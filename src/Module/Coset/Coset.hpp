@@ -45,7 +45,7 @@ public:
 	 * \param name:     Source's name.
 	 */
 	Coset_i(const int size, const int n_frames = 1, const std::string name = "Coset_i")
-	: Module(n_frames, name), size(size)
+	: Module(n_frames, name, "Coset"), size(size)
 	{
 		if (size <= 0)
 		{

@@ -48,7 +48,7 @@ public:
 	 * \param name:     Channel's name.
 	 */
 	Channel_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Channel_i")
-	: Module(n_frames, name), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
+	: Module(n_frames, name, "Channel"), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
 	{
 		if (N <= 0)
 		{
@@ -73,15 +73,15 @@ public:
 			                static_cast<R*>(p1["Y_N"].get_dataptr()));
 		});
 
-		auto &p2 = this->create_process("add_noise_with_gains");
+		auto &p2 = this->create_process("add_noise_wg");
 		this->template create_socket_in <R>(p2, "X_N", this->N * this->n_frames);
 		this->template create_socket_out<R>(p2, "Y_N", this->N * this->n_frames);
 		this->template create_socket_out<R>(p2, "H_N", this->N * this->n_frames);
 		this->create_codelet(p2, [&]()
 		{
-			this->add_noise(static_cast<R*>(p2["X_N"].get_dataptr()),
-			                static_cast<R*>(p2["Y_N"].get_dataptr()),
-			                static_cast<R*>(p2["H_N"].get_dataptr()));
+			this->add_noise_wg(static_cast<R*>(p2["X_N"].get_dataptr()),
+			                   static_cast<R*>(p2["Y_N"].get_dataptr()),
+			                   static_cast<R*>(p2["H_N"].get_dataptr()));
 		});
 	}
 
@@ -171,7 +171,7 @@ public:
 	 * \param H_N: the channel gains.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, std::vector<R,A>& H_N)
+	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, std::vector<R,A>& H_N)
 	{
 		if (X_N.size() != Y_N.size() || Y_N.size() != H_N.size())
 		{
@@ -205,16 +205,16 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->add_noise(X_N.data(), Y_N.data(), H_N.data());
+		this->add_noise_wg(X_N.data(), Y_N.data(), H_N.data());
 	}
 
-	virtual void add_noise(const R *X_N, R *Y_N, R *H_N)
+	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_add_noise(X_N + f * this->N,
-			                 Y_N + f * this->N,
-			                 H_N + f * this->N,
-			                 f);
+			this->_add_noise_wg(X_N + f * this->N,
+			                    Y_N + f * this->N,
+			                    H_N + f * this->N,
+			                    f);
 	}
 
 protected:
@@ -223,7 +223,7 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _add_noise(const R *X_N, R *Y_N, R *H_N, const int frame_id)
+	virtual void _add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}

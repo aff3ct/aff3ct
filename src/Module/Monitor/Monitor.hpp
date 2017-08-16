@@ -53,7 +53,7 @@ public:
 	 * \param size: number of bits.
 	 */
 	Monitor_i(const int size, int n_frames = 1, const std::string name = "Monitor_i")
-	: Module(n_frames, name), size(size)
+	: Module(n_frames, name, "Monitor"), size(size)
 	{
 		if (size <= 0)
 		{
@@ -190,6 +190,7 @@ public:
 	virtual void reset()
 	{
 		Monitor_i<B>::interrupt = false;
+		this->processes["check_errors"]->reset_stats();
 	}
 
 	/*!

@@ -27,9 +27,9 @@ void BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 		{"positive_int",
 		 "set the max number of elements to display in the debug mode."};
 
-	opt_args[{p+"-time-report"}] =
+	opt_args[{p+"-stats"}] =
 		{"",
-		 "display time information about the simulation chain."};
+		 "display statistics module by module."};
 
 	opt_args[{p+"-snr-type", "E"}] =
 		{"string",
@@ -70,7 +70,7 @@ void BFER::store_args(const arg_val_map &vals, parameters &params, const std::st
 	if(exist(vals, {p+"-err-trk-path"   })) params.err_track_path   =           vals.at({p+"-err-trk-path" });
 	if(exist(vals, {p+"-err-trk-rev"    })) params.err_track_revert = true;
 	if(exist(vals, {p+"-err-trk"        })) params.err_track_enable = true;
-	if(exist(vals, {p+"-time-report"    })) params.time_report      = true;
+	if(exist(vals, {p+"-stats"          })) params.statistics       = true;
 	if(exist(vals, {p+"-debug",      "d"})) params.debug            = true;
 	if(exist(vals, {p+"-coset",      "c"})) params.coset            = true;
 	if(exist(vals, {p+"-coded",         })) params.coded_monitoring = true;
@@ -116,7 +116,7 @@ void BFER::make_header(params_list& head_sim, const parameters& params, const bo
 	if (params.benchs)
 		head_sim.push_back(std::make_pair("Number of benchs", std::to_string(params.benchs)));
 	head_sim.push_back(std::make_pair("SNR type", params.snr_type));
-	head_sim.push_back(std::make_pair("Time report", params.time_report ? "on" : "off"));
+	head_sim.push_back(std::make_pair("Statistics", params.statistics ? "on" : "off"));
 	head_sim.push_back(std::make_pair("Debug mode", params.debug ? "on" : "off"));
 	if (params.debug)
 	{

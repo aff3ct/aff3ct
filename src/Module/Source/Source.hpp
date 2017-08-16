@@ -45,7 +45,7 @@ public:
 	 * \param name:     Source's name.
 	 */
 	Source_i(const int K, const int n_frames = 1, const std::string name = "Source_i")
-	: Module(n_frames, name), K(K)
+	: Module(n_frames, name, "Source"), K(K)
 	{
 		if (K <= 0)
 		{

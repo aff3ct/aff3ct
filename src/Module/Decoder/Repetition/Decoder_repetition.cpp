@@ -71,9 +71,9 @@ void Decoder_repetition<B,R>
 	tools::hard_decide(ext.data(), V_K, this->K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+	Decoder_SIHO<B,R>::update_duration("decode_siho", "load",   d_load);
+	Decoder_SIHO<B,R>::update_duration("decode_siho", "decode", d_decod);
+	Decoder_SIHO<B,R>::update_duration("decode_siho", "store",  d_store);
 }
 
 // ==================================================================================== explicit template instantiation

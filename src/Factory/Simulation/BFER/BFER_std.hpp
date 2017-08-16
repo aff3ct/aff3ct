@@ -30,8 +30,6 @@ struct BFER_std : BFER
 		parameters() : BFER::parameters() {}
 
 		virtual ~parameters() {}
-
-		bool debug_fe = false;
 	};
 
 	template <typename B = int, typename R = float, typename Q = R>

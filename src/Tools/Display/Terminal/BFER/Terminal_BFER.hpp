@@ -15,26 +15,16 @@ template <typename B = int>
 class Terminal_BFER : public Terminal
 {
 protected:
-	const int                                                                           K;
-	const int                                                                           N;
 	const module::Monitor<B>                                                           &monitor;
 	      float                                                                         esn0;
 	      float                                                                         ebn0;
 	      bool                                                                          is_esn0;
 	      bool                                                                          is_ebn0;
 	      std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>  t_snr;
-	const std::chrono::nanoseconds                                                     *d_decod_total;
 	unsigned short                                                                      real_time_state;
 
 public:
-	Terminal_BFER(const int K,
-	              const int N,
-	              const module::Monitor<B> &monitor,
-	              const std::chrono::nanoseconds *d_decod_total = nullptr);
-
-	Terminal_BFER(const int K,
-	              const module::Monitor<B> &monitor,
-	              const std::chrono::nanoseconds *d_decod_total = nullptr);
+	Terminal_BFER(const module::Monitor<B> &monitor);
 
 	virtual ~Terminal_BFER() {}
 

@@ -43,12 +43,10 @@ public:
 protected:
 	virtual void _build_communication_chain(const int tid = 0);
 	virtual void _launch();
-	virtual tools::Terminal_BFER<B>* build_terminal();
 
 private:
-	void Monte_Carlo_method   (const int tid = 0);
-	void simulation_loop      (const int tid = 0);
-	void simulation_loop_debug(                 );
+	void Monte_Carlo_method(const int tid = 0);
+	void simulation_loop   (const int tid = 0);
 
 	static void start_thread(BFER_ite_threads<B,R,Q> *simu, const int tid = 0);
 };

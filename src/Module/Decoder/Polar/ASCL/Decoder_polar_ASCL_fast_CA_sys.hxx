@@ -32,18 +32,9 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 ::_decode(const R *Y_N, B *V_K, const int frame_id)
 {
-	sc_decoder.d_load_total  = std::chrono::nanoseconds(0);
-	sc_decoder.d_decod_total = std::chrono::nanoseconds(0);
-	sc_decoder.d_store_total = std::chrono::nanoseconds(0);
-
 	this->L = 1;
 	sc_decoder._decode_siho(Y_N, V_K, frame_id);
 
-	this->d_load_total  += sc_decoder.d_load_total;
-	this->d_decod_total += sc_decoder.d_decod_total;
-	this->d_store_total += sc_decoder.d_store_total;
-
-	auto t_decod = std::chrono::steady_clock::now();
 	// check the CRC
 	auto crc_decode_result = this->crc.check(V_K, this->get_simd_inter_frame_level());
 
@@ -71,30 +62,32 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 			this->recursive_decode(Y_N, off_l, off_s, this->m, first_node_id);
 		}
 	}
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
-
-	this->d_decod_total += d_decod;
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
+	auto t_decod = std::chrono::steady_clock::now();
 	this->_decode(Y_N, V_K, frame_id);
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now();
 	if (this->L > 1)
 		Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::_store(V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_store_total += d_store;
+	this->update_duration("decode_siho", "decode", d_decod);
+	this->update_duration("decode_siho", "store",  d_store);
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 ::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
 {
+	auto t_decod = std::chrono::steady_clock::now();
 	this->_decode(Y_N, V_N, frame_id);
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now();
 	if (this->L > 1)
@@ -103,7 +96,8 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 		sc_decoder._store_coded(V_N);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_store_total += d_store;
+	this->update_duration("decode_siho_coded", "decode", d_decod);
+	this->update_duration("decode_siho_coded", "store",  d_store);
 }
 }
 }

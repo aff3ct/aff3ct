@@ -59,7 +59,7 @@ public:
 	 */
 	Decoder_HIHO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	               std::string name = "Decoder_HIHO_i")
-	: Module(n_frames, name),
+	: Module(n_frames, name, "Decoder_HIHO"),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
 	  Y_N (n_inter_frame_rest ? simd_inter_frame_level * N : 0),
 	  V_KN(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
@@ -105,6 +105,9 @@ public:
 			this->decode_hiho(static_cast<B*>(p1["Y_N"].get_dataptr()),
 			                  static_cast<B*>(p1["V_K"].get_dataptr()));
 		});
+		this->register_duration(p1, "load");
+		this->register_duration(p1, "decode");
+		this->register_duration(p1, "store");
 
 		auto &p2 = this->create_process("decode_hiho_coded");
 		this->template create_socket_in <B>(p2, "Y_N", this->N_hiho * this->n_frames);
@@ -114,6 +117,9 @@ public:
 			this->decode_hiho_coded(static_cast<B*>(p2["Y_N"].get_dataptr()),
 			                        static_cast<B*>(p2["V_N"].get_dataptr()));
 		});
+		this->register_duration(p2, "load");
+		this->register_duration(p2, "decode");
+		this->register_duration(p2, "store");
 	}
 
 	/*!

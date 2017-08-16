@@ -26,25 +26,10 @@ simulation::BFER_std<B,R,Q>* BFER_std
 void BFER_std::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	BFER::build_args(req_args, opt_args, p);
-
-#if !defined(STARPU) && !defined(SYSTEMC)
-	opt_args[{p+"-debug-fe"}] =
-		{"",
-		 "enable debug mode: print array values after each step (only when frame errors)."};
-#endif
 }
 
 void BFER_std::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	// need to be checked before that the default number of threads is set to 1 because debug mode is selected
-#if !defined(STARPU) && !defined(SYSTEMC)
-	if(exist(vals, {p+"-debug-fe"}))
-	{
-		params.debug    = true;
-		params.debug_fe = true;
-	}
-#endif
-
 	BFER::store_args(vals, params, p);
 }
 

@@ -61,12 +61,12 @@ struct BFER : Simulation
 		std::string err_track_path   = "error_tracker";
 		bool        err_track_revert = false;
 		bool        err_track_enable = false;
-		bool        time_report      = false;
+		bool        statistics       = false;
 		bool        debug            = false;
 		bool        coset            = false;
 		bool        coded_monitoring = false;
 		int         debug_limit      = 0;
-		int         debug_precision  = 5;
+		int         debug_precision  = 2;
 		int         benchs           = 0;
 
 		Source       ::parameters *src;

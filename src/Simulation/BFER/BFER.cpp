@@ -47,9 +47,7 @@ BFER<B,R,Q>
   monitor_red(                  nullptr),
   dumper     (params.n_threads, nullptr),
   dumper_red (                  nullptr),
-  terminal   (                  nullptr),
-
-  durations(params.n_threads)
+  terminal   (                  nullptr)
 {
 	if (params.n_threads < 1)
 	{
@@ -70,8 +68,12 @@ BFER<B,R,Q>
 		dumper_red = new tools::Dumper_reduction(dumpers, params.src->n_frames);
 	}
 
+	modules["monitor"] = std::vector<module::Module*>(params.n_threads, nullptr);
 	for (auto tid = 0; tid < params.n_threads; tid++)
+	{
 		this->monitor[tid] = this->build_monitor(tid);
+		modules["monitor"][tid] = this->monitor[tid];
+	}
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
@@ -115,9 +117,6 @@ void BFER<B,R,Q>
 	try
 	{
 		this->_build_communication_chain(tid);
-
-		for (auto& duration : this->durations[tid])
-			duration.second = std::chrono::nanoseconds(0);
 
 		if (params.err_track_enable)
 			this->monitor[tid]->add_handler_fe(std::bind(&tools::Dumper::add, this->dumper[tid], std::placeholders::_1));
@@ -211,20 +210,37 @@ void BFER<B,R,Q>
 
 		if (!module::Monitor<B>::is_over())
 		{
-			if (!params.ter->disabled && snr == params.snr_min && !params.debug && !params.benchs
+			// enable the debug mode in the modules
+			if (params.debug)
+				for (auto &m : modules)
+					for (auto mm : m.second)
+						if (mm != nullptr)
+							for (auto &p : mm->processes)
+							{
+								p.second->set_debug(true);
+								if (params.debug_limit)
+									p.second->set_debug_limit((uint32_t)params.debug_limit);
+								if (params.debug_precision)
+									p.second->set_debug_precision((uint8_t)params.debug_precision);
+							}
+
 #ifdef ENABLE_MPI
-			    && params.mpi_rank == 0
+			if (((!params.ter->disabled && snr == params.snr_min && !params.debug && !params.benchs) ||
+			    (params.statistics && !params.debug)) && params.mpi_rank == 0)
+#else
+			if (((!params.ter->disabled && snr == params.snr_min && !params.debug && !params.benchs) ||
+			    (params.statistics && !params.debug)))
 #endif
-			    )
 				terminal->legend(std::cout);
 
 			// start the terminal to display BER/FER results
 			std::thread term_thread;
-			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) &&
-			    !params.benchs   && !params.debug)
+			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.benchs &&
+			    !params.debug)
 				// launch a thread dedicated to the terminal display
 				term_thread = std::thread(BFER<B,R,Q>::start_thread_terminal, this);
 
+			auto simu_error = false;
 			try
 			{
 				this->_launch();
@@ -233,11 +249,12 @@ void BFER<B,R,Q>
 			{
 				module::Monitor<B>::stop();
 				std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+				simu_error = true;
 			}
 
 			// stop the terminal
-			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) &&
-			    !params.benchs && !params.debug)
+			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.benchs &&
+			    !params.debug)
 			{
 				stop_terminal = true;
 				cond_terminal.notify_all();
@@ -246,22 +263,22 @@ void BFER<B,R,Q>
 				stop_terminal = false;
 			}
 
-			if (!params.ter->disabled && !params.benchs && terminal != nullptr
 #ifdef ENABLE_MPI
-				 && params.mpi_rank == 0
+			if (!params.ter->disabled && !params.benchs && terminal != nullptr && !simu_error && params.mpi_rank == 0)
+#else
+			if (!params.ter->disabled && !params.benchs && terminal != nullptr && !simu_error)
 #endif
-			   )
 			{
-				if (params.debug && !module::Monitor<B>::is_over())
+				if (params.debug)
 					terminal->legend(std::cout);
 
-				time_reduction(true);
+				terminal->final_report(std::cout);
 
-				if (!module::Monitor<B>::is_over())
-					terminal->final_report(std::cout);
+				if (params.statistics)
+					display_stats();
 			}
 
-			if (this->dumper_red != nullptr)
+			if (this->dumper_red != nullptr && !simu_error)
 			{
 				this->dumper_red->dump(params.err_track_path + "_" + std::to_string(snr_b));
 				this->dumper_red->clear();
@@ -275,13 +292,6 @@ void BFER<B,R,Q>
 		if (module::Monitor<B>::is_over())
 			break;
 	}
-
-	if (params.time_report && !params.benchs
-#ifdef ENABLE_MPI
-	    && params.mpi_rank == 0
-#endif
-	   )
-		time_report();
 }
 
 template <typename B, typename R, typename Q>
@@ -292,92 +302,174 @@ void BFER<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
-::time_reduction(const bool is_snr_done)
+::display_stats(std::ostream &stream)
 {
-	for (auto& duration : durations_red)
-		duration.second = std::chrono::nanoseconds(0);
+	size_t max_chars = 0;
+	auto d_total = std::chrono::nanoseconds(0);
+	for (auto &m : modules)
+		for (auto i = 0; i < (int)m.second.size(); i++)
+			if (m.second[i] != nullptr)
+				for (auto &p : m.second[i]->processes)
+				{
+					d_total += p.second->get_duration_total();
+					std::max(max_chars, m.second[i]->get_short_name().size() + p.second->get_name().size());
+				}
+	auto total_sec = ((float)d_total.count()) * 0.000000001f;
 
-	for (auto tid = 0; tid < params.n_threads; tid++)
-		for (auto& duration : durations[tid])
-			durations_red[duration.first] += duration.second;
-
-	if (is_snr_done)
-		for (auto tid = 0; tid < params.n_threads; tid++)
-			for (auto& duration : durations[tid])
-				durations_sum[duration.first] += duration.second;
-}
-
-template <typename B, typename R, typename Q>
-void BFER<B,R,Q>
-::time_report(std::ostream &stream)
-{
-	if (durations_sum.size() >= 1)
+	if (d_total.count())
 	{
-		auto d_total = std::chrono::nanoseconds(0);
-		for (auto& duration : durations_sum)
-			if (!duration.first.second.empty())
-				d_total += duration.first.second[0] != '-' ? duration.second : std::chrono::nanoseconds(0);
-		auto total_sec = ((float)d_total.count()) * 0.000000001f;
-
-		auto max_chars = 0;
-		for (auto& duration : durations_sum)
-			max_chars = std::max(max_chars, (int)duration.first.second.length());
-
 		stream << "#" << std::endl;
-		stream << "# " << tools::format("Time report", tools::Style::BOLD | tools::Style::UNDERLINED)
-		               << " (the time of the threads is cumulated)" << std::endl;
+		stream << tools::format("# -------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
+		stream << tools::format("#      Statistics for the given process      ||       Basic statistics       ||       Measured throughput      ||        Measured latency        ", tools::Style::BOLD) << std::endl;
+		stream << tools::format("#        ('*' = all the sub-processes)       ||        on the process        ||     considering the output     ||     considering the output     ", tools::Style::BOLD) << std::endl;
+		stream << tools::format("# -------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
+		stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+		stream << tools::format("#       MODULE |           PROCESS |     SUB ||    CALLS |     TIME |   PERC ||  AVERAGE |  MINIMUM |  MAXIMUM ||  AVERAGE |  MINIMUM |  MAXIMUM ", tools::Style::BOLD) << std::endl;
+		stream << tools::format("#              |                   | PROCESS ||          |      (s) |    (%) ||   (Mb/s) |   (Mb/s) |   (Mb/s) ||     (us) |     (us) |     (us) ", tools::Style::BOLD) << std::endl;
+		stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
 
-		auto prev_sec = 0.f;
-		for (auto& duration : durations_sum)
+#ifdef _WIN32
+		auto P = 1;
+#else
+		auto P = 2;
+#endif
+
+		for (auto &m : modules)
 		{
-			if (duration.second.count() != 0 && !duration.first.second.empty())
+			if (m.second[0] != nullptr)
 			{
-				std::string key = "";
-				const auto cur_sec = ((float)duration.second.count()) * 0.000000001f;
-				auto cur_pc  = 0.f;
-				if (duration.first.second[0] != '-')
+				for (auto &p : m.second[0]->processes)
 				{
-					cur_pc  = (cur_sec / total_sec) * 100.f;
-					key = tools::format("* " + duration.first.second, tools::Style::BOLD);
-					prev_sec = cur_sec;
+					size_t n_elmts = p.second->out.size() ? p.second->out[0].get_n_elmts() :
+					                                        p.second->in [0].get_n_elmts();
+
+					auto module = m.second[0]->get_short_name();
+					auto process = p.second->get_name();
+					uint32_t n_calls = 0;
+					auto tot_duration = std::chrono::nanoseconds(0);
+					auto min_duration = m.second[0]->processes[p.first]->get_duration_max();
+					auto max_duration = std::chrono::nanoseconds(0);
+					for (auto &mm : m.second)
+					{
+						n_calls += mm->processes[p.first]->get_n_calls();
+						tot_duration += mm->processes[p.first]->get_duration_total();
+						min_duration = std::min(min_duration, mm->processes[p.first]->get_duration_min());
+						max_duration = std::max(max_duration, mm->processes[p.first]->get_duration_max());
+					}
+
+					if (n_calls)
+					{
+						auto tot_dur = ((float)tot_duration.count()) * 0.000000001f;
+						auto percent = (tot_dur / total_sec) * 100.f;
+						auto avg_thr = (float)(n_calls * n_elmts) / ((float)tot_duration.count() * 0.001f);
+						auto min_thr = (float)(1.f     * n_elmts) / ((float)max_duration.count() * 0.001f);
+						auto max_thr = (float)(1.f     * n_elmts) / ((float)min_duration.count() * 0.001f);
+						auto avg_lat = (float)(tot_duration.count() * 0.001f) / n_calls;
+						auto min_lat = (float)(min_duration.count() * 0.001f);
+						auto max_lat = (float)(max_duration.count() * 0.001f);
+
+						unsigned l1 = 99999999;
+						unsigned l2 = 99999.99;
+
+						std::stringstream ssmodule, ssprocess, sssp, ssn_calls, sstot_dur, sspercent;
+						std::stringstream ssavg_thr, ssmin_thr, ssmax_thr;
+						std::stringstream ssavg_lat, ssmin_lat, ssmax_lat;
+
+						ssmodule  << std::setprecision(                   2) <<                                   std::fixed  << std::setw(12) << module;
+						ssprocess << std::setprecision(                   2) <<                                   std::fixed  << std::setw(17) << process;
+						sssp      << std::setprecision(                   2) <<                                   std::fixed  << std::setw( 7) << "*";
+						ssn_calls << std::setprecision(n_calls > l1 ? P : 2) << (n_calls > l1 ? std::scientific : std::fixed) << std::setw( 8) << n_calls;
+						sstot_dur << std::setprecision(tot_dur > l1 ? P : 2) << (tot_dur > l1 ? std::scientific : std::fixed) << std::setw( 8) << tot_dur;
+						sspercent << std::setprecision(                   2) <<                                   std::fixed  << std::setw( 6) << percent;
+						ssavg_thr << std::setprecision(avg_thr > l1 ? P : 2) << (avg_thr > l2 ? std::scientific : std::fixed) << std::setw( 8) << avg_thr;
+						ssmin_thr << std::setprecision(min_thr > l1 ? P : 2) << (min_thr > l2 ? std::scientific : std::fixed) << std::setw( 8) << min_thr;
+						ssmax_thr << std::setprecision(max_thr > l1 ? P : 2) << (max_thr > l2 ? std::scientific : std::fixed) << std::setw( 8) << max_thr;
+						ssavg_lat << std::setprecision(avg_lat > l1 ? P : 2) << (avg_lat > l2 ? std::scientific : std::fixed) << std::setw( 8) << avg_lat;
+						ssmin_lat << std::setprecision(min_lat > l1 ? P : 2) << (min_lat > l2 ? std::scientific : std::fixed) << std::setw( 8) << min_lat;
+						ssmax_lat << std::setprecision(max_lat > l1 ? P : 2) << (max_lat > l2 ? std::scientific : std::fixed) << std::setw( 8) << max_lat;
+
+						std::string spercent = sspercent.str();
+						     if (percent > 50.0f) spercent = tools::format(spercent, tools::FG::INTENSE | tools::FG::RED);
+						else if (percent > 25.0f) spercent = tools::format(spercent, tools::FG::INTENSE | tools::FG::ORANGE);
+						else if (percent > 12.5f) spercent = tools::format(spercent, tools::FG::INTENSE | tools::FG::GREEN);
+						else if (percent <  5.0f) spercent = tools::format(spercent,                      tools::FG::GRAY);
+
+						stream << "# ";
+						stream << ssmodule .str() << tools::format(" | ",  tools::Style::BOLD)
+						       << ssprocess.str() << tools::format(" | ",  tools::Style::BOLD)
+						       << sssp     .str() << tools::format(" || ", tools::Style::BOLD)
+						       << ssn_calls.str() << tools::format(" | ",  tools::Style::BOLD)
+						       << sstot_dur.str() << tools::format(" | ",  tools::Style::BOLD)
+						       << spercent        << tools::format(" || ", tools::Style::BOLD)
+						       << ssavg_thr.str() << tools::format(" | ",  tools::Style::BOLD)
+						       << ssmin_thr.str() << tools::format(" | ",  tools::Style::BOLD)
+						       << ssmax_thr.str() << tools::format(" || ", tools::Style::BOLD)
+						       << ssavg_lat.str() << tools::format(" | ",  tools::Style::BOLD)
+						       << ssmin_lat.str() << tools::format(" | ",  tools::Style::BOLD)
+						       << ssmax_lat.str() << ""
+						       << std::endl;
+
+						for (auto &sp : p.second->get_registered_duration())
+						{
+							uint32_t rn_calls = 0;
+							auto rtot_duration = std::chrono::nanoseconds(0);
+							auto rmin_duration = m.second[0]->processes[p.first]->get_registered_duration_max(sp);
+							auto rmax_duration = std::chrono::nanoseconds(0);
+							for (auto &mm : m.second)
+							{
+								rn_calls += mm->processes[p.first]->get_registered_n_calls(sp);
+								rtot_duration += mm->processes[p.first]->get_registered_duration_total(sp);
+								rmin_duration = std::min(rmin_duration, mm->processes[p.first]->get_registered_duration_min(sp));
+								rmax_duration = std::max(rmax_duration, mm->processes[p.first]->get_registered_duration_max(sp));
+							}
+
+							if (rn_calls)
+							{
+								auto rn_elmts = (n_elmts * n_calls) / rn_calls;
+								auto rtot_dur = ((float)rtot_duration.count()) * 0.000000001f;
+								auto rpercent = (rtot_dur / tot_dur) * 100.f;
+								auto ravg_thr = (float)(rn_calls * rn_elmts) / ((float)rtot_duration.count() * 0.001f);
+								auto rmin_thr = (float)(1.f      * rn_elmts) / ((float)rmax_duration.count() * 0.001f);
+								auto rmax_thr = (float)(1.f      * rn_elmts) / ((float)rmin_duration.count() * 0.001f);
+								auto ravg_lat = (float)(rtot_duration.count() * 0.001f) / rn_calls;
+								auto rmin_lat = (float)(rmin_duration.count() * 0.001f);
+								auto rmax_lat = (float)(rmax_duration.count() * 0.001f);
+
+								std::stringstream sssp, ssrn_calls, ssrtot_dur, ssrpercent;
+								std::stringstream ssravg_thr, ssrmin_thr, ssrmax_thr;
+								std::stringstream ssravg_lat, ssrmin_lat, ssrmax_lat;
+
+								sssp       << std::setprecision(                    2) <<                                    std::fixed  << std::setw(7) << sp;
+								ssrn_calls << std::setprecision(rn_calls > l1 ? P : 2) << (rn_calls > l1 ? std::scientific : std::fixed) << std::setw(8) << rn_calls;
+								ssrtot_dur << std::setprecision(rtot_dur > l1 ? P : 2) << (rtot_dur > l1 ? std::scientific : std::fixed) << std::setw(8) << rtot_dur;
+								ssrpercent << std::setprecision(                    2) <<                                    std::fixed  << std::setw(6) << rpercent;
+								ssravg_thr << std::setprecision(ravg_thr > l1 ? P : 2) << (ravg_thr > l2 ? std::scientific : std::fixed) << std::setw(8) << ravg_thr;
+								ssrmin_thr << std::setprecision(rmin_thr > l1 ? P : 2) << (rmin_thr > l2 ? std::scientific : std::fixed) << std::setw(8) << rmin_thr;
+								ssrmax_thr << std::setprecision(rmax_thr > l1 ? P : 2) << (rmax_thr > l2 ? std::scientific : std::fixed) << std::setw(8) << rmax_thr;
+								ssravg_lat << std::setprecision(ravg_lat > l1 ? P : 2) << (ravg_lat > l2 ? std::scientific : std::fixed) << std::setw(8) << ravg_lat;
+								ssrmin_lat << std::setprecision(rmin_lat > l1 ? P : 2) << (rmin_lat > l2 ? std::scientific : std::fixed) << std::setw(8) << rmin_lat;
+								ssrmax_lat << std::setprecision(rmax_lat > l1 ? P : 2) << (rmax_lat > l2 ? std::scientific : std::fixed) << std::setw(8) << rmax_lat;
+
+								stream << "# ";
+								stream << tools::format(ssmodule  .str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
+								       << tools::format(ssprocess .str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
+								       << tools::format(sssp      .str(), tools::Style::ITALIC) << tools::format(" || ", tools::Style::BOLD)
+								       << tools::format(ssrn_calls.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
+								       << tools::format(ssrtot_dur.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
+								       << tools::format(ssrpercent.str(), tools::Style::ITALIC) << tools::format(" || ", tools::Style::BOLD)
+								       << tools::format(ssravg_thr.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
+								       << tools::format(ssrmin_thr.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
+								       << tools::format(ssrmax_thr.str(), tools::Style::ITALIC) << tools::format(" || ", tools::Style::BOLD)
+								       << tools::format(ssravg_lat.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
+								       << tools::format(ssrmin_lat.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
+								       << tools::format(ssrmax_lat.str(), tools::Style::ITALIC) << ""
+								       << std::endl;
+							}
+						}
+					}
 				}
-				else
-				{
-					cur_pc  = (prev_sec != 0.f) ? (cur_sec / prev_sec) * 100.f : 0.f;
-					key = tools::format("  " + duration.first.second, tools::Style::BOLD | tools::Style::ITALIC);
-				}
-
-				const auto n_spaces = max_chars - (int)duration.first.second.length();
-				std::string str_spaces = "";
-				for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
-
-				stream << "# " << key << str_spaces << ": "
-				       << std::setw(9) << std::fixed << std::setprecision(3) << cur_sec << " sec ("
-				       << std::setw(5) << std::fixed << std::setprecision(2) << cur_pc  << "%)";
-
-				if (data_sizes.find(duration.first) != data_sizes.end())
-				{
-					const auto n_bits_per_fra = data_sizes[duration.first] / params.src->n_frames;
-					const auto n_fra = this->monitor_red->get_n_analyzed_fra_historic();
-					const auto mbps = ((float)(n_bits_per_fra * n_fra) / cur_sec) * 0.000001f;
-					const auto inter_lvl = (float)params.src->n_frames;
-					const auto lat = (((float)duration.second.count() * 0.001f) / (float)n_fra) * inter_lvl;
-
-					stream << " - " << std::setw(9) << mbps << " Mb/s"
-					       << " - " << std::setw(9) << lat  << " us";
-				}
-
-				stream << std::endl;
 			}
 		}
-
-		stream << "#   ----------------------------------" << std::endl;
-		const std::string total_str = "TOTAL";
-		const auto n_spaces = max_chars - (int)total_str.length();
-		std::string str_spaces = "";
-		for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
-		stream << "# " << tools::format("* " + total_str, tools::Style::BOLD) << str_spaces << ": "
-		       << std::setw(9) << std::fixed << std::setprecision(3) << total_sec << " sec" << std::endl;
 		stream << "#" << std::endl;
 	}
 }
@@ -408,10 +500,7 @@ void BFER<B,R,Q>
 		{
 			std::unique_lock<std::mutex> lock(simu->mutex_terminal);
 			if (simu->cond_terminal.wait_for(lock, sleep_time) == std::cv_status::timeout)
-			{
-				simu->time_reduction();
 				simu->terminal->temp_report(std::clog); // display statistics in the terminal
-			}
 		}
 	}
 	else

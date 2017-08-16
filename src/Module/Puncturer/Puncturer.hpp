@@ -50,7 +50,7 @@ public:
 	 */
 	Puncturer_i(const int K, const int N, const int N_code, const int n_frames = 1,
 	            const std::string name = "Puncturer_i")
-	: Module(n_frames, name), K(K), N(N), N_code(N_code)
+	: Module(n_frames, name, "Puncturer"), K(K), N(N), N_code(N_code)
 	{
 		if (K <= 0)
 		{

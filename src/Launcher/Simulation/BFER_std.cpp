@@ -107,9 +107,6 @@ void BFER_std<B,R,Q>
 
 	factory::Monitor::store_args(this->ar.get_args(), *params->mnt);
 
-	params->ter->K = K;
-	params->ter->N = N_cw;
-
 	factory::Terminal_BFER::store_args(this->ar.get_args(), *params->ter);
 
 	if (!std::is_integral<Q>())

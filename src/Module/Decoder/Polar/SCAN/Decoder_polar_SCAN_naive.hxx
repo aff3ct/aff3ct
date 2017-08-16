@@ -160,9 +160,9 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	this->_store(V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+	Decoder_SIHO<B,R>::update_duration("decode_siho", "load",   d_load);
+	Decoder_SIHO<B,R>::update_duration("decode_siho", "decode", d_decod);
+	Decoder_SIHO<B,R>::update_duration("decode_siho", "store",  d_store);
 
 	this->is_init = false;
 }
@@ -184,9 +184,9 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	this->_store(V_N, true);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "load",   d_load);
+	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "decode", d_decod);
+	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "store",  d_store);
 
 	this->is_init = false;
 }

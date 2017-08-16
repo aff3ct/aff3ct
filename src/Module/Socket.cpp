@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 
+#include "Module.hpp"
 #include "Process.hpp"
 #include "Socket.hpp"
 
@@ -14,9 +15,16 @@ std::unordered_map<std::type_index,std::string> type_to_string = {{typeid(int8_t
                                                                   {typeid(float  ), "float32"},
                                                                   {typeid(double ), "float64"}};
 
-Socket::Socket(Process &attached_process, const std::string name, const std::type_index datatype,
-               const size_t databytes, void *dataptr)
-: attached_process(attached_process), name(name), datatype(datatype), databytes(databytes), dataptr(dataptr)
+std::unordered_map<std::type_index,uint8_t> type_to_size = {{typeid(int8_t ), 1},
+                                                            {typeid(int16_t), 2},
+                                                            {typeid(int32_t), 4},
+                                                            {typeid(int64_t), 8},
+                                                            {typeid(float  ), 4},
+                                                            {typeid(double ), 8}};
+
+Socket::Socket(Process &process, const std::string name, const std::type_index datatype, const size_t databytes,
+               void *dataptr)
+: process(process), name(name), datatype(datatype), databytes(databytes), dataptr(dataptr)
 {
 }
 
@@ -30,9 +38,24 @@ std::type_index Socket::get_datatype()
 	return this->datatype;
 }
 
+std::string Socket::get_datatype_string()
+{
+	return type_to_string[this->datatype];
+}
+
+uint8_t Socket::get_datatype_size()
+{
+	return type_to_size[this->datatype];
+}
+
 size_t Socket::get_databytes()
 {
 	return this->databytes;
+}
+
+size_t Socket::get_n_elmts()
+{
+	return this->get_databytes() / (size_t)this->get_datatype_size();
 }
 
 void* Socket::get_dataptr()
@@ -47,8 +70,12 @@ void Socket::bind(Socket &s_in)
 		std::stringstream message;
 		message << "'s_in.datatype' has to be equal to 'datatype' ('s_in.datatype' = " << type_to_string[s_in.datatype]
 		        << ", 'datatype' = " << type_to_string[this->datatype]
-		        << ", 'process_out.name' = " << attached_process.name
-		        << ", 'process_in.name' = " << s_in.attached_process.name << ").";
+		        << ", 'socket_out.name' = " << get_name()
+		        << ", 'socket_in.name' = " << s_in.get_name()
+		        << ", 'process_out.name' = " << process.get_name()
+		        << ", 'process_in.name' = " << s_in.process.get_name()
+		        << ", 'module_out.name' = " << process.module.get_name()
+		        << ", 'module_in.name' = " << s_in.process.module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -57,8 +84,12 @@ void Socket::bind(Socket &s_in)
 		std::stringstream message;
 		message << "'s_in.databytes' has to be equal to 'databytes' ('s_in.databytes' = " << s_in.databytes
 		        << ", 'databytes' = " << this->databytes
-		        << ", 'process_out.name' = " << attached_process.name
-		        << ", 'process_in.name' = " << s_in.attached_process.name << ").";
+		        << ", 'socket_out.name' = " << get_name()
+		        << ", 'socket_in.name' = " << s_in.get_name()
+		        << ", 'process_out.name' = " << process.get_name()
+		        << ", 'process_in.name' = " << s_in.process.get_name()
+		        << ", 'module_out.name' = " << process.module.get_name()
+		        << ", 'module_in.name' = " << s_in.process.module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -71,6 +102,6 @@ void Socket::bind(Socket &s_in)
 
 	s_in.dataptr = this->dataptr;
 
-	if (s_in.attached_process.is_autostart() && s_in.attached_process.last_input_socket(s_in))
-		s_in.attached_process.exec();
+	if (s_in.process.is_autostart() && s_in.process.last_input_socket(s_in))
+		s_in.process.exec();
 }

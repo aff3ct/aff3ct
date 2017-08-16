@@ -57,7 +57,7 @@ public:
 	 */
 	Decoder_SISO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	               std::string name = "Decoder_SISO_i")
-	: Module(n_frames, name),
+	: Module(n_frames, name, "Decoder_SISO"),
 	  n_inter_frame_rest_siso(this->n_frames % simd_inter_frame_level),
 	  Y_N1(n_inter_frame_rest_siso ? simd_inter_frame_level * N : 0),
 	  Y_N2(n_inter_frame_rest_siso ? simd_inter_frame_level * N : 0),

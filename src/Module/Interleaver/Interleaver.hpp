@@ -52,7 +52,7 @@ public:
 	 */
 	Interleaver_i(const int size, const bool uniform = false, const int n_frames = 1,
 	              const std::string name = "Interleaver_i")
-	: Module(n_frames, name),
+	: Module(n_frames, name, "Interleaver"),
 	  size(size), uniform(uniform), pi(size * n_frames), pi_inv(size * n_frames), init_called(false)
 	{
 		if (size <= 0)

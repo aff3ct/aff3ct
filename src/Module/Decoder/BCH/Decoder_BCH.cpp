@@ -38,7 +38,6 @@ template <typename B, typename R>
 void Decoder_BCH<B, R>
 ::_decode(B *Y_N)
 {
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	int i, j, u, q, t2, count = 0, syn_error = 0;
 
 	t2 = 2 * t;
@@ -197,38 +196,48 @@ void Decoder_BCH<B, R>
 					Y_N[loc[i]] ^= 1;
 		}
 	}
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
-
-	this->d_decod_total += d_decod;
-
 }
 
 template <typename B, typename R>
 void Decoder_BCH<B, R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	std::copy(Y_N, Y_N + this->N, YH_N.begin());
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode(YH_N.data());
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	std::copy(YH_N.data() + this->N - this->K, YH_N.data() + this->N, V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_store_total += d_store;
+	Decoder_HIHO<B>::update_duration("decode_hiho", "load",   d_load);
+	Decoder_HIHO<B>::update_duration("decode_hiho", "decode", d_decod);
+	Decoder_HIHO<B>::update_duration("decode_hiho", "store",  d_store);
 }
 
 template <typename B, typename R>
 void Decoder_BCH<B, R>
 ::_decode_hiho_coded(const B *Y_N, B *V_N, const int frame_id)
 {
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	std::copy(Y_N, Y_N + this->N, YH_N.begin());
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode(YH_N.data());
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	std::copy(YH_N.data(), YH_N.data() + this->N, V_N);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_store_total += d_store;
+	Decoder_HIHO<B>::update_duration("decode_hiho_coded", "load",   d_load);
+	Decoder_HIHO<B>::update_duration("decode_hiho_coded", "decode", d_decod);
+	Decoder_HIHO<B>::update_duration("decode_hiho_coded", "store",  d_store);
 }
 
 template <typename B, typename R>
@@ -238,9 +247,18 @@ void Decoder_BCH<B, R>
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	tools::hard_decide(Y_N, YH_N.data(), this->N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
-	this->d_load_total += d_load;
 
-	this->_decode_hiho(YH_N.data(), V_K, frame_id);
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode(YH_N.data());
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	std::copy(YH_N.data() + this->N - this->K, YH_N.data() + this->N, V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	Decoder_SIHO<B,R>::update_duration("decode_siho", "load",   d_load);
+	Decoder_SIHO<B,R>::update_duration("decode_siho", "decode", d_decod);
+	Decoder_SIHO<B,R>::update_duration("decode_siho", "store",  d_store);
 }
 
 template <typename B, typename R>
@@ -250,9 +268,18 @@ void Decoder_BCH<B, R>
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	tools::hard_decide(Y_N, YH_N.data(), this->N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
-	this->d_load_total += d_load;
 
-	this->_decode_hiho_coded(YH_N.data(), V_N, frame_id);
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode(YH_N.data());
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	std::copy(YH_N.data(), YH_N.data() + this->N, V_N);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "load",   d_load);
+	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "decode", d_decod);
+	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "store",  d_store);
 }
 
 // ==================================================================================== explicit template instantiation

@@ -181,8 +181,8 @@ void EXIT<B,R>
 			// Rayleigh channel
 			if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 			{
-				channel_a->add_noise            (X_K, La_K1, H_N       );
-				modem_a  ->demodulate_with_gains(     La_K1, H_N, La_K2);
+				channel_a->add_noise_wg (X_K, La_K1, H_N       );
+				modem_a  ->demodulate_wg(     La_K1, H_N, La_K2);
 			}
 			else // additive channel (AWGN, USER, NO)
 			{
@@ -194,8 +194,8 @@ void EXIT<B,R>
 		// Rayleigh channel
 		if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			channel->add_noise            (X_N2, Lch_N1, H_N        );
-			modem  ->demodulate_with_gains(      Lch_N1, H_N, Lch_N2);
+			channel->add_noise_wg (X_N2, Lch_N1, H_N        );
+			modem  ->demodulate_wg(      Lch_N1, H_N, Lch_N2);
 		}
 		else // additive channel (AWGN, USER, NO)
 		{

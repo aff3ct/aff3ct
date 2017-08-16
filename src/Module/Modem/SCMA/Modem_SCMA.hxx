@@ -134,7 +134,7 @@ void Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2)
+::demodulate_wg(const Q *Y_N1, const R *H_N, Q *Y_N2)
 {
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));

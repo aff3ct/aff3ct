@@ -54,7 +54,7 @@ public:
 	 */
 	Modem_i(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
 	        const std::string name = "Modem_i")
-	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
+	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
 	{
 		if (N <= 0)
 		{
@@ -97,7 +97,7 @@ public:
 	 */
 	Modem_i(const int N, const int N_mod, const R sigma, const int n_frames = 1,
 	        const std::string name = "Modem_i")
-	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
+	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
 	{
 		if (N <= 0)
 		{
@@ -131,7 +131,7 @@ public:
 	 * \param name:     Modem's name.
 	 */
 	Modem_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Modem_i")
-	: Module(n_frames, name), N(N), N_mod(N), N_fil(N)
+	: Module(n_frames, name, "Modem"), N(N), N_mod(N), N_fil(N)
 	{
 		if (N <= 0)
 		{
@@ -185,33 +185,33 @@ public:
 		this->template create_socket_out<Q>(p4, "Y_N3", this->N     * this->n_frames);
 		this->create_codelet(p4, [&]()
 		{
-			this->demodulate(static_cast<Q*>(p4["Y_N1"].get_dataptr()),
-			                 static_cast<Q*>(p4["Y_N2"].get_dataptr()),
-			                 static_cast<Q*>(p4["Y_N3"].get_dataptr()));
+			this->tdemodulate(static_cast<Q*>(p4["Y_N1"].get_dataptr()),
+			                  static_cast<Q*>(p4["Y_N2"].get_dataptr()),
+			                  static_cast<Q*>(p4["Y_N3"].get_dataptr()));
 		});
 
-		auto &p5 = this->create_process("demodulate_with_gains");
+		auto &p5 = this->create_process("demodulate_wg");
 		this->template create_socket_in <Q>(p5, "Y_N1", this->N_mod * this->n_frames);
 		this->template create_socket_in <R>(p5, "H_N",  this->N_mod * this->n_frames);
 		this->template create_socket_out<Q>(p5, "Y_N2", this->N     * this->n_frames);
 		this->create_codelet(p5, [&]()
 		{
-			this->demodulate_with_gains(static_cast<Q*>(p5["Y_N1"].get_dataptr()),
-			                            static_cast<R*>(p5["H_N" ].get_dataptr()),
-			                            static_cast<Q*>(p5["Y_N2"].get_dataptr()));
+			this->demodulate_wg(static_cast<Q*>(p5["Y_N1"].get_dataptr()),
+			                    static_cast<R*>(p5["H_N" ].get_dataptr()),
+			                    static_cast<Q*>(p5["Y_N2"].get_dataptr()));
 		});
 
-		auto &p6 = this->create_process("tdemodulate_with_gains");
+		auto &p6 = this->create_process("tdemodulate_wg");
 		this->template create_socket_in <Q>(p6, "Y_N1", this->N_mod * this->n_frames);
 		this->template create_socket_in <R>(p6, "H_N",  this->N_mod * this->n_frames);
 		this->template create_socket_in <Q>(p6, "Y_N2", this->N     * this->n_frames);
 		this->template create_socket_out<Q>(p6, "Y_N3", this->N     * this->n_frames);
 		this->create_codelet(p6, [&]()
 		{
-			this->demodulate_with_gains(static_cast<Q*>(p6["Y_N1"].get_dataptr()),
-			                            static_cast<R*>(p6["H_N" ].get_dataptr()),
-			                            static_cast<Q*>(p6["Y_N2"].get_dataptr()),
-			                            static_cast<Q*>(p6["Y_N3"].get_dataptr()));
+			this->tdemodulate_wg(static_cast<Q*>(p6["Y_N1"].get_dataptr()),
+			                     static_cast<R*>(p6["H_N" ].get_dataptr()),
+			                     static_cast<Q*>(p6["Y_N2"].get_dataptr()),
+			                     static_cast<Q*>(p6["Y_N3"].get_dataptr()));
 		});
 	}
 
@@ -372,7 +372,7 @@ public:
 	 * \param Y_N2: a demodulated vector.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void demodulate_with_gains(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N, std::vector<Q,AQ>& Y_N2)
+	void demodulate_wg(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N, std::vector<Q,AQ>& Y_N2)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
@@ -398,16 +398,16 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->demodulate_with_gains(Y_N1.data(), H_N.data(), Y_N2.data());
+		this->demodulate_wg(Y_N1.data(), H_N.data(), Y_N2.data());
 	}
 
-	virtual void demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2)
+	virtual void demodulate_wg(const Q *Y_N1, const R *H_N, Q *Y_N2)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_demodulate_with_gains(Y_N1 + f * this->N_fil,
-			                             H_N  + f * this->N_fil,
-			                             Y_N2 + f * this->N,
-			                             f);
+			this->_demodulate_wg(Y_N1 + f * this->N_fil,
+			                     H_N  + f * this->N_fil,
+			                     Y_N2 + f * this->N,
+			                     f);
 	}
 
 	/*!
@@ -422,7 +422,7 @@ public:
 	 * \param Y_N3: a demodulated vector.
 	 */
 	template <class A = std::allocator<Q>>
-	void demodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3)
+	void tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
@@ -448,16 +448,16 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->demodulate(Y_N1.data(), Y_N2.data(), Y_N3.data());
+		this->tdemodulate(Y_N1.data(), Y_N2.data(), Y_N3.data());
 	}
 
-	virtual void demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+	virtual void tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_demodulate(Y_N1 + f * this->N_fil,
-			                  Y_N2 + f * this->N,
-			                  Y_N3 + f * this->N,
-			                  f);
+			this->_tdemodulate(Y_N1 + f * this->N_fil,
+			                   Y_N2 + f * this->N,
+			                   Y_N3 + f * this->N,
+			                   f);
 	}
 
 	/*!
@@ -473,8 +473,8 @@ public:
 	 * \param Y_N3: a demodulated vector.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void demodulate_with_gains(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N,
-	                           const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3)
+	void tdemodulate_wg(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N,
+	                    const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
@@ -508,17 +508,17 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->demodulate_with_gains(Y_N1.data(), H_N.data(), Y_N2.data(), Y_N3.data());
+		this->tdemodulate_wg(Y_N1.data(), H_N.data(), Y_N2.data(), Y_N3.data());
 	}
 
-	virtual void demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
+	virtual void tdemodulate_wg(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_demodulate_with_gains(Y_N1 + f * this->N_fil,
-			                             H_N  + f * this->N_fil,
-			                             Y_N2 + f * this->N,
-			                             Y_N3 + f * this->N,
-			                             f);
+			this->_tdemodulate_wg(Y_N1 + f * this->N_fil,
+			                      H_N  + f * this->N_fil,
+			                      Y_N2 + f * this->N,
+			                      Y_N3 + f * this->N,
+			                      f);
 	}
 
 	/*!
@@ -571,17 +571,17 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
+	virtual void _demodulate_wg(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+	virtual void _tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
+	virtual void _tdemodulate_wg(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}

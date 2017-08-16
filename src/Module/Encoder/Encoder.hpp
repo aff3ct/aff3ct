@@ -46,7 +46,7 @@ public:
 	 * \param name:     Encoder's name.
 	 */
 	Encoder_i(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_i")
-	: Module(n_frames, name), K(K), N(N)
+	: Module(n_frames, name, "Encoder"), K(K), N(N)
 	{
 		if (K <= 0)
 		{

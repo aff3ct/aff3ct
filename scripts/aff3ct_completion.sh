@@ -70,8 +70,8 @@ _aff3ct() {
 	      ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-fe            \
-		--sim-debug-limit --snr-sim-trace-path --sim-time-report --sim-coset \
+		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-fe      \
+		--sim-debug-limit --snr-sim-trace-path --sim-stats --sim-coset \
 		-c --mnt-max-fe -e  --ter-type "
 	fi
 
@@ -88,10 +88,10 @@ _aff3ct() {
 	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFERI" ]]
 	then
-		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-fe              \
-		      --sim-debug-limit                                                \
-		      --snr-sim-trace-path --sim-time-report --sim-coset -c --itl-type \
-		      --itl-path --itl-cols --itl-uni --sim-ite -I --mnt-max-fe -e     \
+		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-fe           \
+		      --sim-debug-limit                                             \
+		      --snr-sim-trace-path --sim-stats --sim-coset -c --itl-type    \
+		      --itl-path --itl-cols --itl-uni --sim-ite -I --mnt-max-fe -e  \
 		      --ter-type"
 	fi
 
@@ -216,7 +216,7 @@ _aff3ct() {
 
 		# awaiting nothing	
 		-v | --version | -h | --help | --mdm-no-sig2 | --ter-no |          \
-		--sim-debug | -d | --sim-debug-fe | --sim-time-report |            \
+		--sim-debug | -d | --sim-debug-fe | --sim-stats |                  \
 		--sim-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
 		--crc-rate | --sim-err-trk | --sim-err-trk-rev | --itl-uni |       \
 		--dec-partial-adaptive | --dec-fnc | --dec-sc                      )

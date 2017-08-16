@@ -1,3 +1,4 @@
+#include <cstring>
 #include <string>
 #include <vector>
 #include <chrono>
@@ -19,8 +20,8 @@ BFER_std_threads<B,R,Q>
 : BFER_std<B,R,Q>(params, codec)
 {
 #ifdef ENABLE_MPI
-	if (this->params.debug || this->params.benchs)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
+	if (this->params.debug)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "The debug mode is unavailable in MPI.");
 #endif
 
 	if (this->params.err_track_revert)
@@ -30,22 +31,6 @@ BFER_std_threads<B,R,Q>
 			                                   " Each thread will play the same frames. Please run with one thread.")
 			          << std::endl;
 	}
-
-//	this->data_sizes[std::make_pair( 0, "Source"      )] = (unsigned)this->U_K1[0].size();
-//	this->data_sizes[std::make_pair( 1, "CRC build"   )] = (unsigned)this->U_K2[0].size();
-//	this->data_sizes[std::make_pair( 2, "Encoder"     )] = (unsigned)this->X_N1[0].size();
-//	this->data_sizes[std::make_pair( 3, "Puncturer"   )] = (unsigned)this->X_N2[0].size();
-//	this->data_sizes[std::make_pair( 4, "Modulator"   )] = (unsigned)this->X_N3[0].size();
-//	this->data_sizes[std::make_pair( 5, "Channel"     )] = (unsigned)this->Y_N1[0].size();
-//	this->data_sizes[std::make_pair( 6, "Filter"      )] = (unsigned)this->Y_N2[0].size();
-//	this->data_sizes[std::make_pair( 7, "Demodulator" )] = (unsigned)this->Y_N3[0].size();
-//	this->data_sizes[std::make_pair( 8, "Quantizer"   )] = (unsigned)this->Y_N4[0].size();
-//	this->data_sizes[std::make_pair( 9, "Depuncturer" )] = (unsigned)this->Y_N5[0].size();
-//	this->data_sizes[std::make_pair(10, "Coset real"  )] = (unsigned)this->Y_N5[0].size();
-//	this->data_sizes[std::make_pair(11, "Decoder"     )] = (unsigned)this->V_K1[0].size();
-//	this->data_sizes[std::make_pair(15, "Coset bit"   )] = (unsigned)this->V_K1[0].size();
-//	this->data_sizes[std::make_pair(16, "CRC extract" )] = (unsigned)this->V_K2[0].size();
-//	this->data_sizes[std::make_pair(17, "Check errors")] = (unsigned)this->V_K2[0].size();
 }
 
 template <typename B, typename R, typename Q>
@@ -101,14 +86,6 @@ void BFER_std_threads<B,R,Q>
 		if (this->interleaver[tid] != nullptr && this->interleaver[tid]->is_uniform())
 			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
 	}
-
-	if (this->params.debug)
-	{
-		if (this->params.debug_fe)
-			this->monitor[tid]->add_handler_fe   (std::bind(&BFER_std_threads::display_debug, this));
-		else
-			this->monitor[tid]->add_handler_check(std::bind(&BFER_std_threads::display_debug, this));
-	}
 }
 
 template <typename B, typename R, typename Q>
@@ -126,6 +103,9 @@ void BFER_std_threads<B,R,Q>
 	// join the slave threads with the master thread
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
 		threads[tid -1].join();
+
+	if (!this->prev_err_message.empty())
+		throw std::runtime_error(this->prev_err_message);
 }
 
 template <typename B, typename R, typename Q>
@@ -135,7 +115,7 @@ void BFER_std_threads<B,R,Q>
 	try
 	{
 		simu->thread_id[std::this_thread::get_id()] = tid;
-		simu->Monte_Carlo_method(tid);
+		simu->simulation_loop(tid);
 	}
 	catch (std::exception const& e)
 	{
@@ -143,22 +123,10 @@ void BFER_std_threads<B,R,Q>
 
 		simu->mutex_exception.lock();
 		if (simu->prev_err_message != e.what())
-		{
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
-			simu->prev_err_message = e.what();
-		}
+			if (std::strlen(e.what()) > simu->prev_err_message.size())
+				simu->prev_err_message = e.what();
 		simu->mutex_exception.unlock();
 	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER_std_threads<B,R,Q>
-::Monte_Carlo_method(const int tid)
-{
-	if (this->params.benchs)
-		this->simulation_loop_bench(tid);
-	else
-		this->simulation_loop(tid);
 }
 
 template <typename B, typename R, typename Q>
@@ -185,6 +153,16 @@ void BFER_std_threads<B,R,Q>
 	       (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time) &&
 	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
 	{
+		if (this->params.debug)
+		{
+			if (!source["generate"].get_n_calls())
+				std::cout << std::endl;
+
+			std::cout << "-------------------------------" << std::endl;
+			std::cout << "New communication (n°" << monitor["check_errors"].get_n_calls() << ")" << std::endl;
+			std::cout << "-------------------------------" << std::endl << std::endl;
+		}
+
 		if (this->params.src->type != "AZCW")
 		{
 			source   ["generate"].exec();
@@ -197,11 +175,11 @@ void BFER_std_threads<B,R,Q>
 		// Rayleigh channel
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			modem  ["modulate"             ]["X_N2"].bind(channel  ["add_noise_with_gains" ]["X_N" ]);
-			channel["add_noise_with_gains" ]["Y_N" ].bind(modem    ["filter"               ]["Y_N1"]);
-			modem  ["filter"               ]["Y_N2"].bind(modem    ["demodulate_with_gains"]["Y_N1"]);
-			channel["add_noise_with_gains" ]["H_N" ].bind(modem    ["demodulate_with_gains"]["H_N" ]);
-			modem  ["demodulate_with_gains"]["Y_N2"].bind(quantizer["process"              ]["Y_N1"]);
+			modem  ["modulate"     ]["X_N2"].bind(channel  ["add_noise_wg" ]["X_N" ]);
+			channel["add_noise_wg" ]["Y_N" ].bind(modem    ["filter"       ]["Y_N1"]);
+			modem  ["filter"       ]["Y_N2"].bind(modem    ["demodulate_wg"]["Y_N1"]);
+			channel["add_noise_wg" ]["H_N" ].bind(modem    ["demodulate_wg"]["H_N" ]);
+			modem  ["demodulate_wg"]["Y_N2"].bind(quantizer["process"      ]["Y_N1"]);
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
@@ -264,226 +242,6 @@ void BFER_std_threads<B,R,Q>
 			crc   ["extract" ]["V_K2"].bind(monitor["check_errors"]["V"]);
 		}
 	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER_std_threads<B,R,Q>
-::simulation_loop_bench(const int tid)
-{
-//	using namespace std::chrono;
-//
-//	this->barrier(tid);
-//	auto t_start = std::chrono::steady_clock::now(); // start time
-//
-//	this->barrier(tid);
-//	if (this->params.coded_monitoring)
-//		for (auto i = 0; i < this->params.benchs; i++)
-//			this->decoder[tid]->decode_siho_coded(this->Y_N5[tid], this->V_N1[tid]);
-//	else
-//		for (auto i = 0; i < this->params.benchs; i++)
-//			this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
-//	this->barrier(tid);
-//
-//	auto t_stop = std::chrono::steady_clock::now(); // stop time
-//
-//	auto frames   = (float)this->params.benchs *
-//	                (float)this->params.src->n_frames *
-//	                (float)this->params.n_threads;
-//	auto bits     = (float)frames * (float)this->params.dec->N_cw;
-//	auto duration = t_stop - t_start;
-//
-//	auto  bps = (float)bits / (float)(duration.count() * 0.000000001f);
-//	auto kbps =  bps * 0.001f;
-//	auto mbps = kbps * 0.001f;
-//
-//	auto latency_ns = (float)duration.count() / (float)this->params.benchs;
-//	auto latency_us = latency_ns * 0.001f;
-//
-//	if (tid == 0)
-//		std::cout << "  SNR (Eb/N0) = "    << std::setw(5) << std::fixed << std::setprecision(2) << this->snr
-//		          << " dB"   << ", "
-//		          << "coded throughput = " << std::setw(8) << std::fixed << std::setprecision(4) << mbps
-//		          << " Mbps" << ", "
-//		          << "latency = "          << std::setw(8) << std::fixed << std::setprecision(4) << latency_us
-//		          << " us."  << std::endl;
-}
-
-template <typename B, typename R, typename Q>
-void BFER_std_threads<B,R,Q>
-::display_debug()
-{
-//	this->mutex_debug.lock();
-//
-//	const auto tid = this->thread_id[std::this_thread::get_id()];
-//	tools::Frame_trace<B> ft(this->params.debug_limit, this->params.debug_precision);
-//
-//	std::cout << "-------------------------------" << std::endl;
-//	std::cout << "New encoding/decoding session !" << std::endl;
-//	std::cout << "Thread id: " << tid              << std::endl;
-//	std::cout << "Frame n°" << this->monitor_red->get_n_analyzed_fra() << std::endl;
-//	std::cout << "-------------------------------" << std::endl;
-//
-//	if (this->params.src->type != "AZCW")
-//	{
-//		std::cout << "Generate random bits U_K1..." << std::endl
-//		          << "U_K1:" << std::endl;
-//		ft.display_bit_vector(this->U_K1[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "Build the CRC from U_K1 into U_K2..." << std::endl
-//		          << "U_K2:" << std::endl;
-//		ft.display_bit_vector(this->U_K2[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "Encode U_K2 in X_N1..." << std::endl
-//		          << "X_N1:" << std::endl;
-//		ft.display_bit_vector(this->X_N1[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "Puncture X_N1 in X_N2..." << std::endl
-//		          << "X_N2:" << std::endl;
-//		ft.display_bit_vector(this->X_N2[tid]);
-//		std::cout << std::endl;
-//
-//		// modulate
-//		std::cout << "Modulate X_N2 in X_N3..." << std::endl
-//		          << "X_N3:" << std::endl;
-//		ft.display_real_vector(this->X_N3[tid]);
-//		std::cout << std::endl;
-//	}
-//	else
-//	{
-//		std::cout << "U_K1:" << std::endl;
-//		ft.display_bit_vector(this->U_K1[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "U_K2:" << std::endl;
-//		ft.display_bit_vector(this->U_K2[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "X_N2:" << std::endl;
-//		ft.display_bit_vector(this->X_N2[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "X_N3:" << std::endl;
-//		ft.display_real_vector(this->X_N3[tid]);
-//		std::cout << std::endl;
-//	}
-//
-//	// Rayleigh channel
-//	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-//	{
-//		std::cout << "Add noise from X_N3 to Y_N1..." << std::endl
-//		          << "Y_N1:" << std::endl;
-//		ft.display_real_vector(this->Y_N1[tid]);
-//		std::cout << std::endl;
-//		std::cout << "H_N:" << std::endl;
-//		ft.display_real_vector(this->H_N[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "Filter from Y_N1 to Y_N2..." << std::endl
-//		          << "Y_N2:" << std::endl;
-//		ft.display_real_vector(this->Y_N2[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "Demodulate from Y_N2 to Y_N3..." << std::endl
-//		          << "Y_N3:" << std::endl;
-//		ft.display_real_vector(this->Y_N3[tid]);
-//		std::cout << std::endl;
-//	}
-//	else // additive channel (AWGN, USER, NO)
-//	{
-//		std::cout << "Add noise from X_N3 to Y_N1..." << std::endl
-//		          << "Y_N1:" << std::endl;
-//		ft.display_real_vector(this->Y_N1[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "Filter from Y_N1 to Y_N2..." << std::endl
-//		          << "Y_N2:" << std::endl;
-//		ft.display_real_vector(this->Y_N2[tid]);
-//		std::cout << std::endl;
-//
-//		std::cout << "Demodulate from Y_N2 to Y_N3..." << std::endl
-//		          << "Y_N3:" << std::endl;
-//		ft.display_real_vector(this->Y_N3[tid]);
-//		std::cout << std::endl;
-//	}
-//
-//	std::cout << "Make the quantization from Y_N3 to Y_N4..." << std::endl
-//	          << "Y_N4:" << std::endl;
-//	ft.display_real_vector(this->Y_N4[tid]);
-//	std::cout << std::endl;
-//
-//	std::cout << "Depuncture Y_N4 and generate Y_N5..." << std::endl
-//	          << "Y_N5:" << std::endl;
-//	ft.display_real_vector(this->Y_N5[tid]);
-//	std::cout << std::endl;
-//
-////	if (this->simu_params.coset)
-////	{
-////		std::cout << "Apply the coset approach on Y_N5..." << std::endl
-////		          << "Y_N5:" << std::endl;
-////		ft.display_real_vector(this->Y_N5[tid]);
-////		std::cout << std::endl;
-////	}
-//
-//	if (this->params.coded_monitoring)
-//	{
-//		std::cout << "Decode Y_N5 and generate V_N1..." << std::endl
-//		          << "V_N1:" << std::endl;
-//		if (this->params.coset)
-//			ft.display_bit_vector(this->V_N1[tid]);
-//		else
-//			ft.display_bit_vector(this->V_N1[tid], this->X_N1[tid]);
-//		std::cout << std::endl;
-//
-////		if (this->simu_params.coset)
-////		{
-////			std::cout << "Apply the coset approach on V_N1..." << std::endl
-////			          << "V_N1:" << std::endl;
-////			ft.display_bit_vector(this->V_N1[tid], this->X_N1[tid]);
-////			std::cout << std::endl;
-////		}
-//	}
-//	else
-//	{
-//		std::cout << "Decode Y_N5 and generate V_K1..." << std::endl
-//		          << "V_K1:" << std::endl;
-//		if (this->params.coset)
-//			ft.display_bit_vector(this->V_K1[tid]);
-//		else
-//			ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
-//		std::cout << std::endl;
-//
-////		if (this->simu_params.coset)
-////		{
-////			std::cout << "Apply the coset approach on V_K1..." << std::endl
-////			          << "V_K1:" << std::endl;
-////			ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
-////			std::cout << std::endl;
-////		}
-//
-//		std::cout << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl
-//		          << "V_K2:" << std::endl;
-//		ft.display_bit_vector(this->V_K2[tid], this->U_K1[tid]);
-//		std::cout << std::endl;
-//	}
-//
-//	this->mutex_debug.unlock();
-}
-
-template <typename B, typename R, typename Q>
-tools::Terminal_BFER<B>* BFER_std_threads<B,R,Q>
-::build_terminal()
-{
-#ifdef ENABLE_MPI
-	return BFER_std<B,R,Q>::build_terminal();
-#else
-	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
-	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];
-
-	return factory::Terminal_BFER::build<B>(*this->params.ter, *this->monitor_red, &d_dec);
-#endif
 }
 
 // ==================================================================================== explicit template instantiation

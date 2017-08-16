@@ -45,7 +45,7 @@ public:
 	 * \param name:     CRC's name.
 	 */
 	CRC_i(const int K, const int size, const int n_frames = 1, const std::string name = "CRC_i")
-	: Module(n_frames, name), K(K), size(size)
+	: Module(n_frames, name, "CRC"), K(K), size(size)
 	{
 		if (K <= 0)
 		{

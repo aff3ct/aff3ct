@@ -111,9 +111,10 @@ void Decoder_turbo_std<B,R>
 	this->_store(V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+	this->update_duration("decode_siho", "load",   d_load);
+	this->update_duration("decode_siho", "decode", d_decod);
+	this->update_duration("decode_siho", "store",  d_store);
+	this->update_duration("decode_siho", "total",  d_load + d_decod + d_store);
 }
 
 // ==================================================================================== explicit template instantiation

@@ -29,10 +29,10 @@ public:
 	           const int n_ite = 1, const int n_frames = 6, const std::string name = "Modem_SCMA");
 	virtual ~Modem_SCMA();
 
-	virtual void modulate             (const B* X_N1,               R *X_N2); using Modem<B,R,Q>::modulate;
-	virtual void demodulate           (const Q *Y_N1,               Q *Y_N2); using Modem<B,R,Q>::demodulate;
-	virtual void demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2); using Modem<B,R,Q>::demodulate_with_gains;
-	virtual void filter               (const R *Y_N1,               R *Y_N2); using Modem<B,R,Q>::filter;
+	virtual void modulate     (const B* X_N1,               R *X_N2); using Modem<B,R,Q>::modulate;
+	virtual void demodulate   (const Q *Y_N1,               Q *Y_N2); using Modem<B,R,Q>::demodulate;
+	virtual void demodulate_wg(const Q *Y_N1, const R *H_N, Q *Y_N2); using Modem<B,R,Q>::demodulate_wg;
+	virtual void filter       (const R *Y_N1,               R *Y_N2); using Modem<B,R,Q>::filter;
 
 	static int size_mod(const int N, const int bps)
 	{

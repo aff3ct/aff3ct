@@ -48,10 +48,6 @@ protected:
 	const int simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
 	const int n_dec_waves;
 
-	std::chrono::nanoseconds d_load_total;
-	std::chrono::nanoseconds d_decod_total;
-	std::chrono::nanoseconds d_store_total;
-
 public:
 	/*!
 	 * \brief Constructor.
@@ -64,7 +60,7 @@ public:
 	 */
 	Decoder_SIHO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	               std::string name = "Decoder_SIHO_i")
-	: Module(n_frames, name),
+	: Module(n_frames, name, "Decoder_SIHO"),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
 	  Y_N (n_inter_frame_rest ? simd_inter_frame_level * N : 0),
 	  V_KN(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
@@ -110,6 +106,10 @@ public:
 			this->decode_siho(static_cast<R*>(p1["Y_N"].get_dataptr()),
 			                  static_cast<B*>(p1["V_K"].get_dataptr()));
 		});
+		this->register_duration(p1, "load");
+		this->register_duration(p1, "decode");
+		this->register_duration(p1, "store");
+		this->register_duration(p1, "total");
 
 		auto &p2 = this->create_process("decode_siho_coded");
 		this->template create_socket_in <R>(p2, "Y_N", this->N * this->n_frames);
@@ -119,6 +119,10 @@ public:
 			this->decode_siho_coded(static_cast<R*>(p2["Y_N"].get_dataptr()),
 			                        static_cast<B*>(p2["V_N"].get_dataptr()));
 		});
+		this->register_duration(p2, "load");
+		this->register_duration(p2, "decode");
+		this->register_duration(p2, "store");
+		this->register_duration(p2, "total");
 	}
 
 	/*!
@@ -183,10 +187,6 @@ public:
 
 	virtual void decode_siho(const R *Y_N, B *V_K)
 	{
-		this->d_load_total  = std::chrono::nanoseconds(0);
-		this->d_decod_total = std::chrono::nanoseconds(0);
-		this->d_store_total = std::chrono::nanoseconds(0);
-
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves -1; w++)
 			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
@@ -237,10 +237,6 @@ public:
 
 	virtual void decode_siho_coded(const R *Y_N, B *V_N)
 	{
-		this->d_load_total  = std::chrono::nanoseconds(0);
-		this->d_decod_total = std::chrono::nanoseconds(0);
-		this->d_store_total = std::chrono::nanoseconds(0);
-
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves -1; w++)
 			this->_decode_siho_coded(Y_N + w * this->N * this->simd_inter_frame_level,
@@ -265,36 +261,6 @@ public:
 			          this->V_KN.begin() + this->n_inter_frame_rest * this->N,
 			          V_N + waves_off2);
 		}
-	}
-
-	/*!
-	 * \brief Gets the duration of the data loading in the decoding process.
-	 *
-	 * \return the duration of the data loading in the decoding process.
-	 */
-	std::chrono::nanoseconds get_load_duration() const
-	{
-		return this->d_load_total;
-	}
-
-	/*!
-	 * \brief Gets the duration of the decoding process (without loads and stores).
-	 *
-	 * \return the duration of the decoding process (without loads and stores).
-	 */
-	std::chrono::nanoseconds get_decode_duration() const
-	{
-		return this->d_decod_total;
-	}
-
-	/*!
-	 * \brief Gets the duration of the data storing in the decoding process.
-	 *
-	 * \return the duration of the data storing in the decoding process.
-	 */
-	std::chrono::nanoseconds get_store_duration() const
-	{
-		return this->d_store_total;
 	}
 
 protected:

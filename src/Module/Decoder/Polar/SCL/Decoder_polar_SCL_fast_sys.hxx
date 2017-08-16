@@ -280,9 +280,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	this->_store(V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+	this->update_duration("decode_siho", "load",   d_load);
+	this->update_duration("decode_siho", "decode", d_decod);
+	this->update_duration("decode_siho", "store",  d_store);
 }
 
 template <typename B, typename R, class API_polar>
@@ -308,9 +308,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	this->_store_coded(V_N);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+	this->update_duration("decode_siho_coded", "load",   d_load);
+	this->update_duration("decode_siho_coded", "decode", d_decod);
+	this->update_duration("decode_siho_coded", "store",  d_store);
 }
 
 template <typename B, typename R, class API_polar>

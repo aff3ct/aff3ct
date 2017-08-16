@@ -45,7 +45,7 @@ public:
 	 * \param name:     Quantizer's name.
 	 */
 	Quantizer_i(const int N, const int n_frames = 1, const std::string name = "Quantizer_i")
-	: Module(n_frames, name), N(N)
+	: Module(n_frames, name, "Quantizer"), N(N)
 	{
 		if (N <= 0)
 		{

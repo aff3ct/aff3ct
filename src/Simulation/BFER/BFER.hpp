@@ -11,6 +11,7 @@
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
 #include "Tools/Codec/Codec.hpp"
 
+#include "Module/Module.hpp"
 #include "Module/Monitor/Monitor.hpp"
 #include "Module/Monitor/Standard/Monitor_reduction.hpp"
 
@@ -52,6 +53,9 @@ protected:
 
 	unsigned max_fra;
 
+	// map of Modules
+	std::map<std::string, std::vector<module::Module*>> modules;
+
 	// the monitors of the the BFER simulation
 	std::vector<module::Monitor          <B>*> monitor;
 	            module::Monitor_reduction<B>*  monitor_red;
@@ -63,14 +67,6 @@ protected:
 	// terminal (for the output of the code)
 	tools::Terminal_BFER<B> *terminal;
 
-	// time points and durations
-	std::vector<std::map<std::pair<int, std::string>, std::chrono::nanoseconds>> durations;
-	            std::map<std::pair<int, std::string>, std::chrono::nanoseconds>  durations_red;
-	            std::map<std::pair<int, std::string>, std::chrono::nanoseconds>  durations_sum;
-
-	// size of the data
-	std::map<std::pair<int, std::string>, unsigned> data_sizes;
-
 public:
 	BFER(const factory::BFER::parameters& simu_params, tools::Codec<B,Q> &codec);
 	virtual ~BFER();
@@ -81,13 +77,12 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	        module::Monitor      <B>* build_monitor (const int tid = 0);
-	virtual tools ::Terminal_BFER<B>* build_terminal(                 );
+	module::Monitor      <B>* build_monitor (const int tid = 0);
+	tools ::Terminal_BFER<B>* build_terminal(                 );
 
 private:
 	void build_communication_chain(const int tid = 0);
-	void time_reduction(const bool is_snr_done = false  );
-	void time_report   (std::ostream &stream = std::clog);
+	void display_stats(std::ostream &stream = std::clog);
 
 	static void start_thread_terminal        (BFER<B,R,Q> *simu               );
 	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);
