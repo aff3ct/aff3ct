@@ -155,12 +155,13 @@ void BFER_std_threads<B,R,Q>
 	{
 		if (this->params.debug)
 		{
-			if (!source["generate"].get_n_calls())
-				std::cout << std::endl;
+			if (!monitor["check_errors"].get_n_calls())
+				std::cout << "#" << std::endl;
 
-			std::cout << "-------------------------------" << std::endl;
-			std::cout << "New communication (n°" << monitor["check_errors"].get_n_calls() << ")" << std::endl;
-			std::cout << "-------------------------------" << std::endl << std::endl;
+			std::cout << "# -------------------------------" << std::endl;
+			std::cout << "# New communication (n°" << monitor["check_errors"].get_n_calls() << ")" << std::endl;
+			std::cout << "# -------------------------------" << std::endl;
+			std::cout << "#" << std::endl;
 		}
 
 		if (this->params.src->type != "AZCW")

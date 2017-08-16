@@ -90,6 +90,7 @@ void Process::exec()
 			const auto sty_class  = tools::Style::BOLD;
 			const auto sty_method = tools::Style::BOLD | tools::FG::Color::GREEN;
 
+			std::cout << "# ";
 			std::cout << tools::format(module.get_name(), sty_class) << "::" << tools::format(get_name(), sty_method)
 			          << "(";
 			for (auto i = 0; i < (int)in.size(); i++)
@@ -120,7 +121,7 @@ void Process::exec()
 				auto n_elmts = i.get_databytes() / (size_t)i.get_datatype_size();
 				auto limit = debug_limit != -1 ? std::min(n_elmts, (size_t)debug_limit) : n_elmts;
 				auto p = debug_precision;
-				std::cout << "{IN}  " << i.get_name() << spaces << " = [";
+				std::cout << "# {IN}  " << i.get_name() << spaces << " = [";
 				     if (i.get_datatype() == typeid(int8_t )) display_data((int8_t *)i.get_dataptr(), limit, p);
 				else if (i.get_datatype() == typeid(int16_t)) display_data((int16_t*)i.get_dataptr(), limit, p);
 				else if (i.get_datatype() == typeid(int32_t)) display_data((int32_t*)i.get_dataptr(), limit, p);
@@ -161,7 +162,7 @@ void Process::exec()
 
 				auto n_elmts = o.get_databytes() / (size_t)o.get_datatype_size();
 				auto limit = debug_limit != -1 ? std::min(n_elmts, (size_t)debug_limit) : n_elmts;
-				std::cout << "{OUT} " << o.get_name() << spaces << " = [";
+				std::cout << "# {OUT} " << o.get_name() << spaces << " = [";
 				auto p = debug_precision;
 				     if (o.get_datatype() == typeid(int8_t )) display_data((int8_t *)o.get_dataptr(), limit, p);
 				else if (o.get_datatype() == typeid(int16_t)) display_data((int16_t*)o.get_dataptr(), limit, p);
@@ -171,7 +172,7 @@ void Process::exec()
 				else if (o.get_datatype() == typeid(double )) display_data((double *)o.get_dataptr(), limit, p);
 				std::cout << (limit < n_elmts ? ", ..." : "") << "]" << std::endl;
 			}
-			std::cout << std::endl;
+			std::cout << "#" << std::endl;
 		}
 	}
 	else
