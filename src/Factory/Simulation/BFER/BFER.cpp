@@ -11,10 +11,6 @@ void BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Simulation::build_args(req_args, opt_args, p);
 
-	opt_args[{p+"-benchs", "b"}] =
-		{"positive_int",
-		 "enable special benchmark mode with a loop around the decoder."};
-
 	opt_args[{p+"-debug", "d"}] =
 		{"",
 		 "enable debug mode: print array values after each step."};
@@ -65,9 +61,8 @@ void BFER::store_args(const arg_val_map &vals, parameters &params, const std::st
 
 	Simulation::store_args(vals, params, p);
 
-	if(exist(vals, {p+"-benchs",     "b"})) params.benchs           = std::stoi(vals.at({p+"-benchs",   "b"}));
-	if(exist(vals, {p+"-snr-type",   "E"})) params.snr_type         =           vals.at({p+"-snr-type", "E"});
-	if(exist(vals, {p+"-err-trk-path"   })) params.err_track_path   =           vals.at({p+"-err-trk-path" });
+	if(exist(vals, {p+"-snr-type",   "E"})) params.snr_type         = vals.at({p+"-snr-type", "E"});
+	if(exist(vals, {p+"-err-trk-path"   })) params.err_track_path   = vals.at({p+"-err-trk-path" });
 	if(exist(vals, {p+"-err-trk-rev"    })) params.err_track_revert = true;
 	if(exist(vals, {p+"-err-trk"        })) params.err_track_enable = true;
 	if(exist(vals, {p+"-stats"          })) params.statistics       = true;
@@ -113,8 +108,6 @@ void BFER::make_header(params_list& head_sim, const parameters& params, const bo
 {
 	Simulation::make_header(head_sim, params, full);
 
-	if (params.benchs)
-		head_sim.push_back(std::make_pair("Number of benchs", std::to_string(params.benchs)));
 	head_sim.push_back(std::make_pair("SNR type", params.snr_type));
 	head_sim.push_back(std::make_pair("Statistics", params.statistics ? "on" : "off"));
 	head_sim.push_back(std::make_pair("Debug mode", params.debug ? "on" : "off"));

@@ -51,7 +51,6 @@ BFER_std<B,R,Q>
 	this->modules["coset_real" ] = std::vector<module::Module*>(params.n_threads, nullptr);
 	this->modules["decoder"    ] = std::vector<module::Module*>(params.n_threads, nullptr);
 	this->modules["coset_bit"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
-	this->modules["interleaver"] = std::vector<module::Module*>(params.n_threads, nullptr);
 }
 
 template <typename B, typename R, typename Q>
@@ -80,14 +79,14 @@ void BFER_std<B,R,Q>
 		interleaver_llr[tid] = factory::Interleaver::build<Q>(*interleaver_core[tid]);
 	}
 
-	encoder    [tid] = build_encoder    (tid, seed_enc); this->modules["encoder"    ][tid] = encoder    [tid];
-	puncturer  [tid] = build_puncturer  (tid          ); this->modules["puncturer"  ][tid] = puncturer  [tid];
-	modem      [tid] = build_modem      (tid          ); this->modules["modem"      ][tid] = modem      [tid];
-	channel    [tid] = build_channel    (tid, seed_chn); this->modules["channel"    ][tid] = channel    [tid];
-	quantizer  [tid] = build_quantizer  (tid          ); this->modules["quantizer"  ][tid] = quantizer  [tid];
-	coset_real [tid] = build_coset_real (tid          ); this->modules["coset_real" ][tid] = coset_real [tid];
-	decoder    [tid] = build_decoder    (tid          ); this->modules["decoder"    ][tid] = decoder    [tid];
-	coset_bit  [tid] = build_coset_bit  (tid          ); this->modules["coset_bit"  ][tid] = coset_bit  [tid];
+	encoder    [tid] = build_encoder    (tid, seed_enc); this->modules["encoder"   ][tid] = encoder   [tid];
+	puncturer  [tid] = build_puncturer  (tid          ); this->modules["puncturer" ][tid] = puncturer [tid];
+	modem      [tid] = build_modem      (tid          ); this->modules["modem"     ][tid] = modem     [tid];
+	channel    [tid] = build_channel    (tid, seed_chn); this->modules["channel"   ][tid] = channel   [tid];
+	quantizer  [tid] = build_quantizer  (tid          ); this->modules["quantizer" ][tid] = quantizer [tid];
+	coset_real [tid] = build_coset_real (tid          ); this->modules["coset_real"][tid] = coset_real[tid];
+	decoder    [tid] = build_decoder    (tid          ); this->modules["decoder"   ][tid] = decoder   [tid];
+	coset_bit  [tid] = build_coset_bit  (tid          ); this->modules["coset_bit" ][tid] = coset_bit [tid];
 
 	if (interleaver_core[tid] != nullptr)
 	{

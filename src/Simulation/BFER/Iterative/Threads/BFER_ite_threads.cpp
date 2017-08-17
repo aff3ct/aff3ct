@@ -1,3 +1,4 @@
+#include <cstring>
 #include <string>
 #include <vector>
 #include <chrono>
@@ -18,42 +19,18 @@ using namespace aff3ct::simulation;
 template <typename B, typename R, typename Q>
 BFER_ite_threads<B,R,Q>
 ::BFER_ite_threads(const factory::BFER_ite::parameters &chain_params, tools::Codec_SISO<B,Q> &codec)
-: BFER_ite<B,R,Q>(chain_params,codec),
-
-  U_K1(this->params.n_threads, mipp::vector<B>(this->params.src->K          * this->params.src->     n_frames)),
-  U_K2(this->params.n_threads, mipp::vector<B>(this->params.enc->K          * this->params.enc->     n_frames)),
-  X_N1(this->params.n_threads, mipp::vector<B>(this->params.enc->N_cw       * this->params.enc->     n_frames)),
-  X_N2(this->params.n_threads, mipp::vector<B>(this->params.itl->core.size  * this->params.itl->core.n_frames)),
-  X_N3(this->params.n_threads, mipp::vector<R>(this->params.mdm->N_mod      * this->params.mdm->     n_frames)),
-  H_N (this->params.n_threads, mipp::vector<R>(this->params.chn->N          * this->params.chn->     n_frames)),
-  Y_N1(this->params.n_threads, mipp::vector<R>(this->params.chn->N          * this->params.chn->     n_frames)),
-  Y_N2(this->params.n_threads, mipp::vector<R>(this->params.mdm->N_fil      * this->params.mdm->     n_frames)),
-  Y_N3(this->params.n_threads, mipp::vector<Q>(this->params.qnt->size       * this->params.qnt->     n_frames)),
-  Y_N4(this->params.n_threads, mipp::vector<Q>(this->params.mdm->N          * this->params.mdm->     n_frames)),
-  Y_N5(this->params.n_threads, mipp::vector<Q>(this->params.itl->core.size  * this->params.itl->core.n_frames)),
-  Y_N6(this->params.n_threads, mipp::vector<Q>(this->params.dec->N_cw       * this->params.dec->     n_frames)),
-  Y_N7(this->params.n_threads, mipp::vector<Q>(this->params.itl->core.size  * this->params.itl->core.n_frames)),
-  V_N1(this->params.n_threads, mipp::vector<B>(this->params.dec->N_cw       * this->params.crc->     n_frames)),
-  V_K1(this->params.n_threads, mipp::vector<B>(this->params.dec->K          * this->params.dec->     n_frames)),
-  V_K2(this->params.n_threads, mipp::vector<B>(this->params.src->K          * this->params.src->     n_frames))
+: BFER_ite<B,R,Q>(chain_params,codec)
 {
-	if (this->params.n_threads > 1 && this->params.debug)
-		std::clog << tools::format_warning("Debug mode will be disabled because you launched the simulation with more"
-		                                   "than 1 thread!") << std::endl;
-
-	if (this->params.benchs)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The bench mode is not supported.");
-
 #ifdef ENABLE_MPI
-	if (this->params.debug || this->params.benchs)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
+	if (this->params.debug)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The debug modes is unavailable in MPI.");
 #endif
 
 	if (this->params.err_track_revert)
 	{
 		if (this->params.n_threads != 1)
 			std::clog << tools::format_warning("Multi-threading detected with error tracking revert feature! "
-			                                   "Each thread will play the same frames. Please run one thread.")
+			                                   "Each thread will play the same frames. Please run with one thread.")
 			          << std::endl;
 	}
 }
@@ -72,20 +49,39 @@ void BFER_ite_threads<B,R,Q>
 
 	if (this->params.src->type == "AZCW")
 	{
-		std::fill(this->U_K1[tid].begin(), this->U_K1[tid].end(), (B)0);
-		std::fill(this->U_K2[tid].begin(), this->U_K2[tid].end(), (B)0);
-		std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
-		std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
-		this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+		auto src_data = (uint8_t*)((*this->source         [tid])["generate"  ]["U_K" ].get_dataptr());
+		auto crc_data = (uint8_t*)((*this->crc            [tid])["build"     ]["U_K2"].get_dataptr());
+		auto enc_data = (uint8_t*)((*this->encoder        [tid])["encode"    ]["X_N" ].get_dataptr());
+		auto itl_data = (uint8_t*)((*this->interleaver_bit[tid])["interleave"]["itl" ].get_dataptr());
+
+		auto src_bytes = (*this->source         [tid])["generate"  ]["U_K" ].get_databytes();
+		auto crc_bytes = (*this->crc            [tid])["build"     ]["U_K2"].get_databytes();
+		auto enc_bytes = (*this->encoder        [tid])["encode"    ]["X_N" ].get_databytes();
+		auto itl_bytes = (*this->interleaver_bit[tid])["interleave"]["itl" ].get_databytes();
+
+		std::fill(src_data, src_data + src_bytes, 0);
+		std::fill(crc_data, crc_data + crc_bytes, 0);
+		std::fill(enc_data, enc_data + enc_bytes, 0);
+		std::fill(itl_data, itl_data + itl_bytes, 0);
+
+		(*this->interleaver_bit[tid])["interleave"]["itl"].bind((*this->modem[tid])["modulate"]["X_N1"]);
 	}
 
 	if (this->params.err_track_enable)
 	{
 		if (this->params.src->type != "AZCW")
-			this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
+		{
+			auto src_data = (B*)((*this->source[tid])["generate"]["U_K"].get_dataptr());
+			auto src_size = (*this->source[tid])["generate"]["U_K"].get_databytes() / sizeof(B);
+			this->dumper[tid]->register_data(src_data, src_size, "src", false, {});
+		}
 
 		if (this->params.coset)
-			this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.enc->K});
+		{
+			auto enc_data = (B*)((*this->encoder[tid])["encode"]["X_N"].get_dataptr());
+			auto enc_size = (*this->encoder[tid])["encode"]["X_N"].get_databytes() / sizeof(B);
+			this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, {(unsigned)this->params.enc->K});
+		}
 
 		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
 
@@ -109,6 +105,9 @@ void BFER_ite_threads<B,R,Q>
 	// join the slave threads with the master thread
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
 		threads[tid -1].join();
+
+	if (!this->prev_err_message.empty())
+		throw std::runtime_error(this->prev_err_message);
 }
 
 template <typename B, typename R, typename Q>
@@ -117,7 +116,7 @@ void BFER_ite_threads<B,R,Q>
 {
 	try
 	{
-		simu->Monte_Carlo_method(tid);
+		simu->simulation_loop(tid);
 	}
 	catch (std::exception const& e)
 	{
@@ -125,19 +124,10 @@ void BFER_ite_threads<B,R,Q>
 
 		simu->mutex_exception.lock();
 		if (simu->prev_err_message != e.what())
-		{
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
-			simu->prev_err_message = e.what();
-		}
+			if (std::strlen(e.what()) > simu->prev_err_message.size())
+				simu->prev_err_message = e.what();
 		simu->mutex_exception.unlock();
 	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER_ite_threads<B,R,Q>
-::Monte_Carlo_method(const int tid)
-{
-	this->simulation_loop(tid);
 }
 
 template <typename B, typename R, typename Q>
@@ -147,77 +137,145 @@ void BFER_ite_threads<B,R,Q>
 	using namespace std::chrono;
 	auto t_snr = steady_clock::now();
 
-	// simulation loop
+	auto &source          = *this->source         [tid];
+	auto &crc             = *this->crc            [tid];
+	auto &encoder         = *this->encoder        [tid];
+	auto &interleaver_bit = *this->interleaver_bit[tid];
+	auto &modem           = *this->modem          [tid];
+	auto &channel         = *this->channel        [tid];
+	auto &quantizer       = *this->quantizer      [tid];
+	auto &interleaver_llr = *this->interleaver_llr[tid];
+	auto &coset_real      = *this->coset_real     [tid];
+	auto &decoder_siso    = *this->siso           [tid];
+	auto &decoder_siho    = *this->decoder        [tid];
+	auto &coset_bit       = *this->coset_bit      [tid];
+	auto &monitor         = *this->monitor        [tid];
+
 	while ((!this->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
-	        (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time))
+	        (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time) &&
+	        (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
 	{
-		if (this->params.src->type != "AZCW")
+		if (this->params.debug)
 		{
-			this->source[tid]->generate(this->U_K1[tid]);
-			this->crc[tid]->build(this->U_K1[tid], this->U_K2[tid]);
-			this->encoder[tid]->encode(this->U_K2[tid], this->X_N1[tid]);
-			this->interleaver_bit[tid]->interleave(this->X_N1[tid], this->X_N2[tid]);
-			this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+			if (!monitor["check_errors"].get_n_calls())
+				std::cout << "#" << std::endl;
+
+			std::cout << "# -------------------------------" << std::endl;
+			std::cout << "# New communication (n°" << monitor["check_errors"].get_n_calls() << ")" << std::endl;
+			std::cout << "# -------------------------------" << std::endl;
+			std::cout << "#" << std::endl;
 		}
 
-		// Rayleigh channel
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-			this->channel[tid]->add_noise_wg(this->X_N3[tid], this->Y_N1[tid], this->H_N[tid]);
-		else // additive channel (AWGN, USER, NO)
-			this->channel[tid]->add_noise(this->X_N3[tid], this->Y_N1[tid]);
-
-		this->modem[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
-		this->quantizer[tid]->process(this->Y_N2[tid], this->Y_N3[tid]);
-
-		std::fill(this->Y_N7[tid].begin(), this->Y_N7[tid].end(), (Q)0);
-		for (auto ite = 0; ite <= this->params.n_ite; ite++)
+		if (this->params.src->type != "AZCW")
 		{
-			// Rayleigh channel
-			if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-				this->modem[tid]->tdemodulate_wg(this->Y_N3[tid], this->H_N[tid], this->Y_N7[tid], this->Y_N4[tid]);
-			else // additive channel (AWGN, USER, NO)
-				this->modem[tid]->tdemodulate(this->Y_N3[tid], this->Y_N7[tid], this->Y_N4[tid]);
+			source         ["generate"  ].exec();
+			source         ["generate"  ]["U_K" ].bind(crc            ["build"     ]["U_K1"]);
+			crc            ["build"     ]["U_K2"].bind(encoder        ["encode"    ]["U_K" ]);
+			encoder        ["encode"    ]["X_N" ].bind(interleaver_bit["interleave"]["nat" ]);
+			interleaver_bit["interleave"]["itl" ].bind(modem          ["modulate"  ]["X_N1"]);
+		}
 
-			this->interleaver_llr[tid]->deinterleave(this->Y_N4[tid], this->Y_N5[tid]);
+		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
+		{
+			modem    ["modulate"     ]["X_N2"].bind(channel  ["add_noise_wg" ]["X_N" ]);
+			channel  ["add_noise_wg" ]["Y_N" ].bind(modem    ["filter"       ]["Y_N1"]);
+			modem    ["filter"       ]["Y_N2"].bind(quantizer["process"      ]["Y_N1"]);
+			quantizer["process"      ]["Y_N2"].bind(modem    ["demodulate_wg"]["Y_N1"]);
+			channel  ["add_noise_wg" ]["H_N" ].bind(modem    ["demodulate_wg"]["H_N" ]);
+		}
+		else
+		{
+			modem    ["modulate" ]["X_N2"].bind(channel  ["add_noise" ]["X_N" ]);
+			channel  ["add_noise"]["Y_N" ].bind(modem    ["filter"    ]["Y_N1"]);
+			modem    ["filter"   ]["Y_N2"].bind(quantizer["process"   ]["Y_N1"]);
+			quantizer["process"  ]["Y_N2"].bind(modem    ["demodulate"]["Y_N1"]);
+		}
 
+		modem["demodulate"]["Y_N2"].bind(interleaver_llr["deinterleave"]["itl"]);
+
+		if (this->params.coset)
+		{
+			encoder["encode"]["X_N"].bind(coset_real["apply"]["ref"]);
+		}
+
+		for (auto ite = 1; ite <= this->params.n_ite; ite++)
+		{
 			if (this->params.coset)
-				this->coset_real[tid]->apply(this->X_N1[tid], this->Y_N5[tid], this->Y_N5[tid]);
-
-			// soft decode
-			if (ite != this->params.n_ite)
 			{
-				this->siso[tid]->decode_siso(this->Y_N5[tid], this->Y_N6[tid]);
-
-				// apply the coset to recover the extrinsic information
-				if (this->params.coset)
-					this->coset_real[tid]->apply(this->X_N1[tid], this->Y_N6[tid], this->Y_N6[tid]);
-
-				this->interleaver_llr[tid]->interleave(this->Y_N6[tid], this->Y_N7[tid]);
+				interleaver_llr["deinterleave"]["nat"     ].bind(coset_real     ["apply"      ]["in_data"]);
+				coset_real     ["apply"       ]["out_data"].bind(decoder_siso   ["decode_siso"]["Y_N1"   ]);
+				decoder_siso   ["decode_siso" ]["Y_N2"    ].bind(coset_real     ["apply"      ]["in_data"]);
+				coset_real     ["apply"       ]["out_data"].bind(interleaver_llr["interleave" ]["nat"    ]);
 			}
-			// hard decode
 			else
 			{
-				if (this->params.coded_monitoring)
-					this->decoder[tid]->decode_siho_coded(this->Y_N5[tid], this->V_N1[tid]);
-				else
-					this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
+				interleaver_llr["deinterleave"]["nat" ].bind(decoder_siso   ["decode_siso"]["Y_N1"]);
+				decoder_siso   ["decode_siso" ]["Y_N2"].bind(interleaver_llr["interleave" ]["nat" ]);
+			}
+
+			if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
+			{
+				quantizer      ["process"       ]["Y_N2"].bind(modem          ["tdemodulate_wg"]["Y_N1"]);
+				channel        ["add_noise_wg"  ]["H_N" ].bind(modem          ["tdemodulate_wg"]["H_N" ]);
+				interleaver_llr["interleave"    ]["itl" ].bind(modem          ["tdemodulate_wg"]["Y_N2"]);
+				modem          ["tdemodulate_wg"]["Y_N3"].bind(interleaver_llr["deinterleave"  ]["itl" ]);
+			}
+			else
+			{
+				quantizer      ["process"    ]["Y_N2"].bind(modem          ["tdemodulate" ]["Y_N1"]);
+				interleaver_llr["interleave" ]["itl" ].bind(modem          ["tdemodulate" ]["Y_N2"]);
+				modem          ["tdemodulate"]["Y_N3"].bind(interleaver_llr["deinterleave"]["itl" ]);
+			}
+		}
+
+		if (this->params.coset)
+		{
+			interleaver_llr["deinterleave"]["nat"].bind(coset_real["apply"]["in_data"]);
+
+			if (this->params.coded_monitoring)
+			{
+				coset_real  ["apply"            ]["out_data"].bind(decoder_siho["decode_siho_coded"]["Y_N"    ]);
+				encoder     ["encode"           ]["X_N"     ].bind(coset_bit   ["apply"            ]["ref"    ]);
+				decoder_siho["decode_siho_coded"]["V_N"     ].bind(coset_bit   ["apply"            ]["in_data"]);
+			}
+			else
+			{
+				coset_real  ["apply"      ]["out_data"].bind(decoder_siho["decode_siho"]["Y_N"    ]);
+				crc         ["build"      ]["U_K2"    ].bind(coset_bit   ["apply"      ]["ref"    ]);
+				decoder_siho["decode_siho"]["V_K"     ].bind(coset_bit   ["apply"      ]["in_data"]);
+				coset_bit   ["apply"      ]["out_data"].bind(crc         ["extract"    ]["V_K1"   ]);
+			}
+		}
+		else
+		{
+			if (this->params.coded_monitoring)
+			{
+				interleaver_llr["deinterleave"]["nat"].bind(decoder_siho["decode_siho_coded"]["Y_N"]);
+			}
+			else
+			{
+				interleaver_llr["deinterleave"]["nat"].bind(decoder_siho["decode_siho"]["Y_N" ]);
+				decoder_siho   ["decode_siho" ]["V_K"].bind(crc         ["extract"    ]["V_K1"]);
 			}
 		}
 
 		if (this->params.coded_monitoring)
 		{
-			if (this->params.coset)
-				this->coset_bit[tid]->apply(this->X_N1[tid], this->V_N1[tid], this->V_N1[tid]);
+			encoder["encode"]["X_N"].bind(monitor["check_errors"]["U"]);
 
-			this->monitor[tid]->check_errors(this->X_N1[tid], this->V_N1[tid]);
+			if (this->params.coset)
+			{
+				coset_bit["apply"]["out_data"].bind(monitor["check_errors"]["V"]);
+			}
+			else
+			{
+				decoder_siho["decode_siho_coded"]["V_N"].bind(monitor["check_errors"]["V"]);
+			}
 		}
 		else
 		{
-			if (this->params.coset)
-				this->coset_bit[tid]->apply(this->U_K2[tid], this->V_K1[tid], this->V_K1[tid]);
-
-			this->crc[tid]->extract(this->V_K1[tid], this->V_K2[tid]);
-			this->monitor[tid]->check_errors(this->U_K1[tid], this->V_K2[tid]);
+			source["generate"]["U_K" ].bind(monitor["check_errors"]["U"]);
+			crc   ["extract" ]["V_K2"].bind(monitor["check_errors"]["V"]);
 		}
 	}
 }

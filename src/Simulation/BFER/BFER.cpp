@@ -225,18 +225,17 @@ void BFER<B,R,Q>
 							}
 
 #ifdef ENABLE_MPI
-			if (((!params.ter->disabled && snr == params.snr_min && !params.debug && !params.benchs) ||
+			if (((!params.ter->disabled && snr == params.snr_min && !params.debug) ||
 			    (params.statistics && !params.debug)) && params.mpi_rank == 0)
 #else
-			if (((!params.ter->disabled && snr == params.snr_min && !params.debug && !params.benchs) ||
+			if (((!params.ter->disabled && snr == params.snr_min && !params.debug) ||
 			    (params.statistics && !params.debug)))
 #endif
 				terminal->legend(std::cout);
 
 			// start the terminal to display BER/FER results
 			std::thread term_thread;
-			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.benchs &&
-			    !params.debug)
+			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
 				// launch a thread dedicated to the terminal display
 				term_thread = std::thread(BFER<B,R,Q>::start_thread_terminal, this);
 
@@ -253,8 +252,7 @@ void BFER<B,R,Q>
 			}
 
 			// stop the terminal
-			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.benchs &&
-			    !params.debug)
+			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
 			{
 				stop_terminal = true;
 				cond_terminal.notify_all();
@@ -264,9 +262,9 @@ void BFER<B,R,Q>
 			}
 
 #ifdef ENABLE_MPI
-			if (!params.ter->disabled && !params.benchs && terminal != nullptr && !simu_error && params.mpi_rank == 0)
+			if (!params.ter->disabled && terminal != nullptr && !simu_error && params.mpi_rank == 0)
 #else
-			if (!params.ter->disabled && !params.benchs && terminal != nullptr && !simu_error)
+			if (!params.ter->disabled && terminal != nullptr && !simu_error)
 #endif
 			{
 				if (params.debug)

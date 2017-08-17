@@ -67,7 +67,6 @@ struct BFER : Simulation
 		bool        coded_monitoring = false;
 		int         debug_limit      = 0;
 		int         debug_precision  = 2;
-		int         benchs           = 0;
 
 		Source       ::parameters *src;
 		CRC          ::parameters *crc;

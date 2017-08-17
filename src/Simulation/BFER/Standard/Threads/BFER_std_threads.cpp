@@ -148,7 +148,6 @@ void BFER_std_threads<B,R,Q>
 	auto &coset_bit  = *this->coset_bit [tid];
 	auto &monitor    = *this->monitor   [tid];
 
-	// simulation loop
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
 	       (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time) &&
 	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
@@ -173,7 +172,6 @@ void BFER_std_threads<B,R,Q>
 			puncturer["puncture"]["X_N2"].bind(modem    ["modulate"]["X_N1"]);
 		}
 
-		// Rayleigh channel
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
 			modem  ["modulate"     ]["X_N2"].bind(channel  ["add_noise_wg" ]["X_N" ]);
@@ -182,7 +180,7 @@ void BFER_std_threads<B,R,Q>
 			channel["add_noise_wg" ]["H_N" ].bind(modem    ["demodulate_wg"]["H_N" ]);
 			modem  ["demodulate_wg"]["Y_N2"].bind(quantizer["process"      ]["Y_N1"]);
 		}
-		else // additive channel (AWGN, USER, NO)
+		else
 		{
 			modem  ["modulate"  ]["X_N2"].bind(channel  ["add_noise" ]["X_N" ]);
 			channel["add_noise" ]["Y_N" ].bind(modem    ["filter"    ]["Y_N1"]);
