@@ -1,9 +1,6 @@
 #ifndef MODEM_BPSK_FAST_HPP_
 #define MODEM_BPSK_FAST_HPP_
 
-#include <vector>
-#include <mipp.h>
-
 #include "../Modem.hpp"
 
 namespace aff3ct

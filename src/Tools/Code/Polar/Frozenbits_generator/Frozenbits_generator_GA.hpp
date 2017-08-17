@@ -3,7 +3,6 @@
 
 #include <limits>
 #include <vector>
-#include <mipp.h>
 
 #include "Frozenbits_generator.hpp"
 
@@ -11,12 +10,11 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
-class Frozenbits_generator_GA : public Frozenbits_generator<B>
+class Frozenbits_generator_GA : public Frozenbits_generator
 {
 private:
 	const int m;
-	mipp::vector<double> z;
+	std::vector<double> z;
 
 	const double alpha = -0.4527;
 	const double beta  =  0.0218;

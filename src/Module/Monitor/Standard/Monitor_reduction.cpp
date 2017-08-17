@@ -8,8 +8,8 @@
 
 #include "Monitor_reduction.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 Monitor_reduction<B>
@@ -23,12 +23,12 @@ Monitor_reduction<B>
 	{
 		std::stringstream message;
 		message << "'monitors.size()' has to be greater than 0 ('monitors.size()' = " << monitors.size() << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	for (size_t i = 0; i < monitors.size(); ++i)
 		if (monitors[i] == nullptr)
-			throw logic_error(__FILE__, __LINE__, __func__, "'monitors[i]' can't be null.");
+			throw tools::logic_error(__FILE__, __LINE__, __func__, "'monitors[i]' can't be null.");
 }
 
 template <typename B>

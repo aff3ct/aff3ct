@@ -5,9 +5,13 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
-#include <mipp.h>
 
 #include "Tools/Math/utils.h"
+
+namespace aff3ct
+{
+namespace tools
+{
 
 template <typename T>
 class LC_sorter_simd;
@@ -18,9 +22,9 @@ class LC_sorter
 	friend LC_sorter_simd<T>;
 
 private:
-	int               max_elmts;
-	mipp::vector<int> tree_idx;
-	mipp::vector<T>   vals;
+	int              max_elmts;
+	std::vector<int> tree_idx;
+	std::vector<T>   vals;
 
 public:
 	LC_sorter(const int max_elmts) : max_elmts(max_elmts), vals(2 * max_elmts)
@@ -81,13 +85,13 @@ public:
 	}
 
 protected:
-	static void _partial_sort_step1(const T                 *values, 
-	                                      std::vector<int>  &pos,
-	                                const int                n_elmts,
-	                                const int                K,
-	                                const int                depth,
-	                                const int                max_elmts,
-	                                      mipp::vector<int> &tree_idx)
+	static void _partial_sort_step1(const T                *values,
+	                                      std::vector<int> &pos,
+	                                const int               n_elmts,
+	                                const int               K,
+	                                const int               depth,
+	                                const int               max_elmts,
+	                                      std::vector<int> &tree_idx)
 	{
 		// sort all the tree (1)
 		const auto n_2 = n_elmts >> 1;
@@ -119,12 +123,12 @@ protected:
 		pos[0] = tree_idx[offset];
 	}
 
-	static void _partial_sort_step2(      T                * values,
-	                                      std::vector<int> & pos,
-	                                const int                K,
-	                                const int                depth,
-	                                const int                max_elmts,
-	                                      mipp::vector<int> &tree_idx)
+	static void _partial_sort_step2(      T                *values,
+	                                      std::vector<int> &pos,
+	                                const int               K,
+	                                const int               depth,
+	                                const int               max_elmts,
+	                                      std::vector<int> &tree_idx)
 	{
 		for (auto k = 0; k < K -1; k++)
 		{
@@ -160,11 +164,11 @@ protected:
 		}
 	}
 
-	static void _partial_sort2_step2(const T                 *values,
-	                                       std::vector<int>  &pos,
-	                                 const int                depth,
-	                                 const int                max_elmts,
-	                                       mipp::vector<int> &tree_idx)
+	static void _partial_sort2_step2(const T                *values,
+	                                       std::vector<int> &pos,
+	                                 const int               depth,
+	                                 const int               max_elmts,
+	                                       std::vector<int> &tree_idx)
 	{
 		// replace the min val by this opponent (rev depth of 1)
 		tree_idx[max_elmts + (pos[0] / 2)] = (pos[0] % 2) ? pos[0] -1 : pos[0] +1;
@@ -188,5 +192,7 @@ protected:
 		pos[1] = tree_idx[offset];
 	}
 };
+}
+}
 
 #endif /* LC_SORTER_HPP */

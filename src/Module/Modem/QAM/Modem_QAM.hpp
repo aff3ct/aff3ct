@@ -3,7 +3,6 @@
 
 #include <complex>
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Math/max.h"
 
@@ -21,7 +20,7 @@ private:
 	const int nbr_symbols;
 	const R sqrt_es;
 	const bool disable_sig2;
-	mipp::vector<std::complex<R>> constellation;
+	std::vector<std::complex<R>> constellation;
 
 public:
 	Modem_QAM(const int N, const R sigma = (R)1, const int bits_per_symbol = 2, const bool disable_sig2 = false,

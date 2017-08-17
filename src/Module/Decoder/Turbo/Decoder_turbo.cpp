@@ -10,8 +10,8 @@
 
 #include "Decoder_turbo.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_turbo<B,R>
@@ -19,11 +19,11 @@ Decoder_turbo<B,R>
                 const int& N,
                 const int& n_ite,
                 const Interleaver<int> &pi,
-                SISO<R> &siso_n,
-                SISO<R> &siso_i,
+                Decoder_SISO<R> &siso_n,
+                Decoder_SISO<R> &siso_i,
                 const bool buffered_encoding,
                 const std::string name)
-: Decoder<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
+: Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),
@@ -41,20 +41,36 @@ Decoder_turbo<B,R>
   l_e2i((K                                                                                    ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
   s    ((K                                                                                    ) * siso_n.get_simd_inter_frame_level())
 {
+	if (siso_n.get_K() != K)
+	{
+		std::stringstream message;
+		message << "'siso_n.get_K()' has to be equal to 'K' ('siso_n.get_K()' = " << siso_n.get_K()
+		        << ", 'K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (siso_i.get_K() != K)
+	{
+		std::stringstream message;
+		message << "'siso_i.get_K()' has to be equal to 'K' ('siso_i.get_K()' = " << siso_i.get_K()
+		        << ", 'K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N - (siso_n.tail_length() + siso_i.tail_length()) != K * 3)
 	{
 		std::stringstream message;
 		message << "'N' - ('siso_n.tail_length()' + 'siso_i.tail_length()') has to be equal to 'K' * 3 ('N' = "
 		        << N << ", 'siso_n.tail_length()' = " << siso_n.tail_length()
 		        << ", 'siso_i.tail_length()' = " << siso_i.tail_length() << ", 'K' = " << K << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (n_ite <= 0)
 	{
 		std::stringstream message;
 		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if ((int)pi.get_size() != K)
@@ -62,7 +78,7 @@ Decoder_turbo<B,R>
 		std::stringstream message;
 		message << "'pi.get_size()' has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
 		        << ", 'K' = " << K << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (siso_n.get_n_frames() != siso_i.get_n_frames())
@@ -70,7 +86,7 @@ Decoder_turbo<B,R>
 		std::stringstream message;
 		message << "'siso_n.get_n_frames()' has to be equal to 'siso_i.get_n_frames()' ('siso_n.get_n_frames()' = "
 		        << siso_n.get_n_frames() << ", 'siso_i.get_n_frames()' = " << siso_i.get_n_frames() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (siso_n.get_simd_inter_frame_level() != siso_i.get_simd_inter_frame_level())
@@ -79,7 +95,7 @@ Decoder_turbo<B,R>
 		message << "'siso_n.get_simd_inter_frame_level()' has to be equal to 'siso_i.get_simd_inter_frame_level()' "
 		        << "('siso_n.get_simd_inter_frame_level()' = " << siso_n.get_simd_inter_frame_level()
 		        << ", 'siso_i.get_simd_inter_frame_level()' = " << siso_i.get_simd_inter_frame_level() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -156,35 +172,35 @@ void Decoder_turbo<B,R>
 		std::vector<const R*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*frame_size;
-		Reorderer<R>::apply(frames, l_sn.data(), this->K);
+		tools::Reorderer<R>::apply(frames, l_sn.data(), this->K);
 
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*frame_size +this->K;
-		Reorderer<R>::apply(frames, l_pn.data(), p_size);
+		tools::Reorderer<R>::apply(frames, l_pn.data(), p_size);
 
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*frame_size +this->K + p_size;
-		Reorderer<R>::apply(frames, l_pi.data(), p_size);
+		tools::Reorderer<R>::apply(frames, l_pi.data(), p_size);
 
 		pi.interleave(l_sn.data(), l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 
 		// tails bit in the natural domain
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*frame_size +N_without_tb + tail_n/2;
-		Reorderer<R>::apply(frames, &l_sn[this->K*n_frames], tail_n/2);
+		tools::Reorderer<R>::apply(frames, &l_sn[this->K*n_frames], tail_n/2);
 
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*frame_size +N_without_tb;
-		Reorderer<R>::apply(frames, &l_pn[p_size*n_frames], tail_n/2);
+		tools::Reorderer<R>::apply(frames, &l_pn[p_size*n_frames], tail_n/2);
 
 		// tails bit in the interleaved domain
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*frame_size +N_without_tb + tail_n + tail_i/2;
-		Reorderer<R>::apply(frames, &l_si[this->K*n_frames], tail_i/2);
+		tools::Reorderer<R>::apply(frames, &l_si[this->K*n_frames], tail_i/2);
 
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*frame_size +N_without_tb + tail_n;
-		Reorderer<R>::apply(frames, &l_pi[p_size*n_frames], tail_i/2);
+		tools::Reorderer<R>::apply(frames, &l_pi[p_size*n_frames], tail_i/2);
 	}
 	std::fill(l_e1n.begin(), l_e1n.end(), (R)0);
 }
@@ -274,7 +290,7 @@ void Decoder_turbo<B,R>
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = V_K + f*this->K;
-		Reorderer<B>::apply_rev(s.data(), frames, this->K);
+		tools::Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}
 }
 

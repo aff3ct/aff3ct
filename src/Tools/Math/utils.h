@@ -1,10 +1,11 @@
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 
-#include <sstream>
 #include <algorithm>
+#include <sstream>
+#include <vector>
+#include <cstdint>
 #include <limits>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -12,20 +13,20 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename R> inline R           div2(R           val) { return val * (R)0.500; }
-template <>           inline int         div2(int         val) { return val >> 1;       }
-template <>           inline short       div2(short       val) { return val >> 1;       }
-template <>           inline signed char div2(signed char val) { return val >> 1;       }
+template <typename R> inline R       div2(R       val) { return val * (R)0.500; }
+template <>           inline int32_t div2(int32_t val) { return val >> 1;       }
+template <>           inline int16_t div2(int16_t val) { return val >> 1;       }
+template <>           inline int8_t  div2(int8_t  val) { return val >> 1;       }
 
-template <typename R> inline R           div4(R           val) { return val * (R)0.250; }
-template <>           inline int         div4(int         val) { return val >> 2;       }
-template <>           inline short       div4(short       val) { return val >> 2;       }
-template <>           inline signed char div4(signed char val) { return val >> 2;       }
+template <typename R> inline R       div4(R       val) { return val * (R)0.250; }
+template <>           inline int32_t div4(int32_t val) { return val >> 2;       }
+template <>           inline int16_t div4(int16_t val) { return val >> 2;       }
+template <>           inline int8_t  div4(int8_t  val) { return val >> 2;       }
 
-template <typename R> inline R           div8(R           val) { return val * (R)0.125; }
-template <>           inline int         div8(int         val) { return val >> 3;       }
-template <>           inline short       div8(short       val) { return val >> 3;       }
-template <>           inline signed char div8(signed char val) { return val >> 3;       }
+template <typename R> inline R       div8(R       val) { return val * (R)0.125; }
+template <>           inline int32_t div8(int32_t val) { return val >> 3;       }
+template <>           inline int16_t div8(int16_t val) { return val >> 3;       }
+template <>           inline int8_t  div8(int8_t  val) { return val >> 3;       }
 
 // init value depending on the domain
 template <typename R>
@@ -38,11 +39,11 @@ constexpr R init_LLR() { return (R)0; }
 template <typename R>
 constexpr R sat_val() { return std::numeric_limits<R>::infinity(); }
 
-template <>
-constexpr short sat_val<short>() { return 16382; }
-
-template <>
-constexpr signed char sat_val<signed char>() { return 63; }
+template <> constexpr double  sat_val<double >() { return std::numeric_limits<double>::infinity(); }
+template <> constexpr float   sat_val<float  >() { return std::numeric_limits<float >::infinity(); }
+template <> constexpr int32_t sat_val<int32_t>() { return 1073741823;                              }
+template <> constexpr int16_t sat_val<int16_t>() { return 16382;                                   }
+template <> constexpr int8_t  sat_val<int8_t >() { return 63;                                      }
 
 template <typename R>
 constexpr std::pair<R, R> sat_vals() { return std::make_pair(-sat_val<R>(), sat_val<R>()); }
@@ -56,8 +57,8 @@ template <typename T>
 inline T saturate(const T val, const T min, const T max) { return std::min(std::max(val, min), max); }
 
 // make a saturation on a full vector
-template <typename T>
-inline void saturate(mipp::vector<T> &array, const T min, const T max) 
+template <typename T, class A = std::allocator<T>>
+inline void saturate(std::vector<T,A> &array, const T min, const T max)
 {
 	const auto loop_size = (int)array.size();
 	for (auto i = 0; i < loop_size; i++)

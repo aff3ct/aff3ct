@@ -1,11 +1,12 @@
 #include <typeinfo>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
 #include "Modem_BPSK_fast.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R, typename Q>
 Modem_BPSK_fast<B,R,Q>
@@ -34,7 +35,7 @@ template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
 ::modulate(const B *X_N1, R *X_N2)
 {
-	throw runtime_error(__FILE__, __LINE__, __func__, "Unsupported data type.");
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported data type.");
 }
 
 namespace aff3ct
@@ -153,16 +154,16 @@ template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
 ::demodulate(const Q *Y_N1, Q *Y_N2)
 {
-	if (typeid(R) != typeid(Q))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
-
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
 	if (disable_sig2)
 		std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
 	else
 	{
+		if (typeid(R) != typeid(Q))
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+
+		if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
 		auto size = (unsigned int)(this->N * this->n_frames);
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
 		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
@@ -173,6 +174,7 @@ void Modem_BPSK_fast<B,R,Q>
 		for (unsigned i = vec_loop_size; i < size; i++)
 			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma;
 	}
+
 }
 
 template <typename B, typename R, typename Q>

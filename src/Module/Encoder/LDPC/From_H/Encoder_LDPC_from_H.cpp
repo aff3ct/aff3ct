@@ -10,12 +10,12 @@
 
 #include "Encoder_LDPC_from_H.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_LDPC_from_H<B>
-::Encoder_LDPC_from_H(const int K, const int N, const Sparse_matrix &H, const int n_frames,
+::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames,
                       const std::string name)
 : Encoder_LDPC<B>(K, N, n_frames, name), G(tools::LDPC_matrix_handler::transform_H_to_G(H, info_bits_pos))
 {
@@ -25,7 +25,7 @@ Encoder_LDPC_from_H<B>
 		std::stringstream message;
 		message << "The built G matrix has a dimension 'K' different than the given one ('K' = " << K
 		        << ", 'G.get_n_cols()' = " << G.get_n_cols() << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (N != (int)G.get_n_rows())
@@ -33,7 +33,7 @@ Encoder_LDPC_from_H<B>
 		std::stringstream message;
 		message << "The built G matrix has a dimension 'N' different than the given one ('N' = " << N
 		        << ", 'G.get_n_rows()' = " << G.get_n_rows() << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -52,7 +52,7 @@ void Encoder_LDPC_from_H<B>
 		std::stringstream message;
 		message << "'info_bits_pos.size()' has to be equal to 'K' ('info_bits_pos.size()' = " << info_bits_pos.size()
 		        << ", 'K' = " << this->K << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	std::copy(this->info_bits_pos.begin(), this->info_bits_pos.end(), info_bits_pos.begin());

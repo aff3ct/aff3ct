@@ -8,15 +8,14 @@
 
 using namespace aff3ct::tools;
 
-template <typename B, typename R>
-Terminal_EXIT<B,R>
-::Terminal_EXIT(const int& N,
-                const R& snr,
-                const R& sig_a,
-                const int& cur_t,
-                const int& trials,
-                double& I_A,
-                double& I_E)
+Terminal_EXIT
+::Terminal_EXIT(const int     N,
+                const double  snr,
+                const double  sig_a,
+                const int    &cur_t,
+                const int    &trials,
+                const double &I_A,
+                const double &I_E)
 : Terminal(),
   N(N),
   snr(snr),
@@ -30,8 +29,7 @@ Terminal_EXIT<B,R>
 {
 }
 
-template <typename B, typename R>
-std::string Terminal_EXIT<B,R>
+std::string Terminal_EXIT
 ::get_time_format(float secondes)
 {
 	auto ss = (int)secondes % 60;
@@ -50,8 +48,7 @@ std::string Terminal_EXIT<B,R>
 	return time_format2;
 }
 
-template <typename B, typename R>
-void Terminal_EXIT<B,R>
+void Terminal_EXIT
 ::legend(std::ostream &stream)
 {
 	stream << "# " << "------|-------|-----------|-----------||----------|----------" << std::endl;
@@ -60,8 +57,7 @@ void Terminal_EXIT<B,R>
 	stream << "# " << "------|-------|-----------|-----------||----------|----------" << std::endl;
 }
 
-template <typename B, typename R>
-void Terminal_EXIT<B,R>
+void Terminal_EXIT
 ::_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -81,8 +77,7 @@ void Terminal_EXIT<B,R>
 	stream << setprecision(2) << fixed << setw(8) << simu_cthr;
 }
 
-template <typename B, typename R>
-void Terminal_EXIT<B,R>
+void Terminal_EXIT
 ::temp_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -110,8 +105,7 @@ void Terminal_EXIT<B,R>
 	stream.flush();
 }
 
-template <typename B, typename R>
-void Terminal_EXIT<B,R>
+void Terminal_EXIT
 ::final_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -125,15 +119,3 @@ void Terminal_EXIT<B,R>
 
 	t_snr = std::chrono::steady_clock::now();
 }
-
-// ==================================================================================== explicit template instantiation 
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class aff3ct::tools::Terminal_EXIT<B_8,R_8>;
-template class aff3ct::tools::Terminal_EXIT<B_16,R_16>;
-template class aff3ct::tools::Terminal_EXIT<B_32,R_32>;
-template class aff3ct::tools::Terminal_EXIT<B_64,R_64>;
-#else
-template class aff3ct::tools::Terminal_EXIT<B,R>;
-#endif
-// ==================================================================================== explicit template instantiation

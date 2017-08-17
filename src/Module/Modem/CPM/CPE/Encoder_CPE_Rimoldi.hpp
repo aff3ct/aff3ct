@@ -1,7 +1,7 @@
 #ifndef ENCODER_CPE_RIMOLDI_HPP_
 #define ENCODER_CPE_RIMOLDI_HPP_
 
-#include <mipp.h>
+#include <vector>
 
 #include "Encoder_CPE.hpp"
 
@@ -19,12 +19,12 @@ public:
 	SOUT inner_encode(const SIN new_symbol, int &state);
 	SIN  tail_symb   (const int &state                );
 
-	void generate_mapper(mipp::vector<SIN>& transition_to_binary,
-	                     mipp::vector<SIN>& binary_to_transition,
+	void generate_mapper(std::vector<SIN>& transition_to_binary,
+	                     std::vector<SIN>& binary_to_transition,
 	                     const std::string& mapping);
 
-	void generate_allowed_states    (mipp::vector<int>& allowed_states     );
-	void generate_allowed_wave_forms(mipp::vector<SOUT>& allowed_wave_forms);
+	void generate_allowed_states    (std::vector<int>& allowed_states     );
+	void generate_allowed_wave_forms(std::vector<SOUT>& allowed_wave_forms);
 };
 }
 }

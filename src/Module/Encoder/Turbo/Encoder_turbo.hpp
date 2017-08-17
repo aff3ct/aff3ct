@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <mipp.h>
 
 #include "../../Interleaver/Interleaver.hpp"
 
@@ -22,10 +21,10 @@ protected:
 
 	Encoder_sys<B> &enco_n; // polar systematic encoder
 	Encoder_sys<B> &enco_i; // sub encoder
-	
-	mipp::vector<B> U_K_i;  // internal buffer for the systematic bits in the interleaved domain
-	mipp::vector<B> par_n;  // internal buffer for the encoded    bits in the natural     domain
-	mipp::vector<B> par_i;  // internal buffer for the encoded    bits in the interleaved domain
+
+	std::vector<B> U_K_i;   // internal buffer for the systematic bits in the interleaved domain
+	std::vector<B> par_n;   // internal buffer for the encoded    bits in the natural     domain
+	std::vector<B> par_i;   // internal buffer for the encoded    bits in the interleaved domain
 
 public:
 	Encoder_turbo(const int& K, const int& N, const Interleaver<int> &pi,

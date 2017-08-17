@@ -6,8 +6,8 @@
 
 #include "Encoder_CPE_Rimoldi.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename SIN, typename SOUT>
 Encoder_CPE_Rimoldi<SIN, SOUT>
@@ -52,7 +52,7 @@ SIN Encoder_CPE_Rimoldi<SIN, SOUT>
 		std::stringstream message;
 		message << "'state' has to be smaller than 'cpm.max_st_id' ('state' = " << state
 		        << ", 'cpm.max_st_id' = " << this->cpm.max_st_id << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	// extract V_n
@@ -67,8 +67,8 @@ SIN Encoder_CPE_Rimoldi<SIN, SOUT>
 
 template<typename SIN, typename SOUT>
 void Encoder_CPE_Rimoldi<SIN, SOUT>
-::generate_mapper(mipp::vector<SIN>& transition_to_binary,
-                  mipp::vector<SIN>& binary_to_transition,
+::generate_mapper(std::vector<SIN>& transition_to_binary,
+                  std::vector<SIN>& binary_to_transition,
                   const std::string& mapping)
 {
 	if ((int)transition_to_binary.size() != (this->cpm.m_order * this->cpm.n_b_per_s))
@@ -78,7 +78,7 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 		        << "('transition_to_binary.size()' = " << transition_to_binary.size()
 		        << ", 'cpm.m_order' = " << this->cpm.m_order
 		        << ", 'cpm.n_b_per_s' = " << this->cpm.n_b_per_s << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if ((int)binary_to_transition.size() != this->cpm.m_order)
@@ -87,7 +87,7 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 		message << "'binary_to_transition.size()' has to be equal to 'cpm.m_order' "
 		        << "('binary_to_transition.size()' = " << binary_to_transition.size()
 		        << ", 'cpm.m_order' = " << this->cpm.m_order << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (mapping == "NATURAL")
@@ -113,19 +113,19 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 			                                      this->cpm.n_b_per_s, true)] = tr;
 	}
 	else
-		throw runtime_error(__FILE__, __LINE__, __func__, "Unknown BCJR mapping scheme ('mapping' = " + mapping + ").");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unknown BCJR mapping scheme ('mapping' = " + mapping + ").");
 }
 
 template<typename SIN, typename SOUT>
 void Encoder_CPE_Rimoldi<SIN, SOUT>
-::generate_allowed_states(mipp::vector<int>& allowed_states)
+::generate_allowed_states(std::vector<int>& allowed_states)
 {
 	if ((int)allowed_states.size() != this->cpm.n_st)
 	{
 		std::stringstream message;
 		message << "'allowed_states.size()' has to be equal to 'cpm.n_st' ('allowed_states.size()' = "
 		        << allowed_states.size() << ", 'cpm.n_st' = " << this->cpm.n_st << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	int state_index = 0;
@@ -150,14 +150,14 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 
 template<typename SIN, typename SOUT>
 void Encoder_CPE_Rimoldi<SIN, SOUT>
-::generate_allowed_wave_forms(mipp::vector<SOUT>& allowed_wave_forms)
+::generate_allowed_wave_forms(std::vector<SOUT>& allowed_wave_forms)
 {
 	if ((int)allowed_wave_forms.size() != this->cpm.n_wa)
 	{
 		std::stringstream message;
 		message << "'allowed_wave_forms.size()' has to be equal to 'cpm.n_wa' ('allowed_wave_forms.size()' = "
 		        << allowed_wave_forms.size() << ", 'cpm.n_wa' = " << this->cpm.n_wa << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	int wa_index = 0;

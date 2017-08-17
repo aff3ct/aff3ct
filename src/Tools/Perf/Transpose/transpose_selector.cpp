@@ -1,4 +1,5 @@
 #include <iostream>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -15,6 +16,12 @@
 
 bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int n)
 {
+	if (!mipp::isAligned(src))
+		throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
+
+	if (!mipp::isAligned(dst))
+		throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
+
 	bool is_transposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
 	is_transposed = false;
@@ -46,6 +53,12 @@ bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int
 
 bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, int n)
 {
+	if (!mipp::isAligned(src))
+		throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
+
+	if (!mipp::isAligned(dst))
+		throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
+
 	bool is_itransposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
 	is_itransposed = false;

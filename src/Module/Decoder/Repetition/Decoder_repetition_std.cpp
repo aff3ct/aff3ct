@@ -2,6 +2,7 @@
 
 #include "Decoder_repetition_std.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
@@ -20,7 +21,7 @@ Decoder_repetition_std<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition_std<B,R>
-::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	for (auto i = 0; i < this->K; i++)
 	{

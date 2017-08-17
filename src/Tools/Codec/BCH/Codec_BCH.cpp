@@ -1,16 +1,14 @@
-#include "Tools/Factory/BCH/Factory_encoder_BCH.hpp"
-#include "Tools/Factory/BCH/Factory_decoder_BCH.hpp"
-
 #include "Codec_BCH.hpp"
 
-using namespace aff3ct::module;
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_BCH<B,Q>
-::Codec_BCH(const parameters& params)
-: Codec<B,Q>(params),
-  GF(params.code.K, params.code.N, params.code.m, params.code.t)
+::Codec_BCH(const factory::Encoder    ::parameters &enc_params,
+            const factory::Decoder_BCH::parameters &dec_params)
+: Codec<B,Q>(enc_params, dec_params), dec_par(dec_params),
+  GF(dec_params.K, dec_params.N_cw, dec_params.t)
 {
 	// assertion are made in the Galois Field (GF)
 }
@@ -22,27 +20,17 @@ Codec_BCH<B,Q>
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec_BCH<B,Q>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_BCH<B,Q>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
-	return Factory_encoder_BCH<B>::build(this->params.encoder.type,
-	                                     this->params.code.K,
-	                                     this->params.code.N_code,
-	                                     GF,
-	                                     this->params.simulation.inter_frame_level);
+	return factory::Encoder_BCH::build<B>(this->enc_params, GF);
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Codec_BCH<B,Q>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_BCH<B,Q>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
-	return Factory_decoder_BCH<B,Q>::build(this->params.decoder.type,
-	                                       this->params.decoder.implem,
-	                                       this->params.code.K,
-	                                       this->params.code.N_code,
-	                                       this->params.code.t,
-	                                       GF,
-	                                       this->params.simulation.inter_frame_level);
+	return factory::Decoder_BCH::build<B,Q>(dec_par, GF);
 }
 
 // ==================================================================================== explicit template instantiation 

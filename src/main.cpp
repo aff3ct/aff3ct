@@ -1,8 +1,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <exception>
-#include <map>
 #include <string>
+#include <map>
 #include <mipp.h>
 
 #ifdef ENABLE_MPI
@@ -13,35 +13,15 @@
 #include <systemc>
 #endif
 
-#include "Tools/git_sha1.h"
 #include "Tools/types.h"
-#include "Tools/params.h"
+#include "Tools/version.h"
 #include "Tools/Arguments_reader.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Launcher/Launcher.hpp"
+#include "Factory/Launcher/Launcher.hpp"
 
-#include "Launcher/BFER/Polar/Launcher_BFER_polar.hpp"
-#include "Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp"
-#include "Launcher/BFER/LDPC/Launcher_BFER_LDPC.hpp"
-#include "Launcher/BFER/RSC/Launcher_BFER_RSC.hpp"
-#include "Launcher/BFER/RA/Launcher_BFER_RA.hpp"
-#include "Launcher/BFER/Repetition/Launcher_BFER_repetition.hpp"
-#include "Launcher/BFER/BCH/Launcher_BFER_BCH.hpp"
-#include "Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp"
-
-#include "Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp"
-#include "Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp"
-#include "Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp"
-#include "Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp"
-
-#include "Launcher/EXIT/Polar/Launcher_EXIT_polar.hpp"
-#include "Launcher/EXIT/RSC/Launcher_EXIT_RSC.hpp"
-
-#include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
-
-using namespace aff3ct::launcher;
-using namespace aff3ct::tools;
+using namespace aff3ct;
 
 void print_version()
 {
@@ -88,14 +68,10 @@ void print_version()
 	std::string compiler = "Unknown compiler";
 	std::string compiler_version = "";
 #endif
-	std::string affect_version = "1.1.0";
-
-	std::string git_sha1 = g_GIT_SHA1;
+	std::string affect_version = version() == "GIT-NOTFOUND" ? "" : version();
 
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", " 
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
-	if (git_sha1 != "GITDIR-NOTFOUND")
-		std::cout << "GIT SHA1: " << git_sha1 << std::endl;
 	std::cout << "Copyright (c) 2016-2017 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
@@ -103,207 +79,36 @@ void print_version()
 }
 
 #ifdef MULTI_PREC
-void read_arguments(const int argc, const char** argv, std::string &code_type, std::string &simu_type, int &prec)
+void read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
 #else
-void read_arguments(const int argc, const char** argv, std::string &code_type, std::string &simu_type)
+void read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
 #endif
 {
-	using namespace std::chrono;
+	tools::Arguments_reader ar(argc, argv);
 
-	std::map<std::vector<std::string>, std::vector<std::string>> req_args, opt_args;
-	Arguments_reader ar(argc, argv);
+	factory::arg_map req_args, opt_args;
+	factory::arg_grp arg_group;
 
-	// ---------------------------------------------------------------------------------------------------- simulation
-	opt_args[{"sim-type"}] =
-		{"string",
-		 "the type of simulation to run.",
-		 "BFER, BFERI, EXIT, GEN"};
-#ifdef MULTI_PREC
-	opt_args[{"sim-prec", "p"}] =
-		{"positive_int",
-		 "the simulation precision in bit.",
-		 "8, 16, 32, 64"};
-#endif
+	std::vector<std::string> cmd_warn, cmd_error;
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	req_args[{"cde-type"}] =
-		{"string",
-		 "the type of codes you want to simulate.",
-		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED"};
+	factory::Launcher::build_args(req_args, opt_args, "sim");
 
-	// --------------------------------------------------------------------------------------------------------- other
-	opt_args[{"version", "v"}] =
-		{"",
-		 "print informations about the version of the code."};
-	opt_args[{"help", "h"}] =
-		{"",
-		 "print this help."};
+	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
+	bool error    = !ar.check_arguments(cmd_error);
 
-	auto display_help = true;
-	auto parsing = ar.parse_arguments(req_args, opt_args);
+	factory::Launcher::store_args(ar.get_args(), params, "sim");
 
-	if (ar.exist_arg({"version", "v"}))
+	if (params.display_version)
 		print_version();
 
-	if (parsing)
+	if (error || miss_arg)
 	{
-		// required parameters
-		code_type = ar.get_arg({"cde-type"});
+		arg_group.push_back({"sim", "Simulation parameter(s)"});
+		ar.print_usage(arg_group);
 
-		// facultative parameters
-		if(ar.exist_arg({"sim-type"})) simu_type = ar.get_arg({"sim-type"});
-#ifdef MULTI_PREC
-		if(ar.exist_arg({"sim-prec", "p"})) prec = ar.get_arg_int({"sim-prec", "p"});
-#endif
-
-		display_help = false;
-	}
-
-	if (display_help)
-	{
-		std::vector<std::vector<std::string>> arg_grp;
-		arg_grp.push_back({"sim", "Simulation parameter(s)"});
-		arg_grp.push_back({"cde", "Code parameter(s)"      });
-		ar.print_usage(arg_grp);
+		for (auto w = 0; w < (int)cmd_error.size(); w++)
+			std::cerr << tools::format_error(cmd_error[w]) << std::endl;
 		std::exit(EXIT_FAILURE);
-	}
-
-	std::vector<std::string> error;
-	if (!ar.check_arguments(error))
-	{
-		for (auto w = 0; w < (int)error.size(); w++)
-			std::cerr << format_error(error[w]) << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-}
-
-template <typename B, typename R, typename Q, typename QD>
-Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
-{
-	return nullptr;
-}
-
-#if defined(MULTI_PREC) || defined(PREC_32_BIT)
-template <>
-Launcher<int32_t,float,float>* create_exit_simu<int32_t, float, float, float>(const int     argc,
-                                                                              const char  **argv,
-                                                                              std::string   code_type,
-                                                                              std::string   simu_type)
-{
-	if (code_type == "POLAR")
-		if (simu_type == "EXIT")
-			return new Launcher_EXIT_polar<int32_t,float,float>(argc, argv);
-
-	if (code_type == "RSC")
-		if (simu_type == "EXIT")
-			return new Launcher_EXIT_RSC<int32_t,float,float,float>(argc, argv);
-
-	return nullptr;
-}
-#endif
-
-#if defined(MULTI_PREC) || defined(PREC_64_BIT)
-template <>
-Launcher<int64_t,double,double>* create_exit_simu<int64_t, double, double, double>(const int     argc,
-                                                                                   const char  **argv,
-                                                                                   std::string   code_type,
-                                                                                   std::string   simu_type)
-{
-	if (code_type == "POLAR")
-		if (simu_type == "EXIT")
-			return new Launcher_EXIT_polar<int64_t,double,double>(argc, argv);
-
-	if (code_type == "RSC")
-		if (simu_type == "EXIT")
-			return new Launcher_EXIT_RSC<int64_t,double,double,double>(argc, argv);
-
-	return nullptr;
-}
-#endif
-
-template <typename B, typename R, typename Q, typename QD>
-void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
-{
-	try
-	{
-		Launcher<B,R,Q> *launcher = nullptr;
-
-		if (code_type == "POLAR")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_polar<B,R,Q>(argc, argv);
-			else if (simu_type == "BFERI")
-				launcher = new Launcher_BFERI_polar<B,R,Q>(argc, argv);
-			else if (simu_type == "GEN")
-				launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
-		}
-
-		if (code_type == "RSC")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_RSC<B,R,Q,QD>(argc, argv);
-			else if (simu_type == "BFERI")
-				launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
-		}
-
-		if (code_type == "TURBO")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_turbo<B,R,Q,QD>(argc, argv);
-		}
-
-		if (code_type == "REPETITION")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_repetition<B,R,Q>(argc, argv);
-		}
-
-		if (code_type == "BCH")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_BCH<B,R,Q>(argc, argv);
-		}
-
-		if (code_type == "RA")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_RA<B,R,Q>(argc, argv);
-		}
-
-		if (code_type == "LDPC")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_LDPC<B,R,Q>(argc, argv);
-			else if (simu_type == "BFERI")
-				launcher = new Launcher_BFERI_LDPC<B,R,Q>(argc, argv);
-		}
-
-		if (code_type == "UNCODED")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_uncoded<B,R,Q>(argc, argv);
-			else if (simu_type == "BFERI")
-				launcher = new Launcher_BFERI_uncoded<B,R,Q>(argc, argv);
-		}
-
-		if (launcher == nullptr)
-		{
-			launcher = create_exit_simu<B,R,Q,QD>(argc, argv, code_type, simu_type);
-
-			if (launcher == nullptr)
-			{
-				std::cerr << format_error("Unsupported type of codes/simulation.") << std::endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-
-		launcher->launch();
-		delete launcher;
-	}
-	catch (std::exception const& e)
-	{
-		std::cerr << format_error("An issue was encountered when running the launcher.") << std::endl
-		          << format_error(e.what()) << std::endl;
 	}
 }
 
@@ -317,33 +122,36 @@ int sc_main(int argc, char **argv)
 	MPI_Init(nullptr, nullptr);
 #endif
 
-	std::string code_type, simu_type = "BFER";
+	factory::Launcher::parameters params;
+	read_arguments(argc, (const char**)argv, params);
 
-#ifdef MULTI_PREC
-	int prec = 32;
-	read_arguments(argc, (const char**)argv, code_type, simu_type, prec);
-
-	switch (prec)
+	launcher::Launcher *launcher = nullptr;
+	try
 	{
-		case 8: 
-			start_simu<B_8, R_8, Q_8, QD_8 >(argc, (const char**)argv, code_type, simu_type); break;
-		case 16: 
-			start_simu<B_16,R_16,Q_16,QD_16>(argc, (const char**)argv, code_type, simu_type); break;
-		case 32: 
-			start_simu<B_32,R_32,Q_32,QD_32>(argc, (const char**)argv, code_type, simu_type); break;
+#ifdef MULTI_PREC
+		switch (params.sim_prec)
+		{
+			case 8 : launcher = factory::Launcher::build<B_8, R_8, Q_8, QD_8 >(params, argc, (const char**)argv); break;
+			case 16: launcher = factory::Launcher::build<B_16,R_16,Q_16,QD_16>(params, argc, (const char**)argv); break;
+			case 32: launcher = factory::Launcher::build<B_32,R_32,Q_32,QD_32>(params, argc, (const char**)argv); break;
 #if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-		case 64: 
-			start_simu<B_64,R_64,Q_64,QD_64>(argc, (const char**)argv, code_type, simu_type); break;
+			case 64: launcher = factory::Launcher::build<B_64,R_64,Q_64,QD_64>(params, argc, (const char**)argv); break;
 #endif
-		default:
-			std::cerr << format_error("Unsupported bit precision.") << std::endl;
-			return EXIT_FAILURE;
-			break;
-	}
+			default: break;
+		}
 #else
-	read_arguments(argc, (const char**)argv, code_type, simu_type);
-	start_simu<B,R,Q,QD>(argc, (const char**)argv, code_type, simu_type);
+		launcher = factory::Launcher::build<B,R,Q,QD>(params, argc, (const char**)argv);
 #endif
+		if (launcher != nullptr)
+		{
+			launcher->launch();
+			delete launcher;
+		}
+	}
+	catch(std::exception const& e)
+	{
+		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+	}
 
 #ifdef ENABLE_MPI
 	MPI_Finalize();

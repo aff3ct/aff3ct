@@ -3,45 +3,46 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_layered.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_layered<B,R>
 ::Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
-                          const Sparse_matrix &H,
+                          const tools::Sparse_matrix &H,
                           const std::vector<unsigned> &info_bits_pos,
                           const bool enable_syndrome,
                           const int syndrome_depth,
                           const int n_frames,
                           const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, 1, name                         ),
-  n_ite            (n_ite                                           ),
-  n_C_nodes        ((int)H.get_n_cols()                             ),
-  enable_syndrome  (enable_syndrome                                 ),
-  syndrome_depth   (syndrome_depth                                  ),
-  init_flag        (true                                            ),
-  info_bits_pos    (info_bits_pos                                   ),
-  H                (H                                               ),
-  var_nodes        (n_frames, mipp::vector<R>(N                    )),
-  branches         (n_frames, mipp::vector<R>(H.get_n_connections()))
+: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                        ),
+  n_ite                 (n_ite                                          ),
+  n_C_nodes             ((int)H.get_n_cols()                            ),
+  enable_syndrome       (enable_syndrome                                ),
+  syndrome_depth        (syndrome_depth                                 ),
+  init_flag             (true                                           ),
+  info_bits_pos         (info_bits_pos                                  ),
+  H                     (H                                              ),
+  var_nodes             (n_frames, std::vector<R>(N                    )),
+  branches              (n_frames, std::vector<R>(H.get_n_connections()))
 {
 	if (n_ite <= 0)
 	{
 		std::stringstream message;
 		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (syndrome_depth <= 0)
 	{
 		std::stringstream message;
 		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (N != (int)H.get_n_rows())
@@ -49,7 +50,7 @@ Decoder_LDPC_BP_layered<B,R>
 		std::stringstream message;
 		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
 		        << H.get_n_rows() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -61,7 +62,25 @@ Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
+::_load(const R *Y_N, const int frame_id)
+{
+	// memory zones initialization
+	if (this->init_flag)
+	{
+		std::fill(this->branches [frame_id].begin(), this->branches [frame_id].end(), (R)0);
+		std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
+
+		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
+			this->init_flag = false;
+	}
+
+	for (auto i = 0; i < (int)var_nodes[frame_id].size(); i++)
+		this->var_nodes[frame_id][i] += Y_N[i]; // var_nodes contain previous extrinsic information
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_layered<B,R>
+::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
 	this->_load(Y_N1, frame_id);
@@ -77,27 +96,10 @@ void Decoder_LDPC_BP_layered<B,R>
 	std::copy(Y_N2, Y_N2 + this->N, this->var_nodes[frame_id].begin());
 }
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_layered<B,R>
-::_load(const R *Y_N, const int frame_id)
-{
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->branches [frame_id].begin(), this->branches [frame_id].end(), (R)0);
-		std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
-
-	for (auto i = 0; i < (int)var_nodes[frame_id].size(); i++)
-		this->var_nodes[frame_id][i] += Y_N[i]; // var_nodes contain previous extrinsic information
-}
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::__decode_siho(const R *Y_N, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -108,29 +110,43 @@ void Decoder_LDPC_BP_layered<B,R>
 	this->BP_decode(frame_id);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (frame_id == Decoder<B,R>::n_frames -1)
+	if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 		this->init_flag = true;
-
-	this->_store(V_K, frame_id);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;
 	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_store(B *V_K, const int frame_id) const
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
+	this->__decode_siho(Y_N, frame_id);
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	for (auto i = 0; i < this->K; i++)
 	{
 		const auto k = this->info_bits_pos[i];
 		V_K[i] = !(this->var_nodes[frame_id][k] >= 0);
 	}
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_store_total += d_store;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_layered<B,R>
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+{
+	this->__decode_siho(Y_N, frame_id);
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	tools::hard_decide(this->var_nodes[frame_id].data(), V_N, this->N);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_store_total += d_store;
 }
 
 // BP algorithm

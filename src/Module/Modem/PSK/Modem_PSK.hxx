@@ -31,7 +31,7 @@ Modem_PSK<B,R,Q,MAX>
   disable_sig2   (disable_sig2),
   constellation  (nbr_symbols)
 {
-	mipp::vector<B> bits(this->bits_per_symbol);
+	std::vector<B> bits(this->bits_per_symbol);
 
 	for (auto j = 0; j < this->nbr_symbols; j++)
 	{

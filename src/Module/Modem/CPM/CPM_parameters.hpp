@@ -3,7 +3,8 @@
 
 #include <fstream>
 #include <string>
-#include <mipp.h>
+#include <vector>
+#include <cmath>
 
 namespace aff3ct
 {
@@ -74,27 +75,27 @@ public :
 	int n_bits_st;                  // number of bits used to code n_st
 	int max_st_id;                  // maximum possible index of a trellis state
 
-	mipp::vector<SIN>  transition_to_binary;          // gives the binary code for a transition.
-	                                                  // For each transition there are n_b_per_s bits separately given
-	                                                  // (separate memory cases), in msb to lsb order
+	std::vector<SIN>  transition_to_binary;          // gives the binary code for a transition.
+	                                                 // For each transition there are n_b_per_s bits separately given
+	                                                 // (separate memory cases), in msb to lsb order
 
-	mipp::vector<SIN>  binary_to_transition;          // gives the transition related to the binary code
+	std::vector<SIN>  binary_to_transition;          // gives the transition related to the binary code
 
-	mipp::vector<int>  allowed_states;                // possible used state indexes
-	                                                  // (there are jumps in the indexes because of p)
+	std::vector<int>  allowed_states;                // possible used state indexes
+	                                                 // (there are jumps in the indexes because of p)
 
-	mipp::vector<SOUT> allowed_wave_forms;            // possible used wave forms indexes
-	                                                  // (there are jumps in the indexes because of p)
+	std::vector<SOUT> allowed_wave_forms;            // possible used wave forms indexes
+	                                                 // (there are jumps in the indexes because of p)
 
-	mipp::vector<int>  trellis_next_state;            // from a given state and transition, gives the next state
+	std::vector<int>  trellis_next_state;            // from a given state and transition, gives the next state
 
-	mipp::vector<SOUT> trellis_related_wave_form;     // from a given state and transition, gives the related wave form
+	std::vector<SOUT> trellis_related_wave_form;     // from a given state and transition, gives the related wave form
 
-	mipp::vector<int>  anti_trellis_original_state;   // from a given state and transition index,
-	                                                  // gives the original state from where comes the transition
+	std::vector<int>  anti_trellis_original_state;   // from a given state and transition index,
+	                                                 // gives the original state from where comes the transition
 
-	mipp::vector<SIN>  anti_trellis_input_transition; // from a given state and transition index,
-	                                                  // gives the related transition value
+	std::vector<SIN>  anti_trellis_input_transition; // from a given state and transition index,
+	                                                 // gives the related transition value
 };
 }
 }

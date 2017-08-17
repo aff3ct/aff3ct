@@ -10,7 +10,7 @@
 
 #include <cmath>
 #include <sstream>
-#include <mipp.h>
+#include <vector>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -35,7 +35,8 @@ struct Bit_packer
 	 * \param vec_out: an output vector of packed bits.
 	 * \param rev:     reverse the bitpaking storage order.
 	 */
-	static inline void pack(const mipp::vector<B> &vec_in, mipp::vector<B> &vec_out, const int n_frames = 1,
+	template <class A = std::allocator<B>>
+	static inline void pack(const std::vector<B,A> &vec_in, std::vector<B,A> &vec_out, const int n_frames = 1,
 	                        const bool rev = false)
 	{
 		if (n_frames <= 0)
@@ -85,7 +86,8 @@ struct Bit_packer
 	 * \param vec: a vector of unpacked bits (only 1 bit per data is used to transport data).
 	 * \param rev: reverse the bitpaking storage order.
 	 */
-	static inline void pack(mipp::vector<B> &vec, const int n_frames = 1, const bool rev = false)
+	template <class A = std::allocator<B>>
+	static inline void pack(std::vector<B,A> &vec, const int n_frames = 1, const bool rev = false)
 	{
 		if (n_frames <= 0)
 		{
@@ -125,7 +127,8 @@ struct Bit_packer
 	 * \param vec_out: an output vector of unpacked bits.
 	 * \param rev:     reverse the bitpaking storage order.
 	 */
-	static inline void unpack(const mipp::vector<B> &vec_in, mipp::vector<B> &vec_out, const int n_frames = 1,
+	template <class A = std::allocator<B>>
+	static inline void unpack(const std::vector<B,A> &vec_in, std::vector<B,A> &vec_out, const int n_frames = 1,
 	                          const bool rev = false)
 	{
 		if (n_frames <= 0)
@@ -175,7 +178,8 @@ struct Bit_packer
 	 * \param vec: a vector of packed bits (all the bits in each element of vec are used to store bits).
 	 * \param rev: reverse the bitpaking storage order.
 	 */
-	static inline void unpack(mipp::vector<B> &vec, const int n_frames = 1, bool rev = false)
+	template <class A = std::allocator<B>>
+	static inline void unpack(std::vector<B,A> &vec, const int n_frames = 1, bool rev = false)
 	{
 		if (n_frames <= 0)
 		{
@@ -200,7 +204,7 @@ struct Bit_packer
 		const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
 
 		unsigned char* bytes = (unsigned char*)vec;
-		mipp::vector<unsigned char> bytes_cpy(n_bytes_per_frame); //TODO: find a way to avoid this allocation
+		std::vector<unsigned char> bytes_cpy(n_bytes_per_frame); //TODO: find a way to avoid this allocation
 
 		for (auto f = 0; f < n_frames; f++)
 		{

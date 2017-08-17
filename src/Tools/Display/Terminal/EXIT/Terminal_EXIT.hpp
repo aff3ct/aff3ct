@@ -3,6 +3,7 @@
 
 #include <string>
 #include <chrono>
+#include <iostream>
 
 #include "../Terminal.hpp"
 
@@ -10,28 +11,27 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int, typename R = float>
 class Terminal_EXIT : public Terminal
 {
 protected:
 	const int                                                                           N;
-	const R                                                                             snr;
-	const R                                                                             sig_a;
+	const double                                                                        snr;
+	const double                                                                        sig_a;
 	      std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>  t_snr;
 	const int                                                                          &cur_t;
 	const int                                                                          &trials;
-	double                                                                             &I_A;
-	double                                                                             &I_E;
+	const double                                                                       &I_A;
+	const double                                                                       &I_E;
 	unsigned short                                                                      real_time_state;
 
 public:
-	Terminal_EXIT(const int& N,
-	              const R& snr,
-	              const R& sig_a,
-	              const int& cur_t,
-	              const int& trials,
-	              double& I_A,
-	              double& I_E);
+	Terminal_EXIT(const int     N,
+	              const double  snr,
+	              const double  sig_a,
+	              const int    &cur_t,
+	              const int    &trials,
+	              const double &I_A,
+	              const double &I_E);
 
 	virtual ~Terminal_EXIT() {}
 

@@ -6,8 +6,8 @@
 
 #include "Encoder_turbo.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 // [sys | pn | pi | tailn | taili]
 
@@ -30,7 +30,7 @@ Encoder_turbo<B>
 		        << ", 'enco_n.tail_length()' = " << enco_n.tail_length()
 		        << ", 'enco_i.tail_length()' = " << enco_i.tail_length()
 		        << ", 'K' = " << K << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if ((int)pi.get_size() != K)
@@ -38,7 +38,7 @@ Encoder_turbo<B>
 		std::stringstream message;
 		message << "'pi.get_size()' has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
 		        << ", 'K' = " << K << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -46,7 +46,7 @@ template <typename B>
 void Encoder_turbo<B>
 ::encode(const B *U_K, B *X_N)
 {
-	pi.interleave(U_K, U_K_i.data());
+	pi.interleave(U_K, U_K_i.data(), 0, this->n_frames);
 
 	enco_n.encode_sys(U_K,          par_n.data());
 	enco_i.encode_sys(U_K_i.data(), par_i.data());

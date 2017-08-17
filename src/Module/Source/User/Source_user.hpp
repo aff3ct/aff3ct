@@ -4,7 +4,6 @@
 #include <string>
 #include <random>
 #include <vector>
-#include <mipp.h>
 
 #include "../Source.hpp"
 
@@ -16,7 +15,7 @@ template <typename B>
 class Source_user : public Source<B>
 {
 private:
-	mipp::vector<mipp::vector<B>> source;
+	std::vector<std::vector<B>> source;
 	int src_counter;
 
 public:

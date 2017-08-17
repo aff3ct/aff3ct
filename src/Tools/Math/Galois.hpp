@@ -2,7 +2,6 @@
 #define GALOIS_HPP
 
 #include <vector>
-#include <mipp.h>
 
 namespace aff3ct
 {
@@ -18,7 +17,7 @@ protected:
 	const int d;
 
 public:
-	Galois(const int& K, const int& N, const int& m, const int& t);
+	Galois(const int& K, const int& N, const int& t);
 	virtual ~Galois();
 
 	void Select_Polynomial(); // move this private section
@@ -27,10 +26,10 @@ public:
 
 	int get_m() const;
 
-	mipp::vector<int> alpha_to; // log table of GF(2**m)
-	mipp::vector<int> index_of; // antilog table of GF(2**m)
-	mipp::vector<int> p;        // coefficients of a primitive polynomial used to generate GF(2**m)
-	mipp::vector<int> g;        // coefficients of the generator polynomial, g(x)
+	std::vector<int> alpha_to; // log table of GF(2**m)
+	std::vector<int> index_of; // antilog table of GF(2**m)
+	std::vector<int> p;        // coefficients of a primitive polynomial used to generate GF(2**m)
+	std::vector<int> g;        // coefficients of the generator polynomial, g(x)
 };
 }
 }

@@ -6,8 +6,8 @@
 
 #include "Encoder_RA.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_RA<B>
@@ -18,7 +18,7 @@ Encoder_RA<B>
 	{
 		std::stringstream message;
 		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if ((int)interleaver.get_size() != N)
@@ -26,7 +26,7 @@ Encoder_RA<B>
 		std::stringstream message;
 		message << "'interleaver.get_size()' has to be equal to 'N' ('interleaver.get_size()' = "
 		        << interleaver.get_size() << ", 'N' = " << N << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 

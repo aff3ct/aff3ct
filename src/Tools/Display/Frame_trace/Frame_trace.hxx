@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iomanip>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
@@ -9,37 +10,42 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B> template <typename D>
+template <typename B>
+template <typename D, class AD, class AB>
 void Frame_trace<B>
-::display_bit_vector(mipp::vector<D> vec, mipp::vector<B> ref)
+::display_bit_vector(std::vector<D,AD> vec, std::vector<B,AB> ref)
 {
 	display_bit_vector(vec, (int)vec.size(), ref);
 }
 
-template <typename B> template <typename D>
+template <typename B>
+template <typename D, class AD, class AB>
 void Frame_trace<B>
-::display_real_vector(mipp::vector<D> vec, mipp::vector<B> ref)
+::display_real_vector(std::vector<D,AD> vec, std::vector<B,AB> ref)
 {
 	display_real_vector(vec, (int)vec.size(), ref);
 }
 
-template <typename B> template <typename D>
+template <typename B>
+template <typename D, class AD, class AB>
 void Frame_trace<B>
-::display_bit_vector(mipp::vector<D> vec, unsigned int row_width, mipp::vector<B> ref)
+::display_bit_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref)
 {
 	display_vector(vec, row_width, ref, debug_version::BIT);
 }
 
-template <typename B> template <typename D>
+template <typename B>
+template <typename D, class AD, class AB>
 void Frame_trace<B>
-::display_real_vector(mipp::vector<D> vec, unsigned int row_width, mipp::vector<B> ref)
+::display_real_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref)
 {
 	display_vector(vec, row_width, ref, debug_version::REAL);
 }
 
-template <typename B> template <typename D>
+template <typename B>
+template <typename D, class AD, class AB>
 void Frame_trace<B>
-::display_vector(mipp::vector<D> vec, unsigned int row_width, mipp::vector<B> ref, debug_version version)
+::display_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref, debug_version version)
 {
 	unsigned int stride         = 0;
 	bool         enable_ref     = !ref.empty();
@@ -86,7 +92,8 @@ void Frame_trace<B>
 	}
 }
 
-template <typename B> template <typename D>
+template <typename B>
+template <typename D>
 void Frame_trace<B>
 ::display_value(D value, debug_version version)
 {
@@ -112,7 +119,8 @@ void Frame_trace<B>
 	}
 }
 
-template <typename B> template <typename D>
+template <typename B>
+template <typename D>
 void Frame_trace<B>
 ::display_value(D value, debug_version version, B ref)
 {	

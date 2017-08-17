@@ -2,50 +2,51 @@
 #include <limits>
 #include <sstream>
 
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 // constexpr int C_to_V_max = 15; // saturation value for the LLRs/extrinsics
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding<B,R>
 ::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
-                           const Sparse_matrix &H,
+                           const tools::Sparse_matrix &H,
                            const std::vector<unsigned> &info_bits_pos,
                            const bool enable_syndrome,
                            const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, 1, name                   ),
-  n_ite            (n_ite                                     ),
-  n_V_nodes        (N                                         ), // same as N but more explicit
-  n_C_nodes        ((int)H.get_n_cols()                       ),
-  n_branches       ((int)H.get_n_connections()                ),
-  enable_syndrome  (enable_syndrome                           ),
-  syndrome_depth   (syndrome_depth                            ),
-  init_flag        (true                                      ),
-  info_bits_pos    (info_bits_pos                             ),
-  Lp_N             (N,                                       -1), // -1 in order to fail when AZCW
-  C_to_V           (n_frames, mipp::vector<R>(this->n_branches)),
-  V_to_C           (n_frames, mipp::vector<R>(this->n_branches))
+: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                  ),
+  n_ite                 (n_ite                                    ),
+  n_V_nodes             (N                                        ), // same as N but more explicit
+  n_C_nodes             ((int)H.get_n_cols()                      ),
+  n_branches            ((int)H.get_n_connections()               ),
+  enable_syndrome       (enable_syndrome                          ),
+  syndrome_depth        (syndrome_depth                           ),
+  init_flag             (true                                     ),
+  info_bits_pos         (info_bits_pos                            ),
+  Lp_N                  (N,                                      -1), // -1 in order to fail when AZCW
+  C_to_V                (n_frames, std::vector<R>(this->n_branches)),
+  V_to_C                (n_frames, std::vector<R>(this->n_branches))
 {
 	if (n_ite <= 0)
 	{
 		std::stringstream message;
 		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (syndrome_depth <= 0)
 	{
 		std::stringstream message;
 		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (N != (int)H.get_n_rows())
@@ -53,7 +54,7 @@ Decoder_LDPC_BP_flooding<B,R>
 		std::stringstream message;
 		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
 		        << H.get_n_rows() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	transpose.resize(this->n_branches);
@@ -81,7 +82,7 @@ Decoder_LDPC_BP_flooding<B,R>
 				message << "'connections[id_V]' has to be equal or smaller than 'VN_to_CN[id_V].size()' ('id_V' = "
 				        << id_V << ", 'connections[id_V]' = " << connections[id_V] << ", 'VN_to_CN[id_V].size()' = "
 				        << VN_to_CN[id_V].size() << ").";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
 			transpose[k] = branch_id;
@@ -106,14 +107,14 @@ Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
+::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
 	if (this->init_flag)
 	{
 		std::fill(this->C_to_V[frame_id].begin(), this->C_to_V[frame_id].end(), (R)0);
 
-		if (frame_id == Decoder<B,R>::n_frames -1)
+		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
 
@@ -129,7 +130,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::__decode_siho(const R *Y_N, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
@@ -137,7 +138,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 	{
 		std::fill(this->C_to_V[frame_id].begin(), this->C_to_V[frame_id].end(), (R)0);
 
-		if (frame_id == Decoder<B,R>::n_frames -1)
+		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
 	auto d_load = std::chrono::steady_clock::now() - t_load;
@@ -147,6 +148,20 @@ void Decoder_LDPC_BP_flooding<B,R>
 	this->BP_decode(Y_N, frame_id);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
+	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
+	if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
+		this->init_flag = true;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding<B,R>
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+{
+	this->__decode_siho(Y_N, frame_id);
+
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	for (auto i = 0; i < this->K; i++)
@@ -154,15 +169,21 @@ void Decoder_LDPC_BP_flooding<B,R>
 		const auto k = this->info_bits_pos[i];
 		V_K[i] = !(this->Lp_N[k] >= 0);
 	}
-
-	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (frame_id == Decoder<B,R>::n_frames -1)
-		this->init_flag = true;
-
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding<B,R>
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+{
+	this->__decode_siho(Y_N, frame_id);
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	tools::hard_decide(this->Lp_N.data(), V_N, this->N);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
 	this->d_store_total += d_store;
 }
 
@@ -178,7 +199,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 	{
 		// specific inner code depending on the selected implementation (min-sum or sum-product for example)
 		auto syndrome = this->BP_process(Y_N, this->V_to_C[frame_id], this->C_to_V[frame_id]);
-		
+
 		// make a saturation
 		// saturate<R>(this->C_to_V, (R)-C_to_V_max, (R)C_to_V_max);
 

@@ -1,17 +1,17 @@
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Factory/Factory_interleaver.hpp"
-#include "Tools/Factory/RA/Factory_encoder_RA.hpp"
-#include "Tools/Factory/RA/Factory_decoder_RA.hpp"
+
+#include "Factory/Module/Interleaver.hpp"
 
 #include "Codec_RA.hpp"
 
-using namespace aff3ct::module;
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_RA<B,Q>
-::Codec_RA(const parameters& params)
-: Codec<B,Q>(params)
+::Codec_RA(const factory::Encoder_RA::parameters &enc_params,
+           const factory::Decoder_RA::parameters &dec_params)
+: Codec<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params)
 {
 }
 
@@ -22,46 +22,32 @@ Codec_RA<B,Q>
 }
 
 template <typename B, typename Q>
-Interleaver<int>* Codec_RA<B,Q>
+module::Interleaver<int>* Codec_RA<B,Q>
 ::build_interleaver(const int tid, const int seed)
 {
-	return Factory_interleaver<int>::build(this->params.interleaver.type,
-	                                       this->params.code.N_code,
-	                                       this->params.interleaver.path,
-	                                       this->params.interleaver.uniform,
-	                                       this->params.interleaver.n_cols,
-	                                       seed,
-	                                       this->params.simulation.inter_frame_level);
+	auto itl_cpy = dec_par.itl;
+	itl_cpy.seed = dec_par.itl.uniform ? seed : dec_par.itl.seed;
+	return factory::Interleaver::build<int>(itl_cpy);
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec_RA<B,Q>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_RA<B,Q>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
 
-	return Factory_encoder_RA<B>::build(this->params.encoder.type,
-	                                    this->params.code.K,
-	                                    this->params.code.N_code,
-	                                    *itl,
-	                                    this->params.simulation.inter_frame_level);
+	return factory::Encoder_RA::build<B>(enc_par, *itl);
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Codec_RA<B,Q>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_RA<B,Q>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
 
-	return Factory_decoder_RA<B,Q>::build(this->params.decoder.type,
-	                                      this->params.decoder.implem,
-	                                      this->params.code.K,
-	                                      this->params.code.N_code,
-	                                      *itl,
-	                                      this->params.decoder.n_ite,
-	                                      this->params.simulation.inter_frame_level);
+	return factory::Decoder_RA::build<B,Q>(dec_par, *itl);
 }
 
 // ==================================================================================== explicit template instantiation 

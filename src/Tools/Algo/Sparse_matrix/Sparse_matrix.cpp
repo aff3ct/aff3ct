@@ -9,7 +9,7 @@
 #include "Sparse_matrix.hpp"
 
 using namespace aff3ct;
-using namespace tools;
+using namespace aff3ct::tools;
 
 Sparse_matrix
 ::Sparse_matrix(const unsigned n_rows, const unsigned n_cols)

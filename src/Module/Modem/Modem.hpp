@@ -13,7 +13,6 @@
 #include <vector>
 #include <cmath>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -190,7 +189,8 @@ public:
 	 * \param X_N1: a vector of bits or symbols.
 	 * \param X_N2: a vector of modulated bits or symbols.
 	 */
-	void modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
+	void modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2)
 	{
 		if (this->N * this->n_frames != (int)X_N1.size())
 		{
@@ -227,7 +227,8 @@ public:
 	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param Y_N2: a filtered vector.
 	 */
-	void filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+	template <class A = std::allocator<R>>
+	void filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2)
 	{
 		if (this->N_mod * this->n_frames != (int)Y_N1.size())
 		{
@@ -262,7 +263,8 @@ public:
 	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param Y_N2: a demodulated vector.
 	 */
-	void demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+	template <class A = std::allocator<Q>>
+	void demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
@@ -298,7 +300,8 @@ public:
 	 * \param H_N:  channel gains.
 	 * \param Y_N2: a demodulated vector.
 	 */
-	void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
+	void demodulate_with_gains(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N, std::vector<Q,AQ>& Y_N2)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
@@ -347,7 +350,8 @@ public:
 	 *              demodulation technique).
 	 * \param Y_N3: a demodulated vector.
 	 */
-	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+	template <class A = std::allocator<Q>>
+	void demodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
@@ -397,8 +401,9 @@ public:
 	 *              demodulation technique).
 	 * \param Y_N3: a demodulated vector.
 	 */
-	void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,
-	                           const mipp::vector<Q>& Y_N2,       mipp::vector<Q>& Y_N3)
+	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
+	void demodulate_with_gains(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N,
+	                           const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{

@@ -3,18 +3,19 @@
 #include <algorithm>
 #include <cmath>
 
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_RA.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_RA<B, R>
 ::Decoder_RA(const int& K, const int& N, const Interleaver<int>& interleaver, int max_iter, const int n_frames,
              const std::string name)
-: Decoder<B,R>(K, N, n_frames, 1, name),
+: Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
   rep_count(N/K),
   max_iter(max_iter),
   Fw(N),
@@ -32,14 +33,14 @@ Decoder_RA<B, R>
 	{
 		std::stringstream message;
 		message << "'max_iter' has to be greater than 0 ('max_iter' = " << max_iter << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (N % K)
 	{
 		std::stringstream message;
 		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if ((int)interleaver.get_size() != N)
@@ -47,7 +48,7 @@ Decoder_RA<B, R>
 		std::stringstream message;
 		message << "'interleaver.get_size()' has to be equal to 'N' ('interleaver.get_size()' = "
 		        << interleaver.get_size() << ", 'N' = " << N << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	Xd[0].resize(N);
@@ -64,7 +65,7 @@ Decoder_RA<B, R>
 
 template <typename B, typename R>
 void Decoder_RA<B, R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	//set F, B and Td at 0
@@ -121,8 +122,7 @@ void Decoder_RA<B, R>
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	for (auto i = 0; i < this->K; i++)
-		V_K[i] = (U[i] > 0) ? 0 : 1;
+	tools::hard_decide(U.data(), V_K, this->K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;

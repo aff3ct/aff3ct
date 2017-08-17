@@ -2,25 +2,26 @@
 #include <sstream>
 #include <algorithm>
 
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_repetition.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_repetition<B,R>
 ::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding, const int n_frames,
                      const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, 1, name),
+: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name),
   rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K)
 {
 	if (N % K)
 	{
 		std::stringstream message;
 		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -56,28 +57,18 @@ void Decoder_repetition<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_soft_decode(sys.data(), par.data(), ext.data(), frame_id);
+	this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	// take the hard decision
-	auto vec_loop_size = (this->K / mipp::nElReg<R>()) * mipp::nElReg<R>();
-	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
-	{
-		const auto r_ext = mipp::Reg<R>(&ext[i]);
-		const auto r_s = mipp::cast<R,B>(r_ext) >> (sizeof(B) * 8 - 1);
-
-		r_s.store(&V_K[i]);
-	}
-	for (auto i = vec_loop_size; i < this->K; i++)
-		V_K[i] = ext[i] < 0;
+	tools::hard_decide(ext.data(), V_K, this->K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;

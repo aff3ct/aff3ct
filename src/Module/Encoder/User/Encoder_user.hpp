@@ -13,7 +13,7 @@ template <typename B = int>
 class Encoder_user : public Encoder<B>
 {
 private:
-	mipp::vector<mipp::vector<B>> codewords;
+	std::vector<std::vector<B>> codewords;
 	int cw_counter;
 
 public:

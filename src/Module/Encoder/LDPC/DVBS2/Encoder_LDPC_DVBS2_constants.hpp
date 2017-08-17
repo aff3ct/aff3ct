@@ -3,6 +3,10 @@
 
 #include <vector>
 
+namespace aff3ct
+{
+namespace module
+{
 class dvbs2_values
 {
 public:
@@ -953,5 +957,7 @@ public:
 		N_LINES  = 45;
 	}
 };
+}
+}
 
 #endif /* ENCODER_LDPC_DVBS2_CONSTANTS_HPP_ */

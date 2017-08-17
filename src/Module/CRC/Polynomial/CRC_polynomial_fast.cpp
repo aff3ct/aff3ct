@@ -6,8 +6,8 @@
 
 #include "CRC_polynomial_fast.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 CRC_polynomial_fast<B>
@@ -18,7 +18,7 @@ CRC_polynomial_fast<B>
 	{
 		std::stringstream message;
 		message << "'get_size()' has to be equal or smaller than 32 ('get_size()' = " << this->get_size() << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	// reverse the order of the bits in the bitpacked polynomial
@@ -44,10 +44,10 @@ void CRC_polynomial_fast<B>
 ::_build(const B *U_K1, B *U_K2, const int frame_id)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	throw runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
 #endif
 
-	Bit_packer<B>::pack(U_K1, this->buff_crc.data(), this->K);
+	tools::Bit_packer<B>::pack(U_K1, this->buff_crc.data(), this->K);
 
 	const auto data = (unsigned char*)this->buff_crc.data();
 	const auto crc  = this->compute_crc_v3((void*)data, this->K);
@@ -61,7 +61,7 @@ template <typename B>
 bool CRC_polynomial_fast<B>
 ::_check(const B *V_K, const int frame_id)
 {
-	Bit_packer<B>::pack(V_K, this->buff_crc.data(), this->K + this->get_size());
+	tools::Bit_packer<B>::pack(V_K, this->buff_crc.data(), this->K + this->get_size());
 	return this->_check_packed(this->buff_crc.data(), frame_id);
 }
 
@@ -70,7 +70,7 @@ bool CRC_polynomial_fast<B>
 ::_check_packed(const B *V_K, const int frame_id)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	throw runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
 #endif
 
 	const auto crc_size = this->get_size();
@@ -111,7 +111,7 @@ unsigned CRC_polynomial_fast<B>
 ::compute_crc_v1(const void* data, const int n_bits)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	throw runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
 #endif
 
 	unsigned crc = 0;
@@ -148,7 +148,7 @@ unsigned CRC_polynomial_fast<B>
 ::compute_crc_v2(const void* data, const int n_bits)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	throw runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
 #endif
 
 	unsigned crc = 0;
@@ -185,7 +185,7 @@ unsigned CRC_polynomial_fast<B>
 ::compute_crc_v3(const void* data, const int n_bits)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	throw runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
 #endif
 
 	unsigned crc = 0;

@@ -9,8 +9,8 @@ namespace module
 {
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive_CA<B,R,F,G>
-::Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc,
-                             const int n_frames, const std::string name)
+::Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
+                             CRC<B>& crc, const int n_frames, const std::string name)
 : Decoder_polar_SCL_naive<B,R,F,G>(K, N, L, frozen_bits, n_frames, name), crc(crc)
 {
 	if (crc.get_size() > K)
@@ -26,7 +26,7 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive_CA<B,R,F,G>
 ::select_best_path() 
 {
-	mipp::vector<B> U_test;
+	std::vector<B> U_test;
 	std::set<int> active_paths_before_crc = this->active_paths;
 	for (auto path : active_paths_before_crc)
 	{

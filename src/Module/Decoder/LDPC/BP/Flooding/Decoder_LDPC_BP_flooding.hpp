@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BP_FLOODING_HPP_
 #define DECODER_LDPC_BP_FLOODING_HPP_
 
-#include "../../../Decoder_SISO.hpp"
+#include "../../../Decoder_SISO_SIHO.hpp"
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct
@@ -9,7 +9,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_flooding : public Decoder_SISO<B,R>
+class Decoder_LDPC_BP_flooding : public Decoder_SISO_SIHO<B,R>
 {
 protected:
 	const int  n_ite;      // number of iterations to perform
@@ -25,14 +25,14 @@ protected:
 
 	const std::vector<unsigned> &info_bits_pos;
 
-	mipp::vector<unsigned char> n_variables_per_parity;
-	mipp::vector<unsigned char> n_parities_per_variable;
-	mipp::vector<unsigned int > transpose;
+	std::vector<unsigned char> n_variables_per_parity;
+	std::vector<unsigned char> n_parities_per_variable;
+	std::vector<unsigned int > transpose;
 
 	// data structures for iterative decoding
-	            mipp::vector<R>  Lp_N;   // a posteriori information
-	std::vector<mipp::vector<R>> C_to_V; // check    nodes to variable nodes messages
-	std::vector<mipp::vector<R>> V_to_C; // variable nodes to check    nodes messages
+	            std::vector<R>  Lp_N;   // a posteriori information
+	std::vector<std::vector<R>> C_to_V; // check    nodes to variable nodes messages
+	std::vector<std::vector<R>> V_to_C; // variable nodes to check    nodes messages
 
 	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
 	                         const tools::Sparse_matrix &H,
@@ -43,16 +43,15 @@ protected:
 	                         const std::string name = "Decoder_LDPC_BP_flooding");
 	virtual ~Decoder_LDPC_BP_flooding();
 
-	// soft decode
-	void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
-
-	// hard decoder
-	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	void _decode_siso      (const R *Y_N1, R *Y_N2, const int frame_id);
+	void __decode_siho     (const R *Y_N,           const int frame_id);
+	void _decode_siho      (const R *Y_N,  B *V_K,  const int frame_id);
+	void _decode_siho_coded(const R *Y_N,  B *V_N,  const int frame_id);
 
 	// BP functions for decoding
 	void BP_decode(const R *Y_N, const int frame_id);
 
-	virtual bool BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V) = 0;
+	virtual bool BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V) = 0;
 };
 }
 }

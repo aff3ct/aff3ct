@@ -106,8 +106,8 @@ void Modem_SCMA<B,R,Q,PSI>
 		{
 			unsigned idx = 0;
 
-			for (auto i = 0 ; i < 2 ; i++)
-				idx += (1 << i) * X_N1[f * this->N + 2 * j + i];
+			for (unsigned i = 0 ; i < 2 ; i++)
+				idx += (1 << i) * (unsigned)X_N1[f * this->N + 2 * j + i];
 
 			for (auto i = 0 ; i < 4 ; i++)
 			{
@@ -121,7 +121,7 @@ void Modem_SCMA<B,R,Q,PSI>
 	{
 		for (auto f = 0 ; f < this->n_frames ; f++)
 		{
-			unsigned idx = X_N1[f * this->N + this->N - 1];
+			unsigned idx = (unsigned)X_N1[f * this->N + this->N - 1];
 
 			for (auto i = 0 ; i < 4 ; i++)
 			{
@@ -284,21 +284,21 @@ void Modem_SCMA<B,R,Q,PSI>
 	}
 
 	// LLRs computation
-	Y_N2[0 * this->N + batch *2 +0] = std::log(guess[0][0] + guess[0][2]) - std::log(guess[0][1] + guess[0][3]);
-	Y_N2[1 * this->N + batch *2 +0] = std::log(guess[1][0] + guess[1][2]) - std::log(guess[1][1] + guess[1][3]);
-	Y_N2[2 * this->N + batch *2 +0] = std::log(guess[2][0] + guess[2][2]) - std::log(guess[2][1] + guess[2][3]);
-	Y_N2[3 * this->N + batch *2 +0] = std::log(guess[3][0] + guess[3][2]) - std::log(guess[3][1] + guess[3][3]);
-	Y_N2[4 * this->N + batch *2 +0] = std::log(guess[4][0] + guess[4][2]) - std::log(guess[4][1] + guess[4][3]);
-	Y_N2[5 * this->N + batch *2 +0] = std::log(guess[5][0] + guess[5][2]) - std::log(guess[5][1] + guess[5][3]);
+	Y_N2[0 * this->N + batch *2 +0] = (Q)(std::log(guess[0][0] + guess[0][2]) - std::log(guess[0][1] + guess[0][3]));
+	Y_N2[1 * this->N + batch *2 +0] = (Q)(std::log(guess[1][0] + guess[1][2]) - std::log(guess[1][1] + guess[1][3]));
+	Y_N2[2 * this->N + batch *2 +0] = (Q)(std::log(guess[2][0] + guess[2][2]) - std::log(guess[2][1] + guess[2][3]));
+	Y_N2[3 * this->N + batch *2 +0] = (Q)(std::log(guess[3][0] + guess[3][2]) - std::log(guess[3][1] + guess[3][3]));
+	Y_N2[4 * this->N + batch *2 +0] = (Q)(std::log(guess[4][0] + guess[4][2]) - std::log(guess[4][1] + guess[4][3]));
+	Y_N2[5 * this->N + batch *2 +0] = (Q)(std::log(guess[5][0] + guess[5][2]) - std::log(guess[5][1] + guess[5][3]));
 
 	if((this->N % 2) != 1 || batch != ((this->N /2 +1) -1))
 	{
-		Y_N2[0 * this->N + batch *2 +1] = std::log(guess[0][0] + guess[0][1]) - std::log(guess[0][2] + guess[0][3]);
-		Y_N2[1 * this->N + batch *2 +1] = std::log(guess[1][0] + guess[1][1]) - std::log(guess[1][2] + guess[1][3]);
-		Y_N2[2 * this->N + batch *2 +1] = std::log(guess[2][0] + guess[2][1]) - std::log(guess[2][2] + guess[2][3]);
-		Y_N2[3 * this->N + batch *2 +1] = std::log(guess[3][0] + guess[3][1]) - std::log(guess[3][2] + guess[3][3]);
-		Y_N2[4 * this->N + batch *2 +1] = std::log(guess[4][0] + guess[4][1]) - std::log(guess[4][2] + guess[4][3]);
-		Y_N2[5 * this->N + batch *2 +1] = std::log(guess[5][0] + guess[5][1]) - std::log(guess[5][2] + guess[5][3]);
+		Y_N2[0 * this->N + batch *2 +1] = (Q)(std::log(guess[0][0] + guess[0][1]) - std::log(guess[0][2] + guess[0][3]));
+		Y_N2[1 * this->N + batch *2 +1] = (Q)(std::log(guess[1][0] + guess[1][1]) - std::log(guess[1][2] + guess[1][3]));
+		Y_N2[2 * this->N + batch *2 +1] = (Q)(std::log(guess[2][0] + guess[2][1]) - std::log(guess[2][2] + guess[2][3]));
+		Y_N2[3 * this->N + batch *2 +1] = (Q)(std::log(guess[3][0] + guess[3][1]) - std::log(guess[3][2] + guess[3][3]));
+		Y_N2[4 * this->N + batch *2 +1] = (Q)(std::log(guess[4][0] + guess[4][1]) - std::log(guess[4][2] + guess[4][3]));
+		Y_N2[5 * this->N + batch *2 +1] = (Q)(std::log(guess[5][0] + guess[5][1]) - std::log(guess[5][2] + guess[5][3]));
 	}
 }
 
@@ -317,7 +317,7 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 	tmp = Y_N - (CB0 + CB1 + CB2);
 
-	phi = PSI(tmp, n0);
+	phi = PSI(tmp, (Q)n0);
 
 	return phi;
 }
@@ -345,7 +345,7 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 	tmp = Y_N - (H_N0 * CB0 + H_N1 * CB1 + H_N2 * CB2);
 
-	phi = PSI(tmp, n0);
+	phi = PSI(tmp, (Q)n0);
 
 	return phi;
 }

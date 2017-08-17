@@ -1,9 +1,6 @@
 #ifndef ENCODER_REPETITION_SYS_HPP_
 #define ENCODER_REPETITION_SYS_HPP_
 
-#include <vector>
-#include <mipp.h>
-
 #include "../Encoder_sys.hpp"
 
 namespace aff3ct

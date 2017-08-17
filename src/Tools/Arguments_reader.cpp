@@ -33,9 +33,7 @@ Arguments_reader
 }
 
 bool Arguments_reader
-::parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
-                  const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args,
-                  const bool display_warnings)
+::parse_arguments(const arg_map &required_args, const arg_map &optional_args, const bool display_warnings)
 {
 	std::vector<std::string> warns;
 	const bool result = parse_arguments(required_args, optional_args, warns);
@@ -48,29 +46,35 @@ bool Arguments_reader
 }
 
 bool Arguments_reader
-::parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
-                  const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args,
-                        std::vector<std::string>                                     &warnings)
+::parse_arguments(const arg_map &required_args, const arg_map &optional_args, std::vector<std::string> &warnings)
 {
-	unsigned short int n_req_arg = 0;
+	unsigned n_req_arg = 0;
 
 	this->clear_arguments();
 
+	// copy arguments locally to work on them
 	this->m_required_args = required_args;
 	this->m_optional_args = optional_args;
 
 	for (unsigned short i = 0; i < this->m_argv.size(); ++i)
 	{
+		// try to find word m_argv[i] inside the arguments list
 		bool valid_arg = false;
-		if (this->sub_parse_arguments(this->m_required_args, i))
+		if (auto n_found = this->sub_parse_arguments(this->m_required_args, i))
 		{
+			n_req_arg += n_found;
 			valid_arg = true;
-			n_req_arg++;
 		}
-		valid_arg = this->sub_parse_arguments(this->m_optional_args, i) || valid_arg;
+		else
+			valid_arg = this->sub_parse_arguments(this->m_optional_args, i);
 
 		// do not display warning when negative value
-		try { std::stoi(this->m_argv[i]); if (!valid_arg) valid_arg = true; }
+		try
+		{
+			std::stoi(this->m_argv[i]);
+			if (!valid_arg)
+				valid_arg = true;
+		}
 		catch (std::exception const&) {}
 
 		if (!valid_arg && this->m_argv[i][0] == '-')
@@ -80,8 +84,8 @@ bool Arguments_reader
 	return n_req_arg >= required_args.size();
 }
 
-bool Arguments_reader
-::sub_parse_arguments(std::map<std::vector<std::string>, std::vector<std::string>> &args, unsigned short pos_arg)
+unsigned Arguments_reader
+::sub_parse_arguments(arg_map &args, unsigned short pos_arg)
 {
 	if (pos_arg >= this->m_argv.size())
 	{
@@ -91,7 +95,7 @@ bool Arguments_reader
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto is_found = false;
+	auto n_found = 0;
 	for (auto it = args.begin(); it != args.end(); ++it)
 	{
 		if (it->first.size() <= 0)
@@ -114,6 +118,7 @@ bool Arguments_reader
 		unsigned total_length = 0;
 		for (auto i = 0; i < (int)it->first.size() -1; i++)
 			total_length += unsigned((it->first[i].length() == 1 ? 1 : 2) + it->first[i].length() + delimiter.length());
+
 		const auto last = it->first.size() -1;
 		total_length += unsigned((it->first[last].length() == 1 ? 1 : 2) + it->first[last].length());
 
@@ -130,38 +135,64 @@ bool Arguments_reader
 					if(pos_arg != (this->m_argv.size() -1))
 					{
 						this->m_args[it->first] = this->m_argv[pos_arg +1];
-						is_found = true;
+						n_found++;
 					}
 				}
 				else
 				{
 					this->m_args[it->first] = "";
-					is_found = true;
+					n_found++;
 				}
 			}
 
 			i++;
 		}
-		while( !is_found && i < (int)it->first.size());
+		while(i < (int)it->first.size());
 	}
 
-	return is_found;
+	return n_found;
 }
 
 bool Arguments_reader
-::exist_argument(const std::vector<std::string> &tags)
+::exist_argument(const std::vector<std::string> &tags) const
 {
 	return (this->m_args.find(tags) != this->m_args.end());
 }
 
 std::string Arguments_reader
-::get_argument(const std::vector<std::string> &tags)
+::get_argument(const std::vector<std::string> &tags) const
 {
-	return this->m_args[tags];
+	return (exist_argument(tags)) ? this->m_args.at(tags) : "";
+}
+
+int Arguments_reader
+::get_arg_int(const std::vector<std::string> &tags) const
+{
+	try
+	{
+		return std::stoi(get_argument(tags));
+	}
+	catch (std::exception&)
+	{
+		return 0;
+	}
+}
+
+float Arguments_reader
+::get_arg_float(const std::vector<std::string> &tags) const
+{
+	try
+	{
+		return std::stof(get_argument(tags));
+	}
+	catch (std::exception&)
+	{
+		return 0.0f;
+	}
 }
 
 void Arguments_reader
-::print_usage()
+::print_usage() const
 {
 	std::cout << "Usage: " << this->m_program_name;
 
@@ -182,7 +213,7 @@ void Arguments_reader
 }
 
 void Arguments_reader
-::print_usage(std::vector<std::vector<std::string>> arg_groups)
+::print_usage(arg_grp arg_groups) const
 {
 	Format head_format = Style::BOLD | Style::ITALIC | FG::Color::MAGENTA | FG::INTENSE;
 
@@ -291,7 +322,7 @@ void Arguments_reader
 }
 
 void Arguments_reader
-::print_usage(const std::vector<std::string> &tags, const std::vector<std::string> &values, const bool required)
+::print_usage(const std::vector<std::string> &tags, const std::vector<std::string> &values, const bool required) const
 {
 	Format arg_format = 0;
 
@@ -334,16 +365,16 @@ void Arguments_reader
 }
 
 bool Arguments_reader
-::check_arguments(std::vector<std::string> &error)
+::check_arguments(std::vector<std::string> &error) const
 {
 	for (auto it = this->m_args.begin(); it != this->m_args.end(); ++it)
 	{
 		std::string arg_error;
 
 		if (this->m_required_args.find(it->first) != this->m_required_args.end())
-			arg_error = this->check_argument(it->first, this->m_required_args);
+			try{ arg_error = this->check_argument(it->first, this->m_required_args); } catch(std::exception&) {}
 		else if (this->m_optional_args.find(it->first) != this->m_optional_args.end())
-			arg_error = this->check_argument(it->first, this->m_optional_args);
+			try{ arg_error = this->check_argument(it->first, this->m_optional_args); } catch(std::exception&) {}
 		else
 			for (auto i = 0; i < (int)it->first.size(); i++)
 				arg_error += print_tag(it->first[i]) + ((i < (int)it->first.size()-1)?", ":"");
@@ -356,14 +387,14 @@ bool Arguments_reader
 }
 
 std::string Arguments_reader
-::check_argument(const std::vector<std::string> &tags, std::map<std::vector<std::string>, std::vector<std::string>> &args)
+::check_argument(const std::vector<std::string> &tags, const arg_map &args) const
 {
 	std::string error;
 
 	// check if the input is positive
-	if (args[tags][0] == "positive_int")
+	if (args.at(tags)[0] == "positive_int")
 	{
-		const auto int_num = std::stoi(this->m_args[tags]);
+		const auto int_num = std::stoi(this->m_args.at(tags));
 		if (int_num < 0)
 		{
 			error = "The \"";
@@ -376,9 +407,9 @@ std::string Arguments_reader
 	}
 
 	// check if the input is positive
-	if (args[tags][0] == "positive_float")
+	if (args.at(tags)[0] == "positive_float")
 	{
-		const auto float_num = std::stof(this->m_args[tags]);
+		const auto float_num = std::stof(this->m_args.at(tags));
 		if (float_num < 0.f)
 		{
 			error = "The \"";
@@ -391,10 +422,10 @@ std::string Arguments_reader
 	}
 
 	// check if the input is in the list
-	if (args[tags].size() >= 3)
+	if (args.at(tags).size() >= 3)
 	{
-		auto entries = Arguments_reader::split(args[tags][2]);
-		auto cur_entry = this->m_args[tags];
+		auto entries = Arguments_reader::split(args.at(tags)[2]);
+		auto cur_entry = this->m_args.at(tags);
 		auto found_entry = false;
 		auto i = 0;
 		do
@@ -431,7 +462,7 @@ std::string Arguments_reader
 }
 
 std::vector<std::string> Arguments_reader
-::split(std::string str)
+::split(std::string str) const
 {
 	std::vector<std::string> str_splited;
 

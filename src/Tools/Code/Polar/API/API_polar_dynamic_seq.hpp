@@ -2,7 +2,6 @@
 #define API_POLAR_DYNAMIC_SEQ_HPP_
 
 #include <algorithm>
-#include <mipp.h>
 
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
@@ -15,12 +14,22 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_g0<R> G0, proto_h<B,R> H, proto_xo<B> XO>
+template <typename B = int32_t, typename R = float, proto_f   <  R> F   = f_LLR   <  R>,
+                                                    proto_g   <B,R> G   = g_LLR   <B,R>,
+                                                    proto_g0  <  R> G0  = g0_LLR  <  R>,
+                                                    proto_h   <B,R> H   = h_LLR   <B,R>,
+                                                    proto_xo  <B  > XO  = xo_STD  <B  >>
 class API_polar_dynamic_seq : public API_polar
 {
 public:
 	static constexpr int get_n_frames() { return 1; }
-	
+
+	template <typename T>
+	static bool isAligned(const T *ptr)
+	{
+		return true;
+	}
+
 	// -------------------------------------------------------------------------------------------------------------- f
 
 	template <int N_ELMTS = 0>
@@ -29,8 +38,8 @@ public:
 		f_seq<R, F>::apply(l_a, l_b, l_c, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static void f(mipp::vector<R> &l, const int off_l_a, const int off_l_b, const int off_l_c, const int n_elmts)
+	template <int N_ELMTS = 0, class A = std::allocator<R>>
+	static void f(std::vector<R,A> &l, const int off_l_a, const int off_l_b, const int off_l_c, const int n_elmts)
 	{
 		const R *__restrict l_a = l.data() + off_l_a;
 		const R *__restrict l_b = l.data() + off_l_b;
@@ -48,8 +57,8 @@ public:
 		g_seq<B, R, G>::apply(l_a, l_b, s_a, l_c, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static void g(const mipp::vector<B> &s, mipp::vector<R> &l, 
+	template <int N_ELMTS = 0, class AB = std::allocator<B>, class AR = std::allocator<R>>
+	static void g(const std::vector<B,AB> &s, std::vector<R,AR> &l,
 	              const int off_l_a, const int off_l_b, const int off_s_a, const int off_l_c, const int n_elmts)
 	{
 		const R *__restrict l_a = l.data() + off_l_a;
@@ -68,8 +77,8 @@ public:
 		g0_seq<R, G0>::apply(l_a, l_b, l_c, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static void g0(mipp::vector<R> &l, const int off_l_a, const int off_l_b, const int off_l_c , const int n_elmts)
+	template <int N_ELMTS = 0, class A = std::allocator<R>>
+	static void g0(std::vector<R,A> &l, const int off_l_a, const int off_l_b, const int off_l_c , const int n_elmts)
 	{
 		const R *__restrict l_a = l.data() + off_l_a;
 		const R *__restrict l_b = l.data() + off_l_b;
@@ -87,8 +96,8 @@ public:
 		gr_seq<B, R, G>::apply(l_a, l_b, s_a, l_c, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static void gr(const mipp::vector<B> &s, mipp::vector<R> &l, 
+	template <int N_ELMTS = 0, class AB = std::allocator<B>, class AR = std::allocator<R>>
+	static void gr(const std::vector<B,AB> &s, std::vector<R,AR> &l,
 	               const int off_l_a, const int off_l_b, const int off_s_a, const int off_l_c, const int n_elmts)
 	{
 		const R *__restrict l_a = l.data() + off_l_a;
@@ -107,8 +116,8 @@ public:
 		h_seq<B, R, H>::apply(l_a, s_a, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static void h(mipp::vector<B> &s, const mipp::vector<R> &l, const int off_l_a, const int off_s_a, 
+	template <int N_ELMTS = 0, class AB = std::allocator<B>, class AR = std::allocator<R>>
+	static void h(std::vector<B,AB> &s, const std::vector<R,AR> &l, const int off_l_a, const int off_s_a,
 	              const int n_elmts)
 	{
 		const R *__restrict l_a = l.data() + off_l_a;
@@ -125,8 +134,8 @@ public:
 		h0_seq<B>::apply(s_a, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static void h0(mipp::vector<B> &s, const int off_s_a, const int n_elmts)
+	template <int N_ELMTS = 0, class A = std::allocator<B>>
+	static void h0(std::vector<B,A> &s, const int off_s_a, const int n_elmts)
 	{
 		B *__restrict s_a = s.data() + off_s_a;
 
@@ -141,8 +150,8 @@ public:
 		rep_seq<B, R, H>::apply(l_a, s_a, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static void rep(mipp::vector<B> &s, const mipp::vector<R> &l, const int off_l_a, const int off_s_a, 
+	template <int N_ELMTS = 0, class AB = std::allocator<B>, class AR = std::allocator<R>>
+	static void rep(std::vector<B,AB> &s, const std::vector<R,AR> &l, const int off_l_a, const int off_s_a,
 	                const int n_elmts)
 	{
 		const R *__restrict l_a = l.data() + off_l_a;
@@ -159,8 +168,8 @@ public:
 		return spc_seq<B, R, H>::apply(l_a, s_a, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static bool spc(mipp::vector<B> &s, const mipp::vector<R> &l, const int off_l_a, const int off_s_a, 
+	template <int N_ELMTS = 0, class AB = std::allocator<B>, class AR = std::allocator<R>>
+	static bool spc(std::vector<B,AB> &s, const std::vector<R,AR> &l, const int off_l_a, const int off_s_a,
 	                const int n_elmts)
 	{
 		const R *__restrict l_a = l.data() + off_l_a;
@@ -178,8 +187,8 @@ public:
 		xo_seq<B, XO>::apply(s_a, s_b, s_c, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static void xo(mipp::vector<B> &s, const int off_s_a, const int off_s_b, const int off_s_c, const int n_elmts)
+	template <int N_ELMTS = 0, class A = std::allocator<B>>
+	static void xo(std::vector<B,A> &s, const int off_s_a, const int off_s_b, const int off_s_c, const int n_elmts)
 	{
 		const B *__restrict s_a = s.data() + off_s_a;
 		const B *__restrict s_b = s.data() + off_s_b;
@@ -196,11 +205,11 @@ public:
 		xo0_seq<B>::apply(s_b, s_c, n_elmts);
 	}
 
-	template <int N_ELMTS = 0>
-	static void xo0(mipp::vector<B> &s, const int off_s_b, const int off_s_c, const int n_elmts)
+	template <int N_ELMTS = 0, class A = std::allocator<B>>
+	static void xo0(std::vector<B,A> &s, const int off_s_b, const int off_s_c, const int n_elmts)
 	{
 		const B *__restrict s_b = s.data() + off_s_b;
-		      B *__restrict s_c = s.data() + off_s_c;	      
+		      B *__restrict s_c = s.data() + off_s_c;
 
 		xo0_seq<B>::apply(s_b, s_c, n_elmts);
 	}

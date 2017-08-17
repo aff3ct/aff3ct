@@ -5,8 +5,8 @@
 
 #include "Decoder_repetition_fast.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_repetition_fast<B,R>
@@ -19,7 +19,7 @@ Decoder_repetition_fast<B,R>
 		std::stringstream message;
 		message << "'K' has to be a multiple of 'mipp::nElReg<R>()' ('K' = " << K
 		        << ", 'mipp::nElReg<R>()' = " << mipp::nElReg<R>() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -31,7 +31,7 @@ Decoder_repetition_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition_fast<B,R>
-::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	for (auto i = 0; i < this->K; i += mipp::nElReg<R>())
 	{

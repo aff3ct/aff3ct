@@ -30,7 +30,7 @@ constexpr int static_level = 6; // 2^6 = 64
 template <typename B, typename R, class API_polar, int REV_D>
 struct Decoder_polar_SC_fast_sys_static
 {
-	static void decode(const tools::Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s,
+	static void decode(const tools::Pattern_polar_parser &polar_patterns, mipp::vector<B> &s,
 	                   mipp::vector<R> &l, const int off_l, const int off_s, int &node_id)
 	{
 		constexpr int reverse_depth = REV_D;
@@ -101,7 +101,7 @@ struct Decoder_polar_SC_fast_sys_static
 template <typename B, typename R, class API_polar>
 struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 {
-	static void decode(const tools::Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
+	static void decode(const tools::Pattern_polar_parser &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
 	                   const int off_l, const int off_s, int &node_id)
 	{
 		constexpr int reverse_depth = 0;
@@ -122,25 +122,25 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
-::Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames,
+::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames,
                             const std::string name)
-: Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
-  m             ((int)std::log2(N)),
-  l             (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
-  s             (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
-  s_bis         (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
-  frozen_bits   (frozen_bits),
-  polar_patterns(N,
-                 frozen_bits,
-                 {new tools::Pattern_polar_std,
-                  new tools::Pattern_polar_r0_left,
-                  new tools::Pattern_polar_r0,
-                  new tools::Pattern_polar_r1,
-                  new tools::Pattern_polar_rep_left,
-                  new tools::Pattern_polar_rep,
-                  new tools::Pattern_polar_spc},
-                 2,
-                 3)
+: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
+  m                ((int)std::log2(N)),
+  l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
+  s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
+  s_bis            (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
+  frozen_bits      (frozen_bits),
+  polar_patterns   (N,
+                    frozen_bits,
+                    {new tools::Pattern_polar_std,
+                     new tools::Pattern_polar_r0_left,
+                     new tools::Pattern_polar_r0,
+                     new tools::Pattern_polar_r1,
+                     new tools::Pattern_polar_rep_left,
+                     new tools::Pattern_polar_rep,
+                     new tools::Pattern_polar_spc},
+                    2,
+                    3)
 {
 	static_assert(sizeof(B) == sizeof(R), "");
 
@@ -167,30 +167,21 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 		        << k << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	if (m < static_level)
-	{
-		std::stringstream message;
-		message << "'m' has to be equal or greater than 'static_level' ('m' = " << m << ", 'static_level' = "
-		        << static_level << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 }
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
-::Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
+::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
                             const std::vector<tools::Pattern_polar_i*> polar_patterns,
                             const int idx_r0, const int idx_r1,
                             const int n_frames, const std::string name)
-: Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
-  m             ((int)std::log2(N)),
-  l             (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
-  s             (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
-  s_bis         (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
-  frozen_bits   (frozen_bits),
-  polar_patterns(N, frozen_bits, polar_patterns, idx_r0, idx_r1)
+: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
+  m                ((int)std::log2(N)),
+  l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
+  s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
+  s_bis            (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
+  frozen_bits      (frozen_bits),
+  polar_patterns   (N, frozen_bits, polar_patterns, idx_r0, idx_r1)
 {
 	static_assert(sizeof(B) == sizeof(R), "");
 
@@ -252,19 +243,67 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode()
 {
+	if (m < static_level)
+	{
+		std::stringstream message;
+		message << "'m' has to be equal or greater than 'static_level' ('m' = " << m << ", 'static_level' = "
+		        << static_level << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	int first_id = 0, off_l = 0, off_s = 0;
+	this->recursive_decode(off_l, off_s, m, first_id);
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SC_fast_sys<B,R,API_polar>
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+{
+	if (!API_polar::isAligned(Y_N))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N' is misaligned memory.");
+
+	if (!API_polar::isAligned(V_K))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'V_K' is misaligned memory.");
+
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	int first_id = 0, off_l = 0, off_s = 0;
-	this->recursive_decode(off_l, off_s, m, first_id);
+	this->_decode();
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SC_fast_sys<B,R,API_polar>
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+{
+	if (!API_polar::isAligned(Y_N))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N' is misaligned memory.");
+
+	if (!API_polar::isAligned(V_N))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'V_N' is misaligned memory.");
+
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode();
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store_coded(V_N);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;
@@ -387,6 +426,44 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			for (auto f = 0; f < n_frames; f++)
 				tools::fb_extract(this->polar_patterns.get_leaves_pattern_types(), this->s.data() + f * this->N,
 				                                                                   V_K            + f * this->K);
+	}
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SC_fast_sys<B,R,API_polar>
+::_store_coded(B *V_N)
+{
+	constexpr int n_frames = API_polar::get_n_frames();
+
+	if (n_frames == 1)
+		std::copy(this->s.begin(), this->s.begin() + this->N, V_N);
+	else
+	{
+		bool fast_deinterleave = false;
+#if defined(ENABLE_BIT_PACKING)
+		if (typeid(B) == typeid(signed char))
+		{
+			if (!(fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
+			                                                 (signed char*)s_bis.data(),
+			                                                 (int)this->N)))
+			{
+				std::stringstream message;
+				message << "Unsupported 'N' value for itransposition: 'N' has to be greater or equal to 128 for "
+				        << "SSE/NEON or to 256 for AVX ('N' = " << this->N << ").";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+			else
+				tools::Bit_packer<B>::unpack(this->s_bis.data(), V_N, this->N, n_frames);
+		}
+#endif
+		if (!fast_deinterleave)
+		{
+			// transpose without bit packing (vectorized)
+			std::vector<B*> frames(n_frames);
+			for (auto f = 0; f < n_frames; f++)
+				frames[f] = (B*)(V_N + f*this->N);
+			tools::Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->N);
+		}
 	}
 }
 }

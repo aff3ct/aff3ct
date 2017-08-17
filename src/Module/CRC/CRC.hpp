@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -81,7 +80,8 @@ public:
 	 * \param U_K: a vector (size = K - CRC<B>::size()) containing the information bits, adds "CRC<B>::size()" bits in
 	 *             U_K.
 	 */
-	void build(const mipp::vector<B>& U_K1, mipp::vector<B>& U_K2)
+	template <class A = std::allocator<B>>
+	void build(const std::vector<B,A>& U_K1, std::vector<B,A>& U_K2)
 	{
 		if (this->K * this->n_frames != (int)U_K1.size())
 		{
@@ -111,7 +111,8 @@ public:
 			             f);
 	}
 
-	void extract(const mipp::vector<B>& V_K1, mipp::vector<B>& V_K2)
+	template <class A = std::allocator<B>>
+	void extract(const std::vector<B,A>& V_K1, std::vector<B,A>& V_K2)
 	{
 		if ((this->K + this->get_size()) * this->n_frames != (int)V_K1.size())
 		{
@@ -150,7 +151,8 @@ public:
 	 *
 	 * \return true if the CRC is verified, false otherwise.
 	 */
-	bool check(const mipp::vector<B>& V_K, const int n_frames = -1)
+	template <class A = std::allocator<B>>
+	bool check(const std::vector<B,A>& V_K, const int n_frames = -1)
 	{
 		if (n_frames <= 0 && n_frames != -1)
 		{
@@ -192,7 +194,8 @@ public:
 	 *
 	 * \return true if the CRC is verified, false otherwise.
 	 */
-	bool check_packed(const mipp::vector<B>& V_K, const int n_frames = -1)
+	template <class A = std::allocator<B>>
+	bool check_packed(const std::vector<B,A>& V_K, const int n_frames = -1)
 	{
 		if (n_frames <= 0 && n_frames != -1)
 		{

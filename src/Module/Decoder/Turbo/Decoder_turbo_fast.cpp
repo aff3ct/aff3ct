@@ -4,12 +4,13 @@
 #include <iostream>
 #include <algorithm>
 
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_turbo_fast.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_turbo_fast<B,R>
@@ -17,8 +18,8 @@ Decoder_turbo_fast<B,R>
                      const int& N,
                      const int& n_ite,
                      const Interleaver<int> &pi,
-                     SISO<R> &siso_n,
-                     SISO<R> &siso_i,
+                     Decoder_SISO<R> &siso_n,
+                     Decoder_SISO<R> &siso_i,
                      const bool buffered_encoding,
                      const std::string name)
 : Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
@@ -50,35 +51,35 @@ void Decoder_turbo_fast<B,R>
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size;
-			Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->K);
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->K);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +this->K;
-			Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), p_size);
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), p_size);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +this->K + p_size;
-			Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
 
 			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 
 			// tails bit in the natural domain
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n/2;
-			Reorderer_static<R,n_frames>::apply(frames, &this->l_sn[this->K*n_frames], tail_n/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_sn[this->K*n_frames], tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +N_without_tb;
-			Reorderer_static<R,n_frames>::apply(frames, &this->l_pn[p_size*n_frames], tail_n/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_pn[p_size*n_frames], tail_n/2);
 
 			// tails bit in the interleaved domain
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n + tail_i/2;
-			Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n;
-			Reorderer_static<R,n_frames>::apply(frames, &this->l_pi[p_size*n_frames], tail_i/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_pi[p_size*n_frames], tail_i/2);
 		}
 		else
 		{
@@ -87,35 +88,35 @@ void Decoder_turbo_fast<B,R>
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size;
-			Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->K);
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->K);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +this->K;
-			Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), p_size);
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), p_size);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +this->K + p_size;
-			Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
 
 			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 
 			// tails bit in the natural domain
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n/2;
-			Reorderer_static<R,n_frames>::apply(frames, &this->l_sn[this->K*n_frames], tail_n/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_sn[this->K*n_frames], tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +N_without_tb;
-			Reorderer_static<R,n_frames>::apply(frames, &this->l_pn[p_size*n_frames], tail_n/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_pn[p_size*n_frames], tail_n/2);
 
 			// tails bit in the interleaved domain
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n + tail_i/2;
-			Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n;
-			Reorderer_static<R,n_frames>::apply(frames, &this->l_pi[p_size*n_frames], tail_i/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_pi[p_size*n_frames], tail_i/2);
 		}
 
 		std::fill(this->l_e1n.begin(), this->l_e1n.end(), (R)0);
@@ -126,7 +127,7 @@ void Decoder_turbo_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -153,7 +154,7 @@ void Decoder_turbo_fast<B,R>
 		          this->l_sen.begin() +  this->K             * n_frames);
 
 		// SISO in the natural domain
-		this->siso_n.soft_decode(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
+		this->siso_n.decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 
 		for (auto cb : this->callbacks_siso_n)
 		{
@@ -177,7 +178,7 @@ void Decoder_turbo_fast<B,R>
 			          this->l_sei.begin() +  this->K             * n_frames);
 
 			// SISO in the interleave domain
-			this->siso_i.soft_decode(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
+			this->siso_i.decode_siso(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
 
 			for (auto cb : this->callbacks_siso_i)
 			{
@@ -198,18 +199,7 @@ void Decoder_turbo_fast<B,R>
 
 			// compute the hard decision only if we are in the last iteration
 			if (ite == this->n_ite || stop)
-			{
-				const auto loop_size1 = (this->K * n_frames) / mipp::nElReg<R>();
-				for (auto i = 0; i < loop_size1; i++)
-				{
-					const auto r_post = mipp::Reg<R>(&this->l_e1n[i * mipp::nElReg<R>()]);
-					const auto r_dec  = mipp::cast<R,B>(r_post) >> (sizeof(B) * 8 - 1); // s[i] = (l_e1n[i] < 0);
-					r_dec.store(&this->s[i * mipp::nElReg<R>()]);
-				}
-				const auto loop_size2 = this->K * n_frames;
-				for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
-					this->s[i] = (this->l_e1n[i] < 0);
-			}
+				tools::hard_decide(this->l_e1n.data(), this->s.data(), this->K * n_frames);
 		}
 
 		ite++; // increment the number of iteration
@@ -242,7 +232,7 @@ void Decoder_turbo_fast<B,R>
 			std::vector<B*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = V_K + f*this->K;
-			Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
+			tools::Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
 		}
 		else
 		{
@@ -251,7 +241,7 @@ void Decoder_turbo_fast<B,R>
 			std::vector<B*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = V_K + f*this->K;
-			Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
+			tools::Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
 		}
 	}
 	else

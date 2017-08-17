@@ -1,15 +1,13 @@
-#include "Tools/Factory/Repetition/Factory_encoder_repetition.hpp"
-#include "Tools/Factory/Repetition/Factory_decoder_repetition.hpp"
-
 #include "Codec_repetition.hpp"
 
-using namespace aff3ct::module;
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_repetition<B,Q>
-::Codec_repetition(const parameters& params)
-: Codec<B,Q>(params)
+::Codec_repetition(const factory::Encoder_repetition::parameters &enc_params,
+                   const factory::Decoder_repetition::parameters &dec_params)
+: Codec<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params)
 {
 }
 
@@ -20,26 +18,17 @@ Codec_repetition<B,Q>
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec_repetition<B,Q>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_repetition<B,Q>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
-	return Factory_encoder_repetition<B>::build(this->params.encoder.type,
-	                                            this->params.code.K,
-	                                            this->params.code.N_code,
-	                                            this->params.encoder.buffered,
-	                                            this->params.simulation.inter_frame_level);
+	return factory::Encoder_repetition::build<B>(enc_par);
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Codec_repetition<B,Q>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_repetition<B,Q>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
-	return Factory_decoder_repetition<B,Q>::build(this->params.decoder.type,
-	                                              this->params.decoder.implem,
-	                                              this->params.code.K,
-	                                              this->params.code.N_code,
-	                                              this->params.encoder.buffered,
-	                                              this->params.simulation.inter_frame_level);
+	return factory::Decoder_repetition::build<B,Q>(dec_par);
 }
 
 // ==================================================================================== explicit template instantiation 

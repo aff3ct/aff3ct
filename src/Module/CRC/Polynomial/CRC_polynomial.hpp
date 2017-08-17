@@ -14,10 +14,10 @@ class CRC_polynomial : public CRC<B>
 {
 protected:
 	const static std::map<std::string, std::tuple<unsigned, int>> known_polynomials;
-	mipp::vector<B> polynomial;
-	unsigned        polynomial_packed;
-	int             poly_size;
-	mipp::vector<B> buff_crc;
+	std::vector<B> polynomial;
+	unsigned       polynomial_packed;
+	int            poly_size;
+	std::vector<B> buff_crc;
 
 public:
 	CRC_polynomial(const int K, std::string poly_key, const int size = 0, const int n_frames = 1,

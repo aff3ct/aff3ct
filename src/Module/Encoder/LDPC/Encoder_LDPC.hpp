@@ -2,7 +2,6 @@
 #define ENCODER_LDPC_HPP_
 
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
@@ -17,7 +16,7 @@ template <typename B = int>
 class Encoder_LDPC : public Encoder<B>
 {
 protected:
-	mipp::vector<B> tG; // the generator matrix
+	std::vector<B> tG; // the generator matrix
 
 protected:
 	Encoder_LDPC(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC");

@@ -2,14 +2,15 @@
 #include <algorithm>
 #include <cmath>
 #include <sstream>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Quantizer_fast.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename R, typename Q>
 Quantizer_fast<R,Q>
@@ -25,7 +26,7 @@ Quantizer_fast<R,Q>
 		std::stringstream message;
 		message << "'fixed_point_pos' has to be smaller than 'sizeof(Q)' * 8 ('fixed_point_pos' = " << fixed_point_pos
 		        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -65,14 +66,14 @@ Quantizer_fast<R,Q>
 	{
 		std::stringstream message;
 		message << "'fixed_point_pos' has to be greater than 0 ('fixed_point_pos' = " << fixed_point_pos << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (saturation_pos < 2)
 	{
 		std::stringstream message;
 		message << "'saturation_pos' has to be greater than 1 ('saturation_pos' = " << saturation_pos << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (fixed_point_pos > saturation_pos)
@@ -80,7 +81,7 @@ Quantizer_fast<R,Q>
 		std::stringstream message;
 		message << "'saturation_pos' has to be equal or greater than 'fixed_point_pos' ('saturation_pos' = "
 		        << saturation_pos << ", 'fixed_point_pos' = " << fixed_point_pos << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (sizeof(Q) * 8 <= (unsigned) fixed_point_pos)
@@ -88,21 +89,21 @@ Quantizer_fast<R,Q>
 		std::stringstream message;
 		message << "'fixed_point_pos' has to be smaller than 'sizeof(Q)' * 8 ('fixed_point_pos' = " << fixed_point_pos
 		        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (val_max > +(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)))
 	{
 		std::stringstream message;
 		message << "'val_max' value is invalid ('val_max' = " << val_max << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (val_min < -(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)))
 	{
 		std::stringstream message;
 		message << "'val_min' value is invalid ('val_min' = " << val_min << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -141,7 +142,7 @@ void Quantizer_fast<R,Q>
 ::process(const R *Y_N1, Q *Y_N2)
 {
 	std::string message = "Supports only 'float' to 'short' and 'float' to 'signed char' conversions.";
-	throw runtime_error(__FILE__, __LINE__, __func__, message);
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
 }
 
 namespace aff3ct
@@ -152,6 +153,12 @@ template<>
 void Quantizer_fast<float,short>
 ::process(const float *Y_N1, short *Y_N2)
 {
+	if (!mipp::isAligned(Y_N1))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' is misaligned memory.");
+
+	if (!mipp::isAligned(Y_N2))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N2' is misaligned memory.");
+
 	auto size = (unsigned)(this->N * this->n_frames);
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<short>()) * mipp::nElmtsPerRegister<short>();
 	vectorized_size = (vectorized_size / 2) * 2;
@@ -171,7 +178,7 @@ void Quantizer_fast<float,short>
 	}
 
 	for (unsigned i = vectorized_size; i < size; i++)
-		Y_N2[i] = (short)saturate((float)std::round((float)factor * Y_N1[i]), (float)val_min, (float)val_max);
+		Y_N2[i] = (short)tools::saturate((float)std::round((float)factor * Y_N1[i]), (float)val_min, (float)val_max);
 }
 }
 }
@@ -184,6 +191,12 @@ template<>
 void Quantizer_fast<float,signed char>
 ::process(const float *Y_N1, signed char *Y_N2)
 {
+	if (!mipp::isAligned(Y_N1))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' is misaligned memory.");
+
+	if (!mipp::isAligned(Y_N2))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N2' is misaligned memory.");
+
 	auto size = (unsigned)(this->N * this->n_frames);
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<signed char>()) * mipp::nElmtsPerRegister<signed char>();
 	vectorized_size = (vectorized_size / 4) * 4;
@@ -210,7 +223,7 @@ void Quantizer_fast<float,signed char>
 	}
 
 	for (unsigned i = vectorized_size; i < size; i++)
-		Y_N2[i] = (signed char)saturate((float)std::round((float)factor * Y_N1[i]), (float)val_min, (float)val_max);
+		Y_N2[i] = (signed char)tools::saturate((float)std::round((float)factor * Y_N1[i]), (float)val_min, (float)val_max);
 }
 }
 }

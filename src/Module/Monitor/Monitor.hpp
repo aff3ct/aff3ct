@@ -14,7 +14,6 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -145,7 +144,8 @@ public:
 	 * \param U: the original message (from the Source or the CRC).
 	 * \param V: the decoded message (from the Decoder).
 	 */
-	void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V)
+	template <class A = std::allocator<B>>
+	void check_errors(const std::vector<B,A>& U, const std::vector<B,A>& V)
 	{
 		if ((int)U.size() != this->size * this->n_frames)
 		{

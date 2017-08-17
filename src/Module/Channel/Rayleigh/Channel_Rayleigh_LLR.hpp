@@ -1,6 +1,8 @@
 #ifndef CHANNEL_RAYLEIGH_LLR_HPP_
 #define CHANNEL_RAYLEIGH_LLR_HPP_
 
+#include <vector>
+
 #include "Tools/Algo/Noise/Noise.hpp"
 #include "Tools/Algo/Noise/Standard/Noise_std.hpp"
 
@@ -16,7 +18,7 @@ class Channel_Rayleigh_LLR : public Channel<R> // flat Rayleigh fading channel
 private:
 	const bool complex;
 	const bool add_users;
-	mipp::vector<R> gains;
+	std::vector<R> gains;
 	tools::Noise<R> *noise_generator;
 
 public:

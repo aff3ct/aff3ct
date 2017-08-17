@@ -1,7 +1,7 @@
 #ifndef NOISE_HPP_
 #define NOISE_HPP_
 
-#include <mipp.h>
+#include <vector>
 
 namespace aff3ct
 {
@@ -19,9 +19,10 @@ public:
 	{
 	}
 
-	void generate(mipp::vector<R> &noise, const R sigma)
+	template <class A = std::allocator<R>>
+	void generate(std::vector<R,A> &noise, const R sigma)
 	{
-		this->generate(noise.data(), noise.size(), sigma);
+		this->generate(noise.data(), (unsigned)noise.size(), sigma);
 	}
 
 	virtual void set_seed(const int seed) = 0;

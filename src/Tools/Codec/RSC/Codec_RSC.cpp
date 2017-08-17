@@ -1,24 +1,22 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
-#include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 
 #include "Codec_RSC.hpp"
 
-using namespace aff3ct::module;
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q, typename QD>
 Codec_RSC<B,Q,QD>
-::Codec_RSC(const parameters& params)
-: Codec_SISO<B,Q>(params)
+::Codec_RSC(const factory::Encoder_RSC::parameters &enc_params,
+            const factory::Decoder_RSC::parameters &dec_params)
+: Codec_SISO<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params)
 {
-	auto encoder_RSC = Factory_encoder_RSC<B>::build("RSC",
-	                                                 this->params.code.K,
-	                                                 this->params.code.N_code,
-	                                                 this->params.encoder.buffered,
-	                                                 this->params.encoder.poly);
+	auto enc_cpy = enc_params;
+	enc_cpy.type = "RSC";
+
+	auto encoder_RSC = factory::Encoder_RSC::build<B>(enc_cpy);
 	trellis = encoder_RSC->get_trellis();
 	delete encoder_RSC;
 }
@@ -30,44 +28,29 @@ Codec_RSC<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-Encoder_RSC_sys<B>* Codec_RSC<B,Q,QD>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder_RSC_sys<B>* Codec_RSC<B,Q,QD>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
-	return Factory_encoder_RSC<B>::build(this->params.encoder.type,
-	                                     this->params.code.K,
-	                                     this->params.code.N_code,
-	                                     this->params.encoder.buffered,
-	                                     this->params.encoder.poly,
-	                                     std::cout,
-	                                     this->params.simulation.inter_frame_level);
+	return factory::Encoder_RSC::build<B>(enc_par, std::cout);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder_SISO<B,Q>* Codec_RSC<B,Q,QD>
-::build_decoder_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SISO_SIHO<B,Q>* Codec_RSC<B,Q,QD>
+::build_decoder_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
-	return Factory_decoder_RSC<B,Q,QD>::build(this->params.decoder.type,
-	                                          this->params.decoder.implem,
-	                                          this->params.code.K,
-	                                          trellis,
-	                                          this->params.decoder.max,
-	                                          this->params.decoder.simd_strategy,
-	                                          this->params.encoder.buffered,
-	                                          std::cout,
-	                                          1,
-	                                          this->params.simulation.inter_frame_level);
+	return factory::Decoder_RSC::build<B,Q,QD>(dec_par, trellis, std::cout);
 }
 
 template <typename B, typename Q, typename QD>
-SISO<Q>* Codec_RSC<B,Q,QD>
-::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SISO<Q>* Codec_RSC<B,Q,QD>
+::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return this->build_decoder_siso(tid, itl, crc);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder<B,Q>* Codec_RSC<B,Q,QD>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_RSC<B,Q,QD>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return this->build_decoder_siso(tid, itl, crc);
 }
@@ -76,40 +59,40 @@ template <typename B, typename Q, typename QD>
 void Codec_RSC<B,Q,QD>
 ::extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par)
 {
-	const auto K    = this->params.code.K;
-	const auto N    = this->params.code.N_code;
-	const auto tb_2 = this->params.code.tail_length / 2;
+	const auto K    = dec_par.K;
+	const auto N    = dec_par.N_cw;
+	const auto tb_2 = enc_par.tail_length / 2;
 
-	if ((int)Y_N.size() != N * this->params.simulation.inter_frame_level)
+	if ((int)Y_N.size() != N * dec_par.n_frames)
 	{
 		std::stringstream message;
 		message << "'Y_N.size()' has to be equal to 'N' * 'inter_frame_level' ('Y_N.size()' = " << Y_N.size()
-		        << ", 'N' = " << N << ", 'inter_frame_level' = " << this->params.simulation.inter_frame_level << ").";
+		        << ", 'N' = " << N << ", 'inter_frame_level' = " << dec_par.n_frames << ").";
 		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)sys.size() != (K + tb_2) * this->params.simulation.inter_frame_level)
+	if ((int)sys.size() != (K + tb_2) * dec_par.n_frames)
 	{
 		std::stringstream message;
 		message << "'sys.size()' has to be equal to ('K' + 'tb_2') * 'inter_frame_level' ('sys.size()' = " << sys.size()
 		        << ", 'K' = " << K << ", 'tb_2' = " << tb_2 << ", 'inter_frame_level' = "
-		        << this->params.simulation.inter_frame_level << ").";
+		        << dec_par.n_frames << ").";
 		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)par.size() != (K + tb_2) * this->params.simulation.inter_frame_level)
+	if ((int)par.size() != (K + tb_2) * dec_par.n_frames)
 	{
 		std::stringstream message;
 		message << "'par.size()' has to be equal to ('K' + 'tb_2') * 'inter_frame_level' ('par.size()' = " << par.size()
 		        << ", 'K' = " << K << ", 'tb_2' = " << tb_2 << ", 'inter_frame_level' = "
-		        << this->params.simulation.inter_frame_level << ").";
+		        << dec_par.n_frames << ").";
 		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	// extract systematic and parity information
-	for (auto f = 0; f < this->params.simulation.inter_frame_level; f++)
+	for (auto f = 0; f < dec_par.n_frames; f++)
 	{
-		if (this->params.encoder.buffered)
+		if (enc_par.buffered)
 		{
 			std::copy(Y_N.begin() + f * N,
 			          Y_N.begin() + f * N + K + tb_2,

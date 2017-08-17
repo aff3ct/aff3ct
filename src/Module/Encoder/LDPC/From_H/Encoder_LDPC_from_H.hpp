@@ -2,7 +2,6 @@
 #define ENCODER_LDPC_FROM_H_HPP_
 
 #include <vector>
-#include <mipp.h>
 
 #include "../Encoder_LDPC.hpp"
 

@@ -3,12 +3,11 @@
 
 #include <set>
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Algo/Tree/Binary_tree_metric.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "../../Decoder.hpp"
+#include "../../Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -18,22 +17,22 @@ template <typename B = int, typename R = float>
 class Contents_SCL
 {
 public:
-	mipp::vector<R> lambda;
-	mipp::vector<B> s;
-	B               is_frozen_bit;
+	std::vector<R> lambda;
+	std::vector<B> s;
+	bool           is_frozen_bit;
 
 	Contents_SCL(int size) : lambda(size), s(size), is_frozen_bit(0) {}
 	virtual ~Contents_SCL() {}
 };
 
 template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::proto_g<B,R> G = tools::g_LLR>
-class Decoder_polar_SCL_naive : public Decoder<B,R>
+class Decoder_polar_SCL_naive : public Decoder_SIHO<B,R>
 {
 protected:
 	const int m;           // graph depth
 	const R   metric_init; // init value of the metrics in the trees
 
-	const mipp::vector<B>& frozen_bits;
+	const std::vector<bool> &frozen_bits;
 
 	const int     L; // maximum paths number
 	std::set<int> active_paths;
@@ -42,14 +41,16 @@ protected:
 	std::vector<std::vector<tools::Binary_node<Contents_SCL<B,R>>*>> leaves_array;
 
 public:
-	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
+	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
 	                        const int n_frames = 1, const std::string name = "Decoder_polar_SCL_naive");
 	virtual ~Decoder_polar_SCL_naive();
 
 protected:
-	        void _load       (const R *Y_N                            );
-	        void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
-	virtual void _store      (              B *V_K                    ) const;
+	        void _load             (const R *Y_N                            );
+	        void _decode           (                                        );
+	        void _decode_siho      (const R *Y_N, B *V_K, const int frame_id);
+	        void _decode_siho_coded(const R *Y_N, B *V_N, const int frame_id);
+	virtual void _store            (              B *V,   bool coded = false) const;
 
 private:
 	void recursive_compute_llr        (      tools::Binary_node<Contents_SCL<B,R>>* node_cur, int depth);
@@ -66,10 +67,10 @@ private:
 protected:
 	virtual void select_best_path();
 
-	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SCL<B,R>>* node_curr, const int vector_size             );
-	void recursive_initialize_frozen_bits   (const tools::Binary_node<Contents_SCL<B,R>>* node_curr, const mipp::vector<B>& frozen_bits);
-	void recursive_store                    (const tools::Binary_node<Contents_SCL<B,R>>* node_curr, B *V_K, int &k                    ) const;
-	void recursive_deallocate_nodes_contents(      tools::Binary_node<Contents_SCL<B,R>>* node_curr                                    );
+	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SCL<B,R>>* node_curr, const int vector_size               );
+	void recursive_initialize_frozen_bits   (const tools::Binary_node<Contents_SCL<B,R>>* node_curr, const std::vector<bool>& frozen_bits);
+	void recursive_store                    (const tools::Binary_node<Contents_SCL<B,R>>* node_curr, B *V_K, int &k                      ) const;
+	void recursive_deallocate_nodes_contents(      tools::Binary_node<Contents_SCL<B,R>>* node_curr                                      );
 
 	void apply_f     (const tools::Binary_node<Contents_SCL<B,R>>* node_curr);
 	void apply_g     (const tools::Binary_node<Contents_SCL<B,R>>* node_curr);

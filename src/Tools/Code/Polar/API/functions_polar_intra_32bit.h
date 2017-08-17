@@ -2,7 +2,6 @@
 #define FUNCTIONS_POLAR_INTRA_32BIT_H_
 
 #include <algorithm>
-#include <mipp.h>
 
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"

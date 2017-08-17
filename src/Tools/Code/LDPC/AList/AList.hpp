@@ -2,8 +2,8 @@
 #define ALIST_HPP_
 
 #include <iostream>
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct
 {

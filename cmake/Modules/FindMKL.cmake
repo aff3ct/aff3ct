@@ -44,17 +44,31 @@ if(WIN32)
         set(CMAKE_FIND_LIBRARY_SUFFIXES _dll.lib)
     endif()
 else()
-    if(MKL_STATAIC)
-        set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+    if(APPLE)
+        if(MKL_STATAIC)
+            set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+        else()
+            set(CMAKE_FIND_LIBRARY_SUFFIXES .dylib)
+        endif()
     else()
-        set(CMAKE_FIND_LIBRARY_SUFFIXES .so)
+        if(MKL_STATAIC)
+            set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+        else()
+            set(CMAKE_FIND_LIBRARY_SUFFIXES .so)
+        endif()
     endif()
 endif()
 
 # MKL is composed by four layers: Interface, Threading, Computational and RTL
-set(MKL_LIBRARIES_PATH 
-    # ${MKL_ROOT}/lib/ia32/
-    ${MKL_ROOT}/lib/intel64/)
+if(APPLE)
+    set(MKL_LIBRARIES_PATH 
+        # ${MKL_ROOT}/lib/ia32/
+        ${MKL_ROOT}/lib/)
+else()
+    set(MKL_LIBRARIES_PATH 
+        # ${MKL_ROOT}/lib/ia32/
+        ${MKL_ROOT}/lib/intel64/)
+endif()
 
 set(INTEL_LIBRARIES_PATH 
     # ${INTEL_ROOT}/lib/ia32/

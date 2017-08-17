@@ -1,7 +1,7 @@
 #ifndef CODEC_SISO_HPP_
 #define CODEC_SISO_HPP_
 
-#include "Module/Decoder/SISO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 #include "Codec.hpp"
 
@@ -13,8 +13,8 @@ template <typename B = int, typename Q = float>
 class Codec_SISO : public Codec<B,Q>
 {
 public:
-	Codec_SISO(const parameters& params)
-	: Codec<B,Q>(params)
+	Codec_SISO(const factory::Encoder::parameters &enc_params, const factory::Decoder::parameters &dec_params)
+	: Codec<B,Q>(enc_params, dec_params)
 	{
 	}
 
@@ -22,8 +22,8 @@ public:
 	{
 	}
 
-	virtual module::SISO<Q>* build_siso(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                             module::CRC        <B  >* crc = nullptr) = 0;
+	virtual module::Decoder_SISO<Q>* build_siso(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                     module::CRC        <B  >* crc = nullptr) = 0;
 
 	virtual void extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par) = 0;
 };

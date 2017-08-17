@@ -2,8 +2,6 @@
 #define ENCODER_TURBO_LEGACY_HPP_
 
 #include <vector>
-#include <mipp.h>
-
 #include <string>
 
 #include "../Encoder.hpp"
@@ -20,10 +18,10 @@ class Encoder_turbo_legacy : public Encoder<B>
 protected:
 	const Interleaver<int> &pi; // the interleaver
 
-	Encoder_sys <B> &sub_enc; // sub encoder
-	mipp::vector<B>  U_K_i;   // internal buffer for the systematic bits in the interleaved domain
-	mipp::vector<B>  X_N_n;   // internal buffer for the encoded    bits in the natural     domain
-	mipp::vector<B>  X_N_i;   // internal buffer for the encoded    bits in the interleaved domain
+	Encoder_sys<B> &sub_enc; // sub encoder
+	std::vector<B>  U_K_i;   // internal buffer for the systematic bits in the interleaved domain
+	std::vector<B>  X_N_n;   // internal buffer for the encoded    bits in the natural     domain
+	std::vector<B>  X_N_i;   // internal buffer for the encoded    bits in the interleaved domain
 
 public:
 	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<int> &pi, Encoder_sys<B> &sub_enc,

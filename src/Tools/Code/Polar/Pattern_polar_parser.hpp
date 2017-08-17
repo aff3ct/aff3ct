@@ -13,7 +13,6 @@
 #include <utility>
 #include <vector>
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
@@ -27,13 +26,12 @@ namespace tools
  * \brief Parses a polar code (represented as a tree) and returns a simplified tree with specialized nodes and tree
  *        cuts when possible.
  */
-template <typename B = int>
 class Pattern_polar_parser
 {
 protected:
 	const int                            N;             /*!< Codeword size. */
 	const int                            m;             /*!< Tree depth. */
-	const mipp::vector<B>               &frozen_bits;   /*!< Vector of frozen bits (true if frozen, false otherwise). */
+	const std::vector<bool>             &frozen_bits;   /*!< Vector of frozen bits (true if frozen, false otherwise). */
 	const std::vector<Pattern_polar_i*>  patterns;      /*!< Vector of patterns. */
 	const Pattern_polar_i               *pattern_rate0; /*!< Terminal pattern when the bit is frozen. */
 	const Pattern_polar_i               *pattern_rate1; /*!< Terminal pattern when the bit is an information bit. */
@@ -52,7 +50,7 @@ public:
 	 * \param pattern_rate1: terminal pattern when the bit is an information bit.
 	 */
 	Pattern_polar_parser(const int& N,
-	                     const mipp::vector<B>& frozen_bits,
+	                     const std::vector<bool> &frozen_bits,
 	                     const std::vector<Pattern_polar_i*> patterns,
 	                     const Pattern_polar_i *pattern_rate0,
 	                     const Pattern_polar_i *pattern_rate1);
@@ -67,7 +65,7 @@ public:
 	 * \param pattern_rate1_id: id of the terminal pattern when the bit is an info. bit (id in the patterns vector).
 	 */
 	Pattern_polar_parser(const int& N,
-	                     const mipp::vector<B>& frozen_bits,
+	                     const std::vector<bool>& frozen_bits,
 	                     const std::vector<Pattern_polar_i*> patterns,
 	                     const int pattern_rate0_id,
 	                     const int pattern_rate1_id);
@@ -103,7 +101,10 @@ public:
 	 *
 	 * \return the type of the node.
 	 */
-	inline polar_node_t get_node_type(const int node_id) const;
+	inline polar_node_t get_node_type(const int node_id) const
+	{
+		return (polar_node_t)pattern_types[node_id];
+	}
 
 	/*!
 	 * \brief Check if a node type exists in the the tree.
@@ -113,7 +114,35 @@ public:
 	 *
 	 * \return true if the node type exists, false otherwise.
 	 */
-	inline bool exist_node_type(const polar_node_t node_type, const int rev_depth = -1) const;
+	inline bool exist_node_type(const polar_node_t node_type, const int rev_depth = -1) const
+	{
+		if (rev_depth <= 0)
+		{
+			if (node_type == polar_node_t::RATE_0) return true;
+			if (node_type == polar_node_t::RATE_1) return true;
+		}
+
+		for (auto i = 0; i < (int)patterns.size(); i++)
+			if (patterns[i]->type() == node_type)
+			{
+				if (rev_depth == -1)
+				{
+					return true;
+				}
+				else
+				{
+					auto min_lvl = patterns[i]->get_min_lvl();
+					auto max_lvl = patterns[i]->get_max_lvl();
+
+					if (rev_depth >= min_lvl && (rev_depth <= max_lvl || max_lvl == -1))
+						return true;
+					else
+						return false;
+				}
+			}
+
+		return false;
+	}
 
 	/*!
 	 * \brief Release the polar patterns given in the constructor.
@@ -127,7 +156,5 @@ private:
 };
 }
 }
-
-#include "Pattern_polar_parser.hxx"
 
 #endif /* PATTERN_POLAR_PARSER_HPP */

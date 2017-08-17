@@ -1,7 +1,9 @@
 #ifndef DECODER_LDPC_BP_LAYERED_ONMS_INTER_HPP_
 #define DECODER_LDPC_BP_LAYERED_ONMS_INTER_HPP_
 
-#include "../../../../Decoder_SISO.hpp"
+#include <mipp.h>
+
+#include "../../../../Decoder_SISO_SIHO.hpp"
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct
@@ -9,7 +11,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_layered_ONMS_inter : public Decoder_SISO<B,R>
+class Decoder_LDPC_BP_layered_ONMS_inter : public Decoder_SISO_SIHO<B,R>
 {
 private:
 	const float normalize_factor;
@@ -36,7 +38,7 @@ protected:
 	std::vector<mipp::vector<mipp::Reg<R>>> branches;
 
 	mipp::vector<mipp::Reg<R>> Y_N_reorderered;
-	mipp::vector<mipp::Reg<B>> V_K_reorderered;
+	mipp::vector<mipp::Reg<B>> V_reorderered;
 
 public:
 	Decoder_LDPC_BP_layered_ONMS_inter(const int &K, const int &N, const int& n_ite,
@@ -51,13 +53,11 @@ public:
 	virtual ~Decoder_LDPC_BP_layered_ONMS_inter();
 
 protected:
-	// soft decode
-	void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
-
-	// hard decoder (load -> decode -> store)
-	void _load       (const R *Y_N,         const int frame_id);
-	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
-	void _store      (              B *V_K, const int frame_id);
+	void _load             (const R *Y_N,           const int frame_id);
+	void _decode_siso      (const R *Y_N1, R *Y_N2, const int frame_id);
+	void __decode_siho     (const R *Y_N,           const int frame_id);
+	void _decode_siho      (const R *Y_N,  B *V_K,  const int frame_id);
+	void _decode_siho_coded(const R *Y_N,  B *V_N,  const int frame_id);
 
 	// BP functions for decoding
 	template <int F = 1>

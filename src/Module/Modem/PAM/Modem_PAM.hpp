@@ -2,7 +2,6 @@
 #define MODEM_PAM_HPP_
 
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Math/max.h"
 
@@ -20,7 +19,7 @@ private:
 	const int nbr_symbols;
 	const R sqrt_es;
 	const bool disable_sig2;
-	mipp::vector<R> constellation;
+	std::vector<R> constellation;
 
 public:
 	Modem_PAM(const int N, const R sigma = (R)1, const int bits_per_symbol = 1, const bool disable_sig2 = false,

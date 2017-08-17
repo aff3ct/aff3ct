@@ -10,7 +10,6 @@
 
 #include <vector>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -74,7 +73,8 @@ public:
 	 * \param Y_N1: a vector of floating-point data.
 	 * \param Y_N2: a vector of quantized data (fixed-point representation).
 	 */
-	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+	template <class AR = std::allocator<R>, class AQ = std::allocator<Q>>
+	void process(const std::vector<R,AR>& Y_N1, std::vector<Q,AQ>& Y_N2)
 	{
 		if (this->N * this->n_frames != (int)Y_N1.size())
 		{

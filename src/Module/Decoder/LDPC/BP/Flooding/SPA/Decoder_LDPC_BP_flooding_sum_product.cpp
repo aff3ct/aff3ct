@@ -5,13 +5,14 @@
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_sum_product.hpp"
+
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_sum_product<B,R>
 ::Decoder_LDPC_BP_flooding_sum_product(const int &K, const int &N, const int& n_ite,
-                                       const Sparse_matrix &H,
+                                       const tools::Sparse_matrix &H,
                                        const std::vector<unsigned> &info_bits_pos,
                                        const bool enable_syndrome,
                                        const int syndrome_depth,
@@ -21,7 +22,7 @@ Decoder_LDPC_BP_flooding_sum_product<B,R>
   values(H.get_cols_max_degree())
 {
 	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
-		throw runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
 }
 
 template <typename B, typename R>
@@ -33,7 +34,7 @@ Decoder_LDPC_BP_flooding_sum_product<B,R>
 // log sum-product implementation
 template <typename B, typename R>
 bool Decoder_LDPC_BP_flooding_sum_product<B,R>
-::BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V)
+::BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V)
 {
 	// beginning of the iteration upon all the matrix lines
 	R *C_to_V_ptr = C_to_V.data();

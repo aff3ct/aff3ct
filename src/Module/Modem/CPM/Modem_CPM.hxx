@@ -98,13 +98,13 @@ void Modem_CPM<B,R,Q,MAX>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
 	// mapper
-	mipp::vector<SIN> mapped_frame(n_sy);
+	std::vector<SIN> mapped_frame(n_sy);
 
 	for (int i=0; i < n_sy; i++)
 		mapped_frame[i] = cpm.binary_to_transition[cpe.merge_bits(X_N1+i*cpm.n_b_per_s, cpm.n_b_per_s, true)];
 
 	// continuous phase encoder
-	mipp::vector<SIN> encoded_frame(n_sy_tl);
+	std::vector<SIN> encoded_frame(n_sy_tl);
 	cpe.encode(mapped_frame, encoded_frame);
 
 	// memoryless modulation (attributing complex waveforms to symbols)
@@ -169,7 +169,7 @@ void Modem_CPM<B,R,Q,MAX>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	mipp::vector<R> phase_response(cpm.L*cpm.s_factor);
+	std::vector<R> phase_response(cpm.L*cpm.s_factor);
 
 	// calculate the different phase responses
 	for (auto s = 0; s < cpm.L * cpm.s_factor; s++)
@@ -183,8 +183,8 @@ void Modem_CPM<B,R,Q,MAX>
 		auto allowed_wa         = cpm.allowed_wave_forms[wa];
 		auto tilted_phase_part1 = (R)(2 * M_PI * cpm_h * (allowed_wa & p_mask));
 
-		mipp::vector<R> tilted_phase_part2(cpm.s_factor, (R)0);
-		mipp::vector<R> tilted_phase_part3(cpm.s_factor, (R)0);
+		std::vector<R> tilted_phase_part2(cpm.s_factor, (R)0);
+		std::vector<R> tilted_phase_part3(cpm.s_factor, (R)0);
 
 		for (auto l = 0; l < cpm.L; l++)
 		{

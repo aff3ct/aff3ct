@@ -11,7 +11,7 @@ namespace module
 {
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
-::Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
+::Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
                                 CRC<B>& crc, const int n_frames, const std::string name)
 : Decoder_polar_SCL_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, n_frames, name),
   fast_store(false), crc(crc), U_test(K)
@@ -27,7 +27,7 @@ Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
-::Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
+::Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
                                 const std::vector<tools::Pattern_polar_i*> polar_patterns,
                                 const int idx_r0, const int idx_r1,
                                 CRC<B>& crc, const int n_frames, const std::string name)

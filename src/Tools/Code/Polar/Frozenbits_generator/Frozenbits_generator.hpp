@@ -10,7 +10,6 @@
 
 #include <sstream>
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -22,7 +21,6 @@ namespace tools
  * \class Frozenbits_generator
  * \brief Determines the frozen bit positions in a frame.
  */
-template <typename B = int>
 class Frozenbits_generator
 {
 protected:
@@ -30,7 +28,7 @@ protected:
 	const int N; /*!< Codeword size (or frame size). */
 	float sigma; /*!< The AWGN channel sigma value. */
 
-	std::vector<int> best_channels; /*!< The best channels in a codeword sorted by descending order. */
+	std::vector<uint32_t> best_channels; /*!< The best channels in a codeword sorted by descending order. */
 
 public:
 	/*!
@@ -78,7 +76,7 @@ public:
 	 *
 	 * \param frozen_bits: output vector of frozen bits.
 	 */
-	void generate(mipp::vector<B> &frozen_bits)
+	void generate(std::vector<bool> &frozen_bits)
 	{
 		if (frozen_bits.size() != (unsigned)N)
 		{
@@ -91,9 +89,9 @@ public:
 		this->evaluate();
 
 		// init frozen_bits vector, true means frozen bits, false means information bits
-		std::fill(frozen_bits.begin(), frozen_bits.end(), (B)1);
+		std::fill(frozen_bits.begin(), frozen_bits.end(), true);
 		for (auto i = 0; i < K; i++) 
-			frozen_bits[best_channels[i]] = (B)0;
+			frozen_bits[best_channels[i]] = false;
 	}
 
 	/*!
@@ -101,7 +99,7 @@ public:
 	 *
 	 * \return a vector of the best channels.
 	 */
-	const std::vector<int>& get_best_channels() const
+	const std::vector<uint32_t>& get_best_channels() const
 	{
 		return best_channels;
 	}

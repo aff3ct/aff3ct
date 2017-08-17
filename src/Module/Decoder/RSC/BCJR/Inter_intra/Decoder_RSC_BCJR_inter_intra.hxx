@@ -79,7 +79,7 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_inter_intra<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext, const int n_frames)
+::decode_siso(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext, const int n_frames)
 {
 	if (n_frames != -1 && n_frames <= 0)
 	{
@@ -126,13 +126,22 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	SISO<R>::soft_decode(sys.data(), par.data(), ext.data(), real_n_frames);
+	Decoder_SISO<R>::decode_siso(sys.data(), par.data(), ext.data(), real_n_frames);
 }
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_inter_intra<B,R>
-::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
+	if (!mipp::isAligned(sys))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'sys' is misaligned memory.");
+
+	if (!mipp::isAligned(par))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'par' is misaligned memory.");
+
+	if (!mipp::isAligned(ext))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'ext' is misaligned memory.");
+
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );
 	this->compute_beta_ext(sys, ext);

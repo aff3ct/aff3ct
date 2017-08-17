@@ -11,7 +11,6 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -72,7 +71,8 @@ public:
 	 *
 	 * \param U_K: a vector of bits to fill.
 	 */
-	void generate(mipp::vector<B>& U_K)
+	template <class A = std::allocator<B>>
+	void generate(std::vector<B,A>& U_K)
 	{
 		if (this->K * this->n_frames != (int)U_K.size())
 		{

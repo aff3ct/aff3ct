@@ -8,19 +8,19 @@
 
 #include "Encoder_LDPC.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_LDPC<B>
 ::Encoder_LDPC(const int K, const int N, const int n_frames, const std::string name)
-: Encoder<B>(K, N, n_frames, name), tG(N * K, 0)
+: Encoder<B>(K, N, n_frames, name)
 {
 }
 
 template <typename B>
 Encoder_LDPC<B>
-::Encoder_LDPC(const int K, const int N, const Sparse_matrix &G, const int n_frames,
+::Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const int n_frames,
                const std::string name)
 : Encoder<B>(K, N, n_frames, name), tG(N * K, 0)
 {
@@ -29,7 +29,7 @@ Encoder_LDPC<B>
 		std::stringstream message;
 		message << "The built G matrix has a dimension 'K' different than the given one ('K' = " << K
 		        << ", 'G.get_n_cols()' = " << G.get_n_cols() << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (N != (int)G.get_n_rows())
@@ -37,12 +37,12 @@ Encoder_LDPC<B>
 		std::stringstream message;
 		message << "The built G matrix has a dimension 'N' different than the given one ('N' = " << N
 		        << ", 'G.get_n_rows()' = " << G.get_n_rows() << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	auto CN_to_VN = G.get_col_to_rows();
 
-	mipp::vector<B> full_G(K * N,0);
+	std::vector<B> full_G(K * N,0);
 	for (auto i = 0; i < K; i++)
 		for (size_t j = 0; j < CN_to_VN[i].size(); ++j)
 			full_G[i * N + CN_to_VN[i][j]] = 1;
@@ -65,7 +65,7 @@ void Encoder_LDPC<B>
 		std::stringstream message;
 		message << "'info_bits_pos.size()' has to be equal to 'K' ('info_bits_pos.size()' = " << info_bits_pos.size()
 		        << ", 'K' = " << this->K << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	std::iota(info_bits_pos.begin(), info_bits_pos.begin() + this->K, 0);

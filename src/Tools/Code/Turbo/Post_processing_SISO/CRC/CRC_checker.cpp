@@ -1,11 +1,11 @@
 #include "CRC_checker.hpp"
 
-using namespace aff3ct::module;
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename R>
 CRC_checker<B,R>
-::CRC_checker(CRC<B> &crc, const int start_crc_check_ite, const int simd_inter_frame_level)
+::CRC_checker(module::CRC<B> &crc, const int start_crc_check_ite, const int simd_inter_frame_level)
 : Post_processing_SISO<B,R>(),
   start_crc_check_ite   (start_crc_check_ite   ),
   simd_inter_frame_level(simd_inter_frame_level),
@@ -46,32 +46,6 @@ bool CRC_checker<B,R>
 	}
 
 	return false;
-}
-
-namespace aff3ct
-{
-namespace tools
-{
-template <>
-bool CRC_checker<int64_t, double>
-::siso_n(const int ite,
-         const mipp::vector<double >& sys,
-               mipp::vector<double >& ext,
-               mipp::vector<int64_t>& s)
-{
-	if (ite >= start_crc_check_ite)
-	{
-		// compute the hard decision (for the CRC)
-		const auto loop_size = (int)s.size();
-		for (auto i = 0; i < loop_size; i++)
-			s[i] = (sys[i] + ext[i]) < 0;
-
-		return crc.check(s, simd_inter_frame_level);
-	}
-
-	return false;
-}
-}
 }
 
 // ==================================================================================== explicit template instantiation 

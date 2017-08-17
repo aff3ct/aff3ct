@@ -9,7 +9,7 @@
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "../../Decoder.hpp"
+#include "../../Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -27,25 +27,25 @@ template <typename B = int, typename R = float,
                                                                tools::g0_LLR<  R>,
                                                                tools::h_LLR <B,R>,
                                                                tools::xo_STD<B  >>>
-class Decoder_polar_SC_fast_sys : public Decoder<B,R>
+class Decoder_polar_SC_fast_sys : public Decoder_SIHO<B,R>
 {
 	friend Decoder_polar_ASCL_fast_CA_sys    <B,R,API_polar>;
 	friend Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>;
 
 protected:
-	const int             m;            // graph depth
-	      mipp::vector<R> l;            // lambda, LR or LLR
-	      mipp::vector<B> s;            // bits, partial sums
-	      mipp::vector<B> s_bis;        // bits, partial sums
-	const mipp::vector<B> &frozen_bits; // frozen bits
+	const int                m;            // graph depth
+	      mipp::vector<R   > l;            // lambda, LR or LLR
+	      mipp::vector<B   > s;            // bits, partial sums
+	      mipp::vector<B   > s_bis;        // bits, partial sums
+	const  std::vector<bool> &frozen_bits; // frozen bits
 
-	const tools::Pattern_polar_parser<B> polar_patterns;
+	const tools::Pattern_polar_parser polar_patterns;
 
 public:
-	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
+	Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
 	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
 
-	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
+	Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
 	                          const std::vector<tools::Pattern_polar_i*> polar_patterns,
 	                          const int idx_r0, const int idx_r1,
 	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
@@ -53,9 +53,12 @@ public:
 	virtual ~Decoder_polar_SC_fast_sys();
 
 protected:
-	        void _load       (const R *Y_N                            );
-	virtual void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
-	        void _store      (              B *V_K                    );
+	        void _load             (const R *Y_N                            );
+	virtual void _decode           (                                        );
+	        void _decode_siho      (const R *Y_N, B *V_K, const int frame_id);
+	        void _decode_siho_coded(const R *Y_N, B *V_N, const int frame_id);
+	        void _store            (              B *V_K                    );
+	        void _store_coded      (              B *V_N                    );
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id);
 };

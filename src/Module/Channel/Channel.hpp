@@ -12,7 +12,6 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -38,7 +37,7 @@ protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
 	      R   sigma; /*!< Sigma^2, the noise variance */
 
-	mipp::vector<R> noise;
+	std::vector<R> noise;
 
 public:
 	/*!
@@ -83,7 +82,7 @@ public:
 		return this->sigma;
 	}
 
-	const mipp::vector<R>& get_noise() const
+	const std::vector<R>& get_noise() const
 	{
 		return noise;
 	}
@@ -106,7 +105,8 @@ public:
 	 * \param X_N: a perfectly clear message.
 	 * \param Y_N: a noisy signal.
 	 */
-	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+	template <class A = std::allocator<R>>
+	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N)
 	{
 		if (X_N.size() != Y_N.size())
 		{
@@ -150,7 +150,8 @@ public:
 	 * \param Y_N: a noisy signal.
 	 * \param H_N: the channel gains.
 	 */
-	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
+	template <class A = std::allocator<R>>
+	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, std::vector<R,A>& H_N)
 	{
 		if (X_N.size() != Y_N.size() || Y_N.size() != H_N.size())
 		{

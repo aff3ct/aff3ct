@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <iostream>
-#include <mipp.h>
 
 #include "Encoder_RSC_generic_sys.hpp"
 

@@ -42,7 +42,7 @@ private:
 		T* buffer = (T*)trans.get_data_ptr();
 		int length = trans.get_data_length() / sizeof(T);
 
-		mipp::vector<T> data_in(length);
+		std::vector<T> data_in(length);
 		std::copy(buffer, buffer + length, data_in.begin());
 
 		// display input data

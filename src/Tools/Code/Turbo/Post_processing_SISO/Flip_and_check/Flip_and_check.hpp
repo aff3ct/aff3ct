@@ -20,6 +20,7 @@ private:
 	mipp::vector<B> fnc_ite;
 
 public:
+
 	Flip_and_check(const int             K,
 	               const int             n_ite,
 	                     module::CRC<B> &crc,
@@ -28,7 +29,7 @@ public:
 	               const int             m                      =  1,
 	               const int             M                      = -1,
 	               const int             s                      =  1,
-	               const int             simd_inter_frame_level = 1);
+	               const int             simd_inter_frame_level =  1);
 
 	virtual ~Flip_and_check();
 

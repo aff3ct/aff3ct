@@ -190,8 +190,17 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_std<B,R,MAX>
-::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
+	if (!mipp::isAligned(sys))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'sys' is misaligned memory.");
+
+	if (!mipp::isAligned(par))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'par' is misaligned memory.");
+
+	if (!mipp::isAligned(ext))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'ext' is misaligned memory.");
+
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );
 	this->compute_beta (        );

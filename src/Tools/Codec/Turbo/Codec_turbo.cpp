@@ -2,47 +2,42 @@
 #include <cctype>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Factory/Factory_interleaver.hpp"
-#include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
-#include "Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
-#include "Tools/Factory/Turbo/Factory_puncturer_turbo.hpp"
-#include "Tools/Factory/Turbo/Factory_scaling_factor.hpp"
-#include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
-#include "Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
-
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp"
 
+#include "Factory/Module/Interleaver.hpp"
+#include "Factory/Tools/Code/Turbo/Scaling_factor.hpp"
+#include "Factory/Tools/Code/Turbo/Flip_and_check.hpp"
+
 #include "Codec_turbo.hpp"
 
-using namespace aff3ct::module;
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q, typename QD>
 Codec_turbo<B,Q,QD>
-::Codec_turbo(const parameters& params)
-: Codec<B,Q>(params),
-  sub_enc  (this->params.simulation.n_threads, nullptr),
-  siso     (this->params.simulation.n_threads, nullptr),
-  post_pros(this->params.simulation.n_threads         )
+::Codec_turbo(const factory::Encoder_turbo  ::parameters<> &enc_params,
+              const factory::Decoder_turbo  ::parameters<> &dec_params,
+              const factory::Puncturer_turbo::parameters   &pct_params,
+              const int n_threads)
+: Codec<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params), pct_par(pct_params),
+  sub_enc  (n_threads, nullptr),
+  siso     (n_threads, nullptr),
+  post_pros(n_threads         )
 {
-	if (!params.simulation.json_path.empty())
+	if (!enc_par.json_path.empty())
 	{
-		if (this->params.simulation.n_threads != 1)
+		if (n_threads != 1)
 			throw runtime_error(__FILE__, __LINE__, __func__, "JSON trace only supports single-threaded simulation.");
 
-		json_stream.open(params.simulation.json_path.c_str(), std::ios::out | std::ios::trunc);
+		json_stream.open(enc_par.json_path.c_str(), std::ios::out | std::ios::trunc);
 
 		json_stream << "[" << std::endl;
 	}
 
-	auto encoder_RSC = Factory_encoder_RSC<B>::build("RSC",
-	                                                 this->params.code.K,
-	                                                (this->params.code.K * 2) + (this->params.code.tail_length / 2),
-	                                                 this->params.encoder.buffered,
-	                                                 this->params.encoder.poly);
+	auto encoder_RSC = factory::Encoder_RSC::build<B>(enc_par.sub1);
 	trellis = encoder_RSC->get_trellis();
 	delete encoder_RSC;
 }
@@ -52,7 +47,7 @@ Codec_turbo<B,Q,QD>
 ::~Codec_turbo()
 {
 	int tid = 0;
-	const int nthr = this->params.simulation.n_threads;
+	const int nthr = (unsigned)sub_enc.size();
 	for (tid = 0; tid < nthr; tid++) if (sub_enc[tid] != nullptr) { delete sub_enc[tid]; sub_enc[tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (siso   [tid] != nullptr) { delete siso   [tid]; siso   [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) clear_post_processing(tid);
@@ -80,34 +75,24 @@ void Codec_turbo<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-Interleaver<int>* Codec_turbo<B,Q,QD>
+module::Interleaver<int>* Codec_turbo<B,Q,QD>
 ::build_interleaver(const int tid, const int seed)
 {
-	return Factory_interleaver<int>::build(this->params.interleaver.type,
-	                                       this->params.code.K,
-	                                       this->params.interleaver.path,
-	                                       this->params.interleaver.uniform,
-	                                       this->params.interleaver.n_cols,
-	                                       seed,
-	                                       this->params.simulation.inter_frame_level);
+	auto itl_cpy = dec_par.itl;
+	itl_cpy.seed = dec_par.itl.uniform ? seed : dec_par.itl.seed;
+	return factory::Interleaver::build<int>(itl_cpy);
 }
 
 template <typename B, typename Q, typename QD>
-Encoder_RSC_sys<B>* Codec_turbo<B,Q,QD>
+module::Encoder_RSC_sys<B>* Codec_turbo<B,Q,QD>
 ::build_sub_encoder(const int tid)
 {
-	return Factory_encoder_RSC<B>::build(this->params.simulation.json_path.empty() ? "RSC" : "RSC_JSON",
-	                                     this->params.code.K,
-	                                     (this->params.code.K * 2) + (this->params.code.tail_length / 2),
-	                                     this->params.encoder.buffered,
-	                                     this->params.encoder.poly,
-	                                     json_stream,
-	                                     this->params.simulation.inter_frame_level);
+	return factory::Encoder_RSC::build<B>(enc_par.sub1, json_stream);
 }
 
 template <typename B, typename Q, typename QD>
-Encoder<B>* Codec_turbo<B,Q,QD>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_turbo<B,Q,QD>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
@@ -123,49 +108,26 @@ Encoder<B>* Codec_turbo<B,Q,QD>
 	if (sub_enc[tid] == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'sub_enc' can't be created.");
 
-	return Factory_encoder_turbo<B>::build(this->params.encoder.type,
-	                                       this->params.code.K,
-	                                       this->params.code.N_code,
-	                                       *itl,
-	                                       sub_enc[tid],
-	                                       sub_enc[tid],
-	                                       this->params.encoder.buffered,
-	                                       this->params.simulation.inter_frame_level);
+	return factory::Encoder_turbo::build<B>(enc_par, *itl, sub_enc[tid], sub_enc[tid]);
 }
 
 template <typename B, typename Q, typename QD>
-Puncturer<B,Q>* Codec_turbo<B,Q,QD>
+module::Puncturer<B,Q>* Codec_turbo<B,Q,QD>
 ::build_puncturer(const int tid)
 {
-	const std::string type = (this->params.code.N == this->params.code.N_code) ? "NO" : "TURBO";
-	return Factory_puncturer_turbo<B,Q>::build(type,
-	                                           this->params.code.K,
-	                                           this->params.code.N,
-	                                           this->params.code.tail_length,
-	                                           this->params.puncturer.pattern,
-	                                           this->params.encoder.buffered,
-	                                           this->params.simulation.inter_frame_level);
+	return factory::Puncturer_turbo::build<B,Q>(pct_par);
 }
 
 template <typename B, typename Q, typename QD>
-SISO<Q>* Codec_turbo<B,Q,QD>
+module::Decoder_SISO<Q>* Codec_turbo<B,Q,QD>
 ::build_sub_siso(const int tid)
 {
-	return Factory_decoder_RSC<B,Q,QD>::build(this->params.decoder.type,
-	                                          this->params.decoder.implem,
-	                                          this->params.code.K,
-	                                          trellis,
-	                                          this->params.decoder.max,
-	                                          this->params.decoder.simd_strategy,
-	                                          this->params.encoder.buffered,
-	                                          json_stream,
-	                                          this->params.decoder.n_ite,
-	                                          this->params.simulation.inter_frame_level);
+	return factory::Decoder_RSC::build<B,Q,QD>(dec_par.sub1, trellis, json_stream, dec_par.n_ite);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder<B,Q>* Codec_turbo<B,Q,QD>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_turbo<B,Q,QD>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__,  "'itl' should not be null.");
@@ -183,45 +145,20 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 	if (siso[tid] == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'siso' can't be created.");
 
-	auto decoder = Factory_decoder_turbo<B,Q>::build("TURBO",
-	                                                 typeid(B) == typeid(int64_t) ? "STD" : "FAST",
-	                                                 this->params.code.K,
-	                                                 this->params.code.N_code,
-	                                                 this->params.decoder.n_ite,
-	                                                 *itl,
-	                                                 *siso[tid],
-	                                                 *siso[tid],
-	                                                 this->params.encoder.buffered);
+	auto decoder = factory::Decoder_turbo::build<B,Q>(dec_par, *itl, *siso[tid], *siso[tid]);
 
-	if (!this->params.decoder.scaling_factor.empty())
+	// then add post processing modules
+	if (dec_par.sf.enable)
 	{
-		std::string sf_type = this->params.decoder.scaling_factor;
-		float sf_cst = 0.f;
-		if (std::isdigit(this->params.decoder.scaling_factor[0]))
-		{
-			sf_type = "CST";
-			sf_cst  = std::stof(this->params.decoder.scaling_factor);
-		}
-
-		post_pros[tid].push_back(Factory_scaling_factor<B,Q>::build(sf_type,
-		                                                            this->params.decoder.n_ite,
-		                                                            sf_cst));
+		post_pros[tid].push_back(factory::Scaling_factor::build<B,Q>(dec_par.sf));
 	}
 
-	if (this->params.decoder.fnc)
+	if (dec_par.fnc.enable)
 	{
-		if (crc != nullptr && crc->get_size() > 0)
-			post_pros[tid].push_back(new tools::Flip_and_check<B,Q>(this->params.code.K,
-			                                                        this->params.decoder.n_ite,
-			                                                        *crc,
-			                                                        2,
-			                                                        this->params.decoder.fnc_q,
-			                                                        this->params.decoder.fnc_ite_min,
-			                                                        this->params.decoder.fnc_ite_max,
-			                                                        this->params.decoder.fnc_ite_step,
-			                                                        decoder->get_simd_inter_frame_level()));
-		else
+		if(crc == nullptr || crc->get_size() == 0)
 			throw runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
+
+		post_pros[tid].push_back(factory::Flip_and_check::build<B,Q>(dec_par.fnc, *crc));
 	}
 	else if (crc != nullptr && crc->get_size() > 0)
 	{
@@ -230,12 +167,12 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 		                                                     decoder->get_simd_inter_frame_level()));
 	}
 
-	if (this->params.decoder.self_corrected)
+	if (dec_par.self_corrected)
 	{
-		post_pros[tid].push_back(new tools::Self_corrected<B,Q>(this->params.code.K,
-		                                                        this->params.decoder.n_ite,
+		post_pros[tid].push_back(new tools::Self_corrected<B,Q>(dec_par.K,
+		                                                        dec_par.n_ite,
 		                                                        4,
-		                                                        this->params.decoder.n_ite,
+		                                                        dec_par.n_ite,
 		                                                        decoder->get_simd_inter_frame_level()));
 	}
 

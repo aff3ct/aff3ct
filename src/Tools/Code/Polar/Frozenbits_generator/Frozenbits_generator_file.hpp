@@ -10,8 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
-class Frozenbits_generator_file : public Frozenbits_generator<B>
+class Frozenbits_generator_file : public Frozenbits_generator
 {
 private:
 	const std::string filename;

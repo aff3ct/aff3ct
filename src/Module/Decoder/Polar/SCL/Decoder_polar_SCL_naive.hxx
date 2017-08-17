@@ -18,9 +18,9 @@ namespace module
 {
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
-::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
+::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
                           const int n_frames, const std::string name)
-: Decoder<B,R>(K, N, n_frames, 1, name),
+: Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
   m((int)std::log2(N)),
   metric_init(std::numeric_limits<R>::min()),
   frozen_bits(frozen_bits),
@@ -105,13 +105,8 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode()
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
-
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	std::set<int> last_active_paths;
 	int cur_path;
 
@@ -225,6 +220,18 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 	}
 
 	this->select_best_path();
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
+void Decoder_polar_SCL_naive<B,R,F,G>
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+{
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode();
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -238,10 +245,40 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::_store(B *V_K) const
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
 {
-	auto k = 0;
-	this->recursive_store((tools::Binary_node<Contents_SCL<B,R>>*)this->polar_trees[*active_paths.begin()]->get_root(), V_K, k);
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode();
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store(V_N, true);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
+void Decoder_polar_SCL_naive<B,R,F,G>
+::_store(B *V, bool coded) const
+{
+	auto *root = (tools::Binary_node<Contents_SCL<B,R>>*)this->polar_trees[*active_paths.begin()]->get_root();
+	if (!coded)
+	{
+		auto k = 0;
+		this->recursive_store(root, V, k);
+	}
+	else
+	{
+		auto *contents_root = root->get_c();
+		std::copy(contents_root->s.begin(), contents_root->s.begin() + this->N, V);
+	}
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
@@ -346,8 +383,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::recursive_allocate_nodes_contents(tools::Binary_node<Contents_SCL<B,R>>* node_curr,
-                                    const int vector_size)
+::recursive_allocate_nodes_contents(tools::Binary_node<Contents_SCL<B,R>>* node_curr, const int vector_size)
 {
 	if (node_curr != nullptr)
 	{
@@ -361,7 +397,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_initialize_frozen_bits(const tools::Binary_node<Contents_SCL<B,R>>* node_curr,
-                                   const mipp::vector<B>& frozen_bits)
+                                   const std::vector<bool>& frozen_bits)
 {
 	auto *contents = node_curr->get_contents();
 
