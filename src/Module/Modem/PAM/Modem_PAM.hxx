@@ -123,7 +123,7 @@ void Modem_PAM<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (2 * this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -158,7 +158,7 @@ void Modem_PAM<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (2 * this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -190,7 +190,7 @@ void Modem_PAM<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (2 * this->sigma * this->sigma);
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -231,7 +231,7 @@ void Modem_PAM<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (2 * this->sigma * this->sigma);
 
 	for (auto n = 0; n < size; n++) // boucle sur les LLRs
 	{
