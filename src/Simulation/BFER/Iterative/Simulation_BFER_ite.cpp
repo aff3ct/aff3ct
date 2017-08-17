@@ -158,9 +158,11 @@ template <typename B, typename R, typename Q>
 Modem<B,R,Q>* Simulation_BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
+	auto sigma = this->params.modulator.complex ? this->sigma * std::sqrt(2.f) : this->sigma;
+	// auto sigma = this->sigma;
 	return Factory_modem<B,R,Q>::build(this->params.modulator.type,
 	                                   this->params.code.N,
-	                                   this->sigma,
+	                                   sigma,
 	                                   this->params.demodulator.max,
 	                                   this->params.demodulator.psi,
 	                                   this->params.modulator.bits_per_symbol,
