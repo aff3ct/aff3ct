@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Tools/Codec/Uncoded/Codec_uncoded.hpp"
+#include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
 
 #include "Uncoded.hpp"
 
@@ -8,70 +8,55 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <class C, typename B, typename R, typename Q>
-Uncoded<C,B,R,Q>
+template <class L, typename B, typename R, typename Q>
+Uncoded<L,B,R,Q>
 ::Uncoded(const int argc, const char **argv, std::ostream &stream)
-: C(argc, argv, stream)
+: L(argc, argv, stream)
 {
-	params_enc = new factory::Encoder   ::parameters();
-	params_dec = new factory::Decoder_NO::parameters();
-
-	if (this->params->enc != nullptr) { delete this->params->enc; this->params->enc = params_enc; }
-	if (this->params->dec != nullptr) { delete this->params->dec; this->params->dec = params_dec; }
 }
 
-template <class C, typename B, typename R, typename Q>
-Uncoded<C,B,R,Q>
+template <class L, typename B, typename R, typename Q>
+Uncoded<L,B,R,Q>
 ::~Uncoded()
 {
 }
 
-template <class C, typename B, typename R, typename Q>
-void Uncoded<C,B,R,Q>
+template <class L, typename B, typename R, typename Q>
+void Uncoded<L,B,R,Q>
 ::build_args()
 {
-	C::build_args();
+	factory::Codec_uncoded::build_args(this->req_args, this->opt_args);
+
+	this->req_args.erase({"enc-info-bits", "K"});
+	this->opt_args.erase({"enc-fra",       "F"});
+
+	L::build_args();
 }
 
-template <class C, typename B, typename R, typename Q>
-void Uncoded<C,B,R,Q>
+template <class L, typename B, typename R, typename Q>
+void Uncoded<L,B,R,Q>
 ::store_args()
 {
-	C::store_args();
+	L::store_args();
 
-	params_enc->type = "NO";
-	params_enc->K    = this->params->src->K;
-	params_enc->N_cw = params_enc->K;
-	params_enc->R    = 1.f;
+	this->params.cdc.enc.K = this->params.src.K;
 
-	params_dec->type   = "NONE";
-	params_dec->implem = "HARD_DECISION";
-	params_dec->K      = params_enc->K;
-	params_dec->N_cw   = params_enc->N_cw;
-	params_dec->R      = 1.f;
+	factory::Codec_uncoded::store_args(this->ar.get_args(), this->params.cdc);
 
-	this->params->pct->type = "NO";
-	this->params->pct->K    = params_enc->K;
-	this->params->pct->N    = this->params->pct->K;
-	this->params->pct->N_cw = this->params->pct->N;
+	this->params.cdc.enc.n_frames = this->params.src.n_frames;
+	this->params.cdc.dec.n_frames = this->params.src.n_frames;
 }
 
-template <class C, typename B, typename R, typename Q>
-void Uncoded<C,B,R,Q>
+template <class L, typename B, typename R, typename Q>
+void Uncoded<L,B,R,Q>
 ::print_header()
 {
-	if (params_enc->type != "NO")
-		factory::Encoder::make_header(this->pl_enc, *params_enc, false);
-	factory::Decoder_NO::make_header(this->pl_dec, *params_dec, false);
+	factory::params_list trash;
+	auto &pl_enc = (this->params.cdc.enc.type != "NO") ? this->pl_enc : trash;
 
-	C::print_header();
-}
+	factory::Codec_uncoded::make_header(pl_enc, this->pl_dec, this->params.cdc, false);
 
-template <class C, typename B, typename R, typename Q>
-void Uncoded<C,B,R,Q>
-::build_codec()
-{
-	this->codec = new tools::Codec_uncoded<B,Q>(*params_enc, *params_dec);
+	L::print_header();
 }
 }
 }

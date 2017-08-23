@@ -4,14 +4,12 @@
 #include <string>
 
 #include "BFER.hpp"
-#include "Tools/Codec/Codec.hpp"
-
 
 namespace aff3ct
 {
 namespace simulation
 {
-template <typename B, typename R, typename Q>
+template <class C, typename B, typename R, typename Q, int CRC, int ITL>
 class BFER_std;
 }
 }
@@ -25,21 +23,27 @@ struct BFER_std : BFER
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : BFER::parameters
+	template <class C>
+	struct parameters : BFER::parameters<C>
 	{
-		parameters() : BFER::parameters() {}
-
 		virtual ~parameters() {}
+
+		template <typename B = int, typename R = float, typename Q = R, int CRC = 0, int ITL = 0>
+		simulation::BFER_std<C,B,R,Q,CRC,ITL>* build() const;
 	};
 
-	template <typename B = int, typename R = float, typename Q = R>
-	static simulation::BFER_std<B,R,Q>* build(const parameters &params, tools::Codec<B,Q> &codec);
+	template <class C, typename B = int, typename R = float, typename Q = R, int CRC = 0, int ITL = 0>
+	static simulation::BFER_std<C,B,R,Q,CRC,ITL>* build(const parameters<C> &params);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_sim, const parameters& params, const bool full = true);
+	template <class C>
+	static void store_args(const arg_val_map &vals, parameters<C> &params, const std::string p = prefix);
+	template <class C>
+	static void make_header(params_list& head_sim, const parameters<C> &params, const bool full = true);
 };
 }
 }
+
+#include "BFER_std.hxx"
 
 #endif /* FACTORY_SIMULATION_BFER_STD_HPP_ */

@@ -5,6 +5,7 @@
 
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
+#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
 #include "../../Decoder_SISO_SIHO.hpp"
 
@@ -17,7 +18,7 @@ template <typename B = int, typename R = float, tools::proto_f<  R> F = &tools::
                                                 tools::proto_h<B,R> H = &tools::h_LLR,
                                                 tools::proto_i<  R> I = &tools::init_LLR,
                                                 tools::proto_s<  R> S = &tools::sat_val>
-class Decoder_polar_SCAN_naive : public Decoder_SISO_SIHO<B,R>
+class Decoder_polar_SCAN_naive : public Decoder_SISO_SIHO<B,R>, public tools::Frozenbits_notifier
 {
 protected:
 	const int m;            // coded bits log-length

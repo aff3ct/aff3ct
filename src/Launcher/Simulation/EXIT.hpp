@@ -3,20 +3,17 @@
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
-#include "Tools/Codec/Codec_SISO.hpp"
-
 #include "../Launcher.hpp"
 
 namespace aff3ct
 {
 namespace launcher
 {
-template <typename B = int, typename R = float>
+template <class C, typename B = int, typename R = float>
 class EXIT : public Launcher
 {
 protected:
-	tools::Codec_SISO<B,R> *codec = nullptr;
-	factory::EXIT::parameters *params;
+	factory::EXIT::parameters<C> params;
 
 public:
 	EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);
@@ -27,13 +24,13 @@ protected:
 	virtual void store_args();
 	virtual void group_args();
 
-	virtual void build_codec() = 0;
-
 	virtual simulation::Simulation* build_simu();
 
 	virtual void print_header();
 };
 }
 }
+
+#include "EXIT.hxx"
 
 #endif /* LAUNCHER_EXIT_HPP_ */

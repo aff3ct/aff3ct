@@ -20,6 +20,9 @@ struct Flip_and_check : public Factory
 	{
 		virtual ~parameters() {}
 
+		template <typename B = int, typename Q = float>
+		tools::Flip_and_check<B,Q>* build(module::CRC<B> &crc) const;
+
 		int  size                = -1;
 
 		bool enable              = false;

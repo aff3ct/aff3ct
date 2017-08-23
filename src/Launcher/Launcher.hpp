@@ -34,6 +34,7 @@ private:
 	simulation::Simulation          *simu;      /*!< A generic simulation pointer to allocate a specific simulation. */
 	std::string                      cmd_line;
 	std::vector<std::string>         cmd_warn;
+
 protected:
 	tools::Arguments_reader          ar;        /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
 	tools::Arguments_reader::arg_map req_args;  /*!< List of the required arguments, syntax is the following:
@@ -42,7 +43,7 @@ protected:
 	                                             *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
 	tools::Arguments_reader::arg_grp arg_group; /*!< List of the arguments groups */
 
-	factory::Simulation::parameters *params;    /*!< A structure of parameters to store and pass to the simulation. */
+	factory::Simulation::parameters &params;    /*!< A structure of parameters to store and pass to the simulation. */
 
 	std::ostream &stream;                       /*!< The dedicated stream in which the Launcher writes the parameters. */
 	factory::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_itl, pl_mdm, pl_chn,
@@ -58,7 +59,8 @@ public:
 	 * \param argv:   array of arguments
 	 * \param stream: the stream in which the Launcher writes the parameters.
 	 */
-	Launcher(const int argc, const char **argv, std::ostream &stream = std::cout);
+	Launcher(const int argc, const char **argv, factory::Simulation::parameters &params,
+	         std::ostream &stream = std::cout);
 
 	/*!
 	 * \brief Destructor.

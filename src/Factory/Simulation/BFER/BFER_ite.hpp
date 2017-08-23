@@ -3,17 +3,15 @@
 
 #include <string>
 
+#include "Factory/Module/Interleaver/Interleaver.hpp"
+
 #include "BFER.hpp"
-#include "Factory/Module/Interleaver.hpp"
-
-#include "Tools/Codec/Codec_SISO.hpp"
-
 
 namespace aff3ct
 {
 namespace simulation
 {
-template <typename B, typename R, typename Q>
+template <class C, typename B, typename R, typename Q, int CRC>
 class BFER_ite;
 }
 }
@@ -27,32 +25,31 @@ struct BFER_ite : BFER
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : BFER::parameters
+	template <class C>
+	struct parameters : BFER::parameters<C>
 	{
-		parameters()
-		: BFER::parameters(),
-		  itl(new Interleaver::parameters())
-		{
-		}
+		virtual ~parameters() {}
 
-		virtual ~parameters()
-		{
-			if (this->itl != nullptr) { delete this->itl; this->itl = nullptr; }
-		}
+		template <typename B = int, typename R = float, typename Q = R, int CRC = 0>
+		simulation::BFER_ite<C,B,R,Q,CRC>* build() const;
 
 		int n_ite = 15;
 
-		Interleaver::parameters *itl;
+		Interleaver::parameters itl;
 	};
 
-	template <typename B = int, typename R = float, typename Q = R>
-	static simulation::BFER_ite<B,R,Q>* build(const parameters &params, tools::Codec_SISO<B,Q> &codec);
+	template <class C, typename B = int, typename R = float, typename Q = R, int CRC = 0>
+	static simulation::BFER_ite<C,B,R,Q,CRC>* build(const parameters<C> &params);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_sim, const parameters& params, const bool full = true);
+	template <class C>
+	static void store_args(const arg_val_map &vals, parameters<C> &params, const std::string p = prefix);
+	template <class C>
+	static void make_header(params_list& head_sim, const parameters<C> &params, const bool full = true);
 };
 }
 }
+
+#include "BFER_ite.hxx"
 
 #endif /* FACTORY_SIMULATION_BFER_ITE_HPP_ */

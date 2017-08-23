@@ -209,6 +209,13 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
+::notify_frozenbits_update()
+{
+	polar_patterns.notify_frozenbits_update();
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::init_buffers()
 {
 	metrics[0] = std::numeric_limits<R>::min();

@@ -131,16 +131,16 @@ int sc_main(int argc, char **argv)
 #ifdef MULTI_PREC
 		switch (params.sim_prec)
 		{
-			case 8 : launcher = factory::Launcher::build<B_8, R_8, Q_8, QD_8 >(params, argc, (const char**)argv); break;
-			case 16: launcher = factory::Launcher::build<B_16,R_16,Q_16,QD_16>(params, argc, (const char**)argv); break;
-			case 32: launcher = factory::Launcher::build<B_32,R_32,Q_32,QD_32>(params, argc, (const char**)argv); break;
+			case 8 : launcher = factory::Launcher::build<B_8, R_8, Q_8 >(params, argc, (const char**)argv); break;
+			case 16: launcher = factory::Launcher::build<B_16,R_16,Q_16>(params, argc, (const char**)argv); break;
+			case 32: launcher = factory::Launcher::build<B_32,R_32,Q_32>(params, argc, (const char**)argv); break;
 #if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-			case 64: launcher = factory::Launcher::build<B_64,R_64,Q_64,QD_64>(params, argc, (const char**)argv); break;
+			case 64: launcher = factory::Launcher::build<B_64,R_64,Q_64>(params, argc, (const char**)argv); break;
 #endif
 			default: break;
 		}
 #else
-		launcher = factory::Launcher::build<B,R,Q,QD>(params, argc, (const char**)argv);
+		launcher = factory::Launcher::build<B,R,Q>(params, argc, (const char**)argv);
 #endif
 		if (launcher != nullptr)
 		{

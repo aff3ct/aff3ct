@@ -1,0 +1,146 @@
+#include "Tools/Exception/exception.hpp"
+
+#include "Module/Channel/NO/Channel_NO.hpp"
+#include "Module/Channel/User/Channel_user.hpp"
+#include "Module/Channel/AWGN/Channel_AWGN_LLR.hpp"
+#include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
+
+#include "Tools/Algo/Noise/Standard/Noise_std.hpp"
+#include "Tools/Algo/Noise/Fast/Noise_fast.hpp"
+#ifdef CHANNEL_MKL
+#include "Tools/Algo/Noise/MKL/Noise_MKL.hpp"
+#endif
+#ifdef CHANNEL_GSL
+#include "Tools/Algo/Noise/GSL/Noise_GSL.hpp"
+#endif
+
+#include "Channel.hpp"
+
+using namespace aff3ct;
+using namespace aff3ct::factory;
+
+const std::string aff3ct::factory::Channel::name   = "Channel";
+const std::string aff3ct::factory::Channel::prefix = "chn";
+
+template <typename R>
+module::Channel<R>* Channel::parameters
+::build() const
+{
+	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR    <R>(N,          new tools::Noise_std <R>(seed), add_users, sigma, n_frames);
+	else if (type == "AWGN_FAST"    ) return new module::Channel_AWGN_LLR    <R>(N,          new tools::Noise_fast<R>(seed), add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_std <R>(seed), add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH_FAST") return new module::Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_fast<R>(seed), add_users, sigma, n_frames);
+	else if (type == "USER"         ) return new module::Channel_user        <R>(N, path,                                    add_users,        n_frames);
+	else if (type == "NO"           ) return new module::Channel_NO          <R>(N,                                          add_users,        n_frames);
+#ifdef CHANNEL_MKL
+	else if (type == "AWGN_MKL"     ) return new module::Channel_AWGN_LLR    <R>(N,          new tools::Noise_MKL <R>(seed), add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH_MKL" ) return new module::Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_MKL <R>(seed), add_users, sigma, n_frames);
+#endif
+#ifdef CHANNEL_GSL
+	else if (type == "AWGN_GSL"     ) return new module::Channel_AWGN_LLR    <R>(N,          new tools::Noise_GSL <R>(seed), add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH_GSL" ) return new module::Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_GSL <R>(seed), add_users, sigma, n_frames);
+#endif
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename R>
+module::Channel<R>* Channel
+::build(const parameters &params)
+{
+	return params.template build<R>();
+}
+
+void Channel
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+{
+	req_args[{p+"-fra-size", "N"}] =
+		{"positive_int",
+		 "number of symbols by frame."};
+
+	opt_args[{p+"-fra", "F"}] =
+		{"positive_int",
+		 "set the number of inter frame level to process."};
+
+	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH, RAYLEIGH_FAST";
+#ifdef CHANNEL_GSL
+	chan_avail += ", AWGN_GSL, RAYLEIGH_GSL";
+#endif
+#ifdef CHANNEL_MKL
+	chan_avail += ", AWGN_MKL, RAYLEIGH_MKL";
+#endif
+
+	opt_args[{p+"-type"}] =
+		{"string",
+		 "type of the channel to use in the simulation.",
+		 chan_avail};
+
+	opt_args[{p+"-path"}] =
+		{"string",
+		 "path to a noisy file, to use with \"--chn-type USER\"."};
+
+	opt_args[{p+"-blk-fad"}] =
+		{"string",
+		 "block fading policy for the RAYLEIGH channel.",
+		 "NO, FRAME, ONETAP"};
+
+	opt_args[{p+"-sigma"}] =
+		{"positive_float",
+		 "noise variance value."};
+
+	opt_args[{p+"-seed", "S"}] =
+		{"positive_int",
+		 "seed used to initialize the pseudo random generators."};
+
+	opt_args[{p+"-add-users"}] =
+		{"",
+		 "add all the users (= frames) before generating the noise."};
+
+	opt_args[{p+"-complex"}] =
+		{"",
+		 "enable complex noise generation."};
+}
+
+void Channel
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+{
+	if(exist(vals, {p+"-fra-size", "N"})) params.N            = std::stoi(vals.at({p+"-fra-size", "N"}));
+	if(exist(vals, {p+"-fra",      "F"})) params.n_frames     = std::stoi(vals.at({p+"-fra",      "F"}));
+	if(exist(vals, {p+"-type"         })) params.type         =           vals.at({p+"-type"         });
+	if(exist(vals, {p+"-path"         })) params.path         =           vals.at({p+"-path"         });
+	if(exist(vals, {p+"-blk-fad"      })) params.block_fading =           vals.at({p+"-blk-fad"      });
+	if(exist(vals, {p+"-sigma"        })) params.sigma        = std::stof(vals.at({p+"-sigma"        }));
+	if(exist(vals, {p+"-seed",     "S"})) params.seed         = std::stoi(vals.at({p+"-seed",     "S"}));
+	if(exist(vals, {p+"-add-users"    })) params.add_users    = true;
+	if(exist(vals, {p+"-complex"      })) params.complex      = true;
+}
+
+void Channel
+::make_header(params_list& head_chn, const parameters& params, const bool full)
+{
+	head_chn.push_back(std::make_pair("Type", params.type));
+	if (full) head_chn.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
+	if (full) head_chn.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (params.sigma != -1.f)
+		head_chn.push_back(std::make_pair("Sigma value", std::to_string(params.sigma)));
+	if (params.type == "USER")
+		head_chn.push_back(std::make_pair("Path", params.path));
+	if (params.type.find("RAYLEIGH") != std::string::npos)
+		head_chn.push_back(std::make_pair("Block fading policy", params.block_fading));
+	if ((params.type != "NO" && params.type != "USER") && full)
+		head_chn.push_back(std::make_pair("Seed", std::to_string(params.seed)));
+	head_chn.push_back(std::make_pair("Complex", params.complex ? "on" : "off"));
+	head_chn.push_back(std::make_pair("Add users", params.add_users ? "on" : "off"));
+}
+// ==================================================================================== explicit template instantiation 
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>() const;
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>() const;
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&);
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const aff3ct::factory::Channel::parameters&);
+#else
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::parameters::build<R>() const;
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const aff3ct::factory::Channel::parameters&);
+#endif
+// ==================================================================================== explicit template instantiation

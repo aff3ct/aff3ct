@@ -8,6 +8,7 @@
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Algo/Sort/LC_sorter.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
+#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
 #include "../../Decoder_SIHO.hpp"
 
@@ -21,13 +22,13 @@ template <typename B = int, typename R = float,
                                                                tools::g0_LLR<  R>,
                                                                tools::h_LLR <B,R>,
                                                                tools::xo_STD<B  >>>
-class Decoder_polar_SCL_MEM_fast_sys : public Decoder_SIHO<B,R>
+class Decoder_polar_SCL_MEM_fast_sys : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
 {
 protected:
 	const int                         m;              // graph depth
 	      int                         L;              // maximum paths number
 	const std::vector<bool>&          frozen_bits;
-	const tools::Pattern_polar_parser polar_patterns;
+	      tools::Pattern_polar_parser polar_patterns;
 
 	            std ::vector<int >    paths;          // active paths
 	            std ::vector<R   >    metrics;        // path metrics
@@ -66,13 +67,15 @@ public:
 
 	virtual ~Decoder_polar_SCL_MEM_fast_sys();
 
+	virtual void notify_frozenbits_update();
+
+protected:
 	virtual void _decode           (const R *Y_N                            );
 	        void _decode_siho      (const R *Y_N, B *V_K, const int frame_id);
 	        void _decode_siho_coded(const R *Y_N, B *V_N, const int frame_id);
 	virtual void _store            (              B *V_K                    ) const;
 	virtual void _store_coded      (              B *V_N                    ) const;
 
-protected:
 	inline void recursive_decode(const R *Y_N, const int off_l, const int off_s, const int rev_depth, int &node_id);
 
 	inline void update_paths_r0 (const int rev_depth, const int off_l, const int off_s, const int n_elmts);

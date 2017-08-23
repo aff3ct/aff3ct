@@ -219,6 +219,13 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
+::notify_frozenbits_update()
+{
+	polar_patterns.notify_frozenbits_update();
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_load(const R *Y_N)
 {
 	constexpr int n_frames = API_polar::get_n_frames();

@@ -26,6 +26,17 @@
 #include "Launcher/Simulation/BFER_std.hpp"
 #include "Launcher/Simulation/EXIT.hpp"
 
+#include "Factory/Module/Codec/BCH/Codec_BCH.hpp"
+#include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
+#include "Factory/Module/Codec/Polar/Codec_polar.hpp"
+#include "Factory/Module/Codec/RA/Codec_RA.hpp"
+#include "Factory/Module/Codec/Repetition/Codec_repetition.hpp"
+#include "Factory/Module/Codec/RSC/Codec_RSC.hpp"
+#include "Factory/Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
+#include "Factory/Module/Codec/Turbo/Codec_turbo.hpp"
+#include "Factory/Module/Codec/Turbo_DB/Codec_turbo_DB.hpp"
+#include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
+
 #include "Launcher.hpp"
 
 using namespace aff3ct;
@@ -34,9 +45,9 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Launcher::name   = "Launcher";
 const std::string aff3ct::factory::Launcher::prefix = "lch";
 
-template <typename B, typename R, typename Q, typename QD>
-launcher::Launcher* Launcher
-::build_exit(const parameters &params, const int argc, const char **argv)
+template <typename B, typename R, typename Q>
+launcher::Launcher* Launcher::parameters
+::build_exit(const int argc, const char **argv) const
 {
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, "Unsupported code/simulation pair.");
 }
@@ -47,16 +58,16 @@ namespace factory
 {
 #if defined(MULTI_PREC) || defined(PREC_32_BIT)
 template <>
-launcher::Launcher* Launcher
-::build_exit<int32_t, float, float, float>(const parameters &params, const int argc, const char **argv)
+launcher::Launcher* Launcher::parameters
+::build_exit<int32_t, float, float>(const int argc, const char **argv) const
 {
-	if (params.cde_type == "POLAR")
-		if (params.sim_type == "EXIT")
-			return new launcher::Polar<launcher::EXIT<int32_t,float>,int32_t,float,float>(argc, argv);
+	if (this->cde_type == "POLAR")
+		if (this->sim_type == "EXIT")
+			return new launcher::Polar<launcher::EXIT<factory::Codec_polar::parameters,int32_t,float>,int32_t,float,float>(argc, argv);
 
-	if (params.cde_type == "RSC")
-		if (params.sim_type == "EXIT")
-			return new launcher::RSC<launcher::EXIT<int32_t,float>,int32_t,float,float,float>(argc, argv);
+	if (this->cde_type == "RSC")
+		if (this->sim_type == "EXIT")
+			return new launcher::RSC<launcher::EXIT<factory::Codec_RSC::parameters,int32_t,float>,int32_t,float,float>(argc, argv);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, "Unsupported code/simulation pair.");
 }
@@ -64,16 +75,16 @@ launcher::Launcher* Launcher
 
 #if defined(MULTI_PREC) || defined(PREC_64_BIT)
 template <>
-launcher::Launcher* Launcher
-::build_exit<int64_t, double, double, double>(const parameters &params, const int argc, const char **argv)
+launcher::Launcher* Launcher::parameters
+::build_exit<int64_t, double, double>(const int argc, const char **argv) const
 {
-	if (params.cde_type == "POLAR")
-		if (params.sim_type == "EXIT")
-			return new launcher::Polar<launcher::EXIT<int64_t,double>,int64_t,double,double>(argc, argv);
+	if (this->cde_type == "POLAR")
+		if (this->sim_type == "EXIT")
+			return new launcher::Polar<launcher::EXIT<factory::Codec_polar::parameters,int64_t,double>,int64_t,double,double>(argc, argv);
 
-	if (params.cde_type == "RSC")
-		if (params.sim_type == "EXIT")
-			return new launcher::RSC<launcher::EXIT<int64_t,double>,int64_t,double,double,double>(argc, argv);
+	if (this->cde_type == "RSC")
+		if (this->sim_type == "EXIT")
+			return new launcher::RSC<launcher::EXIT<factory::Codec_RSC::parameters,int64_t,double>,int64_t,double,double>(argc, argv);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, "Unsupported code/simulation pair.");
 }
@@ -81,81 +92,88 @@ launcher::Launcher* Launcher
 }
 }
 
-template <typename B, typename R, typename Q, typename QD>
+template <typename B, typename R, typename Q>
+launcher::Launcher* Launcher::parameters
+::build(const int argc, const char **argv) const
+{
+	if (this->cde_type == "POLAR")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::Polar<launcher::BFER_std<factory::Codec_polar::parameters,B,R,Q,1>,B,R,Q>(argc, argv);
+		else if (this->sim_type == "BFERI")
+			return new launcher::Polar<launcher::BFER_ite<factory::Codec_polar::parameters,B,R,Q,1>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "RSC")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::RSC<launcher::BFER_std<factory::Codec_RSC::parameters,B,R,Q>,B,R,Q>(argc, argv);
+		else if (this->sim_type == "BFERI")
+			return new launcher::RSC<launcher::BFER_ite<factory::Codec_RSC::parameters,B,R,Q>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "RSC_DB")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::RSC_DB<launcher::BFER_std<factory::Codec_RSC_DB::parameters,B,R,Q>,B,R,Q>(argc, argv);
+		else if (this->sim_type == "BFERI")
+			return new launcher::RSC_DB<launcher::BFER_ite<factory::Codec_RSC_DB::parameters,B,R,Q>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "TURBO")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::Turbo<launcher::BFER_std<factory::Codec_turbo::parameters,B,R,Q,1,1>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "TURBO_DB")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::Turbo_DB<launcher::BFER_std<factory::Codec_turbo_DB::parameters,B,R,Q,1,1>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "REP")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::Repetition<launcher::BFER_std<factory::Codec_repetition::parameters,B,R,Q>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "BCH")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::BCH<launcher::BFER_std<factory::Codec_BCH::parameters,B,R,Q>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "RA")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::RA<launcher::BFER_std<factory::Codec_RA::parameters,B,R,Q,0,1>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "LDPC")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::LDPC<launcher::BFER_std<factory::Codec_LDPC::parameters,B,R,Q>,B,R,Q>(argc, argv);
+		else if (this->sim_type == "BFERI")
+			return new launcher::LDPC<launcher::BFER_ite<factory::Codec_LDPC::parameters,B,R,Q>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "UNCODED")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::Uncoded<launcher::BFER_std<factory::Codec_uncoded::parameters,B,R,Q>,B,R,Q>(argc, argv);
+		else if (this->sim_type == "BFERI")
+			return new launcher::Uncoded<launcher::BFER_ite<factory::Codec_uncoded::parameters,B,R,Q>,B,R,Q>(argc, argv);
+	}
+
+	return build_exit<B,R,Q>(argc, argv);
+}
+
+template <typename B, typename R, typename Q>
 launcher::Launcher* Launcher
 ::build(const parameters &params, const int argc, const char **argv)
 {
-	if (params.cde_type == "POLAR")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::Polar<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (params.sim_type == "BFERI")
-			return new launcher::Polar<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
-	}
-
-	if (params.cde_type == "RSC")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::RSC<launcher::BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
-		else if (params.sim_type == "BFERI")
-			return new launcher::RSC<launcher::BFER_ite<B,R,Q>,B,R,Q,QD>(argc, argv);
-	}
-
-	if (params.cde_type == "RSC_DB")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::RSC_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (params.sim_type == "BFERI")
-			return new launcher::RSC_DB<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
-	}
-
-	if (params.cde_type == "TURBO")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::Turbo<launcher::BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
-	}
-
-	if (params.cde_type == "TURBO_DB")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::Turbo_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-	}
-
-	if (params.cde_type == "REP")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::Repetition<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-	}
-
-	if (params.cde_type == "BCH")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::BCH<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-	}
-
-	if (params.cde_type == "RA")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::RA<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-	}
-
-	if (params.cde_type == "LDPC")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::LDPC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (params.sim_type == "BFERI")
-			return new launcher::LDPC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
-	}
-
-	if (params.cde_type == "UNCODED")
-	{
-		if (params.sim_type == "BFER")
-			return new launcher::Uncoded<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (params.sim_type == "BFERI")
-			return new launcher::Uncoded<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
-	}
-
-	return build_exit<B,R,Q,QD>(params, argc, argv);
+	return params.template build<B,R,Q>(argc, argv);
 }
 
 void Launcher::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
@@ -275,11 +293,16 @@ void Launcher::make_header(params_list& head_sim, const parameters& params, cons
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_8 ,R_8 ,Q_8 ,QD_8 >(const aff3ct::factory::Launcher::parameters&, const int, const char**);
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_16,R_16,Q_16,QD_16>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_32,R_32,Q_32,QD_32>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_64,R_64,Q_64,QD_64>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_8 ,R_8 ,Q_8 >(const int, const char**) const;
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_16,R_16,Q_16>(const int, const char**) const;
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_32,R_32,Q_32>(const int, const char**) const;
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_64,R_64,Q_64>(const int, const char**) const;
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::Launcher::parameters&, const int, const char**);
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_16,R_16,Q_16>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_32,R_32,Q_32>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_64,R_64,Q_64>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
 #else
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B,R,Q,QD>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B,R,Q>(const int, const char**) const;
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B,R,Q>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
 #endif
 // ==================================================================================== explicit template instantiation

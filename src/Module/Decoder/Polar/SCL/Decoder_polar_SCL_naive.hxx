@@ -86,6 +86,14 @@ Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
+::notify_frozenbits_update()
+{
+	for (auto i = 0; i < L; i++)
+		this->recursive_initialize_frozen_bits(this->polar_trees[i]->get_root(), frozen_bits);
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
+void Decoder_polar_SCL_naive<B,R,F,G>
 ::_load(const R *Y_N)
 {
 
@@ -321,8 +329,8 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_duplicate_tree_sums(tools::Binary_node<Contents_SCL<B,R>>* node_a,
-                                tools::Binary_node<Contents_SCL<B,R> >* node_b,
-                                tools::Binary_node<Contents_SCL<B,R> >* node_caller)
+                                tools::Binary_node<Contents_SCL<B,R>>* node_b,
+                                tools::Binary_node<Contents_SCL<B,R>>* node_caller)
 {
 	if (node_a->get_left() != node_caller && !node_a->is_leaf())
 		node_b->get_left()->get_c()->s = node_a->get_left()->get_c()->s;

@@ -8,6 +8,7 @@
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
+#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
 #include "../../Decoder_SIHO.hpp"
 
@@ -27,7 +28,7 @@ template <typename B = int, typename R = float,
                                                                tools::g0_LLR<  R>,
                                                                tools::h_LLR <B,R>,
                                                                tools::xo_STD<B  >>>
-class Decoder_polar_SC_fast_sys : public Decoder_SIHO<B,R>
+class Decoder_polar_SC_fast_sys : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
 {
 	friend Decoder_polar_ASCL_fast_CA_sys    <B,R,API_polar>;
 	friend Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>;
@@ -39,7 +40,7 @@ protected:
 	      mipp::vector<B   > s_bis;        // bits, partial sums
 	const  std::vector<bool> &frozen_bits; // frozen bits
 
-	const tools::Pattern_polar_parser polar_patterns;
+	tools::Pattern_polar_parser polar_patterns;
 
 public:
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
@@ -51,6 +52,8 @@ public:
 	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
 
 	virtual ~Decoder_polar_SC_fast_sys();
+
+	virtual void notify_frozenbits_update();
 
 protected:
 	        void _load             (const R *Y_N                            );

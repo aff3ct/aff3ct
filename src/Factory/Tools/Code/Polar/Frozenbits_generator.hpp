@@ -16,6 +16,8 @@ struct Frozenbits_generator : public Factory
 
 	struct parameters
 	{
+		tools::Frozenbits_generator* build() const;
+
 		int         K       = -1;
 		int         N_cw    = -1;
 

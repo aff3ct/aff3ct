@@ -47,20 +47,13 @@ public:
 	 * \param n_frames: number of frames to process in the Channel.
 	 * \param name:     Channel's name.
 	 */
-	Channel_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Channel_i")
+	Channel_i(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Channel_i")
 	: Module(n_frames, name, "Channel"), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
 	{
 		if (N <= 0)
 		{
 			std::stringstream message;
 			message << "'N' has to be greater than 0 ('N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (sigma <= 0)
-		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -128,6 +121,13 @@ public:
 	template <class A = std::allocator<R>>
 	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (X_N.size() != Y_N.size())
 		{
 			std::stringstream message;
@@ -173,6 +173,13 @@ public:
 	template <class A = std::allocator<R>>
 	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, std::vector<R,A>& H_N)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (X_N.size() != Y_N.size() || Y_N.size() != H_N.size())
 		{
 			std::stringstream message;

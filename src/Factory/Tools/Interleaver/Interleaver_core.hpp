@@ -18,6 +18,9 @@ struct Interleaver_core : public Factory
 
 	struct parameters
 	{
+		template <typename T = uint32_t>
+		tools::Interleaver_core<T>* build() const;
+
 		int         size     = 0;
 
 		std::string type     = "RANDOM";

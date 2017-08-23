@@ -1,0 +1,74 @@
+#include "Tools/Exception/exception.hpp"
+
+#include "Module/Encoder/RA/Encoder_RA.hpp"
+
+#include "Encoder_RA.hpp"
+
+using namespace aff3ct;
+using namespace aff3ct::factory;
+
+const std::string aff3ct::factory::Encoder_RA::name   = "Encoder RA";
+const std::string aff3ct::factory::Encoder_RA::prefix = "enc";
+
+template <typename B>
+module::Encoder<B>* Encoder_RA::parameters
+::build(const module::Interleaver<B> &itl) const
+{
+	if (this->type == "RA") return new module::Encoder_RA<B>(this->K, this->N_cw, itl, this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+module::Encoder<B>* Encoder_RA
+::build(const parameters& params, const module::Interleaver<B> &itl)
+{
+	return params.template build<B>(itl);
+}
+
+void Encoder_RA
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+{
+	Encoder::build_args(req_args, opt_args, p);
+	Interleaver::build_args(req_args, opt_args, "itl");
+	req_args.erase({"itl-size"    });
+	opt_args.erase({"itl-fra", "F"});
+
+	opt_args[{p+"-type"}][2] += ", RA";
+}
+
+void Encoder_RA
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+{
+	params.type = "RA";
+
+	Encoder::store_args(vals, params, p);
+
+	params.itl.core.size     = params.N_cw;
+	params.itl.core.n_frames = params.n_frames;
+	Interleaver::store_args(vals, params.itl, "itl");
+}
+
+void Encoder_RA
+::make_header(params_list& head_enc, params_list& head_itl, const parameters& params, const bool full)
+{
+	Encoder    ::make_header(head_enc, params,     full);
+	Interleaver::make_header(head_itl, params.itl, full);
+}
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_RA::parameters::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&) const;
+template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_RA::parameters::build<B_16>(const aff3ct::module::Interleaver<B_16>&) const;
+template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_RA::parameters::build<B_32>(const aff3ct::module::Interleaver<B_32>&) const;
+template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_RA::parameters::build<B_64>(const aff3ct::module::Interleaver<B_64>&) const;
+template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_RA::build<B_8 >(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_8 >&);
+template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_RA::build<B_16>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_16>&);
+template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_RA::build<B_32>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_32>&);
+template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_RA::build<B_64>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_64>&);
+#else
+template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_RA::parameters::build<B>(const aff3ct::module::Interleaver<B>&) const;
+template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_RA::build<B>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B>&);
+#endif
+// ==================================================================================== explicit template instantiation

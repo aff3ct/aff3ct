@@ -16,6 +16,7 @@
 
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
+#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
 namespace aff3ct
 {
@@ -74,6 +75,8 @@ public:
 	 * \brief Destructor.
 	 */
 	virtual ~Pattern_polar_parser();
+
+	virtual void notify_frozenbits_update();
 
 	/*!
 	 * \brief Gets a binary tree of patterns.

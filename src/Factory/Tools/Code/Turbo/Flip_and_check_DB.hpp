@@ -19,6 +19,9 @@ struct Flip_and_check_DB : public Flip_and_check
 	struct parameters : Flip_and_check::parameters
 	{
 		virtual ~parameters() {}
+
+		template <typename B = int, typename Q = float>
+		tools::Flip_and_check_DB<B,Q>* build(module::CRC<B> &crc) const;
 	};
 
 	template <typename B = int, typename Q = float>

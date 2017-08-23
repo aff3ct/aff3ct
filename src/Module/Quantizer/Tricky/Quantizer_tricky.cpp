@@ -12,12 +12,11 @@ using namespace aff3ct::module;
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
-::Quantizer_tricky(const int N, const R& sigma, const int n_frames, const std::string name)
+::Quantizer_tricky(const int N, const int n_frames, const std::string name)
 : Quantizer<R,Q>(N, n_frames, name),
   val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
   val_min(-val_max),
-  delta_inv((R)0),
-  sigma(sigma)
+  delta_inv((R)0)
 {
 }
 
@@ -27,8 +26,8 @@ namespace module
 {
 template <>
 Quantizer_tricky<float,float>
-::Quantizer_tricky(const int N, const float& sigma, const int n_frames, const std::string name)
-: Quantizer<float,float>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const int N, const int n_frames, const std::string name)
+: Quantizer<float,float>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f) {}
 }
 }
 
@@ -38,19 +37,18 @@ namespace module
 {
 template <>
 Quantizer_tricky<double,double>
-::Quantizer_tricky(const int N, const double& sigma, const int n_frames, const std::string name)
-: Quantizer<double,double>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const int N, const int n_frames, const std::string name)
+: Quantizer<double,double>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f) {}
 }
 }
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
-::Quantizer_tricky(const int N, const short& saturation_pos, const R& sigma, const int n_frames, const std::string name)
+::Quantizer_tricky(const int N, const short& saturation_pos, const int n_frames, const std::string name)
 : Quantizer<R,Q>(N, n_frames, name),
   val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
   val_min(-val_max),
-  delta_inv((R)0),
-  sigma(sigma)
+  delta_inv((R)0)
 {
 	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
 	{
@@ -67,9 +65,9 @@ namespace module
 {
 template <>
 Quantizer_tricky<float,float>
-::Quantizer_tricky(const int N, const short& saturation_pos, const float& sigma, const int n_frames, 
+::Quantizer_tricky(const int N, const short& saturation_pos, const int n_frames,
                    const std::string name)
-: Quantizer<float,float>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+: Quantizer<float,float>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f) {}
 }
 }
 
@@ -79,20 +77,19 @@ namespace module
 {
 template <>
 Quantizer_tricky<double,double>
-::Quantizer_tricky(const int N, const short& saturation_pos, const double& sigma, const int n_frames, 
+::Quantizer_tricky(const int N, const short& saturation_pos, const int n_frames,
                    const std::string name)
-: Quantizer<double,double>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+: Quantizer<double,double>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f) {}
 }
 }
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
-::Quantizer_tricky(const int N, const float min_max, const R& sigma, const int n_frames, const std::string name)
+::Quantizer_tricky(const int N, const float min_max, const int n_frames, const std::string name)
 : Quantizer<R,Q>(N, n_frames, name),
   val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
   val_min(-val_max),
-  delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max)),
-  sigma(sigma)
+  delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max))
 {
 }
 
@@ -102,8 +99,8 @@ namespace module
 {
 template <>
 Quantizer_tricky<float,float>
-::Quantizer_tricky(const int N, const float min_max, const float& sigma, const int n_frames, const std::string name)
-: Quantizer<float,float>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const int N, const float min_max, const int n_frames, const std::string name)
+: Quantizer<float,float>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f) {}
 }
 }
 
@@ -113,20 +110,19 @@ namespace module
 {
 template <>
 Quantizer_tricky<double,double>
-::Quantizer_tricky(const int N, const float min_max, const double& sigma, const int n_frames, const std::string name)
-: Quantizer<double,double>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const int N, const float min_max, const int n_frames, const std::string name)
+: Quantizer<double,double>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f) {}
 }
 }
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
-::Quantizer_tricky(const int N, const float min_max, const short& saturation_pos, const R& sigma, const int n_frames, 
+::Quantizer_tricky(const int N, const float min_max, const short& saturation_pos, const int n_frames,
                    const std::string name)
 : Quantizer<R,Q>(N, n_frames, name),
   val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
   val_min(-val_max),
-  delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max)),
-  sigma(sigma)
+  delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max))
 {
 	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
 	{

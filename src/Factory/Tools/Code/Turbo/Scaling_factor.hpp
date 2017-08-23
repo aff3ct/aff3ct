@@ -18,6 +18,9 @@ struct Scaling_factor : public Factory
 
 	struct parameters
 	{
+		template <typename B = int, typename Q = float>
+		tools::Scaling_factor<B,Q>* build() const;
+
 		std::string         type        = "LTE_VEC";
 		int                 n_ite       = 6;
 		bool                enable      = false;

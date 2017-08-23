@@ -24,24 +24,27 @@ struct Launcher : public Factory
 
 	struct parameters
 	{
+		template <typename B = int, typename R = float, typename Q = R>
+		launcher::Launcher* build(const int argc, const char **argv) const;
+
 		std::string cde_type;
 
 		std::string sim_type        = "BFER";
 		int         sim_prec        = 32;
 		bool        display_help    = false;
 		bool        display_version = false;
+
+	private:
+		template <typename B = int, typename R = float, typename Q = R>
+		inline launcher::Launcher* build_exit(const int argc, const char **argv) const;
 	};
 
-	template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
+	template <typename B = int, typename R = float, typename Q = R>
 	static launcher::Launcher* build(const parameters &params, const int argc, const char **argv);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
 	static void make_header(params_list& head_sim, const parameters& params, const bool full = true);
-
-private:
-	template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
-	static launcher::Launcher* build_exit(const parameters &params, const int argc, const char **argv);
 };
 }
 }

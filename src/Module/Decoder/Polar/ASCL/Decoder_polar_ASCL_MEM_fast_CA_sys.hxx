@@ -32,6 +32,14 @@ Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
+::notify_frozenbits_update()
+{
+	Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::notify_frozenbits_update();
+	sc_decoder.notify_frozenbits_update();
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 ::_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	this->L = 1;

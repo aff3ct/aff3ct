@@ -22,6 +22,9 @@ struct Terminal_BFER : Terminal
 	{
 		virtual ~parameters() {}
 
+		template <typename B = int>
+		tools::Terminal_BFER<B>* build(const module::Monitor<B> &monitor) const;
+
 		std::string type  = "STD";
 	};
 

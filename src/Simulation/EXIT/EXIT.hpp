@@ -5,13 +5,12 @@
 #include <mipp.h>
 
 #include "Module/Source/Source.hpp"
-#include "Module/Encoder/Encoder.hpp"
+#include "Module/Codec/Codec_SISO.hpp"
 #include "Module/Modem/Modem.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
 
 #include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
-#include "Tools/Codec/Codec_SISO.hpp"
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
@@ -21,12 +20,11 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <typename B = int, typename R = float>
+template <class C, typename B = int, typename R = float>
 class EXIT : public Simulation
 {
 protected:
-	const factory::EXIT::parameters &params; // simulation parameters
-	tools::Codec_SISO<B,R> &codec;
+	const factory::EXIT::parameters<C> &params; // simulation parameters
 
 	// channel gains
 	mipp::vector<R> H_N;
@@ -55,17 +53,17 @@ protected:
 	float snr;
 
 	// communication chain
-	module::Source<B>       *source;
-	module::Encoder<B>      *encoder;
-	module::Modem<B,R,R>    *modem;
-	module::Modem<B,R,R>    *modem_a;
-	module::Channel<R>      *channel;
-	module::Channel<R>      *channel_a;
-	module::Decoder_SISO<R> *siso;
-	tools::Terminal_EXIT    *terminal;
+	module::Source      <B  > *source;
+	module::Codec_SISO  <B,R> *codec;
+	module::Modem       <B,R> *modem;
+	module::Modem       <B,R> *modem_a;
+	module::Channel     <  R> *channel;
+	module::Channel     <  R> *channel_a;
+	module::Decoder_SISO<  R> *siso;
+	tools::Terminal_EXIT      *terminal;
 
 public:
-	EXIT(const factory::EXIT::parameters& params, tools::Codec_SISO<B,R> &codec);
+	EXIT(const factory::EXIT::parameters<C> &params);
 	virtual ~EXIT();
 	
 	void launch();
@@ -80,16 +78,17 @@ private:
 protected:
 	virtual void release_objects  ();
 
-	virtual module::Source<B>*       build_source   (              );
-	virtual module::Encoder<B>*      build_encoder  (              );
-	virtual module::Modem  <B,R,R>*  build_modem    (              );
-	virtual module::Modem  <B,R,R>*  build_modem_a  (              );
-	virtual module::Channel<R>*      build_channel  (const int size);
-	virtual module::Channel<R>*      build_channel_a(const int size);
-	virtual module::Decoder_SISO<R>* build_siso     (              );
-	        tools::Terminal_EXIT*    build_terminal (              );
+	virtual module::Source    <B  >* build_source   (              );
+	virtual module::Codec_SISO<B,R>* build_codec    (              );
+	virtual module::Modem     <B,R>* build_modem    (              );
+	virtual module::Modem     <B,R>* build_modem_a  (              );
+	virtual module::Channel   <  R>* build_channel  (const int size);
+	virtual module::Channel   <  R>* build_channel_a(const int size);
+	        tools::Terminal_EXIT   * build_terminal (              );
 };
 }
 }
+
+#include "EXIT.hxx"
 
 #endif /* SIMULATION_EXIT_HPP_ */

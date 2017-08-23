@@ -52,7 +52,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem_i(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
+	Modem_i(const int N, const int N_mod, const int N_fil, const R sigma = -1.f, const int n_frames = 1,
 	        const std::string name = "Modem_i")
 	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
 	{
@@ -77,13 +77,6 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (sigma <= 0)
-		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
 		this->init_processes();
 	}
 
@@ -95,7 +88,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem_i(const int N, const int N_mod, const R sigma, const int n_frames = 1,
+	Modem_i(const int N, const int N_mod, const R sigma = -1.f, const int n_frames = 1,
 	        const std::string name = "Modem_i")
 	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
 	{
@@ -113,13 +106,6 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (sigma <= 0)
-		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
 		this->init_processes();
 	}
 
@@ -130,20 +116,13 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Modem_i")
-	: Module(n_frames, name, "Modem"), N(N), N_mod(N), N_fil(N)
+	Modem_i(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Modem_i")
+	: Module(n_frames, name, "Modem"), N(N), N_mod(N), N_fil(N), sigma(sigma)
 	{
 		if (N <= 0)
 		{
 			std::stringstream message;
 			message << "'N' has to be greater than 0 ('N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (sigma <= 0)
-		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -301,6 +280,13 @@ public:
 	template <class A = std::allocator<R>>
 	void filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_mod * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
@@ -337,6 +323,13 @@ public:
 	template <class A = std::allocator<Q>>
 	void demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
@@ -374,6 +367,13 @@ public:
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
 	void demodulate_wg(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N, std::vector<Q,AQ>& Y_N2)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
@@ -424,6 +424,13 @@ public:
 	template <class A = std::allocator<Q>>
 	void tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
@@ -476,6 +483,13 @@ public:
 	void tdemodulate_wg(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N,
 	                    const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;

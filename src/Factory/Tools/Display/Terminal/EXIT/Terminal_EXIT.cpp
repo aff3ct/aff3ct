@@ -8,12 +8,18 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Terminal_EXIT::name   = "Terminal EXIT";
 const std::string aff3ct::factory::Terminal_EXIT::prefix = "ter";
 
+tools::Terminal_EXIT* Terminal_EXIT::parameters
+::build(const int &cur_t, const int &trials, const double &I_A, const double &I_E) const
+{
+	if (this->type == "STD") return new tools::Terminal_EXIT(this->N, this->snr, this->sig_a, cur_t, trials, I_A, I_E);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
 tools::Terminal_EXIT* Terminal_EXIT
 ::build(const parameters &params, const int &cur_t, const int &trials, const double &I_A, const double &I_E)
 {
-	if (params.type == "STD") return new tools::Terminal_EXIT(params.N, params.snr, params.sig_a, cur_t, trials, I_A, I_E);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return params.build(cur_t, trials, I_A, I_E);
 }
 
 void Terminal_EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)

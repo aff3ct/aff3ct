@@ -11,14 +11,20 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Frozenbits_generator::name   = "Frozen bits generator";
 const std::string aff3ct::factory::Frozenbits_generator::prefix = "fbg";
 
+tools::Frozenbits_generator* Frozenbits_generator::parameters
+::build() const
+{
+	     if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw,                               this->sigma);
+	else if (this->type == "TV"  ) return new tools::Frozenbits_generator_TV  (this->K, this->N_cw, this->path_fb, this->path_pb, this->sigma);
+	else if (this->type == "FILE") return new tools::Frozenbits_generator_file(this->K, this->N_cw, this->path_fb                            );
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
 tools::Frozenbits_generator* Frozenbits_generator
 ::build(const parameters &params)
 {
-	     if (params.type == "GA"  ) return new tools::Frozenbits_generator_GA  (params.K, params.N_cw,                                 params.sigma);
-	else if (params.type == "TV"  ) return new tools::Frozenbits_generator_TV  (params.K, params.N_cw, params.path_fb, params.path_pb, params.sigma);
-	else if (params.type == "FILE") return new tools::Frozenbits_generator_file(params.K, params.N_cw, params.path_fb                              );
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return params.build();
 }
 
 void Frozenbits_generator

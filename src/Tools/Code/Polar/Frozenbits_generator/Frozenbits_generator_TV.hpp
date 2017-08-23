@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include "Frozenbits_generator_file.hpp"
 

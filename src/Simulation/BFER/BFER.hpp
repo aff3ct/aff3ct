@@ -9,7 +9,6 @@
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
-#include "Tools/Codec/Codec.hpp"
 
 #include "Module/Module.hpp"
 #include "Module/Monitor/Monitor.hpp"
@@ -23,12 +22,12 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <typename B = int, typename R = float, typename Q = R>
+template <class C, typename B = int, typename R = float, typename Q = R>
 class BFER : public Simulation
 {
 private:
 	// parameters
-	const factory::BFER::parameters &params;
+	const factory::BFER::parameters<C> &params;
 
 	std::mutex mutex_terminal;
 	std::condition_variable cond_terminal;
@@ -37,8 +36,6 @@ private:
 protected:
 	std::mutex  mutex_exception;
 	std::string prev_err_message;
-
-	tools::Codec<B,Q> &codec;
 
 	// a barrier to synchronize the threads
 	tools::Barrier barrier;
@@ -68,7 +65,7 @@ protected:
 	tools::Terminal_BFER<B> *terminal;
 
 public:
-	BFER(const factory::BFER::parameters& simu_params, tools::Codec<B,Q> &codec);
+	BFER(const factory::BFER::parameters<C>& simu_params);
 	virtual ~BFER();
 	void launch();
 
@@ -84,10 +81,12 @@ private:
 	void build_communication_chain(const int tid = 0);
 	void display_stats(std::ostream &stream = std::cout);
 
-	static void start_thread_terminal        (BFER<B,R,Q> *simu               );
-	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);
+	static void start_thread_terminal        (BFER<C,B,R,Q> *simu               );
+	static void start_thread_build_comm_chain(BFER<C,B,R,Q> *simu, const int tid);
 };
 }
 }
+
+#include "BFER.hxx"
 
 #endif /* SIMULATION_BFER_HPP_ */

@@ -20,21 +20,28 @@ const std::string aff3ct::factory::Interleaver_core::name   = "Interleaver";
 const std::string aff3ct::factory::Interleaver_core::prefix = "itl";
 
 template <typename T>
+tools::Interleaver_core<T>* Interleaver_core::parameters
+::build() const
+{
+	     if (this->type == "LTE"     ) return new tools::Interleaver_core_LTE          <T>(this->size,                                          this->n_frames);
+	else if (this->type == "CCSDS"   ) return new tools::Interleaver_core_CCSDS        <T>(this->size,                                          this->n_frames);
+	else if (this->type == "DVB-RCS1") return new tools::Interleaver_core_ARP_DVB_RCS1 <T>(this->size,                                          this->n_frames);
+	else if (this->type == "DVB-RCS2") return new tools::Interleaver_core_ARP_DVB_RCS2 <T>(this->size,                                          this->n_frames);
+	else if (this->type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(this->size,               this->seed, this->uniform, this->n_frames);
+	else if (this->type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(this->size, this->n_cols, this->seed, this->uniform, this->n_frames);
+	else if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols,                            this->n_frames);
+	else if (this->type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(this->size,               this->seed, this->uniform, this->n_frames);
+	else if (this->type == "USER"    ) return new tools::Interleaver_core_user         <T>(this->size, this->path,                              this->n_frames);
+	else if (this->type == "NO"      ) return new tools::Interleaver_core_NO           <T>(this->size,                                          this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename T>
 tools::Interleaver_core<T>* Interleaver_core
 ::build(const parameters &params)
 {
-	     if (params.type == "LTE"     ) return new tools::Interleaver_core_LTE          <T>(params.size,                                             params.n_frames);
-	else if (params.type == "CCSDS"   ) return new tools::Interleaver_core_CCSDS        <T>(params.size,                                             params.n_frames);
-	else if (params.type == "DVB-RCS1") return new tools::Interleaver_core_ARP_DVB_RCS1 <T>(params.size,                                             params.n_frames);
-	else if (params.type == "DVB-RCS2") return new tools::Interleaver_core_ARP_DVB_RCS2 <T>(params.size,                                             params.n_frames);
-	else if (params.type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(params.size,                params.seed, params.uniform, params.n_frames);
-	else if (params.type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(params.size, params.n_cols, params.seed, params.uniform, params.n_frames);
-	else if (params.type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(params.size, params.n_cols,                              params.n_frames);
-	else if (params.type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(params.size,                params.seed, params.uniform, params.n_frames);
-	else if (params.type == "USER"    ) return new tools::Interleaver_core_user         <T>(params.size, params.path,                                params.n_frames);
-	else if (params.type == "NO"      ) return new tools::Interleaver_core_NO           <T>(params.size,                                             params.n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return params.template build<T>();
 }
 
 void Interleaver_core
@@ -100,5 +107,6 @@ void Interleaver_core
 }
 
 // ==================================================================================== explicit template instantiation 
+template aff3ct::tools::Interleaver_core<uint32_t>* aff3ct::factory::Interleaver_core::parameters::build<uint32_t>() const;
 template aff3ct::tools::Interleaver_core<uint32_t>* aff3ct::factory::Interleaver_core::build<uint32_t>(const aff3ct::factory::Interleaver_core::parameters&);
 // ==================================================================================== explicit template instantiation
