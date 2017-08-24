@@ -36,7 +36,8 @@ public:
 	size_t          get_databytes      ();
 	size_t          get_n_elmts        ();
 	void*           get_dataptr        ();
-	void bind(Socket &s_in);
+
+	int bind(Socket &s_in);
 };
 }
 }

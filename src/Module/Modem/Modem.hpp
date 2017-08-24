@@ -134,50 +134,60 @@ public:
 		auto &p1 = this->create_process("modulate");
 		this->template create_socket_in <B>(p1, "X_N1", this->N     * this->n_frames);
 		this->template create_socket_out<R>(p1, "X_N2", this->N_mod * this->n_frames);
-		this->create_codelet(p1, [&]()
+		this->create_codelet(p1, [&]() -> int
 		{
 			this->modulate(static_cast<B*>(p1["X_N1"].get_dataptr()),
 			               static_cast<R*>(p1["X_N2"].get_dataptr()));
+
+			return 0;
 		});
 
 		auto &p2 = this->create_process("filter");
 		this->template create_socket_in <R>(p2, "Y_N1", this->N_mod * this->n_frames);
 		this->template create_socket_out<R>(p2, "Y_N2", this->N_fil * this->n_frames);
-		this->create_codelet(p2, [&]()
+		this->create_codelet(p2, [&]() -> int
 		{
 			this->filter(static_cast<R*>(p2["Y_N1"].get_dataptr()),
 			             static_cast<R*>(p2["Y_N2"].get_dataptr()));
+
+			return 0;
 		});
 
 		auto &p3 = this->create_process("demodulate");
 		this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_out<Q>(p3, "Y_N2", this->N     * this->n_frames);
-		this->create_codelet(p3, [&]()
+		this->create_codelet(p3, [&]() -> int
 		{
 			this->demodulate(static_cast<Q*>(p3["Y_N1"].get_dataptr()),
 			                 static_cast<Q*>(p3["Y_N2"].get_dataptr()));
+
+			return 0;
 		});
 
 		auto &p4 = this->create_process("tdemodulate");
 		this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_in <Q>(p4, "Y_N2", this->N     * this->n_frames);
 		this->template create_socket_out<Q>(p4, "Y_N3", this->N     * this->n_frames);
-		this->create_codelet(p4, [&]()
+		this->create_codelet(p4, [&]() -> int
 		{
 			this->tdemodulate(static_cast<Q*>(p4["Y_N1"].get_dataptr()),
 			                  static_cast<Q*>(p4["Y_N2"].get_dataptr()),
 			                  static_cast<Q*>(p4["Y_N3"].get_dataptr()));
+
+			return 0;
 		});
 
 		auto &p5 = this->create_process("demodulate_wg");
 		this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_in <R>(p5, "H_N",  this->N_fil * this->n_frames);
 		this->template create_socket_out<Q>(p5, "Y_N2", this->N     * this->n_frames);
-		this->create_codelet(p5, [&]()
+		this->create_codelet(p5, [&]() -> int
 		{
 			this->demodulate_wg(static_cast<Q*>(p5["Y_N1"].get_dataptr()),
 			                    static_cast<R*>(p5["H_N" ].get_dataptr()),
 			                    static_cast<Q*>(p5["Y_N2"].get_dataptr()));
+
+			return 0;
 		});
 
 		auto &p6 = this->create_process("tdemodulate_wg");
@@ -185,12 +195,14 @@ public:
 		this->template create_socket_in <R>(p6, "H_N",  this->N_fil * this->n_frames);
 		this->template create_socket_in <Q>(p6, "Y_N2", this->N     * this->n_frames);
 		this->template create_socket_out<Q>(p6, "Y_N3", this->N     * this->n_frames);
-		this->create_codelet(p6, [&]()
+		this->create_codelet(p6, [&]() -> int
 		{
 			this->tdemodulate_wg(static_cast<Q*>(p6["Y_N1"].get_dataptr()),
 			                     static_cast<R*>(p6["H_N" ].get_dataptr()),
 			                     static_cast<Q*>(p6["Y_N2"].get_dataptr()),
 			                     static_cast<Q*>(p6["Y_N3"].get_dataptr()));
+
+			return 0;
 		});
 	}
 

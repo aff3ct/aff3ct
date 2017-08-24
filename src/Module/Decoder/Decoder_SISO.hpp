@@ -98,10 +98,12 @@ public:
 		auto &p = this->create_process("decode_siso");
 		this->template create_socket_in <R>(p, "Y_N1", this->N_siso * this->n_frames);
 		this->template create_socket_out<R>(p, "Y_N2", this->N_siso * this->n_frames);
-		this->create_codelet(p, [&]()
+		this->create_codelet(p, [&]() -> int
 		{
 			this->decode_siso(static_cast<R*>(p["Y_N1"].get_dataptr()),
 			                  static_cast<R*>(p["Y_N2"].get_dataptr()));
+
+			return 0;
 		});
 	}
 

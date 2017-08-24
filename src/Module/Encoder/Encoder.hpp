@@ -72,10 +72,12 @@ public:
 		auto &p = this->create_process("encode");
 		this->template create_socket_in <B>(p, "U_K", this->K * this->n_frames);
 		this->template create_socket_out<B>(p, "X_N", this->N * this->n_frames);
-		this->create_codelet(p, [&]()
+		this->create_codelet(p, [&]() -> int
 		{
 			this->encode(static_cast<B*>(p["U_K"].get_dataptr()),
 			             static_cast<B*>(p["X_N"].get_dataptr()));
+
+			return 0;
 		});
 	}
 

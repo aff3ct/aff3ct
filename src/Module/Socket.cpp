@@ -63,7 +63,7 @@ void* Socket::get_dataptr()
 	return this->dataptr;
 }
 
-void Socket::bind(Socket &s_in)
+int Socket::bind(Socket &s_in)
 {
 	if (s_in.datatype != this->datatype)
 	{
@@ -103,5 +103,7 @@ void Socket::bind(Socket &s_in)
 	s_in.dataptr = this->dataptr;
 
 	if (s_in.process.is_autostart() && s_in.process.last_input_socket(s_in))
-		s_in.process.exec();
+		return s_in.process.exec();
+	else
+		return 0;
 }

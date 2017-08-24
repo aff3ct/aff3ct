@@ -46,7 +46,7 @@ public:
 	virtual void reset();
 
 protected:
-	virtual void _check_errors(const B *U, const B *V, const int frame_id);
+	virtual int _check_errors(const B *U, const B *V, const int frame_id);
 };
 }
 }

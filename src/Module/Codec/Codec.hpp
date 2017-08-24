@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Interleaver/Interleaver_core.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
@@ -81,6 +82,42 @@ public:
 			message << "'N' has to be smaller or equal to 'N_cw' ('N' = " << N << ", 'N_cw' = " << N_cw << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p1 = this->create_process("extract_sys_llr");
+		this->template create_socket_in <Q>(p1, "Y_N", this->N_cw * this->n_frames);
+		this->template create_socket_out<Q>(p1, "Y_K", this->K    * this->n_frames);
+		this->create_codelet(p1, [&]() -> int
+		{
+			this->extract_sys_llr(static_cast<Q*>(p1["Y_N"].get_dataptr()),
+			                      static_cast<Q*>(p1["Y_K"].get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p2 = this->create_process("extract_sys_bit");
+		this->template create_socket_in <Q>(p2, "Y_N", this->N_cw * this->n_frames);
+		this->template create_socket_out<B>(p2, "V_K", this->K    * this->n_frames);
+		this->create_codelet(p2, [&]() -> int
+		{
+			this->extract_sys_bit(static_cast<Q*>(p2["Y_N"].get_dataptr()),
+			                      static_cast<B*>(p2["V_K"].get_dataptr()));
+
+			return 0;
+		});
+
+		const auto tb_2 = this->tail_length / 2;
+		auto &p3 = this->create_process("extract_sys_par");
+		this->template create_socket_in <Q>(p3, "Y_N",  this->N_cw                   * this->n_frames);
+		this->template create_socket_out<Q>(p3, "sys", (this->K              + tb_2) * this->n_frames);
+		this->template create_socket_out<Q>(p3, "par", (this->N_cw - this->K - tb_2) * this->n_frames);
+		this->create_codelet(p3, [&]() -> int
+		{
+			this->extract_sys_par(static_cast<Q*>(p3["Y_N"].get_dataptr()),
+			                      static_cast<Q*>(p3["sys"].get_dataptr()),
+			                      static_cast<Q*>(p3["par"].get_dataptr()));
+
+			return 0;
+		});
 	}
 
 	virtual ~Codec()

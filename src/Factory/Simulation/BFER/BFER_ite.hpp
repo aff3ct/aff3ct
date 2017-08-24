@@ -33,7 +33,8 @@ struct BFER_ite : BFER
 		template <typename B = int, typename R = float, typename Q = R, int CRC = 0>
 		simulation::BFER_ite<C,B,R,Q,CRC>* build() const;
 
-		int n_ite = 15;
+		int n_ite     = 15;
+		int crc_start = 2;
 
 		Interleaver::parameters itl;
 	};

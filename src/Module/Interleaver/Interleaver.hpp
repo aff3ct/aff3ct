@@ -30,19 +30,23 @@ public:
 		auto &p1 = this->create_process("interleave");
 		this->template create_socket_in <D>(p1, "nat", this->core.get_size() * this->n_frames);
 		this->template create_socket_out<D>(p1, "itl", this->core.get_size() * this->n_frames);
-		this->create_codelet(p1, [&]()
+		this->create_codelet(p1, [&]() -> int
 		{
 			this->interleave(static_cast<D*>(p1["nat"].get_dataptr()),
 			                 static_cast<D*>(p1["itl"].get_dataptr()));
+
+			return 0;
 		});
 
 		auto &p2 = this->create_process("deinterleave");
 		this->template create_socket_in <D>(p2, "itl", this->core.get_size() * this->n_frames);
 		this->template create_socket_out<D>(p2, "nat", this->core.get_size() * this->n_frames);
-		this->create_codelet(p2, [&]()
+		this->create_codelet(p2, [&]() -> int
 		{
 			this->deinterleave(static_cast<D*>(p2["itl"].get_dataptr()),
 			                   static_cast<D*>(p2["nat"].get_dataptr()));
+
+			return 0;
 		});
 	}
 

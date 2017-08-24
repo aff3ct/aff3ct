@@ -129,7 +129,7 @@ protected:
 		process.template create_socket_out<T>(name, n_elmts);
 	}
 
-	void create_codelet(Process& process, std::function<void(void)> codelet)
+	void create_codelet(Process& process, std::function<int(void)> codelet)
 	{
 		process.create_codelet(codelet);
 	}

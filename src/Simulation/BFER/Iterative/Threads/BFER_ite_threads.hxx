@@ -89,6 +89,8 @@ template <class C, typename B, typename R, typename Q, int CRC>
 void BFER_ite_threads<C,B,R,Q,CRC>
 ::_launch()
 {
+	BFER_ite<C,B,R,Q,CRC>::_launch();
+
 	std::vector<std::thread> threads(this->params.n_threads -1);
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
@@ -134,17 +136,19 @@ void BFER_ite_threads<C,B,R,Q,CRC>
 
 	auto &source          = *this->source         [tid];
 	auto &crc             = *this->crc            [tid];
-	auto &encoder         = *this->codec          [tid]->get_encoder();
+	auto &codec           = *this->codec          [tid];
 	auto &interleaver_bit = *this->interleaver_bit[tid];
 	auto &modem           = *this->modem          [tid];
 	auto &channel         = *this->channel        [tid];
 	auto &quantizer       = *this->quantizer      [tid];
 	auto &interleaver_llr = *this->interleaver_llr[tid];
 	auto &coset_real      = *this->coset_real     [tid];
-	auto &decoder_siso    = *this->codec          [tid]->get_decoder_siso();
-	auto &decoder_siho    = *this->codec          [tid]->get_decoder_siho();
 	auto &coset_bit       = *this->coset_bit      [tid];
 	auto &monitor         = *this->monitor        [tid];
+
+	auto &encoder      = *codec.get_encoder();
+	auto &decoder_siso = *codec.get_decoder_siso();
+	auto &decoder_siho = *codec.get_decoder_siho();
 
 	while ((!this->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
 	        (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time) &&
@@ -170,6 +174,17 @@ void BFER_ite_threads<C,B,R,Q,CRC>
 			interleaver_bit["interleave"]["itl" ].bind(modem          ["modulate"  ]["X_N1"]);
 		}
 
+		if (this->params.coset)
+		{
+			if (this->params.coded_monitoring) encoder["encode"]["X_N" ].bind(coset_bit["apply"]["ref"]);
+			else                               crc    ["build" ]["U_K2"].bind(coset_bit["apply"]["ref"]);
+
+			encoder["encode"]["X_N"].bind(coset_real["apply"]["ref"]);
+		}
+
+		if (this->params.coded_monitoring) encoder["encode"  ]["X_N"].bind(monitor["check_errors"]["U"]);
+		else                               source ["generate"]["U_K"].bind(monitor["check_errors"]["U"]);
+
 		if (this->params.chn.type.find("RAYLEIGH") != std::string::npos)
 		{
 			modem    ["modulate"     ]["X_N2"].bind(channel  ["add_noise_wg" ]["X_N" ]);
@@ -188,39 +203,53 @@ void BFER_ite_threads<C,B,R,Q,CRC>
 
 		modem["demodulate"]["Y_N2"].bind(interleaver_llr["deinterleave"]["itl"]);
 
-		if (this->params.coset)
-		{
-			encoder["encode"]["X_N"].bind(coset_real["apply"]["ref"]);
-		}
-
+		// ------------------------------------------------------------------------------------------------------------
+		// ------------------------------------------------------------------------------------ turbo demodulation loop
+		// ------------------------------------------------------------------------------------------------------------
 		for (auto ite = 1; ite <= this->params.n_ite; ite++)
 		{
-			if (this->params.coset)
+			// ------------------------------------------------------------------------------------------- CRC checking
+			if (this->params.crc.type != "NO" && ite >= this->params.crc_start)
 			{
-				interleaver_llr["deinterleave"]["nat"     ].bind(coset_real     ["apply"      ]["in_data"]);
-				coset_real     ["apply"       ]["out_data"].bind(decoder_siso   ["decode_siso"]["Y_N1"   ]);
-				decoder_siso   ["decode_siso" ]["Y_N2"    ].bind(coset_real     ["apply"      ]["in_data"]);
-				coset_real     ["apply"       ]["out_data"].bind(interleaver_llr["interleave" ]["nat"    ]);
-			}
-			else
-			{
-				interleaver_llr["deinterleave"]["nat" ].bind(decoder_siso   ["decode_siso"]["Y_N1"]);
-				decoder_siso   ["decode_siso" ]["Y_N2"].bind(interleaver_llr["interleave" ]["nat" ]);
+				interleaver_llr["deinterleave"   ]["nat"].bind(codec["extract_sys_bit"]["Y_N"]);
+				if (codec      ["extract_sys_bit"]["V_K"].bind(crc  ["check"          ]["V_K"]))
+					break;
 			}
 
-			if (this->params.chn.type.find("RAYLEIGH") != std::string::npos)
+			// ----------------------------------------------------------------------------------------------- decoding
+			if (this->params.coset)
 			{
-				quantizer      ["process"       ]["Y_N2"].bind(modem          ["tdemodulate_wg"]["Y_N1"]);
-				channel        ["add_noise_wg"  ]["H_N" ].bind(modem          ["tdemodulate_wg"]["H_N" ]);
-				interleaver_llr["interleave"    ]["itl" ].bind(modem          ["tdemodulate_wg"]["Y_N2"]);
-				modem          ["tdemodulate_wg"]["Y_N3"].bind(interleaver_llr["deinterleave"  ]["itl" ]);
+				interleaver_llr["deinterleave"]["nat"     ].bind(coset_real  ["apply"      ]["in_data"]);
+				coset_real     ["apply"       ]["out_data"].bind(decoder_siso["decode_siso"]["Y_N1"   ]);
+				decoder_siso   ["decode_siso" ]["Y_N2"    ].bind(coset_real  ["apply"      ]["in_data"]);
 			}
 			else
 			{
-				quantizer      ["process"    ]["Y_N2"].bind(modem          ["tdemodulate" ]["Y_N1"]);
-				interleaver_llr["interleave" ]["itl" ].bind(modem          ["tdemodulate" ]["Y_N2"]);
-				modem          ["tdemodulate"]["Y_N3"].bind(interleaver_llr["deinterleave"]["itl" ]);
+				interleaver_llr["deinterleave"]["nat"].bind(decoder_siso["decode_siso"]["Y_N1"]);
 			}
+
+			// ------------------------------------------------------------------------------------------- interleaving
+			if (this->params.coset) coset_real  ["apply"      ]["out_data"].bind(interleaver_llr["interleave"]["nat"]);
+			else                    decoder_siso["decode_siso"]["Y_N2"    ].bind(interleaver_llr["interleave"]["nat"]);
+
+			// ------------------------------------------------------------------------------------------- demodulation
+			if (this->params.chn.type.find("RAYLEIGH") != std::string::npos)
+			{
+				quantizer      ["process"     ]["Y_N2"].bind(modem["tdemodulate_wg"]["Y_N1"]);
+				channel        ["add_noise_wg"]["H_N" ].bind(modem["tdemodulate_wg"]["H_N" ]);
+				interleaver_llr["interleave"  ]["itl" ].bind(modem["tdemodulate_wg"]["Y_N2"]);
+			}
+			else
+			{
+				quantizer      ["process"   ]["Y_N2"].bind(modem["tdemodulate"]["Y_N1"]);
+				interleaver_llr["interleave"]["itl" ].bind(modem["tdemodulate"]["Y_N2"]);
+			}
+
+			// ----------------------------------------------------------------------------------------- deinterleaving
+			if (this->params.chn.type.find("RAYLEIGH") != std::string::npos)
+				modem["tdemodulate_wg"]["Y_N3"].bind(interleaver_llr["deinterleave"]["itl"]);
+			else
+				modem["tdemodulate"   ]["Y_N3"].bind(interleaver_llr["deinterleave"]["itl"]);
 		}
 
 		if (this->params.coset)
@@ -230,13 +259,11 @@ void BFER_ite_threads<C,B,R,Q,CRC>
 			if (this->params.coded_monitoring)
 			{
 				coset_real  ["apply"            ]["out_data"].bind(decoder_siho["decode_siho_coded"]["Y_N"    ]);
-				encoder     ["encode"           ]["X_N"     ].bind(coset_bit   ["apply"            ]["ref"    ]);
 				decoder_siho["decode_siho_coded"]["V_N"     ].bind(coset_bit   ["apply"            ]["in_data"]);
 			}
 			else
 			{
 				coset_real  ["apply"      ]["out_data"].bind(decoder_siho["decode_siho"]["Y_N"    ]);
-				crc         ["build"      ]["U_K2"    ].bind(coset_bit   ["apply"      ]["ref"    ]);
 				decoder_siho["decode_siho"]["V_K"     ].bind(coset_bit   ["apply"      ]["in_data"]);
 				coset_bit   ["apply"      ]["out_data"].bind(crc         ["extract"    ]["V_K1"   ]);
 			}
@@ -256,21 +283,12 @@ void BFER_ite_threads<C,B,R,Q,CRC>
 
 		if (this->params.coded_monitoring)
 		{
-			encoder["encode"]["X_N"].bind(monitor["check_errors"]["U"]);
-
-			if (this->params.coset)
-			{
-				coset_bit["apply"]["out_data"].bind(monitor["check_errors"]["V"]);
-			}
-			else
-			{
-				decoder_siho["decode_siho_coded"]["V_N"].bind(monitor["check_errors"]["V"]);
-			}
+			if (this->params.coset) coset_bit   ["apply"            ]["out_data"].bind(monitor["check_errors"]["V"]);
+			else                    decoder_siho["decode_siho_coded"]["V_N"     ].bind(monitor["check_errors"]["V"]);
 		}
 		else
 		{
-			source["generate"]["U_K" ].bind(monitor["check_errors"]["U"]);
-			crc   ["extract" ]["V_K2"].bind(monitor["check_errors"]["V"]);
+			crc["extract"]["V_K2"].bind(monitor["check_errors"]["V"]);
 		}
 	}
 }

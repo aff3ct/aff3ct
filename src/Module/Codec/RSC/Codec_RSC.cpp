@@ -14,7 +14,8 @@ Codec_RSC<B,Q>
 ::Codec_RSC(const factory::Encoder_RSC::parameters &enc_params,
             const factory::Decoder_RSC::parameters &dec_params,
             const std::string name)
-: Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
   buffered_encoding(enc_params.buffered)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions

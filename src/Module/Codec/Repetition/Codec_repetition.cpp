@@ -12,7 +12,8 @@ Codec_repetition<B,Q>
 ::Codec_repetition(const factory::Encoder_repetition::parameters &enc_params,
                    const factory::Decoder_repetition::parameters &dec_params,
                    const std::string name)
-: Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name)
+: Codec     <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)

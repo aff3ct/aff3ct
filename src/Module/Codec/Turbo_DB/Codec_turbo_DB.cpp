@@ -23,7 +23,8 @@ Codec_turbo_DB<B,Q>
                  const factory::Decoder_turbo_DB  ::parameters &dec_params,
                  const factory::Puncturer_turbo_DB::parameters &pct_params,
                  CRC<B>* crc, const std::string name)
-: Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+: Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
   sub_enc  (nullptr),
   sub_dec_n(nullptr),
   sub_dec_i(nullptr)

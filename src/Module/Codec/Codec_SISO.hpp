@@ -10,7 +10,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename Q = float>
-class Codec_SISO : public Codec<B,Q>
+class Codec_SISO : virtual public Codec<B,Q>
 {
 private:
 	Decoder_SISO<Q> *decoder_siso;

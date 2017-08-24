@@ -16,8 +16,9 @@ class Codec_SISO_SIHO : public Codec_SISO<B,Q>, public Codec_SIHO<B,Q>
 public:
 	Codec_SISO_SIHO(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1,
 	                const std::string name = "Codec_SISO_SIHO")
-	: Codec_SISO<B,Q>(K, N_cw, N, tail_length, n_frames, name          ),
-	  Codec_SIHO<B,Q>(K, N_cw, N, tail_length, n_frames, name + "_siho")
+	: Codec     <B,Q>(K, N_cw, N, tail_length, n_frames, name),
+	  Codec_SISO<B,Q>(K, N_cw, N, tail_length, n_frames, name),
+	  Codec_SIHO<B,Q>(K, N_cw, N, tail_length, n_frames, name)
 	{
 	}
 

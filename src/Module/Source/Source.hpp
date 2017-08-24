@@ -56,9 +56,11 @@ public:
 
 		auto &p = this->create_process("generate");
 		this->template create_socket_out<B>(p, "U_K", this->K * this->n_frames);
-		this->create_codelet(p, [&]()
+		this->create_codelet(p, [&]() -> int
 		{
 			this->generate(static_cast<B*>(p["U_K"].get_dataptr()));
+
+			return 0;
 		});
 	}
 

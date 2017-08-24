@@ -36,7 +36,7 @@ protected:
 	bool debug;
 	int32_t debug_limit;
 	uint8_t debug_precision;
-	std::function<void(void)> codelet;
+	std::function<int(void)> codelet;
 	std::vector<std::vector<uint8_t>> out_buffers;
 
 	// stats
@@ -89,7 +89,7 @@ public:
 
 	bool last_input_socket(Socket &s_in);
 
-	void exec();
+	int exec();
 
 	Socket& operator[](const std::string name);
 
@@ -104,7 +104,7 @@ protected:
 	template <typename T>
 	void create_socket_out(const std::string name, const size_t n_elmts);
 
-	void create_codelet(std::function<void(void)> codelet);
+	void create_codelet(std::function<int(void)> codelet);
 };
 }
 }

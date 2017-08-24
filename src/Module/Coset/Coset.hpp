@@ -58,11 +58,13 @@ public:
 		this->template create_socket_in <B>(p, "ref",      this->size * this->n_frames);
 		this->template create_socket_in <D>(p, "in_data",  this->size * this->n_frames);
 		this->template create_socket_out<D>(p, "out_data", this->size * this->n_frames);
-		this->create_codelet(p, [&]()
+		this->create_codelet(p, [&]() -> int
 		{
 			this->apply(static_cast<B*>(p["ref"     ].get_dataptr()),
 			            static_cast<D*>(p["in_data" ].get_dataptr()),
 			            static_cast<D*>(p["out_data"].get_dataptr()));
+
+			return 0;
 		});
 	}
 

@@ -57,19 +57,30 @@ public:
 		auto &p1 = this->create_process("build");
 		this->template create_socket_in <B>(p1, "U_K1",  this->K               * this->n_frames);
 		this->template create_socket_out<B>(p1, "U_K2", (this->K + this->size) * this->n_frames);
-		this->create_codelet(p1, [&]()
+		this->create_codelet(p1, [&]() -> int
 		{
 			this->build(static_cast<B*>(p1["U_K1"].get_dataptr()),
 			            static_cast<B*>(p1["U_K2"].get_dataptr()));
+
+			return 0;
 		});
 
 		auto &p2 = this->create_process("extract");
 		this->template create_socket_in <B>(p2, "V_K1", (this->K + this->size) * this->n_frames);
 		this->template create_socket_out<B>(p2, "V_K2",  this->K               * this->n_frames);
-		this->create_codelet(p2, [&]()
+		this->create_codelet(p2, [&]() -> int
 		{
 			this->extract(static_cast<B*>(p2["V_K1"].get_dataptr()),
 			              static_cast<B*>(p2["V_K2"].get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p3 = this->create_process("check");
+		this->template create_socket_in<B>(p3, "V_K", (this->K + this->size) * this->n_frames);
+		this->create_codelet(p3, [&]() -> int
+		{
+			return this->check(static_cast<B*>(p3["V_K"].get_dataptr())) ? 1 : 0;
 		});
 	}
 

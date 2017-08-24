@@ -40,6 +40,7 @@ BFER_ite<C,B,R,Q,CRC>
 
 	this->modules["source"         ] = std::vector<module::Module*>(params.n_threads, nullptr);
 	this->modules["crc"            ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["codec"          ] = std::vector<module::Module*>(params.n_threads, nullptr);
 	this->modules["encoder"        ] = std::vector<module::Module*>(params.n_threads, nullptr);
 	this->modules["modem"          ] = std::vector<module::Module*>(params.n_threads, nullptr);
 	this->modules["channel"        ] = std::vector<module::Module*>(params.n_threads, nullptr);
@@ -77,6 +78,7 @@ void BFER_ite<C,B,R,Q,CRC>
 
 	this->modules["source"         ][tid] = source         [tid];
 	this->modules["crc"            ][tid] = crc            [tid];
+	this->modules["codec"          ][tid] = codec          [tid];
 	this->modules["encoder"        ][tid] = codec          [tid]->get_encoder();
 	this->modules["modem"          ][tid] = modem          [tid];
 	this->modules["channel"        ][tid] = channel        [tid];
@@ -151,15 +153,37 @@ module::CRC<B>* BFER_ite<C,B,R,Q,CRC>
 	return factory::CRC::build<B>(params.crc);
 }
 
+template <class C, typename B, typename Q, int CRC>
+struct Codec_SISO_SIHO
+{
+	static module::Codec_SISO_SIHO<B,Q>* build(const factory::BFER_ite::parameters<C> &params, const int seed_enc,
+	                                           module::CRC<B> *crc = nullptr)
+	{
+		auto params_cdc = params.cdc;
+		params_cdc.enc.seed = seed_enc;
+		return params_cdc.template build<B,Q>();
+	}
+};
+
+template <class C, typename B, typename Q>
+struct Codec_SISO_SIHO<C,B,Q,1>
+{
+	static module::Codec_SISO_SIHO<B,Q>* build(const factory::BFER_ite::parameters<C> &params, const int seed_enc,
+	                                           module::CRC<B> *crc = nullptr)
+	{
+		auto params_cdc = params.cdc;
+		params_cdc.enc.seed = seed_enc;
+		return params.crc.type == "NO" || crc == nullptr ? params_cdc.template build<B,Q>(   ) :
+		                                                   params_cdc.template build<B,Q>(crc);
+	}
+};
+
 template <class C, typename B, typename R, typename Q, int CRC>
 module::Codec_SISO_SIHO<B,Q>* BFER_ite<C,B,R,Q,CRC>
 ::build_codec(const int tid)
 {
 	const auto seed_enc = rd_engine_seed[tid]();
-
-	auto params_cdc = params.cdc;
-	params_cdc.enc.seed = seed_enc;
-	return params_cdc.template build<B,Q>();
+	return Codec_SISO_SIHO<C,B,Q,CRC>::build(params, seed_enc, this->crc[tid]);
 }
 
 template <class C, typename B, typename R, typename Q, int CRC>

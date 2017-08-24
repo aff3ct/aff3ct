@@ -21,7 +21,8 @@ Codec_LDPC<B,Q>
 ::Codec_LDPC(const factory::Encoder_LDPC::parameters &enc_params,
              const factory::Decoder_LDPC::parameters &dec_params,
              const std::string name)
-: Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
   info_bits_pos(enc_params.K)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
@@ -148,6 +149,22 @@ void Codec_LDPC<B,Q>
 			par[sys_idx] = Y_N[i];
 			sys_idx++;
 		}
+}
+
+template <typename B, typename Q>
+void Codec_LDPC<B,Q>
+::_extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id)
+{
+	for (auto i = 0; i < this->K; i++)
+		Y_K[i] = Y_N[info_bits_pos[i]];
+}
+
+template <typename B, typename Q>
+void Codec_LDPC<B,Q>
+::_extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id)
+{
+	for (auto i = 0; i < this->K; i++)
+		V_K[i] = Y_N[info_bits_pos[i]] >= 0 ? (B)0 : (B)1;
 }
 
 // ==================================================================================== explicit template instantiation 

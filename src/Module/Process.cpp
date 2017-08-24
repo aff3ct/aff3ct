@@ -18,7 +18,7 @@ Process::Process(const Module &module, const std::string name, const bool autost
   debug(debug),
   debug_limit(-1),
   debug_precision(2),
-  codelet([]() { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); }),
+  codelet([]() -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
   duration_min(std::chrono::nanoseconds(0)),
@@ -79,7 +79,7 @@ static inline void display_data(const T *data, const size_t n_elmts, const uint8
 		          << (i < (int)n_elmts -1 ? ", " : "");
 }
 
-void Process::exec()
+int Process::exec()
 {
 	if (can_exec())
 	{
@@ -132,10 +132,11 @@ void Process::exec()
 			}
 		}
 
+		int exec_status;
 		if (stats)
 		{
 			auto t_start = std::chrono::steady_clock::now();
-			this->codelet();
+			exec_status = this->codelet();
 			auto duration = std::chrono::steady_clock::now() - t_start;
 
 			this->duration_total += duration;
@@ -151,7 +152,7 @@ void Process::exec()
 			}
 		}
 		else
-			this->codelet();
+			exec_status = this->codelet();
 		this->n_calls++;
 
 		if (debug)
@@ -172,8 +173,11 @@ void Process::exec()
 				else if (o.get_datatype() == typeid(double )) display_data((double *)o.get_dataptr(), limit, p);
 				std::cout << (limit < n_elmts ? ", ..." : "") << "]" << std::endl;
 			}
+			std::cout << "# Returned status: " << exec_status << std::endl;
 			std::cout << "#" << std::endl;
 		}
+
+		return exec_status;
 	}
 	else
 	{
@@ -200,7 +204,7 @@ void Process::create_socket_out(const std::string name, const size_t n_elmts)
 	out.back().dataptr = out_buffers.back().data();
 }
 
-void Process::create_codelet(std::function<void(void)> codelet)
+void Process::create_codelet(std::function<int(void)> codelet)
 {
 	this->codelet = codelet;
 }

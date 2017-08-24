@@ -14,7 +14,8 @@ Codec_BCH<B,Q>
 ::Codec_BCH(const factory::Encoder_BCH::parameters &enc_params,
             const factory::Decoder_BCH::parameters &dec_params,
             const std::string name)
-: Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+: Codec     <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
   GF(dec_params.K, dec_params.N_cw, dec_params.t)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions

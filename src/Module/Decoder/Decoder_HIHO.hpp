@@ -100,10 +100,12 @@ public:
 		auto &p1 = this->create_process("decode_hiho");
 		this->template create_socket_in <B>(p1, "Y_N", this->N_hiho * this->n_frames);
 		this->template create_socket_out<B>(p1, "V_K", this->K_hiho * this->n_frames);
-		this->create_codelet(p1, [&]()
+		this->create_codelet(p1, [&]() -> int
 		{
 			this->decode_hiho(static_cast<B*>(p1["Y_N"].get_dataptr()),
 			                  static_cast<B*>(p1["V_K"].get_dataptr()));
+
+			return 0;
 		});
 		this->register_duration(p1, "load");
 		this->register_duration(p1, "decode");
@@ -112,10 +114,12 @@ public:
 		auto &p2 = this->create_process("decode_hiho_coded");
 		this->template create_socket_in <B>(p2, "Y_N", this->N_hiho * this->n_frames);
 		this->template create_socket_out<B>(p2, "V_N", this->N_hiho * this->n_frames);
-		this->create_codelet(p2, [&]()
+		this->create_codelet(p2, [&]() -> int
 		{
 			this->decode_hiho_coded(static_cast<B*>(p2["Y_N"].get_dataptr()),
 			                        static_cast<B*>(p2["V_N"].get_dataptr()));
+
+			return 0;
 		});
 		this->register_duration(p2, "load");
 		this->register_duration(p2, "decode");

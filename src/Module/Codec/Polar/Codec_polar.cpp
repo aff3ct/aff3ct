@@ -16,7 +16,8 @@ Codec_polar<B,Q>
               const factory::Decoder_polar       ::parameters &dec_params,
               const factory::Puncturer_polar     ::parameters &pct_params,
               CRC<B>* crc, const std::string name)
-: Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
   adaptive_fb(fb_params.sigma == -1.f),
   frozen_bits(fb_params.N_cw, true),
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),

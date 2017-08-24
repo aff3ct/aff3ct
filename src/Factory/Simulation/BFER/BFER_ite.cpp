@@ -13,4 +13,8 @@ void BFER_ite::build_args(arg_map &req_args, arg_map &opt_args, const std::strin
 	opt_args[{p+"-ite", "I"}] =
 		{"positive_int",
 		 "number of global iterations between the demodulator and the decoder."};
+
+	opt_args[{p+"-crc-start"}] =
+		{"positive_int",
+		 "iteration number to start the CRC checking in the turbo demodulation process."};
 }

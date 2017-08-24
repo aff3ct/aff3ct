@@ -72,10 +72,10 @@ public:
 		auto &p = this->create_process("check_errors");
 		this->template create_socket_in<B>(p, "U", this->size * this->n_frames);
 		this->template create_socket_in<B>(p, "V", this->size * this->n_frames);
-		this->create_codelet(p, [&]()
+		this->create_codelet(p, [&]() -> int
 		{
-			this->check_errors(static_cast<B*>(p["U"].get_dataptr()),
-			                   static_cast<B*>(p["V"].get_dataptr()));
+			return this->check_errors(static_cast<B*>(p["U"].get_dataptr()),
+			                          static_cast<B*>(p["V"].get_dataptr()));
 		});
 	}
 
@@ -154,7 +154,7 @@ public:
 	 * \param V: the decoded message (from the Decoder).
 	 */
 	template <class A = std::allocator<B>>
-	void check_errors(const std::vector<B,A>& U, const std::vector<B,A>& V)
+	int check_errors(const std::vector<B,A>& U, const std::vector<B,A>& V)
 	{
 		if ((int)U.size() != this->size * this->n_frames)
 		{
@@ -172,15 +172,18 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->check_errors(U.data(), V.data());
+		return this->check_errors(U.data(), V.data());
 	}
 
-	virtual void check_errors(const B *U, const B *V)
+	virtual int check_errors(const B *U, const B *V)
 	{
+		int n_be = 0;
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_check_errors(U + f * this->size,
-			                    V + f * this->size,
-			                    f);
+			n_be += this->_check_errors(U + f * this->size,
+			                            V + f * this->size,
+			                            f);
+
+		return n_be;
 	}
 
 	virtual void add_handler_fe               (std::function<void(int )> callback) = 0;
@@ -223,7 +226,7 @@ public:
 	}
 
 protected:
-	virtual void _check_errors(const B *U, const B *V, const int frame_id)
+	virtual int _check_errors(const B *U, const B *V, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}

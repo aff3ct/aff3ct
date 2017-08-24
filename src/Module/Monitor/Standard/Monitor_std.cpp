@@ -25,7 +25,7 @@ bool Monitor_std<B>
 }
 
 template <typename B>
-void Monitor_std<B>
+int Monitor_std<B>
 ::_check_errors(const B *U, const B *V, const int frame_id)
 {
 	auto bit_errors_count = 0;
@@ -50,6 +50,8 @@ void Monitor_std<B>
 	if (frame_id == this->n_frames -1)
 		for (auto c : this->callbacks_check)
 			c();
+
+	return bit_errors_count;
 }
 
 template <typename B>
