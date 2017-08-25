@@ -86,9 +86,9 @@ template <typename B, typename Q>
 void Codec_RSC<B,Q>
 ::_extract_sys_par(const Q* Y_N, Q* sys, Q* par, const int frame_id)
 {
-	const auto tb_2 = Codec_SISO<B,Q>::tail_length / 2;
-	const auto K    = Codec_SISO<B,Q>::K;
-	const auto N_cw = Codec_SISO<B,Q>::N_cw;
+	const auto tb_2 = this->tail_length / 2;
+	const auto K    = this->K;
+	const auto N_cw = this->N_cw;
 
 	if (buffered_encoding)
 	{

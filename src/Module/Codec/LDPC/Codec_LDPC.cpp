@@ -59,7 +59,7 @@ Codec_LDPC<B,Q>
 
 		try
 		{
-			info_bits_pos = tools::AList::read_info_bits_pos(file_G, Codec_SISO<B,Q>::K, Codec_SISO<B,Q>::N_cw);
+			info_bits_pos = tools::AList::read_info_bits_pos(file_G, this->K, this->N_cw);
 			is_info_bits_pos = true;
 		}
 		catch (std::exception const&)
@@ -136,8 +136,8 @@ template <typename B, typename Q>
 void Codec_LDPC<B,Q>
 ::_extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id)
 {
-	const auto K    = Codec_SISO<B,Q>::K;
-	const auto N_cw = Codec_SISO<B,Q>::N_cw;
+	const auto K    = this->K;
+	const auto N_cw = this->N_cw;
 
 	for (auto i = 0; i < K; i++)
 		sys[i] = Y_N[info_bits_pos[i]];

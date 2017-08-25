@@ -78,7 +78,7 @@ template <typename B, typename Q>
 void Codec_uncoded<B,Q>
 ::_extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id)
 {
-	auto K = Codec_SISO<B,Q>::K;
+	auto K = this->K;
 	std::copy(Y_N, Y_N + K, sys);
 }
 

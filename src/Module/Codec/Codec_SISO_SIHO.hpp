@@ -25,47 +25,6 @@ public:
 	virtual ~Codec_SISO_SIHO()
 	{
 	}
-
-	tools::Interleaver_core<>* get_interleaver()
-	{
-		return Codec_SISO<B,Q>::get_interleaver();
-	}
-
-	Encoder<B>* get_encoder()
-	{
-		return Codec_SISO<B,Q>::get_encoder();
-	}
-
-	Puncturer<B,Q>* get_puncturer()
-	{
-		return Codec_SISO<B,Q>::get_puncturer();
-	}
-
-	float get_sigma()
-	{
-		return Codec_SISO<B,Q>::get_sigma();
-	}
-
-	virtual void set_sigma(const float sigma)
-	{
-		Codec_SISO<B,Q>::set_sigma(sigma);
-	}
-
-protected:
-	void set_interleaver(tools::Interleaver_core<>* itl)
-	{
-		Codec_SISO<B,Q>::set_interleaver(itl);
-	}
-
-	void set_encoder(Encoder<B>* enc)
-	{
-		Codec_SISO<B,Q>::set_encoder(enc);
-	}
-
-	void set_puncturer(Puncturer<B,Q>* pct)
-	{
-		Codec_SISO<B,Q>::set_puncturer(pct);
-	}
 };
 }
 }

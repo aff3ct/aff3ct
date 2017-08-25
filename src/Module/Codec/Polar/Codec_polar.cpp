@@ -55,16 +55,16 @@ Codec_polar<B,Q>
 		// build the frozen bits generator
 		fb_generator = factory::Frozenbits_generator::build(fb_params);
 	else
-		if (Codec_SISO<B,Q>::N_cw != Codec_SISO<B,Q>::N)
+		if (this->N_cw != this->N)
 		{
 			std::stringstream message;
-			message << "'N_cw' has to be equal to 'N' ('N_cw' = " << Codec_SISO<B,Q>::N_cw << ", 'N' = "
-			        << Codec_SISO<B,Q>::N << ").";
+			message << "'N_cw' has to be equal to 'N' ('N_cw' = " << this->N_cw << ", 'N' = "
+			        << this->N << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	std::fill(frozen_bits.begin(), frozen_bits.begin() + Codec_SISO<B,Q>::K, false);
+	std::fill(frozen_bits.begin(), frozen_bits.begin() + this->K, false);
 
 	if (generated_decoder)
 	{
@@ -120,7 +120,7 @@ Codec_polar<B,Q>
 		if (!adaptive_fb)
 		{
 			fb_generator->generate(frozen_bits);
-			if (Codec_SISO<B,Q>::N_cw != Codec_SISO<B,Q>::N)
+			if (this->N_cw != this->N)
 				puncturer_wangliu->gen_frozen_bits(frozen_bits);
 		}
 	}
@@ -158,7 +158,7 @@ void Codec_polar<B,Q>
 		fb_generator->set_sigma(sigma);
 		fb_generator->generate(frozen_bits);
 
-		if (Codec_SISO<B,Q>::N_cw != Codec_SISO<B,Q>::N)
+		if (this->N_cw != this->N)
 			puncturer_wangliu->gen_frozen_bits(frozen_bits);
 
 		this->fb_decoder->notify_frozenbits_update();
@@ -170,7 +170,7 @@ void Codec_polar<B,Q>
 ::_extract_sys_par(const Q* Y_N, Q* sys, Q* par, const int frame_id)
 {
 	auto par_idx = 0, sys_idx = 0;
-	auto N_cw = Codec_SISO<B,Q>::N_cw;
+	auto N_cw = this->N_cw;
 
 	for (auto i = 0; i < N_cw; i++)
 	{
