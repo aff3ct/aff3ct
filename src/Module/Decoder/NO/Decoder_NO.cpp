@@ -10,7 +10,8 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_NO<B,R>
 ::Decoder_NO(const int K, const int n_frames, const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, K, n_frames, 1, name)
+: Decoder               (K, K, n_frames, 1, name),
+  Decoder_SISO_SIHO<B,R>(K, K, n_frames, 1, name)
 {
 }
 

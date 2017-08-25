@@ -80,7 +80,8 @@ Decoder_RSC_BCJR_seq<B,R>
                        const bool buffered_encoding,
                        const int n_frames,
                        const std::string name)
-: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1, name)
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1, name),
+  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1, name)
 {
 	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));
 	req_trellis[0] = { 0,  2,  4,  6,  0,  2,  4,  6};

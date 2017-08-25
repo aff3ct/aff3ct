@@ -18,7 +18,8 @@ Decoder_RSC_DB_BCJR<B,R>
                       const bool buffered_encoding,
                       const int n_frames,
                       const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, 2 * K, n_frames, 1, name             ),
+: Decoder               (K, 2 * K, n_frames, 1, name             ),
+  Decoder_SISO_SIHO<B,R>(K, 2 * K, n_frames, 1, name             ),
   n_states              ((int)trellis[0].size()/4                ),
   n_ff                  ((int)std::log2(n_states)                ),
   buffered_encoding     (buffered_encoding                       ),

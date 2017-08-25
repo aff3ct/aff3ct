@@ -22,7 +22,8 @@ Decoder_LDPC_BP_flooding<B,R>
                            const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                  ),
+: Decoder               (K, N, n_frames, 1, name                  ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                  ),
   n_ite                 (n_ite                                    ),
   n_V_nodes             (N                                        ), // same as N but more explicit
   n_C_nodes             ((int)H.get_n_cols()                      ),

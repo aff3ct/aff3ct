@@ -15,7 +15,8 @@ Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
                                    const bool buffered_encoding,
                                    const int n_frames,
                                    const std::string name)
-: Decoder_RSC_BCJR_seq_generic<B,R>(K, trellis, buffered_encoding, n_frames, name),
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1, name),
+  Decoder_RSC_BCJR_seq_generic<B,R>(K, trellis, buffered_encoding, n_frames, name),
   beta_prev(trellis[0].size()), beta_cur(trellis[0].size())
 {
 }

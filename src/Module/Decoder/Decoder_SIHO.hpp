@@ -16,7 +16,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Module.hpp"
+#include "Decoder.hpp"
 
 namespace aff3ct
 {
@@ -34,19 +34,11 @@ namespace module
  * Please use Decoder for inheritance (instead of Decoder_SIHO_i).
  */
 template <typename B = int, typename R = float>
-class Decoder_SIHO_i : public Module
+class Decoder_SIHO_i : virtual public Decoder
 {
 private:
-	const int n_inter_frame_rest;
-
 	std::vector<R> Y_N;
 	std::vector<B> V_KN;
-
-protected:
-	const int K; /*!< Number of information bits in one frame */
-	const int N; /*!< Size of one frame (= number of bits in one frame) */
-	const int simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
-	const int n_dec_waves;
 
 public:
 	/*!
@@ -60,44 +52,10 @@ public:
 	 */
 	Decoder_SIHO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	               std::string name = "Decoder_SIHO_i")
-	: Module(n_frames, name, "Decoder_SIHO"),
-	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
-	  Y_N (n_inter_frame_rest ? simd_inter_frame_level * N : 0),
-	  V_KN(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
-	  K(K),
-	  N(N),
-	  simd_inter_frame_level(simd_inter_frame_level),
-	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
+	: Decoder(K, N, n_frames, simd_inter_frame_level, name),
+	  Y_N    (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
+	  V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 	{
-		if (K <= 0)
-		{
-			std::stringstream message;
-			message << "'K' has to be greater than 0 ('K' = " << K << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (N <= 0)
-		{
-			std::stringstream message;
-			message << "'N' has to be greater than 0 ('N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (simd_inter_frame_level <= 0)
-		{
-			std::stringstream message;
-			message << "'simd_inter_frame_level' has to be greater than 0 ('simd_inter_frame_level' = "
-			        << simd_inter_frame_level << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (K > N)
-		{
-			std::stringstream message;
-			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
 		auto &p1 = this->create_process("decode_siho");
 		this->template create_socket_in <R>(p1, "Y_N", this->N * this->n_frames);
 		this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
@@ -136,31 +94,6 @@ public:
 	{
 	}
 
-	int get_K() const
-	{
-		return this->K;
-	}
-
-	int get_N() const
-	{
-		return this->N;
-	}
-
-	/*!
-	 * \brief Gets the number of frames absorbed by the SIMD instructions.
-	 *
-	 * \return the number of frames absorbed by the SIMD instructions.
-	 */
-	int get_simd_inter_frame_level() const
-	{
-		return this->simd_inter_frame_level;
-	}
-
-	int get_n_dec_waves() const
-	{
-		return this->n_dec_waves;
-	}
-
 	/*!
 	 * \brief Decodes the noisy frame.
 	 *
@@ -195,12 +128,12 @@ public:
 		for (w = 0; w < this->n_dec_waves -1; w++)
 			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * simd_inter_frame_level);
+			                   w * this->simd_inter_frame_level);
 
 		if (this->n_inter_frame_rest == 0)
 			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * simd_inter_frame_level);
+			                   w * this->simd_inter_frame_level);
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -245,12 +178,12 @@ public:
 		for (w = 0; w < this->n_dec_waves -1; w++)
 			this->_decode_siho_coded(Y_N + w * this->N * this->simd_inter_frame_level,
 			                         V_N + w * this->N * this->simd_inter_frame_level,
-			                         w * simd_inter_frame_level);
+			                         w * this->simd_inter_frame_level);
 
 		if (this->n_inter_frame_rest == 0)
 			this->_decode_siho_coded(Y_N + w * this->N * this->simd_inter_frame_level,
 			                         V_N + w * this->N * this->simd_inter_frame_level,
-			                         w * simd_inter_frame_level);
+			                         w * this->simd_inter_frame_level);
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;

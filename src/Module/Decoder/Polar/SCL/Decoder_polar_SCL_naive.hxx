@@ -20,7 +20,8 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
                           const int n_frames, const std::string name)
-: Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
+: Decoder          (K, N, n_frames, 1, name),
+  Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
   m((int)std::log2(N)),
   metric_init(std::numeric_limits<R>::min()),
   frozen_bits(frozen_bits),

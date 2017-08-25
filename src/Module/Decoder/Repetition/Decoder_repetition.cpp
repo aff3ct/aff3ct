@@ -14,7 +14,8 @@ template <typename B, typename R>
 Decoder_repetition<B,R>
 ::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding, const int n_frames,
                      const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name),
+: Decoder               (K, N, n_frames, 1, name),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name),
   rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K)
 {
 	if (N % K)

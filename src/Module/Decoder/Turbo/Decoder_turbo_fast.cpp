@@ -22,7 +22,8 @@ Decoder_turbo_fast<B,R>
                      Decoder_SISO<R> &siso_i,
                      const bool buffered_encoding,
                      const std::string name)
-: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
+: Decoder(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
+  Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
 {
 }
 

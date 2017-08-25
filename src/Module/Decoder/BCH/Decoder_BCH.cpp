@@ -13,7 +13,8 @@ template <typename B, typename R>
 Decoder_BCH<B, R>
 ::Decoder_BCH(const int& K, const int& N, const int&t, const tools::Galois &GF, const int n_frames,
               const std::string name)
-: Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1, name),
+: Decoder               (K, N, n_frames, 1, name),
+  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1, name),
   elp(N+2, std::vector<int>(N)), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201), m(GF.get_m()),
   t(t), d(2*t+1), alpha_to(N+1), index_of(N+1), YH_N(N)
 {

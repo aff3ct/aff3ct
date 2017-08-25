@@ -21,14 +21,15 @@ template <typename B, typename R,
 Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
                            const int n_frames, const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name),
-  m                     ((int)std::log2(N)      ),
-  max_iter              (max_iter               ),
-  layers_count          (this->m +1             ),
-  frozen_bits           (frozen_bits            ),
-  feedback_graph        (layers_count           ),
-  soft_graph            (layers_count           ),
-  is_init               (false                  )
+: Decoder               (K, N, n_frames, 1, name  ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name  ),
+  m                     ((int)std::log2(N)        ),
+  max_iter              (max_iter                 ),
+  layers_count          (this->m +1               ),
+  frozen_bits           (frozen_bits              ),
+  feedback_graph        (layers_count             ),
+  soft_graph            (layers_count             ),
+  is_init               (false                    )
 {
 	if (!tools::is_power_of_2(this->N))
 	{

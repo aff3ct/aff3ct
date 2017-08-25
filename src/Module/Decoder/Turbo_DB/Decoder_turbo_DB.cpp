@@ -19,7 +19,8 @@ Decoder_turbo_DB<B,R>
                    Decoder_RSC_DB_BCJR<B,R> &siso_n,
                    Decoder_RSC_DB_BCJR<B,R> &siso_i,
                    const std::string name)
-: Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1, name),
+: Decoder          (K, N, siso_n.get_n_frames(), 1, name),
+  Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1, name),
   n_ite            (n_ite),
   pi               (pi),
   siso_n           (siso_n),

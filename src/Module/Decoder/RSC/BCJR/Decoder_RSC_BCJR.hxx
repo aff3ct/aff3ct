@@ -20,7 +20,8 @@ Decoder_RSC_BCJR<B,R>
                    const int n_frames,
                    const int simd_inter_frame_level,
                    const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level, name),
+: Decoder               (K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level, name),
+  Decoder_SISO_SIHO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level, name),
   n_states((int)trellis[0].size()),
   n_ff((int)std::log2(n_states)),
   buffered_encoding(buffered_encoding),
