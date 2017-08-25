@@ -83,6 +83,13 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+::reset()
+{
+	this->init_flag = true;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::_load(const R *Y_N, const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
@@ -183,11 +190,8 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
-	if (cur_wave == this->n_dec_waves -1) this->init_flag = true;
-
 	// take the hard decision
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 	const auto zero = mipp::Reg<R>((R)0);
 	for (auto i = 0; i < this->K; i++)
 	{
@@ -241,11 +245,8 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
-	if (cur_wave == this->n_dec_waves -1) this->init_flag = true;
-
 	// take the hard decision
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 	const auto zero = mipp::Reg<R>((R)0);
 	for (auto i = 0; i < this->N; i++)
 		V_reorderered[i] = mipp::cast<R,B>(this->var_nodes[cur_wave][i]) >> (sizeof(B) * 8 - 1);

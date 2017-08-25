@@ -36,6 +36,8 @@ public:
 	                         const int n_frames = 1, const std::string name = "Decoder_polar_SCAN_naive");
 	virtual ~Decoder_polar_SCAN_naive() {}
 
+	void reset();
+
 protected:
 	        void _load             (const R *Y_N                              );
 	        void _decode_siho      (const R *Y_N,  B *V_K , const int frame_id);

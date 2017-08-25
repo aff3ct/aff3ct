@@ -23,9 +23,7 @@ struct Terminal_EXIT : Terminal
 
 		tools::Terminal_EXIT* build(const int &cur_t, const int &trials, const double &I_A, const double &I_E) const;
 
-		int   N           = 0;
-		float snr         = -1.f;
-		float sig_a       = -1.f;
+		int         N     = 0;
 
 		std::string type  = "STD";
 	};

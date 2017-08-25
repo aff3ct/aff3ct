@@ -286,6 +286,8 @@ public:
 			                       f);
 	}
 
+	virtual void reset() {}
+
 protected:
 	virtual void _extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id)
 	{

@@ -11,6 +11,9 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_LDPC_BP_flooding : public Decoder_SISO_SIHO<B,R>
 {
+public:
+	void reset();
+
 protected:
 	const int  n_ite;      // number of iterations to perform
 	const int  n_V_nodes;  // number of variable nodes (= N)

@@ -43,14 +43,14 @@ protected:
 	mipp::vector<R> Le_buff, La_buff;
 
 	// EXIT simu parameters
-	const int n_trials;
 	int cur_trial;
 	double I_A, I_E;
 
 	// code specifications
 	float sig_a;
 	float sigma;
-	float snr;
+	float ebn0;
+	float esn0;
 
 	// communication chain
 	module::Source      <B  > *source;
@@ -76,15 +76,15 @@ private:
 	static double measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits);
 
 protected:
-	virtual void release_objects  ();
+	void release_objects  ();
 
-	virtual module::Source    <B  >* build_source   (              );
-	virtual module::Codec_SISO<B,R>* build_codec    (              );
-	virtual module::Modem     <B,R>* build_modem    (              );
-	virtual module::Modem     <B,R>* build_modem_a  (              );
-	virtual module::Channel   <  R>* build_channel  (const int size);
-	virtual module::Channel   <  R>* build_channel_a(const int size);
-	        tools::Terminal_EXIT   * build_terminal (              );
+	module::Source    <B  >* build_source   (              );
+	module::Codec_SISO<B,R>* build_codec    (              );
+	module::Modem     <B,R>* build_modem    (              );
+	module::Modem     <B,R>* build_modem_a  (              );
+	module::Channel   <  R>* build_channel  (const int size);
+	module::Channel   <  R>* build_channel_a(const int size);
+	tools::Terminal_EXIT   * build_terminal (              );
 };
 }
 }

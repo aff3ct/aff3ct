@@ -90,6 +90,8 @@ void BFER_ite<C,B,R,Q,CRC>
 	this->modules["interleaver_bit"][tid] = interleaver_bit[tid];
 	this->modules["interleaver_llr"][tid] = interleaver_llr[tid];
 
+	this->monitor[tid]->add_handler_check(std::bind(&module::Codec_SISO_SIHO<B,Q>::reset, codec[tid]));
+
 	interleaver_core[tid]->init();
 	if (interleaver_core[tid]->is_uniform())
 		this->monitor[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh,

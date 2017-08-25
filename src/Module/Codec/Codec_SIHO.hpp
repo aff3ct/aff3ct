@@ -39,6 +39,18 @@ public:
 		return this->decoder_siho;
 	}
 
+	virtual void reset()
+	{
+		if (this->decoder_siho == nullptr)
+		{
+			std::stringstream message;
+			message << "'decoder_siho' is NULL.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->decoder_siho->reset();
+	}
+
 protected:
 	void set_decoder_siho(Decoder_SIHO<B,Q>* dec)
 	{

@@ -44,6 +44,7 @@ public:
 	virtual void add_handler_fe_limit_achieved(std::function<void(void)> callback);
 
 	virtual void reset();
+	virtual void clear_callbacks();
 
 protected:
 	virtual int _check_errors(const B *U, const B *V, const int frame_id);

@@ -193,6 +193,7 @@ void BFER<C,B,R,Q>
 		if (this->params.err_track_revert)
 		{
 			this->release_objects();
+			this->monitor_red->clear_callbacks();
 
 			// dirty hack to override simulation params
 			auto &params_writable = const_cast<factory::BFER::parameters<C>&>(params);

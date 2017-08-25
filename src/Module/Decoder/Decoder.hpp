@@ -96,6 +96,8 @@ public:
 	{
 		return this->n_dec_waves;
 	}
+
+	virtual void reset() {};
 };
 }
 }

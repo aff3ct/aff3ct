@@ -137,7 +137,12 @@ void Monitor_std<B>
 	this->n_bit_errors      = 0;
 	this->n_frame_errors    = 0;
 	this->n_analyzed_frames = 0;
+}
 
+template <typename B>
+void Monitor_std<B>
+::clear_callbacks()
+{
 	this->callbacks_fe               .clear();
 	this->callbacks_check            .clear();
 	this->callbacks_fe_limit_achieved.clear();

@@ -25,6 +25,11 @@ public:
 	virtual ~Codec_SISO_SIHO()
 	{
 	}
+
+	virtual void reset()
+	{
+		this->get_decoder_siso()->reset();
+	}
 };
 }
 }

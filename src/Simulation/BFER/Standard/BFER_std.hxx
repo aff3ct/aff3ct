@@ -78,6 +78,8 @@ void BFER_std<C,B,R,Q,CRC,ITL>
 	this->modules["decoder"   ][tid] = codec     [tid]->get_decoder_siho();
 	this->modules["coset_bit" ][tid] = coset_bit [tid];
 
+	this->monitor[tid]->add_handler_check(std::bind(&module::Codec_SIHO<B,Q>::reset, codec[tid]));
+
 	try
 	{
 		auto *interleaver = codec[tid]->get_interleaver(); // can raise an exceptions

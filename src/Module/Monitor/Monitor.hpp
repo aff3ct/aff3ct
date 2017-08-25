@@ -196,6 +196,10 @@ public:
 		this->processes["check_errors"]->reset_stats();
 	}
 
+	virtual void clear_callbacks()
+	{
+	}
+
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
 	 *

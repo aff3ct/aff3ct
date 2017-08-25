@@ -69,6 +69,14 @@ Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	}
 }
 
+template <typename B, typename R,
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
+::reset()
+{
+	this->is_init = false;
+}
+
 /********************************************************************/
 /** load **/
 /********************************************************************/
@@ -79,9 +87,9 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 {
 	// init feedback graph (special case for the left most stage)
 	for (auto i = 0; i < this->N; i++)
-		if (frozen_bits[i])// if i is a frozen bit		
+		if (frozen_bits[i])// if i is a frozen bit
 			feedback_graph[0][i] = S();
-		else		
+		else
 			feedback_graph[0][i] = I();
 
 	// init the rest of the feedback graph 
@@ -103,7 +111,7 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::_load(const R *Y_N)
 {
-	if (!(this->is_init))
+	if (!this->is_init)
 		_load_init();
 
 	// init the softGraph (special case for the right most stage)
@@ -164,8 +172,6 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	Decoder_SIHO<B,R>::update_duration("decode_siho", "load",   d_load);
 	Decoder_SIHO<B,R>::update_duration("decode_siho", "decode", d_decod);
 	Decoder_SIHO<B,R>::update_duration("decode_siho", "store",  d_store);
-
-	this->is_init = false;
 }
 
 template <typename B, typename R,
@@ -188,8 +194,6 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "load",   d_load);
 	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "decode", d_decod);
 	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "store",  d_store);
-
-	this->is_init = false;
 }
 
 template <typename B, typename R,

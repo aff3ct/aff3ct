@@ -43,6 +43,7 @@ struct EXIT : Simulation
 		float       sig_a_min  = 0.0f;
 		float       sig_a_max  = 5.0f;
 		float       sig_a_step = 0.5f;
+		int         n_trials   = 200;
 		bool        debug      = false;
 
 		Source       ::parameters src;

@@ -51,8 +51,6 @@ void EXIT<C,B,R>
 	this->opt_args.erase({"chn-add-users"    });
 	this->opt_args.erase({"chn-complex"      });
 	this->req_args.erase({"ter-cw-size", "N"});
-	this->req_args.erase({"ter-sig-a"       });
-	this->req_args.erase({"ter-snr"         });
 }
 
 template <class C, typename B, typename R>
@@ -96,6 +94,9 @@ void EXIT<C,B,R>
 
 	params.mdm.n_frames = params.src.n_frames;
 	params.chn.n_frames = params.src.n_frames;
+
+	if (!this->ar.exist_arg({"sim-trials"}))
+		params.n_trials = 200000 / params.cdc.dec.K;
 }
 
 template <class C, typename B, typename R>

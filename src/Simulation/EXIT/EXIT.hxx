@@ -43,14 +43,14 @@ EXIT<C,B,R>
   Le_buff(0),
   La_buff(0),
 
-  n_trials (200000 / params.cdc.dec.K),
   cur_trial(0),
 
-  I_A      (0.0),
-  I_E      (0.0),
-  sig_a    (0.f),
-  sigma    (0.f),
-  snr      (0.f),
+  I_A  (0.0),
+  I_E  (0.0),
+  sig_a(0.f),
+  sigma(0.f),
+  ebn0 (0.f),
+  esn0 (0.f),
 
   source   (nullptr),
   codec    (nullptr),
@@ -112,23 +112,33 @@ void EXIT<C,B,R>
 {
 	bool first_loop = true;
 
+	// allocate and build all the communication chain to generate EXIT chart
+	this->build_communication_chain();
+
 	// for each channel SNR to be simulated	
-	for (snr = params.snr_min; snr <= params.snr_max; snr += params.snr_step)
+	for (ebn0 = params.snr_min; ebn0 <= params.snr_max; ebn0 += params.snr_step)
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		const auto bit_rate = 1.f;
-		sigma = tools::esn0_to_sigma(tools::ebn0_to_esn0(snr, bit_rate, params.mdm.bps), params.mdm.upf);
+		esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params.mdm.bps);
+		sigma = tools::esn0_to_sigma(esn0, params.mdm.upf);
 
-		codec->set_sigma(sigma);
+		terminal->set_esn0(esn0);
+		terminal->set_ebn0(ebn0);
+
+		channel->set_sigma(sigma);
+		modem  ->set_sigma(sigma);
+		codec  ->set_sigma(sigma);
 
 		// for each "a" standard deviation (sig_a) to be simulated
 		for (sig_a = params.sig_a_min; sig_a <= params.sig_a_max; sig_a += params.sig_a_step)
 		{
-			I_A = 0.0;
-			I_E = 0.0;
+			I_A = I_E = 0.0;
 
-			// allocate and build all the communication chain to generate EXIT chart
-			this->build_communication_chain();
+			terminal->set_sig_a(sig_a);
+
+			channel_a->set_sigma(2.f / sig_a);
+			modem_a  ->set_sigma(2.f / sig_a);
 
 			// if sig_a = 0, La_K2 = 0
 			if (sig_a == 0)
@@ -159,10 +169,10 @@ void EXIT<C,B,R>
 	B_buff .clear();
 	La_buff.clear();
 
-	auto *encoder = codec->get_encoder();
-	auto *siso    = codec->get_decoder_siso();
+	auto *encoder      = codec->get_encoder();
+	auto *decoder_siso = codec->get_decoder_siso();
 
-	for (cur_trial = 0; cur_trial < n_trials; cur_trial++) 
+	for (cur_trial = 0; cur_trial < params.n_trials; cur_trial++)
 	{
 		// generate a random binary value
 		source->generate(B_K);
@@ -210,7 +220,8 @@ void EXIT<C,B,R>
 			sys[k] += La_K2[k];
 
 		// decode
-		siso->decode_siso(sys, par, Le_K);
+		decoder_siso->decode_siso(sys, par, Le_K);
+		decoder_siso->reset();
 
 		// store B_K, La_K and Le_K in buffers (add current B and L to the buffers)
 		B_buff .insert(B_buff .end(), B_K  .begin(), B_K  .end());
@@ -226,7 +237,7 @@ void EXIT<C,B,R>
 	}
 
 	// measure mutual information and store it in I_A, I_E, sig_a_array
-	I_A = EXIT<C,B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.cdc.enc.K * n_trials);
+	I_A = EXIT<C,B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.cdc.enc.K * params.n_trials);
 	I_E = EXIT<C,B,R>::measure_mutual_info_histo(Le_buff, B_buff);
 }
 
@@ -387,8 +398,6 @@ double EXIT<C,B,R>
 	return I_E;
 }
 
-// ---------------------------------------------------------------------------------------------------- virtual methods
-
 template <class C, typename B, typename R>
 void EXIT<C,B,R>
 ::release_objects()
@@ -420,19 +429,15 @@ template <class C, typename B, typename R>
 module::Modem<B,R,R>* EXIT<C,B,R>
 ::build_modem()
 {
-	auto mdm_params = params.mdm;
-	if (params.mdm.sigma == -1.f)
-		mdm_params.sigma = this->sigma;
-	return factory::Modem::build<B,R>(mdm_params);
+	return factory::Modem::build<B,R>(params.mdm);
 }
 
 template <class C, typename B, typename R>
 module::Modem<B,R,R>* EXIT<C,B,R>
 ::build_modem_a()
 {
-	auto mdm_params  = params.mdm;
-	mdm_params.sigma = 2.f / sig_a;
-	mdm_params.N     = params.cdc.enc.K;
+	auto mdm_params = params.mdm;
+	mdm_params.N    = params.cdc.enc.K;
 	return factory::Modem::build<B,R>(mdm_params);
 }
 
@@ -440,23 +445,19 @@ template <class C, typename B, typename R>
 module::Channel<R>* EXIT<C,B,R>
 ::build_channel(const int size)
 {
-	auto chn_params = params.chn;
-	if (params.chn.sigma == -1.f)
-		chn_params.sigma = this->sigma;
-	return factory::Channel::build<R>(chn_params);
+	return factory::Channel::build<R>(params.chn);
 }
 
 template <class C, typename B, typename R>
 module::Channel<R>* EXIT<C,B,R>
 ::build_channel_a(const int size)
 {
-	auto chn_params  = params.chn;
-	chn_params.sigma = 2.f / sig_a;
-	chn_params.N     = factory::Modem::get_buffer_size_after_modulation(params.mdm.type,
-	                                                                    params.cdc.enc.K,
-	                                                                    params.mdm.bps,
-	                                                                    params.mdm.upf,
- 	                                                                    params.mdm.cpm_L);
+	auto chn_params = params.chn;
+	chn_params.N    = factory::Modem::get_buffer_size_after_modulation(params.mdm.type,
+	                                                                   params.cdc.enc.K,
+	                                                                   params.mdm.bps,
+	                                                                   params.mdm.upf,
+ 	                                                                   params.mdm.cpm_L);
 	return factory::Channel::build<R>(chn_params);
 }
 
@@ -464,10 +465,7 @@ template <class C, typename B, typename R>
 tools::Terminal_EXIT* EXIT<C,B,R>
 ::build_terminal()
 {
-	auto term_params  = params.ter;
-	term_params.snr   = snr;
-	term_params.sig_a = sig_a;
-	return factory::Terminal_EXIT::build(term_params, cur_trial, n_trials, I_A, I_E);
+	return factory::Terminal_EXIT::build(params.ter, cur_trial, params.n_trials, I_A, I_E);
 }
 }
 }

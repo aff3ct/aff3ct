@@ -108,6 +108,13 @@ Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
+::reset()
+{
+	this->init_flag = true;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding<B,R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
@@ -150,10 +157,6 @@ void Decoder_LDPC_BP_flooding<B,R>
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-		this->init_flag = true;
-
 	// take the hard decision
 	for (auto i = 0; i < this->K; i++)
 	{
@@ -188,10 +191,6 @@ void Decoder_LDPC_BP_flooding<B,R>
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-		this->init_flag = true;
-
 	tools::hard_decide(this->Lp_N.data(), V_N, this->N);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 

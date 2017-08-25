@@ -28,6 +28,7 @@ public:
 	unsigned long long get_n_be                   () const;
 
 	virtual void reset();
+	virtual void clear_callbacks();
 };
 }
 }

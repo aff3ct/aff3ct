@@ -87,6 +87,15 @@ void Monitor_reduction<B>
 		m->reset();
 }
 
+template <typename B>
+void Monitor_reduction<B>
+::clear_callbacks()
+{
+	Monitor_std<B>::clear_callbacks();
+	for (auto m : monitors)
+		m->clear_callbacks();
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

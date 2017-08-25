@@ -29,6 +29,7 @@ void EXIT::store_args(const arg_val_map &vals, parameters<C> &params, const std:
 	if(exist(vals, {p+"-siga-min", "a"})) params.sig_a_min  = std::stof(vals.at({p+"-siga-min", "a"}));
 	if(exist(vals, {p+"-siga-max", "A"})) params.sig_a_max  = std::stof(vals.at({p+"-siga-max", "A"}));
 	if(exist(vals, {p+"-siga-step"    })) params.sig_a_step = std::stof(vals.at({p+"-siga-step"    }));
+	if(exist(vals, {p+"-trials"       })) params.n_trials   = std::stoi(vals.at({p+"-trials"       }));
 }
 
 template <class C>
@@ -36,9 +37,10 @@ void EXIT::make_header(params_list& head_sim, const parameters<C> &params, const
 {
 	Simulation::make_header(head_sim, params, full);
 
-	head_sim.push_back(std::make_pair("Sigma-a min (a)", std::to_string(params.sig_a_min )));
-	head_sim.push_back(std::make_pair("Sigma-a max (A)", std::to_string(params.sig_a_max )));
-	head_sim.push_back(std::make_pair("Sigma-a step",    std::to_string(params.sig_a_step)));
+	head_sim.push_back(std::make_pair("Sigma-a min (a)",  std::to_string(params.sig_a_min )));
+	head_sim.push_back(std::make_pair("Sigma-a max (A)",  std::to_string(params.sig_a_max )));
+	head_sim.push_back(std::make_pair("Sigma-a step",     std::to_string(params.sig_a_step)));
+	head_sim.push_back(std::make_pair("Number of trials", std::to_string(params.n_trials  )));
 
 	const auto bit_rate = (float)params.src.K / (float)params.cdc.enc.N_cw;
 	head_sim.push_back(std::make_pair("Bit rate", std::to_string(bit_rate)));
