@@ -2,30 +2,44 @@
 #include <vector>
 #include <stdexcept>
 
-#include "Monitor_std.hpp"
+#include "Monitor_BFER.hpp"
 
 using namespace aff3ct::module;
 
 template <typename B>
-Monitor_std<B>
-::Monitor_std(const int size, const unsigned max_fe, const int n_frames, const std::string name)
-: Monitor<B>(size, n_frames, name.c_str()),
+Monitor_BFER<B>
+::Monitor_BFER(const int size, const unsigned max_fe, const int n_frames, const std::string name)
+: Monitor(size, n_frames, name.c_str()),
   max_fe(max_fe),
   n_bit_errors(0),
   n_frame_errors(0),
   n_analyzed_frames(0)
 {
+	auto &p = this->create_process("check_errors");
+	this->template create_socket_in<B>(p, "U", this->size * this->n_frames);
+	this->template create_socket_in<B>(p, "V", this->size * this->n_frames);
+	this->create_codelet(p, [&]() -> int
+	{
+		return this->check_errors(static_cast<B*>(p["U"].get_dataptr()),
+		                          static_cast<B*>(p["V"].get_dataptr()));
+	});
 }
 
 template <typename B>
-bool Monitor_std<B>
-::fe_limit_achieved()
+int Monitor_BFER<B>
+::check_errors(const B *U, const B *V)
 {
-	return (get_n_fe() >= get_fe_limit()) || Monitor<B>::interrupt;
+	int n_be = 0;
+	for (auto f = 0; f < this->n_frames; f++)
+		n_be += this->_check_errors(U + f * this->size,
+		                            V + f * this->size,
+		                            f);
+
+	return n_be;
 }
 
 template <typename B>
-int Monitor_std<B>
+int Monitor_BFER<B>
 ::_check_errors(const B *U, const B *V, const int frame_id)
 {
 	auto bit_errors_count = 0;
@@ -55,35 +69,42 @@ int Monitor_std<B>
 }
 
 template <typename B>
-unsigned Monitor_std<B>
+bool Monitor_BFER<B>
+::fe_limit_achieved()
+{
+	return (get_n_fe() >= get_fe_limit()) || Monitor::interrupt;
+}
+
+template <typename B>
+unsigned Monitor_BFER<B>
 ::get_fe_limit() const
 {
 	return max_fe;
 }
 
 template <typename B>
-unsigned long long Monitor_std<B>
+unsigned long long Monitor_BFER<B>
 ::get_n_analyzed_fra() const
 {
 	return n_analyzed_frames;
 }
 
 template <typename B>
-unsigned long long Monitor_std<B>
+unsigned long long Monitor_BFER<B>
 ::get_n_fe() const
 {
 	return n_frame_errors;
 }
 
 template <typename B>
-unsigned long long Monitor_std<B>
+unsigned long long Monitor_BFER<B>
 ::get_n_be() const
 {
 	return n_bit_errors;
 }
 
 template <typename B>
-float Monitor_std<B>
+float Monitor_BFER<B>
 ::get_fer() const
 {
 	auto t_fer = 0.f;
@@ -96,7 +117,7 @@ float Monitor_std<B>
 }
 
 template <typename B>
-float Monitor_std<B>
+float Monitor_BFER<B>
 ::get_ber() const
 {
 	auto t_ber = 0.f;
@@ -109,30 +130,30 @@ float Monitor_std<B>
 }
 
 template <typename B>
-void Monitor_std<B>
+void Monitor_BFER<B>
 ::add_handler_fe(std::function<void(int)> callback)
 {
 	this->callbacks_fe.push_back(callback);
 }
 template <typename B>
-void Monitor_std<B>
+void Monitor_BFER<B>
 ::add_handler_check(std::function<void(void)> callback)
 {
 	this->callbacks_check.push_back(callback);
 }
 
 template <typename B>
-void Monitor_std<B>
+void Monitor_BFER<B>
 ::add_handler_fe_limit_achieved(std::function<void(void)> callback)
 {
 	this->callbacks_fe_limit_achieved.push_back(callback);
 }
 
 template <typename B>
-void Monitor_std<B>
+void Monitor_BFER<B>
 ::reset()
 {
-	Monitor<B>::reset();
+	Monitor::reset();
 
 	this->n_bit_errors      = 0;
 	this->n_frame_errors    = 0;
@@ -140,7 +161,7 @@ void Monitor_std<B>
 }
 
 template <typename B>
-void Monitor_std<B>
+void Monitor_BFER<B>
 ::clear_callbacks()
 {
 	this->callbacks_fe               .clear();
@@ -151,11 +172,11 @@ void Monitor_std<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Monitor_std<B_8>;
-template class aff3ct::module::Monitor_std<B_16>;
-template class aff3ct::module::Monitor_std<B_32>;
-template class aff3ct::module::Monitor_std<B_64>;
+template class aff3ct::module::Monitor_BFER<B_8>;
+template class aff3ct::module::Monitor_BFER<B_16>;
+template class aff3ct::module::Monitor_BFER<B_32>;
+template class aff3ct::module::Monitor_BFER<B_64>;
 #else
-template class aff3ct::module::Monitor_std<B>;
+template class aff3ct::module::Monitor_BFER<B>;
 #endif
 // ==================================================================================== explicit template instantiation

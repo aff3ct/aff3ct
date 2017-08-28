@@ -11,10 +11,10 @@
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
 #ifdef ENABLE_MPI
-#include "Module/Monitor/Standard/Monitor_reduction_mpi.hpp"
+#include "Module/Monitor/BFER/Monitor_BFER_reduction_mpi.hpp"
 #endif
 
-#include "Factory/Module/Monitor/Monitor.hpp"
+#include "../../Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
 #include "BFER.hpp"
@@ -81,18 +81,18 @@ BFER<C,B,R,Q>
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_reduction_mpi<B>(params.src->K,
-	                                                         params.mnt->n_frame_errors,
-	                                                         this->monitor,
-	                                                         std::this_thread::get_id(),
-	                                                         params.mpi_comm_freq,
-	                                                         params.src->n_frames);
+	this->monitor_red = new module::Monitor_BFER_reduction_mpi<B>(params.src->K,
+	                                                              params.mnt->n_frame_errors,
+	                                                              this->monitor,
+	                                                              std::this_thread::get_id(),
+	                                                              params.mpi_comm_freq,
+	                                                              params.src->n_frames);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_reduction<B>(params.src.K,
-	                                                     params.mnt.n_frame_errors,
-	                                                     this->monitor,
-	                                                     params.src.n_frames);
+	this->monitor_red = new module::Monitor_BFER_reduction<B>(params.src.K,
+	                                                          params.mnt.n_frame_errors,
+	                                                          this->monitor,
+	                                                          params.src.n_frames);
 #endif
 }
 
@@ -127,7 +127,7 @@ void BFER<C,B,R,Q>
 	}
 	catch (std::exception const& e)
 	{
-		module::Monitor<B>::stop();
+		module::Monitor::stop();
 
 		mutex_exception.lock();
 		if (prev_err_message != e.what())
@@ -165,7 +165,7 @@ void BFER<C,B,R,Q>
 		for (auto tid = 1; tid < params.n_threads; tid++)
 			threads[tid -1].join();
 
-		if (module::Monitor<B>::is_over())
+		if (module::Monitor::is_over())
 		{
 			this->release_objects();
 			return;
@@ -230,7 +230,7 @@ void BFER<C,B,R,Q>
 			for (auto tid = 1; tid < params.n_threads; tid++)
 				threads[tid -1].join();
 
-			if (module::Monitor<B>::is_over())
+			if (module::Monitor::is_over())
 			{
 				this->release_objects();
 				return;
@@ -273,7 +273,7 @@ void BFER<C,B,R,Q>
 		}
 		catch (std::exception const& e)
 		{
-			module::Monitor<B>::stop();
+			module::Monitor::stop();
 			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 			simu_error = true;
 		}
@@ -316,7 +316,7 @@ void BFER<C,B,R,Q>
 					for (auto &p : mm->processes)
 						p.second->reset_stats();
 
-		if (module::Monitor<B>::is_over())
+		if (module::Monitor::is_over())
 			break;
 	}
 
@@ -504,10 +504,10 @@ void BFER<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-module::Monitor<B>* BFER<C,B,R,Q>
+module::Monitor_BFER<B>* BFER<C,B,R,Q>
 ::build_monitor(const int tid)
 {
-	return factory::Monitor::build<B>(params.mnt);
+	return factory::Monitor_BFER::build<B>(params.mnt);
 }
 
 template <class C, typename B, typename R, typename Q>

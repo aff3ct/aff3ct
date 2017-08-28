@@ -9,6 +9,7 @@
 #include "Factory/Module/Source/Source.hpp"
 #include "Factory/Module/Modem/Modem.hpp"
 #include "Factory/Module/Channel/Channel.hpp"
+#include "Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp"
 #include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
 #include "EXIT.hpp"
@@ -39,14 +40,6 @@ EXIT<C,B,R>
   sys   (params.cdc.dec.K                         +  params.cdc.dec.tail_length / 2),
   par   ((params.cdc.dec.N_cw - params.cdc.dec.K) - (params.cdc.dec.tail_length / 2)),
 
-  B_buff (0),
-  Le_buff(0),
-  La_buff(0),
-
-  cur_trial(0),
-
-  I_A  (0.0),
-  I_E  (0.0),
   sig_a(0.f),
   sigma(0.f),
   ebn0 (0.f),
@@ -59,18 +52,22 @@ EXIT<C,B,R>
   channel  (nullptr),
   channel_a(nullptr),
   siso     (nullptr),
+  monitor  (nullptr),
   terminal (nullptr)
 {
 #ifdef ENABLE_MPI
 	std::clog << tools::format_warning("This simulation is not MPI ready, the same computations will be launched "
 	                                   "on each MPI processes.") << std::endl;
 #endif
+
+	this->monitor = this->build_monitor();
 }
 
 template <class C, typename B, typename R>
 EXIT<C,B,R>
 ::~EXIT()
 {
+	if (monitor != nullptr) { delete monitor; monitor = nullptr; }
 	release_objects();
 }
 
@@ -110,10 +107,11 @@ template <class C, typename B, typename R>
 void EXIT<C,B,R>
 ::launch()
 {
-	bool first_loop = true;
-
 	// allocate and build all the communication chain to generate EXIT chart
 	this->build_communication_chain();
+
+	if (!params.ter.disabled)
+		terminal->legend(std::cout);
 
 	// for each channel SNR to be simulated	
 	for (ebn0 = params.snr_min; ebn0 <= params.snr_max; ebn0 += params.snr_step)
@@ -133,28 +131,26 @@ void EXIT<C,B,R>
 		// for each "a" standard deviation (sig_a) to be simulated
 		for (sig_a = params.sig_a_min; sig_a <= params.sig_a_max; sig_a += params.sig_a_step)
 		{
-			I_A = I_E = 0.0;
-
-			terminal->set_sig_a(sig_a);
-
+			terminal ->set_sig_a(sig_a      );
 			channel_a->set_sigma(2.f / sig_a);
 			modem_a  ->set_sigma(2.f / sig_a);
 
-			// if sig_a = 0, La_K2 = 0
-			if (sig_a == 0)
-				std::fill(La_K2.begin(), La_K2.end(), tools::init_LLR<R>());
-
-			if (!params.ter.disabled && first_loop)
-			{
-				terminal->legend(std::cout);
-				first_loop = false;
-			}
+			if (sig_a == 0.f) // if sig_a = 0, La_K2 = 0
+				std::fill(La_K2.begin(), La_K2.end(), (R)0);
 
 			this->simulation_loop();
 
 			if (!params.ter.disabled)
 				terminal->final_report(std::cout);
+
+			this->monitor->reset();
+
+			if (module::Monitor::is_over())
+				break;
 		}
+
+		if (module::Monitor::is_over())
+			break;
 	}
 }
 
@@ -165,14 +161,10 @@ void EXIT<C,B,R>
 	using namespace std::chrono;
 	auto t_simu = steady_clock::now();
 
-	Le_buff.clear();
-	B_buff .clear();
-	La_buff.clear();
-
 	auto *encoder      = codec->get_encoder();
 	auto *decoder_siso = codec->get_decoder_siso();
 
-	for (cur_trial = 0; cur_trial < params.n_trials; cur_trial++)
+	while (!monitor->n_trials_achieved())
 	{
 		// generate a random binary value
 		source->generate(B_K);
@@ -223,10 +215,8 @@ void EXIT<C,B,R>
 		decoder_siso->decode_siso(sys, par, Le_K);
 		decoder_siso->reset();
 
-		// store B_K, La_K and Le_K in buffers (add current B and L to the buffers)
-		B_buff .insert(B_buff .end(), B_K  .begin(), B_K  .end());
-		Le_buff.insert(Le_buff.end(), Le_K .begin(), Le_K .end());
-		La_buff.insert(La_buff.end(), La_K2.begin(), La_K2.end());
+		// compute the mutual info
+		monitor->measure_mutual_info(B_K, La_K2, Le_K);
 
 		// display statistics in terminal
 		if (!params.ter.disabled && (steady_clock::now() - t_simu) >= params.ter.frequency)
@@ -235,167 +225,6 @@ void EXIT<C,B,R>
 			t_simu = steady_clock::now();
 		}
 	}
-
-	// measure mutual information and store it in I_A, I_E, sig_a_array
-	I_A = EXIT<C,B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.cdc.enc.K * params.n_trials);
-	I_E = EXIT<C,B,R>::measure_mutual_info_histo(Le_buff, B_buff);
-}
-
-template <class C, typename B, typename R>
-double EXIT<C,B,R>
-::measure_mutual_info_avg(const mipp::vector<R>& llrs, const mipp::vector<B>& bits)
-{
-	double I_A = 0;
-	double symb;
-	auto size = (int)llrs.size();
-	for (int j = 0; j < size; j++)
-	{
-		symb = -2 * (double)bits[j] +1;
-		I_A += (1 - std::log2(1 + std::exp(-symb * (double)llrs[j])));
-	}
-
-	return(I_A);
-}
-
-template <class C, typename B, typename R>
-double EXIT<C,B,R>
-::measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits)
-{
-//	const double inf = 10000000;
-	const double inf = std::numeric_limits<double>::infinity();
-
-	int vec_length = (int)bits.size();
-
-	bool lots_of_bins;
-	int bin_count, bin_offset = 0, bit_0_count, bit_1_count;
-	int llr_0_noninfinite_count = 0;
-	int llr_1_noninfinite_count = 0;
-
-	double tmp;
-	double I_E = 0.0;
-	double bin_width = 0.0;
-	double llr_0_variance = 0.0;
-	double llr_1_variance = 0.0;
-	double llr_0_max, llr_0_min, llr_1_max, llr_1_min;
-	double llr_0_mean = 0.0;
-	double llr_1_mean = 0.0;
-
-	bit_1_count = 0;
-	for (int i = 0; i < (int)bits.size(); i++)
-		bit_1_count += (int)bits[i];
-
-	bit_0_count = vec_length - bit_1_count;
-	if (bit_0_count == 0 || bit_1_count == 0)
-		I_E = 0;
-	else
-	{
-		// determine the min and max value for llrs / 0 and llrs / 1
-		llr_0_max = llr_1_max = -inf;
-		llr_0_min = llr_1_min = +inf;
-
-		for (int i = 0; i < vec_length; i++)
-		{
-			if ((int)bits[i] == 0)
-			{
-				llr_0_noninfinite_count++;
-				llr_0_min = std::min((double)llrs[i], llr_0_min);
-				llr_0_max = std::max((double)llrs[i], llr_0_max);
-			}
-			else
-			{
-				llr_1_noninfinite_count++;
-				llr_1_min = std::min((double)llrs[i], llr_1_min);
-				llr_1_max = std::max((double)llrs[i], llr_1_max);
-			}
-		}
-		if (llr_0_noninfinite_count > 0 && llr_1_noninfinite_count > 0 && 
-		    llr_0_min <= llr_1_max && llr_1_min <= llr_0_max)
-		{
-			for (int i = 0; i < vec_length; i++)
-			{
-				if ((double)llrs[i] != -inf && (double)llrs[i] != inf)
-				{
-					if ((int)bits[i] == 0)
-						llr_0_mean = llr_0_mean + (double)llrs[i];
-					else
-						llr_1_mean = llr_1_mean + (double)llrs[i];
-				}
-			}
-			llr_0_mean = llr_0_mean / llr_0_noninfinite_count;
-			llr_1_mean = llr_1_mean / llr_1_noninfinite_count;
-
-			for (int i = 0; i < vec_length; i++)
-			{
-				if ((double)llrs[i] != -inf && (double)llrs[i] != inf)
-				{
-					if ((int)bits[i] == 0)
-						llr_0_variance = llr_0_variance + std::pow(((double)llrs[i] - llr_0_mean), 2);
-					else
-						llr_1_variance = llr_1_variance + std::pow(((double)llrs[i] - llr_1_mean), 2);
-				}
-			}
-			llr_0_variance = llr_0_variance / llr_0_noninfinite_count;
-			llr_1_variance = llr_1_variance / llr_1_noninfinite_count;
-
-			bin_width = 0.5 * (3.49 * std::sqrt(llr_0_variance) * (std::pow(llr_0_noninfinite_count, (-1.0 / 3.0))) + 
-			            3.49 * std::sqrt(llr_1_variance) * (std::pow(llr_1_noninfinite_count, (-1.0 / 3.0))));
-			if (bin_width > 0.0)
-			{
-				bin_offset = (int)std::floor(std::min(llr_0_min, llr_1_min) / bin_width) - 1;
-				tmp = std::max(llr_0_max, llr_1_max) / bin_width - bin_offset + 1;
-				bin_count = (int)std::ceil(tmp);
-				if (bin_count == tmp)
-					bin_count = bin_count + 1;
-			}
-			else
-			{
-				bin_offset = -1;
-				bin_count  = 3;
-			}
-			lots_of_bins = true;
-		}
-		else
-		{
-			lots_of_bins = false;
-			bin_count    = 4;
-		}
-
-		std::vector<std::vector<double> > histogram(2, std::vector<double>(bin_count));
-		std::vector<std::vector<double> > pdf(2, std::vector<double>(bin_count));
-		for (int i = 0; i < vec_length; i++)
-		{
-			if ((double)llrs[i] == -inf)
-				histogram[(int)bits[i]][0] += 1;
-			else if ((double)llrs[i] == inf)
-				histogram[(int)bits[i]][bin_count - 1] += 1;
-			else
-			{
-				if (lots_of_bins)
-				{
-					if (bin_width > 0.0)
-						histogram[(int)bits[i]][(int)(std::floor((double)llrs[i] / bin_width) - bin_offset)] += 1.0;
-					else
-						histogram[(int)bits[i]][1] += 1;
-				}
-				else
-					histogram[(int)bits[i]][ (int)bits[i] + 1] += 1;
-			}
-		}
-
-		for (int i = 0; i < bin_count; i++)
-		{
-			pdf[0][i] = histogram[0][i] / bit_0_count;
-			pdf[1][i] = histogram[1][i] / bit_1_count;
-		}
-
-		I_E = 0.0;
-		for (int b = 0; b < 2; b++)
-			for (int bin_ix = 0; bin_ix < bin_count; bin_ix++)
-				if (pdf[b][bin_ix] > 0.0)
-					I_E += 0.5 * pdf[b][bin_ix] * std::log2(2.0 * pdf[b][bin_ix] / (pdf[0][bin_ix] + pdf[1][bin_ix]));
-	}
-
-	return I_E;
 }
 
 template <class C, typename B, typename R>
@@ -462,10 +291,17 @@ module::Channel<R>* EXIT<C,B,R>
 }
 
 template <class C, typename B, typename R>
-tools::Terminal_EXIT* EXIT<C,B,R>
+module::Monitor_EXIT<B,R>* EXIT<C,B,R>
+::build_monitor()
+{
+	return factory::Monitor_EXIT::build<B,R>(params.mnt);
+}
+
+template <class C, typename B, typename R>
+tools::Terminal_EXIT<B,R>* EXIT<C,B,R>
 ::build_terminal()
 {
-	return factory::Terminal_EXIT::build(params.ter, cur_trial, params.n_trials, I_A, I_E);
+	return factory::Terminal_EXIT::build<B,R>(params.ter, *this->monitor);
 }
 }
 }

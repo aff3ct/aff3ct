@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 
+#include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
 #include "EXIT.hpp"
@@ -35,6 +36,7 @@ void EXIT<C,B,R>
 	factory::Source       ::build_args(this->req_args, this->opt_args);
 	factory::Modem        ::build_args(this->req_args, this->opt_args);
 	factory::Channel      ::build_args(this->req_args, this->opt_args);
+	factory::Monitor_EXIT ::build_args(this->req_args, this->opt_args);
 	factory::Terminal_EXIT::build_args(this->req_args, this->opt_args);
 
 	if (this->req_args.find({"enc-info-bits", "K"}) != this->req_args.end() ||
@@ -50,7 +52,9 @@ void EXIT<C,B,R>
 	this->opt_args.erase({"chn-seed",     "S"});
 	this->opt_args.erase({"chn-add-users"    });
 	this->opt_args.erase({"chn-complex"      });
-	this->req_args.erase({"ter-cw-size", "N"});
+	this->req_args.erase({"mnt-size",     "K"});
+	this->opt_args.erase({"mnt-fra",      "F"});
+	this->req_args.erase({"ter-cw-size",  "N"});
 }
 
 template <class C, typename B, typename R>
@@ -80,7 +84,9 @@ void EXIT<C,B,R>
 
 	factory::Channel::store_args(this->ar.get_args(), params.chn);
 
-	params.ter.N = N;
+	params.mnt.size = K;
+
+	factory::Monitor_EXIT::store_args(this->ar.get_args(), params.mnt);
 
 	factory::Terminal_EXIT::store_args(this->ar.get_args(), params.ter);
 
@@ -95,8 +101,8 @@ void EXIT<C,B,R>
 	params.mdm.n_frames = params.src.n_frames;
 	params.chn.n_frames = params.src.n_frames;
 
-	if (!this->ar.exist_arg({"sim-trials"}))
-		params.n_trials = 200000 / params.cdc.dec.K;
+	if (!this->ar.exist_arg({"mnt-trials", "n"}))
+		params.mnt.n_trials = 200000 / params.cdc.dec.K;
 }
 
 template <class C, typename B, typename R>
@@ -124,6 +130,7 @@ void EXIT<C,B,R>
 	factory::Source       ::make_header(this->pl_src, params.src, false);
 	factory::Modem        ::make_header(this->pl_mdm, params.mdm, false);
 	factory::Channel      ::make_header(this->pl_chn, params.chn, false);
+	factory::Monitor_EXIT ::make_header(this->pl_mnt, params.mnt, false);
 	factory::Terminal_EXIT::make_header(this->pl_ter, params.ter, false);
 
 	this->pl_cde.push_back(std::make_pair("Type",                             params.cde_type ));

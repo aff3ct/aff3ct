@@ -9,6 +9,7 @@
 #include "Module/Modem/Modem.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
+#include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
 #include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
@@ -39,12 +40,6 @@ protected:
 	mipp::vector<R> Lch_N2;
 	mipp::vector<R> Le_K;
 	mipp::vector<R> sys, par;
-	mipp::vector<B> B_buff;
-	mipp::vector<R> Le_buff, La_buff;
-
-	// EXIT simu parameters
-	int cur_trial;
-	double I_A, I_E;
 
 	// code specifications
 	float sig_a;
@@ -60,7 +55,8 @@ protected:
 	module::Channel     <  R> *channel;
 	module::Channel     <  R> *channel_a;
 	module::Decoder_SISO<  R> *siso;
-	tools::Terminal_EXIT      *terminal;
+	module::Monitor_EXIT<B,R> *monitor;
+	tools::Terminal_EXIT<B,R> *terminal;
 
 public:
 	EXIT(const factory::EXIT::parameters<C> &params);
@@ -72,19 +68,17 @@ private:
 	void build_communication_chain();
 	void simulation_loop          ();
 
-	static double measure_mutual_info_avg  (const mipp::vector<R>& llrs, const mipp::vector<B>& bits);
-	static double measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits);
-
 protected:
 	void release_objects  ();
 
-	module::Source    <B  >* build_source   (              );
-	module::Codec_SISO<B,R>* build_codec    (              );
-	module::Modem     <B,R>* build_modem    (              );
-	module::Modem     <B,R>* build_modem_a  (              );
-	module::Channel   <  R>* build_channel  (const int size);
-	module::Channel   <  R>* build_channel_a(const int size);
-	tools::Terminal_EXIT   * build_terminal (              );
+	module::Source      <B  >* build_source   (              );
+	module::Codec_SISO  <B,R>* build_codec    (              );
+	module::Modem       <B,R>* build_modem    (              );
+	module::Modem       <B,R>* build_modem_a  (              );
+	module::Channel     <  R>* build_channel  (const int size);
+	module::Channel     <  R>* build_channel_a(const int size);
+	module::Monitor_EXIT<B,R>* build_monitor  (              );
+	tools::Terminal_EXIT<B,R>* build_terminal (              );
 };
 }
 }

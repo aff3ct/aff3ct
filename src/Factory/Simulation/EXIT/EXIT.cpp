@@ -22,9 +22,5 @@ void EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 		{"positive_float",
 		 "sigma step value used in EXIT charts."};
 
-	opt_args[{p+"-trials"}] =
-		{"positive_int",
-		 "number of frames to simulate per sigma A value."};
-
 	opt_args[{p+"-inter-lvl"}].push_back("1");
 }

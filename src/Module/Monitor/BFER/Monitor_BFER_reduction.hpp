@@ -4,23 +4,23 @@
 #include <string>
 #include <vector>
 
-#include "Monitor_std.hpp"
+#include "Monitor_BFER.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int>
-class Monitor_reduction : public Monitor_std<B>
+class Monitor_BFER_reduction : public Monitor_BFER<B>
 {
 private:
 	unsigned long long n_analyzed_frames_historic;
-	std::vector<Monitor<B>*> monitors;
+	std::vector<Monitor_BFER<B>*> monitors;
 
 public:
-	Monitor_reduction(const int size, const unsigned max_fe, std::vector<Monitor<B>*> monitors, const int n_frames = 1,
-	                  const std::string name = "Monitor_reduction");
-	virtual ~Monitor_reduction();
+	Monitor_BFER_reduction(const int size, const unsigned max_fe, std::vector<Monitor_BFER<B>*> monitors,
+	                       const int n_frames = 1, const std::string name = "Monitor_BFER_reduction");
+	virtual ~Monitor_BFER_reduction();
 
 	unsigned long long get_n_analyzed_fra_historic() const;
 	unsigned long long get_n_analyzed_fra         () const;

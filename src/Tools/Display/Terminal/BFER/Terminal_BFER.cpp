@@ -12,7 +12,7 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Terminal_BFER<B>
-::Terminal_BFER(const module::Monitor<B> &monitor)
+::Terminal_BFER(const module::Monitor_BFER<B> &monitor)
 : Terminal       (                                ),
   monitor        (monitor                         ),
   esn0           (0.f                             ),
@@ -105,7 +105,7 @@ void Terminal_BFER<B>
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
-	if (module::Monitor<B>::is_interrupt()) stream << "\r";
+	if (module::Monitor::is_interrupt()) stream << "\r";
 
 	std::stringstream esn0_str;
 	if (!is_esn0)
@@ -197,8 +197,8 @@ void Terminal_BFER<B>
 
 	stream << format(" | ", Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(8) << et_format;
 
-	if (module::Monitor<B>::is_interrupt()) stream << " x" << std::endl;
-	else                                    stream << "  " << std::endl;
+	if (module::Monitor::is_interrupt()) stream << " x" << std::endl;
+	else                                 stream << "  " << std::endl;
 
 	t_snr = std::chrono::steady_clock::now();
 }

@@ -6,9 +6,9 @@
 #include "Factory/Module/Channel/Channel.hpp"
 #include "Factory/Module/CRC/CRC.hpp"
 #include "Factory/Module/Modem/Modem.hpp"
-#include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Source/Source.hpp"
+#include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
 #include "../Simulation.hpp"
@@ -44,7 +44,7 @@ struct BFER : Simulation
 		Modem        ::parameters mdm;
 		Channel      ::parameters chn;
 		Quantizer    ::parameters qnt;
-		Monitor      ::parameters mnt;
+		Monitor_BFER ::parameters mnt;
 		Terminal_BFER::parameters ter;
 	};
 

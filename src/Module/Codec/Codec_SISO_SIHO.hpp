@@ -28,7 +28,7 @@ public:
 
 	virtual void reset()
 	{
-		this->get_decoder_siso()->reset();
+		this->get_decoder_siho()->reset();
 	}
 };
 }

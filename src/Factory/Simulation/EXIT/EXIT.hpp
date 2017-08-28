@@ -4,11 +4,12 @@
 #include <string>
 #include <thread>
 
+#include "../../Module/Monitor/Monitor.hpp"
 #include "Factory/Module/Channel/Channel.hpp"
 #include "Factory/Module/Modem/Modem.hpp"
-#include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Source/Source.hpp"
+#include "Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp"
 #include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
 #include "../Simulation.hpp"
@@ -43,7 +44,6 @@ struct EXIT : Simulation
 		float       sig_a_min  = 0.0f;
 		float       sig_a_max  = 5.0f;
 		float       sig_a_step = 0.5f;
-		int         n_trials   = 200;
 		bool        debug      = false;
 
 		Source       ::parameters src;
@@ -51,6 +51,7 @@ struct EXIT : Simulation
 		Modem        ::parameters mdm;
 		Channel      ::parameters chn;
 		Quantizer    ::parameters qnt;
+		Monitor_EXIT ::parameters mnt;
 		Terminal_EXIT::parameters ter;
 	};
 

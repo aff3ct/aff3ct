@@ -12,7 +12,7 @@
 
 #include "Module/Module.hpp"
 #include "Module/Monitor/Monitor.hpp"
-#include "Module/Monitor/Standard/Monitor_reduction.hpp"
+#include "Module/Monitor/BFER/Monitor_BFER_reduction.hpp"
 
 #include "Factory/Simulation/BFER/BFER.hpp"
 
@@ -54,8 +54,8 @@ protected:
 	std::map<std::string, std::vector<module::Module*>> modules;
 
 	// the monitors of the the BFER simulation
-	std::vector<module::Monitor          <B>*> monitor;
-	            module::Monitor_reduction<B>*  monitor_red;
+	std::vector<module::Monitor_BFER          <B>*> monitor;
+	            module::Monitor_BFER_reduction<B>*  monitor_red;
 
 	// dump frames into files
 	std::vector<tools::Dumper          *> dumper;
@@ -74,7 +74,7 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	module::Monitor      <B>* build_monitor (const int tid = 0);
+	module::Monitor_BFER <B>* build_monitor (const int tid = 0);
 	tools ::Terminal_BFER<B>* build_terminal(                 );
 
 private:

@@ -4,8 +4,9 @@
 #include <string>
 #include <chrono>
 
-#include "Module/Monitor/Monitor.hpp"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
+
+#include "Module/Monitor/BFER/Monitor_BFER.hpp"
 
 #include "../Terminal.hpp"
 
@@ -23,13 +24,13 @@ struct Terminal_BFER : Terminal
 		virtual ~parameters() {}
 
 		template <typename B = int>
-		tools::Terminal_BFER<B>* build(const module::Monitor<B> &monitor) const;
+		tools::Terminal_BFER<B>* build(const module::Monitor_BFER<B> &monitor) const;
 
-		std::string type  = "STD";
+		std::string type = "STD";
 	};
 
 	template <typename B = int>
-	static tools::Terminal_BFER<B>* build(const parameters &params, const module::Monitor<B> &monitor);
+	static tools::Terminal_BFER<B>* build(const parameters &params, const module::Monitor_BFER<B> &monitor);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);

@@ -117,7 +117,7 @@ void BFER_std_threads<C,B,R,Q,CRC,ITL>
 	}
 	catch (std::exception const& e)
 	{
-		module::Monitor<B>::stop();
+		module::Monitor::stop();
 
 		simu->mutex_exception.lock();
 		if (simu->prev_err_message != e.what())

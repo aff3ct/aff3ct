@@ -82,8 +82,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int>
-using Monitor = Monitor_i<B>;
+using Monitor = Monitor_i;
 }
 }
 #endif

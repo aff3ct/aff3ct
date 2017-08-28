@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 
+#include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
+
 #include "BFER_ite.hpp"
 
 namespace aff3ct
@@ -37,7 +39,7 @@ void BFER_ite<C,B,R,Q,CRC>
 	factory::Channel            ::build_args(this->req_args, this->opt_args);
 	if (std::is_integral<Q>())
 		factory::Quantizer      ::build_args(this->req_args, this->opt_args);
-	factory::Monitor            ::build_args(this->req_args, this->opt_args);
+	factory::Monitor_BFER       ::build_args(this->req_args, this->opt_args);
 	factory::Terminal_BFER      ::build_args(this->req_args, this->opt_args);
 
 	if (this->req_args.find({"enc-info-bits", "K"}) != this->req_args.end() ||
@@ -111,7 +113,7 @@ void BFER_ite<C,B,R,Q,CRC>
 
 	params.mnt.size = params.coded_monitoring ? N_cw : params.src.K;
 
-	factory::Monitor::store_args(this->ar.get_args(), params.mnt);
+	factory::Monitor_BFER::store_args(this->ar.get_args(), params.mnt);
 
 	factory::Terminal_BFER::store_args(this->ar.get_args(), params.ter);
 
@@ -171,7 +173,7 @@ void BFER_ite<C,B,R,Q,CRC>
 	factory::Channel      ::make_header(this->pl_chn, params.chn, false);
 	if (std::is_integral<Q>())
 		factory::Quantizer::make_header(this->pl_qnt, params.qnt, false);
-	factory::Monitor      ::make_header(this->pl_mnt, params.mnt, false);
+	factory::Monitor_BFER ::make_header(this->pl_mnt, params.mnt, false);
 	factory::Terminal_BFER::make_header(this->pl_ter, params.ter, false);
 
 	const auto code_rate = (float)params.cdc.K / (float)params.cdc.N;
