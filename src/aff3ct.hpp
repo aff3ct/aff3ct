@@ -125,6 +125,7 @@
 #include <Module/Interleaver/Golden/Interleaver_golden.hpp>
 // #include <Module/Interleaver/SPU_Interleaver.hpp>
 #include <Module/Interleaver/Row_column/Interleaver_row_column.hpp>
+#include <Module/Interleaver/Column_row/Interleaver_column_row.hpp>
 // #include <Module/Interleaver/SC_Interleaver.hpp>
 #include <Module/Interleaver/User/Interleaver_user.hpp>
 #include <Module/Interleaver/Random_column/Interleaver_random_column.hpp>
