@@ -1,6 +1,7 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Interleaver/Random_column/Interleaver_random_column.hpp"
+#include "Module/Interleaver/Column_row/Interleaver_column_row.hpp"
 #include "Module/Interleaver/Row_column/Interleaver_row_column.hpp"
 #include "Module/Interleaver/LTE/Interleaver_LTE.hpp"
 #include "Module/Interleaver/CCSDS/Interleaver_CCSDS.hpp"
@@ -30,6 +31,7 @@ module::Interleaver<T>* Interleaver
 	else if (params.type == "RANDOM"  ) return new module::Interleaver_random       <T>(params.size,                params.seed, params.uniform, params.n_frames);
 	else if (params.type == "RAND_COL") return new module::Interleaver_random_column<T>(params.size, params.n_cols, params.seed, params.uniform, params.n_frames);
 	else if (params.type == "ROW_COL" ) return new module::Interleaver_row_column   <T>(params.size, params.n_cols,                              params.n_frames);
+	else if (params.type == "COL_ROW" ) return new module::Interleaver_column_row   <T>(params.size, params.n_cols,                              params.n_frames);
 	else if (params.type == "GOLDEN"  ) return new module::Interleaver_golden       <T>(params.size,                params.seed, params.uniform, params.n_frames);
 	else if (params.type == "USER"    ) return new module::Interleaver_user         <T>(params.size, params.path,                                params.n_frames);
 	else if (params.type == "NO"      ) return new module::Interleaver_NO           <T>(params.size,                                             params.n_frames);
@@ -51,7 +53,7 @@ void Interleaver
 	opt_args[{p+"-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, DVB-RCS1, DVB-RCS2, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, NO"};
+		 "LTE, CCSDS, DVB-RCS1, DVB-RCS2, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, COL_ROW, NO"};
 
 	opt_args[{p+"-path"}] =
 		{"string",
@@ -90,7 +92,7 @@ void Interleaver
 	if (full) head_itl.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	if (params.type == "USER")
 		head_itl.push_back(std::make_pair("Path", params.path));
-	if (params.type == "RAND_COL" || params.type == "ROW_COL")
+	if (params.type == "RAND_COL" || params.type == "ROW_COL" || params.type == "COL_ROW")
 		head_itl.push_back(std::make_pair("Number of columns", std::to_string(params.n_cols)));
 	if (params.type == "RANDOM" || params.type == "GOLDEN" || params.type == "RAND_COL")
 	{
@@ -99,7 +101,7 @@ void Interleaver
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 template aff3ct::module::Interleaver<int16_t>* aff3ct::factory::Interleaver::build<int16_t>(const aff3ct::factory::Interleaver::parameters&);
 template aff3ct::module::Interleaver<int32_t>* aff3ct::factory::Interleaver::build<int32_t>(const aff3ct::factory::Interleaver::parameters&);
 //template aff3ct::module::Interleaver<int64_t>* aff3ct::factory::Interleaver::build<int64_t>(const aff3ct::factory::Interleaver::parameters&);

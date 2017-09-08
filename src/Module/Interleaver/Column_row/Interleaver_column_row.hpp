@@ -1,5 +1,5 @@
-#ifndef INTERLEAVER_ROW_COLUMN_HPP
-#define	INTERLEAVER_ROW_COLUMN_HPP
+#ifndef INTERLEAVER_COLUMN_ROW_HPP
+#define	INTERLEAVER_COLUMN_ROW_HPP
 
 #include <sstream>
 
@@ -14,18 +14,18 @@ namespace module
 {
 
 /*
- * This interleaver is such as a table that is written row by row and read column by column
+ * This interleaver is such as a table that is written column by column and read row by row
  */
 template <typename T = int>
-class Interleaver_row_column : public Interleaver<T>
+class Interleaver_column_row : public Interleaver<T>
 {
 private:
 	const int n_cols;
 	const int n_rows;
 
 public:
-	Interleaver_row_column(const int size, const int n_cols, const int n_frames = 1,
-	                       const std::string name = "Interleaver_row_column")
+	Interleaver_column_row(const int size, const int n_cols, const int n_frames = 1,
+	                       const std::string name = "Interleaver_column_row")
 	: Interleaver<T>(size, false, n_frames, name), n_cols(n_cols), n_rows(size / n_cols)
 	{
 		if (n_rows * n_cols != size)
@@ -37,7 +37,7 @@ public:
 		}
 	}
 
-	virtual ~Interleaver_row_column()
+	virtual ~Interleaver_column_row()
 	{
 	}
 
@@ -46,10 +46,10 @@ protected:
 	{
 		for (auto i = 0; i < n_cols; i++)
 			for (auto j = 0; j < n_rows; j++)
-				lut[i * n_rows +j] = j * n_cols +i;
+				lut[j * n_cols +i] = i * n_rows +j;
 	}
 };
 }
 }
 
-#endif	/* INTERLEAVER_ROW_COLUMN_HPP */
+#endif	/* INTERLEAVER_COLUMN_ROW_HPP */
