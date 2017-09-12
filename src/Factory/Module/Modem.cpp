@@ -1,6 +1,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 
+#include "Module/Modem/OOK/Modem_OOK.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK_fast.hpp"
 #include "Module/Modem/PAM/Modem_PAM.hpp"
@@ -24,6 +25,7 @@ module::Modem<B,R,Q>* Modem
 {
 	     if (params.type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(params.N, params.sigma,                                                                                                      params.no_sig2, params.n_frames);
 	else if (params.type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(params.N, params.sigma,                                                                                                      params.no_sig2, params.n_frames);
+	else if (params.type == "OOK"      ) return new module::Modem_OOK      <B,R,Q    >(params.N, params.sigma,                                                                                                      params.no_sig2, params.n_frames);
 	else if (params.type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(params.N, params.sigma, params.bps,                                                                                          params.no_sig2, params.n_frames);
 	else if (params.type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(params.N, params.sigma, params.bps,                                                                                          params.no_sig2, params.n_frames);
 	else if (params.type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(params.N, params.sigma, params.bps,                                                                                          params.no_sig2, params.n_frames);
@@ -73,6 +75,7 @@ int Modem
 {
 	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::size_mod(N                 );
 	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::size_mod(N                 );
+	else if (type == "OOK"      ) return module::Modem_OOK      <>::size_mod(N                 );
 	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::size_mod(N, bps            );
 	else if (type == "PAM"      ) return module::Modem_PAM      <>::size_mod(N, bps            );
 	else if (type == "QAM"      ) return module::Modem_QAM      <>::size_mod(N, bps            );
@@ -92,6 +95,7 @@ int Modem
 {
 	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::size_fil(N                   );
 	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::size_fil(N                   );
+	else if (type == "OOK"      ) return module::Modem_OOK      <>::size_fil(N                   );
 	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::size_fil(N, bps              );
 	else if (type == "PAM"      ) return module::Modem_PAM      <>::size_fil(N, bps              );
 	else if (type == "QAM"      ) return module::Modem_QAM      <>::size_fil(N, bps              );
@@ -117,7 +121,7 @@ void Modem
 	opt_args[{p+"-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER, SCMA"};
+		 "BPSK, BPSK_FAST, OOK, PSK, PAM, QAM, CPM, USER, SCMA"};
 
 	opt_args[{p+"-bps"}] =
 		{"positive_int",
@@ -227,8 +231,9 @@ void Modem
 	}
 
 	// force the number of bits per symbol to 1 when BPSK mod
-	if (params.type == "BPSK" || params.type == "BPSK_FAST")
+	if (params.type == "BPSK" || params.type == "BPSK_FAST" || params.type == "OOK")
 		params.bps = 1;
+
 	// force the number of bits per symbol to 3 when SCMA mod
 	if (params.type == "SCMA")
 		params.bps = 3;
@@ -279,6 +284,7 @@ void Modem
 	std::string demod_sig2 = (params.no_sig2) ? "off" : "on";
 	std::string demod_max  = (params.type == "BPSK"     ) ||
 	                         (params.type == "BPSK_FAST") ||
+	                         (params.type == "OOK")       ||
 	                         (params.type == "SCMA"     ) ?
 	                         "unused" : params.max;
 	std::string demod_ite  = std::to_string(params.n_ite);

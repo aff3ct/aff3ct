@@ -365,7 +365,7 @@ _aff3ct() {
 			;;
 
 		--mdm-type)
-			local params="BPSK BPSK_FAST PSK PAM QAM CPM SCMA USER"
+			local params="BPSK BPSK_FAST OOK PSK PAM QAM CPM SCMA USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
