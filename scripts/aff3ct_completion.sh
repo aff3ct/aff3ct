@@ -200,7 +200,7 @@ _aff3ct() {
 		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |         \
 		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |           \
 		--sim-threads | -t | --sim-inter-lvl | --enc-info-bits | -K |          \
-		--enc-cw-size | -N | --mdm-ite |                                       \
+		--enc-cw-size | -N | --mdm-ite | --chn-gain-occur                      \
 		--mdm-bps | --mdm-ups | --mdm-cpm-L | --mdm-cpm-p | --mdm-cpm-k |      \
 		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                    \
 		--sim-benchs | -b | --sim-debug-limit | --sim-debug-prec |             \
@@ -318,7 +318,7 @@ _aff3ct() {
 			;;
 
 		--chn-type)
-			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL RAYLEIGH RAYLEIGH_FAST RAYLEIGH_GSL RAYLEIGH_MKL \
+			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL RAYLEIGH RAYLEIGH_USER RAYLEIGH_FAST RAYLEIGH_GSL RAYLEIGH_MKL \
 			              USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;

@@ -4,6 +4,7 @@
 #include "Module/Channel/User/Channel_user.hpp"
 #include "Module/Channel/AWGN/Channel_AWGN_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
+#include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
 
 #include "Tools/Algo/Noise/Standard/Noise_std.hpp"
 #include "Tools/Algo/Noise/Fast/Noise_fast.hpp"
@@ -40,6 +41,7 @@ module::Channel<R>* Channel
 	else if (params.type == "AWGN_GSL"     ) return new module::Channel_AWGN_LLR    <R>(params.N,                 new tools::Noise_GSL <R>(params.seed), params.add_users, params.sigma, params.n_frames);
 	else if (params.type == "RAYLEIGH_GSL" ) return new module::Channel_Rayleigh_LLR<R>(params.N, params.complex, new tools::Noise_GSL <R>(params.seed), params.add_users, params.sigma, params.n_frames);
 #endif
+	else if (params.type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(params.N, params.complex, params.path, params.gain_occur, new tools::Noise_fast<R>(params.seed), params.add_users, params.sigma, params.n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -55,7 +57,7 @@ void Channel
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
-	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH, RAYLEIGH_FAST";
+	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH, RAYLEIGH_FAST, RAYLEIGH_USER";
 #ifdef CHANNEL_GSL
 	chan_avail += ", AWGN_GSL, RAYLEIGH_GSL";
 #endif
@@ -70,7 +72,7 @@ void Channel
 
 	opt_args[{p+"-path"}] =
 		{"string",
-		 "path to a noisy file, to use with \"--chn-type USER\"."};
+		 "path to a noisy file (used with \"--chn-type USER\") or to a gains file (used with \"--chn-type RAYLEIGH_USER\")."};
 
 	opt_args[{p+"-blk-fad"}] =
 		{"string",
@@ -92,6 +94,10 @@ void Channel
 	opt_args[{p+"-complex"}] =
 		{"",
 		 "enable complex noise generation."};
+
+	opt_args[{p+"-gain-occur"}] =
+		{"positive_int",
+		 "the number of times a gain is used on consecutive symbols (used with \"--chn-type RAYLEIGH_USER\")."};
 }
 
 void Channel
@@ -106,6 +112,7 @@ void Channel
 	if(exist(vals, {p+"-seed",     "S"})) params.seed         = std::stoi(vals.at({p+"-seed",     "S"}));
 	if(exist(vals, {p+"-add-users"    })) params.add_users    = true;
 	if(exist(vals, {p+"-complex"      })) params.complex      = true;
+	if(exist(vals, {p+"-gain-occur"   })) params.gain_occur   = true;
 }
 
 void Channel
@@ -114,18 +121,26 @@ void Channel
 	head_chn.push_back(std::make_pair("Type", params.type));
 	if (full) head_chn.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
 	if (full) head_chn.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+
 	if (params.sigma != -1.f)
 		head_chn.push_back(std::make_pair("Sigma value", std::to_string(params.sigma)));
-	if (params.type == "USER")
+
+	if (params.type == "USER" || params.type == "RAYLEIGH_USER")
 		head_chn.push_back(std::make_pair("Path", params.path));
+
+	if (params.type == "RAYLEIGH_USER")
+		head_chn.push_back(std::make_pair("Gain occurrences", std::to_string(params.gain_occur)));
+
 	if (params.type.find("RAYLEIGH") != std::string::npos)
 		head_chn.push_back(std::make_pair("Block fading policy", params.block_fading));
+
 	if ((params.type != "NO" && params.type != "USER") && full)
 		head_chn.push_back(std::make_pair("Seed", std::to_string(params.seed)));
+
 	head_chn.push_back(std::make_pair("Complex", params.complex ? "on" : "off"));
 	head_chn.push_back(std::make_pair("Add users", params.add_users ? "on" : "off"));
 }
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&);

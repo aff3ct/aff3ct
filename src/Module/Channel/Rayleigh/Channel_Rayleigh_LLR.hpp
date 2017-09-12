@@ -30,6 +30,8 @@ public:
 	virtual ~Channel_Rayleigh_LLR();
 
 	virtual void add_noise(const R *X_N, R *Y_N, R *H_N); using Channel<R>::add_noise;
+
+	virtual void get_gains(std::vector<R>& gains, const R sigma);
 };
 }
 }

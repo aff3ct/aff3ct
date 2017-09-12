@@ -56,11 +56,19 @@ Channel_Rayleigh_LLR<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR<R>
+::get_gains(std::vector<R>& gains, const R sigma)
+{
+	noise_generator->generate(gains, sigma);
+}
+
+
+template <typename R>
+void Channel_Rayleigh_LLR<R>
 ::add_noise(const R *X_N, R *Y_N, R *H_N)
 {
 	if (add_users && this->n_frames > 1)
 	{
-		noise_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
+		this->get_gains(this->gains, (R)1 / (R)std::sqrt((R)2));
 		noise_generator->generate(this->noise.data(), this->N, this->sigma);
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
@@ -98,7 +106,7 @@ void Channel_Rayleigh_LLR<R>
 	}
 	else
 	{
-		noise_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
+		this->get_gains(this->gains, (R)1 / (R)std::sqrt((R)2));
 		noise_generator->generate(this->noise, this->sigma);
 
 		if (this->complex)
@@ -129,7 +137,7 @@ void Channel_Rayleigh_LLR<R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Channel_Rayleigh_LLR<R_32>;
