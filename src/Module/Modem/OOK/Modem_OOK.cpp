@@ -40,7 +40,7 @@ void Modem_OOK<B,R,Q>
 {
 	auto size = (unsigned int)(this->N * this->n_frames);
 	for (unsigned i = 0; i < size; i++)
-		X_N2[i] = X_N1[i] ? 0 : 1;
+		X_N2[i] = X_N1[i] ? 1 : 0;
 }
 
 template <typename B,typename R, typename Q>
@@ -63,7 +63,7 @@ void Modem_OOK<B,R,Q>
 	auto size = (unsigned int)(this->N_fil * this->n_frames);
 	for (unsigned i = 0; i < size; i++)
 	{
-		Y_N2[i] = ((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor;
+		Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor;
 	}
 }
 
@@ -80,7 +80,7 @@ void Modem_OOK<B,R,Q>
 	auto size = (unsigned int)(this->N_fil * this->n_frames);
 	for (unsigned i = 0; i < size; i++)
 	{
-		Y_N2[i] = ((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor * (Q)H_N[i];
+		Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor * (Q)H_N[i];
 	}
 }
 
