@@ -15,10 +15,8 @@ class Encoder_BCH : public Encoder<B>
 {
 
 protected:
-	const int m; // order of the Galois Field
-
-	std::vector<int> g;  // coefficients of the generator polynomial, g(x)
-	std::vector<B  > bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
+	const std::vector<int>& g;  // coefficients of the generator polynomial, g(x)
+	std::vector<B>          bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
 
 public:
 	Encoder_BCH(const int& K, const int& N, const tools::Galois &GF, const int n_frames = 1,

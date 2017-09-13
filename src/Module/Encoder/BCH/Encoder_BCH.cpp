@@ -9,10 +9,8 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_BCH<B>
 ::Encoder_BCH(const int& K, const int& N, const tools::Galois &GF, const int n_frames, const std::string name)
- : Encoder<B>(K, N, n_frames, name), m(GF.get_m()), g(N - K + 1), bb(N - K)
+ : Encoder<B>(K, N, n_frames, name), g(GF.get_g()), bb(N - K)
 {
-	// set polynomial coefficients
-	this->g = GF.g;
 }
 
 template <typename B>

@@ -17,7 +17,7 @@ module::Decoder_SIHO<B,Q>* Decoder_BCH
 {
 	if (params.type == "ALGEBRAIC")
 	{
-		if (params.implem == "STD") return new module::Decoder_BCH<B,Q>(params.K, params.N_cw, params.t, GF, params.n_frames);
+		if (params.implem == "STD") return new module::Decoder_BCH<B,Q>(params.K, params.N_cw, GF, params.n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

@@ -14,6 +14,7 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_BCH : public Decoder_SIHO_HIHO<B,R>
 {
+private:
 	std::vector<std::vector<int>> elp;
 	std::vector<int> discrepancy;
 	std::vector<int> l;
@@ -27,14 +28,14 @@ protected:
 	const int t;               // correction power
 	const int d;               // minimum distance of the code (d=2t+1))
 
-	std::vector<int> alpha_to; // log table of GF(2**m)
-	std::vector<int> index_of; // antilog table of GF(2**m)
+	const std::vector<int>& alpha_to; // log table of GF(2**m)
+	const std::vector<int>& index_of; // antilog table of GF(2**m)
 
 	std::vector<B> YH_N;       // hard decision input vector
 
 public:
-	Decoder_BCH(const int& K, const int& N, const int&t, const tools::Galois &GF,
-	            const int n_frames = 1, const std::string name = "Decoder_BCH");
+	Decoder_BCH(const int& K, const int& N, const tools::Galois &GF, const int n_frames = 1,
+	            const std::string name = "Decoder_BCH");
 	virtual ~Decoder_BCH();
 
 protected:

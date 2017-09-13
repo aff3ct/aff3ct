@@ -11,7 +11,8 @@ using namespace aff3ct::tools;
 
 Galois
 ::Galois(const int& K, const int& N, const int& t)
- : K(K), N(N), m((int)std::ceil(std::log2(N))), t(t), d(2 * t + 1)
+ : K(K), N(N), m((int)std::ceil(std::log2(N))), t(t), d(2 * t + 1), alpha_to(N +1), index_of(N +1),
+   p(m +1, 0), g(N - K + 1)
 {
 	if (K <= 0)
 	{
@@ -55,11 +56,6 @@ Galois
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	alpha_to.resize(N +1);
-	index_of.resize(N +1);
-	p       .resize(m +1, 0);
-	g       .resize(N - K + 1);
-
 	Select_Polynomial();
 	Generate_GF();
 	Compute_BCH_Generator_Polynomial();
@@ -71,9 +67,57 @@ Galois
 }
 
 int Galois
+::get_K() const
+{
+	return K;
+}
+
+int Galois
+::get_N() const
+{
+	return N;
+}
+
+int Galois
 ::get_m() const
 {
 	return m;
+}
+
+int Galois
+::get_t() const
+{
+	return t;
+}
+
+int Galois
+::get_d() const
+{
+	return d;
+}
+
+const std::vector<int>& Galois
+::get_alpha_to() const
+{
+	return alpha_to;
+}
+
+const std::vector<int>& Galois
+::get_index_of() const
+{
+	return index_of;
+}
+
+const std::vector<int>& Galois
+::get_p() const
+{
+	return p;
+}
+
+const std::vector<int>& Galois
+::get_g() const
+{
+	return g;
 }
 
 void Galois

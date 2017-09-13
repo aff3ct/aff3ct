@@ -11,11 +11,11 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_BCH<B, R>
-::Decoder_BCH(const int& K, const int& N, const int&t, const tools::Galois &GF, const int n_frames,
-              const std::string name)
+::Decoder_BCH(const int& K, const int& N, const tools::Galois &GF, const int n_frames, const std::string name)
 : Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1, name),
-  elp(N+2, std::vector<int>(N)), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201), m(GF.get_m()),
-  t(t), d(2*t+1), alpha_to(N+1), index_of(N+1), YH_N(N)
+  elp(N+2, std::vector<int>(N)), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201),
+  m(GF.get_m()), t(GF.get_t()), d(GF.get_d()), alpha_to(GF.get_alpha_to()), index_of(GF.get_index_of()),
+  YH_N(N)
 {
 	if (K <= 3)
 	{
@@ -23,9 +23,6 @@ Decoder_BCH<B, R>
 		message << "'K' has to be greater than 3 ('K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	alpha_to = GF.alpha_to;
-	index_of = GF.index_of;
 }
 
 template <typename B, typename R>
@@ -42,7 +39,7 @@ void Decoder_BCH<B, R>
 	int i, j, u, q, t2, count = 0, syn_error = 0;
 
 	t2 = 2 * t;
-	
+
 	/* first form the syndromes */
 	for (i = 1; i <= t2; i++)
 	{
@@ -69,7 +66,7 @@ void Decoder_BCH<B, R>
 		 * u='mu'+1 and 'mu' (the Greek letter!) is the step number
 		 * ranging from -1 to 2*t (see L&C),  l[u] is the degree of
 		 * the elp at that step, and u_l[u] is the difference between
-		 * the step number and the degree of the elp. 
+		 * the step number and the degree of the elp.
 		 */
 		/* initialise table entries */
 		discrepancy[0] = 0; /* index form */
@@ -123,7 +120,7 @@ void Decoder_BCH<B, R>
 
 				/*
 				 * have now found q such that d[u]!=0 and
-				 * u_lu[q] is maximum 
+				 * u_lu[q] is maximum
 				 */
 				/* store degree of new elp polynomial */
 				if (l[u] > l[q] + u - q)
