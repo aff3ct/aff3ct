@@ -9,11 +9,11 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <class C, typename B = int, typename R = float, typename Q = R, int CRC = 0>
+template <typename B = int, typename R = float, typename Q = R>
 class BFER_ite : public Launcher
 {
 protected:
-	factory::BFER_ite::parameters<C> params;
+	factory::BFER_ite::parameters params;
 
 public:
 	BFER_ite(const int argc, const char **argv, std::ostream &stream = std::cout);
@@ -30,7 +30,5 @@ protected:
 };
 }
 }
-
-#include "BFER_ite.hxx"
 
 #endif /* LAUNCHER_BFER_ITE_HPP_ */

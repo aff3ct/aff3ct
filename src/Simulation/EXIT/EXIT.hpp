@@ -21,11 +21,11 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <class C, typename B = int, typename R = float>
+template <typename B = int, typename R = float>
 class EXIT : public Simulation
 {
 protected:
-	const factory::EXIT::parameters<C> &params; // simulation parameters
+	const factory::EXIT::parameters &params; // simulation parameters
 
 	// channel gains
 	mipp::vector<R> H_N;
@@ -59,9 +59,9 @@ protected:
 	tools::Terminal_EXIT<B,R> *terminal;
 
 public:
-	EXIT(const factory::EXIT::parameters<C> &params);
+	EXIT(const factory::EXIT::parameters &params);
 	virtual ~EXIT();
-	
+
 	void launch();
 
 private:
@@ -82,7 +82,5 @@ protected:
 };
 }
 }
-
-#include "EXIT.hxx"
 
 #endif /* SIMULATION_EXIT_HPP_ */

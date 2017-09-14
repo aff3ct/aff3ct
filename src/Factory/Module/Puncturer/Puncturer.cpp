@@ -8,25 +8,34 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Puncturer::name   = "Puncturer";
 const std::string aff3ct::factory::Puncturer::prefix = "pct";
 
-template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer::parameters
-::build() const
+Puncturer::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(Puncturer::name, Puncturer::name, prefix)
 {
-	if (this->type == "NO") return new module::Puncturer_NO<B,Q>(this->K, this->N, this->n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer
-::build(const parameters &params)
+Puncturer::parameters
+::parameters(const std::string name, const std::string prefix)
+: Factory::parameters(name, Puncturer::name, prefix)
 {
-	return params.template build<B,Q>();
 }
 
-void Puncturer
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Puncturer::parameters
+::~parameters()
 {
+}
+
+Puncturer::parameters* Puncturer::parameters
+::clone() const
+{
+	return new Puncturer::parameters(*this);
+}
+
+void Puncturer::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	auto p = this->get_prefix();
+
 	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (information bits)."};
@@ -45,27 +54,46 @@ void Puncturer
 		 "set the number of inter frame level to process."};
 }
 
-void Puncturer
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Puncturer::parameters
+::store(const arg_val_map &vals)
 {
-	if(exist(vals, {p+"-info-bits", "K"})) params.K        = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-fra-size",  "N"})) params.N        = std::stoi(vals.at({p+"-fra-size",  "N"}));
-	if(exist(vals, {p+"-fra",       "F"})) params.n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-type"          })) params.type     =           vals.at({p+"-type"          });
+	auto p = this->get_prefix();
 
-	params.N_cw = params.N;
+	if(exist(vals, {p+"-info-bits", "K"})) this->K        = std::stoi(vals.at({p+"-info-bits", "K"}));
+	if(exist(vals, {p+"-fra-size",  "N"})) this->N        = std::stoi(vals.at({p+"-fra-size",  "N"}));
+	if(exist(vals, {p+"-fra",       "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
+	if(exist(vals, {p+"-type"          })) this->type     =           vals.at({p+"-type"          });
+
+	this->N_cw = this->N;
 }
 
-void Puncturer
-::make_header(params_list& head_pct, const parameters& params, const bool full)
+void Puncturer::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	head_pct.push_back(std::make_pair("Type", params.type));
-	if (full) head_pct.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
-	if (full) head_pct.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
-	if (full) head_pct.push_back(std::make_pair("Codeword size", std::to_string(params.N_cw)));
-	if (full) head_pct.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("Type", this->type));
+	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
+	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->N)));
+	if (full) headers[p].push_back(std::make_pair("Codeword size", std::to_string(this->N_cw)));
+	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 }
 
+template <typename B, typename Q>
+module::Puncturer<B,Q>* Puncturer::parameters
+::build() const
+{
+	if (this->type == "NO") return new module::Puncturer_NO<B,Q>(this->K, this->N, this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q>
+module::Puncturer<B,Q>* Puncturer
+::build(const parameters &params)
+{
+	return params.template build<B,Q>();
+}
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

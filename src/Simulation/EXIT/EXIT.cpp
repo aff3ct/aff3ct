@@ -6,39 +6,32 @@
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 
-#include "Factory/Module/Source/Source.hpp"
-#include "Factory/Module/Modem/Modem.hpp"
-#include "Factory/Module/Channel/Channel.hpp"
-#include "Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp"
-#include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
-
 #include "EXIT.hpp"
 
-namespace aff3ct
-{
-namespace simulation
-{
-template <class C, typename B, typename R>
-EXIT<C,B,R>
-::EXIT(const factory::EXIT::parameters<C>& params)
+using namespace aff3ct;
+using namespace aff3ct::simulation;
+
+template <typename B, typename R>
+EXIT<B,R>
+::EXIT(const factory::EXIT::parameters& params)
 : Simulation(),
   params(params),
 
-  H_N   (params.cdc.dec.N_cw),
-  B_K   (params.cdc.dec.K   ),
-  B_N   (params.cdc.dec.N_cw),
-  X_N1  (params.cdc.dec.N_cw),
-  X_K   (params.cdc.dec.K   ),
-  X_N2  (params.cdc.dec.N_cw),
-  Y_N   (params.cdc.dec.N_cw),
-  Y_K   (params.cdc.dec.K   ),
-  La_K1 (params.cdc.dec.K   ),
-  Lch_N1(params.cdc.dec.N_cw),
-  La_K2 (params.cdc.dec.K   ),
-  Lch_N2(params.cdc.dec.N_cw),
-  Le_K  (params.cdc.dec.K   ),
-  sys   (params.cdc.dec.K                         +  params.cdc.dec.tail_length / 2),
-  par   ((params.cdc.dec.N_cw - params.cdc.dec.K) - (params.cdc.dec.tail_length / 2)),
+  H_N   ( params.cdc->N_cw),
+  B_K   ( params.cdc->K   ),
+  B_N   ( params.cdc->N_cw),
+  X_N1  ( params.cdc->N_cw),
+  X_K   ( params.cdc->K   ),
+  X_N2  ( params.cdc->N_cw),
+  Y_N   ( params.cdc->N_cw),
+  Y_K   ( params.cdc->K   ),
+  La_K1 ( params.cdc->K   ),
+  Lch_N1( params.cdc->N_cw),
+  La_K2 ( params.cdc->K   ),
+  Lch_N2( params.cdc->N_cw),
+  Le_K  ( params.cdc->K   ),
+  sys   ( params.cdc->K                     +  params.cdc->tail_length / 2),
+  par   ((params.cdc->N_cw - params.cdc->K) - (params.cdc->tail_length / 2)),
 
   sig_a(0.f),
   sigma(0.f),
@@ -63,26 +56,26 @@ EXIT<C,B,R>
 	this->monitor = this->build_monitor();
 }
 
-template <class C, typename B, typename R>
-EXIT<C,B,R>
+template <typename B, typename R>
+EXIT<B,R>
 ::~EXIT()
 {
 	if (monitor != nullptr) { delete monitor; monitor = nullptr; }
 	release_objects();
 }
 
-template <class C, typename B, typename R>
-void EXIT<C,B,R>
+template <typename B, typename R>
+void EXIT<B,R>
 ::build_communication_chain()
 {
 	release_objects();
 
-	const auto N_mod = params.mdm.N_mod;
-	const auto K_mod = factory::Modem::get_buffer_size_after_modulation(params.mdm.type,
-	                                                                    params.cdc.enc.K,
-	                                                                    params.mdm.bps,
-	                                                                    params.mdm.upf,
-	                                                                    params.mdm.cpm_L);
+	const auto N_mod = params.mdm->N_mod;
+	const auto K_mod = factory::Modem::get_buffer_size_after_modulation(params.mdm->type,
+	                                                                    params.cdc->K,
+	                                                                    params.mdm->bps,
+	                                                                    params.mdm->upf,
+	                                                                    params.mdm->cpm_L);
 
 	// build the objects
 	source    = build_source   (     );
@@ -103,14 +96,14 @@ void EXIT<C,B,R>
 	if (H_N   .size() != (unsigned)N_mod) H_N   .resize(N_mod);
 }
 
-template <class C, typename B, typename R>
-void EXIT<C,B,R>
+template <typename B, typename R>
+void EXIT<B,R>
 ::launch()
 {
 	// allocate and build all the communication chain to generate EXIT chart
 	this->build_communication_chain();
 
-	if (!params.ter.disabled)
+	if (!params.ter->disabled)
 		terminal->legend(std::cout);
 
 	// for each channel SNR to be simulated	
@@ -118,8 +111,8 @@ void EXIT<C,B,R>
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		const auto bit_rate = 1.f;
-		esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params.mdm.bps);
-		sigma = tools::esn0_to_sigma(esn0, params.mdm.upf);
+		esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params.mdm->bps);
+		sigma = tools::esn0_to_sigma(esn0, params.mdm->upf);
 
 		terminal->set_esn0(esn0);
 		terminal->set_ebn0(ebn0);
@@ -140,7 +133,7 @@ void EXIT<C,B,R>
 
 			this->simulation_loop();
 
-			if (!params.ter.disabled)
+			if (!params.ter->disabled)
 				terminal->final_report(std::cout);
 
 			this->monitor->reset();
@@ -154,8 +147,8 @@ void EXIT<C,B,R>
 	}
 }
 
-template <class C, typename B, typename R>
-void EXIT<C,B,R>
+template <typename B, typename R>
+void EXIT<B,R>
 ::simulation_loop()
 {
 	using namespace std::chrono;
@@ -180,7 +173,7 @@ void EXIT<C,B,R>
 		if (sig_a != 0)
 		{
 			// Rayleigh channel
-			if (params.chn.type.find("RAYLEIGH") != std::string::npos)
+			if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 			{
 				channel_a->add_noise_wg (X_K, La_K1, H_N       );
 				modem_a  ->demodulate_wg(     La_K1, H_N, La_K2);
@@ -193,7 +186,7 @@ void EXIT<C,B,R>
 		}
 
 		// Rayleigh channel
-		if (params.chn.type.find("RAYLEIGH") != std::string::npos)
+		if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
 			channel->add_noise_wg (X_N2, Lch_N1, H_N        );
 			modem  ->demodulate_wg(      Lch_N1, H_N, Lch_N2);
@@ -208,7 +201,7 @@ void EXIT<C,B,R>
 		codec->extract_sys_par(Lch_N2, sys, par);
 
 		// add other siso's extrinsic
-		for (auto k = 0; k < params.cdc.enc.K; k++)
+		for (auto k = 0; k < params.cdc->K; k++)
 			sys[k] += La_K2[k];
 
 		// decode
@@ -219,7 +212,7 @@ void EXIT<C,B,R>
 		monitor->measure_mutual_info(B_K, La_K2, Le_K);
 
 		// display statistics in terminal
-		if (!params.ter.disabled && (steady_clock::now() - t_simu) >= params.ter.frequency)
+		if (!params.ter->disabled && (steady_clock::now() - t_simu) >= params.ter->frequency)
 		{
 			terminal->temp_report(std::clog);
 			t_simu = steady_clock::now();
@@ -227,8 +220,8 @@ void EXIT<C,B,R>
 	}
 }
 
-template <class C, typename B, typename R>
-void EXIT<C,B,R>
+template <typename B, typename R>
+void EXIT<B,R>
 ::release_objects()
 {
 	if (source    != nullptr) { delete source;    source    = nullptr; }
@@ -240,68 +233,81 @@ void EXIT<C,B,R>
 	if (terminal  != nullptr) { delete terminal;  terminal  = nullptr; }
 }
 
-template <class C, typename B, typename R>
-module::Source<B>* EXIT<C,B,R>
+template <typename B, typename R>
+module::Source<B>* EXIT<B,R>
 ::build_source()
 {
-	return factory::Source::build<B>(params.src);
+	return params.src->template build<B>();
 }
 
-template <class C, typename B, typename R>
-module::Codec_SISO<B,R>* EXIT<C,B,R>
+template <typename B, typename R>
+module::Codec_SISO<B,R>* EXIT<B,R>
 ::build_codec()
 {
-	return params.cdc.template build<B,R>();
+	return params.cdc->template build<B,R>();
 }
 
-template <class C, typename B, typename R>
-module::Modem<B,R,R>* EXIT<C,B,R>
+template <typename B, typename R>
+module::Modem<B,R,R>* EXIT<B,R>
 ::build_modem()
 {
-	return factory::Modem::build<B,R>(params.mdm);
+	return params.mdm->template build<B,R>();
 }
 
-template <class C, typename B, typename R>
-module::Modem<B,R,R>* EXIT<C,B,R>
+template <typename B, typename R>
+module::Modem<B,R>* EXIT<B,R>
 ::build_modem_a()
 {
-	auto mdm_params = params.mdm;
-	mdm_params.N    = params.cdc.enc.K;
-	return factory::Modem::build<B,R>(mdm_params);
+	auto mdm_params = params.mdm->clone();
+	mdm_params->N   = params.cdc->K;
+	auto m = mdm_params->template build<B,R>();
+	delete mdm_params;
+	return m;
 }
 
-template <class C, typename B, typename R>
-module::Channel<R>* EXIT<C,B,R>
+template <typename B, typename R>
+module::Channel<R>* EXIT<B,R>
 ::build_channel(const int size)
 {
-	return factory::Channel::build<R>(params.chn);
+	return params.chn->template build<R>();
 }
 
-template <class C, typename B, typename R>
-module::Channel<R>* EXIT<C,B,R>
+template <typename B, typename R>
+module::Channel<R>* EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	auto chn_params = params.chn;
-	chn_params.N    = factory::Modem::get_buffer_size_after_modulation(params.mdm.type,
-	                                                                   params.cdc.enc.K,
-	                                                                   params.mdm.bps,
-	                                                                   params.mdm.upf,
- 	                                                                   params.mdm.cpm_L);
-	return factory::Channel::build<R>(chn_params);
+	auto chn_params = params.chn->clone();
+	chn_params->N   = factory::Modem::get_buffer_size_after_modulation(params.mdm->type,
+	                                                                   params.cdc->K,
+	                                                                   params.mdm->bps,
+	                                                                   params.mdm->upf,
+	                                                                   params.mdm->cpm_L);
+
+	auto c = chn_params->template build<R>();
+	delete chn_params;
+	return c;
 }
 
-template <class C, typename B, typename R>
-module::Monitor_EXIT<B,R>* EXIT<C,B,R>
+template <typename B, typename R>
+module::Monitor_EXIT<B,R>* EXIT<B,R>
 ::build_monitor()
 {
-	return factory::Monitor_EXIT::build<B,R>(params.mnt);
+	return params.mnt->template build<B,R>();
 }
 
-template <class C, typename B, typename R>
-tools::Terminal_EXIT<B,R>* EXIT<C,B,R>
+template <typename B, typename R>
+tools::Terminal_EXIT<B,R>* EXIT<B,R>
 ::build_terminal()
 {
-	return factory::Terminal_EXIT::build<B,R>(params.ter, *this->monitor);
+	return params.ter->template build<B,R>(*this->monitor);
 }
-}
-}
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class aff3ct::simulation::EXIT<B_32,R_32>;
+template class aff3ct::simulation::EXIT<B_64,R_64>;
+#else
+template class aff3ct::simulation::EXIT<B,R>;
+#endif
+// ==================================================================================== explicit template instantiation

@@ -10,6 +10,58 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_repetition::name   = "Encoder Repetiton";
 const std::string aff3ct::factory::Encoder_repetition::prefix = "enc";
 
+Encoder_repetition::parameters
+::parameters(const std::string prefix)
+: Encoder::parameters(Encoder_repetition::name, prefix)
+{
+	this->type = "REPETITION";
+}
+
+Encoder_repetition::parameters
+::~parameters()
+{
+}
+
+Encoder_repetition::parameters* Encoder_repetition::parameters
+::clone() const
+{
+	return new Encoder_repetition::parameters(*this);
+}
+
+void Encoder_repetition::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Encoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type"}][2] += ", REPETITION";
+
+	opt_args[{p+"-no-buff"}] =
+		{"",
+		 "disable the buffered encoding."};
+}
+
+void Encoder_repetition::parameters
+::store(const arg_val_map &vals)
+{
+	Encoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
+}
+
+void Encoder_repetition::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Encoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
+}
+
 template <typename B>
 module::Encoder_sys<B>* Encoder_repetition::parameters
 ::build() const
@@ -24,36 +76,6 @@ module::Encoder_sys<B>* Encoder_repetition
 ::build(const parameters &params)
 {
 	return params.template build<B>();
-}
-
-void Encoder_repetition
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Encoder::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-type"}][2] += ", REPETITION";
-
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "disable the buffered encoding."};
-}
-
-void Encoder_repetition
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type = "REPETITION";
-
-	Encoder::store_args(vals, params, p);
-
-	if(exist(vals, {p+"-no-buff"})) params.buffered = false;
-}
-
-void Encoder_repetition
-::make_header(params_list& head_enc, const parameters& params, const bool full)
-{
-	Encoder::make_header(head_enc, params, full);
-
-	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 }
 
 // ==================================================================================== explicit template instantiation

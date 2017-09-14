@@ -8,9 +8,29 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Simulation::name   = "Simulation";
 const std::string aff3ct::factory::Simulation::prefix = "sim";
 
-void Simulation::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Simulation::parameters
+::parameters(const std::string name, const std::string prefix)
+: Launcher::parameters(name, prefix)
 {
-	Launcher::build_args(req_args, opt_args, p);
+}
+
+Simulation::parameters* Simulation::parameters
+::clone() const
+{
+	return new Simulation::parameters(*this);
+}
+
+Simulation::parameters
+::~parameters()
+{
+}
+
+void Simulation::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Launcher::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
 
 	req_args[{p+"-snr-min", "m"}] =
 		{"float",
@@ -59,36 +79,39 @@ void Simulation::build_args(arg_map &req_args, arg_map &opt_args, const std::str
 #endif
 }
 
-void Simulation::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Simulation::parameters
+::store(const arg_val_map &vals)
 {
 	using namespace std::chrono;
 
-	Launcher::store_args(vals, params, p);
+	Launcher::parameters::store(vals);
 
-	if(exist(vals, {p+"-snr-min",  "m"})) params.snr_min     =         std::stof(vals.at({p+"-snr-min",  "m"}));
-	if(exist(vals, {p+"-snr-max",  "M"})) params.snr_max     =         std::stof(vals.at({p+"-snr-max",  "M"}));
-	if(exist(vals, {p+"-pyber"        })) params.pyber       =                   vals.at({p+"-pyber"        });
-	if(exist(vals, {p+"-snr-step", "s"})) params.snr_step    =         std::stof(vals.at({p+"-snr-step", "s"}));
-	if(exist(vals, {p+"-stop-time"    })) params.stop_time   = seconds(std::stoi(vals.at({p+"-stop-time"    })));
-	if(exist(vals, {p+"-seed",     "S"})) params.global_seed =         std::stoi(vals.at({p+"-seed",     "S"}));
+	auto p = this->get_prefix();
 
-	params.snr_max += 0.0001f; // hack to avoid the miss of the last snr
+	if(exist(vals, {p+"-snr-min",  "m"})) this->snr_min     =         std::stof(vals.at({p+"-snr-min",  "m"}));
+	if(exist(vals, {p+"-snr-max",  "M"})) this->snr_max     =         std::stof(vals.at({p+"-snr-max",  "M"}));
+	if(exist(vals, {p+"-pyber"        })) this->pyber       =                   vals.at({p+"-pyber"        });
+	if(exist(vals, {p+"-snr-step", "s"})) this->snr_step    =         std::stof(vals.at({p+"-snr-step", "s"}));
+	if(exist(vals, {p+"-stop-time"    })) this->stop_time   = seconds(std::stoi(vals.at({p+"-stop-time"    })));
+	if(exist(vals, {p+"-seed",     "S"})) this->global_seed =         std::stoi(vals.at({p+"-seed",     "S"}));
+
+	this->snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
 #ifndef STARPU
 	if(exist(vals, {p+"-threads", "t"}) && std::stoi(vals.at({p+"-threads", "t"})) > 0)
-		if(exist(vals, {p+"-threads", "t"})) params.n_threads = std::stoi(vals.at({p+"-threads",    "t"}));
+		if(exist(vals, {p+"-threads", "t"})) this->n_threads = std::stoi(vals.at({p+"-threads",    "t"}));
 #else
-	if(exist(vals, {p+"-conc-tasks", "t"})) params.n_threads  = std::stoi(vals.at({p+"-conc-tasks", "t"}));
+	if(exist(vals, {p+"-conc-tasks", "t"})) this->n_threads  = std::stoi(vals.at({p+"-conc-tasks", "t"}));
 #endif
 
 #ifdef ENABLE_MPI
-	MPI_Comm_size(MPI_COMM_WORLD, &params.mpi_size);
-	MPI_Comm_rank(MPI_COMM_WORLD, &params.mpi_rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &this->mpi_size);
+	MPI_Comm_rank(MPI_COMM_WORLD, &this->mpi_rank);
 
-	if(exist(vals, {p+"-mpi-comm"})) params.mpi_comm_freq = milliseconds(std::stoi(vals.at({p+"-mpi-comm"})));
+	if(exist(vals, {p+"-mpi-comm"})) this->mpi_comm_freq = milliseconds(std::stoi(vals.at({p+"-mpi-comm"})));
 
 	int max_n_threads_global;
-	int max_n_threads_local = params.n_threads;
+	int max_n_threads_local = this->n_threads;
 
 	MPI_Allreduce(&max_n_threads_local, &max_n_threads_global, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
 
@@ -101,44 +124,47 @@ void Simulation::store_args(const arg_val_map &vals, parameters &params, const s
 	}
 
 	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
-	params.local_seed = params.global_seed + max_n_threads_global * params.mpi_rank;
+	this->local_seed = this->global_seed + max_n_threads_global * this->mpi_rank;
 #endif
 
 #ifdef ENABLE_COOL_BASH
 	// disable the cool bash mode for PyBER
-	if (!params.pyber.empty())
+	if (!this->pyber.empty())
 		tools::enable_bash_tools = false;
 
 	if (exist(vals, {p+"-no-colors"})) tools::enable_bash_tools = false;
 #endif
 
 #ifdef MULTI_PREC
-	if(exist(vals, {p+"-prec", "p"})) params.sim_prec = std::stoi(vals.at({p+"-prec", "p"}));
+	if(exist(vals, {p+"-prec", "p"})) this->sim_prec = std::stoi(vals.at({p+"-prec", "p"}));
 #endif
 }
 
-void Simulation::make_header(params_list& head_sim, const parameters& params, const bool full)
+void Simulation::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Launcher::make_header(head_sim, params);
+	Launcher::parameters::get_headers(headers);
 
-	head_sim.push_back(std::make_pair("SNR min (m)",   std::to_string(params.snr_min)  + " dB"));
-	head_sim.push_back(std::make_pair("SNR max (M)",   std::to_string(params.snr_max)  + " dB"));
-	head_sim.push_back(std::make_pair("SNR step (s)",  std::to_string(params.snr_step) + " dB"));
+	auto p = this->get_prefix();
 
-	head_sim.push_back(std::make_pair("Seed", std::to_string(params.global_seed)));
+	headers[p].push_back(std::make_pair("SNR min (m)",  std::to_string(this->snr_min)  + " dB"));
+	headers[p].push_back(std::make_pair("SNR max (M)",  std::to_string(this->snr_max)  + " dB"));
+	headers[p].push_back(std::make_pair("SNR step (s)", std::to_string(this->snr_step) + " dB"));
+
+	headers[p].push_back(std::make_pair("Seed", std::to_string(this->global_seed)));
 
 #ifdef ENABLE_MPI
-	head_sim.push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(params.mpi_comm_freq.count())));
-	head_sim.push_back(std::make_pair("MPI size",             std::to_string(params.mpi_size             )));
+	headers[p].push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(this->mpi_comm_freq.count())));
+	headers[p].push_back(std::make_pair("MPI size",             std::to_string(this->mpi_size             )));
 #endif
 
 #ifdef STARPU
-	head_sim.push_back(std::make_pair("Task concurrency level (t)", std::to_string(params.n_threads)));
+	headers[p].push_back(std::make_pair("Task concurrency level (t)", std::to_string(this->n_threads)));
 #else
 	std::string threads = "unused";
-	if (params.n_threads)
-		threads = std::to_string(params.n_threads) + " thread(s)";
+	if (this->n_threads)
+		threads = std::to_string(this->n_threads) + " thread(s)";
 
-	head_sim.push_back(std::make_pair("Multi-threading (t)", threads));
+	headers[p].push_back(std::make_pair("Multi-threading (t)", threads));
 #endif
 }

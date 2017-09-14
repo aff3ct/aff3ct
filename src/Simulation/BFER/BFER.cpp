@@ -14,18 +14,17 @@
 #include "Module/Monitor/BFER/Monitor_BFER_reduction_mpi.hpp"
 #endif
 
-#include "../../Factory/Module/Monitor/Monitor.hpp"
+#include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
 #include "BFER.hpp"
 
-namespace aff3ct
-{
-namespace simulation
-{
-template <class C, typename B, typename R, typename Q>
-BFER<C,B,R,Q>
-::BFER(const factory::BFER::parameters<C>& params)
+using namespace aff3ct;
+using namespace aff3ct::simulation;
+
+template <typename B, typename R, typename Q>
+BFER<B,R,Q>
+::BFER(const factory::BFER::parameters& params)
 : Simulation(),
   params(params),
 
@@ -33,7 +32,7 @@ BFER<C,B,R,Q>
 
   barrier(params.n_threads),
 
-  bit_rate((float)params.src.K / (float)params.cdc.N),
+  bit_rate((float)params.src->K / (float)params.cdc->N),
 
   snr  (0.f),
   snr_s(0.f),
@@ -63,13 +62,13 @@ BFER<C,B,R,Q>
 	if (params.err_track_enable)
 	{
 		for (auto tid = 0; tid < params.n_threads; tid++)
-			dumper[tid] = new tools::Dumper(params.src.n_frames);
+			dumper[tid] = new tools::Dumper(params.src->n_frames);
 
 		std::vector<tools::Dumper*> dumpers;
 		for (auto tid = 0; tid < params.n_threads; tid++)
 			dumpers.push_back(dumper[tid]);
 
-		dumper_red = new tools::Dumper_reduction(dumpers, params.src.n_frames);
+		dumper_red = new tools::Dumper_reduction(dumpers, params.src->n_frames);
 	}
 
 	modules["monitor"] = std::vector<module::Module*>(params.n_threads, nullptr);
@@ -89,15 +88,15 @@ BFER<C,B,R,Q>
 	                                                              params.src->n_frames);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_BFER_reduction<B>(params.src.K,
-	                                                          params.mnt.n_frame_errors,
+	this->monitor_red = new module::Monitor_BFER_reduction<B>(params.src->K,
+	                                                          params.mnt->n_frame_errors,
 	                                                          this->monitor,
-	                                                          params.src.n_frames);
+	                                                          params.src->n_frames);
 #endif
 }
 
-template <class C, typename B, typename R, typename Q>
-BFER<C,B,R,Q>
+template <typename B, typename R, typename Q>
+BFER<B,R,Q>
 ::~BFER()
 {
 	release_objects();
@@ -114,8 +113,8 @@ BFER<C,B,R,Q>
 	if (terminal != nullptr) { delete terminal; terminal = nullptr; }
 }
 
-template <class C, typename B, typename R, typename Q>
-void BFER<C,B,R,Q>
+template <typename B, typename R, typename Q>
+void BFER<B,R,Q>
 ::build_communication_chain(const int tid)
 {
 	try
@@ -139,15 +138,15 @@ void BFER<C,B,R,Q>
 	}
 }
 
-template <class C, typename B, typename R, typename Q>
-void BFER<C,B,R,Q>
+template <typename B, typename R, typename Q>
+void BFER<B,R,Q>
 ::_build_communication_chain(const int tid)
 {
 	// by default, do nothing
 }
 
-template <class C, typename B, typename R, typename Q>
-void BFER<C,B,R,Q>
+template <typename B, typename R, typename Q>
+void BFER<B,R,Q>
 ::launch()
 {
 	this->terminal = this->build_terminal();
@@ -157,9 +156,9 @@ void BFER<C,B,R,Q>
 		// build the communication chain in multi-threaded mode
 		std::vector<std::thread> threads(params.n_threads -1);
 		for (auto tid = 1; tid < params.n_threads; tid++)
-			threads[tid -1] = std::thread(BFER<C,B,R,Q>::start_thread_build_comm_chain, this, tid);
+			threads[tid -1] = std::thread(BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
 
-		BFER<C,B,R,Q>::start_thread_build_comm_chain(this, 0);
+		BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
 
 		// join the slave threads with the master thread
 		for (auto tid = 1; tid < params.n_threads; tid++)
@@ -178,14 +177,14 @@ void BFER<C,B,R,Q>
 		if (params.snr_type == "EB")
 		{
 			snr_b = snr;
-			snr_s = tools::ebn0_to_esn0(snr_b, bit_rate, params.mdm.bps);
+			snr_s = tools::ebn0_to_esn0(snr_b, bit_rate, params.mdm->bps);
 		}
 		else // if (params.sim->snr_type == "ES")
 		{
 			snr_s = snr;
-			snr_b = tools::esn0_to_ebn0(snr_s, bit_rate, params.mdm.bps);
+			snr_b = tools::esn0_to_ebn0(snr_s, bit_rate, params.mdm->bps);
 		}
-		sigma = tools::esn0_to_sigma(snr_s, params.mdm.upf);
+		sigma = tools::esn0_to_sigma(snr_s, params.mdm->upf);
 
 		this->terminal->set_esn0(snr_s);
 		this->terminal->set_ebn0(snr_b);
@@ -196,17 +195,17 @@ void BFER<C,B,R,Q>
 			this->monitor_red->clear_callbacks();
 
 			// dirty hack to override simulation params
-			auto &params_writable = const_cast<factory::BFER::parameters<C>&>(params);
+			auto &params_writable = const_cast<factory::BFER::parameters&>(params);
 
-			if (this->params.src.type != "AZCW")
-				params_writable.src.path = params.err_track_path + "_" + std::to_string(snr_b) + ".src";
+			if (this->params.src->type != "AZCW")
+				params_writable.src->path = params.err_track_path + "_" + std::to_string(snr_b) + ".src";
 
 			if (this->params.coset)
-				params_writable.cdc.enc.path = params.err_track_path + "_" + std::to_string(snr_b) + ".enc";
+				params_writable.cdc->enc->path = params.err_track_path + "_" + std::to_string(snr_b) + ".enc";
 
-			params_writable.chn.path = params.err_track_path + "_" + std::to_string(snr_b) + ".chn";
+			params_writable.chn->path = params.err_track_path + "_" + std::to_string(snr_b) + ".chn";
 
-			std::ifstream file(this->params.chn.path, std::ios::binary);
+			std::ifstream file(this->params.chn->path, std::ios::binary);
 			if (file.is_open())
 			{
 				file.read((char*)&max_fra, sizeof(max_fra));
@@ -215,16 +214,16 @@ void BFER<C,B,R,Q>
 			else
 			{
 				std::stringstream message;
-				message << "Impossible to read the 'chn' file ('chn' = " << this->params.chn.path << ").";
+				message << "Impossible to read the 'chn' file ('chn' = " << this->params.chn->path << ").";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
 			// build the communication chain in multi-threaded mode
 			std::vector<std::thread> threads(params.n_threads -1);
 			for (auto tid = 1; tid < params.n_threads; tid++)
-				threads[tid -1] = std::thread(BFER<C,B,R,Q>::start_thread_build_comm_chain, this, tid);
+				threads[tid -1] = std::thread(BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
 
-			BFER<C,B,R,Q>::start_thread_build_comm_chain(this, 0);
+			BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
 
 			// join the slave threads with the master thread
 			for (auto tid = 1; tid < params.n_threads; tid++)
@@ -255,16 +254,16 @@ void BFER<C,B,R,Q>
 		if (((!params.ter->disabled && snr == params.snr_min && !params.debug) ||
 		    (params.statistics && !params.debug)) && params.mpi_rank == 0)
 #else
-		if (((!params.ter.disabled && snr == params.snr_min && !params.debug) ||
+		if (((!params.ter->disabled && snr == params.snr_min && !params.debug) ||
 		    (params.statistics && !params.debug)))
 #endif
 			terminal->legend(std::cout);
 
 		// start the terminal to display BER/FER results
 		std::thread term_thread;
-		if (!params.ter.disabled && params.ter.frequency != std::chrono::nanoseconds(0) && !params.debug)
+		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
 			// launch a thread dedicated to the terminal display
-			term_thread = std::thread(BFER<C,B,R,Q>::start_thread_terminal, this);
+			term_thread = std::thread(BFER<B,R,Q>::start_thread_terminal, this);
 
 		auto simu_error = false;
 		try
@@ -279,7 +278,7 @@ void BFER<C,B,R,Q>
 		}
 
 		// stop the terminal
-		if (!params.ter.disabled && params.ter.frequency != std::chrono::nanoseconds(0) && !params.debug)
+		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
 		{
 			stop_terminal = true;
 			cond_terminal.notify_all();
@@ -289,9 +288,9 @@ void BFER<C,B,R,Q>
 		}
 
 #ifdef ENABLE_MPI
-		if (!params.ter.disabled && terminal != nullptr && !simu_error && params.mpi_rank == 0)
+		if (!params.ter->disabled && terminal != nullptr && !simu_error && params.mpi_rank == 0)
 #else
-		if (!params.ter.disabled && terminal != nullptr && !simu_error)
+		if (!params.ter->disabled && terminal != nullptr && !simu_error)
 #endif
 		{
 			if (params.debug)
@@ -323,14 +322,14 @@ void BFER<C,B,R,Q>
 	this->release_objects();
 }
 
-template <class C, typename B, typename R, typename Q>
-void BFER<C,B,R,Q>
+template <typename B, typename R, typename Q>
+void BFER<B,R,Q>
 ::release_objects()
 {
 }
 
-template <class C, typename B, typename R, typename Q>
-void BFER<C,B,R,Q>
+template <typename B, typename R, typename Q>
+void BFER<B,R,Q>
 ::display_stats(std::ostream &stream)
 {
 	size_t max_chars = 0;
@@ -503,27 +502,27 @@ void BFER<C,B,R,Q>
 	}
 }
 
-template <class C, typename B, typename R, typename Q>
-module::Monitor_BFER<B>* BFER<C,B,R,Q>
+template <typename B, typename R, typename Q>
+module::Monitor_BFER<B>* BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return factory::Monitor_BFER::build<B>(params.mnt);
+	return factory::Monitor_BFER::build<B>(*params.mnt);
 }
 
-template <class C, typename B, typename R, typename Q>
-tools::Terminal_BFER<B>* BFER<C,B,R,Q>
+template <typename B, typename R, typename Q>
+tools::Terminal_BFER<B>* BFER<B,R,Q>
 ::build_terminal()
 {
-	return factory::Terminal_BFER::build<B>(params.ter, *this->monitor_red);
+	return factory::Terminal_BFER::build<B>(*params.ter, *this->monitor_red);
 }
 
-template <class C, typename B, typename R, typename Q>
-void BFER<C,B,R,Q>
-::start_thread_terminal(BFER<C,B,R,Q> *simu)
+template <typename B, typename R, typename Q>
+void BFER<B,R,Q>
+::start_thread_terminal(BFER<B,R,Q> *simu)
 {
 	if (simu->terminal != nullptr && simu->monitor_red != nullptr)
 	{
-		const auto sleep_time = simu->params.ter.frequency - std::chrono::milliseconds(0);
+		const auto sleep_time = simu->params.ter->frequency - std::chrono::milliseconds(0);
 
 		while (!simu->stop_terminal)
 		{
@@ -537,11 +536,22 @@ void BFER<C,B,R,Q>
 		          << std::endl;
 }
 
-template <class C, typename B, typename R, typename Q>
-void BFER<C,B,R,Q>
-::start_thread_build_comm_chain(BFER<C,B,R,Q> *simu, const int tid)
+template <typename B, typename R, typename Q>
+void BFER<B,R,Q>
+::start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid)
 {
 	simu->build_communication_chain(tid);
 }
-}
-}
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class aff3ct::simulation::BFER<B_8,R_8,Q_8>;
+template class aff3ct::simulation::BFER<B_16,R_16,Q_16>;
+template class aff3ct::simulation::BFER<B_32,R_32,Q_32>;
+template class aff3ct::simulation::BFER<B_64,R_64,Q_64>;
+#else
+template class aff3ct::simulation::BFER<B,R,Q>;
+#endif
+// ==================================================================================== explicit template instantiation
+

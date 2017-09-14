@@ -10,6 +10,80 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_RA::name   = "Decoder RA";
 const std::string aff3ct::factory::Decoder_RA::prefix = "dec";
 
+Decoder_RA::parameters
+::parameters(const std::string prefix)
+: Decoder::parameters(Decoder_RA::name, prefix),
+  itl(new Interleaver::parameters("itl"))
+{
+	this->type   = "RA";
+	this->implem = "STD";
+}
+
+Decoder_RA::parameters
+::~parameters()
+{
+	if (itl != nullptr) { delete itl; itl = nullptr; }
+}
+
+Decoder_RA::parameters* Decoder_RA::parameters
+::clone() const
+{
+	auto clone = new Decoder_RA::parameters(*this);
+
+	if (itl != nullptr) { clone->itl = itl->clone(); }
+
+	return clone;
+}
+
+void Decoder_RA::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Decoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	itl->get_description(req_args, opt_args);
+
+	auto pi = itl->get_prefix();
+
+	req_args.erase({pi+"-size"    });
+	opt_args.erase({pi+"-fra", "F"});
+
+	opt_args[{p+"-type", "D"}].push_back("RA");
+	opt_args[{p+"-implem"   }].push_back("STD");
+
+	opt_args[{p+"-ite", "i"}] =
+		{"positive_int",
+		 "maximal number of iterations in the decoder."};
+}
+
+void Decoder_RA::parameters
+::store(const arg_val_map &vals)
+{
+	Decoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	this->itl->core->size     = this->N_cw;
+	this->itl->core->n_frames = this->n_frames;
+
+	itl->store(vals);
+
+	if(exist(vals, {p+"-ite", "i"})) this->n_ite = std::stoi(vals.at({p+"-ite", "i"}));
+}
+
+void Decoder_RA::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Decoder::parameters::get_headers(headers, full);
+
+	itl->get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+}
+
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_RA::parameters
 ::build(const module::Interleaver<Q> &itl) const
@@ -25,46 +99,6 @@ module::Decoder_SIHO<B,Q>* Decoder_RA
 ::build(const parameters &params, const module::Interleaver<Q> &itl)
 {
 	return params.template build<B,Q>(itl);
-}
-
-void Decoder_RA
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Decoder::build_args(req_args, opt_args, p);
-	Interleaver::build_args(req_args, opt_args, "itl");
-	req_args.erase({"itl-size"    });
-	opt_args.erase({"itl-fra", "F"});
-
-	opt_args[{p+"-type", "D"}].push_back("RA");
-	opt_args[{p+"-implem"   }].push_back("STD");
-
-	opt_args[{p+"-ite", "i"}] =
-		{"positive_int",
-		 "maximal number of iterations in the decoder."};
-}
-
-void Decoder_RA
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type   = "RA";
-	params.implem = "STD";
-
-	Decoder::store_args(vals, params, p);
-
-	params.itl.core.size     = params.N_cw;
-	params.itl.core.n_frames = params.n_frames;
-	Interleaver::store_args(vals, params.itl, "itl");
-
-	if(exist(vals, {p+"-ite", "i"})) params.n_ite = std::stoi(vals.at({p+"-ite", "i"}));
-}
-
-void Decoder_RA
-::make_header(params_list& head_dec, params_list& head_itl, const parameters& params, const bool full)
-{
-	Decoder    ::make_header(head_dec, params,     full);
-	Interleaver::make_header(head_itl, params.itl, full);
-
-	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
 }
 
 // ==================================================================================== explicit template instantiation

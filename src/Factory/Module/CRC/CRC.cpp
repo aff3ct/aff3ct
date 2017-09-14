@@ -14,28 +14,28 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::CRC::name   = "CRC";
 const std::string aff3ct::factory::CRC::prefix = "crc";
 
-template <typename B>
-module::CRC<B>* CRC::parameters
-::build() const
+CRC::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(CRC::name, CRC::name, prefix)
 {
-	     if (type == "STD"  ) return new module::CRC_polynomial      <B>(K, poly, size, n_frames);
-	else if (type == "FAST" ) return new module::CRC_polynomial_fast <B>(K, poly, size, n_frames);
-	else if (type == "INTER") return new module::CRC_polynomial_inter<B>(K, poly, size, n_frames);
-	else if (type == "NO"   ) return new module::CRC_NO              <B>(K,             n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::CRC<B>* CRC
-::build(const parameters &params)
+CRC::parameters
+::~parameters()
 {
-	return params.template build<B>();
 }
 
-void CRC
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+CRC::parameters* CRC::parameters
+::clone() const
 {
+	return new CRC::parameters(*this);
+}
+
+void CRC::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	auto p = this->get_prefix();
+
 	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "number of generated bits (information bits, the CRC is not included)."};
@@ -58,42 +58,65 @@ void CRC
 		 "size of the CRC (divisor size in bit -1), required if you selected an unknown CRC."};
 }
 
-void CRC
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void CRC::parameters
+::store(const arg_val_map &vals)
 {
-	if(exist(vals, {p+"-info-bits", "K"})) params.K        = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-fra",       "F"})) params.n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-type"          })) params.type     =           vals.at({p+"-type"          });
-	if(exist(vals, {p+"-poly"          })) params.poly     =           vals.at({p+"-poly"          });
-	if(exist(vals, {p+"-size"          })) params.size     = std::stoi(vals.at({p+"-size"          }));
+	auto p = this->get_prefix();
 
-	if (!params.poly.empty() && !params.size)
-		params.size = module::CRC_polynomial<B>::get_size(params.poly);
+	if(exist(vals, {p+"-info-bits", "K"})) this->K        = std::stoi(vals.at({p+"-info-bits", "K"}));
+	if(exist(vals, {p+"-fra",       "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
+	if(exist(vals, {p+"-type"          })) this->type     =           vals.at({p+"-type"          });
+	if(exist(vals, {p+"-poly"          })) this->poly     =           vals.at({p+"-poly"          });
+	if(exist(vals, {p+"-size"          })) this->size     = std::stoi(vals.at({p+"-size"          }));
 
-	if (params.poly.empty())
-		params.type = "NO";
+	if (!this->poly.empty() && !this->size)
+		this->size = module::CRC_polynomial<B>::get_size(this->poly);
+
+	if (this->poly.empty())
+		this->type = "NO";
 }
 
-void CRC
-::make_header(params_list& head_crc, const parameters& params, const bool full)
+void CRC::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	if (!params.poly.empty())
-	{
-		head_crc.push_back(std::make_pair("Type", params.type));
-		if (full) head_crc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
-		if (full) head_crc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	auto p = this->get_prefix();
 
-		auto poly_name = module::CRC_polynomial<B>::get_name(params.poly);
+	if (!this->poly.empty())
+	{
+		headers[p].push_back(std::make_pair("Type", this->type));
+		if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
+		if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+
+		auto poly_name = module::CRC_polynomial<B>::get_name(this->poly);
 		if (!poly_name.empty())
-			head_crc.push_back(std::make_pair("Name", poly_name));
+			headers[p].push_back(std::make_pair("Name", poly_name));
 
 		std::stringstream poly_val;
-		poly_val << "0x" << std::hex << module::CRC_polynomial<B>::get_value(params.poly);
-		head_crc.push_back(std::make_pair("Polynomial (hexadecimal)", poly_val.str()));
+		poly_val << "0x" << std::hex << module::CRC_polynomial<B>::get_value(this->poly);
+		headers[p].push_back(std::make_pair("Polynomial (hexadecimal)", poly_val.str()));
 
-		auto poly_size = module::CRC_polynomial<B>::get_size(params.poly);
-		head_crc.push_back(std::make_pair("Size (in bit)", std::to_string(poly_size ? poly_size : params.size)));
+		auto poly_size = module::CRC_polynomial<B>::get_size(this->poly);
+		headers[p].push_back(std::make_pair("Size (in bit)", std::to_string(poly_size ? poly_size : this->size)));
 	}
+}
+
+template <typename B>
+module::CRC<B>* CRC::parameters
+::build() const
+{
+	     if (type == "STD"  ) return new module::CRC_polynomial      <B>(K, poly, size, n_frames);
+	else if (type == "FAST" ) return new module::CRC_polynomial_fast <B>(K, poly, size, n_frames);
+	else if (type == "INTER") return new module::CRC_polynomial_inter<B>(K, poly, size, n_frames);
+	else if (type == "NO"   ) return new module::CRC_NO              <B>(K,             n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+module::CRC<B>* CRC
+::build(const parameters &params)
+{
+	return params.template build<B>();
 }
 
 // ==================================================================================== explicit template instantiation

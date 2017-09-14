@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
+#include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
 
 #include "BFER.hpp"
 
@@ -11,7 +12,7 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <class C, typename B, typename R, typename Q, int CRC>
+template <typename B, typename R, typename Q>
 class BFER_ite;
 }
 }
@@ -25,32 +26,41 @@ struct BFER_ite : BFER
 	static const std::string name;
 	static const std::string prefix;
 
-	template <class C>
-	struct parameters : BFER::parameters<C>
+	class parameters : public BFER::parameters
 	{
-		virtual ~parameters() {}
-
-		template <typename B = int, typename R = float, typename Q = R, int CRC = 0>
-		simulation::BFER_ite<C,B,R,Q,CRC>* build() const;
-
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// optional parameters
 		int n_ite     = 15;
 		int crc_start = 2;
 
-		Interleaver::parameters itl;
+		// module parameters
+		Interleaver    ::parameters *itl = nullptr;
+		Codec_SISO_SIHO::parameters *cdc = nullptr;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = BFER_ite::prefix);
+		virtual ~parameters();
+		BFER_ite::parameters* clone() const;
+
+		// setters
+		void set_cdc(Codec_SISO_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
+		void set_itl(Interleaver    ::parameters *itl) { this->itl = itl;                                 }
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename R = float, typename Q = R>
+		simulation::BFER_ite<B,R,Q>* build() const;
 	};
 
-	template <class C, typename B = int, typename R = float, typename Q = R, int CRC = 0>
-	static simulation::BFER_ite<C,B,R,Q,CRC>* build(const parameters<C> &params);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	template <class C>
-	static void store_args(const arg_val_map &vals, parameters<C> &params, const std::string p = prefix);
-	template <class C>
-	static void make_header(params_list& head_sim, const parameters<C> &params, const bool full = true);
+	template <typename B = int, typename R = float, typename Q = R>
+	static simulation::BFER_ite<B,R,Q>* build(const parameters &params);
 };
 }
 }
-
-#include "BFER_ite.hxx"
 
 #endif /* FACTORY_SIMULATION_BFER_ITE_HPP_ */

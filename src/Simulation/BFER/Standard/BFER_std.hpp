@@ -21,11 +21,11 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <class C, typename B = int, typename R = float, typename Q = R, int CRC = 0, int ITL = 0>
-class BFER_std : public BFER<C,B,R,Q>
+template <typename B = int, typename R = float, typename Q = R>
+class BFER_std : public BFER<B,R,Q>
 {
 protected:
-	const factory::BFER_std::parameters<C> &params;
+	const factory::BFER_std::parameters &params;
 
 	// communication chain
 	std::vector<module::Source    <B    >*> source;
@@ -41,7 +41,7 @@ protected:
 	std::vector<std::mt19937> rd_engine_seed;
 
 public:
-	BFER_std(const factory::BFER_std::parameters<C> &params);
+	BFER_std(const factory::BFER_std::parameters &params);
 	virtual ~BFER_std();
 
 protected:
@@ -60,7 +60,5 @@ protected:
 };
 }
 }
-
-#include "BFER_std.hxx"
 
 #endif /* SIMULATION_BFER_STD_HPP_ */

@@ -10,6 +10,50 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Puncturer_polar::name   = "Puncturer Polar";
 const std::string aff3ct::factory::Puncturer_polar::prefix = "pct";
 
+Puncturer_polar::parameters
+::parameters(const std::string prefix)
+: Puncturer::parameters(Puncturer_polar::name, prefix)
+{
+	this->type = "WANGLIU";
+}
+
+Puncturer_polar::parameters
+::~parameters()
+{
+}
+
+Puncturer_polar::parameters* Puncturer_polar::parameters
+::clone() const
+{
+	return new Puncturer_polar::parameters(*this);
+}
+
+void Puncturer_polar::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Puncturer::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type"}][2] += ", WANGLIU";
+}
+
+void Puncturer_polar::parameters
+::store(const arg_val_map &vals)
+{
+	Puncturer::parameters::store(vals);
+	this->N_cw = (int)std::exp2((int)std::ceil(std::log2(this->N)));
+
+	if (this->N == this->N_cw)
+		this->type = "NO";
+}
+
+void Puncturer_polar::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Puncturer::parameters::get_headers(headers, full);
+}
+
 template <typename B, typename Q>
 module::Puncturer_polar_wangliu<B,Q>* Puncturer_polar::parameters
 ::build(const tools::Frozenbits_generator &fb_generator) const
@@ -25,32 +69,6 @@ module::Puncturer_polar_wangliu<B,Q>* Puncturer_polar
         const tools::Frozenbits_generator &fb_generator)
 {
 	return params.template build<B,Q>(fb_generator);
-}
-
-void Puncturer_polar
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Puncturer::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-type"}][2] += ", WANGLIU";
-}
-
-void Puncturer_polar
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type = "WANGLIU";
-
-	Puncturer::store_args(vals, params, p);
-	params.N_cw = (int)std::exp2((int)std::ceil(std::log2(params.N)));
-
-	if (params.N == params.N_cw)
-		params.type = "NO";
-}
-
-void Puncturer_polar
-::make_header(params_list& head_pct, const parameters& params, const bool full)
-{
-	Puncturer::make_header(head_pct, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

@@ -9,6 +9,150 @@ namespace aff3ct
 {
 namespace factory
 {
+
+template <class E1, class E2>
+Encoder_turbo::parameters<E1,E2>
+::parameters(const std::string prefix)
+: Encoder::parameters(Encoder_turbo::name, prefix),
+  itl(new Interleaver::parameters("itl")),
+  sub1(new typename E1::parameters(std::is_same<E1,E2>() ? prefix+"-sub" : prefix+"-sub1")),
+  sub2(new typename E2::parameters(std::is_same<E1,E2>() ? prefix+"-sub" : prefix+"-sub2"))
+{
+	this->type = "TURBO";
+}
+
+template <class E1, class E2>
+Encoder_turbo::parameters<E1,E2>* Encoder_turbo::parameters<E1,E2>
+::clone() const
+{
+	auto clone = new Encoder_turbo::parameters<E1,E2>(*this);
+
+	if (itl  != nullptr) { clone->itl  = itl ->clone(); }
+	if (sub1 != nullptr) { clone->sub1 = sub1->clone(); }
+	if (sub2 != nullptr) { clone->sub2 = sub2->clone(); }
+
+	return clone;
+}
+
+template <class E1, class E2>
+Encoder_turbo::parameters<E1,E2>
+::~parameters()
+{
+	if (itl  != nullptr) { delete itl;  itl  = nullptr; }
+	if (sub1 != nullptr) { delete sub1; sub1 = nullptr; }
+	if (sub2 != nullptr) { delete sub2; sub2 = nullptr; }
+}
+
+template <class E1, class E2>
+void Encoder_turbo::parameters<E1,E2>
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Encoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	req_args.erase({p+"-cw-size", "N"});
+
+	itl->get_description(req_args, opt_args);
+
+	auto pi = itl->get_prefix();
+
+	req_args.erase({pi+"-size"    });
+	opt_args.erase({pi+"-fra", "F"});
+
+	opt_args[{p+"-type"}][2] += ", TURBO";
+
+	opt_args[{p+"-json-path"}] =
+		{"string",
+		 "path to store the encoder and decoder traces formated in JSON."};
+
+	sub1->get_description(req_args, opt_args);
+
+	auto ps1 = sub1->get_prefix();
+
+	req_args.erase({ps1+"-info-bits", "K"});
+	req_args.erase({ps1+"-cw-size",   "N"});
+	opt_args.erase({ps1+"-fra",       "F"});
+	opt_args.erase({ps1+"-seed",      "S"});
+	opt_args.erase({ps1+"-path"          });
+
+	if (!std::is_same<E1,E2>())
+	{
+		sub2->get_description(req_args, opt_args);
+
+		auto ps2 = sub2->get_prefix();
+
+		req_args.erase({ps2+"-info-bits", "K"});
+		req_args.erase({ps2+"-cw-size",   "N"});
+		opt_args.erase({ps2+"-fra",       "F"});
+		opt_args.erase({ps2+"-seed",      "S"});
+		opt_args.erase({ps2+"-path"          });
+	}
+}
+
+template <class E1, class E2>
+void Encoder_turbo::parameters<E1,E2>
+::store(const arg_val_map &vals)
+{
+	Encoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-json-path"})) this->json_path = vals.at({p+"-json-path"});
+
+	this->sub1->K        = this->K;
+	this->sub2->K        = this->K;
+	this->sub1->n_frames = this->n_frames;
+	this->sub2->n_frames = this->n_frames;
+	this->sub1->seed     = this->seed;
+	this->sub2->seed     = this->seed;
+
+	sub1->store(vals);
+	sub2->store(vals);
+
+	if (!this->json_path.empty())
+	{
+		this->sub1->type += "_JSON";
+		this->sub2->type += "_JSON";
+	}
+
+	this->tail_length = this->sub1->tail_length + this->sub2->tail_length;
+	this->N_cw        = this->sub1->N_cw + this->sub2->N_cw - this->K;
+	this->R           = (float)this->K / (float)this->N_cw;
+
+	this->itl->core->size     = this->K;
+	this->itl->core->n_frames = this->n_frames;
+
+	itl->store(vals);
+
+	if (this->sub1->standard == "LTE" && !exist(vals, {"itl-type"}))
+		this->itl->core->type = "LTE";
+
+	if (this->sub1->standard == "CCSDS" && !exist(vals, {"itl-type"}))
+		this->itl->core->type = "CCSDS";
+}
+
+template <class E1, class E2>
+void Encoder_turbo::parameters<E1,E2>
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Encoder::parameters::get_headers(headers, full);
+
+	itl->get_headers(headers);
+
+	auto p = this->get_prefix();
+
+	if (this->tail_length)
+		headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
+
+	if (!this->json_path.empty())
+		headers[p].push_back(std::make_pair("Path to the JSON file", this->json_path));
+
+	sub1->get_headers(headers, full);
+	if (!std::is_same<E1,E2>())
+		sub2->get_headers(headers, full);
+}
+
 template <class E1, class E2>
 template <typename B>
 module::Encoder<B>* Encoder_turbo::parameters<E1,E2>
@@ -18,7 +162,7 @@ module::Encoder<B>* Encoder_turbo::parameters<E1,E2>
 {
 	enc_i = (enc_i == nullptr) ? enc_n : enc_i;
 
-	if (this->sub1.buffered)
+	if (this->sub1->buffered)
 	{
 		if (this->type == "TURBO") return new module::Encoder_turbo       <B>(this->K, this->N_cw, itl, *enc_n, *enc_i, this->n_frames);
 	}
@@ -38,128 +182,6 @@ module::Encoder<B>* Encoder_turbo
               module::Encoder_sys<B> *enc_i)
 {
 	return params.template build<B>(itl, enc_n, enc_i);
-}
-
-template <class E1, class E2>
-void Encoder_turbo
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Encoder::build_args(req_args, opt_args, p);
-	req_args.erase({p+"-cw-size", "N"});
-
-	Interleaver::build_args(req_args, opt_args, "itl");
-	req_args.erase({"itl-size"    });
-	opt_args.erase({"itl-fra", "F"});
-
-	opt_args[{p+"-type"}][2] += ", TURBO";
-
-	opt_args[{p+"-json-path"}] =
-		{"string",
-		 "path to store the encoder and decoder traces formated in JSON."};
-
-	if (std::is_same<E1,E2>())
-	{
-		E1::build_args(req_args, opt_args, p+"-sub");
-		req_args.erase({p+"-sub-info-bits", "K"});
-		req_args.erase({p+"-sub-cw-size",   "N"});
-		opt_args.erase({p+"-sub-fra",       "F"});
-		opt_args.erase({p+"-sub-seed",      "S"});
-		opt_args.erase({p+"-sub-path"          });
-	}
-	else
-	{
-		E1::build_args(req_args, opt_args, p+"-sub1");
-		E2::build_args(req_args, opt_args, p+"-sub2");
-
-		req_args.erase({p+"-sub1-info-bits", "K"});
-		req_args.erase({p+"-sub2-info-bits", "K"});
-		req_args.erase({p+"-sub1-cw-size",   "N"});
-		req_args.erase({p+"-sub2-cw-size",   "N"});
-		opt_args.erase({p+"-sub1-fra",       "F"});
-		opt_args.erase({p+"-sub2-fra",       "F"});
-		opt_args.erase({p+"-sub1-seed",      "S"});
-		opt_args.erase({p+"-sub2-seed",      "S"});
-		opt_args.erase({p+"-sub1-path"          });
-		opt_args.erase({p+"-sub2-path"          });
-	}
-}
-
-template <class E1, class E2>
-void Encoder_turbo
-::store_args(const arg_val_map &vals, parameters<E1,E2> &params, const std::string p)
-{
-	params.type = "TURBO";
-
-	Encoder::store_args(vals, params, p);
-
-	if(exist(vals, {p+"-json-path"})) params.json_path = vals.at({p+"-json-path"});
-
-	params.sub1.K        = params.K;
-	params.sub2.K        = params.K;
-	params.sub1.n_frames = params.n_frames;
-	params.sub2.n_frames = params.n_frames;
-	params.sub1.seed     = params.seed;
-	params.sub2.seed     = params.seed;
-
-	if (std::is_same<E1,E2>())
-	{
-		E1::store_args(vals, params.sub1, p+"-sub");
-		E2::store_args(vals, params.sub2, p+"-sub");
-	}
-	else
-	{
-		E1::store_args(vals, params.sub1, p+"-sub1");
-		E2::store_args(vals, params.sub2, p+"-sub2");
-	}
-
-	if (!params.json_path.empty())
-	{
-		params.sub1.type += "_JSON";
-		params.sub2.type += "_JSON";
-	}
-
-	params.tail_length = params.sub1.tail_length + params.sub2.tail_length;
-	params.N_cw        = params.sub1.N_cw + params.sub2.N_cw - params.K;
-	params.R           = (float)params.K / (float)params.N_cw;
-
-	params.itl.core.size     = params.K;
-	params.itl.core.n_frames = params.n_frames;
-	Interleaver::store_args(vals, params.itl, "itl");
-
-	if (params.sub1.standard == "LTE" && !exist(vals, {"itl-type"}))
-		params.itl.core.type = "LTE";
-
-	if (params.sub1.standard == "CCSDS" && !exist(vals, {"itl-type"}))
-		params.itl.core.type = "CCSDS";
-}
-
-template <class E1, class E2>
-void Encoder_turbo
-::make_header(params_list& head_enc, params_list& head_itl, const parameters<E1,E2>& params, const bool full)
-{
-	Encoder    ::make_header(head_enc, params,     full);
-	Interleaver::make_header(head_itl, params.itl, full);
-
-	if (params.tail_length)
-		head_enc.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
-
-	if (!params.json_path.empty())
-		head_enc.push_back(std::make_pair("Path to the JSON file", params.json_path));
-
-	if (std::is_same<E1,E2>())
-	{
-		params_list head_enc_sub1;
-		E1::make_header(head_enc_sub1, params.sub1, full);
-		for (auto p : head_enc_sub1) { p.first.insert(0, E1::name + ": "); head_enc.push_back(p); }
-	}
-	else
-	{
-		params_list head_enc_sub1, head_enc_sub2;
-		E1::make_header(head_enc_sub1, params.sub1, full);
-		E2::make_header(head_enc_sub2, params.sub2, full);
-		for (auto p : head_enc_sub1) { p.first.insert(0, E1::name + ": "); head_enc.push_back(p); }
-		for (auto p : head_enc_sub2) { p.first.insert(0, E2::name + ": "); head_enc.push_back(p); }
-	}
 }
 }
 }

@@ -10,17 +10,40 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Monitor::name   = "Monitor";
 const std::string aff3ct::factory::Monitor::prefix = "mnt";
 
-void Monitor
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Monitor::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(Monitor::name, Monitor::name, prefix)
 {
 }
 
-void Monitor
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+Monitor::parameters
+::parameters(const std::string name, const std::string prefix)
+: Factory::parameters(name, Monitor::name, prefix)
 {
 }
 
-void Monitor
-::make_header(params_list& head_mnt, const parameters& params, const bool full)
+Monitor::parameters
+::~parameters()
+{
+}
+
+Monitor::parameters* Monitor::parameters
+::clone() const
+{
+	return new Monitor::parameters(*this);
+}
+
+void Monitor::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+}
+
+void Monitor::parameters
+::store(const arg_val_map &vals)
+{
+}
+
+void Monitor::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 }

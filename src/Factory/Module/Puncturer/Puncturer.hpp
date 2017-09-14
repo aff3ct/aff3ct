@@ -16,27 +16,39 @@ struct Puncturer : Factory
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters
+	class parameters : public Factory::parameters
 	{
-		virtual ~parameters() {}
-
-		template <typename B, typename Q>
-		module::Puncturer<B,Q>* build() const;
-
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// required parameters
 		int         K        = 0;
 		int         N        = 0;
 
+		// optional parameters
 		std::string type     = "NO";
 		int         N_cw     = 0;
 		int         n_frames = 1;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Puncturer::prefix);
+		virtual ~parameters();
+		virtual Puncturer::parameters* clone() const;
+
+		// parameters construction
+		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B, typename Q>
+		module::Puncturer<B,Q>* build() const;
+
+	protected:
+		parameters(const std::string n, const std::string p);
 	};
 
 	template <typename B, typename Q>
 	static module::Puncturer<B,Q>* build(const parameters &params);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_pct, const parameters& params, const bool full = true);
 };
 }
 }

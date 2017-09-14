@@ -12,6 +12,51 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Puncturer_turbo_DB::name   = "Puncturer Turbo DB";
 const std::string aff3ct::factory::Puncturer_turbo_DB::prefix = "pct";
 
+Puncturer_turbo_DB::parameters
+::parameters(const std::string prefix)
+: Puncturer::parameters(Puncturer_turbo_DB::name, prefix)
+{
+	this->type = "TURBO_DB";
+}
+
+Puncturer_turbo_DB::parameters
+::~parameters()
+{
+}
+
+Puncturer_turbo_DB::parameters* Puncturer_turbo_DB::parameters
+::clone() const
+{
+	return new Puncturer_turbo_DB::parameters(*this);
+}
+
+void Puncturer_turbo_DB::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Puncturer::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type"}][2] += ", TURBO_DB";
+}
+
+void Puncturer_turbo_DB::parameters
+::store(const arg_val_map &vals)
+{
+	Puncturer::parameters::store(vals);
+
+	this->N_cw = 3 * this->K;
+
+	if (this->N == this->N_cw)
+		this->type = "NO";
+}
+
+void Puncturer_turbo_DB::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Puncturer::parameters::get_headers(headers, full);
+}
+
 template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer_turbo_DB::parameters
 ::build() const
@@ -26,33 +71,6 @@ module::Puncturer<B,Q>* Puncturer_turbo_DB
 ::build(const parameters &params)
 {
 	return params.template build<B,Q>();
-}
-
-void Puncturer_turbo_DB
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Puncturer::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-type"}][2] += ", TURBO_DB";
-}
-
-void Puncturer_turbo_DB
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type = "TURBO_DB";
-
-	Puncturer::store_args(vals, params, p);
-
-	params.N_cw = 3 * params.K;
-
-	if (params.N == params.N_cw)
-		params.type = "NO";
-}
-
-void Puncturer_turbo_DB
-::make_header(params_list& head_pct, const parameters& params, const bool full)
-{
-	Puncturer::make_header(head_pct, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

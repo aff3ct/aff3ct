@@ -129,7 +129,6 @@ template <typename B, typename Q>
 Codec_LDPC<B,Q>
 ::~Codec_LDPC()
 {
-	this->set_decoder_siho(nullptr);
 }
 
 template <typename B, typename Q>

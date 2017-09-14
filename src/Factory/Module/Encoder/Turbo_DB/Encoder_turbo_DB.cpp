@@ -10,6 +10,111 @@ const std::string aff3ct::factory::Encoder_turbo_DB::prefix = "enc";
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+Encoder_turbo_DB::parameters
+::parameters(const std::string prefix)
+: Encoder::parameters(Encoder_turbo_DB::name, prefix),
+  itl(new Interleaver::parameters("itl")),
+  sub(new Encoder_RSC_DB::parameters(prefix+"-sub"))
+{
+	this->type = "TURBO_DB";
+}
+
+Encoder_turbo_DB::parameters
+::~parameters()
+{
+	if (itl != nullptr) { delete itl; itl = nullptr; }
+	if (sub != nullptr) { delete sub; sub = nullptr; }
+}
+
+Encoder_turbo_DB::parameters* Encoder_turbo_DB::parameters
+::clone() const
+{
+	auto clone = new Encoder_turbo_DB::parameters(*this);
+
+	if (itl != nullptr) { clone->itl = itl->clone(); }
+	if (sub != nullptr) { clone->sub = sub->clone(); }
+
+	return clone;
+}
+
+void Encoder_turbo_DB::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Encoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	req_args.erase({p+"-cw-size", "N"});
+
+	itl->get_description(req_args, opt_args);
+
+	auto pi = itl->get_prefix();
+
+	req_args.erase({pi+"-size"    });
+	opt_args.erase({pi+"-fra", "F"});
+
+	opt_args[{p+"-type"}][2] += ", TURBO_DB";
+
+	opt_args[{p+"-json-path"}] =
+		{"string",
+		 "path to store the encoder and decoder traces formated in JSON."};
+
+	sub->get_description(req_args, opt_args);
+
+	auto ps = sub->get_prefix();
+
+	req_args.erase({ps+"-info-bits", "K"});
+	req_args.erase({ps+"-cw-size",   "N"});
+	opt_args.erase({ps+"-fra",       "F"});
+	opt_args.erase({ps+"-seed",      "S"});
+	opt_args.erase({ps+"-path"          });
+	opt_args.erase({ps+"-no-buff"       });
+}
+
+void Encoder_turbo_DB::parameters
+::store(const arg_val_map &vals)
+{
+	Encoder::parameters::store(vals);
+
+	this->sub->K        = this->K;
+	this->sub->n_frames = this->n_frames;
+	this->sub->seed     = this->seed;
+
+	sub->store(vals);
+
+	this->N_cw = 2 * this->sub->N_cw - this->K;
+	this->R    = (float)this->K / (float)this->N_cw;
+
+	this->itl->core->size     = this->K >> 1;
+	this->itl->core->n_frames = this->n_frames;
+
+	itl->store(vals);
+
+	if (this->sub->standard == "DVB-RCS1" && !exist(vals, {"itl-type"}))
+		this->itl->core->type = "DVB-RCS1";
+
+	if (this->sub->standard == "DVB-RCS2" && !exist(vals, {"itl-type"}))
+		this->itl->core->type = "DVB-RCS2";
+}
+
+void Encoder_turbo_DB::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Encoder::parameters::get_headers(headers, full);
+
+	itl->get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	if (this->tail_length)
+		headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
+
+	if (!this->json_path.empty())
+		headers[p].push_back(std::make_pair("Path to the JSON file", this->json_path));
+
+	sub->get_headers(headers, full);
+}
+
 template <typename B>
 module::Encoder<B>* Encoder_turbo_DB::parameters
 ::build(const module::Interleaver<B> &itl, module::Encoder_RSC_DB<B> &sub_enc) const
@@ -26,75 +131,6 @@ module::Encoder<B>* Encoder_turbo_DB
               module::Encoder_RSC_DB<B> &sub_enc)
 {
 	return params.template build<B>(itl, sub_enc);
-}
-
-void Encoder_turbo_DB
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Encoder::build_args(req_args, opt_args, p);
-	req_args.erase({p+"-cw-size", "N"});
-
-	Interleaver::build_args(req_args, opt_args, "itl");
-	req_args.erase({"itl-size"    });
-	opt_args.erase({"itl-fra", "F"});
-
-	opt_args[{p+"-type"}][2] += ", TURBO_DB";
-
-	opt_args[{p+"-json-path"}] =
-		{"string",
-		 "path to store the encoder and decoder traces formated in JSON."};
-
-	Encoder_RSC_DB::build_args(req_args, opt_args, p+"-sub");
-	req_args.erase({p+"-sub-info-bits", "K"});
-	req_args.erase({p+"-sub-cw-size",   "N"});
-	opt_args.erase({p+"-sub-fra",       "F"});
-	opt_args.erase({p+"-sub-seed",      "S"});
-	opt_args.erase({p+"-sub-path"          });
-	opt_args.erase({p+"-sub-no-buff"       });
-}
-
-void Encoder_turbo_DB
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type = "TURBO_DB";
-
-	Encoder::store_args(vals, params, p);
-
-	params.sub.K        = params.K;
-	params.sub.n_frames = params.n_frames;
-	params.sub.seed     = params.seed;
-
-	Encoder_RSC_DB::store_args(vals, params.sub, p+"-sub");
-
-	params.N_cw = 2 * params.sub.N_cw - params.K;
-	params.R    = (float)params.K / (float)params.N_cw;
-
-	params.itl.core.size     = params.K >> 1;
-	params.itl.core.n_frames = params.n_frames;
-	Interleaver::store_args(vals, params.itl, "itl");
-
-	if (params.sub.standard == "DVB-RCS1" && !exist(vals, {"itl-type"}))
-		params.itl.core.type = "DVB-RCS1";
-
-	if (params.sub.standard == "DVB-RCS2" && !exist(vals, {"itl-type"}))
-		params.itl.core.type = "DVB-RCS2";
-}
-
-void Encoder_turbo_DB
-::make_header(params_list& head_enc, params_list& head_itl, const parameters& params, const bool full)
-{
-	Encoder    ::make_header(head_enc, params,     full);
-	Interleaver::make_header(head_itl, params.itl, full);
-
-	if (params.tail_length)
-		head_enc.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
-
-	if (!params.json_path.empty())
-		head_enc.push_back(std::make_pair("Path to the JSON file", params.json_path));
-
-	params_list head_enc_sub;
-	Encoder_RSC_DB::make_header(head_enc_sub, params.sub, full);
-	for (auto p : head_enc_sub) { p.first.insert(0, Encoder_RSC_DB::name + ": "); head_enc.push_back(p); }
 }
 
 // ==================================================================================== explicit template instantiation

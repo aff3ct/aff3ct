@@ -2,8 +2,6 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Factory/Module/Decoder/Polar/Decoder_polar_gen.hpp"
-
 #include "Codec_polar.hpp"
 
 using namespace aff3ct;
@@ -108,9 +106,9 @@ Codec_polar<B,Q>
 	catch (const std::exception&)
 	{
 		if (generated_decoder)
-			this->set_decoder_siho(factory::Decoder_polar_gen::build<B,Q>(dec_params,              crc));
+			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc));
 		else
-			this->set_decoder_siho(factory::Decoder_polar    ::build<B,Q>(dec_params, frozen_bits, crc));
+			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc));
 	}
 	this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho());
 
@@ -126,7 +124,7 @@ Codec_polar<B,Q>
 	}
 	else
 	{
-		const auto fb = factory::Decoder_polar_gen::get_frozen_bits(dec_params.implem);
+		const auto fb = factory::Decoder_polar::get_frozen_bits(dec_params.implem);
 		if (fb.size() != frozen_bits.size())
 		{
 			std::stringstream message;
@@ -142,7 +140,6 @@ template <typename B, typename Q>
 Codec_polar<B,Q>
 ::~Codec_polar()
 {
-	this->set_decoder_siho(nullptr);
 	if (fb_generator != nullptr) { delete fb_generator; fb_generator = nullptr; }
 }
 

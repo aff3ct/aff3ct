@@ -10,6 +10,144 @@ const std::string aff3ct::factory::Decoder_turbo_DB::prefix = "dec";
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+Decoder_turbo_DB::parameters
+::parameters(const std::string prefix)
+: Decoder::parameters(Decoder_turbo_DB::name, prefix),
+  sub(new Decoder_RSC_DB::parameters(prefix+"-sub")),
+  itl(new Interleaver::parameters("itl")),
+  sf(new Scaling_factor::parameters(prefix+"-sf")),
+  fnc(new Flip_and_check_DB::parameters(prefix+"-fnc"))
+{
+	this->type   = "TURBO_DB";
+	this->implem = "STD";
+}
+
+Decoder_turbo_DB::parameters* Decoder_turbo_DB::parameters
+::clone() const
+{
+	auto clone = new Decoder_turbo_DB::parameters(*this);
+
+	if (sub != nullptr) { clone->sub = sub->clone(); }
+	if (itl != nullptr) { clone->itl = itl->clone(); }
+	if (sf  != nullptr) { clone->sf  = sf ->clone(); }
+	if (fnc != nullptr) { clone->fnc = fnc->clone(); }
+
+	return clone;
+}
+
+Decoder_turbo_DB::parameters
+::~parameters()
+{
+	if (sub != nullptr) { delete sub; sub = nullptr; }
+	if (itl != nullptr) { delete itl; itl = nullptr; }
+	if (sf  != nullptr) { delete sf ; sf  = nullptr; }
+	if (fnc != nullptr) { delete fnc; fnc = nullptr; }
+}
+
+void Decoder_turbo_DB::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Decoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	req_args.erase({p+"-cw-size", "N"});
+
+	itl->get_description(req_args, opt_args);
+
+	auto pi = this->get_prefix();
+
+	req_args.erase({pi+"-size"    });
+	opt_args.erase({pi+"-fra", "F"});
+
+	opt_args[{p+"-type", "D"}].push_back("TURBO_DB");
+
+	opt_args[{p+"-implem"}].push_back("STD");
+
+	opt_args[{p+"-ite", "i"}] =
+		{"positive_int",
+		 "maximal number of iterations in the turbo."};
+
+	sf->get_description(req_args, opt_args);
+
+	auto psf = sf->get_prefix();
+
+	opt_args.erase({psf+"-ite"});
+
+	fnc->get_description(req_args, opt_args);
+
+	auto pfnc = fnc->get_prefix();
+
+	req_args.erase({pfnc+"-size", "K"});
+	opt_args.erase({pfnc+"-fra",  "F"});
+	opt_args.erase({pfnc+"-ite",  "i"});
+
+	sub->get_description(req_args, opt_args);
+
+	auto ps = sub->get_prefix();
+
+	req_args.erase({ps+"-info-bits", "K"});
+	req_args.erase({ps+"-cw-size",   "N"});
+	opt_args.erase({ps+"-fra",       "F"});
+}
+
+void Decoder_turbo_DB::parameters
+::store(const arg_val_map &vals)
+{
+	Decoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-ite", "i"})) this->n_ite = std::stoi(vals.at({p+"-ite", "i"}));
+
+	this->sub->K        = this->K;
+	this->sub->n_frames = this->n_frames;
+
+	sub->store(vals);
+
+	this->N_cw = 2 * this->sub->N_cw - this->K;
+	this->R    = (float)this->K / (float)this->N_cw;
+
+	this->itl->core->size     = this->K >> 1;
+	this->itl->core->n_frames = this->n_frames;
+
+	itl->store(vals);
+
+	if (this->sub->implem == "DVB-RCS1" && !exist(vals, {"itl-type"}))
+		this->itl->core->type = "DVB-RCS1";
+
+	if (this->sub->implem == "DVB-RCS2" && !exist(vals, {"itl-type"}))
+		this->itl->core->type = "DVB-RCS2";
+
+	this->sf->n_ite = this->n_ite;
+
+	sf->store(vals);
+
+	this->fnc->size     = this->K;
+	this->fnc->n_frames = this->n_frames;
+	this->fnc->n_ite    = this->n_ite;
+
+	fnc->store(vals);
+}
+
+void Decoder_turbo_DB::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Decoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	itl->get_headers(headers, full);
+
+	headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+	if (this->tail_length && full)
+		headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
+
+	sf ->get_headers(headers, full);
+	fnc->get_headers(headers, full);
+	sub->get_headers(headers, full);
+}
+
 template <typename B, typename Q>
 module::Decoder_turbo_DB<B,Q>* Decoder_turbo_DB::parameters
 ::build(const module::Interleaver<Q>           &itl,
@@ -32,93 +170,6 @@ module::Decoder_turbo_DB<B,Q>* Decoder_turbo_DB
               module::Decoder_RSC_DB_BCJR<B,Q> &siso_i)
 {
 	return params.template build<B,Q>(itl, siso_n, siso_i);
-}
-
-void Decoder_turbo_DB
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Decoder::build_args(req_args, opt_args, p);
-	req_args.erase({p+"-cw-size", "N"});
-
-	Interleaver::build_args(req_args, opt_args, "itl");
-	req_args.erase({"itl-size"    });
-	opt_args.erase({"itl-fra", "F"});
-
-	opt_args[{p+"-type", "D"}].push_back("TURBO_DB");
-
-	opt_args[{p+"-implem"}].push_back("STD");
-
-	opt_args[{p+"-ite", "i"}] =
-		{"positive_int",
-		 "maximal number of iterations in the turbo."};
-
-	Scaling_factor::build_args(req_args, opt_args, p+"-sf" );
-	opt_args.erase({p+"-sf-ite"});
-
-	Flip_and_check::build_args(req_args, opt_args, p+"-fnc");
-	req_args.erase({p+"-fnc-size", "K"});
-	opt_args.erase({p+"-fnc-fra",  "F"});
-	opt_args.erase({p+"-fnc-ite",  "i"});
-
-	Decoder_RSC_DB::build_args(req_args, opt_args, p+"-sub");
-	req_args.erase({p+"-sub-info-bits", "K"});
-	req_args.erase({p+"-sub-cw-size",   "N"});
-	opt_args.erase({p+"-sub-fra",       "F"});
-}
-
-void Decoder_turbo_DB
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type   = "TURBO_DB";
-	params.implem = "STD";
-
-	Decoder::store_args(vals, params, p);
-
-	if(exist(vals, {p+"-ite", "i"})) params.n_ite = std::stoi(vals.at({p+"-ite", "i"}));
-
-	params.sub.K        = params.K;
-	params.sub.n_frames = params.n_frames;
-
-	Decoder_RSC_DB::store_args(vals, params.sub, p+"-sub");
-
-	params.N_cw = 2 * params.sub.N_cw - params.K;
-	params.R    = (float)params.K / (float)params.N_cw;
-
-	params.itl.core.size     = params.K >> 1;
-	params.itl.core.n_frames = params.n_frames;
-	Interleaver::store_args(vals, params.itl, "itl");
-
-	if (params.sub.implem == "DVB-RCS1" && !exist(vals, {"itl-type"}))
-		params.itl.core.type = "DVB-RCS1";
-
-	if (params.sub.implem == "DVB-RCS2" && !exist(vals, {"itl-type"}))
-		params.itl.core.type = "DVB-RCS2";
-
-	params.sf.n_ite = params.n_ite;
-	Scaling_factor::store_args(vals, params.sf, p+"-sf");
-
-	params.fnc.size     = params.K;
-	params.fnc.n_frames = params.n_frames;
-	params.fnc.n_ite    = params.n_ite;
-	Flip_and_check::store_args(vals, params.fnc, p+"-fnc");
-}
-
-void Decoder_turbo_DB
-::make_header(params_list& head_dec, params_list& head_itl, const parameters& params, const bool full)
-{
-	Decoder    ::make_header(head_dec, params,     full);
-	Interleaver::make_header(head_itl, params.itl, full);
-
-	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
-	if (params.tail_length && full)
-		head_dec.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
-
-	Scaling_factor::make_header(head_dec, params.sf,  full);
-	Flip_and_check::make_header(head_dec, params.fnc, full);
-
-	params_list head_dec_sub;
-	Decoder_RSC_DB::make_header(head_dec_sub, params.sub, full);
-	for (auto p : head_dec_sub) { p.first.insert(0, Decoder_RSC_DB::name + ": "); head_dec.push_back(p); }
 }
 
 // ==================================================================================== explicit template instantiation

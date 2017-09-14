@@ -8,6 +8,41 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Flip_and_check_DB::name   = "Flip and check DB";
 const std::string aff3ct::factory::Flip_and_check_DB::prefix = "fnc";
 
+Flip_and_check_DB::parameters
+::parameters(const std::string prefix)
+: Flip_and_check::parameters(Flip_and_check_DB::name, prefix)
+{
+}
+
+Flip_and_check_DB::parameters
+::~parameters()
+{
+}
+
+Flip_and_check_DB::parameters* Flip_and_check_DB::parameters
+::clone() const
+{
+	return new Flip_and_check_DB::parameters(*this);
+}
+
+void Flip_and_check_DB::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Flip_and_check::parameters::get_description(req_args, opt_args);
+}
+
+void Flip_and_check_DB::parameters
+::store(const arg_val_map &vals)
+{
+	Flip_and_check::parameters::store(vals);
+}
+
+void Flip_and_check_DB::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Flip_and_check::parameters::get_headers(headers, full);
+}
+
 template<typename B, typename Q>
 tools::Flip_and_check_DB<B,Q>* Flip_and_check_DB::parameters
 ::build(module::CRC<B> &crc) const
@@ -23,24 +58,6 @@ tools::Flip_and_check_DB<B,Q>* Flip_and_check_DB
 ::build(const parameters& params, module::CRC<B> &crc)
 {
 	return params.template build<B,Q>(crc);
-}
-
-void Flip_and_check_DB
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Flip_and_check::build_args(req_args, opt_args, p);
-}
-
-void Flip_and_check_DB
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	Flip_and_check::store_args(vals, params, p);
-}
-
-void Flip_and_check_DB
-::make_header(params_list& head_fnc, const parameters& params, const bool full)
-{
-	Flip_and_check::make_header(head_fnc, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

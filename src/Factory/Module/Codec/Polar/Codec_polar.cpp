@@ -6,11 +6,111 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Codec_polar::name   = "Codec Polar";
 const std::string aff3ct::factory::Codec_polar::prefix = "cdc";
 
+Codec_polar::parameters
+::parameters(const std::string prefix)
+: Codec          ::parameters(Codec_polar::name, prefix),
+  Codec_SISO_SIHO::parameters(Codec_polar::name, prefix),
+  enc(new Encoder_polar::parameters("enc")),
+  fbg(new Frozenbits_generator::parameters(enc->get_prefix()+"-fb")),
+  dec(new Decoder_polar::parameters("dec")),
+  pct(new Puncturer_polar::parameters("pct"))
+{
+	Codec::parameters::enc = enc;
+	Codec::parameters::dec = dec;
+}
+
+Codec_polar::parameters
+::~parameters()
+{
+	if (enc != nullptr) { delete enc; enc = nullptr; }
+	if (dec != nullptr) { delete dec; dec = nullptr; }
+	if (fbg != nullptr) { delete fbg; fbg = nullptr; }
+	if (pct != nullptr) { delete pct; pct = nullptr; }
+
+	Codec::parameters::enc = nullptr;
+	Codec::parameters::dec = nullptr;
+}
+
+Codec_polar::parameters* Codec_polar::parameters
+::clone() const
+{
+	auto clone = new Codec_polar::parameters(*this);
+
+	if (enc != nullptr) { clone->enc = enc->clone(); }
+	if (dec != nullptr) { clone->dec = dec->clone(); }
+	if (fbg != nullptr) { clone->fbg = fbg->clone(); }
+	if (pct != nullptr) { clone->pct = pct->clone(); }
+
+	clone->set_enc(clone->enc);
+	clone->set_dec(clone->dec);
+
+	return clone;
+}
+
+void Codec_polar::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
+
+	pct->get_description(req_args, opt_args);
+	enc->get_description(req_args, opt_args);
+	fbg->get_description(req_args, opt_args);
+	dec->get_description(req_args, opt_args);
+
+	auto penc = enc->get_prefix();
+	auto pdec = dec->get_prefix();
+	auto pfbg = fbg->get_prefix();
+
+	req_args.erase({penc+"-cw-size",   "N"});
+	req_args.erase({penc+"-info-bits", "K"});
+	opt_args.erase({penc+"-fra",       "F"});
+	req_args.erase({penc+"-cw-size",   "N"});
+	req_args.erase({pdec+"-info-bits", "K"});
+	opt_args.erase({pdec+"-fra",       "F"});
+	opt_args.erase({pdec+"-no-sys"        });
+	req_args.erase({pfbg+"-cw-size",   "N"});
+	req_args.erase({pfbg+"-info-bits", "K"});
+}
+
+void Codec_polar::parameters
+::store(const arg_val_map &vals)
+{
+	Codec_SISO_SIHO::parameters::store(vals);
+
+	pct->store(vals);
+
+	this->enc->K        = this->fbg->K    = this->dec->K        = this->pct->K;
+	this->enc->N_cw     = this->fbg->N_cw = this->dec->N_cw     = this->pct->N_cw;
+	this->enc->n_frames                   = this->dec->n_frames = this->pct->n_frames;
+
+	enc->store(vals);
+	fbg->store(vals);
+
+	this->dec->systematic = this->enc->systematic;
+
+	dec->store(vals);
+
+	this->K    = this->pct->K;
+	this->N_cw = this->pct->N_cw;
+	this->N    = this->pct->N;
+}
+
+void Codec_polar::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Codec_SISO_SIHO::parameters::get_headers(headers, full);
+
+	pct->get_headers(headers, full);
+	enc->get_headers(headers, full);
+	fbg->get_headers(headers, full);
+	dec->get_headers(headers, full);
+}
+
 template <typename B, typename Q>
 module::Codec_polar<B,Q>* Codec_polar::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_polar<B,Q>(fbg, enc, dec, pct, crc);
+	return new module::Codec_polar<B,Q>(*fbg, *enc, *dec, *pct, crc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -20,62 +120,6 @@ module::Codec_polar<B,Q>* Codec_polar
 ::build(const parameters &params, module::CRC<B> *crc)
 {
 	return params.template build<B,Q>(crc);
-}
-
-void Codec_polar
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Codec               ::build_args(req_args, opt_args, p       );
-	Puncturer_polar     ::build_args(req_args, opt_args          );
-	Encoder_polar       ::build_args(req_args, opt_args          );
-	Frozenbits_generator::build_args(req_args, opt_args, "enc-fb");
-	Decoder_polar       ::build_args(req_args, opt_args          );
-
-	req_args.erase({"enc-cw-size",      "N"});
-	req_args.erase({"enc-info-bits",    "K"});
-	opt_args.erase({"enc-fra",          "F"});
-	req_args.erase({"dec-cw-size",      "N"});
-	req_args.erase({"dec-info-bits",    "K"});
-	opt_args.erase({"dec-fra",          "F"});
-	opt_args.erase({"dec-no-sys"           });
-	req_args.erase({"enc-fb-cw-size",   "N"});
-	req_args.erase({"enc-fb-info-bits", "K"});
-}
-
-void Codec_polar
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	Codec::store_args(vals, params, p);
-
-	Puncturer_polar::store_args(vals, params.pct);
-
-	params.enc.K        = params.fbg.K    = params.dec.K        = params.pct.K;
-	params.enc.N_cw     = params.fbg.N_cw = params.dec.N_cw     = params.pct.N_cw;
-	params.enc.n_frames                   = params.dec.n_frames = params.pct.n_frames;
-
-	Encoder_polar::store_args(vals, params.enc);
-
-	params.dec.systematic = params.enc.systematic;
-
-	Frozenbits_generator::store_args(vals, params.fbg, "enc-fb");
-
-	Decoder_polar::store_args(vals, params.dec);
-
-	params.K    = params.pct.K;
-	params.N_cw = params.pct.N_cw;
-	params.N    = params.pct.N;
-}
-
-void Codec_polar
-::make_header(params_list& head_enc, params_list& head_fbg, params_list& head_dec, params_list& head_pct,
-              const parameters& params, const bool full)
-{
-	params_list trash;
-	Codec               ::make_header(trash,    params,     full);
-	Puncturer_polar     ::make_header(head_pct, params.pct, full);
-	Encoder_polar       ::make_header(head_enc, params.enc, full);
-	Frozenbits_generator::make_header(head_fbg, params.fbg, full);
-	Decoder_polar       ::make_header(head_dec, params.dec, full);
 }
 
 // ==================================================================================== explicit template instantiation
@@ -94,4 +138,3 @@ template aff3ct::module::Codec_polar<B,Q>* aff3ct::factory::Codec_polar::paramet
 template aff3ct::module::Codec_polar<B,Q>* aff3ct::factory::Codec_polar::build<B,Q>(const aff3ct::factory::Codec_polar::parameters&, aff3ct::module::CRC<B>*);
 #endif
 // ==================================================================================== explicit template instantiation
-

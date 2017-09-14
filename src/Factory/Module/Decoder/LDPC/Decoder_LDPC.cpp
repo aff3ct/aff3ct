@@ -17,6 +17,109 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_LDPC::name   = "Decoder LDPC";
 const std::string aff3ct::factory::Decoder_LDPC::prefix = "dec";
 
+Decoder_LDPC::parameters
+::parameters(const std::string prefix)
+: Decoder::parameters(Decoder_LDPC::name, prefix)
+{
+	this->type   = "BP_FLOODING";
+	this->implem = "SPA";
+}
+
+Decoder_LDPC::parameters
+::~parameters()
+{
+}
+
+Decoder_LDPC::parameters* Decoder_LDPC::parameters
+::clone() const
+{
+	return new Decoder_LDPC::parameters(*this);
+}
+
+void Decoder_LDPC::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Decoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	req_args[{p+"-h-path"}] =
+		{"string",
+		 "path to the H matrix (AList formated file)."};
+
+	opt_args[{p+"-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
+
+	opt_args[{p+"-implem"}].push_back("ONMS, SPA, LSPA, GALA");
+
+	opt_args[{p+"-ite", "i"}] =
+		{"positive_int",
+		 "maximal number of iterations in the turbo decoder."};
+
+	opt_args[{p+"-off"}] =
+		{"float",
+		 "offset used in the offset min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
+
+	opt_args[{p+"-norm"}] =
+		{"positive_float",
+		 "normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
+
+	opt_args[{p+"-no-synd"}] =
+		{"",
+		 "disable the syndrome detection (disable the stop criterion in the LDPC decoders)."};
+
+	opt_args[{p+"-synd-depth"}] =
+		{"positive_int",
+		 "successive number of iterations to validate the syndrome detection."};
+
+	opt_args[{p+"-simd"}] =
+		{"string",
+		 "the SIMD strategy you want to use.",
+		 "INTER"};
+}
+
+void Decoder_LDPC::parameters
+::store(const arg_val_map &vals)
+{
+	Decoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-h-path"    })) this->H_alist_path    =           vals.at({p+"-h-path"    });
+	if(exist(vals, {p+"-ite",   "i"})) this->n_ite           = std::stoi(vals.at({p+"-ite",   "i"}));
+	if(exist(vals, {p+"-off"       })) this->offset          = std::stof(vals.at({p+"-off"       }));
+	if(exist(vals, {p+"-norm"      })) this->norm_factor     = std::stof(vals.at({p+"-norm"      }));
+	if(exist(vals, {p+"-synd-depth"})) this->syndrome_depth  = std::stoi(vals.at({p+"-synd-depth"}));
+	if(exist(vals, {p+"-simd"      })) this->simd_strategy   =           vals.at({p+"-simd"      });
+	if(exist(vals, {p+"-no-synd"   })) this->enable_syndrome = false;
+}
+
+void Decoder_LDPC::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Decoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("H matrix path", this->H_alist_path));
+
+	if (!this->simd_strategy.empty())
+		headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
+
+	headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+
+	if (this->implem == "ONMS")
+	{
+		headers[p].push_back(std::make_pair("Offset", std::to_string(this->offset)));
+		headers[p].push_back(std::make_pair("Normalize factor", std::to_string(this->norm_factor)));
+	}
+
+	std::string syndrome = this->enable_syndrome ? "on" : "off";
+	headers[p].push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
+
+	if (this->enable_syndrome)
+		headers[p].push_back(std::make_pair("Stop criterion depth", std::to_string(this->syndrome_depth)));
+}
+
 template <typename B, typename Q>
 module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 ::build_siso(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos) const
@@ -67,87 +170,6 @@ module::Decoder_SIHO<B,Q>* Decoder_LDPC
 ::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos)
 {
 	return params.template build<B,Q>(H, info_bits_pos);
-}
-
-void Decoder_LDPC
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Decoder::build_args(req_args, opt_args, p);
-
-	req_args[{p+"-h-path"}] =
-		{"string",
-		 "path to the H matrix (AList formated file)."};
-
-	opt_args[{p+"-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
-
-	opt_args[{p+"-implem"}].push_back("ONMS, SPA, LSPA, GALA");
-
-	opt_args[{p+"-ite", "i"}] =
-		{"positive_int",
-		 "maximal number of iterations in the turbo decoder."};
-
-	opt_args[{p+"-off"}] =
-		{"float",
-		 "offset used in the offset min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
-
-	opt_args[{p+"-norm"}] =
-		{"positive_float",
-		 "normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
-
-	opt_args[{p+"-no-synd"}] =
-		{"",
-		 "disable the syndrome detection (disable the stop criterion in the LDPC decoders)."};
-
-	opt_args[{p+"-synd-depth"}] =
-		{"positive_int",
-		 "successive number of iterations to validate the syndrome detection."};
-
-	opt_args[{p+"-simd"}] =
-		{"string",
-		 "the SIMD strategy you want to use.",
-		 "INTER"};
-}
-
-void Decoder_LDPC
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type   = "BP_FLOODING";
-	params.implem = "SPA";
-
-	Decoder::store_args(vals, params, p);
-
-	if(exist(vals, {p+"-h-path"    })) params.H_alist_path    =           vals.at({p+"-h-path"    });
-	if(exist(vals, {p+"-ite",   "i"})) params.n_ite           = std::stoi(vals.at({p+"-ite",   "i"}));
-	if(exist(vals, {p+"-off"       })) params.offset          = std::stof(vals.at({p+"-off"       }));
-	if(exist(vals, {p+"-norm"      })) params.norm_factor     = std::stof(vals.at({p+"-norm"      }));
-	if(exist(vals, {p+"-synd-depth"})) params.syndrome_depth  = std::stoi(vals.at({p+"-synd-depth"}));
-	if(exist(vals, {p+"-simd"      })) params.simd_strategy   =           vals.at({p+"-simd"      });
-	if(exist(vals, {p+"-no-synd"   })) params.enable_syndrome = false;
-}
-
-void Decoder_LDPC
-::make_header(params_list& head_dec, const parameters& params, const bool full)
-{
-	Decoder::make_header(head_dec, params, full);
-
-	head_dec.push_back(std::make_pair("H matrix path", params.H_alist_path));
-
-	if (!params.simd_strategy.empty())
-		head_dec.push_back(std::make_pair("SIMD strategy", params.simd_strategy));
-
-	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
-
-	if (params.implem == "ONMS")
-	{
-		head_dec.push_back(std::make_pair("Offset", std::to_string(params.offset)));
-		head_dec.push_back(std::make_pair("Normalize factor", std::to_string(params.norm_factor)));
-	}
-
-	std::string syndrome = params.enable_syndrome ? "on" : "off";
-	head_dec.push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
-
-	if (params.enable_syndrome)
-		head_dec.push_back(std::make_pair("Stop criterion depth", std::to_string(params.syndrome_depth)));
 }
 
 // ==================================================================================== explicit template instantiation

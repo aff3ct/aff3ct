@@ -6,11 +6,132 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Codec_turbo::name   = "Codec Turbo";
 const std::string aff3ct::factory::Codec_turbo::prefix = "cdc";
 
+Codec_turbo::parameters
+::parameters(const std::string prefix)
+: Codec     ::parameters(Codec_turbo::name, prefix),
+  Codec_SIHO::parameters(Codec_turbo::name, prefix),
+  enc(new Encoder_turbo::parameters<>("enc")),
+  dec(new Decoder_turbo ::parameters<>("dec")),
+  pct(new Puncturer_turbo::parameters("pct"))
+{
+	Codec::parameters::enc = enc;
+	Codec::parameters::dec = dec;
+	Codec::parameters::itl = enc->itl;
+	delete dec->itl; dec->itl = enc->itl;
+}
+
+Codec_turbo::parameters
+::~parameters()
+{
+	if (enc != nullptr) { enc->itl = nullptr; delete enc; enc = nullptr; }
+	if (dec != nullptr) { dec->itl = nullptr; delete dec; dec = nullptr; }
+	if (pct != nullptr) {                     delete pct; pct = nullptr; }
+
+	Codec::parameters::enc = nullptr;
+	Codec::parameters::dec = nullptr;
+	if (Codec::parameters::itl != nullptr)
+	{
+		delete Codec::parameters::itl;
+		Codec::parameters::itl = nullptr;
+	}
+}
+
+Codec_turbo::parameters* Codec_turbo::parameters
+::clone() const
+{
+	auto clone = new Codec_turbo::parameters(*this);
+
+	if (enc != nullptr) { clone->enc = enc->clone(); }
+	if (dec != nullptr) { clone->dec = dec->clone(); }
+	if (pct != nullptr) { clone->pct = pct->clone(); }
+
+	clone->set_enc(clone->enc);
+	clone->set_dec(clone->dec);
+	clone->set_itl(clone->enc->itl);
+	delete clone->dec->itl; clone->dec->itl = clone->enc->itl;
+
+	return clone;
+}
+
+void Codec_turbo::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Codec_SIHO::parameters::get_description(req_args, opt_args);
+
+	enc->get_description(req_args, opt_args);
+	pct->get_description(req_args, opt_args);
+	dec->get_description(req_args, opt_args);
+
+	auto ppct = pct->get_prefix();
+	auto pdec = dec->get_prefix();
+	auto pdes = dec->sub1->get_prefix();
+
+	req_args.erase({ppct+"-info-bits", "K"});
+	opt_args.erase({ppct+"-no-buff"       });
+	opt_args.erase({ppct+"-fra",       "F"});
+	opt_args.erase({ppct+"-tail-length"   });
+	req_args.erase({pdec+"-cw-size",   "N"});
+	req_args.erase({pdec+"-info-bits", "K"});
+	opt_args.erase({pdec+"-fra",       "F"});
+	opt_args.erase({pdes+"-no-buff"       });
+	opt_args.erase({pdes+"-poly"          });
+	opt_args.erase({pdes+"-std"           });
+	opt_args.erase({pdec+"-json"          });
+}
+
+void Codec_turbo::parameters
+::store(const arg_val_map &vals)
+{
+	Codec_SIHO::parameters::store(vals);
+
+	enc->store(vals);
+
+	this->pct->K           = this->enc->K;
+	this->pct->N_cw        = this->enc->N_cw;
+	this->pct->buffered    = this->enc->sub1->buffered;
+	this->pct->n_frames    = this->enc->n_frames;
+	this->pct->tail_length = this->enc->tail_length;
+
+	pct->store(vals);
+
+	this->dec->K                 = this->enc->K;
+	this->dec->N_cw              = this->enc->N_cw;
+	this->dec->sub1->buffered    = this->enc->sub1->buffered;
+	this->dec->sub2->buffered    = this->enc->sub2->buffered;
+	this->dec->n_frames          = this->enc->n_frames;
+	this->dec->sub1->n_frames    = this->enc->sub1->n_frames;
+	this->dec->sub2->n_frames    = this->enc->sub2->n_frames;
+	this->dec->tail_length       = this->enc->tail_length;
+	this->dec->sub1->tail_length = this->enc->sub1->tail_length;
+	this->dec->sub2->tail_length = this->enc->sub2->tail_length;
+	this->dec->sub1->poly        = this->enc->sub1->poly;
+	this->dec->sub2->poly        = this->enc->sub2->poly;
+	this->dec->sub1->standard    = this->enc->sub1->standard;
+	this->dec->sub2->standard    = this->enc->sub2->standard;
+	this->dec->enable_json       = !this->enc->json_path.empty();
+
+	dec->store(vals);
+
+	this->K           = this->enc->K;
+	this->N_cw        = this->enc->N_cw;
+	this->N           = this->pct->N;
+	this->tail_length = this->enc->tail_length;
+}
+
+void Codec_turbo::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Codec_SIHO::parameters::get_headers(headers, full);
+	enc->get_headers(headers, full);
+	pct->get_headers(headers, full);
+	dec->get_headers(headers, full);
+}
+
 template <typename B, typename Q>
 module::Codec_turbo<B,Q>* Codec_turbo::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_turbo<B,Q>(enc, dec, pct, crc);
+	return new module::Codec_turbo<B,Q>(*enc, *dec, *pct, crc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -21,77 +142,6 @@ module::Codec_turbo<B,Q>* Codec_turbo
 ::build(const parameters &params, module::CRC<B> *crc)
 {
 	return params.template build<B,Q>(crc);
-}
-
-void Codec_turbo
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Codec          ::build_args(req_args, opt_args, p);
-	Encoder_turbo  ::build_args(req_args, opt_args   );
-	Puncturer_turbo::build_args(req_args, opt_args   );
-	Decoder_turbo  ::build_args(req_args, opt_args   );
-
-	req_args.erase({"pct-info-bits", "K"});
-	opt_args.erase({"pct-no-buff"       });
-	opt_args.erase({"pct-fra",       "F"});
-	opt_args.erase({"pct-tail-length"   });
-	req_args.erase({"dec-cw-size",   "N"});
-	req_args.erase({"dec-info-bits", "K"});
-	opt_args.erase({"dec-fra",       "F"});
-	opt_args.erase({"dec-sub-no-buff"   });
-	opt_args.erase({"dec-sub-poly"      });
-	opt_args.erase({"dec-sub-std"       });
-	opt_args.erase({"dec-json"          });
-}
-
-void Codec_turbo
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	Codec::store_args(vals, params, p);
-
-	Encoder_turbo::store_args(vals, params.enc);
-
-	params.pct.K           = params.enc.K;
-	params.pct.N_cw        = params.enc.N_cw;
-	params.pct.buffered    = params.enc.sub1.buffered;
-	params.pct.n_frames    = params.enc.n_frames;
-	params.pct.tail_length = params.enc.tail_length;
-
-	Puncturer_turbo::store_args(vals, params.pct);
-
-	params.dec.K                = params.enc.K;
-	params.dec.N_cw             = params.enc.N_cw;
-	params.dec.sub1.buffered    = params.enc.sub1.buffered;
-	params.dec.sub2.buffered    = params.enc.sub2.buffered;
-	params.dec.n_frames         = params.enc.n_frames;
-	params.dec.sub1.n_frames    = params.enc.sub1.n_frames;
-	params.dec.sub2.n_frames    = params.enc.sub2.n_frames;
-	params.dec.tail_length      = params.enc.tail_length;
-	params.dec.sub1.tail_length = params.enc.sub1.tail_length;
-	params.dec.sub2.tail_length = params.enc.sub2.tail_length;
-	params.dec.sub1.poly        = params.enc.sub1.poly;
-	params.dec.sub2.poly        = params.enc.sub2.poly;
-	params.dec.sub1.standard    = params.enc.sub1.standard;
-	params.dec.sub2.standard    = params.enc.sub2.standard;
-	params.dec.enable_json      = !params.enc.json_path.empty();
-
-	Decoder_turbo::store_args(vals, params.dec);
-
-	params.K           = params.enc.K;
-	params.N_cw        = params.enc.N_cw;
-	params.N           = params.pct.N;
-	params.tail_length = params.enc.tail_length;
-}
-
-void Codec_turbo
-::make_header(params_list& head_enc, params_list& head_dec, params_list& head_pct, params_list& head_itl,
-              const parameters& params, const bool full)
-{
-	params_list trash;
-	Codec          ::make_header(trash,              params,     full);
-	Encoder_turbo  ::make_header(head_enc, head_itl, params.enc, full);
-	Puncturer_turbo::make_header(head_pct,           params.pct, full);
-	Decoder_turbo  ::make_header(head_dec, trash   , params.dec, full);
 }
 
 // ==================================================================================== explicit template instantiation

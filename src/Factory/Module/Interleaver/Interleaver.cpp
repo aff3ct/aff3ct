@@ -8,6 +8,47 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Interleaver::name   = "Interleaver";
 const std::string aff3ct::factory::Interleaver::prefix = "itl";
 
+Interleaver::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(Interleaver::name, Interleaver::name, prefix),
+  core(new factory::Interleaver_core::parameters(prefix))
+{
+}
+
+Interleaver::parameters
+::~parameters()
+{
+	if (core != nullptr) { delete core; core = nullptr; }
+}
+
+Interleaver::parameters* Interleaver::parameters
+::clone() const
+{
+	auto clone = new Interleaver::parameters(*this);
+
+	if (core != nullptr) {clone->core = core->clone(); }
+
+	return clone;
+}
+
+void Interleaver::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	core->get_description(req_args, opt_args);
+}
+
+void Interleaver::parameters
+::store(const arg_val_map &vals)
+{
+	core->store(vals);
+}
+
+void Interleaver::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	core->get_headers(headers, full);
+}
+
 template <typename D>
 module::Interleaver<D>* Interleaver::parameters
 ::build(const tools::Interleaver_core<>& itl_core) const
@@ -24,24 +65,6 @@ module::Interleaver<D>* Interleaver
 	return new module::Interleaver<D>(itl_core);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-}
-
-void Interleaver
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Interleaver_core::build_args(req_args, opt_args, p);
-}
-
-void Interleaver
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	Interleaver_core::store_args(vals, params.core, p);
-}
-
-void Interleaver
-::make_header(params_list& head_itl, const parameters& params, const bool full)
-{
-	Interleaver_core::make_header(head_itl, params.core, full);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -18,20 +18,21 @@ struct Modem : public Factory
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters
+	class parameters : public Factory::parameters
 	{
-		template <typename B = int, typename R = float, typename Q = R>
-		module::Modem<B,R,Q>* build() const;
-
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// required parameters
 		int         N          = 0;
 
+		// optional parameters
 		// ------- modulator parameters
 		std::string type       = "BPSK";    // modulation type (PAM, QAM, ...)
 		std::string const_path = "";        // PATH to constellation file (CSV file)
 		bool        complex    = true;      // true if the modulated signal is complex
 		int         bps        = 1;         // bits per symbol
 		int         upf        = 1;         // samples per symbol
-
+		// -------- CPM parameters
 		std::string cpm_std    = "";        // the selection of a default cpm standard hardly implemented (GSM)
 		std::string mapping    = "NATURAL"; // symbol mapping layout (natural, gray)
 		std::string wave_shape = "GMSK";    // wave shape (gmsk, rcos, rec)
@@ -48,7 +49,22 @@ struct Modem : public Factory
 		int         N_fil      = 0;         // frame size at the output of the filter
 		float       sigma      = -1.f;      // noise variance sigma
 
+		// ------- common parameters
 		int         n_frames   = 1;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Modem::prefix);
+		virtual ~parameters();
+		Modem::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename R = float, typename Q = R>
+		module::Modem<B,R,Q>* build() const;
 
 	private:
 		template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX>
@@ -73,10 +89,6 @@ struct Modem : public Factory
 	                                           const int         bps   = 1,
 	                                           const int         cpm_L = 3,
 	                                           const int         cpm_p = 2);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_mdm, const parameters& params, const bool full = true);
 };
 }
 }

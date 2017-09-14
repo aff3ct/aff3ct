@@ -22,20 +22,33 @@ struct Encoder_turbo : public Encoder
 	static const std::string prefix;
 
 	template <class E1 = Encoder_RSC, class E2 = E1>
-	struct parameters : Encoder::parameters
+	class parameters : public Encoder::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// optional
+		std::string json_path = "";
 
+		// depending parameters
+		Interleaver::parameters *itl;
+		typename E1::parameters *sub1;
+		typename E2::parameters *sub2;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Encoder_turbo::prefix);
+		virtual ~parameters();
+		Encoder_turbo::parameters<E1,E2>* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
 		template <typename B = int>
 		module::Encoder<B>* build(const module::Interleaver<B> &itl,
 		                                module::Encoder_sys<B> *enc_n,
 		                                module::Encoder_sys<B> *enc_i = nullptr) const;
-
-		std::string json_path = "";
-
-		Interleaver::parameters itl;
-		typename E1::parameters sub1;
-		typename E2::parameters sub2;
 	};
 
 	template <typename B = int, class E1 = Encoder_RSC, class E2 = E1>
@@ -43,13 +56,6 @@ struct Encoder_turbo : public Encoder
 	                                 const module::Interleaver<B> &itl,
 	                                       module::Encoder_sys<B> *enc_n,
 	                                       module::Encoder_sys<B> *enc_i = nullptr);
-
-	template <class E1 = Encoder_RSC, class E2 = E1>
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	template <class E1 = Encoder_RSC, class E2 = E1>
-	static void store_args(const arg_val_map &vals, parameters<E1,E2> &params, const std::string p = prefix);
-	template <class E1 = Encoder_RSC, class E2 = E1>
-	static void make_header(params_list& head_enc, params_list& head_itl, const parameters<E1,E2>& params, const bool full = true);
 };
 }
 }

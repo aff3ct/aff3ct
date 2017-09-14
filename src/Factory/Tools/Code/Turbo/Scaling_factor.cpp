@@ -16,6 +16,77 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Scaling_factor::name   = "Scaling factor";
 const std::string aff3ct::factory::Scaling_factor::prefix = "sf";
 
+Scaling_factor::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(Scaling_factor::name, Scaling_factor::name, prefix)
+{
+}
+
+Scaling_factor::parameters
+::~parameters()
+{
+}
+
+Scaling_factor::parameters* Scaling_factor::parameters
+::clone() const
+{
+	return new Scaling_factor::parameters(*this);
+}
+
+void Scaling_factor::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type"}] =
+		{"string",
+		 "scaling factor type.",
+		 "CST, LTE, LTE_VEC, ARRAY, ADAPTIVE"};
+
+	opt_args[{p+"-ite"}] =
+		{"positive_int",
+		 "number of iterations."};
+}
+
+void Scaling_factor::parameters
+::store(const arg_val_map &vals)
+{
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-type"}))
+	{
+		this->enable = true;
+		this->type = vals.at({p+"-type"});
+
+		if (std::isdigit(this->type[0]))
+		{
+			this->cst  = std::stof(this->type);
+			this->type = "CST";
+		}
+	}
+
+	if(exist(vals, {p+"-ite", "i"})) this->n_ite = std::stoi(vals.at({p+"-ite", "i"}));
+}
+
+void Scaling_factor::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	auto p = this->get_prefix();
+
+	if (this->enable)
+	{
+		headers[p].push_back(std::make_pair("Enabled", "yes"));
+		headers[p].push_back(std::make_pair("Scaling factor (SF)", this->type));
+		headers[p].push_back(std::make_pair("SF iterations", std::to_string(this->n_ite)));
+		if (this->type == "CST")
+			headers[p].push_back(std::make_pair("SF constant", std::to_string(this->cst)));
+	}
+	else
+	{
+		headers[p].push_back(std::make_pair("Enabled", "no"));
+	}
+}
+
 template<typename B, typename Q>
 tools::Scaling_factor<B,Q>* Scaling_factor::parameters
 ::build() const
@@ -34,53 +105,6 @@ tools::Scaling_factor<B,Q>* Scaling_factor
 ::build(const parameters& params)
 {
 	return params.template build<B,Q>();
-}
-
-void Scaling_factor
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "scaling factor type.",
-		 "CST, LTE, LTE_VEC, ARRAY, ADAPTIVE"};
-
-	opt_args[{p+"-ite"}] =
-		{"positive_int",
-		 "number of iterations."};
-}
-
-void Scaling_factor
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	if(exist(vals, {p+"-type"}))
-	{
-		params.enable = true;
-		params.type = vals.at({p+"-type"});
-
-		if (std::isdigit(params.type[0]))
-		{
-			params.cst  = std::stof(params.type);
-			params.type = "CST";
-		}
-	}
-
-	if(exist(vals, {p+"-ite", "i"})) params.n_ite = std::stoi(vals.at({p+"-ite", "i"}));
-}
-
-void Scaling_factor
-::make_header(params_list& head_sf, const parameters& params, const bool full)
-{
-	if (params.enable)
-	{
-		head_sf.push_back(std::make_pair("Scaling factor (SF)", params.type));
-		head_sf.push_back(std::make_pair("SF iterations", std::to_string(params.n_ite)));
-		if (params.type == "CST")
-			head_sf.push_back(std::make_pair("SF constant", std::to_string(params.cst)));
-	}
-	else
-	{
-		head_sf.push_back(std::make_pair("Scaling factor (SF)", "off"));
-	}
 }
 
 // ==================================================================================== explicit template instantiation

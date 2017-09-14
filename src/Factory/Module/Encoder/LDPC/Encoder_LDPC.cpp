@@ -12,6 +12,66 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_LDPC::name   = "Encoder LDPC";
 const std::string aff3ct::factory::Encoder_LDPC::prefix = "enc";
 
+Encoder_LDPC::parameters
+::parameters(const std::string prefix)
+: Encoder::parameters(Encoder_LDPC::name, prefix)
+{
+	this->type = "AZCW";
+}
+
+Encoder_LDPC::parameters
+::~parameters()
+{
+}
+
+Encoder_LDPC::parameters* Encoder_LDPC::parameters
+::clone() const
+{
+	return new Encoder_LDPC::parameters(*this);
+}
+
+void Encoder_LDPC::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Encoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
+
+	opt_args[{p+"-h-path"}] =
+		{"string",
+		 "path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder)."};
+
+	opt_args[{p+"-g-path"}] =
+		{"string",
+		 "path to the G matrix (AList formated file, required by the \"LDPC\" encoder)."};
+}
+
+void Encoder_LDPC::parameters
+::store(const arg_val_map &vals)
+{
+	Encoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-h-path"})) this->H_alist_path = vals.at({p+"-h-path"});
+	if(exist(vals, {p+"-g-path"})) this->G_alist_path = vals.at({p+"-g-path"});
+}
+
+void Encoder_LDPC::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Encoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	if (this->type == "LDPC")
+		headers[p].push_back(std::make_pair("G matrix path", this->G_alist_path));
+	if (this->type == "LDPC_H")
+		headers[p].push_back(std::make_pair("H matrix path", this->H_alist_path));
+}
+
 template <typename B>
 module::Encoder_LDPC<B>* Encoder_LDPC::parameters
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const
@@ -30,44 +90,6 @@ module::Encoder_LDPC<B>* Encoder_LDPC
         const tools::Sparse_matrix &H)
 {
 	return params.template build<B>(G, H);
-}
-
-void Encoder_LDPC
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Encoder::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
-
-	opt_args[{p+"-h-path"}] =
-		{"string",
-		 "path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder)."};
-
-	opt_args[{p+"-g-path"}] =
-		{"string",
-		 "path to the G matrix (AList formated file, required by the \"LDPC\" encoder)."};
-}
-
-void Encoder_LDPC
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type = "AZCW";
-
-	Encoder::store_args(vals, params, p);
-
-	if(exist(vals, {p+"-h-path"})) params.H_alist_path = vals.at({p+"-h-path"});
-	if(exist(vals, {p+"-g-path"})) params.G_alist_path = vals.at({p+"-g-path"});
-}
-
-void Encoder_LDPC
-::make_header(params_list& head_enc, const parameters& params, const bool full)
-{
-	Encoder::make_header(head_enc, params, full);
-
-	if (params.type == "LDPC")
-		head_enc.push_back(std::make_pair("G matrix path", params.G_alist_path));
-	if (params.type == "LDPC_H")
-		head_enc.push_back(std::make_pair("H matrix path", params.H_alist_path));
 }
 
 // ==================================================================================== explicit template instantiation

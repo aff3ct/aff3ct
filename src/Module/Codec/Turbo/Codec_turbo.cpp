@@ -61,12 +61,12 @@ Codec_turbo<B,Q>
 		json_stream << "[" << std::endl;
 	}
 
-	auto encoder_RSC = factory::Encoder_RSC::build<B>(enc_params.sub1);
+	auto encoder_RSC = factory::Encoder_RSC::build<B>(*enc_params.sub1);
 	trellis = encoder_RSC->get_trellis();
 	delete encoder_RSC;
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	this->set_interleaver(factory::Interleaver_core::build<>(dec_params.itl.core));
+	this->set_interleaver(factory::Interleaver_core::build<>(*dec_params.itl->core));
 
 	try
 	{
@@ -79,7 +79,7 @@ Codec_turbo<B,Q>
 
 	try
 	{
-		sub_enc = factory::Encoder_RSC::build<B>(enc_params.sub1, json_stream);
+		sub_enc = factory::Encoder_RSC::build<B>(*enc_params.sub1, json_stream);
 		this->set_encoder(factory::Encoder_turbo::build<B>(enc_params, this->get_interleaver_bit(), sub_enc, sub_enc));
 	}
 	catch (tools::cannot_allocate const&)
@@ -87,20 +87,20 @@ Codec_turbo<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	sub_dec = factory::Decoder_RSC::build<B,Q>(dec_params.sub1, trellis, json_stream, dec_params.n_ite);
+	sub_dec = factory::Decoder_RSC::build<B,Q>(*dec_params.sub1, trellis, json_stream, dec_params.n_ite);
 	auto decoder = factory::Decoder_turbo::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec, *sub_dec);
 	this->set_decoder_siho(decoder);
 
 	// ------------------------------------------------------------------------------------------------ post processing
-	if (dec_params.sf.enable)
-		post_pros.push_back(factory::Scaling_factor::build<B,Q>(dec_params.sf));
+	if (dec_params.sf->enable)
+		post_pros.push_back(factory::Scaling_factor::build<B,Q>(*dec_params.sf));
 
-	if (dec_params.fnc.enable)
+	if (dec_params.fnc->enable)
 	{
 		if (crc == nullptr || crc->get_size() == 0)
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-		post_pros.push_back(factory::Flip_and_check::build<B,Q>(dec_params.fnc, *crc));
+		post_pros.push_back(factory::Flip_and_check::build<B,Q>(*dec_params.fnc, *crc));
 	}
 	else if (crc != nullptr && crc->get_size() > 0)
 		post_pros.push_back(new tools::CRC_checker<B,Q>(*crc, 2, decoder->get_simd_inter_frame_level()));

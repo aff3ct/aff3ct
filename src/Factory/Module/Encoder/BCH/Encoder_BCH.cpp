@@ -10,6 +10,46 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_BCH::name   = "Encoder BCH";
 const std::string aff3ct::factory::Encoder_BCH::prefix = "enc";
 
+Encoder_BCH::parameters
+::parameters(const std::string prefix)
+: Encoder::parameters(Encoder_BCH::name, prefix)
+{
+	this->type = "BCH";
+}
+
+Encoder_BCH::parameters
+::~parameters()
+{
+}
+
+Encoder_BCH::parameters* Encoder_BCH::parameters
+::clone() const
+{
+	return new Encoder_BCH::parameters(*this);
+}
+
+void Encoder_BCH::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Encoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type"}][2] += ", BCH";
+}
+
+void Encoder_BCH::parameters
+::store(const arg_val_map &vals)
+{
+	Encoder::parameters::store(vals);
+}
+
+void Encoder_BCH::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Encoder::parameters::get_headers(headers, full);
+}
+
 template <typename B>
 module::Encoder<B>* Encoder_BCH::parameters
 ::build(const tools::Galois &GF) const
@@ -24,28 +64,6 @@ module::Encoder<B>* Encoder_BCH
 ::build(const parameters &params, const tools::Galois &GF)
 {
 	return params.template build<B>(GF);
-}
-
-void Encoder_BCH
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Encoder::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-type"}][2] += ", BCH";
-}
-
-void Encoder_BCH
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type = "BCH";
-
-	Encoder::store_args(vals, params, p);
-}
-
-void Encoder_BCH
-::make_header(params_list& head_enc, const parameters& params, const bool full)
-{
-	Encoder::make_header(head_enc, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

@@ -9,11 +9,11 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <class C, typename B = int, typename R = float>
+template <typename B = int, typename R = float>
 class EXIT : public Launcher
 {
 protected:
-	factory::EXIT::parameters<C> params;
+	factory::EXIT::parameters params;
 
 public:
 	EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);
@@ -30,7 +30,5 @@ protected:
 };
 }
 }
-
-#include "EXIT.hxx"
 
 #endif /* LAUNCHER_EXIT_HPP_ */

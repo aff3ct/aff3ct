@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <thread>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
@@ -11,14 +12,13 @@
 
 #include "BFER_std_threads.hpp"
 
-namespace aff3ct
-{
-namespace simulation
-{
-template <class C, typename B, typename R, typename Q, int CRC, int ITL>
-BFER_std_threads<C,B,R,Q,CRC,ITL>
-::BFER_std_threads(const factory::BFER_std::parameters<C> &params)
-: BFER_std<C,B,R,Q,CRC,ITL>(params)
+using namespace aff3ct;
+using namespace aff3ct::simulation;
+
+template <typename B, typename R, typename Q>
+BFER_std_threads<B,R,Q>
+::BFER_std_threads(const factory::BFER_std::parameters &params)
+: BFER_std<B,R,Q>(params)
 {
 	if (this->params.err_track_revert)
 	{
@@ -29,17 +29,17 @@ BFER_std_threads<C,B,R,Q,CRC,ITL>
 	}
 }
 
-template <class C, typename B, typename R, typename Q, int CRC, int ITL>
-BFER_std_threads<C,B,R,Q,CRC,ITL>
+template <typename B, typename R, typename Q>
+BFER_std_threads<B,R,Q>
 ::~BFER_std_threads()
 {
 }
 
-template <class C, typename B, typename R, typename Q, int CRC, int ITL>
-void BFER_std_threads<C,B,R,Q,CRC,ITL>
+template <typename B, typename R, typename Q>
+void BFER_std_threads<B,R,Q>
 ::_build_communication_chain(const int tid)
 {
-	BFER_std<C,B,R,Q,CRC,ITL>::_build_communication_chain(tid);
+	BFER_std<B,R,Q>::_build_communication_chain(tid);
 
 	auto &source    = *this->source[tid];
 	auto &crc       = *this->crc   [tid];
@@ -47,7 +47,7 @@ void BFER_std_threads<C,B,R,Q,CRC,ITL>
 	auto &puncturer = *this->codec [tid]->get_puncturer();
 	auto &modem     = *this->modem [tid];
 
-	if (this->params.src.type == "AZCW")
+	if (this->params.src->type == "AZCW")
 	{
 		auto src_data = (uint8_t*)(source   ["generate"]["U_K" ].get_dataptr());
 		auto crc_data = (uint8_t*)(crc      ["build"   ]["U_K2"].get_dataptr());
@@ -69,7 +69,7 @@ void BFER_std_threads<C,B,R,Q,CRC,ITL>
 
 	if (this->params.err_track_enable)
 	{
-		if (this->params.src.type != "AZCW")
+		if (this->params.src->type != "AZCW")
 		{
 			auto src_data = (B*)(source["generate"]["U_K"].get_dataptr());
 			auto src_size = source["generate"]["U_K"].get_databytes() / sizeof(B);
@@ -80,24 +80,24 @@ void BFER_std_threads<C,B,R,Q,CRC,ITL>
 		{
 			auto enc_data = (B*)(encoder["encode"]["X_N"].get_dataptr());
 			auto enc_size = encoder["encode"]["X_N"].get_databytes() / sizeof(B);
-			this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, {(unsigned)this->params.cdc.enc.K});
+			this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, {(unsigned)this->params.cdc->enc->K});
 		}
 	}
 }
 
-template <class C, typename B, typename R, typename Q, int CRC, int ITL>
-void BFER_std_threads<C,B,R,Q,CRC,ITL>
+template <typename B, typename R, typename Q>
+void BFER_std_threads<B,R,Q>
 ::_launch()
 {
-	BFER_std<C,B,R,Q,CRC,ITL>::_launch();
+	BFER_std<B,R,Q>::_launch();
 
 	std::vector<std::thread> threads(this->params.n_threads -1);
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
-		threads[tid -1] = std::thread(BFER_std_threads<C,B,R,Q,CRC,ITL>::start_thread, this, tid);
+		threads[tid -1] = std::thread(BFER_std_threads<B,R,Q>::start_thread, this, tid);
 
 	// launch the master thread
-	BFER_std_threads<C,B,R,Q,CRC,ITL>::start_thread(this, 0);
+	BFER_std_threads<B,R,Q>::start_thread(this, 0);
 
 	// join the slave threads with the master thread
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
@@ -107,9 +107,9 @@ void BFER_std_threads<C,B,R,Q,CRC,ITL>
 		throw std::runtime_error(this->prev_err_message);
 }
 
-template <class C, typename B, typename R, typename Q, int CRC, int ITL>
-void BFER_std_threads<C,B,R,Q,CRC,ITL>
-::start_thread(BFER_std_threads<C,B,R,Q,CRC,ITL> *simu, const int tid)
+template <typename B, typename R, typename Q>
+void BFER_std_threads<B,R,Q>
+::start_thread(BFER_std_threads<B,R,Q> *simu, const int tid)
 {
 	try
 	{
@@ -127,8 +127,8 @@ void BFER_std_threads<C,B,R,Q,CRC,ITL>
 	}
 }
 
-template <class C, typename B, typename R, typename Q, int CRC, int ITL>
-void BFER_std_threads<C,B,R,Q,CRC,ITL>
+template <typename B, typename R, typename Q>
+void BFER_std_threads<B,R,Q>
 ::simulation_loop(const int tid)
 {
 	using namespace std::chrono;
@@ -161,7 +161,7 @@ void BFER_std_threads<C,B,R,Q,CRC,ITL>
 			std::cout << "#" << std::endl;
 		}
 
-		if (this->params.src.type != "AZCW")
+		if (this->params.src->type != "AZCW")
 		{
 			source   ["generate"].exec();
 			source   ["generate"]["U_K" ].bind(crc      ["build"   ]["U_K1"]);
@@ -170,7 +170,7 @@ void BFER_std_threads<C,B,R,Q,CRC,ITL>
 			puncturer["puncture"]["X_N2"].bind(modem    ["modulate"]["X_N1"]);
 		}
 
-		if (this->params.chn.type.find("RAYLEIGH") != std::string::npos)
+		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
 			modem  ["modulate"     ]["X_N2"].bind(channel  ["add_noise_wg" ]["X_N" ]);
 			channel["add_noise_wg" ]["Y_N" ].bind(modem    ["filter"       ]["Y_N1"]);
@@ -240,5 +240,16 @@ void BFER_std_threads<C,B,R,Q,CRC,ITL>
 		}
 	}
 }
-}
-}
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class aff3ct::simulation::BFER_std_threads<B_8,R_8,Q_8>;
+template class aff3ct::simulation::BFER_std_threads<B_16,R_16,Q_16>;
+template class aff3ct::simulation::BFER_std_threads<B_32,R_32,Q_32>;
+template class aff3ct::simulation::BFER_std_threads<B_64,R_64,Q_64>;
+#else
+template class aff3ct::simulation::BFER_std_threads<B,R,Q>;
+#endif
+// ==================================================================================== explicit template instantiation
+

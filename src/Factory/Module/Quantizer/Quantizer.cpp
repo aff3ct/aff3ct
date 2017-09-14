@@ -15,28 +15,28 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Quantizer::name   = "Quantizer";
 const std::string aff3ct::factory::Quantizer::prefix = "qnt";
 
-template <typename R, typename Q>
-module::Quantizer<R,Q>* Quantizer::parameters
-::build() const
+Quantizer::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(Quantizer::name, Quantizer::name, prefix)
 {
-	     if (this->type == "STD"     ) return new module::Quantizer_standard<R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
-	else if (this->type == "STD_FAST") return new module::Quantizer_fast    <R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
-	else if (this->type == "TRICKY"  ) return new module::Quantizer_tricky  <R,Q>(this->size, this->range,      this->n_bits, this->n_frames);
-	else if (this->type == "NO"      ) return new module::Quantizer_NO      <R,Q>(this->size,                                 this->n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename R, typename Q>
-module::Quantizer<R,Q>* Quantizer
-::build(const parameters& params)
+Quantizer::parameters
+::~parameters()
 {
-	return params.template build<R,Q>();
 }
 
-void Quantizer
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Quantizer::parameters* Quantizer::parameters
+::clone() const
 {
+	return new Quantizer::parameters(*this);
+}
+
+void Quantizer::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	auto p = this->get_prefix();
+
 	req_args[{p+"-size", "N"}] =
 		{"positive_int",
 		 "number of real to quantize."};
@@ -63,30 +63,53 @@ void Quantizer
 		 "the min/max bound for the tricky quantizer."};
 }
 
-void Quantizer
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Quantizer::parameters
+::store(const arg_val_map &vals)
 {
-	if(exist(vals, {p+"-size", "N"})) params.size       = std::stoi(vals.at({p+"-size", "N"}));
-	if(exist(vals, {p+"-fra",  "F"})) params.n_frames   = std::stoi(vals.at({p+"-fra",  "F"}));
-	if(exist(vals, {p+"-type"     })) params.type       =           vals.at({p+"-type"     });
-	if(exist(vals, {p+"-dec"      })) params.n_decimals = std::stoi(vals.at({p+"-dec"      }));
-	if(exist(vals, {p+"-bits"     })) params.n_bits     = std::stoi(vals.at({p+"-bits"     }));
-	if(exist(vals, {p+"-range"    })) params.range      = std::stof(vals.at({p+"-range"    }));
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-size", "N"})) this->size       = std::stoi(vals.at({p+"-size", "N"}));
+	if(exist(vals, {p+"-fra",  "F"})) this->n_frames   = std::stoi(vals.at({p+"-fra",  "F"}));
+	if(exist(vals, {p+"-type"     })) this->type       =           vals.at({p+"-type"     });
+	if(exist(vals, {p+"-dec"      })) this->n_decimals = std::stoi(vals.at({p+"-dec"      }));
+	if(exist(vals, {p+"-bits"     })) this->n_bits     = std::stoi(vals.at({p+"-bits"     }));
+	if(exist(vals, {p+"-range"    })) this->range      = std::stof(vals.at({p+"-range"    }));
 }
 
-void Quantizer
-::make_header(params_list& head_gnt, const parameters& params, const bool full)
+void Quantizer::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	std::string quantif = "unused";
-	if (params.type == "TRICKY")
-		quantif = "{"+std::to_string(params.n_bits)+", "+std::to_string(params.range)+"f}";
-	else if (params.type == "STD" || params.type == "STD_FAST")
-		quantif = "{"+std::to_string(params.n_bits)+", "+std::to_string(params.n_decimals)+"}";
+	auto p = this->get_prefix();
 
-	head_gnt.push_back(std::make_pair("Type", params.type));
-	if (full) head_gnt.push_back(std::make_pair("Frame size (N)", std::to_string(params.size)));
-	if (full) head_gnt.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
-	head_gnt.push_back(std::make_pair("Fixed-point config.", quantif));
+	std::string quantif = "unused";
+	if (this->type == "TRICKY")
+		quantif = "{"+std::to_string(this->n_bits)+", "+std::to_string(this->range)+"f}";
+	else if (this->type == "STD" || this->type == "STD_FAST")
+		quantif = "{"+std::to_string(this->n_bits)+", "+std::to_string(this->n_decimals)+"}";
+
+	headers[p].push_back(std::make_pair("Type", this->type));
+	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->size)));
+	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+	headers[p].push_back(std::make_pair("Fixed-point config.", quantif));
+}
+
+template <typename R, typename Q>
+module::Quantizer<R,Q>* Quantizer::parameters
+::build() const
+{
+	     if (this->type == "STD"     ) return new module::Quantizer_standard<R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
+	else if (this->type == "STD_FAST") return new module::Quantizer_fast    <R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
+	else if (this->type == "TRICKY"  ) return new module::Quantizer_tricky  <R,Q>(this->size, this->range,      this->n_bits, this->n_frames);
+	else if (this->type == "NO"      ) return new module::Quantizer_NO      <R,Q>(this->size,                                 this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename R, typename Q>
+module::Quantizer<R,Q>* Quantizer
+::build(const parameters& params)
+{
+	return params.template build<R,Q>();
 }
 
 // ==================================================================================== explicit template instantiation

@@ -29,6 +29,124 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_RSC::name   = "Decoder RSC";
 const std::string aff3ct::factory::Decoder_RSC::prefix = "dec";
 
+Decoder_RSC::parameters
+::parameters(const std::string prefix)
+: Decoder::parameters(Decoder_RSC::name, prefix)
+{
+	this->type   = "BCJR";
+	this->implem = "STD";
+}
+
+Decoder_RSC::parameters
+::~parameters()
+{
+}
+
+Decoder_RSC::parameters* Decoder_RSC::parameters
+::clone() const
+{
+	return new Decoder_RSC::parameters(*this);
+}
+
+void Decoder_RSC::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Decoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	req_args.erase({p+"-cw-size", "N"});
+
+	opt_args[{p+"-type", "D"}].push_back("BCJR");
+
+	opt_args[{p+"-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
+
+	opt_args[{p+"-simd"}] =
+		{"string",
+		 "the SIMD strategy you want to use.",
+		 "INTRA, INTER"};
+
+	opt_args[{p+"-max"}] =
+		{"string",
+		 "the MAX implementation for the nodes.",
+		 "MAX, MAXL, MAXS"};
+
+	opt_args[{p+"-no-buff"}] =
+		{"",
+		 "does not suppose a buffered encoding."};
+
+	opt_args[{p+"-poly"}] =
+		{"string",
+		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+
+	opt_args[{p+"-std"}] =
+		{"string",
+		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
+		 "LTE, CCSDS"};
+}
+
+void Decoder_RSC::parameters
+::store(const arg_val_map &vals)
+{
+	Decoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-simd"   })) this->simd_strategy = vals.at({p+"-simd"});
+	if(exist(vals, {p+"-max"    })) this->max           = vals.at({p+"-max" });
+	if(exist(vals, {p+"-std"    })) this->standard      = vals.at({p+"-std" });
+	if(exist(vals, {p+"-no-buff"})) this->buffered      = false;
+
+	if (this->standard == "LTE")
+		this->poly = {013, 015};
+
+	if (this->standard == "CCSDS")
+		this->poly = {023, 033};
+
+	if (exist(vals, {p+"-poly"}))
+	{
+		auto poly_str = vals.at({p+"-poly"});
+
+#ifdef _MSC_VER
+		sscanf_s   (poly_str.c_str(), "{%o,%o}", &this->poly[0], &this->poly[1]);
+#else
+		std::sscanf(poly_str.c_str(), "{%o,%o}", &this->poly[0], &this->poly[1]);
+#endif
+	}
+
+	if (this->poly[0] != 013 || this->poly[1] != 015)
+		this->implem = "GENERIC";
+
+	this->tail_length = (int)(2 * std::floor(std::log2((float)std::max(this->poly[0], this->poly[1]))));
+	this->N_cw        = 2 * this->K + this->tail_length;
+	this->R           = (float)this->K / (float)this->N_cw;
+}
+
+void Decoder_RSC::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Decoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	if (this->tail_length && full)
+		headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
+
+	if (full) headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
+
+	if (!this->standard.empty())
+		headers[p].push_back(std::make_pair("Standard", this->standard));
+
+	std::stringstream poly;
+	poly << "{0" << std::oct << this->poly[0] << ",0" << std::oct << this->poly[1] << "}";
+	headers[p].push_back(std::make_pair(std::string("Polynomials"), poly.str()));
+
+	if (!this->simd_strategy.empty())
+		headers[p].push_back(std::make_pair(std::string("SIMD strategy"), this->simd_strategy));
+
+	headers[p].push_back(std::make_pair(std::string("Max type"), this->max));
+}
+
 template <typename B, typename Q, typename QD, tools::proto_max<Q> MAX1, tools::proto_max<QD> MAX2>
 module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC::parameters
 ::_build_seq(const std::vector<std::vector<int>> &trellis,
@@ -128,101 +246,6 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC
         const int                              n_ite)
 {
 	return params.template build<B,Q>(trellis, stream, n_ite);
-}
-
-void Decoder_RSC
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Decoder::build_args(req_args, opt_args, p);
-	req_args.erase({p+"-cw-size", "N"});
-
-	opt_args[{p+"-type", "D"}].push_back("BCJR");
-
-	opt_args[{p+"-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
-
-	opt_args[{p+"-simd"}] =
-		{"string",
-		 "the SIMD strategy you want to use.",
-		 "INTRA, INTER"};
-
-	opt_args[{p+"-max"}] =
-		{"string",
-		 "the MAX implementation for the nodes.",
-		 "MAX, MAXL, MAXS"};
-
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "does not suppose a buffered encoding."};
-
-	opt_args[{p+"-poly"}] =
-		{"string",
-		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
-
-	opt_args[{p+"-std"}] =
-		{"string",
-		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
-		 "LTE, CCSDS"};
-}
-
-void Decoder_RSC
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type   = "BCJR";
-	params.implem = "STD";
-
-	Decoder::store_args(vals, params, p);
-
-	if(exist(vals, {p+"-simd"   })) params.simd_strategy = vals.at({p+"-simd"});
-	if(exist(vals, {p+"-max"    })) params.max           = vals.at({p+"-max" });
-	if(exist(vals, {p+"-std"    })) params.standard      = vals.at({p+"-std" });
-	if(exist(vals, {p+"-no-buff"})) params.buffered      = false;
-
-	if (params.standard == "LTE")
-		params.poly = {013, 015};
-
-	if (params.standard == "CCSDS")
-		params.poly = {023, 033};
-
-	if (exist(vals, {p+"-poly"}))
-	{
-		auto poly_str = vals.at({p+"-poly"});
-
-#ifdef _MSC_VER
-		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
-#else
-		std::sscanf(poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
-#endif
-	}
-
-	if (params.poly[0] != 013 || params.poly[1] != 015)
-		params.implem = "GENERIC";
-
-	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
-	params.N_cw        = 2 * params.K + params.tail_length;
-	params.R           = (float)params.K / (float)params.N_cw;
-}
-
-void Decoder_RSC
-::make_header(params_list& head_dec, const parameters& params, const bool full)
-{
-	Decoder::make_header(head_dec, params, full);
-
-	if (params.tail_length && full)
-		head_dec.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
-
-	if (full) head_dec.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
-
-	if (!params.standard.empty())
-		head_dec.push_back(std::make_pair("Standard", params.standard));
-
-	std::stringstream poly;
-	poly << "{0" << std::oct << params.poly[0] << ",0" << std::oct << params.poly[1] << "}";
-	head_dec.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
-
-	if (!params.simd_strategy.empty())
-		head_dec.push_back(std::make_pair(std::string("SIMD strategy"), params.simd_strategy));
-
-	head_dec.push_back(std::make_pair(std::string("Max type"), params.max));
 }
 
 // ==================================================================================== explicit template instantiation

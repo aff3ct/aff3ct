@@ -18,7 +18,7 @@ namespace aff3ct
 {
 namespace factory
 {
-using params_list = std::vector<std::pair<std::string,std::string>>;
+using header_list = std::vector<std::pair<std::string,std::string>>;
 using arg_map     = std::map<std::vector<std::string>, std::vector<std::string>>;
 using arg_grp     = std::vector<std::vector<std::string>>;
 using arg_val_map = std::map<std::vector<std::string>, std::string>;
@@ -27,10 +27,10 @@ bool exist(const arg_val_map &vals, const std::vector<std::string> &tags);
 
 struct Header
 {
-	static void print_parameters(std::string grp_name, params_list params, int max_n_chars,
+	static void print_parameters(std::string grp_key, std::string grp_name, header_list header, int max_n_chars,
 	                             std::ostream& stream = std::cout);
 
-	static void compute_max_n_chars(const params_list& params, int& max_n_chars);
+	static void compute_max_n_chars(const header_list& header, int& max_n_chars);
 };
 
 /*!
@@ -41,7 +41,32 @@ struct Header
  * A factory is a structure dedicated to the object creation. The common usage is to call the build method which returns
  * a new allocated object.
  */
-struct Factory {};
+struct Factory
+{
+	class parameters
+	{
+	public:
+		// constructor/destructor
+		parameters(const std::string name       = "Factory",
+		           const std::string short_name = "Factory",
+		           const std::string prefix     = "fac");
+		virtual ~parameters();
+		virtual Factory::parameters* clone() const = 0;
+
+		std::string get_name      () const;
+		std::string get_short_name() const;
+		std::string get_prefix    () const;
+
+		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const = 0;
+		virtual void store          (const arg_val_map &vals                                           )       = 0;
+		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const = 0;
+
+	private:
+		const std::string name;
+		const std::string short_name;
+		const std::string prefix;
+	};
+};
 }
 }
 

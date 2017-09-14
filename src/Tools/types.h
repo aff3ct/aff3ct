@@ -25,32 +25,22 @@ using Q_16 = short;
 using Q_32 = float;
 using Q_64 = double;
 
-// type for the real numbers inside the decoder (could be used or not depending on the decoder)
-//using QD_8  = short;
-//using QD_16 = short;
-//using QD_32 = float;
-//using QD_64 = double;
-
 #if defined(PREC_8_BIT)
 	using B  = B_8;
 	using R  = R_8;
 	using Q  = Q_8;
-//	using QD = QD_8;
 #elif defined(PREC_16_BIT)
 	using B  = B_16;
 	using R  = R_16;
 	using Q  = Q_16;
-//	using QD = QD_16;
 #elif defined(PREC_64_BIT)
 	using B  = B_64;
 	using R  = R_64;
 	using Q  = Q_64;
-//	using QD = QD_64;
 #else // PREC_32_BIT
 	using B  = B_32;
 	using R  = R_32;
 	using Q  = Q_32;
-//	using QD = QD_32;
 	#ifndef PREC_32_BIT
 	#define PREC_32_BIT
 	#endif

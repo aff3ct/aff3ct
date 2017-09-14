@@ -21,15 +21,27 @@ struct Decoder_RSC_DB : public Decoder
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Decoder::parameters
+	class parameters : public Decoder::parameters
 	{
-		virtual ~parameters() {}
-
-		template <typename B = int, typename Q = float>
-		module::Decoder_RSC_DB_BCJR<B,Q>* build(const std::vector<std::vector<int>> &trellis) const;
-
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// optional parameters
 		std::string max      = "MAX";
 		bool        buffered = true;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Decoder_RSC_DB::prefix);
+		virtual ~parameters();
+		Decoder_RSC_DB::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename Q = float>
+		module::Decoder_RSC_DB_BCJR<B,Q>* build(const std::vector<std::vector<int>> &trellis) const;
 
 	private:
 		template <typename B = int, typename Q = float, tools::proto_max<Q> MAX>
@@ -38,10 +50,6 @@ struct Decoder_RSC_DB : public Decoder
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_RSC_DB_BCJR<B,Q>* build(const parameters &params, const std::vector<std::vector<int>> &trellis);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_dec, const parameters& params, const bool full = true);
 };
 }
 }

@@ -3,13 +3,15 @@
 
 #include <string>
 
+#include "Factory/Module/Codec/Codec_SIHO.hpp"
+
 #include "BFER.hpp"
 
 namespace aff3ct
 {
 namespace simulation
 {
-template <class C, typename B, typename R, typename Q, int CRC, int ITL>
+template <typename B, typename R, typename Q>
 class BFER_std;
 }
 }
@@ -23,27 +25,35 @@ struct BFER_std : BFER
 	static const std::string name;
 	static const std::string prefix;
 
-	template <class C>
-	struct parameters : BFER::parameters<C>
+	class parameters : public BFER::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// module parameters
+		Codec_SIHO::parameters *cdc = nullptr;
 
-		template <typename B = int, typename R = float, typename Q = R, int CRC = 0, int ITL = 0>
-		simulation::BFER_std<C,B,R,Q,CRC,ITL>* build() const;
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = BFER_std::prefix);
+		virtual ~parameters();
+		BFER_std::parameters* clone() const;
+
+		// setters
+		void set_cdc(Codec_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename R = float, typename Q = R>
+		simulation::BFER_std<B,R,Q>* build() const;
 	};
 
-	template <class C, typename B = int, typename R = float, typename Q = R, int CRC = 0, int ITL = 0>
-	static simulation::BFER_std<C,B,R,Q,CRC,ITL>* build(const parameters<C> &params);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	template <class C>
-	static void store_args(const arg_val_map &vals, parameters<C> &params, const std::string p = prefix);
-	template <class C>
-	static void make_header(params_list& head_sim, const parameters<C> &params, const bool full = true);
+	template <typename B = int, typename R = float, typename Q = R>
+	static simulation::BFER_std<B,R,Q>* build(const parameters &params);
 };
 }
 }
-
-#include "BFER_std.hxx"
 
 #endif /* FACTORY_SIMULATION_BFER_STD_HPP_ */

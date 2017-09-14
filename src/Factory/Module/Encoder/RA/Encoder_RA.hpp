@@ -19,22 +19,30 @@ struct Encoder_RA : public Encoder
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Encoder::parameters
+	class parameters : public Encoder::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// depending parameters
+		Interleaver::parameters *itl;
 
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Encoder_RA::prefix);
+		virtual ~parameters();
+		Encoder_RA::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
 		template <typename B = int>
 		module::Encoder<B>* build(const module::Interleaver<B> &itl) const;
-
-		Interleaver::parameters itl;
 	};
 
 	template <typename B = int>
 	static module::Encoder<B>* build(const parameters& params, const module::Interleaver<B> &itl);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_enc, params_list& head_itl, const parameters& params, const bool full = true);
 };
 }
 }

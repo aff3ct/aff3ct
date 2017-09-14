@@ -16,26 +16,37 @@ struct Quantizer : public Factory
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters
+	class parameters : public Factory::parameters
 	{
-		template <typename R = float, typename Q = R>
-		module::Quantizer<R,Q>* build() const;
-
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// required parameters
 		int         size       = 0;
 
+		// optional parameters
 		std::string type       = "STD";
 		float       range      = 0.f;
 		int         n_bits     = 8;
 		int         n_decimals = 3;
 		int         n_frames   = 1;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Quantizer::prefix);
+		virtual ~parameters();
+		Quantizer::parameters* clone() const;
+
+		// parameters construction
+		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename R = float, typename Q = R>
+		module::Quantizer<R,Q>* build() const;
 	};
 
 	template <typename R = float, typename Q = R>
 	static module::Quantizer<R,Q>* build(const parameters& params);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_qua, const parameters& params, const bool full = true);
 };
 }
 }

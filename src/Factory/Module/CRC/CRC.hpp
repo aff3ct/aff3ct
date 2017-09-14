@@ -17,25 +17,36 @@ struct CRC : public Factory
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters
+	class parameters : public Factory::parameters
 	{
-		template <typename B = int>
-		module::CRC<B>* build() const;
-
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// required parameters
 		int         K             = 0;
 
+		// optional parameters
 		std::string type          = "FAST";
 		std::string poly          = "";
 		int         size          = 0;
 		int         n_frames      = 1;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = CRC::prefix);
+		virtual ~parameters();
+		CRC::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int>
+		module::CRC<B>* build() const;
 	};
 
 	template <typename B = int>
 	static module::CRC<B>* build(const parameters &params);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_crc, const parameters& params, const bool full = true);
 };
 }
 }

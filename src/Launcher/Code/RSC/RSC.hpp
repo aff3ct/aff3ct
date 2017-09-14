@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_RSC_HPP_
 #define LAUNCHER_RSC_HPP_
 
+#include "Factory/Module/Codec/RSC/Codec_RSC.hpp"
+
 namespace aff3ct
 {
 namespace launcher
@@ -8,6 +10,9 @@ namespace launcher
 template <class L, typename B = int, typename R = float, typename Q = R>
 class RSC : public L
 {
+protected:
+	factory::Codec_RSC::parameters *params_cdc;
+
 public:
 	RSC(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~RSC();
@@ -15,11 +20,10 @@ public:
 protected:
 	virtual void build_args();
 	virtual void store_args();
+	virtual void group_args();
 	virtual void print_header();
 };
 }
 }
-
-#include "RSC.hxx"
 
 #endif /* LAUNCHER_RSC_HPP_ */

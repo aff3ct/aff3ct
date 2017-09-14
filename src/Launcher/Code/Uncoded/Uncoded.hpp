@@ -1,5 +1,7 @@
-#ifndef LAUNCHER_NO_HPP_
-#define LAUNCHER_NO_HPP_
+#ifndef LAUNCHER_UNCODED_HPP_
+#define LAUNCHER_UNCODED_HPP_
+
+#include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
 
 namespace aff3ct
 {
@@ -8,6 +10,9 @@ namespace launcher
 template <class L, typename B = int, typename R = float, typename Q = R>
 class Uncoded : public L
 {
+protected:
+	factory::Codec_uncoded::parameters *params_cdc;
+
 public:
 	Uncoded(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Uncoded();
@@ -15,11 +20,10 @@ public:
 protected:
 	virtual void build_args();
 	virtual void store_args();
+	virtual void group_args();
 	virtual void print_header();
 };
 }
 }
 
-#include "Uncoded.hxx"
-
-#endif /* LAUNCHER_NO_HPP_ */
+#endif /* LAUNCHER_UNCODED_HPP_ */

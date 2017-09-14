@@ -10,26 +10,31 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_RSC_DB::name   = "Encoder RSC DB";
 const std::string aff3ct::factory::Encoder_RSC_DB::prefix = "enc";
 
-template <typename B>
-module::Encoder_RSC_DB<B>* Encoder_RSC_DB::parameters
-::build() const
+Encoder_RSC_DB::parameters
+::parameters(const std::string prefix)
+: Encoder::parameters(Encoder_RSC_DB::name, prefix)
 {
-	if (this->type == "RSC_DB") return new module::Encoder_RSC_DB<B>(this->K, this->N_cw, this->standard, this->buffered, this->n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	this->type = "RSC_DB";
 }
 
-template <typename B>
-module::Encoder_RSC_DB<B>* Encoder_RSC_DB
-::build(const parameters &params)
+Encoder_RSC_DB::parameters
+::~parameters()
 {
-	return params.template build<B>();
 }
 
-void Encoder_RSC_DB
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Encoder_RSC_DB::parameters* Encoder_RSC_DB::parameters
+::clone() const
 {
-	Encoder::build_args(req_args, opt_args, p);
+	return new Encoder_RSC_DB::parameters(*this);
+}
+
+void Encoder_RSC_DB::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Encoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
 	req_args.erase({p+"-cw-size", "N"});
 
 	opt_args[{p+"-type"}][2] += ", RSC_DB";
@@ -44,30 +49,48 @@ void Encoder_RSC_DB
 		 "DVB-RCS1, DVB-RCS2"};
 }
 
-void Encoder_RSC_DB
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Encoder_RSC_DB::parameters
+::store(const arg_val_map &vals)
 {
-	params.type = "RSC_DB";
+	Encoder::parameters::store(vals);
 
-	Encoder::store_args(vals, params, p);
+	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-no-buff"})) params.buffered = false;
+	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
 
-	if(exist(vals, {p+"-std"})) params.standard = vals.at({p+"-std"});
+	if(exist(vals, {p+"-std"})) this->standard = vals.at({p+"-std"});
 
-	params.N_cw = 2 * params.K;
-	params.R    = (float)params.K / (float)params.N_cw;
+	this->N_cw = 2 * this->K;
+	this->R    = (float)this->K / (float)this->N_cw;
 }
 
-void Encoder_RSC_DB
-::make_header(params_list& head_enc, const parameters& params, const bool full)
+void Encoder_RSC_DB::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Encoder::make_header(head_enc, params, full);
+	Encoder::parameters::get_headers(headers, full);
 
-	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
+	auto p = this->get_prefix();
 
-	if (!params.standard.empty())
-		head_enc.push_back(std::make_pair("Standard", params.standard));
+	headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
+
+	if (!this->standard.empty())
+		headers[p].push_back(std::make_pair("Standard", this->standard));
+}
+
+template <typename B>
+module::Encoder_RSC_DB<B>* Encoder_RSC_DB::parameters
+::build() const
+{
+	if (this->type == "RSC_DB") return new module::Encoder_RSC_DB<B>(this->K, this->N_cw, this->standard, this->buffered, this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+module::Encoder_RSC_DB<B>* Encoder_RSC_DB
+::build(const parameters &params)
+{
+	return params.template build<B>();
 }
 
 // ==================================================================================== explicit template instantiation

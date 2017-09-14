@@ -19,23 +19,33 @@ struct Decoder_BCH : public Decoder
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Decoder::parameters
+	class parameters : public Decoder::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// optional parameters
+		int t = 5; // correction power of th BCH
 
+		// deduced parameters
+		int m = 0; // Gallois field order
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Decoder_BCH::prefix);
+		virtual ~parameters();
+		Decoder_BCH::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const tools::Galois &GF) const;
-
-		int t = 5; // correction power of th BCH
-		int m;     // Gallois field order
 	};
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::Galois &GF);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_dec, const parameters& params, const bool full = true);
 };
 }
 }

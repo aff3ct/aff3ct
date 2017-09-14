@@ -16,10 +16,23 @@ struct Puncturer_polar : public Puncturer
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Puncturer::parameters
+	class parameters : public Puncturer::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// empty
 
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Puncturer_polar::prefix);
+		virtual ~parameters();
+		Puncturer_polar::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
 		template <typename B = int, typename Q = float>
 		module::Puncturer_polar_wangliu<B,Q>* build(const tools::Frozenbits_generator &fb_generator) const;
 	};
@@ -27,10 +40,6 @@ struct Puncturer_polar : public Puncturer
 	template <typename B = int, typename Q = float>
 	static module::Puncturer_polar_wangliu<B,Q>* build(const parameters                  &params,
 	                                                   const tools::Frozenbits_generator &fb_generator);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_pct, const parameters& params, const bool full = true);
 };
 }
 }

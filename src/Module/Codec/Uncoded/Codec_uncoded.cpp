@@ -71,7 +71,6 @@ template <typename B, typename Q>
 Codec_uncoded<B,Q>
 ::~Codec_uncoded()
 {
-	this->set_decoder_siho(nullptr);
 }
 
 template <typename B, typename Q>

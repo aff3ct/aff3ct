@@ -46,8 +46,8 @@ protected:
 	factory::Simulation::parameters &params;    /*!< A structure of parameters to store and pass to the simulation. */
 
 	std::ostream &stream;                       /*!< The dedicated stream in which the Launcher writes the parameters. */
-	factory::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_itl, pl_mdm, pl_chn,
-	                     pl_qnt, pl_enc, pl_dec, pl_mnt, pl_ter, pl_pct;
+	std::map<std::string, factory::header_list> headers;
+	std::vector<std::pair<std::string, std::string>> titles;
 
 public:
 	/*!

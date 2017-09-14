@@ -1,24 +1,16 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
-#include "Factory/Module/Source/Source.hpp"
-#include "Factory/Module/CRC/CRC.hpp"
-#include "Factory/Module/Encoder/Encoder.hpp"
-#include "Factory/Module/Modem/Modem.hpp"
-#include "Factory/Module/Channel/Channel.hpp"
-#include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Coset/Coset.hpp"
 
 #include "BFER_ite.hpp"
 
-namespace aff3ct
-{
-namespace simulation
-{
-template <class C, typename B, typename R, typename Q, int CRC>
-BFER_ite<C,B,R,Q,CRC>
-::BFER_ite(const factory::BFER_ite::parameters<C> &params)
-: BFER<C,B,R,Q>(params),
+using namespace aff3ct;
+using namespace aff3ct::simulation;
+
+template <typename B, typename R, typename Q>
+BFER_ite<B,R,Q>
+::BFER_ite(const factory::BFER_ite::parameters &params)
+: BFER<B,R,Q>(params),
   params(params),
 
   source          (params.n_threads, nullptr),
@@ -53,14 +45,14 @@ BFER_ite<C,B,R,Q,CRC>
 	this->modules["interleaver_llr"] = std::vector<module::Module*>(params.n_threads, nullptr);
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+BFER_ite<B,R,Q>
 ::~BFER_ite()
 {
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-void BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+void BFER_ite<B,R,Q>
 ::_build_communication_chain(const int tid)
 {
 	// build the objects
@@ -104,8 +96,8 @@ void BFER_ite<C,B,R,Q,CRC>
 		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-void BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+void BFER_ite<B,R,Q>
 ::_launch()
 {
 	// set current sigma
@@ -117,8 +109,8 @@ void BFER_ite<C,B,R,Q,CRC>
 	}
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-void BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+void BFER_ite<B,R,Q>
 ::release_objects()
 {
 	const auto nthr = params.n_threads;
@@ -134,116 +126,115 @@ void BFER_ite<C,B,R,Q,CRC>
 	for (auto i = 0; i < nthr; i++) if (coset_real      [i] != nullptr) { delete coset_real      [i]; coset_real      [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (coset_bit       [i] != nullptr) { delete coset_bit       [i]; coset_bit       [i] = nullptr; }
 
-	BFER<C,B,R,Q>::release_objects();
+	BFER<B,R,Q>::release_objects();
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-module::Source<B>* BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+module::Source<B>* BFER_ite<B,R,Q>
 ::build_source(const int tid)
 {
 	const auto seed_src = rd_engine_seed[tid]();
 
-	auto params_src = params.src;
-	params_src.seed = seed_src;
-	return factory::Source::build<B>(params_src);
+	auto params_src = params.src->clone();
+	params_src->seed = seed_src;
+	auto s = params_src->template build<B>();
+	delete params_src;
+	return s;
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-module::CRC<B>* BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+module::CRC<B>* BFER_ite<B,R,Q>
 ::build_crc(const int tid)
 {
-	return factory::CRC::build<B>(params.crc);
+	return params.crc->template build<B>();
 }
 
-template <class C, typename B, typename Q, int CRC>
-struct Codec_SISO_SIHO
-{
-	static module::Codec_SISO_SIHO<B,Q>* build(const factory::BFER_ite::parameters<C> &params, const int seed_enc,
-	                                           module::CRC<B> *crc = nullptr)
-	{
-		auto params_cdc = params.cdc;
-		params_cdc.enc.seed = seed_enc;
-		return params_cdc.template build<B,Q>();
-	}
-};
-
-template <class C, typename B, typename Q>
-struct Codec_SISO_SIHO<C,B,Q,1>
-{
-	static module::Codec_SISO_SIHO<B,Q>* build(const factory::BFER_ite::parameters<C> &params, const int seed_enc,
-	                                           module::CRC<B> *crc = nullptr)
-	{
-		auto params_cdc = params.cdc;
-		params_cdc.enc.seed = seed_enc;
-		return params.crc.type == "NO" || crc == nullptr ? params_cdc.template build<B,Q>(   ) :
-		                                                   params_cdc.template build<B,Q>(crc);
-	}
-};
-
-template <class C, typename B, typename R, typename Q, int CRC>
-module::Codec_SISO_SIHO<B,Q>* BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+module::Codec_SISO_SIHO<B,Q>* BFER_ite<B,R,Q>
 ::build_codec(const int tid)
 {
 	const auto seed_enc = rd_engine_seed[tid]();
-	return Codec_SISO_SIHO<C,B,Q,CRC>::build(params, seed_enc, this->crc[tid]);
+
+	auto params_cdc = params.cdc->clone();
+	params_cdc->enc->seed = seed_enc;
+	auto crc = this->params.crc->type == "NO" ? nullptr : this->crc[tid];
+	auto c = params_cdc->template build<B,Q>(crc);
+	delete params_cdc;
+	return c;
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-tools ::Interleaver_core<>* BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+tools ::Interleaver_core<>* BFER_ite<B,R,Q>
 ::build_interleaver(const int tid)
 {
 	const auto seed_itl = rd_engine_seed[tid]();
 
-	auto params_itl = params.itl;
-	params_itl.core.seed = params.itl.core.uniform ? seed_itl : params.itl.core.seed;
+	auto params_itl = params.itl->clone();
+	params_itl->core->seed = params.itl->core->uniform ? seed_itl : params.itl->core->seed;
 	if (params.err_track_revert)
-		params_itl.core.path = params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
-	return factory::Interleaver_core::build<>(params_itl.core);
+		params_itl->core->path = params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
+
+	auto i = params_itl->core->template build<>();
+	delete params_itl;
+	return i;
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-module::Modem<B,R,Q>* BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+module::Modem<B,R,Q>* BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
-	return factory::Modem::build<B,R,Q>(params.mdm);
+	return params.mdm->template build<B,R,Q>();
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-module::Channel<R>* BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+module::Channel<R>* BFER_ite<B,R,Q>
 ::build_channel(const int tid)
 {
 	const auto seed_chn = rd_engine_seed[tid]();
 
-	auto params_chn = params.chn;
-	params_chn.seed = seed_chn;
-	return factory::Channel::build<R>(params_chn);
+	auto params_chn = params.chn->clone();
+	params_chn->seed = seed_chn;
+	auto c = params_chn->template build<R>();
+	delete params_chn;
+	return c;
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-module::Quantizer<R,Q>* BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+module::Quantizer<R,Q>* BFER_ite<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return factory::Quantizer::build<R,Q>(params.qnt);
+	return params.qnt->template build<R,Q>();
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-module::Coset<B,Q>* BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+module::Coset<B,Q>* BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
 	factory::Coset::parameters cst_params;
-	cst_params.size = params.cdc.N_cw;
-	cst_params.n_frames = params.src.n_frames;
-	return factory::Coset::build_real<B,Q>(cst_params);
+	cst_params.size = params.cdc->N_cw;
+	cst_params.n_frames = params.src->n_frames;
+	return cst_params.template build_real<B,Q>();
 }
 
-template <class C, typename B, typename R, typename Q, int CRC>
-module::Coset<B,B>* BFER_ite<C,B,R,Q,CRC>
+template <typename B, typename R, typename Q>
+module::Coset<B,B>* BFER_ite<B,R,Q>
 ::build_coset_bit(const int tid)
 {
 	factory::Coset::parameters cst_params;
-	cst_params.size = params.coded_monitoring ? params.cdc.N_cw : params.cdc.K;
-	cst_params.n_frames = params.src.n_frames;
-	return factory::Coset::build_bit<B>(cst_params);
+	cst_params.size = params.coded_monitoring ? params.cdc->N_cw : params.cdc->K;
+	cst_params.n_frames = params.src->n_frames;
+	return cst_params.template build_bit<B,B>();
 }
-}
-}
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class aff3ct::simulation::BFER_ite<B_8,R_8,Q_8>;
+template class aff3ct::simulation::BFER_ite<B_16,R_16,Q_16>;
+template class aff3ct::simulation::BFER_ite<B_32,R_32,Q_32>;
+template class aff3ct::simulation::BFER_ite<B_64,R_64,Q_64>;
+#else
+template class aff3ct::simulation::BFER_ite<B,R,Q>;
+#endif
+// ==================================================================================== explicit template instantiation
+

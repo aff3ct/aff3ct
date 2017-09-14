@@ -111,33 +111,14 @@ void Launcher::print_header()
 	stream << "# " << tools::style(style("Parameters :", tools::Style::BOLD), tools::Style::UNDERLINED) << std::endl;
 
 	int max_n_chars = 0;
-	factory::Header::compute_max_n_chars(pl_sim, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_cde, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_src, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_crc, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_enc, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_pct, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_itl, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_mdm, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_chn, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_qnt, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_dec, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_mnt, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_ter, max_n_chars);
+	for (auto h : headers)
+		factory::Header::compute_max_n_chars(h.second, max_n_chars);
 
-	if (pl_sim.size()) factory::Header::print_parameters(factory::Simulation ::name, pl_sim, max_n_chars, this->stream);
-	if (pl_cde.size()) factory::Header::print_parameters("Code"                    , pl_cde, max_n_chars, this->stream);
-	if (pl_src.size()) factory::Header::print_parameters(factory::Source     ::name, pl_src, max_n_chars, this->stream);
-	if (pl_crc.size()) factory::Header::print_parameters(factory::CRC        ::name, pl_crc, max_n_chars, this->stream);
-	if (pl_enc.size()) factory::Header::print_parameters(factory::Encoder    ::name, pl_enc, max_n_chars, this->stream);
-	if (pl_pct.size()) factory::Header::print_parameters(factory::Puncturer  ::name, pl_pct, max_n_chars, this->stream);
-	if (pl_itl.size()) factory::Header::print_parameters(factory::Interleaver::name, pl_itl, max_n_chars, this->stream);
-	if (pl_mdm.size()) factory::Header::print_parameters(factory::Modem      ::name, pl_mdm, max_n_chars, this->stream);
-	if (pl_chn.size()) factory::Header::print_parameters(factory::Channel    ::name, pl_chn, max_n_chars, this->stream);
-	if (pl_qnt.size()) factory::Header::print_parameters(factory::Quantizer  ::name, pl_qnt, max_n_chars, this->stream);
-	if (pl_dec.size()) factory::Header::print_parameters(factory::Decoder    ::name, pl_dec, max_n_chars, this->stream);
-	if (pl_mnt.size()) factory::Header::print_parameters(factory::Monitor    ::name, pl_mnt, max_n_chars, this->stream);
-	if (pl_ter.size()) factory::Header::print_parameters(factory::Terminal   ::name, pl_ter, max_n_chars, this->stream);
+	for (auto t : titles)
+		if (headers.find(t.first) != headers.end() && headers[t.first].size())
+			if (headers[t.first][0].first != "Type" || headers[t.first][0].second != "NO")
+				factory::Header::print_parameters(t.first, t.second, headers[t.first], max_n_chars, this->stream);
+
 	this->stream << "#" << std::endl;
 }
 

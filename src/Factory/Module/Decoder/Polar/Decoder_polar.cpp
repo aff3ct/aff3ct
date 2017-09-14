@@ -42,6 +42,116 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_polar::name   = "Decoder Polar";
 const std::string aff3ct::factory::Decoder_polar::prefix = "dec";
 
+Decoder_polar::parameters
+::parameters(const std::string prefix)
+: Decoder::parameters(Decoder_polar::name, prefix)
+{
+	this->type   = "SC";
+	this->implem = "FAST";
+}
+
+Decoder_polar::parameters
+::parameters(const std::string name, const std::string prefix)
+: Decoder::parameters(name, prefix)
+{
+	this->type   = "SC";
+	this->implem = "FAST";
+}
+
+Decoder_polar::parameters
+::~parameters()
+{
+}
+
+Decoder_polar::parameters* Decoder_polar::parameters
+::clone() const
+{
+	return new Decoder_polar::parameters(*this);
+}
+
+void Decoder_polar::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Decoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN");
+
+	opt_args[{p+"-ite", "i"}] =
+		{"positive_int",
+		 "maximal number of iterations in the SCAN decoder."};
+
+	opt_args[{p+"-lists", "L"}] =
+		{"positive_int",
+		 "maximal number of paths in the SCL decoder."};
+
+	opt_args[{p+"-simd"}] =
+		{"string",
+		 "the SIMD strategy you want to use.",
+		 "INTRA, INTER"};
+
+	opt_args[{p+"-polar-nodes"}] =
+		{"string",
+		 "the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\")."};
+
+	opt_args[{p+"-partial-adaptive"}] =
+		{"",
+		 "enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected)."};
+
+	opt_args[{p+"-no-sys"}] =
+		{"",
+		 "does not suppose a systematic encoding."};
+}
+
+void Decoder_polar::parameters
+::store(const arg_val_map &vals)
+{
+	Decoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-ite",         "i"})) this->n_ite         = std::stoi(vals.at({p+"-ite",    "i"}));
+	if(exist(vals, {p+"-lists",       "L"})) this->L             = std::stoi(vals.at({p+"-lists",  "L"}));
+	if(exist(vals, {p+"-simd"            })) this->simd_strategy =           vals.at({p+"-simd"       });
+	if(exist(vals, {p+"-polar-nodes"     })) this->polar_nodes   =           vals.at({p+"-polar-nodes"});
+	if(exist(vals, {p+"-partial-adaptive"})) this->full_adaptive = false;
+
+	// force 1 iteration max if not SCAN (and polar code)
+	if (this->type != "SCAN") this->n_ite = 1;
+}
+
+void Decoder_polar::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Decoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	if (!this->simd_strategy.empty())
+		headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
+
+	if (this->type == "SCAN")
+		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+
+	if (this->type == "SCL" || this->type == "SCL_MEM")
+		headers[p].push_back(std::make_pair("Num. of lists (L)", std::to_string(this->L)));
+
+	if (this->type == "ASCL" || this->type == "ASCL_MEM")
+	{
+		auto adaptative_mode = this->full_adaptive ? "full" : "partial";
+		headers[p].push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->L)));
+		headers[p].push_back(std::make_pair("Adaptative mode", adaptative_mode));
+	}
+
+	if ((this->type == "SC"      ||
+	     this->type == "SCL"     ||
+	     this->type == "ASCL"    ||
+	     this->type == "SCL_MEM" ||
+	     this->type == "ASCL_MEM") && this->implem == "FAST")
+		headers[p].push_back(std::make_pair("Polar node types", this->polar_nodes));
+}
+
 template <typename B, typename Q>
 module::Decoder_SISO_SIHO<B,Q>* Decoder_polar::parameters
 ::build_siso(const std::vector<bool> &frozen_bits) const
@@ -241,86 +351,6 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 ::build(const parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc)
 {
 	return params.template build<B,Q>(frozen_bits, crc);
-}
-
-void Decoder_polar
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Decoder::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN");
-
-	opt_args[{p+"-ite", "i"}] =
-		{"positive_int",
-		 "maximal number of iterations in the SCAN decoder."};
-
-	opt_args[{p+"-lists", "L"}] =
-		{"positive_int",
-		 "maximal number of paths in the SCL decoder."};
-
-	opt_args[{p+"-simd"}] =
-		{"string",
-		 "the SIMD strategy you want to use.",
-		 "INTRA, INTER"};
-
-	opt_args[{p+"-polar-nodes"}] =
-		{"string",
-		 "the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\")."};
-
-	opt_args[{p+"-partial-adaptive"}] =
-		{"",
-		 "enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected)."};
-
-	opt_args[{p+"-no-sys"}] =
-		{"",
-		 "does not suppose a systematic encoding."};
-}
-
-void Decoder_polar
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type   = "SC";
-	params.implem = "FAST";
-
-	Decoder::store_args(vals, params, p);
-
-	if(exist(vals, {p+"-ite",         "i"})) params.n_ite         = std::stoi(vals.at({p+"-ite",    "i"}));
-	if(exist(vals, {p+"-lists",       "L"})) params.L             = std::stoi(vals.at({p+"-lists",  "L"}));
-	if(exist(vals, {p+"-simd"            })) params.simd_strategy =           vals.at({p+"-simd"       });
-	if(exist(vals, {p+"-polar-nodes"     })) params.polar_nodes   =           vals.at({p+"-polar-nodes"});
-	if(exist(vals, {p+"-partial-adaptive"})) params.full_adaptive = false;
-
-	// force 1 iteration max if not SCAN (and polar code)
-	if (params.type != "SCAN") params.n_ite = 1;
-}
-
-void Decoder_polar
-::make_header(params_list& head_dec, const parameters& params, const bool full)
-{
-	Decoder::make_header(head_dec, params, full);
-
-	if (!params.simd_strategy.empty())
-		head_dec.push_back(std::make_pair("SIMD strategy", params.simd_strategy));
-
-	if (params.type == "SCAN")
-		head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
-
-	if (params.type == "SCL" || params.type == "SCL_MEM")
-		head_dec.push_back(std::make_pair("Num. of lists (L)", std::to_string(params.L)));
-
-	if (params.type == "ASCL" || params.type == "ASCL_MEM")
-	{
-		auto adaptative_mode = params.full_adaptive ? "full" : "partial";
-		head_dec.push_back(std::make_pair("Max num. of lists (L)", std::to_string(params.L)));
-		head_dec.push_back(std::make_pair("Adaptative mode", adaptative_mode));
-	}
-
-	if ((params.type == "SC"      ||
-	     params.type == "SCL"     ||
-	     params.type == "ASCL"    ||
-	     params.type == "SCL_MEM" ||
-	     params.type == "ASCL_MEM") && params.implem == "FAST")
-		head_dec.push_back(std::make_pair("Polar node types", params.polar_nodes));
 }
 
 // ==================================================================================== explicit template instantiation

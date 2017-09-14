@@ -25,24 +25,37 @@ struct Decoder_turbo : public Decoder
 	static const std::string prefix;
 
 	template <class D1 = Decoder_RSC, class D2 = D1>
-	struct parameters : Decoder::parameters
+	class parameters : public Decoder::parameters
 	{
-		virtual ~parameters() {}
-
-		template <typename B = int, typename Q = float>
-		module::Decoder_turbo<B,Q>* build(const module::Interleaver<Q>  &itl,
-		                                        module::Decoder_SISO<Q> &siso_n,
-		                                        module::Decoder_SISO<Q> &siso_i) const;
-
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// optional parameters
 		bool self_corrected = false;
 		bool enable_json    = false;
 		int  n_ite          = 6;
 
-		typename D1   ::parameters sub1;
-		typename D2   ::parameters sub2;
-		Interleaver   ::parameters itl;
-		Scaling_factor::parameters sf;
-		Flip_and_check::parameters fnc;
+		// depending parameters
+		typename D1   ::parameters *sub1;
+		typename D2   ::parameters *sub2;
+		Interleaver   ::parameters *itl;
+		Scaling_factor::parameters *sf;
+		Flip_and_check::parameters *fnc;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Decoder_turbo::prefix);
+		virtual ~parameters();
+		Decoder_turbo::parameters<D1,D2>* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename Q = float>
+		module::Decoder_turbo<B,Q>* build(const module::Interleaver<Q>  &itl,
+		                                        module::Decoder_SISO<Q> &siso_n,
+		                                        module::Decoder_SISO<Q> &siso_i) const;
 	};
 
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
@@ -50,13 +63,6 @@ struct Decoder_turbo : public Decoder
 	                                         const module::Interleaver<Q>  &itl,
 	                                               module::Decoder_SISO<Q> &siso_n,
 	                                               module::Decoder_SISO<Q> &siso_i);
-
-	template <class D1 = Decoder_RSC, class D2 = D1>
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	template <class D1 = Decoder_RSC, class D2 = D1>
-	static void store_args(const arg_val_map &vals, parameters<D1,D2> &params, const std::string p = prefix);
-	template <class D1 = Decoder_RSC, class D2 = D1>
-	static void make_header(params_list& head_dec, params_list& head_itl, const parameters<D1,D2>& params, const bool full = true);
 };
 }
 }

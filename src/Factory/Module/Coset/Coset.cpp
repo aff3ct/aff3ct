@@ -9,6 +9,62 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Coset::name   = "Coset";
 const std::string aff3ct::factory::Coset::prefix = "cst";
 
+Coset::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(Coset::name, Coset::name, prefix)
+{
+}
+
+Coset::parameters
+::~parameters()
+{
+}
+
+Coset::parameters* Coset::parameters
+::clone() const
+{
+	return new Coset::parameters(*this);
+}
+
+void Coset::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	auto p = this->get_prefix();
+
+	req_args[{p+"-size", "N"}] =
+		{"positive_int",
+		 "coset size."};
+
+	opt_args[{p+"-type"}] =
+		{"string",
+		 "coset type.",
+		 "STD"};
+
+	opt_args[{p+"-fra", "F"}] =
+		{"positive_int",
+		 "set the number of inter frame level to process."};
+}
+
+void Coset::parameters
+::store(const arg_val_map &vals)
+{
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-size", "N"})) this->size     = std::stoi(vals.at({p+"-size", "N"}));
+	if(exist(vals, {p+"-fra",  "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",  "F"}));
+	if(exist(vals, {p+"-type"     })) this->type     =           vals.at({p+"-type"     });
+}
+
+void Coset::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("Type", this->type));
+	if (full) headers[p].push_back(std::make_pair("Size (N)", std::to_string(this->size)));
+	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+}
+
 template <typename B1, typename B2>
 module::Coset<B1,B2>* Coset::parameters
 ::build_bit() const
@@ -39,39 +95,6 @@ module::Coset<B,R>* Coset
 ::build_real(const parameters &params)
 {
 	return params.template build_real<B,R>();
-}
-
-void Coset
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	req_args[{p+"-size", "N"}] =
-		{"positive_int",
-		 "coset size."};
-
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "coset type.",
-		 "STD"};
-
-	opt_args[{p+"-fra", "F"}] =
-		{"positive_int",
-		 "set the number of inter frame level to process."};
-}
-
-void Coset
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	if(exist(vals, {p+"-size", "N"})) params.size     = std::stoi(vals.at({p+"-size", "N"}));
-	if(exist(vals, {p+"-fra",  "F"})) params.n_frames = std::stoi(vals.at({p+"-fra",  "F"}));
-	if(exist(vals, {p+"-type"     })) params.type     =           vals.at({p+"-type"     });
-}
-
-void Coset
-::make_header(params_list& head_pct, const parameters& params, const bool full)
-{
-	head_pct.push_back(std::make_pair("Type", params.type));
-	if (full) head_pct.push_back(std::make_pair("Size (N)", std::to_string(params.size)));
-	if (full) head_pct.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 }
 
 // ==================================================================================== explicit template instantiation

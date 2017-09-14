@@ -6,6 +6,56 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Terminal_BFER::name   = "Terminal BFER";
 const std::string aff3ct::factory::Terminal_BFER::prefix = "ter";
 
+Terminal_BFER::parameters
+::parameters(const std::string prefix)
+: Terminal::parameters(Terminal_BFER::name, prefix)
+{
+}
+
+Terminal_BFER::parameters
+::~parameters()
+{
+}
+
+Terminal_BFER::parameters* Terminal_BFER::parameters
+::clone() const
+{
+	return new Terminal_BFER::parameters(*this);
+}
+
+void Terminal_BFER::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Terminal::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type"}] =
+		{"string",
+		 "select the terminal type you want.",
+		 "STD"};
+}
+
+void Terminal_BFER::parameters
+::store(const arg_val_map &vals)
+{
+	Terminal::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-type"})) this->type = vals.at({p+"-type"});
+}
+
+void Terminal_BFER::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("Type", this->type));
+
+	Terminal::parameters::get_headers(headers, full);
+}
+
 template <typename B>
 tools::Terminal_BFER<B>* Terminal_BFER::parameters
 ::build(const module::Monitor_BFER<B> &monitor) const
@@ -20,30 +70,6 @@ tools::Terminal_BFER<B>* Terminal_BFER
 ::build(const parameters &params, const module::Monitor_BFER<B> &monitor)
 {
 	return params.template build<B>(monitor);
-}
-
-void Terminal_BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Terminal::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "select the terminal type you want.",
-		 "STD"};
-}
-
-void Terminal_BFER::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	Terminal::store_args(vals, params, p);
-
-	if(exist(vals, {p+"-type"})) params.type = vals.at({p+"-type"});
-}
-
-void Terminal_BFER::make_header(params_list& head_ter, const parameters& params, const bool full)
-{
-	head_ter.push_back(std::make_pair("Type", params.type));
-
-	Terminal::make_header(head_ter, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

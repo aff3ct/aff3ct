@@ -10,41 +10,61 @@ namespace aff3ct
 namespace factory
 {
 template <class D1, class D2>
-template <typename B, typename Q>
-module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
-::build(const module::Interleaver<Q>  &itl,
-              module::Decoder_SISO<Q> &siso_n,
-              module::Decoder_SISO<Q> &siso_i) const
+Decoder_turbo::parameters<D1,D2>
+::parameters(const std::string prefix)
+: Decoder::parameters(Decoder_turbo::name, prefix),
+  sub1(new typename D1::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub1")),
+  sub2(new typename D2::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub2")),
+  itl(new Interleaver::parameters("itl")),
+  sf(new Scaling_factor::parameters(prefix+"-sf")),
+  fnc(new Flip_and_check::parameters(prefix+"-fnc"))
 {
-	if (this->type == "TURBO")
-	{
-		     if (this->implem == "STD" ) return new module::Decoder_turbo_std <B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1.buffered);
-		else if (this->implem == "FAST") return new module::Decoder_turbo_fast<B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1.buffered);
-	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-}
-
-template <typename B, typename Q, class D1, class D2>
-module::Decoder_turbo<B,Q>* Decoder_turbo
-::build(const parameters<D1,D2>       &params,
-        const module::Interleaver<Q>  &itl,
-              module::Decoder_SISO<Q> &siso_n,
-              module::Decoder_SISO<Q> &siso_i)
-{
-	return params.template build<B,Q>(itl, siso_n, siso_i);
+	this->type   = "TURBO";
+	this->implem = "FAST";
 }
 
 template <class D1, class D2>
-void Decoder_turbo
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Decoder_turbo::parameters<D1,D2>
+::~parameters()
 {
-	Decoder::build_args(req_args, opt_args, p);
+	if (sub1 != nullptr) { delete sub1; sub1 = nullptr; }
+	if (sub2 != nullptr) { delete sub2; sub2 = nullptr; }
+	if (itl  != nullptr) { delete itl;  itl  = nullptr; }
+	if (sf   != nullptr) { delete sf ;  sf   = nullptr; }
+	if (fnc  != nullptr) { delete fnc;  fnc  = nullptr; }
+}
+
+template <class D1, class D2>
+Decoder_turbo::parameters<D1,D2>* Decoder_turbo::parameters<D1,D2>
+::clone() const
+{
+	auto clone = new Decoder_turbo::parameters<D1,D2>(*this);
+
+	if (sub1 != nullptr) { clone->sub1 = sub1->clone(); }
+	if (sub2 != nullptr) { clone->sub2 = sub2->clone(); }
+	if (itl  != nullptr) { clone->itl  = itl ->clone(); }
+	if (sf   != nullptr) { clone->sf   = sf  ->clone(); }
+	if (fnc  != nullptr) { clone->fnc  = fnc ->clone(); }
+
+	return clone;
+}
+
+template <class D1, class D2>
+void Decoder_turbo::parameters<D1,D2>
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Decoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
 	req_args.erase({p+"-cw-size", "N"});
 
-	Interleaver::build_args(req_args, opt_args, "itl");
-	req_args.erase({"itl-size"    });
-	opt_args.erase({"itl-fra", "F"});
+	itl->get_description(req_args, opt_args);
+
+	auto pi = itl->get_prefix();
+
+	req_args.erase({pi+"-size"    });
+	opt_args.erase({pi+"-fra", "F"});
 
 	opt_args[{p+"-type", "D"}].push_back("TURBO");
 
@@ -62,125 +82,142 @@ void Decoder_turbo
 		{"",
 		 "enable the json output trace."};
 
-	Scaling_factor::build_args(req_args, opt_args, p+"-sf" );
-	opt_args.erase({p+"-sf-ite"});
+	sf->get_description(req_args, opt_args);
 
-	Flip_and_check::build_args(req_args, opt_args, p+"-fnc");
-	req_args.erase({p+"-fnc-size", "K"});
-	opt_args.erase({p+"-fnc-fra",  "F"});
-	opt_args.erase({p+"-fnc-ite",  "i"});
+	auto psf = sf->get_prefix();
 
-	if (std::is_same<D1,D2>())
+	opt_args.erase({psf+"-ite"});
+
+	fnc->get_description(req_args, opt_args);
+
+	auto pfnc = fnc->get_prefix();
+
+	req_args.erase({pfnc+"-size", "K"});
+	opt_args.erase({pfnc+"-fra",  "F"});
+	opt_args.erase({pfnc+"-ite",  "i"});
+
+	sub1->get_description(req_args, opt_args);
+
+	auto ps1 = sub1->get_prefix();
+
+	req_args.erase({ps1+"-info-bits", "K"});
+	req_args.erase({ps1+"-cw-size",   "N"});
+	opt_args.erase({ps1+"-fra",       "F"});
+
+	if (!std::is_same<D1,D2>())
 	{
-		D1::build_args(req_args, opt_args, p+"-sub");
-		req_args.erase({p+"-sub-info-bits", "K"});
-		req_args.erase({p+"-sub-cw-size",   "N"});
-		opt_args.erase({p+"-sub-fra",       "F"});
-	}
-	else
-	{
-		D1::build_args(req_args, opt_args, p+"-sub1");
-		D2::build_args(req_args, opt_args, p+"-sub2");
+		auto ps2 = sub2->get_prefix();
 
-		req_args.erase({p+"-sub1-info-bits", "K"});
-		req_args.erase({p+"-sub2-info-bits", "K"});
-		req_args.erase({p+"-sub1-cw-size",   "N"});
-		req_args.erase({p+"-sub2-cw-size",   "N"});
-		opt_args.erase({p+"-sub1-fra",       "F"});
-		opt_args.erase({p+"-sub2-fra",       "F"});
+		req_args.erase({ps2+"-info-bits", "K"});
+		req_args.erase({ps2+"-cw-size",   "N"});
+		opt_args.erase({ps2+"-fra",       "F"});
 	}
 }
 
 template <class D1, class D2>
-void Decoder_turbo
-::store_args(const arg_val_map &vals, parameters<D1,D2> &params, const std::string p)
+void Decoder_turbo::parameters<D1,D2>
+::store(const arg_val_map &vals)
 {
-	params.type   = "TURBO";
-	params.implem = "FAST";
+	Decoder::parameters::store(vals);
 
-	Decoder::store_args(vals, params, p);
+	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ite", "i"})) params.n_ite          = std::stoi(vals.at({p+"-ite", "i"}));
-	if(exist(vals, {p+"-sc"      })) params.self_corrected = true;
-	if(exist(vals, {p+"-json"    })) params.enable_json    = true;
+	if(exist(vals, {p+"-ite", "i"})) this->n_ite          = std::stoi(vals.at({p+"-ite", "i"}));
+	if(exist(vals, {p+"-sc"      })) this->self_corrected = true;
+	if(exist(vals, {p+"-json"    })) this->enable_json    = true;
 
-	params.sub1.K        = params.K;
-	params.sub2.K        = params.K;
-	params.sub1.n_frames = params.n_frames;
-	params.sub2.n_frames = params.n_frames;
+	this->sub1->K        = this->K;
+	this->sub2->K        = this->K;
+	this->sub1->n_frames = this->n_frames;
+	this->sub2->n_frames = this->n_frames;
 
-	if (std::is_same<D1,D2>())
+	sub1->store(vals);
+	sub2->store(vals);
+
+	if (this->enable_json)
 	{
-		D1::store_args(vals, params.sub1, p+"-sub");
-		D2::store_args(vals, params.sub2, p+"-sub");
-	}
-	else
-	{
-		D1::store_args(vals, params.sub1, p+"-sub1");
-		D2::store_args(vals, params.sub2, p+"-sub2");
-	}
-
-	if (params.enable_json)
-	{
-		params.sub1.implem        = "GENERIC_JSON";
-		params.sub2.implem        = "GENERIC_JSON";
-		params.sub1.simd_strategy = "";
-		params.sub2.simd_strategy = "";
+		this->sub1->implem        = "GENERIC_JSON";
+		this->sub2->implem        = "GENERIC_JSON";
+		this->sub1->simd_strategy = "";
+		this->sub2->simd_strategy = "";
 	}
 
-	params.tail_length = params.sub1.tail_length + params.sub2.tail_length;
-	params.N_cw        = params.sub1.N_cw + params.sub2.N_cw - params.K;
-	params.R           = (float)params.K / (float)params.N_cw;
+	this->tail_length = this->sub1->tail_length + this->sub2->tail_length;
+	this->N_cw        = this->sub1->N_cw + this->sub2->N_cw - this->K;
+	this->R           = (float)this->K / (float)this->N_cw;
 
-	params.itl.core.size     = params.K;
-	params.itl.core.n_frames = params.n_frames;
-	Interleaver::store_args(vals, params.itl, "itl");
+	this->itl->core->size     = this->K;
+	this->itl->core->n_frames = this->n_frames;
 
-	if (params.sub1.standard == "LTE" && !exist(vals, {"itl-type"}))
-		params.itl.core.type = "LTE";
+	itl->store(vals);
 
-	if (params.sub1.standard == "CCSDS" && !exist(vals, {"itl-type"}))
-		params.itl.core.type = "CCSDS";
+	if (this->sub1->standard == "LTE" && !exist(vals, {"itl-type"}))
+		this->itl->core->type = "LTE";
 
-	params.sf.n_ite = params.n_ite;
-	Scaling_factor::store_args(vals, params.sf, p+"-sf");
+	if (this->sub1->standard == "CCSDS" && !exist(vals, {"itl-type"}))
+		this->itl->core->type = "CCSDS";
 
-	params.fnc.size     = params.K;
-	params.fnc.n_frames = params.n_frames;
-	params.fnc.n_ite    = params.n_ite;
-	Flip_and_check::store_args(vals, params.fnc, p+"-fnc");
+	this->sf->n_ite = this->n_ite;
+
+	sf->store(vals);
+
+	this->fnc->size     = this->K;
+	this->fnc->n_frames = this->n_frames;
+	this->fnc->n_ite    = this->n_ite;
+
+	fnc->store(vals);
 }
 
 template <class D1, class D2>
-void Decoder_turbo
-::make_header(params_list& head_dec, params_list& head_itl, const parameters<D1,D2>& params, const bool full)
+void Decoder_turbo::parameters<D1,D2>
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Decoder    ::make_header(head_dec, params,     full);
-	Interleaver::make_header(head_itl, params.itl, full);
+	Decoder::parameters::get_headers(headers, full);
 
-	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
-	if (params.tail_length && full)
-		head_dec.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
-	head_dec.push_back(std::make_pair("Enable json", ((params.enable_json) ? "on" : "off")));
-	head_dec.push_back(std::make_pair("Self-corrected", ((params.self_corrected) ? "on" : "off")));
+	auto p = this->get_prefix();
 
-	Scaling_factor::make_header(head_dec, params.sf,  full);
-	Flip_and_check::make_header(head_dec, params.fnc, full);
+	itl->get_headers(headers, full);
 
-	if (std::is_same<D1,D2>())
+	headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+	if (this->tail_length && full)
+		headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
+	headers[p].push_back(std::make_pair("Enable json", ((this->enable_json) ? "on" : "off")));
+	headers[p].push_back(std::make_pair("Self-corrected", ((this->self_corrected) ? "on" : "off")));
+
+	sf->get_headers(headers, full);
+	fnc->get_headers(headers, full);
+
+	this->sub1->get_headers(headers);
+	if (!std::is_same<D1,D2>())
 	{
-		params_list head_dec_sub1;
-		D1::make_header(head_dec_sub1, params.sub1, full);
-		for (auto p : head_dec_sub1) { p.first.insert(0, D1::name + ": "); head_dec.push_back(p); }
+		this->sub2->get_headers(headers);
 	}
-	else
+}
+
+template <class D1, class D2>
+template <typename B, typename Q>
+module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
+::build(const module::Interleaver<Q>  &itl,
+              module::Decoder_SISO<Q> &siso_n,
+              module::Decoder_SISO<Q> &siso_i) const
+{
+	if (this->type == "TURBO")
 	{
-		params_list head_dec_sub1, head_dec_sub2;
-		D1::make_header(head_dec_sub1, params.sub1, full);
-		D2::make_header(head_dec_sub2, params.sub2, full);
-		for (auto p : head_dec_sub1) { p.first.insert(0, D1::name + ": "); head_dec.push_back(p); }
-		for (auto p : head_dec_sub2) { p.first.insert(0, D2::name + ": "); head_dec.push_back(p); }
+		     if (this->implem == "STD" ) return new module::Decoder_turbo_std <B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
+		else if (this->implem == "FAST") return new module::Decoder_turbo_fast<B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
 	}
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q, class D1, class D2>
+module::Decoder_turbo<B,Q>* Decoder_turbo
+::build(const parameters<D1,D2>       &params,
+        const module::Interleaver<Q>  &itl,
+              module::Decoder_SISO<Q> &siso_n,
+              module::Decoder_SISO<Q> &siso_i)
+{
+	return params.template build<B,Q>(itl, siso_n, siso_i);
 }
 }
 }

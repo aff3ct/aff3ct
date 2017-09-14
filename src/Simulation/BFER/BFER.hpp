@@ -22,12 +22,12 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <class C, typename B = int, typename R = float, typename Q = R>
+template <typename B = int, typename R = float, typename Q = R>
 class BFER : public Simulation
 {
 private:
 	// parameters
-	const factory::BFER::parameters<C> &params;
+	const factory::BFER::parameters &params;
 
 	std::mutex mutex_terminal;
 	std::condition_variable cond_terminal;
@@ -65,7 +65,7 @@ protected:
 	tools::Terminal_BFER<B> *terminal;
 
 public:
-	BFER(const factory::BFER::parameters<C>& simu_params);
+	BFER(const factory::BFER::parameters& simu_params);
 	virtual ~BFER();
 	void launch();
 
@@ -81,12 +81,10 @@ private:
 	void build_communication_chain(const int tid = 0);
 	void display_stats(std::ostream &stream = std::cout);
 
-	static void start_thread_terminal        (BFER<C,B,R,Q> *simu               );
-	static void start_thread_build_comm_chain(BFER<C,B,R,Q> *simu, const int tid);
+	static void start_thread_terminal        (BFER<B,R,Q> *simu               );
+	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);
 };
 }
 }
-
-#include "BFER.hxx"
 
 #endif /* SIMULATION_BFER_HPP_ */

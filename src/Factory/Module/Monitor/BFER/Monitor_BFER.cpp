@@ -10,26 +10,29 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Monitor_BFER::name   = "Monitor BER/FER";
 const std::string aff3ct::factory::Monitor_BFER::prefix = "mnt";
 
-template <typename B>
-module::Monitor_BFER<B>* Monitor_BFER::parameters
-::build() const
+Monitor_BFER::parameters
+::parameters(const std::string prefix)
+: Monitor::parameters(Monitor::name, prefix)
 {
-	if (this->type == "STD") return new module::Monitor_BFER<B>(this->size, this->n_frame_errors, this->n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::Monitor_BFER<B>* Monitor_BFER
-::build(const parameters& params)
+Monitor_BFER::parameters
+::~parameters()
 {
-	return params.template build<B>();
 }
 
-void Monitor_BFER
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Monitor_BFER::parameters* Monitor_BFER::parameters
+::clone() const
 {
-	Monitor::build_args(req_args, opt_args, p);
+	return new Monitor_BFER::parameters(*this);
+}
+
+void Monitor_BFER::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Monitor::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
 
 	req_args[{p+"-size", "K"}] =
 		{"positive_int",
@@ -44,24 +47,44 @@ void Monitor_BFER
 		 "max number of frame errors for each SNR simulation."};
 }
 
-void Monitor_BFER
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Monitor_BFER::parameters
+::store(const arg_val_map &vals)
 {
-	Monitor::store_args(vals, params, p);
+	Monitor::parameters::store(vals);
 
-	if(exist(vals, {p+"-size",    "K"})) params.size           = std::stoi(vals.at({p+"-size",   "K"}));
-	if(exist(vals, {p+"-fra",     "F"})) params.n_frames       = std::stoi(vals.at({p+"-fra",    "F"}));
-	if(exist(vals, {p+"-max-fe",  "e"})) params.n_frame_errors = std::stoi(vals.at({p+"-max-fe", "e"}));
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-size",   "K"})) this->size           = std::stoi(vals.at({p+"-size",   "K"}));
+	if(exist(vals, {p+"-fra",    "F"})) this->n_frames       = std::stoi(vals.at({p+"-fra",    "F"}));
+	if(exist(vals, {p+"-max-fe", "e"})) this->n_frame_errors = std::stoi(vals.at({p+"-max-fe", "e"}));
 }
 
-void Monitor_BFER
-::make_header(params_list& head_mnt, const parameters& params, const bool full)
+void Monitor_BFER::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Monitor::make_header(head_mnt, params, full);
+	Monitor::parameters::get_headers(headers, full);
 
-	head_mnt.push_back(std::make_pair("Frame error count (e)", std::to_string(params.n_frame_errors)));
-	if (full) head_mnt.push_back(std::make_pair("Size (K)", std::to_string(params.size)));
-	if (full) head_mnt.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("Frame error count (e)", std::to_string(this->n_frame_errors)));
+	if (full) headers[p].push_back(std::make_pair("Size (K)", std::to_string(this->size)));
+	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+}
+
+template <typename B>
+module::Monitor_BFER<B>* Monitor_BFER::parameters
+::build() const
+{
+	if (this->type == "STD") return new module::Monitor_BFER<B>(this->size, this->n_frame_errors, this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+module::Monitor_BFER<B>* Monitor_BFER
+::build(const parameters& params)
+{
+	return params.template build<B>();
 }
 
 // ==================================================================================== explicit template instantiation

@@ -13,28 +13,28 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Source::name   = "Source";
 const std::string aff3ct::factory::Source::prefix = "src";
 
-template <typename B>
-module::Source<B>* Source::parameters
-::build() const
+Source::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(Source::name, Source::name, prefix)
 {
-	     if (this->type == "RAND"     ) return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "RAND_FAST") return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "AZCW"     ) return new module::Source_AZCW       <B>(this->K,             this->n_frames);
-	else if (this->type == "USER"     ) return new module::Source_user       <B>(this->K, this->path, this->n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::Source<B>* Source
-::build(const parameters& params)
+Source::parameters
+::~parameters()
 {
-	return params.template build<B>();
 }
 
-void Source
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Source::parameters* Source::parameters
+::clone() const
 {
+	return new Source::parameters(*this);
+}
+
+void Source::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	auto p = this->get_prefix();
+
 	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "number of generated bits (information bits)."};
@@ -57,26 +57,49 @@ void Source
 		 "seed used to initialize the pseudo random generators."};
 }
 
-void Source
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Source::parameters
+::store(const arg_val_map &vals)
 {
-	if(exist(vals, {p+"-info-bits", "K"})) params.K        = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-fra",       "F"})) params.n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-type"          })) params.type     =           vals.at({p+"-type"          });
-	if(exist(vals, {p+"-path"          })) params.path     =           vals.at({p+"-path"          });
-	if(exist(vals, {p+"-seed",      "S"})) params.seed     = std::stoi(vals.at({p+"-seed",      "S"}));
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-info-bits", "K"})) this->K        = std::stoi(vals.at({p+"-info-bits", "K"}));
+	if(exist(vals, {p+"-fra",       "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
+	if(exist(vals, {p+"-type"          })) this->type     =           vals.at({p+"-type"          });
+	if(exist(vals, {p+"-path"          })) this->path     =           vals.at({p+"-path"          });
+	if(exist(vals, {p+"-seed",      "S"})) this->seed     = std::stoi(vals.at({p+"-seed",      "S"}));
 }
 
-void Source
-::make_header(params_list& head_src, const parameters& params, const bool full)
+void Source::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	head_src.push_back(std::make_pair("Type", params.type));
-	head_src.push_back(std::make_pair("Info. bits (K_info)", std::to_string(params.K)));
-	if (full) head_src.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
-	if (params.type == "USER")
-		head_src.push_back(std::make_pair("Path", params.path));
-	if ((params.type == "RAND" || params.type == "RAND_FAST") && full)
-		head_src.push_back(std::make_pair("Seed", std::to_string(params.seed)));
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("Type", this->type));
+	headers[p].push_back(std::make_pair("Info. bits (K_info)", std::to_string(this->K)));
+	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+	if (this->type == "USER")
+		headers[p].push_back(std::make_pair("Path", this->path));
+	if ((this->type == "RAND" || this->type == "RAND_FAST") && full)
+		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
+}
+
+template <typename B>
+module::Source<B>* Source::parameters
+::build() const
+{
+	     if (this->type == "RAND"     ) return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
+	else if (this->type == "RAND_FAST") return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
+	else if (this->type == "AZCW"     ) return new module::Source_AZCW       <B>(this->K,             this->n_frames);
+	else if (this->type == "USER"     ) return new module::Source_user       <B>(this->K, this->path, this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+module::Source<B>* Source
+::build(const parameters& params)
+{
+	return params.template build<B>();
 }
 
 // ==================================================================================== explicit template instantiation

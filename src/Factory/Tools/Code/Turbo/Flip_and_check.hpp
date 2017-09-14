@@ -16,15 +16,14 @@ struct Flip_and_check : public Factory
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters
+	class parameters : public Factory::parameters
 	{
-		virtual ~parameters() {}
-
-		template <typename B = int, typename Q = float>
-		tools::Flip_and_check<B,Q>* build(module::CRC<B> &crc) const;
-
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// required parameters
 		int  size                = -1;
 
+		// optional parameters
 		bool enable              = false;
 		int  q                   = 10;
 		int  n_ite               = 6;
@@ -33,15 +32,27 @@ struct Flip_and_check : public Factory
 		int  ite_step            = 1;
 		int  start_crc_check_ite = 2;
 		int  n_frames            = 1;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Flip_and_check::prefix);
+		virtual ~parameters();
+		virtual Flip_and_check::parameters* clone() const;
+
+		// parameters construction
+		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename Q = float>
+		tools::Flip_and_check<B,Q>* build(module::CRC<B> &crc) const;
+
+	protected:
+		parameters(const std::string n, const std::string p);
 	};
 
 	template <typename B = int, typename Q = float>
 	static tools::Flip_and_check<B,Q>* build(const parameters& params, module::CRC<B> &crc);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_fnc, const parameters& params, const bool full = true);
-
 };
 }
 }

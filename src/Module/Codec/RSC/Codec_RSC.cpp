@@ -79,7 +79,6 @@ template <typename B, typename Q>
 Codec_RSC<B,Q>
 ::~Codec_RSC()
 {
-	this->set_decoder_siho(nullptr);
 }
 
 template <typename B, typename Q>
@@ -106,15 +105,6 @@ void Codec_RSC<B,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-//#include "Tools/types.h"
-//#ifdef MULTI_PREC
-//template class aff3ct::module::Codec_RSC<B_8,Q_8,QD_8>;
-//template class aff3ct::module::Codec_RSC<B_16,Q_16,QD_16>;
-//template class aff3ct::module::Codec_RSC<B_32,Q_32,QD_32>;
-//template class aff3ct::module::Codec_RSC<B_64,Q_64,QD_64>;
-//#else
-//template class aff3ct::module::Codec_RSC<B,Q,QD>;
-//#endif
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Codec_RSC<B_8,Q_8>;

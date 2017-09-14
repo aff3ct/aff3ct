@@ -19,34 +19,28 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Interleaver_core::name   = "Interleaver";
 const std::string aff3ct::factory::Interleaver_core::prefix = "itl";
 
-template <typename T>
-tools::Interleaver_core<T>* Interleaver_core::parameters
-::build() const
+Interleaver_core::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(Interleaver_core::name, Interleaver_core::name, prefix)
 {
-	     if (this->type == "LTE"     ) return new tools::Interleaver_core_LTE          <T>(this->size,                                          this->n_frames);
-	else if (this->type == "CCSDS"   ) return new tools::Interleaver_core_CCSDS        <T>(this->size,                                          this->n_frames);
-	else if (this->type == "DVB-RCS1") return new tools::Interleaver_core_ARP_DVB_RCS1 <T>(this->size,                                          this->n_frames);
-	else if (this->type == "DVB-RCS2") return new tools::Interleaver_core_ARP_DVB_RCS2 <T>(this->size,                                          this->n_frames);
-	else if (this->type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(this->size,               this->seed, this->uniform, this->n_frames);
-	else if (this->type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(this->size, this->n_cols, this->seed, this->uniform, this->n_frames);
-	else if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols,                            this->n_frames);
-	else if (this->type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(this->size,               this->seed, this->uniform, this->n_frames);
-	else if (this->type == "USER"    ) return new tools::Interleaver_core_user         <T>(this->size, this->path,                              this->n_frames);
-	else if (this->type == "NO"      ) return new tools::Interleaver_core_NO           <T>(this->size,                                          this->n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename T>
-tools::Interleaver_core<T>* Interleaver_core
-::build(const parameters &params)
+Interleaver_core::parameters
+::~parameters()
 {
-	return params.template build<T>();
 }
 
-void Interleaver_core
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Interleaver_core::parameters* Interleaver_core::parameters
+::clone() const
 {
+	return new Interleaver_core::parameters(*this);
+}
+
+void Interleaver_core::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	auto p = this->get_prefix();
+
 	req_args[{p+"-size"}] =
 		{"positive_int",
 		 "number of symbols to interleave."};
@@ -77,33 +71,62 @@ void Interleaver_core
 		 "seed used to initialize the pseudo random generators."};
 }
 
-void Interleaver_core
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Interleaver_core::parameters
+::store(const arg_val_map &vals)
 {
-	if(exist(vals, {p+"-size"     })) params.size     = std::stoi(vals.at({p+"-size"     }));
-	if(exist(vals, {p+"-fra",  "F"})) params.n_frames = std::stoi(vals.at({p+"-fra",  "F"}));
-	if(exist(vals, {p+"-type"     })) params.type     =           vals.at({p+"-type"     });
-	if(exist(vals, {p+"-path"     })) params.path     =           vals.at({p+"-path"     });
-	if(exist(vals, {p+"-cols"     })) params.n_cols   = std::stoi(vals.at({p+"-cols"     }));
-	if(exist(vals, {p+"-seed", "S"})) params.seed     = std::stoi(vals.at({p+"-seed", "S"}));
-	if(exist(vals, {p+"-uni"      })) params.uniform  = true;
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-size"     })) this->size     = std::stoi(vals.at({p+"-size"     }));
+	if(exist(vals, {p+"-fra",  "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",  "F"}));
+	if(exist(vals, {p+"-type"     })) this->type     =           vals.at({p+"-type"     });
+	if(exist(vals, {p+"-path"     })) this->path     =           vals.at({p+"-path"     });
+	if(exist(vals, {p+"-cols"     })) this->n_cols   = std::stoi(vals.at({p+"-cols"     }));
+	if(exist(vals, {p+"-seed", "S"})) this->seed     = std::stoi(vals.at({p+"-seed", "S"}));
+	if(exist(vals, {p+"-uni"      })) this->uniform  = true;
 }
 
-void Interleaver_core
-::make_header(params_list& head_itl, const parameters& params, const bool full)
+void Interleaver_core::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	head_itl.push_back(std::make_pair("Type", params.type));
-	if (full) head_itl.push_back(std::make_pair("Size", std::to_string(params.size)));
-	if (full) head_itl.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
-	if (params.type == "USER")
-		head_itl.push_back(std::make_pair("Path", params.path));
-	if (params.type == "RAND_COL" || params.type == "ROW_COL")
-		head_itl.push_back(std::make_pair("Number of columns", std::to_string(params.n_cols)));
-	if (params.type == "RANDOM" || params.type == "GOLDEN" || params.type == "RAND_COL")
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("Type", this->type));
+	if (full) headers[p].push_back(std::make_pair("Size", std::to_string(this->size)));
+	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+	if (this->type == "USER")
+		headers[p].push_back(std::make_pair("Path", this->path));
+	if (this->type == "RAND_COL" || this->type == "ROW_COL")
+		headers[p].push_back(std::make_pair("Number of columns", std::to_string(this->n_cols)));
+	if (this->type == "RANDOM" || this->type == "GOLDEN" || this->type == "RAND_COL")
 	{
-		if (full) head_itl.push_back(std::make_pair("Seed", std::to_string(params.seed)));
-		head_itl.push_back(std::make_pair("Uniform", (params.uniform ? "yes" : "no")));
+		if (full) headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
+		headers[p].push_back(std::make_pair("Uniform", (this->uniform ? "yes" : "no")));
 	}
+}
+
+template <typename T>
+tools::Interleaver_core<T>* Interleaver_core::parameters
+::build() const
+{
+	     if (this->type == "LTE"     ) return new tools::Interleaver_core_LTE          <T>(this->size,                                          this->n_frames);
+	else if (this->type == "CCSDS"   ) return new tools::Interleaver_core_CCSDS        <T>(this->size,                                          this->n_frames);
+	else if (this->type == "DVB-RCS1") return new tools::Interleaver_core_ARP_DVB_RCS1 <T>(this->size,                                          this->n_frames);
+	else if (this->type == "DVB-RCS2") return new tools::Interleaver_core_ARP_DVB_RCS2 <T>(this->size,                                          this->n_frames);
+	else if (this->type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(this->size,               this->seed, this->uniform, this->n_frames);
+	else if (this->type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(this->size, this->n_cols, this->seed, this->uniform, this->n_frames);
+	else if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols,                            this->n_frames);
+	else if (this->type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(this->size,               this->seed, this->uniform, this->n_frames);
+	else if (this->type == "USER"    ) return new tools::Interleaver_core_user         <T>(this->size, this->path,                              this->n_frames);
+	else if (this->type == "NO"      ) return new tools::Interleaver_core_NO           <T>(this->size,                                          this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename T>
+tools::Interleaver_core<T>* Interleaver_core
+::build(const parameters &params)
+{
+	return params.template build<T>();
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -11,6 +11,50 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_polar::name   = "Encoder Polar";
 const std::string aff3ct::factory::Encoder_polar::prefix = "enc";
 
+Encoder_polar::parameters
+::parameters(const std::string prefix)
+: Encoder::parameters(Encoder_polar::name, prefix)
+{
+	this->type = "POLAR";
+}
+
+Encoder_polar::parameters
+::~parameters()
+{
+}
+
+Encoder_polar::parameters* Encoder_polar::parameters
+::clone() const
+{
+	return new Encoder_polar::parameters(*this);
+}
+
+void Encoder_polar::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Encoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type"}][2] += ", POLAR";
+
+	opt_args[{p+"-no-sys"}] =
+		{"",
+		 "disable the systematic encoding."};
+}
+
+void Encoder_polar::parameters
+::store(const arg_val_map &vals)
+{
+	Encoder::parameters::store(vals);
+}
+
+void Encoder_polar::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Encoder::parameters::get_headers(headers, full);
+}
+
 template <typename B>
 module::Encoder<B>* Encoder_polar::parameters
 ::build(const std::vector<bool> &frozen_bits) const
@@ -26,32 +70,6 @@ module::Encoder<B>* Encoder_polar
 ::build(const parameters& params, const std::vector<bool> &frozen_bits)
 {
 	return params.template build<B>(frozen_bits);
-}
-
-void Encoder_polar
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Encoder::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-type"}][2] += ", POLAR";
-
-	opt_args[{p+"-no-sys"}] =
-		{"",
-		 "disable the systematic encoding."};
-}
-
-void Encoder_polar
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type = "POLAR";
-
-	Encoder::store_args(vals, params, p);
-}
-
-void Encoder_polar
-::make_header(params_list& head_enc, const parameters& params, const bool full)
-{
-	Encoder::make_header(head_enc, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

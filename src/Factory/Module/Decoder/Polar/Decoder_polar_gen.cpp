@@ -565,223 +565,220 @@
 #include "Tools/Code/Polar/API/API_polar_static_intra_32bit.hpp"
 #endif
 
-#include "Decoder_polar_gen.hpp"
+#include "Decoder_polar.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Decoder_polar_gen::name   = "Decoder Polar generated";
-const std::string aff3ct::factory::Decoder_polar_gen::prefix = "dec";
-
 template <typename B, typename Q, class API_polar>
-module::Decoder_SIHO<B,Q>* Decoder_polar_gen
-::_build(const Decoder_polar::parameters& params, module::CRC<B> *crc)
+module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
+::_build_gen(module::CRC<B> *crc) const
 {
-	if (params.type == "SC")
+	if (this->type == "SC")
 	{
 		// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
-		if (params.implem == "N4_K2_SNR25"           ) return new module::Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N4_K2_SNR25"           ) return new module::Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K4_SNR25
-		if (params.implem == "N8_K4_SNR25"           ) return new module::Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N8_K4_SNR25"           ) return new module::Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K8_SNR25
-		if (params.implem == "N16_K8_SNR25"          ) return new module::Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N16_K8_SNR25"          ) return new module::Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K16_SNR25
-		if (params.implem == "N32_K16_SNR25"         ) return new module::Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32_K16_SNR25"         ) return new module::Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K32_SNR25
-		if (params.implem == "N64_K32_SNR25"         ) return new module::Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N64_K32_SNR25"         ) return new module::Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K64_SNR25
-		if (params.implem == "N128_K64_SNR25"        ) return new module::Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N128_K64_SNR25"        ) return new module::Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K128_SNR25
-		if (params.implem == "N256_K128_SNR25"       ) return new module::Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N256_K128_SNR25"       ) return new module::Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K256_SNR25
-		if (params.implem == "N512_K256_SNR25"       ) return new module::Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N512_K256_SNR25"       ) return new module::Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K512_SNR25
-		if (params.implem == "N1024_K512_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N1024_K512_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-		if (params.implem == "N2048_K1024_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K1024_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR25
-		if (params.implem == "N4096_K2048_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N4096_K2048_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR33
-		if (params.implem == "N4096_K2048_SNR33"     ) return new module::Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N4096_K2048_SNR33"     ) return new module::Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K4096_SNR25
-		if (params.implem == "N8192_K4096_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N8192_K4096_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K8192_SNR25
-		if (params.implem == "N16384_K8192_SNR25"    ) return new module::Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N16384_K8192_SNR25"    ) return new module::Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR18
-		if (params.implem == "N32768_K16384_SNR18"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K16384_SNR18"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-		if (params.implem == "N32768_K16384_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K16384_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K32768_SNR25
-		if (params.implem == "N65536_K32768_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N65536_K32768_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K65536_SNR25
-		if (params.implem == "N131072_K65536_SNR25"  ) return new module::Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N131072_K65536_SNR25"  ) return new module::Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K131072_SNR25
-		if (params.implem == "N262144_K131072_SNR25" ) return new module::Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N262144_K131072_SNR25" ) return new module::Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K262144_SNR25
-		if (params.implem == "N524288_K262144_SNR25" ) return new module::Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N524288_K262144_SNR25" ) return new module::Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
-		if (params.implem == "N1048576_K524288_SNR25") return new module::Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N1048576_K524288_SNR25") return new module::Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 		// RATE 5/6
 #ifdef ENABLE_DECODER_SC_FAST_N4_K3_SNR40
-		if (params.implem == "N4_K3_SNR40"           ) return new module::Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N4_K3_SNR40"           ) return new module::Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K7_SNR40
-		if (params.implem == "N8_K7_SNR40"           ) return new module::Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N8_K7_SNR40"           ) return new module::Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K13_SNR40
-		if (params.implem == "N16_K13_SNR40"         ) return new module::Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N16_K13_SNR40"         ) return new module::Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K27_SNR40
-		if (params.implem == "N32_K27_SNR40"         ) return new module::Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32_K27_SNR40"         ) return new module::Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K53_SNR40
-		if (params.implem == "N64_K53_SNR40"         ) return new module::Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N64_K53_SNR40"         ) return new module::Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K107_SNR40
-		if (params.implem == "N128_K107_SNR40"       ) return new module::Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N128_K107_SNR40"       ) return new module::Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K213_SNR40
-		if (params.implem == "N256_K213_SNR40"       ) return new module::Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N256_K213_SNR40"       ) return new module::Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K427_SNR40
-		if (params.implem == "N512_K427_SNR40"       ) return new module::Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N512_K427_SNR40"       ) return new module::Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K853_SNR40
-		if (params.implem == "N1024_K853_SNR40"      ) return new module::Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N1024_K853_SNR40"      ) return new module::Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1707_SNR40
-		if (params.implem == "N2048_K1707_SNR40"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K1707_SNR40"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K3413_SNR40
-		if (params.implem == "N4096_K3413_SNR40"     ) return new module::Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N4096_K3413_SNR40"     ) return new module::Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K6827_SNR40
-		if (params.implem == "N8192_K6827_SNR40"     ) return new module::Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N8192_K6827_SNR40"     ) return new module::Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K13653_SNR40
-		if (params.implem == "N16384_K13653_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N16384_K13653_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27307_SNR40
-		if (params.implem == "N32768_K27307_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K27307_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K54613_SNR40
-		if (params.implem == "N65536_K54613_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N65536_K54613_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K109227_SNR40
-		if (params.implem == "N131072_K109227_SNR40" ) return new module::Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N131072_K109227_SNR40" ) return new module::Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K218453_SNR40
-		if (params.implem == "N262144_K218453_SNR40" ) return new module::Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N262144_K218453_SNR40" ) return new module::Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K436907_SNR40
-		if (params.implem == "N524288_K436907_SNR40" ) return new module::Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N524288_K436907_SNR40" ) return new module::Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K873813_SNR40
-		if (params.implem == "N1048576_K873813_SNR40") return new module::Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N1048576_K873813_SNR40") return new module::Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 		// RATE 0.84
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27568_SNR40
-		if (params.implem == "N32768_K27568_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K27568_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 		// RATE 9/10
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR40
-		if (params.implem == "N2048_K1843_SNR40"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K1843_SNR40"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K14746_SNR40
-		if (params.implem == "N16384_K14746_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N16384_K14746_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29492_SNR40
-		if (params.implem == "N32768_K29492_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K29492_SNR40"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
-		// RATE 1/10, 2/10, ..., 9/10 => params.N_cw = 2048
+		// RATE 1/10, 2/10, ..., 9/10 => this->N_cw = 2048
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K205_SNR25
-		if (params.implem == "N2048_K205_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K205_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K410_SNR25
-		if (params.implem == "N2048_K410_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K410_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K614_SNR25
-		if (params.implem == "N2048_K614_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K614_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K819_SNR25
-		if (params.implem == "N2048_K819_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K819_SNR25"      ) return new module::Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-//		if (params.implem == "N2048_K1024_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+//		if (this->implem == "N2048_K1024_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1229_SNR25
-		if (params.implem == "N2048_K1229_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K1229_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1434_SNR25
-		if (params.implem == "N2048_K1434_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K1434_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1638_SNR25
-		if (params.implem == "N2048_K1638_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K1638_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR25
-		if (params.implem == "N2048_K1843_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N2048_K1843_SNR25"     ) return new module::Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
-		// RATE 1/10, 2/10, ..., 9/10 => params.N_cw = 32768
+		// RATE 1/10, 2/10, ..., 9/10 => this->N_cw = 32768
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K3277_SNR25
-		if (params.implem == "N32768_K3277_SNR25"    ) return new module::Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K3277_SNR25"    ) return new module::Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K6554_SNR25
-		if (params.implem == "N32768_K6554_SNR25"    ) return new module::Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K6554_SNR25"    ) return new module::Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K9830_SNR25
-		if (params.implem == "N32768_K9830_SNR25"    ) return new module::Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K9830_SNR25"    ) return new module::Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K13107_SNR25
-		if (params.implem == "N32768_K13107_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K13107_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-//		if (params.implem == "N32768_K16384_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+//		if (this->implem == "N32768_K16384_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25
-		if (params.implem == "N32768_K19661_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K19661_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K22938_SNR25
-		if (params.implem == "N32768_K22938_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K22938_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25
-		if (params.implem == "N32768_K26214_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K26214_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
-		if (params.implem == "N32768_K29491_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, Q, API_polar>(params.K, params.N_cw,                 params.n_frames);
+		if (this->implem == "N32768_K29491_SNR25"   ) return new module::Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, Q, API_polar>(this->K, this->N_cw,                 this->n_frames);
 #endif
 	}
-	else if (params.type == "SCL" && crc != nullptr && crc->get_size() > 0)
+	else if (this->type == "SCL" && crc != nullptr && crc->get_size() > 0)
 	{
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
-		if (params.implem == "CA_N4_K2_SNR25"        ) return new module::Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25       <B, Q, API_polar>(params.K, params.N_cw, params.L, *crc, params.n_frames);
+		if (this->implem == "CA_N4_K2_SNR25"        ) return new module::Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25       <B, Q, API_polar>(this->K, this->N_cw, this->L, *crc, this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
-		if (params.implem == "CA_N2048_K1755_SNR35"  ) return new module::Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35 <B, Q, API_polar>(params.K, params.N_cw, params.L, *crc, params.n_frames);
+		if (this->implem == "CA_N2048_K1755_SNR35"  ) return new module::Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35 <B, Q, API_polar>(this->K, this->N_cw, this->L, *crc, this->n_frames);
 #endif
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N256_K64_SNR30
-		if (params.implem == "CA_N256_K64_SNR30"     ) return new module::Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30    <B, Q, API_polar>(params.K, params.N_cw, params.L, *crc, params.n_frames);
+		if (this->implem == "CA_N256_K64_SNR30"     ) return new module::Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30    <B, Q, API_polar>(this->K, this->N_cw, this->L, *crc, this->n_frames);
 #endif
 	}
 
@@ -789,12 +786,12 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_gen
 }
 
 template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_polar_gen
-::build(const Decoder_polar::parameters& params, module::CRC<B> *crc)
+module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
+::build_gen(module::CRC<B> *crc) const
 {
-	if (params.systematic)
+	if (this->systematic)
 	{
-		if (params.simd_strategy == "INTER" && params.type == "SC")
+		if (this->simd_strategy == "INTER" && this->type == "SC")
 		{
 			if (typeid(B) == typeid(signed char))
 			{
@@ -811,7 +808,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_gen
 				using API_polar = tools::API_polar_static_inter<B,Q>;
 #endif
 #endif
-				return _build<B,Q,API_polar>(params, crc);
+				return _build_gen<B,Q,API_polar>(crc);
 			}
 			else
 			{
@@ -820,10 +817,10 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_gen
 #else
 				using API_polar = tools::API_polar_static_inter<B,Q>;
 #endif
-				return _build<B,Q,API_polar>(params, crc);
+				return _build_gen<B,Q,API_polar>(crc);
 			}
 		}
-		else if (params.simd_strategy == "INTRA")
+		else if (this->simd_strategy == "INTRA")
 		{
 			if (typeid(B) == typeid(signed char))
 			{
@@ -832,7 +829,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_gen
 #else
 				using API_polar = tools::API_polar_static_intra_8bit<B,Q>;
 #endif
-				return _build<B,Q,API_polar>(params, crc);
+				return _build_gen<B,Q,API_polar>(crc);
 			}
 			else if (typeid(B) == typeid(short))
 			{
@@ -841,7 +838,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_gen
 #else
 				using API_polar = tools::API_polar_static_intra_16bit<B,Q>;
 #endif
-				return _build<B,Q,API_polar>(params, crc);
+				return _build_gen<B,Q,API_polar>(crc);
 			}
 			else if (typeid(B) == typeid(int))
 			{
@@ -850,24 +847,31 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_gen
 #else
 				using API_polar = tools::API_polar_static_intra_32bit<B,Q>;
 #endif
-				return _build<B,Q,API_polar>(params, crc);
+				return _build_gen<B,Q,API_polar>(crc);
 			}
 		}
-		else if (params.simd_strategy.empty())
+		else if (this->simd_strategy.empty())
 		{
 #ifdef API_POLAR_DYNAMIC
 			using API_polar = tools::API_polar_dynamic_seq<B,Q>;
 #else
 			using API_polar = tools::API_polar_static_seq<B,Q>;
 #endif
-			return _build<B,Q,API_polar>(params, crc);
+			return _build_gen<B,Q,API_polar>(crc);
 		}
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-const std::vector<bool>& Decoder_polar_gen
+template <typename B, typename Q>
+module::Decoder_SIHO<B,Q>* Decoder_polar
+::build_gen(const parameters& params, module::CRC<B> *crc)
+{
+	return params.template build_gen<B,Q>(crc);
+}
+
+const std::vector<bool>& Decoder_polar
 ::get_frozen_bits(const std::string implem)
 {
 	// RATE 1/2
@@ -1086,32 +1090,14 @@ const std::vector<bool>& Decoder_polar_gen
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }
 
-void Decoder_polar_gen
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Decoder_polar::build_args(req_args, opt_args, p);
-}
-
-void Decoder_polar_gen
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	Decoder_polar::store_args(vals, params, p);
-}
-
-void Decoder_polar_gen
-::make_header(params_list& head_dec, const Decoder_polar::parameters& params, const bool full)
-{
-	Decoder_polar::make_header(head_dec, params, full);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar_gen::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_polar_gen::parameters&, module::CRC<B_8 >*);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar_gen::build<B_16,Q_16>(const aff3ct::factory::Decoder_polar_gen::parameters&, module::CRC<B_16>*);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar_gen::build<B_32,Q_32>(const aff3ct::factory::Decoder_polar_gen::parameters&, module::CRC<B_32>*);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar_gen::build<B_64,Q_64>(const aff3ct::factory::Decoder_polar_gen::parameters&, module::CRC<B_64>*);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::build_gen<B_8 ,Q_8 >(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B_8 >*);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::build_gen<B_16,Q_16>(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B_16>*);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::build_gen<B_32,Q_32>(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B_32>*);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::build_gen<B_64,Q_64>(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B_64>*);
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar_gen::build<B,Q>(const aff3ct::factory::Decoder_polar_gen::parameters&, module::CRC<B>*);
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build_gen<B,Q>(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B>*);
 #endif
 // ==================================================================================== explicit template instantiation

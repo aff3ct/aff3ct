@@ -11,6 +11,60 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_repetition::name   = "Decoder Repetition";
 const std::string aff3ct::factory::Decoder_repetition::prefix = "dec";
 
+Decoder_repetition::parameters
+::parameters(const std::string prefix)
+: Decoder::parameters(Decoder_repetition::name, prefix)
+{
+	this->type   = "REPETITION";
+	this->implem = "STD";
+}
+
+Decoder_repetition::parameters
+::~parameters()
+{
+}
+
+Decoder_repetition::parameters* Decoder_repetition::parameters
+::clone() const
+{
+	return new Decoder_repetition::parameters(*this);
+}
+
+void Decoder_repetition::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Decoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type", "D"}].push_back("REPETITION");
+	opt_args[{p+"-implem"   }].push_back("STD, FAST");
+
+	opt_args[{p+"-no-buff"}] =
+		{"",
+		 "does not suppose a buffered encoding."};
+}
+
+void Decoder_repetition::parameters
+::store(const arg_val_map &vals)
+{
+	Decoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
+}
+
+void Decoder_repetition::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Decoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	if (full) headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
+}
+
 template <typename B, typename R>
 module::Decoder_SIHO<B,R>* Decoder_repetition::parameters
 ::build() const
@@ -29,38 +83,6 @@ module::Decoder_SIHO<B,R>* Decoder_repetition
 ::build(const parameters &params)
 {
 	return params.template build<B,R>();
-}
-
-void Decoder_repetition
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Decoder::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-type", "D"}].push_back("REPETITION");
-	opt_args[{p+"-implem"   }].push_back("STD, FAST");
-
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "does not suppose a buffered encoding."};
-}
-
-void Decoder_repetition
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type   = "REPETITION";
-	params.implem = "STD";
-
-	Decoder::store_args(vals, params, p);
-
-	if(exist(vals, {p+"-no-buff"})) params.buffered = false;
-}
-
-void Decoder_repetition
-::make_header(params_list& head_dec, const parameters& params, const bool full)
-{
-	Decoder::make_header(head_dec, params, full);
-
-	if (full) head_dec.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 }
 
 // ==================================================================================== explicit template instantiation

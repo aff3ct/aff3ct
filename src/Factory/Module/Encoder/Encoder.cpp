@@ -13,28 +13,34 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder::name   = "Encoder";
 const std::string aff3ct::factory::Encoder::prefix = "enc";
 
-template <typename B>
-module::Encoder<B>* Encoder::parameters
-::build() const
+Encoder::parameters
+::parameters(const std::string prefix)
+: Factory::parameters(Encoder::name, Encoder::name, prefix)
 {
-	     if (this->type == "NO"   ) return new module::Encoder_NO   <B>(this->K,                         this->n_frames);
-	else if (this->type == "AZCW" ) return new module::Encoder_AZCW <B>(this->K, this->N_cw,             this->n_frames);
-	else if (this->type == "COSET") return new module::Encoder_coset<B>(this->K, this->N_cw, this->seed, this->n_frames);
-	else if (this->type == "USER" ) return new module::Encoder_user <B>(this->K, this->N_cw, this->path, this->n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::Encoder<B>* Encoder
-::build(const parameters &params)
+Encoder::parameters
+::parameters(const std::string name, const std::string prefix)
+: Factory::parameters(name, Encoder::name, prefix)
 {
-	return params.template build<B>();
 }
 
-void Encoder
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Encoder::parameters
+::~parameters()
 {
+}
+
+Encoder::parameters* Encoder::parameters
+::clone() const
+{
+	return new Encoder::parameters(*this);
+}
+
+void Encoder::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	auto p = this->get_prefix();
+
 	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (information bits)."};
@@ -61,34 +67,56 @@ void Encoder
 		 "seed used to initialize the pseudo random generators."};
 }
 
-void Encoder
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Encoder::parameters
+::store(const arg_val_map &vals)
 {
-	if(exist(vals, {p+"-info-bits", "K"})) params.K          = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-cw-size",   "N"})) params.N_cw       = std::stoi(vals.at({p+"-cw-size",   "N"}));
-	if(exist(vals, {p+"-fra",       "F"})) params.n_frames   = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-seed",      "S"})) params.seed       = std::stoi(vals.at({p+"-seed",      "S"}));
-	if(exist(vals, {p+"-type"          })) params.type       =           vals.at({p+"-type"          });
-	if(exist(vals, {p+"-path"          })) params.path       =           vals.at({p+"-path"          });
-	if(exist(vals, {p+"-no-sys"        })) params.systematic = false;
+	auto p = this->get_prefix();
 
-	params.R = (float)params.K / (float)params.N_cw;
+	if(exist(vals, {p+"-info-bits", "K"})) this->K          = std::stoi(vals.at({p+"-info-bits", "K"}));
+	if(exist(vals, {p+"-cw-size",   "N"})) this->N_cw       = std::stoi(vals.at({p+"-cw-size",   "N"}));
+	if(exist(vals, {p+"-fra",       "F"})) this->n_frames   = std::stoi(vals.at({p+"-fra",       "F"}));
+	if(exist(vals, {p+"-seed",      "S"})) this->seed       = std::stoi(vals.at({p+"-seed",      "S"}));
+	if(exist(vals, {p+"-type"          })) this->type       =           vals.at({p+"-type"          });
+	if(exist(vals, {p+"-path"          })) this->path       =           vals.at({p+"-path"          });
+	if(exist(vals, {p+"-no-sys"        })) this->systematic = false;
+
+	this->R = (float)this->K / (float)this->N_cw;
 }
 
-void Encoder
-::make_header(params_list& head_enc, const parameters& params, const bool full)
+void Encoder::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	head_enc.push_back(std::make_pair("Type", params.type));
-	if (full) head_enc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
-	if (full) head_enc.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
-	if (full) head_enc.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
-	if (full) head_enc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
-	head_enc.push_back(std::make_pair("Systematic", ((params.systematic) ? "yes" : "no")));
-	if (params.type == "USER")
-		head_enc.push_back(std::make_pair("Path", params.path));
-	if (params.type == "COSET" && full)
-		head_enc.push_back(std::make_pair("Seed", std::to_string(params.seed)));
+	auto p = this->get_prefix();
 
+	headers[p].push_back(std::make_pair("Type", this->type));
+	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
+	if (full) headers[p].push_back(std::make_pair("Codeword size (N)", std::to_string(this->N_cw)));
+	if (full) headers[p].push_back(std::make_pair("Code rate (R)", std::to_string(this->R)));
+	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+	headers[p].push_back(std::make_pair("Systematic", ((this->systematic) ? "yes" : "no")));
+	if (this->type == "USER")
+		headers[p].push_back(std::make_pair("Path", this->path));
+	if (this->type == "COSET" && full)
+		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
+}
+
+template <typename B>
+module::Encoder<B>* Encoder::parameters
+::build() const
+{
+	     if (this->type == "NO"   ) return new module::Encoder_NO   <B>(this->K,                         this->n_frames);
+	else if (this->type == "AZCW" ) return new module::Encoder_AZCW <B>(this->K, this->N_cw,             this->n_frames);
+	else if (this->type == "COSET") return new module::Encoder_coset<B>(this->K, this->N_cw, this->seed, this->n_frames);
+	else if (this->type == "USER" ) return new module::Encoder_user <B>(this->K, this->N_cw, this->path, this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+module::Encoder<B>* Encoder
+::build(const parameters &params)
+{
+	return params.template build<B>();
 }
 
 // ==================================================================================== explicit template instantiation

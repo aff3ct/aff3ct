@@ -50,7 +50,7 @@ Codec_RA<B,Q>
 	pct_params.n_frames = enc_params.n_frames;
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
-	this->set_interleaver(factory::Interleaver_core::build<>(dec_params.itl.core));
+	this->set_interleaver(factory::Interleaver_core::build<>(*dec_params.itl->core));
 
 	try
 	{

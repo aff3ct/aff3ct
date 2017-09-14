@@ -17,24 +17,32 @@ struct Encoder_LDPC : public Encoder
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Encoder::parameters
+	class parameters : public Encoder::parameters
 	{
-		virtual ~parameters() {}
-
-		template <typename B = int>
-		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const;
-
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// optional
 		std::string H_alist_path = "";
 		std::string G_alist_path = "";
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Encoder_LDPC::prefix);
+		virtual ~parameters();
+		Encoder_LDPC::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int>
+		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const;
 	};
 
 	template <typename B = int>
 	static module::Encoder_LDPC<B>* build(const parameters &params, const tools::Sparse_matrix &G,
 	                                                                const tools::Sparse_matrix &H);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_enc, const parameters& params, const bool full = true);
 };
 }
 }

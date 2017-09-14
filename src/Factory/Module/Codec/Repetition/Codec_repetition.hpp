@@ -9,35 +9,42 @@
 
 #include "Module/Codec/Repetition/Codec_repetition.hpp"
 
-#include "../Codec.hpp"
+#include "../Codec_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace factory
 {
-struct Codec_repetition : public Codec
+struct Codec_repetition : public Codec_SIHO
 {
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Codec::parameters
+	class parameters : public Codec_SIHO::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// depending parameters
+		Encoder_repetition::parameters *enc;
+		Decoder_repetition::parameters *dec;
 
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Codec_repetition::prefix);
+		virtual ~parameters();
+		Codec_repetition::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
 		template <typename B = int, typename Q = float>
-		module::Codec_repetition<B,Q>* build() const;
-
-		Encoder_repetition::parameters enc;
-		Decoder_repetition::parameters dec;
+		module::Codec_repetition<B,Q>* build(module::CRC<B> *crc = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Codec_repetition<B,Q>* build(const parameters &params);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_enc, params_list& head_dec, const parameters& params,
-	                        const bool full = true);
+	static module::Codec_repetition<B,Q>* build(const parameters &params, module::CRC<B> *crc = nullptr);
 };
 }
 }

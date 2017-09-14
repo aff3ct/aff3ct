@@ -17,21 +17,29 @@ struct Encoder_polar : public Encoder
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Encoder::parameters
+	class parameters : public Encoder::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// empty
 
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Encoder_polar::prefix);
+		virtual ~parameters();
+		Encoder_polar::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
 		template <typename B = int>
 		module::Encoder<B>* build(const std::vector<bool> &frozen_bits) const;
 	};
 
 	template <typename B = int>
-	static module::Encoder<B>* build(const parameters        &params,
-	                                 const std::vector<bool> &frozen_bits);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_enc, const parameters& params, const bool full = true);
+	static module::Encoder<B>* build(const parameters &params, const std::vector<bool> &frozen_bits);
 };
 }
 }

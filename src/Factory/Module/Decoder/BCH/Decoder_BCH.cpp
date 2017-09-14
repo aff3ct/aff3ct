@@ -11,6 +11,69 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_BCH::name   = "Decoder BCH";
 const std::string aff3ct::factory::Decoder_BCH::prefix = "dec";
 
+Decoder_BCH::parameters
+::parameters(const std::string prefix)
+: Decoder::parameters(Decoder_BCH::name, prefix)
+{
+	this->type   = "ALGEBRAIC";
+	this->implem = "STD";
+}
+
+Decoder_BCH::parameters
+::~parameters()
+{
+}
+
+Decoder_BCH::parameters* Decoder_BCH::parameters
+::clone() const
+{
+	return new Decoder_BCH::parameters(*this);
+}
+
+void Decoder_BCH::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Decoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-corr-pow", "T"}] =
+		{"positive_int",
+		 "correction power of the BCH code."};
+}
+
+void Decoder_BCH::parameters
+::store(const arg_val_map &vals)
+{
+	Decoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	this->m = (int)std::ceil(std::log2(this->N_cw));
+	if (this->m == 0)
+	{
+		std::stringstream message;
+		message << "The Gallois Field order is null (because N_cw = " << this->N_cw << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (exist(vals, {p+"-corr-pow", "T"}))
+		this->t = std::stoi(vals.at({p+"-corr-pow", "T"}));
+	else
+		this->t = (this->N_cw - this->K) / this->m;
+}
+
+void Decoder_BCH::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Decoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("Galois field order (m)", std::to_string(this->m)));
+	headers[p].push_back(std::make_pair("Correction power (T)",   std::to_string(this->t)));
+}
+
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_BCH::parameters
 ::build(const tools::Galois &GF) const
@@ -28,47 +91,6 @@ module::Decoder_SIHO<B,Q>* Decoder_BCH
 ::build(const parameters &params, const tools::Galois &GF)
 {
 	return params.template build<B,Q>(GF);
-}
-
-void Decoder_BCH
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Decoder::build_args(req_args, opt_args, p);
-
-	opt_args[{p+"-corr-pow", "T"}] =
-		{"positive_int",
-		 "correction power of the BCH code."};
-}
-
-void Decoder_BCH
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type   = "ALGEBRAIC";
-	params.implem = "STD";
-
-	Decoder::store_args(vals, params, p);
-
-	params.m = (int)std::ceil(std::log2(params.N_cw));
-	if (params.m == 0)
-	{
-		std::stringstream message;
-		message << "The Gallois Field order is null (because N_cw = " << params.N_cw << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (exist(vals, {p+"-corr-pow", "T"}))
-		params.t = std::stoi(vals.at({p+"-corr-pow", "T"}));
-	else
-		params.t = (params.N_cw - params.K) / params.m;
-}
-
-void Decoder_BCH
-::make_header(params_list& head_dec, const parameters& params, const bool full)
-{
-	Decoder::make_header(head_dec, params, full);
-
-	head_dec.push_back(std::make_pair("Galois field order (m)", std::to_string(params.m)));
-	head_dec.push_back(std::make_pair("Correction power (T)",   std::to_string(params.t)));
 }
 
 // ==================================================================================== explicit template instantiation

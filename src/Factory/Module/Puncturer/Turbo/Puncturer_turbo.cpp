@@ -12,26 +12,31 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Puncturer_turbo::name   = "Puncturer Turbo";
 const std::string aff3ct::factory::Puncturer_turbo::prefix = "pct";
 
-template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer_turbo::parameters
-::build() const
+Puncturer_turbo::parameters
+::parameters(const std::string prefix)
+: Puncturer::parameters(Puncturer_turbo::name, prefix)
 {
-	if (this->type == "TURBO") return new module::Puncturer_turbo<B,Q>(this->K, this->N, this->tail_length, this->pattern, this->buffered, this->n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	this->type = "TURBO";
 }
 
-template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer_turbo
-::build(const parameters &params)
+Puncturer_turbo::parameters
+::~parameters()
 {
-	return params.template build<B,Q>();
 }
 
-void Puncturer_turbo
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Puncturer_turbo::parameters* Puncturer_turbo::parameters
+::clone() const
 {
-	Puncturer::build_args(req_args, opt_args, p);
+	return new Puncturer_turbo::parameters(*this);
+}
+
+void Puncturer_turbo::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Puncturer::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
+
 	req_args.erase({p+"-fra-size", "N"});
 
 	opt_args[{p+"-type"}][2] += ", TURBO";
@@ -118,35 +123,53 @@ int compute_N(const int K, const int tail_bits,  const std::string pattern)
 	return N;
 }
 
-void Puncturer_turbo
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Puncturer_turbo::parameters
+::store(const arg_val_map &vals)
 {
-	params.type = "TURBO";
+	Puncturer::parameters::store(vals);
 
-	Puncturer::store_args(vals, params, p);
+	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-pattern"    })) params.pattern     =           vals.at({p+"-pattern"    });
-	if(exist(vals, {p+"-tail-length"})) params.tail_length = std::stoi(vals.at({p+"-tail-length"}));
-	if(exist(vals, {p+"-no-buff"    })) params.buffered    = false;
+	if(exist(vals, {p+"-pattern"    })) this->pattern     =           vals.at({p+"-pattern"    });
+	if(exist(vals, {p+"-tail-length"})) this->tail_length = std::stoi(vals.at({p+"-tail-length"}));
+	if(exist(vals, {p+"-no-buff"    })) this->buffered    = false;
 
-	params.N_cw = 3 * params.K + params.tail_length;
-	params.N    = compute_N(params.K, params.tail_length, params.pattern);
+	this->N_cw = 3 * this->K + this->tail_length;
+	this->N    = compute_N(this->K, this->tail_length, this->pattern);
 
-	if (params.N == params.N_cw)
-		params.type = "NO";
+	if (this->N == this->N_cw)
+		this->type = "NO";
 }
 
-void Puncturer_turbo
-::make_header(params_list& head_pct, const parameters& params, const bool full)
+void Puncturer_turbo::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Puncturer::make_header(head_pct, params, full);
+	Puncturer::parameters::get_headers(headers, full);
 
-	if (params.type != "NO")
+	auto p = this->get_prefix();
+
+	if (this->type != "NO")
 	{
-		head_pct.push_back(std::make_pair(std::string("Pattern"), std::string("{" + params.pattern) + "}"));
-		if (full) head_pct.push_back(std::make_pair(std::string("Tail length"), std::to_string(params.tail_length)));
-		if (full) head_pct.push_back(std::make_pair(std::string("Buffered"), params.buffered ? "on" : "off"));
+		headers[p].push_back(std::make_pair(std::string("Pattern"), std::string("{" + this->pattern) + "}"));
+		if (full) headers[p].push_back(std::make_pair(std::string("Tail length"), std::to_string(this->tail_length)));
+		if (full) headers[p].push_back(std::make_pair(std::string("Buffered"), this->buffered ? "on" : "off"));
 	}
+}
+
+template <typename B, typename Q>
+module::Puncturer<B,Q>* Puncturer_turbo::parameters
+::build() const
+{
+	if (this->type == "TURBO") return new module::Puncturer_turbo<B,Q>(this->K, this->N, this->tail_length, this->pattern, this->buffered, this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q>
+module::Puncturer<B,Q>* Puncturer_turbo
+::build(const parameters &params)
+{
+	return params.template build<B,Q>();
 }
 
 // ==================================================================================== explicit template instantiation

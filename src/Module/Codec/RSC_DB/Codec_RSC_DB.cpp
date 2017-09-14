@@ -79,7 +79,6 @@ template <typename B, typename Q>
 Codec_RSC_DB<B,Q>
 ::~Codec_RSC_DB()
 {
-	this->set_decoder_siho(nullptr);
 }
 
 // ==================================================================================== explicit template instantiation 

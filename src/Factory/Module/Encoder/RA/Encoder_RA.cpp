@@ -10,6 +10,64 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_RA::name   = "Encoder RA";
 const std::string aff3ct::factory::Encoder_RA::prefix = "enc";
 
+Encoder_RA::parameters
+::parameters(const std::string prefix)
+: Encoder::parameters(Encoder_RA::name, prefix),
+  itl(new Interleaver::parameters("itl"))
+{
+	this->type = "RA";
+}
+
+Encoder_RA::parameters* Encoder_RA::parameters
+::clone() const
+{
+	auto clone = new Encoder_RA::parameters(*this);
+
+	if (itl != nullptr) { clone->itl = itl->clone(); }
+
+	return clone;
+}
+
+Encoder_RA::parameters
+::~parameters()
+{
+	if (itl != nullptr) { delete itl; itl = nullptr; }
+}
+
+void Encoder_RA::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Encoder::parameters::get_description(req_args, opt_args);
+
+	this->itl->get_description(req_args, opt_args);
+
+	req_args.erase({"itl-size"    });
+	opt_args.erase({"itl-fra", "F"});
+
+	auto p = this->get_prefix();
+
+	opt_args[{p+"-type"}][2] += ", RA";
+}
+
+void Encoder_RA::parameters
+::store(const arg_val_map &vals)
+{
+	Encoder::parameters::store(vals);
+
+	this->itl->core->size     = this->N_cw;
+	this->itl->core->n_frames = this->n_frames;
+
+	this->itl->store(vals);
+}
+
+void Encoder_RA::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+{
+	Encoder::parameters::get_headers(headers, full);
+
+	this->itl->get_headers(headers, full);
+}
+
 template <typename B>
 module::Encoder<B>* Encoder_RA::parameters
 ::build(const module::Interleaver<B> &itl) const
@@ -24,36 +82,6 @@ module::Encoder<B>* Encoder_RA
 ::build(const parameters& params, const module::Interleaver<B> &itl)
 {
 	return params.template build<B>(itl);
-}
-
-void Encoder_RA
-::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
-{
-	Encoder::build_args(req_args, opt_args, p);
-	Interleaver::build_args(req_args, opt_args, "itl");
-	req_args.erase({"itl-size"    });
-	opt_args.erase({"itl-fra", "F"});
-
-	opt_args[{p+"-type"}][2] += ", RA";
-}
-
-void Encoder_RA
-::store_args(const arg_val_map &vals, parameters &params, const std::string p)
-{
-	params.type = "RA";
-
-	Encoder::store_args(vals, params, p);
-
-	params.itl.core.size     = params.N_cw;
-	params.itl.core.n_frames = params.n_frames;
-	Interleaver::store_args(vals, params.itl, "itl");
-}
-
-void Encoder_RA
-::make_header(params_list& head_enc, params_list& head_itl, const parameters& params, const bool full)
-{
-	Encoder    ::make_header(head_enc, params,     full);
-	Interleaver::make_header(head_itl, params.itl, full);
 }
 
 // ==================================================================================== explicit template instantiation
