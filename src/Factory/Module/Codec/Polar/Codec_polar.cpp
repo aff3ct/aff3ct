@@ -68,6 +68,7 @@ void Codec_polar::parameters
 	req_args.erase({pdec+"-info-bits", "K"});
 	opt_args.erase({pdec+"-fra",       "F"});
 	opt_args.erase({pdec+"-no-sys"        });
+	req_args.erase({pdec+"-cw-size",   "N"});
 	req_args.erase({pfbg+"-cw-size",   "N"});
 	req_args.erase({pfbg+"-info-bits", "K"});
 }
