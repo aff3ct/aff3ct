@@ -84,7 +84,7 @@ template <class L, typename B, typename R, typename Q>
 void Turbo<L,B,R,Q>
 ::group_args()
 {
-	L::store_args();
+	L::group_args();
 
 	this->arg_group.push_back({params_cdc->enc->get_prefix(), params_cdc->enc->get_short_name() + " parameter(s)"});
 	this->arg_group.push_back({params_cdc->pct->get_prefix(), params_cdc->pct->get_short_name() + " parameter(s)"});
