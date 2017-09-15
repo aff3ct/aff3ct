@@ -25,10 +25,6 @@ public:
 	Galois(const int& K, const int& N, const int& t);
 	virtual ~Galois();
 
-	void Select_Polynomial(); // move this private section
-	void Generate_GF();
-	void Compute_BCH_Generator_Polynomial();
-
 	int get_K() const;
 	int get_N() const;
 	int get_m() const;
@@ -39,6 +35,11 @@ public:
 	const std::vector<int>& get_index_of() const;
 	const std::vector<int>& get_p       () const;
 	const std::vector<int>& get_g       () const;
+
+private:
+	void Select_Polynomial();
+	void Generate_GF();
+	void Compute_BCH_Generator_Polynomial();
 };
 }
 }
