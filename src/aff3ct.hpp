@@ -172,6 +172,7 @@
 // #include <Module/Channel/SPU_Channel.hpp>
 #include <Module/Channel/User/Channel_user.hpp>
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp>
+#include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp>
 // #include <Module/Channel/SC_Channel.hpp>
 #include <Module/Channel/NO/Channel_NO.hpp>
 #include <Module/Decoder/Decoder_SIHO.hpp>
@@ -288,6 +289,7 @@
 #include <Module/Modem/QAM/Modem_QAM.hpp>
 #include <Module/Modem/PAM/Modem_PAM.hpp>
 #include <Module/Modem/SCMA/Modem_SCMA.hpp>
+#include <Module/Modem/OOK/Modem_OOK.hpp>
 #include <Module/Module.hpp>
 #include <Factory/Tools/Code/Polar/Frozenbits_generator.hpp>
 #include <Factory/Tools/Code/Turbo/Flip_and_check.hpp>
