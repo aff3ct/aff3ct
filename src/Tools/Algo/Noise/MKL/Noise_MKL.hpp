@@ -23,7 +23,7 @@ public:
 	virtual ~Noise_MKL();
 
 	virtual void set_seed(const int seed);
-	virtual void generate(R *noise, const unsigned length, const R sigma);
+	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0);
 };
 }
 }

@@ -24,7 +24,7 @@ public:
 	virtual ~Noise_fast();
 
 	virtual void set_seed(const int seed);
-	virtual void generate(R *noise, const unsigned length, const R sigma);
+	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0);
 
 private:
 	inline mipp::Reg<R> get_random_simd();

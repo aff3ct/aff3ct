@@ -28,15 +28,15 @@ void Noise_std<R>
 
 template <typename R>
 void Noise_std<R>
-::generate(R *noise, const unsigned length, const R sigma)
+::generate(R *noise, const unsigned length, const R sigma, const R mu)
 {
-	normal_dist = std::normal_distribution<R>((R)0, sigma);
+	normal_dist = std::normal_distribution<R>(mu, sigma);
 
 	for (unsigned i = 0; i < length; i++)
 		noise[i] = this->normal_dist(this->rd_engine);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::tools::Noise_std<R_32>;
