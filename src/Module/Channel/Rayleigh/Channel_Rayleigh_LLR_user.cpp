@@ -13,11 +13,21 @@ Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const std::string& gains_filename,
                             const int gain_occurrences, tools::Noise<R> *noise_generator, const bool add_users,
                             const R sigma, const int n_frames, const std::string name)
-: Channel_Rayleigh_LLR<R>(N, complex, noise_generator, add_users, sigma, n_frames, name),
+: Channel<R>(N, sigma, n_frames, name),
+  complex(complex),
+  add_users(add_users),
+  gains(N * n_frames),
+  noise_generator(noise_generator),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
   gain_index(0)
 {
+	if (complex || add_users)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Arguments 'complex' and 'add_users' are not supported yet.");
+
+	if (noise_generator == nullptr)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
+
 	if (gain_occurrences <= 0)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Argument 'gain_occurrences' must be strictly positive.");
 
@@ -29,11 +39,21 @@ Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const int seed, const std::string& gains_filename,
                             const int gain_occurrences, const bool add_users, const R sigma,
                             const int n_frames, const std::string name)
-: Channel_Rayleigh_LLR<R>(N, complex, seed, add_users, sigma, n_frames, name),
+: Channel<R>(N, sigma, n_frames, name),
+  complex(complex),
+  add_users(add_users),
+  gains(N * n_frames),
+  noise_generator(new tools::Noise_std<R>(seed)),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
   gain_index(0)
 {
+	if (complex || add_users)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Arguments 'complex' and 'add_users' are not supported yet.");
+
+	if (gain_occurrences <= 0)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Argument 'gain_occurrences' must be strictly positive.");
+
 	read_gains(gains_filename);
 }
 
@@ -41,6 +61,7 @@ template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::~Channel_Rayleigh_LLR_user()
 {
+	delete noise_generator;
 }
 
 template <typename R>
@@ -92,6 +113,20 @@ void Channel_Rayleigh_LLR_user<R>
 	}
 }
 
+template <typename R>
+void Channel_Rayleigh_LLR_user<R>
+::add_noise(const R *X_N, R *Y_N, R *H_N)
+{
+	this->get_gains(gains, (R)1 / (R)std::sqrt((R)2));
+	noise_generator->generate(this->noise, this->sigma);
+
+	for (auto i = 0; i < this->N * this->n_frames; i++)
+	{
+		H_N[i] = this->gains[i];
+
+		Y_N[i] = X_N[i] * H_N[i] + this->noise[i];
+	}
+}
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

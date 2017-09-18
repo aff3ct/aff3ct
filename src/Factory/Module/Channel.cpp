@@ -112,7 +112,7 @@ void Channel
 	if(exist(vals, {p+"-seed",     "S"})) params.seed         = std::stoi(vals.at({p+"-seed",     "S"}));
 	if(exist(vals, {p+"-add-users"    })) params.add_users    = true;
 	if(exist(vals, {p+"-complex"      })) params.complex      = true;
-	if(exist(vals, {p+"-gain-occur"   })) params.gain_occur   = true;
+	if(exist(vals, {p+"-gain-occur"   })) params.gain_occur   = std::stoi(vals.at({p+"-gain-occur"   }));
 }
 
 void Channel
@@ -137,7 +137,7 @@ void Channel
 	if ((params.type != "NO" && params.type != "USER") && full)
 		head_chn.push_back(std::make_pair("Seed", std::to_string(params.seed)));
 
-	head_chn.push_back(std::make_pair("Complex", params.complex ? "on" : "off"));
+	head_chn.push_back(std::make_pair("Complex",   params.complex   ? "on" : "off"));
 	head_chn.push_back(std::make_pair("Add users", params.add_users ? "on" : "off"));
 }
 // ==================================================================================== explicit template instantiation
