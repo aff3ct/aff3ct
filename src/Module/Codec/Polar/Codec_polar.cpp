@@ -12,10 +12,10 @@ Codec_polar<B,Q>
 ::Codec_polar(const factory::Frozenbits_generator::parameters &fb_params,
               const factory::Encoder_polar       ::parameters &enc_params,
               const factory::Decoder_polar       ::parameters &dec_params,
-              const factory::Puncturer_polar     ::parameters &pct_params,
+              const factory::Puncturer_polar     ::parameters *pct_params,
               CRC<B>* crc, const std::string name)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
   adaptive_fb(fb_params.sigma == -1.f),
   frozen_bits(fb_params.N_cw, true),
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
@@ -64,7 +64,7 @@ Codec_polar<B,Q>
 	// ---------------------------------------------------------------------------------------------------- allocations
 	std::fill(frozen_bits.begin(), frozen_bits.begin() + this->K, false);
 
-	if (generated_decoder)
+	if (generated_decoder || !pct_params)
 	{
 		factory::Puncturer::parameters pctno_params;
 		pctno_params.type     = "NO";
@@ -79,12 +79,12 @@ Codec_polar<B,Q>
 	{
 		try
 		{
-			puncturer_wangliu = factory::Puncturer_polar::build<B,Q>(pct_params, *fb_generator);
+			puncturer_wangliu = factory::Puncturer_polar::build<B,Q>(*pct_params, *fb_generator);
 			this->set_puncturer(puncturer_wangliu);
 		}
 		catch(tools::cannot_allocate const&)
 		{
-			this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
+			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
 		}
 	}
 

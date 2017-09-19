@@ -33,7 +33,7 @@ protected:
 public:
 	Codec_turbo_DB(const factory::Encoder_turbo_DB  ::parameters &enc_params,
 	               const factory::Decoder_turbo_DB  ::parameters &dec_params,
-	               const factory::Puncturer_turbo_DB::parameters &pct_params,
+	               const factory::Puncturer_turbo_DB::parameters *pct_params = nullptr,
 	               CRC<B>* crc = nullptr, const std::string name = "Codec_turbo");
 	virtual ~Codec_turbo_DB();
 };

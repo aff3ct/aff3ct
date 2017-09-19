@@ -57,6 +57,7 @@ void Turbo_DB<L,B,R,Q>
 	L::store_args();
 
 	params_cdc->enc      ->n_frames = this->params.src->n_frames;
+	if (params_cdc->pct)
 	params_cdc->pct      ->n_frames = this->params.src->n_frames;
 	params_cdc->dec      ->n_frames = this->params.src->n_frames;
 	params_cdc->itl->core->n_frames = this->params.src->n_frames;
@@ -79,6 +80,7 @@ void Turbo_DB<L,B,R,Q>
 	L::group_args();
 
 	this->arg_group.push_back({params_cdc->enc->get_prefix(), params_cdc->enc->get_short_name() + " parameter(s)"});
+	if (params_cdc->pct)
 	this->arg_group.push_back({params_cdc->pct->get_prefix(), params_cdc->pct->get_short_name() + " parameter(s)"});
 	this->arg_group.push_back({params_cdc->dec->get_prefix(), params_cdc->dec->get_short_name() + " parameter(s)"});
 	this->arg_group.push_back({params_cdc->itl->get_prefix(), params_cdc->itl->get_short_name() + " parameter(s)"});
@@ -92,6 +94,7 @@ void Turbo_DB<L,B,R,Q>
 
 	this->titles.push_back(std::make_pair(params_cdc->enc->     get_prefix(), params_cdc->enc->     get_short_name()));
 	this->titles.push_back(std::make_pair(params_cdc->enc->sub->get_prefix(), "Sub encoder"                         ));
+	if (params_cdc->pct)
 	this->titles.push_back(std::make_pair(params_cdc->pct->     get_prefix(), params_cdc->pct->     get_short_name()));
 	this->titles.push_back(std::make_pair(params_cdc->itl->     get_prefix(), params_cdc->itl->     get_short_name()));
 	this->titles.push_back(std::make_pair(params_cdc->dec->     get_prefix(), params_cdc->dec->     get_short_name()));

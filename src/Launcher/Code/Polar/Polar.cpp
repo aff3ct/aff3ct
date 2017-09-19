@@ -1,5 +1,8 @@
 #include <iostream>
+#include <typeinfo>
 #include <mipp.h>
+
+#include "Launcher/Simulation/BFER_std.hpp"
 
 #include "Factory/Module/Codec/Polar/Codec_polar.hpp"
 
@@ -14,6 +17,9 @@ Polar<L,B,R,Q>
 : L(argc, argv, stream), params_cdc(new factory::Codec_polar::parameters("cdc"))
 {
 	this->params.set_cdc(params_cdc);
+
+	if (typeid(L) == typeid(BFER_std<B,R,Q>))
+		params_cdc->enable_puncturer();
 }
 
 template <class L, typename B, typename R, typename Q>
@@ -28,11 +34,16 @@ void Polar<L,B,R,Q>
 {
 	params_cdc->get_description(this->req_args, this->opt_args);
 
-	auto ppct = params_cdc->pct->get_prefix();
 	auto penc = params_cdc->enc->get_prefix();
-
-	this->opt_args.erase({ppct+"-fra",  "F"});
 	this->opt_args.erase({penc+"-seed", "S"});
+
+	if (params_cdc->pct)
+	{
+		auto ppct = params_cdc->pct->get_prefix();
+		this->opt_args.erase({ppct+"-fra", "F"});
+	}
+	else
+		this->opt_args.erase({penc+"-fra", "F"});
 
 	L::build_args();
 }
@@ -55,6 +66,7 @@ void Polar<L,B,R,Q>
 	L::store_args();
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
+	if (params_cdc->pct)
 	params_cdc->pct->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;
 }
@@ -67,6 +79,7 @@ void Polar<L,B,R,Q>
 
 	this->arg_group.push_back({params_cdc->enc->get_prefix(), params_cdc->enc->get_short_name() + " parameter(s)"});
 	this->arg_group.push_back({params_cdc->dec->get_prefix(), params_cdc->dec->get_short_name() + " parameter(s)"});
+	if (params_cdc->pct)
 	this->arg_group.push_back({params_cdc->pct->get_prefix(), params_cdc->pct->get_short_name() + " parameter(s)"});
 }
 
@@ -77,6 +90,7 @@ void Polar<L,B,R,Q>
 	params_cdc->get_headers(this->headers, false);
 
 	this->titles.push_back(std::make_pair(params_cdc->enc->get_prefix(), params_cdc->enc->get_short_name()));
+	if (params_cdc->pct)
 	this->titles.push_back(std::make_pair(params_cdc->pct->get_prefix(), params_cdc->pct->get_short_name()));
 	this->titles.push_back(std::make_pair(params_cdc->fbg->get_prefix(), params_cdc->fbg->get_short_name()));
 	this->titles.push_back(std::make_pair(params_cdc->dec->get_prefix(), params_cdc->dec->get_short_name()));

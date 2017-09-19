@@ -37,6 +37,7 @@ struct Codec : Factory
 		parameters(const std::string p = Codec::prefix);
 		virtual ~parameters();
 		virtual Codec::parameters* clone() const;
+		virtual void enable_puncturer();
 
 		// parameters construction
 		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;

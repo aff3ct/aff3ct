@@ -1,5 +1,8 @@
 #include <iostream>
+#include <typeinfo>
 #include <mipp.h>
+
+#include "Launcher/Simulation/BFER_std.hpp"
 
 #include "Factory/Module/Codec/RSC/Codec_RSC.hpp"
 
@@ -14,6 +17,9 @@ RSC<L,B,R,Q>
 : L(argc, argv, stream), params_cdc(new factory::Codec_RSC::parameters("cdc"))
 {
 	this->params.set_cdc(params_cdc);
+
+	if (typeid(L) == typeid(BFER_std<B,R,Q>))
+		params_cdc->enable_puncturer();
 }
 
 template <class L, typename B, typename R, typename Q>

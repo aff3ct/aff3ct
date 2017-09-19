@@ -29,6 +29,12 @@ Codec::parameters* Codec::parameters
 }
 
 void Codec::parameters
+::enable_puncturer()
+{
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, "This codec does not support to be punctured.");
+}
+
+void Codec::parameters
 ::get_description(arg_map &req_args, arg_map &opt_args) const
 {
 }

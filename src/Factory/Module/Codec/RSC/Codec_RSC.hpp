@@ -20,7 +20,7 @@ struct Codec_RSC : public Codec_SISO_SIHO
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : public Codec_SISO_SIHO::parameters
+	class parameters : public Codec_SISO_SIHO::parameters
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS

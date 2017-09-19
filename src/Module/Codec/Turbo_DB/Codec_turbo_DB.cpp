@@ -21,10 +21,10 @@ template <typename B, typename Q>
 Codec_turbo_DB<B,Q>
 ::Codec_turbo_DB(const factory::Encoder_turbo_DB  ::parameters &enc_params,
                  const factory::Decoder_turbo_DB  ::parameters &dec_params,
-                 const factory::Puncturer_turbo_DB::parameters &pct_params,
+                 const factory::Puncturer_turbo_DB::parameters *pct_params,
                  CRC<B>* crc, const std::string name)
-: Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
-  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
+: Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
   sub_enc  (nullptr),
   sub_dec_n(nullptr),
   sub_dec_i(nullptr)
@@ -62,13 +62,27 @@ Codec_turbo_DB<B,Q>
 	// ---------------------------------------------------------------------------------------------------- allocations
 	this->set_interleaver(factory::Interleaver_core::build<>(*enc_params.itl->core));
 
-	try
+	if (pct_params)
 	{
-		this->set_puncturer(factory::Puncturer_turbo_DB::build<B,Q>(pct_params));
+		try
+		{
+			this->set_puncturer(factory::Puncturer_turbo_DB::build<B,Q>(*pct_params));
+		}
+		catch (tools::cannot_allocate const&)
+		{
+			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
+		}
 	}
-	catch (tools::cannot_allocate const&)
+	else
 	{
-		this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
+		factory::Puncturer::parameters pctno_params;
+		pctno_params.type     = "NO";
+		pctno_params.K        = enc_params.K;
+		pctno_params.N        = enc_params.N_cw;
+		pctno_params.N_cw     = enc_params.N_cw;
+		pctno_params.n_frames = enc_params.n_frames;
+
+		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 	}
 
 	try

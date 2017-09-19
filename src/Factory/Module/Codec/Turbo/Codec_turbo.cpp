@@ -12,7 +12,7 @@ Codec_turbo::parameters
   Codec_SIHO::parameters(Codec_turbo::name, prefix),
   enc(new Encoder_turbo::parameters<>("enc")),
   dec(new Decoder_turbo ::parameters<>("dec")),
-  pct(new Puncturer_turbo::parameters("pct"))
+  pct(nullptr)
 {
 	Codec::parameters::enc = enc;
 	Codec::parameters::dec = dec;
@@ -54,22 +54,34 @@ Codec_turbo::parameters* Codec_turbo::parameters
 }
 
 void Codec_turbo::parameters
+::enable_puncturer()
+{
+	this->pct = new Puncturer_turbo::parameters("pct");
+}
+
+void Codec_turbo::parameters
 ::get_description(arg_map &req_args, arg_map &opt_args) const
 {
 	Codec_SIHO::parameters::get_description(req_args, opt_args);
 
+	if (this->pct)
+	{
+		pct->get_description(req_args, opt_args);
+
+		auto ppct = pct->get_prefix();
+
+		req_args.erase({ppct+"-info-bits", "K"});
+		opt_args.erase({ppct+"-no-buff"       });
+		opt_args.erase({ppct+"-fra",       "F"});
+		opt_args.erase({ppct+"-tail-length"   });
+	}
+
 	enc->get_description(req_args, opt_args);
-	pct->get_description(req_args, opt_args);
 	dec->get_description(req_args, opt_args);
 
-	auto ppct = pct->get_prefix();
 	auto pdec = dec->get_prefix();
 	auto pdes = dec->sub1->get_prefix();
 
-	req_args.erase({ppct+"-info-bits", "K"});
-	opt_args.erase({ppct+"-no-buff"       });
-	opt_args.erase({ppct+"-fra",       "F"});
-	opt_args.erase({ppct+"-tail-length"   });
 	req_args.erase({pdec+"-cw-size",   "N"});
 	req_args.erase({pdec+"-info-bits", "K"});
 	opt_args.erase({pdec+"-fra",       "F"});
@@ -86,13 +98,16 @@ void Codec_turbo::parameters
 
 	enc->store(vals);
 
-	this->pct->K           = this->enc->K;
-	this->pct->N_cw        = this->enc->N_cw;
-	this->pct->buffered    = this->enc->sub1->buffered;
-	this->pct->n_frames    = this->enc->n_frames;
-	this->pct->tail_length = this->enc->tail_length;
+	if (this->pct)
+	{
+		this->pct->K           = this->enc->K;
+		this->pct->N_cw        = this->enc->N_cw;
+		this->pct->buffered    = this->enc->sub1->buffered;
+		this->pct->n_frames    = this->enc->n_frames;
+		this->pct->tail_length = this->enc->tail_length;
 
-	pct->store(vals);
+		pct->store(vals);
+	}
 
 	this->dec->K                 = this->enc->K;
 	this->dec->N_cw              = this->enc->N_cw;
@@ -114,7 +129,7 @@ void Codec_turbo::parameters
 
 	this->K           = this->enc->K;
 	this->N_cw        = this->enc->N_cw;
-	this->N           = this->pct->N;
+	this->N           = this->pct ? this->pct->N : this->enc->N_cw;
 	this->tail_length = this->enc->tail_length;
 }
 
@@ -123,6 +138,7 @@ void Codec_turbo::parameters
 {
 	Codec_SIHO::parameters::get_headers(headers, full);
 	enc->get_headers(headers, full);
+	if (this->pct)
 	pct->get_headers(headers, full);
 	dec->get_headers(headers, full);
 }
@@ -131,7 +147,7 @@ template <typename B, typename Q>
 module::Codec_turbo<B,Q>* Codec_turbo::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_turbo<B,Q>(*enc, *dec, *pct, crc);
+	return new module::Codec_turbo<B,Q>(*enc, *dec, pct, crc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

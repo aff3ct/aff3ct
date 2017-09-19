@@ -13,7 +13,7 @@ Codec_polar::parameters
   enc(new Encoder_polar::parameters("enc")),
   fbg(new Frozenbits_generator::parameters(enc->get_prefix()+"-fb")),
   dec(new Decoder_polar::parameters("dec")),
-  pct(new Puncturer_polar::parameters("pct"))
+  pct(nullptr)
 {
 	Codec::parameters::enc = enc;
 	Codec::parameters::dec = dec;
@@ -48,29 +48,40 @@ Codec_polar::parameters* Codec_polar::parameters
 }
 
 void Codec_polar::parameters
+::enable_puncturer()
+{
+	this->pct = new Puncturer_polar::parameters("pct");
+}
+
+void Codec_polar::parameters
 ::get_description(arg_map &req_args, arg_map &opt_args) const
 {
 	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
 
-	pct->get_description(req_args, opt_args);
 	enc->get_description(req_args, opt_args);
 	fbg->get_description(req_args, opt_args);
 	dec->get_description(req_args, opt_args);
 
-	auto penc = enc->get_prefix();
 	auto pdec = dec->get_prefix();
 	auto pfbg = fbg->get_prefix();
 
-	req_args.erase({penc+"-cw-size",   "N"});
-	req_args.erase({penc+"-info-bits", "K"});
-	opt_args.erase({penc+"-fra",       "F"});
-	req_args.erase({penc+"-cw-size",   "N"});
 	req_args.erase({pdec+"-info-bits", "K"});
 	opt_args.erase({pdec+"-fra",       "F"});
 	opt_args.erase({pdec+"-no-sys"        });
 	req_args.erase({pdec+"-cw-size",   "N"});
 	req_args.erase({pfbg+"-cw-size",   "N"});
 	req_args.erase({pfbg+"-info-bits", "K"});
+
+	if (this->pct)
+	{
+		pct->get_description(req_args, opt_args);
+
+		auto penc = enc->get_prefix();
+
+		req_args.erase({penc+"-cw-size",   "N"});
+		req_args.erase({penc+"-info-bits", "K"});
+		opt_args.erase({penc+"-fra",       "F"});
+	}
 }
 
 void Codec_polar::parameters
@@ -78,22 +89,33 @@ void Codec_polar::parameters
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 
-	pct->store(vals);
+	if (this->pct)
+	{
+		pct->store(vals);
 
-	this->enc->K        = this->fbg->K    = this->dec->K        = this->pct->K;
-	this->enc->N_cw     = this->fbg->N_cw = this->dec->N_cw     = this->pct->N_cw;
-	this->enc->n_frames                   = this->dec->n_frames = this->pct->n_frames;
+		this->enc->K        = this->fbg->K    = this->dec->K        = this->pct->K;
+		this->enc->N_cw     = this->fbg->N_cw = this->dec->N_cw     = this->pct->N_cw;
+		this->enc->n_frames                   = this->dec->n_frames = this->pct->n_frames;
+	}
 
 	enc->store(vals);
+
+	if (!this->pct)
+	{
+		this->fbg->K    = this->dec->K        = this->enc->K;
+		this->fbg->N_cw = this->dec->N_cw     = this->enc->N_cw;
+		                  this->dec->n_frames = this->enc->n_frames;
+	}
+
 	fbg->store(vals);
 
 	this->dec->systematic = this->enc->systematic;
 
 	dec->store(vals);
 
-	this->K    = this->pct->K;
-	this->N_cw = this->pct->N_cw;
-	this->N    = this->pct->N;
+	this->K    = this->pct ? this->pct->K    : this->enc->K;
+	this->N_cw = this->pct ? this->pct->N_cw : this->enc->N_cw;
+	this->N    = this->pct ? this->pct->N    : this->enc->N_cw;
 }
 
 void Codec_polar::parameters
@@ -101,6 +123,7 @@ void Codec_polar::parameters
 {
 	Codec_SISO_SIHO::parameters::get_headers(headers, full);
 
+	if (this->pct)
 	pct->get_headers(headers, full);
 	enc->get_headers(headers, full);
 	fbg->get_headers(headers, full);
@@ -111,7 +134,7 @@ template <typename B, typename Q>
 module::Codec_polar<B,Q>* Codec_polar::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_polar<B,Q>(*fbg, *enc, *dec, *pct, crc);
+	return new module::Codec_polar<B,Q>(*fbg, *enc, *dec, pct, crc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

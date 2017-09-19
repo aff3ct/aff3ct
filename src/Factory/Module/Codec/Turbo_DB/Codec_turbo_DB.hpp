@@ -35,6 +35,7 @@ struct Codec_turbo_DB : public Codec_SIHO
 		parameters(const std::string p = Codec_turbo_DB::prefix);
 		virtual ~parameters();
 		Codec_turbo_DB::parameters* clone() const;
+		void enable_puncturer();
 
 		// parameters construction
 		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
