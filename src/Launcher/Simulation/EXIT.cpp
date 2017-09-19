@@ -140,12 +140,25 @@ template <typename B, typename R>
 void EXIT<B,R>
 ::print_header()
 {
+	auto cpy_titles = this->titles;
+	this->titles.clear();
+
 	auto pcde = "cde";
 	this->titles.push_back(std::make_pair(params.     get_prefix(), "Simulation"                ));
 	this->titles.push_back(std::make_pair(pcde,                     "Code"                      ));
 	this->titles.push_back(std::make_pair(params.src->get_prefix(), params.src->get_short_name()));
 	this->titles.push_back(std::make_pair(params.mdm->get_prefix(), params.mdm->get_short_name()));
+
+	for (auto t : cpy_titles)
+		if (t.first.find("enc") == 0)
+			this->titles.push_back(t);
+
 	this->titles.push_back(std::make_pair(params.chn->get_prefix(), params.chn->get_short_name()));
+
+	for (auto t : cpy_titles)
+		if (t.first.find("dec") == 0)
+			this->titles.push_back(t);
+
 	this->titles.push_back(std::make_pair(params.mnt->get_prefix(), params.mnt->get_short_name()));
 	this->titles.push_back(std::make_pair(params.ter->get_prefix(), params.ter->get_short_name()));
 
