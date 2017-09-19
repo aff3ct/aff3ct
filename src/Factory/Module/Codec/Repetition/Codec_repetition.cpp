@@ -53,6 +53,7 @@ void Codec_repetition::parameters
 
 	req_args.erase({pdec+"-cw-size",   "N"});
 	req_args.erase({pdec+"-info-bits", "K"});
+	opt_args.erase({pdec+"-no-buff"       });
 	opt_args.erase({pdec+"-fra",       "F"});
 }
 
@@ -65,6 +66,7 @@ void Codec_repetition::parameters
 
 	this->dec->K        = this->enc->K;
 	this->dec->N_cw     = this->enc->N_cw;
+	this->dec->buffered = this->enc->buffered;
 	this->dec->n_frames = this->enc->n_frames;
 
 	dec->store(vals);
