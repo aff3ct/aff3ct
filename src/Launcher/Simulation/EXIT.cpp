@@ -46,14 +46,12 @@ void EXIT<B,R>
 
 	auto psrc = params.src     ->get_prefix();
 	auto penc = params.cdc->enc->get_prefix();
-	auto ppct = std::string("pct");
 	auto pmdm = params.mdm     ->get_prefix();
 	auto pchn = params.chn     ->get_prefix();
 	auto pmnt = params.mnt     ->get_prefix();
 	auto pter = params.ter     ->get_prefix();
 
-	if (this->req_args.find({penc+"-info-bits", "K"}) != this->req_args.end() ||
-	    this->req_args.find({ppct+"-info-bits", "K"}) != this->req_args.end())
+	if (this->req_args.find({penc+"-info-bits", "K"}) != this->req_args.end())
 		this->req_args.erase({psrc+"-info-bits", "K"});
 	this->opt_args.erase({psrc+"-seed",     "S"});
 	this->req_args.erase({pmdm+"-fra-size", "N"});
@@ -118,7 +116,7 @@ void EXIT<B,R>
 
 	auto pmnt = params.mnt->get_prefix();
 
-	if (!this->ar.exist_arg({pmnt+"-trials", "n"}))
+	if (!this->ar.exist_arg({pmnt+"-trials", "n"}) && params.cdc->K != 0)
 		params.mnt->n_trials = 200000 / params.cdc->K;
 }
 
