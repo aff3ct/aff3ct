@@ -55,7 +55,7 @@ void Decoder_turbo_DB::parameters
 
 	itl->get_description(req_args, opt_args);
 
-	auto pi = this->get_prefix();
+	auto pi = this->itl->get_prefix();
 
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
