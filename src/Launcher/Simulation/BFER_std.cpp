@@ -155,7 +155,7 @@ void BFER_std<B,R,Q>
 {
 	Launcher::group_args();
 
-	this->arg_group.push_back({params.     get_prefix(), params.     get_short_name() + " parameter(s)"});
+	this->arg_group.push_back({params.     get_prefix(), "Simulation parameter(s)"});
 	this->arg_group.push_back({params.src->get_prefix(), params.src->get_short_name() + " parameter(s)"});
 	this->arg_group.push_back({params.crc->get_prefix(), params.crc->get_short_name() + " parameter(s)"});
 	this->arg_group.push_back({params.mdm->get_prefix(), params.mdm->get_short_name() + " parameter(s)"});
