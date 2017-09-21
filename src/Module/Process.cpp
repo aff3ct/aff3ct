@@ -72,11 +72,31 @@ bool Process::is_debug()
 }
 
 template <typename T>
-static inline void display_data(const T *data, const size_t n_elmts, const uint8_t p)
+static inline void display_data(const T *data,
+                                const size_t fra_size, const size_t n_fra, const size_t limit,
+                                const uint8_t p, const uint8_t n_spaces)
 {
-	for (auto i = 0; i < (int)n_elmts; i++)
-		std::cout << std::fixed << std::setprecision(p) << std::setw(p +3) << +data[i]
-		          << (i < (int)n_elmts -1 ? ", " : "");
+	if (n_fra == 1)
+	{
+		for (auto i = 0; i < (int)limit; i++)
+			std::cout << std::fixed << std::setprecision(p) << std::setw(p +3) << +data[i]
+			          << (i < (int)fra_size -1 ? ", " : "");
+		std::cout << (limit < fra_size ? ", ..." : "");
+	}
+	else
+	{
+		const auto sty_fra = tools::Style::BOLD | tools::FG::Color::GRAY;
+		std::string spaces = "#"; for (auto s = 0; s < (int)n_spaces -1; s++) spaces += " ";
+		for (auto f = 0; f < (int)n_fra; f++)
+		{
+			std::string fra_id = tools::format("f" + std::to_string(f+1) + ":", sty_fra);
+			std::cout << (f >= 1 ? spaces : "") << fra_id << "(";
+			for (auto i = 0; i < (int)limit; i++)
+				std::cout << std::fixed << std::setprecision(p) << std::setw(p +3) << +data[f * fra_size +i]
+				          << (i < (int)fra_size -1 ? ", " : "");
+			std::cout << (limit < fra_size ? "..." : "") << ")" << (f < (int)n_fra -1 ? ", \n" : "");
+		}
+	}
 }
 
 int Process::exec()
@@ -119,16 +139,18 @@ int Process::exec()
 				std::string spaces; for (size_t s = 0; s < max_n_chars - i.get_name().size(); s++) spaces += " ";
 
 				auto n_elmts = i.get_databytes() / (size_t)i.get_datatype_size();
-				auto limit = debug_limit != -1 ? std::min(n_elmts, (size_t)debug_limit) : n_elmts;
+				auto n_fra = (size_t)this->module.get_n_frames();
+				auto fra_size = n_elmts / n_fra;
+				auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
 				auto p = debug_precision;
 				std::cout << "# {IN}  " << i.get_name() << spaces << " = [";
-				     if (i.get_datatype() == typeid(int8_t )) display_data((int8_t *)i.get_dataptr(), limit, p);
-				else if (i.get_datatype() == typeid(int16_t)) display_data((int16_t*)i.get_dataptr(), limit, p);
-				else if (i.get_datatype() == typeid(int32_t)) display_data((int32_t*)i.get_dataptr(), limit, p);
-				else if (i.get_datatype() == typeid(int64_t)) display_data((int64_t*)i.get_dataptr(), limit, p);
-				else if (i.get_datatype() == typeid(float  )) display_data((float  *)i.get_dataptr(), limit, p);
-				else if (i.get_datatype() == typeid(double )) display_data((double *)i.get_dataptr(), limit, p);
-				std::cout << (limit < n_elmts ? ", ..." : "") << "]" << std::endl;
+				     if (i.get_datatype() == typeid(int8_t )) display_data((int8_t *)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (i.get_datatype() == typeid(int16_t)) display_data((int16_t*)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (i.get_datatype() == typeid(int32_t)) display_data((int32_t*)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (i.get_datatype() == typeid(int64_t)) display_data((int64_t*)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (i.get_datatype() == typeid(float  )) display_data((float  *)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (i.get_datatype() == typeid(double )) display_data((double *)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				std::cout << "]" << std::endl;
 			}
 		}
 
@@ -162,16 +184,18 @@ int Process::exec()
 				std::string spaces; for (size_t s = 0; s < max_n_chars - o.get_name().size(); s++) spaces += " ";
 
 				auto n_elmts = o.get_databytes() / (size_t)o.get_datatype_size();
-				auto limit = debug_limit != -1 ? std::min(n_elmts, (size_t)debug_limit) : n_elmts;
+				auto n_fra = (size_t)this->module.get_n_frames();
+				auto fra_size = n_elmts / n_fra;
+				auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
 				std::cout << "# {OUT} " << o.get_name() << spaces << " = [";
 				auto p = debug_precision;
-				     if (o.get_datatype() == typeid(int8_t )) display_data((int8_t *)o.get_dataptr(), limit, p);
-				else if (o.get_datatype() == typeid(int16_t)) display_data((int16_t*)o.get_dataptr(), limit, p);
-				else if (o.get_datatype() == typeid(int32_t)) display_data((int32_t*)o.get_dataptr(), limit, p);
-				else if (o.get_datatype() == typeid(int64_t)) display_data((int64_t*)o.get_dataptr(), limit, p);
-				else if (o.get_datatype() == typeid(float  )) display_data((float  *)o.get_dataptr(), limit, p);
-				else if (o.get_datatype() == typeid(double )) display_data((double *)o.get_dataptr(), limit, p);
-				std::cout << (limit < n_elmts ? ", ..." : "") << "]" << std::endl;
+				     if (o.get_datatype() == typeid(int8_t )) display_data((int8_t *)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (o.get_datatype() == typeid(int16_t)) display_data((int16_t*)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (o.get_datatype() == typeid(int32_t)) display_data((int32_t*)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (o.get_datatype() == typeid(int64_t)) display_data((int64_t*)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (o.get_datatype() == typeid(float  )) display_data((float  *)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (o.get_datatype() == typeid(double )) display_data((double *)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				std::cout << "]" << std::endl;
 			}
 			std::cout << "# Returned status: " << exec_status << std::endl;
 			std::cout << "#" << std::endl;
