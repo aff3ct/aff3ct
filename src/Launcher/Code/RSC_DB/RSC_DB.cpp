@@ -41,7 +41,12 @@ void RSC_DB<L,B,R,Q>
 {
 	params_cdc->store(this->ar.get_args());
 
-	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
+	if (std::is_same<Q,int8_t>())
+	{
+		this->params.qnt->n_bits     = 6;
+		this->params.qnt->n_decimals = 1;
+	}
+	else if (std::is_same<Q,int16_t>())
 	{
 		this->params.qnt->n_bits     = 6;
 		this->params.qnt->n_decimals = 3;

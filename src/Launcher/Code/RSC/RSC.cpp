@@ -1,5 +1,4 @@
 #include <iostream>
-#include <typeinfo>
 #include <mipp.h>
 
 #include "Launcher/Simulation/BFER_std.hpp"
@@ -17,9 +16,6 @@ RSC<L,B,R,Q>
 : L(argc, argv, stream), params_cdc(new factory::Codec_RSC::parameters("cdc"))
 {
 	this->params.set_cdc(params_cdc);
-
-	if (typeid(L) == typeid(BFER_std<B,R,Q>))
-		params_cdc->enable_puncturer();
 }
 
 template <class L, typename B, typename R, typename Q>
@@ -53,7 +49,12 @@ void RSC<L,B,R,Q>
 	if (params_cdc->dec->simd_strategy == "INTRA")
 		this->params.src->n_frames = (int)std::ceil(mipp::N<Q>() / 8.f);
 
-	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
+	if (std::is_same<Q,int8_t>())
+	{
+		this->params.qnt->n_bits     = 6;
+		this->params.qnt->n_decimals = 1;
+	}
+	else if (std::is_same<Q,int16_t>())
 	{
 		this->params.qnt->n_bits     = 6;
 		this->params.qnt->n_decimals = 3;
