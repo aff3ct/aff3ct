@@ -61,10 +61,9 @@ Modem_SCMA<B,R,Q,PSI>
                sigma,
                n_frames,
                name),
-  disable_sig2       (disable_sig2            ),
-  two_on_square_sigma((R)2.0 / (sigma * sigma)),
-  n0                 ((R)2.0 * sigma * sigma  ),
-  n_ite              (n_ite                   )
+  disable_sig2(disable_sig2                                    ),
+  n0          (disable_sig2 ? (R)1.0 : (R)2.0 *  sigma * sigma ),
+  n_ite       (n_ite                                           )
 {
 	if (n_frames != 6)
 	{
@@ -92,6 +91,16 @@ template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
 ::~Modem_SCMA()
 {
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+void Modem_SCMA<B,R,Q,PSI>
+::set_sigma(const R sigma)
+{
+	Modem<B,R,Q>::set_sigma(sigma);
+
+	if (!disable_sig2)
+		this->n0 = (R)2.0 * sigma * sigma;
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
