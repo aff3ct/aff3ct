@@ -226,7 +226,8 @@ void Modem::parameters
 	if (this->sigma != -1.f && full)
 		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->sigma)));
 	headers[p].push_back(std::make_pair("Sigma square", demod_sig2));
-	headers[p].push_back(std::make_pair("Max type", demod_max));
+	if (demod_max != "unused")
+		headers[p].push_back(std::make_pair("Max type", demod_max));
 	if (this->type == "SCMA")
 	{
 		headers[p].push_back(std::make_pair("Number of iterations", demod_ite));
