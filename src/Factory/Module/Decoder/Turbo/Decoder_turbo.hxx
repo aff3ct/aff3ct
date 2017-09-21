@@ -187,10 +187,10 @@ void Decoder_turbo::parameters<D1,D2>
 	sf->get_headers(headers, full);
 	fnc->get_headers(headers, full);
 
-	this->sub1->get_headers(headers);
+	this->sub1->get_headers(headers, full);
 	if (!std::is_same<D1,D2>())
 	{
-		this->sub2->get_headers(headers);
+		this->sub2->get_headers(headers, full);
 	}
 }
 
