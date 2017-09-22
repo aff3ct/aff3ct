@@ -27,20 +27,6 @@ class EXIT : public Simulation
 protected:
 	const factory::EXIT::parameters &params; // simulation parameters
 
-	// channel gains
-	mipp::vector<R> H_N;
-
-	// data vectors
-	mipp::vector<B> B_K, B_N, X_N1;
-	mipp::vector<R> X_K, X_N2;
-	mipp::vector<R> Y_N, Y_K;
-	mipp::vector<R> La_K1;
-	mipp::vector<R> Lch_N1;
-	mipp::vector<R> La_K2;
-	mipp::vector<R> Lch_N2;
-	mipp::vector<R> Le_K;
-	mipp::vector<R> sys, par;
-
 	// code specifications
 	float sig_a;
 	float sigma;

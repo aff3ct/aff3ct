@@ -68,7 +68,6 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-
 		return this->measure_mutual_info(bits.data(), llrs_a.data(), llrs_e.data());
 	}
 

@@ -104,6 +104,29 @@ void Codec_RSC<B,Q>
 	}
 }
 
+template <typename B, typename Q>
+void Codec_RSC<B,Q>
+::_extract_sys_llr(const Q* Y_N, Q* sys, const int frame_id)
+{
+	if (buffered_encoding)
+		std::copy(Y_N, Y_N + this->K, sys);
+	else
+		for (auto i = 0; i < this->K; i++)
+			sys[i] = Y_N[i*2];
+}
+
+template <typename B, typename Q>
+void Codec_RSC<B,Q>
+::_add_sys_ext(const Q* ext, Q* Y_N, const int frame_id)
+{
+	if (buffered_encoding)
+		for (auto i = 0; i < this->K; i++)
+			Y_N[i] += ext[i];
+	else
+		for (auto i = 0; i < this->K; i++)
+			Y_N[i*2] += ext[i];
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

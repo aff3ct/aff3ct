@@ -118,6 +118,17 @@ public:
 
 			return 0;
 		});
+
+		auto &p4 = this->create_process("add_sys_ext");
+		this->template create_socket_in<Q>(p4, "ext", this->K    * this->n_frames);
+		this->template create_socket_in<Q>(p4, "Y_N", this->N_cw * this->n_frames);
+		this->create_codelet(p4, [&]() -> int
+		{
+			this->add_sys_ext(static_cast<Q*>(p4["ext"].get_dataptr()),
+			                  static_cast<Q*>(p4["Y_N"].get_dataptr()));
+
+			return 0;
+		});
 	}
 
 	virtual ~Codec()
@@ -286,6 +297,36 @@ public:
 			                       f);
 	}
 
+	template <class A = std::allocator<Q>>
+	void add_sys_ext(const std::vector<Q,A> &ext, std::vector<Q,A> &Y_N)
+	{
+		if (this->K * this->n_frames != (int)ext.size())
+		{
+			std::stringstream message;
+			message << "'ext.size()' has to be equal to 'K' * 'n_frames' ('ext.size()' = " << ext.size()
+			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (this->N_cw * this->n_frames != (int)Y_N.size())
+		{
+			std::stringstream message;
+			message << "'Y_N.size()' has to be equal to 'N_cw' * 'n_frames' ('Y_N.size()' = " << Y_N.size()
+			        << ", 'N_cw' = " << this->N_cw << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->add_sys_ext(ext.data(), Y_N.data());
+	}
+
+	virtual void add_sys_ext(const Q *ext, Q *Y_N)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_add_sys_ext(ext + f * this->K,
+			                   Y_N + f * this->N_cw,
+			                   f);
+	}
+
 	virtual void reset() {}
 
 protected:
@@ -300,6 +341,11 @@ protected:
 	}
 
 	virtual void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id)
+	{
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
+
+	virtual void _add_sys_ext(const Q *ext, Q *Y_N, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}

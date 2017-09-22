@@ -184,6 +184,36 @@ void Codec_polar<B,Q>
 	}
 }
 
+template <typename B, typename Q>
+void Codec_polar<B,Q>
+::_extract_sys_llr(const Q* Y_N, Q* sys, const int frame_id)
+{
+	auto sys_idx = 0;
+	auto N_cw = this->N_cw;
+
+	for (auto i = 0; i < N_cw; i++)
+	{
+		if (!frozen_bits[i])
+		{
+			sys[sys_idx] = Y_N[i];
+			sys_idx++;
+		}
+	}
+}
+
+template <typename B, typename Q>
+void Codec_polar<B,Q>
+::_add_sys_ext(const Q* ext, Q* Y_N, const int frame_id)
+{
+	auto sys_idx = 0;
+	for (auto i = 0; i < this->N_cw; i++)
+		if (!frozen_bits[i])
+		{
+			Y_N[i] += ext[sys_idx];
+			sys_idx++;
+		}
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

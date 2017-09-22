@@ -17,22 +17,6 @@ EXIT<B,R>
 : Simulation(),
   params(params),
 
-  H_N   ( params.cdc->N_cw),
-  B_K   ( params.cdc->K   ),
-  B_N   ( params.cdc->N_cw),
-  X_N1  ( params.cdc->N_cw),
-  X_K   ( params.cdc->K   ),
-  X_N2  ( params.cdc->N_cw),
-  Y_N   ( params.cdc->N_cw),
-  Y_K   ( params.cdc->K   ),
-  La_K1 ( params.cdc->K   ),
-  Lch_N1( params.cdc->N_cw),
-  La_K2 ( params.cdc->K   ),
-  Lch_N2( params.cdc->N_cw),
-  Le_K  ( params.cdc->K   ),
-  sys   ( params.cdc->K                     +  params.cdc->tail_length / 2),
-  par   ((params.cdc->N_cw - params.cdc->K) - (params.cdc->tail_length / 2)),
-
   sig_a(0.f),
   sigma(0.f),
   ebn0 (0.f),
@@ -86,14 +70,10 @@ void EXIT<B,R>
 	channel_a = build_channel_a(K_mod);
 	terminal  = build_terminal (     );
 
+	this->monitor->add_handler_measure(std::bind(&module::Codec_SISO<B,R>::reset, codec));
+
 	if (codec->get_decoder_siso()->get_n_frames() > 1)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "The inter frame is not supported.");
-
-	if (X_K   .size() != (unsigned)K_mod) X_K   .resize(K_mod);
-	if (X_N2  .size() != (unsigned)N_mod) X_N2  .resize(N_mod);
-	if (La_K1 .size() != (unsigned)K_mod) La_K1 .resize(K_mod);
-	if (Lch_N1.size() != (unsigned)N_mod) Lch_N1.resize(N_mod);
-	if (H_N   .size() != (unsigned)N_mod) H_N   .resize(N_mod);
 }
 
 template <typename B, typename R>
@@ -129,7 +109,21 @@ void EXIT<B,R>
 			modem_a  ->set_sigma(2.f / sig_a);
 
 			if (sig_a == 0.f) // if sig_a = 0, La_K2 = 0
-				std::fill(La_K2.begin(), La_K2.end(), (R)0);
+			{
+				auto &mdm = *this->modem_a;
+				if (params.chn->type.find("RAYLEIGH") != std::string::npos)
+				{
+					auto mdm_data  = (uint8_t*)(mdm["demodulate_wg"]["Y_N2"].get_dataptr  ());
+					auto mdm_bytes =            mdm["demodulate_wg"]["Y_N2"].get_databytes();
+					std::fill(mdm_data, mdm_data + mdm_bytes, 0);
+				}
+				else
+				{
+					auto mdm_data  = (uint8_t*)(mdm["demodulate"]["Y_N2"].get_dataptr  ());
+					auto mdm_bytes =            mdm["demodulate"]["Y_N2"].get_databytes();
+					std::fill(mdm_data, mdm_data + mdm_bytes, 0);
+				}
+			}
 
 			this->simulation_loop();
 
@@ -154,20 +148,23 @@ void EXIT<B,R>
 	using namespace std::chrono;
 	auto t_simu = steady_clock::now();
 
-	auto *encoder      = codec->get_encoder();
-	auto *decoder_siso = codec->get_decoder_siso();
+	auto &source    = *this->source;
+	auto &codec     = *this->codec;
+	auto &encoder   = *this->codec->get_encoder();
+	auto &decoder   = *this->codec->get_decoder_siso();
+	auto &modem     = *this->modem;
+	auto &modem_a   = *this->modem_a;
+	auto &channel   = *this->channel;
+	auto &channel_a = *this->channel_a;
+	auto &monitor   = *this->monitor;
 
-	while (!monitor->n_trials_achieved())
+	while (!monitor.n_trials_achieved())
 	{
-		// generate a random binary value
-		source->generate(B_K);
-
-		// encode
-		encoder->encode(B_K, X_N1);
-
-		// modulate
-		modem_a->modulate(B_K,  X_K );
-		modem  ->modulate(X_N1, X_N2);
+		source ["generate"].exec();
+		source ["generate"]["U_K" ].bind(monitor["measure_mutual_info"]["bits"]);
+		source ["generate"]["U_K" ].bind(modem_a["modulate"           ]["X_N1"]);
+		source ["generate"]["U_K" ].bind(encoder["encode"             ]["U_K" ]);
+		encoder["encode"  ]["X_N" ].bind(modem  ["modulate"           ]["X_N1"]);
 
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
@@ -175,41 +172,42 @@ void EXIT<B,R>
 			// Rayleigh channel
 			if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 			{
-				channel_a->add_noise_wg (X_K, La_K1, H_N       );
-				modem_a  ->demodulate_wg(     La_K1, H_N, La_K2);
+				modem_a  ["modulate"    ]["X_N2"].bind(channel_a["add_noise_wg" ]["X_N" ]);
+				channel_a["add_noise_wg"]["Y_N" ].bind(modem_a  ["demodulate_wg"]["Y_N1"]);
+				channel_a["add_noise_wg"]["H_N" ].bind(modem_a  ["demodulate_wg"]["H_N "]);
 			}
 			else // additive channel (AWGN, USER, NO)
 			{
-				channel_a->add_noise (X_K, La_K1       );
-				modem_a  ->demodulate(     La_K1, La_K2);
+				modem_a  ["modulate" ]["X_N2"].bind(channel_a["add_noise" ]["X_N" ]);
+				channel_a["add_noise"]["Y_N" ].bind(modem_a  ["demodulate"]["Y_N1"]);
 			}
 		}
 
 		// Rayleigh channel
 		if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			channel->add_noise_wg (X_N2, Lch_N1, H_N        );
-			modem  ->demodulate_wg(      Lch_N1, H_N, Lch_N2);
+			modem_a["demodulate_wg"]["Y_N2"].bind(monitor["measure_mutual_info"]["llrs_a"]);
+			modem  ["modulate"     ]["X_N2"].bind(channel["add_noise_wg"       ]["X_N"   ]);
+			channel["add_noise_wg" ]["Y_N" ].bind(modem  ["demodulate_wg"      ]["Y_N1"  ]);
+			channel["add_noise_wg" ]["H_N" ].bind(modem  ["demodulate_wg"      ]["H_N "  ]);
+			modem  ["demodulate_wg"]["Y_N2"].bind(codec  ["extract_sys_par"    ]["Y_N"   ]);
+			modem_a["demodulate_wg"]["Y_N2"].bind(codec  ["add_sys_ext"        ]["ext"   ]);
+			modem  ["demodulate_wg"]["Y_N2"].bind(codec  ["add_sys_ext"        ]["Y_N"   ]);
+			modem  ["demodulate_wg"]["Y_N2"].bind(decoder["decode_siso"        ]["Y_N1"  ]);
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
-			channel->add_noise (X_N2, Lch_N1        );
-			modem  ->demodulate(      Lch_N1, Lch_N2);
+			modem_a["demodulate"]["Y_N2"].bind(monitor["measure_mutual_info"]["llrs_a"]);
+			modem  ["modulate"  ]["X_N2"].bind(channel["add_noise"          ]["X_N"   ]);
+			channel["add_noise" ]["Y_N" ].bind(modem  ["demodulate"         ]["Y_N1"  ]);
+			modem  ["demodulate"]["Y_N2"].bind(codec  ["extract_sys_par"    ]["Y_N"   ]);
+			modem_a["demodulate"]["Y_N2"].bind(codec  ["add_sys_ext"        ]["ext"   ]);
+			modem  ["demodulate"]["Y_N2"].bind(codec  ["add_sys_ext"        ]["Y_N"   ]);
+			modem  ["demodulate"]["Y_N2"].bind(decoder["decode_siso"        ]["Y_N1"  ]);
 		}
 
-		// extract systematic and parity information
-		codec->extract_sys_par(Lch_N2, sys, par);
-
-		// add other siso's extrinsic
-		for (auto k = 0; k < params.cdc->K; k++)
-			sys[k] += La_K2[k];
-
-		// decode
-		decoder_siso->decode_siso(sys, par, Le_K);
-		decoder_siso->reset();
-
-		// compute the mutual info
-		monitor->measure_mutual_info(B_K, La_K2, Le_K);
+		decoder["decode_siso"    ]["Y_N2"].bind(codec  ["extract_sys_llr"    ]["Y_N"   ]);
+		codec  ["extract_sys_llr"]["Y_K" ].bind(monitor["measure_mutual_info"]["llrs_e"]);
 
 		// display statistics in terminal
 		if (!params.ter->disabled && (steady_clock::now() - t_simu) >= params.ter->frequency)

@@ -24,7 +24,9 @@ public:
 	virtual ~Codec_RSC();
 
 protected:
-	void _extract_sys_par(const Q* Y_N, Q* sys, Q* par, const int frame_id);
+	void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);
+	void _extract_sys_llr(const Q *Y_N, Q *sys,         const int frame_id);
+	void _add_sys_ext    (const Q *ext, Q *Y_N,         const int frame_id);
 };
 }
 }
