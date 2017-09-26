@@ -49,9 +49,9 @@ SC_BFER_std<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void SC_BFER_std<B,R,Q>
-::_build_communication_chain(const int tid)
+::__build_communication_chain(const int tid)
 {
-	BFER_std<B,R,Q>::_build_communication_chain(tid);
+	BFER_std<B,R,Q>::__build_communication_chain(tid);
 
 	// create the sc_module inside the objects of the communication chain
 	this->source   [tid]->create_sc_module            ();

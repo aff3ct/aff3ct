@@ -37,9 +37,9 @@ BFER_std_threads<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER_std_threads<B,R,Q>
-::_build_communication_chain(const int tid)
+::__build_communication_chain(const int tid)
 {
-	BFER_std<B,R,Q>::_build_communication_chain(tid);
+	BFER_std<B,R,Q>::__build_communication_chain(tid);
 
 	auto &source    = *this->source[tid];
 	auto &crc       = *this->crc   [tid];

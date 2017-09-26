@@ -26,21 +26,25 @@ struct Simulation : Launcher
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		float                     snr_min       = 0.f;
-		float                     snr_max       = 0.f;
+		float                     snr_min         = 0.f;
+		float                     snr_max         = 0.f;
 
 		// optional parameters
 #ifdef ENABLE_MPI
-		std::chrono::milliseconds mpi_comm_freq = std::chrono::milliseconds(1000);
-		int                       mpi_rank      = 0;
-		int                       mpi_size      = 1;
+		std::chrono::milliseconds mpi_comm_freq   = std::chrono::milliseconds(1000);
+		int                       mpi_rank        = 0;
+		int                       mpi_size        = 1;
 #endif
-		std::chrono::seconds      stop_time     = std::chrono::seconds(0);
-		std::string               pyber         = "";
-		float                     snr_step      = 0.1f;
-		int                       n_threads     = 1;
-		int                       local_seed    = 0;
-		int                       global_seed   = 0;
+		std::chrono::seconds      stop_time       = std::chrono::seconds(0);
+		std::string               pyber           = "";
+		float                     snr_step        = 0.1f;
+		bool                      debug           = false;
+		bool                      statistics      = false;
+		int                       n_threads       = 1;
+		int                       local_seed      = 0;
+		int                       global_seed     = 0;
+		int                       debug_limit     = 0;
+		int                       debug_precision = 2;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		virtual ~parameters();

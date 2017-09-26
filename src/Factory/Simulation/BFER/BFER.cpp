@@ -51,22 +51,6 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-debug", "d"}] =
-		{"",
-		 "enable debug mode: print array values after each step."};
-
-	opt_args[{p+"-debug-prec"}] =
-		{"positive_int",
-		 "set the precision of real elements when displayed in debug mode."};
-
-	opt_args[{p+"-debug-limit"}] =
-		{"positive_int",
-		 "set the max number of elements to display in the debug mode."};
-
-	opt_args[{p+"-stats"}] =
-		{"",
-		 "display statistics module by module."};
-
 	opt_args[{p+"-snr-type", "E"}] =
 		{"string",
 		 "select the type of SNR: symbol energy or information bit energy.",
@@ -108,24 +92,8 @@ void BFER::parameters
 	if(exist(vals, {p+"-err-trk-path"   })) this->err_track_path   = vals.at({p+"-err-trk-path" });
 	if(exist(vals, {p+"-err-trk-rev"    })) this->err_track_revert = true;
 	if(exist(vals, {p+"-err-trk"        })) this->err_track_enable = true;
-	if(exist(vals, {p+"-stats"          })) this->statistics       = true;
-	if(exist(vals, {p+"-debug",      "d"})) this->debug            = true;
 	if(exist(vals, {p+"-coset",      "c"})) this->coset            = true;
 	if(exist(vals, {p+"-coded",         })) this->coded_monitoring = true;
-	if(exist(vals, {p+"-debug-limit"}))
-	{
-		this->debug = true;
-		this->debug_limit = std::stoi(vals.at({p+"-debug-limit"}));
-	}
-	if(exist(vals, {p+"-debug-prec"}))
-	{
-		this->debug = true;
-		this->debug_precision = std::stoi(vals.at({p+"-debug-prec"}));
-	}
-
-	if (this->debug && !(exist(vals, {p+"-threads", "t"}) && std::stoi(vals.at({p+"-threads", "t"})) > 0))
-		// check if debug is asked and if n_thread kept its default value
-		this->n_threads = 1;
 
 	if (this->err_track_revert)
 	{
@@ -156,14 +124,6 @@ void BFER::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("SNR type", this->snr_type));
-	headers[p].push_back(std::make_pair("Statistics", this->statistics ? "on" : "off"));
-	headers[p].push_back(std::make_pair("Debug mode", this->debug ? "on" : "off"));
-	if (this->debug)
-	{
-		headers[p].push_back(std::make_pair("Debug precision", std::to_string(this->debug_precision)));
-		if (this->debug_limit)
-			headers[p].push_back(std::make_pair("Debug limit", std::to_string(this->debug_limit)));
-	}
 	headers[p].push_back(std::make_pair("Coset approach (c)", this->coset ? "yes" : "no"));
 	headers[p].push_back(std::make_pair("Coded monitoring", this->coded_monitoring ? "yes" : "no"));
 

@@ -35,7 +35,7 @@ public:
 	virtual ~SC_BFER_ite();
 
 protected:
-	virtual void _build_communication_chain(const int tid = 0);
+	virtual void __build_communication_chain(const int tid = 0);
 	virtual void release_objects();
 	virtual void _launch();
 

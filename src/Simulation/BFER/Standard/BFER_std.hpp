@@ -45,7 +45,7 @@ public:
 	virtual ~BFER_std();
 
 protected:
-	virtual void _build_communication_chain(const int tid = 0);
+	virtual void __build_communication_chain(const int tid = 0);
 	virtual void _launch();
 	virtual void release_objects();
 

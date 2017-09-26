@@ -54,6 +54,7 @@ protected:
 public:
 	std::vector<Socket> in;
 	std::vector<Socket> out;
+	std::vector<Socket> in_out;
 
 	Process(const Module &module,
 	        const std::string name,
@@ -103,6 +104,9 @@ protected:
 
 	template <typename T>
 	void create_socket_out(const std::string name, const size_t n_elmts);
+
+	template <typename T>
+	void create_socket_in_out(const std::string name, const size_t n_elmts);
 
 	void create_codelet(std::function<int(void)> codelet);
 };

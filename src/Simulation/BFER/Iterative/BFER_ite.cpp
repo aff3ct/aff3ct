@@ -53,7 +53,7 @@ BFER_ite<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER_ite<B,R,Q>
-::_build_communication_chain(const int tid)
+::__build_communication_chain(const int tid)
 {
 	// build the objects
 	source          [tid] = build_source     (tid);

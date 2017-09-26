@@ -14,7 +14,7 @@ using namespace aff3ct::simulation;
 template <typename B, typename R>
 EXIT<B,R>
 ::EXIT(const factory::EXIT::parameters& params)
-: Simulation(),
+: Simulation(params),
   params(params),
 
   sig_a(0.f),
@@ -37,7 +37,22 @@ EXIT<B,R>
 	                                   "on each MPI processes.") << std::endl;
 #endif
 
+	if (this->params.n_threads > 1)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "EXIT simu does not support the multi-threading.");
+
+	this->modules["source"   ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["codec"    ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["encoder"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["decoder"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["modem"    ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["modem_a"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["channel"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["channel_a"] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["monitor"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
+
 	this->monitor = this->build_monitor();
+
+	this->modules["monitor"][0] = this->monitor;
 }
 
 template <typename B, typename R>
@@ -50,7 +65,7 @@ EXIT<B,R>
 
 template <typename B, typename R>
 void EXIT<B,R>
-::build_communication_chain()
+::_build_communication_chain()
 {
 	release_objects();
 
@@ -70,6 +85,17 @@ void EXIT<B,R>
 	channel_a = build_channel_a(K_mod);
 	terminal  = build_terminal (     );
 
+	Simulation::terminal = terminal;
+
+	this->modules["source"   ][0] = source;
+	this->modules["codec"    ][0] = codec;
+	this->modules["encoder"  ][0] = codec->get_encoder();
+	this->modules["decoder"  ][0] = codec->get_decoder_siso();
+	this->modules["modem"    ][0] = modem;
+	this->modules["modem_a"  ][0] = modem_a;
+	this->modules["channel"  ][0] = channel;
+	this->modules["channel_a"][0] = channel_a;
+
 	this->monitor->add_handler_measure(std::bind(&module::Codec_SISO<B,R>::reset, codec));
 
 	if (codec->get_decoder_siso()->get_n_frames() > 1)
@@ -82,9 +108,6 @@ void EXIT<B,R>
 {
 	// allocate and build all the communication chain to generate EXIT chart
 	this->build_communication_chain();
-
-	if (!params.ter->disabled)
-		terminal->legend(std::cout);
 
 	// for each channel SNR to be simulated	
 	for (ebn0 = params.snr_min; ebn0 <= params.snr_max; ebn0 += params.snr_step)
@@ -125,12 +148,37 @@ void EXIT<B,R>
 				}
 			}
 
+			if (((!params.ter->disabled && ebn0 == params.snr_min && sig_a == params.sig_a_min  && !params.debug) ||
+			    (params.statistics && !params.debug)))
+				terminal->legend(std::cout);
+
+			// start the terminal to display BER/FER results
+			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
+				this->start_terminal_temp_report(params.ter->frequency);
+
 			this->simulation_loop();
 
+			// stop the terminal
+			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
+				this->stop_terminal_temp_report();
+
 			if (!params.ter->disabled)
+			{
+				if (params.debug)
+					terminal->legend(std::cout);
+
 				terminal->final_report(std::cout);
 
+				if (params.statistics)
+					display_stats();
+			}
+
 			this->monitor->reset();
+			for (auto &m : modules)
+				for (auto mm : m.second)
+					if (mm != nullptr)
+						for (auto &p : mm->processes)
+							p.second->reset_stats();
 
 			if (module::Monitor::is_over())
 				break;
@@ -145,9 +193,6 @@ template <typename B, typename R>
 void EXIT<B,R>
 ::simulation_loop()
 {
-	using namespace std::chrono;
-	auto t_simu = steady_clock::now();
-
 	auto &source    = *this->source;
 	auto &codec     = *this->codec;
 	auto &encoder   = *this->codec->get_encoder();
@@ -160,11 +205,22 @@ void EXIT<B,R>
 
 	while (!monitor.n_trials_achieved())
 	{
+		if (this->params.debug)
+		{
+			if (!monitor["check_mutual_info"].get_n_calls())
+				std::cout << "#" << std::endl;
+
+			std::cout << "# -------------------------------" << std::endl;
+			std::cout << "# New communication (n°" << monitor["check_mutual_info"].get_n_calls() << ")" << std::endl;
+			std::cout << "# -------------------------------" << std::endl;
+			std::cout << "#" << std::endl;
+		}
+
 		source ["generate"].exec();
-		source ["generate"]["U_K" ].bind(monitor["measure_mutual_info"]["bits"]);
-		source ["generate"]["U_K" ].bind(modem_a["modulate"           ]["X_N1"]);
-		source ["generate"]["U_K" ].bind(encoder["encode"             ]["U_K" ]);
-		encoder["encode"  ]["X_N" ].bind(modem  ["modulate"           ]["X_N1"]);
+		source ["generate"]["U_K" ].bind(monitor["check_mutual_info"]["bits"]);
+		source ["generate"]["U_K" ].bind(modem_a["modulate"         ]["X_N1"]);
+		source ["generate"]["U_K" ].bind(encoder["encode"           ]["U_K" ]);
+		encoder["encode"  ]["X_N" ].bind(modem  ["modulate"         ]["X_N1"]);
 
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
@@ -186,35 +242,26 @@ void EXIT<B,R>
 		// Rayleigh channel
 		if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			modem_a["demodulate_wg"]["Y_N2"].bind(monitor["measure_mutual_info"]["llrs_a"]);
-			modem  ["modulate"     ]["X_N2"].bind(channel["add_noise_wg"       ]["X_N"   ]);
-			channel["add_noise_wg" ]["Y_N" ].bind(modem  ["demodulate_wg"      ]["Y_N1"  ]);
-			channel["add_noise_wg" ]["H_N" ].bind(modem  ["demodulate_wg"      ]["H_N "  ]);
-			modem  ["demodulate_wg"]["Y_N2"].bind(codec  ["extract_sys_par"    ]["Y_N"   ]);
-			modem_a["demodulate_wg"]["Y_N2"].bind(codec  ["add_sys_ext"        ]["ext"   ]);
-			modem  ["demodulate_wg"]["Y_N2"].bind(codec  ["add_sys_ext"        ]["Y_N"   ]);
-			modem  ["demodulate_wg"]["Y_N2"].bind(decoder["decode_siso"        ]["Y_N1"  ]);
+			modem_a["demodulate_wg"]["Y_N2"].bind(monitor["check_mutual_info"]["llrs_a"]);
+			modem  ["modulate"     ]["X_N2"].bind(channel["add_noise_wg"     ]["X_N"   ]);
+			channel["add_noise_wg" ]["Y_N" ].bind(modem  ["demodulate_wg"    ]["Y_N1"  ]);
+			channel["add_noise_wg" ]["H_N" ].bind(modem  ["demodulate_wg"    ]["H_N "  ]);
+			modem_a["demodulate_wg"]["Y_N2"].bind(codec  ["add_sys_ext"      ]["ext"   ]);
+			modem  ["demodulate_wg"]["Y_N2"].bind(codec  ["add_sys_ext"      ]["Y_N"   ]);
+			modem  ["demodulate_wg"]["Y_N2"].bind(decoder["decode_siso"      ]["Y_N1"  ]);
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
-			modem_a["demodulate"]["Y_N2"].bind(monitor["measure_mutual_info"]["llrs_a"]);
-			modem  ["modulate"  ]["X_N2"].bind(channel["add_noise"          ]["X_N"   ]);
-			channel["add_noise" ]["Y_N" ].bind(modem  ["demodulate"         ]["Y_N1"  ]);
-			modem  ["demodulate"]["Y_N2"].bind(codec  ["extract_sys_par"    ]["Y_N"   ]);
-			modem_a["demodulate"]["Y_N2"].bind(codec  ["add_sys_ext"        ]["ext"   ]);
-			modem  ["demodulate"]["Y_N2"].bind(codec  ["add_sys_ext"        ]["Y_N"   ]);
-			modem  ["demodulate"]["Y_N2"].bind(decoder["decode_siso"        ]["Y_N1"  ]);
+			modem_a["demodulate"]["Y_N2"].bind(monitor["check_mutual_info"]["llrs_a"]);
+			modem  ["modulate"  ]["X_N2"].bind(channel["add_noise"        ]["X_N"   ]);
+			channel["add_noise" ]["Y_N" ].bind(modem  ["demodulate"       ]["Y_N1"  ]);
+			modem_a["demodulate"]["Y_N2"].bind(codec  ["add_sys_ext"      ]["ext"   ]);
+			modem  ["demodulate"]["Y_N2"].bind(codec  ["add_sys_ext"      ]["Y_N"   ]);
+			modem  ["demodulate"]["Y_N2"].bind(decoder["decode_siso"      ]["Y_N1"  ]);
 		}
 
-		decoder["decode_siso"    ]["Y_N2"].bind(codec  ["extract_sys_llr"    ]["Y_N"   ]);
-		codec  ["extract_sys_llr"]["Y_K" ].bind(monitor["measure_mutual_info"]["llrs_e"]);
-
-		// display statistics in terminal
-		if (!params.ter->disabled && (steady_clock::now() - t_simu) >= params.ter->frequency)
-		{
-			terminal->temp_report(std::clog);
-			t_simu = steady_clock::now();
-		}
+		decoder["decode_siso"    ]["Y_N2"].bind(codec  ["extract_sys_llr"  ]["Y_N"   ]);
+		codec  ["extract_sys_llr"]["Y_K" ].bind(monitor["check_mutual_info"]["llrs_e"]);
 	}
 }
 

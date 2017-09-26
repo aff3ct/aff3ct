@@ -29,10 +29,6 @@ private:
 	// parameters
 	const factory::BFER::parameters &params;
 
-	std::mutex mutex_terminal;
-	std::condition_variable cond_terminal;
-	bool stop_terminal;
-
 protected:
 	std::mutex  mutex_exception;
 	std::string prev_err_message;
@@ -49,9 +45,6 @@ protected:
 	float sigma;
 
 	unsigned max_fra;
-
-	// map of Modules
-	std::map<std::string, std::vector<module::Module*>> modules;
 
 	// the monitors of the the BFER simulation
 	std::vector<module::Monitor_BFER          <B>*> monitor;
@@ -70,7 +63,8 @@ public:
 	void launch();
 
 protected:
-	virtual void _build_communication_chain(const int tid = 0);
+	        void  _build_communication_chain();
+	virtual void __build_communication_chain(const int tid = 0) = 0;
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
@@ -78,10 +72,6 @@ protected:
 	tools ::Terminal_BFER<B>* build_terminal(                 );
 
 private:
-	void build_communication_chain(const int tid = 0);
-	void display_stats(std::ostream &stream = std::cout);
-
-	static void start_thread_terminal        (BFER<B,R,Q> *simu               );
 	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);
 };
 }

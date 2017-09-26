@@ -44,7 +44,6 @@ struct EXIT : Simulation
 		// optional parameters
 		std::string snr_type   = "ES";
 		float       sig_a_step = 0.5f;
-		bool        debug      = false;
 
 		// module parameters
 		Source       ::parameters *src = nullptr;

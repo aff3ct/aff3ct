@@ -53,9 +53,9 @@ SC_BFER_ite<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void SC_BFER_ite<B,R,Q>
-::_build_communication_chain(const int tid)
+::__build_communication_chain(const int tid)
 {
-	BFER_ite<B,R,Q>::_build_communication_chain(tid);
+	BFER_ite<B,R,Q>::__build_communication_chain(tid);
 
 	if (*this->interleaver[tid] != *this->interleaver_e)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'interleaver[tid]' and 'interleaver_e' have to be "

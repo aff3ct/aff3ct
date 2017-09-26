@@ -15,15 +15,15 @@ Monitor_EXIT<B,R>
   I_A_sum((R)0),
   n_analyzed_frames(0)
 {
-	auto &p = this->create_process("measure_mutual_info");
+	auto &p = this->create_process("check_mutual_info");
 	this->template create_socket_in<B>(p, "bits",   this->size * this->n_frames);
 	this->template create_socket_in<R>(p, "llrs_a", this->size * this->n_frames);
 	this->template create_socket_in<R>(p, "llrs_e", this->size * this->n_frames);
 	this->create_codelet(p, [&]() -> int
 	{
-		this->measure_mutual_info(static_cast<B*>(p["bits"  ].get_dataptr()),
-		                          static_cast<R*>(p["llrs_a"].get_dataptr()),
-		                          static_cast<R*>(p["llrs_e"].get_dataptr()));
+		this->check_mutual_info(static_cast<B*>(p["bits"  ].get_dataptr()),
+		                        static_cast<R*>(p["llrs_a"].get_dataptr()),
+		                        static_cast<R*>(p["llrs_e"].get_dataptr()));
 
 		return 0;
 	});
@@ -31,12 +31,12 @@ Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
-::measure_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e)
+::check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e)
 {
 	for (auto f = 0; f < this->n_frames; f++)
-		this->_measure_mutual_info_avg(bits   + f * this->size,
-		                               llrs_a + f * this->size,
-		                               f);
+		this->_check_mutual_info_avg(bits   + f * this->size,
+		                             llrs_a + f * this->size,
+		                             f);
 
 	bits_buff  .insert(bits_buff  .end(), bits,   bits   + this->size);
 	llrs_e_buff.insert(llrs_e_buff.end(), llrs_e, llrs_e + this->size);
@@ -49,7 +49,7 @@ void Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
-::_measure_mutual_info_avg(const B *bits, const R *llrs_a, const int frame_id)
+::_check_mutual_info_avg(const B *bits, const R *llrs_a, const int frame_id)
 {
 	for (int j = 0; j < this->size; j++)
 	{
@@ -60,7 +60,7 @@ void Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 R Monitor_EXIT<B,R>
-::_measure_mutual_info_histo() const
+::_check_mutual_info_histo() const
 {
 	unsigned size = this->bits_buff.size();
 	unsigned bit_1_count = 0;
@@ -218,7 +218,7 @@ template <typename B, typename R>
 R Monitor_EXIT<B,R>
 ::get_I_E() const
 {
-	return this->_measure_mutual_info_histo();
+	return this->_check_mutual_info_histo();
 }
 
 template <typename B, typename R>

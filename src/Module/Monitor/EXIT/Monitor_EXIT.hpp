@@ -40,9 +40,9 @@ public:
 	 * \param V: the decoded message (from the Decoder).
 	 */
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
-	void measure_mutual_info(const std::vector<B,AB>& bits,
-	                         const std::vector<R,AR>& llrs_a,
-	                         const std::vector<R,AR>& llrs_e)
+	void check_mutual_info(const std::vector<B,AB>& bits,
+	                       const std::vector<R,AR>& llrs_a,
+	                       const std::vector<R,AR>& llrs_e)
 	{
 		if ((int)bits.size() != this->size * this->n_frames)
 		{
@@ -68,10 +68,10 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		return this->measure_mutual_info(bits.data(), llrs_a.data(), llrs_e.data());
+		return this->check_mutual_info(bits.data(), llrs_a.data(), llrs_e.data());
 	}
 
-	virtual void measure_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e);
+	virtual void check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e);
 
 	unsigned get_n_trials() const;
 
@@ -88,8 +88,8 @@ public:
 	virtual void clear_callbacks();
 
 protected:
-	virtual void _measure_mutual_info_avg  (const B *bits, const R *llrs_a, const int frame_id);
-	virtual R _measure_mutual_info_histo() const;
+	virtual void _check_mutual_info_avg  (const B *bits, const R *llrs_a, const int frame_id);
+	virtual R _check_mutual_info_histo() const;
 };
 }
 }

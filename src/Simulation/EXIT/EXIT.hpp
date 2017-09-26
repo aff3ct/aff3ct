@@ -50,12 +50,10 @@ public:
 
 	void launch();
 
-private:
-	void build_communication_chain();
-	void simulation_loop          ();
-
 protected:
-	void release_objects  ();
+	void _build_communication_chain();
+	void  simulation_loop          ();
+	void release_objects           ();
 
 	module::Source      <B  >* build_source   (              );
 	module::Codec_SISO  <B,R>* build_codec    (              );

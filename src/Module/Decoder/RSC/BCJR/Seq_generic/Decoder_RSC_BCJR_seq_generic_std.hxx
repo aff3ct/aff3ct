@@ -302,12 +302,12 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 	if (!this->buffered_encoding)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__,  "'buffered_encoding' has to be enabled.");
 
-	const R* sys          = Y_N1;
-	const R* par          = Y_N1 + 1 * this->K;
-	const R* tail_sys     = Y_N1 + 2 * this->K + this->n_ff;
-	const R* tail_par     = Y_N1 + 2 * this->K;
-	      R* ext_sys      = Y_N2;
-	      R* ext_par      = Y_N2 + 1 * this->K;
+	const R* sys      = Y_N1;
+	const R* par      = Y_N1 + 1 * this->K;
+	const R* tail_sys = Y_N1 + 2 * this->K + this->n_ff;
+	const R* tail_par = Y_N1 + 2 * this->K;
+	      R* ext_sys  = Y_N2;
+	      R* ext_par  = Y_N2 + 1 * this->K;
 
 	this->compute_gamma  (sys, par, tail_sys, tail_par);
 	this->compute_alpha  (                            );

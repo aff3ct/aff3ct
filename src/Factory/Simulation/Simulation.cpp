@@ -52,6 +52,22 @@ void Simulation::parameters
 		{"positive_int",
 		 "time in sec after what the current SNR iteration should stop."};
 
+	opt_args[{p+"-debug", "d"}] =
+		{"",
+		 "enable debug mode: print array values after each step."};
+
+	opt_args[{p+"-debug-prec"}] =
+		{"positive_int",
+		 "set the precision of real elements when displayed in debug mode."};
+
+	opt_args[{p+"-debug-limit"}] =
+		{"positive_int",
+		 "set the max number of elements to display in the debug mode."};
+
+	opt_args[{p+"-stats"}] =
+		{"",
+		 "display statistics module by module."};
+
 #ifndef STARPU
 	opt_args[{p+"-threads", "t"}] =
 		{"positive_int",
@@ -94,6 +110,18 @@ void Simulation::parameters
 	if(exist(vals, {p+"-snr-step", "s"})) this->snr_step    =         std::stof(vals.at({p+"-snr-step", "s"}));
 	if(exist(vals, {p+"-stop-time"    })) this->stop_time   = seconds(std::stoi(vals.at({p+"-stop-time"    })));
 	if(exist(vals, {p+"-seed",     "S"})) this->global_seed =         std::stoi(vals.at({p+"-seed",     "S"}));
+	if(exist(vals, {p+"-stats"        })) this->statistics  = true;
+	if(exist(vals, {p+"-debug",    "d"})) this->debug       = true;
+	if(exist(vals, {p+"-debug-limit"}))
+	{
+		this->debug = true;
+		this->debug_limit = std::stoi(vals.at({p+"-debug-limit"}));
+	}
+	if(exist(vals, {p+"-debug-prec"}))
+	{
+		this->debug = true;
+		this->debug_precision = std::stoi(vals.at({p+"-debug-prec"}));
+	}
 
 	this->snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
@@ -138,6 +166,10 @@ void Simulation::parameters
 #ifdef MULTI_PREC
 	if(exist(vals, {p+"-prec", "p"})) this->sim_prec = std::stoi(vals.at({p+"-prec", "p"}));
 #endif
+
+	if (this->debug && !(exist(vals, {p+"-threads", "t"}) && std::stoi(vals.at({p+"-threads", "t"})) > 0))
+		// check if debug is asked and if n_thread kept its default value
+		this->n_threads = 1;
 }
 
 void Simulation::parameters
@@ -150,8 +182,15 @@ void Simulation::parameters
 	headers[p].push_back(std::make_pair("SNR min (m)",  std::to_string(this->snr_min)  + " dB"));
 	headers[p].push_back(std::make_pair("SNR max (M)",  std::to_string(this->snr_max)  + " dB"));
 	headers[p].push_back(std::make_pair("SNR step (s)", std::to_string(this->snr_step) + " dB"));
-
 	headers[p].push_back(std::make_pair("Seed", std::to_string(this->global_seed)));
+	headers[p].push_back(std::make_pair("Statistics", this->statistics ? "on" : "off"));
+	headers[p].push_back(std::make_pair("Debug mode", this->debug ? "on" : "off"));
+	if (this->debug)
+	{
+		headers[p].push_back(std::make_pair("Debug precision", std::to_string(this->debug_precision)));
+		if (this->debug_limit)
+			headers[p].push_back(std::make_pair("Debug limit", std::to_string(this->debug_limit)));
+	}
 
 #ifdef ENABLE_MPI
 	headers[p].push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(this->mpi_comm_freq.count())));
