@@ -19,12 +19,11 @@ class Encoder_turbo : public Encoder<B>
 protected:
 	const Interleaver<B> &pi; // the interleaver
 
-	Encoder_sys<B> &enco_n; // polar systematic encoder
-	Encoder_sys<B> &enco_i; // sub encoder
+	Encoder_sys<B> &enco_n;   // polar systematic encoder
+	Encoder_sys<B> &enco_i;   // sub encoder
 
-	std::vector<B> U_K_i;   // internal buffer for the systematic bits in the interleaved domain
-	std::vector<B> par_n;   // internal buffer for the encoded    bits in the natural     domain
-	std::vector<B> par_i;   // internal buffer for the encoded    bits in the interleaved domain
+	std::vector<B> U_K_i;     // internal buffer for the systematic bits in the interleaved domain
+	std::vector<B> X_N_tmp;
 
 public:
 	Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi,

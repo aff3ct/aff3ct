@@ -39,11 +39,8 @@ void Decoder_turbo_fast<B,R>
 {
 	if (this->buffered_encoding && this->get_simd_inter_frame_level() > 1)
 	{
-		const auto tail_n       = this->siso_n.tail_length();
-		const auto tail_i       = this->siso_i.tail_length();
-		const auto frame_size   = this->N;
-		const auto N_without_tb = this->N - (this->siso_n.tail_length() + this->siso_i.tail_length());
-		const auto p_size       = (N_without_tb - this->K) / 2; // size of the parity
+		const auto tail_n = this->siso_n.tail_length();
+		const auto tail_i = this->siso_i.tail_length();
 
 		if (this->get_simd_inter_frame_level() == mipp::nElReg<B>())
 		{
@@ -51,36 +48,22 @@ void Decoder_turbo_fast<B,R>
 
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->K);
+				frames[f] = Y_N + f*this->N;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->siso_n.get_K() + tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +this->K;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), p_size);
+				frames[f] = Y_N + f*this->N + this->siso_n.get_K() + tail_n/2;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), this->siso_n.get_K() + tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +this->K + p_size;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
-
-			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
-
-			// tails bit in the natural domain
-			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n/2;
-			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_sn[this->K*n_frames], tail_n/2);
-
-			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +N_without_tb;
-			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_pn[p_size*n_frames], tail_n/2);
-
-			// tails bit in the interleaved domain
-			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n + tail_i/2;
+				frames[f] = Y_N + f*this->N + this->siso_n.get_N();
 			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n;
-			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_pi[p_size*n_frames], tail_i/2);
+				frames[f] = Y_N + f*this->N + this->siso_n.get_N() + tail_i/2;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), this->siso_i.get_K() + tail_i/2);
+
+			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 		}
 		else
 		{
@@ -88,36 +71,22 @@ void Decoder_turbo_fast<B,R>
 
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->K);
+				frames[f] = Y_N + f*this->N;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->siso_n.get_K() + tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +this->K;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), p_size);
+				frames[f] = Y_N + f*this->N + this->siso_n.get_K() + tail_n/2;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), this->siso_n.get_K() + tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +this->K + p_size;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
-
-			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
-
-			// tails bit in the natural domain
-			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n/2;
-			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_sn[this->K*n_frames], tail_n/2);
-
-			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +N_without_tb;
-			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_pn[p_size*n_frames], tail_n/2);
-
-			// tails bit in the interleaved domain
-			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n + tail_i/2;
+				frames[f] = Y_N + f*this->N + this->siso_n.get_N();
 			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n;
-			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_pi[p_size*n_frames], tail_i/2);
+				frames[f] = Y_N + f*this->N + this->siso_n.get_N() + tail_i/2;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), this->siso_i.get_K() + tail_i/2);
+
+			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 		}
 
 		std::fill(this->l_e1n.begin(), this->l_e1n.end(), (R)0);

@@ -56,12 +56,8 @@ void Decoder_RSC_BCJR<B,R>
 
 		if (n_frames == 1)
 		{
-			std::copy(Y_N + 0*this->K, Y_N + 1*this->K, sys.begin());
-			std::copy(Y_N + 1*this->K, Y_N + 2*this->K, par.begin());
-
-			// tails bit
-			std::copy(Y_N + 2*this->K         , Y_N + 2*this->K + tail/2, par.begin() +this->K);
-			std::copy(Y_N + 2*this->K + tail/2, Y_N + 2*this->K + tail  , sys.begin() +this->K);
+			std::copy(Y_N + 0*this->K,          Y_N + 1*this->K + tail/2, sys.begin());
+			std::copy(Y_N + 1*this->K + tail/2, Y_N + 2*this->K + tail/2, par.begin());
 		}
 		else
 		{
@@ -70,20 +66,11 @@ void Decoder_RSC_BCJR<B,R>
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size;
-			tools::Reorderer<R>::apply(frames, sys.data(), this->K);
+			tools::Reorderer<R>::apply(frames, sys.data(), this->K + tail/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size +this->K;
-			tools::Reorderer<R>::apply(frames, par.data(), this->K);
-
-			// tails bit
-			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size + 2*this->K + tail/2;
-			tools::Reorderer<R>::apply(frames, &sys[this->K*n_frames], tail/2);
-
-			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*frame_size + 2*this->K;
-			tools::Reorderer<R>::apply(frames, &par[this->K*n_frames], tail/2);
+				frames[f] = Y_N + f*frame_size + this->K + tail/2;
+			tools::Reorderer<R>::apply(frames, par.data(), this->K + tail/2);
 		}
 	}
 	else

@@ -110,6 +110,8 @@ int Process::exec()
 			const auto sty_class  = tools::Style::BOLD;
 			const auto sty_method = tools::Style::BOLD | tools::FG::Color::GREEN;
 
+			auto n_fra = (size_t)this->module.get_n_frames();
+
 			std::cout << "# ";
 			std::cout << tools::format(module.get_name(), sty_class) << "::" << tools::format(get_name(), sty_method)
 			          << "(";
@@ -118,7 +120,8 @@ int Process::exec()
 				auto n_elmts = in[i].get_databytes() / (size_t)in[i].get_datatype_size();
 				std::cout << tools::format("const ", sty_type)
 				          << tools::format(in[i].get_datatype_string(), sty_type)
-				          << " " << in[i].get_name() << "[" << n_elmts << "]"
+				          << " " << in[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
+				          << (n_elmts / n_fra) << "]"
 				          << (i < (int)in.size() -1 || out.size() > 0 ? ", " : "");
 
 				max_n_chars = std::max(in[i].get_name().size(), max_n_chars);
@@ -127,7 +130,8 @@ int Process::exec()
 			{
 				auto n_elmts = out[i].get_databytes() / (size_t)out[i].get_datatype_size();
 				std::cout << tools::format(out[i].get_datatype_string(), sty_type)
-				          << " " << out[i].get_name() << "[" << n_elmts << "]"
+				          << " " << out[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
+				          << (n_elmts / n_fra) << "]"
 				          << (i < (int)out.size() -1 ? ", " : "");
 
 				max_n_chars = std::max(out[i].get_name().size(), max_n_chars);
@@ -139,7 +143,6 @@ int Process::exec()
 				std::string spaces; for (size_t s = 0; s < max_n_chars - i.get_name().size(); s++) spaces += " ";
 
 				auto n_elmts = i.get_databytes() / (size_t)i.get_datatype_size();
-				auto n_fra = (size_t)this->module.get_n_frames();
 				auto fra_size = n_elmts / n_fra;
 				auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
 				auto p = debug_precision;

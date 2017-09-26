@@ -29,11 +29,12 @@ public:
 protected:
 	void _encode    (const B *U_K, B *X_N, const int frame_id);
 	void _encode_sys(const B *U_K, B *par, const int frame_id);
-	
-	void __encode(const B* U_K, B* sys, B* tail_sys, B* par, B* tail_par, const int stride = 1, const int stride_tail = 1);
 
 	virtual int inner_encode(const int bit_sys, int &state) = 0;
 	virtual int tail_bit_sys(const int &state             ) = 0;
+
+private:
+	void __encode(const B* U_K, B* sys, B* tail_sys, B* par, B* tail_par, const int stride = 1, const int stride_tail = 1);
 };
 }
 }

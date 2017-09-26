@@ -52,10 +52,10 @@ void Encoder_RSC_sys<B>
 {
 	if (buffered_encoding)
 		__encode(U_K,
-		         X_N,                            // sys
-		         X_N + 2 * this->K + this->n_ff, // tail sys
-		         X_N + 1 * this->K,              // par
-		         X_N + 2 * this->K );            // tail par
+		         X_N,                             // sys
+		         X_N + 1 * this->K,               // tail sys
+		         X_N + 1 * this->K + this->n_ff,  // par
+		         X_N + 2 * this->K + this->n_ff); // tail par
 	else
 		__encode(U_K,
 		         X_N,                   // sys
