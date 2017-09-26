@@ -32,15 +32,13 @@ protected:
 	virtual void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 	virtual void _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
 
-	virtual void compute_gamma   (const R *sys, const R *par);
-	virtual void compute_alpha   (                          );
-	virtual void compute_beta    (                          );
-	virtual void compute_ext     (const R *sys,       R *ext);
-	virtual void compute_beta_ext(const R *sys,       R *ext);
-
-	virtual void compute_gamma   (const R *sys, const R *par, const R *tail_sys, const R *tail_par);
-	virtual void compute_ext_sys (const R *sys,                                        R *ext_sys );
-	virtual void compute_ext_par (const R *par,                                        R *ext_par );
+	virtual void compute_gamma   (const R *sys, const R *par    );
+	virtual void compute_alpha   (                              );
+	virtual void compute_beta    (                              );
+	virtual void compute_ext     (const R *sys,       R *ext    );
+	virtual void compute_beta_ext(const R *sys,       R *ext    );
+	virtual void compute_ext_sys (const R *sys,       R *ext_sys);
+	virtual void compute_ext_par (const R *par,       R *ext_par);
 };
 }
 }
