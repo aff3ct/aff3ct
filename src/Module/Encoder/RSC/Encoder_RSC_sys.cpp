@@ -51,20 +51,31 @@ void Encoder_RSC_sys<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	if (buffered_encoding)
-	{
-		std::copy(U_K, U_K + this->K, X_N); // sys
-		__encode(U_K, X_N + this->K, 1, true); // par + tail bits
-	}
+		__encode(U_K,
+		         X_N,                            // sys
+		         X_N + 2 * this->K + this->n_ff, // tail sys
+		         X_N + 1 * this->K,              // par
+		         X_N + 2 * this->K );            // tail par
 	else
-		__encode(U_K, X_N);
+		__encode(U_K,
+		         X_N,                   // sys
+		         X_N + 2 * this->K,     // tail sys
+		         X_N + 1,               // par
+		         X_N + 2 * this->K + 1, // tail par
+		         2,                     // stride
+		         2);                    // stride tail bits
 }
 
 template <typename B>
 void Encoder_RSC_sys<B>
 ::_encode_sys(const B *U_K, B *par, const int frame_id)
 {
-	// par bits: [par | tail bit sys | tail bits par]
-	__encode(U_K, par, 1, true);
+	// par bits: [par | tail bit par | tail bits sys]
+	__encode(U_K,
+	         nullptr,                    // sys
+	         par + this->K + this->n_ff, // tail sys
+	         par,                        // par
+	         par + this->K);             // tail par
 }
 
 template <typename B>
@@ -109,36 +120,34 @@ std::vector<std::vector<int>> Encoder_RSC_sys<B>
 
 template <typename B>
 void Encoder_RSC_sys<B>
-::__encode(const B* U_K, B* X_N, const int stride, const bool only_parity)
+::__encode(const B* U_K, B* sys, B* tail_sys, B* par, B* tail_par, const int stride, const int stride_tail)
 {
-	auto j = 0; // cur offset in X_N buffer
 	auto state = 0; // initial (and final) state 0 0 0
 
+	if (sys != nullptr)
+		for (auto i = 0; i < this->K; i++)
+			sys[i * stride] = U_K[i];
+
 	// standard frame encoding process
-	for (auto i = 0; i < this->K; i++)
-	{
-		if (!only_parity)
-		{
-			X_N[j] = U_K[i];
-			j += stride; // systematic transmission of the bit
-		}
-		X_N[j] = inner_encode((int)U_K[i], state); j += stride; // encoding block
-	}
+	if (par != nullptr)
+		for (auto i = 0; i < this->K; i++)
+			par[i * stride] = inner_encode((int)U_K[i], state); // encoding block
+	else
+		for (auto i = 0; i < this->K; i++)
+			inner_encode((int)U_K[i], state); // encoding block
 
 	// tail bits for initialization conditions (state of data "state" have to be 0 0 0)
 	for (auto i = 0; i < this->n_ff; i++)
 	{
 		B bit_sys = tail_bit_sys(state);
 
-		if (!only_parity)
-		{
-			X_N[j] = bit_sys; // systematic transmission of the bit
-			j += stride;
-		}
-		else
-			X_N[j+this->n_ff] = bit_sys; // systematic transmission of the bit
+		if (tail_sys != nullptr)
+			tail_sys[i * stride_tail] = bit_sys; // systematic transmission of the bit
 
-		X_N[j] = inner_encode((int)bit_sys, state); j += stride; // encoding block
+		auto p = inner_encode((int)bit_sys, state); // encoding block
+
+		if (tail_par != nullptr)
+			tail_par[i * stride_tail] = p;
 	}
 
 	if (state != 0)
@@ -146,28 +155,6 @@ void Encoder_RSC_sys<B>
 		std::stringstream message;
 		message << "'state' should be equal to 0 ('state' = " <<  state << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (!only_parity)
-	{
-		if (j != this->N * stride)
-		{
-			std::stringstream message;
-			message << "'j' should be equal to 'N' * 'stride' ('j' = " << j << ", 'N' = " << this->N
-			        << ", 'stride' = " << stride << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
-	else
-	{
-		j += this->n_ff * stride;
-		if (j != (this->K + 2*this->n_ff) * stride)
-		{
-			std::stringstream message;
-			message << "'j' should be equal to ('K' + 2 * 'n_ff') * 'stride' ('j' = " << j << ", 'K' = " << this->K
-			        << ", 'n_ff' = " << this->n_ff << ", 'stride' = " << stride << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
 	}
 }
 
