@@ -64,7 +64,7 @@ void BFER_ite_threads<B,R,Q>
 		std::fill(enc_data, enc_data + enc_bytes, 0);
 		std::fill(itl_data, itl_data + itl_bytes, 0);
 
-		interleaver_bit["interleave"]["itl"].bind(modem["modulate"]["X_N1"]);
+		modem["modulate"]["X_N1"].bind(interleaver_bit["interleave"]["itl"]);
 	}
 
 	if (this->params.err_track_enable)
@@ -168,40 +168,40 @@ void BFER_ite_threads<B,R,Q>
 		if (this->params.src->type != "AZCW")
 		{
 			source         ["generate"  ].exec();
-			source         ["generate"  ]["U_K" ].bind(crc            ["build"     ]["U_K1"]);
-			crc            ["build"     ]["U_K2"].bind(encoder        ["encode"    ]["U_K" ]);
-			encoder        ["encode"    ]["X_N" ].bind(interleaver_bit["interleave"]["nat" ]);
-			interleaver_bit["interleave"]["itl" ].bind(modem          ["modulate"  ]["X_N1"]);
+			crc            ["build"     ]["U_K1"].bind(source         ["generate"  ]["U_K" ]);
+			encoder        ["encode"    ]["U_K" ].bind(crc            ["build"     ]["U_K2"]);
+			interleaver_bit["interleave"]["nat" ].bind(encoder        ["encode"    ]["X_N" ]);
+			modem          ["modulate"  ]["X_N1"].bind(interleaver_bit["interleave"]["itl" ]);
 		}
 
 		if (this->params.coset)
 		{
-			if (this->params.coded_monitoring) encoder["encode"]["X_N" ].bind(coset_bit["apply"]["ref"]);
-			else                               crc    ["build" ]["U_K2"].bind(coset_bit["apply"]["ref"]);
+			if (this->params.coded_monitoring) coset_bit["apply"]["ref"].bind(encoder["encode"]["X_N" ]);
+			else                               coset_bit["apply"]["ref"].bind(crc    ["build" ]["U_K2"]);
 
-			encoder["encode"]["X_N"].bind(coset_real["apply"]["ref"]);
+			coset_real["apply"]["ref"].bind(encoder["encode"]["X_N"]);
 		}
 
-		if (this->params.coded_monitoring) encoder["encode"  ]["X_N"].bind(monitor["check_errors"]["U"]);
-		else                               source ["generate"]["U_K"].bind(monitor["check_errors"]["U"]);
+		if (this->params.coded_monitoring) monitor["check_errors"]["U"].bind(encoder["encode"  ]["X_N"]);
+		else                               monitor["check_errors"]["U"].bind(source ["generate"]["U_K"]);
 
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			modem    ["modulate"     ]["X_N2"].bind(channel  ["add_noise_wg" ]["X_N" ]);
-			channel  ["add_noise_wg" ]["Y_N" ].bind(modem    ["filter"       ]["Y_N1"]);
-			modem    ["filter"       ]["Y_N2"].bind(quantizer["process"      ]["Y_N1"]);
-			quantizer["process"      ]["Y_N2"].bind(modem    ["demodulate_wg"]["Y_N1"]);
-			channel  ["add_noise_wg" ]["H_N" ].bind(modem    ["demodulate_wg"]["H_N" ]);
+			channel  ["add_noise_wg" ]["X_N" ].bind(modem    ["modulate"     ]["X_N2"]);
+			modem    ["filter"       ]["Y_N1"].bind(channel  ["add_noise_wg" ]["Y_N" ]);
+			quantizer["process"      ]["Y_N1"].bind(modem    ["filter"       ]["Y_N2"]);
+			modem    ["demodulate_wg"]["Y_N1"].bind(quantizer["process"      ]["Y_N2"]);
+			modem    ["demodulate_wg"]["H_N" ].bind(channel  ["add_noise_wg" ]["H_N" ]);
 		}
 		else
 		{
-			modem    ["modulate" ]["X_N2"].bind(channel  ["add_noise" ]["X_N" ]);
-			channel  ["add_noise"]["Y_N" ].bind(modem    ["filter"    ]["Y_N1"]);
-			modem    ["filter"   ]["Y_N2"].bind(quantizer["process"   ]["Y_N1"]);
-			quantizer["process"  ]["Y_N2"].bind(modem    ["demodulate"]["Y_N1"]);
+			channel  ["add_noise" ]["X_N" ].bind(modem    ["modulate" ]["X_N2"]);
+			modem    ["filter"    ]["Y_N1"].bind(channel  ["add_noise"]["Y_N" ]);
+			quantizer["process"   ]["Y_N1"].bind(modem    ["filter"   ]["Y_N2"]);
+			modem    ["demodulate"]["Y_N1"].bind(quantizer["process"  ]["Y_N2"]);
 		}
 
-		modem["demodulate"]["Y_N2"].bind(interleaver_llr["deinterleave"]["itl"]);
+		interleaver_llr["deinterleave"]["itl"].bind(modem["demodulate"]["Y_N2"]);
 
 		// ------------------------------------------------------------------------------------------------------------
 		// ------------------------------------------------------------------------------------ turbo demodulation loop
@@ -211,84 +211,84 @@ void BFER_ite_threads<B,R,Q>
 			// ------------------------------------------------------------------------------------------- CRC checking
 			if (this->params.crc->type != "NO" && ite >= this->params.crc_start)
 			{
-				interleaver_llr["deinterleave"   ]["nat"].bind(codec["extract_sys_bit"]["Y_N"]);
-				if (codec      ["extract_sys_bit"]["V_K"].bind(crc  ["check"          ]["V_K"]))
+				codec  ["extract_sys_bit"]["Y_N"].bind(interleaver_llr["deinterleave"   ]["nat"]);
+				if (crc["check"          ]["V_K"].bind(codec          ["extract_sys_bit"]["V_K"]))
 					break;
 			}
 
 			// ----------------------------------------------------------------------------------------------- decoding
 			if (this->params.coset)
 			{
-				interleaver_llr["deinterleave"]["nat"     ].bind(coset_real  ["apply"      ]["in_data"]);
-				coset_real     ["apply"       ]["out_data"].bind(decoder_siso["decode_siso"]["Y_N1"   ]);
-				decoder_siso   ["decode_siso" ]["Y_N2"    ].bind(coset_real  ["apply"      ]["in_data"]);
+				coset_real  ["apply"      ]["in_data"].bind(interleaver_llr["deinterleave"]["nat"     ]);
+				decoder_siso["decode_siso"]["Y_N1"   ].bind(coset_real     ["apply"       ]["out_data"]);
+				coset_real  ["apply"      ]["in_data"].bind(decoder_siso   ["decode_siso" ]["Y_N2"    ]);
 			}
 			else
 			{
-				interleaver_llr["deinterleave"]["nat"].bind(decoder_siso["decode_siso"]["Y_N1"]);
+				decoder_siso["decode_siso"]["Y_N1"].bind(interleaver_llr["deinterleave"]["nat"]);
 			}
 
 			// ------------------------------------------------------------------------------------------- interleaving
-			if (this->params.coset) coset_real  ["apply"      ]["out_data"].bind(interleaver_llr["interleave"]["nat"]);
-			else                    decoder_siso["decode_siso"]["Y_N2"    ].bind(interleaver_llr["interleave"]["nat"]);
+			if (this->params.coset) interleaver_llr["interleave"]["nat"].bind(coset_real  ["apply"      ]["out_data"]);
+			else                    interleaver_llr["interleave"]["nat"].bind(decoder_siso["decode_siso"]["Y_N2"    ]);
 
 			// ------------------------------------------------------------------------------------------- demodulation
 			if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 			{
-				quantizer      ["process"     ]["Y_N2"].bind(modem["tdemodulate_wg"]["Y_N1"]);
-				channel        ["add_noise_wg"]["H_N" ].bind(modem["tdemodulate_wg"]["H_N" ]);
-				interleaver_llr["interleave"  ]["itl" ].bind(modem["tdemodulate_wg"]["Y_N2"]);
+				modem["tdemodulate_wg"]["Y_N1"].bind(quantizer      ["process"     ]["Y_N2"]);
+				modem["tdemodulate_wg"]["H_N" ].bind(channel        ["add_noise_wg"]["H_N" ]);
+				modem["tdemodulate_wg"]["Y_N2"].bind(interleaver_llr["interleave"  ]["itl" ]);
 			}
 			else
 			{
-				quantizer      ["process"   ]["Y_N2"].bind(modem["tdemodulate"]["Y_N1"]);
-				interleaver_llr["interleave"]["itl" ].bind(modem["tdemodulate"]["Y_N2"]);
+				modem["tdemodulate"]["Y_N1"].bind(quantizer      ["process"   ]["Y_N2"]);
+				modem["tdemodulate"]["Y_N2"].bind(interleaver_llr["interleave"]["itl" ]);
 			}
 
 			// ----------------------------------------------------------------------------------------- deinterleaving
 			if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-				modem["tdemodulate_wg"]["Y_N3"].bind(interleaver_llr["deinterleave"]["itl"]);
+				interleaver_llr["deinterleave"]["itl"].bind(modem["tdemodulate_wg"]["Y_N3"]);
 			else
-				modem["tdemodulate"   ]["Y_N3"].bind(interleaver_llr["deinterleave"]["itl"]);
+				interleaver_llr["deinterleave"]["itl"].bind(modem["tdemodulate"   ]["Y_N3"]);
 		}
 
 		if (this->params.coset)
 		{
-			interleaver_llr["deinterleave"]["nat"].bind(coset_real["apply"]["in_data"]);
+			coset_real["apply"]["in_data"].bind(interleaver_llr["deinterleave"]["nat"]);
 
 			if (this->params.coded_monitoring)
 			{
-				coset_real  ["apply"            ]["out_data"].bind(decoder_siho["decode_siho_coded"]["Y_N"    ]);
-				decoder_siho["decode_siho_coded"]["V_N"     ].bind(coset_bit   ["apply"            ]["in_data"]);
+				decoder_siho["decode_siho_coded"]["Y_N"    ].bind(coset_real  ["apply"            ]["out_data"]);
+				coset_bit   ["apply"            ]["in_data"].bind(decoder_siho["decode_siho_coded"]["V_N"     ]);
 			}
 			else
 			{
-				coset_real  ["apply"      ]["out_data"].bind(decoder_siho["decode_siho"]["Y_N"    ]);
-				decoder_siho["decode_siho"]["V_K"     ].bind(coset_bit   ["apply"      ]["in_data"]);
-				coset_bit   ["apply"      ]["out_data"].bind(crc         ["extract"    ]["V_K1"   ]);
+				decoder_siho["decode_siho"]["Y_N"    ].bind(coset_real  ["apply"      ]["out_data"]);
+				coset_bit   ["apply"      ]["in_data"].bind(decoder_siho["decode_siho"]["V_K"     ]);
+				crc         ["extract"    ]["V_K1"   ].bind(coset_bit   ["apply"      ]["out_data"]);
 			}
 		}
 		else
 		{
 			if (this->params.coded_monitoring)
 			{
-				interleaver_llr["deinterleave"]["nat"].bind(decoder_siho["decode_siho_coded"]["Y_N"]);
+				decoder_siho["decode_siho_coded"]["Y_N"].bind(interleaver_llr["deinterleave"]["nat"]);
 			}
 			else
 			{
-				interleaver_llr["deinterleave"]["nat"].bind(decoder_siho["decode_siho"]["Y_N" ]);
-				decoder_siho   ["decode_siho" ]["V_K"].bind(crc         ["extract"    ]["V_K1"]);
+				decoder_siho["decode_siho"]["Y_N" ].bind(interleaver_llr["deinterleave"]["nat"]);
+				crc         ["extract"    ]["V_K1"].bind(decoder_siho   ["decode_siho" ]["V_K"]);
 			}
 		}
 
 		if (this->params.coded_monitoring)
 		{
-			if (this->params.coset) coset_bit   ["apply"            ]["out_data"].bind(monitor["check_errors"]["V"]);
-			else                    decoder_siho["decode_siho_coded"]["V_N"     ].bind(monitor["check_errors"]["V"]);
+			if (this->params.coset) monitor["check_errors"]["V"].bind(coset_bit   ["apply"            ]["out_data"]);
+			else                    monitor["check_errors"]["V"].bind(decoder_siho["decode_siho_coded"]["V_N"     ]);
 		}
 		else
 		{
-			crc["extract"]["V_K2"].bind(monitor["check_errors"]["V"]);
+			monitor["check_errors"]["V"].bind(crc["extract"]["V_K2"]);
 		}
 	}
 }

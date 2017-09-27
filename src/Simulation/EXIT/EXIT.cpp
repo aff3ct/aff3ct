@@ -217,10 +217,10 @@ void EXIT<B,R>
 		}
 
 		source ["generate"].exec();
-		source ["generate"]["U_K" ].bind(monitor["check_mutual_info"]["bits"]);
-		source ["generate"]["U_K" ].bind(modem_a["modulate"         ]["X_N1"]);
-		source ["generate"]["U_K" ].bind(encoder["encode"           ]["U_K" ]);
-		encoder["encode"  ]["X_N" ].bind(modem  ["modulate"         ]["X_N1"]);
+		monitor["check_mutual_info"]["bits"].bind(source ["generate"]["U_K"]);
+		modem_a["modulate"         ]["X_N1"].bind(source ["generate"]["U_K"]);
+		encoder["encode"           ]["U_K" ].bind(source ["generate"]["U_K"]);
+		modem  ["modulate"         ]["X_N1"].bind(encoder["encode"  ]["X_N"]);
 
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
@@ -228,40 +228,40 @@ void EXIT<B,R>
 			// Rayleigh channel
 			if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 			{
-				modem_a  ["modulate"    ]["X_N2"].bind(channel_a["add_noise_wg" ]["X_N" ]);
-				channel_a["add_noise_wg"]["Y_N" ].bind(modem_a  ["demodulate_wg"]["Y_N1"]);
-				channel_a["add_noise_wg"]["H_N" ].bind(modem_a  ["demodulate_wg"]["H_N "]);
+				channel_a["add_noise_wg" ]["X_N" ].bind(modem_a  ["modulate"    ]["X_N2"]);
+				modem_a  ["demodulate_wg"]["Y_N1"].bind(channel_a["add_noise_wg"]["Y_N" ]);
+				modem_a  ["demodulate_wg"]["H_N "].bind(channel_a["add_noise_wg"]["H_N" ]);
 			}
 			else // additive channel (AWGN, USER, NO)
 			{
-				modem_a  ["modulate" ]["X_N2"].bind(channel_a["add_noise" ]["X_N" ]);
-				channel_a["add_noise"]["Y_N" ].bind(modem_a  ["demodulate"]["Y_N1"]);
+				channel_a["add_noise" ]["X_N" ].bind(modem_a  ["modulate" ]["X_N2"]);
+				modem_a  ["demodulate"]["Y_N1"].bind(channel_a["add_noise"]["Y_N" ]);
 			}
 		}
 
 		// Rayleigh channel
 		if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			modem_a["demodulate_wg"]["Y_N2"].bind(monitor["check_mutual_info"]["llrs_a"]);
-			modem  ["modulate"     ]["X_N2"].bind(channel["add_noise_wg"     ]["X_N"   ]);
-			channel["add_noise_wg" ]["Y_N" ].bind(modem  ["demodulate_wg"    ]["Y_N1"  ]);
-			channel["add_noise_wg" ]["H_N" ].bind(modem  ["demodulate_wg"    ]["H_N "  ]);
-			modem_a["demodulate_wg"]["Y_N2"].bind(codec  ["add_sys_ext"      ]["ext"   ]);
-			modem  ["demodulate_wg"]["Y_N2"].bind(codec  ["add_sys_ext"      ]["Y_N"   ]);
-			modem  ["demodulate_wg"]["Y_N2"].bind(decoder["decode_siso"      ]["Y_N1"  ]);
+			monitor["check_mutual_info"]["llrs_a"].bind(modem_a["demodulate_wg"]["Y_N2"]);
+			channel["add_noise_wg"     ]["X_N"   ].bind(modem  ["modulate"     ]["X_N2"]);
+			modem  ["demodulate_wg"    ]["Y_N1"  ].bind(channel["add_noise_wg" ]["Y_N" ]);
+			modem  ["demodulate_wg"    ]["H_N "  ].bind(channel["add_noise_wg" ]["H_N" ]);
+			codec  ["add_sys_ext"      ]["ext"   ].bind(modem_a["demodulate_wg"]["Y_N2"]);
+			codec  ["add_sys_ext"      ]["Y_N"   ].bind(modem  ["demodulate_wg"]["Y_N2"]);
+			decoder["decode_siso"      ]["Y_N1"  ].bind(modem  ["demodulate_wg"]["Y_N2"]);
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
-			modem_a["demodulate"]["Y_N2"].bind(monitor["check_mutual_info"]["llrs_a"]);
-			modem  ["modulate"  ]["X_N2"].bind(channel["add_noise"        ]["X_N"   ]);
-			channel["add_noise" ]["Y_N" ].bind(modem  ["demodulate"       ]["Y_N1"  ]);
-			modem_a["demodulate"]["Y_N2"].bind(codec  ["add_sys_ext"      ]["ext"   ]);
-			modem  ["demodulate"]["Y_N2"].bind(codec  ["add_sys_ext"      ]["Y_N"   ]);
-			modem  ["demodulate"]["Y_N2"].bind(decoder["decode_siso"      ]["Y_N1"  ]);
+			monitor["check_mutual_info"]["llrs_a"].bind(modem_a["demodulate"]["Y_N2"]);
+			channel["add_noise"        ]["X_N"   ].bind(modem  ["modulate"  ]["X_N2"]);
+			modem  ["demodulate"       ]["Y_N1"  ].bind(channel["add_noise" ]["Y_N" ]);
+			codec  ["add_sys_ext"      ]["ext"   ].bind(modem_a["demodulate"]["Y_N2"]);
+			codec  ["add_sys_ext"      ]["Y_N"   ].bind(modem  ["demodulate"]["Y_N2"]);
+			decoder["decode_siso"      ]["Y_N1"  ].bind(modem  ["demodulate"]["Y_N2"]);
 		}
 
-		decoder["decode_siso"    ]["Y_N2"].bind(codec  ["extract_sys_llr"  ]["Y_N"   ]);
-		codec  ["extract_sys_llr"]["Y_K" ].bind(monitor["check_mutual_info"]["llrs_e"]);
+		codec  ["extract_sys_llr"  ]["Y_N"   ].bind(decoder["decode_siso"    ]["Y_N2"]);
+		monitor["check_mutual_info"]["llrs_e"].bind(codec  ["extract_sys_llr"]["Y_K" ]);
 	}
 }
 

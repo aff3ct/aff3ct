@@ -44,7 +44,15 @@ public:
 	size_t          get_n_elmts        () const;
 	void*           get_dataptr        () const;
 
-	int bind(Socket &s_in);
+	int bind(Socket &s);
+
+	template <typename T, class A = std::allocator<T>>
+	int bind(std::vector<T,A> &vector);
+
+	template <typename T>
+	inline int bind(T *array);
+
+	inline int bind(void* dataptr);
 };
 }
 }

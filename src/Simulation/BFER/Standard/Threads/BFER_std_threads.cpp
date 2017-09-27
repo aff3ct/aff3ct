@@ -64,7 +64,7 @@ void BFER_std_threads<B,R,Q>
 		std::fill(enc_data, enc_data + enc_bytes, 0);
 		std::fill(pct_data, pct_data + pct_bytes, 0);
 
-		puncturer["puncture"]["X_N2"].bind(modem["modulate"]["X_N1"]);
+		modem["modulate"]["X_N1"].bind(puncturer["puncture"]["X_N2"]);
 	}
 
 	if (this->params.err_track_enable)
@@ -164,79 +164,79 @@ void BFER_std_threads<B,R,Q>
 		if (this->params.src->type != "AZCW")
 		{
 			source   ["generate"].exec();
-			source   ["generate"]["U_K" ].bind(crc      ["build"   ]["U_K1"]);
-			crc      ["build"   ]["U_K2"].bind(encoder  ["encode"  ]["U_K" ]);
-			encoder  ["encode"  ]["X_N" ].bind(puncturer["puncture"]["X_N1"]);
-			puncturer["puncture"]["X_N2"].bind(modem    ["modulate"]["X_N1"]);
+			crc      ["build"   ]["U_K1"].bind(source   ["generate"]["U_K" ]);
+			encoder  ["encode"  ]["U_K" ].bind(crc      ["build"   ]["U_K2"]);
+			puncturer["puncture"]["X_N1"].bind(encoder  ["encode"  ]["X_N" ]);
+			modem    ["modulate"]["X_N1"].bind(puncturer["puncture"]["X_N2"]);
 		}
 
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			modem  ["modulate"     ]["X_N2"].bind(channel  ["add_noise_wg" ]["X_N" ]);
-			channel["add_noise_wg" ]["Y_N" ].bind(modem    ["filter"       ]["Y_N1"]);
-			modem  ["filter"       ]["Y_N2"].bind(modem    ["demodulate_wg"]["Y_N1"]);
-			channel["add_noise_wg" ]["H_N" ].bind(modem    ["demodulate_wg"]["H_N" ]);
-			modem  ["demodulate_wg"]["Y_N2"].bind(quantizer["process"      ]["Y_N1"]);
+			channel  ["add_noise_wg" ]["X_N" ].bind(modem  ["modulate"     ]["X_N2"]);
+			modem    ["filter"       ]["Y_N1"].bind(channel["add_noise_wg" ]["Y_N" ]);
+			modem    ["demodulate_wg"]["Y_N1"].bind(modem  ["filter"       ]["Y_N2"]);
+			modem    ["demodulate_wg"]["H_N" ].bind(channel["add_noise_wg" ]["H_N" ]);
+			quantizer["process"      ]["Y_N1"].bind(modem  ["demodulate_wg"]["Y_N2"]);
 		}
 		else
 		{
-			modem  ["modulate"  ]["X_N2"].bind(channel  ["add_noise" ]["X_N" ]);
-			channel["add_noise" ]["Y_N" ].bind(modem    ["filter"    ]["Y_N1"]);
-			modem  ["filter"    ]["Y_N2"].bind(modem    ["demodulate"]["Y_N1"]);
-			modem  ["demodulate"]["Y_N2"].bind(quantizer["process"   ]["Y_N1"]);
+			channel  ["add_noise" ]["X_N" ].bind(modem  ["modulate"  ]["X_N2"]);
+			modem    ["filter"    ]["Y_N1"].bind(channel["add_noise" ]["Y_N" ]);
+			modem    ["demodulate"]["Y_N1"].bind(modem  ["filter"    ]["Y_N2"]);
+			quantizer["process"   ]["Y_N1"].bind(modem  ["demodulate"]["Y_N2"]);
 		}
 
-		quantizer["process"]["Y_N2"].bind(puncturer["depuncture"]["Y_N1"]);
+		puncturer["depuncture"]["Y_N1"].bind(quantizer["process"]["Y_N2"]);
 
 		if (this->params.coset)
 		{
-			encoder  ["encode"    ]["X_N" ].bind(coset_real["apply"]["ref"    ]);
-			puncturer["depuncture"]["Y_N2"].bind(coset_real["apply"]["in_data"]);
+			coset_real["apply"]["ref"    ].bind(encoder  ["encode"    ]["X_N" ]);
+			coset_real["apply"]["in_data"].bind(puncturer["depuncture"]["Y_N2"]);
 
 			if (this->params.coded_monitoring)
 			{
-				coset_real["apply"            ]["out_data"].bind(decoder  ["decode_siho_coded"]["Y_N"    ]);
-				encoder   ["encode"           ]["X_N"     ].bind(coset_bit["apply"            ]["ref"    ]);
-				decoder   ["decode_siho_coded"]["V_N"     ].bind(coset_bit["apply"            ]["in_data"]);
+				decoder  ["decode_siho_coded"]["Y_N"    ].bind(coset_real["apply"            ]["out_data"]);
+				coset_bit["apply"            ]["ref"    ].bind(encoder   ["encode"           ]["X_N"     ]);
+				coset_bit["apply"            ]["in_data"].bind(decoder   ["decode_siho_coded"]["V_N"     ]);
 			}
 			else
 			{
-				coset_real["apply"      ]["out_data"].bind(decoder  ["decode_siho"]["Y_N"    ]);
-				crc       ["build"      ]["U_K2"    ].bind(coset_bit["apply"      ]["ref"    ]);
-				decoder   ["decode_siho"]["V_K"     ].bind(coset_bit["apply"      ]["in_data"]);
-				coset_bit ["apply"      ]["out_data"].bind(crc      ["extract"    ]["V_K1"   ]);
+				decoder  ["decode_siho"]["Y_N"    ].bind(coset_real["apply"      ]["out_data"]);
+				coset_bit["apply"      ]["ref"    ].bind(crc       ["build"      ]["U_K2"    ]);
+				coset_bit["apply"      ]["in_data"].bind(decoder   ["decode_siho"]["V_K"     ]);
+				crc      ["extract"    ]["V_K1"   ].bind(coset_bit ["apply"      ]["out_data"]);
 			}
 		}
 		else
 		{
 			if (this->params.coded_monitoring)
 			{
-				puncturer["depuncture"]["Y_N2"].bind(decoder["decode_siho_coded"]["Y_N"]);
+				decoder["decode_siho_coded"]["Y_N"].bind(puncturer["depuncture"]["Y_N2"]);
 			}
 			else
 			{
-				puncturer["depuncture" ]["Y_N2"].bind(decoder["decode_siho"]["Y_N" ]);
-				decoder  ["decode_siho"]["V_K" ].bind(crc    ["extract"    ]["V_K1"]);
+				decoder["decode_siho"]["Y_N" ].bind(puncturer["depuncture" ]["Y_N2"]);
+				crc    ["extract"    ]["V_K1"].bind(decoder  ["decode_siho"]["V_K" ]);
 			}
 		}
 
 		if (this->params.coded_monitoring)
 		{
-			encoder["encode"]["X_N"].bind(monitor["check_errors"]["U"]);
+			monitor["check_errors"]["U"].bind(encoder["encode"]["X_N"]);
 
 			if (this->params.coset)
 			{
-				coset_bit["apply"]["out_data"].bind(monitor["check_errors"]["V"]);
+				monitor["check_errors"]["V"].bind(coset_bit["apply"]["out_data"]);
 			}
 			else
 			{
-				decoder["decode_siho_coded"]["V_N"].bind(monitor["check_errors"]["V"]);
+				monitor["check_errors"]["V"].bind(decoder["decode_siho_coded"]["V_N"]);
 			}
 		}
 		else
 		{
-			source["generate"]["U_K" ].bind(monitor["check_errors"]["U"]);
-			crc   ["extract" ]["V_K2"].bind(monitor["check_errors"]["V"]);
+			monitor["check_errors"]["U"].bind(source["generate"]["U_K" ]);
+			monitor["check_errors"]["V"].bind(crc   ["extract" ]["V_K2"]);
 		}
 	}
 }
