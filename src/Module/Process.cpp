@@ -26,7 +26,7 @@ Process::Process(const Module &module, const std::string name, const bool autost
 {
 }
 
-std::string Process::get_name()
+std::string Process::get_name() const
 {
 	return this->name;
 }
@@ -36,7 +36,7 @@ void Process::set_autostart(const bool autostart)
 	this->autostart = autostart;
 }
 
-bool Process::is_autostart()
+bool Process::is_autostart() const
 {
 	return this->autostart;
 }
@@ -46,7 +46,7 @@ void Process::set_stats(const bool stats)
 	this->stats = stats;
 }
 
-bool Process::is_stats()
+bool Process::is_stats() const
 {
 	return this->stats;
 }
@@ -66,7 +66,7 @@ void Process::set_debug_precision(const uint8_t prec)
 	this->debug_precision = prec;
 }
 
-bool Process::is_debug()
+bool Process::is_debug() const
 {
 	return this->debug;
 }
@@ -115,72 +115,41 @@ int Process::exec()
 			std::cout << "# ";
 			std::cout << tools::format(module.get_name(), sty_class) << "::" << tools::format(get_name(), sty_method)
 			          << "(";
-			for (auto i = 0; i < (int)s_in.size(); i++)
+			for (auto i = 0; i < (int)socket.size(); i++)
 			{
-				auto n_elmts = s_in[i].get_databytes() / (size_t)s_in[i].get_datatype_size();
-				std::cout << tools::format("const ", sty_type)
-				          << tools::format(s_in[i].get_datatype_string(), sty_type)
-				          << " " << s_in[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
+				auto &s = socket[i];
+				auto s_type = get_socket_type(s);
+				auto n_elmts = s.get_databytes() / (size_t)s.get_datatype_size();
+				std::cout << (s_type == IN ? tools::format("const ", sty_type) : "")
+				          << tools::format(s.get_datatype_string(), sty_type)
+				          << " " << s.get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
 				          << (n_elmts / n_fra) << "]"
-				          << (i < (int)s_in.size() -1 || s_in_out.size() || s_out.size() > 0 ? ", " : "");
+				          << (i < (int)socket.size() -1 ? ", " : "");
 
-				max_n_chars = std::max(s_in[i].get_name().size(), max_n_chars);
-			}
-			for (auto i = 0; i < (int)s_in_out.size(); i++)
-			{
-				auto n_elmts = s_in_out[i].get_databytes() / (size_t)s_in_out[i].get_datatype_size();
-				std::cout << tools::format(s_in_out[i].get_datatype_string(), sty_type)
-				          << " " << s_in_out[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
-				          << (n_elmts / n_fra) << "]"
-				          << (i < (int)s_in_out.size() -1 || s_out.size() > 0 ? ", " : "");
-
-				max_n_chars = std::max(s_in_out[i].get_name().size(), max_n_chars);
-			}
-			for (auto i = 0; i < (int)s_out.size(); i++)
-			{
-				auto n_elmts = s_out[i].get_databytes() / (size_t)s_out[i].get_datatype_size();
-				std::cout << tools::format(s_out[i].get_datatype_string(), sty_type)
-				          << " " << s_out[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
-				          << (n_elmts / n_fra) << "]"
-				          << (i < (int)s_out.size() -1 ? ", " : "");
-
-				max_n_chars = std::max(s_out[i].get_name().size(), max_n_chars);
+				max_n_chars = std::max(s.get_name().size(), max_n_chars);
 			}
 			std::cout << ")" << std::endl;
 
-			for (auto &i : s_in)
+			for (auto &s : socket)
 			{
-				std::string spaces; for (size_t s = 0; s < max_n_chars - i.get_name().size(); s++) spaces += " ";
+				auto s_type = get_socket_type(s);
+				if (s_type == IN || s_type == IN_OUT)
+				{
+					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s.get_name().size(); ss++) spaces += " ";
 
-				auto n_elmts = i.get_databytes() / (size_t)i.get_datatype_size();
-				auto fra_size = n_elmts / n_fra;
-				auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
-				auto p = debug_precision;
-				std::cout << "# {IN}  " << i.get_name() << spaces << " = [";
-				     if (i.get_datatype() == typeid(int8_t )) display_data((int8_t *)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (i.get_datatype() == typeid(int16_t)) display_data((int16_t*)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (i.get_datatype() == typeid(int32_t)) display_data((int32_t*)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (i.get_datatype() == typeid(int64_t)) display_data((int64_t*)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (i.get_datatype() == typeid(float  )) display_data((float  *)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (i.get_datatype() == typeid(double )) display_data((double *)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				std::cout << "]" << std::endl;
-			}
-			for (auto &io : s_in_out)
-			{
-				std::string spaces; for (size_t s = 0; s < max_n_chars - io.get_name().size(); s++) spaces += " ";
-
-				auto n_elmts = io.get_databytes() / (size_t)io.get_datatype_size();
-				auto fra_size = n_elmts / n_fra;
-				auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
-				auto p = debug_precision;
-				std::cout << "# {IN}  " << io.get_name() << spaces << " = [";
-				     if (io.get_datatype() == typeid(int8_t )) display_data((int8_t *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(int16_t)) display_data((int16_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(int32_t)) display_data((int32_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(int64_t)) display_data((int64_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(float  )) display_data((float  *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(double )) display_data((double *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				std::cout << "]" << std::endl;
+					auto n_elmts = s.get_databytes() / (size_t)s.get_datatype_size();
+					auto fra_size = n_elmts / n_fra;
+					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+					auto p = debug_precision;
+					std::cout << "# {IN}  " << s.get_name() << spaces << " = [";
+						 if (s.get_datatype() == typeid(int8_t )) display_data((int8_t *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(int16_t)) display_data((int16_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(int32_t)) display_data((int32_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(int64_t)) display_data((int64_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(float  )) display_data((float  *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(double )) display_data((double *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					std::cout << "]" << std::endl;
+				}
 			}
 		}
 
@@ -209,41 +178,27 @@ int Process::exec()
 
 		if (debug)
 		{
-			for (auto &io : s_in_out)
+			auto n_fra = (size_t)this->module.get_n_frames();
+			for (auto &s : socket)
 			{
-				std::string spaces; for (size_t s = 0; s < max_n_chars - io.get_name().size(); s++) spaces += " ";
+				auto s_type = get_socket_type(s);
+				if (s_type == OUT || s_type == IN_OUT)
+				{
+					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s.get_name().size(); ss++) spaces += " ";
 
-				auto n_elmts = io.get_databytes() / (size_t)io.get_datatype_size();
-				auto n_fra = (size_t)this->module.get_n_frames();
-				auto fra_size = n_elmts / n_fra;
-				auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
-				std::cout << "# {OUT} " << io.get_name() << spaces << " = [";
-				auto p = debug_precision;
-				     if (io.get_datatype() == typeid(int8_t )) display_data((int8_t *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(int16_t)) display_data((int16_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(int32_t)) display_data((int32_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(int64_t)) display_data((int64_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(float  )) display_data((float  *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (io.get_datatype() == typeid(double )) display_data((double *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				std::cout << "]" << std::endl;
-			}
-			for (auto &o : s_out)
-			{
-				std::string spaces; for (size_t s = 0; s < max_n_chars - o.get_name().size(); s++) spaces += " ";
-
-				auto n_elmts = o.get_databytes() / (size_t)o.get_datatype_size();
-				auto n_fra = (size_t)this->module.get_n_frames();
-				auto fra_size = n_elmts / n_fra;
-				auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
-				std::cout << "# {OUT} " << o.get_name() << spaces << " = [";
-				auto p = debug_precision;
-				     if (o.get_datatype() == typeid(int8_t )) display_data((int8_t *)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (o.get_datatype() == typeid(int16_t)) display_data((int16_t*)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (o.get_datatype() == typeid(int32_t)) display_data((int32_t*)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (o.get_datatype() == typeid(int64_t)) display_data((int64_t*)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (o.get_datatype() == typeid(float  )) display_data((float  *)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				else if (o.get_datatype() == typeid(double )) display_data((double *)o.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-				std::cout << "]" << std::endl;
+					auto n_elmts = s.get_databytes() / (size_t)s.get_datatype_size();
+					auto fra_size = n_elmts / n_fra;
+					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+					auto p = debug_precision;
+					std::cout << "# {OUT} " << s.get_name() << spaces << " = [";
+						 if (s.get_datatype() == typeid(int8_t )) display_data((int8_t *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(int16_t)) display_data((int16_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(int32_t)) display_data((int32_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(int64_t)) display_data((int64_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(float  )) display_data((float  *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s.get_datatype() == typeid(double )) display_data((double *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					std::cout << "]" << std::endl;
+				}
 			}
 			std::cout << "# Returned status: " << exec_status << std::endl;
 			std::cout << "#" << std::endl;
@@ -254,32 +209,64 @@ int Process::exec()
 	else
 	{
 		std::stringstream message;
-		message << "The process cannot be executed because some of the inputs are not fed ('process.name' = "
+		message << "The process cannot be executed because some of the inputs/outputs are not fed ('process.name' = "
 		        << this->get_name() << ", 'module.name' = " << module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
 template <typename T>
+Socket& Process::create_socket(const std::string name, const size_t n_elmts)
+{
+	if (name.empty())
+	{
+		std::stringstream message;
+		message << "Impossible to create this socket because the name is empty ('process.name' = " << this->get_name()
+		        << ", 'module.name' = " << module.get_name() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	for (auto &s : socket)
+		if (s.get_name() == name)
+		{
+			std::stringstream message;
+			message << "Impossible to create this socket because an other socket has the same name ('socket.name' = "
+			        << name << ", 'process.name' = " << this->get_name()
+			        << ", 'module.name' = " << module.get_name() << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+	socket.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
+
+	return socket.back();
+}
+
+template <typename T>
 void Process::create_socket_in(const std::string name, const size_t n_elmts)
 {
-	s_in.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
+	auto &s = create_socket<T>(name, n_elmts);
+
+	socket_type[s.get_name()] = Socket_type::IN;
 }
 
 template <typename T>
 void Process::create_socket_in_out(const std::string name, const size_t n_elmts)
 {
-	s_in_out.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
+	auto &s = create_socket<T>(name, n_elmts);
+
+	socket_type[s.get_name()] = Socket_type::IN_OUT;
 }
 
 template <typename T>
 void Process::create_socket_out(const std::string name, const size_t n_elmts)
 {
-	s_out.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
+	auto &s = create_socket<T>(name, n_elmts);
+
+	socket_type[s.get_name()] = Socket_type::OUT;
 
 	// memory allocation
-	out_buffers.push_back(std::vector<uint8_t>(s_out.back().databytes));
-	s_out.back().dataptr = out_buffers.back().data();
+	out_buffers.push_back(std::vector<uint8_t>(s.databytes));
+	s.dataptr = out_buffers.back().data();
 }
 
 void Process::create_codelet(std::function<int(void)> codelet)
@@ -289,9 +276,9 @@ void Process::create_codelet(std::function<int(void)> codelet)
 
 Socket& Process::operator[](const std::string name)
 {
-	for (auto &s : s_in    ) if (s.get_name() == name) return s;
-	for (auto &s : s_in_out) if (s.get_name() == name) return s;
-	for (auto &s : s_out   ) if (s.get_name() == name) return s;
+	for (auto &s : socket)
+		if (s.get_name() == name)
+			return s;
 
 	std::stringstream message;
 	message << "The socket does not exist ('socket.name' = " << name << ", 'process.name' = " << this->get_name()
@@ -299,75 +286,108 @@ Socket& Process::operator[](const std::string name)
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }
 
-bool Process::last_input_socket(Socket &s_in)
+const Socket& Process::operator[](const std::string name) const
 {
-	return this->s_in_out.size() == 0 ? &s_in == &this->s_in.back() : &s_in == &this->s_in_out.back();
+	for (auto &s : socket)
+		if (s.get_name() == name)
+			return s;
+
+	std::stringstream message;
+	message << "The socket does not exist ('socket.name' = " << name << ", 'process.name' = " << this->get_name()
+	        << ", 'module.name' = " << module.get_name() << ").";
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }
 
-bool Process::can_exec()
+bool Process::last_input_socket(const Socket &s_in) const
 {
-	for (auto &s : this->s_in)
-		if (s.dataptr == nullptr)
-			return false;
-	for (auto &s : this->s_in_out)
+	const Socket* last_s_in = nullptr;
+	for (auto &s : socket)
+	{
+		auto s_type = get_socket_type(s);
+		if (s_type == IN || s_type == IN_OUT)
+			last_s_in = &s;
+	}
+
+	auto val = last_s_in == nullptr ? false : &s_in == last_s_in;
+
+	return val;
+}
+
+bool Process::can_exec() const
+{
+	for (auto &s : socket)
 		if (s.dataptr == nullptr)
 			return false;
 	return true;
 }
 
-uint32_t Process::get_n_calls()
+uint32_t Process::get_n_calls() const
 {
 	return this->n_calls;
 }
 
-std::chrono::nanoseconds Process::get_duration_total()
+std::chrono::nanoseconds Process::get_duration_total() const
 {
 	return this->duration_total;
 }
 
-std::chrono::nanoseconds Process::get_duration_avg()
+std::chrono::nanoseconds Process::get_duration_avg() const
 {
 	return this->duration_total / this->n_calls;
 }
 
-std::chrono::nanoseconds Process::get_duration_min()
+std::chrono::nanoseconds Process::get_duration_min() const
 {
 	return this->duration_min;
 }
 
-std::chrono::nanoseconds Process::get_duration_max()
+std::chrono::nanoseconds Process::get_duration_max() const
 {
 	return this->duration_max;
 }
 
-const std::vector<std::string>& Process::get_registered_duration()
+const std::vector<std::string>& Process::get_registered_duration() const
 {
 	return this->registered_duration;
 }
 
-uint32_t Process::get_registered_n_calls(const std::string key)
+uint32_t Process::get_registered_n_calls(const std::string key) const
 {
-	return this->registered_n_calls[key];
+	return this->registered_n_calls.find(key)->second;
 }
 
-std::chrono::nanoseconds Process::get_registered_duration_total(const std::string key)
+std::chrono::nanoseconds Process::get_registered_duration_total(const std::string key) const
 {
-	return this->registered_duration_total[key];
+	return this->registered_duration_total.find(key)->second;
 }
 
-std::chrono::nanoseconds Process::get_registered_duration_avg(const std::string key)
+std::chrono::nanoseconds Process::get_registered_duration_avg(const std::string key) const
 {
-	return this->registered_duration_total[key] / this->n_calls;
+	return this->registered_duration_total.find(key)->second / this->n_calls;
 }
 
-std::chrono::nanoseconds Process::get_registered_duration_min(const std::string key)
+std::chrono::nanoseconds Process::get_registered_duration_min(const std::string key) const
 {
-	return this->registered_duration_min[key];
+	return this->registered_duration_min.find(key)->second;
 }
 
-std::chrono::nanoseconds Process::get_registered_duration_max(const std::string key)
+std::chrono::nanoseconds Process::get_registered_duration_max(const std::string key) const
 {
-	return this->registered_duration_max[key];
+	return this->registered_duration_max.find(key)->second;
+}
+
+Socket_type Process::get_socket_type(const Socket &s) const
+{
+	const auto &it = this->socket_type.find(s.get_name());
+	if (it != socket_type.end())
+		return it->second;
+	else
+	{
+		std::stringstream message;
+		message << "The socket does not exist ('s.name' = " << s.name << ", 'process.name' = " << this->get_name()
+		        << ", 'module.name' = " << module.get_name() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 void Process::register_duration(const std::string key)

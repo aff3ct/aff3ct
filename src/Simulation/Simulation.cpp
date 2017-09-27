@@ -79,9 +79,11 @@ void Simulation
 			{
 				for (auto &p : m.second[0]->processes)
 				{
-					size_t n_elmts = p.second->s_out   .size() ? p.second->s_out   [0].get_n_elmts():
-					                 p.second->s_in_out.size() ? p.second->s_in_out[0].get_n_elmts():
-					                                             p.second->s_in    [0].get_n_elmts();
+//					size_t n_elmts = p.second->s_out   .size() ? p.second->s_out   [0].get_n_elmts():
+//					                 p.second->s_in_out.size() ? p.second->s_in_out[0].get_n_elmts():
+//					                                             p.second->s_in    [0].get_n_elmts();
+
+					size_t n_elmts = p.second->socket.back().get_n_elmts();
 
 					auto module = m.second[0]->get_short_name();
 					auto process = p.second->get_name();

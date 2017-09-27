@@ -28,37 +28,37 @@ Socket::Socket(Process &process, const std::string name, const std::type_index d
 {
 }
 
-std::string Socket::get_name()
+std::string Socket::get_name() const
 {
 	return this->name;
 }
 
-std::type_index Socket::get_datatype()
+std::type_index Socket::get_datatype() const
 {
 	return this->datatype;
 }
 
-std::string Socket::get_datatype_string()
+std::string Socket::get_datatype_string() const
 {
 	return type_to_string[this->datatype];
 }
 
-uint8_t Socket::get_datatype_size()
+uint8_t Socket::get_datatype_size() const
 {
 	return type_to_size[this->datatype];
 }
 
-size_t Socket::get_databytes()
+size_t Socket::get_databytes() const
 {
 	return this->databytes;
 }
 
-size_t Socket::get_n_elmts()
+size_t Socket::get_n_elmts() const
 {
 	return this->get_databytes() / (size_t)this->get_datatype_size();
 }
 
-void* Socket::get_dataptr()
+void* Socket::get_dataptr() const
 {
 	return this->dataptr;
 }

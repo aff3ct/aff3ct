@@ -51,10 +51,10 @@ protected:
 	std::map<std::string, std::chrono::nanoseconds> registered_duration_min;
 	std::map<std::string, std::chrono::nanoseconds> registered_duration_max;
 
+	std::map<std::string,Socket_type> socket_type;
+
 public:
-	std::vector<Socket> s_in;
-	std::vector<Socket> s_in_out;
-	std::vector<Socket> s_out;
+	std::vector<Socket> socket;
 
 	Process(const Module &module,
 	        const std::string name,
@@ -70,29 +70,31 @@ public:
 	void set_debug_limit    (const uint32_t limit    );
 	void set_debug_precision(const uint8_t  prec     );
 
-	bool is_autostart();
-	bool is_stats    ();
-	bool is_debug    ();
-	bool can_exec    ();
+	bool is_autostart() const;
+	bool is_stats    () const;
+	bool is_debug    () const;
+	bool can_exec    () const;
 
-	std::string                     get_name                     (                     );
-	uint32_t                        get_n_calls                  (                     );
-	std::chrono::nanoseconds        get_duration_total           (                     );
-	std::chrono::nanoseconds        get_duration_avg             (                     );
-	std::chrono::nanoseconds        get_duration_min             (                     );
-	std::chrono::nanoseconds        get_duration_max             (                     );
-	const std::vector<std::string>& get_registered_duration      (                     );
-	uint32_t                        get_registered_n_calls       (const std::string key);
-	std::chrono::nanoseconds        get_registered_duration_total(const std::string key);
-	std::chrono::nanoseconds        get_registered_duration_avg  (const std::string key);
-	std::chrono::nanoseconds        get_registered_duration_min  (const std::string key);
-	std::chrono::nanoseconds        get_registered_duration_max  (const std::string key);
+	std::string                     get_name                     (                     ) const;
+	uint32_t                        get_n_calls                  (                     ) const;
+	std::chrono::nanoseconds        get_duration_total           (                     ) const;
+	std::chrono::nanoseconds        get_duration_avg             (                     ) const;
+	std::chrono::nanoseconds        get_duration_min             (                     ) const;
+	std::chrono::nanoseconds        get_duration_max             (                     ) const;
+	const std::vector<std::string>& get_registered_duration      (                     ) const;
+	uint32_t                        get_registered_n_calls       (const std::string key) const;
+	std::chrono::nanoseconds        get_registered_duration_total(const std::string key) const;
+	std::chrono::nanoseconds        get_registered_duration_avg  (const std::string key) const;
+	std::chrono::nanoseconds        get_registered_duration_min  (const std::string key) const;
+	std::chrono::nanoseconds        get_registered_duration_max  (const std::string key) const;
+	Socket_type                     get_socket_type              (const Socket      &s ) const;
 
-	bool last_input_socket(Socket &s_in);
+	bool last_input_socket(const Socket &s_in) const;
 
 	int exec();
 
-	Socket& operator[](const std::string name);
+	      Socket& operator[](const std::string name);
+	const Socket& operator[](const std::string name) const;
 
 protected:
 	void register_duration(const std::string key);
@@ -109,6 +111,10 @@ protected:
 	void create_socket_out(const std::string name, const size_t n_elmts);
 
 	void create_codelet(std::function<int(void)> codelet);
+
+private:
+	template <typename T>
+	inline Socket& create_socket(const std::string name, const size_t n_elmts);
 };
 }
 }
