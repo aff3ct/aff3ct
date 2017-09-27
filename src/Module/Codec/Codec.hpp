@@ -120,8 +120,8 @@ public:
 		});
 
 		auto &p4 = this->create_process("add_sys_ext");
-		this->template create_socket_in<Q>(p4, "ext", this->K    * this->n_frames);
-		this->template create_socket_in<Q>(p4, "Y_N", this->N_cw * this->n_frames);
+		this->template create_socket_in    <Q>(p4, "ext", this->K    * this->n_frames);
+		this->template create_socket_in_out<Q>(p4, "Y_N", this->N_cw * this->n_frames);
 		this->create_codelet(p4, [&]() -> int
 		{
 			this->add_sys_ext(static_cast<Q*>(p4["ext"].get_dataptr()),

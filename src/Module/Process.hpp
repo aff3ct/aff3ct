@@ -52,9 +52,9 @@ protected:
 	std::map<std::string, std::chrono::nanoseconds> registered_duration_max;
 
 public:
-	std::vector<Socket> in;
-	std::vector<Socket> out;
-	std::vector<Socket> in_out;
+	std::vector<Socket> s_in;
+	std::vector<Socket> s_in_out;
+	std::vector<Socket> s_out;
 
 	Process(const Module &module,
 	        const std::string name,
@@ -103,10 +103,10 @@ protected:
 	void create_socket_in(const std::string name, const size_t n_elmts);
 
 	template <typename T>
-	void create_socket_out(const std::string name, const size_t n_elmts);
+	void create_socket_in_out(const std::string name, const size_t n_elmts);
 
 	template <typename T>
-	void create_socket_in_out(const std::string name, const size_t n_elmts);
+	void create_socket_out(const std::string name, const size_t n_elmts);
 
 	void create_codelet(std::function<int(void)> codelet);
 };

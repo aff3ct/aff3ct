@@ -124,6 +124,12 @@ protected:
 	}
 
 	template <typename T>
+	void create_socket_in_out(Process& process, const std::string name, const size_t n_elmts)
+	{
+		process.template create_socket_in_out<T>(name, n_elmts);
+	}
+
+	template <typename T>
 	void create_socket_out(Process& process, const std::string name, const size_t n_elmts)
 	{
 		process.template create_socket_out<T>(name, n_elmts);

@@ -115,30 +115,40 @@ int Process::exec()
 			std::cout << "# ";
 			std::cout << tools::format(module.get_name(), sty_class) << "::" << tools::format(get_name(), sty_method)
 			          << "(";
-			for (auto i = 0; i < (int)in.size(); i++)
+			for (auto i = 0; i < (int)s_in.size(); i++)
 			{
-				auto n_elmts = in[i].get_databytes() / (size_t)in[i].get_datatype_size();
+				auto n_elmts = s_in[i].get_databytes() / (size_t)s_in[i].get_datatype_size();
 				std::cout << tools::format("const ", sty_type)
-				          << tools::format(in[i].get_datatype_string(), sty_type)
-				          << " " << in[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
+				          << tools::format(s_in[i].get_datatype_string(), sty_type)
+				          << " " << s_in[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
 				          << (n_elmts / n_fra) << "]"
-				          << (i < (int)in.size() -1 || out.size() > 0 ? ", " : "");
+				          << (i < (int)s_in.size() -1 || s_in_out.size() || s_out.size() > 0 ? ", " : "");
 
-				max_n_chars = std::max(in[i].get_name().size(), max_n_chars);
+				max_n_chars = std::max(s_in[i].get_name().size(), max_n_chars);
 			}
-			for (auto i = 0; i < (int)out.size(); i++)
+			for (auto i = 0; i < (int)s_in_out.size(); i++)
 			{
-				auto n_elmts = out[i].get_databytes() / (size_t)out[i].get_datatype_size();
-				std::cout << tools::format(out[i].get_datatype_string(), sty_type)
-				          << " " << out[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
+				auto n_elmts = s_in_out[i].get_databytes() / (size_t)s_in_out[i].get_datatype_size();
+				std::cout << tools::format(s_in_out[i].get_datatype_string(), sty_type)
+				          << " " << s_in_out[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
 				          << (n_elmts / n_fra) << "]"
-				          << (i < (int)out.size() -1 ? ", " : "");
+				          << (i < (int)s_in_out.size() -1 || s_out.size() > 0 ? ", " : "");
 
-				max_n_chars = std::max(out[i].get_name().size(), max_n_chars);
+				max_n_chars = std::max(s_in_out[i].get_name().size(), max_n_chars);
+			}
+			for (auto i = 0; i < (int)s_out.size(); i++)
+			{
+				auto n_elmts = s_out[i].get_databytes() / (size_t)s_out[i].get_datatype_size();
+				std::cout << tools::format(s_out[i].get_datatype_string(), sty_type)
+				          << " " << s_out[i].get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
+				          << (n_elmts / n_fra) << "]"
+				          << (i < (int)s_out.size() -1 ? ", " : "");
+
+				max_n_chars = std::max(s_out[i].get_name().size(), max_n_chars);
 			}
 			std::cout << ")" << std::endl;
 
-			for (auto &i : in)
+			for (auto &i : s_in)
 			{
 				std::string spaces; for (size_t s = 0; s < max_n_chars - i.get_name().size(); s++) spaces += " ";
 
@@ -153,6 +163,23 @@ int Process::exec()
 				else if (i.get_datatype() == typeid(int64_t)) display_data((int64_t*)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
 				else if (i.get_datatype() == typeid(float  )) display_data((float  *)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
 				else if (i.get_datatype() == typeid(double )) display_data((double *)i.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				std::cout << "]" << std::endl;
+			}
+			for (auto &io : s_in_out)
+			{
+				std::string spaces; for (size_t s = 0; s < max_n_chars - io.get_name().size(); s++) spaces += " ";
+
+				auto n_elmts = io.get_databytes() / (size_t)io.get_datatype_size();
+				auto fra_size = n_elmts / n_fra;
+				auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+				auto p = debug_precision;
+				std::cout << "# {IN}  " << io.get_name() << spaces << " = [";
+				     if (io.get_datatype() == typeid(int8_t )) display_data((int8_t *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(int16_t)) display_data((int16_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(int32_t)) display_data((int32_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(int64_t)) display_data((int64_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(float  )) display_data((float  *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(double )) display_data((double *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
 				std::cout << "]" << std::endl;
 			}
 		}
@@ -182,7 +209,25 @@ int Process::exec()
 
 		if (debug)
 		{
-			for (auto &o : out)
+			for (auto &io : s_in_out)
+			{
+				std::string spaces; for (size_t s = 0; s < max_n_chars - io.get_name().size(); s++) spaces += " ";
+
+				auto n_elmts = io.get_databytes() / (size_t)io.get_datatype_size();
+				auto n_fra = (size_t)this->module.get_n_frames();
+				auto fra_size = n_elmts / n_fra;
+				auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+				std::cout << "# {OUT} " << io.get_name() << spaces << " = [";
+				auto p = debug_precision;
+				     if (io.get_datatype() == typeid(int8_t )) display_data((int8_t *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(int16_t)) display_data((int16_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(int32_t)) display_data((int32_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(int64_t)) display_data((int64_t*)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(float  )) display_data((float  *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				else if (io.get_datatype() == typeid(double )) display_data((double *)io.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+				std::cout << "]" << std::endl;
+			}
+			for (auto &o : s_out)
 			{
 				std::string spaces; for (size_t s = 0; s < max_n_chars - o.get_name().size(); s++) spaces += " ";
 
@@ -218,17 +263,23 @@ int Process::exec()
 template <typename T>
 void Process::create_socket_in(const std::string name, const size_t n_elmts)
 {
-	in.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
+	s_in.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
+}
+
+template <typename T>
+void Process::create_socket_in_out(const std::string name, const size_t n_elmts)
+{
+	s_in_out.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
 }
 
 template <typename T>
 void Process::create_socket_out(const std::string name, const size_t n_elmts)
 {
-	out.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
+	s_out.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
 
 	// memory allocation
-	out_buffers.push_back(std::vector<uint8_t>(out.back().databytes));
-	out.back().dataptr = out_buffers.back().data();
+	out_buffers.push_back(std::vector<uint8_t>(s_out.back().databytes));
+	s_out.back().dataptr = out_buffers.back().data();
 }
 
 void Process::create_codelet(std::function<int(void)> codelet)
@@ -238,8 +289,9 @@ void Process::create_codelet(std::function<int(void)> codelet)
 
 Socket& Process::operator[](const std::string name)
 {
-	for (auto &s : in ) if (s.get_name() == name) return s;
-	for (auto &s : out) if (s.get_name() == name) return s;
+	for (auto &s : s_in    ) if (s.get_name() == name) return s;
+	for (auto &s : s_in_out) if (s.get_name() == name) return s;
+	for (auto &s : s_out   ) if (s.get_name() == name) return s;
 
 	std::stringstream message;
 	message << "The socket does not exist ('socket.name' = " << name << ", 'process.name' = " << this->get_name()
@@ -249,12 +301,15 @@ Socket& Process::operator[](const std::string name)
 
 bool Process::last_input_socket(Socket &s_in)
 {
-	return &s_in == &in.back();
+	return this->s_in_out.size() == 0 ? &s_in == &this->s_in.back() : &s_in == &this->s_in_out.back();
 }
 
 bool Process::can_exec()
 {
-	for (auto &s : this->in)
+	for (auto &s : this->s_in)
+		if (s.dataptr == nullptr)
+			return false;
+	for (auto &s : this->s_in_out)
 		if (s.dataptr == nullptr)
 			return false;
 	return true;
@@ -359,6 +414,13 @@ template void Process::create_socket_in<int32_t>(const std::string, const size_t
 template void Process::create_socket_in<int64_t>(const std::string, const size_t);
 template void Process::create_socket_in<float  >(const std::string, const size_t);
 template void Process::create_socket_in<double >(const std::string, const size_t);
+
+template void Process::create_socket_in_out<int8_t >(const std::string, const size_t);
+template void Process::create_socket_in_out<int16_t>(const std::string, const size_t);
+template void Process::create_socket_in_out<int32_t>(const std::string, const size_t);
+template void Process::create_socket_in_out<int64_t>(const std::string, const size_t);
+template void Process::create_socket_in_out<float  >(const std::string, const size_t);
+template void Process::create_socket_in_out<double >(const std::string, const size_t);
 
 template void Process::create_socket_out<int8_t >(const std::string, const size_t);
 template void Process::create_socket_out<int16_t>(const std::string, const size_t);
