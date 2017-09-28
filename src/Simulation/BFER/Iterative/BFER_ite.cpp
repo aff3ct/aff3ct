@@ -77,10 +77,13 @@ void BFER_ite<B,R,Q>
 	this->modules["quantizer"      ][tid] = quantizer      [tid];
 	this->modules["coset_real"     ][tid] = coset_real     [tid];
 	this->modules["decoder_siso"   ][tid] = codec          [tid]->get_decoder_siso();
-	this->modules["decoder_siho"   ][tid] = codec          [tid]->get_decoder_siho();
 	this->modules["coset_bit"      ][tid] = coset_bit      [tid];
 	this->modules["interleaver_bit"][tid] = interleaver_bit[tid];
 	this->modules["interleaver_llr"][tid] = interleaver_llr[tid];
+
+	if (dynamic_cast<module::Decoder*>(codec[tid]->get_decoder_siso()) !=
+	    dynamic_cast<module::Decoder*>(codec[tid]->get_decoder_siho()))
+		this->modules["decoder_siho"][tid] = codec[tid]->get_decoder_siho();
 
 	this->monitor[tid]->add_handler_check(std::bind(&module::Codec_SISO_SIHO<B,Q>::reset, codec[tid]));
 
