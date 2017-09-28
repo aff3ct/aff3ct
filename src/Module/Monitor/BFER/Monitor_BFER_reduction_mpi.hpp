@@ -9,7 +9,7 @@
 
 #include <mpi.h>
 
-#include "Monitor_reduction.hpp"
+#include "Monitor_BFER_reduction.hpp"
 
 namespace aff3ct
 {
