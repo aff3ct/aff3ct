@@ -79,10 +79,6 @@ void Simulation
 			{
 				for (auto &p : m.second[0]->processes)
 				{
-//					size_t n_elmts = p.second->s_out   .size() ? p.second->s_out   [0].get_n_elmts():
-//					                 p.second->s_in_out.size() ? p.second->s_in_out[0].get_n_elmts():
-//					                                             p.second->s_in    [0].get_n_elmts();
-
 					size_t n_elmts = p.second->socket.back().get_n_elmts();
 
 					auto module = m.second[0]->get_short_name();
@@ -177,23 +173,24 @@ void Simulation
 								auto rmin_lat = (float)(rmin_duration.count() * 0.001f);
 								auto rmax_lat = (float)(rmax_duration.count() * 0.001f);
 
-								std::stringstream sssp, ssrn_calls, ssrtot_dur, ssrpercent;
+								std::stringstream spaces, sssp, ssrn_calls, ssrtot_dur, ssrpercent;
 								std::stringstream ssravg_thr, ssrmin_thr, ssrmax_thr;
 								std::stringstream ssravg_lat, ssrmin_lat, ssrmax_lat;
 
-								sssp       << std::setprecision(                    2) <<                                    std::fixed  << std::setw(7) << sp;
-								ssrn_calls << std::setprecision(rn_calls > l1 ? P : 2) << (rn_calls > l1 ? std::scientific : std::fixed) << std::setw(8) << rn_calls;
-								ssrtot_dur << std::setprecision(rtot_dur > l1 ? P : 2) << (rtot_dur > l1 ? std::scientific : std::fixed) << std::setw(8) << rtot_dur;
-								ssrpercent << std::setprecision(                    2) <<                                    std::fixed  << std::setw(6) << rpercent;
-								ssravg_thr << std::setprecision(ravg_thr > l1 ? P : 2) << (ravg_thr > l2 ? std::scientific : std::fixed) << std::setw(8) << ravg_thr;
-								ssrmin_thr << std::setprecision(rmin_thr > l1 ? P : 2) << (rmin_thr > l2 ? std::scientific : std::fixed) << std::setw(8) << rmin_thr;
-								ssrmax_thr << std::setprecision(rmax_thr > l1 ? P : 2) << (rmax_thr > l2 ? std::scientific : std::fixed) << std::setw(8) << rmax_thr;
-								ssravg_lat << std::setprecision(ravg_lat > l1 ? P : 2) << (ravg_lat > l2 ? std::scientific : std::fixed) << std::setw(8) << ravg_lat;
-								ssrmin_lat << std::setprecision(rmin_lat > l1 ? P : 2) << (rmin_lat > l2 ? std::scientific : std::fixed) << std::setw(8) << rmin_lat;
-								ssrmax_lat << std::setprecision(rmax_lat > l1 ? P : 2) << (rmax_lat > l2 ? std::scientific : std::fixed) << std::setw(8) << rmax_lat;
+								spaces     <<                                                                                std::fixed  << std::setw(12) << "-";
+								sssp       << std::setprecision(                    2) <<                                    std::fixed  << std::setw( 7) << sp;
+								ssrn_calls << std::setprecision(rn_calls > l1 ? P : 2) << (rn_calls > l1 ? std::scientific : std::fixed) << std::setw( 8) << rn_calls;
+								ssrtot_dur << std::setprecision(rtot_dur > l1 ? P : 2) << (rtot_dur > l1 ? std::scientific : std::fixed) << std::setw( 8) << rtot_dur;
+								ssrpercent << std::setprecision(                    2) <<                                    std::fixed  << std::setw( 6) << rpercent;
+								ssravg_thr << std::setprecision(ravg_thr > l1 ? P : 2) << (ravg_thr > l2 ? std::scientific : std::fixed) << std::setw( 8) << ravg_thr;
+								ssrmin_thr << std::setprecision(rmin_thr > l1 ? P : 2) << (rmin_thr > l2 ? std::scientific : std::fixed) << std::setw( 8) << rmin_thr;
+								ssrmax_thr << std::setprecision(rmax_thr > l1 ? P : 2) << (rmax_thr > l2 ? std::scientific : std::fixed) << std::setw( 8) << rmax_thr;
+								ssravg_lat << std::setprecision(ravg_lat > l1 ? P : 2) << (ravg_lat > l2 ? std::scientific : std::fixed) << std::setw( 8) << ravg_lat;
+								ssrmin_lat << std::setprecision(rmin_lat > l1 ? P : 2) << (rmin_lat > l2 ? std::scientific : std::fixed) << std::setw( 8) << rmin_lat;
+								ssrmax_lat << std::setprecision(rmax_lat > l1 ? P : 2) << (rmax_lat > l2 ? std::scientific : std::fixed) << std::setw( 8) << rmax_lat;
 
 								stream << "# ";
-								stream << tools::format(ssmodule  .str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
+								stream << spaces.str()                                          << tools::format(" | ",  tools::Style::BOLD)
 								       << tools::format(ssprocess .str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
 								       << tools::format(sssp      .str(), tools::Style::ITALIC) << tools::format(" || ", tools::Style::BOLD)
 								       << tools::format(ssrn_calls.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)

@@ -245,7 +245,7 @@ void EXIT<B,R>
 			monitor["check_mutual_info"]["llrs_a"].bind(modem_a["demodulate_wg"]["Y_N2"]);
 			channel["add_noise_wg"     ]["X_N"   ].bind(modem  ["modulate"     ]["X_N2"]);
 			modem  ["demodulate_wg"    ]["Y_N1"  ].bind(channel["add_noise_wg" ]["Y_N" ]);
-			modem  ["demodulate_wg"    ]["H_N "  ].bind(channel["add_noise_wg" ]["H_N" ]);
+			modem  ["demodulate_wg"    ]["H_N"   ].bind(channel["add_noise_wg" ]["H_N" ]);
 			codec  ["add_sys_ext"      ]["ext"   ].bind(modem_a["demodulate_wg"]["Y_N2"]);
 			codec  ["add_sys_ext"      ]["Y_N"   ].bind(modem  ["demodulate_wg"]["Y_N2"]);
 			decoder["decode_siso"      ]["Y_N1"  ].bind(modem  ["demodulate_wg"]["Y_N2"]);
