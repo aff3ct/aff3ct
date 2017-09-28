@@ -102,7 +102,7 @@ int Socket::bind(Socket &s)
 
 	this->dataptr = s.dataptr;
 
-	if (this->process.is_autostart() && this->process.last_input_socket(*this))
+	if (this->process.is_autoexec() && this->process.last_input_socket(*this))
 		return this->process.exec();
 	else
 		return 0;

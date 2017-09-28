@@ -10,10 +10,12 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-Process::Process(const Module &module, const std::string name, const bool autostart, const bool stats, const bool debug)
+Process::Process(const Module &module, const std::string name, const bool autoalloc, const bool autoexec,
+                 const bool stats, const bool debug)
 : module(module),
   name(name),
-  autostart(autostart),
+  autoalloc(autoalloc),
+  autoexec(autoexec),
   stats(stats),
   debug(debug),
   debug_limit(-1),
@@ -31,14 +33,26 @@ std::string Process::get_name() const
 	return this->name;
 }
 
-void Process::set_autostart(const bool autostart)
+void Process::set_autoalloc(const bool autoalloc)
 {
-	this->autostart = autostart;
+	this->autoalloc = autoalloc;
+
+	//TODO: free mem and set ptr to null in the socket (if autoalloc = false)
 }
 
-bool Process::is_autostart() const
+bool Process::is_autoalloc() const
 {
-	return this->autostart;
+	return this->autoalloc;
+}
+
+void Process::set_autoexec(const bool autoexec)
+{
+	this->autoexec = autoexec;
+}
+
+bool Process::is_autoexec() const
+{
+	return this->autoexec;
 }
 
 void Process::set_stats(const bool stats)
@@ -265,8 +279,11 @@ void Process::create_socket_out(const std::string name, const size_t n_elmts)
 	socket_type[s.get_name()] = Socket_type::OUT;
 
 	// memory allocation
-	out_buffers.push_back(std::vector<uint8_t>(s.databytes));
-	s.dataptr = out_buffers.back().data();
+	if (is_autoalloc())
+	{
+		out_buffers.push_back(std::vector<uint8_t>(s.databytes));
+		s.dataptr = out_buffers.back().data();
+	}
 }
 
 void Process::create_codelet(std::function<int(void)> codelet)
@@ -393,6 +410,7 @@ Socket_type Process::get_socket_type(const Socket &s) const
 void Process::register_duration(const std::string key)
 {
 	this->registered_duration.push_back(key);
+	this->registered_n_calls       [key] = 0;
 	this->registered_duration_total[key] = std::chrono::nanoseconds(0);
 	this->registered_duration_max  [key] = std::chrono::nanoseconds(0);
 	this->registered_duration_min  [key] = std::chrono::nanoseconds(0);

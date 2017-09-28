@@ -31,7 +31,8 @@ protected:
 	const Module &module;
 
 	const std::string name;
-	bool autostart;
+	bool autoalloc;
+	bool autoexec;
 	bool stats;
 	bool debug;
 	int32_t debug_limit;
@@ -45,11 +46,11 @@ protected:
 	std::chrono::nanoseconds duration_min;
 	std::chrono::nanoseconds duration_max;
 
-	std::vector<std::string> registered_duration;
-	std::map<std::string, uint32_t                > registered_n_calls;
-	std::map<std::string, std::chrono::nanoseconds> registered_duration_total;
-	std::map<std::string, std::chrono::nanoseconds> registered_duration_min;
-	std::map<std::string, std::chrono::nanoseconds> registered_duration_max;
+	std::vector<std::string                          > registered_duration;
+	std::map   <std::string, uint32_t                > registered_n_calls;
+	std::map   <std::string, std::chrono::nanoseconds> registered_duration_total;
+	std::map   <std::string, std::chrono::nanoseconds> registered_duration_min;
+	std::map   <std::string, std::chrono::nanoseconds> registered_duration_max;
 
 	std::map<std::string,Socket_type> socket_type;
 
@@ -58,19 +59,22 @@ public:
 
 	Process(const Module &module,
 	        const std::string name,
-	        const bool autostart = true,
+	        const bool autoalloc = false,
+	        const bool autoexec  = false,
 	        const bool stats     = false,
 	        const bool debug     = false);
 
 	void reset_stats();
 
-	void set_autostart      (const bool     autostart);
+	void set_autoalloc      (const bool     autoalloc);
+	void set_autoexec       (const bool     autoexec );
 	void set_stats          (const bool     stats    );
 	void set_debug          (const bool     debug    );
 	void set_debug_limit    (const uint32_t limit    );
 	void set_debug_precision(const uint8_t  prec     );
 
-	bool is_autostart() const;
+	bool is_autoalloc() const;
+	bool is_autoexec () const;
 	bool is_stats    () const;
 	bool is_debug    () const;
 	bool can_exec    () const;

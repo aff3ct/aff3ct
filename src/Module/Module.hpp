@@ -112,8 +112,8 @@ public:
 protected:
 	Process& create_process(const std::string name)
 	{
-		bool autostart = true, stats = true, debug = false;
-		processes[name] = new Process(*this, name, autostart, stats, debug);
+		bool autoalloc = true, autoexec = true, stats = true, debug = false;
+		processes[name] = new Process(*this, name, autoalloc, autoexec, stats, debug);
 		return *processes[name];
 	}
 
