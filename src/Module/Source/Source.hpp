@@ -22,16 +22,16 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Source_i
+ * \class Source
  *
  * \brief Generates a message.
  *
  * \tparam B: type of the bits in the Source.
  *
- * Please use Source for inheritance (instead of Source_i).
+ * Please use Source for inheritance (instead of Source).
  */
 template <typename B = int>
-class Source_i : public Module
+class Source : public Module
 {
 protected:
 	const int K; /*!< Number of information bits in one frame */
@@ -44,7 +44,7 @@ public:
 	 * \param n_frames: number of frames to process in the Source.
 	 * \param name:     Source's name.
 	 */
-	Source_i(const int K, const int n_frames = 1, const std::string name = "Source_i")
+	Source(const int K, const int n_frames = 1, const std::string name = "Source")
 	: Module(n_frames, name, "Source"), K(K)
 	{
 		if (K <= 0)
@@ -67,7 +67,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Source_i()
+	virtual ~Source()
 	{
 	}
 
@@ -109,7 +109,5 @@ protected:
 };
 }
 }
-
-#include "SC_Source.hpp"
 
 #endif /* SOURCE_HPP_ */

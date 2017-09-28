@@ -23,7 +23,7 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Decoder_SIHO_i
+ * \class Decoder_SIHO
  *
  * \brief A Decoder is an algorithm dedicated to find the initial sequence of information bits (before the noise).
  *
@@ -31,10 +31,10 @@ namespace module
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder.
  *
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
- * Please use Decoder for inheritance (instead of Decoder_SIHO_i).
+ * Please use Decoder for inheritance (instead of Decoder_SIHO).
  */
 template <typename B = int, typename R = float>
-class Decoder_SIHO_i : virtual public Decoder
+class Decoder_SIHO : virtual public Decoder
 {
 private:
 	std::vector<R> Y_N;
@@ -50,8 +50,8 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   Decoder's name.
 	 */
-	Decoder_SIHO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	               std::string name = "Decoder_SIHO_i")
+	Decoder_SIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
+	             std::string name = "Decoder_SIHO")
 	: Decoder(K, N, n_frames, simd_inter_frame_level, name),
 	  Y_N    (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
 	  V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
@@ -90,7 +90,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_SIHO_i()
+	virtual ~Decoder_SIHO()
 	{
 	}
 
@@ -213,7 +213,5 @@ protected:
 };
 }
 }
-
-#include "SC_Decoder_SIHO.hpp"
 
 #endif /* DECODER_SIHO_HPP_ */

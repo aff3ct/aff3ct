@@ -21,16 +21,16 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Encoder_i
+ * \class Encoder
  *
  * \brief Encodes a vector of information bits (a message) and adds some redundancy (parity bits).
  *
  * \tparam B: type of the bits in the encoder.
  *
- * Please use Encoder for inheritance (instead of Encoder_i)
+ * Please use Encoder for inheritance (instead of Encoder)
  */
 template <typename B = int>
-class Encoder_i : public Module
+class Encoder : public Module
 {
 protected:
 	const int K; /*!< Number of information bits in one frame */
@@ -45,7 +45,7 @@ public:
 	 * \param n_frames: number of frames to process in the Encoder.
 	 * \param name:     Encoder's name.
 	 */
-	Encoder_i(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_i")
+	Encoder(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder")
 	: Module(n_frames, name, "Encoder"), K(K), N(N)
 	{
 		if (K <= 0)
@@ -84,7 +84,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Encoder_i()
+	virtual ~Encoder()
 	{
 	}
 
@@ -153,7 +153,5 @@ protected:
 };
 }
 }
-
-#include "SC_Encoder.hpp"
 
 #endif /* ENCODER_HPP_ */

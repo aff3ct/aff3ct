@@ -30,10 +30,10 @@ namespace module
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder.
  *
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
- * Please use Decoder for inheritance (instead of Decoder_HIHO_i).
+ * Please use Decoder for inheritance (instead of Decoder_HIHO).
  */
 template <typename B = int>
-class Decoder_HIHO_i : virtual public Decoder
+class Decoder_HIHO : virtual public Decoder
 {
 private:
 	std::vector<B> Y_N;
@@ -49,8 +49,8 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   Decoder's name.
 	 */
-	Decoder_HIHO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	               std::string name = "Decoder_HIHO_i")
+	Decoder_HIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
+	             std::string name = "Decoder_HIHO")
 	: Decoder(K, N, n_frames, simd_inter_frame_level, name),
 	  Y_N    (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
 	  V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
@@ -87,7 +87,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_HIHO_i()
+	virtual ~Decoder_HIHO()
 	{
 	}
 
@@ -210,7 +210,5 @@ protected:
 };
 }
 }
-
-#include "SC_Decoder_HIHO.hpp"
 
 #endif /* DECODER_HIHO_HPP_ */

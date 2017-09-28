@@ -23,7 +23,7 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Modem_i
+ * \class Modem
  *
  * \brief Modulates, filters and/or demodulates a signal.
  *
@@ -31,10 +31,10 @@ namespace module
  * \tparam R: type of the reals (floating-point representation) in the modulation and in the filtering process.
  * \tparam Q: type of the reals (floating-point or fixed-point representation) in the demodulation.
  *
- * Please use Modem for inheritance (instead of Modem_i)
+ * Please use Modem for inheritance (instead of Modem)
  */
 template <typename B = int, typename R = float, typename Q = R>
-class Modem_i : public Module
+class Modem : public Module
 {
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
@@ -52,8 +52,8 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem_i(const int N, const int N_mod, const int N_fil, const R sigma = -1.f, const int n_frames = 1,
-	        const std::string name = "Modem_i")
+	Modem(const int N, const int N_mod, const int N_fil, const R sigma = -1.f, const int n_frames = 1,
+	      const std::string name = "Modem")
 	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
 	{
 		if (N <= 0)
@@ -88,8 +88,8 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem_i(const int N, const int N_mod, const R sigma = -1.f, const int n_frames = 1,
-	        const std::string name = "Modem_i")
+	Modem(const int N, const int N_mod, const R sigma = -1.f, const int n_frames = 1,
+	        const std::string name = "Modem")
 	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
 	{
 		if (N <= 0)
@@ -116,7 +116,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem_i(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Modem_i")
+	Modem(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Modem")
 	: Module(n_frames, name, "Modem"), N(N), N_mod(N), N_fil(N), sigma(sigma)
 	{
 		if (N <= 0)
@@ -209,7 +209,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Modem_i()
+	virtual ~Modem()
 	{
 	}
 
@@ -614,7 +614,5 @@ protected:
 };
 }
 }
-
-#include "SC_Modem.hpp"
 
 #endif /* MODEM_HPP_ */

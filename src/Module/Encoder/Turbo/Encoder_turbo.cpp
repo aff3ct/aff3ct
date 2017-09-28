@@ -14,7 +14,7 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_turbo<B>
 ::Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi,
-                Encoder_sys<B> &enco_n, Encoder_sys<B> &enco_i, const int n_frames, const std::string name)
+                Encoder<B> &enco_n, Encoder<B> &enco_i, const int n_frames, const std::string name)
 : Encoder<B>(K, N, n_frames, name),
   pi        (pi),
   enco_n    (enco_n),

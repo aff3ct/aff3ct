@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "../Encoder_sys.hpp"
+#include "../Encoder.hpp"
 
 namespace aff3ct
 {
@@ -14,7 +14,7 @@ template <typename B>
 class Encoder_turbo_DB;
 
 template <typename B = int>
-class Encoder_RSC_DB: public Encoder_sys<B>
+class Encoder_RSC_DB: public Encoder<B>
 {
 	friend Encoder_turbo_DB<B>;
 

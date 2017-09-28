@@ -20,18 +20,18 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Quantizer_i
+ * \class Quantizer
  *
  * \brief Quantizes floating-point data to fixed-point representation.
  *
  * \tparam R: type of the reals (floating-point representation) in the Quantizer.
  * \tparam Q: type of the reals (floating-point or fixed-point representation) in the Quantizer.
  *
- * Please use Quantizer for inheritance (instead of Quantizer_i).
+ * Please use Quantizer for inheritance (instead of Quantizer).
  * If Q is a floating-point representation then the Quantizer does nothing more than a cast.
  */
 template <typename R = float, typename Q = int>
-class Quantizer_i : public Module
+class Quantizer : public Module
 {
 protected:
 	const int N; /*!< Size of one frame (= number of bits in one frame) */
@@ -44,7 +44,7 @@ public:
 	 * \param n_frames: number of frames to process in the Decoder.
 	 * \param name:     Quantizer's name.
 	 */
-	Quantizer_i(const int N, const int n_frames = 1, const std::string name = "Quantizer_i")
+	Quantizer(const int N, const int n_frames = 1, const std::string name = "Quantizer")
 	: Module(n_frames, name, "Quantizer"), N(N)
 	{
 		if (N <= 0)
@@ -69,7 +69,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Quantizer_i()
+	virtual ~Quantizer()
 	{
 	}
 
@@ -122,7 +122,5 @@ protected:
 };
 }
 }
-
-#include "SC_Quantizer.hpp"
 
 #endif /* QUANTIZER_HPP_ */

@@ -22,16 +22,16 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Decoder_SISO_i
+ * \class Decoder_SISO
  *
  * \brief A Decoder_SISO (Soft Input Soft Output) is a type of decoder which takes a soft input and return a soft output.
  *
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder_SISO.
  *
- * Please use Decoder_SISO for inheritance (instead of Decoder_SISO_i).
+ * Please use Decoder_SISO for inheritance (instead of Decoder_SISO).
  */
 template <typename R = float>
-class Decoder_SISO_i : virtual public Decoder
+class Decoder_SISO : virtual public Decoder
 {
 private:
 	std::vector<R> Y_N1;
@@ -47,8 +47,8 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   decoder name.
 	 */
-	Decoder_SISO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	               std::string name = "Decoder_SISO_i")
+	Decoder_SISO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
+	             std::string name = "Decoder_SISO")
 	: Decoder(K, N, n_frames, simd_inter_frame_level, name),
 	  Y_N1   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
 	  Y_N2   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
@@ -68,7 +68,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_SISO_i() {};
+	virtual ~Decoder_SISO() {};
 
 	/*!
 	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be
@@ -216,7 +216,5 @@ protected:
 };
 }
 }
-
-#include "SC_Decoder_SISO.hpp"
 
 #endif /* DECODER_SISO_HPP_ */

@@ -21,17 +21,17 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Coset_i
+ * \class Coset
  *
  * \brief Performs the coset approach (flips the bits or the signs depending on the initial codeword).
  *
  * \tparam B: type of the bits in the ref data.
  * \tparam D: type of the input/output data.
  *
- * Please use Coset for inheritance (instead of Coset_i).
+ * Please use Coset for inheritance (instead of Coset).
  */
 template <typename B, typename D>
-class Coset_i : public Module
+class Coset : public Module
 {
 protected:
 	const int size; /*!< Size of the input data */
@@ -44,7 +44,7 @@ public:
 	 * \param n_frames: number of frames to process in the Source.
 	 * \param name:     Source's name.
 	 */
-	Coset_i(const int size, const int n_frames = 1, const std::string name = "Coset_i")
+	Coset(const int size, const int n_frames = 1, const std::string name = "Coset")
 	: Module(n_frames, name, "Coset"), size(size)
 	{
 		if (size <= 0)
@@ -71,7 +71,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Coset_i()
+	virtual ~Coset()
 	{
 	}
 
@@ -145,7 +145,5 @@ protected:
 };
 }
 }
-
-#include "SC_Coset.hpp"
 
 #endif /* COSET_HPP_ */

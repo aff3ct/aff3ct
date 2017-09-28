@@ -22,16 +22,16 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Channel_i
+ * \class Channel
  *
  * \brief The Channel is the physical transmission medium.
  *
  * \tparam R: type of the reals (floating-point representation) in the Channel.
  *
- * Please use Channel for inheritance (instead of Channel_i).
+ * Please use Channel for inheritance (instead of Channel).
  */
 template <typename R = float>
-class Channel_i : public Module
+class Channel : public Module
 {
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
@@ -47,7 +47,7 @@ public:
 	 * \param n_frames: number of frames to process in the Channel.
 	 * \param name:     Channel's name.
 	 */
-	Channel_i(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Channel_i")
+	Channel(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Channel")
 	: Module(n_frames, name, "Channel"), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
 	{
 		if (N <= 0)
@@ -85,7 +85,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Channel_i()
+	virtual ~Channel()
 	{
 	}
 
@@ -241,7 +241,5 @@ protected:
 };
 }
 }
-
-#include "SC_Channel.hpp"
 
 #endif /* CHANNEL_HPP_ */

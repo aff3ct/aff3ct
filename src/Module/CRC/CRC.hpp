@@ -21,16 +21,16 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class CRC_i
+ * \class CRC
  *
  * \brief Adds/builds and checks a Cyclic Redundancy Check (CRC) for a set of information bits.
  *
  * \tparam B: type of the bits in the CRC.
  *
- * Please use CRC for inheritance (instead of CRC_i).
+ * Please use CRC for inheritance (instead of CRC).
  */
 template <typename B = int>
-class CRC_i : public Module
+class CRC : public Module
 {
 protected:
 	const int K; /*!< Number of information bits (the CRC bits are not included in K) */
@@ -44,7 +44,7 @@ public:
 	 * \param n_frames: number of frames to process in the CRC.
 	 * \param name:     CRC's name.
 	 */
-	CRC_i(const int K, const int size, const int n_frames = 1, const std::string name = "CRC_i")
+	CRC(const int K, const int size, const int n_frames = 1, const std::string name = "CRC")
 	: Module(n_frames, name, "CRC"), K(K), size(size)
 	{
 		if (K <= 0)
@@ -87,7 +87,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~CRC_i()
+	virtual ~CRC()
 	{
 	}
 
@@ -286,7 +286,5 @@ protected:
 };
 }
 }
-
-#include "SC_CRC.hpp"
 
 #endif

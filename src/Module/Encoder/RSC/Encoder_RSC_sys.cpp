@@ -14,7 +14,7 @@ template <typename B>
 Encoder_RSC_sys<B>
 ::Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding,
                   const std::string name)
-: Encoder_sys<B>(K, N, n_frames, name), n_ff(n_ff), n_states(1 << n_ff),
+: Encoder<B>(K, N, n_frames, name), n_ff(n_ff), n_states(1 << n_ff),
   buffered_encoding(buffered_encoding)
 {
 	if (n_ff <= 0)
@@ -64,18 +64,6 @@ void Encoder_RSC_sys<B>
 		         X_N + 2 * this->K + 1, // tail par
 		         2,                     // stride
 		         2);                    // stride tail bits
-}
-
-template <typename B>
-void Encoder_RSC_sys<B>
-::_encode_sys(const B *U_K, B *par, const int frame_id)
-{
-	// par bits: [par | tail bit par | tail bits sys]
-	__encode(U_K,
-	         nullptr,                    // sys
-	         par + this->K + this->n_ff, // tail sys
-	         par,                        // par
-	         par + this->K);             // tail par
 }
 
 template <typename B>

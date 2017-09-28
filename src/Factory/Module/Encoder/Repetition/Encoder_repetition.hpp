@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Module/Encoder/Encoder_sys.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 #include "../Encoder.hpp"
 
@@ -35,11 +35,11 @@ struct Encoder_repetition : public Encoder
 
 		// builder
 		template <typename B = int>
-		module::Encoder_sys<B>* build() const;
+		module::Encoder<B>* build() const;
 	};
 
 	template <typename B = int>
-	static module::Encoder_sys<B>* build(const parameters &params);
+	static module::Encoder<B>* build(const parameters &params);
 };
 }
 }

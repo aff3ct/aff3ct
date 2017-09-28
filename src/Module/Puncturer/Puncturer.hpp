@@ -21,22 +21,22 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Puncturer_i
+ * \class Puncturer
  *
  * \brief Punctures a codeword to match a frame size.
  *
  * \tparam B: type of the bits in the frames.
  * \tparam Q: type of the reals (floating-point or fixed-point representation) in the Puncturer.
  *
- * Please use Puncturer for inheritance (instead of Puncturer_i)
+ * Please use Puncturer for inheritance (instead of Puncturer)
  */
 template <typename B = int, typename Q = float>
-class Puncturer_i : public Module
+class Puncturer : public Module
 {
 protected:
 	const int K;      /*!< Number of information bits in one frame */
 	const int N;      /*!< Size of one frame (= number of bits in one frame) */
-	const int N_code; /*!< Real size of the codeword (Puncturer_i::N_code >= Puncturer_i::N) */
+	const int N_code; /*!< Real size of the codeword (Puncturer::N_code >= Puncturer::N) */
 
 public:
 	/*!
@@ -44,12 +44,12 @@ public:
 	 *
 	 * \param K:        number of information bits in the frame.
 	 * \param N:        size of one frame.
-	 * \param N_code:   real size of the codeword (Puncturer_i::N_code >= Puncturer_i::N).
+	 * \param N_code:   real size of the codeword (Puncturer::N_code >= Puncturer::N).
 	 * \param n_frames: number of frames to process in the Puncturer.
 	 * \param name:     Puncturer's name.
 	 */
-	Puncturer_i(const int K, const int N, const int N_code, const int n_frames = 1,
-	            const std::string name = "Puncturer_i")
+	Puncturer(const int K, const int N, const int N_code, const int n_frames = 1,
+	          const std::string name = "Puncturer")
 	: Module(n_frames, name, "Puncturer"), K(K), N(N), N_code(N_code)
 	{
 		if (K <= 0)
@@ -113,7 +113,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Puncturer_i() {}
+	virtual ~Puncturer() {}
 
 	int get_K() const
 	{
@@ -215,7 +215,5 @@ protected:
 };
 }
 }
-
-#include "SC_Puncturer.hpp"
 
 #endif /* PUNCTURER_HPP_ */

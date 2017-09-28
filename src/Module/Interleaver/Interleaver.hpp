@@ -17,13 +17,13 @@ namespace aff3ct
 namespace module
 {
 template <typename D = int32_t, typename T = uint32_t>
-class Interleaver_i : public Module
+class Interleaver : public Module
 {
 protected:
 	const tools::Interleaver_core<T> &core;
 
 public:
-	Interleaver_i(const tools::Interleaver_core<T> &core)
+	Interleaver(const tools::Interleaver_core<T> &core)
 	: Module(core.get_n_frames(), "Interleaver_" + core.get_name(), "Interleaver"),
 	  core(core)
 	{
@@ -50,7 +50,7 @@ public:
 		});
 	}
 
-	virtual ~Interleaver_i()
+	virtual ~Interleaver()
 	{
 	}
 
@@ -210,7 +210,5 @@ private:
 };
 }
 }
-
-#include "SC_Interleaver.hpp"
 
 #endif /* INTERLEAVER_HPP_ */

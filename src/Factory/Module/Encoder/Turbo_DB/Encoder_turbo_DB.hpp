@@ -5,7 +5,6 @@
 
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Encoder.hpp"
-#include "Module/Encoder/Encoder_sys.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
