@@ -94,7 +94,7 @@ static inline void display_data(const T *data,
 	{
 		for (auto i = 0; i < (int)limit; i++)
 			std::cout << std::fixed << std::setprecision(p) << std::setw(p +3) << +data[i]
-			          << (i < (int)fra_size -1 ? ", " : "");
+			          << (i < (int)limit -1 ? ", " : "");
 		std::cout << (limit < fra_size ? ", ..." : "");
 	}
 	else
@@ -107,8 +107,8 @@ static inline void display_data(const T *data,
 			std::cout << (f >= 1 ? spaces : "") << fra_id << "(";
 			for (auto i = 0; i < (int)limit; i++)
 				std::cout << std::fixed << std::setprecision(p) << std::setw(p +3) << +data[f * fra_size +i]
-				          << (i < (int)fra_size -1 ? ", " : "");
-			std::cout << (limit < fra_size ? "..." : "") << ")" << (f < (int)n_fra -1 ? ", \n" : "");
+				          << (i < (int)limit -1 ? ", " : "");
+			std::cout << (limit < fra_size ? ", ..." : "") << ")" << (f < (int)n_fra -1 ? ", \n" : "");
 		}
 	}
 }
