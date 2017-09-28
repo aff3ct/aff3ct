@@ -54,7 +54,7 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		auto &p1 = this->create_process("build");
+		auto &p1 = this->create_task("build");
 		this->template create_socket_in <B>(p1, "U_K1",  this->K               * this->n_frames);
 		this->template create_socket_out<B>(p1, "U_K2", (this->K + this->size) * this->n_frames);
 		this->create_codelet(p1, [&]() -> int
@@ -65,7 +65,7 @@ public:
 			return 0;
 		});
 
-		auto &p2 = this->create_process("extract");
+		auto &p2 = this->create_task("extract");
 		this->template create_socket_in <B>(p2, "V_K1", (this->K + this->size) * this->n_frames);
 		this->template create_socket_out<B>(p2, "V_K2",  this->K               * this->n_frames);
 		this->create_codelet(p2, [&]() -> int
@@ -76,7 +76,7 @@ public:
 			return 0;
 		});
 
-		auto &p3 = this->create_process("check");
+		auto &p3 = this->create_task("check");
 		this->template create_socket_in<B>(p3, "V_K", (this->K + this->size) * this->n_frames);
 		this->create_codelet(p3, [&]() -> int
 		{

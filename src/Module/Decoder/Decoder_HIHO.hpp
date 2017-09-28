@@ -55,7 +55,7 @@ public:
 	  Y_N    (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
 	  V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 	{
-		auto &p1 = this->create_process("decode_hiho");
+		auto &p1 = this->create_task("decode_hiho");
 		this->template create_socket_in <B>(p1, "Y_N", this->N * this->n_frames);
 		this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
 		this->create_codelet(p1, [&]() -> int
@@ -69,7 +69,7 @@ public:
 		this->register_duration(p1, "decode");
 		this->register_duration(p1, "store");
 
-		auto &p2 = this->create_process("decode_hiho_coded");
+		auto &p2 = this->create_task("decode_hiho_coded");
 		this->template create_socket_in <B>(p2, "Y_N", this->N * this->n_frames);
 		this->template create_socket_out<B>(p2, "V_N", this->N * this->n_frames);
 		this->create_codelet(p2, [&]() -> int

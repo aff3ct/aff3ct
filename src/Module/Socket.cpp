@@ -2,8 +2,8 @@
 #include <sstream>
 
 #include "Module.hpp"
-#include "Process.hpp"
 #include "Socket.hpp"
+#include "Task.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
@@ -22,9 +22,9 @@ std::unordered_map<std::type_index,uint8_t> type_to_size = {{typeid(int8_t ), 1}
                                                             {typeid(float  ), 4},
                                                             {typeid(double ), 8}};
 
-Socket::Socket(Process &process, const std::string name, const std::type_index datatype, const size_t databytes,
+Socket::Socket(Task &task, const std::string name, const std::type_index datatype, const size_t databytes,
                void *dataptr)
-: process(process), name(name), datatype(datatype), databytes(databytes), dataptr(dataptr)
+: task(task), name(name), datatype(datatype), databytes(databytes), dataptr(dataptr)
 {
 }
 
@@ -72,10 +72,10 @@ int Socket::bind(Socket &s)
 		        << ", 'datatype' = " << type_to_string[this->datatype]
 		        << ", 'name' = " << get_name()
 		        << ", 's.name' = " << s.get_name()
-		        << ", 'process.name' = " << process.get_name()
-		        << ", 's.process.name' = " << s.process.get_name()
-		        << ", 'process.module.name' = " << process.module.get_name()
-		        << ", 's.process.module.name' = " << s.process.module.get_name() << ").";
+		        << ", 'task.name' = " << task.get_name()
+		        << ", 's.task.name' = " << s.task.get_name()
+		        << ", 'task.module.name' = " << task.module.get_name()
+		        << ", 's.task.module.name' = " << s.task.module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -86,10 +86,10 @@ int Socket::bind(Socket &s)
 		        << ", 'databytes' = " << this->databytes
 		        << ", 'name' = " << get_name()
 		        << ", 's.name' = " << s.get_name()
-		        << ", 'process.name' = " << process.get_name()
-		        << ", 's.process.name' = " << s.process.get_name()
-		        << ", 'process.module.name' = " << process.module.get_name()
-		        << ", 's.process.module.name' = " << s.process.module.get_name() << ").";
+		        << ", 'task.name' = " << task.get_name()
+		        << ", 's.task.name' = " << s.task.get_name()
+		        << ", 'task.module.name' = " << task.module.get_name()
+		        << ", 's.task.module.name' = " << s.task.module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -102,8 +102,8 @@ int Socket::bind(Socket &s)
 
 	this->dataptr = s.dataptr;
 
-	if (this->process.is_autoexec() && this->process.last_input_socket(*this))
-		return this->process.exec();
+	if (this->task.is_autoexec() && this->task.last_input_socket(*this))
+		return this->task.exec();
 	else
 		return 0;
 }
@@ -117,8 +117,8 @@ int Socket::bind(std::vector<T,A> &vector)
 		message << "'vector.size()' has to be equal to 'get_n_elmts()' ('vector.size()' = " << vector.size()
 		        << ", 'get_n_elmts()' = " << get_n_elmts()
 		        << ", 'name' = " << get_name()
-		        << ", 'process.name' = " << process.get_name()
-		        << ", 'process.module.name' = " << process.module.get_name() << ").";
+		        << ", 'task.name' = " << task.get_name()
+		        << ", 'task.module.name' = " << task.module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -134,8 +134,8 @@ int Socket::bind(T *array)
 		message << "'T' has to be equal to 'datatype' ('T' = " << type_to_string[typeid(T)]
 		        << ", 'datatype' = " << type_to_string[this->datatype]
 		        << ", 'socket.name' = " << get_name()
-		        << ", 'process.name' = " << process.get_name()
-		        << ", 'module.name' = " << process.module.get_name() << ").";
+		        << ", 'task.name' = " << task.get_name()
+		        << ", 'module.name' = " << task.module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 

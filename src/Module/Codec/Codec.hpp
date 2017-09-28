@@ -83,7 +83,7 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		auto &p1 = this->create_process("extract_sys_llr");
+		auto &p1 = this->create_task("extract_sys_llr");
 		this->template create_socket_in <Q>(p1, "Y_N", this->N_cw * this->n_frames);
 		this->template create_socket_out<Q>(p1, "Y_K", this->K    * this->n_frames);
 		this->create_codelet(p1, [&]() -> int
@@ -94,7 +94,7 @@ public:
 			return 0;
 		});
 
-		auto &p2 = this->create_process("extract_sys_bit");
+		auto &p2 = this->create_task("extract_sys_bit");
 		this->template create_socket_in <Q>(p2, "Y_N", this->N_cw * this->n_frames);
 		this->template create_socket_out<B>(p2, "V_K", this->K    * this->n_frames);
 		this->create_codelet(p2, [&]() -> int
@@ -106,7 +106,7 @@ public:
 		});
 
 		const auto tb_2 = this->tail_length / 2;
-		auto &p3 = this->create_process("extract_sys_par");
+		auto &p3 = this->create_task("extract_sys_par");
 		this->template create_socket_in <Q>(p3, "Y_N",  this->N_cw                   * this->n_frames);
 		this->template create_socket_out<Q>(p3, "sys", (this->K              + tb_2) * this->n_frames);
 		this->template create_socket_out<Q>(p3, "par", (this->N_cw - this->K - tb_2) * this->n_frames);
@@ -119,7 +119,7 @@ public:
 			return 0;
 		});
 
-		auto &p4 = this->create_process("add_sys_ext");
+		auto &p4 = this->create_task("add_sys_ext");
 		this->template create_socket_in    <Q>(p4, "ext", this->K    * this->n_frames);
 		this->template create_socket_in_out<Q>(p4, "Y_N", this->N_cw * this->n_frames);
 		this->create_codelet(p4, [&]() -> int

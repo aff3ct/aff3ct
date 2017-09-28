@@ -53,7 +53,7 @@ public:
 	  Y_N1   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
 	  Y_N2   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 	{
-		auto &p = this->create_process("decode_siso");
+		auto &p = this->create_task("decode_siso");
 		this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
 		this->template create_socket_out<R>(p, "Y_N2", this->N * this->n_frames);
 		this->create_codelet(p, [&]() -> int

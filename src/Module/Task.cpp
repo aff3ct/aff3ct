@@ -1,3 +1,5 @@
+#include "Task.hpp"
+
 #include <iostream>
 #include <iomanip>
 
@@ -5,13 +7,12 @@
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Module.hpp"
-#include "Process.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-Process::Process(const Module &module, const std::string name, const bool autoalloc, const bool autoexec,
-                 const bool stats, const bool debug)
+Task::Task(const Module &module, const std::string name, const bool autoalloc, const bool autoexec,
+           const bool stats, const bool debug)
 : module(module),
   name(name),
   autoalloc(autoalloc),
@@ -28,12 +29,12 @@ Process::Process(const Module &module, const std::string name, const bool autoal
 {
 }
 
-std::string Process::get_name() const
+std::string Task::get_name() const
 {
 	return this->name;
 }
 
-void Process::set_autoalloc(const bool autoalloc)
+void Task::set_autoalloc(const bool autoalloc)
 {
 	if (autoalloc != this->autoalloc)
 	{
@@ -58,47 +59,47 @@ void Process::set_autoalloc(const bool autoalloc)
 	}
 }
 
-bool Process::is_autoalloc() const
+bool Task::is_autoalloc() const
 {
 	return this->autoalloc;
 }
 
-void Process::set_autoexec(const bool autoexec)
+void Task::set_autoexec(const bool autoexec)
 {
 	this->autoexec = autoexec;
 }
 
-bool Process::is_autoexec() const
+bool Task::is_autoexec() const
 {
 	return this->autoexec;
 }
 
-void Process::set_stats(const bool stats)
+void Task::set_stats(const bool stats)
 {
 	this->stats = stats;
 }
 
-bool Process::is_stats() const
+bool Task::is_stats() const
 {
 	return this->stats;
 }
 
-void Process::set_debug(const bool debug)
+void Task::set_debug(const bool debug)
 {
 	this->debug = debug;
 }
 
-void Process::set_debug_limit(const uint32_t limit)
+void Task::set_debug_limit(const uint32_t limit)
 {
 	this->debug_limit = (int32_t)limit;
 }
 
-void Process::set_debug_precision(const uint8_t prec)
+void Task::set_debug_precision(const uint8_t prec)
 {
 	this->debug_precision = prec;
 }
 
-bool Process::is_debug() const
+bool Task::is_debug() const
 {
 	return this->debug;
 }
@@ -131,7 +132,7 @@ static inline void display_data(const T *data,
 	}
 }
 
-int Process::exec()
+int Task::exec()
 {
 	if (can_exec())
 	{
@@ -241,19 +242,19 @@ int Process::exec()
 	else
 	{
 		std::stringstream message;
-		message << "The process cannot be executed because some of the inputs/outputs are not fed ('process.name' = "
+		message << "The task cannot be executed because some of the inputs/outputs are not fed ('task.name' = "
 		        << this->get_name() << ", 'module.name' = " << module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
 template <typename T>
-Socket& Process::create_socket(const std::string name, const size_t n_elmts)
+Socket& Task::create_socket(const std::string name, const size_t n_elmts)
 {
 	if (name.empty())
 	{
 		std::stringstream message;
-		message << "Impossible to create this socket because the name is empty ('process.name' = " << this->get_name()
+		message << "Impossible to create this socket because the name is empty ('task.name' = " << this->get_name()
 		        << ", 'module.name' = " << module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -263,7 +264,7 @@ Socket& Process::create_socket(const std::string name, const size_t n_elmts)
 		{
 			std::stringstream message;
 			message << "Impossible to create this socket because an other socket has the same name ('socket.name' = "
-			        << name << ", 'process.name' = " << this->get_name()
+			        << name << ", 'task.name' = " << this->get_name()
 			        << ", 'module.name' = " << module.get_name() << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
@@ -274,7 +275,7 @@ Socket& Process::create_socket(const std::string name, const size_t n_elmts)
 }
 
 template <typename T>
-void Process::create_socket_in(const std::string name, const size_t n_elmts)
+void Task::create_socket_in(const std::string name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -282,7 +283,7 @@ void Process::create_socket_in(const std::string name, const size_t n_elmts)
 }
 
 template <typename T>
-void Process::create_socket_in_out(const std::string name, const size_t n_elmts)
+void Task::create_socket_in_out(const std::string name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -290,7 +291,7 @@ void Process::create_socket_in_out(const std::string name, const size_t n_elmts)
 }
 
 template <typename T>
-void Process::create_socket_out(const std::string name, const size_t n_elmts)
+void Task::create_socket_out(const std::string name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -304,36 +305,36 @@ void Process::create_socket_out(const std::string name, const size_t n_elmts)
 	}
 }
 
-void Process::create_codelet(std::function<int(void)> codelet)
+void Task::create_codelet(std::function<int(void)> codelet)
 {
 	this->codelet = codelet;
 }
 
-Socket& Process::operator[](const std::string name)
+Socket& Task::operator[](const std::string name)
 {
 	for (auto &s : socket)
 		if (s.get_name() == name)
 			return s;
 
 	std::stringstream message;
-	message << "The socket does not exist ('socket.name' = " << name << ", 'process.name' = " << this->get_name()
+	message << "The socket does not exist ('socket.name' = " << name << ", 'task.name' = " << this->get_name()
 	        << ", 'module.name' = " << module.get_name() << ").";
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }
 
-const Socket& Process::operator[](const std::string name) const
+const Socket& Task::operator[](const std::string name) const
 {
 	for (auto &s : socket)
 		if (s.get_name() == name)
 			return s;
 
 	std::stringstream message;
-	message << "The socket does not exist ('socket.name' = " << name << ", 'process.name' = " << this->get_name()
+	message << "The socket does not exist ('socket.name' = " << name << ", 'task.name' = " << this->get_name()
 	        << ", 'module.name' = " << module.get_name() << ").";
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }
 
-bool Process::last_input_socket(const Socket &s_in) const
+bool Task::last_input_socket(const Socket &s_in) const
 {
 	const Socket* last_s_in = nullptr;
 	for (auto &s : socket)
@@ -348,7 +349,7 @@ bool Process::last_input_socket(const Socket &s_in) const
 	return val;
 }
 
-bool Process::can_exec() const
+bool Task::can_exec() const
 {
 	for (auto &s : socket)
 		if (s.dataptr == nullptr)
@@ -356,62 +357,62 @@ bool Process::can_exec() const
 	return true;
 }
 
-uint32_t Process::get_n_calls() const
+uint32_t Task::get_n_calls() const
 {
 	return this->n_calls;
 }
 
-std::chrono::nanoseconds Process::get_duration_total() const
+std::chrono::nanoseconds Task::get_duration_total() const
 {
 	return this->duration_total;
 }
 
-std::chrono::nanoseconds Process::get_duration_avg() const
+std::chrono::nanoseconds Task::get_duration_avg() const
 {
 	return this->duration_total / this->n_calls;
 }
 
-std::chrono::nanoseconds Process::get_duration_min() const
+std::chrono::nanoseconds Task::get_duration_min() const
 {
 	return this->duration_min;
 }
 
-std::chrono::nanoseconds Process::get_duration_max() const
+std::chrono::nanoseconds Task::get_duration_max() const
 {
 	return this->duration_max;
 }
 
-const std::vector<std::string>& Process::get_registered_duration() const
+const std::vector<std::string>& Task::get_registered_duration() const
 {
 	return this->registered_duration;
 }
 
-uint32_t Process::get_registered_n_calls(const std::string key) const
+uint32_t Task::get_registered_n_calls(const std::string key) const
 {
 	return this->registered_n_calls.find(key)->second;
 }
 
-std::chrono::nanoseconds Process::get_registered_duration_total(const std::string key) const
+std::chrono::nanoseconds Task::get_registered_duration_total(const std::string key) const
 {
 	return this->registered_duration_total.find(key)->second;
 }
 
-std::chrono::nanoseconds Process::get_registered_duration_avg(const std::string key) const
+std::chrono::nanoseconds Task::get_registered_duration_avg(const std::string key) const
 {
 	return this->registered_duration_total.find(key)->second / this->n_calls;
 }
 
-std::chrono::nanoseconds Process::get_registered_duration_min(const std::string key) const
+std::chrono::nanoseconds Task::get_registered_duration_min(const std::string key) const
 {
 	return this->registered_duration_min.find(key)->second;
 }
 
-std::chrono::nanoseconds Process::get_registered_duration_max(const std::string key) const
+std::chrono::nanoseconds Task::get_registered_duration_max(const std::string key) const
 {
 	return this->registered_duration_max.find(key)->second;
 }
 
-Socket_type Process::get_socket_type(const Socket &s) const
+Socket_type Task::get_socket_type(const Socket &s) const
 {
 	const auto &it = this->socket_type.find(s.get_name());
 	if (it != socket_type.end())
@@ -419,13 +420,13 @@ Socket_type Process::get_socket_type(const Socket &s) const
 	else
 	{
 		std::stringstream message;
-		message << "The socket does not exist ('s.name' = " << s.name << ", 'process.name' = " << this->get_name()
+		message << "The socket does not exist ('s.name' = " << s.name << ", 'task.name' = " << this->get_name()
 		        << ", 'module.name' = " << module.get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
-void Process::register_duration(const std::string key)
+void Task::register_duration(const std::string key)
 {
 	this->registered_duration.push_back(key);
 	this->registered_n_calls       [key] = 0;
@@ -434,7 +435,7 @@ void Process::register_duration(const std::string key)
 	this->registered_duration_min  [key] = std::chrono::nanoseconds(0);
 }
 
-void Process::update_duration(const std::string key, const std::chrono::nanoseconds &duration)
+void Task::update_duration(const std::string key, const std::chrono::nanoseconds &duration)
 {
 	this->registered_n_calls[key]++;
 	this->registered_duration_total[key] += duration;
@@ -450,7 +451,7 @@ void Process::update_duration(const std::string key, const std::chrono::nanoseco
 	}
 }
 
-void Process::reset_stats()
+void Task::reset_stats()
 {
 	this->n_calls        =                          0;
 	this->duration_total = std::chrono::nanoseconds(0);
@@ -464,24 +465,24 @@ void Process::reset_stats()
 }
 
 // ==================================================================================== explicit template instantiation
-template void Process::create_socket_in<int8_t >(const std::string, const size_t);
-template void Process::create_socket_in<int16_t>(const std::string, const size_t);
-template void Process::create_socket_in<int32_t>(const std::string, const size_t);
-template void Process::create_socket_in<int64_t>(const std::string, const size_t);
-template void Process::create_socket_in<float  >(const std::string, const size_t);
-template void Process::create_socket_in<double >(const std::string, const size_t);
+template void Task::create_socket_in<int8_t >(const std::string, const size_t);
+template void Task::create_socket_in<int16_t>(const std::string, const size_t);
+template void Task::create_socket_in<int32_t>(const std::string, const size_t);
+template void Task::create_socket_in<int64_t>(const std::string, const size_t);
+template void Task::create_socket_in<float  >(const std::string, const size_t);
+template void Task::create_socket_in<double >(const std::string, const size_t);
 
-template void Process::create_socket_in_out<int8_t >(const std::string, const size_t);
-template void Process::create_socket_in_out<int16_t>(const std::string, const size_t);
-template void Process::create_socket_in_out<int32_t>(const std::string, const size_t);
-template void Process::create_socket_in_out<int64_t>(const std::string, const size_t);
-template void Process::create_socket_in_out<float  >(const std::string, const size_t);
-template void Process::create_socket_in_out<double >(const std::string, const size_t);
+template void Task::create_socket_in_out<int8_t >(const std::string, const size_t);
+template void Task::create_socket_in_out<int16_t>(const std::string, const size_t);
+template void Task::create_socket_in_out<int32_t>(const std::string, const size_t);
+template void Task::create_socket_in_out<int64_t>(const std::string, const size_t);
+template void Task::create_socket_in_out<float  >(const std::string, const size_t);
+template void Task::create_socket_in_out<double >(const std::string, const size_t);
 
-template void Process::create_socket_out<int8_t >(const std::string, const size_t);
-template void Process::create_socket_out<int16_t>(const std::string, const size_t);
-template void Process::create_socket_out<int32_t>(const std::string, const size_t);
-template void Process::create_socket_out<int64_t>(const std::string, const size_t);
-template void Process::create_socket_out<float  >(const std::string, const size_t);
-template void Process::create_socket_out<double >(const std::string, const size_t);
+template void Task::create_socket_out<int8_t >(const std::string, const size_t);
+template void Task::create_socket_out<int16_t>(const std::string, const size_t);
+template void Task::create_socket_out<int32_t>(const std::string, const size_t);
+template void Task::create_socket_out<int64_t>(const std::string, const size_t);
+template void Task::create_socket_out<float  >(const std::string, const size_t);
+template void Task::create_socket_out<double >(const std::string, const size_t);
 // ==================================================================================== explicit template instantiation

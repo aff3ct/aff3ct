@@ -22,7 +22,7 @@ namespace module
 {
 class Module;
 
-class Process
+class Task
 {
 	friend Socket;
 	friend Module;
@@ -57,12 +57,12 @@ protected:
 public:
 	std::vector<Socket> socket;
 
-	Process(const Module &module,
-	        const std::string name,
-	        const bool autoalloc = false,
-	        const bool autoexec  = false,
-	        const bool stats     = false,
-	        const bool debug     = false);
+	Task(const Module &module,
+	     const std::string name,
+	     const bool autoalloc = false,
+	     const bool autoexec  = false,
+	     const bool stats     = false,
+	     const bool debug     = false);
 
 	void reset_stats();
 

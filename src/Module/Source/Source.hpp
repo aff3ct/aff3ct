@@ -54,7 +54,7 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		auto &p = this->create_process("generate");
+		auto &p = this->create_task("generate");
 		this->template create_socket_out<B>(p, "U_K", this->K * this->n_frames);
 		this->create_codelet(p, [&]() -> int
 		{

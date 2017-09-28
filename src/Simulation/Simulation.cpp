@@ -30,13 +30,13 @@ void Simulation
 		for (auto &m : modules)
 			for (auto mm : m.second)
 				if (mm != nullptr)
-					for (auto &p : mm->processes)
+					for (auto &t : mm->tasks)
 					{
-						p.second->set_debug(true);
+						t.second->set_debug(true);
 						if (params.debug_limit)
-							p.second->set_debug_limit((uint32_t)params.debug_limit);
+							t.second->set_debug_limit((uint32_t)params.debug_limit);
 						if (params.debug_precision)
-							p.second->set_debug_precision((uint8_t)params.debug_precision);
+							t.second->set_debug_precision((uint8_t)params.debug_precision);
 					}
 }
 
@@ -48,10 +48,10 @@ void Simulation
 	for (auto &m : modules)
 		for (auto i = 0; i < (int)m.second.size(); i++)
 			if (m.second[i] != nullptr)
-				for (auto &p : m.second[i]->processes)
+				for (auto &t : m.second[i]->tasks)
 				{
-					d_total += p.second->get_duration_total();
-					std::max(max_chars, m.second[i]->get_short_name().size() + p.second->get_name().size());
+					d_total += t.second->get_duration_total();
+					std::max(max_chars, m.second[i]->get_short_name().size() + t.second->get_name().size());
 				}
 	auto total_sec = ((float)d_total.count()) * 0.000000001f;
 
@@ -77,22 +77,22 @@ void Simulation
 		{
 			if (m.second[0] != nullptr)
 			{
-				for (auto &p : m.second[0]->processes)
+				for (auto &t : m.second[0]->tasks)
 				{
-					size_t n_elmts = p.second->socket.back().get_n_elmts();
+					size_t n_elmts = t.second->socket.back().get_n_elmts();
 
 					auto module = m.second[0]->get_short_name();
-					auto process = p.second->get_name();
+					auto process = t.second->get_name();
 					uint32_t n_calls = 0;
 					auto tot_duration = std::chrono::nanoseconds(0);
-					auto min_duration = m.second[0]->processes[p.first]->get_duration_max();
+					auto min_duration = m.second[0]->tasks[t.first]->get_duration_max();
 					auto max_duration = std::chrono::nanoseconds(0);
 					for (auto &mm : m.second)
 					{
-						n_calls += mm->processes[p.first]->get_n_calls();
-						tot_duration += mm->processes[p.first]->get_duration_total();
-						min_duration = std::min(min_duration, mm->processes[p.first]->get_duration_min());
-						max_duration = std::max(max_duration, mm->processes[p.first]->get_duration_max());
+						n_calls += mm->tasks[t.first]->get_n_calls();
+						tot_duration += mm->tasks[t.first]->get_duration_total();
+						min_duration = std::min(min_duration, mm->tasks[t.first]->get_duration_min());
+						max_duration = std::max(max_duration, mm->tasks[t.first]->get_duration_max());
 					}
 
 					if (n_calls)
@@ -147,18 +147,18 @@ void Simulation
 						       << ssmax_lat.str() << ""
 						       << std::endl;
 
-						for (auto &sp : p.second->get_registered_duration())
+						for (auto &sp : t.second->get_registered_duration())
 						{
 							uint32_t rn_calls = 0;
 							auto rtot_duration = std::chrono::nanoseconds(0);
-							auto rmin_duration = m.second[0]->processes[p.first]->get_registered_duration_max(sp);
+							auto rmin_duration = m.second[0]->tasks[t.first]->get_registered_duration_max(sp);
 							auto rmax_duration = std::chrono::nanoseconds(0);
 							for (auto &mm : m.second)
 							{
-								rn_calls += mm->processes[p.first]->get_registered_n_calls(sp);
-								rtot_duration += mm->processes[p.first]->get_registered_duration_total(sp);
-								rmin_duration = std::min(rmin_duration, mm->processes[p.first]->get_registered_duration_min(sp));
-								rmax_duration = std::max(rmax_duration, mm->processes[p.first]->get_registered_duration_max(sp));
+								rn_calls += mm->tasks[t.first]->get_registered_n_calls(sp);
+								rtot_duration += mm->tasks[t.first]->get_registered_duration_total(sp);
+								rmin_duration = std::min(rmin_duration, mm->tasks[t.first]->get_registered_duration_min(sp));
+								rmax_duration = std::max(rmax_duration, mm->tasks[t.first]->get_registered_duration_max(sp));
 							}
 
 							if (rn_calls)

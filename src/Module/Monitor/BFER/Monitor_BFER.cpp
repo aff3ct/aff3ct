@@ -15,7 +15,7 @@ Monitor_BFER<B>
   n_frame_errors(0),
   n_analyzed_frames(0)
 {
-	auto &p = this->create_process("check_errors");
+	auto &p = this->create_task("check_errors");
 	this->template create_socket_in<B>(p, "U", this->size * this->n_frames);
 	this->template create_socket_in<B>(p, "V", this->size * this->n_frames);
 	this->create_codelet(p, [&]() -> int

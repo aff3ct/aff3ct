@@ -27,7 +27,7 @@ public:
 	: Module(core.get_n_frames(), "Interleaver_" + core.get_name(), "Interleaver"),
 	  core(core)
 	{
-		auto &p1 = this->create_process("interleave");
+		auto &p1 = this->create_task("interleave");
 		this->template create_socket_in <D>(p1, "nat", this->core.get_size() * this->n_frames);
 		this->template create_socket_out<D>(p1, "itl", this->core.get_size() * this->n_frames);
 		this->create_codelet(p1, [&]() -> int
@@ -38,7 +38,7 @@ public:
 			return 0;
 		});
 
-		auto &p2 = this->create_process("deinterleave");
+		auto &p2 = this->create_task("deinterleave");
 		this->template create_socket_in <D>(p2, "itl", this->core.get_size() * this->n_frames);
 		this->template create_socket_out<D>(p2, "nat", this->core.get_size() * this->n_frames);
 		this->create_codelet(p2, [&]() -> int

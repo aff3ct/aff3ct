@@ -131,7 +131,7 @@ public:
 
 	void init_processes()
 	{
-		auto &p1 = this->create_process("modulate");
+		auto &p1 = this->create_task("modulate");
 		this->template create_socket_in <B>(p1, "X_N1", this->N     * this->n_frames);
 		this->template create_socket_out<R>(p1, "X_N2", this->N_mod * this->n_frames);
 		this->create_codelet(p1, [&]() -> int
@@ -142,7 +142,7 @@ public:
 			return 0;
 		});
 
-		auto &p2 = this->create_process("filter");
+		auto &p2 = this->create_task("filter");
 		this->template create_socket_in <R>(p2, "Y_N1", this->N_mod * this->n_frames);
 		this->template create_socket_out<R>(p2, "Y_N2", this->N_fil * this->n_frames);
 		this->create_codelet(p2, [&]() -> int
@@ -153,7 +153,7 @@ public:
 			return 0;
 		});
 
-		auto &p3 = this->create_process("demodulate");
+		auto &p3 = this->create_task("demodulate");
 		this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_out<Q>(p3, "Y_N2", this->N     * this->n_frames);
 		this->create_codelet(p3, [&]() -> int
@@ -164,7 +164,7 @@ public:
 			return 0;
 		});
 
-		auto &p4 = this->create_process("tdemodulate");
+		auto &p4 = this->create_task("tdemodulate");
 		this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_in <Q>(p4, "Y_N2", this->N     * this->n_frames);
 		this->template create_socket_out<Q>(p4, "Y_N3", this->N     * this->n_frames);
@@ -177,7 +177,7 @@ public:
 			return 0;
 		});
 
-		auto &p5 = this->create_process("demodulate_wg");
+		auto &p5 = this->create_task("demodulate_wg");
 		this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_in <R>(p5, "H_N",  this->N_fil * this->n_frames);
 		this->template create_socket_out<Q>(p5, "Y_N2", this->N     * this->n_frames);
@@ -190,7 +190,7 @@ public:
 			return 0;
 		});
 
-		auto &p6 = this->create_process("tdemodulate_wg");
+		auto &p6 = this->create_task("tdemodulate_wg");
 		this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_in <R>(p6, "H_N",  this->N_fil * this->n_frames);
 		this->template create_socket_in <Q>(p6, "Y_N2", this->N     * this->n_frames);

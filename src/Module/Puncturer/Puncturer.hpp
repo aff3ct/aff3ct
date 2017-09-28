@@ -87,7 +87,7 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		auto &p1 = this->create_process("puncture");
+		auto &p1 = this->create_task("puncture");
 		this->template create_socket_in <B>(p1, "X_N1", this->N_code * this->n_frames);
 		this->template create_socket_out<B>(p1, "X_N2", this->N      * this->n_frames);
 		this->create_codelet(p1, [&]() -> int
@@ -98,7 +98,7 @@ public:
 			return 0;
 		});
 
-		auto &p2 = this->create_process("depuncture");
+		auto &p2 = this->create_task("depuncture");
 		this->template create_socket_in <Q>(p2, "Y_N1", this->N      * this->n_frames);
 		this->template create_socket_out<Q>(p2, "Y_N2", this->N_code * this->n_frames);
 		this->create_codelet(p2, [&]() -> int

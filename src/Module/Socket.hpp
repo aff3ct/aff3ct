@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace module
 {
-class Process;
+class Task;
 
 enum Socket_type
 {
@@ -22,17 +22,17 @@ enum Socket_type
 
 class Socket
 {
-	friend Process;
+	friend Task;
 
 protected:
-	Process &process;
+	Task &task;
 
 	const std::string     name;
 	const std::type_index datatype;
 	const size_t          databytes;
 	      void*           dataptr;
 
-	Socket(Process &process, const std::string name, const std::type_index datatype, const size_t databytes,
+	Socket(Task &task, const std::string name, const std::type_index datatype, const size_t databytes,
 	       void *dataptr = nullptr);
 
 public:

@@ -17,9 +17,9 @@
 #include <map>
 #include <functional>
 
+#include "Task.hpp"
 #include "Tools/Exception/exception.hpp"
 
-#include "Process.hpp"
 
 namespace aff3ct
 {
@@ -38,7 +38,7 @@ protected:
 	std::string short_name;  /*!< Short name of the Module. */
 
 public:
-	std::map<std::string, Process*> processes;
+	std::map<std::string, Task*> tasks;
 
 	/*!
 	 * \brief Constructor.
@@ -62,7 +62,7 @@ public:
 	 */
 	virtual ~Module()
 	{
-		for (auto p : processes) delete p.second;
+		for (auto t : tasks) delete t.second;
 	}
 
 	/*!
@@ -95,11 +95,11 @@ public:
 		return this->short_name;
 	}
 
-	Process& operator[](const std::string name)
+	Task& operator[](const std::string name)
 	{
-		if (processes.find(name) != processes.end())
+		if (tasks.find(name) != tasks.end())
 		{
-			return *processes[name];
+			return *tasks[name];
 		}
 		else
 		{
@@ -110,44 +110,44 @@ public:
 	}
 
 protected:
-	Process& create_process(const std::string name)
+	Task& create_task(const std::string name)
 	{
 		bool autoalloc = true, autoexec = true, stats = true, debug = false;
-		processes[name] = new Process(*this, name, autoalloc, autoexec, stats, debug);
-		return *processes[name];
+		tasks[name] = new Task(*this, name, autoalloc, autoexec, stats, debug);
+		return *tasks[name];
 	}
 
 	template <typename T>
-	void create_socket_in(Process& process, const std::string name, const size_t n_elmts)
+	void create_socket_in(Task& task, const std::string name, const size_t n_elmts)
 	{
-		process.template create_socket_in<T>(name, n_elmts);
+		task.template create_socket_in<T>(name, n_elmts);
 	}
 
 	template <typename T>
-	void create_socket_in_out(Process& process, const std::string name, const size_t n_elmts)
+	void create_socket_in_out(Task& task, const std::string name, const size_t n_elmts)
 	{
-		process.template create_socket_in_out<T>(name, n_elmts);
+		task.template create_socket_in_out<T>(name, n_elmts);
 	}
 
 	template <typename T>
-	void create_socket_out(Process& process, const std::string name, const size_t n_elmts)
+	void create_socket_out(Task& task, const std::string name, const size_t n_elmts)
 	{
-		process.template create_socket_out<T>(name, n_elmts);
+		task.template create_socket_out<T>(name, n_elmts);
 	}
 
-	void create_codelet(Process& process, std::function<int(void)> codelet)
+	void create_codelet(Task& task, std::function<int(void)> codelet)
 	{
-		process.create_codelet(codelet);
+		task.create_codelet(codelet);
 	}
 
-	void register_duration(Process& process, const std::string key)
+	void register_duration(Task& task, const std::string key)
 	{
-		process.register_duration(key);
+		task.register_duration(key);
 	}
 
-	void update_duration(const std::string process_key, const std::string key, const std::chrono::nanoseconds &duration)
+	void update_duration(const std::string task_key, const std::string key, const std::chrono::nanoseconds &duration)
 	{
-		processes[process_key]->update_duration(key, duration);
+		tasks[task_key]->update_duration(key, duration);
 	}
 };
 }

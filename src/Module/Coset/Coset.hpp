@@ -54,7 +54,7 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		auto &p = this->create_process("apply");
+		auto &p = this->create_task("apply");
 		this->template create_socket_in <B>(p, "ref",      this->size * this->n_frames);
 		this->template create_socket_in <D>(p, "in_data",  this->size * this->n_frames);
 		this->template create_socket_out<D>(p, "out_data", this->size * this->n_frames);
