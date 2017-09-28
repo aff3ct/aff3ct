@@ -35,9 +35,27 @@ std::string Process::get_name() const
 
 void Process::set_autoalloc(const bool autoalloc)
 {
-	this->autoalloc = autoalloc;
+	if (autoalloc != this->autoalloc)
+	{
+		this->autoalloc = autoalloc;
 
-	//TODO: free mem and set ptr to null in the socket (if autoalloc = false)
+		if (!autoalloc)
+		{
+			this->out_buffers.clear();
+			for (auto &s : socket)
+				if (get_socket_type(s) == OUT)
+					s.dataptr = nullptr;
+		}
+		else
+		{
+			for (auto &s : socket)
+				if (get_socket_type(s) == OUT)
+				{
+					out_buffers.push_back(std::vector<uint8_t>(s.databytes));
+					s.dataptr = out_buffers.back().data();
+				}
+		}
+	}
 }
 
 bool Process::is_autoalloc() const
