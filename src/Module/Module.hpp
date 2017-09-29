@@ -20,7 +20,6 @@
 #include "Task.hpp"
 #include "Tools/Exception/exception.hpp"
 
-
 namespace aff3ct
 {
 namespace module
@@ -112,7 +111,7 @@ public:
 protected:
 	Task& create_task(const std::string name)
 	{
-		bool autoalloc = true, autoexec = true, stats = true, debug = false;
+		bool autoalloc = false, autoexec = false, stats = false, debug = false;
 		tasks[name] = new Task(*this, name, autoalloc, autoexec, stats, debug);
 		return *tasks[name];
 	}

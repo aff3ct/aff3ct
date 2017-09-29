@@ -25,12 +25,17 @@ void Simulation
 {
 	_build_communication_chain();
 
-	// enable the debug mode in the modules
-	if (params.debug)
-		for (auto &m : modules)
-			for (auto mm : m.second)
-				if (mm != nullptr)
-					for (auto &t : mm->tasks)
+	for (auto &m : modules)
+		for (auto mm : m.second)
+			if (mm != nullptr)
+				for (auto &t : mm->tasks)
+				{
+					t.second->set_autoexec (true);
+					t.second->set_autoalloc(true);
+					t.second->set_stats    (true);
+
+					// enable the debug mode in the modules
+					if (params.debug)
 					{
 						t.second->set_debug(true);
 						if (params.debug_limit)
@@ -38,6 +43,7 @@ void Simulation
 						if (params.debug_precision)
 							t.second->set_debug_precision((uint8_t)params.debug_precision);
 					}
+				}
 }
 
 void Simulation
