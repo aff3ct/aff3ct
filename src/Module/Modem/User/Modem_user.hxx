@@ -170,7 +170,7 @@ void Modem_user<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
-::_demodulate_wg(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
+::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -251,7 +251,7 @@ void Modem_user<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
-::_tdemodulate_wg(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");

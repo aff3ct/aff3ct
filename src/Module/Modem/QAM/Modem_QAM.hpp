@@ -38,12 +38,12 @@ public:
 	}
 
 protected:
-	void   _modulate    (const B *X_N1,                              R *X_N2, const int frame_id);
-	void     _filter    (const R *Y_N1,                              R *Y_N2, const int frame_id);
-	void _demodulate    (const Q *Y_N1,                              Q *Y_N2, const int frame_id);
-	void _demodulate_wg (const Q *Y_N1, const R *H_N,                Q *Y_N2, const int frame_id);
-	void _tdemodulate   (const Q *Y_N1,               const Q *Y_N2, Q *Y_N3, const int frame_id);
-	void _tdemodulate_wg(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id);
+	void   _modulate    (              const B *X_N1,                 R *X_N2, const int frame_id);
+	void     _filter    (              const R *Y_N1,                 R *Y_N2, const int frame_id);
+	void _demodulate    (              const Q *Y_N1,                 Q *Y_N2, const int frame_id);
+	void _demodulate_wg (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const int frame_id);
+	void _tdemodulate   (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
+	void _tdemodulate_wg(const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
 
 private:
 	inline std::complex<R> bits_to_symbol(const B* bits) const;

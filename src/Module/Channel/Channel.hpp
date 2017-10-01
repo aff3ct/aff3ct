@@ -70,13 +70,13 @@ public:
 
 		auto &p2 = this->create_task("add_noise_wg");
 		this->template create_socket_in <R>(p2, "X_N", this->N * this->n_frames);
-		this->template create_socket_out<R>(p2, "Y_N", this->N * this->n_frames);
 		this->template create_socket_out<R>(p2, "H_N", this->N * this->n_frames);
+		this->template create_socket_out<R>(p2, "Y_N", this->N * this->n_frames);
 		this->create_codelet(p2, [&]() -> int
 		{
 			this->add_noise_wg(static_cast<R*>(p2["X_N"].get_dataptr()),
-			                   static_cast<R*>(p2["Y_N"].get_dataptr()),
-			                   static_cast<R*>(p2["H_N"].get_dataptr()));
+			                   static_cast<R*>(p2["H_N"].get_dataptr()),
+			                   static_cast<R*>(p2["Y_N"].get_dataptr()));
 
 			return 0;
 		});
@@ -171,11 +171,11 @@ public:
 	 * \brief Adds the noise to a perfectly clear signal.
 	 *
 	 * \param X_N: a perfectly clear message.
-	 * \param Y_N: a noisy signal.
 	 * \param H_N: the channel gains.
+	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, std::vector<R,A>& H_N)
+	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N)
 	{
 		if (sigma <= 0)
 		{
@@ -216,15 +216,15 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->add_noise_wg(X_N.data(), Y_N.data(), H_N.data());
+		this->add_noise_wg(X_N.data(), H_N.data(), Y_N.data());
 	}
 
 	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_add_noise_wg(X_N + f * this->N,
-			                    Y_N + f * this->N,
 			                    H_N + f * this->N,
+			                    Y_N + f * this->N,
 			                    f);
 	}
 
@@ -234,7 +234,7 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id)
+	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}

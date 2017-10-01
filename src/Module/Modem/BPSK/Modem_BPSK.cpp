@@ -70,7 +70,7 @@ void Modem_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
-::demodulate_wg(const Q *Y_N1, const R *H_N, Q *Y_N2)
+::demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2)
 {
 	if (typeid(R) != typeid(Q))
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -102,9 +102,9 @@ void Modem_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
-::tdemodulate_wg(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
+::tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 {
-	this->demodulate_wg(Y_N1, H_N, Y_N3);
+	this->demodulate_wg(H_N, Y_N1, Y_N3);
 }
 
 // ==================================================================================== explicit template instantiation 

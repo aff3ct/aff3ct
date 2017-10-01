@@ -188,10 +188,10 @@ void BFER_ite_threads<B,R,Q>
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
 			channel  ["add_noise_wg" ]["X_N" ].bind(modem    ["modulate"     ]["X_N2"]);
+			modem    ["demodulate_wg"]["H_N" ].bind(channel  ["add_noise_wg" ]["H_N" ]);
 			modem    ["filter"       ]["Y_N1"].bind(channel  ["add_noise_wg" ]["Y_N" ]);
 			quantizer["process"      ]["Y_N1"].bind(modem    ["filter"       ]["Y_N2"]);
 			modem    ["demodulate_wg"]["Y_N1"].bind(quantizer["process"      ]["Y_N2"]);
-			modem    ["demodulate_wg"]["H_N" ].bind(channel  ["add_noise_wg" ]["H_N" ]);
 		}
 		else
 		{

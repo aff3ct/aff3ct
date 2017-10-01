@@ -178,27 +178,27 @@ public:
 		});
 
 		auto &p5 = this->create_task("demodulate_wg");
-		this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_in <R>(p5, "H_N",  this->N_fil * this->n_frames);
+		this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_out<Q>(p5, "Y_N2", this->N     * this->n_frames);
 		this->create_codelet(p5, [&]() -> int
 		{
-			this->demodulate_wg(static_cast<Q*>(p5["Y_N1"].get_dataptr()),
-			                    static_cast<R*>(p5["H_N" ].get_dataptr()),
+			this->demodulate_wg(static_cast<R*>(p5["H_N" ].get_dataptr()),
+			                    static_cast<Q*>(p5["Y_N1"].get_dataptr()),
 			                    static_cast<Q*>(p5["Y_N2"].get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p6 = this->create_task("tdemodulate_wg");
-		this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_in <R>(p6, "H_N",  this->N_fil * this->n_frames);
+		this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil * this->n_frames);
 		this->template create_socket_in <Q>(p6, "Y_N2", this->N     * this->n_frames);
 		this->template create_socket_out<Q>(p6, "Y_N3", this->N     * this->n_frames);
 		this->create_codelet(p6, [&]() -> int
 		{
-			this->tdemodulate_wg(static_cast<Q*>(p6["Y_N1"].get_dataptr()),
-			                     static_cast<R*>(p6["H_N" ].get_dataptr()),
+			this->tdemodulate_wg(static_cast<R*>(p6["H_N" ].get_dataptr()),
+			                     static_cast<Q*>(p6["Y_N1"].get_dataptr()),
 			                     static_cast<Q*>(p6["Y_N2"].get_dataptr()),
 			                     static_cast<Q*>(p6["Y_N3"].get_dataptr()));
 
@@ -372,12 +372,12 @@ public:
 	/*!
 	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
 	 *
-	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param H_N:  channel gains.
+	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param Y_N2: a demodulated vector.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void demodulate_wg(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N, std::vector<Q,AQ>& Y_N2)
+	void demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2)
 	{
 		if (sigma <= 0)
 		{
@@ -410,14 +410,14 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->demodulate_wg(Y_N1.data(), H_N.data(), Y_N2.data());
+		this->demodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data());
 	}
 
-	virtual void demodulate_wg(const Q *Y_N1, const R *H_N, Q *Y_N2)
+	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_demodulate_wg(Y_N1 + f * this->N_fil,
-			                     H_N  + f * this->N_fil,
+			this->_demodulate_wg(H_N  + f * this->N_fil,
+			                     Y_N1 + f * this->N_fil,
 			                     Y_N2 + f * this->N,
 			                     f);
 	}
@@ -485,14 +485,14 @@ public:
 	 * Used for the iterative turbo demodulation technique, this type of demodulation takes the decoder information
 	 * into account.
 	 *
-	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param H_N:  channel gains.
+	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param Y_N2: a vector of extrinsic information coming from a SISO decoder (used in the iterative turbo
 	 *              demodulation technique).
 	 * \param Y_N3: a demodulated vector.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void tdemodulate_wg(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N,
+	void tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
 	                    const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3)
 	{
 		if (sigma <= 0)
@@ -534,14 +534,14 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->tdemodulate_wg(Y_N1.data(), H_N.data(), Y_N2.data(), Y_N3.data());
+		this->tdemodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data(), Y_N3.data());
 	}
 
-	virtual void tdemodulate_wg(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
+	virtual void tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_tdemodulate_wg(Y_N1 + f * this->N_fil,
-			                      H_N  + f * this->N_fil,
+			this->_tdemodulate_wg(H_N  + f * this->N_fil,
+			                      Y_N1 + f * this->N_fil,
 			                      Y_N2 + f * this->N,
 			                      Y_N3 + f * this->N,
 			                      f);
@@ -597,7 +597,7 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _demodulate_wg(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
+	virtual void _demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
@@ -607,7 +607,7 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _tdemodulate_wg(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
+	virtual void _tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}

@@ -56,7 +56,7 @@ Channel_Rayleigh_LLR<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR<R>
-::add_noise_wg(const R *X_N, R *Y_N, R *H_N)
+::add_noise_wg(const R *X_N, R *H_N, R *Y_N)
 {
 	if (add_users && this->n_frames > 1)
 	{
