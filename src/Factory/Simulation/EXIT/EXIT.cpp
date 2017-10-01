@@ -102,7 +102,13 @@ template <typename B, typename R>
 simulation::EXIT<B,R>* EXIT::parameters
 ::build() const
 {
+#if defined(SYSTEMC)
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC/TLM  simulation is not available.");
+#elif defined(STARPU)
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "StarPU  simulation is not available.");
+#else
 	return new simulation::EXIT<B,R>(*this);
+#endif
 }
 
 template <typename B, typename R>

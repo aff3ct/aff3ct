@@ -1,4 +1,4 @@
-#ifdef SYSTEMC
+#ifdef SYSTEMC_PLOP
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"

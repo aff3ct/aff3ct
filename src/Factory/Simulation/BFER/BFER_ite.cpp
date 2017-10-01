@@ -1,3 +1,5 @@
+#include "Tools/Exception/exception.hpp"
+
 #include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
 #include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
 
@@ -92,7 +94,10 @@ simulation::BFER_ite<B,R,Q>* BFER_ite::parameters
 ::build() const
 {
 #if defined(SYSTEMC)
-	return new simulation::SC_BFER_ite     <B,R,Q>(*this);
+//	return new simulation::SC_BFER_ite     <B,R,Q>(*this);
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC/TLM  simulation is not available.");
+#elif defined(STARPU)
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation is not available.");
 #else
 	return new simulation::BFER_ite_threads<B,R,Q>(*this);
 #endif

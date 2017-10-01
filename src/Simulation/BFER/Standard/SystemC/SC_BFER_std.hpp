@@ -17,15 +17,15 @@ class SC_BFER_std : public BFER_std<B,R,Q>
 {
 protected:
 	tools::SC_Duplicator *duplicator[3];
-	tools::SC_Debug<B>   *dbg_B     [7];
-	tools::SC_Debug<R>   *dbg_R     [5];
-	tools::SC_Debug<Q>   *dbg_Q     [3];
 
 public:
-	SC_BFER_std(const factory::BFER_std::parameters &chain_params, tools::Codec<B,Q> &codec);
+	SC_BFER_std(const factory::BFER_std::parameters &params);
 	virtual ~SC_BFER_std();
 
 protected:
+	void create_sc_modules();
+	void erase_sc_modules();
+
 	virtual void __build_communication_chain(const int tid = 0);
 	virtual void _launch();
 

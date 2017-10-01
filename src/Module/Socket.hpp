@@ -52,7 +52,7 @@ public:
 	template <typename T>
 	inline int bind(T *array);
 
-	inline int bind(void* dataptr);
+	int bind(void* dataptr);
 };
 }
 }

@@ -179,7 +179,11 @@ template <typename B, typename R>
 simulation::Simulation* EXIT<B,R>
 ::build_simu()
 {
+#if !defined(SYSTEMC) && !defined(STARPU)
 	return factory::EXIT::build<B,R>(params);
+#else
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC/TLM and StarPU simulation are not available.");
+#endif
 }
 
 // ==================================================================================== explicit template instantiation

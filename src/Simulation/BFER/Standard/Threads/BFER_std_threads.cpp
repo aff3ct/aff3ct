@@ -252,4 +252,3 @@ template class aff3ct::simulation::BFER_std_threads<B_64,R_64,Q_64>;
 template class aff3ct::simulation::BFER_std_threads<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
-

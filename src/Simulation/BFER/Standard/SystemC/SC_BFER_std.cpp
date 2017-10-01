@@ -12,33 +12,18 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 SC_BFER_std<B,R,Q>
-::SC_BFER_std(const factory::BFER_std::parameters &params, tools::Codec<B,Q> &codec)
-: BFER_std<B,R,Q>(params, codec),
+::SC_BFER_std(const factory::BFER_std::parameters &params)
+: BFER_std<B,R,Q>(params),
 
-  duplicator{nullptr, nullptr, nullptr},
-  dbg_B     {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
-  dbg_R     {nullptr, nullptr, nullptr},
-  dbg_Q     {nullptr, nullptr, nullptr}
+  duplicator{nullptr, nullptr, nullptr}
 {
 	if (this->params.n_threads > 1)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support "
 		                                                            "multi-threading.");
 
-	if (params.benchs)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the bench "
-		                                                            "mode.");
-
 	if (params.coded_monitoring)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded "
 		                                                            "monitoring.");
-
-	if (params.time_report)
-		std::clog << tools::format_warning("The time report is not available in the SystemC simulation.") << std::endl;
-
-#ifdef ENABLE_MPI
-	std::clog << tools::format_warning("(WW) This simulation is not MPI ready, the same computations will be launched "
-	                                   "on each MPI processes.") << std::endl;
-#endif
 }
 
 template <typename B, typename R, typename Q>
@@ -53,56 +38,111 @@ void SC_BFER_std<B,R,Q>
 {
 	BFER_std<B,R,Q>::__build_communication_chain(tid);
 
+	if (this->params.err_track_enable)
+	{
+		auto &source  = *this->source[tid];
+		auto &encoder = *this->codec [tid]->get_encoder();
+
+		if (this->params.src->type != "AZCW")
+		{
+			auto src_data = (B*)(source["generate"]["U_K"].get_dataptr());
+			auto src_size = source["generate"]["U_K"].get_databytes() / sizeof(B);
+			this->dumper[tid]->register_data(src_data, src_size, "src", false, {});
+		}
+
+		if (this->params.coset)
+		{
+			auto enc_data = (B*)(encoder["encode"]["X_N"].get_dataptr());
+			auto enc_size = encoder["encode"]["X_N"].get_databytes() / sizeof(B);
+			this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, {(unsigned)this->params.cdc->enc->K});
+		}
+	}
+
+	this->monitor[tid]->add_handler_check([&]() -> void
+	{
+		if (this->monitor_red->fe_limit_achieved()) // will make the MPI communication
+			sc_core::sc_stop();
+	});
+}
+
+template <typename B, typename R, typename Q>
+void SC_BFER_std<B,R,Q>
+::create_sc_modules()
+{
+	const auto tid = 0;
+
 	// create the sc_module inside the objects of the communication chain
-	this->source   [tid]->create_sc_module            ();
-	this->crc      [tid]->create_sc_module_build      ();
-	this->encoder  [tid]->create_sc_module            ();
-	this->puncturer[tid]->create_sc_module_puncturer  ();
-	this->puncturer[tid]->create_sc_module_depuncturer();
-	this->modem    [tid]->create_sc_module_modulator  ();
-	this->modem    [tid]->create_sc_module_filterer   ();
+	this->source   [tid]                 ->sc.create_module("generate"  );
+	this->crc      [tid]                 ->sc.create_module("build"     );
+	this->codec    [tid]->get_encoder()  ->sc.create_module("encode"    );
+	this->codec    [tid]->get_puncturer()->sc.create_module("puncture"  );
+	this->codec    [tid]->get_puncturer()->sc.create_module("depuncture");
+	this->modem    [tid]                 ->sc.create_module("modulate"  );
+	this->modem    [tid]                 ->sc.create_module("filter"    );
 	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		this->channel[tid]->create_sc_module_wg            ();
-		this->modem  [tid]->create_sc_module_demodulator_wg();
+		this->channel[tid]->sc.create_module("add_noise_wg" );
+		this->modem  [tid]->sc.create_module("demodulate_wg");
 	}
 	else
 	{
-		this->channel[tid]->create_sc_module            ();
-		this->modem  [tid]->create_sc_module_demodulator();
+		this->channel[tid]->sc.create_module("add_noise" );
+		this->modem  [tid]->sc.create_module("demodulate");
 	}
-	this->quantizer[tid]->create_sc_module();
-	this->decoder  [tid]->create_sc_module();
-	this->monitor  [tid]->create_sc_module();
+	this->quantizer[tid]                    ->sc.create_module("process"     );
+	this->codec    [tid]->get_decoder_siho()->sc.create_module("decode_siho" );
+	this->monitor  [tid]                    ->sc.create_module("check_errors");
 	if (this->params.coset)
 	{
-		this->coset_real[tid]->create_sc_module();
-		this->coset_bit [tid]->create_sc_module();
+		this->coset_real[tid]->sc.create_module("apply");
+		this->coset_bit [tid]->sc.create_module("apply");
 	}
-	this->crc[tid]->create_sc_module_extract();
+	this->crc[tid]->sc.create_module("extract");
+}
 
-	if (this->params.err_track_enable)
+template <typename B, typename R, typename Q>
+void SC_BFER_std<B,R,Q>
+::erase_sc_modules()
+{
+	const auto tid = 0;
+
+	// create the sc_module inside the objects of the communication chain
+	this->source   [tid]                 ->sc.erase_module("generate"  );
+	this->crc      [tid]                 ->sc.erase_module("build"     );
+	this->codec    [tid]->get_encoder()  ->sc.erase_module("encode"    );
+	this->codec    [tid]->get_puncturer()->sc.erase_module("puncture"  );
+	this->codec    [tid]->get_puncturer()->sc.erase_module("depuncture");
+	this->modem    [tid]                 ->sc.erase_module("modulate"  );
+	this->modem    [tid]                 ->sc.erase_module("filter"    );
+	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		const auto &U_K = this->source [tid]->sc_module->get_U_K();
-		const auto &X_N = this->encoder[tid]->sc_module->get_X_N();
-
-		if (this->params.src->type != "AZCW")
-			this->dumper[tid]->register_data(U_K, "src", false, {});
-
-		if (this->params.coset)
-			this->dumper[tid]->register_data(X_N, "enc", false, {(unsigned)this->params.enc->K});
-
-		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
-
-		if (this->interleaver[tid] != nullptr && this->interleaver[tid]->is_uniform())
-			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
+		this->channel[tid]->sc.erase_module("add_noise_wg" );
+		this->modem  [tid]->sc.erase_module("demodulate_wg");
 	}
+	else
+	{
+		this->channel[tid]->sc.erase_module("add_noise" );
+		this->modem  [tid]->sc.erase_module("demodulate");
+	}
+	this->quantizer[tid]                    ->sc.erase_module("process"     );
+	this->codec    [tid]->get_decoder_siho()->sc.erase_module("decode_siho" );
+	this->monitor  [tid]                    ->sc.erase_module("check_errors");
+	if (this->params.coset)
+	{
+		this->coset_real[tid]->sc.erase_module("apply");
+		this->coset_bit [tid]->sc.erase_module("apply");
+	}
+	this->crc[tid]->sc.erase_module("extract");
 }
 
 template <typename B, typename R, typename Q>
 void SC_BFER_std<B,R,Q>
 ::_launch()
 {
+	BFER_std<B,R,Q>::_launch();
+
+	this->create_sc_modules();
+
 	this->duplicator[0] = new tools::SC_Duplicator("Duplicator0");
 	if (this->params.coset)
 	{
@@ -110,61 +150,9 @@ void SC_BFER_std<B,R,Q>
 		this->duplicator[2] = new tools::SC_Duplicator("Duplicator2");
 	}
 
-	if (this->params.n_threads == 1 && this->params.debug)
-	{
-		const auto dl = this->params.debug_limit;
-
-		this->dbg_B[0] = new tools::SC_Debug<B>("Generate random bits U_K1...              \nU_K1:\n", dl, "Debug_B0");
-		this->dbg_B[1] = new tools::SC_Debug<B>("Build the CRC from U_K1 into U_K2...      \nU_K2:\n", dl, "Debug_B1");
-		this->dbg_B[2] = new tools::SC_Debug<B>("Encode U_K2 in X_N1...                    \nX_N1:\n", dl, "Debug_B2");
-		this->dbg_B[3] = new tools::SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", dl, "Debug_B3");
-		this->dbg_R[0] = new tools::SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
-		this->dbg_R[1] = new tools::SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
-		this->dbg_R[2] = new tools::SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", dl, "Debug_R2");
-		this->dbg_R[3] = new tools::SC_Debug<R>("Demodulate from Y_N3 to Y_N3...           \nY_N3:\n", dl, "Debug_R3");
-		this->dbg_Q[0] = new tools::SC_Debug<Q>("Make the quantization from Y_N3 to Y_N4...\nY_N4:\n", dl, "Debug_Q0");
-		this->dbg_Q[1] = new tools::SC_Debug<Q>("Depuncture Y_N4 and generate Y_N5...      \nY_N5:\n", dl, "Debug_Q1");
-		this->dbg_B[4] = new tools::SC_Debug<B>("Decode Y_N5 and generate V_K1...          \nV_K1:\n", dl, "Debug_B4");
-		this->dbg_B[6] = new tools::SC_Debug<B>("Extract CRC bits from V_K1 into V_K2...   \nV_K2:\n", dl, "Debug_B6");
-
-		if (this->params.coset)
-		{
-			this->dbg_Q[2] = new tools::SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q2");
-			this->dbg_B[5] = new tools::SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
-		}
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-			this->dbg_R[4] = new tools::SC_Debug<R>("Channel gains...                          \nH_N: \n", dl, "Debug_R4");
-
-		this->bind_sockets_debug();
-		sc_core::sc_start(); // start simulation
-
-		for (auto i = 0; i < 7; i++)
-			if (this->dbg_B[i] != nullptr)
-			{
-				delete this->dbg_B[i];
-				this->dbg_B[i] = nullptr;
-			}
-
-		for (auto i = 0; i < 5; i++)
-			if (this->dbg_R[i] != nullptr)
-			{
-				delete this->dbg_R[i];
-				this->dbg_R[i] = nullptr;
-			}
-
-		for (auto i = 0; i < 3; i++)
-			if (this->dbg_Q[i] != nullptr)
-			{
-				delete this->dbg_Q[i];
-				this->dbg_Q[i] = nullptr;
-			}
-	}
-	else
-	{
-		this->bind_sockets();
-		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
-		sc_core::sc_start(); // start simulation
-	}
+	this->bind_sockets();
+	sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
+	sc_core::sc_start(); // start simulation
 
 	for (auto i = 0; i < 3; i++)
 		if (this->duplicator[i] != nullptr)
@@ -172,6 +160,8 @@ void SC_BFER_std<B,R,Q>
 			delete this->duplicator[i];
 			this->duplicator[i] = nullptr;
 		}
+
+	this->erase_sc_modules();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STD! /!\ //
@@ -184,123 +174,77 @@ template <typename B, typename R, typename Q>
 void SC_BFER_std<B,R,Q>
 ::bind_sockets()
 {
-	if (this->params.coset)
-	{
-		this->source       [0]->sc_module         ->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                    ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                    ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
-		this->crc          [0]->sc_module_build   ->s_out (this->duplicator[1]                    ->s_in );
-		this->duplicator   [1]                    ->s_out1(this->coset_bit [0]->sc_module         ->s_in1);
-		this->duplicator   [1]                    ->s_out2(this->encoder   [0]->sc_module         ->s_in );
-		this->encoder      [0]->sc_module         ->s_out (this->duplicator[2]                    ->s_in );
-		this->duplicator   [2]                    ->s_out1(this->coset_real[0]->sc_module         ->s_in1);
-		this->duplicator   [2]                    ->s_out2(this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->modem     [0]->sc_module_mod     ->s_in );
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
-			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->modem     [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
-			this->modem    [0]->sc_module_demod_wg->s_out (this->quantizer [0]->sc_module         ->s_in );
-		} else { // additive channel (AWGN, USER, NO)
-			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod   ->s_in );
-			this->modem    [0]->sc_module_demod   ->s_out (this->quantizer [0]->sc_module         ->s_in );
-		}
-		this->quantizer    [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
-		this->puncturer    [0]->sc_module_depunct ->s_out (this->coset_real[0]->sc_module         ->s_in2);
-		this->coset_real   [0]->sc_module         ->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->coset_bit [0]->sc_module         ->s_in2);
-		this->coset_bit    [0]->sc_module         ->s_out (this->crc       [0]->sc_module_extract ->s_in );
-		this->crc          [0]->sc_module_extract ->s_out (this->monitor   [0]->sc_module         ->s_in2);
-	}
-	else // standard simulation
-	{
-		this->source       [0]->sc_module         ->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                    ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                    ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
-		this->crc          [0]->sc_module_build   ->s_out (this->encoder   [0]->sc_module         ->s_in );
-		this->encoder      [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->modem     [0]->sc_module_mod     ->s_in );
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
-			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->modem     [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
-			this->modem    [0]->sc_module_demod_wg->s_out (this->quantizer [0]->sc_module         ->s_in );
-		} else { // additive channel (AWGN, USER, NO)
-			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod   ->s_in );
-			this->modem    [0]->sc_module_demod   ->s_out (this->quantizer [0]->sc_module         ->s_in );
-		}
-		this->quantizer    [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
-		this->puncturer    [0]->sc_module_depunct ->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->crc       [0]->sc_module_extract ->s_in );
-		this->crc          [0]->sc_module_extract ->s_out (this->monitor   [0]->sc_module         ->s_in2);
-	}
-}
+	auto &duplicator0 = *this->duplicator[0];
+	auto &duplicator1 = *this->duplicator[1];
+	auto &duplicator2 = *this->duplicator[2];
 
-template <typename B, typename R, typename Q>
-void SC_BFER_std<B,R,Q>
-::bind_sockets_debug()
-{
+	auto &source     = *this->source    [0];
+	auto &crc        = *this->crc       [0];
+	auto &encoder    = *this->codec     [0]->get_encoder();
+	auto &puncturer  = *this->codec     [0]->get_puncturer();
+	auto &modem      = *this->modem     [0];
+	auto &channel    = *this->channel   [0];
+	auto &quantizer  = *this->quantizer [0];
+	auto &coset_real = *this->coset_real[0];
+	auto &decoder    = *this->codec     [0]->get_decoder_siho();
+	auto &coset_bit  = *this->coset_bit [0];
+	auto &monitor    = *this->monitor   [0];
+
 	if (this->params.coset)
 	{
-		this->source       [0]->sc_module         ->s_out (this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                                                                  ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                                                                  ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
-		this->crc          [0]->sc_module_build   ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator[1]                    ->s_in );
-		this->duplicator   [1]                                                                  ->s_out1(this->coset_bit [0]->sc_module         ->s_in1);
-		this->duplicator   [1]                                                                  ->s_out2(this->encoder   [0]->sc_module         ->s_in );
-		this->encoder      [0]->sc_module         ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->duplicator[2]                    ->s_in );
-		this->duplicator   [2]                                                                  ->s_out1(this->coset_real[0]->sc_module         ->s_in1);
-		this->duplicator   [2]                                                                  ->s_out2(this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modem     [0]->sc_module_mod     ->s_in );
+		source     .sc["generate"     ].s_out ["U_K"     ](duplicator0                    .s_in            );
+		duplicator0                    .s_out1            (monitor    .sc["check_errors" ].s_in ["U"      ]);
+		duplicator0                    .s_out2            (crc        .sc["build"        ].s_in ["U_K1"   ]);
+		crc        .sc["build"        ].s_out ["U_K2"    ](duplicator1                    .s_in            );
+		duplicator1                    .s_out1            (coset_bit  .sc["apply"        ].s_in ["ref"    ]);
+		duplicator1                    .s_out2            (encoder    .sc["encode"       ].s_in ["U_K"    ]);
+		encoder    .sc["encode"       ].s_out ["X_N"     ](duplicator2                    .s_in            );
+		duplicator2                    .s_out1            (coset_real .sc["apply"        ].s_in ["ref"    ]);
+		duplicator2                    .s_out2            (puncturer  .sc["puncture"     ].s_in ["X_N1"   ]);
+		puncturer  .sc["puncture"     ].s_out ["X_N2"    ](modem      .sc["modulate"     ].s_in ["X_N1"   ]);
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
- 			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->dbg_R[4]->s_in); this->dbg_R[4]->s_out (this->modem     [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
-			this->modem    [0]->sc_module_demod_wg->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+			modem  .sc["modulate"     ].s_out ["X_N2"    ](channel    .sc["add_noise_wg" ].s_in ["X_N"    ]);
+			channel.sc["add_noise_wg" ].s_out ["H_N"     ](modem      .sc["demodulate_wg"].s_in ["H_N"    ]);
+			channel.sc["add_noise_wg" ].s_out ["Y_N"     ](modem      .sc["filter"       ].s_in ["Y_N1"   ]);
+			modem  .sc["filter"       ].s_out ["Y_N2"    ](modem      .sc["demodulate_wg"].s_in ["Y_N1"   ]);
+			modem  .sc["demodulate_wg"].s_out ["Y_N2"    ](quantizer  .sc["process"      ].s_in ["Y_N1"   ]);
 		} else { // additive channel (AWGN, USER, NO)
-			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod   ->s_in );
-			this->modem    [0]->sc_module_demod   ->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+			modem  .sc["modulate"     ].s_out ["X_N2"    ](channel    .sc["add_noise"    ].s_in ["X_N"    ]);
+			channel.sc["add_noise"    ].s_out ["Y_N"     ](modem      .sc["filter"       ].s_in ["Y_N1"   ]);
+			modem  .sc["filter"       ].s_out ["Y_N2"    ](modem      .sc["demodulate"   ].s_in ["Y_N1"   ]);
+			modem  .sc["demodulate"   ].s_out ["Y_N2"    ](quantizer  .sc["process"      ].s_in ["Y_N1"   ]);
 		}
-		this->quantizer    [0]->sc_module         ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
-		this->puncturer    [0]->sc_module_depunct ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->coset_real[0]->sc_module         ->s_in2);
-		this->coset_real   [0]->sc_module         ->s_out (this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->coset_bit [0]->sc_module         ->s_in2);
-		this->coset_bit    [0]->sc_module         ->s_out (this->dbg_B[5]->s_in); this->dbg_B[5]->s_out (this->crc       [0]->sc_module_extract ->s_in );
-		this->crc          [0]->sc_module_extract ->s_out (this->dbg_B[6]->s_in); this->dbg_B[6]->s_out (this->monitor   [0]->sc_module         ->s_in2);
+		quantizer  .sc["process"      ].s_out ["Y_N2"    ](puncturer  .sc["depuncture"   ].s_in ["Y_N1"   ]);
+		puncturer  .sc["depuncture"   ].s_out ["Y_N2"    ](coset_real .sc["apply"        ].s_in ["in_data"]);
+		coset_real .sc["apply"        ].s_out ["out_data"](decoder    .sc["decode_siho"  ].s_in ["Y_N"    ]);
+		decoder    .sc["decode_siho"  ].s_out ["V_K"     ](coset_bit  .sc["apply"        ].s_in ["in_data"]);
+		coset_bit  .sc["apply"        ].s_out ["out_data"](crc        .sc["extract"      ].s_in ["V_K1"   ]);
+		crc        .sc["extract"      ].s_out ["V_K2"    ](monitor    .sc["check_errors" ].s_in ["V"      ]);
 	}
 	else // standard simulation
 	{
-		this->source       [0]->sc_module         ->s_out (this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                    ->s_out1                                              (this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                    ->s_out2                                              (this->crc       [0]->sc_module_build   ->s_in );
-		this->crc          [0]->sc_module_build   ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->encoder   [0]->sc_module         ->s_in );
-		this->encoder      [0]->sc_module         ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modem     [0]->sc_module_mod     ->s_in );
+		source     .sc["generate"     ].s_out ["U_K" ](duplicator0                    .s_in         );
+		duplicator0                    .s_out1        (monitor    .sc["check_errors" ].s_in ["U"   ]);
+		duplicator0                    .s_out2        (crc        .sc["build"        ].s_in ["U_K1"]);
+		crc        .sc["build"        ].s_out ["U_K2"](encoder    .sc["encode"       ].s_in ["U_K" ]);
+		encoder    .sc["encode"       ].s_out ["X_N" ](puncturer  .sc["puncture"     ].s_in ["X_N1"]);
+		puncturer  .sc["puncture"     ].s_out ["X_N2"](modem      .sc["modulate"     ].s_in ["X_N1"]);
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
-			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->dbg_R[4]->s_in); this->dbg_R[4]->s_out (this->modem     [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
-			this->modem    [0]->sc_module_demod_wg->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+			modem  .sc["modulate"     ].s_out ["X_N2"](channel    .sc["add_noise_wg" ].s_in ["X_N" ]);
+			channel.sc["add_noise_wg" ].s_out ["H_N" ](modem      .sc["demodulate_wg"].s_in ["H_N" ]);
+			channel.sc["add_noise_wg" ].s_out ["Y_N" ](modem      .sc["filter"       ].s_in ["Y_N1"]);
+			modem  .sc["filter"       ].s_out ["Y_N2"](modem      .sc["demodulate_wg"].s_in ["Y_N1"]);
+			modem  .sc["demodulate_wg"].s_out ["Y_N2"](quantizer  .sc["process"      ].s_in ["Y_N1"]);
 		} else { // additive channel (AWGN, USER, NO)
-			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod   ->s_in );
-			this->modem    [0]->sc_module_demod   ->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+			modem  .sc["modulate"     ].s_out ["X_N2"](channel    .sc["add_noise"    ].s_in ["X_N" ]);
+			channel.sc["add_noise"    ].s_out ["Y_N" ](modem      .sc["filter"       ].s_in ["Y_N1"]);
+			modem  .sc["filter"       ].s_out ["Y_N2"](modem      .sc["demodulate"   ].s_in ["Y_N1"]);
+			modem  .sc["demodulate"   ].s_out ["Y_N2"](quantizer  .sc["process"      ].s_in ["Y_N1"]);
 		}
-		this->quantizer    [0]->sc_module         ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
-		this->puncturer    [0]->sc_module_depunct ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->crc       [0]->sc_module_extract ->s_in );
-		this->crc          [0]->sc_module_extract ->s_out (this->dbg_B[6]->s_in); this->dbg_B[6]->s_out (this->monitor   [0]->sc_module         ->s_in2);
+		quantizer  .sc["process"      ].s_out ["Y_N2"](puncturer  .sc["depuncture"   ].s_in ["Y_N1"]);
+		puncturer  .sc["depuncture"   ].s_out ["Y_N2"](decoder    .sc["decode_siho"  ].s_in ["Y_N" ]);
+		decoder    .sc["decode_siho"  ].s_out ["V_K" ](crc        .sc["extract"      ].s_in ["V_K1"]);
+		crc        .sc["extract"      ].s_out ["V_K2"](monitor    .sc["check_errors" ].s_in ["V"   ]);
 	}
 }
 

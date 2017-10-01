@@ -17,6 +17,10 @@
 #include <map>
 #include <functional>
 
+#ifdef SYSTEMC_MODULE
+#include "SC_Module.hpp"
+#endif
+
 #include "Task.hpp"
 #include "Tools/Exception/exception.hpp"
 
@@ -38,6 +42,9 @@ protected:
 
 public:
 	std::map<std::string, Task*> tasks;
+#ifdef SYSTEMC_MODULE
+	SC_Module_container sc;
+#endif
 
 	/*!
 	 * \brief Constructor.
@@ -47,6 +54,9 @@ public:
 	 */
 	Module(const int n_frames = 1, const std::string name = "Module", const std::string short_name = "Module")
 	: n_frames(n_frames), name(name), short_name(short_name)
+#ifdef SYSTEMC_MODULE
+	, sc(*this)
+#endif
 	{
 		if (n_frames <= 0)
 		{

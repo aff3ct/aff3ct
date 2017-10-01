@@ -29,6 +29,15 @@ Task::Task(const Module &module, const std::string name, const bool autoalloc, c
 {
 }
 
+Task::~Task()
+{
+}
+
+const Module& Task::get_module() const
+{
+	return this->module;
+}
+
 std::string Task::get_name() const
 {
 	return this->name;

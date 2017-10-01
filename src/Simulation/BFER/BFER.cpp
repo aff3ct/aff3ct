@@ -211,7 +211,12 @@ void BFER<B,R,Q>
 			terminal->legend(std::cout);
 
 		// start the terminal to display BER/FER results
+#ifdef ENABLE_MPI
+		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug
+		    && params.mpi_rank == 0)
+#else
 		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
+#endif
 			this->start_terminal_temp_report(params.ter->frequency);
 
 		auto simu_error = false;
@@ -227,7 +232,12 @@ void BFER<B,R,Q>
 		}
 
 		// stop the terminal
+#ifdef ENABLE_MPI
+		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug
+		    && params.mpi_rank == 0)
+#else
 		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
+#endif
 			this->stop_terminal_temp_report();
 
 #ifdef ENABLE_MPI

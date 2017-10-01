@@ -53,7 +53,6 @@ protected:
 	std::map   <std::string, std::chrono::nanoseconds> registered_duration_max;
 
 	std::map<std::string,Socket_type> socket_type;
-
 public:
 	std::vector<Socket> socket;
 
@@ -63,6 +62,8 @@ public:
 	     const bool autoexec  = false,
 	     const bool stats     = false,
 	     const bool debug     = false);
+
+	virtual ~Task();
 
 	void reset_stats();
 
@@ -79,6 +80,7 @@ public:
 	bool is_debug    () const;
 	bool can_exec    () const;
 
+	const Module&                   get_module                   (                     ) const;
 	std::string                     get_name                     (                     ) const;
 	uint32_t                        get_n_calls                  (                     ) const;
 	std::chrono::nanoseconds        get_duration_total           (                     ) const;
