@@ -73,6 +73,7 @@ Modem_user<B,R,Q,MAX>
 	for (auto i = 0; i < nbr_symbols; i++)
 		constellation[i] /= (std::complex<R>)sqrt_es;
 
+	this->sqrt_es = 1.0;
 	const_file.close();
 }
 

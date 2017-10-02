@@ -2,6 +2,7 @@
 
 #include "Tools/Interleaver/Random_column/Interleaver_core_random_column.hpp"
 #include "Tools/Interleaver/Row_column/Interleaver_core_row_column.hpp"
+#include "Tools/Interleaver/Column_row/Interleaver_core_column_row.hpp"
 #include "Tools/Interleaver/LTE/Interleaver_core_LTE.hpp"
 #include "Tools/Interleaver/CCSDS/Interleaver_core_CCSDS.hpp"
 #include "Tools/Interleaver/ARP/Interleaver_core_ARP_DVB_RCS1.hpp"
@@ -52,7 +53,7 @@ void Interleaver_core::parameters
 	opt_args[{p+"-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, DVB-RCS1, DVB-RCS2, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, NO"};
+		 "LTE, CCSDS, DVB-RCS1, DVB-RCS2, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, COL_ROW, NO"};
 
 	opt_args[{p+"-path"}] =
 		{"string",
@@ -60,7 +61,7 @@ void Interleaver_core::parameters
 
 	opt_args[{p+"-cols"}] =
 		{"positive_int",
-		 "specify the number of columns used for the RAND_COL or ROW_COL interleaver."};
+		 "specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver."};
 
 	opt_args[{p+"-uni"}] =
 		{"",
@@ -95,7 +96,7 @@ void Interleaver_core::parameters
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	if (this->type == "USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
-	if (this->type == "RAND_COL" || this->type == "ROW_COL")
+	if (this->type == "RAND_COL" || this->type == "ROW_COL" || this->type == "COL_ROW")
 		headers[p].push_back(std::make_pair("Number of columns", std::to_string(this->n_cols)));
 	if (this->type == "RANDOM" || this->type == "GOLDEN" || this->type == "RAND_COL")
 	{
@@ -115,6 +116,7 @@ tools::Interleaver_core<T>* Interleaver_core::parameters
 	else if (this->type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(this->size,               this->seed, this->uniform, this->n_frames);
 	else if (this->type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(this->size, this->n_cols, this->seed, this->uniform, this->n_frames);
 	else if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols,                            this->n_frames);
+	else if (this->type == "COL_ROW" ) return new tools::Interleaver_core_column_row   <T>(this->size, this->n_cols,                            this->n_frames);
 	else if (this->type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(this->size,               this->seed, this->uniform, this->n_frames);
 	else if (this->type == "USER"    ) return new tools::Interleaver_core_user         <T>(this->size, this->path,                              this->n_frames);
 	else if (this->type == "NO"      ) return new tools::Interleaver_core_NO           <T>(this->size,                                          this->n_frames);

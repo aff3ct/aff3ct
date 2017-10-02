@@ -1,5 +1,5 @@
-#ifndef INTERLEAVER_CORE_ROW_COLUMN_HPP
-#define INTERLEAVER_CORE_ROW_COLUMN_HPP
+#ifndef INTERLEAVER_CORE_COLUMN_ROW_HPP
+#define INTERLEAVER_CORE_COLUMN_ROW_HPP
 
 #include "Tools/Exception/exception.hpp"
 
@@ -13,15 +13,15 @@ namespace aff3ct
 namespace tools
 {
 template <typename T = uint32_t>
-class Interleaver_core_row_column : public Interleaver_core<T>
+class Interleaver_core_column_row : public Interleaver_core<T>
 {
 private:
 	const int n_cols;
 	const int n_rows;
 
 public:
-	Interleaver_core_row_column(const int size, const int n_cols, const int n_frames = 1);
-	virtual ~Interleaver_core_row_column();
+	Interleaver_core_column_row(const int size, const int n_cols, const int n_frames = 1);
+	virtual ~Interleaver_core_column_row();
 
 protected:
 	void gen_lut(T *lut, const int frame_id);
@@ -29,4 +29,4 @@ protected:
 }
 }
 
-#endif /* INTERLEAVER_CORE_ROW_COLUMN_HPP */
+#endif /* INTERLEAVER_CORE_COLUMN_ROW_HPP */

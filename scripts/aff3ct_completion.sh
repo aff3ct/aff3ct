@@ -151,7 +151,7 @@ _aff3ct() {
 		      --itl-cols --itl-uni --dec-type -D --dec-implem --dec-ite -i \
 		      --dec-sf-type --dec-simd --dec-max --dec-sc --dec-fnc        \
 		      --dec-fnc-q --dec-fnc-ite-m --dec-fnc-ite-M --dec-fnc-ite-s  \
-		      --pct-pattern" 
+		      --pct-pattern"
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -213,7 +213,7 @@ _aff3ct() {
 			COMPREPLY=()
 			;;
 
-		# awaiting nothing	
+		# awaiting nothing
 		-v | --version | -h | --help | --mdm-no-sig2 | --ter-no |          \
 		--sim-debug | -d | --sim-debug-fe | --sim-stats |                  \
 		--sim-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
@@ -250,7 +250,7 @@ _aff3ct() {
 				RSC)     params="BFER BFERI EXIT" ;;
 				UNCODED) params="BFER BFERI"      ;;
 				*)       params="BFER BFERI EXIT" ;;
-				
+
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
@@ -298,10 +298,10 @@ _aff3ct() {
 
 		--enc-fb-awgn-path | --dec-gen-path | --sim-pb-path | --itl-path | \
 		--mdm-const-path | --src-path | --enc-path | --chn-path |          \
-		--dec-h-path | --sim-err-trk-path) 
+		--dec-h-path | --sim-err-trk-path)
 			_filedir
 			;;
-		
+
 		--src-type)
 			local params="RAND RAND_FAST AZCW USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
@@ -310,8 +310,8 @@ _aff3ct() {
 		--itl-type)
 			local params
 			case "${simutype}" in
-				BFER)      params="LTE CCSDS RANDOM RAND_COL ROW_COL GOLDEN USER NO" ;;
-				BFERI)     params="LTE CCSDS RANDOM RAND_COL ROW_COL GOLDEN USER NO" ;;
+				BFER)      params="LTE CCSDS RANDOM RAND_COL ROW_COL COL_ROW GOLDEN USER NO" ;;
+				BFERI)     params="LTE CCSDS RANDOM RAND_COL ROW_COL COL_ROW GOLDEN USER NO" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
@@ -331,7 +331,7 @@ _aff3ct() {
 			local params="STD FAST INTER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
-		
+
 		--crc-poly)
 			local params="1-PAR 4-ITU 5-USB 5-EPC 5-ITU 6-ITU 6-DARC 6-CDMA2000-B 6-CDMA2000-A  \
 			              7-MMC 7-MVB 8-DVB-S2 8-AUTOSAR 8-CCITT 8-DALLAS 8-DARC 8-SAE-J1850    \

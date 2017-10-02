@@ -106,9 +106,9 @@ void BFER_ite<B,R,Q>
 	// set current sigma
 	for (auto tid = 0; tid < this->params.n_threads; tid++)
 	{
-		this->channel[tid]->set_sigma(this->sigma);
-		this->modem  [tid]->set_sigma(this->sigma);
-		this->codec  [tid]->set_sigma(this->sigma);
+		this->channel[tid]->set_sigma(                                                           this->sigma);
+		this->modem  [tid]->set_sigma(this->params.mdm->complex ? this->sigma * std::sqrt(2.f) : this->sigma);
+		this->codec  [tid]->set_sigma(                                                           this->sigma);
 	}
 }
 
