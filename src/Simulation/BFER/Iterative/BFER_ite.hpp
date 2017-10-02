@@ -55,15 +55,15 @@ protected:
 	virtual void _launch();
 	virtual void release_objects();
 
-	module::Source          <B    >* build_source     (const int tid = 0);
-	module::CRC             <B    >* build_crc        (const int tid = 0);
-	module::Codec_SISO_SIHO <B,Q  >* build_codec      (const int tid = 0);
-	module::Modem           <B,R,Q>* build_modem      (const int tid = 0);
-	module::Channel         <R    >* build_channel    (const int tid = 0);
-	module::Quantizer       <R,Q  >* build_quantizer  (const int tid = 0);
-	module::Coset           <B,Q  >* build_coset_real (const int tid = 0);
-	module::Coset           <B,B  >* build_coset_bit  (const int tid = 0);
-	tools ::Interleaver_core<     >* build_interleaver(const int tid = 0);
+	virtual module::Source          <B    >* build_source     (const int tid = 0);
+	virtual module::CRC             <B    >* build_crc        (const int tid = 0);
+	virtual module::Codec_SISO_SIHO <B,Q  >* build_codec      (const int tid = 0);
+	virtual module::Modem           <B,R,Q>* build_modem      (const int tid = 0);
+	virtual module::Channel         <R    >* build_channel    (const int tid = 0);
+	virtual module::Quantizer       <R,Q  >* build_quantizer  (const int tid = 0);
+	virtual module::Coset           <B,Q  >* build_coset_real (const int tid = 0);
+	virtual module::Coset           <B,B  >* build_coset_bit  (const int tid = 0);
+	virtual tools ::Interleaver_core<     >* build_interleaver(const int tid = 0);
 
 };
 }

@@ -3,7 +3,6 @@
 #ifndef SC_SIMULATION_BFER_STD_HPP_
 #define SC_SIMULATION_BFER_STD_HPP_
 
-#include "Tools/SystemC/SC_Debug.hpp"
 #include "Tools/SystemC/SC_Duplicator.hpp"
 
 #include "../BFER_std.hpp"
@@ -30,8 +29,7 @@ protected:
 	virtual void _launch();
 
 private:
-	void bind_sockets      ();
-	void bind_sockets_debug();
+	void bind_sockets();
 };
 }
 }
