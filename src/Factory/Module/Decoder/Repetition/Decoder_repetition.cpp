@@ -65,24 +65,24 @@ void Decoder_repetition::parameters
 	if (full) headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
 }
 
-template <typename B, typename R>
-module::Decoder_SIHO<B,R>* Decoder_repetition::parameters
+template <typename B, typename Q>
+module::Decoder_SIHO<B,Q>* Decoder_repetition::parameters
 ::build() const
 {
 	if (this->type == "REPETITION")
 	{
-		     if (this->implem == "STD" ) return new module::Decoder_repetition_std <B,R>(this->K, this->N_cw, this->buffered, this->n_frames);
-		else if (this->implem == "FAST") return new module::Decoder_repetition_fast<B,R>(this->K, this->N_cw, this->buffered, this->n_frames);
+		     if (this->implem == "STD" ) return new module::Decoder_repetition_std <B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
+		else if (this->implem == "FAST") return new module::Decoder_repetition_fast<B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename R>
-module::Decoder_SIHO<B,R>* Decoder_repetition
+template <typename B, typename Q>
+module::Decoder_SIHO<B,Q>* Decoder_repetition
 ::build(const parameters &params)
 {
-	return params.template build<B,R>();
+	return params.template build<B,Q>();
 }
 
 // ==================================================================================== explicit template instantiation

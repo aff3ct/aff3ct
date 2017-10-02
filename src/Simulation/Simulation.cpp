@@ -113,7 +113,7 @@ void Simulation
 						auto max_lat = (float)(max_duration.count() * 0.001f);
 
 						unsigned l1 = 99999999;
-						unsigned l2 = 99999.99;
+						float    l2 = 99999.99;
 
 						std::stringstream ssmodule, ssprocess, sssp, ssn_calls, sstot_dur, sspercent;
 						std::stringstream ssavg_thr, ssmin_thr, ssmax_thr;

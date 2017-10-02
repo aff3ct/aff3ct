@@ -29,8 +29,6 @@ private:
 
 	const double bisection_max = std::numeric_limits<double>::max();
 
-	const double epsilon = 0.00000000001;
-
 public:
 	Frozenbits_generator_GA(const int K, const int N, const float sigma = 0.f);
 
