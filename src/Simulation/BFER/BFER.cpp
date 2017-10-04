@@ -45,11 +45,6 @@ BFER<B,R,Q>
   dumper_red (                  nullptr),
   terminal   (                  nullptr)
 {
-#ifdef ENABLE_MPI
-	if (params.debug)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The debug modes is unavailable in MPI.");
-#endif
-
 	if (params.n_threads < 1)
 	{
 		std::stringstream message;

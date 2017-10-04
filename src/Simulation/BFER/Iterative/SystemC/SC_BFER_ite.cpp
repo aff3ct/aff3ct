@@ -29,6 +29,8 @@ SC_BFER_ite<B,R,Q>
 	if (params.coded_monitoring)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded "
 		                                                            "monitoring.");
+
+	this->modules["coset_real_i"] = std::vector<module::Module*>(params.n_threads, nullptr);
 }
 
 template <typename B, typename R, typename Q>
@@ -42,6 +44,8 @@ void SC_BFER_ite<B,R,Q>
 ::__build_communication_chain(const int tid)
 {
 	BFER_ite<B,R,Q>::__build_communication_chain(tid);
+
+	this->modules["coset_real_i"][tid] = coset_real_i;
 
 	this->interleaver_bit[tid]->rename(this->interleaver_llr[tid]->get_name() + "_bit");
 	this->interleaver_llr[tid]->rename(this->interleaver_llr[tid]->get_name() + "_llr");
