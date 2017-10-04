@@ -5,6 +5,7 @@
 
 #include "Tools/SystemC/SC_Debug.hpp"
 #include "Tools/SystemC/SC_Router.hpp"
+#include "Tools/SystemC/SC_Funnel.hpp"
 #include "Tools/SystemC/SC_Predicate.hpp"
 #include "Tools/SystemC/SC_Duplicator.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
@@ -21,8 +22,9 @@ class SC_BFER_ite : public BFER_ite<B,R,Q>
 protected:
 	module::Coset<B,Q> *coset_real_i;
 
-	tools::SC_Duplicator *duplicator[5];
+	tools::SC_Duplicator *duplicator[7];
 	tools::SC_Router     *router;
+	tools::SC_Funnel     *funnel;
 	tools::SC_Predicate  *predicate;
 
 public:
