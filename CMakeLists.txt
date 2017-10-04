@@ -52,17 +52,7 @@ option (ENABLE_GSL            "Enable GSL support"                            OF
 option (ENABLE_MKL            "Enable MKL support"                            OFF)
 option (ENABLE_SYSTEMC        "Enable SystemC support"                        OFF)
 option (ENABLE_SYSTEMC_MODULE "Enable SystemC support (only for the modules)" OFF)
-option (ENABLE_STARPU         "Enable StarPU support"                         OFF)
 option (ENABLE_MPI            "Enable MPI support"                            OFF)
-
-# StarPU: set the link dir
-if (ENABLE_STARPU)
-    find_package (PkgConfig REQUIRED)
-    if (PKG_CONFIG_FOUND)
-        pkg_search_module(SPU REQUIRED starpu-1.2)
-        link_directories(${SPU_LIBRARY_DIRS})
-    endif (PKG_CONFIG_FOUND)
-endif (ENABLE_STARPU)
 
 # Add includes
 include_directories (src)
@@ -154,20 +144,6 @@ if (ENABLE_SYSTEMC)
         include_directories (${TLM_INCLUDE_DIRS})
     endif (TLM_FOUND)
 endif (ENABLE_SYSTEMC)
-
-# StarPU
-if (ENABLE_STARPU)
-    add_definitions ("-DSTARPU")
-
-    find_package (PkgConfig REQUIRED)
-    if (PKG_CONFIG_FOUND)
-        pkg_search_module(SPU REQUIRED starpu-1.2)
-
-        include_directories (${SPU_INCLUDE_DIRS})
-        aff3ct_link_libraries ("${SPU_LIBRARIES}")
-
-    endif (PKG_CONFIG_FOUND)
-endif (ENABLE_STARPU)
 
 # MPI
 if (ENABLE_MPI)
