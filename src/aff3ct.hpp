@@ -361,7 +361,6 @@
 #include <Simulation/EXIT/EXIT.hpp>
 #include <Simulation/BFER/Standard/BFER_std.hpp>
 #include <Simulation/BFER/Standard/Threads/BFER_std_threads.hpp>
-#include <Simulation/BFER/Standard/StarPU/SPU_BFER_std.hpp>
 #include <Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp>
 #include <Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp>
 #include <Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp>

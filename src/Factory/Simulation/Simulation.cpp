@@ -68,15 +68,9 @@ void Simulation::parameters
 		{"",
 		 "display statistics module by module."};
 
-#ifndef STARPU
 	opt_args[{p+"-threads", "t"}] =
 		{"positive_int",
 		 "enable multi-threaded mode and specify the number of threads."};
-#else
-	opt_args[{p+"-conc-tasks", "t"}] =
-		{"positive_int",
-		 "set the task concurrency level (default is 1, no concurrency)."};
-#endif
 
 	opt_args[{p+"-seed", "S"}] =
 		{"positive_int",
@@ -125,12 +119,8 @@ void Simulation::parameters
 
 	this->snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
-#ifndef STARPU
 	if(exist(vals, {p+"-threads", "t"}) && std::stoi(vals.at({p+"-threads", "t"})) > 0)
-		if(exist(vals, {p+"-threads", "t"})) this->n_threads = std::stoi(vals.at({p+"-threads",    "t"}));
-#else
-	if(exist(vals, {p+"-conc-tasks", "t"})) this->n_threads  = std::stoi(vals.at({p+"-conc-tasks", "t"}));
-#endif
+		if(exist(vals, {p+"-threads", "t"})) this->n_threads = std::stoi(vals.at({p+"-threads", "t"}));
 
 #ifdef ENABLE_MPI
 	MPI_Comm_size(MPI_COMM_WORLD, &this->mpi_size);
@@ -197,13 +187,9 @@ void Simulation::parameters
 	headers[p].push_back(std::make_pair("MPI size",             std::to_string(this->mpi_size             )));
 #endif
 
-#ifdef STARPU
-	headers[p].push_back(std::make_pair("Task concurrency level (t)", std::to_string(this->n_threads)));
-#else
 	std::string threads = "unused";
 	if (this->n_threads)
 		threads = std::to_string(this->n_threads) + " thread(s)";
 
 	headers[p].push_back(std::make_pair("Multi-threading (t)", threads));
-#endif
 }

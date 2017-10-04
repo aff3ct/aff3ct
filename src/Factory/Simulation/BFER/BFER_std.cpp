@@ -1,4 +1,3 @@
-#include "Simulation/BFER/Standard/StarPU/SPU_BFER_std.hpp"
 #include "Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp"
 #include "Simulation/BFER/Standard/Threads/BFER_std_threads.hpp"
 
@@ -64,8 +63,6 @@ simulation::BFER_std<B,R,Q>* BFER_std::parameters
 {
 #if defined(SYSTEMC)
 	return new simulation::SC_BFER_std<B,R,Q>(*this);
-#elif defined(STARPU)
-	return new simulation::SPU_BFER_std<B,R,Q>(*this);
 #else
 	return new simulation::BFER_std_threads<B,R,Q>(*this);
 #endif

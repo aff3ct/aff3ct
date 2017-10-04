@@ -95,8 +95,6 @@ simulation::BFER_ite<B,R,Q>* BFER_ite::parameters
 {
 #if defined(SYSTEMC)
 	return new simulation::SC_BFER_ite<B,R,Q>(*this);
-#elif defined(STARPU)
-	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation is not available.");
 #else
 	return new simulation::BFER_ite_threads<B,R,Q>(*this);
 #endif

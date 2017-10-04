@@ -80,7 +80,7 @@ void BFER::parameters
 void BFER::parameters
 ::store(const arg_val_map &vals)
 {
-#if !defined(STARPU) && !defined(SYSTEMC)
+#if !defined(SYSTEMC)
 	this->n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
 
