@@ -100,20 +100,6 @@ void BFER::parameters
 		this->err_track_enable = false;
 		this->n_threads = 1;
 	}
-
-	if (this->err_track_revert)
-	{
-		this->err_track_enable = false;
-		if (this->src != nullptr && this->src->type != "AZCW")
-			this->src->type = "USER";
-		if (this->cdc != nullptr && this->coset)
-			this->cdc->enc->type = "USER";
-
-		if (this->chn != nullptr) this->chn->type = "USER";
-		if (this->src != nullptr) this->src->path      = this->err_track_path + std::string("_$snr.src");
-		if (this->cdc != nullptr) this->cdc->enc->path = this->err_track_path + std::string("_$snr.enc");
-		if (this->chn != nullptr) this->chn->path      = this->err_track_path + std::string("_$snr.chn");
-	}
 }
 
 void BFER::parameters

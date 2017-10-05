@@ -17,8 +17,6 @@ class Dumper
 	friend Dumper_reduction;
 
 protected:
-	const int n_frames;
-
 	std::vector<std::vector<std::vector<char>>> buffer;
 
 	std::vector<const char*>           registered_data_ptr;
@@ -28,17 +26,20 @@ protected:
 	std::vector<std::string>           registered_data_ext;
 	std::vector<bool>                  registered_data_bin;
 	std::vector<std::vector<unsigned>> registered_data_head;
+	std::vector<unsigned>              registered_data_n_frames;
 
 public:
-	Dumper(const int n_frames = 1);
+	Dumper(/*const int n_frames = 1*/);
 	virtual ~Dumper();
 
 	template <typename T>
 	void register_data(const T *ptr, const unsigned size, const std::string file_ext = "dump",
-	                   const bool binary_mode = false, std::vector<unsigned> headers = std::vector<unsigned>());
+	                   const bool binary_mode = false, const unsigned n_frames = 1,
+	                   std::vector<unsigned> headers = std::vector<unsigned>());
 	template <typename T, class A = std::allocator<T>>
 	void register_data(const std::vector<T,A> &data, const std::string file_ext = "dump",
-	                   const bool binary_mode = false, std::vector<unsigned> headers = std::vector<unsigned>());
+	                   const bool binary_mode = false, const unsigned n_frames = 1,
+	                   std::vector<unsigned> headers = std::vector<unsigned>());
 
 	virtual void dump (const std::string& base_path);
 	virtual void add  (const int frame_id = 0      );

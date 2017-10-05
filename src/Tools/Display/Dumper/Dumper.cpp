@@ -10,15 +10,8 @@
 using namespace aff3ct::tools;
 
 Dumper
-::Dumper(const int32_t n_frames)
-: n_frames(n_frames)
+::Dumper()
 {
-	if (n_frames <= 0)
-	{
-		std::stringstream message;
-		message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 }
 
 Dumper
@@ -29,7 +22,7 @@ Dumper
 template <typename T>
 void Dumper
 ::register_data(const T *ptr, const unsigned size, const std::string file_ext, const bool binary_mode,
-                std::vector<unsigned> headers)
+                const unsigned n_frames, std::vector<unsigned> headers)
 {
 	if (ptr == nullptr)
 		throw invalid_argument(__FILE__, __LINE__, __func__, "'ptr' can't be null.");
@@ -44,60 +37,63 @@ void Dumper
 	if (file_ext.empty())
 		throw invalid_argument(__FILE__, __LINE__, __func__, "'file_ext' can't be empty.");
 
-	if (n_frames <= 0 && n_frames != -1)
+	if (n_frames == 0)
 	{
 		std::stringstream message;
-		message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
+		message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	this->buffer.push_back(std::vector<std::vector<char>>());
 
-	this->registered_data_ptr   .push_back((char*)ptr );
-	this->registered_data_size  .push_back(size       );
-	this->registered_data_sizeof.push_back(sizeof(T)  );
-	this->registered_data_type  .push_back(typeid(T)  );
-	this->registered_data_ext   .push_back(file_ext   );
-	this->registered_data_bin   .push_back(binary_mode);
-	this->registered_data_head  .push_back(headers    );
+	this->registered_data_ptr     .push_back((char*)ptr );
+	this->registered_data_size    .push_back(size       );
+	this->registered_data_sizeof  .push_back(sizeof(T)  );
+	this->registered_data_type    .push_back(typeid(T)  );
+	this->registered_data_ext     .push_back(file_ext   );
+	this->registered_data_bin     .push_back(binary_mode);
+	this->registered_data_head    .push_back(headers    );
+	this->registered_data_n_frames.push_back(n_frames   );
 }
 
 template <typename T, class A>
 void Dumper
 ::register_data(const std::vector<T,A> &data, const std::string file_ext, const bool binary_mode,
-                std::vector<unsigned> headers)
+                const unsigned n_frames, std::vector<unsigned> headers)
 {
-	if (n_frames <= 0 && n_frames != -1)
+	if (n_frames == 0)
 	{
 		std::stringstream message;
-		message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
+		message << "'n_frames' has to be greater than 0('n_frames' = " << n_frames << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	};
 
-	this->register_data(data.data(), (unsigned)(data.size() / this->n_frames), file_ext, binary_mode, headers);
+	this->register_data(data.data(), (unsigned)(data.size() / n_frames), file_ext, binary_mode, n_frames, headers);
 }
 
 void Dumper
 ::add(const int32_t frame_id)
 {
-	if (frame_id < 0 || frame_id >= this->n_frames)
+	if (frame_id < 0)
 	{
 		std::stringstream message;
-		message << "'frame_id' has to be positive and smaller than 'n_frames' ('frame_id' = " << frame_id
-		        << ", 'n_frames' = " << this->n_frames << ").";
+		message << "'frame_id' has to be positive ('frame_id' = " << frame_id << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	for (auto i = 0; i < (int32_t)this->registered_data_ptr.size(); i++)
 	{
-		const auto ptr   = this->registered_data_ptr [i];
-		const auto bytes = this->registered_data_size[i] * this->registered_data_sizeof[i];
+		if ((unsigned)frame_id < this->registered_data_n_frames[i])
+		{
+			const auto ptr   = this->registered_data_ptr [i];
+			const auto bytes = this->registered_data_size[i] * this->registered_data_sizeof[i];
 
-		this->buffer[i].push_back(std::vector<char>(bytes));
+			this->buffer[i].push_back(std::vector<char>(bytes));
 
-		std::copy(ptr + bytes * (frame_id +0),
-		          ptr + bytes * (frame_id +1),
-		          this->buffer[i][this->buffer[i].size() -1].begin());
+			std::copy(ptr + bytes * (frame_id +0),
+			          ptr + bytes * (frame_id +1),
+			          this->buffer[i][this->buffer[i].size() -1].begin());
+		}
 	}
 }
 
@@ -143,15 +139,15 @@ void Dumper
 {
 	for (auto &b : this->buffer)
 		b.clear();
-	this->buffer.clear();
+//	this->buffer.clear();
 
-	this->registered_data_ptr   .clear();
-	this->registered_data_size  .clear();
-	this->registered_data_sizeof.clear();
-	this->registered_data_type  .clear();
-	this->registered_data_ext   .clear();
-	this->registered_data_bin   .clear();
-	this->registered_data_head  .clear();
+//	this->registered_data_ptr   .clear();
+//	this->registered_data_size  .clear();
+//	this->registered_data_sizeof.clear();
+//	this->registered_data_type  .clear();
+//	this->registered_data_ext   .clear();
+//	this->registered_data_bin   .clear();
+//	this->registered_data_head  .clear();
 }
 
 void Dumper
@@ -170,12 +166,16 @@ void Dumper
 ::write_body_text(std::ofstream &file, const std::vector<std::vector<char>> &buffer, const unsigned size,
                   const std::type_index type)
 {
-	if      (type == typeid(int8_t )) this->_write_body_text<int8_t >(file, buffer, size);
-	else if (type == typeid(int16_t)) this->_write_body_text<int16_t>(file, buffer, size);
-	else if (type == typeid(int32_t)) this->_write_body_text<int32_t>(file, buffer, size);
-	else if (type == typeid(int64_t)) this->_write_body_text<int64_t>(file, buffer, size);
-	else if (type == typeid(float  )) this->_write_body_text<float  >(file, buffer, size);
-	else if (type == typeid(double )) this->_write_body_text<double >(file, buffer, size);
+	if      (type == typeid( int8_t )) this->_write_body_text< int8_t >(file, buffer, size);
+	else if (type == typeid(uint8_t )) this->_write_body_text<uint8_t >(file, buffer, size);
+	else if (type == typeid( int16_t)) this->_write_body_text< int16_t>(file, buffer, size);
+	else if (type == typeid(uint16_t)) this->_write_body_text<uint16_t>(file, buffer, size);
+	else if (type == typeid( int32_t)) this->_write_body_text< int32_t>(file, buffer, size);
+	else if (type == typeid(uint32_t)) this->_write_body_text<uint32_t>(file, buffer, size);
+	else if (type == typeid( int64_t)) this->_write_body_text< int64_t>(file, buffer, size);
+	else if (type == typeid(uint64_t)) this->_write_body_text<uint64_t>(file, buffer, size);
+	else if (type == typeid(float   )) this->_write_body_text<float   >(file, buffer, size);
+	else if (type == typeid(double  )) this->_write_body_text<double  >(file, buffer, size);
 	else
 		throw invalid_argument(__FILE__, __LINE__, __func__, "Unsupported data type.");
 }
@@ -211,29 +211,39 @@ void Dumper
 }
 
 // ==================================================================================== explicit template instantiation
-template void Dumper::register_data<int8_t >(const int8_t*,  const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int16_t>(const int16_t*, const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int32_t>(const int32_t*, const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int64_t>(const int64_t*, const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<float  >(const float*,   const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<double >(const double*,  const unsigned, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int8_t  >(const int8_t*,   const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint8_t >(const uint8_t*,  const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<int16_t >(const int16_t*,  const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint16_t>(const uint16_t*, const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<int32_t >(const int32_t*,  const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint32_t>(const uint32_t*, const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<int64_t >(const int64_t*,  const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint64_t>(const uint64_t*, const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<float   >(const float*,    const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<double  >(const double*,   const unsigned, const std::string, const bool, const unsigned, std::vector<unsigned>);
 
-template void Dumper::register_data<int8_t,   std::allocator<int8_t  >>(const std::vector<int8_t,   std::allocator<int8_t  >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int16_t,  std::allocator<int16_t >>(const std::vector<int16_t,  std::allocator<int16_t >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int32_t,  std::allocator<int32_t >>(const std::vector<int32_t,  std::allocator<int32_t >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<uint32_t, std::allocator<uint32_t>>(const std::vector<uint32_t, std::allocator<uint32_t>>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int64_t,  std::allocator<int64_t >>(const std::vector<int64_t,  std::allocator<int64_t >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<float,    std::allocator<float   >>(const std::vector<float,    std::allocator<float   >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<double,   std::allocator<double  >>(const std::vector<double,   std::allocator<double  >>&, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int8_t,   std::allocator<int8_t  >>(const std::vector<int8_t,   std::allocator<int8_t  >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint8_t,  std::allocator<uint8_t >>(const std::vector<uint8_t,  std::allocator<uint8_t >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<int16_t,  std::allocator<int16_t >>(const std::vector<int16_t,  std::allocator<int16_t >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint16_t, std::allocator<uint16_t>>(const std::vector<uint16_t, std::allocator<uint16_t>>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<int32_t,  std::allocator<int32_t >>(const std::vector<int32_t,  std::allocator<int32_t >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint32_t, std::allocator<uint32_t>>(const std::vector<uint32_t, std::allocator<uint32_t>>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<int64_t,  std::allocator<int64_t >>(const std::vector<int64_t,  std::allocator<int64_t >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint64_t, std::allocator<uint64_t>>(const std::vector<uint64_t, std::allocator<uint64_t>>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<float,    std::allocator<float   >>(const std::vector<float,    std::allocator<float   >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<double,   std::allocator<double  >>(const std::vector<double,   std::allocator<double  >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
 
 #include <mipp.h>
-template void Dumper::register_data<int8_t,   mipp::allocator<int8_t  >>(const std::vector<int8_t,   mipp::allocator<int8_t  >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int16_t,  mipp::allocator<int16_t >>(const std::vector<int16_t,  mipp::allocator<int16_t >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int32_t,  mipp::allocator<int32_t >>(const std::vector<int32_t,  mipp::allocator<int32_t >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<uint32_t, mipp::allocator<uint32_t>>(const std::vector<uint32_t, mipp::allocator<uint32_t>>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int64_t,  mipp::allocator<int64_t >>(const std::vector<int64_t,  mipp::allocator<int64_t >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<float,    mipp::allocator<float   >>(const std::vector<float,    mipp::allocator<float   >>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<double,   mipp::allocator<double  >>(const std::vector<double,   mipp::allocator<double  >>&, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int8_t,   mipp::allocator<int8_t  >>(const std::vector<int8_t,   mipp::allocator<int8_t  >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint8_t,  mipp::allocator<uint8_t >>(const std::vector<uint8_t,  mipp::allocator<uint8_t >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<int16_t,  mipp::allocator<int16_t >>(const std::vector<int16_t,  mipp::allocator<int16_t >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint16_t, mipp::allocator<uint16_t>>(const std::vector<uint16_t, mipp::allocator<uint16_t>>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<int32_t,  mipp::allocator<int32_t >>(const std::vector<int32_t,  mipp::allocator<int32_t >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint32_t, mipp::allocator<uint32_t>>(const std::vector<uint32_t, mipp::allocator<uint32_t>>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<int64_t,  mipp::allocator<int64_t >>(const std::vector<int64_t,  mipp::allocator<int64_t >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<uint64_t, mipp::allocator<uint64_t>>(const std::vector<uint64_t, mipp::allocator<uint64_t>>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<float,    mipp::allocator<float   >>(const std::vector<float,    mipp::allocator<float   >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
+template void Dumper::register_data<double,   mipp::allocator<double  >>(const std::vector<double,   mipp::allocator<double  >>&, const std::string, const bool, const unsigned, std::vector<unsigned>);
 
 template void Dumper::_write_body_text<int8_t >(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
 template void Dumper::_write_body_text<int16_t>(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);

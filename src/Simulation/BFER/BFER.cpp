@@ -55,13 +55,13 @@ BFER<B,R,Q>
 	if (params.err_track_enable)
 	{
 		for (auto tid = 0; tid < params.n_threads; tid++)
-			dumper[tid] = new tools::Dumper(params.src->n_frames);
+			dumper[tid] = new tools::Dumper();
 
 		std::vector<tools::Dumper*> dumpers;
 		for (auto tid = 0; tid < params.n_threads; tid++)
 			dumpers.push_back(dumper[tid]);
 
-		dumper_red = new tools::Dumper_reduction(dumpers, params.src->n_frames);
+		dumper_red = new tools::Dumper_reduction(dumpers);
 	}
 
 	modules["monitor"] = std::vector<module::Module*>(params.n_threads, nullptr);
@@ -166,13 +166,12 @@ void BFER<B,R,Q>
 			// dirty hack to override simulation params
 			auto &params_writable = const_cast<factory::BFER::parameters&>(params);
 
-			if (this->params.src->type != "AZCW")
-				params_writable.src->path = params.err_track_path + "_" + std::to_string(snr_b) + ".src";
+			std::stringstream s_snr_b;
+			s_snr_b << std::setprecision(2) << std::fixed << snr_b;
 
-			if (this->params.coset)
-				params_writable.cdc->enc->path = params.err_track_path + "_" + std::to_string(snr_b) + ".enc";
-
-			params_writable.chn->path = params.err_track_path + "_" + std::to_string(snr_b) + ".chn";
+			params_writable.src     ->path = params.err_track_path + "_" + s_snr_b.str() + ".src";
+			params_writable.cdc->enc->path = params.err_track_path + "_" + s_snr_b.str() + ".enc";
+			params_writable.chn     ->path = params.err_track_path + "_" + s_snr_b.str() + ".chn";
 
 			std::ifstream file(this->params.chn->path, std::ios::binary);
 			if (file.is_open())
@@ -252,7 +251,10 @@ void BFER<B,R,Q>
 
 		if (this->dumper_red != nullptr && !simu_error)
 		{
-			this->dumper_red->dump(params.err_track_path + "_" + std::to_string(snr_b));
+			std::stringstream s_snr_b;
+			s_snr_b << std::setprecision(2) << std::fixed << snr_b;
+
+			this->dumper_red->dump(params.err_track_path + "_" + s_snr_b.str());
 			this->dumper_red->clear();
 		}
 

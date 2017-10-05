@@ -80,12 +80,29 @@ void BFER_std<B,R,Q>
 			this->monitor[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh, interleaver));
 
 		if (this->params.err_track_enable && interleaver->is_uniform())
-			this->dumper[tid]->register_data(interleaver->get_lut(), "itl", false, {});
+			this->dumper[tid]->register_data(interleaver->get_lut(), "itl", false, this->params.src->n_frames, {});
 	}
 	catch (const std::exception&) { /* do nothing if the is no interleaver */ }
 
 	if (this->params.err_track_enable)
-		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
+	{
+		auto &source  = *this->source [tid];
+		auto &encoder = *this->codec  [tid]->get_encoder();
+		auto &channel = *this->channel[tid];
+
+		source["generate"].set_autoalloc(true);
+		auto src_data = (B*)(source["generate"]["U_K"].get_dataptr());
+		auto src_size = (source["generate"]["U_K"].get_databytes() / sizeof(B)) / this->params.src->n_frames;
+		this->dumper[tid]->register_data(src_data, src_size, "src", false, this->params.src->n_frames, {});
+
+		encoder["encode"].set_autoalloc(true);
+		auto enc_data = (B*)(encoder["encode"]["X_N"].get_dataptr());
+		auto enc_size = (encoder["encode"]["X_N"].get_databytes() / sizeof(B)) / this->params.src->n_frames;
+		this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, this->params.src->n_frames,
+		                                 {(unsigned)this->params.cdc->enc->K});
+
+		this->dumper[tid]->register_data(channel.get_noise(), "chn", true, this->params.src->n_frames, {});
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -149,16 +166,18 @@ module::Codec_SIHO<B,Q>* BFER_std<B,R,Q>
 
 	if (params_cdc->itl != nullptr)
 	{
-		if (params_cdc->itl->core->uniform)
+		if (params.err_track_revert && params_cdc->itl->core->uniform)
+		{
+			std::stringstream s_snr_b;
+			s_snr_b << std::setprecision(2) << std::fixed << this->snr_b;
+
+			params_cdc->itl->core->type = "USER";
+			params_cdc->itl->core->path = params.err_track_path + "_" + s_snr_b.str() + ".itl";
+		}
+		else if (params_cdc->itl->core->uniform)
 		{
 			const auto seed_itl = rd_engine_seed[tid]();
 			params_cdc->itl->core->seed = seed_itl;
-		}
-
-		if (params.err_track_revert)
-		{
-			params_cdc->itl->core->type = "USER";
-			params_cdc->itl->core->path = params.err_track_path + "_" + std::to_string(this->snr) + ".itl";
 		}
 	}
 

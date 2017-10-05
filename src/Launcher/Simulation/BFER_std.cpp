@@ -140,6 +140,24 @@ void BFER_std<B,R,Q>
 		params.cdc->enc->type = "AZCW";
 	}
 
+	if (params.err_track_revert)
+	{
+		params.src->type = "USER";
+		params.src->path = params.err_track_path + std::string("_$snr.src");
+
+		params.cdc->enc->type = "USER";
+		params.cdc->enc->path = params.err_track_path + std::string("_$snr.enc");
+
+		if (params.cdc->itl != nullptr && params.cdc->itl->core->uniform)
+		{
+			params.cdc->itl->core->type = "USER";
+			params.cdc->itl->core->path = params.err_track_path + std::string("_$snr.itl");
+		}
+
+		params.chn->type = "USER";
+		params.chn->path = params.err_track_path + std::string("_$snr.chn");
+	}
+
 	params.cdc->enc->seed = params.local_seed;
 
 	params.crc->n_frames = params.src->n_frames;

@@ -65,12 +65,6 @@ void Turbo_DB<L,B,R,Q>
 	params_cdc->dec->sub ->n_frames = this->params.src->n_frames;
 
 	params_cdc->itl->core->seed = this->params.global_seed;
-
-	if (this->params.err_track_revert)
-	{
-		params_cdc->itl->core->type = "USER";
-		params_cdc->itl->core->path = this->params.err_track_path + std::string("_$snr.itl");
-	}
 }
 
 template <class L, typename B, typename R, typename Q>

@@ -66,23 +66,6 @@ void BFER_std_threads<B,R,Q>
 
 		modem["modulate"]["X_N1"].bind(puncturer["puncture"]["X_N2"]);
 	}
-
-	if (this->params.err_track_enable)
-	{
-		if (this->params.src->type != "AZCW")
-		{
-			auto src_data = (B*)(source["generate"]["U_K"].get_dataptr());
-			auto src_size = source["generate"]["U_K"].get_databytes() / sizeof(B);
-			this->dumper[tid]->register_data(src_data, src_size, "src", false, {});
-		}
-
-		if (this->params.coset)
-		{
-			auto enc_data = (B*)(encoder["encode"]["X_N"].get_dataptr());
-			auto enc_size = encoder["encode"]["X_N"].get_databytes() / sizeof(B);
-			this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, {(unsigned)this->params.cdc->enc->K});
-		}
-	}
 }
 
 template <typename B, typename R, typename Q>

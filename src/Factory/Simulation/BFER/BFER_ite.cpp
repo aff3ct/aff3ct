@@ -68,12 +68,6 @@ void BFER_ite::parameters
 
 	if(exist(vals, {p+"-ite",  "I"})) this->n_ite     = std::stoi(vals.at({p+"-ite",  "I"}));
 	if(exist(vals, {p+"-crc-start"})) this->crc_start = std::stoi(vals.at({p+"-crc-start"}));
-
-	if(this->err_track_revert && itl != nullptr)
-	{
-		this->itl->core->type = "USER";
-		this->itl->core->path = this->err_track_path + std::string("_$snr.itl");
-	}
 }
 
 void BFER_ite::parameters

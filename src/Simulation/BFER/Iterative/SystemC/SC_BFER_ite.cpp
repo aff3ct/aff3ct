@@ -50,26 +50,6 @@ void SC_BFER_ite<B,R,Q>
 	this->interleaver_bit[tid]->rename(this->interleaver_llr[tid]->get_name() + "_bit");
 	this->interleaver_llr[tid]->rename(this->interleaver_llr[tid]->get_name() + "_llr");
 
-	if (this->params.err_track_enable)
-	{
-		auto &source  = *this->source[tid];
-		auto &encoder = *this->codec [tid]->get_encoder();
-
-		if (this->params.src->type != "AZCW")
-		{
-			auto src_data = (B*)(source["generate"]["U_K"].get_dataptr());
-			auto src_size = source["generate"]["U_K"].get_databytes() / sizeof(B);
-			this->dumper[tid]->register_data(src_data, src_size, "src", false, {});
-		}
-
-		if (this->params.coset)
-		{
-			auto enc_data = (B*)(encoder["encode"]["X_N"].get_dataptr());
-			auto enc_size = encoder["encode"]["X_N"].get_databytes() / sizeof(B);
-			this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, {(unsigned)this->params.cdc->enc->K});
-		}
-	}
-
 	this->monitor[tid]->add_handler_check([&]() -> void
 	{
 		if (this->monitor_red->fe_limit_achieved()) // will make the MPI communication

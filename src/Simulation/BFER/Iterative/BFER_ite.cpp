@@ -92,11 +92,29 @@ void BFER_ite<B,R,Q>
 		this->monitor[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh,
 		                                                this->interleaver_core[tid]));
 
-	if (this->params.err_track_enable && interleaver_core[tid]->is_uniform())
-		this->dumper[tid]->register_data(interleaver_core[tid]->get_lut(), "itl", false, {});
-
 	if (this->params.err_track_enable)
-		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
+	{
+		auto &source      = *this->source    [tid];
+		auto &encoder     = *this->codec     [tid]->get_encoder();
+		auto &channel     = *this->channel   [tid];
+		auto &interleaver = *interleaver_core[tid];
+
+		source["generate"].set_autoalloc(true);
+		auto src_data = (B*)(source["generate"]["U_K"].get_dataptr());
+		auto src_size = (source["generate"]["U_K"].get_databytes() / sizeof(B)) / this->params.src->n_frames;
+		this->dumper[tid]->register_data(src_data, src_size, "src", false, this->params.src->n_frames, {});
+
+		encoder["encode"].set_autoalloc(true);
+		auto enc_data = (B*)(encoder["encode"]["X_N"].get_dataptr());
+		auto enc_size = (encoder["encode"]["X_N"].get_databytes() / sizeof(B)) / this->params.src->n_frames;
+		this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, this->params.src->n_frames,
+		                                 {(unsigned)this->params.cdc->enc->K});
+
+		this->dumper[tid]->register_data(channel.get_noise(), "chn", true, this->params.src->n_frames, {});
+
+		if (interleaver_core[tid]->is_uniform())
+			this->dumper[tid]->register_data(interleaver.get_lut(), "itl", false, this->params.src->n_frames, {});
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -174,8 +192,13 @@ tools ::Interleaver_core<>* BFER_ite<B,R,Q>
 
 	auto params_itl = params.itl->clone();
 	params_itl->core->seed = params.itl->core->uniform ? seed_itl : params.itl->core->seed;
-	if (params.err_track_revert)
-		params_itl->core->path = params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
+	if (params.err_track_revert && params.itl->core->uniform)
+	{
+		std::stringstream s_snr_b;
+		s_snr_b << std::setprecision(2) << std::fixed << this->snr_b;
+
+		params_itl->core->path = params.err_track_path + "_" + s_snr_b.str() + ".itl";
+	}
 
 	auto i = params_itl->core->template build<>();
 	delete params_itl;
