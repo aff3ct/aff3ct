@@ -25,7 +25,7 @@ CRC_polynomial<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "CRC '" + poly_key + "' is not supported.");
 
 	auto crc_name = CRC_polynomial<B>::get_name(poly_key);
-	if (this->get_size() == 0 && crc_name.empty())
+	if (this->size == 0 && crc_name.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Please specify the CRC 'size'.");
 
 	if (!crc_name.empty() && CRC_polynomial<B>::get_size(crc_name) != this->size)
