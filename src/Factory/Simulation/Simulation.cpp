@@ -143,6 +143,8 @@ void Simulation::parameters
 
 	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
 	this->local_seed = this->global_seed + max_n_threads_global * this->mpi_rank;
+#else
+	this->local_seed = this->global_seed;
 #endif
 
 #ifdef ENABLE_COOL_BASH
