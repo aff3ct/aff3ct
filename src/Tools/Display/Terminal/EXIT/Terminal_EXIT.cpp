@@ -141,6 +141,8 @@ void Terminal_EXIT<B,R>
 {
 	using namespace std::chrono;
 
+	Terminal::final_report(stream);
+
 	this->_report(stream);
 
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;

@@ -8,6 +8,7 @@
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
 #ifdef ENABLE_MPI
@@ -127,7 +128,6 @@ void BFER<B,R,Q>
 ::launch()
 {
 	this->terminal = this->build_terminal();
-	Simulation::terminal = this->terminal;
 
 	if (!this->params.err_track_revert)
 	{
@@ -211,7 +211,7 @@ void BFER<B,R,Q>
 #else
 		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
 #endif
-			this->start_terminal_temp_report(params.ter->frequency);
+			terminal->start_temp_report(params.ter->frequency);
 
 		auto simu_error = false;
 		try
@@ -225,15 +225,6 @@ void BFER<B,R,Q>
 			simu_error = true;
 		}
 
-		// stop the terminal
-#ifdef ENABLE_MPI
-		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug
-		    && params.mpi_rank == 0)
-#else
-		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
-#endif
-			this->stop_terminal_temp_report();
-
 #ifdef ENABLE_MPI
 		if (!params.ter->disabled && terminal != nullptr && !simu_error && params.mpi_rank == 0)
 #else
@@ -246,7 +237,15 @@ void BFER<B,R,Q>
 			terminal->final_report(std::cout);
 
 			if (params.statistics)
-				display_stats();
+			{
+				std::vector<std::vector<module::Module*>> mod_vec;
+				for (auto &vm : modules)
+					mod_vec.push_back(vm.second);
+
+				std::cout << "#" << std::endl;
+				tools::Stats::show(mod_vec, std::cout);
+				std::cout << "#" << std::endl;
+			}
 		}
 
 		if (this->dumper_red != nullptr && !simu_error)

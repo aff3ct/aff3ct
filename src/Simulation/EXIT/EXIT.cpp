@@ -3,6 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 
@@ -85,8 +86,6 @@ void EXIT<B,R>
 	channel_a = build_channel_a(K_mod);
 	terminal  = build_terminal (     );
 
-	Simulation::terminal = terminal;
-
 	this->modules["source"   ][0] = source;
 	this->modules["codec"    ][0] = codec;
 	this->modules["encoder"  ][0] = codec->get_encoder();
@@ -154,13 +153,13 @@ void EXIT<B,R>
 
 			// start the terminal to display BER/FER results
 			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
-				this->start_terminal_temp_report(params.ter->frequency);
+				this->terminal->start_temp_report(params.ter->frequency);
 
 			this->simulation_loop();
 
 			// stop the terminal
 			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
-				this->stop_terminal_temp_report();
+				this->terminal->stop_temp_report();
 
 			if (!params.ter->disabled)
 			{
@@ -170,7 +169,15 @@ void EXIT<B,R>
 				terminal->final_report(std::cout);
 
 				if (params.statistics)
-					display_stats();
+				{
+					std::vector<std::vector<module::Module*>> mod_vec;
+					for (auto &vm : modules)
+						mod_vec.push_back(vm.second);
+
+					std::cout << "#" << std::endl;
+					tools::Stats::show(mod_vec, std::cout);
+					std::cout << "#" << std::endl;
+				}
 			}
 
 			this->monitor->reset();
