@@ -175,7 +175,7 @@ void EXIT<B,R>
 						mod_vec.push_back(vm.second);
 
 					std::cout << "#" << std::endl;
-					tools::Stats::show(mod_vec, std::cout);
+					tools::Stats::show(mod_vec, true, std::cout);
 					std::cout << "#" << std::endl;
 				}
 			}

@@ -18,8 +18,10 @@ protected:
 public:
 	virtual ~Statistics();
 
-	static void show(std::vector<            module::Module* > &modules, std::ostream &stream = std::cout);
-	static void show(std::vector<std::vector<module::Module*>> &modules, std::ostream &stream = std::cout);
+	static void show(const std::vector<module::Module*> &modules, const bool ordered = false,
+	                 std::ostream &stream = std::cout);
+	static void show(const std::vector<std::vector<module::Module*>> &modules, const bool ordered = false,
+	                 std::ostream &stream = std::cout);
 
 private:
 	static void show_header(std::ostream &stream = std::cout);

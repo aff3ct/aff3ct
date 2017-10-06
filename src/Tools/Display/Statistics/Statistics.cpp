@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iomanip>
 
 #include "Tools/Display/bash_tools.h"
@@ -168,128 +169,160 @@ void Statistics
 }
 
 void Statistics
-::show(std::vector<module::Module*> &modules, std::ostream &stream)
+::show(const std::vector<module::Module*> &modules, const bool ordered, std::ostream &stream)
 {
-	size_t max_chars = 0;
-	auto d_total = std::chrono::nanoseconds(0);
+	std::vector<module::Task*> tasks;
 	for (auto *m : modules)
 		for (auto &t : m->tasks)
+			if (t.second->get_n_calls())
+				tasks.push_back(t.second);
+
+	if (ordered)
+	{
+		std::sort(tasks.begin(), tasks.end(), [](module::Task* t1, module::Task* t2)
 		{
-			d_total += t.second->get_duration_total();
-			std::max(max_chars, m->get_short_name().size() + t.second->get_name().size());
-		}
+			return t1->get_duration_total() > t2->get_duration_total();
+		});
+	}
+
+	size_t max_chars = 0;
+	auto d_total = std::chrono::nanoseconds(0);
+	for (auto *t : tasks)
+	{
+		d_total += t->get_duration_total();
+		std::max(max_chars, t->get_module().get_short_name().size() + t->get_module().get_name().size());
+	}
 	auto total_sec = ((float)d_total.count()) * 0.000000001f;
 
 	if (d_total.count())
 	{
 		Statistics::show_header(stream);
 
-		for (auto *m : modules)
+		for (auto *t : tasks)
 		{
-			for (auto &t : m->tasks)
+			auto module_sname      = t->get_module().get_short_name();
+			auto task_n_elmts      = t->socket.back().get_n_elmts();
+			auto task_name         = t->get_name          ();
+			auto task_n_calls      = t->get_n_calls       ();
+			auto task_tot_duration = t->get_duration_total();
+			auto task_min_duration = t->get_duration_min  ();
+			auto task_max_duration = t->get_duration_max  ();
+
+			Statistics::show_task(total_sec, module_sname, task_name, task_n_elmts, task_n_calls,
+			                      task_tot_duration, task_min_duration, task_max_duration, stream);
+
+			auto task_total_sec = ((float)task_tot_duration.count()) * 0.000000001f;
+			for (auto &sp : t->get_registered_duration())
 			{
-				auto module_sname      = m->get_short_name();
-				auto task_n_elmts      = t.second->socket.back().get_n_elmts();
-				auto task_name         = t.second->get_name          ();
-				auto task_n_calls      = t.second->get_n_calls       ();
-				auto task_tot_duration = t.second->get_duration_total();
-				auto task_min_duration = t.second->get_duration_min  ();
-				auto task_max_duration = t.second->get_duration_max  ();
+				auto subtask_name         = sp;
+				auto subtask_n_elmts      = task_n_elmts;
+				auto subtask_n_calls      = t->get_registered_n_calls       (sp);
+				auto subtask_tot_duration = t->get_registered_duration_total(sp);
+				auto subtask_min_duration = t->get_registered_duration_min  (sp);
+				auto subtask_max_duration = t->get_registered_duration_max  (sp);
 
-				Statistics::show_task(total_sec, module_sname, task_name, task_n_elmts, task_n_calls,
-				                      task_tot_duration, task_min_duration, task_max_duration, stream);
-
-				auto task_total_sec = ((float)task_tot_duration.count()) * 0.000000001f;
-				for (auto &sp : t.second->get_registered_duration())
-				{
-					auto subtask_name         = sp;
-					auto subtask_n_elmts      = task_n_elmts;
-					auto subtask_n_calls      = t.second->get_registered_n_calls       (sp);
-					auto subtask_tot_duration = t.second->get_registered_duration_total(sp);
-					auto subtask_min_duration = t.second->get_registered_duration_min  (sp);
-					auto subtask_max_duration = t.second->get_registered_duration_max  (sp);
-
-					Statistics::show_sub_task(task_total_sec, task_name, task_n_calls, subtask_n_elmts,
-					                          subtask_name, subtask_n_calls, subtask_tot_duration,
-					                          subtask_min_duration, subtask_max_duration, stream);
-				}
+				Statistics::show_sub_task(task_total_sec, task_name, task_n_calls, subtask_n_elmts,
+				                          subtask_name, subtask_n_calls, subtask_tot_duration,
+				                          subtask_min_duration, subtask_max_duration, stream);
 			}
 		}
 	}
 	else
 	{
-		stream << "# Statistics are unavailable (did you enable the statistics in the tasks?)." << std::endl;
+		stream << "# " << format("(II)",  tools::Style::BOLD | tools::FG::BLUE)
+		       << " Statistics are unavailable. Did you enable the statistics in the tasks?" << std::endl;
 	}
 }
 
 void Statistics
-::show(std::vector<std::vector<module::Module*>> &modules, std::ostream &stream)
+::show(const std::vector<std::vector<module::Module*>> &modules, const bool ordered, std::ostream &stream)
 {
+	std::vector<std::vector<module::Task*>> tasks;
+
+	for (auto &vm : modules)
+		if (vm.size() > 0)
+			for (auto &t : vm[0]->tasks)
+			{
+				std::vector<module::Task*> tsk;
+				for (auto *m : vm)
+					tsk.push_back(m->tasks[t.first]);
+				tasks.push_back(tsk);
+			}
+
+	if (ordered)
+	{
+		std::sort(tasks.begin(), tasks.end(), [](std::vector<module::Task*> &t1, std::vector<module::Task*> &t2)
+		{
+			auto total1 = std::chrono::nanoseconds(0);
+			auto total2 = std::chrono::nanoseconds(0);
+			for (auto *t : t1) total1 += t->get_duration_total();
+			for (auto *t : t2) total2 += t->get_duration_total();
+			return total1 > total2;
+		});
+	}
+
 	size_t max_chars = 0;
 	auto d_total = std::chrono::nanoseconds(0);
-	for (auto &vm : modules)
-		for (auto *m : vm)
-			for (auto &t : m->tasks)
-			{
-				d_total += t.second->get_duration_total();
-				std::max(max_chars, m->get_short_name().size() + t.second->get_name().size());
-			}
+	for (auto &vt : tasks)
+		for (auto *t : vt)
+		{
+			d_total += t->get_duration_total();
+			std::max(max_chars, t->get_module().get_short_name().size() + t->get_module().get_name().size());
+		}
 	auto total_sec = ((float)d_total.count()) * 0.000000001f;
 
 	if (d_total.count())
 	{
 		Statistics::show_header(stream);
 
-		for (auto &vm : modules)
+		for (auto &vt : tasks)
 		{
-			for (auto &t : vm[0]->tasks)
+			auto module_sname      = vt[0]->get_module().get_short_name();
+			auto task_n_elmts      = vt[0]->socket.back().get_n_elmts();
+			auto task_name         = vt[0]->get_name();
+			auto task_n_calls      = 0;
+			auto task_tot_duration = std::chrono::nanoseconds(0);
+			auto task_min_duration = d_total;
+			auto task_max_duration = std::chrono::nanoseconds(0);
+
+			for (auto *t : vt)
 			{
-				auto module_sname      = vm[0]->get_short_name();
-				auto task_n_elmts      = t.second->socket.back().get_n_elmts();
-				auto task_name         = t.second->get_name();
-				auto task_n_calls      = 0;
-				auto task_tot_duration = std::chrono::nanoseconds(0);
-				auto task_min_duration = d_total;
-				auto task_max_duration = std::chrono::nanoseconds(0);
+				task_n_calls      += t->get_n_calls();
+				task_tot_duration += t->get_duration_total();
+				task_min_duration  = std::min(task_min_duration, t->get_duration_min());
+				task_max_duration  = std::max(task_max_duration, t->get_duration_max());
+			}
 
-				for (auto *m : vm)
+			Statistics::show_task(total_sec, module_sname, task_name, task_n_elmts, task_n_calls,
+			                      task_tot_duration, task_min_duration, task_max_duration, stream);
+
+			auto task_total_sec = ((float)task_tot_duration.count()) * 0.000000001f;
+			for (auto &sp : vt[0]->get_registered_duration())
+			{
+				auto subtask_name         = sp;
+				auto subtask_n_elmts      = task_n_elmts;
+				auto subtask_n_calls      = 0;
+				auto subtask_tot_duration = std::chrono::nanoseconds(0);
+				auto subtask_min_duration = d_total;
+				auto subtask_max_duration = std::chrono::nanoseconds(0);
+
+				for (auto *t : vt)
 				{
-					task_n_calls      += (*m)[task_name].get_n_calls();
-					task_tot_duration += (*m)[task_name].get_duration_total();
-					task_min_duration  = std::min(task_min_duration, (*m)[task_name].get_duration_min());
-					task_max_duration  = std::max(task_max_duration, (*m)[task_name].get_duration_max());
+					subtask_n_calls      += t->get_registered_n_calls(sp);
+					subtask_tot_duration += t->get_registered_duration_total(sp);
+					subtask_min_duration  = std::min(task_min_duration, t->get_registered_duration_min(sp));
+					subtask_max_duration  = std::max(task_max_duration, t->get_registered_duration_max(sp));
 				}
 
-				Statistics::show_task(total_sec, module_sname, task_name, task_n_elmts, task_n_calls,
-				                      task_tot_duration, task_min_duration, task_max_duration, stream);
-
-				auto task_total_sec = ((float)task_tot_duration.count()) * 0.000000001f;
-				for (auto &sp : t.second->get_registered_duration())
-				{
-					auto subtask_name         = sp;
-					auto subtask_n_elmts      = task_n_elmts;
-					auto subtask_n_calls      = 0;
-					auto subtask_tot_duration = std::chrono::nanoseconds(0);
-					auto subtask_min_duration = d_total;
-					auto subtask_max_duration = std::chrono::nanoseconds(0);
-
-					for (auto *m : vm)
-					{
-						subtask_n_calls      += (*m)[task_name].get_registered_n_calls(sp);
-						subtask_tot_duration += (*m)[task_name].get_registered_duration_total(sp);
-						subtask_min_duration  = std::min(task_min_duration, (*m)[task_name].get_registered_duration_min(sp));
-						subtask_max_duration  = std::max(task_max_duration, (*m)[task_name].get_registered_duration_max(sp));
-					}
-
-					Statistics::show_sub_task(task_total_sec, task_name, task_n_calls, subtask_n_elmts,
-					                          subtask_name, subtask_n_calls, subtask_tot_duration,
-					                          subtask_min_duration, subtask_max_duration, stream);
-				}
+				Statistics::show_sub_task(task_total_sec, task_name, task_n_calls, subtask_n_elmts,
+				                          subtask_name, subtask_n_calls, subtask_tot_duration,
+				                          subtask_min_duration, subtask_max_duration, stream);
 			}
 		}
 	}
 	else
 	{
-		stream << "# Statistics are unavailable (did you enable the statistics in the tasks?)." << std::endl;
+		stream << "# " << format("(II)",  tools::Style::BOLD | tools::FG::BLUE)
+		       << " Statistics are unavailable. Did you enable the statistics in the tasks?" << std::endl;
 	}
 }
