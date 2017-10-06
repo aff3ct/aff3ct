@@ -169,7 +169,7 @@ void Statistics
 }
 
 void Statistics
-::show(const std::vector<module::Module*> &modules, const bool ordered, std::ostream &stream)
+::show(std::vector<module::Module*> modules, const bool ordered, std::ostream &stream)
 {
 	std::vector<module::Task*> tasks;
 	for (auto *m : modules)
@@ -177,6 +177,12 @@ void Statistics
 			if (t.second->get_n_calls())
 				tasks.push_back(t.second);
 
+	Statistics::show(tasks, ordered, stream);
+}
+
+void Statistics
+::show(std::vector<module::Task*> tasks, const bool ordered, std::ostream &stream)
+{
 	if (ordered)
 	{
 		std::sort(tasks.begin(), tasks.end(), [](module::Task* t1, module::Task* t2)
@@ -235,10 +241,9 @@ void Statistics
 }
 
 void Statistics
-::show(const std::vector<std::vector<module::Module*>> &modules, const bool ordered, std::ostream &stream)
+::show(std::vector<std::vector<module::Module*>> modules, const bool ordered, std::ostream &stream)
 {
 	std::vector<std::vector<module::Task*>> tasks;
-
 	for (auto &vm : modules)
 		if (vm.size() > 0)
 			for (auto &t : vm[0]->tasks)
@@ -249,6 +254,12 @@ void Statistics
 				tasks.push_back(tsk);
 			}
 
+	Statistics::show(tasks, ordered, stream);
+}
+
+void Statistics
+::show(std::vector<std::vector<module::Task*>> tasks, const bool ordered, std::ostream &stream)
+{
 	if (ordered)
 	{
 		std::sort(tasks.begin(), tasks.end(), [](std::vector<module::Task*> &t1, std::vector<module::Task*> &t2)

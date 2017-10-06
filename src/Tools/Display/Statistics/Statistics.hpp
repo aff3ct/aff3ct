@@ -2,6 +2,7 @@
 #define STATISTICS_HPP_
 
 #include "Module/Module.hpp"
+#include "Module/Task.hpp"
 
 #include <vector>
 #include <iostream>
@@ -18,9 +19,13 @@ protected:
 public:
 	virtual ~Statistics();
 
-	static void show(const std::vector<module::Module*> &modules, const bool ordered = false,
+	static void show(std::vector<module::Module*> modules, const bool ordered = false,
 	                 std::ostream &stream = std::cout);
-	static void show(const std::vector<std::vector<module::Module*>> &modules, const bool ordered = false,
+	static void show(std::vector<module::Task*> tasks, const bool ordered = false,
+	                 std::ostream &stream = std::cout);
+	static void show(std::vector<std::vector<module::Module*>> modules, const bool ordered = false,
+	                 std::ostream &stream = std::cout);
+	static void show(std::vector<std::vector<module::Task*>> tasks, const bool ordered = false,
 	                 std::ostream &stream = std::cout);
 
 private:
