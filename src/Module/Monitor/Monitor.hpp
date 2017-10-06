@@ -89,8 +89,6 @@ public:
 	virtual void reset()
 	{
 		Monitor::interrupt = false;
-		for (auto &t : this->tasks)
-			t.second->reset_stats();
 	}
 
 	virtual void clear_callbacks()
