@@ -26,7 +26,9 @@ void Simulation
 				{
 					t.second->set_autoexec (true);
 					t.second->set_autoalloc(true);
-					t.second->set_stats    (true);
+
+					if (params.statistics)
+						t.second->set_stats(true);
 
 					// enable the debug mode in the modules
 					if (params.debug)
