@@ -18,16 +18,32 @@ Statistics
 }
 
 void Statistics
-::show_header(std::ostream &stream)
+::separation1(std::ostream &stream)
 {
 	stream << tools::format("# -------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
+}
+
+void Statistics
+::separation2(std::ostream &stream)
+{
+	stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+}
+
+void Statistics
+::show_header(std::ostream &stream)
+{
+	Statistics::separation1(stream);
+//	stream << tools::format("# -------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
 	stream << tools::format("#        Statistics for the given task       ||       Basic statistics       ||       Measured throughput      ||        Measured latency        ", tools::Style::BOLD) << std::endl;
 	stream << tools::format("#          ('*' = all the sub-tasks)         ||          on the task         ||   considering the last socket  ||   considering the last socket  ", tools::Style::BOLD) << std::endl;
-	stream << tools::format("# -------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
-	stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+//	stream << tools::format("# -------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
+	Statistics::separation1(stream);
+	Statistics::separation2(stream);
+//	stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
 	stream << tools::format("#       MODULE |              TASK |     SUB ||    CALLS |     TIME |   PERC ||  AVERAGE |  MINIMUM |  MAXIMUM ||  AVERAGE |  MINIMUM |  MAXIMUM ", tools::Style::BOLD) << std::endl;
 	stream << tools::format("#              |                   |    TASK ||          |      (s) |    (%) ||   (Mb/s) |   (Mb/s) |   (Mb/s) ||     (us) |     (us) |     (us) ", tools::Style::BOLD) << std::endl;
-	stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+//	stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+	Statistics::separation2(stream);
 }
 
 void Statistics
@@ -191,19 +207,25 @@ void Statistics
 		});
 	}
 
+	size_t   ttask_n_elmts      = 0;
+	uint32_t ttask_n_calls      = 0;
+	auto     ttask_tot_duration = std::chrono::nanoseconds(0);
+	auto     ttask_min_duration = std::chrono::nanoseconds(0);
+	auto     ttask_max_duration = std::chrono::nanoseconds(0);
+
 	size_t max_chars = 0;
-	auto d_total = std::chrono::nanoseconds(0);
 	for (auto *t : tasks)
 	{
-		d_total += t->get_duration_total();
+		ttask_tot_duration += t->get_duration_total();
 		std::max(max_chars, t->get_module().get_short_name().size() + t->get_module().get_name().size());
 	}
-	auto total_sec = ((float)d_total.count()) * 0.000000001f;
+	auto total_sec = ((float)ttask_tot_duration.count()) * 0.000000001f;
 
-	if (d_total.count())
+	if (ttask_tot_duration.count())
 	{
 		Statistics::show_header(stream);
 
+		auto is_first = true;
 		for (auto *t : tasks)
 		{
 			auto module_sname      = t->get_module().get_short_name();
@@ -213,6 +235,23 @@ void Statistics
 			auto task_tot_duration = t->get_duration_total();
 			auto task_min_duration = t->get_duration_min  ();
 			auto task_max_duration = t->get_duration_max  ();
+
+			if (is_first)
+			{
+				if (task_n_calls)
+				{
+					ttask_n_elmts = task_n_elmts;
+					ttask_n_calls = task_n_calls;
+					is_first = false;
+				}
+			}
+			else
+			{
+				ttask_n_elmts = task_n_elmts ? std::min(ttask_n_elmts, task_n_elmts) : ttask_n_elmts;
+				ttask_n_calls = task_n_calls ? std::min(ttask_n_calls, task_n_calls) : ttask_n_calls;
+			}
+			ttask_min_duration += task_min_duration;
+			ttask_max_duration += task_max_duration;
 
 			Statistics::show_task(total_sec, module_sname, task_name, task_n_elmts, task_n_calls,
 			                      task_tot_duration, task_min_duration, task_max_duration, stream);
@@ -232,6 +271,10 @@ void Statistics
 				                          subtask_min_duration, subtask_max_duration, stream);
 			}
 		}
+		Statistics::separation2(stream);
+
+		Statistics::show_task(total_sec, "TOTAL", "*", ttask_n_elmts, ttask_n_calls,
+		                      ttask_tot_duration, ttask_min_duration, ttask_max_duration, stream);
 	}
 	else
 	{
@@ -272,20 +315,26 @@ void Statistics
 		});
 	}
 
+	size_t ttask_n_elmts      = 0;
+	auto   ttask_n_calls      = 0;
+	auto   ttask_tot_duration = std::chrono::nanoseconds(0);
+	auto   ttask_min_duration = std::chrono::nanoseconds(0);
+	auto   ttask_max_duration = std::chrono::nanoseconds(0);
+
 	size_t max_chars = 0;
-	auto d_total = std::chrono::nanoseconds(0);
 	for (auto &vt : tasks)
 		for (auto *t : vt)
 		{
-			d_total += t->get_duration_total();
+			ttask_tot_duration += t->get_duration_total();
 			std::max(max_chars, t->get_module().get_short_name().size() + t->get_module().get_name().size());
 		}
-	auto total_sec = ((float)d_total.count()) * 0.000000001f;
+	auto total_sec = ((float)ttask_tot_duration.count()) * 0.000000001f;
 
-	if (d_total.count())
+	if (ttask_tot_duration.count())
 	{
 		Statistics::show_header(stream);
 
+		auto is_first = true;
 		for (auto &vt : tasks)
 		{
 			auto module_sname      = vt[0]->get_module().get_short_name();
@@ -293,7 +342,7 @@ void Statistics
 			auto task_name         = vt[0]->get_name();
 			auto task_n_calls      = 0;
 			auto task_tot_duration = std::chrono::nanoseconds(0);
-			auto task_min_duration = d_total;
+			auto task_min_duration = ttask_tot_duration;
 			auto task_max_duration = std::chrono::nanoseconds(0);
 
 			for (auto *t : vt)
@@ -303,6 +352,23 @@ void Statistics
 				task_min_duration  = std::min(task_min_duration, t->get_duration_min());
 				task_max_duration  = std::max(task_max_duration, t->get_duration_max());
 			}
+
+			if (is_first)
+			{
+				if (task_n_calls)
+				{
+					ttask_n_elmts = task_n_elmts;
+					ttask_n_calls = task_n_calls;
+					is_first = false;
+				}
+			}
+			else
+			{
+				ttask_n_elmts = task_n_elmts ? std::min(ttask_n_elmts, task_n_elmts) : ttask_n_elmts;
+				ttask_n_calls = task_n_calls ? std::min(ttask_n_calls, task_n_calls) : ttask_n_calls;
+			}
+			ttask_min_duration += task_min_duration;
+			ttask_max_duration += task_max_duration;
 
 			Statistics::show_task(total_sec, module_sname, task_name, task_n_elmts, task_n_calls,
 			                      task_tot_duration, task_min_duration, task_max_duration, stream);
@@ -314,7 +380,7 @@ void Statistics
 				auto subtask_n_elmts      = task_n_elmts;
 				auto subtask_n_calls      = 0;
 				auto subtask_tot_duration = std::chrono::nanoseconds(0);
-				auto subtask_min_duration = d_total;
+				auto subtask_min_duration = ttask_tot_duration;
 				auto subtask_max_duration = std::chrono::nanoseconds(0);
 
 				for (auto *t : vt)
@@ -330,6 +396,10 @@ void Statistics
 				                          subtask_min_duration, subtask_max_duration, stream);
 			}
 		}
+		Statistics::separation2(stream);
+
+		Statistics::show_task(total_sec, "TOTAL", "*", ttask_n_elmts, ttask_n_calls,
+		                      ttask_tot_duration, ttask_min_duration, ttask_max_duration, stream);
 	}
 	else
 	{

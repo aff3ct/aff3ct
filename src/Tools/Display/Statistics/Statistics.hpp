@@ -29,6 +29,10 @@ public:
 	                 std::ostream &stream = std::cout);
 
 private:
+	static void separation1(std::ostream &stream = std::cout);
+
+	static void separation2(std::ostream &stream = std::cout);
+
 	static void show_header(std::ostream &stream = std::cout);
 
 	static void show_task(const float                    total_sec,
