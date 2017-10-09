@@ -119,7 +119,6 @@ void Statistics
 
 void Statistics
 ::show_sub_task(const float                    total_sec,
-                const std::string              task_name,
                 const uint32_t                 task_n_calls,
                 const size_t                   subtask_n_elmts,
                 const std::string              subtask_name,
@@ -156,7 +155,7 @@ void Statistics
 	std::stringstream ssravg_lat, ssrmin_lat, ssrmax_lat;
 
 	spaces     <<                                                                                              std::fixed  << std::setw(12) << "-";
-	ssprocess  << std::setprecision(                           2) <<                                           std::fixed  << std::setw(17) << task_name;
+	ssprocess  << std::setprecision(                           2) <<                                           std::fixed  << std::setw(17) << "-";
 	sssp       << std::setprecision(                           2) <<                                           std::fixed  << std::setw( 7) << subtask_name;
 	ssrn_calls << std::setprecision(subtask_n_calls > l1 ? P : 2) << (subtask_n_calls > l1 ? std::scientific : std::fixed) << std::setw( 8) << subtask_n_calls;
 	ssrtot_dur << std::setprecision(rtot_dur        > l1 ? P : 2) << (rtot_dur        > l1 ? std::scientific : std::fixed) << std::setw( 8) << rtot_dur;
@@ -266,7 +265,7 @@ void Statistics
 				auto subtask_min_duration = t->get_registered_duration_min  (sp);
 				auto subtask_max_duration = t->get_registered_duration_max  (sp);
 
-				Statistics::show_sub_task(task_total_sec, task_name, task_n_calls, subtask_n_elmts,
+				Statistics::show_sub_task(task_total_sec, task_n_calls, subtask_n_elmts,
 				                          subtask_name, subtask_n_calls, subtask_tot_duration,
 				                          subtask_min_duration, subtask_max_duration, stream);
 			}
@@ -391,7 +390,7 @@ void Statistics
 					subtask_max_duration  = std::max(task_max_duration, t->get_registered_duration_max(sp));
 				}
 
-				Statistics::show_sub_task(task_total_sec, task_name, task_n_calls, subtask_n_elmts,
+				Statistics::show_sub_task(task_total_sec, task_n_calls, subtask_n_elmts,
 				                          subtask_name, subtask_n_calls, subtask_tot_duration,
 				                          subtask_min_duration, subtask_max_duration, stream);
 			}

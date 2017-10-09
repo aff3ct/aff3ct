@@ -46,7 +46,6 @@ private:
 	                            std::ostream             &stream = std::cout);
 
 	static void show_sub_task(const float                    total_sec,
-	                          const std::string              task_name,
 	                          const uint32_t                 task_n_calls,
 	                          const size_t                   subtask_n_elmts,
 	                          const std::string              subtask_name,
