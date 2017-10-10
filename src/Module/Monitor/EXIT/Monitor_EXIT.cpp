@@ -16,14 +16,14 @@ Monitor_EXIT<B,R>
   n_analyzed_frames(0)
 {
 	auto &p = this->create_task("check_mutual_info");
-	this->template create_socket_in<B>(p, "bits",   this->size * this->n_frames);
-	this->template create_socket_in<R>(p, "llrs_a", this->size * this->n_frames);
-	this->template create_socket_in<R>(p, "llrs_e", this->size * this->n_frames);
-	this->create_codelet(p, [&]() -> int
+	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->size * this->n_frames);
+	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->size * this->n_frames);
+	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", this->size * this->n_frames);
+	this->create_codelet(p, [this, &ps_bits, &ps_llrs_a, &ps_llrs_e]() -> int
 	{
-		this->check_mutual_info(static_cast<B*>(p["bits"  ].get_dataptr()),
-		                        static_cast<R*>(p["llrs_a"].get_dataptr()),
-		                        static_cast<R*>(p["llrs_e"].get_dataptr()));
+		this->check_mutual_info(static_cast<B*>(ps_bits  .get_dataptr()),
+		                        static_cast<R*>(ps_llrs_a.get_dataptr()),
+		                        static_cast<R*>(ps_llrs_e.get_dataptr()));
 
 		return 0;
 	});

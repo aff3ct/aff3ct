@@ -58,25 +58,25 @@ public:
 		}
 
 		auto &p1 = this->create_task("add_noise");
-		this->template create_socket_in <R>(p1, "X_N", this->N * this->n_frames);
-		this->template create_socket_out<R>(p1, "Y_N", this->N * this->n_frames);
-		this->create_codelet(p1, [&]() -> int
+		auto &p1s_X_N = this->template create_socket_in <R>(p1, "X_N", this->N * this->n_frames);
+		auto &p1s_Y_N = this->template create_socket_out<R>(p1, "Y_N", this->N * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_X_N, &p1s_Y_N]() -> int
 		{
-			this->add_noise(static_cast<R*>(p1["X_N"].get_dataptr()),
-			                static_cast<R*>(p1["Y_N"].get_dataptr()));
+			this->add_noise(static_cast<R*>(p1s_X_N.get_dataptr()),
+			                static_cast<R*>(p1s_Y_N.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p2 = this->create_task("add_noise_wg");
-		this->template create_socket_in <R>(p2, "X_N", this->N * this->n_frames);
-		this->template create_socket_out<R>(p2, "H_N", this->N * this->n_frames);
-		this->template create_socket_out<R>(p2, "Y_N", this->N * this->n_frames);
-		this->create_codelet(p2, [&]() -> int
+		auto &p2s_X_N = this->template create_socket_in <R>(p2, "X_N", this->N * this->n_frames);
+		auto &p2s_H_N = this->template create_socket_out<R>(p2, "H_N", this->N * this->n_frames);
+		auto &p2s_Y_N = this->template create_socket_out<R>(p2, "Y_N", this->N * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_X_N, &p2s_H_N, &p2s_Y_N]() -> int
 		{
-			this->add_noise_wg(static_cast<R*>(p2["X_N"].get_dataptr()),
-			                   static_cast<R*>(p2["H_N"].get_dataptr()),
-			                   static_cast<R*>(p2["Y_N"].get_dataptr()));
+			this->add_noise_wg(static_cast<R*>(p2s_X_N.get_dataptr()),
+			                   static_cast<R*>(p2s_H_N.get_dataptr()),
+			                   static_cast<R*>(p2s_Y_N.get_dataptr()));
 
 			return 0;
 		});

@@ -57,34 +57,34 @@ public:
 	  V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 	{
 		auto &p1 = this->create_task("decode_siho");
-		this->template create_socket_in <R>(p1, "Y_N", this->N * this->n_frames);
-		this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
-		this->create_codelet(p1, [&]() -> int
+		auto &p1s_Y_N = this->template create_socket_in <R>(p1, "Y_N", this->N * this->n_frames);
+		auto &p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_Y_N, &p1s_V_K]() -> int
 		{
-			this->decode_siho(static_cast<R*>(p1["Y_N"].get_dataptr()),
-			                  static_cast<B*>(p1["V_K"].get_dataptr()));
+			this->decode_siho(static_cast<R*>(p1s_Y_N.get_dataptr()),
+			                  static_cast<B*>(p1s_V_K.get_dataptr()));
 
 			return 0;
 		});
-		this->register_duration(p1, "load");
-		this->register_duration(p1, "decode");
-		this->register_duration(p1, "store");
-		this->register_duration(p1, "total");
+		this->register_timer(p1, "load");
+		this->register_timer(p1, "decode");
+		this->register_timer(p1, "store");
+		this->register_timer(p1, "total");
 
 		auto &p2 = this->create_task("decode_siho_coded");
-		this->template create_socket_in <R>(p2, "Y_N", this->N * this->n_frames);
-		this->template create_socket_out<B>(p2, "V_N", this->N * this->n_frames);
-		this->create_codelet(p2, [&]() -> int
+		auto &p2s_Y_N = this->template create_socket_in <R>(p2, "Y_N", this->N * this->n_frames);
+		auto &p2s_V_N = this->template create_socket_out<B>(p2, "V_N", this->N * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_Y_N, &p2s_V_N]() -> int
 		{
-			this->decode_siho_coded(static_cast<R*>(p2["Y_N"].get_dataptr()),
-			                        static_cast<B*>(p2["V_N"].get_dataptr()));
+			this->decode_siho_coded(static_cast<R*>(p2s_Y_N.get_dataptr()),
+			                        static_cast<B*>(p2s_V_N.get_dataptr()));
 
 			return 0;
 		});
-		this->register_duration(p2, "load");
-		this->register_duration(p2, "decode");
-		this->register_duration(p2, "store");
-		this->register_duration(p2, "total");
+		this->register_timer(p2, "load");
+		this->register_timer(p2, "decode");
+		this->register_timer(p2, "store");
+		this->register_timer(p2, "total");
 	}
 
 	/*!

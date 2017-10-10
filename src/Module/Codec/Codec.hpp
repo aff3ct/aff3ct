@@ -84,48 +84,48 @@ public:
 		}
 
 		auto &p1 = this->create_task("extract_sys_llr");
-		this->template create_socket_in <Q>(p1, "Y_N", this->N_cw * this->n_frames);
-		this->template create_socket_out<Q>(p1, "Y_K", this->K    * this->n_frames);
-		this->create_codelet(p1, [&]() -> int
+		auto &p1s_Y_N = this->template create_socket_in <Q>(p1, "Y_N", this->N_cw * this->n_frames);
+		auto &p1s_Y_K = this->template create_socket_out<Q>(p1, "Y_K", this->K    * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_Y_N, &p1s_Y_K]() -> int
 		{
-			this->extract_sys_llr(static_cast<Q*>(p1["Y_N"].get_dataptr()),
-			                      static_cast<Q*>(p1["Y_K"].get_dataptr()));
+			this->extract_sys_llr(static_cast<Q*>(p1s_Y_N.get_dataptr()),
+			                      static_cast<Q*>(p1s_Y_K.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p2 = this->create_task("extract_sys_bit");
-		this->template create_socket_in <Q>(p2, "Y_N", this->N_cw * this->n_frames);
-		this->template create_socket_out<B>(p2, "V_K", this->K    * this->n_frames);
-		this->create_codelet(p2, [&]() -> int
+		auto &p2s_Y_N = this->template create_socket_in <Q>(p2, "Y_N", this->N_cw * this->n_frames);
+		auto &p2s_V_K = this->template create_socket_out<B>(p2, "V_K", this->K    * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_Y_N, &p2s_V_K]() -> int
 		{
-			this->extract_sys_bit(static_cast<Q*>(p2["Y_N"].get_dataptr()),
-			                      static_cast<B*>(p2["V_K"].get_dataptr()));
+			this->extract_sys_bit(static_cast<Q*>(p2s_Y_N.get_dataptr()),
+			                      static_cast<B*>(p2s_V_K.get_dataptr()));
 
 			return 0;
 		});
 
 		const auto tb_2 = this->tail_length / 2;
 		auto &p3 = this->create_task("extract_sys_par");
-		this->template create_socket_in <Q>(p3, "Y_N",  this->N_cw                   * this->n_frames);
-		this->template create_socket_out<Q>(p3, "sys", (this->K              + tb_2) * this->n_frames);
-		this->template create_socket_out<Q>(p3, "par", (this->N_cw - this->K - tb_2) * this->n_frames);
-		this->create_codelet(p3, [&]() -> int
+		auto &p3s_Y_N = this->template create_socket_in <Q>(p3, "Y_N",  this->N_cw                   * this->n_frames);
+		auto &p3s_sys = this->template create_socket_out<Q>(p3, "sys", (this->K              + tb_2) * this->n_frames);
+		auto &p3s_par = this->template create_socket_out<Q>(p3, "par", (this->N_cw - this->K - tb_2) * this->n_frames);
+		this->create_codelet(p3, [this, &p3s_Y_N, &p3s_sys, &p3s_par]() -> int
 		{
-			this->extract_sys_par(static_cast<Q*>(p3["Y_N"].get_dataptr()),
-			                      static_cast<Q*>(p3["sys"].get_dataptr()),
-			                      static_cast<Q*>(p3["par"].get_dataptr()));
+			this->extract_sys_par(static_cast<Q*>(p3s_Y_N.get_dataptr()),
+			                      static_cast<Q*>(p3s_sys.get_dataptr()),
+			                      static_cast<Q*>(p3s_par.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p4 = this->create_task("add_sys_ext");
-		this->template create_socket_in    <Q>(p4, "ext", this->K    * this->n_frames);
-		this->template create_socket_in_out<Q>(p4, "Y_N", this->N_cw * this->n_frames);
-		this->create_codelet(p4, [&]() -> int
+		auto &p4s_ext = this->template create_socket_in    <Q>(p4, "ext", this->K    * this->n_frames);
+		auto &p4s_Y_N = this->template create_socket_in_out<Q>(p4, "Y_N", this->N_cw * this->n_frames);
+		this->create_codelet(p4, [this, &p4s_ext, &p4s_Y_N]() -> int
 		{
-			this->add_sys_ext(static_cast<Q*>(p4["ext"].get_dataptr()),
-			                  static_cast<Q*>(p4["Y_N"].get_dataptr()));
+			this->add_sys_ext(static_cast<Q*>(p4s_ext.get_dataptr()),
+			                  static_cast<Q*>(p4s_Y_N.get_dataptr()));
 
 			return 0;
 		});

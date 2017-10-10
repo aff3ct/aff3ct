@@ -39,22 +39,22 @@ template <typename B, typename R>
 void Decoder_NO<B,R>
 ::_decode_siho(const R *Y_K, B *V_K, const int frame_id)
 {
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide(Y_K, V_K, this->K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::update_duration("decode_siho", "store", d_store);
+//	this->tasks["decode_siho"]->update_timer("total", d_store);
 }
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
 ::_decode_siho_coded(const R *Y_K, B *V_K, const int frame_id)
 {
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide(Y_K, V_K, this->K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "store", d_store);
+//	this->tasks["decode_siho_coded"]->update_timer("store", d_store);
 }
 
 // ==================================================================================== explicit template instantiation 

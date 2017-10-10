@@ -55,14 +55,14 @@ public:
 		}
 
 		auto &p = this->create_task("apply");
-		this->template create_socket_in <B>(p, "ref",      this->size * this->n_frames);
-		this->template create_socket_in <D>(p, "in_data",  this->size * this->n_frames);
-		this->template create_socket_out<D>(p, "out_data", this->size * this->n_frames);
-		this->create_codelet(p, [&]() -> int
+		auto &ps_ref      = this->template create_socket_in <B>(p, "ref",      this->size * this->n_frames);
+		auto &ps_in_data  = this->template create_socket_in <D>(p, "in_data",  this->size * this->n_frames);
+		auto &ps_out_data = this->template create_socket_out<D>(p, "out_data", this->size * this->n_frames);
+		this->create_codelet(p, [this, &ps_ref, &ps_in_data, &ps_out_data]() -> int
 		{
-			this->apply(static_cast<B*>(p["ref"     ].get_dataptr()),
-			            static_cast<D*>(p["in_data" ].get_dataptr()),
-			            static_cast<D*>(p["out_data"].get_dataptr()));
+			this->apply(static_cast<B*>(ps_ref     .get_dataptr()),
+			            static_cast<D*>(ps_in_data .get_dataptr()),
+			            static_cast<D*>(ps_out_data.get_dataptr()));
 
 			return 0;
 		});

@@ -132,75 +132,75 @@ public:
 	void init_processes()
 	{
 		auto &p1 = this->create_task("modulate");
-		this->template create_socket_in <B>(p1, "X_N1", this->N     * this->n_frames);
-		this->template create_socket_out<R>(p1, "X_N2", this->N_mod * this->n_frames);
-		this->create_codelet(p1, [&]() -> int
+		auto &p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N     * this->n_frames);
+		auto &p1s_X_N2 = this->template create_socket_out<R>(p1, "X_N2", this->N_mod * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_X_N1, &p1s_X_N2]() -> int
 		{
-			this->modulate(static_cast<B*>(p1["X_N1"].get_dataptr()),
-			               static_cast<R*>(p1["X_N2"].get_dataptr()));
+			this->modulate(static_cast<B*>(p1s_X_N1.get_dataptr()),
+			               static_cast<R*>(p1s_X_N2.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p2 = this->create_task("filter");
-		this->template create_socket_in <R>(p2, "Y_N1", this->N_mod * this->n_frames);
-		this->template create_socket_out<R>(p2, "Y_N2", this->N_fil * this->n_frames);
-		this->create_codelet(p2, [&]() -> int
+		auto &p2s_Y_N1 = this->template create_socket_in <R>(p2, "Y_N1", this->N_mod * this->n_frames);
+		auto &p2s_Y_N2 = this->template create_socket_out<R>(p2, "Y_N2", this->N_fil * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_Y_N1, &p2s_Y_N2]() -> int
 		{
-			this->filter(static_cast<R*>(p2["Y_N1"].get_dataptr()),
-			             static_cast<R*>(p2["Y_N2"].get_dataptr()));
+			this->filter(static_cast<R*>(p2s_Y_N1.get_dataptr()),
+			             static_cast<R*>(p2s_Y_N2.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p3 = this->create_task("demodulate");
-		this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil * this->n_frames);
-		this->template create_socket_out<Q>(p3, "Y_N2", this->N     * this->n_frames);
-		this->create_codelet(p3, [&]() -> int
+		auto &p3s_Y_N1 = this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil * this->n_frames);
+		auto &p3s_Y_N2 = this->template create_socket_out<Q>(p3, "Y_N2", this->N     * this->n_frames);
+		this->create_codelet(p3, [this, &p3s_Y_N1, &p3s_Y_N2]() -> int
 		{
-			this->demodulate(static_cast<Q*>(p3["Y_N1"].get_dataptr()),
-			                 static_cast<Q*>(p3["Y_N2"].get_dataptr()));
+			this->demodulate(static_cast<Q*>(p3s_Y_N1.get_dataptr()),
+			                 static_cast<Q*>(p3s_Y_N2.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p4 = this->create_task("tdemodulate");
-		this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil * this->n_frames);
-		this->template create_socket_in <Q>(p4, "Y_N2", this->N     * this->n_frames);
-		this->template create_socket_out<Q>(p4, "Y_N3", this->N     * this->n_frames);
-		this->create_codelet(p4, [&]() -> int
+		auto &p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil * this->n_frames);
+		auto &p4s_Y_N2 = this->template create_socket_in <Q>(p4, "Y_N2", this->N     * this->n_frames);
+		auto &p4s_Y_N3 = this->template create_socket_out<Q>(p4, "Y_N3", this->N     * this->n_frames);
+		this->create_codelet(p4, [this, &p4s_Y_N1, &p4s_Y_N2, &p4s_Y_N3]() -> int
 		{
-			this->tdemodulate(static_cast<Q*>(p4["Y_N1"].get_dataptr()),
-			                  static_cast<Q*>(p4["Y_N2"].get_dataptr()),
-			                  static_cast<Q*>(p4["Y_N3"].get_dataptr()));
+			this->tdemodulate(static_cast<Q*>(p4s_Y_N1.get_dataptr()),
+			                  static_cast<Q*>(p4s_Y_N2.get_dataptr()),
+			                  static_cast<Q*>(p4s_Y_N3.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p5 = this->create_task("demodulate_wg");
-		this->template create_socket_in <R>(p5, "H_N",  this->N_fil * this->n_frames);
-		this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil * this->n_frames);
-		this->template create_socket_out<Q>(p5, "Y_N2", this->N     * this->n_frames);
-		this->create_codelet(p5, [&]() -> int
+		auto &p5s_H_N  = this->template create_socket_in <R>(p5, "H_N",  this->N_fil * this->n_frames);
+		auto &p5s_Y_N1 = this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil * this->n_frames);
+		auto &p5s_Y_N2 = this->template create_socket_out<Q>(p5, "Y_N2", this->N     * this->n_frames);
+		this->create_codelet(p5, [this, &p5s_H_N, &p5s_Y_N1, &p5s_Y_N2]() -> int
 		{
-			this->demodulate_wg(static_cast<R*>(p5["H_N" ].get_dataptr()),
-			                    static_cast<Q*>(p5["Y_N1"].get_dataptr()),
-			                    static_cast<Q*>(p5["Y_N2"].get_dataptr()));
+			this->demodulate_wg(static_cast<R*>(p5s_H_N .get_dataptr()),
+			                    static_cast<Q*>(p5s_Y_N1.get_dataptr()),
+			                    static_cast<Q*>(p5s_Y_N2.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p6 = this->create_task("tdemodulate_wg");
-		this->template create_socket_in <R>(p6, "H_N",  this->N_fil * this->n_frames);
-		this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil * this->n_frames);
-		this->template create_socket_in <Q>(p6, "Y_N2", this->N     * this->n_frames);
-		this->template create_socket_out<Q>(p6, "Y_N3", this->N     * this->n_frames);
-		this->create_codelet(p6, [&]() -> int
+		auto &p6s_H_N  = this->template create_socket_in <R>(p6, "H_N",  this->N_fil * this->n_frames);
+		auto &p6s_Y_N1 = this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil * this->n_frames);
+		auto &p6s_Y_N2 = this->template create_socket_in <Q>(p6, "Y_N2", this->N     * this->n_frames);
+		auto &p6s_Y_N3 = this->template create_socket_out<Q>(p6, "Y_N3", this->N     * this->n_frames);
+		this->create_codelet(p6, [this, &p6s_H_N, &p6s_Y_N1, &p6s_Y_N2, &p6s_Y_N3]() -> int
 		{
-			this->tdemodulate_wg(static_cast<R*>(p6["H_N" ].get_dataptr()),
-			                     static_cast<Q*>(p6["Y_N1"].get_dataptr()),
-			                     static_cast<Q*>(p6["Y_N2"].get_dataptr()),
-			                     static_cast<Q*>(p6["Y_N3"].get_dataptr()));
+			this->tdemodulate_wg(static_cast<R*>(p6s_H_N .get_dataptr()),
+			                     static_cast<Q*>(p6s_Y_N1.get_dataptr()),
+			                     static_cast<Q*>(p6s_Y_N2.get_dataptr()),
+			                     static_cast<Q*>(p6s_Y_N3.get_dataptr()));
 
 			return 0;
 		});

@@ -17,11 +17,12 @@
 #include <map>
 #include <functional>
 
+#include "Task.hpp"
+#include "Socket.hpp"
 #ifdef SYSTEMC_MODULE
 #include "SC_Module.hpp"
 #endif
 
-#include "Task.hpp"
 #include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
@@ -94,22 +95,21 @@ public:
 		this->name = name;
 	}
 
-	std::string get_name() const
+	inline std::string get_name() const
 	{
 		return this->name;
 	}
 
-	std::string get_short_name() const
+	inline std::string get_short_name() const
 	{
 		return this->short_name;
 	}
 
-	Task& operator[](const std::string name)
+	inline Task& operator[](const std::string name)
 	{
-		if (tasks.find(name) != tasks.end())
-		{
-			return *tasks[name];
-		}
+		const auto &it = tasks.find(name);
+		if (it != tasks.end())
+			return *it->second;
 		else
 		{
 			std::stringstream message;
@@ -121,27 +121,27 @@ public:
 protected:
 	Task& create_task(const std::string name)
 	{
-		bool autoalloc = false, autoexec = false, stats = false, debug = false;
-		tasks[name] = new Task(*this, name, autoalloc, autoexec, stats, debug);
+		bool autoalloc = false, autoexec = false, stats = false, fast = false, debug = false;
+		tasks[name] = new Task(*this, name, autoalloc, autoexec, stats, fast, debug);
 		return *tasks[name];
 	}
 
 	template <typename T>
-	void create_socket_in(Task& task, const std::string name, const size_t n_elmts)
+	Socket& create_socket_in(Task& task, const std::string name, const size_t n_elmts)
 	{
-		task.template create_socket_in<T>(name, n_elmts);
+		return task.template create_socket_in<T>(name, n_elmts);
 	}
 
 	template <typename T>
-	void create_socket_in_out(Task& task, const std::string name, const size_t n_elmts)
+	Socket& create_socket_in_out(Task& task, const std::string name, const size_t n_elmts)
 	{
-		task.template create_socket_in_out<T>(name, n_elmts);
+		return task.template create_socket_in_out<T>(name, n_elmts);
 	}
 
 	template <typename T>
-	void create_socket_out(Task& task, const std::string name, const size_t n_elmts)
+	Socket& create_socket_out(Task& task, const std::string name, const size_t n_elmts)
 	{
-		task.template create_socket_out<T>(name, n_elmts);
+		return task.template create_socket_out<T>(name, n_elmts);
 	}
 
 	void create_codelet(Task& task, std::function<int(void)> codelet)
@@ -149,14 +149,9 @@ protected:
 		task.create_codelet(codelet);
 	}
 
-	void register_duration(Task& task, const std::string key)
+	void register_timer(Task& task, const std::string key)
 	{
-		task.register_duration(key);
-	}
-
-	void update_duration(const std::string task_key, const std::string key, const std::chrono::nanoseconds &duration)
-	{
-		tasks[task_key]->update_duration(key, duration);
+		task.register_timer(key);
 	}
 };
 }

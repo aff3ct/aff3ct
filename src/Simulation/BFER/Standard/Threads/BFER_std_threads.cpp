@@ -96,6 +96,7 @@ void BFER_std_threads<B,R,Q>
 {
 	try
 	{
+		simu->sockets_binding(tid);
 		simu->simulation_loop(tid);
 	}
 	catch (std::exception const& e)
@@ -112,11 +113,8 @@ void BFER_std_threads<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER_std_threads<B,R,Q>
-::simulation_loop(const int tid)
+::sockets_binding(const int tid)
 {
-	using namespace std::chrono;
-	auto t_snr = steady_clock::now();
-
 	auto &source     = *this->source    [tid];
 	auto &crc        = *this->crc       [tid];
 	auto &encoder    = *this->codec     [tid]->get_encoder();
@@ -129,6 +127,104 @@ void BFER_std_threads<B,R,Q>
 	auto &coset_bit  = *this->coset_bit [tid];
 	auto &monitor    = *this->monitor   [tid];
 
+	if (this->params.src->type != "AZCW")
+	{
+		crc      ["build"   ]["U_K1"].bind(source   ["generate"]["U_K" ]);
+		encoder  ["encode"  ]["U_K" ].bind(crc      ["build"   ]["U_K2"]);
+		puncturer["puncture"]["X_N1"].bind(encoder  ["encode"  ]["X_N" ]);
+		modem    ["modulate"]["X_N1"].bind(puncturer["puncture"]["X_N2"]);
+	}
+
+	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
+	{
+		channel  ["add_noise_wg" ]["X_N" ].bind(modem  ["modulate"     ]["X_N2"]);
+		modem    ["demodulate_wg"]["H_N" ].bind(channel["add_noise_wg" ]["H_N" ]);
+		modem    ["filter"       ]["Y_N1"].bind(channel["add_noise_wg" ]["Y_N" ]);
+		modem    ["demodulate_wg"]["Y_N1"].bind(modem  ["filter"       ]["Y_N2"]);
+		quantizer["process"      ]["Y_N1"].bind(modem  ["demodulate_wg"]["Y_N2"]);
+	}
+	else
+	{
+		channel  ["add_noise" ]["X_N" ].bind(modem  ["modulate"  ]["X_N2"]);
+		modem    ["filter"    ]["Y_N1"].bind(channel["add_noise" ]["Y_N" ]);
+		modem    ["demodulate"]["Y_N1"].bind(modem  ["filter"    ]["Y_N2"]);
+		quantizer["process"   ]["Y_N1"].bind(modem  ["demodulate"]["Y_N2"]);
+	}
+
+	puncturer["depuncture"]["Y_N1"].bind(quantizer["process"]["Y_N2"]);
+
+	if (this->params.coset)
+	{
+		coset_real["apply"]["ref"    ].bind(encoder  ["encode"    ]["X_N" ]);
+		coset_real["apply"]["in_data"].bind(puncturer["depuncture"]["Y_N2"]);
+
+		if (this->params.coded_monitoring)
+		{
+			decoder  ["decode_siho_coded"]["Y_N"    ].bind(coset_real["apply"            ]["out_data"]);
+			coset_bit["apply"            ]["ref"    ].bind(encoder   ["encode"           ]["X_N"     ]);
+			coset_bit["apply"            ]["in_data"].bind(decoder   ["decode_siho_coded"]["V_N"     ]);
+		}
+		else
+		{
+			decoder  ["decode_siho"]["Y_N"    ].bind(coset_real["apply"      ]["out_data"]);
+			coset_bit["apply"      ]["ref"    ].bind(crc       ["build"      ]["U_K2"    ]);
+			coset_bit["apply"      ]["in_data"].bind(decoder   ["decode_siho"]["V_K"     ]);
+			crc      ["extract"    ]["V_K1"   ].bind(coset_bit ["apply"      ]["out_data"]);
+		}
+	}
+	else
+	{
+		if (this->params.coded_monitoring)
+		{
+			decoder["decode_siho_coded"]["Y_N"].bind(puncturer["depuncture"]["Y_N2"]);
+		}
+		else
+		{
+			decoder["decode_siho"]["Y_N" ].bind(puncturer["depuncture" ]["Y_N2"]);
+			crc    ["extract"    ]["V_K1"].bind(decoder  ["decode_siho"]["V_K" ]);
+		}
+	}
+
+	if (this->params.coded_monitoring)
+	{
+		monitor["check_errors"]["U"].bind(encoder["encode"]["X_N"]);
+
+		if (this->params.coset)
+		{
+			monitor["check_errors"]["V"].bind(coset_bit["apply"]["out_data"]);
+		}
+		else
+		{
+			monitor["check_errors"]["V"].bind(decoder["decode_siho_coded"]["V_N"]);
+		}
+	}
+	else
+	{
+		monitor["check_errors"]["U"].bind(source["generate"]["U_K" ]);
+		monitor["check_errors"]["V"].bind(crc   ["extract" ]["V_K2"]);
+	}
+}
+
+template <typename B, typename R, typename Q>
+void BFER_std_threads<B,R,Q>
+::simulation_loop(const int tid)
+{
+	auto &source     = *this->source    [tid];
+	auto &crc        = *this->crc       [tid];
+	auto &encoder    = *this->codec     [tid]->get_encoder();
+	auto &puncturer  = *this->codec     [tid]->get_puncturer();
+	auto &modem      = *this->modem     [tid];
+	auto &channel    = *this->channel   [tid];
+	auto &quantizer  = *this->quantizer [tid];
+	auto &coset_real = *this->coset_real[tid];
+	auto &decoder    = *this->codec     [tid]->get_decoder_siho();
+	auto &coset_bit  = *this->coset_bit [tid];
+	auto &monitor    = *this->monitor   [tid];
+
+	using namespace std::chrono;
+	auto t_snr = steady_clock::now();
+
+	// communication chain execution
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
 	       (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time) &&
 	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
@@ -147,80 +243,59 @@ void BFER_std_threads<B,R,Q>
 		if (this->params.src->type != "AZCW")
 		{
 			source   ["generate"].exec();
-			crc      ["build"   ]["U_K1"].bind(source   ["generate"]["U_K" ]);
-			encoder  ["encode"  ]["U_K" ].bind(crc      ["build"   ]["U_K2"]);
-			puncturer["puncture"]["X_N1"].bind(encoder  ["encode"  ]["X_N" ]);
-			modem    ["modulate"]["X_N1"].bind(puncturer["puncture"]["X_N2"]);
+			crc      ["build"   ].exec();
+			encoder  ["encode"  ].exec();
+			puncturer["puncture"].exec();
+			modem    ["modulate"].exec();
 		}
 
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			channel  ["add_noise_wg" ]["X_N" ].bind(modem  ["modulate"     ]["X_N2"]);
-			modem    ["demodulate_wg"]["H_N" ].bind(channel["add_noise_wg" ]["H_N" ]);
-			modem    ["filter"       ]["Y_N1"].bind(channel["add_noise_wg" ]["Y_N" ]);
-			modem    ["demodulate_wg"]["Y_N1"].bind(modem  ["filter"       ]["Y_N2"]);
-			quantizer["process"      ]["Y_N1"].bind(modem  ["demodulate_wg"]["Y_N2"]);
+			channel  ["add_noise_wg" ].exec();
+			modem    ["filter"       ].exec();
+			modem    ["demodulate_wg"].exec();
+			quantizer["process"      ].exec();
 		}
 		else
 		{
-			channel  ["add_noise" ]["X_N" ].bind(modem  ["modulate"  ]["X_N2"]);
-			modem    ["filter"    ]["Y_N1"].bind(channel["add_noise" ]["Y_N" ]);
-			modem    ["demodulate"]["Y_N1"].bind(modem  ["filter"    ]["Y_N2"]);
-			quantizer["process"   ]["Y_N1"].bind(modem  ["demodulate"]["Y_N2"]);
+			channel  ["add_noise" ].exec();
+			modem    ["filter"    ].exec();
+			modem    ["demodulate"].exec();
+			quantizer["process"   ].exec();
 		}
 
-		puncturer["depuncture"]["Y_N1"].bind(quantizer["process"]["Y_N2"]);
+		puncturer["depuncture"].exec();
 
 		if (this->params.coset)
 		{
-			coset_real["apply"]["ref"    ].bind(encoder  ["encode"    ]["X_N" ]);
-			coset_real["apply"]["in_data"].bind(puncturer["depuncture"]["Y_N2"]);
+			coset_real["apply"].exec();
 
 			if (this->params.coded_monitoring)
 			{
-				decoder  ["decode_siho_coded"]["Y_N"    ].bind(coset_real["apply"            ]["out_data"]);
-				coset_bit["apply"            ]["ref"    ].bind(encoder   ["encode"           ]["X_N"     ]);
-				coset_bit["apply"            ]["in_data"].bind(decoder   ["decode_siho_coded"]["V_N"     ]);
+				decoder  ["decode_siho_coded"].exec();
+				coset_bit["apply"            ].exec();
 			}
 			else
 			{
-				decoder  ["decode_siho"]["Y_N"    ].bind(coset_real["apply"      ]["out_data"]);
-				coset_bit["apply"      ]["ref"    ].bind(crc       ["build"      ]["U_K2"    ]);
-				coset_bit["apply"      ]["in_data"].bind(decoder   ["decode_siho"]["V_K"     ]);
-				crc      ["extract"    ]["V_K1"   ].bind(coset_bit ["apply"      ]["out_data"]);
+				decoder  ["decode_siho"].exec();
+				coset_bit["apply"      ].exec();
+				crc      ["extract"    ].exec();
 			}
 		}
 		else
 		{
 			if (this->params.coded_monitoring)
 			{
-				decoder["decode_siho_coded"]["Y_N"].bind(puncturer["depuncture"]["Y_N2"]);
+				decoder["decode_siho_coded"].exec();
 			}
 			else
 			{
-				decoder["decode_siho"]["Y_N" ].bind(puncturer["depuncture" ]["Y_N2"]);
-				crc    ["extract"    ]["V_K1"].bind(decoder  ["decode_siho"]["V_K" ]);
+				decoder["decode_siho"].exec();
+				crc    ["extract"    ].exec();
 			}
 		}
 
-		if (this->params.coded_monitoring)
-		{
-			monitor["check_errors"]["U"].bind(encoder["encode"]["X_N"]);
-
-			if (this->params.coset)
-			{
-				monitor["check_errors"]["V"].bind(coset_bit["apply"]["out_data"]);
-			}
-			else
-			{
-				monitor["check_errors"]["V"].bind(decoder["decode_siho_coded"]["V_N"]);
-			}
-		}
-		else
-		{
-			monitor["check_errors"]["U"].bind(source["generate"]["U_K" ]);
-			monitor["check_errors"]["V"].bind(crc   ["extract" ]["V_K2"]);
-		}
+		monitor["check_errors"].exec();
 	}
 }
 

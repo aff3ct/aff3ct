@@ -88,23 +88,23 @@ public:
 		}
 
 		auto &p1 = this->create_task("puncture");
-		this->template create_socket_in <B>(p1, "X_N1", this->N_code * this->n_frames);
-		this->template create_socket_out<B>(p1, "X_N2", this->N      * this->n_frames);
-		this->create_codelet(p1, [&]() -> int
+		auto &p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N_code * this->n_frames);
+		auto &p1s_X_N2 = this->template create_socket_out<B>(p1, "X_N2", this->N      * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_X_N1, &p1s_X_N2]() -> int
 		{
-			this->puncture(static_cast<B*>(p1["X_N1"].get_dataptr()),
-			               static_cast<B*>(p1["X_N2"].get_dataptr()));
+			this->puncture(static_cast<B*>(p1s_X_N1.get_dataptr()),
+			               static_cast<B*>(p1s_X_N2.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p2 = this->create_task("depuncture");
-		this->template create_socket_in <Q>(p2, "Y_N1", this->N      * this->n_frames);
-		this->template create_socket_out<Q>(p2, "Y_N2", this->N_code * this->n_frames);
-		this->create_codelet(p2, [&]() -> int
+		auto &p2s_Y_N1 = this->template create_socket_in <Q>(p2, "Y_N1", this->N      * this->n_frames);
+		auto &p2s_Y_N2 = this->template create_socket_out<Q>(p2, "Y_N2", this->N_code * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_Y_N1, &p2s_Y_N2]() -> int
 		{
-			this->depuncture(static_cast<Q*>(p2["Y_N1"].get_dataptr()),
-			                 static_cast<Q*>(p2["Y_N2"].get_dataptr()));
+			this->depuncture(static_cast<Q*>(p2s_Y_N1.get_dataptr()),
+			                 static_cast<Q*>(p2s_Y_N2.get_dataptr()));
 
 			return 0;
 		});

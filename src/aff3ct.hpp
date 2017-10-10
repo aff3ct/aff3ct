@@ -227,7 +227,6 @@
 #include <Module/Decoder/Turbo/Decoder_turbo_fast.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo_std.hpp>
-#include <Module/Socket.hpp>
 #include <Module/Coset/Real/Coset_real.hpp>
 #include <Module/Coset/Coset.hpp>
 #include <Module/Coset/Bit/Coset_bit.hpp>
@@ -367,6 +366,7 @@
 #include <Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp>
 #include <Simulation/BFER/Iterative/BFER_ite.hpp>
 #include <Simulation/BFER/BFER.hpp>
+#include "Module/Socket.hpp"
 // #include <aff3ct.hpp>
 
 #endif /* AFF3CT_HPP */

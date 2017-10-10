@@ -1,5 +1,3 @@
-#include "Task.hpp"
-
 #include <iostream>
 #include <iomanip>
 
@@ -7,17 +5,21 @@
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Module.hpp"
+#include "Socket.hpp"
+#include "Task.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 Task::Task(const Module &module, const std::string name, const bool autoalloc, const bool autoexec,
-           const bool stats, const bool debug)
+           const bool stats, const bool fast, const bool debug)
 : module(module),
+  module_name(module.get_name()),
   name(name),
   autoalloc(autoalloc),
   autoexec(autoexec),
   stats(stats),
+  fast(fast),
   debug(debug),
   debug_limit(-1),
   debug_precision(2),
@@ -25,23 +27,30 @@ Task::Task(const Module &module, const std::string name, const bool autoalloc, c
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
   duration_min(std::chrono::nanoseconds(0)),
-  duration_max(std::chrono::nanoseconds(0))
+  duration_max(std::chrono::nanoseconds(0)),
+  last_input_socket(nullptr)
 {
 }
 
 Task::~Task()
 {
+	for (size_t i = 0; i < sockets.size(); i++)
+		if (sockets[i] != nullptr)
+		{
+			delete sockets[i];
+			sockets[i] = nullptr;
+		}
 }
 
-const Module& Task::get_module() const
-{
-	return this->module;
-}
+//const Module& Task::get_module() const
+//{
+//	return this->module;
+//}
 
-std::string Task::get_name() const
-{
-	return this->name;
-}
+//std::string Task::get_name() const
+//{
+//	return this->name;
+//}
 
 void Task::set_autoalloc(const bool autoalloc)
 {
@@ -52,25 +61,20 @@ void Task::set_autoalloc(const bool autoalloc)
 		if (!autoalloc)
 		{
 			this->out_buffers.clear();
-			for (auto &s : socket)
-				if (get_socket_type(s) == OUT)
-					s.dataptr = nullptr;
+			for (auto *s : sockets)
+				if (get_socket_type(*s) == OUT)
+					s->dataptr = nullptr;
 		}
 		else
 		{
-			for (auto &s : socket)
-				if (get_socket_type(s) == OUT)
+			for (auto *s : sockets)
+				if (get_socket_type(*s) == OUT)
 				{
-					out_buffers.push_back(std::vector<uint8_t>(s.databytes));
-					s.dataptr = out_buffers.back().data();
+					out_buffers.push_back(std::vector<uint8_t>(s->databytes));
+					s->dataptr = out_buffers.back().data();
 				}
 		}
 	}
-}
-
-bool Task::is_autoalloc() const
-{
-	return this->autoalloc;
 }
 
 void Task::set_autoexec(const bool autoexec)
@@ -78,24 +82,33 @@ void Task::set_autoexec(const bool autoexec)
 	this->autoexec = autoexec;
 }
 
-bool Task::is_autoexec() const
-{
-	return this->autoexec;
-}
-
 void Task::set_stats(const bool stats)
 {
 	this->stats = stats;
+
+	if (this->stats)
+		this->set_fast(false);
 }
 
-bool Task::is_stats() const
+void Task::set_fast(const bool fast)
 {
-	return this->stats;
+	this->fast = fast;
+	if (this->fast)
+	{
+		this->set_debug(false);
+		this->set_stats(false);
+	}
+
+	for (size_t i = 0; i < sockets.size(); i++)
+		sockets[i]->set_fast(this->fast);
 }
 
 void Task::set_debug(const bool debug)
 {
 	this->debug = debug;
+
+	if (this->debug)
+		this->set_fast(false);
 }
 
 void Task::set_debug_limit(const uint32_t limit)
@@ -106,11 +119,6 @@ void Task::set_debug_limit(const uint32_t limit)
 void Task::set_debug_precision(const uint8_t prec)
 {
 	this->debug_precision = prec;
-}
-
-bool Task::is_debug() const
-{
-	return this->debug;
 }
 
 template <typename T>
@@ -143,6 +151,9 @@ static inline void display_data(const T *data,
 
 int Task::exec()
 {
+	if (fast)
+		return this->codelet();
+
 	if (can_exec())
 	{
 		size_t max_n_chars = 0;
@@ -157,39 +168,39 @@ int Task::exec()
 			std::cout << "# ";
 			std::cout << tools::format(module.get_name(), sty_class) << "::" << tools::format(get_name(), sty_method)
 			          << "(";
-			for (auto i = 0; i < (int)socket.size(); i++)
+			for (auto i = 0; i < (int)sockets.size(); i++)
 			{
-				auto &s = socket[i];
+				auto &s = *sockets[i];
 				auto s_type = get_socket_type(s);
 				auto n_elmts = s.get_databytes() / (size_t)s.get_datatype_size();
 				std::cout << (s_type == IN ? tools::format("const ", sty_type) : "")
 				          << tools::format(s.get_datatype_string(), sty_type)
 				          << " " << s.get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
 				          << (n_elmts / n_fra) << "]"
-				          << (i < (int)socket.size() -1 ? ", " : "");
+				          << (i < (int)sockets.size() -1 ? ", " : "");
 
 				max_n_chars = std::max(s.get_name().size(), max_n_chars);
 			}
 			std::cout << ")" << std::endl;
 
-			for (auto &s : socket)
+			for (auto *s : sockets)
 			{
-				auto s_type = get_socket_type(s);
+				auto s_type = get_socket_type(*s);
 				if (s_type == IN || s_type == IN_OUT)
 				{
-					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s.get_name().size(); ss++) spaces += " ";
+					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s->get_name().size(); ss++) spaces += " ";
 
-					auto n_elmts = s.get_databytes() / (size_t)s.get_datatype_size();
+					auto n_elmts = s->get_databytes() / (size_t)s->get_datatype_size();
 					auto fra_size = n_elmts / n_fra;
 					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
 					auto p = debug_precision;
-					std::cout << "# {IN}  " << s.get_name() << spaces << " = [";
-						 if (s.get_datatype() == typeid(int8_t )) display_data((int8_t *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(int16_t)) display_data((int16_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(int32_t)) display_data((int32_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(int64_t)) display_data((int64_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(float  )) display_data((float  *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(double )) display_data((double *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					std::cout << "# {IN}  " << s->get_name() << spaces << " = [";
+					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
 					std::cout << "]" << std::endl;
 				}
 			}
@@ -221,24 +232,24 @@ int Task::exec()
 		if (debug)
 		{
 			auto n_fra = (size_t)this->module.get_n_frames();
-			for (auto &s : socket)
+			for (auto *s : sockets)
 			{
-				auto s_type = get_socket_type(s);
+				auto s_type = get_socket_type(*s);
 				if (s_type == OUT || s_type == IN_OUT)
 				{
-					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s.get_name().size(); ss++) spaces += " ";
+					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s->get_name().size(); ss++) spaces += " ";
 
-					auto n_elmts = s.get_databytes() / (size_t)s.get_datatype_size();
+					auto n_elmts = s->get_databytes() / (size_t)s->get_datatype_size();
 					auto fra_size = n_elmts / n_fra;
 					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
 					auto p = debug_precision;
-					std::cout << "# {OUT} " << s.get_name() << spaces << " = [";
-						 if (s.get_datatype() == typeid(int8_t )) display_data((int8_t *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(int16_t)) display_data((int16_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(int32_t)) display_data((int32_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(int64_t)) display_data((int64_t*)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(float  )) display_data((float  *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
-					else if (s.get_datatype() == typeid(double )) display_data((double *)s.get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					std::cout << "# {OUT} " << s->get_name() << spaces << " = [";
+					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
+					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, max_n_chars +12);
 					std::cout << "]" << std::endl;
 				}
 			}
@@ -268,8 +279,8 @@ Socket& Task::create_socket(const std::string name, const size_t n_elmts)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	for (auto &s : socket)
-		if (s.get_name() == name)
+	for (auto &s : sockets)
+		if (s->get_name() == name)
 		{
 			std::stringstream message;
 			message << "Impossible to create this socket because an other socket has the same name ('socket.name' = "
@@ -278,29 +289,38 @@ Socket& Task::create_socket(const std::string name, const size_t n_elmts)
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-	socket.push_back(Socket(*this, name, typeid(T), n_elmts * sizeof(T)));
+	auto *s = new Socket(*this, name, typeid(T), n_elmts * sizeof(T), this->is_fast());
 
-	return socket.back();
+	sockets.push_back(s);
+	sockets_map[name] = s;
+
+	return *s;
 }
 
 template <typename T>
-void Task::create_socket_in(const std::string name, const size_t n_elmts)
+Socket& Task::create_socket_in(const std::string name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
 	socket_type[s.get_name()] = Socket_type::IN;
+	last_input_socket = &s;
+
+	return s;
 }
 
 template <typename T>
-void Task::create_socket_in_out(const std::string name, const size_t n_elmts)
+Socket& Task::create_socket_in_out(const std::string name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
 	socket_type[s.get_name()] = Socket_type::IN_OUT;
+	last_input_socket = &s;
+
+	return s;
 }
 
 template <typename T>
-void Task::create_socket_out(const std::string name, const size_t n_elmts)
+Socket& Task::create_socket_out(const std::string name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -312,6 +332,8 @@ void Task::create_socket_out(const std::string name, const size_t n_elmts)
 		out_buffers.push_back(std::vector<uint8_t>(s.databytes));
 		s.dataptr = out_buffers.back().data();
 	}
+
+	return s;
 }
 
 void Task::create_codelet(std::function<int(void)> codelet)
@@ -319,56 +341,12 @@ void Task::create_codelet(std::function<int(void)> codelet)
 	this->codelet = codelet;
 }
 
-Socket& Task::operator[](const std::string name)
-{
-	for (auto &s : socket)
-		if (s.get_name() == name)
-			return s;
-
-	std::stringstream message;
-	message << "The socket does not exist ('socket.name' = " << name << ", 'task.name' = " << this->get_name()
-	        << ", 'module.name' = " << module.get_name() << ").";
-	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-}
-
-const Socket& Task::operator[](const std::string name) const
-{
-	for (auto &s : socket)
-		if (s.get_name() == name)
-			return s;
-
-	std::stringstream message;
-	message << "The socket does not exist ('socket.name' = " << name << ", 'task.name' = " << this->get_name()
-	        << ", 'module.name' = " << module.get_name() << ").";
-	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-}
-
-bool Task::last_input_socket(const Socket &s_in) const
-{
-	const Socket* last_s_in = nullptr;
-	for (auto &s : socket)
-	{
-		auto s_type = get_socket_type(s);
-		if (s_type == IN || s_type == IN_OUT)
-			last_s_in = &s;
-	}
-
-	auto val = last_s_in == nullptr ? false : &s_in == last_s_in;
-
-	return val;
-}
-
 bool Task::can_exec() const
 {
-	for (auto &s : socket)
-		if (s.dataptr == nullptr)
+	for (size_t i = 0; i < sockets.size(); i++)
+		if (sockets[i]->dataptr == nullptr)
 			return false;
 	return true;
-}
-
-uint32_t Task::get_n_calls() const
-{
-	return this->n_calls;
 }
 
 std::chrono::nanoseconds Task::get_duration_total() const
@@ -391,9 +369,9 @@ std::chrono::nanoseconds Task::get_duration_max() const
 	return this->duration_max;
 }
 
-const std::vector<std::string>& Task::get_registered_duration() const
+const std::vector<std::string>& Task::get_registered_timers() const
 {
-	return this->registered_duration;
+	return this->registered_timers;
 }
 
 uint32_t Task::get_registered_n_calls(const std::string key) const
@@ -401,24 +379,24 @@ uint32_t Task::get_registered_n_calls(const std::string key) const
 	return this->registered_n_calls.find(key)->second;
 }
 
-std::chrono::nanoseconds Task::get_registered_duration_total(const std::string key) const
+std::chrono::nanoseconds Task::get_registered_timers_total(const std::string key) const
 {
-	return this->registered_duration_total.find(key)->second;
+	return this->registered_timers_total.find(key)->second;
 }
 
-std::chrono::nanoseconds Task::get_registered_duration_avg(const std::string key) const
+std::chrono::nanoseconds Task::get_registered_timers_avg(const std::string key) const
 {
-	return this->registered_duration_total.find(key)->second / this->n_calls;
+	return this->registered_timers_total.find(key)->second / this->n_calls;
 }
 
-std::chrono::nanoseconds Task::get_registered_duration_min(const std::string key) const
+std::chrono::nanoseconds Task::get_registered_timers_min(const std::string key) const
 {
-	return this->registered_duration_min.find(key)->second;
+	return this->registered_timers_min.find(key)->second;
 }
 
-std::chrono::nanoseconds Task::get_registered_duration_max(const std::string key) const
+std::chrono::nanoseconds Task::get_registered_timers_max(const std::string key) const
 {
-	return this->registered_duration_max.find(key)->second;
+	return this->registered_timers_max.find(key)->second;
 }
 
 Socket_type Task::get_socket_type(const Socket &s) const
@@ -435,29 +413,13 @@ Socket_type Task::get_socket_type(const Socket &s) const
 	}
 }
 
-void Task::register_duration(const std::string key)
+void Task::register_timer(const std::string key)
 {
-	this->registered_duration.push_back(key);
-	this->registered_n_calls       [key] = 0;
-	this->registered_duration_total[key] = std::chrono::nanoseconds(0);
-	this->registered_duration_max  [key] = std::chrono::nanoseconds(0);
-	this->registered_duration_min  [key] = std::chrono::nanoseconds(0);
-}
-
-void Task::update_duration(const std::string key, const std::chrono::nanoseconds &duration)
-{
-	this->registered_n_calls[key]++;
-	this->registered_duration_total[key] += duration;
-	if (this->n_calls)
-	{
-		this->registered_duration_max[key] = std::max(this->registered_duration_max[key], duration);
-		this->registered_duration_min[key] = std::min(this->registered_duration_min[key], duration);
-	}
-	else
-	{
-		this->registered_duration_max[key] = duration;
-		this->registered_duration_min[key] = duration;
-	}
+	this->registered_timers.push_back(key);
+	this->registered_n_calls     [key] = 0;
+	this->registered_timers_total[key] = std::chrono::nanoseconds(0);
+	this->registered_timers_max  [key] = std::chrono::nanoseconds(0);
+	this->registered_timers_min  [key] = std::chrono::nanoseconds(0);
 }
 
 void Task::reset_stats()
@@ -467,31 +429,32 @@ void Task::reset_stats()
 	this->duration_min   = std::chrono::nanoseconds(0);
 	this->duration_max   = std::chrono::nanoseconds(0);
 
-	for (auto &x : this->registered_n_calls       ) x.second =                          0;
-	for (auto &x : this->registered_duration_total) x.second = std::chrono::nanoseconds(0);
-	for (auto &x : this->registered_duration_min  ) x.second = std::chrono::nanoseconds(0);
-	for (auto &x : this->registered_duration_max  ) x.second = std::chrono::nanoseconds(0);
+	for (auto &x : this->registered_n_calls     ) x.second =                          0;
+	for (auto &x : this->registered_timers_total) x.second = std::chrono::nanoseconds(0);
+	for (auto &x : this->registered_timers_min  ) x.second = std::chrono::nanoseconds(0);
+	for (auto &x : this->registered_timers_max  ) x.second = std::chrono::nanoseconds(0);
 }
 
 // ==================================================================================== explicit template instantiation
-template void Task::create_socket_in<int8_t >(const std::string, const size_t);
-template void Task::create_socket_in<int16_t>(const std::string, const size_t);
-template void Task::create_socket_in<int32_t>(const std::string, const size_t);
-template void Task::create_socket_in<int64_t>(const std::string, const size_t);
-template void Task::create_socket_in<float  >(const std::string, const size_t);
-template void Task::create_socket_in<double >(const std::string, const size_t);
+template Socket& Task::create_socket_in<int8_t >(const std::string, const size_t);
+template Socket& Task::create_socket_in<int16_t>(const std::string, const size_t);
+template Socket& Task::create_socket_in<int32_t>(const std::string, const size_t);
+template Socket& Task::create_socket_in<int64_t>(const std::string, const size_t);
+template Socket& Task::create_socket_in<float  >(const std::string, const size_t);
+template Socket& Task::create_socket_in<double >(const std::string, const size_t);
 
-template void Task::create_socket_in_out<int8_t >(const std::string, const size_t);
-template void Task::create_socket_in_out<int16_t>(const std::string, const size_t);
-template void Task::create_socket_in_out<int32_t>(const std::string, const size_t);
-template void Task::create_socket_in_out<int64_t>(const std::string, const size_t);
-template void Task::create_socket_in_out<float  >(const std::string, const size_t);
-template void Task::create_socket_in_out<double >(const std::string, const size_t);
+template Socket& Task::create_socket_in_out<int8_t >(const std::string, const size_t);
+template Socket& Task::create_socket_in_out<int16_t>(const std::string, const size_t);
+template Socket& Task::create_socket_in_out<int32_t>(const std::string, const size_t);
+template Socket& Task::create_socket_in_out<int64_t>(const std::string, const size_t);
+template Socket& Task::create_socket_in_out<float  >(const std::string, const size_t);
+template Socket& Task::create_socket_in_out<double >(const std::string, const size_t);
 
-template void Task::create_socket_out<int8_t >(const std::string, const size_t);
-template void Task::create_socket_out<int16_t>(const std::string, const size_t);
-template void Task::create_socket_out<int32_t>(const std::string, const size_t);
-template void Task::create_socket_out<int64_t>(const std::string, const size_t);
-template void Task::create_socket_out<float  >(const std::string, const size_t);
-template void Task::create_socket_out<double >(const std::string, const size_t);
+template Socket& Task::create_socket_out<int8_t >(const std::string, const size_t);
+template Socket& Task::create_socket_out<int16_t>(const std::string, const size_t);
+template Socket& Task::create_socket_out<int32_t>(const std::string, const size_t);
+template Socket& Task::create_socket_out<int64_t>(const std::string, const size_t);
+template Socket& Task::create_socket_out<float  >(const std::string, const size_t);
+template Socket& Task::create_socket_out<double >(const std::string, const size_t);
 // ==================================================================================== explicit template instantiation
+

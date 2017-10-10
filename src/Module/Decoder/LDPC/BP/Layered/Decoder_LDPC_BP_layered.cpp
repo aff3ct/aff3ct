@@ -126,9 +126,9 @@ void Decoder_LDPC_BP_layered<B,R>
 	}
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::update_duration("decode_siho", "load",   d_load);
-	Decoder_SIHO<B,R>::update_duration("decode_siho", "decode", d_decod);
-	Decoder_SIHO<B,R>::update_duration("decode_siho", "store",  d_store);
+	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("load",   d_load);
+	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("decode", d_decod);
+	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("store",  d_store);
 }
 
 template <typename B, typename R>
@@ -148,9 +148,9 @@ void Decoder_LDPC_BP_layered<B,R>
 	tools::hard_decide(this->var_nodes[frame_id].data(), V_N, this->N);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "load",   d_load);
-	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "decode", d_decod);
-	Decoder_SIHO<B,R>::update_duration("decode_siho_coded", "store",  d_store);
+	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("load",   d_load);
+	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("decode", d_decod);
+	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("store",  d_store);
 }
 
 // BP algorithm

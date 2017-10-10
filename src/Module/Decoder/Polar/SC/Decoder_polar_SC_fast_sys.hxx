@@ -288,10 +288,10 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 	this->_store(V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->update_duration("decode_siho", "load",   d_load);
-	this->update_duration("decode_siho", "decode", d_decod);
-	this->update_duration("decode_siho", "store",  d_store);
-	this->update_duration("decode_siho", "total",  d_load + d_decod + d_store);
+	this->tasks["decode_siho"]->update_timer("load",   d_load);
+	this->tasks["decode_siho"]->update_timer("decode", d_decod);
+	this->tasks["decode_siho"]->update_timer("store",  d_store);
+	this->tasks["decode_siho"]->update_timer("total",  d_load + d_decod + d_store);
 }
 
 template <typename B, typename R, class API_polar>
@@ -316,10 +316,10 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 	this->_store_coded(V_N);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->update_duration("decode_siho_coded", "load",   d_load);
-	this->update_duration("decode_siho_coded", "decode", d_decod);
-	this->update_duration("decode_siho_coded", "store",  d_store);
-	this->update_duration("decode_siho_coded", "total",  d_load + d_decod + d_store);
+	this->tasks["decode_siho_coded"]->update_timer("load",   d_load);
+	this->tasks["decode_siho_coded"]->update_timer("decode", d_decod);
+	this->tasks["decode_siho_coded"]->update_timer("store",  d_store);
+	this->tasks["decode_siho_coded"]->update_timer("total",  d_load + d_decod + d_store);
 }
 
 template <typename B, typename R, class API_polar>

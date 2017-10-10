@@ -55,15 +55,16 @@ public:
 		}
 
 		auto &p = this->create_task("process");
-		this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
-		this->template create_socket_out<Q>(p, "Y_N2", this->N * this->n_frames);
-		this->create_codelet(p, [&]() -> int
+		auto &ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
+		auto &ps_Y_N2 = this->template create_socket_out<Q>(p, "Y_N2", this->N * this->n_frames);
+		this->create_codelet(p, [this, &ps_Y_N1, &ps_Y_N2]() -> int
 		{
-			this->process(static_cast<R*>(p["Y_N1"].get_dataptr()),
-			              static_cast<Q*>(p["Y_N2"].get_dataptr()));
+			this->process(static_cast<R*>(ps_Y_N1.get_dataptr()),
+			              static_cast<Q*>(ps_Y_N2.get_dataptr()));
 
 			return 0;
 		});
+
 	}
 
 	/*!

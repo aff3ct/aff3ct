@@ -24,7 +24,7 @@ void Simulation
 			if (mm != nullptr)
 				for (auto &t : mm->tasks)
 				{
-					t.second->set_autoexec (true);
+//					t.second->set_autoexec (true);
 					t.second->set_autoalloc(true);
 
 					if (params.statistics)
@@ -39,5 +39,8 @@ void Simulation
 						if (params.debug_precision)
 							t.second->set_debug_precision((uint8_t)params.debug_precision);
 					}
+
+					if (!t.second->is_stats() && !t.second->is_debug())
+						t.second->set_fast(true);
 				}
 }

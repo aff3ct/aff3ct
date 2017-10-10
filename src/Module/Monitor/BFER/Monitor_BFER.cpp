@@ -16,12 +16,12 @@ Monitor_BFER<B>
   n_analyzed_frames(0)
 {
 	auto &p = this->create_task("check_errors");
-	this->template create_socket_in<B>(p, "U", this->size * this->n_frames);
-	this->template create_socket_in<B>(p, "V", this->size * this->n_frames);
-	this->create_codelet(p, [&]() -> int
+	auto &ps_U = this->template create_socket_in<B>(p, "U", this->size * this->n_frames);
+	auto &ps_V = this->template create_socket_in<B>(p, "V", this->size * this->n_frames);
+	this->create_codelet(p, [this, &ps_U, &ps_V]() -> int
 	{
-		return this->check_errors(static_cast<B*>(p["U"].get_dataptr()),
-		                          static_cast<B*>(p["V"].get_dataptr()));
+		return this->check_errors(static_cast<B*>(ps_U.get_dataptr()),
+		                          static_cast<B*>(ps_V.get_dataptr()));
 	});
 }
 

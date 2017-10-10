@@ -238,9 +238,14 @@ void BFER<B,R,Q>
 
 			if (params.statistics)
 			{
-				std::vector<std::vector<module::Module*>> mod_vec;
+				std::vector<std::vector<const module::Module*>> mod_vec;
 				for (auto &vm : modules)
-					mod_vec.push_back(vm.second);
+				{
+					std::vector<const module::Module*> sub_mod_vec;
+					for (auto *m : vm.second)
+						sub_mod_vec.push_back(m);
+					mod_vec.push_back(sub_mod_vec);
+				}
 
 				std::cout << "#" << std::endl;
 				tools::Stats::show(mod_vec, true, std::cout);

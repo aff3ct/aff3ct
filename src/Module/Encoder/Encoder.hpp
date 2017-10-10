@@ -70,12 +70,12 @@ public:
 		}
 
 		auto &p = this->create_task("encode");
-		this->template create_socket_in <B>(p, "U_K", this->K * this->n_frames);
-		this->template create_socket_out<B>(p, "X_N", this->N * this->n_frames);
-		this->create_codelet(p, [&]() -> int
+		auto &ps_U_K = this->template create_socket_in <B>(p, "U_K", this->K * this->n_frames);
+		auto &ps_X_N = this->template create_socket_out<B>(p, "X_N", this->N * this->n_frames);
+		this->create_codelet(p, [this, &ps_U_K, &ps_X_N]() -> int
 		{
-			this->encode(static_cast<B*>(p["U_K"].get_dataptr()),
-			             static_cast<B*>(p["X_N"].get_dataptr()));
+			this->encode(static_cast<B*>(ps_U_K.get_dataptr()),
+			             static_cast<B*>(ps_X_N.get_dataptr()));
 
 			return 0;
 		});

@@ -28,23 +28,23 @@ public:
 	  core(core)
 	{
 		auto &p1 = this->create_task("interleave");
-		this->template create_socket_in <D>(p1, "nat", this->core.get_size() * this->n_frames);
-		this->template create_socket_out<D>(p1, "itl", this->core.get_size() * this->n_frames);
-		this->create_codelet(p1, [&]() -> int
+		auto &p1s_nat = this->template create_socket_in <D>(p1, "nat", this->core.get_size() * this->n_frames);
+		auto &p1s_itl = this->template create_socket_out<D>(p1, "itl", this->core.get_size() * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_nat, &p1s_itl]() -> int
 		{
-			this->interleave(static_cast<D*>(p1["nat"].get_dataptr()),
-			                 static_cast<D*>(p1["itl"].get_dataptr()));
+			this->interleave(static_cast<D*>(p1s_nat.get_dataptr()),
+			                 static_cast<D*>(p1s_itl.get_dataptr()));
 
 			return 0;
 		});
 
 		auto &p2 = this->create_task("deinterleave");
-		this->template create_socket_in <D>(p2, "itl", this->core.get_size() * this->n_frames);
-		this->template create_socket_out<D>(p2, "nat", this->core.get_size() * this->n_frames);
-		this->create_codelet(p2, [&]() -> int
+		auto &p2s_itl = this->template create_socket_in <D>(p2, "itl", this->core.get_size() * this->n_frames);
+		auto &p2s_nat = this->template create_socket_out<D>(p2, "nat", this->core.get_size() * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_itl, &p2s_nat]() -> int
 		{
-			this->deinterleave(static_cast<D*>(p2["itl"].get_dataptr()),
-			                   static_cast<D*>(p2["nat"].get_dataptr()));
+			this->deinterleave(static_cast<D*>(p2s_itl.get_dataptr()),
+			                   static_cast<D*>(p2s_nat.get_dataptr()));
 
 			return 0;
 		});

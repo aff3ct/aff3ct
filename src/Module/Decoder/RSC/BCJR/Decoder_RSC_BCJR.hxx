@@ -116,10 +116,10 @@ void Decoder_RSC_BCJR<B,R>
 	_store(V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::update_duration("decode_siho", "load",   d_load);
-	Decoder_SIHO<B,R>::update_duration("decode_siho", "decode", d_decod);
-	Decoder_SIHO<B,R>::update_duration("decode_siho", "store",  d_store);
-	Decoder_SIHO<B,R>::update_duration("decode_siho", "total",  d_load + d_decod + d_store);
+	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("load",   d_load);
+	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("decode", d_decod);
+	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("store",  d_store);
+	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("total",  d_load + d_decod + d_store);
 }
 
 template <typename B, typename R>
