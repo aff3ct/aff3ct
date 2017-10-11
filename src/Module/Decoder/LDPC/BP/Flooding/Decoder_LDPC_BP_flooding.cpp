@@ -140,7 +140,7 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -149,32 +149,32 @@ void Decoder_LDPC_BP_flooding<B,R>
 		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
 	this->BP_decode(Y_N, frame_id);
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	for (auto i = 0; i < this->K; i++)
 	{
 		const auto k = this->info_bits_pos[i];
 		V_K[i] = !(this->Lp_N[k] >= 0);
 	}
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("load",   d_load);
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("decode", d_decod);
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("store",  d_store);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("load",   d_load);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("decode", d_decod);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("store",  d_store);
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -183,20 +183,20 @@ void Decoder_LDPC_BP_flooding<B,R>
 		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
 	this->BP_decode(Y_N, frame_id);
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide(this->Lp_N.data(), V_N, this->N);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("load",   d_load);
-	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("decode", d_decod);
-	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("store",  d_store);
+//	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("load",   d_load);
+//	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("decode", d_decod);
+//	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("store",  d_store);
 }
 
 // BP algorithm

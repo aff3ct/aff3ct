@@ -158,11 +158,11 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
@@ -187,9 +187,9 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
 		else                            this->BP_decode<0>(frame_id);
 	}
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 	const auto zero = mipp::Reg<R>((R)0);
@@ -202,22 +202,22 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	std::vector<B*> frames(mipp::nElReg<R>());
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_K + f * this->K;
 	tools::Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("load",   d_load);
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("decode", d_decod);
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("store",  d_store);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("load",   d_load);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("decode", d_decod);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("store",  d_store);
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
@@ -242,9 +242,9 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
 		else                            this->BP_decode<0>(frame_id);
 	}
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 	const auto zero = mipp::Reg<R>((R)0);
@@ -254,11 +254,11 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	std::vector<B*> frames(mipp::nElReg<R>());
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_N + f * this->N;
 	tools::Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->N);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("load",   d_load);
-	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("decode", d_decod);
-	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("store",  d_store);
+//	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("load",   d_load);
+//	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("decode", d_decod);
+//	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("store",  d_store);
 }
 
 // BP algorithm

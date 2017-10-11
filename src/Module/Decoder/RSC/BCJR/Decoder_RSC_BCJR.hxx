@@ -93,15 +93,15 @@ template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	for (auto i = 0; i < this->K * this->simd_inter_frame_level; i += mipp::nElReg<R>())
 	{
@@ -114,12 +114,12 @@ void Decoder_RSC_BCJR<B,R>
 	}
 
 	_store(V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("load",   d_load);
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("decode", d_decod);
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("store",  d_store);
-	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("total",  d_load + d_decod + d_store);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("load",   d_load);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("decode", d_decod);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("store",  d_store);
+//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("total",  d_load + d_decod + d_store);
 }
 
 template <typename B, typename R>

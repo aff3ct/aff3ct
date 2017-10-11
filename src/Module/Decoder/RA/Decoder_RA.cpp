@@ -68,7 +68,7 @@ template <typename B, typename R>
 void Decoder_RA<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	//set F, B and Td at 0
 	for (auto i = 0; i < this->N; i++)
 	{
@@ -76,9 +76,9 @@ void Decoder_RA<B, R>
 		Bw[i] = 0;
 		Td[i] = 0;
 	}
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	for (auto iter = 0; iter < max_iter; iter++)
 	{
 		///////////////////
@@ -120,15 +120,15 @@ void Decoder_RA<B, R>
 		// Interleaving
 		interleaver.interleave(Wd.data(), Td.data(), frame_id);
 	}
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide(U.data(), V_K, this->K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->tasks["decode_siho"]->update_timer("load",   d_load);
-	this->tasks["decode_siho"]->update_timer("decode", d_decod);
-	this->tasks["decode_siho"]->update_timer("store",  d_store);
+//	this->tasks["decode_siho"]->update_timer("load",   d_load);
+//	this->tasks["decode_siho"]->update_timer("decode", d_decod);
+//	this->tasks["decode_siho"]->update_timer("store",  d_store);
 }
 
 template <typename B, typename R>

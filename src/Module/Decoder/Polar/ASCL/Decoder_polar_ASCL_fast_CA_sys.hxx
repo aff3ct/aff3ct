@@ -78,36 +78,36 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_decod = std::chrono::steady_clock::now();
+//	auto t_decod = std::chrono::steady_clock::now();
 	this->_decode(Y_N, V_K, frame_id);
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now();
+//	auto t_store = std::chrono::steady_clock::now();
 	if (this->L > 1)
 		Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::_store(V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->tasks["decode_siho"]->update_timer("decode", d_decod);
-	this->tasks["decode_siho"]->update_timer("store",  d_store);
+//	this->tasks["decode_siho"]->update_timer("decode", d_decod);
+//	this->tasks["decode_siho"]->update_timer("store",  d_store);
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 ::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
 {
-	auto t_decod = std::chrono::steady_clock::now();
+//	auto t_decod = std::chrono::steady_clock::now();
 	this->_decode(Y_N, V_N, frame_id);
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now();
+//	auto t_store = std::chrono::steady_clock::now();
 	if (this->L > 1)
 		Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::_store_coded(V_N);
 	else
 		sc_decoder._store_coded(V_N);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->tasks["decode_siho_coded"]->update_timer("decode", d_decod);
-	this->tasks["decode_siho_coded"]->update_timer("store",  d_store);
+//	this->tasks["decode_siho_coded"]->update_timer("decode", d_decod);
+//	this->tasks["decode_siho_coded"]->update_timer("store",  d_store);
 }
 }
 }

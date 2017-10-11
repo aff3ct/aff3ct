@@ -276,22 +276,22 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 	if (!API_polar::isAligned(V_K))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'V_K' is misaligned memory.");
 
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode();
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->tasks["decode_siho"]->update_timer("load",   d_load);
-	this->tasks["decode_siho"]->update_timer("decode", d_decod);
-	this->tasks["decode_siho"]->update_timer("store",  d_store);
-	this->tasks["decode_siho"]->update_timer("total",  d_load + d_decod + d_store);
+//	this->tasks["decode_siho"]->update_timer("load",   d_load);
+//	this->tasks["decode_siho"]->update_timer("decode", d_decod);
+//	this->tasks["decode_siho"]->update_timer("store",  d_store);
+//	this->tasks["decode_siho"]->update_timer("total",  d_load + d_decod + d_store);
 }
 
 template <typename B, typename R, class API_polar>
@@ -304,22 +304,22 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 	if (!API_polar::isAligned(V_N))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'V_N' is misaligned memory.");
 
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode();
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store_coded(V_N);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->tasks["decode_siho_coded"]->update_timer("load",   d_load);
-	this->tasks["decode_siho_coded"]->update_timer("decode", d_decod);
-	this->tasks["decode_siho_coded"]->update_timer("store",  d_store);
-	this->tasks["decode_siho_coded"]->update_timer("total",  d_load + d_decod + d_store);
+//	this->tasks["decode_siho_coded"]->update_timer("load",   d_load);
+//	this->tasks["decode_siho_coded"]->update_timer("decode", d_decod);
+//	this->tasks["decode_siho_coded"]->update_timer("store",  d_store);
+//	this->tasks["decode_siho_coded"]->update_timer("total",  d_load + d_decod + d_store);
 }
 
 template <typename B, typename R, class API_polar>
