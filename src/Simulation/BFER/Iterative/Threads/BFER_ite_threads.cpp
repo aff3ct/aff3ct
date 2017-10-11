@@ -37,39 +37,6 @@ BFER_ite_threads<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER_ite_threads<B,R,Q>
-::__build_communication_chain(const int tid)
-{
-	BFER_ite<B,R,Q>::__build_communication_chain(tid);
-
-	auto &source          = *this->source         [tid];
-	auto &crc             = *this->crc            [tid];
-	auto &encoder         = *this->codec          [tid]->get_encoder();
-	auto &interleaver_bit = *this->interleaver_bit[tid];
-	auto &modem           = *this->modem          [tid];
-
-	if (this->params.src->type == "AZCW")
-	{
-		auto src_data = (uint8_t*)(source         ["generate"  ]["U_K" ].get_dataptr());
-		auto crc_data = (uint8_t*)(crc            ["build"     ]["U_K2"].get_dataptr());
-		auto enc_data = (uint8_t*)(encoder        ["encode"    ]["X_N" ].get_dataptr());
-		auto itl_data = (uint8_t*)(interleaver_bit["interleave"]["itl" ].get_dataptr());
-
-		auto src_bytes = source         ["generate"  ]["U_K" ].get_databytes();
-		auto crc_bytes = crc            ["build"     ]["U_K2"].get_databytes();
-		auto enc_bytes = encoder        ["encode"    ]["X_N" ].get_databytes();
-		auto itl_bytes = interleaver_bit["interleave"]["itl" ].get_databytes();
-
-		std::fill(src_data, src_data + src_bytes, 0);
-		std::fill(crc_data, crc_data + crc_bytes, 0);
-		std::fill(enc_data, enc_data + enc_bytes, 0);
-		std::fill(itl_data, itl_data + itl_bytes, 0);
-
-		modem["modulate"]["X_N1"].bind(interleaver_bit["interleave"]["itl"]);
-	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER_ite_threads<B,R,Q>
 ::_launch()
 {
 	BFER_ite<B,R,Q>::_launch();
@@ -131,7 +98,28 @@ void BFER_ite_threads<B,R,Q>
 	auto &decoder_siso = *codec.get_decoder_siso();
 	auto &decoder_siho = *codec.get_decoder_siho();
 
-	if (this->params.src->type != "AZCW")
+	if (this->params.src->type == "AZCW")
+	{
+		auto src_data = (uint8_t*)(source         ["generate"  ]["U_K" ].get_dataptr());
+		auto crc_data = (uint8_t*)(crc            ["build"     ]["U_K2"].get_dataptr());
+		auto enc_data = (uint8_t*)(encoder        ["encode"    ]["X_N" ].get_dataptr());
+		auto itl_data = (uint8_t*)(interleaver_bit["interleave"]["itl" ].get_dataptr());
+
+		auto src_bytes = source         ["generate"  ]["U_K" ].get_databytes();
+		auto crc_bytes = crc            ["build"     ]["U_K2"].get_databytes();
+		auto enc_bytes = encoder        ["encode"    ]["X_N" ].get_databytes();
+		auto itl_bytes = interleaver_bit["interleave"]["itl" ].get_databytes();
+
+		std::fill(src_data, src_data + src_bytes, 0);
+		std::fill(crc_data, crc_data + crc_bytes, 0);
+		std::fill(enc_data, enc_data + enc_bytes, 0);
+		std::fill(itl_data, itl_data + itl_bytes, 0);
+
+		modem["modulate"]["X_N1"].bind(interleaver_bit["interleave"]["itl"]);
+		modem["modulate"].exec();
+		modem["modulate"].reset_stats();
+	}
+	else
 	{
 		crc            ["build"     ]["U_K1"].bind(source         ["generate"  ]["U_K" ]);
 		encoder        ["encode"    ]["U_K" ].bind(crc            ["build"     ]["U_K2"]);

@@ -37,39 +37,6 @@ BFER_std_threads<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER_std_threads<B,R,Q>
-::__build_communication_chain(const int tid)
-{
-	BFER_std<B,R,Q>::__build_communication_chain(tid);
-
-	auto &source    = *this->source[tid];
-	auto &crc       = *this->crc   [tid];
-	auto &encoder   = *this->codec [tid]->get_encoder();
-	auto &puncturer = *this->codec [tid]->get_puncturer();
-	auto &modem     = *this->modem [tid];
-
-	if (this->params.src->type == "AZCW")
-	{
-		auto src_data = (uint8_t*)(source   ["generate"]["U_K" ].get_dataptr());
-		auto crc_data = (uint8_t*)(crc      ["build"   ]["U_K2"].get_dataptr());
-		auto enc_data = (uint8_t*)(encoder  ["encode"  ]["X_N" ].get_dataptr());
-		auto pct_data = (uint8_t*)(puncturer["puncture"]["X_N2"].get_dataptr());
-
-		auto src_bytes = source   ["generate"]["U_K" ].get_databytes();
-		auto crc_bytes = crc      ["build"   ]["U_K2"].get_databytes();
-		auto enc_bytes = encoder  ["encode"  ]["X_N" ].get_databytes();
-		auto pct_bytes = puncturer["puncture"]["X_N2"].get_databytes();
-
-		std::fill(src_data, src_data + src_bytes, 0);
-		std::fill(crc_data, crc_data + crc_bytes, 0);
-		std::fill(enc_data, enc_data + enc_bytes, 0);
-		std::fill(pct_data, pct_data + pct_bytes, 0);
-
-		modem["modulate"]["X_N1"].bind(puncturer["puncture"]["X_N2"]);
-	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER_std_threads<B,R,Q>
 ::_launch()
 {
 	BFER_std<B,R,Q>::_launch();
@@ -127,7 +94,28 @@ void BFER_std_threads<B,R,Q>
 	auto &coset_bit  = *this->coset_bit [tid];
 	auto &monitor    = *this->monitor   [tid];
 
-	if (this->params.src->type != "AZCW")
+	if (this->params.src->type == "AZCW")
+	{
+		auto src_data = (uint8_t*)(source   ["generate"]["U_K" ].get_dataptr());
+		auto crc_data = (uint8_t*)(crc      ["build"   ]["U_K2"].get_dataptr());
+		auto enc_data = (uint8_t*)(encoder  ["encode"  ]["X_N" ].get_dataptr());
+		auto pct_data = (uint8_t*)(puncturer["puncture"]["X_N2"].get_dataptr());
+
+		auto src_bytes = source   ["generate"]["U_K" ].get_databytes();
+		auto crc_bytes = crc      ["build"   ]["U_K2"].get_databytes();
+		auto enc_bytes = encoder  ["encode"  ]["X_N" ].get_databytes();
+		auto pct_bytes = puncturer["puncture"]["X_N2"].get_databytes();
+
+		std::fill(src_data, src_data + src_bytes, 0);
+		std::fill(crc_data, crc_data + crc_bytes, 0);
+		std::fill(enc_data, enc_data + enc_bytes, 0);
+		std::fill(pct_data, pct_data + pct_bytes, 0);
+
+		modem["modulate"]["X_N1"].bind(puncturer["puncture"]["X_N2"]);
+		modem["modulate"].exec();
+		modem["modulate"].reset_stats();
+	}
+	else
 	{
 		crc      ["build"   ]["U_K1"].bind(source   ["generate"]["U_K" ]);
 		encoder  ["encode"  ]["U_K" ].bind(crc      ["build"   ]["U_K2"]);

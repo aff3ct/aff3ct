@@ -15,7 +15,6 @@ public:
 	virtual ~BFER_std_threads();
 
 protected:
-	virtual void __build_communication_chain(const int tid = 0);
 	virtual void _launch();
 
 private:
