@@ -42,16 +42,6 @@ Task::~Task()
 		}
 }
 
-//const Module& Task::get_module() const
-//{
-//	return this->module;
-//}
-
-//std::string Task::get_name() const
-//{
-//	return this->name;
-//}
-
 void Task::set_autoalloc(const bool autoalloc)
 {
 	if (autoalloc != this->autoalloc)
