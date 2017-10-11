@@ -107,6 +107,7 @@ void EXIT<B,R>
 {
 	// allocate and build all the communication chain to generate EXIT chart
 	this->build_communication_chain();
+	this->sockets_binding();
 
 	// for each channel SNR to be simulated	
 	for (ebn0 = params.snr_min; ebn0 <= params.snr_max; ebn0 += params.snr_step)
@@ -157,10 +158,6 @@ void EXIT<B,R>
 
 			this->simulation_loop();
 
-			// stop the terminal
-			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
-				this->terminal->stop_temp_report();
-
 			if (!params.ter->disabled)
 			{
 				if (params.debug)
@@ -203,6 +200,63 @@ void EXIT<B,R>
 
 template <typename B, typename R>
 void EXIT<B,R>
+::sockets_binding()
+{
+	auto &source    = *this->source;
+	auto &codec     = *this->codec;
+	auto &encoder   = *this->codec->get_encoder();
+	auto &decoder   = *this->codec->get_decoder_siso();
+	auto &modem     = *this->modem;
+	auto &modem_a   = *this->modem_a;
+	auto &channel   = *this->channel;
+	auto &channel_a = *this->channel_a;
+	auto &monitor   = *this->monitor;
+
+	monitor["check_mutual_info"]["bits"].bind(source ["generate"]["U_K"]);
+	modem_a["modulate"         ]["X_N1"].bind(source ["generate"]["U_K"]);
+	encoder["encode"           ]["U_K" ].bind(source ["generate"]["U_K"]);
+	modem  ["modulate"         ]["X_N1"].bind(encoder["encode"  ]["X_N"]);
+
+	// Rayleigh channel
+	if (params.chn->type.find("RAYLEIGH") != std::string::npos)
+	{
+		channel_a["add_noise_wg" ]["X_N" ].bind(modem_a  ["modulate"    ]["X_N2"]);
+		modem_a  ["demodulate_wg"]["H_N "].bind(channel_a["add_noise_wg"]["H_N" ]);
+		modem_a  ["demodulate_wg"]["Y_N1"].bind(channel_a["add_noise_wg"]["Y_N" ]);
+	}
+	else // additive channel (AWGN, USER, NO)
+	{
+		channel_a["add_noise" ]["X_N" ].bind(modem_a  ["modulate" ]["X_N2"]);
+		modem_a  ["demodulate"]["Y_N1"].bind(channel_a["add_noise"]["Y_N" ]);
+	}
+
+	// Rayleigh channel
+	if (params.chn->type.find("RAYLEIGH") != std::string::npos)
+	{
+		monitor["check_mutual_info"]["llrs_a"].bind(modem_a["demodulate_wg"]["Y_N2"]);
+		channel["add_noise_wg"     ]["X_N"   ].bind(modem  ["modulate"     ]["X_N2"]);
+		modem  ["demodulate_wg"    ]["H_N"   ].bind(channel["add_noise_wg" ]["H_N" ]);
+		modem  ["demodulate_wg"    ]["Y_N1"  ].bind(channel["add_noise_wg" ]["Y_N" ]);
+		codec  ["add_sys_ext"      ]["ext"   ].bind(modem_a["demodulate_wg"]["Y_N2"]);
+		codec  ["add_sys_ext"      ]["Y_N"   ].bind(modem  ["demodulate_wg"]["Y_N2"]);
+		decoder["decode_siso"      ]["Y_N1"  ].bind(modem  ["demodulate_wg"]["Y_N2"]);
+	}
+	else // additive channel (AWGN, USER, NO)
+	{
+		monitor["check_mutual_info"]["llrs_a"].bind(modem_a["demodulate"]["Y_N2"]);
+		channel["add_noise"        ]["X_N"   ].bind(modem  ["modulate"  ]["X_N2"]);
+		modem  ["demodulate"       ]["Y_N1"  ].bind(channel["add_noise" ]["Y_N" ]);
+		codec  ["add_sys_ext"      ]["ext"   ].bind(modem_a["demodulate"]["Y_N2"]);
+		codec  ["add_sys_ext"      ]["Y_N"   ].bind(modem  ["demodulate"]["Y_N2"]);
+		decoder["decode_siso"      ]["Y_N1"  ].bind(modem  ["demodulate"]["Y_N2"]);
+	}
+
+	codec  ["extract_sys_llr"  ]["Y_N"   ].bind(decoder["decode_siso"    ]["Y_N2"]);
+	monitor["check_mutual_info"]["llrs_e"].bind(codec  ["extract_sys_llr"]["Y_K" ]);
+}
+
+template <typename B, typename R>
+void EXIT<B,R>
 ::simulation_loop()
 {
 	auto &source    = *this->source;
@@ -229,10 +283,9 @@ void EXIT<B,R>
 		}
 
 		source ["generate"].exec();
-		monitor["check_mutual_info"]["bits"].bind(source ["generate"]["U_K"]);
-		modem_a["modulate"         ]["X_N1"].bind(source ["generate"]["U_K"]);
-		encoder["encode"           ]["U_K" ].bind(source ["generate"]["U_K"]);
-		modem  ["modulate"         ]["X_N1"].bind(encoder["encode"  ]["X_N"]);
+		modem_a["modulate"].exec();
+		encoder["encode"  ].exec();
+		modem  ["modulate"].exec();
 
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
@@ -240,40 +293,32 @@ void EXIT<B,R>
 			// Rayleigh channel
 			if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 			{
-				channel_a["add_noise_wg" ]["X_N" ].bind(modem_a  ["modulate"    ]["X_N2"]);
-				modem_a  ["demodulate_wg"]["H_N "].bind(channel_a["add_noise_wg"]["H_N" ]);
-				modem_a  ["demodulate_wg"]["Y_N1"].bind(channel_a["add_noise_wg"]["Y_N" ]);
+				channel_a["add_noise_wg" ].exec();
+				modem_a  ["demodulate_wg"].exec();
 			}
 			else // additive channel (AWGN, USER, NO)
 			{
-				channel_a["add_noise" ]["X_N" ].bind(modem_a  ["modulate" ]["X_N2"]);
-				modem_a  ["demodulate"]["Y_N1"].bind(channel_a["add_noise"]["Y_N" ]);
+				channel_a["add_noise" ].exec();
+				modem_a  ["demodulate"].exec();
 			}
 		}
 
 		// Rayleigh channel
 		if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			monitor["check_mutual_info"]["llrs_a"].bind(modem_a["demodulate_wg"]["Y_N2"]);
-			channel["add_noise_wg"     ]["X_N"   ].bind(modem  ["modulate"     ]["X_N2"]);
-			modem  ["demodulate_wg"    ]["H_N"   ].bind(channel["add_noise_wg" ]["H_N" ]);
-			modem  ["demodulate_wg"    ]["Y_N1"  ].bind(channel["add_noise_wg" ]["Y_N" ]);
-			codec  ["add_sys_ext"      ]["ext"   ].bind(modem_a["demodulate_wg"]["Y_N2"]);
-			codec  ["add_sys_ext"      ]["Y_N"   ].bind(modem  ["demodulate_wg"]["Y_N2"]);
-			decoder["decode_siso"      ]["Y_N1"  ].bind(modem  ["demodulate_wg"]["Y_N2"]);
+			channel["add_noise_wg" ].exec();
+			modem  ["demodulate_wg"].exec();
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
-			monitor["check_mutual_info"]["llrs_a"].bind(modem_a["demodulate"]["Y_N2"]);
-			channel["add_noise"        ]["X_N"   ].bind(modem  ["modulate"  ]["X_N2"]);
-			modem  ["demodulate"       ]["Y_N1"  ].bind(channel["add_noise" ]["Y_N" ]);
-			codec  ["add_sys_ext"      ]["ext"   ].bind(modem_a["demodulate"]["Y_N2"]);
-			codec  ["add_sys_ext"      ]["Y_N"   ].bind(modem  ["demodulate"]["Y_N2"]);
-			decoder["decode_siso"      ]["Y_N1"  ].bind(modem  ["demodulate"]["Y_N2"]);
+			channel["add_noise" ].exec();
+			modem  ["demodulate"].exec();
 		}
 
-		codec  ["extract_sys_llr"  ]["Y_N"   ].bind(decoder["decode_siso"    ]["Y_N2"]);
-		monitor["check_mutual_info"]["llrs_e"].bind(codec  ["extract_sys_llr"]["Y_K" ]);
+		codec  ["add_sys_ext"      ].exec();
+		decoder["decode_siso"      ].exec();
+		codec  ["extract_sys_llr"  ].exec();
+		monitor["check_mutual_info"].exec();
 	}
 }
 

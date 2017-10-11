@@ -52,7 +52,8 @@ public:
 
 protected:
 	void _build_communication_chain();
-	void  simulation_loop          ();
+	void sockets_binding           ();
+	void simulation_loop           ();
 	void release_objects           ();
 
 	module::Source      <B  >* build_source   (              );
