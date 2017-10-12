@@ -15,6 +15,31 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace dec
+	{
+		namespace tsk
+		{
+			enum list { decode_hiho, decode_hiho_cw, decode_siho, decode_siho_cw, decode_siso, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace decode_hiho   { enum list { Y_N,  V_K , SIZE }; }
+			namespace decode_hiho_cw{ enum list { Y_N,  V_N , SIZE }; }
+			namespace decode_siho   { enum list { Y_N,  V_K , SIZE }; }
+			namespace decode_siho_cw{ enum list { Y_N,  V_N , SIZE }; }
+			namespace decode_siso   { enum list { Y_N1, Y_N2, SIZE }; }
+		}
+
+		namespace tm
+		{
+			namespace decode_hiho   { enum list { load, decode, store       , SIZE }; }
+			namespace decode_hiho_cw{ enum list { load, decode, store       , SIZE }; }
+			namespace decode_siho   { enum list { load, decode, store, total, SIZE }; }
+			namespace decode_siho_cw{ enum list { load, decode, store, total, SIZE }; }
+		}
+	}
+
 class Decoder : public Module
 {
 protected:
@@ -63,6 +88,10 @@ public:
 			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		this->tasks_with_nullptr.resize(dec::tsk::SIZE);
+		for (size_t t = 0; t < dec::tsk::SIZE; t++)
+			this->tasks_with_nullptr[t] = nullptr;
 	}
 
 	/*!

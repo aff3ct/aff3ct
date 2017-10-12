@@ -22,6 +22,24 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace mdm
+	{
+		namespace tsk
+		{
+			enum list { modulate, filter, demodulate, tdemodulate, demodulate_wg, tdemodulate_wg, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace modulate       { enum list {      X_N1, X_N2      , SIZE }; }
+			namespace filter         { enum list {      Y_N1, Y_N2      , SIZE }; }
+			namespace demodulate     { enum list {      Y_N1, Y_N2      , SIZE }; }
+			namespace tdemodulate    { enum list {      Y_N1, Y_N2, Y_N3, SIZE }; }
+			namespace demodulate_wg  { enum list { H_N, Y_N1, Y_N2      , SIZE }; }
+			namespace tdemodulate_wg { enum list { H_N, Y_N1, Y_N2, Y_N3, SIZE }; }
+		}
+	}
+
 /*!
  * \class Modem
  *

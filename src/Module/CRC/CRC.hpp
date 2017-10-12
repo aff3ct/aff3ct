@@ -20,6 +20,21 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace crc
+	{
+		namespace tsk
+		{
+			enum list { build, extract, check, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace build   { enum list { U_K1, U_K2, SIZE }; }
+			namespace extract { enum list { V_K1, V_K2, SIZE }; }
+			namespace check   { enum list { V_K       , SIZE }; }
+		}
+	}
+
 /*!
  * \class CRC
  *

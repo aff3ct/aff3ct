@@ -296,7 +296,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	if (!API_polar::isAligned(Y_N))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N' is misaligned memory.");
@@ -314,7 +314,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	this->_store_coded(V_N);
+	this->_store_cw(V_N);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	this->tasks["decode_siho_coded"]->update_timer("load",   d_load);
@@ -524,7 +524,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::_store_coded(B *V_N) const
+::_store_cw(B *V_N) const
 {
 	std::copy(this->s[best_path].data(), this->s[best_path].data() + this->N, V_N);
 }

@@ -20,6 +20,19 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace cst
+	{
+		namespace tsk
+		{
+			enum list { apply, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace apply { enum list { ref, in, out, SIZE }; }
+		}
+	}
+
 /*!
  * \class Coset
  *
@@ -55,14 +68,14 @@ public:
 		}
 
 		auto &p = this->create_task("apply");
-		auto &ps_ref      = this->template create_socket_in <B>(p, "ref",      this->size * this->n_frames);
-		auto &ps_in_data  = this->template create_socket_in <D>(p, "in_data",  this->size * this->n_frames);
-		auto &ps_out_data = this->template create_socket_out<D>(p, "out_data", this->size * this->n_frames);
-		this->create_codelet(p, [this, &ps_ref, &ps_in_data, &ps_out_data]() -> int
+		auto &ps_ref = this->template create_socket_in <B>(p, "ref", this->size * this->n_frames);
+		auto &ps_in  = this->template create_socket_in <D>(p, "in",  this->size * this->n_frames);
+		auto &ps_out = this->template create_socket_out<D>(p, "out", this->size * this->n_frames);
+		this->create_codelet(p, [this, &ps_ref, &ps_in, &ps_out]() -> int
 		{
-			this->apply(static_cast<B*>(ps_ref     .get_dataptr()),
-			            static_cast<D*>(ps_in_data .get_dataptr()),
-			            static_cast<D*>(ps_out_data.get_dataptr()));
+			this->apply(static_cast<B*>(ps_ref.get_dataptr()),
+			            static_cast<D*>(ps_in .get_dataptr()),
+			            static_cast<D*>(ps_out.get_dataptr()));
 
 			return 0;
 		});
@@ -90,14 +103,14 @@ public:
 	 * \param out_data: the output data after the coset application.
 	 */
 	template <class AB = std::allocator<B>, class AD = std::allocator<D>>
-	void apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in_data, std::vector<D,AD> &out_data)
+	void apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in, std::vector<D,AD> &out)
 	{
-		if (ref.size() != in_data.size() || in_data.size() != out_data.size())
+		if (ref.size() != in.size() || in.size() != out.size())
 		{
 			std::stringstream message;
 			message << "'ref.size()' has to be equal to 'in_data.size()' and 'out_data.size()' ('ref.size()' = "
-			        << ref.size() << ", 'in_data.size()' = " << in_data.size() << ", 'out_data.size()' = "
-			        << out_data.size() << ").";
+			        << ref.size() << ", 'in_data.size()' = " << in.size() << ", 'out_data.size()' = "
+			        << out.size() << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -109,36 +122,36 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (this->size * this->n_frames != (int)in_data.size())
+		if (this->size * this->n_frames != (int)in.size())
 		{
 			std::stringstream message;
-			message << "'in_data.size()' has to be equal to 'size' * 'n_frames' ('in_data.size()' = " << in_data.size()
+			message << "'in_data.size()' has to be equal to 'size' * 'n_frames' ('in_data.size()' = " << in.size()
 			        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (this->size * this->n_frames != (int)out_data.size())
+		if (this->size * this->n_frames != (int)out.size())
 		{
 			std::stringstream message;
-			message << "'out_data.size()' has to be equal to 'size' * 'n_frames' ('out_data.size()' = " << out_data.size()
+			message << "'out_data.size()' has to be equal to 'size' * 'n_frames' ('out_data.size()' = " << out.size()
 			        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->apply(ref.data(), in_data.data(), out_data.data());
+		this->apply(ref.data(), in.data(), out.data());
 	}
 
-	virtual void apply(const B *ref, const D *in_data, D *out_data)
+	virtual void apply(const B *ref, const D *in, D *out)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_apply(ref      + f * this->size,
-			             in_data  + f * this->size,
-			             out_data + f * this->size,
+			this->_apply(ref + f * this->size,
+			             in  + f * this->size,
+			             out + f * this->size,
 			             f);
 	}
 
 protected:
-	virtual void _apply(const B *ref, const D *in_data, D *out_data, const int frame_id)
+	virtual void _apply(const B *ref, const D *in, D *out, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}

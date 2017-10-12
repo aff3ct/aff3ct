@@ -21,6 +21,19 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace src
+	{
+		namespace tsk
+		{
+			enum list { generate, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace generate { enum list { U_K, SIZE }; }
+		}
+	}
+
 /*!
  * \class Source
  *
@@ -55,10 +68,10 @@ public:
 		}
 
 		auto &p = this->create_task("generate");
-		this->template create_socket_out<B>(p, "U_K", this->K * this->n_frames);
-		this->create_codelet(p, [&]() -> int
+		auto &ps_U_K = this->template create_socket_out<B>(p, "U_K", this->K * this->n_frames);
+		this->create_codelet(p, [this, &ps_U_K]() -> int
 		{
-			this->generate(static_cast<B*>(p["U_K"].get_dataptr()));
+			this->generate(static_cast<B*>(ps_U_K.get_dataptr()));
 
 			return 0;
 		});

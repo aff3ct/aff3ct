@@ -267,7 +267,7 @@ void BFER<B,R,Q>
 			for (auto mm : m.second)
 				if (mm != nullptr)
 					for (auto &t : mm->tasks)
-						t.second->reset_stats();
+						t->reset_stats();
 
 		if (module::Monitor::is_over())
 			break;

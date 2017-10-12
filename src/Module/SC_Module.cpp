@@ -18,21 +18,21 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 	task.set_autoalloc(true );
 
 	auto is_inputs = false;
-	for (auto &s : task.socket)
-		if (task.get_socket_type(s) == IN || task.get_socket_type(s) == IN_OUT)
+	for (auto *s : task.sockets)
+		if (task.get_socket_type(*s) == IN || task.get_socket_type(*s) == IN_OUT)
 		{
 			is_inputs = true;
 			break;
 		}
 
-	for (auto &s : task.socket)
+	for (auto *s : task.sockets)
 	{
-		auto name = s.get_name();
-		switch (task.get_socket_type(s))
+		auto name = s->get_name();
+		switch (task.get_socket_type(*s))
 		{
 		case IN:
 			sockets_in[name] = new tlm_utils::simple_target_socket<SC_Module>(name.c_str());
-			ptr_input_sockets.push_back(&s);
+			ptr_input_sockets.push_back(s);
 			switch (ptr_input_sockets.size())
 			{
 				case 1: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport1); break;
@@ -55,7 +55,7 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 
 		case IN_OUT:
 			sockets_in[name] = new tlm_utils::simple_target_socket<SC_Module>(name.c_str());
-			ptr_input_sockets.push_back(&s);
+			ptr_input_sockets.push_back(s);
 			switch (ptr_input_sockets.size())
 			{
 				case 1: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport1); break;

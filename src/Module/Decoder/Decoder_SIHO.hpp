@@ -56,7 +56,7 @@ public:
 	  Y_N    (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
 	  V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 	{
-		auto &p1 = this->create_task("decode_siho");
+		auto &p1 = this->create_task("decode_siho", dec::tsk::decode_siho);
 		auto &p1s_Y_N = this->template create_socket_in <R>(p1, "Y_N", this->N * this->n_frames);
 		auto &p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
 		this->create_codelet(p1, [this, &p1s_Y_N, &p1s_V_K]() -> int
@@ -71,13 +71,13 @@ public:
 		this->register_timer(p1, "store");
 		this->register_timer(p1, "total");
 
-		auto &p2 = this->create_task("decode_siho_coded");
+		auto &p2 = this->create_task("decode_siho_cw", dec::tsk::decode_siho_cw);
 		auto &p2s_Y_N = this->template create_socket_in <R>(p2, "Y_N", this->N * this->n_frames);
 		auto &p2s_V_N = this->template create_socket_out<B>(p2, "V_N", this->N * this->n_frames);
 		this->create_codelet(p2, [this, &p2s_Y_N, &p2s_V_N]() -> int
 		{
-			this->decode_siho_coded(static_cast<R*>(p2s_Y_N.get_dataptr()),
-			                        static_cast<B*>(p2s_V_N.get_dataptr()));
+			this->decode_siho_cw(static_cast<R*>(p2s_Y_N.get_dataptr()),
+			                     static_cast<B*>(p2s_V_N.get_dataptr()));
 
 			return 0;
 		});
@@ -151,7 +151,7 @@ public:
 	}
 
 	template <class AR = std::allocator<R>, class AB = std::allocator<B>>
-	void decode_siho_coded(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N)
+	void decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N)
 	{
 		if (this->N * this->n_frames != (int)Y_N.size())
 		{
@@ -169,21 +169,21 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->decode_siho_coded(Y_N.data(), V_N.data());
+		this->decode_siho_cw(Y_N.data(), V_N.data());
 	}
 
-	virtual void decode_siho_coded(const R *Y_N, B *V_N)
+	virtual void decode_siho_cw(const R *Y_N, B *V_N)
 	{
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves -1; w++)
-			this->_decode_siho_coded(Y_N + w * this->N * this->simd_inter_frame_level,
-			                         V_N + w * this->N * this->simd_inter_frame_level,
-			                         w * this->simd_inter_frame_level);
+			this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
+			                      V_N + w * this->N * this->simd_inter_frame_level,
+			                      w * this->simd_inter_frame_level);
 
 		if (this->n_inter_frame_rest == 0)
-			this->_decode_siho_coded(Y_N + w * this->N * this->simd_inter_frame_level,
-			                         V_N + w * this->N * this->simd_inter_frame_level,
-			                         w * this->simd_inter_frame_level);
+			this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
+			                      V_N + w * this->N * this->simd_inter_frame_level,
+			                      w * this->simd_inter_frame_level);
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -191,7 +191,7 @@ public:
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N.begin());
 
-			this->_decode_siho_coded(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level);
+			this->_decode_siho_cw(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
 			std::copy(this->V_KN.begin(),
@@ -206,7 +206,7 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+	virtual void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}

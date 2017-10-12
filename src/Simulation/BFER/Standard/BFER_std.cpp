@@ -86,18 +86,20 @@ void BFER_std<B,R,Q>
 
 	if (this->params.err_track_enable)
 	{
+		using namespace module;
+
 		auto &source  = *this->source [tid];
 		auto &encoder = *this->codec  [tid]->get_encoder();
 		auto &channel = *this->channel[tid];
 
-		source["generate"].set_autoalloc(true);
-		auto src_data = (B*)(source["generate"]["U_K"].get_dataptr());
-		auto src_size = (source["generate"]["U_K"].get_databytes() / sizeof(B)) / this->params.src->n_frames;
+		source[src::tsk::generate].set_autoalloc(true);
+		auto src_data = (B*)(source[src::tsk::generate][src::sck::generate::U_K].get_dataptr());
+		auto src_size = (source[src::tsk::generate][src::sck::generate::U_K].get_databytes() / sizeof(B)) / this->params.src->n_frames;
 		this->dumper[tid]->register_data(src_data, src_size, "src", false, this->params.src->n_frames, {});
 
-		encoder["encode"].set_autoalloc(true);
-		auto enc_data = (B*)(encoder["encode"]["X_N"].get_dataptr());
-		auto enc_size = (encoder["encode"]["X_N"].get_databytes() / sizeof(B)) / this->params.src->n_frames;
+		encoder[enc::tsk::encode].set_autoalloc(true);
+		auto enc_data = (B*)(encoder[enc::tsk::encode][enc::sck::encode::X_N].get_dataptr());
+		auto enc_size = (encoder[enc::tsk::encode][enc::sck::encode::X_N].get_databytes() / sizeof(B)) / this->params.src->n_frames;
 		this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, this->params.src->n_frames,
 		                                 {(unsigned)this->params.cdc->enc->K});
 

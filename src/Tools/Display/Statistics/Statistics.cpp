@@ -20,29 +20,29 @@ Statistics
 void Statistics
 ::separation1(std::ostream &stream)
 {
-	stream << tools::format("# -------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
+	stream << "# " << tools::format("-------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
 }
 
 void Statistics
 ::separation2(std::ostream &stream)
 {
-	stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+	stream << "# " << tools::format("-------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
 }
 
 void Statistics
 ::show_header(std::ostream &stream)
 {
 	Statistics::separation1(stream);
-//	stream << tools::format("# -------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
-	stream << tools::format("#        Statistics for the given task       ||       Basic statistics       ||       Measured throughput      ||        Measured latency        ", tools::Style::BOLD) << std::endl;
-	stream << tools::format("#     ('*' = any, '-' = same as previous)    ||          on the task         ||   considering the last socket  ||   considering the last socket  ", tools::Style::BOLD) << std::endl;
-//	stream << tools::format("# -------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
+//	stream << "# " << tools::format("-------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
+	stream << "# " << tools::format("       Statistics for the given task       ||       Basic statistics       ||       Measured throughput      ||        Measured latency        ", tools::Style::BOLD) << std::endl;
+	stream << "# " << tools::format("    ('*' = any, '-' = same as previous)    ||          on the task         ||   considering the last socket  ||   considering the last socket  ", tools::Style::BOLD) << std::endl;
+//	stream << "# " << tools::format("-------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
 	Statistics::separation1(stream);
 	Statistics::separation2(stream);
-//	stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
-	stream << tools::format("#       MODULE |              TASK |   TIMER ||    CALLS |     TIME |   PERC ||  AVERAGE |  MINIMUM |  MAXIMUM ||  AVERAGE |  MINIMUM |  MAXIMUM ", tools::Style::BOLD) << std::endl;
-	stream << tools::format("#              |                   |         ||          |      (s) |    (%) ||   (Mb/s) |   (Mb/s) |   (Mb/s) ||     (us) |     (us) |     (us) ", tools::Style::BOLD) << std::endl;
-//	stream << tools::format("# -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+//	stream << "# " << tools::format("-------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+	stream << "# " << tools::format("      MODULE |              TASK |   TIMER ||    CALLS |     TIME |   PERC ||  AVERAGE |  MINIMUM |  MAXIMUM ||  AVERAGE |  MINIMUM |  MAXIMUM ", tools::Style::BOLD) << std::endl;
+	stream << "# " << tools::format("             |                   |         ||          |      (s) |    (%) ||   (Mb/s) |   (Mb/s) |   (Mb/s) ||     (us) |     (us) |     (us) ", tools::Style::BOLD) << std::endl;
+//	stream << "# " << tools::format("-------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
 	Statistics::separation2(stream);
 }
 
@@ -189,9 +189,9 @@ void Statistics
 	std::vector<const module::Task*> tasks;
 	for (auto *m : modules)
 		if (m != nullptr)
-			for (auto &t : m->tasks)
-				if (t.second->get_n_calls())
-					tasks.push_back(t.second);
+			for (auto *t : m->tasks)
+				if (t->get_n_calls())
+					tasks.push_back(t);
 
 	Statistics::show(tasks, ordered, stream);
 }
@@ -199,6 +199,10 @@ void Statistics
 void Statistics
 ::show(std::vector<const module::Task*> tasks, const bool ordered, std::ostream &stream)
 {
+	for (size_t t = 0; t < tasks.size(); t++)
+		if (tasks[t] == nullptr)
+			tasks.erase(tasks.begin()+t);
+
 	if (ordered)
 	{
 		std::sort(tasks.begin(), tasks.end(), [](const module::Task* t1, const module::Task* t2)
@@ -264,18 +268,19 @@ void Statistics
 			                      task_tot_duration, task_min_duration, task_max_duration, stream);
 
 			auto task_total_sec = ((float)task_tot_duration.count()) * 0.000000001f;
-			for (auto &tn : t->get_registered_timers())
-			{
-				auto timer_name         = tn;
-				auto timer_n_elmts      = task_n_elmts;
-				auto timer_n_calls      = t->get_registered_n_calls     (tn);
-				auto timer_tot_duration = t->get_registered_timers_total(tn);
-				auto timer_min_duration = t->get_registered_timers_min  (tn);
-				auto timer_max_duration = t->get_registered_timers_max  (tn);
 
-				Statistics::show_timer(task_total_sec, task_n_calls, timer_n_elmts,
-				                       timer_name, timer_n_calls, timer_tot_duration,
-				                       timer_min_duration, timer_max_duration, stream);
+			auto timers_name         = t->get_timers_name();
+			auto timers_n_elmts      = task_n_elmts;
+			auto timers_n_calls      = t->get_timers_n_calls();
+			auto timers_tot_duration = t->get_timers_total();
+			auto timers_min_duration = t->get_timers_min();
+			auto timers_max_duration = t->get_timers_max();
+
+			for (size_t i = 0; i < timers_name.size(); i++)
+			{
+				Statistics::show_timer(task_total_sec, task_n_calls, timers_n_elmts,
+				                       timers_name[i], timers_n_calls[i], timers_tot_duration[i],
+				                       timers_min_duration[i], timers_max_duration[i], stream);
 			}
 		}
 		Statistics::separation2(stream);
@@ -296,13 +301,16 @@ void Statistics
 	std::vector<std::vector<const module::Task*>> tasks;
 	for (auto &vm : modules)
 		if (vm.size() > 0 && vm[0] != nullptr)
-			for (auto &t : vm[0]->tasks)
+		{
+			auto &tasks0 = vm[0]->tasks;
+			for (size_t t = 0; t < tasks0.size(); t++)
 			{
 				std::vector<const module::Task*> tsk;
 				for (auto *m : vm)
-					tsk.push_back(m->tasks.find(t.first)->second);
+					tsk.push_back(m->tasks[t]);
 				tasks.push_back(tsk);
 			}
+		}
 
 	Statistics::show(tasks, ordered, stream);
 }
@@ -310,13 +318,21 @@ void Statistics
 void Statistics
 ::show(std::vector<std::vector<const module::Task*>> tasks, const bool ordered, std::ostream &stream)
 {
+	using namespace std::chrono;
+
+	if (tasks.size())
+		for (size_t t = 0; t < tasks[0].size(); t++)
+			if (tasks[0][t] == nullptr)
+				for (size_t i = 0; i < tasks.size(); i++)
+					tasks[i].erase(tasks[i].begin()+t);
+
 	if (ordered)
 	{
 		std::sort(tasks.begin(), tasks.end(), [](std::vector<const module::Task*> &t1,
 		                                         std::vector<const module::Task*> &t2)
 		{
-			auto total1 = std::chrono::nanoseconds(0);
-			auto total2 = std::chrono::nanoseconds(0);
+			auto total1 = nanoseconds(0);
+			auto total2 = nanoseconds(0);
 			for (auto *t : t1) total1 += t->get_duration_total();
 			for (auto *t : t2) total2 += t->get_duration_total();
 			return total1 > total2;
@@ -325,9 +341,9 @@ void Statistics
 
 	size_t ttask_n_elmts      = 0;
 	auto   ttask_n_calls      = 0;
-	auto   ttask_tot_duration = std::chrono::nanoseconds(0);
-	auto   ttask_min_duration = std::chrono::nanoseconds(0);
-	auto   ttask_max_duration = std::chrono::nanoseconds(0);
+	auto   ttask_tot_duration = nanoseconds(0);
+	auto   ttask_min_duration = nanoseconds(0);
+	auto   ttask_max_duration = nanoseconds(0);
 
 	size_t max_chars = 0;
 	for (auto &vt : tasks)
@@ -373,9 +389,9 @@ void Statistics
 			auto task_n_elmts      = vt[0]->sockets.back()->get_n_elmts();
 			auto task_name         = vt[0]->get_name();
 			auto task_n_calls      = 0;
-			auto task_tot_duration = std::chrono::nanoseconds(0);
+			auto task_tot_duration = nanoseconds(0);
 			auto task_min_duration = ttask_tot_duration;
-			auto task_max_duration = std::chrono::nanoseconds(0);
+			auto task_max_duration = nanoseconds(0);
 
 			for (auto *t : vt)
 			{
@@ -392,26 +408,27 @@ void Statistics
 			                      task_tot_duration, task_min_duration, task_max_duration, stream);
 
 			auto task_total_sec = ((float)task_tot_duration.count()) * 0.000000001f;
-			for (auto &tn : vt[0]->get_registered_timers())
-			{
-				auto timer_name         = tn;
-				auto timer_n_elmts      = task_n_elmts;
-				auto timer_n_calls      = 0;
-				auto timer_tot_duration = std::chrono::nanoseconds(0);
-				auto timer_min_duration = ttask_tot_duration;
-				auto timer_max_duration = std::chrono::nanoseconds(0);
 
+			auto timers_name         = vt[0]->get_timers_name();
+			auto timers_n_elmts      = task_n_elmts;
+			auto timers_n_calls      = std::vector<uint32_t>(timers_name.size(), 0);
+			auto timers_tot_duration = std::vector<nanoseconds>(timers_name.size(), nanoseconds(0));
+			auto timers_min_duration = std::vector<nanoseconds>(timers_name.size(), ttask_tot_duration);
+			auto timers_max_duration = std::vector<nanoseconds>(timers_name.size(), nanoseconds(0));
+
+			for (size_t tn = 0; tn < vt[0]->get_timers_name().size(); tn++)
+			{
 				for (auto *t : vt)
 				{
-					timer_n_calls      += t->get_registered_n_calls(tn);
-					timer_tot_duration += t->get_registered_timers_total(tn);
-					timer_min_duration  = std::min(task_min_duration, t->get_registered_timers_min(tn));
-					timer_max_duration  = std::max(task_max_duration, t->get_registered_timers_max(tn));
+					timers_n_calls     [tn] += t->get_timers_n_calls()[tn];
+					timers_tot_duration[tn] += t->get_timers_total()[tn];
+					timers_min_duration[tn]  = std::min(task_min_duration, t->get_timers_min()[tn]);
+					timers_max_duration[tn]  = std::max(task_max_duration, t->get_timers_max()[tn]);
 				}
 
-				Statistics::show_timer(task_total_sec, task_n_calls, timer_n_elmts,
-				                       timer_name, timer_n_calls, timer_tot_duration,
-				                       timer_min_duration, timer_max_duration, stream);
+				Statistics::show_timer(task_total_sec, task_n_calls, timers_n_elmts,
+				                       timers_name[tn], timers_n_calls[tn], timers_tot_duration[tn],
+				                       timers_min_duration[tn], timers_max_duration[tn], stream);
 			}
 		}
 		Statistics::separation2(stream);

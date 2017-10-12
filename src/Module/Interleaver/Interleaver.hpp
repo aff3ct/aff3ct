@@ -16,6 +16,20 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace itl
+	{
+		namespace tsk
+		{
+			enum list { interleave, deinterleave, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace interleave   { enum list { nat, itl, SIZE }; }
+			namespace deinterleave { enum list { itl, nat, SIZE }; }
+		}
+	}
+
 template <typename D = int32_t, typename T = uint32_t>
 class Interleaver : public Module
 {

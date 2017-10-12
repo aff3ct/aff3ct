@@ -48,7 +48,7 @@ void Decoder_NO<B,R>
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::_decode_siho_coded(const R *Y_K, B *V_K, const int frame_id)
+::_decode_siho_cw(const R *Y_K, B *V_K, const int frame_id)
 {
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide(Y_K, V_K, this->K);

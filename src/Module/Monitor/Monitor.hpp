@@ -23,6 +23,20 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace mnt
+	{
+		namespace tsk
+		{
+			enum list { check_errors, check_mutual_info, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace check_errors      { enum list { U,    V             , SIZE }; }
+			namespace check_mutual_info { enum list { bits, llrs_a, llrs_e, SIZE }; }
+		}
+	}
+
 /*!
  * \class Monitor
  *
@@ -67,6 +81,10 @@ public:
 		// Install a signal handler
 		std::signal(SIGINT, Monitor::signal_interrupt_handler);
 #endif
+
+		this->tasks_with_nullptr.resize(mnt::tsk::SIZE);
+		for (size_t t = 0; t < mnt::tsk::SIZE; t++)
+			this->tasks_with_nullptr[t] = nullptr;
 	}
 
 	/*!

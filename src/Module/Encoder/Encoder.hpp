@@ -20,6 +20,20 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace enc
+	{
+		namespace tsk
+		{
+			enum list { encode, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace encode { enum list { U_K, X_N, SIZE }; }
+		}
+	}
+
+
 /*!
  * \class Encoder
  *

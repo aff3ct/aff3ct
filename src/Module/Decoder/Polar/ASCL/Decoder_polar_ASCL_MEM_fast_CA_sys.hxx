@@ -95,7 +95,7 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
-::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_decod = std::chrono::steady_clock::now();
 	this->_decode(Y_N, V_N, frame_id);
@@ -103,9 +103,9 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 
 //	auto t_store = std::chrono::steady_clock::now();
 	if (this->L > 1)
-		Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::_store_coded(V_N);
+		Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::_store_cw(V_N);
 	else
-		sc_decoder._store_coded(V_N);
+		sc_decoder._store_cw(V_N);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	this->tasks["decode_siho_coded"]->update_timer("decode", d_decod);

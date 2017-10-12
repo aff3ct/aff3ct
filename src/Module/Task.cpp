@@ -282,7 +282,6 @@ Socket& Task::create_socket(const std::string name, const size_t n_elmts)
 	auto *s = new Socket(*this, name, typeid(T), n_elmts * sizeof(T), this->is_fast());
 
 	sockets.push_back(s);
-	sockets_map[name] = s;
 
 	return *s;
 }
@@ -292,7 +291,7 @@ Socket& Task::create_socket_in(const std::string name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
-	socket_type[s.get_name()] = Socket_type::IN;
+	socket_type.push_back(Socket_type::IN);
 	last_input_socket = &s;
 
 	return s;
@@ -303,7 +302,7 @@ Socket& Task::create_socket_in_out(const std::string name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
-	socket_type[s.get_name()] = Socket_type::IN_OUT;
+	socket_type.push_back(Socket_type::IN_OUT);
 	last_input_socket = &s;
 
 	return s;
@@ -314,7 +313,7 @@ Socket& Task::create_socket_out(const std::string name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
-	socket_type[s.get_name()] = Socket_type::OUT;
+	socket_type.push_back(Socket_type::OUT);
 
 	// memory allocation
 	if (is_autoalloc())
@@ -359,57 +358,50 @@ std::chrono::nanoseconds Task::get_duration_max() const
 	return this->duration_max;
 }
 
-const std::vector<std::string>& Task::get_registered_timers() const
+const std::vector<std::string>& Task::get_timers_name() const
 {
-	return this->registered_timers;
+	return this->timers_name;
 }
 
-uint32_t Task::get_registered_n_calls(const std::string key) const
+const std::vector<uint32_t>& Task::get_timers_n_calls() const
 {
-	return this->registered_n_calls.find(key)->second;
+	return this->timers_n_calls;
 }
 
-std::chrono::nanoseconds Task::get_registered_timers_total(const std::string key) const
+const std::vector<std::chrono::nanoseconds>& Task::get_timers_total() const
 {
-	return this->registered_timers_total.find(key)->second;
+	return this->timers_total;
 }
 
-std::chrono::nanoseconds Task::get_registered_timers_avg(const std::string key) const
+const std::vector<std::chrono::nanoseconds>& Task::get_timers_min() const
 {
-	return this->registered_timers_total.find(key)->second / this->n_calls;
+	return this->timers_min;
 }
 
-std::chrono::nanoseconds Task::get_registered_timers_min(const std::string key) const
+const std::vector<std::chrono::nanoseconds>& Task::get_timers_max() const
 {
-	return this->registered_timers_min.find(key)->second;
-}
-
-std::chrono::nanoseconds Task::get_registered_timers_max(const std::string key) const
-{
-	return this->registered_timers_max.find(key)->second;
+	return this->timers_max;
 }
 
 Socket_type Task::get_socket_type(const Socket &s) const
 {
-	const auto &it = this->socket_type.find(s.get_name());
-	if (it != socket_type.end())
-		return it->second;
-	else
-	{
-		std::stringstream message;
-		message << "The socket does not exist ('s.name' = " << s.name << ", 'task.name' = " << this->get_name()
-		        << ", 'module.name' = " << module.get_name() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
+	for (size_t i = 0; i < sockets.size(); i++)
+		if (sockets[i] == &s)
+			return socket_type[i];
+
+	std::stringstream message;
+	message << "The socket does not exist ('s.name' = " << s.name << ", 'task.name' = " << this->get_name()
+	        << ", 'module.name' = " << module.get_name() << ").";
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }
 
-void Task::register_timer(const std::string key)
+void Task::register_timer(const std::string name)
 {
-	this->registered_timers.push_back(key);
-	this->registered_n_calls     [key] = 0;
-	this->registered_timers_total[key] = std::chrono::nanoseconds(0);
-	this->registered_timers_max  [key] = std::chrono::nanoseconds(0);
-	this->registered_timers_min  [key] = std::chrono::nanoseconds(0);
+	this->timers_name   .push_back(name                       );
+	this->timers_n_calls.push_back(0                          );
+	this->timers_total  .push_back(std::chrono::nanoseconds(0));
+	this->timers_max    .push_back(std::chrono::nanoseconds(0));
+	this->timers_min    .push_back(std::chrono::nanoseconds(0));
 }
 
 void Task::reset_stats()
@@ -419,10 +411,10 @@ void Task::reset_stats()
 	this->duration_min   = std::chrono::nanoseconds(0);
 	this->duration_max   = std::chrono::nanoseconds(0);
 
-	for (auto &x : this->registered_n_calls     ) x.second =                          0;
-	for (auto &x : this->registered_timers_total) x.second = std::chrono::nanoseconds(0);
-	for (auto &x : this->registered_timers_min  ) x.second = std::chrono::nanoseconds(0);
-	for (auto &x : this->registered_timers_max  ) x.second = std::chrono::nanoseconds(0);
+	for (auto &x : this->timers_n_calls) x =                          0;
+	for (auto &x : this->timers_total  ) x = std::chrono::nanoseconds(0);
+	for (auto &x : this->timers_min    ) x = std::chrono::nanoseconds(0);
+	for (auto &x : this->timers_max    ) x = std::chrono::nanoseconds(0);
 }
 
 // ==================================================================================== explicit template instantiation

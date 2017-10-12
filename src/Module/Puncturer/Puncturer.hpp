@@ -20,6 +20,20 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace pct
+	{
+		namespace tsk
+		{
+			enum list { puncture, depuncture, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace puncture   { enum list { X_N1, X_N2, SIZE }; }
+			namespace depuncture { enum list { Y_N1, Y_N2, SIZE }; }
+		}
+	}
+
 /*!
  * \class Puncturer
  *

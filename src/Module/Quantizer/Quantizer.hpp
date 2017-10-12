@@ -19,6 +19,19 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace qnt
+	{
+		namespace tsk
+		{
+			enum list { process, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace process { enum list { Y_N1, Y_N2, SIZE }; }
+		}
+	}
+
 /*!
  * \class Quantizer
  *

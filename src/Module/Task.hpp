@@ -53,15 +53,14 @@ protected:
 	std::chrono::nanoseconds duration_min;
 	std::chrono::nanoseconds duration_max;
 
-	std::vector<std::string                          > registered_timers;
-	std::map   <std::string, uint32_t                > registered_n_calls;
-	std::map   <std::string, std::chrono::nanoseconds> registered_timers_total;
-	std::map   <std::string, std::chrono::nanoseconds> registered_timers_min;
-	std::map   <std::string, std::chrono::nanoseconds> registered_timers_max;
+	std::vector<std::string             > timers_name;
+	std::vector<uint32_t                > timers_n_calls;
+	std::vector<std::chrono::nanoseconds> timers_total;
+	std::vector<std::chrono::nanoseconds> timers_min;
+	std::vector<std::chrono::nanoseconds> timers_max;
 
 	Socket* last_input_socket;
-	std::map<std::string,Socket_type> socket_type;
-	std::map<std::string,Socket*    > sockets_map;
+	std::vector<Socket_type> socket_type;
 
 public:
 	std::vector<Socket*> sockets;
@@ -98,52 +97,41 @@ public:
 	inline const Module&      get_module     (               ) const { return this->module;      }
 	inline std::string        get_name       (               ) const { return this->name;        }
 	inline uint32_t           get_n_calls    (               ) const { return this->n_calls;     }
-	inline Socket_type        get_socket_type(const Socket &s) const;
+	       Socket_type        get_socket_type(const Socket &s) const;
 
 	// get stats
-	std::chrono::nanoseconds        get_duration_total         (                     ) const;
-	std::chrono::nanoseconds        get_duration_avg           (                     ) const;
-	std::chrono::nanoseconds        get_duration_min           (                     ) const;
-	std::chrono::nanoseconds        get_duration_max           (                     ) const;
-	const std::vector<std::string>& get_registered_timers      (                     ) const;
-	uint32_t                        get_registered_n_calls     (const std::string key) const;
-	std::chrono::nanoseconds        get_registered_timers_total(const std::string key) const;
-	std::chrono::nanoseconds        get_registered_timers_avg  (const std::string key) const;
-	std::chrono::nanoseconds        get_registered_timers_min  (const std::string key) const;
-	std::chrono::nanoseconds        get_registered_timers_max  (const std::string key) const;
+	std::chrono::nanoseconds                     get_duration_total() const;
+	std::chrono::nanoseconds                     get_duration_avg  () const;
+	std::chrono::nanoseconds                     get_duration_min  () const;
+	std::chrono::nanoseconds                     get_duration_max  () const;
+	const std::vector<std::string>             & get_timers_name   () const;
+	const std::vector<uint32_t>                & get_timers_n_calls() const;
+	const std::vector<std::chrono::nanoseconds>& get_timers_total  () const;
+	const std::vector<std::chrono::nanoseconds>& get_timers_min    () const;
+	const std::vector<std::chrono::nanoseconds>& get_timers_max    () const;
 
 	int exec();
 
-	inline Socket& operator[](const std::string name)
+	inline Socket& operator[](const int id)
 	{
-		const auto &it = this->sockets_map.find(name);
-		if (it != this->sockets_map.end())
-			return *it->second;
-		else
-		{
-			std::stringstream message;
-			message << "The socket does not exist ('socket.name' = " << name << ", 'task.name' = " << this->get_name()
-			        << ", 'module.name' = " << get_module_name()
-			        << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
+		return *this->sockets[id];
 	}
 
-	inline void update_timer(const std::string key, const std::chrono::nanoseconds &duration)
+	inline void update_timer(const int id, const std::chrono::nanoseconds &duration)
 	{
 		if (this->is_stats())
 		{
-			this->registered_n_calls[key]++;
-			this->registered_timers_total[key] += duration;
+			this->timers_n_calls[id]++;
+			this->timers_total[id] += duration;
 			if (this->n_calls)
 			{
-				this->registered_timers_max[key] = std::max(this->registered_timers_max[key], duration);
-				this->registered_timers_min[key] = std::min(this->registered_timers_min[key], duration);
+				this->timers_max[id] = std::max(this->timers_max[id], duration);
+				this->timers_min[id] = std::min(this->timers_min[id], duration);
 			}
 			else
 			{
-				this->registered_timers_max[key] = duration;
-				this->registered_timers_min[key] = duration;
+				this->timers_max[id] = duration;
+				this->timers_min[id] = duration;
 			}
 		}
 	}

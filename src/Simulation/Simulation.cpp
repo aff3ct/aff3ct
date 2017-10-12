@@ -24,23 +24,22 @@ void Simulation
 			if (mm != nullptr)
 				for (auto &t : mm->tasks)
 				{
-//					t.second->set_autoexec (true);
-					t.second->set_autoalloc(true);
+					t->set_autoalloc(true);
 
 					if (params.statistics)
-						t.second->set_stats(true);
+						t->set_stats(true);
 
 					// enable the debug mode in the modules
 					if (params.debug)
 					{
-						t.second->set_debug(true);
+						t->set_debug(true);
 						if (params.debug_limit)
-							t.second->set_debug_limit((uint32_t)params.debug_limit);
+							t->set_debug_limit((uint32_t)params.debug_limit);
 						if (params.debug_precision)
-							t.second->set_debug_precision((uint8_t)params.debug_precision);
+							t->set_debug_precision((uint8_t)params.debug_precision);
 					}
 
-					if (!t.second->is_stats() && !t.second->is_debug())
-						t.second->set_fast(true);
+					if (!t->is_stats() && !t->is_debug())
+						t->set_fast(true);
 				}
 }

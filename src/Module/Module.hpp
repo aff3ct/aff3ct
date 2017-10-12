@@ -40,9 +40,10 @@ protected:
 	int         n_frames;    /*!< Number of frames to process in this Module */
 	std::string name;        /*!< Name of the Module. */
 	std::string short_name;  /*!< Short name of the Module. */
+	std::vector<Task*> tasks_with_nullptr;
 
 public:
-	std::map<std::string, Task*> tasks;
+	std::vector<Task*> tasks;
 #ifdef SYSTEMC_MODULE
 	SC_Module_container sc;
 #endif
@@ -72,7 +73,7 @@ public:
 	 */
 	virtual ~Module()
 	{
-		for (auto t : tasks) delete t.second;
+		for (auto t : tasks) delete t;
 	}
 
 	/*!
@@ -105,25 +106,41 @@ public:
 		return this->short_name;
 	}
 
-	inline Task& operator[](const std::string name)
+	inline Task& operator[](const int id)
 	{
-		const auto &it = tasks.find(name);
-		if (it != tasks.end())
-			return *it->second;
-		else
-		{
-			std::stringstream message;
-			message << "'name' does not exist ('name' = " << name << ", 'module.name' = " << this->name << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+		return *tasks_with_nullptr[id];
 	}
 
 protected:
-	Task& create_task(const std::string name)
+	Task& create_task(const std::string name, const int id = -1)
 	{
 		bool autoalloc = false, autoexec = false, stats = false, fast = false, debug = false;
-		tasks[name] = new Task(*this, name, autoalloc, autoexec, stats, fast, debug);
-		return *tasks[name];
+		auto t = new Task(*this, name, autoalloc, autoexec, stats, fast, debug);
+		if (id < 0)
+		{
+			tasks.push_back(t);
+			tasks_with_nullptr.push_back(t);
+		}
+		else
+		{
+			if (tasks_with_nullptr.size() > (size_t)id && tasks_with_nullptr[id] == nullptr)
+			{
+				tasks.push_back(t);
+				tasks_with_nullptr[id] = t;
+
+			}else
+			{
+				delete t;
+
+				std::stringstream message;
+				message << "Impossible to create the task ('task.name' = " << name
+				        << ", 'task.id' = " << id
+				        << ", 'tasks.size()' = " << tasks.size()
+				        << ", 'module.name' = " << this->get_name() << ").";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+		}
+		return *t;
 	}
 
 	template <typename T>

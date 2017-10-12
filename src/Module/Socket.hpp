@@ -112,6 +112,11 @@ public:
 			return 0;
 	}
 
+	inline int operator()(Socket &s)
+	{
+		return bind(s);
+	}
+
 	template <typename T, class A = std::allocator<T>>
 	inline int bind(std::vector<T,A> &vector)
 	{
@@ -134,6 +139,12 @@ public:
 		}
 
 		return bind(vector.data());
+	}
+
+	template <typename T, class A = std::allocator<T>>
+	inline int operator()(std::vector<T,A> &vector)
+	{
+		return bind(vector);
 	}
 
 	template <typename T>
@@ -160,6 +171,12 @@ public:
 		return bind(static_cast<void*>(array));
 	}
 
+	template <typename T>
+	inline int operator()(T *array)
+	{
+		return bind(array);
+	}
+
 	inline int bind(void* dataptr)
 	{
 		if (!is_fast())
@@ -175,6 +192,11 @@ public:
 		this->dataptr = dataptr;
 
 		return 0;
+	}
+
+	inline int operator()(void* dataptr)
+	{
+		return bind(dataptr);
 	}
 };
 }

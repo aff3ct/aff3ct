@@ -14,10 +14,10 @@ Coset_real<B,D>::~Coset_real()
 }
 
 template <typename B, typename D>
-void Coset_real<B,D>::apply(const B *ref, const D *in_data, D *out_data)
+void Coset_real<B,D>::apply(const B *ref, const D *in, D *out)
 {
 	for (auto i = 0; i < this->size * this->n_frames; i++)
-		out_data[i] = ref[i] ? -in_data[i] : in_data[i];
+		out[i] = ref[i] ? -in[i] : in[i];
 }
 
 // ==================================================================================== explicit template instantiation

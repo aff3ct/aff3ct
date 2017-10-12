@@ -41,8 +41,8 @@ public:
 			std::stringstream message;
 			message << "The input socket does not exist ("
 			        << "'key' = " << key
-			        << ", 'task.name' = " << task.get_name() << ").";
-//			        << ", 'task.module.name' = " << task.get_module().get_name() << ").";
+			        << ", 'task.name' = " << task.get_name()
+			        << ", 'task.module.name' = " << task.get_module_name() << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
@@ -70,8 +70,8 @@ public:
 			std::stringstream message;
 			message << "The output socket does not exist ("
 			        << "'key' = " << key
-			        << ", 'task.name' = " << task.get_name() << ").";
-//			        << ", 'task.module.name' = " << task.get_module().get_name() << ").";
+			        << ", 'task.name' = " << task.get_name()
+			        << ", 'task.module.name' = " << task.get_module_name() << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}

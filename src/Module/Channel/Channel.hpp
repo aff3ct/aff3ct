@@ -21,6 +21,20 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace chn
+	{
+		namespace tsk
+		{
+			enum list { add_noise, add_noise_wg, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace add_noise    { enum list { X_N, Y_N     , SIZE }; }
+			namespace add_noise_wg { enum list { X_N, H_N, Y_N, SIZE }; }
+		}
+	}
+
 /*!
  * \class Channel
  *

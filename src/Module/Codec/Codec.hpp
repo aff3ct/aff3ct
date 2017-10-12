@@ -19,6 +19,22 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace cdc
+	{
+		namespace tsk
+		{
+			enum list { extract_sys_llr, extract_sys_bit, extract_sys_par, add_sys_ext, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace extract_sys_llr { enum list { Y_N, Y_K     , SIZE }; }
+			namespace extract_sys_bit { enum list { Y_N, V_K     , SIZE }; }
+			namespace extract_sys_par { enum list { Y_N, sys, par, SIZE }; }
+			namespace add_sys_ext     { enum list { ext, Y_N     , SIZE }; }
+		}
+	}
+
 template <typename B = int, typename Q = float>
 class Codec : public Module
 {

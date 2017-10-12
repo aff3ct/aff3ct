@@ -15,7 +15,7 @@ Monitor_EXIT<B,R>
   I_A_sum((R)0),
   n_analyzed_frames(0)
 {
-	auto &p = this->create_task("check_mutual_info");
+	auto &p = this->create_task("check_mutual_info", mnt::tsk::check_mutual_info);
 	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->size * this->n_frames);
 	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->size * this->n_frames);
 	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", this->size * this->n_frames);
