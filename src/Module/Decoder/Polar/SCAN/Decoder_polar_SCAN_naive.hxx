@@ -169,9 +169,9 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	this->_store(V_K);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("load",   d_load);
-//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("decode", d_decod);
-//	Decoder_SIHO<B,R>::tasks["decode_siho"]->update_timer("store",  d_store);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 }
 
 template <typename B, typename R,
@@ -191,9 +191,9 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	this->_store(V_N, true);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-//	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("load",   d_load);
-//	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("decode", d_decod);
-//	Decoder_SIHO<B,R>::tasks["decode_siho_coded"]->update_timer("store",  d_store);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
 template <typename B, typename R,

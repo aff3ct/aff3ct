@@ -107,7 +107,7 @@ void EXIT<B,R>
 {
 	// allocate and build all the communication chain to generate EXIT chart
 	this->build_communication_chain();
-//	this->sockets_binding();
+	this->sockets_binding();
 
 	// for each channel SNR to be simulated	
 	for (ebn0 = params.snr_min; ebn0 <= params.snr_max; ebn0 += params.snr_step)
@@ -157,7 +157,6 @@ void EXIT<B,R>
 			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
 				this->terminal->start_temp_report(params.ter->frequency);
 
-			this->sockets_binding();
 			this->simulation_loop();
 
 			if (!params.ter->disabled)

@@ -126,9 +126,9 @@ void Decoder_RA<B, R>
 	tools::hard_decide(U.data(), V_K, this->K);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-//	this->tasks["decode_siho"]->update_timer("load",   d_load);
-//	this->tasks["decode_siho"]->update_timer("decode", d_decod);
-//	this->tasks["decode_siho"]->update_timer("store",  d_store);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 }
 
 template <typename B, typename R>

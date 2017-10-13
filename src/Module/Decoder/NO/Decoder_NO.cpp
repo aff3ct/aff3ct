@@ -43,7 +43,7 @@ void Decoder_NO<B,R>
 	tools::hard_decide(Y_K, V_K, this->K);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-//	this->tasks["decode_siho"]->update_timer("total", d_store);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store, d_store);
 }
 
 template <typename B, typename R>
@@ -54,7 +54,7 @@ void Decoder_NO<B,R>
 	tools::hard_decide(Y_K, V_K, this->K);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-//	this->tasks["decode_siho_coded"]->update_timer("store", d_store);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store, d_store);
 }
 
 // ==================================================================================== explicit template instantiation 
