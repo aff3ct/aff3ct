@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Tools/Math/Galois.hpp"
+#include "Tools/Code/BCH/BCH_Polynomial_Generator.hpp"
 
 #include "../Decoder_SIHO_HIHO.hpp"
 
@@ -34,7 +34,7 @@ protected:
 	std::vector<B> YH_N;       // hard decision input vector
 
 public:
-	Decoder_BCH(const int& K, const int& N, const tools::Galois &GF, const int n_frames = 1,
+	Decoder_BCH(const int& K, const int& N, const tools::BCH_Polynomial_Generator &GF, const int n_frames = 1,
 	            const std::string name = "Decoder_BCH");
 	virtual ~Decoder_BCH();
 

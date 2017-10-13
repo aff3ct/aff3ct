@@ -1,7 +1,7 @@
 #ifndef CODEC_BCH_HPP_
 #define CODEC_BCH_HPP_
 
-#include "Tools/Math/Galois.hpp"
+#include "Tools/Code/BCH/BCH_Polynomial_Generator.hpp"
 
 #include "Factory/Module/Code/BCH/Encoder_BCH.hpp"
 #include "Factory/Module/Code/BCH/Decoder_BCH.hpp"
@@ -18,7 +18,7 @@ class Codec_BCH : public Codec<B,Q>
 protected:
 	const factory::Decoder_BCH::parameters& dec_par;
 
-	const tools::Galois GF;
+	const tools::BCH_Polynomial_Generator GF_poly;
 
 public:
 	Codec_BCH(const factory::Encoder    ::parameters &enc_params,

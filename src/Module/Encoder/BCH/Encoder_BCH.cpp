@@ -1,5 +1,6 @@
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 #include "Encoder_BCH.hpp"
 
@@ -8,8 +9,22 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_BCH<B>
-::Encoder_BCH(const int& K, const int& N, const tools::Galois &GF, const int n_frames, const std::string name)
- : Encoder<B>(K, N, n_frames, name), g(GF.get_g()), bb(N - K)
+::Encoder_BCH(const int& K, const int& N, const tools::BCH_Polynomial_Generator& GF_poly, const int n_frames,
+              const std::string name)
+ : Encoder<B>(K, N, n_frames, name), g(GF_poly.get_g()), bb(N - K)
+{
+	if ((this->N - this->K) != GF_poly.get_n_rdncy())
+	{
+		std::stringstream message;
+		message << "'N - K' is different than 'n_rdncy' ('K' = " << K << ", 'N' = " << N << ", 'n_rdncy' = "
+		        << GF_poly.get_n_rdncy() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+template <typename B>
+Encoder_BCH<B>
+::~Encoder_BCH()
 {
 }
 

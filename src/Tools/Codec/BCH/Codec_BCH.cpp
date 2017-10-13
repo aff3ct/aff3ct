@@ -8,9 +8,9 @@ Codec_BCH<B,Q>
 ::Codec_BCH(const factory::Encoder    ::parameters &enc_params,
             const factory::Decoder_BCH::parameters &dec_params)
 : Codec<B,Q>(enc_params, dec_params), dec_par(dec_params),
-  GF(dec_params.K, dec_params.N_cw, dec_params.t)
+  GF_poly(dec_params.K, dec_params.N_cw, dec_params.t)
 {
-	// assertion are made in the Galois Field (GF)
+	// assertion are made in the Galois Field and BCH_Polynomial_Generator (GF_poly)
 }
 
 template <typename B, typename Q>
@@ -23,17 +23,17 @@ template <typename B, typename Q>
 module::Encoder<B>* Codec_BCH<B,Q>
 ::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
-	return factory::Encoder_BCH::build<B>(this->enc_params, GF);
+	return factory::Encoder_BCH::build<B>(this->enc_params, GF_poly);
 }
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Codec_BCH<B,Q>
 ::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
-	return factory::Decoder_BCH::build<B,Q>(dec_par, GF);
+	return factory::Decoder_BCH::build<B,Q>(dec_par, GF_poly);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::tools::Codec_BCH<B_8,Q_8>;

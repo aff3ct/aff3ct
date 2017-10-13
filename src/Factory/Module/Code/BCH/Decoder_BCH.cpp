@@ -13,11 +13,11 @@ const std::string aff3ct::factory::Decoder_BCH::prefix = "dec";
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_BCH
-::build(const parameters &params, const tools::Galois &GF)
+::build(const parameters &params, const tools::BCH_Polynomial_Generator &GF_poly)
 {
 	if (params.type == "ALGEBRAIC")
 	{
-		if (params.implem == "STD") return new module::Decoder_BCH<B,Q>(params.K, params.N_cw, GF, params.n_frames);
+		if (params.implem == "STD") return new module::Decoder_BCH<B,Q>(params.K, params.N_cw, GF_poly, params.n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -67,12 +67,12 @@ void Decoder_BCH
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_BCH::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::Galois&);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_BCH::build<B_16,Q_16>(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::Galois&);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_BCH::build<B_32,Q_32>(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::Galois&);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_BCH::build<B_64,Q_64>(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::Galois&);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_BCH::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::BCH_Polynomial_Generator&);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_BCH::build<B_16,Q_16>(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::BCH_Polynomial_Generator&);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_BCH::build<B_32,Q_32>(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::BCH_Polynomial_Generator&);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_BCH::build<B_64,Q_64>(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::BCH_Polynomial_Generator&);
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_BCH::build<B,Q>(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::Galois&);
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_BCH::build<B,Q>(const aff3ct::factory::Decoder_BCH::parameters&, const aff3ct::tools::BCH_Polynomial_Generator&);
 #endif
 // ==================================================================================== explicit template instantiation
 

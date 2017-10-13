@@ -6,7 +6,7 @@
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
-#include "Tools/Math/Galois.hpp"
+#include "Tools/Code/BCH/BCH_Polynomial_Generator.hpp"
 
 #include "../Decoder.hpp"
 
@@ -23,12 +23,12 @@ struct Decoder_BCH : public Decoder
 	{
 		virtual ~parameters() {}
 
-		int t = 5; // correction power of th BCH
-		int m;     // Gallois field order
+		int t = 5; // correction power of the BCH
+		int m;     // Galois field order
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::Galois &GF);
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::BCH_Polynomial_Generator &GF_poly);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);

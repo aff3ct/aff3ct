@@ -10,9 +10,8 @@
 using namespace aff3ct::tools;
 
 Galois
-::Galois(const int& K, const int& N, const int& t)
- : K(K), N(N), m((int)std::ceil(std::log2(N))), t(t), d(2 * t + 1), alpha_to(N +1), index_of(N +1),
-   p(m +1, 0), g(N - K + 1)
+::Galois(const int& K, const int& N)
+ : K(K), N(N), m((int)std::ceil(std::log2(N))), alpha_to(N +1), index_of(N +1), p(m +1, 0)
 {
 	if (K <= 0)
 	{
@@ -49,6 +48,13 @@ Galois
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (m <= 1)
+	{
+		std::stringstream message;
+		message << "'m' has to be strictly greater than 1 ('m' = " << m << ", 'N' = " << N << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != ((1 << m) -1))
 	{
 		std::stringstream message;
@@ -58,7 +64,6 @@ Galois
 
 	Select_Polynomial();
 	Generate_GF();
-	Compute_BCH_Generator_Polynomial();
 }
 
 Galois
@@ -84,18 +89,6 @@ int Galois
 	return m;
 }
 
-int Galois
-::get_t() const
-{
-	return t;
-}
-
-int Galois
-::get_d() const
-{
-	return d;
-}
-
 const std::vector<int>& Galois
 ::get_alpha_to() const
 {
@@ -112,12 +105,6 @@ const std::vector<int>& Galois
 ::get_p() const
 {
 	return p;
-}
-
-const std::vector<int>& Galois
-::get_g() const
-{
-	return g;
 }
 
 void Galois
@@ -172,106 +159,4 @@ void Galois
 		index_of[idx] = i;
 	}
 	index_of[0] = -1;
-}
-
-void Galois
-::Compute_BCH_Generator_Polynomial()
-{
-	int ii, jj, ll, kaux;
-	int test, aux, nocycles, root, noterms, rdncy;
-	int cycle[1024][21], size[1024], min[1024], zeros[1024];
-
-	/* Generate cycle sets modulo n, n = 2**m - 1 */
-	cycle[0][0] = 0;
-	size[0] = 1;
-	cycle[1][0] = 1;
-	size[1] = 1;
-	jj = 1; /* cycle set index */
-	do
-	{
-		/* Generate the jj-th cycle set */
-		ii = 0;
-		do
-		{
-			ii++;
-			cycle[jj][ii] = (cycle[jj][ii - 1] * 2) % N;
-			size[jj]++;
-			aux = (cycle[jj][ii] * 2) % N;
-		}
-		while (aux != cycle[jj][0]);
-		/* Next cycle set representative */
-		ll = 0;
-		do
-		{
-			ll++;
-			test = 0;
-			for (ii = 1; ((ii <= jj) && (!test)); ii++)
-				/* Examine previous cycle sets */
-				for (kaux = 0; ((kaux < size[ii]) && (!test)); kaux++)
-					if (ll == cycle[ii][kaux])
-						test = 1;
-		}
-		while ((test) && (ll < (N - 1)));
-		if (!(test))
-		{
-			jj++; /* next cycle set index */
-			cycle[jj][0] = ll;
-			size[jj] = 1;
-		}
-	}
-	while (ll < (N - 1));
-	nocycles = jj; /* number of cycle sets modulo n */
-
-	//d = 2 * t + 1;
-
-	/* Search for roots 1, 2, ..., d-1 in cycle sets */
-	kaux = 0;
-	rdncy = 0;
-	for (ii = 1; ii <= nocycles; ii++)
-	{
-		min[kaux] = 0;
-		test = 0;
-		for (jj = 0; ((jj < size[ii]) && (!test)); jj++)
-			for (root = 1; ((root < d) && (!test)); root++)
-				if (root == cycle[ii][jj])
-				{
-					test = 1;
-					min[kaux] = ii;
-				}
-		if (min[kaux])
-		{
-			rdncy += size[min[kaux]];
-			kaux++;
-		}
-	}
-	noterms = kaux;
-	kaux = 1;
-	for (ii = 0; ii < noterms; ii++)
-		for (jj = 0; jj < size[min[ii]]; jj++)
-		{
-			zeros[kaux] = cycle[min[ii]][jj];
-			kaux++;
-		}
-
-	if (K > N - rdncy)
-	{
-		std::stringstream message;
-		message << "'K' seems to be too big for this correction power 't' ('K' = " << K << ", 't' = " << t
-		        << ", 'N' = " << N << ", 'rdncy' = " << rdncy << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	/* Compute the generator polynomial */
-	g[0] = alpha_to[zeros[1]];
-	g[1] = 1; /* g(x) = (X + zeros[1]) initially */
-	for (ii = 2; ii <= rdncy; ii++)
-	{
-		g[ii] = 1;
-		for (jj = ii - 1; jj > 0; jj--)
-			if (g[jj] != 0)
-				g[jj] = g[jj - 1] ^ alpha_to[(index_of[g[jj]] + zeros[ii]) % N];
-			else
-				g[jj] = g[jj - 1];
-		g[0] = alpha_to[(index_of[g[0]] + zeros[ii]) % N];
-	}
 }
