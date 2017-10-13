@@ -33,7 +33,6 @@ public:
 
 protected:
 	void create_sc_modules();
-	void erase_sc_modules();
 
 	virtual void __build_communication_chain(const int tid = 0);
 	virtual void release_objects();

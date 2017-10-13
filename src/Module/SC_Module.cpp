@@ -246,8 +246,11 @@ void SC_Module_container::create_module(const int id)
 		fill(sc_modules.begin(), sc_modules.end(), nullptr);
 	}
 
-	if ((size_t)id < sc_modules.size() && sc_modules[id] == nullptr)
+	if ((size_t)id < sc_modules.size())
 	{
+		if (sc_modules[id] != nullptr)
+			erase_module(id);
+
 		sc_modules[id] = new SC_Module(module[id], (module.get_name() + "::" + module[id].get_name()).c_str());
 	}
 	else

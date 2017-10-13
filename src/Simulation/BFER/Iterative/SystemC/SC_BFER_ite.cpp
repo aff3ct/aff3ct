@@ -100,47 +100,6 @@ void SC_BFER_ite<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void SC_BFER_ite<B,R,Q>
-::erase_sc_modules()
-{
-	using namespace module;
-	const auto tid = 0;
-
-	// create the sc_module inside the objects of the communication chain
-	this->source         [tid]               ->sc.erase_module(src::tsk::generate  );
-	this->crc            [tid]               ->sc.erase_module(crc::tsk::build     );
-	this->codec          [tid]->get_encoder()->sc.erase_module(enc::tsk::encode    );
-	this->interleaver_bit[tid]               ->sc.erase_module(itl::tsk::interleave);
-	this->modem          [tid]               ->sc.erase_module(mdm::tsk::modulate  );
-	this->modem          [tid]               ->sc.erase_module(mdm::tsk::filter    );
-	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-	{
-		this->channel[tid]->sc.erase_module(chn::tsk::add_noise_wg  );
-		this->modem  [tid]->sc.erase_module(mdm::tsk::demodulate_wg );
-		this->modem  [tid]->sc.erase_module(mdm::tsk::tdemodulate_wg);
-	}
-	else
-	{
-		this->channel[tid]->sc.erase_module(chn::tsk::add_noise  );
-		this->modem  [tid]->sc.erase_module(mdm::tsk::demodulate );
-		this->modem  [tid]->sc.erase_module(mdm::tsk::tdemodulate);
-	}
-	this->interleaver_llr[tid]                    ->sc.erase_module(itl::tsk::interleave  );
-	this->quantizer      [tid]                    ->sc.erase_module(qnt::tsk::process     );
-	this->interleaver_llr[tid]                    ->sc.erase_module(itl::tsk::deinterleave);
-	this->codec          [tid]->get_decoder_siho()->sc.erase_module(dec::tsk::decode_siho );
-	this->codec          [tid]->get_decoder_siso()->sc.erase_module(dec::tsk::decode_siso );
-	this->monitor        [tid]                    ->sc.erase_module(mnt::tsk::check_errors);
-	if (this->params.coset)
-	{
-		this->coset_real[tid]->sc.erase_module(cst::tsk::apply);
-		this->coset_real_i   ->sc.erase_module(cst::tsk::apply);
-		this->coset_bit [tid]->sc.erase_module(cst::tsk::apply);
-	}
-	this->crc[tid]->sc.erase_module(crc::tsk::extract);
-}
-
-template <typename B, typename R, typename Q>
-void SC_BFER_ite<B,R,Q>
 ::release_objects()
 {
 	if (coset_real_i != nullptr) { delete coset_real_i; coset_real_i = nullptr; }
@@ -191,8 +150,6 @@ void SC_BFER_ite<B,R,Q>
 	delete this->router;    this->router    = nullptr;
 	delete this->funnel;    this->funnel    = nullptr;
 	delete this->predicate; this->predicate = nullptr;
-
-	this->erase_sc_modules();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STD! /!\ //
