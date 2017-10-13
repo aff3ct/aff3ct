@@ -11,8 +11,10 @@ using namespace aff3ct::module;
 SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 : sc_module(sc_name),
   task(task),
-  s_in (sockets_in, task),
-  s_out(sockets_out, task)
+  indirect_sockets_in (task.sockets.size()),
+  indirect_sockets_out(task.sockets.size()),
+  s_in (sockets_in,  task, indirect_sockets_in),
+  s_out(sockets_out, task, indirect_sockets_out)
 {
 	task.set_autoexec (false);
 	task.set_autoalloc(true );
@@ -25,50 +27,62 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 			break;
 		}
 
-	for (auto *s : task.sockets)
+	for (size_t i = 0; i < task.sockets.size(); i++)
 	{
+		auto *s = task.sockets[i];
 		auto name = s->get_name();
+
+		const auto id_in  = (int)sockets_in.size();
+		const auto id_out = (int)sockets_out.size();
 		switch (task.get_socket_type(*s))
 		{
 		case IN:
-			sockets_in[name] = new tlm_utils::simple_target_socket<SC_Module>(name.c_str());
+			indirect_sockets_in[i] = id_in;
+			indirect_sockets_in_rev.push_back(i);
+			sockets_in.push_back(new tlm_utils::simple_target_socket<SC_Module>(name.c_str()));
 			ptr_input_sockets.push_back(s);
 			switch (ptr_input_sockets.size())
 			{
-				case 1: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport1); break;
-				case 2: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport2); break;
-				case 3: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport3); break;
-				case 4: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport4); break;
-				case 5: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport5); break;
-				case 6: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport6); break;
-				case 7: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport7); break;
-				case 8: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport8); break;
+				case 1: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport1); break;
+				case 2: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport2); break;
+				case 3: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport3); break;
+				case 4: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport4); break;
+				case 5: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport5); break;
+				case 6: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport6); break;
+				case 7: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport7); break;
+				case 8: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport8); break;
 				default: throw tools::runtime_error(__FILE__, __LINE__, __func__, "This should never happen."); break;
 			}
 			break;
 
 		case OUT:
-			sockets_out[name] = new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str());
+			indirect_sockets_out[i] = id_out;
+			indirect_sockets_out_rev.push_back(i);
+			sockets_out.push_back(new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str()));
 			if (!is_inputs)
 				SC_THREAD(start_sc_thread);
 			break;
 
 		case IN_OUT:
-			sockets_in[name] = new tlm_utils::simple_target_socket<SC_Module>(name.c_str());
+			indirect_sockets_in[i] = id_in;
+			indirect_sockets_in_rev.push_back(i);
+			sockets_in.push_back(new tlm_utils::simple_target_socket<SC_Module>(name.c_str()));
 			ptr_input_sockets.push_back(s);
 			switch (ptr_input_sockets.size())
 			{
-				case 1: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport1); break;
-				case 2: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport2); break;
-				case 3: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport3); break;
-				case 4: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport4); break;
-				case 5: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport5); break;
-				case 6: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport6); break;
-				case 7: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport7); break;
-				case 8: sockets_in[name]->register_b_transport(this, &SC_Module::b_transport8); break;
+				case 1: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport1); break;
+				case 2: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport2); break;
+				case 3: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport3); break;
+				case 4: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport4); break;
+				case 5: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport5); break;
+				case 6: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport6); break;
+				case 7: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport7); break;
+				case 8: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport8); break;
 				default: throw tools::runtime_error(__FILE__, __LINE__, __func__, "This should never happen."); break;
 			}
-			sockets_out[name] = new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str());
+			indirect_sockets_out[i] = id_out;
+			indirect_sockets_out_rev.push_back(i);
+			sockets_out.push_back(new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str()));
 			break;
 
 		default:
@@ -80,8 +94,8 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 
 SC_Module::~SC_Module()
 {
-	for (auto s : sockets_in ) delete s.second;
-	for (auto s : sockets_out) delete s.second;
+	for (auto *s : sockets_in ) delete s;
+	for (auto *s : sockets_out) delete s;
 }
 
 void SC_Module::b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t, Socket &socket)
@@ -114,18 +128,17 @@ void SC_Module::b_transport_and_exec(tlm::tlm_generic_payload& trans, sc_core::s
 
 	task.exec();
 
-	for (auto &s : sockets_out)
+	for (size_t i = 0; i < sockets_out.size(); i++)
 	{
-		auto name = tools::string_split(s.second->name(), '.')[1];
-		auto &ts = task[name];
+		auto &s = *sockets_out[i];
+		auto &ts = task[indirect_sockets_out_rev[i]];
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((uint8_t*)ts.get_dataptr());
 		payload.set_data_length(ts.get_databytes());
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		auto &ss = *s.second;
-		ss->b_transport(payload, zero_time);
+		s->b_transport(payload, zero_time);
 	}
 }
 
@@ -195,18 +208,17 @@ void SC_Module::start_sc_thread()
 
 		task.exec();
 
-		for (auto &s : sockets_out)
+		for (size_t i = 0; i < sockets_out.size(); i++)
 		{
-			auto name = tools::string_split(s.second->name(), '.')[1];
-			auto &ts = task[name];
+			auto &s = *sockets_out[i];
+			auto &ts = task[indirect_sockets_out_rev[i]];
 
 			tlm::tlm_generic_payload payload;
 			payload.set_data_ptr((uint8_t*)ts.get_dataptr());
 			payload.set_data_length(ts.get_databytes());
 
 			sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-			auto &ss = *s.second;
-			ss->b_transport(payload, zero_time);
+			s->b_transport(payload, zero_time);
 		}
 
 		// required to give the hand to the SystemC scheduler (yield)
@@ -215,55 +227,48 @@ void SC_Module::start_sc_thread()
 }
 
 SC_Module_container::SC_Module_container(Module &module)
-: module(module)
+: module(module), sc_modules()
 {
 }
 
 SC_Module_container::~SC_Module_container()
 {
-	for (auto m : sc_modules) delete m.second;
+	for (auto *m : sc_modules)
+		if (m != nullptr)
+			delete m;
 }
 
-void SC_Module_container::create_module(const std::string name)
+void SC_Module_container::create_module(const int id)
 {
-	if (module.tasks.find(name) != module.tasks.end())
+	if (module.tasks_with_nullptr.size() != sc_modules.size())
 	{
-		sc_modules[name] = new SC_Module(*module.tasks[name], (module.get_name() + "::" +
-		                                                       module.tasks[name]->get_name()).c_str());
+		sc_modules.resize(module.tasks_with_nullptr.size());
+		fill(sc_modules.begin(), sc_modules.end(), nullptr);
+	}
+
+	if ((size_t)id < sc_modules.size() && sc_modules[id] == nullptr)
+	{
+		sc_modules[id] = new SC_Module(module[id], (module.get_name() + "::" + module[id].get_name()).c_str());
 	}
 	else
 	{
 		std::stringstream message;
-		message << "'name' does not exist ('name' = " << name << ", 'module.name' = " << module.get_name() << ").";
+		message << "'id' does not exist ('id' = " << id << ", 'module.name' = " << module.get_name() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
-void SC_Module_container::erase_module(const std::string name)
+void SC_Module_container::erase_module(const int id)
 {
-	if (sc_modules.find(name) != sc_modules.end())
+	if ((size_t)id < sc_modules.size() && sc_modules[id] != nullptr)
 	{
-		delete sc_modules[name]; sc_modules[name] = nullptr;
-		sc_modules.erase(sc_modules.find(name));
+		delete sc_modules[id];
+		sc_modules[id] = nullptr;
 	}
 	else
 	{
 		std::stringstream message;
-		message << "'name' does not exist ('name' = " << name << ", 'module.name' = " << module.get_name() << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-}
-
-SC_Module& SC_Module_container::operator[](const std::string name)
-{
-	if (sc_modules.find(name) != sc_modules.end())
-	{
-		return *sc_modules[name];
-	}
-	else
-	{
-		std::stringstream message;
-		message << "'name' does not exist ('name' = " << name << ", 'module.name' = " << module.get_name() << ").";
+		message << "'id' does not exist ('id' = " << id << ", 'module.name' = " << module.get_name() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }

@@ -61,80 +61,82 @@ template <typename B, typename R, typename Q>
 void SC_BFER_ite<B,R,Q>
 ::create_sc_modules()
 {
+	using namespace module;
 	const auto tid = 0;
 
 	// create the sc_module inside the objects of the communication chain
-	this->source         [tid]               ->sc.create_module("generate"  );
-	this->crc            [tid]               ->sc.create_module("build"     );
-	this->codec          [tid]->get_encoder()->sc.create_module("encode"    );
-	this->interleaver_bit[tid]               ->sc.create_module("interleave");
-	this->modem          [tid]               ->sc.create_module("modulate"  );
-	this->modem          [tid]               ->sc.create_module("filter"    );
+	this->source         [tid]               ->sc.create_module(src::tsk::generate  );
+	this->crc            [tid]               ->sc.create_module(crc::tsk::build     );
+	this->codec          [tid]->get_encoder()->sc.create_module(enc::tsk::encode    );
+	this->interleaver_bit[tid]               ->sc.create_module(itl::tsk::interleave);
+	this->modem          [tid]               ->sc.create_module(mdm::tsk::modulate  );
+	this->modem          [tid]               ->sc.create_module(mdm::tsk::filter    );
 	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		this->channel[tid]->sc.create_module("add_noise_wg"  );
-		this->modem  [tid]->sc.create_module("demodulate_wg" );
-		this->modem  [tid]->sc.create_module("tdemodulate_wg");
+		this->channel[tid]->sc.create_module(chn::tsk::add_noise_wg  );
+		this->modem  [tid]->sc.create_module(mdm::tsk::demodulate_wg );
+		this->modem  [tid]->sc.create_module(mdm::tsk::tdemodulate_wg);
 	}
 	else
 	{
-		this->channel[tid]->sc.create_module("add_noise"  );
-		this->modem  [tid]->sc.create_module("demodulate" );
-		this->modem  [tid]->sc.create_module("tdemodulate");
+		this->channel[tid]->sc.create_module(chn::tsk::add_noise  );
+		this->modem  [tid]->sc.create_module(mdm::tsk::demodulate );
+		this->modem  [tid]->sc.create_module(mdm::tsk::tdemodulate);
 	}
-	this->interleaver_llr[tid]                    ->sc.create_module("interleave"  );
-	this->quantizer      [tid]                    ->sc.create_module("process"     );
-	this->interleaver_llr[tid]                    ->sc.create_module("deinterleave");
-	this->codec          [tid]->get_decoder_siho()->sc.create_module("decode_siho" );
-	this->codec          [tid]->get_decoder_siso()->sc.create_module("decode_siso" );
-	this->monitor        [tid]                    ->sc.create_module("check_errors");
+	this->interleaver_llr[tid]                    ->sc.create_module(itl::tsk::interleave  );
+	this->quantizer      [tid]                    ->sc.create_module(qnt::tsk::process     );
+	this->interleaver_llr[tid]                    ->sc.create_module(itl::tsk::deinterleave);
+	this->codec          [tid]->get_decoder_siho()->sc.create_module(dec::tsk::decode_siho );
+	this->codec          [tid]->get_decoder_siso()->sc.create_module(dec::tsk::decode_siso );
+	this->monitor        [tid]                    ->sc.create_module(mnt::tsk::check_errors);
 	if (this->params.coset)
 	{
-		this->coset_real[tid]->sc.create_module("apply");
-		this->coset_real_i   ->sc.create_module("apply");
-		this->coset_bit [tid]->sc.create_module("apply");
+		this->coset_real[tid]->sc.create_module(cst::tsk::apply);
+		this->coset_real_i   ->sc.create_module(cst::tsk::apply);
+		this->coset_bit [tid]->sc.create_module(cst::tsk::apply);
 	}
-	this->crc[tid]->sc.create_module("extract");
+	this->crc[tid]->sc.create_module(crc::tsk::extract);
 }
 
 template <typename B, typename R, typename Q>
 void SC_BFER_ite<B,R,Q>
 ::erase_sc_modules()
 {
+	using namespace module;
 	const auto tid = 0;
 
 	// create the sc_module inside the objects of the communication chain
-	this->source         [tid]               ->sc.erase_module("generate"  );
-	this->crc            [tid]               ->sc.erase_module("build"     );
-	this->codec          [tid]->get_encoder()->sc.erase_module("encode"    );
-	this->interleaver_bit[tid]               ->sc.erase_module("interleave");
-	this->modem          [tid]               ->sc.erase_module("modulate"  );
-	this->modem          [tid]               ->sc.erase_module("filter"    );
+	this->source         [tid]               ->sc.erase_module(src::tsk::generate  );
+	this->crc            [tid]               ->sc.erase_module(crc::tsk::build     );
+	this->codec          [tid]->get_encoder()->sc.erase_module(enc::tsk::encode    );
+	this->interleaver_bit[tid]               ->sc.erase_module(itl::tsk::interleave);
+	this->modem          [tid]               ->sc.erase_module(mdm::tsk::modulate  );
+	this->modem          [tid]               ->sc.erase_module(mdm::tsk::filter    );
 	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		this->channel[tid]->sc.erase_module("add_noise_wg"  );
-		this->modem  [tid]->sc.erase_module("demodulate_wg" );
-		this->modem  [tid]->sc.erase_module("tdemodulate_wg");
+		this->channel[tid]->sc.erase_module(chn::tsk::add_noise_wg  );
+		this->modem  [tid]->sc.erase_module(mdm::tsk::demodulate_wg );
+		this->modem  [tid]->sc.erase_module(mdm::tsk::tdemodulate_wg);
 	}
 	else
 	{
-		this->channel[tid]->sc.erase_module("add_noise"  );
-		this->modem  [tid]->sc.erase_module("demodulate" );
-		this->modem  [tid]->sc.erase_module("tdemodulate");
+		this->channel[tid]->sc.erase_module(chn::tsk::add_noise  );
+		this->modem  [tid]->sc.erase_module(mdm::tsk::demodulate );
+		this->modem  [tid]->sc.erase_module(mdm::tsk::tdemodulate);
 	}
-	this->interleaver_llr[tid]                    ->sc.erase_module("interleave"  );
-	this->quantizer      [tid]                    ->sc.erase_module("process"     );
-	this->interleaver_llr[tid]                    ->sc.erase_module("deinterleave");
-	this->codec          [tid]->get_decoder_siho()->sc.erase_module("decode_siho" );
-	this->codec          [tid]->get_decoder_siso()->sc.erase_module("decode_siso" );
-	this->monitor        [tid]                    ->sc.erase_module("check_errors");
+	this->interleaver_llr[tid]                    ->sc.erase_module(itl::tsk::interleave  );
+	this->quantizer      [tid]                    ->sc.erase_module(qnt::tsk::process     );
+	this->interleaver_llr[tid]                    ->sc.erase_module(itl::tsk::deinterleave);
+	this->codec          [tid]->get_decoder_siho()->sc.erase_module(dec::tsk::decode_siho );
+	this->codec          [tid]->get_decoder_siso()->sc.erase_module(dec::tsk::decode_siso );
+	this->monitor        [tid]                    ->sc.erase_module(mnt::tsk::check_errors);
 	if (this->params.coset)
 	{
-		this->coset_real[tid]->sc.erase_module("apply");
-		this->coset_real_i   ->sc.erase_module("apply");
-		this->coset_bit [tid]->sc.erase_module("apply");
+		this->coset_real[tid]->sc.erase_module(cst::tsk::apply);
+		this->coset_real_i   ->sc.erase_module(cst::tsk::apply);
+		this->coset_bit [tid]->sc.erase_module(cst::tsk::apply);
 	}
-	this->crc[tid]->sc.erase_module("extract");
+	this->crc[tid]->sc.erase_module(crc::tsk::extract);
 }
 
 template <typename B, typename R, typename Q>
@@ -203,131 +205,132 @@ template <typename B, typename R, typename Q>
 void SC_BFER_ite<B,R,Q>
 ::bind_sockets()
 {
-	auto &duplicator0 = *this->duplicator[0];
-	auto &duplicator1 = *this->duplicator[1];
-	auto &duplicator2 = *this->duplicator[2];
-	auto &duplicator3 = *this->duplicator[3];
-	auto &duplicator4 = *this->duplicator[4];
-	auto &duplicator5 = *this->duplicator[5];
-	auto &duplicator6 = *this->duplicator[6];
+	auto &dp0 = *this->duplicator[0];
+	auto &dp1 = *this->duplicator[1];
+	auto &dp2 = *this->duplicator[2];
+	auto &dp3 = *this->duplicator[3];
+	auto &dp4 = *this->duplicator[4];
+	auto &dp5 = *this->duplicator[5];
+	auto &dp6 = *this->duplicator[6];
 
-	auto &router    = *this->router;
-	auto &funnel    = *this->funnel;
-	auto &predicate = *this->predicate;
+	auto &rtr = *this->router;
+	auto &fnl = *this->funnel;
+	auto &prd = *this->predicate;
 
-	auto &source          = *this->source         [0];
-	auto &crc             = *this->crc            [0];
-	auto &encoder         = *this->codec          [0]->get_encoder();
-	auto &interleaver_bit = *this->interleaver_bit[0];
-	auto &interleaver_llr = *this->interleaver_llr[0];
-	auto &modem           = *this->modem          [0];
-	auto &channel         = *this->channel        [0];
-	auto &quantizer       = *this->quantizer      [0];
-	auto &coset_real      = *this->coset_real     [0];
-	auto &coset_real_i    = *this->coset_real_i;
-	auto &decoder_siho    = *this->codec          [0]->get_decoder_siho();
-	auto &decoder_siso    = *this->codec          [0]->get_decoder_siso();
-	auto &coset_bit       = *this->coset_bit      [0];
-	auto &monitor         = *this->monitor        [0];
+	auto &src = *this->source         [0];
+	auto &crc = *this->crc            [0];
+	auto &enc = *this->codec          [0]->get_encoder();
+	auto &itb = *this->interleaver_bit[0];
+	auto &itl = *this->interleaver_llr[0];
+	auto &mdm = *this->modem          [0];
+	auto &chn = *this->channel        [0];
+	auto &qnt = *this->quantizer      [0];
+	auto &csr = *this->coset_real     [0];
+	auto &csi = *this->coset_real_i;
+	auto &dch = *this->codec          [0]->get_decoder_siho();
+	auto &dcs = *this->codec          [0]->get_decoder_siso();
+	auto &csb = *this->coset_bit      [0];
+	auto &mnt = *this->monitor        [0];
 
+	using namespace module;
 	if (this->params.coset)
 	{
-		source             .sc["generate"      ].s_out ["U_K"     ](duplicator0                         .s_in            );
-		duplicator0                             .s_out1            (monitor        .sc["check_errors"  ].s_in ["U"      ]);
-		duplicator0                             .s_out2            (crc            .sc["build"         ].s_in ["U_K1"   ]);
-		crc                .sc["build"         ].s_out ["U_K2"    ](duplicator2                         .s_in            );
-		duplicator2                             .s_out1            (coset_bit      .sc["apply"         ].s_in ["ref"    ]);
-		duplicator2                             .s_out2            (encoder        .sc["encode"        ].s_in ["U_K"    ]);
-		encoder            .sc["encode"        ].s_out ["X_N"     ](duplicator3                         .s_in            );
-		duplicator3                             .s_out1            (duplicator4                         .s_in            );
-		duplicator4                             .s_out1            (coset_real     .sc["apply"         ].s_in ["ref"    ]);
-		duplicator4                             .s_out2            (coset_real_i   .sc["apply"         ].s_in ["ref"    ]);
-		duplicator3                             .s_out2            (interleaver_bit.sc["interleave"    ].s_in ["nat"    ]);
-		interleaver_bit    .sc["interleave"    ].s_out ["itl"     ](modem          .sc["modulate"      ].s_in ["X_N1"   ]);
+		src.sc    [src::tsk::generate      ].s_out [src::sck::generate      ::U_K ](dp0                             .s_in                                 );
+		dp0                                 .s_out1                                (mnt.sc[mnt::tsk::check_errors  ].s_in [mnt::sck::check_errors  ::U   ]);
+		dp0                                 .s_out2                                (crc.sc[crc::tsk::build         ].s_in [crc::sck::build         ::U_K1]);
+		crc.sc    [crc::tsk::build         ].s_out [crc::sck::build         ::U_K2](dp2                             .s_in                                 );
+		dp2                                 .s_out1                                (csb.sc[cst::tsk::apply         ].s_in [cst::sck::apply         ::ref ]);
+		dp2                                 .s_out2                                (enc.sc[enc::tsk::encode        ].s_in [enc::sck::encode        ::U_K ]);
+		enc.sc    [enc::tsk::encode        ].s_out [enc::sck::encode        ::X_N ](dp3                             .s_in                                 );
+		dp3                                 .s_out1                                (dp4                             .s_in                                 );
+		dp4                                 .s_out1                                (csr.sc[cst::tsk::apply         ].s_in [cst::sck::apply         ::ref ]);
+		dp4                                 .s_out2                                (csi.sc[cst::tsk::apply         ].s_in [cst::sck::apply         ::ref ]);
+		dp3                                 .s_out2                                (itb.sc[itl::tsk::interleave    ].s_in [itl::sck::interleave    ::nat ]);
+		itb.sc    [itl::tsk::interleave    ].s_out [itl::sck::interleave    ::itl ](mdm.sc[mdm::tsk::modulate      ].s_in [mdm::sck::modulate      ::X_N1]);
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) {
-			modem          .sc["modulate"      ].s_out ["X_N2"    ](channel        .sc["add_noise_wg"  ].s_in ["X_N"    ]);
-			channel        .sc["add_noise_wg"  ].s_out ["H_N"     ](duplicator6                         .s_in            );
-			duplicator6                         .s_out1            (modem          .sc["demodulate_wg" ].s_in ["H_N"    ]);
-			duplicator6                         .s_out2            (modem          .sc["tdemodulate_wg"].s_in ["H_N"    ]);
-			channel        .sc["add_noise_wg"  ].s_out ["Y_N"     ](modem          .sc["filter"        ].s_in ["Y_N1"   ]);
-			modem          .sc["filter"        ].s_out ["Y_N2"    ](quantizer      .sc["process"       ].s_in ["Y_N1"   ]);
-			quantizer      .sc["process"       ].s_out ["Y_N2"    ](duplicator5                         .s_in            );
-			duplicator5                         .s_out1            (modem          .sc["tdemodulate_wg"].s_in ["Y_N1"   ]);
-			duplicator5                         .s_out2            (modem          .sc["demodulate_wg" ].s_in ["Y_N1"   ]);
-			modem          .sc["demodulate_wg" ].s_out ["Y_N2"    ](funnel                              .s_in1           );
+			mdm.sc[mdm::tsk::modulate      ].s_out [mdm::sck::modulate      ::X_N2](chn.sc[chn::tsk::add_noise_wg  ].s_in [chn::sck::add_noise_wg  ::X_N ]);
+			chn.sc[chn::tsk::add_noise_wg  ].s_out [chn::sck::add_noise_wg  ::H_N ](dp6                             .s_in                                 );
+			dp6                             .s_out1                                (mdm.sc[mdm::tsk::demodulate_wg ].s_in [mdm::sck::demodulate_wg ::H_N ]);
+			dp6                             .s_out2                                (mdm.sc[mdm::tsk::tdemodulate_wg].s_in [mdm::sck::tdemodulate_wg::H_N ]);
+			chn.sc[chn::tsk::add_noise_wg  ].s_out [chn::sck::add_noise_wg  ::Y_N ](mdm.sc[mdm::tsk::filter        ].s_in [mdm::sck::filter        ::Y_N1]);
+			mdm.sc[mdm::tsk::filter        ].s_out [mdm::sck::filter        ::Y_N2](qnt.sc[qnt::tsk::process       ].s_in [qnt::sck::process       ::Y_N1]);
+			qnt.sc[qnt::tsk::process       ].s_out [qnt::sck::process       ::Y_N2](dp5                             .s_in                                 );
+			dp5                             .s_out1                                (mdm.sc[mdm::tsk::tdemodulate_wg].s_in [mdm::sck::tdemodulate_wg::Y_N1]);
+			dp5                             .s_out2                                (mdm.sc[mdm::tsk::demodulate_wg ].s_in [mdm::sck::demodulate_wg ::Y_N1]);
+			mdm.sc[mdm::tsk::demodulate_wg ].s_out [mdm::sck::demodulate_wg ::Y_N2](fnl                             .s_in1                                );
 		} else {
-			modem          .sc["modulate"      ].s_out ["X_N2"    ](channel        .sc["add_noise"     ].s_in ["X_N"    ]);
-			channel        .sc["add_noise"     ].s_out ["Y_N"     ](modem          .sc["filter"        ].s_in ["Y_N1"   ]);
-			modem          .sc["filter"        ].s_out ["Y_N2"    ](quantizer      .sc["process"       ].s_in ["Y_N1"   ]);
-			quantizer      .sc["process"       ].s_out ["Y_N2"    ](duplicator5                         .s_in            );
-			duplicator5                         .s_out1            (modem          .sc["tdemodulate"   ].s_in ["Y_N1"   ]);
-			duplicator5                         .s_out2            (modem          .sc["demodulate"    ].s_in ["Y_N1"   ]);
-			modem          .sc["demodulate"    ].s_out ["Y_N2"    ](funnel                              .s_in1           );
+			mdm.sc[mdm::tsk::modulate      ].s_out [mdm::sck::modulate      ::X_N2](chn.sc[chn::tsk::add_noise     ].s_in [chn::sck::add_noise     ::X_N ]);
+			chn.sc[chn::tsk::add_noise     ].s_out [chn::sck::add_noise     ::Y_N ](mdm.sc[mdm::tsk::filter        ].s_in [mdm::sck::filter        ::Y_N1]);
+			mdm.sc[mdm::tsk::filter        ].s_out [mdm::sck::filter        ::Y_N2](qnt.sc[qnt::tsk::process       ].s_in [qnt::sck::process       ::Y_N1]);
+			qnt.sc[qnt::tsk::process       ].s_out [qnt::sck::process       ::Y_N2](dp5                             .s_in                                 );
+			dp5                             .s_out1                                (mdm.sc[mdm::tsk::tdemodulate   ].s_in [mdm::sck::tdemodulate   ::Y_N1]);
+			dp5                             .s_out2                                (mdm.sc[mdm::tsk::demodulate    ].s_in [mdm::sck::demodulate    ::Y_N1]);
+			mdm.sc[mdm::tsk::demodulate    ].s_out [mdm::sck::demodulate    ::Y_N2](fnl                             .s_in1                                );
 		}
-		funnel                                  .s_out             (interleaver_llr.sc["deinterleave"  ].s_in ["itl"    ]);
-		interleaver_llr    .sc["deinterleave"  ].s_out ["nat"     ](coset_real     .sc["apply"         ].s_in ["in_data"]);
-		coset_real         .sc["apply"         ].s_out ["out_data"](router                              .s_in            );
-		router                                  .s_out1            (decoder_siso   .sc["decode_siso"   ].s_in ["Y_N1"   ]);
-		router                                  .s_out2            (decoder_siho   .sc["decode_siho"   ].s_in ["Y_N"    ]);
-		decoder_siso       .sc["decode_siso"   ].s_out ["Y_N2"    ](coset_real_i   .sc["apply"         ].s_in ["in_data"]);
-		coset_real_i       .sc["apply"         ].s_out ["out_data"](interleaver_llr.sc["interleave"    ].s_in ["nat"    ]);
+		fnl                                 .s_out                                 (itl.sc[itl::tsk::deinterleave  ].s_in [itl::sck::deinterleave  ::itl ]);
+		itl.sc    [itl::tsk::deinterleave  ].s_out [itl::sck::deinterleave  ::nat ](csr.sc[cst::tsk::apply         ].s_in [cst::sck::apply         ::in  ]);
+		csr.sc    [cst::tsk::apply         ].s_out [cst::sck::apply         ::out ](rtr                             .s_in                                 );
+		rtr                                 .s_out1                                (dcs.sc[dec::tsk::decode_siso   ].s_in [dec::sck::decode_siso   ::Y_N1]);
+		rtr                                 .s_out2                                (dch.sc[dec::tsk::decode_siho   ].s_in [dec::sck::decode_siho   ::Y_N ]);
+		dcs.sc    [dec::tsk::decode_siso   ].s_out [dec::sck::decode_siso   ::Y_N2](csi.sc[cst::tsk::apply         ].s_in [cst::sck::apply         ::in  ]);
+		csi.sc    [cst::tsk::apply         ].s_out [cst::sck::apply         ::out ](itl.sc[itl::tsk::interleave    ].s_in [itl::sck::interleave    ::nat ]);
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) {
-			interleaver_llr.sc["interleave"    ].s_out ["itl"     ](modem          .sc["tdemodulate_wg"].s_in ["Y_N2"   ]);
-			modem          .sc["tdemodulate_wg"].s_out ["Y_N3"    ](funnel                              .s_in2           );
+			itl.sc[itl::tsk::interleave    ].s_out [itl::sck::interleave    ::itl ](mdm.sc[mdm::tsk::tdemodulate_wg].s_in [mdm::sck::tdemodulate_wg::Y_N2]);
+			mdm.sc[mdm::tsk::tdemodulate_wg].s_out [mdm::sck::tdemodulate_wg::Y_N3](fnl                             .s_in2                                );
 		} else {
-			interleaver_llr.sc["interleave"    ].s_out ["itl"     ](modem          .sc["tdemodulate"   ].s_in ["Y_N2"   ]);
-			modem          .sc["tdemodulate"   ].s_out ["Y_N3"    ](funnel                              .s_in2           );
+			itl.sc[itl::tsk::interleave    ].s_out [itl::sck::interleave    ::itl ](mdm.sc[mdm::tsk::tdemodulate   ].s_in [mdm::sck::tdemodulate   ::Y_N2]);
+			mdm.sc[mdm::tsk::tdemodulate   ].s_out [mdm::sck::tdemodulate   ::Y_N3](fnl                             .s_in2                                );
 		}
-		decoder_siho       .sc["decode_siho"   ].s_out ["V_K"     ](coset_bit      .sc["apply"         ].s_in ["in_data"]);
-		coset_bit          .sc["apply"         ].s_out ["out_data"](crc            .sc["extract"       ].s_in ["V_K1"   ]);
-		crc                .sc["extract"       ].s_out ["V_K2"    ](duplicator1                         .s_in            );
-		duplicator1                             .s_out1            (monitor        .sc["check_errors"  ].s_in ["V"      ]);
-		duplicator1                             .s_out2            (predicate                           .s_in            );
+		dch.sc    [dec::tsk::decode_siho   ].s_out [dec::sck::decode_siho   ::V_K ](csb.sc[cst::tsk::apply         ].s_in [cst::sck::apply         ::in  ]);
+		csb.sc    [cst::tsk::apply         ].s_out [cst::sck::apply         ::out ](crc.sc[crc::tsk::extract       ].s_in [crc::sck::extract       ::V_K1]);
+		crc.sc    [crc::tsk::extract       ].s_out [crc::sck::extract       ::V_K2](dp1                             .s_in                                 );
+		dp1                                 .s_out1                                (mnt.sc[mnt::tsk::check_errors  ].s_in [mnt::sck::check_errors  ::V   ]);
+		dp1                                 .s_out2                                (prd                             .s_in                                 );
 	}
 	else // standard simulation
 	{
-		source             .sc["generate"      ].s_out ["U_K" ](duplicator0                         .s_in         );
-		duplicator0                             .s_out1        (monitor        .sc["check_errors"  ].s_in ["U"   ]);
-		duplicator0                             .s_out2        (crc            .sc["build"         ].s_in ["U_K1"]);
-		crc                .sc["build"         ].s_out ["U_K2"](encoder        .sc["encode"        ].s_in ["U_K" ]);
-		encoder            .sc["encode"        ].s_out ["X_N" ](interleaver_bit.sc["interleave"    ].s_in ["nat" ]);
-		interleaver_bit    .sc["interleave"    ].s_out ["itl" ](modem          .sc["modulate"      ].s_in ["X_N1"]);
+		src.sc    [src::tsk::generate      ].s_out [src::sck::generate      ::U_K ](dp0                             .s_in                                 );
+		dp0                                 .s_out1                                (mnt.sc[mnt::tsk::check_errors  ].s_in [mnt::sck::check_errors  ::U   ]);
+		dp0                                 .s_out2                                (crc.sc[crc::tsk::build         ].s_in [crc::sck::build         ::U_K1]);
+		crc.sc    [crc::tsk::build         ].s_out [crc::sck::build         ::U_K2](enc.sc[enc::tsk::encode        ].s_in [enc::sck::encode        ::U_K ]);
+		enc.sc    [enc::tsk::encode        ].s_out [enc::sck::encode        ::X_N ](itb.sc[itl::tsk::interleave    ].s_in [itl::sck::interleave    ::nat ]);
+		itb.sc    [itl::tsk::interleave    ].s_out [itl::sck::interleave    ::itl ](mdm.sc[mdm::tsk::modulate      ].s_in [mdm::sck::modulate      ::X_N1]);
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) {
-			modem          .sc["modulate"      ].s_out ["X_N2"](channel        .sc["add_noise_wg"  ].s_in ["X_N" ]);
-			channel        .sc["add_noise_wg"  ].s_out ["H_N" ](duplicator6                         .s_in         );
-			duplicator6                         .s_out1        (modem          .sc["demodulate_wg" ].s_in ["H_N" ]);
-			duplicator6                         .s_out2        (modem          .sc["tdemodulate_wg"].s_in ["H_N" ]);
-			channel        .sc["add_noise_wg"  ].s_out ["Y_N" ](modem          .sc["filter"        ].s_in ["Y_N1"]);
-			modem          .sc["filter"        ].s_out ["Y_N2"](quantizer      .sc["process"       ].s_in ["Y_N1"]);
-			quantizer      .sc["process"       ].s_out ["Y_N2"](duplicator5                         .s_in         );
-			duplicator5                         .s_out1        (modem          .sc["tdemodulate_wg"].s_in ["Y_N1"]);
-			duplicator5                         .s_out2        (modem          .sc["demodulate_wg" ].s_in ["Y_N1"]);
-			modem          .sc["demodulate_wg" ].s_out ["Y_N2"](funnel                              .s_in1        );
+			mdm.sc[mdm::tsk::modulate      ].s_out [mdm::sck::modulate      ::X_N2](chn.sc[chn::tsk::add_noise_wg  ].s_in [chn::sck::add_noise_wg  ::X_N ]);
+			chn.sc[chn::tsk::add_noise_wg  ].s_out [chn::sck::add_noise_wg  ::H_N ](dp6                             .s_in                                 );
+			dp6                             .s_out1                                (mdm.sc[mdm::tsk::demodulate_wg ].s_in [mdm::sck::demodulate_wg ::H_N ]);
+			dp6                             .s_out2                                (mdm.sc[mdm::tsk::tdemodulate_wg].s_in [mdm::sck::tdemodulate_wg::H_N ]);
+			chn.sc[chn::tsk::add_noise_wg  ].s_out [chn::sck::add_noise_wg  ::Y_N ](mdm.sc[mdm::tsk::filter        ].s_in [mdm::sck::filter        ::Y_N1]);
+			mdm.sc[mdm::tsk::filter        ].s_out [mdm::sck::filter        ::Y_N2](qnt.sc[qnt::tsk::process       ].s_in [qnt::sck::process       ::Y_N1]);
+			qnt.sc[qnt::tsk::process       ].s_out [qnt::sck::process       ::Y_N2](dp5                             .s_in                                 );
+			dp5                             .s_out1                                (mdm.sc[mdm::tsk::tdemodulate_wg].s_in [mdm::sck::tdemodulate_wg::Y_N1]);
+			dp5                             .s_out2                                (mdm.sc[mdm::tsk::demodulate_wg ].s_in [mdm::sck::demodulate_wg ::Y_N1]);
+			mdm.sc[mdm::tsk::demodulate_wg ].s_out [mdm::sck::demodulate_wg ::Y_N2](fnl                             .s_in1                                );
 		} else {
-			modem          .sc["modulate"      ].s_out ["X_N2"](channel        .sc["add_noise"     ].s_in ["X_N" ]);
-			channel        .sc["add_noise"     ].s_out ["Y_N" ](modem          .sc["filter"        ].s_in ["Y_N1"]);
-			modem          .sc["filter"        ].s_out ["Y_N2"](quantizer      .sc["process"       ].s_in ["Y_N1"]);
-			quantizer      .sc["process"       ].s_out ["Y_N2"](duplicator5                         .s_in         );
-			duplicator5                         .s_out1        (modem          .sc["tdemodulate"   ].s_in ["Y_N1"]);
-			duplicator5                         .s_out2        (modem          .sc["demodulate"    ].s_in ["Y_N1"]);
-			modem          .sc["demodulate"    ].s_out ["Y_N2"](funnel                              .s_in1        );
+			mdm.sc[mdm::tsk::modulate      ].s_out [mdm::sck::modulate      ::X_N2](chn.sc[chn::tsk::add_noise     ].s_in [chn::sck::add_noise     ::X_N ]);
+			chn.sc[chn::tsk::add_noise     ].s_out [chn::sck::add_noise     ::Y_N ](mdm.sc[mdm::tsk::filter        ].s_in [mdm::sck::filter        ::Y_N1]);
+			mdm.sc[mdm::tsk::filter        ].s_out [mdm::sck::filter        ::Y_N2](qnt.sc[qnt::tsk::process       ].s_in [qnt::sck::process       ::Y_N1]);
+			qnt.sc[qnt::tsk::process       ].s_out [qnt::sck::process       ::Y_N2](dp5                             .s_in                                 );
+			dp5                             .s_out1                                (mdm.sc[mdm::tsk::tdemodulate   ].s_in [mdm::sck::tdemodulate   ::Y_N1]);
+			dp5                             .s_out2                                (mdm.sc[mdm::tsk::demodulate    ].s_in [mdm::sck::demodulate    ::Y_N1]);
+			mdm.sc[mdm::tsk::demodulate    ].s_out [mdm::sck::demodulate    ::Y_N2](fnl                             .s_in1                                );
 		}
-		funnel                                  .s_out         (interleaver_llr.sc["deinterleave"  ].s_in ["itl" ]);
-		interleaver_llr    .sc["deinterleave"  ].s_out ["nat" ](router                              .s_in         );
-		router                                  .s_out1        (decoder_siso   .sc["decode_siso"   ].s_in ["Y_N1"]);
-		router                                  .s_out2        (decoder_siho   .sc["decode_siho"   ].s_in ["Y_N" ]);
-		decoder_siso       .sc["decode_siso"   ].s_out ["Y_N2"](interleaver_llr.sc["interleave"    ].s_in ["nat" ]);
+		fnl                                 .s_out                                 (itl.sc[itl::tsk::deinterleave  ].s_in [itl::sck::deinterleave  ::itl ]);
+		itl.sc    [itl::tsk::deinterleave  ].s_out [itl::sck::deinterleave  ::nat ](rtr                             .s_in                                 );
+		rtr                                 .s_out1                                (dcs.sc[dec::tsk::decode_siso   ].s_in [dec::sck::decode_siso   ::Y_N1]);
+		rtr                                 .s_out2                                (dch.sc[dec::tsk::decode_siho   ].s_in [dec::sck::decode_siho   ::Y_N ]);
+		dcs.sc    [dec::tsk::decode_siso   ].s_out [dec::sck::decode_siso   ::Y_N2](itl.sc[itl::tsk::interleave    ].s_in [itl::sck::interleave    ::nat ]);
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) {
-			interleaver_llr.sc["interleave"    ].s_out ["itl" ](modem          .sc["tdemodulate_wg"].s_in ["Y_N2"]);
-			modem          .sc["tdemodulate_wg"].s_out ["Y_N3"](funnel                              .s_in2        );
+			itl.sc[itl::tsk::interleave    ].s_out [itl::sck::interleave    ::itl ](mdm.sc[mdm::tsk::tdemodulate_wg].s_in [mdm::sck::tdemodulate_wg::Y_N2]);
+			mdm.sc[mdm::tsk::tdemodulate_wg].s_out [mdm::sck::tdemodulate_wg::Y_N3](fnl                             .s_in2                                );
 		} else {
-			interleaver_llr.sc["interleave"    ].s_out ["itl" ](modem          .sc["tdemodulate"   ].s_in ["Y_N2"]);
-			modem          .sc["tdemodulate"   ].s_out ["Y_N3"](funnel                              .s_in2        );
+			itl.sc[itl::tsk::interleave    ].s_out [itl::sck::interleave    ::itl ](mdm.sc[mdm::tsk::tdemodulate   ].s_in [mdm::sck::tdemodulate   ::Y_N2]);
+			mdm.sc[mdm::tsk::tdemodulate   ].s_out [mdm::sck::tdemodulate   ::Y_N3](fnl                             .s_in2                                );
 		}
-		decoder_siho       .sc["decode_siho"   ].s_out ["V_K" ](crc            .sc["extract"       ].s_in ["V_K1"]);
-		crc                .sc["extract"       ].s_out ["V_K2"](duplicator1                         .s_in         );
-		duplicator1                             .s_out1        (monitor        .sc["check_errors"  ].s_in ["V"   ]);
-		duplicator1                             .s_out2        (predicate                           .s_in         );
+		dch.sc    [dec::tsk::decode_siho   ].s_out [dec::sck::decode_siho   ::V_K ](crc.sc[crc::tsk::extract       ].s_in [crc::sck::extract       ::V_K1]);
+		crc.sc    [crc::tsk::extract       ].s_out [crc::sck::extract       ::V_K2](dp1                             .s_in                                 );
+		dp1                                 .s_out1                                (mnt.sc[mnt::tsk::check_errors  ].s_in [mnt::sck::check_errors  ::V   ]);
+		dp1                                 .s_out2                                (prd                             .s_in                                 );
 	}
 }
 

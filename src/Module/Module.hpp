@@ -45,6 +45,7 @@ protected:
 public:
 	std::vector<Task*> tasks;
 #ifdef SYSTEMC_MODULE
+	friend SC_Module_container;
 	SC_Module_container sc;
 #endif
 
