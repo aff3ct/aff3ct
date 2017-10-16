@@ -39,9 +39,9 @@ std::vector<std::string> Decoder_turbo_DB::parameters
 ::get_names() const
 {
 	auto n = Decoder::parameters::get_names();
-	if (sub != nullptr) { auto nn = sub->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (sf  != nullptr) { auto nn = sf ->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (fnc != nullptr) { auto nn = fnc->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (sub != nullptr) { auto nn = sub->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_names(); for (auto &x : nn) n.push_back(x); }
 	return n;
 }
@@ -50,9 +50,9 @@ std::vector<std::string> Decoder_turbo_DB::parameters
 ::get_short_names() const
 {
 	auto sn = Decoder::parameters::get_short_names();
-	if (sub != nullptr) { auto nn = sub->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (sf  != nullptr) { auto nn = sf ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (fnc != nullptr) { auto nn = fnc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (sub != nullptr) { auto nn = sub->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	return sn;
 }
@@ -61,9 +61,9 @@ std::vector<std::string> Decoder_turbo_DB::parameters
 ::get_prefixes() const
 {
 	auto p = Decoder::parameters::get_prefixes();
-	if (sub != nullptr) { auto nn = sub->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (sf  != nullptr) { auto nn = sf ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (fnc != nullptr) { auto nn = fnc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (sub != nullptr) { auto nn = sub->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
 }

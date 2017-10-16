@@ -54,10 +54,10 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 ::get_names() const
 {
 	auto n = Decoder::parameters::get_names();
-	if (sub1 != nullptr) { auto nn = sub1->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (sub2 != nullptr) { auto nn = sub2->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (sf   != nullptr) { auto nn = sf  ->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (fnc  != nullptr) { auto nn = fnc ->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (sub1 != nullptr) { auto nn = sub1->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (sub2 != nullptr) { auto nn = sub2->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (itl  != nullptr) { auto nn = itl ->get_names(); for (auto &x : nn) n.push_back(x); }
 	return n;
 }
@@ -67,10 +67,10 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 ::get_short_names() const
 {
 	auto sn = Decoder::parameters::get_short_names();
-	if (sub1 != nullptr) { auto nn = sub1->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (sub2 != nullptr) { auto nn = sub2->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (sf   != nullptr) { auto nn = sf  ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (fnc  != nullptr) { auto nn = fnc ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (sub1 != nullptr) { auto nn = sub1->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (sub2 != nullptr) { auto nn = sub2->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (itl  != nullptr) { auto nn = itl ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	return sn;
 }
@@ -80,10 +80,10 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 ::get_prefixes() const
 {
 	auto p = Decoder::parameters::get_prefixes();
-	if (sub1 != nullptr) { auto nn = sub1->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (sub2 != nullptr) { auto nn = sub2->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (sf   != nullptr) { auto nn = sf  ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (fnc  != nullptr) { auto nn = fnc ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (sub1 != nullptr) { auto nn = sub1->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (sub2 != nullptr) { auto nn = sub2->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (itl  != nullptr) { auto nn = itl ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
 }
