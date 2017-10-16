@@ -43,6 +43,7 @@ std::vector<std::string> Codec::parameters
 	if (itl != nullptr) { auto nn = itl->get_names(); for (auto &x : nn) n.push_back(x); }
 	return n;
 }
+
 std::vector<std::string> Codec::parameters
 ::get_short_names() const
 {

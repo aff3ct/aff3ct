@@ -129,11 +129,17 @@ void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string 
 		stream << std::endl;
 	}
 
+	std::vector<std::string> dup;
 	for (auto i = 0; i < (int)header.size(); i++)
 	{
-		stream << "#    ** " << tools::style(header[i].first, tools::Style::BOLD);
-		for (auto j = 0; j < max_n_chars - (int)header[i].first.length(); j++) stream << " ";
-		stream << " = " << header[i].second << std::endl;
+		if (std::find(dup.begin(), dup.end(), header[i].first + header[i].second) == dup.end())
+		{
+			stream << "#    ** " << tools::style(header[i].first, tools::Style::BOLD);
+			for (auto j = 0; j < max_n_chars - (int)header[i].first.length(); j++) stream << " ";
+			stream << " = " << header[i].second << std::endl;
+
+			dup.push_back(header[i].first + header[i].second);
+		}
 	}
 }
 
@@ -149,6 +155,8 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parame
 			aff3ct::factory::Header::compute_max_n_chars(h.second, max_n_chars);
 	}
 
+	std::vector<aff3ct::factory::header_list> dup_h;
+	std::vector<std::string                 > dup_n;
 	for (auto *p : params)
 	{
 		std::map<std::string,aff3ct::factory::header_list> headers;
@@ -166,8 +174,18 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parame
 		}
 
 		for (size_t i = 0; i < prefixes.size(); i++)
-			if (headers[prefixes[i]].size())
-				aff3ct::factory::Header::print_parameters(prefixes[i], short_names[i], headers[prefixes[i]], max_n_chars);
+		{
+			auto h = headers[prefixes[i]];
+			auto n = short_names[i];
+			if (h.size() && (std::find(dup_h.begin(), dup_h.end(), h) == dup_h.end() ||
+			                 std::find(dup_n.begin(), dup_n.end(), n) == dup_n.end()))
+			{
+				aff3ct::factory::Header::print_parameters(prefixes[i], n, h, max_n_chars);
+
+				dup_h.push_back(h);
+				dup_n.push_back(n);
+			}
+		}
 	}
 }
 

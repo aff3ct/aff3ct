@@ -42,6 +42,10 @@ struct Decoder_turbo_DB : public Decoder
 		virtual ~parameters();
 		Decoder_turbo_DB::parameters* clone() const;
 
+		virtual std::vector<std::string> get_names      () const;
+		virtual std::vector<std::string> get_short_names() const;
+		virtual std::vector<std::string> get_prefixes   () const;
+
 		// parameters construction
 		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
 		void store          (const arg_val_map &vals                                           );

@@ -59,6 +59,30 @@ void Codec_turbo_DB::parameters
 	this->pct = new Puncturer_turbo_DB::parameters("pct");
 }
 
+std::vector<std::string> Codec_turbo_DB::parameters
+::get_names() const
+{
+	auto n = Codec::parameters::get_names();
+	if (pct != nullptr) { auto nn = pct->get_names(); for (auto &x : nn) n.push_back(x); }
+	return n;
+}
+
+std::vector<std::string> Codec_turbo_DB::parameters
+::get_short_names() const
+{
+	auto sn = Codec::parameters::get_short_names();
+	if (pct != nullptr) { auto nn = pct->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	return sn;
+}
+
+std::vector<std::string> Codec_turbo_DB::parameters
+::get_prefixes() const
+{
+	auto p = Codec::parameters::get_prefixes();
+	if (pct != nullptr) { auto nn = pct->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	return p;
+}
+
 void Codec_turbo_DB::parameters
 ::get_description(arg_map &req_args, arg_map &opt_args) const
 {

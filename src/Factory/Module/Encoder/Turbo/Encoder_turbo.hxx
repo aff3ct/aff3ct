@@ -35,6 +35,39 @@ Encoder_turbo::parameters<E1,E2>* Encoder_turbo::parameters<E1,E2>
 }
 
 template <class E1, class E2>
+std::vector<std::string> Encoder_turbo::parameters<E1,E2>
+::get_names() const
+{
+	auto n = Encoder::parameters::get_names();
+	if (sub1 != nullptr) { auto nn = sub1->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (sub2 != nullptr) { auto nn = sub2->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (itl  != nullptr) { auto nn = itl ->get_names(); for (auto &x : nn) n.push_back(x); }
+	return n;
+}
+
+template <class E1, class E2>
+std::vector<std::string> Encoder_turbo::parameters<E1,E2>
+::get_short_names() const
+{
+	auto sn = Encoder::parameters::get_short_names();
+	if (sub1 != nullptr) { auto nn = sub1->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (sub2 != nullptr) { auto nn = sub2->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (itl  != nullptr) { auto nn = itl ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	return sn;
+}
+
+template <class E1, class E2>
+std::vector<std::string> Encoder_turbo::parameters<E1,E2>
+::get_prefixes() const
+{
+	auto p = Encoder::parameters::get_prefixes();
+	if (sub1 != nullptr) { auto nn = sub1->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (sub2 != nullptr) { auto nn = sub2->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (itl  != nullptr) { auto nn = itl ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	return p;
+}
+
+template <class E1, class E2>
 Encoder_turbo::parameters<E1,E2>
 ::~parameters()
 {

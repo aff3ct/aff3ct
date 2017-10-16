@@ -35,6 +35,29 @@ Decoder_RA::parameters* Decoder_RA::parameters
 	return clone;
 }
 
+std::vector<std::string> Decoder_RA::parameters
+::get_names() const
+{
+	auto n = Decoder::parameters::get_names();
+	if (itl != nullptr) { auto nn = itl->get_names(); for (auto &x : nn) n.push_back(x); }
+	return n;
+}
+std::vector<std::string> Decoder_RA::parameters
+::get_short_names() const
+{
+	auto sn = Decoder::parameters::get_short_names();
+	if (itl != nullptr) { auto nn = itl->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	return sn;
+}
+
+std::vector<std::string> Decoder_RA::parameters
+::get_prefixes() const
+{
+	auto p = Decoder::parameters::get_prefixes();
+	if (itl != nullptr) { auto nn = itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	return p;
+}
+
 void Decoder_RA::parameters
 ::get_description(arg_map &req_args, arg_map &opt_args) const
 {
