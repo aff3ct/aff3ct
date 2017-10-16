@@ -14,7 +14,6 @@ using namespace aff3ct::module;
 Task::Task(const Module &module, const std::string name, const bool autoalloc, const bool autoexec,
            const bool stats, const bool fast, const bool debug)
 : module(module),
-  module_name(module.get_name()),
   name(name),
   autoalloc(autoalloc),
   autoexec(autoexec),

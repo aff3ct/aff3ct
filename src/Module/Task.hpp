@@ -35,7 +35,6 @@ class Task
 
 protected:
 	const Module &module;
-	const std::string &module_name;
 	const std::string name;
 	bool autoalloc;
 	bool autoexec;
@@ -93,11 +92,10 @@ public:
 	inline bool is_last_input_socket(const Socket &s_in) const { return last_input_socket == &s_in; }
 	inline bool can_exec            (                  ) const;
 
-	inline const std::string& get_module_name(               ) const { return this->module_name; }
-	inline const Module&      get_module     (               ) const { return this->module;      }
-	inline std::string        get_name       (               ) const { return this->name;        }
-	inline uint32_t           get_n_calls    (               ) const { return this->n_calls;     }
-	       Socket_type        get_socket_type(const Socket &s) const;
+	inline const Module& get_module     (               ) const { return this->module;  }
+	inline std::string   get_name       (               ) const { return this->name;    }
+	inline uint32_t      get_n_calls    (               ) const { return this->n_calls; }
+	       Socket_type   get_socket_type(const Socket &s) const;
 
 	// get stats
 	std::chrono::nanoseconds                     get_duration_total() const;

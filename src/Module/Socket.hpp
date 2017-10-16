@@ -75,8 +75,8 @@ public:
 				        << ", 's.name' = " << s.get_name()
 				        << ", 'task.name' = " << task.get_name()
 				        << ", 's.task.name' = " << s.task.get_name()
-				        << ", 'task.module.name' = " << task.get_module_name()
-				        << ", 's.task.module.name' = " << s.task.get_module_name()
+//				        << ", 'task.module.name' = " << task.get_module_name()
+//				        << ", 's.task.module.name' = " << s.task.get_module_name()
 				        << ").";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
@@ -90,8 +90,8 @@ public:
 				        << ", 's.name' = " << s.get_name()
 				        << ", 'task.name' = " << task.get_name()
 				        << ", 's.task.name' = " << s.task.get_name()
-				        << ", 'task.module.name' = " << task.get_module_name()
-				        << ", 's.task.module.name' = " << s.task.get_module_name()
+//				        << ", 'task.module.name' = " << task.get_module_name()
+//				        << ", 's.task.module.name' = " << s.task.get_module_name()
 				        << ").";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
@@ -133,7 +133,7 @@ public:
 			        << ", 'get_n_elmts()' = " << get_n_elmts()
 			        << ", 'name' = " << get_name()
 			        << ", 'task.name' = " << task.get_name()
-			        << ", 'task.module.name' = " << task.get_module_name()
+//			        << ", 'task.module.name' = " << task.get_module_name()
 			        << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
@@ -163,7 +163,7 @@ public:
 			        << ", 'datatype' = " << type_to_string[this->datatype]
 			        << ", 'socket.name' = " << get_name()
 			        << ", 'task.name' = " << task.get_name()
-			        << ", 'module.name' = " << task.get_module_name()
+//			        << ", 'module.name' = " << task.get_module_name()
 			        << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
