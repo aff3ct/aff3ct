@@ -25,14 +25,6 @@ using arg_val_map = std::map<std::vector<std::string>, std::string>;
 
 bool exist(const arg_val_map &vals, const std::vector<std::string> &tags);
 
-struct Header
-{
-	static void print_parameters(std::string grp_key, std::string grp_name, header_list header, int max_n_chars,
-	                             std::ostream& stream = std::cout);
-
-	static void compute_max_n_chars(const header_list& header, int& max_n_chars);
-};
-
 /*!
  * \class Factory
  *
@@ -70,6 +62,21 @@ struct Factory
 		const std::string short_name;
 		const std::string prefix;
 	};
+
+	static std::pair<arg_map, arg_map> get_description(const std::vector<Factory::parameters*> &params);
+	static void                        store(std::vector<Factory::parameters*> &params, const arg_val_map &vals);
+	static aff3ct::factory::arg_grp    create_groups(const std::vector<Factory::parameters*> &params);
+};
+
+struct Header
+{
+	static void print_parameters(std::string grp_key, std::string grp_name, header_list header, int max_n_chars,
+	                             std::ostream& stream = std::cout);
+
+	static void print_parameters(const std::vector<Factory::parameters*> &params,
+	                             std::ostream& stream = std::cout);
+
+	static void compute_max_n_chars(const header_list& header, int& max_n_chars);
 };
 }
 }
