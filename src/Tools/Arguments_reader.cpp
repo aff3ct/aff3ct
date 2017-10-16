@@ -234,13 +234,20 @@ void Arguments_reader
 
 	std::cout << "Usage: " << this->m_program_name;
 
+	std::vector<std::string> existing_flags;
+
 	for (auto it = this->m_required_args.begin(); it != this->m_required_args.end(); ++it)
 	{
 		const auto last = it->first.size() -1;
-		if(it->second[0] != "")
-			std::cout << " " + print_tag(it->first[last]) << " <" << it->second[0] << ">";
-		else
-			std::cout << " " + print_tag(it->first[last]);
+		if (std::find(existing_flags.begin(), existing_flags.end(), it->first[last]) == existing_flags.end())
+		{
+			if(it->second[0] != "")
+				std::cout << " " + print_tag(it->first[last]) << " <" << it->second[0] << ">";
+			else
+				std::cout << " " + print_tag(it->first[last]);
+
+			existing_flags.push_back(it->first[last]);
+		}
 	}
 	std::cout << " [optional args...]" << std::endl << std::endl;
 
