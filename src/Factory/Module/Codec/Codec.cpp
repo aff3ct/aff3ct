@@ -34,6 +34,35 @@ void Codec::parameters
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "This codec does not support to be punctured.");
 }
 
+std::vector<std::string> Codec::parameters
+::get_names() const
+{
+	auto n = Factory::parameters::get_names();
+	if (enc != nullptr) { auto nn = enc->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (dec != nullptr) { auto nn = dec->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (itl != nullptr) { auto nn = itl->get_names(); for (auto &x : nn) n.push_back(x); }
+	return n;
+}
+std::vector<std::string> Codec::parameters
+::get_short_names() const
+{
+	auto sn = Factory::parameters::get_short_names();
+	if (enc != nullptr) { auto nn = enc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (dec != nullptr) { auto nn = dec->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (itl != nullptr) { auto nn = itl->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	return sn;
+}
+
+std::vector<std::string> Codec::parameters
+::get_prefixes() const
+{
+	auto p = Factory::parameters::get_prefixes();
+	if (enc != nullptr) { auto nn = enc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (dec != nullptr) { auto nn = dec->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (itl != nullptr) { auto nn = itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	return p;
+}
+
 void Codec::parameters
 ::get_description(arg_map &req_args, arg_map &opt_args) const
 {

@@ -75,3 +75,26 @@ std::string Factory::parameters
 {
 	return this->prefix;
 }
+
+std::vector<std::string> Factory::parameters
+::get_names() const
+{
+	std::vector<std::string> n;
+	n.push_back(this->name);
+	return n;
+}
+std::vector<std::string> Factory::parameters
+::get_short_names() const
+{
+	std::vector<std::string> sn;
+	sn.push_back(this->short_name);
+	return sn;
+}
+
+std::vector<std::string> Factory::parameters
+::get_prefixes() const
+{
+	std::vector<std::string> p;
+	p.push_back(this->prefix);
+	return p;
+}

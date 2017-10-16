@@ -53,9 +53,13 @@ struct Factory
 		virtual ~parameters();
 		virtual Factory::parameters* clone() const = 0;
 
-		std::string get_name      () const;
-		std::string get_short_name() const;
-		std::string get_prefix    () const;
+		        std::string              get_name       () const;
+		        std::string              get_short_name () const;
+		        std::string              get_prefix     () const;
+
+		virtual std::vector<std::string> get_names      () const;
+		virtual std::vector<std::string> get_short_names() const;
+		virtual std::vector<std::string> get_prefixes   () const;
 
 		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const = 0;
 		virtual void store          (const arg_val_map &vals                                           )       = 0;
