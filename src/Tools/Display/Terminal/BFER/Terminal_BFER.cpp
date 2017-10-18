@@ -126,7 +126,7 @@ void Terminal_BFER<B>
 
 	unsigned long long l0 = 99999999;  // limit 0
 	unsigned long long l1 = 99999999;  // limit 1
-	auto               l2 = 99999.99f; // limit 2
+//	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
 	stream <<                                                                                                     esn0_str.str()  << format(" | ",  Style::BOLD);
 	stream <<                                                                                                     ebn0_str.str()  << format(" | ",  Style::BOLD);
