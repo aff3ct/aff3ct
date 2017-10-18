@@ -44,7 +44,7 @@ protected:
 
 	factory::Simulation::parameters &params;    /*!< A structure of parameters to store and pass to the simulation. */
 
-	std::ostream &stream;                       /*!< The dedicated stream in which the Launcher writes the parameters. */
+	std::ostream                    &stream;    /*!< The dedicated stream in which the Launcher writes the parameters. */
 
 public:
 	/*!
@@ -99,7 +99,6 @@ protected:
 
 private:
 	int read_arguments();
-	void compute_max_n_chars();
 };
 }
 }
