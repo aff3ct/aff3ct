@@ -157,9 +157,9 @@ void Codec_turbo_DB::parameters
 	Codec_SIHO::parameters::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
-	if (this->pct)
-	pct->get_headers(headers, full);
 	dec->get_headers(headers, full);
+	if (this->pct)
+		pct->get_headers(headers, full);
 }
 
 template <typename B, typename Q>

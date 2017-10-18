@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "Launcher/Simulation/BFER_std.hpp"
+
 #include "Factory/Module/Codec/Turbo_DB/Codec_turbo_DB.hpp"
 
 #include "Turbo_DB.hpp"
@@ -13,6 +15,9 @@ Turbo_DB<L,B,R,Q>
 : L(argc, argv, stream), params_cdc(new factory::Codec_turbo_DB::parameters("cdc"))
 {
 	this->params.set_cdc(params_cdc);
+
+	if (typeid(L) == typeid(BFER_std<B,R,Q>))
+		params_cdc->enable_puncturer();
 }
 
 template <class L, typename B, typename R, typename Q>
