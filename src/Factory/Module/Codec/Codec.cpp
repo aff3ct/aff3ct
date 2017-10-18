@@ -1,3 +1,7 @@
+#include <algorithm>
+
+#include "Tools/general_utils.h"
+
 #include "Codec.hpp"
 
 using namespace aff3ct::factory;
@@ -77,6 +81,17 @@ void Codec::parameters
 void Codec::parameters
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
+	auto p = this->get_prefix();
+	const auto code_rate = (float)this->K / (float)this->N;
+	auto v = tools::string_split(this->get_name(), ' ');
+	auto name = v.size() >= 2 ? v[1] : "UNKNOWN";
+	std::transform(name.begin(), name.end(), name.begin(), toupper);
+
+	headers[p].push_back(std::make_pair("Type",                                name            ));
+	headers[p].push_back(std::make_pair("Info. bits (K)",       std::to_string(this->K        )));
+	headers[p].push_back(std::make_pair("Codeword size (N_cw)", std::to_string(this->N_cw     )));
+	headers[p].push_back(std::make_pair("Frame size (N)",       std::to_string(this->N        )));
+	headers[p].push_back(std::make_pair("Code rate",            std::to_string(code_rate      )));
 }
 
 void Codec::parameters

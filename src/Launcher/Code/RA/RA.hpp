@@ -18,10 +18,8 @@ public:
 	virtual ~RA();
 
 protected:
-	virtual void build_args();
+	virtual void get_description_args();
 	virtual void store_args();
-	virtual void group_args();
-	virtual void print_header();
 };
 }
 }

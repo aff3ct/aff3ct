@@ -49,6 +49,10 @@ struct BFER : Simulation
 		virtual ~parameters();
 		virtual BFER::parameters* clone() const;
 
+		virtual std::vector<std::string> get_names      () const;
+		virtual std::vector<std::string> get_short_names() const;
+		virtual std::vector<std::string> get_prefixes   () const;
+
 		// setters
 		        void set_src(Source       ::parameters *src) { this->src = src; }
 		        void set_crc(CRC          ::parameters *crc) { this->crc = crc; }

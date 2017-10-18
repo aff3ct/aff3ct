@@ -20,13 +20,10 @@ public:
 	virtual ~BFER_std();
 
 protected:
-	virtual void build_args();
+	virtual void get_description_args();
 	virtual void store_args();
-	virtual void group_args();
 
 	virtual simulation::Simulation* build_simu();
-
-	virtual void print_header();
 };
 }
 }

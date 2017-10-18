@@ -23,8 +23,8 @@ Codec_polar::parameters
 ::~parameters()
 {
 	if (enc != nullptr) { delete enc; enc = nullptr; }
-	if (dec != nullptr) { delete dec; dec = nullptr; }
 	if (fbg != nullptr) { delete fbg; fbg = nullptr; }
+	if (dec != nullptr) { delete dec; dec = nullptr; }
 	if (pct != nullptr) { delete pct; pct = nullptr; }
 
 	Codec::parameters::enc = nullptr;
@@ -37,8 +37,8 @@ Codec_polar::parameters* Codec_polar::parameters
 	auto clone = new Codec_polar::parameters(*this);
 
 	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
 	if (fbg != nullptr) { clone->fbg = fbg->clone(); }
+	if (dec != nullptr) { clone->dec = dec->clone(); }
 	if (pct != nullptr) { clone->pct = pct->clone(); }
 
 	clone->set_enc(clone->enc);
@@ -57,27 +57,66 @@ std::vector<std::string> Codec_polar::parameters
 ::get_names() const
 {
 	auto n = Codec::parameters::get_names();
-	if (fbg != nullptr) { auto nn = fbg->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (pct != nullptr) { auto nn = pct->get_names(); for (auto &x : nn) n.push_back(x); }
-	return n;
+	std::vector<std::string> n2;
+
+	for (size_t i = 0; i < n.size(); i++)
+	{
+		n2.push_back(n[i]);
+		if (enc != nullptr && n[i] == enc->get_name() && fbg != nullptr)
+		{
+			auto nn = fbg->get_names();
+			for (auto &x : nn)
+				n2.push_back(x);
+		}
+	}
+
+//	if (fbg != nullptr) { auto nn = fbg->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (pct != nullptr) { auto nn = pct->get_names(); for (auto &x : nn) n2.push_back(x); }
+	return n2;
 }
 
 std::vector<std::string> Codec_polar::parameters
 ::get_short_names() const
 {
 	auto sn = Codec::parameters::get_short_names();
-	if (fbg != nullptr) { auto nn = fbg->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (pct != nullptr) { auto nn = pct->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	return sn;
+	std::vector<std::string> sn2;
+
+	for (size_t i = 0; i < sn.size(); i++)
+	{
+		sn2.push_back(sn[i]);
+		if (enc != nullptr && sn[i] == enc->get_short_name() && fbg != nullptr)
+		{
+			auto nn = fbg->get_short_names();
+			for (auto &x : nn)
+				sn2.push_back(x);
+		}
+	}
+
+//	if (fbg != nullptr) { auto nn = fbg->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (pct != nullptr) { auto nn = pct->get_short_names(); for (auto &x : nn) sn2.push_back(x); }
+	return sn2;
 }
 
 std::vector<std::string> Codec_polar::parameters
 ::get_prefixes() const
 {
 	auto p = Codec::parameters::get_prefixes();
-	if (fbg != nullptr) { auto nn = fbg->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (pct != nullptr) { auto nn = pct->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	return p;
+	std::vector<std::string> p2;
+
+	for (size_t i = 0; i < p.size(); i++)
+	{
+		p2.push_back(p[i]);
+		if (enc != nullptr && p[i] == enc->get_prefix() && fbg != nullptr)
+		{
+			auto nn = fbg->get_prefixes();
+			for (auto &x : nn)
+				p2.push_back(x);
+		}
+	}
+
+//	if (fbg != nullptr) { auto nn = fbg->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (pct != nullptr) { auto nn = pct->get_prefixes(); for (auto &x : nn) p2.push_back(x); }
+	return p2;
 }
 
 void Codec_polar::parameters
@@ -150,11 +189,11 @@ void Codec_polar::parameters
 {
 	Codec_SISO_SIHO::parameters::get_headers(headers, full);
 
-	if (this->pct)
-	pct->get_headers(headers, full);
 	enc->get_headers(headers, full);
 	fbg->get_headers(headers, full);
 	dec->get_headers(headers, full);
+	if (this->pct)
+		pct->get_headers(headers, full);
 }
 
 template <typename B, typename Q>

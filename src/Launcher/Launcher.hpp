@@ -41,13 +41,10 @@ protected:
 	                                             *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
 	tools::Arguments_reader::arg_map opt_args;  /*!< List of the optional arguments, syntax is the following:
 	                                             *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	tools::Arguments_reader::arg_grp arg_group; /*!< List of the arguments groups */
 
 	factory::Simulation::parameters &params;    /*!< A structure of parameters to store and pass to the simulation. */
 
 	std::ostream &stream;                       /*!< The dedicated stream in which the Launcher writes the parameters. */
-	std::map<std::string, factory::header_list> headers;
-	std::vector<std::pair<std::string, std::string>> titles;
 
 public:
 	/*!
@@ -80,7 +77,7 @@ protected:
 	 *
 	 * This method can be overloaded to be extended.
 	 */
-	virtual void build_args();
+	virtual void get_description_args();
 
 	/*!
 	 * \brief Stores the values from the command line to the internal parameters.
@@ -88,13 +85,6 @@ protected:
 	 * This method can be overloaded to be extended.
 	 */
 	virtual void store_args();
-
-	/*!
-	 * \brief Gathers the arguments in separated groups
-	 *
-	 * This method can be overloaded to be extended.
-	 */
-	virtual void group_args();
 
 	/*!
 	 * \brief Allocates a specific simulation.
@@ -105,7 +95,7 @@ protected:
 	 */
 	virtual simulation::Simulation* build_simu() = 0;
 
-	virtual void print_header();
+	void print_header();
 
 private:
 	int read_arguments();

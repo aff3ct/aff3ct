@@ -23,7 +23,7 @@ Turbo_DB<L,B,R,Q>
 
 template <class L, typename B, typename R, typename Q>
 void Turbo_DB<L,B,R,Q>
-::build_args()
+::get_description_args()
 {
 	params_cdc->get_description(this->req_args, this->opt_args);
 
@@ -34,7 +34,7 @@ void Turbo_DB<L,B,R,Q>
 	this->opt_args.erase({penc+"-seed", "S"});
 	this->opt_args.erase({pitl+"-seed", "S"});
 
-	L::build_args();
+	L::get_description_args();
 }
 
 template <class L, typename B, typename R, typename Q>
@@ -65,38 +65,6 @@ void Turbo_DB<L,B,R,Q>
 	params_cdc->dec->sub ->n_frames = this->params.src->n_frames;
 
 	params_cdc->itl->core->seed = this->params.global_seed;
-}
-
-template <class L, typename B, typename R, typename Q>
-void Turbo_DB<L,B,R,Q>
-::group_args()
-{
-	L::group_args();
-
-	this->arg_group.push_back({params_cdc->enc->get_prefix(), params_cdc->enc->get_short_name() + " parameter(s)"});
-	if (params_cdc->pct)
-	this->arg_group.push_back({params_cdc->pct->get_prefix(), params_cdc->pct->get_short_name() + " parameter(s)"});
-	this->arg_group.push_back({params_cdc->dec->get_prefix(), params_cdc->dec->get_short_name() + " parameter(s)"});
-	this->arg_group.push_back({params_cdc->itl->get_prefix(), params_cdc->itl->get_short_name() + " parameter(s)"});
-}
-
-template <class L, typename B, typename R, typename Q>
-void Turbo_DB<L,B,R,Q>
-::print_header()
-{
-	params_cdc->get_headers(this->headers, false);
-
-	this->titles.push_back(std::make_pair(params_cdc->enc->     get_prefix(), params_cdc->enc->     get_short_name()));
-	this->titles.push_back(std::make_pair(params_cdc->enc->sub->get_prefix(), "Sub encoder"                         ));
-	if (params_cdc->pct)
-	this->titles.push_back(std::make_pair(params_cdc->pct->     get_prefix(), params_cdc->pct->     get_short_name()));
-	this->titles.push_back(std::make_pair(params_cdc->itl->     get_prefix(), params_cdc->itl->     get_short_name()));
-	this->titles.push_back(std::make_pair(params_cdc->dec->     get_prefix(), params_cdc->dec->     get_short_name()));
-	this->titles.push_back(std::make_pair(params_cdc->dec->fnc->get_prefix(), params_cdc->dec->fnc->get_short_name()));
-	this->titles.push_back(std::make_pair(params_cdc->dec->sf ->get_prefix(), params_cdc->dec->sf ->get_short_name()));
-	this->titles.push_back(std::make_pair(params_cdc->dec->sub->get_prefix(), "Sub decoder"                         ));
-
-	L::print_header();
 }
 
 // ==================================================================================== explicit template instantiation

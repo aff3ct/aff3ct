@@ -49,7 +49,7 @@ Launcher::~Launcher()
 {
 }
 
-void Launcher::build_args()
+void Launcher::get_description_args()
 {
 }
 
@@ -57,13 +57,9 @@ void Launcher::store_args()
 {
 }
 
-void Launcher::group_args()
-{
-}
-
 int Launcher::read_arguments()
 {
-	this->build_args();
+	this->get_description_args();
 
 	std::vector<std::string> cmd_error;
 
@@ -74,9 +70,9 @@ int Launcher::read_arguments()
 
 	if (params.display_help)
 	{
-		this->group_args();
+		auto grps = factory::Factory::create_groups({&params});
 
-		ar.print_usage(arg_group);
+		ar.print_usage(grps);
 		error = true; // in order to exit at the end of this function
 	}
 
@@ -109,16 +105,7 @@ void Launcher::print_header()
 	stream << "# " << tools::style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", tools::Style::BOLD) << std::endl;
 	stream << "# " << tools::style("-------------------------------------------------", tools::Style::BOLD) << std::endl;
 	stream << "# " << tools::style(style("Parameters :", tools::Style::BOLD), tools::Style::UNDERLINED) << std::endl;
-
-	int max_n_chars = 0;
-	for (auto h : headers)
-		factory::Header::compute_max_n_chars(h.second, max_n_chars);
-
-	for (auto t : titles)
-		if (headers.find(t.first) != headers.end() && headers[t.first].size())
-			if (headers[t.first][0].first != "Type" || headers[t.first][0].second != "NO")
-				factory::Header::print_parameters(t.first, t.second, headers[t.first], max_n_chars, this->stream);
-
+	factory::Header::print_parameters({&params}, false, this->stream);
 	this->stream << "#" << std::endl;
 }
 

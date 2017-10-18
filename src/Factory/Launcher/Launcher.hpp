@@ -54,7 +54,7 @@ struct Launcher : public Factory
 		inline launcher::Launcher* build_exit(const int argc, const char **argv) const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string n, const std::string sn, const std::string p);
 	};
 
 	template <typename B = int, typename R = float, typename Q = R>

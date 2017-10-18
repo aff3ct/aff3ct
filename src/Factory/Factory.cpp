@@ -143,16 +143,18 @@ void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string 
 	}
 }
 
-void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parameters*> &params, std::ostream& stream)
+void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parameters*> &params, const bool full,
+                                               std::ostream& stream)
 {
 	int max_n_chars = 0;
 	for (auto *p : params)
 	{
 		std::map<std::string,aff3ct::factory::header_list> headers;
-		p->get_headers(headers, true);
+		p->get_headers(headers, full);
 
 		for (auto &h : headers)
-			aff3ct::factory::Header::compute_max_n_chars(h.second, max_n_chars);
+			if (full || (!full && h.second.size() && (h.second[0].first != "Type" || h.second[0].second != "NO")))
+				aff3ct::factory::Header::compute_max_n_chars(h.second, max_n_chars);
 	}
 
 	std::vector<aff3ct::factory::header_list> dup_h;
@@ -160,7 +162,7 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parame
 	for (auto *p : params)
 	{
 		std::map<std::string,aff3ct::factory::header_list> headers;
-		p->get_headers(headers, true);
+		p->get_headers(headers, full);
 
 		auto prefixes = p->get_prefixes();
 		auto short_names = p->get_short_names();
@@ -176,14 +178,18 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parame
 		for (size_t i = 0; i < prefixes.size(); i++)
 		{
 			auto h = headers[prefixes[i]];
-			auto n = short_names[i];
-			if (h.size() && (std::find(dup_h.begin(), dup_h.end(), h) == dup_h.end() ||
-			                 std::find(dup_n.begin(), dup_n.end(), n) == dup_n.end()))
-			{
-				aff3ct::factory::Header::print_parameters(prefixes[i], n, h, max_n_chars);
 
-				dup_h.push_back(h);
-				dup_n.push_back(n);
+			if (full || (!full && h.size() && (h[0].first != "Type" || h[0].second != "NO")))
+			{
+				auto n = short_names[i];
+				if (h.size() && (std::find(dup_h.begin(), dup_h.end(), h) == dup_h.end() ||
+				                 std::find(dup_n.begin(), dup_n.end(), n) == dup_n.end()))
+				{
+					aff3ct::factory::Header::print_parameters(prefixes[i], n, h, max_n_chars);
+
+					dup_h.push_back(h);
+					dup_n.push_back(n);
+				}
 			}
 		}
 	}

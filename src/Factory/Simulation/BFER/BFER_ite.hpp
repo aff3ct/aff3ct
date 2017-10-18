@@ -43,6 +43,10 @@ struct BFER_ite : BFER
 		virtual ~parameters();
 		BFER_ite::parameters* clone() const;
 
+		virtual std::vector<std::string> get_names      () const;
+		virtual std::vector<std::string> get_short_names() const;
+		virtual std::vector<std::string> get_prefixes   () const;
+
 		// setters
 		void set_cdc(Codec_SISO_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
 		void set_itl(Interleaver    ::parameters *itl) { this->itl = itl;                                 }

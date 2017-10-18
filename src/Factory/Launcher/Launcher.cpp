@@ -52,8 +52,8 @@ factory::Launcher::parameters
 }
 
 factory::Launcher::parameters
-::parameters(const std::string name, const std::string prefix)
-: Factory::parameters(name, Launcher::name, prefix)
+::parameters(const std::string name, const std::string short_name, const std::string prefix)
+: Factory::parameters(name, short_name, prefix)
 {
 }
 
@@ -177,7 +177,8 @@ void factory::Launcher::parameters
 
 	params_headers[p].push_back(std::make_pair("Type of bits",  type_names[id_B]));
 	params_headers[p].push_back(std::make_pair("Type of reals", type_names[id_R]));
-	if (std::is_integral<Q>::value)
+//	if (std::is_integral<Q>::value) // do not works for int8_t, int16_t, etc.
+	if (id_Q == typeid(int8_t) || id_Q == typeid(int16_t) || id_Q == typeid(int32_t) || id_Q == typeid(int64_t))
 		params_headers[p].push_back(std::make_pair("Type of quant. reals", type_names[id_Q]));
 
 	using namespace date;

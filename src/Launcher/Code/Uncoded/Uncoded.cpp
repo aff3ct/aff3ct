@@ -23,7 +23,7 @@ Uncoded<L,B,R,Q>
 
 template <class L, typename B, typename R, typename Q>
 void Uncoded<L,B,R,Q>
-::build_args()
+::get_description_args()
 {
 	params_cdc->get_description(this->req_args, this->opt_args);
 
@@ -32,7 +32,7 @@ void Uncoded<L,B,R,Q>
 	this->req_args.erase({penc+"-info-bits", "K"});
 	this->opt_args.erase({penc+"-fra",       "F"});
 
-	L::build_args();
+	L::get_description_args();
 }
 
 template <class L, typename B, typename R, typename Q>
@@ -47,28 +47,6 @@ void Uncoded<L,B,R,Q>
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;
-}
-
-template <class L, typename B, typename R, typename Q>
-void Uncoded<L,B,R,Q>
-::group_args()
-{
-	L::group_args();
-
-	this->arg_group.push_back({params_cdc->enc->get_prefix(), params_cdc->enc->get_short_name() + " parameter(s)"});
-	this->arg_group.push_back({params_cdc->dec->get_prefix(), params_cdc->dec->get_short_name() + " parameter(s)"});
-}
-
-template <class L, typename B, typename R, typename Q>
-void Uncoded<L,B,R,Q>
-::print_header()
-{
-	params_cdc->get_headers(this->headers, false);
-
-	this->titles.push_back(std::make_pair(params_cdc->enc->get_prefix(), params_cdc->enc->get_short_name()));
-	this->titles.push_back(std::make_pair(params_cdc->dec->get_prefix(), params_cdc->dec->get_short_name()));
-
-	L::print_header();
 }
 
 // ==================================================================================== explicit template instantiation

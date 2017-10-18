@@ -44,6 +44,51 @@ BFER::parameters* BFER::parameters
 	return clone;
 }
 
+std::vector<std::string> BFER::parameters
+::get_names() const
+{
+	auto n = Simulation::parameters::get_names();
+	if (src != nullptr) { auto nn = src->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (crc != nullptr) { auto nn = crc->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (cdc != nullptr) { auto nn = cdc->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (mdm != nullptr) { auto nn = mdm->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (chn != nullptr) { auto nn = chn->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (qnt != nullptr) { auto nn = qnt->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (mnt != nullptr) { auto nn = mnt->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (ter != nullptr) { auto nn = ter->get_names(); for (auto &x : nn) n.push_back(x); }
+	return n;
+}
+
+std::vector<std::string> BFER::parameters
+::get_short_names() const
+{
+	auto sn = Factory::parameters::get_short_names();
+	if (src != nullptr) { auto nn = src->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (crc != nullptr) { auto nn = crc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (cdc != nullptr) { auto nn = cdc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (mdm != nullptr) { auto nn = mdm->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (chn != nullptr) { auto nn = chn->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (qnt != nullptr) { auto nn = qnt->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (mnt != nullptr) { auto nn = mnt->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (ter != nullptr) { auto nn = ter->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	return sn;
+}
+
+std::vector<std::string> BFER::parameters
+::get_prefixes() const
+{
+	auto p = Factory::parameters::get_prefixes();
+	if (src != nullptr) { auto nn = src->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (crc != nullptr) { auto nn = crc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (cdc != nullptr) { auto nn = cdc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (mdm != nullptr) { auto nn = mdm->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (chn != nullptr) { auto nn = chn->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (qnt != nullptr) { auto nn = qnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (mnt != nullptr) { auto nn = mnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (ter != nullptr) { auto nn = ter->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	return p;
+}
+
 void BFER::parameters
 ::get_description(arg_map &req_args, arg_map &opt_args) const
 {
@@ -133,4 +178,13 @@ void BFER::parameters
 
 	if (this->src != nullptr)
 		headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->src->n_frames)));
+
+	if (this->src != nullptr) { this->src->get_headers(headers, full); }
+	if (this->crc != nullptr) { this->crc->get_headers(headers, full); }
+	if (this->cdc != nullptr) { this->cdc->get_headers(headers, full); }
+	if (this->mdm != nullptr) { this->mdm->get_headers(headers, full); }
+	if (this->chn != nullptr) { this->chn->get_headers(headers, full); }
+	if (this->qnt != nullptr) { this->qnt->get_headers(headers, full); }
+	if (this->mnt != nullptr) { this->mnt->get_headers(headers, full); }
+	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }

@@ -81,12 +81,13 @@ void CRC::parameters
 {
 	auto p = this->get_prefix();
 
+	headers[p].push_back(std::make_pair("Type", this->type));
+
+	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
+	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+
 	if (!this->poly.empty())
 	{
-		headers[p].push_back(std::make_pair("Type", this->type));
-		if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
-		if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
-
 		auto poly_name = module::CRC_polynomial<B>::get_name(this->poly);
 		if (!poly_name.empty())
 			headers[p].push_back(std::make_pair("Name", poly_name));

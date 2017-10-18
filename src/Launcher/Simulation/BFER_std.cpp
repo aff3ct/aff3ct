@@ -34,9 +34,9 @@ BFER_std<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER_std<B,R,Q>
-::build_args()
+::get_description_args()
 {
-	Launcher::build_args();
+	Launcher::get_description_args();
 
 	params.     get_description(this->req_args, this->opt_args);
 	params.src->get_description(this->req_args, this->opt_args);
@@ -165,79 +165,6 @@ void BFER_std<B,R,Q>
 	params.chn->n_frames = params.src->n_frames;
 	params.qnt->n_frames = params.src->n_frames;
 	params.mnt->n_frames = params.src->n_frames;
-}
-
-template <typename B, typename R, typename Q>
-void BFER_std<B,R,Q>
-::group_args()
-{
-	Launcher::group_args();
-
-	this->arg_group.push_back({params.     get_prefix(), "Simulation parameter(s)"});
-	this->arg_group.push_back({params.src->get_prefix(), params.src->get_short_name() + " parameter(s)"});
-	this->arg_group.push_back({params.crc->get_prefix(), params.crc->get_short_name() + " parameter(s)"});
-	this->arg_group.push_back({params.mdm->get_prefix(), params.mdm->get_short_name() + " parameter(s)"});
-	this->arg_group.push_back({params.chn->get_prefix(), params.chn->get_short_name() + " parameter(s)"});
-	this->arg_group.push_back({params.qnt->get_prefix(), params.qnt->get_short_name() + " parameter(s)"});
-	this->arg_group.push_back({params.mnt->get_prefix(), params.mnt->get_short_name() + " parameter(s)"});
-	this->arg_group.push_back({params.ter->get_prefix(), params.ter->get_short_name() + " parameter(s)"});
-}
-
-template <typename B, typename R, typename Q>
-void BFER_std<B,R,Q>
-::print_header()
-{
-	auto cpy_titles = this->titles;
-	this->titles.clear();
-
-	auto pcde = "cde";
-	this->titles.push_back(std::make_pair(params.     get_prefix(), "Simulation"                ));
-	this->titles.push_back(std::make_pair(pcde,                     "Code"                      ));
-	this->titles.push_back(std::make_pair(params.src->get_prefix(), params.src->get_short_name()));
-	this->titles.push_back(std::make_pair(params.crc->get_prefix(), params.crc->get_short_name()));
-
-	for (auto t : cpy_titles)
-		if (t.first.find("enc") == 0)
-			this->titles.push_back(t);
-
-	for (auto t : cpy_titles)
-		if (t.first.find("pct") == 0)
-			this->titles.push_back(t);
-
-	if (params.cdc->itl != nullptr)
-	this->titles.push_back(std::make_pair(params.cdc->itl->get_prefix(), params.cdc->itl->get_short_name()));
-
-	this->titles.push_back(std::make_pair(params.mdm->get_prefix(), params.mdm->get_short_name()));
-	this->titles.push_back(std::make_pair(params.chn->get_prefix(), params.chn->get_short_name()));
-	if (std::is_integral<Q>())
-	this->titles.push_back(std::make_pair(params.qnt->get_prefix(), params.qnt->get_short_name()));
-
-	for (auto t : cpy_titles)
-		if (t.first.find("dec") == 0)
-			this->titles.push_back(t);
-
-	this->titles.push_back(std::make_pair(params.mnt->get_prefix(), params.mnt->get_short_name()));
-	this->titles.push_back(std::make_pair(params.ter->get_prefix(), params.ter->get_short_name()));
-
-	params.     get_headers(this->headers, false);
-	params.src->get_headers(this->headers, false);
-	params.crc->get_headers(this->headers, false);
-	params.mdm->get_headers(this->headers, false);
-	params.chn->get_headers(this->headers, false);
-	if (std::is_integral<Q>())
-	params.qnt->get_headers(this->headers, false);
-	params.mnt->get_headers(this->headers, false);
-	params.ter->get_headers(this->headers, false);
-
-	const auto code_rate = (float)params.cdc->K / (float)params.cdc->N;
-
-	this->headers[pcde].push_back(std::make_pair("Type",                                params.cde_type ));
-	this->headers[pcde].push_back(std::make_pair("Info. bits (K)",       std::to_string(params.cdc->K   )));
-	this->headers[pcde].push_back(std::make_pair("Codeword size (N_cw)", std::to_string(params.cdc->N_cw)));
-	this->headers[pcde].push_back(std::make_pair("Frame size (N)",       std::to_string(params.cdc->N   )));
-	this->headers[pcde].push_back(std::make_pair("Code rate",            std::to_string(code_rate       )));
-
-	Launcher::print_header();
 }
 
 template <typename B, typename R, typename Q>
