@@ -27,7 +27,7 @@ BFER_std::parameters* BFER_std::parameters
 
 	if (src != nullptr) { clone->src = src->clone(); }
 	if (crc != nullptr) { clone->crc = crc->clone(); }
-	if (cdc != nullptr) { clone->cdc = cdc->clone(); }
+	if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SIHO::parameters*>(cdc->clone()); }
 	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
 	if (chn != nullptr) { clone->chn = chn->clone(); }
 	if (qnt != nullptr) { clone->qnt = qnt->clone(); }

@@ -32,7 +32,7 @@ EXIT::parameters* EXIT::parameters
 	auto clone = new EXIT::parameters(*this);
 
 	if (src != nullptr) { clone->src = src->clone(); }
-	if (cdc != nullptr) { clone->cdc = cdc->clone(); }
+	if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SISO::parameters*>(cdc->clone()); }
 	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
 	if (chn != nullptr) { clone->chn = chn->clone(); }
 	if (qnt != nullptr) { clone->qnt = qnt->clone(); }

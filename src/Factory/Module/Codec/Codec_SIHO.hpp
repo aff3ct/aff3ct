@@ -26,7 +26,13 @@ struct Codec_SIHO : Codec
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		parameters(const std::string p = Codec_SIHO::prefix);
 		virtual ~parameters();
-		virtual Codec_SIHO::parameters* clone() const = 0;
+		// The following line is commented to prevent Visual C++ to incorrectly report ambiguity when covariance is 
+		// used with virtual inheritance.
+		// See more about this MSVC bug:
+		// - https://stackoverflow.com/questions/6933061/c-ambiguous-inheritance-error-in-vs-2010
+		// - https://connect.microsoft.com/VisualStudio/feedback/details/590625/visual-c-incorrectly-reports-ambiguity-when-covariance-is-used-with-virtual-inheritance
+		// - https://docs.microsoft.com/fr-fr/cpp/error-messages/compiler-errors-1/compiler-error-c2250
+//		virtual Codec_SIHO::parameters* clone() const = 0;
 
 		// builder
 		template <typename B = int, typename Q = float>

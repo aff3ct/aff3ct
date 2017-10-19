@@ -8,6 +8,7 @@
 #include <chrono>
 #include <vector>
 #include <typeinfo>
+#include <algorithm>
 #include <typeindex>
 #include <functional>
 #include <unordered_map>

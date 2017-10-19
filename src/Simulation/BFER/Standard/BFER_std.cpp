@@ -95,12 +95,12 @@ void BFER_std<B,R,Q>
 		source[src::tsk::generate].set_autoalloc(true);
 		auto src_data = (B*)(source[src::tsk::generate][src::sck::generate::U_K].get_dataptr());
 		auto src_size = (source[src::tsk::generate][src::sck::generate::U_K].get_databytes() / sizeof(B)) / this->params.src->n_frames;
-		this->dumper[tid]->register_data(src_data, src_size, "src", false, this->params.src->n_frames, {});
+		this->dumper[tid]->register_data(src_data, (unsigned int)src_size, "src", false, this->params.src->n_frames, {});
 
 		encoder[enc::tsk::encode].set_autoalloc(true);
 		auto enc_data = (B*)(encoder[enc::tsk::encode][enc::sck::encode::X_N].get_dataptr());
 		auto enc_size = (encoder[enc::tsk::encode][enc::sck::encode::X_N].get_databytes() / sizeof(B)) / this->params.src->n_frames;
-		this->dumper[tid]->register_data(enc_data, enc_size, "enc", false, this->params.src->n_frames,
+		this->dumper[tid]->register_data(enc_data, (unsigned int)enc_size, "enc", false, this->params.src->n_frames,
 		                                 {(unsigned)this->params.cdc->enc->K});
 
 		this->dumper[tid]->register_data(channel.get_noise(), "chn", true, this->params.src->n_frames, {});
@@ -184,7 +184,7 @@ module::Codec_SIHO<B,Q>* BFER_std<B,R,Q>
 	}
 
 	auto crc = this->params.crc->type == "NO" ? nullptr : this->crc[tid];
-	auto c = params_cdc->template build<B,Q>(crc);
+	auto c = dynamic_cast<factory::Codec_SIHO::parameters*>(params_cdc)->template build<B, Q>(crc);
 	delete params_cdc;
 	return c;
 }

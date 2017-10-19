@@ -81,12 +81,8 @@ tools::Terminal_EXIT<B,R>* Terminal_EXIT
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::tools::Terminal_EXIT<B_8 ,R_8 >* aff3ct::factory::Terminal_EXIT::parameters::build<B_8 ,R_8 >(const aff3ct::module::Monitor_EXIT<B_8 ,R_8 >&) const;
-template aff3ct::tools::Terminal_EXIT<B_16,R_16>* aff3ct::factory::Terminal_EXIT::parameters::build<B_16,R_16>(const aff3ct::module::Monitor_EXIT<B_16,R_16>&) const;
 template aff3ct::tools::Terminal_EXIT<B_32,R_32>* aff3ct::factory::Terminal_EXIT::parameters::build<B_32,R_32>(const aff3ct::module::Monitor_EXIT<B_32,R_32>&) const;
 template aff3ct::tools::Terminal_EXIT<B_64,R_64>* aff3ct::factory::Terminal_EXIT::parameters::build<B_64,R_64>(const aff3ct::module::Monitor_EXIT<B_64,R_64>&) const;
-template aff3ct::tools::Terminal_EXIT<B_8 ,R_8 >* aff3ct::factory::Terminal_EXIT::build<B_8 ,R_8 >(const aff3ct::factory::Terminal_EXIT::parameters&, const aff3ct::module::Monitor_EXIT<B_8 ,R_8 >&);
-template aff3ct::tools::Terminal_EXIT<B_16,R_16>* aff3ct::factory::Terminal_EXIT::build<B_16,R_16>(const aff3ct::factory::Terminal_EXIT::parameters&, const aff3ct::module::Monitor_EXIT<B_16,R_16>&);
 template aff3ct::tools::Terminal_EXIT<B_32,R_32>* aff3ct::factory::Terminal_EXIT::build<B_32,R_32>(const aff3ct::factory::Terminal_EXIT::parameters&, const aff3ct::module::Monitor_EXIT<B_32,R_32>&);
 template aff3ct::tools::Terminal_EXIT<B_64,R_64>* aff3ct::factory::Terminal_EXIT::build<B_64,R_64>(const aff3ct::factory::Terminal_EXIT::parameters&, const aff3ct::module::Monitor_EXIT<B_64,R_64>&);
 #else

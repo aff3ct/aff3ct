@@ -5,6 +5,7 @@
 
 #include "Statistics.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 Statistics
@@ -76,7 +77,7 @@ void Statistics
 #endif
 
 	unsigned l1 = 99999999;
-	float    l2 = 99999.99;
+	float    l2 = 99999.99f;
 
 	std::stringstream ssmodule, ssprocess, sssp, ssn_calls, sstot_dur, sspercent;
 	std::stringstream ssavg_thr, ssmin_thr, ssmax_thr;
@@ -148,7 +149,7 @@ void Statistics
 #endif
 
 	unsigned l1 = 99999999;
-	float    l2 = 99999.99;
+	float    l2 = 99999.99f;
 
 	std::stringstream spaces, ssprocess, sssp, ssrn_calls, ssrtot_dur, ssrpercent;
 	std::stringstream ssravg_thr, ssrmin_thr, ssrmax_thr;

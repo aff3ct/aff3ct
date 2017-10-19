@@ -54,7 +54,7 @@ void Monitor_EXIT<B,R>
 	for (int j = 0; j < this->size; j++)
 	{
 		double symb = -2.0 * (double)bits[j] +1.0;
-		I_A_sum += (1.0 - std::log2(1.0 + std::exp(-symb * (double)llrs_a[j])));
+		I_A_sum += (R)(1.0 - std::log2(1.0 + std::exp(-symb * (double)llrs_a[j])));
 	}
 }
 
@@ -62,9 +62,9 @@ template <typename B, typename R>
 R Monitor_EXIT<B,R>
 ::_check_mutual_info_histo() const
 {
-	unsigned size = this->bits_buff.size();
+	size_t size = this->bits_buff.size();
 	unsigned bit_1_count = 0;
-	for (unsigned i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 		bit_1_count += (unsigned)bits_buff[i];
 
 	unsigned bit_0_count = (unsigned)size - bit_1_count;
@@ -134,8 +134,8 @@ R Monitor_EXIT<B,R>
 			llr_0_variance /= llr_0_noninfinite_count;
 			llr_1_variance /= llr_1_noninfinite_count;
 
-			bin_width = (R)0.5 * ((R)3.49 * std::sqrt(llr_0_variance) * (std::pow(llr_0_noninfinite_count, (R)-1.0 / (R)3.0)) +
-			                      (R)3.49 * std::sqrt(llr_1_variance) * (std::pow(llr_1_noninfinite_count, (R)-1.0 / (R)3.0)));
+			bin_width = (R)0.5 * ((R)3.49 * (R)std::sqrt(llr_0_variance) * (R)(std::pow(llr_0_noninfinite_count, (R)-1.0 / (R)3.0)) +
+			                      (R)3.49 * (R)std::sqrt(llr_1_variance) * (R)(std::pow(llr_1_noninfinite_count, (R)-1.0 / (R)3.0)));
 			if (bin_width > (R)0)
 			{
 				bin_offset = (int)std::floor(std::min(llr_0_min, llr_1_min) / bin_width) -1;
@@ -257,8 +257,6 @@ void Monitor_EXIT<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Monitor_EXIT<B_8 ,R_8 >;
-template class aff3ct::module::Monitor_EXIT<B_16,R_16>;
 template class aff3ct::module::Monitor_EXIT<B_32,R_32>;
 template class aff3ct::module::Monitor_EXIT<B_64,R_64>;
 #else
