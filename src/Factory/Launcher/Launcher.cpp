@@ -81,7 +81,7 @@ void factory::Launcher::parameters
 	opt_args[{p+"-type"}] =
 		{"string",
 		 "select the type of simulation to launch (default is BFER).",
-		 "BFER, BFERI, EXIT, GEN"};
+		 "BFER, BFERI, EXIT"};
 
 #ifdef MULTI_PREC
 	opt_args[{p+"-prec", "p"}] =
