@@ -127,6 +127,7 @@ void Codec_turbo_DB::parameters
 	if (this->pct)
 	{
 		this->pct->K        = this->enc->K;
+		this->pct->N        = this->enc->N_cw;
 		this->pct->N_cw     = this->enc->N_cw;
 		this->pct->n_frames = this->enc->n_frames;
 
