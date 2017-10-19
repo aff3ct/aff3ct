@@ -1,19 +1,5 @@
 # How to compile and run the code
-This project use `cmake` in order to generate any type of projects (Makefile, Visual Studio projects, Eclipse projects, etc.).
-
-## Install cmake
-
-### On Linux/Debian-like
-
-Open a shell and type:
-
-    $ sudo apt-get install cmake
-
-### On Windows
-
-Download and install `cmake`: [https://cmake.org/files/v3.7/cmake-3.7.1-win64-x64.msi](https://cmake.org/files/v3.7/cmake-3.7.1-win64-x64.msi).
-
-Make sure to add the `cmake` program to the `PATH`.
+This project use `cmake` in order to generate any type of projects (Makefile, Visual Studio, Eclipse, CLion, etc.).
 
 ## Get the Git submodules
 
@@ -55,27 +41,23 @@ Expected output:
     #    ** Type                     = BFER
     #    ** Type of bits             = int32
     #    ** Type of reals            = float32
-    #    ** Date (UTC)               = 2017-07-31 07:53:48
+    #    ** Date (UTC)               = 2017-10-19 09:54:56
+    #    ** Git version              = v1.3.0
     #    ** Code type (C)            = POLAR
     #    ** SNR min (m)              = 1.000000 dB
     #    ** SNR max (M)              = 4.000100 dB
     #    ** SNR step (s)             = 0.250000 dB
     #    ** Seed                     = 0
+    #    ** Statistics               = off
+    #    ** Debug mode               = off
     #    ** Multi-threading (t)      = 4 thread(s)
     #    ** SNR type                 = EB
-    #    ** Time report              = off
-    #    ** Debug mode               = off
     #    ** Coset approach (c)       = no
+    #    ** Coded monitoring         = no
     #    ** Bad frames tracking      = off
     #    ** Bad frames replay        = off
     #    ** Bit rate                 = 0.841309
     #    ** Inter frame level        = 1
-    # * Code ------------------------------------------
-    #    ** Type                     = POLAR
-    #    ** Info. bits (K)           = 1755
-    #    ** Codeword size (N_cw)     = 2048
-    #    ** Frame size (N)           = 2048
-    #    ** Code rate                = 0.856934
     # * Source ----------------------------------------
     #    ** Type                     = RAND
     #    ** Info. bits (K_info)      = 1723
@@ -84,21 +66,18 @@ Expected output:
     #    ** Name                     = 32-GZIP
     #    ** Polynomial (hexadecimal) = 0x4c11db7
     #    ** Size (in bit)            = 32
+    # * Codec -----------------------------------------
+    #    ** Type                     = POLAR
+    #    ** Info. bits (K)           = 1755
+    #    ** Codeword size (N_cw)     = 2048
+    #    ** Frame size (N)           = 2048
+    #    ** Code rate                = 0.856934
     # * Encoder ---------------------------------------
     #    ** Type                     = POLAR
     #    ** Systematic               = yes
-    #    ** Fb gen. method           = GA
-    #    ** Fb sigma                 = adaptive
-    # * Modem -----------------------------------------
-    #    ** Type                     = BPSK
-    #    ** Bits per symbol          = 1
-    #    ** Sampling factor          = 1
-    #    ** Sigma square             = on
-    #    ** Max type                 = unused
-    # * Channel ---------------------------------------
-    #    ** Type                     = AWGN
-    #    ** Complex                  = off
-    #    ** Add users                = off
+    #    Frozen bits generator ------------------------
+    #    ** Type                     = GA
+    #    ** Sigma                    = adaptive
     # * Decoder ---------------------------------------
     #    ** Type (D)                 = ASCL
     #    ** Implementation           = FAST
@@ -106,6 +85,15 @@ Expected output:
     #    ** Max num. of lists (L)    = 8
     #    ** Adaptative mode          = full
     #    ** Polar node types         = {R0,R0L,R1,REP,REPL,SPC}
+    # * Modem -----------------------------------------
+    #    ** Type                     = BPSK
+    #    ** Bits per symbol          = 1
+    #    ** Sampling factor          = 1
+    #    ** Sigma square             = on
+    # * Channel ---------------------------------------
+    #    ** Type                     = AWGN
+    #    ** Complex                  = off
+    #    ** Add users                = off
     # * Monitor ---------------------------------------
     #    ** Frame error count (e)    = 100
     # * Terminal --------------------------------------
@@ -114,27 +102,27 @@ Expected output:
     #    ** Frequency (ms)           = 500
     #
     # The simulation is running...
-    # ----------------------------------------------------------------------||--------------------------------||---------------------
-    #       Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||     Decoder throughput and     ||  Global throughput  
-    #                    on the Signal Noise Ratio (SNR)                    ||      latency (per thread)      ||  and elapsed time   
-    # ----------------------------------------------------------------------||--------------------------------||---------------------
-    # -------|-------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
-    #  Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT 
-    #   (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) 
-    # -------|-------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
-        0.25 |  1.00 |      103 |    15777 |      103 | 8.73e-02 | 1.00e+00 ||     2.46 |     2.10 |   834.12 ||     5.23 | 00h00'00  
-        0.50 |  1.25 |      103 |    15096 |      103 | 8.35e-02 | 1.00e+00 ||     2.72 |     2.33 |   752.64 ||     6.72 | 00h00'00  
-        0.75 |  1.50 |      103 |    13921 |      103 | 7.70e-02 | 1.00e+00 ||     3.07 |     2.63 |   666.28 ||     7.36 | 00h00'00  
-        1.00 |  1.75 |      103 |    13156 |      103 | 7.28e-02 | 1.00e+00 ||     3.22 |     2.76 |   636.18 ||     6.62 | 00h00'00  
-        1.25 |  2.00 |      103 |    12146 |      103 | 6.72e-02 | 1.00e+00 ||     3.12 |     2.68 |   655.87 ||     6.94 | 00h00'00  
-        1.50 |  2.25 |      103 |    10499 |      103 | 5.81e-02 | 1.00e+00 ||     3.23 |     2.77 |   633.48 ||     7.61 | 00h00'00  
-        1.75 |  2.50 |      106 |     9028 |      103 | 4.85e-02 | 9.72e-01 ||     3.06 |     2.63 |   668.27 ||     6.98 | 00h00'00  
-        2.00 |  2.75 |      125 |     6568 |      103 | 2.99e-02 | 8.24e-01 ||     3.36 |     2.88 |   609.05 ||     7.83 | 00h00'00  
-        2.25 |  3.00 |      200 |     4557 |      103 | 1.30e-02 | 5.15e-01 ||     4.30 |     3.68 |   476.63 ||    10.25 | 00h00'00  
-        2.50 |  3.25 |      565 |     3849 |      100 | 3.88e-03 | 1.77e-01 ||     8.14 |     6.98 |   251.59 ||    16.54 | 00h00'00  
-        2.75 |  3.50 |     2594 |     3024 |      101 | 6.64e-04 | 3.89e-02 ||    15.78 |    13.53 |   129.74 ||    24.63 | 00h00'00  
-        3.00 |  3.75 |    18102 |     2265 |      100 | 7.13e-05 | 5.52e-03 ||    32.96 |    28.25 |    62.13 ||    31.41 | 00h00'01  
-        3.25 |  4.00 |   179246 |     1712 |      100 | 5.44e-06 | 5.58e-04 ||    48.69 |    41.72 |    42.06 ||    32.47 | 00h00'11  
+    # ----------------------------------------------------------------------||---------------------
+    #       Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  
+    #                    on the Signal Noise Ratio (SNR)                    ||  and elapsed time   
+    # ----------------------------------------------------------------------||---------------------
+    # -------|-------|----------|----------|----------|----------|----------||----------|----------
+    #  Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT 
+    #   (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) 
+    # -------|-------|----------|----------|----------|----------|----------||----------|----------
+        0.25 |  1.00 |      103 |    15522 |      103 | 8.75e-02 | 1.00e+00 ||     2.37 | 00h00'00  
+        0.50 |  1.25 |      103 |    14705 |      103 | 8.29e-02 | 1.00e+00 ||     5.04 | 00h00'00  
+        0.75 |  1.50 |      103 |    13801 |      103 | 7.78e-02 | 1.00e+00 ||     5.26 | 00h00'00  
+        1.00 |  1.75 |      103 |    12988 |      103 | 7.32e-02 | 1.00e+00 ||     5.22 | 00h00'00  
+        1.25 |  2.00 |      103 |    12072 |      103 | 6.80e-02 | 1.00e+00 ||     5.20 | 00h00'00  
+        1.50 |  2.25 |      103 |    10801 |      103 | 6.09e-02 | 1.00e+00 ||     5.12 | 00h00'00  
+        1.75 |  2.50 |      106 |     8266 |      103 | 4.53e-02 | 9.72e-01 ||     5.23 | 00h00'00  
+        2.00 |  2.75 |      138 |     6789 |      102 | 2.86e-02 | 7.39e-01 ||     6.09 | 00h00'00  
+        2.25 |  3.00 |      182 |     4777 |      103 | 1.52e-02 | 5.66e-01 ||     7.12 | 00h00'00  
+        2.50 |  3.25 |      497 |     3751 |      102 | 4.38e-03 | 2.05e-01 ||    11.76 | 00h00'00  
+        2.75 |  3.50 |     2445 |     2723 |      100 | 6.46e-04 | 4.09e-02 ||    19.59 | 00h00'00  
+        3.00 |  3.75 |    18817 |     2552 |      100 | 7.87e-05 | 5.31e-03 ||    26.25 | 00h00'01  
+        3.25 |  4.00 |   174249 |     1910 |      100 | 6.36e-06 | 5.74e-04 ||    28.97 | 00h00'10  
     # End of the simulation.
 
 ## More
