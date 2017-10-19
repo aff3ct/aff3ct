@@ -85,6 +85,8 @@ void Codec::parameters
 	const auto code_rate = (float)this->K / (float)this->N;
 	auto v = tools::string_split(this->get_name(), ' ');
 	auto name = v.size() >= 2 ? v[1] : "UNKNOWN";
+	for (size_t i = 2; i < v.size(); i++)
+		name += "_" + v[i];
 	std::transform(name.begin(), name.end(), name.begin(), toupper);
 
 	headers[p].push_back(std::make_pair("Type",                                name            ));
