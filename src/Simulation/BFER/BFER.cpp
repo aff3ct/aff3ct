@@ -262,6 +262,10 @@ void BFER<B,R,Q>
 			this->dumper_red->clear();
 		}
 
+		if (this->monitor_red->get_n_fe() < this->monitor_red->get_fe_limit() &&
+		    (max_fra == 0 || this->monitor_red->get_n_fe() < max_fra))
+			module::Monitor::stop();
+
 		this->monitor_red->reset();
 		for (auto &m : modules)
 			for (auto mm : m.second)
