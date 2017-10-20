@@ -98,15 +98,32 @@ void Puncturer_turbo<B,Q>
 	auto k = 0;
 	if (this->buff_enc)
 	{
+		int off[3] = {0, this->K + this->tail_bits/4, this->N_cw - (this->K + this->tail_bits/4)};
 		for (auto j = 0; j < 3; j++)
 		{
 			auto p = 0;
+			auto o = off[j];
 			for (auto i = 0; i < this->K; i++)
 			{
 				if (pattern_bits[j][p])
-					X_N2[k++] = X_N1[this->K * j +i];
-
+					X_N2[k++] = X_N1[o +i];
 				p = (p +1) % period;
+			}
+
+			if (j == 0)
+			{
+				std::copy(X_N1 + o + this->K, X_N1 + o + this->K + this->tail_bits/4, X_N2 + k);
+				k += this->tail_bits/4;
+			}
+			else if (j == 1)
+			{
+				std::copy(X_N1 + o + this->K, X_N1 + o + this->K + this->tail_bits/2, X_N2 + k);
+				k += this->tail_bits/2;
+			}
+			else
+			{
+				std::copy(X_N1 + o + this->K, X_N1 + o + this->K + this->tail_bits/4, X_N2 + k);
+				k += this->tail_bits/4;
 			}
 		}
 	}
@@ -121,9 +138,9 @@ void Puncturer_turbo<B,Q>
 
 			p = (p +1) % period;
 		}
-	}
 
-	std::copy(X_N1 + 3 * this->K, X_N1 + 3 * this->K + this->tail_bits, X_N2 + k);
+		std::copy(X_N1 + 3 * this->K, X_N1 + 3 * this->K + this->tail_bits, X_N2 + k);
+	}
 }
 
 template <typename B, typename Q>
@@ -135,14 +152,31 @@ void Puncturer_turbo<B,Q>
 	auto k = 0;
 	if (this->buff_enc)
 	{
+		int off[3] = {0, this->K + this->tail_bits/4, this->N_cw - (this->K + this->tail_bits/4)};
 		for (auto j = 0; j < 3; j++)
 		{
 			auto p = 0;
+			auto o = off[j];
 			for (auto i = 0; i < this->K; i++)
 			{
-				Y_N2[this->K * j +i] = pattern_bits[j][p] ? Y_N1[k++] : (Q)0;
-
+				Y_N2[o +i] = pattern_bits[j][p] ? Y_N1[k++] : (Q)0;
 				p = (p +1) % period;
+			}
+
+			if (j == 0)
+			{
+				std::copy(Y_N1 + k, Y_N1 + k + this->tail_bits/4, Y_N2 + o + this->K);
+				k += this->tail_bits/4;
+			}
+			else if (j == 1)
+			{
+				std::copy(Y_N1 + k, Y_N1 + k + this->tail_bits/2, Y_N2 + o + this->K);
+				k += this->tail_bits/2;
+			}
+			else
+			{
+				std::copy(Y_N1 + k, Y_N1 + k + this->tail_bits/4, Y_N2 + o + this->K);
+				k += this->tail_bits/4;
 			}
 		}
 	}
@@ -157,9 +191,9 @@ void Puncturer_turbo<B,Q>
 
 			p = (p +1) % period;
 		}
-	}
 
-	std::copy(Y_N1 + k, Y_N1 + k + this->tail_bits, Y_N2 + 3 * this->K);
+		std::copy(Y_N1 + k, Y_N1 + k + this->tail_bits, Y_N2 + 3 * this->K);
+	}
 }
 
 // ==================================================================================== explicit template instantiation 
