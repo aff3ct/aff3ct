@@ -105,7 +105,7 @@ template <typename T>
 void Interleaver_core_ARP_DVB_RCS1<T>
 ::gen_lut(T *lut, const int frame_id)
 {
-	int p;
+	int p = 0;
 	int size = this->get_size();
 	for (auto i = 0; i < size; i++)
 	{
