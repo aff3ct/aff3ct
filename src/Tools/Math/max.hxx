@@ -31,7 +31,7 @@ inline R max_star(const R& a, const R& b)
 }
 
 template <typename R>
-inline R max_star_safe(const R& a, const R& b) 
+inline R max_star_safe(const R& a, const R& b)
 {
 	throw runtime_error(__FILE__, __LINE__, __func__, "This method is not defined in fixed-point arithmetic.");
 
@@ -43,9 +43,9 @@ inline float max_star_safe(const float& a, const float& b)
 {
 	float d = std::abs(a - b);
 
-	if (d >= (float)37 || std::isnan(d))
-		d = (float)0.0; // exp(-d);
-	else if (d < (float)37 && d >= 9)
+	if (d >= 37.f || std::isnan(d))
+		d = 0.f; // exp(-d);
+	else if (d < 37.f && d >= 9.f)
 		d = std::exp(-d);
 	else
 		d = (float)std::log1p(std::exp(-d));
@@ -58,12 +58,12 @@ inline double max_star_safe(const double& a, const double& b)
 {
 	double d = std::abs(a - b);
 
-	if (d >= (double)37 || std::isnan(d))
-		d = (double)0.0; // exp(-d);
-	else if (d < (double)37 && d >= 9)
+	if (d >= 37.0 || std::isnan(d))
+		d = 0.0; // exp(-d);
+	else if (d < 37.0 && d >= 9.0)
 		d = std::exp(-d);
 	else
-		d = (double)std::log1p(std::exp(-d));
+		d = std::log1p(std::exp(-d));
 
 	return std::max(a, b) + d;
 }
