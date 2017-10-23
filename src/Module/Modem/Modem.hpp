@@ -26,12 +26,13 @@ namespace module
 	{
 		namespace tsk
 		{
-			enum list { modulate, filter, demodulate, tdemodulate, demodulate_wg, tdemodulate_wg, SIZE };
+			enum list { modulate, tmodulate, filter, demodulate, tdemodulate, demodulate_wg, tdemodulate_wg, SIZE };
 		}
 
 		namespace sck
 		{
 			namespace modulate       { enum list {      X_N1, X_N2      , SIZE }; }
+			namespace tmodulate      { enum list {      X_N1, X_N2      , SIZE }; }
 			namespace filter         { enum list {      Y_N1, Y_N2      , SIZE }; }
 			namespace demodulate     { enum list {      Y_N1, Y_N2      , SIZE }; }
 			namespace tdemodulate    { enum list {      Y_N1, Y_N2, Y_N3, SIZE }; }
@@ -156,6 +157,17 @@ public:
 		{
 			this->modulate(static_cast<B*>(p1s_X_N1.get_dataptr()),
 			               static_cast<R*>(p1s_X_N2.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p7 = this->create_task("tmodulate");
+		auto &p7s_X_N1 = this->template create_socket_in <Q>(p7, "X_N1", this->N     * this->n_frames);
+		auto &p7s_X_N2 = this->template create_socket_out<R>(p7, "X_N2", this->N_mod * this->n_frames);
+		this->create_codelet(p7, [this, &p7s_X_N1, &p7s_X_N2]() -> int
+		{
+			this->tmodulate(static_cast<Q*>(p7s_X_N1.get_dataptr()),
+			                static_cast<R*>(p7s_X_N2.get_dataptr()));
 
 			return 0;
 		});
@@ -297,6 +309,42 @@ public:
 			this->_modulate(X_N1 + f * this->N,
 			                X_N2 + f * this->N_mod,
 			                f);
+	}
+
+	/*!
+	 * \brief soft Modulates a vector of LLRs.
+	 *
+	 * \param X_N1: a vector of LLRs.
+	 * \param X_N2: a vector of soft symbols.
+	 */
+	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
+	void tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2)
+	{
+		if (this->N * this->n_frames != (int)X_N1.size())
+		{
+			std::stringstream message;
+			message << "'X_N1.size()' has to be equal to 'N' * 'n_frames' ('X_N1.size()' = " << X_N1.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (this->N_mod * this->n_frames != (int)X_N2.size())
+		{
+			std::stringstream message;
+			message << "'X_N2.size()' has to be equal to 'N_mod' * 'n_frames' ('X_N2.size()' = " << X_N2.size()
+			        << ", 'N_mod' = " << this->N_mod << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->tmodulate(X_N1.data(), X_N2.data());
+	}
+
+	virtual void tmodulate(const Q *X_N1, R *X_N2)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_tmodulate(X_N1 + f * this->N,
+			                 X_N2 + f * this->N_mod,
+			                 f);
 	}
 
 	/*!
@@ -605,6 +653,10 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
+	virtual void _tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
+	{
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
 	virtual void _filter(const R *Y_N1, R *Y_N2, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);

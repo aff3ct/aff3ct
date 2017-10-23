@@ -127,6 +127,19 @@ void Codec_RSC<B,Q>
 			Y_N[i*2] += ext[i];
 }
 
+template <typename B, typename Q>
+void Codec_RSC<B,Q>
+::_extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id)
+{
+	if (buffered_encoding)
+		for (auto i = 0; i < this->K; i++)
+			V_K[i] = Y_N[i] >= 0 ? (B)0 : (B)1;
+	else
+		for (auto i = 0; i < this->K; i++)
+			V_K[i] = Y_N[2*i] >= 0 ? (B)0 : (B)1;
+}
+
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
