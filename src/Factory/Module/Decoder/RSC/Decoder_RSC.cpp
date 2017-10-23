@@ -97,10 +97,10 @@ void Decoder_RSC::parameters
 	if(exist(vals, {p+"-std"    })) this->standard      = vals.at({p+"-std" });
 	if(exist(vals, {p+"-no-buff"})) this->buffered      = false;
 
-	if (this->standard == "LTE")
+	if (this->standard == "LTE" && !exist(vals, {p+"-poly"}))
 		this->poly = {013, 015};
 
-	if (this->standard == "CCSDS")
+	if (this->standard == "CCSDS" && !exist(vals, {p+"-poly"}))
 		this->poly = {023, 033};
 
 	if (exist(vals, {p+"-poly"}))
