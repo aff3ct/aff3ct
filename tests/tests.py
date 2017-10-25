@@ -9,7 +9,7 @@ PathBuild     = "../build"
 Sensibility   = 1.0
 Nthreads      = 0          # if 0 then AFF3CT takes all the available threads
 RecursiveScan = True
-MaxFE         = 100
+MaxFE         = 100        # 0 takes fe from the original simulation
 WeakRate      = 0.8        # 0 < WeakRate < 1
 MaxTimeSNR    = 10         # max time to spend per SNR (in sec), 0 = illimited
 
@@ -115,8 +115,9 @@ for fn in fileNames:
 
 	argsAFFECT.append("--ter-freq")
 	argsAFFECT.append("0")
-	argsAFFECT.append("-e")
-	argsAFFECT.append(str(MaxFE))
+	if MaxFE:
+		argsAFFECT.append("-e")
+		argsAFFECT.append(str(MaxFE))
 	argsAFFECT.append("-t")
 	argsAFFECT.append(str(Nthreads))
 	argsAFFECT.append("--sim-no-colors")

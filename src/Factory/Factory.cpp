@@ -175,15 +175,29 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parame
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
+		bool print_first_title = false;
+		for (size_t i = 1; i < prefixes.size(); i++)
+		{
+			auto h = headers[prefixes[i]];
+			auto key = tools::string_split(prefixes[i], '-');
+
+			if (key[0] == prefixes[0] && h.size())
+			{
+				print_first_title = true;
+				break;
+			}
+		}
+
 		for (size_t i = 0; i < prefixes.size(); i++)
 		{
 			auto h = headers[prefixes[i]];
+			auto print_head = (i == 0) ? print_first_title || h.size() : h.size();
 
 			if (full || (!full && h.size() && (h[0].first != "Type" || h[0].second != "NO")))
 			{
 				auto n = short_names[i];
-				if (h.size() && (std::find(dup_h.begin(), dup_h.end(), h) == dup_h.end() ||
-				                 std::find(dup_n.begin(), dup_n.end(), n) == dup_n.end()))
+				if (print_head && (std::find(dup_h.begin(), dup_h.end(), h) == dup_h.end() ||
+				                   std::find(dup_n.begin(), dup_n.end(), n) == dup_n.end()))
 				{
 					aff3ct::factory::Header::print_parameters(prefixes[i], n, h, max_n_chars);
 
