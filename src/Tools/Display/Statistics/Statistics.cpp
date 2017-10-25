@@ -329,8 +329,8 @@ void Statistics
 
 	if (ordered)
 	{
-		std::sort(tasks.begin(), tasks.end(), [](std::vector<const module::Task*> &t1,
-		                                         std::vector<const module::Task*> &t2)
+		std::sort(tasks.begin(), tasks.end(), [](const std::vector<const module::Task*> &t1,
+		                                         const std::vector<const module::Task*> &t2)
 		{
 			auto total1 = nanoseconds(0);
 			auto total2 = nanoseconds(0);
