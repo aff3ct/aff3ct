@@ -100,6 +100,11 @@ std::vector<unsigned> AList
 {
 	std::string line;
 
+	// look for the position in the file where the info bits begin
+	while (std::getline(stream, line))
+		if (line == "# Positions of the information bits in the codewords:" || stream.eof() || stream.fail() || stream.bad())
+			break;
+
 	getline(stream, line);
 	auto values = split(line);
 	if (values.size() != 1)
