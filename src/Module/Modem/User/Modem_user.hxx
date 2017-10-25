@@ -30,13 +30,6 @@ Modem_user<B,R,Q,MAX>
 	if (const_path.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'const_path' should not be empty.");
 
-	if (bits_per_symbol % 2)
-	{
-		std::stringstream message;
-		message << "'bits_per_symbol' has to be a multiple of 2 ('bits_per_symbol' = " << bits_per_symbol << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	std::fstream const_file(const_path, std::ios_base::in);
 
 	std::string temp;
@@ -246,6 +239,7 @@ void Modem_user<B,R,Q,MAX>
 					else
 						tempL += std::numeric_limits<Q>::infinity();
 				}
+
 			}
 			tempL = std::isnan(tempL) ? (Q)0.0 : tempL;
 
@@ -336,7 +330,7 @@ void Modem_user<B, R, Q, MAX>
 			auto p = 1.0f;
 			for (auto j = 0; j < this->bits_per_symbol; j++)
 			{
-				auto p0 = 1.0f/(1.0f + std::exp(-X_N1[i*this->bits_per_symbol + j]));
+				auto p0 = 1.0f/(1.0f + std::exp(-(R)(X_N1[i*this->bits_per_symbol + j])));
 				p *= ((m >> j) & 1) == 0 ? p0 : 1 - p0;
 			}
 			X_N2[2*i]   += p * soft_symbol.real();
@@ -348,16 +342,20 @@ void Modem_user<B, R, Q, MAX>
 	if (loop_size * this->bits_per_symbol < size_in)
 	{
 		auto r = size_in - (loop_size * this->bits_per_symbol);
+		X_N2[size_out - 2] = 0.0f;
+		X_N2[size_out - 1] = 0.0f;
+
 		for (auto m = 0; m < (1<<r); m++)
 		{
 			std::complex<R> soft_symbol = this->constellation[m];
+			auto p = 1.0f;
 			for (auto j = 0; j < r; j++)
 			{
-				auto p0 = 1.0f/(1.0f + std::exp(-X_N1[loop_size*this->bits_per_symbol + j]));
-				soft_symbol *= ((m >> j) & 1) == 0 ? p0 : 1 - p0;
+				auto p0 = 1.0f/(1.0f + std::exp(-(R)X_N1[loop_size*this->bits_per_symbol + j]));
+				p *= ((m >> j) & 1) == 0 ? p0 : 1 - p0;
 			}
-			X_N2[size_out - 2] += soft_symbol.real()/this->nbr_symbols;
-			X_N2[size_out - 1] += soft_symbol.imag()/this->nbr_symbols;
+			X_N2[size_out - 2] += p*soft_symbol.real();
+			X_N2[size_out - 1] += p*soft_symbol.imag();
 		}
 	}
 }
