@@ -124,21 +124,8 @@ void Modem::parameters
 	auto p = this->get_prefix();
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(exist(vals, {p+"-fra-size", "N"})) this->N          = std::stoi(vals.at({p+"-fra-size", "N"}));
-	if(exist(vals, {p+"-fra",      "F"})) this->n_frames   = std::stoi(vals.at({p+"-fra",      "F"}));
 	if(exist(vals, {p+"-type"         })) this->type       =           vals.at({p+"-type"         });
 	if(exist(vals, {p+"-cpm-std"      })) this->cpm_std    =           vals.at({p+"-cpm-std"      });
-	if(exist(vals, {p+"-bps"          })) this->bps        = std::stoi(vals.at({p+"-bps"          }));
-	if(exist(vals, {p+"-ups"          })) this->upf        = std::stoi(vals.at({p+"-ups"          }));
-	if(exist(vals, {p+"-const-path"   })) this->const_path =           vals.at({p+"-const-path"   });
-	if(exist(vals, {p+"-cpm-L"        })) this->cpm_L      = std::stoi(vals.at({p+"-cpm-L"        }));
-	if(exist(vals, {p+"-cpm-p"        })) this->cpm_p      = std::stoi(vals.at({p+"-cpm-p"        }));
-	if(exist(vals, {p+"-cpm-k"        })) this->cpm_k      = std::stoi(vals.at({p+"-cpm-k"        }));
-	if(exist(vals, {p+"-cpm-map"      })) this->mapping    =           vals.at({p+"-cpm-map"      });
-	if(exist(vals, {p+"-cpm-ws"       })) this->wave_shape =           vals.at({p+"-cpm-ws"       });
-
-	if (this->type.find("BPSK") != std::string::npos || this->type == "PAM")
-		this->complex = false;
 
 	if (this->type == "CPM")
 	{
@@ -162,6 +149,21 @@ void Modem::parameters
 			}
 		}
 	}
+
+	if(exist(vals, {p+"-fra-size", "N"})) this->N          = std::stoi(vals.at({p+"-fra-size", "N"}));
+	if(exist(vals, {p+"-fra",      "F"})) this->n_frames   = std::stoi(vals.at({p+"-fra",      "F"}));
+	if(exist(vals, {p+"-bps"          })) this->bps        = std::stoi(vals.at({p+"-bps"          }));
+	if(exist(vals, {p+"-ups"          })) this->upf        = std::stoi(vals.at({p+"-ups"          }));
+	if(exist(vals, {p+"-const-path"   })) this->const_path =           vals.at({p+"-const-path"   });
+	if(exist(vals, {p+"-cpm-L"        })) this->cpm_L      = std::stoi(vals.at({p+"-cpm-L"        }));
+	if(exist(vals, {p+"-cpm-p"        })) this->cpm_p      = std::stoi(vals.at({p+"-cpm-p"        }));
+	if(exist(vals, {p+"-cpm-k"        })) this->cpm_k      = std::stoi(vals.at({p+"-cpm-k"        }));
+	if(exist(vals, {p+"-cpm-map"      })) this->mapping    =           vals.at({p+"-cpm-map"      });
+	if(exist(vals, {p+"-cpm-ws"       })) this->wave_shape =           vals.at({p+"-cpm-ws"       });
+
+	if (this->type.find("BPSK") != std::string::npos || this->type == "PAM")
+		this->complex = false;
+
 
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (this->type == "BPSK" || this->type == "BPSK_FAST")

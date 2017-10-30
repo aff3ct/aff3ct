@@ -21,9 +21,9 @@ protected:
 	unsigned long long n_frame_errors;
 	unsigned long long n_analyzed_frames;
 
-	std::vector<std::function<void(int )>> callbacks_fe;
-	std::vector<std::function<void(void)>> callbacks_check;
-	std::vector<std::function<void(void)>> callbacks_fe_limit_achieved;
+	std::vector<std::function<void(unsigned, int )>> callbacks_fe;
+	std::vector<std::function<void(          void)>> callbacks_check;
+	std::vector<std::function<void(          void)>> callbacks_fe_limit_achieved;
 
 public:
 	Monitor_BFER(const int size, const unsigned max_fe, const int n_frames = 1, const std::string name = "Monitor_BFER");
@@ -71,9 +71,9 @@ public:
 	float get_fer() const;
 	float get_ber() const;
 
-	virtual void add_handler_fe               (std::function<void(int )> callback);
-	virtual void add_handler_check            (std::function<void(void)> callback);
-	virtual void add_handler_fe_limit_achieved(std::function<void(void)> callback);
+	virtual void add_handler_fe               (std::function<void(unsigned, int )> callback);
+	virtual void add_handler_check            (std::function<void(          void)> callback);
+	virtual void add_handler_fe_limit_achieved(std::function<void(          void)> callback);
 
 	virtual void reset();
 	virtual void clear_callbacks();

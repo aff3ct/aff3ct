@@ -117,6 +117,10 @@ void BFER::parameters
 		{"string",
 		 "base path for the files where the bad frames will be stored or read."};
 
+	opt_args[{p+"-err-trk-thold"}] =
+		{"positive_int",
+		 "dump only frames with a bit error count above or equal to this threshold."};
+
 	opt_args[{p+"-coded"}] =
 		{"",
 		 "enable the coded monitoring (extends the monitored bits to the entire codeword)."};
@@ -133,12 +137,13 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-snr-type",   "E"})) this->snr_type         = vals.at({p+"-snr-type", "E"});
-	if(exist(vals, {p+"-err-trk-path"   })) this->err_track_path   = vals.at({p+"-err-trk-path" });
-	if(exist(vals, {p+"-err-trk-rev"    })) this->err_track_revert = true;
-	if(exist(vals, {p+"-err-trk"        })) this->err_track_enable = true;
-	if(exist(vals, {p+"-coset",      "c"})) this->coset            = true;
-	if(exist(vals, {p+"-coded",         })) this->coded_monitoring = true;
+	if(exist(vals, {p+"-snr-type",   "E"})) this->snr_type            =           vals.at({p+"-snr-type", "E"});
+	if(exist(vals, {p+"-err-trk-path"   })) this->err_track_path      =           vals.at({p+"-err-trk-path" });
+	if(exist(vals, {p+"-err-trk-thold"  })) this->err_track_threshold = std::stoi(vals.at({p+"-err-trk-thold"}));
+	if(exist(vals, {p+"-err-trk-rev"    })) this->err_track_revert    = true;
+	if(exist(vals, {p+"-err-trk"        })) this->err_track_enable    = true;
+	if(exist(vals, {p+"-coset",      "c"})) this->coset               = true;
+	if(exist(vals, {p+"-coded",         })) this->coded_monitoring    = true;
 
 	if (this->err_track_revert)
 	{
@@ -163,6 +168,8 @@ void BFER::parameters
 
 	std::string enable_rev_track = (this->err_track_revert) ? "on" : "off";
 	headers[p].push_back(std::make_pair("Bad frames replay", enable_rev_track));
+
+	headers[p].push_back(std::make_pair("Bad frames threshold", std::to_string(this->err_track_threshold)));
 
 	if (this->err_track_enable || this->err_track_revert)
 	{

@@ -52,7 +52,7 @@ int Monitor_BFER<B>
 		n_frame_errors++;
 
 		for (auto c : this->callbacks_fe)
-			c(frame_id);
+			c(bit_errors_count, frame_id);
 
 		if (this->fe_limit_achieved() && frame_id == this->n_frames -1)
 			for (auto c : this->callbacks_fe_limit_achieved)
@@ -131,10 +131,11 @@ float Monitor_BFER<B>
 
 template <typename B>
 void Monitor_BFER<B>
-::add_handler_fe(std::function<void(int)> callback)
+::add_handler_fe(std::function<void(unsigned, int)> callback)
 {
 	this->callbacks_fe.push_back(callback);
 }
+
 template <typename B>
 void Monitor_BFER<B>
 ::add_handler_check(std::function<void(void)> callback)
@@ -169,7 +170,7 @@ void Monitor_BFER<B>
 	this->callbacks_fe_limit_achieved.clear();
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Monitor_BFER<B_8>;

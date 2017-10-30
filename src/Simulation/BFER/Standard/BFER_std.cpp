@@ -80,7 +80,7 @@ void BFER_std<B,R,Q>
 			this->monitor[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh, interleaver));
 
 		if (this->params.err_track_enable && interleaver->is_uniform())
-			this->dumper[tid]->register_data(interleaver->get_lut(), "itl", false, this->params.src->n_frames, {});
+			this->dumper[tid]->register_data(interleaver->get_lut(), this->params.err_track_threshold, "itl", false, this->params.src->n_frames, {});
 	}
 	catch (const std::exception&) { /* do nothing if the is no interleaver */ }
 
@@ -95,15 +95,15 @@ void BFER_std<B,R,Q>
 		source[src::tsk::generate].set_autoalloc(true);
 		auto src_data = (B*)(source[src::tsk::generate][src::sck::generate::U_K].get_dataptr());
 		auto src_size = (source[src::tsk::generate][src::sck::generate::U_K].get_databytes() / sizeof(B)) / this->params.src->n_frames;
-		this->dumper[tid]->register_data(src_data, (unsigned int)src_size, "src", false, this->params.src->n_frames, {});
+		this->dumper[tid]->register_data(src_data, (unsigned int)src_size, this->params.err_track_threshold, "src", false, this->params.src->n_frames, {});
 
 		encoder[enc::tsk::encode].set_autoalloc(true);
 		auto enc_data = (B*)(encoder[enc::tsk::encode][enc::sck::encode::X_N].get_dataptr());
 		auto enc_size = (encoder[enc::tsk::encode][enc::sck::encode::X_N].get_databytes() / sizeof(B)) / this->params.src->n_frames;
-		this->dumper[tid]->register_data(enc_data, (unsigned int)enc_size, "enc", false, this->params.src->n_frames,
+		this->dumper[tid]->register_data(enc_data, (unsigned int)enc_size, this->params.err_track_threshold, "enc", false, this->params.src->n_frames,
 		                                 {(unsigned)this->params.cdc->enc->K});
 
-		this->dumper[tid]->register_data(channel.get_noise(), "chn", true, this->params.src->n_frames, {});
+		this->dumper[tid]->register_data(channel.get_noise(), this->params.err_track_threshold, "chn", true, this->params.src->n_frames, {});
 	}
 }
 

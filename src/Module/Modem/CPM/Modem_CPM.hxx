@@ -248,7 +248,7 @@ R Modem_CPM<B,R,Q,MAX>
 	else
 	{
 		std::string message = "Unknown CPM wave shape ('cpm.wave_shape' = " + cpm.wave_shape + ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message);
 	}
 }
 
@@ -267,7 +267,7 @@ void Modem_CPM<B,R,Q,MAX>
 	R factor = (R)1;
 
 	if (!no_sig2)
-		factor = (R)1 / (this->sigma * this->sigma);
+		factor = (R)2 / (this->sigma * this->sigma);
 
 	if (cpm.filters_type == "TOTAL")
 	{
@@ -282,7 +282,7 @@ void Modem_CPM<B,R,Q,MAX>
 	else
 	{
 		std::string message = "Unknown CPM filter bank type ('cpm.filters_type' = " + cpm.filters_type + ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message);
 	}
 }
 }
