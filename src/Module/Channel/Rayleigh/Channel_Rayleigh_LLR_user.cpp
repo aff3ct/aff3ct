@@ -95,8 +95,9 @@ void Channel_Rayleigh_LLR_user<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR_user<R>
-::get_gains(std::vector<R>& gains, const R sigma)
+::add_noise_wg(const R *X_N, R *H_N, R *Y_N)
 {
+	// get all the needed gains from the stock
 	for (unsigned i = 0; i < gains.size(); ++i)
 	{
 		gains[i] = gains_stock[gain_index];
@@ -111,15 +112,11 @@ void Channel_Rayleigh_LLR_user<R>
 				gain_index = 0;
 		}
 	}
-}
 
-template <typename R>
-void Channel_Rayleigh_LLR_user<R>
-::add_noise_wg(const R *X_N, R *H_N, R *Y_N)
-{
-	this->get_gains(gains, (R)1 / (R)std::sqrt((R)2));
+	// generate the noise
 	noise_generator->generate(this->noise, this->sigma);
 
+	// use the noise and the gain to modify the signal
 	for (auto i = 0; i < this->N * this->n_frames; i++)
 	{
 		H_N[i] = this->gains[i];
