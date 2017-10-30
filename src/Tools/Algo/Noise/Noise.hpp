@@ -26,7 +26,7 @@ public:
 	}
 
 	virtual void set_seed(const int seed) = 0;
-	virtual void generate(R *noise, const unsigned length, const R sigma) = 0;
+	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0) = 0;
 
 };
 }

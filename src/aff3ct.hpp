@@ -161,6 +161,7 @@
 #include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
 #include <Module/Channel/User/Channel_user.hpp>
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp>
+#include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp>
 #include <Module/Channel/NO/Channel_NO.hpp>
 #include <Module/Decoder/Decoder_SISO_SIHO.hpp>
 #include <Module/Decoder/Decoder.hpp>
@@ -263,7 +264,7 @@
 #include <Module/Modem/QAM/Modem_QAM.hpp>
 #include <Module/Modem/PAM/Modem_PAM.hpp>
 #include <Module/Modem/SCMA/Modem_SCMA.hpp>
-#include <Module/SC_Module.hpp>
+#include <Module/Modem/OOK/Modem_OOK.hpp>
 #include <Module/Module.hpp>
 #include <Module/Codec/Codec_SIHO.hpp>
 #include <Module/Codec/Polar/Codec_polar.hpp>

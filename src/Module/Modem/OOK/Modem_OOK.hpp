@@ -10,7 +10,7 @@ namespace module
 template <typename B = int, typename R = float, typename Q = R>
 class Modem_OOK : public Modem<B,R,Q>
 {
-private:
+protected:
 	const bool disable_sig2;
 	R sigma_factor;
 

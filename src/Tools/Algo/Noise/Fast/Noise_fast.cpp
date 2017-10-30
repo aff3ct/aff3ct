@@ -77,7 +77,7 @@ float Noise_fast<float>
 
 template <typename R>
 void Noise_fast<R>
-::generate(R *noise, const unsigned length, const R sigma)
+::generate(R *noise, const unsigned length, const R sigma, const R mu) //TODO: integrate mu in the computation
 {
 	if (!mipp::isAligned(noise))
 		throw runtime_error(__FILE__, __LINE__, __func__, "'noise' is misaligned memory.");
@@ -86,7 +86,7 @@ void Noise_fast<R>
 
 	// SIMD version of the Box Muller method in the polar form
 	const auto vec_loop_size = (int)(((int)length / (mipp::nElReg<R>() * 2)) * mipp::nElReg<R>() * 2);
-	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>() * 2) 
+	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>() * 2)
 	{
 		const auto u1 = get_random_simd();
 		const auto u2 = get_random_simd();
@@ -136,7 +136,7 @@ void Noise_fast<R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::tools::Noise_fast<R_32>;

@@ -34,13 +34,13 @@ Noise_GSL<R>
 
 template <typename R>
 void Noise_GSL<R>
-::generate(R *noise, const unsigned length, const R sigma)
+::generate(R *noise, const unsigned length, const R sigma, const R mu)
 {
 	for (unsigned i = 0; i < length; i++)
 		noise[i] = (R)gsl_ran_gaussian(rng, sigma);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::tools::Noise_GSL<R_32>;

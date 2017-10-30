@@ -36,7 +36,7 @@ void Noise_MKL<R>
 
 template <typename R>
 void Noise_MKL<R>
-::generate(R *noise, const unsigned length, const R sigma)
+::generate(R *noise, const unsigned length, const R sigma, const R mu)
 {
 	throw runtime_error(__FILE__, __LINE__, __func__, "Adding white Gaussian noise is impossible on this data type.");
 }
@@ -47,20 +47,20 @@ namespace tools
 {
 template <>
 void Noise_MKL<float>
-::generate(float *noise, const unsigned length, const float sigma)
+::generate(float *noise, const unsigned length, const float sigma, const R mu)
 {
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,
 	              length,
 	              noise,
-	              0.0,
+	              mu,
 	              sigma);
 	/*
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
 	              stream_state,
 	              length,
 	              noise,
-	              0.0,
+	              mu,
 	              sigma);
 	*/
 }
@@ -73,27 +73,27 @@ namespace tools
 {
 template <>
 void Noise_MKL<double>
-::generate(double *noise, const unsigned length, const double sigma)
+::generate(double *noise, const unsigned length, const double sigma, const R mu)
 {
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,
 	              length,
 	              noise,
-	              0.0,
+	              mu,
 	              sigma);
 	/*
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
 	              stream_state,
 	              length,
 	              noise,
-	              0.0,
+	              mu,
 	              sigma);
 	*/
 }
 }
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::tools::Noise_MKL<R_32>;
