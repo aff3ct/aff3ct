@@ -16,14 +16,14 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Module.hpp"
+#include "Decoder.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 /*!
- * \class Decoder_SIHO_i
+ * \class Decoder_SIHO
  *
  * \brief A Decoder is an algorithm dedicated to find the initial sequence of information bits (before the noise).
  *
@@ -31,26 +31,14 @@ namespace module
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder.
  *
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
- * Please use Decoder for inheritance (instead of Decoder_SIHO_i).
+ * Please use Decoder for inheritance (instead of Decoder_SIHO).
  */
 template <typename B = int, typename R = float>
-class Decoder_SIHO_i : public Module
+class Decoder_SIHO : virtual public Decoder
 {
 private:
-	const int n_inter_frame_rest;
-
 	std::vector<R> Y_N;
 	std::vector<B> V_KN;
-
-protected:
-	const int K; /*!< Number of information bits in one frame */
-	const int N; /*!< Size of one frame (= number of bits in one frame) */
-	const int simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
-	const int n_dec_waves;
-
-	std::chrono::nanoseconds d_load_total;
-	std::chrono::nanoseconds d_decod_total;
-	std::chrono::nanoseconds d_store_total;
 
 public:
 	/*!
@@ -62,77 +50,48 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   Decoder's name.
 	 */
-	Decoder_SIHO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	               std::string name = "Decoder_SIHO_i")
-	: Module(n_frames, name),
-	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
-	  Y_N (n_inter_frame_rest ? simd_inter_frame_level * N : 0),
-	  V_KN(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
-	  K(K),
-	  N(N),
-	  simd_inter_frame_level(simd_inter_frame_level),
-	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
+	Decoder_SIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
+	             std::string name = "Decoder_SIHO")
+	: Decoder(K, N, n_frames, simd_inter_frame_level, name),
+	  Y_N    (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
+	  V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 	{
-		if (K <= 0)
+		auto &p1 = this->create_task("decode_siho", dec::tsk::decode_siho);
+		auto &p1s_Y_N = this->template create_socket_in <R>(p1, "Y_N", this->N * this->n_frames);
+		auto &p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_Y_N, &p1s_V_K]() -> int
 		{
-			std::stringstream message;
-			message << "'K' has to be greater than 0 ('K' = " << K << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+			this->decode_siho(static_cast<R*>(p1s_Y_N.get_dataptr()),
+			                  static_cast<B*>(p1s_V_K.get_dataptr()));
 
-		if (N <= 0)
-		{
-			std::stringstream message;
-			message << "'N' has to be greater than 0 ('N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+			return 0;
+		});
+		this->register_timer(p1, "load");
+		this->register_timer(p1, "decode");
+		this->register_timer(p1, "store");
+		this->register_timer(p1, "total");
 
-		if (simd_inter_frame_level <= 0)
+		auto &p2 = this->create_task("decode_siho_cw", dec::tsk::decode_siho_cw);
+		auto &p2s_Y_N = this->template create_socket_in <R>(p2, "Y_N", this->N * this->n_frames);
+		auto &p2s_V_N = this->template create_socket_out<B>(p2, "V_N", this->N * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_Y_N, &p2s_V_N]() -> int
 		{
-			std::stringstream message;
-			message << "'simd_inter_frame_level' has to be greater than 0 ('simd_inter_frame_level' = "
-			        << simd_inter_frame_level << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+			this->decode_siho_cw(static_cast<R*>(p2s_Y_N.get_dataptr()),
+			                     static_cast<B*>(p2s_V_N.get_dataptr()));
 
-		if (K > N)
-		{
-			std::stringstream message;
-			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+			return 0;
+		});
+		this->register_timer(p2, "load");
+		this->register_timer(p2, "decode");
+		this->register_timer(p2, "store");
+		this->register_timer(p2, "total");
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_SIHO_i()
+	virtual ~Decoder_SIHO()
 	{
-	}
-
-	int get_K() const
-	{
-		return this->K;
-	}
-
-	int get_N() const
-	{
-		return this->N;
-	}
-
-	/*!
-	 * \brief Gets the number of frames absorbed by the SIMD instructions.
-	 *
-	 * \return the number of frames absorbed by the SIMD instructions.
-	 */
-	int get_simd_inter_frame_level() const
-	{
-		return this->simd_inter_frame_level;
-	}
-
-	int get_n_dec_waves() const
-	{
-		return this->n_dec_waves;
 	}
 
 	/*!
@@ -165,20 +124,16 @@ public:
 
 	virtual void decode_siho(const R *Y_N, B *V_K)
 	{
-		this->d_load_total  = std::chrono::nanoseconds(0);
-		this->d_decod_total = std::chrono::nanoseconds(0);
-		this->d_store_total = std::chrono::nanoseconds(0);
-
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves -1; w++)
 			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * simd_inter_frame_level);
+			                   w * this->simd_inter_frame_level);
 
 		if (this->n_inter_frame_rest == 0)
 			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * simd_inter_frame_level);
+			                   w * this->simd_inter_frame_level);
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -196,7 +151,7 @@ public:
 	}
 
 	template <class AR = std::allocator<R>, class AB = std::allocator<B>>
-	void decode_siho_coded(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N)
+	void decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N)
 	{
 		if (this->N * this->n_frames != (int)Y_N.size())
 		{
@@ -214,25 +169,21 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->decode_siho_coded(Y_N.data(), V_N.data());
+		this->decode_siho_cw(Y_N.data(), V_N.data());
 	}
 
-	virtual void decode_siho_coded(const R *Y_N, B *V_N)
+	virtual void decode_siho_cw(const R *Y_N, B *V_N)
 	{
-		this->d_load_total  = std::chrono::nanoseconds(0);
-		this->d_decod_total = std::chrono::nanoseconds(0);
-		this->d_store_total = std::chrono::nanoseconds(0);
-
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves -1; w++)
-			this->_decode_siho_coded(Y_N + w * this->N * this->simd_inter_frame_level,
-			                         V_N + w * this->N * this->simd_inter_frame_level,
-			                         w * simd_inter_frame_level);
+			this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
+			                      V_N + w * this->N * this->simd_inter_frame_level,
+			                      w * this->simd_inter_frame_level);
 
 		if (this->n_inter_frame_rest == 0)
-			this->_decode_siho_coded(Y_N + w * this->N * this->simd_inter_frame_level,
-			                         V_N + w * this->N * this->simd_inter_frame_level,
-			                         w * simd_inter_frame_level);
+			this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
+			                      V_N + w * this->N * this->simd_inter_frame_level,
+			                      w * this->simd_inter_frame_level);
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -240,7 +191,7 @@ public:
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N.begin());
 
-			this->_decode_siho_coded(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level);
+			this->_decode_siho_cw(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
 			std::copy(this->V_KN.begin(),
@@ -249,50 +200,18 @@ public:
 		}
 	}
 
-	/*!
-	 * \brief Gets the duration of the data loading in the decoding process.
-	 *
-	 * \return the duration of the data loading in the decoding process.
-	 */
-	std::chrono::nanoseconds get_load_duration() const
-	{
-		return this->d_load_total;
-	}
-
-	/*!
-	 * \brief Gets the duration of the decoding process (without loads and stores).
-	 *
-	 * \return the duration of the decoding process (without loads and stores).
-	 */
-	std::chrono::nanoseconds get_decode_duration() const
-	{
-		return this->d_decod_total;
-	}
-
-	/*!
-	 * \brief Gets the duration of the data storing in the decoding process.
-	 *
-	 * \return the duration of the data storing in the decoding process.
-	 */
-	std::chrono::nanoseconds get_store_duration() const
-	{
-		return this->d_store_total;
-	}
-
 protected:
 	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+	virtual void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }
 }
-
-#include "SC_Decoder_SIHO.hpp"
 
 #endif /* DECODER_SIHO_HPP_ */

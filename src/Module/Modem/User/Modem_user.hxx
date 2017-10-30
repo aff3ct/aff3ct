@@ -30,13 +30,6 @@ Modem_user<B,R,Q,MAX>
 	if (const_path.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'const_path' should not be empty.");
 
-	if (bits_per_symbol % 2)
-	{
-		std::stringstream message;
-		message << "'bits_per_symbol' has to be a multiple of 2 ('bits_per_symbol' = " << bits_per_symbol << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	std::fstream const_file(const_path, std::ios_base::in);
 
 	std::string temp;
@@ -98,7 +91,7 @@ void Modem_user<B,R,Q,MAX>
 	{
 		unsigned idx = 0;
 		for (auto j = 0; j < this->bits_per_symbol; j++)
-			idx += unsigned(unsigned(1 << (this->bits_per_symbol -j -1)) * X_N1[i * this->bits_per_symbol +j]);
+			idx += unsigned(unsigned(1 << j) * X_N1[i * this->bits_per_symbol +j]);
 		auto symbol = this->constellation[idx];
 
 		X_N2[2*i   ] = symbol.real();
@@ -110,7 +103,7 @@ void Modem_user<B,R,Q,MAX>
 	{
 		unsigned idx = 0;
 		for (auto j = 0; j < size_in - (loop_size * this->bits_per_symbol); j++)
-			idx += unsigned(unsigned(1 << (this->bits_per_symbol -j -1)) * X_N1[loop_size * this->bits_per_symbol +j]);
+			idx += unsigned(unsigned(1 << j) * X_N1[loop_size * this->bits_per_symbol +j]);
 		auto symbol = this->constellation[idx];
 
 		X_N2[size_out -2] = symbol.real();
@@ -155,7 +148,7 @@ void Modem_user<B,R,Q,MAX>
 		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j &(1 << (this->bits_per_symbol -b -1))) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
 				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
 			else
@@ -171,7 +164,7 @@ void Modem_user<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
-::_demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
+::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -194,7 +187,7 @@ void Modem_user<B,R,Q,MAX>
 		auto complex_Hk = std::complex<Q>((Q)H_N [2*k], (Q)H_N [2*k+1]);
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j &(1 << (this->bits_per_symbol -b -1))) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -std::norm(complex_Yk -
 				                        complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
 				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
@@ -209,7 +202,7 @@ void Modem_user<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
-::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -234,13 +227,23 @@ void Modem_user<B,R,Q,MAX>
 			auto tempL = (Q)(std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
 			                                                        (Q)this->constellation[j].imag())) * inv_sigma2);
 
-			for (auto l = 0; l < b; l++)
-				tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+			for (auto l = 0; l < this->bits_per_symbol; l++)
+			{
+				if (l == b)
+					continue;
 
-			for (auto l = b + 1; l < this->bits_per_symbol; l++)
-				tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+				if  (( (j>>l) & 1 ) == 1)
+				{
+					if (k * this->bits_per_symbol +l < size)
+						tempL += Y_N2[k * this->bits_per_symbol +l];
+					else
+						tempL += std::numeric_limits<Q>::infinity();
+				}
 
-			if ((j & (1 << (this->bits_per_symbol-b-1))) == 0)
+			}
+			tempL = std::isnan(tempL) ? (Q)0.0 : tempL;
+
+			if ( ( (j>>b) & 1) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
@@ -252,7 +255,7 @@ void Modem_user<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
-::_demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -279,13 +282,22 @@ void Modem_user<B,R,Q,MAX>
 			                           complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
 			                                                        (Q)this->constellation[j].imag())) * inv_sigma2);
 
-			for (auto l = 0; l < b; l++)
-				tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+			for (auto l = 0; l < this->bits_per_symbol; l++)
+			{
+				if (l == b)
+					continue;
 
-			for (auto l = b + 1; l < this->bits_per_symbol; l++)
-				tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+				if  (( (j>>l) & 1 ) == 1)
+				{
+					if (k * this->bits_per_symbol +l < size)
+						tempL += Y_N2[k * this->bits_per_symbol +l];
+					else
+						tempL += std::numeric_limits<Q>::infinity();
+				}
+			}
+			tempL = std::isnan(tempL) ? (Q)0.0 : tempL;
 
-			if ((j & (1 << (this->bits_per_symbol-b-1))) == 0)
+			if ( ( (j>>b) & 1) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
@@ -294,5 +306,59 @@ void Modem_user<B,R,Q,MAX>
 		Y_N3[n] = (L0 - L1);
 	}
 }
+
+/*
+* \brief Soft Mapper
+*/
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+void Modem_user<B, R, Q, MAX>
+::_tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
+{
+	auto size_in  = this->N;
+	auto size_out = this->N_mod;
+
+	auto loop_size = size_in / this->bits_per_symbol;
+
+	for (auto i = 0; i < loop_size; i++)
+	{
+		X_N2[2*i] = 0.0f;
+		X_N2[2*i+1] = 0.0f;
+
+		for (auto m = 0; m < this->nbr_symbols; m++)
+		{
+			std::complex<R> soft_symbol = this->constellation[m];
+			auto p = 1.0f;
+			for (auto j = 0; j < this->bits_per_symbol; j++)
+			{
+				auto p0 = 1.0f/(1.0f + std::exp(-(R)(X_N1[i*this->bits_per_symbol + j])));
+				p *= ((m >> j) & 1) == 0 ? p0 : 1 - p0;
+			}
+			X_N2[2*i]   += p * soft_symbol.real();
+			X_N2[2*i+1] += p * soft_symbol.imag();
+		}
+	}
+
+	// last elements if "size_in" is not a multiple of the number of bits per symbol
+	if (loop_size * this->bits_per_symbol < size_in)
+	{
+		auto r = size_in - (loop_size * this->bits_per_symbol);
+		X_N2[size_out - 2] = 0.0f;
+		X_N2[size_out - 1] = 0.0f;
+
+		for (auto m = 0; m < (1<<r); m++)
+		{
+			std::complex<R> soft_symbol = this->constellation[m];
+			auto p = 1.0f;
+			for (auto j = 0; j < r; j++)
+			{
+				auto p0 = 1.0f/(1.0f + std::exp(-(R)X_N1[loop_size*this->bits_per_symbol + j]));
+				p *= ((m >> j) & 1) == 0 ? p0 : 1 - p0;
+			}
+			X_N2[size_out - 2] += p*soft_symbol.real();
+			X_N2[size_out - 1] += p*soft_symbol.imag();
+		}
+	}
+}
+
 }
 }

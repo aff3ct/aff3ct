@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -20,17 +21,30 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace src
+	{
+		namespace tsk
+		{
+			enum list { generate, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace generate { enum list { U_K, SIZE }; }
+		}
+	}
+
 /*!
- * \class Source_i
+ * \class Source
  *
  * \brief Generates a message.
  *
  * \tparam B: type of the bits in the Source.
  *
- * Please use Source for inheritance (instead of Source_i).
+ * Please use Source for inheritance (instead of Source).
  */
 template <typename B = int>
-class Source_i : public Module
+class Source : public Module
 {
 protected:
 	const int K; /*!< Number of information bits in one frame */
@@ -43,8 +57,8 @@ public:
 	 * \param n_frames: number of frames to process in the Source.
 	 * \param name:     Source's name.
 	 */
-	Source_i(const int K, const int n_frames = 1, const std::string name = "Source_i")
-	: Module(n_frames, name), K(K)
+	Source(const int K, const int n_frames = 1, const std::string name = "Source")
+	: Module(n_frames, name, "Source"), K(K)
 	{
 		if (K <= 0)
 		{
@@ -52,12 +66,21 @@ public:
 			message << "'K' has to be greater than 0 ('K' = " << K << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p = this->create_task("generate");
+		auto &ps_U_K = this->template create_socket_out<B>(p, "U_K", this->K * this->n_frames);
+		this->create_codelet(p, [this, &ps_U_K]() -> int
+		{
+			this->generate(static_cast<B*>(ps_U_K.get_dataptr()));
+
+			return 0;
+		});
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Source_i()
+	virtual ~Source()
 	{
 	}
 
@@ -99,7 +122,5 @@ protected:
 };
 }
 }
-
-#include "SC_Source.hpp"
 
 #endif /* SOURCE_HPP_ */

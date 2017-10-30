@@ -21,29 +21,43 @@ struct Simulation : Launcher
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Launcher::parameters
+	class parameters : public Launcher::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// required parameters
+		float                     snr_min         = 0.f;
+		float                     snr_max         = 0.f;
 
-		float                     snr_min;
-		float                     snr_max;
-
+		// optional parameters
 #ifdef ENABLE_MPI
-		std::chrono::milliseconds mpi_comm_freq = std::chrono::milliseconds(1000);
-		int                       mpi_rank      = 0;
-		int                       mpi_size      = 1;
+		std::chrono::milliseconds mpi_comm_freq   = std::chrono::milliseconds(1000);
+		int                       mpi_rank        = 0;
+		int                       mpi_size        = 1;
 #endif
-		std::chrono::seconds      stop_time     = std::chrono::seconds(0);
-		std::string               pyber         = "";
-		float                     snr_step      = 0.1f;
-		int                       n_threads     = 1;
-		int                       local_seed    = 0;
-		int                       global_seed   = 0;
-	};
+		std::chrono::seconds      stop_time       = std::chrono::seconds(0);
+		std::string               pyber           = "";
+		float                     snr_step        = 0.1f;
+		bool                      debug           = false;
+		bool                      statistics      = false;
+		int                       n_threads       = 1;
+		int                       local_seed      = 0;
+		int                       global_seed     = 0;
+		int                       debug_limit     = 0;
+		int                       debug_precision = 2;
 
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_sim, const parameters& params, const bool full = true);
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		virtual ~parameters();
+		virtual Simulation::parameters* clone() const;
+
+		// parameters construction
+		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+	protected:
+		parameters(const std::string n = Simulation::name, const std::string p = Simulation::prefix);
+	};
 };
 }
 }

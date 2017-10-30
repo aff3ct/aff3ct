@@ -58,22 +58,29 @@ void Frozenbits_generator_TV
 
 		if ((dp = opendir(sub_folder.c_str())) == nullptr)
 		{
-			int ret;
-			// mkdir mod = rwx r.x r.x
+			static std::mutex mutex_create_folder;
+			mutex_create_folder.lock();
+			if ((dp = opendir(sub_folder.c_str())) == nullptr)
+			{
+				int ret;
+				// mkdir mod = rwx r.x r.x
 #ifdef _MSC_VER // Windows with MSVC
-			if ((ret = _mkdir(sub_folder.c_str())) != 0)
-			{
+				if ((ret = _mkdir(sub_folder.c_str())) != 0)
+				{
 #elif defined(_WIN32) // MinGW on Windows
-			if((ret = mkdir(sub_folder.c_str())) != 0)
-			{
+				if((ret = mkdir(sub_folder.c_str())) != 0)
+				{
 #else // UNIX like
-			if ((ret = mkdir(sub_folder.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)) != 0)
-			{
+				if ((ret = mkdir(sub_folder.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)) != 0)
+				{
 #endif
-				std::stringstream message;
-				message << "Impossible to create '" + sub_folder + "'.";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+					mutex_create_folder.unlock();
+					std::stringstream message;
+					message << "Impossible to create '" + sub_folder + "'.";
+					throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+				}
 			}
+			mutex_create_folder.unlock();
 		}
 		else
 			closedir(dp);
@@ -83,33 +90,41 @@ void Frozenbits_generator_TV
 		if (!this->load_channels_file(filename))
 		{
 #ifdef ENABLE_POLAR_BOUNDS
-			auto cmd  = bin_pb_path;
-			cmd      += " --no-print";                             // do not display anything
-			cmd      += " -q " + std::to_string(Mu);               // quality
-			cmd      += " --awgn";                                 // type
-			cmd      += " --sigma=" + std::to_string(this->sigma); // sigma value
-			cmd      += " --log-length=" + str_m;                  // m
-			cmd      += " -f=" + filename;                         // filename
-
-			std::clog << format("(II) Generating best channels positions file (\"" + filename + "\")...",
-			                    Style::BOLD | FG::Color::BLUE) << "\r";
-			fflush(stdout);
-
-			if (system(cmd.c_str()) == 0)
+			static std::mutex mutex_write_file;
+			mutex_write_file.lock();
+			if (!this->load_channels_file(filename))
 			{
-				if (!this->load_channels_file(filename))
+				auto cmd  = bin_pb_path;
+				cmd      += " --no-print";                             // do not display anything
+				cmd      += " -q " + std::to_string(Mu);               // quality
+				cmd      += " --awgn";                                 // type
+				cmd      += " --sigma=" + std::to_string(this->sigma); // sigma value
+				cmd      += " --log-length=" + str_m;                  // m
+				cmd      += " -f=" + filename;                         // filename
+
+				std::clog << format("(II) Generating best channels positions file (\"" + filename + "\")...",
+				                    Style::BOLD | FG::Color::BLUE) << "\r";
+				fflush(stdout);
+
+				if (system(cmd.c_str()) == 0)
 				{
+					if (!this->load_channels_file(filename))
+					{
+						mutex_write_file.unlock();
+						std::stringstream message;
+						message << "Can't open '" << filename << "' file.";
+						throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+					}
+				}
+				else
+				{
+					mutex_write_file.unlock();
 					std::stringstream message;
-					message << "Can't open '" << filename << "' file.";
-					throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+					message << "The following command failed: '" << cmd << "'.";
+					throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 				}
 			}
-			else
-			{
-				std::stringstream message;
-				message << "The following command failed: '" << cmd << "'.";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
+			mutex_write_file.unlock();
 #else
 			std::stringstream message;
 			message << "Can't open '" << filename <<"' file.";

@@ -1,14 +1,14 @@
 #ifndef ENCODER_REPETITION_SYS_HPP_
 #define ENCODER_REPETITION_SYS_HPP_
 
-#include "../Encoder_sys.hpp"
+#include "../Encoder.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int>
-class Encoder_repetition_sys : public Encoder_sys<B>
+class Encoder_repetition_sys : public Encoder<B>
 {
 protected:
 	const int rep_count; // number of repetition
@@ -21,8 +21,7 @@ public:
 	virtual ~Encoder_repetition_sys() {}
 
 protected:
-	virtual void _encode_sys(const B *U_K, B *par, const int frame_id);
-	virtual void _encode    (const B *U_K, B *X_N, const int frame_id);
+	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

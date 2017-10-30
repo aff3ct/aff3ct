@@ -9,7 +9,7 @@ template <typename B>
 Encoder_RSC_DB<B>
 ::Encoder_RSC_DB(const int& K, const int& N, const std::string standard, const bool buffered_encoding,
                  const int n_frames, const std::string name)
-: Encoder_sys<B>   (K, N, n_frames, name),
+: Encoder<B>       (K, N, n_frames, name),
   n_ff             (standard == "DVB-RCS1" ? 3 : 4),
   n_states         (1 << n_ff),
   buffered_encoding(buffered_encoding),

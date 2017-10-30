@@ -21,17 +21,31 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace chn
+	{
+		namespace tsk
+		{
+			enum list { add_noise, add_noise_wg, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace add_noise    { enum list { X_N, Y_N     , SIZE }; }
+			namespace add_noise_wg { enum list { X_N, H_N, Y_N, SIZE }; }
+		}
+	}
+
 /*!
- * \class Channel_i
+ * \class Channel
  *
  * \brief The Channel is the physical transmission medium.
  *
  * \tparam R: type of the reals (floating-point representation) in the Channel.
  *
- * Please use Channel for inheritance (instead of Channel_i).
+ * Please use Channel for inheritance (instead of Channel).
  */
 template <typename R = float>
-class Channel_i : public Module
+class Channel : public Module
 {
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
@@ -47,8 +61,8 @@ public:
 	 * \param n_frames: number of frames to process in the Channel.
 	 * \param name:     Channel's name.
 	 */
-	Channel_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Channel_i")
-	: Module(n_frames, name), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
+	Channel(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Channel")
+	: Module(n_frames, name, "Channel"), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
 	{
 		if (N <= 0)
 		{
@@ -57,18 +71,35 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (sigma <= 0)
+		auto &p1 = this->create_task("add_noise");
+		auto &p1s_X_N = this->template create_socket_in <R>(p1, "X_N", this->N * this->n_frames);
+		auto &p1s_Y_N = this->template create_socket_out<R>(p1, "Y_N", this->N * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_X_N, &p1s_Y_N]() -> int
 		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+			this->add_noise(static_cast<R*>(p1s_X_N.get_dataptr()),
+			                static_cast<R*>(p1s_Y_N.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p2 = this->create_task("add_noise_wg");
+		auto &p2s_X_N = this->template create_socket_in <R>(p2, "X_N", this->N * this->n_frames);
+		auto &p2s_H_N = this->template create_socket_out<R>(p2, "H_N", this->N * this->n_frames);
+		auto &p2s_Y_N = this->template create_socket_out<R>(p2, "Y_N", this->N * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_X_N, &p2s_H_N, &p2s_Y_N]() -> int
+		{
+			this->add_noise_wg(static_cast<R*>(p2s_X_N.get_dataptr()),
+			                   static_cast<R*>(p2s_H_N.get_dataptr()),
+			                   static_cast<R*>(p2s_Y_N.get_dataptr()));
+
+			return 0;
+		});
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Channel_i()
+	virtual ~Channel()
 	{
 	}
 
@@ -108,6 +139,13 @@ public:
 	template <class A = std::allocator<R>>
 	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (X_N.size() != Y_N.size())
 		{
 			std::stringstream message;
@@ -147,12 +185,19 @@ public:
 	 * \brief Adds the noise to a perfectly clear signal.
 	 *
 	 * \param X_N: a perfectly clear message.
-	 * \param Y_N: a noisy signal.
 	 * \param H_N: the channel gains.
+	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, std::vector<R,A>& H_N)
+	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (X_N.size() != Y_N.size() || Y_N.size() != H_N.size())
 		{
 			std::stringstream message;
@@ -185,16 +230,16 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->add_noise(X_N.data(), Y_N.data(), H_N.data());
+		this->add_noise_wg(X_N.data(), H_N.data(), Y_N.data());
 	}
 
-	virtual void add_noise(const R *X_N, R *Y_N, R *H_N)
+	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_add_noise(X_N + f * this->N,
-			                 Y_N + f * this->N,
-			                 H_N + f * this->N,
-			                 f);
+			this->_add_noise_wg(X_N + f * this->N,
+			                    H_N + f * this->N,
+			                    Y_N + f * this->N,
+			                    f);
 	}
 
 protected:
@@ -203,14 +248,12 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _add_noise(const R *X_N, R *Y_N, R *H_N, const int frame_id)
+	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }
 }
-
-#include "SC_Channel.hpp"
 
 #endif /* CHANNEL_HPP_ */

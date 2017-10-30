@@ -1,13 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Factory/Module/Source.hpp"
-#include "Factory/Module/CRC.hpp"
-#include "Factory/Module/Code/Encoder.hpp"
-#include "Factory/Module/Modem.hpp"
-#include "Factory/Module/Channel.hpp"
-#include "Factory/Module/Quantizer.hpp"
-#include "Factory/Module/Coset.hpp"
-#include "Factory/Module/Interleaver.hpp"
+#include "Factory/Module/Coset/Coset.hpp"
 
 #include "BFER_ite.hpp"
 
@@ -16,28 +9,40 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER_ite<B,R,Q>
-::BFER_ite(const factory::BFER_ite::parameters &params, tools::Codec_SISO<B,Q> &codec)
-: BFER<B,R,Q>(params, codec),
+::BFER_ite(const factory::BFER_ite::parameters &params)
+: BFER<B,R,Q>(params),
   params(params),
 
-  codec_siso(codec),
-
-  source     (params.n_threads, nullptr),
-  crc        (params.n_threads, nullptr),
-  encoder    (params.n_threads, nullptr),
-  modem      (params.n_threads, nullptr),
-  channel    (params.n_threads, nullptr),
-  quantizer  (params.n_threads, nullptr),
-  interleaver(params.n_threads, nullptr),
-  coset_real (params.n_threads, nullptr),
-  siso       (params.n_threads, nullptr),
-  decoder    (params.n_threads, nullptr),
-  coset_bit  (params.n_threads, nullptr),
+  source          (params.n_threads, nullptr),
+  crc             (params.n_threads, nullptr),
+  codec           (params.n_threads, nullptr),
+  modem           (params.n_threads, nullptr),
+  channel         (params.n_threads, nullptr),
+  quantizer       (params.n_threads, nullptr),
+  coset_real      (params.n_threads, nullptr),
+  coset_bit       (params.n_threads, nullptr),
+  interleaver_core(params.n_threads, nullptr),
+  interleaver_bit (params.n_threads, nullptr),
+  interleaver_llr (params.n_threads, nullptr),
 
   rd_engine_seed(params.n_threads)
 {
 	for (auto tid = 0; tid < params.n_threads; tid++)
 		rd_engine_seed[tid].seed(params.local_seed + tid);
+
+	this->modules["source"         ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["crc"            ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["codec"          ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["encoder"        ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["modem"          ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["channel"        ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["quantizer"      ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["coset_real"     ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["decoder_siso"   ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["decoder_siho"   ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["coset_bit"      ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["interleaver_bit"] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["interleaver_llr"] = std::vector<module::Module*>(params.n_threads, nullptr);
 }
 
 template <typename B, typename R, typename Q>
@@ -48,29 +53,83 @@ BFER_ite<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER_ite<B,R,Q>
-::_build_communication_chain(const int tid)
+::__build_communication_chain(const int tid)
 {
-	const auto seed_src = rd_engine_seed[tid]();
-	const auto seed_enc = rd_engine_seed[tid]();
-	const auto seed_chn = rd_engine_seed[tid]();
-	const auto seed_itl = rd_engine_seed[tid]();
-
 	// build the objects
-	source     [tid] = build_source     (tid, seed_src);
-	crc        [tid] = build_crc        (tid          );
-	encoder    [tid] = build_encoder    (tid, seed_enc);
-	modem      [tid] = build_modem      (tid          );
-	channel    [tid] = build_channel    (tid, seed_chn);
-	quantizer  [tid] = build_quantizer  (tid          );
-	coset_real [tid] = build_coset_real (tid          );
-	siso       [tid] = build_siso       (tid          );
-	decoder    [tid] = build_decoder    (tid          );
-	coset_bit  [tid] = build_coset_bit  (tid          );
-	interleaver[tid] = build_interleaver(tid, seed_itl);
+	source          [tid] = build_source     (tid);
+	crc             [tid] = build_crc        (tid);
+	codec           [tid] = build_codec      (tid);
+	modem           [tid] = build_modem      (tid);
+	channel         [tid] = build_channel    (tid);
+	quantizer       [tid] = build_quantizer  (tid);
+	coset_real      [tid] = build_coset_real (tid);
+	coset_bit       [tid] = build_coset_bit  (tid);
+	interleaver_core[tid] = build_interleaver(tid);
+	interleaver_bit [tid] = factory::Interleaver::build<B>(*interleaver_core[tid]);
+	interleaver_llr [tid] = factory::Interleaver::build<Q>(*interleaver_core[tid]);
 
-	interleaver[tid]->init();
-	if (interleaver[tid]->is_uniform())
-		this->monitor[tid]->add_handler_check(std::bind(&module::Interleaver<int>::refresh, this->interleaver[tid]));
+	this->modules["source"         ][tid] = source         [tid];
+	this->modules["crc"            ][tid] = crc            [tid];
+	this->modules["codec"          ][tid] = codec          [tid];
+	this->modules["encoder"        ][tid] = codec          [tid]->get_encoder();
+	this->modules["modem"          ][tid] = modem          [tid];
+	this->modules["channel"        ][tid] = channel        [tid];
+	this->modules["quantizer"      ][tid] = quantizer      [tid];
+	this->modules["coset_real"     ][tid] = coset_real     [tid];
+	this->modules["decoder_siso"   ][tid] = codec          [tid]->get_decoder_siso();
+	this->modules["coset_bit"      ][tid] = coset_bit      [tid];
+	this->modules["interleaver_bit"][tid] = interleaver_bit[tid];
+	this->modules["interleaver_llr"][tid] = interleaver_llr[tid];
+
+	if (dynamic_cast<module::Decoder*>(codec[tid]->get_decoder_siso()) !=
+	    dynamic_cast<module::Decoder*>(codec[tid]->get_decoder_siho()))
+		this->modules["decoder_siho"][tid] = codec[tid]->get_decoder_siho();
+
+	this->monitor[tid]->add_handler_check(std::bind(&module::Codec_SISO_SIHO<B,Q>::reset, codec[tid]));
+
+	interleaver_core[tid]->init();
+	if (interleaver_core[tid]->is_uniform())
+		this->monitor[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh,
+		                                                this->interleaver_core[tid]));
+
+	if (this->params.err_track_enable)
+	{
+		using namespace module;
+
+		auto &source      = *this->source    [tid];
+		auto &encoder     = *this->codec     [tid]->get_encoder();
+		auto &channel     = *this->channel   [tid];
+		auto &interleaver = *interleaver_core[tid];
+
+		source[src::tsk::generate].set_autoalloc(true);
+		auto src_data = (B*)(source[src::tsk::generate][src::sck::generate::U_K].get_dataptr());
+		auto src_size = (source[src::tsk::generate][src::sck::generate::U_K].get_databytes() / sizeof(B)) / this->params.src->n_frames;
+		this->dumper[tid]->register_data(src_data, (unsigned int)src_size, this->params.err_track_threshold, "src", false, this->params.src->n_frames, {});
+
+		encoder[enc::tsk::encode].set_autoalloc(true);
+		auto enc_data = (B*)(encoder[enc::tsk::encode][enc::sck::encode::X_N].get_dataptr());
+		auto enc_size = (encoder[enc::tsk::encode][enc::sck::encode::X_N].get_databytes() / sizeof(B)) / this->params.src->n_frames;
+		this->dumper[tid]->register_data(enc_data, (unsigned int)enc_size, this->params.err_track_threshold, "enc", false, this->params.src->n_frames,
+		                                 {(unsigned)this->params.cdc->enc->K});
+
+		this->dumper[tid]->register_data(channel.get_noise(), this->params.err_track_threshold, "chn", true, this->params.src->n_frames, {});
+
+		if (interleaver_core[tid]->is_uniform())
+			this->dumper[tid]->register_data(interleaver.get_lut(), this->params.err_track_threshold, "itl", false, this->params.src->n_frames, {});
+	}
+}
+
+template <typename B, typename R, typename Q>
+void BFER_ite<B,R,Q>
+::_launch()
+{
+	// set current sigma
+	for (auto tid = 0; tid < this->params.n_threads; tid++)
+	{
+		this->channel[tid]->set_sigma(                                                           this->sigma);
+		this->modem  [tid]->set_sigma(this->params.mdm->complex ? this->sigma * std::sqrt(2.f) : this->sigma);
+		this->codec  [tid]->set_sigma(                                                           this->sigma);
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -78,127 +137,111 @@ void BFER_ite<B,R,Q>
 ::release_objects()
 {
 	const auto nthr = params.n_threads;
-	for (auto i = 0; i < nthr; i++) if (source     [i] != nullptr) { delete source     [i]; source     [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (crc        [i] != nullptr) { delete crc        [i]; crc        [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (encoder    [i] != nullptr) { delete encoder    [i]; encoder    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (interleaver[i] != nullptr) { delete interleaver[i]; interleaver[i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (modem      [i] != nullptr) { delete modem      [i]; modem      [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (channel    [i] != nullptr) { delete channel    [i]; channel    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (quantizer  [i] != nullptr) { delete quantizer  [i]; quantizer  [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (coset_real [i] != nullptr) { delete coset_real [i]; coset_real [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++)
-		if (siso[i] != nullptr)
-		{
-			// do not delete the siso if the decoder and the siso are the same pointers
-			if (decoder[i] == nullptr || siso[i] != dynamic_cast<module::Decoder_SISO<Q>*>(decoder[i]))
-				delete siso[i];
-			siso[i] = nullptr;
-		}
-	for (auto i = 0; i < nthr; i++) if (decoder    [i] != nullptr) { delete decoder    [i]; decoder    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (coset_bit  [i] != nullptr) { delete coset_bit  [i]; coset_bit  [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (source          [i] != nullptr) { delete source          [i]; source          [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (crc             [i] != nullptr) { delete crc             [i]; crc             [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (codec           [i] != nullptr) { delete codec           [i]; codec           [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver_bit [i] != nullptr) { delete interleaver_bit [i]; interleaver_bit [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver_llr [i] != nullptr) { delete interleaver_llr [i]; interleaver_llr [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver_core[i] != nullptr) { delete interleaver_core[i]; interleaver_core[i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (modem           [i] != nullptr) { delete modem           [i]; modem           [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (channel         [i] != nullptr) { delete channel         [i]; channel         [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (quantizer       [i] != nullptr) { delete quantizer       [i]; quantizer       [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_real      [i] != nullptr) { delete coset_real      [i]; coset_real      [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_bit       [i] != nullptr) { delete coset_bit       [i]; coset_bit       [i] = nullptr; }
 
 	BFER<B,R,Q>::release_objects();
 }
 
 template <typename B, typename R, typename Q>
 module::Source<B>* BFER_ite<B,R,Q>
-::build_source(const int tid, const int seed)
+::build_source(const int tid)
 {
-	auto src_cpy = *params.src;
-	src_cpy.seed = seed;
-	return factory::Source::build<B>(src_cpy);
+	const auto seed_src = rd_engine_seed[tid]();
+
+	auto params_src = params.src->clone();
+	params_src->seed = seed_src;
+	auto s = params_src->template build<B>();
+	delete params_src;
+	return s;
 }
 
 template <typename B, typename R, typename Q>
 module::CRC<B>* BFER_ite<B,R,Q>
 ::build_crc(const int tid)
 {
-	return factory::CRC::build<B>(*params.crc);
+	return params.crc->template build<B>();
 }
 
 template <typename B, typename R, typename Q>
-module::Encoder<B>* BFER_ite<B,R,Q>
-::build_encoder(const int tid, const int seed)
+module::Codec_SISO_SIHO<B,Q>* BFER_ite<B,R,Q>
+::build_codec(const int tid)
 {
-	try
-	{
-		return this->codec.build_encoder(tid, interleaver[tid]);
-	}
-	catch (tools::cannot_allocate const&)
-	{
-		auto enc_cpy = *params.enc;
-		enc_cpy.seed = seed;
-		return factory::Encoder::build<B>(enc_cpy);
-	}
+	const auto seed_enc = rd_engine_seed[tid]();
+
+	auto params_cdc = params.cdc->clone();
+	params_cdc->enc->seed = seed_enc;
+	auto crc = this->params.crc->type == "NO" ? nullptr : this->crc[tid];
+	auto c = params_cdc->template build<B,Q>(crc);
+	delete params_cdc;
+	return c;
 }
 
 template <typename B, typename R, typename Q>
-module::Interleaver<int>* BFER_ite<B,R,Q>
-::build_interleaver(const int tid, const int seed)
+tools ::Interleaver_core<>* BFER_ite<B,R,Q>
+::build_interleaver(const int tid)
 {
-	auto itl_cpy = *params.itl;
-	itl_cpy.seed = itl_cpy.uniform ? seed : itl_cpy.seed;
-	if (params.err_track_revert)
-		params.itl->path = this->params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
-	return factory::Interleaver::build<int>(itl_cpy);
+	const auto seed_itl = rd_engine_seed[tid]();
+
+	auto params_itl = params.itl->clone();
+	params_itl->core->seed = params.itl->core->uniform ? seed_itl : params.itl->core->seed;
+	if (params.err_track_revert && params.itl->core->uniform)
+	{
+		std::stringstream s_snr_b;
+		s_snr_b << std::setprecision(2) << std::fixed << this->snr_b;
+
+		params_itl->core->path = params.err_track_path + "_" + s_snr_b.str() + ".itl";
+	}
+
+	auto i = params_itl->core->template build<>();
+	delete params_itl;
+	return i;
 }
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
-	auto mdm_cpy = *params.mdm;
-	if (params.mdm->sigma == -1.f)
-		mdm_cpy.sigma = this->sigma;
-	return factory::Modem::build<B,R,Q>(mdm_cpy);
+	return params.mdm->template build<B,R,Q>();
 }
 
 template <typename B, typename R, typename Q>
 module::Channel<R>* BFER_ite<B,R,Q>
-::build_channel(const int tid, const int seed)
+::build_channel(const int tid)
 {
-	auto chn_cpy = *params.chn;
-	if (params.chn->sigma == -1.f)
-		chn_cpy.sigma = this->sigma;
-	chn_cpy.seed = seed;
+	const auto seed_chn = rd_engine_seed[tid]();
 
-	return factory::Channel::build<R>(chn_cpy);
+	auto params_chn = params.chn->clone();
+	params_chn->seed = seed_chn;
+	auto c = params_chn->template build<R>();
+	delete params_chn;
+	return c;
 }
 
 template <typename B, typename R, typename Q>
 module::Quantizer<R,Q>* BFER_ite<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	auto qnt_cpy = *params.qnt;
-	if (params.qnt->sigma == -1.f)
-		qnt_cpy.sigma = this->sigma;
-
-	return factory::Quantizer::build<R,Q>(qnt_cpy);
+	return params.qnt->template build<R,Q>();
 }
-
-template <typename B, typename R, typename Q>
-module::Decoder_SISO<Q>* BFER_ite<B,R,Q>
-::build_siso(const int tid)
-{
-	return codec_siso.build_siso(tid, interleaver[tid], crc[tid]);
-}
-
 
 template <typename B, typename R, typename Q>
 module::Coset<B,Q>* BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
 	factory::Coset::parameters cst_params;
-	cst_params.size = params.dec->N_cw;
+	cst_params.size = params.cdc->N_cw;
 	cst_params.n_frames = params.src->n_frames;
-	return factory::Coset::build_real<B,Q>(cst_params);
-}
-
-template <typename B, typename R, typename Q>
-module::Decoder_SIHO<B,Q>* BFER_ite<B,R,Q>
-::build_decoder(const int tid)
-{
-	return this->codec.build_decoder(tid, interleaver[tid], crc[tid]);
+	return cst_params.template build_real<B,Q>();
 }
 
 template <typename B, typename R, typename Q>
@@ -206,9 +249,9 @@ module::Coset<B,B>* BFER_ite<B,R,Q>
 ::build_coset_bit(const int tid)
 {
 	factory::Coset::parameters cst_params;
-	cst_params.size = this->params.coded_monitoring ? params.dec->N_cw : params.dec->K;
+	cst_params.size = params.coded_monitoring ? params.cdc->N_cw : params.cdc->K;
 	cst_params.n_frames = params.src->n_frames;
-	return factory::Coset::build_bit<B>(cst_params);
+	return cst_params.template build_bit<B,B>();
 }
 
 // ==================================================================================== explicit template instantiation
@@ -222,3 +265,4 @@ template class aff3ct::simulation::BFER_ite<B_64,R_64,Q_64>;
 template class aff3ct::simulation::BFER_ite<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
+

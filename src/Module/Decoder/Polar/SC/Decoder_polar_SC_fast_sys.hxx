@@ -124,7 +124,8 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames,
                             const std::string name)
-: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
+: Decoder          (K, N, n_frames, API_polar::get_n_frames(), name),
+  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
   m                ((int)std::log2(N)),
   l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
   s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
@@ -175,7 +176,8 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
                             const std::vector<tools::Pattern_polar_i*> polar_patterns,
                             const int idx_r0, const int idx_r1,
                             const int n_frames, const std::string name)
-: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
+: Decoder          (K, N, n_frames, API_polar::get_n_frames(), name),
+  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
   m                ((int)std::log2(N)),
   l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
   s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
@@ -215,6 +217,13 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::~Decoder_polar_SC_fast_sys()
 {
 	polar_patterns.release_patterns();
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SC_fast_sys<B,R,API_polar>
+::notify_frozenbits_update()
+{
+	polar_patterns.notify_frozenbits_update();
 }
 
 template <typename B, typename R, class API_polar>
@@ -267,26 +276,27 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 	if (!API_polar::isAligned(V_K))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'V_K' is misaligned memory.");
 
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode();
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::total,  d_load + d_decod + d_store);
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	if (!API_polar::isAligned(Y_N))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N' is misaligned memory.");
@@ -294,21 +304,22 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 	if (!API_polar::isAligned(V_N))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'V_N' is misaligned memory.");
 
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode();
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	this->_store_coded(V_N);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store_cw(V_N);
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::total,  d_load + d_decod + d_store);
 }
 
 template <typename B, typename R, class API_polar>
@@ -431,7 +442,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_store_coded(B *V_N)
+::_store_cw(B *V_N)
 {
 	constexpr int n_frames = API_polar::get_n_frames();
 

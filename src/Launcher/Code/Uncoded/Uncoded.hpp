@@ -1,34 +1,27 @@
-#ifndef LAUNCHER_NO_HPP_
-#define LAUNCHER_NO_HPP_
+#ifndef LAUNCHER_UNCODED_HPP_
+#define LAUNCHER_UNCODED_HPP_
 
-#include "Factory/Module/Code/NO/Decoder_NO.hpp"
-#include "Factory/Module/Code/Encoder.hpp"
+#include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
 
 namespace aff3ct
 {
 namespace launcher
 {
-template <class C, typename B = int, typename R = float, typename Q = R>
-class Uncoded : public C
+template <class L, typename B = int, typename R = float, typename Q = R>
+class Uncoded : public L
 {
 protected:
-	factory::Encoder   ::parameters *params_enc = nullptr;
-	factory::Decoder_NO::parameters *params_dec = nullptr;
+	factory::Codec_uncoded::parameters *params_cdc;
 
 public:
 	Uncoded(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Uncoded();
 
 protected:
-	virtual void build_args();
+	virtual void get_description_args();
 	virtual void store_args();
-	virtual void print_header();
-
-	virtual void build_codec();
 };
 }
 }
 
-#include "Uncoded.hxx"
-
-#endif /* LAUNCHER_NO_HPP_ */
+#endif /* LAUNCHER_UNCODED_HPP_ */

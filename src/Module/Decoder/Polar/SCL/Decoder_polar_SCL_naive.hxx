@@ -20,7 +20,8 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
                           const int n_frames, const std::string name)
-: Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
+: Decoder          (K, N, n_frames, 1, name),
+  Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
   m((int)std::log2(N)),
   metric_init(std::numeric_limits<R>::min()),
   frozen_bits(frozen_bits),
@@ -82,6 +83,14 @@ Decoder_polar_SCL_naive<B,R,F,G>
 		this->polar_trees.pop_back();
 		delete cur_tree;
 	}
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
+void Decoder_polar_SCL_naive<B,R,F,G>
+::notify_frozenbits_update()
+{
+	for (auto i = 0; i < L; i++)
+		this->recursive_initialize_frozen_bits(this->polar_trees[i]->get_root(), frozen_bits);
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
@@ -226,42 +235,42 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode();
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode();
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_N, true);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
@@ -321,8 +330,8 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_duplicate_tree_sums(tools::Binary_node<Contents_SCL<B,R>>* node_a,
-                                tools::Binary_node<Contents_SCL<B,R> >* node_b,
-                                tools::Binary_node<Contents_SCL<B,R> >* node_caller)
+                                tools::Binary_node<Contents_SCL<B,R>>* node_b,
+                                tools::Binary_node<Contents_SCL<B,R>>* node_caller)
 {
 	if (node_a->get_left() != node_caller && !node_a->is_leaf())
 		node_b->get_left()->get_c()->s = node_a->get_left()->get_c()->s;

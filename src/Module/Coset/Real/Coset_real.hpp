@@ -19,7 +19,7 @@ public:
 
 	virtual ~Coset_real();
 
-	virtual void apply(const B *ref, const D *in_data, D *out_data); using Coset<B,D>::apply;
+	virtual void apply(const B *ref, const D *in, D *out); using Coset<B,D>::apply;
 };
 }
 }

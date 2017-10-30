@@ -20,8 +20,7 @@ private:
 	const int                        re_user[4][3]       = {{1,2,4},{0,2,5},{1,3,5},{0,3,4}};
 	      Q                          arr_phi[4][4][4][4] = {}; // probability functions
 	const bool                       disable_sig2;
-	const R                          two_on_square_sigma;
-	const R                          n0; // 1 / n0 = 179.856115108
+	      R                          n0; // 1 / n0 = 179.856115108
 	const int                        n_ite;
 
 public:
@@ -29,10 +28,12 @@ public:
 	           const int n_ite = 1, const int n_frames = 6, const std::string name = "Modem_SCMA");
 	virtual ~Modem_SCMA();
 
-	virtual void modulate             (const B* X_N1,               R *X_N2); using Modem<B,R,Q>::modulate;
-	virtual void demodulate           (const Q *Y_N1,               Q *Y_N2); using Modem<B,R,Q>::demodulate;
-	virtual void demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2); using Modem<B,R,Q>::demodulate_with_gains;
-	virtual void filter               (const R *Y_N1,               R *Y_N2); using Modem<B,R,Q>::filter;
+	virtual void set_sigma(const R sigma);
+
+	virtual void modulate     (              const B* X_N1, R *X_N2); using Modem<B,R,Q>::modulate;
+	virtual void demodulate   (              const Q *Y_N1, Q *Y_N2); using Modem<B,R,Q>::demodulate;
+	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2); using Modem<B,R,Q>::demodulate_wg;
+	virtual void filter       (              const R *Y_N1, R *Y_N2); using Modem<B,R,Q>::filter;
 
 	static int size_mod(const int N, const int bps)
 	{

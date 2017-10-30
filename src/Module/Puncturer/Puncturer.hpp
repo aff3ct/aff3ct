@@ -20,23 +20,37 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace pct
+	{
+		namespace tsk
+		{
+			enum list { puncture, depuncture, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace puncture   { enum list { X_N1, X_N2, SIZE }; }
+			namespace depuncture { enum list { Y_N1, Y_N2, SIZE }; }
+		}
+	}
+
 /*!
- * \class Puncturer_i
+ * \class Puncturer
  *
  * \brief Punctures a codeword to match a frame size.
  *
  * \tparam B: type of the bits in the frames.
  * \tparam Q: type of the reals (floating-point or fixed-point representation) in the Puncturer.
  *
- * Please use Puncturer for inheritance (instead of Puncturer_i)
+ * Please use Puncturer for inheritance (instead of Puncturer)
  */
 template <typename B = int, typename Q = float>
-class Puncturer_i : public Module
+class Puncturer : public Module
 {
 protected:
-	const int K;      /*!< Number of information bits in one frame */
-	const int N;      /*!< Size of one frame (= number of bits in one frame) */
-	const int N_code; /*!< Real size of the codeword (Puncturer_i::N_code >= Puncturer_i::N) */
+	const int K;    /*!< Number of information bits in one frame */
+	const int N;    /*!< Size of one frame (= number of bits in one frame) */
+	const int N_cw; /*!< Real size of the codeword (Puncturer::N_cw >= Puncturer::N) */
 
 public:
 	/*!
@@ -44,13 +58,13 @@ public:
 	 *
 	 * \param K:        number of information bits in the frame.
 	 * \param N:        size of one frame.
-	 * \param N_code:   real size of the codeword (Puncturer_i::N_code >= Puncturer_i::N).
+	 * \param N_cw:     real size of the codeword (Puncturer::N_cw >= Puncturer::N).
 	 * \param n_frames: number of frames to process in the Puncturer.
 	 * \param name:     Puncturer's name.
 	 */
-	Puncturer_i(const int K, const int N, const int N_code, const int n_frames = 1,
-	            const std::string name = "Puncturer_i")
-	: Module(n_frames, name), K(K), N(N), N_code(N_code)
+	Puncturer(const int K, const int N, const int N_cw, const int n_frames = 1,
+	          const std::string name = "Puncturer")
+	: Module(n_frames, name, "Puncturer"), K(K), N(N), N_cw(N_cw)
 	{
 		if (K <= 0)
 		{
@@ -66,10 +80,10 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (N_code <= 0)
+		if (N_cw <= 0)
 		{
 			std::stringstream message;
-			message << "'N_code' has to be greater than 0 ('N_code' = " << N_code << ").";
+			message << "'N_cw' has to be greater than 0 ('N_cw' = " << N_cw << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -80,18 +94,40 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (N > N_code)
+		if (N > N_cw)
 		{
 			std::stringstream message;
-			message << "'N' has to be smaller or equal to 'N_code' ('N' = " << N << ", 'N_code' = " << N_code << ").";
+			message << "'N' has to be smaller or equal to 'N_cw' ('N' = " << N << ", 'N_cw' = " << N_cw << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p1 = this->create_task("puncture");
+		auto &p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N_cw * this->n_frames);
+		auto &p1s_X_N2 = this->template create_socket_out<B>(p1, "X_N2", this->N      * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_X_N1, &p1s_X_N2]() -> int
+		{
+			this->puncture(static_cast<B*>(p1s_X_N1.get_dataptr()),
+			               static_cast<B*>(p1s_X_N2.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p2 = this->create_task("depuncture");
+		auto &p2s_Y_N1 = this->template create_socket_in <Q>(p2, "Y_N1", this->N      * this->n_frames);
+		auto &p2s_Y_N2 = this->template create_socket_out<Q>(p2, "Y_N2", this->N_cw * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_Y_N1, &p2s_Y_N2]() -> int
+		{
+			this->depuncture(static_cast<Q*>(p2s_Y_N1.get_dataptr()),
+			                 static_cast<Q*>(p2s_Y_N2.get_dataptr()));
+
+			return 0;
+		});
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Puncturer_i() {}
+	virtual ~Puncturer() {}
 
 	int get_K() const
 	{
@@ -103,9 +139,9 @@ public:
 		return N;
 	}
 
-	int get_N_code() const
+	int get_N_cw() const
 	{
-		return N_code;
+		return N_cw;
 	}
 
 	/*!
@@ -117,11 +153,11 @@ public:
 	template <class A = std::allocator<B>>
 	void puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2) const
 	{
-		if (this->N_code * this->n_frames != (int)X_N1.size())
+		if (this->N_cw * this->n_frames != (int)X_N1.size())
 		{
 			std::stringstream message;
-			message << "'X_N1.size()' has to be equal to 'N_code' * 'n_frames' ('X_N1.size()' = " << X_N1.size()
-			        << ", 'N_code' = " << this->N_code << ", 'n_frames' = " << this->n_frames << ").";
+			message << "'X_N1.size()' has to be equal to 'N_cw' * 'n_frames' ('X_N1.size()' = " << X_N1.size()
+			        << ", 'N_cw' = " << this->N_cw << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -139,7 +175,7 @@ public:
 	virtual void puncture(const B *X_N1, B *X_N2) const
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_puncture(X_N1 + f * this->N_code,
+			this->_puncture(X_N1 + f * this->N_cw,
 			                X_N2 + f * this->N,
 			                f);
 	}
@@ -161,11 +197,11 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (this->N_code * this->n_frames != (int)Y_N2.size())
+		if (this->N_cw * this->n_frames != (int)Y_N2.size())
 		{
 			std::stringstream message;
-			message << "'Y_N2.size()' has to be equal to 'N_code' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
-			        << ", 'N_code' = " << this->N_code << ", 'n_frames' = " << this->n_frames << ").";
+			message << "'Y_N2.size()' has to be equal to 'N_cw' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
+			        << ", 'N_cw' = " << this->N_cw << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -176,7 +212,7 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_depuncture(Y_N1 + f * this->N,
-			                  Y_N2 + f * this->N_code,
+			                  Y_N2 + f * this->N_cw,
 			                  f);
 	}
 
@@ -193,7 +229,5 @@ protected:
 };
 }
 }
-
-#include "SC_Puncturer.hpp"
 
 #endif /* PUNCTURER_HPP_ */

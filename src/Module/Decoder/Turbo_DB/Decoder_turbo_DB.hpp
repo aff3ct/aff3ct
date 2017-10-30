@@ -19,7 +19,7 @@ class Decoder_turbo_DB : public Decoder_SIHO<B,R>
 protected:
 	const int                 n_ite; // number of iterations
 
-	const Interleaver  <int> &pi;
+	const Interleaver  <R>   &pi;
 	Decoder_RSC_DB_BCJR<B,R> &siso_n;
 	Decoder_RSC_DB_BCJR<B,R> &siso_i;
 
@@ -49,7 +49,7 @@ public:
 	Decoder_turbo_DB(const int& K,
 	                 const int& N,
 	                 const int& n_ite,
-	                 const Interleaver<int> &pi,
+	                 const Interleaver<R> &pi,
 	                 Decoder_RSC_DB_BCJR<B,R> &siso_n,
 	                 Decoder_RSC_DB_BCJR<B,R> &siso_i,
 	                 const std::string name = "Decoder_turbo_DB");

@@ -15,10 +15,10 @@ public:
 	virtual ~Decoder_NO();
 
 protected:
-	void _decode_siso      (const R *sys, const R *par, R *ext, const int frame_id);
-	void _decode_siso      (const R *Y_K1, R *Y_K2, const int frame_id);
-	void _decode_siho      (const R *Y_K,  B *V_K,  const int frame_id);
-	void _decode_siho_coded(const R *Y_K,  B *V_K,  const int frame_id);
+	void _decode_siso   (const R *sys, const R *par, R *ext, const int frame_id);
+	void _decode_siso   (const R *Y_K1, R *Y_K2, const int frame_id);
+	void _decode_siho   (const R *Y_K,  B *V_K,  const int frame_id);
+	void _decode_siho_cw(const R *Y_K,  B *V_K,  const int frame_id);
 };
 }
 }

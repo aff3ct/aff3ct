@@ -18,7 +18,8 @@ Decoder_RSC_DB_BCJR<B,R>
                       const bool buffered_encoding,
                       const int n_frames,
                       const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, 2 * K, n_frames, 1, name             ),
+: Decoder               (K, 2 * K, n_frames, 1, name             ),
+  Decoder_SISO_SIHO<B,R>(K, 2 * K, n_frames, 1, name             ),
   n_states              ((int)trellis[0].size()/4                ),
   n_ff                  ((int)std::log2(n_states)                ),
   buffered_encoding     (buffered_encoding                       ),
@@ -89,15 +90,15 @@ template <typename B, typename R>
 void Decoder_RSC_DB_BCJR<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	for (auto i = 0; i < this->K; i+=2)
 	{
 		s[i  ] = (  std::max(ext[2*i+2] + sys[2*i+2], ext[2*i+3] + sys[2*i+3])
@@ -106,11 +107,11 @@ void Decoder_RSC_DB_BCJR<B,R>
 		          - std::max(ext[2*i+0] + sys[2*i+0], ext[2*i+2] + sys[2*i+2])  ) > 0;
 	}
 	_store(V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 }
 
 template <typename B, typename R>

@@ -5,6 +5,7 @@
 
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
+#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
 #include "../../Decoder_SISO_SIHO.hpp"
 
@@ -17,7 +18,7 @@ template <typename B = int, typename R = float, tools::proto_f<  R> F = &tools::
                                                 tools::proto_h<B,R> H = &tools::h_LLR,
                                                 tools::proto_i<  R> I = &tools::init_LLR,
                                                 tools::proto_s<  R> S = &tools::sat_val>
-class Decoder_polar_SCAN_naive : public Decoder_SISO_SIHO<B,R>
+class Decoder_polar_SCAN_naive : public Decoder_SISO_SIHO<B,R>, public tools::Frozenbits_notifier
 {
 protected:
 	const int m;            // coded bits log-length
@@ -35,12 +36,14 @@ public:
 	                         const int n_frames = 1, const std::string name = "Decoder_polar_SCAN_naive");
 	virtual ~Decoder_polar_SCAN_naive() {}
 
+	void reset();
+
 protected:
-	        void _load             (const R *Y_N                              );
-	        void _decode_siho      (const R *Y_N,  B *V_K , const int frame_id);
-	        void _decode_siho_coded(const R *Y_N,  B *V_N , const int frame_id);
-	virtual void _decode_siso      (const R *Y_N1, R *Y_N2, const int frame_id);
-	virtual void _store            (               B *V_KN, bool coded = false) const;
+	        void _load          (const R *Y_N                              );
+	        void _decode_siho   (const R *Y_N,  B *V_K , const int frame_id);
+	        void _decode_siho_cw(const R *Y_N,  B *V_N , const int frame_id);
+	virtual void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
+	virtual void _store         (               B *V_KN, bool coded = false) const;
 
 	void _load_init();
 	void _decode();

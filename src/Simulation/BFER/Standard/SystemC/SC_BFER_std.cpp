@@ -12,33 +12,18 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 SC_BFER_std<B,R,Q>
-::SC_BFER_std(const factory::BFER_std::parameters &params, tools::Codec<B,Q> &codec)
-: BFER_std<B,R,Q>(params, codec),
+::SC_BFER_std(const factory::BFER_std::parameters &params)
+: BFER_std<B,R,Q>(params),
 
-  duplicator{nullptr, nullptr, nullptr},
-  dbg_B     {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
-  dbg_R     {nullptr, nullptr, nullptr},
-  dbg_Q     {nullptr, nullptr, nullptr}
+  duplicator{nullptr, nullptr, nullptr}
 {
 	if (this->params.n_threads > 1)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support "
 		                                                            "multi-threading.");
 
-	if (params.benchs)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the bench "
-		                                                            "mode.");
-
 	if (params.coded_monitoring)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded "
 		                                                            "monitoring.");
-
-	if (params.time_report)
-		std::clog << tools::format_warning("The time report is not available in the SystemC simulation.") << std::endl;
-
-#ifdef ENABLE_MPI
-	std::clog << tools::format_warning("(WW) This simulation is not MPI ready, the same computations will be launched "
-	                                   "on each MPI processes.") << std::endl;
-#endif
 }
 
 template <typename B, typename R, typename Q>
@@ -49,60 +34,62 @@ SC_BFER_std<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void SC_BFER_std<B,R,Q>
-::_build_communication_chain(const int tid)
+::__build_communication_chain(const int tid)
 {
-	BFER_std<B,R,Q>::_build_communication_chain(tid);
+	BFER_std<B,R,Q>::__build_communication_chain(tid);
+
+	this->monitor[tid]->add_handler_check([&]() -> void
+	{
+		if (this->monitor_red->fe_limit_achieved()) // will make the MPI communication
+			sc_core::sc_stop();
+	});
+}
+
+template <typename B, typename R, typename Q>
+void SC_BFER_std<B,R,Q>
+::create_sc_modules()
+{
+	using namespace module;
+
+	const auto tid = 0;
 
 	// create the sc_module inside the objects of the communication chain
-	this->source   [tid]->create_sc_module            ();
-	this->crc      [tid]->create_sc_module_build      ();
-	this->encoder  [tid]->create_sc_module            ();
-	this->puncturer[tid]->create_sc_module_puncturer  ();
-	this->puncturer[tid]->create_sc_module_depuncturer();
-	this->modem    [tid]->create_sc_module_modulator  ();
-	this->modem    [tid]->create_sc_module_filterer   ();
+	this->source   [tid]                 ->sc.create_module(src::tsk::generate  );
+	this->crc      [tid]                 ->sc.create_module(crc::tsk::build     );
+	this->codec    [tid]->get_encoder()  ->sc.create_module(enc::tsk::encode    );
+	this->codec    [tid]->get_puncturer()->sc.create_module(pct::tsk::puncture  );
+	this->codec    [tid]->get_puncturer()->sc.create_module(pct::tsk::depuncture);
+	this->modem    [tid]                 ->sc.create_module(mdm::tsk::modulate  );
+	this->modem    [tid]                 ->sc.create_module(mdm::tsk::filter    );
 	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		this->channel[tid]->create_sc_module_wg            ();
-		this->modem  [tid]->create_sc_module_demodulator_wg();
+		this->channel[tid]->sc.create_module(chn::tsk::add_noise_wg );
+		this->modem  [tid]->sc.create_module(mdm::tsk::demodulate_wg);
 	}
 	else
 	{
-		this->channel[tid]->create_sc_module            ();
-		this->modem  [tid]->create_sc_module_demodulator();
+		this->channel[tid]->sc.create_module(chn::tsk::add_noise );
+		this->modem  [tid]->sc.create_module(mdm::tsk::demodulate);
 	}
-	this->quantizer[tid]->create_sc_module();
-	this->decoder  [tid]->create_sc_module();
-	this->monitor  [tid]->create_sc_module();
+	this->quantizer[tid]                    ->sc.create_module(qnt::tsk::process     );
+	this->codec    [tid]->get_decoder_siho()->sc.create_module(dec::tsk::decode_siho );
+	this->monitor  [tid]                    ->sc.create_module(mnt::tsk::check_errors);
 	if (this->params.coset)
 	{
-		this->coset_real[tid]->create_sc_module();
-		this->coset_bit [tid]->create_sc_module();
+		this->coset_real[tid]->sc.create_module(cst::tsk::apply);
+		this->coset_bit [tid]->sc.create_module(cst::tsk::apply);
 	}
-	this->crc[tid]->create_sc_module_extract();
-
-	if (this->params.err_track_enable)
-	{
-		const auto &U_K = this->source [tid]->sc_module->get_U_K();
-		const auto &X_N = this->encoder[tid]->sc_module->get_X_N();
-
-		if (this->params.src->type != "AZCW")
-			this->dumper[tid]->register_data(U_K, "src", false, {});
-
-		if (this->params.coset)
-			this->dumper[tid]->register_data(X_N, "enc", false, {(unsigned)this->params.enc->K});
-
-		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
-
-		if (this->interleaver[tid] != nullptr && this->interleaver[tid]->is_uniform())
-			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
-	}
+	this->crc[tid]->sc.create_module(crc::tsk::extract);
 }
 
 template <typename B, typename R, typename Q>
 void SC_BFER_std<B,R,Q>
 ::_launch()
 {
+	BFER_std<B,R,Q>::_launch();
+
+	this->create_sc_modules();
+
 	this->duplicator[0] = new tools::SC_Duplicator("Duplicator0");
 	if (this->params.coset)
 	{
@@ -110,61 +97,9 @@ void SC_BFER_std<B,R,Q>
 		this->duplicator[2] = new tools::SC_Duplicator("Duplicator2");
 	}
 
-	if (this->params.n_threads == 1 && this->params.debug)
-	{
-		const auto dl = this->params.debug_limit;
-
-		this->dbg_B[0] = new tools::SC_Debug<B>("Generate random bits U_K1...              \nU_K1:\n", dl, "Debug_B0");
-		this->dbg_B[1] = new tools::SC_Debug<B>("Build the CRC from U_K1 into U_K2...      \nU_K2:\n", dl, "Debug_B1");
-		this->dbg_B[2] = new tools::SC_Debug<B>("Encode U_K2 in X_N1...                    \nX_N1:\n", dl, "Debug_B2");
-		this->dbg_B[3] = new tools::SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", dl, "Debug_B3");
-		this->dbg_R[0] = new tools::SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
-		this->dbg_R[1] = new tools::SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
-		this->dbg_R[2] = new tools::SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", dl, "Debug_R2");
-		this->dbg_R[3] = new tools::SC_Debug<R>("Demodulate from Y_N3 to Y_N3...           \nY_N3:\n", dl, "Debug_R3");
-		this->dbg_Q[0] = new tools::SC_Debug<Q>("Make the quantization from Y_N3 to Y_N4...\nY_N4:\n", dl, "Debug_Q0");
-		this->dbg_Q[1] = new tools::SC_Debug<Q>("Depuncture Y_N4 and generate Y_N5...      \nY_N5:\n", dl, "Debug_Q1");
-		this->dbg_B[4] = new tools::SC_Debug<B>("Decode Y_N5 and generate V_K1...          \nV_K1:\n", dl, "Debug_B4");
-		this->dbg_B[6] = new tools::SC_Debug<B>("Extract CRC bits from V_K1 into V_K2...   \nV_K2:\n", dl, "Debug_B6");
-
-		if (this->params.coset)
-		{
-			this->dbg_Q[2] = new tools::SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q2");
-			this->dbg_B[5] = new tools::SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
-		}
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-			this->dbg_R[4] = new tools::SC_Debug<R>("Channel gains...                          \nH_N: \n", dl, "Debug_R4");
-
-		this->bind_sockets_debug();
-		sc_core::sc_start(); // start simulation
-
-		for (auto i = 0; i < 7; i++)
-			if (this->dbg_B[i] != nullptr)
-			{
-				delete this->dbg_B[i];
-				this->dbg_B[i] = nullptr;
-			}
-
-		for (auto i = 0; i < 5; i++)
-			if (this->dbg_R[i] != nullptr)
-			{
-				delete this->dbg_R[i];
-				this->dbg_R[i] = nullptr;
-			}
-
-		for (auto i = 0; i < 3; i++)
-			if (this->dbg_Q[i] != nullptr)
-			{
-				delete this->dbg_Q[i];
-				this->dbg_Q[i] = nullptr;
-			}
-	}
-	else
-	{
-		this->bind_sockets();
-		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
-		sc_core::sc_start(); // start simulation
-	}
+	this->bind_sockets();
+	sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
+	sc_core::sc_start(); // start simulation
 
 	for (auto i = 0; i < 3; i++)
 		if (this->duplicator[i] != nullptr)
@@ -184,123 +119,79 @@ template <typename B, typename R, typename Q>
 void SC_BFER_std<B,R,Q>
 ::bind_sockets()
 {
-	if (this->params.coset)
-	{
-		this->source       [0]->sc_module         ->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                    ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                    ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
-		this->crc          [0]->sc_module_build   ->s_out (this->duplicator[1]                    ->s_in );
-		this->duplicator   [1]                    ->s_out1(this->coset_bit [0]->sc_module         ->s_in1);
-		this->duplicator   [1]                    ->s_out2(this->encoder   [0]->sc_module         ->s_in );
-		this->encoder      [0]->sc_module         ->s_out (this->duplicator[2]                    ->s_in );
-		this->duplicator   [2]                    ->s_out1(this->coset_real[0]->sc_module         ->s_in1);
-		this->duplicator   [2]                    ->s_out2(this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->modem     [0]->sc_module_mod     ->s_in );
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
-			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->modem     [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
-			this->modem    [0]->sc_module_demod_wg->s_out (this->quantizer [0]->sc_module         ->s_in );
-		} else { // additive channel (AWGN, USER, NO)
-			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod   ->s_in );
-			this->modem    [0]->sc_module_demod   ->s_out (this->quantizer [0]->sc_module         ->s_in );
-		}
-		this->quantizer    [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
-		this->puncturer    [0]->sc_module_depunct ->s_out (this->coset_real[0]->sc_module         ->s_in2);
-		this->coset_real   [0]->sc_module         ->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->coset_bit [0]->sc_module         ->s_in2);
-		this->coset_bit    [0]->sc_module         ->s_out (this->crc       [0]->sc_module_extract ->s_in );
-		this->crc          [0]->sc_module_extract ->s_out (this->monitor   [0]->sc_module         ->s_in2);
-	}
-	else // standard simulation
-	{
-		this->source       [0]->sc_module         ->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                    ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                    ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
-		this->crc          [0]->sc_module_build   ->s_out (this->encoder   [0]->sc_module         ->s_in );
-		this->encoder      [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->modem     [0]->sc_module_mod     ->s_in );
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
-			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->modem     [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
-			this->modem    [0]->sc_module_demod_wg->s_out (this->quantizer [0]->sc_module         ->s_in );
-		} else { // additive channel (AWGN, USER, NO)
-			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod   ->s_in );
-			this->modem    [0]->sc_module_demod   ->s_out (this->quantizer [0]->sc_module         ->s_in );
-		}
-		this->quantizer    [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
-		this->puncturer    [0]->sc_module_depunct ->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->crc       [0]->sc_module_extract ->s_in );
-		this->crc          [0]->sc_module_extract ->s_out (this->monitor   [0]->sc_module         ->s_in2);
-	}
-}
+	using namespace module;
 
-template <typename B, typename R, typename Q>
-void SC_BFER_std<B,R,Q>
-::bind_sockets_debug()
-{
+	auto &dp0 = *this->duplicator[0];
+	auto &dp1 = *this->duplicator[1];
+	auto &dp2 = *this->duplicator[2];
+
+	auto &src = *this->source    [0];
+	auto &crc = *this->crc       [0];
+	auto &enc = *this->codec     [0]->get_encoder();
+	auto &pct = *this->codec     [0]->get_puncturer();
+	auto &mdm = *this->modem     [0];
+	auto &chn = *this->channel   [0];
+	auto &qnt = *this->quantizer [0];
+	auto &csr = *this->coset_real[0];
+	auto &dec = *this->codec     [0]->get_decoder_siho();
+	auto &csb = *this->coset_bit [0];
+	auto &mnt = *this->monitor   [0];
+
 	if (this->params.coset)
 	{
-		this->source       [0]->sc_module         ->s_out (this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                                                                  ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                                                                  ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
-		this->crc          [0]->sc_module_build   ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator[1]                    ->s_in );
-		this->duplicator   [1]                                                                  ->s_out1(this->coset_bit [0]->sc_module         ->s_in1);
-		this->duplicator   [1]                                                                  ->s_out2(this->encoder   [0]->sc_module         ->s_in );
-		this->encoder      [0]->sc_module         ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->duplicator[2]                    ->s_in );
-		this->duplicator   [2]                                                                  ->s_out1(this->coset_real[0]->sc_module         ->s_in1);
-		this->duplicator   [2]                                                                  ->s_out2(this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modem     [0]->sc_module_mod     ->s_in );
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
- 			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->dbg_R[4]->s_in); this->dbg_R[4]->s_out (this->modem     [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
-			this->modem    [0]->sc_module_demod_wg->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+		src.sc    [src::tsk::generate     ].s_out [src::sck::generate     ::U_K ](dp0                            .s_in                               );
+		dp0                                .s_out1                               (mnt.sc[mnt::tsk::check_errors ].s_in[mnt::sck::check_errors ::U   ]);
+		dp0                                .s_out2                               (crc.sc[crc::tsk::build        ].s_in[crc::sck::build        ::U_K1]);
+		crc.sc    [crc::tsk::build        ].s_out [crc::sck::build        ::U_K2](dp1                            .s_in                               );
+		dp1                                .s_out1                               (csb.sc[cst::tsk::apply        ].s_in[cst::sck::apply        ::ref ]);
+		dp1                                .s_out2                               (enc.sc[enc::tsk::encode       ].s_in[enc::sck::encode       ::U_K ]);
+		enc.sc    [enc::tsk::encode       ].s_out [enc::sck::encode       ::X_N ](dp2                            .s_in                               );
+		dp2                                .s_out1                               (csr.sc[cst::tsk::apply        ].s_in[cst::sck::apply        ::ref ]);
+		dp2                                .s_out2                               (pct.sc[pct::tsk::puncture     ].s_in[pct::sck::puncture     ::X_N1]);
+		pct.sc    [pct::tsk::puncture     ].s_out [pct::sck::puncture     ::X_N2](mdm.sc[mdm::tsk::modulate     ].s_in[mdm::sck::modulate     ::X_N1]);
+		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh chn
+			mdm.sc[mdm::tsk::modulate     ].s_out [mdm::sck::modulate     ::X_N2](chn.sc[chn::tsk::add_noise_wg ].s_in[chn::sck::add_noise_wg ::X_N ]);
+			chn.sc[chn::tsk::add_noise_wg ].s_out [chn::sck::add_noise_wg ::H_N ](mdm.sc[mdm::tsk::demodulate_wg].s_in[mdm::sck::demodulate_wg::H_N ]);
+			chn.sc[chn::tsk::add_noise_wg ].s_out [chn::sck::add_noise_wg ::Y_N ](mdm.sc[mdm::tsk::filter       ].s_in[mdm::sck::filter       ::Y_N1]);
+			mdm.sc[mdm::tsk::filter       ].s_out [mdm::sck::filter       ::Y_N2](mdm.sc[mdm::tsk::demodulate_wg].s_in[mdm::sck::demodulate_wg::Y_N1]);
+			mdm.sc[mdm::tsk::demodulate_wg].s_out [mdm::sck::demodulate_wg::Y_N2](qnt.sc[qnt::tsk::process      ].s_in[qnt::sck::process      ::Y_N1]);
 		} else { // additive channel (AWGN, USER, NO)
-			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod   ->s_in );
-			this->modem    [0]->sc_module_demod   ->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+			mdm.sc[mdm::tsk::modulate     ].s_out [mdm::sck::modulate     ::X_N2](chn.sc[chn::tsk::add_noise    ].s_in[chn::sck::add_noise    ::X_N ]);
+			chn.sc[chn::tsk::add_noise    ].s_out [chn::sck::add_noise    ::Y_N ](mdm.sc[mdm::tsk::filter       ].s_in[mdm::sck::filter       ::Y_N1]);
+			mdm.sc[mdm::tsk::filter       ].s_out [mdm::sck::filter       ::Y_N2](mdm.sc[mdm::tsk::demodulate   ].s_in[mdm::sck::demodulate   ::Y_N1]);
+			mdm.sc[mdm::tsk::demodulate   ].s_out [mdm::sck::demodulate   ::Y_N2](qnt.sc[qnt::tsk::process      ].s_in[qnt::sck::process      ::Y_N1]);
 		}
-		this->quantizer    [0]->sc_module         ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
-		this->puncturer    [0]->sc_module_depunct ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->coset_real[0]->sc_module         ->s_in2);
-		this->coset_real   [0]->sc_module         ->s_out (this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->coset_bit [0]->sc_module         ->s_in2);
-		this->coset_bit    [0]->sc_module         ->s_out (this->dbg_B[5]->s_in); this->dbg_B[5]->s_out (this->crc       [0]->sc_module_extract ->s_in );
-		this->crc          [0]->sc_module_extract ->s_out (this->dbg_B[6]->s_in); this->dbg_B[6]->s_out (this->monitor   [0]->sc_module         ->s_in2);
+		qnt.sc    [qnt::tsk::process      ].s_out [qnt::sck::process      ::Y_N2](pct.sc[pct::tsk::depuncture   ].s_in[pct::sck::depuncture   ::Y_N1]);
+		pct.sc    [pct::tsk::depuncture   ].s_out [pct::sck::depuncture   ::Y_N2](csr.sc[cst::tsk::apply        ].s_in[cst::sck::apply        ::in  ]);
+		csr.sc    [cst::tsk::apply        ].s_out [cst::sck::apply        ::out ](dec.sc[dec::tsk::decode_siho  ].s_in[dec::sck::decode_siho  ::Y_N ]);
+		dec.sc    [dec::tsk::decode_siho  ].s_out [dec::sck::decode_siho  ::V_K ](csb.sc[cst::tsk::apply        ].s_in[cst::sck::apply        ::in  ]);
+		csb.sc    [cst::tsk::apply        ].s_out [cst::sck::apply        ::out ](crc.sc[crc::tsk::extract      ].s_in[crc::sck::extract      ::V_K1]);
+		crc.sc    [crc::tsk::extract      ].s_out [crc::sck::extract      ::V_K2](mnt.sc[mnt::tsk::check_errors ].s_in[mnt::sck::check_errors ::V   ]);
 	}
 	else // standard simulation
 	{
-		this->source       [0]->sc_module         ->s_out (this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                    ->s_out1                                              (this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                    ->s_out2                                              (this->crc       [0]->sc_module_build   ->s_in );
-		this->crc          [0]->sc_module_build   ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->encoder   [0]->sc_module         ->s_in );
-		this->encoder      [0]->sc_module         ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modem     [0]->sc_module_mod     ->s_in );
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
-			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->dbg_R[4]->s_in); this->dbg_R[4]->s_out (this->modem     [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
-			this->modem    [0]->sc_module_demod_wg->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+		src.sc    [src::tsk::generate     ].s_out [src::sck::generate     ::U_K ](dp0                            .s_in                               );
+		dp0                                .s_out1                               (mnt.sc[mnt::tsk::check_errors ].s_in[mnt::sck::check_errors ::U   ]);
+		dp0                                .s_out2                               (crc.sc[crc::tsk::build        ].s_in[crc::sck::build        ::U_K1]);
+		crc.sc    [crc::tsk::build        ].s_out [crc::sck::build        ::U_K2](enc.sc[enc::tsk::encode       ].s_in[enc::sck::encode       ::U_K ]);
+		enc.sc    [enc::tsk::encode       ].s_out [enc::sck::encode       ::X_N ](pct.sc[pct::tsk::puncture     ].s_in[pct::sck::puncture     ::X_N1]);
+		pct.sc    [pct::tsk::puncture     ].s_out [pct::sck::puncture     ::X_N2](mdm.sc[mdm::tsk::modulate     ].s_in[mdm::sck::modulate     ::X_N1]);
+		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh chn
+			mdm.sc[mdm::tsk::modulate     ].s_out [mdm::sck::modulate     ::X_N2](chn.sc[chn::tsk::add_noise_wg ].s_in[chn::sck::add_noise_wg ::X_N ]);
+			chn.sc[chn::tsk::add_noise_wg ].s_out [chn::sck::add_noise_wg ::H_N ](mdm.sc[mdm::tsk::demodulate_wg].s_in[mdm::sck::demodulate_wg::H_N ]);
+			chn.sc[chn::tsk::add_noise_wg ].s_out [chn::sck::add_noise_wg ::Y_N ](mdm.sc[mdm::tsk::filter       ].s_in[mdm::sck::filter       ::Y_N1]);
+			mdm.sc[mdm::tsk::filter       ].s_out [mdm::sck::filter       ::Y_N2](mdm.sc[mdm::tsk::demodulate_wg].s_in[mdm::sck::demodulate_wg::Y_N1]);
+			mdm.sc[mdm::tsk::demodulate_wg].s_out [mdm::sck::demodulate_wg::Y_N2](qnt.sc[qnt::tsk::process      ].s_in[qnt::sck::process      ::Y_N1]);
 		} else { // additive channel (AWGN, USER, NO)
-			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
-			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod   ->s_in );
-			this->modem    [0]->sc_module_demod   ->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+			mdm.sc[mdm::tsk::modulate     ].s_out [mdm::sck::modulate     ::X_N2](chn.sc[chn::tsk::add_noise    ].s_in[chn::sck::add_noise    ::X_N ]);
+			chn.sc[chn::tsk::add_noise    ].s_out [chn::sck::add_noise    ::Y_N ](mdm.sc[mdm::tsk::filter       ].s_in[mdm::sck::filter       ::Y_N1]);
+			mdm.sc[mdm::tsk::filter       ].s_out [mdm::sck::filter       ::Y_N2](mdm.sc[mdm::tsk::demodulate   ].s_in[mdm::sck::demodulate   ::Y_N1]);
+			mdm.sc[mdm::tsk::demodulate   ].s_out [mdm::sck::demodulate   ::Y_N2](qnt.sc[qnt::tsk::process      ].s_in[qnt::sck::process      ::Y_N1]);
 		}
-		this->quantizer    [0]->sc_module         ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
-		this->puncturer    [0]->sc_module_depunct ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->crc       [0]->sc_module_extract ->s_in );
-		this->crc          [0]->sc_module_extract ->s_out (this->dbg_B[6]->s_in); this->dbg_B[6]->s_out (this->monitor   [0]->sc_module         ->s_in2);
+		qnt.sc    [qnt::tsk::process      ].s_out [qnt::sck::process      ::Y_N2](pct.sc[pct::tsk::depuncture   ].s_in[pct::sck::depuncture   ::Y_N1]);
+		pct.sc    [pct::tsk::depuncture   ].s_out [pct::sck::depuncture   ::Y_N2](dec.sc[dec::tsk::decode_siho  ].s_in[dec::sck::decode_siho  ::Y_N ]);
+		dec.sc    [dec::tsk::decode_siho  ].s_out [dec::sck::decode_siho  ::V_K ](crc.sc[crc::tsk::extract      ].s_in[crc::sck::extract      ::V_K1]);
+		crc.sc    [crc::tsk::extract      ].s_out [crc::sck::extract      ::V_K2](mnt.sc[mnt::tsk::check_errors ].s_in[mnt::sck::check_errors ::V   ]);
 	}
 }
 

@@ -16,8 +16,11 @@ struct Scaling_factor : public Factory
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters
+	struct parameters : public Factory::parameters
 	{
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// optional parameters
 		std::string         type        = "LTE_VEC";
 		int                 n_ite       = 6;
 		bool                enable      = false;
@@ -30,14 +33,24 @@ struct Scaling_factor : public Factory
 		                                   0.80f, 0.80f,  // ite 6
 		                                   0.90f, 0.90f,  // ite 7
 		                                   0.95f, 0.95f}; // ite 8
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Scaling_factor::prefix);
+		virtual ~parameters();
+		Scaling_factor::parameters* clone() const;
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename Q = float>
+		tools::Scaling_factor<B,Q>* build() const;
 	};
 
 	template <typename B = int, typename Q = float>
 	static tools::Scaling_factor<B,Q>* build(const parameters& params);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_sf, const parameters& params, const bool full = true);
 };
 }
 }

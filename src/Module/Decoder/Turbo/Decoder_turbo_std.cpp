@@ -16,12 +16,13 @@ Decoder_turbo_std<B,R>
 ::Decoder_turbo_std(const int& K,
                     const int& N,
                     const int& n_ite,
-                    const Interleaver<int> &pi,
+                    const Interleaver<R> &pi,
                     Decoder_SISO<R> &siso_n,
                     Decoder_SISO<R> &siso_i,
                     const bool buffered_encoding,
                     const std::string name)
-: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
+: Decoder(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
+  Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
 {
 }
 
@@ -35,11 +36,11 @@ template <typename B, typename R>
 void Decoder_turbo_std<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	const auto n_frames = this->get_simd_inter_frame_level();
 	const auto tail_n_2 = this->siso_n.tail_length() / 2;
 	const auto tail_i_2 = this->siso_i.tail_length() / 2;
@@ -105,15 +106,16 @@ void Decoder_turbo_std<B,R>
 
 	for (auto cb : this->callbacks_end)
 		cb(ite -1);
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::total,  d_load + d_decod + d_store);
 }
 
 // ==================================================================================== explicit template instantiation

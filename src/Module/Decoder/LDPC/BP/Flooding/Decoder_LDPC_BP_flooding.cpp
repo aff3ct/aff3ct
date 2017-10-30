@@ -22,7 +22,8 @@ Decoder_LDPC_BP_flooding<B,R>
                            const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                  ),
+: Decoder               (K, N, n_frames, 1, name                  ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                  ),
   n_ite                 (n_ite                                    ),
   n_V_nodes             (N                                        ), // same as N but more explicit
   n_C_nodes             ((int)H.get_n_cols()                      ),
@@ -107,6 +108,13 @@ Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
+::reset()
+{
+	this->init_flag = true;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding<B,R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
@@ -130,9 +138,9 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::__decode_siho(const R *Y_N, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -141,50 +149,54 @@ void Decoder_LDPC_BP_flooding<B,R>
 		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
 	this->BP_decode(Y_N, frame_id);
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-		this->init_flag = true;
-
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
-{
-	this->__decode_siho(Y_N, frame_id);
-
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	for (auto i = 0; i < this->K; i++)
 	{
 		const auto k = this->info_bits_pos[i];
 		V_K[i] = !(this->Lp_N[k] >= 0);
 	}
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
-	this->__decode_siho(Y_N, frame_id);
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	// memory zones initialization
+	if (this->init_flag)
+	{
+		std::fill(this->C_to_V[frame_id].begin(), this->C_to_V[frame_id].end(), (R)0);
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
+			this->init_flag = false;
+	}
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	// actual decoding
+	this->BP_decode(Y_N, frame_id);
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide(this->Lp_N.data(), V_N, this->N);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
 // BP algorithm

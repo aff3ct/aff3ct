@@ -8,6 +8,10 @@
 #ifndef TERMINAL_HPP_
 #define TERMINAL_HPP_
 
+#include <chrono>
+#include <mutex>
+#include <thread>
+#include <condition_variable>
 #include <iostream>
 
 namespace aff3ct
@@ -21,29 +25,29 @@ namespace tools
  */
 class Terminal
 {
+private:
+	std::thread term_thread;
+	std::mutex mutex_terminal;
+	std::condition_variable cond_terminal;
+	bool stop_terminal;
+
 public:
 	/*!
 	 * \brief Constructor.
 	 */
-	Terminal()
-	{
-	}
+	Terminal();
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Terminal()
-	{
-	}
+	virtual ~Terminal();
 
 	/*!
 	 * \brief Displays the terminal legend.
 	 *
 	 * \param stream: the stream to print the legend.
 	 */
-	virtual void legend(std::ostream &stream)
-	{
-	}
+	virtual void legend(std::ostream &stream);
 
 	/*!
 	 * \brief Temporary report.
@@ -57,7 +61,14 @@ public:
 	 *
 	 * \param stream: the stream to print the report.
 	 */
-	virtual void final_report(std::ostream &stream) = 0;
+	virtual void final_report(std::ostream &stream);
+
+	void start_temp_report(const std::chrono::milliseconds freq = std::chrono::milliseconds(500));
+
+	void stop_temp_report();
+
+private:
+	static void start_thread_terminal(Terminal *terminal, const std::chrono::milliseconds freq);
 };
 }
 }

@@ -22,26 +22,43 @@ struct Launcher : public Factory
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters
+	class parameters : public Factory::parameters
 	{
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// required parameters
 		std::string cde_type;
 
+		// optional parameters
 		std::string sim_type        = "BFER";
 		int         sim_prec        = 32;
 		bool        display_help    = false;
 		bool        display_version = false;
+
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Launcher::prefix);
+		virtual ~parameters();
+		virtual Launcher::parameters* clone() const;
+
+		// parameters construction
+		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename R = float, typename Q = R>
+		launcher::Launcher* build(const int argc, const char **argv) const;
+
+	private:
+		template <typename B = int, typename R = float, typename Q = R>
+		inline launcher::Launcher* build_exit(const int argc, const char **argv) const;
+
+	protected:
+		parameters(const std::string n, const std::string sn, const std::string p);
 	};
 
-	template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
+	template <typename B = int, typename R = float, typename Q = R>
 	static launcher::Launcher* build(const parameters &params, const int argc, const char **argv);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_sim, const parameters& params, const bool full = true);
-
-private:
-	template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
-	static launcher::Launcher* build_exit(const parameters &params, const int argc, const char **argv);
 };
 }
 }

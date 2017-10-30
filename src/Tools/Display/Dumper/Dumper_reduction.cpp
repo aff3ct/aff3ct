@@ -10,8 +10,8 @@
 using namespace aff3ct::tools;
 
 Dumper_reduction
-::Dumper_reduction(std::vector<Dumper*> dumpers, const int n_frames)
-: Dumper(n_frames), dumpers(dumpers)
+::Dumper_reduction(std::vector<Dumper*> dumpers)
+: Dumper(), dumpers(dumpers)
 {
 	this->checks();
 }
@@ -38,21 +38,23 @@ void Dumper_reduction
 
 		for (unsigned i = 0; i < n_buff_ref; i++)
 		{
-			const auto size_ref   = dumpers[0]->registered_data_size  [i];
-			const auto sizeof_ref = dumpers[0]->registered_data_sizeof[i];
-			const auto type_ref   = dumpers[0]->registered_data_type  [i];
-			const auto ext_ref    = dumpers[0]->registered_data_ext   [i];
-			const auto bin_ref    = dumpers[0]->registered_data_bin   [i];
-			const auto head_ref   = dumpers[0]->registered_data_head  [i];
+			const auto size_ref   = dumpers[0]->registered_data_size    [i];
+			const auto sizeof_ref = dumpers[0]->registered_data_sizeof  [i];
+			const auto type_ref   = dumpers[0]->registered_data_type    [i];
+			const auto ext_ref    = dumpers[0]->registered_data_ext     [i];
+			const auto bin_ref    = dumpers[0]->registered_data_bin     [i];
+			const auto head_ref   = dumpers[0]->registered_data_head    [i];
+			const auto fra_ref    = dumpers[0]->registered_data_n_frames[i];
 
 			for (auto j = 1; j < (int)dumpers.size(); j++)
 			{
-				const auto size_cur   = dumpers[j]->registered_data_size  [i];
-				const auto sizeof_cur = dumpers[j]->registered_data_sizeof[i];
-				const auto type_cur   = dumpers[j]->registered_data_type  [i];
-				const auto ext_cur    = dumpers[j]->registered_data_ext   [i];
-				const auto bin_cur    = dumpers[j]->registered_data_bin   [i];
-				const auto head_cur   = dumpers[j]->registered_data_head  [i];
+				const auto size_cur   = dumpers[j]->registered_data_size    [i];
+				const auto sizeof_cur = dumpers[j]->registered_data_sizeof  [i];
+				const auto type_cur   = dumpers[j]->registered_data_type    [i];
+				const auto ext_cur    = dumpers[j]->registered_data_ext     [i];
+				const auto bin_cur    = dumpers[j]->registered_data_bin     [i];
+				const auto head_cur   = dumpers[j]->registered_data_head    [i];
+				const auto fra_cur    = dumpers[j]->registered_data_n_frames[i];
 
 				if (size_cur != size_ref)
 				{
@@ -98,6 +100,14 @@ void Dumper_reduction
 				{
 					std::stringstream message;
 					message << "'head_cur' should be equal to 'head_ref'.";
+					throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+				}
+
+				if (fra_cur != fra_ref)
+				{
+					std::stringstream message;
+					message << "'fra_cur' should be equal to 'fra_ref' ('fra_cur' = " << fra_cur
+					        << ", 'fra_ref' = " << fra_ref << ").";
 					throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 				}
 			}

@@ -23,23 +23,36 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace mnt
+	{
+		namespace tsk
+		{
+			enum list { check_errors, check_mutual_info, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace check_errors      { enum list { U,    V             , SIZE }; }
+			namespace check_mutual_info { enum list { bits, llrs_a, llrs_e, SIZE }; }
+		}
+	}
+
 /*!
- * \class Monitor_i
+ * \class Monitor
  *
  * \brief Monitors the simulated frames, tells if there is a frame errors and counts the number of bit errors.
  *
  * \tparam B: type of the bits in the frames to compare.
  * \tparam R: type of the samples in the channel frame.
  *
- * Please use Monitor for inheritance (instead of Monitor_i).
+ * Please use Monitor for inheritance (instead of Monitor).
  */
-template <typename B = int>
-class Monitor_i : public Module
+class Monitor : public Module
 {
 protected:
 	static bool interrupt;                                                                                /*!< True if there is a SIGINT signal (ctrl+C). */
 	static bool first_interrupt;                                                                          /*!< True if this is the first time that SIGIN is called. */
-	static bool over;                                                                                     /*!< True if SIGINT is called twice in the Monitor_i::d_delta_interrupt time */
+	static bool over;                                                                                     /*!< True if SIGINT is called twice in the Monitor::d_delta_interrupt time */
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_interrupt; /*!< Time point of the last call to SIGINT */
 
 	const int size; /*!< Number of bits */
@@ -52,8 +65,8 @@ public:
 	 *
 	 * \param size: number of bits.
 	 */
-	Monitor_i(const int size, int n_frames = 1, const std::string name = "Monitor_i")
-	: Module(n_frames, name), size(size)
+	Monitor(const int size, int n_frames = 1, const std::string name = "Monitor")
+	: Module(n_frames, name, "Monitor"), size(size)
 	{
 		if (size <= 0)
 		{
@@ -62,18 +75,22 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		Monitor_i<B>::interrupt = false;
+		Monitor::interrupt = false;
 
 #ifndef ENABLE_MPI
 		// Install a signal handler
-		std::signal(SIGINT, Monitor_i<B>::signal_interrupt_handler);
+		std::signal(SIGINT, Monitor::signal_interrupt_handler);
 #endif
+
+		this->tasks_with_nullptr.resize(mnt::tsk::SIZE);
+		for (size_t t = 0; t < mnt::tsk::SIZE; t++)
+			this->tasks_with_nullptr[t] = nullptr;
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Monitor_i()
+	virtual ~Monitor()
 	{
 	}
 
@@ -87,100 +104,13 @@ public:
 		return size;
 	}
 
-	/*!
-	 * \brief Gets the number of bit errors.
-	 *
-	 * \return the number of bit errors.
-	 */
-	virtual unsigned long long get_n_be() const = 0;
-
-	/*!
-	 * \brief Gets the number of frame errors.
-	 *
-	 * \return the number of frame errors.
-	 */
-	virtual unsigned long long get_n_fe() const = 0;
-
-	/*!
-	 * \brief Gets the bit error rate.
-	 *
-	 * \return the bit error rate.
-	 */
-	virtual float get_ber() const = 0;
-
-	/*!
-	 * \brief Gets the frame error rate.
-	 *
-	 * \return the frame error rate.
-	 */
-	virtual float get_fer() const = 0;
-
-	/*!
-	 * \brief Gets the number of analyzed frames (analyzed in the Monitor_i::check_errors method).
-	 *
-	 * \return the number of analyzed frames.
-	 */
-	virtual unsigned long long get_n_analyzed_fra() const = 0;
-
-	/*!
-	 * \brief Gets the frame errors limit (maximal number of frame errors to simulate).
-	 *
-	 * \return the frame errors limit.
-	 */
-	virtual unsigned get_fe_limit() const = 0;
-
-	/*!
-	 * \brief Tells if the frame errors limit is achieved (in this case the current computations should stop).
-	 *
-	 * \return true if the frame errors limit is achieved.
-	 */
-	virtual bool fe_limit_achieved() = 0;
-
-	/*!
-	 * \brief Compares two messages and counts the number of frame errors and bit errors.
-	 *
-	 * Typically this method is called at the very end of a communication chain.
-	 *
-	 * \param U: the original message (from the Source or the CRC).
-	 * \param V: the decoded message (from the Decoder).
-	 */
-	template <class A = std::allocator<B>>
-	void check_errors(const std::vector<B,A>& U, const std::vector<B,A>& V)
-	{
-		if ((int)U.size() != this->size * this->n_frames)
-		{
-			std::stringstream message;
-			message << "'U.size()' has to be equal to 'size' * 'n_frames' ('U.size()' = " << U.size()
-			        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if ((int)V.size() != this->size * this->n_frames)
-		{
-			std::stringstream message;
-			message << "'V.size()' has to be equal to 'size' * 'n_frames' ('V.size()' = " << V.size()
-			        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		this->check_errors(U.data(), V.data());
-	}
-
-	virtual void check_errors(const B *U, const B *V)
-	{
-		for (auto f = 0; f < this->n_frames; f++)
-			this->_check_errors(U + f * this->size,
-			                    V + f * this->size,
-			                    f);
-	}
-
-	virtual void add_handler_fe               (std::function<void(int )> callback) = 0;
-	virtual void add_handler_check            (std::function<void(void)> callback) = 0;
-	virtual void add_handler_fe_limit_achieved(std::function<void(void)> callback) = 0;
-
 	virtual void reset()
 	{
-		Monitor_i<B>::interrupt = false;
+		Monitor::interrupt = false;
+	}
+
+	virtual void clear_callbacks()
+	{
 	}
 
 	/*!
@@ -190,7 +120,7 @@ public:
 	 */
 	static bool is_interrupt()
 	{
-		return Monitor_i<B>::interrupt;
+		return Monitor::interrupt;
 	}
 
 	/*!
@@ -200,55 +130,35 @@ public:
 	 */
 	static bool is_over()
 	{
-		return Monitor_i<B>::over;
+		return Monitor::over;
 	}
 
 	/*!
-	 * \brief Put Monitor_i<B,R>::interrupt and Monitor_i<B,R>::over to true.
+	 * \brief Put Monitor<B,R>::interrupt and Monitor<B,R>::over to true.
 	 */
 	static void stop()
 	{
-		Monitor_i<B>::interrupt = true;
-		Monitor_i<B>::over      = true;
-	}
-
-protected:
-	virtual void _check_errors(const B *U, const B *V, const int frame_id)
-	{
-		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+		Monitor::interrupt = true;
+		Monitor::over      = true;
 	}
 
 private:
 	static void signal_interrupt_handler(int signal)
 	{
 		auto t_now = std::chrono::steady_clock::now();
-		if (!Monitor_i<B>::first_interrupt)
+		if (!Monitor::first_interrupt)
 		{
-			auto d_delta_interrupt = t_now - Monitor_i<B>::t_last_interrupt;
+			auto d_delta_interrupt = t_now - Monitor::t_last_interrupt;
 			if (d_delta_interrupt < std::chrono::milliseconds(500))
-				Monitor_i<B>::stop();
+				Monitor::stop();
 		}
-		Monitor_i<B>::t_last_interrupt  = t_now;
+		Monitor::t_last_interrupt  = t_now;
 
-		Monitor_i<B>::first_interrupt = false;
-		Monitor_i<B>::interrupt       = true;
+		Monitor::first_interrupt = false;
+		Monitor::interrupt       = true;
 	}
 };
-
-template <typename B>
-bool Monitor_i<B>::interrupt = false;
-
-template <typename B>
-bool Monitor_i<B>::first_interrupt = true;
-
-template <typename B>
-bool Monitor_i<B>::over = false;
-
-template <typename B>
-std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> Monitor_i<B>::t_last_interrupt;
 }
 }
-
-#include "SC_Monitor.hpp"
 
 #endif /* MONITOR_HPP_ */

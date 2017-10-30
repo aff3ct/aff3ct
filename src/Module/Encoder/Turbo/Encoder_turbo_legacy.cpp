@@ -11,7 +11,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<int> &pi, Encoder_sys<B> &sub_enc,
+::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc,
                        const int n_frames, const std::string name)
 : Encoder<B>(K, N, n_frames, name.c_str()),
   pi(pi),
@@ -28,11 +28,11 @@ Encoder_turbo_legacy<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)pi.get_size() != K)
+	if ((int)pi.get_core().get_size() != K)
 	{
 		std::stringstream message;
-		message << "'pi.get_size()' has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
-		        << ", 'K' = " << K << ").";
+		message << "'pi.get_core().get_size()' has to be equal to 'K' ('pi.get_core().get_size()' = "
+		        << pi.get_core().get_size() << ", 'K' = " << K << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }

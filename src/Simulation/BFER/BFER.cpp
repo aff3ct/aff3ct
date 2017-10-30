@@ -8,13 +8,14 @@
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
 #ifdef ENABLE_MPI
-#include "Module/Monitor/Standard/Monitor_reduction_mpi.hpp"
+#include "Module/Monitor/BFER/Monitor_BFER_reduction_mpi.hpp"
 #endif
 
-#include "Factory/Module/Monitor.hpp"
+#include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
 #include "BFER.hpp"
@@ -24,17 +25,13 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER<B,R,Q>
-::BFER(const factory::BFER::parameters& params, tools::Codec<B,Q> &codec)
-: Simulation(),
+::BFER(const factory::BFER::parameters& params)
+: Simulation(params),
   params(params),
-
-  stop_terminal(false),
-
-  codec(codec),
 
   barrier(params.n_threads),
 
-  bit_rate((float)params.src->K / (float)params.pct->N),
+  bit_rate((float)params.src->K / (float)params.cdc->N),
 
   snr  (0.f),
   snr_s(0.f),
@@ -47,9 +44,7 @@ BFER<B,R,Q>
   monitor_red(                  nullptr),
   dumper     (params.n_threads, nullptr),
   dumper_red (                  nullptr),
-  terminal   (                  nullptr),
-
-  durations(params.n_threads)
+  terminal   (                  nullptr)
 {
 	if (params.n_threads < 1)
 	{
@@ -61,32 +56,36 @@ BFER<B,R,Q>
 	if (params.err_track_enable)
 	{
 		for (auto tid = 0; tid < params.n_threads; tid++)
-			dumper[tid] = new tools::Dumper(params.src->n_frames);
+			dumper[tid] = new tools::Dumper();
 
 		std::vector<tools::Dumper*> dumpers;
 		for (auto tid = 0; tid < params.n_threads; tid++)
 			dumpers.push_back(dumper[tid]);
 
-		dumper_red = new tools::Dumper_reduction(dumpers, params.src->n_frames);
+		dumper_red = new tools::Dumper_reduction(dumpers);
 	}
 
+	modules["monitor"] = std::vector<module::Module*>(params.n_threads, nullptr);
 	for (auto tid = 0; tid < params.n_threads; tid++)
+	{
 		this->monitor[tid] = this->build_monitor(tid);
+		modules["monitor"][tid] = this->monitor[tid];
+	}
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_reduction_mpi<B>(params.src->K,
-	                                                         params.mnt->n_frame_errors,
-	                                                         this->monitor,
-	                                                         std::this_thread::get_id(),
-	                                                         params.mpi_comm_freq,
-	                                                         params.src->n_frames);
+	this->monitor_red = new module::Monitor_BFER_reduction_mpi<B>(params.src->K,
+	                                                              params.mnt->n_frame_errors,
+	                                                              this->monitor,
+	                                                              std::this_thread::get_id(),
+	                                                              params.mpi_comm_freq,
+	                                                              params.src->n_frames);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_reduction<B>(params.src->K,
-	                                                     params.mnt->n_frame_errors,
-	                                                     this->monitor,
-	                                                     params.src->n_frames);
+	this->monitor_red = new module::Monitor_BFER_reduction<B>(params.src->K,
+	                                                          params.mnt->n_frame_errors,
+	                                                          this->monitor,
+	                                                          params.src->n_frames);
 #endif
 }
 
@@ -110,37 +109,18 @@ BFER<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
-::build_communication_chain(const int tid)
+::_build_communication_chain()
 {
-	try
-	{
-		this->_build_communication_chain(tid);
+	// build the communication chain in multi-threaded mode
+	std::vector<std::thread> threads(params.n_threads -1);
+	for (auto tid = 1; tid < params.n_threads; tid++)
+		threads[tid -1] = std::thread(BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
 
-		for (auto& duration : this->durations[tid])
-			duration.second = std::chrono::nanoseconds(0);
+	BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
 
-		if (params.err_track_enable)
-			this->monitor[tid]->add_handler_fe(std::bind(&tools::Dumper::add, this->dumper[tid], std::placeholders::_1));
-	}
-	catch (std::exception const& e)
-	{
-		module::Monitor<B>::stop();
-
-		mutex_exception.lock();
-		if (prev_err_message != e.what())
-		{
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
-			prev_err_message = e.what();
-		}
-		mutex_exception.unlock();
-	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER<B,R,Q>
-::_build_communication_chain(const int tid)
-{
-	// by default, do nothing
+	// join the slave threads with the master thread
+	for (auto tid = 1; tid < params.n_threads; tid++)
+		threads[tid -1].join();
 }
 
 template <typename B, typename R, typename Q>
@@ -149,7 +129,16 @@ void BFER<B,R,Q>
 {
 	this->terminal = this->build_terminal();
 
-	codec.launch_precompute();
+	if (!this->params.err_track_revert)
+	{
+		this->build_communication_chain();
+
+		if (module::Monitor::is_over())
+		{
+			this->release_objects();
+			return;
+		}
+	}
 
 	// for each SNR to be simulated
 	for (snr = params.snr_min; snr <= params.snr_max; snr += params.snr_step)
@@ -159,7 +148,7 @@ void BFER<B,R,Q>
 			snr_b = snr;
 			snr_s = tools::ebn0_to_esn0(snr_b, bit_rate, params.mdm->bps);
 		}
-		else //if(params.sim->snr_type == "ES")
+		else // if (params.sim->snr_type == "ES")
 		{
 			snr_s = snr;
 			snr_b = tools::esn0_to_ebn0(snr_s, bit_rate, params.mdm->bps);
@@ -169,20 +158,22 @@ void BFER<B,R,Q>
 		this->terminal->set_esn0(snr_s);
 		this->terminal->set_ebn0(snr_b);
 
-		if (params.err_track_revert)
+		if (this->params.err_track_revert)
 		{
+			this->release_objects();
+			this->monitor_red->clear_callbacks();
+
 			// dirty hack to override simulation params
-			auto *params_writable = const_cast<factory::BFER::parameters*>(&params);
+			auto &params_writable = const_cast<factory::BFER::parameters&>(params);
 
-			if (this->params.src->type != "AZCW")
-				params_writable->src->path = params.err_track_path + "_" + std::to_string(snr_b) + ".src";
+			std::stringstream s_snr_b;
+			s_snr_b << std::setprecision(2) << std::fixed << snr_b;
 
-			if (this->params.coset)
-				params_writable->enc->path = params.err_track_path + "_" + std::to_string(snr_b) + ".enc";
+			params_writable.src     ->path = params.err_track_path + "_" + s_snr_b.str() + ".src";
+			params_writable.cdc->enc->path = params.err_track_path + "_" + s_snr_b.str() + ".enc";
+			params_writable.chn     ->path = params.err_track_path + "_" + s_snr_b.str() + ".chn";
 
-			params_writable->chn->path = params.err_track_path + "_" + std::to_string(snr_b) + ".chn";
-
-			std::ifstream file(params_writable->chn->path, std::ios::binary);
+			std::ifstream file(this->params.chn->path, std::ios::binary);
 			if (file.is_open())
 			{
 				file.read((char*)&max_fra, sizeof(max_fra));
@@ -191,97 +182,102 @@ void BFER<B,R,Q>
 			else
 			{
 				std::stringstream message;
-				message << "Impossible to read the 'chn' file ('chn' = " << params_writable->chn->path << ").";
+				message << "Impossible to read the 'chn' file ('chn' = " << this->params.chn->path << ").";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
+
+			this->build_communication_chain();
+
+			if (module::Monitor::is_over())
+			{
+				this->release_objects();
+				return;
+			}
 		}
 
-		codec.snr_precompute(this->sigma);
-
-		// build the communication chain in multi-threaded mode
-		std::vector<std::thread> threads(params.n_threads -1);
-		for (auto tid = 1; tid < params.n_threads; tid++)
-			threads[tid -1] = std::thread(BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
-
-		BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
-
-		// join the slave threads with the master thread
-		for (auto tid = 1; tid < params.n_threads; tid++)
-			threads[tid -1].join();
-
-		if (!module::Monitor<B>::is_over())
-		{
-			if (!params.ter->disabled && snr == params.snr_min && !params.debug && !params.benchs
 #ifdef ENABLE_MPI
-			    && params.mpi_rank == 0
+		if (((!params.ter->disabled && snr == params.snr_min && !params.debug) ||
+		    (params.statistics && !params.debug)) && params.mpi_rank == 0)
+#else
+		if (((!params.ter->disabled && snr == params.snr_min && !params.debug) ||
+		    (params.statistics && !params.debug)))
 #endif
-			    )
+			terminal->legend(std::cout);
+
+		// start the terminal to display BER/FER results
+#ifdef ENABLE_MPI
+		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug
+		    && params.mpi_rank == 0)
+#else
+		if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
+#endif
+			terminal->start_temp_report(params.ter->frequency);
+
+		auto simu_error = false;
+		try
+		{
+			this->_launch();
+		}
+		catch (std::exception const& e)
+		{
+			module::Monitor::stop();
+			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+			simu_error = true;
+		}
+
+#ifdef ENABLE_MPI
+		if (!params.ter->disabled && terminal != nullptr && !simu_error && params.mpi_rank == 0)
+#else
+		if (!params.ter->disabled && terminal != nullptr && !simu_error)
+#endif
+		{
+			if (params.debug)
 				terminal->legend(std::cout);
 
-			// start the terminal to display BER/FER results
-			std::thread term_thread;
-			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) &&
-			    !params.benchs   && !params.debug)
-				// launch a thread dedicated to the terminal display
-				term_thread = std::thread(BFER<B,R,Q>::start_thread_terminal, this);
+			terminal->final_report(std::cout);
 
-			try
+			if (params.statistics)
 			{
-				this->_launch();
+				std::vector<std::vector<const module::Module*>> mod_vec;
+				for (auto &vm : modules)
+				{
+					std::vector<const module::Module*> sub_mod_vec;
+					for (auto *m : vm.second)
+						sub_mod_vec.push_back(m);
+					mod_vec.push_back(sub_mod_vec);
+				}
+
+				std::cout << "#" << std::endl;
+				tools::Stats::show(mod_vec, true, std::cout);
+				std::cout << "#" << std::endl;
 			}
-			catch (std::exception const& e)
-			{
-				module::Monitor<B>::stop();
-				std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
-			}
-
-			// stop the terminal
-			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) &&
-			    !params.benchs && !params.debug)
-			{
-				stop_terminal = true;
-				cond_terminal.notify_all();
-				// wait the terminal thread to finish
-				term_thread.join();
-				stop_terminal = false;
-			}
-
-			if (!params.ter->disabled && !params.benchs && terminal != nullptr
-#ifdef ENABLE_MPI
-				 && params.mpi_rank == 0
-#endif
-			   )
-			{
-				if (params.debug && !module::Monitor<B>::is_over())
-					terminal->legend(std::cout);
-
-				time_reduction(true);
-
-				if (!module::Monitor<B>::is_over())
-					terminal->final_report(std::cout);
-			}
-
-			if (this->dumper_red != nullptr)
-			{
-				this->dumper_red->dump(params.err_track_path + "_" + std::to_string(snr_b));
-				this->dumper_red->clear();
-			}
-
-			this->monitor_red->reset();
 		}
 
-		this->release_objects();
+		if (this->dumper_red != nullptr && !simu_error)
+		{
+			std::stringstream s_snr_b;
+			s_snr_b << std::setprecision(2) << std::fixed << snr_b;
 
-		if (module::Monitor<B>::is_over())
+			this->dumper_red->dump(params.err_track_path + "_" + s_snr_b.str());
+			this->dumper_red->clear();
+		}
+
+		if (!module::Monitor::is_interrupt() && this->monitor_red->get_n_fe() < this->monitor_red->get_fe_limit() &&
+		    (max_fra == 0 || this->monitor_red->get_n_fe() < max_fra))
+			module::Monitor::stop();
+
+		this->monitor_red->reset();
+		for (auto &m : modules)
+			for (auto mm : m.second)
+				if (mm != nullptr)
+					for (auto &t : mm->tasks)
+						t->reset_stats();
+
+		if (module::Monitor::is_over())
 			break;
 	}
 
-	if (params.time_report && !params.benchs
-#ifdef ENABLE_MPI
-	    && params.mpi_rank == 0
-#endif
-	   )
-		time_report();
+	this->release_objects();
 }
 
 template <typename B, typename R, typename Q>
@@ -291,102 +287,10 @@ void BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void BFER<B,R,Q>
-::time_reduction(const bool is_snr_done)
-{
-	for (auto& duration : durations_red)
-		duration.second = std::chrono::nanoseconds(0);
-
-	for (auto tid = 0; tid < params.n_threads; tid++)
-		for (auto& duration : durations[tid])
-			durations_red[duration.first] += duration.second;
-
-	if (is_snr_done)
-		for (auto tid = 0; tid < params.n_threads; tid++)
-			for (auto& duration : durations[tid])
-				durations_sum[duration.first] += duration.second;
-}
-
-template <typename B, typename R, typename Q>
-void BFER<B,R,Q>
-::time_report(std::ostream &stream)
-{
-	if (durations_sum.size() >= 1)
-	{
-		auto d_total = std::chrono::nanoseconds(0);
-		for (auto& duration : durations_sum)
-			if (!duration.first.second.empty())
-				d_total += duration.first.second[0] != '-' ? duration.second : std::chrono::nanoseconds(0);
-		auto total_sec = ((float)d_total.count()) * 0.000000001f;
-
-		auto max_chars = 0;
-		for (auto& duration : durations_sum)
-			max_chars = std::max(max_chars, (int)duration.first.second.length());
-
-		stream << "#" << std::endl;
-		stream << "# " << tools::format("Time report", tools::Style::BOLD | tools::Style::UNDERLINED)
-		               << " (the time of the threads is cumulated)" << std::endl;
-
-		auto prev_sec = 0.f;
-		for (auto& duration : durations_sum)
-		{
-			if (duration.second.count() != 0 && !duration.first.second.empty())
-			{
-				std::string key = "";
-				const auto cur_sec = ((float)duration.second.count()) * 0.000000001f;
-				auto cur_pc  = 0.f;
-				if (duration.first.second[0] != '-')
-				{
-					cur_pc  = (cur_sec / total_sec) * 100.f;
-					key = tools::format("* " + duration.first.second, tools::Style::BOLD);
-					prev_sec = cur_sec;
-				}
-				else
-				{
-					cur_pc  = (prev_sec != 0.f) ? (cur_sec / prev_sec) * 100.f : 0.f;
-					key = tools::format("  " + duration.first.second, tools::Style::BOLD | tools::Style::ITALIC);
-				}
-
-				const auto n_spaces = max_chars - (int)duration.first.second.length();
-				std::string str_spaces = "";
-				for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
-
-				stream << "# " << key << str_spaces << ": "
-				       << std::setw(9) << std::fixed << std::setprecision(3) << cur_sec << " sec ("
-				       << std::setw(5) << std::fixed << std::setprecision(2) << cur_pc  << "%)";
-
-				if (data_sizes.find(duration.first) != data_sizes.end())
-				{
-					const auto n_bits_per_fra = data_sizes[duration.first] / params.src->n_frames;
-					const auto n_fra = this->monitor_red->get_n_analyzed_fra_historic();
-					const auto mbps = ((float)(n_bits_per_fra * n_fra) / cur_sec) * 0.000001f;
-					const auto inter_lvl = (float)params.src->n_frames;
-					const auto lat = (((float)duration.second.count() * 0.001f) / (float)n_fra) * inter_lvl;
-
-					stream << " - " << std::setw(9) << mbps << " Mb/s"
-					       << " - " << std::setw(9) << lat  << " us";
-				}
-
-				stream << std::endl;
-			}
-		}
-
-		stream << "#   ----------------------------------" << std::endl;
-		const std::string total_str = "TOTAL";
-		const auto n_spaces = max_chars - (int)total_str.length();
-		std::string str_spaces = "";
-		for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
-		stream << "# " << tools::format("* " + total_str, tools::Style::BOLD) << str_spaces << ": "
-		       << std::setw(9) << std::fixed << std::setprecision(3) << total_sec << " sec" << std::endl;
-		stream << "#" << std::endl;
-	}
-}
-
-template <typename B, typename R, typename Q>
-module::Monitor<B>* BFER<B,R,Q>
+module::Monitor_BFER<B>* BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return factory::Monitor::build<B>(*params.mnt);
+	return factory::Monitor_BFER::build<B>(*params.mnt);
 }
 
 template <typename B, typename R, typename Q>
@@ -398,32 +302,27 @@ tools::Terminal_BFER<B>* BFER<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
-::start_thread_terminal(BFER<B,R,Q> *simu)
-{
-	if (simu->terminal != nullptr && simu->monitor_red != nullptr)
-	{
-		const auto sleep_time = simu->params.ter->frequency - std::chrono::milliseconds(0);
-
-		while (!simu->stop_terminal)
-		{
-			std::unique_lock<std::mutex> lock(simu->mutex_terminal);
-			if (simu->cond_terminal.wait_for(lock, sleep_time) == std::cv_status::timeout)
-			{
-				simu->time_reduction();
-				simu->terminal->temp_report(std::clog); // display statistics in the terminal
-			}
-		}
-	}
-	else
-		std::clog << tools::format_warning("Terminal is not allocated: the temporal report can't be called.")
-		          << std::endl;
-}
-
-template <typename B, typename R, typename Q>
-void BFER<B,R,Q>
 ::start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid)
 {
-	simu->build_communication_chain(tid);
+	try
+	{
+		simu->__build_communication_chain(tid);
+
+		if (simu->params.err_track_enable)
+			simu->monitor[tid]->add_handler_fe(std::bind(&tools::Dumper::add, simu->dumper[tid], std::placeholders::_1, std::placeholders::_2));
+	}
+	catch (std::exception const& e)
+	{
+		module::Monitor::stop();
+
+		simu->mutex_exception.lock();
+		if (simu->prev_err_message != e.what())
+		{
+			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+			simu->prev_err_message = e.what();
+		}
+		simu->mutex_exception.unlock();
+	}
 }
 
 // ==================================================================================== explicit template instantiation
@@ -437,3 +336,4 @@ template class aff3ct::simulation::BFER<B_64,R_64,Q_64>;
 template class aff3ct::simulation::BFER<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
+

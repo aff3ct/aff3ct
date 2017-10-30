@@ -1,14 +1,14 @@
 #ifndef ENCODER_RSC_SYS_HPP_
 #define ENCODER_RSC_SYS_HPP_
 
-#include "../Encoder_sys.hpp"
+#include "../Encoder.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int>
-class Encoder_RSC_sys : public Encoder_sys<B>
+class Encoder_RSC_sys : public Encoder<B>
 {
 protected:
 	const int n_ff;     // number of D flip-flop
@@ -27,13 +27,13 @@ public:
 	virtual std::vector<std::vector<int>> get_trellis();
 
 protected:
-	void _encode    (const B *U_K, B *X_N, const int frame_id);
-	void _encode_sys(const B *U_K, B *par, const int frame_id);
+	void _encode(const B *U_K, B *X_N, const int frame_id);
 
-	void __encode(const B* U_K, B* X_N, const int stride = 1, const bool only_parity = false);
-	
 	virtual int inner_encode(const int bit_sys, int &state) = 0;
 	virtual int tail_bit_sys(const int &state             ) = 0;
+
+private:
+	void __encode(const B* U_K, B* sys, B* tail_sys, B* par, B* tail_par, const int stride = 1, const int stride_tail = 1);
 };
 }
 }

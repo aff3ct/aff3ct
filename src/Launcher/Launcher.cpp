@@ -13,16 +13,16 @@
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
 
-#include "Factory/Module/Source.hpp"
-#include "Factory/Module/CRC.hpp"
-#include "Factory/Module/Code/Encoder.hpp"
-#include "Factory/Module/Code/Puncturer.hpp"
-#include "Factory/Module/Interleaver.hpp"
-#include "Factory/Module/Modem.hpp"
-#include "Factory/Module/Channel.hpp"
-#include "Factory/Module/Quantizer.hpp"
-#include "Factory/Module/Code/Decoder.hpp"
-#include "Factory/Module/Monitor.hpp"
+#include "Factory/Module/Source/Source.hpp"
+#include "Factory/Module/CRC/CRC.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
+#include "Factory/Module/Puncturer/Puncturer.hpp"
+#include "Factory/Module/Interleaver/Interleaver.hpp"
+#include "Factory/Module/Modem/Modem.hpp"
+#include "Factory/Module/Channel/Channel.hpp"
+#include "Factory/Module/Quantizer/Quantizer.hpp"
+#include "Factory/Module/Decoder/Decoder.hpp"
+#include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
 #include "Launcher.hpp"
@@ -30,8 +30,8 @@
 using namespace aff3ct;
 using namespace aff3ct::launcher;
 
-Launcher::Launcher(const int argc, const char **argv, std::ostream &stream)
-: simu(nullptr), ar(argc, argv), params(nullptr), stream(stream)
+Launcher::Launcher(const int argc, const char **argv, factory::Simulation::parameters &params, std::ostream &stream)
+: simu(nullptr), ar(argc, argv), params(params), stream(stream)
 {
 	cmd_line += std::string(argv[0]) + std::string(" ");
 	for (auto i = 1; i < argc; i++)
@@ -47,10 +47,9 @@ Launcher::Launcher(const int argc, const char **argv, std::ostream &stream)
 
 Launcher::~Launcher()
 {
-	if (params != nullptr) { delete params; params = nullptr; };
 }
 
-void Launcher::build_args()
+void Launcher::get_description_args()
 {
 }
 
@@ -58,13 +57,9 @@ void Launcher::store_args()
 {
 }
 
-void Launcher::group_args()
-{
-}
-
 int Launcher::read_arguments()
 {
-	this->build_args();
+	this->get_description_args();
 
 	std::vector<std::string> cmd_error;
 
@@ -73,11 +68,11 @@ int Launcher::read_arguments()
 
 	this->store_args();
 
-	if (params->display_help)
+	if (params.display_help)
 	{
-		this->group_args();
+		auto grps = factory::Factory::create_groups({&params});
 
-		ar.print_usage(arg_group);
+		ar.print_usage(grps);
 		error = true; // in order to exit at the end of this function
 	}
 
@@ -89,7 +84,7 @@ int Launcher::read_arguments()
 		std::cerr << tools::format_error("At least one required argument is missing.") << std::endl;
 
 	// print the help tags
-	if ((miss_arg || error) && !params->display_help)
+	if ((miss_arg || error) && !params.display_help)
 	{
 		std::string message = "For more information please display the help (";
 		std::vector<std::string> help_tag = {"help", "h"};
@@ -110,41 +105,13 @@ void Launcher::print_header()
 	stream << "# " << tools::style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", tools::Style::BOLD) << std::endl;
 	stream << "# " << tools::style("-------------------------------------------------", tools::Style::BOLD) << std::endl;
 	stream << "# " << tools::style(style("Parameters :", tools::Style::BOLD), tools::Style::UNDERLINED) << std::endl;
-
-	int max_n_chars = 0;
-	factory::Header::compute_max_n_chars(pl_sim, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_cde, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_src, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_crc, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_enc, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_pct, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_itl, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_mdm, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_chn, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_qnt, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_dec, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_mnt, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_ter, max_n_chars);
-
-	if (pl_sim.size()) factory::Header::print_parameters(factory::Simulation ::name, pl_sim, max_n_chars, this->stream);
-	if (pl_cde.size()) factory::Header::print_parameters("Code"                    , pl_cde, max_n_chars, this->stream);
-	if (pl_src.size()) factory::Header::print_parameters(factory::Source     ::name, pl_src, max_n_chars, this->stream);
-	if (pl_crc.size()) factory::Header::print_parameters(factory::CRC        ::name, pl_crc, max_n_chars, this->stream);
-	if (pl_enc.size()) factory::Header::print_parameters(factory::Encoder    ::name, pl_enc, max_n_chars, this->stream);
-	if (pl_pct.size()) factory::Header::print_parameters(factory::Puncturer  ::name, pl_pct, max_n_chars, this->stream);
-	if (pl_itl.size()) factory::Header::print_parameters(factory::Interleaver::name, pl_itl, max_n_chars, this->stream);
-	if (pl_mdm.size()) factory::Header::print_parameters(factory::Modem      ::name, pl_mdm, max_n_chars, this->stream);
-	if (pl_chn.size()) factory::Header::print_parameters(factory::Channel    ::name, pl_chn, max_n_chars, this->stream);
-	if (pl_qnt.size()) factory::Header::print_parameters(factory::Quantizer  ::name, pl_qnt, max_n_chars, this->stream);
-	if (pl_dec.size()) factory::Header::print_parameters(factory::Decoder    ::name, pl_dec, max_n_chars, this->stream);
-	if (pl_mnt.size()) factory::Header::print_parameters(factory::Monitor    ::name, pl_mnt, max_n_chars, this->stream);
-	if (pl_ter.size()) factory::Header::print_parameters(factory::Terminal   ::name, pl_ter, max_n_chars, this->stream);
+	factory::Header::print_parameters({&params}, false, this->stream);
 	this->stream << "#" << std::endl;
 }
 
 void Launcher::launch()
 {
-	std::srand(this->params->global_seed);
+	std::srand(this->params.global_seed);
 
 	// in case of the user call launch multiple times
 	if (simu != nullptr)
@@ -157,7 +124,7 @@ void Launcher::launch()
 	{
 		// print the warnings
 #ifdef ENABLE_MPI
-		if (this->params->mpi_rank == 0)
+		if (this->params.mpi_rank == 0)
 #endif
 			for (unsigned w = 0; w < cmd_warn.size(); w++)
 				std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
@@ -166,25 +133,25 @@ void Launcher::launch()
 
 	// write the command and he curve name in the PyBER format
 #ifdef ENABLE_MPI
-	if (!this->params->pyber.empty() && this->params->mpi_rank == 0)
+	if (!this->params.pyber.empty() && this->params.mpi_rank == 0)
 #else
-	if (!this->params->pyber.empty())
+	if (!this->params.pyber.empty())
 #endif
 	{
-		stream << "Run command:"      << std::endl;
-		stream << cmd_line            << std::endl;
-		stream << "Curve name:"       << std::endl;
-		stream << this->params->pyber << std::endl;
+		stream << "Run command:"     << std::endl;
+		stream << cmd_line           << std::endl;
+		stream << "Curve name:"      << std::endl;
+		stream << this->params.pyber << std::endl;
 	}
 
 #ifdef ENABLE_MPI
-	if (this->params->mpi_rank == 0)
+	if (this->params.mpi_rank == 0)
 #endif
 		this->print_header();
 
 	// print the warnings
 #ifdef ENABLE_MPI
-	if (this->params->mpi_rank == 0)
+	if (this->params.mpi_rank == 0)
 #endif
 		for (unsigned w = 0; w < cmd_warn.size(); w++)
 			std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
@@ -202,7 +169,7 @@ void Launcher::launch()
 	{
 		// launch the simulation
 #ifdef ENABLE_MPI
-	if (this->params->mpi_rank == 0)
+	if (this->params.mpi_rank == 0)
 #endif
 			stream << "# " << "The simulation is running..." << std::endl;
 
@@ -217,7 +184,7 @@ void Launcher::launch()
 	}
 
 #ifdef ENABLE_MPI
-	if (this->params->mpi_rank == 0)
+	if (this->params.mpi_rank == 0)
 #endif
 		stream << "# End of the simulation." << std::endl;
 

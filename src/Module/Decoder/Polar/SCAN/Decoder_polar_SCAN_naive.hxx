@@ -21,14 +21,15 @@ template <typename B, typename R,
 Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
                            const int n_frames, const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name),
-  m                     ((int)std::log2(N)      ),
-  max_iter              (max_iter               ),
-  layers_count          (this->m +1             ),
-  frozen_bits           (frozen_bits            ),
-  feedback_graph        (layers_count           ),
-  soft_graph            (layers_count           ),
-  is_init               (false                  )
+: Decoder               (K, N, n_frames, 1, name  ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name  ),
+  m                     ((int)std::log2(N)        ),
+  max_iter              (max_iter                 ),
+  layers_count          (this->m +1               ),
+  frozen_bits           (frozen_bits              ),
+  feedback_graph        (layers_count             ),
+  soft_graph            (layers_count             ),
+  is_init               (false                    )
 {
 	if (!tools::is_power_of_2(this->N))
 	{
@@ -68,6 +69,14 @@ Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	}
 }
 
+template <typename B, typename R,
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
+::reset()
+{
+	this->is_init = false;
+}
+
 /********************************************************************/
 /** load **/
 /********************************************************************/
@@ -78,9 +87,9 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 {
 	// init feedback graph (special case for the left most stage)
 	for (auto i = 0; i < this->N; i++)
-		if (frozen_bits[i])// if i is a frozen bit		
+		if (frozen_bits[i])// if i is a frozen bit
 			feedback_graph[0][i] = S();
-		else		
+		else
 			feedback_graph[0][i] = I();
 
 	// init the rest of the feedback graph 
@@ -102,7 +111,7 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::_load(const R *Y_N)
 {
-	if (!(this->is_init))
+	if (!this->is_init)
 		_load_init();
 
 	// init the softGraph (special case for the right most stage)
@@ -148,47 +157,43 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode();
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
-
-	this->is_init = false;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 }
 
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
-::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode();
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_N, true);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
-
-	this->is_init = false;
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
 template <typename B, typename R,

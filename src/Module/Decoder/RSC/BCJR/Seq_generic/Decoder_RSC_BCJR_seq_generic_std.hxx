@@ -15,7 +15,8 @@ Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
                                    const bool buffered_encoding,
                                    const int n_frames,
                                    const std::string name)
-: Decoder_RSC_BCJR_seq_generic<B,R>(K, trellis, buffered_encoding, n_frames, name),
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1, name),
+  Decoder_RSC_BCJR_seq_generic<B,R>(K, trellis, buffered_encoding, n_frames, name),
   beta_prev(trellis[0].size()), beta_cur(trellis[0].size())
 {
 }
@@ -37,27 +38,6 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 		this->gamma[0][i] = RSC_BCJR_seq_generic_div_or_not<R>::apply(sys[i] + par[i]);
 		// there is a big loss of precision here in fixed point
 		this->gamma[1][i] = RSC_BCJR_seq_generic_div_or_not<R>::apply(sys[i] - par[i]);
-	}
-}
-
-template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
-void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
-::compute_gamma(const R *sys, const R *par, const R *tail_sys, const R *tail_par)
-{
-	for (auto i = 0; i < this->K; i++)
-	{
-		// there is a big loss of precision here in fixed point
-		this->gamma[0][i] = RSC_BCJR_seq_generic_div_or_not<R>::apply(sys[i] + par[i]);
-		// there is a big loss of precision here in fixed point
-		this->gamma[1][i] = RSC_BCJR_seq_generic_div_or_not<R>::apply(sys[i] - par[i]);
-	}
-
-	for (auto i = 0; i < this->n_ff; i++)
-	{
-		// there is a big loss of precision here in fixed point
-		this->gamma[0][this->K +i] = RSC_BCJR_seq_generic_div_or_not<R>::apply(tail_sys[i] + tail_par[i]);
-		// there is a big loss of precision here in fixed point
-		this->gamma[1][this->K +i] = RSC_BCJR_seq_generic_div_or_not<R>::apply(tail_sys[i] - tail_par[i]);
 	}
 }
 
@@ -198,7 +178,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 ::compute_ext_sys(const R *sys, R *ext_sys)
 {
 	// compute extrinsic values
-	for (auto i = 0; i < this->K; i++)
+	for (auto i = 0; i < this->K + this->n_ff; i++)
 	{
 		RD max0 = -std::numeric_limits<RD>::max();
 		RD max1 = -std::numeric_limits<RD>::max();
@@ -232,7 +212,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 ::compute_ext_par(const R *par, R *ext_par)
 {
 	// compute extrinsic values
-	for (auto i = 0; i < this->K; i++)
+	for (auto i = 0; i < this->K + this->n_ff; i++)
 	{
 		RD max0 = -std::numeric_limits<RD>::max();
 		RD max1 = -std::numeric_limits<RD>::max();
@@ -301,18 +281,16 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 	if (!this->buffered_encoding)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__,  "'buffered_encoding' has to be enabled.");
 
-	const R* sys          = Y_N1;
-	const R* par          = Y_N1 + 1 * this->K;
-	const R* tail_sys     = Y_N1 + 2 * this->K + this->n_ff;
-	const R* tail_par     = Y_N1 + 2 * this->K;
-	      R* ext_sys      = Y_N2;
-	      R* ext_par      = Y_N2 + 1 * this->K;
+	const R* sys     = Y_N1;
+	const R* par     = Y_N1 + this->K + this->n_ff;
+	      R* ext_sys = Y_N2;
+	      R* ext_par = Y_N2 + this->K + this->n_ff;
 
-	this->compute_gamma  (sys, par, tail_sys, tail_par);
-	this->compute_alpha  (                            );
-	this->compute_beta   (                            );
-	this->compute_ext_sys(sys, ext_sys                );
-	this->compute_ext_par(par, ext_par                );
+	this->compute_gamma  (sys, par    );
+	this->compute_alpha  (            );
+	this->compute_beta   (            );
+	this->compute_ext_sys(sys, ext_sys);
+	this->compute_ext_par(par, ext_par);
 }
 }
 }

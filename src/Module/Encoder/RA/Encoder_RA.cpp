@@ -11,7 +11,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RA<B>
-::Encoder_RA(const int& K, const int& N, const Interleaver<int>& interleaver, const int n_frames, const std::string name)
+::Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver, const int n_frames, const std::string name)
  : Encoder<B>(K, N, n_frames, name), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver)
 {
 	if (N % K)
@@ -21,11 +21,11 @@ Encoder_RA<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)interleaver.get_size() != N)
+	if ((int)interleaver.get_core().get_size() != N)
 	{
 		std::stringstream message;
-		message << "'interleaver.get_size()' has to be equal to 'N' ('interleaver.get_size()' = "
-		        << interleaver.get_size() << ", 'N' = " << N << ").";
+		message << "'interleaver.get_core().get_size()' has to be equal to 'N' ('interleaver.get_core().get_size()' = "
+		        << interleaver.get_core().get_size() << ", 'N' = " << N << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }

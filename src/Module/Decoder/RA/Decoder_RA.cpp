@@ -13,9 +13,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_RA<B, R>
-::Decoder_RA(const int& K, const int& N, const Interleaver<int>& interleaver, int max_iter, const int n_frames,
+::Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter, const int n_frames,
              const std::string name)
-: Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
+: Decoder          (K, N, n_frames, 1, name),
+  Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
   rep_count(N/K),
   max_iter(max_iter),
   Fw(N),
@@ -43,11 +44,11 @@ Decoder_RA<B, R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)interleaver.get_size() != N)
+	if ((int)interleaver.get_core().get_size() != N)
 	{
 		std::stringstream message;
-		message << "'interleaver.get_size()' has to be equal to 'N' ('interleaver.get_size()' = "
-		        << interleaver.get_size() << ", 'N' = " << N << ").";
+		message << "'interleaver.get_core().get_size()' has to be equal to 'N' ('interleaver.get_core().get_size()' = "
+		        << interleaver.get_core().get_size() << ", 'N' = " << N << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -67,7 +68,7 @@ template <typename B, typename R>
 void Decoder_RA<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	//set F, B and Td at 0
 	for (auto i = 0; i < this->N; i++)
 	{
@@ -75,9 +76,9 @@ void Decoder_RA<B, R>
 		Bw[i] = 0;
 		Td[i] = 0;
 	}
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	for (auto iter = 0; iter < max_iter; iter++)
 	{
 		///////////////////
@@ -119,15 +120,15 @@ void Decoder_RA<B, R>
 		// Interleaving
 		interleaver.interleave(Wd.data(), Td.data(), frame_id);
 	}
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide(U.data(), V_K, this->K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 }
 
 template <typename B, typename R>

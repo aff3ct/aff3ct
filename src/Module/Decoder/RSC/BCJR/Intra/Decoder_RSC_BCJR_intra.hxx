@@ -53,7 +53,8 @@ Decoder_RSC_BCJR_intra<B,R>
                          const bool buffered_encoding,
                          const int n_frames,
                          const std::string name)
-: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1, name),
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1, name),
+  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1, name),
   alpha(8 * (K +4) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) + 2 * mipp::nElReg<R>())
 {

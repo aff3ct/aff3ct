@@ -5,6 +5,7 @@
 
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
+#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
 #include "../../Decoder_SIHO.hpp"
 
@@ -27,7 +28,7 @@ public:
 template <typename B = int, typename R = float, tools::proto_f<  R> F = tools::f_LLR,
                                                 tools::proto_g<B,R> G = tools::g_LLR,
                                                 tools::proto_h<B,R> H = tools::h_LLR>
-class Decoder_polar_SC_naive : public Decoder_SIHO<B,R>
+class Decoder_polar_SC_naive : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
 {
 protected:
 	const int m; // graph depth
@@ -40,11 +41,13 @@ public:
  	                       const std::string name = "Decoder_polar_SC_naive");
 	virtual ~Decoder_polar_SC_naive();
 
+	virtual void notify_frozenbits_update();
+
 protected:
-	        void _load             (const R *Y_N                            );
-	        void _decode_siho      (const R *Y_N, B *V_K, const int frame_id);
-	        void _decode_siho_coded(const R *Y_N, B *V_N, const int frame_id);
-	virtual void _store            (              B *V,   bool coded = false) const;
+	        void _load          (const R *Y_N                            );
+	        void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
+	        void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+	virtual void _store         (              B *V,   bool coded = false) const;
 
 private:
 	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size               );

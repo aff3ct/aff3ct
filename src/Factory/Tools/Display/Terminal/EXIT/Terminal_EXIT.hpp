@@ -6,6 +6,8 @@
 
 #include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
+#include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
+
 #include "../Terminal.hpp"
 
 namespace aff3ct
@@ -17,23 +19,30 @@ struct Terminal_EXIT : Terminal
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Terminal::parameters
+	class parameters : public Terminal::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// optional parameters
+		std::string type = "STD";
 
-		int   N           = 0;
-		float snr         = -1.f;
-		float sig_a       = -1.f;
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Terminal_EXIT::prefix);
+		virtual ~parameters();
+		Terminal_EXIT::parameters* clone() const;
 
-		std::string type  = "STD";
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename R = float>
+		tools::Terminal_EXIT<B,R>* build(const module::Monitor_EXIT<B,R> &monitor) const;
 	};
 
-	static tools::Terminal_EXIT* build(const parameters &params, const int &cur_t, const int &trials,
-	                                   const double &I_A, const double &I_E);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_ter, const parameters& params, const bool full = true);
+	template <typename B = int, typename R = float>
+	static tools::Terminal_EXIT<B,R>* build(const parameters &params, const module::Monitor_EXIT<B,R> &monitor);
 };
 }
 }

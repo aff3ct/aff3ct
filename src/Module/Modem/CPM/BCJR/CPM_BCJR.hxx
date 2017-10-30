@@ -14,25 +14,13 @@ namespace aff3ct
 namespace module
 {
 template<typename Q>
-inline Q negative_inf(){return -std::numeric_limits<Q>::max(); }
-
-template<>
-inline short negative_inf<short>(){return -(1 << (sizeof(short) * 8 -2)); }
-
-template<>
-inline signed char negative_inf<signed char>(){return -63; }
+inline Q negative_inf(){return std::numeric_limits<Q>::lowest(); }
 
 template<typename Q>
 inline Q positive_inf(){return std::numeric_limits<Q>::max(); }
 
-template<>
-inline short positive_inf<short>(){return (1 << (sizeof(short) * 8 -2)); }
-
-template<>
-inline signed char positive_inf<signed char>(){return 63; }
-
 template <typename Q, tools::proto_max<Q> MAX>
-inline void BCJR_normalize(Q *metrics, const int &i, const int &n_states)
+inline void BCJR_normalize(Q *metrics, const int &n_states)
 {
 	// normalization
 	auto norm_val = negative_inf<Q>();
@@ -41,18 +29,6 @@ inline void BCJR_normalize(Q *metrics, const int &i, const int &n_states)
 
 	for (auto j = 0; j < n_states; j++)
 		metrics[j] -= norm_val;
-}
-
-template <signed char, tools::proto_max<signed char> MAX>
-inline void BCJR_normalize(signed char *metrics, const int &i, const int &n_states)
-{
-	// normalization
-	auto norm_val = negative_inf<signed char>();
-	for (auto j = 0; j < n_states; j++)
-		norm_val = MAX(norm_val, metrics[j]);
-
-	for (auto j = 0; j < n_states; j++)
-		metrics[j] = tools::saturate<signed char>(metrics[j] - norm_val, -63, +63);
 }
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
@@ -164,14 +140,14 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 
 	for (int i = 0; i < dec_size/cpm.n_b_per_s; i++)
 		for (int tr = 0; tr < cpm.m_order; tr++)
-		{
 			for (int b = 0; b < cpm.n_b_per_s; b++)
 			{
-				const auto bit_state = cpm.transition_to_binary[tr * cpm.n_b_per_s + b]; // transition_to_binary what bit state we should have for the given transition and bit position
-				const auto sign      = (bit_state == 0) ? 1 : -1; //associated coeff
-				symb_apriori_prob[i * cpm.m_order + tr] += (Q)sign*Ldec_N[i * cpm.n_b_per_s + b]/(Q)2; //match -> add prob else remove
+				// transition_to_binary what bit state we should have for the given transition and bit position
+				const int bit_state = cpm.transition_to_binary[tr * cpm.n_b_per_s + b];
+				// match -> add probability else remove
+				symb_apriori_prob[i * cpm.m_order + tr] += (bit_state == 0) ?  Ldec_N[i * cpm.n_b_per_s + b]/2
+				                                                            : -Ldec_N[i * cpm.n_b_per_s + b]/2;
 			}
-		}
 }
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
@@ -181,7 +157,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	// alpha and beta initialization
 	std::fill(alpha.begin(), alpha.end(), negative_inf<Q>());
 	std::fill(beta .begin(), beta .end(), negative_inf<Q>());
-	alpha[                                 cpm.allowed_states[0]] = 0;
+	alpha[                                cpm.allowed_states[0]] = 0;
 	beta [(n_symbols -1) * cpm.max_st_id +cpm.allowed_states[0]] = 0;
 
 	// compute gamma
@@ -215,8 +191,8 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		}
 
 		// normalize alpha and beta vectors (not impact on the decoding performances)
-		BCJR_normalize<Q,MAX>(&alpha[             (i +0)  * cpm.max_st_id], i, cpm.max_st_id);
-		BCJR_normalize<Q,MAX>(&beta [(n_symbols - (i +1)) * cpm.max_st_id], i, cpm.max_st_id);
+		BCJR_normalize<Q,MAX>(&alpha[             (i +0)  * cpm.max_st_id], cpm.max_st_id);
+		BCJR_normalize<Q,MAX>(&beta [(n_symbols - (i +1)) * cpm.max_st_id], cpm.max_st_id);
 	}
 }
 
@@ -273,7 +249,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	// remove tail bits
 	for (auto i = 0; i < ext_size; i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
-		Le_N[i] = proba_msg_bits[i*2] - (proba_msg_bits[i*2+1] + Ldec_N[i]);
+		Le_N[i] = proba_msg_bits[i*2] - (proba_msg_bits[i*2 +1] + Ldec_N[i]);
 }
 }
 }

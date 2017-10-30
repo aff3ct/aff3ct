@@ -15,11 +15,12 @@ Decoder_turbo_DB<B,R>
 ::Decoder_turbo_DB(const int& K,
                    const int& N,
                    const int& n_ite,
-                   const Interleaver<int> &pi,
+                   const Interleaver<R> &pi,
                    Decoder_RSC_DB_BCJR<B,R> &siso_n,
                    Decoder_RSC_DB_BCJR<B,R> &siso_i,
                    const std::string name)
-: Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1, name),
+: Decoder          (K, N, siso_n.get_n_frames(), 1, name),
+  Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1, name),
   n_ite            (n_ite),
   pi               (pi),
   siso_n           (siso_n),
@@ -67,11 +68,11 @@ Decoder_turbo_DB<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)pi.get_size() * 2 != K)
+	if ((int)pi.get_core().get_size() * 2 != K)
 	{
 		std::stringstream message;
-		message << "'pi.get_size()' * 2 has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
-		        << ", 'K' = " << K << ").";
+		message << "'pi.get_core().get_size()' * 2 has to be equal to 'K' ('pi.get_core().get_size()' = "
+		        << pi.get_core().get_size() << ", 'K' = " << K << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -167,7 +168,7 @@ void Decoder_turbo_DB<B,R>
 		std::swap(l_cpy[i+1], l_cpy[i+2]);
 	for (auto i = 0; i < this->K; i += 2)
 	{
-		const auto l = pi.get_lut_inv()[i >> 1];
+		const auto l = pi.get_core().get_lut_inv()[i >> 1];
 		for (auto bps = 0; bps < 2; bps++) this->l_si[2 * (i +0) + bps] = l_cpy[(4 * l + 0) + bps];
 		for (auto bps = 0; bps < 2; bps++) this->l_si[2 * (i +1) + bps] = l_cpy[(4 * l + 2) + bps];
 	}
@@ -179,11 +180,11 @@ template <typename B, typename R>
 void Decoder_turbo_DB<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	const auto n_frames = this->get_simd_inter_frame_level();
 
 	// iterative turbo decoding process
@@ -212,7 +213,7 @@ void Decoder_turbo_DB<B,R>
 				std::swap(l_cpy[i+1], l_cpy[i+2]);
 			for (auto i = 0; i < this->K; i += 2)
 			{
-				const auto l = pi.get_lut_inv()[i >> 1];
+				const auto l = pi.get_core().get_lut_inv()[i >> 1];
 				for (auto bps = 0; bps < 2; bps++) this->l_e1i[2 * (i +0) + bps] = l_cpy[(4 * l + 0) + bps];
 				for (auto bps = 0; bps < 2; bps++) this->l_e1i[2 * (i +1) + bps] = l_cpy[(4 * l + 2) + bps];
 			}
@@ -238,7 +239,7 @@ void Decoder_turbo_DB<B,R>
 			// make the deinterleaving
 			for (auto i = 0; i < this->K; i += 2)
 			{
-				const auto l = pi.get_lut()[i >> 1];
+				const auto l = pi.get_core().get_lut()[i >> 1];
 				for (auto bps = 0; bps < 2; bps++) this->l_e1n[2 * (i +0) + bps] = l_e2i[(4 * l + 0) + bps];
 				for (auto bps = 0; bps < 2; bps++) this->l_e1n[2 * (i +1) + bps] = l_e2i[(4 * l + 2) + bps];
 			}
@@ -263,15 +264,15 @@ void Decoder_turbo_DB<B,R>
 
 	for (auto cb : this->callbacks_end)
 		cb(ite -1);
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 }
 
 template <typename B, typename R>

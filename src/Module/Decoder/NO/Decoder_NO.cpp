@@ -10,7 +10,8 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_NO<B,R>
 ::Decoder_NO(const int K, const int n_frames, const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, K, n_frames, 1, name)
+: Decoder               (K, K, n_frames, 1, name),
+  Decoder_SISO_SIHO<B,R>(K, K, n_frames, 1, name)
 {
 }
 
@@ -38,18 +39,22 @@ template <typename B, typename R>
 void Decoder_NO<B,R>
 ::_decode_siho(const R *Y_K, B *V_K, const int frame_id)
 {
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide(Y_K, V_K, this->K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store, d_store);
 }
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::_decode_siho_coded(const R *Y_K, B *V_K, const int frame_id)
+::_decode_siho_cw(const R *Y_K, B *V_K, const int frame_id)
 {
-	this->_decode_siho(Y_K, V_K, frame_id);
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	tools::hard_decide(Y_K, V_K, this->K);
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store, d_store);
 }
 
 // ==================================================================================== explicit template instantiation 

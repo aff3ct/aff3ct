@@ -20,17 +20,31 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace enc
+	{
+		namespace tsk
+		{
+			enum list { encode, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace encode { enum list { U_K, X_N, SIZE }; }
+		}
+	}
+
+
 /*!
- * \class Encoder_i
+ * \class Encoder
  *
  * \brief Encodes a vector of information bits (a message) and adds some redundancy (parity bits).
  *
  * \tparam B: type of the bits in the encoder.
  *
- * Please use Encoder for inheritance (instead of Encoder_i)
+ * Please use Encoder for inheritance (instead of Encoder)
  */
 template <typename B = int>
-class Encoder_i : public Module
+class Encoder : public Module
 {
 protected:
 	const int K; /*!< Number of information bits in one frame */
@@ -45,8 +59,8 @@ public:
 	 * \param n_frames: number of frames to process in the Encoder.
 	 * \param name:     Encoder's name.
 	 */
-	Encoder_i(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_i")
-	: Module(n_frames, name), K(K), N(N)
+	Encoder(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder")
+	: Module(n_frames, name, "Encoder"), K(K), N(N)
 	{
 		if (K <= 0)
 		{
@@ -68,12 +82,23 @@ public:
 			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p = this->create_task("encode");
+		auto &ps_U_K = this->template create_socket_in <B>(p, "U_K", this->K * this->n_frames);
+		auto &ps_X_N = this->template create_socket_out<B>(p, "X_N", this->N * this->n_frames);
+		this->create_codelet(p, [this, &ps_U_K, &ps_X_N]() -> int
+		{
+			this->encode(static_cast<B*>(ps_U_K.get_dataptr()),
+			             static_cast<B*>(ps_X_N.get_dataptr()));
+
+			return 0;
+		});
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Encoder_i()
+	virtual ~Encoder()
 	{
 	}
 
@@ -142,7 +167,5 @@ protected:
 };
 }
 }
-
-#include "SC_Encoder.hpp"
 
 #endif /* ENCODER_HPP_ */

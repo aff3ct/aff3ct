@@ -24,7 +24,8 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
                                      const int syndrome_depth,
                                      const int n_frames,
                                      const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                      ),
+: Decoder               (K, N, n_frames, mipp::nElReg<R>(), name                                      ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                      ),
   normalize_factor      (normalize_factor                                                             ),
   offset                (offset                                                                       ),
   contributions         (H.get_cols_max_degree()                                                      ),
@@ -78,6 +79,13 @@ template <typename B, typename R>
 Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::~Decoder_LDPC_BP_layered_ONMS_inter()
 {
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+::reset()
+{
+	this->init_flag = true;
 }
 
 template <typename B, typename R>
@@ -148,13 +156,13 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::__decode_siho(const R *Y_N, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
-	auto d_load = std::chrono::steady_clock::now() - t_load;
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
@@ -179,27 +187,11 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
 		else                            this->BP_decode<0>(frame_id);
 	}
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto d_decod = std::chrono::steady_clock::now() - t_decod;
-
-	this->d_load_total  += d_load;
-	this->d_decod_total += d_decod;
-
-	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
-	if (cur_wave == this->n_dec_waves -1) this->init_flag = true;
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
-{
-	this->__decode_siho(Y_N, frame_id);
-
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
-
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 	const auto zero = mipp::Reg<R>((R)0);
 	for (auto i = 0; i < this->K; i++)
 	{
@@ -210,21 +202,51 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	std::vector<B*> frames(mipp::nElReg<R>());
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_K + f * this->K;
 	tools::Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
-	this->__decode_siho(Y_N, frame_id);
+//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N, frame_id);
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+//	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	// actual decoding
+	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
+	{
+		     if (normalize_factor == 0.125f) this->BP_decode<1>(frame_id);
+		else if (normalize_factor == 0.250f) this->BP_decode<2>(frame_id);
+		else if (normalize_factor == 0.375f) this->BP_decode<3>(frame_id);
+		else if (normalize_factor == 0.500f) this->BP_decode<4>(frame_id);
+		else if (normalize_factor == 0.625f) this->BP_decode<5>(frame_id);
+		else if (normalize_factor == 0.750f) this->BP_decode<6>(frame_id);
+		else if (normalize_factor == 0.875f) this->BP_decode<7>(frame_id);
+		else if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
+		else
+		{
+			std::stringstream message;
+			message << "'normalize_factor' can only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f"
+			        << " ('normalize_factor' = " << normalize_factor << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+	else // float or double
+	{
+		if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
+		else                            this->BP_decode<0>(frame_id);
+	}
+//	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
+//	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 	const auto zero = mipp::Reg<R>((R)0);
 	for (auto i = 0; i < this->N; i++)
 		V_reorderered[i] = mipp::cast<R,B>(this->var_nodes[cur_wave][i]) >> (sizeof(B) * 8 - 1);
@@ -232,9 +254,11 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	std::vector<B*> frames(mipp::nElReg<R>());
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_N + f * this->N;
 	tools::Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->N);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
+//	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_store_total += d_store;
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
+//	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
 // BP algorithm

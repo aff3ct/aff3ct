@@ -8,29 +8,33 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Terminal_EXIT::name   = "Terminal EXIT";
 const std::string aff3ct::factory::Terminal_EXIT::prefix = "ter";
 
-tools::Terminal_EXIT* Terminal_EXIT
-::build(const parameters &params, const int &cur_t, const int &trials, const double &I_A, const double &I_E)
+Terminal_EXIT::parameters
+::parameters(const std::string prefix)
+: Terminal::parameters(Terminal_EXIT::name, prefix)
 {
-	if (params.type == "STD") return new tools::Terminal_EXIT(params.N, params.snr, params.sig_a, cur_t, trials, I_A, I_E);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-void Terminal_EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Terminal_EXIT::parameters
+::~parameters()
 {
-	Terminal::build_args(req_args, opt_args, p);
+}
+
+Terminal_EXIT::parameters* Terminal_EXIT::parameters
+::clone() const
+{
+	return new Terminal_EXIT::parameters(*this);
+}
+
+void Terminal_EXIT::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Terminal::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
 
 	req_args[{p+"-cw-size", "N"}] =
 		{"positive_int",
 		 "number of bits in the codeword."};
-
-	req_args[{p+"-snr"}] =
-		{"float",
-		 "SNR value in dB."};
-
-	req_args[{p+"-sig-a"}] =
-		{"positive_float",
-		 "noise variance."};
 
 	opt_args[{p+"-type"}] =
 		{"string",
@@ -38,20 +42,50 @@ void Terminal_EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::
 		 "STD"};
 }
 
-void Terminal_EXIT::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Terminal_EXIT::parameters
+::store(const arg_val_map &vals)
 {
-	Terminal::store_args(vals, params, p);
+	Terminal::parameters::store(vals);
 
-	if(exist(vals, {p+"-cw-size", "N"})) params.N     = std::stoi(vals.at({p+"-cw-size", "N"}));
-	if(exist(vals, {p+"-snr"         })) params.snr   = std::stof(vals.at({p+"-snr"         }));
-	if(exist(vals, {p+"-sig-a"       })) params.sig_a = std::stof(vals.at({p+"-sig-a"       }));
-	if(exist(vals, {p+"-type"        })) params.type  =           vals.at({p+"-type"        });
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-type"})) this->type = vals.at({p+"-type"});
 }
 
-void Terminal_EXIT::make_header(params_list& head_ter, const parameters& params, const bool full)
+void Terminal_EXIT::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	head_ter.push_back(std::make_pair("Type", params.type));
-	if (full) head_ter.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N)));
+	auto p = this->get_prefix();
 
-	Terminal::make_header(head_ter, params, full);
+	headers[p].push_back(std::make_pair("Type", this->type));
+
+	Terminal::parameters::get_headers(headers, full);
 }
+
+template <typename B, typename R>
+tools::Terminal_EXIT<B,R>* Terminal_EXIT::parameters
+::build(const module::Monitor_EXIT<B,R> &monitor) const
+{
+	if (this->type == "STD") return new tools::Terminal_EXIT<B,R>(monitor);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
+tools::Terminal_EXIT<B,R>* Terminal_EXIT
+::build(const parameters &params, const module::Monitor_EXIT<B,R> &monitor)
+{
+	return params.build<B,R>(monitor);
+}
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template aff3ct::tools::Terminal_EXIT<B_32,R_32>* aff3ct::factory::Terminal_EXIT::parameters::build<B_32,R_32>(const aff3ct::module::Monitor_EXIT<B_32,R_32>&) const;
+template aff3ct::tools::Terminal_EXIT<B_64,R_64>* aff3ct::factory::Terminal_EXIT::parameters::build<B_64,R_64>(const aff3ct::module::Monitor_EXIT<B_64,R_64>&) const;
+template aff3ct::tools::Terminal_EXIT<B_32,R_32>* aff3ct::factory::Terminal_EXIT::build<B_32,R_32>(const aff3ct::factory::Terminal_EXIT::parameters&, const aff3ct::module::Monitor_EXIT<B_32,R_32>&);
+template aff3ct::tools::Terminal_EXIT<B_64,R_64>* aff3ct::factory::Terminal_EXIT::build<B_64,R_64>(const aff3ct::factory::Terminal_EXIT::parameters&, const aff3ct::module::Monitor_EXIT<B_64,R_64>&);
+#else
+template aff3ct::tools::Terminal_EXIT<B,R>* aff3ct::factory::Terminal_EXIT::parameters::build<B,R>(const aff3ct::module::Monitor_EXIT<B,R>&) const;
+template aff3ct::tools::Terminal_EXIT<B,R>* aff3ct::factory::Terminal_EXIT::build<B,R>(const aff3ct::factory::Terminal_EXIT::parameters&, const aff3ct::module::Monitor_EXIT<B,R>&);
+#endif

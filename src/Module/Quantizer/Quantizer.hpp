@@ -19,19 +19,32 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace qnt
+	{
+		namespace tsk
+		{
+			enum list { process, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace process { enum list { Y_N1, Y_N2, SIZE }; }
+		}
+	}
+
 /*!
- * \class Quantizer_i
+ * \class Quantizer
  *
  * \brief Quantizes floating-point data to fixed-point representation.
  *
  * \tparam R: type of the reals (floating-point representation) in the Quantizer.
  * \tparam Q: type of the reals (floating-point or fixed-point representation) in the Quantizer.
  *
- * Please use Quantizer for inheritance (instead of Quantizer_i).
+ * Please use Quantizer for inheritance (instead of Quantizer).
  * If Q is a floating-point representation then the Quantizer does nothing more than a cast.
  */
 template <typename R = float, typename Q = int>
-class Quantizer_i : public Module
+class Quantizer : public Module
 {
 protected:
 	const int N; /*!< Size of one frame (= number of bits in one frame) */
@@ -44,8 +57,8 @@ public:
 	 * \param n_frames: number of frames to process in the Decoder.
 	 * \param name:     Quantizer's name.
 	 */
-	Quantizer_i(const int N, const int n_frames = 1, const std::string name = "Quantizer_i")
-	: Module(n_frames, name), N(N)
+	Quantizer(const int N, const int n_frames = 1, const std::string name = "Quantizer")
+	: Module(n_frames, name, "Quantizer"), N(N)
 	{
 		if (N <= 0)
 		{
@@ -53,12 +66,24 @@ public:
 			message << "'N' has to be greater than 0 ('N' = " << N << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p = this->create_task("process");
+		auto &ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
+		auto &ps_Y_N2 = this->template create_socket_out<Q>(p, "Y_N2", this->N * this->n_frames);
+		this->create_codelet(p, [this, &ps_Y_N1, &ps_Y_N2]() -> int
+		{
+			this->process(static_cast<R*>(ps_Y_N1.get_dataptr()),
+			              static_cast<Q*>(ps_Y_N2.get_dataptr()));
+
+			return 0;
+		});
+
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Quantizer_i()
+	virtual ~Quantizer()
 	{
 	}
 
@@ -111,7 +136,5 @@ protected:
 };
 }
 }
-
-#include "SC_Quantizer.hpp"
 
 #endif /* QUANTIZER_HPP_ */

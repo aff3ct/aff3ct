@@ -63,8 +63,35 @@ void Encoder_LDPC_DVBS2<B>
 		{
 			switch (NmK)
 			{
+				case 1800 :
+					dvbs2 = new dvbs2_values_16200_1800();
+					break;
+				case 2880 :
+					dvbs2 = new dvbs2_values_16200_2880();
+					break;
+				case 3600 :
+					dvbs2 = new dvbs2_values_16200_3600();
+					break;
+				case 4320 :
+					dvbs2 = new dvbs2_values_16200_4320();
+					break;
 				case 5400 :
 					dvbs2 = new dvbs2_values_16200_5400();
+					break;
+				case 6480 :
+					dvbs2 = new dvbs2_values_16200_6480();
+					break;
+				case 9000 :
+					dvbs2 = new dvbs2_values_16200_9000();
+					break;
+				case 9720 :
+					dvbs2 = new dvbs2_values_16200_9720();
+					break;
+				case 10800 :
+					dvbs2 = new dvbs2_values_16200_10800();
+					break;
+				case 12960 :
+					dvbs2 = new dvbs2_values_16200_12960();
 					break;
 				default :
 					break;
@@ -81,14 +108,26 @@ void Encoder_LDPC_DVBS2<B>
 				case 7200 :
 					dvbs2 = new dvbs2_values_64800_7200();
 					break;
+				case 10800 :
+					dvbs2 = new dvbs2_values_64800_10800();
+					break;
+				case 12960 :
+					dvbs2 = new dvbs2_values_64800_12960();
+					break;
 				case 16200 :
 					dvbs2 = new dvbs2_values_64800_16200();
 					break;
 				case 21600 :
 					dvbs2 = new dvbs2_values_64800_21600();
 					break;
+				case 25920 :
+					dvbs2 = new dvbs2_values_64800_25920();
+					break;
 				case 32400 :
 					dvbs2 = new dvbs2_values_64800_32400();
+					break;
+				case 38880 :
+					dvbs2 = new dvbs2_values_64800_38880();
 					break;
 				case 43200 :
 					dvbs2 = new dvbs2_values_64800_43200();
@@ -141,7 +180,7 @@ void Encoder_LDPC_DVBS2<B>
 		Px[i] = Px[i] ^ Px[i-1];
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Encoder_LDPC_DVBS2<B_8>;

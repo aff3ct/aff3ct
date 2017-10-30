@@ -20,20 +20,36 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace crc
+	{
+		namespace tsk
+		{
+			enum list { build, extract, check, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace build   { enum list { U_K1, U_K2, SIZE }; }
+			namespace extract { enum list { V_K1, V_K2, SIZE }; }
+			namespace check   { enum list { V_K       , SIZE }; }
+		}
+	}
+
 /*!
- * \class CRC_i
+ * \class CRC
  *
  * \brief Adds/builds and checks a Cyclic Redundancy Check (CRC) for a set of information bits.
  *
  * \tparam B: type of the bits in the CRC.
  *
- * Please use CRC for inheritance (instead of CRC_i).
+ * Please use CRC for inheritance (instead of CRC).
  */
 template <typename B = int>
-class CRC_i : public Module
+class CRC : public Module
 {
 protected:
 	const int K; /*!< Number of information bits (the CRC bits are not included in K) */
+	const int size;
 
 public:
 	/*!
@@ -43,8 +59,8 @@ public:
 	 * \param n_frames: number of frames to process in the CRC.
 	 * \param name:     CRC's name.
 	 */
-	CRC_i(const int K, const int n_frames = 1, const std::string name = "CRC_i")
-	: Module(n_frames, name), K(K)
+	CRC(const int K, const int size, const int n_frames = 1, const std::string name = "CRC")
+	: Module(n_frames, name, "CRC"), K(K), size(size)
 	{
 		if (K <= 0)
 		{
@@ -52,12 +68,41 @@ public:
 			message << "'K' has to be greater than 0 ('K' = " << K << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p1 = this->create_task("build");
+		auto &p1s_U_K1 = this->template create_socket_in <B>(p1, "U_K1",  this->K               * this->n_frames);
+		auto &p1s_U_K2 = this->template create_socket_out<B>(p1, "U_K2", (this->K + this->size) * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_U_K1, &p1s_U_K2]() -> int
+		{
+			this->build(static_cast<B*>(p1s_U_K1.get_dataptr()),
+			            static_cast<B*>(p1s_U_K2.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p2 = this->create_task("extract");
+		auto &p2s_V_K1 = this->template create_socket_in <B>(p2, "V_K1", (this->K + this->size) * this->n_frames);
+		auto &p2s_V_K2 = this->template create_socket_out<B>(p2, "V_K2",  this->K               * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_V_K1, &p2s_V_K2]() -> int
+		{
+			this->extract(static_cast<B*>(p2s_V_K1.get_dataptr()),
+			              static_cast<B*>(p2s_V_K2.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p3 = this->create_task("check");
+		auto &p3s_V_K = this->template create_socket_in<B>(p3, "V_K", (this->K + this->size) * this->n_frames);
+		this->create_codelet(p3, [this, &p3s_V_K]() -> int
+		{
+			return this->check(static_cast<B*>(p3s_V_K.get_dataptr())) ? 1 : 0;
+		});
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~CRC_i()
+	virtual ~CRC()
 	{
 	}
 
@@ -71,7 +116,10 @@ public:
 	 *
 	 * \return the size of the CRC.
 	 */
-	virtual int get_size() const = 0;
+	virtual int get_size()
+	{
+		return size;
+	}
 
 	/*!
 	 * \brief Computes and adds the CRC in the vector of information bits (the CRC bits are often put at the end of the
@@ -253,7 +301,5 @@ protected:
 };
 }
 }
-
-#include "SC_CRC.hpp"
 
 #endif

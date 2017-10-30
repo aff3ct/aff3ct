@@ -1,12 +1,12 @@
+#include <cstring>
 #include <string>
 #include <vector>
 #include <chrono>
-#include <cstdlib>
-#include <algorithm>
-#include <stdexcept>
+#include <thread>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
+#include "Tools/Display/bash_tools.h"
 
 #include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
@@ -17,43 +17,14 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER_ite_threads<B,R,Q>
-::BFER_ite_threads(const factory::BFER_ite::parameters &chain_params, tools::Codec_SISO<B,Q> &codec)
-: BFER_ite<B,R,Q>(chain_params,codec),
-
-  U_K1(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames)),
-  U_K2(this->params.n_threads, mipp::vector<B>(this->params.enc->K     * this->params.enc->n_frames)),
-  X_N1(this->params.n_threads, mipp::vector<B>(this->params.enc->N_cw  * this->params.enc->n_frames)),
-  X_N2(this->params.n_threads, mipp::vector<B>(this->params.itl->size  * this->params.itl->n_frames)),
-  X_N3(this->params.n_threads, mipp::vector<R>(this->params.mdm->N_mod * this->params.mdm->n_frames)),
-  H_N (this->params.n_threads, mipp::vector<R>(this->params.chn->N     * this->params.chn->n_frames)),
-  Y_N1(this->params.n_threads, mipp::vector<R>(this->params.chn->N     * this->params.chn->n_frames)),
-  Y_N2(this->params.n_threads, mipp::vector<R>(this->params.mdm->N_fil * this->params.mdm->n_frames)),
-  Y_N3(this->params.n_threads, mipp::vector<Q>(this->params.qnt->size  * this->params.qnt->n_frames)),
-  Y_N4(this->params.n_threads, mipp::vector<Q>(this->params.mdm->N     * this->params.mdm->n_frames)),
-  Y_N5(this->params.n_threads, mipp::vector<Q>(this->params.itl->size  * this->params.itl->n_frames)),
-  Y_N6(this->params.n_threads, mipp::vector<Q>(this->params.dec->N_cw  * this->params.dec->n_frames)),
-  Y_N7(this->params.n_threads, mipp::vector<Q>(this->params.itl->size  * this->params.itl->n_frames)),
-  V_N1(this->params.n_threads, mipp::vector<B>(this->params.dec->N_cw  * this->params.crc->n_frames)),
-  V_K1(this->params.n_threads, mipp::vector<B>(this->params.dec->K     * this->params.dec->n_frames)),
-  V_K2(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames))
+::BFER_ite_threads(const factory::BFER_ite::parameters &params)
+: BFER_ite<B,R,Q>(params)
 {
-	if (this->params.n_threads > 1 && this->params.debug)
-		std::clog << tools::format_warning("Debug mode will be disabled because you launched the simulation with more"
-		                                   "than 1 thread!") << std::endl;
-
-	if (this->params.benchs)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The bench mode is not supported.");
-
-#ifdef ENABLE_MPI
-	if (this->params.debug || this->params.benchs)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
-#endif
-
 	if (this->params.err_track_revert)
 	{
 		if (this->params.n_threads != 1)
 			std::clog << tools::format_warning("Multi-threading detected with error tracking revert feature! "
-			                                   "Each thread will play the same frames. Please run one thread.")
+			                                   "Each thread will play the same frames. Please run with one thread.")
 			          << std::endl;
 	}
 }
@@ -66,38 +37,10 @@ BFER_ite_threads<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER_ite_threads<B,R,Q>
-::_build_communication_chain(const int tid)
-{
-	BFER_ite<B,R,Q>::_build_communication_chain(tid);
-
-	if (this->params.src->type == "AZCW")
-	{
-		std::fill(this->U_K1[tid].begin(), this->U_K1[tid].end(), (B)0);
-		std::fill(this->U_K2[tid].begin(), this->U_K2[tid].end(), (B)0);
-		std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
-		std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
-		this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
-	}
-
-	if (this->params.err_track_enable)
-	{
-		if (this->params.src->type != "AZCW")
-			this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
-
-		if (this->params.coset)
-			this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.enc->K});
-
-		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
-
-		if (this->interleaver[tid]->is_uniform())
-			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
-	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER_ite_threads<B,R,Q>
 ::_launch()
 {
+	BFER_ite<B,R,Q>::_launch();
+
 	std::vector<std::thread> threads(this->params.n_threads -1);
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
@@ -109,6 +52,9 @@ void BFER_ite_threads<B,R,Q>
 	// join the slave threads with the master thread
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
 		threads[tid -1].join();
+
+	if (!this->prev_err_message.empty())
+		throw std::runtime_error(this->prev_err_message);
 }
 
 template <typename B, typename R, typename Q>
@@ -117,560 +63,337 @@ void BFER_ite_threads<B,R,Q>
 {
 	try
 	{
-		simu->Monte_Carlo_method(tid);
+		simu->sockets_binding(tid);
+		simu->simulation_loop(tid);
 	}
 	catch (std::exception const& e)
 	{
-		module::Monitor<B>::stop();
+		module::Monitor::stop();
 
 		simu->mutex_exception.lock();
 		if (simu->prev_err_message != e.what())
-		{
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
-			simu->prev_err_message = e.what();
-		}
+			if (std::strlen(e.what()) > simu->prev_err_message.size())
+				simu->prev_err_message = e.what();
 		simu->mutex_exception.unlock();
 	}
 }
 
 template <typename B, typename R, typename Q>
 void BFER_ite_threads<B,R,Q>
-::Monte_Carlo_method(const int tid)
+::sockets_binding(const int tid)
 {
-	if (this->params.n_threads == 1 && this->params.debug)
-		this->simulation_loop_debug();
+	auto &src = *this->source         [tid];
+	auto &crc = *this->crc            [tid];
+	auto &cdc = *this->codec          [tid];
+	auto &itb = *this->interleaver_bit[tid];
+	auto &mdm = *this->modem          [tid];
+	auto &chn = *this->channel        [tid];
+	auto &qnt = *this->quantizer      [tid];
+	auto &itl = *this->interleaver_llr[tid];
+	auto &csr = *this->coset_real     [tid];
+	auto &csb = *this->coset_bit      [tid];
+	auto &mnt = *this->monitor        [tid];
+
+	auto &enc = *cdc.get_encoder();
+	auto &dcs = *cdc.get_decoder_siso();
+	auto &dch = *cdc.get_decoder_siho();
+
+	using namespace module;
+
+	if (this->params.src->type == "AZCW")
+	{
+		auto src_data = (uint8_t*)(src[src::tsk::generate  ][src::sck::generate  ::U_K ].get_dataptr());
+		auto crc_data = (uint8_t*)(crc[crc::tsk::build     ][crc::sck::build     ::U_K2].get_dataptr());
+		auto enc_data = (uint8_t*)(enc[enc::tsk::encode    ][enc::sck::encode    ::X_N ].get_dataptr());
+		auto itl_data = (uint8_t*)(itb[itl::tsk::interleave][itl::sck::interleave::itl ].get_dataptr());
+
+		auto src_bytes = src[src::tsk::generate  ][src::sck::generate  ::U_K ].get_databytes();
+		auto crc_bytes = crc[crc::tsk::build     ][crc::sck::build     ::U_K2].get_databytes();
+		auto enc_bytes = enc[enc::tsk::encode    ][enc::sck::encode    ::X_N ].get_databytes();
+		auto itl_bytes = itb[itl::tsk::interleave][itl::sck::interleave::itl ].get_databytes();
+
+		std::fill(src_data, src_data + src_bytes, 0);
+		std::fill(crc_data, crc_data + crc_bytes, 0);
+		std::fill(enc_data, enc_data + enc_bytes, 0);
+		std::fill(itl_data, itl_data + itl_bytes, 0);
+
+		mdm[mdm::tsk::modulate][mdm::sck::modulate::X_N1](itb[itl::tsk::interleave][itl::sck::interleave::itl]);
+		mdm[mdm::tsk::modulate].exec();
+		mdm[mdm::tsk::modulate].reset_stats();
+	}
 	else
-		this->simulation_loop(tid);
+	{
+		crc[crc::tsk::build     ][crc::sck::build     ::U_K1](src[src::tsk::generate  ][src::sck::generate  ::U_K ]);
+		enc[enc::tsk::encode    ][enc::sck::encode    ::U_K ](crc[crc::tsk::build     ][crc::sck::build     ::U_K2]);
+		itb[itl::tsk::interleave][itl::sck::interleave::nat ](enc[enc::tsk::encode    ][enc::sck::encode    ::X_N ]);
+		mdm[mdm::tsk::modulate  ][mdm::sck::modulate  ::X_N1](itb[itl::tsk::interleave][itl::sck::interleave::itl ]);
+	}
+
+	if (this->params.coset)
+	{
+		if (this->params.coded_monitoring)
+			csb[cst::tsk::apply][cst::sck::apply::ref](enc[enc::tsk::encode][enc::sck::encode::X_N ]);
+		else
+			csb[cst::tsk::apply][cst::sck::apply::ref](crc[crc::tsk::build ][crc::sck::build ::U_K2]);
+
+		csr[cst::tsk::apply][cst::sck::apply::ref](enc[enc::tsk::encode][enc::sck::encode::X_N]);
+	}
+
+	if (this->params.coded_monitoring)
+		mnt[mnt::tsk::check_errors][mnt::sck::check_errors::U](enc[enc::tsk::encode  ][enc::sck::encode  ::X_N]);
+	else
+		mnt[mnt::tsk::check_errors][mnt::sck::check_errors::U](src[src::tsk::generate][src::sck::generate::U_K]);
+
+	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
+	{
+		chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::X_N ](mdm[mdm::tsk::modulate     ][mdm::sck::modulate    ::X_N2]);
+		mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::H_N ](chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg::H_N ]);
+		mdm[mdm::tsk::filter       ][mdm::sck::filter       ::Y_N1](chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg::Y_N ]);
+		qnt[qnt::tsk::process      ][qnt::sck::process      ::Y_N1](mdm[mdm::tsk::filter       ][mdm::sck::filter      ::Y_N2]);
+		mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N1](qnt[qnt::tsk::process      ][qnt::sck::process     ::Y_N2]);
+	}
+	else
+	{
+		chn[chn::tsk::add_noise ][chn::sck::add_noise ::X_N ](mdm[mdm::tsk::modulate ][mdm::sck::modulate ::X_N2]);
+		mdm[mdm::tsk::filter    ][mdm::sck::filter    ::Y_N1](chn[chn::tsk::add_noise][chn::sck::add_noise::Y_N ]);
+		qnt[qnt::tsk::process   ][qnt::sck::process   ::Y_N1](mdm[mdm::tsk::filter   ][mdm::sck::filter   ::Y_N2]);
+		mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N1](qnt[qnt::tsk::process  ][qnt::sck::process  ::Y_N2]);
+	}
+
+	itl[itl::tsk::deinterleave][itl::sck::deinterleave::itl](mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------- turbo demodulation loop
+	// ----------------------------------------------------------------------------------------------------------------
+
+	// --------------------------------------------------------------------------------------------------- CRC checking
+	if (this->params.crc->type != "NO")
+	{
+		cdc[cdc::tsk::extract_sys_bit][cdc::sck::extract_sys_bit::Y_N](itl[itl::tsk::deinterleave   ][itl::sck::deinterleave   ::nat]);
+		crc[crc::tsk::check          ][crc::sck::check          ::V_K](cdc[cdc::tsk::extract_sys_bit][cdc::sck::extract_sys_bit::V_K]);
+	}
+
+	// ------------------------------------------------------------------------------------------------------- decoding
+	if (this->params.coset)
+	{
+		// output socket binding (trick to avoid runtime re-binding)
+		dcs[dec::tsk::decode_siso][dec::sck::decode_siso::Y_N2](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat ]);
+		csr[cst::tsk::apply      ][cst::sck::apply      ::in  ](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat ]);
+		dcs[dec::tsk::decode_siso][dec::sck::decode_siso::Y_N1](csr[cst::tsk::apply       ][cst::sck::apply       ::out ]);
+		csr[cst::tsk::apply      ][cst::sck::apply      ::in  ](dcs[dec::tsk::decode_siso ][dec::sck::decode_siso ::Y_N2]);
+	}
+	else
+	{
+		dcs[dec::tsk::decode_siso][dec::sck::decode_siso::Y_N1](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat]);
+	}
+
+	// --------------------------------------------------------------------------------------------------- interleaving
+	if (this->params.coset)
+		itl[itl::tsk::interleave][itl::sck::interleave::nat](csr[cst::tsk::apply      ][cst::sck::apply      ::out ]);
+	else
+		itl[itl::tsk::interleave][itl::sck::interleave::nat](dcs[dec::tsk::decode_siso][dec::sck::decode_siso::Y_N2]);
+
+	// --------------------------------------------------------------------------------------------------- demodulation
+	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
+	{
+		// output socket binding (trick to avoid runtime re-binding)
+		mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::Y_N3](mdm[mdm::tsk::demodulate  ][mdm::sck::demodulate  ::Y_N2]);
+		mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::Y_N1](qnt[qnt::tsk::process     ][qnt::sck::process     ::Y_N2]);
+		mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::H_N ](chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::H_N ]);
+		mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::Y_N2](itl[itl::tsk::interleave  ][itl::sck::interleave  ::itl ]);
+	}
+	else
+	{
+		// output socket binding (trick to avoid runtime re-binding)
+		mdm[mdm::tsk::tdemodulate][mdm::sck::tdemodulate::Y_N3](mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
+		mdm[mdm::tsk::tdemodulate][mdm::sck::tdemodulate::Y_N1](qnt[qnt::tsk::process   ][qnt::sck::process   ::Y_N2]);
+		mdm[mdm::tsk::tdemodulate][mdm::sck::tdemodulate::Y_N2](itl[itl::tsk::interleave][itl::sck::interleave::itl ]);
+	}
+
+	// ------------------------------------------------------------------------------------------------- deinterleaving
+	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
+		itl[itl::tsk::deinterleave][itl::sck::deinterleave::itl](mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::Y_N3]);
+	else
+		itl[itl::tsk::deinterleave][itl::sck::deinterleave::itl](mdm[mdm::tsk::tdemodulate   ][mdm::sck::tdemodulate   ::Y_N3]);
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------- end of turbo demodulation loop
+	// ----------------------------------------------------------------------------------------------------------------
+
+	if (this->params.coset)
+	{
+		csr[cst::tsk::apply][cst::sck::apply::in](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat]);
+
+		if (this->params.coded_monitoring)
+		{
+			dch[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::Y_N](csr[cst::tsk::apply         ][cst::sck::apply         ::out]);
+			csb[cst::tsk::apply         ][cst::sck::apply         ::in ](dch[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::V_N]);
+		}
+		else
+		{
+			dch[dec::tsk::decode_siho][dec::sck::decode_siho::Y_N ](csr[cst::tsk::apply      ][cst::sck::apply      ::out]);
+			csb[cst::tsk::apply      ][cst::sck::apply      ::in  ](dch[dec::tsk::decode_siho][dec::sck::decode_siho::V_K]);
+			crc[crc::tsk::extract    ][crc::sck::extract    ::V_K1](csb[cst::tsk::apply      ][cst::sck::apply      ::out]);
+		}
+	}
+	else
+	{
+		if (this->params.coded_monitoring)
+		{
+			dch[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::Y_N](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat]);
+		}
+		else
+		{
+			dch[dec::tsk::decode_siho][dec::sck::decode_siho::Y_N ](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat]);
+			crc[crc::tsk::extract    ][crc::sck::extract    ::V_K1](dch[dec::tsk::decode_siho ][dec::sck::decode_siho ::V_K]);
+		}
+	}
+
+	if (this->params.coded_monitoring)
+	{
+		if (this->params.coset)
+			mnt[mnt::tsk::check_errors][mnt::sck::check_errors::V](csb[cst::tsk::apply         ][cst::sck::apply         ::out]);
+		else
+			mnt[mnt::tsk::check_errors][mnt::sck::check_errors::V](dch[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::V_N]);
+	}
+	else
+	{
+		mnt[mnt::tsk::check_errors][mnt::sck::check_errors::V](crc[crc::tsk::extract][crc::sck::extract::V_K2]);
+	}
 }
 
 template <typename B, typename R, typename Q>
 void BFER_ite_threads<B,R,Q>
 ::simulation_loop(const int tid)
 {
+	auto &source          = *this->source         [tid];
+	auto &crc             = *this->crc            [tid];
+	auto &codec           = *this->codec          [tid];
+	auto &interleaver_bit = *this->interleaver_bit[tid];
+	auto &modem           = *this->modem          [tid];
+	auto &channel         = *this->channel        [tid];
+	auto &quantizer       = *this->quantizer      [tid];
+	auto &interleaver_llr = *this->interleaver_llr[tid];
+	auto &coset_real      = *this->coset_real     [tid];
+	auto &coset_bit       = *this->coset_bit      [tid];
+	auto &monitor         = *this->monitor        [tid];
+
+	auto &encoder      = *codec.get_encoder();
+	auto &decoder_siso = *codec.get_decoder_siso();
+	auto &decoder_siho = *codec.get_decoder_siho();
+
+	using namespace module;
 	using namespace std::chrono;
 	auto t_snr = steady_clock::now();
 
-	// simulation loop
 	while ((!this->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
-	        (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time))
+	        (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time) &&
+	        (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
 	{
-		if (this->params.src->type != "AZCW")
+		if (this->params.debug)
 		{
-			// generate a random K bits vector U_K1
-			auto t_sourc = steady_clock::now();
-			this->source[tid]->generate(this->U_K1[tid]);
-			this->durations[tid][std::make_pair(0, "Source")] += steady_clock::now() - t_sourc;
+			if (!monitor[mnt::tsk::check_errors].get_n_calls())
+				std::cout << "#" << std::endl;
 
-			// build the CRC from U_K1 into U_K2
-			auto t_crcbd = steady_clock::now();
-			this->crc[tid]->build(this->U_K1[tid], this->U_K2[tid]);
-			this->durations[tid][std::make_pair(1, "CRC build")] += steady_clock::now() - t_crcbd;
-
-			// encode U_K2 into a N bits vector X_N
-			auto t_encod = steady_clock::now();
-			this->encoder[tid]->encode(this->U_K2[tid], this->X_N1[tid]);
-			this->durations[tid][std::make_pair(2, "Encoder")] += steady_clock::now() - t_encod;
-
-			auto t_inter = steady_clock::now();
-			this->interleaver[tid]->interleave(this->X_N1[tid], this->X_N2[tid]);
-			this->durations[tid][std::make_pair(3, "Interleaver")] += steady_clock::now() - t_inter;
-
-			// modulate
-			auto t_modul = steady_clock::now();
-			this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
-			this->durations[tid][std::make_pair(4, "Modulator")] += steady_clock::now() - t_modul;
+			std::cout << "# -------------------------------" << std::endl;
+			std::cout << "# New communication (n°" << monitor[mnt::tsk::check_errors].get_n_calls() << ")" << std::endl;
+			std::cout << "# -------------------------------" << std::endl;
+			std::cout << "#" << std::endl;
 		}
-
-		// Rayleigh channel
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-		{
-			// add noise
-			auto t_chann = steady_clock::now();
-			this->channel[tid]->add_noise(this->X_N3[tid], this->Y_N1[tid], this->H_N[tid]);
-			this->durations[tid][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
-		}
-		else // additive channel (AWGN, USER, NO)
-		{
-			// add noise
-			auto t_chann = steady_clock::now();
-			this->channel[tid]->add_noise(this->X_N3[tid], this->Y_N1[tid]);
-			this->durations[tid][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
-		}
-
-		// filtering
-		auto t_filte = steady_clock::now();
-		this->modem[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
-		this->durations[tid][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
-
-		// make the quantization
-		auto t_quant = steady_clock::now();
-		this->quantizer[tid]->process(this->Y_N2[tid], this->Y_N3[tid]);
-		this->durations[tid][std::make_pair(7, "Quantizer")] += steady_clock::now() - t_quant;
-
-		std::fill(this->Y_N7[tid].begin(), this->Y_N7[tid].end(), (Q)0);
-		for (auto ite = 0; ite <= this->params.n_ite; ite++)
-		{
-			// Rayleigh channel
-			if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-			{
-				// demodulation
-				auto t_demod = steady_clock::now();
-				this->modem[tid]->demodulate_with_gains(this->Y_N3[tid], this->H_N[tid], this->Y_N7[tid],
-				                                        this->Y_N4[tid]);
-				this->durations[tid][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
-			}
-			else // additive channel (AWGN, USER, NO)
-			{
-				// demodulation
-				auto t_demod = steady_clock::now();
-				this->modem[tid]->demodulate(this->Y_N3[tid], this->Y_N7[tid], this->Y_N4[tid]);
-				this->durations[tid][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
-			}
-
-			// deinterleaving
-			auto t_deint = steady_clock::now();
-			this->interleaver[tid]->deinterleave(this->Y_N4[tid], this->Y_N5[tid]);
-			this->durations[tid][std::make_pair(9, "Deinterlever")] += steady_clock::now() - t_deint;
-
-			// apply the coset: the decoder will believe to a AZCW
-			if (this->params.coset)
-			{
-				auto t_corea = steady_clock::now();
-				this->coset_real[tid]->apply(this->X_N1[tid], this->Y_N5[tid], this->Y_N5[tid]);
-				this->durations[tid][std::make_pair(10, "Coset real")] += steady_clock::now() - t_corea;
-			}
-
-			// soft decode
-			if (ite != this->params.n_ite)
-			{
-				// decode
-				auto t_decod = steady_clock::now();
-				this->siso[tid]->decode_siso(this->Y_N5[tid], this->Y_N6[tid]);
-				this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
-
-				// apply the coset to recover the extrinsic information
-				if (this->params.coset)
-				{
-					auto t_corea = steady_clock::now();
-					this->coset_real[tid]->apply(this->X_N1[tid], this->Y_N6[tid], this->Y_N6[tid]);
-					this->durations[tid][std::make_pair(10, "Coset real")] += steady_clock::now() - t_corea;
-				}
-
-				// interleaving
-				auto t_inter = steady_clock::now();
-				this->interleaver[tid]->interleave(this->Y_N6[tid], this->Y_N7[tid]);
-				this->durations[tid][std::make_pair(3, "Interleaver")] += steady_clock::now() - t_inter;
-			}
-			// hard decode
-			else
-			{
-				if (this->params.coded_monitoring)
-				{
-					// decode
-					auto t_decod = steady_clock::now();
-					this->decoder[tid]->decode_siho_coded(this->Y_N5[tid], this->V_N1[tid]);
-					this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
-				}
-				else
-				{
-					// decode
-					auto t_decod = steady_clock::now();
-					this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
-					this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
-				}
-			}
-		}
-
-		if (this->params.coded_monitoring)
-		{
-			// apply the coset to recover the real bits
-			if (this->params.coset)
-			{
-				auto t_cobit = steady_clock::now();
-				this->coset_bit[tid]->apply(this->X_N1[tid], this->V_N1[tid], this->V_N1[tid]);
-				this->durations[tid][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
-			}
-
-			// check errors in the frame
-			auto t_check = steady_clock::now();
-			this->monitor[tid]->check_errors(this->X_N1[tid], this->V_N1[tid]);
-			this->durations[tid][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
-		}
-		else
-		{
-			// apply the coset to recover the real bits
-			if (this->params.coset)
-			{
-				auto t_cobit = steady_clock::now();
-				this->coset_bit[tid]->apply(this->U_K2[tid], this->V_K1[tid], this->V_K1[tid]);
-				this->durations[tid][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
-			}
-
-			// extract the CRC bits and keep only the information bits
-			auto t_crcex = steady_clock::now();
-			this->crc[tid]->extract(this->V_K1[tid], this->V_K2[tid]);
-			this->durations[tid][std::make_pair(13, "CRC extract")] += steady_clock::now() - t_crcex;
-
-			// check errors in the frame
-			auto t_check = steady_clock::now();
-			this->monitor[tid]->check_errors(this->U_K1[tid], this->V_K2[tid]);
-			this->durations[tid][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
-		}
-	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER_ite_threads<B,R,Q>
-::simulation_loop_debug()
-{
-	using namespace std::chrono;
-	auto t_snr = steady_clock::now();
-
-	// frame trace to display the vectors
-	tools::Frame_trace<B> ft(this->params.debug_limit, this->params.debug_precision);
-
-	// simulation loop
-	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
-	       (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time) &&
-	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
-	{
-		std::cout << "-------------------------------" << std::endl;
-		std::cout << "New encoding/decoding session !" << std::endl;
-		std::cout << "Frame n°" << this->monitor_red->get_n_analyzed_fra() << std::endl;
-		std::cout << "-------------------------------" << std::endl;
 
 		if (this->params.src->type != "AZCW")
 		{
-			// generate a random K bits vector U_K1
-			std::cout << "Generate random bits U_K1..." << std::endl;
-			auto t_sourc = steady_clock::now();
-			this->source[0]->generate(this->U_K1[0]);
-			this->durations[0][std::make_pair(0, "Source")] += steady_clock::now() - t_sourc;
-
-			// display U_K1
-			std::cout << "U_K1:" << std::endl;
-			ft.display_bit_vector(this->U_K1[0]);
-			std::cout << std::endl;
-
-			// add the CRC to U_K
-			std::cout << "Build the CRC from U_K1 into U_K2..." << std::endl;
-			auto t_crcbd = steady_clock::now();
-			this->crc[0]->build(this->U_K1[0], this->U_K2[0]);
-			this->durations[0][std::make_pair(1, "CRC build")] += steady_clock::now() - t_crcbd;
-
-			// display U_K2
-			std::cout << "U_K2:" << std::endl;
-			ft.display_bit_vector(this->U_K2[0]);
-			std::cout << std::endl;
-
-			// encode U_K2 into a N bits vector X_N1
-			std::cout << "Encode U_K2 in X_N1..." << std::endl;
-			auto t_encod = steady_clock::now();
-			this->encoder[0]->encode(this->U_K2[0], this->X_N1[0]);
-			this->durations[0][std::make_pair(2, "Encoder")] += steady_clock::now() - t_encod;
-
-			// display X_N1
-			std::cout << "X_N1:" << std::endl;
-			ft.display_bit_vector(this->X_N1[0]);
-			std::cout << std::endl;
-
-			// puncture X_N1 into X_N2
-			std::cout << "Interleaver X_N1 in X_N2..." << std::endl;
-			auto t_inter = steady_clock::now();
-			this->interleaver[0]->interleave(this->X_N1[0], this->X_N2[0]);
-			this->durations[0][std::make_pair(3, "Interleaver")] += steady_clock::now() - t_inter;
-
-			// display X_N2
-			std::cout << "X_N2:" << std::endl;
-			ft.display_bit_vector(this->X_N2[0]);
-			std::cout << std::endl;
-
-			// modulate
-			std::cout << "Modulate X_N2 in X_N3..." << std::endl;
-			auto t_modul = steady_clock::now();
-			this->modem[0]->modulate(this->X_N2[0], this->X_N3[0]);
-			this->durations[0][std::make_pair(4, "Modulator")] += steady_clock::now() - t_modul;
-
-			// display X_N3
-			std::cout << "X_N3:" << std::endl;
-			ft.display_real_vector(this->X_N3[0]);
-			std::cout << std::endl;
-		}
-		else
-		{
-			// display U_K1
-			std::cout << "U_K1:" << std::endl;
-			ft.display_bit_vector(this->U_K1[0]);
-			std::cout << std::endl;
-
-			// display U_K2
-			std::cout << "U_K2:" << std::endl;
-			ft.display_bit_vector(this->U_K2[0]);
-			std::cout << std::endl;
-
-			// display X_N2
-			std::cout << "X_N2:" << std::endl;
-			ft.display_bit_vector(this->X_N2[0]);
-			std::cout << std::endl;
-
-			// display X_N3
-			std::cout << "X_N3:" << std::endl;
-			ft.display_real_vector(this->X_N3[0]);
-			std::cout << std::endl;
+			source         [src::tsk::generate  ].exec();
+			crc            [crc::tsk::build     ].exec();
+			encoder        [enc::tsk::encode    ].exec();
+			interleaver_bit[itl::tsk::interleave].exec();
+			modem          [mdm::tsk::modulate  ].exec();
 		}
 
-		// Rayleigh channel
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			// add noise
-			std::cout << "Add noise from X_N3 to Y_N1..." << std::endl;
-			auto t_chann = steady_clock::now();
-			this->channel[0]->add_noise(this->X_N3[0], this->Y_N1[0], this->H_N[0]);
-			this->durations[0][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
-
-			// display Y_N1
-			std::cout << "Y_N1:" << std::endl;
-			ft.display_real_vector(this->Y_N1[0]);
-			std::cout << std::endl;
-
-			// display channel gains
-			std::cout << "H_N:" << std::endl;
-			ft.display_real_vector(this->H_N[0]);
-			std::cout << std::endl;
-		}
-		else // additive channel (AWGN, USER, NO)
-		{
-			// add noise
-			std::cout << "Add noise from X_N3 to Y_N1..." << std::endl;
-			auto t_chann = steady_clock::now();
-			this->channel[0]->add_noise(this->X_N3[0], this->Y_N1[0]);
-			this->durations[0][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
-
-			// display Y_N1
-			std::cout << "Y_N1:" << std::endl;
-			ft.display_real_vector(this->Y_N1[0]);
-			std::cout << std::endl;
-		}
-
-		// filtering
-		std::cout << "Apply the filtering from Y_N1 to Y_N2..." << std::endl;
-		auto t_filte = steady_clock::now();
-		this->modem[0]->filter(this->Y_N1[0], this->Y_N2[0]);
-		this->durations[0][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
-
-		// display Y_N2
-		std::cout << "Y_N2:" << std::endl;
-		ft.display_real_vector(this->Y_N2[0]);
-		std::cout << std::endl;
-
-		// make the quantization
-		std::cout << "Make the quantization from Y_N2 to Y_N3..." << std::endl;
-		auto t_quant = steady_clock::now();
-		this->quantizer[0]->process(this->Y_N2[0], this->Y_N3[0]);
-		this->durations[0][std::make_pair(7, "Quantizer")] += steady_clock::now() - t_quant;
-
-		// display Y_N3
-		std::cout << "Y_N3:" << std::endl;
-		ft.display_real_vector(this->Y_N3[0]);
-		std::cout << std::endl;
-
-		std::fill(this->Y_N7[0].begin(), this->Y_N7[0].end(), (Q)0);
-		for (auto ite = 0; ite <= this->params.n_ite; ite++)
-		{
-			std::cout << "*** Turbo demodulation iteration n°" << ite << " ***" << std::endl << std::endl;
-
-			// Rayleigh channel
-			if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-			{
-				// demodulation
-				std::cout << "Demodulate from Y_N3 to Y_N4..." << std::endl;
-				auto t_demod = steady_clock::now();
-				this->modem[0]->demodulate_with_gains(this->Y_N3[0], this->H_N[0], this->Y_N7[0], this->Y_N4[0]);
-				this->durations[0][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
-
-				// display Y_N5
-				std::cout << "Y_N4:" << std::endl;
-				ft.display_real_vector(this->Y_N4[0]);
-				std::cout << std::endl;
-			}
-			else
-			{
-				// demodulation
-				std::cout << "Demodulate from Y_N3 to Y_N4..." << std::endl;
-				auto t_demod = steady_clock::now();
-				this->modem[0]->demodulate(this->Y_N3[0], this->Y_N7[0], this->Y_N4[0]);
-				this->durations[0][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
-
-				// display Y_N5
-				std::cout << "Y_N4:" << std::endl;
-				ft.display_real_vector(this->Y_N4[0]);
-				std::cout << std::endl;
-			}
-
-			// deinterleaving
-			std::cout << "Deinterleave from Y_N4 to Y_N5..." << std::endl;
-			auto t_deint = steady_clock::now();
-			this->interleaver[0]->deinterleave(this->Y_N4[0], this->Y_N5[0]);
-			this->durations[0][std::make_pair(9, "Deinterlever")] += steady_clock::now() - t_deint;
-
-			// display Y_N5
-			std::cout << "Y_N5:" << std::endl;
-			ft.display_real_vector(this->Y_N5[0]);
-			std::cout << std::endl;
-
-			// apply the coset: the decoder will believe to a AZCW
-			if (this->params.coset)
-			{
-				std::cout << "Apply the coset approach on Y_N5..." << std::endl;
-				auto t_corea = steady_clock::now();
-				this->coset_real[0]->apply(this->X_N1[0], this->Y_N5[0], this->Y_N5[0]);
-				this->durations[0][std::make_pair(10, "Coset real")] += steady_clock::now() - t_corea;
-
-				// display Y_N5
-				std::cout << "Y_N5:" << std::endl;
-				ft.display_real_vector(this->Y_N5[0]);
-				std::cout << std::endl;
-			}
-
-			// soft decode
-			if (ite != this->params.n_ite)
-			{
-				// decode
-				std::cout << "Soft decode from Y_N5 to Y_N6..." << std::endl;
-				auto t_decod = steady_clock::now();
-				this->siso[0]->decode_siso(this->Y_N5[0], this->Y_N6[0]);
-				this->durations[0][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
-
-				// display Y_N6
-				std::cout << "Y_N6:" << std::endl;
-				ft.display_real_vector(this->Y_N6[0]);
-				std::cout << std::endl;
-
-				// apply the coset to recover the extrinsic information
-				if (this->params.coset)
-				{
-					std::cout << "Reverse the coset approach on Y_N6..." << std::endl;
-					auto t_corea = steady_clock::now();
-					this->coset_real[0]->apply(this->X_N1[0], this->Y_N6[0], this->Y_N6[0]);
-					this->durations[0][std::make_pair(10, "Coset real")] += steady_clock::now() - t_corea;
-
-					// display Y_N6
-					std::cout << "Y_N6:" << std::endl;
-					ft.display_real_vector(this->Y_N6[0]);
-					std::cout << std::endl;
-				}
-
-				// interleaving
-				std::cout << "Interleave from Y_N6 to Y_N7..." << std::endl;
-				auto t_inter = steady_clock::now();
-				this->interleaver[0]->interleave(this->Y_N6[0], this->Y_N7[0]);
-				this->durations[0][std::make_pair(3, "Interleaver")] += steady_clock::now() - t_inter;
-
-				// display Y_N7
-				std::cout << "Y_N7:" << std::endl;
-				ft.display_real_vector(this->Y_N7[0]);
-				std::cout << std::endl;
-			}
-			// hard decode
-			else
-			{
-				if (this->params.coded_monitoring)
-				{
-					// decode
-					std::cout << "Hard decode from Y_N5 to V_N1..." << std::endl;
-					auto t_decod = steady_clock::now();
-					this->decoder[0]->decode_siho_coded(this->Y_N5[0], this->V_N1[0]);
-					this->durations[0][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
-
-					// display V_K1
-					std::cout << "V_K1:" << std::endl;
-					ft.display_real_vector(this->V_K1[0], this->U_K2[0]);
-					std::cout << std::endl;
-				}
-				else
-				{
-					// decode
-					std::cout << "Hard decode from Y_N5 to V_K1..." << std::endl;
-					auto t_decod = steady_clock::now();
-					this->decoder[0]->decode_siho(this->Y_N5[0], this->V_K1[0]);
-					this->durations[0][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
-
-					// display V_K1
-					std::cout << "V_K1:" << std::endl;
-					ft.display_real_vector(this->V_K1[0], this->U_K2[0]);
-					std::cout << std::endl;
-				}
-			}
-		}
-
-		if (this->params.coded_monitoring)
-		{
-			// apply the coset to recover the real bits
-			if (this->params.coset)
-			{
-				std::cout << "Apply the coset approach on V_N1..." << std::endl;
-				auto t_cobit = steady_clock::now();
-				this->coset_bit[0]->apply(this->X_N1[0], this->V_N1[0], this->V_N1[0]);
-				this->durations[0][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
-
-				// display V_K1
-				std::cout << "V_N1:" << std::endl;
-				ft.display_real_vector(this->V_N1[0], this->X_N1[0]);
-				std::cout << std::endl;
-			}
-
-			// check errors in the frame
-			auto t_check = steady_clock::now();
-			this->monitor[0]->check_errors(this->X_N1[0], this->V_N1[0]);
-			this->durations[0][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
+			channel  [chn::tsk::add_noise_wg ].exec();
+			modem    [mdm::tsk::filter       ].exec();
+			quantizer[qnt::tsk::process      ].exec();
+			modem    [mdm::tsk::demodulate_wg].exec();
 		}
 		else
 		{
-			// apply the coset to recover the real bits
-			if (this->params.coset)
-			{
-				std::cout << "Apply the coset approach on V_K1..." << std::endl;
-				auto t_cobit = steady_clock::now();
-				this->coset_bit[0]->apply(this->U_K2[0], this->V_K1[0], this->V_K1[0]);
-				this->durations[0][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
+			channel  [chn::tsk::add_noise ].exec();
+			modem    [mdm::tsk::filter    ].exec();
+			quantizer[qnt::tsk::process   ].exec();
+			modem    [mdm::tsk::demodulate].exec();
+		}
 
-				// display V_K1
-				std::cout << "V_K1:" << std::endl;
-				ft.display_real_vector(this->V_K1[0], this->U_K2[0]);
-				std::cout << std::endl;
+		interleaver_llr[itl::tsk::deinterleave].exec();
+
+		// ------------------------------------------------------------------------------------------------------------
+		// ------------------------------------------------------------------------------------ turbo demodulation loop
+		// ------------------------------------------------------------------------------------------------------------
+		for (auto ite = 1; ite <= this->params.n_ite; ite++)
+		{
+			// ------------------------------------------------------------------------------------------- CRC checking
+			if (this->params.crc->type != "NO" && ite >= this->params.crc_start)
+			{
+				codec[cdc::tsk::extract_sys_bit].exec();
+				if (crc[crc::tsk::check].exec())
+					break;
 			}
 
-			// extract the CRC bits and keep only the information bits
-			std::cout << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl;
-			auto t_crcex = steady_clock::now();
-			this->crc[0]->extract(this->V_K1[0], this->V_K2[0]);
-			this->durations[0][std::make_pair(13, "CRC extract")] += steady_clock::now() - t_crcex;
+			// ----------------------------------------------------------------------------------------------- decoding
+			if (this->params.coset)
+			{
+				coset_real  [cst::tsk::apply      ].exec();
+				decoder_siso[dec::tsk::decode_siso].exec();
+				coset_real  [cst::tsk::apply      ].exec();
+			}
+			else
+			{
+				decoder_siso[dec::tsk::decode_siso].exec();
+			}
 
-			// display V_K2
-			std::cout << "V_K2:" << std::endl;
-			ft.display_real_vector(this->V_K2[0], this->U_K1[0]);
-			std::cout << std::endl;
+			// ------------------------------------------------------------------------------------------- interleaving
+			interleaver_llr[itl::tsk::interleave].exec();
 
-			// check errors in the frame
-			auto t_check = steady_clock::now();
-			this->monitor[0]->check_errors(this->U_K1[0], this->V_K2[0]);
-			this->durations[0][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
+			// ------------------------------------------------------------------------------------------- demodulation
+			if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) modem[mdm::tsk::tdemodulate_wg].exec();
+			else                                                              modem[mdm::tsk::tdemodulate   ].exec();
+
+			// ----------------------------------------------------------------------------------------- deinterleaving
+			interleaver_llr[itl::tsk::deinterleave].exec();
 		}
+
+		if (this->params.coset)
+		{
+			coset_real[cst::tsk::apply].exec();
+
+			if (this->params.coded_monitoring)
+			{
+				decoder_siho[dec::tsk::decode_siho_cw].exec();
+				coset_bit   [cst::tsk::apply         ].exec();
+			}
+			else
+			{
+				decoder_siho[dec::tsk::decode_siho].exec();
+				coset_bit   [cst::tsk::apply      ].exec();
+				crc         [crc::tsk::extract    ].exec();
+			}
+		}
+		else
+		{
+			if (this->params.coded_monitoring)
+			{
+				decoder_siho[dec::tsk::decode_siho_cw].exec();
+			}
+			else
+			{
+				decoder_siho[dec::tsk::decode_siho].exec();
+				crc         [crc::tsk::extract    ].exec();
+			}
+		}
+
+		monitor[mnt::tsk::check_errors].exec();
 	}
-}
-
-template <typename B, typename R, typename Q>
-tools::Terminal_BFER<B>* BFER_ite_threads<B,R,Q>
-::build_terminal()
-{
-#ifdef ENABLE_MPI
-	return BFER_ite<B,R,Q>::build_terminal();
-#else
-	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
-	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];
-
-	return factory::Terminal_BFER::build<B>(*this->params.ter, *this->monitor_red, &d_dec);
-#endif
 }
 
 // ==================================================================================== explicit template instantiation

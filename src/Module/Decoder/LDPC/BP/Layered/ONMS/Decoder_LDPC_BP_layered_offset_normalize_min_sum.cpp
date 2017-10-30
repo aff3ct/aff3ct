@@ -54,7 +54,8 @@ Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
                                                    const int syndrome_depth,
                                                    const int n_frames,
                                                    const std::string name)
-: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
+: Decoder(K, N, n_frames, 1, name),
+  Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
   normalize_factor(normalize_factor), offset(offset), contributions(H.get_cols_max_degree())
 {
 	if (typeid(R) == typeid(signed char))

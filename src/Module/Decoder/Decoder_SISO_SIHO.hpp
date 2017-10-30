@@ -38,8 +38,9 @@ public:
 	 */
 	Decoder_SISO_SIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	                  std::string name = "Decoder_SISO_SIHO")
-	: Decoder_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level, name          ),
-	  Decoder_SISO<  R>(K, N, n_frames, simd_inter_frame_level, name + "_siso")
+	: Decoder          (K, N, n_frames, simd_inter_frame_level, name),
+	  Decoder_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level, name),
+	  Decoder_SISO<  R>(K, N, n_frames, simd_inter_frame_level, name)
 	{
 	}
 
@@ -47,41 +48,6 @@ public:
 	 * \brief Destructor.
 	 */
 	virtual ~Decoder_SISO_SIHO() {}
-
-	/*!
-	 * \brief Gets the number of frames.
-	 *
-	 * \return the number of frames to process in the decoder.
-	 */
-	virtual int get_n_frames() const
-	{
-		return Decoder_SISO<R>::n_frames;
-	}
-
-	int get_K() const
-	{
-		return Decoder_SISO<R>::K_siso;
-	}
-
-	int get_N() const
-	{
-		return Decoder_SISO<R>::N_siso;
-	}
-
-	/*!
-	 * \brief Gets the number of frames absorbed by the SIMD instructions.
-	 *
-	 * \return the number of frames absorbed by the SIMD instructions.
-	 */
-	int get_simd_inter_frame_level() const
-	{
-		return Decoder_SISO<R>::simd_inter_frame_level_siso;
-	}
-
-	int get_n_dec_waves() const
-	{
-		return Decoder_SISO<R>::n_dec_waves;
-	}
 };
 }
 }

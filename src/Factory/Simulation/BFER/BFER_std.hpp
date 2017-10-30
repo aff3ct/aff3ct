@@ -3,9 +3,9 @@
 
 #include <string>
 
-#include "BFER.hpp"
-#include "Tools/Codec/Codec.hpp"
+#include "Factory/Module/Codec/Codec_SIHO.hpp"
 
+#include "BFER.hpp"
 
 namespace aff3ct
 {
@@ -25,21 +25,33 @@ struct BFER_std : BFER
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : BFER::parameters
+	class parameters : public BFER::parameters
 	{
-		parameters() : BFER::parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// module parameters
+		Codec_SIHO::parameters *cdc = nullptr;
 
-		virtual ~parameters() {}
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = BFER_std::prefix);
+		virtual ~parameters();
+		BFER_std::parameters* clone() const;
 
-		bool debug_fe = false;
+		// setters
+		void set_cdc(Codec_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
+
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int, typename R = float, typename Q = R>
+		simulation::BFER_std<B,R,Q>* build() const;
 	};
 
 	template <typename B = int, typename R = float, typename Q = R>
-	static simulation::BFER_std<B,R,Q>* build(const parameters &params, tools::Codec<B,Q> &codec);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_sim, const parameters& params, const bool full = true);
+	static simulation::BFER_std<B,R,Q>* build(const parameters &params);
 };
 }
 }

@@ -21,12 +21,12 @@ public:
 
 	void set_sigma(const R sigma);
 
-	void   modulate           (const B *X_N1,                              R *X_N2); using Modem<B,R,Q>::modulate;
-	void     filter           (const R *Y_N1,                              R *Y_N2); using Modem<B,R,Q>::filter;
-	void demodulate           (const Q *Y_N1,                              Q *Y_N2);
-	void demodulate_with_gains(const Q *Y_N1, const R *H_N,                Q *Y_N2);
-	void demodulate           (const Q *Y_N1,               const Q *Y_N2, Q *Y_N3); using Modem<B,R,Q>::demodulate;
-	void demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3); using Modem<B,R,Q>::demodulate_with_gains;
+	void   modulate    (              const B *X_N1,                R *X_N2); using Modem<B,R,Q>::modulate;
+	void     filter    (              const R *Y_N1,                R *Y_N2); using Modem<B,R,Q>::filter;
+	void demodulate    (              const Q *Y_N1,                Q *Y_N2); using Modem<B,R,Q>::demodulate;
+	void demodulate_wg (const R *H_N, const Q *Y_N1,                Q *Y_N2); using Modem<B,R,Q>::demodulate_wg;
+	void tdemodulate   (              const Q *Y_N1, const Q *Y_N2, Q *Y_N3); using Modem<B,R,Q>::tdemodulate;
+	void tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3); using Modem<B,R,Q>::tdemodulate_wg;
 
 	static int size_mod(const int N)
 	{

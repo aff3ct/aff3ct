@@ -15,35 +15,27 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Module.hpp"
+#include "Decoder.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 /*!
- * \class Decoder_SISO_i
+ * \class Decoder_SISO
  *
  * \brief A Decoder_SISO (Soft Input Soft Output) is a type of decoder which takes a soft input and return a soft output.
  *
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder_SISO.
  *
- * Please use Decoder_SISO for inheritance (instead of Decoder_SISO_i).
+ * Please use Decoder_SISO for inheritance (instead of Decoder_SISO).
  */
 template <typename R = float>
-class Decoder_SISO_i : public Module
+class Decoder_SISO : virtual public Decoder
 {
 private:
-	const int n_inter_frame_rest_siso;
-
 	std::vector<R> Y_N1;
 	std::vector<R> Y_N2;
-
-protected:
-	const int K_siso; /*!< Number of information bits in one frame */
-	const int N_siso; /*!< Size of one frame (= number of bits in one frame) */
-	const int simd_inter_frame_level_siso;
-	const int n_dec_waves_siso;
 
 public:
 	/*!
@@ -55,76 +47,28 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   decoder name.
 	 */
-	Decoder_SISO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	               std::string name = "Decoder_SISO_i")
-	: Module(n_frames, name),
-	  n_inter_frame_rest_siso(this->n_frames % simd_inter_frame_level),
-	  Y_N1(n_inter_frame_rest_siso ? simd_inter_frame_level * N : 0),
-	  Y_N2(n_inter_frame_rest_siso ? simd_inter_frame_level * N : 0),
-	  K_siso(K),
-	  N_siso(N),
-	  simd_inter_frame_level_siso(simd_inter_frame_level),
-	  n_dec_waves_siso((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
+	Decoder_SISO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
+	             std::string name = "Decoder_SISO")
+	: Decoder(K, N, n_frames, simd_inter_frame_level, name),
+	  Y_N1   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
+	  Y_N2   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 	{
-		if (K <= 0)
+		auto &p = this->create_task("decode_siso", dec::tsk::decode_siso);
+		auto &ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
+		auto &ps_Y_N2 = this->template create_socket_out<R>(p, "Y_N2", this->N * this->n_frames);
+		this->create_codelet(p, [this, &ps_Y_N1, &ps_Y_N2]() -> int
 		{
-			std::stringstream message;
-			message << "'K' has to be greater than 0 ('K' = " << K << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+			this->decode_siso(static_cast<R*>(ps_Y_N1.get_dataptr()),
+			                  static_cast<R*>(ps_Y_N2.get_dataptr()));
 
-		if (N <= 0)
-		{
-			std::stringstream message;
-			message << "'N' has to be greater than 0 ('N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (simd_inter_frame_level <= 0)
-		{
-			std::stringstream message;
-			message << "'simd_inter_frame_level' has to be greater than 0 ('simd_inter_frame_level' = "
-			        << simd_inter_frame_level << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (K > N)
-		{
-			std::stringstream message;
-			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+			return 0;
+		});
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_SISO_i() {};
-
-	int get_K() const
-	{
-		return this->K_siso;
-	}
-
-	int get_N() const
-	{
-		return this->N_siso;
-	}
-
-	/*!
-	 * \brief Gets the number of frames absorbed by the SIMD instructions.
-	 *
-	 * \return the number of frames absorbed by the SIMD instructions.
-	 */
-	int get_simd_inter_frame_level() const
-	{
-		return this->simd_inter_frame_level_siso;
-	}
-
-	int get_n_dec_waves() const
-	{
-		return this->n_dec_waves_siso;
-	}
+	virtual ~Decoder_SISO() {};
 
 	/*!
 	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be
@@ -147,34 +91,34 @@ public:
 
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
-		if ((this->K_siso + this->tail_length() / 2) * real_n_frames != (int)sys.size())
+		if ((this->K + this->tail_length() / 2) * real_n_frames != (int)sys.size())
 		{
 			std::stringstream message;
-			message << "'sys.size()' has to be equal to ('K_siso' + 'tail_length()' / 2) * 'real_n_frames' "
+			message << "'sys.size()' has to be equal to ('K' + 'tail_length()' / 2) * 'real_n_frames' "
 			        << "('sys.size()' = " << sys.size()
-			        << ", 'K_siso' = " << this->K_siso
+			        << ", 'K' = " << this->K
 			        << ", 'tail_length()' = " << this->tail_length()
 			        << ", 'real_n_frames' = " << real_n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (((this->N_siso - this->K_siso) - this->tail_length() / 2) * real_n_frames != (int)par.size())
+		if (((this->N - this->K) - this->tail_length() / 2) * real_n_frames != (int)par.size())
 		{
 			std::stringstream message;
-			message << "'par.size()' has to be equal to (('N_siso' - 'K_siso') - 'tail_length()' / 2) * "
+			message << "'par.size()' has to be equal to (('N' - 'K') - 'tail_length()' / 2) * "
 			        << "'real_n_frames' ('par.size()' = " << par.size()
-			        << ", 'N_siso' = " << this->N_siso
-			        << ", 'K_siso' = " << this->K_siso
+			        << ", 'N' = " << this->N
+			        << ", 'K' = " << this->K
 			        << ", 'tail_length()' = " << this->tail_length()
 			        << ", 'real_n_frames' = " << real_n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (this->K_siso * real_n_frames != (int)ext.size())
+		if (this->K * real_n_frames != (int)ext.size())
 		{
 			std::stringstream message;
-			message << "'ext.size()' has to be equal to 'K_siso' * 'real_n_frames' ('ext.size()' = " << ext.size()
-			        << ", 'K_siso' = " << this->K_siso << ", 'real_n_frames' = " << real_n_frames << ").";
+			message << "'ext.size()' has to be equal to 'K' * 'real_n_frames' ('ext.size()' = " << ext.size()
+			        << ", 'K' = " << this->K << ", 'real_n_frames' = " << real_n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -185,12 +129,12 @@ public:
 	{
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
-		const auto n_dec_waves_siso = real_n_frames / this->simd_inter_frame_level_siso;
+		const auto n_dec_waves_siso = real_n_frames / this->simd_inter_frame_level;
 		for (auto w = 0; w < n_dec_waves_siso; w++)
-			this->_decode_siso(sys + w * (               this->K_siso) * this->simd_inter_frame_level_siso,
-			                   par + w * (this->N_siso - this->K_siso) * this->simd_inter_frame_level_siso,
-			                   ext + w * (               this->K_siso) * this->simd_inter_frame_level_siso,
-			                   w * simd_inter_frame_level_siso);
+			this->_decode_siso(sys + w * (          this->K) * this->simd_inter_frame_level,
+			                   par + w * (this->N - this->K) * this->simd_inter_frame_level,
+			                   ext + w * (          this->K) * this->simd_inter_frame_level,
+			                   w * this->simd_inter_frame_level);
 	}
 
 	/*!
@@ -202,19 +146,19 @@ public:
 	template <class A = std::allocator<R>>
 	void decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2)
 	{
-		if (this->N_siso * this->n_frames != (int)Y_N1.size())
+		if (this->N * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
-			message << "'Y_N1.size()' has to be equal to 'N_siso' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
-			        << ", 'N_siso' = " << this->N_siso << ", 'n_frames' = " << this->n_frames << ").";
+			message << "'Y_N1.size()' has to be equal to 'N' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (this->N_siso * this->n_frames != (int)Y_N2.size())
+		if (this->N * this->n_frames != (int)Y_N2.size())
 		{
 			std::stringstream message;
-			message << "'Y_N2.size()' has to be equal to 'N_siso' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
-			        << ", 'N_siso' = " << this->N_siso << ", 'n_frames' = " << this->n_frames << ").";
+			message << "'Y_N2.size()' has to be equal to 'N' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -224,27 +168,27 @@ public:
 	virtual void decode_siso(const R *Y_N1, R *Y_N2)
 	{
 		auto w = 0;
-		for (w = 0; w < this->n_dec_waves_siso -1; w++)
-			this->_decode_siso(Y_N1 + w * this->N_siso * this->simd_inter_frame_level_siso,
-			                   Y_N2 + w * this->N_siso * this->simd_inter_frame_level_siso,
-			                   w * simd_inter_frame_level_siso);
+		for (w = 0; w < this->n_dec_waves -1; w++)
+			this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
+			                   Y_N2 + w * this->N * this->simd_inter_frame_level,
+			                   w * this->simd_inter_frame_level);
 
-		if (this->n_inter_frame_rest_siso == 0)
-			this->_decode_siso(Y_N1 + w * this->N_siso * this->simd_inter_frame_level_siso,
-			                   Y_N2 + w * this->N_siso * this->simd_inter_frame_level_siso,
-			                   w * simd_inter_frame_level_siso);
+		if (this->n_inter_frame_rest == 0)
+			this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
+			                   Y_N2 + w * this->N * this->simd_inter_frame_level,
+			                   w * this->simd_inter_frame_level);
 		else
 		{
-			const auto waves_off1 = w * this->simd_inter_frame_level_siso * this->N_siso;
+			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
 			std::copy(Y_N1 + waves_off1,
-			          Y_N1 + waves_off1 + this->n_inter_frame_rest_siso * this->N_siso,
+			          Y_N1 + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N1.begin());
 
-			this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * simd_inter_frame_level_siso);
+			this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * simd_inter_frame_level);
 
-			const auto waves_off2 = w * this->simd_inter_frame_level_siso * this->N_siso;
+			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
 			std::copy(this->Y_N2.begin(),
-			          this->Y_N2.begin() + this->n_inter_frame_rest_siso * this->N_siso,
+			          this->Y_N2.begin() + this->n_inter_frame_rest * this->N,
 			          Y_N2 + waves_off2);
 		}
 	}
@@ -272,7 +216,5 @@ protected:
 };
 }
 }
-
-#include "SC_Decoder_SISO.hpp"
 
 #endif /* DECODER_SISO_HPP_ */

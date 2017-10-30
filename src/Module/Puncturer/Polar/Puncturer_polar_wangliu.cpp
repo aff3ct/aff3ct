@@ -27,11 +27,11 @@ Puncturer_polar_wangliu<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (fb_generator.get_N() != this->N_code)
+	if (fb_generator.get_N() != this->N_cw)
 	{
 		std::stringstream message;
-		message << "'fb_generator.get_N()' has to be equal to 'N_code' ('fb_generator.get_N()' = "
-		        << fb_generator.get_N() << ", 'N_code' = " << this->N_code << ").";
+		message << "'fb_generator.get_N()' has to be equal to 'N_cw' ('fb_generator.get_N()' = "
+		        << fb_generator.get_N() << ", 'N_cw' = " << this->N_cw << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
@@ -79,7 +79,7 @@ void Puncturer_polar_wangliu<B,Q>
 	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 
 	// +inf (bit = 0)
-	std::fill(Y_N2 + this->N, Y_N2 + this->N_code, tools::sat_vals<Q>().second);
+	std::fill(Y_N2 + this->N, Y_N2 + this->N_cw, tools::sat_vals<Q>().second);
 }
 
 // ==================================================================================== explicit template instantiation 

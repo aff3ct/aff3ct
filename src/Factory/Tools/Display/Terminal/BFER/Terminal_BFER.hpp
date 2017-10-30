@@ -4,8 +4,9 @@
 #include <string>
 #include <chrono>
 
-#include "Module/Monitor/Monitor.hpp"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
+
+#include "Module/Monitor/BFER/Monitor_BFER.hpp"
 
 #include "../Terminal.hpp"
 
@@ -18,23 +19,30 @@ struct Terminal_BFER : Terminal
 	static const std::string name;
 	static const std::string prefix;
 
-	struct parameters : Terminal::parameters
+	class parameters : public Terminal::parameters
 	{
-		virtual ~parameters() {}
+	public:
+		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// optional parameters
+		std::string type = "STD";
 
-		int         K     = 0;
+		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string p = Terminal_BFER::prefix);
+		virtual ~parameters();
+		Terminal_BFER::parameters* clone() const;
 
-		std::string type  = "STD";
-		int         N     = 0;
+		// parameters construction
+		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
+		void store          (const arg_val_map &vals                                           );
+		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+
+		// builder
+		template <typename B = int>
+		tools::Terminal_BFER<B>* build(const module::Monitor_BFER<B> &monitor) const;
 	};
 
 	template <typename B = int>
-	static tools::Terminal_BFER<B>* build(const parameters &params, const module::Monitor<B> &monitor,
-	                                      const std::chrono::nanoseconds *d_decod_total = nullptr);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_ter, const parameters& params, const bool full = true);
+	static tools::Terminal_BFER<B>* build(const parameters &params, const module::Monitor_BFER<B> &monitor);
 };
 }
 }

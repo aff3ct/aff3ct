@@ -3,21 +3,20 @@
 
 #include <random>
 
-#include "../Encoder_sys.hpp"
+#include "../Encoder.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int>
-class Encoder_AZCW : public Encoder_sys<B>
+class Encoder_AZCW : public Encoder<B>
 {
 public:
 	Encoder_AZCW(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_AZCW");
 	virtual ~Encoder_AZCW();
 
-	void encode    (const B *U_K, B *X_N); using Encoder_sys<B>::encode;
-	void encode_sys(const B *U_K, B *par); using Encoder_sys<B>::encode_sys;
+	void encode(const B *U_K, B *X_N); using Encoder<B>::encode;
 };
 }
 }

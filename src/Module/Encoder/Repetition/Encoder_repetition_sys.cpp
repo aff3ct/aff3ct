@@ -12,7 +12,7 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_repetition_sys<B>
 ::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding, const int n_frames, const std::string name)
-: Encoder_sys<B>(K, N, n_frames, name), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
+: Encoder<B>(K, N, n_frames, name), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
 {
 	if (N % K)
 	{
@@ -20,17 +20,6 @@ Encoder_repetition_sys<B>
 		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B>
-void Encoder_repetition_sys<B>
-::_encode_sys(const B *U_K, B *par, const int frame_id)
-{
-	if (!buffered_encoding)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "Works only with the 'buffered_encoding' enabled.");
-
-	for (auto i = 0; i < rep_count; i++) // parity bits
-		std::copy(U_K, U_K + this->K, par + i * this->K);
 }
 
 template <typename B>

@@ -13,7 +13,7 @@ protected:
 	std::vector<Dumper*> dumpers;
 
 public:
-	Dumper_reduction(std::vector<Dumper*> dumpers, const int n_frames = 1);
+	Dumper_reduction(std::vector<Dumper*> dumpers);
 	virtual ~Dumper_reduction();
 
 	virtual void dump (const std::string& base_path);

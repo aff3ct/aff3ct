@@ -179,7 +179,7 @@ void Modem_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+::tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 {
 	this->demodulate(Y_N1,Y_N3);
 }

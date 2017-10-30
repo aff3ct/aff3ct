@@ -39,6 +39,8 @@ private:
 	std::string              m_program_name;  /*!< Program binary name. */
 	unsigned int             max_n_char_arg;  /*!< The number of characters of the largest argument name. */
 
+	std::map<std::vector<std::string>, unsigned> m_occ;
+
 public:
 	/*!
 	 * \brief Constructor.
@@ -179,7 +181,7 @@ private:
 	 *
 	 * \return true if the argument "m_argv[pos_arg]" is in args.
 	 */
-	unsigned sub_parse_arguments(arg_map &args, unsigned short pos_arg);
+	bool sub_parse_arguments(arg_map &args, unsigned short pos_arg, unsigned &args_count);
 
 	/*!
 	 * \brief Checks if the values from the command line respect the criteria given by required_args and optional_args

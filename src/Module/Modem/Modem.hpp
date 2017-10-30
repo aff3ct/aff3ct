@@ -22,8 +22,27 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace mdm
+	{
+		namespace tsk
+		{
+			enum list { modulate, tmodulate, filter, demodulate, tdemodulate, demodulate_wg, tdemodulate_wg, SIZE };
+		}
+
+		namespace sck
+		{
+			namespace modulate       { enum list {      X_N1, X_N2      , SIZE }; }
+			namespace tmodulate      { enum list {      X_N1, X_N2      , SIZE }; }
+			namespace filter         { enum list {      Y_N1, Y_N2      , SIZE }; }
+			namespace demodulate     { enum list {      Y_N1, Y_N2      , SIZE }; }
+			namespace tdemodulate    { enum list {      Y_N1, Y_N2, Y_N3, SIZE }; }
+			namespace demodulate_wg  { enum list { H_N, Y_N1, Y_N2      , SIZE }; }
+			namespace tdemodulate_wg { enum list { H_N, Y_N1, Y_N2, Y_N3, SIZE }; }
+		}
+	}
+
 /*!
- * \class Modem_i
+ * \class Modem
  *
  * \brief Modulates, filters and/or demodulates a signal.
  *
@@ -31,10 +50,10 @@ namespace module
  * \tparam R: type of the reals (floating-point representation) in the modulation and in the filtering process.
  * \tparam Q: type of the reals (floating-point or fixed-point representation) in the demodulation.
  *
- * Please use Modem for inheritance (instead of Modem_i)
+ * Please use Modem for inheritance (instead of Modem)
  */
 template <typename B = int, typename R = float, typename Q = R>
-class Modem_i : public Module
+class Modem : public Module
 {
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
@@ -52,9 +71,9 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem_i(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
-	        const std::string name = "Modem_i")
-	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
+	Modem(const int N, const int N_mod, const int N_fil, const R sigma = -1.f, const int n_frames = 1,
+	      const std::string name = "Modem")
+	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
 	{
 		if (N <= 0)
 		{
@@ -77,12 +96,7 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (sigma <= 0)
-		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+		this->init_processes();
 	}
 
 	/*!
@@ -93,9 +107,9 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem_i(const int N, const int N_mod, const R sigma, const int n_frames = 1,
-	        const std::string name = "Modem_i")
-	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
+	Modem(const int N, const int N_mod, const R sigma = -1.f, const int n_frames = 1,
+	        const std::string name = "Modem")
+	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
 	{
 		if (N <= 0)
 		{
@@ -111,12 +125,7 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (sigma <= 0)
-		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+		this->init_processes();
 	}
 
 	/*!
@@ -126,8 +135,8 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Modem_i")
-	: Module(n_frames, name), N(N), N_mod(N), N_fil(N)
+	Modem(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Modem")
+	: Module(n_frames, name, "Modem"), N(N), N_mod(N), N_fil(N), sigma(sigma)
 	{
 		if (N <= 0)
 		{
@@ -136,18 +145,101 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (sigma <= 0)
+		this->init_processes();
+	}
+
+	void init_processes()
+	{
+		auto &p1 = this->create_task("modulate");
+		auto &p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N     * this->n_frames);
+		auto &p1s_X_N2 = this->template create_socket_out<R>(p1, "X_N2", this->N_mod * this->n_frames);
+		this->create_codelet(p1, [this, &p1s_X_N1, &p1s_X_N2]() -> int
 		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+			this->modulate(static_cast<B*>(p1s_X_N1.get_dataptr()),
+			               static_cast<R*>(p1s_X_N2.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p7 = this->create_task("tmodulate");
+		auto &p7s_X_N1 = this->template create_socket_in <Q>(p7, "X_N1", this->N     * this->n_frames);
+		auto &p7s_X_N2 = this->template create_socket_out<R>(p7, "X_N2", this->N_mod * this->n_frames);
+		this->create_codelet(p7, [this, &p7s_X_N1, &p7s_X_N2]() -> int
+		{
+			this->tmodulate(static_cast<Q*>(p7s_X_N1.get_dataptr()),
+			                static_cast<R*>(p7s_X_N2.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p2 = this->create_task("filter");
+		auto &p2s_Y_N1 = this->template create_socket_in <R>(p2, "Y_N1", this->N_mod * this->n_frames);
+		auto &p2s_Y_N2 = this->template create_socket_out<R>(p2, "Y_N2", this->N_fil * this->n_frames);
+		this->create_codelet(p2, [this, &p2s_Y_N1, &p2s_Y_N2]() -> int
+		{
+			this->filter(static_cast<R*>(p2s_Y_N1.get_dataptr()),
+			             static_cast<R*>(p2s_Y_N2.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p3 = this->create_task("demodulate");
+		auto &p3s_Y_N1 = this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil * this->n_frames);
+		auto &p3s_Y_N2 = this->template create_socket_out<Q>(p3, "Y_N2", this->N     * this->n_frames);
+		this->create_codelet(p3, [this, &p3s_Y_N1, &p3s_Y_N2]() -> int
+		{
+			this->demodulate(static_cast<Q*>(p3s_Y_N1.get_dataptr()),
+			                 static_cast<Q*>(p3s_Y_N2.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p4 = this->create_task("tdemodulate");
+		auto &p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil * this->n_frames);
+		auto &p4s_Y_N2 = this->template create_socket_in <Q>(p4, "Y_N2", this->N     * this->n_frames);
+		auto &p4s_Y_N3 = this->template create_socket_out<Q>(p4, "Y_N3", this->N     * this->n_frames);
+		this->create_codelet(p4, [this, &p4s_Y_N1, &p4s_Y_N2, &p4s_Y_N3]() -> int
+		{
+			this->tdemodulate(static_cast<Q*>(p4s_Y_N1.get_dataptr()),
+			                  static_cast<Q*>(p4s_Y_N2.get_dataptr()),
+			                  static_cast<Q*>(p4s_Y_N3.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p5 = this->create_task("demodulate_wg");
+		auto &p5s_H_N  = this->template create_socket_in <R>(p5, "H_N",  this->N_fil * this->n_frames);
+		auto &p5s_Y_N1 = this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil * this->n_frames);
+		auto &p5s_Y_N2 = this->template create_socket_out<Q>(p5, "Y_N2", this->N     * this->n_frames);
+		this->create_codelet(p5, [this, &p5s_H_N, &p5s_Y_N1, &p5s_Y_N2]() -> int
+		{
+			this->demodulate_wg(static_cast<R*>(p5s_H_N .get_dataptr()),
+			                    static_cast<Q*>(p5s_Y_N1.get_dataptr()),
+			                    static_cast<Q*>(p5s_Y_N2.get_dataptr()));
+
+			return 0;
+		});
+
+		auto &p6 = this->create_task("tdemodulate_wg");
+		auto &p6s_H_N  = this->template create_socket_in <R>(p6, "H_N",  this->N_fil * this->n_frames);
+		auto &p6s_Y_N1 = this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil * this->n_frames);
+		auto &p6s_Y_N2 = this->template create_socket_in <Q>(p6, "Y_N2", this->N     * this->n_frames);
+		auto &p6s_Y_N3 = this->template create_socket_out<Q>(p6, "Y_N3", this->N     * this->n_frames);
+		this->create_codelet(p6, [this, &p6s_H_N, &p6s_Y_N1, &p6s_Y_N2, &p6s_Y_N3]() -> int
+		{
+			this->tdemodulate_wg(static_cast<R*>(p6s_H_N .get_dataptr()),
+			                     static_cast<Q*>(p6s_Y_N1.get_dataptr()),
+			                     static_cast<Q*>(p6s_Y_N2.get_dataptr()),
+			                     static_cast<Q*>(p6s_Y_N3.get_dataptr()));
+
+			return 0;
+		});
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Modem_i()
+	virtual ~Modem()
 	{
 	}
 
@@ -220,6 +312,42 @@ public:
 	}
 
 	/*!
+	 * \brief soft Modulates a vector of LLRs.
+	 *
+	 * \param X_N1: a vector of LLRs.
+	 * \param X_N2: a vector of soft symbols.
+	 */
+	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
+	void tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2)
+	{
+		if (this->N * this->n_frames != (int)X_N1.size())
+		{
+			std::stringstream message;
+			message << "'X_N1.size()' has to be equal to 'N' * 'n_frames' ('X_N1.size()' = " << X_N1.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (this->N_mod * this->n_frames != (int)X_N2.size())
+		{
+			std::stringstream message;
+			message << "'X_N2.size()' has to be equal to 'N_mod' * 'n_frames' ('X_N2.size()' = " << X_N2.size()
+			        << ", 'N_mod' = " << this->N_mod << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->tmodulate(X_N1.data(), X_N2.data());
+	}
+
+	virtual void tmodulate(const Q *X_N1, R *X_N2)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_tmodulate(X_N1 + f * this->N,
+			                 X_N2 + f * this->N_mod,
+			                 f);
+	}
+
+	/*!
 	 * \brief Filters a vector of noised and modulated bits/symbols.
 	 *
 	 * By default this method does nothing.
@@ -230,6 +358,13 @@ public:
 	template <class A = std::allocator<R>>
 	void filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_mod * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
@@ -266,6 +401,13 @@ public:
 	template <class A = std::allocator<Q>>
 	void demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
@@ -296,13 +438,20 @@ public:
 	/*!
 	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
 	 *
-	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param H_N:  channel gains.
+	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param Y_N2: a demodulated vector.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void demodulate_with_gains(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N, std::vector<Q,AQ>& Y_N2)
+	void demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
@@ -327,16 +476,16 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->demodulate_with_gains(Y_N1.data(), H_N.data(), Y_N2.data());
+		this->demodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data());
 	}
 
-	virtual void demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2)
+	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_demodulate_with_gains(Y_N1 + f * this->N_fil,
-			                             H_N  + f * this->N_fil,
-			                             Y_N2 + f * this->N,
-			                             f);
+			this->_demodulate_wg(H_N  + f * this->N_fil,
+			                     Y_N1 + f * this->N_fil,
+			                     Y_N2 + f * this->N,
+			                     f);
 	}
 
 	/*!
@@ -351,8 +500,15 @@ public:
 	 * \param Y_N3: a demodulated vector.
 	 */
 	template <class A = std::allocator<Q>>
-	void demodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3)
+	void tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
@@ -377,16 +533,16 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->demodulate(Y_N1.data(), Y_N2.data(), Y_N3.data());
+		this->tdemodulate(Y_N1.data(), Y_N2.data(), Y_N3.data());
 	}
 
-	virtual void demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+	virtual void tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_demodulate(Y_N1 + f * this->N_fil,
-			                  Y_N2 + f * this->N,
-			                  Y_N3 + f * this->N,
-			                  f);
+			this->_tdemodulate(Y_N1 + f * this->N_fil,
+			                   Y_N2 + f * this->N,
+			                   Y_N3 + f * this->N,
+			                   f);
 	}
 
 	/*!
@@ -395,16 +551,23 @@ public:
 	 * Used for the iterative turbo demodulation technique, this type of demodulation takes the decoder information
 	 * into account.
 	 *
-	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param H_N:  channel gains.
+	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param Y_N2: a vector of extrinsic information coming from a SISO decoder (used in the iterative turbo
 	 *              demodulation technique).
 	 * \param Y_N3: a demodulated vector.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void demodulate_with_gains(const std::vector<Q,AQ>& Y_N1, const std::vector<R,AR>& H_N,
-	                           const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3)
+	void tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
+	                    const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3)
 	{
+		if (sigma <= 0)
+		{
+			std::stringstream message;
+			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
 		{
 			std::stringstream message;
@@ -437,17 +600,17 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->demodulate_with_gains(Y_N1.data(), H_N.data(), Y_N2.data(), Y_N3.data());
+		this->tdemodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data(), Y_N3.data());
 	}
 
-	virtual void demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
+	virtual void tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_demodulate_with_gains(Y_N1 + f * this->N_fil,
-			                             H_N  + f * this->N_fil,
-			                             Y_N2 + f * this->N,
-			                             Y_N3 + f * this->N,
-			                             f);
+			this->_tdemodulate_wg(H_N  + f * this->N_fil,
+			                      Y_N1 + f * this->N_fil,
+			                      Y_N2 + f * this->N,
+			                      Y_N3 + f * this->N,
+			                      f);
 	}
 
 	/*!
@@ -490,6 +653,10 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
+	virtual void _tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
+	{
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
 	virtual void _filter(const R *Y_N1, R *Y_N2, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
@@ -500,24 +667,22 @@ protected:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
+	virtual void _demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+	virtual void _tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
+	virtual void _tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }
 }
-
-#include "SC_Modem.hpp"
 
 #endif /* MODEM_HPP_ */

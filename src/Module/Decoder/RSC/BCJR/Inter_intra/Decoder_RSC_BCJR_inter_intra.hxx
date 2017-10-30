@@ -17,7 +17,8 @@ Decoder_RSC_BCJR_inter_intra<B,R>
                                const bool buffered_encoding,
                                const int n_frames,
                                const std::string name)
-: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, mipp::nElReg<R>() / 8, name),
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>()/8, name),
+  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, mipp::nElReg<R>() / 8, name),
   alpha(8 * (K +4) * (mipp::nElReg<R>()/8) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) * (mipp::nElReg<R>()/8) + 2 * mipp::nElReg<R>())
 {
@@ -58,20 +59,11 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 		std::vector<const R*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*frame_size;
-		tools::Reorderer_static<R,n_frames>::apply(frames, this->sys.data(), this->K);
+		tools::Reorderer_static<R,n_frames>::apply(frames, this->sys.data(), this->K + tail/2);
 
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N + f*frame_size +this->K;
-		tools::Reorderer_static<R,n_frames>::apply(frames, this->par.data(), this->K);
-
-		// tails bit
-		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N + f*frame_size + 2*this->K + tail/2;
-		tools::Reorderer_static<R,n_frames>::apply(frames, &this->sys[this->K*n_frames], tail/2);
-
-		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N + f*frame_size + 2*this->K;
-		tools::Reorderer_static<R,n_frames>::apply(frames, &this->par[this->K*n_frames], tail/2);
+			frames[f] = Y_N + f*frame_size + this->K + tail/2;
+		tools::Reorderer_static<R,n_frames>::apply(frames, this->par.data(), this->K + tail/2);
 	}
 	else
 		Decoder_RSC_BCJR<B,R>::_load(Y_N);

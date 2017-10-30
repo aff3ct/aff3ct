@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 
+#include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
+
 #include "BFER_ite.hpp"
 
 using namespace aff3ct;
@@ -12,61 +14,77 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 BFER_ite<B,R,Q>
 ::BFER_ite(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), params(new factory::BFER_ite::parameters())
+: Launcher(argc, argv, params, stream)
 {
-	Launcher::params = params;
+	params.set_src(new factory::Source       ::parameters("src"));
+	params.set_crc(new factory::CRC          ::parameters("crc"));
+	params.set_itl(new factory::Interleaver  ::parameters("itl"));
+	params.set_mdm(new factory::Modem        ::parameters("mdm"));
+	params.set_chn(new factory::Channel      ::parameters("chn"));
+	params.set_qnt(new factory::Quantizer    ::parameters("qnt"));
+	params.set_mnt(new factory::Monitor_BFER ::parameters("mnt"));
+	params.set_ter(new factory::Terminal_BFER::parameters("ter"));
 }
 
 template <typename B, typename R, typename Q>
 BFER_ite<B,R,Q>
 ::~BFER_ite()
 {
-	if (codec != nullptr)
-		delete codec;
 }
 
 template <typename B, typename R, typename Q>
 void BFER_ite<B,R,Q>
-::build_args()
+::get_description_args()
 {
-	Launcher::build_args();
+	Launcher::get_description_args();
 
-	factory::BFER_ite::build_args(this->req_args, this->opt_args);
-	factory::Source             ::build_args(this->req_args, this->opt_args);
-	factory::CRC                ::build_args(this->req_args, this->opt_args);
-	factory::Interleaver        ::build_args(this->req_args, this->opt_args);
-	factory::Modem              ::build_args(this->req_args, this->opt_args);
-	factory::Channel            ::build_args(this->req_args, this->opt_args);
+	params.     get_description(this->req_args, this->opt_args);
+	params.src->get_description(this->req_args, this->opt_args);
+	params.crc->get_description(this->req_args, this->opt_args);
+	params.itl->get_description(this->req_args, this->opt_args);
+	params.mdm->get_description(this->req_args, this->opt_args);
+	params.chn->get_description(this->req_args, this->opt_args);
 	if (std::is_integral<Q>())
-		factory::Quantizer      ::build_args(this->req_args, this->opt_args);
-	factory::Monitor            ::build_args(this->req_args, this->opt_args);
-	factory::Terminal_BFER      ::build_args(this->req_args, this->opt_args);
+	params.qnt->get_description(this->req_args, this->opt_args);
+	params.mnt->get_description(this->req_args, this->opt_args);
+	params.ter->get_description(this->req_args, this->opt_args);
 
-	if (this->req_args.find({"enc-info-bits", "K"}) != this->req_args.end() ||
-	    this->req_args.find({"pct-info-bits", "K"}) != this->req_args.end())
-		this->req_args.erase({"src-info-bits", "K"});
-	this->opt_args.erase({"src-seed",      "S"});
-	this->req_args.erase({"crc-info-bits", "K"});
-	this->opt_args.erase({"crc-fra",       "F"});
-	this->req_args.erase({"itl-size"          });
-	this->opt_args.erase({"itl-fra",       "F"});
-	this->opt_args.erase({"itl-seed",      "S"});
-	this->req_args.erase({"mdm-fra-size",  "N"});
-	this->opt_args.erase({"mdm-fra",       "F"});
-	this->opt_args.erase({"mdm-sigma"        });
-	this->req_args.erase({"chn-fra-size",  "N"});
-	this->opt_args.erase({"chn-fra",       "F"});
-	this->opt_args.erase({"chn-sigma"         });
-	this->opt_args.erase({"chn-seed",      "S"});
-	this->opt_args.erase({"chn-add-users"     });
-	this->opt_args.erase({"chn-complex"       });
-	this->req_args.erase({"qnt-size",      "N"});
-	this->opt_args.erase({"qnt-fra",       "F"});
-	this->opt_args.erase({"qnt-sigma"         });
-	this->req_args.erase({"mnt-size",      "K"});
-	this->opt_args.erase({"mnt-fra",       "F"});
-	this->req_args.erase({"ter-info-bits","K"});
-	this->opt_args.erase({"ter-cw-size",  "N"});
+	auto psrc = params.src     ->get_prefix();
+	auto pcrc = params.crc     ->get_prefix();
+	auto pitl = params.itl     ->get_prefix();
+	auto penc = params.cdc->enc->get_prefix();
+	auto ppct = std::string("pct");
+	auto pmdm = params.mdm     ->get_prefix();
+	auto pchn = params.chn     ->get_prefix();
+	auto pqnt = params.qnt     ->get_prefix();
+	auto pmnt = params.mnt     ->get_prefix();
+	auto pter = params.ter     ->get_prefix();
+
+	if (this->req_args.find({penc+"-info-bits", "K"}) != this->req_args.end() ||
+	    this->req_args.find({ppct+"-info-bits", "K"}) != this->req_args.end())
+		this->req_args.erase({psrc+"-info-bits", "K"});
+	this->opt_args.erase({psrc+"-seed",      "S"});
+	this->req_args.erase({pcrc+"-info-bits", "K"});
+	this->opt_args.erase({pcrc+"-fra",       "F"});
+	this->req_args.erase({pitl+"-size"          });
+	this->opt_args.erase({pitl+"-fra",       "F"});
+	this->opt_args.erase({pitl+"-seed",      "S"});
+	this->req_args.erase({pmdm+"-fra-size",  "N"});
+	this->opt_args.erase({pmdm+"-fra",       "F"});
+	this->opt_args.erase({pmdm+"-sigma"        });
+	this->req_args.erase({pchn+"-fra-size",  "N"});
+	this->opt_args.erase({pchn+"-fra",       "F"});
+	this->opt_args.erase({pchn+"-sigma"         });
+	this->opt_args.erase({pchn+"-seed",      "S"});
+	this->opt_args.erase({pchn+"-add-users"     });
+	this->opt_args.erase({pchn+"-complex"       });
+	this->req_args.erase({pqnt+"-size",      "N"});
+	this->opt_args.erase({pqnt+"-fra",       "F"});
+	this->opt_args.erase({pqnt+"-sigma"         });
+	this->req_args.erase({pmnt+"-size",      "K"});
+	this->opt_args.erase({pmnt+"-fra",       "F"});
+	this->req_args.erase({pter+"-info-bits","K"});
+	this->opt_args.erase({pter+"-cw-size",  "N"});
 }
 
 template <typename B, typename R, typename Q>
@@ -75,133 +93,100 @@ void BFER_ite<B,R,Q>
 {
 	Launcher::store_args();
 
-	factory::BFER_ite::store_args(this->ar.get_args(), *params);
+	params.store(this->ar.get_args());
 
-	params->src->seed = params->local_seed;
+	params.src->seed = params.local_seed;
 
-	factory::Source::store_args(this->ar.get_args(), *params->src);
+	params.src->store(this->ar.get_args());
 
-	auto K    = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
-	auto N    = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N;
-	auto N_cw = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N_cw;
+	auto psrc = params.src->get_prefix();
 
-	factory::CRC::store_args(this->ar.get_args(), *params->crc);
+	auto K    = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->K;
+	auto N    = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N;
+	auto N_cw = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N_cw;
 
-	params->crc->K = K - params->crc->size;
-	params->src->K = params->src->K == 0 ? params->crc->K : params->src->K;
+	params.crc->store(this->ar.get_args());
 
-	params->itl->size = N;
-	params->itl->seed = params->local_seed;
+	params.crc->K = K - params.crc->size;
+	params.src->K = params.src->K == 0 ? params.crc->K : params.src->K;
 
-	factory::Interleaver::store_args(this->ar.get_args(), *params->itl);
+	params.itl->core->size = N;
+	params.itl->core->seed = params.local_seed;
 
-	params->mdm->N = N;
+	params.itl->store(this->ar.get_args());
 
-	factory::Modem::store_args(this->ar.get_args(), *params->mdm);
+	params.mdm->N = N;
 
-	params->chn->N         = params->mdm->N_mod;
-	params->chn->complex   = params->mdm->complex;
-	params->chn->add_users = params->mdm->type == "SCMA";
-	params->chn->seed      = params->local_seed;
+	params.mdm->store(this->ar.get_args());
 
-	factory::Channel::store_args(this->ar.get_args(), *params->chn);
+	params.chn->N         = params.mdm->N_mod;
+	params.chn->complex   = params.mdm->complex;
+	params.chn->add_users = params.mdm->type == "SCMA";
+	params.chn->seed      = params.local_seed;
 
-	params->qnt->size = params->mdm->N_fil;
+	params.chn->store(this->ar.get_args());
+
+	params.qnt->size = params.mdm->N_fil;
 
 	if (std::is_integral<Q>())
-		factory::Quantizer::store_args(this->ar.get_args(), *params->qnt);
+		params.qnt->store(this->ar.get_args());
 
-	params->mnt->size = params->coded_monitoring ? N_cw : params->src->K;
+	params.mnt->size = params.coded_monitoring ? N_cw : params.src->K;
 
-	factory::Monitor::store_args(this->ar.get_args(), *params->mnt);
+	params.mnt->store(this->ar.get_args());
 
-	params->ter->K = K;
-	params->ter->N = N_cw;
-
-	factory::Terminal_BFER::store_args(this->ar.get_args(), *params->ter);
+	params.ter->store(this->ar.get_args());
 
 	if (!std::is_integral<Q>())
-		params->qnt->type = "NO";
+		params.qnt->type = "NO";
 
-	if (params->coset)
-		params->enc->type = "COSET";
-	else if (params->enc->type == "COSET")
-		params->coset = true;
+	if (params.coset)
+		params.cdc->enc->type = "COSET";
+	else if (params.cdc->enc->type == "COSET")
+		params.coset = true;
 
-	if (params->src->type == "AZCW" || params->enc->type == "AZCW")
+	if (params.src->type == "AZCW" || params.cdc->enc->type == "AZCW")
 	{
-		params->src->type = "AZCW";
-		params->enc->type = "AZCW";
+		params.src     ->type = "AZCW";
+		params.cdc->enc->type = "AZCW";
 	}
 
-	params->enc->seed = params->local_seed;
+	if (params.err_track_revert)
+	{
+		params.src->type = "USER";
+		params.src->path = params.err_track_path + std::string("_$snr.src");
 
-	params->crc->n_frames = params->src->n_frames;
-	params->enc->n_frames = params->src->n_frames;
-	params->itl->n_frames = params->src->n_frames;
-	params->pct->n_frames = params->src->n_frames;
-	params->mdm->n_frames = params->src->n_frames;
-	params->chn->n_frames = params->src->n_frames;
-	params->qnt->n_frames = params->src->n_frames;
-	params->dec->n_frames = params->src->n_frames;
-	params->mnt->n_frames = params->src->n_frames;
-}
+		params.cdc->enc->type = "USER";
+		params.cdc->enc->path = params.err_track_path + std::string("_$snr.enc");
 
-template <typename B, typename R, typename Q>
-void BFER_ite<B,R,Q>
-::group_args()
-{
-	Launcher::group_args();
+		if (params.itl->core->uniform)
+		{
+			params.itl->core->type = "USER";
+			params.itl->core->path = params.err_track_path + std::string("_$snr.itl");
+		}
 
-	this->arg_group.push_back({factory::Simulation ::prefix, factory::Simulation ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Source     ::prefix, factory::Source     ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::CRC        ::prefix, factory::CRC        ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Encoder    ::prefix, factory::Encoder    ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Interleaver::prefix, factory::Interleaver::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Puncturer  ::prefix, factory::Puncturer  ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Modem      ::prefix, factory::Modem      ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Channel    ::prefix, factory::Channel    ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Quantizer  ::prefix, factory::Quantizer  ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Decoder    ::prefix, factory::Decoder    ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Monitor    ::prefix, factory::Monitor    ::name + " parameter(s)"});
-	this->arg_group.push_back({factory::Terminal   ::prefix, factory::Terminal   ::name + " parameter(s)"});
-}
+		params.chn->type = "USER";
+		params.chn->path = params.err_track_path + std::string("_$snr.chn");
+	}
 
-template <typename B, typename R, typename Q>
-void BFER_ite<B,R,Q>
-::print_header()
-{
-	factory::BFER_ite     ::make_header(this->pl_sim, *params     , false);
-	factory::Source       ::make_header(this->pl_src, *params->src, false);
-	factory::CRC          ::make_header(this->pl_crc, *params->crc, false);
-	factory::Interleaver  ::make_header(this->pl_itl, *params->itl, false);
-	factory::Modem        ::make_header(this->pl_mdm, *params->mdm, false);
-	factory::Channel      ::make_header(this->pl_chn, *params->chn, false);
-	if (std::is_integral<Q>())
-		factory::Quantizer::make_header(this->pl_qnt, *params->qnt, false);
-	factory::Monitor      ::make_header(this->pl_mnt, *params->mnt, false);
-	factory::Terminal_BFER::make_header(this->pl_ter, *params->ter, false);
+	params.cdc->enc->seed = params.local_seed;
 
-	const auto code_rate = (float)params->enc->K / (float)params->pct->N;
-
-	this->pl_cde.push_back(std::make_pair("Type",                                params->cde_type  ));
-	this->pl_cde.push_back(std::make_pair("Info. bits (K)",       std::to_string(params->enc->K   )));
-	this->pl_cde.push_back(std::make_pair("Codeword size (N_cw)", std::to_string(params->enc->N_cw)));
-	this->pl_cde.push_back(std::make_pair("Frame size (N)",       std::to_string(params->pct->N   )));
-	this->pl_cde.push_back(std::make_pair("Code rate",            std::to_string(code_rate        )));
-
-	Launcher::print_header();
+	params.crc->      n_frames = params.src->n_frames;
+	params.itl->core->n_frames = params.src->n_frames;
+	params.mdm->      n_frames = params.src->n_frames;
+	params.chn->      n_frames = params.src->n_frames;
+	params.qnt->      n_frames = params.src->n_frames;
+	params.mnt->      n_frames = params.src->n_frames;
 }
 
 template <typename B, typename R, typename Q>
 simulation::Simulation* BFER_ite<B,R,Q>
 ::build_simu()
 {
-	this->build_codec();
-	return factory::BFER_ite::build<B,R,Q>(*params, *codec);
+	return factory::BFER_ite::build<B,R,Q>(params);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::launcher::BFER_ite<B_8,R_8,Q_8>;
@@ -212,3 +197,4 @@ template class aff3ct::launcher::BFER_ite<B_64,R_64,Q_64>;
 template class aff3ct::launcher::BFER_ite<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
+

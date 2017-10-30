@@ -6,60 +6,84 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Terminal_BFER::name   = "Terminal BFER";
 const std::string aff3ct::factory::Terminal_BFER::prefix = "ter";
 
-template <typename B>
-tools::Terminal_BFER<B>* Terminal_BFER
-::build(const parameters &params, const module::Monitor<B> &monitor, const std::chrono::nanoseconds *d_decod_total)
+Terminal_BFER::parameters
+::parameters(const std::string prefix)
+: Terminal::parameters(Terminal_BFER::name, prefix)
 {
-	if (params.type == "STD") return new tools::Terminal_BFER<B>(params.K, params.N ? params.N : params.K, monitor, d_decod_total);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-void Terminal_BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+Terminal_BFER::parameters
+::~parameters()
 {
-	Terminal::build_args(req_args, opt_args, p);
+}
 
-	req_args[{p+"-info-bits", "K"}] =
-		{"positive_int",
-		 "number of information bits."};
+Terminal_BFER::parameters* Terminal_BFER::parameters
+::clone() const
+{
+	return new Terminal_BFER::parameters(*this);
+}
+
+void Terminal_BFER::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Terminal::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
 
 	opt_args[{p+"-type"}] =
 		{"string",
 		 "select the terminal type you want.",
 		 "STD"};
-
-	opt_args[{p+"-cw-size", "N"}] =
-		{"positive_int",
-		 "number of bits in the codeword."};
 }
 
-void Terminal_BFER::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void Terminal_BFER::parameters
+::store(const arg_val_map &vals)
 {
-	Terminal::store_args(vals, params, p);
+	Terminal::parameters::store(vals);
 
-	if(exist(vals, {p+"-info-bits", "K"})) params.K    = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-cw-size",   "N"})) params.N    = std::stoi(vals.at({p+"-cw-size",   "N"}));
-	if(exist(vals, {p+"-type"          })) params.type =           vals.at({p+"-type"          });
+	auto p = this->get_prefix();
+
+	if(exist(vals, {p+"-type"})) this->type = vals.at({p+"-type"});
 }
 
-void Terminal_BFER::make_header(params_list& head_ter, const parameters& params, const bool full)
+void Terminal_BFER::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	head_ter.push_back(std::make_pair("Type", params.type));
-	if (full) head_ter.push_back(std::make_pair("Info bits (K)", std::to_string(params.K)));
+	auto p = this->get_prefix();
 
-	if (params.N && full)
-		head_ter.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N)));
+	headers[p].push_back(std::make_pair("Type", this->type));
 
-	Terminal::make_header(head_ter, params, full);
+	Terminal::parameters::get_headers(headers, full);
+}
+
+template <typename B>
+tools::Terminal_BFER<B>* Terminal_BFER::parameters
+::build(const module::Monitor_BFER<B> &monitor) const
+{
+	if (this->type == "STD") return new tools::Terminal_BFER<B>(monitor);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+tools::Terminal_BFER<B>* Terminal_BFER
+::build(const parameters &params, const module::Monitor_BFER<B> &monitor)
+{
+	return params.template build<B>(monitor);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::tools::Terminal_BFER<B_8 >* aff3ct::factory::Terminal_BFER::build<B_8 >(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor<B_8 >&, const std::chrono::nanoseconds*);
-template aff3ct::tools::Terminal_BFER<B_16>* aff3ct::factory::Terminal_BFER::build<B_16>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor<B_16>&, const std::chrono::nanoseconds*);
-template aff3ct::tools::Terminal_BFER<B_32>* aff3ct::factory::Terminal_BFER::build<B_32>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor<B_32>&, const std::chrono::nanoseconds*);
-template aff3ct::tools::Terminal_BFER<B_64>* aff3ct::factory::Terminal_BFER::build<B_64>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor<B_64>&, const std::chrono::nanoseconds*);
+template aff3ct::tools::Terminal_BFER<B_8 >* aff3ct::factory::Terminal_BFER::parameters::build<B_8 >(const aff3ct::module::Monitor_BFER<B_8 >&) const;
+template aff3ct::tools::Terminal_BFER<B_16>* aff3ct::factory::Terminal_BFER::parameters::build<B_16>(const aff3ct::module::Monitor_BFER<B_16>&) const;
+template aff3ct::tools::Terminal_BFER<B_32>* aff3ct::factory::Terminal_BFER::parameters::build<B_32>(const aff3ct::module::Monitor_BFER<B_32>&) const;
+template aff3ct::tools::Terminal_BFER<B_64>* aff3ct::factory::Terminal_BFER::parameters::build<B_64>(const aff3ct::module::Monitor_BFER<B_64>&) const;
+template aff3ct::tools::Terminal_BFER<B_8 >* aff3ct::factory::Terminal_BFER::build<B_8 >(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_8 >&);
+template aff3ct::tools::Terminal_BFER<B_16>* aff3ct::factory::Terminal_BFER::build<B_16>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_16>&);
+template aff3ct::tools::Terminal_BFER<B_32>* aff3ct::factory::Terminal_BFER::build<B_32>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_32>&);
+template aff3ct::tools::Terminal_BFER<B_64>* aff3ct::factory::Terminal_BFER::build<B_64>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_64>&);
 #else
-template aff3ct::tools::Terminal_BFER<B>* aff3ct::factory::Terminal_BFER::build<B>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor<B>&, const std::chrono::nanoseconds*);
+template aff3ct::tools::Terminal_BFER<B>* aff3ct::factory::Terminal_BFER::parameters::build<B>(const aff3ct::module::Monitor_BFER<B>&) const;
+template aff3ct::tools::Terminal_BFER<B>* aff3ct::factory::Terminal_BFER::build<B>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B>&);
 #endif

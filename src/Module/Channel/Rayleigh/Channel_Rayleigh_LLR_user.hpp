@@ -27,7 +27,7 @@ public:
 	                          const int n_frames = 1, const std::string name = "Channel_Rayleigh_LLR_user");
 	virtual ~Channel_Rayleigh_LLR_user();
 
-	using Channel_Rayleigh_LLR<R>::add_noise;
+	using Channel_Rayleigh_LLR<R>::add_noise_wg;
 
 	virtual void get_gains(std::vector<R>& gains, const R sigma);
 

@@ -2,34 +2,99 @@
 
 #include "BFER.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::factory;
 
 const std::string aff3ct::factory::BFER::name   = "Simulation BFER";
 const std::string aff3ct::factory::BFER::prefix = "sim";
 
-void BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+BFER::parameters
+::parameters(const std::string name, const std::string prefix)
+: Simulation::parameters(name, prefix)
 {
-	Simulation::build_args(req_args, opt_args, p);
+}
 
-	opt_args[{p+"-benchs", "b"}] =
-		{"positive_int",
-		 "enable special benchmark mode with a loop around the decoder."};
+BFER::parameters
+::~parameters()
+{
+	if (src != nullptr) { delete src; src = nullptr; }
+	if (crc != nullptr) { delete crc; crc = nullptr; }
+	if (cdc != nullptr) { delete cdc; cdc = nullptr; }
+	if (mdm != nullptr) { delete mdm; mdm = nullptr; }
+	if (chn != nullptr) { delete chn; chn = nullptr; }
+	if (qnt != nullptr) { delete qnt; qnt = nullptr; }
+	if (mnt != nullptr) { delete mnt; mnt = nullptr; }
+	if (ter != nullptr) { delete ter; ter = nullptr; }
+}
 
-	opt_args[{p+"-debug", "d"}] =
-		{"",
-		 "enable debug mode: print array values after each step."};
+BFER::parameters* BFER::parameters
+::clone() const
+{
+	auto clone = new BFER::parameters(*this);
 
-	opt_args[{p+"-debug-prec"}] =
-		{"positive_int",
-		 "set the precision of real elements when displayed in debug mode."};
+	if (src != nullptr) { clone->src = src->clone(); }
+	if (crc != nullptr) { clone->crc = crc->clone(); }
+	if (cdc != nullptr) { clone->cdc = cdc->clone(); }
+	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
+	if (chn != nullptr) { clone->chn = chn->clone(); }
+	if (qnt != nullptr) { clone->qnt = qnt->clone(); }
+	if (mnt != nullptr) { clone->mnt = mnt->clone(); }
+	if (ter != nullptr) { clone->ter = ter->clone(); }
 
-	opt_args[{p+"-debug-limit"}] =
-		{"positive_int",
-		 "set the max number of elements to display in the debug mode."};
+	return clone;
+}
 
-	opt_args[{p+"-time-report"}] =
-		{"",
-		 "display time information about the simulation chain."};
+std::vector<std::string> BFER::parameters
+::get_names() const
+{
+	auto n = Simulation::parameters::get_names();
+	if (src != nullptr) { auto nn = src->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (crc != nullptr) { auto nn = crc->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (cdc != nullptr) { auto nn = cdc->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (mdm != nullptr) { auto nn = mdm->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (chn != nullptr) { auto nn = chn->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (qnt != nullptr) { auto nn = qnt->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (mnt != nullptr) { auto nn = mnt->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (ter != nullptr) { auto nn = ter->get_names(); for (auto &x : nn) n.push_back(x); }
+	return n;
+}
+
+std::vector<std::string> BFER::parameters
+::get_short_names() const
+{
+	auto sn = Factory::parameters::get_short_names();
+	if (src != nullptr) { auto nn = src->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (crc != nullptr) { auto nn = crc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (cdc != nullptr) { auto nn = cdc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (mdm != nullptr) { auto nn = mdm->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (chn != nullptr) { auto nn = chn->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (qnt != nullptr) { auto nn = qnt->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (mnt != nullptr) { auto nn = mnt->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (ter != nullptr) { auto nn = ter->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	return sn;
+}
+
+std::vector<std::string> BFER::parameters
+::get_prefixes() const
+{
+	auto p = Factory::parameters::get_prefixes();
+	if (src != nullptr) { auto nn = src->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (crc != nullptr) { auto nn = crc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (cdc != nullptr) { auto nn = cdc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (mdm != nullptr) { auto nn = mdm->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (chn != nullptr) { auto nn = chn->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (qnt != nullptr) { auto nn = qnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (mnt != nullptr) { auto nn = mnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (ter != nullptr) { auto nn = ter->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	return p;
+}
+
+void BFER::parameters
+::get_description(arg_map &req_args, arg_map &opt_args) const
+{
+	Simulation::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
 
 	opt_args[{p+"-snr-type", "E"}] =
 		{"string",
@@ -52,94 +117,81 @@ void BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 		{"string",
 		 "base path for the files where the bad frames will be stored or read."};
 
+	opt_args[{p+"-err-trk-thold"}] =
+		{"positive_int",
+		 "dump only frames with a bit error count above or equal to this threshold."};
+
 	opt_args[{p+"-coded"}] =
 		{"",
 		 "enable the coded monitoring (extends the monitored bits to the entire codeword)."};
 }
 
-void BFER::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void BFER::parameters
+::store(const arg_val_map &vals)
 {
-#if !defined(STARPU) && !defined(SYSTEMC)
-	params.n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
+#if !defined(SYSTEMC)
+	this->n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
 
-	Simulation::store_args(vals, params, p);
+	Simulation::parameters::store(vals);
 
-	if(exist(vals, {p+"-benchs",     "b"})) params.benchs           = std::stoi(vals.at({p+"-benchs",   "b"}));
-	if(exist(vals, {p+"-snr-type",   "E"})) params.snr_type         =           vals.at({p+"-snr-type", "E"});
-	if(exist(vals, {p+"-err-trk-path"   })) params.err_track_path   =           vals.at({p+"-err-trk-path" });
-	if(exist(vals, {p+"-err-trk-rev"    })) params.err_track_revert = true;
-	if(exist(vals, {p+"-err-trk"        })) params.err_track_enable = true;
-	if(exist(vals, {p+"-time-report"    })) params.time_report      = true;
-	if(exist(vals, {p+"-debug",      "d"})) params.debug            = true;
-	if(exist(vals, {p+"-coset",      "c"})) params.coset            = true;
-	if(exist(vals, {p+"-coded",         })) params.coded_monitoring = true;
-	if(exist(vals, {p+"-debug-limit"}))
-	{
-		params.debug = true;
-		params.debug_limit = std::stoi(vals.at({p+"-debug-limit"}));
-	}
-	if(exist(vals, {p+"-debug-prec"}))
-	{
-		params.debug = true;
-		params.debug_precision = std::stoi(vals.at({p+"-debug-prec"}));
-	}
+	auto p = this->get_prefix();
 
-	if (params.debug && !(exist(vals, {p+"-threads", "t"}) && std::stoi(vals.at({p+"-threads", "t"})) > 0))
-		// check if debug is asked and if n_thread kept its default value
-		params.n_threads = 1;
+	if(exist(vals, {p+"-snr-type",   "E"})) this->snr_type            =           vals.at({p+"-snr-type", "E"});
+	if(exist(vals, {p+"-err-trk-path"   })) this->err_track_path      =           vals.at({p+"-err-trk-path" });
+	if(exist(vals, {p+"-err-trk-thold"  })) this->err_track_threshold = std::stoi(vals.at({p+"-err-trk-thold"}));
+	if(exist(vals, {p+"-err-trk-rev"    })) this->err_track_revert    = true;
+	if(exist(vals, {p+"-err-trk"        })) this->err_track_enable    = true;
+	if(exist(vals, {p+"-coset",      "c"})) this->coset               = true;
+	if(exist(vals, {p+"-coded",         })) this->coded_monitoring    = true;
 
-	if (params.err_track_revert)
+	if (this->err_track_revert)
 	{
-		params.err_track_enable = false;
-		params.n_threads = 1;
-	}
-
-	if (params.err_track_revert)
-	{
-		params.err_track_enable = false;
-		if (params.src->type != "AZCW")
-			params.src->type = "USER";
-		if (params.coset)
-			params.enc->type = "USER";
-		params.chn->type = "USER";
-		params.src->path = params.err_track_path + std::string("_$snr.src");
-		params.enc->path = params.err_track_path + std::string("_$snr.enc");
-		params.chn->path = params.err_track_path + std::string("_$snr.chn");
+		this->err_track_enable = false;
+		this->n_threads = 1;
 	}
 }
 
-void BFER::make_header(params_list& head_sim, const parameters& params, const bool full)
+void BFER::parameters
+::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Simulation::make_header(head_sim, params, full);
+	Simulation::parameters::get_headers(headers, full);
 
-	if (params.benchs)
-		head_sim.push_back(std::make_pair("Number of benchs", std::to_string(params.benchs)));
-	head_sim.push_back(std::make_pair("SNR type", params.snr_type));
-	head_sim.push_back(std::make_pair("Time report", params.time_report ? "on" : "off"));
-	head_sim.push_back(std::make_pair("Debug mode", params.debug ? "on" : "off"));
-	if (params.debug)
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair("SNR type", this->snr_type));
+	headers[p].push_back(std::make_pair("Coset approach (c)", this->coset ? "yes" : "no"));
+	headers[p].push_back(std::make_pair("Coded monitoring", this->coded_monitoring ? "yes" : "no"));
+
+	std::string enable_track = (this->err_track_enable) ? "on" : "off";
+	headers[p].push_back(std::make_pair("Bad frames tracking", enable_track));
+
+	std::string enable_rev_track = (this->err_track_revert) ? "on" : "off";
+	headers[p].push_back(std::make_pair("Bad frames replay", enable_rev_track));
+
+	headers[p].push_back(std::make_pair("Bad frames threshold", std::to_string(this->err_track_threshold)));
+
+	if (this->err_track_enable || this->err_track_revert)
 	{
-		head_sim.push_back(std::make_pair("Debug precision", std::to_string(params.debug_precision)));
-		if (params.debug_limit)
-			head_sim.push_back(std::make_pair("Debug limit", std::to_string(params.debug_limit)));
-	}
-	head_sim.push_back(std::make_pair("Coset approach (c)", params.coset ? "yes" : "no"));
-	head_sim.push_back(std::make_pair("Coded monitoring", params.coded_monitoring ? "yes" : "no"));
-
-	std::string enable_track = (params.err_track_enable) ? "on" : "off";
-	head_sim.push_back(std::make_pair("Bad frames tracking", enable_track));
-
-	std::string enable_rev_track = (params.err_track_revert) ? "on" : "off";
-	head_sim.push_back(std::make_pair("Bad frames replay", enable_rev_track));
-
-	if (params.err_track_enable || params.err_track_revert)
-	{
-		std::string path = params.err_track_path + std::string("_$snr.[src,enc,chn]");
-		head_sim.push_back(std::make_pair("Bad frames base path", path));
+		std::string path = this->err_track_path + std::string("_$snr.[src,enc,chn]");
+		headers[p].push_back(std::make_pair("Bad frames base path", path));
 	}
 
-	const auto bit_rate = (float)params.src->K / (float)params.pct->N;
-	head_sim.push_back(std::make_pair("Bit rate", std::to_string(bit_rate)));
-	head_sim.push_back(std::make_pair("Inter frame level", std::to_string(params.src->n_frames)));
+	if (this->src != nullptr && this->cdc != nullptr)
+	{
+		const auto bit_rate = (float)this->src->K / (float)this->cdc->N;
+		headers[p].push_back(std::make_pair("Bit rate", std::to_string(bit_rate)));
+	}
+
+	if (this->src != nullptr)
+		headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->src->n_frames)));
+
+	if (this->src != nullptr) { this->src->get_headers(headers, full); }
+	if (this->crc != nullptr) { this->crc->get_headers(headers, full); }
+	if (this->cdc != nullptr) { this->cdc->get_headers(headers, full); }
+	if (this->mdm != nullptr) { this->mdm->get_headers(headers, full); }
+	if (this->chn != nullptr) { this->chn->get_headers(headers, full); }
+	if (this->qnt != nullptr) { this->qnt->get_headers(headers, full); }
+	if (this->mnt != nullptr) { this->mnt->get_headers(headers, full); }
+	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }
