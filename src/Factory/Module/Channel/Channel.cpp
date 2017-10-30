@@ -53,18 +53,23 @@ void Channel::parameters
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
-	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH, RAYLEIGH_FAST, RAYLEIGH_USER";
-#ifdef CHANNEL_GSL
-	chan_avail += ", AWGN_GSL, RAYLEIGH_GSL";
-#endif
-#ifdef CHANNEL_MKL
-	chan_avail += ", AWGN_MKL, RAYLEIGH_MKL";
-#endif
-
 	opt_args[{p+"-type"}] =
 		{"string",
 		 "type of the channel to use in the simulation.",
-		 chan_avail};
+		 "NO, USER, AWGN, RAYLEIGH, RAYLEIGH_USER"};
+
+	std::string implem_avail = "STD, FAST";
+#ifdef CHANNEL_GSL
+	implem_avail += ", GSL";
+#endif
+#ifdef CHANNEL_MKL
+	implem_avail += ", MKL";
+#endif
+
+	opt_args[{p+"-implem"}] =
+		{"string",
+		 "select the implementation of the algorithm to generate noise.",
+		 implem_avail};
 
 	opt_args[{p+"-path"}] =
 		{"string",
@@ -104,6 +109,7 @@ void Channel::parameters
 	if(exist(vals, {p+"-fra-size", "N"})) this->N            = std::stoi(vals.at({p+"-fra-size", "N"}));
 	if(exist(vals, {p+"-fra",      "F"})) this->n_frames     = std::stoi(vals.at({p+"-fra",      "F"}));
 	if(exist(vals, {p+"-type"         })) this->type         =           vals.at({p+"-type"         });
+	if(exist(vals, {p+"-implem"       })) this->implem       =           vals.at({p+"-implem"       });
 	if(exist(vals, {p+"-path"         })) this->path         =           vals.at({p+"-path"         });
 	if(exist(vals, {p+"-blk-fad"      })) this->block_fading =           vals.at({p+"-blk-fad"      });
 	if(exist(vals, {p+"-sigma"        })) this->sigma        = std::stof(vals.at({p+"-sigma"        }));
@@ -118,7 +124,8 @@ void Channel::parameters
 {
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("Type", this->type));
+	headers[p].push_back(std::make_pair("Type",           this->type  ));
+	headers[p].push_back(std::make_pair("Implementation", this->implem));
 
 	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->N)));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
@@ -146,23 +153,34 @@ template <typename R>
 module::Channel<R>* Channel::parameters
 ::build() const
 {
-	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR    <R>(N,          new tools::Noise_std <R>(seed), add_users, sigma, n_frames);
-	else if (type == "AWGN_FAST"    ) return new module::Channel_AWGN_LLR    <R>(N,          new tools::Noise_fast<R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_std <R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_FAST") return new module::Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_fast<R>(seed), add_users, sigma, n_frames);
-	else if (type == "USER"         ) return new module::Channel_user        <R>(N, path,                                    add_users,        n_frames);
-	else if (type == "NO"           ) return new module::Channel_NO          <R>(N,                                          add_users,        n_frames);
+	tools::Noise<R>* n = nullptr;
+	     if (implem == "STD" ) n = new tools::Noise_std <R>(seed);
+	else if (implem == "FAST") n = new tools::Noise_fast<R>(seed);
 #ifdef CHANNEL_MKL
-	else if (type == "AWGN_MKL"     ) return new module::Channel_AWGN_LLR    <R>(N,          new tools::Noise_MKL <R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_MKL" ) return new module::Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_MKL <R>(seed), add_users, sigma, n_frames);
+	else if (implem == "MKL" ) n = new tools::Noise_MKL <R>(seed);
 #endif
 #ifdef CHANNEL_GSL
-	else if (type == "AWGN_GSL"     ) return new module::Channel_AWGN_LLR    <R>(N,          new tools::Noise_GSL <R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_GSL" ) return new module::Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_GSL <R>(seed), add_users, sigma, n_frames);
+	else if (implem == "GSL" ) n = new tools::Noise_GSL <R>(seed);
 #endif
-	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, new tools::Noise_fast<R>(seed), add_users, sigma, n_frames);
+	else
+		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+
+	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, sigma, n_frames);
+	else
+	{
+		module::Channel<R>* c = nullptr;
+		     if (type == "USER") c = new module::Channel_user<R>(N, path, add_users, n_frames);
+		else if (type == "NO"  ) c = new module::Channel_NO  <R>(N,       add_users, n_frames);
+
+		delete n;
+
+		if (c) return c;
+
+		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	}
 }
 
 template <typename R>

@@ -25,6 +25,7 @@ struct Channel : public Factory
 
 		// optional parameters
 		std::string type         = "AWGN";
+		std::string implem       = "STD";
 		std::string path         = "";
 		std::string block_fading = "NO";
 		bool        add_users    = false;

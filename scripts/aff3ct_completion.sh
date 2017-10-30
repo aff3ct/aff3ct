@@ -52,8 +52,8 @@ _aff3ct() {
 		      --src-type --src-path --enc-type --enc-path --mdm-type --mdm-bps\
 		      --mdm-ups --mdm-cpm-ws --mdm-cpm-map --mdm-cpm-L --mdm-cpm-p    \
 		      --mdm-cpm-k --mdm-cpm-std --mdm-const-path --mdm-max --mdm-psi  \
-		      --mdm-ite                                                       \
-		      --mdm-no-sig2 --chn-type --chn-path --chn-blk-fad --qnt-type    \
+		      --mdm-ite --mdm-no-sig2                                         \
+		      --chn-type --chn-implem --chn-path --chn-blk-fad --qnt-type     \
 		      --qnt-dec --qnt-bits --qnt-range --dec-type --dec-implem        \
 		      --ter-no --ter-freq --sim-seed --sim-mpi-comm --sim-pyber       \
 		      --sim-no-colors --sim-err-trk --sim-err-trk-rev                 \
@@ -317,8 +317,12 @@ _aff3ct() {
 			;;
 
 		--chn-type)
-			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL RAYLEIGH RAYLEIGH_USER RAYLEIGH_FAST RAYLEIGH_GSL RAYLEIGH_MKL \
-			              USER"
+			local params="NO AWGN RAYLEIGH RAYLEIGH_USER USER"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--chn-implem)
+			local params="STD FAST GSL MKL"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
