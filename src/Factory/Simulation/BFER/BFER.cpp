@@ -169,7 +169,8 @@ void BFER::parameters
 	std::string enable_rev_track = (this->err_track_revert) ? "on" : "off";
 	headers[p].push_back(std::make_pair("Bad frames replay", enable_rev_track));
 
-	headers[p].push_back(std::make_pair("Bad frames threshold", std::to_string(this->err_track_threshold)));
+	if (this->err_track_threshold)
+		headers[p].push_back(std::make_pair("Bad frames threshold", std::to_string(this->err_track_threshold)));
 
 	if (this->err_track_enable || this->err_track_revert)
 	{
