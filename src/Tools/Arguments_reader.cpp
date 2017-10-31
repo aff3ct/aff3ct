@@ -440,12 +440,38 @@ std::string Arguments_reader
 			}
 		}
 
-		// check if the input is strictly positive
+		else if (args.at(tags)[0] == "negative_int")
+		{
+			if (int_num > 0)
+			{
+				error += "has to be a negative integer.";
+				return error;
+			}
+		}
+
 		else if (args.at(tags)[0] == "strictly_positive_int")
 		{
 			if (int_num <= 0)
 			{
 				error += "has to be a strictly positive integer.";
+				return error;
+			}
+		}
+
+		else if (args.at(tags)[0] == "strictly_negative_int")
+		{
+			if (int_num >= 0)
+			{
+				error += "has to be a strictly negative integer.";
+				return error;
+			}
+		}
+
+		else if (args.at(tags)[0] == "non_zero_int")
+		{
+			if (int_num == 0)
+			{
+				error += "has to be a non-zero integer.";
 				return error;
 			}
 		}
@@ -481,12 +507,38 @@ std::string Arguments_reader
 			}
 		}
 
-		// check if the input is strictly positive
+		else if (args.at(tags)[0] == "negative_float")
+		{
+			if (float_num > 0.f)
+			{
+				error += "has to be a negative float.";
+				return error;
+			}
+		}
+
 		else if (args.at(tags)[0] == "strictly_positive_float")
 		{
 			if (float_num <= 0.f)
 			{
 				error += "has to be a strictly positive float.";
+				return error;
+			}
+		}
+
+		else if (args.at(tags)[0] == "strictly_negative_float")
+		{
+			if (float_num >= 0.f)
+			{
+				error += "has to be a strictly negative float.";
+				return error;
+			}
+		}
+
+		else if (args.at(tags)[0] == "non_zero_float")
+		{
+			if (float_num == 0.f)
+			{
+				error += "has to be a non-zero float.";
 				return error;
 			}
 		}
