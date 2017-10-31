@@ -79,11 +79,11 @@ void Decoder_polar::parameters
 	opt_args[{p+"-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN");
 
 	opt_args[{p+"-ite", "i"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "maximal number of iterations in the SCAN decoder."};
 
 	opt_args[{p+"-lists", "L"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "maximal number of paths in the SCL decoder."};
 
 	opt_args[{p+"-simd"}] =

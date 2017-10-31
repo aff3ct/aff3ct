@@ -36,11 +36,11 @@ void Source::parameters
 	auto p = this->get_prefix();
 
 	req_args[{p+"-info-bits", "K"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "number of generated bits (information bits)."};
 
 	opt_args[{p+"-fra", "F"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set the number of inter frame level to process."};
 
 	opt_args[{p+"-type"}] =

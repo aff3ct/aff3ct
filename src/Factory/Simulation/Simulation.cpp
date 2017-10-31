@@ -50,7 +50,7 @@ void Simulation::parameters
 
 	opt_args[{p+"-stop-time"}] =
 		{"positive_int",
-		 "time in sec after what the current SNR iteration should stop."};
+		 "time in sec after what the current SNR iteration should stop (0 is infinite)."};
 
 	opt_args[{p+"-debug", "d"}] =
 		{"",
@@ -58,19 +58,19 @@ void Simulation::parameters
 
 	opt_args[{p+"-debug-prec"}] =
 		{"positive_int",
-		 "set the precision of real elements when displayed in debug mode."};
+		 "set the decimal precision of real elements when displayed in debug mode."};
 
 	opt_args[{p+"-debug-limit"}] =
 		{"positive_int",
-		 "set the max number of elements to display in the debug mode."};
+		 "set the max number of elements to display in the debug mode (0 is infinite)."};
 
 	opt_args[{p+"-stats"}] =
 		{"",
 		 "display statistics module by module."};
 
 	opt_args[{p+"-threads", "t"}] =
-		{"positive_int",
-		 "enable multi-threaded mode and specify the number of threads."};
+		{"strictly_positive_int",
+		 "specify the number of threads used (default is the number of CPU cores)."};
 
 	opt_args[{p+"-seed", "S"}] =
 		{"positive_int",
@@ -78,7 +78,7 @@ void Simulation::parameters
 
 #ifdef ENABLE_MPI
 	opt_args[{p+"-mpi-comm"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "MPI communication frequency between the nodes (in millisec)."};
 #endif
 

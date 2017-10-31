@@ -34,11 +34,11 @@ void Frozenbits_generator::parameters
 	auto p = this->get_prefix();
 
 	req_args[{p+"-info-bits", "K"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "useful number of bit transmitted (information bits)."};
 
 	req_args[{p+"-cw-size", "N"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "the codeword size."};
 
 	opt_args[{p+"-sigma"}] =

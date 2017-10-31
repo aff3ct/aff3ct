@@ -43,11 +43,11 @@ void Modem::parameters
 
 	// ----------------------------------------------------------------------------------------------------- modulator
 	req_args[{p+"-fra-size", "N"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "number of symbols by frame."};
 
 	opt_args[{p+"-fra", "F"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set the number of inter frame level to process."};
 
 	opt_args[{p+"-type"}] =
@@ -56,11 +56,11 @@ void Modem::parameters
 		 "BPSK, BPSK_FAST, OOK, PSK, PAM, QAM, CPM, USER, SCMA"};
 
 	opt_args[{p+"-bps"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "select the number of bits per symbol (default is 1)."};
 
 	opt_args[{p+"-ups"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "select the symbol sampling factor (default is 1)."};
 
 	opt_args[{p+"-const-path"}] =
@@ -74,15 +74,15 @@ void Modem::parameters
 		 "GSM"};
 
 	opt_args[{p+"-cpm-L"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "CPM pulse width or CPM memory (default is 2)"};
 
 	opt_args[{p+"-cpm-k"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "modulation index numerator (default is 1)"};
 
 	opt_args[{p+"-cpm-p"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "modulation index denominator (default is 2)"};
 
 	opt_args[{p+"-cpm-map"}] =
@@ -102,7 +102,7 @@ void Modem::parameters
 		 "MAX, MAXL, MAXS, MAXSS"};
 
 	opt_args[{p+"-sigma"}] =
-		{"posive_float",
+		{"strictly_posive_float",
 		 "noise variance value for the demodulator."};
 
 	opt_args[{p+"-no-sig2"}] =
@@ -115,7 +115,7 @@ void Modem::parameters
 		 "PSI0, PSI1, PSI2, PSI3"};
 
 	opt_args[{p+"-ite"}] =
-		{"positive int",
+		{"strictly_positive int",
 		 "select the number of iteration in the demodulator."};
 }
 

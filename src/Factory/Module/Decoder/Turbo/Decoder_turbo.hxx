@@ -110,7 +110,7 @@ void Decoder_turbo::parameters<D1,D2>
 	opt_args[{p+"-implem"}].push_back("STD, FAST");
 
 	opt_args[{p+"-ite", "i"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "maximal number of iterations in the turbo."};
 
 	opt_args[{p+"-sc"}] =

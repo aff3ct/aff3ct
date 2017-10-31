@@ -43,11 +43,11 @@ void Interleaver_core::parameters
 	auto p = this->get_prefix();
 
 	req_args[{p+"-size"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "number of symbols to interleave."};
 
 	opt_args[{p+"-fra", "F"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set the number of inter frame level to process."};
 
 	opt_args[{p+"-type"}] =
@@ -60,7 +60,7 @@ void Interleaver_core::parameters
 		 "specify the path to the interleaver file (to use with \"--itl-type USER\")."};
 
 	opt_args[{p+"-cols"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver."};
 
 	opt_args[{p+"-uni"}] =
@@ -131,7 +131,7 @@ tools::Interleaver_core<T>* Interleaver_core
 	return params.template build<T>();
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 template aff3ct::tools::Interleaver_core<uint32_t>* aff3ct::factory::Interleaver_core::parameters::build<uint32_t>() const;
 template aff3ct::tools::Interleaver_core<uint32_t>* aff3ct::factory::Interleaver_core::build<uint32_t>(const aff3ct::factory::Interleaver_core::parameters&);
 // ==================================================================================== explicit template instantiation

@@ -33,7 +33,7 @@ void Terminal_EXIT::parameters
 	auto p = this->get_prefix();
 
 	req_args[{p+"-cw-size", "N"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "number of bits in the codeword."};
 
 	opt_args[{p+"-type"}] =

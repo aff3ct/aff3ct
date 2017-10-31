@@ -38,7 +38,7 @@ void Decoder_BCH::parameters
 	auto p = this->get_prefix();
 
 	opt_args[{p+"-corr-pow", "T"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "correction power of the BCH code."};
 }
 

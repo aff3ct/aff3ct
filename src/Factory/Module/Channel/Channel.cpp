@@ -46,11 +46,11 @@ void Channel::parameters
 	auto p = this->get_prefix();
 
 	req_args[{p+"-fra-size", "N"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "number of symbols by frame."};
 
 	opt_args[{p+"-fra", "F"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set the number of inter frame level to process."};
 
 	opt_args[{p+"-type"}] =
@@ -81,7 +81,7 @@ void Channel::parameters
 		 "NO, FRAME, ONETAP"};
 
 	opt_args[{p+"-sigma"}] =
-		{"positive_float",
+		{"strictly_positive_float",
 		 "noise variance value."};
 
 	opt_args[{p+"-seed", "S"}] =
@@ -97,7 +97,7 @@ void Channel::parameters
 		 "enable complex noise generation."};
 
 	opt_args[{p+"-gain-occur"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "the number of times a gain is used on consecutive symbols (used with \"--chn-type RAYLEIGH_USER\")."};
 }
 

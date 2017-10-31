@@ -42,15 +42,15 @@ void Encoder::parameters
 	auto p = this->get_prefix();
 
 	req_args[{p+"-info-bits", "K"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "useful number of bit transmitted (information bits)."};
 
 	req_args[{p+"-cw-size", "N"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "the codeword size."};
 
 	opt_args[{p+"-fra", "F"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set the number of inter frame level to process."};
 
 	opt_args[{p+"-type"}] =

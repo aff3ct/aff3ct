@@ -38,11 +38,11 @@ void Quantizer::parameters
 	auto p = this->get_prefix();
 
 	req_args[{p+"-size", "N"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "number of real to quantize."};
 
 	opt_args[{p+"-fra", "F"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set the number of inter frame level to process."};
 
 	opt_args[{p+"-type"}] =
@@ -55,7 +55,7 @@ void Quantizer::parameters
 		 "the position of the fixed point in the quantified representation."};
 
 	opt_args[{p+"-bits"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "the number of bits used for the quantizer."};
 
 	opt_args[{p+"-range"}] =

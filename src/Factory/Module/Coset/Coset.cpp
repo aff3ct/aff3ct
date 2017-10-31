@@ -32,7 +32,7 @@ void Coset::parameters
 	auto p = this->get_prefix();
 
 	req_args[{p+"-size", "N"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "coset size."};
 
 	opt_args[{p+"-type"}] =
@@ -41,7 +41,7 @@ void Coset::parameters
 		 "STD"};
 
 	opt_args[{p+"-fra", "F"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set the number of inter frame level to process."};
 }
 

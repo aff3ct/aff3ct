@@ -100,7 +100,7 @@ void EXIT::parameters
 		 "sigma max value used in EXIT charts."};
 
 	opt_args[{p+"-siga-step"}] =
-		{"positive_float",
+		{"strictly_positive_float",
 		 "sigma step value used in EXIT charts."};
 
 	opt_args[{p+"-inter-lvl"}].push_back("1");

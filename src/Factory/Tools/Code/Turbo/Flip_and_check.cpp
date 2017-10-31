@@ -37,7 +37,7 @@ void Flip_and_check::parameters
 	auto p = this->get_prefix();
 
 	req_args[{p+"-size", "K"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "size (in bit) of the extrinsic for the fnc processing."};
 
 	opt_args[{p}] =
@@ -69,7 +69,7 @@ void Flip_and_check::parameters
 		 "set the iteration to start the CRC checking."};
 
 	opt_args[{p+"-fra", "F"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set the number of inter frame level to process."};
 }
 

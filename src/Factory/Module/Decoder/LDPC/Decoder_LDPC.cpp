@@ -53,7 +53,7 @@ void Decoder_LDPC::parameters
 
 	opt_args[{p+"-ite", "i"}] =
 		{"positive_int",
-		 "maximal number of iterations in the turbo decoder."};
+		 "maximal number of iterations in the decoder."};
 
 	opt_args[{p+"-off"}] =
 		{"float",
@@ -68,7 +68,7 @@ void Decoder_LDPC::parameters
 		 "disable the syndrome detection (disable the stop criterion in the LDPC decoders)."};
 
 	opt_args[{p+"-synd-depth"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "successive number of iterations to validate the syndrome detection."};
 
 	opt_args[{p+"-simd"}] =

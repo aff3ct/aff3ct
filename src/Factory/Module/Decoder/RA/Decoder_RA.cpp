@@ -76,7 +76,7 @@ void Decoder_RA::parameters
 	opt_args[{p+"-implem"   }].push_back("STD");
 
 	opt_args[{p+"-ite", "i"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "maximal number of iterations in the decoder."};
 }
 
