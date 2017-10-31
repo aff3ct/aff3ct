@@ -13,7 +13,10 @@ Modem_OOK<B,R,Q>
 : Modem<B,R,Q>(N, sigma, n_frames, name),
   disable_sig2(disable_sig2)
 {
-	this->set_sigma(sigma);
+	if(disable_sig2)
+		sigma_factor = (R)0.5;
+	else
+		sigma_factor = (R)1.0 / (2 * sigma * sigma);
 }
 
 template <typename B, typename R, typename Q>
