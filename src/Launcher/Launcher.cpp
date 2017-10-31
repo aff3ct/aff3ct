@@ -66,7 +66,14 @@ int Launcher::read_arguments()
 	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
 	bool error    = !ar.check_arguments(cmd_error);
 
-	this->store_args();
+	try
+	{
+		this->store_args();
+	}
+	catch(std::exception&)
+	{
+		params.display_help = true;
+	}
 
 	if (params.display_help)
 	{

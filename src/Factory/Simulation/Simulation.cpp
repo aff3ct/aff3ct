@@ -41,7 +41,7 @@ void Simulation::parameters
 		 "maximal signal/noise ratio to simulate."};
 
 	opt_args[{p+"-snr-step", "s"}] =
-		{"positive_float",
+		{"strictly_positive_float",
 		 "signal/noise ratio step between each simulation."};
 
 	opt_args[{p+"-pyber"}] =

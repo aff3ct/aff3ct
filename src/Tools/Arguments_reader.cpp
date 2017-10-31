@@ -394,9 +394,9 @@ bool Arguments_reader
 		std::string arg_error;
 
 		if (this->m_required_args.find(it->first) != this->m_required_args.end())
-			try{ arg_error = this->check_argument(it->first, this->m_required_args); } catch(std::exception&) {}
+			arg_error = this->check_argument(it->first, this->m_required_args);
 		else if (this->m_optional_args.find(it->first) != this->m_optional_args.end())
-			try{ arg_error = this->check_argument(it->first, this->m_optional_args); } catch(std::exception&) {}
+			arg_error = this->check_argument(it->first, this->m_optional_args);
 		else
 			for (auto i = 0; i < (int)it->first.size(); i++)
 				arg_error += print_tag(it->first[i]) + ((i < (int)it->first.size()-1)?", ":"");
@@ -411,36 +411,109 @@ bool Arguments_reader
 std::string Arguments_reader
 ::check_argument(const std::vector<std::string> &tags, const arg_map &args) const
 {
-	std::string error;
+	// prepare the error message
+	std::string error = "The \"";
+	for (auto i = 0; i < (int)tags.size(); i++)
+		error += print_tag(tags[i]) + ((i < (int)tags.size()-1)?", ":"");
+	error += "\" argument ";
 
-	// check if the input is positive
-	if (args.at(tags)[0] == "positive_int")
+	// check if the input is an integer
+	if (args.at(tags)[0].find("int") != std::string::npos)
 	{
-		const auto int_num = std::stoi(this->m_args.at(tags));
-		if (int_num < 0)
+		int int_num = 0;
+		try
 		{
-			error = "The \"";
-			for (auto i = 0; i < (int)tags.size(); i++)
-				error += print_tag(tags[i]) + ((i < (int)tags.size()-1)?", ":"");
+			int_num = std::stoi(this->m_args.at(tags));
+		}
+		catch(std::exception&)
+		{
+			error += "has to be an integer.";
+			return error;
+		}
 
-			error += "\" argument has to be positive.";
+		if (args.at(tags)[0] == "positive_int")
+		{
+			if (int_num < 0)
+			{
+				error += "has to be a positive integer.";
+				return error;
+			}
+		}
+
+		// check if the input is strictly positive
+		else if (args.at(tags)[0] == "strictly_positive_int")
+		{
+			if (int_num <= 0)
+			{
+				error += "has to be a strictly positive integer.";
+				return error;
+			}
+		}
+
+		else if (args.at(tags)[0] != "integer")
+		{
+			std::stringstream message;
+			message << error << "has an unknown conditionnal flag '" << args.at(tags)[0] << "'.";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+
+	// check if the input is an integer
+	else if (args.at(tags)[0].find("float") != std::string::npos)
+	{
+		float float_num = 0;
+		try
+		{
+			float_num = std::stof(this->m_args.at(tags));
+		}
+		catch(std::exception&)
+		{
+			error += "has to be a float.";
+			return error;
+		}
+
+		if (args.at(tags)[0] == "positive_float")
+		{
+			if (float_num < 0.f)
+			{
+				error += "has to be a positive float.";
+				return error;
+			}
+		}
+
+		// check if the input is strictly positive
+		else if (args.at(tags)[0] == "strictly_positive_float")
+		{
+			if (float_num <= 0.f)
+			{
+				error += "has to be a strictly positive float.";
+				return error;
+			}
+		}
+
+		else if (args.at(tags)[0] != "float")
+		{
+			std::stringstream message;
+			message << error << "has an unknown conditionnal flag '" << args.at(tags)[0] << "'.";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+
+	// check if the input is a string
+	else if (args.at(tags)[0] == "string")
+	{
+		if (this->m_args.at(tags).empty())
+		{
+			error += "has to be a string.";
 			return error;
 		}
 	}
 
-	// check if the input is positive
-	if (args.at(tags)[0] == "positive_float")
+	else if (args.at(tags)[0] != "")
 	{
-		const auto float_num = std::stof(this->m_args.at(tags));
-		if (float_num < 0.f)
-		{
-			error = "The \"";
-			for (auto i = 0; i < (int)tags.size(); i++)
-				error += print_tag(tags[i]) + ((i < (int)tags.size()-1)?", ":"");
-
-			error += "\" argument has to be positive.";
-			return error;
-		}
+		std::stringstream message;
+		message << error << "has an unknown conditionnal flag '" << args.at(tags)[0] << "'.";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	// check if the input is in the list
@@ -465,16 +538,12 @@ std::string Arguments_reader
 				set += entries[i] + "|";
 			set += entries[entries.size() -1] + ">";
 
-			error = "The \"";
-			for (auto i = 0; i < (int)tags.size(); i++)
-				error += print_tag(tags[i]) + ((i < (int)tags.size()-1)?", ":"");
-
-			error += "\" argument has to be in the " + set + " set.";
+			error += "has to be in the " + set + " set.";
 			return error;
 		}
 	}
 
-	return error;
+	return "";
 }
 
 std::string Arguments_reader
