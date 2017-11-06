@@ -43,7 +43,7 @@ void Monitor_BFER::parameters
 		 "set the number of inter frame level to process."};
 
 	opt_args[{p+"-max-fe", "e"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "max number of frame errors for each SNR simulation."};
 }
 

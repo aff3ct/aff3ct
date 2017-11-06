@@ -42,7 +42,7 @@ void Frozenbits_generator::parameters
 		 "the codeword size."};
 
 	opt_args[{p+"-sigma"}] =
-		{"positive_float",
+		{"strictly_positive_float",
 		 "sigma value for the polar codes generation (adaptive frozen bits if sigma is not set)."};
 
 	opt_args[{p+"-gen-method"}] =

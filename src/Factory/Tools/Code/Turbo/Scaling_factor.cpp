@@ -44,7 +44,7 @@ void Scaling_factor::parameters
 		 "CST, LTE, LTE_VEC, ARRAY, ADAPTIVE"};
 
 	opt_args[{p+"-ite"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "number of iterations."};
 }
 

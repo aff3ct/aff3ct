@@ -44,7 +44,7 @@ void Monitor_EXIT::parameters
 		 "set the number of inter frame level to process."};
 
 	opt_args[{p+"-trials", "n"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "number of frames to simulate per sigma A value."};
 }
 

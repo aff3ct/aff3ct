@@ -45,7 +45,7 @@ void Flip_and_check::parameters
 		 "enables the flip and check decoder (requires \"--crc-type\")."};
 
 	opt_args[{p+"-q"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set the search's space for the fnc algorithm."};
 
 	opt_args[{p+"-ite-m"}] =
@@ -57,7 +57,7 @@ void Flip_and_check::parameters
 		 "set last iteration at which the fnc is used."};
 
 	opt_args[{p+"-ite-s"}] =
-		{"positive_int",
+		{"strictly_positive_int",
 		 "set iteration step for the fnc algorithm."};
 
 	opt_args[{p+"-ite", "i"}] =

@@ -59,7 +59,7 @@ void Quantizer::parameters
 		 "the number of bits used for the quantizer."};
 
 	opt_args[{p+"-range"}] =
-		{"positive_float",
+		{"strictly_positive_float",
 		 "the min/max bound for the tricky quantizer."};
 }
 
