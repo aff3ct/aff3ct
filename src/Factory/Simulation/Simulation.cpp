@@ -69,8 +69,8 @@ void Simulation::parameters
 		 "display statistics module by module."};
 
 	opt_args[{p+"-threads", "t"}] =
-		{"strictly_positive_int",
-		 "specify the number of threads used (default is the number of CPU cores)."};
+		{"positive_int",
+		 "specify the number of threads used (0 or default is the number of CPU cores)."};
 
 	opt_args[{p+"-seed", "S"}] =
 		{"positive_int",
