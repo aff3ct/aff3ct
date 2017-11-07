@@ -86,7 +86,8 @@ void Codec_LDPC::parameters
 
 	dec->store(vals);
 
-	this->enc->H_alist_path = this->dec->H_alist_path;
+	this->enc->H_alist_path   = this->dec->H_alist_path;
+	this->enc->QC_matrix_path = this->dec->QC_matrix_path;
 
 	this->K    = this->enc->K;
 	this->N_cw = this->enc->N_cw;
