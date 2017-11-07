@@ -43,9 +43,13 @@ void Decoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	req_args[{p+"-h-path"}] =
+	opt_args[{p+"-h-path"}] =
 		{"string",
 		 "path to the H matrix (AList formated file)."};
+
+	opt_args[{p+"-qc-path"}] =
+		{"string",
+		 "path to the QC matrix (QC formated file)."};
 
 	opt_args[{p+"-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
 
@@ -85,6 +89,7 @@ void Decoder_LDPC::parameters
 	auto p = this->get_prefix();
 
 	if(exist(vals, {p+"-h-path"    })) this->H_alist_path    =           vals.at({p+"-h-path"    });
+	if(exist(vals, {p+"-qc-path"   })) this->QC_matrix_path  =           vals.at({p+"-qc-path"   });
 	if(exist(vals, {p+"-ite",   "i"})) this->n_ite           = std::stoi(vals.at({p+"-ite",   "i"}));
 	if(exist(vals, {p+"-off"       })) this->offset          = std::stof(vals.at({p+"-off"       }));
 	if(exist(vals, {p+"-norm"      })) this->norm_factor     = std::stof(vals.at({p+"-norm"      }));
@@ -100,7 +105,10 @@ void Decoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("H matrix path", this->H_alist_path));
+	if (!this->H_alist_path.empty())
+		headers[p].push_back(std::make_pair("H matrix path", this->H_alist_path));
+	if (!this->QC_matrix_path.empty())
+		headers[p].push_back(std::make_pair("QC matrix path", this->QC_matrix_path));
 
 	if (!this->simd_strategy.empty())
 		headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));

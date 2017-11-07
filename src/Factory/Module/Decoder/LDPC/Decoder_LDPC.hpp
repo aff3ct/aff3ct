@@ -25,6 +25,7 @@ struct Decoder_LDPC : public Decoder
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
 		std::string H_alist_path     = "";
+		std::string QC_matrix_path   = "";
 		std::string simd_strategy    = "";
 		float       norm_factor      = 1.f;
 		float       offset           = 0.f;

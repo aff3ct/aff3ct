@@ -5,6 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/LDPC/AList/AList.hpp"
+#include "Tools/Code/LDPC/QC_matrix/QC_matrix.hpp"
 
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
@@ -52,6 +53,20 @@ Codec_LDPC<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (dec_params.QC_matrix_path.empty() && dec_params.H_alist_path.empty())
+	{
+		std::stringstream message;
+		message << "'dec_params.QC_matrix_path' or 'dec_params.H_alist_path' has to be set to a matrix file.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (!dec_params.QC_matrix_path.empty() && !dec_params.H_alist_path.empty())
+	{
+		std::stringstream message;
+		message << "'dec_params.QC_matrix_path' and 'dec_params.H_alist_path' can't be use together.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	// ---------------------------------------------------------------------------------------------------------- tools
 	bool is_info_bits_pos = false;
 	if (!enc_params.G_alist_path.empty() && enc_params.type == "LDPC")
@@ -72,29 +87,44 @@ Codec_LDPC<B,Q>
 		file_G.close();
 	}
 
-	std::ifstream file_H(dec_params.H_alist_path, std::ifstream::in);
-	H = tools::AList::read(file_H);
-
-	if (!is_info_bits_pos)
+	if (!dec_params.QC_matrix_path.empty())
 	{
-		try
-		{
-			if (enc_params.type == "LDPC_H")
-			{
-				auto encoder_LDPC = factory::Encoder_LDPC::build<B>(enc_params, G, H);
-				encoder_LDPC->get_info_bits_pos(info_bits_pos);
-				delete encoder_LDPC;
-			}
-			else
-				info_bits_pos = tools::AList::read_info_bits_pos(file_H, enc_params.K, enc_params.N_cw);
-		}
-		catch (std::exception const&)
-		{
-			std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
-		}
+		std::ifstream file_QC(dec_params.QC_matrix_path, std::ifstream::in);
+		tools::QC_matrix QC = tools::QC_matrix::load(file_QC);
+		H = QC.expand_QC();
+		pct_params.pctPattern = QC.get_pct_pattern();
+
+		std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+
+		file_QC.close();
 	}
 
-	file_H.close();
+	if (!dec_params.H_alist_path.empty())
+	{
+		std::ifstream file_H(dec_params.H_alist_path, std::ifstream::in);
+		H = tools::AList::read(file_H);
+
+		if (!is_info_bits_pos)
+		{
+			try
+			{
+				if (enc_params.type == "LDPC_H")
+				{
+					auto encoder_LDPC = factory::Encoder_LDPC::build<B>(enc_params, G, H);
+					encoder_LDPC->get_info_bits_pos(info_bits_pos);
+					delete encoder_LDPC;
+				}
+				else
+					info_bits_pos = tools::AList::read_info_bits_pos(file_H, enc_params.K, enc_params.N_cw);
+			}
+			catch (std::exception const&)
+			{
+				std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+			}
+		}
+
+		file_H.close();
+	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
 	try
