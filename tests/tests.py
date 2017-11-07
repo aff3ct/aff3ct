@@ -11,7 +11,7 @@ Nthreads      = 0          # if 0 then AFF3CT takes all the available threads
 RecursiveScan = True
 MaxFE         = 100        # 0 takes fe from the original simulation
 WeakRate      = 0.8        # 0 < WeakRate < 1
-MaxTimeSNR    = 600        # max time to spend per SNR (in sec), 0 = illimited
+MaxTimeSNR    = 1        # max time to spend per SNR (in sec), 0 = illimited
 
 # ================================================================== PARAMETERS
 # =============================================================================
@@ -105,13 +105,42 @@ for fn in fileNames:
 
 	f.close()
 
-	argsAFFECT = []
-	argsAFFECT = runCommand.split(" ")
-
+	# split the run command
+	argsAFFECT = [""]
 	idx = 0
-	for a in argsAFFECT:
-		argsAFFECT[idx] = a.replace("\"", "")
-		idx = idx + 1
+
+	new = 0
+	found_dashes = 0
+	for s in runCommand:
+		if found_dashes == 0:
+			if s == ' ':
+				if new == 0:
+					argsAFFECT.append("")
+					idx = idx + 1
+					new = 1
+
+			elif s == '\"':
+				if new == 0:
+					argsAFFECT.append("")
+					idx = idx + 1
+					new = 1
+				found_dashes = 1
+
+			else:
+				argsAFFECT[idx] += s
+				new = 0
+
+		else: # between dashes
+			if s == '\"':
+				argsAFFECT.append("")
+				idx = idx + 1
+				found_dashes = 0
+
+			else:
+				argsAFFECT[idx] += s
+
+	del argsAFFECT[idx]
+
 
 	argsAFFECT.append("--ter-freq")
 	argsAFFECT.append("0")
