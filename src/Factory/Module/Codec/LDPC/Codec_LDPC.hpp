@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "Factory/Module/Encoder/LDPC/Encoder_LDPC.hpp"
+#include "Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 #include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
 
 #include "Module/Codec/LDPC/Codec_LDPC.hpp"
@@ -26,6 +27,7 @@ struct Codec_LDPC : public Codec_SISO_SIHO
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// depending parameters
 		Encoder_LDPC::parameters *enc;
+		Puncturer_LDPC::parameters *pct;
 		Decoder_LDPC::parameters *dec;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS

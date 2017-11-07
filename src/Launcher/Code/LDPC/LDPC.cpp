@@ -54,6 +54,7 @@ void LDPC<L,B,R,Q>
 	L::store_args();
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
+	params_cdc->pct->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;
 }
 

@@ -10,6 +10,7 @@
 
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
+#include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 
 #include "Codec_LDPC.hpp"
 
@@ -20,9 +21,10 @@ template <typename B, typename Q>
 Codec_LDPC<B,Q>
 ::Codec_LDPC(const factory::Encoder_LDPC::parameters &enc_params,
              const factory::Decoder_LDPC::parameters &dec_params,
+                   factory::Puncturer_LDPC::parameters &pct_params,
              const std::string name)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
   info_bits_pos(enc_params.K)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
@@ -95,14 +97,14 @@ Codec_LDPC<B,Q>
 	file_H.close();
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	factory::Puncturer::parameters pct_params;
-	pct_params.type     = "NO";
-	pct_params.K        = enc_params.K;
-	pct_params.N        = enc_params.N_cw;
-	pct_params.N_cw     = enc_params.N_cw;
-	pct_params.n_frames = enc_params.n_frames;
-
-	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
+	try
+	{
+		this->set_puncturer(factory::Puncturer_LDPC::build<B,Q>(pct_params));
+	}
+	catch (tools::cannot_allocate const&)
+	{
+		this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
+	}
 
 	try
 	{

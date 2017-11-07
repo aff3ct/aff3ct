@@ -11,6 +11,7 @@ Codec_LDPC::parameters
 : Codec          ::parameters(Codec_LDPC::name, prefix),
   Codec_SISO_SIHO::parameters(Codec_LDPC::name, prefix),
   enc(new Encoder_LDPC::parameters("enc")),
+  pct(new Puncturer_LDPC::parameters("pct")),
   dec(new Decoder_LDPC::parameters("dec"))
 {
 	Codec::parameters::enc = enc;
@@ -21,6 +22,7 @@ Codec_LDPC::parameters
 ::~parameters()
 {
 	if (enc != nullptr) { delete enc; enc = nullptr; }
+	if (pct != nullptr) { delete pct; pct = nullptr; }
 	if (dec != nullptr) { delete dec; dec = nullptr; }
 
 	Codec::parameters::enc = nullptr;
@@ -33,6 +35,7 @@ Codec_LDPC::parameters* Codec_LDPC::parameters
 	auto clone = new Codec_LDPC::parameters(*this);
 
 	if (enc != nullptr) { clone->enc = enc->clone(); }
+	if (pct != nullptr) { clone->pct = pct->clone(); }
 	if (dec != nullptr) { clone->dec = dec->clone(); }
 
 	clone->set_enc(clone->enc);
@@ -47,15 +50,20 @@ void Codec_LDPC::parameters
 	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
 
 	enc->get_description(req_args, opt_args);
+	pct->get_description(req_args, opt_args);
 	dec->get_description(req_args, opt_args);
 
 	auto penc = enc->get_prefix();
+	auto ppct = pct->get_prefix();
 	auto pdec = dec->get_prefix();
 
-	opt_args.erase({penc+"-h-path"        });
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
+	opt_args.erase({penc+"-h-path"           });
+	req_args.erase({ppct+"-info-bits", "K"   });
+	opt_args.erase({ppct+"-fra",       "F"   });
+	req_args.erase({ppct+"-cw-size",   "N_cw"});
+	req_args.erase({pdec+"-cw-size",   "N"   });
+	req_args.erase({pdec+"-info-bits", "K"   });
+	opt_args.erase({pdec+"-fra",       "F"   });
 }
 
 void Codec_LDPC::parameters
@@ -64,6 +72,13 @@ void Codec_LDPC::parameters
 	Codec_SISO_SIHO::parameters::store(vals);
 
 	enc->store(vals);
+
+	this->pct->K        = this->enc->K;
+	this->pct->n_frames = this->enc->n_frames;
+
+	pct->store(vals);
+
+	this->pct->N_cw     = this->enc->N_cw;
 
 	this->dec->K        = this->enc->K;
 	this->dec->N_cw     = this->enc->N_cw;
@@ -75,7 +90,7 @@ void Codec_LDPC::parameters
 
 	this->K    = this->enc->K;
 	this->N_cw = this->enc->N_cw;
-	this->N    = this->enc->N_cw;
+	this->N    = this->pct->N;
 }
 
 void Codec_LDPC::parameters
@@ -84,6 +99,7 @@ void Codec_LDPC::parameters
 	Codec_SISO_SIHO::parameters::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
+	pct->get_headers(headers, full);
 	dec->get_headers(headers, full);
 }
 
@@ -91,7 +107,7 @@ template <typename B, typename Q>
 module::Codec_LDPC<B,Q>* Codec_LDPC::parameters
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_LDPC<B,Q>(*enc, *dec);
+	return new module::Codec_LDPC<B,Q>(*enc, *dec, *pct);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
