@@ -115,7 +115,7 @@ void Modem::parameters
 		 "PSI0, PSI1, PSI2, PSI3"};
 
 	opt_args[{p+"-ite"}] =
-		{"strictly_positive int",
+		{"strictly_positive_int",
 		 "select the number of iteration in the demodulator."};
 }
 
