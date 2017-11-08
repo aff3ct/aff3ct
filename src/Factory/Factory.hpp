@@ -13,6 +13,7 @@
 #include <map>
 
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Arguments/Argument_map.hpp"
 
 namespace aff3ct
 {
@@ -54,6 +55,8 @@ struct Factory
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const = 0;
+		virtual void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args      ) const {};
+		virtual void store          (const tools::Argument_map_value &vals                                           ) {};
 		virtual void store          (const arg_val_map &vals                                           )       = 0;
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const = 0;
 
@@ -66,6 +69,7 @@ struct Factory
 	static std::pair<arg_map, arg_map> get_description(const std::vector<Factory::parameters*> &params);
 	static void                        store(std::vector<Factory::parameters*> &params, const arg_val_map &vals);
 	static aff3ct::factory::arg_grp    create_groups(const std::vector<Factory::parameters*> &params);
+	static tools::Argument_map_group   create_map_groups(const std::vector<Factory::parameters*> &params);
 };
 
 struct Header

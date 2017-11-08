@@ -16,6 +16,7 @@
 #include "Tools/types.h"
 #include "Tools/version.h"
 #include "Tools/Arguments_reader.hpp"
+#include "Tools/Arguments/Argument_handler.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Launcher/Launcher.hpp"
@@ -49,7 +50,7 @@ void print_version()
 	std::string compiler_version = std::to_string(__INTEL_COMPILER);
 #elif defined(__ICL)
 	std::string compiler_version = std::to_string(__ICL);
-#else 
+#else
 	std::string compiler_version = std::to_string(__ICC);
 #endif
 	compiler_version = compiler_version.substr(0,2) + "." + compiler_version.substr(2,compiler_version.size());
@@ -70,7 +71,7 @@ void print_version()
 #endif
 	std::string affect_version = version() == "GIT-NOTFOUND" ? "" : version();
 
-	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", " 
+	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", "
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
 	std::cout << "Copyright (c) 2016-2017 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
@@ -84,32 +85,36 @@ void read_arguments(const int argc, const char** argv, factory::Launcher::parame
 void read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
 #endif
 {
-	tools::Arguments_reader ar(argc, argv);
+	tools::Argument_handler ah(argc, argv);
 
-	factory::arg_map req_args, opt_args;
-	factory::arg_grp arg_group;
+	tools::Argument_map_info req_args, opt_args;
+	tools::Argument_map_group arg_group;
 
 	std::vector<std::string> cmd_warn, cmd_error;
 
 	params.get_description(req_args, opt_args);
 
-	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
-	bool error    = !ar.check_arguments(cmd_error);
+	auto arg_vals = ah.parse_arguments(req_args, opt_args, cmd_warn, cmd_error);
 
-	params.store(ar.get_args());
+	params.store(arg_vals);
 
 	if (params.display_version)
 		print_version();
 
-	if (error || miss_arg)
+	if (cmd_error.size())
 	{
-		arg_group.push_back({"sim", "Simulation parameter(s)"});
-		ar.print_usage(arg_group);
+		arg_group["sim"] = "Simulation parameter(s)";
+		ah.print_help(req_args, opt_args, arg_group);
 
 		for (auto w = 0; w < (int)cmd_error.size(); w++)
 			std::cerr << tools::format_error(cmd_error[w]) << std::endl;
-		std::exit(EXIT_FAILURE);
 	}
+
+	for (auto w = 0; w < (int)cmd_warn.size(); w++)
+		std::cerr << tools::format_warning(cmd_warn[w]) << std::endl;
+
+	if (cmd_error.size())
+		std::exit(EXIT_FAILURE);
 }
 
 #ifndef SYSTEMC

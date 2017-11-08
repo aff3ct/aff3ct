@@ -69,6 +69,45 @@ factory::Launcher::parameters* factory::Launcher::parameters
 }
 
 void factory::Launcher::parameters
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+{
+	auto p = this->get_prefix();
+
+	req_args.add(
+		{p+"-cde-type", "C"},
+		new tools::Text<>({new tools::Including_set<std::string>({"POLAR", "TURBO", "TURBO_DB", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED"})}),
+		"select the code type you want to use.");
+
+	opt_args.add(
+		{p+"-type"},
+		new tools::Text<>({new tools::Including_set<std::string>({"BFER", "BFERI", "EXIT"})}),
+		"select the type of simulation to launch (default is BFER).");
+
+#ifdef MULTI_PREC
+	opt_args.add(
+		{p+"-prec", "p"},
+		new tools::Integer<>({new tools::Including_set<int>({8, 16, 32})}),
+		"the simulation precision in bit.");
+
+#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
+	auto* arg_type  = dynamic_cast<tools::Argument_type_limited<int>*>(opt_args.at({p+"-prec", "p"}).type);
+	auto* arg_range = dynamic_cast<tools::Set<int>*>(arg_type->get_ranges().front());
+	arg_range->add_options({64});
+#endif
+#endif
+
+	opt_args.add(
+		{"help", "h"},
+		new tools::None(),
+		"print this help.");
+
+	opt_args.add(
+		{"version", "v"},
+		new tools::None(),
+		"print informations about the version of the code.");
+}
+
+void factory::Launcher::parameters
 ::get_description(arg_map &req_args, arg_map &opt_args) const
 {
 	auto p = this->get_prefix();
@@ -101,6 +140,21 @@ void factory::Launcher::parameters
 	opt_args[{"version", "v"}] =
 		{"",
 		 "print informations about the version of the code."};
+}
+
+void factory::Launcher::parameters
+::store(const tools::Argument_map_value &vals)
+{
+	auto p = this->get_prefix();
+
+	if(vals.exist({p+"-cde-type", "C"})) this->cde_type        = vals.at({p+"-cde-type", "C"}); // required
+	if(vals.exist({p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
+	if(vals.exist({"help",        "h"})) this->display_help    = true;
+	if(vals.exist({"version",     "v"})) this->display_version = true;
+
+#ifdef MULTI_PREC
+	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
+#endif
 }
 
 void factory::Launcher::parameters

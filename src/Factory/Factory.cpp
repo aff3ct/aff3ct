@@ -111,6 +111,31 @@ aff3ct::factory::arg_grp Factory
 	return grps;
 }
 
+tools::Argument_map_group Factory
+::create_map_groups(const std::vector<Factory::parameters*> &params)
+{
+	// create groups of arguments
+	tools::Argument_map_group grps;
+	for (auto *p : params)
+	{
+		auto prefixes    = p->get_prefixes   ();
+		auto short_names = p->get_short_names();
+
+		if (prefixes.size() != short_names.size())
+		{
+			std::stringstream message;
+			message << "'prefixes.size()' has to be equal to 'short_names.size()' ('prefixes.size()' = "
+			        << prefixes.size() << ", 'short_names.size()' = " << short_names.size() << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		for (size_t i = 0; i < prefixes.size(); i++)
+			grps[prefixes[i]] = short_names[i] + " parameter(s)";
+	}
+
+	return grps;
+}
+
 void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string grp_name, header_list header,
                                                int max_n_chars, std::ostream& stream)
 {
