@@ -28,14 +28,27 @@ struct Argument_info
     : type(type), doc(doc)
     {}
 
-	virtual Argument_info clone() const
+	virtual ~Argument_info()
+	{
+		clear();
+	}
+
+	virtual void clear()
+	{
+		if (type != nullptr)
+			delete type;
+
+		type = nullptr;
+	}
+
+	virtual Argument_info* clone() const
 	{
 		Argument_type* arg_t = nullptr;
 
 		if (type != nullptr)
 			arg_t = type->clone();
 
-		return Argument_info(arg_t, doc);
+		return new Argument_info(arg_t, doc);
 	}
 
 	Argument_type* type = nullptr;
@@ -43,10 +56,10 @@ struct Argument_info
 };
 
 
-class Argument_map_info : public std::map<Argument_tag, Argument_info>
+class Argument_map_info : public std::map<Argument_tag, Argument_info*>
 {
 public:
-	using mother = std::map<Argument_tag, Argument_info>;
+	using mother_t = std::map<Argument_tag, Argument_info*>;
 
 public:
 	Argument_map_info()
@@ -54,12 +67,18 @@ public:
 
 	Argument_map_info(const Argument_map_info& other)
 	{
-		*this = other.clone();
+		other.clone(*this);
 	}
 
 	virtual ~Argument_map_info()
 	{
 		clear();
+	}
+
+	Argument_map_info& operator=(const Argument_map_info& other)
+	{
+		other.clone(*this);
+		return *this;
 	}
 
 	void add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc)
@@ -70,28 +89,40 @@ public:
 		if (arg_t == nullptr)
 			throw std::invalid_argument("No argument type has been given ('arg_t' == 0).");
 
-		(*this)[tags];
-		(*this)[tags].type = arg_t;
-		(*this)[tags].doc  = doc;
+		(*this)[tags] = new Argument_info(arg_t, doc);
 	}
 
 	void clear()
 	{
 		for (auto it = this->begin(); it != this->end(); it++)
-			if (it->second.type != nullptr)
-				delete it->second.type;
+			if (it->second != nullptr)
+				delete it->second;
 
-		mother::clear();
+		mother_t::clear();
 	}
 
-	Argument_map_info clone() const
+	/* \brief: clone itself in the 'other' map
+	 * \return a pointer to the clone map
+	 */
+	Argument_map_info* clone() const
 	{
-		Argument_map_info other;
+		auto* other = new Argument_map_info();
 
 		for (auto it = this->begin(); it != this->end(); it++)
-			other[it->first] = it->second.clone();
+			(*other)[it->first] = it->second->clone();
 
 		return other;
+	}
+
+	/* \brief: clone itself in the 'other' map
+	 * \param 'other' is the other map in which this class will be cloned. Clear it first of all
+	 */
+	void clone(Argument_map_info& other) const
+	{
+		other.clear();
+
+		for (auto it = this->begin(); it != this->end(); it++)
+			other[it->first] = it->second->clone();
 	}
 
 	bool exist(const Argument_tag &tags)
@@ -104,7 +135,7 @@ public:
 class Argument_map_value : public std::map<Argument_tag, std::string>
 {
 public:
-	using mother = std::map<Argument_tag, std::string>;
+	using mother_t = std::map<Argument_tag, std::string>;
 
 public:
 

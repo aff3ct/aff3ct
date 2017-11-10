@@ -87,10 +87,10 @@ void factory::Launcher::parameters
 	opt_args.add(
 		{p+"-prec", "p"},
 		new tools::Integer<>({new tools::Including_set<int>({8, 16, 32})}),
-		"the simulation precision in bit.");
+		"the simulation precision in bits.");
 
 #if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-	auto* arg_type  = dynamic_cast<tools::Argument_type_limited<int>*>(opt_args.at({p+"-prec", "p"}).type);
+	auto* arg_type  = dynamic_cast<tools::Argument_type_limited<int>*>(opt_args.at({p+"-prec", "p"})->type);
 	auto* arg_range = dynamic_cast<tools::Set<int>*>(arg_type->get_ranges().front());
 	arg_range->add_options({64});
 #endif
@@ -125,7 +125,7 @@ void factory::Launcher::parameters
 #ifdef MULTI_PREC
 	opt_args[{p+"-prec", "p"}] =
 		{"positive_int",
-		 "the simulation precision in bit.",
+		 "the simulation precision in bits.",
 		 "8, 16, 32"};
 
 #if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)

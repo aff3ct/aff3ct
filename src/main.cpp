@@ -79,11 +79,7 @@ void print_version()
 	exit(EXIT_SUCCESS);
 }
 
-#ifdef MULTI_PREC
-void read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
-#else
-void read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
-#endif
+int read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
 {
 	tools::Argument_handler ah(argc, argv);
 
@@ -113,8 +109,7 @@ void read_arguments(const int argc, const char** argv, factory::Launcher::parame
 	for (auto w = 0; w < (int)cmd_warn.size(); w++)
 		std::cerr << tools::format_warning(cmd_warn[w]) << std::endl;
 
-	if (cmd_error.size())
-		std::exit(EXIT_FAILURE);
+	return cmd_error.size() ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 #ifndef SYSTEMC
@@ -128,7 +123,8 @@ int sc_main(int argc, char **argv)
 #endif
 
 	factory::Launcher::parameters params("sim");
-	read_arguments(argc, (const char**)argv, params);
+	if (read_arguments(argc, (const char**)argv, params) == EXIT_FAILURE)
+		return EXIT_FAILURE;
 
 	launcher::Launcher *launcher = nullptr;
 	try

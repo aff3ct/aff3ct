@@ -92,7 +92,7 @@ std::vector<bool> Argument_handler
 			{
 				if (cur_tag == this->command[ix_arg_val]) // the tag has been found
 				{
-					if(it_arg_info->second.type->get_title() == "") // do not wait for a value after the tag
+					if(it_arg_info->second->type->get_title() == "") // do not wait for a value after the tag
 					{
 						auto it = arg_v.find(it_arg_info->first);
 						if (it == arg_v.end())
@@ -119,7 +119,7 @@ std::vector<bool> Argument_handler
 							// check the found argument
 							try
 							{
-								it_arg_info->second.type->check(this->command[ix_arg_val +1]);
+								it_arg_info->second->type->check(this->command[ix_arg_val +1]);
 								message = "";
 							}
 							catch(std::exception& e)
@@ -153,8 +153,8 @@ void Argument_handler
 	{
 		if (std::find(existing_flags.begin(), existing_flags.end(), it->first.back()) == existing_flags.end())
 		{
-			if(it->second.type->get_title() != "")
-				std::cout << " " + print_tag(it->first.back()) << " <" << it->second.type->get_title() << ">";
+			if(it->second->type->get_title() != "")
+				std::cout << " " + print_tag(it->first.back()) << " <" << it->second->type->get_title() << ">";
 			else
 				std::cout << " " + print_tag(it->first.back());
 
@@ -184,10 +184,10 @@ void Argument_handler
 
 	// print arguments
 	for (auto it = req_args.begin(); it != req_args.end(); ++it)
-		this->print_help(it->first, it->second, max_n_char_arg, true);
+		this->print_help(it->first, *it->second, max_n_char_arg, true);
 
 	for (auto it = opt_args.begin(); it != opt_args.end(); ++it)
-		this->print_help(it->first, it->second, max_n_char_arg, false);
+		this->print_help(it->first, *it->second, max_n_char_arg, false);
 
 	std::cout << std::endl;
 }
@@ -251,7 +251,7 @@ void Argument_handler
 					title_displayed = true;
 				}
 
-				this->print_help(it_arg->first, it_arg->second, max_n_char_arg, true);
+				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, true);
 			}
 		}
 
@@ -268,7 +268,7 @@ void Argument_handler
 					title_displayed = true;
 				}
 
-				this->print_help(it_arg->first, it_arg->second, max_n_char_arg, false);
+				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, false);
 			}
 		}
 
@@ -302,7 +302,7 @@ void Argument_handler
 				title_displayed = true;
 			}
 
-			this->print_help(it_arg->first, it_arg->second, max_n_char_arg, true);
+			this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, true);
 		}
 	}
 
@@ -331,7 +331,7 @@ void Argument_handler
 				title_displayed = true;
 			}
 
-			this->print_help(it_arg->first, it_arg->second, max_n_char_arg, false);
+			this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, false);
 		}
 	}
 }
