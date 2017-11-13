@@ -393,7 +393,7 @@ struct rep_intra_8bit <B, R, H, HI, 32>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
 	{
-		rep_seq<B,R,H,16>::apply(l_a, s_a, n_elmts);
+		rep_seq<B,R,H,32>::apply(l_a, s_a, n_elmts);
 	}
 };
 #endif
@@ -455,7 +455,7 @@ struct spc_intra_8bit <B, R, H, HI, 64>
 {
 	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
 	{
-		return spc_seq<B,R,H,32>::apply(l_a, s_a, n_elmts);
+		return spc_seq<B,R,H,64>::apply(l_a, s_a, n_elmts);
 	}
 };
 #endif
@@ -519,7 +519,7 @@ struct xo_intra_8bit <B, XO, XOI, 32>
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
 	                  const int n_elmts = 0)
 	{
-		xo_seq<B,XO,16>::apply(s_a, s_b, s_c, n_elmts);
+		xo_seq<B,XO,32>::apply(s_a, s_b, s_c, n_elmts);
 	}
 };
 #endif
@@ -595,7 +595,7 @@ struct xo0_intra_8bit <B, 32>
 {
 	static void apply(const B *__restrict s_b, B *__restrict s_c, const int n_elmts = 0)
 	{
-		xo0_seq<B,16>::apply(s_b, s_c, n_elmts);
+		xo0_seq<B,32>::apply(s_b, s_c, n_elmts);
 	}
 };
 #endif
