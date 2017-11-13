@@ -82,6 +82,7 @@ struct g_intra_32bit
 };
 
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
+template <typename B, typename R, proto_g<B,R> G, proto_g_i<B,R> GI>
 struct g_intra_32bit <B, R, G, GI, 8>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -193,6 +194,7 @@ struct gr_intra_32bit
 };
 
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
+template <typename B, typename R, proto_g<B,R> G, proto_g_i<B,R> GI>
 struct gr_intra_32bit <B, R, G, GI, 8>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
