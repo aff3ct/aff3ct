@@ -32,7 +32,7 @@ Decoder_RSC_DB::parameters* Decoder_RSC_DB::parameters
 }
 
 void Decoder_RSC_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Decoder::parameters::get_description(req_args, opt_args);
 
@@ -40,29 +40,34 @@ void Decoder_RSC_DB::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type", "D"}].push_back("BCJR");
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"BCJR"});
 
-	opt_args[{p+"-implem"}].push_back("GENERIC, DVB-RCS1, DVB-RCS2");
+	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
+	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
+	arg_range_implem->add_options({"GENERIC", "DVB-RCS1", "DVB-RCS2"});
 
-	opt_args[{p+"-max"}] =
-		{"string",
-		 "the MAX implementation for the nodes.",
-		 "MAX, MAXL, MAXS"};
+	opt_args.add(
+		{p+"-max"},
+		new tools::Text<>({new tools::Including_set<std::string>({"MAX", "MAXL", "MAXS"})}),
+		"the MAX implementation for the nodes.");
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "does not suppose a buffered encoding."};
+	opt_args.add(
+		{p+"-no-buff"},
+		new tools::None(),
+		"does not suppose a buffered encoding.");
 }
 
 void Decoder_RSC_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-max"    })) this->max      = vals.at({p+"-max"});
-	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
+	if(vals.exist({p+"-max"    })) this->max      = vals.at({p+"-max"});
+	if(vals.exist({p+"-no-buff"})) this->buffered = false;
 
 	this->N_cw = 2 * this->K;
 	this->R    = (float)this->K / (float)this->N_cw;

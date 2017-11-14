@@ -31,28 +31,34 @@ Decoder_repetition::parameters* Decoder_repetition::parameters
 }
 
 void Decoder_repetition::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Decoder::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}].push_back("REPETITION");
-	opt_args[{p+"-implem"   }].push_back("STD, FAST");
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"REPETITION"});
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "does not suppose a buffered encoding."};
+	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
+	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
+	arg_range_implem->add_options({"STD", "FAST"});
+
+	opt_args.add(
+		{p+"-no-buff"},
+		new tools::None(),
+		"does not suppose a buffered encoding.");
 }
 
 void Decoder_repetition::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
+	if(vals.exist({p+"-no-buff"})) this->buffered = false;
 }
 
 void Decoder_repetition::parameters

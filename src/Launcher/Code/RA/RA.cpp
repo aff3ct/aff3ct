@@ -44,7 +44,7 @@ template <class L, typename B, typename R, typename Q>
 void RA<L,B,R,Q>
 ::store_args()
 {
-	this->params.cdc->store(this->ar.get_args());
+	this->params.cdc->store(this->arg_vals);
 
 	L::store_args();
 

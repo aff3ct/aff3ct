@@ -42,7 +42,7 @@ Codec_RSC_DB::parameters
 }
 
 void Codec_RSC_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
 
@@ -58,7 +58,7 @@ void Codec_RSC_DB::parameters
 }
 
 void Codec_RSC_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 
@@ -73,7 +73,7 @@ void Codec_RSC_DB::parameters
 
 	auto pdec = dec->get_prefix();
 
-	if (!this->enc->standard.empty() && !exist(vals, {pdec+"-implem"}))
+	if (!this->enc->standard.empty() && !vals.exist({pdec+"-implem"}))
 		this->dec->implem = this->enc->standard;
 
 	this->K    = this->enc->K;

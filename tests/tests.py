@@ -11,7 +11,7 @@ Nthreads      = 0          # if 0 then AFF3CT takes all the available threads
 RecursiveScan = True
 MaxFE         = 100        # 0 takes fe from the original simulation
 WeakRate      = 0.8        # 0 < WeakRate < 1
-MaxTimeSNR    = 1        # max time to spend per SNR (in sec), 0 = illimited
+MaxTimeSNR    = 600        # max time to spend per SNR (in sec), 0 = illimited
 
 # ================================================================== PARAMETERS
 # =============================================================================
@@ -159,18 +159,24 @@ for fn in fileNames:
 	(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
 
 	err = stderrAFFECT.decode(encoding='UTF-8')
+
+	# results file
+	os.chdir(PathOrigin)
+	fRes = open(PathResults + "/" + fn, 'w+')
+	stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
+
 	if err:
 		print(" - ABORTED.", end="\n");
 		print("Error message:", end="\n");
-		print(err)
-	else:
-		# begin to write the results into a file
-		os.chdir(PathOrigin)
+		print(err, end="\n")
 
-		fRes = open(PathResults + "/" + fn, 'w+')
+		for l in stdOutput:
+			fRes.write(l + "\n")
+
+		fRes.write(err + "\n")
+	else:
 
 		# parse the results
-		stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
 		outputAFFECTLines = []
 		simuCur = []
 		for l in stdOutput:
@@ -226,7 +232,8 @@ for fn in fileNames:
 			print(" - FAILED.", end="\n");
 
 		fRes.write("# End of the simulation.\n")
-		fRes.close();
+
+	fRes.close();
 
 	testId = testId + 1
 

@@ -31,42 +31,46 @@ Source::parameters* Source::parameters
 }
 
 void Source::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-info-bits", "K"}] =
-		{"strictly_positive_int",
-		 "number of generated bits (information bits)."};
+	req_args.add(
+		{p+"-info-bits", "K"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"number of generated bits (information bits).");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	opt_args.add(
+		{p+"-fra", "F"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "method used to generate the codewords.",
-		 "RAND, RAND_FAST, AZCW, USER"};
+	opt_args.add(
+		{p+"-type"},
+		new tools::Text<>({new tools::Including_set<std::string>({"RAND", "RAND_FAST", "AZCW", "USER"})}),
+		"method used to generate the codewords.");
 
-	opt_args[{p+"-path"}] =
-		{"string",
-		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\"."};
+	opt_args.add(
+		{p+"-path"},
+		new tools::Text<>(),
+		"path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\".");
 
-	opt_args[{p+"-seed", "S"}] =
-		{"positive_int",
-		 "seed used to initialize the pseudo random generators."};
+	opt_args.add(
+		{p+"-seed", "S"},
+		new tools::Integer<>({new tools::Positive<int>()}),
+		"seed used to initialize the pseudo random generators.");
 }
 
 void Source::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-info-bits", "K"})) this->K        = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-fra",       "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-type"          })) this->type     =           vals.at({p+"-type"          });
-	if(exist(vals, {p+"-path"          })) this->path     =           vals.at({p+"-path"          });
-	if(exist(vals, {p+"-seed",      "S"})) this->seed     = std::stoi(vals.at({p+"-seed",      "S"}));
+	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int({p+"-info-bits", "K"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int({p+"-fra",       "F"});
+	if(vals.exist({p+"-type"          })) this->type     = vals.at    ({p+"-type"          });
+	if(vals.exist({p+"-path"          })) this->path     = vals.at    ({p+"-path"          });
+	if(vals.exist({p+"-seed",      "S"})) this->seed     = vals.to_int({p+"-seed",      "S"});
 }
 
 void Source::parameters

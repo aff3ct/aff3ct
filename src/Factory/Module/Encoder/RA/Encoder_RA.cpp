@@ -58,7 +58,7 @@ Encoder_RA::parameters
 }
 
 void Encoder_RA::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Encoder::parameters::get_description(req_args, opt_args);
 
@@ -69,11 +69,13 @@ void Encoder_RA::parameters
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type"}][2] += ", RA";
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"RA"});
 }
 
 void Encoder_RA::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 

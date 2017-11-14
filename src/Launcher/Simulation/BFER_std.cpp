@@ -88,11 +88,11 @@ void BFER_std<B,R,Q>
 {
 	Launcher::store_args();
 
-	params.store(this->ar.get_args());
+	params.store(this->arg_vals);
 
 	params.src->seed = params.local_seed;
 
-	params.src->store(this->ar.get_args());
+	params.src->store(this->arg_vals);
 
 	auto psrc = params.src->get_prefix();
 
@@ -100,31 +100,31 @@ void BFER_std<B,R,Q>
 	auto N    = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N;
 	auto N_cw = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N_cw;
 
-	params.crc->store(this->ar.get_args());
+	params.crc->store(this->arg_vals);
 
 	params.crc->K = K - params.crc->size;
 	params.src->K = params.src->K == 0 ? params.crc->K : params.src->K;
 	params.mdm->N = N;
 
-	params.mdm->store(this->ar.get_args());
+	params.mdm->store(this->arg_vals);
 
 	params.chn->N         = params.mdm->N_mod;
 	params.chn->complex   = params.mdm->complex;
 	params.chn->add_users = params.mdm->type == "SCMA";
 	params.chn->seed      = params.local_seed;
 
-	params.chn->store(this->ar.get_args());
+	params.chn->store(this->arg_vals);
 
 	params.qnt->size = params.mdm->N;
 
 	if (std::is_integral<Q>())
-		params.qnt->store(this->ar.get_args());
+		params.qnt->store(this->arg_vals);
 
 	params.mnt->size = params.coded_monitoring ? N_cw : params.src->K;
 
-	params.mnt->store(this->ar.get_args());
+	params.mnt->store(this->arg_vals);
 
-	params.ter->store(this->ar.get_args());
+	params.ter->store(this->arg_vals);
 
 	if (!std::is_integral<Q>())
 		params.qnt->type = "NO";

@@ -33,47 +33,52 @@ Quantizer::parameters* Quantizer::parameters
 }
 
 void Quantizer::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-size", "N"}] =
-		{"strictly_positive_int",
-		 "number of real to quantize."};
+	req_args.add(
+		{p+"-size", "N"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"number of real to quantize.");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	opt_args.add(
+		{p+"-fra", "F"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "type of the quantizer to use in the simulation.",
-		 "STD, STD_FAST, TRICKY"};
+	opt_args.add(
+		{p+"-type"},
+		new tools::Text<>({new tools::Including_set<std::string>({"STD", "STD_FAST", "TRICKY"})}),
+		"type of the quantizer to use in the simulation.");
 
-	opt_args[{p+"-dec"}] =
-		{"positive_int",
-		 "the position of the fixed point in the quantified representation."};
+	opt_args.add(
+		{p+"-dec"},
+		new tools::Integer<>({new tools::Positive<int>()}),
+		"the position of the fixed point in the quantified representation.");
 
-	opt_args[{p+"-bits"}] =
-		{"strictly_positive_int",
-		 "the number of bits used for the quantizer."};
+	opt_args.add(
+		{p+"-bits"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"the number of bits used for the quantizer.");
 
-	opt_args[{p+"-range"}] =
-		{"strictly_positive_float",
-		 "the min/max bound for the tricky quantizer."};
+	opt_args.add(
+		{p+"-range"},
+		new tools::Real<>({new tools::Positive<float>(), new tools::Non_zero<float>()}),
+		"the min/max bound for the tricky quantizer.");
 }
 
 void Quantizer::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-size", "N"})) this->size       = std::stoi(vals.at({p+"-size", "N"}));
-	if(exist(vals, {p+"-fra",  "F"})) this->n_frames   = std::stoi(vals.at({p+"-fra",  "F"}));
-	if(exist(vals, {p+"-type"     })) this->type       =           vals.at({p+"-type"     });
-	if(exist(vals, {p+"-dec"      })) this->n_decimals = std::stoi(vals.at({p+"-dec"      }));
-	if(exist(vals, {p+"-bits"     })) this->n_bits     = std::stoi(vals.at({p+"-bits"     }));
-	if(exist(vals, {p+"-range"    })) this->range      = std::stof(vals.at({p+"-range"    }));
+	if(vals.exist({p+"-range"    })) this->range      = vals.to_float({p+"-range"    });
+	if(vals.exist({p+"-size", "N"})) this->size       = vals.to_int  ({p+"-size", "N"});
+	if(vals.exist({p+"-fra",  "F"})) this->n_frames   = vals.to_int  ({p+"-fra",  "F"});
+	if(vals.exist({p+"-dec"      })) this->n_decimals = vals.to_int  ({p+"-dec"      });
+	if(vals.exist({p+"-bits"     })) this->n_bits     = vals.to_int  ({p+"-bits"     });
+	if(vals.exist({p+"-type"     })) this->type       = vals.at      ({p+"-type"     });
 }
 
 void Quantizer::parameters

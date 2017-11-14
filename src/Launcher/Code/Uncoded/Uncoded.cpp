@@ -43,7 +43,7 @@ void Uncoded<L,B,R,Q>
 
 	params_cdc->enc->K = this->params.src->K;
 
-	params_cdc->store(this->ar.get_args());
+	params_cdc->store(this->arg_vals);
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;

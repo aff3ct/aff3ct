@@ -70,52 +70,59 @@ Decoder_polar::parameters* Decoder_polar::parameters
 }
 
 void Decoder_polar::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Decoder::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN");
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN"});
 
-	opt_args[{p+"-ite", "i"}] =
-		{"strictly_positive_int",
-		 "maximal number of iterations in the SCAN decoder."};
+	opt_args.add(
+		{p+"-ite", "i"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"maximal number of iterations in the SCAN decoder.");
 
-	opt_args[{p+"-lists", "L"}] =
-		{"strictly_positive_int",
-		 "maximal number of paths in the SCL decoder."};
+	opt_args.add(
+		{p+"-lists", "L"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"maximal number of paths in the SCL decoder.");
 
-	opt_args[{p+"-simd"}] =
-		{"string",
-		 "the SIMD strategy you want to use.",
-		 "INTRA, INTER"};
+	opt_args.add(
+		{p+"-simd"},
+		new tools::Text<>({new tools::Including_set<std::string>({"INTRA", "INTER"})}),
+		"the SIMD strategy you want to use.");
 
-	opt_args[{p+"-polar-nodes"}] =
-		{"string",
-		 "the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\")."};
+	opt_args.add(
+		{p+"-polar-nodes"},
+		new tools::Text<>(),
+		"the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\").");
 
-	opt_args[{p+"-partial-adaptive"}] =
-		{"",
-		 "enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected)."};
+	opt_args.add(
+		{p+"-partial-adaptive"},
+		new tools::None(),
+		"enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected).");
 
-	opt_args[{p+"-no-sys"}] =
-		{"",
-		 "does not suppose a systematic encoding."};
+	opt_args.add(
+		{p+"-no-sys"},
+		new tools::None(),
+		"does not suppose a systematic encoding.");
 }
 
 void Decoder_polar::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ite",         "i"})) this->n_ite         = std::stoi(vals.at({p+"-ite",    "i"}));
-	if(exist(vals, {p+"-lists",       "L"})) this->L             = std::stoi(vals.at({p+"-lists",  "L"}));
-	if(exist(vals, {p+"-simd"            })) this->simd_strategy =           vals.at({p+"-simd"       });
-	if(exist(vals, {p+"-polar-nodes"     })) this->polar_nodes   =           vals.at({p+"-polar-nodes"});
-	if(exist(vals, {p+"-partial-adaptive"})) this->full_adaptive = false;
+	if(vals.exist({p+"-ite",         "i"})) this->n_ite         = vals.to_int({p+"-ite",    "i"});
+	if(vals.exist({p+"-lists",       "L"})) this->L             = vals.to_int({p+"-lists",  "L"});
+	if(vals.exist({p+"-simd"            })) this->simd_strategy = vals.at    ({p+"-simd"       });
+	if(vals.exist({p+"-polar-nodes"     })) this->polar_nodes   = vals.at    ({p+"-polar-nodes"});
+	if(vals.exist({p+"-partial-adaptive"})) this->full_adaptive = false;
 
 	// force 1 iteration max if not SCAN (and polar code)
 	if (this->type != "SCAN") this->n_ite = 1;

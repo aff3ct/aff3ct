@@ -32,18 +32,23 @@ Decoder_NO::parameters* Decoder_NO::parameters
 }
 
 void Decoder_NO::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Decoder::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}].push_back("NONE");
-	opt_args[{p+"-implem"   }].push_back("HARD_DECISION");
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"NONE"});
+
+	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
+	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
+	arg_range_implem->add_options({"HARD_DECISION"});
 }
 
 void Decoder_NO::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 }

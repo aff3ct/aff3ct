@@ -32,42 +32,46 @@ CRC::parameters* CRC::parameters
 }
 
 void CRC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-info-bits", "K"}] =
-		{"strictly_positive_int",
-		 "number of generated bits (information bits, the CRC is not included)."};
+	req_args.add(
+		{p+"-info-bits", "K"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"number of generated bits (information bits, the CRC is not included).");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	opt_args.add(
+		{p+"-fra", "F"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "select the CRC implementation you want to use.",
-		 "NO, STD, FAST, INTER"};
+	opt_args.add(
+		{p+"-type"},
+		new tools::Text<>({new tools::Including_set<std::string>({"NO", "STD", "FAST", "INTER"})}),
+		"select the CRC implementation you want to use.");
 
-	opt_args[{p+"-poly"}] =
-		{"string",
-		 "select the CRC polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7)."};
+	opt_args.add(
+		{p+"-poly"},
+		new tools::Text<>(),
+		"select the CRC polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7).");
 
-	opt_args[{p+"-size"}] =
-		{"positive_int",
-		 "size of the CRC (divisor size in bit -1), required if you selected an unknown CRC."};
+	opt_args.add(
+		{p+"-size"},
+		new tools::Integer<>({new tools::Positive<int>()}),
+		"size of the CRC (divisor size in bit -1), required if you selected an unknown CRC.");
 }
 
 void CRC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-info-bits", "K"})) this->K        = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-fra",       "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-type"          })) this->type     =           vals.at({p+"-type"          });
-	if(exist(vals, {p+"-poly"          })) this->poly     =           vals.at({p+"-poly"          });
-	if(exist(vals, {p+"-size"          })) this->size     = std::stoi(vals.at({p+"-size"          }));
+	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int({p+"-info-bits", "K"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int({p+"-fra",       "F"});
+	if(vals.exist({p+"-type"          })) this->type     = vals.at    ({p+"-type"          });
+	if(vals.exist({p+"-poly"          })) this->poly     = vals.at    ({p+"-poly"          });
+	if(vals.exist({p+"-size"          })) this->size     = vals.to_int({p+"-size"          });
 
 	if (!this->poly.empty() && !this->size)
 		this->size = module::CRC_polynomial<B>::get_size(this->poly);

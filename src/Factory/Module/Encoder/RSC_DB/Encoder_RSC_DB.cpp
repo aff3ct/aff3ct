@@ -29,7 +29,7 @@ Encoder_RSC_DB::parameters* Encoder_RSC_DB::parameters
 }
 
 void Encoder_RSC_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Encoder::parameters::get_description(req_args, opt_args);
 
@@ -37,28 +37,30 @@ void Encoder_RSC_DB::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type"}][2] += ", RSC_DB";
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<int>*>(opt_args.at({p+"-type"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"RSC_DB"});
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "disable the buffered encoding."};
+	opt_args.add(
+		{p+"-std"},
+		new tools::Text<>({new tools::Including_set<std::string>({"DVB", "RCS2"})}),
+		"select a standard and set automatically some parameters (overwritten with user given arguments).");
 
-	opt_args[{p+"-std"}] =
-		{"string",
-		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
-		 "DVB-RCS1, DVB-RCS2"};
+	opt_args.add(
+		{p+"-no-buff"},
+		new tools::None(),
+		"disable the buffered encoding.");
 }
 
 void Encoder_RSC_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
-
-	if(exist(vals, {p+"-std"})) this->standard = vals.at({p+"-std"});
+	if(vals.exist({p+"-no-buff"})) this->buffered = false;
+	if(vals.exist({p+"-std"    })) this->standard = vals.at({p+"-std"});
 
 	this->N_cw = 2 * this->K;
 	this->R    = (float)this->K / (float)this->N_cw;

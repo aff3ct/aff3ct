@@ -74,11 +74,11 @@ void EXIT<B,R>
 {
 	Launcher::store_args();
 
-	params.store(this->ar.get_args());
+	params.store(this->arg_vals);
 
 	params.src->seed = params.local_seed;
 
-	params.src->store(this->ar.get_args());
+	params.src->store(this->arg_vals);
 
 	auto psrc = params.src->get_prefix();
 
@@ -88,20 +88,20 @@ void EXIT<B,R>
 	params.src->K = params.src->K == 0 ? K : params.src->K;
 	params.mdm->N = N;
 
-	params.mdm->store(this->ar.get_args());
+	params.mdm->store(this->arg_vals);
 
 	params.chn->N         = params.mdm->N_mod;
 	params.chn->complex   = params.mdm->complex;
 	params.chn->add_users = params.mdm->type == "SCMA";
 	params.chn->seed      = params.local_seed;
 
-	params.chn->store(this->ar.get_args());
+	params.chn->store(this->arg_vals);
 
 	params.mnt->size = K;
 
-	params.mnt->store(this->ar.get_args());
+	params.mnt->store(this->arg_vals);
 
-	params.ter->store(this->ar.get_args());
+	params.ter->store(this->arg_vals);
 
 	if (params.src->type == "AZCW" || params.cdc->enc->type == "AZCW")
 	{
@@ -116,7 +116,7 @@ void EXIT<B,R>
 
 	auto pmnt = params.mnt->get_prefix();
 
-	if (!this->ar.exist_arg({pmnt+"-trials", "n"}) && params.cdc->K != 0)
+	if (!this->arg_vals.exist({pmnt+"-trials", "n"}) && params.cdc->K != 0)
 		params.mnt->n_trials = 200000 / params.cdc->K;
 }
 

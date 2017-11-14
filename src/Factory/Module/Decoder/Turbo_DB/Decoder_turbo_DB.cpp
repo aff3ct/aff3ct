@@ -78,7 +78,7 @@ Decoder_turbo_DB::parameters
 }
 
 void Decoder_turbo_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Decoder::parameters::get_description(req_args, opt_args);
 
@@ -93,13 +93,18 @@ void Decoder_turbo_DB::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}].push_back("TURBO_DB");
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"TURBO_DB"});
 
-	opt_args[{p+"-implem"}].push_back("STD");
+	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
+	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
+	arg_range_implem->add_options({"STD"});
 
-	opt_args[{p+"-ite", "i"}] =
-		{"strictly_positive_int",
-		 "maximal number of iterations in the turbo."};
+	opt_args.add(
+		{p+"-ite", "i"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"maximal number of iterations in the turbo.");
 
 	sf->get_description(req_args, opt_args);
 
@@ -111,7 +116,7 @@ void Decoder_turbo_DB::parameters
 
 	auto pfnc = fnc->get_prefix();
 
-	req_args.erase({pfnc+"-size", "K"});
+	req_args.erase({pfnc+"-size"     });
 	opt_args.erase({pfnc+"-fra",  "F"});
 	opt_args.erase({pfnc+"-ite",  "i"});
 
@@ -125,13 +130,13 @@ void Decoder_turbo_DB::parameters
 }
 
 void Decoder_turbo_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ite", "i"})) this->n_ite = std::stoi(vals.at({p+"-ite", "i"}));
+	if(vals.exist({p+"-ite", "i"})) this->n_ite = vals.to_int({p+"-ite", "i"});
 
 	this->sub->K        = this->K;
 	this->sub->n_frames = this->n_frames;
@@ -146,10 +151,10 @@ void Decoder_turbo_DB::parameters
 
 	itl->store(vals);
 
-	if (this->sub->implem == "DVB-RCS1" && !exist(vals, {"itl-type"}))
+	if (this->sub->implem == "DVB-RCS1" && !vals.exist({"itl-type"}))
 		this->itl->core->type = "DVB-RCS1";
 
-	if (this->sub->implem == "DVB-RCS2" && !exist(vals, {"itl-type"}))
+	if (this->sub->implem == "DVB-RCS2" && !vals.exist({"itl-type"}))
 		this->itl->core->type = "DVB-RCS2";
 
 	this->sf->n_ite = this->n_ite;

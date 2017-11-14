@@ -42,7 +42,7 @@ Codec_repetition::parameters* Codec_repetition::parameters
 }
 
 void Codec_repetition::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Codec_SIHO::parameters::get_description(req_args, opt_args);
 
@@ -58,7 +58,7 @@ void Codec_repetition::parameters
 }
 
 void Codec_repetition::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SIHO::parameters::store(vals);
 

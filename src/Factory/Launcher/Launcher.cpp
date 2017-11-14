@@ -108,41 +108,6 @@ void factory::Launcher::parameters
 }
 
 void factory::Launcher::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
-{
-	auto p = this->get_prefix();
-
-	req_args[{p+"-cde-type", "C"}] =
-		{"string",
-		 "select the code type you want to use.",
-		 "POLAR, TURBO, TURBO_DB, LDPC, REP, RA, RSC, RSC_DB, BCH, UNCODED"};
-
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "select the type of simulation to launch (default is BFER).",
-		 "BFER, BFERI, EXIT"};
-
-#ifdef MULTI_PREC
-	opt_args[{p+"-prec", "p"}] =
-		{"positive_int",
-		 "the simulation precision in bits.",
-		 "8, 16, 32"};
-
-#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-	opt_args[{p+"-prec", "p"}][2] += ", 64";
-#endif
-#endif
-
-	opt_args[{"help", "h"}] =
-		{"",
-		 "print this help."};
-
-	opt_args[{"version", "v"}] =
-		{"",
-		 "print informations about the version of the code."};
-}
-
-void factory::Launcher::parameters
 ::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -154,21 +119,6 @@ void factory::Launcher::parameters
 
 #ifdef MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
-#endif
-}
-
-void factory::Launcher::parameters
-::store(const arg_val_map &vals)
-{
-	auto p = this->get_prefix();
-
-	if(exist(vals, {p+"-cde-type", "C"})) this->cde_type        = vals.at({p+"-cde-type", "C"}); // required
-	if(exist(vals, {p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
-	if(exist(vals, {"help",        "h"})) this->display_help    = true;
-	if(exist(vals, {"version",     "v"})) this->display_version = true;
-
-#ifdef MULTI_PREC
-	if(exist(vals, {p+"-prec", "p"})) this->sim_prec = std::stoi(vals.at({p+"-prec", "p"}));
 #endif
 }
 

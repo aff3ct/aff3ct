@@ -64,7 +64,7 @@ std::vector<std::string> Encoder_turbo_DB::parameters
 }
 
 void Encoder_turbo_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Encoder::parameters::get_description(req_args, opt_args);
 
@@ -79,11 +79,14 @@ void Encoder_turbo_DB::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type"}][2] += ", TURBO_DB";
+	auto* arg_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
+	auto* arg_range = dynamic_cast<tools::Set<std::string>*>(arg_type->get_ranges().front());
+	arg_range->add_options({"TURBO_DB"});
 
-	opt_args[{p+"-json-path"}] =
-		{"string",
-		 "path to store the encoder and decoder traces formated in JSON."};
+	opt_args.add(
+		{p+"-json-path"},
+		new tools::Text<>(),
+		"path to store the encoder and decoder traces formated in JSON.");
 
 	sub->get_description(req_args, opt_args);
 
@@ -98,7 +101,7 @@ void Encoder_turbo_DB::parameters
 }
 
 void Encoder_turbo_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
@@ -116,10 +119,10 @@ void Encoder_turbo_DB::parameters
 
 	itl->store(vals);
 
-	if (this->sub->standard == "DVB-RCS1" && !exist(vals, {"itl-type"}))
+	if (this->sub->standard == "DVB-RCS1" && !vals.exist({"itl-type"}))
 		this->itl->core->type = "DVB-RCS1";
 
-	if (this->sub->standard == "DVB-RCS2" && !exist(vals, {"itl-type"}))
+	if (this->sub->standard == "DVB-RCS2" && !vals.exist({"itl-type"}))
 		this->itl->core->type = "DVB-RCS2";
 }
 

@@ -26,13 +26,13 @@ Flip_and_check_DB::parameters* Flip_and_check_DB::parameters
 }
 
 void Flip_and_check_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Flip_and_check::parameters::get_description(req_args, opt_args);
 }
 
 void Flip_and_check_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Flip_and_check::parameters::store(vals);
 }

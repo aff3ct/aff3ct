@@ -47,8 +47,8 @@ struct Decoder_turbo_DB : public Decoder
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const;
+		void store          (const tools::Argument_map_value &vals                                 );
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
@@ -64,8 +64,8 @@ struct Decoder_turbo_DB : public Decoder
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_i);
 
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
+	static void build_args(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args, const std::string p = prefix);
+	static void store_args(const tools::Argument_map_value &vals, parameters &params, const std::string p = prefix);
 	static void make_header(header_list& head_dec, header_list& head_itl, const parameters& params, const bool full = true);
 };
 }

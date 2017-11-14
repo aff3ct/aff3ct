@@ -37,96 +37,108 @@ Modem::parameters* Modem::parameters
 }
 
 void Modem::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	auto p = this->get_prefix();
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	req_args[{p+"-fra-size", "N"}] =
-		{"strictly_positive_int",
-		 "number of symbols by frame."};
+	req_args.add(
+		{p+"-fra-size", "N"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"number of symbols by frame.");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	opt_args.add(
+		{p+"-fra", "F"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, OOK, PSK, PAM, QAM, CPM, USER, SCMA"};
+	opt_args.add(
+		{p+"-type"},
+		new tools::Text<>({new tools::Including_set<std::string>({"BPSK", "BPSK_FAST", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA"})}),
+		"type of the modulation to use in the simulation.");
 
-	opt_args[{p+"-bps"}] =
-		{"strictly_positive_int",
-		 "select the number of bits per symbol (default is 1)."};
+	opt_args.add(
+		{p+"-bps"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"select the number of bits per symbol (default is 1).");
 
-	opt_args[{p+"-ups"}] =
-		{"strictly_positive_int",
-		 "select the symbol sampling factor (default is 1)."};
+	opt_args.add(
+		{p+"-ups"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"select the symbol sampling factor (default is 1).");
 
-	opt_args[{p+"-const-path"}] =
-		{"string",
-		 "path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\"."};
+	opt_args.add(
+		{p+"-const-path"},
+		new tools::Text<>(),
+		"path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\".");
 
-	opt_args[{p+"-cpm-std"}] =
-		{"string",
-		 "the selection of a default CPM standard hardly implemented (any of those parameters is "
-		   "overwritten if the argument is given by the user)",
-		 "GSM"};
+	opt_args.add(
+		{p+"-cpm-std"},
+		new tools::Text<>({new tools::Including_set<std::string>({"GSM"})}),
+		"the selection of a default CPM standard hardly implemented (any of those parameters is "
+		   "overwritten if the argument is given by the user)");
 
-	opt_args[{p+"-cpm-L"}] =
-		{"strictly_positive_int",
-		 "CPM pulse width or CPM memory (default is 2)"};
+	opt_args.add(
+		{p+"-cpm-L"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"CPM pulse width or CPM memory (default is 2).");
 
-	opt_args[{p+"-cpm-k"}] =
-		{"strictly_positive_int",
-		 "modulation index numerator (default is 1)"};
+	opt_args.add(
+		{p+"-cpm-k"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"modulation index numerator (default is 1).");
 
-	opt_args[{p+"-cpm-p"}] =
-		{"strictly_positive_int",
-		 "modulation index denominator (default is 2)"};
+	opt_args.add(
+		{p+"-cpm-p"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"modulation index denominator (default is 2).");
 
-	opt_args[{p+"-cpm-map"}] =
-		{"string",
-		 "symbols mapping layout (default is NATURAL)",
-		 "NATURAL, GRAY"};
+	opt_args.add(
+		{p+"-cpm-map"},
+		new tools::Text<>({new tools::Including_set<std::string>({"NATURAL", "GRAY"})}),
+		"symbols mapping layout (default is NATURAL).");
 
-	opt_args[{p+"-cpm-ws"}] =
-		{"string",
-		 "wave shape (default is GMSK)",
-		 "GMSK, REC, RCOS"};
+	opt_args.add(
+		{p+"-cpm-ws"},
+		new tools::Text<>({new tools::Including_set<std::string>({"GMSK", "REC", "RCOS"})}),
+		"wave shape (default is GMSK).");
+
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	opt_args[{p+"-max"}] =
-		{"string",
-		 "select the type of the max operation to use in the demodulator.",
-		 "MAX, MAXL, MAXS, MAXSS"};
+	opt_args.add(
+		{p+"-max"},
+		new tools::Text<>({new tools::Including_set<std::string>({"MAX", "MAXL", "MAXS", "MAXSS"})}),
+		"select the type of the max operation to use in the demodulator.");
 
-	opt_args[{p+"-sigma"}] =
-		{"strictly_posive_float",
-		 "noise variance value for the demodulator."};
+	opt_args.add(
+		{p+"-sigma"},
+		new tools::Real<>({new tools::Positive<float>(), new tools::Non_zero<float>()}),
+		"noise variance value for the demodulator.");
 
-	opt_args[{p+"-no-sig2"}] =
-		{"",
-		 "turn off the division by sigma square in the demodulator."};
+	opt_args.add(
+		{p+"-no-sig2"},
+		new tools::None(),
+		"turn off the division by sigma square in the demodulator.");
 
-	opt_args[{p+"-psi"}] =
-		{"string",
-		 "select the type of the psi function to use in the SCMA demodulator.",
-		 "PSI0, PSI1, PSI2, PSI3"};
+	opt_args.add(
+		{p+"-psi"},
+		new tools::Text<>({new tools::Including_set<std::string>({"PSI0", "PSI1", "PSI2", "PSI3"})}),
+		"select the type of the psi function to use in the SCMA demodulator.");
 
-	opt_args[{p+"-ite"}] =
-		{"strictly_positive_int",
-		 "select the number of iteration in the demodulator."};
+	opt_args.add(
+		{p+"-ite"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"number of iteration in the demodulator.");
 }
 
 void Modem::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(exist(vals, {p+"-type"         })) this->type       =           vals.at({p+"-type"         });
-	if(exist(vals, {p+"-cpm-std"      })) this->cpm_std    =           vals.at({p+"-cpm-std"      });
+	if(vals.exist({p+"-type"         })) this->type    = vals.at({p+"-type"   });
+	if(vals.exist({p+"-cpm-std"      })) this->cpm_std = vals.at({p+"-cpm-std"});
 
 	if (this->type == "CPM")
 	{
@@ -151,16 +163,16 @@ void Modem::parameters
 		}
 	}
 
-	if(exist(vals, {p+"-fra-size", "N"})) this->N          = std::stoi(vals.at({p+"-fra-size", "N"}));
-	if(exist(vals, {p+"-fra",      "F"})) this->n_frames   = std::stoi(vals.at({p+"-fra",      "F"}));
-	if(exist(vals, {p+"-bps"          })) this->bps        = std::stoi(vals.at({p+"-bps"          }));
-	if(exist(vals, {p+"-ups"          })) this->upf        = std::stoi(vals.at({p+"-ups"          }));
-	if(exist(vals, {p+"-const-path"   })) this->const_path =           vals.at({p+"-const-path"   });
-	if(exist(vals, {p+"-cpm-L"        })) this->cpm_L      = std::stoi(vals.at({p+"-cpm-L"        }));
-	if(exist(vals, {p+"-cpm-p"        })) this->cpm_p      = std::stoi(vals.at({p+"-cpm-p"        }));
-	if(exist(vals, {p+"-cpm-k"        })) this->cpm_k      = std::stoi(vals.at({p+"-cpm-k"        }));
-	if(exist(vals, {p+"-cpm-map"      })) this->mapping    =           vals.at({p+"-cpm-map"      });
-	if(exist(vals, {p+"-cpm-ws"       })) this->wave_shape =           vals.at({p+"-cpm-ws"       });
+	if(vals.exist({p+"-fra-size", "N"})) this->N          = vals.to_int({p+"-fra-size", "N"});
+	if(vals.exist({p+"-fra",      "F"})) this->n_frames   = vals.to_int({p+"-fra",      "F"});
+	if(vals.exist({p+"-bps"          })) this->bps        = vals.to_int({p+"-bps"          });
+	if(vals.exist({p+"-ups"          })) this->upf        = vals.to_int({p+"-ups"          });
+	if(vals.exist({p+"-const-path"   })) this->const_path = vals.at    ({p+"-const-path"   });
+	if(vals.exist({p+"-cpm-L"        })) this->cpm_L      = vals.to_int({p+"-cpm-L"        });
+	if(vals.exist({p+"-cpm-p"        })) this->cpm_p      = vals.to_int({p+"-cpm-p"        });
+	if(vals.exist({p+"-cpm-k"        })) this->cpm_k      = vals.to_int({p+"-cpm-k"        });
+	if(vals.exist({p+"-cpm-map"      })) this->mapping    = vals.at    ({p+"-cpm-map"      });
+	if(vals.exist({p+"-cpm-ws"       })) this->wave_shape = vals.at    ({p+"-cpm-ws"       });
 
 	if (this->type.find("BPSK") != std::string::npos || this->type == "PAM")
 		this->complex = false;
@@ -186,11 +198,11 @@ void Modem::parameters
 	                                               this->cpm_p);
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	if(exist(vals, {p+"-no-sig2"})) this->no_sig2 = true;
-	if(exist(vals, {p+"-sigma"  })) this->sigma   = std::stof(vals.at({p+"-sigma"}));
-	if(exist(vals, {p+"-ite"    })) this->n_ite   = std::stoi(vals.at({p+"-ite"  }));
-	if(exist(vals, {p+"-max"    })) this->max     =           vals.at({p+"-max"  });
-	if(exist(vals, {p+"-psi"    })) this->psi     =           vals.at({p+"-psi"  });
+	if(vals.exist({p+"-no-sig2"})) this->no_sig2 = true;
+	if(vals.exist({p+"-sigma"  })) this->sigma   = vals.to_float({p+"-sigma"});
+	if(vals.exist({p+"-ite"    })) this->n_ite   = vals.to_int  ({p+"-ite"  });
+	if(vals.exist({p+"-max"    })) this->max     = vals.at      ({p+"-max"  });
+	if(vals.exist({p+"-psi"    })) this->psi     = vals.at      ({p+"-psi"  });
 }
 
 void Modem::parameters

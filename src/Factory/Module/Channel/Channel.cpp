@@ -41,82 +41,93 @@ Channel::parameters* Channel::parameters
 }
 
 void Channel::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-fra-size", "N"}] =
-		{"strictly_positive_int",
-		 "number of symbols by frame."};
+	req_args.add(
+		{p+"-fra-size", "N"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"number of symbols by frame.");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	opt_args.add(
+		{p+"-fra", "F"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "type of the channel to use in the simulation.",
-		 "NO, USER, AWGN, RAYLEIGH, RAYLEIGH_USER"};
+	opt_args.add(
+		{p+"-type"},
+		new tools::Text<>({new tools::Including_set<std::string>({"NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER"})}),
+		"type of the channel to use in the simulation.");
 
-	std::string implem_avail = "STD, FAST";
+	opt_args.add(
+		{p+"-implem"},
+		new tools::Text<>({new tools::Including_set<std::string>({"STD", "FAST"})}),
+		"select the implementation of the algorithm to generate noise.");
+
 #ifdef CHANNEL_GSL
-	implem_avail += ", GSL";
+	auto* arg_type_gsl  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
+	auto* arg_range_gsl = dynamic_cast<tools::Set<std::string>*>(arg_type_gsl->get_ranges().front());
+	arg_range_gsl->add_options({"GSL"});
 #endif
 #ifdef CHANNEL_MKL
-	implem_avail += ", MKL";
+	auto* arg_type_mkl  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
+	auto* arg_range_mkl = dynamic_cast<tools::Set<std::string>*>(arg_type_mkl->get_ranges().front());
+	arg_range_mkl->add_options({"MKL"});
 #endif
 
-	opt_args[{p+"-implem"}] =
-		{"string",
-		 "select the implementation of the algorithm to generate noise.",
-		 implem_avail};
+	opt_args.add(
+		{p+"-path"},
+		new tools::Text<>(),
+		"path to a noisy file, to use with \"--chn-type USER\" or to a gains file (used with \"--chn-type RAYLEIGH_USER\").");
 
-	opt_args[{p+"-path"}] =
-		{"string",
-		 "path to a noisy file, to use with \"--chn-type USER\" or to a gains file (used with \"--chn-type RAYLEIGH_USER\")."};
+	opt_args.add(
+		{p+"-blk-fad"},
+		new tools::Text<>({new tools::Including_set<std::string>({"NO", "FRAME", "ONETAP"})}),
+		"block fading policy for the RAYLEIGH channel.");
 
-	opt_args[{p+"-blk-fad"}] =
-		{"string",
-		 "block fading policy for the RAYLEIGH channel.",
-		 "NO, FRAME, ONETAP"};
+	opt_args.add(
+		{p+"-sigma"},
+		new tools::Real<>({new tools::Positive<float>(), new tools::Non_zero<float>()}),
+		"noise variance value.");
 
-	opt_args[{p+"-sigma"}] =
-		{"strictly_positive_float",
-		 "noise variance value."};
+	opt_args.add(
+		{p+"-seed", "S"},
+		new tools::Integer<>({new tools::Positive<int>()}),
+		"seed used to initialize the pseudo random generators.");
 
-	opt_args[{p+"-seed", "S"}] =
-		{"positive_int",
-		 "seed used to initialize the pseudo random generators."};
+	opt_args.add(
+		{p+"-add-users"},
+		new tools::None(),
+		"add all the users (= frames) before generating the noise.");
 
-	opt_args[{p+"-add-users"}] =
-		{"",
-		 "add all the users (= frames) before generating the noise."};
+	opt_args.add(
+		{p+"-complex"},
+		new tools::None(),
+		"enable complex noise generation.");
 
-	opt_args[{p+"-complex"}] =
-		{"",
-		 "enable complex noise generation."};
-
-	opt_args[{p+"-gain-occur"}] =
-		{"strictly_positive_int",
-		 "the number of times a gain is used on consecutive symbols (used with \"--chn-type RAYLEIGH_USER\")."};
+	opt_args.add(
+		{p+"-gain-occur"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"the number of times a gain is used on consecutive symbols (used with \"--chn-type RAYLEIGH_USER\").");
 }
 
 void Channel::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-fra-size", "N"})) this->N            = std::stoi(vals.at({p+"-fra-size", "N"}));
-	if(exist(vals, {p+"-fra",      "F"})) this->n_frames     = std::stoi(vals.at({p+"-fra",      "F"}));
-	if(exist(vals, {p+"-type"         })) this->type         =           vals.at({p+"-type"         });
-	if(exist(vals, {p+"-implem"       })) this->implem       =           vals.at({p+"-implem"       });
-	if(exist(vals, {p+"-path"         })) this->path         =           vals.at({p+"-path"         });
-	if(exist(vals, {p+"-blk-fad"      })) this->block_fading =           vals.at({p+"-blk-fad"      });
-	if(exist(vals, {p+"-sigma"        })) this->sigma        = std::stof(vals.at({p+"-sigma"        }));
-	if(exist(vals, {p+"-seed",     "S"})) this->seed         = std::stoi(vals.at({p+"-seed",     "S"}));
-	if(exist(vals, {p+"-add-users"    })) this->add_users    = true;
-	if(exist(vals, {p+"-complex"      })) this->complex      = true;
-	if(exist(vals, {p+"-gain-occur"   })) this->gain_occur   = std::stoi(vals.at({p+"-gain-occur"   }));
+	if(vals.exist({p+"-fra-size", "N"})) this->N            = vals.to_int({p+"-fra-size", "N"});
+	if(vals.exist({p+"-fra",      "F"})) this->n_frames     = vals.to_int({p+"-fra",      "F"});
+	if(vals.exist({p+"-seed",     "S"})) this->seed         = vals.to_int({p+"-seed",     "S"});
+	if(vals.exist({p+"-gain-occur"   })) this->gain_occur   = vals.to_int({p+"-gain-occur"   });
+	if(vals.exist({p+"-type"         })) this->type         = vals.at    ({p+"-type"         });
+	if(vals.exist({p+"-implem"       })) this->implem       = vals.at    ({p+"-implem"       });
+	if(vals.exist({p+"-path"         })) this->path         = vals.at    ({p+"-path"         });
+	if(vals.exist({p+"-blk-fad"      })) this->block_fading = vals.at    ({p+"-blk-fad"      });
+	if(vals.exist({p+"-add-users"    })) this->add_users    = true;
+	if(vals.exist({p+"-complex"      })) this->complex      = true;
+	if(vals.exist({p+"-sigma"        })) this->sigma        = vals.to_float({p+"-sigma"      });
 }
 
 void Channel::parameters

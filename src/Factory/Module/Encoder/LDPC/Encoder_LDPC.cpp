@@ -31,32 +31,36 @@ Encoder_LDPC::parameters* Encoder_LDPC::parameters
 }
 
 void Encoder_LDPC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Encoder::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"LDPC", "LDPC_H", "LDPC_DVBS2"});
 
-	opt_args[{p+"-h-path"}] =
-		{"string",
-		 "path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder)."};
+	opt_args.add(
+		{p+"-h-path"},
+		new tools::Text<>(),
+		"path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder).");
 
-	opt_args[{p+"-g-path"}] =
-		{"string",
-		 "path to the G matrix (AList formated file, required by the \"LDPC\" encoder)."};
+	opt_args.add(
+		{p+"-g-path"},
+		new tools::Text<>(),
+		"path to the G matrix (AList formated file, required by the \"LDPC\" encoder).");
 }
 
 void Encoder_LDPC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-h-path"})) this->H_alist_path = vals.at({p+"-h-path"});
-	if(exist(vals, {p+"-g-path"})) this->G_alist_path = vals.at({p+"-g-path"});
+	if(vals.exist({p+"-h-path"})) this->H_alist_path = vals.at({p+"-h-path"});
+	if(vals.exist({p+"-g-path"})) this->G_alist_path = vals.at({p+"-g-path"});
 }
 
 void Encoder_LDPC::parameters

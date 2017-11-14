@@ -42,7 +42,7 @@ template <class L, typename B, typename R, typename Q>
 void BCH<L,B,R,Q>
 ::store_args()
 {
-	params_cdc->store(this->ar.get_args());
+	params_cdc->store(this->arg_vals);
 
 	L::store_args();
 

@@ -85,37 +85,38 @@ std::vector<std::string> EXIT::parameters
 }
 
 void EXIT::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Simulation::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	req_args[{p+"-siga-min", "a"}] =
-		{"positive_float",
-		 "sigma min value used in EXIT charts."};
+	req_args.add(
+		{p+"-siga-min", "a"},
+		new tools::Real<>({new tools::Positive<float>()}),
+		"sigma min value used in EXIT charts.");
 
-	req_args[{p+"-siga-max", "A"}] =
-		{"positive_float",
-		 "sigma max value used in EXIT charts."};
+	req_args.add(
+		{p+"-siga-max", "A"},
+		new tools::Real<>({new tools::Positive<float>()}),
+		"sigma max value used in EXIT charts.");
 
-	opt_args[{p+"-siga-step"}] =
-		{"strictly_positive_float",
-		 "sigma step value used in EXIT charts."};
-
-	opt_args[{p+"-inter-lvl"}].push_back("1");
+	opt_args.add(
+		{p+"-siga-step"},
+		new tools::Real<>({new tools::Positive<float>(), new tools::Non_zero<float>()}),
+		"sigma step value used in EXIT charts.");
 }
 
 void EXIT::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Simulation::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-siga-min", "a"})) this->sig_a_min  = std::stof(vals.at({p+"-siga-min", "a"}));
-	if(exist(vals, {p+"-siga-max", "A"})) this->sig_a_max  = std::stof(vals.at({p+"-siga-max", "A"}));
-	if(exist(vals, {p+"-siga-step"    })) this->sig_a_step = std::stof(vals.at({p+"-siga-step"    }));
+	if(vals.exist({p+"-siga-min", "a"})) this->sig_a_min  = vals.to_float({p+"-siga-min", "a"});
+	if(vals.exist({p+"-siga-max", "A"})) this->sig_a_max  = vals.to_float({p+"-siga-max", "A"});
+	if(vals.exist({p+"-siga-step"    })) this->sig_a_step = vals.to_float({p+"-siga-step"    });
 }
 
 void EXIT::parameters

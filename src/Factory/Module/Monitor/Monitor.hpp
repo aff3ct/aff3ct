@@ -28,8 +28,8 @@ struct Monitor : public Factory
 		virtual Monitor::parameters* clone() const;
 
 		// parameters construction
-		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const;
+		virtual void store          (const tools::Argument_map_value &vals                                 );
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:

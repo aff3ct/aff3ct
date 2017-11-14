@@ -90,7 +90,7 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 
 template <class D1, class D2>
 void Decoder_turbo::parameters<D1,D2>
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Decoder::parameters::get_description(req_args, opt_args);
 
@@ -105,21 +105,29 @@ void Decoder_turbo::parameters<D1,D2>
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}].push_back("TURBO");
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"TURBO"});
 
-	opt_args[{p+"-implem"}].push_back("STD, FAST");
+	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
+	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
+	arg_range_implem->add_options({"STD", "FAST"});
 
-	opt_args[{p+"-ite", "i"}] =
-		{"strictly_positive_int",
-		 "maximal number of iterations in the turbo."};
+	opt_args.add(
+		{p+"-ite", "i"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"maximal number of iterations in the turbo.");
 
-	opt_args[{p+"-sc"}] =
-		{"",
-		 "enables the self corrected decoder (requires \"--crc-type\")."};
+	opt_args.add(
+		{p+"-sc"},
+		new tools::None(),
+		"enables the self corrected decoder (requires \"--crc-type\").");
 
-	opt_args[{p+"-json"}] =
-		{"",
-		 "enable the json output trace."};
+	opt_args.add(
+		{p+"-json"},
+		new tools::None(),
+		"enable the json output trace.");
+
 
 	sf->get_description(req_args, opt_args);
 
@@ -131,7 +139,7 @@ void Decoder_turbo::parameters<D1,D2>
 
 	auto pfnc = fnc->get_prefix();
 
-	req_args.erase({pfnc+"-size", "K"});
+	req_args.erase({pfnc+"-size"     });
 	opt_args.erase({pfnc+"-fra",  "F"});
 	opt_args.erase({pfnc+"-ite",  "i"});
 
@@ -155,15 +163,15 @@ void Decoder_turbo::parameters<D1,D2>
 
 template <class D1, class D2>
 void Decoder_turbo::parameters<D1,D2>
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ite", "i"})) this->n_ite          = std::stoi(vals.at({p+"-ite", "i"}));
-	if(exist(vals, {p+"-sc"      })) this->self_corrected = true;
-	if(exist(vals, {p+"-json"    })) this->enable_json    = true;
+	if(vals.exist({p+"-ite", "i"})) this->n_ite          = vals.to_int({p+"-ite", "i"});
+	if(vals.exist({p+"-sc"      })) this->self_corrected = true;
+	if(vals.exist({p+"-json"    })) this->enable_json    = true;
 
 	this->sub1->K        = this->K;
 	this->sub2->K        = this->K;
@@ -190,10 +198,10 @@ void Decoder_turbo::parameters<D1,D2>
 
 	itl->store(vals);
 
-	if (this->sub1->standard == "LTE" && !exist(vals, {"itl-type"}))
+	if (this->sub1->standard == "LTE" && !vals.exist({"itl-type"}))
 		this->itl->core->type = "LTE";
 
-	if (this->sub1->standard == "CCSDS" && !exist(vals, {"itl-type"}))
+	if (this->sub1->standard == "CCSDS" && !vals.exist({"itl-type"}))
 		this->itl->core->type = "CCSDS";
 
 	this->sf->n_ite = this->n_ite;

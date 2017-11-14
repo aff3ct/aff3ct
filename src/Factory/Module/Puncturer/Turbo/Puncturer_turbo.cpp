@@ -31,7 +31,7 @@ Puncturer_turbo::parameters* Puncturer_turbo::parameters
 }
 
 void Puncturer_turbo::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Puncturer::parameters::get_description(req_args, opt_args);
 
@@ -39,19 +39,24 @@ void Puncturer_turbo::parameters
 
 	req_args.erase({p+"-fra-size", "N"});
 
-	opt_args[{p+"-type"}][2] += ", TURBO";
+	auto* arg_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
+	auto* arg_range = dynamic_cast<tools::Set<std::string>*>(arg_type->get_ranges().front());
+	arg_range->add_options({"TURBO"});
 
-	opt_args[{p+"-pattern"}] =
-		{"string",
-		 "puncturing pattern for the turbo encoder (ex: \"11,10,01\")."};
+	opt_args.add(
+		{p+"-pattern"},
+		new tools::Text<>(),
+		"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
 
-	opt_args[{p+"-tail-length"}] =
-		{"positive_int",
-		 "total number of tail bits at the end of the frame."};
+	opt_args.add(
+		{p+"-tail-length"},
+		new tools::Integer<>({new tools::Positive<int>()}),
+		"total number of tail bits at the end of the frame.");
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "does not suppose a buffered encoding."};
+	opt_args.add(
+		{p+"-no-buff"},
+		new tools::None(),
+		"does not suppose a buffered encoding.");
 }
 
 int compute_N(const int K, const int tail_bits,  const std::string pattern)
@@ -124,15 +129,15 @@ int compute_N(const int K, const int tail_bits,  const std::string pattern)
 }
 
 void Puncturer_turbo::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Puncturer::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-pattern"    })) this->pattern     =           vals.at({p+"-pattern"    });
-	if(exist(vals, {p+"-tail-length"})) this->tail_length = std::stoi(vals.at({p+"-tail-length"}));
-	if(exist(vals, {p+"-no-buff"    })) this->buffered    = false;
+	if(vals.exist({p+"-pattern"    })) this->pattern     = vals.at    ({p+"-pattern"    });
+	if(vals.exist({p+"-tail-length"})) this->tail_length = vals.to_int({p+"-tail-length"});
+	if(vals.exist({p+"-no-buff"    })) this->buffered    = false;
 
 	this->N_cw = 3 * this->K + this->tail_length;
 	this->N    = compute_N(this->K, this->tail_length, this->pattern);

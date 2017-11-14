@@ -33,7 +33,7 @@ Encoder_RSC::parameters* Encoder_RSC::parameters
 }
 
 void Encoder_RSC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Encoder::parameters::get_description(req_args, opt_args);
 
@@ -41,32 +41,35 @@ void Encoder_RSC::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type"}][2] += ", RSC";
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"RSC"});
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "disable the buffered encoding."};
+	opt_args.add(
+		{p+"-no-buff"},
+		new tools::None(),
+		"disable the buffered encoding.");
 
-	opt_args[{p+"-poly"}] =
-		{"string",
-		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+	opt_args.add(
+		{p+"-poly"},
+		new tools::Text<>(),
+		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
 
-	opt_args[{p+"-std"}] =
-		{"string",
-		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
-		 "LTE, CCSDS"};
+	opt_args.add(
+		{p+"-std"},
+		new tools::Text<>({new tools::Including_set<std::string>({"LTE", "CCSDS"})}),
+		"select a standard and set automatically some parameters (overwritten with user given arguments)");
 }
 
 void Encoder_RSC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
-
-	if(exist(vals, {p+"-std"})) this->standard = vals.at({p+"-std"});
+	if(vals.exist({p+"-no-buff"})) this->buffered = false;
+	if(vals.exist({p+"-std"    })) this->standard = vals.at({p+"-std"});
 
 	if (this->standard == "LTE")
 		this->poly = {013, 015};
@@ -74,7 +77,7 @@ void Encoder_RSC::parameters
 	if (this->standard == "CCSDS")
 		this->poly = {023, 033};
 
-	if (exist(vals, {p+"-poly"}))
+	if (vals.exist({p+"-poly"}))
 	{
 		auto poly_str = vals.at({p+"-poly"});
 

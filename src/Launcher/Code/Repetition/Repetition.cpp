@@ -39,7 +39,7 @@ template <class L, typename B, typename R, typename Q>
 void Repetition<L,B,R,Q>
 ::store_args()
 {
-	params_cdc->store(this->ar.get_args());
+	params_cdc->store(this->arg_vals);
 
 	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
 	{

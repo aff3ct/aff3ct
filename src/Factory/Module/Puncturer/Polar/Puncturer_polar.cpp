@@ -29,17 +29,19 @@ Puncturer_polar::parameters* Puncturer_polar::parameters
 }
 
 void Puncturer_polar::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Puncturer::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type"}][2] += ", WANGLIU";
+	auto* arg_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
+	auto* arg_range = dynamic_cast<tools::Set<std::string>*>(arg_type->get_ranges().front());
+	arg_range->add_options({"WANGLIU"});
 }
 
 void Puncturer_polar::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Puncturer::parameters::store(vals);
 	this->N_cw = (int)std::exp2((int)std::ceil(std::log2(this->N)));

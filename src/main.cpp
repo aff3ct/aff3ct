@@ -92,24 +92,31 @@ int read_arguments(const int argc, const char** argv, factory::Launcher::paramet
 
 	auto arg_vals = ah.parse_arguments(req_args, opt_args, cmd_warn, cmd_error);
 
-	params.store(arg_vals);
+	bool display_help = false;
+	try
+	{
+		params.store(arg_vals);
+	}
+	catch(std::exception&)
+	{
+		display_help = true;
+	}
 
 	if (params.display_version)
 		print_version();
 
-	if (cmd_error.size())
+	if (cmd_error.size() || display_help)
 	{
 		arg_group["sim"] = "Simulation parameter(s)";
 		ah.print_help(req_args, opt_args, arg_group);
 
 		for (auto w = 0; w < (int)cmd_error.size(); w++)
 			std::cerr << tools::format_error(cmd_error[w]) << std::endl;
+
+		for (auto w = 0; w < (int)cmd_warn.size(); w++)
+			std::cerr << tools::format_warning(cmd_warn[w]) << std::endl;
 	}
-
-	for (auto w = 0; w < (int)cmd_warn.size(); w++)
-		std::cerr << tools::format_warning(cmd_warn[w]) << std::endl;
-
-	return cmd_error.size() ? EXIT_FAILURE : EXIT_SUCCESS;
+	return (cmd_error.size() || display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 #ifndef SYSTEMC

@@ -31,7 +31,7 @@ using namespace aff3ct;
 using namespace aff3ct::launcher;
 
 Launcher::Launcher(const int argc, const char **argv, factory::Simulation::parameters &params, std::ostream &stream)
-: simu(nullptr), ar(argc, argv), params(params), stream(stream)
+: simu(nullptr), ah(argc, argv), params(params), stream(stream)
 {
 	cmd_line += std::string(argv[0]) + std::string(" ");
 	for (auto i = 1; i < argc; i++)
@@ -63,8 +63,7 @@ int Launcher::read_arguments()
 
 	std::vector<std::string> cmd_error;
 
-	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
-	bool error    = !ar.check_arguments(cmd_error);
+	this->arg_vals = ah.parse_arguments(this->req_args, this->opt_args, this->cmd_warn, cmd_error);
 
 	try
 	{
@@ -72,37 +71,34 @@ int Launcher::read_arguments()
 	}
 	catch(std::exception&)
 	{
-		params.display_help = true;
+		this->params.display_help = true;
 	}
 
-	if (params.display_help)
+	if (this->params.display_help)
 	{
-		auto grps = factory::Factory::create_groups({&params});
-
-		ar.print_usage(grps);
-		error = true; // in order to exit at the end of this function
+		auto grps = factory::Factory::create_groups({&this->params});
+		ah.print_help(this->req_args, this->opt_args, grps);
 	}
 
 	// print the errors
+	if (cmd_error.size())
+		std::cerr << std::endl;
 	for (unsigned e = 0; e < cmd_error.size(); e++)
 		std::cerr << tools::format_error(cmd_error[e]) << std::endl;
 
-	if (miss_arg)
-		std::cerr << tools::format_error("At least one required argument is missing.") << std::endl;
-
 	// print the help tags
-	if ((miss_arg || error) && !params.display_help)
+	if (cmd_error.size() && !this->params.display_help)
 	{
 		std::string message = "For more information please display the help (";
 		std::vector<std::string> help_tag = {"help", "h"};
 		for (unsigned i = 0; i < help_tag.size(); i++)
-			message += tools::Arguments_reader::print_tag(help_tag[i]) + ((i < help_tag.size()-1)?", ":"");
+			message += tools::Argument_handler::print_tag(help_tag[i]) + ((i < help_tag.size()-1)?", ":"");
 
 		message += ").";
 		std::cerr << tools::format_info(message) << std::endl;
 	}
 
-	return ((miss_arg || error) ? EXIT_FAILURE : EXIT_SUCCESS);
+	return (cmd_error.size() || this->params.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 void Launcher::print_header()
@@ -112,7 +108,7 @@ void Launcher::print_header()
 	stream << "# " << tools::style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", tools::Style::BOLD) << std::endl;
 	stream << "# " << tools::style("-------------------------------------------------", tools::Style::BOLD) << std::endl;
 	stream << "# " << tools::style(style("Parameters :", tools::Style::BOLD), tools::Style::UNDERLINED) << std::endl;
-	factory::Header::print_parameters({&params}, false, this->stream);
+	factory::Header::print_parameters({&this->params}, false, this->stream);
 	this->stream << "#" << std::endl;
 }
 
@@ -133,8 +129,8 @@ void Launcher::launch()
 #ifdef ENABLE_MPI
 		if (this->params.mpi_rank == 0)
 #endif
-			for (unsigned w = 0; w < cmd_warn.size(); w++)
-				std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
+			for (unsigned w = 0; w < this->cmd_warn.size(); w++)
+				std::clog << tools::format_warning(this->cmd_warn[w]) << std::endl;
 		return;
 	}
 
@@ -160,8 +156,8 @@ void Launcher::launch()
 #ifdef ENABLE_MPI
 	if (this->params.mpi_rank == 0)
 #endif
-		for (unsigned w = 0; w < cmd_warn.size(); w++)
-			std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
+		for (unsigned w = 0; w < this->cmd_warn.size(); w++)
+			std::clog << tools::format_warning(this->cmd_warn[w]) << std::endl;
 
 	try
 	{

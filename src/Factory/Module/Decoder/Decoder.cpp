@@ -23,42 +23,47 @@ Decoder::parameters* Decoder::parameters
 }
 
 void Decoder::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-info-bits", "K"}] =
-		{"strictly_positive_int",
-		 "useful number of bit transmitted (information bits)."};
+	req_args.add(
+		{p+"-cw-size", "N"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"the codeword size.");
 
-	req_args[{p+"-cw-size", "N"}] =
-		{"strictly_positive_int",
-		 "the codeword size."};
+	req_args.add(
+		{p+"-info-bits", "K"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"useful number of bit transmitted (information bits).");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	opt_args.add(
+		{p+"-fra", "F"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type", "D"}] =
-		{"string",
-		 "select the algorithm you want to decode the codeword."};
+	opt_args.add(
+		{p+"-type", "D"},
+		new tools::Text<>({new tools::Including_set<std::string>({})}),
+		"select the algorithm you want to decode the codeword.");
 
-	opt_args[{p+"-implem"}] =
-		{"string",
-		 "select the implementation of the algorithm to decode."};
+	opt_args.add(
+		{p+"-implem"},
+		new tools::Text<>({new tools::Including_set<std::string>({})}),
+		"select the implementation of the algorithm to decode.");
 }
 
 void Decoder::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-info-bits", "K"})) this->K          = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-cw-size",   "N"})) this->N_cw       = std::stoi(vals.at({p+"-cw-size",   "N"}));
-	if(exist(vals, {p+"-fra",       "F"})) this->n_frames   = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-type",      "D"})) this->type       =           vals.at({p+"-type",      "D"});
-	if(exist(vals, {p+"-implem"        })) this->implem     =           vals.at({p+"-implem"        });
-	if(exist(vals, {p+"-no-sys"        })) this->systematic = false;
+	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int({p+"-info-bits", "K"});
+	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int({p+"-fra",       "F"});
+	if(vals.exist({p+"-type",      "D"})) this->type       = vals.at    ({p+"-type",      "D"});
+	if(vals.exist({p+"-implem"        })) this->implem     = vals.at    ({p+"-implem"        });
+	if(vals.exist({p+"-no-sys"        })) this->systematic = false;
 
 	this->R = (float)this->K / (float)this->N_cw;
 }

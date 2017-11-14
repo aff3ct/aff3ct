@@ -84,7 +84,7 @@ std::vector<std::string> Codec_turbo_DB::parameters
 }
 
 void Codec_turbo_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Codec_SIHO::parameters::get_description(req_args, opt_args);
 
@@ -99,7 +99,7 @@ void Codec_turbo_DB::parameters
 		opt_args.erase({ppct+"-fra",       "F"});
 		opt_args.erase({ppct+"-tail-length"   });
 
-		opt_args[{ppct+"-fra-size", "N"}] = req_args[{ppct+"-fra-size", "N"}];
+		opt_args[{ppct+"-fra-size", "N"}] = req_args[{ppct+"-fra-size", "N"}]->clone();
 		req_args.erase({ppct+"-fra-size", "N"});
 	}
 
@@ -118,7 +118,7 @@ void Codec_turbo_DB::parameters
 }
 
 void Codec_turbo_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SIHO::parameters::store(vals);
 
@@ -144,7 +144,7 @@ void Codec_turbo_DB::parameters
 
 	auto pdes = dec->sub->get_prefix();
 
-	if (!this->enc->sub->standard.empty() && !exist(vals, {pdes+"-implem"}))
+	if (!this->enc->sub->standard.empty() && !vals.exist({pdes+"-implem"}))
 		this->dec->sub->implem = this->enc->sub->standard;
 
 	this->K    = this->enc->K;

@@ -31,19 +31,20 @@ Decoder_BCH::parameters* Decoder_BCH::parameters
 }
 
 void Decoder_BCH::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Decoder::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-corr-pow", "T"}] =
-		{"strictly_positive_int",
-		 "correction power of the BCH code."};
+	opt_args.add(
+		{p+"-corr-pow", "T"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"correction power of the BCH code.");
 }
 
 void Decoder_BCH::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
@@ -57,8 +58,8 @@ void Decoder_BCH::parameters
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (exist(vals, {p+"-corr-pow", "T"}))
-		this->t = std::stoi(vals.at({p+"-corr-pow", "T"}));
+	if (vals.exist({p+"-corr-pow", "T"}))
+		this->t = vals.to_int({p+"-corr-pow", "T"});
 	else
 		this->t = (this->N_cw - this->K) / this->m;
 }

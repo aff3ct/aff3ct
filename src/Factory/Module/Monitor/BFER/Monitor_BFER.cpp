@@ -28,35 +28,38 @@ Monitor_BFER::parameters* Monitor_BFER::parameters
 }
 
 void Monitor_BFER::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Monitor::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	req_args[{p+"-size", "K"}] =
-		{"strictly_positive_int",
-		 "number of bits to check."};
+	req_args.add(
+		{p+"-size", "K"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"number of bits to check.");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	opt_args.add(
+		{p+"-fra", "F"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-max-fe", "e"}] =
-		{"strictly_positive_int",
-		 "max number of frame errors for each SNR simulation."};
+	opt_args.add(
+		{p+"-max-fe", "e"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"max number of frame errors for each SNR simulation.");
 }
 
 void Monitor_BFER::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Monitor::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-size",   "K"})) this->size           = std::stoi(vals.at({p+"-size",   "K"}));
-	if(exist(vals, {p+"-fra",    "F"})) this->n_frames       = std::stoi(vals.at({p+"-fra",    "F"}));
-	if(exist(vals, {p+"-max-fe", "e"})) this->n_frame_errors = std::stoi(vals.at({p+"-max-fe", "e"}));
+	if(vals.exist({p+"-size",   "K"})) this->size           = vals.to_int({p+"-size",   "K"});
+	if(vals.exist({p+"-fra",    "F"})) this->n_frames       = vals.to_int({p+"-fra",    "F"});
+	if(vals.exist({p+"-max-fe", "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe", "e"});
 }
 
 void Monitor_BFER::parameters

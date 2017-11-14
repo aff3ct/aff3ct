@@ -29,27 +29,30 @@ Encoder_repetition::parameters* Encoder_repetition::parameters
 }
 
 void Encoder_repetition::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Encoder::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type"}][2] += ", REPETITION";
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"REPETITION"});
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "disable the buffered encoding."};
+	opt_args.add(
+		{p+"-no-buff"},
+		new tools::None(),
+		"disable the buffered encoding.");
 }
 
 void Encoder_repetition::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
+	if(vals.exist({p+"-no-buff"})) this->buffered = false;
 }
 
 void Encoder_repetition::parameters

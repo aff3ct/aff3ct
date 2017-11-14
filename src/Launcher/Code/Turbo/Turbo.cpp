@@ -48,7 +48,7 @@ template <class L, typename B, typename R, typename Q>
 void Turbo<L,B,R,Q>
 ::store_args()
 {
-	params_cdc->store(this->ar.get_args());
+	params_cdc->store(this->arg_vals);
 
 	if (params_cdc->dec->sub1->simd_strategy == "INTER")
 		this->params.src->n_frames = mipp::N<Q>();

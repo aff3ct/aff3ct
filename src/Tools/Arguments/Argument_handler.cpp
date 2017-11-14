@@ -60,7 +60,8 @@ Argument_map_value Argument_handler
 		if (command_found_pos[i])
 			continue;
 
-		std::string message = "Unknown argument \"" + this->command[i] + "\".";
+		std::string message = "Unknown argument \"" + this->command[i] + "\" at the position "
+		                     + std::to_string(i+1) + ".";
 		warnings.push_back(message);
 	}
 

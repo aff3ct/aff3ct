@@ -13,10 +13,6 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-bool aff3ct::factory::exist(const arg_val_map &vals, const std::vector<std::string> &tags)
-{
-	return (vals.find(tags) != vals.end());
-}
 
 Factory::parameters
 ::parameters(const std::string name, const std::string short_name, const std::string prefix)
@@ -69,10 +65,10 @@ std::vector<std::string> Factory::parameters
 	return p;
 }
 
-std::pair<arg_map, arg_map> Factory
+std::pair<tools::Argument_map_info, tools::Argument_map_info> Factory
 ::get_description(const std::vector<Factory::parameters*> &params)
 {
-	std::pair<arg_map, arg_map> args;
+	std::pair<tools::Argument_map_info, tools::Argument_map_info> args;
 	for (auto *p : params)
 		p->get_description(args.first, args.second);
 
@@ -80,39 +76,14 @@ std::pair<arg_map, arg_map> Factory
 }
 
 void Factory
-::store(std::vector<Factory::parameters*> &params, const arg_val_map &vals)
+::store(std::vector<Factory::parameters*> &params, const tools::Argument_map_value &vals)
 {
 	for (auto *p : params)
 		p->store(vals);
 }
 
-aff3ct::factory::arg_grp Factory
-::create_groups(const std::vector<Factory::parameters*> &params)
-{
-	// create groups of arguments
-	aff3ct::factory::arg_grp grps;
-	for (auto *p : params)
-	{
-		auto prefixes    = p->get_prefixes   ();
-		auto short_names = p->get_short_names();
-
-		if (prefixes.size() != short_names.size())
-		{
-			std::stringstream message;
-			message << "'prefixes.size()' has to be equal to 'short_names.size()' ('prefixes.size()' = "
-			        << prefixes.size() << ", 'short_names.size()' = " << short_names.size() << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		for (size_t i = 0; i < prefixes.size(); i++)
-			grps.push_back({prefixes[i], short_names[i] + " parameter(s)"});
-	}
-
-	return grps;
-}
-
 tools::Argument_map_group Factory
-::create_map_groups(const std::vector<Factory::parameters*> &params)
+::create_groups(const std::vector<Factory::parameters*> &params)
 {
 	// create groups of arguments
 	tools::Argument_map_group grps;

@@ -103,9 +103,6 @@ public:
 	: Argument_range<T>(title)
 	{
 		add_options(options);
-
-		if (options.empty())
-			throw std::invalid_argument("The given option list is empty.");
 	}
 
 	virtual ~Set() {};
@@ -160,6 +157,9 @@ public:
 
 	virtual void check(const T& val) const
 	{
+		if (this->options.empty())
+			return;
+
 		auto it = std::find(this->options.begin(), this->options.end(), val);
 
 		if (it == this->options.end())
@@ -184,6 +184,9 @@ public:
 
 	virtual void check(const T& val) const
 	{
+		if (this->options.empty())
+			return;
+
 		auto it = std::find(this->options.begin(), this->options.end(), val);
 
 		if (it != this->options.end())

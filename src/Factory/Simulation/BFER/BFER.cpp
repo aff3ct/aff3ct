@@ -90,44 +90,50 @@ std::vector<std::string> BFER::parameters
 }
 
 void BFER::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Simulation::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-snr-type", "E"}] =
-		{"string",
-		 "select the type of SNR: symbol energy or information bit energy.",
-		 "ES, EB"};
+	opt_args.add(
+		{p+"-snr-type", "E"},
+		new tools::Text<>({new tools::Including_set<std::string>({"ES", "EB"})}),
+		"select the type of SNR: symbol energy or information bit energy.");
 
-	opt_args[{p+"-coset", "c"}] =
-		{"",
-		 "enable the coset approach."};
+	opt_args.add(
+		{p+"-coset", "c"},
+		new tools::None(),
+		"enable the coset approach.");
 
-	opt_args[{p+"-err-trk"}] =
-		{"",
-		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
+	opt_args.add(
+		{p+"-err-trk"},
+		new tools::None(),
+		"enable the tracking of the bad frames (by default the frames are stored in the current folder).");
 
-	opt_args[{p+"-err-trk-rev"}] =
-		{"",
-		 "automatically replay the saved frames."};
+	opt_args.add(
+		{p+"-err-trk-rev"},
+		new tools::None(),
+		"automatically replay the saved frames.");
 
-	opt_args[{p+"-err-trk-path"}] =
-		{"string",
-		 "base path for the files where the bad frames will be stored or read."};
+	opt_args.add(
+		{p+"-err-trk-path"},
+		new tools::Text<>(),
+		"base path for the files where the bad frames will be stored or read.");
 
-	opt_args[{p+"-err-trk-thold"}] =
-		{"positive_int",
-		 "dump only frames with a bit error count above or equal to this threshold."};
+	opt_args.add(
+		{p+"-err-trk-thold"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"dump only frames with a bit error count above or equal to this threshold.");
 
-	opt_args[{p+"-coded"}] =
-		{"",
-		 "enable the coded monitoring (extends the monitored bits to the entire codeword)."};
+	opt_args.add(
+		{p+"-coded"},
+		new tools::None(),
+		"enable the coded monitoring (extends the monitored bits to the entire codeword).");
 }
 
 void BFER::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 #if !defined(SYSTEMC)
 	this->n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
@@ -137,13 +143,13 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-snr-type",   "E"})) this->snr_type            =           vals.at({p+"-snr-type", "E"});
-	if(exist(vals, {p+"-err-trk-path"   })) this->err_track_path      =           vals.at({p+"-err-trk-path" });
-	if(exist(vals, {p+"-err-trk-thold"  })) this->err_track_threshold = std::stoi(vals.at({p+"-err-trk-thold"}));
-	if(exist(vals, {p+"-err-trk-rev"    })) this->err_track_revert    = true;
-	if(exist(vals, {p+"-err-trk"        })) this->err_track_enable    = true;
-	if(exist(vals, {p+"-coset",      "c"})) this->coset               = true;
-	if(exist(vals, {p+"-coded",         })) this->coded_monitoring    = true;
+	if(vals.exist({p+"-snr-type",   "E"})) this->snr_type            = vals.at    ({p+"-snr-type", "E"});
+	if(vals.exist({p+"-err-trk-path"   })) this->err_track_path      = vals.at    ({p+"-err-trk-path" });
+	if(vals.exist({p+"-err-trk-thold"  })) this->err_track_threshold = vals.to_int({p+"-err-trk-thold"});
+	if(vals.exist({p+"-err-trk-rev"    })) this->err_track_revert    = true;
+	if(vals.exist({p+"-err-trk"        })) this->err_track_enable    = true;
+	if(vals.exist({p+"-coset",      "c"})) this->coset               = true;
+	if(vals.exist({p+"-coded",         })) this->coded_monitoring    = true;
 
 	if (this->err_track_revert)
 	{

@@ -38,52 +38,58 @@ Interleaver_core::parameters* Interleaver_core::parameters
 }
 
 void Interleaver_core::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-size"}] =
-		{"strictly_positive_int",
-		 "number of symbols to interleave."};
+	req_args.add(
+		{p+"-size"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"number of symbols to interleave.");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	opt_args.add(
+		{p+"-fra", "F"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, DVB-RCS1, DVB-RCS2, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, COL_ROW, NO"};
+	opt_args.add(
+		{p+"-type"},
+		new tools::Text<>({new tools::Including_set<std::string>({"LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL", "ROW_COL", "COL_ROW", "NO"})}),
+		"type of the interleaver to use in the simulation.");
 
-	opt_args[{p+"-path"}] =
-		{"string",
-		 "specify the path to the interleaver file (to use with \"--itl-type USER\")."};
+	opt_args.add(
+		{p+"-path"},
+		new tools::Text<>(),
+		"specify the path to the interleaver file (to use with \"--itl-type USER\").");
 
-	opt_args[{p+"-cols"}] =
-		{"strictly_positive_int",
-		 "specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver."};
+	opt_args.add(
+		{p+"-cols"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver.");
 
-	opt_args[{p+"-uni"}] =
-		{"",
-		 "enable the regeneration of the interleaver at each new frame."};
+	opt_args.add(
+		{p+"-uni"},
+		new tools::None(),
+		"enable the regeneration of the interleaver at each new frame.");
 
-	opt_args[{p+"-seed", "S"}] =
-		{"positive_int",
-		 "seed used to initialize the pseudo random generators."};
+	opt_args.add(
+		{p+"-seed", "S"},
+		new tools::Integer<>({new tools::Positive<int>()}),
+		"seed used to initialize the pseudo random generators.");
 }
 
 void Interleaver_core::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-size"     })) this->size     = std::stoi(vals.at({p+"-size"     }));
-	if(exist(vals, {p+"-fra",  "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",  "F"}));
-	if(exist(vals, {p+"-type"     })) this->type     =           vals.at({p+"-type"     });
-	if(exist(vals, {p+"-path"     })) this->path     =           vals.at({p+"-path"     });
-	if(exist(vals, {p+"-cols"     })) this->n_cols   = std::stoi(vals.at({p+"-cols"     }));
-	if(exist(vals, {p+"-seed", "S"})) this->seed     = std::stoi(vals.at({p+"-seed", "S"}));
-	if(exist(vals, {p+"-uni"      })) this->uniform  = true;
+	if(vals.exist({p+"-size"     })) this->size     = vals.to_int({p+"-size"     });
+	if(vals.exist({p+"-fra",  "F"})) this->n_frames = vals.to_int({p+"-fra",  "F"});
+	if(vals.exist({p+"-type"     })) this->type     = vals.at    ({p+"-type"     });
+	if(vals.exist({p+"-path"     })) this->path     = vals.at    ({p+"-path"     });
+	if(vals.exist({p+"-cols"     })) this->n_cols   = vals.to_int({p+"-cols"     });
+	if(vals.exist({p+"-seed", "S"})) this->seed     = vals.to_int({p+"-seed", "S"});
+	if(vals.exist({p+"-uni"      })) this->uniform  = true;
 }
 
 void Interleaver_core::parameters

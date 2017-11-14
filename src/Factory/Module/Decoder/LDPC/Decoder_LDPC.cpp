@@ -37,60 +37,72 @@ Decoder_LDPC::parameters* Decoder_LDPC::parameters
 }
 
 void Decoder_LDPC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Decoder::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
 
-	req_args[{p+"-h-path"}] =
-		{"string",
-		 "path to the H matrix (AList formated file)."};
+	req_args.add(
+		{p+"-h-path"},
+		new tools::Text<>(),
+		"path to the H matrix (AList formated file).");
 
-	opt_args[{p+"-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
 
-	opt_args[{p+"-implem"}].push_back("ONMS, SPA, LSPA, GALA");
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"BP", "BP_FLOODING", "BP_LAYERED"});
 
-	opt_args[{p+"-ite", "i"}] =
-		{"positive_int",
-		 "maximal number of iterations in the decoder."};
+	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
+	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
+	arg_range_implem->add_options({"ONMS", "SPA", "LSPA", "GALA"});
 
-	opt_args[{p+"-off"}] =
-		{"float",
-		 "offset used in the offset min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
 
-	opt_args[{p+"-norm"}] =
-		{"positive_float",
-		 "normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
+	opt_args.add(
+		{p+"-ite", "i"},
+		new tools::Integer<>({new tools::Positive<int>()}),
+		"maximal number of iterations in the decoder.");
 
-	opt_args[{p+"-no-synd"}] =
-		{"",
-		 "disable the syndrome detection (disable the stop criterion in the LDPC decoders)."};
+	opt_args.add(
+		{p+"-off"},
+		new tools::Real<>(),
+		"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem ONMS\").");
 
-	opt_args[{p+"-synd-depth"}] =
-		{"strictly_positive_int",
-		 "successive number of iterations to validate the syndrome detection."};
+	opt_args.add(
+		{p+"-norm"},
+		new tools::Real<>(),
+		"normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem ONMS\").");
 
-	opt_args[{p+"-simd"}] =
-		{"string",
-		 "the SIMD strategy you want to use.",
-		 "INTER"};
+	opt_args.add(
+		{p+"-no-synd"},
+		new tools::None(),
+		"disable the syndrome detection (disable the stop criterion in the LDPC decoders).");
+
+	opt_args.add(
+		{p+"-synd-depth"},
+		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		"successive number of iterations to validate the syndrome detection.");
+
+	opt_args.add(
+		{p+"-simd"},
+		new tools::Text<>({new tools::Including_set<std::string>({"INTER"})}),
+		"the SIMD strategy you want to use.");
 }
 
 void Decoder_LDPC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-h-path"    })) this->H_alist_path    =           vals.at({p+"-h-path"    });
-	if(exist(vals, {p+"-ite",   "i"})) this->n_ite           = std::stoi(vals.at({p+"-ite",   "i"}));
-	if(exist(vals, {p+"-off"       })) this->offset          = std::stof(vals.at({p+"-off"       }));
-	if(exist(vals, {p+"-norm"      })) this->norm_factor     = std::stof(vals.at({p+"-norm"      }));
-	if(exist(vals, {p+"-synd-depth"})) this->syndrome_depth  = std::stoi(vals.at({p+"-synd-depth"}));
-	if(exist(vals, {p+"-simd"      })) this->simd_strategy   =           vals.at({p+"-simd"      });
-	if(exist(vals, {p+"-no-synd"   })) this->enable_syndrome = false;
+	if(vals.exist({p+"-h-path"    })) this->H_alist_path    = vals.at      ({p+"-h-path"    });
+	if(vals.exist({p+"-simd"      })) this->simd_strategy   = vals.at      ({p+"-simd"      });
+	if(vals.exist({p+"-ite",   "i"})) this->n_ite           = vals.to_int  ({p+"-ite",   "i"});
+	if(vals.exist({p+"-synd-depth"})) this->syndrome_depth  = vals.to_int  ({p+"-synd-depth"});
+	if(vals.exist({p+"-off"       })) this->offset          = vals.to_float({p+"-off"       });
+	if(vals.exist({p+"-norm"      })) this->norm_factor     = vals.to_float({p+"-norm"      });
+	if(vals.exist({p+"-no-synd"   })) this->enable_syndrome = false;
 }
 
 void Decoder_LDPC::parameters

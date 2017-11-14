@@ -49,7 +49,7 @@ Decoder_RSC::parameters* Decoder_RSC::parameters
 }
 
 void Decoder_RSC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Decoder::parameters::get_description(req_args, opt_args);
 
@@ -57,53 +57,59 @@ void Decoder_RSC::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type", "D"}].push_back("BCJR");
+	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
+	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
+	arg_range_type->add_options({"BCJR"});
 
-	opt_args[{p+"-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
+	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
+	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
+	arg_range_implem->add_options({"GENERIC", "STD", "FAST", "VERY_FAST"});
 
-	opt_args[{p+"-simd"}] =
-		{"string",
-		 "the SIMD strategy you want to use.",
-		 "INTRA, INTER"};
+	opt_args.add(
+		{p+"-simd"},
+		new tools::Text<>({new tools::Including_set<std::string>({"INTRA", "INTER"})}),
+		"the SIMD strategy you want to use.");
 
-	opt_args[{p+"-max"}] =
-		{"string",
-		 "the MAX implementation for the nodes.",
-		 "MAX, MAXL, MAXS"};
+	opt_args.add(
+		{p+"-max"},
+		new tools::Text<>({new tools::Including_set<std::string>({"MAX", "MAXL", "MAXS"})}),
+		"the MAX implementation for the nodes.");
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "does not suppose a buffered encoding."};
+	opt_args.add(
+		{p+"-no-buff"},
+		new tools::None(),
+		"does not suppose a buffered encoding.");
 
-	opt_args[{p+"-poly"}] =
-		{"string",
-		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+	opt_args.add(
+		{p+"-poly"},
+		new tools::Text<>(),
+		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
 
-	opt_args[{p+"-std"}] =
-		{"string",
-		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
-		 "LTE, CCSDS"};
+	opt_args.add(
+		{p+"-std"},
+		new tools::Text<>({new tools::Including_set<std::string>({"LTE", "CCSDS"})}),
+		"select a standard and set automatically some parameters (overwritten with user given arguments).");
 }
 
 void Decoder_RSC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-simd"   })) this->simd_strategy = vals.at({p+"-simd"});
-	if(exist(vals, {p+"-max"    })) this->max           = vals.at({p+"-max" });
-	if(exist(vals, {p+"-std"    })) this->standard      = vals.at({p+"-std" });
-	if(exist(vals, {p+"-no-buff"})) this->buffered      = false;
+	if(vals.exist({p+"-simd"   })) this->simd_strategy = vals.at({p+"-simd"});
+	if(vals.exist({p+"-max"    })) this->max           = vals.at({p+"-max" });
+	if(vals.exist({p+"-std"    })) this->standard      = vals.at({p+"-std" });
+	if(vals.exist({p+"-no-buff"})) this->buffered      = false;
 
-	if (this->standard == "LTE" && !exist(vals, {p+"-poly"}))
+	if (this->standard == "LTE" && !vals.exist({p+"-poly"}))
 		this->poly = {013, 015};
 
-	if (this->standard == "CCSDS" && !exist(vals, {p+"-poly"}))
+	if (this->standard == "CCSDS" && !vals.exist({p+"-poly"}))
 		this->poly = {023, 033};
 
-	if (exist(vals, {p+"-poly"}))
+	if (vals.exist({p+"-poly"}))
 	{
 		auto poly_str = vals.at({p+"-poly"});
 
