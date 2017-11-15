@@ -31,6 +31,7 @@
 
 
 //find ./src/ -type f -follow -print | grep "[.]hpp$"
+// #include <aff3ct.hpp>
 #include <Factory/Factory.hpp>
 #include <Factory/Launcher/Launcher.hpp>
 #include <Factory/Module/Channel/Channel.hpp>
@@ -290,7 +291,13 @@
 #include <Tools/Algo/Tree/Binary_node.hpp>
 #include <Tools/Algo/Tree/Binary_tree.hpp>
 #include <Tools/Algo/Tree/Binary_tree_metric.hpp>
-#include <Tools/Arguments_reader.hpp>
+#include <Tools/Arguments/Argument_handler.hpp>
+#include <Tools/Arguments/Argument_map.hpp>
+#include <Tools/Arguments/Argument_range.hpp>
+#include <Tools/Arguments/Argument_range_basics.hpp>
+#include <Tools/Arguments/Argument_tools.hpp>
+#include <Tools/Arguments/Argument_type.hpp>
+#include <Tools/Arguments/Argument_type_basics.hpp>
 #include <Tools/Code/BCH/BCH_Polynomial_Generator.hpp>
 #include <Tools/Code/LDPC/AList/AList.hpp>
 #include <Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp>
@@ -372,6 +379,6 @@
 #include <Tools/SystemC/SC_Predicate.hpp>
 #include <Tools/SystemC/SC_Router.hpp>
 #include <Tools/Threads/Barrier.hpp>
-// #include <aff3ct.hpp>
+
 
 #endif /* AFF3CT_HPP */

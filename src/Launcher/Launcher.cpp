@@ -89,12 +89,11 @@ int Launcher::read_arguments()
 	// print the help tags
 	if (cmd_error.size() && !this->params.display_help)
 	{
-		std::string message = "For more information please display the help (";
-		std::vector<std::string> help_tag = {"help", "h"};
-		for (unsigned i = 0; i < help_tag.size(); i++)
-			message += tools::Argument_handler::print_tag(help_tag[i]) + ((i < help_tag.size()-1)?", ":"");
+		tools::Argument_tag help_tag = {"help", "h"};
 
-		message += ").";
+		std::string message = "For more information please display the help (";
+		message += tools::Argument_handler::print_tag(help_tag) += ").";
+
 		std::cerr << tools::format_info(message) << std::endl;
 	}
 

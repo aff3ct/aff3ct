@@ -75,7 +75,7 @@ void Channel::parameters
 	opt_args.add(
 		{p+"-path"},
 		new tools::Text<>(),
-		"path to a noisy file, to use with \"--chn-type USER\" or to a gains file (used with \"--chn-type RAYLEIGH_USER\").");
+		"path to a noisy file, to use with \"--chn-type USER\" or to a gain file (used with \"--chn-type RAYLEIGH_USER\").");
 
 	opt_args.add(
 		{p+"-blk-fad"},

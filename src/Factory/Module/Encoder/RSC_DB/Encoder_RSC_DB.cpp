@@ -41,7 +41,7 @@ void Encoder_RSC_DB::parameters
 
 	opt_args.add(
 		{p+"-std"},
-		new tools::Text<>({new tools::Including_set<std::string>({"DVB", "RCS2"})}),
+		new tools::Text<>({new tools::Including_set<std::string>({"DVB-RCS1", "DVB-RCS2"})}),
 		"select a standard and set automatically some parameters (overwritten with user given arguments).");
 
 	opt_args.add(

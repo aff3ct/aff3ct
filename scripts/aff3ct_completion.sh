@@ -203,7 +203,7 @@ _aff3ct() {
 		--mdm-bps | --mdm-ups | --mdm-cpm-L | --mdm-cpm-p | --mdm-cpm-k |      \
 		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                    \
 		--sim-benchs | -b | --sim-debug-limit | --sim-debug-prec |             \
-		--mnt-max-fe | -e |                                                    \
+		--mnt-max-fe | -e | -d |                                               \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step | -I |     \
 		--sim-ite | --enc-fb-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
 		-L | --enc-json-path | --dec-off | --dec-norm | --ter-freq |           \
@@ -215,7 +215,7 @@ _aff3ct() {
 
 		# awaiting nothing
 		-v | --version | -h | --help | --mdm-no-sig2 | --ter-no |          \
-		--sim-debug | -d | --sim-debug-fe | --sim-stats |                  \
+		--sim-debug | --sim-debug-fe | --sim-stats |                       \
 		--sim-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
 		--crc-rate | --sim-err-trk | --sim-err-trk-rev | --itl-uni |       \
 		--dec-partial-adaptive | --dec-fnc | --dec-sc                      )
