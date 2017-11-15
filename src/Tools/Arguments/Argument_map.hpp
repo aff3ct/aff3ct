@@ -8,8 +8,6 @@
 
 #include "Argument_type.hpp"
 #include "Argument_range.hpp"
-#include "Argument_type_basics.hpp"
-#include "Argument_range_basics.hpp"
 
 namespace aff3ct
 {
