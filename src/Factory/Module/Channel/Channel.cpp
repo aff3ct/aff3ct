@@ -66,14 +66,10 @@ void Channel::parameters
 		"select the implementation of the algorithm to generate noise.");
 
 #ifdef CHANNEL_GSL
-	auto* arg_type_gsl  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
-	auto* arg_range_gsl = dynamic_cast<tools::Set<std::string>*>(arg_type_gsl->get_ranges().front());
-	arg_range_gsl->add_options({"GSL"});
+	tools::add_options<std::string>(opt_args.at({p+"-implem"}), {"GSL"}, 0);
 #endif
 #ifdef CHANNEL_MKL
-	auto* arg_type_mkl  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
-	auto* arg_range_mkl = dynamic_cast<tools::Set<std::string>*>(arg_type_mkl->get_ranges().front());
-	arg_range_mkl->add_options({"MKL"});
+	tools::add_options<std::string>(opt_args.at({p+"-implem"}), {"MKL"}, 0);
 #endif
 
 	opt_args.add(

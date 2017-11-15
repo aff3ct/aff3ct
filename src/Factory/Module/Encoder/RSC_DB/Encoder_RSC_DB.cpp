@@ -37,9 +37,7 @@ void Encoder_RSC_DB::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<int>*>(opt_args.at({p+"-type"})->type);
-	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
-	arg_range_type->add_options({"RSC_DB"});
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"RSC_DB"}, 0);
 
 	opt_args.add(
 		{p+"-std"},

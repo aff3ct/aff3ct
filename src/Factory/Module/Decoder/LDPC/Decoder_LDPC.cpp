@@ -48,15 +48,8 @@ void Decoder_LDPC::parameters
 		new tools::Text<>(),
 		"path to the H matrix (AList formated file).");
 
-
-	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
-	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
-	arg_range_type->add_options({"BP", "BP_FLOODING", "BP_LAYERED"});
-
-	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
-	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
-	arg_range_implem->add_options({"ONMS", "SPA", "LSPA", "GALA"});
-
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"BP", "BP_FLOODING", "BP_LAYERED"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), {"ONMS", "SPA", "LSPA", "GALA"},     0);
 
 	opt_args.add(
 		{p+"-ite", "i"},

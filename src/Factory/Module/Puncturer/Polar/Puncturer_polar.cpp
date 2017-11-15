@@ -35,9 +35,7 @@ void Puncturer_polar::parameters
 
 	auto p = this->get_prefix();
 
-	auto* arg_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
-	auto* arg_range = dynamic_cast<tools::Set<std::string>*>(arg_type->get_ranges().front());
-	arg_range->add_options({"WANGLIU"});
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"WANGLIU"}, 0);
 }
 
 void Puncturer_polar::parameters

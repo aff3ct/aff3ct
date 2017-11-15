@@ -76,9 +76,7 @@ void Decoder_polar::parameters
 
 	auto p = this->get_prefix();
 
-	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
-	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
-	arg_range_type->add_options({"SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN"});
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN"}, 0);
 
 	opt_args.add(
 		{p+"-ite", "i"},

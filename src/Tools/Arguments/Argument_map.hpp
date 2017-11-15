@@ -1,4 +1,3 @@
-
 #ifndef ARGUMENT_MAP_HPP_
 #define ARGUMENT_MAP_HPP_
 

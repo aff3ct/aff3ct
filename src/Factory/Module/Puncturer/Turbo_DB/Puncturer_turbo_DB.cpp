@@ -37,9 +37,7 @@ void Puncturer_turbo_DB::parameters
 
 	auto p = this->get_prefix();
 
-	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
-	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
-	arg_range_type->add_options({"TURBO_DB"});
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"TURBO_DB"}, 0);
 }
 
 void Puncturer_turbo_DB::parameters

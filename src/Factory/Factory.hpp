@@ -14,6 +14,7 @@
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Arguments/Argument_map.hpp"
+#include "Tools/Arguments/Argument_tools.hpp"
 
 namespace aff3ct
 {

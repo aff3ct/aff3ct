@@ -93,9 +93,7 @@ void Encoder_turbo::parameters<E1,E2>
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	auto* arg_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
-	auto* arg_range = dynamic_cast<tools::Set<std::string>*>(arg_type->get_ranges().front());
-	arg_range->add_options({"TURBO"});
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"TURBO"}, 0);
 
 	opt_args.add(
 		{p+"-json-path"},

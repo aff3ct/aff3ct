@@ -32,7 +32,6 @@ public:
 	}
 };
 
-
 template <typename T>
 class Argument_type_limited : public Argument_type
 {

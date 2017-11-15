@@ -37,9 +37,7 @@ void Encoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
-	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
-	arg_range_type->add_options({"LDPC", "LDPC_H", "LDPC_DVBS2"});
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"LDPC", "LDPC_H", "LDPC_DVBS2"}, 0);
 
 	opt_args.add(
 		{p+"-h-path"},

@@ -35,9 +35,7 @@ void Encoder_BCH::parameters
 
 	auto p = this->get_prefix();
 
-	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type"})->type);
-	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
-	arg_range_type->add_options({"BCH"});
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"BCH"}, 0);
 }
 
 void Encoder_BCH::parameters

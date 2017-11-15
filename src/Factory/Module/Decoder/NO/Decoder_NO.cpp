@@ -38,13 +38,8 @@ void Decoder_NO::parameters
 
 	auto p = this->get_prefix();
 
-	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
-	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
-	arg_range_type->add_options({"NONE"});
-
-	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
-	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
-	arg_range_implem->add_options({"HARD_DECISION"});
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"NONE"         }, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-implem"}   ), {"HARD_DECISION"}, 0);
 }
 
 void Decoder_NO::parameters

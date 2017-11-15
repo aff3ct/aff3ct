@@ -93,13 +93,8 @@ void Decoder_turbo_DB::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	auto* arg_type_type  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-type", "D"})->type);
-	auto* arg_range_type = dynamic_cast<tools::Set<std::string>*>(arg_type_type->get_ranges().front());
-	arg_range_type->add_options({"TURBO_DB"});
-
-	auto* arg_type_implem  = dynamic_cast<tools::Argument_type_limited<std::string>*>(opt_args.at({p+"-implem"})->type);
-	auto* arg_range_implem = dynamic_cast<tools::Set<std::string>*>(arg_type_implem->get_ranges().front());
-	arg_range_implem->add_options({"STD"});
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"TURBO_DB"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), {"STD"     }, 0);
 
 	opt_args.add(
 		{p+"-ite", "i"},
