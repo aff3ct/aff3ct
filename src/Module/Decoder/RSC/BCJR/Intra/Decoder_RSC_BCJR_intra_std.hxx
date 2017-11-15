@@ -138,7 +138,7 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 	}
 
 	const R m1e[8] = {1, 0, 0, 0, 0, 0, 0, 0};
-	const auto r_m1e = mipp::cvt_reg<R>(mipp::Reg<R>(1) == mipp::Reg<R>(m1e));
+	const auto r_m1e = mipp::toReg<R>(mipp::Reg<R>(1) == mipp::Reg<R>(m1e));
 
 	// compute beta values and the extrinsic values [trellis backward traversal <-] (vectorized)
 	auto r_g4 = mipp::Reg<R>((R)0);
