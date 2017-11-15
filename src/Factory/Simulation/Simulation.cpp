@@ -64,7 +64,7 @@ void Simulation::parameters
 
 	opt_args.add(
 		{p+"-debug-prec"},
-		new tools::Integer<>({new tools::Min<int>(2)}),
+		new tools::Integer<>({new tools::Positive<int>()}),
 		"set the precision of real elements when displayed in debug mode.");
 
 	opt_args.add(

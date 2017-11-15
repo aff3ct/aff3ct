@@ -34,6 +34,7 @@ struct Argument_info
 	std::string    doc  = "";
 };
 
+
 class Argument_map_info : public std::map<Argument_tag, Argument_info*>
 {
 public:
@@ -94,7 +95,6 @@ public:
 	 * \return the floating-point value of an argument with its tags (to use after the parse_arguments method).
 	 */
 	float to_float(const Argument_tag &tags) const;
-
 };
 
 
