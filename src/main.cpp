@@ -15,7 +15,6 @@
 
 #include "Tools/types.h"
 #include "Tools/version.h"
-#include "Tools/Arguments_reader.hpp"
 #include "Tools/Arguments/Argument_handler.hpp"
 #include "Tools/Display/bash_tools.h"
 
