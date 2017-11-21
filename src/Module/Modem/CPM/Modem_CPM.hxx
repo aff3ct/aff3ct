@@ -31,7 +31,7 @@ Modem_CPM<B,R,Q,MAX>
             int  n_frames,
             const std::string name)
 : Modem<B,R,Q>(N,
-               Modem_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, sampling_factor),
+               Modem_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, cpm_p, sampling_factor),
                Modem_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
                sigma,
                n_frames,
@@ -73,6 +73,8 @@ Modem_CPM<B,R,Q,MAX>
 	                                cpm.trellis_related_wave_form    );
 	cpe.generate_anti_trellis      (cpm.anti_trellis_original_state,
 	                                cpm.anti_trellis_input_transition);
+
+	cpe.generate_tail_symb_transition(                               );
 
 	generate_baseband              (                                 );
 	generate_projection            (                                 );
