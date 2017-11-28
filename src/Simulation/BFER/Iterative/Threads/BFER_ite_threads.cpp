@@ -53,8 +53,8 @@ void BFER_ite_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
 		threads[tid -1].join();
 
-	if (!this->prev_err_message.empty())
-		throw std::runtime_error(this->prev_err_message);
+	if (!this->prev_err_messages.empty())
+		throw std::runtime_error(this->prev_err_messages.back());
 }
 
 template <typename B, typename R, typename Q>
@@ -71,9 +71,9 @@ void BFER_ite_threads<B,R,Q>
 		module::Monitor::stop();
 
 		simu->mutex_exception.lock();
-		if (simu->prev_err_message != e.what())
-			if (std::strlen(e.what()) > simu->prev_err_message.size())
-				simu->prev_err_message = e.what();
+		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), e.what()) == simu->prev_err_messages.end())
+			if (simu->prev_err_messages.size() && std::strlen(e.what()) > simu->prev_err_messages.back().size())
+				simu->prev_err_messages.push_back(e.what());
 		simu->mutex_exception.unlock();
 	}
 }

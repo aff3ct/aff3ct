@@ -12,6 +12,7 @@
 #include "Tools/general_utils.h"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/system_functions.hpp"
 
 #include "Factory/Module/Source/Source.hpp"
 #include "Factory/Module/CRC/CRC.hpp"
@@ -179,7 +180,7 @@ void Launcher::launch()
 		}
 		catch (std::exception const& e)
 		{
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+			std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
 		}
 	}
 

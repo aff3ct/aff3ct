@@ -17,6 +17,7 @@
 #include "Tools/version.h"
 #include "Tools/Arguments_reader.hpp"
 #include "Tools/Display/bash_tools.h"
+#include "Tools/system_functions.hpp"
 
 #include "Launcher/Launcher.hpp"
 #include "Factory/Launcher/Launcher.hpp"
@@ -49,7 +50,7 @@ void print_version()
 	std::string compiler_version = std::to_string(__INTEL_COMPILER);
 #elif defined(__ICL)
 	std::string compiler_version = std::to_string(__ICL);
-#else 
+#else
 	std::string compiler_version = std::to_string(__ICC);
 #endif
 	compiler_version = compiler_version.substr(0,2) + "." + compiler_version.substr(2,compiler_version.size());
@@ -70,7 +71,7 @@ void print_version()
 #endif
 	std::string affect_version = version() == "GIT-NOTFOUND" ? "" : version();
 
-	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", " 
+	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", "
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
 	std::cout << "Copyright (c) 2016-2017 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
@@ -150,7 +151,7 @@ int sc_main(int argc, char **argv)
 	}
 	catch(std::exception const& e)
 	{
-		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+		std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
 	}
 
 #ifdef ENABLE_MPI
