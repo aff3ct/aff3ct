@@ -1,10 +1,11 @@
 #if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
-#include <execinfo.h>
 #include <unistd.h>
 #include <cstdlib>
+#include <iostream>
 #endif
 
 #include "exception.hpp"
+#include "Tools/system_functions.hpp"
 
 #define ENABLE_BACK_TRACE
 
@@ -20,7 +21,7 @@ exception
 : message(message)
 {
 #if defined(ENABLE_BACK_TRACE)
-	this->message += get_back_trace();
+	this->message += get_back_trace(3);
 #endif
 }
 
@@ -40,7 +41,7 @@ exception
 	this->message += "\"" + message + "\"";
 
 #if defined(ENABLE_BACK_TRACE)
-	this->message += get_back_trace();
+	this->message += get_back_trace(3);
 #endif
 }
 
@@ -53,24 +54,4 @@ const char* exception
 ::what() const throw()
 {
 	return message.c_str();
-}
-
-std::string exception
-::get_back_trace()
-{
-	std::string bt_str;
-#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
-	const int bt_max_depth = 32;
-	void *bt_array[bt_max_depth];
-
-	size_t size = backtrace(bt_array, bt_max_depth);
-	char** bt_symbs = backtrace_symbols(bt_array, size);
-
-	bt_str += "\nBacktrace:";
-	for (size_t i = 0; i < size; i++)
-		bt_str += "\n" + std::string(bt_symbs[i]);
-	free(bt_symbs);
-#endif
-
-	return bt_str;
 }
