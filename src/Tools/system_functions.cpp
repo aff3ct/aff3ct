@@ -1,10 +1,14 @@
-#include <execinfo.h> // backtrace, backtrace_symbols
-#include <cxxabi.h>   // __cxa_demangle
+#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
+	#include <execinfo.h> // backtrace, backtrace_symbols
+	#include <cxxabi.h>   // __cxa_demangle
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
-
+#include <string>
+#include <stdexcept>
 
 #include "system_functions.hpp"
 
@@ -83,7 +87,11 @@ std::string aff3ct::tools::runSystemCommand(std::string cmd)
 	char buffer[max_buffer];
 	cmd.append(" 2>&1");
 
+#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
 	stream = popen(cmd.c_str(), "r");
+#elif defined(_WIN64) || defined(_WIN32)
+	stream = _popen(cmd.c_str(), "r");
+#endif
 
 	if (stream)
 	{
@@ -91,20 +99,24 @@ std::string aff3ct::tools::runSystemCommand(std::string cmd)
 			if (fgets(buffer, max_buffer, stream) != NULL)
 				data.append(buffer);
 
+#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
 		pclose(stream);
+#elif defined(_WIN64) || defined(_WIN32)
+		_pclose(stream);
+#endif
 	}
+	else
+		throw std::runtime_error("runSystemCommand error: Couldn't open the pipe to run system command.");
 
 	return data;
 }
 
 std::string aff3ct::tools::addr2line(const std::string& backtrace)
 {
-
 #ifdef DNDEBUG
 	return backtrace;
-#else
-	// TODO : Bug lines does not always match. Especially with the main function maybe because
-	//        of precompiler instructions (#ifdef) ?
+#elif (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
+	// TODO Bug: lines does not always match with the real line where are called the functions.
 
 	std::string bt_str;
 	// first separate the backtrace to find back the stack
@@ -159,6 +171,9 @@ std::string aff3ct::tools::addr2line(const std::string& backtrace)
 	}
 
 	return bt_str;
+
+#else
+	return backtrace;
 
 #endif
 }
