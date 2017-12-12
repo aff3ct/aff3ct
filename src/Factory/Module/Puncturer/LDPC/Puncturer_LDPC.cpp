@@ -79,11 +79,11 @@ void Puncturer_LDPC::parameters
 
 	auto p = this->get_prefix();
 	
-	std::string strPattern;
+	std::string str_pattern;
 	if(exist(vals, {p+"-pattern"}))
 	{
-		strPattern = vals.at({p+"-pattern"});
-		this->pattern = generate_punct_vector(strPattern);
+		str_pattern = vals.at({p+"-pattern"});
+		this->pattern = generate_punct_vector(str_pattern);
 	}
 	
 	if(exist(vals, {p+"-cw-size",  "N_cw"})) this->N_cw = std::stoi(vals.at({p+"-cw-size",  "N_cw"}));

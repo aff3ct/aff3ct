@@ -24,7 +24,7 @@ Puncturer_LDPC<B,Q>
 	if (N_pattern == 0)
 	{
 		std::stringstream message;
-		message << "'pattern' shouldn't be null).";
+		message << "'pattern' shouldn't be empty.";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
