@@ -32,8 +32,6 @@ Channel_user<R>
 		file.clear(); // since ignore will have set eof.
 		file.seekg(8, std::ios_base::beg);
 
-		const unsigned sizeof_float = (unsigned)length / (n_fra * fra_size);
-
 		if (n_fra <= 0 || fra_size <= 0)
 		{
 			std::stringstream message;
@@ -41,6 +39,8 @@ Channel_user<R>
 			        << n_fra << ", 'fra_size' = " << fra_size << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		const unsigned sizeof_float = (unsigned)length / (n_fra * fra_size);
 
 		this->noise_buff.resize(n_fra);
 		for (unsigned i = 0; i < (unsigned)n_fra; i++)
@@ -145,7 +145,7 @@ void Channel_user<R>
 		}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Channel_user<R_32>;
