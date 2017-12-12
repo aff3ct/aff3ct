@@ -4,15 +4,15 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-#include "Tools/Math/max.h"
 
 #include "Decoder_LDPC_BP_flooding_approximate_min_star.hpp"
 
-using namespace aff3ct;
-using namespace aff3ct::module;
-
-template <typename B, typename R>
-Decoder_LDPC_BP_flooding_approximate_min_star<B,R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B, typename R, tools::proto_min<R> MIN>
+Decoder_LDPC_BP_flooding_approximate_min_star<B,R,MIN>
 ::Decoder_LDPC_BP_flooding_approximate_min_star(const int &K, const int &N, const int& n_ite,
                                                 const tools::Sparse_matrix &H,
                                                 const std::vector<unsigned> &info_bits_pos,
@@ -27,15 +27,15 @@ Decoder_LDPC_BP_flooding_approximate_min_star<B,R>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
 }
 
-template <typename B, typename R>
-Decoder_LDPC_BP_flooding_approximate_min_star<B,R>
+template <typename B, typename R, tools::proto_min<R> MIN>
+Decoder_LDPC_BP_flooding_approximate_min_star<B,R,MIN>
 ::~Decoder_LDPC_BP_flooding_approximate_min_star()
 {
 }
 
 // normalized offest min-sum implementation
-template <typename B, typename R>
-bool Decoder_LDPC_BP_flooding_approximate_min_star<B,R>
+template <typename B, typename R, tools::proto_min<R> MIN>
+bool Decoder_LDPC_BP_flooding_approximate_min_star<B,R,MIN>
 ::BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V)
 {
 	// beginning of the iteration upon all the matrix lines
@@ -83,12 +83,12 @@ bool Decoder_LDPC_BP_flooding_approximate_min_star<B,R>
 
 			sign    ^= c_sign;
 			min      = std::min(min, v_abs);
-			deltaMin = tools::min_star_linear2(deltaMin, (v_abs == min) ? v_temp : v_abs);
+			deltaMin = MIN(deltaMin, (v_abs == min) ? v_temp : v_abs);
 		}
 
-		auto delta = tools::min_star_linear2(deltaMin, min);
-		delta = (delta < 0) ? 0 : delta;
-		deltaMin = (deltaMin < 0) ? 0 : deltaMin;
+		auto delta = MIN(deltaMin, min);
+		delta    = std::max((R)0, delta   );
+		deltaMin = std::max((R)0, deltaMin);
 
 		// regenerate the CN outcoming values
 		for (auto j = 0; j < length; j++)
@@ -108,15 +108,5 @@ bool Decoder_LDPC_BP_flooding_approximate_min_star<B,R>
 
 	return (syndrome == 0);
 }
-
-// ==================================================================================== explicit template instantiation 
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class aff3ct::module::Decoder_LDPC_BP_flooding_approximate_min_star<B_8,Q_8>;
-template class aff3ct::module::Decoder_LDPC_BP_flooding_approximate_min_star<B_16,Q_16>;
-template class aff3ct::module::Decoder_LDPC_BP_flooding_approximate_min_star<B_32,Q_32>;
-template class aff3ct::module::Decoder_LDPC_BP_flooding_approximate_min_star<B_64,Q_64>;
-#else
-template class aff3ct::module::Decoder_LDPC_BP_flooding_approximate_min_star<B,Q>;
-#endif
-// ==================================================================================== explicit template instantiation
+}
+}

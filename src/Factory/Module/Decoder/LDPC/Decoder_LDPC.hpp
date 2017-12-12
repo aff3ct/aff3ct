@@ -24,6 +24,7 @@ struct Decoder_LDPC : public Decoder
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
+		std::string min              = "MINL";
 		std::string H_alist_path     = "";
 		std::string QC_matrix_path   = "";
 		std::string simd_strategy    = "";
