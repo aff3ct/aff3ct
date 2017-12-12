@@ -63,7 +63,7 @@ Codec_LDPC<B,Q>
 	if (!dec_params.QC_matrix_path.empty() && !dec_params.H_alist_path.empty())
 	{
 		std::stringstream message;
-		message << "'dec_params.QC_matrix_path' and 'dec_params.H_alist_path' can't be use together.";
+		message << "'dec_params.QC_matrix_path' and 'dec_params.H_alist_path' can't be used together.";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -92,7 +92,7 @@ Codec_LDPC<B,Q>
 		std::ifstream file_QC(dec_params.QC_matrix_path, std::ifstream::in);
 		tools::QC_matrix QC = tools::QC_matrix::load(file_QC);
 		H = QC.expand_QC();
-		pct_params.pctPattern = QC.get_pct_pattern();
+		pct_params.pattern = QC.get_pct_pattern();
 
 		std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
 

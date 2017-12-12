@@ -8,7 +8,8 @@
 
 using namespace aff3ct::tools;
 
-std::vector<std::string> QC_matrix::split(const std::string &s)
+std::vector<std::string> QC_matrix
+::split(const std::string &s)
 {
 	std::string buf;                 // have a buffer string
 	std::stringstream ss(s);         // insert the string into a stream
@@ -20,7 +21,8 @@ std::vector<std::string> QC_matrix::split(const std::string &s)
 	return tokens;
 }
 
-void QC_matrix::getline(std::istream &file, std::string &line)
+void QC_matrix
+::getline(std::istream &file, std::string &line)
 {
 	if (file.eof() || file.fail() || file.bad())
 		throw runtime_error(__FILE__, __LINE__, __func__, "Something went wrong when getting a new line.");
@@ -31,9 +33,9 @@ void QC_matrix::getline(std::istream &file, std::string &line)
 }
 
 QC_matrix
-::QC_matrix(const unsigned Nred, const unsigned Mred)
-: Hred(Mred, mipp::vector<int16_t>(Nred, -1)),
-  pctPattern(Nred, true),
+::QC_matrix(const unsigned N_red, const unsigned M_red)
+: H_red(M_red, mipp::vector<int16_t>(N_red, -1)),
+  pct_pattern(N_red, true),
   Z(0)
 {
 }
@@ -43,22 +45,22 @@ QC_matrix
 {
 }
 
-Sparse_matrix QC_matrix::
-expand_QC()
+Sparse_matrix QC_matrix
+::expand_QC()
 {
-	unsigned Nred = (unsigned)this->Hred.size();
-	unsigned Mred = (unsigned)this->Hred.front().size();
+	unsigned N_red = (unsigned)this->H_red.size();
+	unsigned M_red = (unsigned)this->H_red.front().size();
 
-	unsigned N = Nred * this->Z;
-	unsigned M = Mred * this->Z;
+	unsigned N = N_red * this->Z;
+	unsigned M = M_red * this->Z;
 
 	Sparse_matrix H(N, M);
 
-	for (unsigned i = 0; i < Nred; i++)
+	for (unsigned i = 0; i < N_red; i++)
 	{
-		for (unsigned j = 0; j < Mred; j++)
+		for (unsigned j = 0; j < M_red; j++)
 		{
-			auto value = this->Hred[i][j];
+			auto value = this->H_red[i][j];
 
 			unsigned idxLgn = i * this->Z;
 			unsigned idxCol = j * this->Z;
@@ -83,10 +85,10 @@ expand_QC()
 	return H.transpose();
 }
 
-std::vector<bool> QC_matrix::
-get_pct_pattern() const
+std::vector<bool> QC_matrix
+::get_pct_pattern() const
 {
-	return this->pctPattern;
+	return this->pct_pattern;
 }
 
 QC_matrix QC_matrix
@@ -103,40 +105,40 @@ QC_matrix QC_matrix
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	unsigned Nred = 0, Mred = 0, Z = 0;
+	unsigned N_red = 0, M_red = 0, Z = 0;
 
-	Nred = std::stoi(values[0]);
-	Mred = std::stoi(values[1]);
+	N_red = std::stoi(values[0]);
+	M_red = std::stoi(values[1]);
 	Z = std::stoi(values[2]);
 
-	if (Nred <= 0 || Mred <= 0 || Z <= 0)
+	if (N_red <= 0 || M_red <= 0 || Z <= 0)
 	{
 		std::stringstream message;
-		message << "'Nred', 'Mred' and 'Z' have to be greater than 0 ('Nred' = " << Nred
-		        << ", 'Mred' = " << Mred << ", 'Z' = " << Z << ").";
+		message << "'N_red', 'M_red' and 'Z' have to be greater than 0 ('N_red' = " << N_red
+		        << ", 'M_red' = " << M_red << ", 'Z' = " << Z << ").";
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	QC_matrix matrix(Nred, Mred);
+	QC_matrix matrix(N_red, M_red);
 	matrix.Z = Z;
 
-	for (unsigned i = 0; i < Mred; i++)
+	for (unsigned i = 0; i < M_red; i++)
 	{
 		getline(stream, line);
 		values = split(line);
 
-		if (values.size() < Nred)
+		if (values.size() < N_red)
 		{
 			std::stringstream message;
-			message << "'values.size()' has to be greater or equal to 'Nred' ('values.size()' = "
-			        << values.size() << ", 'i' = " << i << ", 'Nred' = " << Nred << ").";
+			message << "'values.size()' has to be greater or equal to 'N_red' ('values.size()' = "
+			        << values.size() << ", 'i' = " << i << ", 'N_red' = " << N_red << ").";
 			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		for (unsigned j = 0; j < Nred; j++)
+		for (unsigned j = 0; j < N_red; j++)
 		{
 			auto col_value = (j < values.size()) ? std::stoi(values[j]) : -1;
-			matrix.Hred[i][j] = col_value;
+			matrix.H_red[i][j] = col_value;
 		}
 	}
 
@@ -145,17 +147,17 @@ QC_matrix QC_matrix
 	{
 		getline(stream, line);
 		values = split(line);
-		if (values.size() < Nred)
+		if (values.size() < N_red)
 		{
 			std::stringstream message;
-			message << "'values.size()' has to be greater or equal to 'Nred' ('values.size()' = " << values.size() << ").";
+			message << "'values.size()' has to be greater or equal to 'N_red' ('values.size()' = " << values.size() << ").";
 			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		for (unsigned j = 0; j < Nred; j++)
+		for (unsigned j = 0; j < N_red; j++)
 		{
 			auto col_value = (j < values.size()) ? std::stoi(values[j]) : 1;
-			matrix.pctPattern[j] = col_value;
+			matrix.pct_pattern[j] = col_value;
 		}
 	}
 	catch (std::exception const&)

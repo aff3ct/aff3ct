@@ -11,11 +11,11 @@ using namespace aff3ct::module;
 template <typename B, typename Q>
 Puncturer_LDPC<B,Q>
 ::Puncturer_LDPC(const int &K,
-                  const int &N,
-                  const int &N_cw,
-                  const std::vector<bool> &pattern,
-                  const int n_frames,
-                  const std::string name)
+                 const int &N,
+                 const int &N_cw,
+                 const std::vector<bool> &pattern,
+                 const int n_frames,
+                 const std::string name)
 : Puncturer<B,Q>(K, N, N_cw, n_frames, name)
 {
 	auto N_pattern = (int)pattern.size();

@@ -4,53 +4,27 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
+#include "Tools/Math/max.h"
 
 #include "Decoder_LDPC_BP_flooding_approximate_min_star.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-template <typename R>
-inline R Correction_linear2(const R x)
-{
-	if (x > 2.625)
-		return (R)0;
-	else if (x < 1.0)
-		return -0.3750 * x + 0.6825;
-	else
-		return -0.1875 * x + 0.5;
-}
-
-template <typename R>
-inline R MinStar(const R a, const R b)
-{
-	return std::min(a, b) + (R)std::log1p(std::exp(-(a + b))) - (R)std::log1p(std::exp(-std::abs(a - b)));
-}
-
-template <typename R>
-inline R MinStar_linear2(const R a, const R b)
-{
-	return (R)(std::min(a, b) + Correction_linear2(a + b) - Correction_linear2(std::abs(a - b)));
-}
-
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_approximate_min_star<B,R>
 ::Decoder_LDPC_BP_flooding_approximate_min_star(const int &K, const int &N, const int& n_ite,
-                                                    const tools::Sparse_matrix &H,
-                                                    const std::vector<unsigned> &info_bits_pos,
-                                                    const bool enable_syndrome,
-                                                    const int syndrome_depth,
-                                                    const int n_frames,
-                                                    const std::string name)
+                                                const tools::Sparse_matrix &H,
+                                                const std::vector<unsigned> &info_bits_pos,
+                                                const bool enable_syndrome,
+                                                const int syndrome_depth,
+                                                const int n_frames,
+                                                const std::string name)
 : Decoder(K, N, n_frames, 1, name),
   Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name)
 {
-	/*if (typeid(R) == typeid(signed char))
-	{
-		std::stringstream message;
-		message << "This decoder does not work in 8-bit fixed-point (try in 16-bit).";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}*/
+	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
 }
 
 template <typename B, typename R>
@@ -88,7 +62,7 @@ bool Decoder_LDPC_BP_flooding_approximate_min_star<B,R>
 		V_to_C_ptr += length; // jump to the next node
 	}
 
-	auto syndrome = 0;	
+	auto syndrome = 0;
 	auto transpose_ptr = this->transpose.data();
 
 	for (auto i = 0; i < this->n_C_nodes; i++)
@@ -109,10 +83,10 @@ bool Decoder_LDPC_BP_flooding_approximate_min_star<B,R>
 
 			sign    ^= c_sign;
 			min      = std::min(min, v_abs);
-			deltaMin = MinStar_linear2(deltaMin, (v_abs == min) ? v_temp : v_abs);
+			deltaMin = tools::min_star_linear2(deltaMin, (v_abs == min) ? v_temp : v_abs);
 		}
 
-		auto delta = MinStar_linear2(deltaMin, min);
+		auto delta = tools::min_star_linear2(deltaMin, min);
 		delta = (delta < 0) ? 0 : delta;
 		deltaMin = (deltaMin < 0) ? 0 : deltaMin;
 

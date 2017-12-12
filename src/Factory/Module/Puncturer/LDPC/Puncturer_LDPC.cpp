@@ -45,7 +45,7 @@ void Puncturer_LDPC::parameters
 
 	opt_args[{p+"-pattern"}] =
 		{"string",
-				 "puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: \"1,1,1,0\")."};
+		 "puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: \"1,1,1,0\")."};
 }
 
 std::vector<bool> generate_punct_vector(const std::string pattern)
@@ -83,7 +83,7 @@ void Puncturer_LDPC::parameters
 	if(exist(vals, {p+"-pattern"}))
 	{
 		strPattern = vals.at({p+"-pattern"});
-		this->pctPattern = generate_punct_vector(strPattern);
+		this->pattern = generate_punct_vector(strPattern);
 	}
 	
 	if(exist(vals, {p+"-cw-size",  "N_cw"})) this->N_cw = std::stoi(vals.at({p+"-cw-size",  "N_cw"}));
@@ -98,7 +98,7 @@ void Puncturer_LDPC::parameters
 
 	if (this->type != "NO")
 	{
-		headers[p].push_back(std::make_pair(std::string("Pattern"), std::string("{" + std::string(this->pctPattern.begin(),this->pctPattern.end())) + "}"));
+		headers[p].push_back(std::make_pair(std::string("Pattern"), std::string("{" + std::string(this->pattern.begin(),this->pattern.end())) + "}"));
 	}
 }
 
@@ -106,7 +106,7 @@ template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer_LDPC::parameters
 ::build() const
 {
-	if (this->type == "LDPC") return new module::Puncturer_LDPC<B,Q>(this->K, this->N, this->N_cw, this->pctPattern, this->n_frames);
+	if (this->type == "LDPC") return new module::Puncturer_LDPC<B,Q>(this->K, this->N, this->N_cw, this->pattern, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

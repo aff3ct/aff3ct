@@ -12,12 +12,12 @@ class Decoder_LDPC_BP_flooding_approximate_min_star : public Decoder_LDPC_BP_flo
 {
 public:
 	Decoder_LDPC_BP_flooding_approximate_min_star(const int &K, const int &N, const int& n_ite,
-												  const tools::Sparse_matrix &H,
-												  const std::vector<unsigned> &info_bits_pos,
-												  const bool enable_syndrome = true,
-												  const int syndrome_depth = 1,
-												  const int n_frames = 1,
-												  const std::string name = "Decoder_LDPC_BP_flooding_approximate_min_star");
+	                                              const tools::Sparse_matrix &H,
+	                                              const std::vector<unsigned> &info_bits_pos,
+	                                              const bool enable_syndrome = true,
+	                                              const int syndrome_depth = 1,
+	                                              const int n_frames = 1,
+	                                              const std::string name = "Decoder_LDPC_BP_flooding_approximate_min_star");
 	virtual ~Decoder_LDPC_BP_flooding_approximate_min_star();
 
 protected:

@@ -10,9 +10,9 @@ Codec_LDPC::parameters
 ::parameters(const std::string prefix)
 : Codec          ::parameters(Codec_LDPC::name, prefix),
   Codec_SISO_SIHO::parameters(Codec_LDPC::name, prefix),
-  enc(new Encoder_LDPC::parameters("enc")),
+  enc(new Encoder_LDPC  ::parameters("enc")),
   pct(new Puncturer_LDPC::parameters("pct")),
-  dec(new Decoder_LDPC::parameters("dec"))
+  dec(new Decoder_LDPC  ::parameters("dec"))
 {
 	Codec::parameters::enc = enc;
 	Codec::parameters::dec = dec;

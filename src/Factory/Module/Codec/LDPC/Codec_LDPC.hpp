@@ -26,9 +26,9 @@ struct Codec_LDPC : public Codec_SISO_SIHO
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// depending parameters
-		Encoder_LDPC::parameters *enc;
+		Encoder_LDPC  ::parameters *enc;
 		Puncturer_LDPC::parameters *pct;
-		Decoder_LDPC::parameters *dec;
+		Decoder_LDPC  ::parameters *dec;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		parameters(const std::string p = Codec_LDPC::prefix);
