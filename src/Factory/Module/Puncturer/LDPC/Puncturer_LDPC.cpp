@@ -86,6 +86,9 @@ void Puncturer_LDPC::parameters
 	}
 	
 	if(exist(vals, {p+"-cw-size",  "N_cw"})) this->N_cw = std::stoi(vals.at({p+"-cw-size",  "N_cw"}));
+
+	if (this->N == this->N_cw)
+		this->type = "NO";
 }
 
 void Puncturer_LDPC::parameters
