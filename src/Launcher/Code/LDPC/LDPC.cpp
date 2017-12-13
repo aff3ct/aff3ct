@@ -1,6 +1,8 @@
 #include <iostream>
 #include <mipp.h>
 
+#include "Launcher/Simulation/BFER_std.hpp"
+
 #include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
 
 #include "LDPC.hpp"
@@ -14,6 +16,9 @@ LDPC<L,B,R,Q>
 : L(argc, argv, stream), params_cdc(new factory::Codec_LDPC::parameters("cdc"))
 {
 	this->params.set_cdc(params_cdc);
+
+	if (typeid(L) == typeid(BFER_std<B,R,Q>))
+		params_cdc->enable_puncturer();
 }
 
 template <class L, typename B, typename R, typename Q>
@@ -54,6 +59,7 @@ void LDPC<L,B,R,Q>
 	L::store_args();
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
+	if (params_cdc->pct)
 	params_cdc->pct->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;
 }

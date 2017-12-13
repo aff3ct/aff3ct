@@ -10,9 +10,9 @@ Codec_LDPC::parameters
 ::parameters(const std::string prefix)
 : Codec          ::parameters(Codec_LDPC::name, prefix),
   Codec_SISO_SIHO::parameters(Codec_LDPC::name, prefix),
-  enc(new Encoder_LDPC  ::parameters("enc")),
-  pct(new Puncturer_LDPC::parameters("pct")),
-  dec(new Decoder_LDPC  ::parameters("dec"))
+  enc(new Encoder_LDPC::parameters("enc")),
+  dec(new Decoder_LDPC::parameters("dec")),
+  pct(nullptr)
 {
 	Codec::parameters::enc = enc;
 	Codec::parameters::dec = dec;
@@ -45,25 +45,61 @@ Codec_LDPC::parameters* Codec_LDPC::parameters
 }
 
 void Codec_LDPC::parameters
+::enable_puncturer()
+{
+	this->pct = new Puncturer_LDPC::parameters("pct");
+}
+
+std::vector<std::string> Codec_LDPC::parameters
+::get_names() const
+{
+	auto n = Codec::parameters::get_names();
+	if (pct != nullptr) { auto nn = pct->get_names(); for (auto &x : nn) n.push_back(x); }
+	return n;
+}
+
+std::vector<std::string> Codec_LDPC::parameters
+::get_short_names() const
+{
+	auto sn = Codec::parameters::get_short_names();
+	if (pct != nullptr) { auto nn = pct->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	return sn;
+}
+
+std::vector<std::string> Codec_LDPC::parameters
+::get_prefixes() const
+{
+	auto p = Codec::parameters::get_prefixes();
+	if (pct != nullptr) { auto nn = pct->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	return p;
+}
+
+void Codec_LDPC::parameters
 ::get_description(arg_map &req_args, arg_map &opt_args) const
 {
 	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
 
 	enc->get_description(req_args, opt_args);
-	pct->get_description(req_args, opt_args);
 	dec->get_description(req_args, opt_args);
 
 	auto penc = enc->get_prefix();
-	auto ppct = pct->get_prefix();
 	auto pdec = dec->get_prefix();
 
 	opt_args.erase({penc+"-h-path"           });
-	req_args.erase({ppct+"-info-bits", "K"   });
-	opt_args.erase({ppct+"-fra",       "F"   });
-	req_args.erase({ppct+"-cw-size",   "N_cw"});
 	req_args.erase({pdec+"-cw-size",   "N"   });
 	req_args.erase({pdec+"-info-bits", "K"   });
 	opt_args.erase({pdec+"-fra",       "F"   });
+
+	if (this->pct)
+	{
+		pct->get_description(req_args, opt_args);
+
+		auto ppct = pct->get_prefix();
+
+		req_args.erase({ppct+"-info-bits", "K"   });
+		opt_args.erase({ppct+"-fra",       "F"   });
+		req_args.erase({ppct+"-cw-size",   "N_cw"});
+	}
 }
 
 void Codec_LDPC::parameters
@@ -73,12 +109,15 @@ void Codec_LDPC::parameters
 
 	enc->store(vals);
 
-	this->pct->K        = this->enc->K;
-	this->pct->n_frames = this->enc->n_frames;
+	if (this->pct)
+	{
+		this->pct->K        = this->enc->K;
+		this->pct->n_frames = this->enc->n_frames;
 
-	pct->store(vals);
+		pct->store(vals);
 
-	this->pct->N_cw     = this->enc->N_cw;
+		this->pct->N_cw     = this->enc->N_cw;
+	}
 
 	this->dec->K        = this->enc->K;
 	this->dec->N_cw     = this->enc->N_cw;
@@ -90,7 +129,7 @@ void Codec_LDPC::parameters
 
 	this->K    = this->enc->K;
 	this->N_cw = this->enc->N_cw;
-	this->N    = this->pct->N;
+	this->N    = this->pct ? this->pct->N : this->N_cw;
 }
 
 void Codec_LDPC::parameters
@@ -99,15 +138,16 @@ void Codec_LDPC::parameters
 	Codec_SISO_SIHO::parameters::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
-	pct->get_headers(headers, full);
 	dec->get_headers(headers, full);
+	if (this->pct)
+		pct->get_headers(headers, full);
 }
 
 template <typename B, typename Q>
 module::Codec_LDPC<B,Q>* Codec_LDPC::parameters
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_LDPC<B,Q>(*enc, *dec, *pct);
+	return new module::Codec_LDPC<B,Q>(*enc, *dec, pct);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

@@ -47,12 +47,12 @@ std::string Codec_LDPC<B,Q>
 
 template <typename B, typename Q>
 Codec_LDPC<B,Q>
-::Codec_LDPC(const factory::Encoder_LDPC::parameters &enc_params,
-             const factory::Decoder_LDPC::parameters &dec_params,
-                   factory::Puncturer_LDPC::parameters &pct_params,
+::Codec_LDPC(const factory::Encoder_LDPC  ::parameters &enc_params,
+             const factory::Decoder_LDPC  ::parameters &dec_params,
+                   factory::Puncturer_LDPC::parameters *pct_params,
              const std::string name)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params.N, enc_params.tail_length, enc_params.n_frames, name),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
   info_bits_pos(enc_params.K)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
@@ -131,7 +131,8 @@ Codec_LDPC<B,Q>
 		std::ifstream file_H(dec_params.H_path, std::ifstream::in);
 		tools::QC_matrix QC = tools::QC_matrix::load(file_H);
 		H = QC.expand_QC();
-		pct_params.pattern = QC.get_pct_pattern();
+		if (pct_params)
+			pct_params->pattern = QC.get_pct_pattern();
 
 		std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
 
@@ -171,13 +172,27 @@ Codec_LDPC<B,Q>
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	try
+	if (!pct_params)
 	{
-		this->set_puncturer(factory::Puncturer_LDPC::build<B,Q>(pct_params));
+		factory::Puncturer::parameters pctno_params;
+		pctno_params.type     = "NO";
+		pctno_params.K        = enc_params.K;
+		pctno_params.N        = enc_params.N_cw;
+		pctno_params.N_cw     = enc_params.N_cw;
+		pctno_params.n_frames = enc_params.n_frames;
+
+		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 	}
-	catch (tools::cannot_allocate const&)
+	else
 	{
-		this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
+		try
+		{
+			this->set_puncturer(factory::Puncturer_LDPC::build<B,Q>(*pct_params));
+		}
+		catch (tools::cannot_allocate const&)
+		{
+			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
+		}
 	}
 
 	try

@@ -27,13 +27,18 @@ struct Codec_LDPC : public Codec_SISO_SIHO
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// depending parameters
 		Encoder_LDPC  ::parameters *enc;
-		Puncturer_LDPC::parameters *pct;
 		Decoder_LDPC  ::parameters *dec;
+		Puncturer_LDPC::parameters *pct;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		parameters(const std::string p = Codec_LDPC::prefix);
 		virtual ~parameters();
 		Codec_LDPC::parameters* clone() const;
+		void enable_puncturer();
+
+		virtual std::vector<std::string> get_names      () const;
+		virtual std::vector<std::string> get_short_names() const;
+		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
 		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
