@@ -141,24 +141,12 @@ Codec_LDPC<B,Q>
 		std::ifstream file_H(dec_params.H_path, std::ifstream::in);
 		H = tools::AList::read(file_H);
 
-		if (!is_info_bits_pos)
+		try
 		{
-			try
-			{
-				if (enc_params.type == "LDPC_H")
-				{
-					auto encoder_LDPC = factory::Encoder_LDPC::build<B>(enc_params, G, H);
-					encoder_LDPC->get_info_bits_pos(info_bits_pos);
-					delete encoder_LDPC;
-				}
-				else
-					info_bits_pos = tools::AList::read_info_bits_pos(file_H, enc_params.K, enc_params.N_cw);
-			}
-			catch (std::exception const&)
-			{
-				std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
-			}
+			info_bits_pos = tools::AList::read_info_bits_pos(file_H, enc_params.K, enc_params.N_cw);
+			is_info_bits_pos = true;
 		}
+		catch (std::exception const&) { }
 
 		file_H.close();
 	}
@@ -167,6 +155,20 @@ Codec_LDPC<B,Q>
 		std::stringstream message;
 		message << "'dec_params.H_path' can't be opened ('dec_params.H_path' = \"" + dec_params.H_path + "\").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (!is_info_bits_pos)
+	{
+		if (enc_params.type == "LDPC_H")
+		{
+			auto encoder_LDPC = factory::Encoder_LDPC::build<B>(enc_params, G, H);
+			encoder_LDPC->get_info_bits_pos(info_bits_pos);
+			delete encoder_LDPC;
+		}
+		else
+		{
+			std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+		}
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
