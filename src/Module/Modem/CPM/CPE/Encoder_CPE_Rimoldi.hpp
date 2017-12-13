@@ -12,6 +12,9 @@ namespace module
 template <typename SIN = int, typename SOUT = int>
 class Encoder_CPE_Rimoldi : public Encoder_CPE<SIN, SOUT>
 {
+protected:
+	std::vector<SIN>  tail_symb_transition;
+
 public:
 	Encoder_CPE_Rimoldi(const int N, const CPM_parameters<SIN,SOUT>& cpm);
 	virtual ~Encoder_CPE_Rimoldi() {}
@@ -23,8 +26,9 @@ public:
 	                     std::vector<SIN>& binary_to_transition,
 	                     const std::string& mapping);
 
-	void generate_allowed_states    (std::vector<int>& allowed_states     );
-	void generate_allowed_wave_forms(std::vector<SOUT>& allowed_wave_forms);
+	void generate_allowed_states      (std::vector<int>& allowed_states     );
+	void generate_allowed_wave_forms  (std::vector<SOUT>& allowed_wave_forms);
+	void generate_tail_symb_transition(                                     );
 };
 }
 }

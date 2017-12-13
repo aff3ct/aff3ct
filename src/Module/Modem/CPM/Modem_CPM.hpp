@@ -58,19 +58,23 @@ public:
 
 	void set_sigma(const R sigma);
 
-	static int size_mod(const int N, const int bps, const int L, const int ups)
+	static int size_mod(const int N, const int bps, const int L, const int p, const int ups)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, L, ups, true);
+		int m_order = (int)1 << bps;
+		int n_tl	= (int)(std::ceil((float)(p - 1) / (float)(m_order - 1))) + L - 1;
+
+		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, n_tl, ups, true);
 	}
 
 	static int size_fil(const int N, const int bps, const int L, const int p)
 	{
 		int m_order   = (int)1 << bps;
+		int n_tl	  = (int)(std::ceil((float)(p - 1) / (float)(m_order - 1))) + L - 1;
 		int n_wa      = (int)(p * std::pow(m_order, L));
 		int n_bits_wa = (int)std::ceil(std::log2(n_wa));
 		int max_wa_id = (int)(1 << n_bits_wa);
 
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, L, max_wa_id, false);
+		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, n_tl, max_wa_id, false);
 	}
 
 protected:

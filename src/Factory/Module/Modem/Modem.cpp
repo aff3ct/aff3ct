@@ -177,7 +177,8 @@ void Modem::parameters
 	                                               this->N,
 	                                               this->bps,
 	                                               this->upf,
-	                                               this->cpm_L);
+	                                               this->cpm_L,
+	                                               this->cpm_p);
 
 	this->N_fil = get_buffer_size_after_filtering (this->type,
 	                                               this->N,
@@ -298,17 +299,18 @@ int Modem
                                    const int         N,
                                    const int         bps,
                                    const int         upf,
-                                   const int         cpm_L)
+                                   const int         cpm_L,
+                                   const int         cpm_p)
 {
-	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::size_mod(N                 );
-	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::size_mod(N                 );
-	else if (type == "OOK"      ) return module::Modem_OOK      <>::size_mod(N                 );
-	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::size_mod(N, bps            );
-	else if (type == "PAM"      ) return module::Modem_PAM      <>::size_mod(N, bps            );
-	else if (type == "QAM"      ) return module::Modem_QAM      <>::size_mod(N, bps            );
-	else if (type == "PSK"      ) return module::Modem_PSK      <>::size_mod(N, bps            );
-	else if (type == "USER"     ) return module::Modem_user     <>::size_mod(N, bps            );
-	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_mod(N, bps, cpm_L, upf);
+	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::size_mod(N                        );
+	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::size_mod(N                        );
+	else if (type == "OOK"      ) return module::Modem_OOK      <>::size_mod(N                        );
+	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::size_mod(N, bps                   );
+	else if (type == "PAM"      ) return module::Modem_PAM      <>::size_mod(N, bps                   );
+	else if (type == "QAM"      ) return module::Modem_QAM      <>::size_mod(N, bps                   );
+	else if (type == "PSK"      ) return module::Modem_PSK      <>::size_mod(N, bps                   );
+	else if (type == "USER"     ) return module::Modem_user     <>::size_mod(N, bps                   );
+	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_mod(N, bps, cpm_L, cpm_p, upf);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
