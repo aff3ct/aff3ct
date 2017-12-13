@@ -6,7 +6,7 @@
 #include "../Encoder_LDPC.hpp"
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
-#include "Tools/Code/LDPC/QC_matrix/QC_matrix.hpp"
+#include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 namespace aff3ct
 {
@@ -18,7 +18,7 @@ class Encoder_LDPC_from_QC : public Encoder_LDPC<B>
 {
 protected:
 	tools::Sparse_matrix H;
-	tools::QC_matrix::QCFull_matrix invH2;
+	tools::LDPC_matrix_handler::QCFull_matrix invH2;
 
 public:
 	Encoder_LDPC_from_QC(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1,

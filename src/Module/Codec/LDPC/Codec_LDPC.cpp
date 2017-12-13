@@ -6,7 +6,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/LDPC/AList/AList.hpp"
-#include "Tools/Code/LDPC/QC_matrix/QC_matrix.hpp"
+#include "Tools/Code/LDPC/QC/QC.hpp"
 #include "Tools/general_utils.h"
 
 #include "Factory/Module/Puncturer/Puncturer.hpp"
@@ -96,8 +96,7 @@ Codec_LDPC<B,Q>
 		if (G_format == "QC")
 		{
 			std::ifstream file_G(enc_params.G_path, std::ifstream::in);
-			tools::QC_matrix QC = tools::QC_matrix::load(file_G);
-			G = QC.expand_QC();
+			G = tools::QC::read(file_G);
 			file_G.close();
 		}
 		else if (G_format == "ALIST")
@@ -129,10 +128,9 @@ Codec_LDPC<B,Q>
 	if (H_format == "QC")
 	{
 		std::ifstream file_H(dec_params.H_path, std::ifstream::in);
-		tools::QC_matrix QC = tools::QC_matrix::load(file_H);
-		H = QC.expand_QC();
+		H = tools::QC::read(file_H);
 		if (pct_params)
-			pct_params->pattern = QC.get_pct_pattern();
+			pct_params->pattern = tools::QC::read_pct_pattern(file_H);
 
 		std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
 
