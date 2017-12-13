@@ -10,9 +10,9 @@
 
 #include "Tools/date.h"
 #include "Tools/general_utils.h"
+#include "Tools/system_functions.h"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/system_functions.hpp"
 
 #include "Factory/Module/Source/Source.hpp"
 #include "Factory/Module/CRC/CRC.hpp"

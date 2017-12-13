@@ -1,3 +1,4 @@
+
 #if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
 	#include <execinfo.h> // backtrace, backtrace_symbols
 	#include <cxxabi.h>   // __cxa_demangle
@@ -10,7 +11,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "system_functions.hpp"
+#include "system_functions.h"
 
 std::string aff3ct::tools::get_back_trace(int first_call)
 {

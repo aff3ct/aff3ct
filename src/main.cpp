@@ -17,7 +17,7 @@
 #include "Tools/version.h"
 #include "Tools/Arguments_reader.hpp"
 #include "Tools/Display/bash_tools.h"
-#include "Tools/system_functions.hpp"
+#include "Tools/system_functions.h"
 
 #include "Launcher/Launcher.hpp"
 #include "Factory/Launcher/Launcher.hpp"
