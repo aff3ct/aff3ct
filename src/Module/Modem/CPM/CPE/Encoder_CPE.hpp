@@ -36,6 +36,8 @@ public:
 	virtual void generate_allowed_states    (std::vector<int>& allowed_states     ) = 0;
 	virtual void generate_allowed_wave_forms(std::vector<SOUT>& allowed_wave_forms) = 0;
 
+	virtual void generate_tail_symb_transition() = 0;
+
 	// merge given bit on separate memory addresses to one variable
 	// takes number_of_bits from the in_bits array by increasing the memory address
 	// msb_to_lsb=true means that the first read bit is the msb and the number_of_bits one is the lsb.
