@@ -74,7 +74,10 @@ std::vector<bool> generate_punct_vector(const std::string pattern)
 void Puncturer_LDPC::parameters
 ::store(const arg_val_map &vals)
 {
+	auto save_N_cw = this->N_cw;
 	Puncturer::parameters::store(vals);
+	if (save_N_cw > 0)
+		this->N_cw = save_N_cw;
 
 	auto p = this->get_prefix();
 	
@@ -84,8 +87,8 @@ void Puncturer_LDPC::parameters
 		str_pattern = vals.at({p+"-pattern"});
 		this->pattern = generate_punct_vector(str_pattern);
 	}
-	
-	if(exist(vals, {p+"-cw-size",  "N_cw"})) this->N_cw = std::stoi(vals.at({p+"-cw-size",  "N_cw"}));
+
+	if(exist(vals, {p+"-cw-size", "N_cw"})) this->N_cw = std::stoi(vals.at({p+"-cw-size",  "N_cw"}));
 
 	if (this->N == this->N_cw)
 		this->type = "NO";

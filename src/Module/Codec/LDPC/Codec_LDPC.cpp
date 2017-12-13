@@ -129,11 +129,8 @@ Codec_LDPC<B,Q>
 	{
 		std::ifstream file_H(dec_params.H_path, std::ifstream::in);
 		H = tools::QC::read(file_H);
-		if (pct_params)
+		if (pct_params && pct_params->pattern.empty())
 			pct_params->pattern = tools::QC::read_pct_pattern(file_H);
-
-		std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
-
 		file_H.close();
 	}
 	else if (H_format == "ALIST")

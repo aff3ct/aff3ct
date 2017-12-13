@@ -112,11 +112,10 @@ void Codec_LDPC::parameters
 	if (this->pct)
 	{
 		this->pct->K        = this->enc->K;
+		this->pct->N_cw     = this->enc->N_cw;
 		this->pct->n_frames = this->enc->n_frames;
 
 		pct->store(vals);
-
-		this->pct->N_cw     = this->enc->N_cw;
 	}
 
 	this->dec->K        = this->enc->K;
