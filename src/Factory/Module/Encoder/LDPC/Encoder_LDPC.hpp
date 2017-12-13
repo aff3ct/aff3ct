@@ -22,9 +22,8 @@ struct Encoder_LDPC : public Encoder
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional
-		std::string H_alist_path   = "";
-		std::string G_alist_path   = "";
-		std::string QC_matrix_path = "";
+		std::string H_path = "";
+		std::string G_path = "";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		parameters(const std::string p = Encoder_LDPC::prefix);

@@ -114,7 +114,7 @@ aff3ct::factory::arg_grp Factory
 void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string grp_name, header_list header,
                                                int max_n_chars, std::ostream& stream)
 {
-	auto key = tools::string_split(grp_key, '-');
+	auto key = tools::split(grp_key, '-');
 
 	if (key.size() == 1)
 	{
@@ -179,7 +179,7 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parame
 		for (size_t i = 1; i < prefixes.size(); i++)
 		{
 			auto h = headers[prefixes[i]];
-			auto key = tools::string_split(prefixes[i], '-');
+			auto key = tools::split(prefixes[i], '-');
 
 			if (key[0] == prefixes[0] && h.size())
 			{

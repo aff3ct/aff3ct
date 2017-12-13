@@ -35,6 +35,9 @@ protected:
 	void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);
 	void _extract_sys_llr(const Q *Y_N, Q *Y_K,         const int frame_id);
 	void _extract_sys_bit(const Q *Y_N, B *V_K,         const int frame_id);
+
+private:
+	static std::string get_matrix_format(const std::string& filename);
 };
 }
 }

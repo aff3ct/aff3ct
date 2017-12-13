@@ -1,3 +1,4 @@
+#include <string>
 #include <fstream>
 #include <sstream>
 #include <numeric>
@@ -6,6 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/LDPC/AList/AList.hpp"
 #include "Tools/Code/LDPC/QC_matrix/QC_matrix.hpp"
+#include "Tools/general_utils.h"
 
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
@@ -17,6 +19,31 @@
 
 using namespace aff3ct;
 using namespace aff3ct::module;
+
+template <typename B, typename Q>
+std::string Codec_LDPC<B,Q>
+::get_matrix_format(const std::string& filename)
+{
+	std::ifstream file(filename, std::ifstream::in);
+
+	if (file.is_open())
+	{
+		std::string line;
+		tools::getline(file, line);
+		file.close();
+
+		auto values = tools::split(line);
+
+		if (values.size() == 3)
+			return "QC";
+		else
+			return "ALIST";
+	}
+	else
+	{
+		return "BAD_FILE";
+	}
+}
 
 template <typename B, typename Q>
 Codec_LDPC<B,Q>
@@ -53,55 +80,66 @@ Codec_LDPC<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (dec_params.QC_matrix_path.empty() && dec_params.H_alist_path.empty())
+	if (dec_params.H_path.empty())
 	{
 		std::stringstream message;
-		message << "'dec_params.QC_matrix_path' or 'dec_params.H_alist_path' has to be set to a matrix file.";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (!dec_params.QC_matrix_path.empty() && !dec_params.H_alist_path.empty())
-	{
-		std::stringstream message;
-		message << "'dec_params.QC_matrix_path' and 'dec_params.H_alist_path' can't be used together.";
+		message << "'dec_params.H_path' has to be set to a matrix file.";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	// ---------------------------------------------------------------------------------------------------------- tools
 	bool is_info_bits_pos = false;
-	if (!enc_params.G_alist_path.empty() && enc_params.type == "LDPC")
+	if (enc_params.type == "LDPC")
 	{
-		std::ifstream file_G(enc_params.G_alist_path, std::ifstream::in);
-		G = tools::AList::read(file_G);
+		auto G_format = get_matrix_format(enc_params.G_path);
 
-		try
+		if (G_format == "QC")
 		{
-			info_bits_pos = tools::AList::read_info_bits_pos(file_G, this->K, this->N_cw);
-			is_info_bits_pos = true;
+			std::ifstream file_G(enc_params.G_path, std::ifstream::in);
+			tools::QC_matrix QC = tools::QC_matrix::load(file_G);
+			G = QC.expand_QC();
+			file_G.close();
 		}
-		catch (std::exception const&)
+		else if (G_format == "ALIST")
 		{
-			// information bits positions are not in the G matrix file
-		}
+			std::ifstream file_G(enc_params.G_path, std::ifstream::in);
+			G = tools::AList::read(file_G);
 
-		file_G.close();
+			try
+			{
+				info_bits_pos = tools::AList::read_info_bits_pos(file_G, this->K, this->N_cw);
+				is_info_bits_pos = true;
+			}
+			catch (std::exception const&)
+			{
+				// information bits positions are not in the G matrix file
+			}
+
+			file_G.close();
+		}
+		else if (G_format == "BAD_FILE")
+		{
+			std::stringstream message;
+			message << "'enc_params.G_path' can't be opened ('enc_params.G_path' = \"" + enc_params.G_path + "\").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
-	if (!dec_params.QC_matrix_path.empty())
+	auto H_format = get_matrix_format(dec_params.H_path);
+	if (H_format == "QC")
 	{
-		std::ifstream file_QC(dec_params.QC_matrix_path, std::ifstream::in);
-		tools::QC_matrix QC = tools::QC_matrix::load(file_QC);
+		std::ifstream file_H(dec_params.H_path, std::ifstream::in);
+		tools::QC_matrix QC = tools::QC_matrix::load(file_H);
 		H = QC.expand_QC();
 		pct_params.pattern = QC.get_pct_pattern();
 
 		std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
 
-		file_QC.close();
+		file_H.close();
 	}
-
-	if (!dec_params.H_alist_path.empty())
+	else if (H_format == "ALIST")
 	{
-		std::ifstream file_H(dec_params.H_alist_path, std::ifstream::in);
+		std::ifstream file_H(dec_params.H_path, std::ifstream::in);
 		H = tools::AList::read(file_H);
 
 		if (!is_info_bits_pos)
@@ -124,6 +162,12 @@ Codec_LDPC<B,Q>
 		}
 
 		file_H.close();
+	}
+	else if (H_format == "BAD_FILE")
+	{
+		std::stringstream message;
+		message << "'dec_params.H_path' can't be opened ('dec_params.H_path' = \"" + dec_params.H_path + "\").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations

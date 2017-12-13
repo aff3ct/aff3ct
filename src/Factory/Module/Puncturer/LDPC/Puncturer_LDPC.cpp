@@ -51,7 +51,7 @@ void Puncturer_LDPC::parameters
 std::vector<bool> generate_punct_vector(const std::string pattern)
 {
 
-	std::vector<std::string> str_array = aff3ct::tools::string_split(pattern, ',');
+	std::vector<std::string> str_array = aff3ct::tools::split(pattern, ',');
 	int N_pattern = (int)str_array.size();
 
 	if (N_pattern == 0)

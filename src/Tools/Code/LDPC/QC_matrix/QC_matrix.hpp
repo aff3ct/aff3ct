@@ -34,10 +34,6 @@ public:
 	 * inverse H2 (H = [H1 H2] with size(H2) = M x M) to allow encoding with p = H1 x inv(H2) x u
 	 */
 	static QCFull_matrix invert_H2(const Sparse_matrix& H);
-
-private:
-	static std::vector<std::string> split(const std::string &s);
-	static void getline(std::istream &file, std::string &line);
 };
 }
 }

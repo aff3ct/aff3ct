@@ -47,10 +47,6 @@ void Encoder_LDPC::parameters
 	opt_args[{p+"-g-path"}] =
 		{"string",
 		 "path to the G matrix (AList formated file, required by the \"LDPC\" encoder)."};
-
-	opt_args[{p+"-qc-path"}] =
-		{"string",
-		 "path to the QC matrix (QC formated file, required by the \"LDPC_QC\" encoder)."};
 }
 
 void Encoder_LDPC::parameters
@@ -60,9 +56,8 @@ void Encoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-h-path" })) this->H_alist_path   = vals.at({p+"-h-path" });
-	if(exist(vals, {p+"-g-path" })) this->G_alist_path   = vals.at({p+"-g-path" });
-	if(exist(vals, {p+"-qc-path"})) this->QC_matrix_path = vals.at({p+"-qc-path"});
+	if(exist(vals, {p+"-h-path" })) this->H_path = vals.at({p+"-h-path" });
+	if(exist(vals, {p+"-g-path" })) this->G_path = vals.at({p+"-g-path" });
 }
 
 void Encoder_LDPC::parameters
@@ -73,11 +68,9 @@ void Encoder_LDPC::parameters
 	auto p = this->get_prefix();
 
 	if (this->type == "LDPC")
-		headers[p].push_back(std::make_pair("G matrix path", this->G_alist_path));
-	if (this->type == "LDPC_H")
-		headers[p].push_back(std::make_pair("H matrix path", this->H_alist_path));
-	if (this->type == "LDPC_QC")
-		headers[p].push_back(std::make_pair("QC matrix path", this->QC_matrix_path));
+		headers[p].push_back(std::make_pair("G matrix path", this->G_path));
+	if (this->type == "LDPC_H" || this->type == "LDPC_QC")
+		headers[p].push_back(std::make_pair("H matrix path", this->H_path));
 }
 
 template <typename B>
