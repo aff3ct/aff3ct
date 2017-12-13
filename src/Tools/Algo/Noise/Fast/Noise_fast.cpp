@@ -97,8 +97,8 @@ void Noise_fast<R>
 		mipp::Reg<R> sintheta, costheta;
 		mipp::sincos(theta, sintheta, costheta);
 
-		auto awgn1 = radius * costheta;
-		auto awgn2 = radius * sintheta;
+		auto awgn1 = radius * costheta + mu;
+		auto awgn2 = radius * sintheta + mu;
 
 		awgn1.store(&noise[i                    ]);
 		awgn2.store(&noise[i + mipp::nElReg<R>()]);
@@ -117,8 +117,8 @@ void Noise_fast<R>
 		const auto sintheta = std::sin(theta);
 		const auto costheta = std::cos(theta);
 
-		noise[i +0] = radius * sintheta;
-		noise[i +1] = radius * costheta;
+		noise[i +0] = radius * sintheta + mu;
+		noise[i +1] = radius * costheta + mu;
 	}
 
 	// distribute the last odd element
@@ -132,7 +132,7 @@ void Noise_fast<R>
 
 		const auto sintheta = std::sin(theta);
 
-		noise[length -1] = radius * sintheta;
+		noise[length -1] = radius * sintheta + mu;
 	}
 }
 
