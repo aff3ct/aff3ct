@@ -15,49 +15,24 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding<B,R>
-::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
+::Decoder_LDPC_BP_flooding(const int K, const int N, const int n_ite,
                            const tools::Sparse_matrix &H,
                            const std::vector<unsigned> &info_bits_pos,
                            const bool enable_syndrome,
                            const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
-: Decoder               (K, N, n_frames, 1, name                  ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                  ),
-  n_ite                 (n_ite                                    ),
-  n_V_nodes             (N                                        ), // same as N but more explicit
-  n_C_nodes             ((int)H.get_n_cols()                      ),
-  n_branches            ((int)H.get_n_connections()               ),
-  enable_syndrome       (enable_syndrome                          ),
-  syndrome_depth        (syndrome_depth                           ),
-  init_flag             (true                                     ),
-  info_bits_pos         (info_bits_pos                            ),
-  Lp_N                  (N,                                      -1), // -1 in order to fail when AZCW
-  C_to_V                (n_frames, std::vector<R>(this->n_branches)),
-  V_to_C                (n_frames, std::vector<R>(this->n_branches))
+: Decoder               (K, N,                                            n_frames, 1, name),
+  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1, name),
+  n_V_nodes             (N                                                                 ), // same as N but more explicit
+  n_C_nodes             ((int)H.get_n_cols()                                               ),
+  n_branches            ((int)H.get_n_connections()                                        ),
+  init_flag             (true                                                              ),
+  info_bits_pos         (info_bits_pos                                                     ),
+  Lp_N                  (N, -1                                                             ), // -1 in order to fail when AZCW
+  C_to_V                (n_frames, std::vector<R>(this->n_branches)                        ),
+  V_to_C                (n_frames, std::vector<R>(this->n_branches)                        )
 {
-	if (n_ite <= 0)
-	{
-		std::stringstream message;
-		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (syndrome_depth <= 0)
-	{
-		std::stringstream message;
-		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (N != (int)H.get_n_rows())
-	{
-		std::stringstream message;
-		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
-		        << H.get_n_rows() << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	transpose.resize(this->n_branches);
 	mipp::vector<unsigned char> connections(H.get_n_rows(), 0);
 
@@ -204,26 +179,35 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::BP_decode(const R *Y_N, const int frame_id)
 {
-	auto cur_syndrome_depth = 0;
-
 	// actual decoding
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		// specific inner code depending on the selected implementation (min-sum or sum-product for example)
-		auto syndrome = this->BP_process(Y_N, this->V_to_C[frame_id], this->C_to_V[frame_id]);
+		this->BP_process(Y_N, this->V_to_C[frame_id], this->C_to_V[frame_id]);
 
 		// make a saturation
 		// saturate<R>(this->C_to_V, (R)-C_to_V_max, (R)C_to_V_max);
 
-		// stop criterion
-		if (this->enable_syndrome && syndrome)
+		if (this->enable_syndrome && ite != this->n_ite -1)
 		{
-			cur_syndrome_depth++;
-			if (cur_syndrome_depth == this->syndrome_depth)
+			R *C_to_V_ptr = this->C_to_V[frame_id].data();
+			for (auto i = 0; i < this->n_V_nodes; i++)
+			{
+				const auto length = this->n_parities_per_variable[i];
+
+				auto sum_C_to_V = (R)0;
+				for (auto j = 0; j < length; j++)
+					sum_C_to_V += C_to_V_ptr[j];
+
+				// filling the output
+				this->Lp_N[i] = Y_N[i] + sum_C_to_V;
+
+				C_to_V_ptr += length;
+			}
+
+			if (this->check_syndrome_soft(this->Lp_N.data()))
 				break;
 		}
-		else
-			cur_syndrome_depth = 0;
 	}
 
 	// begining of the iteration upon all the matrix lines

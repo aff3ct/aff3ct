@@ -14,7 +14,7 @@ private:
 	std::vector<R> values;
 
 public:
-	Decoder_LDPC_BP_flooding_log_sum_product(const int &K, const int &N, const int& n_ite,
+	Decoder_LDPC_BP_flooding_log_sum_product(const int K, const int N, const int n_ite,
 	                                         const tools::Sparse_matrix &H,
 	                                         const std::vector<unsigned> &info_bits_pos,
 	                                         const bool enable_syndrome = true,
@@ -25,7 +25,7 @@ public:
 
 protected:
 	// BP functions for decoding
-	virtual bool BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V);
+	virtual void BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V);
 };
 
 template <typename B = int, typename R = float>

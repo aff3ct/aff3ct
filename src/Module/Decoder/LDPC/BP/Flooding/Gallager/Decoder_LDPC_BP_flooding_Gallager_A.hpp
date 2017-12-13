@@ -4,25 +4,22 @@
 #include <cstdint>
 
 #include "Module/Decoder/NO/Decoder_NO.hpp"
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+
+#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_flooding_Gallager_A : public Decoder_SIHO_HIHO<B,R>
+class Decoder_LDPC_BP_flooding_Gallager_A : public Decoder_LDPC_BP<B,R>
 {
 private:
-	Decoder_NO<B,R>              hard_decision;
+	Decoder_NO<B,R> hard_decision;
 
 protected:
-	const int                    n_ite;           // number of iterations to perform
-	const tools::Sparse_matrix  &H;               // LDPC H matrix
-	const bool                   enable_syndrome; // stop criterion
-	const int                    syndrome_depth;
 	const std::vector<unsigned> &info_bits_pos;
 	std::vector<B>               HY_N;            // input LLRs (transformed in bit)
 	std::vector<int8_t>          V_N;             // decoded bits
@@ -31,7 +28,7 @@ protected:
 	std::vector<unsigned>        transpose;
 
 public:
-	Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const tools::Sparse_matrix &H,
+	Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &H,
 	                                    const std::vector<unsigned> &info_bits_pos,
 	                                    const bool enable_syndrome = true,
 	                                    const int syndrome_depth = 1,

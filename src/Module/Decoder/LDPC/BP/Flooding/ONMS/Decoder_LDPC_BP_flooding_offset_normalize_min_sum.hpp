@@ -15,7 +15,7 @@ private:
 	const R offset;
 
 public:
-	Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
+	Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int K, const int N, const int n_ite,
 	                                                  const tools::Sparse_matrix &H,
 	                                                  const std::vector<unsigned> &info_bits_pos,
 	                                                  const float normalize_factor = 1.f,
@@ -28,7 +28,7 @@ public:
 
 protected:
 	// BP functions for decoding
-	virtual bool BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V);
+	virtual void BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V);
 };
 
 template <typename B = int, typename R = float>

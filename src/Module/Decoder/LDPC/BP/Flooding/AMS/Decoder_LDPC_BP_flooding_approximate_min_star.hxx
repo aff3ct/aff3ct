@@ -13,7 +13,7 @@ namespace module
 {
 template <typename B, typename R, tools::proto_min<R> MIN>
 Decoder_LDPC_BP_flooding_approximate_min_star<B,R,MIN>
-::Decoder_LDPC_BP_flooding_approximate_min_star(const int &K, const int &N, const int& n_ite,
+::Decoder_LDPC_BP_flooding_approximate_min_star(const int K, const int N, const int n_ite,
                                                 const tools::Sparse_matrix &H,
                                                 const std::vector<unsigned> &info_bits_pos,
                                                 const bool enable_syndrome,
@@ -35,7 +35,7 @@ Decoder_LDPC_BP_flooding_approximate_min_star<B,R,MIN>
 
 // normalized offest min-sum implementation
 template <typename B, typename R, tools::proto_min<R> MIN>
-bool Decoder_LDPC_BP_flooding_approximate_min_star<B,R,MIN>
+void Decoder_LDPC_BP_flooding_approximate_min_star<B,R,MIN>
 ::BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V)
 {
 	// beginning of the iteration upon all the matrix lines
@@ -62,7 +62,6 @@ bool Decoder_LDPC_BP_flooding_approximate_min_star<B,R,MIN>
 		V_to_C_ptr += length; // jump to the next node
 	}
 
-	auto syndrome = 0;
 	auto transpose_ptr = this->transpose.data();
 
 	for (auto i = 0; i < this->n_C_nodes; i++)
@@ -103,10 +102,7 @@ bool Decoder_LDPC_BP_flooding_approximate_min_star<B,R,MIN>
 		}
 
 		transpose_ptr += length;
-		syndrome = syndrome || sign;
 	}
-
-	return (syndrome == 0);
 }
 }
 }
