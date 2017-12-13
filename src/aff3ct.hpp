@@ -92,6 +92,7 @@
 #include <Tools/Code/Polar/Frozenbits_notifier.hpp>
 #include <Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp>
 #include <Tools/Code/LDPC/AList/AList.hpp>
+#include <Tools/Code/LDPC/QC/QC.hpp>
 #include <Tools/Code/SCMA/modem_SCMA_functions.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp>
@@ -132,6 +133,7 @@
 #include <Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp>
 #include <Module/Puncturer/NO/Puncturer_NO.hpp>
 #include <Module/Puncturer/Turbo/Puncturer_turbo.hpp>
+#include <Module/Puncturer/LDPC/Puncturer_LDPC.hpp>
 #include <Module/Encoder/Polar/Encoder_polar.hpp>
 #include <Module/Encoder/Polar/Encoder_polar_sys.hpp>
 #include <Module/Encoder/AZCW/Encoder_AZCW.hpp>
@@ -143,6 +145,7 @@
 #include <Module/Encoder/Repetition/Encoder_repetition_sys.hpp>
 #include <Module/Encoder/LDPC/Encoder_LDPC.hpp>
 #include <Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp>
+#include <Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp>
 #include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp>
 #include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2_constants_64800.hpp>
 #include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2_constants.hpp>
@@ -214,6 +217,7 @@
 #include <Module/Decoder/LDPC/BP/Flooding/ONMS/Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp>
+#include <Module/Decoder/LDPC/BP/Flooding/AMS/Decoder_LDPC_BP_flooding_approximate_min_star.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp>
 #include <Module/Decoder/Decoder_SIHO.hpp>
 #include <Module/Decoder/BCH/Decoder_BCH.hpp>
@@ -289,6 +293,7 @@
 #include <Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp>
 #include <Factory/Factory.hpp>
 #include <Factory/Module/Interleaver/Interleaver.hpp>
+#include <Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp>
 #include <Factory/Module/Puncturer/Polar/Puncturer_polar.hpp>
 #include <Factory/Module/Puncturer/Puncturer.hpp>
 #include <Factory/Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp>
