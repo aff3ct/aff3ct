@@ -143,7 +143,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 			for (int b = 0; b < cpm.n_b_per_s; b++)
 			{
 				// transition_to_binary what bit state we should have for the given transition and bit position
-				const int bit_state = cpm.transition_to_binary[tr * cpm.n_b_per_s + b];
+				const int bit_state = (int)cpm.transition_to_binary[tr * cpm.n_b_per_s + b];
 				// match -> add probability else remove
 				symb_apriori_prob[i * cpm.m_order + tr] += (bit_state == 0) ?  Ldec_N[i * cpm.n_b_per_s + b]/2
 				                                                            : -Ldec_N[i * cpm.n_b_per_s + b]/2;

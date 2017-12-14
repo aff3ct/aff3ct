@@ -218,7 +218,7 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 
 					if (it != state_found.end() && found_pos < pos_in_vect)
 					{
-						pos_in_vect = found_pos;
+						pos_in_vect = (int)found_pos;
 						tail_symb_transition[cur_state] = tr;
 					}
 				}

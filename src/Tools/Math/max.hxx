@@ -98,8 +98,8 @@ template <typename R>
 inline R correction_linear2(const R x)
 {
 	if      (x > 2.625) return (R)0;
-	else if (x < 1.000) return -0.3750 * x + 0.6825;
-	else                return -0.1875 * x + 0.5;
+	else if (x < 1.000) return (R)-0.3750 * x + (R)0.6825;
+	else                return (R)-0.1875 * x + (R)0.5;
 }
 
 template <typename R>
