@@ -1,8 +1,10 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Math/max.h"
 
 #include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/ONMS/Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/AMS/Decoder_LDPC_BP_flooding_approximate_min_star.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/SPA/Decoder_LDPC_BP_layered_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp"
@@ -45,15 +47,20 @@ void Decoder_LDPC::parameters
 
 	req_args[{p+"-h-path"}] =
 		{"string",
-		 "path to the H matrix (AList formated file)."};
+		 "path to the H matrix (AList or QC formated file)."};
+
+	opt_args[{p+"-min"}] =
+		{"string",
+		 "the MIN implementation for the nodes (AMS decoder).",
+		 "MIN, MINL, MINS"};
 
 	opt_args[{p+"-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
 
-	opt_args[{p+"-implem"}].push_back("ONMS, SPA, LSPA, GALA");
+	opt_args[{p+"-implem"}].push_back("ONMS, SPA, LSPA, GALA, AMS");
 
 	opt_args[{p+"-ite", "i"}] =
 		{"positive_int",
-		 "maximal number of iterations in the decoder."};
+		 "maximal number of iterations in the LDPC decoder."};
 
 	opt_args[{p+"-off"}] =
 		{"float",
@@ -84,7 +91,8 @@ void Decoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-h-path"    })) this->H_alist_path    =           vals.at({p+"-h-path"    });
+	if(exist(vals, {p+"-h-path"    })) this->H_path          =           vals.at({p+"-h-path"    });
+	if(exist(vals, {p+"-min"       })) this->min             =           vals.at({p+"-min"       });
 	if(exist(vals, {p+"-ite",   "i"})) this->n_ite           = std::stoi(vals.at({p+"-ite",   "i"}));
 	if(exist(vals, {p+"-off"       })) this->offset          = std::stof(vals.at({p+"-off"       }));
 	if(exist(vals, {p+"-norm"      })) this->norm_factor     = std::stof(vals.at({p+"-norm"      }));
@@ -100,7 +108,8 @@ void Decoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("H matrix path", this->H_alist_path));
+	if (!this->H_path.empty())
+		headers[p].push_back(std::make_pair("H matrix path", this->H_path));
 
 	if (!this->simd_strategy.empty())
 		headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
@@ -118,6 +127,9 @@ void Decoder_LDPC::parameters
 
 	if (this->enable_syndrome)
 		headers[p].push_back(std::make_pair("Stop criterion depth", std::to_string(this->syndrome_depth)));
+
+	if (this->implem == "AMS")
+		headers[p].push_back(std::make_pair("Min type", this->min));
 }
 
 template <typename B, typename Q>
@@ -129,6 +141,14 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 		     if (this->implem == "ONMS") return new module::Decoder_LDPC_BP_flooding_ONMS     <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		else if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_SPA      <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		else if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_flooding_LSPA     <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "AMS" ) {
+			if (this->min == "MIN")
+				return new module::Decoder_LDPC_BP_flooding_AMS<B,Q,tools::min<Q>>                 (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINL")
+				return new module::Decoder_LDPC_BP_flooding_AMS<B,Q,tools::min_star_linear2<Q>>    (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINS")
+				return new module::Decoder_LDPC_BP_flooding_AMS<B,Q,tools::min_star<Q>>            (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		}
 	}
 	else if (this->type == "BP_LAYERED" && this->simd_strategy.empty())
 	{

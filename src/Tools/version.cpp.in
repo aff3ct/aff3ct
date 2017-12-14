@@ -26,7 +26,7 @@ int aff3ct::version_major()
 	}
 	else
 	{
-		auto vs = tools::string_split(version, '.');
+		auto vs = tools::split(version, '.');
 
 		if (!vs.size())
 			return -2;
@@ -51,13 +51,13 @@ int aff3ct::version_minor()
 	}
 	else
 	{
-		auto vs = tools::string_split(version, '.');
+		auto vs = tools::split(version, '.');
 
 		if (vs.size() < 2)
 			return -2;
 		else
 		{
-			auto vs2 = tools::string_split(vs[1], '-');
+			auto vs2 = tools::split(vs[1], '-');
 
 			if (!vs2[0].size())
 				return -3;
@@ -77,13 +77,13 @@ int aff3ct::version_release()
 	}
 	else
 	{
-		auto vs = tools::string_split(version, '.');
+		auto vs = tools::split(version, '.');
 
 		if (vs.size() < 3)
 			return -2;
 		else
 		{
-			auto vs3 = tools::string_split(vs[2], '-');
+			auto vs3 = tools::split(vs[2], '-');
 
 			if (!vs3[0].size())
 				return -3;

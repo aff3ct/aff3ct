@@ -15,7 +15,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::Decoder_LDPC_BP_layered_ONMS_inter(const int &K, const int &N, const int& n_ite,
+::Decoder_LDPC_BP_layered_ONMS_inter(const int K, const int N, const int n_ite,
                                      const tools::Sparse_matrix &H,
                                      const std::vector<unsigned> &info_bits_pos,
                                      const float normalize_factor,
@@ -24,46 +24,20 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
                                      const int syndrome_depth,
                                      const int n_frames,
                                      const std::string name)
-: Decoder               (K, N, n_frames, mipp::nElReg<R>(), name                                      ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                      ),
-  normalize_factor      (normalize_factor                                                             ),
-  offset                (offset                                                                       ),
-  contributions         (H.get_cols_max_degree()                                                      ),
-  saturation            ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(H.get_rows_max_degree()))) -1)),
-  n_ite                 (n_ite                                                                        ),
-  n_C_nodes             ((int)H.get_n_cols()                                                          ),
-  enable_syndrome       (enable_syndrome                                                              ),
-  syndrome_depth        (syndrome_depth                                                               ),
-  init_flag             (true                                                                         ),
-  info_bits_pos         (info_bits_pos                                                                ),
-  H                     (H                                                                            ),
-  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                             ),
-  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(H.get_n_connections())         ),
-  Y_N_reorderered       (N                                                                            ),
-  V_reorderered         (N                                                                            )
+: Decoder               (K, N, n_frames,                                            mipp::nElReg<R>(), name),
+  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, mipp::nElReg<R>(), name),
+  normalize_factor      (normalize_factor                                                                  ),
+  offset                (offset                                                                            ),
+  contributions         (H.get_cols_max_degree()                                                           ),
+  saturation            ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(H.get_rows_max_degree()))) -1)     ),
+  n_C_nodes             ((int)H.get_n_cols()                                                               ),
+  init_flag             (true                                                                              ),
+  info_bits_pos         (info_bits_pos                                                                     ),
+  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                                  ),
+  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(H.get_n_connections())              ),
+  Y_N_reorderered       (N                                                                                 ),
+  V_reorderered         (N                                                                                 )
 {
-	if (n_ite <= 0)
-	{
-		std::stringstream message;
-		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (syndrome_depth <= 0)
-	{
-		std::stringstream message;
-		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (N != (int)H.get_n_rows())
-	{
-		std::stringstream message;
-		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
-		        << H.get_n_rows() << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (typeid(R) == typeid(signed char))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder does not work in 8-bit fixed-point.");
 
@@ -295,7 +269,7 @@ bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	const auto zero = mipp::Msk<mipp::N<B>()>(false);
 	auto syndrome = zero;
 
-	auto k = 0;
+	//auto k = 0;
 	for (auto i = 0; i < this->n_C_nodes; i++)
 	{
 		auto sign = zero;
@@ -303,16 +277,14 @@ bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		const auto n_VN = (int)this->H[i].size();
 		for (auto j = 0; j < n_VN; j++)
 		{
-			const auto value = this->var_nodes[cur_wave][this->H[i][j]] - this->branches[cur_wave][k++];
+			const auto value = this->var_nodes[cur_wave][this->H[i][j]];// - this->branches[cur_wave][k++];
 			sign ^= mipp::sign(value);
 		}
 
 		syndrome |= sign;
 	}
 
-	auto i = 0;
-	while (i < mipp::nElReg<B>() && !syndrome[i]) i++;
-	return (i == mipp::nElReg<B>());
+	return (mipp::testz(syndrome));
 }
 
 // --------------------------------------------------------------------------------------------------------------------

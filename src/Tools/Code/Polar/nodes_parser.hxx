@@ -28,10 +28,10 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 
 	polar_patterns.push_back(new STD);
 
-	auto v_polar = string_split(str_polar_bis, ',');
+	auto v_polar = split(str_polar_bis, ',');
 	for (auto i = 0; i < (int)v_polar.size(); i++)
 	{
-		auto v_str1 = string_split(v_polar[i], '_');
+		auto v_str1 = split(v_polar[i], '_');
 
 		if (v_str1.size() >= 1)
 		{
@@ -41,7 +41,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 					polar_patterns.push_back(new R0L);
 				else
 				{
-					auto v_str2 = string_split(v_str1[1], '-');
+					auto v_str2 = split(v_str1[1], '-');
 
 					if (v_str2.size() > 1)
 					{
@@ -69,7 +69,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 					polar_patterns.push_back(new R0);
 				else
 				{
-					auto v_str2 = string_split(v_str1[1], '-');
+					auto v_str2 = split(v_str1[1], '-');
 
 					if (v_str2.size() > 1)
 					{
@@ -97,7 +97,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 					polar_patterns.push_back(new R1);
 				else
 				{
-					auto v_str2 = string_split(v_str1[1], '-');
+					auto v_str2 = split(v_str1[1], '-');
 
 					if (v_str2.size() > 1)
 					{
@@ -123,7 +123,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 					polar_patterns.push_back(new REPL);
 				else
 				{
-					auto v_str2 = string_split(v_str1[1], '-');
+					auto v_str2 = split(v_str1[1], '-');
 
 					if (v_str2.size() > 1)
 					{
@@ -149,7 +149,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 					polar_patterns.push_back(new REP);
 				else
 				{
-					auto v_str2 = string_split(v_str1[1], '-');
+					auto v_str2 = split(v_str1[1], '-');
 
 					if (v_str2.size() > 1)
 					{
@@ -175,7 +175,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 					polar_patterns.push_back(new SPC);
 				else
 				{
-					auto v_str2 = string_split(v_str1[1], '-');
+					auto v_str2 = split(v_str1[1], '-');
 
 					if (v_str2.size() > 1)
 					{

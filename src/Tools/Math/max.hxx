@@ -10,20 +10,20 @@ namespace aff3ct
 namespace tools
 {
 template <typename R>
-inline R max(const R& a, const R& b)
+inline R max(const R a, const R b)
 {
 	return std::max(a, b);
 }
 
 template <typename R>
-inline R max_linear(const R& a, const R& b)
+inline R max_linear(const R a, const R b)
 {
 	//return std::max(a, b) + std::max((R)0, (R)((R)0.25 * ((R)2.77 - std::abs(a - b))));
 	return std::max(a, b) + std::max((R)0, (R)((R)0.301 - ((R)0.5 * std::abs(a - b))));
 }
 
 template <typename R>
-inline R max_star(const R& a, const R& b) 
+inline R max_star(const R a, const R b)
 {
 	// the two next statements are equivalent !
 	// return std::max(a, b) + std::log((R)1 + std::exp(-std::abs(a - b)));
@@ -31,7 +31,7 @@ inline R max_star(const R& a, const R& b)
 }
 
 template <typename R>
-inline R max_star_safe(const R& a, const R& b)
+inline R max_star_safe(const R a, const R b)
 {
 	throw runtime_error(__FILE__, __LINE__, __func__, "This method is not defined in fixed-point arithmetic.");
 
@@ -39,7 +39,7 @@ inline R max_star_safe(const R& a, const R& b)
 }
 
 template <>
-inline float max_star_safe(const float& a, const float& b)
+inline float max_star_safe(const float a, const float b)
 {
 	float d = std::abs(a - b);
 
@@ -54,7 +54,7 @@ inline float max_star_safe(const float& a, const float& b)
 }
 
 template <>
-inline double max_star_safe(const double& a, const double& b)
+inline double max_star_safe(const double a, const double b)
 {
 	double d = std::abs(a - b);
 
@@ -86,6 +86,32 @@ inline mipp::Reg<R> max_star_i(const mipp::Reg<R> a, const mipp::Reg<R> b)
 {
 	mipp::Reg<R> zero = (R)0.0, one = (R)1.0;
 	return mipp::max(a, b) + mipp::log(one + mipp::exp(zero - mipp::abs(a - b)));
+}
+
+template <typename R>
+inline R min(const R a, const R b)
+{
+	return std::min(a, b);
+}
+
+template <typename R>
+inline R correction_linear2(const R x)
+{
+	if      (x > 2.625) return (R)0;
+	else if (x < 1.000) return (R)-0.3750 * x + (R)0.6825;
+	else                return (R)-0.1875 * x + (R)0.5;
+}
+
+template <typename R>
+inline R min_star_linear2(const R a, const R b)
+{
+	return (R)(std::min(a, b) + correction_linear2(a + b) - correction_linear2(std::abs(a - b)));
+}
+
+template <typename R>
+inline R min_star(const R a, const R b)
+{
+	return std::min(a, b) + (R)std::log1p(std::exp(-(a + b))) - (R)std::log1p(std::exp(-std::abs(a - b)));
 }
 }
 }
