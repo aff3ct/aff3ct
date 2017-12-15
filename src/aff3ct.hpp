@@ -296,7 +296,7 @@
 #include <Tools/Algo/Tree/Binary_tree.hpp>
 #include <Tools/Algo/Tree/Binary_tree_metric.hpp>
 #include <Tools/Arguments_reader.hpp>
-#include <Tools/Code/BCH/BCH_Polynomial_Generator.hpp>
+#include <Tools/Code/BCH/BCH_polynomial_generator.hpp>
 #include <Tools/Code/LDPC/AList/AList.hpp>
 #include <Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp>
 #include <Tools/Code/LDPC/QC/QC.hpp>

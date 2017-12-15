@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "../Encoder.hpp"
-#include "Tools/Code/BCH/BCH_Polynomial_Generator.hpp"
+#include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
 
 namespace aff3ct
 {
@@ -19,7 +19,7 @@ protected:
 	std::vector<B>          bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
 
 public:
-	Encoder_BCH(const int& K, const int& N, const tools::BCH_Polynomial_Generator& GF, const int n_frames = 1,
+	Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator& GF, const int n_frames = 1,
 	            const std::string name = "Encoder_BCH");
 
 	virtual ~Encoder_BCH();

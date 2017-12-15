@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Module/Encoder/Encoder.hpp"
-#include "Tools/Code/BCH/BCH_Polynomial_Generator.hpp"
+#include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
 
 #include "../Encoder.hpp"
 
@@ -35,11 +35,11 @@ struct Encoder_BCH : public Encoder
 
 		// builder
 		template <typename B = int>
-		module::Encoder<B>* build(const tools::BCH_Polynomial_Generator &GF) const;
+		module::Encoder<B>* build(const tools::BCH_polynomial_generator &GF) const;
 	};
 
 	template <typename B = int>
-	static module::Encoder<B>* build(const parameters &params, const tools::BCH_Polynomial_Generator &GF);
+	static module::Encoder<B>* build(const parameters &params, const tools::BCH_polynomial_generator &GF);
 };
 }
 }
