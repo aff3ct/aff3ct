@@ -6,7 +6,7 @@
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
-#include "Tools/Code/BCH/BCH_Polynomial_Generator.hpp"
+#include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
 
 #include "../Decoder.hpp"
 
@@ -41,11 +41,11 @@ struct Decoder_BCH : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const tools::BCH_Polynomial_Generator &GF) const;
+		module::Decoder_SIHO<B,Q>* build(const tools::BCH_polynomial_generator &GF) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::BCH_Polynomial_Generator &GF);
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::BCH_polynomial_generator &GF);
 };
 }
 }
