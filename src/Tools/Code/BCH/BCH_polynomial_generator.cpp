@@ -41,7 +41,7 @@ int BCH_polynomial_generator
 int BCH_polynomial_generator
 ::get_n_rdncy() const
 {
-	return g.size() -1;
+	return (int)g.size() -1;
 }
 
 const std::vector<int>& BCH_polynomial_generator
@@ -109,7 +109,7 @@ void BCH_polynomial_generator
 				{
 					test = true;
 					min.push_back((int)i);
-					rdncy += cycle_sets[i].size();
+					rdncy += (int)cycle_sets[i].size();
 				}
 	}
 
