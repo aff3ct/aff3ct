@@ -273,7 +273,8 @@ void Argument_handler
 			}
 		}
 
-		std::cout << std::endl;
+		if (title_displayed)
+			std::cout << std::endl;
 	}
 
 
