@@ -1,27 +1,24 @@
 #ifndef DECODER_LDPC_BP_FLOODING_HPP_
 #define DECODER_LDPC_BP_FLOODING_HPP_
 
-#include "../../../Decoder_SISO_SIHO.hpp"
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+
+#include "../Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_flooding : public Decoder_SISO_SIHO<B,R>
+class Decoder_LDPC_BP_flooding : public Decoder_LDPC_BP<B,R>
 {
 public:
 	void reset();
 
 protected:
-	const int  n_ite;      // number of iterations to perform
 	const int  n_V_nodes;  // number of variable nodes (= N)
 	const int  n_C_nodes;  // number of check    nodes (= N - K)
 	const int  n_branches; // number of branched in the bi-partite graph (connexions between the V and C nodes)
-
-	const bool enable_syndrome;
-	const int  syndrome_depth;
 
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
@@ -37,7 +34,7 @@ protected:
 	std::vector<std::vector<R>> C_to_V; // check    nodes to variable nodes messages
 	std::vector<std::vector<R>> V_to_C; // variable nodes to check    nodes messages
 
-	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
+	Decoder_LDPC_BP_flooding(const int K, const int N, const int n_ite,
 	                         const tools::Sparse_matrix &H,
 	                         const std::vector<unsigned> &info_bits_pos,
 	                         const bool enable_syndrome = true,
@@ -53,7 +50,7 @@ protected:
 	// BP functions for decoding
 	void BP_decode(const R *Y_N, const int frame_id);
 
-	virtual bool BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V) = 0;
+	virtual void BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V) = 0;
 };
 }
 }

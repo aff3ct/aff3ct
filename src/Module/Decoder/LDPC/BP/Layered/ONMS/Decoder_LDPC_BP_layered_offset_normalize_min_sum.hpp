@@ -16,7 +16,7 @@ private:
 	std::vector<R> contributions;
 
 public:
-	Decoder_LDPC_BP_layered_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
+	Decoder_LDPC_BP_layered_offset_normalize_min_sum(const int K, const int N, const int n_ite,
 	                                                 const tools::Sparse_matrix &H,
 	                                                 const std::vector<unsigned> &info_bits_pos,
 	                                                 const float normalize_factor = 1.f,

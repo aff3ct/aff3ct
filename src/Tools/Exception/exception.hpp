@@ -26,9 +26,6 @@ public:
 	virtual ~exception() throw();
 
 	virtual const char* what() const throw();
-
-private:
-	static std::string get_back_trace();
 };
 }
 }

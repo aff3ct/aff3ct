@@ -30,8 +30,8 @@ private:
 	const factory::BFER::parameters &params;
 
 protected:
-	std::mutex  mutex_exception;
-	std::string prev_err_message;
+	std::mutex               mutex_exception;
+	std::vector<std::string> prev_err_messages;
 
 	// a barrier to synchronize the threads
 	tools::Barrier barrier;

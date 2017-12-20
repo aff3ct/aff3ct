@@ -6,8 +6,8 @@
 #include <stdexcept>
 #include <map>
 
-#include "Argument_type.hpp"
-#include "Argument_range.hpp"
+#include "Argument_type/Argument_type.hpp"
+#include "Argument_range/Argument_range.hpp"
 
 namespace aff3ct
 {

@@ -55,7 +55,6 @@ void Puncturer::parameters
 		{p+"-type"},
 		new tools::Text<>({new tools::Including_set<std::string>({"NO"})}),
 		"code puncturer type.");
-
 }
 
 void Puncturer::parameters

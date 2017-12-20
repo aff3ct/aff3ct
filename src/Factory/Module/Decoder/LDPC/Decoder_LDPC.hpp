@@ -23,14 +23,17 @@ struct Decoder_LDPC : public Decoder
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// required parameters
+		std::string H_path;
+
 		// optional parameters
-		std::string H_alist_path     = "";
-		std::string simd_strategy    = "";
-		float       norm_factor      = 1.f;
-		float       offset           = 0.f;
-		bool        enable_syndrome  = true;
-		int         syndrome_depth   = 2;
-		int         n_ite            = 10;
+		std::string min             = "MINL";
+		std::string simd_strategy   = "";
+		float       norm_factor     = 1.f;
+		float       offset          = 0.f;
+		bool        enable_syndrome = true;
+		int         syndrome_depth  = 2;
+		int         n_ite           = 10;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		parameters(const std::string p = Decoder_LDPC::prefix);

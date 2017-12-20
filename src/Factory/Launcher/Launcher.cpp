@@ -186,7 +186,7 @@ void factory::Launcher::parameters
 	using namespace date;
 	std::stringstream date;
 	date << std::chrono::system_clock::now();
-	auto split_date = tools::string_split(date.str(), '.');
+	auto split_date = tools::split(date.str(), '.');
 	params_headers[p].push_back(std::make_pair("Date (UTC)", split_date[0]));
 	if (version() != "GIT-NOTFOUND")
 		params_headers[p].push_back(std::make_pair("Git version", version()));

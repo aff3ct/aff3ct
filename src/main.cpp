@@ -17,6 +17,7 @@
 #include "Tools/version.h"
 #include "Tools/Arguments/Argument_handler.hpp"
 #include "Tools/Display/bash_tools.h"
+#include "Tools/system_functions.h"
 
 #include "Launcher/Launcher.hpp"
 #include "Factory/Launcher/Launcher.hpp"
@@ -157,7 +158,7 @@ int sc_main(int argc, char **argv)
 	}
 	catch(std::exception const& e)
 	{
-		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+		std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
 	}
 
 #ifdef ENABLE_MPI

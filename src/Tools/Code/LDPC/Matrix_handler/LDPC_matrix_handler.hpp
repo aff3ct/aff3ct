@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
+#include <mipp.h>
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
@@ -14,7 +15,8 @@ namespace tools
 struct LDPC_matrix_handler
 {
 public:
-	using Full_matrix = std::vector<std::vector<bool>>;
+	using Full_matrix   = std::vector<std::vector<bool>>;
+	using QCFull_matrix = std::vector<mipp::vector<int8_t>>;
 
 	/*
 	 * convert a binary sparse matrix to a binary full matrix
@@ -69,10 +71,13 @@ public:
 	static std::vector<unsigned> interleave_info_bits_pos(const std::vector<unsigned>& info_bits_pos,
 	                                                      std::vector<unsigned>& old_cols_pos);
 
+	/*
+	 * inverse H2 (H = [H1 H2] with size(H2) = M x M) to allow encoding with p = H1 x inv(H2) x u
+	 */
+	static QCFull_matrix invert_H2(const Sparse_matrix& H);
+
 protected :
-
 	static void transform_H_to_G(Full_matrix& mat, std::vector<unsigned>& info_bits_pos);
-
 };
 }
 }

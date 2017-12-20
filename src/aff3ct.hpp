@@ -1,7 +1,7 @@
 #ifndef AFF3CT_HPP
 #define AFF3CT_HPP
 
-//find ./src/ -type f -follow -print | grep "[.]h$"
+//find .\/src\/ -type f -follow -print | grep "[.]h$" | sed 's/[[:blank:]]\+/\n/g' | sed 's/.\/src\//#include </' | sed 's|$|>|g'
 #include <Tools/Code/Polar/API/functions_polar_inter.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_8bit_bitpacking.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_intra.h>
@@ -25,12 +25,12 @@
 #include <Tools/Perf/Transpose/transpose_NEON.h>
 #include <Tools/Perf/Transpose/transpose_selector.h>
 #include <Tools/Perf/Transpose/transpose_SSE.h>
+#include <Tools/system_functions.h>
 #include <Tools/types.h>
 #include <Tools/version.h>
 
 
-
-//find ./src/ -type f -follow -print | grep "[.]hpp$"
+//find .\/src\/ -type f -follow -print | grep "[.]hpp$" | sed 's/[[:blank:]]\+/\n/g' | sed 's/.\/src\//#include </' | sed 's|$|>|g'
 // #include <aff3ct.hpp>
 #include <Factory/Factory.hpp>
 #include <Factory/Launcher/Launcher.hpp>
@@ -77,6 +77,7 @@
 #include <Factory/Module/Monitor/BFER/Monitor_BFER.hpp>
 #include <Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp>
 #include <Factory/Module/Monitor/Monitor.hpp>
+#include <Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp>
 #include <Factory/Module/Puncturer/Polar/Puncturer_polar.hpp>
 #include <Factory/Module/Puncturer/Puncturer.hpp>
 #include <Factory/Module/Puncturer/Turbo/Puncturer_turbo.hpp>
@@ -145,6 +146,8 @@
 #include <Module/Decoder/Decoder_SIHO_HIHO.hpp>
 #include <Module/Decoder/Decoder_SISO.hpp>
 #include <Module/Decoder/Decoder_SISO_SIHO.hpp>
+#include <Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp>
+#include <Module/Decoder/LDPC/BP/Flooding/AMS/Decoder_LDPC_BP_flooding_approximate_min_star.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp>
@@ -213,6 +216,7 @@
 #include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2_constants_64800.hpp>
 #include <Module/Encoder/LDPC/Encoder_LDPC.hpp>
 #include <Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp>
+#include <Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp>
 #include <Module/Encoder/NO/Encoder_NO.hpp>
 #include <Module/Encoder/Polar/Encoder_polar.hpp>
 #include <Module/Encoder/Polar/Encoder_polar_sys.hpp>
@@ -248,6 +252,7 @@
 #include <Module/Monitor/BFER/Monitor_BFER_reduction_mpi.hpp>
 #include <Module/Monitor/EXIT/Monitor_EXIT.hpp>
 #include <Module/Monitor/Monitor.hpp>
+#include <Module/Puncturer/LDPC/Puncturer_LDPC.hpp>
 #include <Module/Puncturer/NO/Puncturer_NO.hpp>
 #include <Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp>
 #include <Module/Puncturer/Puncturer.hpp>
@@ -298,9 +303,10 @@
 #include <Tools/Arguments/Argument_tools.hpp>
 #include <Tools/Arguments/Argument_type.hpp>
 #include <Tools/Arguments/Argument_type_basics.hpp>
-#include <Tools/Code/BCH/BCH_Polynomial_Generator.hpp>
+#include <Tools/Code/BCH/BCH_polynomial_generator.hpp>
 #include <Tools/Code/LDPC/AList/AList.hpp>
 #include <Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp>
+#include <Tools/Code/LDPC/QC/QC.hpp>
 #include <Tools/Code/Polar/API/API_polar.hpp>
 #include <Tools/Code/Polar/API/API_polar_dynamic_inter.hpp>
 #include <Tools/Code/Polar/API/API_polar_dynamic_inter_8bit_bitpacking.hpp>
@@ -379,6 +385,5 @@
 #include <Tools/SystemC/SC_Predicate.hpp>
 #include <Tools/SystemC/SC_Router.hpp>
 #include <Tools/Threads/Barrier.hpp>
-
 
 #endif /* AFF3CT_HPP */

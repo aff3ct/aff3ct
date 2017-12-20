@@ -10,6 +10,7 @@
 
 #include "Tools/date.h"
 #include "Tools/general_utils.h"
+#include "Tools/system_functions.h"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
 
@@ -164,7 +165,7 @@ void Launcher::launch()
 	}
 	catch (std::exception const& e)
 	{
-		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+		std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
 	}
 
 	if (simu != nullptr)
@@ -181,7 +182,7 @@ void Launcher::launch()
 		}
 		catch (std::exception const& e)
 		{
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+			std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
 		}
 	}
 

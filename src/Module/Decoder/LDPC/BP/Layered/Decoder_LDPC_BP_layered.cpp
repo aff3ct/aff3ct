@@ -13,46 +13,21 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_layered<B,R>
-::Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
+::Decoder_LDPC_BP_layered(const int K, const int N, const int n_ite,
                           const tools::Sparse_matrix &H,
                           const std::vector<unsigned> &info_bits_pos,
                           const bool enable_syndrome,
                           const int syndrome_depth,
                           const int n_frames,
                           const std::string name)
-: Decoder               (K, N, n_frames, 1, name                        ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                        ),
-  n_ite                 (n_ite                                          ),
-  n_C_nodes             ((int)H.get_n_cols()                            ),
-  enable_syndrome       (enable_syndrome                                ),
-  syndrome_depth        (syndrome_depth                                 ),
-  init_flag             (true                                           ),
-  info_bits_pos         (info_bits_pos                                  ),
-  H                     (H                                              ),
-  var_nodes             (n_frames, std::vector<R>(N                    )),
-  branches              (n_frames, std::vector<R>(H.get_n_connections()))
+: Decoder               (K, N,                                            n_frames, 1, name),
+  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1, name),
+  n_C_nodes             ((int)H.get_n_cols()                                               ),
+  init_flag             (true                                                              ),
+  info_bits_pos         (info_bits_pos                                                     ),
+  var_nodes             (n_frames, std::vector<R>(N                    )                   ),
+  branches              (n_frames, std::vector<R>(H.get_n_connections())                   )
 {
-	if (n_ite <= 0)
-	{
-		std::stringstream message;
-		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (syndrome_depth <= 0)
-	{
-		std::stringstream message;
-		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (N != (int)H.get_n_rows())
-	{
-		std::stringstream message;
-		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
-		        << H.get_n_rows() << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 }
 
 template <typename B, typename R>
@@ -158,48 +133,13 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
 ::BP_decode(const int frame_id)
 {
-	auto cur_syndrome_depth = 0;
-
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		this->BP_process(this->var_nodes[frame_id], this->branches[frame_id]);
 
-		// stop criterion
-		if (this->enable_syndrome && this->check_syndrome(frame_id))
-		{
-			cur_syndrome_depth++;
-			if (cur_syndrome_depth == this->syndrome_depth)
-				break;
-		}
-		else
-			cur_syndrome_depth = 0;
+		if (this->check_syndrome_soft(this->var_nodes[frame_id].data()))
+			break;
 	}
-}
-
-template <typename B, typename R>
-bool Decoder_LDPC_BP_layered<B,R>
-::check_syndrome(const int frame_id)
-{
-	auto syndrome = false;
-
-	auto k = 0;
-	for (auto i = 0; i < this->n_C_nodes; i++)
-	{
-		auto sign = 0;
-
-		const auto n_VN = (int)this->H[i].size();
-		for (auto j = 0; j < n_VN; j++)
-		{
-			const auto value = this->var_nodes[frame_id][this->H[i][j]] - this->branches[frame_id][k++];
-			const auto tmp_sign  = std::signbit((float)value) ? -1 : 0;
-
-			sign ^= tmp_sign;
-		}
-
-		syndrome = syndrome || sign;
-	}
-
-	return (syndrome == 0);
 }
 
 // ==================================================================================== explicit template instantiation 
