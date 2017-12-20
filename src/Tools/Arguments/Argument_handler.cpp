@@ -3,10 +3,11 @@
 #include <algorithm>
 #include <type_traits>
 
+#include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/general_utils.h"
 
 #include "Argument_handler.hpp"
-#include "Tools/Display/bash_tools.h"
 
 using namespace aff3ct::tools;
 
@@ -206,26 +207,48 @@ void Argument_handler
 	std::cout << std::endl;
 }
 
+std::string split_doc(const std::string& line, const std::string start_line, const unsigned max_char)
+{
+	auto words = split(line);
+	unsigned cur_char = start_line.length();
+	std::string splitted_lines = start_line;
+	for (auto &w : words)
+	{
+		if (cur_char + (unsigned)w.size() > max_char)
+		{
+			splitted_lines += "\n" + start_line;
+			cur_char = start_line.length();
+		}
+		splitted_lines += w + " ";
+
+		cur_char += w.length() +1;
+	}
+
+	return splitted_lines;
+}
+
 void Argument_handler
 ::print_help(const Argument_tag &tags, const Argument_info &info, const size_t max_n_char_arg, const bool required) const
 {
 	Format arg_format = 0;
 
-	const auto tab = "    ";
-
 	std::string tags_str = this->print_tag(tags);
 	tags_str.append(max_n_char_arg - tags_str.size(), ' ');
 
-	std::cout << tab << format(tags_str, arg_format | Style::BOLD);
+	const std::string tab = "    ";
+	std::string tabr = tab;
+	if (required)
+		tabr = format("{R} ", arg_format | Style::BOLD | FG::Color::ORANGE);
+
+	std::cout << tabr << format(tags_str, arg_format | Style::BOLD);
 
 	if (info.type->get_title().size())
 		std::cout << format(" <" + info.type->get_title() + ">", arg_format | FG::GRAY);
 
-	if (required)
-		std::cout << format(" {REQUIRED}", arg_format | Style::BOLD | FG::Color::ORANGE);
-
 	std::cout << std::endl;
-	std::cout << format(tab + info.doc, arg_format) << std::endl;
+	auto splitted_doc = split_doc(info.doc, tab + "  ", 80);
+	// std::cout << format(tab + info.doc, arg_format) << std::endl;
+	std::cout << format(splitted_doc, arg_format) << std::endl;
 }
 
 void Argument_handler
@@ -360,9 +383,10 @@ std::string Argument_handler
 std::string Argument_handler
 ::print_tag(const Argument_tag &tags)
 {
-	std::string txt = "\"";
-		for (unsigned i = 0; i < tags.size(); i++)
-			txt += print_tag(tags[i]) + ((i < tags.size()-1)?", ":"");
-	txt += "\"";
+	std::string txt;
+	// txt += "\"";
+	for (unsigned i = 0; i < tags.size(); i++)
+		txt += print_tag(tags[i]) + ((i < tags.size()-1)?", ":"");
+	// txt += "\"";
 	return txt;
 }
