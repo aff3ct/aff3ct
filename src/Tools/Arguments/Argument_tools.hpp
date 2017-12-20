@@ -4,8 +4,6 @@
 #include <typeinfo>
 #include <stdexcept>
 #include "Argument_map.hpp"
-#include "Argument_type_basics.hpp"
-#include "Argument_range_basics.hpp"
 
 namespace aff3ct
 {

@@ -4,7 +4,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "Argument_range.hpp"
+#include "../Argument_range/Argument_range.hpp"
 
 namespace aff3ct
 {
@@ -13,23 +13,23 @@ namespace tools
 
 class Argument_type
 {
+public:
+	static const std::string title_description_separator;
+
 protected:
 	std::string title;
 
 public:
-	Argument_type(const std::string& title)
-	: title(title)
-	{ }
+	Argument_type(const std::string& title);
 
 	virtual ~Argument_type() {};
 
 	virtual void check(const std::string&) const = 0;
 	virtual Argument_type* clone()         const = 0;
 
-	virtual const std::string get_title() const
-	{
-		return title;
-	}
+	virtual const std::string get_title() const;
+
+	virtual const std::string get_short_title() const;
 };
 
 template <typename T>
@@ -76,7 +76,7 @@ public:
 		auto t = this->title;
 		if (ranges.size()) // then add ranges titles to the argument title
 		{
-			t += ":";
+			t += Argument_type::title_description_separator;
 			for (unsigned i = 0; i < ranges.size(); i++)
 			{
 				t += ranges[i]->get_title();
@@ -108,4 +108,10 @@ protected:
 
 }
 }
+
+#include "None.hpp"
+#include "Text.hpp"
+#include "Real.hpp"
+#include "Integer.hpp"
+
 #endif /* ARGUMENT_TYPE_HPP_ */

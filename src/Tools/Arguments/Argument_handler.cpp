@@ -155,7 +155,7 @@ void Argument_handler
 		if (std::find(existing_flags.begin(), existing_flags.end(), it->first.back()) == existing_flags.end())
 		{
 			if(it->second->type->get_title() != "")
-				std::cout << " " + print_tag(it->first.back()) << " <" << it->second->type->get_title() << ">";
+				std::cout << " " + print_tag(it->first.back()) << " <" << it->second->type->get_short_title() << ">";
 			else
 				std::cout << " " + print_tag(it->first.back());
 

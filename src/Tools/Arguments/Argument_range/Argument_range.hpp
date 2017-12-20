@@ -197,4 +197,8 @@ public:
 }
 }
 
+#include "Non_zero.hpp"
+#include "Negative.hpp"
+#include "Positive.hpp"
+
 #endif /* ARGUMENT_RANGE_HPP_ */
