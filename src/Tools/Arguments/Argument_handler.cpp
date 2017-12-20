@@ -247,7 +247,6 @@ void Argument_handler
 
 	std::cout << std::endl;
 	auto splitted_doc = split_doc(info.doc, tab + "  ", 80);
-	// std::cout << format(tab + info.doc, arg_format) << std::endl;
 	std::cout << format(splitted_doc, arg_format) << std::endl;
 }
 
@@ -384,9 +383,7 @@ std::string Argument_handler
 ::print_tag(const Argument_tag &tags)
 {
 	std::string txt;
-	// txt += "\"";
 	for (unsigned i = 0; i < tags.size(); i++)
 		txt += print_tag(tags[i]) + ((i < tags.size()-1)?", ":"");
-	// txt += "\"";
 	return txt;
 }
