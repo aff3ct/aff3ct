@@ -3,15 +3,16 @@
 
 #include <mipp.h>
 
-#include "../../../../Decoder_SISO_SIHO.hpp"
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+
+#include "../../Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_layered_ONMS_inter : public Decoder_SISO_SIHO<B,R>
+class Decoder_LDPC_BP_layered_ONMS_inter : public Decoder_LDPC_BP<B,R>
 {
 private:
 	const float normalize_factor;
@@ -20,18 +21,12 @@ private:
 
 protected:
 	const R saturation;
-	const int n_ite;     // number of iterations to perform
 	const int n_C_nodes; // number of check nodes (= N - K)
-
-	const bool enable_syndrome;
-	const int  syndrome_depth;
 
 	// reset so C_to_V and V_to_C structures can be cleared only at the beginning of the loop in iterative decoding
 	bool init_flag;
 
 	const std::vector<unsigned> &info_bits_pos;
-
-	const tools::Sparse_matrix &H;
 
 	// data structures for iterative decoding
 	std::vector<mipp::vector<mipp::Reg<R>>> var_nodes;
@@ -41,7 +36,7 @@ protected:
 	mipp::vector<mipp::Reg<B>> V_reorderered;
 
 public:
-	Decoder_LDPC_BP_layered_ONMS_inter(const int &K, const int &N, const int& n_ite,
+	Decoder_LDPC_BP_layered_ONMS_inter(const int K, const int N, const int n_ite,
 	                                   const tools::Sparse_matrix &H,
 	                                   const std::vector<unsigned> &info_bits_pos,
 	                                   const float normalize_factor = 1.f,

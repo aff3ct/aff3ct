@@ -43,7 +43,7 @@ void Modem_OOK<B,R,Q>
 {
 	auto size = (unsigned int)(this->N * this->n_frames);
 	for (unsigned i = 0; i < size; i++)
-		X_N2[i] = X_N1[i] ? 1 : 0;
+		X_N2[i] = X_N1[i] ? (R)1 : (R)0;
 }
 
 template <typename B,typename R, typename Q>

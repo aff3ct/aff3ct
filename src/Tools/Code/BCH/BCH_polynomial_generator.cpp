@@ -1,13 +1,13 @@
 #include <sstream>
 
-#include "BCH_Polynomial_Generator.hpp"
+#include "BCH_polynomial_generator.hpp"
 
 #include "Tools/Exception/exception.hpp"
 
 using namespace aff3ct::tools;
 
-BCH_Polynomial_Generator
-::BCH_Polynomial_Generator(const int& K, const int& N, const int& t)
+BCH_polynomial_generator
+::BCH_polynomial_generator(const int& K, const int& N, const int& t)
  : Galois(K, N), t(t), d(2 * t + 1)
 {
 	if (t < 1)
@@ -20,37 +20,37 @@ BCH_Polynomial_Generator
 	compute_polynomial();
 }
 
-BCH_Polynomial_Generator
-::~BCH_Polynomial_Generator()
+BCH_polynomial_generator
+::~BCH_polynomial_generator()
 {
 }
 
-int BCH_Polynomial_Generator
+int BCH_polynomial_generator
 ::get_d() const
 {
 	return d;
 }
 
-int BCH_Polynomial_Generator
+int BCH_polynomial_generator
 ::get_t() const
 {
 	return t;
 }
 
 
-int BCH_Polynomial_Generator
+int BCH_polynomial_generator
 ::get_n_rdncy() const
 {
-	return g.size() -1;
+	return (int)g.size() -1;
 }
 
-const std::vector<int>& BCH_Polynomial_Generator
+const std::vector<int>& BCH_polynomial_generator
 ::get_g() const
 {
 	return g;
 }
 
-void BCH_Polynomial_Generator
+void BCH_polynomial_generator
 ::compute_polynomial()
 {
 	int rdncy = 0;
@@ -109,7 +109,7 @@ void BCH_Polynomial_Generator
 				{
 					test = true;
 					min.push_back((int)i);
-					rdncy += cycle_sets[i].size();
+					rdncy += (int)cycle_sets[i].size();
 				}
 	}
 

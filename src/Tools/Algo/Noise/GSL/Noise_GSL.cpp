@@ -37,7 +37,7 @@ void Noise_GSL<R>
 ::generate(R *noise, const unsigned length, const R sigma, const R mu)
 {
 	for (unsigned i = 0; i < length; i++)
-		noise[i] = (R)gsl_ran_gaussian(rng, sigma);
+		noise[i] = (R)gsl_ran_gaussian(rng, sigma) + mu;
 }
 
 // ==================================================================================== explicit template instantiation

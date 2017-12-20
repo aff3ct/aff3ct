@@ -30,7 +30,7 @@ public :
 	  wave_shape  (wave_shape                          ),
 	  m_order     ((int)1 << n_b_per_s                 ),
 	  n_bits_p    ((int)std::ceil(std::log2((double)p))),
-	  tl          (L                                   ),
+	  tl          ((int)(std::ceil((float)(p - 1) / (float)(m_order - 1))) + L - 1),
 
 	  // TODO: warning: from here parameters are working for Rimoldi decomposition only!
 	  n_wa        ((int)(p * std::pow(m_order, L))     ),

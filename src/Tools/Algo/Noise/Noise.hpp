@@ -20,9 +20,9 @@ public:
 	}
 
 	template <class A = std::allocator<R>>
-	void generate(std::vector<R,A> &noise, const R sigma)
+	void generate(std::vector<R,A> &noise, const R sigma, const R mu = 0.0)
 	{
-		this->generate(noise.data(), (unsigned)noise.size(), sigma);
+		this->generate(noise.data(), (unsigned)noise.size(), sigma, mu);
 	}
 
 	virtual void set_seed(const int seed) = 0;

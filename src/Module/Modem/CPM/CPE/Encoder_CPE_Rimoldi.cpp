@@ -1,6 +1,7 @@
 #include <vector>
 #include <cmath>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -12,7 +13,8 @@ using namespace aff3ct::module;
 template <typename SIN, typename SOUT>
 Encoder_CPE_Rimoldi<SIN, SOUT>
 ::Encoder_CPE_Rimoldi(const int N, const CPM_parameters<SIN,SOUT>& cpm)
-: Encoder_CPE<SIN,SOUT>(N, cpm)
+: Encoder_CPE<SIN,SOUT>(N, cpm),
+  tail_symb_transition(cpm.max_st_id, -1)
 {
 }
 
@@ -55,14 +57,7 @@ SIN Encoder_CPE_Rimoldi<SIN, SOUT>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	// extract V_n
-	int val = state & ((1 << this->cpm.n_bits_p)-1);
-
-	// sum V_n to the U_(n-L-1-i)
-	for (auto i = 0; i < this->cpm.L -1; i++)
-		val += (state >> (i*this->cpm.n_b_per_s+this->cpm.n_bits_p)) & ((1 << this->cpm.n_b_per_s)-1);
-
-	return (SIN)(this->cpm.p - (val)%this->cpm.p) % this->cpm.p;
+	return (SIN)tail_symb_transition[state];
 }
 
 template<typename SIN, typename SOUT>
@@ -177,6 +172,72 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 			wa_index |= p_mask;
 			wa_index++;
 		}
+	}
+}
+
+template<typename SIN, typename SOUT>
+void Encoder_CPE_Rimoldi<SIN, SOUT>
+::generate_tail_symb_transition()
+{
+	std::vector<int> state_found;
+	auto n_tail_symb = 0;
+	int next_state;
+
+	for (auto st = 0; st < this->cpm.n_st; ++st)
+		for (auto tr = 0; tr < this->cpm.m_order; ++tr)
+		{
+			next_state = this->cpm.trellis_next_state[this->cpm.allowed_states[st]*this->cpm.m_order + tr];
+			if (next_state == 0)
+			{
+				tail_symb_transition[this->cpm.allowed_states[st]] = tr;
+				state_found.push_back(this->cpm.allowed_states[st]);
+
+				break;
+			}
+		}
+
+	n_tail_symb++;
+
+	while ((int)state_found.size() != this->cpm.n_st)
+	{
+		std::vector<int> state_found_aux(state_found);
+
+		for (auto st = 0; st < this->cpm.n_st; ++st)
+		{
+			auto cur_state = this->cpm.allowed_states[st];
+
+			if (std::find(state_found.begin(), state_found.end(), cur_state) == state_found.end()) // not in the list
+			{
+				auto pos_in_vect = (int)state_found.size();
+
+				for (auto tr = 0; tr < this->cpm.m_order; ++tr)
+				{
+					next_state = this->cpm.trellis_next_state[cur_state * this->cpm.m_order + tr];
+					auto it = std::find(state_found.begin(), state_found.end(), next_state);
+					auto found_pos = it - state_found.begin();
+
+					if (it != state_found.end() && found_pos < pos_in_vect)
+					{
+						pos_in_vect = (int)found_pos;
+						tail_symb_transition[cur_state] = tr;
+					}
+				}
+
+				if (pos_in_vect < (int)state_found.size())
+					state_found_aux.push_back(cur_state);
+			}
+		}
+
+		state_found = state_found_aux;
+		n_tail_symb++;
+	}
+
+	if (n_tail_symb != this->cpm.tl)
+	{
+		std::stringstream message;
+		message << "'n_tail_symb' has to be equal to 'cpm.tl' ('n_tail_symb' = "
+		        << n_tail_symb << ", 'cpm.tl' = " << this->cpm.tl << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 

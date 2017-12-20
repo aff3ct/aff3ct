@@ -2,6 +2,7 @@
 
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 #include "Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp"
+#include "Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp"
 #include "Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp"
 
 #include "Encoder_LDPC.hpp"
@@ -37,7 +38,7 @@ void Encoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"LDPC", "LDPC_H", "LDPC_DVBS2"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"LDPC", "LDPC_H", "LDPC_DVBS2, LDPC_QC"}, 0);
 
 	opt_args.add(
 		{p+"-h-path"},
@@ -57,8 +58,8 @@ void Encoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-h-path"})) this->H_alist_path = vals.at({p+"-h-path"});
-	if(vals.exist({p+"-g-path"})) this->G_alist_path = vals.at({p+"-g-path"});
+	if(vals.exist({p+"-h-path"})) this->H_path = vals.at({p+"-h-path"});
+	if(vals.exist({p+"-g-path"})) this->G_path = vals.at({p+"-g-path"});
 }
 
 void Encoder_LDPC::parameters
@@ -69,18 +70,19 @@ void Encoder_LDPC::parameters
 	auto p = this->get_prefix();
 
 	if (this->type == "LDPC")
-		headers[p].push_back(std::make_pair("G matrix path", this->G_alist_path));
-	if (this->type == "LDPC_H")
-		headers[p].push_back(std::make_pair("H matrix path", this->H_alist_path));
+		headers[p].push_back(std::make_pair("G matrix path", this->G_path));
+	if (this->type == "LDPC_H" || this->type == "LDPC_QC")
+		headers[p].push_back(std::make_pair("H matrix path", this->H_path));
 }
 
 template <typename B>
 module::Encoder_LDPC<B>* Encoder_LDPC::parameters
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const
 {
-	     if (this->type == "LDPC"      ) return new module::Encoder_LDPC       <B>(this->K, this->N_cw, G, this->n_frames);
-	else if (this->type == "LDPC_H"    ) return new module::Encoder_LDPC_from_H<B>(this->K, this->N_cw, H, this->n_frames);
-	else if (this->type == "LDPC_DVBS2") return new module::Encoder_LDPC_DVBS2 <B>(this->K, this->N_cw,    this->n_frames);
+	     if (this->type == "LDPC"      ) return new module::Encoder_LDPC        <B>(this->K, this->N_cw, G, this->n_frames);
+	else if (this->type == "LDPC_H"    ) return new module::Encoder_LDPC_from_H <B>(this->K, this->N_cw, H, this->n_frames);
+	else if (this->type == "LDPC_QC"   ) return new module::Encoder_LDPC_from_QC<B>(this->K, this->N_cw, H, this->n_frames);
+	else if (this->type == "LDPC_DVBS2") return new module::Encoder_LDPC_DVBS2  <B>(this->K, this->N_cw,    this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

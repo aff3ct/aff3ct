@@ -68,7 +68,7 @@ int compute_N(const int K, const int tail_bits,  const std::string pattern)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto str_array = tools::string_split(pattern, ',');
+	auto str_array = tools::split(pattern, ',');
 
 	if (str_array.size() != 3)
 	{

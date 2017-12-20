@@ -3,12 +3,17 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
 
 namespace aff3ct
 {
 namespace tools
 {
-std::vector<std::string> string_split(const std::string &s, char delim);
+std::vector<std::string> split(const std::string &s, char delim);
+
+std::vector<std::string> split(const std::string &s);
+
+void getline(std::istream &file, std::string &line);
 
 template <typename R = float>
 R sigma_to_esn0(const R sigma, const int upsample_factor = 1);

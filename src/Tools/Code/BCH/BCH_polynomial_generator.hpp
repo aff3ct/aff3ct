@@ -1,5 +1,5 @@
-#ifndef BCH_Polynomial_Generator_HPP
-#define BCH_Polynomial_Generator_HPP
+#ifndef BCH_POLYNOMIAL_GENERATOR_HPP
+#define BCH_POLYNOMIAL_GENERATOR_HPP
 
 #include <vector>
 
@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace tools
 {
-class BCH_Polynomial_Generator : public Galois
+class BCH_polynomial_generator : public Galois
 {
 protected:
 	const int t;
@@ -18,8 +18,8 @@ protected:
 	std::vector<int> g; // coefficients of the generator polynomial, g(x)
 
 public:
-	BCH_Polynomial_Generator(const int& K, const int& N, const int& t);
-	virtual ~BCH_Polynomial_Generator();
+	BCH_polynomial_generator(const int& K, const int& N, const int& t);
+	virtual ~BCH_polynomial_generator();
 
 	int get_d      () const;
 	int get_t      () const; // get the correction power
@@ -33,4 +33,4 @@ private:
 }
 }
 
-#endif /* GALOIS_HPP */
+#endif /* BCH_POLYNOMIAL_GENERATOR_HPP */

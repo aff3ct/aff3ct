@@ -82,7 +82,8 @@ struct Modem : public Factory
 	                                            const int         N,
 	                                            const int         bps   = 1,
 	                                            const int         upf   = 5,
-	                                            const int         cpm_L = 3);
+	                                            const int         cpm_L = 3,
+		                                        const int         cpm_p = 2);
 
 	static int get_buffer_size_after_filtering(const std::string type,
 	                                           const int         N,

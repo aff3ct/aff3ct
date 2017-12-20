@@ -83,7 +83,7 @@ void Codec::parameters
 {
 	auto p = this->get_prefix();
 	const auto code_rate = (float)this->K / (float)this->N;
-	auto v = tools::string_split(this->get_name(), ' ');
+	auto v = tools::split(this->get_name(), ' ');
 	auto name = v.size() >= 2 ? v[1] : "UNKNOWN";
 	for (size_t i = 2; i < v.size(); i++)
 		name += "_" + v[i];

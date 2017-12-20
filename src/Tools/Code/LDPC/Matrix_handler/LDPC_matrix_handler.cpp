@@ -249,3 +249,107 @@ std::vector<unsigned> LDPC_matrix_handler
 
 	return itl_vec;
 }
+
+LDPC_matrix_handler::QCFull_matrix LDPC_matrix_handler
+::invert_H2(const Sparse_matrix& _H)
+{
+	Sparse_matrix H;
+	if (_H.get_n_rows() > _H.get_n_cols())
+		H = _H.transpose();
+	else
+		H = _H;
+
+	unsigned M = H.get_n_rows();
+	unsigned N = H.get_n_cols();
+	unsigned K = N - M;
+
+	QCFull_matrix MatriceCalcul;
+	MatriceCalcul.clear();
+	MatriceCalcul.resize(M, mipp::vector<int8_t>(2 * M, 0));
+
+	//Copy H2 on left
+	for (unsigned i = 0; i < M; i++)
+		for (unsigned j = 0; j < H.get_cols_from_row(i).size(); j++)
+			if (H.get_cols_from_row(i)[j] >= K)
+				MatriceCalcul[i][H.get_cols_from_row(i)[j] - K] = 1;
+
+	//Create identity on right
+	for (unsigned i = 0; i < M; i++)
+			MatriceCalcul[i][M + i] = 1;
+
+	//Pivot de Gauss (Forward)
+	for (unsigned indLgn = 0; indLgn < M; indLgn++)
+	{
+		if (MatriceCalcul[indLgn][indLgn] == 0)
+		{
+			unsigned indLgnSwap = 0;
+			for (unsigned indLgn2 = indLgn + 1; indLgn2 < M; indLgn2++)
+			{
+				if (MatriceCalcul[indLgn2][indLgn] != 0)
+				{
+					indLgnSwap = indLgn2;
+					break;
+				}
+			}
+			if (indLgnSwap == 0)
+			{
+				std::stringstream message;
+				message << "Matrix H2 (H = [H1 H2]) is not invertible";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+			std::swap(MatriceCalcul[indLgn], MatriceCalcul[indLgnSwap]);
+		}
+
+		//XOR des lignes
+		for (unsigned indLgn2 = indLgn + 1; indLgn2 < M; indLgn2++)
+		{
+			if (MatriceCalcul[indLgn2][indLgn] != 0)
+			{
+				const auto loop_size1 = (unsigned)(2 * M / mipp::nElReg<int8_t>());
+				for (unsigned i = 0; i < loop_size1; i++)
+				{
+					const auto rLgn  = mipp::Reg<int8_t>(&MatriceCalcul[indLgn][i * mipp::nElReg<int8_t>()]);
+					const auto rLgn2 = mipp::Reg<int8_t>(&MatriceCalcul[indLgn2][i * mipp::nElReg<int8_t>()]);
+					auto rLgn3       = rLgn2 ^ rLgn;
+					rLgn3.store(&MatriceCalcul[indLgn2][i * mipp::nElReg<int8_t>()]);
+				}
+				for (unsigned i = loop_size1 * mipp::nElReg<int8_t>(); i < 2 * M; i++)
+					MatriceCalcul[indLgn2][i] = MatriceCalcul[indLgn2][i] ^ MatriceCalcul[indLgn][i];
+			}
+		}
+	}
+
+	//Pivot de Gauss (Backward)
+	for (unsigned indLgn = M - 1; indLgn > 0; indLgn--)
+	{
+		//XOR des lignes
+		for (unsigned indLgn2 = indLgn - 1; indLgn2 > 0; indLgn2--)
+		{
+			if (MatriceCalcul[indLgn2][indLgn] != 0)
+			{
+				const auto loop_size1 = (unsigned)(2 * M / mipp::nElReg<int8_t>());
+				for (unsigned i = 0; i < loop_size1; i++)
+				{
+					const auto rLgn  = mipp::Reg<int8_t>(&MatriceCalcul[indLgn][i * mipp::nElReg<int8_t>()]);
+					const auto rLgn2 = mipp::Reg<int8_t>(&MatriceCalcul[indLgn2][i * mipp::nElReg<int8_t>()]);
+					auto rLgn3       = rLgn2 ^ rLgn;
+					rLgn3.store(&MatriceCalcul[indLgn2][i * mipp::nElReg<int8_t>()]);
+				}
+				for (unsigned i = loop_size1 * mipp::nElReg<int8_t>(); i < 2 * M; i++)
+					MatriceCalcul[indLgn2][i] = MatriceCalcul[indLgn2][i] ^ MatriceCalcul[indLgn][i];
+			}
+		}
+	}
+
+	QCFull_matrix invH2;
+	invH2.clear();
+	invH2.resize(M, mipp::vector<int8_t>(M, 0));
+
+	for (unsigned i = 0; i < M; i++)
+		for (unsigned j = 0; j < M; j++)
+			invH2[i][j] = MatriceCalcul[i][M + j];
+
+	MatriceCalcul.clear();
+
+	return invH2;
+}

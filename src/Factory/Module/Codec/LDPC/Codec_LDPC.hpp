@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "Factory/Module/Encoder/LDPC/Encoder_LDPC.hpp"
+#include "Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 #include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
 
 #include "Module/Codec/LDPC/Codec_LDPC.hpp"
@@ -25,13 +26,19 @@ struct Codec_LDPC : public Codec_SISO_SIHO
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// depending parameters
-		Encoder_LDPC::parameters *enc;
-		Decoder_LDPC::parameters *dec;
+		Encoder_LDPC  ::parameters *enc;
+		Decoder_LDPC  ::parameters *dec;
+		Puncturer_LDPC::parameters *pct;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		parameters(const std::string p = Codec_LDPC::prefix);
 		virtual ~parameters();
 		Codec_LDPC::parameters* clone() const;
+		void enable_puncturer();
+
+		virtual std::vector<std::string> get_names      () const;
+		virtual std::vector<std::string> get_short_names() const;
+		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
 		void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const;
