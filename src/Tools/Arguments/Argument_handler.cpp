@@ -72,6 +72,8 @@ std::vector<bool> Argument_handler
 ::sub_parse_arguments(const Argument_map_info &args, Argument_map_value& arg_v, std::vector<bool>& command_found_pos,
                       std::vector<std::string>& messages)
 {
+	std::map<Argument_tag, size_t> tag_found_pos;
+
 	std::vector<bool> args_found_pos(args.size(), false);
 
 	if (this->command.size() != command_found_pos.size())
@@ -93,6 +95,17 @@ std::vector<bool> Argument_handler
 			{
 				if (cur_tag == this->command[ix_arg_val]) // the tag has been found
 				{
+					// check if the tag has already been found in the command
+					auto it_prev_pos = tag_found_pos.find(it_arg_info->first);
+
+					if (it_prev_pos == tag_found_pos.end())
+						tag_found_pos[it_arg_info->first] = ix_arg_val; // not yet found then set the found position
+
+					else if (it_prev_pos->second >= ix_arg_val) // the tag is set further in the command so ignore this one
+						continue;
+					// else the tag is set previously in the command so overwrite it
+
+
 					if(it_arg_info->second->type->get_title() == "") // do not wait for a value after the tag
 					{
 						auto it = arg_v.find(it_arg_info->first);
