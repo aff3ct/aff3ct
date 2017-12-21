@@ -81,9 +81,12 @@ int Launcher::read_arguments()
 		ah.print_help(this->req_args, this->opt_args, grps);
 	}
 
+	// print usage
+	if (cmd_error.size() && !this->params.display_help)
+		ah.print_usage(this->req_args);
+
 	// print the errors
-	if (cmd_error.size())
-		std::cerr << std::endl;
+	if (cmd_error.size()) std::cerr << std::endl;
 	for (unsigned e = 0; e < cmd_error.size(); e++)
 		std::cerr << tools::format_error(cmd_error[e]) << std::endl;
 
@@ -92,10 +95,10 @@ int Launcher::read_arguments()
 	{
 		tools::Argument_tag help_tag = {"help", "h"};
 
-		std::string message = "For more information please display the help (";
-		message += tools::Argument_handler::print_tag(help_tag) += ").";
+		std::string message = "For more information please display the help (\"";
+		message += tools::Argument_handler::print_tag(help_tag) += "\").";
 
-		std::cerr << tools::format_info(message) << std::endl;
+		std::cerr << std::endl << tools::format_info(message) << std::endl;
 	}
 
 	return (cmd_error.size() || this->params.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
