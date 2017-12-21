@@ -92,6 +92,26 @@ public:
 	 * \return the floating-point value of an argument with its tags (to use after the parse_arguments method).
 	 */
 	float to_float(const Argument_tag &tags) const;
+
+	/*!
+	 * \brief Returns the list of values for an argument.
+	 *
+	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.
+	 *
+	 * \return the  value of an argument with its tags (to use after the parse_arguments method).
+	 */
+	template <class S, typename T>
+	std::vector<T> to_list(const Argument_tag &tags) const
+	{
+		try
+		{
+			return List<S,T>::get_list(this->at(tags));
+		}
+		catch (std::exception&)
+		{
+			return std::vector<T>();
+		}
+	}
 };
 
 

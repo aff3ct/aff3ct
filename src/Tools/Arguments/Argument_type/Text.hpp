@@ -28,12 +28,20 @@ public:
 		return dynamic_cast<Text<T>*>(this->clone_ranges(clone));
 	}
 
+	virtual T convert(const std::string& val) const
+	{
+		return val;
+	}
+
+
 	virtual void check(const std::string& val) const
 	{
+		auto str_val = this->convert(val);
+
 		if (val.empty())
 			throw std::runtime_error("shall be a text");
 
-		this->check_ranges(val);
+		this->check_ranges(str_val);
 	}
 };
 

@@ -70,9 +70,9 @@ int Launcher::read_arguments()
 	{
 		this->store_args();
 	}
-	catch(std::exception&)
+	catch(std::exception& e)
 	{
-		this->params.display_help = true;
+		cmd_error.push_back(e.what());
 	}
 
 	if (this->params.display_help)

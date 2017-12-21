@@ -109,7 +109,7 @@ public:
 
 	void add_options(const std::vector<T>& new_options)
 	{
-		for (auto& o : new_options)
+		for (const auto& o : new_options)
 			add_option(o);
 	}
 

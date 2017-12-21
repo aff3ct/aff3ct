@@ -43,8 +43,23 @@ void Puncturer_turbo::parameters
 
 	opt_args.add(
 		{p+"-pattern"},
-		new tools::Text<>(),
+		new tools::List<>(new tools::Text<>()),
 		"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
+
+	// opt_args.add(
+	// 	{p+"-pattern"},
+	// 	new tools::List<>(new tools::Text<>({new tools::Including_set<std::string>({"00", "01", "10", "11"})})),
+	// 	"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
+
+	// opt_args.add(
+	// 	{p+"-pattern"},
+	// 	new tools::List<>(new tools::List<>(new tools::Boolean<>())),
+	// 	"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
+
+	// opt_args.add(
+	// 	{p+"-pattern"},
+	// 	new tools::Text<>(),
+	// 	"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
 
 	opt_args.add(
 		{p+"-tail-length"},
@@ -57,7 +72,32 @@ void Puncturer_turbo::parameters
 		"does not suppose a buffered encoding.");
 }
 
-int compute_N(const int K, const int tail_bits,  const std::string pattern)
+template <typename T>
+std::string display_pattern(std::vector<T> pattern)
+{
+	std::string m;
+
+	for(auto &v : pattern)
+		m += std::to_string(v) + ",";
+
+	m.erase(m.size() -1);
+
+	return m;
+}
+
+std::string display_pattern(std::vector<std::string> pattern)
+{
+	std::string m;
+
+	for(auto &v : pattern)
+		m += v + ",";
+
+	m.erase(m.size() -1);
+
+	return m;
+}
+
+int compute_N(const int K, const int tail_bits,  const std::vector<std::string> pattern)
 {
 	std::vector<std::vector<bool>> pattern_bits(3);
 
@@ -68,34 +108,35 @@ int compute_N(const int K, const int tail_bits,  const std::string pattern)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto str_array = tools::split(pattern, ',');
+	// auto str_array = tools::split(pattern, ',');
 
-	if (str_array.size() != 3)
+	if (pattern.size() != 3)
 	{
 		std::stringstream message;
-		message << "'pattern' should give 3 different set delimited by a comma ('pattern' = " << pattern
-		        << ", 'str_array.size()' = " << str_array.size() << ").";
+		message << "'pattern' should give 3 different sets ('pattern' = " << display_pattern(pattern)
+		        << ", 'pattern.size()' = " << pattern.size() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (str_array[0].size() != str_array[1].size() || str_array[0].size() != str_array[2].size())
+	if (pattern[0].size() != pattern[1].size() || pattern[0].size() != pattern[2].size())
 	{
 		std::stringstream message;
-		message << "'pattern' sets have to contains an equal number of bits ('pattern' = " << pattern
-		        << ", 'str_array[0].size()' = " << str_array[0].size()
-		        << ", 'str_array[1].size()' = " << str_array[1].size()
-		        << ", 'str_array[2].size()' = " << str_array[2].size() << ").";
+		message << "'pattern' sets have to contains an equal number of bits ('pattern' = " << display_pattern(pattern)
+		        << ", 'pattern[0].size()' = " << pattern[0].size()
+		        << ", 'pattern[1].size()' = " << pattern[1].size()
+		        << ", 'pattern[2].size()' = " << pattern[2].size() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	auto all_one = true;
 	for (auto i = 0; i < 3; i++)
-		for (auto j = 0; j < (int)str_array[i].size(); j++)
-			all_one = str_array[i][j] != '1' ? false : all_one;
+		for (auto j = 0; j < (int)pattern[i].size(); j++)
+			all_one = pattern[i][j] != '1' ? false : all_one;
+
 	if (all_one)
 		return 3 * K + tail_bits;
 
-	auto period = (int)str_array[0].size();
+	auto period = (int)pattern[0].size();
 
 	if (K % period)
 	{
@@ -111,7 +152,7 @@ int compute_N(const int K, const int tail_bits,  const std::string pattern)
 	for (auto i = 0; i < 3; i++)
 		for (auto j = 0; j < period; j++)
 		{
-			char c[2] = {str_array[i][j], '\0'};
+			char c[2] = {pattern[i][j], '\0'};
 			pattern_bits[i][j] = std::stoi(std::string(c)) ? true : false;
 		}
 
@@ -126,6 +167,11 @@ int compute_N(const int K, const int tail_bits,  const std::string pattern)
 	return N;
 }
 
+int compute_N(const int K, const int tail_bits,  const std::string pattern)
+{
+	return compute_N(K, tail_bits, tools::List<>::get_list(pattern));
+}
+
 void Puncturer_turbo::parameters
 ::store(const tools::Argument_map_value &vals)
 {
@@ -133,12 +179,13 @@ void Puncturer_turbo::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-pattern"    })) this->pattern     = vals.at    ({p+"-pattern"    });
+	if(vals.exist({p+"-pattern"    })) this->pattern     = vals.at     ({p+"-pattern"    });
+	if(vals.exist({p+"-pattern"    })) this->pattern2    = vals.to_list<tools::Generic_splitter, std::string>({p+"-pattern"    });
 	if(vals.exist({p+"-tail-length"})) this->tail_length = vals.to_int({p+"-tail-length"});
 	if(vals.exist({p+"-no-buff"    })) this->buffered    = false;
 
 	this->N_cw = 3 * this->K + this->tail_length;
-	this->N    = compute_N(this->K, this->tail_length, this->pattern);
+	this->N    = compute_N(this->K, this->tail_length, this->pattern2);
 
 	if (this->N == this->N_cw)
 		this->type = "NO";
@@ -153,7 +200,8 @@ void Puncturer_turbo::parameters
 
 	if (this->type != "NO")
 	{
-		headers[p].push_back(std::make_pair(std::string("Pattern"), std::string("{" + this->pattern) + "}"));
+		headers[p].push_back(std::make_pair(std::string("Pattern"), std::string("{" + this->pattern + "}")));
+		headers[p].push_back(std::make_pair(std::string("Pattern list"), std::string("{" + display_pattern(this->pattern2) + "}")));
 		if (full) headers[p].push_back(std::make_pair(std::string("Tail length"), std::to_string(this->tail_length)));
 		if (full) headers[p].push_back(std::make_pair(std::string("Buffered"), this->buffered ? "on" : "off"));
 	}
@@ -163,7 +211,7 @@ template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer_turbo::parameters
 ::build() const
 {
-	if (this->type == "TURBO") return new module::Puncturer_turbo<B,Q>(this->K, this->N, this->tail_length, this->pattern, this->buffered, this->n_frames);
+	if (this->type == "TURBO") return new module::Puncturer_turbo<B,Q>(this->K, this->N, this->tail_length, display_pattern(this->pattern2), this->buffered, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

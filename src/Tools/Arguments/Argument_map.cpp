@@ -105,9 +105,6 @@ void Argument_map_info
 	mother_t::clear();
 }
 
-/* \brief: clone itself in the 'other' map
- * \return a pointer to the clone map
- */
 Argument_map_info* Argument_map_info
 ::clone() const
 {
@@ -119,9 +116,6 @@ Argument_map_info* Argument_map_info
 	return other;
 }
 
-/* \brief: clone itself in the 'other' map
- * \param 'other' is the other map in which this class will be cloned. Clear it first of all
- */
 void Argument_map_info
 ::clone(Argument_map_info& other) const
 {
@@ -147,13 +141,6 @@ bool Argument_map_value
 	return (this->find(tags) != this->end());
 }
 
-/*!
- * \brief Returns the value for an argument.
- *
- * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}
- *
- * \return the integer value of an argument with its tags (to use after the parse_arguments method).
- */
 int Argument_map_value
 ::to_int(const Argument_tag &tags) const
 {
@@ -167,13 +154,6 @@ int Argument_map_value
 	}
 }
 
-/*!
- * \brief Returns the value for an argument.
- *
- * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.
- *
- * \return the floating-point value of an argument with its tags (to use after the parse_arguments method).
- */
 float Argument_map_value
 ::to_float(const Argument_tag &tags) const
 {
@@ -186,7 +166,6 @@ float Argument_map_value
 		return 0.0f;
 	}
 }
-
 
 /***********************************
  * Argument_map_group class

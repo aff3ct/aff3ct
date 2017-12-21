@@ -27,9 +27,11 @@ public:
 	virtual void check(const std::string&) const = 0;
 	virtual Argument_type* clone()         const = 0;
 
+	// virtual void* get_val(const std::string& val) const;
+
 	virtual const std::string get_title() const;
 
-	virtual const std::string get_short_title() const;
+	const std::string get_short_title() const;
 };
 
 template <typename T>
@@ -71,22 +73,46 @@ public:
 		return ranges;
 	}
 
-	virtual const std::string get_title() const
+	const std::string get_ranges_title() const
 	{
-		auto t = this->title;
-		if (ranges.size()) // then add ranges titles to the argument title
+		std::string t;
+
+		// add ranges titles
+		for (unsigned i = 0; i < ranges.size(); i++)
 		{
-			t += Argument_type::title_description_separator;
-			for (unsigned i = 0; i < ranges.size(); i++)
-			{
-				t += ranges[i]->get_title();
-				if (i < (ranges.size()-1))
-					t += ", ";
-			}
+			t += ranges[i]->get_title();
+			if (i < (ranges.size()-1))
+				t += ", ";
 		}
 
 		return t;
 	}
+
+	virtual const std::string get_title() const
+	{
+		auto t = this->title;
+
+		if (ranges.size()) // then add ranges titles to the argument title
+		{
+			t += Argument_type::title_description_separator;
+			t += this->get_ranges_title();
+		}
+
+		return t;
+	}
+
+	// virtual T convert(const std::string& val) const
+	// {
+	// 	throw std::runtime_error("This method has not been instantiated for this class.");
+	// }
+
+	// virtual void* get_val(const std::string& val) const
+	// {
+	// 	T* p_val = new T(this->convert(val));
+
+	// 	return (void*)p_val;
+	// }
+
 
 protected:
 	virtual void check_ranges(const T& val) const
@@ -113,5 +139,7 @@ protected:
 #include "Text.hpp"
 #include "Real.hpp"
 #include "Integer.hpp"
+#include "Boolean.hpp"
+#include "List.hpp"
 
 #endif /* ARGUMENT_TYPE_HPP_ */

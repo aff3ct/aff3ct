@@ -2,6 +2,7 @@
 #define FACTORY_PUNCTURER_TURBO_HPP
 
 #include <string>
+#include <vector>
 
 #include "Module/Puncturer/Puncturer.hpp"
 
@@ -22,6 +23,7 @@ struct Puncturer_turbo : public Puncturer
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
 		std::string pattern     = "111,111,111";
+		std::vector<std::string> pattern2;
 		bool        buffered    = true;
 		int         tail_length = 0;
 

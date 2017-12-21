@@ -16,10 +16,11 @@ const std::string aff3ct::tools::Argument_type
 const std::string aff3ct::tools::Argument_type
 ::get_short_title() const
 {
-	auto pos = title.find(title_description_separator);
-
-	if (pos == std::string::npos)
-		return title;
-
-	return title.substr(0, pos);
+	return title;
 }
+
+// void* aff3ct::tools::Argument_type
+// ::get_val(const std::string& val) const
+// {
+// 	return nullptr;
+// }

@@ -28,13 +28,18 @@ public:
 		return dynamic_cast<Real<T>*>(this->clone_ranges(clone));
 	}
 
+	virtual T convert(const std::string& val) const
+	{
+		return (T)std::stof(val);
+	}
+
 	virtual void check(const std::string& val) const
 	{
-		float real_num;
+		T real_num;
 
 		try
 		{
-			real_num = std::stof(val);
+			real_num = this->convert(val);
 		}
 		catch(std::exception&)
 		{

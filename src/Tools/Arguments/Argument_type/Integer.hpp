@@ -28,13 +28,18 @@ public:
 		return dynamic_cast<Integer<T>*>(this->clone_ranges(clone));
 	}
 
+	virtual T convert(const std::string& val) const
+	{
+		return (T)std::stoi(val);
+	}
+
 	virtual void check(const std::string& val) const
 	{
-		int int_num;
+		T int_num;
 
 		try
 		{
-			int_num = std::stoi(val);
+			int_num = this->convert(val);
 		}
 		catch(std::exception&)
 		{
