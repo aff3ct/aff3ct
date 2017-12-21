@@ -2,8 +2,8 @@
 #define ARGUMENT_TYPE_LIST_HPP_
 
 #include <string>
+#include <sstream>
 #include <stdexcept>
-#include <iostream>
 #include <type_traits>
 
 #include "Argument_type.hpp"
@@ -40,10 +40,22 @@ public:
 		// seperate values:
 		auto list_vals = this->get_list(val);
 
-		for (const auto& v : list_vals)
-			val_type->check(v);
-
 		this->check_ranges(list_vals);
+
+		unsigned i = 0;
+
+		try
+		{
+			for (; i < list_vals.size(); i++)
+				val_type->check(list_vals[i]);
+		}
+		catch(std::exception& e)
+		{
+			std::stringstream message;
+			message << "has the element " << i << " (" << list_vals[i] << ") not respecting the rules: " << e.what();
+
+			throw std::runtime_error(message.str());
+		}
 	}
 
 	virtual const std::string get_title() const

@@ -43,23 +43,10 @@ void Puncturer_turbo::parameters
 
 	opt_args.add(
 		{p+"-pattern"},
-		new tools::List<>(new tools::Text<>()),
+		new tools::List<>(new tools::List<tools::String_splitter>(new tools::Boolean<>(), // list of list of boolean
+		                                                          {new tools::Length<std::vector<std::string>>(2, 3)}), // std::vector<std::string> is the container of each element after being splitted
+		                  {new tools::Length<std::vector<std::string>>(3, 3)}), // std::vector<std::string> is the container of each element after being splitted
 		"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
-
-	// opt_args.add(
-	// 	{p+"-pattern"},
-	// 	new tools::List<>(new tools::Text<>({new tools::Including_set<std::string>({"00", "01", "10", "11"})})),
-	// 	"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
-
-	// opt_args.add(
-	// 	{p+"-pattern"},
-	// 	new tools::List<>(new tools::List<>(new tools::Boolean<>())),
-	// 	"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
-
-	// opt_args.add(
-	// 	{p+"-pattern"},
-	// 	new tools::Text<>(),
-	// 	"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
 
 	opt_args.add(
 		{p+"-tail-length"},

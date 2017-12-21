@@ -66,6 +66,19 @@ struct Generic_splitter : Splitter
 	}
 };
 
+struct String_splitter
+{
+	static std::vector<std::string> split(const std::string& val)
+	{
+		std::vector<std::string> list_vals(val.size());
+
+		for (unsigned i = 0; i < val.size(); i++)
+			list_vals[i].append(1, val[i]);
+
+		return list_vals;
+	}
+};
+
 
 
 
