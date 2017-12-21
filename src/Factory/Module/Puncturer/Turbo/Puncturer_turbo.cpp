@@ -43,9 +43,9 @@ void Puncturer_turbo::parameters
 
 	opt_args.add(
 		{p+"-pattern"},
-		new tools::List<>(new tools::List<tools::String_splitter>(new tools::Boolean<>(), // list of list of boolean
-		                                                          {new tools::Length<std::vector<std::string>>(2, 3)}), // std::vector<std::string> is the container of each element after being splitted
-		                  {new tools::Length<std::vector<std::string>>(3, 3)}), // std::vector<std::string> is the container of each element after being splitted
+		new tools::List<tools::Generic_splitter, std::vector<bool>>(new tools::List<tools::String_splitter, bool>(new tools::Boolean<>(), // list of list of boolean
+		                                                                                                          {new tools::Length<std::vector<bool>>(2, 3)}), // std::vector<std::string> is the container of each element after being splitted
+		                                                            {new tools::Length<std::vector<std::vector<bool>>>(3, 3)}), // std::vector<std::string> is the container of each element after being splitted
 		"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
 
 	opt_args.add(
@@ -84,10 +84,25 @@ std::string display_pattern(std::vector<std::string> pattern)
 	return m;
 }
 
-int compute_N(const int K, const int tail_bits,  const std::vector<std::string> pattern)
+std::string display_pattern(std::vector<std::vector<bool>> pattern)
 {
-	std::vector<std::vector<bool>> pattern_bits(3);
+	std::string m;
 
+	for(auto &v : pattern)
+	{
+		for(const auto &vb : v)
+			m += std::to_string(vb);
+
+		m += ",";
+	}
+
+	m.erase(m.size() -1);
+
+	return m;
+}
+
+int compute_N(const int K, const int tail_bits,  const std::vector<std::vector<bool>> pattern)
+{
 	if (tail_bits < 0)
 	{
 		std::stringstream message;
@@ -108,7 +123,7 @@ int compute_N(const int K, const int tail_bits,  const std::vector<std::string> 
 	if (pattern[0].size() != pattern[1].size() || pattern[0].size() != pattern[2].size())
 	{
 		std::stringstream message;
-		message << "'pattern' sets have to contains an equal number of bits ('pattern' = " << display_pattern(pattern)
+		message << "'pattern' sets have to contain an equal number of bits ('pattern' = " << display_pattern(pattern)
 		        << ", 'pattern[0].size()' = " << pattern[0].size()
 		        << ", 'pattern[1].size()' = " << pattern[1].size()
 		        << ", 'pattern[2].size()' = " << pattern[2].size() << ").";
@@ -118,12 +133,12 @@ int compute_N(const int K, const int tail_bits,  const std::vector<std::string> 
 	auto all_one = true;
 	for (auto i = 0; i < 3; i++)
 		for (auto j = 0; j < (int)pattern[i].size(); j++)
-			all_one = pattern[i][j] != '1' ? false : all_one;
+			all_one = pattern[i][j] != 1 ? false : all_one;
 
 	if (all_one)
 		return 3 * K + tail_bits;
 
-	auto period = (int)pattern[0].size();
+	auto period = (int)pattern.front().size();
 
 	if (K % period)
 	{
@@ -132,31 +147,15 @@ int compute_N(const int K, const int tail_bits,  const std::vector<std::string> 
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	pattern_bits[0].resize(period);
-	pattern_bits[1].resize(period);
-	pattern_bits[2].resize(period);
-
-	for (auto i = 0; i < 3; i++)
-		for (auto j = 0; j < period; j++)
-		{
-			char c[2] = {pattern[i][j], '\0'};
-			pattern_bits[i][j] = std::stoi(std::string(c)) ? true : false;
-		}
-
-	auto bit_sys_count = 0; for (auto j = 0; j < period; j++) bit_sys_count += pattern_bits[0][j] ? 1 : 0;
-	auto bit_pa1_count = 0; for (auto j = 0; j < period; j++) bit_pa1_count += pattern_bits[1][j] ? 1 : 0;
-	auto bit_pa2_count = 0; for (auto j = 0; j < period; j++) bit_pa2_count += pattern_bits[2][j] ? 1 : 0;
+	auto bit_sys_count = 0; for (auto j = 0; j < period; j++) bit_sys_count += pattern[0][j] ? 1 : 0;
+	auto bit_pa1_count = 0; for (auto j = 0; j < period; j++) bit_pa1_count += pattern[1][j] ? 1 : 0;
+	auto bit_pa2_count = 0; for (auto j = 0; j < period; j++) bit_pa2_count += pattern[2][j] ? 1 : 0;
 
 	auto bit_count = bit_sys_count + bit_pa1_count + bit_pa2_count;
 
 	auto N = (K / period) * bit_count + tail_bits;
 
 	return N;
-}
-
-int compute_N(const int K, const int tail_bits,  const std::string pattern)
-{
-	return compute_N(K, tail_bits, tools::List<>::get_list(pattern));
 }
 
 void Puncturer_turbo::parameters
@@ -167,7 +166,7 @@ void Puncturer_turbo::parameters
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-pattern"    })) this->pattern     = vals.at     ({p+"-pattern"    });
-	if(vals.exist({p+"-pattern"    })) this->pattern2    = vals.to_list<tools::Generic_splitter, std::string>({p+"-pattern"    });
+	if(vals.exist({p+"-pattern"    })) this->pattern2    = vals.to_list<std::vector<bool>>({p+"-pattern"    });
 	if(vals.exist({p+"-tail-length"})) this->tail_length = vals.to_int({p+"-tail-length"});
 	if(vals.exist({p+"-no-buff"    })) this->buffered    = false;
 

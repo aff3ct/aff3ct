@@ -27,7 +27,7 @@ public:
 	virtual void check(const std::string&) const = 0;
 	virtual Argument_type* clone()         const = 0;
 
-	// virtual void* get_val(const std::string& val) const;
+	virtual void* get_val(const std::string& val) const;
 
 	virtual const std::string get_title() const;
 
@@ -39,6 +39,9 @@ class Argument_type_limited : public Argument_type
 {
 private:
 	std::vector<Argument_range<T>*> ranges;
+
+public:
+	using type = T;
 
 public:
 	Argument_type_limited(const std::string& title, const std::vector<Argument_range<T>*>& new_ranges = {})
@@ -101,17 +104,17 @@ public:
 		return t;
 	}
 
-	// virtual T convert(const std::string& val) const
-	// {
-	// 	throw std::runtime_error("This method has not been instantiated for this class.");
-	// }
+	virtual T convert(const std::string& val) const
+	{
+		throw std::runtime_error("This method has not been instantiated for this class.");
+	}
 
-	// virtual void* get_val(const std::string& val) const
-	// {
-	// 	T* p_val = new T(this->convert(val));
+	virtual void* get_val(const std::string& val) const
+	{
+		T* p_val = new T(this->convert(val));
 
-	// 	return (void*)p_val;
-	// }
+		return (void*)p_val;
+	}
 
 
 protected:

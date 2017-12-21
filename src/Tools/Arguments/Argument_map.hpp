@@ -65,10 +65,10 @@ public:
 };
 
 
-class Argument_map_value : public std::map<Argument_tag, std::string>
+class Argument_map_value : public std::map<Argument_tag, std::pair<std::string, Argument_info*>>
 {
 public:
-	using mother_t = std::map<Argument_tag, std::string>;
+	using mother_t = std::map<Argument_tag, std::pair<std::string, Argument_info*>>;
 
 public:
 
@@ -99,17 +99,33 @@ public:
 	 *
 	 * \return the  value of an argument with its tags (to use after the parse_arguments method).
 	 */
-	template <class S, typename T>
+	template <typename T>
 	std::vector<T> to_list(const Argument_tag &tags) const
 	{
+		std::vector<T> list;
+
 		try
 		{
-			return List<S,T>::get_list(this->at(tags));
+			auto& val_info_pair = mother_t::at(tags);
+
+			auto* p_list = (std::vector<T>*)val_info_pair.second->type->get_val(val_info_pair.first);
+
+			if (p_list != nullptr)
+			{
+				list.swap(*p_list);
+				delete p_list;
+			}
 		}
 		catch (std::exception&)
 		{
-			return std::vector<T>();
 		}
+
+		return list;
+	}
+
+	std::string at(const Argument_tag &tags) const
+	{
+		return mother_t::at(tags).first;
 	}
 };
 

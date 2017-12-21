@@ -113,7 +113,7 @@ std::vector<bool> Argument_handler
 						if (it == arg_v.end())
 							found_arg_count++;
 
-						arg_v[it_arg_info->first] = "";
+						arg_v[it_arg_info->first] = std::make_pair("", it_arg_info->second);
 						command_found_pos[ix_arg_val] = true;
 						args_found_pos[std::distance(args.begin(), it_arg_info)] = true;
 
@@ -126,7 +126,7 @@ std::vector<bool> Argument_handler
 							if (it == arg_v.end())
 								found_arg_count++;
 
-							arg_v[it_arg_info->first] = this->command[ix_arg_val +1];
+							arg_v[it_arg_info->first] = std::make_pair(this->command[ix_arg_val +1], it_arg_info->second);
 							command_found_pos[ix_arg_val   ] = true;
 							command_found_pos[ix_arg_val +1] = true;
 							args_found_pos[std::distance(args.begin(), it_arg_info)] = true;

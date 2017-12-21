@@ -19,8 +19,8 @@ const std::string aff3ct::tools::Argument_type
 	return title;
 }
 
-// void* aff3ct::tools::Argument_type
-// ::get_val(const std::string& val) const
-// {
-// 	return nullptr;
-// }
+void* aff3ct::tools::Argument_type
+::get_val(const std::string& val) const
+{
+	return nullptr;
+}
