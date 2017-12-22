@@ -39,12 +39,8 @@ public:
 	{
 		// separate values:
 		auto list = S::split(val);
-		auto list_vals = this->convert(list);
-
-		this->check_ranges(list_vals);
 
 		unsigned i = 0;
-
 		try
 		{
 			for (; i < list.size(); i++)
@@ -57,6 +53,11 @@ public:
 
 			throw std::runtime_error(message.str());
 		}
+
+		auto list_vals = this->convert(list);
+
+		this->check_ranges(list_vals);
+
 	}
 
 	virtual const std::string get_title() const

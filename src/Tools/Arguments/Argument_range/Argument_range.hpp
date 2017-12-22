@@ -25,7 +25,7 @@ public:
 
 	virtual ~Argument_range() {};
 
-	virtual void check(const T&)    const = 0;
+	virtual void check(const T&)       const = 0;
 	virtual Argument_range<T>* clone() const = 0;
 
 	virtual std::string get_title() const
