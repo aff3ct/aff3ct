@@ -72,7 +72,7 @@ int Launcher::read_arguments()
 	}
 	catch(std::exception& e)
 	{
-		cmd_error.push_back(e.what());
+		cmd_error.push_back(tools::addr2line(e.what()));
 	}
 
 	if (this->params.display_help)
