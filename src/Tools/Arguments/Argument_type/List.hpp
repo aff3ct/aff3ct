@@ -14,7 +14,7 @@ namespace aff3ct
 namespace tools
 {
 
-template <class S = Generic_splitter, typename List_element_type = std::string>
+template <typename List_element_type = std::string, class S = Generic_splitter>
 class List : public Argument_type_limited<std::vector<List_element_type>>
 {
 protected:
@@ -30,7 +30,7 @@ public:
 		if (val_type != nullptr) delete val_type;
 	};
 
-	virtual List<S, List_element_type>* clone() const
+	virtual List<List_element_type, S>* clone() const
 	{
 		return new List(val_type->clone());
 	}

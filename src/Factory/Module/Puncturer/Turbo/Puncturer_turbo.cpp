@@ -15,6 +15,26 @@ const std::string aff3ct::factory::Puncturer_turbo::name   = "Puncturer Turbo";
 const std::string aff3ct::factory::Puncturer_turbo::prefix = "pct";
 
 
+struct Splitter_D1
+{
+	static std::vector<std::string> split(const std::string& val) // split first dimension of the pattern
+	{
+		const std::string head      = "{([";
+		const std::string queue     = "})]";
+		const std::string separator = ";,.|";
+
+		return tools::Splitter::split(val, head, queue, separator);
+	}
+};
+
+struct Splitter_D2
+{
+	static std::vector<std::string> split(const std::string& val) // split second dimension of the pattern
+	{
+		return tools::String_splitter::split(val);
+	}
+};
+
 Puncturer_turbo::parameters
 ::parameters(const std::string prefix)
 : Puncturer::parameters(Puncturer_turbo::name, prefix)
@@ -46,9 +66,9 @@ void Puncturer_turbo::parameters
 
 	opt_args.add(
 		{p+"-pattern"},
-		new tools::List<PT::Splitter_D1, std::vector<bool>>(new tools::List<PT::Splitter_D2, bool>(new tools::Boolean<>(), // list of list of boolean
-		                                                                                           {new tools::Length<std::vector<bool>>(2, 3)}), // std::vector<std::string> is the container of each element after being splitted
-		                                                    {new tools::Length<std::vector<std::vector<bool>>>(3, 3)}), // std::vector<std::string> is the container of each element after being splitted
+		new tools::List<std::vector<bool>, Splitter_D1>(new tools::List<bool, Splitter_D2>(new tools::Boolean<>(), // list of list of boolean
+		                                                                                   {new tools::Length<std::vector<bool>>(2, 3)}), // std::vector<std::string> is the container of each element after being splitted
+		                                                {new tools::Length<std::vector<std::vector<bool>>>(3, 3)}), // std::vector<std::string> is the container of each element after being splitted
 		"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
 
 	opt_args.add(
@@ -69,7 +89,7 @@ void Puncturer_turbo::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-pattern"    })) this->pattern2    = vals.at     ({p+"-pattern"    });
+	// if(vals.exist({p+"-pattern"    })) this->pattern2    = vals.at     ({p+"-pattern"    });
 	if(vals.exist({p+"-pattern"    })) this->pattern     = vals.to_list<std::vector<bool>>({p+"-pattern"    });
 	if(vals.exist({p+"-tail-length"})) this->tail_length = vals.to_int({p+"-tail-length"});
 	if(vals.exist({p+"-no-buff"    })) this->buffered    = false;
@@ -91,7 +111,7 @@ void Puncturer_turbo::parameters
 	if (this->type != "NO")
 	{
 		headers[p].push_back(std::make_pair(std::string("Pattern"), std::string("{" + PT::display_pattern(this->pattern) + "}")));
-		headers[p].push_back(std::make_pair(std::string("Pattern cmd"), std::string("{" + this->pattern2 + "}")));
+		// headers[p].push_back(std::make_pair(std::string("Pattern cmd"), std::string("{" + this->pattern2 + "}")));
 		if (full) headers[p].push_back(std::make_pair(std::string("Tail length"), std::to_string(this->tail_length)));
 		if (full) headers[p].push_back(std::make_pair(std::string("Buffered"), this->buffered ? "on" : "off"));
 	}
