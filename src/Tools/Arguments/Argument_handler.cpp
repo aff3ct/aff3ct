@@ -269,6 +269,10 @@ void Argument_handler
 	size_t max_n_char_arg = std::max(find_longest_tags(req_args), find_longest_tags(opt_args));
 	bool title_displayed = false;
 
+	// the already displayed positions then it can't be displayed several times in different sub parameters
+	std::vector<bool> req_args_print_pos(req_args.size(), false);
+	std::vector<bool> opt_args_print_pos(opt_args.size(), false);
+
 	// display each group
 	for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
 	{
@@ -279,15 +283,18 @@ void Argument_handler
 		// display first the required arguments of this group
 		for (auto it_arg = req_args.begin(); it_arg != req_args.end(); it_arg++)
 		{
-			auto& tag = it_arg->first.front();
+			auto& tag  = it_arg->first.front();
+			auto  dist = std::distance(req_args.begin(), it_arg);
 
-			if (tag.find(prefix) == 0)
+			if (tag.find(prefix) == 0 && !req_args_print_pos[dist])
 			{
 				if (!title_displayed)
 				{
 					print_help_title(it_grp->second);
 					title_displayed = true;
 				}
+
+				req_args_print_pos[dist] = true;
 
 				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, true);
 			}
@@ -296,15 +303,18 @@ void Argument_handler
 		// display then the optional arguments of this group
 		for (auto it_arg = opt_args.begin(); it_arg != opt_args.end(); it_arg++)
 		{
-			auto& tag = it_arg->first.front();
+			auto& tag  = it_arg->first.front();
+			auto  dist = std::distance(opt_args.begin(), it_arg);
 
-			if (tag.find(prefix) == 0)
+			if (tag.find(prefix) == 0 && !opt_args_print_pos[dist])
 			{
 				if (!title_displayed)
 				{
 					print_help_title(it_grp->second);
 					title_displayed = true;
 				}
+
+				opt_args_print_pos[dist] = true;
 
 				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, false);
 			}
@@ -321,6 +331,9 @@ void Argument_handler
 	{
 		auto& tag = it_arg->first.front();
 		bool found = false;
+
+		if (req_args_print_pos[std::distance(req_args.begin(), it_arg)])
+			continue; // already displayed
 
 		for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
 		{
@@ -350,6 +363,9 @@ void Argument_handler
 	{
 		auto& tag = it_arg->first.front();
 		bool found = false;
+
+		if (opt_args_print_pos[std::distance(opt_args.begin(), it_arg)])
+			continue; // already displayed
 
 		for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
 		{
