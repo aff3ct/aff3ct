@@ -21,14 +21,6 @@ public:
 	Puncturer_turbo(const int &K,
 	                const int &N,
 	                const int &tail_bits,
-	                const std::string &pattern,
-	                const bool buff_enc = true,
-	                const int n_frames = 1,
-	                const std::string name = "Puncturer_turbo");
-
-	Puncturer_turbo(const int &K,
-	                const int &N,
-	                const int &tail_bits,
 	                const std::vector<std::vector<bool>> &pattern_bits,
 	                const bool buff_enc = true,
 	                const int n_frames = 1,
@@ -38,19 +30,8 @@ public:
 
 	static unsigned get_period(const std::vector<std::vector<bool>>& pattern);
 	static std::string display_pattern(const std::vector<std::vector<bool>>& pattern);
-	static std::vector<std::vector<bool>> convert_pattern(const std::string& pattern);
 	static void check_pattern(const int K, const std::vector<std::vector<bool>>& pattern_bits);
 	static int compute_N(const int K, const int tail_bits, const std::vector<std::vector<bool>>& pattern_bits);
-
-	struct Splitter_D1
-	{
-		static std::vector<std::string> split(const std::string& val); // split first dimension of the pattern
-	};
-
-	struct Splitter_D2
-	{
-		static std::vector<std::string> split(const std::string& val); // split second dimension of the pattern
-	};
 
 protected:
 	void   _puncture(const B *X_N1, B *X_N2, const int frame_id) const;

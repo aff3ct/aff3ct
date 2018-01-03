@@ -4,23 +4,9 @@
 #include "Tools/general_utils.h"
 
 #include "Puncturer_turbo.hpp"
-#include "Tools/Arguments/Splitter/Splitter.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
-
-template <typename B, typename Q>
-Puncturer_turbo<B,Q>
-::Puncturer_turbo(const int &K,
-                  const int &N,
-                  const int &tail_bits,
-                  const std::string &pattern,
-                  const bool buff_enc,
-                  const int n_frames,
-                  const std::string name)
-: Puncturer_turbo<B,Q>(K, N, tail_bits, convert_pattern(pattern), buff_enc, n_frames, name)
-{
-}
 
 template <typename B, typename Q>
 Puncturer_turbo<B,Q>
@@ -164,37 +150,37 @@ void Puncturer_turbo<B,Q>
 	}
 }
 
-template <typename B, typename Q>
-std::vector<std::vector<bool>> Puncturer_turbo<B,Q>
-::convert_pattern(const std::string& pattern)
-{
-	auto str_array = Splitter_D1::split(pattern);
+// template <typename B, typename Q>
+// std::vector<std::vector<bool>> Puncturer_turbo<B,Q>
+// ::convert_pattern(const std::string& pattern)
+// {
+// 	auto str_array = Splitter_D1::split(pattern);
 
-	std::vector<std::vector<std::string>> pattern_str;
+// 	std::vector<std::vector<std::string>> pattern_str;
 
-	for(auto& s : str_array)
-		pattern_str.push_back(Splitter_D2::split(s));
+// 	for(auto& s : str_array)
+// 		pattern_str.push_back(Splitter_D2::split(s));
 
-	std::vector<std::vector<bool>> pattern_bits(pattern_str.size());
+// 	std::vector<std::vector<bool>> pattern_bits(pattern_str.size());
 
-	for (unsigned i = 0; i < pattern_str.size(); i++)
-	{
-		pattern_bits[i].resize(pattern_str[i].size());
+// 	for (unsigned i = 0; i < pattern_str.size(); i++)
+// 	{
+// 		pattern_bits[i].resize(pattern_str[i].size());
 
-		for (unsigned j = 0; j < pattern_str[i].size(); j++)
-		{
-			if (pattern_str[i][j] == "0")
-				pattern_bits[i][j] = false;
+// 		for (unsigned j = 0; j < pattern_str[i].size(); j++)
+// 		{
+// 			if (pattern_str[i][j] == "0")
+// 				pattern_bits[i][j] = false;
 
-			else if (pattern_str[i][j] == "1")
-				pattern_bits[i][j] = true;
+// 			else if (pattern_str[i][j] == "1")
+// 				pattern_bits[i][j] = true;
 
-			else
-				throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Pattern elements must be boolean (0 or 1).");
-		}
-	}
-	return pattern_bits;
-}
+// 			else
+// 				throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Pattern elements must be boolean (0 or 1).");
+// 		}
+// 	}
+// 	return pattern_bits;
+// }
 
 template <typename B, typename Q>
 std::string Puncturer_turbo<B,Q>
@@ -273,27 +259,9 @@ int Puncturer_turbo<B,Q>
 			bit_count += pattern_bits[i][j] ? 1 : 0;
 
 	if (period)
-		return (K / period) * bit_count + tail_bits;
+		return K * bit_count / period + tail_bits;
 	else
 		return 0;
-}
-
-template <typename B, typename Q>
-std::vector<std::string> Puncturer_turbo<B,Q>::Splitter_D1
-::split(const std::string& val)
-{
-	const std::string head      = "{([";
-	const std::string queue     = "})]";
-	const std::string separator = ";,.|";
-
-	return tools::Splitter::split(val, head, queue, separator);
-}
-
-template <typename B, typename Q>
-std::vector<std::string> Puncturer_turbo<B,Q>::Splitter_D2
-::split(const std::string& val)
-{
-	return tools::String_splitter::split(val);
 }
 
 // ==================================================================================== explicit template instantiation
