@@ -79,50 +79,6 @@ struct String_splitter
 	}
 };
 
-
-
-
-
-// static std::vector<T> get_list(const std::string& val)
-// {
-// 	static_assert(std::is_same<T, std::string>::value || std::is_same<T, float>::value || std::is_same<T, int>::value || std::is_same<T, bool>::value,
-// 	              "The get_list function is available only with a std::string, a float, a int or a bool type.");
-
-// 	auto list = seperate(val);
-
-// 	std::vector<T> list_T(list.size());
-
-// 	void * p_val = nullptr;
-
-// 	for(unsigned i = 0; i < list.size(); i++)
-// 	{
-// 		if (std::is_same<T, float>::value)
-// 			p_val = (void*)(new float(std::stof(list[i])));
-
-// 		else if (std::is_same<T, int>::value)
-// 			p_val = (void*)(new int(std::stoi(list[i])));
-
-// 		else if (std::is_same<T, bool>::value)
-// 			p_val = (void*)(new bool(std::stoi(list[i])));
-
-// 		else if (std::is_same<T, std::string>::value)
-// 			p_val = (void*)(new std::string(list[i]));
-
-// 		else
-// 			p_val = nullptr;
-
-
-// 		if (p_val == nullptr)
-// 			throw std::runtime_error("Couldn't convert value.");
-
-// 		list_T[i] = *(T*)p_val;
-
-// 		delete (T*)p_val;
-// 	}
-
-// 	return list_T;
-// }
-
 }
 }
 #endif /* ARGUMENT_SPLITTER_HPP_ */
