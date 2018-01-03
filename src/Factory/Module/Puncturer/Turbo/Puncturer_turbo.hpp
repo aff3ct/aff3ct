@@ -22,8 +22,8 @@ struct Puncturer_turbo : public Puncturer
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
-		std::string pattern     = "111,111,111";
-		std::vector<std::vector<bool>> pattern2;
+		std::string pattern2    = "111,111,111";
+		std::vector<std::vector<bool>> pattern = {{1,1,1},{1,1,1},{1,1,1}};
 		bool        buffered    = true;
 		int         tail_length = 0;
 
