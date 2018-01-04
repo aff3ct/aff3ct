@@ -102,6 +102,44 @@ public:
 
 };
 
+template <typename List_element_type = std::string, class S1 = Generic_splitter, class S2 = String_splitter>
+class List2D : public List<std::vector<List_element_type>, S1>
+{
+public:
+	List2D(Argument_type* val_type, const std::vector<Argument_range<std::vector<std::vector<List_element_type>>>*>& ranges1 = {}, const std::vector<Argument_range<std::vector<List_element_type>>*>& ranges2 = {})
+	: List<std::vector<List_element_type>, S1>(new List<List_element_type, S2>(val_type, ranges2), ranges1)
+	{
+	}
+};
+
+
+// template <typename List_element_type, class S, class... MD_S>
+// struct unpack2vectors
+// {
+// 	using type = std::vector<typename std::conditional<sizeof...(MD_S) == 0,
+// 	                                                   List_element_type,
+// 	                                                   unpack2vectors<List_element_type, MD_S...>
+// 	                                                  >::type
+// 	                        >;
+// };
+
+// template <typename List_element_type = std::string, class S = Generic_splitter, class... MD_S>
+// class MD_List : public List<typename unpack2vectors<List_element_type, S, MD_S...>::type>
+// {
+// public:
+// 	MD_List(Argument_type* val_type, const std::vector<Argument_range<std::vector<List_element_type>>*>& ranges = {})
+// 	: List<List_element_type, S>(val_type, ranges)
+// 	{
+// 	}
+
+// 	template <class... MD_Argument_ranges>
+// 	MD_List(Argument_type* val_type, const std::vector<Argument_range<std::vector<List_element_type>>*>&& ranges, const MD_Argument_ranges&&... MD_ranges)
+// 	: List<typename unpack2vectors<List_element_type, S, MD_S...>::type, S>(new MD_List<List_element_type, MD_S...>(val_type, MD_ranges...), ranges)
+// 	{
+// 		static_assert(sizeof...(MD_S) == sizeof...(MD_Argument_ranges), "There shall be the same number of ranges elements than Splitter");
+// 	}
+// };
+
 }
 }
 #endif /* ARGUMENT_TYPE_LIST_HPP_ */

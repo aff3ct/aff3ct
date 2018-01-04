@@ -184,11 +184,11 @@ void Puncturer_turbo<B,Q>
 
 template <typename B, typename Q>
 std::string Puncturer_turbo<B,Q>
-::display_pattern(const std::vector<std::vector<bool>>& pattern)
+::display_pattern(const std::vector<std::vector<bool>>& pattern_bits)
 {
 	std::string m;
 
-	for(auto &v : pattern)
+	for(auto &v : pattern_bits)
 	{
 		for(const auto &vb : v)
 			m += std::to_string(vb);
@@ -213,6 +213,18 @@ unsigned Puncturer_turbo<B,Q>
 }
 
 template <typename B, typename Q>
+unsigned Puncturer_turbo<B,Q>
+::get_bit_count(const std::vector<std::vector<bool>>& pattern_bits)
+{
+	unsigned bit_count = 0;
+	for (unsigned i = 0; i < pattern_bits.size(); i++)
+		for (unsigned j = 0; j < pattern_bits[i].size(); j++)
+			bit_count += pattern_bits[i][j] ? 1 : 0;
+
+	return bit_count;
+}
+
+template <typename B, typename Q>
 void Puncturer_turbo<B,Q>
 ::check_pattern(const int K, const std::vector<std::vector<bool>>& pattern_bits)
 {
@@ -234,13 +246,14 @@ void Puncturer_turbo<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto period = get_period(pattern_bits);
+	auto period = get_period   (pattern_bits);
+	bool allone = get_bit_count(pattern_bits) == period * pattern_bits.size();
 
-	if (K % period)
+	if (!allone && (K % period != 0))
 	{
 		std::stringstream message;
-		message << "'period' has to be a multiple of 'K' ('period' = " << period << ", 'K' = " << K << ", 'pattern' = "
-		        << display_pattern(pattern_bits) << ").";
+		message << "'period' has to be a multiple of 'K' or all bits must be at '1' ('period' = " << period
+		        << ", 'K' = " << K << ", 'pattern' = " << display_pattern(pattern_bits) << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
@@ -251,12 +264,8 @@ int Puncturer_turbo<B,Q>
 {
 	check_pattern(K, pattern_bits);
 
-	auto period = get_period(pattern_bits);
-
-	auto bit_count = 0;
-	for (unsigned i = 0; i < pattern_bits.size(); i++)
-		for (unsigned j = 0; j < pattern_bits[i].size(); j++)
-			bit_count += pattern_bits[i][j] ? 1 : 0;
+	auto period    = get_period   (pattern_bits);
+	auto bit_count = get_bit_count(pattern_bits);
 
 	if (period)
 		return K * bit_count / period + tail_bits;

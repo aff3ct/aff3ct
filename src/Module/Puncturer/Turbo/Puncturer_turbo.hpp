@@ -28,10 +28,12 @@ public:
 
 	virtual ~Puncturer_turbo();
 
-	static unsigned get_period(const std::vector<std::vector<bool>>& pattern);
-	static std::string display_pattern(const std::vector<std::vector<bool>>& pattern);
-	static void check_pattern(const int K, const std::vector<std::vector<bool>>& pattern_bits);
-	static int compute_N(const int K, const int tail_bits, const std::vector<std::vector<bool>>& pattern_bits);
+	static unsigned    get_period     (const std::vector<std::vector<bool>>& pattern_bits);
+	static unsigned    get_bit_count  (const std::vector<std::vector<bool>>& pattern_bits);
+	static std::string display_pattern(const std::vector<std::vector<bool>>& pattern_bits);
+
+	static void check_pattern(const int K,                      const std::vector<std::vector<bool>>& pattern_bits);
+	static int  compute_N    (const int K, const int tail_bits, const std::vector<std::vector<bool>>& pattern_bits);
 
 protected:
 	void   _puncture(const B *X_N1, B *X_N2, const int frame_id) const;
