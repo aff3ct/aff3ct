@@ -83,11 +83,11 @@ print("Starting the test script...")
 testId = 0
 for fn in fileNames:
 
-	if testId < StartId:
-		testId = testId + 1
+	if pathlib.Path(fn).suffix != ".txt" and pathlib.Path(fn).suffix != ".perf" and pathlib.Path(fn).suffix != ".data" and pathlib.Path(fn).suffix != ".dat":
 		continue
 
-	if pathlib.Path(fn).suffix != ".txt" and pathlib.Path(fn).suffix != ".perf" and pathlib.Path(fn).suffix != ".data" and pathlib.Path(fn).suffix != ".dat":
+	if testId < StartId:
+		testId = testId + 1
 		continue
 
 	print("Test n°" + str(testId) + " - " + fn, end="", flush=True);
