@@ -5,6 +5,8 @@
 
 PathTests     = "refs"     # can be overrided by arg1 from the cmd line
 PathResults   = "results"  # can be overrided by arg2 from the cmd line
+StartId       = 0          # can be overrided by arg3 from the cmd line, starting id to not do previous one again
+
 PathBuild     = "../build"
 Sensibility   = 1.0
 Nthreads      = 0          # if 0 then AFF3CT takes all the available threads
@@ -61,6 +63,9 @@ if len(sys.argv) >= 2:
 if len(sys.argv) >= 3:
 	PathResults = sys.argv[2]
 
+if len(sys.argv) >= 4:
+	StartId = int(sys.argv[3])
+
 PathOrigin = os.getcwd()
 
 # get the filenames to test
@@ -77,6 +82,10 @@ print("Starting the test script...")
 
 testId = 0
 for fn in fileNames:
+
+	if testId < StartId:
+		testId = testId + 1
+		continue
 
 	if pathlib.Path(fn).suffix != ".txt" and pathlib.Path(fn).suffix != ".perf" and pathlib.Path(fn).suffix != ".data" and pathlib.Path(fn).suffix != ".dat":
 		continue
