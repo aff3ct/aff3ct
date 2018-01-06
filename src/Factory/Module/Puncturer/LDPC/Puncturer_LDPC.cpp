@@ -39,14 +39,14 @@ void Puncturer_LDPC::parameters
 
 	req_args.add(
 		{p+"-cw-size", "N_cw"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the codeword size.");
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"LDPC"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "LDPC");
 
 	opt_args.add(
 		{p+"-pattern"},
-		new tools::Text<>(),
+		tools::Text(),
 		"puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: \"1,1,1,0\").");
 }
 

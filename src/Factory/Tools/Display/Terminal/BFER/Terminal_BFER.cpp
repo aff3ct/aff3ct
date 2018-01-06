@@ -32,7 +32,7 @@ void Terminal_BFER::parameters
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"STD"})}),
+		tools::Text(tools::Including_set("STD")),
 		"select the terminal type you want.");
 }
 

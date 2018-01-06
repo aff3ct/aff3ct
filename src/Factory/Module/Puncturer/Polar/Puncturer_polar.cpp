@@ -35,7 +35,7 @@ void Puncturer_polar::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"WANGLIU"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "WANGLIU");
 }
 
 void Puncturer_polar::parameters

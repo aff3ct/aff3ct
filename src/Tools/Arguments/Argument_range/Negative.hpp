@@ -11,18 +11,18 @@ namespace tools
 {
 
 template <typename T>
-class Negative : public Max<T>
+class Negative_range : public Max_range<T>
 {
 public:
-	Negative()
-	: Max<T>(0)
+	Negative_range()
+	: Max_range<T>(0)
 	{ }
 
-	virtual ~Negative() {};
+	virtual ~Negative_range() {};
 
-	virtual Negative* clone() const
+	virtual Negative_range* clone() const
 	{
-		return new Negative(*this);
+		return new Negative_range(*this);
 	}
 
 	virtual std::string get_title() const
@@ -30,6 +30,12 @@ public:
 		return "negative";
 	}
 };
+
+template <typename T = float> // then int are converted into floats in the max check function
+Negative_range<T>* Negative()
+{
+	return new Negative_range<T>();
+}
 
 }
 }

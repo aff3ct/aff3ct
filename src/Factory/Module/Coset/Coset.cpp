@@ -33,17 +33,17 @@ void Coset::parameters
 
 	req_args.add(
 		{p+"-size", "N"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"coset size.");
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"STD"})}),
+		tools::Text(tools::Including_set("STD")),
 		"coset type.");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 }
 

@@ -39,32 +39,32 @@ void Quantizer::parameters
 
 	req_args.add(
 		{p+"-size", "N"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of real to quantize.");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"STD", "STD_FAST", "TRICKY"})}),
+		tools::Text(tools::Including_set("STD", "STD_FAST", "TRICKY")),
 		"type of the quantizer to use in the simulation.");
 
 	opt_args.add(
 		{p+"-dec"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"the position of the fixed point in the quantified representation.");
 
 	opt_args.add(
 		{p+"-bits"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the number of bits used for the quantizer.");
 
 	opt_args.add(
 		{p+"-range"},
-		new tools::Real<>({new tools::Positive<float>(), new tools::Non_zero<float>()}),
+		tools::Real(tools::Positive(), tools::Non_zero()),
 		"the min/max bound for the tricky quantizer.");
 }
 

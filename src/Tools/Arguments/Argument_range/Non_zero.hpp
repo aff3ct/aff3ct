@@ -11,18 +11,18 @@ namespace tools
 {
 
 template <typename T>
-class Non_zero : public Excluding_set<T>
+class Non_zero_range : public Excluding_set_range<T>
 {
 public:
-	Non_zero()
-	: Excluding_set<T>({0})
+	Non_zero_range()
+	: Excluding_set_range<T>({(T)0})
 	{ }
 
-	virtual ~Non_zero() {};
+	virtual ~Non_zero_range() {};
 
-	virtual Non_zero* clone() const
+	virtual Non_zero_range* clone() const
 	{
-		return new Non_zero(*this);
+		return new Non_zero_range(*this);
 	}
 
 	virtual std::string get_title() const
@@ -30,6 +30,12 @@ public:
 		return "non-zero";
 	}
 };
+
+template <typename T = float> // then int are converted into floats in the excluding set check function
+Non_zero_range<T>* Non_zero()
+{
+	return new Non_zero_range<T>();
+}
 
 }
 }

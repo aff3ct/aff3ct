@@ -35,7 +35,7 @@ void Encoder_repetition::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"REPETITION"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "REPETITION");
 
 	opt_args.add(
 		{p+"-no-buff"},

@@ -11,21 +11,21 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename T = std::string>
-class Text : public Argument_type_limited<T>
+template <typename T = std::string, typename... Ranges>
+class Text_type : public Argument_type_limited<T,Ranges...>
 {
 public:
-	Text(const std::vector<Argument_range<T>*>& ranges = {})
-	: Argument_type_limited<T>("text", ranges)
+	Text_type(const Ranges*... ranges)
+	: Argument_type_limited<T,Ranges...>("text", ranges...)
 	{ }
 
-	virtual ~Text() {};
+	virtual ~Text_type() {};
 
-	virtual Text<T>* clone() const
+	virtual Text_type<T,Ranges...>* clone() const
 	{
-		auto clone = new Text<T>(*this);
+		auto clone = new Text_type<T,Ranges...>(*this);
 
-		return dynamic_cast<Text<T>*>(this->clone_ranges(clone));
+		return dynamic_cast<Text_type<T,Ranges...>*>(this->clone_ranges(clone));
 	}
 
 	virtual T convert(const std::string& val) const
@@ -38,12 +38,18 @@ public:
 	{
 		auto str_val = this->convert(val);
 
-		if (val.empty())
+		if (str_val.empty())
 			throw std::runtime_error("shall be a text");
 
 		this->check_ranges(str_val);
 	}
 };
+
+template <typename T = std::string, typename... Ranges>
+Text_type<T,Ranges...>* Text(Ranges*... ranges)
+{
+	return new Text_type<T,Ranges...>(ranges...);
+}
 
 }
 }

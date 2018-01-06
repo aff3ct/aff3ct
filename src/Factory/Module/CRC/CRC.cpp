@@ -38,27 +38,27 @@ void CRC::parameters
 
 	req_args.add(
 		{p+"-info-bits", "K"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of generated bits (information bits, the CRC is not included).");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"NO", "STD", "FAST", "INTER"})}),
+		tools::Text(tools::Including_set("NO", "STD", "FAST", "INTER")),
 		"select the CRC implementation you want to use.");
 
 	opt_args.add(
 		{p+"-poly"},
-		new tools::Text<>(),
+		tools::Text(),
 		"select the CRC polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7).");
 
 	opt_args.add(
 		{p+"-size"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"size of the CRC (divisor size in bit -1), required if you selected an unknown CRC.");
 }
 

@@ -14,20 +14,18 @@ namespace tools
 
 template <typename T = int> // shall not be of type "bool" because a val of (int 5) would be converted
                             // to (bool 1) and then can't be checked correctly as a boolean value 0 or 1
-class Boolean : public Argument_type_limited<T>
+class Boolean_type : public Argument_type_limited<T,Including_set_range<T>>
 {
 public:
-	Boolean()
-	: Argument_type_limited<T>("boolean", {new Including_set<int>({0, 1})})
+	Boolean_type()
+	: Argument_type_limited<T,Including_set_range<T>>("boolean", Including_set((T)0, (T)1))
 	{ }
 
-	virtual ~Boolean() {};
+	virtual ~Boolean_type() {};
 
-	virtual Boolean<T>* clone() const
+	virtual Boolean_type<T>* clone() const
 	{
-		auto clone = new Boolean<T>(*this);
-
-		return dynamic_cast<Boolean<T>*>(this->clone_ranges(clone));
+		return new Boolean_type<T>();
 	}
 
 	virtual int convert(const std::string& val) const
@@ -51,6 +49,12 @@ public:
 		this->check_ranges(bool_num);
 	}
 };
+
+template <typename T = int>
+Boolean_type<T>* Boolean()
+{
+	return new Boolean_type<T>();
+}
 
 }
 }

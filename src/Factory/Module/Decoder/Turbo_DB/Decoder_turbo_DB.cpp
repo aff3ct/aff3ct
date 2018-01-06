@@ -93,12 +93,12 @@ void Decoder_turbo_DB::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"TURBO_DB"}, 0);
-	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), {"STD"     }, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "TURBO_DB");
+	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), 0, "STD"     );
 
 	opt_args.add(
 		{p+"-ite", "i"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"maximal number of iterations in the turbo.");
 
 	sf->get_description(req_args, opt_args);

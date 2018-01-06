@@ -37,17 +37,17 @@ void Monitor_EXIT::parameters
 
 	req_args.add(
 		{p+"-size", "K"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of bits to check.");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
 	opt_args.add(
 		{p+"-trials", "n"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of frames to simulate per sigma A value.");
 }
 

@@ -38,16 +38,16 @@ void Encoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"LDPC", "LDPC_H", "LDPC_DVBS2", "LDPC_QC"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "LDPC", "LDPC_H", "LDPC_DVBS2", "LDPC_QC");
 
 	opt_args.add(
 		{p+"-h-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder).");
 
 	opt_args.add(
 		{p+"-g-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"path to the G matrix (AList formated file, required by the \"LDPC\" encoder).");
 }
 

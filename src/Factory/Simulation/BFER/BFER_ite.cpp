@@ -100,12 +100,12 @@ void BFER_ite::parameters
 
 	opt_args.add(
 		{p+"-ite", "I"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"number of global iterations between the demodulator and the decoder.");
 
 	opt_args.add(
 		{p+"-crc-start"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"iteration number to start the CRC checking in the turbo demodulation process.");
 }
 

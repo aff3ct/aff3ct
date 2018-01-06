@@ -11,21 +11,21 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename T = int>
-class Integer : public Argument_type_limited<T>
+template <typename T = int, typename... Ranges>
+class Integer_type : public Argument_type_limited<T,Ranges...>
 {
 public:
-	Integer(const std::vector<Argument_range<T>*>& ranges = {})
-	: Argument_type_limited<T>("integer", ranges)
+	Integer_type(const Ranges*... ranges)
+	: Argument_type_limited<T,Ranges...>("integer", ranges...)
 	{ }
 
-	virtual ~Integer() {};
+	virtual ~Integer_type() {};
 
-	virtual Integer<T>* clone() const
+	virtual Integer_type<T,Ranges...>* clone() const
 	{
-		auto clone = new Integer<T>(*this);
+		auto clone = new Integer_type<T,Ranges...>(*this);
 
-		return dynamic_cast<Integer<T>*>(this->clone_ranges(clone));
+		return dynamic_cast<Integer_type<T,Ranges...>*>(this->clone_ranges(clone));
 	}
 
 	virtual T convert(const std::string& val) const
@@ -49,6 +49,12 @@ public:
 		this->check_ranges(int_num);
 	}
 };
+
+template <typename T = int, typename... Ranges>
+Integer_type<T,Ranges...>* Integer(Ranges*... ranges)
+{
+	return new Integer_type<T,Ranges...>(ranges...);
+}
 
 }
 }

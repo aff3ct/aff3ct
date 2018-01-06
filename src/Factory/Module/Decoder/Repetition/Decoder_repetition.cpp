@@ -37,8 +37,8 @@ void Decoder_repetition::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"REPETITION" }, 0);
-	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), {"STD", "FAST"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "REPETITION" );
+	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), 0, "STD", "FAST");
 
 	opt_args.add(
 		{p+"-no-buff"},

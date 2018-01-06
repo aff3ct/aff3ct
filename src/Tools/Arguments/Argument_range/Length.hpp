@@ -12,8 +12,7 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename T = std::string>
-class Length : public Argument_range<T>
+class Length_range : public Argument_range
 {
 	const size_t min_size;
 	const size_t max_size;
@@ -23,19 +22,20 @@ public:
 	 * min_size is the minimal size must have the checked container (0 means no minimum)
 	 * max_size is the maximal size must have the checked container (0 means infinite)
 	 */
-	Length(size_t min_size = 0, size_t max_size = 0)
-	: Argument_range<T>("limited length [" + std::to_string(min_size) + ";" + (max_size?std::to_string(max_size):"inf") + "]"),
+	Length_range(size_t min_size = 0, size_t max_size = 0)
+	: Argument_range("limited length [" + std::to_string(min_size) + ";" + (max_size?std::to_string(max_size):"inf") + "]"),
 	  min_size(min_size), max_size(max_size)
 	{ }
 
-	virtual ~Length() {};
+	virtual ~Length_range() {};
 
-	virtual Length<T>* clone() const
+	virtual Length_range* clone() const
 	{
-		return new Length(*this);
+		return new Length_range(*this);
 	}
 
-	virtual void check(const T& val) const
+	template <typename T>
+	void check(const T& val) const
 	{
 		size_t container_size = val.size();
 
@@ -59,6 +59,8 @@ public:
 		}
 	}
 };
+
+Length_range* Length(size_t min_size = 0, size_t max_size = 0);
 
 }
 }

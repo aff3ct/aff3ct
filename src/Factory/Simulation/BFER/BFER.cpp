@@ -98,7 +98,7 @@ void BFER::parameters
 
 	opt_args.add(
 		{p+"-snr-type", "E"},
-		new tools::Text<>({new tools::Including_set<std::string>({"ES", "EB"})}),
+		tools::Text(tools::Including_set("ES", "EB")),
 		"select the type of SNR: symbol energy or information bit energy.");
 
 	opt_args.add(
@@ -118,12 +118,12 @@ void BFER::parameters
 
 	opt_args.add(
 		{p+"-err-trk-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"base path for the files where the bad frames will be stored or read.");
 
 	opt_args.add(
 		{p+"-err-trk-thold"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"dump only frames with a bit error count above or equal to this threshold.");
 
 	opt_args.add(

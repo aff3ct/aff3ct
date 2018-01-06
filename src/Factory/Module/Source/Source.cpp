@@ -37,27 +37,27 @@ void Source::parameters
 
 	req_args.add(
 		{p+"-info-bits", "K"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of generated bits (information bits).");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"RAND", "RAND_FAST", "AZCW", "USER"})}),
+		tools::Text(tools::Including_set("RAND", "RAND_FAST", "AZCW", "USER")),
 		"method used to generate the codewords.");
 
 	opt_args.add(
 		{p+"-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\".");
 
 	opt_args.add(
 		{p+"-seed", "S"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");
 }
 

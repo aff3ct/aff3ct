@@ -40,12 +40,12 @@ void Decoder_RSC_DB::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"BCJR"}, 0);
-	tools::add_options<std::string>(opt_args.at({p+"-implem"}), {"GENERIC", "DVB-RCS1", "DVB-RCS2"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "BCJR");
+	tools::add_options<std::string>(opt_args.at({p+"-implem"}), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
 
 	opt_args.add(
 		{p+"-max"},
-		new tools::Text<>({new tools::Including_set<std::string>({"MAX", "MAXL", "MAXS"})}),
+		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
 		"the MAX implementation for the nodes.");
 
 	opt_args.add(

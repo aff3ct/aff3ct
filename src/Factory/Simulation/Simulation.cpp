@@ -34,27 +34,27 @@ void Simulation::parameters
 
 	req_args.add(
 		{p+"-snr-min", "m"},
-		new tools::Real<>(),
+		tools::Real(),
 		"minimal signal/noise ratio to simulate.");
 
 	req_args.add(
 		{p+"-snr-max", "M"},
-		new tools::Real<>(),
+		tools::Real(),
 		"maximal signal/noise ratio to simulate.");
 
 	opt_args.add(
 		{p+"-snr-step", "s"},
-		new tools::Real<>({new tools::Positive<float>(), new tools::Non_zero<float>()}),
+		tools::Real(tools::Positive(), tools::Non_zero()),
 		"signal/noise ratio step between each simulation.");
 
 	opt_args.add(
 		{p+"-pyber"},
-		new tools::Text<>(),
+		tools::Text(),
 		"prepare the output for the PyBER plotter tool, takes the name of the curve in PyBER.");
 
 	opt_args.add(
 		{p+"-stop-time"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"time in sec after what the current SNR iteration should stop (0 is infinite).");
 
 	opt_args.add(
@@ -64,12 +64,12 @@ void Simulation::parameters
 
 	opt_args.add(
 		{p+"-debug-prec"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"set the precision of real elements when displayed in debug mode.");
 
 	opt_args.add(
 		{p+"-debug-limit", "d"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the max number of elements to display in the debug mode.");
 
 	opt_args.add(
@@ -79,18 +79,18 @@ void Simulation::parameters
 
 	opt_args.add(
 		{p+"-threads", "t"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"enable multi-threaded mode and specify the number of threads (0 means the maximum supported by the core.");
 
 	opt_args.add(
 		{p+"-seed", "S"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"seed used in the simulation to initialize the pseudo random generators in general.");
 
 #ifdef ENABLE_MPI
 	opt_args.add(
 		{p+"-mpi-comm"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"MPI communication frequency between the nodes (in millisec).");
 #endif
 

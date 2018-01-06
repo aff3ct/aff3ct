@@ -38,12 +38,12 @@ void Flip_and_check::parameters
 
 	req_args.add(
 		{p+"-size"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"size (in bit) of the extrinsic for the fnc processing.");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
 	opt_args.add(
@@ -53,32 +53,32 @@ void Flip_and_check::parameters
 
 	opt_args.add(
 		{p+"-q"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the search's space for the fnc algorithm.");
 
 	opt_args.add(
 		{p+"-ite-m"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"set first iteration at which the fnc is used.");
 
 	opt_args.add(
 		{p+"-ite-M"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"set last iteration at which the fnc is used.");
 
 	opt_args.add(
 		{p+"-ite-s"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set iteration step for the fnc algorithm.");
 
 	opt_args.add(
 		{p+"-ite", "i"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"maximal number of iterations in the turbo.");
 
 	opt_args.add(
 		{p+"-crc-ite"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"set the iteration to start the CRC checking.");
 }
 

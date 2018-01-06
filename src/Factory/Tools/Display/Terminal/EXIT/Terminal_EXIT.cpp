@@ -34,12 +34,12 @@ void Terminal_EXIT::parameters
 
 	req_args.add(
 		{p+"-cw-size", "N"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of bits in the codeword.");
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"STD"})}),
+		tools::Text(tools::Including_set("STD")),
 		"select the terminal type you want.");
 
 }

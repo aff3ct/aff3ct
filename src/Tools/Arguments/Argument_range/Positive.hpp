@@ -11,18 +11,18 @@ namespace tools
 {
 
 template <typename T>
-class Positive : public Min<T>
+class Positive_range : public Min_range<T>
 {
 public:
-	Positive()
-	: Min<T>(0)
+	Positive_range()
+	: Min_range<T>(0)
 	{ }
 
-	virtual ~Positive() {};
+	virtual ~Positive_range() {};
 
-	virtual Positive* clone() const
+	virtual Positive_range* clone() const
 	{
-		return new Positive(*this);
+		return new Positive_range(*this);
 	}
 
 	virtual std::string get_title() const
@@ -30,6 +30,12 @@ public:
 		return "positive";
 	}
 };
+
+template <typename T = float> // then int are converted into floats in the min check function
+Positive_range<T>* Positive()
+{
+	return new Positive_range<T>();
+}
 
 }
 }

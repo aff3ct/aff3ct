@@ -29,27 +29,27 @@ void Decoder::parameters
 
 	req_args.add(
 		{p+"-cw-size", "N"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the codeword size.");
 
 	req_args.add(
 		{p+"-info-bits", "K"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"useful number of bit transmitted (information bits).");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
 	opt_args.add(
 		{p+"-type", "D"},
-		new tools::Text<>({new tools::Including_set<std::string>({})}),
+		tools::Text(tools::Including_set<std::string>()),
 		"select the algorithm you want to decode the codeword.");
 
 	opt_args.add(
 		{p+"-implem"},
-		new tools::Text<>({new tools::Including_set<std::string>({})}),
+		tools::Text(tools::Including_set<std::string>()),
 		"select the implementation of the algorithm to decode.");
 }
 

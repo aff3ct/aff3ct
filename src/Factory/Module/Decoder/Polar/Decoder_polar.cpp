@@ -76,26 +76,26 @@ void Decoder_polar::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN");
 
 	opt_args.add(
 		{p+"-ite", "i"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"maximal number of iterations in the SCAN decoder.");
 
 	opt_args.add(
 		{p+"-lists", "L"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"maximal number of paths in the SCL decoder.");
 
 	opt_args.add(
 		{p+"-simd"},
-		new tools::Text<>({new tools::Including_set<std::string>({"INTRA", "INTER"})}),
+		tools::Text(tools::Including_set("INTRA", "INTER")),
 		"the SIMD strategy you want to use.");
 
 	opt_args.add(
 		{p+"-polar-nodes"},
-		new tools::Text<>(),
+		tools::Text(),
 		"the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\").");
 
 	opt_args.add(

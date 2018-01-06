@@ -37,11 +37,11 @@ void Encoder_RSC_DB::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"RSC_DB"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "RSC_DB");
 
 	opt_args.add(
 		{p+"-std"},
-		new tools::Text<>({new tools::Including_set<std::string>({"DVB-RCS1", "DVB-RCS2"})}),
+		tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")),
 		"select a standard and set automatically some parameters (overwritten with user given arguments).");
 
 	opt_args.add(

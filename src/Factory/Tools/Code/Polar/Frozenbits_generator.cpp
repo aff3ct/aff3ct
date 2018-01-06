@@ -35,33 +35,33 @@ void Frozenbits_generator::parameters
 
 	req_args.add(
 		{p+"-info-bits", "K"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"useful number of bit transmitted (information bits).");
 
 	req_args.add(
 		{p+"-cw-size", "N"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the codeword size.");
 
 	opt_args.add(
 		{p+"-sigma"},
-		new tools::Real<>({new tools::Positive<float>(), new tools::Non_zero<float>()}),
+		tools::Real(tools::Positive(), tools::Non_zero()),
 		"sigma value for the polar codes generation (adaptive frozen bits if sigma is not set).");
 
 	opt_args.add(
 		{p+"-gen-method"},
-		new tools::Text<>({new tools::Including_set<std::string>({"GA", "FILE", "TV"})}),
+		tools::Text(tools::Including_set("GA", "FILE", "TV")),
 		"select the frozen bits generation method.");
 
 	opt_args.add(
 		{p+"-awgn-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"path to a file or a directory containing the best channels to use for information bits.");
 
 #ifdef ENABLE_POLAR_BOUNDS
 	opt_args.add(
 		{p+"-pb-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"path of the polar bounds code generator (generates best channels to use).");
 #endif
 }

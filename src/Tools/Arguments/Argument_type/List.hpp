@@ -14,25 +14,29 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename List_element_type = std::string, class S = Generic_splitter>
-class List : public Argument_type_limited<std::vector<List_element_type>>
+template <typename List_element_type = std::string, class S = Generic_splitter, typename... Ranges>
+class List_type : public Argument_type_limited<std::vector<List_element_type>,Ranges...>
 {
 protected:
 	Argument_type* val_type;
 
 public:
-	List(Argument_type* val_type, const std::vector<Argument_range<std::vector<List_element_type>>*>& ranges = {})
-	: Argument_type_limited<std::vector<List_element_type>>("list of " + val_type->get_short_title(), ranges), val_type(val_type)
+	List_type(Argument_type* val_type, const Ranges*... ranges)
+	: Argument_type_limited<std::vector<List_element_type>,Ranges...>("list of " + val_type->get_short_title(), ranges...), val_type(val_type)
 	{ }
 
-	virtual ~List()
+	virtual ~List_type()
 	{
 		if (val_type != nullptr) delete val_type;
 	};
 
-	virtual List<List_element_type, S>* clone() const
+	virtual List_type<List_element_type, S, Ranges...>* clone() const
 	{
-		return new List(val_type->clone());
+		auto clone = new List_type<List_element_type, S, Ranges...>(*this);
+
+		clone->val_type = val_type->clone();
+
+		return dynamic_cast<List_type<List_element_type, S, Ranges...>*>(this->clone_ranges(clone));
 	}
 
 	virtual void check(const std::string& val) const
@@ -64,11 +68,10 @@ public:
 	{
 		auto t = "list of (" + val_type->get_title() + ")";
 
-		auto rt = this->get_ranges_title();
-		if (rt.size()) // then add ranges titles to the argument title
+		if (sizeof...(Ranges)) // then add ranges titles to the argument title
 		{
 			t += Argument_type::title_description_separator;
-			t += rt;
+			this->get_ranges_title(t);
 		}
 
 		return t;
@@ -99,18 +102,33 @@ public:
 
 		return list_T;
 	}
-
 };
 
-template <typename List_element_type = std::string, class S1 = Generic_splitter, class S2 = String_splitter>
-class List2D : public List<std::vector<List_element_type>, S1>
+template <typename T = std::string, class S = Generic_splitter, typename... Ranges>
+List_type<T,S,Ranges...>* List(Argument_type* val_type, Ranges*... ranges)
 {
-public:
-	List2D(Argument_type* val_type, const std::vector<Argument_range<std::vector<std::vector<List_element_type>>>*>& ranges1 = {}, const std::vector<Argument_range<std::vector<List_element_type>>*>& ranges2 = {})
-	: List<std::vector<List_element_type>, S1>(new List<List_element_type, S2>(val_type, ranges2), ranges1)
-	{
-	}
-};
+	return new List_type<T,S,Ranges...>(val_type, ranges...);
+}
+
+template <typename T = std::string,
+          class S1 = Generic_splitter, typename... Ranges1,
+          class S2 = String_splitter,  typename... Ranges2>
+List_type<std::vector<T>,S1,Ranges1...>* List2D(Ranges1*... ranges1, Argument_type* val_type, Ranges2*... ranges2)
+{
+	return new List_type<std::vector<T>,S1,Ranges1...>(List<T,S2,Ranges2...>(val_type, ranges2...), ranges1...);
+}
+
+
+
+// template <typename List_element_type = std::string, class S1 = Generic_splitter, class S2 = String_splitter>
+// class List2D : public List<std::vector<List_element_type>, S1>
+// {
+// public:
+// 	List2D(Argument_type* val_type, const std::vector<Argument_range<std::vector<std::vector<List_element_type>>>*>& ranges1 = {}, const std::vector<Argument_range<std::vector<List_element_type>>*>& ranges2 = {})
+// 	: List<std::vector<List_element_type>, S1>(new List<List_element_type, S2>(val_type, ranges2), ranges1)
+// 	{
+// 	}
+// };
 
 
 // template <typename List_element_type, class S, class... MD_S>

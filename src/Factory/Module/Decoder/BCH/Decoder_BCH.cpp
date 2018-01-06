@@ -39,7 +39,7 @@ void Decoder_BCH::parameters
 
 	opt_args.add(
 		{p+"-corr-pow", "T"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"correction power of the BCH code.");
 }
 

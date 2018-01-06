@@ -47,25 +47,25 @@ void Decoder_LDPC::parameters
 
 	req_args.add(
 		{p+"-h-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"path to the H matrix (AList or QC formated file).");
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"BP", "BP_FLOODING", "BP_LAYERED"}, 0);
-	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), {"ONMS", "SPA", "LSPA", "GALA", "AMS"},     0);
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "BP", "BP_FLOODING", "BP_LAYERED"   );
+	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), 0, "ONMS", "SPA", "LSPA", "GALA", "AMS");
 
 	opt_args.add(
 		{p+"-ite", "i"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"maximal number of iterations in the LDPC decoder.");
 
 	opt_args.add(
 		{p+"-off"},
-		new tools::Real<>(),
+		tools::Real(),
 		"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem ONMS\").");
 
 	opt_args.add(
 		{p+"-norm"},
-		new tools::Real<>({new tools::Positive<float>()}),
+		tools::Real(tools::Positive()),
 		"normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem ONMS\").");
 
 	opt_args.add(
@@ -75,17 +75,17 @@ void Decoder_LDPC::parameters
 
 	opt_args.add(
 		{p+"-synd-depth"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"successive number of iterations to validate the syndrome detection.");
 
 	opt_args.add(
 		{p+"-simd"},
-		new tools::Text<>({new tools::Including_set<std::string>({"INTER"})}),
+		tools::Text(tools::Including_set("INTER")),
 		"the SIMD strategy you want to use.");
 
 	opt_args.add(
 		{p+"-min"},
-		new tools::Text<>({new tools::Including_set<std::string>({"MIN", "MINL", "MINS"})}),
+		tools::Text(tools::Including_set("MIN", "MINL", "MINS")),
 		"the MIN implementation for the nodes (AMS decoder).");
 }
 

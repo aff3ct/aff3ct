@@ -93,11 +93,11 @@ void Encoder_turbo::parameters<E1,E2>
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"TURBO"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "TURBO");
 
 	opt_args.add(
 		{p+"-json-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"path to store the encoder and decoder traces formated in JSON.");
 
 	sub1->get_description(req_args, opt_args);

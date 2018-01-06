@@ -40,12 +40,12 @@ void Scaling_factor::parameters
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE"})}),
+		tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")),
 		"scaling factor type.");
 
 	opt_args.add(
 		{p+"-ite"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of iterations.");
 }
 

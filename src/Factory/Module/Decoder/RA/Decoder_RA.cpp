@@ -72,12 +72,12 @@ void Decoder_RA::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"RA" }, 0);
-	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), {"STD"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "RA" );
+	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), 0, "STD");
 
 	opt_args.add(
 		{p+"-ite", "i"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"maximal number of iterations in the decoder.");
 }
 

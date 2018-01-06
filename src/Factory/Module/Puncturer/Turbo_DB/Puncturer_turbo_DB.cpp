@@ -37,7 +37,7 @@ void Puncturer_turbo_DB::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"TURBO_DB"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "TURBO_DB");
 }
 
 void Puncturer_turbo_DB::parameters

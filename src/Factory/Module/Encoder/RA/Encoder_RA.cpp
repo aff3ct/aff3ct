@@ -69,7 +69,7 @@ void Encoder_RA::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"RA"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "RA");
 }
 
 void Encoder_RA::parameters

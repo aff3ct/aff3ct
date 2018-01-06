@@ -57,17 +57,17 @@ void Decoder_RSC::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), {"BCJR" }, 0);
-	tools::add_options<std::string>(opt_args.at({p+"-implem"}), {"GENERIC", "STD", "FAST", "VERY_FAST"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "BCJR");
+	tools::add_options<std::string>(opt_args.at({p+"-implem"}), 0, "GENERIC", "STD", "FAST", "VERY_FAST");
 
 	opt_args.add(
 		{p+"-simd"},
-		new tools::Text<>({new tools::Including_set<std::string>({"INTRA", "INTER"})}),
+		tools::Text(tools::Including_set("INTRA", "INTER")),
 		"the SIMD strategy you want to use.");
 
 	opt_args.add(
 		{p+"-max"},
-		new tools::Text<>({new tools::Including_set<std::string>({"MAX", "MAXL", "MAXS"})}),
+		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
 		"the MAX implementation for the nodes.");
 
 	opt_args.add(
@@ -77,12 +77,12 @@ void Decoder_RSC::parameters
 
 	opt_args.add(
 		{p+"-poly"},
-		new tools::Text<>(),
+		tools::Text(),
 		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
 
 	opt_args.add(
 		{p+"-std"},
-		new tools::Text<>({new tools::Including_set<std::string>({"LTE", "CCSDS"})}),
+		tools::Text(tools::Including_set("LTE", "CCSDS")),
 		"select a standard and set automatically some parameters (overwritten with user given arguments).");
 }
 

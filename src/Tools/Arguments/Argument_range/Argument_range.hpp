@@ -12,7 +12,6 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename T>
 class Argument_range
 {
 protected:
@@ -25,8 +24,7 @@ public:
 
 	virtual ~Argument_range() {};
 
-	virtual void check(const T&)       const = 0;
-	virtual Argument_range<T>* clone() const = 0;
+	virtual Argument_range* clone() const = 0;
 
 	virtual std::string get_title() const
 	{
@@ -35,25 +33,26 @@ public:
 };
 
 template <typename T>
-class Min : public Argument_range<T>
+class Min_range : public Argument_range
 {
 	const T min_val;
 
 public:
-	Min(T m)
-	: Argument_range<T>("minimum " + std::to_string(m)), min_val(m)
+	Min_range(const T& m)
+	: Argument_range("minimum " + std::to_string(m)), min_val(m)
 	{ }
 
-	virtual ~Min() {};
+	virtual ~Min_range() {};
 
-	virtual Min<T>* clone() const
+	virtual Min_range<T>* clone() const
 	{
-		return new Min<T>(*this);
+		return new Min_range<T>(*this);
 	}
 
-	virtual void check(const T& val) const
+	template <typename V>
+	void check(const V& val) const
 	{
-		if (val < min_val)
+		if ((T)val < min_val)
 		{
 			std::stringstream message;
 			message << "shall be higher than " << min_val;
@@ -63,25 +62,34 @@ public:
 };
 
 template <typename T>
-class Max : public Argument_range<T>
+Min_range<T>* Min(const T& min_val)
+{
+	return new Min_range<T>(min_val);
+}
+
+
+
+template <typename T>
+class Max_range : public Argument_range
 {
 	const T max_val;
 
 public:
-	Max(T m)
-	: Argument_range<T>("maximum " + std::to_string(m)), max_val(m)
+	Max_range(const T& m)
+	: Argument_range("maximum " + std::to_string(m)), max_val(m)
 	{ }
 
-	virtual ~Max() {};
+	virtual ~Max_range() {};
 
-	virtual Max<T>* clone() const
+	virtual Max_range<T>* clone() const
 	{
-		return new Max<T>(*this);
+		return new Max_range<T>(*this);
 	}
 
-	virtual void check(const T& val) const
+	template <typename V>
+	void check(const V& val) const
 	{
-		if (val > max_val)
+		if ((T)val > max_val)
 		{
 			std::stringstream message;
 			message << "shall be lower than " << max_val;
@@ -90,22 +98,27 @@ public:
 	}
 };
 
+template <typename T>
+Max_range<T>* Max(const T& max_val)
+{
+	return new Max_range<T>(max_val);
+}
 
 
 template <typename T>
-class Set : public Argument_range<T>
+class Set_range : public Argument_range
 {
 protected:
 	std::vector<T> options;
 
 public:
-	Set(const std::string& title, const std::vector<T>& options)
-	: Argument_range<T>(title)
+	Set_range(const std::string& title, const std::vector<T>& options)
+	: Argument_range(title)
 	{
 		add_options(options);
 	}
 
-	virtual ~Set() {};
+	virtual ~Set_range() {};
 
 	void add_options(const std::vector<T>& new_options)
 	{
@@ -138,48 +151,75 @@ public:
 
 		return options_list.str();
 	}
+
+	template <typename V>
+	T adapt(const V& val) const
+	{
+		return (T)val;
+	}
 };
 
+template <>
+template <>
+const char* Set_range<const char*>::template adapt<std::string>(const std::string& val) const;
+
+
 template <typename T>
-class Including_set : public Set<T>
+class Including_set_range : public Set_range<T>
 {
 public:
-	Including_set(const std::vector<T>& options)
-	: Set<T>("including set", options)
+	Including_set_range(const std::vector<T>& options)
+	: Set_range<T>("including set", options)
 	{ }
 
-	virtual ~Including_set() {};
+	virtual ~Including_set_range() {};
 
-	virtual Including_set<T>* clone() const
+	virtual Including_set_range<T>* clone() const
 	{
-		return new Including_set<T>(*this);
+		return new Including_set_range<T>(*this);
 	}
 
-	virtual void check(const T& val) const
+	template <typename V>
+	void check(const V& val) const
 	{
 		if (this->options.empty())
 			return;
 
-		auto it = std::find(this->options.begin(), this->options.end(), val);
+		T val_T = this->adapt(val);
+
+		auto it = std::find(this->options.begin(), this->options.end(), val_T);
 
 		if (it == this->options.end())
 			throw std::runtime_error("shall be in the set " + this->get_option_list());
 	}
 };
 
+template <typename T, typename... O>
+Including_set_range<T>* Including_set(const T option, const O... options)
+{
+	return new Including_set_range<T>({option, options...});
+}
+
 template <typename T>
-class Excluding_set : public Set<T>
+Including_set_range<T>* Including_set()
+{
+	return new Including_set_range<T>({});
+}
+
+
+template <typename T>
+class Excluding_set_range : public Set_range<T>
 {
 public:
-	Excluding_set(const std::vector<T>& options)
-	: Set<T>("excluding set", options)
+	Excluding_set_range(const std::vector<T>& options)
+	: Set_range<T>("excluding set", options)
 	{ }
 
-	virtual ~Excluding_set() {};
+	virtual ~Excluding_set_range() {};
 
-	virtual Excluding_set<T>* clone() const
+	virtual Excluding_set_range<T>* clone() const
 	{
-		return new Excluding_set<T>(*this);
+		return new Excluding_set_range<T>(*this);
 	}
 
 	virtual void check(const T& val) const
@@ -187,12 +227,27 @@ public:
 		if (this->options.empty())
 			return;
 
-		auto it = std::find(this->options.begin(), this->options.end(), val);
+		T val_T = this->adapt(val);
+
+		auto it = std::find(this->options.begin(), this->options.end(), val_T);
 
 		if (it != this->options.end())
 			throw std::runtime_error("shall NOT be in the set " + this->get_option_list());
 	}
 };
+
+template <typename T, typename... O>
+Excluding_set_range<T>* Excluding_set(const T option, const O... options)
+{
+	return new Excluding_set_range<T>({option, options...});
+}
+
+template <typename T>
+Excluding_set_range<T>* Excluding_set()
+{
+	return new Excluding_set_range<T>({});
+}
+
 
 }
 }

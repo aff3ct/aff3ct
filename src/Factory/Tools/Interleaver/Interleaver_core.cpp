@@ -44,27 +44,27 @@ void Interleaver_core::parameters
 
 	req_args.add(
 		{p+"-size"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of symbols to interleave.");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL", "ROW_COL", "COL_ROW", "NO"})}),
+		tools::Text(tools::Including_set("LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL", "ROW_COL", "COL_ROW", "NO")),
 		"type of the interleaver to use in the simulation.");
 
 	opt_args.add(
 		{p+"-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"specify the path to the interleaver file (to use with \"--itl-type USER\").");
 
 	opt_args.add(
 		{p+"-cols"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver.");
 
 	opt_args.add(
@@ -74,7 +74,7 @@ void Interleaver_core::parameters
 
 	opt_args.add(
 		{p+"-seed", "S"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");
 }
 

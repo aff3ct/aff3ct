@@ -34,7 +34,7 @@ void Terminal::parameters
 
 	opt_args.add(
 		{p+"-freq"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"display frequency in ms (refresh time step for each iteration, 0 = disable display refresh).");
 }
 

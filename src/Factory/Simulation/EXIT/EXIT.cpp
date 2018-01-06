@@ -93,17 +93,17 @@ void EXIT::parameters
 
 	req_args.add(
 		{p+"-siga-min", "a"},
-		new tools::Real<>({new tools::Positive<float>()}),
+		tools::Real(tools::Positive()),
 		"sigma min value used in EXIT charts.");
 
 	req_args.add(
 		{p+"-siga-max", "A"},
-		new tools::Real<>({new tools::Positive<float>()}),
+		tools::Real(tools::Positive()),
 		"sigma max value used in EXIT charts.");
 
 	opt_args.add(
 		{p+"-siga-step"},
-		new tools::Real<>({new tools::Positive<float>(), new tools::Non_zero<float>()}),
+		tools::Real(tools::Positive(), tools::Non_zero()),
 		"sigma step value used in EXIT charts.");
 }
 

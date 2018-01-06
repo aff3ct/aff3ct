@@ -43,32 +43,32 @@ void Encoder::parameters
 
 	req_args.add(
 		{p+"-info-bits", "K"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"useful number of bit transmitted (information bits).");
 
 	req_args.add(
 		{p+"-cw-size", "N"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the codeword size.");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"NO", "USER", "AZCW", "COSET"})}),
+		tools::Text(tools::Including_set("NO", "USER", "AZCW", "COSET")),
 		"type of the encoder to use in the simulation.");
 
 	opt_args.add(
 		{p+"-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
 
 	opt_args.add(
 		{p+"-seed", "S"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");
 }
 

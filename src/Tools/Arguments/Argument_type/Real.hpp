@@ -11,21 +11,21 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename T = float>
-class Real : public Argument_type_limited<T>
+template <typename T = float, typename... Ranges>
+class Real_type : public Argument_type_limited<T,Ranges...>
 {
 public:
-	Real(const std::vector<Argument_range<T>*>& ranges = {})
-	: Argument_type_limited<T>("real number", ranges)
+	Real_type(const Ranges*... ranges)
+	: Argument_type_limited<T,Ranges...>("real number", ranges...)
 	{ }
 
-	virtual ~Real() {};
+	virtual ~Real_type() {};
 
-	virtual Real<T>* clone() const
+	virtual Real_type<T,Ranges...>* clone() const
 	{
-		auto clone = new Real<T>(*this);
+		auto clone = new Real_type<T,Ranges...>(*this);
 
-		return dynamic_cast<Real<T>*>(this->clone_ranges(clone));
+		return dynamic_cast<Real_type<T,Ranges...>*>(this->clone_ranges(clone));
 	}
 
 	virtual T convert(const std::string& val) const
@@ -49,6 +49,12 @@ public:
 		this->check_ranges(real_num);
 	}
 };
+
+template <typename T = float, typename... Ranges>
+Real_type<T,Ranges...>* Real(Ranges*... ranges)
+{
+	return new Real_type<T,Ranges...>(ranges...);
+}
 
 
 }

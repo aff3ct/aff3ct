@@ -41,7 +41,7 @@ void Encoder_RSC::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), {"RSC"}, 0);
+	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "RSC");
 
 	opt_args.add(
 		{p+"-no-buff"},
@@ -50,12 +50,12 @@ void Encoder_RSC::parameters
 
 	opt_args.add(
 		{p+"-poly"},
-		new tools::Text<>(),
+		tools::Text(),
 		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
 
 	opt_args.add(
 		{p+"-std"},
-		new tools::Text<>({new tools::Including_set<std::string>({"LTE", "CCSDS"})}),
+		tools::Text(tools::Including_set("LTE", "CCSDS")),
 		"select a standard and set automatically some parameters (overwritten with user given arguments)");
 }
 

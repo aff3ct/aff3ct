@@ -47,22 +47,22 @@ void Channel::parameters
 
 	req_args.add(
 		{p+"-fra-size", "N"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of symbols by frame.");
 
 	opt_args.add(
 		{p+"-fra", "F"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER"})}),
+		tools::Text(tools::Including_set("NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER")),
 		"type of the channel to use in the simulation.");
 
 	opt_args.add(
 		{p+"-implem"},
-		new tools::Text<>({new tools::Including_set<std::string>({"STD", "FAST"})}),
+		tools::Text(tools::Including_set("STD", "FAST")),
 		"select the implementation of the algorithm to generate noise.");
 
 #ifdef CHANNEL_GSL
@@ -74,22 +74,22 @@ void Channel::parameters
 
 	opt_args.add(
 		{p+"-path"},
-		new tools::Text<>(),
+		tools::Text(),
 		"path to a noisy file, to use with \"--chn-type USER\" or to a gain file (used with \"--chn-type RAYLEIGH_USER\").");
 
 	opt_args.add(
 		{p+"-blk-fad"},
-		new tools::Text<>({new tools::Including_set<std::string>({"NO", "FRAME", "ONETAP"})}),
+		tools::Text(tools::Including_set("NO", "FRAME", "ONETAP")),
 		"block fading policy for the RAYLEIGH channel.");
 
 	opt_args.add(
 		{p+"-sigma"},
-		new tools::Real<>({new tools::Positive<float>(), new tools::Non_zero<float>()}),
+		tools::Real(tools::Positive(), tools::Non_zero()),
 		"noise variance value.");
 
 	opt_args.add(
 		{p+"-seed", "S"},
-		new tools::Integer<>({new tools::Positive<int>()}),
+		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");
 
 	opt_args.add(
@@ -104,7 +104,7 @@ void Channel::parameters
 
 	opt_args.add(
 		{p+"-gain-occur"},
-		new tools::Integer<>({new tools::Positive<int>(), new tools::Non_zero<int>()}),
+		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the number of times a gain is used on consecutive symbols (used with \"--chn-type RAYLEIGH_USER\").");
 }
 

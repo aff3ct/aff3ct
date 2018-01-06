@@ -75,22 +75,24 @@ void factory::Launcher::parameters
 
 	req_args.add(
 		{p+"-cde-type", "C"},
-		new tools::Text<>({new tools::Including_set<std::string>({"POLAR", "TURBO", "TURBO_DB", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED"})}),
+		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED")),
 		"select the code type you want to use.");
 
 	opt_args.add(
 		{p+"-type"},
-		new tools::Text<>({new tools::Including_set<std::string>({"BFER", "BFERI", "EXIT"})}),
+		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")),
 		"select the type of simulation to launch (default is BFER).");
 
 #ifdef MULTI_PREC
 	opt_args.add(
 		{p+"-prec", "p"},
-		new tools::Integer<>({new tools::Including_set<int>({8, 16, 32})}),
+		tools::Integer(tools::Including_set(8, 16, 32)),
 		"the simulation precision in bits.");
 
+	std::cout << opt_args.at({p+"-prec", "p"})->doc << std::endl;
+
 #if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-	tools::add_options<int>(opt_args.at({p+"-prec", "p"}), {64}, 0);
+	tools::add_option<int>(opt_args.at({p+"-prec", "p"}), 0, 64);
 #endif
 #endif
 
