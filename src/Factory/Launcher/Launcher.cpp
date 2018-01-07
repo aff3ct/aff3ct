@@ -89,21 +89,19 @@ void factory::Launcher::parameters
 		tools::Integer(tools::Including_set(8, 16, 32)),
 		"the simulation precision in bits.");
 
-	std::cout << opt_args.at({p+"-prec", "p"})->doc << std::endl;
-
 #if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-	tools::add_option<int>(opt_args.at({p+"-prec", "p"}), 0, 64);
+	tools::add_options(opt_args.at({p+"-prec", "p"}), 0, 64);
 #endif
 #endif
 
 	opt_args.add(
 		{"help", "h"},
-		new tools::None(),
+		tools::None(),
 		"print this help.");
 
 	opt_args.add(
 		{"version", "v"},
-		new tools::None(),
+		tools::None(),
 		"print informations about the version of the code.");
 }
 

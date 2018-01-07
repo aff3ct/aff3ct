@@ -103,17 +103,17 @@ void BFER::parameters
 
 	opt_args.add(
 		{p+"-coset", "c"},
-		new tools::None(),
+		tools::None(),
 		"enable the coset approach.");
 
 	opt_args.add(
 		{p+"-err-trk"},
-		new tools::None(),
+		tools::None(),
 		"enable the tracking of the bad frames (by default the frames are stored in the current folder).");
 
 	opt_args.add(
 		{p+"-err-trk-rev"},
-		new tools::None(),
+		tools::None(),
 		"automatically replay the saved frames.");
 
 	opt_args.add(
@@ -128,7 +128,7 @@ void BFER::parameters
 
 	opt_args.add(
 		{p+"-coded"},
-		new tools::None(),
+		tools::None(),
 		"enable the coded monitoring (extends the monitored bits to the entire codeword).");
 }
 

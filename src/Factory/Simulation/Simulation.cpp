@@ -59,7 +59,7 @@ void Simulation::parameters
 
 	opt_args.add(
 		{p+"-debug"},
-		new tools::None(),
+		tools::None(),
 		"enable debug mode: print array values after each step.");
 
 	opt_args.add(
@@ -74,7 +74,7 @@ void Simulation::parameters
 
 	opt_args.add(
 		{p+"-stats"},
-		new tools::None(),
+		tools::None(),
 		"display statistics module by module.");
 
 	opt_args.add(
@@ -97,7 +97,7 @@ void Simulation::parameters
 #ifdef ENABLE_COOL_BASH
 	opt_args.add(
 		{p+"-no-colors"},
-		new tools::None(),
+		tools::None(),
 		"disable the colors in the shell.");
 #endif
 }

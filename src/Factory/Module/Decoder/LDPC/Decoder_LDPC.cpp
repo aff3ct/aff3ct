@@ -50,8 +50,8 @@ void Decoder_LDPC::parameters
 		tools::Text(),
 		"path to the H matrix (AList or QC formated file).");
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "BP", "BP_FLOODING", "BP_LAYERED"   );
-	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), 0, "ONMS", "SPA", "LSPA", "GALA", "AMS");
+	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "BP", "BP_FLOODING", "BP_LAYERED"   );
+	tools::add_options(opt_args.at({p+"-implem"   }), 0, "ONMS", "SPA", "LSPA", "GALA", "AMS");
 
 	opt_args.add(
 		{p+"-ite", "i"},
@@ -70,7 +70,7 @@ void Decoder_LDPC::parameters
 
 	opt_args.add(
 		{p+"-no-synd"},
-		new tools::None(),
+		tools::None(),
 		"disable the syndrome detection (disable the stop criterion in the LDPC decoders).");
 
 	opt_args.add(

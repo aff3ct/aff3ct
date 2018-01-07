@@ -35,11 +35,11 @@ void Encoder_repetition::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "REPETITION");
+	tools::add_options(opt_args.at({p+"-type"}), 0, "REPETITION");
 
 	opt_args.add(
 		{p+"-no-buff"},
-		new tools::None(),
+		tools::None(),
 		"disable the buffered encoding.");
 }
 

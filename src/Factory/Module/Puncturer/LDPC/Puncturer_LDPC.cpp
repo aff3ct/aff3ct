@@ -42,7 +42,7 @@ void Puncturer_LDPC::parameters
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the codeword size.");
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "LDPC");
+	tools::add_options(opt_args.at({p+"-type"}), 0, "LDPC");
 
 	opt_args.add(
 		{p+"-pattern"},

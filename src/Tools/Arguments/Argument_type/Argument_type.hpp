@@ -34,8 +34,8 @@ public:
 	const std::string get_short_title() const;
 };
 
-template <typename T, typename... Ranges>
-class Argument_type_limited : public Argument_type
+template <typename T>
+class Argument_type_limited_T : public Argument_type
 {
 public:
 	static const std::string ranges_description_separator;
@@ -44,33 +44,18 @@ private:
 	std::vector<void*> ranges;
 
 public:
-	Argument_type_limited(const std::string& title, const Ranges*... new_ranges)
+	Argument_type_limited_T(const std::string& title)
 	: Argument_type(title)
-	{
-		add_ranges(new_ranges...);
-	}
+	{}
 
-	virtual ~Argument_type_limited()
+	void* get_range(size_t pos) const
 	{
-		_clear<Ranges...>();
+		return ranges.at(pos);
 	}
 
 	const std::vector<void*>& get_ranges() const
 	{
 		return ranges;
-	}
-
-	virtual const std::string get_title() const
-	{
-		auto t = this->title;
-
-		if (ranges.size()) // then add ranges titles to the argument title
-		{
-			t += Argument_type::title_description_separator;
-			get_ranges_title(t);
-		}
-
-		return t;
 	}
 
 	virtual T convert(const std::string& val) const
@@ -85,17 +70,56 @@ public:
 		return (void*)p_val;
 	}
 
+protected:
+	std::vector<void*>& get_ranges()
+	{
+		return ranges;
+	}
+};
+
+template <typename T>
+const std::string Argument_type_limited_T<T>::ranges_description_separator = ", ";
+
+
+
+template <typename T, typename... Ranges>
+class Argument_type_limited : public Argument_type_limited_T<T>
+{
+public:
+	Argument_type_limited(const std::string& title, const Ranges*... new_ranges)
+	: Argument_type_limited_T<T>(title)
+	{
+		add_ranges(new_ranges...);
+	}
+
+	virtual ~Argument_type_limited()
+	{
+		_clear<Ranges...>();
+	}
+
+	virtual const std::string get_title() const
+	{
+		auto t = this->title;
+
+		if (this->get_ranges().size()) // then add ranges titles to the argument title
+		{
+			t += Argument_type::title_description_separator;
+			get_ranges_title(t);
+		}
+
+		return t;
+	}
 
 protected:
 	void check_ranges(const T& val) const
 	{
-		if (ranges.size())
+		if (this->get_ranges().size())
 			_check<Ranges...>(val);
 	}
 
 	virtual Argument_type_limited<T,Ranges...>* clone_ranges(Argument_type_limited<T,Ranges...>* clone) const
 	{
-		clone->ranges.clear();
+		clone->get_ranges().clear();
 
 		_clone<Ranges...>(clone);
 
@@ -111,12 +135,12 @@ private:
 	template <typename r>
 	void _clear(size_t pos = 0)
 	{
-		if (pos >= ranges.size())
+		if (pos >= this->get_ranges().size())
 			throw std::out_of_range(std::string("Given position out of range : ")
 			                                    + std::to_string(pos) + " on "
-			                                    + std::to_string(ranges.size()) + "elements.");
+			                                    + std::to_string(this->get_ranges().size()) + "elements.");
 
-		auto* ptr = static_cast<r*>(ranges[pos]);
+		auto* ptr = static_cast<r*>(this->get_ranges()[pos]);
 		if (ptr != nullptr)
 			delete ptr;
 		ptr = nullptr;
@@ -132,12 +156,12 @@ private:
 	template <typename r>
 	void _check(const T& val, size_t pos = 0) const
 	{
-		if (pos >= ranges.size())
+		if (pos >= this->get_ranges().size())
 			throw std::out_of_range(std::string("Given position out of range : ")
 			                                    + std::to_string(pos) + " on "
-			                                    + std::to_string(ranges.size()) + "elements.");
+			                                    + std::to_string(this->get_ranges().size()) + "elements.");
 
-		static_cast<r*>(ranges[pos])->check(val);
+		static_cast<r*>(this->get_ranges()[pos])->check(val);
 	}
 
 	template <typename r, typename... R>
@@ -150,12 +174,12 @@ private:
 	template <typename r>
 	void _clone(Argument_type_limited<T,Ranges...>* clone, size_t pos = 0) const
 	{
-		if (pos >= ranges.size())
+		if (pos >= this->get_ranges().size())
 			throw std::out_of_range(std::string("Given position out of range : ")
 			                                    + std::to_string(pos) + " on "
-			                                    + std::to_string(ranges.size()) + "elements.");
+			                                    + std::to_string(this->get_ranges().size()) + "elements.");
 
-		clone->add_ranges(static_cast<r*>(ranges[pos])->clone());
+		clone->add_ranges(static_cast<r*>(this->get_ranges()[pos])->clone());
 	}
 
 	template <typename r, typename... R>
@@ -168,12 +192,12 @@ private:
 	template <typename r>
 	void _get_ranges_title(std::string& t, size_t pos = 0) const
 	{
-		if (pos >= ranges.size())
+		if (pos >= this->get_ranges().size())
 			throw std::out_of_range(std::string("Given position out of range : ")
 			                                    + std::to_string(pos) + " on "
-			                                    + std::to_string(ranges.size()) + "elements.");
+			                                    + std::to_string(this->get_ranges().size()) + "elements.");
 
-		t += static_cast<r*>(ranges[pos])->get_title();
+		t += static_cast<r*>(this->get_ranges()[pos])->get_title();
 	}
 
 	template <typename r, typename... R>
@@ -181,7 +205,7 @@ private:
 	{
 		_get_ranges_title<r   >(t,   pos);
 
-		t += ranges_description_separator;
+		t += this->ranges_description_separator;
 
 		_get_ranges_title<R...>(t, ++pos);
 	}
@@ -192,7 +216,7 @@ private:
 		if (new_range == nullptr)
 			throw std::invalid_argument("The given argument range is a nullptr.");
 
-		ranges.push_back((void*)new_range);
+		this->get_ranges().push_back((void*)new_range);
 	}
 
 	template <typename r, typename... R>
@@ -204,39 +228,16 @@ private:
 };
 
 template <typename T>
-class Argument_type_limited<T> : public Argument_type
+class Argument_type_limited<T> : public Argument_type_limited_T<T>
 {
 public:
-	static const std::string ranges_description_separator;
-
-private:
-	std::vector<void*> ranges;
-
-public:
 	Argument_type_limited(const std::string& title)
-	: Argument_type(title)
+	: Argument_type_limited_T<T>(title)
 	{
 	}
 
 	virtual ~Argument_type_limited()
 	{
-	}
-
-	const std::vector<void*>& get_ranges()
-	{
-		return ranges;
-	}
-
-	virtual T convert(const std::string& val) const
-	{
-		throw std::runtime_error("This method has not been instantiated for this class.");
-	}
-
-	virtual void* get_val(const std::string& val) const
-	{
-		T* p_val = new T(this->convert(val));
-
-		return (void*)p_val;
 	}
 
 
@@ -247,15 +248,10 @@ protected:
 
 	virtual Argument_type_limited<T>* clone_ranges(Argument_type_limited<T>* clone) const
 	{
-		clone->ranges.clear();
+		clone->get_ranges().clear();
 		return clone;
 	}
 };
-
-
-template <typename T, typename... R>
-const std::string Argument_type_limited<T, R...>::ranges_description_separator = ", ";
-
 
 }
 }

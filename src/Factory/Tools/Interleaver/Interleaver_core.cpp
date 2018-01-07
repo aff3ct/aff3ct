@@ -69,7 +69,7 @@ void Interleaver_core::parameters
 
 	opt_args.add(
 		{p+"-uni"},
-		new tools::None(),
+		tools::None(),
 		"enable the regeneration of the interleaver at each new frame.");
 
 	opt_args.add(

@@ -117,7 +117,7 @@ void Modem::parameters
 
 	opt_args.add(
 		{p+"-no-sig2"},
-		new tools::None(),
+		tools::None(),
 		"turn off the division by sigma square in the demodulator.");
 
 	opt_args.add(

@@ -105,8 +105,8 @@ void Decoder_turbo::parameters<D1,D2>
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "TURBO"      );
-	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), 0, "STD", "FAST");
+	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "TURBO"      );
+	tools::add_options(opt_args.at({p+"-implem"   }), 0, "STD", "FAST");
 
 	opt_args.add(
 		{p+"-ite", "i"},
@@ -115,12 +115,12 @@ void Decoder_turbo::parameters<D1,D2>
 
 	opt_args.add(
 		{p+"-sc"},
-		new tools::None(),
+		tools::None(),
 		"enables the self corrected decoder (requires \"--crc-type\").");
 
 	opt_args.add(
 		{p+"-json"},
-		new tools::None(),
+		tools::None(),
 		"enable the json output trace.");
 
 

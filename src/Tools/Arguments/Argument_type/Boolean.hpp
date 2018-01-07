@@ -14,11 +14,11 @@ namespace tools
 
 template <typename T = int> // shall not be of type "bool" because a val of (int 5) would be converted
                             // to (bool 1) and then can't be checked correctly as a boolean value 0 or 1
-class Boolean_type : public Argument_type_limited<T,Including_set_range<T>>
+class Boolean_type : public Argument_type_limited<T,Set_range<T>>
 {
 public:
 	Boolean_type()
-	: Argument_type_limited<T,Including_set_range<T>>("boolean", Including_set((T)0, (T)1))
+	: Argument_type_limited<T,Set_range<T>>("boolean", Including_set((T)0, (T)1))
 	{ }
 
 	virtual ~Boolean_type() {};

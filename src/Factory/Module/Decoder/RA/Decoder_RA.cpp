@@ -72,8 +72,8 @@ void Decoder_RA::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "RA" );
-	tools::add_options<std::string>(opt_args.at({p+"-implem"   }), 0, "STD");
+	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "RA" );
+	tools::add_options(opt_args.at({p+"-implem"   }), 0, "STD");
 
 	opt_args.add(
 		{p+"-ite", "i"},

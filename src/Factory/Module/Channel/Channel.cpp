@@ -66,10 +66,10 @@ void Channel::parameters
 		"select the implementation of the algorithm to generate noise.");
 
 #ifdef CHANNEL_GSL
-	tools::add_options<std::string>(opt_args.at({p+"-implem"}), {"GSL"}, 0);
+	tools::add_options(opt_args.at({p+"-implem"}), 0, "GSL");
 #endif
 #ifdef CHANNEL_MKL
-	tools::add_options<std::string>(opt_args.at({p+"-implem"}), {"MKL"}, 0);
+	tools::add_options(opt_args.at({p+"-implem"}), 0, "MKL");
 #endif
 
 	opt_args.add(
@@ -94,12 +94,12 @@ void Channel::parameters
 
 	opt_args.add(
 		{p+"-add-users"},
-		new tools::None(),
+		tools::None(),
 		"add all the users (= frames) before generating the noise.");
 
 	opt_args.add(
 		{p+"-complex"},
-		new tools::None(),
+		tools::None(),
 		"enable complex noise generation.");
 
 	opt_args.add(

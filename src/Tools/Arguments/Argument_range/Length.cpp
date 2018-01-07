@@ -1,9 +1,6 @@
 #include "Length.hpp"
 
-using namespace aff3ct;
-using namespace tools;
-
-Length_range* Length(size_t min_size = 0, size_t max_size = 0)
+aff3ct::tools::Length_range* aff3ct::tools::Length(size_t min_size, size_t max_size)
 {
 	return new Length_range(min_size, max_size);
 }

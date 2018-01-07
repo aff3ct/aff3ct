@@ -48,7 +48,7 @@ void Flip_and_check::parameters
 
 	opt_args.add(
 		{p},
-		new tools::None(),
+		tools::None(),
 		"enables the flip and check decoder (requires \"--crc-type\").");
 
 	opt_args.add(

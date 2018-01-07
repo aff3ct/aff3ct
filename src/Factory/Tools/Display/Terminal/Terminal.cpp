@@ -29,7 +29,7 @@ void Terminal::parameters
 
 	opt_args.add(
 		{p+"-no"},
-		new tools::None(),
+		tools::None(),
 		"disable reporting for each iteration.");
 
 	opt_args.add(

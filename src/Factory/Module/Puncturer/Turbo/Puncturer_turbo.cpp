@@ -33,23 +33,6 @@ Puncturer_turbo::parameters* Puncturer_turbo::parameters
 	return new Puncturer_turbo::parameters(*this);
 }
 
-// namespace aff3ct
-// {
-// namespace tools
-// {
-
-// extern size_t D1;
-
-// template <typename T = std::string,
-//           class S1 = Generic_splitter, typename... Ranges1,
-//           class S2 = String_splitter,  typename... Ranges2>
-// List_type<std::vector<T>,S1,Ranges1...>* List3D(Argument_type* val_type, std::placeholders ph1, Ranges1*... ranges1, std::placeholders ph2, std::tuples<Ranges2*...> ranges2)
-// {
-// 	return new List_type<std::vector<T>,S1,Ranges1...>(List<T,S2,Ranges2...>(val_type, ranges2...), ranges1...);
-// }
-// }
-// }
-
 void Puncturer_turbo::parameters
 ::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
@@ -59,12 +42,11 @@ void Puncturer_turbo::parameters
 
 	req_args.erase({p+"-fra-size", "N"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "TURBO");
+	tools::add_options(opt_args.at({p+"-type"}), 0, "TURBO");
 
 	opt_args.add(
 		{p+"-pattern"},
-		tools::List<std::vector<bool>>(tools::List<bool,tools::String_splitter>(tools::Boolean(), tools::Length(2, 3)), tools::Length(3, 3)),
-		// tools::List3D<bool>(tools::Boolean(), tools::Length(3, 3), tools::Length(2, 3)),
+		tools::List2D<bool>(tools::Boolean(), std::make_tuple(tools::Length(3, 3)), std::make_tuple(tools::Length(2, 3))),
 		"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
 
 	opt_args.add(
@@ -74,7 +56,7 @@ void Puncturer_turbo::parameters
 
 	opt_args.add(
 		{p+"-no-buff"},
-		new tools::None(),
+		tools::None(),
 		"does not suppose a buffered encoding.");
 }
 

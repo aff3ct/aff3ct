@@ -41,11 +41,11 @@ void Encoder_RSC::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "RSC");
+	tools::add_options(opt_args.at({p+"-type"}), 0, "RSC");
 
 	opt_args.add(
 		{p+"-no-buff"},
-		new tools::None(),
+		tools::None(),
 		"disable the buffered encoding.");
 
 	opt_args.add(

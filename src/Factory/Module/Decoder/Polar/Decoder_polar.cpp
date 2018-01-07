@@ -76,7 +76,7 @@ void Decoder_polar::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN");
+	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN");
 
 	opt_args.add(
 		{p+"-ite", "i"},
@@ -100,12 +100,12 @@ void Decoder_polar::parameters
 
 	opt_args.add(
 		{p+"-partial-adaptive"},
-		new tools::None(),
+		tools::None(),
 		"enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected).");
 
 	opt_args.add(
 		{p+"-no-sys"},
-		new tools::None(),
+		tools::None(),
 		"does not suppose a systematic encoding.");
 }
 

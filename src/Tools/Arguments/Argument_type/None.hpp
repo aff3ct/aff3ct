@@ -11,24 +11,26 @@ namespace aff3ct
 namespace tools
 {
 
-class None : public Argument_type
+class None_type : public Argument_type
 {
 public:
-	None()
+	None_type()
 	: Argument_type("")
 	{ }
 
-	virtual ~None() {};
+	virtual ~None_type() {};
 
-	virtual None* clone() const
+	virtual None_type* clone() const
 	{
-		return new None(*this);
+		return new None_type(*this);
 	}
 
 	virtual void check(const std::string& val) const
 	{
 	}
 };
+
+None_type* None();
 
 }
 }

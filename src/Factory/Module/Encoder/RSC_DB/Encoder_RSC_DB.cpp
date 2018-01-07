@@ -37,7 +37,7 @@ void Encoder_RSC_DB::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "RSC_DB");
+	tools::add_options(opt_args.at({p+"-type"}), 0, "RSC_DB");
 
 	opt_args.add(
 		{p+"-std"},
@@ -46,7 +46,7 @@ void Encoder_RSC_DB::parameters
 
 	opt_args.add(
 		{p+"-no-buff"},
-		new tools::None(),
+		tools::None(),
 		"disable the buffered encoding.");
 }
 

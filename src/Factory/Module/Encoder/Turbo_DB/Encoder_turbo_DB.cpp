@@ -79,7 +79,7 @@ void Encoder_turbo_DB::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type"}), 0, "TURBO_DB");
+	tools::add_options(opt_args.at({p+"-type"}), 0, "TURBO_DB");
 
 	opt_args.add(
 		{p+"-json-path"},

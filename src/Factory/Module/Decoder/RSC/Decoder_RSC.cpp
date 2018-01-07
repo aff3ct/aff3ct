@@ -57,8 +57,8 @@ void Decoder_RSC::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	tools::add_options<std::string>(opt_args.at({p+"-type", "D"}), 0, "BCJR");
-	tools::add_options<std::string>(opt_args.at({p+"-implem"}), 0, "GENERIC", "STD", "FAST", "VERY_FAST");
+	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "BCJR");
+	tools::add_options(opt_args.at({p+"-implem"}), 0, "GENERIC", "STD", "FAST", "VERY_FAST");
 
 	opt_args.add(
 		{p+"-simd"},
@@ -72,7 +72,7 @@ void Decoder_RSC::parameters
 
 	opt_args.add(
 		{p+"-no-buff"},
-		new tools::None(),
+		tools::None(),
 		"does not suppose a buffered encoding.");
 
 	opt_args.add(
