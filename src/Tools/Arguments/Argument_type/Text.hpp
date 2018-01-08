@@ -3,6 +3,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <type_traits>
 
 #include "Argument_type.hpp"
 
@@ -15,24 +16,41 @@ template <typename T = std::string, typename... Ranges>
 class Text_type : public Argument_type_limited<T,Ranges...>
 {
 public:
-	Text_type(const Ranges*... ranges)
-	: Argument_type_limited<T,Ranges...>("text", ranges...)
+	template <typename r, typename... R>
+	Text_type(const r* range, const R*... ranges)
+	: Argument_type_limited<T,Ranges...>("text", range, ranges...)
+	{ }
+
+	Text_type()
+	: Argument_type_limited<T,Ranges...>("text")
 	{ }
 
 	virtual ~Text_type() {};
 
 	virtual Text_type<T,Ranges...>* clone() const
 	{
-		auto clone = new Text_type<T,Ranges...>(*this);
+		auto clone = new Text_type<T,Ranges...>();
 
 		return dynamic_cast<Text_type<T,Ranges...>*>(this->clone_ranges(clone));
+	}
+
+	template <typename... NewRanges>
+	Text_type<T, Ranges..., NewRanges...>*
+	clone(NewRanges*... new_ranges)
+	{
+		auto clone = new Text_type<T, Ranges..., NewRanges...>();
+
+		this->clone_ranges(clone);
+
+		clone->template add_ranges(new_ranges...);
+
+		return clone;
 	}
 
 	virtual T convert(const std::string& val) const
 	{
 		return val;
 	}
-
 
 	virtual void check(const std::string& val) const
 	{

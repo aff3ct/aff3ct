@@ -15,17 +15,35 @@ template <typename T = float, typename... Ranges>
 class Real_type : public Argument_type_limited<T,Ranges...>
 {
 public:
-	Real_type(const Ranges*... ranges)
-	: Argument_type_limited<T,Ranges...>("real number", ranges...)
+	template <typename r, typename... R>
+	Real_type(const r* range, const R*... ranges)
+	: Argument_type_limited<T,Ranges...>("real number", range, ranges...)
+	{ }
+
+	Real_type()
+	: Argument_type_limited<T,Ranges...>("real number")
 	{ }
 
 	virtual ~Real_type() {};
 
 	virtual Real_type<T,Ranges...>* clone() const
 	{
-		auto clone = new Real_type<T,Ranges...>(*this);
+		auto clone = new Real_type<T,Ranges...>();
 
 		return dynamic_cast<Real_type<T,Ranges...>*>(this->clone_ranges(clone));
+	}
+
+	template <typename... NewRanges>
+	Real_type<T, Ranges..., NewRanges...>*
+	clone(NewRanges*... new_ranges)
+	{
+		auto clone = new Real_type<T, Ranges..., NewRanges...>();
+
+		this->clone_ranges(clone);
+
+		clone->template add_ranges(new_ranges...);
+
+		return clone;
 	}
 
 	virtual T convert(const std::string& val) const

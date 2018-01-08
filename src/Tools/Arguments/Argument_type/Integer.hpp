@@ -15,8 +15,9 @@ template <typename T = int, typename... Ranges>
 class Integer_type : public Argument_type_limited<T,Ranges...>
 {
 public:
-	Integer_type(const Ranges*... ranges)
-	: Argument_type_limited<T,Ranges...>("integer", ranges...)
+	template <typename r, typename... R>
+	Integer_type(const r* range, const R*... ranges)
+	: Argument_type_limited<T,Ranges...>("integer", range, ranges...)
 	{ }
 
 	Integer_type()
@@ -28,7 +29,7 @@ public:
 
 	virtual Integer_type<T,Ranges...>* clone() const
 	{
-		auto clone = new Integer_type<T,Ranges...>(*this);
+		auto clone = new Integer_type<T,Ranges...>();
 
 		return dynamic_cast<Integer_type<T,Ranges...>*>(this->clone_ranges(clone));
 	}
@@ -41,7 +42,7 @@ public:
 
 		this->clone_ranges(clone);
 
-		clone->template add_ranges<NewRanges...>(new_ranges...);
+		clone->template add_ranges(new_ranges...);
 
 		return clone;
 	}
