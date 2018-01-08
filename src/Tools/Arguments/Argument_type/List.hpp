@@ -8,6 +8,7 @@
 #include <tuple>
 
 #include "Argument_type.hpp"
+#include "../utilities.hpp"
 #include "../Splitter/Splitter.hpp"
 
 namespace aff3ct
@@ -111,55 +112,13 @@ List_type<T,S,Ranges...>* List(Argument_type* val_type, Ranges*... ranges)
 	return new List_type<T,S,Ranges...>(val_type, ranges...);
 }
 
-template<int...> struct index_tuple{};
-
-template<int I, typename IndexTuple, typename... Types>
-struct make_indexes_impl;
-
-template<int I, int... Indexes, typename T, typename ... Types>
-struct make_indexes_impl<I, index_tuple<Indexes...>, T, Types...>
-{
-    typedef typename make_indexes_impl<I + 1, index_tuple<Indexes..., I>, Types...>::type type;
-};
-
-template<int I, int... Indexes>
-struct make_indexes_impl<I, index_tuple<Indexes...> >
-{
-    typedef index_tuple<Indexes...> type;
-};
-
-template<typename ... Types>
-struct make_indexes : make_indexes_impl<0, index_tuple<>, Types...>
-{};
-
-
-template<class Ret, class... Args, int... Indexes >
-Ret apply_helper( Ret (*pf)(Args...), index_tuple< Indexes... >, std::tuple<Args...>&& tup)
-{
-    return pf( std::forward<Args>( std::get<Indexes>(tup))... );
-}
-
-template<class Ret, class ... Args>
-Ret apply(Ret (*pf)(Args...), const std::tuple<Args...>&  tup)
-{
-    return apply_helper(pf, typename make_indexes<Args...>::type(), std::tuple<Args...>(tup));
-}
-
-template<class Ret, class ... Args>
-Ret apply(Ret (*pf)(Args...), std::tuple<Args...>&&  tup)
-{
-    return apply_helper(pf, typename make_indexes<Args...>::type(), std::forward<std::tuple<Args...>>(tup));
-}
-
-
-
 template <typename T = std::string,
           class S1 = Generic_splitter, class S2 = String_splitter,
           typename... Ranges1, typename... Ranges2>
 List_type<std::vector<T>,S1,Ranges1...>* List2D(Argument_type* val_type, std::tuple<Ranges1*...>&& ranges1, std::tuple<Ranges2*...>&& ranges2)
 {
-	Argument_type* listD2 = apply(List<T,S2,Ranges2...>, std::tuple_cat(std::make_tuple(val_type), ranges2));
-	return apply(List<std::vector<T>,S1,Ranges1...>, std::tuple_cat(std::make_tuple(listD2), ranges1));
+	Argument_type* listD2 = apply_tuple(List<T,S2,Ranges2...>, std::tuple_cat(std::make_tuple(val_type), ranges2));
+	return apply_tuple(List<std::vector<T>,S1,Ranges1...>, std::tuple_cat(std::make_tuple(listD2), ranges1));
 }
 
 }
