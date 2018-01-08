@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
@@ -28,25 +30,24 @@ Encoder_BCH::parameters* Encoder_BCH::parameters
 	return new Encoder_BCH::parameters(*this);
 }
 
-#include <cmath>
-void check_BCH_N(const int N)
-{
-	auto m = (int)std::ceil(std::log2(N));
-
-	if (N != ((1 << m) -1))
-	{
-		std::stringstream message;
-		message << "'N' has to be a power of 2 minus 1";
-		throw std::runtime_error(message.str());
-	}
-}
-
 void Encoder_BCH::parameters
 ::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
 	Encoder::parameters::get_description(req_args, opt_args);
 
 	auto p = this->get_prefix();
+
+	auto check_BCH_N = [](const int N)
+	{
+		auto m = (int)std::ceil(std::log2(N));
+
+		if (N != ((1 << m) -1))
+		{
+			std::stringstream message;
+			message << "'N' has to be a power of 2 minus 1";
+			throw std::runtime_error(message.str());
+		}
+	};
 
 	tools::add_ranges<tools::Integer_type<int, tools::Positive_range<>, tools::Non_zero_range<>>>
 	(req_args.at({p+"-cw-size", "N"}), tools::Function<int>("power of 2 minus 1", check_BCH_N));
