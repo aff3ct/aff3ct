@@ -10,7 +10,7 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename T>
+template <typename T = float>
 class Non_zero_range : public Excluding_set_range<T>
 {
 public:

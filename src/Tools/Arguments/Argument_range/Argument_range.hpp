@@ -42,5 +42,6 @@ public:
 #include "Negative.hpp"
 #include "Positive.hpp"
 #include "Length.hpp"
+#include "Function.hpp"
 
 #endif /* ARGUMENT_RANGE_HPP_ */

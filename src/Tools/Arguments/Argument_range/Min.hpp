@@ -8,7 +8,6 @@ namespace aff3ct
 namespace tools
 {
 
-
 template <typename T>
 class Min_range : public Argument_range
 {

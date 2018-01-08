@@ -10,7 +10,7 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename T>
+template <typename T = float>
 class Positive_range : public Min_range<T>
 {
 public:
