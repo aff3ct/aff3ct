@@ -11,6 +11,49 @@ namespace aff3ct
 {
 namespace tools
 {
+
+/*******************************************************************************
+ *                ADD RANGE TO AN ARGUMENT TYPE
+ ******************************************************************************/
+
+	template <typename CurrentType, typename... Ranges>
+	void add_ranges(Argument_type** at, Ranges*... new_ranges)
+	{
+		CurrentType* old_arg_type;
+
+		try
+		{
+			old_arg_type = dynamic_cast<CurrentType*>(*at);
+		}
+		catch(std::exception& e)
+		{
+			std::string message = "The Argument type object '" + (*at)->get_title() + "' is not parent of "
+			                    + " the given CurrentType \"" + typeid(CurrentType).name() + "\"";
+			throw std::runtime_error(message);
+		}
+
+		*at = old_arg_type->clone(new_ranges...);
+
+		delete old_arg_type;
+	}
+
+	template <typename CurrentType, typename... Ranges>
+	void add_ranges(Argument_info& ai, Ranges*... new_ranges)
+	{
+		add_ranges<CurrentType>(&(ai.type), new_ranges...);
+	}
+
+	template <typename CurrentType, typename... Ranges>
+	void add_ranges(Argument_info* ai, Ranges*... new_ranges)
+	{
+		add_ranges<CurrentType>(&(ai->type), new_ranges...);
+	}
+
+
+/*******************************************************************************
+ *                ADD OPTIONS TO A SET RANGE
+ ******************************************************************************/
+
 	template <typename T, typename... Options>
 	void add_options(tools::Argument_type_limited_T<T>& atl, const size_t set_pos, Options... new_options)
 	{

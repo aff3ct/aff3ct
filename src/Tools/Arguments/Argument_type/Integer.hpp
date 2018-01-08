@@ -19,6 +19,11 @@ public:
 	: Argument_type_limited<T,Ranges...>("integer", ranges...)
 	{ }
 
+	Integer_type()
+	: Argument_type_limited<T,Ranges...>("integer")
+	{ }
+
+public:
 	virtual ~Integer_type() {};
 
 	virtual Integer_type<T,Ranges...>* clone() const
@@ -26,6 +31,19 @@ public:
 		auto clone = new Integer_type<T,Ranges...>(*this);
 
 		return dynamic_cast<Integer_type<T,Ranges...>*>(this->clone_ranges(clone));
+	}
+
+	template <typename... NewRanges>
+	Integer_type<T, Ranges..., NewRanges...>*
+	clone(NewRanges*... new_ranges)
+	{
+		auto clone = new Integer_type<T, Ranges..., NewRanges...>();
+
+		this->clone_ranges(clone);
+
+		clone->template add_ranges<NewRanges...>(new_ranges...);
+
+		return clone;
 	}
 
 	virtual T convert(const std::string& val) const

@@ -53,7 +53,7 @@ public:
 		return ranges.at(pos);
 	}
 
-	const std::vector<void*>& get_ranges() const
+	std::vector<void*>& get_ranges()
 	{
 		return ranges;
 	}
@@ -71,7 +71,7 @@ public:
 	}
 
 protected:
-	std::vector<void*>& get_ranges()
+	const std::vector<void*>& get_ranges() const
 	{
 		return ranges;
 	}
@@ -92,6 +92,12 @@ public:
 		add_ranges(new_ranges...);
 	}
 
+protected:
+	Argument_type_limited(const std::string& title)
+	: Argument_type_limited_T<T>(title)
+	{ }
+
+public:
 	virtual ~Argument_type_limited()
 	{
 		_clear<Ranges...>();
@@ -110,6 +116,12 @@ public:
 		return t;
 	}
 
+	template <typename... NewRanges>
+	void add_ranges(NewRanges*... new_ranges)
+	{
+		_add_ranges<NewRanges...>(new_ranges...);
+	}
+
 protected:
 	void check_ranges(const T& val) const
 	{
@@ -117,11 +129,13 @@ protected:
 			_check<Ranges...>(val);
 	}
 
-	virtual Argument_type_limited<T,Ranges...>* clone_ranges(Argument_type_limited<T,Ranges...>* clone) const
+	template <typename... OtherRanges>
+	Argument_type_limited<T,Ranges...,OtherRanges...>*
+	clone_ranges(Argument_type_limited<T,Ranges...,OtherRanges...>* clone) const
 	{
 		clone->get_ranges().clear();
 
-		_clone<Ranges...>(clone);
+		_clone<Argument_type_limited<T,Ranges...,OtherRanges...>,Ranges...>(clone);
 
 		return clone;
 	}
@@ -136,9 +150,10 @@ private:
 	void _clear(size_t pos = 0)
 	{
 		if (pos >= this->get_ranges().size())
-			throw std::out_of_range(std::string("Given position out of range : ")
+			throw std::out_of_range(std::string("Given position out of range when clearing : ")
 			                                    + std::to_string(pos) + " on "
-			                                    + std::to_string(this->get_ranges().size()) + "elements.");
+			                                    + std::to_string(this->get_ranges().size()) + "elements. title ="
+			                                    + this->title);
 
 		auto* ptr = static_cast<r*>(this->get_ranges()[pos]);
 		if (ptr != nullptr)
@@ -157,9 +172,10 @@ private:
 	void _check(const T& val, size_t pos = 0) const
 	{
 		if (pos >= this->get_ranges().size())
-			throw std::out_of_range(std::string("Given position out of range : ")
+			throw std::out_of_range(std::string("Given position out of range when checking : ")
 			                                    + std::to_string(pos) + " on "
-			                                    + std::to_string(this->get_ranges().size()) + "elements.");
+			                                    + std::to_string(this->get_ranges().size()) + "elements. title ="
+			                                    + this->title);
 
 		static_cast<r*>(this->get_ranges()[pos])->check(val);
 	}
@@ -171,31 +187,33 @@ private:
 		_check<R...>(val, ++pos);
 	}
 
-	template <typename r>
-	void _clone(Argument_type_limited<T,Ranges...>* clone, size_t pos = 0) const
+	template <typename C, typename r>
+	void _clone(C* clone, size_t pos = 0) const
 	{
 		if (pos >= this->get_ranges().size())
-			throw std::out_of_range(std::string("Given position out of range : ")
+			throw std::out_of_range(std::string("Given position out of range when cloning : ")
 			                                    + std::to_string(pos) + " on "
-			                                    + std::to_string(this->get_ranges().size()) + "elements.");
+			                                    + std::to_string(this->get_ranges().size()) + "elements. title ="
+			                                    + this->title);
 
 		clone->add_ranges(static_cast<r*>(this->get_ranges()[pos])->clone());
 	}
 
-	template <typename r, typename... R>
-	typename std::enable_if<sizeof...(R) != 0,void>::type _clone(Argument_type_limited<T,Ranges...>* clone, size_t pos = 0) const
+	template <typename C, typename r, typename... R>
+	typename std::enable_if<sizeof...(R) != 0,void>::type _clone(C* clone, size_t pos = 0) const
 	{
-		_clone<r   >(clone,   pos);
-		_clone<R...>(clone, ++pos);
+		_clone<C,r   >(clone,   pos);
+		_clone<C,R...>(clone, ++pos);
 	}
 
 	template <typename r>
 	void _get_ranges_title(std::string& t, size_t pos = 0) const
 	{
 		if (pos >= this->get_ranges().size())
-			throw std::out_of_range(std::string("Given position out of range : ")
+			throw std::out_of_range(std::string("Given position out of range when getting title : ")
 			                                    + std::to_string(pos) + " on "
-			                                    + std::to_string(this->get_ranges().size()) + "elements.");
+			                                    + std::to_string(this->get_ranges().size()) + "elements. title ="
+			                                    + this->title);
 
 		t += static_cast<r*>(this->get_ranges()[pos])->get_title();
 	}
@@ -211,20 +229,28 @@ private:
 	}
 
 	template <typename r>
-	void add_ranges(const r* new_range)
+	void _add_ranges(r* new_range)
 	{
 		if (new_range == nullptr)
 			throw std::invalid_argument("The given argument range is a nullptr.");
+
+		if (this->get_ranges().size() >= sizeof...(Ranges))
+			throw std::out_of_range(std::string("Try to add a range but already at its maximum : ")
+			                                    + std::to_string(this->get_ranges().size()) + "elements. title ="
+			                                    + this->title);
 
 		this->get_ranges().push_back((void*)new_range);
 	}
 
 	template <typename r, typename... R>
-	typename std::enable_if<sizeof...(R) != 0,void>::type add_ranges(const r* new_range, const R*... new_ranges)
+	typename std::enable_if<sizeof...(R) != 0,void>::type _add_ranges(r* new_range, R*... new_ranges)
 	{
-		add_ranges(new_range    );
-		add_ranges(new_ranges...);
+		_add_ranges(new_range    );
+		_add_ranges(new_ranges...);
 	}
+
+	template <typename Friend, typename... FriendRange>
+	friend class Argument_type_limited;
 };
 
 template <typename T>
