@@ -47,7 +47,7 @@ namespace tools
 {
 template <>
 void Noise_MKL<float>
-::generate(float *noise, const unsigned length, const float sigma, const R mu)
+::generate(float *noise, const unsigned length, const float sigma, const float mu)
 {
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,
@@ -73,7 +73,7 @@ namespace tools
 {
 template <>
 void Noise_MKL<double>
-::generate(double *noise, const unsigned length, const double sigma, const R mu)
+::generate(double *noise, const unsigned length, const double sigma, const double mu)
 {
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,
