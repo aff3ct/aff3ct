@@ -55,7 +55,7 @@ void Frozenbits_generator::parameters
 
 	opt_args.add(
 		{p+"-awgn-path"},
-		tools::Text(),
+		tools::Path(tools::openmode::read),
 		"path to a file or a directory containing the best channels to use for information bits.");
 
 #ifdef ENABLE_POLAR_BOUNDS

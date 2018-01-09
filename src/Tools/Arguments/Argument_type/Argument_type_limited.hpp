@@ -264,4 +264,12 @@ protected:
 }
 }
 
+#include "Number/Real.hpp"
+#include "Number/Integer.hpp"
+#include "Number/Boolean.hpp"
+#include "Container/Text.hpp"
+#include "Container/List.hpp"
+#include "File_system/File_system.hpp"
+
+
 #endif /* ARGUMENT_TYPE_LIMITED_HPP_ */

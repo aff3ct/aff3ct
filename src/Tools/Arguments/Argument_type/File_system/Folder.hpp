@@ -1,0 +1,37 @@
+#ifndef ARGUMENT_TYPE_FOLDER_HPP_
+#define ARGUMENT_TYPE_FOLDER_HPP_
+
+#include "File_system.hpp"
+
+namespace aff3ct
+{
+namespace tools
+{
+
+template <typename T = std::string, typename... Ranges>
+class Folder_type : public File_system_type<T, isFolder, noCheck, noCheck, Ranges...>
+{
+public:
+	using parent_type = File_system_type<T, isFolder, noCheck, noCheck, Ranges...>;
+
+	template <typename r, typename... R>
+	Folder_type(const openmode& mode, const r* range, const R*... ranges)
+	: parent_type("folder", mode, range, ranges...)
+	{ }
+
+	Folder_type(const openmode& mode)
+	: parent_type("folder", mode)
+	{ }
+
+	virtual ~Folder_type() {};
+};
+
+template <typename T = std::string, typename... Ranges>
+typename Folder_type<T,Ranges...>::parent_type* Folder(openmode mode, Ranges*... ranges)
+{
+	return new Folder_type<T,Ranges...>(mode, ranges...);
+}
+
+}
+}
+#endif /* ARGUMENT_TYPE_FOLDER_HPP_ */
