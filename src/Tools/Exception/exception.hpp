@@ -12,6 +12,9 @@ class exception : public std::exception
 {
 private:
 	std::string message;
+#ifdef ENABLE_BACK_TRACE
+	std::string backtrace;
+#endif
 
 public:
 	exception() throw();
@@ -25,7 +28,8 @@ public:
 
 	virtual ~exception() throw();
 
-	virtual const char* what() const throw();
+	virtual const char* what      () const throw(); // return the message and the back trace if enabled
+	virtual const char* what_no_bt() const throw(); // return only the message
 };
 }
 }

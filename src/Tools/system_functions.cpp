@@ -25,7 +25,7 @@ std::string aff3ct::tools::get_back_trace(int first_call)
 	char** bt_symbs = backtrace_symbols(bt_array, size);
 
 
-	bt_str += "\nBacktrace:";
+	bt_str += "Backtrace:";
 	for (size_t i = first_call; i < size; i++)
 	{
 		std::string symbol = bt_symbs[i];

@@ -70,7 +70,11 @@ int Launcher::read_arguments()
 	{
 		this->store_args();
 	}
-	catch(std::exception& e)
+	catch(const tools::exception& e)
+	{
+		cmd_error.push_back(e.what_no_bt());
+	}
+	catch(const std::exception& e)
 	{
 		cmd_error.push_back(tools::addr2line(e.what()));
 	}

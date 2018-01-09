@@ -9,8 +9,6 @@
 
 #include "exception.hpp"
 
-#define ENABLE_BACK_TRACE
-
 using namespace aff3ct::tools;
 
 exception
@@ -22,8 +20,8 @@ exception
 ::exception(const std::string message) throw()
 : message(message)
 {
-#if defined(ENABLE_BACK_TRACE)
-	this->message += get_back_trace(3);
+#ifdef ENABLE_BACK_TRACE
+	backtrace = message + "\n" + get_back_trace(3);
 #endif
 }
 
@@ -42,8 +40,8 @@ exception
 	this->message += ": ";
 	this->message += "\"" + message + "\"";
 
-#if defined(ENABLE_BACK_TRACE)
-	this->message += get_back_trace(3);
+#ifdef ENABLE_BACK_TRACE
+	backtrace = message + "\n" + get_back_trace(3);
 #endif
 }
 
@@ -54,6 +52,16 @@ exception
 
 const char* exception
 ::what() const throw()
+{
+#ifdef ENABLE_BACK_TRACE
+	return backtrace.c_str();
+#else
+	return message.c_str();
+#endif
+}
+
+const char* exception
+::what_no_bt() const throw()
 {
 	return message.c_str();
 }
