@@ -24,11 +24,11 @@ private:
 public:
 	template <typename r, typename... R>
 	File_type(openmode mode, const r* range, const R*... ranges)
-	: Argument_type_limited<T,Ranges...>("file", range, ranges...), mode(mode)
+	: Argument_type_limited<T,Ranges...>(generate_title(mode), range, ranges...), mode(mode)
 	{ }
 
 	File_type(openmode mode)
-	: Argument_type_limited<T,Ranges...>("file"), mode(mode)
+	: Argument_type_limited<T,Ranges...>(generate_title(mode)), mode(mode)
 	{ }
 
 	virtual ~File_type() {};
@@ -81,6 +81,30 @@ public:
 		}
 
 		this->check_ranges(str_val);
+	}
+
+	static std::string generate_title(openmode mode)
+	{
+		std::string str = "file [";
+
+		switch(mode)
+		{
+			case openmode::read :
+				str += "read only";
+				break;
+
+			case openmode::write :
+				str += "write only";
+				break;
+
+			case openmode::read_write : // nothing to check
+				str += "read/write";
+				break;
+		}
+
+		str += "]";
+
+		return str;
 	}
 };
 

@@ -25,11 +25,11 @@ protected:
 public:
 	template <typename r, typename... R>
 	List_type(Argument_type* val_type, const r* range, const R*... ranges)
-	: Argument_type_limited<std::vector<T>,Ranges...>("list of " + val_type->get_short_title(), range, ranges...), val_type(val_type)
+	: Argument_type_limited<std::vector<T>,Ranges...>(generate_title(val_type), range, ranges...), val_type(val_type)
 	{ }
 
 	List_type(Argument_type* val_type)
-	: Argument_type_limited<std::vector<T>,Ranges...>("list of " + val_type->get_short_title()), val_type(val_type)
+	: Argument_type_limited<std::vector<T>,Ranges...>(generate_title(val_type)), val_type(val_type)
 	{ }
 
 	virtual ~List_type()
@@ -121,6 +121,13 @@ public:
 		}
 
 		return list_T;
+	}
+
+	static std::string generate_title(Argument_type* val_type)
+	{
+		std::string str = "list of " + val_type->get_short_title();
+
+		return str;
 	}
 };
 
