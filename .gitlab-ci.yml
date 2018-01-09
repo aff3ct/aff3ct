@@ -52,5 +52,6 @@ build-windows-gcc:
     - cmake .. -G"MinGW Makefiles" || true
     - cmake .. -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_CC_COMPILER=gcc.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC"
     - mingw32-make
-    - ./bin/aff3ct --version
-    - ./bin/aff3ct -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL
+    - cd bin
+    - aff3ct.exe --version
+    - aff3ct.exe -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL
