@@ -47,7 +47,7 @@ void Decoder_LDPC::parameters
 
 	req_args.add(
 		{p+"-h-path"},
-		tools::Text(),
+		tools::File(tools::openmode::read),
 		"path to the H matrix (AList or QC formated file).");
 
 	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "BP", "BP_FLOODING", "BP_LAYERED"   );

@@ -69,7 +69,7 @@ void Modem::parameters
 
 	opt_args.add(
 		{p+"-const-path"},
-		tools::Text(),
+		tools::File(tools::openmode::read),
 		"path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\".");
 
 	opt_args.add(

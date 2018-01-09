@@ -42,12 +42,12 @@ void Encoder_LDPC::parameters
 
 	opt_args.add(
 		{p+"-h-path"},
-		tools::Text(),
+		tools::File(tools::openmode::read),
 		"path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder).");
 
 	opt_args.add(
 		{p+"-g-path"},
-		tools::Text(),
+		tools::File(tools::openmode::read),
 		"path to the G matrix (AList formated file, required by the \"LDPC\" encoder).");
 }
 

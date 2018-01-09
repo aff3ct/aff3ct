@@ -63,7 +63,7 @@ void Encoder::parameters
 
 	opt_args.add(
 		{p+"-path"},
-		tools::Text(),
+		tools::File(tools::openmode::read),
 		"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
 
 	opt_args.add(

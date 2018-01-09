@@ -118,7 +118,7 @@ void BFER::parameters
 
 	opt_args.add(
 		{p+"-err-trk-path"},
-		tools::Text(),
+		tools::File(tools::openmode::read_write),
 		"base path for the files where the bad frames will be stored or read.");
 
 	opt_args.add(

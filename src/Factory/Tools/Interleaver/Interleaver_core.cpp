@@ -59,7 +59,7 @@ void Interleaver_core::parameters
 
 	opt_args.add(
 		{p+"-path"},
-		tools::Text(),
+		tools::File(tools::openmode::read),
 		"specify the path to the interleaver file (to use with \"--itl-type USER\").");
 
 	opt_args.add(

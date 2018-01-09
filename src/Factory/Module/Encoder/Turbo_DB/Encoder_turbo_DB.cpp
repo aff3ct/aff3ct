@@ -83,7 +83,7 @@ void Encoder_turbo_DB::parameters
 
 	opt_args.add(
 		{p+"-json-path"},
-		tools::Text(),
+		tools::File(tools::openmode::write),
 		"path to store the encoder and decoder traces formated in JSON.");
 
 	sub->get_description(req_args, opt_args);

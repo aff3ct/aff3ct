@@ -52,7 +52,7 @@ void Source::parameters
 
 	opt_args.add(
 		{p+"-path"},
-		tools::Text(),
+		tools::File(tools::openmode::read),
 		"path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\".");
 
 	opt_args.add(
