@@ -61,7 +61,7 @@ void Frozenbits_generator::parameters
 #ifdef ENABLE_POLAR_BOUNDS
 	opt_args.add(
 		{p+"-pb-path"},
-		tools::Text(),
+		tools::File(tools::openmode::read),
 		"path of the polar bounds code generator (generates best channels to use).");
 #endif
 }
