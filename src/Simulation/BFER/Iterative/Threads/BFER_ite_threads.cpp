@@ -72,8 +72,7 @@ void BFER_ite_threads<B,R,Q>
 
 		simu->mutex_exception.lock();
 		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), e.what()) == simu->prev_err_messages.end())
-			if (simu->prev_err_messages.size() && std::strlen(e.what()) > simu->prev_err_messages.back().size())
-				simu->prev_err_messages.push_back(e.what());
+			simu->prev_err_messages.push_back(e.what());
 		simu->mutex_exception.unlock();
 	}
 }

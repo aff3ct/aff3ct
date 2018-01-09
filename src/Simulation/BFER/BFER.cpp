@@ -222,6 +222,8 @@ void BFER<B,R,Q>
 		catch (std::exception const& e)
 		{
 			module::Monitor::stop();
+			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
+
 			std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
 			simu_error = true;
 		}
