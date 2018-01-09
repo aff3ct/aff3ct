@@ -12,6 +12,7 @@ Terminal
 Terminal
 ::~Terminal()
 {
+	stop_temp_report(); // try to join the thread if this is not been done by the user
 }
 
 void Terminal
