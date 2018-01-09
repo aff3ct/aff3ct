@@ -41,6 +41,9 @@ build-windows-gcc:
   tags:
    - build-windows
   script:
+    - set PATH=%PATH%;C:\Program Files\Git\cmd
+    - set PATH=%PATH%;C:\Program Files\CMake\bin
+    - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin
 #   - git submodule update --init --recursive
     - git submodule update --init -- conf
     - git submodule update --init -- lib/MIPP
