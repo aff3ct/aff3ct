@@ -24,11 +24,11 @@ private:
 public:
 	template <typename r, typename... R>
 	File_type(openmode mode, const r* range, const R*... ranges)
-	: Argument_type_limited<T,Ranges...>("File", range, ranges...), mode(mode)
+	: Argument_type_limited<T,Ranges...>("file", range, ranges...), mode(mode)
 	{ }
 
 	File_type(openmode mode)
-	: Argument_type_limited<T,Ranges...>("File"), mode(mode)
+	: Argument_type_limited<T,Ranges...>("file"), mode(mode)
 	{ }
 
 	virtual ~File_type() {};
@@ -70,8 +70,8 @@ public:
 			case openmode::read :
 			{
 				std::ifstream f(str_val);
-				if(f.bad())
-					throw std::runtime_error("file has not been found");
+				if(f.fail())
+					throw std::runtime_error("does not name an existing file");
 
 				break;
 			}
