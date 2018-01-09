@@ -36,11 +36,13 @@ public:
 }
 
 #include "None.hpp"
-#include "Text.hpp"
-#include "Real.hpp"
-#include "Integer.hpp"
-#include "Boolean.hpp"
-#include "List.hpp"
-#include "File.hpp"
+#include "Number/Real.hpp"
+#include "Number/Integer.hpp"
+#include "Number/Boolean.hpp"
+#include "Container/Text.hpp"
+#include "Container/List.hpp"
+#include "File_system/File.hpp"
+#include "File_system/Folder.hpp"
+#include "File_system/Path.hpp"
 
 #endif /* ARGUMENT_TYPE_HPP_ */
