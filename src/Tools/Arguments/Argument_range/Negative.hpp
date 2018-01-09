@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Argument_range.hpp"
+#include "Max.hpp"
 
 namespace aff3ct
 {

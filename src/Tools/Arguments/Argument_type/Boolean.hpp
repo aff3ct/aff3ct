@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "Argument_type.hpp"
+#include "Argument_type_limited.hpp"
 
 namespace aff3ct
 {
