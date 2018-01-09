@@ -12,30 +12,30 @@ namespace tools
                TUPLE UTILITIES
  ******************************************************************************/
 
-template<int...> struct index_tuple{};
+template<int...> struct index{};
 
-template<int I, typename IndexTuple, typename... Types>
+template<int I, typename Index, typename... Types>
 struct make_indexes_impl;
 
 template<int I, int... Indexes, typename T, typename ... Types>
-struct make_indexes_impl<I, index_tuple<Indexes...>, T, Types...>
+struct make_indexes_impl<I, index<Indexes...>, T, Types...>
 {
-    typedef typename make_indexes_impl<I + 1, index_tuple<Indexes..., I>, Types...>::type type;
+    typedef typename make_indexes_impl<I + 1, index<Indexes..., I>, Types...>::type type;
 };
 
 template<int I, int... Indexes>
-struct make_indexes_impl<I, index_tuple<Indexes...> >
+struct make_indexes_impl<I, index<Indexes...> >
 {
-    typedef index_tuple<Indexes...> type;
+    typedef index<Indexes...> type;
 };
 
 template<typename ... Types>
-struct make_indexes : make_indexes_impl<0, index_tuple<>, Types...>
+struct make_indexes : make_indexes_impl<0, index<>, Types...>
 {};
 
 
 template<class Ret, class... Args, int... Indexes >
-Ret apply_tuple_helper( Ret (*pf)(Args...), index_tuple< Indexes... >, std::tuple<Args...>&& tup)
+Ret apply_tuple_helper( Ret (*pf)(Args...), index< Indexes... >, std::tuple<Args...>&& tup)
 {
     return pf( std::forward<Args>( std::get<Indexes>(tup))... );
 }

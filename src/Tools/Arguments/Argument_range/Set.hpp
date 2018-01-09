@@ -103,6 +103,24 @@ Including_set(const T option, const O... options)
 }
 
 template <typename T>
+typename std::enable_if<!std::is_same<T, char const*>::value, Set_range<T>*>::type
+Including_set(const std::vector<T>& options)
+{
+	return new Including_set_range<T>(options);
+}
+
+template <typename T>
+typename std::enable_if<std::is_same<T, char const*>::value, Set_range<std::string>*>::type
+Including_set(const std::vector<T>& options)
+{
+	std::vector<std::string> list(options.size());
+
+	std::copy(options.begin(), options.end(), list.begin());
+
+	return new Including_set_range<std::string>(list);
+}
+
+template <typename T>
 Set_range<T>* Including_set()
 {
 	return new Including_set_range<T>({});
@@ -150,6 +168,24 @@ typename std::enable_if<std::is_same<T, char const*>::value, Set_range<std::stri
 Excluding_set(const T option, const O... options)
 {
 	std::vector<std::string> list = {option, options...};
+	return new Excluding_set_range<std::string>(list);
+}
+
+template <typename T>
+typename std::enable_if<!std::is_same<T, char const*>::value, Set_range<T>*>::type
+Excluding_set(const std::vector<T>& options)
+{
+	return new Excluding_set_range<T>(options);
+}
+
+template <typename T>
+typename std::enable_if<std::is_same<T, char const*>::value, Set_range<std::string>*>::type
+Excluding_set(const std::vector<T>& options)
+{
+	std::vector<std::string> list(options.size());
+
+	std::copy(options.begin(), options.end(), list.begin());
+
 	return new Excluding_set_range<std::string>(list);
 }
 
