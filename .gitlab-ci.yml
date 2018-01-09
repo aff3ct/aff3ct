@@ -4,7 +4,7 @@ stages:
 before_script:
   - hostname
   - whoami
-  - pwd
+# - pwd
 
 build-linux-gcc:
   stage: build
