@@ -277,6 +277,10 @@ protected:
 		clone->get_ranges().clear();
 		return clone;
 	}
+
+	void get_ranges_title(std::string& t) const
+	{
+	}
 };
 
 }

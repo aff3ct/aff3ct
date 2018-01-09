@@ -150,38 +150,6 @@ void Puncturer_turbo<B,Q>
 	}
 }
 
-// template <typename B, typename Q>
-// std::vector<std::vector<bool>> Puncturer_turbo<B,Q>
-// ::convert_pattern(const std::string& pattern)
-// {
-// 	auto str_array = Splitter_D1::split(pattern);
-
-// 	std::vector<std::vector<std::string>> pattern_str;
-
-// 	for(auto& s : str_array)
-// 		pattern_str.push_back(Splitter_D2::split(s));
-
-// 	std::vector<std::vector<bool>> pattern_bits(pattern_str.size());
-
-// 	for (unsigned i = 0; i < pattern_str.size(); i++)
-// 	{
-// 		pattern_bits[i].resize(pattern_str[i].size());
-
-// 		for (unsigned j = 0; j < pattern_str[i].size(); j++)
-// 		{
-// 			if (pattern_str[i][j] == "0")
-// 				pattern_bits[i][j] = false;
-
-// 			else if (pattern_str[i][j] == "1")
-// 				pattern_bits[i][j] = true;
-
-// 			else
-// 				throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Pattern elements must be boolean (0 or 1).");
-// 		}
-// 	}
-// 	return pattern_bits;
-// }
-
 template <typename B, typename Q>
 std::string Puncturer_turbo<B,Q>
 ::display_pattern(const std::vector<std::vector<bool>>& pattern_bits)

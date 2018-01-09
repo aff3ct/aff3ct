@@ -33,6 +33,18 @@ Puncturer_turbo::parameters* Puncturer_turbo::parameters
 	return new Puncturer_turbo::parameters(*this);
 }
 
+
+struct sub_same_length
+{
+	template <typename T>
+	static void check(const std::vector<T>& v)
+	{
+		for(unsigned i = 0; i < v.size(); i++)
+			if (v[i].size() != v[0].size())
+				throw std::runtime_error("all elements do not have the same length");
+	}
+};
+
 void Puncturer_turbo::parameters
 ::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
 {
@@ -46,7 +58,9 @@ void Puncturer_turbo::parameters
 
 	opt_args.add(
 		{p+"-pattern"},
-		tools::List2D<bool>(tools::Boolean(), std::make_tuple(tools::Length(3, 3)), std::make_tuple(tools::Length(2, 3))),
+		tools::List2D<bool>(tools::Boolean(),
+		                    std::make_tuple(tools::Length(3, 3), tools::Function<sub_same_length>("elements of same length")),
+		                    std::make_tuple(tools::Length(1))),
 		"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
 
 	opt_args.add(
@@ -67,7 +81,6 @@ void Puncturer_turbo::parameters
 
 	auto p = this->get_prefix();
 
-	// if(vals.exist({p+"-pattern"    })) this->pattern2    = vals.at     ({p+"-pattern"    });
 	if(vals.exist({p+"-pattern"    })) this->pattern     = vals.to_list<std::vector<bool>>({p+"-pattern"    });
 	if(vals.exist({p+"-tail-length"})) this->tail_length = vals.to_int({p+"-tail-length"});
 	if(vals.exist({p+"-no-buff"    })) this->buffered    = false;
@@ -89,7 +102,6 @@ void Puncturer_turbo::parameters
 	if (this->type != "NO")
 	{
 		headers[p].push_back(std::make_pair(std::string("Pattern"), std::string("{" + PT::display_pattern(this->pattern) + "}")));
-		// headers[p].push_back(std::make_pair(std::string("Pattern cmd"), std::string("{" + this->pattern2 + "}")));
 		if (full) headers[p].push_back(std::make_pair(std::string("Tail length"), std::to_string(this->tail_length)));
 		if (full) headers[p].push_back(std::make_pair(std::string("Buffered"), this->buffered ? "on" : "off"));
 	}

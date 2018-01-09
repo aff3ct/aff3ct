@@ -8,34 +8,32 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename T, typename F>
+template <typename F>
 class Function_range : public Argument_range
 {
-	F f;
-
 public:
-	Function_range(const std::string& title, F f)
-	: Argument_range(title), f(f)
+	Function_range(const std::string& title)
+	: Argument_range(title)
 	{ }
 
 	virtual ~Function_range() {};
 
-	virtual Function_range<T,F>* clone() const
+	virtual Function_range<F>* clone() const
 	{
-		return new Function_range<T,F>(*this);
+		return new Function_range<F>(*this);
 	}
 
 	template <typename V>
 	void check(const V& val) const
 	{
-		f((T)val);
+		F::check(val);
 	}
 };
 
-template <typename T, typename F>
-Function_range<T,F>* Function(const std::string& title, F f)
+template <typename F>
+Function_range<F>* Function(const std::string& title)
 {
-	return new Function_range<T,F>(title, f);
+	return new Function_range<F>(title);
 }
 
 }

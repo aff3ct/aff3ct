@@ -30,14 +30,10 @@ Encoder_BCH::parameters* Encoder_BCH::parameters
 	return new Encoder_BCH::parameters(*this);
 }
 
-void Encoder_BCH::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+struct check_BCH_N
 {
-	Encoder::parameters::get_description(req_args, opt_args);
-
-	auto p = this->get_prefix();
-
-	auto check_BCH_N = [](const int N)
+	template <typename T>
+	static void check(const T N)
 	{
 		auto m = (int)std::ceil(std::log2(N));
 
@@ -47,10 +43,18 @@ void Encoder_BCH::parameters
 			message << "'N' has to be a power of 2 minus 1";
 			throw std::runtime_error(message.str());
 		}
-	};
+	}
+};
+
+void Encoder_BCH::parameters
+::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+{
+	Encoder::parameters::get_description(req_args, opt_args);
+
+	auto p = this->get_prefix();
 
 	tools::add_ranges<tools::Integer_type<int, tools::Positive_range<>, tools::Non_zero_range<>>>
-	(req_args.at({p+"-cw-size", "N"}), tools::Function<int>("power of 2 minus 1", check_BCH_N));
+	(req_args.at({p+"-cw-size", "N"}), tools::Function<check_BCH_N>("power of 2 minus 1"));
 
 	tools::add_options(opt_args.at({p+"-type"}), 0, "BCH");
 }
