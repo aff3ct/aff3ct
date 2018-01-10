@@ -24,14 +24,14 @@ analyse-cppcheck:
        - cppcheck_unusedFunction.log
        - cppcheck_missingInclude.log
   tags: 
-    - build-linux
+    - cppcheck
   script:
     - ./ci/cppcheck.sh
 
 build-linux-gcc:
   stage: build
   tags:
-   - build-linux
+   - linux
   script:
     - mkdir build
     - cd build
@@ -43,7 +43,7 @@ build-linux-gcc:
 build-linux-clang:
   stage: build
   tags:
-   - build-linux
+   - linux
   script:
     - mkdir build
     - cd build
@@ -55,7 +55,7 @@ build-linux-clang:
 build-windows-gcc:
   stage: build
   tags:
-   - build-windows
+   - windows
   script:
     - set PATH=%PATH%;C:\Program Files\Git\cmd
     - set PATH=%PATH%;C:\Program Files\CMake\bin
@@ -71,7 +71,7 @@ build-windows-gcc:
 build-windows-msvc:
   stage: build
   tags:
-   - build-windows
+   - windows
   script:
     - set PATH=%PATH%;C:\Program Files\Git\cmd
     - set PATH=%PATH%;C:\Program Files\CMake\bin
@@ -89,7 +89,7 @@ build-windows-msvc:
 build-mac-osx-clang:
   stage: build
   tags:
-   - build-mac-osx
+   - mac-osx
   script:
     - mkdir build
     - cd build
