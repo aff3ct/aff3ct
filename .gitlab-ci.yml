@@ -15,7 +15,7 @@ analyse-cppcheck:
      name: analyse-cppcheck-logs
      paths:
        - cppcheck.log
-#      - cppcheck_error.log
+       - cppcheck_error.log
        - cppcheck_warning.log
        - cppcheck_performance.log
        - cppcheck_style.log

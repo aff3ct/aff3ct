@@ -11,14 +11,14 @@ cat cppcheck.log | grep "(information)" > cppcheck_information.log
 cat cppcheck.log | grep "(unusedFunction)" > cppcheck_unusedFunction.log
 cat cppcheck.log | grep "(missingInclude)" > cppcheck_missingInclude.log
 
-COUNT=$(wc -l < cppcheck_error.log )
-
-if [ $COUNT -gt 0 ]; then
-  echo "Error count is $COUNT! cppcheck run failed :-(.";
-  echo ""
-  echo "Errors list:"
-  cat cppcheck_error.log
-  exit 1;
-else
-  echo "There is no error :-)."
-fi
+#COUNT=$(wc -l < cppcheck_error.log )
+#
+#if [ $COUNT -gt 0 ]; then
+#  echo "Error count is $COUNT! cppcheck run failed :-(.";
+#  echo ""
+#  echo "Errors list:"
+#  cat cppcheck_error.log
+#  exit 1;
+#else
+#  echo "There is no error :-)."
+#fi
