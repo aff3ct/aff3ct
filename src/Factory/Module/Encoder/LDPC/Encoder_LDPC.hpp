@@ -25,6 +25,9 @@ struct Encoder_LDPC : public Encoder
 		std::string H_path = "";
 		std::string G_path = "";
 
+		// optional parameters
+		std::string H_reorder = "NONE";
+
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		parameters(const std::string p = Encoder_LDPC::prefix);
 		virtual ~parameters();

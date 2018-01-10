@@ -27,6 +27,7 @@ struct Decoder_LDPC : public Decoder
 		std::string H_path;
 
 		// optional parameters
+		std::string H_reorder       = "NONE";
 		std::string min             = "MINL";
 		std::string simd_strategy   = "";
 		float       norm_factor     = 1.f;

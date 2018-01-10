@@ -2,6 +2,7 @@
 #define SPARSE_MATRIX_HPP_
 
 #include <vector>
+#include <string>
 
 namespace aff3ct
 {
@@ -55,6 +56,12 @@ public:
 	 * Return the density of ones in this matrix
 	 */
 	float compute_density() const;
+
+	/*
+	 * Sort the sparse matrix per density of lines
+	 * The "order" parameter can be "ASC" for ascending or "DSC" for descending
+	 */
+	void sort_cols_per_density(std::string order = "DSC");
 };
 }
 }

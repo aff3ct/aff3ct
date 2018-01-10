@@ -2,7 +2,6 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
-#include <sstream>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -162,4 +161,32 @@ float Sparse_matrix
 ::compute_density() const
 {
 	return ((float)n_connections / (float)(n_rows * n_cols));
+}
+
+void Sparse_matrix
+::sort_cols_per_density(std::string order)
+{
+	if (order != "ASC" && order != "DSC")
+	{
+		std::stringstream message;
+		message << "'order' is unsupported, it sould be 'ASC' or 'DSC' ('order' = " << order << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (order == "ASC")
+	{
+		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
+		          [](std::vector<unsigned> &i1, std::vector<unsigned> &i2) { return i1.size() < i2.size(); });
+	}
+	else // order == "DSC"
+	{
+		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
+		          [](std::vector<unsigned> &i1, std::vector<unsigned> &i2) { return i1.size() > i2.size(); });
+	}
+
+	for (auto &r : this->row_to_cols)
+		r.clear();
+	for (size_t i = 0; i < this->col_to_rows.size(); i++)
+		for (size_t j = 0; j < i; j++)
+			this->row_to_cols[this->col_to_rows[i][j]].push_back(i);
 }

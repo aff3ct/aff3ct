@@ -49,6 +49,12 @@ void Decoder_LDPC::parameters
 		{"string",
 		 "path to the H matrix (AList or QC formated file)."};
 
+	opt_args[{p+"-h-reorder"}] =
+		{"string",
+		 "specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
+		 "smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.",
+		 "NONE, ASC, DSC"};
+
 	opt_args[{p+"-min"}] =
 		{"string",
 		 "the MIN implementation for the nodes (AMS decoder).",
@@ -92,6 +98,7 @@ void Decoder_LDPC::parameters
 	auto p = this->get_prefix();
 
 	if(exist(vals, {p+"-h-path"    })) this->H_path          =           vals.at({p+"-h-path"    });
+	if(exist(vals, {p+"-h-reorder" })) this->H_reorder       =           vals.at({p+"-h-reorder" });
 	if(exist(vals, {p+"-min"       })) this->min             =           vals.at({p+"-min"       });
 	if(exist(vals, {p+"-ite",   "i"})) this->n_ite           = std::stoi(vals.at({p+"-ite",   "i"}));
 	if(exist(vals, {p+"-off"       })) this->offset          = std::stof(vals.at({p+"-off"       }));
@@ -109,7 +116,10 @@ void Decoder_LDPC::parameters
 	auto p = this->get_prefix();
 
 	if (!this->H_path.empty())
+	{
 		headers[p].push_back(std::make_pair("H matrix path", this->H_path));
+		headers[p].push_back(std::make_pair("H matrix reordering", this->H_reorder));
+	}
 
 	if (!this->simd_strategy.empty())
 		headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));

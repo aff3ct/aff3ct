@@ -86,6 +86,7 @@ void Codec_LDPC::parameters
 	auto pdec = dec->get_prefix();
 
 	opt_args.erase({penc+"-h-path"           });
+	opt_args.erase({penc+"-h-reorder"        });
 	req_args.erase({pdec+"-cw-size",   "N"   });
 	req_args.erase({pdec+"-info-bits", "K"   });
 	opt_args.erase({pdec+"-fra",       "F"   });
@@ -124,7 +125,8 @@ void Codec_LDPC::parameters
 
 	dec->store(vals);
 
-	this->enc->H_path   = this->dec->H_path;
+	this->enc->H_path    = this->dec->H_path;
+	this->enc->H_reorder = this->dec->H_reorder;
 
 	this->K    = this->enc->K;
 	this->N_cw = this->enc->N_cw;
