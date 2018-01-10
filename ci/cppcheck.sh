@@ -22,3 +22,5 @@ cat cppcheck.log | grep "(missingInclude)" > cppcheck_missingInclude.log
 #else
 #  echo "There is no error :-)."
 #fi
+
+exit 0;
