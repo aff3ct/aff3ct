@@ -14,7 +14,7 @@ analyse-cppcheck:
   artifacts:
      name: analyse-cppcheck-logs
      paths:
-       - cppcheck.log
+       - cppcheck_all.log
        - cppcheck_error.log
        - cppcheck_warning.log
        - cppcheck_performance.log
