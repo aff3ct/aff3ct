@@ -49,9 +49,30 @@ build-windows-gcc:
     - git submodule update --init -- lib/MIPP
     - mkdir build
     - cd build
-    - cmake .. -G"MinGW Makefiles" || true
-    - cmake .. -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_CC_COMPILER=gcc.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC"
+    - cmake .. -G"MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC"
     - mingw32-make
     - cd bin
+    - aff3ct.exe --version
+    - aff3ct.exe -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL
+
+build-windows-msvc:
+  stage: build
+  tags:
+   - build-windows
+  script:
+    - set PATH=%PATH%;C:\Program Files\Git\cmd
+    - set PATH=%PATH%;C:\Program Files\CMake\bin
+    - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin
+    - set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
+    - set "VSCMD_START_DIR=%CD%"
+    - vcvars64 
+#   - git submodule update --init --recursive
+    - git submodule update --init -- conf
+    - git submodule update --init -- lib/MIPP
+    - mkdir build
+    - cd build
+    - cmake .. -G"Visual Studio 15 2017 Win64" -DCMAKE_CXX_FLAGS="-D_CRT_SECURE_NO_DEPRECATE -DMULTI_PREC /EHsc /arch:AVX"
+    - devenv /build Release aff3ct.sln
+    - cd bin\Release
     - aff3ct.exe --version
     - aff3ct.exe -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL
