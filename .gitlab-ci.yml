@@ -23,7 +23,8 @@ analyse-cppcheck:
        - cppcheck_information.log
        - cppcheck_unusedFunction.log
        - cppcheck_missingInclude.log
-  tags: build-linux
+  tags: 
+    - build-linux
   script:
     - ./ci/cppcheck.sh
 
