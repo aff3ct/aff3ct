@@ -63,9 +63,8 @@ build-windows-msvc:
     - set PATH=%PATH%;C:\Program Files\Git\cmd
     - set PATH=%PATH%;C:\Program Files\CMake\bin
     - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin
-    - set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
     - set "VSCMD_START_DIR=%CD%"
-    - vcvars64 
+    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
 #   - git submodule update --init --recursive
     - git submodule update --init -- conf
     - git submodule update --init -- lib/MIPP
