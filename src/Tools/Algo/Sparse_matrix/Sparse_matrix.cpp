@@ -176,12 +176,12 @@ void Sparse_matrix
 	if (order == "ASC")
 	{
 		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
-		          [](std::vector<unsigned> &i1, std::vector<unsigned> &i2) { return i1.size() < i2.size(); });
+		          [](const std::vector<unsigned> &i1, const  std::vector<unsigned> &i2) { return i1.size() < i2.size(); });
 	}
 	else // order == "DSC"
 	{
 		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
-		          [](std::vector<unsigned> &i1, std::vector<unsigned> &i2) { return i1.size() > i2.size(); });
+		          [](const  std::vector<unsigned> &i1, const std::vector<unsigned> &i2) { return i1.size() > i2.size(); });
 	}
 
 	for (auto &r : this->row_to_cols)
