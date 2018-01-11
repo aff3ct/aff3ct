@@ -11,6 +11,7 @@ cat cppcheck_all.log | grep "(information)" > cppcheck_information.log
 cat cppcheck_all.log | grep "(unusedFunction)" > cppcheck_unusedFunction.log
 cat cppcheck_all.log | grep "(missingInclude)" > cppcheck_missingInclude.log
 
+## Uncomment this block if you want a failure when there is errors
 #COUNT=$(wc -l < cppcheck_error.log )
 #
 #if [ $COUNT -gt 0 ]; then
