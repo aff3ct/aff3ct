@@ -82,7 +82,7 @@ std::string aff3ct::tools::get_back_trace(int first_call)
 std::string aff3ct::tools::runSystemCommand(std::string cmd)
 {
 	std::string data;
-	FILE * stream;
+	FILE * stream = nullptr;
 
 	const int max_buffer = 256;
 	char buffer[max_buffer];

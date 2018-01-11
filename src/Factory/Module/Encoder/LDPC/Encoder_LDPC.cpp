@@ -49,6 +49,12 @@ void Encoder_LDPC::parameters
 		{p+"-g-path"},
 		tools::File(tools::openmode::read),
 		"path to the G matrix (AList formated file, required by the \"LDPC\" encoder).");
+
+	opt_args.add(
+		{p+"-h-reorder"},
+		tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
+		"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
+		"smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.");
 }
 
 void Encoder_LDPC::parameters
@@ -58,8 +64,9 @@ void Encoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-h-path"})) this->H_path = vals.at({p+"-h-path"});
-	if(vals.exist({p+"-g-path"})) this->G_path = vals.at({p+"-g-path"});
+	if(vals.exist({p+"-h-path"   })) this->H_path    = vals.at({p+"-h-path"   });
+	if(vals.exist({p+"-g-path"   })) this->G_path    = vals.at({p+"-g-path"   });
+	if(vals.exist({p+"-h-reorder"})) this->H_reorder = vals.at({p+"-h-reorder"});
 }
 
 void Encoder_LDPC::parameters
@@ -72,7 +79,10 @@ void Encoder_LDPC::parameters
 	if (this->type == "LDPC")
 		headers[p].push_back(std::make_pair("G matrix path", this->G_path));
 	if (this->type == "LDPC_H" || this->type == "LDPC_QC")
+	{
 		headers[p].push_back(std::make_pair("H matrix path", this->H_path));
+		headers[p].push_back(std::make_pair("H matrix reordering", this->H_reorder));
+	}
 }
 
 template <typename B>

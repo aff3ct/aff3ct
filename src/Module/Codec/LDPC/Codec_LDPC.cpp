@@ -154,6 +154,12 @@ Codec_LDPC<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (dec_params.H_reorder != "NONE")
+	{
+		// reorder the H matrix following the check node degrees
+		H.sort_cols_per_density(dec_params.H_reorder);
+	}
+
 	if (!is_info_bits_pos)
 	{
 		if (enc_params.type == "LDPC_H")
