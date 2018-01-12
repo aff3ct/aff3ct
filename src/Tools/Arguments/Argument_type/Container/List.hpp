@@ -39,7 +39,7 @@ public:
 
 	virtual List_type<T, S, Ranges...>* clone() const
 	{
-		auto clone = new List_type<T, S, Ranges...>(val_type);
+		auto* clone = new List_type<T, S, Ranges...>(val_type);
 
 		clone->val_type = val_type->clone();
 
@@ -50,11 +50,11 @@ public:
 	Integer_type<T, S, Ranges..., NewRanges...>*
 	clone(NewRanges*... new_ranges)
 	{
-		auto clone = new List_type<T, S, Ranges..., NewRanges...>(val_type);
+		auto* clone = new List_type<T, S, Ranges..., NewRanges...>(val_type);
 
 		this->clone_ranges(clone);
 
-		clone->template add_ranges(new_ranges...);
+		clone->add_ranges(new_ranges...);
 
 		return clone;
 	}

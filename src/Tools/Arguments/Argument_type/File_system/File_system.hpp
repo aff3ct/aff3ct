@@ -57,7 +57,7 @@ public:
 
 	virtual File_system_type<T, Read_F, Write_F, RW_F, Ranges...>* clone() const
 	{
-		auto clone = new File_system_type<T, Read_F, Write_F, RW_F, Ranges...>(name, mode);
+		auto* clone = new File_system_type<T, Read_F, Write_F, RW_F, Ranges...>(name, mode);
 
 		return dynamic_cast<File_system_type<T, Read_F, Write_F, RW_F, Ranges...>*>(this->clone_ranges(clone));
 	}
@@ -65,11 +65,11 @@ public:
 	template <typename... NewRanges>
 	File_system_type<T, Read_F, Write_F, RW_F, Ranges..., NewRanges...>* clone(NewRanges*... new_ranges)
 	{
-		auto clone = new File_system_type<T, Read_F, Write_F, RW_F, Ranges..., NewRanges...>(name, mode);
+		auto* clone = new File_system_type<T, Read_F, Write_F, RW_F, Ranges..., NewRanges...>(name, mode);
 
 		this->clone_ranges(clone);
 
-		clone->template add_ranges(new_ranges...);
+		clone->add_ranges(new_ranges...);
 
 		return clone;
 	}

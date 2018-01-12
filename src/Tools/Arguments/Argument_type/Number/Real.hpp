@@ -28,7 +28,7 @@ public:
 
 	virtual Real_type<T,Ranges...>* clone() const
 	{
-		auto clone = new Real_type<T,Ranges...>();
+		auto* clone = new Real_type<T,Ranges...>();
 
 		return dynamic_cast<Real_type<T,Ranges...>*>(this->clone_ranges(clone));
 	}
@@ -37,11 +37,11 @@ public:
 	Real_type<T, Ranges..., NewRanges...>*
 	clone(NewRanges*... new_ranges)
 	{
-		auto clone = new Real_type<T, Ranges..., NewRanges...>();
+		auto* clone = new Real_type<T, Ranges..., NewRanges...>();
 
 		this->clone_ranges(clone);
 
-		clone->template add_ranges(new_ranges...);
+		clone->add_ranges(new_ranges...);
 
 		return clone;
 	}

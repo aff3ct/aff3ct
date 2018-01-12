@@ -29,7 +29,7 @@ public:
 
 	virtual Integer_type<T,Ranges...>* clone() const
 	{
-		auto clone = new Integer_type<T,Ranges...>();
+		auto* clone = new Integer_type<T,Ranges...>();
 
 		return dynamic_cast<Integer_type<T,Ranges...>*>(this->clone_ranges(clone));
 	}
@@ -38,11 +38,11 @@ public:
 	Integer_type<T, Ranges..., NewRanges...>*
 	clone(NewRanges*... new_ranges)
 	{
-		auto clone = new Integer_type<T, Ranges..., NewRanges...>();
+		auto* clone = new Integer_type<T, Ranges..., NewRanges...>();
 
 		this->clone_ranges(clone);
 
-		clone->template add_ranges(new_ranges...);
+		clone->add_ranges(new_ranges...);
 
 		return clone;
 	}
