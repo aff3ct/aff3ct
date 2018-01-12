@@ -1,5 +1,6 @@
 #include "Terminal.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::factory;
 
 const std::string aff3ct::factory::Terminal::name   = "Terminal";
