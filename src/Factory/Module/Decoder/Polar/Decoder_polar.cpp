@@ -43,7 +43,7 @@ const std::string aff3ct::factory::Decoder_polar::name   = "Decoder Polar";
 const std::string aff3ct::factory::Decoder_polar::prefix = "dec";
 
 Decoder_polar::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Decoder::parameters(Decoder_polar::name, prefix)
 {
 	this->type   = "SC";
@@ -51,7 +51,7 @@ Decoder_polar::parameters
 }
 
 Decoder_polar::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Decoder::parameters(name, prefix)
 {
 	this->type   = "SC";

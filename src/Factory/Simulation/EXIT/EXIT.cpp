@@ -9,7 +9,7 @@ const std::string aff3ct::factory::EXIT::name   = "Simulation EXIT";
 const std::string aff3ct::factory::EXIT::prefix = "sim";
 
 EXIT::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Simulation::parameters(EXIT::name, prefix)
 {
 }

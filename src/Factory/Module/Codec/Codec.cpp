@@ -10,13 +10,13 @@ const std::string aff3ct::factory::Codec::name   = "Codec";
 const std::string aff3ct::factory::Codec::prefix = "cdc";
 
 Codec::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Codec::name, Codec::name, prefix)
 {
 }
 
 Codec::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Factory::parameters(name, Codec::name, prefix)
 {
 }

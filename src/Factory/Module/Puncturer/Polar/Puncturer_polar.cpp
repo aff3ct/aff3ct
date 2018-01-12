@@ -11,7 +11,7 @@ const std::string aff3ct::factory::Puncturer_polar::name   = "Puncturer Polar";
 const std::string aff3ct::factory::Puncturer_polar::prefix = "pct";
 
 Puncturer_polar::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Puncturer::parameters(Puncturer_polar::name, prefix)
 {
 	this->type = "WANGLIU";

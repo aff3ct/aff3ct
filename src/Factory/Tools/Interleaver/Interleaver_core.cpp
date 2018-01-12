@@ -21,7 +21,7 @@ const std::string aff3ct::factory::Interleaver_core::name   = "Interleaver";
 const std::string aff3ct::factory::Interleaver_core::prefix = "itl";
 
 Interleaver_core::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Interleaver_core::name, Interleaver_core::name, prefix)
 {
 }

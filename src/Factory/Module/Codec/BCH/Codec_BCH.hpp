@@ -29,7 +29,7 @@ struct Codec_BCH : public Codec_SIHO
 		Decoder_BCH::parameters *dec;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_BCH::prefix);
+		parameters(const std::string &p = Codec_BCH::prefix);
 		virtual ~parameters();
 		Codec_BCH::parameters* clone() const;
 

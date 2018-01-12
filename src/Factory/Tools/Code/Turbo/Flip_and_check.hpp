@@ -34,7 +34,7 @@ struct Flip_and_check : public Factory
 		int  n_frames            = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Flip_and_check::prefix);
+		parameters(const std::string &p = Flip_and_check::prefix);
 		virtual ~parameters();
 		virtual Flip_and_check::parameters* clone() const;
 
@@ -48,7 +48,7 @@ struct Flip_and_check : public Factory
 		tools::Flip_and_check<B,Q>* build(module::CRC<B> &crc) const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string &n, const std::string &p);
 	};
 
 	template <typename B = int, typename Q = float>

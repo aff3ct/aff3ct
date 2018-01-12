@@ -37,7 +37,7 @@ struct Decoder_LDPC : public Decoder
 		int         n_ite           = 10;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_LDPC::prefix);
+		parameters(const std::string &p = Decoder_LDPC::prefix);
 		virtual ~parameters();
 		Decoder_LDPC::parameters* clone() const;
 

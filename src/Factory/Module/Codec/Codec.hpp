@@ -34,7 +34,7 @@ struct Codec : Factory
 		int tail_length = 0;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec::prefix);
+		parameters(const std::string &p = Codec::prefix);
 		virtual ~parameters();
 		virtual Codec::parameters* clone() const;
 		virtual void enable_puncturer();
@@ -49,7 +49,7 @@ struct Codec : Factory
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:
-		parameters(const std::string n = Codec::name, const std::string p = Codec::prefix);
+		parameters(const std::string &n = Codec::name, const std::string &p = Codec::prefix);
 
 		void set_enc(Encoder    ::parameters *enc);
 		void set_dec(Decoder    ::parameters *dec);

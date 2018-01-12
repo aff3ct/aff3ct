@@ -29,7 +29,7 @@ struct Codec_RSC_DB : public Codec_SISO_SIHO
 		Decoder_RSC_DB::parameters *dec;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_RSC_DB::prefix);
+		parameters(const std::string &p = Codec_RSC_DB::prefix);
 		virtual ~parameters();
 		Codec_RSC_DB::parameters* clone() const;
 

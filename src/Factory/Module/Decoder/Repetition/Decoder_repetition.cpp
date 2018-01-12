@@ -12,7 +12,7 @@ const std::string aff3ct::factory::Decoder_repetition::name   = "Decoder Repetit
 const std::string aff3ct::factory::Decoder_repetition::prefix = "dec";
 
 Decoder_repetition::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Decoder::parameters(Decoder_repetition::name, prefix)
 {
 	this->type   = "REPETITION";

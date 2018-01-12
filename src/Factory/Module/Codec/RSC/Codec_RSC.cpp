@@ -7,7 +7,7 @@ const std::string aff3ct::factory::Codec_RSC::name   = "Codec RSC";
 const std::string aff3ct::factory::Codec_RSC::prefix = "cdc";
 
 Codec_RSC::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_RSC::name, prefix),
   Codec_SISO_SIHO::parameters(Codec_RSC::name, prefix),
   enc(new Encoder_RSC::parameters("enc")),

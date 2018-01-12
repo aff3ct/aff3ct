@@ -70,7 +70,7 @@ struct BFER : Simulation
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:
-		parameters(const std::string n = BFER::name, const std::string p = BFER::prefix);
+		parameters(const std::string &n = BFER::name, const std::string &p = BFER::prefix);
 	};
 };
 }

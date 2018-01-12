@@ -35,7 +35,7 @@ struct Scaling_factor : public Factory
 		                                   0.95f, 0.95f}; // ite 8
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Scaling_factor::prefix);
+		parameters(const std::string &p = Scaling_factor::prefix);
 		virtual ~parameters();
 		Scaling_factor::parameters* clone() const;
 

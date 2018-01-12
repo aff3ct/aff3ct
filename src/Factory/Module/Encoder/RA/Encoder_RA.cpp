@@ -11,7 +11,7 @@ const std::string aff3ct::factory::Encoder_RA::name   = "Encoder RA";
 const std::string aff3ct::factory::Encoder_RA::prefix = "enc";
 
 Encoder_RA::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Encoder::parameters(Encoder_RA::name, prefix),
   itl(new Interleaver::parameters("itl"))
 {

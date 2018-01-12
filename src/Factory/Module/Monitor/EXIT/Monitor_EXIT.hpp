@@ -29,7 +29,7 @@ struct Monitor_EXIT : public Factory
 		int         n_frames = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Monitor_EXIT::prefix);
+		parameters(const std::string &p = Monitor_EXIT::prefix);
 		virtual ~parameters();
 		Monitor_EXIT::parameters* clone() const;
 

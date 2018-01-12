@@ -6,7 +6,7 @@ const std::string aff3ct::factory::Decoder::name   = "Decoder";
 const std::string aff3ct::factory::Decoder::prefix = "dec";
 
 Decoder::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Factory::parameters(name, Decoder::name, prefix)
 {
 }

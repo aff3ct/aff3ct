@@ -12,7 +12,7 @@ const std::string aff3ct::factory::BFER_ite::name   = "Simulation BFER iterative
 const std::string aff3ct::factory::BFER_ite::prefix = "sim";
 
 BFER_ite::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : BFER::parameters(BFER_ite::name, prefix)
 {
 }

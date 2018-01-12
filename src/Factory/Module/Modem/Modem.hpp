@@ -53,7 +53,7 @@ struct Modem : public Factory
 		int         n_frames   = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Modem::prefix);
+		parameters(const std::string &p = Modem::prefix);
 		virtual ~parameters();
 		Modem::parameters* clone() const;
 
@@ -78,14 +78,14 @@ struct Modem : public Factory
 	template <typename B = int, typename R = float, typename Q = R>
 	static module::Modem<B,R,Q>* build(const parameters &params);
 
-	static int get_buffer_size_after_modulation(const std::string type,
+	static int get_buffer_size_after_modulation(const std::string &type,
 	                                            const int         N,
 	                                            const int         bps   = 1,
 	                                            const int         upf   = 5,
 	                                            const int         cpm_L = 3,
 		                                        const int         cpm_p = 2);
 
-	static int get_buffer_size_after_filtering(const std::string type,
+	static int get_buffer_size_after_filtering(const std::string &type,
 	                                           const int         N,
 	                                           const int         bps   = 1,
 	                                           const int         cpm_L = 3,

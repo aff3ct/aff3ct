@@ -10,7 +10,7 @@ const std::string aff3ct::factory::Coset::name   = "Coset";
 const std::string aff3ct::factory::Coset::prefix = "cst";
 
 Coset::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Coset::name, Coset::name, prefix)
 {
 }

@@ -24,7 +24,7 @@ struct Decoder_repetition : public Decoder
 		bool buffered = true;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_repetition::prefix);
+		parameters(const std::string &p = Decoder_repetition::prefix);
 		virtual ~parameters();
 		Decoder_repetition::parameters* clone() const;
 

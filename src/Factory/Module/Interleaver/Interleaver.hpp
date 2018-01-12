@@ -29,7 +29,7 @@ struct Interleaver : public Factory
 		factory::Interleaver_core::parameters *core;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Interleaver::prefix);
+		parameters(const std::string &p = Interleaver::prefix);
 		virtual ~parameters();
 		Interleaver::parameters* clone() const;
 

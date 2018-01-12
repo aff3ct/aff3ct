@@ -13,7 +13,7 @@ const std::string aff3ct::factory::Decoder_NO::name   = "Decoder NO";
 const std::string aff3ct::factory::Decoder_NO::prefix = "dec";
 
 Decoder_NO::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Decoder::parameters(Decoder_NO::name, prefix)
 {
 	this->type   = "NONE";

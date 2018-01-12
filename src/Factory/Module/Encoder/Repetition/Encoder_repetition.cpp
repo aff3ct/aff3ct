@@ -11,7 +11,7 @@ const std::string aff3ct::factory::Encoder_repetition::name   = "Encoder Repetit
 const std::string aff3ct::factory::Encoder_repetition::prefix = "enc";
 
 Encoder_repetition::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Encoder::parameters(Encoder_repetition::name, prefix)
 {
 	this->type = "REPETITION";

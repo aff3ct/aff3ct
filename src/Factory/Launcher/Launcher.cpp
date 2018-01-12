@@ -46,13 +46,13 @@ const std::string aff3ct::factory::Launcher::name   = "Launcher";
 const std::string aff3ct::factory::Launcher::prefix = "lch";
 
 factory::Launcher::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Launcher::name, Launcher::name, prefix)
 {
 }
 
 factory::Launcher::parameters
-::parameters(const std::string name, const std::string short_name, const std::string prefix)
+::parameters(const std::string &name, const std::string &short_name, const std::string &prefix)
 : Factory::parameters(name, short_name, prefix)
 {
 }
@@ -134,8 +134,8 @@ void factory::Launcher::parameters
 
 	params_headers[p].push_back(std::make_pair("Type", this->sim_type));
 
-	std::type_index id_B = typeid(int32_t), id_R = typeid(float), id_Q = typeid(float);
 #ifdef MULTI_PREC
+	std::type_index id_B = typeid(int32_t), id_R = typeid(float), id_Q = typeid(float);
 	switch (this->sim_prec)
 	{
 		case 8:
@@ -170,9 +170,7 @@ void factory::Launcher::parameters
 		break;
 	}
 #else
-	id_B = typeid(B);
-	id_R = typeid(R);
-	id_Q = typeid(Q);
+	std::type_index id_B = typeid(B), id_R = typeid(R), id_Q = typeid(Q);
 #endif
 
 	params_headers[p].push_back(std::make_pair("Type of bits",  type_names[id_B]));

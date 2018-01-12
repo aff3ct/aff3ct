@@ -15,7 +15,7 @@ const std::string aff3ct::factory::Encoder_RSC::name   = "Encoder RSC";
 const std::string aff3ct::factory::Encoder_RSC::prefix = "enc";
 
 Encoder_RSC::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Encoder::parameters(Encoder_RSC::name, prefix)
 {
 	this->type = "RSC";

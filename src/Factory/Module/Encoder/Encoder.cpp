@@ -14,13 +14,13 @@ const std::string aff3ct::factory::Encoder::name   = "Encoder";
 const std::string aff3ct::factory::Encoder::prefix = "enc";
 
 Encoder::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Encoder::name, Encoder::name, prefix)
 {
 }
 
 Encoder::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Factory::parameters(name, Encoder::name, prefix)
 {
 }

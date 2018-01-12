@@ -15,7 +15,7 @@ const std::string aff3ct::factory::CRC::name   = "CRC";
 const std::string aff3ct::factory::CRC::prefix = "crc";
 
 CRC::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(CRC::name, CRC::name, prefix)
 {
 }

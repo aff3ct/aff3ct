@@ -9,13 +9,13 @@ const std::string aff3ct::factory::Flip_and_check::name   = "Flip and check";
 const std::string aff3ct::factory::Flip_and_check::prefix = "fnc";
 
 Flip_and_check::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Flip_and_check::name, Flip_and_check::name, prefix)
 {
 }
 
 Flip_and_check::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Factory::parameters(name, Flip_and_check::name, prefix)
 {
 }

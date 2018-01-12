@@ -28,7 +28,7 @@ struct Coset : public Factory
 		int         n_frames = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Coset::prefix);
+		parameters(const std::string &p = Coset::prefix);
 		virtual ~parameters();
 		Coset::parameters* clone() const;
 

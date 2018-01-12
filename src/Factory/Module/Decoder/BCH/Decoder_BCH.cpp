@@ -12,7 +12,7 @@ const std::string aff3ct::factory::Decoder_BCH::name   = "Decoder BCH";
 const std::string aff3ct::factory::Decoder_BCH::prefix = "dec";
 
 Decoder_BCH::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Decoder::parameters(Decoder_BCH::name, prefix)
 {
 	this->type   = "ALGEBRAIC";

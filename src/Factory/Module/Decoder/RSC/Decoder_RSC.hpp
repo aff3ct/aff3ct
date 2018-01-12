@@ -33,7 +33,7 @@ struct Decoder_RSC : public Decoder
 		std::vector<int> poly          = {013, 015};
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_RSC::prefix);
+		parameters(const std::string &p = Decoder_RSC::prefix);
 		virtual ~parameters();
 		Decoder_RSC::parameters* clone() const;
 

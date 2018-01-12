@@ -29,7 +29,7 @@ struct Decoder_RA : public Decoder
 		Interleaver::parameters *itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_RA::prefix);
+		parameters(const std::string &p = Decoder_RA::prefix);
 		virtual ~parameters();
 		Decoder_RA::parameters* clone() const;
 

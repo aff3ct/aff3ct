@@ -7,7 +7,7 @@ const std::string aff3ct::factory::Codec_turbo_DB::name   = "Codec Turbo DB";
 const std::string aff3ct::factory::Codec_turbo_DB::prefix = "cdc";
 
 Codec_turbo_DB::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Codec     ::parameters(Codec_turbo_DB::name, prefix),
   Codec_SIHO::parameters(Codec_turbo_DB::name, prefix),
   enc(new Encoder_turbo_DB::parameters("enc")),

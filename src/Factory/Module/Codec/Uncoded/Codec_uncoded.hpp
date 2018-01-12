@@ -29,7 +29,7 @@ struct Codec_uncoded : public Codec_SISO_SIHO
 		Decoder_NO::parameters *dec;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_uncoded::prefix);
+		parameters(const std::string &p = Codec_uncoded::prefix);
 		virtual ~parameters();
 		Codec_uncoded::parameters* clone() const;
 

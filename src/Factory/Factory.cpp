@@ -13,13 +13,17 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Factory::name       = "Factory";
+const std::string aff3ct::factory::Factory::short_name = "Factory";
+const std::string aff3ct::factory::Factory::prefix     = "fac";
+
 bool aff3ct::factory::exist(const arg_val_map &vals, const std::vector<std::string> &tags)
 {
 	return (vals.find(tags) != vals.end());
 }
 
 Factory::parameters
-::parameters(const std::string name, const std::string short_name, const std::string prefix)
+::parameters(const std::string &name, const std::string &short_name, const std::string &prefix)
 : name(name), short_name(short_name), prefix(prefix)
 {
 }

@@ -26,7 +26,7 @@ struct Puncturer_turbo : public Puncturer
 		int         tail_length = 0;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Puncturer_turbo::prefix);
+		parameters(const std::string &p = Puncturer_turbo::prefix);
 		virtual ~parameters();
 		Puncturer_turbo::parameters* clone() const;
 

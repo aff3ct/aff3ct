@@ -7,7 +7,7 @@ const std::string aff3ct::factory::Codec_polar::name   = "Codec Polar";
 const std::string aff3ct::factory::Codec_polar::prefix = "cdc";
 
 Codec_polar::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_polar::name, prefix),
   Codec_SISO_SIHO::parameters(Codec_polar::name, prefix),
   enc(new Encoder_polar::parameters("enc")),

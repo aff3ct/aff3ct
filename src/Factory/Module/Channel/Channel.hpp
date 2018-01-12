@@ -36,7 +36,7 @@ struct Channel : public Factory
 		float       sigma        = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Channel::prefix);
+		parameters(const std::string &p = Channel::prefix);
 		virtual ~parameters();
 		Channel::parameters* clone() const;
 

@@ -25,7 +25,7 @@ struct Codec_SISO_SIHO : Codec
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_SISO_SIHO::prefix);
+		parameters(const std::string &p = Codec_SISO_SIHO::prefix);
 		virtual ~parameters();
 		virtual Codec_SISO_SIHO::parameters* clone() const = 0;
 
@@ -34,7 +34,7 @@ struct Codec_SISO_SIHO : Codec
 		module::Codec_SISO_SIHO<B,Q>* build(module::CRC<B>* crc = nullptr) const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string &n, const std::string &p);
 	};
 
 	template <typename B = int, typename Q = float>

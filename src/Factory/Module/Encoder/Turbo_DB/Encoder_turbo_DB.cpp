@@ -11,7 +11,7 @@ using namespace aff3ct;
 using namespace aff3ct::factory;
 
 Encoder_turbo_DB::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Encoder::parameters(Encoder_turbo_DB::name, prefix),
   itl(new Interleaver::parameters("itl")),
   sub(new Encoder_RSC_DB::parameters(prefix+"-sub"))

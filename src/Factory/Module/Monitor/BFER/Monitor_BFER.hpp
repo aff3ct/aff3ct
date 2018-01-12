@@ -29,7 +29,7 @@ struct Monitor_BFER : public Factory
 		int         n_frames       = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Monitor_BFER::prefix);
+		parameters(const std::string &p = Monitor_BFER::prefix);
 		virtual ~parameters();
 		Monitor_BFER::parameters* clone() const;
 

@@ -34,7 +34,7 @@ struct Codec_polar : public Codec_SISO_SIHO
 		Puncturer_polar     ::parameters *pct;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_polar::prefix);
+		parameters(const std::string &p = Codec_polar::prefix);
 		virtual ~parameters();
 		Codec_polar::parameters* clone() const;
 		void enable_puncturer();

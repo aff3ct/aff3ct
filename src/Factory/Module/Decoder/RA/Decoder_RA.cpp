@@ -11,7 +11,7 @@ const std::string aff3ct::factory::Decoder_RA::name   = "Decoder RA";
 const std::string aff3ct::factory::Decoder_RA::prefix = "dec";
 
 Decoder_RA::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Decoder::parameters(Decoder_RA::name, prefix),
   itl(new Interleaver::parameters("itl"))
 {

@@ -11,7 +11,7 @@ const std::string aff3ct::factory::Encoder_BCH::name   = "Encoder BCH";
 const std::string aff3ct::factory::Encoder_BCH::prefix = "enc";
 
 Encoder_BCH::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Encoder::parameters(Encoder_BCH::name, prefix)
 {
 	this->type = "BCH";

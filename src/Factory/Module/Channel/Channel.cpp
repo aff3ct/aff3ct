@@ -24,7 +24,7 @@ const std::string aff3ct::factory::Channel::name   = "Channel";
 const std::string aff3ct::factory::Channel::prefix = "chn";
 
 Channel::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Channel::name, Channel::name, prefix)
 {
 }

@@ -9,7 +9,7 @@ const std::string aff3ct::factory::Terminal_EXIT::name   = "Terminal EXIT";
 const std::string aff3ct::factory::Terminal_EXIT::prefix = "ter";
 
 Terminal_EXIT::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Terminal::parameters(Terminal_EXIT::name, prefix)
 {
 }

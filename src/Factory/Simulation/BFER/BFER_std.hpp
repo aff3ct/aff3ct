@@ -33,7 +33,7 @@ struct BFER_std : BFER
 		Codec_SIHO::parameters *cdc = nullptr;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = BFER_std::prefix);
+		parameters(const std::string &p = BFER_std::prefix);
 		virtual ~parameters();
 		BFER_std::parameters* clone() const;
 

@@ -32,7 +32,7 @@ struct Interleaver_core : public Factory
 		bool        uniform  = false; // set at true to regenerate the interleaver at each new frame
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Interleaver_core::prefix);
+		parameters(const std::string &p = Interleaver_core::prefix);
 		virtual ~parameters();
 		Interleaver_core::parameters* clone() const;
 

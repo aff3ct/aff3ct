@@ -173,7 +173,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-                            const std::vector<tools::Pattern_polar_i*> polar_patterns,
+                            const std::vector<tools::Pattern_polar_i*>& polar_patterns,
                             const int idx_r0, const int idx_r1,
                             const int n_frames, const std::string name)
 : Decoder          (K, N, n_frames, API_polar::get_n_frames(), name),

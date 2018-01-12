@@ -27,7 +27,7 @@ struct Terminal_EXIT : Terminal
 		std::string type = "STD";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Terminal_EXIT::prefix);
+		parameters(const std::string &p = Terminal_EXIT::prefix);
 		virtual ~parameters();
 		Terminal_EXIT::parameters* clone() const;
 

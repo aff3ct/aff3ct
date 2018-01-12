@@ -29,7 +29,7 @@ struct Codec_RA : public Codec_SIHO
 		Decoder_RA::parameters *dec;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_RA::prefix);
+		parameters(const std::string &p = Codec_RA::prefix);
 		virtual ~parameters();
 		Codec_RA::parameters* clone() const;
 

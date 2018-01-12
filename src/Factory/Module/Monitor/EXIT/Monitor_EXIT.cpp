@@ -12,7 +12,7 @@ const std::string aff3ct::factory::Monitor_EXIT::name   = "Monitor EXIT";
 const std::string aff3ct::factory::Monitor_EXIT::prefix = "mnt";
 
 Monitor_EXIT::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Monitor::parameters(Monitor_EXIT::name, prefix)
 {
 }

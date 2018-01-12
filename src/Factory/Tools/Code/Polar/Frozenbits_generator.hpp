@@ -29,7 +29,7 @@ struct Frozenbits_generator : public Factory
 		float       sigma   = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Frozenbits_generator::prefix);
+		parameters(const std::string &p = Frozenbits_generator::prefix);
 		virtual ~parameters();
 		Frozenbits_generator::parameters* clone() const;
 

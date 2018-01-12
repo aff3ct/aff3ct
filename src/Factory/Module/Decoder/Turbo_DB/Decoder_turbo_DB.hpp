@@ -38,7 +38,7 @@ struct Decoder_turbo_DB : public Decoder
 		Flip_and_check_DB::parameters *fnc;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_turbo_DB::prefix);
+		parameters(const std::string &p = Decoder_turbo_DB::prefix);
 		virtual ~parameters();
 		Decoder_turbo_DB::parameters* clone() const;
 
@@ -63,10 +63,6 @@ struct Decoder_turbo_DB : public Decoder
 	                                            const module::Interleaver<Q>           &itl,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_i);
-
-	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(header_list& head_dec, header_list& head_itl, const parameters& params, const bool full = true);
 };
 }
 }

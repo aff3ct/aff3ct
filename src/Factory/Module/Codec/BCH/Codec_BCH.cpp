@@ -7,7 +7,7 @@ const std::string aff3ct::factory::Codec_BCH::name   = "Codec BCH";
 const std::string aff3ct::factory::Codec_BCH::prefix = "cdc";
 
 Codec_BCH::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Codec     ::parameters(Codec_BCH::name, prefix),
   Codec_SIHO::parameters(Codec_BCH::name, prefix),
   enc(new Encoder_BCH::parameters("enc")),

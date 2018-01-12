@@ -7,7 +7,7 @@ const std::string aff3ct::factory::Codec_RA::name   = "Codec RA";
 const std::string aff3ct::factory::Codec_RA::prefix = "cdc";
 
 Codec_RA::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Codec     ::parameters(Codec_RA::name, prefix),
   Codec_SIHO::parameters(Codec_RA::name, prefix),
   enc(new Encoder_RA::parameters("enc")),

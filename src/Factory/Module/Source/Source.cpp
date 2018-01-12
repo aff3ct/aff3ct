@@ -14,7 +14,7 @@ const std::string aff3ct::factory::Source::name   = "Source";
 const std::string aff3ct::factory::Source::prefix = "src";
 
 Source::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Source::name, Source::name, prefix)
 {
 }

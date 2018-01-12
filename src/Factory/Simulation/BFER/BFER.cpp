@@ -9,7 +9,7 @@ const std::string aff3ct::factory::BFER::name   = "Simulation BFER";
 const std::string aff3ct::factory::BFER::prefix = "sim";
 
 BFER::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Simulation::parameters(name, prefix)
 {
 }

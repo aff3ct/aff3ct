@@ -20,7 +20,7 @@ const std::string aff3ct::factory::Decoder_LDPC::name   = "Decoder LDPC";
 const std::string aff3ct::factory::Decoder_LDPC::prefix = "dec";
 
 Decoder_LDPC::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Decoder::parameters(Decoder_LDPC::name, prefix)
 {
 	this->type   = "BP_FLOODING";

@@ -7,7 +7,7 @@ const std::string aff3ct::factory::Codec_repetition::name   = "Codec Repetition"
 const std::string aff3ct::factory::Codec_repetition::prefix = "cdc";
 
 Codec_repetition::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Codec     ::parameters(Codec_repetition::name, prefix),
   Codec_SIHO::parameters(Codec_repetition::name, prefix),
   enc(new Encoder_repetition::parameters("enc")),

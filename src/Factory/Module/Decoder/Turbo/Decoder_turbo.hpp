@@ -42,7 +42,7 @@ struct Decoder_turbo : public Decoder
 		Flip_and_check::parameters *fnc;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_turbo::prefix);
+		parameters(const std::string &p = Decoder_turbo::prefix);
 		virtual ~parameters();
 		Decoder_turbo::parameters<D1,D2>* clone() const;
 

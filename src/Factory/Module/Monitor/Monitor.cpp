@@ -11,13 +11,13 @@ const std::string aff3ct::factory::Monitor::name   = "Monitor";
 const std::string aff3ct::factory::Monitor::prefix = "mnt";
 
 Monitor::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Monitor::name, Monitor::name, prefix)
 {
 }
 
 Monitor::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Factory::parameters(name, Monitor::name, prefix)
 {
 }

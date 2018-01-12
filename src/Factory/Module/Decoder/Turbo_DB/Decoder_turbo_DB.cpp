@@ -11,7 +11,7 @@ using namespace aff3ct;
 using namespace aff3ct::factory;
 
 Decoder_turbo_DB::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Decoder::parameters(Decoder_turbo_DB::name, prefix),
   sub(new Decoder_RSC_DB::parameters(prefix+"-sub")),
   itl(new Interleaver::parameters("itl")),

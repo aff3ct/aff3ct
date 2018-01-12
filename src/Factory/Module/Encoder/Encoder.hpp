@@ -36,7 +36,7 @@ struct Encoder : public Factory
 		float       R           = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder::prefix);
+		parameters(const std::string &p = Encoder::prefix);
 		virtual ~parameters();
 		virtual Encoder::parameters* clone() const;
 
@@ -50,7 +50,7 @@ struct Encoder : public Factory
 		module::Encoder<B>* build() const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string &n, const std::string &p);
 	};
 
 	template <typename B = int>

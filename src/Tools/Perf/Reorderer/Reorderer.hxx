@@ -17,7 +17,7 @@ namespace tools
 {
 template <typename T>
 void Reorderer<T>
-::apply(const std::vector<const T*> in_data, T* out_data, const int data_length)
+::apply(const std::vector<const T*> &in_data, T* out_data, const int data_length)
 {
 	const int n_fra   = (int)in_data.size();
 	const int n_fra_2 = n_fra / 2;
@@ -136,7 +136,7 @@ struct Reorderer_static_core <T,N_FRAMES,J,16384>
 
 template <typename T, int N_FRAMES>
 void Reorderer_static<T,N_FRAMES>
-::apply(const std::vector<const T*> in_data, T* out_data, const int data_length)
+::apply(const std::vector<const T*> &in_data, T* out_data, const int data_length)
 {
 	if (in_data.size() != N_FRAMES)
 	{
@@ -198,7 +198,7 @@ void Reorderer_static<T,N_FRAMES>
 
 template <typename T>
 void Reorderer<T>
-::apply_rev(const T* in_data, std::vector<T*> out_data, const int data_length)
+::apply_rev(const T* in_data, std::vector<T*> &out_data, const int data_length)
 {
 	const int n_fra   = (int)out_data.size();
 	const int n_fra_2 = n_fra / 2;
@@ -370,7 +370,7 @@ struct Reorderer_static_core_rev <T,N_FRAMES,1,K,0>
 
 template <typename T, int N_FRAMES>
 void Reorderer_static<T,N_FRAMES>
-::apply_rev(const T* in_data, std::vector<T*> out_data, const int data_length)
+::apply_rev(const T* in_data, std::vector<T*> &out_data, const int data_length)
 {
 	if (out_data.size() != N_FRAMES)
 	{

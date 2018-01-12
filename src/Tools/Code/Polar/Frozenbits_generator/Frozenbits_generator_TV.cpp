@@ -23,8 +23,8 @@ const int Frozenbits_generator_TV::Mu = 100;
 
 Frozenbits_generator_TV
 ::Frozenbits_generator_TV(const int K, const int N,
-                          const std::string awgn_codes_dir,
-                          const std::string bin_pb_path,
+                          const std::string &awgn_codes_dir,
+                          const std::string &bin_pb_path,
                           const float sigma)
 : Frozenbits_generator_file(K, N, sigma), m((int)std::log2(N)), awgn_codes_dir(awgn_codes_dir), bin_pb_path(bin_pb_path)
 {

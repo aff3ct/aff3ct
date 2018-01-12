@@ -18,13 +18,13 @@ const std::string aff3ct::factory::Codec_SIHO::name   = "Codec SIHO";
 const std::string aff3ct::factory::Codec_SIHO::prefix = "cdc";
 
 Codec_SIHO::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Codec::parameters(Codec_SIHO::name, prefix)
 {
 }
 
 Codec_SIHO::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Codec::parameters(name, prefix)
 {
 }

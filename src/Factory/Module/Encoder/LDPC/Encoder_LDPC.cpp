@@ -14,7 +14,7 @@ const std::string aff3ct::factory::Encoder_LDPC::name   = "Encoder LDPC";
 const std::string aff3ct::factory::Encoder_LDPC::prefix = "enc";
 
 Encoder_LDPC::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Encoder::parameters(Encoder_LDPC::name, prefix)
 {
 	this->type = "AZCW";

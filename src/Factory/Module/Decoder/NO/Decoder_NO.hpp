@@ -23,7 +23,7 @@ struct Decoder_NO : public Decoder
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_NO::prefix);
+		parameters(const std::string &p = Decoder_NO::prefix);
 		virtual ~parameters();
 		Decoder_NO::parameters* clone() const;
 

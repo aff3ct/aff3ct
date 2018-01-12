@@ -13,7 +13,7 @@ const std::string aff3ct::factory::Puncturer_turbo::name   = "Puncturer Turbo";
 const std::string aff3ct::factory::Puncturer_turbo::prefix = "pct";
 
 Puncturer_turbo::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Puncturer::parameters(Puncturer_turbo::name, prefix)
 {
 	this->type = "TURBO";
@@ -54,7 +54,7 @@ void Puncturer_turbo::parameters
 		 "does not suppose a buffered encoding."};
 }
 
-int compute_N(const int K, const int tail_bits,  const std::string pattern)
+int compute_N(const int K, const int tail_bits, const std::string &pattern)
 {
 	std::vector<std::vector<bool>> pattern_bits(3);
 

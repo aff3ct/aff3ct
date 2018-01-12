@@ -25,7 +25,7 @@ struct Encoder_RSC_DB : public Encoder
 		std::string standard = "DVB-RCS1";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder_RSC_DB::prefix);
+		parameters(const std::string &p = Encoder_RSC_DB::prefix);
 		virtual ~parameters();
 		Encoder_RSC_DB::parameters* clone() const;
 

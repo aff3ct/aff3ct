@@ -13,7 +13,7 @@ const std::string aff3ct::factory::Decoder_RSC_DB::name   = "Decoder RSC DB";
 const std::string aff3ct::factory::Decoder_RSC_DB::prefix = "dec";
 
 Decoder_RSC_DB::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Decoder::parameters(Decoder_RSC_DB::name, prefix)
 {
 	this->type   = "BCJR";

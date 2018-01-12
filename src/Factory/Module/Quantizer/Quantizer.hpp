@@ -31,7 +31,7 @@ struct Quantizer : public Factory
 		int         n_frames   = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Quantizer::prefix);
+		parameters(const std::string &p = Quantizer::prefix);
 		virtual ~parameters();
 		Quantizer::parameters* clone() const;
 

@@ -23,7 +23,7 @@ struct Flip_and_check_DB : public Flip_and_check
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Flip_and_check_DB::prefix);
+		parameters(const std::string &p = Flip_and_check_DB::prefix);
 		virtual ~parameters();
 		Flip_and_check_DB::parameters* clone() const;
 

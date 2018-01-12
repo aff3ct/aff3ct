@@ -32,7 +32,7 @@ struct Codec_turbo : public Codec_SIHO
 		Puncturer_turbo::parameters   *pct;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_turbo::prefix);
+		parameters(const std::string &p = Codec_turbo::prefix);
 		virtual ~parameters();
 		Codec_turbo::parameters* clone() const;
 		void enable_puncturer();

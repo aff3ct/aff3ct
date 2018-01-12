@@ -26,7 +26,7 @@ struct Encoder_RSC : public Encoder
 		std::vector<int> poly     = {013, 015};
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder_RSC::prefix);
+		parameters(const std::string &p = Encoder_RSC::prefix);
 		virtual ~parameters();
 		Encoder_RSC::parameters* clone() const;
 

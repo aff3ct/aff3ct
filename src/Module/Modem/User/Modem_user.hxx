@@ -18,7 +18,7 @@ namespace module
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_user<B,R,Q,MAX>
-::Modem_user(const int N, const R sigma, const int bits_per_symbol, const std::string const_path,
+::Modem_user(const int N, const std::string &const_path, const R sigma, const int bits_per_symbol,
              const bool disable_sig2, const int n_frames, const std::string name)
 : Modem<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), sigma, n_frames, name),
   bits_per_symbol(bits_per_symbol),

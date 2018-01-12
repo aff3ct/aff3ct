@@ -12,7 +12,7 @@ const std::string aff3ct::factory::Frozenbits_generator::name   = "Frozen bits g
 const std::string aff3ct::factory::Frozenbits_generator::prefix = "fbg";
 
 Frozenbits_generator::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Frozenbits_generator::name, Frozenbits_generator::name, prefix)
 {
 }

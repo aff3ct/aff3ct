@@ -30,7 +30,7 @@ struct Decoder_RSC_DB : public Decoder
 		bool        buffered = true;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_RSC_DB::prefix);
+		parameters(const std::string &p = Decoder_RSC_DB::prefix);
 		virtual ~parameters();
 		Decoder_RSC_DB::parameters* clone() const;
 

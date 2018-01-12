@@ -23,7 +23,7 @@ struct Monitor : public Factory
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Monitor::prefix);
+		parameters(const std::string &p = Monitor::prefix);
 		virtual ~parameters();
 		virtual Monitor::parameters* clone() const;
 
@@ -33,7 +33,7 @@ struct Monitor : public Factory
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string &n, const std::string &p);
 	};
 };
 }

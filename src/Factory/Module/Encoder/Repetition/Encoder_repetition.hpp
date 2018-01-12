@@ -24,7 +24,7 @@ struct Encoder_repetition : public Encoder
 		bool buffered = true;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder_repetition::prefix);
+		parameters(const std::string &p = Encoder_repetition::prefix);
 		virtual ~parameters();
 		Encoder_repetition::parameters* clone() const;
 

@@ -13,7 +13,7 @@ const std::string aff3ct::factory::Puncturer_turbo_DB::name   = "Puncturer Turbo
 const std::string aff3ct::factory::Puncturer_turbo_DB::prefix = "pct";
 
 Puncturer_turbo_DB::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Puncturer::parameters(Puncturer_turbo_DB::name, prefix)
 {
 	this->type = "TURBO_DB";

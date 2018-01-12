@@ -30,7 +30,7 @@ struct Decoder_BCH : public Decoder
 		int m = 0; // Gallois field order
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_BCH::prefix);
+		parameters(const std::string &p = Decoder_BCH::prefix);
 		virtual ~parameters();
 		Decoder_BCH::parameters* clone() const;
 

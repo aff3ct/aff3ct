@@ -7,7 +7,7 @@ const std::string aff3ct::factory::Codec_LDPC::name   = "Codec LDPC";
 const std::string aff3ct::factory::Codec_LDPC::prefix = "cdc";
 
 Codec_LDPC::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_LDPC::name, prefix),
   Codec_SISO_SIHO::parameters(Codec_LDPC::name, prefix),
   enc(new Encoder_LDPC::parameters("enc")),

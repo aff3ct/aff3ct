@@ -24,7 +24,7 @@ struct Puncturer_LDPC : public Puncturer
 		std::vector<bool> pattern;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Puncturer_LDPC::prefix);
+		parameters(const std::string &p = Puncturer_LDPC::prefix);
 		virtual ~parameters();
 		Puncturer_LDPC::parameters* clone() const;
 

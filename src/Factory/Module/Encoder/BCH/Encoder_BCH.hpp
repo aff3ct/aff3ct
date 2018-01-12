@@ -24,7 +24,7 @@ struct Encoder_BCH : public Encoder
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder_BCH::prefix);
+		parameters(const std::string &p = Encoder_BCH::prefix);
 		virtual ~parameters();
 		Encoder_BCH::parameters* clone() const;
 

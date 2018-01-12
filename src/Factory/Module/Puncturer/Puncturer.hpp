@@ -30,7 +30,7 @@ struct Puncturer : Factory
 		int         n_frames = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Puncturer::prefix);
+		parameters(const std::string &p = Puncturer::prefix);
 		virtual ~parameters();
 		virtual Puncturer::parameters* clone() const;
 
@@ -44,7 +44,7 @@ struct Puncturer : Factory
 		module::Puncturer<B,Q>* build() const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string &n, const std::string &p);
 	};
 
 	template <typename B, typename Q>

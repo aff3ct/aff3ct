@@ -16,7 +16,7 @@ const std::string aff3ct::factory::Quantizer::name   = "Quantizer";
 const std::string aff3ct::factory::Quantizer::prefix = "qnt";
 
 Quantizer::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Quantizer::name, Quantizer::name, prefix)
 {
 }

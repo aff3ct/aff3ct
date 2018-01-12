@@ -29,7 +29,7 @@ struct Codec_repetition : public Codec_SIHO
 		Decoder_repetition::parameters *dec;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_repetition::prefix);
+		parameters(const std::string &p = Codec_repetition::prefix);
 		virtual ~parameters();
 		Codec_repetition::parameters* clone() const;
 

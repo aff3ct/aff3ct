@@ -9,13 +9,13 @@ const std::string aff3ct::factory::Puncturer::name   = "Puncturer";
 const std::string aff3ct::factory::Puncturer::prefix = "pct";
 
 Puncturer::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Factory::parameters(Puncturer::name, Puncturer::name, prefix)
 {
 }
 
 Puncturer::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Factory::parameters(name, Puncturer::name, prefix)
 {
 }

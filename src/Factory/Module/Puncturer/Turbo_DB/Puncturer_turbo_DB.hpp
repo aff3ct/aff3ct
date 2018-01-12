@@ -23,7 +23,7 @@ struct Puncturer_turbo_DB : public Puncturer
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Puncturer_turbo_DB::prefix);
+		parameters(const std::string &p = Puncturer_turbo_DB::prefix);
 		virtual ~parameters();
 		Puncturer_turbo_DB::parameters* clone() const;
 

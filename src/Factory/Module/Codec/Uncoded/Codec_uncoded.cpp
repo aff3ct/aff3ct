@@ -7,7 +7,7 @@ const std::string aff3ct::factory::Codec_uncoded::name   = "Codec Uncoded";
 const std::string aff3ct::factory::Codec_uncoded::prefix = "cdc";
 
 Codec_uncoded::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_uncoded::name, prefix),
   Codec_SISO_SIHO::parameters(Codec_uncoded::name, prefix),
   enc(new Encoder::parameters("enc")),

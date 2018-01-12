@@ -9,7 +9,7 @@ const std::string aff3ct::factory::Flip_and_check_DB::name   = "Flip and check D
 const std::string aff3ct::factory::Flip_and_check_DB::prefix = "fnc";
 
 Flip_and_check_DB::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Flip_and_check::parameters(Flip_and_check_DB::name, prefix)
 {
 }

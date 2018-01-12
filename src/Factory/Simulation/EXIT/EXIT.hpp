@@ -55,7 +55,7 @@ struct EXIT : Simulation
 		Terminal_EXIT::parameters *ter = nullptr;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = EXIT::prefix);
+		parameters(const std::string &p = EXIT::prefix);
 		virtual ~parameters();
 		virtual EXIT::parameters* clone() const;
 

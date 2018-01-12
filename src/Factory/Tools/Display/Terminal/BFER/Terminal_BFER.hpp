@@ -27,7 +27,7 @@ struct Terminal_BFER : Terminal
 		std::string type = "STD";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Terminal_BFER::prefix);
+		parameters(const std::string &p = Terminal_BFER::prefix);
 		virtual ~parameters();
 		Terminal_BFER::parameters* clone() const;
 

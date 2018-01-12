@@ -9,7 +9,7 @@ const std::string aff3ct::factory::Simulation::name   = "Simulation";
 const std::string aff3ct::factory::Simulation::prefix = "sim";
 
 Simulation::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Launcher::parameters(name, Simulation::name, prefix)
 {
 }

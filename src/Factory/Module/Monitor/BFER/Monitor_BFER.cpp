@@ -11,7 +11,7 @@ const std::string aff3ct::factory::Monitor_BFER::name   = "Monitor BER/FER";
 const std::string aff3ct::factory::Monitor_BFER::prefix = "mnt";
 
 Monitor_BFER::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Monitor::parameters(Monitor::name, prefix)
 {
 }

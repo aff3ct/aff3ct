@@ -27,7 +27,7 @@ struct Encoder_RA : public Encoder
 		Interleaver::parameters *itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder_RA::prefix);
+		parameters(const std::string &p = Encoder_RA::prefix);
 		virtual ~parameters();
 		Encoder_RA::parameters* clone() const;
 

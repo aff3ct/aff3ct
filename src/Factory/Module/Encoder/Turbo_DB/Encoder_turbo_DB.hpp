@@ -32,7 +32,7 @@ struct Encoder_turbo_DB : public Encoder
 		Encoder_RSC_DB::parameters *sub;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder_turbo_DB::prefix);
+		parameters(const std::string &p = Encoder_turbo_DB::prefix);
 		virtual ~parameters();
 		Encoder_turbo_DB::parameters* clone() const;
 

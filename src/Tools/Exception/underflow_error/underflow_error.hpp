@@ -14,12 +14,12 @@ class underflow_error : public exception
 public:
 	underflow_error() throw();
 
-	underflow_error(const std::string message) throw();
+	underflow_error(const std::string &message) throw();
 
-	underflow_error(const std::string filename,
+	underflow_error(const std::string &filename,
 	                const int line_num,
-	                const std::string funcname = "",
-	                const std::string message = "") throw();
+	                const std::string &funcname = exception::empty_string,
+	                const std::string &message = exception::empty_string) throw();
 
 	virtual ~underflow_error() throw();
 };

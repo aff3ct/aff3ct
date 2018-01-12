@@ -30,7 +30,7 @@ struct Source : public Factory
 		int         seed     = 0;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Source::prefix);
+		parameters(const std::string &p = Source::prefix);
 		virtual ~parameters();
 		Source::parameters* clone() const;
 

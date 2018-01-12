@@ -31,7 +31,7 @@ struct CRC : public Factory
 		int         n_frames      = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = CRC::prefix);
+		parameters(const std::string &p = CRC::prefix);
 		virtual ~parameters();
 		CRC::parameters* clone() const;
 

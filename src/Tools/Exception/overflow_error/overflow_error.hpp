@@ -14,12 +14,12 @@ class overflow_error : public exception
 public:
 	overflow_error() throw();
 
-	overflow_error(const std::string message) throw();
+	overflow_error(const std::string &message) throw();
 
-	overflow_error(const std::string filename,
+	overflow_error(const std::string &filename,
 	               const int line_num,
-	               const std::string funcname = "",
-	               const std::string message = "") throw();
+	               const std::string &funcname = exception::empty_string,
+	               const std::string &message = exception::empty_string) throw();
 
 	virtual ~overflow_error() throw();
 };

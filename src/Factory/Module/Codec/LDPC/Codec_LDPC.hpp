@@ -31,7 +31,7 @@ struct Codec_LDPC : public Codec_SISO_SIHO
 		Puncturer_LDPC::parameters *pct;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_LDPC::prefix);
+		parameters(const std::string &p = Codec_LDPC::prefix);
 		virtual ~parameters();
 		Codec_LDPC::parameters* clone() const;
 		void enable_puncturer();

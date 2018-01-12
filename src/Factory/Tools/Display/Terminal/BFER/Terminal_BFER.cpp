@@ -7,7 +7,7 @@ const std::string aff3ct::factory::Terminal_BFER::name   = "Terminal BFER";
 const std::string aff3ct::factory::Terminal_BFER::prefix = "ter";
 
 Terminal_BFER::parameters
-::parameters(const std::string prefix)
+::parameters(const std::string &prefix)
 : Terminal::parameters(Terminal_BFER::name, prefix)
 {
 }
