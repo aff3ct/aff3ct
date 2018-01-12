@@ -37,8 +37,7 @@ protected:
 	tools::Binary_tree<Contents_SC<B,R>> polar_tree;
 
 public:
-	Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames = 1,
- 	                       const std::string name = "Decoder_polar_SC_naive");
+	Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames = 1);
 	virtual ~Decoder_polar_SC_naive();
 
 	virtual void notify_frozenbits_update();

@@ -7,11 +7,14 @@ using namespace aff3ct::module;
 
 template <typename B>
 Source_random_fast<B>
-::Source_random_fast(const int K, const int seed, const int n_frames, const std::string name)
-: Source<B>(K, n_frames, name),
+::Source_random_fast(const int K, const int seed, const int n_frames)
+: Source<B>(K, n_frames),
   mt19937(seed),
   mt19937_simd()
 {
+	const std::string name = "Source_random_fast";
+	this->set_name(name);
+	
 	mipp::vector<int> seeds(mipp::nElReg<int>());
 	for (auto i = 0; i < mipp::nElReg<int>(); i++)
 		seeds[i] = mt19937.rand();

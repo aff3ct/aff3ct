@@ -51,15 +51,18 @@ protected:
 	const int n_dec_waves;
 
 public:
-	Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	        std::string name = "Decoder")
-	: Module(n_frames, name, "Decoder"),
+	Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1)
+	: Module(n_frames),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
 	  K(K),
 	  N(N),
 	  simd_inter_frame_level(simd_inter_frame_level),
 	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
 	{
+		const std::string name = "Decoder";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (K <= 0)
 		{
 			std::stringstream message;

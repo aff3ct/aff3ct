@@ -21,8 +21,7 @@ private:
 #endif
 
 public:
-	Encoder_coset(const int K, const int N, const int seed = 0, const int n_frames = 1,
-	              const std::string name = "Encoder_coset");
+	Encoder_coset(const int K, const int N, const int seed = 0, const int n_frames = 1);
 	virtual ~Encoder_coset();
 
 protected:

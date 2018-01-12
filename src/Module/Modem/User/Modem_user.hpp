@@ -24,7 +24,7 @@ private:
 
 public:
 	Modem_user(const int N, const std::string &const_path, const R sigma = (R)1, const int bits_per_symbol = 2,
-	           const bool disable_sig2 = false, const int n_frames = 1, const std::string name = "Modem_user");
+	           const bool disable_sig2 = false, const int n_frames = 1);
 	virtual ~Modem_user();
 
 	static int size_mod(const int N, const int bps)

@@ -8,10 +8,12 @@ template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::Decoder_polar_SCAN_naive_sys(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
-                               const int n_frames, const std::string name)
-: Decoder(K, N, n_frames, 1, name),
-  Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>(K, N, max_iter, frozen_bits, n_frames, name)
+                               const int n_frames)
+: Decoder(K, N, n_frames, 1),
+  Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>(K, N, max_iter, frozen_bits, n_frames)
 {
+	const std::string name = "Decoder_polar_SCAN_naive_sys";
+	this->set_name(name);
 }
 
 template <typename B, typename R,

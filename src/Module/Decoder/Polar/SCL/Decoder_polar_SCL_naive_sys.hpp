@@ -18,7 +18,7 @@ class Decoder_polar_SCL_naive_sys : public Decoder_polar_SCL_naive<B,R,F,G>
 
 public:
 	Decoder_polar_SCL_naive_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                            const int n_frames = 1, const std::string name = "Decoder_polar_SCL_naive_sys");
+	                            const int n_frames = 1);
 
 	virtual ~Decoder_polar_SCL_naive_sys() {}
 

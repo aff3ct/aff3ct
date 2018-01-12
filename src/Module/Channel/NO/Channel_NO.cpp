@@ -4,9 +4,11 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_NO<R>
-::Channel_NO(const int N, const bool add_users, const int n_frames, const std::string name)
-: Channel<R>(N, (R)1, n_frames, name), add_users(add_users)
+::Channel_NO(const int N, const bool add_users, const int n_frames)
+: Channel<R>(N, (R)1, n_frames), add_users(add_users)
 {
+	const std::string name = "Channel_NO";
+	this->set_name(name);
 }
 
 template <typename R>

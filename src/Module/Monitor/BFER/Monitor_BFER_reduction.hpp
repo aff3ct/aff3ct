@@ -19,7 +19,7 @@ private:
 
 public:
 	Monitor_BFER_reduction(const int size, const unsigned max_fe, std::vector<Monitor_BFER<B>*> monitors,
-	                       const int n_frames = 1, const std::string name = "Monitor_BFER_reduction");
+	                       const int n_frames = 1);
 	virtual ~Monitor_BFER_reduction();
 
 	unsigned long long get_n_analyzed_fra_historic() const;

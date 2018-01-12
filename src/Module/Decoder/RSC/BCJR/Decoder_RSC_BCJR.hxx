@@ -18,10 +18,9 @@ Decoder_RSC_BCJR<B,R>
                    const std::vector<std::vector<int>> &trellis, 
                    const bool buffered_encoding,
                    const int n_frames,
-                   const int simd_inter_frame_level,
-                   const std::string name)
-: Decoder               (K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level, name),
-  Decoder_SISO_SIHO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level, name),
+                   const int simd_inter_frame_level)
+: Decoder               (K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level),
+  Decoder_SISO_SIHO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level),
   n_states((int)trellis[0].size()),
   n_ff((int)std::log2(n_states)),
   buffered_encoding(buffered_encoding),
@@ -31,6 +30,9 @@ Decoder_RSC_BCJR<B,R>
   ext( K       * simd_inter_frame_level + mipp::nElReg<R>()),
   s  ( K       * simd_inter_frame_level + mipp::nElReg<B>())
 {
+	const std::string name = "Decoder_RSC_BCJR";
+	this->set_name(name);
+	
 	if (!tools::is_power_of_2(n_states))
 	{
 		std::stringstream message;

@@ -51,12 +51,14 @@ Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
                                                     const R offset,
                                                     const bool enable_syndrome,
                                                     const int syndrome_depth,
-                                                    const int n_frames,
-                                                    const std::string name)
-: Decoder(K, N, n_frames, 1, name),
-  Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
+                                                    const int n_frames)
+: Decoder(K, N, n_frames, 1),
+  Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
   normalize_factor(normalize_factor), offset(offset)
 {
+	const std::string name = "Decoder_LDPC_BP_flooding_offset_normalize_min_sum";
+	this->set_name(name);
+	
 	if (typeid(R) == typeid(signed char))
 	{
 		std::stringstream message;

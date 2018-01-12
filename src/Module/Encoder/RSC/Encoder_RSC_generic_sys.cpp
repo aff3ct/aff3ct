@@ -12,12 +12,15 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_RSC_generic_sys<B>
 ::Encoder_RSC_generic_sys(const int& K, const int& N, const bool buffered_encoding, const std::vector<int> poly,
-                          const int n_frames, const std::string name)
-: Encoder_RSC_sys<B>(K, N, (int)std::floor(std::log2(poly[0])), n_frames, buffered_encoding, name),
+                          const int n_frames)
+: Encoder_RSC_sys<B>(K, N, (int)std::floor(std::log2(poly[0])), n_frames, buffered_encoding),
   out_parity(),
   next_state(),
   sys_tail  ()
 {
+	const std::string name = "Encoder_RSC_generic_sys";
+	this->set_name(name);
+	
 	if (poly.size() < 2)
 	{
 		std::stringstream message;

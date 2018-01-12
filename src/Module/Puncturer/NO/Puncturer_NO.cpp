@@ -6,9 +6,11 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Puncturer_NO<B,Q>
-::Puncturer_NO(const int K, const int N, const int n_frames, const std::string name)
-: Puncturer<B,Q>(K, N, N, n_frames, name)
+::Puncturer_NO(const int K, const int N, const int n_frames)
+: Puncturer<B,Q>(K, N, N, n_frames)
 {
+	const std::string name = "Puncturer_NO";
+	this->set_name(name);
 }
 
 template <typename B, typename Q>

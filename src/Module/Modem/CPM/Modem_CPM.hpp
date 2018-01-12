@@ -52,8 +52,7 @@ public:
 	          std::string mapping    = "NATURAL",
 	          std::string wave_shape = "GMSK",
 	          bool no_sig2           = false,
-	          int  n_frames          = 1,
-	          const std::string name = "Modem_CPM");
+	          int  n_frames          = 1);
 	virtual ~Modem_CPM();
 
 	void set_sigma(const R sigma);

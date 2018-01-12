@@ -33,8 +33,7 @@ public:
 	                           std::vector<Monitor_BFER<B>*> monitors,
 	                           const std::thread::id master_thread_id,
 	                           const std::chrono::nanoseconds d_mpi_comm_frequency = std::chrono::milliseconds(1000),
-	                           const int n_frames = 1,
-	                           const std::string name = "Monitor_BFER_reduction_mpi");
+	                           const int n_frames = 1);
 	virtual ~Monitor_BFER_reduction_mpi();
 
 	bool fe_limit_achieved();

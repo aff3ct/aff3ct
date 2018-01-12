@@ -13,17 +13,21 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_LDPC<B>
-::Encoder_LDPC(const int K, const int N, const int n_frames, const std::string name)
-: Encoder<B>(K, N, n_frames, name)
+::Encoder_LDPC(const int K, const int N, const int n_frames)
+: Encoder<B>(K, N, n_frames)
 {
+	const std::string name = "Encoder_LDPC";
+	this->set_name(name);
 }
 
 template <typename B>
 Encoder_LDPC<B>
-::Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const int n_frames,
-               const std::string name)
-: Encoder<B>(K, N, n_frames, name), tG(N * K, 0)
+::Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const int n_frames)
+: Encoder<B>(K, N, n_frames), tG(N * K, 0)
 {
+	const std::string name = "Encoder_LDPC";
+	this->set_name(name);
+	
 	if (K != (int)G.get_n_cols())
 	{
 		std::stringstream message;

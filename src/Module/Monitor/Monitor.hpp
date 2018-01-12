@@ -65,9 +65,13 @@ public:
 	 *
 	 * \param size: number of bits.
 	 */
-	Monitor(const int size, int n_frames = 1, const std::string name = "Monitor")
-	: Module(n_frames, name, "Monitor"), size(size)
+	Monitor(const int size, int n_frames = 1)
+	: Module(n_frames), size(size)
 	{
+		const std::string name = "Monitor";
+		this->set_name(name);
+		this->set_short_name(name);
+		
 		if (size <= 0)
 		{
 			std::stringstream message;

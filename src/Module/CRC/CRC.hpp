@@ -59,9 +59,13 @@ public:
 	 * \param n_frames: number of frames to process in the CRC.
 	 * \param name:     CRC's name.
 	 */
-	CRC(const int K, const int size, const int n_frames = 1, const std::string name = "CRC")
-	: Module(n_frames, name, "CRC"), K(K), size(size)
+	CRC(const int K, const int size, const int n_frames = 1)
+	: Module(n_frames), K(K), size(size)
 	{
+		const std::string name = "CRC";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (K <= 0)
 		{
 			std::stringstream message;

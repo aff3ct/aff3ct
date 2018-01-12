@@ -24,7 +24,7 @@ protected:
 
 public:
 	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc,
-	                     const int n_frames = 1, const std::string name = "Encoder_turbo_legacy");
+	                     const int n_frames = 1);
 	virtual ~Encoder_turbo_legacy() {}
 
 	int tail_length() const { return sub_enc.tail_length() + sub_enc.tail_length(); }

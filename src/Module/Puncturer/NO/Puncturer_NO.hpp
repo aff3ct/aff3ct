@@ -11,7 +11,7 @@ template <typename B = int, typename Q = float>
 class Puncturer_NO : public Puncturer<B,Q>
 {
 public:
-	Puncturer_NO(const int K, const int N, const int n_frames = 1, const std::string name = "Puncturer_NO");
+	Puncturer_NO(const int K, const int N, const int n_frames = 1);
 	virtual ~Puncturer_NO();
 
 	void   puncture(const B *X_N1, B *X_N2) const; using Puncturer<B,Q>::puncture;

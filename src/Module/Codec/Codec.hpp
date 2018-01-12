@@ -54,9 +54,8 @@ protected :
 	float sigma;
 
 public:
-	Codec(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1,
-	      const std::string name = "Codec")
-	: Module(n_frames, name, "Codec"),
+	Codec(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1)
+	: Module(n_frames),
 	  interleaver_core(nullptr),
 	  interleaver_bit (nullptr),
 	  interleaver_llr (nullptr),
@@ -64,6 +63,10 @@ public:
 	  puncturer       (nullptr),
 	  K(K), N_cw(N_cw), N(N), tail_length(tail_length), sigma(-1.f)
 	{
+		const std::string name = "Codec";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (K <= 0)
 		{
 			std::stringstream message;

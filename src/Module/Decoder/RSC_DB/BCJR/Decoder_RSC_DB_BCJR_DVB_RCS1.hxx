@@ -19,11 +19,13 @@ Decoder_RSC_DB_BCJR_DVB_RCS1<B,R,MAX>
 ::Decoder_RSC_DB_BCJR_DVB_RCS1(const int K,
                                const std::vector<std::vector<int>> &trellis,
                                const bool buffered_encoding,
-                               const int n_frames,
-                               const std::string name)
-: Decoder(K, 2 * K, n_frames, 1, name),
-  Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, name)
+                               const int n_frames)
+: Decoder(K, 2 * K, n_frames, 1),
+  Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames)
 {
+	const std::string name = "Decoder_RSC_DB_BCJR_DVB_RCS1";
+	this->set_name(name);
+	
 	if (this->n_states != 8)
 	{
 		std::stringstream message;

@@ -4,11 +4,13 @@ using namespace aff3ct::module;
 
 template <typename B>
 Source_random<B>
-::Source_random(const int K, const int seed, const int n_frames, const std::string name)
-: Source<B>(K, n_frames, name),
+::Source_random(const int K, const int seed, const int n_frames)
+: Source<B>(K, n_frames),
   rd_engine(seed), 
   uniform_dist(0, 1) 
 {
+	const std::string name = "Source_random";
+	this->set_name(name);
 }
 
 template <typename B>

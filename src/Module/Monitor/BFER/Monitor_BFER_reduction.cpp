@@ -14,11 +14,14 @@ using namespace aff3ct::module;
 template <typename B>
 Monitor_BFER_reduction<B>
 ::Monitor_BFER_reduction(const int size, const unsigned max_fe, std::vector<Monitor_BFER<B>*> monitors,
-                         const int n_frames, const std::string name)
-: Monitor_BFER<B>           (size, max_fe, n_frames, name),
-  n_analyzed_frames_historic(0                           ),
-  monitors                  (monitors                    )
+                         const int n_frames)
+: Monitor_BFER<B>           (size, max_fe, n_frames),
+  n_analyzed_frames_historic(0                     ),
+  monitors                  (monitors              )
 {
+	const std::string name = "Monitor_BFER_reduction";
+	this->set_name(name);
+	
 	if (monitors.size() == 0)
 	{
 		std::stringstream message;

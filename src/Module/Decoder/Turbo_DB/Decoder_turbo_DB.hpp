@@ -51,8 +51,7 @@ public:
 	                 const int& n_ite,
 	                 const Interleaver<R> &pi,
 	                 Decoder_RSC_DB_BCJR<B,R> &siso_n,
-	                 Decoder_RSC_DB_BCJR<B,R> &siso_i,
-	                 const std::string name = "Decoder_turbo_DB");
+	                 Decoder_RSC_DB_BCJR<B,R> &siso_i);
 	virtual ~Decoder_turbo_DB();
 
 	void add_handler_siso_n(std::function<bool(const int,

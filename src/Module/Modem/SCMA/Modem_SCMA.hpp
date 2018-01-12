@@ -25,7 +25,7 @@ private:
 
 public:
 	Modem_SCMA(const int N, const R sigma = (R)1, const int bps = 3, const bool disable_sig2 = false,
-	           const int n_ite = 1, const int n_frames = 6, const std::string name = "Modem_SCMA");
+	           const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA();
 
 	virtual void set_sigma(const R sigma);

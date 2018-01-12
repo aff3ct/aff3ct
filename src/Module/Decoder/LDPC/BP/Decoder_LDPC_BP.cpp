@@ -20,16 +20,18 @@ Decoder_LDPC_BP<B,R>
                   const bool enable_syndrome,
                   const int syndrome_depth,
                   const int n_frames,
-                  const int simd_inter_frame_level,
-                  const std::string name)
-: Decoder               (K, N, n_frames, simd_inter_frame_level, name),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level, name),
-  n_ite                 (n_ite                                       ),
-  H                     (H                                           ),
-  enable_syndrome       (enable_syndrome                             ),
-  syndrome_depth        (syndrome_depth                              ),
-  cur_syndrome_depth    (0                                           )
+                  const int simd_inter_frame_level)
+: Decoder               (K, N, n_frames, simd_inter_frame_level),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level),
+  n_ite                 (n_ite                                 ),
+  H                     (H                                     ),
+  enable_syndrome       (enable_syndrome                       ),
+  syndrome_depth        (syndrome_depth                        ),
+  cur_syndrome_depth    (0                                     )
 {
+	const std::string name = "Decoder_LDPC_BP";
+	this->set_name(name);
+	
 	if (n_ite <= 0)
 	{
 		std::stringstream message;

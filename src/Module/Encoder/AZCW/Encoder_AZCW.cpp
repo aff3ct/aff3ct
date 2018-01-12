@@ -4,9 +4,11 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_AZCW<B>
-::Encoder_AZCW(const int K, const int N, const int n_frames, const std::string name)
-: Encoder<B>(K, N, n_frames, name)
+::Encoder_AZCW(const int K, const int N, const int n_frames)
+: Encoder<B>(K, N, n_frames)
 {
+	const std::string name = "Encoder_AZCW";
+	this->set_name(name);
 }
 
 template <typename B>

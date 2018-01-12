@@ -14,14 +14,17 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_turbo<B>
 ::Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi,
-                Encoder<B> &enco_n, Encoder<B> &enco_i, const int n_frames, const std::string name)
-: Encoder<B>(K, N, n_frames, name),
+                Encoder<B> &enco_n, Encoder<B> &enco_i, const int n_frames)
+: Encoder<B>(K, N, n_frames),
   pi        (pi),
   enco_n    (enco_n),
   enco_i    (enco_i),
   U_K_i     (K * n_frames),
   X_N_tmp   ((enco_n.get_N() >= enco_i.get_N() ? enco_n.get_N() : enco_i.get_N()) * n_frames)
 {
+	const std::string name = "Encoder_turbo";
+	this->set_name(name);
+	
 	if (N - (enco_n.tail_length() + enco_i.tail_length()) != 3 * K)
 	{
 		std::stringstream message;

@@ -13,11 +13,13 @@ Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 ::Decoder_RSC_BCJR_seq_very_fast(const int &K,
                                  const std::vector<std::vector<int>> &trellis,
                                  const bool buffered_encoding,
-                                 const int n_frames,
-                                 const std::string name)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1, name),
-  Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding, n_frames, name)
+                                 const int n_frames)
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1),
+  Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding, n_frames)
 {
+	const std::string name = "Decoder_RSC_BCJR_seq_very_fast";
+	this->set_name(name);
+	
 	if (this->K % mipp::nElReg<R>())
 	{
 		std::stringstream message;

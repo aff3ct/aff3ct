@@ -28,14 +28,12 @@ Modem_CPM<B,R,Q,MAX>
             std::string mapping,
             std::string wave_shape,
             bool no_sig2,
-            int  n_frames,
-            const std::string name)
+            int  n_frames)
 : Modem<B,R,Q>(N,
                Modem_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, cpm_p, sampling_factor),
                Modem_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
                sigma,
-               n_frames,
-               name),
+               n_frames),
   no_sig2   (no_sig2                            ),
   cpm       (cpm_L,
              cpm_k,
@@ -53,6 +51,9 @@ Modem_CPM<B,R,Q,MAX>
   cpe       (n_sy, cpm                          ),
   bcjr      (cpm, n_sy_tl                       )
 {
+	const std::string name = "Modem_CPM";
+	this->set_name(name);
+	
 	if (N % bits_per_symbol)
 	{
 		std::stringstream message;

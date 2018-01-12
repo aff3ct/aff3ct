@@ -16,10 +16,7 @@ protected:
 	std::string coderate;
 
 public:
-	Puncturer_turbo_DB(const int &K,
-	                   const int &N,
-	                   const int n_frames = 1,
-	                   const std::string name = "Puncturer_turbo_DB");
+	Puncturer_turbo_DB(const int &K, const int &N, const int n_frames = 1);
 	virtual ~Puncturer_turbo_DB();
 
 protected:

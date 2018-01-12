@@ -12,12 +12,14 @@ using namespace aff3ct::module;
 template <typename B, typename Q>
 Codec_RSC<B,Q>
 ::Codec_RSC(const factory::Encoder_RSC::parameters &enc_params,
-            const factory::Decoder_RSC::parameters &dec_params,
-            const std::string name)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+            const factory::Decoder_RSC::parameters &dec_params)
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   buffered_encoding(enc_params.buffered)
 {
+	const std::string name = "Codec_RSC";
+	this->set_name(name);
+	
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{

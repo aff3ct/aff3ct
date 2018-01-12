@@ -16,19 +16,20 @@ namespace module
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_QAM<B,R,Q,MAX>
-::Modem_QAM(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames,
-            const std::string name)
+::Modem_QAM(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames)
 : Modem<B,R,Q>(N,
                (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
                sigma,
-               n_frames,
-               name),
+               n_frames),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sqrt_es        ((R)std::sqrt(2.0 * (this->nbr_symbols -1) / 3.0)),
   disable_sig2   (disable_sig2),
   constellation  (nbr_symbols)
 {
+	const std::string name = "Modem_QAM";
+	this->set_name(name);
+	
 	if (this->bits_per_symbol % 2)
 	{
 		std::stringstream message;

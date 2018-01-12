@@ -21,8 +21,7 @@ public:
 	               const int &N,
 	               const int &N_cw,
 	               const std::vector<bool> &pattern,
-	               const int n_frames = 1,
-	               const std::string name = "Puncturer_LDPC");
+	               const int n_frames = 1);
 	virtual ~Puncturer_LDPC();
 
 protected:

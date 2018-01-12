@@ -71,10 +71,13 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem(const int N, const int N_mod, const int N_fil, const R sigma = -1.f, const int n_frames = 1,
-	      const std::string name = "Modem")
-	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
+	Modem(const int N, const int N_mod, const int N_fil, const R sigma = -1.f, const int n_frames = 1)
+	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
 	{
+		const std::string name = "Modem";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (N <= 0)
 		{
 			std::stringstream message;
@@ -107,10 +110,13 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem(const int N, const int N_mod, const R sigma = -1.f, const int n_frames = 1,
-	        const std::string name = "Modem")
-	: Module(n_frames, name, "Modem"), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
+	Modem(const int N, const int N_mod, const R sigma = -1.f, const int n_frames = 1)
+	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
 	{
+		const std::string name = "Modem";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (N <= 0)
 		{
 			std::stringstream message;
@@ -135,9 +141,13 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Modem")
-	: Module(n_frames, name, "Modem"), N(N), N_mod(N), N_fil(N), sigma(sigma)
+	Modem(const int N, const R sigma = -1.f, const int n_frames = 1)
+	: Module(n_frames), N(N), N_mod(N), N_fil(N), sigma(sigma)
 	{
+		const std::string name = "Modem";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (N <= 0)
 		{
 			std::stringstream message;

@@ -15,8 +15,7 @@ class Codec_uncoded : public Codec_SISO_SIHO<B,Q>
 {
 public:
 	Codec_uncoded(const factory::Encoder   ::parameters &enc_params,
-	              const factory::Decoder_NO::parameters &dec_params,
-	              const std::string name = "Codec_uncoded");
+	              const factory::Decoder_NO::parameters &dec_params);
 	virtual ~Codec_uncoded();
 
 protected:

@@ -49,8 +49,8 @@ void Statistics
 
 void Statistics
 ::show_task(const float                    total_sec,
-            const std::string              module_sname,
-            const std::string              task_name,
+            const std::string&             module_sname,
+            const std::string&             task_name,
             const size_t                   task_n_elmts,
             const uint32_t                 task_n_calls,
             const std::chrono::nanoseconds task_tot_duration,
@@ -122,7 +122,7 @@ void Statistics
 ::show_timer(const float                    total_sec,
              const uint32_t                 task_n_calls,
              const size_t                   timer_n_elmts,
-             const std::string              timer_name,
+             const std::string&             timer_name,
              const uint32_t                 timer_n_calls,
              const std::chrono::nanoseconds timer_tot_duration,
              const std::chrono::nanoseconds timer_min_duration,

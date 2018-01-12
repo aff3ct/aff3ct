@@ -22,7 +22,7 @@ private:
 #endif
 
 public:
-	Source_random(const int K, const int seed = 0, const int n_frames = 1, const std::string name = "Source_random");
+	Source_random(const int K, const int seed = 0, const int n_frames = 1);
 
 	virtual ~Source_random();
 

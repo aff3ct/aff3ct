@@ -54,17 +54,19 @@ const std::complex<float> Modem_SCMA<B,R,Q,PSI>::CB[6][4][4] =
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
 ::Modem_SCMA(const int N, const R sigma, const int bps, const bool disable_sig2, const int n_ite,
-             const int n_frames, const std::string name)
+             const int n_frames)
 : Modem<B,R,Q>(N,
                Modem_SCMA<B,R,Q,PSI>::size_mod(N, bps),
                Modem_SCMA<B,R,Q,PSI>::size_fil(N, bps),
                sigma,
-               n_frames,
-               name),
+               n_frames),
   disable_sig2(disable_sig2                                    ),
   n0          (disable_sig2 ? (R)1.0 : (R)2.0 *  sigma * sigma ),
   n_ite       (n_ite                                           )
 {
+	const std::string name = "Modem_SCMA";
+	this->set_name(name);
+	
 	if (n_frames != 6)
 	{
 		std::stringstream message;

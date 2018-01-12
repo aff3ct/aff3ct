@@ -49,12 +49,14 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   Decoder's name.
 	 */
-	Decoder_HIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	             std::string name = "Decoder_HIHO")
-	: Decoder(K, N, n_frames, simd_inter_frame_level, name),
+	Decoder_HIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1)
+	: Decoder(K, N, n_frames, simd_inter_frame_level),
 	  Y_N    (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
 	  V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 	{
+		const std::string name = "Decoder_HIHO";
+		this->set_name(name);
+		
 		auto &p1 = this->create_task("decode_hiho", dec::tsk::decode_hiho);
 		auto &p1s_Y_N = this->template create_socket_in <B>(p1, "Y_N", this->N * this->n_frames);
 		auto &p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);

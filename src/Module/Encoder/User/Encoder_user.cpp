@@ -10,9 +10,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_user<B>
-::Encoder_user(const int K, const int N, const std::string filename, const int n_frames, const std::string name)
-: Encoder<B>(K, N, n_frames, name), codewords(), cw_counter(0)
+::Encoder_user(const int K, const int N, const std::string &filename, const int n_frames)
+: Encoder<B>(K, N, n_frames), codewords(), cw_counter(0)
 {
+	const std::string name = "Encoder_user";
+	this->set_name(name);
+
 	if (filename.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 

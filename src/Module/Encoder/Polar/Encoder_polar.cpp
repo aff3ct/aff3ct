@@ -10,10 +10,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_polar<B>
-::Encoder_polar(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames,
-                const std::string name)
-: Encoder<B>(K, N, n_frames, name), m((int)std::log2(N)), frozen_bits(frozen_bits)
+::Encoder_polar(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames)
+: Encoder<B>(K, N, n_frames), m((int)std::log2(N)), frozen_bits(frozen_bits)
 {
+	const std::string name = "Encoder_polar";
+	this->set_name(name);
+	
 	if (this->N != (int)frozen_bits.size())
 	{
 		std::stringstream message;

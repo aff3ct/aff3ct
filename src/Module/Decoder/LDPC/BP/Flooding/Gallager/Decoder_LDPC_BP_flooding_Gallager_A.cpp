@@ -14,16 +14,19 @@ template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &H,
                                       const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
-                                      const int syndrome_depth, const int n_frames, const std::string name)
-: Decoder               (K, N,                                            n_frames, 1, name),
-  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1, name),
-  hard_decision         (N                                                                 ),
-  info_bits_pos         (info_bits_pos                                                     ),
-  HY_N                  (N                                                                 ),
-  V_N                   (N                                                                 ),
-  C_to_V_messages       (H.get_n_connections(), 0                                          ),
-  V_to_C_messages       (H.get_n_connections(), 0                                          )
+                                      const int syndrome_depth, const int n_frames)
+: Decoder               (K, N,                                            n_frames, 1),
+  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
+  hard_decision         (N                                                           ),
+  info_bits_pos         (info_bits_pos                                               ),
+  HY_N                  (N                                                           ),
+  V_N                   (N                                                           ),
+  C_to_V_messages       (H.get_n_connections(), 0                                    ),
+  V_to_C_messages       (H.get_n_connections(), 0                                    )
 {
+	const std::string name = "Decoder_LDPC_BP_flooding_Gallager_A";
+	this->set_name(name);
+	
 	transpose.resize(H.get_n_connections());
 	std::vector<unsigned char> connections(H.get_n_rows(), 0);
 

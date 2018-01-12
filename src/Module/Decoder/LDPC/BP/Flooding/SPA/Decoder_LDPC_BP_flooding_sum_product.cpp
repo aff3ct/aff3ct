@@ -16,12 +16,14 @@ Decoder_LDPC_BP_flooding_sum_product<B,R>
                                        const std::vector<unsigned> &info_bits_pos,
                                        const bool enable_syndrome,
                                        const int syndrome_depth,
-                                       const int n_frames,
-                                       const std::string name)
-: Decoder(K, N, n_frames, 1, name),
-  Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
+                                       const int n_frames)
+: Decoder(K, N, n_frames, 1),
+  Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
   values(H.get_cols_max_degree())
 {
+	const std::string name = "Decoder_LDPC_BP_flooding_sum_product";
+	this->set_name(name);
+	
 	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
 }

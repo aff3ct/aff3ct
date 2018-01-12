@@ -4,9 +4,11 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_NO<B>
-::CRC_NO(const int K, const int n_frames, const std::string name)
-: CRC<B>(K, 0, n_frames, name)
+::CRC_NO(const int K, const int n_frames)
+: CRC<B>(K, 0, n_frames)
 {
+	const std::string name = "CRC_NO";
+	this->set_name(name);
 }
 
 template <typename B>

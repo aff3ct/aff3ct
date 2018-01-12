@@ -102,11 +102,13 @@ Decoder_RSC_BCJR_inter<B,R>
 ::Decoder_RSC_BCJR_inter(const int &K, 
                          const std::vector<std::vector<int>> &trellis, 
                          const bool buffered_encoding,
-                         const int n_frames,
-                         const std::string name)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>(), name),
-  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, mipp::nElmtsPerRegister<R>(), name)
+                         const int n_frames)
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>()),
+  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, mipp::nElmtsPerRegister<R>())
 {
+	const std::string name = "Decoder_RSC_BCJR_inter";
+	this->set_name(name);
+	
 	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));
 	req_trellis[0] = { 0,  2,  4,  6,  0,  2,  4,  6};
 	req_trellis[1] = { 1, -1,  1, -1, -1,  1, -1,  1};

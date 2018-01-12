@@ -12,11 +12,14 @@ namespace module
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                                CRC<B>& crc, const int n_frames, const std::string name)
-: Decoder(K, N, n_frames, API_polar::get_n_frames(), name),
-  Decoder_polar_SCL_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, n_frames, name),
+                                CRC<B>& crc, const int n_frames)
+: Decoder(K, N, n_frames, API_polar::get_n_frames()),
+  Decoder_polar_SCL_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, n_frames),
   fast_store(false), crc(crc), U_test(K)
 {
+	const std::string name = "Decoder_polar_SCL_fast_CA_sys";
+	this->set_name(name);
+
 	if (crc.get_size() > K)
 	{
 		std::stringstream message;
@@ -30,12 +33,14 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
                                 const std::vector<tools::Pattern_polar_i*>& polar_patterns,
-                                const int idx_r0, const int idx_r1,
-                                CRC<B>& crc, const int n_frames, const std::string name)
-: Decoder(K, N, n_frames, API_polar::get_n_frames(), name),
-  Decoder_polar_SCL_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1, n_frames, name),
+                                const int idx_r0, const int idx_r1, CRC<B>& crc, const int n_frames)
+: Decoder(K, N, n_frames, API_polar::get_n_frames()),
+  Decoder_polar_SCL_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1, n_frames),
   fast_store(false), crc(crc), U_test(K)
 {
+	const std::string name = "Decoder_polar_SCL_fast_CA_sys";
+	this->set_name(name);
+	
 	if (crc.get_size() > K)
 	{
 		std::stringstream message;

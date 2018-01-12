@@ -11,13 +11,16 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_BCH<B, R>
-::Decoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator &GF_poly, const int n_frames, const std::string name)
-: Decoder               (K, N, n_frames, 1, name),
-  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1, name),
+::Decoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator &GF_poly, const int n_frames)
+: Decoder               (K, N, n_frames, 1),
+  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1),
   elp(N+2, std::vector<int>(N)), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201),
   m(GF_poly.get_m()), t(GF_poly.get_t()), d(GF_poly.get_d()), alpha_to(GF_poly.get_alpha_to()), index_of(GF_poly.get_index_of()),
   YH_N(N)
 {
+	const std::string name = "Decoder_BCH";
+	this->set_name(name);
+	
 	if (K <= 3)
 	{
 		std::stringstream message;

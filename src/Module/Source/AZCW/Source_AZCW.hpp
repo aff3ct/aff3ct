@@ -15,7 +15,7 @@ template <typename B = int>
 class Source_AZCW : public Source<B>
 {
 public:
-	Source_AZCW(const int K, const int n_frames = 1, const std::string name = "Source_AZCW");
+	Source_AZCW(const int K, const int n_frames = 1);
 
 	virtual ~Source_AZCW();
 

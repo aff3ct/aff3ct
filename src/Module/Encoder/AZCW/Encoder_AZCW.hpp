@@ -13,7 +13,7 @@ template <typename B = int>
 class Encoder_AZCW : public Encoder<B>
 {
 public:
-	Encoder_AZCW(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_AZCW");
+	Encoder_AZCW(const int K, const int N, const int n_frames = 1);
 	virtual ~Encoder_AZCW();
 
 	void encode(const B *U_K, B *X_N); using Encoder<B>::encode;

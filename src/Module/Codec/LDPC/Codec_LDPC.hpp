@@ -27,8 +27,7 @@ protected:
 public:
 	Codec_LDPC(const factory::Encoder_LDPC::parameters   &enc_params,
 	           const factory::Decoder_LDPC::parameters   &dec_params,
-	                 factory::Puncturer_LDPC::parameters *pct_params,
-	           const std::string name = "Codec_LDPC");
+	                 factory::Puncturer_LDPC::parameters *pct_params);
 	virtual ~Codec_LDPC();
 
 protected:

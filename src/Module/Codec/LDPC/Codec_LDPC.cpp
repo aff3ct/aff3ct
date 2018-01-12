@@ -49,12 +49,14 @@ template <typename B, typename Q>
 Codec_LDPC<B,Q>
 ::Codec_LDPC(const factory::Encoder_LDPC  ::parameters &enc_params,
              const factory::Decoder_LDPC  ::parameters &dec_params,
-                   factory::Puncturer_LDPC::parameters *pct_params,
-             const std::string name)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+                   factory::Puncturer_LDPC::parameters *pct_params)
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   info_bits_pos(enc_params.K)
 {
+	const std::string name = "Codec_LDPC";
+	this->set_name(name);
+	
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{

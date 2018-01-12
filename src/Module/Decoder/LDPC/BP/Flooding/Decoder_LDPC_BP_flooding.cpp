@@ -20,19 +20,21 @@ Decoder_LDPC_BP_flooding<B,R>
                            const std::vector<unsigned> &info_bits_pos,
                            const bool enable_syndrome,
                            const int syndrome_depth,
-                           const int n_frames,
-                           const std::string name)
-: Decoder               (K, N,                                            n_frames, 1, name),
-  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1, name),
-  n_V_nodes             (N                                                                 ), // same as N but more explicit
-  n_C_nodes             ((int)H.get_n_cols()                                               ),
-  n_branches            ((int)H.get_n_connections()                                        ),
-  init_flag             (true                                                              ),
-  info_bits_pos         (info_bits_pos                                                     ),
-  Lp_N                  (N, -1                                                             ), // -1 in order to fail when AZCW
-  C_to_V                (n_frames, std::vector<R>(this->n_branches)                        ),
-  V_to_C                (n_frames, std::vector<R>(this->n_branches)                        )
+                           const int n_frames)
+: Decoder               (K, N,                                            n_frames, 1),
+  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
+  n_V_nodes             (N                                                           ), // same as N but more explicit
+  n_C_nodes             ((int)H.get_n_cols()                                         ),
+  n_branches            ((int)H.get_n_connections()                                  ),
+  init_flag             (true                                                        ),
+  info_bits_pos         (info_bits_pos                                               ),
+  Lp_N                  (N, -1                                                       ), // -1 in order to fail when AZCW
+  C_to_V                (n_frames, std::vector<R>(this->n_branches)                  ),
+  V_to_C                (n_frames, std::vector<R>(this->n_branches)                  )
 {
+	const std::string name = "Decoder_LDPC_BP_flooding";
+	this->set_name(name);
+	
 	transpose.resize(this->n_branches);
 	mipp::vector<unsigned char> connections(H.get_n_rows(), 0);
 

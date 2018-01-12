@@ -13,8 +13,7 @@ template <typename B = int>
 class Encoder_polar_sys : public Encoder_polar<B>
 {
 public:
-	Encoder_polar_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int& n_frames = 1,
-	                  const std::string name = "Encoder_polar_sys");
+	Encoder_polar_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int& n_frames = 1);
 	virtual ~Encoder_polar_sys() {}
 
 protected:

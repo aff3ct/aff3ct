@@ -11,7 +11,7 @@ template <typename R = float, typename Q = int>
 class Quantizer_NO : public Quantizer<R,Q>
 {
 public:
-	Quantizer_NO(const int N, const int n_frames = 1, const std::string name = "Quantizer_NO");
+	Quantizer_NO(const int N, const int n_frames = 1);
 	virtual ~Quantizer_NO();
 
 	void process(const R *Y_N1, Q *Y_N2); using Quantizer<R,Q>::process;

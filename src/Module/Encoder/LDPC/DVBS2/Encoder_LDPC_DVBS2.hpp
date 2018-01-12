@@ -18,7 +18,7 @@ class Encoder_LDPC_DVBS2 : public Encoder_LDPC<B>
 	const dvbs2_values* dvbs2 = nullptr;
 
 public:
-	Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC_DVBS2");
+	Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames = 1);
 	virtual ~Encoder_LDPC_DVBS2();
 
 protected:

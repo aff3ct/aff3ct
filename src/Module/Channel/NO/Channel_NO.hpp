@@ -17,8 +17,7 @@ protected:
 	const bool add_users;
 
 public:
-	Channel_NO(const int N, const bool add_users = false, const int n_frames = 1,
-	           const std::string name = "Channel_NO");
+	Channel_NO(const int N, const bool add_users = false, const int n_frames = 1);
 	virtual ~Channel_NO();
 
 	void add_noise(const R *X_N, R *Y_N); using Channel<R>::add_noise;

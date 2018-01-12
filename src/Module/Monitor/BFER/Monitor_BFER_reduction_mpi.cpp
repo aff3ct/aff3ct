@@ -33,17 +33,19 @@ void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *da
 template <typename B>
 Monitor_BFER_reduction_mpi<B>
 ::Monitor_BFER_reduction_mpi(const int size, const unsigned max_fe,
-                        std::vector<Monitor_BFER<B>*> monitors,
-                        const std::thread::id master_thread_id,
-                        const std::chrono::nanoseconds d_mpi_comm_frequency,
-                        const int n_frames,
-                        const std::string name)
-: Monitor_BFER_reduction<B>(size, max_fe, monitors, n_frames, name),
+                             std::vector<Monitor_BFER<B>*> monitors,
+                             const std::thread::id master_thread_id,
+                             const std::chrono::nanoseconds d_mpi_comm_frequency,
+                             const int n_frames)
+: Monitor_BFER_reduction<B>(size, max_fe, monitors, n_frames),
   master_thread_id(master_thread_id),
   is_fe_limit_achieved(false),
   t_last_mpi_comm(std::chrono::steady_clock::now()),
   d_mpi_comm_frequency(d_mpi_comm_frequency)
 {
+	const std::string name = "Monitor_BFER_reduction_mpi";
+	this->set_name(name);
+
 	int blen[3];
 	MPI_Aint displacements[3];
 	MPI_Datatype oldtypes[3];

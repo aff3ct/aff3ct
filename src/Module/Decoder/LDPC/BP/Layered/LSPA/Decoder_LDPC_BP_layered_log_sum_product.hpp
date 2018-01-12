@@ -20,8 +20,7 @@ public:
 	                                        const std::vector<unsigned> &info_bits_pos,
 	                                        const bool enable_syndrome = true,
 	                                        const int syndrome_depth = 1,
-	                                        const int n_frames = 1,
-	                                        const std::string name = "Decoder_LDPC_BP_layered_log_sum_product");
+	                                        const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_layered_log_sum_product();
 
 protected:

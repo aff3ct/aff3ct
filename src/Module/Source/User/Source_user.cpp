@@ -10,9 +10,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 Source_user<B>
-::Source_user(const int K, const std::string filename, const int n_frames, const std::string name)
-: Source<B>(K, n_frames, name), source(), src_counter(0)
+::Source_user(const int K, const std::string filename, const int n_frames)
+: Source<B>(K, n_frames), source(), src_counter(0)
 {
+	const std::string name = "Source_user";
+	this->set_name(name);
+
 	if (filename.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 

@@ -11,8 +11,7 @@ template <typename B = int>
 class Encoder_RSC3_CPE_sys : public Encoder_RSC_sys<B>
 {
 public:
-	Encoder_RSC3_CPE_sys(const int& K, const int& N, const int& n_frames = 1, const bool buffered_encoding = true,
-	                     const std::string name = "Encoder_RSC3_CPE_sys");
+	Encoder_RSC3_CPE_sys(const int& K, const int& N, const int& n_frames = 1, const bool buffered_encoding = true);
 	virtual ~Encoder_RSC3_CPE_sys() {}
 
 protected:

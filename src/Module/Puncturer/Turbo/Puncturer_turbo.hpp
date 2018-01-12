@@ -23,8 +23,7 @@ public:
 	                const int &tail_bits,
 	                const std::string &pattern,
 	                const bool buff_enc = true,
-	                const int n_frames = 1,
-	                const std::string name = "Puncturer_turbo");
+	                const int n_frames = 1);
 	virtual ~Puncturer_turbo();
 
 protected:

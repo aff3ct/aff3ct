@@ -15,8 +15,7 @@ private:
 	R two_on_square_sigma;
 	
 public:
-	Modem_BPSK_fast(const int N, const R sigma = (R)1, const bool disable_sig2 = false, const int n_frames = 1,
-	                const std::string name = "Modem_BPSK_fast");
+	Modem_BPSK_fast(const int N, const R sigma = (R)1, const bool disable_sig2 = false, const int n_frames = 1);
 	virtual ~Modem_BPSK_fast();
 
 	void set_sigma(const R sigma);
