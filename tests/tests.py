@@ -1,41 +1,44 @@
 #!/usr/bin/python3
 
 # =============================================================================
-# ================================================================== PARAMETERS
-
-PathTests     = "refs"     # can be overrided by arg1 from the cmd line
-PathResults   = "results"  # can be overrided by arg2 from the cmd line
-StartId       = 0          # can be overrided by arg3 from the cmd line, starting id to not do previous one again
-
-PathBuild     = "../build"
-Sensibility   = 1.0
-Nthreads      = 0          # if 0 then AFF3CT takes all the available threads
-RecursiveScan = True
-MaxFE         = 100        # 0 takes fe from the original simulation
-WeakRate      = 0.8        # 0 < WeakRate < 1
-MaxTimeSNR    = 600        # max time to spend per SNR (in sec), 0 = illimited
-
-# ================================================================== PARAMETERS
-# =============================================================================
-
-# =============================================================================
 # ==================================================================== PACKAGES
 
 import os
 import sys
 import math
 import pathlib
+import argparse
 import subprocess
 
 # ==================================================================== PACKAGES
 # =============================================================================
 
 # =============================================================================
+# ================================================================== PARAMETERS
+
+parser = argparse.ArgumentParser(
+    prog='aff3ct_tests',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('--refs-path',      action='store', dest='refsPath',      type=str,   default="refs",     help='Path to the references to re-simulate.')
+parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="results",  help='Path to the simulated results.')
+parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="../build", help='Path to the AFF3CT build.')
+parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=0,          help='Starting id to avoid computing results one again.')                                     # choices=xrange(0,   +inf)
+parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,        help='Sensibility to verify a SNR point.')                                                    # choices=xrange(0.0, +inf) 
+parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,          help='Number of threads to use in the simulation (0 = all available).')                       # choices=xrange(0,   +ing)
+parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,       help='If enabled, scan the path of refs recursively.')
+parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,        help='Maximum number of frames errors to simulate per SNR point.')                            # choices=xrange(0,   +inf)
+parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,        help='Rate of valid SNR points to passed a test.')                                            # choices=xrange(0.0, 1.0 )
+parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,        help='The maximum amount of time to spend to compute a SNR point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
+
+# ================================================================== PARAMETERS
+# =============================================================================
+
+# =============================================================================
 # =================================================================== FUNCTIONS
 
 def recursivelyGetFilenames(currentPath, fileNames):
-	if not os.path.exists(currentPath.replace(PathTests, PathResults)):
-		os.makedirs(currentPath.replace(PathTests, PathResults))
+	if not os.path.exists(currentPath.replace(args.refsPath, args.resultsPath)):
+		os.makedirs(currentPath.replace(args.refsPath, args.resultsPath))
 
 	files = os.listdir(currentPath)
 	for f in files:
@@ -47,7 +50,7 @@ def recursivelyGetFilenames(currentPath, fileNames):
 			newCurrentPath = currentPath + "/" + f
 			recursivelyGetFilenames(newCurrentPath, fileNames)
 		else:
-			fileNames.append(currentPath.replace(PathTests + "/", "") + "/" + f)
+			fileNames.append(currentPath.replace(args.refsPath + "/", "") + "/" + f)
 
 # -----
 
@@ -57,43 +60,54 @@ def recursivelyGetFilenames(currentPath, fileNames):
 # =============================================================================
 # ======================================================================== MAIN
 
-if len(sys.argv) >= 2:
-	PathTests = sys.argv[1]
+#parser.print_help()
+args = parser.parse_args()
 
-if len(sys.argv) >= 3:
-	PathResults = sys.argv[2]
-
-if len(sys.argv) >= 4:
-	StartId = int(sys.argv[3])
+print('# AFF3CT tests')
+print('# ------------')
+print('#')
+print('# Parameters:')
+print('# refs path      =', args.refsPath     )
+print('# results path   =', args.resultsPath  )
+print('# build path     =', args.buildPath    )
+print('# start id       =', args.startId      )
+print('# sensibility    =', args.sensibility  )
+print('# n threads      =', args.nThreads     )
+print('# recursive scan =', args.recursiveScan)
+print('# max fe         =', args.maxFE        )
+print('# weak rate      =', args.weakRate     )
+print('# max snr time   =', args.maxSNRTime   )
+print('#')
 
 PathOrigin = os.getcwd()
 
 # get the filenames to test
 fileNames = []
-fileNamesTmp = os.listdir(PathTests)
+fileNamesTmp = os.listdir(args.refsPath)
 for f in fileNamesTmp:
-	if not os.path.isdir(PathTests + "/" + f):
+	if not os.path.isdir(args.refsPath + "/" + f):
 		fileNames.append(f)
 	else:
-		if RecursiveScan:
-			recursivelyGetFilenames(PathTests + "/" + f, fileNames)
+		if args.recursiveScan:
+			recursivelyGetFilenames(args.refsPath + "/" + f, fileNames)
 
-print("Starting the test script...")
+print("# Starting the test script...")
 
+nErrors = 0
 testId = 0
 for fn in fileNames:
 
 	if pathlib.Path(fn).suffix != ".txt" and pathlib.Path(fn).suffix != ".perf" and pathlib.Path(fn).suffix != ".data" and pathlib.Path(fn).suffix != ".dat":
 		continue
 
-	if testId < StartId:
+	if testId < args.startId:
 		testId = testId + 1
 		continue
 
 	print("Test n°" + str(testId) + " - " + fn, end="", flush=True);
 
 	# open the file in read mode (from the fileName "fn" and the path)
-	f = open(PathTests + "/" + fn, 'r')
+	f = open(args.refsPath + "/" + fn, 'r')
 
 	# read all the lines from the current file f
 	lines = []
@@ -153,17 +167,17 @@ for fn in fileNames:
 
 	argsAFFECT.append("--ter-freq")
 	argsAFFECT.append("0")
-	if MaxFE:
+	if args.maxFE:
 		argsAFFECT.append("-e")
-		argsAFFECT.append(str(MaxFE))
+		argsAFFECT.append(str(args.maxFE))
 	argsAFFECT.append("-t")
-	argsAFFECT.append(str(Nthreads))
+	argsAFFECT.append(str(args.nThreads))
 	argsAFFECT.append("--sim-no-colors")
-	if MaxTimeSNR:
+	if args.maxSNRTime:
 		argsAFFECT.append("--sim-stop-time")
-		argsAFFECT.append(str(MaxTimeSNR))
+		argsAFFECT.append(str(args.maxSNRTime))
 
-	os.chdir(PathBuild)
+	os.chdir(args.buildPath)
 	processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
 
@@ -176,7 +190,7 @@ for fn in fileNames:
 		# begin to write the results into a file
 		os.chdir(PathOrigin)
 
-		fRes = open(PathResults + "/" + fn, 'w+')
+		fRes = open(args.resultsPath + "/" + fn, 'w+')
 
 		# parse the results
 		stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
@@ -214,7 +228,7 @@ for fn in fileNames:
 					numRef = numRef * 10**(math.fabs(powerRef - powerCur))
 
 			absoluteNumDiff = math.fabs(numRef - numCur)
-			if absoluteNumDiff > Sensibility:
+			if absoluteNumDiff > args.sensibility:
 				fRes.write(outputAFFECTLines[idx] + "WRONG! FER=" + ref[6][0:8] + "\n")
 			else:
 				valid = valid + 1
@@ -224,20 +238,23 @@ for fn in fileNames:
 
 			idx = idx + 1
 
-			if cur_fe < MaxFE:
+			if cur_fe < args.maxFE:
 				break
 
 		if valid == idx:
 			print(" - STRONG PASSED.", end="\n");
-		elif idx != 0 and float(valid) / float(idx) >= WeakRate:
+		elif idx != 0 and float(valid) / float(idx) >= args.weakRate:
 			print(" - WEAK PASSED.", end="\n");
 		else:
 			print(" - FAILED.", end="\n");
+			nErrors = nErrors +1
 
 		fRes.write("# End of the simulation.\n")
 		fRes.close();
 
 	testId = testId + 1
+
+sys.exit(nErrors);
 
 # ======================================================================== MAIN
 # =============================================================================

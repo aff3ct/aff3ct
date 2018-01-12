@@ -1,6 +1,7 @@
 stages:
   - analyse
   - build
+  - test
 
 before_script:
   - hostname
@@ -32,6 +33,9 @@ build-linux-gcc:
   stage: build
   tags:
    - linux
+  cache:
+    - paths:
+      - build/
   script:
     - mkdir build
     - cd build
@@ -115,3 +119,18 @@ build-mac-osx-clang:
     - make
     - ./bin/aff3ct --version
     - ./bin/aff3ct -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL --ter-freq 0
+
+test-regression:
+  stage: test
+  tags:
+    - test
+  cache:
+    - paths:
+      - build/
+  artifacts:
+     name: test-regression-results
+     paths:
+       - tests/results/
+  script:
+    - cd tests
+    - ./tests.py --max-snr-time 5 --sensibility 1.5
