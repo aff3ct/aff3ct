@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 # =============================================================================
 # ==================================================================== PACKAGES
@@ -82,14 +82,22 @@ print('#')
 PathOrigin = os.getcwd()
 
 # get the filenames to test
+isFile = False
 fileNames = []
-fileNamesTmp = os.listdir(args.refsPath)
-for f in fileNamesTmp:
-	if not os.path.isdir(args.refsPath + "/" + f):
-		fileNames.append(f)
-	else:
-		if args.recursiveScan:
-			recursivelyGetFilenames(args.refsPath + "/" + f, fileNames)
+if os.path.isdir(args.refsPath):
+	fileNamesTmp = os.listdir(args.refsPath)
+	for f in fileNamesTmp:
+		if not os.path.isdir(args.refsPath + "/" + f):
+			fileNames.append(f)
+		else:
+			if args.recursiveScan:
+				recursivelyGetFilenames(args.refsPath + "/" + f, fileNames)
+else:
+	isFile = True
+	basename = os.path.basename(args.refsPath)
+	dirname = args.refsPath.replace(basename, '')
+	args.refsPath = dirname
+	fileNames.append(basename)
 
 print("# Starting the test script...")
 
@@ -164,7 +172,6 @@ for fn in fileNames:
 
 	del argsAFFECT[idx]
 
-
 	argsAFFECT.append("--ter-freq")
 	argsAFFECT.append("0")
 	if args.maxFE:
@@ -213,6 +220,11 @@ for fn in fileNames:
 		valid = 0;
 		idx = 0
 		for ref in simuRef:
+			cur_fe = int(simuCur[idx][4])
+
+			if cur_fe < args.maxFE / 2:
+				break
+
 			numRef = float(ref[6][0:4])
 			powerRef = int(ref[6][6:8])
 			try:
@@ -233,8 +245,6 @@ for fn in fileNames:
 			else:
 				valid = valid + 1
 				fRes.write(outputAFFECTLines[idx] + "\n")
-
-			cur_fe = int(simuCur[idx][4])
 
 			idx = idx + 1
 
