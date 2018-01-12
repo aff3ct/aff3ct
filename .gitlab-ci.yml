@@ -33,9 +33,6 @@ build-linux-gcc:
   stage: build
   tags:
    - linux
-  cache:
-    - paths:
-      - build/
   script:
     - mkdir build
     - cd build
@@ -124,13 +121,16 @@ test-regression:
   stage: test
   tags:
     - test
-  cache:
-    - paths:
-      - build/
   artifacts:
      name: test-regression-results
      paths:
        - tests/results/
   script:
-    - cd tests
+    - mkdir build
+    - cd build
+    - cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DENABLE_GSL=ON -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC -DENABLE_COOL_BASH"
+    - THREADS=$(grep -c ^processor /proc/cpuinfo)
+    - echo $THREADS
+    - make -j $THREADS
+    - cd ../tests
     - ./tests.py --max-snr-time 5 --sensibility 1.5
