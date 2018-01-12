@@ -14,6 +14,7 @@ analyse-cppcheck:
   stage: analyse
   artifacts:
      name: analyse-cppcheck-logs
+     when: always
      paths:
        - cppcheck_all.log
        - cppcheck_error.log
@@ -123,6 +124,7 @@ test-regression:
     - test
   artifacts:
      name: test-regression-results
+     when: always
      paths:
        - tests/results/
   script:
@@ -133,4 +135,4 @@ test-regression:
     - echo $THREADS
     - make -j $THREADS
     - cd ../tests
-    - ./tests.py --max-snr-time 5 --sensibility 2.5 --weak-rate 1
+    - ./tests.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9
