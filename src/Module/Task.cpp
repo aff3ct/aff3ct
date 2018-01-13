@@ -11,7 +11,7 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-Task::Task(const Module &module, const std::string name, const bool autoalloc, const bool autoexec,
+Task::Task(const Module &module, const std::string &name, const bool autoalloc, const bool autoexec,
            const bool stats, const bool fast, const bool debug)
 : module(module),
   name(name),
@@ -258,7 +258,7 @@ int Task::exec()
 }
 
 template <typename T>
-Socket& Task::create_socket(const std::string name, const size_t n_elmts)
+Socket& Task::create_socket(const std::string &name, const size_t n_elmts)
 {
 	if (name.empty())
 	{
@@ -286,7 +286,7 @@ Socket& Task::create_socket(const std::string name, const size_t n_elmts)
 }
 
 template <typename T>
-Socket& Task::create_socket_in(const std::string name, const size_t n_elmts)
+Socket& Task::create_socket_in(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -297,7 +297,7 @@ Socket& Task::create_socket_in(const std::string name, const size_t n_elmts)
 }
 
 template <typename T>
-Socket& Task::create_socket_in_out(const std::string name, const size_t n_elmts)
+Socket& Task::create_socket_in_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -308,7 +308,7 @@ Socket& Task::create_socket_in_out(const std::string name, const size_t n_elmts)
 }
 
 template <typename T>
-Socket& Task::create_socket_out(const std::string name, const size_t n_elmts)
+Socket& Task::create_socket_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -394,7 +394,7 @@ Socket_type Task::get_socket_type(const Socket &s) const
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }
 
-void Task::register_timer(const std::string name)
+void Task::register_timer(const std::string &name)
 {
 	this->timers_name   .push_back(name                       );
 	this->timers_n_calls.push_back(0                          );
@@ -417,25 +417,25 @@ void Task::reset_stats()
 }
 
 // ==================================================================================== explicit template instantiation
-template Socket& Task::create_socket_in<int8_t >(const std::string, const size_t);
-template Socket& Task::create_socket_in<int16_t>(const std::string, const size_t);
-template Socket& Task::create_socket_in<int32_t>(const std::string, const size_t);
-template Socket& Task::create_socket_in<int64_t>(const std::string, const size_t);
-template Socket& Task::create_socket_in<float  >(const std::string, const size_t);
-template Socket& Task::create_socket_in<double >(const std::string, const size_t);
+template Socket& Task::create_socket_in<int8_t >(const std::string&, const size_t);
+template Socket& Task::create_socket_in<int16_t>(const std::string&, const size_t);
+template Socket& Task::create_socket_in<int32_t>(const std::string&, const size_t);
+template Socket& Task::create_socket_in<int64_t>(const std::string&, const size_t);
+template Socket& Task::create_socket_in<float  >(const std::string&, const size_t);
+template Socket& Task::create_socket_in<double >(const std::string&, const size_t);
 
-template Socket& Task::create_socket_in_out<int8_t >(const std::string, const size_t);
-template Socket& Task::create_socket_in_out<int16_t>(const std::string, const size_t);
-template Socket& Task::create_socket_in_out<int32_t>(const std::string, const size_t);
-template Socket& Task::create_socket_in_out<int64_t>(const std::string, const size_t);
-template Socket& Task::create_socket_in_out<float  >(const std::string, const size_t);
-template Socket& Task::create_socket_in_out<double >(const std::string, const size_t);
+template Socket& Task::create_socket_in_out<int8_t >(const std::string&, const size_t);
+template Socket& Task::create_socket_in_out<int16_t>(const std::string&, const size_t);
+template Socket& Task::create_socket_in_out<int32_t>(const std::string&, const size_t);
+template Socket& Task::create_socket_in_out<int64_t>(const std::string&, const size_t);
+template Socket& Task::create_socket_in_out<float  >(const std::string&, const size_t);
+template Socket& Task::create_socket_in_out<double >(const std::string&, const size_t);
 
-template Socket& Task::create_socket_out<int8_t >(const std::string, const size_t);
-template Socket& Task::create_socket_out<int16_t>(const std::string, const size_t);
-template Socket& Task::create_socket_out<int32_t>(const std::string, const size_t);
-template Socket& Task::create_socket_out<int64_t>(const std::string, const size_t);
-template Socket& Task::create_socket_out<float  >(const std::string, const size_t);
-template Socket& Task::create_socket_out<double >(const std::string, const size_t);
+template Socket& Task::create_socket_out<int8_t >(const std::string&, const size_t);
+template Socket& Task::create_socket_out<int16_t>(const std::string&, const size_t);
+template Socket& Task::create_socket_out<int32_t>(const std::string&, const size_t);
+template Socket& Task::create_socket_out<int64_t>(const std::string&, const size_t);
+template Socket& Task::create_socket_out<float  >(const std::string&, const size_t);
+template Socket& Task::create_socket_out<double >(const std::string&, const size_t);
 // ==================================================================================== explicit template instantiation
 

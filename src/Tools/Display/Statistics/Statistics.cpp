@@ -212,11 +212,9 @@ void Statistics
 		});
 	}
 
-	size_t   ttask_n_elmts      = 0;
-	uint32_t ttask_n_calls      = 0;
-	auto     ttask_tot_duration = std::chrono::nanoseconds(0);
-	auto     ttask_min_duration = std::chrono::nanoseconds(0);
-	auto     ttask_max_duration = std::chrono::nanoseconds(0);
+	auto ttask_tot_duration = std::chrono::nanoseconds(0);
+	auto ttask_min_duration = std::chrono::nanoseconds(0);
+	auto ttask_max_duration = std::chrono::nanoseconds(0);
 
 	size_t max_chars = 0;
 	for (auto *t : tasks)
@@ -229,6 +227,9 @@ void Statistics
 	if (ttask_tot_duration.count())
 	{
 		Statistics::show_header(stream);
+
+		size_t   ttask_n_elmts = 0;
+		uint32_t ttask_n_calls = 0;
 
 		auto is_first = true;
 		for (auto *t : tasks)
@@ -340,11 +341,10 @@ void Statistics
 		});
 	}
 
-	size_t ttask_n_elmts      = 0;
-	auto   ttask_n_calls      = 0;
-	auto   ttask_tot_duration = nanoseconds(0);
-	auto   ttask_min_duration = nanoseconds(0);
-	auto   ttask_max_duration = nanoseconds(0);
+	auto ttask_n_calls      = 0;
+	auto ttask_tot_duration = nanoseconds(0);
+	auto ttask_min_duration = nanoseconds(0);
+	auto ttask_max_duration = nanoseconds(0);
 
 	size_t max_chars = 0;
 	for (auto &vt : tasks)
@@ -358,6 +358,8 @@ void Statistics
 	if (ttask_tot_duration.count())
 	{
 		Statistics::show_header(stream);
+
+		size_t ttask_n_elmts = 0;
 
 		auto is_first = true;
 		for (auto &vt : tasks)

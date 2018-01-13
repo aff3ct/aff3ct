@@ -84,8 +84,6 @@ std::string aff3ct::tools::runSystemCommand(std::string cmd)
 	std::string data;
 	FILE * stream = nullptr;
 
-	const int max_buffer = 256;
-	char buffer[max_buffer];
 	cmd.append(" 2>&1");
 
 #if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
@@ -96,6 +94,8 @@ std::string aff3ct::tools::runSystemCommand(std::string cmd)
 
 	if (stream)
 	{
+		const int max_buffer = 256;
+		char buffer[max_buffer];
 		while (!feof(stream))
 			if (fgets(buffer, max_buffer, stream) != NULL)
 				data.append(buffer);

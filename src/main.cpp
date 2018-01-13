@@ -126,9 +126,9 @@ int sc_main(int argc, char **argv)
 	factory::Launcher::parameters params("sim");
 	read_arguments(argc, (const char**)argv, params);
 
-	launcher::Launcher *launcher = nullptr;
 	try
 	{
+		launcher::Launcher *launcher = nullptr;
 #ifdef MULTI_PREC
 		switch (params.sim_prec)
 		{

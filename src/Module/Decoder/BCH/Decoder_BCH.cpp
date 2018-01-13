@@ -39,7 +39,7 @@ template <typename B, typename R>
 void Decoder_BCH<B, R>
 ::_decode(B *Y_N)
 {
-	int i, j, u, q, t2, count = 0, syn_error = 0;
+	int i, j, t2, syn_error = 0;
 
 	t2 = 2 * t;
 
@@ -85,8 +85,8 @@ void Decoder_BCH<B, R>
 		l[1] = 0;
 		u_lu[0] = -1;
 		u_lu[1] = 0;
-		u = 0;
 
+		int q, u = 0;
 		do
 		{
 			u++;
@@ -173,7 +173,7 @@ void Decoder_BCH<B, R>
 			/* Chien search: find roots of the error location polynomial */
 			for (i = 1; i <= l[u]; i++)
 				reg[i] = elp[u][i];
-			count = 0;
+			int count = 0;
 			for (i = 1; i <= this->N; i++)
 			{
 				q = 1;

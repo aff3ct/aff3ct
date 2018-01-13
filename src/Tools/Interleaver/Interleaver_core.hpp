@@ -34,7 +34,7 @@ public:
 	 * \param n_frames: number of frames to process in the Interleaver.
 	 * \param name:     Interleaver's name.
 	 */
-	Interleaver_core(const int size, const std::string name, const bool uniform = false, const int n_frames = 1)
+	Interleaver_core(const int size, const std::string &name, const bool uniform = false, const int n_frames = 1)
 	: size(size), name(name), n_frames(n_frames), uniform(uniform), initialized(false),
 	  pi(size * n_frames, 0), pi_inv(size * n_frames, 0)
 	{

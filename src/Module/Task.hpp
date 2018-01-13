@@ -66,7 +66,7 @@ public:
 	std::vector<Socket*> sockets;
 
 	Task(const Module &module,
-	     const std::string name,
+	     const std::string &name,
 	     const bool autoalloc = false,
 	     const bool autoexec  = false,
 	     const bool stats     = false,
@@ -136,22 +136,22 @@ public:
 	}
 
 protected:
-	void register_timer(const std::string key);
+	void register_timer(const std::string &key);
 
 	template <typename T>
-	Socket& create_socket_in(const std::string name, const size_t n_elmts);
+	Socket& create_socket_in(const std::string &name, const size_t n_elmts);
 
 	template <typename T>
-	Socket& create_socket_in_out(const std::string name, const size_t n_elmts);
+	Socket& create_socket_in_out(const std::string &name, const size_t n_elmts);
 
 	template <typename T>
-	Socket& create_socket_out(const std::string name, const size_t n_elmts);
+	Socket& create_socket_out(const std::string &name, const size_t n_elmts);
 
 	void create_codelet(std::function<int(void)> codelet);
 
 private:
 	template <typename T>
-	inline Socket& create_socket(const std::string name, const size_t n_elmts);
+	inline Socket& create_socket(const std::string &name, const size_t n_elmts);
 };
 }
 }

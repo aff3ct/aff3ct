@@ -40,7 +40,7 @@ protected:
 	      bool            fast;
 	      void*           dataptr;
 
-	Socket(Task &task, const std::string name, const std::type_index datatype, const size_t databytes,
+	Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
 	       const bool fast = false, void *dataptr = nullptr)
 	: task(task), name(name), datatype(datatype), databytes(databytes), fast(fast), dataptr(dataptr)
 	{

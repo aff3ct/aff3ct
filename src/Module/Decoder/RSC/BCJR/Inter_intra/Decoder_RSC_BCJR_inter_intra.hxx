@@ -254,7 +254,6 @@ struct RSC_BCJR_inter_intra_normalize <signed char, I>
 	static mipp::Reg<signed char> apply(const mipp::Reg<signed char> &r_metrics, const mipp::Reg<signed char> &r_cmask_norm, const int &i = 0)
 	{
 		return RSC_BCJR_inter_intra_normalize_core<signed char>::apply(r_metrics, r_cmask_norm);
-		return r_metrics;
 	}
 };
 }

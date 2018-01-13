@@ -87,7 +87,7 @@ public:
 		return n_frames;
 	}
 
-	inline void set_name(const std::string name)
+	inline void set_name(const std::string &name)
 	{
 		this->name = name;
 	}
@@ -97,7 +97,7 @@ public:
 		return this->name;
 	}
 
-	inline void set_short_name(const std::string short_name)
+	inline void set_short_name(const std::string &short_name)
 	{
 		this->short_name = short_name;
 	}
@@ -113,7 +113,7 @@ public:
 	}
 
 protected:
-	Task& create_task(const std::string name, const int id = -1)
+	Task& create_task(const std::string &name, const int id = -1)
 	{
 		bool autoalloc = false, autoexec = false, stats = false, fast = false, debug = false;
 		auto t = new Task(*this, name, autoalloc, autoexec, stats, fast, debug);
@@ -145,19 +145,19 @@ protected:
 	}
 
 	template <typename T>
-	Socket& create_socket_in(Task& task, const std::string name, const size_t n_elmts)
+	Socket& create_socket_in(Task& task, const std::string &name, const size_t n_elmts)
 	{
 		return task.template create_socket_in<T>(name, n_elmts);
 	}
 
 	template <typename T>
-	Socket& create_socket_in_out(Task& task, const std::string name, const size_t n_elmts)
+	Socket& create_socket_in_out(Task& task, const std::string &name, const size_t n_elmts)
 	{
 		return task.template create_socket_in_out<T>(name, n_elmts);
 	}
 
 	template <typename T>
-	Socket& create_socket_out(Task& task, const std::string name, const size_t n_elmts)
+	Socket& create_socket_out(Task& task, const std::string &name, const size_t n_elmts)
 	{
 		return task.template create_socket_out<T>(name, n_elmts);
 	}
@@ -167,7 +167,7 @@ protected:
 		task.create_codelet(codelet);
 	}
 
-	void register_timer(Task& task, const std::string key)
+	void register_timer(Task& task, const std::string &key)
 	{
 		task.register_timer(key);
 	}
