@@ -12,12 +12,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Quantizer::name   = "Quantizer";
-const std::string aff3ct::factory::Quantizer::prefix = "qnt";
+const std::string aff3ct::factory::Quantizer_name   = "Quantizer";
+const std::string aff3ct::factory::Quantizer_prefix = "qnt";
 
 Quantizer::parameters
 ::parameters(const std::string &prefix)
-: Factory::parameters(Quantizer::name, Quantizer::name, prefix)
+: Factory::parameters(Quantizer_name, Quantizer_name, prefix)
 {
 }
 

@@ -3,13 +3,13 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec_repetition::name   = "Codec Repetition";
-const std::string aff3ct::factory::Codec_repetition::prefix = "cdc";
+const std::string aff3ct::factory::Codec_repetition_name   = "Codec Repetition";
+const std::string aff3ct::factory::Codec_repetition_prefix = "cdc";
 
 Codec_repetition::parameters
 ::parameters(const std::string &prefix)
-: Codec     ::parameters(Codec_repetition::name, prefix),
-  Codec_SIHO::parameters(Codec_repetition::name, prefix),
+: Codec     ::parameters(Codec_repetition_name, prefix),
+  Codec_SIHO::parameters(Codec_repetition_name, prefix),
   enc(new Encoder_repetition::parameters("enc")),
   dec(new Decoder_repetition::parameters("dec"))
 {

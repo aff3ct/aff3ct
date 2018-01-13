@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Puncturer_turbo_name;
+extern const std::string Puncturer_turbo_prefix;
 struct Puncturer_turbo : public Puncturer
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Puncturer::parameters
 	{
 	public:
@@ -26,7 +25,7 @@ struct Puncturer_turbo : public Puncturer
 		int         tail_length = 0;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Puncturer_turbo::prefix);
+		explicit parameters(const std::string &p = Puncturer_turbo_prefix);
 		virtual ~parameters();
 		Puncturer_turbo::parameters* clone() const;
 

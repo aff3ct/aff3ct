@@ -14,11 +14,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Terminal_BFER_name;
+extern const std::string Terminal_BFER_prefix;
 struct Terminal_BFER : Terminal
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Terminal::parameters
 	{
 	public:
@@ -27,7 +26,7 @@ struct Terminal_BFER : Terminal
 		std::string type = "STD";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Terminal_BFER::prefix);
+		explicit parameters(const std::string &p = Terminal_BFER_prefix);
 		virtual ~parameters();
 		Terminal_BFER::parameters* clone() const;
 

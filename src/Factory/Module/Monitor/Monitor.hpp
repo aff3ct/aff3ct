@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Monitor_name;
+extern const std::string Monitor_prefix;
 struct Monitor : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -23,7 +22,7 @@ struct Monitor : public Factory
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Monitor::prefix);
+		explicit parameters(const std::string &p = Monitor_prefix);
 		virtual ~parameters();
 		virtual Monitor::parameters* clone() const;
 

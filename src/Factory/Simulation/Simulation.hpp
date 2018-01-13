@@ -16,11 +16,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Simulation_name;
+extern const std::string Simulation_prefix;
 struct Simulation : Launcher
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Launcher::parameters
 	{
 	public:
@@ -56,7 +55,7 @@ struct Simulation : Launcher
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:
-		parameters(const std::string &n = Simulation::name, const std::string &p = Simulation::prefix);
+		parameters(const std::string &n = Simulation_name, const std::string &p = Simulation_prefix);
 	};
 };
 }

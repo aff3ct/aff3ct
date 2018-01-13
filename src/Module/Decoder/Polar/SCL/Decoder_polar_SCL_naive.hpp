@@ -22,7 +22,7 @@ public:
 	std::vector<B> s;
 	bool           is_frozen_bit;
 
-	Contents_SCL(int size) : lambda(size), s(size), is_frozen_bit(0) {}
+	explicit Contents_SCL(int size) : lambda(size), s(size), is_frozen_bit(0) {}
 	virtual ~Contents_SCL() {}
 };
 

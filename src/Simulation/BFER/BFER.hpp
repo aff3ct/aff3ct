@@ -58,7 +58,7 @@ protected:
 	tools::Terminal_BFER<B> *terminal;
 
 public:
-	BFER(const factory::BFER::parameters& simu_params);
+	explicit BFER(const factory::BFER::parameters& simu_params);
 	virtual ~BFER();
 	void launch();
 

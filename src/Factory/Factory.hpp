@@ -25,6 +25,10 @@ using arg_val_map = std::map<std::vector<std::string>, std::string>;
 
 bool exist(const arg_val_map &vals, const std::vector<std::string> &tags);
 
+extern const std::string Factory_name;
+extern const std::string Factory_short_name;
+extern const std::string Factory_prefix;
+
 /*!
  * \class Factory
  *
@@ -35,17 +39,13 @@ bool exist(const arg_val_map &vals, const std::vector<std::string> &tags);
  */
 struct Factory
 {
-	static const std::string name;
-	static const std::string short_name;
-	static const std::string prefix;
-
 	class parameters
 	{
 	public:
 		// constructor/destructor
-		parameters(const std::string &name       = Factory::name,
-		           const std::string &short_name = Factory::short_name,
-		           const std::string &prefix     = Factory::prefix);
+		parameters(const std::string &name       = Factory_name,
+		           const std::string &short_name = Factory_short_name,
+		           const std::string &prefix     = Factory_prefix);
 		virtual ~parameters();
 		virtual Factory::parameters* clone() const = 0;
 

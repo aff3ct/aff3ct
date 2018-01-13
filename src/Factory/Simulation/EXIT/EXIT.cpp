@@ -5,12 +5,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::EXIT::name   = "Simulation EXIT";
-const std::string aff3ct::factory::EXIT::prefix = "sim";
+const std::string aff3ct::factory::EXIT_name   = "Simulation EXIT";
+const std::string aff3ct::factory::EXIT_prefix = "sim";
 
 EXIT::parameters
 ::parameters(const std::string &prefix)
-: Simulation::parameters(EXIT::name, prefix)
+: Simulation::parameters(EXIT_name, prefix)
 {
 }
 

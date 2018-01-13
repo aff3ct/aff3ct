@@ -14,11 +14,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Encoder_RA_name;
+extern const std::string Encoder_RA_prefix;
 struct Encoder_RA : public Encoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Encoder::parameters
 	{
 	public:
@@ -27,7 +26,7 @@ struct Encoder_RA : public Encoder
 		Interleaver::parameters *itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Encoder_RA::prefix);
+		explicit parameters(const std::string &p = Encoder_RA_prefix);
 		virtual ~parameters();
 		Encoder_RA::parameters* clone() const;
 

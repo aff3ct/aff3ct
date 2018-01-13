@@ -8,12 +8,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Monitor_EXIT::name   = "Monitor EXIT";
-const std::string aff3ct::factory::Monitor_EXIT::prefix = "mnt";
+const std::string aff3ct::factory::Monitor_EXIT_name   = "Monitor EXIT";
+const std::string aff3ct::factory::Monitor_EXIT_prefix = "mnt";
 
 Monitor_EXIT::parameters
 ::parameters(const std::string &prefix)
-: Monitor::parameters(Monitor_EXIT::name, prefix)
+: Monitor::parameters(Monitor_EXIT_name, prefix)
 {
 }
 

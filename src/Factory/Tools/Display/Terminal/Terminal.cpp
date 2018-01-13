@@ -2,12 +2,12 @@
 
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Terminal::name   = "Terminal";
-const std::string aff3ct::factory::Terminal::prefix = "ter";
+const std::string aff3ct::factory::Terminal_name   = "Terminal";
+const std::string aff3ct::factory::Terminal_prefix = "ter";
 
 Terminal::parameters
 ::parameters(const std::string &name, const std::string &prefix)
-: Factory::parameters(name, Terminal::name, prefix)
+: Factory::parameters(name, Terminal_name, prefix)
 {
 }
 

@@ -4,15 +4,15 @@
 
 #include "Decoder_turbo_DB.hpp"
 
-const std::string aff3ct::factory::Decoder_turbo_DB::name   = "Decoder Turbo DB";
-const std::string aff3ct::factory::Decoder_turbo_DB::prefix = "dec";
+const std::string aff3ct::factory::Decoder_turbo_DB_name   = "Decoder Turbo DB";
+const std::string aff3ct::factory::Decoder_turbo_DB_prefix = "dec";
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
 Decoder_turbo_DB::parameters
 ::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_turbo_DB::name, prefix),
+: Decoder::parameters(Decoder_turbo_DB_name, prefix),
   sub(new Decoder_RSC_DB::parameters(prefix+"-sub")),
   itl(new Interleaver::parameters("itl")),
   sf(new Scaling_factor::parameters(prefix+"-sf")),

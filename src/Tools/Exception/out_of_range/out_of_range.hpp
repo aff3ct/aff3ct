@@ -14,7 +14,7 @@ class out_of_range : public exception
 public:
 	out_of_range() throw();
 
-	out_of_range(const std::string &message) throw();
+	explicit out_of_range(const std::string &message) throw();
 
 	out_of_range(const std::string &filename,
 	             const int line_num,

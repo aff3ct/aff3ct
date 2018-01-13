@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Monitor_EXIT_name;
+extern const std::string Monitor_EXIT_prefix;
 struct Monitor_EXIT : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Monitor::parameters
 	{
 	public:
@@ -29,7 +28,7 @@ struct Monitor_EXIT : public Factory
 		int         n_frames = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Monitor_EXIT::prefix);
+		explicit parameters(const std::string &p = Monitor_EXIT_prefix);
 		virtual ~parameters();
 		Monitor_EXIT::parameters* clone() const;
 

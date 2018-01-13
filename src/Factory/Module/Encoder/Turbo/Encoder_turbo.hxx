@@ -13,7 +13,7 @@ namespace factory
 template <class E1, class E2>
 Encoder_turbo::parameters<E1,E2>
 ::parameters(const std::string &prefix)
-: Encoder::parameters(Encoder_turbo::name, prefix),
+: Encoder::parameters(Encoder_turbo_name, prefix),
   itl(new Interleaver::parameters("itl")),
   sub1(new typename E1::parameters(std::is_same<E1,E2>() ? prefix+"-sub" : prefix+"-sub1")),
   sub2(new typename E2::parameters(std::is_same<E1,E2>() ? prefix+"-sub" : prefix+"-sub2"))

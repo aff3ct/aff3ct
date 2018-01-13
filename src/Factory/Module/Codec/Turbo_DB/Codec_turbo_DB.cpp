@@ -3,13 +3,13 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec_turbo_DB::name   = "Codec Turbo DB";
-const std::string aff3ct::factory::Codec_turbo_DB::prefix = "cdc";
+const std::string aff3ct::factory::Codec_turbo_DB_name   = "Codec Turbo DB";
+const std::string aff3ct::factory::Codec_turbo_DB_prefix = "cdc";
 
 Codec_turbo_DB::parameters
 ::parameters(const std::string &prefix)
-: Codec     ::parameters(Codec_turbo_DB::name, prefix),
-  Codec_SIHO::parameters(Codec_turbo_DB::name, prefix),
+: Codec     ::parameters(Codec_turbo_DB_name, prefix),
+  Codec_SIHO::parameters(Codec_turbo_DB_name, prefix),
   enc(new Encoder_turbo_DB::parameters("enc")),
   dec(new Decoder_turbo_DB::parameters("dec")),
   pct(nullptr)

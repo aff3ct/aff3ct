@@ -14,11 +14,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_BCH_name;
+extern const std::string Decoder_BCH_prefix;
 struct Decoder_BCH : public Decoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Decoder::parameters
 	{
 	public:
@@ -30,7 +29,7 @@ struct Decoder_BCH : public Decoder
 		int m = 0; // Gallois field order
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Decoder_BCH::prefix);
+		explicit parameters(const std::string &p = Decoder_BCH_prefix);
 		virtual ~parameters();
 		Decoder_BCH::parameters* clone() const;
 

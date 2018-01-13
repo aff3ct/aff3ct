@@ -5,18 +5,18 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Puncturer::name   = "Puncturer";
-const std::string aff3ct::factory::Puncturer::prefix = "pct";
+const std::string aff3ct::factory::Puncturer_name   = "Puncturer";
+const std::string aff3ct::factory::Puncturer_prefix = "pct";
 
 Puncturer::parameters
 ::parameters(const std::string &prefix)
-: Factory::parameters(Puncturer::name, Puncturer::name, prefix)
+: Factory::parameters(Puncturer_name, Puncturer_name, prefix)
 {
 }
 
 Puncturer::parameters
 ::parameters(const std::string &name, const std::string &prefix)
-: Factory::parameters(name, Puncturer::name, prefix)
+: Factory::parameters(name, Puncturer_name, prefix)
 {
 }
 

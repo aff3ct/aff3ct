@@ -7,18 +7,18 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Monitor::name   = "Monitor";
-const std::string aff3ct::factory::Monitor::prefix = "mnt";
+const std::string aff3ct::factory::Monitor_name   = "Monitor";
+const std::string aff3ct::factory::Monitor_prefix = "mnt";
 
 Monitor::parameters
 ::parameters(const std::string &prefix)
-: Factory::parameters(Monitor::name, Monitor::name, prefix)
+: Factory::parameters(Monitor_name, Monitor_name, prefix)
 {
 }
 
 Monitor::parameters
 ::parameters(const std::string &name, const std::string &prefix)
-: Factory::parameters(name, Monitor::name, prefix)
+: Factory::parameters(name, Monitor_name, prefix)
 {
 }
 

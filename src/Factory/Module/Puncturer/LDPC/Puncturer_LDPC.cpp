@@ -9,12 +9,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Puncturer_LDPC::name   = "Puncturer LDPC";
-const std::string aff3ct::factory::Puncturer_LDPC::prefix = "pct";
+const std::string aff3ct::factory::Puncturer_LDPC_name   = "Puncturer LDPC";
+const std::string aff3ct::factory::Puncturer_LDPC_prefix = "pct";
 
 Puncturer_LDPC::parameters
 ::parameters(const std::string &prefix)
-: Puncturer::parameters(Puncturer_LDPC::name, prefix)
+: Puncturer::parameters(Puncturer_LDPC_name, prefix)
 {
 	this->type = "LDPC";
 }

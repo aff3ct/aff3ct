@@ -13,9 +13,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Factory::name       = "Factory";
-const std::string aff3ct::factory::Factory::short_name = "Factory";
-const std::string aff3ct::factory::Factory::prefix     = "fac";
+const std::string aff3ct::factory::Factory_name       = "Factory";
+const std::string aff3ct::factory::Factory_short_name = "Factory";
+const std::string aff3ct::factory::Factory_prefix     = "fac";
 
 bool aff3ct::factory::exist(const arg_val_map &vals, const std::vector<std::string> &tags)
 {

@@ -16,12 +16,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Modem::name   = "Modem";
-const std::string aff3ct::factory::Modem::prefix = "mdm";
+const std::string aff3ct::factory::Modem_name   = "Modem";
+const std::string aff3ct::factory::Modem_prefix = "mdm";
 
 Modem::parameters
 ::parameters(const std::string &prefix)
-: Factory::parameters(Modem::name, Modem::name, prefix)
+: Factory::parameters(Modem_name, Modem_name, prefix)
 {
 }
 

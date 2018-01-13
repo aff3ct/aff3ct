@@ -42,12 +42,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Launcher::name   = "Launcher";
-const std::string aff3ct::factory::Launcher::prefix = "lch";
+const std::string aff3ct::factory::Launcher_name   = "Launcher";
+const std::string aff3ct::factory::Launcher_prefix = "lch";
 
 factory::Launcher::parameters
 ::parameters(const std::string &prefix)
-: Factory::parameters(Launcher::name, Launcher::name, prefix)
+: Factory::parameters(Launcher_name, Launcher_name, prefix)
 {
 }
 

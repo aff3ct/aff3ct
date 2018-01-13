@@ -14,11 +14,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Terminal_EXIT_name;
+extern const std::string Terminal_EXIT_prefix;
 struct Terminal_EXIT : Terminal
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Terminal::parameters
 	{
 	public:
@@ -27,7 +26,7 @@ struct Terminal_EXIT : Terminal
 		std::string type = "STD";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Terminal_EXIT::prefix);
+		explicit parameters(const std::string &p = Terminal_EXIT_prefix);
 		virtual ~parameters();
 		Terminal_EXIT::parameters* clone() const;
 

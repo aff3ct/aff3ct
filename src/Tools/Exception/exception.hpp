@@ -19,7 +19,7 @@ private:
 public:
 	exception() throw();
 
-	exception(const std::string &message) throw();
+	explicit exception(const std::string &message) throw();
 
 	exception(const std::string &filename,
 	          const int line_num,

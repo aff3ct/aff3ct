@@ -15,11 +15,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_polar_name;
+extern const std::string Decoder_polar_prefix;
 struct Decoder_polar : public Decoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Decoder::parameters
 	{
 	public:
@@ -32,7 +31,7 @@ struct Decoder_polar : public Decoder
 		int         L             = 8;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Decoder_polar::prefix);
+		explicit parameters(const std::string &p = Decoder_polar_prefix);
 		virtual ~parameters();
 		Decoder_polar::parameters* clone() const;
 

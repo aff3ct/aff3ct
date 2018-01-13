@@ -14,7 +14,7 @@ class underflow_error : public exception
 public:
 	underflow_error() throw();
 
-	underflow_error(const std::string &message) throw();
+	explicit underflow_error(const std::string &message) throw();
 
 	underflow_error(const std::string &filename,
 	                const int line_num,

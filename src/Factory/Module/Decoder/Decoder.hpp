@@ -9,11 +9,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_name;
+extern const std::string Decoder_prefix;
 struct Decoder : Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:

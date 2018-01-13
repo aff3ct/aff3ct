@@ -41,7 +41,7 @@ protected:
 	std::vector<std::mt19937> rd_engine_seed;
 
 public:
-	BFER_std(const factory::BFER_std::parameters &params);
+	explicit BFER_std(const factory::BFER_std::parameters &params);
 	virtual ~BFER_std();
 
 protected:

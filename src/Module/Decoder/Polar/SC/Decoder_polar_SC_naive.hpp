@@ -21,7 +21,7 @@ public:
 	std::vector<B> s;
 	bool           is_frozen_bit;
 
-	Contents_SC(int size) : lambda(size), s(size), is_frozen_bit(false) {}
+	explicit Contents_SC(int size) : lambda(size), s(size), is_frozen_bit(false) {}
 	virtual ~Contents_SC() {}
 };
 

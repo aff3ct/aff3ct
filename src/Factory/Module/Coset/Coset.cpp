@@ -6,12 +6,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Coset::name   = "Coset";
-const std::string aff3ct::factory::Coset::prefix = "cst";
+const std::string aff3ct::factory::Coset_name   = "Coset";
+const std::string aff3ct::factory::Coset_prefix = "cst";
 
 Coset::parameters
 ::parameters(const std::string &prefix)
-: Factory::parameters(Coset::name, Coset::name, prefix)
+: Factory::parameters(Coset_name, Coset_name, prefix)
 {
 }
 

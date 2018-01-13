@@ -13,12 +13,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Scaling_factor::name   = "Scaling factor";
-const std::string aff3ct::factory::Scaling_factor::prefix = "sf";
+const std::string aff3ct::factory::Scaling_factor_name   = "Scaling factor";
+const std::string aff3ct::factory::Scaling_factor_prefix = "sf";
 
 Scaling_factor::parameters
 ::parameters(const std::string &prefix)
-: Factory::parameters(Scaling_factor::name, Scaling_factor::name, prefix)
+: Factory::parameters(Scaling_factor_name, Scaling_factor_name, prefix)
 {
 }
 

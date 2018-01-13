@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Encoder_RSC_name;
+extern const std::string Encoder_RSC_prefix;
 struct Encoder_RSC : public Encoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Encoder::parameters
 	{
 	public:
@@ -26,7 +25,7 @@ struct Encoder_RSC : public Encoder
 		std::vector<int> poly     = {013, 015};
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Encoder_RSC::prefix);
+		explicit parameters(const std::string &p = Encoder_RSC_prefix);
 		virtual ~parameters();
 		Encoder_RSC::parameters* clone() const;
 

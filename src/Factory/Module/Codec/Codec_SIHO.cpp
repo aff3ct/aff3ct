@@ -14,12 +14,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec_SIHO::name   = "Codec SIHO";
-const std::string aff3ct::factory::Codec_SIHO::prefix = "cdc";
+const std::string aff3ct::factory::Codec_SIHO_name   = "Codec SIHO";
+const std::string aff3ct::factory::Codec_SIHO_prefix = "cdc";
 
 Codec_SIHO::parameters
 ::parameters(const std::string &prefix)
-: Codec::parameters(Codec_SIHO::name, prefix)
+: Codec::parameters(Codec_SIHO_name, prefix)
 {
 }
 

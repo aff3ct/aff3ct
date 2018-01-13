@@ -31,7 +31,7 @@ public:
 	 * \param K:     number of information bits in the frame.
 	 * \param n_ite: number of iterations in the turbo decoding process.
 	 */
-	Scaling_factor(const int n_ite)
+	explicit Scaling_factor(const int n_ite)
 	: n_ite(n_ite)
 	{
 	}

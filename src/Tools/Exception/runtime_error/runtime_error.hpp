@@ -14,7 +14,7 @@ class runtime_error : public exception
 public:
 	runtime_error() throw();
 
-	runtime_error(const std::string &message) throw();
+	explicit runtime_error(const std::string &message) throw();
 
 	runtime_error(const std::string &filename,
 	              const int line_num,

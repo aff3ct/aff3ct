@@ -14,7 +14,7 @@ class unimplemented_error : public exception
 public:
 	unimplemented_error() throw();
 
-	unimplemented_error(const std::string &message) throw();
+	explicit unimplemented_error(const std::string &message) throw();
 
 	unimplemented_error(const std::string &filename,
 	                    const int line_num,

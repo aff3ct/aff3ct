@@ -5,12 +5,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Flip_and_check_DB::name   = "Flip and check DB";
-const std::string aff3ct::factory::Flip_and_check_DB::prefix = "fnc";
+const std::string aff3ct::factory::Flip_and_check_DB_name   = "Flip and check DB";
+const std::string aff3ct::factory::Flip_and_check_DB_prefix = "fnc";
 
 Flip_and_check_DB::parameters
 ::parameters(const std::string &prefix)
-: Flip_and_check::parameters(Flip_and_check_DB::name, prefix)
+: Flip_and_check::parameters(Flip_and_check_DB_name, prefix)
 {
 }
 

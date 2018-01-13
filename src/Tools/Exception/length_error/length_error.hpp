@@ -14,7 +14,7 @@ class length_error : public exception
 public:
 	length_error() throw();
 
-	length_error(const std::string &message) throw();
+	explicit length_error(const std::string &message) throw();
 
 	length_error(const std::string &filename,
 	             const int line_num,

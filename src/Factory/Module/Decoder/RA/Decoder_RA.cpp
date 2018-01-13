@@ -7,12 +7,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Decoder_RA::name   = "Decoder RA";
-const std::string aff3ct::factory::Decoder_RA::prefix = "dec";
+const std::string aff3ct::factory::Decoder_RA_name   = "Decoder RA";
+const std::string aff3ct::factory::Decoder_RA_prefix = "dec";
 
 Decoder_RA::parameters
 ::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_RA::name, prefix),
+: Decoder::parameters(Decoder_RA_name, prefix),
   itl(new Interleaver::parameters("itl"))
 {
 	this->type   = "RA";

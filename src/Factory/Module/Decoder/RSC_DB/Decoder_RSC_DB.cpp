@@ -9,12 +9,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Decoder_RSC_DB::name   = "Decoder RSC DB";
-const std::string aff3ct::factory::Decoder_RSC_DB::prefix = "dec";
+const std::string aff3ct::factory::Decoder_RSC_DB_name   = "Decoder RSC DB";
+const std::string aff3ct::factory::Decoder_RSC_DB_prefix = "dec";
 
 Decoder_RSC_DB::parameters
 ::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_RSC_DB::name, prefix)
+: Decoder::parameters(Decoder_RSC_DB_name, prefix)
 {
 	this->type   = "BCJR";
 	this->implem = "GENERIC";

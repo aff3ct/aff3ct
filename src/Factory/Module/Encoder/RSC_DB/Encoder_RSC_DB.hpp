@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Encoder_RSC_DB_name;
+extern const std::string Encoder_RSC_DB_prefix;
 struct Encoder_RSC_DB : public Encoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Encoder::parameters
 	{
 	public:
@@ -25,7 +24,7 @@ struct Encoder_RSC_DB : public Encoder
 		std::string standard = "DVB-RCS1";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Encoder_RSC_DB::prefix);
+		explicit parameters(const std::string &p = Encoder_RSC_DB_prefix);
 		virtual ~parameters();
 		Encoder_RSC_DB::parameters* clone() const;
 

@@ -3,13 +3,13 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec_RSC_DB::name   = "Codec RSC DB";
-const std::string aff3ct::factory::Codec_RSC_DB::prefix = "cdc";
+const std::string aff3ct::factory::Codec_RSC_DB_name   = "Codec RSC DB";
+const std::string aff3ct::factory::Codec_RSC_DB_prefix = "cdc";
 
 Codec_RSC_DB::parameters
 ::parameters(const std::string &prefix)
-: Codec          ::parameters(Codec_RSC_DB::name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_RSC_DB::name, prefix),
+: Codec          ::parameters(Codec_RSC_DB_name, prefix),
+  Codec_SISO_SIHO::parameters(Codec_RSC_DB_name, prefix),
   enc(new Encoder_RSC_DB::parameters("enc")),
   dec(new Decoder_RSC_DB::parameters("dec"))
 {

@@ -13,11 +13,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Modem_name;
+extern const std::string Modem_prefix;
 struct Modem : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -53,7 +52,7 @@ struct Modem : public Factory
 		int         n_frames   = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Modem::prefix);
+		explicit parameters(const std::string &p = Modem_prefix);
 		virtual ~parameters();
 		Modem::parameters* clone() const;
 

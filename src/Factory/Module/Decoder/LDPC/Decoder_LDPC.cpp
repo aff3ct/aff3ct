@@ -16,12 +16,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Decoder_LDPC::name   = "Decoder LDPC";
-const std::string aff3ct::factory::Decoder_LDPC::prefix = "dec";
+const std::string aff3ct::factory::Decoder_LDPC_name   = "Decoder LDPC";
+const std::string aff3ct::factory::Decoder_LDPC_prefix = "dec";
 
 Decoder_LDPC::parameters
 ::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_LDPC::name, prefix)
+: Decoder::parameters(Decoder_LDPC_name, prefix)
 {
 	this->type   = "BP_FLOODING";
 	this->implem = "SPA";

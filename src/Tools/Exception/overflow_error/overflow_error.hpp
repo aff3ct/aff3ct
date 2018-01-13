@@ -14,7 +14,7 @@ class overflow_error : public exception
 public:
 	overflow_error() throw();
 
-	overflow_error(const std::string &message) throw();
+	explicit overflow_error(const std::string &message) throw();
 
 	overflow_error(const std::string &filename,
 	               const int line_num,

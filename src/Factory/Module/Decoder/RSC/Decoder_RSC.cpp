@@ -26,12 +26,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Decoder_RSC::name   = "Decoder RSC";
-const std::string aff3ct::factory::Decoder_RSC::prefix = "dec";
+const std::string aff3ct::factory::Decoder_RSC_name   = "Decoder RSC";
+const std::string aff3ct::factory::Decoder_RSC_prefix = "dec";
 
 Decoder_RSC::parameters
 ::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_RSC::name, prefix)
+: Decoder::parameters(Decoder_RSC_name, prefix)
 {
 	this->type   = "BCJR";
 	this->implem = "STD";

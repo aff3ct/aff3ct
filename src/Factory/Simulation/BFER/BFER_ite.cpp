@@ -8,12 +8,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::BFER_ite::name   = "Simulation BFER iterative";
-const std::string aff3ct::factory::BFER_ite::prefix = "sim";
+const std::string aff3ct::factory::BFER_ite_name   = "Simulation BFER iterative";
+const std::string aff3ct::factory::BFER_ite_prefix = "sim";
 
 BFER_ite::parameters
 ::parameters(const std::string &prefix)
-: BFER::parameters(BFER_ite::name, prefix)
+: BFER::parameters(BFER_ite_name, prefix)
 {
 }
 

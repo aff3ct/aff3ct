@@ -45,7 +45,7 @@ protected:
 	tools::Terminal_EXIT<B,R> *terminal;
 
 public:
-	EXIT(const factory::EXIT::parameters &params);
+	explicit EXIT(const factory::EXIT::parameters &params);
 	virtual ~EXIT();
 
 	void launch();

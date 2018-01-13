@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Coset_name;
+extern const std::string Coset_prefix;
 struct Coset : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -28,7 +27,7 @@ struct Coset : public Factory
 		int         n_frames = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Coset::prefix);
+		explicit parameters(const std::string &p = Coset_prefix);
 		virtual ~parameters();
 		Coset::parameters* clone() const;
 

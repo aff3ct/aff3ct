@@ -7,12 +7,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Encoder_RSC_DB::name   = "Encoder RSC DB";
-const std::string aff3ct::factory::Encoder_RSC_DB::prefix = "enc";
+const std::string aff3ct::factory::Encoder_RSC_DB_name   = "Encoder RSC DB";
+const std::string aff3ct::factory::Encoder_RSC_DB_prefix = "enc";
 
 Encoder_RSC_DB::parameters
 ::parameters(const std::string &prefix)
-: Encoder::parameters(Encoder_RSC_DB::name, prefix)
+: Encoder::parameters(Encoder_RSC_DB_name, prefix)
 {
 	this->type = "RSC_DB";
 }

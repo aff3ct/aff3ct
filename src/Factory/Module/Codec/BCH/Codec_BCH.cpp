@@ -3,13 +3,13 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec_BCH::name   = "Codec BCH";
-const std::string aff3ct::factory::Codec_BCH::prefix = "cdc";
+const std::string aff3ct::factory::Codec_BCH_name   = "Codec BCH";
+const std::string aff3ct::factory::Codec_BCH_prefix = "cdc";
 
 Codec_BCH::parameters
 ::parameters(const std::string &prefix)
-: Codec     ::parameters(Codec_BCH::name, prefix),
-  Codec_SIHO::parameters(Codec_BCH::name, prefix),
+: Codec     ::parameters(Codec_BCH_name, prefix),
+  Codec_SIHO::parameters(Codec_BCH_name, prefix),
   enc(new Encoder_BCH::parameters("enc")),
   dec(new Decoder_BCH::parameters("dec"))
 {

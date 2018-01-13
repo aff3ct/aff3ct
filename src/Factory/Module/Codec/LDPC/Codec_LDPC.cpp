@@ -3,13 +3,13 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec_LDPC::name   = "Codec LDPC";
-const std::string aff3ct::factory::Codec_LDPC::prefix = "cdc";
+const std::string aff3ct::factory::Codec_LDPC_name   = "Codec LDPC";
+const std::string aff3ct::factory::Codec_LDPC_prefix = "cdc";
 
 Codec_LDPC::parameters
 ::parameters(const std::string &prefix)
-: Codec          ::parameters(Codec_LDPC::name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_LDPC::name, prefix),
+: Codec          ::parameters(Codec_LDPC_name, prefix),
+  Codec_SISO_SIHO::parameters(Codec_LDPC_name, prefix),
   enc(new Encoder_LDPC::parameters("enc")),
   dec(new Decoder_LDPC::parameters("dec")),
   pct(nullptr)

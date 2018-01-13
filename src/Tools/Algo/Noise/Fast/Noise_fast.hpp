@@ -20,7 +20,7 @@ private:
 	tools::PRNG_MT19937_simd mt19937_simd; // Mersenne Twister 19937 (SIMD)
 
 public:
-	Noise_fast(const int seed = 0);
+	explicit Noise_fast(const int seed = 0);
 	virtual ~Noise_fast();
 
 	virtual void set_seed(const int seed);

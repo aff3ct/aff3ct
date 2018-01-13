@@ -14,7 +14,7 @@ class logic_error : public exception
 public:
 	logic_error() throw();
 
-	logic_error(const std::string &message) throw();
+	explicit logic_error(const std::string &message) throw();
 
 	logic_error(const std::string &filename,
 	            const int line_num,

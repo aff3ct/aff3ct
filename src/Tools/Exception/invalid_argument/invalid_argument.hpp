@@ -14,7 +14,7 @@ class invalid_argument : public exception
 public:
 	invalid_argument() throw();
 
-	invalid_argument(const std::string &message) throw();
+	explicit invalid_argument(const std::string &message) throw();
 
 	invalid_argument(const std::string &filename,
 	                 const int line_num,

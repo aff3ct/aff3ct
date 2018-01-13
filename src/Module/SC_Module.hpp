@@ -105,7 +105,7 @@ protected:
 	std::vector<SC_Module*> sc_modules;
 
 public:
-	SC_Module_container(Module &module);
+	explicit SC_Module_container(Module &module);
 	virtual ~SC_Module_container();
 
 	void create_module(const int id);

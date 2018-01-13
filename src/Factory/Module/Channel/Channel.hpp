@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Channel_name;
+extern const std::string Channel_prefix;
 struct Channel : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -36,7 +35,7 @@ struct Channel : public Factory
 		float       sigma        = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Channel::prefix);
+		explicit parameters(const std::string &p = Channel_prefix);
 		virtual ~parameters();
 		Channel::parameters* clone() const;
 

@@ -28,7 +28,7 @@ protected:
 	tools::SC_Predicate  *predicate;
 
 public:
-	SC_BFER_ite(const factory::BFER_ite::parameters &params);
+	explicit SC_BFER_ite(const factory::BFER_ite::parameters &params);
 	virtual ~SC_BFER_ite();
 
 protected:

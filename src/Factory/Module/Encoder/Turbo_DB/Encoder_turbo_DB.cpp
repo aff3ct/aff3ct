@@ -4,15 +4,15 @@
 
 #include "Encoder_turbo_DB.hpp"
 
-const std::string aff3ct::factory::Encoder_turbo_DB::name   = "Encoder Turbo DB";
-const std::string aff3ct::factory::Encoder_turbo_DB::prefix = "enc";
+const std::string aff3ct::factory::Encoder_turbo_DB_name   = "Encoder Turbo DB";
+const std::string aff3ct::factory::Encoder_turbo_DB_prefix = "enc";
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
 Encoder_turbo_DB::parameters
 ::parameters(const std::string &prefix)
-: Encoder::parameters(Encoder_turbo_DB::name, prefix),
+: Encoder::parameters(Encoder_turbo_DB_name, prefix),
   itl(new Interleaver::parameters("itl")),
   sub(new Encoder_RSC_DB::parameters(prefix+"-sub"))
 {

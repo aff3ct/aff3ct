@@ -14,7 +14,7 @@ class cannot_allocate : public exception
 public:
 	cannot_allocate() throw();
 
-	cannot_allocate(const std::string &message) throw();
+	explicit cannot_allocate(const std::string &message) throw();
 
 	cannot_allocate(const std::string &filename,
 	                const int line_num,

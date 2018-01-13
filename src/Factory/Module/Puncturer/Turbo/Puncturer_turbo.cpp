@@ -9,12 +9,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Puncturer_turbo::name   = "Puncturer Turbo";
-const std::string aff3ct::factory::Puncturer_turbo::prefix = "pct";
+const std::string aff3ct::factory::Puncturer_turbo_name   = "Puncturer Turbo";
+const std::string aff3ct::factory::Puncturer_turbo_prefix = "pct";
 
 Puncturer_turbo::parameters
 ::parameters(const std::string &prefix)
-: Puncturer::parameters(Puncturer_turbo::name, prefix)
+: Puncturer::parameters(Puncturer_turbo_name, prefix)
 {
 	this->type = "TURBO";
 }

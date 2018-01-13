@@ -13,11 +13,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_RA_name;
+extern const std::string Decoder_RA_prefix;
 struct Decoder_RA : public Decoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Decoder::parameters
 	{
 	public:
@@ -29,7 +28,7 @@ struct Decoder_RA : public Decoder
 		Interleaver::parameters *itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Decoder_RA::prefix);
+		explicit parameters(const std::string &p = Decoder_RA_prefix);
 		virtual ~parameters();
 		Decoder_RA::parameters* clone() const;
 

@@ -12,7 +12,7 @@ namespace factory
 template <class D1, class D2>
 Decoder_turbo::parameters<D1,D2>
 ::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_turbo::name, prefix),
+: Decoder::parameters(Decoder_turbo_name, prefix),
   sub1(new typename D1::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub1")),
   sub2(new typename D2::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub2")),
   itl(new Interleaver::parameters("itl")),

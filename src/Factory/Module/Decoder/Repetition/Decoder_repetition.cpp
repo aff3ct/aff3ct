@@ -8,12 +8,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Decoder_repetition::name   = "Decoder Repetition";
-const std::string aff3ct::factory::Decoder_repetition::prefix = "dec";
+const std::string aff3ct::factory::Decoder_repetition_name   = "Decoder Repetition";
+const std::string aff3ct::factory::Decoder_repetition_prefix = "dec";
 
 Decoder_repetition::parameters
 ::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_repetition::name, prefix)
+: Decoder::parameters(Decoder_repetition_name, prefix)
 {
 	this->type   = "REPETITION";
 	this->implem = "STD";

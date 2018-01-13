@@ -16,11 +16,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_RSC_DB_name;
+extern const std::string Decoder_RSC_DB_prefix;
 struct Decoder_RSC_DB : public Decoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Decoder::parameters
 	{
 	public:
@@ -30,7 +29,7 @@ struct Decoder_RSC_DB : public Decoder
 		bool        buffered = true;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Decoder_RSC_DB::prefix);
+		explicit parameters(const std::string &p = Decoder_RSC_DB_prefix);
 		virtual ~parameters();
 		Decoder_RSC_DB::parameters* clone() const;
 

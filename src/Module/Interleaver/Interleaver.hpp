@@ -37,7 +37,7 @@ protected:
 	const tools::Interleaver_core<T> &core;
 
 public:
-	Interleaver(const tools::Interleaver_core<T> &core)
+	explicit Interleaver(const tools::Interleaver_core<T> &core)
 	: Module(core.get_n_frames()),
 	  core(core)
 	{

@@ -55,7 +55,7 @@ public:
 	 * \param n_frames: number of frames to process in this Module.
 	 * \param name    : Module's name.
 	 */
-	Module(const int n_frames = 1)
+	explicit Module(const int n_frames = 1)
 	: n_frames(n_frames), name("Module"), short_name("Module")
 #ifdef SYSTEMC_MODULE
 	, sc(*this)
@@ -87,7 +87,7 @@ public:
 		return n_frames;
 	}
 
-	inline void set_name(const std::string &name)
+	inline void set_name(const std::string name)
 	{
 		this->name = name;
 	}
@@ -97,7 +97,7 @@ public:
 		return this->name;
 	}
 
-	inline void set_short_name(const std::string &short_name)
+	inline void set_short_name(const std::string short_name)
 	{
 		this->short_name = short_name;
 	}

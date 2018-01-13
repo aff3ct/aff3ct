@@ -31,7 +31,7 @@ private:
 	      int cur_ite;
 
 public:
-	Predicate_ite(const int n_ite) 
+	explicit Predicate_ite(const int n_ite) 
 	: n_ite(n_ite), cur_ite(0)
 	{
 		if (n_ite <= 0)

@@ -18,11 +18,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Codec_polar_name;
+extern const std::string Codec_polar_prefix;
 struct Codec_polar : public Codec_SISO_SIHO
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Codec_SISO_SIHO::parameters
 	{
 	public:
@@ -34,7 +33,7 @@ struct Codec_polar : public Codec_SISO_SIHO
 		Puncturer_polar     ::parameters *pct;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Codec_polar::prefix);
+		explicit parameters(const std::string &p = Codec_polar_prefix);
 		virtual ~parameters();
 		Codec_polar::parameters* clone() const;
 		void enable_puncturer();

@@ -18,11 +18,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string BFER_name;
+extern const std::string BFER_prefix;
 struct BFER : Simulation
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Simulation::parameters
 	{
 	public:
@@ -70,7 +69,7 @@ struct BFER : Simulation
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:
-		parameters(const std::string &n = BFER::name, const std::string &p = BFER::prefix);
+		parameters(const std::string &n = BFER_name, const std::string &p = BFER_prefix);
 	};
 };
 }

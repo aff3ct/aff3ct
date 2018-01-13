@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Scaling_factor_name;
+extern const std::string Scaling_factor_prefix;
 struct Scaling_factor : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	struct parameters : public Factory::parameters
 	{
 	public:
@@ -35,7 +34,7 @@ struct Scaling_factor : public Factory
 		                                   0.95f, 0.95f}; // ite 8
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string &p = Scaling_factor::prefix);
+		explicit parameters(const std::string &p = Scaling_factor_prefix);
 		virtual ~parameters();
 		Scaling_factor::parameters* clone() const;
 

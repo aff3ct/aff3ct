@@ -14,7 +14,7 @@ class range_error : public exception
 public:
 	range_error() throw();
 
-	range_error(const std::string &message) throw();
+	explicit range_error(const std::string &message) throw();
 
 	range_error(const std::string &filename,
 	            const int line_num,

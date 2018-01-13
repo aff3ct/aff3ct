@@ -14,7 +14,7 @@ class domain_error : public exception
 public:
 	domain_error() throw();
 
-	domain_error(const std::string &message) throw();
+	explicit domain_error(const std::string &message) throw();
 
 	domain_error(const std::string &filename,
 	             const int line_num,
