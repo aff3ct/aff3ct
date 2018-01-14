@@ -239,15 +239,15 @@ for fn in fileNames:
 
 			if powerRef - powerCur != 0:
 				if powerRef > powerCur:
-					numCur = numCur * 10**(math.fabs(powerRef - powerCur))
+					numCur = numCur * 10**(math.fabs(powerCur - powerRef))
 				else:
-					numRef = numRef * 10**(math.fabs(powerRef - powerCur))
+					numRef = numRef * 10**(math.fabs(powerCur - powerRef))
 
-			absoluteNumDiff = math.fabs(numRef - numCur)
+			absoluteNumDiff = math.fabs(numCur - numRef)
 			sensibilityList.append(absoluteNumDiff)
 			if absoluteNumDiff > args.sensibility:
 				fRes.write(outputAFFECTLines[idx] + "WRONG! FER=" + ref[6][0:8] + "\n")
-				errorsList.append([float(simuCur[idx][1][0:4]), absoluteNumDiff])
+				errorsList.append([float(simuCur[idx][1][0:4]), numCur - numRef])
 			else:
 				valid = valid + 1
 				fRes.write(outputAFFECTLines[idx] + "\n")
@@ -284,7 +284,10 @@ for fn in fileNames:
 				print("---- Details: 'errors list' = [", end="")
 				el = 0
 				for error in errorsList:
-					print("{", error[0], "dB -> +-%.2f" %error[1], "}", end="")
+					if error[1] > 0:
+						print("{", error[0], "dB -> +%.2f" %error[1], "}", end="")
+					else:
+						print("{", error[0], "dB -> %.2f" %error[1], "}", end="")
 					if el < len(errorsList) -1:
 						print(", ", end="")
 					el = el + 1
