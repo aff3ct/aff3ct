@@ -29,6 +29,7 @@ parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', ty
 parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,        help='Maximum number of frames errors to simulate per SNR point.')                            # choices=xrange(0,   +inf)
 parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,        help='Rate of valid SNR points to passed a test.')                                            # choices=xrange(0.0, 1.0 )
 parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,        help='The maximum amount of time to spend to compute a SNR point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
+parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,      help='Enable the verbose mode.')
 
 # ================================================================== PARAMETERS
 # =============================================================================
@@ -77,6 +78,7 @@ print('# recursive scan =', args.recursiveScan)
 print('# max fe         =', args.maxFE        )
 print('# weak rate      =', args.weakRate     )
 print('# max snr time   =', args.maxSNRTime   )
+print('# verbose        =', args.verbose      )
 print('#')
 
 PathOrigin = os.getcwd()
@@ -217,8 +219,10 @@ for fn in fileNames:
 		fRes.flush()
 
 		# validate (or not) the BER/FER performance
-		valid = 0;
+		valid = 0
 		idx = 0
+		sumSensibility = 0.0
+		errorsList = []
 		for ref in simuRef:
 			cur_fe = int(simuCur[idx][4])
 
@@ -240,8 +244,10 @@ for fn in fileNames:
 					numRef = numRef * 10**(math.fabs(powerRef - powerCur))
 
 			absoluteNumDiff = math.fabs(numRef - numCur)
+			sumSensibility = sumSensibility + absoluteNumDiff
 			if absoluteNumDiff > args.sensibility:
 				fRes.write(outputAFFECTLines[idx] + "WRONG! FER=" + ref[6][0:8] + "\n")
+				errorsList.append([float(simuCur[idx][1][0:4]), absoluteNumDiff])
 			else:
 				valid = valid + 1
 				fRes.write(outputAFFECTLines[idx] + "\n")
@@ -251,6 +257,13 @@ for fn in fileNames:
 			if cur_fe < args.maxFE:
 				break
 
+		avgSensibility = 0
+		if idx == 0:
+			avgSensibility = 0
+		else:
+			avgSensibility = sumSensibility / float(idx)
+		rateSensibility = (avgSensibility / args.sensibility) * 100
+
 		if valid == idx:
 			print(" - STRONG PASSED.", end="\n");
 		elif idx != 0 and float(valid) / float(idx) >= args.weakRate:
@@ -258,6 +271,20 @@ for fn in fileNames:
 		else:
 			print(" - FAILED.", end="\n");
 			nErrors = nErrors +1
+
+		if args.verbose:
+			print("---- Details: 'valid SNR points' = ", valid, "/", idx, ", 'avg sensibility' = %.2f" % avgSensibility , ", 'sensibility rate' = %.1f" % rateSensibility, "%.", end="\n")
+			if idx > 0:
+				print("---- Details: 'first SNR point' = ", float(simuCur[0][1][0:4]), "dB, 'last SNR point' = ", float(simuCur[idx -1][1][0:4]), "dB.")
+			if len(errorsList):
+				print("---- Details: 'errors list' = [", end="")
+				el = 0
+				for error in errorsList:
+					print("{", error[0], "dB -> +-%.2f" %error[1], "}", end="")
+					if el < len(errorsList) -1:
+						print(", ", end="")
+					el = el + 1
+				print("].", end="\n")
 
 		fRes.write("# End of the simulation.\n")
 		fRes.close();

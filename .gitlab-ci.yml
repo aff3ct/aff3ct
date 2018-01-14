@@ -135,4 +135,4 @@ test-regression:
     - echo $THREADS
     - make -j $THREADS
     - cd ../tests
-    - ./tests.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9
+    - ./tests.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
