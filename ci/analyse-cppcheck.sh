@@ -22,7 +22,7 @@ if [ $COUNT -gt 5 ]; then
 	echo "Error count is $COUNT! cppcheck run failed :-(.";
 	echo ""
 	echo "Errors list:"
-	cat cppcheck_error.log
+	cat cppcheck/cppcheck_error.log
 	exit 1;
 else
 	echo "There is no error :-)."
