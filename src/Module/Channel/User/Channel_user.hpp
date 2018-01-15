@@ -19,8 +19,7 @@ private:
 	int noise_counter;
 
 public:
-	Channel_user(const int N, const std::string filename, const bool add_users = false, const int n_frames = 1,
-	             const std::string name = "Channel_user");
+	Channel_user(const int N, const std::string &filename, const bool add_users = false, const int n_frames = 1);
 	virtual ~Channel_user();
 
 protected:

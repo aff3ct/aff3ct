@@ -17,25 +17,28 @@ namespace aff3ct
 namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+const std::string Modem_CPM<B,R,Q,MAX>::mapping_default = "NATURAL";
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+const std::string Modem_CPM<B,R,Q,MAX>::wave_shape_default = "GMSK";
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_CPM<B,R,Q,MAX>
-::Modem_CPM(int  N,
-            R    sigma,
-            int  bits_per_symbol,
-            int  sampling_factor,
-            int  cpm_L,
-            int  cpm_k,
-            int  cpm_p,
-            std::string mapping,
-            std::string wave_shape,
-            bool no_sig2,
-            int  n_frames,
-            const std::string name)
+::Modem_CPM(const int  N,
+            const R    sigma,
+            const int  bits_per_symbol,
+            const int  sampling_factor,
+            const int  cpm_L,
+            const int  cpm_k,
+            const int  cpm_p,
+            const std::string &mapping,
+            const std::string &wave_shape,
+            const bool no_sig2,
+            const int  n_frames)
 : Modem<B,R,Q>(N,
                Modem_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, cpm_p, sampling_factor),
                Modem_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
                sigma,
-               n_frames,
-               name),
+               n_frames),
   no_sig2   (no_sig2                            ),
   cpm       (cpm_L,
              cpm_k,
@@ -53,6 +56,9 @@ Modem_CPM<B,R,Q,MAX>
   cpe       (n_sy, cpm                          ),
   bcjr      (cpm, n_sy_tl                       )
 {
+	const std::string name = "Modem_CPM";
+	this->set_name(name);
+	
 	if (N % bits_per_symbol)
 	{
 		std::stringstream message;

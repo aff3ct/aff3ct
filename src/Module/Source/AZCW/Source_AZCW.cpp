@@ -4,9 +4,11 @@ using namespace aff3ct::module;
 
 template <typename B>
 Source_AZCW<B>
-::Source_AZCW(const int K, const int n_frames, const std::string name)
-: Source<B>(K, n_frames, name)
+::Source_AZCW(const int K, const int n_frames)
+: Source<B>(K, n_frames)
 {
+	const std::string name = "Source_AZCW";
+	this->set_name(name);
 }
 
 template <typename B>

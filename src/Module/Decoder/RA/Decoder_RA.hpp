@@ -24,8 +24,7 @@ protected:
 	const Interleaver<R>& interleaver;
 
 public:
-	Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter,
-	           const int n_frames = 1, const std::string name = "Decoder_RA");
+	Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter, const int n_frames = 1);
 	virtual ~Decoder_RA();
 
 protected:

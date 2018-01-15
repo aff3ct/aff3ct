@@ -7,12 +7,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Encoder_repetition::name   = "Encoder Repetiton";
-const std::string aff3ct::factory::Encoder_repetition::prefix = "enc";
+const std::string aff3ct::factory::Encoder_repetition_name   = "Encoder Repetiton";
+const std::string aff3ct::factory::Encoder_repetition_prefix = "enc";
 
 Encoder_repetition::parameters
-::parameters(const std::string prefix)
-: Encoder::parameters(Encoder_repetition::name, prefix)
+::parameters(const std::string &prefix)
+: Encoder::parameters(Encoder_repetition_name, prefix)
 {
 	this->type = "REPETITION";
 }

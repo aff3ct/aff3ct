@@ -65,8 +65,8 @@ inline R f_LLR_tanh_safe(const R& lambda_a, const R& lambda_b)
 	{
 		auto abs_lambda_a_plus_lambda_b = (lambda_a + lambda_b >= 0) ? lambda_b + lambda_a : -(lambda_b + lambda_a);
 		auto abs_lambda_a_minus_lambda_b = (lambda_a - lambda_b >= 0) ? lambda_a - lambda_b : -(lambda_a - lambda_b);
-		return le + std::log(1 + std::exp(-abs_lambda_a_plus_lambda_b)) -
-		            std::log(1 + std::exp(-abs_lambda_a_minus_lambda_b));
+		return le + std::log1p(std::exp(-abs_lambda_a_plus_lambda_b)) -
+		            std::log1p(std::exp(-abs_lambda_a_minus_lambda_b));
 	}
 }
 

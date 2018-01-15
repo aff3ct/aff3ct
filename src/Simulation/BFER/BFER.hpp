@@ -27,7 +27,7 @@ class BFER : public Simulation
 {
 private:
 	// parameters
-	const factory::BFER::parameters &params;
+	const factory::BFER::parameters &params_BFER;
 
 protected:
 	std::mutex               mutex_exception;
@@ -58,7 +58,7 @@ protected:
 	tools::Terminal_BFER<B> *terminal;
 
 public:
-	BFER(const factory::BFER::parameters& simu_params);
+	explicit BFER(const factory::BFER::parameters& params_BFER);
 	virtual ~BFER();
 	void launch();
 

@@ -10,12 +10,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Encoder_LDPC::name   = "Encoder LDPC";
-const std::string aff3ct::factory::Encoder_LDPC::prefix = "enc";
+const std::string aff3ct::factory::Encoder_LDPC_name   = "Encoder LDPC";
+const std::string aff3ct::factory::Encoder_LDPC_prefix = "enc";
 
 Encoder_LDPC::parameters
-::parameters(const std::string prefix)
-: Encoder::parameters(Encoder_LDPC::name, prefix)
+::parameters(const std::string &prefix)
+: Encoder::parameters(Encoder_LDPC_name, prefix)
 {
 	this->type = "AZCW";
 }

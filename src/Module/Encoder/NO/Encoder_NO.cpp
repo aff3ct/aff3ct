@@ -6,9 +6,11 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_NO<B>
-::Encoder_NO(const int K, const int n_frames, const std::string name)
-: Encoder<B>(K, K, n_frames, name)
+::Encoder_NO(const int K, const int n_frames)
+: Encoder<B>(K, K, n_frames)
 {
+	const std::string name = "Encoder_NO";
+	this->set_name(name);
 }
 
 template <typename B>

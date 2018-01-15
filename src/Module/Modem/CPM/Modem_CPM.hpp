@@ -25,6 +25,10 @@ class Modem_CPM : public Modem<B,R,Q>
 	using SIN  = B;
 	using SOUT = B;
 
+private:
+	static const std::string mapping_default;
+	static const std::string wave_shape_default;
+
 protected:
 	// inputs:
 	const bool                    no_sig2;    // no computation of sigma^2
@@ -42,18 +46,17 @@ protected:
 	CPM_BCJR<SIN,SOUT,Q,MAX>      bcjr;       // demodulator
 
 public:
-	Modem_CPM(int  N,
-	          R    sigma             = (R)1,
-	          int  bits_per_symbol   = 1,
-	          int  sampling_factor   = 5,
-	          int  cpm_L             = 3,
-	          int  cpm_k             = 1,
-	          int  cpm_p             = 2,
-	          std::string mapping    = "NATURAL",
-	          std::string wave_shape = "GMSK",
-	          bool no_sig2           = false,
-	          int  n_frames          = 1,
-	          const std::string name = "Modem_CPM");
+	Modem_CPM(const int  N,
+	          const R    sigma              = (R)1,
+	          const int  bits_per_symbol    = 1,
+	          const int  sampling_factor    = 5,
+	          const int  cpm_L              = 3,
+	          const int  cpm_k              = 1,
+	          const int  cpm_p              = 2,
+	          const std::string &mapping    = mapping_default,
+	          const std::string &wave_shape = wave_shape_default,
+	          const bool no_sig2            = false,
+	          const int  n_frames           = 1);
 	virtual ~Modem_CPM();
 
 	void set_sigma(const R sigma);

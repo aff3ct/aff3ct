@@ -10,10 +10,12 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_user<R>
-::Channel_user(const int N, const std::string filename, const bool add_users, const int n_frames,
-               const std::string name)
-: Channel<R>(N, (R)1, n_frames, name), add_users(add_users), noise_buff(), noise_counter(0)
+::Channel_user(const int N, const std::string &filename, const bool add_users, const int n_frames)
+: Channel<R>(N, (R)1, n_frames), add_users(add_users), noise_buff(), noise_counter(0)
 {
+	const std::string name = "Channel_user";
+	this->set_name(name);
+
 	if (filename.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 

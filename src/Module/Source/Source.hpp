@@ -57,9 +57,13 @@ public:
 	 * \param n_frames: number of frames to process in the Source.
 	 * \param name:     Source's name.
 	 */
-	Source(const int K, const int n_frames = 1, const std::string name = "Source")
-	: Module(n_frames, name, "Source"), K(K)
+	Source(const int K, const int n_frames = 1)
+	: Module(n_frames), K(K)
 	{
+		const std::string name = "Source";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (K <= 0)
 		{
 			std::stringstream message;

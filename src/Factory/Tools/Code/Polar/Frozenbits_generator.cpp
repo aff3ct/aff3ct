@@ -8,12 +8,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Frozenbits_generator::name   = "Frozen bits generator";
-const std::string aff3ct::factory::Frozenbits_generator::prefix = "fbg";
+const std::string aff3ct::factory::Frozenbits_generator_name   = "Frozen bits generator";
+const std::string aff3ct::factory::Frozenbits_generator_prefix = "fbg";
 
 Frozenbits_generator::parameters
-::parameters(const std::string prefix)
-: Factory::parameters(Frozenbits_generator::name, Frozenbits_generator::name, prefix)
+::parameters(const std::string &prefix)
+: Factory::parameters(Frozenbits_generator_name, Frozenbits_generator_name, prefix)
 {
 }
 

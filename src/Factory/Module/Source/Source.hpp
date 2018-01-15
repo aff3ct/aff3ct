@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Source_name;
+extern const std::string Source_prefix;
 struct Source : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -30,7 +29,7 @@ struct Source : public Factory
 		int         seed     = 0;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Source::prefix);
+		explicit parameters(const std::string &p = Source_prefix);
 		virtual ~parameters();
 		Source::parameters* clone() const;
 

@@ -7,12 +7,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Puncturer_polar::name   = "Puncturer Polar";
-const std::string aff3ct::factory::Puncturer_polar::prefix = "pct";
+const std::string aff3ct::factory::Puncturer_polar_name   = "Puncturer Polar";
+const std::string aff3ct::factory::Puncturer_polar_prefix = "pct";
 
 Puncturer_polar::parameters
-::parameters(const std::string prefix)
-: Puncturer::parameters(Puncturer_polar::name, prefix)
+::parameters(const std::string &prefix)
+: Puncturer::parameters(Puncturer_polar_name, prefix)
 {
 	this->type = "WANGLIU";
 }

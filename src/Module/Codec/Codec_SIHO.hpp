@@ -16,10 +16,11 @@ private:
 	Decoder_SIHO<B,Q>* decoder_siho;
 
 public:
-	Codec_SIHO(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1,
-	           const std::string name = "Codec_SIHO")
-	: Codec<B,Q>(K, N_cw, N, tail_length, n_frames, name), decoder_siho(nullptr)
+	Codec_SIHO(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1)
+	: Codec<B,Q>(K, N_cw, N, tail_length, n_frames), decoder_siho(nullptr)
 	{
+		const std::string name = "Codec_SIHO";
+		this->set_name(name);
 	}
 
 	virtual ~Codec_SIHO()

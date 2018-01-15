@@ -46,7 +46,7 @@ std::string bg_color_reset_command = "\e[49m";
 #pragma warning( default : 4129 )
 #endif
 
-std::string aff3ct::tools::format(std::string str, Format f)
+std::string aff3ct::tools::format(const std::string &str, const Format f)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -54,24 +54,29 @@ std::string aff3ct::tools::format(std::string str, Format f)
 
 	if (enable_bash_tools)
 	{
+		std::string str_style = str;
 		constexpr Format style_mask = (((Format)1 << 31) + (((Format)1 << 31) -1)) ^ (((Format)1 << 20) -1);
-		str = style(str, (Style)(f & style_mask));
+		str_style = style(str_style, (Style)(f & style_mask));
 
 		constexpr Format bg_intensity_mask = (((Format)1 << 20) -1) ^ (((Format)1 << 18) -1);
 		constexpr Format bg_color_mask     = (((Format)1 << 18) -1) ^ (((Format)1 << 10) -1);
-		str = bg_color(str, (BG::Color)(f & bg_color_mask), (BG::Intensity)(f & bg_intensity_mask));
+		str_style = bg_color(str_style, (BG::Color)(f & bg_color_mask), (BG::Intensity)(f & bg_intensity_mask));
 
 		constexpr Format fg_intensity_mask = (((Format)1 << 10) -1) ^ (((Format)1 << 8) -1);
 		constexpr Format fg_color_mask     = (((Format)1 <<  8) -1);
-		str = fg_color(str, (FG::Color)(f & fg_color_mask), (FG::Intensity)(f & fg_intensity_mask));
+		str_style = fg_color(str_style, (FG::Color)(f & fg_color_mask), (FG::Intensity)(f & fg_intensity_mask));
+		
+		return str_style;
 	}
-
-	return str;
+	else
+	{
+		return str;
+	}
 
 #endif
 }
 
-std::string aff3ct::tools::style(std::string str, Style s)
+std::string aff3ct::tools::style(const std::string &str, const Style s)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -96,7 +101,7 @@ std::string aff3ct::tools::style(std::string str, Style s)
 #endif
 }
 
-std::string aff3ct::tools::fg_color(std::string str, FG::Color c, FG::Intensity i)
+std::string aff3ct::tools::fg_color(const std::string &str, const FG::Color c, const FG::Intensity i)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -114,7 +119,7 @@ std::string aff3ct::tools::fg_color(std::string str, FG::Color c, FG::Intensity 
 #endif
 }
 
-std::string aff3ct::tools::bg_color(std::string str, BG::Color c, BG::Intensity i)
+std::string aff3ct::tools::bg_color(const std::string &str, const BG::Color c, const BG::Intensity i)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -132,7 +137,7 @@ std::string aff3ct::tools::bg_color(std::string str, BG::Color c, BG::Intensity 
 #endif
 }
 
-std::string aff3ct::tools::default_style(std::string str)
+std::string aff3ct::tools::default_style(const std::string &str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -145,43 +150,43 @@ std::string aff3ct::tools::default_style(std::string str)
 }
 
 
-std::string aff3ct::tools::format_error(std::string str)
+std::string aff3ct::tools::format_error(const std::string &str)
 {
 	return format("(EE) ", FG::Color::RED | FG::Intensity::INTENSE | Style::BOLD) + str;
 }
 
-std::string aff3ct::tools::format_critical_error(std::string str)
+std::string aff3ct::tools::format_critical_error(const std::string &str)
 {
 	return format("(EE) ", FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::RED | BG::Intensity::INTENSE) + str;
 }
 
-std::string aff3ct::tools::format_warning(std::string str)
+std::string aff3ct::tools::format_warning(const std::string &str)
 {
 	return format("(WW) ", FG::Color::ORANGE | FG::Intensity::NORMAL | Style::BOLD) + str;
 }
 
-std::string aff3ct::tools::format_critical_warning(std::string str)
+std::string aff3ct::tools::format_critical_warning(const std::string &str)
 {
 	return format("(WW) ", FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::ORANGE | BG::Intensity::INTENSE) + str;
 }
 
-std::string aff3ct::tools::format_info(std::string str)
+std::string aff3ct::tools::format_info(const std::string &str)
 {
 	return format("(II) ", FG::Color::BLUE | FG::Intensity::NORMAL | Style::BOLD) + str;
 }
 
-std::string aff3ct::tools::format_critical_info(std::string str)
+std::string aff3ct::tools::format_critical_info(const std::string &str)
 {
 	return format("(II) ", FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::BLUE | BG::Intensity::INTENSE) + str;
 }
 
-std::string aff3ct::tools::format_positive_info(std::string str)
+std::string aff3ct::tools::format_positive_info(const std::string &str)
 {
 	return format("(II) ", FG::Color::GREEN | FG::Intensity::NORMAL) + str;
 }
 
 
-std::string aff3ct::tools::apply_on_each_line(const std::string& str, format_function fptr)
+std::string aff3ct::tools::apply_on_each_line(const std::string& str, const format_function fptr)
 {
 	std::string formated;
 

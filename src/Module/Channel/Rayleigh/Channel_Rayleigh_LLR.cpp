@@ -11,13 +11,16 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_Rayleigh_LLR<R>
 ::Channel_Rayleigh_LLR(const int N, const bool complex, tools::Noise<R> *noise_generator, const bool add_users,
-                       const R sigma, const int n_frames, const std::string name)
-: Channel<R>(N, sigma, n_frames, name),
+                       const R sigma, const int n_frames)
+: Channel<R>(N, sigma, n_frames),
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
   noise_generator(noise_generator)
 {
+	const std::string name = "Channel_Rayleigh_LLR";
+	this->set_name(name);
+
 	if (complex && N % 2)
 	{
 		std::stringstream message;
@@ -32,13 +35,16 @@ Channel_Rayleigh_LLR<R>
 template <typename R>
 Channel_Rayleigh_LLR<R>
 ::Channel_Rayleigh_LLR(const int N, const bool complex, const int seed, const bool add_users, const R sigma,
-                       const int n_frames, const std::string name)
-: Channel<R>(N, sigma, n_frames, name),
+                       const int n_frames)
+: Channel<R>(N, sigma, n_frames),
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
   noise_generator(new tools::Noise_std<R>(seed))
 {
+	const std::string name = "Channel_Rayleigh_LLR";
+	this->set_name(name);
+
 	if (complex && N % 2)
 	{
 		std::stringstream message;

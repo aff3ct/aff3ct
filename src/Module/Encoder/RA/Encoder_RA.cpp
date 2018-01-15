@@ -11,9 +11,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RA<B>
-::Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver, const int n_frames, const std::string name)
- : Encoder<B>(K, N, n_frames, name), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver)
+::Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver, const int n_frames)
+ : Encoder<B>(K, N, n_frames), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver)
 {
+	const std::string name = "Encoder_RA";
+	this->set_name(name);
+	
 	if (N % K)
 	{
 		std::stringstream message;

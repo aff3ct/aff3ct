@@ -28,7 +28,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class BFER_ite : public BFER<B,R,Q>
 {
 protected:
-	const factory::BFER_ite::parameters &params;
+	const factory::BFER_ite::parameters &params_BFER_ite;
 
 	// communication chain
 	std::vector<module::Source          <B    >*> source;
@@ -47,7 +47,7 @@ protected:
 	std::vector<std::mt19937> rd_engine_seed;
 
 public:
-	BFER_ite(const factory::BFER_ite::parameters &params);
+	explicit BFER_ite(const factory::BFER_ite::parameters &params_BFER_ite);
 	virtual ~BFER_ite();
 
 protected:

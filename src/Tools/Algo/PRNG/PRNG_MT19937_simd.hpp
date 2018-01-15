@@ -38,7 +38,7 @@ protected:
 	unsigned index;
 
 public:
-	PRNG_MT19937_simd(const mipp::Reg<int> seed);
+	explicit PRNG_MT19937_simd(const mipp::Reg<int> seed);
 	PRNG_MT19937_simd();
 	virtual ~PRNG_MT19937_simd();
 

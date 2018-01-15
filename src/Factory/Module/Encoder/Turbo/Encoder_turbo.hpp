@@ -15,11 +15,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Encoder_turbo_name;
+extern const std::string Encoder_turbo_prefix;
 struct Encoder_turbo : public Encoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	template <class E1 = Encoder_RSC, class E2 = E1>
 	class parameters : public Encoder::parameters
 	{
@@ -34,7 +33,7 @@ struct Encoder_turbo : public Encoder
 		typename E2::parameters *sub2;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder_turbo::prefix);
+		explicit parameters(const std::string &p = Encoder_turbo_prefix);
 		virtual ~parameters();
 		Encoder_turbo::parameters<E1,E2>* clone() const;
 

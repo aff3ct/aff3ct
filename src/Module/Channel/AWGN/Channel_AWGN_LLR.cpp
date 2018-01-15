@@ -10,23 +10,27 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_AWGN_LLR<R>
 ::Channel_AWGN_LLR(const int N, tools::Noise<R> *noise_generator, const bool add_users, const R sigma,
-                   const int n_frames, const std::string name)
-: Channel<R>(N, sigma, n_frames, name),
+                   const int n_frames)
+: Channel<R>(N, sigma, n_frames),
   add_users(add_users),
   noise_generator(noise_generator)
 {
+	const std::string name = "Channel_AWGN_LLR";
+	this->set_name(name);
+
 	if (noise_generator == nullptr)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
 }
 
 template <typename R>
 Channel_AWGN_LLR<R>
-::Channel_AWGN_LLR(const int N, const int seed, const bool add_users, const R sigma, const int n_frames,
-                   const std::string name)
-: Channel<R>(N, sigma, n_frames, name),
+::Channel_AWGN_LLR(const int N, const int seed, const bool add_users, const R sigma, const int n_frames)
+: Channel<R>(N, sigma, n_frames),
   add_users(add_users),
   noise_generator(new tools::Noise_std<R>(seed))
 {
+	const std::string name = "Channel_AWGN_LLR";
+	this->set_name(name);
 }
 
 template <typename R>

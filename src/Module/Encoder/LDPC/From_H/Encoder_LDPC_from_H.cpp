@@ -15,10 +15,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_LDPC_from_H<B>
-::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames,
-                      const std::string name)
-: Encoder_LDPC<B>(K, N, n_frames, name), G(tools::LDPC_matrix_handler::transform_H_to_G(H, info_bits_pos))
+::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames)
+: Encoder_LDPC<B>(K, N, n_frames), G(tools::LDPC_matrix_handler::transform_H_to_G(H, info_bits_pos))
 {
+	const std::string name = "Encoder_LDPC_from_H";
+	this->set_name(name);
+	
 	// warning G is transposed !
 	if (K != (int)G.get_n_cols())
 	{

@@ -28,8 +28,7 @@ public:
 	                                      const int n_ite = 1, 
 	                                      const bool buffered_encoding = true,
 	                                      std::ostream &stream = std::cout,
-	                                      const int n_frames = 1,
-	                                      const std::string name = "Decoder_RSC_BCJR_seq_generic_std_json");
+	                                      const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_seq_generic_std_json();
 
 protected:

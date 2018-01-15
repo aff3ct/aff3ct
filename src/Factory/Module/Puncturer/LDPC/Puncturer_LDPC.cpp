@@ -9,12 +9,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Puncturer_LDPC::name   = "Puncturer LDPC";
-const std::string aff3ct::factory::Puncturer_LDPC::prefix = "pct";
+const std::string aff3ct::factory::Puncturer_LDPC_name   = "Puncturer LDPC";
+const std::string aff3ct::factory::Puncturer_LDPC_prefix = "pct";
 
 Puncturer_LDPC::parameters
-::parameters(const std::string prefix)
-: Puncturer::parameters(Puncturer_LDPC::name, prefix)
+::parameters(const std::string &prefix)
+: Puncturer::parameters(Puncturer_LDPC_name, prefix)
 {
 	this->type = "LDPC";
 }
@@ -50,7 +50,7 @@ void Puncturer_LDPC::parameters
 		"puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: \"1,1,1,0\").");
 }
 
-std::vector<bool> generate_punct_vector(const std::string pattern)
+std::vector<bool> generate_punct_vector(const std::string &pattern)
 {
 	std::vector<std::string> str_array = aff3ct::tools::split(pattern, ',');
 	int N_pattern = (int)str_array.size();

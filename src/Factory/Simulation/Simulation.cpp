@@ -5,12 +5,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Simulation::name   = "Simulation";
-const std::string aff3ct::factory::Simulation::prefix = "sim";
+const std::string aff3ct::factory::Simulation_name   = "Simulation";
+const std::string aff3ct::factory::Simulation_prefix = "sim";
 
 Simulation::parameters
-::parameters(const std::string name, const std::string prefix)
-: Launcher::parameters(name, Simulation::name, prefix)
+::parameters(const std::string &name, const std::string &prefix)
+: Launcher::parameters(name, Simulation_name, prefix)
 {
 }
 

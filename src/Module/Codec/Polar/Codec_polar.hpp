@@ -33,7 +33,7 @@ public:
 	            const factory::Encoder_polar       ::parameters &enc_par,
 	            const factory::Decoder_polar       ::parameters &dec_par,
 	            const factory::Puncturer_polar     ::parameters *pct_par = nullptr,
-	            CRC<B>* crc = nullptr, const std::string name = "Codec_polar");
+	            CRC<B>* crc = nullptr);
 	virtual ~Codec_polar();
 
 	void set_sigma(const float sigma);

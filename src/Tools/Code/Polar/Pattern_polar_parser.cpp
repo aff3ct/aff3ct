@@ -14,7 +14,7 @@ using namespace aff3ct::tools;
 Pattern_polar_parser
 ::Pattern_polar_parser(const int& N,
                        const std::vector<bool> &frozen_bits,
-                       const std::vector<Pattern_polar_i*> patterns,
+                       const std::vector<Pattern_polar_i*> &patterns,
                        const Pattern_polar_i *pattern_rate0,
                        const Pattern_polar_i *pattern_rate1)
 : N(N),
@@ -34,7 +34,7 @@ Pattern_polar_parser
 Pattern_polar_parser
 ::Pattern_polar_parser(const int& N,
                        const std::vector<bool>& frozen_bits,
-                       const std::vector<Pattern_polar_i*> patterns,
+                       const std::vector<Pattern_polar_i*> &patterns,
                        const int pattern_rate0_id,
                        const int pattern_rate1_id)
 : N(N),

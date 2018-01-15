@@ -17,11 +17,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Codec_turbo_name;
+extern const std::string Codec_turbo_prefix;
 struct Codec_turbo : public Codec_SIHO
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Codec_SIHO::parameters
 	{
 	public:
@@ -32,7 +31,7 @@ struct Codec_turbo : public Codec_SIHO
 		Puncturer_turbo::parameters   *pct;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_turbo::prefix);
+		explicit parameters(const std::string &p = Codec_turbo_prefix);
 		virtual ~parameters();
 		Codec_turbo::parameters* clone() const;
 		void enable_puncturer();

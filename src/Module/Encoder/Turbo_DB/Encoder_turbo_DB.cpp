@@ -11,9 +11,8 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_turbo_DB<B>
 ::Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
-                   Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i, const int n_frames,
-                   const std::string name)
-: Encoder<B>(K, N, n_frames, name),
+                   Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i, const int n_frames)
+: Encoder<B>(K, N, n_frames),
   pi(pi),
   enco_n(enco_n),
   enco_i(enco_i),
@@ -21,6 +20,9 @@ Encoder_turbo_DB<B>
   par_n(K * n_frames),
   par_i(K * n_frames)
 {
+	const std::string name = "Encoder_turbo_DB";
+	this->set_name(name);
+	
 	if (K % 2)
 	{
 		std::stringstream message;

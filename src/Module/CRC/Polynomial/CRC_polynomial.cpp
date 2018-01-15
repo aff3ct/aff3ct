@@ -12,12 +12,15 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_polynomial<B>
-::CRC_polynomial(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
-: CRC<B>(K, size ? size : CRC_polynomial<B>::get_size(CRC_polynomial<B>::get_name(poly_key)), n_frames, name),
-  polynomial       (0                                 ),
+::CRC_polynomial(const int K, std::string poly_key, const int size, const int n_frames)
+: CRC<B>(K, size ? size : CRC_polynomial<B>::get_size(CRC_polynomial<B>::get_name(poly_key)), n_frames),
+  polynomial       (0                                     ),
   polynomial_packed(CRC_polynomial<B>::get_value(poly_key)),
-  buff_crc         (0                                 )
+  buff_crc         (0                                     )
 {
+	const std::string name = "CRC_polynomial";
+	this->set_name(name);
+
 	if (poly_key.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'poly_key' can't be empty, choose a CRC.");
 

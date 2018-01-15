@@ -129,14 +129,14 @@ public:
 
 	virtual ~Pattern_polar_i() {}
 
-	void        set_id   (unsigned id    ) { this->id = id;    }
-	unsigned    get_id   (               ) { return this->id;  }
-	void        set_key  (std::string key) { this->key = key;  }
-	std::string get_key  (               ) { return this->key; }
-	int         get_size (               ) { return size;      }
-	int         get_si_2 (               ) { return si_2;      }
-	int         get_off_l(               ) { return off_l;     }
-	int         get_off_s(               ) { return off_s;     }
+	void        set_id   (const unsigned id     ) { this->id = id;    }
+	unsigned    get_id   (                      ) { return this->id;  }
+	void        set_key  (const std::string &key) { this->key = key;  }
+	std::string get_key  (                      ) { return this->key; }
+	int         get_size (                      ) { return size;      }
+	int         get_si_2 (                      ) { return si_2;      }
+	int         get_off_l(                      ) { return off_l;     }
+	int         get_off_s(                      ) { return off_s;     }
 
 	inline int get_min_lvl() { return min_level; }
 	inline int get_max_lvl() { return max_level; }

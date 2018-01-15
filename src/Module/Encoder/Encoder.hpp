@@ -59,9 +59,13 @@ public:
 	 * \param n_frames: number of frames to process in the Encoder.
 	 * \param name:     Encoder's name.
 	 */
-	Encoder(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder")
-	: Module(n_frames, name, "Encoder"), K(K), N(N)
+	Encoder(const int K, const int N, const int n_frames = 1)
+	: Module(n_frames), K(K), N(N)
 	{
+		const std::string name = "Encoder";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (K <= 0)
 		{
 			std::stringstream message;

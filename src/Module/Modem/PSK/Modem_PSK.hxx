@@ -19,18 +19,19 @@ namespace module
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_PSK<B,R,Q,MAX>
-::Modem_PSK(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames,
-            const std::string name)
+::Modem_PSK(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames)
 : Modem<B,R,Q>(N,
                (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
                sigma,
-               n_frames,
-               name),
+               n_frames),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   disable_sig2   (disable_sig2),
   constellation  (nbr_symbols)
 {
+	const std::string name = "Modem_PSK";
+	this->set_name(name);
+	
 	std::vector<B> bits(this->bits_per_symbol);
 
 	for (auto j = 0; j < this->nbr_symbols; j++)

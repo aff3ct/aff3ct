@@ -4,9 +4,11 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_coset<B>
-::Encoder_coset(const int K, const int N, const int seed, const int n_frames, const std::string name)
-: Encoder<B>(K, N, n_frames, name), rd_engine(seed + 1024), uniform_dist(0, 1)
+::Encoder_coset(const int K, const int N, const int seed, const int n_frames)
+: Encoder<B>(K, N, n_frames), rd_engine(seed + 1024), uniform_dist(0, 1)
 {
+	const std::string name = "Encoder_coset";
+	this->set_name(name);
 }
 
 template <typename B>

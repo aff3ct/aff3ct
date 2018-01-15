@@ -19,8 +19,7 @@ private:
 
 public:
 	Encoder_RSC_generic_sys(const int& K, const int& N, const bool buffered_encoding = true,
-	                        std::vector<int> poly = {5,7}, const int n_frames = 1,
-	                        const std::string name = "Encoder_RSC_generic_sys");
+	                        std::vector<int> poly = {5,7}, const int n_frames = 1);
 	virtual ~Encoder_RSC_generic_sys() {}
 
 protected:

@@ -17,8 +17,7 @@ private:
 	int cw_counter;
 
 public:
-	Encoder_user(const int K, const int N, const std::string filename, const int n_frames = 1,
-	             const std::string name = "Encoder_user");
+	Encoder_user(const int K, const int N, const std::string &filename, const int n_frames = 1);
 	virtual ~Encoder_user();
 
 protected:

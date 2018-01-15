@@ -11,9 +11,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_polynomial_fast<B>
-::CRC_polynomial_fast(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
-: CRC_polynomial<B>(K, poly_key, size, n_frames, name), lut_crc32(256), polynomial_packed_rev(0)
+::CRC_polynomial_fast(const int K, std::string poly_key, const int size, const int n_frames)
+: CRC_polynomial<B>(K, poly_key, size, n_frames), lut_crc32(256), polynomial_packed_rev(0)
 {
+	const std::string name = "CRC_polynomial_fast";
+	this->set_name(name);
+
 	if (this->size > 32)
 	{
 		std::stringstream message;

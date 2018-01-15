@@ -21,6 +21,10 @@ namespace factory
 {
 using header_list = std::vector<std::pair<std::string,std::string>>;
 
+extern const std::string Factory_name;
+extern const std::string Factory_short_name;
+extern const std::string Factory_prefix;
+
 /*!
  * \class Factory
  *
@@ -35,9 +39,9 @@ struct Factory
 	{
 	public:
 		// constructor/destructor
-		parameters(const std::string name       = "Factory",
-		           const std::string short_name = "Factory",
-		           const std::string prefix     = "fac");
+		parameters(const std::string &name       = Factory_name,
+		           const std::string &short_name = Factory_short_name,
+		           const std::string &prefix     = Factory_prefix);
 		virtual ~parameters();
 		virtual Factory::parameters* clone() const = 0;
 

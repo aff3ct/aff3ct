@@ -23,7 +23,7 @@ private:
 	mipp::vector<T>   vals;
 
 public:
-	LC_sorter_simd(const int max_elmts) : max_elmts(max_elmts), vals(2 * max_elmts)
+	explicit LC_sorter_simd(const int max_elmts) : max_elmts(max_elmts), vals(2 * max_elmts)
 	{
 		tree_idx.resize(2 * max_elmts -1);
 		std::iota(tree_idx.begin(), tree_idx.begin() + this->max_elmts, 0);

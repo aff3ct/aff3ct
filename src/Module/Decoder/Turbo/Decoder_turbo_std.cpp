@@ -19,11 +19,12 @@ Decoder_turbo_std<B,R>
                     const Interleaver<R> &pi,
                     Decoder_SISO<R> &siso_n,
                     Decoder_SISO<R> &siso_i,
-                    const bool buffered_encoding,
-                    const std::string name)
-: Decoder(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
-  Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
+                    const bool buffered_encoding)
+: Decoder(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level()),
+  Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding)
 {
+	const std::string name = "Decoder_turbo_std";
+	this->set_name(name);
 }
 
 template <typename B, typename R>

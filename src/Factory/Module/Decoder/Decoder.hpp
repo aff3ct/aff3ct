@@ -9,11 +9,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_name;
+extern const std::string Decoder_prefix;
 struct Decoder : Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -42,7 +41,7 @@ struct Decoder : Factory
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string &n, const std::string &p);
 	};
 };
 }

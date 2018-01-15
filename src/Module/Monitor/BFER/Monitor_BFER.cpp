@@ -8,13 +8,16 @@ using namespace aff3ct::module;
 
 template <typename B>
 Monitor_BFER<B>
-::Monitor_BFER(const int size, const unsigned max_fe, const int n_frames, const std::string name)
-: Monitor(size, n_frames, name.c_str()),
+::Monitor_BFER(const int size, const unsigned max_fe, const int n_frames)
+: Monitor(size, n_frames),
   max_fe(max_fe),
   n_bit_errors(0),
   n_frame_errors(0),
   n_analyzed_frames(0)
 {
+	const std::string name = "Monitor_BFER";
+	this->set_name(name);
+	
 	auto &p = this->create_task("check_errors", mnt::tsk::check_errors);
 	auto &ps_U = this->template create_socket_in<B>(p, "U", this->size * this->n_frames);
 	auto &ps_V = this->template create_socket_in<B>(p, "V", this->size * this->n_frames);

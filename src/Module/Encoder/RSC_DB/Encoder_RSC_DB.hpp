@@ -19,6 +19,8 @@ class Encoder_RSC_DB: public Encoder<B>
 	friend Encoder_turbo_DB<B>;
 
 private:
+	static const std::string default_std;
+
 	const int  n_ff;               // number of D flip-flop
 	const int  n_states;           // number of states in the trellis
 	const bool buffered_encoding;
@@ -31,10 +33,9 @@ private:
 
 public:
 	Encoder_RSC_DB(const int& K, const int& N,
-	               const std::string standard = "DVB-RCS1",
+	               const std::string &standard = default_std,
 	               const bool buffered_encoding = true,
-	               const int n_frames = 1,
-	               const std::string name = "Encoder_RSC_DB");
+	               const int n_frames = 1);
 	virtual ~Encoder_RSC_DB() {}
 
 	int tail_length() const {return 0;}

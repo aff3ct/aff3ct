@@ -9,10 +9,13 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK<B,R,Q>
-::Modem_OOK(const int N, const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
-: Modem<B,R,Q>(N, sigma, n_frames, name),
+::Modem_OOK(const int N, const R sigma, const bool disable_sig2, const int n_frames)
+: Modem<B,R,Q>(N, sigma, n_frames),
   disable_sig2(disable_sig2)
 {
+	const std::string name = "Modem_OOK";
+	this->set_name(name);
+	
 	if(disable_sig2)
 		sigma_factor = (R)0.5;
 	else

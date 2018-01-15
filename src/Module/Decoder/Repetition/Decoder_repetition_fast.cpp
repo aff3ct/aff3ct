@@ -10,11 +10,13 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_repetition_fast<B,R>
-::Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding, const int n_frames,
-                          const std::string name)
-: Decoder(K, N, n_frames, 1, name),
-  Decoder_repetition<B,R>(K, N, buffered_encoding, n_frames, name)
+::Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding, const int n_frames)
+: Decoder(K, N, n_frames, 1),
+  Decoder_repetition<B,R>(K, N, buffered_encoding, n_frames)
 {
+	const std::string name = "Decoder_repetition_fast";
+	this->set_name(name);
+	
 	if (this->K % mipp::nElReg<R>())
 	{
 		std::stringstream message;

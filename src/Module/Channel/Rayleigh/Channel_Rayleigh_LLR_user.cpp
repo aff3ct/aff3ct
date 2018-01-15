@@ -12,8 +12,8 @@ template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const std::string& gains_filename,
                             const int gain_occurrences, tools::Noise<R> *noise_generator, const bool add_users,
-                            const R sigma, const int n_frames, const std::string name)
-: Channel<R>(N, sigma, n_frames, name),
+                            const R sigma, const int n_frames)
+: Channel<R>(N, sigma, n_frames),
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
@@ -22,6 +22,9 @@ Channel_Rayleigh_LLR_user<R>
   current_gain_occur(0),
   gain_index(0)
 {
+	const std::string name = "Channel_Rayleigh_LLR_user";
+	this->set_name(name);
+
 	if (complex || add_users)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Arguments 'complex' and 'add_users' are not supported yet.");
 
@@ -37,9 +40,8 @@ Channel_Rayleigh_LLR_user<R>
 template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const int seed, const std::string& gains_filename,
-                            const int gain_occurrences, const bool add_users, const R sigma,
-                            const int n_frames, const std::string name)
-: Channel<R>(N, sigma, n_frames, name),
+                            const int gain_occurrences, const bool add_users, const R sigma, const int n_frames)
+: Channel<R>(N, sigma, n_frames),
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
@@ -48,6 +50,9 @@ Channel_Rayleigh_LLR_user<R>
   current_gain_occur(0),
   gain_index(0)
 {
+	const std::string name = "Channel_Rayleigh_LLR_user";
+	this->set_name(name);
+
 	if (complex || add_users)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Arguments 'complex' and 'add_users' are not supported yet.");
 

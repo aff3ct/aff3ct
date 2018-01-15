@@ -9,12 +9,15 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Monitor_EXIT<B,R>
-::Monitor_EXIT(const int size, const unsigned n_trials, const int n_frames, const std::string name)
-: Monitor(size, n_frames, name.c_str()),
+::Monitor_EXIT(const int size, const unsigned n_trials, const int n_frames)
+: Monitor(size, n_frames),
   n_trials(n_trials),
   I_A_sum((R)0),
   n_analyzed_frames(0)
 {
+	const std::string name = "Monitor_EXIT";
+	this->set_name(name);
+
 	auto &p = this->create_task("check_mutual_info", mnt::tsk::check_mutual_info);
 	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->size * this->n_frames);
 	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->size * this->n_frames);

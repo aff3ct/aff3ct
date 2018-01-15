@@ -135,9 +135,9 @@ int sc_main(int argc, char **argv)
 	if (read_arguments(argc, (const char**)argv, params) == EXIT_FAILURE)
 		return EXIT_FAILURE;
 
-	launcher::Launcher *launcher = nullptr;
 	try
 	{
+		launcher::Launcher *launcher = nullptr;
 #ifdef MULTI_PREC
 		switch (params.sim_prec)
 		{

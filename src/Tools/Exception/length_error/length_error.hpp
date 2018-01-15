@@ -14,12 +14,12 @@ class length_error : public exception
 public:
 	length_error() throw();
 
-	length_error(const std::string message) throw();
+	explicit length_error(const std::string &message) throw();
 
-	length_error(const std::string filename,
+	length_error(const std::string &filename,
 	             const int line_num,
-	             const std::string funcname = "",
-	             const std::string message = "") throw();
+	             const std::string &funcname = exception::empty_string,
+	             const std::string &message = exception::empty_string) throw();
 
 	virtual ~length_error() throw();
 };

@@ -12,11 +12,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Codec_SISO_name;
+extern const std::string Codec_SISO_prefix;
 struct Codec_SISO : Codec
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : virtual public Codec::parameters
 	{
 	public:
@@ -24,7 +23,7 @@ struct Codec_SISO : Codec
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_SISO::prefix);
+		explicit parameters(const std::string &p = Codec_SISO_prefix);
 		virtual ~parameters();
 		// The following line is commented to prevent Visual C++ to incorrectly report ambiguity when covariance is 
 		// used with virtual inheritance.
@@ -39,7 +38,7 @@ struct Codec_SISO : Codec
 		module::Codec_SISO<B,Q>* build(module::CRC<B>* crc = nullptr) const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string &n, const std::string &p);
 	};
 
 	template <typename B = int, typename Q = float>

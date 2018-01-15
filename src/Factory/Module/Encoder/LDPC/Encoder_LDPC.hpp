@@ -12,11 +12,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Encoder_LDPC_name;
+extern const std::string Encoder_LDPC_prefix;
 struct Encoder_LDPC : public Encoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Encoder::parameters
 	{
 	public:
@@ -29,7 +28,7 @@ struct Encoder_LDPC : public Encoder
 		std::string H_reorder = "NONE";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder_LDPC::prefix);
+		explicit parameters(const std::string &p = Encoder_LDPC_prefix);
 		virtual ~parameters();
 		Encoder_LDPC::parameters* clone() const;
 

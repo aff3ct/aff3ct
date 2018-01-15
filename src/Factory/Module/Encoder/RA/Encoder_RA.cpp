@@ -7,12 +7,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Encoder_RA::name   = "Encoder RA";
-const std::string aff3ct::factory::Encoder_RA::prefix = "enc";
+const std::string aff3ct::factory::Encoder_RA_name   = "Encoder RA";
+const std::string aff3ct::factory::Encoder_RA_prefix = "enc";
 
 Encoder_RA::parameters
-::parameters(const std::string prefix)
-: Encoder::parameters(Encoder_RA::name, prefix),
+::parameters(const std::string &prefix)
+: Encoder::parameters(Encoder_RA_name, prefix),
   itl(new Interleaver::parameters("itl"))
 {
 	this->type = "RA";

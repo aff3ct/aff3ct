@@ -14,12 +14,12 @@ class domain_error : public exception
 public:
 	domain_error() throw();
 
-	domain_error(const std::string message) throw();
+	explicit domain_error(const std::string &message) throw();
 
-	domain_error(const std::string filename,
+	domain_error(const std::string &filename,
 	             const int line_num,
-	             const std::string funcname = "",
-	             const std::string message = "") throw();
+	             const std::string &funcname = exception::empty_string,
+	             const std::string &message = exception::empty_string) throw();
 
 	virtual ~domain_error() throw();
 };

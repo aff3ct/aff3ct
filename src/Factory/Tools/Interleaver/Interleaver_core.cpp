@@ -17,12 +17,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Interleaver_core::name   = "Interleaver";
-const std::string aff3ct::factory::Interleaver_core::prefix = "itl";
+const std::string aff3ct::factory::Interleaver_core_name   = "Interleaver";
+const std::string aff3ct::factory::Interleaver_core_prefix = "itl";
 
 Interleaver_core::parameters
-::parameters(const std::string prefix)
-: Factory::parameters(Interleaver_core::name, Interleaver_core::name, prefix)
+::parameters(const std::string &prefix)
+: Factory::parameters(Interleaver_core_name, Interleaver_core_name, prefix)
 {
 }
 

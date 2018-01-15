@@ -49,7 +49,7 @@ public:
 	 *
 	 * \param seed: a seed to initialize the PRNG.
 	 */
-	PRNG_MT19937(const uint32_t seed = 0);
+	explicit PRNG_MT19937(const uint32_t seed = 0);
 
 	/*!
 	 * \brief Destructor.

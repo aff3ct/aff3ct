@@ -17,11 +17,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Launcher_name;
+extern const std::string Launcher_prefix;
 struct Launcher : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -36,7 +35,7 @@ struct Launcher : public Factory
 		bool        display_version = false;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Launcher::prefix);
+		explicit parameters(const std::string &p = Launcher_prefix);
 		virtual ~parameters();
 		virtual Launcher::parameters* clone() const;
 
@@ -54,7 +53,7 @@ struct Launcher : public Factory
 		inline launcher::Launcher* build_exit(const int argc, const char **argv) const;
 
 	protected:
-		parameters(const std::string n, const std::string sn, const std::string p);
+		parameters(const std::string &n, const std::string &sn, const std::string &p);
 	};
 
 	template <typename B = int, typename R = float, typename Q = R>

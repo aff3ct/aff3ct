@@ -36,12 +36,13 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   decoder name.
 	 */
-	Decoder_SISO_SIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	                  std::string name = "Decoder_SISO_SIHO")
-	: Decoder          (K, N, n_frames, simd_inter_frame_level, name),
-	  Decoder_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level, name),
-	  Decoder_SISO<  R>(K, N, n_frames, simd_inter_frame_level, name)
+	Decoder_SISO_SIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1)
+	: Decoder          (K, N, n_frames, simd_inter_frame_level),
+	  Decoder_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level),
+	  Decoder_SISO<  R>(K, N, n_frames, simd_inter_frame_level)
 	{
+		const std::string name = "Decoder_SISO_SIHO";
+		this->set_name(name);
 	}
 
 	/*!

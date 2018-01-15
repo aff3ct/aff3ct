@@ -16,12 +16,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Modem::name   = "Modem";
-const std::string aff3ct::factory::Modem::prefix = "mdm";
+const std::string aff3ct::factory::Modem_name   = "Modem";
+const std::string aff3ct::factory::Modem_prefix = "mdm";
 
 Modem::parameters
-::parameters(const std::string prefix)
-: Factory::parameters(Modem::name, Modem::name, prefix)
+::parameters(const std::string &prefix)
+: Factory::parameters(Modem_name, Modem_name, prefix)
 {
 }
 
@@ -256,14 +256,14 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build() const
 {
-	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N, this->sigma,                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N, this->sigma,                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "OOK"      ) return new module::Modem_OOK      <B,R,Q    >(this->N, this->sigma,                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N, this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N, this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N, this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "USER"     ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->sigma, this->bps, this->const_path,                                                                  this->no_sig2, this->n_frames);
-	else if (this->type == "CPM"      ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, this->sigma, this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
+	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   this->sigma,                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   this->sigma,                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "OOK"      ) return new module::Modem_OOK      <B,R,Q    >(this->N,                   this->sigma,                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "USER"     ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "CPM"      ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -307,7 +307,7 @@ module::Modem<B,R,Q>* Modem
 }
 
 int Modem
-::get_buffer_size_after_modulation(const std::string type,
+::get_buffer_size_after_modulation(const std::string &type,
                                    const int         N,
                                    const int         bps,
                                    const int         upf,
@@ -328,7 +328,7 @@ int Modem
 }
 
 int Modem
-::get_buffer_size_after_filtering(const std::string type,
+::get_buffer_size_after_filtering(const std::string &type,
                                   const int         N,
                                   const int         bps,
                                   const int         cpm_L,

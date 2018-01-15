@@ -61,9 +61,13 @@ public:
 	 * \param n_frames: number of frames to process in the Channel.
 	 * \param name:     Channel's name.
 	 */
-	Channel(const int N, const R sigma = -1.f, const int n_frames = 1, const std::string name = "Channel")
-	: Module(n_frames, name, "Channel"), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
+	Channel(const int N, const R sigma = -1.f, const int n_frames = 1)
+	: Module(n_frames), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
 	{
+		const std::string name = "Channel";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (N <= 0)
 		{
 			std::stringstream message;

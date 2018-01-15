@@ -14,12 +14,12 @@ class invalid_argument : public exception
 public:
 	invalid_argument() throw();
 
-	invalid_argument(const std::string message) throw();
+	explicit invalid_argument(const std::string &message) throw();
 
-	invalid_argument(const std::string filename,
+	invalid_argument(const std::string &filename,
 	                 const int line_num,
-	                 const std::string funcname = "",
-	                 const std::string message = "") throw();
+	                 const std::string &funcname = exception::empty_string,
+	                 const std::string &message = exception::empty_string) throw();
 
 	virtual ~invalid_argument() throw();
 };

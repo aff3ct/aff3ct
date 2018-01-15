@@ -19,8 +19,7 @@ protected:
 
 public:
 	Codec_RSC(const factory::Encoder_RSC::parameters &enc_params,
-	          const factory::Decoder_RSC::parameters &dec_params,
-	          const std::string name = "Codec_RSC");
+	          const factory::Decoder_RSC::parameters &dec_params);
 	virtual ~Codec_RSC();
 
 protected:

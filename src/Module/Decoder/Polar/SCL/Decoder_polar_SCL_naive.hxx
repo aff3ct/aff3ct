@@ -19,14 +19,17 @@ namespace module
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                          const int n_frames, const std::string name)
-: Decoder          (K, N, n_frames, 1, name),
-  Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
+                          const int n_frames)
+: Decoder          (K, N, n_frames, 1),
+  Decoder_SIHO<B,R>(K, N, n_frames, 1),
   m((int)std::log2(N)),
   metric_init(std::numeric_limits<R>::min()),
   frozen_bits(frozen_bits),
   L(L)
 {
+	const std::string name = "Decoder_polar_SCL_naive";
+	this->set_name(name);
+	
 	if (!tools::is_power_of_2(this->N))
 	{
 		std::stringstream message;

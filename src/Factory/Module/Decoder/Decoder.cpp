@@ -3,12 +3,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Decoder::name   = "Decoder";
-const std::string aff3ct::factory::Decoder::prefix = "dec";
+const std::string aff3ct::factory::Decoder_name   = "Decoder";
+const std::string aff3ct::factory::Decoder_prefix = "dec";
 
 Decoder::parameters
-::parameters(const std::string name, const std::string prefix)
-: Factory::parameters(name, Decoder::name, prefix)
+::parameters(const std::string &name, const std::string &prefix)
+: Factory::parameters(name, Decoder_name, prefix)
 {
 }
 

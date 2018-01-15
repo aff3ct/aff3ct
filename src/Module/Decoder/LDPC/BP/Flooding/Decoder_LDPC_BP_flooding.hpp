@@ -39,8 +39,7 @@ protected:
 	                         const std::vector<unsigned> &info_bits_pos,
 	                         const bool enable_syndrome = true,
 	                         const int syndrome_depth = 1,
-	                         const int n_frames = 1,
-	                         const std::string name = "Decoder_LDPC_BP_flooding");
+	                         const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_flooding();
 
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);

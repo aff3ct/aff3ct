@@ -13,7 +13,6 @@ template <typename B = int, typename R = float>
 class CRC_checker_DB : public CRC_checker<B,R>
 {
 protected:
-	const int      K;
 	std::vector<R> apost;
 
 public:

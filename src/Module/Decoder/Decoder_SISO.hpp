@@ -47,12 +47,14 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   decoder name.
 	 */
-	Decoder_SISO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	             std::string name = "Decoder_SISO")
-	: Decoder(K, N, n_frames, simd_inter_frame_level, name),
+	Decoder_SISO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1)
+	: Decoder(K, N, n_frames, simd_inter_frame_level),
 	  Y_N1   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
 	  Y_N2   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 	{
+		const std::string name = "Decoder_SISO";
+		this->set_name(name);
+		
 		auto &p = this->create_task("decode_siso", dec::tsk::decode_siso);
 		auto &ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
 		auto &ps_Y_N2 = this->template create_socket_out<R>(p, "Y_N2", this->N * this->n_frames);

@@ -30,8 +30,7 @@ public:
 	Decoder_RSC_DB_BCJR(const int K,
 	                    const std::vector<std::vector<int>> &trellis,
 	                    const bool buffered_encoding = true,
-	                    const int n_frames = 1,
-	                    const std::string name = "Decoder_RSC_DB_BCJR");
+	                    const int n_frames = 1);
 	virtual ~Decoder_RSC_DB_BCJR();
 
 	void notify_new_frame();

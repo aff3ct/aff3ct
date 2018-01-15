@@ -8,12 +8,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Decoder_BCH::name   = "Decoder BCH";
-const std::string aff3ct::factory::Decoder_BCH::prefix = "dec";
+const std::string aff3ct::factory::Decoder_BCH_name   = "Decoder BCH";
+const std::string aff3ct::factory::Decoder_BCH_prefix = "dec";
 
 Decoder_BCH::parameters
-::parameters(const std::string prefix)
-: Decoder::parameters(Decoder_BCH::name, prefix)
+::parameters(const std::string &prefix)
+: Decoder::parameters(Decoder_BCH_name, prefix)
 {
 	this->type   = "ALGEBRAIC";
 	this->implem = "STD";

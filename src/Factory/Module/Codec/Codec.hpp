@@ -13,11 +13,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Codec_name;
+extern const std::string Codec_prefix;
 struct Codec : Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -34,7 +33,7 @@ struct Codec : Factory
 		int tail_length = 0;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec::prefix);
+		explicit parameters(const std::string &p = Codec_prefix);
 		virtual ~parameters();
 		virtual Codec::parameters* clone() const;
 		virtual void enable_puncturer();
@@ -49,7 +48,7 @@ struct Codec : Factory
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:
-		parameters(const std::string n = Codec::name, const std::string p = Codec::prefix);
+		parameters(const std::string &n = Codec_name, const std::string &p = Codec_prefix);
 
 		void set_enc(Encoder    ::parameters *enc);
 		void set_dec(Decoder    ::parameters *dec);

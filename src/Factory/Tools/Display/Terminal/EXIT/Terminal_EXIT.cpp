@@ -5,12 +5,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Terminal_EXIT::name   = "Terminal EXIT";
-const std::string aff3ct::factory::Terminal_EXIT::prefix = "ter";
+const std::string aff3ct::factory::Terminal_EXIT_name   = "Terminal EXIT";
+const std::string aff3ct::factory::Terminal_EXIT_prefix = "ter";
 
 Terminal_EXIT::parameters
-::parameters(const std::string prefix)
-: Terminal::parameters(Terminal_EXIT::name, prefix)
+::parameters(const std::string &prefix)
+: Terminal::parameters(Terminal_EXIT_name, prefix)
 {
 }
 

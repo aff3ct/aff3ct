@@ -13,11 +13,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Codec_SISO_SIHO_name;
+extern const std::string Codec_SISO_SIHO_prefix;
 struct Codec_SISO_SIHO : Codec
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : virtual public Codec_SISO::parameters, virtual public Codec_SIHO::parameters
 	{
 	public:
@@ -25,7 +24,7 @@ struct Codec_SISO_SIHO : Codec
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_SISO_SIHO::prefix);
+		explicit parameters(const std::string &p = Codec_SISO_SIHO_prefix);
 		virtual ~parameters();
 		virtual Codec_SISO_SIHO::parameters* clone() const = 0;
 
@@ -34,7 +33,7 @@ struct Codec_SISO_SIHO : Codec
 		module::Codec_SISO_SIHO<B,Q>* build(module::CRC<B>* crc = nullptr) const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string &n, const std::string &p);
 	};
 
 	template <typename B = int, typename Q = float>

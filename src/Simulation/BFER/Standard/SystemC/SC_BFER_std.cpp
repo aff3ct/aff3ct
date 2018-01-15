@@ -12,16 +12,16 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 SC_BFER_std<B,R,Q>
-::SC_BFER_std(const factory::BFER_std::parameters &params)
-: BFER_std<B,R,Q>(params),
+::SC_BFER_std(const factory::BFER_std::parameters &params_BFER_std)
+: BFER_std<B,R,Q>(params_BFER_std),
 
   duplicator{nullptr, nullptr, nullptr}
 {
-	if (this->params.n_threads > 1)
+	if (this->params_BFER_std.n_threads > 1)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support "
 		                                                            "multi-threading.");
 
-	if (params.coded_monitoring)
+	if (params_BFER_std.coded_monitoring)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded "
 		                                                            "monitoring.");
 }
@@ -61,7 +61,7 @@ void SC_BFER_std<B,R,Q>
 	this->codec    [tid]->get_puncturer()->sc.create_module(pct::tsk::depuncture);
 	this->modem    [tid]                 ->sc.create_module(mdm::tsk::modulate  );
 	this->modem    [tid]                 ->sc.create_module(mdm::tsk::filter    );
-	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
+	if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
 		this->channel[tid]->sc.create_module(chn::tsk::add_noise_wg );
 		this->modem  [tid]->sc.create_module(mdm::tsk::demodulate_wg);
@@ -74,7 +74,7 @@ void SC_BFER_std<B,R,Q>
 	this->quantizer[tid]                    ->sc.create_module(qnt::tsk::process     );
 	this->codec    [tid]->get_decoder_siho()->sc.create_module(dec::tsk::decode_siho );
 	this->monitor  [tid]                    ->sc.create_module(mnt::tsk::check_errors);
-	if (this->params.coset)
+	if (this->params_BFER_std.coset)
 	{
 		this->coset_real[tid]->sc.create_module(cst::tsk::apply);
 		this->coset_bit [tid]->sc.create_module(cst::tsk::apply);
@@ -91,7 +91,7 @@ void SC_BFER_std<B,R,Q>
 	this->create_sc_modules();
 
 	this->duplicator[0] = new tools::SC_Duplicator("Duplicator0");
-	if (this->params.coset)
+	if (this->params_BFER_std.coset)
 	{
 		this->duplicator[1] = new tools::SC_Duplicator("Duplicator1");
 		this->duplicator[2] = new tools::SC_Duplicator("Duplicator2");
@@ -137,7 +137,7 @@ void SC_BFER_std<B,R,Q>
 	auto &csb = *this->coset_bit [0];
 	auto &mnt = *this->monitor   [0];
 
-	if (this->params.coset)
+	if (this->params_BFER_std.coset)
 	{
 		src.sc    [src::tsk::generate     ].s_out [src::sck::generate     ::U_K ](dp0                            .s_in                               );
 		dp0                                .s_out1                               (mnt.sc[mnt::tsk::check_errors ].s_in[mnt::sck::check_errors ::U   ]);
@@ -149,7 +149,7 @@ void SC_BFER_std<B,R,Q>
 		dp2                                .s_out1                               (csr.sc[cst::tsk::apply        ].s_in[cst::sck::apply        ::ref ]);
 		dp2                                .s_out2                               (pct.sc[pct::tsk::puncture     ].s_in[pct::sck::puncture     ::X_N1]);
 		pct.sc    [pct::tsk::puncture     ].s_out [pct::sck::puncture     ::X_N2](mdm.sc[mdm::tsk::modulate     ].s_in[mdm::sck::modulate     ::X_N1]);
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh chn
+		if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh chn
 			mdm.sc[mdm::tsk::modulate     ].s_out [mdm::sck::modulate     ::X_N2](chn.sc[chn::tsk::add_noise_wg ].s_in[chn::sck::add_noise_wg ::X_N ]);
 			chn.sc[chn::tsk::add_noise_wg ].s_out [chn::sck::add_noise_wg ::H_N ](mdm.sc[mdm::tsk::demodulate_wg].s_in[mdm::sck::demodulate_wg::H_N ]);
 			chn.sc[chn::tsk::add_noise_wg ].s_out [chn::sck::add_noise_wg ::Y_N ](mdm.sc[mdm::tsk::filter       ].s_in[mdm::sck::filter       ::Y_N1]);
@@ -176,7 +176,7 @@ void SC_BFER_std<B,R,Q>
 		crc.sc    [crc::tsk::build        ].s_out [crc::sck::build        ::U_K2](enc.sc[enc::tsk::encode       ].s_in[enc::sck::encode       ::U_K ]);
 		enc.sc    [enc::tsk::encode       ].s_out [enc::sck::encode       ::X_N ](pct.sc[pct::tsk::puncture     ].s_in[pct::sck::puncture     ::X_N1]);
 		pct.sc    [pct::tsk::puncture     ].s_out [pct::sck::puncture     ::X_N2](mdm.sc[mdm::tsk::modulate     ].s_in[mdm::sck::modulate     ::X_N1]);
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh chn
+		if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh chn
 			mdm.sc[mdm::tsk::modulate     ].s_out [mdm::sck::modulate     ::X_N2](chn.sc[chn::tsk::add_noise_wg ].s_in[chn::sck::add_noise_wg ::X_N ]);
 			chn.sc[chn::tsk::add_noise_wg ].s_out [chn::sck::add_noise_wg ::H_N ](mdm.sc[mdm::tsk::demodulate_wg].s_in[mdm::sck::demodulate_wg::H_N ]);
 			chn.sc[chn::tsk::add_noise_wg ].s_out [chn::sck::add_noise_wg ::Y_N ](mdm.sc[mdm::tsk::filter       ].s_in[mdm::sck::filter       ::Y_N1]);

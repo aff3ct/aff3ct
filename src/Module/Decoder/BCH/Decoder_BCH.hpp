@@ -34,8 +34,7 @@ protected:
 	std::vector<B> YH_N;       // hard decision input vector
 
 public:
-	Decoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator &GF, const int n_frames = 1,
-	            const std::string name = "Decoder_BCH");
+	Decoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator &GF, const int n_frames = 1);
 	virtual ~Decoder_BCH();
 
 protected:

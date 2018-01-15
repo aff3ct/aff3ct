@@ -9,12 +9,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Puncturer_turbo_DB::name   = "Puncturer Turbo DB";
-const std::string aff3ct::factory::Puncturer_turbo_DB::prefix = "pct";
+const std::string aff3ct::factory::Puncturer_turbo_DB_name   = "Puncturer Turbo DB";
+const std::string aff3ct::factory::Puncturer_turbo_DB_prefix = "pct";
 
 Puncturer_turbo_DB::parameters
-::parameters(const std::string prefix)
-: Puncturer::parameters(Puncturer_turbo_DB::name, prefix)
+::parameters(const std::string &prefix)
+: Puncturer::parameters(Puncturer_turbo_DB_name, prefix)
 {
 	this->type = "TURBO_DB";
 }

@@ -5,18 +5,18 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Flip_and_check::name   = "Flip and check";
-const std::string aff3ct::factory::Flip_and_check::prefix = "fnc";
+const std::string aff3ct::factory::Flip_and_check_name   = "Flip and check";
+const std::string aff3ct::factory::Flip_and_check_prefix = "fnc";
 
 Flip_and_check::parameters
-::parameters(const std::string prefix)
-: Factory::parameters(Flip_and_check::name, Flip_and_check::name, prefix)
+::parameters(const std::string &prefix)
+: Factory::parameters(Flip_and_check_name, Flip_and_check_name, prefix)
 {
 }
 
 Flip_and_check::parameters
-::parameters(const std::string name, const std::string prefix)
-: Factory::parameters(name, Flip_and_check::name, prefix)
+::parameters(const std::string &name, const std::string &prefix)
+: Factory::parameters(name, Flip_and_check_name, prefix)
 {
 }
 

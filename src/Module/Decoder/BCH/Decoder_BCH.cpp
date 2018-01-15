@@ -11,13 +11,16 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_BCH<B, R>
-::Decoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator &GF_poly, const int n_frames, const std::string name)
-: Decoder               (K, N, n_frames, 1, name),
-  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1, name),
+::Decoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator &GF_poly, const int n_frames)
+: Decoder               (K, N, n_frames, 1),
+  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1),
   elp(N+2, std::vector<int>(N)), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201),
   m(GF_poly.get_m()), t(GF_poly.get_t()), d(GF_poly.get_d()), alpha_to(GF_poly.get_alpha_to()), index_of(GF_poly.get_index_of()),
   YH_N(N)
 {
+	const std::string name = "Decoder_BCH";
+	this->set_name(name);
+	
 	if (K <= 3)
 	{
 		std::stringstream message;
@@ -36,7 +39,7 @@ template <typename B, typename R>
 void Decoder_BCH<B, R>
 ::_decode(B *Y_N)
 {
-	int i, j, u, q, t2, count = 0, syn_error = 0;
+	int i, j, t2, syn_error = 0;
 
 	t2 = 2 * t;
 
@@ -82,8 +85,8 @@ void Decoder_BCH<B, R>
 		l[1] = 0;
 		u_lu[0] = -1;
 		u_lu[1] = 0;
-		u = 0;
 
+		int q, u = 0;
 		do
 		{
 			u++;
@@ -170,7 +173,7 @@ void Decoder_BCH<B, R>
 			/* Chien search: find roots of the error location polynomial */
 			for (i = 1; i <= l[u]; i++)
 				reg[i] = elp[u][i];
-			count = 0;
+			int count = 0;
 			for (i = 1; i <= this->N; i++)
 			{
 				q = 1;

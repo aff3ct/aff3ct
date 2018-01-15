@@ -57,9 +57,13 @@ public:
 	 * \param n_frames: number of frames to process in the Source.
 	 * \param name:     Source's name.
 	 */
-	Coset(const int size, const int n_frames = 1, const std::string name = "Coset")
-	: Module(n_frames, name, "Coset"), size(size)
+	Coset(const int size, const int n_frames = 1)
+	: Module(n_frames), size(size)
 	{
+		const std::string name = "Coset";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (size <= 0)
 		{
 			std::stringstream message;

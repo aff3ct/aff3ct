@@ -19,11 +19,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_turbo_DB_name;
+extern const std::string Decoder_turbo_DB_prefix;
 struct Decoder_turbo_DB : public Decoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Decoder::parameters
 	{
 	public:
@@ -38,7 +37,7 @@ struct Decoder_turbo_DB : public Decoder
 		Flip_and_check_DB::parameters *fnc;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_turbo_DB::prefix);
+		explicit parameters(const std::string &p = Decoder_turbo_DB_prefix);
 		virtual ~parameters();
 		Decoder_turbo_DB::parameters* clone() const;
 
@@ -63,10 +62,6 @@ struct Decoder_turbo_DB : public Decoder
 	                                            const module::Interleaver<Q>           &itl,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_i);
-
-	static void build_args(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args, const std::string p = prefix);
-	static void store_args(const tools::Argument_map_value &vals, parameters &params, const std::string p = prefix);
-	static void make_header(header_list& head_dec, header_list& head_itl, const parameters& params, const bool full = true);
 };
 }
 }

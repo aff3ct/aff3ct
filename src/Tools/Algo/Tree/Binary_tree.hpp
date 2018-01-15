@@ -37,7 +37,7 @@ public:
 	 *
 	 * \param depth: the binary tree depth.
 	 */
-	Binary_tree(int depth);
+	explicit Binary_tree(int depth);
 
 	/*!
 	 * \brief Destructor.

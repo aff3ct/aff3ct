@@ -10,9 +10,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_polynomial_inter<B>
-::CRC_polynomial_inter(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
-: CRC_polynomial<B>(K, poly_key, size, n_frames, name)
+::CRC_polynomial_inter(const int K, std::string poly_key, const int size, const int n_frames)
+: CRC_polynomial<B>(K, poly_key, size, n_frames)
 {
+	const std::string name = "CRC_polynomial_inter";
+	this->set_name(name);
+
 	this->buff_crc.resize((this->K + this->size) * mipp::nElReg<B>());
 }
 

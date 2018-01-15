@@ -8,12 +8,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Encoder_polar::name   = "Encoder Polar";
-const std::string aff3ct::factory::Encoder_polar::prefix = "enc";
+const std::string aff3ct::factory::Encoder_polar_name   = "Encoder Polar";
+const std::string aff3ct::factory::Encoder_polar_prefix = "enc";
 
 Encoder_polar::parameters
-::parameters(const std::string prefix)
-: Encoder::parameters(Encoder_polar::name, prefix)
+::parameters(const std::string &prefix)
+: Encoder::parameters(Encoder_polar_name, prefix)
 {
 	this->type = "POLAR";
 }

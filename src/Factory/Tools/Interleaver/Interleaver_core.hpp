@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Interleaver_core_name;
+extern const std::string Interleaver_core_prefix;
 struct Interleaver_core : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -32,7 +31,7 @@ struct Interleaver_core : public Factory
 		bool        uniform  = false; // set at true to regenerate the interleaver at each new frame
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Interleaver_core::prefix);
+		explicit parameters(const std::string &p = Interleaver_core_prefix);
 		virtual ~parameters();
 		Interleaver_core::parameters* clone() const;
 

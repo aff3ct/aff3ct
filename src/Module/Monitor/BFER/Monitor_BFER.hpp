@@ -26,7 +26,7 @@ protected:
 	std::vector<std::function<void(          void)>> callbacks_fe_limit_achieved;
 
 public:
-	Monitor_BFER(const int size, const unsigned max_fe, const int n_frames = 1, const std::string name = "Monitor_BFER");
+	Monitor_BFER(const int size, const unsigned max_fe, const int n_frames = 1);
 	virtual ~Monitor_BFER(){};
 
 	/*!

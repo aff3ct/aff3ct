@@ -14,12 +14,12 @@ class logic_error : public exception
 public:
 	logic_error() throw();
 
-	logic_error(const std::string message) throw();
+	explicit logic_error(const std::string &message) throw();
 
-	logic_error(const std::string filename,
+	logic_error(const std::string &filename,
 	            const int line_num,
-	            const std::string funcname = "",
-	            const std::string message = "") throw();
+	            const std::string &funcname = exception::empty_string,
+	            const std::string &message = exception::empty_string) throw();
 
 	virtual ~logic_error() throw();
 };

@@ -10,12 +10,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Source::name   = "Source";
-const std::string aff3ct::factory::Source::prefix = "src";
+const std::string aff3ct::factory::Source_name   = "Source";
+const std::string aff3ct::factory::Source_prefix = "src";
 
 Source::parameters
-::parameters(const std::string prefix)
-: Factory::parameters(Source::name, Source::name, prefix)
+::parameters(const std::string &prefix)
+: Factory::parameters(Source_name, Source_name, prefix)
 {
 }
 

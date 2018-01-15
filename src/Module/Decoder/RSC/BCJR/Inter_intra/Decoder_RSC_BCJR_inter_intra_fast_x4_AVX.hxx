@@ -88,11 +88,13 @@ Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 ::Decoder_RSC_BCJR_inter_intra_fast_x4_AVX(const int &K,
                                            const std::vector<std::vector<int>> &trellis,
                                            const bool buffered_encoding,
-                                           const int n_frames,
-                                           const std::string name)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>()/8, name),
-  Decoder_RSC_BCJR_inter_intra<B,R>(K, trellis, buffered_encoding, n_frames, name)
+                                           const int n_frames)
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>()/8),
+  Decoder_RSC_BCJR_inter_intra<B,R>(K, trellis, buffered_encoding, n_frames)
 {
+	const std::string name = "Decoder_RSC_BCJR_inter_intra_fast_x4_AVX";
+	this->set_name(name);
+	
 	if (mipp::nElReg<R>() != 32)
 	{
 		std::stringstream message;

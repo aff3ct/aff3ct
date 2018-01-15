@@ -20,11 +20,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string BFER_std_name;
+extern const std::string BFER_std_prefix;
 struct BFER_std : BFER
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public BFER::parameters
 	{
 	public:
@@ -33,7 +32,7 @@ struct BFER_std : BFER
 		Codec_SIHO::parameters *cdc = nullptr;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = BFER_std::prefix);
+		explicit parameters(const std::string &p = BFER_std_prefix);
 		virtual ~parameters();
 		BFER_std::parameters* clone() const;
 

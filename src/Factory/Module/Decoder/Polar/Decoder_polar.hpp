@@ -15,11 +15,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_polar_name;
+extern const std::string Decoder_polar_prefix;
 struct Decoder_polar : public Decoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Decoder::parameters
 	{
 	public:
@@ -32,7 +31,7 @@ struct Decoder_polar : public Decoder
 		int         L             = 8;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_polar::prefix);
+		explicit parameters(const std::string &p = Decoder_polar_prefix);
 		virtual ~parameters();
 		Decoder_polar::parameters* clone() const;
 
@@ -63,7 +62,7 @@ struct Decoder_polar : public Decoder
 		module::Decoder_SIHO<B,Q>* _build_gen(module::CRC<B> *crc = nullptr) const;
 
 	protected:
-		parameters(const std::string n, const std::string p);
+		parameters(const std::string &n, const std::string &p);
 	};
 
 	template <typename B = int, typename Q = float>
@@ -76,7 +75,7 @@ struct Decoder_polar : public Decoder
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build_gen(const parameters &params, module::CRC<B> *crc = nullptr);
 
-	static const std::vector<bool>& get_frozen_bits(const std::string implem);
+	static const std::vector<bool>& get_frozen_bits(const std::string &implem);
 };
 }
 }

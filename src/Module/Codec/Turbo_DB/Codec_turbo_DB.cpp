@@ -22,13 +22,16 @@ Codec_turbo_DB<B,Q>
 ::Codec_turbo_DB(const factory::Encoder_turbo_DB  ::parameters &enc_params,
                  const factory::Decoder_turbo_DB  ::parameters &dec_params,
                  const factory::Puncturer_turbo_DB::parameters *pct_params,
-                 CRC<B>* crc, const std::string name)
-: Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
-  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+                 CRC<B>* crc)
+: Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   sub_enc  (nullptr),
   sub_dec_n(nullptr),
   sub_dec_i(nullptr)
 {
+	const std::string name = "Codec_turbo_DB";
+	this->set_name(name);
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{

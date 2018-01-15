@@ -11,12 +11,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::CRC::name   = "CRC";
-const std::string aff3ct::factory::CRC::prefix = "crc";
+const std::string aff3ct::factory::CRC_name   = "CRC";
+const std::string aff3ct::factory::CRC_prefix = "crc";
 
 CRC::parameters
-::parameters(const std::string prefix)
-: Factory::parameters(CRC::name, CRC::name, prefix)
+::parameters(const std::string &prefix)
+: Factory::parameters(CRC_name, CRC_name, prefix)
 {
 }
 

@@ -49,8 +49,8 @@ void Statistics
 
 void Statistics
 ::show_task(const float                    total_sec,
-            const std::string              module_sname,
-            const std::string              task_name,
+            const std::string&             module_sname,
+            const std::string&             task_name,
             const size_t                   task_n_elmts,
             const uint32_t                 task_n_calls,
             const std::chrono::nanoseconds task_tot_duration,
@@ -122,7 +122,7 @@ void Statistics
 ::show_timer(const float                    total_sec,
              const uint32_t                 task_n_calls,
              const size_t                   timer_n_elmts,
-             const std::string              timer_name,
+             const std::string&             timer_name,
              const uint32_t                 timer_n_calls,
              const std::chrono::nanoseconds timer_tot_duration,
              const std::chrono::nanoseconds timer_min_duration,
@@ -212,23 +212,20 @@ void Statistics
 		});
 	}
 
-	size_t   ttask_n_elmts      = 0;
-	uint32_t ttask_n_calls      = 0;
-	auto     ttask_tot_duration = std::chrono::nanoseconds(0);
-	auto     ttask_min_duration = std::chrono::nanoseconds(0);
-	auto     ttask_max_duration = std::chrono::nanoseconds(0);
+	auto ttask_tot_duration = std::chrono::nanoseconds(0);
+	auto ttask_min_duration = std::chrono::nanoseconds(0);
+	auto ttask_max_duration = std::chrono::nanoseconds(0);
 
-	size_t max_chars = 0;
 	for (auto *t : tasks)
-	{
 		ttask_tot_duration += t->get_duration_total();
-		std::max(max_chars, t->get_module().get_short_name().size() + t->get_module().get_name().size());
-	}
 	auto total_sec = ((float)ttask_tot_duration.count()) * 0.000000001f;
 
 	if (ttask_tot_duration.count())
 	{
 		Statistics::show_header(stream);
+
+		size_t   ttask_n_elmts = 0;
+		uint32_t ttask_n_calls = 0;
 
 		auto is_first = true;
 		for (auto *t : tasks)
@@ -340,24 +337,22 @@ void Statistics
 		});
 	}
 
-	size_t ttask_n_elmts      = 0;
-	auto   ttask_n_calls      = 0;
-	auto   ttask_tot_duration = nanoseconds(0);
-	auto   ttask_min_duration = nanoseconds(0);
-	auto   ttask_max_duration = nanoseconds(0);
+	
+	auto ttask_tot_duration = nanoseconds(0);
+	auto ttask_min_duration = nanoseconds(0);
+	auto ttask_max_duration = nanoseconds(0);
 
-	size_t max_chars = 0;
 	for (auto &vt : tasks)
 		for (auto *t : vt)
-		{
 			ttask_tot_duration += t->get_duration_total();
-			std::max(max_chars, t->get_module().get_short_name().size() + t->get_module().get_name().size());
-		}
 	auto total_sec = ((float)ttask_tot_duration.count()) * 0.000000001f;
 
 	if (ttask_tot_duration.count())
 	{
 		Statistics::show_header(stream);
+
+		size_t ttask_n_elmts = 0;
+		auto   ttask_n_calls = 0;
 
 		auto is_first = true;
 		for (auto &vt : tasks)

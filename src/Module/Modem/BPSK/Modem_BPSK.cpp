@@ -9,10 +9,12 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_BPSK<B,R,Q>
-::Modem_BPSK(const int N, const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
-: Modem<B,R,Q>(N, sigma, n_frames, name),
+::Modem_BPSK(const int N, const R sigma, const bool disable_sig2, const int n_frames)
+: Modem<B,R,Q>(N, sigma, n_frames),
   disable_sig2(disable_sig2), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
+	const std::string name = "Modem_BPSK";
+	this->set_name(name);
 }
 
 template <typename B, typename R, typename Q>

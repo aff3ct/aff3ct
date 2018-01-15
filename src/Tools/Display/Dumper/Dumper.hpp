@@ -17,6 +17,8 @@ class Dumper
 	friend Dumper_reduction;
 
 protected:
+	static const std::string default_ext;
+
 	std::vector<std::vector<std::vector<char>>> buffer;
 
 	unsigned                           add_threshold;
@@ -35,11 +37,11 @@ public:
 
 	template <typename T>
 	void register_data(const T *ptr, const unsigned size, const unsigned add_threshold = 0,
-	                   const std::string file_ext = "dump", const bool binary_mode = false, const unsigned n_frames = 1,
+	                   const std::string &file_ext = default_ext, const bool binary_mode = false, const unsigned n_frames = 1,
 	                   std::vector<unsigned> headers = std::vector<unsigned>());
 	template <typename T, class A = std::allocator<T>>
 	void register_data(const std::vector<T,A> &data, const unsigned add_threshold = 0,
-	                   const std::string file_ext = "dump", const bool binary_mode = false, const unsigned n_frames = 1,
+	                   const std::string &file_ext = default_ext, const bool binary_mode = false, const unsigned n_frames = 1,
 	                   std::vector<unsigned> headers = std::vector<unsigned>());
 
 	virtual void dump (const std::string& base_path                );

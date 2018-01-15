@@ -19,7 +19,7 @@ protected:
 	Frozenbits_generator_file(const int K, const int N, const float sigma = 0.f);
 
 public:
-	Frozenbits_generator_file(const int K, const int N, const std::string filename);
+	Frozenbits_generator_file(const int K, const int N, const std::string& filename);
 
 	virtual ~Frozenbits_generator_file();
 

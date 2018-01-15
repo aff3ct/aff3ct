@@ -21,10 +21,9 @@ Decoder_turbo<B,R>
                 const Interleaver<R> &pi,
                 Decoder_SISO<R> &siso_n,
                 Decoder_SISO<R> &siso_i,
-                const bool buffered_encoding,
-                const std::string name)
-: Decoder          (K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
-  Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
+                const bool buffered_encoding)
+: Decoder          (K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level()),
+  Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level()),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),
@@ -42,6 +41,9 @@ Decoder_turbo<B,R>
   l_e2i((K                                                                                    ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
   s    ((K                                                                                    ) * siso_n.get_simd_inter_frame_level())
 {
+	const std::string name = "Decoder_turbo";
+	this->set_name(name);
+	
 	if (siso_n.get_K() != K)
 	{
 		std::stringstream message;

@@ -7,18 +7,18 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec::name   = "Codec";
-const std::string aff3ct::factory::Codec::prefix = "cdc";
+const std::string aff3ct::factory::Codec_name   = "Codec";
+const std::string aff3ct::factory::Codec_prefix = "cdc";
 
 Codec::parameters
-::parameters(const std::string prefix)
-: Factory::parameters(Codec::name, Codec::name, prefix)
+::parameters(const std::string &prefix)
+: Factory::parameters(Codec_name, Codec_name, prefix)
 {
 }
 
 Codec::parameters
-::parameters(const std::string name, const std::string prefix)
-: Factory::parameters(name, Codec::name, prefix)
+::parameters(const std::string &name, const std::string &prefix)
+: Factory::parameters(name, Codec_name, prefix)
 {
 }
 

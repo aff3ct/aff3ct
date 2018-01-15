@@ -14,10 +14,12 @@ Puncturer_LDPC<B,Q>
                  const int &N,
                  const int &N_cw,
                  const std::vector<bool> &pattern,
-                 const int n_frames,
-                 const std::string name)
-: Puncturer<B,Q>(K, N, N_cw, n_frames, name)
+                 const int n_frames)
+: Puncturer<B,Q>(K, N, N_cw, n_frames)
 {
+	const std::string name = "Puncturer_LDPC";
+	this->set_name(name);
+	
 	auto N_pattern = (int)pattern.size();
 	pattern_bits = pattern;
 	

@@ -21,8 +21,7 @@ protected:
 	tools::Sparse_matrix G; // position of ones by column
 
 public:
-	Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1,
-	                    const std::string name = "Encoder_LDPC_from_H");
+	Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1);
 	virtual ~Encoder_LDPC_from_H();
 
 	virtual void get_info_bits_pos(std::vector<unsigned>& info_bits_pos);

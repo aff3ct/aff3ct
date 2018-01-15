@@ -82,12 +82,14 @@ Decoder_RSC_BCJR_seq_generic<B,R>
 ::Decoder_RSC_BCJR_seq_generic(const int &K,
                                const std::vector<std::vector<int>> &trellis,
                                const bool buffered_encoding,
-                               const int n_frames,
-                               const std::string name)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1, name),
-  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1, name),
+                               const int n_frames)
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1),
+  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1),
   alpha(this->n_states), beta(this->n_states), gamma(2)
 {
+	const std::string name = "Decoder_RSC_BCJR_seq_generic";
+	this->set_name(name);
+	
 	for (unsigned i = 0; i < alpha.size(); i++) alpha[i].resize(K + this->n_ff +1);
 	for (unsigned i = 0; i < beta .size(); i++) beta [i].resize(K + this->n_ff +1);
 	for (unsigned i = 0; i < gamma.size(); i++) gamma[i].resize(K + this->n_ff +0);

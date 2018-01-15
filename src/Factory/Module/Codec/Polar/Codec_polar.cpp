@@ -3,13 +3,13 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec_polar::name   = "Codec Polar";
-const std::string aff3ct::factory::Codec_polar::prefix = "cdc";
+const std::string aff3ct::factory::Codec_polar_name   = "Codec Polar";
+const std::string aff3ct::factory::Codec_polar_prefix = "cdc";
 
 Codec_polar::parameters
-::parameters(const std::string prefix)
-: Codec          ::parameters(Codec_polar::name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_polar::name, prefix),
+::parameters(const std::string &prefix)
+: Codec          ::parameters(Codec_polar_name, prefix),
+  Codec_SISO_SIHO::parameters(Codec_polar_name, prefix),
   enc(new Encoder_polar::parameters("enc")),
   fbg(new Frozenbits_generator::parameters(enc->get_prefix()+"-fb")),
   dec(new Decoder_polar::parameters("dec")),

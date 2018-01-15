@@ -16,11 +16,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Codec_LDPC_name;
+extern const std::string Codec_LDPC_prefix;
 struct Codec_LDPC : public Codec_SISO_SIHO
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Codec_SISO_SIHO::parameters
 	{
 	public:
@@ -31,7 +30,7 @@ struct Codec_LDPC : public Codec_SISO_SIHO
 		Puncturer_LDPC::parameters *pct;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_LDPC::prefix);
+		explicit parameters(const std::string &p = Codec_LDPC_prefix);
 		virtual ~parameters();
 		Codec_LDPC::parameters* clone() const;
 		void enable_puncturer();

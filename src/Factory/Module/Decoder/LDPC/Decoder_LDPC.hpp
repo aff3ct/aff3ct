@@ -14,11 +14,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_LDPC_name;
+extern const std::string Decoder_LDPC_prefix;
 struct Decoder_LDPC : public Decoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Decoder::parameters
 	{
 	public:
@@ -37,7 +36,7 @@ struct Decoder_LDPC : public Decoder
 		int         n_ite           = 10;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_LDPC::prefix);
+		explicit parameters(const std::string &p = Decoder_LDPC_prefix);
 		virtual ~parameters();
 		Decoder_LDPC::parameters* clone() const;
 

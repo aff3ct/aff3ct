@@ -9,12 +9,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Encoder_BCH::name   = "Encoder BCH";
-const std::string aff3ct::factory::Encoder_BCH::prefix = "enc";
+const std::string aff3ct::factory::Encoder_BCH_name   = "Encoder BCH";
+const std::string aff3ct::factory::Encoder_BCH_prefix = "enc";
 
 Encoder_BCH::parameters
-::parameters(const std::string prefix)
-: Encoder::parameters(Encoder_BCH::name, prefix)
+::parameters(const std::string &prefix)
+: Encoder::parameters(Encoder_BCH_name, prefix)
 {
 	this->type = "BCH";
 }

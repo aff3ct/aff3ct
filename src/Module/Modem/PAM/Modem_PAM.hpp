@@ -23,7 +23,7 @@ private:
 
 public:
 	Modem_PAM(const int N, const R sigma = (R)1, const int bits_per_symbol = 1, const bool disable_sig2 = false,
-	          const int n_frames = 1, const std::string name = "Modem_PAM");
+	          const int n_frames = 1);
 	virtual ~Modem_PAM();
 
 	static int size_mod(const int N, const int bps)

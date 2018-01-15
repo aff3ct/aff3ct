@@ -10,6 +10,9 @@ namespace tools
 {
 class exception : public std::exception
 {
+protected:
+	static const std::string empty_string;
+
 private:
 	std::string message;
 #ifdef ENABLE_BACK_TRACE
@@ -19,12 +22,12 @@ private:
 public:
 	exception() throw();
 
-	exception(const std::string message) throw();
+	explicit exception(const std::string &message) throw();
 
-	exception(const std::string filename,
+	exception(const std::string &filename,
 	          const int line_num,
-	          const std::string funcname,
-	          const std::string message) throw();
+	          const std::string &funcname,
+	          const std::string &message) throw();
 
 	virtual ~exception() throw();
 

@@ -31,11 +31,10 @@ public:
 	Channel_Rayleigh_LLR_user(const int N, const bool complex, const std::string& gains_filename,
 	                          const int gain_occurrences = 1,
 	                          tools::Noise<R> *noise_generator = new tools::Noise_std<R>(),
-	                          const bool add_users = false, const R sigma = (R)1, const int n_frames = 1,
-	                          const std::string name = "Channel_Rayleigh_LLR_user");
+	                          const bool add_users = false, const R sigma = (R)1, const int n_frames = 1);
 	Channel_Rayleigh_LLR_user(const int N, const bool complex, const int seed, const std::string& gains_filename,
 	                          const int gain_occurrences = 1, const bool add_users = false, const R sigma = (R)1,
-	                          const int n_frames = 1, const std::string name = "Channel_Rayleigh_LLR_user");
+	                          const int n_frames = 1);
 	virtual ~Channel_Rayleigh_LLR_user();
 
 	virtual void add_noise_wg(const R *X_N, R *H_N, R *Y_N); using Channel<R>::add_noise_wg;

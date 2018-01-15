@@ -14,11 +14,13 @@ Puncturer_polar_wangliu<B,Q>
 ::Puncturer_polar_wangliu(const int &K,
                           const int &N,
                           const tools::Frozenbits_generator &fb_generator,
-                          const int n_frames,
-                          const std::string name)
-: Puncturer<B,Q>(K, N, (int)std::exp2(std::ceil(std::log2(N))), n_frames, name),
+                          const int n_frames)
+: Puncturer<B,Q>(K, N, (int)std::exp2(std::ceil(std::log2(N))), n_frames),
   fb_generator(fb_generator)
 {
+	const std::string name = "Puncturer_polar_wangliu";
+	this->set_name(name);
+	
 	if (fb_generator.get_K() != K)
 	{
 		std::stringstream message;

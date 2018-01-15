@@ -11,13 +11,13 @@ using namespace aff3ct::factory;
 
 using PT = aff3ct::module::Puncturer_turbo<>;
 
-const std::string aff3ct::factory::Puncturer_turbo::name   = "Puncturer Turbo";
-const std::string aff3ct::factory::Puncturer_turbo::prefix = "pct";
+const std::string aff3ct::factory::Puncturer_turbo_name   = "Puncturer Turbo";
+const std::string aff3ct::factory::Puncturer_turbo_prefix = "pct";
 
 
 Puncturer_turbo::parameters
-::parameters(const std::string prefix)
-: Puncturer::parameters(Puncturer_turbo::name, prefix)
+::parameters(const std::string &prefix)
+: Puncturer::parameters(Puncturer_turbo_name, prefix)
 {
 	this->type = "TURBO";
 }
@@ -32,7 +32,6 @@ Puncturer_turbo::parameters* Puncturer_turbo::parameters
 {
 	return new Puncturer_turbo::parameters(*this);
 }
-
 
 struct sub_same_length
 {

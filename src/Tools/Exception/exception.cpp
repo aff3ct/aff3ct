@@ -11,13 +11,15 @@
 
 using namespace aff3ct::tools;
 
+const std::string aff3ct::tools::exception::empty_string = "";
+
 exception
 ::exception() throw()
 {
 }
 
 exception
-::exception(const std::string message) throw()
+::exception(const std::string &message) throw()
 : message(message)
 {
 #ifdef ENABLE_BACK_TRACE
@@ -26,10 +28,10 @@ exception
 }
 
 exception
-::exception(const std::string filename,
+::exception(const std::string &filename,
             const int line_num,
-            const std::string funcname,
-            const std::string message) throw()
+            const std::string &funcname,
+            const std::string &message) throw()
 {
 	if (!filename.empty())
 		this->message += "In the '" + filename + "' file";

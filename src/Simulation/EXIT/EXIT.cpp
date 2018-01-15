@@ -14,9 +14,9 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R>
 EXIT<B,R>
-::EXIT(const factory::EXIT::parameters& params)
-: Simulation(params),
-  params(params),
+::EXIT(const factory::EXIT::parameters& params_EXIT)
+: Simulation(params_EXIT),
+  params_EXIT(params_EXIT),
 
   sig_a(0.f),
   sigma(0.f),
@@ -38,18 +38,18 @@ EXIT<B,R>
 	                                   "on each MPI processes.") << std::endl;
 #endif
 
-	if (this->params.n_threads > 1)
+	if (params_EXIT.n_threads > 1)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "EXIT simu does not support the multi-threading.");
 
-	this->modules["source"   ] = std::vector<module::Module*>(params.n_threads, nullptr);
-	this->modules["codec"    ] = std::vector<module::Module*>(params.n_threads, nullptr);
-	this->modules["encoder"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
-	this->modules["decoder"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
-	this->modules["modem"    ] = std::vector<module::Module*>(params.n_threads, nullptr);
-	this->modules["modem_a"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
-	this->modules["channel"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
-	this->modules["channel_a"] = std::vector<module::Module*>(params.n_threads, nullptr);
-	this->modules["monitor"  ] = std::vector<module::Module*>(params.n_threads, nullptr);
+	this->modules["source"   ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
+	this->modules["codec"    ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
+	this->modules["encoder"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
+	this->modules["decoder"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
+	this->modules["modem"    ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
+	this->modules["modem_a"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
+	this->modules["channel"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
+	this->modules["channel_a"] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
+	this->modules["monitor"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
 
 	this->monitor = this->build_monitor();
 
@@ -70,12 +70,12 @@ void EXIT<B,R>
 {
 	release_objects();
 
-	const auto N_mod = params.mdm->N_mod;
-	const auto K_mod = factory::Modem::get_buffer_size_after_modulation(params.mdm->type,
-	                                                                    params.cdc->K,
-	                                                                    params.mdm->bps,
-	                                                                    params.mdm->upf,
-	                                                                    params.mdm->cpm_L);
+	const auto N_mod = params_EXIT.mdm->N_mod;
+	const auto K_mod = factory::Modem::get_buffer_size_after_modulation(params_EXIT.mdm->type,
+	                                                                    params_EXIT.cdc->K,
+	                                                                    params_EXIT.mdm->bps,
+	                                                                    params_EXIT.mdm->upf,
+	                                                                    params_EXIT.mdm->cpm_L);
 
 	// build the objects
 	source    = build_source   (     );
@@ -110,12 +110,12 @@ void EXIT<B,R>
 	this->sockets_binding();
 
 	// for each channel SNR to be simulated	
-	for (ebn0 = params.snr_min; ebn0 <= params.snr_max; ebn0 += params.snr_step)
+	for (ebn0 = params_EXIT.snr_min; ebn0 <= params_EXIT.snr_max; ebn0 += params_EXIT.snr_step)
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		const auto bit_rate = 1.f;
-		esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params.mdm->bps);
-		sigma = tools::esn0_to_sigma(esn0, params.mdm->upf);
+		esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params_EXIT.mdm->bps);
+		sigma = tools::esn0_to_sigma(esn0, params_EXIT.mdm->upf);
 
 		terminal->set_esn0(esn0);
 		terminal->set_ebn0(ebn0);
@@ -126,7 +126,7 @@ void EXIT<B,R>
 
 		// for each "a" standard deviation (sig_a) to be simulated
 		using namespace module;
-		for (sig_a = params.sig_a_min; sig_a <= params.sig_a_max; sig_a += params.sig_a_step)
+		for (sig_a = params_EXIT.sig_a_min; sig_a <= params_EXIT.sig_a_max; sig_a += params_EXIT.sig_a_step)
 		{
 			terminal ->set_sig_a(sig_a      );
 			channel_a->set_sigma(2.f / sig_a);
@@ -135,7 +135,7 @@ void EXIT<B,R>
 			if (sig_a == 0.f) // if sig_a = 0, La_K2 = 0
 			{
 				auto &mdm = *this->modem_a;
-				if (params.chn->type.find("RAYLEIGH") != std::string::npos)
+				if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 				{
 					auto mdm_data  = (uint8_t*)(mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2].get_dataptr());
 					auto mdm_bytes =            mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2].get_databytes();
@@ -149,24 +149,25 @@ void EXIT<B,R>
 				}
 			}
 
-			if (((!params.ter->disabled && ebn0 == params.snr_min && sig_a == params.sig_a_min  && !params.debug) ||
-			    (params.statistics && !params.debug)))
+			if (((!params_EXIT.ter->disabled && ebn0 == params_EXIT.snr_min && sig_a == params_EXIT.sig_a_min && 
+				!params_EXIT.debug) || (params_EXIT.statistics && !params_EXIT.debug)))
 				terminal->legend(std::cout);
 
 			// start the terminal to display BER/FER results
-			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) && !params.debug)
-				this->terminal->start_temp_report(params.ter->frequency);
+			if (!params_EXIT.ter->disabled && params_EXIT.ter->frequency != std::chrono::nanoseconds(0) && 
+				!params_EXIT.debug)
+				this->terminal->start_temp_report(params_EXIT.ter->frequency);
 
 			this->simulation_loop();
 
-			if (!params.ter->disabled)
+			if (!params_EXIT.ter->disabled)
 			{
-				if (params.debug)
+				if (params_EXIT.debug)
 					terminal->legend(std::cout);
 
 				terminal->final_report(std::cout);
 
-				if (params.statistics)
+				if (params_EXIT.statistics)
 				{
 					std::vector<std::vector<const module::Module*>> mod_vec;
 					for (auto &vm : modules)
@@ -221,7 +222,7 @@ void EXIT<B,R>
 	mdm[mdm::tsk::modulate         ][mdm::sck::modulate         ::X_N1](enc[enc::tsk::encode  ][enc::sck::encode  ::X_N]);
 
 	// Rayleigh channel
-	if (params.chn->type.find("RAYLEIGH") != std::string::npos)
+	if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
 		cha[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::X_N ](mda[mdm::tsk::modulate    ][mdm::sck::modulate    ::X_N2]);
 		mda[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::H_N ](cha[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::H_N ]);
@@ -234,7 +235,7 @@ void EXIT<B,R>
 	}
 
 	// Rayleigh channel
-	if (params.chn->type.find("RAYLEIGH") != std::string::npos)
+	if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
 		mnt[mnt::tsk::check_mutual_info][mnt::sck::check_mutual_info::llrs_a](mda[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2]);
 		chn[chn::tsk::add_noise_wg     ][chn::sck::add_noise_wg     ::X_N   ](mdm[mdm::tsk::modulate     ][mdm::sck::modulate     ::X_N2]);
@@ -276,7 +277,7 @@ void EXIT<B,R>
 
 	while (!monitor.n_trials_achieved())
 	{
-		if (this->params.debug)
+		if (params_EXIT.debug)
 		{
 			if (!monitor[mnt::tsk::check_mutual_info].get_n_calls())
 				std::cout << "#" << std::endl;
@@ -296,7 +297,7 @@ void EXIT<B,R>
 		if (sig_a != 0)
 		{
 			// Rayleigh channel
-			if (params.chn->type.find("RAYLEIGH") != std::string::npos)
+			if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 			{
 				channel_a[chn::tsk::add_noise_wg ].exec();
 				modem_a  [mdm::tsk::demodulate_wg].exec();
@@ -309,7 +310,7 @@ void EXIT<B,R>
 		}
 
 		// Rayleigh channel
-		if (params.chn->type.find("RAYLEIGH") != std::string::npos)
+		if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
 			channel[chn::tsk::add_noise_wg ].exec();
 			modem  [mdm::tsk::demodulate_wg].exec();
@@ -344,29 +345,29 @@ template <typename B, typename R>
 module::Source<B>* EXIT<B,R>
 ::build_source()
 {
-	return params.src->template build<B>();
+	return params_EXIT.src->template build<B>();
 }
 
 template <typename B, typename R>
 module::Codec_SISO<B,R>* EXIT<B,R>
 ::build_codec()
 {
-	return params.cdc->template build<B,R>();
+	return params_EXIT.cdc->template build<B,R>();
 }
 
 template <typename B, typename R>
 module::Modem<B,R,R>* EXIT<B,R>
 ::build_modem()
 {
-	return params.mdm->template build<B,R>();
+	return params_EXIT.mdm->template build<B,R>();
 }
 
 template <typename B, typename R>
 module::Modem<B,R>* EXIT<B,R>
 ::build_modem_a()
 {
-	auto mdm_params = params.mdm->clone();
-	mdm_params->N   = params.cdc->K;
+	auto mdm_params = params_EXIT.mdm->clone();
+	mdm_params->N   = params_EXIT.cdc->K;
 	auto m = mdm_params->template build<B,R>();
 	delete mdm_params;
 	return m;
@@ -376,19 +377,19 @@ template <typename B, typename R>
 module::Channel<R>* EXIT<B,R>
 ::build_channel(const int size)
 {
-	return params.chn->template build<R>();
+	return params_EXIT.chn->template build<R>();
 }
 
 template <typename B, typename R>
 module::Channel<R>* EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	auto chn_params = params.chn->clone();
-	chn_params->N   = factory::Modem::get_buffer_size_after_modulation(params.mdm->type,
-	                                                                   params.cdc->K,
-	                                                                   params.mdm->bps,
-	                                                                   params.mdm->upf,
-	                                                                   params.mdm->cpm_L);
+	auto chn_params = params_EXIT.chn->clone();
+	chn_params->N   = factory::Modem::get_buffer_size_after_modulation(params_EXIT.mdm->type,
+	                                                                   params_EXIT.cdc->K,
+	                                                                   params_EXIT.mdm->bps,
+	                                                                   params_EXIT.mdm->upf,
+	                                                                   params_EXIT.mdm->cpm_L);
 
 	auto c = chn_params->template build<R>();
 	delete chn_params;
@@ -399,14 +400,14 @@ template <typename B, typename R>
 module::Monitor_EXIT<B,R>* EXIT<B,R>
 ::build_monitor()
 {
-	return params.mnt->template build<B,R>();
+	return params_EXIT.mnt->template build<B,R>();
 }
 
 template <typename B, typename R>
 tools::Terminal_EXIT<B,R>* EXIT<B,R>
 ::build_terminal()
 {
-	return params.ter->template build<B,R>(*this->monitor);
+	return params_EXIT.ter->template build<B,R>(*this->monitor);
 }
 
 // ==================================================================================== explicit template instantiation

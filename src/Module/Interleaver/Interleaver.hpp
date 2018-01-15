@@ -37,10 +37,16 @@ protected:
 	const tools::Interleaver_core<T> &core;
 
 public:
-	Interleaver(const tools::Interleaver_core<T> &core)
-	: Module(core.get_n_frames(), "Interleaver_" + core.get_name(), "Interleaver"),
+	explicit Interleaver(const tools::Interleaver_core<T> &core)
+	: Module(core.get_n_frames()),
 	  core(core)
 	{
+		const std::string name = "Interleaver_" + core.get_name();
+		this->set_name(name);
+		const std::string short_name = "Interleaver";
+		this->set_short_name(short_name);
+
+
 		auto &p1 = this->create_task("interleave");
 		auto &p1s_nat = this->template create_socket_in <D>(p1, "nat", this->core.get_size() * this->n_frames);
 		auto &p1s_itl = this->template create_socket_out<D>(p1, "itl", this->core.get_size() * this->n_frames);

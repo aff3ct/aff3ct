@@ -10,11 +10,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Terminal_name;
+extern const std::string Terminal_prefix;
 struct Terminal : Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -33,7 +32,7 @@ struct Terminal : Factory
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:
-		parameters(const std::string n = Terminal::name, const std::string p = Terminal::prefix);
+		parameters(const std::string &n = Terminal_name, const std::string &p = Terminal_prefix);
 	};
 };
 }

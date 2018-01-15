@@ -19,8 +19,7 @@ public:
 	Puncturer_polar_wangliu(const int &K,
 	                        const int &N,
 	                        const tools::Frozenbits_generator &fb_generator,
-	                        const int n_frames = 1,
-	                        const std::string name = "Puncturer_polar_wangliu");
+	                        const int n_frames = 1);
 	virtual ~Puncturer_polar_wangliu();
 
 	void gen_frozen_bits(std::vector<bool> &frozen_bits);

@@ -7,9 +7,11 @@ using namespace aff3ct::module;
 
 template <typename R, typename Q>
 Quantizer_NO<R,Q>
-::Quantizer_NO(const int N, const int n_frames, const std::string name)
-: Quantizer<R,Q>(N, n_frames, name)
+::Quantizer_NO(const int N, const int n_frames)
+: Quantizer<R,Q>(N, n_frames)
 {
+	const std::string name = "Quantizer_NO";
+	this->set_name(name);
 }
 
 template <typename R, typename Q>

@@ -11,7 +11,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class BFER_ite_threads : public BFER_ite<B,R,Q>
 {
 public:
-	BFER_ite_threads(const factory::BFER_ite::parameters &params);
+	explicit BFER_ite_threads(const factory::BFER_ite::parameters &params_BFER_ite);
 	virtual ~BFER_ite_threads();
 
 protected:

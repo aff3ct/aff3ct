@@ -10,18 +10,18 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Encoder::name   = "Encoder";
-const std::string aff3ct::factory::Encoder::prefix = "enc";
+const std::string aff3ct::factory::Encoder_name   = "Encoder";
+const std::string aff3ct::factory::Encoder_prefix = "enc";
 
 Encoder::parameters
-::parameters(const std::string prefix)
-: Factory::parameters(Encoder::name, Encoder::name, prefix)
+::parameters(const std::string &prefix)
+: Factory::parameters(Encoder_name, Encoder_name, prefix)
 {
 }
 
 Encoder::parameters
-::parameters(const std::string name, const std::string prefix)
-: Factory::parameters(name, Encoder::name, prefix)
+::parameters(const std::string &name, const std::string &prefix)
+: Factory::parameters(name, Encoder_name, prefix)
 {
 }
 

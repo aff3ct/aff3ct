@@ -15,11 +15,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Codec_BCH_name;
+extern const std::string Codec_BCH_prefix;
 struct Codec_BCH : public Codec_SIHO
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Codec_SIHO::parameters
 	{
 	public:
@@ -29,7 +28,7 @@ struct Codec_BCH : public Codec_SIHO
 		Decoder_BCH::parameters *dec;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Codec_BCH::prefix);
+		explicit parameters(const std::string &p = Codec_BCH_prefix);
 		virtual ~parameters();
 		Codec_BCH::parameters* clone() const;
 

@@ -10,12 +10,12 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Puncturer_turbo_DB<B,Q>
-::Puncturer_turbo_DB(const int &K,
-                     const int &N,
-                     const int n_frames,
-                     const std::string name)
-: Puncturer<B,Q>(K, N, K * 3, n_frames, name)
+::Puncturer_turbo_DB(const int &K, const int &N, const int n_frames)
+: Puncturer<B,Q>(K, N, K * 3, n_frames)
 {
+	const std::string name = "Puncturer_turbo_DB";
+	this->set_name(name);
+
 	float rate = (float)K / (float)N;
 
 	     if (std::round(100.0 * rate) == std::round(100 * 2.0 / 5.0)) coderate = "2/5";

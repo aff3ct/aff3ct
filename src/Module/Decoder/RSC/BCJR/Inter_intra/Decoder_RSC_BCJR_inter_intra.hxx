@@ -15,13 +15,15 @@ Decoder_RSC_BCJR_inter_intra<B,R>
 ::Decoder_RSC_BCJR_inter_intra(const int &K,
                                const std::vector<std::vector<int>> &trellis, 
                                const bool buffered_encoding,
-                               const int n_frames,
-                               const std::string name)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>()/8, name),
-  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, mipp::nElReg<R>() / 8, name),
+                               const int n_frames)
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>()/8),
+  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, mipp::nElReg<R>() / 8),
   alpha(8 * (K +4) * (mipp::nElReg<R>()/8) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) * (mipp::nElReg<R>()/8) + 2 * mipp::nElReg<R>())
 {
+	const std::string name = "Decoder_RSC_BCJR_inter_intra";
+	this->set_name(name);
+	
 	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));	
 	req_trellis[0] = { 0,  2,  4,  6,  0,  2,  4,  6};
 	req_trellis[1] = { 1, -1,  1, -1, -1,  1, -1,  1};
@@ -252,7 +254,6 @@ struct RSC_BCJR_inter_intra_normalize <signed char, I>
 	static mipp::Reg<signed char> apply(const mipp::Reg<signed char> &r_metrics, const mipp::Reg<signed char> &r_cmask_norm, const int &i = 0)
 	{
 		return RSC_BCJR_inter_intra_normalize_core<signed char>::apply(r_metrics, r_cmask_norm);
-		return r_metrics;
 	}
 };
 }

@@ -19,7 +19,7 @@ private:
 	gsl_rng *rng;
 
 public:
-	Noise_GSL(const int seed = 0);
+	explicit Noise_GSL(const int seed = 0);
 	virtual ~Noise_GSL();
 
 	virtual void set_seed(const int seed);

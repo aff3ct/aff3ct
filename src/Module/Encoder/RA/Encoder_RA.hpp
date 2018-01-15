@@ -18,8 +18,7 @@ protected:
 	const Interleaver<B>& interleaver;
 
 public:
-	Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver, const int n_frames = 1,
-	           const std::string name = "Encoder_RA");
+	Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver, const int n_frames = 1);
 
 	virtual ~Encoder_RA() {}
 

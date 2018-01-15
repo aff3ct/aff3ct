@@ -19,8 +19,7 @@ protected:
 	std::vector<B> buff_crc;
 
 public:
-	CRC_polynomial(const int K, std::string poly_key, const int size = 0, const int n_frames = 1,
-	               const std::string name = "CRC_polynomial");
+	CRC_polynomial(const int K, std::string poly_key, const int size = 0, const int n_frames = 1);
 	virtual ~CRC_polynomial(){};
 
 	static int         get_size (std::string poly_key);

@@ -9,11 +9,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Frozenbits_generator_name;
+extern const std::string Frozenbits_generator_prefix;
 struct Frozenbits_generator : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -29,7 +28,7 @@ struct Frozenbits_generator : public Factory
 		float       sigma   = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Frozenbits_generator::prefix);
+		explicit parameters(const std::string &p = Frozenbits_generator_prefix);
 		virtual ~parameters();
 		Frozenbits_generator::parameters* clone() const;
 

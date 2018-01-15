@@ -25,7 +25,7 @@ protected:
 	unsigned short                                                                      real_time_state;
 
 public:
-	Terminal_EXIT(const module::Monitor_EXIT<B,R> &monitor);
+	explicit Terminal_EXIT(const module::Monitor_EXIT<B,R> &monitor);
 
 	virtual ~Terminal_EXIT() {}
 

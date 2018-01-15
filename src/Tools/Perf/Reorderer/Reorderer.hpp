@@ -33,7 +33,7 @@ public:
 	 * \param out_data:    the reordered frames (interleaved regularly | e0_f0| e0_f1 | e0_f2 | e0_f3 | e1_f0 |...).
 	 * \param data_length: the size of one frame.
 	 */
-	static void apply(const std::vector<const T*> in_data, T* out_data, const int data_length);
+	static void apply(const std::vector<const T*> &in_data, T* out_data, const int data_length);
 
 	/*!
 	 * \brief Reverses the reordering.
@@ -43,7 +43,7 @@ public:
 	 * \param out_data:    a vector of frames.
 	 * \param data_length: the size of one frame.
 	 */
-	static void apply_rev(const T* in_data, std::vector<T*> out_data, const int data_length);
+	static void apply_rev(const T* in_data, std::vector<T*> &out_data, const int data_length);
 };
 
 /*!
@@ -66,7 +66,7 @@ public:
 	 * \param out_data:    the reordered frames (interleaved regularly | e0_f0| e0_f1 | e0_f2 | e0_f3 | e1_f0 |...).
 	 * \param data_length: the size of one frame.
 	 */
-	static void apply(const std::vector<const T*> in_data, T* out_data, const int data_length);
+	static void apply(const std::vector<const T*> &in_data, T* out_data, const int data_length);
 
 	/*!
 	 * \brief Reverses the reordering.
@@ -76,7 +76,7 @@ public:
 	 * \param out_data:    a vector of frames.
 	 * \param data_length: the size of one frame.
 	 */
-	static void apply_rev(const T* in_data, std::vector<T*> out_data, const int data_length);
+	static void apply_rev(const T* in_data, std::vector<T*> &out_data, const int data_length);
 };
 }
 }

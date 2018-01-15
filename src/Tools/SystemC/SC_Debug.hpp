@@ -30,7 +30,7 @@ private:
 	const int debug_limit;
 
 public:
-	SC_Debug(std::string message = "Debug:\n", const int debug_limit = 0, sc_core::sc_module_name name = "SC_Debug")
+	SC_Debug(std::string &message = std::string("Debug:\n"), const int debug_limit = 0, sc_core::sc_module_name name = "SC_Debug")
 	: sc_module(name), s_in("s_in"), s_out("s_out"), message(message), debug_limit(debug_limit)
 	{
 		s_in.register_b_transport(this, &SC_Debug::b_transport);

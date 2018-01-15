@@ -22,8 +22,7 @@ protected:
 	mipp::vector<R> par;
 	mipp::vector<R> ext;
 
-	Decoder_repetition(const int& K, const int& N, const bool buffered_encoding = true, 
-	                   const int n_frames = 1, const std::string name = "Decoder_repetition");
+	Decoder_repetition(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
 	virtual ~Decoder_repetition();
 
 	void _load       (const R *Y_N                            );

@@ -16,11 +16,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Interleaver_name;
+extern const std::string Interleaver_prefix;
 struct Interleaver : public Factory
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Factory::parameters
 	{
 	public:
@@ -29,7 +28,7 @@ struct Interleaver : public Factory
 		factory::Interleaver_core::parameters *core;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Interleaver::prefix);
+		explicit parameters(const std::string &p = Interleaver_prefix);
 		virtual ~parameters();
 		Interleaver::parameters* clone() const;
 

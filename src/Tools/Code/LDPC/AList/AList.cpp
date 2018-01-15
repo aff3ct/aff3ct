@@ -177,7 +177,7 @@ Sparse_matrix AList
 			unsigned n_connections = 0;
 			stream >> n_connections;
 
-			if (n_connections <= 0 || n_connections > rows_max_degree)
+			if (n_connections == 0 || n_connections > rows_max_degree)
 			{
 				std::stringstream message;
 				message << "'n_connections' has to be greater than 0 and smaller or equal to 'rows_max_degree' "
@@ -189,13 +189,13 @@ Sparse_matrix AList
 			rows_degree[i] = n_connections;
 		}
 
-		std::vector<unsigned> cols_degree(n_cols);
+		// std::vector<unsigned> cols_degree(n_cols);
 		for (unsigned i = 0; i < n_cols; i++)
 		{
 			unsigned n_connections = 0;
 			stream >> n_connections;
 
-			if (n_connections <= 0 || n_connections > cols_max_degree)
+			if (n_connections == 0 || n_connections > cols_max_degree)
 			{
 				std::stringstream message;
 				message << "'n_connections' has to be greater than 0 and smaller or equal to 'cols_max_degree' "
@@ -204,7 +204,7 @@ Sparse_matrix AList
 				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
-			cols_degree[i] = n_connections;
+			// cols_degree[i] = n_connections;
 		}
 
 		for (unsigned i = 0; i < n_rows; i++)
@@ -216,7 +216,7 @@ Sparse_matrix AList
 				stream >> col_index;
 
 				if ((col_index >  0 && j <  rows_degree[i]) ||
-					(col_index <= 0 && j >= rows_degree[i]))
+					(col_index == 0 && j >= rows_degree[i]))
 				{
 					if (col_index)
 						matrix.add_connection(i, col_index -1);
@@ -295,7 +295,7 @@ Sparse_matrix AList
 	n_rows = std::stoi(values[0]);
 	n_cols = std::stoi(values[1]);
 
-	if (n_rows <= 0 || n_cols <= 0)
+	if (n_rows == 0 || n_cols == 0)
 	{
 		std::stringstream message;
 		message << "'n_rows' and 'n_cols' have to be greater than 0 ('n_rows' = " << n_rows
@@ -317,7 +317,7 @@ Sparse_matrix AList
 	rows_max_degree = std::stoi(values[0]);
 	cols_max_degree = std::stoi(values[1]);
 
-	if (rows_max_degree <= 0 || cols_max_degree <= 0)
+	if (rows_max_degree == 0 || cols_max_degree == 0)
 	{
 		std::stringstream message;
 		message << "'rows_max_degree' and 'cols_max_degree' have to be greater than 0 ('rows_max_degree' = "
@@ -360,19 +360,19 @@ Sparse_matrix AList
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	std::vector<unsigned> cols_degree(n_rows);
+	// std::vector<unsigned> cols_degree(n_rows);
 	for (unsigned i = 0; i < n_cols; i++)
 	{
 		unsigned n_connections = std::stoi(values[i]);
-		if (n_connections > 0 && n_connections <= cols_max_degree)
-			cols_degree[i] = n_connections;
-		else
+		if (!(n_connections > 0 && n_connections <= cols_max_degree))
 		{
 			std::stringstream message;
 			message << "'n_connections' has to be greater than 0 and smaller than 'cols_max_degree' "
 			        << "('n_connections' = " << n_connections << ", 'cols_max_degree' = " << cols_max_degree << ").";
 			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
+		// else
+			// cols_degree[i] = n_connections;
 	}
 
 	for (unsigned i = 0; i < n_rows; i++)
@@ -471,7 +471,7 @@ Sparse_matrix AList
 	n_cols = std::stoi(values[0]);
 	n_rows = std::stoi(values[1]);
 
-	if (n_rows <= 0 || n_cols <= 0)
+	if (n_rows == 0 || n_cols == 0)
 	{
 		std::stringstream message;
 		message << "'n_rows' and 'n_cols' have to be greater than 0 ('n_rows' = " << n_rows

@@ -12,9 +12,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_LDPC_DVBS2<B>
-::Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames, const std::string name)
-: Encoder_LDPC<B>(K, N, n_frames, name)
+::Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames)
+: Encoder_LDPC<B>(K, N, n_frames)
 {
+	const std::string name = "Encoder_LDPC_DVBS2";
+	this->set_name(name);
+	
 	build_dvbs2();
 
 	if (!dvbs2)

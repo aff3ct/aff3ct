@@ -6,16 +6,22 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B>
+const std::string aff3ct::module::Encoder_RSC_DB<B>::default_std = "DVB-RCS1";
+
+template <typename B>
 Encoder_RSC_DB<B>
-::Encoder_RSC_DB(const int& K, const int& N, const std::string standard, const bool buffered_encoding,
-                 const int n_frames, const std::string name)
-: Encoder<B>       (K, N, n_frames, name),
+::Encoder_RSC_DB(const int& K, const int& N, const std::string &standard, const bool buffered_encoding,
+                 const int n_frames)
+: Encoder<B>       (K, N, n_frames),
   n_ff             (standard == "DVB-RCS1" ? 3 : 4),
   n_states         (1 << n_ff),
   buffered_encoding(buffered_encoding),
   next_state       (4, std::vector<int>(n_states, 0)),
   out_parity       (4, std::vector<int>(n_states, 0))
 {
+	const std::string name = "Encoder_RSC_DB";
+	this->set_name(name);
+	
 	if (N !=  2 * K)
 	{
 		std::stringstream message;

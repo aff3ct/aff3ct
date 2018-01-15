@@ -5,11 +5,11 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::BFER::name   = "Simulation BFER";
-const std::string aff3ct::factory::BFER::prefix = "sim";
+const std::string aff3ct::factory::BFER_name   = "Simulation BFER";
+const std::string aff3ct::factory::BFER_prefix = "sim";
 
 BFER::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Simulation::parameters(name, prefix)
 {
 }

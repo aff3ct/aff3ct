@@ -23,9 +23,7 @@ public:
 	                const int &tail_bits,
 	                const std::vector<std::vector<bool>> &pattern_bits,
 	                const bool buff_enc = true,
-	                const int n_frames = 1,
-	                const std::string name = "Puncturer_turbo");
-
+	                const int n_frames = 1);
 	virtual ~Puncturer_turbo();
 
 	static unsigned    get_period     (const std::vector<std::vector<bool>>& pattern_bits);

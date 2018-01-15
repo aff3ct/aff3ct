@@ -14,7 +14,7 @@
 using namespace aff3ct::tools;
 
 Frozenbits_generator_file
-::Frozenbits_generator_file(const int K, const int N, const std::string filename)
+::Frozenbits_generator_file(const int K, const int N, const std::string& filename)
 : Frozenbits_generator(K, N, 0.f), filename(filename)
 {
 }

@@ -15,12 +15,14 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_LDPC_from_QC<B>
-::Encoder_LDPC_from_QC(const int K, const int N, const tools::Sparse_matrix &_H, const int n_frames,
-                      const std::string name)
-: Encoder_LDPC<B>(K, N, n_frames, name),
+::Encoder_LDPC_from_QC(const int K, const int N, const tools::Sparse_matrix &_H, const int n_frames)
+: Encoder_LDPC<B>(K, N, n_frames),
   H((_H.get_n_rows() > _H.get_n_cols())?_H.transpose():_H),
   invH2(tools::LDPC_matrix_handler::invert_H2(_H))
 {
+	const std::string name = "Encoder_LDPC_from_QC";
+	this->set_name(name);
+	
 	if ((N-K) != (int)H.get_n_rows())
 	{
 		std::stringstream message;

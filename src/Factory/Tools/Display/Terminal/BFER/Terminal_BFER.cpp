@@ -3,12 +3,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Terminal_BFER::name   = "Terminal BFER";
-const std::string aff3ct::factory::Terminal_BFER::prefix = "ter";
+const std::string aff3ct::factory::Terminal_BFER_name   = "Terminal BFER";
+const std::string aff3ct::factory::Terminal_BFER_prefix = "ter";
 
 Terminal_BFER::parameters
-::parameters(const std::string prefix)
-: Terminal::parameters(Terminal_BFER::name, prefix)
+::parameters(const std::string &prefix)
+: Terminal::parameters(Terminal_BFER_name, prefix)
 {
 }
 

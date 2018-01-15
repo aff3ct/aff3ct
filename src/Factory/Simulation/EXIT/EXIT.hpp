@@ -28,11 +28,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string EXIT_name;
+extern const std::string EXIT_prefix;
 struct EXIT : Simulation
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Simulation::parameters
 	{
 	public:
@@ -55,7 +54,7 @@ struct EXIT : Simulation
 		Terminal_EXIT::parameters *ter = nullptr;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = EXIT::prefix);
+		explicit parameters(const std::string &p = EXIT_prefix);
 		virtual ~parameters();
 		virtual EXIT::parameters* clone() const;
 

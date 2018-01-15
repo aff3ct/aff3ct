@@ -11,12 +11,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Encoder_RSC::name   = "Encoder RSC";
-const std::string aff3ct::factory::Encoder_RSC::prefix = "enc";
+const std::string aff3ct::factory::Encoder_RSC_name   = "Encoder RSC";
+const std::string aff3ct::factory::Encoder_RSC_prefix = "enc";
 
 Encoder_RSC::parameters
-::parameters(const std::string prefix)
-: Encoder::parameters(Encoder_RSC::name, prefix)
+::parameters(const std::string &prefix)
+: Encoder::parameters(Encoder_RSC_name, prefix)
 {
 	this->type = "RSC";
 }

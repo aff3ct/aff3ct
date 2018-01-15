@@ -15,11 +15,13 @@ Puncturer_turbo<B,Q>
                   const int &tail_bits,
                   const std::vector<std::vector<bool>>& pattern_bits,
                   const bool buff_enc,
-                  const int n_frames,
-                  const std::string name)
-: Puncturer<B,Q>(K, N, K * 3 + tail_bits, n_frames, name),
+                  const int n_frames)
+: Puncturer<B,Q>(K, N, K * 3 + tail_bits, n_frames),
   pattern_bits(pattern_bits), buff_enc(buff_enc), tail_bits(tail_bits)
 {
+	const std::string name = "Puncturer_turbo";
+	this->set_name(name);
+
 	if (tail_bits < 0)
 	{
 		std::stringstream message;

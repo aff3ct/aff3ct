@@ -63,9 +63,9 @@ inline void normalize_scl_metrics(std::vector<signed char> &metrics, const int L
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                             const int n_frames, const std::string name)
-: Decoder          (K, N, n_frames, API_polar::get_n_frames(), name),
-  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
+                             const int n_frames)
+: Decoder          (K, N, n_frames, API_polar::get_n_frames()),
+  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   L                (L),
   frozen_bits      (frozen_bits),
@@ -97,6 +97,9 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   best_idx         (L),
   l_tmp            (N)
 {
+	const std::string name = "Decoder_polar_SCL_fast_sys";
+	this->set_name(name);
+
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 //	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 
@@ -150,11 +153,10 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                             const std::vector<tools::Pattern_polar_i*> polar_patterns,
-                             const int idx_r0, const int idx_r1,
-                             const int n_frames, const std::string name)
-: Decoder          (K, N, n_frames, API_polar::get_n_frames(), name),
-  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
+                             const std::vector<tools::Pattern_polar_i*>& polar_patterns,
+                             const int idx_r0, const int idx_r1, const int n_frames)
+: Decoder          (K, N, n_frames, API_polar::get_n_frames()),
+  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   L                (L),
   frozen_bits      (frozen_bits),
@@ -176,6 +178,8 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   best_idx         (L),
   l_tmp            (N)
 {
+	const std::string name = "Decoder_polar_SCL_fast_sys";
+	this->set_name(name);
 
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 //	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");

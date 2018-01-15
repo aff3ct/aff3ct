@@ -18,7 +18,7 @@ private:
 	std::normal_distribution<R> normal_dist;
 
 public:
-	Noise_std(const int seed = 0);
+	explicit Noise_std(const int seed = 0);
 	virtual ~Noise_std();
 
 	virtual void set_seed(const int seed);

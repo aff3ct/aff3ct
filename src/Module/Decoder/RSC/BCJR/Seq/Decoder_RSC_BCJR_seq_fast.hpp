@@ -21,8 +21,7 @@ public:
 	Decoder_RSC_BCJR_seq_fast(const int &K,
 	                          const std::vector<std::vector<int>> &trellis,
 	                          const bool buffered_encoding = true,
-	                          const int n_frames = 1,
-	                          const std::string name = "Decoder_RSC_BCJR_seq_fast");
+	                          const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_seq_fast();
 
 protected:

@@ -57,9 +57,13 @@ public:
 	 * \param n_frames: number of frames to process in the Decoder.
 	 * \param name:     Quantizer's name.
 	 */
-	Quantizer(const int N, const int n_frames = 1, const std::string name = "Quantizer")
-	: Module(n_frames, name, "Quantizer"), N(N)
+	Quantizer(const int N, const int n_frames = 1)
+	: Module(n_frames), N(N)
 	{
+		const std::string name = "Quantizer";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (N <= 0)
 		{
 			std::stringstream message;

@@ -18,7 +18,7 @@ bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int
 {
 	bool is_transposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
-	is_transposed = false;
+	// is_transposed = false;
 #elif defined(__AVX2__)
 	if (n >= 256)
 	{
@@ -64,7 +64,7 @@ bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, in
 {
 	bool is_itransposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
-	is_itransposed = false;
+	// is_itransposed = false;
 #elif defined(__AVX2__)
 	if (n >= 256)
 	{

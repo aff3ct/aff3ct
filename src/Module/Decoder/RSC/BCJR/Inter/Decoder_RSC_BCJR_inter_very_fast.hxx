@@ -12,11 +12,12 @@ Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
 ::Decoder_RSC_BCJR_inter_very_fast(const int &K,
                                    const std::vector<std::vector<int>> &trellis,
                                    const bool buffered_encoding,
-                                   const int n_frames,
-                                   const std::string name)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>(), name),
-  Decoder_RSC_BCJR_inter<B,R>(K, trellis, buffered_encoding, n_frames, name)
+                                   const int n_frames)
+: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>()),
+  Decoder_RSC_BCJR_inter<B,R>(K, trellis, buffered_encoding, n_frames)
 {
+	const std::string name = "Decoder_RSC_BCJR_inter_very_fast";
+	this->set_name(name);
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>

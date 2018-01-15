@@ -11,7 +11,7 @@ template <typename B = int, typename R = float>
 class Scaling_factor_seq : public Scaling_factor<B,R>
 {
 public:
-	Scaling_factor_seq(const int n_ite);
+	explicit Scaling_factor_seq(const int n_ite);
 
 	bool siso_n(const int ite,
 	            const mipp::vector<R>& sys,

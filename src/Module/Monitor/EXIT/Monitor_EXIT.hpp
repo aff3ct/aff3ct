@@ -27,8 +27,7 @@ protected:
 	std::vector<R> llrs_e_buff;
 
 public:
-	Monitor_EXIT(const int size, const unsigned n_trials, const int n_frames = 1,
-	             const std::string name = "Monitor_EXIT");
+	Monitor_EXIT(const int size, const unsigned n_trials, const int n_frames = 1);
 	virtual ~Monitor_EXIT(){};
 
 	/*!

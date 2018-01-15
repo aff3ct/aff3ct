@@ -17,10 +17,9 @@ Decoder_turbo_DB<B,R>
                    const int& n_ite,
                    const Interleaver<R> &pi,
                    Decoder_RSC_DB_BCJR<B,R> &siso_n,
-                   Decoder_RSC_DB_BCJR<B,R> &siso_i,
-                   const std::string name)
-: Decoder          (K, N, siso_n.get_n_frames(), 1, name),
-  Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1, name),
+                   Decoder_RSC_DB_BCJR<B,R> &siso_i)
+: Decoder          (K, N, siso_n.get_n_frames(), 1),
+  Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1),
   n_ite            (n_ite),
   pi               (pi),
   siso_n           (siso_n),
@@ -38,6 +37,9 @@ Decoder_turbo_DB<B,R>
   l_e2i            (2 * K),
   s                (    K)
 {
+	const std::string name = "Decoder_turbo_DB";
+	this->set_name(name);
+
 	if (K % 2)
 	{
 		std::stringstream message;

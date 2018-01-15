@@ -9,10 +9,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_BCH<B>
-::Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator& GF_poly, const int n_frames,
-              const std::string name)
- : Encoder<B>(K, N, n_frames, name), g(GF_poly.get_g()), bb(N - K)
+::Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator& GF_poly, const int n_frames)
+ : Encoder<B>(K, N, n_frames), g(GF_poly.get_g()), bb(N - K)
 {
+	const std::string name = "Encoder_BCH";
+	this->set_name(name);
+	
 	if ((this->N - this->K) != GF_poly.get_n_rdncy())
 	{
 		std::stringstream message;

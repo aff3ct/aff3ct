@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Encoder_repetition_name;
+extern const std::string Encoder_repetition_prefix;
 struct Encoder_repetition : public Encoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Encoder::parameters
 	{
 	public:
@@ -24,7 +23,7 @@ struct Encoder_repetition : public Encoder
 		bool buffered = true;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Encoder_repetition::prefix);
+		explicit parameters(const std::string &p = Encoder_repetition_prefix);
 		virtual ~parameters();
 		Encoder_repetition::parameters* clone() const;
 

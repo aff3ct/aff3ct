@@ -20,12 +20,12 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Channel::name   = "Channel";
-const std::string aff3ct::factory::Channel::prefix = "chn";
+const std::string aff3ct::factory::Channel_name   = "Channel";
+const std::string aff3ct::factory::Channel_prefix = "chn";
 
 Channel::parameters
-::parameters(const std::string prefix)
-: Factory::parameters(Channel::name, Channel::name, prefix)
+::parameters(const std::string &prefix)
+: Factory::parameters(Channel_name, Channel_name, prefix)
 {
 }
 

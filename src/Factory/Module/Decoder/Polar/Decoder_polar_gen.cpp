@@ -872,7 +872,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 }
 
 const std::vector<bool>& Decoder_polar
-::get_frozen_bits(const std::string implem)
+::get_frozen_bits(const std::string &implem)
 {
 	// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25

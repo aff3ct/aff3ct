@@ -39,19 +39,19 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Decoder_polar::name   = "Decoder Polar";
-const std::string aff3ct::factory::Decoder_polar::prefix = "dec";
+const std::string aff3ct::factory::Decoder_polar_name   = "Decoder Polar";
+const std::string aff3ct::factory::Decoder_polar_prefix = "dec";
 
 Decoder_polar::parameters
-::parameters(const std::string prefix)
-: Decoder::parameters(Decoder_polar::name, prefix)
+::parameters(const std::string &prefix)
+: Decoder::parameters(Decoder_polar_name, prefix)
 {
 	this->type   = "SC";
 	this->implem = "FAST";
 }
 
 Decoder_polar::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Decoder::parameters(name, prefix)
 {
 	this->type   = "SC";

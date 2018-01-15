@@ -12,11 +12,13 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RSC_sys<B>
-::Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding,
-                  const std::string name)
-: Encoder<B>(K, N, n_frames, name), n_ff(n_ff), n_states(1 << n_ff),
+::Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding)
+: Encoder<B>(K, N, n_frames), n_ff(n_ff), n_states(1 << n_ff),
   buffered_encoding(buffered_encoding)
 {
+	const std::string name = "Encoder_RSC_sys";
+	this->set_name(name);
+	
 	if (n_ff <= 0)
 	{
 		std::stringstream message;

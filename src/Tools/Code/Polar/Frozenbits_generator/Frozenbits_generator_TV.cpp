@@ -23,8 +23,8 @@ const int Frozenbits_generator_TV::Mu = 100;
 
 Frozenbits_generator_TV
 ::Frozenbits_generator_TV(const int K, const int N,
-                          const std::string awgn_codes_dir,
-                          const std::string bin_pb_path,
+                          const std::string &awgn_codes_dir,
+                          const std::string &bin_pb_path,
                           const float sigma)
 : Frozenbits_generator_file(K, N, sigma), m((int)std::log2(N)), awgn_codes_dir(awgn_codes_dir), bin_pb_path(bin_pb_path)
 {
@@ -62,16 +62,15 @@ void Frozenbits_generator_TV
 			mutex_create_folder.lock();
 			if ((dp = opendir(sub_folder.c_str())) == nullptr)
 			{
-				int ret;
 				// mkdir mod = rwx r.x r.x
 #ifdef _MSC_VER // Windows with MSVC
-				if ((ret = _mkdir(sub_folder.c_str())) != 0)
+				if (_mkdir(sub_folder.c_str()) != 0)
 				{
 #elif defined(_WIN32) // MinGW on Windows
-				if((ret = mkdir(sub_folder.c_str())) != 0)
+				if (mkdir(sub_folder.c_str()) != 0)
 				{
 #else // UNIX like
-				if ((ret = mkdir(sub_folder.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)) != 0)
+				if (mkdir(sub_folder.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) != 0)
 				{
 #endif
 					mutex_create_folder.unlock();

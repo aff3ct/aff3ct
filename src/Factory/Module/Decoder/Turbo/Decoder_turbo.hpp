@@ -19,11 +19,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Decoder_turbo_name;
+extern const std::string Decoder_turbo_prefix;
 struct Decoder_turbo : public Decoder
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	template <class D1 = Decoder_RSC, class D2 = D1>
 	class parameters : public Decoder::parameters
 	{
@@ -42,7 +41,7 @@ struct Decoder_turbo : public Decoder
 		Flip_and_check::parameters *fnc;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Decoder_turbo::prefix);
+		explicit parameters(const std::string &p = Decoder_turbo_prefix);
 		virtual ~parameters();
 		Decoder_turbo::parameters<D1,D2>* clone() const;
 

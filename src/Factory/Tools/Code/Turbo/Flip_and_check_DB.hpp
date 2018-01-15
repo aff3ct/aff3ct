@@ -11,11 +11,10 @@ namespace aff3ct
 {
 namespace factory
 {
+extern const std::string Flip_and_check_DB_name;
+extern const std::string Flip_and_check_DB_prefix;
 struct Flip_and_check_DB : public Flip_and_check
 {
-	static const std::string name;
-	static const std::string prefix;
-
 	class parameters : public Flip_and_check::parameters
 	{
 	public:
@@ -23,7 +22,7 @@ struct Flip_and_check_DB : public Flip_and_check
 		// empty
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		parameters(const std::string p = Flip_and_check_DB::prefix);
+		explicit parameters(const std::string &p = Flip_and_check_DB_prefix);
 		virtual ~parameters();
 		Flip_and_check_DB::parameters* clone() const;
 

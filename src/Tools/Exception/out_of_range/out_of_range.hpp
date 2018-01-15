@@ -14,12 +14,12 @@ class out_of_range : public exception
 public:
 	out_of_range() throw();
 
-	out_of_range(const std::string message) throw();
+	explicit out_of_range(const std::string &message) throw();
 
-	out_of_range(const std::string filename,
+	out_of_range(const std::string &filename,
 	             const int line_num,
-	             const std::string funcname = "",
-	             const std::string message = "") throw();
+	             const std::string &funcname = exception::empty_string,
+	             const std::string &message = exception::empty_string) throw();
 
 	virtual ~out_of_range() throw();
 };

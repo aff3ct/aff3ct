@@ -21,8 +21,7 @@ protected:
 	tools::LDPC_matrix_handler::QCFull_matrix invH2;
 
 public:
-	Encoder_LDPC_from_QC(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1,
-	                     const std::string name = "Encoder_LDPC_from_QC");
+	Encoder_LDPC_from_QC(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1);
 	virtual ~Encoder_LDPC_from_QC();
 
 protected:

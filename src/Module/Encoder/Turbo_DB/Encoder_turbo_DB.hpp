@@ -27,8 +27,7 @@ protected:
 
 public:
 	Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
-	                 Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i, const int n_frames = 1,
-	                 const std::string name = "Encoder_turbo_DB");
+	                 Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i, const int n_frames = 1);
 	virtual ~Encoder_turbo_DB() {}
 
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id);

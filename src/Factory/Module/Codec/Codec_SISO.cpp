@@ -9,17 +9,17 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec_SISO::name   = "Codec SISO";
-const std::string aff3ct::factory::Codec_SISO::prefix = "cdc";
+const std::string aff3ct::factory::Codec_SISO_name   = "Codec SISO";
+const std::string aff3ct::factory::Codec_SISO_prefix = "cdc";
 
 Codec_SISO::parameters
-::parameters(const std::string prefix)
-: Codec::parameters(Codec_SISO::name, prefix)
+::parameters(const std::string &prefix)
+: Codec::parameters(Codec_SISO_name, prefix)
 {
 }
 
 Codec_SISO::parameters
-::parameters(const std::string name, const std::string prefix)
+::parameters(const std::string &name, const std::string &prefix)
 : Codec::parameters(name, prefix)
 {
 }

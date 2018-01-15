@@ -13,10 +13,9 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_RA<B, R>
-::Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter, const int n_frames,
-             const std::string name)
-: Decoder          (K, N, n_frames, 1, name),
-  Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
+::Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter, const int n_frames)
+: Decoder          (K, N, n_frames, 1),
+  Decoder_SIHO<B,R>(K, N, n_frames, 1),
   rep_count(N/K),
   max_iter(max_iter),
   Fw(N),
@@ -30,6 +29,9 @@ Decoder_RA<B, R>
   Xu(2),
   interleaver(interleaver)
 {
+	const std::string name = "Decoder_RA";
+	this->set_name(name);
+	
 	if (max_iter <= 0)
 	{
 		std::stringstream message;

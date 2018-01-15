@@ -34,7 +34,7 @@ public:
 	/*!
 	 *  \brief Constructor.
 	 */
-	Simulation(const factory::Simulation::parameters& simu_params);
+	explicit Simulation(const factory::Simulation::parameters& simu_params);
 
 	/*!
 	 *  \brief Destructor.

@@ -25,7 +25,7 @@ protected:
 	unsigned short                                                                      real_time_state;
 
 public:
-	Terminal_BFER(const module::Monitor_BFER<B> &monitor);
+	explicit Terminal_BFER(const module::Monitor_BFER<B> &monitor);
 
 	virtual ~Terminal_BFER() {}
 

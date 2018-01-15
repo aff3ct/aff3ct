@@ -36,7 +36,7 @@ public:
 	 *
 	 * \param n_threads: number of threads to wait in the barrier.
 	 */
-	Barrier(const int n_threads);
+	explicit Barrier(const int n_threads);
 
 	/*!
 	 * \brief Destructor.

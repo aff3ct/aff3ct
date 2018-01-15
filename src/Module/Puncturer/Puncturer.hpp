@@ -62,10 +62,13 @@ public:
 	 * \param n_frames: number of frames to process in the Puncturer.
 	 * \param name:     Puncturer's name.
 	 */
-	Puncturer(const int K, const int N, const int N_cw, const int n_frames = 1,
-	          const std::string name = "Puncturer")
-	: Module(n_frames, name, "Puncturer"), K(K), N(N), N_cw(N_cw)
+	Puncturer(const int K, const int N, const int N_cw, const int n_frames = 1)
+	: Module(n_frames), K(K), N(N), N_cw(N_cw)
 	{
+		const std::string name = "Puncturer";
+		this->set_name(name);
+		this->set_short_name(name);
+
 		if (K <= 0)
 		{
 			std::stringstream message;

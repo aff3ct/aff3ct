@@ -18,15 +18,18 @@ namespace module
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_user<B,R,Q,MAX>
-::Modem_user(const int N, const R sigma, const int bits_per_symbol, const std::string const_path,
-             const bool disable_sig2, const int n_frames, const std::string name)
-: Modem<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), sigma, n_frames, name),
+::Modem_user(const int N, const std::string &const_path, const R sigma, const int bits_per_symbol,
+             const bool disable_sig2, const int n_frames)
+: Modem<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), sigma, n_frames),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sqrt_es        (0.0),
   disable_sig2   (disable_sig2),
   constellation  ()
 {
+	const std::string name = "Modem_user";
+	this->set_name(name);
+
 	if (const_path.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'const_path' should not be empty.");
 

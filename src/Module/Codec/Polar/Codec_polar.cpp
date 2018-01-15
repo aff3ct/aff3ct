@@ -13,9 +13,9 @@ Codec_polar<B,Q>
               const factory::Encoder_polar       ::parameters &enc_params,
               const factory::Decoder_polar       ::parameters &dec_params,
               const factory::Puncturer_polar     ::parameters *pct_params,
-              CRC<B>* crc, const std::string name)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames, name),
+              CRC<B>* crc)
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   adaptive_fb(fb_params.sigma == -1.f),
   frozen_bits(fb_params.N_cw, true),
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
@@ -23,6 +23,9 @@ Codec_polar<B,Q>
   puncturer_wangliu(nullptr),
   fb_decoder       (nullptr)
 {
+	const std::string name = "Codec_polar";
+	this->set_name(name);
+	
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{

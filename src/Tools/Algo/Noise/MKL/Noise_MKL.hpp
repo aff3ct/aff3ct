@@ -19,7 +19,7 @@ private:
 	bool              is_stream_alloc;
 
 public:
-	Noise_MKL(const int seed = 0);
+	explicit Noise_MKL(const int seed = 0);
 	virtual ~Noise_MKL();
 
 	virtual void set_seed(const int seed);
