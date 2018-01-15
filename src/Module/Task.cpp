@@ -324,7 +324,7 @@ Socket& Task::create_socket_out(const std::string &name, const size_t n_elmts)
 	return s;
 }
 
-void Task::create_codelet(std::function<int(void)> codelet)
+void Task::create_codelet(std::function<int(void)> &codelet)
 {
 	this->codelet = codelet;
 }

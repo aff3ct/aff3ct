@@ -18,7 +18,7 @@ protected:
 	tools::SC_Duplicator *duplicator[3];
 
 public:
-	explicit SC_BFER_std(const factory::BFER_std::parameters &params);
+	explicit SC_BFER_std(const factory::BFER_std::parameters &params_BFER_std);
 	virtual ~SC_BFER_std();
 
 protected:

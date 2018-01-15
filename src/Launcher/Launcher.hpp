@@ -31,20 +31,20 @@ namespace launcher
 class Launcher
 {
 private:
-	simulation::Simulation          *simu;      /*!< A generic simulation pointer to allocate a specific simulation. */
+	simulation::Simulation          *simu;          /*!< A generic simulation pointer to allocate a specific simulation. */
 	std::string                      cmd_line;
 	std::vector<std::string>         cmd_warn;
 
 protected:
-	tools::Arguments_reader          ar;        /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
-	tools::Arguments_reader::arg_map req_args;  /*!< List of the required arguments, syntax is the following:
-	                                             *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	tools::Arguments_reader::arg_map opt_args;  /*!< List of the optional arguments, syntax is the following:
-	                                             *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	tools::Arguments_reader          ar;            /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
+	tools::Arguments_reader::arg_map req_args;      /*!< List of the required arguments, syntax is the following:
+	                                                 *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	tools::Arguments_reader::arg_map opt_args;      /*!< List of the optional arguments, syntax is the following:
+	                                                 *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
 
-	factory::Simulation::parameters &params;    /*!< A structure of parameters to store and pass to the simulation. */
+	factory::Simulation::parameters &params_common; /*!< A structure of parameters to store and pass to the simulation. */
 
-	std::ostream                    &stream;    /*!< The dedicated stream in which the Launcher writes the parameters. */
+	std::ostream                    &stream;        /*!< The dedicated stream in which the Launcher writes the parameters. */
 
 public:
 	/*!
@@ -56,7 +56,7 @@ public:
 	 * \param argv:   array of arguments
 	 * \param stream: the stream in which the Launcher writes the parameters.
 	 */
-	Launcher(const int argc, const char **argv, factory::Simulation::parameters &params,
+	Launcher(const int argc, const char **argv, factory::Simulation::parameters &params_common,
 	         std::ostream &stream = std::cout);
 
 	/*!

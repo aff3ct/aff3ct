@@ -25,7 +25,7 @@ template <typename B = int, typename R = float>
 class EXIT : public Simulation
 {
 protected:
-	const factory::EXIT::parameters &params; // simulation parameters
+	const factory::EXIT::parameters &params_EXIT; // simulation parameters
 
 	// code specifications
 	float sig_a;
@@ -45,7 +45,7 @@ protected:
 	tools::Terminal_EXIT<B,R> *terminal;
 
 public:
-	explicit EXIT(const factory::EXIT::parameters &params);
+	explicit EXIT(const factory::EXIT::parameters &params_EXIT);
 	virtual ~EXIT();
 
 	void launch();

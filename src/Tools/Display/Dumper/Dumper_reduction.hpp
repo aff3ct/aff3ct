@@ -13,7 +13,7 @@ protected:
 	std::vector<Dumper*> dumpers;
 
 public:
-	explicit Dumper_reduction(std::vector<Dumper*> dumpers);
+	explicit Dumper_reduction(std::vector<Dumper*> &dumpers);
 	virtual ~Dumper_reduction();
 
 	virtual void dump (const std::string& base_path);

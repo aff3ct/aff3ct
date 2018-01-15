@@ -10,7 +10,7 @@
 using namespace aff3ct::tools;
 
 Dumper_reduction
-::Dumper_reduction(std::vector<Dumper*> dumpers)
+::Dumper_reduction(std::vector<Dumper*> &dumpers)
 : Dumper(), dumpers(dumpers)
 {
 	this->checks();

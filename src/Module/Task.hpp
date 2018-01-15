@@ -147,7 +147,7 @@ protected:
 	template <typename T>
 	Socket& create_socket_out(const std::string &name, const size_t n_elmts);
 
-	void create_codelet(std::function<int(void)> codelet);
+	void create_codelet(std::function<int(void)> &codelet);
 
 private:
 	template <typename T>

@@ -17,12 +17,12 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER_std_threads<B,R,Q>
-::BFER_std_threads(const factory::BFER_std::parameters &params)
-: BFER_std<B,R,Q>(params)
+::BFER_std_threads(const factory::BFER_std::parameters &params_BFER_std)
+: BFER_std<B,R,Q>(params_BFER_std)
 {
-	if (this->params.err_track_revert)
+	if (this->params_BFER_std.err_track_revert)
 	{
-		if (this->params.n_threads != 1)
+		if (this->params_BFER_std.n_threads != 1)
 			std::clog << tools::format_warning("Multi-threading detected with error tracking revert feature! "
 			                                   "Each thread will play the same frames. Please run with one thread.")
 			          << std::endl;
@@ -41,16 +41,16 @@ void BFER_std_threads<B,R,Q>
 {
 	BFER_std<B,R,Q>::_launch();
 
-	std::vector<std::thread> threads(this->params.n_threads -1);
+	std::vector<std::thread> threads(this->params_BFER_std.n_threads -1);
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
-	for (auto tid = 1; tid < this->params.n_threads; tid++)
+	for (auto tid = 1; tid < this->params_BFER_std.n_threads; tid++)
 		threads[tid -1] = std::thread(BFER_std_threads<B,R,Q>::start_thread, this, tid);
 
 	// launch the master thread
 	BFER_std_threads<B,R,Q>::start_thread(this, 0);
 
 	// join the slave threads with the master thread
-	for (auto tid = 1; tid < this->params.n_threads; tid++)
+	for (auto tid = 1; tid < this->params_BFER_std.n_threads; tid++)
 		threads[tid -1].join();
 
 	if (!this->prev_err_messages.empty())
@@ -95,7 +95,7 @@ void BFER_std_threads<B,R,Q>
 	auto &csb = *this->coset_bit [tid];
 	auto &mnt = *this->monitor   [tid];
 
-	if (this->params.src->type == "AZCW")
+	if (this->params_BFER_std.src->type == "AZCW")
 	{
 		auto src_data = (uint8_t*)(src[src::tsk::generate][src::sck::generate::U_K ].get_dataptr());
 		auto crc_data = (uint8_t*)(crc[crc::tsk::build   ][crc::sck::build   ::U_K2].get_dataptr());
@@ -124,7 +124,7 @@ void BFER_std_threads<B,R,Q>
 		mdm[mdm::tsk::modulate][mdm::sck::modulate::X_N1](pct[pct::tsk::puncture][pct::sck::puncture::X_N2]);
 	}
 
-	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
+	if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
 		chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::X_N ](mdm[mdm::tsk::modulate     ][mdm::sck::modulate     ::X_N2]);
 		mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::H_N ](chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::H_N ]);
@@ -142,12 +142,12 @@ void BFER_std_threads<B,R,Q>
 
 	pct[pct::tsk::depuncture][pct::sck::depuncture::Y_N1](qnt[qnt::tsk::process][qnt::sck::process::Y_N2]);
 
-	if (this->params.coset)
+	if (this->params_BFER_std.coset)
 	{
 		csr[cst::tsk::apply][cst::sck::apply::ref](enc[enc::tsk::encode    ][enc::sck::encode    ::X_N ]);
 		csr[cst::tsk::apply][cst::sck::apply::in ](pct[pct::tsk::depuncture][pct::sck::depuncture::Y_N2]);
 
-		if (this->params.coded_monitoring)
+		if (this->params_BFER_std.coded_monitoring)
 		{
 			dec[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::Y_N](csr[cst::tsk::apply         ][cst::sck::apply         ::out]);
 			csb[cst::tsk::apply         ][cst::sck::apply         ::ref](enc[enc::tsk::encode        ][enc::sck::encode        ::X_N]);
@@ -163,7 +163,7 @@ void BFER_std_threads<B,R,Q>
 	}
 	else
 	{
-		if (this->params.coded_monitoring)
+		if (this->params_BFER_std.coded_monitoring)
 		{
 			dec[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::Y_N](pct[pct::tsk::depuncture][pct::sck::depuncture::Y_N2]);
 		}
@@ -174,11 +174,11 @@ void BFER_std_threads<B,R,Q>
 		}
 	}
 
-	if (this->params.coded_monitoring)
+	if (this->params_BFER_std.coded_monitoring)
 	{
 		mnt[mnt::tsk::check_errors][mnt::sck::check_errors::U](enc[enc::tsk::encode][enc::sck::encode::X_N]);
 
-		if (this->params.coset)
+		if (this->params_BFER_std.coset)
 		{
 			mnt[mnt::tsk::check_errors][mnt::sck::check_errors::V](csb[cst::tsk::apply][cst::sck::apply::out]);
 		}
@@ -216,10 +216,11 @@ void BFER_std_threads<B,R,Q>
 
 	// communication chain execution
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
-	       (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time) &&
+	       (this->params_BFER_std.stop_time == seconds(0) || 
+	       (steady_clock::now() - t_snr) < this->params_BFER_std.stop_time) &&
 	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
 	{
-		if (this->params.debug)
+		if (this->params_BFER_std.debug)
 		{
 			if (!monitor[mnt::tsk::check_errors].get_n_calls())
 				std::cout << "#" << std::endl;
@@ -230,7 +231,7 @@ void BFER_std_threads<B,R,Q>
 			std::cout << "#" << std::endl;
 		}
 
-		if (this->params.src->type != "AZCW")
+		if (this->params_BFER_std.src->type != "AZCW")
 		{
 			source   [src::tsk::generate].exec();
 			crc      [crc::tsk::build   ].exec();
@@ -239,7 +240,7 @@ void BFER_std_threads<B,R,Q>
 			modem    [mdm::tsk::modulate].exec();
 		}
 
-		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
+		if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
 			channel  [chn::tsk::add_noise_wg ].exec();
 			modem    [mdm::tsk::filter       ].exec();
@@ -256,11 +257,11 @@ void BFER_std_threads<B,R,Q>
 
 		puncturer[pct::tsk::depuncture].exec();
 
-		if (this->params.coset)
+		if (this->params_BFER_std.coset)
 		{
 			coset_real[cst::tsk::apply].exec();
 
-			if (this->params.coded_monitoring)
+			if (this->params_BFER_std.coded_monitoring)
 			{
 				decoder  [dec::tsk::decode_siho_cw].exec();
 				coset_bit[cst::tsk::apply         ].exec();
@@ -274,7 +275,7 @@ void BFER_std_threads<B,R,Q>
 		}
 		else
 		{
-			if (this->params.coded_monitoring)
+			if (this->params_BFER_std.coded_monitoring)
 			{
 				decoder[dec::tsk::decode_siho_cw].exec();
 			}

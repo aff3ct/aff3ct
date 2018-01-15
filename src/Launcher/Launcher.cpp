@@ -31,8 +31,9 @@
 using namespace aff3ct;
 using namespace aff3ct::launcher;
 
-Launcher::Launcher(const int argc, const char **argv, factory::Simulation::parameters &params, std::ostream &stream)
-: simu(nullptr), ar(argc, argv), params(params), stream(stream)
+Launcher::Launcher(const int argc, const char **argv, factory::Simulation::parameters &params_common,
+                   std::ostream &stream)
+: simu(nullptr), ar(argc, argv), params_common(params_common), stream(stream)
 {
 	cmd_line += std::string(argv[0]) + std::string(" ");
 	for (auto i = 1; i < argc; i++)
@@ -73,12 +74,12 @@ int Launcher::read_arguments()
 	}
 	catch(std::exception&)
 	{
-		params.display_help = true;
+		params_common.display_help = true;
 	}
 
-	if (params.display_help)
+	if (params_common.display_help)
 	{
-		auto grps = factory::Factory::create_groups({&params});
+		auto grps = factory::Factory::create_groups({&params_common});
 
 		ar.print_usage(grps);
 		error = true; // in order to exit at the end of this function
@@ -92,7 +93,7 @@ int Launcher::read_arguments()
 		std::cerr << tools::format_error("At least one required argument is missing.") << std::endl;
 
 	// print the help tags
-	if ((miss_arg || error) && !params.display_help)
+	if ((miss_arg || error) && !params_common.display_help)
 	{
 		std::string message = "For more information please display the help (";
 		std::vector<std::string> help_tag = {"help", "h"};
@@ -113,13 +114,13 @@ void Launcher::print_header()
 	stream << "# " << tools::style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", tools::Style::BOLD) << std::endl;
 	stream << "# " << tools::style("-------------------------------------------------", tools::Style::BOLD) << std::endl;
 	stream << "# " << tools::style(style("Parameters :", tools::Style::BOLD), tools::Style::UNDERLINED) << std::endl;
-	factory::Header::print_parameters({&params}, false, this->stream);
+	factory::Header::print_parameters({&params_common}, false, this->stream);
 	this->stream << "#" << std::endl;
 }
 
 void Launcher::launch()
 {
-	std::srand(this->params.global_seed);
+	std::srand(this->params_common.global_seed);
 
 	// in case of the user call launch multiple times
 	if (simu != nullptr)
@@ -132,7 +133,7 @@ void Launcher::launch()
 	{
 		// print the warnings
 #ifdef ENABLE_MPI
-		if (this->params.mpi_rank == 0)
+		if (this->params_common.mpi_rank == 0)
 #endif
 			for (unsigned w = 0; w < cmd_warn.size(); w++)
 				std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
@@ -141,25 +142,25 @@ void Launcher::launch()
 
 	// write the command and he curve name in the PyBER format
 #ifdef ENABLE_MPI
-	if (!this->params.pyber.empty() && this->params.mpi_rank == 0)
+	if (!this->params_common.pyber.empty() && this->params_common.mpi_rank == 0)
 #else
-	if (!this->params.pyber.empty())
+	if (!this->params_common.pyber.empty())
 #endif
 	{
 		stream << "Run command:"     << std::endl;
 		stream << cmd_line           << std::endl;
 		stream << "Curve name:"      << std::endl;
-		stream << this->params.pyber << std::endl;
+		stream << this->params_common.pyber << std::endl;
 	}
 
 #ifdef ENABLE_MPI
-	if (this->params.mpi_rank == 0)
+	if (this->params_common.mpi_rank == 0)
 #endif
 		this->print_header();
 
 	// print the warnings
 #ifdef ENABLE_MPI
-	if (this->params.mpi_rank == 0)
+	if (this->params_common.mpi_rank == 0)
 #endif
 		for (unsigned w = 0; w < cmd_warn.size(); w++)
 			std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
@@ -177,7 +178,7 @@ void Launcher::launch()
 	{
 		// launch the simulation
 #ifdef ENABLE_MPI
-	if (this->params.mpi_rank == 0)
+	if (this->params_common.mpi_rank == 0)
 #endif
 			stream << "# " << "The simulation is running..." << std::endl;
 
@@ -192,7 +193,7 @@ void Launcher::launch()
 	}
 
 #ifdef ENABLE_MPI
-	if (this->params.mpi_rank == 0)
+	if (this->params_common.mpi_rank == 0)
 #endif
 		stream << "# End of the simulation." << std::endl;
 

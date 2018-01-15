@@ -14,6 +14,7 @@ const std::string aff3ct::tools::Dumper::default_ext = "dump";
 
 Dumper
 ::Dumper()
+: add_threshold(0)
 {
 }
 

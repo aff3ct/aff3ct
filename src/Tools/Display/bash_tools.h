@@ -79,23 +79,23 @@ namespace BG // background
 	};
 }
 
-std::string format  (std::string str, Format f = 0);
-std::string style   (std::string str, Style s);
-std::string fg_color(std::string str, FG::Color c, FG::Intensity i = FG::Intensity::NORMAL);
-std::string bg_color(std::string str, BG::Color c, BG::Intensity i = BG::Intensity::NORMAL);
+std::string format  (const std::string &str, const Format f = 0);
+std::string style   (const std::string &str, const Style s);
+std::string fg_color(const std::string &str, const FG::Color c, const FG::Intensity i = FG::Intensity::NORMAL);
+std::string bg_color(const std::string &str, const BG::Color c, const BG::Intensity i = BG::Intensity::NORMAL);
 
-std::string default_style(std::string str);
+std::string default_style(const std::string &str);
 
-std::string format_error           (std::string str);
-std::string format_critical_error  (std::string str);
-std::string format_warning         (std::string str);
-std::string format_critical_warning(std::string str);
-std::string format_info            (std::string str);
-std::string format_critical_info   (std::string str);
-std::string format_positive_info   (std::string str);
+std::string format_error           (const std::string &str);
+std::string format_critical_error  (const std::string &str);
+std::string format_warning         (const std::string &str);
+std::string format_critical_warning(const std::string &str);
+std::string format_info            (const std::string &str);
+std::string format_critical_info   (const std::string &str);
+std::string format_positive_info   (const std::string &str);
 
-using format_function = std::add_pointer<std::string(std::string)>::type;
-std::string apply_on_each_line(const std::string& str, format_function fptr);
+using format_function = std::add_pointer<std::string(const std::string&)>::type;
+std::string apply_on_each_line(const std::string& str, const format_function fptr);
 }
 }
 
