@@ -75,5 +75,5 @@ test-regression:
        - tests/results/
   script:
     - ./ci/test-build-linux-gcc.sh
-    - cd ../tests
+    - cd tests
     - ./tests.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
