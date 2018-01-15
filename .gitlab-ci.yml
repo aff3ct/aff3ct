@@ -16,107 +16,53 @@ analyse-cppcheck:
      name: analyse-cppcheck-logs
      when: always
      paths:
-       - cppcheck_all.log
-       - cppcheck_error.log
-       - cppcheck_warning.log
-       - cppcheck_performance.log
-       - cppcheck_style.log
-       - cppcheck_portability.log
-       - cppcheck_information.log
-       - cppcheck_unusedFunction.log
-       - cppcheck_missingInclude.log
+       - cppcheck/
   tags: 
     - cppcheck
   script:
-    - ./ci/cppcheck.sh
+    - ./ci/analyse-cppcheck.sh
 
 build-linux-gcc:
   stage: build
   tags:
    - linux
   script:
-    - mkdir build
-    - cd build
-    - cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DENABLE_GSL=ON -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC"
-    - THREADS=$(grep -c ^processor /proc/cpuinfo)
-    - echo $THREADS
-    - make -j $THREADS
-    - ./bin/aff3ct --version
-    - ./bin/aff3ct -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL --ter-freq 0
+    - ./ci/build-linux-gcc.sh
 
 build-linux-clang:
   stage: build
   tags:
    - linux
   script:
-    - mkdir build
-    - cd build
-    - cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release -DENABLE_GSL=ON -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC"
-    - THREADS=$(grep -c ^processor /proc/cpuinfo)
-    - echo $THREADS
-    - make -j $THREADS
-    - ./bin/aff3ct --version
-    - ./bin/aff3ct -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL --ter-freq 0
+    - ./ci/build-linux-clang.sh
 
 build-linux-gcc-4.8:
   stage: build
   tags:
    - linux
   script:
-    - mkdir build
-    - cd build
-    - cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++-4.8 -DCMAKE_BUILD_TYPE=Release -DENABLE_GSL=ON -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC"
-    - THREADS=$(grep -c ^processor /proc/cpuinfo)
-    - echo $THREADS
-    - make -j $THREADS
-    - ./bin/aff3ct --version
-    - ./bin/aff3ct -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL --ter-freq 0
+    - ./ci/build-linux-gcc-4.8.sh
 
 build-windows-gcc:
   stage: build
   tags:
    - windows
   script:
-    - set PATH=%PATH%;C:\Program Files\Git\cmd
-    - set PATH=%PATH%;C:\Program Files\CMake\bin
-    - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin
-    - mkdir build
-    - cd build
-    - cmake .. -G"MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Wall -Wno-misleading-indentation -funroll-loops -march=native -DMULTI_PREC"
-    - mingw32-make
-    - cd bin
-    - aff3ct.exe --version
-    - aff3ct.exe -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL --ter-freq 0
+    - ./ci/build-windows-gcc.bat
 
 build-windows-msvc:
   stage: build
   tags:
    - windows
   script:
-    - set PATH=%PATH%;C:\Program Files\Git\cmd
-    - set PATH=%PATH%;C:\Program Files\CMake\bin
-    - set PATH=%PATH%;C:\Program Files\Git\mingw64\bin
-    - set "VSCMD_START_DIR=%CD%"
-    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-    - mkdir build
-    - cd build
-    - cmake .. -G"Visual Studio 15 2017 Win64" -DCMAKE_CXX_FLAGS="-D_CRT_SECURE_NO_DEPRECATE -DMULTI_PREC /EHsc /arch:AVX"
-    - devenv /build Release aff3ct.sln
-    - cd bin\Release
-    - aff3ct.exe --version
-    - aff3ct.exe -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL --ter-freq 0
+    - ./ci/build-windows-msvc.bat
 
 build-mac-osx-clang:
   stage: build
   tags:
    - mac-osx
   script:
-    - mkdir build
-    - cd build
-    - cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC"
-    - make
-    - ./bin/aff3ct --version
-    - ./bin/aff3ct -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL --ter-freq 0
+    - ./ci/build-mac-osx-clang.sh
 
 test-regression:
   stage: test
@@ -128,11 +74,6 @@ test-regression:
      paths:
        - tests/results/
   script:
-    - mkdir build
-    - cd build
-    - cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DENABLE_GSL=ON -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC -DENABLE_COOL_BASH"
-    - THREADS=$(grep -c ^processor /proc/cpuinfo)
-    - echo $THREADS
-    - make -j $THREADS
+    - ./ci/test-build-linux-gcc.sh
     - cd ../tests
     - ./tests.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
