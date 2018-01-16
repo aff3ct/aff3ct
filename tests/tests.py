@@ -194,7 +194,7 @@ for fn in fileNames:
 
 	# results file
 	os.chdir(PathOrigin)
-	fRes = open(PathResults + "/" + fn, 'w+')
+	fRes = open(args.resultsPath + "/" + fn, 'w+')
 	stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
 
 	if err:
