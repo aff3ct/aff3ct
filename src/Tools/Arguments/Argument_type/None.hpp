@@ -14,20 +14,13 @@ namespace tools
 class None_type : public Argument_type
 {
 public:
-	None_type()
-	: Argument_type("")
-	{ }
+	None_type();
 
-	virtual ~None_type() {};
+	virtual ~None_type();
 
-	virtual None_type* clone() const
-	{
-		return new None_type(*this);
-	}
+	virtual None_type* clone() const;
 
-	virtual void check(const std::string& val) const
-	{
-	}
+	virtual void check(const std::string& val) const;
 };
 
 None_type* None();
