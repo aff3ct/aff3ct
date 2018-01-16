@@ -15,7 +15,7 @@ protected:
 	std::vector<T> options;
 
 public:
-	Set_range(const std::string& title, const std::vector<T>& options)
+	explicit Set_range(const std::string& title, const std::vector<T>& options)
 	: Argument_range(title)
 	{
 		add_options(options);
@@ -64,7 +64,7 @@ template <typename T>
 class Including_set_range : public Set_range<T>
 {
 public:
-	Including_set_range(const std::vector<T>& options)
+	explicit Including_set_range(const std::vector<T>& options)
 	: Set_range<T>("including set", options)
 	{ }
 
@@ -133,7 +133,7 @@ template <typename T>
 class Excluding_set_range : public Set_range<T>
 {
 public:
-	Excluding_set_range(const std::vector<T>& options)
+	explicit Excluding_set_range(const std::vector<T>& options)
 	: Set_range<T>("excluding set", options)
 	{ }
 

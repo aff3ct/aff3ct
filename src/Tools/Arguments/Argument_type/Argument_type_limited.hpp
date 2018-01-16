@@ -22,7 +22,7 @@ private:
 	std::vector<void*> ranges;
 
 public:
-	Argument_type_limited_T(const std::string& title)
+	explicit Argument_type_limited_T(const std::string& title)
 	: Argument_type(title)
 	{}
 
@@ -64,7 +64,7 @@ template <typename T, typename... Ranges>
 class Argument_type_limited : public Argument_type_limited_T<T>
 {
 public:
-	Argument_type_limited(const std::string& title, const Ranges*... new_ranges)
+	explicit Argument_type_limited(const std::string& title, const Ranges*... new_ranges)
 	: Argument_type_limited_T<T>(title)
 	{
 		add_ranges(new_ranges...);
@@ -235,7 +235,7 @@ template <typename T>
 class Argument_type_limited<T> : public Argument_type_limited_T<T>
 {
 public:
-	Argument_type_limited(const std::string& title)
+	explicit Argument_type_limited(const std::string& title)
 	: Argument_type_limited_T<T>(title)
 	{
 	}

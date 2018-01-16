@@ -14,9 +14,9 @@ protected:
 	static const std::string empty_string;
 
 private:
-	std::string message;
+	std::string message;   // the message only
 #ifdef ENABLE_BACK_TRACE
-	std::string backtrace;
+	std::string backtrace; // the message + the backtrace
 #endif
 
 public:

@@ -18,7 +18,7 @@ protected:
 	std::string title;
 
 public:
-	Argument_range(const std::string& title)
+	explicit Argument_range(const std::string& title)
 	: title(title)
 	{ }
 

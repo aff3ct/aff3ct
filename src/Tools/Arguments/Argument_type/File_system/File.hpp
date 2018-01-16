@@ -15,11 +15,11 @@ public:
 	using parent_type = File_system_type<T, isFile, noCheck, noCheck, Ranges...>;
 
 	template <typename r, typename... R>
-	File_type(const openmode& mode, const r* range, const R*... ranges)
+	explicit File_type(const openmode& mode, const r* range, const R*... ranges)
 	: parent_type("file", mode, range, ranges...)
 	{ }
 
-	File_type(const openmode& mode)
+	explicit File_type(const openmode& mode)
 	: parent_type("file", mode)
 	{ }
 

@@ -14,7 +14,7 @@ class Min_range : public Argument_range
 	const T min_val;
 
 public:
-	Min_range(const T& m)
+	explicit Min_range(const T& m)
 	: Argument_range("minimum " + std::to_string(m)), min_val(m)
 	{ }
 

@@ -14,7 +14,7 @@ template <typename T = float>
 class Non_zero_range : public Excluding_set_range<T>
 {
 public:
-	Non_zero_range()
+	explicit Non_zero_range()
 	: Excluding_set_range<T>({(T)0})
 	{ }
 

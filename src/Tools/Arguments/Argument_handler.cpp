@@ -80,7 +80,7 @@ std::vector<bool> Argument_handler
 	if (this->command.size() != command_found_pos.size())
 		std::runtime_error("'command' and 'command_found_pos' vectors have to have the same length.");
 
-	unsigned found_arg_count = 0;
+	// unsigned found_arg_count = 0; // number of different arguments found in the command line
 
 	for (auto it_arg_info = args.begin(); it_arg_info != args.end(); it_arg_info++)
 	{
@@ -109,9 +109,9 @@ std::vector<bool> Argument_handler
 
 					if(it_arg_info->second->type->get_title() == "") // do not wait for a value after the tag
 					{
-						auto it = arg_v.find(it_arg_info->first);
-						if (it == arg_v.end())
-							found_arg_count++;
+						// auto it = arg_v.find(it_arg_info->first);
+						// if (it == arg_v.end())
+						// 	found_arg_count++;
 
 						arg_v[it_arg_info->first] = std::make_pair("", it_arg_info->second);
 						command_found_pos[ix_arg_val] = true;
@@ -122,9 +122,9 @@ std::vector<bool> Argument_handler
 					{
 						if(ix_arg_val != (this->command.size() -1))
 						{
-							auto it = arg_v.find(it_arg_info->first);
-							if (it == arg_v.end())
-								found_arg_count++;
+							// auto it = arg_v.find(it_arg_info->first);
+							// if (it == arg_v.end())
+							// 	found_arg_count++;
 
 							arg_v[it_arg_info->first] = std::make_pair(this->command[ix_arg_val +1], it_arg_info->second);
 							command_found_pos[ix_arg_val   ] = true;
@@ -208,7 +208,7 @@ void Argument_handler
 	std::cout << std::endl;
 }
 
-std::string split_doc(const std::string& line, const std::string start_line, const unsigned max_char)
+std::string split_doc(const std::string& line, const std::string& start_line, const unsigned max_char)
 {
 	auto words = split(line);
 	unsigned cur_char = start_line.length();

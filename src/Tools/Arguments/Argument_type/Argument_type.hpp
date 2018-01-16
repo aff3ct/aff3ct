@@ -18,7 +18,7 @@ protected:
 	std::string title;
 
 public:
-	Argument_type(const std::string& title);
+	explicit Argument_type(const std::string& title);
 
 	virtual ~Argument_type() {};
 

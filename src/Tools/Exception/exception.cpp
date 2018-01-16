@@ -21,17 +21,17 @@ exception
 exception
 ::exception(const std::string &message) throw()
 : message(message)
-{
 #ifdef ENABLE_BACK_TRACE
-	backtrace = message + "\n" + get_back_trace(3);
+,backtrace(message + "\n" + get_back_trace(3))
 #endif
+{
 }
 
 exception
 ::exception(const std::string &filename,
             const int line_num,
             const std::string &funcname,
-            const std::string &message) throw()
+            const std::string &_message) throw()
 {
 	if (!filename.empty())
 		this->message += "In the '" + filename + "' file";
@@ -40,10 +40,10 @@ exception
 	if (!funcname.empty())
 		this->message += " ('" + funcname + "' function)";
 	this->message += ": ";
-	this->message += "\"" + message + "\"";
+	this->message += "\"" + _message + "\"";
 
 #ifdef ENABLE_BACK_TRACE
-	backtrace = message + "\n" + get_back_trace(3);
+	backtrace = this->message + "\n" + get_back_trace(3);
 #endif
 }
 

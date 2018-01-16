@@ -17,11 +17,11 @@ class Text_type : public Argument_type_limited<T,Ranges...>
 {
 public:
 	template <typename r, typename... R>
-	Text_type(const r* range, const R*... ranges)
+	explicit Text_type(const r* range, const R*... ranges)
 	: Argument_type_limited<T,Ranges...>("text", range, ranges...)
 	{ }
 
-	Text_type()
+	explicit Text_type()
 	: Argument_type_limited<T,Ranges...>("text")
 	{ }
 

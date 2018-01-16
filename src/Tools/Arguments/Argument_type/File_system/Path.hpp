@@ -15,11 +15,11 @@ public:
 	using parent_type = File_system_type<T, isPath, noCheck, noCheck, Ranges...>;
 
 	template <typename r, typename... R>
-	Path_type(const openmode& mode, const r* range, const R*... ranges)
+	explicit Path_type(const openmode& mode, const r* range, const R*... ranges)
 	: parent_type("path", mode, range, ranges...)
 	{ }
 
-	Path_type(const openmode& mode)
+	explicit Path_type(const openmode& mode)
 	: parent_type("path", mode)
 	{ }
 

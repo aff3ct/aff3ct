@@ -14,7 +14,7 @@ class Max_range : public Argument_range
 	const T max_val;
 
 public:
-	Max_range(const T& m)
+	explicit Max_range(const T& m)
 	: Argument_range("maximum " + std::to_string(m)), max_val(m)
 	{ }
 

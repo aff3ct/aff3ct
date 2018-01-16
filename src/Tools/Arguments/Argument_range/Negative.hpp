@@ -14,7 +14,7 @@ template <typename T>
 class Negative_range : public Max_range<T>
 {
 public:
-	Negative_range()
+	explicit Negative_range()
 	: Max_range<T>(0)
 	{ }
 

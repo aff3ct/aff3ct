@@ -12,7 +12,7 @@ template <typename F>
 class Function_range : public Argument_range
 {
 public:
-	Function_range(const std::string& title)
+	explicit Function_range(const std::string& title)
 	: Argument_range(title)
 	{ }
 

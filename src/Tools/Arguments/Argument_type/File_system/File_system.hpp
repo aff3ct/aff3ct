@@ -45,11 +45,11 @@ protected:
 
 public:
 	template <typename r, typename... R>
-	File_system_type(const std::string& name, const openmode& mode, const r* range, const R*... ranges)
+	explicit File_system_type(const std::string& name, const openmode& mode, const r* range, const R*... ranges)
 	: Argument_type_limited<T,Ranges...>(generate_title(name, mode), range, ranges...), name(name), mode(mode)
 	{ }
 
-	File_system_type(const std::string& name, const openmode& mode)
+	explicit File_system_type(const std::string& name, const openmode& mode)
 	: Argument_type_limited<T,Ranges...>(generate_title(name, mode)), name(name), mode(mode)
 	{ }
 

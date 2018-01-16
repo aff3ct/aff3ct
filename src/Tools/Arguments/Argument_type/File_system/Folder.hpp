@@ -15,11 +15,11 @@ public:
 	using parent_type = File_system_type<T, isFolder, noCheck, noCheck, Ranges...>;
 
 	template <typename r, typename... R>
-	Folder_type(const openmode& mode, const r* range, const R*... ranges)
+	explicit Folder_type(const openmode& mode, const r* range, const R*... ranges)
 	: parent_type("folder", mode, range, ranges...)
 	{ }
 
-	Folder_type(const openmode& mode)
+	explicit Folder_type(const openmode& mode)
 	: parent_type("folder", mode)
 	{ }
 
