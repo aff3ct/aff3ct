@@ -5,10 +5,8 @@
 #include <vector>
 #include <map>
 
-#include "Tools/system_functions.h"
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Arguments/Argument_handler.hpp"
 
 #include "Factory.hpp"
 
@@ -74,10 +72,19 @@ std::pair<tools::Argument_map_info, tools::Argument_map_info> Factory
 ::get_description(const std::vector<Factory::parameters*> &params)
 {
 	std::pair<tools::Argument_map_info, tools::Argument_map_info> args;
-	for (auto *p : params)
-		p->get_description(args.first, args.second);
+
+	get_description(params, args.first, args.second);
 
 	return args;
+}
+
+void Factory
+::get_description(const std::vector<Factory::parameters*> &params,
+                     tools::Argument_map_info &req_args,
+                     tools::Argument_map_info &opt_args)
+{
+	for (auto *p : params)
+		p->get_description(req_args, opt_args);
 }
 
 void Factory
@@ -110,59 +117,6 @@ tools::Argument_map_group Factory
 	}
 
 	return grps;
-}
-
-bool Factory
-::parse_command(int argc, char** argv, std::vector<Factory::parameters*> &params, std::ostream& err_stream)
-{
-	// build the required and optional arguments for the cmd line
-	auto args = aff3ct::factory::Factory::get_description(params);
-
-	// parse the argument from the command line
-	tools::Argument_handler ahandler(argc, (const char**)argv);
-	std::vector<std::string> warnings, errors;
-	auto read_args = ahandler.parse_arguments(args.first, args.second, warnings, errors);
-
-	try
-	{
-		// write the parameters values in "params" from "read_args"
-		Factory::store(params, read_args);
-	}
-	catch(const aff3ct::tools::exception& e)
-	{
-		errors.push_back(e.what_no_bt());
-	}
-	catch(const std::exception& e)
-	{
-		errors.push_back(tools::addr2line(e.what()));
-	}
-
-	// if there is blocking errors
-	if (errors.size())
-	{
-		// create groups of arguments
-		auto grps = aff3ct::factory::Factory::create_groups(params);
-
-		// display the command usage and the help (the parameters are ordered by group)
-		ahandler.print_help(args.first, args.second, grps);
-
-		// print the warnings
-		for (unsigned e = 0; e < warnings.size(); e++)
-			err_stream << aff3ct::tools::format_warning(warnings[e]) << std::endl;
-
-		// print the errors
-		for (size_t e = 0; e < errors.size(); e++)
-			err_stream << aff3ct::tools::format_error(errors[e]) << std::endl;
-
-		// exit the program here
-		return 1;
-	}
-
-	// print the warnings
-	for (size_t w = 0; w < warnings.size(); w++)
-		err_stream << aff3ct::tools::format_warning(warnings[w]) << std::endl;
-
-	return 0;
 }
 
 void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string grp_name, header_list header,

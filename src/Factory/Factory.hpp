@@ -64,10 +64,10 @@ struct Factory
 	};
 
 	static std::pair<tools::Argument_map_info, tools::Argument_map_info> get_description(const std::vector<Factory::parameters*> &params);
+	static void get_description(const std::vector<Factory::parameters*> &params, tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args);
+
 	static void                      store        (std::vector<Factory::parameters*> &params, const tools::Argument_map_value &vals);
 	static tools::Argument_map_group create_groups(const std::vector<Factory::parameters*> &params);
-
-	static bool parse_command(int argc, char** argv, std::vector<Factory::parameters*> &params, std::ostream& err_stream = std::cerr);
 };
 
 struct Header
