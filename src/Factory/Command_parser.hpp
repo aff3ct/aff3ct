@@ -1,5 +1,5 @@
-#ifndef COMMAND_SCANNER_HPP
-#define COMMAND_SCANNER_HPP
+#ifndef COMMAND_PARSER_HPP
+#define COMMAND_PARSER_HPP
 
 #include <iostream>
 #include <vector>
@@ -17,7 +17,7 @@ namespace aff3ct
 namespace factory
 {
 
-class Command_scanner
+class Command_parser
 {
 private:
 	tools::Argument_handler ahandler;
@@ -33,12 +33,12 @@ private:
 	bool help_asked;
 
 public:
-	Command_scanner(int argc, char** argv,
+	Command_parser(int argc, char** argv,
 	               std::vector<Factory::parameters*> &params,
 	               bool add_help_tag = false,
 	               std::ostream& err_stream = std::cerr);
 
-	~Command_scanner();
+	~Command_parser();
 
 	void print_help    ();
 	void print_errors  ();
