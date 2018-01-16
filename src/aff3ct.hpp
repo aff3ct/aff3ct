@@ -1,7 +1,6 @@
 #ifndef AFF3CT_HPP
 #define AFF3CT_HPP
 
-//find .\/src\/ -type f -follow -print | grep "[.]h$" | sed 's/[[:blank:]]\+/\n/g' | sed 's/.\/src\//#include </' | sed 's|$|>|g'
 #include <Tools/Code/Polar/API/functions_polar_inter.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_8bit_bitpacking.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_intra.h>
@@ -13,13 +12,11 @@
 #include <Tools/Code/Polar/decoder_polar_functions.h>
 #include <Tools/Code/Polar/fb_extract.h>
 #include <Tools/Code/Polar/nodes_parser.h>
-// #include <Tools/date.h>
 #include <Tools/Display/bash_tools.h>
 #include <Tools/general_utils.h>
 #include <Tools/Math/matrix.h>
 #include <Tools/Math/max.h>
 #include <Tools/Math/utils.h>
-// #include <Tools/MSVC/dirent.h>
 #include <Tools/Perf/hard_decision.h>
 #include <Tools/Perf/Transpose/transpose_AVX.h>
 #include <Tools/Perf/Transpose/transpose_NEON.h>
@@ -29,8 +26,6 @@
 #include <Tools/types.h>
 #include <Tools/version.h>
 
-//find .\/src\/ -type f -follow -print | grep "[.]hpp$" | sed 's/[[:blank:]]\+/\n/g' | sed 's/.\/src\//#include </' | sed 's|$|>|g'
-// #include <aff3ct.hpp>
 #include <Factory/Factory.hpp>
 #include <Factory/Launcher/Launcher.hpp>
 #include <Factory/Module/Channel/Channel.hpp>
@@ -379,4 +374,4 @@
 #include <Tools/SystemC/SC_Router.hpp>
 #include <Tools/Threads/Barrier.hpp>
 
-#endif /* AFF3CT_HPP */
+#endif
