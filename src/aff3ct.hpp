@@ -26,6 +26,7 @@
 #include <Tools/types.h>
 #include <Tools/version.h>
 
+#include <Factory/Command_scanner.hpp>
 #include <Factory/Factory.hpp>
 #include <Factory/Launcher/Launcher.hpp>
 #include <Factory/Module/Channel/Channel.hpp>
