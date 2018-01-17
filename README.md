@@ -37,69 +37,7 @@ Expected output:
     # ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
     # -------------------------------------------------
     # Parameters :
-    # * Simulation ------------------------------------
-    #    ** Type                     = BFER
-    #    ** Type of bits             = int32
-    #    ** Type of reals            = float32
-    #    ** Date (UTC)               = 2017-10-19 09:54:56
-    #    ** Git version              = v1.3.0
-    #    ** Code type (C)            = POLAR
-    #    ** SNR min (m)              = 1.000000 dB
-    #    ** SNR max (M)              = 4.000100 dB
-    #    ** SNR step (s)             = 0.250000 dB
-    #    ** Seed                     = 0
-    #    ** Statistics               = off
-    #    ** Debug mode               = off
-    #    ** Multi-threading (t)      = 4 thread(s)
-    #    ** SNR type                 = EB
-    #    ** Coset approach (c)       = no
-    #    ** Coded monitoring         = no
-    #    ** Bad frames tracking      = off
-    #    ** Bad frames replay        = off
-    #    ** Bit rate                 = 0.841309
-    #    ** Inter frame level        = 1
-    # * Source ----------------------------------------
-    #    ** Type                     = RAND
-    #    ** Info. bits (K_info)      = 1723
-    # * CRC -------------------------------------------
-    #    ** Type                     = FAST
-    #    ** Name                     = 32-GZIP
-    #    ** Polynomial (hexadecimal) = 0x4c11db7
-    #    ** Size (in bit)            = 32
-    # * Codec -----------------------------------------
-    #    ** Type                     = POLAR
-    #    ** Info. bits (K)           = 1755
-    #    ** Codeword size (N_cw)     = 2048
-    #    ** Frame size (N)           = 2048
-    #    ** Code rate                = 0.856934
-    # * Encoder ---------------------------------------
-    #    ** Type                     = POLAR
-    #    ** Systematic               = yes
-    #    Frozen bits generator ------------------------
-    #    ** Type                     = GA
-    #    ** Sigma                    = adaptive
-    # * Decoder ---------------------------------------
-    #    ** Type (D)                 = ASCL
-    #    ** Implementation           = FAST
-    #    ** Systematic               = yes
-    #    ** Max num. of lists (L)    = 8
-    #    ** Adaptative mode          = full
-    #    ** Polar node types         = {R0,R0L,R1,REP,REPL,SPC}
-    # * Modem -----------------------------------------
-    #    ** Type                     = BPSK
-    #    ** Bits per symbol          = 1
-    #    ** Sampling factor          = 1
-    #    ** Sigma square             = on
-    # * Channel ---------------------------------------
-    #    ** Type                     = AWGN
-    #    ** Complex                  = off
-    #    ** Add users                = off
-    # * Monitor ---------------------------------------
-    #    ** Frame error count (e)    = 100
-    # * Terminal --------------------------------------
-    #    ** Type                     = STD
-    #    ** Enabled                  = yes
-    #    ** Frequency (ms)           = 500
+    # [...]
     #
     # The simulation is running...
     # ----------------------------------------------------------------------||---------------------
