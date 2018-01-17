@@ -30,9 +30,18 @@ Sparse_matrix AList
 		}
 		catch (std::exception const&)
 		{
-			stream.clear();
-			stream.seekg(init_pos);
-			return AList::read_format3(stream);
+			try
+			{
+				stream.clear();
+				stream.seekg(init_pos);
+				return AList::read_format3(stream);
+			}
+			catch (std::exception const&)
+			{
+				std::stringstream message;
+				message << "The given stream does not refer to a AList format file.";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
 		}
 	}
 }

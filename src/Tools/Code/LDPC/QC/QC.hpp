@@ -18,6 +18,9 @@ public:
 	static Sparse_matrix     read            (                             std::istream &stream                );
 	static std::vector<bool> read_pct_pattern(                             std::istream &stream, int N_red = -1);
 	static void              write           (const Sparse_matrix &matrix, std::ostream &stream                );
+
+private:
+	static Sparse_matrix    _read            (                             std::istream &stream                );
 };
 }
 }

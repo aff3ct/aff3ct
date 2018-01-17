@@ -6,7 +6,6 @@
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "functions_polar_inter_intra.h"
 #include "functions_polar_intra.h"
 #include "functions_polar_seq.h"
 
