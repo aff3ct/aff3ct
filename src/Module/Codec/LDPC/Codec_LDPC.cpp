@@ -56,7 +56,7 @@ Codec_LDPC<B,Q>
 {
 	const std::string name = "Codec_LDPC";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -95,15 +95,20 @@ Codec_LDPC<B,Q>
 	{
 		auto G_format = get_matrix_format(enc_params.G_path);
 
-		if (G_format == "QC")
+		std::ifstream file_G(enc_params.G_path, std::ifstream::in);
+
+		if (!file_G.is_open() || G_format == "BAD_FILE")
 		{
-			std::ifstream file_G(enc_params.G_path, std::ifstream::in);
+			std::stringstream message;
+			message << "'enc_params.G_path' can't be opened ('enc_params.G_path' = \"" + enc_params.G_path + "\").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+		else if (G_format == "QC")
+		{
 			G = tools::QC::read(file_G);
-			file_G.close();
 		}
 		else if (G_format == "ALIST")
 		{
-			std::ifstream file_G(enc_params.G_path, std::ifstream::in);
 			G = tools::AList::read(file_G);
 
 			try
@@ -115,29 +120,29 @@ Codec_LDPC<B,Q>
 			{
 				// information bits positions are not in the G matrix file
 			}
-
-			file_G.close();
-		}
-		else if (G_format == "BAD_FILE")
-		{
-			std::stringstream message;
-			message << "'enc_params.G_path' can't be opened ('enc_params.G_path' = \"" + enc_params.G_path + "\").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 
+
+
 	auto H_format = get_matrix_format(dec_params.H_path);
-	if (H_format == "QC")
+
+	std::ifstream file_H(dec_params.H_path, std::ifstream::in);
+
+	if (!file_H.is_open() || H_format == "BAD_FILE")
 	{
-		std::ifstream file_H(dec_params.H_path, std::ifstream::in);
+		std::stringstream message;
+		message << "'dec_params.H_path' can't be opened ('dec_params.H_path' = \"" + dec_params.H_path + "\").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+	else if (H_format == "QC")
+	{
 		H = tools::QC::read(file_H);
 		if (pct_params && pct_params->pattern.empty())
 			pct_params->pattern = tools::QC::read_pct_pattern(file_H);
-		file_H.close();
 	}
 	else if (H_format == "ALIST")
 	{
-		std::ifstream file_H(dec_params.H_path, std::ifstream::in);
 		H = tools::AList::read(file_H);
 
 		try
@@ -146,14 +151,6 @@ Codec_LDPC<B,Q>
 			is_info_bits_pos = true;
 		}
 		catch (std::exception const&) { }
-
-		file_H.close();
-	}
-	else if (H_format == "BAD_FILE")
-	{
-		std::stringstream message;
-		message << "'dec_params.H_path' can't be opened ('dec_params.H_path' = \"" + dec_params.H_path + "\").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (dec_params.H_reorder != "NONE")
@@ -262,7 +259,7 @@ void Codec_LDPC<B,Q>
 		V_K[i] = Y_N[info_bits_pos[i]] >= 0 ? (B)0 : (B)1;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Codec_LDPC<B_8,Q_8>;

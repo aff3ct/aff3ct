@@ -12,6 +12,21 @@ using namespace aff3ct::tools;
 Sparse_matrix QC
 ::read(std::istream &stream)
 {
+	try
+	{
+		return QC::_read(stream);
+	}
+	catch (std::exception const&)
+	{
+		std::stringstream message;
+		message << "The given stream does not refer to a QC format file.";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+Sparse_matrix QC
+::_read(std::istream &stream)
+{
 	// ----------------------------------------------------------------------------------------- read matrix from file
 	std::string line;
 
