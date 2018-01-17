@@ -71,7 +71,7 @@ public:
 	}
 
 protected:
-	Argument_type_limited(const std::string& title)
+	explicit Argument_type_limited(const std::string& title)
 	: Argument_type_limited_T<T>(title)
 	{ }
 
@@ -250,7 +250,9 @@ protected:
 	{
 	}
 
-	virtual Argument_type_limited<T>* clone_ranges(Argument_type_limited<T>* clone) const
+	template <typename... OtherRanges>
+	Argument_type_limited<T,OtherRanges...>*
+	clone_ranges(Argument_type_limited<T,OtherRanges...>* clone) const
 	{
 		clone->get_ranges().clear();
 		return clone;

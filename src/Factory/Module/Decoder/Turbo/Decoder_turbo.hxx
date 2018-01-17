@@ -106,7 +106,9 @@ void Decoder_turbo::parameters<D1,D2>
 	opt_args.erase({pi+"-fra", "F"});
 
 	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "TURBO"      );
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "STD", "FAST");
+
+	tools::add_ranges<tools::Text_type<>>
+	(opt_args.at({p+"-implem"}), tools::Including_set("STD", "FAST"));
 
 	opt_args.add(
 		{p+"-ite", "i"},

@@ -50,7 +50,7 @@ void Decoder::parameters
 
 	opt_args.add(
 		{p+"-implem"},
-		tools::Text(tools::Including_set<std::string>()),
+		tools::Text(),
 		"select the implementation of the algorithm to decode.");
 }
 

@@ -51,7 +51,9 @@ void Decoder_LDPC::parameters
 		"path to the H matrix (AList or QC formated file).");
 
 	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "BP", "BP_FLOODING", "BP_LAYERED"   );
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "ONMS", "SPA", "LSPA", "GALA", "AMS");
+
+	tools::add_ranges<tools::Text_type<>>
+	(opt_args.at({p+"-implem"}), tools::Including_set("ONMS", "SPA", "LSPA", "GALA", "AMS"));
 
 	opt_args.add(
 		{p+"-ite", "i"},

@@ -38,8 +38,10 @@ void Decoder_NO::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "NONE"         );
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "HARD_DECISION");
+	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "NONE");
+
+	tools::add_ranges<tools::Text_type<>>
+	(opt_args.at({p+"-implem"}), tools::Including_set("HARD_DECISION"));
 }
 
 void Decoder_NO::parameters

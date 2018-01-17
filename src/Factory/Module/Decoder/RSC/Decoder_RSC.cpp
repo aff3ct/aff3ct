@@ -58,7 +58,9 @@ void Decoder_RSC::parameters
 	req_args.erase({p+"-cw-size", "N"});
 
 	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "BCJR");
-	tools::add_options(opt_args.at({p+"-implem"}), 0, "GENERIC", "STD", "FAST", "VERY_FAST");
+
+	tools::add_ranges<tools::Text_type<>>
+	(opt_args.at({p+"-implem"}), tools::Including_set("GENERIC", "STD", "FAST", "VERY_FAST"));
 
 	opt_args.add(
 		{p+"-simd"},

@@ -94,7 +94,9 @@ void Decoder_turbo_DB::parameters
 	opt_args.erase({pi+"-fra", "F"});
 
 	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "TURBO_DB");
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "STD"     );
+
+	tools::add_ranges<tools::Text_type<>>
+	(opt_args.at({p+"-implem"}), tools::Including_set("STD"));
 
 	opt_args.add(
 		{p+"-ite", "i"},

@@ -78,7 +78,7 @@ public:
 	void check(const T& val) const
 	{
 		if (this->options.empty())
-			return;
+			throw std::runtime_error("accepts no argument");
 
 		auto it = std::find(this->options.begin(), this->options.end(), val);
 

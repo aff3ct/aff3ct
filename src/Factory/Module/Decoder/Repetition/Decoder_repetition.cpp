@@ -38,7 +38,9 @@ void Decoder_repetition::parameters
 	auto p = this->get_prefix();
 
 	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "REPETITION" );
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "STD", "FAST");
+
+	tools::add_ranges<tools::Text_type<>>
+	(opt_args.at({p+"-implem"}), tools::Including_set("STD", "FAST"));
 
 	opt_args.add(
 		{p+"-no-buff"},

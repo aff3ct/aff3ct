@@ -41,7 +41,9 @@ void Decoder_RSC_DB::parameters
 	req_args.erase({p+"-cw-size", "N"});
 
 	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "BCJR");
-	tools::add_options(opt_args.at({p+"-implem"}), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
+
+	tools::add_ranges<tools::Text_type<>>
+	(opt_args.at({p+"-implem"}), tools::Including_set("GENERIC", "DVB-RCS1", "DVB-RCS2"));
 
 	opt_args.add(
 		{p+"-max"},
