@@ -22,6 +22,15 @@ analyse-cppcheck:
   script:
     - ./ci/analyse-cppcheck.sh
 
+analyse-sonarqube:
+  stage: analyse
+  tags: 
+    - sonarqube
+  only:
+    - master
+  script:
+    - ./ci/analyse-sonarqube.sh
+
 build-linux-gcc:
   stage: build
   tags:
