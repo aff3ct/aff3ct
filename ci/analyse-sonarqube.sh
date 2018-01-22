@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-VERSION=$(git tag | tail -n 1 | cut -c2,3,4,5,6)
+VERSION=$(git tag | tail -n 1 | cut -d $'v' -f2-)
 
 find .\/src\/ -type f -follow -print | grep "[.]h$\|[.]hpp$\|[.]hxx$\|[.]cpp$" > src_files.txt
 sed -i -e 's/.\/src\/Tools\/date.h//g' src_files.txt
