@@ -16,20 +16,18 @@ import subprocess
 # =============================================================================
 # ================================================================== PARAMETERS
 
-parser = argparse.ArgumentParser(
-    prog='aff3ct_tests',
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument('--refs-path',      action='store', dest='refsPath',      type=str,   default="refs",     help='Path to the references to re-simulate.')
-parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="results",  help='Path to the simulated results.')
-parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="../build", help='Path to the AFF3CT build.')
-parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=0,          help='Starting id to avoid computing results one again.')                                     # choices=xrange(0,   +inf)
-parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,        help='Sensibility to verify a SNR point.')                                                    # choices=xrange(0.0, +inf) 
-parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,          help='Number of threads to use in the simulation (0 = all available).')                       # choices=xrange(0,   +ing)
-parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,       help='If enabled, scan the path of refs recursively.')
-parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,        help='Maximum number of frames errors to simulate per SNR point.')                            # choices=xrange(0,   +inf)
-parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,        help='Rate of valid SNR points to passed a test.')                                            # choices=xrange(0.0, 1.0 )
-parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,        help='The maximum amount of time to spend to compute a SNR point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
-parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,      help='Enable the verbose mode.')
+parser = argparse.ArgumentParser(prog='aff3ct-test-regression', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('--refs-path',      action='store', dest='refsPath',      type=str,   default="refs",                    help='Path to the references to re-simulate.')
+parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
+parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
+parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=0,                         help='Starting id to avoid computing results one again.')                                     # choices=xrange(0,   +inf)
+parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility to verify a SNR point.')                                                    # choices=xrange(0.0, +inf) 
+parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                       # choices=xrange(0,   +ing)
+parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
+parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per SNR point.')                            # choices=xrange(0,   +inf)
+parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,                       help='Rate of valid SNR points to passed a test.')                                            # choices=xrange(0.0, 1.0 )
+parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a SNR point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
+parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                     help='Enable the verbose mode.')
 
 # ================================================================== PARAMETERS
 # =============================================================================
