@@ -1,33 +1,43 @@
-# How to compile and run the code
+# AFF3CT Short Presentation
+
+**AFF3CT** (A Fast Forward Error Correction Tool!) is a library dedicated to the [Forward Error Correction](https://en.wikipedia.org/wiki/Forward_error_correction) (FEC or channel coding).
+It is written in **C++11** and it supports a large range of codes: from the well-spread **Turbo codes** to the very new **Polar codes** including the **Low-Density Parity-Check (LDPC) codes**.
+AFF3CT can be used in two different ways, as:
+- a dedicated **toolbox** or **library** that can be used in various projects,
+- a **standalone application** for [Monte Carlo](https://en.wikipedia.org/wiki/Monte_Carlo_method) [BER/FER](https://en.wikipedia.org/wiki/Bit_error_rate) and [EXIT chart](https://en.wikipedia.org/wiki/EXIT_chart) simulations.
+The following section focuses on the compilation and the execution of the AFF3CT standalone application.
+
+# How to Compile and Run the Code
+
 This project use `cmake` in order to generate any type of projects (Makefile, Visual Studio, Eclipse, CLion, etc.).
 
-## Get the Git submodules
+## Get the Git Submodules
 
 AFF3CT depends on some other Git repositories (or submodules). It is highly recommended to get those submodules before trying to do anything else. Here is the command to get all the required submodules:
 
     $ git submodule update --init --recursive
 
-## Exemple of a Makefile project generation (with the C++ GNU compiler)
+## Example of a Makefile Project Generation (with the C++ GNU Compiler)
 
-Open a shell and type (from the `AFF3CT` root folder):
+Open a terminal and type (from the `AFF3CT` root folder):
 
     $ mkdir build
     $ cd build
     $ cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native -DMULTI_PREC"
 
-## Compile the code with the Makefile
+## Compile the Code with the Makefile
 
     $ make -j4
 
 This command will use the generated Makefile.
 
-## Run the code
+## Run the Code
 Here is an example of run. You can skip the computations of the current SNR point with the `ctrl+c` combination on the keyboard.
 If you use `ctrl+c` twice in a small time-step (500ms), the program will stop.
 
-### Decoding of the Polar codes with the Successive Cancellation List decoder (SCL)
+### Decoding of the Polar Codes with the Successive Cancellation List Decoder (SCL)
 
-Open a shell and type (from the `$ROOT_AFF3CT/build/` folder):
+Open a terminal and type (from the `$ROOT_AFF3CT/build/` folder):
 
     $ ./bin/aff3ct -C POLAR -m 1 -M 4 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL
 
@@ -63,6 +73,9 @@ Expected output:
         3.25 |  4.00 |   174249 |     1910 |      100 | 6.36e-06 | 5.74e-04 ||    28.97 | 00h00'10  
     # End of the simulation.
 
-## More
+# More
 
-See the [AFF3CT Wiki](https://github.com/aff3ct/aff3ct/wiki).
+A list of the AFF3CT related web pages:
+- [Official wiki](https://github.com/aff3ct/aff3ct/wiki)
+- [Official website](https://aff3ct.github.io/)
+- [Scientific publications](https://aff3ct.github.io/publications.html)
