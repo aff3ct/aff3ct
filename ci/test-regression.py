@@ -6,6 +6,7 @@
 import os
 import sys
 import math
+import time
 import pathlib
 import argparse
 import subprocess
@@ -29,6 +30,9 @@ parser.add_argument('--weak-rate',      action='store', dest='weakRate',      ty
 parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a SNR point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
 parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                     help='Enable the verbose mode.')
 
+# supported file extensions (filename suffix)
+extensions = ['.txt', '.perf', '.data', '.dat']
+
 # ================================================================== PARAMETERS
 # =============================================================================
 
@@ -49,7 +53,8 @@ def recursivelyGetFilenames(currentPath, fileNames):
 			newCurrentPath = currentPath + "/" + f
 			recursivelyGetFilenames(newCurrentPath, fileNames)
 		else:
-			fileNames.append(currentPath.replace(args.refsPath + "/", "") + "/" + f)
+			if pathlib.Path(f).suffix in extensions:
+				fileNames.append(currentPath.replace(args.refsPath + "/", "") + "/" + f)
 
 # -----
 
@@ -97,22 +102,20 @@ else:
 	basename = os.path.basename(args.refsPath)
 	dirname = args.refsPath.replace(basename, '')
 	args.refsPath = dirname
-	fileNames.append(basename)
+	if pathlib.Path(basename).suffix in extensions:
+		fileNames.append(basename)
 
 print("# Starting the test script...")
 
 nErrors = 0
 testId = 0
 for fn in fileNames:
-
-	if pathlib.Path(fn).suffix != ".txt" and pathlib.Path(fn).suffix != ".perf" and pathlib.Path(fn).suffix != ".data" and pathlib.Path(fn).suffix != ".dat":
-		continue
-
-	if testId < args.startId:
+	if testId < args.startId -1:
 		testId = testId + 1
 		continue
 
-	print("Test n°" + str(testId) + " - " + fn, end="", flush=True);
+	print("Test n°" + str(testId+1) + "/" + str(len(fileNames)) + 
+	      " - " + fn, end="", flush=True);
 
 	# open the file in read mode (from the fileName "fn" and the path)
 	f = open(args.refsPath + "/" + fn, 'r')
@@ -130,7 +133,9 @@ for fn in fileNames:
 	simuRef = []
 	for l in lines:
 		# avoid the first lines and the comments
-		if idx > 6 and l.replace(" ", "") != "" and l.replace(" ", "") != "\n" and l[0] != '#':
+		if idx > 6 and l.replace(" ", "") != ""   and \
+		               l.replace(" ", "") != "\n" and \
+		               l[0] != '#':
 			simuRef.append(l.strip().replace("||", "|").replace(" ", "").split("|"))
 		idx = idx +1
 
@@ -185,8 +190,11 @@ for fn in fileNames:
 		argsAFFECT.append(str(args.maxSNRTime))
 
 	os.chdir(args.buildPath)
-	processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	startTime = time.time()
+	processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE, 
+	                                             stderr=subprocess.PIPE)
 	(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+	elapsedTime = time.time() - startTime
 
 	err = stderrAFFECT.decode(encoding='UTF-8')
 	if err:
@@ -255,6 +263,7 @@ for fn in fileNames:
 			if cur_fe < args.maxFE:
 				break
 
+		print(" - %.2f" %elapsedTime, "sec", end="")
 		if valid == idx:
 			print(" - STRONG PASSED.", end="\n");
 		elif idx != 0 and float(valid) / float(idx) >= args.weakRate:
@@ -275,9 +284,15 @@ for fn in fileNames:
 				maxSensibility = max(sensibilityList)
 			rateSensibility = (avgSensibility / args.sensibility) * 100
 
-			print("---- Details: 'valid SNR points' = ", valid, "/", idx, ", 'sensibility [avg,min,max,rate]' = [ %.2f" %avgSensibility , ", %.2f" %minSensibility, ", %.2f" %maxSensibility, ", %.1f" % rateSensibility, "% ].", end="\n")
+			print("---- Details: 'valid SNR points' = ", valid, "/", idx, 
+			      ", 'sensibility [avg,min,max,rate]' = [ %.2f" %avgSensibility, 
+			      ", %.2f" %minSensibility, ", %.2f" %maxSensibility, 
+			      ", %.1f" % rateSensibility, "% ].", end="\n")
 			if idx > 0:
-				print("---- Details: 'first SNR point' =", float(simuCur[0][1][0:4]), "dB (@", simuCur[0][6][0:8], "FER), 'last SNR point' =", float(simuCur[idx -1][1][0:4]), "dB (@", simuCur[idx -1][6][0:8], "FER).")
+				print("---- Details: 'first SNR point' =", float(simuCur[0][1][0:4]), 
+				      "dB (@", simuCur[0][6][0:8], 
+				      "FER), 'last SNR point' =", float(simuCur[idx -1][1][0:4]), 
+				      "dB (@", simuCur[idx -1][6][0:8], "FER).")
 			if len(errorsList):
 				print("---- Details: 'errors list' = [", end="")
 				el = 0
