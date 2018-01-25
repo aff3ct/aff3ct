@@ -261,9 +261,6 @@ for fn in fileNames:
 
 			idx = idx + 1
 
-			if cur_fe < args.maxFE:
-				break
-
 		print(" - %.2f" %elapsedTime, "sec", end="")
 		if valid == idx:
 			print(" - STRONG PASSED.", end="\n");
