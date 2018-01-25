@@ -3,8 +3,9 @@
 **AFF3CT** (A Fast Forward Error Correction Tool!) is a library dedicated to the [Forward Error Correction](https://en.wikipedia.org/wiki/Forward_error_correction) (FEC or channel coding).
 It is written in **C++11** and it supports a large range of codes: from the well-spread **Turbo codes** to the very new **Polar codes** including the **Low-Density Parity-Check (LDPC) codes**.
 AFF3CT can be used in two different ways, as:
-- a dedicated **toolbox** or **library** that can be used in various projects,
+- a dedicated **toolbox** or **library** for your projects, many modules (like codecs, modems, channels, ...) are available and easy to use,
 - a **standalone application** for [Monte Carlo](https://en.wikipedia.org/wiki/Monte_Carlo_method) [BER/FER](https://en.wikipedia.org/wiki/Bit_error_rate) and [EXIT chart](https://en.wikipedia.org/wiki/EXIT_chart) simulations.
+
 The following section focuses on the compilation and the execution of the AFF3CT standalone application.
 
 # How to Compile and Run the Code
