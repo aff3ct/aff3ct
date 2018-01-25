@@ -231,18 +231,18 @@ for fn in fileNames:
 		errorsList = []
 		sensibilityList = []
 		for ref in simuRef:
-			cur_fe = int(simuCur[idx][4])
+			try:
+				cur_fe = int(simuCur[idx][4])
+			except IndexError: # no such line
+				break
 
 			if cur_fe < args.maxFE / 2:
 				break
 
 			numRef = float(ref[6][0:4])
 			powerRef = int(ref[6][6:8])
-			try:
-				numCur = float(simuCur[idx][6][0:4])
-				powerCur = int(simuCur[idx][6][6:8])
-			except IndexError: # no such line
-				break
+			numCur = float(simuCur[idx][6][0:4])
+			powerCur = int(simuCur[idx][6][6:8])
 
 			if powerRef - powerCur != 0:
 				if powerRef > powerCur:
