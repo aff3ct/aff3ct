@@ -39,22 +39,32 @@ extensions = ['.txt', '.perf', '.data', '.dat']
 # =============================================================================
 # =================================================================== FUNCTIONS
 
-def recursivelyGetFilenames(currentPath, fileNames):
-	if not os.path.exists(currentPath.replace(args.refsPath, args.resultsPath)):
-		os.makedirs(currentPath.replace(args.refsPath, args.resultsPath))
+def getFileNames(currentPath, fileNames):
+	if os.path.isdir(currentPath):
+		if not os.path.exists(currentPath.replace(args.refsPath, args.resultsPath)):
+			os.makedirs(currentPath.replace(args.refsPath, args.resultsPath))
 
-	files = os.listdir(currentPath)
-	for f in files:
-		if ".empty" in f:
-			continue
-		if "~" in f:
-			continue
-		if os.path.isdir(currentPath + "/" + f):
+		files = os.listdir(currentPath)
+		for f in files:
+			if "~" in f:
+				continue
 			newCurrentPath = currentPath + "/" + f
-			recursivelyGetFilenames(newCurrentPath, fileNames)
-		else:
-			if pathlib.Path(f).suffix in extensions:
-				fileNames.append(currentPath.replace(args.refsPath + "/", "") + "/" + f)
+			if os.path.isdir(newCurrentPath):
+				if args.recursiveScan:
+					getFileNames(newCurrentPath, fileNames)
+			else:
+				getFileNames(newCurrentPath, fileNames)
+	else:
+		if pathlib.Path(currentPath).suffix in extensions:
+			if args.refsPath == currentPath:
+				basename = os.path.basename(args.refsPath)
+				dirname = args.refsPath.replace(basename, '')
+				args.refsPath = dirname
+				fileNames.append(basename)
+			else:
+				shortenPath = currentPath.replace(args.refsPath + "/", "")
+				shortenPath = shortenPath.replace(args.refsPath,       "")
+				fileNames.append(shortenPath)
 
 # -----
 
@@ -86,25 +96,17 @@ print('#')
 
 PathOrigin = os.getcwd()
 
+if os.path.isfile(args.resultsPath):
+	print("# (EE) The results path should not be an existing file.")
+	sys.exit(1);
+
+# auto create the result folder if it does not exist
+if not os.path.exists(args.resultsPath):
+	os.makedirs(args.resultsPath)
+
 # get the filenames to test
-isFile = False
 fileNames = []
-if os.path.isdir(args.refsPath):
-	fileNamesTmp = os.listdir(args.refsPath)
-	for f in fileNamesTmp:
-		if not os.path.isdir(args.refsPath + "/" + f):
-			if pathlib.Path(f).suffix in extensions:
-				fileNames.append(f)
-		else:
-			if args.recursiveScan:
-				recursivelyGetFilenames(args.refsPath + "/" + f, fileNames)
-else:
-	isFile = True
-	basename = os.path.basename(args.refsPath)
-	dirname = args.refsPath.replace(basename, '')
-	args.refsPath = dirname
-	if pathlib.Path(basename).suffix in extensions:
-		fileNames.append(basename)
+getFileNames(args.refsPath, fileNames)
 
 print("# Starting the test script...")
 
