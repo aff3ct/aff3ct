@@ -93,7 +93,8 @@ if os.path.isdir(args.refsPath):
 	fileNamesTmp = os.listdir(args.refsPath)
 	for f in fileNamesTmp:
 		if not os.path.isdir(args.refsPath + "/" + f):
-			fileNames.append(f)
+			if pathlib.Path(f).suffix in extensions:
+				fileNames.append(f)
 		else:
 			if args.recursiveScan:
 				recursivelyGetFilenames(args.refsPath + "/" + f, fileNames)
