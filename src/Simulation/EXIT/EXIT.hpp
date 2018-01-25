@@ -1,3 +1,5 @@
+#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+
 #ifndef SIMULATION_EXIT_HPP_
 #define SIMULATION_EXIT_HPP_
 
@@ -69,3 +71,5 @@ protected:
 }
 
 #endif /* SIMULATION_EXIT_HPP_ */
+
+#endif

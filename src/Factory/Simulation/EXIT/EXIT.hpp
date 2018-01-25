@@ -1,3 +1,5 @@
+#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+
 #ifndef FACTORY_SIMULATION_EXIT_HPP_
 #define FACTORY_SIMULATION_EXIT_HPP_
 
@@ -88,3 +90,5 @@ struct EXIT : Simulation
 }
 
 #endif /* FACTORY_SIMULATION_EXIT_HPP_ */
+
+#endif

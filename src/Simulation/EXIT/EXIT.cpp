@@ -1,3 +1,5 @@
+#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+
 #include <cmath>
 #include <algorithm>
 
@@ -419,3 +421,5 @@ template class aff3ct::simulation::EXIT<B_64,R_64>;
 template class aff3ct::simulation::EXIT<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation
+
+#endif
