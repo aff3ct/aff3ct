@@ -91,9 +91,11 @@ Codec_polar<B,Q>
 		}
 	}
 
+	Encoder_polar<B>* encoder_polar = nullptr;
 	try
 	{
-		this->set_encoder(factory::Encoder_polar::build<B>(enc_params, frozen_bits));
+		encoder_polar = factory::Encoder_polar::build<B>(enc_params, frozen_bits);
+		this->set_encoder(encoder_polar);
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -109,11 +111,12 @@ Codec_polar<B,Q>
 	catch (const std::exception&)
 	{
 		if (generated_decoder)
-			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc));
+			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc               ));
 		else
-			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc));
+			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, encoder_polar));
 	}
-	this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho());
+	if (dec_params.type != "ML")
+		this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
 	if (!generated_decoder)
@@ -161,7 +164,8 @@ void Codec_polar<B,Q>
 		if (this->N_cw != this->N)
 			puncturer_wangliu->gen_frozen_bits(frozen_bits);
 
-		this->fb_decoder->notify_frozenbits_update();
+		if (this->fb_decoder)
+			this->fb_decoder->notify_frozenbits_update();
 	}
 }
 

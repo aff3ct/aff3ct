@@ -8,6 +8,7 @@
 #include "Module/CRC/CRC.hpp"
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Module/Encoder/Polar/Encoder_polar.hpp"
 
 #include "../Decoder.hpp"
 
@@ -45,7 +46,8 @@ struct Decoder_polar : public Decoder
 		module::Decoder_SISO_SIHO<B,Q>* build_siso(const std::vector<bool> &frozen_bits) const;
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc = nullptr, 
+		                                 module::Encoder_polar<B> *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build_gen(module::CRC<B> *crc = nullptr) const;
@@ -70,7 +72,7 @@ struct Decoder_polar : public Decoder
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters& params, const std::vector<bool> &frozen_bits,
-	                                        module::CRC<B> *crc = nullptr);
+	                                        module::CRC<B> *crc = nullptr, module::Encoder_polar<B> *encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build_gen(const parameters &params, module::CRC<B> *crc = nullptr);

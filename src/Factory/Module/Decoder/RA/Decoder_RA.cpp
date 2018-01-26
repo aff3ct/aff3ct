@@ -117,7 +117,7 @@ module::Decoder_SIHO<B,Q>* Decoder_RA::parameters
 	{
 		if (this->implem == "STD" ) return new module::Decoder_RA<B,Q>(this->K, this->N_cw, itl, this->n_ite, this->n_frames);
 	}
-	else if (this->type == "ML" && this->implem == "STD" && encoder)
+	else if (this->type == "ML" && encoder)
 	{
 		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
 	}

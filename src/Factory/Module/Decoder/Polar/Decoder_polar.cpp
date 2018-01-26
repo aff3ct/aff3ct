@@ -15,6 +15,7 @@
 #include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_MEM_fast_CA_sys.hpp"
 #include "Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_fast_CA_sys.hpp"
 #include "Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp"
+#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 //#define API_POLAR_DYNAMIC 1
 
@@ -76,7 +77,7 @@ void Decoder_polar::parameters
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN");
+	opt_args[{p+"-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN, ML");
 
 	opt_args[{p+"-ite", "i"}] =
 		{"strictly_positive_int",
@@ -128,28 +129,31 @@ void Decoder_polar::parameters
 
 	auto p = this->get_prefix();
 
-	if (!this->simd_strategy.empty())
-		headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
-
-	if (this->type == "SCAN")
-		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
-
-	if (this->type == "SCL" || this->type == "SCL_MEM")
-		headers[p].push_back(std::make_pair("Num. of lists (L)", std::to_string(this->L)));
-
-	if (this->type == "ASCL" || this->type == "ASCL_MEM")
+	if (this->type != "ML")
 	{
-		auto adaptative_mode = this->full_adaptive ? "full" : "partial";
-		headers[p].push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->L)));
-		headers[p].push_back(std::make_pair("Adaptative mode", adaptative_mode));
-	}
+		if (!this->simd_strategy.empty())
+			headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
 
-	if ((this->type == "SC"      ||
-	     this->type == "SCL"     ||
-	     this->type == "ASCL"    ||
-	     this->type == "SCL_MEM" ||
-	     this->type == "ASCL_MEM") && this->implem == "FAST")
-		headers[p].push_back(std::make_pair("Polar node types", this->polar_nodes));
+		if (this->type == "SCAN")
+			headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+
+		if (this->type == "SCL" || this->type == "SCL_MEM")
+			headers[p].push_back(std::make_pair("Num. of lists (L)", std::to_string(this->L)));
+
+		if (this->type == "ASCL" || this->type == "ASCL_MEM")
+		{
+			auto adaptative_mode = this->full_adaptive ? "full" : "partial";
+			headers[p].push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->L)));
+			headers[p].push_back(std::make_pair("Adaptative mode", adaptative_mode));
+		}
+
+		if ((this->type == "SC"      ||
+		     this->type == "SCL"     ||
+		     this->type == "ASCL"    ||
+		     this->type == "SCL_MEM" ||
+		     this->type == "ASCL_MEM") && this->implem == "FAST")
+			headers[p].push_back(std::make_pair("Polar node types", this->polar_nodes));
+	}
 }
 
 template <typename B, typename Q>
@@ -242,8 +246,13 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
-::build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc) const
+::build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc, module::Encoder_polar<B> *encoder) const
 {
+	if (this->type == "ML" && encoder)
+	{
+		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+	}
+	
 	if (this->type.find("SCL") != std::string::npos && this->implem == "FAST")
 	{
 		if (this->simd_strategy == "INTRA")
@@ -348,9 +357,10 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_polar
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_polar
-::build(const parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc)
+::build(const parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc, 
+        module::Encoder_polar<B> *encoder)
 {
-	return params.template build<B,Q>(frozen_bits, crc);
+	return params.template build<B,Q>(frozen_bits, crc, encoder);
 }
 
 // ==================================================================================== explicit template instantiation
@@ -370,16 +380,16 @@ template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_polar:
 #endif
 
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::parameters::build<B_8 ,Q_8 >(const std::vector<bool>&, module::CRC<B_8 >*) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::parameters::build<B_16,Q_16>(const std::vector<bool>&, module::CRC<B_16>*) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::parameters::build<B_32,Q_32>(const std::vector<bool>&, module::CRC<B_32>*) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::parameters::build<B_64,Q_64>(const std::vector<bool>&, module::CRC<B_64>*) const;
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_8 >*);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::build<B_16,Q_16>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_16>*);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::build<B_32,Q_32>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_32>*);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::build<B_64,Q_64>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_64>*);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::parameters::build<B_8 ,Q_8 >(const std::vector<bool>&, module::CRC<B_8 >*, module::Encoder_polar<B_8 >*) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::parameters::build<B_16,Q_16>(const std::vector<bool>&, module::CRC<B_16>*, module::Encoder_polar<B_16>*) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::parameters::build<B_32,Q_32>(const std::vector<bool>&, module::CRC<B_32>*, module::Encoder_polar<B_32>*) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::parameters::build<B_64,Q_64>(const std::vector<bool>&, module::CRC<B_64>*, module::Encoder_polar<B_64>*) const;
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_8 >*, module::Encoder_polar<B_8 >*);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::build<B_16,Q_16>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_16>*, module::Encoder_polar<B_16>*);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::build<B_32,Q_32>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_32>*, module::Encoder_polar<B_32>*);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::build<B_64,Q_64>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_64>*, module::Encoder_polar<B_64>*);
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::parameters::build<B,Q>(const std::vector<bool>&, module::CRC<B>*) const;
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build<B,Q>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B>*);
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::parameters::build<B,Q>(const std::vector<bool>&, module::CRC<B>*, module::Encoder_polar<B>*) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build<B,Q>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B>*, module::Encoder_polar<B>*);
 #endif
 // ==================================================================================== explicit template instantiation

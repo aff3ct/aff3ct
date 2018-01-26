@@ -76,7 +76,7 @@ module::Decoder_SIHO<B,Q>* Decoder_repetition::parameters
 		     if (this->implem == "STD" ) return new module::Decoder_repetition_std <B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
 		else if (this->implem == "FAST") return new module::Decoder_repetition_fast<B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
 	}
-	else if (this->type == "ML" && this->implem == "STD" && encoder)
+	else if (this->type == "ML" && encoder)
 	{
 		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
 	}
