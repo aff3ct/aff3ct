@@ -1,6 +1,7 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
+#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_turbo_DB.hpp"
 
@@ -93,7 +94,7 @@ void Decoder_turbo_DB::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}].push_back("TURBO_DB");
+	opt_args[{p+"-type", "D"}].push_back("TURBO_DB, ML");
 
 	opt_args[{p+"-implem"}].push_back("STD");
 
@@ -170,15 +171,18 @@ void Decoder_turbo_DB::parameters
 
 	auto p = this->get_prefix();
 
-	itl->get_headers(headers, full);
+	if (this->type != "ML")
+	{
+		itl->get_headers(headers, full);
 
-	headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
-	if (this->tail_length && full)
-		headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
+		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+		if (this->tail_length && full)
+			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
-	sf ->get_headers(headers, full);
-	fnc->get_headers(headers, full);
-	sub->get_headers(headers, full);
+		sf ->get_headers(headers, full);
+		fnc->get_headers(headers, full);
+		sub->get_headers(headers, full);
+	}
 }
 
 template <typename B, typename Q>
@@ -196,6 +200,16 @@ module::Decoder_turbo_DB<B,Q>* Decoder_turbo_DB::parameters
 }
 
 template <typename B, typename Q>
+module::Decoder_SIHO<B,Q>* Decoder_turbo_DB::parameters
+::build_ml(module::Encoder_turbo_DB<B> *encoder) const
+{
+	if (this->type == "ML" && encoder)
+		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q>
 module::Decoder_turbo_DB<B,Q>* Decoder_turbo_DB
 ::build(const parameters                       &params,
         const module::Interleaver<Q>           &itl,
@@ -203,6 +217,13 @@ module::Decoder_turbo_DB<B,Q>* Decoder_turbo_DB
               module::Decoder_RSC_DB_BCJR<B,Q> &siso_i)
 {
 	return params.template build<B,Q>(itl, siso_n, siso_i);
+}
+
+template <typename B, typename Q>
+module::Decoder_SIHO<B,Q>* Decoder_turbo_DB
+::build_ml(const parameters &params, module::Encoder_turbo_DB<B> *encoder)
+{
+	return params.template build_ml<B,Q>(encoder);
 }
 
 // ==================================================================================== explicit template instantiation
@@ -219,5 +240,19 @@ template aff3ct::module::Decoder_turbo_DB<B_64,Q_64>* aff3ct::factory::Decoder_t
 #else
 template aff3ct::module::Decoder_turbo_DB<B,Q>* aff3ct::factory::Decoder_turbo_DB::parameters::build<B,Q>(const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&, aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&) const;
 template aff3ct::module::Decoder_turbo_DB<B,Q>* aff3ct::factory::Decoder_turbo_DB::build<B,Q>(const aff3ct::factory::Decoder_turbo_DB::parameters&, const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&, aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&);
+#endif
+
+#ifdef MULTI_PREC
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B_8 ,Q_8 >(module::Encoder_turbo_DB<B_8 >*) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B_16,Q_16>(module::Encoder_turbo_DB<B_16>*) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B_32,Q_32>(module::Encoder_turbo_DB<B_32>*) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B_64,Q_64>(module::Encoder_turbo_DB<B_64>*) const;
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::build_ml<B_8 ,Q_8 >(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_8 >*);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::build_ml<B_16,Q_16>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_16>*);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::build_ml<B_32,Q_32>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_32>*);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_DB::build_ml<B_64,Q_64>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_64>*);
+#else
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B,Q>(module::Encoder_turbo_DB<B>*) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_DB::build_ml<B,Q>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B>*);
 #endif
 // ==================================================================================== explicit template instantiation
