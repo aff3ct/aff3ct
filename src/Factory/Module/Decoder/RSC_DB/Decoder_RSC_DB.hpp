@@ -9,6 +9,7 @@
 #include "Tools/Math/max.h"
 
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
+#include "Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 
 #include "../Decoder.hpp"
 
@@ -40,15 +41,25 @@ struct Decoder_RSC_DB : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_RSC_DB_BCJR<B,Q>* build(const std::vector<std::vector<int>> &trellis) const;
+		module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const std::vector<std::vector<int>> &trellis) const;
+
+		template <typename B = int, typename Q = float>
+		module::Decoder_SIHO<B,Q>* build(const std::vector<std::vector<int>> &trellis,
+		                                       module::Encoder_RSC_DB<B>     *encoder = nullptr) const;
 
 	private:
 		template <typename B = int, typename Q = float, tools::proto_max<Q> MAX>
-		module::Decoder_RSC_DB_BCJR<B,Q>* _build(const std::vector<std::vector<int>> &trellis) const;
+		module::Decoder_RSC_DB_BCJR<B,Q>* _build_siso(const std::vector<std::vector<int>> &trellis) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_RSC_DB_BCJR<B,Q>* build(const parameters &params, const std::vector<std::vector<int>> &trellis);
+	static module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const parameters &params,
+	                                                    const std::vector<std::vector<int>> &trellis);
+
+	template <typename B = int, typename Q = float>
+	static module::Decoder_SIHO<B,Q>* build(const parameters                    &params,
+	                                        const std::vector<std::vector<int>> &trellis,
+	                                              module::Encoder_RSC_DB<B>     *encoder = nullptr);
 };
 }
 }

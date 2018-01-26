@@ -80,7 +80,7 @@ Codec_RSC<B,Q>
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
-	catch (const std::exception&)
+	catch (tools::cannot_allocate const&)
 	{
 		this->set_decoder_siho(factory::Decoder_RSC::build<B,Q>(dec_params, trellis, std::cout, 1, encoder_RSC_bis));
 	}
