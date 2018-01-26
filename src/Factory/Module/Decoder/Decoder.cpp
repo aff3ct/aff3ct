@@ -69,7 +69,7 @@ void Decoder::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Type (D)",this->type));
-	if(this->implem.size())
+	if(this->implem.size() && this->type != "ML")
 		headers[p].push_back(std::make_pair("Implementation", this->implem));
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Codeword size (N)", std::to_string(this->N_cw)));

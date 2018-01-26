@@ -123,8 +123,6 @@ Codec_LDPC<B,Q>
 		}
 	}
 
-
-
 	auto H_format = get_matrix_format(dec_params.H_path);
 
 	std::ifstream file_H(dec_params.H_path, std::ifstream::in);
@@ -197,9 +195,11 @@ Codec_LDPC<B,Q>
 		}
 	}
 
+	Encoder_LDPC<B> *encoder_LDPC = nullptr;
 	try
 	{
-		this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H));
+		encoder_LDPC = factory::Encoder_LDPC::build<B>(enc_params, G, H);
+		this->set_encoder(encoder_LDPC);
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -214,7 +214,7 @@ Codec_LDPC<B,Q>
 	}
 	catch (const std::exception&)
 	{
-		this->set_decoder_siho(factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos));
+		this->set_decoder_siho(factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos, encoder_LDPC));
 	}
 }
 

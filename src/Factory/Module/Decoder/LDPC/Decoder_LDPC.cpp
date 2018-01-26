@@ -10,6 +10,7 @@
 #include "Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_ONMS_inter.hpp"
+#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_LDPC.hpp"
 
@@ -60,7 +61,7 @@ void Decoder_LDPC::parameters
 		 "the MIN implementation for the nodes (AMS decoder).",
 		 "MIN, MINL, MINS"};
 
-	opt_args[{p+"-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
+	opt_args[{p+"-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED, ML");
 
 	opt_args[{p+"-implem"}].push_back("ONMS, SPA, LSPA, GALA, AMS");
 
@@ -115,31 +116,34 @@ void Decoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	if (!this->H_path.empty())
+	if (this->type != "ML")
 	{
-		headers[p].push_back(std::make_pair("H matrix path", this->H_path));
-		headers[p].push_back(std::make_pair("H matrix reordering", this->H_reorder));
+		if (!this->H_path.empty())
+		{
+			headers[p].push_back(std::make_pair("H matrix path", this->H_path));
+			headers[p].push_back(std::make_pair("H matrix reordering", this->H_reorder));
+		}
+
+		if (!this->simd_strategy.empty())
+			headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
+
+		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+
+		if (this->implem == "ONMS")
+		{
+			headers[p].push_back(std::make_pair("Offset", std::to_string(this->offset)));
+			headers[p].push_back(std::make_pair("Normalize factor", std::to_string(this->norm_factor)));
+		}
+
+		std::string syndrome = this->enable_syndrome ? "on" : "off";
+		headers[p].push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
+
+		if (this->enable_syndrome)
+			headers[p].push_back(std::make_pair("Stop criterion depth", std::to_string(this->syndrome_depth)));
+
+		if (this->implem == "AMS")
+			headers[p].push_back(std::make_pair("Min type", this->min));
 	}
-
-	if (!this->simd_strategy.empty())
-		headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
-
-	headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
-
-	if (this->implem == "ONMS")
-	{
-		headers[p].push_back(std::make_pair("Offset", std::to_string(this->offset)));
-		headers[p].push_back(std::make_pair("Normalize factor", std::to_string(this->norm_factor)));
-	}
-
-	std::string syndrome = this->enable_syndrome ? "on" : "off";
-	headers[p].push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
-
-	if (this->enable_syndrome)
-		headers[p].push_back(std::make_pair("Stop criterion depth", std::to_string(this->syndrome_depth)));
-
-	if (this->implem == "AMS")
-		headers[p].push_back(std::make_pair("Min type", this->min));
 }
 
 template <typename B, typename Q>
@@ -176,11 +180,16 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_LDPC::parameters
-::build(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos) const
+::build(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos, 
+        module::Encoder_LDPC<B> *encoder) const
 {
 	if ((this->type == "BP" || this->type == "BP_FLOODING") && this->simd_strategy.empty())
 	{
 		if (this->implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+	}
+	else if (this->type == "ML" && encoder)
+	{
+		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
 	}
 
 	return build_siso<B,Q>(H, info_bits_pos);
@@ -197,9 +206,10 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_LDPC
-::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos)
+::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos, 
+        module::Encoder_LDPC<B> *encoder)
 {
-	return params.template build<B,Q>(H, info_bits_pos);
+	return params.template build<B,Q>(H, info_bits_pos, encoder);
 }
 
 // ==================================================================================== explicit template instantiation
@@ -220,16 +230,16 @@ template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_LDPC::
 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_LDPC::parameters::build<B_8 ,Q_8 >(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_LDPC::parameters::build<B_16,Q_16>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_LDPC::parameters::build<B_32,Q_32>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_LDPC::parameters::build<B_64,Q_64>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&) const;
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_LDPC::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_LDPC::build<B_16,Q_16>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_LDPC::build<B_32,Q_32>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_LDPC::build<B_64,Q_64>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_LDPC::parameters::build<B_8 ,Q_8 >(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B_8 >*) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_LDPC::parameters::build<B_16,Q_16>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B_16>*) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_LDPC::parameters::build<B_32,Q_32>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B_32>*) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_LDPC::parameters::build<B_64,Q_64>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B_64>*) const;
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_LDPC::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B_8 >*);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_LDPC::build<B_16,Q_16>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B_16>*);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_LDPC::build<B_32,Q_32>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B_32>*);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_LDPC::build<B_64,Q_64>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B_64>*);
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_LDPC::parameters::build<B,Q>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&) const;
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_LDPC::build<B,Q>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_LDPC::parameters::build<B,Q>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B>*) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_LDPC::build<B,Q>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, module::Encoder_LDPC<B>*);
 #endif
 // ==================================================================================== explicit template instantiation
