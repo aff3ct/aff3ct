@@ -92,7 +92,7 @@ void Encoder_RA::parameters
 }
 
 template <typename B>
-module::Encoder<B>* Encoder_RA::parameters
+module::Encoder_RA<B>* Encoder_RA::parameters
 ::build(const module::Interleaver<B> &itl) const
 {
 	if (this->type == "RA") return new module::Encoder_RA<B>(this->K, this->N_cw, itl, this->n_frames);
@@ -101,7 +101,7 @@ module::Encoder<B>* Encoder_RA::parameters
 }
 
 template <typename B>
-module::Encoder<B>* Encoder_RA
+module::Encoder_RA<B>* Encoder_RA
 ::build(const parameters& params, const module::Interleaver<B> &itl)
 {
 	return params.template build<B>(itl);
@@ -110,16 +110,16 @@ module::Encoder<B>* Encoder_RA
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_RA::parameters::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&) const;
-template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_RA::parameters::build<B_16>(const aff3ct::module::Interleaver<B_16>&) const;
-template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_RA::parameters::build<B_32>(const aff3ct::module::Interleaver<B_32>&) const;
-template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_RA::parameters::build<B_64>(const aff3ct::module::Interleaver<B_64>&) const;
-template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_RA::build<B_8 >(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_8 >&);
-template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_RA::build<B_16>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_16>&);
-template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_RA::build<B_32>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_32>&);
-template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_RA::build<B_64>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_64>&);
+template aff3ct::module::Encoder_RA<B_8 >* aff3ct::factory::Encoder_RA::parameters::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&) const;
+template aff3ct::module::Encoder_RA<B_16>* aff3ct::factory::Encoder_RA::parameters::build<B_16>(const aff3ct::module::Interleaver<B_16>&) const;
+template aff3ct::module::Encoder_RA<B_32>* aff3ct::factory::Encoder_RA::parameters::build<B_32>(const aff3ct::module::Interleaver<B_32>&) const;
+template aff3ct::module::Encoder_RA<B_64>* aff3ct::factory::Encoder_RA::parameters::build<B_64>(const aff3ct::module::Interleaver<B_64>&) const;
+template aff3ct::module::Encoder_RA<B_8 >* aff3ct::factory::Encoder_RA::build<B_8 >(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_8 >&);
+template aff3ct::module::Encoder_RA<B_16>* aff3ct::factory::Encoder_RA::build<B_16>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_16>&);
+template aff3ct::module::Encoder_RA<B_32>* aff3ct::factory::Encoder_RA::build<B_32>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_32>&);
+template aff3ct::module::Encoder_RA<B_64>* aff3ct::factory::Encoder_RA::build<B_64>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_64>&);
 #else
-template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_RA::parameters::build<B>(const aff3ct::module::Interleaver<B>&) const;
-template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_RA::build<B>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B>&);
+template aff3ct::module::Encoder_RA<B>* aff3ct::factory::Encoder_RA::parameters::build<B>(const aff3ct::module::Interleaver<B>&) const;
+template aff3ct::module::Encoder_RA<B>* aff3ct::factory::Encoder_RA::build<B>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B>&);
 #endif
 // ==================================================================================== explicit template instantiation

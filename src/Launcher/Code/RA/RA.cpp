@@ -31,11 +31,9 @@ void RA<L,B,R,Q>
 	auto pdec = params_cdc->dec->get_prefix();
 	auto pitl = params_cdc->itl->get_prefix();
 
-	this->opt_args.erase({penc+"-fra",   "F"});
-	this->opt_args.erase({penc+"-seed",  "S"});
-	this->opt_args.erase({pdec+"-implem"    });
-	this->opt_args.erase({pdec+"-type",  "D"});
-	this->opt_args.erase({pitl+"-seed",  "S"});
+	this->opt_args.erase({penc+"-fra",  "F"});
+	this->opt_args.erase({penc+"-seed", "S"});
+	this->opt_args.erase({pitl+"-seed", "S"});
 
 	L::get_description_args();
 }

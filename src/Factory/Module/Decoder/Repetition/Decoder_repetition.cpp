@@ -63,7 +63,8 @@ void Decoder_repetition::parameters
 
 	auto p = this->get_prefix();
 
-	if (full) headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
+	if (this->type != "ML")
+		if (full) headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
 }
 
 template <typename B, typename Q>
@@ -75,7 +76,7 @@ module::Decoder_SIHO<B,Q>* Decoder_repetition::parameters
 		     if (this->implem == "STD" ) return new module::Decoder_repetition_std <B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
 		else if (this->implem == "FAST") return new module::Decoder_repetition_fast<B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
 	}
-	else if (this->type == "ML" && encoder)
+	else if (this->type == "ML" && this->implem == "STD" && encoder)
 	{
 		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
 	}

@@ -114,6 +114,7 @@ void Decoder_maximum_likelihood<B,R>
 			{
 				auto tmp = (this->X_N[n] ? -1.f : +1.f) - (float)Y_N[n];
 				cur_euclidean_dist += tmp * tmp;
+				// cur_euclidean_dist += std::abs(tmp); // performance degradation with the abs
 			}
 
 			// we can avoid the sqrt because of the monotonicity of the sqrt function

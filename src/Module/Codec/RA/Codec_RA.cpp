@@ -54,16 +54,18 @@ Codec_RA<B,Q>
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
 	this->set_interleaver(factory::Interleaver_core::build<>(*dec_params.itl->core));
 
+	Encoder_RA<B> *encoder_ra = nullptr;
 	try
 	{
-		this->set_encoder(factory::Encoder_RA::build<B>(enc_params, this->get_interleaver_bit()));
+		encoder_ra = factory::Encoder_RA::build<B>(enc_params, this->get_interleaver_bit());
+		this->set_encoder(encoder_ra);
 	}
 	catch (tools::cannot_allocate const&)
 	{
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	this->set_decoder_siho(factory::Decoder_RA::build<B,Q>(dec_params, this->get_interleaver_llr()));
+	this->set_decoder_siho(factory::Decoder_RA::build<B,Q>(dec_params, this->get_interleaver_llr(), encoder_ra));
 }
 
 template <typename B, typename Q>
