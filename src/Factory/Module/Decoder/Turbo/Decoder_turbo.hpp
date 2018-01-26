@@ -62,7 +62,7 @@ struct Decoder_turbo : public Decoder
 		                                        module::Decoder_SISO<Q> &siso_i) const;
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build_ml(module::Encoder_turbo<B> *encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(module::Encoder_turbo<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
@@ -72,8 +72,8 @@ struct Decoder_turbo : public Decoder
 	                                               module::Decoder_SISO<Q> &siso_i);
 
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
-	static module::Decoder_SIHO<B,Q>* build_ml(const parameters<D1,D2>        &params,
-	                                                 module::Encoder_turbo<B> *encoder = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters<D1,D2>        &params,
+	                                              module::Encoder_turbo<B> *encoder = nullptr);
 };
 }
 }

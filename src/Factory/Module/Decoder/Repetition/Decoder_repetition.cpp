@@ -38,7 +38,7 @@ void Decoder_repetition::parameters
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}].push_back("REPETITION, ML");
+	opt_args[{p+"-type", "D"}][2] += ", REPETITION";
 	opt_args[{p+"-implem"   }].push_back("STD, FAST");
 
 	opt_args[{p+"-no-buff"}] =
@@ -61,24 +61,29 @@ void Decoder_repetition::parameters
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	auto p = this->get_prefix();
-
 	if (this->type != "ML")
+	{
+		auto p = this->get_prefix();
+
 		if (full) headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
+	}
 }
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_repetition::parameters
 ::build(module::Encoder_repetition_sys<B> *encoder) const
 {
-	if (this->type == "REPETITION")
+	try
 	{
-		     if (this->implem == "STD" ) return new module::Decoder_repetition_std <B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
-		else if (this->implem == "FAST") return new module::Decoder_repetition_fast<B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
+		return Decoder::parameters::build<B,Q>(encoder);
 	}
-	else if (this->type == "ML" && encoder)
+	catch (tools::cannot_allocate const&)
 	{
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+		if (this->type == "REPETITION")
+		{
+			     if (this->implem == "STD" ) return new module::Decoder_repetition_std <B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
+			else if (this->implem == "FAST") return new module::Decoder_repetition_fast<B,Q>(this->K, this->N_cw, this->buffered, this->n_frames);
+		}
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

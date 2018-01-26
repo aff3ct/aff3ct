@@ -73,7 +73,7 @@ void Decoder_RA::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}].push_back("RA, ML");
+	opt_args[{p+"-type", "D"}][2] += ", RA";
 	opt_args[{p+"-implem"   }].push_back("STD");
 
 	opt_args[{p+"-ite", "i"}] =
@@ -103,23 +103,28 @@ void Decoder_RA::parameters
 
 	itl->get_headers(headers, full);
 
-	auto p = this->get_prefix();
-
 	if (this->type != "ML")
+	{
+		auto p = this->get_prefix();
+		
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+	}
 }
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_RA::parameters
 ::build(const module::Interleaver<Q> &itl, module::Encoder_RA<B> *encoder) const
 {
-	if (this->type == "RA")
+	try
 	{
-		if (this->implem == "STD" ) return new module::Decoder_RA<B,Q>(this->K, this->N_cw, itl, this->n_ite, this->n_frames);
+		return Decoder::parameters::build<B,Q>(encoder);
 	}
-	else if (this->type == "ML" && encoder)
+	catch (tools::cannot_allocate const&)
 	{
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+		if (this->type == "RA")
+		{
+			if (this->implem == "STD" ) return new module::Decoder_RA<B,Q>(this->K, this->N_cw, itl, this->n_ite, this->n_frames);
+		}
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

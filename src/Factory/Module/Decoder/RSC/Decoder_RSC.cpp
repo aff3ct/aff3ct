@@ -59,7 +59,7 @@ void Decoder_RSC::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type", "D"}].push_back("BCJR, ML");
+	opt_args[{p+"-type", "D"}][2] += ", BCJR";
 
 	opt_args[{p+"-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
 
@@ -129,10 +129,10 @@ void Decoder_RSC::parameters
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	auto p = this->get_prefix();
-
 	if (this->type != "ML")
 	{
+		auto p = this->get_prefix();
+		
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
@@ -250,10 +250,14 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC::parameters
         const int                            n_ite,
               module::Encoder_RSC_sys<B>    *encoder) const
 {
-	if (this->type == "ML" && encoder)
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
-	else
+	try
+	{
+		return Decoder::parameters::build<B,Q>(encoder);
+	}
+	catch (tools::cannot_allocate const&)
+	{
 		return build_siso<B,Q>(trellis, stream, n_ite);
+	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

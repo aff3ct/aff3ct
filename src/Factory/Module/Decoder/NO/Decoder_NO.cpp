@@ -38,8 +38,10 @@ void Decoder_NO::parameters
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}].push_back("NONE");
+	opt_args[{p+"-type", "D"}][2] = "NONE";
 	opt_args[{p+"-implem"   }].push_back("HARD_DECISION");
+
+	opt_args.erase({p+"-ml-hamming"});
 }
 
 void Decoder_NO::parameters

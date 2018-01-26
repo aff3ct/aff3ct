@@ -58,7 +58,7 @@ struct Decoder_turbo_DB : public Decoder
 		                                           module::Decoder_RSC_DB_BCJR<B,Q> &siso_i) const;
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build_ml(module::Encoder_turbo_DB<B> *encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(module::Encoder_turbo_DB<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
@@ -68,8 +68,8 @@ struct Decoder_turbo_DB : public Decoder
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_i);
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build_ml(const parameters                  &params,
-	                                                 module::Encoder_turbo_DB<B> *encoder = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters                  &params,
+	                                              module::Encoder_turbo_DB<B> *encoder = nullptr);
 };
 }
 }

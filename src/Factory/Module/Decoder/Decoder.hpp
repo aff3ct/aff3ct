@@ -3,6 +3,9 @@
 
 #include <string>
 
+#include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Module/Encoder/Encoder.hpp"
+
 #include "../../Factory.hpp"
 
 namespace aff3ct
@@ -25,6 +28,7 @@ struct Decoder : Factory
 		std::string type        = "";
 		std::string implem      = "";
 		bool        systematic  = true;
+		bool        ml_hamming  = false;
 		int         n_frames    = 1;
 		int         tail_length = 0;
 
@@ -42,6 +46,9 @@ struct Decoder : Factory
 
 	protected:
 		parameters(const std::string &n, const std::string &p);
+
+		template <typename B = int, typename Q = float>
+		module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
 	};
 };
 }

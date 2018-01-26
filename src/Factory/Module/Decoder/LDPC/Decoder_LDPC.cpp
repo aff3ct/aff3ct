@@ -61,8 +61,7 @@ void Decoder_LDPC::parameters
 		 "the MIN implementation for the nodes (AMS decoder).",
 		 "MIN, MINL, MINS"};
 
-	opt_args[{p+"-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED, ML");
-
+	opt_args[{p+"-type", "D"}][2] += ", BP, BP_FLOODING, BP_LAYERED";
 	opt_args[{p+"-implem"}].push_back("ONMS, SPA, LSPA, GALA, AMS");
 
 	opt_args[{p+"-ite", "i"}] =
@@ -114,10 +113,10 @@ void Decoder_LDPC::parameters
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	auto p = this->get_prefix();
-
 	if (this->type != "ML")
 	{
+		auto p = this->get_prefix();
+		
 		if (!this->H_path.empty())
 		{
 			headers[p].push_back(std::make_pair("H matrix path", this->H_path));
@@ -183,16 +182,19 @@ module::Decoder_SIHO<B,Q>* Decoder_LDPC::parameters
 ::build(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos, 
         module::Encoder_LDPC<B> *encoder) const
 {
-	if ((this->type == "BP" || this->type == "BP_FLOODING") && this->simd_strategy.empty())
+	try
 	{
-		if (this->implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		return Decoder::parameters::build<B,Q>(encoder);
 	}
-	else if (this->type == "ML" && encoder)
+	catch (tools::cannot_allocate const&)
 	{
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
-	}
+		if ((this->type == "BP" || this->type == "BP_FLOODING") && this->simd_strategy.empty())
+		{
+			if (this->implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		}
 
-	return build_siso<B,Q>(H, info_bits_pos);
+		return build_siso<B,Q>(H, info_bits_pos);
+	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

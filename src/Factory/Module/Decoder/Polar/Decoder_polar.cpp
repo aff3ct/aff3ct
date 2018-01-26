@@ -77,7 +77,7 @@ void Decoder_polar::parameters
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN, ML");
+	opt_args[{p+"-type", "D"}][2] += ", SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN";
 
 	opt_args[{p+"-ite", "i"}] =
 		{"strictly_positive_int",
@@ -127,10 +127,10 @@ void Decoder_polar::parameters
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	auto p = this->get_prefix();
-
 	if (this->type != "ML")
 	{
+		auto p = this->get_prefix();
+		
 		if (!this->simd_strategy.empty())
 			headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
 
@@ -248,101 +248,103 @@ template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 ::build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc, module::Encoder_polar<B> *encoder) const
 {
-	if (this->type == "ML" && encoder)
+	try
 	{
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+		return Decoder::parameters::build<B,Q>(encoder);
 	}
-	
-	if (this->type.find("SCL") != std::string::npos && this->implem == "FAST")
+	catch (tools::cannot_allocate const&)
 	{
-		if (this->simd_strategy == "INTRA")
+		if (this->type.find("SCL") != std::string::npos && this->implem == "FAST")
+		{
+			if (this->simd_strategy == "INTRA")
+			{
+				if (typeid(B) == typeid(signed char))
+				{
+					return _build_scl_fast<B,Q,tools::API_polar_dynamic_intra<B,Q>>(frozen_bits, crc);
+				}
+				else if (typeid(B) == typeid(short))
+				{
+					return _build_scl_fast<B,Q,tools::API_polar_dynamic_intra<B,Q>>(frozen_bits, crc);
+				}
+				else if (typeid(B) == typeid(int))
+				{
+					return _build_scl_fast<B,Q,tools::API_polar_dynamic_intra<B,Q>>(frozen_bits, crc);
+				}
+			}
+			else if (this->simd_strategy.empty())
+			{
+				return _build_scl_fast<B,Q,tools::API_polar_dynamic_seq<B,Q>>(frozen_bits, crc);
+			}
+		}
+
+		if (this->simd_strategy == "INTER" && this->type == "SC" && this->implem == "FAST")
 		{
 			if (typeid(B) == typeid(signed char))
 			{
-				return _build_scl_fast<B,Q,tools::API_polar_dynamic_intra<B,Q>>(frozen_bits, crc);
+#ifdef ENABLE_BIT_PACKING
+#ifdef API_POLAR_DYNAMIC
+				using API_polar = tools::API_polar_dynamic_inter_8bit_bitpacking<B,Q>;
+#else
+				using API_polar = tools::API_polar_static_inter_8bit_bitpacking<B,Q>;
+#endif
+#else
+#ifdef API_POLAR_DYNAMIC
+				using API_polar = tools::API_polar_dynamic_inter<B,Q>;
+#else
+				using API_polar = tools::API_polar_static_inter<B,Q>;
+#endif
+#endif
+				return _build<B,Q,API_polar>(frozen_bits, crc);
+			}
+			else
+			{
+#ifdef API_POLAR_DYNAMIC
+				using API_polar = tools::API_polar_dynamic_inter<B,Q>;
+#else
+				using API_polar = tools::API_polar_static_inter<B,Q>;
+#endif
+				return _build<B,Q,API_polar>(frozen_bits, crc);
+			}
+		}
+		else if (this->simd_strategy == "INTRA" && this->implem == "FAST")
+		{
+			if (typeid(B) == typeid(signed char))
+			{
+#ifdef API_POLAR_DYNAMIC
+				using API_polar = tools::API_polar_dynamic_intra<B,Q>;
+#else
+				using API_polar = tools::API_polar_static_intra_8bit<B,Q>;
+#endif
+				return _build<B,Q,API_polar>(frozen_bits, crc);
 			}
 			else if (typeid(B) == typeid(short))
 			{
-				return _build_scl_fast<B,Q,tools::API_polar_dynamic_intra<B,Q>>(frozen_bits, crc);
+#ifdef API_POLAR_DYNAMIC
+				using API_polar = tools::API_polar_dynamic_intra<B,Q>;
+#else
+				using API_polar = tools::API_polar_static_intra_16bit<B,Q>;
+#endif
+				return _build<B,Q,API_polar>(frozen_bits, crc);
 			}
 			else if (typeid(B) == typeid(int))
 			{
-				return _build_scl_fast<B,Q,tools::API_polar_dynamic_intra<B,Q>>(frozen_bits, crc);
+#ifdef API_POLAR_DYNAMIC
+				using API_polar = tools::API_polar_dynamic_intra<B,Q>;
+#else
+				using API_polar = tools::API_polar_static_intra_32bit<B,Q>;
+#endif
+				return _build<B,Q,API_polar>(frozen_bits, crc);
 			}
 		}
 		else if (this->simd_strategy.empty())
 		{
-			return _build_scl_fast<B,Q,tools::API_polar_dynamic_seq<B,Q>>(frozen_bits, crc);
-		}
-	}
-
-	if (this->simd_strategy == "INTER" && this->type == "SC" && this->implem == "FAST")
-	{
-		if (typeid(B) == typeid(signed char))
-		{
-#ifdef ENABLE_BIT_PACKING
 #ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_inter_8bit_bitpacking<B,Q>;
+			using API_polar = tools::API_polar_dynamic_seq<B,Q>;
 #else
-			using API_polar = tools::API_polar_static_inter_8bit_bitpacking<B,Q>;
-#endif
-#else
-#ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_inter<B,Q>;
-#else
-			using API_polar = tools::API_polar_static_inter<B,Q>;
-#endif
+			using API_polar = tools::API_polar_static_seq<B,Q>;
 #endif
 			return _build<B,Q,API_polar>(frozen_bits, crc);
 		}
-		else
-		{
-#ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_inter<B,Q>;
-#else
-			using API_polar = tools::API_polar_static_inter<B,Q>;
-#endif
-			return _build<B,Q,API_polar>(frozen_bits, crc);
-		}
-	}
-	else if (this->simd_strategy == "INTRA" && this->implem == "FAST")
-	{
-		if (typeid(B) == typeid(signed char))
-		{
-#ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_intra<B,Q>;
-#else
-			using API_polar = tools::API_polar_static_intra_8bit<B,Q>;
-#endif
-			return _build<B,Q,API_polar>(frozen_bits, crc);
-		}
-		else if (typeid(B) == typeid(short))
-		{
-#ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_intra<B,Q>;
-#else
-			using API_polar = tools::API_polar_static_intra_16bit<B,Q>;
-#endif
-			return _build<B,Q,API_polar>(frozen_bits, crc);
-		}
-		else if (typeid(B) == typeid(int))
-		{
-#ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_intra<B,Q>;
-#else
-			using API_polar = tools::API_polar_static_intra_32bit<B,Q>;
-#endif
-			return _build<B,Q,API_polar>(frozen_bits, crc);
-		}
-	}
-	else if (this->simd_strategy.empty())
-	{
-#ifdef API_POLAR_DYNAMIC
-		using API_polar = tools::API_polar_dynamic_seq<B,Q>;
-#else
-		using API_polar = tools::API_polar_static_seq<B,Q>;
-#endif
-		return _build<B,Q,API_polar>(frozen_bits, crc);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

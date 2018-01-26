@@ -1,5 +1,8 @@
+#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
+
 #include "Decoder.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::factory;
 
 const std::string aff3ct::factory::Decoder_name   = "Decoder";
@@ -41,11 +44,16 @@ void Decoder::parameters
 
 	opt_args[{p+"-type", "D"}] =
 		{"string",
-		 "select the algorithm you want to decode the codeword."};
+		 "select the algorithm you want to decode the codeword.",
+		 "ML"};
 
 	opt_args[{p+"-implem"}] =
 		{"string",
 		 "select the implementation of the algorithm to decode."};
+
+	opt_args[{p+"-ml-hamming"}] =
+		{"",
+		 "enable the computation of the Hamming distance instead of the Euclidean distance in the ML decoder."};
 }
 
 void Decoder::parameters
@@ -59,6 +67,7 @@ void Decoder::parameters
 	if(exist(vals, {p+"-type",      "D"})) this->type       =           vals.at({p+"-type",      "D"});
 	if(exist(vals, {p+"-implem"        })) this->implem     =           vals.at({p+"-implem"        });
 	if(exist(vals, {p+"-no-sys"        })) this->systematic = false;
+	if(exist(vals, {p+"-ml-hamming"    })) this->ml_hamming = true;
 
 	this->R = (float)this->K / (float)this->N_cw;
 }
@@ -69,11 +78,35 @@ void Decoder::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Type (D)",this->type));
-	if(this->implem.size() && this->type != "ML")
-		headers[p].push_back(std::make_pair("Implementation", this->implem));
+	if(this->implem.size() && this->type != "ML") headers[p].push_back(std::make_pair("Implementation", this->implem));
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Codeword size (N)", std::to_string(this->N_cw)));
 	if (full) headers[p].push_back(std::make_pair("Code rate (R)", std::to_string(this->R)));
 	headers[p].push_back(std::make_pair("Systematic", ((this->systematic) ? "yes" : "no")));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+	if(this->type == "ML") headers[p].push_back(std::make_pair("Distance", this->ml_hamming ? "Hamming" : "Euclidean"));
 }
+
+template <typename B, typename Q>
+module::Decoder_SIHO<B,Q>* Decoder::parameters
+::build(module::Encoder<B> *encoder) const
+{
+	if (encoder)
+	{
+		if (this->type == "ML") return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, this->ml_hamming, this->n_frames);
+	}
+	
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::parameters::build<B_8 ,Q_8 >(module::Encoder<B_8 >*) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder::parameters::build<B_16,Q_16>(module::Encoder<B_16>*) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder::parameters::build<B_32,Q_32>(module::Encoder<B_32>*) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder::parameters::build<B_64,Q_64>(module::Encoder<B_64>*) const;
+#else
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder::parameters::build<B,Q>(module::Encoder<B>*) const;
+#endif
+// ==================================================================================== explicit template instantiation

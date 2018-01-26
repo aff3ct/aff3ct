@@ -94,7 +94,7 @@ void Decoder_turbo_DB::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}].push_back("TURBO_DB, ML");
+	opt_args[{p+"-type", "D"}][2] += ", TURBO_DB";
 
 	opt_args[{p+"-implem"}].push_back("STD");
 
@@ -169,10 +169,10 @@ void Decoder_turbo_DB::parameters
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	auto p = this->get_prefix();
-
 	if (this->type != "ML")
 	{
+		auto p = this->get_prefix();
+		
 		itl->get_headers(headers, full);
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
@@ -201,10 +201,9 @@ module::Decoder_turbo_DB<B,Q>* Decoder_turbo_DB::parameters
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_turbo_DB::parameters
-::build_ml(module::Encoder_turbo_DB<B> *encoder) const
+::build(module::Encoder_turbo_DB<B> *encoder) const
 {
-	if (this->type == "ML" && encoder)
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+	return Decoder::parameters::build<B,Q>(encoder);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -221,9 +220,9 @@ module::Decoder_turbo_DB<B,Q>* Decoder_turbo_DB
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_turbo_DB
-::build_ml(const parameters &params, module::Encoder_turbo_DB<B> *encoder)
+::build(const parameters &params, module::Encoder_turbo_DB<B> *encoder)
 {
-	return params.template build_ml<B,Q>(encoder);
+	return params.template build<B,Q>(encoder);
 }
 
 // ==================================================================================== explicit template instantiation
@@ -243,16 +242,16 @@ template aff3ct::module::Decoder_turbo_DB<B,Q>* aff3ct::factory::Decoder_turbo_D
 #endif
 
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B_8 ,Q_8 >(module::Encoder_turbo_DB<B_8 >*) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B_16,Q_16>(module::Encoder_turbo_DB<B_16>*) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B_32,Q_32>(module::Encoder_turbo_DB<B_32>*) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B_64,Q_64>(module::Encoder_turbo_DB<B_64>*) const;
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::build_ml<B_8 ,Q_8 >(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_8 >*);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::build_ml<B_16,Q_16>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_16>*);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::build_ml<B_32,Q_32>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_32>*);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_DB::build_ml<B_64,Q_64>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_64>*);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_8 ,Q_8 >(module::Encoder_turbo_DB<B_8 >*) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_16,Q_16>(module::Encoder_turbo_DB<B_16>*) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_32,Q_32>(module::Encoder_turbo_DB<B_32>*) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_64,Q_64>(module::Encoder_turbo_DB<B_64>*) const;
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_8 >*);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::build<B_16,Q_16>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_16>*);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::build<B_32,Q_32>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_32>*);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_DB::build<B_64,Q_64>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B_64>*);
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_DB::parameters::build_ml<B,Q>(module::Encoder_turbo_DB<B>*) const;
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_DB::build_ml<B,Q>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B>*);
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_DB::parameters::build<B,Q>(module::Encoder_turbo_DB<B>*) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_DB::build<B,Q>(const aff3ct::factory::Decoder_turbo_DB::parameters&, module::Encoder_turbo_DB<B>*);
 #endif
 // ==================================================================================== explicit template instantiation

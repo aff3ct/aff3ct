@@ -103,7 +103,7 @@ Codec_turbo_DB<B,Q>
 	Decoder_turbo_DB<B,Q>* decoder_turbo = nullptr;
 	try
 	{
-		this->set_decoder_siho(factory::Decoder_turbo_DB::build_ml<B,Q>(dec_params, encoder_turbo));
+		this->set_decoder_siho(factory::Decoder_turbo_DB::build<B,Q>(dec_params, encoder_turbo));
 	}
 	catch (tools::cannot_allocate const&)
 	{

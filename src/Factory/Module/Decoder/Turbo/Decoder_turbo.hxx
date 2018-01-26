@@ -106,7 +106,7 @@ void Decoder_turbo::parameters<D1,D2>
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}].push_back("TURBO, ML");
+	opt_args[{p+"-type", "D"}][2] += ", TURBO";
 
 	opt_args[{p+"-implem"}].push_back("STD, FAST");
 
@@ -214,12 +214,12 @@ void Decoder_turbo::parameters<D1,D2>
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	auto p = this->get_prefix();
-
 	itl->get_headers(headers, full);
 
 	if (this->type != "ML")
 	{
+		auto p = this->get_prefix();
+		
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
@@ -256,10 +256,9 @@ module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 template <class D1, class D2>
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_turbo::parameters<D1,D2>
-::build_ml(module::Encoder_turbo<B> *encoder) const
+::build(module::Encoder_turbo<B> *encoder) const
 {
-	if (this->type == "ML" && encoder)
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+	return Decoder::parameters::build<B,Q>(encoder);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -276,9 +275,9 @@ module::Decoder_turbo<B,Q>* Decoder_turbo
 
 template <typename B, typename Q, class D1, class D2>
 module::Decoder_SIHO<B,Q>* Decoder_turbo
-::build_ml(const parameters<D1,D2> &params, module::Encoder_turbo<B> *encoder)
+::build(const parameters<D1,D2> &params, module::Encoder_turbo<B> *encoder)
 {
-	return params.template build_ml<B,Q>(encoder);
+	return params.template build<B,Q>(encoder);
 }
 }
 }

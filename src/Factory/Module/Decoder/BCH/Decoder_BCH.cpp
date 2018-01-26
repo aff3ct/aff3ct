@@ -39,7 +39,7 @@ void Decoder_BCH::parameters
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}].push_back("ALGEBRAIC, ML");
+	opt_args[{p+"-type", "D"}][2] += ", ALGEBRAIC";
 	opt_args[{p+"-implem"}].push_back("STD");
 
 	opt_args[{p+"-corr-pow", "T"}] =
@@ -73,10 +73,10 @@ void Decoder_BCH::parameters
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	auto p = this->get_prefix();
-
 	if (this->type != "ML")
 	{
+		auto p = this->get_prefix();
+		
 		headers[p].push_back(std::make_pair("Galois field order (m)", std::to_string(this->m)));
 		headers[p].push_back(std::make_pair("Correction power (T)",   std::to_string(this->t)));
 	}
@@ -86,13 +86,16 @@ template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_BCH::parameters
 ::build(const tools::BCH_polynomial_generator &GF, module::Encoder_BCH<B> *encoder) const
 {
-	if (this->type == "ALGEBRAIC")
+	try
 	{
-		if (this->implem == "STD") return new module::Decoder_BCH<B,Q>(this->K, this->N_cw, GF, this->n_frames);
+		return Decoder::parameters::build<B,Q>(encoder);
 	}
-	else if (this->type == "ML" && encoder)
+	catch (tools::cannot_allocate const&)
 	{
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+		if (this->type == "ALGEBRAIC")
+		{
+			if (this->implem == "STD") return new module::Decoder_BCH<B,Q>(this->K, this->N_cw, GF, this->n_frames);
+		}
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

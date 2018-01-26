@@ -42,7 +42,7 @@ void Decoder_RSC_DB::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type", "D"}].push_back("BCJR, ML");
+	opt_args[{p+"-type", "D"}][2] += ", BCJR";
 
 	opt_args[{p+"-implem"}].push_back("GENERIC, DVB-RCS1, DVB-RCS2");
 
@@ -75,10 +75,10 @@ void Decoder_RSC_DB::parameters
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	auto p = this->get_prefix();
-
 	if (this->type != "ML")
 	{
+		auto p = this->get_prefix();
+		
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
@@ -117,10 +117,14 @@ template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_RSC_DB::parameters
 ::build(const std::vector<std::vector<int>> &trellis, module::Encoder_RSC_DB<B> *encoder) const
 {
-	if (this->type == "ML" && encoder)
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
-	else
+	try
+	{
+		return Decoder::parameters::build<B,Q>(encoder);
+	}
+	catch (tools::cannot_allocate const&)
+	{
 		return build_siso<B,Q>(trellis);
+	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
