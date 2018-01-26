@@ -52,16 +52,18 @@ Codec_repetition<B,Q>
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
 
+	Encoder_repetition_sys<B> *encoder_rep_sys = nullptr;
 	try
 	{
-		this->set_encoder(factory::Encoder_repetition::build<B>(enc_params));
+		encoder_rep_sys = factory::Encoder_repetition::build<B>(enc_params);
+		this->set_encoder(encoder_rep_sys);
 	}
 	catch (tools::cannot_allocate const&)
 	{
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	this->set_decoder_siho(factory::Decoder_repetition::build<B,Q>(dec_params));
+	this->set_decoder_siho(factory::Decoder_repetition::build<B,Q>(dec_params, encoder_rep_sys));
 }
 
 template <typename B, typename Q>
