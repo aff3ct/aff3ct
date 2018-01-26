@@ -45,6 +45,13 @@ Encoder_turbo<B>
 }
 
 template <typename B>
+int Encoder_turbo<B>
+::tail_length() const
+{
+	return enco_n.tail_length() + enco_i.tail_length();
+}
+
+template <typename B>
 void Encoder_turbo<B>
 ::encode(const B *U_K, B *X_N)
 {

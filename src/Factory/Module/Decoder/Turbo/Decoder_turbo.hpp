@@ -7,6 +7,7 @@
 #include "Module/Decoder/Turbo/Decoder_turbo.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
+#include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Tools/Code/Turbo/Flip_and_check.hpp"
@@ -59,6 +60,9 @@ struct Decoder_turbo : public Decoder
 		module::Decoder_turbo<B,Q>* build(const module::Interleaver<Q>  &itl,
 		                                        module::Decoder_SISO<Q> &siso_n,
 		                                        module::Decoder_SISO<Q> &siso_i) const;
+
+		template <typename B = int, typename Q = float>
+		module::Decoder_SIHO<B,Q>* build_ml(module::Encoder_turbo<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
@@ -66,6 +70,10 @@ struct Decoder_turbo : public Decoder
 	                                         const module::Interleaver<Q>  &itl,
 	                                               module::Decoder_SISO<Q> &siso_n,
 	                                               module::Decoder_SISO<Q> &siso_i);
+
+	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
+	static module::Decoder_SIHO<B,Q>* build_ml(const parameters<D1,D2>        &params,
+	                                                 module::Encoder_turbo<B> *encoder = nullptr);
 };
 }
 }

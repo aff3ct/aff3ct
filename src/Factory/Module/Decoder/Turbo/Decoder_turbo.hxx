@@ -2,6 +2,7 @@
 
 #include "Module/Decoder/Turbo/Decoder_turbo_std.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
+#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_turbo.hpp"
 
@@ -105,7 +106,7 @@ void Decoder_turbo::parameters<D1,D2>
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}].push_back("TURBO");
+	opt_args[{p+"-type", "D"}].push_back("TURBO, ML");
 
 	opt_args[{p+"-implem"}].push_back("STD, FAST");
 
@@ -217,19 +218,22 @@ void Decoder_turbo::parameters<D1,D2>
 
 	itl->get_headers(headers, full);
 
-	headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
-	if (this->tail_length && full)
-		headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
-	headers[p].push_back(std::make_pair("Enable json", ((this->enable_json) ? "on" : "off")));
-	headers[p].push_back(std::make_pair("Self-corrected", ((this->self_corrected) ? "on" : "off")));
-
-	sf->get_headers(headers, full);
-	fnc->get_headers(headers, full);
-
-	this->sub1->get_headers(headers, full);
-	if (!std::is_same<D1,D2>())
+	if (this->type != "ML")
 	{
-		this->sub2->get_headers(headers, full);
+		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+		if (this->tail_length && full)
+			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
+		headers[p].push_back(std::make_pair("Enable json", ((this->enable_json) ? "on" : "off")));
+		headers[p].push_back(std::make_pair("Self-corrected", ((this->self_corrected) ? "on" : "off")));
+
+		sf->get_headers(headers, full);
+		fnc->get_headers(headers, full);
+
+		this->sub1->get_headers(headers, full);
+		if (!std::is_same<D1,D2>())
+		{
+			this->sub2->get_headers(headers, full);
+		}
 	}
 }
 
@@ -249,6 +253,17 @@ module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <class D1, class D2>
+template <typename B, typename Q>
+module::Decoder_SIHO<B,Q>* Decoder_turbo::parameters<D1,D2>
+::build_ml(module::Encoder_turbo<B> *encoder) const
+{
+	if (this->type == "ML" && encoder)
+		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
 template <typename B, typename Q, class D1, class D2>
 module::Decoder_turbo<B,Q>* Decoder_turbo
 ::build(const parameters<D1,D2>       &params,
@@ -257,6 +272,13 @@ module::Decoder_turbo<B,Q>* Decoder_turbo
               module::Decoder_SISO<Q> &siso_i)
 {
 	return params.template build<B,Q>(itl, siso_n, siso_i);
+}
+
+template <typename B, typename Q, class D1, class D2>
+module::Decoder_SIHO<B,Q>* Decoder_turbo
+::build_ml(const parameters<D1,D2> &params, module::Encoder_turbo<B> *encoder)
+{
+	return params.template build_ml<B,Q>(encoder);
 }
 }
 }

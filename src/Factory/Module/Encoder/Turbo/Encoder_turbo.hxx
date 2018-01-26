@@ -188,7 +188,7 @@ void Encoder_turbo::parameters<E1,E2>
 
 template <class E1, class E2>
 template <typename B>
-module::Encoder<B>* Encoder_turbo::parameters<E1,E2>
+module::Encoder_turbo<B>* Encoder_turbo::parameters<E1,E2>
 ::build(const module::Interleaver<B> &itl,
               module::Encoder    <B> *enc_n,
               module::Encoder    <B> *enc_i) const
@@ -208,7 +208,7 @@ module::Encoder<B>* Encoder_turbo::parameters<E1,E2>
 }
 
 template <typename B, class E1, class E2>
-module::Encoder<B>* Encoder_turbo
+module::Encoder_turbo<B>* Encoder_turbo
 ::build(const parameters<E1,E2>      &params,
         const module::Interleaver<B> &itl,
               module::Encoder    <B> *enc_n,

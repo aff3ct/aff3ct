@@ -13,10 +13,9 @@ template <typename B>
 Encoder_turbo_legacy<B>
 ::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc,
                        const int n_frames)
-: Encoder<B>(K, N, n_frames),
+: Encoder_turbo<B>(K, N, pi, sub_enc, sub_enc, n_frames),
   pi(pi),
   sub_enc(sub_enc),
-  U_K_i(K*n_frames),
   X_N_n((2 * (K + sub_enc.tail_length()/2))*n_frames),
   X_N_i((2 * (K + sub_enc.tail_length()/2))*n_frames)
 {
@@ -44,9 +43,9 @@ template <typename B>
 void Encoder_turbo_legacy<B>
 ::encode(const B *U_K, B *X_N)
 {
-	pi.interleave (U_K,          U_K_i.data(), 0, this->n_frames);
-	sub_enc.encode(U_K,          X_N_n.data()                   );
-	sub_enc.encode(U_K_i.data(), X_N_i.data()                   );
+	pi.interleave (U_K,                this->U_K_i.data(), 0, this->n_frames);
+	sub_enc.encode(U_K,                      X_N_n.data()                   );
+	sub_enc.encode(this->U_K_i.data(),       X_N_i.data()                   );
 
 	for (auto f = 0; f < this->n_frames; f++)
 	{
