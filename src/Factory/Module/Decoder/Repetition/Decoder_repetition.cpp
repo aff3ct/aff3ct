@@ -77,7 +77,7 @@ module::Decoder_SIHO<B,Q>* Decoder_repetition::parameters
 	}
 	else if (this->type == "ML" && encoder)
 	{
-		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, this->n_frames);
+		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
