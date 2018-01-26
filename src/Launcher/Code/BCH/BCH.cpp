@@ -30,10 +30,8 @@ void BCH<L,B,R,Q>
 	auto penc = params_cdc->enc->get_prefix();
 	auto pdec = params_cdc->dec->get_prefix();
 
-	this->opt_args.erase({penc+"-fra",   "F"});
-	this->opt_args.erase({penc+"-seed",  "S"});
-	this->opt_args.erase({pdec+"-implem"    });
-	this->opt_args.erase({pdec+"-type",  "D"});
+	this->opt_args.erase({penc+"-fra",  "F"});
+	this->opt_args.erase({penc+"-seed", "S"});
 
 	L::get_description_args();
 }
