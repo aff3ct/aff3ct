@@ -21,6 +21,8 @@
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hpp"
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_very_fast.hpp"
 
+#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
+
 #include "Decoder_RSC.hpp"
 
 using namespace aff3ct;
@@ -57,7 +59,7 @@ void Decoder_RSC::parameters
 
 	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type", "D"}].push_back("BCJR");
+	opt_args[{p+"-type", "D"}].push_back("BCJR, ML");
 
 	opt_args[{p+"-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
 
@@ -129,29 +131,32 @@ void Decoder_RSC::parameters
 
 	auto p = this->get_prefix();
 
-	if (this->tail_length && full)
-		headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
+	if (this->type != "ML")
+	{
+		if (this->tail_length && full)
+			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
-	if (full) headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
+		if (full) headers[p].push_back(std::make_pair("Buffered", (this->buffered ? "on" : "off")));
 
-	if (!this->standard.empty())
-		headers[p].push_back(std::make_pair("Standard", this->standard));
+		if (!this->standard.empty())
+			headers[p].push_back(std::make_pair("Standard", this->standard));
 
-	std::stringstream poly;
-	poly << "{0" << std::oct << this->poly[0] << ",0" << std::oct << this->poly[1] << "}";
-	headers[p].push_back(std::make_pair(std::string("Polynomials"), poly.str()));
+		std::stringstream poly;
+		poly << "{0" << std::oct << this->poly[0] << ",0" << std::oct << this->poly[1] << "}";
+		headers[p].push_back(std::make_pair(std::string("Polynomials"), poly.str()));
 
-	if (!this->simd_strategy.empty())
-		headers[p].push_back(std::make_pair(std::string("SIMD strategy"), this->simd_strategy));
+		if (!this->simd_strategy.empty())
+			headers[p].push_back(std::make_pair(std::string("SIMD strategy"), this->simd_strategy));
 
-	headers[p].push_back(std::make_pair(std::string("Max type"), this->max));
+		headers[p].push_back(std::make_pair(std::string("Max type"), this->max));
+	}
 }
 
 template <typename B, typename Q, typename QD, tools::proto_max<Q> MAX1, tools::proto_max<QD> MAX2>
 module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC::parameters
-::_build_seq(const std::vector<std::vector<int>> &trellis,
-                   std::ostream                  &stream,
-             const int                            n_ite) const
+::_build_siso_seq(const std::vector<std::vector<int>> &trellis,
+                        std::ostream                  &stream,
+                  const int                            n_ite) const
 {
 	if (this->type == "BCJR")
 	{
@@ -168,7 +173,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC::parameters
 
 template <typename B, typename Q, typename QD, tools::proto_max_i<Q> MAX>
 module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC::parameters
-::_build_simd(const std::vector<std::vector<int>> &trellis) const
+::_build_siso_simd(const std::vector<std::vector<int>> &trellis) const
 {
 	if (this->type == "BCJR" && this->simd_strategy == "INTER")
 	{
@@ -216,51 +221,91 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC::parameters
 
 template <typename B, typename Q>
 module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC::parameters
-::build(const std::vector<std::vector<int>>   &trellis,
-              std::ostream                    &stream,
-        const int                              n_ite) const
+::build_siso(const std::vector<std::vector<int>> &trellis,
+                   std::ostream                  &stream,
+             const int                            n_ite) const
 {
 	using QD = typename std::conditional<std::is_same<Q,int8_t>::value,int16_t,Q>::type;
 
 	if (this->simd_strategy.empty())
 	{
-		     if (this->max == "MAX" ) return _build_seq<B,Q,QD,tools::max       <Q>,tools::max       <QD>>(trellis, stream, n_ite);
-		else if (this->max == "MAXS") return _build_seq<B,Q,QD,tools::max_star  <Q>,tools::max_star  <QD>>(trellis, stream, n_ite);
-		else if (this->max == "MAXL") return _build_seq<B,Q,QD,tools::max_linear<Q>,tools::max_linear<QD>>(trellis, stream, n_ite);
+		     if (this->max == "MAX" ) return _build_siso_seq<B,Q,QD,tools::max       <Q>,tools::max       <QD>>(trellis, stream, n_ite);
+		else if (this->max == "MAXS") return _build_siso_seq<B,Q,QD,tools::max_star  <Q>,tools::max_star  <QD>>(trellis, stream, n_ite);
+		else if (this->max == "MAXL") return _build_siso_seq<B,Q,QD,tools::max_linear<Q>,tools::max_linear<QD>>(trellis, stream, n_ite);
 	}
 	else
 	{
-		     if (this->max == "MAX" ) return _build_simd<B,Q,QD,tools::max_i       <Q>>(trellis);
-		else if (this->max == "MAXS") return _build_simd<B,Q,QD,tools::max_star_i  <Q>>(trellis);
-		else if (this->max == "MAXL") return _build_simd<B,Q,QD,tools::max_linear_i<Q>>(trellis);
+		     if (this->max == "MAX" ) return _build_siso_simd<B,Q,QD,tools::max_i       <Q>>(trellis);
+		else if (this->max == "MAXS") return _build_siso_simd<B,Q,QD,tools::max_star_i  <Q>>(trellis);
+		else if (this->max == "MAXL") return _build_siso_simd<B,Q,QD,tools::max_linear_i<Q>>(trellis);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
-module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC
-::build(const parameters                      &params,
-        const std::vector<std::vector<int>>   &trellis,
-              std::ostream                    &stream,
-        const int                              n_ite)
+module::Decoder_SIHO<B,Q>* Decoder_RSC::parameters
+::build(const std::vector<std::vector<int>> &trellis,
+              std::ostream                  &stream,
+        const int                            n_ite,
+              module::Encoder_RSC_sys<B>    *encoder) const
 {
-	return params.template build<B,Q>(trellis, stream, n_ite);
+	if (this->type == "ML" && encoder)
+		return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, false, this->n_frames);
+	else
+		return build_siso<B,Q>(trellis, stream, n_ite);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q>
+module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC
+::build_siso(const parameters                    &params,
+             const std::vector<std::vector<int>> &trellis,
+                   std::ostream                  &stream,
+             const int                            n_ite)
+{
+	return params.template build_siso<B,Q>(trellis, stream, n_ite);
+}
+
+template <typename B, typename Q>
+module::Decoder_SIHO<B,Q>* Decoder_RSC
+::build(const parameters                    &params,
+        const std::vector<std::vector<int>> &trellis,
+              std::ostream                  &stream,
+        const int                            n_ite,
+              module::Encoder_RSC_sys<B>    *encoder)
+{
+	return params.template build<B,Q>(trellis, stream, n_ite, encoder);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::parameters::build<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::parameters::build<B_16,Q_16>(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::parameters::build<B_32,Q_32>(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC::parameters::build<B_64,Q_64>(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
-template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::build<B_16,Q_16>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
-template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::build<B_32,Q_32>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
-template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC::build<B_64,Q_64>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::parameters::build_siso<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::parameters::build_siso<B_16,Q_16>(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::parameters::build_siso<B_32,Q_32>(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC::parameters::build_siso<B_64,Q_64>(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::build_siso<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::build_siso<B_16,Q_16>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::build_siso<B_32,Q_32>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC::build_siso<B_64,Q_64>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
 #else
-template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_RSC::parameters::build<B,Q>(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
-template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_RSC::build<B,Q>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_RSC::parameters::build_siso<B,Q>(const std::vector<std::vector<int>>&, std::ostream&, const int) const;
+template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_RSC::build_siso<B,Q>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+#endif
+
+#ifdef MULTI_PREC
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::parameters::build<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B_8 >*) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::parameters::build<B_16,Q_16>(const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B_16>*) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::parameters::build<B_32,Q_32>(const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B_32>*) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC::parameters::build<B_64,Q_64>(const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B_64>*) const;
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B_8 >*);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::build<B_16,Q_16>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B_16>*);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::build<B_32,Q_32>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B_32>*);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC::build<B_64,Q_64>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B_64>*);
+#else
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RSC::parameters::build<B,Q>(const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B>*) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RSC::build<B,Q>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int, module::Encoder_RSC_sys<B>*);
 #endif
 // ==================================================================================== explicit template instantiation

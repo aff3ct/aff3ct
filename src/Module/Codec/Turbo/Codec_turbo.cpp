@@ -104,7 +104,7 @@ Codec_turbo<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	sub_dec = factory::Decoder_RSC::build<B,Q>(*dec_params.sub1, trellis, json_stream, dec_params.n_ite);
+	sub_dec = factory::Decoder_RSC::build_siso<B,Q>(*dec_params.sub1, trellis, json_stream, dec_params.n_ite);
 	auto decoder = factory::Decoder_turbo::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec, *sub_dec);
 	this->set_decoder_siho(decoder);
 
