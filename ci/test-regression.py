@@ -21,7 +21,7 @@ parser = argparse.ArgumentParser(prog='aff3ct-test-regression', formatter_class=
 parser.add_argument('--refs-path',      action='store', dest='refsPath',      type=str,   default="refs",                    help='Path to the references to re-simulate.')
 parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
 parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
-parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=0,                         help='Starting id to avoid computing results one again.')                                     # choices=xrange(0,   +inf)
+parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                     # choices=xrange(1,   +inf)
 parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility to verify a SNR point.')                                                    # choices=xrange(0.0, +inf) 
 parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                       # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
@@ -54,7 +54,7 @@ def getFileNames(currentPath, fileNames):
 					getFileNames(newCurrentPath, fileNames)
 			else:
 				getFileNames(newCurrentPath, fileNames)
-	else:
+	elif os.path.isfile(currentPath):
 		if pathlib.Path(currentPath).suffix in extensions:
 			if args.refsPath == currentPath:
 				basename = os.path.basename(args.refsPath)
@@ -65,6 +65,8 @@ def getFileNames(currentPath, fileNames):
 				shortenPath = currentPath.replace(args.refsPath + "/", "")
 				shortenPath = shortenPath.replace(args.refsPath,       "")
 				fileNames.append(shortenPath)
+	else:
+		print("# (WW) The path '", currentPath, "' does not exist.")
 
 # -----
 
@@ -76,6 +78,9 @@ def getFileNames(currentPath, fileNames):
 
 #parser.print_help()
 args = parser.parse_args()
+
+if args.startId <= 0:
+	args.startId = 1
 
 print('# AFF3CT tests')
 print('# ------------')
@@ -108,7 +113,10 @@ if not os.path.exists(args.resultsPath):
 fileNames = []
 getFileNames(args.refsPath, fileNames)
 
-print("# Starting the test script...")
+if (len(fileNames) - (args.startId -1) > 0) :
+	print("# (II) Starting the test script...")
+else:
+	print("# (WW) There is no simulation to replay.")
 
 nErrors = 0
 testId = 0
@@ -117,7 +125,7 @@ for fn in fileNames:
 		testId = testId + 1
 		continue
 
-	print("Test n°" + str(testId+1) + "/" + str(len(fileNames)) + 
+	print("Test n°" + str(testId+1) + " / " + str(len(fileNames)) + 
 	      " - " + fn, end="", flush=True);
 
 	# open the file in read mode (from the fileName "fn" and the path)
