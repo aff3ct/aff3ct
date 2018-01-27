@@ -72,6 +72,29 @@ void Encoder_turbo<B>
 		          X_N            + f * this->N + enco_n.get_N());
 }
 
+template <typename B>
+bool Encoder_turbo<B>
+::is_codeword(const B *X_N)
+{
+	if (!enco_n.is_codeword(X_N))
+		return false;
+
+	const auto *U_K_n = X_N;
+	pi.interleave(U_K_n, U_K_i.data());
+
+	std::copy(U_K_i  .begin(),
+	          U_K_i  .begin() + enco_i.get_K(), 
+	          X_N_tmp.begin());
+	std::copy(X_N             + enco_n.get_N(),
+	          X_N             + this->N,
+	          X_N_tmp.begin() + enco_i.get_K());
+
+	if (!enco_i.is_codeword(X_N_tmp.data()))
+		return false;
+
+	return true;
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

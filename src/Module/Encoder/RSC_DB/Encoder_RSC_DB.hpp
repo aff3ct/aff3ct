@@ -41,6 +41,8 @@ public:
 	int tail_length() const {return 0;}
 	std::vector<std::vector<int>> get_trellis();
 
+	bool is_codeword(const B *X_N);
+
 protected:
 	void _encode    (const B *U_K, B *X_N, const int frame_id);
 	void _encode_sys(const B *U_K, B *par, const int frame_id);

@@ -16,7 +16,7 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_LDPC_from_H<B>
 ::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames)
-: Encoder_LDPC<B>(K, N, n_frames), G(tools::LDPC_matrix_handler::transform_H_to_G(H, info_bits_pos))
+: Encoder_LDPC<B>(K, N, n_frames), G(tools::LDPC_matrix_handler::transform_H_to_G(H, info_bits_pos)), H(H)
 {
 	const std::string name = "Encoder_LDPC_from_H";
 	this->set_name(name);
@@ -71,6 +71,34 @@ void Encoder_LDPC_from_H<B>
 			X_N[i] += U_K[ G.get_cols_from_row(i)[j] ];
 		X_N[i] %= 2;
 	}
+}
+
+template <typename B>
+bool Encoder_LDPC_from_H<B>
+::is_codeword(const B *X_N)
+{
+	auto syndrome = false;
+
+	const auto n_CN = (int)this->H.get_n_cols();
+	auto i = 0;
+	while (!syndrome && i < n_CN)
+	{
+		auto sign = 0;
+
+		const auto n_VN = (int)this->H[i].size();
+		for (auto j = 0; j < n_VN; j++)
+		{
+			const auto bit = X_N[this->H[i][j]];
+			const auto tmp_sign = bit ? -1 : 0;
+
+			sign ^= tmp_sign;
+		}
+
+		syndrome = syndrome || sign;
+		i++;
+	}
+
+	return !syndrome;
 }
 
 // ==================================================================================== explicit template instantiation

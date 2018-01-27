@@ -75,6 +75,34 @@ void Encoder_LDPC_from_QC<B>
 	}
 }
 
+template <typename B>
+bool Encoder_LDPC_from_QC<B>
+::is_codeword(const B *X_N)
+{
+	auto syndrome = false;
+
+	const auto n_CN = (int)this->H.get_n_cols();
+	auto i = 0;
+	while (!syndrome && i < n_CN)
+	{
+		auto sign = 0;
+
+		const auto n_VN = (int)this->H[i].size();
+		for (auto j = 0; j < n_VN; j++)
+		{
+			const auto bit = X_N[this->H[i][j]];
+			const auto tmp_sign = bit ? -1 : 0;
+
+			sign ^= tmp_sign;
+		}
+
+		syndrome = syndrome || sign;
+		i++;
+	}
+
+	return !syndrome;
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

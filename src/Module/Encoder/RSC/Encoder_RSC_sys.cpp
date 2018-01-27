@@ -148,6 +148,59 @@ void Encoder_RSC_sys<B>
 	}
 }
 
+template <typename B>
+bool Encoder_RSC_sys<B>
+::_is_codeword(const B* sys, const B* tail_sys, const B* par, const B* tail_par, 
+               const int stride, const int stride_tail)
+{
+	auto state = 0; // initial (and final) state 0 0 0
+
+	// standard frame encoding process
+	if (par != nullptr)
+		for (auto i = 0; i < this->K; i++)
+			if (par[i * stride] != inner_encode((int)sys[i * stride], state)) // encoding block
+				return false;
+	else
+		for (auto i = 0; i < this->K; i++)
+			inner_encode((int)sys[i * stride], state); // encoding block
+
+	// tail bits for initialization conditions (state of data "state" have to be 0 0 0)
+	for (auto i = 0; i < this->n_ff; i++)
+	{
+		B bit_sys = tail_bit_sys(state);
+
+		if (tail_sys != nullptr)
+			if (tail_sys[i * stride_tail] != bit_sys) // systematic transmission of the bit
+				return false;
+
+		auto p = inner_encode((int)bit_sys, state); // encoding block
+
+		if (tail_par != nullptr)
+			if (tail_par[i * stride_tail] != p)
+				return false;
+	}
+
+	return true;
+}
+
+template <typename B>
+bool Encoder_RSC_sys<B>
+::is_codeword(const B *X_N)
+{
+	if (buffered_encoding)
+		return _is_codeword(X_N,                             // sys
+		                    X_N + 1 * this->K,               // tail sys
+		                    X_N + 1 * this->K + this->n_ff,  // par
+		                    X_N + 2 * this->K + this->n_ff); // tail par
+	else
+		return _is_codeword(X_N,                   // sys
+		                    X_N + 2 * this->K,     // tail sys
+		                    X_N + 1,               // par
+		                    X_N + 2 * this->K + 1, // tail par
+		                    2,                     // stride
+		                    2);                    // stride tail bits
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

@@ -285,6 +285,49 @@ std::vector<std::vector<int>> Encoder_RSC_DB<B>
 	return trellis;
 }
 
+template <typename B>
+bool Encoder_RSC_DB<B>
+::is_codeword(const B *X_N)
+{
+	int circ_state = 0;
+	if (this->buffered_encoding)
+		for (auto i = 0; i < this->K; i+=2)
+			circ_state = next_state[X_N[i]*2 + X_N[i+1]][circ_state];
+	else
+		for (auto i = 0; i < this->K; i+=2)
+			circ_state = next_state[X_N[i*4]*2 + X_N[i*4+1]][circ_state];
+
+	auto init_state = circ_states[( (this->K/2) % (n_states-1) ) -1][circ_state];
+	auto state = init_state;
+	if (this->buffered_encoding)
+	{
+		for (auto i = 0; i < this->K; i+=2)
+		{
+			auto in = X_N[i+0]*2 + X_N[i+1];
+			auto parity = out_parity[in][state];
+			state = next_state[in][state];
+			if (X_N[this->K + i+0] != ((parity>>1) &1)) return false;
+			if (X_N[this->K + i+1] != ((parity   ) &1)) return false;
+		}
+	}
+	else
+	{
+		for (auto i = 0; i < this->K; i+=2)
+		{
+			auto in = X_N[i*4+0]*2 + X_N[i*4+1];
+			auto parity = out_parity[in][state];
+			state = next_state[in][state];
+			if (X_N[i*4+2] != ((parity>>1) &1)) return false;
+			if (X_N[i*4+3] != ((parity   ) &1)) return false;
+		}
+	}
+
+	if (init_state != state)
+		return false;
+
+	return true;
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

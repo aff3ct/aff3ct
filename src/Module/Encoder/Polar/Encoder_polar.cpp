@@ -73,6 +73,15 @@ void Encoder_polar<B>
 	}
 }
 
+template <typename B>
+bool Encoder_polar<B>
+::is_codeword(const B *X_N)
+{
+	auto n = 0;
+	while ((!frozen_bits[n] || (frozen_bits[n] && !X_N[n])) && n < this->N) n++;
+	return n == this->N;
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

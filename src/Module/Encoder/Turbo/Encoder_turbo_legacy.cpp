@@ -76,6 +76,49 @@ void Encoder_turbo_legacy<B>
 	}
 }
 
+template <typename B>
+bool Encoder_turbo_legacy<B>
+::is_codeword(const B *X_N)
+{
+	auto &U_K_n = this->X_N_tmp;
+
+	for (auto i = 0; i < this->K; i++)
+	{
+		U_K_n[i] = X_N_n[2*i +0] = X_N[3*i +0];
+		           X_N_n[2*i +1] = X_N[3*i +1];
+		           X_N_i[2*i +1] = X_N[3*i +2];
+	}
+
+	const auto off1_tails_n = 3*this->K;
+	const auto off2_tails_n = 2*this->K;
+	for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
+	{
+		X_N_n[off2_tails_n + 2*i +0] = X_N[off1_tails_n + 2*i +0];
+		X_N_n[off2_tails_n + 2*i +1] = X_N[off1_tails_n + 2*i +1];
+	}
+
+	const auto off1_tails_i = off1_tails_n + sub_enc.tail_length();
+	const auto off2_tails_i = off2_tails_n;
+	for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
+	{
+		X_N_i[off2_tails_i + 2*i +0] = X_N[off1_tails_i + 2*i +0];
+		X_N_i[off2_tails_i + 2*i +1] = X_N[off1_tails_i + 2*i +1];
+	}
+
+	if (!sub_enc.is_codeword(X_N_n.data()))
+		return false;
+
+	pi.interleave(U_K_n.data(), this->U_K_i.data());
+
+	for (auto i = 0; i < this->K; i++)
+		X_N_i[2*i +0] = this->U_K_i[i];
+
+	if (!sub_enc.is_codeword(X_N_i.data()))
+		return false;
+
+	return true;
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

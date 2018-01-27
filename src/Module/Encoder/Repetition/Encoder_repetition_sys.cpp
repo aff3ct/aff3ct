@@ -30,7 +30,16 @@ void Encoder_repetition_sys<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	// repetition
-	if (!buffered_encoding)
+	if (buffered_encoding)
+	{
+		// systematic bits
+		std::copy(U_K, U_K + this->K, X_N);
+
+		// parity bits
+		for (auto i = 1; i <= rep_count; i++)
+			std::copy(U_K, U_K + this->K, X_N + i * this->K);
+	}
+	else
 	{
 		for (auto i = 0; i < this->K; i++)
 		{
@@ -46,14 +55,39 @@ void Encoder_repetition_sys<B>
 				X_N[off2 +j] = bit;
 		}
 	}
+}
+
+template <typename B>
+bool Encoder_repetition_sys<B>
+::is_codeword(const B *X_N)
+{
+	bool valid = true;
+
+	if (buffered_encoding)
+	{
+		auto r = 0;
+		while (valid && r < rep_count)
+		{
+			auto k = 0;
+			while ((X_N[k] == X_N[(r +1) * this->K +k]) && k < this->K) k++;
+			valid = k == this->K;
+			r++;
+		}
+
+		return valid;
+	}
 	else
 	{
-		// systematic bits
-		std::copy(U_K, U_K + this->K, X_N);
+		auto k = 0;
+		while (valid && k < this->K)
+		{
+			auto r = 0;
+			while ((X_N[k * this->K] == X_N[k * this->K + r +1]) && r < rep_count) r++;
+			valid = r == rep_count;
+			k++;
+		}
 
-		// parity bits
-		for (auto i = 1; i <= rep_count; i++)
-			std::copy(U_K, U_K + this->K, X_N + i * this->K);
+		return valid;
 	}
 }
 

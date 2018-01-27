@@ -15,6 +15,8 @@ public:
 	virtual ~Encoder_NO();
 
 	void encode(const B *U_K, B *X_K); using Encoder<B>::encode;
+
+	bool is_codeword(const B *X_K);
 };
 }
 }

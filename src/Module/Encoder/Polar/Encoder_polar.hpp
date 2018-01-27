@@ -22,6 +22,8 @@ public:
 
 	void light_encode(B *bits);
 
+	bool is_codeword(const B *X_N);
+
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
 	void convert(const B *U_K, B *U_N);

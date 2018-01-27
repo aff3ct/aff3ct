@@ -153,6 +153,25 @@ public:
 			              f);
 	}
 
+	template <class A = std::allocator<B>>
+	bool is_codeword(const std::vector<B,A>& X_N)
+	{
+		if (this->N != (int)X_N.size())
+		{
+			std::stringstream message;
+			message << "'X_N.size()' has to be equal to 'N' ('X_N.size()' = " << X_N.size()
+			        << ", 'N' = " << this->N << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		return this->is_codeword(X_N.data());
+	}
+
+	virtual bool is_codeword(const B *X_N)
+	{
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
+
 	/*!
 	 * \brief Gets the number of tail bits.
 	 *
