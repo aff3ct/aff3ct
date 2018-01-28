@@ -29,6 +29,9 @@ void Encoder_polar_sys<B>
 
 	// second time encode because of systematic encoder
 	this->light_encode(X_N);
+
+	for (auto i = 0; i < this->N; i++)
+		X_N[i] = (B)(!this->frozen_bits[i]) && X_N[i];
 }
 
 // ==================================================================================== explicit template instantiation 

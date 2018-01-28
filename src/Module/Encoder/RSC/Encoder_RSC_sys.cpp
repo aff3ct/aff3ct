@@ -157,12 +157,16 @@ bool Encoder_RSC_sys<B>
 
 	// standard frame encoding process
 	if (par != nullptr)
+	{
 		for (auto i = 0; i < this->K; i++)
 			if (par[i * stride] != inner_encode((int)sys[i * stride], state)) // encoding block
 				return false;
+	}
 	else
+	{
 		for (auto i = 0; i < this->K; i++)
 			inner_encode((int)sys[i * stride], state); // encoding block
+	}
 
 	// tail bits for initialization conditions (state of data "state" have to be 0 0 0)
 	for (auto i = 0; i < this->n_ff; i++)

@@ -295,7 +295,7 @@ bool Encoder_RSC_DB<B>
 			circ_state = next_state[X_N[i]*2 + X_N[i+1]][circ_state];
 	else
 		for (auto i = 0; i < this->K; i+=2)
-			circ_state = next_state[X_N[i*4]*2 + X_N[i*4+1]][circ_state];
+			circ_state = next_state[X_N[i*2]*2 + X_N[i*2+1]][circ_state];
 
 	auto init_state = circ_states[( (this->K/2) % (n_states-1) ) -1][circ_state];
 	auto state = init_state;
@@ -314,11 +314,11 @@ bool Encoder_RSC_DB<B>
 	{
 		for (auto i = 0; i < this->K; i+=2)
 		{
-			auto in = X_N[i*4+0]*2 + X_N[i*4+1];
+			auto in = X_N[i*2+0]*2 + X_N[i*2+1];
 			auto parity = out_parity[in][state];
 			state = next_state[in][state];
-			if (X_N[i*4+2] != ((parity>>1) &1)) return false;
-			if (X_N[i*4+3] != ((parity   ) &1)) return false;
+			if (X_N[i*2+2] != ((parity>>1) &1)) return false;
+			if (X_N[i*2+3] != ((parity   ) &1)) return false;
 		}
 	}
 

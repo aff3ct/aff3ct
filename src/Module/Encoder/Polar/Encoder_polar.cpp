@@ -39,7 +39,11 @@ void Encoder_polar<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	this->convert(U_K, X_N);
+
 	this->light_encode(X_N);
+
+	for (auto i = 0; i < this->N; i++)
+		X_N[i] = (B)(!this->frozen_bits[i]) && X_N[i];
 }
 
 template <typename B>
@@ -78,7 +82,7 @@ bool Encoder_polar<B>
 ::is_codeword(const B *X_N)
 {
 	auto n = 0;
-	while ((!frozen_bits[n] || (frozen_bits[n] && !X_N[n])) && n < this->N) n++;
+	while (n < this->N && (!frozen_bits[n] || (frozen_bits[n] && !X_N[n]))) n++;
 	return n == this->N;
 }
 

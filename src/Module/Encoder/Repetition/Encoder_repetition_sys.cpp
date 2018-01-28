@@ -69,7 +69,7 @@ bool Encoder_repetition_sys<B>
 		while (valid && r < rep_count)
 		{
 			auto k = 0;
-			while ((X_N[k] == X_N[(r +1) * this->K +k]) && k < this->K) k++;
+			while (k < this->K && (X_N[k] == X_N[(r +1) * this->K +k])) k++;
 			valid = k == this->K;
 			r++;
 		}
@@ -82,7 +82,7 @@ bool Encoder_repetition_sys<B>
 		while (valid && k < this->K)
 		{
 			auto r = 0;
-			while ((X_N[k * this->K] == X_N[k * this->K + r +1]) && r < rep_count) r++;
+			while (r < rep_count && (X_N[k * (rep_count +1)] == X_N[k * (rep_count +1) + r +1])) r++;
 			valid = r == rep_count;
 			k++;
 		}

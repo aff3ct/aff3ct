@@ -102,13 +102,13 @@ bool Encoder_turbo_DB<B>
 	for (auto i = 0; i < this->K; i += 4)
 		std::swap(U_K_n[i], U_K_n[i+1]);
 
-	auto &U_K_i = X_N_tmp;
 	for (auto i = 0; i < this->K; i += 2)
 	{
 		const auto l = pi.get_core().get_lut_inv()[i >> 1];
 		U_K_i[i +0] = U_K_n[l * 2 +0];
 		U_K_i[i +1] = U_K_n[l * 2 +1];
 	}
+	std::copy(U_K_i.begin(), U_K_i.end(), X_N_tmp.begin());
 
 	auto *X_N_par_i = X_N_tmp.data() + this->K;
 	for (auto i = 0; i < this->K; i+=2) // parity y for interleaver encoders

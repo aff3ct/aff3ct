@@ -81,7 +81,7 @@ bool Encoder_LDPC_from_H<B>
 
 	const auto n_CN = (int)this->H.get_n_cols();
 	auto i = 0;
-	while (!syndrome && i < n_CN)
+	while (i < n_CN && !syndrome)
 	{
 		auto sign = 0;
 
