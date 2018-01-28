@@ -16,7 +16,7 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_LDPC_from_H<B>
 ::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames)
-: Encoder_LDPC<B>(K, N, n_frames), G(tools::LDPC_matrix_handler::transform_H_to_G(H, info_bits_pos)), H(H)
+: Encoder_LDPC<B>(K, N, n_frames), G(tools::LDPC_matrix_handler::transform_H_to_G(H, this->info_bits_pos)), H(H)
 {
 	const std::string name = "Encoder_LDPC_from_H";
 	this->set_name(name);
@@ -43,21 +43,6 @@ template <typename B>
 Encoder_LDPC_from_H<B>
 ::~Encoder_LDPC_from_H()
 {
-}
-
-template <typename B>
-void Encoder_LDPC_from_H<B>
-::get_info_bits_pos(std::vector<unsigned>& info_bits_pos)
-{
-	if (this->K != (int)info_bits_pos.size())
-	{
-		std::stringstream message;
-		message << "'info_bits_pos.size()' has to be equal to 'K' ('info_bits_pos.size()' = " << info_bits_pos.size()
-		        << ", 'K' = " << this->K << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	std::copy(this->info_bits_pos.begin(), this->info_bits_pos.end(), info_bits_pos.begin());
 }
 
 template <typename B>

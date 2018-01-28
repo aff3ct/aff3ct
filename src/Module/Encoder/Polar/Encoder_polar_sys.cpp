@@ -13,6 +13,7 @@ Encoder_polar_sys<B>
 {
 	const std::string name = "Encoder_polar_sys";
 	this->set_name(name);
+	this->set_sys(true);
 }
 
 template <typename B>

@@ -162,7 +162,7 @@ Codec_LDPC<B,Q>
 		if (enc_params.type == "LDPC_H")
 		{
 			auto encoder_LDPC = factory::Encoder_LDPC::build<B>(enc_params, G, H);
-			encoder_LDPC->get_info_bits_pos(info_bits_pos);
+			info_bits_pos = encoder_LDPC->get_info_bits_pos();
 			delete encoder_LDPC;
 		}
 		else

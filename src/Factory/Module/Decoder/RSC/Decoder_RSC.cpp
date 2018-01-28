@@ -21,8 +21,6 @@
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hpp"
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_very_fast.hpp"
 
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
-
 #include "Decoder_RSC.hpp"
 
 using namespace aff3ct;
@@ -60,8 +58,7 @@ void Decoder_RSC::parameters
 	req_args.erase({p+"-cw-size", "N"});
 
 	opt_args[{p+"-type", "D"}][2] += ", BCJR";
-
-	opt_args[{p+"-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
+	opt_args[{p+"-implem"   }][2] += ", GENERIC, FAST, VERY_FAST";
 
 	opt_args[{p+"-simd"}] =
 		{"string",

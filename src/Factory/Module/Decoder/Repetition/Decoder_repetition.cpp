@@ -2,7 +2,6 @@
 
 #include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_repetition.hpp"
 
@@ -39,7 +38,7 @@ void Decoder_repetition::parameters
 	auto p = this->get_prefix();
 
 	opt_args[{p+"-type", "D"}][2] += ", REPETITION";
-	opt_args[{p+"-implem"   }].push_back("STD, FAST");
+	opt_args[{p+"-implem"   }][2] += ", FAST";
 
 	opt_args[{p+"-no-buff"}] =
 		{"",

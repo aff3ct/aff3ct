@@ -2,7 +2,6 @@
 
 #include "Module/Decoder/Turbo/Decoder_turbo_std.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_turbo.hpp"
 
@@ -107,8 +106,7 @@ void Decoder_turbo::parameters<D1,D2>
 	opt_args.erase({pi+"-fra", "F"});
 
 	opt_args[{p+"-type", "D"}][2] += ", TURBO";
-
-	opt_args[{p+"-implem"}].push_back("STD, FAST");
+	opt_args[{p+"-implem"   }][2] += ", FAST";
 
 	opt_args[{p+"-ite", "i"}] =
 		{"strictly_positive_int",

@@ -23,6 +23,10 @@ Encoder_repetition_sys<B>
 		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	if (!buffered_encoding)
+		for (auto k = 0; k < this->K; k++)
+			this->info_bits_pos[k] = (rep_count +1) * k;
 }
 
 template <typename B>

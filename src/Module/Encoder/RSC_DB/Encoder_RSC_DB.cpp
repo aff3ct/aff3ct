@@ -147,6 +147,13 @@ Encoder_RSC_DB<B>
 		next_state[3][s] = s3;
 		out_parity[3][s] = p3;
 	}
+
+	if (!buffered_encoding)
+		for (auto k = 0; k < this->K; k += 2)
+		{
+			this->info_bits_pos[k   ] = 2 * k;
+			this->info_bits_pos[k +1] = 2 * k +1;
+		}
 }
 
 template <typename B>

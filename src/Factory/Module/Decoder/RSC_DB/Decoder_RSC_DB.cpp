@@ -4,8 +4,6 @@
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS1.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS2.hpp"
 
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
-
 #include "Decoder_RSC_DB.hpp"
 
 using namespace aff3ct;
@@ -43,8 +41,7 @@ void Decoder_RSC_DB::parameters
 	req_args.erase({p+"-cw-size", "N"});
 
 	opt_args[{p+"-type", "D"}][2] += ", BCJR";
-
-	opt_args[{p+"-implem"}].push_back("GENERIC, DVB-RCS1, DVB-RCS2");
+	opt_args[{p+"-implem"   }][2] += ", GENERIC, DVB-RCS1, DVB-RCS2";
 
 	opt_args[{p+"-max"}] =
 		{"string",

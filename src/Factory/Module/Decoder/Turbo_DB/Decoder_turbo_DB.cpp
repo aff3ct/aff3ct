@@ -1,7 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_turbo_DB.hpp"
 
@@ -95,8 +94,6 @@ void Decoder_turbo_DB::parameters
 	opt_args.erase({pi+"-fra", "F"});
 
 	opt_args[{p+"-type", "D"}][2] += ", TURBO_DB";
-
-	opt_args[{p+"-implem"}].push_back("STD");
 
 	opt_args[{p+"-ite", "i"}] =
 		{"strictly_positive_int",

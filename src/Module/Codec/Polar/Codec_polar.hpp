@@ -27,6 +27,7 @@ protected:
 	tools::Frozenbits_generator *fb_generator;
 	Puncturer_polar_wangliu<B,Q> *puncturer_wangliu;
 	tools::Frozenbits_notifier *fb_decoder;
+	tools::Frozenbits_notifier *fb_encoder;
 
 public:
 	Codec_polar(const factory::Frozenbits_generator::parameters &fb_par,

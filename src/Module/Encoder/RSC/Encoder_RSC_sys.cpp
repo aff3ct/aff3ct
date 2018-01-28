@@ -33,6 +33,10 @@ Encoder_RSC_sys<B>
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	if (!buffered_encoding)
+		for (auto k = 0; k < this->K; k++)
+			this->info_bits_pos[k] = 2 * k;
 }
 
 template <typename B>

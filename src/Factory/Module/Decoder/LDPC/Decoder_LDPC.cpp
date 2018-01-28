@@ -10,7 +10,6 @@
 #include "Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_ONMS_inter.hpp"
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_LDPC.hpp"
 
@@ -62,7 +61,7 @@ void Decoder_LDPC::parameters
 		 "MIN, MINL, MINS"};
 
 	opt_args[{p+"-type", "D"}][2] += ", BP, BP_FLOODING, BP_LAYERED";
-	opt_args[{p+"-implem"}].push_back("ONMS, SPA, LSPA, GALA, AMS");
+	opt_args[{p+"-implem"   }][2] += ", ONMS, SPA, LSPA, GALA, AMS";
 
 	opt_args[{p+"-ite", "i"}] =
 		{"positive_int",

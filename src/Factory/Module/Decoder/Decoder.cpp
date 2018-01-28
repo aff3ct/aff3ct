@@ -1,4 +1,5 @@
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
+#include "Module/Decoder/ML/Decoder_maximum_likelihood_std.hpp"
+#include "Module/Decoder/ML/Decoder_maximum_likelihood_naive.hpp"
 
 #include "Decoder.hpp"
 
@@ -49,7 +50,8 @@ void Decoder::parameters
 
 	opt_args[{p+"-implem"}] =
 		{"string",
-		 "select the implementation of the algorithm to decode."};
+		 "select the implementation of the algorithm to decode.",
+		 "STD, NAIVE"};
 
 	opt_args[{p+"-ml-hamming"}] =
 		{"",
@@ -78,7 +80,7 @@ void Decoder::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Type (D)",this->type));
-	if(this->implem.size() && this->type != "ML") headers[p].push_back(std::make_pair("Implementation", this->implem));
+	if(this->implem.size()) headers[p].push_back(std::make_pair("Implementation", this->implem));
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Codeword size (N)", std::to_string(this->N_cw)));
 	if (full) headers[p].push_back(std::make_pair("Code rate (R)", std::to_string(this->R)));
@@ -93,7 +95,11 @@ module::Decoder_SIHO<B,Q>* Decoder::parameters
 {
 	if (encoder)
 	{
-		if (this->type == "ML") return new module::Decoder_ML<B,Q>(this->K, this->N_cw, *encoder, this->ml_hamming, this->n_frames);
+		if (this->type == "ML") 
+		{
+			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->ml_hamming, this->n_frames);
+			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->ml_hamming, this->n_frames);
+		}
 	}
 	
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

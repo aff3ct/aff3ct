@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Tools/Exception/exception.hpp"
 
@@ -40,7 +39,6 @@ void Decoder_BCH::parameters
 	auto p = this->get_prefix();
 
 	opt_args[{p+"-type", "D"}][2] += ", ALGEBRAIC";
-	opt_args[{p+"-implem"}].push_back("STD");
 
 	opt_args[{p+"-corr-pow", "T"}] =
 		{"strictly_positive_int",

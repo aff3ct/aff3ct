@@ -21,7 +21,8 @@ Codec_polar<B,Q>
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
   fb_generator     (nullptr),
   puncturer_wangliu(nullptr),
-  fb_decoder       (nullptr)
+  fb_decoder       (nullptr),
+  fb_encoder       (nullptr)
 {
 	const std::string name = "Codec_polar";
 	this->set_name(name);
@@ -95,6 +96,7 @@ Codec_polar<B,Q>
 	try
 	{
 		encoder_polar = factory::Encoder_polar::build<B>(enc_params, frozen_bits);
+		this->fb_encoder = encoder_polar;
 		this->set_encoder(encoder_polar);
 	}
 	catch (tools::cannot_allocate const&)
@@ -166,6 +168,8 @@ void Codec_polar<B,Q>
 
 		if (this->fb_decoder)
 			this->fb_decoder->notify_frozenbits_update();
+		if (this->fb_encoder)
+			this->fb_encoder->notify_frozenbits_update();
 	}
 }
 

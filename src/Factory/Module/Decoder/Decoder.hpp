@@ -25,8 +25,8 @@ struct Decoder : Factory
 		int         N_cw        = 0;
 
 		// optional parameters
-		std::string type        = "";
-		std::string implem      = "";
+		std::string type        = "ML";
+		std::string implem      = "STD";
 		bool        systematic  = true;
 		bool        ml_hamming  = false;
 		int         n_frames    = 1;

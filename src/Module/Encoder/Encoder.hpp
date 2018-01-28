@@ -47,8 +47,10 @@ template <typename B = int>
 class Encoder : public Module
 {
 protected:
-	const int K; /*!< Number of information bits in one frame */
-	const int N; /*!< Size of one frame (= number of bits in one frame) */
+	const int             K;             /*!< Number of information bits in one frame */
+	const int             N;             /*!< Size of one frame (= number of bits in one frame) */
+	      bool            sys;           /*!< Is the generated codeworde are systematics ? */
+	std::vector<uint32_t> info_bits_pos; /*!< Positions of the information bits in the codeword */
 
 public:
 	/*!
@@ -60,7 +62,7 @@ public:
 	 * \param name:     Encoder's name.
 	 */
 	Encoder(const int K, const int N, const int n_frames = 1)
-	: Module(n_frames), K(K), N(N)
+	: Module(n_frames), K(K), N(N), sys(true), info_bits_pos(this->K)
 	{
 		const std::string name = "Encoder";
 		this->set_name(name);
@@ -97,6 +99,8 @@ public:
 
 			return 0;
 		});
+
+		std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
 	}
 
 	/*!
@@ -114,6 +118,11 @@ public:
 	int get_N() const
 	{
 		return this->N;
+	}
+
+	bool is_sys() const
+	{
+		return this->sys;
 	}
 
 	/*!
@@ -172,6 +181,11 @@ public:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
+	const std::vector<uint32_t>& get_info_bits_pos()
+	{
+		return info_bits_pos;
+	}
+
 	/*!
 	 * \brief Gets the number of tail bits.
 	 *
@@ -186,6 +200,11 @@ protected:
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
+
+	void set_sys(const bool sys)
+	{
+		this->sys = sys;
 	}
 };
 }

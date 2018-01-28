@@ -15,6 +15,7 @@ Encoder_polar<B>
 {
 	const std::string name = "Encoder_polar";
 	this->set_name(name);
+	this->set_sys(false);
 	
 	if (this->N != (int)frozen_bits.size())
 	{
@@ -32,6 +33,8 @@ Encoder_polar<B>
 		        << k << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->notify_frozenbits_update();
 }
 
 template <typename B>
@@ -84,6 +87,16 @@ bool Encoder_polar<B>
 	auto n = 0;
 	while (n < this->N && (!frozen_bits[n] || (frozen_bits[n] && !X_N[n]))) n++;
 	return n == this->N;
+}
+
+template <typename B>
+void Encoder_polar<B>
+::notify_frozenbits_update()
+{
+	auto k = 0;
+	for (auto n = 0; n < this->N; n++)
+		if (!frozen_bits[n])
+			this->info_bits_pos[k++] = n;
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -37,6 +37,9 @@ Encoder_turbo_legacy<B>
 		        << pi.get_core().get_size() << ", 'K' = " << K << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	for (auto k = 0; k < this->K; k++)
+		this->info_bits_pos[k] = 3 * k;
 }
 
 template <typename B>

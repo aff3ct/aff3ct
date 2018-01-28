@@ -1,7 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Decoder/RA/Decoder_RA.hpp"
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_RA.hpp"
 
@@ -74,7 +73,6 @@ void Decoder_RA::parameters
 	opt_args.erase({pi+"-fra", "F"});
 
 	opt_args[{p+"-type", "D"}][2] += ", RA";
-	opt_args[{p+"-implem"   }].push_back("STD");
 
 	opt_args[{p+"-ite", "i"}] =
 		{"strictly_positive_int",

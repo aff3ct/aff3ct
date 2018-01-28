@@ -15,7 +15,6 @@
 #include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_MEM_fast_CA_sys.hpp"
 #include "Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_fast_CA_sys.hpp"
 #include "Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp"
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 //#define API_POLAR_DYNAMIC 1
 
@@ -78,6 +77,7 @@ void Decoder_polar::parameters
 	auto p = this->get_prefix();
 
 	opt_args[{p+"-type", "D"}][2] += ", SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN";
+	opt_args[{p+"-implem"   }].pop_back();
 
 	opt_args[{p+"-ite", "i"}] =
 		{"strictly_positive_int",

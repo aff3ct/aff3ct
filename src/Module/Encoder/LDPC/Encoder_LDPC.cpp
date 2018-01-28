@@ -62,21 +62,6 @@ Encoder_LDPC<B>
 
 template <typename B>
 void Encoder_LDPC<B>
-::get_info_bits_pos(std::vector<unsigned>& info_bits_pos)
-{
-	if (this->K != (int)info_bits_pos.size())
-	{
-		std::stringstream message;
-		message << "'info_bits_pos.size()' has to be equal to 'K' ('info_bits_pos.size()' = " << info_bits_pos.size()
-		        << ", 'K' = " << this->K << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	std::iota(info_bits_pos.begin(), info_bits_pos.begin() + this->K, 0);
-}
-
-template <typename B>
-void Encoder_LDPC<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	// Real General Matrix Multiplication

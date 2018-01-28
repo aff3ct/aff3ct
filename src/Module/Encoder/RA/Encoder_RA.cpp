@@ -16,7 +16,8 @@ Encoder_RA<B>
 {
 	const std::string name = "Encoder_RA";
 	this->set_name(name);
-	
+	this->set_sys(false);
+
 	if (N % K)
 	{
 		std::stringstream message;
@@ -31,6 +32,9 @@ Encoder_RA<B>
 		        << interleaver.get_core().get_size() << ", 'N' = " << N << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	for (auto k = 0; k < this->K; k++)
+		this->info_bits_pos[k] = rep_count * k;
 }
 
 template <typename B>
