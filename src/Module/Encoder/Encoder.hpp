@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <numeric>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -120,7 +121,7 @@ public:
 		return this->N;
 	}
 
-	bool is_sys() const
+	virtual bool is_sys() const
 	{
 		return this->sys;
 	}
@@ -181,7 +182,7 @@ public:
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
-	const std::vector<uint32_t>& get_info_bits_pos()
+	virtual const std::vector<uint32_t>& get_info_bits_pos()
 	{
 		return info_bits_pos;
 	}

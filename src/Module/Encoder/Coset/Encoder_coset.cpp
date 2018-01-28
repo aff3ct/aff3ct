@@ -27,6 +27,20 @@ void Encoder_coset<B>
 		X_N[i] = (B)this->uniform_dist(this->rd_engine);
 }
 
+template <typename B>
+const std::vector<uint32_t>& Encoder_coset<B>
+::get_info_bits_pos()
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+bool Encoder_coset<B>
+::is_sys() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

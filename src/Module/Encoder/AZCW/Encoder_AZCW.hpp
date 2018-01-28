@@ -17,6 +17,10 @@ public:
 	virtual ~Encoder_AZCW();
 
 	void encode(const B *U_K, B *X_N); using Encoder<B>::encode;
+
+	const std::vector<uint32_t>& get_info_bits_pos();
+
+	bool is_sys() const;
 };
 }
 }

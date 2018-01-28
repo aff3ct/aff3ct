@@ -21,6 +21,10 @@ public:
 	Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames = 1);
 	virtual ~Encoder_LDPC_DVBS2();
 
+	const std::vector<uint32_t>& get_info_bits_pos();
+
+	bool is_sys() const;
+
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);
 

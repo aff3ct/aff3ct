@@ -24,6 +24,20 @@ void Encoder_AZCW<B>
 	std::fill(X_N, X_N + this->N * this->n_frames, (B)0);
 }
 
+template <typename B>
+const std::vector<uint32_t>& Encoder_AZCW<B>
+::get_info_bits_pos()
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+bool Encoder_AZCW<B>
+::is_sys() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

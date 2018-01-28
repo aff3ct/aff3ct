@@ -71,6 +71,20 @@ void Encoder_LDPC<B>
 		X_N[j] %= 2;
 }
 
+template <typename B>
+const std::vector<uint32_t>& Encoder_LDPC<B>
+::get_info_bits_pos()
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+bool Encoder_LDPC<B>
+::is_sys() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

@@ -23,6 +23,10 @@ public:
 
 	virtual ~Encoder_BCH();
 
+	const std::vector<uint32_t>& get_info_bits_pos();
+
+	bool is_sys() const;
+
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
 };
