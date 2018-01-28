@@ -12,6 +12,7 @@
 #include <vector>
 #include <sstream>
 #include <numeric>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -51,7 +52,11 @@ protected:
 	const int             K;             /*!< Number of information bits in one frame */
 	const int             N;             /*!< Size of one frame (= number of bits in one frame) */
 	      bool            sys;           /*!< Is the generated codeworde are systematics ? */
+	      bool            memorizing;    /*!< If true, keep the last encoded frame(s) in memory */
 	std::vector<uint32_t> info_bits_pos; /*!< Positions of the information bits in the codeword */
+
+	std::vector<std::vector<B>> U_K_mem;
+	std::vector<std::vector<B>> X_N_mem;
 
 public:
 	/*!
@@ -63,7 +68,14 @@ public:
 	 * \param name:     Encoder's name.
 	 */
 	Encoder(const int K, const int N, const int n_frames = 1)
-	: Module(n_frames), K(K), N(N), sys(true), info_bits_pos(this->K)
+	: Module(n_frames), 
+	  K(K), 
+	  N(N), 
+	  sys(true), 
+	  memorizing(false), 
+	  info_bits_pos(this->K),
+	  U_K_mem(n_frames),
+	  X_N_mem(n_frames)
 	{
 		const std::string name = "Encoder";
 		this->set_name(name);
@@ -126,6 +138,46 @@ public:
 		return this->sys;
 	}
 
+	bool is_memorizing() const
+	{
+		return this->memorizing;
+	}
+
+	void set_memorizing(const bool memorizing)
+	{
+		this->memorizing = memorizing;
+
+		if (this->memorizing)
+		{
+			if (!this->U_K_mem[0].size())
+			{
+				for (auto f = 0; f < this->n_frames; f++)
+				{
+					this->U_K_mem[f].resize(this->K);
+					std::fill(this->U_K_mem[f].begin(), this->U_K_mem[f].end(), (B)0);
+				}
+			}
+			if (!this->X_N_mem[0].size())
+			{
+				for (auto f = 0; f < this->n_frames; f++)
+				{
+					this->X_N_mem[f].resize(this->N);
+					std::fill(this->X_N_mem[f].begin(), this->X_N_mem[f].end(), (B)0);
+				}
+			}
+		}
+	}
+
+	const std::vector<B>& get_U_K(const int frame_id = 0) const
+	{
+		return this->U_K_mem[frame_id % this->n_frames];
+	}
+
+	const std::vector<B>& get_X_N(const int frame_id = 0) const
+	{
+		return this->X_N_mem[frame_id % this->n_frames];
+	}
+
 	/*!
 	 * \brief Encodes a vector of information bits (a message).
 	 *
@@ -133,7 +185,7 @@ public:
 	 * \param X_N: an encoded frame with redundancy added (parity bits).
 	 */
 	template <class A = std::allocator<B>>
-	void encode(const std::vector<B,A>& U_K, std::vector<B,A>& X_N)
+	void encode(const std::vector<B,A>& U_K, std::vector<B,A>& X_N, const int frame_id = -1)
 	{
 		if (this->K * this->n_frames != (int)U_K.size())
 		{
@@ -152,15 +204,38 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->encode(U_K.data(), X_N.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->encode(U_K.data(), X_N.data(), frame_id);
 	}
 
-	virtual void encode(const B *U_K, B *X_N)
+	virtual void encode(const B *U_K, B *X_N, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		if (this->is_memorizing())
+			for (auto f = f_start; f < f_stop; f++)
+				std::copy(U_K + (f +0) * this->K,
+				          U_K + (f +1) * this->K,
+				          U_K_mem[f].begin());
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_encode(U_K + f * this->K,
 			              X_N + f * this->N,
 			              f);
+
+		if (this->is_memorizing())
+			for (auto f = f_start; f < f_stop; f++)
+				std::copy(X_N + (f +0) * this->N,
+				          X_N + (f +1) * this->N,
+				          X_N_mem[f].begin());
 	}
 
 	template <class A = std::allocator<B>>

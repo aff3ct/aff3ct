@@ -141,7 +141,7 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N)
+	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id = -1)
 	{
 		if (sigma <= 0)
 		{
@@ -174,12 +174,23 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->add_noise(X_N.data(), Y_N.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->add_noise(X_N.data(), Y_N.data(), frame_id);
 	}
 
-	virtual void add_noise(const R *X_N, R *Y_N)
+	virtual void add_noise(const R *X_N, R *Y_N, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_add_noise(X_N + f * this->N,
 			                 Y_N + f * this->N,
 			                 f);
@@ -193,7 +204,7 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N)
+	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N, const int frame_id = -1)
 	{
 		if (sigma <= 0)
 		{
@@ -234,12 +245,23 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->add_noise_wg(X_N.data(), H_N.data(), Y_N.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->add_noise_wg(X_N.data(), H_N.data(), Y_N.data(), frame_id);
 	}
 
-	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N)
+	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_add_noise_wg(X_N + f * this->N,
 			                    H_N + f * this->N,
 			                    Y_N + f * this->N,

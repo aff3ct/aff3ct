@@ -99,7 +99,7 @@ public:
 	 * \param U_K: a vector of bits to fill.
 	 */
 	template <class A = std::allocator<B>>
-	void generate(std::vector<B,A>& U_K)
+	void generate(std::vector<B,A>& U_K, const int frame_id = -1)
 	{
 		if (this->K * this->n_frames != (int)U_K.size())
 		{
@@ -109,12 +109,15 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->generate(U_K.data());
+		this->generate(U_K.data(), frame_id);
 	}
 
-	virtual void generate(B *U_K)
+	virtual void generate(B *U_K, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_generate(U_K + f * this->K, f);
 	}
 

@@ -19,7 +19,8 @@ public:
 
 	virtual ~Coset_real();
 
-	virtual void apply(const B *ref, const D *in, D *out); using Coset<B,D>::apply;
+protected:
+	void _apply(const B *ref, const D *in, D *out, const int frame_id);
 };
 }
 }

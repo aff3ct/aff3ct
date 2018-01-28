@@ -35,7 +35,7 @@ void Modem_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::modulate(const B *X_N1, R *X_N2)
+::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported data type.");
 }
@@ -46,9 +46,9 @@ namespace module
 {
 template <>
 void Modem_BPSK_fast<int, float, float>
-::modulate(const int *X_N1, float *X_N2)
+::_modulate(const int *X_N1, float *X_N2, const int frame_id)
 {
-	auto size = (unsigned int)(this->N * this->n_frames);
+	auto size = (unsigned int)(this->N);
 
 	const auto vec_loop_size = (size / mipp::nElReg<int>()) * mipp::nElReg<int>();
 	const mipp::Reg<float> one = 1.f;
@@ -72,9 +72,9 @@ namespace module
 {
 template <>
 void Modem_BPSK_fast<short, float, float>
-::modulate(const short *X_N1, float *X_N2)
+::_modulate(const short *X_N1, float *X_N2, const int frame_id)
 {
-	auto size = (unsigned int)(this->N * this->n_frames);
+	auto size = (unsigned int)(this->N);
 
 	const auto vec_loop_size = size / mipp::nElReg<short>();
 	const mipp::Reg<float> one = 1.f;
@@ -106,9 +106,9 @@ namespace module
 {
 template <>
 void Modem_BPSK_fast<signed char, float, float>
-::modulate(const signed char *X_N1, float *X_N2)
+::_modulate(const signed char *X_N1, float *X_N2, const int frame_id)
 {
-	auto size = (unsigned int)(this->N * this->n_frames);
+	auto size = (unsigned int)(this->N);
 
 	const auto vec_loop_size = size / mipp::nElReg<signed char>();
 	const mipp::Reg<float> one = 1.f;
@@ -147,17 +147,17 @@ void Modem_BPSK_fast<signed char, float, float>
 
 template <typename B,typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::filter(const R *Y_N1, R *Y_N2)
+::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
+	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::demodulate(const Q *Y_N1, Q *Y_N2)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (disable_sig2)
-		std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
+		std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 	else
 	{
 		if (typeid(R) != typeid(Q))
@@ -166,7 +166,7 @@ void Modem_BPSK_fast<B,R,Q>
 		if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		auto size = (unsigned int)(this->N * this->n_frames);
+		auto size = (unsigned int)(this->N);
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
 		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
 		{
@@ -181,9 +181,9 @@ void Modem_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	this->demodulate(Y_N1,Y_N3);
+	this->_demodulate(Y_N1,Y_N3,frame_id);
 }
 
 // ==================================================================================== explicit template instantiation 

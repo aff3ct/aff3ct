@@ -30,10 +30,13 @@ Monitor_BFER<B>
 
 template <typename B>
 int Monitor_BFER<B>
-::check_errors(const B *U, const B *V)
+::check_errors(const B *U, const B *V, const int frame_id)
 {
+	auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+	auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
 	int n_be = 0;
-	for (auto f = 0; f < this->n_frames; f++)
+	for (auto f = f_start; f < f_stop; f++)
 		n_be += this->_check_errors(U + f * this->size,
 		                            V + f * this->size,
 		                            f);

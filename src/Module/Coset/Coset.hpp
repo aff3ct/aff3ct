@@ -107,7 +107,8 @@ public:
 	 * \param out_data: the output data after the coset application.
 	 */
 	template <class AB = std::allocator<B>, class AD = std::allocator<D>>
-	void apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in, std::vector<D,AD> &out)
+	void apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in, std::vector<D,AD> &out,
+	           const int frame_id = -1)
 	{
 		if (ref.size() != in.size() || in.size() != out.size())
 		{
@@ -142,12 +143,23 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->apply(ref.data(), in.data(), out.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->apply(ref.data(), in.data(), out.data(), frame_id);
 	}
 
-	virtual void apply(const B *ref, const D *in, D *out)
+	virtual void apply(const B *ref, const D *in, D *out, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_apply(ref + f * this->size,
 			             in  + f * this->size,
 			             out + f * this->size,

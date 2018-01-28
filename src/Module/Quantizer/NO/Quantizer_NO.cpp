@@ -22,9 +22,9 @@ Quantizer_NO<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_NO<R,Q>
-::process(const R *Y_N1, Q *Y_N2)
+::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {
-	const auto loop_size = (unsigned)(this->N * this->n_frames);
+	const auto loop_size = (unsigned)(this->N);
 	for (unsigned i = 0; i < loop_size; i++)
 		Y_N2[i] = (Q)Y_N1[i];
 }
@@ -35,9 +35,9 @@ namespace module
 {
 template<>
 void Quantizer_NO<float,float>
-::process(const float *Y_N1, float *Y_N2)
+::_process(const float *Y_N1, float *Y_N2, const int frame_id)
 {
-	std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
+	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 }
 }
 }
@@ -48,9 +48,9 @@ namespace module
 {
 template<>
 void Quantizer_NO<double,double>
-::process(const double *Y_N1, double *Y_N2)
+::_process(const double *Y_N1, double *Y_N2, const int frame_id)
 {
-	std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
+	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 }
 }
 }

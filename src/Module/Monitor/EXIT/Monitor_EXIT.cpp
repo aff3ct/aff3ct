@@ -34,17 +34,22 @@ Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
-::check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e)
+::check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id)
 {
-	for (auto f = 0; f < this->n_frames; f++)
+	auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+	auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+	for (auto f = f_start; f < f_stop; f++)
+	{
 		this->_check_mutual_info_avg(bits   + f * this->size,
 		                             llrs_a + f * this->size,
 		                             f);
 
-	bits_buff  .insert(bits_buff  .end(), bits,   bits   + this->size);
-	llrs_e_buff.insert(llrs_e_buff.end(), llrs_e, llrs_e + this->size);
+		bits_buff  .insert(bits_buff  .end(), bits   + f * this->size, bits   + (f +1) * this->size);
+		llrs_e_buff.insert(llrs_e_buff.end(), llrs_e + f * this->size, llrs_e + (f +1) * this->size);
 
-	n_analyzed_frames += this->n_frames;
+		n_analyzed_frames++;
+	}
 
 	for (auto c : this->callbacks_measure)
 		c();

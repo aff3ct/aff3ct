@@ -154,7 +154,7 @@ public:
 	 * \param X_N2: a punctured codeword (corresponding to the frame size).
 	 */
 	template <class A = std::allocator<B>>
-	void puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2) const
+	void puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id = -1) const
 	{
 		if (this->N_cw * this->n_frames != (int)X_N1.size())
 		{
@@ -172,12 +172,23 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->puncture(X_N1.data(), X_N2.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->puncture(X_N1.data(), X_N2.data(), frame_id);
 	}
 
-	virtual void puncture(const B *X_N1, B *X_N2) const
+	virtual void puncture(const B *X_N1, B *X_N2, const int frame_id = -1) const
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_puncture(X_N1 + f * this->N_cw,
 			                X_N2 + f * this->N,
 			                f);
@@ -190,7 +201,7 @@ public:
 	 * \param Y_N2: a noised and complete/valid codeword.
 	 */
 	template <class A = std::allocator<Q>>
-	void depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2) const
+	void depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id = -1) const
 	{
 		if (this->N * this->n_frames != (int)Y_N1.size())
 		{
@@ -208,12 +219,23 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->depuncture(Y_N1.data(), Y_N2.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->depuncture(Y_N1.data(), Y_N2.data(), frame_id);
 	}
 
-	virtual void depuncture(const Q *Y_N1, Q *Y_N2) const
+	virtual void depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id = -1) const
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_depuncture(Y_N1 + f * this->N,
 			                  Y_N2 + f * this->N_cw,
 			                  f);

@@ -33,6 +33,9 @@ public:
 	virtual void encode(const B *U_K, B *X_N); using Encoder<B>::encode;
 
 	virtual bool is_codeword(const B *X_N);
+
+// protected:
+// 	void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

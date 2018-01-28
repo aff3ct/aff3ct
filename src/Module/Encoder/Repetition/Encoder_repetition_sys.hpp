@@ -22,7 +22,7 @@ public:
 	bool is_codeword(const B *X_N);
 
 protected:
-	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
+	void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

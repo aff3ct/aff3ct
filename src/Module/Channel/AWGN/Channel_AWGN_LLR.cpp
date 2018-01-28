@@ -42,8 +42,15 @@ Channel_AWGN_LLR<R>
 
 template <typename R>
 void Channel_AWGN_LLR<R>
-::add_noise(const R *X_N, R *Y_N)
+::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
+	if (frame_id != -1)
+	{
+		std::stringstream message;
+		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (add_users && this->n_frames > 1)
 	{
 		noise_generator->generate(this->noise.data(), this->N, this->sigma);

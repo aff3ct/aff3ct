@@ -16,7 +16,7 @@ template <typename B = int>
 class Encoder_turbo_DB : public Encoder<B>
 {
 protected:
-	const Interleaver<B> &pi; // the interleaver
+	const Interleaver<B> &pi;   // the interleaver
 
 	Encoder_RSC_DB<B> &enco_n;  // encoder natural order
 	Encoder_RSC_DB<B> &enco_i;  // encoder interleaved order
@@ -34,7 +34,8 @@ public:
 	                 Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i, const int n_frames = 1);
 	virtual ~Encoder_turbo_DB() {}
 
-	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
+protected:
+	void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

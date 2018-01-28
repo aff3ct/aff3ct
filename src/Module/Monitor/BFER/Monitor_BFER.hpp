@@ -38,7 +38,7 @@ public:
 	 * \param V: the decoded message (from the Decoder).
 	 */
 	template <class A = std::allocator<B>>
-	int check_errors(const std::vector<B,A>& U, const std::vector<B,A>& V)
+	int check_errors(const std::vector<B,A>& U, const std::vector<B,A>& V, const int frame_id = -1)
 	{
 		if ((int)U.size() != this->size * this->n_frames)
 		{
@@ -56,10 +56,18 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		return this->check_errors(U.data(), V.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		return this->check_errors(U.data(), V.data(), frame_id);
 	}
 
-	virtual int check_errors(const B *U, const B *V);
+	virtual int check_errors(const B *U, const B *V, const int frame_id = -1);
 
 	virtual bool fe_limit_achieved();
 	unsigned get_fe_limit() const;

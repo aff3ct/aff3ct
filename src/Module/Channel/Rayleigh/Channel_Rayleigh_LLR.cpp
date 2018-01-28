@@ -62,8 +62,15 @@ Channel_Rayleigh_LLR<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR<R>
-::add_noise_wg(const R *X_N, R *H_N, R *Y_N)
+::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
+	if (frame_id != -1)
+	{
+		std::stringstream message;
+		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (add_users && this->n_frames > 1)
 	{
 		noise_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));

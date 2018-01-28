@@ -21,7 +21,8 @@ public:
 	Quantizer_standard(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames = 1);
 	virtual ~Quantizer_standard();
 
-	void process(const R *Y_N1, Q *Y_N2); using Quantizer<R,Q>::process;
+protected:
+	void _process(const R *Y_N1, Q *Y_N2, const int frame_id);
 };
 }
 }

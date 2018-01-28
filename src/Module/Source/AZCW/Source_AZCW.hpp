@@ -19,7 +19,8 @@ public:
 
 	virtual ~Source_AZCW();
 
-	void generate(B *U_K);  using Source<B>::generate;
+protected:
+	void _generate(B *U_K, const int frame_id);
 };
 }
 }

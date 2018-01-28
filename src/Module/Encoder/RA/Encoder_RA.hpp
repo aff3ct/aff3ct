@@ -23,7 +23,7 @@ public:
 	virtual ~Encoder_RA() {}
 
 protected:
-	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
+	void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

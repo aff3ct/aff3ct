@@ -26,7 +26,7 @@ public:
 
 	virtual ~Channel_AWGN_LLR();
 
-	void add_noise(const R *X_N, R *Y_N); using Channel<R>::add_noise;
+	void add_noise(const R *X_N, R *Y_N, const int frame_id = -1); using Channel<R>::add_noise;
 };
 }
 }

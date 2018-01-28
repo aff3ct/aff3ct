@@ -16,10 +16,11 @@ public:
 
 	int get_size() const;
 
-	void build       (const B *U_K1, B *U_K2               ); using CRC<B>::build;
-	void extract     (const B *V_K1, B *V_K2               ); using CRC<B>::extract;
-	bool check       (const B *V_K, const int n_frames = -1); using CRC<B>::check;
-	bool check_packed(const B *V_K, const int n_frames = -1); using CRC<B>::check_packed;
+protected:
+	virtual void _build       (const B *U_K1, B *U_K2, const int frame_id);
+	virtual void _extract     (const B *V_K1, B *V_K2, const int frame_id);
+	virtual bool _check       (const B *V_K          , const int frame_id);
+	virtual bool _check_packed(const B *V_K          , const int frame_id);
 };
 }
 }
