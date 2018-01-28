@@ -76,7 +76,7 @@ Codec_RSC_DB<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_RSC_DB::build_siso<B,Q>(dec_params, trellis);
+		auto decoder_siso_siho = factory::Decoder_RSC_DB::build_siso<B,Q>(dec_params, trellis, encoder_RSC_bis);
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}

@@ -41,7 +41,8 @@ struct Decoder_RSC_DB : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const std::vector<std::vector<int>> &trellis) const;
+		module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const std::vector<std::vector<int>> &trellis,
+		                                             module::Encoder_RSC_DB<B>           *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const std::vector<std::vector<int>> &trellis,
@@ -49,12 +50,14 @@ struct Decoder_RSC_DB : public Decoder
 
 	private:
 		template <typename B = int, typename Q = float, tools::proto_max<Q> MAX>
-		module::Decoder_RSC_DB_BCJR<B,Q>* _build_siso(const std::vector<std::vector<int>> &trellis) const;
+		module::Decoder_RSC_DB_BCJR<B,Q>* _build_siso(const std::vector<std::vector<int>> &trellis,
+		                                                    module::Encoder_RSC_DB<B>     *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const parameters &params,
-	                                                    const std::vector<std::vector<int>> &trellis);
+	                                                    const std::vector<std::vector<int>> &trellis,
+	                                                          module::Encoder_RSC_DB<B>     *encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters                    &params,

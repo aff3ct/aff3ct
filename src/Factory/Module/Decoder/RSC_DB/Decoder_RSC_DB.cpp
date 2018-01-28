@@ -87,7 +87,7 @@ void Decoder_RSC_DB::parameters
 
 template <typename B, typename Q, tools::proto_max<Q> MAX>
 module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB::parameters
-::_build_siso(const std::vector<std::vector<int>> &trellis) const
+::_build_siso(const std::vector<std::vector<int>> &trellis, module::Encoder_RSC_DB<B> *encoder) const
 {
 	if (this->type == "BCJR")
 	{
@@ -101,11 +101,11 @@ module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB::parameters
 
 template <typename B, typename Q>
 module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB::parameters
-::build_siso(const std::vector<std::vector<int>> &trellis) const
+::build_siso(const std::vector<std::vector<int>> &trellis, module::Encoder_RSC_DB<B> *encoder) const
 {
-	     if (this->max == "MAX" ) return _build_siso<B,Q,tools::max       <Q>>(trellis);
-	else if (this->max == "MAXS") return _build_siso<B,Q,tools::max_star  <Q>>(trellis);
-	else if (this->max == "MAXL") return _build_siso<B,Q,tools::max_linear<Q>>(trellis);
+	     if (this->max == "MAX" ) return _build_siso<B,Q,tools::max       <Q>>(trellis, encoder);
+	else if (this->max == "MAXS") return _build_siso<B,Q,tools::max_star  <Q>>(trellis, encoder);
+	else if (this->max == "MAXL") return _build_siso<B,Q,tools::max_linear<Q>>(trellis, encoder);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -128,9 +128,10 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC_DB::parameters
 
 template <typename B, typename Q>
 module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB
-::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis)
+::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis, 
+             module::Encoder_RSC_DB<B> *encoder)
 {
-	return params.template build_siso<B,Q>(trellis);
+	return params.template build_siso<B,Q>(trellis, encoder);
 }
 
 template <typename B, typename Q>
@@ -143,17 +144,17 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC_DB
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_8 ,Q_8 >(const std::vector<std::vector<int>>&) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_16,Q_16>(const std::vector<std::vector<int>>&) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_32,Q_32>(const std::vector<std::vector<int>>&) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_64,Q_64>(const std::vector<std::vector<int>>&) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::build_siso<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_16,Q_16>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_32,Q_32>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_64,Q_64>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B_8 >*) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_16,Q_16>(const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B_16>*) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_32,Q_32>(const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B_32>*) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_64,Q_64>(const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B_64>*) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::build_siso<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B_8 >*);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_16,Q_16>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B_16>*);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_32,Q_32>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B_32>*);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_64,Q_64>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B_64>*);
 #else
-template aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B,Q>(const std::vector<std::vector<int>>&) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>* aff3ct::factory::Decoder_RSC_DB::build_siso<B,Q>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B,Q>(const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B>*) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>* aff3ct::factory::Decoder_RSC_DB::build_siso<B,Q>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder_RSC_DB<B>*);
 #endif
 
 #ifdef MULTI_PREC

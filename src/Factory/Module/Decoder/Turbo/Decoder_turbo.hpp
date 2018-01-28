@@ -57,19 +57,21 @@ struct Decoder_turbo : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_turbo<B,Q>* build(const module::Interleaver<Q>  &itl,
-		                                        module::Decoder_SISO<Q> &siso_n,
-		                                        module::Decoder_SISO<Q> &siso_i) const;
+		module::Decoder_turbo<B,Q>* build(const module::Interleaver<Q>   &itl,
+		                                        module::Decoder_SISO<Q>  &siso_n,
+		                                        module::Decoder_SISO<Q>  &siso_i,
+		                                        module::Encoder_turbo<B> *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(module::Encoder_turbo<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
-	static module::Decoder_turbo<B,Q>* build(const parameters<D1,D2>       &params,
-	                                         const module::Interleaver<Q>  &itl,
-	                                               module::Decoder_SISO<Q> &siso_n,
-	                                               module::Decoder_SISO<Q> &siso_i);
+	static module::Decoder_turbo<B,Q>* build(const parameters<D1,D2>        &params,
+	                                         const module::Interleaver<Q>   &itl,
+	                                               module::Decoder_SISO<Q>  &siso_n,
+	                                               module::Decoder_SISO<Q>  &siso_i,
+	                                               module::Encoder_turbo<B> *encoder = nullptr);
 
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
 	static module::Decoder_SIHO<B,Q>* build(const parameters<D1,D2>        &params,

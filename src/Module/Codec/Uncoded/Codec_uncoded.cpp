@@ -67,7 +67,7 @@ Codec_uncoded<B,Q>
 	this->set_encoder(encoder);
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_NO::build_siso<B,Q>(dec_params);
+		auto decoder_siso_siho = factory::Decoder_NO::build_siso<B,Q>(dec_params, encoder);
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}

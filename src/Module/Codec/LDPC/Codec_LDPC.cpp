@@ -208,7 +208,7 @@ Codec_LDPC<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos);
+		auto decoder_siso_siho = factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, encoder_LDPC);
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}

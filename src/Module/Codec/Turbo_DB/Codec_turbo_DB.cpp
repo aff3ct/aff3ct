@@ -109,7 +109,8 @@ Codec_turbo_DB<B,Q>
 	{
 		sub_dec_n = factory::Decoder_RSC_DB::build_siso<B,Q>(*dec_params.sub, trellis);
 		sub_dec_i = factory::Decoder_RSC_DB::build_siso<B,Q>(*dec_params.sub, trellis);
-		decoder_turbo = factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec_n, *sub_dec_i);
+		decoder_turbo = factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec_n, 
+		                                                      *sub_dec_i, encoder_turbo);
 		this->set_decoder_siho(decoder_turbo);
 	}
 

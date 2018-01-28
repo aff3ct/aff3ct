@@ -106,14 +106,14 @@ Codec_polar<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits);
+		auto decoder_siso_siho = factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits, encoder_polar);
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (const std::exception&)
 	{
 		if (generated_decoder)
-			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc               ));
+			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc, encoder_polar));
 		else
 			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, encoder_polar));
 	}

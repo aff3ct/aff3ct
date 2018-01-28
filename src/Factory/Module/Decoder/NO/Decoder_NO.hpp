@@ -34,14 +34,14 @@ struct Decoder_NO : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_SISO_SIHO<B,Q>* build_siso() const;
+		module::Decoder_SISO_SIHO<B,Q>* build_siso(module::Encoder<B> *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters &params);
+	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters &params, module::Encoder<B> *encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters &params, module::Encoder<B> *encoder = nullptr);

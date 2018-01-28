@@ -114,7 +114,8 @@ Codec_turbo<B,Q>
 	catch (tools::cannot_allocate const&)
 	{
 		sub_dec = factory::Decoder_RSC::build_siso<B,Q>(*dec_params.sub1, trellis, json_stream, dec_params.n_ite);
-		decoder_turbo = factory::Decoder_turbo::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec, *sub_dec);
+		decoder_turbo = factory::Decoder_turbo::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec, *sub_dec,
+		                                                   encoder_turbo);
 		this->set_decoder_siho(decoder_turbo);
 	}
 
