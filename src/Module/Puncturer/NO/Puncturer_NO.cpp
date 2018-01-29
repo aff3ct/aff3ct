@@ -28,7 +28,7 @@ void Puncturer_NO<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_NO<B,Q>
-::_depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const;
+::_depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
 {
 	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 }
