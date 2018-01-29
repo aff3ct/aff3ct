@@ -53,8 +53,15 @@ int Encoder_turbo<B>
 
 template <typename B>
 void Encoder_turbo<B>
-::encode(const B *U_K, B *X_N)
+::encode(const B *U_K, B *X_N, const int frame_id)
 {
+	if (frame_id != -1)
+	{
+		std::stringstream message;
+		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	pi.interleave(U_K, U_K_i.data(), 0, this->n_frames);
 
 	enco_n.encode(U_K, X_N_tmp.data());
