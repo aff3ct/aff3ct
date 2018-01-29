@@ -195,11 +195,9 @@ Codec_LDPC<B,Q>
 		}
 	}
 
-	Encoder_LDPC<B> *encoder_LDPC = nullptr;
 	try
 	{
-		encoder_LDPC = factory::Encoder_LDPC::build<B>(enc_params, G, H);
-		this->set_encoder(encoder_LDPC);
+		this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H));
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -208,13 +206,13 @@ Codec_LDPC<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, encoder_LDPC);
+		auto decoder_siso_siho = factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, this->get_encoder());
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (const std::exception&)
 	{
-		this->set_decoder_siho(factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos, encoder_LDPC));
+		this->set_decoder_siho(factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
 	}
 }
 

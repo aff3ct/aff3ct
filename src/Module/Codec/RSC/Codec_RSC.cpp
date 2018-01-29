@@ -63,11 +63,9 @@ Codec_RSC<B,Q>
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
 
-	Encoder_RSC_sys<B> *encoder_RSC_bis = nullptr;
 	try
 	{
-		encoder_RSC_bis = factory::Encoder_RSC::build<B>(enc_params);
-		this->set_encoder(encoder_RSC_bis);
+		this->set_encoder(factory::Encoder_RSC::build<B>(enc_params));
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -76,13 +74,13 @@ Codec_RSC<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_RSC::build_siso<B,Q>(dec_params, trellis, std::cout, 1, encoder_RSC_bis);
+		auto decoder_siso_siho = factory::Decoder_RSC::build_siso<B,Q>(dec_params, trellis, std::cout, 1, this->get_encoder());
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(factory::Decoder_RSC::build<B,Q>(dec_params, trellis, std::cout, 1, encoder_RSC_bis));
+		this->set_decoder_siho(factory::Decoder_RSC::build<B,Q>(dec_params, trellis, std::cout, 1, this->get_encoder()));
 	}
 }
 

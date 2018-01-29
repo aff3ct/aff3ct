@@ -92,10 +92,9 @@ Codec_polar<B,Q>
 		}
 	}
 
-	Encoder_polar<B>* encoder_polar = nullptr;
 	try
 	{
-		encoder_polar = factory::Encoder_polar::build<B>(enc_params, frozen_bits);
+		auto *encoder_polar = factory::Encoder_polar::build<B>(enc_params, frozen_bits);
 		this->fb_encoder = encoder_polar;
 		this->set_encoder(encoder_polar);
 	}
@@ -106,16 +105,16 @@ Codec_polar<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits, encoder_polar);
+		auto decoder_siso_siho = factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits, this->get_encoder());
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (const std::exception&)
 	{
 		if (generated_decoder)
-			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc, encoder_polar));
+			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc, this->get_encoder()));
 		else
-			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, encoder_polar));
+			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, this->get_encoder()));
 	}
 	if (dec_params.type != "ML")
 		this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho());

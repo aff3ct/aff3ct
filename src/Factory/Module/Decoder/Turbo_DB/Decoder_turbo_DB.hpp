@@ -7,7 +7,7 @@
 #include "Module/Decoder/RSC_DB/BCJR//Decoder_RSC_DB_BCJR.hpp"
 #include "Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
-#include "Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Tools/Code/Turbo/Flip_and_check_DB.hpp"
@@ -56,10 +56,10 @@ struct Decoder_turbo_DB : public Decoder
 		module::Decoder_turbo_DB<B,Q>* build(const module::Interleaver<Q>           &itl,
 		                                           module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
 		                                           module::Decoder_RSC_DB_BCJR<B,Q> &siso_i,
-		                                           module::Encoder_turbo_DB<B>      *encoder = nullptr) const;
+		                                           module::Encoder<B>               *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(module::Encoder_turbo_DB<B> *encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
@@ -67,11 +67,10 @@ struct Decoder_turbo_DB : public Decoder
 	                                            const module::Interleaver<Q>           &itl,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_i,
-	                                                  module::Encoder_turbo_DB<B>      *encoder = nullptr);
+	                                                  module::Encoder<B>               *encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters                  &params,
-	                                              module::Encoder_turbo_DB<B> *encoder = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, module::Encoder<B> *encoder = nullptr);
 };
 }
 }

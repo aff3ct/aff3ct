@@ -63,17 +63,16 @@ Codec_uncoded<B,Q>
 	pct_params.n_frames = enc_params.n_frames;
 
 	this->set_puncturer(factory::Puncturer ::build<B,Q>(pct_params));
-	auto *encoder = factory::Encoder::build<B>(enc_params);
-	this->set_encoder(encoder);
+	this->set_encoder(factory::Encoder::build<B>(enc_params));
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_NO::build_siso<B,Q>(dec_params, encoder);
+		auto decoder_siso_siho = factory::Decoder_NO::build_siso<B,Q>(dec_params, this->get_encoder());
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(factory::Decoder_NO::build<B,Q>(dec_params, encoder));
+		this->set_decoder_siho(factory::Decoder_NO::build<B,Q>(dec_params, this->get_encoder()));
 	}
 }
 
