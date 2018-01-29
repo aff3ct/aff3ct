@@ -187,8 +187,8 @@ public:
 
 	virtual void add_noise(const R *X_N, R *Y_N, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_add_noise(X_N + f * this->N,
@@ -258,8 +258,8 @@ public:
 
 	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_add_noise_wg(X_N + f * this->N,

@@ -244,8 +244,8 @@ public:
 
 	virtual void extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_extract_sys_llr(Y_N + f * this->N_cw,
@@ -285,8 +285,8 @@ public:
 
 	virtual void extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_extract_sys_bit(Y_N + f * this->N_cw,
@@ -340,8 +340,8 @@ public:
 	{
 		const auto tb_2 = this->tail_length / 2;
 
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_extract_sys_par(Y_N + f *  this->N_cw,
@@ -382,8 +382,8 @@ public:
 
 	virtual void add_sys_ext(const Q *ext, Q *Y_N, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_add_sys_ext(ext + f * this->K,

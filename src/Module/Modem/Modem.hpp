@@ -315,8 +315,8 @@ public:
 
 	virtual void modulate(const B *X_N1, R *X_N2, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_modulate(X_N1 + f * this->N,
@@ -354,8 +354,8 @@ public:
 
 	virtual void tmodulate(const Q *X_N1, R *X_N2, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_tmodulate(X_N1 + f * this->N,
@@ -402,8 +402,8 @@ public:
 
 	virtual void filter(const R *Y_N1, R *Y_N2, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_filter(Y_N1 + f * this->N_mod,
@@ -448,8 +448,8 @@ public:
 
 	virtual void demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_demodulate(Y_N1 + f * this->N_fil,
@@ -504,8 +504,8 @@ public:
 
 	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_demodulate_wg(H_N  + f * this->N_fil,
@@ -565,8 +565,8 @@ public:
 
 	virtual void tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_tdemodulate(Y_N1 + f * this->N_fil,
@@ -636,8 +636,8 @@ public:
 
 	virtual void tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1)
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->_tdemodulate_wg(H_N  + f * this->N_fil,

@@ -82,7 +82,7 @@ public:
 	 */
 	template <class A = std::allocator<R>>
 	void decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
-	                 const int n_frames = -1)
+	                 const int n_frames = -1, const int frame_id = -1)
 	{
 		if (n_frames != -1 && n_frames <= 0)
 		{
@@ -124,15 +124,27 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->decode_siso(sys.data(), par.data(), ext.data(), real_n_frames);
+		if (frame_id != -1 && frame_id >= real_n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'real_n_frames' ('frame_id' = " 
+			        << frame_id << ", 'real_n_frames' = " << real_n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->decode_siso(sys.data(), par.data(), ext.data(), real_n_frames, frame_id);
 	}
 
-	virtual void decode_siso(const R *sys, const R *par, R *ext, const int n_frames = -1)
+	virtual void decode_siso(const R *sys, const R *par, R *ext, const int n_frames = -1, const int frame_id = -1)
 	{
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
 		const auto n_dec_waves_siso = real_n_frames / this->simd_inter_frame_level;
-		for (auto w = 0; w < n_dec_waves_siso; w++)
+
+		const auto w_start = (frame_id < 0) ? 0 : frame_id % n_dec_waves_siso;
+		const auto w_stop  = (frame_id < 0) ? n_dec_waves_siso : w_start +1;
+
+		for (auto w = w_start; w < w_stop; w++)
 			this->_decode_siso(sys + w * (          this->K) * this->simd_inter_frame_level,
 			                   par + w * (this->N - this->K) * this->simd_inter_frame_level,
 			                   ext + w * (          this->K) * this->simd_inter_frame_level,
@@ -146,7 +158,7 @@ public:
 	 * \param Y_N2: an extrinsic information about all the bits in the frame.
 	 */
 	template <class A = std::allocator<R>>
-	void decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2)
+	void decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int frame_id = -1)
 	{
 		if (this->N * this->n_frames != (int)Y_N1.size())
 		{
@@ -164,34 +176,64 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->decode_siso(Y_N1.data(), Y_N2.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->decode_siso(Y_N1.data(), Y_N2.data(), frame_id);
 	}
 
-	virtual void decode_siso(const R *Y_N1, R *Y_N2)
+	virtual void decode_siso(const R *Y_N1, R *Y_N2, const int frame_id = -1)
 	{
-		auto w = 0;
-		for (w = 0; w < this->n_dec_waves -1; w++)
-			this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
-			                   Y_N2 + w * this->N * this->simd_inter_frame_level,
-			                   w * this->simd_inter_frame_level);
+		if (frame_id < 0 || this->simd_inter_frame_level == 1)
+		{
+			const auto w_start = (frame_id < 0) ? 0 : frame_id % this->n_dec_waves;
+			const auto w_stop  = (frame_id < 0) ? this->n_dec_waves : w_start +1;
 
-		if (this->n_inter_frame_rest == 0)
-			this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
-			                   Y_N2 + w * this->N * this->simd_inter_frame_level,
-			                   w * this->simd_inter_frame_level);
+			auto w = 0;
+			for (w = w_start; w < w_stop -1; w++)
+				this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
+				                   Y_N2 + w * this->N * this->simd_inter_frame_level,
+				                   w * this->simd_inter_frame_level);
+
+			if (this->n_inter_frame_rest == 0)
+				this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
+				                   Y_N2 + w * this->N * this->simd_inter_frame_level,
+				                   w * this->simd_inter_frame_level);
+			else
+			{
+				const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
+				std::copy(Y_N1 + waves_off1,
+				          Y_N1 + waves_off1 + this->n_inter_frame_rest * this->N,
+				          this->Y_N1.begin());
+
+				this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * simd_inter_frame_level);
+
+				const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
+				std::copy(this->Y_N2.begin(),
+				          this->Y_N2.begin() + this->n_inter_frame_rest * this->N,
+				          Y_N2 + waves_off2);
+			}
+		}
 		else
 		{
-			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
-			std::copy(Y_N1 + waves_off1,
-			          Y_N1 + waves_off1 + this->n_inter_frame_rest * this->N,
-			          this->Y_N1.begin());
+			const auto w = (frame_id % this->n_frames) / this->simd_inter_frame_level;
+			const auto w_pos = frame_id % this->simd_inter_frame_level;
 
-			this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * simd_inter_frame_level);
+			std::fill(this->Y_N1.begin(), this->Y_N1.end(), (R)0);
+			std::copy(Y_N1 + ((frame_id % this->n_frames) + 0) * this->N,
+			          Y_N1 + ((frame_id % this->n_frames) + 1) * this->N,
+			          this->Y_N1.begin() + w_pos * this->N);
 
-			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
-			std::copy(this->Y_N2.begin(),
-			          this->Y_N2.begin() + this->n_inter_frame_rest * this->N,
-			          Y_N2 + waves_off2);
+			this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * this->simd_inter_frame_level);
+
+			std::copy(this->Y_N2.begin() + (w_pos +0) * this->N,
+			          this->Y_N2.begin() + (w_pos +1) * this->N,
+			          Y_N2 + (frame_id % this->n_frames) * this->N);
 		}
 	}
 

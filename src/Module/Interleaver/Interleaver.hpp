@@ -112,8 +112,8 @@ public:
 
 	inline void interleave(const D *nat, D *itl, const int frame_id = -1) const
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->interleave(nat + f * this->core.get_size(),
@@ -160,8 +160,8 @@ public:
 
 	inline void deinterleave(const D *itl, D *nat, const int frame_id = -1) const
 	{
-		auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		for (auto f = f_start; f < f_stop; f++)
 			this->deinterleave(itl + f * this->core.get_size(),

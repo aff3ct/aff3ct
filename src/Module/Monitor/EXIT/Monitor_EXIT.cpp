@@ -36,8 +36,8 @@ template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id)
 {
-	auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 	for (auto f = f_start; f < f_stop; f++)
 	{
