@@ -57,7 +57,7 @@ float Decoder_maximum_likelihood<B,R>
 	float euclidean_dist = 0.f;
 	for (auto n = 0; n < this->N; n++)
 	{
-		auto tmp = (this->X_N[n] ? -1.f : +1.f) - (float)Y_N[n];
+		auto tmp = (X_N[n] ? -1.f : +1.f) - (float)Y_N[n];
 		euclidean_dist += tmp * tmp;
 		// euclidean_dist += std::abs(tmp); // performance degradation with the abs
 	}
@@ -75,7 +75,7 @@ uint32_t Decoder_maximum_likelihood<B,R>
 	// compute the Hamming distance between the input bits (Y_N) and the current codeword (X_N)
 	uint32_t hamming_dist = 0;
 	for (auto n = 0; n < this->N; n++)
-		hamming_dist += this->X_N[n] != Y_N[n];
+		hamming_dist += X_N[n] != Y_N[n];
 
 	return hamming_dist;
 }
