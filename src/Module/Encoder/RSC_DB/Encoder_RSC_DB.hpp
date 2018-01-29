@@ -42,10 +42,10 @@ public:
 	std::vector<std::vector<int>> get_trellis();
 
 	bool is_codeword(const B *X_N);
+	bool is_buffered() const;
 
 protected:
-	void _encode    (const B *U_K, B *X_N, const int frame_id);
-	void _encode_sys(const B *U_K, B *par, const int frame_id);
+	void _encode(const B *U_K, B *X_N, const int frame_id);
 
 	void __encode_from_state(const B* U_K, B* X_N, const bool only_parity, const int init_state, int& end_state);
 	void __pre_encode(const B* U_K, int& end_state);

@@ -23,9 +23,9 @@ protected:
 
 	std::vector<B> U_K_cpy;
 	std::vector<B> U_K_i;       // internal buffer for the systematic bits in the interleaved domain
+	std::vector<B> X_N_tmp;
 	std::vector<B> par_n;       // internal buffer for the encoded    bits in the natural     domain
 	std::vector<B> par_i;       // internal buffer for the encoded    bits in the interleaved domain
-	std::vector<B> X_N_tmp;
 
 	bool is_codeword(const B *X_N);
 

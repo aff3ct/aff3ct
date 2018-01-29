@@ -251,25 +251,6 @@ void Encoder_RSC_DB<B>
 }
 
 template <typename B>
-void Encoder_RSC_DB<B>
-::_encode_sys(const B *U_K, B *par, const int frame_id)
-{
-	int circ_state, end_state;
-	__pre_encode(U_K, circ_state);
-	int init_state = circ_states[( (this->K/2) % (n_states-1) ) -1][circ_state];
-
-	__encode_from_state(U_K, par, true, init_state, end_state);
-
-	if (init_state != end_state)
-	{
-		std::stringstream message;
-		message << "'end_state' should match 'init_state' ('end_state' = " << end_state
-		        << ", 'init_state' = " << init_state << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-}
-
-template <typename B>
 std::vector<std::vector<int>> Encoder_RSC_DB<B>
 ::get_trellis()
 {
@@ -333,6 +314,13 @@ bool Encoder_RSC_DB<B>
 		return false;
 
 	return true;
+}
+
+template <typename B>
+bool Encoder_RSC_DB<B>
+::is_buffered() const
+{
+	return this->buffered_encoding;
 }
 
 // ==================================================================================== explicit template instantiation 

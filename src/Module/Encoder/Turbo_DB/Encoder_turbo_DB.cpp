@@ -16,11 +16,11 @@ Encoder_turbo_DB<B>
   pi(pi),
   enco_n(enco_n),
   enco_i(enco_i),
-  U_K_cpy(K),
-  U_K_i(K),
+  U_K_cpy(K * this->n_frames),
+  U_K_i(K * this->n_frames),
+  X_N_tmp(N * this->n_frames),
   par_n(K),
-  par_i(K),
-  X_N_tmp(N)
+  par_i(K)
 {
 	const std::string name = "Encoder_turbo_DB";
 	this->set_name(name);
@@ -46,6 +46,14 @@ Encoder_turbo_DB<B>
 		        << pi.get_core().get_size() << ", 'K' = " << K << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	if (!enco_n.is_buffered() || !enco_i.is_buffered())
+	{
+		std::stringstream message;
+		message << "Both 'enco_n.is_buffered()' and 'enco_i.is_buffered()' have to be true ('enco_n.is_buffered()' = " 
+		        << enco_n.is_buffered() << ", 'enco_i.is_buffered()' = " << enco_i.is_buffered() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 // [   AB   ][  WnWi  ][  YnYi  ]
@@ -53,18 +61,29 @@ template <typename B>
 void Encoder_turbo_DB<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	std::copy(U_K, U_K + this->K, U_K_cpy.begin());
+	std::copy(U_K, U_K + this->K, U_K_cpy.begin() + frame_id * this->K);
+
 	for (auto i = 0; i < this->K; i+=4)
-		std::swap(U_K_cpy[i], U_K_cpy[i+1]);
+		std::swap(U_K_cpy[frame_id * this->K +i], U_K_cpy[frame_id * this->K + i +1]);
+
 	for (auto i = 0; i < this->K; i += 2)
 	{
 		const auto l = pi.get_core().get_lut_inv()[i >> 1];
-		U_K_i[i +0] = U_K_cpy[l * 2 +0];
-		U_K_i[i +1] = U_K_cpy[l * 2 +1];
+		U_K_i[frame_id * this->K + i +0] = U_K_cpy[frame_id * this->K + l * 2 +0];
+		U_K_i[frame_id * this->K + i +1] = U_K_cpy[frame_id * this->K + l * 2 +1];
 	}
 
-	enco_n._encode_sys(U_K,          par_n.data(), frame_id);
-	enco_i._encode_sys(U_K_i.data(), par_i.data(), frame_id);
+	enco_n.encode(U_K - frame_id * enco_n.get_K(), X_N_tmp.data(), frame_id);
+
+	std::copy(X_N_tmp.begin() + frame_id * enco_n.get_N() + enco_n.get_K(), 
+	          X_N_tmp.begin() + frame_id * enco_n.get_N() + enco_n.get_N(),
+	          this->par_n.begin());
+
+	enco_i.encode(U_K_i.data() + frame_id * enco_i.get_K(), X_N_tmp.data(), frame_id);
+
+	std::copy(X_N_tmp.begin() + frame_id * enco_i.get_N() + enco_i.get_K(), 
+	          X_N_tmp.begin() + frame_id * enco_i.get_N() + enco_i.get_N(),
+	          this->par_i.begin());
 
 	std::copy(U_K, U_K + this->K, X_N);
 
@@ -108,7 +127,7 @@ bool Encoder_turbo_DB<B>
 		U_K_i[i +0] = U_K_n[l * 2 +0];
 		U_K_i[i +1] = U_K_n[l * 2 +1];
 	}
-	std::copy(U_K_i.begin(), U_K_i.end(), X_N_tmp.begin());
+	std::copy(U_K_i.begin(), U_K_i.begin() + this->K, X_N_tmp.begin());
 
 	auto *X_N_par_i = X_N_tmp.data() + this->K;
 	for (auto i = 0; i < this->K; i+=2) // parity y for interleaver encoders
