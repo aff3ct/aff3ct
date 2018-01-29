@@ -145,7 +145,7 @@ template <typename B>
 module::Encoder_turbo_DB<B>* Encoder_turbo_DB::parameters
 ::build(const module::Interleaver<B> &itl, module::Encoder_RSC_DB<B> &sub_enc) const
 {
-	if (this->type == "TURBO_DB") return new module::Encoder_turbo_DB<B>(this->K, this->N_cw, itl, sub_enc, sub_enc, this->n_frames);
+	if (this->type == "TURBO_DB") return new module::Encoder_turbo_DB<B>(this->K, this->N_cw, itl, sub_enc, sub_enc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

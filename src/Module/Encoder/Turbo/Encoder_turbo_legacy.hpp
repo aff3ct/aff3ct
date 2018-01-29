@@ -22,8 +22,7 @@ protected:
 	std::vector<B>        X_N_i;   // internal buffer for the encoded    bits in the interleaved domain
 
 public:
-	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc,
-	                     const int n_frames = 1);
+	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc);
 	virtual ~Encoder_turbo_legacy() {}
 
 	bool is_codeword(const B *X_N);

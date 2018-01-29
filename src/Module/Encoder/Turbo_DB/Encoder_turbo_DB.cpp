@@ -11,14 +11,14 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_turbo_DB<B>
 ::Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
-                   Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i, const int n_frames)
-: Encoder<B>(K, N, n_frames),
+                   Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i)
+: Encoder<B>(K, N, enco_n.get_n_frames()),
   pi(pi),
   enco_n(enco_n),
   enco_i(enco_i),
-  U_K_cpy(K * this->n_frames),
-  U_K_i(K * this->n_frames),
-  X_N_tmp(N * this->n_frames),
+  U_K_cpy(K * enco_n.get_n_frames()),
+  U_K_i  (K * enco_n.get_n_frames()),
+  X_N_tmp(N * enco_n.get_n_frames()),
   par_n(K),
   par_i(K)
 {
@@ -54,6 +54,14 @@ Encoder_turbo_DB<B>
 		        << enco_n.is_buffered() << ", 'enco_i.is_buffered()' = " << enco_i.is_buffered() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	if (enco_n.get_n_frames() != enco_i.get_n_frames())
+	{
+		std::stringstream message;
+		message << "'enco_n.get_n_frames()' has to be equal to 'enco_i.get_n_frames()' ('enco_n.get_n_frames()' = "
+		        << enco_n.get_n_frames() << ", 'enco_i.get_n_frames()' = " << enco_i.get_n_frames() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 // [   AB   ][  WnWi  ][  YnYi  ]
@@ -79,7 +87,7 @@ void Encoder_turbo_DB<B>
 	          X_N_tmp.begin() + frame_id * enco_n.get_N() + enco_n.get_N(),
 	          this->par_n.begin());
 
-	enco_i.encode(U_K_i.data() + frame_id * enco_i.get_K(), X_N_tmp.data(), frame_id);
+	enco_i.encode(U_K_i.data(), X_N_tmp.data(), frame_id);
 
 	std::copy(X_N_tmp.begin() + frame_id * enco_i.get_N() + enco_i.get_K(), 
 	          X_N_tmp.begin() + frame_id * enco_i.get_N() + enco_i.get_N(),

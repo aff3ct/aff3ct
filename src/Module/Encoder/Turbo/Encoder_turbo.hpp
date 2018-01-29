@@ -24,8 +24,7 @@ protected:
 	std::vector<B> X_N_tmp;
 
 public:
-	Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &enco_n, Encoder<B> &enco_i,
-	              const int n_frames = 1);
+	Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &enco_n, Encoder<B> &enco_i);
 	virtual ~Encoder_turbo() {}
 
 	int tail_length() const;

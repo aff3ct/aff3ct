@@ -31,7 +31,7 @@ protected:
 
 public:
 	Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
-	                 Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i, const int n_frames = 1);
+	                 Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i);
 	virtual ~Encoder_turbo_DB() {}
 
 protected:

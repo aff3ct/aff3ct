@@ -11,13 +11,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc,
-                       const int n_frames)
-: Encoder_turbo<B>(K, N, pi, sub_enc, sub_enc, n_frames),
+::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc)
+: Encoder_turbo<B>(K, N, pi, sub_enc, sub_enc),
   pi(pi),
   sub_enc(sub_enc),
-  X_N_n((2 * (K + sub_enc.tail_length()/2))*n_frames),
-  X_N_i((2 * (K + sub_enc.tail_length()/2))*n_frames)
+  X_N_n((2 * (K + sub_enc.tail_length()/2))*sub_enc.get_n_frames()),
+  X_N_i((2 * (K + sub_enc.tail_length()/2))*sub_enc.get_n_frames())
 {
 	const std::string name = "Encoder_turbo_legacy";
 	this->set_name(name);

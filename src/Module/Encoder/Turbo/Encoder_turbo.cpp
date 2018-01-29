@@ -14,13 +14,13 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_turbo<B>
 ::Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi,
-                Encoder<B> &enco_n, Encoder<B> &enco_i, const int n_frames)
-: Encoder<B>(K, N, n_frames),
+                Encoder<B> &enco_n, Encoder<B> &enco_i)
+: Encoder<B>(K, N, enco_n.get_n_frames()),
   pi        (pi),
   enco_n    (enco_n),
   enco_i    (enco_i),
-  U_K_i     (K * n_frames),
-  X_N_tmp   ((enco_n.get_N() >= enco_i.get_N() ? enco_n.get_N() : enco_i.get_N()) * n_frames)
+  U_K_i     (K * enco_n.get_n_frames()),
+  X_N_tmp   ((enco_n.get_N() >= enco_i.get_N() ? enco_n.get_N() : enco_i.get_N()) * enco_n.get_n_frames())
 {
 	const std::string name = "Encoder_turbo";
 	this->set_name(name);
@@ -42,6 +42,14 @@ Encoder_turbo<B>
 		        << pi.get_core().get_size() << ", 'K' = " << K << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	if (enco_n.get_n_frames() != enco_i.get_n_frames())
+	{
+		std::stringstream message;
+		message << "'enco_n.get_n_frames()' has to be equal to 'enco_i.get_n_frames()' ('enco_n.get_n_frames()' = "
+		        << enco_n.get_n_frames() << ", 'enco_i.get_n_frames()' = " << enco_i.get_n_frames() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>
@@ -61,13 +69,13 @@ void Encoder_turbo<B>
 
 	std::copy(X_N_tmp.data() + frame_id * enco_n.get_N(),
 	          X_N_tmp.data() + frame_id * enco_n.get_N() + enco_n.get_N(),
-	          X_N            - frame_id * this->N);
+	          X_N);
 
 	enco_i.encode(U_K_i.data(), X_N_tmp.data(), frame_id);
 
 	std::copy(X_N_tmp.data() + frame_id * enco_i.get_N() + enco_i.get_K(),
 	          X_N_tmp.data() + frame_id * enco_i.get_N() + enco_i.get_N(),
-	          X_N            - frame_id * this->N + enco_n.get_N());
+	          X_N                                        + enco_n.get_N());
 }
 
 template <typename B>
