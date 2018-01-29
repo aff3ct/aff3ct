@@ -25,6 +25,7 @@ protected:
 	void _decode_hiho_cw(const B *Y_N,  B *V_N, const int frame_id);
 
 	void _decode_siho_cw_recursive(const R *Y_N, B *V_N, const uint32_t n_flips, const uint32_t max_flips);
+	void _decode_hiho_cw_recursive(const B *Y_N, B *V_N, const uint32_t n_flips, const uint32_t max_flips);
 };
 }
 }
