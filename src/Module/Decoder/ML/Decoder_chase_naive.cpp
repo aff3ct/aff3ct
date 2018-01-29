@@ -85,24 +85,22 @@ void Decoder_chase_naive<B,R>
 	{
 		this->min_euclidean_dist = std::numeric_limits<float>::max();
 
-		for (auto n_flips = 0; n_flips <= (int)this->max_flips; n_flips++)
+		if (this->encoder.is_codeword(this->hard_Y_N.data()))
 		{
-			if (n_flips == 0)
-			{
-				if (this->encoder.is_codeword(this->hard_Y_N.data()))
-				{
-					// compute the Euclidean distance between the input LLR and the current codeword
-					auto cur_euclidean_dist = this->compute_euclidean_dist(this->hard_Y_N.data(), Y_N);
+			// compute the Euclidean distance between the input LLR and the current codeword
+			auto cur_euclidean_dist = this->compute_euclidean_dist(this->hard_Y_N.data(), Y_N);
 
-					// update the best codeword
-					if (cur_euclidean_dist < this->min_euclidean_dist)
-					{
-						this->min_euclidean_dist = cur_euclidean_dist;
-						std::copy(this->hard_Y_N.begin(), this->hard_Y_N.begin() + this->N, V_N);
-					}
-				}
+			// update the best codeword
+			if (cur_euclidean_dist < this->min_euclidean_dist)
+			{
+				this->min_euclidean_dist = cur_euclidean_dist;
+				std::copy(this->hard_Y_N.begin(), this->hard_Y_N.begin() + this->N, V_N);
 			}
-			else if (n_flips == 1)
+		}
+
+		for (auto n_flips = 1; n_flips <= (int)this->max_flips; n_flips++)
+		{
+			if (n_flips == 1)
 			{
 				for (auto flip1_pos = 0; flip1_pos < this->N; flip1_pos++)
 				{
