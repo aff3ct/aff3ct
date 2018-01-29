@@ -44,45 +44,35 @@ Encoder_turbo_legacy<B>
 
 template <typename B>
 void Encoder_turbo_legacy<B>
-::encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	if (frame_id != -1)
+	pi.interleave (U_K - frame_id * this->K, this->U_K_i.data(), frame_id);
+	sub_enc.encode(U_K - frame_id * this->K,       X_N_n.data(), frame_id);
+	sub_enc.encode(this->U_K_i.data(),             X_N_i.data(), frame_id);
+
+	const auto off1 = ((3*this->K + (2 * sub_enc.tail_length())) * frame_id) - (frame_id * this->N);
+	const auto off2 =  (2*this->K + (1 * sub_enc.tail_length())) * frame_id;
+	for (auto i = 0; i < this->K; i++)
 	{
-		std::stringstream message;
-		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		X_N[off1 + 3*i +0] = X_N_n[off2 + 2*i +0];
+		X_N[off1 + 3*i +1] = X_N_n[off2 + 2*i +1];
+		X_N[off1 + 3*i +2] = X_N_i[off2 + 2*i +1];
 	}
 
-	pi.interleave (U_K,                this->U_K_i.data(), 0, this->n_frames);
-	sub_enc.encode(U_K,                      X_N_n.data()                   );
-	sub_enc.encode(this->U_K_i.data(),       X_N_i.data()                   );
-
-	for (auto f = 0; f < this->n_frames; f++)
+	const auto off1_tails_n = off1 + 3*this->K;
+	const auto off2_tails_n = off2 + 2*this->K;
+	for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
 	{
-		const auto off1 = (3*this->K + (2 * sub_enc.tail_length())) * f;
-		const auto off2 = (2*this->K + (1 * sub_enc.tail_length())) * f;
-		for (auto i = 0; i < this->K; i++)
-		{
-			X_N[off1 + 3*i +0] = X_N_n[off2 + 2*i +0];
-			X_N[off1 + 3*i +1] = X_N_n[off2 + 2*i +1];
-			X_N[off1 + 3*i +2] = X_N_i[off2 + 2*i +1];
-		}
+		X_N[off1_tails_n + 2*i +0] = X_N_n[off2_tails_n + 2*i +0];
+		X_N[off1_tails_n + 2*i +1] = X_N_n[off2_tails_n + 2*i +1];
+	}
 
-		const auto off1_tails_n = off1 + 3*this->K;
-		const auto off2_tails_n = off2 + 2*this->K;
-		for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
-		{
-			X_N[off1_tails_n + 2*i +0] = X_N_n[off2_tails_n + 2*i +0];
-			X_N[off1_tails_n + 2*i +1] = X_N_n[off2_tails_n + 2*i +1];
-		}
-
-		const auto off1_tails_i = off1_tails_n + sub_enc.tail_length();
-		const auto off2_tails_i = off2_tails_n;
-		for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
-		{
-			X_N[off1_tails_i + 2*i +0] = X_N_i[off2_tails_i + 2*i +0];
-			X_N[off1_tails_i + 2*i +1] = X_N_i[off2_tails_i + 2*i +1];
-		}
+	const auto off1_tails_i = off1_tails_n + sub_enc.tail_length();
+	const auto off2_tails_i = off2_tails_n;
+	for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
+	{
+		X_N[off1_tails_i + 2*i +0] = X_N_i[off2_tails_i + 2*i +0];
+		X_N[off1_tails_i + 2*i +1] = X_N_i[off2_tails_i + 2*i +1];
 	}
 }
 
