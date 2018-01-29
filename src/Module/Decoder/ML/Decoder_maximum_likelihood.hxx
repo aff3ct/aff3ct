@@ -51,7 +51,7 @@ Decoder_maximum_likelihood<B,R>
 
 template <typename B, typename R>
 float Decoder_maximum_likelihood<B,R>
-::compute_euclidean_dist(const B *X_N, const R *Y_N)
+::compute_euclidean_dist(const B *X_N, const R *Y_N) const
 {
 	// compute the Euclidean distance between the LLR (Y_N) and the current codeword (X_N)
 	float euclidean_dist = 0.f;
@@ -70,7 +70,7 @@ float Decoder_maximum_likelihood<B,R>
 
 template <typename B, typename R>
 uint32_t Decoder_maximum_likelihood<B,R>
-::compute_hamming_dist(const B *X_N, const B *Y_N)
+::compute_hamming_dist(const B *X_N, const B *Y_N) const
 {
 	// compute the Hamming distance between the input bits (Y_N) and the current codeword (X_N)
 	uint32_t hamming_dist = 0;
@@ -82,7 +82,7 @@ uint32_t Decoder_maximum_likelihood<B,R>
 
 template <typename B, typename R>
 uint32_t Decoder_maximum_likelihood<B,R>
-::compute_hamming_dist_soft(const B *X_N, const R *Y_N)
+::compute_hamming_dist_soft(const B *X_N, const R *Y_N) const
 {
 	// compute the Hamming distance between the input bits (Y_N) and the current codeword (X_N)
 	uint32_t hamming_dist = 0;

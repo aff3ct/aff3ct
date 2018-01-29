@@ -214,7 +214,7 @@ void Decoder_turbo::parameters<D1,D2>
 
 	itl->get_headers(headers, full);
 
-	if (this->type != "ML")
+	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
 		

@@ -101,7 +101,7 @@ void Decoder_RA::parameters
 
 	itl->get_headers(headers, full);
 
-	if (this->type != "ML")
+	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
 		

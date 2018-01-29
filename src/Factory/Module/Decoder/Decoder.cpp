@@ -1,5 +1,6 @@
 #include "Module/Decoder/ML/Decoder_maximum_likelihood_std.hpp"
 #include "Module/Decoder/ML/Decoder_maximum_likelihood_naive.hpp"
+#include "Module/Decoder/ML/Decoder_chase_naive.hpp"
 
 #include "Decoder.hpp"
 
@@ -46,16 +47,20 @@ void Decoder::parameters
 	opt_args[{p+"-type", "D"}] =
 		{"string",
 		 "select the algorithm you want to decode the codeword.",
-		 "ML"};
+		 "ML, CHASE"};
 
 	opt_args[{p+"-implem"}] =
 		{"string",
 		 "select the implementation of the algorithm to decode.",
 		 "STD, NAIVE"};
 
-	opt_args[{p+"-ml-hamming"}] =
+	opt_args[{p+"-hamming"}] =
 		{"",
-		 "enable the computation of the Hamming distance instead of the Euclidean distance in the ML decoder."};
+		 "enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders."};
+
+	opt_args[{p+"-flips"}] =
+		{"strictly_positive_int",
+		 "set the maximum number of flips in the CHASE decoder."};
 }
 
 void Decoder::parameters
@@ -66,10 +71,11 @@ void Decoder::parameters
 	if(exist(vals, {p+"-info-bits", "K"})) this->K          = std::stoi(vals.at({p+"-info-bits", "K"}));
 	if(exist(vals, {p+"-cw-size",   "N"})) this->N_cw       = std::stoi(vals.at({p+"-cw-size",   "N"}));
 	if(exist(vals, {p+"-fra",       "F"})) this->n_frames   = std::stoi(vals.at({p+"-fra",       "F"}));
+	if(exist(vals, {p+"-flips"         })) this->flips      = std::stoi(vals.at({p+"-flips"         }));
 	if(exist(vals, {p+"-type",      "D"})) this->type       =           vals.at({p+"-type",      "D"});
 	if(exist(vals, {p+"-implem"        })) this->implem     =           vals.at({p+"-implem"        });
 	if(exist(vals, {p+"-no-sys"        })) this->systematic = false;
-	if(exist(vals, {p+"-ml-hamming"    })) this->ml_hamming = true;
+	if(exist(vals, {p+"-hamming"       })) this->hamming    = true;
 
 	this->R = (float)this->K / (float)this->N_cw;
 }
@@ -86,7 +92,10 @@ void Decoder::parameters
 	if (full) headers[p].push_back(std::make_pair("Code rate (R)", std::to_string(this->R)));
 	headers[p].push_back(std::make_pair("Systematic", ((this->systematic) ? "yes" : "no")));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
-	if(this->type == "ML") headers[p].push_back(std::make_pair("Distance", this->ml_hamming ? "Hamming" : "Euclidean"));
+	if(this->type == "ML" || this->type == "CHASE") 
+		headers[p].push_back(std::make_pair("Distance", this->hamming ? "Hamming" : "Euclidean"));
+	if(this->type == "CHASE")
+		headers[p].push_back(std::make_pair("Max flips", std::to_string(this->flips)));
 }
 
 template <typename B, typename Q>
@@ -97,8 +106,12 @@ module::Decoder_SIHO<B,Q>* Decoder::parameters
 	{
 		if (this->type == "ML") 
 		{
-			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->ml_hamming, this->n_frames);
-			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->ml_hamming, this->n_frames);
+			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
+			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
+		}
+		else if (this->type == "CHASE")
+		{
+			if (this->implem == "NAIVE") return new module::Decoder_chase_naive<B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
 		}
 	}
 	

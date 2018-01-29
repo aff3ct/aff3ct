@@ -166,7 +166,7 @@ void Decoder_turbo_DB::parameters
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	if (this->type != "ML")
+	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
 		

@@ -28,9 +28,10 @@ struct Decoder : Factory
 		std::string type        = "ML";
 		std::string implem      = "STD";
 		bool        systematic  = true;
-		bool        ml_hamming  = false;
+		bool        hamming     = false;
 		int         n_frames    = 1;
 		int         tail_length = 0;
+		int         flips       = 3;
 
 		// deduced parameters
 		float       R           = -1.f;
