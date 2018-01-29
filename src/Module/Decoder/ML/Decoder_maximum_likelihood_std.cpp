@@ -73,16 +73,7 @@ void Decoder_maximum_likelihood_std<B,R>
 			auto data = (uint64_t*)this->U_K.data();
 			data[0] = u;
 			tools::Bit_packer<B>::unpack(this->U_K.data(), this->K);
-			this->encoder.encode(this->U_K.data(), this->X_N.data());
-
-			// // DEBUG CODE (BEGIN)
-			// if (this->encoder.is_codeword(this->X_N.data()))
-			// 	std::cout << "It is a codeword :-)" << std::endl;
-			// else
-			// 	std::cout << "It is not a codeword :-(" << std::endl;
-			// if (u == 10)
-			// 	std::exit(-1);
-			// // DEBUG CODE (END)
+			this->encoder.encode(this->U_K.data(), this->X_N.data(), 0);
 
 			// compute the Euclidean distance between the input LLR and the current codeword
 			auto cur_euclidean_dist = this->compute_euclidean_dist(this->X_N.data(), Y_N);
@@ -124,7 +115,7 @@ void Decoder_maximum_likelihood_std<B,R>
 		auto data = (uint64_t*)this->U_K.data();
 		data[0] = u;
 		tools::Bit_packer<B>::unpack(this->U_K.data(), this->K);
-		this->encoder.encode(this->U_K.data(), this->X_N.data());
+		this->encoder.encode(this->U_K.data(), this->X_N.data(), 0);
 
 		// compute the Hamming distance between the input bits and the current codeword
 		auto cur_hamming_dist = this->compute_hamming_dist(this->X_N.data(), Y_N);

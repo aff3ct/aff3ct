@@ -41,14 +41,6 @@ Decoder_maximum_likelihood<B,R>
 		        << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	if (encoder.get_n_frames() != 1)
-	{
-		std::stringstream message;
-		message << "'encoder.get_n_frames()' has to be equal to 1 ('encoder.get_n_frames()' = " 
-		        << encoder.get_n_frames() << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 }
 
 template <typename B, typename R>
