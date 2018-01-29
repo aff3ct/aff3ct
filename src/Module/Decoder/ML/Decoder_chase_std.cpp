@@ -85,10 +85,9 @@ template <typename B, typename R>
 void Decoder_chase_std<B,R>
 ::_decode_hiho_cw_recursive(const B *Y_N, B *V_N, const uint32_t n_flips, const uint32_t max_flips)
 {
-	// TODO: /!\ there is a bug in this code !!!
 	if (n_flips == max_flips)
 	{
-		std::copy(Y_N, Y_N + this->K, this->X_N.begin());
+		std::copy(Y_N, Y_N + this->N, this->X_N.begin());
 
 		// flip the bits
 		for (uint32_t f = 0; f < max_flips; f++)
@@ -125,7 +124,6 @@ void Decoder_chase_std<B,R>
 
 	if (this->hamming)
 	{
-		// TODO: /!\ there is a bug in this code !!! (_decode_hiho_cw)
 		this->_decode_hiho_cw(this->hard_Y_N.data(), V_N, frame_id);
 	}
 	else
@@ -154,7 +152,6 @@ template <typename B, typename R>
 void Decoder_chase_std<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
-	// TODO: /!\ there is a bug in this code !!!
 	if (!this->encoder.is_sys())
 	{
 		std::stringstream message;
@@ -173,7 +170,6 @@ template <typename B, typename R>
 void Decoder_chase_std<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
-	// TODO: /!\ there is a bug in this code !!!
 	this->min_hamming_dist = std::numeric_limits<uint32_t>::max();
 
 	if (this->encoder.is_codeword(Y_N))
