@@ -13,10 +13,8 @@ class Decoder_chase_naive : public Decoder_maximum_likelihood<B,R>
 protected:
 	const uint32_t max_flips;
 	const bool hamming;
-	uint64_t x_max;
 	float min_euclidean_dist;
 	uint32_t min_hamming_dist;
-	
 
 public:
 	Decoder_chase_naive(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips = 3, 

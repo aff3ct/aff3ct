@@ -18,32 +18,19 @@ Decoder_chase_naive<B,R>
   Decoder_maximum_likelihood<B,R>(K, N, encoder, n_frames   ),
   max_flips(max_flips),
   hamming(hamming),
-  x_max(0),
   min_euclidean_dist(std::numeric_limits<float>::max()),
   min_hamming_dist(std::numeric_limits<uint32_t>::max())
 {
 	const std::string name = "Decoder_chase_naive";
 	this->set_name(name);
 
-	if (N > 64)
+	if (max_flips > (uint32_t)N)
 	{
 		std::stringstream message;
-		message << "'N' has to be smaller or equal to 64 ('N' = " << N << ").";
+		message << "'max_flips' has to be smaller or equal to 'N' ('max_flips' = " << max_flips 
+		        << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	if (max_flips == 0)
-	{
-		std::stringstream message;
-		message << "'max_flips' has to be bigger than 0 ('max_flips' = " << max_flips << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	// determine the maximum sequence 'x' of codeword bits
-	if (N == 64)
-		this->x_max = std::numeric_limits<uint64_t>::max();
-	else
-		this->x_max = ((uint64_t)1 << (uint64_t)(N)) -1;
 }
 
 template <typename B, typename R>
@@ -105,7 +92,7 @@ void Decoder_chase_naive<B,R>
 				for (auto flip1_pos = 0; flip1_pos < this->N; flip1_pos++)
 				{
 					std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
-					this->X_N[flip1_pos] = this->X_N[flip1_pos] ? (B)0 : (B)1;
+					this->X_N[flip1_pos] = !this->X_N[flip1_pos];
 
 					if (this->encoder.is_codeword(this->X_N.data()))
 					{
@@ -127,8 +114,8 @@ void Decoder_chase_naive<B,R>
 					for (auto flip2_pos = flip1_pos +1; flip2_pos < this->N; flip2_pos++)
 					{
 						std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
-						this->X_N[flip1_pos] = this->X_N[flip1_pos] ? (B)0 : (B)1;
-						this->X_N[flip2_pos] = this->X_N[flip2_pos] ? (B)0 : (B)1;
+						this->X_N[flip1_pos] = !this->X_N[flip1_pos];
+						this->X_N[flip2_pos] = !this->X_N[flip2_pos];
 
 						if (this->encoder.is_codeword(this->X_N.data()))
 						{
@@ -151,9 +138,9 @@ void Decoder_chase_naive<B,R>
 						for (auto flip3_pos = flip2_pos +1; flip3_pos < this->N; flip3_pos++)
 						{
 							std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
-							this->X_N[flip1_pos] = this->X_N[flip1_pos] ? (B)0 : (B)1;
-							this->X_N[flip2_pos] = this->X_N[flip2_pos] ? (B)0 : (B)1;
-							this->X_N[flip3_pos] = this->X_N[flip3_pos] ? (B)0 : (B)1;
+							this->X_N[flip1_pos] = !this->X_N[flip1_pos];
+							this->X_N[flip2_pos] = !this->X_N[flip2_pos];
+							this->X_N[flip3_pos] = !this->X_N[flip3_pos];
 
 							if (this->encoder.is_codeword(this->X_N.data()))
 							{
@@ -177,10 +164,10 @@ void Decoder_chase_naive<B,R>
 							for (auto flip4_pos = flip3_pos +1; flip4_pos < this->N; flip4_pos++)
 							{
 								std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
-								this->X_N[flip1_pos] = this->X_N[flip1_pos] ? (B)0 : (B)1;
-								this->X_N[flip2_pos] = this->X_N[flip2_pos] ? (B)0 : (B)1;
-								this->X_N[flip3_pos] = this->X_N[flip3_pos] ? (B)0 : (B)1;
-								this->X_N[flip4_pos] = this->X_N[flip4_pos] ? (B)0 : (B)1;
+								this->X_N[flip1_pos] = !this->X_N[flip1_pos];
+								this->X_N[flip2_pos] = !this->X_N[flip2_pos];
+								this->X_N[flip3_pos] = !this->X_N[flip3_pos];
+								this->X_N[flip4_pos] = !this->X_N[flip4_pos];
 								
 								if (this->encoder.is_codeword(this->X_N.data()))
 								{

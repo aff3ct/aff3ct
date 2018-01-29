@@ -1,6 +1,7 @@
 #include "Module/Decoder/ML/Decoder_maximum_likelihood_std.hpp"
 #include "Module/Decoder/ML/Decoder_maximum_likelihood_naive.hpp"
 #include "Module/Decoder/ML/Decoder_chase_naive.hpp"
+#include "Module/Decoder/ML/Decoder_chase_std.hpp"
 
 #include "Decoder.hpp"
 
@@ -112,6 +113,7 @@ module::Decoder_SIHO<B,Q>* Decoder::parameters
 		else if (this->type == "CHASE")
 		{
 			if (this->implem == "NAIVE") return new module::Decoder_chase_naive<B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
+			if (this->implem == "STD"  ) return new module::Decoder_chase_std  <B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
 		}
 	}
 	
