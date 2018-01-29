@@ -59,6 +59,24 @@ void Decoder_chase_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_naive<B,R>
+::_try_sequence(const R *Y_N, const B *X_N, B *V_N)
+{
+	if (this->encoder.is_codeword(X_N))
+	{
+		// compute the Euclidean distance between the input LLR and the current codeword
+		auto cur_euclidean_dist = this->compute_euclidean_dist(X_N, Y_N);
+
+		// update the best codeword
+		if (cur_euclidean_dist < this->min_euclidean_dist)
+		{
+			this->min_euclidean_dist = cur_euclidean_dist;
+			std::copy(X_N, X_N + this->N, V_N);
+		}
+	}
+}
+
+template <typename B, typename R>
+void Decoder_chase_naive<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->hard_Y_N.data(), this->N);
@@ -72,18 +90,7 @@ void Decoder_chase_naive<B,R>
 	{
 		this->min_euclidean_dist = std::numeric_limits<float>::max();
 
-		if (this->encoder.is_codeword(this->hard_Y_N.data()))
-		{
-			// compute the Euclidean distance between the input LLR and the current codeword
-			auto cur_euclidean_dist = this->compute_euclidean_dist(this->hard_Y_N.data(), Y_N);
-
-			// update the best codeword
-			if (cur_euclidean_dist < this->min_euclidean_dist)
-			{
-				this->min_euclidean_dist = cur_euclidean_dist;
-				std::copy(this->hard_Y_N.begin(), this->hard_Y_N.begin() + this->N, V_N);
-			}
-		}
+		this->_try_sequence(Y_N, this->hard_Y_N.data(), V_N);
 
 		for (auto n_flips = 1; n_flips <= (int)this->max_flips; n_flips++)
 		{
@@ -94,18 +101,7 @@ void Decoder_chase_naive<B,R>
 					std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
 					this->X_N[flip1_pos] = !this->X_N[flip1_pos];
 
-					if (this->encoder.is_codeword(this->X_N.data()))
-					{
-						// compute the Euclidean distance between the input LLR and the current codeword
-						auto cur_euclidean_dist = this->compute_euclidean_dist(this->X_N.data(), Y_N);
-
-						// update the best codeword
-						if (cur_euclidean_dist < this->min_euclidean_dist)
-						{
-							this->min_euclidean_dist = cur_euclidean_dist;
-							std::copy(this->X_N.begin(), this->X_N.begin() + this->N, V_N);
-						}
-					}
+					this->_try_sequence(Y_N, this->X_N.data(), V_N);
 				}
 			}
 			else if (n_flips == 2)
@@ -117,18 +113,7 @@ void Decoder_chase_naive<B,R>
 						this->X_N[flip1_pos] = !this->X_N[flip1_pos];
 						this->X_N[flip2_pos] = !this->X_N[flip2_pos];
 
-						if (this->encoder.is_codeword(this->X_N.data()))
-						{
-							// compute the Euclidean distance between the input LLR and the current codeword
-							auto cur_euclidean_dist = this->compute_euclidean_dist(this->X_N.data(), Y_N);
-
-							// update the best codeword
-							if (cur_euclidean_dist < this->min_euclidean_dist)
-							{
-								this->min_euclidean_dist = cur_euclidean_dist;
-								std::copy(this->X_N.begin(), this->X_N.begin() + this->N, V_N);
-							}
-						}
+						this->_try_sequence(Y_N, this->X_N.data(), V_N);
 					}
 			}
 			else if (n_flips == 3)
@@ -142,18 +127,7 @@ void Decoder_chase_naive<B,R>
 							this->X_N[flip2_pos] = !this->X_N[flip2_pos];
 							this->X_N[flip3_pos] = !this->X_N[flip3_pos];
 
-							if (this->encoder.is_codeword(this->X_N.data()))
-							{
-								// compute the Euclidean distance between the input LLR and the current codeword
-								auto cur_euclidean_dist = this->compute_euclidean_dist(this->X_N.data(), Y_N);
-
-								// update the best codeword
-								if (cur_euclidean_dist < this->min_euclidean_dist)
-								{
-									this->min_euclidean_dist = cur_euclidean_dist;
-									std::copy(this->X_N.begin(), this->X_N.begin() + this->N, V_N);
-								}
-							}
+							this->_try_sequence(Y_N, this->X_N.data(), V_N);
 						}
 			}
 			else if (n_flips == 4)
@@ -168,20 +142,147 @@ void Decoder_chase_naive<B,R>
 								this->X_N[flip2_pos] = !this->X_N[flip2_pos];
 								this->X_N[flip3_pos] = !this->X_N[flip3_pos];
 								this->X_N[flip4_pos] = !this->X_N[flip4_pos];
-								
-								if (this->encoder.is_codeword(this->X_N.data()))
-								{
-									// compute the Euclidean distance between the input LLR and the current codeword
-									auto cur_euclidean_dist = this->compute_euclidean_dist(this->X_N.data(), Y_N);
 
-									// update the best codeword
-									if (cur_euclidean_dist < this->min_euclidean_dist)
-									{
-										this->min_euclidean_dist = cur_euclidean_dist;
-										std::copy(this->X_N.begin(), this->X_N.begin() + this->N, V_N);
-									}
-								}
+								this->_try_sequence(Y_N, this->X_N.data(), V_N);
 							}
+			}
+			else if (n_flips == 5)
+			{
+				for (auto flip1_pos = 0; flip1_pos < this->N; flip1_pos++)
+					for (auto flip2_pos = flip1_pos +1; flip2_pos < this->N; flip2_pos++)
+						for (auto flip3_pos = flip2_pos +1; flip3_pos < this->N; flip3_pos++)
+							for (auto flip4_pos = flip3_pos +1; flip4_pos < this->N; flip4_pos++)
+								for (auto flip5_pos = flip4_pos +1; flip5_pos < this->N; flip5_pos++)
+								{
+									std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
+									this->X_N[flip1_pos] = !this->X_N[flip1_pos];
+									this->X_N[flip2_pos] = !this->X_N[flip2_pos];
+									this->X_N[flip3_pos] = !this->X_N[flip3_pos];
+									this->X_N[flip4_pos] = !this->X_N[flip4_pos];
+									this->X_N[flip5_pos] = !this->X_N[flip5_pos];
+
+									this->_try_sequence(Y_N, this->X_N.data(), V_N);
+								}
+			}
+			else if (n_flips == 6)
+			{
+				for (auto flip1_pos = 0; flip1_pos < this->N; flip1_pos++)
+					for (auto flip2_pos = flip1_pos +1; flip2_pos < this->N; flip2_pos++)
+						for (auto flip3_pos = flip2_pos +1; flip3_pos < this->N; flip3_pos++)
+							for (auto flip4_pos = flip3_pos +1; flip4_pos < this->N; flip4_pos++)
+								for (auto flip5_pos = flip4_pos +1; flip5_pos < this->N; flip5_pos++)
+									for (auto flip6_pos = flip5_pos +1; flip6_pos < this->N; flip6_pos++)
+									{
+										std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
+										this->X_N[flip1_pos] = !this->X_N[flip1_pos];
+										this->X_N[flip2_pos] = !this->X_N[flip2_pos];
+										this->X_N[flip3_pos] = !this->X_N[flip3_pos];
+										this->X_N[flip4_pos] = !this->X_N[flip4_pos];
+										this->X_N[flip5_pos] = !this->X_N[flip5_pos];
+										this->X_N[flip6_pos] = !this->X_N[flip6_pos];
+
+										this->_try_sequence(Y_N, this->X_N.data(), V_N);
+									}
+			}
+			else if (n_flips == 7)
+			{
+				for (auto flip1_pos = 0; flip1_pos < this->N; flip1_pos++)
+					for (auto flip2_pos = flip1_pos +1; flip2_pos < this->N; flip2_pos++)
+						for (auto flip3_pos = flip2_pos +1; flip3_pos < this->N; flip3_pos++)
+							for (auto flip4_pos = flip3_pos +1; flip4_pos < this->N; flip4_pos++)
+								for (auto flip5_pos = flip4_pos +1; flip5_pos < this->N; flip5_pos++)
+									for (auto flip6_pos = flip5_pos +1; flip6_pos < this->N; flip6_pos++)
+										for (auto flip7_pos = flip6_pos +1; flip7_pos < this->N; flip7_pos++)
+										{
+											std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
+											this->X_N[flip1_pos] = !this->X_N[flip1_pos];
+											this->X_N[flip2_pos] = !this->X_N[flip2_pos];
+											this->X_N[flip3_pos] = !this->X_N[flip3_pos];
+											this->X_N[flip4_pos] = !this->X_N[flip4_pos];
+											this->X_N[flip5_pos] = !this->X_N[flip5_pos];
+											this->X_N[flip6_pos] = !this->X_N[flip6_pos];
+											this->X_N[flip7_pos] = !this->X_N[flip7_pos];
+
+											this->_try_sequence(Y_N, this->X_N.data(), V_N);
+										}
+			}
+			else if (n_flips == 8)
+			{
+				for (auto flip1_pos = 0; flip1_pos < this->N; flip1_pos++)
+					for (auto flip2_pos = flip1_pos +1; flip2_pos < this->N; flip2_pos++)
+						for (auto flip3_pos = flip2_pos +1; flip3_pos < this->N; flip3_pos++)
+							for (auto flip4_pos = flip3_pos +1; flip4_pos < this->N; flip4_pos++)
+								for (auto flip5_pos = flip4_pos +1; flip5_pos < this->N; flip5_pos++)
+									for (auto flip6_pos = flip5_pos +1; flip6_pos < this->N; flip6_pos++)
+										for (auto flip7_pos = flip6_pos +1; flip7_pos < this->N; flip7_pos++)
+											for (auto flip8_pos = flip7_pos +1; flip8_pos < this->N; flip8_pos++)
+											{
+												std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
+												this->X_N[flip1_pos] = !this->X_N[flip1_pos];
+												this->X_N[flip2_pos] = !this->X_N[flip2_pos];
+												this->X_N[flip3_pos] = !this->X_N[flip3_pos];
+												this->X_N[flip4_pos] = !this->X_N[flip4_pos];
+												this->X_N[flip5_pos] = !this->X_N[flip5_pos];
+												this->X_N[flip6_pos] = !this->X_N[flip6_pos];
+												this->X_N[flip7_pos] = !this->X_N[flip7_pos];
+												this->X_N[flip8_pos] = !this->X_N[flip8_pos];
+
+												this->_try_sequence(Y_N, this->X_N.data(), V_N);
+											}
+			}
+			else if (n_flips == 9)
+			{
+				for (auto flip1_pos = 0; flip1_pos < this->N; flip1_pos++)
+					for (auto flip2_pos = flip1_pos +1; flip2_pos < this->N; flip2_pos++)
+						for (auto flip3_pos = flip2_pos +1; flip3_pos < this->N; flip3_pos++)
+							for (auto flip4_pos = flip3_pos +1; flip4_pos < this->N; flip4_pos++)
+								for (auto flip5_pos = flip4_pos +1; flip5_pos < this->N; flip5_pos++)
+									for (auto flip6_pos = flip5_pos +1; flip6_pos < this->N; flip6_pos++)
+										for (auto flip7_pos = flip6_pos +1; flip7_pos < this->N; flip7_pos++)
+											for (auto flip8_pos = flip7_pos +1; flip8_pos < this->N; flip8_pos++)
+												for (auto flip9_pos = flip8_pos +1; flip9_pos < this->N; flip9_pos++)
+												{
+													std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
+													this->X_N[flip1_pos] = !this->X_N[flip1_pos];
+													this->X_N[flip2_pos] = !this->X_N[flip2_pos];
+													this->X_N[flip3_pos] = !this->X_N[flip3_pos];
+													this->X_N[flip4_pos] = !this->X_N[flip4_pos];
+													this->X_N[flip5_pos] = !this->X_N[flip5_pos];
+													this->X_N[flip6_pos] = !this->X_N[flip6_pos];
+													this->X_N[flip7_pos] = !this->X_N[flip7_pos];
+													this->X_N[flip8_pos] = !this->X_N[flip8_pos];
+													this->X_N[flip9_pos] = !this->X_N[flip9_pos];
+
+													this->_try_sequence(Y_N, this->X_N.data(), V_N);
+												}
+			}
+			else if (n_flips == 10)
+			{
+				for (auto flip1_pos = 0; flip1_pos < this->N; flip1_pos++)
+					for (auto flip2_pos = flip1_pos +1; flip2_pos < this->N; flip2_pos++)
+						for (auto flip3_pos = flip2_pos +1; flip3_pos < this->N; flip3_pos++)
+							for (auto flip4_pos = flip3_pos +1; flip4_pos < this->N; flip4_pos++)
+								for (auto flip5_pos = flip4_pos +1; flip5_pos < this->N; flip5_pos++)
+									for (auto flip6_pos = flip5_pos +1; flip6_pos < this->N; flip6_pos++)
+										for (auto flip7_pos = flip6_pos +1; flip7_pos < this->N; flip7_pos++)
+											for (auto flip8_pos = flip7_pos +1; flip8_pos < this->N; flip8_pos++)
+												for (auto flip9_pos = flip8_pos +1; flip9_pos < this->N; flip9_pos++)
+													for (auto flip10_pos = flip9_pos +1; flip10_pos < this->N; flip10_pos++)
+													{
+														std::copy(this->hard_Y_N.begin(), this->hard_Y_N.end(), this->X_N.begin());
+														this->X_N[flip1_pos ] = !this->X_N[flip1_pos ];
+														this->X_N[flip2_pos ] = !this->X_N[flip2_pos ];
+														this->X_N[flip3_pos ] = !this->X_N[flip3_pos ];
+														this->X_N[flip4_pos ] = !this->X_N[flip4_pos ];
+														this->X_N[flip5_pos ] = !this->X_N[flip5_pos ];
+														this->X_N[flip6_pos ] = !this->X_N[flip6_pos ];
+														this->X_N[flip7_pos ] = !this->X_N[flip7_pos ];
+														this->X_N[flip8_pos ] = !this->X_N[flip8_pos ];
+														this->X_N[flip9_pos ] = !this->X_N[flip9_pos ];
+														this->X_N[flip10_pos] = !this->X_N[flip10_pos];
+
+														this->_try_sequence(Y_N, this->X_N.data(), V_N);
+													}
 			}
 			else
 			{
