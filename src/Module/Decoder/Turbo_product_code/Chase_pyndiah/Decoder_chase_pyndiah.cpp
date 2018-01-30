@@ -7,6 +7,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/compute_parity.h"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
@@ -15,18 +16,18 @@ template <typename B, typename R>
 Decoder_chase_pyndiah<B,R>
 ::Decoder_chase_pyndiah(const int& n_ite,
                         const Interleaver<R> &pi,
-                        Decoder_HIHO<B> &hiho_n,
-                        Decoder_HIHO<B> &hiho_i,
+                        Decoder_HIHO<B> &hiho_r,
+                        Decoder_HIHO<B> &hiho_c,
 	                    const R alpha_,
                         const int n_least_reliable_positions_,
                         const int n_competitors_)
-: Decoder(hiho_n.get_K() * hiho_i.get_K(), pi.get_core().get_size(), hiho_n.get_n_frames(), hiho_n.get_simd_inter_frame_level()),
-  Decoder_turbo_product_code<B,R>(n_ite, pi, hiho_n, hiho_i),
+: Decoder(hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
+  Decoder_turbo_product_code<B,R>(n_ite, pi, hiho_r, hiho_c),
 
   alpha                     (alpha_                                          ),
   n_least_reliable_positions(n_least_reliable_positions_                     ),
   least_reliable_pos        (n_least_reliable_positions                      ),
-  hard_Rprime               (std::max(hiho_n.get_N(), hiho_i.get_N())        ),
+  hard_Rprime               (std::max(hiho_r.get_N(), hiho_c.get_N())        ),
   n_test_vectors            ((int)1 << n_least_reliable_positions            ),
   test_vect                 (n_test_vectors * hard_Rprime.size()             ),
   metrics                   (n_test_vectors                                  ),
@@ -36,11 +37,11 @@ Decoder_chase_pyndiah<B,R>
 	const std::string name = "Decoder_chase_pyndiah";
 	this->set_name(name);
 
-	if (n_least_reliable_positions <= 0 || n_least_reliable_positions >= hiho_n.get_N() || n_least_reliable_positions >= hiho_i.get_N())
+	if (n_least_reliable_positions <= 0 || n_least_reliable_positions >= hiho_r.get_N() || n_least_reliable_positions >= hiho_c.get_N())
 	{
 		std::stringstream message;
-		message << "'n_least_reliable_positions' has to be positive and lower than 'hiho_n.get_N()' and 'hiho_i.get_N()' ('n_least_reliable_positions' = "
-		        << n_least_reliable_positions << ", 'hiho_i.get_N()' = " << hiho_i.get_N() << " and 'hiho_n.get_N()' = " << hiho_n.get_N() << ").";
+		message << "'n_least_reliable_positions' has to be positive and lower than 'hiho_r.get_N()' and 'hiho_c.get_N()' ('n_least_reliable_positions' = "
+		        << n_least_reliable_positions << ", 'hiho_c.get_N()' = " << hiho_c.get_N() << " and 'hiho_r.get_N()' = " << hiho_r.get_N() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -61,8 +62,8 @@ template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
 ::_decode(const R *Y_N, int return_K_siso)
 {
-	const int n_cols = this->hiho_n.get_N() + (this->parity_extended ? 1 : 0);
-	const int n_rows = this->hiho_i.get_N() + (this->parity_extended ? 1 : 0);
+	const int n_cols = this->hiho_r.get_N() + (this->parity_extended ? 1 : 0);
+	const int n_rows = this->hiho_c.get_N() + (this->parity_extended ? 1 : 0);
 
 
 	for (int i = 0; i < this->n_ite; i++)
@@ -71,7 +72,7 @@ void Decoder_chase_pyndiah<B,R>
 
 		// decode each col
 		for (int j = 0; j < n_cols; j++)
-			_decode_row_siso(Y_N, this->Y_N_pi.data() + j*n_rows, this->Y_N_pi.data() + j*n_rows, this->hiho_i, n_rows); // overwrite Y_N_pi
+			_decode_row_siso(Y_N, this->Y_N_pi.data() + j*n_rows, this->Y_N_pi.data() + j*n_rows, this->hiho_c, n_rows); // overwrite Y_N_pi
 
 
 		this->pi.deinterleave(this->Y_N_pi.data(), this->Y_N_i.data(), 0, 1); // rows go back as columns
@@ -82,18 +83,18 @@ void Decoder_chase_pyndiah<B,R>
 		{
 			for (int j = 0; j < n_rows; j++)
 			{
-				_decode_row_siso(Y_N, this->Y_N_i.data() + j*n_cols, this->Y_N_i.data() + j*n_cols, this->hiho_n, n_cols); // overwrite Y_N_i
+				_decode_row_siso(Y_N, this->Y_N_i.data() + j*n_cols, this->Y_N_i.data() + j*n_cols, this->hiho_r, n_cols); // overwrite Y_N_i
 			}
 		}
 		else if(return_K_siso == 0)
 		{
-			for (int j = 0; j < this->hiho_i.get_K(); j++)
-				_decode_row_siho(Y_N, this->Y_N_i.data() + j*n_cols, this->V_K_i.data() + j*this->hiho_n.get_K(), this->hiho_n, n_cols, true);
+			for (int j = 0; j < this->hiho_c.get_K(); j++)
+				_decode_row_siho(Y_N, this->Y_N_i.data() + j*n_cols, this->V_K_i.data() + j*this->hiho_r.get_K(), this->hiho_r, n_cols, true);
 		}
 		else if (return_K_siso == 1)
 		{
 			for (int j = 0; j < n_cols; j++)
-				_decode_row_siho(Y_N, this->Y_N_i.data() + j*n_cols, this->V_N_i.data() + j*n_cols, this->hiho_n, n_cols, false);
+				_decode_row_siho(Y_N, this->Y_N_i.data() + j*n_cols, this->V_N_i.data() + j*n_cols, this->hiho_r, n_cols, false);
 		}
 	}
 }
@@ -133,7 +134,7 @@ bool Decoder_chase_pyndiah<B,R>
 	tools::hard_decide(R_prime, hard_Rprime.data(), size);
 
 	// if (this->parity_extended)
-	// 	parity_diff = compute_parity(hard_Rprime.data()) ^ hard_Rprime[N -1];
+	// 	parity_diff = tools::compute_parity(hard_Rprime.data()) ^ hard_Rprime[N -1];
 	// else
 	// 	parity_diff = false;
 
@@ -148,18 +149,6 @@ bool Decoder_chase_pyndiah<B,R>
 	compute_metrics        (R_prime, size        );
 
 	return false;
-}
-
-template <typename B, typename R>
-B Decoder_chase_pyndiah<B,R>
-::compute_parity(const B* vals, const int size)
-{
-	// compute test vector parity after being decoded
-	B parity = 0;
-	for (int i = 0; i < size; i++)
-		parity ^= vals[i];
-
-	return parity;
 }
 
 template <typename B, typename R>
@@ -201,7 +190,7 @@ void Decoder_chase_pyndiah<B,R>
 		hiho.decode_hiho_cw(hard_Rprime.data(), test_vect.data() + c*size); // parity bit is ignored by the decoder
 
 		if (this->parity_extended)
-			test_vect[(c+1)*size -1] = compute_parity(test_vect.data() + c*size, hiho.get_N());
+			test_vect[(c+1)*size -1] = tools::compute_parity(test_vect.data() + c*size, hiho.get_N());
 	}
 }
 

@@ -81,7 +81,7 @@ void Encoder_turbo_product_code::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}][2] += ", TPC";
+	opt_args[{p+"-type"}][2] += ", TPC";
 
 	opt_args[{p+"-ext"}] =
 		{"",
@@ -146,9 +146,7 @@ module::Encoder_turbo_product_code<B>* Encoder_turbo_product_code::parameters
               module::Encoder_BCH<B> &enc_i) const
 {
 	if (this->type == "TPC")
-	{
-		if (this->implem == "STD") return new module::Encoder_turbo_product_code<B>(this->n_ite, itl, enc_n, enc_i, alpha, n_least_reliable_positions, n_competitors);
-	}
+		return new module::Encoder_turbo_product_code<B>(itl, enc_n, enc_i);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

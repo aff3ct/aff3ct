@@ -4,8 +4,7 @@
 #include <string>
 #include <cmath>
 
-#include "Module/Decoder/Decoder_SIHO.hpp"
-#include "Module/Decoder/Decoder_SISO.hpp"
+#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
 
@@ -41,13 +40,28 @@ struct Decoder_BCH : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const tools::BCH_polynomial_generator &GF, 
+		module::Decoder_SIHO<B,Q>* build(const tools::BCH_polynomial_generator &GF,
 		                                 module::Encoder_BCH<B> *encoder = nullptr) const;
+
+		template <typename B = int, typename Q = float>
+		module::Decoder_HIHO<B>* build_hiho(const tools::BCH_polynomial_generator &GF,
+		                                    module::Encoder_BCH<B> *encoder = nullptr) const;
+
+		template <typename B = int, typename Q = float>
+		module::Decoder_SIHO_HIHO<B,Q>* build_siho_hiho(const tools::BCH_polynomial_generator &GF,
+		                                                module::Encoder_BCH<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::BCH_polynomial_generator &GF, 
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::BCH_polynomial_generator &GF,
 	                                        module::Encoder_BCH<B> *encoder = nullptr);
+
+	template <typename B = int, typename Q = float>
+	static module::Decoder_HIHO<B>* build_hiho(const parameters &params, const tools::BCH_polynomial_generator &GF,
+	                                    module::Encoder_BCH<B> *encoder = nullptr);
+	template <typename B = int, typename Q = float>
+	static module::Decoder_SIHO_HIHO<B,Q>* build_siho_hiho(const parameters &params, const tools::BCH_polynomial_generator &GF,
+	                                                module::Encoder_BCH<B> *encoder = nullptr);
 };
 }
 }

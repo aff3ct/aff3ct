@@ -18,16 +18,16 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename Q = float>
-class Codec_turbo_product_code : public Codec_SIHO<B,Q>
+class Codec_turbo_product_code : public Codec_SISO_SIHO<B,Q>
 {
 protected:
 	const aff3ct::tools::BCH_polynomial_generator GF_poly;
-	aff3ct::module::Encoder_BCH<B,Q>              enc_bch;
-	aff3ct::module::Decoder_BCH<B,Q>              dec_bch;
+	aff3ct::module::Encoder_BCH <B>* enc_bch;
+	aff3ct::module::Decoder_HIHO<B>* dec_bch;
 
 public:
-	Codec_turbo_product_code(const factory::Encoder_turbo  ::parameters<> &enc_params,
-	                         const factory::Decoder_turbo  ::parameters<> &dec_params);
+	Codec_turbo_product_code(const factory::Encoder_turbo_product_code::parameters &enc_params,
+	                         const factory::Decoder_turbo_product_code::parameters &dec_params);
 	virtual ~Codec_turbo_product_code();
 };
 }

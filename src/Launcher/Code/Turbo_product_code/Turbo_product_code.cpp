@@ -15,9 +15,6 @@ Turbo_product_code<L,B,R,Q>
 : L(argc, argv, stream), params_cdc(new factory::Codec_turbo_product_code::parameters("cdc"))
 {
 	this->params.set_cdc(params_cdc);
-
-	if (typeid(L) == typeid(BFER_std<B,R,Q>))
-		params_cdc->enable_puncturer();
 }
 
 template <class L, typename B, typename R, typename Q>
@@ -40,6 +37,9 @@ void Turbo_product_code<L,B,R,Q>
 	this->opt_args.erase({pitl+"-seed", "S"});
 
 	L::get_description_args();
+
+	auto psrc = this->params.src->get_prefix();
+	this->req_args.erase({psrc+"-info-bits", "K"});
 }
 
 template <class L, typename B, typename R, typename Q>
@@ -48,10 +48,10 @@ void Turbo_product_code<L,B,R,Q>
 {
 	params_cdc->store(this->ar.get_args());
 
-	if (params_cdc->dec->sub1->simd_strategy == "INTER")
-		this->params.src->n_frames = mipp::N<Q>();
-	if (params_cdc->dec->sub1->simd_strategy == "INTRA")
-		this->params.src->n_frames = (int)std::ceil(mipp::N<Q>() / 8.f);
+	// if (params_cdc->dec->sub->simd_strategy == "INTER")
+	// 	this->params.src->n_frames = mipp::N<Q>();
+	// if (params_cdc->dec->sub->simd_strategy == "INTRA")
+	// 	this->params.src->n_frames = (int)std::ceil(mipp::N<Q>() / 8.f);
 
 	if (std::is_same<Q,int8_t>())
 	{
@@ -60,21 +60,17 @@ void Turbo_product_code<L,B,R,Q>
 	}
 	else if (std::is_same<Q,int16_t>())
 	{
-		this->params.qnt->n_bits     = 6;
+		this->params.qnt->n_bits     = 8;
 		this->params.qnt->n_decimals = 3;
 	}
 
 	L::store_args();
 
 	params_cdc->enc      ->n_frames = this->params.src->n_frames;
-	if (params_cdc->pct)
-	params_cdc->pct      ->n_frames = this->params.src->n_frames;
 	params_cdc->dec      ->n_frames = this->params.src->n_frames;
 	params_cdc->itl->core->n_frames = this->params.src->n_frames;
-	params_cdc->enc->sub1->n_frames = this->params.src->n_frames;
-	params_cdc->enc->sub2->n_frames = this->params.src->n_frames;
-	params_cdc->dec->sub1->n_frames = this->params.src->n_frames;
-	params_cdc->dec->sub2->n_frames = this->params.src->n_frames;
+	params_cdc->enc->sub ->n_frames = this->params.src->n_frames;
+	params_cdc->dec->sub ->n_frames = this->params.src->n_frames;
 
 	params_cdc->itl->core->seed = this->params.global_seed;
 }

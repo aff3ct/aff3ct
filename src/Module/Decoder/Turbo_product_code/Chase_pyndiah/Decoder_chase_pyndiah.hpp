@@ -40,8 +40,8 @@ public:
 
 	Decoder_chase_pyndiah(const int& n_ite,
 	                      const Interleaver<R> &pi,
-	                      Decoder_HIHO<B> &hiho_n,
-	                      Decoder_HIHO<B> &hiho_i,
+	                      Decoder_HIHO<B> &hiho_r,
+	                      Decoder_HIHO<B> &hiho_c,
 	                      const R   alpha = 0.5,
 	                      const int n_least_reliable_positions = 2,
 	                      const int n_competitors = 0);

@@ -17,16 +17,16 @@ template <typename B, typename R>
 Decoder_turbo_product_code<B,R>
 ::Decoder_turbo_product_code(const int& n_ite,
                              const Interleaver<R> &pi,
-                             Decoder_HIHO<B> &hiho_n,
-                             Decoder_HIHO<B> &hiho_i)
-: Decoder               (hiho_n.get_K() * hiho_i.get_K(), pi.get_core().get_size(), hiho_n.get_n_frames(), hiho_n.get_simd_inter_frame_level()),
-  Decoder_SISO_SIHO<B,R>(hiho_n.get_K() * hiho_i.get_K(), pi.get_core().get_size(), hiho_n.get_n_frames(), hiho_n.get_simd_inter_frame_level()),
+                             Decoder_HIHO<B> &hiho_r,
+                             Decoder_HIHO<B> &hiho_c)
+: Decoder               (hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
+  Decoder_SISO_SIHO<B,R>(hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
   n_ite (n_ite ),
   pi    (pi    ),
-  hiho_n(hiho_n),
-  hiho_i(hiho_i),
+  hiho_r(hiho_r),
+  hiho_c(hiho_c),
 
-  parity_extended(this->N == (hiho_n.get_N() +1) * (hiho_i.get_N() +1)),
+  parity_extended(this->N == (hiho_r.get_N() +1) * (hiho_c.get_N() +1)),
 
   Y_N_i (this->N),
   Y_N_pi(this->N),
@@ -36,13 +36,14 @@ Decoder_turbo_product_code<B,R>
 	const std::string name = "Decoder_turbo_product_code";
 	this->set_name(name);
 
-	if ((parity_extended && this->N != (hiho_n.get_N() +1) * (hiho_i.get_N() +1)) || this->N != hiho_n.get_N() * hiho_i.get_N())
+	if ((parity_extended && this->N != (hiho_r.get_N() +1) * (hiho_c.get_N() +1)) || (!parity_extended &&  this->N != hiho_r.get_N() * hiho_c.get_N()))
 	{
 		std::stringstream message;
-		message << "'N' has to be equal to ('hiho_n.get_N()' +1) * ('hiho_i.get_N()' +1) if parity code extension, "
-				<< "else equal to 'hiho_n.get_N()' * 'hiho_i.get_N()'   ('N' = "
-		        << this->N << ", 'hiho_n.get_N()' = " << hiho_n.get_N()
-		        << ", 'hiho_i.get_N()' = " << hiho_i.get_N() << ").";
+		message << "'N' has to be equal to ('hiho_r.get_N()' +1) * ('hiho_c.get_N()' +1) if parity code extension, "
+				<< "else equal to 'hiho_r.get_N()' * 'hiho_c.get_N()'   ('N' = "
+		        << this->N << ", 'hiho_r.get_N()' = " << hiho_r.get_N()
+		        << ", 'hiho_c.get_N()' = " << hiho_c.get_N()
+		        << " and 'parity_extended' = " << parity_extended << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -53,31 +54,31 @@ Decoder_turbo_product_code<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (hiho_n.get_n_frames() != hiho_i.get_n_frames())
+	if (hiho_r.get_n_frames() != hiho_c.get_n_frames())
 	{
 		std::stringstream message;
-		message << "'hiho_n.get_n_frames()' has to be equal to 'hiho_i.get_n_frames()' ('hiho_n.get_n_frames()' = "
-		        << hiho_n.get_n_frames() << ", 'hiho_i.get_n_frames()' = " << hiho_i.get_n_frames() << ").";
+		message << "'hiho_r.get_n_frames()' has to be equal to 'hiho_c.get_n_frames()' ('hiho_r.get_n_frames()' = "
+		        << hiho_r.get_n_frames() << ", 'hiho_c.get_n_frames()' = " << hiho_c.get_n_frames() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (hiho_n.get_simd_inter_frame_level() != hiho_i.get_simd_inter_frame_level())
+	if (hiho_r.get_simd_inter_frame_level() != hiho_c.get_simd_inter_frame_level())
 	{
 		std::stringstream message;
-		message << "'hiho_n.get_simd_inter_frame_level()' has to be equal to 'hiho_i.get_simd_inter_frame_level()' "
-		        << "('hiho_n.get_simd_inter_frame_level()' = " << hiho_n.get_simd_inter_frame_level()
-		        << ", 'hiho_i.get_simd_inter_frame_level()' = " << hiho_i.get_simd_inter_frame_level() << ").";
+		message << "'hiho_r.get_simd_inter_frame_level()' has to be equal to 'hiho_c.get_simd_inter_frame_level()' "
+		        << "('hiho_r.get_simd_inter_frame_level()' = " << hiho_r.get_simd_inter_frame_level()
+		        << ", 'hiho_c.get_simd_inter_frame_level()' = " << hiho_c.get_simd_inter_frame_level() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 
 
-	if (this->K != hiho_n.get_K() * hiho_i.get_K())
+	if (this->K != hiho_r.get_K() * hiho_c.get_K())
 	{
 		std::stringstream message;
-		message << "'K' has to be equal to 'hiho_K.get_K()' * 'hiho_i.get_K()' ('K' = "
-		        << this->K << ", 'hiho_K.get_K()' = " << hiho_n.get_K()
-		        << ", 'hiho_i.get_K()' = " << hiho_i.get_K() << ").";
+		message << "'K' has to be equal to 'hiho_r.get_K()' * 'hiho_c.get_K()' ('K' = "
+		        << this->K << ", 'hiho_r.get_K()' = " << hiho_r.get_K()
+		        << ", 'hiho_c.get_K()' = " << hiho_c.get_K() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -102,7 +103,7 @@ void Decoder_turbo_product_code<B, R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	std::copy(Y_N1, Y_N1 + this->N, Y_N_i.begin());
+	std::copy(Y_N1, Y_N1 + this->N, Y_N_i.data());
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -123,7 +124,7 @@ void Decoder_turbo_product_code<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	std::copy(Y_N, Y_N + this->N, Y_N_i.begin());
+	std::copy(Y_N, Y_N + this->N, Y_N_i.data());
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -144,7 +145,7 @@ void Decoder_turbo_product_code<B, R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	std::copy(Y_N, Y_N + this->N, Y_N_i.begin());
+	std::copy(Y_N, Y_N + this->N, Y_N_i.data());
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE

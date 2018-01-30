@@ -4,9 +4,8 @@
 #include <string>
 #include <type_traits>
 
-#include "Module/Encoder/Turbo_product_code/Encoder_turbo_product_code.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
-// #include "Module/Encoder/Turbo_product_code/Encoder_turbo_product_code.hpp"
+#include "Module/Encoder/Turbo_product_code/Encoder_turbo_product_code.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
@@ -33,7 +32,7 @@ struct Encoder_turbo_product_code : public Encoder
 		Interleaver ::parameters *itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Decoder_turbo_product_code_prefix);
+		explicit parameters(const std::string &p = Encoder_turbo_product_code_prefix);
 		virtual ~parameters();
 		Encoder_turbo_product_code::parameters* clone() const;
 
@@ -54,7 +53,7 @@ struct Encoder_turbo_product_code : public Encoder
 	};
 
 	template <typename B = int>
-	static module::Encoder_turbo_product_code<B>* build(const parameters              &params,
+	static module::Encoder_turbo_product_code<B>* build(const parameters             &params,
 	                                                    const module::Interleaver<B> &itl,
 	                                                          module::Encoder_BCH<B> &enc_n,
 	                                                          module::Encoder_BCH<B> &enc_i);

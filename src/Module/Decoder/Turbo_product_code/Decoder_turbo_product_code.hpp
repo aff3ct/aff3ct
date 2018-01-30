@@ -17,8 +17,8 @@ class Decoder_turbo_product_code : public Decoder_SISO_SIHO<B,R>
 protected:
 	const int  n_ite; // number of iterations
 	const Interleaver<R> &pi;
-	Decoder_HIHO<B> &hiho_n;
-	Decoder_HIHO<B> &hiho_i;
+	Decoder_HIHO<B> &hiho_r; // row decoder
+	Decoder_HIHO<B> &hiho_c; // col decoder
 
 	const bool parity_extended;
 
@@ -30,8 +30,8 @@ protected:
 public:
 	Decoder_turbo_product_code(const int& n_ite,
 	                           const Interleaver<R> &pi,
-	                           Decoder_HIHO<B> &hiho_n,
-	                           Decoder_HIHO<B> &hiho_i);
+	                           Decoder_HIHO<B> &hiho_r,
+	                           Decoder_HIHO<B> &hiho_c);
 	virtual ~Decoder_turbo_product_code();
 
 protected:
