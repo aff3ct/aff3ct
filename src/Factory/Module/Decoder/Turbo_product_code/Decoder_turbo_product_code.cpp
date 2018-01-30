@@ -5,7 +5,7 @@
 
 #include "Decoder_turbo_product_code.hpp"
 
-const std::string aff3ct::factory::Decoder_turbo_product_code_name   = "Decoder Turbo DB";
+const std::string aff3ct::factory::Decoder_turbo_product_code_name   = "Decoder Turbo Product Code";
 const std::string aff3ct::factory::Decoder_turbo_product_code_prefix = "dec";
 
 using namespace aff3ct;
@@ -186,7 +186,7 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_product_code::parameters
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		if (this->type == "TURBO_DB")
+		if (this->type == "TPC")
 		{
 			if (this->implem == "STD") return new module::Decoder_chase_pyndiah<B,Q>(this->n_ite, itl, hiho_n, hiho_i, alpha, n_least_reliable_positions, n_competitors);
 		}

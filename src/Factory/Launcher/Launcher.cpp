@@ -21,6 +21,7 @@
 #include "Launcher/Code/RSC_DB/RSC_DB.hpp"
 #include "Launcher/Code/Turbo/Turbo.hpp"
 #include "Launcher/Code/Turbo_DB/Turbo_DB.hpp"
+#include "Launcher/Code/Turbo_product_code/Turbo_product_code.hpp"
 #include "Launcher/Code/Uncoded/Uncoded.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
 #include "Launcher/Simulation/BFER_std.hpp"
@@ -279,6 +280,12 @@ launcher::Launcher* factory::Launcher::parameters
 	{
 		if (this->sim_type == "BFER")
 			return new launcher::Turbo_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "TPC")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::Turbo_product_code<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "REP")
