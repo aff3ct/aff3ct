@@ -261,6 +261,8 @@ void Decoder_chase_pyndiah<B,R>
 
 		if (DB) // if DB is a 1
 			reliability = -reliability; // set as negative
+
+		R_dec[i] = R_cha[i] + alpha * (reliability - R_prime[i]);
 	}
 }
 
