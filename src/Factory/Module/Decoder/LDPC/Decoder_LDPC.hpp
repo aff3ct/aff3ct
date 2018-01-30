@@ -7,7 +7,7 @@
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
-#include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 #include "../Decoder.hpp"
 
@@ -50,21 +50,24 @@ struct Decoder_LDPC : public Decoder
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const tools::Sparse_matrix &H,
 		                                 const std::vector<unsigned> &info_bits_pos,
-		                                 module::Encoder_LDPC<B> *encoder = nullptr) const;
+		                                 module::Encoder<B> *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SISO_SIHO<B,Q>* build_siso(const tools::Sparse_matrix &H,
-		                                           const std::vector<unsigned> &info_bits_pos) const;
+		                                           const std::vector<unsigned> &info_bits_pos,
+		                                           module::Encoder<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters& params, const tools::Sparse_matrix &H,
 	                                        const std::vector<unsigned> &info_bits_pos, 
-	                                        module::Encoder_LDPC<B> *encoder = nullptr);
+	                                        module::Encoder<B> *encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters& params, const tools::Sparse_matrix &H,
-	                                                  const std::vector<unsigned> &info_bits_pos);
+	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters& params, 
+	                                                  const tools::Sparse_matrix &H,
+	                                                  const std::vector<unsigned> &info_bits_pos, 
+	                                                  module::Encoder<B> *encoder = nullptr);
 };
 }
 }

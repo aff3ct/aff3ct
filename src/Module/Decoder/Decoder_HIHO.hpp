@@ -100,7 +100,7 @@ public:
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
 	template <class A = std::allocator<B>>
-	void decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K)
+	void decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id = -1)
 	{
 		if (this->N * this->n_frames != (int)Y_N.size())
 		{
@@ -118,39 +118,69 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->decode_hiho(Y_N.data(), V_K.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->decode_hiho(Y_N.data(), V_K.data(), frame_id);
 	}
 
-	virtual void decode_hiho(const B *Y_N, B *V_K)
+	virtual void decode_hiho(const B *Y_N, B *V_K, const int frame_id = -1)
 	{
-		auto w = 0;
-		for (w = 0; w < this->n_dec_waves -1; w++)
-			this->_decode_hiho(Y_N + w * this->N * this->simd_inter_frame_level,
-			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * this->simd_inter_frame_level);
+		if (frame_id < 0 || this->simd_inter_frame_level == 1)
+		{
+			const auto w_start = (frame_id < 0) ? 0 : frame_id % this->n_dec_waves;
+			const auto w_stop  = (frame_id < 0) ? this->n_dec_waves : w_start +1;
 
-		if (this->n_inter_frame_rest == 0)
-			this->_decode_hiho(Y_N + w * this->N * this->simd_inter_frame_level,
-			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * this->simd_inter_frame_level);
+			auto w = 0;
+			for (w = w_start; w < w_stop -1; w++)
+				this->_decode_hiho(Y_N + w * this->N * this->simd_inter_frame_level,
+				                   V_K + w * this->K * this->simd_inter_frame_level,
+				                   w * this->simd_inter_frame_level);
+
+			if (this->n_inter_frame_rest == 0)
+				this->_decode_hiho(Y_N + w * this->N * this->simd_inter_frame_level,
+				                   V_K + w * this->K * this->simd_inter_frame_level,
+				                   w * this->simd_inter_frame_level);
+			else
+			{
+				const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
+				std::copy(Y_N + waves_off1,
+				          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
+				          this->Y_N.begin());
+
+				this->_decode_hiho(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+
+				const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
+				std::copy(this->V_KN.begin(),
+				          this->V_KN.begin() + this->n_inter_frame_rest * this->K,
+				          V_K + waves_off2);
+			}
+		}
 		else
 		{
-			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
-			std::copy(Y_N + waves_off1,
-			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
-			          this->Y_N.begin());
+			const auto w = (frame_id % this->n_frames) / this->simd_inter_frame_level;
+			const auto w_pos = frame_id % this->simd_inter_frame_level;
+
+			// std::fill(this->Y_N.begin(), this->Y_N.end(), (B)0);
+			std::copy(Y_N + ((frame_id % this->n_frames) + 0) * this->N,
+			          Y_N + ((frame_id % this->n_frames) + 1) * this->N,
+			          this->Y_N.begin() + w_pos * this->N);
 
 			this->_decode_hiho(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
 
-			const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
-			std::copy(this->V_KN.begin(),
-			          this->V_KN.begin() + this->n_inter_frame_rest * this->K,
-			          V_K + waves_off2);
+			std::copy(this->V_KN.begin() + (w_pos +0) * this->K,
+			          this->V_KN.begin() + (w_pos +1) * this->K,
+			          V_K + (frame_id % this->n_frames) * this->K);
 		}
 	}
 
 	template <class A = std::allocator<B>>
-	void decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N)
+	void decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int frame_id = -1)
 	{
 		if (this->N * this->n_frames != (int)Y_N.size())
 		{
@@ -168,34 +198,64 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->decode_hiho_cw(Y_N.data(), V_N.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->decode_hiho_cw(Y_N.data(), V_N.data(), frame_id);
 	}
 
-	virtual void decode_hiho_cw(const B *Y_N, B *V_N)
+	virtual void decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id = -1)
 	{
-		auto w = 0;
-		for (w = 0; w < this->n_dec_waves -1; w++)
-			this->_decode_hiho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
-			                      V_N + w * this->N * this->simd_inter_frame_level,
-			                      w * this->simd_inter_frame_level);
+		if (frame_id < 0 || this->simd_inter_frame_level == 1)
+		{
+			const auto w_start = (frame_id < 0) ? 0 : frame_id % this->n_dec_waves;
+			const auto w_stop  = (frame_id < 0) ? this->n_dec_waves : w_start +1;
 
-		if (this->n_inter_frame_rest == 0)
-			this->_decode_hiho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
-			                      V_N + w * this->N * this->simd_inter_frame_level,
-			                      w * this->simd_inter_frame_level);
+			auto w = 0;
+			for (w = w_start; w < w_stop -1; w++)
+				this->_decode_hiho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
+				                      V_N + w * this->N * this->simd_inter_frame_level,
+				                      w * this->simd_inter_frame_level);
+
+			if (this->n_inter_frame_rest == 0)
+				this->_decode_hiho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
+				                      V_N + w * this->N * this->simd_inter_frame_level,
+				                      w * this->simd_inter_frame_level);
+			else
+			{
+				const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
+				std::copy(Y_N + waves_off1,
+				          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
+				          this->Y_N.begin());
+
+				this->_decode_hiho_cw(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+
+				const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
+				std::copy(this->V_KN.begin(),
+				          this->V_KN.begin() + this->n_inter_frame_rest * this->N,
+				          V_N + waves_off2);
+			}
+		}
 		else
 		{
-			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
-			std::copy(Y_N + waves_off1,
-			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
-			          this->Y_N.begin());
+			const auto w = (frame_id % this->n_frames) / this->simd_inter_frame_level;
+			const auto w_pos = frame_id % this->simd_inter_frame_level;
+
+			// std::fill(this->Y_N.begin(), this->Y_N.end(), (B)0);
+			std::copy(Y_N + ((frame_id % this->n_frames) + 0) * this->N,
+			          Y_N + ((frame_id % this->n_frames) + 1) * this->N,
+			          this->Y_N.begin() + w_pos * this->N);
 
 			this->_decode_hiho_cw(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
 
-			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
-			std::copy(this->V_KN.begin(),
-			          this->V_KN.begin() + this->n_inter_frame_rest * this->N,
-			          V_N + waves_off2);
+			std::copy(this->V_KN.begin() + (w_pos +0) * this->N,
+			          this->V_KN.begin() + (w_pos +1) * this->N,
+			          V_N + (frame_id % this->n_frames) * this->N);
 		}
 	}
 

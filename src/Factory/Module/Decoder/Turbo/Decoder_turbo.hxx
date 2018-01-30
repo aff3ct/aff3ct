@@ -2,7 +2,6 @@
 
 #include "Module/Decoder/Turbo/Decoder_turbo_std.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_turbo.hpp"
 
@@ -107,8 +106,7 @@ void Decoder_turbo::parameters<D1,D2>
 	opt_args.erase({pi+"-fra", "F"});
 
 	opt_args[{p+"-type", "D"}][2] += ", TURBO";
-
-	opt_args[{p+"-implem"}].push_back("STD, FAST");
+	opt_args[{p+"-implem"   }][2] += ", FAST";
 
 	opt_args[{p+"-ite", "i"}] =
 		{"strictly_positive_int",
@@ -216,7 +214,7 @@ void Decoder_turbo::parameters<D1,D2>
 
 	itl->get_headers(headers, full);
 
-	if (this->type != "ML")
+	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
 		
@@ -242,7 +240,8 @@ template <typename B, typename Q>
 module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 ::build(const module::Interleaver<Q>  &itl,
               module::Decoder_SISO<Q> &siso_n,
-              module::Decoder_SISO<Q> &siso_i) const
+              module::Decoder_SISO<Q> &siso_i,
+              module::Encoder<B>      *encoder) const
 {
 	if (this->type == "TURBO")
 	{
@@ -256,7 +255,7 @@ module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 template <class D1, class D2>
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_turbo::parameters<D1,D2>
-::build(module::Encoder_turbo<B> *encoder) const
+::build(module::Encoder<B> *encoder) const
 {
 	return Decoder::parameters::build<B,Q>(encoder);
 
@@ -268,14 +267,15 @@ module::Decoder_turbo<B,Q>* Decoder_turbo
 ::build(const parameters<D1,D2>       &params,
         const module::Interleaver<Q>  &itl,
               module::Decoder_SISO<Q> &siso_n,
-              module::Decoder_SISO<Q> &siso_i)
+              module::Decoder_SISO<Q> &siso_i,
+              module::Encoder<B>      *encoder)
 {
-	return params.template build<B,Q>(itl, siso_n, siso_i);
+	return params.template build<B,Q>(itl, siso_n, siso_i, encoder);
 }
 
 template <typename B, typename Q, class D1, class D2>
 module::Decoder_SIHO<B,Q>* Decoder_turbo
-::build(const parameters<D1,D2> &params, module::Encoder_turbo<B> *encoder)
+::build(const parameters<D1,D2> &params, module::Encoder<B> *encoder)
 {
 	return params.template build<B,Q>(encoder);
 }

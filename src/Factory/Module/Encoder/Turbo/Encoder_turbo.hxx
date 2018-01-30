@@ -197,11 +197,11 @@ module::Encoder_turbo<B>* Encoder_turbo::parameters<E1,E2>
 
 	if (this->sub1->buffered)
 	{
-		if (this->type == "TURBO") return new module::Encoder_turbo       <B>(this->K, this->N_cw, itl, *enc_n, *enc_i, this->n_frames);
+		if (this->type == "TURBO") return new module::Encoder_turbo       <B>(this->K, this->N_cw, itl, *enc_n, *enc_i);
 	}
 	else if (enc_n == enc_i)
 	{
-		if (this->type == "TURBO") return new module::Encoder_turbo_legacy<B>(this->K, this->N_cw, itl, *enc_n,         this->n_frames);
+		if (this->type == "TURBO") return new module::Encoder_turbo_legacy<B>(this->K, this->N_cw, itl, *enc_n);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

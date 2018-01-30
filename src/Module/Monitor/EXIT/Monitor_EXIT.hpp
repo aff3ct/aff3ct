@@ -41,7 +41,8 @@ public:
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
 	void check_mutual_info(const std::vector<B,AB>& bits,
 	                       const std::vector<R,AR>& llrs_a,
-	                       const std::vector<R,AR>& llrs_e)
+	                       const std::vector<R,AR>& llrs_e,
+	                       const int frame_id = -1)
 	{
 		if ((int)bits.size() != this->size * this->n_frames)
 		{
@@ -67,10 +68,18 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		return this->check_mutual_info(bits.data(), llrs_a.data(), llrs_e.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		return this->check_mutual_info(bits.data(), llrs_a.data(), llrs_e.data(), frame_id);
 	}
 
-	virtual void check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e);
+	virtual void check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id = -1);
 
 	unsigned get_n_trials() const;
 

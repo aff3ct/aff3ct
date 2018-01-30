@@ -147,6 +147,13 @@ Encoder_RSC_DB<B>
 		next_state[3][s] = s3;
 		out_parity[3][s] = p3;
 	}
+
+	if (!buffered_encoding)
+		for (auto k = 0; k < this->K; k += 2)
+		{
+			this->info_bits_pos[k   ] = 2 * k;
+			this->info_bits_pos[k +1] = 2 * k +1;
+		}
 }
 
 template <typename B>
@@ -244,25 +251,6 @@ void Encoder_RSC_DB<B>
 }
 
 template <typename B>
-void Encoder_RSC_DB<B>
-::_encode_sys(const B *U_K, B *par, const int frame_id)
-{
-	int circ_state, end_state;
-	__pre_encode(U_K, circ_state);
-	int init_state = circ_states[( (this->K/2) % (n_states-1) ) -1][circ_state];
-
-	__encode_from_state(U_K, par, true, init_state, end_state);
-
-	if (init_state != end_state)
-	{
-		std::stringstream message;
-		message << "'end_state' should match 'init_state' ('end_state' = " << end_state
-		        << ", 'init_state' = " << init_state << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-}
-
-template <typename B>
 std::vector<std::vector<int>> Encoder_RSC_DB<B>
 ::get_trellis()
 {
@@ -283,6 +271,56 @@ std::vector<std::vector<int>> Encoder_RSC_DB<B>
 	}
 
 	return trellis;
+}
+
+template <typename B>
+bool Encoder_RSC_DB<B>
+::is_codeword(const B *X_N)
+{
+	int circ_state = 0;
+	if (this->buffered_encoding)
+		for (auto i = 0; i < this->K; i+=2)
+			circ_state = next_state[X_N[i]*2 + X_N[i+1]][circ_state];
+	else
+		for (auto i = 0; i < this->K; i+=2)
+			circ_state = next_state[X_N[i*2]*2 + X_N[i*2+1]][circ_state];
+
+	auto init_state = circ_states[( (this->K/2) % (n_states-1) ) -1][circ_state];
+	auto state = init_state;
+	if (this->buffered_encoding)
+	{
+		for (auto i = 0; i < this->K; i+=2)
+		{
+			auto in = X_N[i+0]*2 + X_N[i+1];
+			auto parity = out_parity[in][state];
+			state = next_state[in][state];
+			if (X_N[this->K + i+0] != ((parity>>1) &1)) return false;
+			if (X_N[this->K + i+1] != ((parity   ) &1)) return false;
+		}
+	}
+	else
+	{
+		for (auto i = 0; i < this->K; i+=2)
+		{
+			auto in = X_N[i*2+0]*2 + X_N[i*2+1];
+			auto parity = out_parity[in][state];
+			state = next_state[in][state];
+			if (X_N[i*2+2] != ((parity>>1) &1)) return false;
+			if (X_N[i*2+3] != ((parity   ) &1)) return false;
+		}
+	}
+
+	if (init_state != state)
+		return false;
+
+	return true;
+}
+
+template <typename B>
+bool Encoder_RSC_DB<B>
+::is_buffered() const
+{
+	return this->buffered_encoding;
 }
 
 // ==================================================================================== explicit template instantiation 

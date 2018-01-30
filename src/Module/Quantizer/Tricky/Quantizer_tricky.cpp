@@ -172,9 +172,9 @@ Quantizer_tricky<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_tricky<R,Q>
-::process(const R *Y_N1, Q *Y_N2)
+::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {
-	const auto size = (unsigned)(this->N * this->n_frames);
+	const auto size = (unsigned)(this->N);
 
 	if (delta_inv == (R)0)
 	{

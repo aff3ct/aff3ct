@@ -19,9 +19,9 @@ Source_AZCW<B>
 
 template <typename B>
 void Source_AZCW<B>
-::generate(B *U_K)
+::_generate(B *U_K, const int frame_id)
 {
-	std::fill(U_K, U_K + this->K * this->n_frames, 0);
+	std::fill(U_K, U_K + this->K, 0);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -25,6 +25,8 @@ public:
 
 	virtual std::vector<std::vector<int>> get_trellis();
 
+	bool is_codeword(const B *X_N);
+
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);
 
@@ -33,6 +35,8 @@ protected:
 
 private:
 	void __encode(const B* U_K, B* sys, B* tail_sys, B* par, B* tail_par, const int stride = 1, const int stride_tail = 1);
+	bool _is_codeword(const B* sys, const B* tail_sys, const B* par, const B* tail_par, const int stride = 1, 
+	                  const int stride_tail = 1);
 };
 }
 }

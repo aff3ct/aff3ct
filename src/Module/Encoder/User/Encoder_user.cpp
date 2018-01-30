@@ -97,6 +97,20 @@ void Encoder_user<B>
 	this->cw_counter = (this->cw_counter +1) % (int)this->codewords.size();
 }
 
+template <typename B>
+const std::vector<uint32_t>& Encoder_user<B>
+::get_info_bits_pos()
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+bool Encoder_user<B>
+::is_sys() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

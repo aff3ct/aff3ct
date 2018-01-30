@@ -19,8 +19,10 @@ public:
 	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
 	virtual ~Encoder_repetition_sys() {}
 
+	bool is_codeword(const B *X_N);
+
 protected:
-	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
+	void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

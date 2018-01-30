@@ -59,8 +59,6 @@ void Codec_uncoded::parameters
 	req_args.erase({pdec+"-cw-size",   "N"});
 	req_args.erase({pdec+"-info-bits", "K"});
 	opt_args.erase({pdec+"-fra",       "F"});
-	opt_args.erase({pdec+"-implem"        });
-	opt_args.erase({pdec+"-type",      "D"});
 }
 
 void Codec_uncoded::parameters

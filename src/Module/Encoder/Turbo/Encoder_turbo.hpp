@@ -24,13 +24,15 @@ protected:
 	std::vector<B> X_N_tmp;
 
 public:
-	Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &enco_n, Encoder<B> &enco_i,
-	              const int n_frames = 1);
+	Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &enco_n, Encoder<B> &enco_i);
 	virtual ~Encoder_turbo() {}
 
 	int tail_length() const;
 
-	virtual void encode(const B *U_K, B *X_N); using Encoder<B>::encode;
+	virtual bool is_codeword(const B *X_N);
+
+protected:
+	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

@@ -183,6 +183,20 @@ void Encoder_LDPC_DVBS2<B>
 		Px[i] = Px[i] ^ Px[i-1];
 }
 
+template <typename B>
+const std::vector<uint32_t>& Encoder_LDPC_DVBS2<B>
+::get_info_bits_pos()
+{
+	return Encoder<B>::get_info_bits_pos();
+}
+
+template <typename B>
+bool Encoder_LDPC_DVBS2<B>
+::is_sys() const
+{
+	return Encoder<B>::is_sys();
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

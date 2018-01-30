@@ -55,18 +55,16 @@ Codec_BCH<B,Q>
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
 
-	Encoder_BCH<B> *encoder_BCH = nullptr;
 	try
 	{
-		encoder_BCH = factory::Encoder_BCH::build<B>(enc_params, GF_poly);
-		this->set_encoder(encoder_BCH);
+		this->set_encoder(factory::Encoder_BCH::build<B>(enc_params, GF_poly));
 	}
 	catch (tools::cannot_allocate const&)
 	{
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	this->set_decoder_siho(factory::Decoder_BCH::build<B,Q>(dec_params, GF_poly, encoder_BCH));
+	this->set_decoder_siho(factory::Decoder_BCH::build<B,Q>(dec_params, GF_poly, this->get_encoder()));
 }
 
 template <typename B, typename Q>

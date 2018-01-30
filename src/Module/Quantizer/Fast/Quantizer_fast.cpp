@@ -158,7 +158,7 @@ Quantizer_fast<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_fast<R,Q>
-::process(const R *Y_N1, Q *Y_N2)
+::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {
 	std::string message = "Supports only 'float' to 'short' and 'float' to 'signed char' conversions.";
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
@@ -170,7 +170,7 @@ namespace module
 {
 template<>
 void Quantizer_fast<float,short>
-::process(const float *Y_N1, short *Y_N2)
+::_process(const float *Y_N1, short *Y_N2, const int frame_id)
 {
 	if (!mipp::isAligned(Y_N1))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' is misaligned memory.");
@@ -178,7 +178,7 @@ void Quantizer_fast<float,short>
 	if (!mipp::isAligned(Y_N2))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N2' is misaligned memory.");
 
-	auto size = (unsigned)(this->N * this->n_frames);
+	auto size = (unsigned)(this->N);
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<short>()) * mipp::nElmtsPerRegister<short>();
 	vectorized_size = (vectorized_size / 2) * 2;
 
@@ -208,7 +208,7 @@ namespace module
 {
 template<>
 void Quantizer_fast<float,signed char>
-::process(const float *Y_N1, signed char *Y_N2)
+::_process(const float *Y_N1, signed char *Y_N2, const int frame_id)
 {
 	if (!mipp::isAligned(Y_N1))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' is misaligned memory.");
@@ -216,7 +216,7 @@ void Quantizer_fast<float,signed char>
 	if (!mipp::isAligned(Y_N2))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N2' is misaligned memory.");
 
-	auto size = (unsigned)(this->N * this->n_frames);
+	auto size = (unsigned)(this->N);
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<signed char>()) * mipp::nElmtsPerRegister<signed char>();
 	vectorized_size = (vectorized_size / 4) * 4;
 

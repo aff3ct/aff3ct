@@ -14,13 +14,13 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_turbo<B>
 ::Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi,
-                Encoder<B> &enco_n, Encoder<B> &enco_i, const int n_frames)
-: Encoder<B>(K, N, n_frames),
+                Encoder<B> &enco_n, Encoder<B> &enco_i)
+: Encoder<B>(K, N, enco_n.get_n_frames()),
   pi        (pi),
   enco_n    (enco_n),
   enco_i    (enco_i),
-  U_K_i     (K * n_frames),
-  X_N_tmp   ((enco_n.get_N() >= enco_i.get_N() ? enco_n.get_N() : enco_i.get_N()) * n_frames)
+  U_K_i     (K * enco_n.get_n_frames()),
+  X_N_tmp   ((enco_n.get_N() >= enco_i.get_N() ? enco_n.get_N() : enco_i.get_N()) * enco_n.get_n_frames())
 {
 	const std::string name = "Encoder_turbo";
 	this->set_name(name);
@@ -42,6 +42,14 @@ Encoder_turbo<B>
 		        << pi.get_core().get_size() << ", 'K' = " << K << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	if (enco_n.get_n_frames() != enco_i.get_n_frames())
+	{
+		std::stringstream message;
+		message << "'enco_n.get_n_frames()' has to be equal to 'enco_i.get_n_frames()' ('enco_n.get_n_frames()' = "
+		        << enco_n.get_n_frames() << ", 'enco_i.get_n_frames()' = " << enco_i.get_n_frames() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>
@@ -53,23 +61,44 @@ int Encoder_turbo<B>
 
 template <typename B>
 void Encoder_turbo<B>
-::encode(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	pi.interleave(U_K, U_K_i.data(), 0, this->n_frames);
+	pi.interleave(U_K - frame_id * this->K, U_K_i.data(), frame_id);
 
-	enco_n.encode(U_K, X_N_tmp.data());
+	enco_n.encode(U_K - frame_id * this->K, X_N_tmp.data(), frame_id);
 
-	for (auto f = 0; f < this->n_frames; f++)
-		std::copy(X_N_tmp.data() + f * enco_n.get_N(),
-		          X_N_tmp.data() + f * enco_n.get_N() + enco_n.get_N(),
-		          X_N            + f * this->N);
+	std::copy(X_N_tmp.data() + frame_id * enco_n.get_N(),
+	          X_N_tmp.data() + frame_id * enco_n.get_N() + enco_n.get_N(),
+	          X_N);
 
-	enco_i.encode(U_K_i.data(), X_N_tmp.data());
+	enco_i.encode(U_K_i.data(), X_N_tmp.data(), frame_id);
 
-	for (auto f = 0; f < this->n_frames; f++)
-		std::copy(X_N_tmp.data() + f * enco_i.get_N() + enco_i.get_K(),
-		          X_N_tmp.data() + f * enco_i.get_N() + enco_i.get_N(),
-		          X_N            + f * this->N + enco_n.get_N());
+	std::copy(X_N_tmp.data() + frame_id * enco_i.get_N() + enco_i.get_K(),
+	          X_N_tmp.data() + frame_id * enco_i.get_N() + enco_i.get_N(),
+	          X_N                                        + enco_n.get_N());
+}
+
+template <typename B>
+bool Encoder_turbo<B>
+::is_codeword(const B *X_N)
+{
+	if (!enco_n.is_codeword(X_N))
+		return false;
+
+	const auto *U_K_n = X_N;
+	pi.interleave(U_K_n, U_K_i.data());
+
+	std::copy(U_K_i  .begin(),
+	          U_K_i  .begin() + enco_i.get_K(), 
+	          X_N_tmp.begin());
+	std::copy(X_N             + enco_n.get_N(),
+	          X_N             + this->N,
+	          X_N_tmp.begin() + enco_i.get_K());
+
+	if (!enco_i.is_codeword(X_N_tmp.data()))
+		return false;
+
+	return true;
 }
 
 // ==================================================================================== explicit template instantiation 

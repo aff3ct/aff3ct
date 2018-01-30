@@ -16,7 +16,7 @@ public:
 	CRC_polynomial_inter(const int K, std::string poly_key, const int size, const int n_frames);
 	virtual ~CRC_polynomial_inter(){};
 
-	virtual bool check(const B *V_K, const int n_frames = -1); using CRC<B>::check;
+	virtual bool check(const B *V_K, const int n_frames = -1, const int frame_id = -1); using CRC<B>::check;
 
 protected:
 	void _generate_INTER(const B *U_in,

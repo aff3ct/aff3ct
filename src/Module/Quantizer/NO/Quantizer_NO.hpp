@@ -14,7 +14,8 @@ public:
 	Quantizer_NO(const int N, const int n_frames = 1);
 	virtual ~Quantizer_NO();
 
-	void process(const R *Y_N1, Q *Y_N2); using Quantizer<R,Q>::process;
+protected:
+	void _process(const R *Y_N1, Q *Y_N2, const int frame_id);
 };
 }
 }

@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
-#include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 #include "../Decoder.hpp"
 
@@ -35,11 +35,11 @@ struct Decoder_repetition : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(module::Encoder_repetition_sys<B> *encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, module::Encoder_repetition_sys<B> *encoder = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, module::Encoder<B> *encoder = nullptr);
 };
 }
 }

@@ -88,12 +88,10 @@ Codec_turbo_DB<B,Q>
 		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 	}
 
-	Encoder_turbo_DB<B> *encoder_turbo = nullptr;
 	try
 	{
 		sub_enc = factory::Encoder_RSC_DB::build<B>(*enc_params.sub);
-		encoder_turbo = factory::Encoder_turbo_DB::build<B>(enc_params, this->get_interleaver_bit(), *sub_enc);
-		this->set_encoder(encoder_turbo);
+		this->set_encoder(factory::Encoder_turbo_DB::build<B>(enc_params, this->get_interleaver_bit(), *sub_enc));
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -103,13 +101,14 @@ Codec_turbo_DB<B,Q>
 	Decoder_turbo_DB<B,Q>* decoder_turbo = nullptr;
 	try
 	{
-		this->set_decoder_siho(factory::Decoder_turbo_DB::build<B,Q>(dec_params, encoder_turbo));
+		this->set_decoder_siho(factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_encoder()));
 	}
 	catch (tools::cannot_allocate const&)
 	{
 		sub_dec_n = factory::Decoder_RSC_DB::build_siso<B,Q>(*dec_params.sub, trellis);
 		sub_dec_i = factory::Decoder_RSC_DB::build_siso<B,Q>(*dec_params.sub, trellis);
-		decoder_turbo = factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec_n, *sub_dec_i);
+		decoder_turbo = factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec_n, 
+		                                                      *sub_dec_i, this->get_encoder());
 		this->set_decoder_siho(decoder_turbo);
 	}
 

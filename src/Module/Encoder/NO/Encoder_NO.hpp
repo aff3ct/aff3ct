@@ -14,7 +14,10 @@ public:
 	Encoder_NO(const int K, const int n_frames = 1);
 	virtual ~Encoder_NO();
 
-	void encode(const B *U_K, B *X_K); using Encoder<B>::encode;
+	bool is_codeword(const B *X_K);
+
+protected:
+	void _encode(const B *U_K, B *X_K, const int frame_id);
 };
 }
 }
