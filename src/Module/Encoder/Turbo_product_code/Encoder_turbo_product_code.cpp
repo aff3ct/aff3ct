@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Perf/compute_parity.h"
 
 #include "Encoder_turbo_product_code.hpp"
 
@@ -68,7 +69,7 @@ void Encoder_turbo_product_code<B>
 		this->enc_r.encode(U_K + j*n_cols_K, this->X_N_i.data() + j*n_cols_N); // last parity bit ignored if any
 
 		if (this->parity_extended)
-			this->X_N_i[(j+1)*n_cols_N -1] = 0; // parity null for a BCH
+			this->X_N_i[(j+1)*n_cols_N -1] = tools::compute_parity(this->X_N_i.data() + j*n_cols_N, n_cols_N -1);
 	}
 
 	pi.interleave(this->X_N_i.data(), X_N, 0);
@@ -79,7 +80,7 @@ void Encoder_turbo_product_code<B>
 		this->enc_c.encode(X_N + j*n_rows_N, this->X_N_i.data() + j*n_rows_N); // last parity bit ignored if any
 
 		if (this->parity_extended)
-			this->X_N_i[(j+1)*n_rows_N -1] = 0; // parity null for a BCH
+			this->X_N_i[(j+1)*n_rows_N -1] = tools::compute_parity(this->X_N_i.data() + j*n_rows_N, n_rows_N -1);
 	}
 
 	pi.deinterleave(this->X_N_i.data(), X_N, 0);
