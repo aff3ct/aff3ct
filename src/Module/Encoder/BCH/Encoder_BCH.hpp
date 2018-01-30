@@ -23,12 +23,11 @@ public:
 
 	virtual ~Encoder_BCH();
 
-	const std::vector<uint32_t>& get_info_bits_pos();
-
-	bool is_sys() const;
+	bool is_codeword(const B *X_N);
 
 protected:
-	void _encode(const B *U_K, B *X_N, const int frame_id);
+	void  _encode(const B *U_K, B *X_N, const int frame_id);
+	void __encode(const B *U_K, B *bb);
 };
 }
 }

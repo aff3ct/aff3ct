@@ -22,6 +22,8 @@ Encoder_BCH<B>
 		        << GF_poly.get_n_rdncy() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	std::iota(this->info_bits_pos.begin(), this->info_bits_pos.end(), this->N - this->K);
 }
 
 template <typename B>
@@ -32,7 +34,7 @@ Encoder_BCH<B>
 
 template <typename B>
 void Encoder_BCH<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::__encode(const B *U_K, B *bb)
 {
 	for (auto i = 0; i < this->N - this->K; i++)
 		bb[i] = (B)0;
@@ -55,25 +57,30 @@ void Encoder_BCH<B>
 			bb[0] = 0;
 		}
 	}
-
-	for (auto i = 0; i < this->N - this->K; i++)
-		X_N[i] = bb[i];
-	for (auto i = 0; i < this->K; i++)
-		X_N[i + this->N - this->K] = U_K[i];
 }
 
 template <typename B>
-const std::vector<uint32_t>& Encoder_BCH<B>
-::get_info_bits_pos()
+void Encoder_BCH<B>
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	// generate the parity bits
+	this->__encode(U_K, X_N);
+
+	// copy the sys bits at the end of the codeword
+	std::copy(U_K, U_K + this->K, X_N + this->N - this->K);
 }
 
 template <typename B>
 bool Encoder_BCH<B>
-::is_sys() const
+::is_codeword(const B *X_N)
 {
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	this->__encode(X_N + this->N - this->K, this->bb.data());
+
+	auto par_size = this->N - this->K;
+	auto p = 0;
+	while (p < par_size && (X_N[p] == this->bb[p])) p++;
+
+	return p == par_size;
 }
 
 // ==================================================================================== explicit template instantiation
