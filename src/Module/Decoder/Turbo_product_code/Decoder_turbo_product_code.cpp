@@ -18,13 +18,18 @@ Decoder_turbo_product_code<B,R>
 ::Decoder_turbo_product_code(const int& n_ite,
                              const Interleaver<R> &pi,
                              Decoder_HIHO<B> &hiho_r,
-                             Decoder_HIHO<B> &hiho_c)
+                             Decoder_HIHO<B> &hiho_c,
+                             const std::vector<uint32_t> &info_bits_pos_r,
+                             const std::vector<uint32_t> &info_bits_pos_c)
 : Decoder               (hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
   Decoder_SISO_SIHO<B,R>(hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
   n_ite (n_ite ),
   pi    (pi    ),
   hiho_r(hiho_r),
   hiho_c(hiho_c),
+
+  info_bits_pos_r(info_bits_pos_r),
+  info_bits_pos_c(info_bits_pos_c),
 
   parity_extended(this->N == (hiho_r.get_N() +1) * (hiho_c.get_N() +1)),
 
@@ -71,6 +76,23 @@ Decoder_turbo_product_code<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if ((int)info_bits_pos_r.size() != hiho_r.get_K())
+	{
+		std::stringstream message;
+		message << "'info_bits_pos_r.size()' has to be equal to 'hiho_r.get_K()' "
+		        << "('info_bits_pos_r.size()' = " << info_bits_pos_r.size()
+		        << ", 'hiho_r.get_K()' = " << hiho_r.get_K() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if ((int)info_bits_pos_c.size() != hiho_c.get_K())
+	{
+		std::stringstream message;
+		message << "'info_bits_pos_c.size()' has to be equal to 'hiho_c.get_K()' "
+		        << "('info_bits_pos_c.size()' = " << info_bits_pos_c.size()
+		        << ", 'hiho_c.get_K()' = " << hiho_c.get_K() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 
 	if (this->K != hiho_r.get_K() * hiho_c.get_K())

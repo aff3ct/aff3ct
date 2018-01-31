@@ -44,6 +44,8 @@ public:
 	                      const Interleaver<R> &pi,
 	                      Decoder_HIHO<B> &hiho_r,
 	                      Decoder_HIHO<B> &hiho_c,
+	                      const std::vector<uint32_t> &info_bits_pos_r,
+	                      const std::vector<uint32_t> &info_bits_pos_c,
 	                      const R   alpha = 0.5,
 	                      const int n_least_reliable_positions = 2,
 	                      const int n_competitors = 0);
@@ -52,7 +54,8 @@ protected:
 	void _decode(const R *Y_N, int return_K_siso); // return_K_siso = 0 then hard decode and fill V_K_i else if = 1 then hard decode and fill V_H_i else soft decode and fill Y_N_i
 
 	void _decode_row_siso(const R *R_cha, const R *R_prime, R *R_dec, Decoder_HIHO<B> &hiho, const int size); // size is length with parity bit if any
-	void _decode_row_siho(const R *R_cha, const R *R_prime, B *R_dec, Decoder_HIHO<B> &hiho, const int size, const bool return_K = true);
+	void _decode_row_siho(const R *R_cha, const R *R_prime, B *R_dec, Decoder_HIHO<B> &hiho, const int size,
+	                      const std::vector<uint32_t>& info_bits_pos, const bool return_K = true);
 
 	bool _decode_chase          (const R *R_prime, Decoder_HIHO<B> &hiho,    const int size);
 	void find_least_reliable_pos(const R* R_prime,                           const int size);

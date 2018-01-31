@@ -62,7 +62,7 @@ Codec_turbo_product_code<B,Q>
 	Encoder_turbo_product_code<B> *encoder_tpc = nullptr;
 	try
 	{
-		enc_bch = factory::Encoder_BCH::build<B>(*enc_params.sub, GF_poly);
+		enc_bch     = factory::Encoder_BCH::build<B>(*enc_params.sub, GF_poly);
 		encoder_tpc = factory::Encoder_turbo_product_code::build<B>(enc_params, this->get_interleaver_bit(), *enc_bch, *enc_bch);
 		this->set_encoder(encoder_tpc);
 	}
@@ -74,13 +74,15 @@ Codec_turbo_product_code<B,Q>
 	dec_bch = factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly);
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_turbo_product_code::build_siso<B,Q>(dec_params, this->get_interleaver_llr(), *dec_bch, *dec_bch);
+		auto decoder_siso_siho = factory::Decoder_turbo_product_code::build_siso<B,Q>(dec_params, this->get_interleaver_llr(),
+		                                                                              *dec_bch, *dec_bch, *enc_bch, *enc_bch);
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(factory::Decoder_turbo_product_code::build<B,Q>(dec_params, this->get_interleaver_llr(), *dec_bch, *dec_bch, encoder_tpc));
+		this->set_decoder_siho(factory::Decoder_turbo_product_code::build<B,Q>(dec_params, this->get_interleaver_llr(),
+		                                                                       *dec_bch, *dec_bch, *enc_bch, *enc_bch, encoder_tpc));
 	}
 }
 

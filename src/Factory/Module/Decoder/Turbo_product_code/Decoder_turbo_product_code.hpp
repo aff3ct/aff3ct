@@ -54,29 +54,37 @@ struct Decoder_turbo_product_code : public Decoder
 		// builder
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const module::Interleaver <Q> &itl,
-		                                       module::Decoder_HIHO<B> &hiho_n,
-		                                       module::Decoder_HIHO<B> &hiho_i,
+		                                       module::Decoder_HIHO<B> &hiho_r,
+		                                       module::Decoder_HIHO<B> &hiho_c,
+		                                       module::Encoder     <B> &enc_r,
+		                                       module::Encoder     <B> &enc_c,
 		                                       module::Encoder     <B> *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SISO_SIHO<B,Q>* build_siso(const module::Interleaver <Q> &itl,
-		                                                 module::Decoder_HIHO<B> &hiho_n,
-		                                                 module::Decoder_HIHO<B> &hiho_i) const;
+		                                                 module::Decoder_HIHO<B> &hiho_r,
+		                                                 module::Decoder_HIHO<B> &hiho_c,
+		                                                 module::Encoder     <B> &enc_r,
+		                                                 module::Encoder     <B> &enc_c) const;
 
 	};
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters              &params,
 	                                        const module::Interleaver <Q> &itl,
-	                                              module::Decoder_HIHO<B> &hiho_n,
-	                                              module::Decoder_HIHO<B> &hiho_i,
+	                                              module::Decoder_HIHO<B> &hiho_r,
+	                                              module::Decoder_HIHO<B> &hiho_c,
+	                                              module::Encoder     <B> &enc_r,
+	                                              module::Encoder     <B> &enc_c,
 	                                              module::Encoder     <B> *encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters              &params,
 	                                                  const module::Interleaver <Q> &itl,
-	                                                        module::Decoder_HIHO<B> &hiho_n,
-	                                                        module::Decoder_HIHO<B> &hiho_i);
+	                                                        module::Decoder_HIHO<B> &hiho_r,
+	                                                        module::Decoder_HIHO<B> &hiho_c,
+	                                                        module::Encoder     <B> &enc_r,
+	                                                        module::Encoder     <B> &enc_c);
 };
 }
 }

@@ -20,6 +20,9 @@ protected:
 	Decoder_HIHO<B> &hiho_r; // row decoder
 	Decoder_HIHO<B> &hiho_c; // col decoder
 
+	const std::vector<uint32_t> &info_bits_pos_r;
+	const std::vector<uint32_t> &info_bits_pos_c;
+
 	const bool parity_extended;
 
 	std::vector<R> Y_N_i;
@@ -31,7 +34,9 @@ public:
 	Decoder_turbo_product_code(const int& n_ite,
 	                           const Interleaver<R> &pi,
 	                           Decoder_HIHO<B> &hiho_r,
-	                           Decoder_HIHO<B> &hiho_c);
+	                           Decoder_HIHO<B> &hiho_c,
+	                           const std::vector<uint32_t> &info_bits_pos_r,
+	                           const std::vector<uint32_t> &info_bits_pos_c);
 	virtual ~Decoder_turbo_product_code();
 
 protected:

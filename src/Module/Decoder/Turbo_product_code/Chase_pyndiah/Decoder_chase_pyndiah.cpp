@@ -18,11 +18,13 @@ Decoder_chase_pyndiah<B,R>
                         const Interleaver<R> &pi,
                         Decoder_HIHO<B> &hiho_r,
                         Decoder_HIHO<B> &hiho_c,
+                        const std::vector<uint32_t> &info_bits_pos_r,
+                        const std::vector<uint32_t> &info_bits_pos_c,
 	                    const R alpha_,
                         const int n_least_reliable_positions_,
                         const int n_competitors_)
 : Decoder(hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
-  Decoder_turbo_product_code<B,R>(n_ite, pi, hiho_r, hiho_c),
+  Decoder_turbo_product_code<B,R>(n_ite, pi, hiho_r, hiho_c, info_bits_pos_r, info_bits_pos_c),
 
   alpha                     (alpha_                                          ),
   n_least_reliable_positions(n_least_reliable_positions_                     ),
@@ -97,11 +99,17 @@ void Decoder_chase_pyndiah<B,R>
 		else if(return_K_siso == 0)
 		{
 			for (int j = 0; j < this->hiho_c.get_K(); j++)
-				_decode_row_siho(Y_N_cha + j*n_cols,
-				                 this->Y_N_i.data() + (j + this->hiho_c.get_N() - this->hiho_c.get_K())*n_cols,
+			{
+				auto pos = this->info_bits_pos_c[j];
+
+				_decode_row_siho(Y_N_cha + pos*n_cols,
+				                 this->Y_N_i.data() + pos*n_cols,
 				                 this->V_K_i.data() + j*this->hiho_r.get_K(),
-				                 this->hiho_r, n_cols,
+				                 this->hiho_r,
+				                 n_cols,
+				                 this->info_bits_pos_r,
 				                 true);
+			}
 		}
 		else if (return_K_siso == 1)
 		{
@@ -109,7 +117,9 @@ void Decoder_chase_pyndiah<B,R>
 				_decode_row_siho(Y_N_cha + j*n_cols,
 				                 this->Y_N_i.data() + j*n_cols,
 				                 this->V_N_i.data() + j*n_cols,
-				                 this->hiho_r, n_cols,
+				                 this->hiho_r,
+				                 n_cols,
+				                 this->info_bits_pos_r,
 				                 false);
 		}
 
@@ -119,21 +129,35 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::_decode_row_siho(const R *R_cha, const R *R_prime, B *R_dec, Decoder_HIHO<B> &hiho, const int size, const bool return_K)
+::_decode_row_siho(const R *R_cha, const R *R_prime, B *R_dec, Decoder_HIHO<B> &hiho, const int size,
+                   const std::vector<uint32_t>& info_bits_pos, const bool return_K)
 {
 	if (_decode_chase(R_prime, hiho, size))
 	{	// syndrome ok, R_prime is a code word, then copy its hard decided version and exit the function
-		std::copy(hard_Rprime.data() + (return_K ? hiho.get_N() - hiho.get_K() : 0),
-		          hard_Rprime.data() + (return_K ? hiho.get_N() : size),
-		          R_dec);
+
+		if (return_K)
+		{
+			for (int j = 0; j < hiho.get_K(); j++)
+				R_dec[j] = hard_Rprime[info_bits_pos[j]];
+		}
+		else
+		{
+			std::copy(hard_Rprime.data(), hard_Rprime.data() + size, R_dec);
+		}
 		return;
 	}
 
 	auto* DW = test_vect.data() + competitors.front().pos;
 
-	std::copy(DW + (return_K ? hiho.get_N() - hiho.get_K() : 0),
-	          DW + (return_K ? hiho.get_N() : size),
-	          R_dec);
+	if (return_K)
+	{
+		for (int j = 0; j < hiho.get_K(); j++)
+			R_dec[j] = DW[info_bits_pos[j]];
+	}
+	else
+	{
+		std::copy(DW, DW + size, R_dec);
+	}
 }
 
 template <typename B, typename R>
