@@ -275,8 +275,8 @@ void Decoder_chase_pyndiah<B,R>
 
 			if (val < it->metric)
 			{ // R[i] is weak, then save its position
-				least_reliable_pos.erase(least_reliable_pos.end() -1); // remove the last position that is not weak enough
-				least_reliable_pos.insert(it, {val, i});
+				least_reliable_pos.pop_back(); // remove the last position that is not weak enough
+				it = least_reliable_pos.insert(it, {val, i});
 				break;
 			}
 		}
@@ -330,7 +330,7 @@ void Decoder_chase_pyndiah<B,R>
 
 	// remove duplicated metrics
 	unsigned start_pos = 0;
-	while ((int)competitors.size() > n_competitors && start_pos < (competitors.size() -2))
+	while ((int)competitors.size() > n_competitors && start_pos < (competitors.size() -1))
 	{
 		auto it = competitors.begin();
 		std::advance(it, start_pos +1);
@@ -380,12 +380,16 @@ void Decoder_chase_pyndiah<B,R>
 		std::cerr << "beta = " << beta << ", alpha = " << alpha<< ", DW.metric = " << DW.metric << std::endl;
 #endif
 
+	beta -= DW.metric;
+
+	for (int j = 1; j < n_competitors; j++)
+		competitors[j].metric -= DW.metric;
+
 	for (int i = 0; i < size; i++)
 	{
 		const auto DB = test_vect[DW.pos + i]; // decided bit at the position i
 
 		int j = 1;
-
 		for (; j < n_competitors; j++)
 			if (test_vect[competitors[j].pos + i] != DB)
 				break;
@@ -394,11 +398,11 @@ void Decoder_chase_pyndiah<B,R>
 
 		if (j < n_competitors) // then there is a competitor with a different bit at the position i
 		{
-			reliability = competitors[j].metric - DW.metric; // << mettre calcul avant : competitors[j].metric -= DW.metric >> reliability = competitors[j].metric;
+			reliability = competitors[j].metric;
 		}
 		else // same bits for each candidates
 		{
-			reliability = std::abs(R_prime[i]) + beta - DW.metric; // << mettre calcul avant : beta -= DW.metric >> reliability = std::abs(R_prime[i]) + beta;
+			reliability = std::abs(R_prime[i]) + beta;
 			if (reliability < 0)
 				reliability = 0;
 		}
