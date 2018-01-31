@@ -4,22 +4,22 @@
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
-#include "Codec_turbo_product_code.hpp"
+#include "Codec_turbo_product.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename Q>
-Codec_turbo_product_code<B,Q>
-::Codec_turbo_product_code(const factory::Encoder_turbo_product_code::parameters &enc_params,
-                           const factory::Decoder_turbo_product_code::parameters &dec_params)
+Codec_turbo_product<B,Q>
+::Codec_turbo_product(const factory::Encoder_turbo_product::parameters &enc_params,
+                      const factory::Decoder_turbo_product::parameters &dec_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
   GF_poly(dec_params.sub->K, dec_params.sub->N_cw, dec_params.sub->t),
   enc_bch(nullptr),
   dec_bch(nullptr)
 {
-	const std::string name = "Codec_turbo_product_code";
+	const std::string name = "Codec_turbo_product";
 	this->set_name(name);
 
 	// ----------------------------------------------------------------------------------------------------- exceptions
@@ -59,11 +59,11 @@ Codec_turbo_product_code<B,Q>
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 
-	Encoder_turbo_product_code<B> *encoder_tpc = nullptr;
+	Encoder_turbo_product<B> *encoder_tpc = nullptr;
 	try
 	{
 		enc_bch     = factory::Encoder_BCH::build<B>(*enc_params.sub, GF_poly);
-		encoder_tpc = factory::Encoder_turbo_product_code::build<B>(enc_params, this->get_interleaver_bit(), *enc_bch, *enc_bch);
+		encoder_tpc = factory::Encoder_turbo_product::build<B>(enc_params, this->get_interleaver_bit(), *enc_bch, *enc_bch);
 		this->set_encoder(encoder_tpc);
 	}
 	catch (tools::cannot_allocate const&)
@@ -74,21 +74,21 @@ Codec_turbo_product_code<B,Q>
 	dec_bch = factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly);
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_turbo_product_code::build_siso<B,Q>(dec_params, this->get_interleaver_llr(),
+		auto decoder_siso_siho = factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(),
 		                                                                              *dec_bch, *dec_bch, *enc_bch, *enc_bch);
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(factory::Decoder_turbo_product_code::build<B,Q>(dec_params, this->get_interleaver_llr(),
+		this->set_decoder_siho(factory::Decoder_turbo_product::build<B,Q>(dec_params, this->get_interleaver_llr(),
 		                                                                       *dec_bch, *dec_bch, *enc_bch, *enc_bch, encoder_tpc));
 	}
 }
 
 template <typename B, typename Q>
-Codec_turbo_product_code<B,Q>
-::~Codec_turbo_product_code()
+Codec_turbo_product<B,Q>
+::~Codec_turbo_product()
 {
 	if (enc_bch != nullptr) { delete enc_bch; enc_bch = nullptr; }
 	if (dec_bch != nullptr) { delete dec_bch; dec_bch = nullptr; }
@@ -97,11 +97,11 @@ Codec_turbo_product_code<B,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Codec_turbo_product_code<B_8,Q_8>;
-template class aff3ct::module::Codec_turbo_product_code<B_16,Q_16>;
-template class aff3ct::module::Codec_turbo_product_code<B_32,Q_32>;
-template class aff3ct::module::Codec_turbo_product_code<B_64,Q_64>;
+template class aff3ct::module::Codec_turbo_product<B_8,Q_8>;
+template class aff3ct::module::Codec_turbo_product<B_16,Q_16>;
+template class aff3ct::module::Codec_turbo_product<B_32,Q_32>;
+template class aff3ct::module::Codec_turbo_product<B_64,Q_64>;
 #else
-template class aff3ct::module::Codec_turbo_product_code<B,Q>;
+template class aff3ct::module::Codec_turbo_product<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

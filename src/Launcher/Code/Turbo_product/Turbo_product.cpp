@@ -4,27 +4,27 @@
 
 #include "Launcher/Simulation/BFER_std.hpp"
 
-#include "Turbo_product_code.hpp"
+#include "Turbo_product.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;
 
 template <class L, typename B, typename R, typename Q>
-Turbo_product_code<L,B,R,Q>
-::Turbo_product_code(const int argc, const char **argv, std::ostream &stream)
-: L(argc, argv, stream), params_cdc(new factory::Codec_turbo_product_code::parameters("cdc"))
+Turbo_product<L,B,R,Q>
+::Turbo_product(const int argc, const char **argv, std::ostream &stream)
+: L(argc, argv, stream), params_cdc(new factory::Codec_turbo_product::parameters("cdc"))
 {
 	this->params.set_cdc(params_cdc);
 }
 
 template <class L, typename B, typename R, typename Q>
-Turbo_product_code<L,B,R,Q>
-::~Turbo_product_code()
+Turbo_product<L,B,R,Q>
+::~Turbo_product()
 {
 }
 
 template <class L, typename B, typename R, typename Q>
-void Turbo_product_code<L,B,R,Q>
+void Turbo_product<L,B,R,Q>
 ::get_description_args()
 {
 	params_cdc->get_description(this->req_args, this->opt_args);
@@ -43,7 +43,7 @@ void Turbo_product_code<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-void Turbo_product_code<L,B,R,Q>
+void Turbo_product<L,B,R,Q>
 ::store_args()
 {
 	params_cdc->store(this->ar.get_args());
@@ -79,11 +79,11 @@ void Turbo_product_code<L,B,R,Q>
 #include "Tools/types.h"
 #include "Launcher/Simulation/BFER_std.hpp"
 #ifdef MULTI_PREC
-template class aff3ct::launcher::Turbo_product_code<aff3ct::launcher::BFER_std<B_8 ,R_8 ,Q_8 >,B_8 ,R_8 ,Q_8 >;
-template class aff3ct::launcher::Turbo_product_code<aff3ct::launcher::BFER_std<B_16,R_16,Q_16>,B_16,R_16,Q_16>;
-template class aff3ct::launcher::Turbo_product_code<aff3ct::launcher::BFER_std<B_32,R_32,Q_32>,B_32,R_32,Q_32>;
-template class aff3ct::launcher::Turbo_product_code<aff3ct::launcher::BFER_std<B_64,R_64,Q_64>,B_64,R_64,Q_64>;
+template class aff3ct::launcher::Turbo_product<aff3ct::launcher::BFER_std<B_8 ,R_8 ,Q_8 >,B_8 ,R_8 ,Q_8 >;
+template class aff3ct::launcher::Turbo_product<aff3ct::launcher::BFER_std<B_16,R_16,Q_16>,B_16,R_16,Q_16>;
+template class aff3ct::launcher::Turbo_product<aff3ct::launcher::BFER_std<B_32,R_32,Q_32>,B_32,R_32,Q_32>;
+template class aff3ct::launcher::Turbo_product<aff3ct::launcher::BFER_std<B_64,R_64,Q_64>,B_64,R_64,Q_64>;
 #else
-template class aff3ct::launcher::Turbo_product_code<aff3ct::launcher::BFER_std<B,R,Q>,B,R,Q>;
+template class aff3ct::launcher::Turbo_product<aff3ct::launcher::BFER_std<B,R,Q>,B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

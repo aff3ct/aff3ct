@@ -8,7 +8,7 @@
 #include "Turbo/Codec_turbo.hpp"
 #include "Turbo_DB/Codec_turbo_DB.hpp"
 #include "Uncoded/Codec_uncoded.hpp"
-#include "Turbo_product_code/Codec_turbo_product_code.hpp"
+#include "Turbo_product/Codec_turbo_product.hpp"
 
 #include "Codec_SIHO.hpp"
 
@@ -49,7 +49,7 @@ module::Codec_SIHO<B,Q>* Codec_SIHO::parameters
 	else if (get_name() == "Codec Turbo"     ) return dynamic_cast<const Codec_turbo             ::parameters&>(*this).template build<B,Q>(crc);
 	else if (get_name() == "Codec Turbo DB"  ) return dynamic_cast<const Codec_turbo_DB          ::parameters&>(*this).template build<B,Q>(crc);
 	else if (get_name() == "Codec Uncoded"   ) return dynamic_cast<const Codec_uncoded           ::parameters&>(*this).template build<B,Q>(crc);
-	else if (get_name() == "Codec TPC"       ) return dynamic_cast<const Codec_turbo_product_code::parameters&>(*this).template build<B,Q>(crc);
+	else if (get_name() == "Codec TPC"       ) return dynamic_cast<const Codec_turbo_product::parameters&>(*this).template build<B,Q>(crc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

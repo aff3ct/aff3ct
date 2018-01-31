@@ -203,7 +203,7 @@ module::Channel<R>* BFER_std<B,R,Q>
 	const auto seed_chn = rd_engine_seed[tid]();
 
 	auto params_chn = this->params_BFER_std.chn->clone();
-	params_chn->seed = seed_chn;
+	params_chn->seed = 0;//seed_chn;
 	auto c = params_chn->template build<R>();
 	delete params_chn;
 	return c;

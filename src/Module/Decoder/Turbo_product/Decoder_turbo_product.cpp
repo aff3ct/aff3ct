@@ -8,19 +8,19 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
-#include "Decoder_turbo_product_code.hpp"
+#include "Decoder_turbo_product.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
-Decoder_turbo_product_code<B,R>
-::Decoder_turbo_product_code(const int& n_ite,
-                             const Interleaver<R> &pi,
-                             Decoder_HIHO<B> &hiho_r,
-                             Decoder_HIHO<B> &hiho_c,
-                             const std::vector<uint32_t> &info_bits_pos_r,
-                             const std::vector<uint32_t> &info_bits_pos_c)
+Decoder_turbo_product<B,R>
+::Decoder_turbo_product(const int& n_ite,
+                        const Interleaver<R> &pi,
+                        Decoder_HIHO<B> &hiho_r,
+                        Decoder_HIHO<B> &hiho_c,
+                        const std::vector<uint32_t> &info_bits_pos_r,
+                        const std::vector<uint32_t> &info_bits_pos_c)
 : Decoder               (hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
   Decoder_SISO_SIHO<B,R>(hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
   n_ite (n_ite ),
@@ -38,7 +38,7 @@ Decoder_turbo_product_code<B,R>
   V_K_i (this->K),
   V_N_i (this->N)
 {
-	const std::string name = "Decoder_turbo_product_code";
+	const std::string name = "Decoder_turbo_product";
 	this->set_name(name);
 
 	if ((parity_extended && this->N != (hiho_r.get_N() +1) * (hiho_c.get_N() +1)) || (!parity_extended &&  this->N != hiho_r.get_N() * hiho_c.get_N()))
@@ -115,13 +115,13 @@ Decoder_turbo_product_code<B,R>
 }
 
 template <typename B, typename R>
-Decoder_turbo_product_code<B,R>
-::~Decoder_turbo_product_code()
+Decoder_turbo_product<B,R>
+::~Decoder_turbo_product()
 {
 }
 
 template <typename B, typename R>
-void Decoder_turbo_product_code<B, R>
+void Decoder_turbo_product<B, R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -142,7 +142,7 @@ void Decoder_turbo_product_code<B, R>
 }
 
 template <typename B, typename R>
-void Decoder_turbo_product_code<B, R>
+void Decoder_turbo_product<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -163,7 +163,7 @@ void Decoder_turbo_product_code<B, R>
 }
 
 template <typename B, typename R>
-void Decoder_turbo_product_code<B, R>
+void Decoder_turbo_product<B, R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -186,11 +186,11 @@ void Decoder_turbo_product_code<B, R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Decoder_turbo_product_code<B_8,Q_8>;
-template class aff3ct::module::Decoder_turbo_product_code<B_16,Q_16>;
-template class aff3ct::module::Decoder_turbo_product_code<B_32,Q_32>;
-template class aff3ct::module::Decoder_turbo_product_code<B_64,Q_64>;
+template class aff3ct::module::Decoder_turbo_product<B_8,Q_8>;
+template class aff3ct::module::Decoder_turbo_product<B_16,Q_16>;
+template class aff3ct::module::Decoder_turbo_product<B_32,Q_32>;
+template class aff3ct::module::Decoder_turbo_product<B_64,Q_64>;
 #else
-template class aff3ct::module::Decoder_turbo_product_code<B,Q>;
+template class aff3ct::module::Decoder_turbo_product<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

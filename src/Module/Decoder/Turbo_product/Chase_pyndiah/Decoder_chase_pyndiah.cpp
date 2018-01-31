@@ -24,7 +24,7 @@ Decoder_chase_pyndiah<B,R>
                         const int n_least_reliable_positions_,
                         const int n_competitors_)
 : Decoder(hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
-  Decoder_turbo_product_code<B,R>(n_ite, pi, hiho_r, hiho_c, info_bits_pos_r, info_bits_pos_c),
+  Decoder_turbo_product<B,R>(n_ite, pi, hiho_r, hiho_c, info_bits_pos_r, info_bits_pos_c),
 
   alpha                     (alpha_                                          ),
   n_least_reliable_positions(n_least_reliable_positions_                     ),

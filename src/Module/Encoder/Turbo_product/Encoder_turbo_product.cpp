@@ -5,14 +5,14 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/compute_parity.h"
 
-#include "Encoder_turbo_product_code.hpp"
+#include "Encoder_turbo_product.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B>
-Encoder_turbo_product_code<B>
-::Encoder_turbo_product_code(const Interleaver<B> &pi, Encoder<B> &enc_r, Encoder<B> &enc_c)
+Encoder_turbo_product<B>
+::Encoder_turbo_product(const Interleaver<B> &pi, Encoder<B> &enc_r, Encoder<B> &enc_c)
 : Encoder<B>(enc_r.get_K() * enc_c.get_K(), pi.get_core().get_size(), enc_r.get_n_frames()),
   pi   (pi   ),
   enc_r(enc_r),
@@ -22,7 +22,7 @@ Encoder_turbo_product_code<B>
 
   X_N_i (this->N)
 {
-	const std::string name = "Encoder_turbo_product_code";
+	const std::string name = "Encoder_turbo_product";
 	this->set_name(name);
 
 	if ((parity_extended && this->N != (enc_r.get_N() +1) * (enc_c.get_N() +1)) || (!parity_extended && this->N != enc_r.get_N() * enc_c.get_N()))
@@ -55,7 +55,7 @@ Encoder_turbo_product_code<B>
 }
 
 template <typename B>
-void Encoder_turbo_product_code<B>
+void Encoder_turbo_product<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	const int n_cols_K = this->enc_r.get_K();
@@ -89,11 +89,11 @@ void Encoder_turbo_product_code<B>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Encoder_turbo_product_code<B_8>;
-template class aff3ct::module::Encoder_turbo_product_code<B_16>;
-template class aff3ct::module::Encoder_turbo_product_code<B_32>;
-template class aff3ct::module::Encoder_turbo_product_code<B_64>;
+template class aff3ct::module::Encoder_turbo_product<B_8>;
+template class aff3ct::module::Encoder_turbo_product<B_16>;
+template class aff3ct::module::Encoder_turbo_product<B_32>;
+template class aff3ct::module::Encoder_turbo_product<B_64>;
 #else
-template class aff3ct::module::Encoder_turbo_product_code<B>;
+template class aff3ct::module::Encoder_turbo_product<B>;
 #endif
 // ==================================================================================== explicit template instantiation

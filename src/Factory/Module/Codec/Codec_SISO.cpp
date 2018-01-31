@@ -3,7 +3,7 @@
 #include "RSC/Codec_RSC.hpp"
 #include "RSC_DB/Codec_RSC_DB.hpp"
 #include "Uncoded/Codec_uncoded.hpp"
-#include "Turbo_product_code/Codec_turbo_product_code.hpp"
+#include "Turbo_product/Codec_turbo_product.hpp"
 
 #include "Codec_SISO.hpp"
 
@@ -39,7 +39,7 @@ module::Codec_SISO<B,Q>* Codec_SISO::parameters
 	else if (get_name() == "Codec RSC"    ) return dynamic_cast<const Codec_RSC    ::parameters&>(*this).template build<B,Q>(crc);
 	else if (get_name() == "Codec RSC DB" ) return dynamic_cast<const Codec_RSC_DB ::parameters&>(*this).template build<B,Q>(crc);
 	else if (get_name() == "Codec Uncoded") return dynamic_cast<const Codec_uncoded::parameters&>(*this).template build<B,Q>(crc);
-	else if (get_name() == "Codec TPC"    ) return dynamic_cast<const Codec_turbo_product_code::parameters&>(*this).template build<B,Q>(crc);
+	else if (get_name() == "Codec TPC"    ) return dynamic_cast<const Codec_turbo_product::parameters&>(*this).template build<B,Q>(crc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

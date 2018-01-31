@@ -1,5 +1,5 @@
-#ifndef DECODER_TURBO_PRODUCT_CODE_HPP_
-#define DECODER_TURBO_PRODUCT_CODE_HPP_
+#ifndef DECODER_TURBO_PRODUCT_HPP_
+#define DECODER_TURBO_PRODUCT_HPP_
 
 #include "Module/Interleaver/Interleaver.hpp"
 
@@ -12,7 +12,7 @@ namespace module
 {
 
 template <typename B = int, typename R = float>
-class Decoder_turbo_product_code : public Decoder_SISO_SIHO<B,R>
+class Decoder_turbo_product : public Decoder_SISO_SIHO<B,R>
 {
 protected:
 	const int  n_ite; // number of iterations
@@ -31,13 +31,13 @@ protected:
 	std::vector<B> V_N_i;
 
 public:
-	Decoder_turbo_product_code(const int& n_ite,
-	                           const Interleaver<R> &pi,
-	                           Decoder_HIHO<B> &hiho_r,
-	                           Decoder_HIHO<B> &hiho_c,
-	                           const std::vector<uint32_t> &info_bits_pos_r,
-	                           const std::vector<uint32_t> &info_bits_pos_c);
-	virtual ~Decoder_turbo_product_code();
+	Decoder_turbo_product(const int& n_ite,
+	                      const Interleaver<R> &pi,
+	                      Decoder_HIHO<B> &hiho_r,
+	                      Decoder_HIHO<B> &hiho_c,
+	                      const std::vector<uint32_t> &info_bits_pos_r,
+	                      const std::vector<uint32_t> &info_bits_pos_c);
+	virtual ~Decoder_turbo_product();
 
 protected:
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
@@ -50,4 +50,4 @@ protected:
 }
 }
 
-#endif /* DECODER_TURBO_PRODUCT_CODE_HPP_ */
+#endif /* DECODER_TURBO_PRODUCT_HPP_ */

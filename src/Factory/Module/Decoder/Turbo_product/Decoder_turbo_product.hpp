@@ -1,13 +1,13 @@
-#ifndef FACTORY_DECODER_TURBO_PRODUCT_CODE_HPP
-#define FACTORY_DECODER_TURBO_PRODUCT_CODE_HPP
+#ifndef FACTORY_DECODER_TURBO_PRODUCT_HPP
+#define FACTORY_DECODER_TURBO_PRODUCT_HPP
 
 #include <string>
 #include <type_traits>
 
 #include "Module/Decoder/Decoder_HIHO.hpp"
-#include "Module/Decoder/Turbo_product_code/Decoder_turbo_product_code.hpp"
+#include "Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
-// #include "Module/Encoder/Turbo_product_code/Encoder_turbo_product_code.hpp"
+// #include "Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
@@ -18,9 +18,9 @@ namespace aff3ct
 {
 namespace factory
 {
-extern const std::string Decoder_turbo_product_code_name;
-extern const std::string Decoder_turbo_product_code_prefix;
-struct Decoder_turbo_product_code : public Decoder
+extern const std::string Decoder_turbo_product_name;
+extern const std::string Decoder_turbo_product_prefix;
+struct Decoder_turbo_product : public Decoder
 {
 	class parameters : public Decoder::parameters
 	{
@@ -38,9 +38,9 @@ struct Decoder_turbo_product_code : public Decoder
 		Interleaver ::parameters *itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Decoder_turbo_product_code_prefix);
+		explicit parameters(const std::string &p = Decoder_turbo_product_prefix);
 		virtual ~parameters();
-		Decoder_turbo_product_code::parameters* clone() const;
+		Decoder_turbo_product::parameters* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;
 		virtual std::vector<std::string> get_short_names() const;
@@ -89,4 +89,4 @@ struct Decoder_turbo_product_code : public Decoder
 }
 }
 
-#endif /* FACTORY_DECODER_TURBO_PRODUCT_CODE_HPP */
+#endif /* FACTORY_DECODER_TURBO_PRODUCT_HPP */

@@ -4,7 +4,7 @@
 #include <aff3ct.hpp>
 #include <vector>
 
-#include "../Decoder_turbo_product_code.hpp"
+#include "../Decoder_turbo_product.hpp"
 
 namespace aff3ct
 {
@@ -12,7 +12,7 @@ namespace module
 {
 
 template <typename B = int, typename R = float>
-class Decoder_chase_pyndiah : public Decoder_turbo_product_code<B,R>
+class Decoder_chase_pyndiah : public Decoder_turbo_product<B,R>
 {
 protected:
 
