@@ -246,7 +246,7 @@ void Decoder_chase_pyndiah<B,R>
 
 		for (int i = 0; i < size; i++)
 		{
-			B sign = std::signbit(R_prime[i]) ? 1 : 0;
+			B sign = (R_prime[i] < 0) ? 1 : 0;
 
 			if (sign ^ test_vect[tv_off + i])
 				metrics[c] += std::abs(R_prime[i]);
