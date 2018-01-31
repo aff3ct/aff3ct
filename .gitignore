@@ -7,6 +7,7 @@
 cppcheck.xml
 sonar-project.properties
 src_files.txt
+*.sublime-*
 
 .scannerwork/
 build*/
