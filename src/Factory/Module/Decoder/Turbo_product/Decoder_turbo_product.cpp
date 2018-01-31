@@ -17,7 +17,7 @@ Decoder_turbo_product::parameters
   sub(new Decoder_BCH::parameters(prefix+"-sub")),
   itl(new Interleaver::parameters("itl"))
 {
-	this->type   = "TPC";
+	this->type   = "CP";
 	this->implem = "STD";
 }
 
@@ -83,9 +83,7 @@ void Decoder_turbo_product::parameters
 	req_args.erase({pi+"-size"    });
 	opt_args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}][2] += ", TPC";
-
-	opt_args[{p+"-implem"}].push_back("STD");
+	opt_args[{p+"-type", "D"}][2] += ", CP";
 
 	opt_args[{p+"-ite", "i"}] =
 		{"strictly_positive_int",
@@ -188,7 +186,7 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		if (this->type == "TPC")
+		if (this->type == "CP")
 		{
 			if (this->implem == "STD")
 				return new module::Decoder_chase_pyndiah<B,Q>(this->n_ite, itl, hiho_r, hiho_c, enc_r.get_info_bits_pos(), enc_r.get_info_bits_pos(),
