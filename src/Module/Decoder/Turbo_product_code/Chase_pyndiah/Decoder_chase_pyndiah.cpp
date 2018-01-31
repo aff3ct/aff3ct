@@ -75,7 +75,11 @@ void Decoder_chase_pyndiah<B,R>
 
 		// decode each col
 		for (int j = 0; j < n_cols; j++)
-			_decode_row_siso(Y_N_cha_i.data() + j*n_rows, this->Y_N_pi.data() + j*n_rows, this->Y_N_pi.data() + j*n_rows, this->hiho_c, n_rows); // overwrite Y_N_pi
+			_decode_row_siso(Y_N_cha_i   .data() + j*n_rows,
+			                 this->Y_N_pi.data() + j*n_rows,
+			                 this->Y_N_pi.data() + j*n_rows,
+			                 this->hiho_c,
+			                 n_rows); // overwrite Y_N_pi
 
 
 		this->pi.deinterleave(this->Y_N_pi.data(), this->Y_N_i.data(), 0, 1); // rows go back as columns
@@ -84,17 +88,29 @@ void Decoder_chase_pyndiah<B,R>
 		if (i < this->n_ite -1 || (return_K_siso != 0 && return_K_siso != 1))
 		{
 			for (int j = 0; j < n_rows; j++)
-				_decode_row_siso(Y_N_cha + j*n_cols, this->Y_N_i.data() + j*n_cols, this->Y_N_i.data() + j*n_cols, this->hiho_r, n_cols); // overwrite Y_N_i
+				_decode_row_siso(Y_N_cha + j*n_cols,
+				                 this->Y_N_i.data() + j*n_cols,
+				                 this->Y_N_i.data() + j*n_cols,
+				                 this->hiho_r,
+				                 n_cols); // overwrite Y_N_i
 		}
 		else if(return_K_siso == 0)
 		{
 			for (int j = 0; j < this->hiho_c.get_K(); j++)
-				_decode_row_siho(Y_N_cha + j*n_cols, this->Y_N_i.data() + j*n_cols, this->V_K_i.data() + j*this->hiho_r.get_K(), this->hiho_r, n_cols, true);
+				_decode_row_siho(Y_N_cha + j*n_cols,
+				                 this->Y_N_i.data() + (j + this->hiho_c.get_N() - this->hiho_c.get_K())*n_cols,
+				                 this->V_K_i.data() + j*this->hiho_r.get_K(),
+				                 this->hiho_r, n_cols,
+				                 true);
 		}
 		else if (return_K_siso == 1)
 		{
 			for (int j = 0; j < n_cols; j++)
-				_decode_row_siho(Y_N_cha + j*n_cols, this->Y_N_i.data() + j*n_cols, this->V_N_i.data() + j*n_cols, this->hiho_r, n_cols, false);
+				_decode_row_siho(Y_N_cha + j*n_cols,
+				                 this->Y_N_i.data() + j*n_cols,
+				                 this->V_N_i.data() + j*n_cols,
+				                 this->hiho_r, n_cols,
+				                 false);
 		}
 
 	}
@@ -107,12 +123,17 @@ void Decoder_chase_pyndiah<B,R>
 {
 	if (_decode_chase(R_prime, hiho, size))
 	{	// syndrome ok, R_prime is a code word, then copy its hard decided version and exit the function
-		std::copy(hard_Rprime.data(), hard_Rprime.data() + (return_K ? hiho.get_K() : size), R_dec);
+		std::copy(hard_Rprime.data() + (return_K ? hiho.get_N() - hiho.get_K() : 0),
+		          hard_Rprime.data() + (return_K ? hiho.get_N() : size),
+		          R_dec);
 		return;
 	}
 
 	auto* DW = test_vect.data() + competitors.front().pos;
-	std::copy(DW, DW + (return_K ? hiho.get_K() : size), R_dec);
+
+	std::copy(DW + (return_K ? hiho.get_N() - hiho.get_K() : 0),
+	          DW + (return_K ? hiho.get_N() : size),
+	          R_dec);
 }
 
 template <typename B, typename R>
@@ -138,12 +159,6 @@ bool Decoder_chase_pyndiah<B,R>
 	// 	parity_diff = tools::compute_parity(hard_Rprime.data()) ^ hard_Rprime[N -1];
 	// else
 	// 	parity_diff = false;
-
-	// if (! dec_hiho->check_syndrome(hard_Rprime.data()) && ! parity_diff)
-	// {
-	// 	// std::cerr << "(II) check_syndrome : " << std::endl;
-	// 	return true;
-	// }
 
 	find_least_reliable_pos(R_prime, hiho.get_N()); // without parity bit if any
 	compute_test_vectors   (hiho,    size        );
