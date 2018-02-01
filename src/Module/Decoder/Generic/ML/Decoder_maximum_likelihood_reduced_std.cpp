@@ -5,31 +5,31 @@
 #include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Perf/hard_decision.h"
 
-#include "Decoder_chase_std.hpp"
+#include "Decoder_maximum_likelihood_reduced_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
-Decoder_chase_std<B,R>
-::Decoder_chase_std(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips, const bool hamming, 
-                    const int n_frames)
-: Decoder                 (K, N,                              n_frames, 1),
-  Decoder_chase_naive<B,R>(K, N, encoder, max_flips, hamming, n_frames   ),
+Decoder_maximum_likelihood_reduced_std<B,R>
+::Decoder_maximum_likelihood_reduced_std(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips, 
+                                         const bool hamming, const int n_frames)
+: Decoder                                      (K, N,                              n_frames, 1),
+  Decoder_maximum_likelihood_reduced_naive<B,R>(K, N, encoder, max_flips, hamming, n_frames   ),
   flip_pos(max_flips)
 {
-	const std::string name = "Decoder_chase_std";
+	const std::string name = "Decoder_maximum_likelihood_reduced_std";
 	this->set_name(name);
 }
 
 template <typename B, typename R>
-Decoder_chase_std<B,R>
-::~Decoder_chase_std()
+Decoder_maximum_likelihood_reduced_std<B,R>
+::~Decoder_maximum_likelihood_reduced_std()
 {
 }
 
 template <typename B, typename R>
-void Decoder_chase_std<B,R>
+void Decoder_maximum_likelihood_reduced_std<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	if (!this->encoder.is_sys())
@@ -47,7 +47,7 @@ void Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_std<B,R>
+void Decoder_maximum_likelihood_reduced_std<B,R>
 ::_decode_siho_cw_recursive(const R *Y_N, B *V_N, const uint32_t n_flips, const uint32_t max_flips)
 {
 	if (n_flips == max_flips)
@@ -82,7 +82,7 @@ void Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_std<B,R>
+void Decoder_maximum_likelihood_reduced_std<B,R>
 ::_decode_hiho_cw_recursive(const B *Y_N, B *V_N, const uint32_t n_flips, const uint32_t max_flips)
 {
 	if (n_flips == max_flips)
@@ -117,7 +117,7 @@ void Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_std<B,R>
+void Decoder_maximum_likelihood_reduced_std<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->hard_Y_N.data(), this->N);
@@ -149,7 +149,7 @@ void Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_std<B,R>
+void Decoder_maximum_likelihood_reduced_std<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	if (!this->encoder.is_sys())
@@ -167,7 +167,7 @@ void Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_std<B,R>
+void Decoder_maximum_likelihood_reduced_std<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	this->min_hamming_dist = std::numeric_limits<uint32_t>::max();
@@ -186,11 +186,11 @@ void Decoder_chase_std<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Decoder_chase_std<B_8,Q_8>;
-template class aff3ct::module::Decoder_chase_std<B_16,Q_16>;
-template class aff3ct::module::Decoder_chase_std<B_32,Q_32>;
-template class aff3ct::module::Decoder_chase_std<B_64,Q_64>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_std<B_8,Q_8>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_std<B_16,Q_16>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_std<B_32,Q_32>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_std<B_64,Q_64>;
 #else
-template class aff3ct::module::Decoder_chase_std<B,Q>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_std<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -5,23 +5,23 @@
 #include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Perf/hard_decision.h"
 
-#include "Decoder_chase_naive.hpp"
+#include "Decoder_maximum_likelihood_reduced_naive.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
-Decoder_chase_naive<B,R>
-::Decoder_chase_naive(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips, const bool hamming, 
-                      const int n_frames)
-: Decoder                        (K, N,          n_frames, 1),
-  Decoder_maximum_likelihood<B,R>(K, N, encoder, n_frames   ),
+Decoder_maximum_likelihood_reduced_naive<B,R>
+::Decoder_maximum_likelihood_reduced_naive(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips, 
+                                           const bool hamming, const int n_frames)
+: Decoder             (K, N,          n_frames, 1),
+  Decoder_generic<B,R>(K, N, encoder, n_frames   ),
   max_flips(max_flips),
   hamming(hamming),
   min_euclidean_dist(std::numeric_limits<float>::max()),
   min_hamming_dist(std::numeric_limits<uint32_t>::max())
 {
-	const std::string name = "Decoder_chase_naive";
+	const std::string name = "Decoder_maximum_likelihood_reduced_naive";
 	this->set_name(name);
 
 	if (max_flips > (uint32_t)N)
@@ -34,13 +34,13 @@ Decoder_chase_naive<B,R>
 }
 
 template <typename B, typename R>
-Decoder_chase_naive<B,R>
-::~Decoder_chase_naive()
+Decoder_maximum_likelihood_reduced_naive<B,R>
+::~Decoder_maximum_likelihood_reduced_naive()
 {
 }
 
 template <typename B, typename R>
-void Decoder_chase_naive<B,R>
+void Decoder_maximum_likelihood_reduced_naive<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	if (!this->encoder.is_sys())
@@ -58,7 +58,7 @@ void Decoder_chase_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_naive<B,R>
+void Decoder_maximum_likelihood_reduced_naive<B,R>
 ::_try_sequence_llrs(const R *Y_N, const B *X_N, B *V_N)
 {
 	if (this->encoder.is_codeword(X_N))
@@ -76,7 +76,7 @@ void Decoder_chase_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_naive<B,R>
+void Decoder_maximum_likelihood_reduced_naive<B,R>
 ::_try_sequence_bits(const B *Y_N, const B *X_N, B *V_N)
 {
 	if (this->encoder.is_codeword(X_N))
@@ -94,7 +94,7 @@ void Decoder_chase_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_naive<B,R>
+void Decoder_maximum_likelihood_reduced_naive<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->hard_Y_N.data(), this->N);
@@ -313,7 +313,7 @@ void Decoder_chase_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_naive<B,R>
+void Decoder_maximum_likelihood_reduced_naive<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	if (!this->encoder.is_sys())
@@ -331,7 +331,7 @@ void Decoder_chase_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_naive<B,R>
+void Decoder_maximum_likelihood_reduced_naive<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	this->min_hamming_dist = std::numeric_limits<uint32_t>::max();
@@ -547,11 +547,11 @@ void Decoder_chase_naive<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Decoder_chase_naive<B_8,Q_8>;
-template class aff3ct::module::Decoder_chase_naive<B_16,Q_16>;
-template class aff3ct::module::Decoder_chase_naive<B_32,Q_32>;
-template class aff3ct::module::Decoder_chase_naive<B_64,Q_64>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_naive<B_8,Q_8>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_naive<B_16,Q_16>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_naive<B_32,Q_32>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_naive<B_64,Q_64>;
 #else
-template class aff3ct::module::Decoder_chase_naive<B,Q>;
+template class aff3ct::module::Decoder_maximum_likelihood_reduced_naive<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
