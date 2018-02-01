@@ -97,6 +97,10 @@ void Decoder_turbo_product::parameters
 		{"strictly_positive_int",
 		 "number of least reliable positions."};
 
+	opt_args[{p+"-t"}] =
+		{"positive_int",
+		 "number of test vectors (0 means equal to 2^p)."};
+
 	opt_args[{p+"-c"}] =
 		{"positive_int",
 		 "number of competitors (0 means equal to number of test vectors)."};
@@ -121,6 +125,7 @@ void Decoder_turbo_product::parameters
 
 	if(exist(vals, {p+"-ite", "i"})) this->n_ite                      = std::stoi(vals.at({p+"-ite", "i"}));
 	if(exist(vals, {p+"-p"       })) this->n_least_reliable_positions = std::stoi(vals.at({p+"-p"       }));
+	if(exist(vals, {p+"-t"       })) this->n_test_vectors             = std::stoi(vals.at({p+"-t"       }));
 	if(exist(vals, {p+"-c"       })) this->n_competitors              = std::stoi(vals.at({p+"-c"       }));
 	if(exist(vals, {p+"-alpha"   })) this->alpha                      = std::stof(vals.at({p+"-alpha"   }));
 	if(exist(vals, {p+"-ext"     })) this->parity_extended            = true;
@@ -162,6 +167,9 @@ void Decoder_turbo_product::parameters
 		headers[p].push_back(std::make_pair("alpha",                       std::to_string(alpha                     )));
 		headers[p].push_back(std::make_pair("Num. least reliable pos (p)", std::to_string(n_least_reliable_positions)));
 
+		if (n_test_vectors != 0)
+			headers[p].push_back(std::make_pair("Num. test vectors (t)", std::to_string(n_test_vectors)));
+
 		if (n_competitors != 0)
 			headers[p].push_back(std::make_pair("Num. competitors (c)", std::to_string(n_competitors)));
 
@@ -189,8 +197,8 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
 		if (this->type == "CP")
 		{
 			if (this->implem == "STD")
-				return new module::Decoder_chase_pyndiah<B,Q>(this->n_ite, itl, hiho_r, hiho_c, enc_r.get_info_bits_pos(), enc_r.get_info_bits_pos(),
-				                                              alpha, n_least_reliable_positions, n_competitors);
+				return new module::Decoder_chase_pyndiah<B,Q>(n_ite, itl, hiho_r, hiho_c, enc_r.get_info_bits_pos(), enc_r.get_info_bits_pos(),
+				                                              alpha, n_least_reliable_positions, n_test_vectors, n_competitors);
 		}
 	}
 

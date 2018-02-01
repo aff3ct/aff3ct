@@ -24,20 +24,22 @@ Decoder_chase_pyndiah<B,R>
                         const std::vector<uint32_t> &info_bits_pos_c,
 	                    const R alpha_,
                         const int n_least_reliable_positions_,
+                        const int n_test_vectors_,
                         const int n_competitors_)
 : Decoder(hiho_r.get_K() * hiho_c.get_K(), pi.get_core().get_size(), hiho_r.get_n_frames(), hiho_r.get_simd_inter_frame_level()),
   Decoder_turbo_product<B,R>(n_ite, pi, hiho_r, hiho_c, info_bits_pos_r, info_bits_pos_c),
 
-  alpha                     (alpha_                                          ),
-  n_least_reliable_positions(n_least_reliable_positions_                     ),
-  least_reliable_pos        (n_least_reliable_positions                      ),
-  hard_Rprime               (std::max(hiho_r.get_N(), hiho_c.get_N()) +1     ), // +1 for parity bit if any
-  n_test_vectors            ((int)1 << n_least_reliable_positions            ),
-  test_vect                 (n_test_vectors * hard_Rprime.size()             ),
-  metrics                   (n_test_vectors                                  ),
-  n_competitors             (n_competitors_ ? n_competitors_ : n_test_vectors),
-  competitors               (n_test_vectors                                  ),
-  Y_N_cha_i                 (pi.get_core().get_size()                        )
+  alpha                     (alpha_                                                                  ),
+  n_least_reliable_positions(n_least_reliable_positions_                                             ),
+  least_reliable_pos        (n_least_reliable_positions                                              ),
+  hard_Rprime               (std::max(hiho_r.get_N(), hiho_c.get_N()) +1                             ), // +1 for parity bit if any
+  n_test_vectors            (n_test_vectors_ ? n_test_vectors_ : (int)1 << n_least_reliable_positions),
+  test_vect                 (n_test_vectors * hard_Rprime.size()                                     ),
+  metrics                   (n_test_vectors                                                          ),
+  n_competitors             (n_competitors_ ? n_competitors_ : n_test_vectors                        ),
+  competitors               (n_test_vectors                                                          ),
+  Y_N_cha_i                 (pi.get_core().get_size()                                                ),
+  Alpha ({0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.35, 0.35,0.35,0.35,0.35,0.4,0.4,0.4,0.5})
 {
 	const std::string name = "Decoder_chase_pyndiah";
 	this->set_name(name);
@@ -50,6 +52,14 @@ Decoder_chase_pyndiah<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (n_test_vectors <= 0 || n_test_vectors > ((int)1 << n_least_reliable_positions))
+	{
+		std::stringstream message;
+		message << "'n_test_vectors' has to be positive and lower than 2^'n_least_reliable_positions' ('n_least_reliable_positions' = "
+		        << n_least_reliable_positions << ", 'n_test_vectors' = " << n_test_vectors << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (n_competitors <= 0 || n_competitors > n_test_vectors)
 	{
 		std::stringstream message;
@@ -58,9 +68,7 @@ Decoder_chase_pyndiah<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-
-	// TODO : donner possibilité de choisir les vecteurs de tests (n_test_vectors doit pouvoir être inférieur à 2^n_least_reliable_positions)
-	// consequently, in apply_candidate, invert the bit value and not force 0 or 1
+	generate_bit_flipping_candidates();
 }
 
 template <typename B, typename R>
@@ -75,6 +83,9 @@ void Decoder_chase_pyndiah<B,R>
 
 	for (int i = 0; i < this->n_ite; i++)
 	{
+		// alpha = Alpha[2*i];
+
+
 		this->pi.interleave(this->Y_N_i.data(), this->Y_N_pi.data(), 0, 1); // columns becomes rows
 
 		// decode each col
@@ -93,6 +104,7 @@ void Decoder_chase_pyndiah<B,R>
 			                 n_rows); // overwrite Y_N_pi
 		}
 
+		// alpha = Alpha[2*i+1];
 
 		this->pi.deinterleave(this->Y_N_pi.data(), this->Y_N_i.data(), 0, 1); // rows go back as columns
 
@@ -100,19 +112,19 @@ void Decoder_chase_pyndiah<B,R>
 		if (i < this->n_ite -1 || (return_K_siso != 0 && return_K_siso != 1))
 		{
 			for (int j = 0; j < n_rows; j++)
-		{
-#ifndef NDEBUG
-    std::cerr << std::endl;
-    std::cerr << std::endl;
-    std::cerr << std::endl;
-    std::cerr << "(II) row : " << j << std::endl;
-#endif
+			{
+	#ifndef NDEBUG
+	    std::cerr << std::endl;
+	    std::cerr << std::endl;
+	    std::cerr << std::endl;
+	    std::cerr << "(II) row : " << j << std::endl;
+	#endif
 				_decode_row_siso(Y_N_cha + j*n_cols,
 				                 this->Y_N_i.data() + j*n_cols,
 				                 this->Y_N_i.data() + j*n_cols,
 				                 this->hiho_r,
 				                 n_cols); // overwrite Y_N_i
-		}
+			}
 		}
 		else if(return_K_siso == 0)
 		{
@@ -223,7 +235,11 @@ bool Decoder_chase_pyndiah<B,R>
 #endif
 
 	// if (this->parity_extended)
-	// 	parity_diff = tools::compute_parity(hard_Rprime.data()) ^ hard_Rprime[N -1];
+	// {
+	// 	auto parity_calc = tools::compute_parity(hard_Rprime.data(), hiho.get_N());
+	// 	parity_diff = parity_calc ^ hard_Rprime[hiho.get_N()];
+	// 	hard_Rprime[hiho.get_N()] = parity_calc;
+	// }
 	// else
 	// 	parity_diff = false;
 
@@ -290,12 +306,14 @@ void Decoder_chase_pyndiah<B,R>
 	for (int c = 0; c < n_test_vectors; c++)
 	{
 		// rearrange hard_Rprime to be a good candidate
-		apply_candidate(hard_Rprime.data(), c);
+		bit_flipping(hard_Rprime.data(), c);
 
 		hiho.decode_hiho_cw(hard_Rprime.data(), test_vect.data() + c*size); // parity bit is ignored by the decoder
 
 		if (this->parity_extended)
 			test_vect[(c+1)*size -1] = tools::compute_parity(test_vect.data() + c*size, hiho.get_N());
+
+		bit_flipping(hard_Rprime.data(), c); // apply again the bit flipping to recover the original hard_Rprime
 	}
 }
 
@@ -310,12 +328,8 @@ void Decoder_chase_pyndiah<B,R>
 		int tv_off = c*size;
 
 		for (int i = 0; i < size; i++)
-		{
-			B sign = (R_prime[i] < 0) ? 1 : 0;
-
-			if (sign ^ test_vect[tv_off + i])
+			if (hard_Rprime[i] ^ test_vect[tv_off + i])
 				metrics[c] += std::abs(R_prime[i]);
-		}
 	}
 
 	// reorder metrics -> decided word is at first position of competitors list
@@ -385,6 +399,7 @@ void Decoder_chase_pyndiah<B,R>
 	for (int j = 1; j < n_competitors; j++)
 		competitors[j].metric -= DW.metric;
 
+
 	for (int i = 0; i < size; i++)
 	{
 		const auto DB = test_vect[DW.pos + i]; // decided bit at the position i
@@ -423,12 +438,61 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::apply_candidate(B* hard_vect, const int c)
+::bit_flipping(B* hard_vect, const int c)
 {
-	// take the bits of 'c' as the different values to apply to each least reliable bits
-	// being a counter, the bits of 'c' change for each candidate and so the test vector
 	for (int i = 0; i < n_least_reliable_positions; i++)
-		hard_vect[least_reliable_pos[i].pos] = (c >> i) & (int)1;
+		hard_vect[least_reliable_pos[i].pos] = tv_candidates[c][i] ? hard_vect[least_reliable_pos[i].pos] : !hard_vect[least_reliable_pos[i].pos];
+}
+
+template <typename B, typename R>
+void Decoder_chase_pyndiah<B,R>
+::generate_bit_flipping_candidates()
+{
+	tv_candidates.resize(n_test_vectors, std::vector<bool>(n_least_reliable_positions, false));
+
+	std::vector<int> cand(n_test_vectors, 0);
+
+	if (n_test_vectors == (1 << n_least_reliable_positions))
+	{
+		std::iota(cand.begin(), cand.end(), 0);
+	}
+	else if (n_test_vectors <= (n_least_reliable_positions * (n_least_reliable_positions + 1) / 2 + 1))
+	{
+		// (0) do not flip any bit -> 1 test vector
+		// (1) flip one by one all least reliable positions -> 'n_least_reliable_positions' test vectors
+		// (2) always flip the least realiable position and do (1) on the 'n_least_reliable_positions' -1 left bits -> 'n_least_reliable_positions' -1 test vectors
+		// (3) always flip the two least reliable position and do (1) on the 'n_least_reliable_positions' -2 left bits -> 'n_least_reliable_positions' -2 test vectors
+		// (4) and so on until reaching the will number of test vectors with a maximum of the sum from 1 to 'n_least_reliable_positions' + 1
+
+		int idx_pos = 0, start_idx_pos = 0;
+		int least_reliable_pos_mask = 0;
+		int flipped_bit_mask = 1;
+
+		for (int i = 1; i < n_test_vectors; i++)
+		{
+			cand[i] = flipped_bit_mask | least_reliable_pos_mask;
+
+			idx_pos++;
+			flipped_bit_mask <<= 1;
+
+			if (idx_pos >= n_least_reliable_positions)
+			{
+				start_idx_pos ++;
+				idx_pos = start_idx_pos;
+
+				least_reliable_pos_mask <<= 1;
+				least_reliable_pos_mask  += 1;
+
+				flipped_bit_mask = 1 << start_idx_pos;
+			}
+		}
+	}
+	else
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "unimplemented method");
+
+	for (int i = 0; i < n_test_vectors; i++)
+		for (int j = 0; j < n_least_reliable_positions; j++)
+			tv_candidates[i][j] = ((cand[i] >> j) & (int)1) != 0;
 }
 
 // ==================================================================================== explicit template instantiation

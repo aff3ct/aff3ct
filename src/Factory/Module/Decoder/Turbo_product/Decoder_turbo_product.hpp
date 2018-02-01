@@ -30,7 +30,8 @@ struct Decoder_turbo_product : public Decoder
 		int   n_ite = 4;
 		float alpha = 0.5;
 		int   n_least_reliable_positions = 2;
-		int   n_competitors = 0;
+		int   n_test_vectors = 0;
+		int   n_competitors  = 0;
 		int   parity_extended = false;
 
 		// depending parameters

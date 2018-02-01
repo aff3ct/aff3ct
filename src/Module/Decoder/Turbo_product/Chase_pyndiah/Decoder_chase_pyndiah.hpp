@@ -22,7 +22,7 @@ protected:
 		int pos;
 	};
 
-	const R   alpha;
+	 R   alpha;
 	const int n_least_reliable_positions;
 
 	std::vector<info> least_reliable_pos;
@@ -38,6 +38,9 @@ protected:
 
 	std::vector<R> Y_N_cha_i;
 
+	std::vector<std::vector<bool>> tv_candidates;
+
+	const std::vector<float>   Alpha;
 public:
 
 	Decoder_chase_pyndiah(const int& n_ite,
@@ -48,7 +51,8 @@ public:
 	                      const std::vector<uint32_t> &info_bits_pos_c,
 	                      const R   alpha = 0.5,
 	                      const int n_least_reliable_positions = 2,
-	                      const int n_competitors = 0);
+	                      const int n_test_vectors = 0,
+	                      const int n_competitors  = 0);
 
 protected:
 	void _decode(const R *Y_N, int return_K_siso); // return_K_siso = 0 then hard decode and fill V_K_i else if = 1 then hard decode and fill V_H_i else soft decode and fill Y_N_i
@@ -63,7 +67,9 @@ protected:
 	void compute_metrics        (const R* R_prime,                           const int size);
 	void compute_reliability    (const R* R_cha, const R* R_prime, R* R_dec, const int size);
 
-	void apply_candidate(B* hard_vect, const int c);
+	void bit_flipping(B* hard_vect, const int c);
+
+	void generate_bit_flipping_candidates();
 };
 
 }
