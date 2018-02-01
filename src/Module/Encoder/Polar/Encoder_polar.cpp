@@ -76,8 +76,6 @@ void Encoder_polar<B>
 	}
 }
 
-#include <iostream>
-
 template <typename B>
 bool Encoder_polar<B>
 ::is_codeword(const B *X_N)
