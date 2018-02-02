@@ -68,7 +68,7 @@ Decoder_chase_pyndiah<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	generate_bit_flipping_candidates();
+	generate_bit_flipping_candidates(); // generate bit flipping patterns
 }
 
 template <typename B, typename R>
@@ -164,24 +164,10 @@ void Decoder_chase_pyndiah<B,R>
 ::_decode_row_siho(const R *R_cha, const R *R_prime, B *R_dec, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size,
                    const bool return_K)
 {
-	auto& info_bits_pos = enc.get_info_bits_pos();
-
-	if (_decode_chase(R_prime, dec, enc, size))
-	{	// syndrome ok, R_prime is a code word, then copy its hard decided version and exit the function
-
-		if (return_K)
-		{
-			for (int j = 0; j < dec.get_K(); j++)
-				R_dec[j] = hard_Rprime[info_bits_pos[j]];
-		}
-		else
-		{
-			std::copy(hard_Rprime.data(), hard_Rprime.data() + size, R_dec);
-		}
-		return;
-	}
+	_decode_chase(R_prime, dec, enc, size);
 
 	auto* DW = test_vect.data() + competitors.front().pos;
+	auto& info_bits_pos = enc.get_info_bits_pos();
 
 	if (return_K)
 	{
@@ -198,11 +184,7 @@ template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
 ::_decode_row_siso(const R *R_cha, const R *R_prime, R *R_dec, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size)
 {
-	if (_decode_chase(R_prime, dec, enc, size))
-	{	// syndrome ok, R_prime is a code word, then copy it as decided word and exit the function
-		std::copy(R_prime, R_prime + size, R_dec);
-		return;
-	}
+	_decode_chase(R_prime, dec, enc, size);
 
 	compute_reliability(R_cha, R_prime, R_dec, size);
 
@@ -218,7 +200,7 @@ void Decoder_chase_pyndiah<B,R>
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 template <typename B, typename R>
-bool Decoder_chase_pyndiah<B,R>
+void Decoder_chase_pyndiah<B,R>
 ::_decode_chase(const R *R_prime, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size)
 {
 	tools::Frame_trace<> ft(0,3,std::cerr);
@@ -253,8 +235,8 @@ bool Decoder_chase_pyndiah<B,R>
 	// 	parity_diff = false;
 
 	find_least_reliable_pos(R_prime, dec.get_N()); // without parity bit if any
-	compute_test_vectors   (dec, enc, size);
-	compute_metrics        (R_prime,  size);
+	compute_test_vectors   (dec, enc, size); // make bit flipping of least reliable positions and try to decode them
+	compute_metrics        (R_prime,  size); // compute euclidian metrics for each test vectors
 
 #ifndef NDEBUG
     std::cerr << "(II) least_reliable_pos : " << std::endl;
@@ -288,8 +270,6 @@ bool Decoder_chase_pyndiah<B,R>
     std::cerr << std::endl;
     { std::vector<R> v(DW, DW+size);  ft.display_bit_vector(v); }
 #endif
-
-	return false;
 }
 
 template <typename B, typename R>
@@ -496,7 +476,7 @@ void Decoder_chase_pyndiah<B,R>
 		// (1) flip one by one all least reliable positions -> 'n_least_reliable_positions' test vectors
 		// (2) always flip the least realiable position and do (1) on the 'n_least_reliable_positions' -1 left bits -> 'n_least_reliable_positions' -1 test vectors
 		// (3) always flip the two least reliable position and do (1) on the 'n_least_reliable_positions' -2 left bits -> 'n_least_reliable_positions' -2 test vectors
-		// (4) and so on until reaching the will number of test vectors with a maximum of the sum from 1 to 'n_least_reliable_positions' + 1
+		// (4) and so on until reaching the wish number of test vectors with a maximum of the sum from 1 to 'n_least_reliable_positions' + 1
 
 		int idx_pos = 0, start_idx_pos = 0;
 		int least_reliable_pos_mask = 0;
@@ -524,6 +504,10 @@ void Decoder_chase_pyndiah<B,R>
 	else
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "unimplemented method");
 
+
+	// one 'tv_candidates' element is the bit flipping pattern to apply on the least reliable positions
+	// in this pattern, the first position is the instruction to flip or not the least reliable position
+	// the second position is the instruction to flip the second least reliable position, and so on.
 	for (int i = 0; i < n_test_vectors; i++)
 		for (int j = 0; j < n_least_reliable_positions; j++)
 			tv_candidates[i][j] = ((cand[i] >> j) & (int)1) != 0;

@@ -62,7 +62,7 @@ protected:
 	void _decode_row_siho(const R *R_cha, const R *R_prime, B *R_dec, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size,
 	                      const bool return_K = true);
 
-	bool _decode_chase          (const R *R_prime, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size);
+	void _decode_chase          (const R *R_prime, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size);
 	void find_least_reliable_pos(const R* R_prime,                                        const int size);
 	void compute_test_vectors   (                  Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size);
 	void compute_metrics        (const R* R_prime,                                        const int size);
