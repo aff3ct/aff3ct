@@ -1,8 +1,6 @@
 #include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_std.hpp"
 #include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_naive.hpp"
-#include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_reduced_std.hpp"
-#include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_reduced_naive.hpp"
-#include "Module/Decoder/Generic/Chase/Decoder_chase_naive.hpp"
+#include "Module/Decoder/Generic/Chase/Decoder_chase_std.hpp"
 
 #include "Decoder.hpp"
 
@@ -49,7 +47,7 @@ void Decoder::parameters
 	opt_args[{p+"-type", "D"}] =
 		{"string",
 		 "select the algorithm you want to decode the codeword.",
-		 "ML, ML_RED, CHASE"};
+		 "ML, CHASE"};
 
 	opt_args[{p+"-implem"}] =
 		{"string",
@@ -111,14 +109,9 @@ module::Decoder_SIHO<B,Q>* Decoder::parameters
 			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
 			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
 		}
-		else if (this->type == "ML_RED")
-		{
-			if (this->implem == "NAIVE") return new module::Decoder_ML_reduced_naive<B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
-			if (this->implem == "STD"  ) return new module::Decoder_ML_reduced_std  <B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
-		}
 		else if (this->type == "CHASE")
 		{
-			if (this->implem == "NAIVE") return new module::Decoder_chase_naive<B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
+			if (this->implem == "STD"  ) return new module::Decoder_chase_std  <B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
 		}
 	}
 	

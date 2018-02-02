@@ -1,14 +1,14 @@
 #ifndef DECODER_MAXIMUM_LIKELIHOOD_NAIVE_HPP_
 #define DECODER_MAXIMUM_LIKELIHOOD_NAIVE_HPP_
 
-#include "../Decoder_generic.hpp"
+#include "Decoder_maximum_likelihood.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_maximum_likelihood_naive : public Decoder_generic<B,R>
+class Decoder_maximum_likelihood_naive : public Decoder_maximum_likelihood<B,R>
 {
 protected:
 	const bool hamming;
