@@ -56,6 +56,10 @@ void Simulation::parameters
 		{"",
 		 "enable debug mode: print array values after each step."};
 
+	opt_args[{p+"-debug-hex"}] =
+		{"",
+		 "debug mode prints values in the hexadecimal format."};
+
 	opt_args[{p+"-debug-prec"}] =
 		{"positive_int",
 		 "set the decimal precision of real elements when displayed in debug mode."};
@@ -110,6 +114,11 @@ void Simulation::parameters
 	{
 		this->debug = true;
 		this->debug_limit = std::stoi(vals.at({p+"-debug-limit"}));
+	}
+	if(exist(vals, {p+"-debug-hex"}))
+	{
+		this->debug = true;
+		this->debug_hex = true;
 	}
 	if(exist(vals, {p+"-debug-prec"}))
 	{

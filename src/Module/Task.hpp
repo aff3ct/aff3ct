@@ -42,6 +42,7 @@ protected:
 	bool stats;
 	bool fast;
 	bool debug;
+	bool debug_hex;
 	int32_t debug_limit;
 	uint8_t debug_precision;
 	std::function<int(void)> codelet;
@@ -82,6 +83,7 @@ public:
 	void set_stats          (const bool     stats    );
 	void set_fast           (const bool     fast     );
 	void set_debug          (const bool     debug    );
+	void set_debug_hex      (const bool     debug_hex);
 	void set_debug_limit    (const uint32_t limit    );
 	void set_debug_precision(const uint8_t  prec     );
 
@@ -90,6 +92,7 @@ public:
 	inline bool is_stats            (                  ) const { return this->stats;                }
 	inline bool is_fast             (                  ) const { return this->fast;                 }
 	inline bool is_debug            (                  ) const { return this->debug;                }
+	inline bool is_debug_hex        (                  ) const { return this->debug_hex;            }
 	inline bool is_last_input_socket(const Socket &s_in) const { return last_input_socket == &s_in; }
 	inline bool can_exec            (                  ) const;
 

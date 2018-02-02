@@ -33,6 +33,7 @@ void Simulation
 					if (params.debug)
 					{
 						t->set_debug(true);
+						t->set_debug_hex(params.debug_hex);
 						if (params.debug_limit)
 							t->set_debug_limit((uint32_t)params.debug_limit);
 						if (params.debug_precision)
