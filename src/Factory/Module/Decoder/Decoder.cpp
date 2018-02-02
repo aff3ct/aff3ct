@@ -104,14 +104,14 @@ module::Decoder_SIHO<B,Q>* Decoder::parameters
 {
 	if (encoder)
 	{
-		if (this->type == "ML") 
+		if (this->type == "ML")
 		{
 			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
 			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
 		}
 		else if (this->type == "CHASE")
 		{
-			if (this->implem == "STD"  ) return new module::Decoder_chase_std  <B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
+			if (this->implem == "STD") return new module::Decoder_chase_std<B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
 		}
 	}
 	

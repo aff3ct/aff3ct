@@ -26,8 +26,8 @@ public:
 protected:
 	Decoder_maximum_likelihood(const int K, const int N, Encoder<B> &encoder, const int n_frames = 1);
 
-	inline float    compute_euclidean_dist(const B *X_N,  const R *Y_N) const;
-	inline uint32_t compute_hamming_dist  (const B *X_N,  const B *Y_N) const;
+	inline float    compute_euclidean_dist(const B *X_N, const R *Y_N) const;
+	inline uint32_t compute_hamming_dist  (const B *X_N, const B *Y_N) const;
 };
 }
 }
