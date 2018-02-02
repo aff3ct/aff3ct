@@ -103,7 +103,7 @@ void Decoder_turbo_product::parameters
 
 	opt_args[{p+"-c"}] =
 		{"positive_int",
-		 "number of competitors (0 means equal to number of test vectors)."};
+		 "number of competitors (0 means equal to number of test vectors, 1 means only the decided word)."};
 
 	opt_args[{p+"-ext"}] =
 		{"",

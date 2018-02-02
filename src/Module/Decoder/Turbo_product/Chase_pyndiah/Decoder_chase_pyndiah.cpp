@@ -12,7 +12,7 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-#define NDEBUG
+// #define NDEBUG
 
 template <typename B, typename R>
 Decoder_chase_pyndiah<B,R>
@@ -211,12 +211,17 @@ void Decoder_chase_pyndiah<B,R>
 #endif
 }
 
+#include "Tools/Display/Frame_trace/Frame_trace.hpp"
+
 template <typename B, typename R>
 bool Decoder_chase_pyndiah<B,R>
 ::_decode_chase(const R *R_prime, Decoder_HIHO<B> &hiho, const int size)
 {
+	tools::Frame_trace<> ft;
 
 	tools::hard_decide(R_prime, hard_Rprime.data(), size);
+
+
 
 #ifndef NDEBUG
     std::cerr << "(II) R_prime : " << std::endl;
@@ -225,6 +230,7 @@ bool Decoder_chase_pyndiah<B,R>
         std::cerr << R_prime[i] << " ";
     }
     std::cerr << std::endl;
+    { std::vector<R> v(R_prime, R_prime+size); ft.display_real_vector(v); }
 
     std::cerr << "(II) hard_Rprime : " << std::endl;
     for (unsigned i = 0; hard_Rprime.size() > i; i++)
@@ -232,6 +238,7 @@ bool Decoder_chase_pyndiah<B,R>
         std::cerr << hard_Rprime[i] << " ";
     }
     std::cerr << std::endl;
+    { ft.display_bit_vector(hard_Rprime); }
 #endif
 
 	// if (this->parity_extended)
@@ -251,22 +258,33 @@ bool Decoder_chase_pyndiah<B,R>
     std::cerr << "(II) least_reliable_pos : " << std::endl;
     for (unsigned i = 0; i < least_reliable_pos.size(); i++)
     {
-        std::cerr << i << ". (" << least_reliable_pos[i].pos << ", " << least_reliable_pos[i].metric << ")" << std::endl;
+        std::cerr << i << ". (" << least_reliable_pos[i].pos << ", " << least_reliable_pos[i].metric << ") -> " << hard_Rprime[least_reliable_pos[i].pos]  << std::endl;
     }
+
+
+    std::cerr << "(II) Test vectors : " << std::endl;
+    ft.display_bit_vector(test_vect, size);
 
     std::cerr << "(II) Metriques : " << std::endl;
     for (unsigned i = 0; i < metrics.size(); i++)
     {
-        std::cerr << i << ". " << metrics[i] << std::endl;
+        std::cerr << i << ". " << metrics[i] << " -> ";
+
+		for (unsigned j = 0; j < tv_candidates[i].size(); j++)
+			std::cerr << tv_candidates[i][j] << " ";
+
+
+    	std::cerr << std::endl;
     }
 
 	auto* DW = test_vect.data() + competitors.front().pos;
     std::cerr << "(II) DW : " << std::endl;
-    for (int i = 0; i < size; i++)
+    for (int i = 0; size > i; i++)
     {
         std::cerr << DW[i] << " ";
     }
     std::cerr << std::endl;
+    { std::vector<R> v(DW, DW+size);  ft.display_bit_vector(v); }
 #endif
 
 	return false;
@@ -303,6 +321,7 @@ template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
 ::compute_test_vectors(Decoder_HIHO<B> &hiho, const int size)
 {
+	tools::Frame_trace<> ft;
 	for (int c = 0; c < n_test_vectors; c++)
 	{
 		// rearrange hard_Rprime to be a good candidate
@@ -310,6 +329,9 @@ void Decoder_chase_pyndiah<B,R>
 
 		hiho.decode_hiho_cw(hard_Rprime.data(), test_vect.data() + c*size); // parity bit is ignored by the decoder
 
+#ifndef NDEBUG
+	    ft.display_bit_vector(hard_Rprime);
+#endif
 		if (this->parity_extended)
 			test_vect[(c+1)*size -1] = tools::compute_parity(test_vect.data() + c*size, hiho.get_N());
 
@@ -388,7 +410,7 @@ void Decoder_chase_pyndiah<B,R>
 	// compute beta, the sum of the least reliable position reliabilities in the decided word
 	R beta = 0;
 	for (int i = 0; i < n_least_reliable_positions; i++)
-		beta += 2 * least_reliable_pos[i].metric;
+		beta += least_reliable_pos[i].metric;
 
 #ifndef NDEBUG
 		std::cerr << "beta = " << beta << ", alpha = " << alpha<< ", DW.metric = " << DW.metric << std::endl;
@@ -441,7 +463,7 @@ void Decoder_chase_pyndiah<B,R>
 ::bit_flipping(B* hard_vect, const int c)
 {
 	for (int i = 0; i < n_least_reliable_positions; i++)
-		hard_vect[least_reliable_pos[i].pos] = tv_candidates[c][i] ? hard_vect[least_reliable_pos[i].pos] : !hard_vect[least_reliable_pos[i].pos];
+		hard_vect[least_reliable_pos[i].pos] = tv_candidates[c][i] ? !hard_vect[least_reliable_pos[i].pos] : hard_vect[least_reliable_pos[i].pos];
 }
 
 template <typename B, typename R>
