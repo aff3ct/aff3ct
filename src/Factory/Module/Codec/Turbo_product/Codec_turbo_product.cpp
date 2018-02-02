@@ -3,7 +3,7 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Codec_turbo_product_name   = "Codec TPC";
+const std::string aff3ct::factory::Codec_turbo_product_name   = "Codec Turbo Prod";
 const std::string aff3ct::factory::Codec_turbo_product_prefix = "cdc";
 
 Codec_turbo_product::parameters

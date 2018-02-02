@@ -197,7 +197,7 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
 		if (this->type == "CP")
 		{
 			if (this->implem == "STD")
-				return new module::Decoder_chase_pyndiah<B,Q>(n_ite, itl, hiho_r, hiho_c, enc_r.get_info_bits_pos(), enc_r.get_info_bits_pos(),
+				return new module::Decoder_chase_pyndiah<B,Q>(n_ite, itl, hiho_r, hiho_c, enc_r, enc_c,
 				                                              alpha, n_least_reliable_positions, n_test_vectors, n_competitors);
 		}
 	}

@@ -5,6 +5,7 @@
 
 #include "../Decoder_SISO_SIHO.hpp"
 #include "../Decoder_HIHO.hpp"
+#include "../../Encoder/Encoder.hpp"
 
 namespace aff3ct
 {
@@ -17,11 +18,10 @@ class Decoder_turbo_product : public Decoder_SISO_SIHO<B,R>
 protected:
 	const int  n_ite; // number of iterations
 	const Interleaver<R> &pi;
-	Decoder_HIHO<B> &hiho_r; // row decoder
-	Decoder_HIHO<B> &hiho_c; // col decoder
-
-	const std::vector<uint32_t> &info_bits_pos_r;
-	const std::vector<uint32_t> &info_bits_pos_c;
+	Decoder_HIHO<B> &dec_r; // row decoder
+	Decoder_HIHO<B> &dec_c; // col decoder
+    Encoder     <B> &enc_r; // row encoder
+    Encoder     <B> &enc_c; // col encoder
 
 	const bool parity_extended;
 
@@ -33,10 +33,10 @@ protected:
 public:
 	Decoder_turbo_product(const int& n_ite,
 	                      const Interleaver<R> &pi,
-	                      Decoder_HIHO<B> &hiho_r,
-	                      Decoder_HIHO<B> &hiho_c,
-	                      const std::vector<uint32_t> &info_bits_pos_r,
-	                      const std::vector<uint32_t> &info_bits_pos_c);
+	                      Decoder_HIHO<B> &dec_r,
+	                      Decoder_HIHO<B> &dec_c,
+	                      Encoder     <B> &enc_r,
+	                      Encoder     <B> &enc_c);
 	virtual ~Decoder_turbo_product();
 
 protected:
