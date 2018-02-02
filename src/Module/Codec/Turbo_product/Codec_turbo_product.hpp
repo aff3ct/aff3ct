@@ -7,6 +7,7 @@
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 
 #include "Factory/Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 #include "Factory/Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
@@ -24,6 +25,7 @@ protected:
 	const aff3ct::tools::BCH_polynomial_generator GF_poly;
 	aff3ct::module::Encoder_BCH <B>* enc_bch;
 	aff3ct::module::Decoder_HIHO<B>* dec_bch;
+	aff3ct::module::Decoder_chase_pyndiah<B,Q>* cp;
 
 public:
 	Codec_turbo_product(const factory::Encoder_turbo_product::parameters &enc_params,

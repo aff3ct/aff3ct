@@ -17,7 +17,8 @@ Codec_turbo_product<B,Q>
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
   GF_poly(dec_params.sub->K, dec_params.sub->N_cw, dec_params.sub->t),
   enc_bch(nullptr),
-  dec_bch(nullptr)
+  dec_bch(nullptr),
+  cp     (nullptr)
 {
 	const std::string name = "Codec_turbo_product";
 	this->set_name(name);
@@ -59,10 +60,20 @@ Codec_turbo_product<B,Q>
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 
+
+	enc_bch = factory::Encoder_BCH::build     <B  >(*enc_params.sub, GF_poly);
+	dec_bch = factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly);
+	cp = new Decoder_chase_pyndiah<B,Q>(dec_bch->get_K(), dec_bch->get_N() + (dec_params.parity_extended?1:0),
+	                                    *dec_bch, *enc_bch,
+	                                    dec_params.alpha,
+	                                    dec_params.n_least_reliable_positions,
+	                                    dec_params.n_test_vectors,
+	                                    dec_params.n_competitors);
+
+
 	Encoder_turbo_product<B> *encoder_tpc = nullptr;
 	try
 	{
-		enc_bch     = factory::Encoder_BCH::build<B>(*enc_params.sub, GF_poly);
 		encoder_tpc = factory::Encoder_turbo_product::build<B>(enc_params, this->get_interleaver_bit(), *enc_bch, *enc_bch);
 		this->set_encoder(encoder_tpc);
 	}
@@ -71,18 +82,15 @@ Codec_turbo_product<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	dec_bch = factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly);
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(),
-		                                                                              *dec_bch, *dec_bch, *enc_bch, *enc_bch);
+		auto decoder_siso_siho = factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(), *cp, *cp);
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(factory::Decoder_turbo_product::build<B,Q>(dec_params, this->get_interleaver_llr(),
-		                                                                       *dec_bch, *dec_bch, *enc_bch, *enc_bch, encoder_tpc));
+		this->set_decoder_siho(factory::Decoder_turbo_product::build<B,Q>(dec_params, this->get_interleaver_llr(), *cp, *cp));
 	}
 }
 

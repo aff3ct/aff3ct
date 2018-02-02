@@ -2,6 +2,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
+#include <chrono>
 
 #include "Decoder_chase_pyndiah.hpp"
 
@@ -16,39 +17,39 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_chase_pyndiah<B,R>
-::Decoder_chase_pyndiah(const int& n_ite,
-                        const Interleaver<R> &pi,
-                        Decoder_HIHO<B> &dec_r,
-                        Decoder_HIHO<B> &dec_c,
-                        Encoder     <B> &enc_r,
-                        Encoder     <B> &enc_c,
-                        const R alpha_,
+::Decoder_chase_pyndiah(const int K, const int N, // N includes the parity bit if any
+                        Decoder_HIHO<B> &dec_,
+                        Encoder     <B> &enc_,
+                        const R   alpha_,
                         const int n_least_reliable_positions_,
                         const int n_test_vectors_,
                         const int n_competitors_)
-: Decoder(dec_r.get_K() * dec_c.get_K(), pi.get_core().get_size(), dec_r.get_n_frames(), dec_r.get_simd_inter_frame_level()),
-  Decoder_turbo_product<B,R>(n_ite, pi, dec_r, dec_c, enc_r, enc_c),
+: Decoder               (K, N, dec_.get_n_frames(), dec_.get_simd_inter_frame_level()),
+  Decoder_SISO_SIHO<B,R>(K, N, dec_.get_n_frames(), dec_.get_simd_inter_frame_level()),
+  dec                       (dec_                                                                    ),
+  enc                       (enc_                                                                    ),
+  N_np                      (dec.get_N()                                                             ),
+  parity_extended           (this->N == (N_np +1)                                                    ),
   alpha                     (alpha_                                                                  ),
   n_least_reliable_positions(n_least_reliable_positions_                                             ),
   least_reliable_pos        (n_least_reliable_positions                                              ),
-  hard_Rprime               (std::max(dec_r.get_N(), dec_c.get_N()) +1                             ), // +1 for parity bit if any
+  hard_Rprime               (this->N                                                                 ),
   n_test_vectors            (n_test_vectors_ ? n_test_vectors_ : (int)1 << n_least_reliable_positions),
   test_vect                 (n_test_vectors * hard_Rprime.size()                                     ),
   metrics                   (n_test_vectors                                                          ),
   is_wrong                  (n_test_vectors                                                          ),
   n_competitors             (n_competitors_ ? n_competitors_ : n_test_vectors                        ),
-  competitors               (n_test_vectors                                                          ),
-  Y_N_cha_i                 (pi.get_core().get_size()                                                )
+  competitors               (n_test_vectors                                                          )
   // Alpha ({0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.35, 0.35,0.35,0.35,0.35,0.4,0.4,0.4,0.5})
 {
 	const std::string name = "Decoder_chase_pyndiah";
 	this->set_name(name);
 
-	if (n_least_reliable_positions <= 0 || n_least_reliable_positions >= dec_r.get_N() || n_least_reliable_positions >= dec_c.get_N())
+	if (n_least_reliable_positions <= 0 || n_least_reliable_positions >= N_np)
 	{
 		std::stringstream message;
-		message << "'n_least_reliable_positions' has to be positive and lower than 'dec_r.get_N()' and 'dec_c.get_N()' ('n_least_reliable_positions' = "
-		        << n_least_reliable_positions << ", 'dec_c.get_N()' = " << dec_c.get_N() << " and 'dec_r.get_N()' = " << dec_r.get_N() << ").";
+		message << "'n_least_reliable_positions' has to be positive and lower than 'N_np' ('n_least_reliable_positions' = "
+		        << n_least_reliable_positions << ", 'N_np' = " << N_np << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -68,130 +69,74 @@ Decoder_chase_pyndiah<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+
+	if (enc.get_K() != dec.get_K())
+	{
+		std::stringstream message;
+		message << "'enc.get_K()' has to be equal to 'dec.get_K()' "
+		        << "('enc.get_K()' = " << enc.get_K()
+		        << ", 'dec.get_K()' = " << dec.get_K() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (enc.get_N() != dec.get_N())
+	{
+		std::stringstream message;
+		message << "'enc.get_N()' has to be equal to 'dec.get_K()' "
+		        << "('enc.get_N()' = " << enc.get_N()
+		        << ", 'dec.get_N()' = " << dec.get_N() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	time_span = std::chrono::seconds(0);
+	count= 0;
+
 	generate_bit_flipping_candidates(); // generate bit flipping patterns
 }
 
 template <typename B, typename R>
-void Decoder_chase_pyndiah<B,R>
-::_decode(const R *Y_N_cha, int return_K_siso)
+const std::vector<uint32_t>& Decoder_chase_pyndiah<B,R>
+::get_info_bits_pos()
 {
-	const int n_cols = this->dec_r.get_N() + (this->parity_extended ? 1 : 0);
-	const int n_rows = this->dec_c.get_N() + (this->parity_extended ? 1 : 0);
-
-	this->pi.interleave(Y_N_cha, this->Y_N_cha_i.data(), 0, 1); // interleave data from the channel
-
-
-	for (int i = 0; i < this->n_ite; i++)
-	{
-		// alpha = Alpha[2*i];
-
-
-		this->pi.interleave(this->Y_N_i.data(), this->Y_N_pi.data(), 0, 1); // columns becomes rows
-
-		// decode each col
-		for (int j = 0; j < n_cols; j++)
-		{
-#ifndef NDEBUG
-    std::cerr << std::endl;
-    std::cerr << std::endl;
-    std::cerr << std::endl;
-    std::cerr << "(II) col : " << j << std::endl;
-#endif
-			_decode_row_siso(Y_N_cha_i   .data() + j*n_rows,
-			                 this->Y_N_pi.data() + j*n_rows,
-			                 this->Y_N_pi.data() + j*n_rows,
-			                 this->dec_c,
-			                 this->enc_c,
-			                 n_rows); // overwrite Y_N_pi
-		}
-
-		// alpha = Alpha[2*i+1];
-
-		this->pi.deinterleave(this->Y_N_pi.data(), this->Y_N_i.data(), 0, 1); // rows go back as columns
-
-		// decode each row
-		if (i < this->n_ite -1 || (return_K_siso != 0 && return_K_siso != 1))
-		{
-			for (int j = 0; j < n_rows; j++)
-			{
-	#ifndef NDEBUG
-	    std::cerr << std::endl;
-	    std::cerr << std::endl;
-	    std::cerr << std::endl;
-	    std::cerr << "(II) row : " << j << std::endl;
-	#endif
-				_decode_row_siso(Y_N_cha + j*n_cols,
-				                 this->Y_N_i.data() + j*n_cols,
-				                 this->Y_N_i.data() + j*n_cols,
-				                 this->dec_r,
-				                 this->enc_r,
-				                 n_cols); // overwrite Y_N_i
-			}
-		}
-		else if(return_K_siso == 0)
-		{
-			for (int j = 0; j < this->dec_c.get_K(); j++)
-			{
-				auto pos = this->enc_c.get_info_bits_pos()[j];
-
-				_decode_row_siho(Y_N_cha + pos*n_cols,
-				                 this->Y_N_i.data() + pos*n_cols,
-				                 this->V_K_i.data() + j*this->dec_r.get_K(),
-				                 this->dec_r,
-				                 this->enc_r,
-				                 n_cols,
-				                 true);
-			}
-		}
-		else if (return_K_siso == 1)
-		{
-			for (int j = 0; j < n_cols; j++)
-				_decode_row_siho(Y_N_cha + j*n_cols,
-				                 this->Y_N_i.data() + j*n_cols,
-				                 this->V_N_i.data() + j*n_cols,
-				                 this->dec_r,
-				                 this->enc_r,
-				                 n_cols,
-				                 false);
-		}
-
-	}
+	return enc.get_info_bits_pos();
 }
-
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::_decode_row_siho(const R *R_cha, const R *R_prime, B *R_dec, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size,
-                   const bool return_K)
+::tdecode_siho(const R *R_cha, const R *R_prime, B *R_dec)
 {
-	_decode_chase(R_prime, dec, enc, size);
+	decode_chase(R_prime);
 
 	auto* DW = test_vect.data() + competitors.front().pos;
 	auto& info_bits_pos = enc.get_info_bits_pos();
 
-	if (return_K)
-	{
-		for (int j = 0; j < dec.get_K(); j++)
-			R_dec[j] = DW[info_bits_pos[j]];
-	}
-	else
-	{
-		std::copy(DW, DW + size, R_dec);
-	}
+	for (int j = 0; j < this->K; j++)
+		R_dec[j] = DW[info_bits_pos[j]];
 }
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::_decode_row_siso(const R *R_cha, const R *R_prime, R *R_dec, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size)
+::tdecode_siho_cw(const R *R_cha, const R *R_prime, B *R_dec)
 {
-	_decode_chase(R_prime, dec, enc, size);
+	decode_chase(R_prime);
 
-	compute_reliability(R_cha, R_prime, R_dec, size);
+	auto* DW = test_vect.data() + competitors.front().pos;
+
+	std::copy(DW, DW + this->N, R_dec);
+}
+
+template <typename B, typename R>
+void Decoder_chase_pyndiah<B,R>
+::tdecode_siso(const R *R_cha, const R *R_prime, R *R_dec)
+{
+	decode_chase(R_prime);
+
+	compute_reliability(R_cha, R_prime, R_dec);
 
 #ifndef NDEBUG
     std::cerr  << "(II) R_dec : " <<  std::endl;
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < this->N; i++)
         std::cerr << R_dec[i] << " ";
     std::cerr << std::endl;
 #endif
@@ -201,20 +146,20 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::_decode_chase(const R *R_prime, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size)
+::decode_chase(const R *R_prime)
 {
-	tools::Frame_trace<> ft(0,3,std::cerr);
-
-	tools::hard_decide(R_prime, hard_Rprime.data(), size);
+	tools::hard_decide(R_prime, hard_Rprime.data(), this->N);
 
 #ifndef NDEBUG
+	tools::Frame_trace<> ft(0,3,std::cerr);
+
     std::cerr << "(II) R_prime : " << std::endl;
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < this->N; i++)
     {
         std::cerr << R_prime[i] << " ";
     }
     std::cerr << std::endl;
-    { std::vector<R> v(R_prime, R_prime+size); ft.display_real_vector(v); }
+    { std::vector<R> v(R_prime, R_prime+this->N); ft.display_real_vector(v); }
 
     std::cerr << "(II) hard_Rprime : " << std::endl;
     for (unsigned i = 0; hard_Rprime.size() > i; i++)
@@ -234,9 +179,9 @@ void Decoder_chase_pyndiah<B,R>
 	// else
 	// 	parity_diff = false;
 
-	find_least_reliable_pos(R_prime, dec.get_N()); // without parity bit if any
-	compute_test_vectors   (dec, enc, size); // make bit flipping of least reliable positions and try to decode them
-	compute_metrics        (R_prime,  size); // compute euclidian metrics for each test vectors
+	find_least_reliable_pos(R_prime); // without parity bit if any
+	compute_test_vectors   (       ); // make bit flipping of least reliable positions and try to decode them
+	compute_metrics        (R_prime); // compute euclidian metrics for each test vectors
 
 #ifndef NDEBUG
     std::cerr << "(II) least_reliable_pos : " << std::endl;
@@ -247,7 +192,7 @@ void Decoder_chase_pyndiah<B,R>
 
 
     std::cerr << "(II) Test vectors : " << std::endl;
-    ft.display_bit_vector(test_vect, size);
+    ft.display_bit_vector(test_vect, this->N);
 
     std::cerr << "(II) Metriques : " << std::endl;
     for (unsigned i = 0; i < metrics.size(); i++)
@@ -263,26 +208,31 @@ void Decoder_chase_pyndiah<B,R>
 
 	auto* DW = test_vect.data() + competitors.front().pos;
     std::cerr << "(II) DW : " << std::endl;
-    for (int i = 0; size > i; i++)
+    for (int i = 0; this->N > i; i++)
     {
         std::cerr << DW[i] << " ";
     }
     std::cerr << std::endl;
-    { std::vector<R> v(DW, DW+size);  ft.display_bit_vector(v); }
+    { std::vector<R> v(DW, DW+this->N);  ft.display_bit_vector(v); }
 #endif
 }
 
+
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::find_least_reliable_pos(const R* R_prime, const int size)
+::find_least_reliable_pos(const R* R_prime)
 {
+	using namespace std::chrono;
+
+	// high_resolution_clock::time_point t1 = high_resolution_clock::now();
+
 	for (auto it = least_reliable_pos.begin(); it != least_reliable_pos.end(); it++)
 	{
-	    it->metric = std::numeric_limits<R>::max();
-	    it->pos    = size;
+		it->metric = std::numeric_limits<R>::max();
+		it->pos    = this->N;
 	}
 
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < N_np; i++)
 	{
 		// check if R[i] is a least reliable value compared to the already saved positions
 		for (auto it = least_reliable_pos.begin(); it != least_reliable_pos.end(); it++)
@@ -297,11 +247,60 @@ void Decoder_chase_pyndiah<B,R>
 			}
 		}
 	}
+
+	// high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+
+	// std::vector<int> llrs_indexes(this->N);
+	// // high_resolution_clock::time_point t1 = high_resolution_clock::now();
+
+	// std::iota(llrs_indexes.begin(), llrs_indexes.end(), 0);
+	// std::partial_sort(llrs_indexes.begin(), llrs_indexes.begin() + n_least_reliable_positions, llrs_indexes.end(),
+	//                   [&R_prime](const uint32_t i1, const uint32_t i2) { return std::abs(R_prime[i1]) < std::abs(R_prime[i2]);}
+	//                   );
+
+
+	// std::vector<info> least_reliable_pos2(least_reliable_pos.size());
+
+	// bool diff = false;
+
+	// for (int i = 0; i < n_least_reliable_positions; i++)
+	// {
+	// 	least_reliable_pos2[i].pos    = llrs_indexes[i];
+	// 	least_reliable_pos2[i].metric = std::abs(R_prime[llrs_indexes[i]]);
+
+	// 	if (least_reliable_pos2[i].pos != least_reliable_pos[i].pos)
+	// 		diff = true;
+	// }
+
+	// if (diff)
+	// {
+	// 	for (int i = 0; i < n_least_reliable_positions; i++)
+	// 	{
+	// 		std::cerr << i << ". pos " << least_reliable_pos[i].pos << ", metric " << least_reliable_pos[i].metric;
+	// 		std::cerr << " vs  pos " << least_reliable_pos2[i].pos << ", metric " << least_reliable_pos2[i].metric << std::endl;
+	// 	}
+	// }
+
+	// high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+	// time_span += duration_cast<duration<double>>(t2 - t1);
+	// count++;
+
+	// if (count == 1000000)
+	// {
+	// 	std::stringstream ss;
+	// 	ss << "Total   = " << time_span.count()        << " seconds" << std::endl;
+	// 	ss << "Average = " << time_span.count()/count  << " usec/exec" << std::endl;
+
+	// 	std::cout << ss.str();
+	// 	std::exit(1);
+	// }
 }
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::compute_test_vectors(Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size)
+::compute_test_vectors()
 {
 	tools::Frame_trace<> ft(0,3,std::cerr);
 	for (int c = 0; c < n_test_vectors; c++)
@@ -309,17 +308,17 @@ void Decoder_chase_pyndiah<B,R>
 		// rearrange hard_Rprime to be a good candidate
 		bit_flipping(hard_Rprime.data(), c);
 
-		dec.decode_hiho_cw(hard_Rprime.data(), test_vect.data() + c*size); // parity bit is ignored by the decoder
-		is_wrong[c] = !enc.is_codeword(test_vect.data() + c*size);
+		dec.decode_hiho_cw(hard_Rprime.data(), test_vect.data() + c*this->N); // parity bit is ignored by the decoder
+		is_wrong[c] = !enc.is_codeword(test_vect.data() + c*this->N);
 
 		if (this->parity_extended)
-			test_vect[(c+1)*size -1] = tools::compute_parity(test_vect.data() + c*size, dec.get_N());
+			test_vect[(c+1)*this->N -1] = tools::compute_parity(test_vect.data() + c*this->N, dec.get_N());
 
 #ifndef NDEBUG
 	    std::cerr << "(II) Test vectors " << c << " before correction" << std::endl;
 	    ft.display_bit_vector(hard_Rprime);
 	    std::cerr << "(II) Test vectors " << c << " after correction : is wrong = " << is_wrong[c] << std::endl;
-	    { std::vector<B> v(test_vect.data() + c*size, test_vect.data() + (c+1)*size); ft.display_bit_vector(v); }
+	    { std::vector<B> v(test_vect.data() + c*this->N, test_vect.data() + (c+1)*this->N); ft.display_bit_vector(v); }
 #endif
 		bit_flipping(hard_Rprime.data(), c); // apply again the bit flipping to recover the original hard_Rprime
 	}
@@ -327,7 +326,7 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::compute_metrics(const R* R_prime, const int size)
+::compute_metrics(const R* R_prime)
 {
 	std::fill(metrics.begin(), metrics.end(), (R)0);
 
@@ -339,9 +338,9 @@ void Decoder_chase_pyndiah<B,R>
 			continue;
 		}
 
-		int tv_off = c*size;
+		int tv_off = c*this->N;
 
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < this->N; i++)
 			if (hard_Rprime[i] ^ test_vect[tv_off + i])
 				metrics[c] += std::abs(R_prime[i]);
 	}
@@ -350,7 +349,7 @@ void Decoder_chase_pyndiah<B,R>
 	for (int c = 0; c < n_test_vectors; c++)
 	{
 		competitors[c].metric = metrics[c];
-		competitors[c].pos    = c*size;
+		competitors[c].pos    = c*this->N;
 	}
 
 	std::sort(competitors.begin(), competitors.end(), [](const info& a, const info& b) { return a.metric < b.metric; });
@@ -395,7 +394,7 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::compute_reliability(const R* R_cha, const R* R_prime, R* R_dec, const int size)
+::compute_reliability(const R* R_cha, const R* R_prime, R* R_dec)
 {
 	const auto & DW = competitors.front(); // the Decided Word
 
@@ -414,7 +413,7 @@ void Decoder_chase_pyndiah<B,R>
 		competitors[j].metric -= DW.metric;
 
 
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < this->N; i++)
 	{
 		const auto DB = test_vect[DW.pos + i]; // decided bit at the position i
 
@@ -444,6 +443,7 @@ void Decoder_chase_pyndiah<B,R>
 #endif
 
 		R_dec[i] = R_cha[i] + alpha * (reliability - R_prime[i]);
+
 #ifndef NDEBUG
 		std::cerr  << ", reliability = " << reliability << ", R_cha = " << R_cha[i]<< ", R_dec = " << R_dec[i] << std::endl;
 #endif

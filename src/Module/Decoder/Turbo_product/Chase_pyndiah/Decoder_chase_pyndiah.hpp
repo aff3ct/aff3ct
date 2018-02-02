@@ -4,7 +4,10 @@
 #include <aff3ct.hpp>
 #include <vector>
 
-#include "../Decoder_turbo_product.hpp"
+#include <chrono>
+
+// #include "../Decoder_turbo_product.hpp"
+#include "../../Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -12,7 +15,7 @@ namespace module
 {
 
 template <typename B = int, typename R = float>
-class Decoder_chase_pyndiah : public Decoder_turbo_product<B,R>
+class Decoder_chase_pyndiah : public Decoder_SISO_SIHO<B,R>
 {
 protected:
 
@@ -22,7 +25,13 @@ protected:
 		int pos;
 	};
 
-	 R   alpha;
+	Decoder_HIHO<B> &dec;
+	Encoder     <B> &enc;
+
+	const int  N_np; // N without the parity bit: can be equal to N if there is no parity bit in the code
+	const bool parity_extended;
+
+	R   alpha;
 	const int n_least_reliable_positions;
 
 	std::vector<info> least_reliable_pos;
@@ -37,36 +46,35 @@ protected:
 	const int n_competitors;
 	std::vector<info> competitors; // map of the competitor metric and its related test vector position
 
-	std::vector<R> Y_N_cha_i;
-
 	std::vector<std::vector<bool>> tv_candidates;
 
 	const std::vector<float>   Alpha;
+
+
+	std::chrono::duration<double> time_span;
+	unsigned count;
 public:
 
-	Decoder_chase_pyndiah(const int& n_ite,
-	                      const Interleaver<R> &pi,
-	                      Decoder_HIHO<B> &dec_r,
-	                      Decoder_HIHO<B> &dec_c,
-	                      Encoder     <B> &enc_r,
-	                      Encoder     <B> &enc_c,
+	Decoder_chase_pyndiah(const int K, const int N, // N with the parity bit if any
+	                      Decoder_HIHO<B> &dec,
+	                      Encoder     <B> &enc,
 	                      const R   alpha = 0.5,
 	                      const int n_least_reliable_positions = 2,
 	                      const int n_test_vectors = 0,
 	                      const int n_competitors  = 0);
 
+	void tdecode_siso   (const R *R_cha, const R *R_prime, R *R_dec); // size is length with parity bit if any
+	void tdecode_siho   (const R *R_cha, const R *R_prime, B *R_dec);
+	void tdecode_siho_cw(const R *R_cha, const R *R_prime, B *R_dec);
+
+	const std::vector<uint32_t>& get_info_bits_pos();
+
 protected:
-	void _decode(const R *Y_N, int return_K_siso); // return_K_siso = 0 then hard decode and fill V_K_i else if = 1 then hard decode and fill V_H_i else soft decode and fill Y_N_i
-
-	void _decode_row_siso(const R *R_cha, const R *R_prime, R *R_dec, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size); // size is length with parity bit if any
-	void _decode_row_siho(const R *R_cha, const R *R_prime, B *R_dec, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size,
-	                      const bool return_K = true);
-
-	void _decode_chase          (const R *R_prime, Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size);
-	void find_least_reliable_pos(const R* R_prime,                                        const int size);
-	void compute_test_vectors   (                  Decoder_HIHO<B> &dec, Encoder<B> &enc, const int size);
-	void compute_metrics        (const R* R_prime,                                        const int size);
-	void compute_reliability    (const R* R_cha, const R* R_prime, R* R_dec,              const int size);
+	void decode_chase           (const R *R_prime);
+	void find_least_reliable_pos(const R* R_prime);
+	void compute_test_vectors   (                );
+	void compute_metrics        (const R* R_prime);
+	void compute_reliability    (const R* R_cha, const R* R_prime, R* R_dec);
 
 	void bit_flipping(B* hard_vect, const int c);
 

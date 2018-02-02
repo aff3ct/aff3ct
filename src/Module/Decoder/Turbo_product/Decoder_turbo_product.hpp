@@ -7,6 +7,8 @@
 #include "../Decoder_HIHO.hpp"
 #include "../../Encoder/Encoder.hpp"
 
+#include "Chase_pyndiah/Decoder_chase_pyndiah.hpp"
+
 namespace aff3ct
 {
 namespace module
@@ -18,25 +20,21 @@ class Decoder_turbo_product : public Decoder_SISO_SIHO<B,R>
 protected:
 	const int  n_ite; // number of iterations
 	const Interleaver<R> &pi;
-	Decoder_HIHO<B> &dec_r; // row decoder
-	Decoder_HIHO<B> &dec_c; // col decoder
-    Encoder     <B> &enc_r; // row encoder
-    Encoder     <B> &enc_c; // col encoder
-
-	const bool parity_extended;
+	Decoder_chase_pyndiah<B,R> &cp_r; // row decoder
+	Decoder_chase_pyndiah<B,R> &cp_c; // col decoder
 
 	std::vector<R> Y_N_i;
 	std::vector<R> Y_N_pi;
 	std::vector<B> V_K_i;
 	std::vector<B> V_N_i;
 
+	std::vector<R> Y_N_cha_i;
+
 public:
 	Decoder_turbo_product(const int& n_ite,
 	                      const Interleaver<R> &pi,
-	                      Decoder_HIHO<B> &dec_r,
-	                      Decoder_HIHO<B> &dec_c,
-	                      Encoder     <B> &enc_r,
-	                      Encoder     <B> &enc_c);
+	                      Decoder_chase_pyndiah<B,R> &cp_r,
+	                      Decoder_chase_pyndiah<B,R> &cp_c);
 	virtual ~Decoder_turbo_product();
 
 protected:
@@ -44,7 +42,8 @@ protected:
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
-	virtual void _decode(const R *Y_N, int return_K_siso) = 0;
+	virtual void _decode(const R *Y_N, int return_K_siso); // return_K_siso = 0 then hard decode and fill V_K_i else if = 1 then hard decode and fill V_H_i else soft decode and fill Y_N_i
+
 };
 
 }
