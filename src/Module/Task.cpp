@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <ios>
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
@@ -121,21 +122,26 @@ static inline void display_data(const T *data,
                                 const size_t fra_size, const size_t n_fra, const size_t limit,
                                 const uint8_t p, const uint8_t n_spaces, const bool hex)
 {
-	bool is_float_type = std::is_same<float, T>::value || std::is_same<double, T>::value;
+	constexpr bool is_float_type = std::is_same<float, T>::value || std::is_same<double, T>::value;
+
+	std::ios::fmtflags f(std::cout.flags());
 	if (hex)
 	{
-		if (is_float_type)
-			std::cout << std::hexfloat << std::hex;
-		else
-			std::cout << std::hex;
+		if (is_float_type) std::cout << std::hexfloat << std::hex;
+		else               std::cout << std::hex;
 	}
 	else
-		std::cout << std::fixed << std::setprecision(p) << std::setw(p +3);
+		std::cout << std::fixed << std::setprecision(p);
 
 	if (n_fra == 1)
 	{
 		for (auto i = 0; i < (int)limit; i++)
-			std::cout << (hex && !is_float_type ? "0x" : "") << +data[i] << (i < (int)limit -1 ? ", " : "");
+		{
+			if (hex)
+				std::cout << (!is_float_type ? "0x" : "") << +data[i] << (i < (int)limit -1 ? ", " : "");
+			else
+				std::cout << std::setw(p +3) << +data[i] << (i < (int)limit -1 ? ", " : "");
+		}
 		std::cout << (limit < fra_size ? ", ..." : "");
 	}
 	else
@@ -147,14 +153,18 @@ static inline void display_data(const T *data,
 			std::string fra_id = tools::format("f" + std::to_string(f+1) + ":", sty_fra);
 			std::cout << (f >= 1 ? spaces : "") << fra_id << "(";
 			for (auto i = 0; i < (int)limit; i++)
-				std::cout << (hex && !is_float_type ? "0x" : "") << +data[f * fra_size +i]
-				          << (i < (int)limit -1 ? ", " : "");
+			{
+				if (hex)
+					std::cout << std::setw(p +3) << +data[f * fra_size +i] << (i < (int)limit -1 ? ", " : "");
+				else
+					std::cout << (!is_float_type ? "0x" : "") << +data[f * fra_size +i]
+					          << (i < (int)limit -1 ? ", " : "");
+			}
 			std::cout << (limit < fra_size ? ", ..." : "") << ")" << (f < (int)n_fra -1 ? ", \n" : "");
 		}
 	}
 
-	if (hex && is_float_type)
-		std::cout << std::defaultfloat;
+	std::cout.flags(f);
 }
 
 int Task::exec()
@@ -184,7 +194,7 @@ int Task::exec()
 				std::cout << (s_type == IN ? tools::format("const ", sty_type) : "")
 				          << tools::format(s.get_datatype_string(), sty_type)
 				          << " " << s.get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
-				          << std::dec << (n_elmts / n_fra) << "]"
+				          << (n_elmts / n_fra) << "]"
 				          << (i < (int)sockets.size() -1 ? ", " : "");
 
 				max_n_chars = std::max(s.get_name().size(), max_n_chars);
@@ -261,7 +271,7 @@ int Task::exec()
 					std::cout << "]" << std::endl;
 				}
 			}
-			std::cout << "# Returned status: " << std::dec << exec_status << std::endl;
+			std::cout << "# Returned status: " << exec_status << std::endl;
 			std::cout << "#" << std::endl;
 		}
 
