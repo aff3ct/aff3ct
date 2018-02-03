@@ -61,7 +61,7 @@ void Task::set_autoalloc(const bool autoalloc)
 			for (auto *s : sockets)
 				if (get_socket_type(*s) == OUT)
 				{
-					out_buffers.push_back(std::vector<uint8_t>(s->databytes));
+					out_buffers.push_back(mipp::vector<uint8_t>(s->databytes));
 					s->dataptr = out_buffers.back().data();
 				}
 		}
@@ -358,7 +358,7 @@ Socket& Task::create_socket_out(const std::string &name, const size_t n_elmts)
 	// memory allocation
 	if (is_autoalloc())
 	{
-		out_buffers.push_back(std::vector<uint8_t>(s.databytes));
+		out_buffers.push_back(mipp::vector<uint8_t>(s.databytes));
 		s.dataptr = out_buffers.back().data();
 	}
 

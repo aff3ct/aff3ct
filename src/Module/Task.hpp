@@ -13,6 +13,8 @@
 #include <functional>
 #include <unordered_map>
 
+#include <mipp.h>
+
 #include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
@@ -46,7 +48,7 @@ protected:
 	int32_t debug_limit;
 	uint8_t debug_precision;
 	std::function<int(void)> codelet;
-	std::vector<std::vector<uint8_t>> out_buffers;
+	std::vector<mipp::vector<uint8_t>> out_buffers;
 
 	// stats
 	uint32_t                 n_calls;
