@@ -117,6 +117,18 @@ void Task::set_debug_precision(const uint8_t prec)
 	this->debug_precision = prec;
 }
 
+// trick to compile on the GNU compiler version 4 (where 'std::hexfloat' is unavailable)
+#if defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
+namespace std {
+class Hexfloat {
+public:
+	void message(std::ostream &os) const { os << " /!\\ 'std::hexfloat' is not supported by this compiler. /!\\ "; }
+};
+Hexfloat hexfloat;
+}
+std::ostream& operator<<(std::ostream &os, const std::Hexfloat &obj) { obj.message(os); return os; }
+#endif
+
 template <typename T>
 static inline void display_data(const T *data,
                                 const size_t fra_size, const size_t n_fra, const size_t limit,
