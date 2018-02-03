@@ -118,7 +118,7 @@ void Task::set_debug_precision(const uint8_t prec)
 }
 
 // trick to compile on the GNU compiler version 4 (where 'std::hexfloat' is unavailable)
-#if defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
+#if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
 namespace std {
 class Hexfloat {
 public:
