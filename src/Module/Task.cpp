@@ -184,7 +184,7 @@ int Task::exec()
 				std::cout << (s_type == IN ? tools::format("const ", sty_type) : "")
 				          << tools::format(s.get_datatype_string(), sty_type)
 				          << " " << s.get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
-				          << (n_elmts / n_fra) << "]"
+				          << std::dec << (n_elmts / n_fra) << "]"
 				          << (i < (int)sockets.size() -1 ? ", " : "");
 
 				max_n_chars = std::max(s.get_name().size(), max_n_chars);
@@ -261,7 +261,7 @@ int Task::exec()
 					std::cout << "]" << std::endl;
 				}
 			}
-			std::cout << "# Returned status: " << exec_status << std::endl;
+			std::cout << "# Returned status: " << std::dec << exec_status << std::endl;
 			std::cout << "#" << std::endl;
 		}
 
