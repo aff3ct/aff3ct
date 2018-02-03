@@ -143,7 +143,7 @@ static inline void display_data(const T *data,
 		else               std::cout << std::hex;
 	}
 	else
-		std::cout << std::fixed << std::setprecision(p);
+		std::cout << std::fixed << std::setprecision(p) << std::dec;
 
 	if (n_fra == 1)
 	{
@@ -167,10 +167,10 @@ static inline void display_data(const T *data,
 			for (auto i = 0; i < (int)limit; i++)
 			{
 				if (hex)
-					std::cout << std::setw(p +3) << +data[f * fra_size +i] << (i < (int)limit -1 ? ", " : "");
-				else
 					std::cout << (!is_float_type ? "0x" : "") << +data[f * fra_size +i]
 					          << (i < (int)limit -1 ? ", " : "");
+				else
+					std::cout << std::setw(p +3) << +data[f * fra_size +i] << (i < (int)limit -1 ? ", " : "");
 			}
 			std::cout << (limit < fra_size ? ", ..." : "") << ")" << (f < (int)n_fra -1 ? ", \n" : "");
 		}
@@ -224,13 +224,14 @@ int Task::exec()
 					auto fra_size = n_elmts / n_fra;
 					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
 					auto p = debug_precision;
+					auto h = debug_hex;
 					std::cout << "# {IN}  " << s->get_name() << spaces << " = [";
-					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
+					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
 					std::cout << "]" << std::endl;
 				}
 			}
@@ -273,13 +274,14 @@ int Task::exec()
 					auto fra_size = n_elmts / n_fra;
 					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
 					auto p = debug_precision;
+					auto h = debug_hex;
 					std::cout << "# {OUT} " << s->get_name() << spaces << " = [";
-					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
-					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, this->debug_hex);
+					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
 					std::cout << "]" << std::endl;
 				}
 			}
