@@ -40,4 +40,16 @@ diff -s Y_N2.h Y_N2_gold3.h
 rm -f Y_N1.txt Y_N2.txt Y_N1.bin Y_N2.bin Y_N1.h Y_N2.h
 echo "Test 3 Done."
 
+echo "Test 4..."
+rm -f Y_N1.txt Y_N2.txt Y_N1.bin Y_N2.bin Y_N1.h Y_N2.h
+python3 ../aff3ct_debug_parser.py ./dump_debug_gold4.txt --mod Quantizer_standard --tsk process --src 3
+diff -s Y_N1.txt Y_N1_gold4.txt
+diff -s Y_N2.txt Y_N2_gold4.txt
+diff -s Y_N1.bin Y_N1_gold4.bin
+diff -s Y_N2.bin Y_N2_gold4.bin
+diff -s Y_N1.h Y_N1_gold4.h
+diff -s Y_N2.h Y_N2_gold4.h
+rm -f Y_N1.txt Y_N2.txt Y_N1.bin Y_N2.bin Y_N1.h Y_N2.h
+echo "Test 4 Done."
+
 cd -

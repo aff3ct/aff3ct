@@ -3,12 +3,14 @@
 import argparse
 import struct
 import os
+import ctypes
 
 
 class OutputStructure:
     index = 0
     frame_length = 0
     data_format = ""
+    hex_format = False
     name = ""
     frames = []
 
@@ -34,6 +36,7 @@ class OutputStructure:
                 frame = frame.replace(",", " ")
                 frame = frame.split(" ")
                 self.frames.append(frame)
+        self.hex_format = "0x" in self.frames[0][0]
 
     def export_as_text(self, path):
         # write output information into file
@@ -82,6 +85,16 @@ class OutputStructure:
                         fout.write("\n\t")
                     else:
                         fout.write(" ")
+                if self.hex_format and "int" in self.data_format:
+                    if self.data_format == "int8":
+                        value = ctypes.c_int8(int(value, 16)).value
+                    elif self.data_format == "int16":
+                        value = ctypes.c_int16(int(value, 16)).value
+                    elif self.data_format == "int32":
+                        value = ctypes.c_int32(int(value, 16)).value
+                    elif self.data_format == "int64":
+                        value = ctypes.c_int64(int(value, 16)).value
+                    value = str(value)
                 fout.write('{:>4}'.format(value))
             fout.write("\n")
             fout.write("};\n\n")
@@ -121,13 +134,32 @@ class OutputStructure:
             fout.write(struct.pack('>I', float_code))
             fout.write(struct.pack('>I', sizeof_value))
             fout.write(struct.pack('>I', self.frame_length))
-
-            for frame in self.frames:
-                for value in frame:
-                    if float_code == 1:
-                        fout.write(struct.pack(pack_format, float(value)))
-                    else:
-                        fout.write(struct.pack(pack_format, int(value)))
+            if not self.hex_format:
+                if float_code == 1:
+                    for frame in self.frames:
+                        for value in frame:
+                            fout.write(struct.pack(pack_format, float(value)))
+                else:
+                    for frame in self.frames:
+                        for value in frame:
+                            fout.write(struct.pack(pack_format, int(value)))
+            else:
+                if float_code == 1:
+                    for frame in self.frames:
+                        for value in frame:
+                            fout.write(struct.pack(pack_format, float.fromhex(value)))
+                else:
+                    for frame in self.frames:
+                        for value in frame:
+                            if self.data_format == "int8":
+                                value = ctypes.c_int8(int(value, 16)).value
+                            elif self.data_format == "int16":
+                                value = ctypes.c_int16(int(value, 16)).value
+                            elif self.data_format == "int32":
+                                value = ctypes.c_int32(int(value, 16)).value
+                            elif self.data_format == "int64":
+                                value = ctypes.c_int64(int(value, 16)).value
+                            fout.write(struct.pack(pack_format, value))
 
 
 def adp_parse_args():
@@ -181,6 +213,7 @@ def get_output_structures(lines, key):
 
 
 def main():
+
     args = adp_parse_args()
 
     # open files and store contents
