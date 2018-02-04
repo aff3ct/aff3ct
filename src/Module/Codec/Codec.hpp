@@ -213,7 +213,7 @@ public:
 	}
 
 	template <class A = std::allocator<Q>>
-	void extract_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K)
+	void extract_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id = -1)
 	{
 		if (this->N_cw * this->n_frames != (int)Y_N.size())
 		{
@@ -231,19 +231,30 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->extract_sys_llr(Y_N.data(), Y_K.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->extract_sys_llr(Y_N.data(), Y_K.data(), frame_id);
 	}
 
-	virtual void extract_sys_llr(const Q *Y_N, Q *Y_K)
+	virtual void extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_extract_sys_llr(Y_N + f * this->N_cw,
 			                       Y_K + f * this->K,
 			                       f);
 	}
 
 	template <class AQ = std::allocator<Q>, class AB = std::allocator<B>>
-	void extract_sys_bit(const std::vector<Q,AQ> &Y_N, std::vector<B,AB> &V_K)
+	void extract_sys_bit(const std::vector<Q,AQ> &Y_N, std::vector<B,AB> &V_K, const int frame_id = -1)
 	{
 		if (this->N_cw * this->n_frames != (int)Y_N.size())
 		{
@@ -261,19 +272,31 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->extract_sys_bit(Y_N.data(), V_K.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->extract_sys_bit(Y_N.data(), V_K.data(), frame_id);
 	}
 
-	virtual void extract_sys_bit(const Q *Y_N, B *V_K)
+	virtual void extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_extract_sys_bit(Y_N + f * this->N_cw,
 			                       V_K + f * this->K,
 			                       f);
 	}
 
 	template <class A = std::allocator<Q>>
-	void extract_sys_par(const std::vector<Q,A> &Y_N, std::vector<Q,A> &sys, std::vector<Q,A> &par)
+	void extract_sys_par(const std::vector<Q,A> &Y_N, std::vector<Q,A> &sys, std::vector<Q,A> &par,
+	                     const int frame_id = -1)
 	{
 		const auto tb_2 = this->tail_length / 2;
 
@@ -302,14 +325,25 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->extract_sys_par(Y_N.data(), sys.data(), par.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->extract_sys_par(Y_N.data(), sys.data(), par.data(), frame_id);
 	}
 
-	virtual void extract_sys_par(const Q *Y_N, Q *sys, Q *par)
+	virtual void extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id = -1)
 	{
 		const auto tb_2 = this->tail_length / 2;
 
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_extract_sys_par(Y_N + f *  this->N_cw,
 			                       sys + f * (this->K              + tb_2),
 			                       par + f * (this->N_cw - this->K - tb_2),
@@ -317,7 +351,7 @@ public:
 	}
 
 	template <class A = std::allocator<Q>>
-	void add_sys_ext(const std::vector<Q,A> &ext, std::vector<Q,A> &Y_N)
+	void add_sys_ext(const std::vector<Q,A> &ext, std::vector<Q,A> &Y_N, const int frame_id = -1)
 	{
 		if (this->K * this->n_frames != (int)ext.size())
 		{
@@ -335,12 +369,23 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->add_sys_ext(ext.data(), Y_N.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->add_sys_ext(ext.data(), Y_N.data(), frame_id);
 	}
 
-	virtual void add_sys_ext(const Q *ext, Q *Y_N)
+	virtual void add_sys_ext(const Q *ext, Q *Y_N, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_add_sys_ext(ext + f * this->K,
 			                   Y_N + f * this->N_cw,
 			                   f);

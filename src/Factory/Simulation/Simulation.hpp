@@ -38,6 +38,7 @@ struct Simulation : Launcher
 		std::string               pyber           = "";
 		float                     snr_step        = 0.1f;
 		bool                      debug           = false;
+		bool                      debug_hex       = false;
 		bool                      statistics      = false;
 		int                       n_threads       = 1;
 		int                       local_seed      = 0;

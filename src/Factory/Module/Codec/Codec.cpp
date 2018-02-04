@@ -45,6 +45,7 @@ std::vector<std::string> Codec::parameters
 	auto n = Factory::parameters::get_names();
 	if (enc != nullptr) { auto nn = enc->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (dec != nullptr) { auto nn = dec->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (pct != nullptr) { auto nn = pct->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_names(); for (auto &x : nn) n.push_back(x); }
 	return n;
 }
@@ -55,6 +56,7 @@ std::vector<std::string> Codec::parameters
 	auto sn = Factory::parameters::get_short_names();
 	if (enc != nullptr) { auto nn = enc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (dec != nullptr) { auto nn = dec->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (pct != nullptr) { auto nn = pct->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	return sn;
 }
@@ -65,6 +67,7 @@ std::vector<std::string> Codec::parameters
 	auto p = Factory::parameters::get_prefixes();
 	if (enc != nullptr) { auto nn = enc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (dec != nullptr) { auto nn = dec->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (pct != nullptr) { auto nn = pct->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
 }
@@ -107,6 +110,12 @@ void Codec::parameters
 ::set_dec(Decoder::parameters *dec)
 {
 	this->dec = dec;
+}
+
+void Codec::parameters
+::set_pct(Puncturer::parameters *pct)
+{
+	this->pct = pct;
 }
 
 void Codec::parameters

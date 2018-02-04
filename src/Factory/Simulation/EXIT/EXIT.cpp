@@ -1,3 +1,5 @@
+#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+
 #include "Simulation/EXIT/EXIT.hpp"
 
 #include "EXIT.hpp"
@@ -176,3 +178,4 @@ template aff3ct::simulation::EXIT<B,R>* aff3ct::factory::EXIT::build<B,R>(const 
 #endif
 // ==================================================================================== explicit template instantiation
 
+#endif

@@ -36,10 +36,6 @@ struct Codec_turbo : public Codec_SIHO
 		Codec_turbo::parameters* clone() const;
 		void enable_puncturer();
 
-		virtual std::vector<std::string> get_names      () const;
-		virtual std::vector<std::string> get_short_names() const;
-		virtual std::vector<std::string> get_prefixes   () const;
-
 		// parameters construction
 		void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const;
 		void store          (const tools::Argument_map_value &vals                                 );

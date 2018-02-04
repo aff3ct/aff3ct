@@ -61,6 +61,9 @@ protected:
 	const int N_fil; /*!< Number of transmitted elements after the filtering process */
 	      R   sigma; /*!< Sigma^2, the noise variance */
 
+	bool enable_filter;
+	bool enable_demodulator;
+
 public:
 	/*!
 	 * \brief Constructor.
@@ -72,7 +75,7 @@ public:
 	 * \param name:     Modem's name.
 	 */
 	Modem(const int N, const int N_mod, const int N_fil, const R sigma = -1.f, const int n_frames = 1)
-	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
+	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma), enable_filter(false), enable_demodulator(true)
 	{
 		const std::string name = "Modem";
 		this->set_name(name);
@@ -111,7 +114,7 @@ public:
 	 * \param name:     Modem's name.
 	 */
 	Modem(const int N, const int N_mod, const R sigma = -1.f, const int n_frames = 1)
-	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
+	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma), enable_filter(false), enable_demodulator(true)
 	{
 		const std::string name = "Modem";
 		this->set_name(name);
@@ -142,7 +145,7 @@ public:
 	 * \param name:     Modem's name.
 	 */
 	Modem(const int N, const R sigma = -1.f, const int n_frames = 1)
-	: Module(n_frames), N(N), N_mod(N), N_fil(N), sigma(sigma)
+	: Module(n_frames), N(N), N_mod(N), N_fil(N), sigma(sigma), enable_filter(false), enable_demodulator(true)
 	{
 		const std::string name = "Modem";
 		this->set_name(name);
@@ -273,6 +276,16 @@ public:
 		return this->sigma;
 	}
 
+	bool is_filter() const
+	{
+		return this->enable_filter;
+	}
+
+	bool is_demodulator() const
+	{
+		return this->enable_demodulator;
+	}
+
 	virtual void set_sigma(const R sigma)
 	{
 		if (sigma <= 0)
@@ -292,7 +305,7 @@ public:
 	 * \param X_N2: a vector of modulated bits or symbols.
 	 */
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
-	void modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2)
+	void modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2, const int frame_id = -1)
 	{
 		if (this->N * this->n_frames != (int)X_N1.size())
 		{
@@ -310,12 +323,15 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->modulate(X_N1.data(), X_N2.data());
+		this->modulate(X_N1.data(), X_N2.data(), frame_id);
 	}
 
-	virtual void modulate(const B *X_N1, R *X_N2)
+	virtual void modulate(const B *X_N1, R *X_N2, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_modulate(X_N1 + f * this->N,
 			                X_N2 + f * this->N_mod,
 			                f);
@@ -328,7 +344,7 @@ public:
 	 * \param X_N2: a vector of soft symbols.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2)
+	void tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2, const int frame_id = -1)
 	{
 		if (this->N * this->n_frames != (int)X_N1.size())
 		{
@@ -346,12 +362,15 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->tmodulate(X_N1.data(), X_N2.data());
+		this->tmodulate(X_N1.data(), X_N2.data(), frame_id);
 	}
 
-	virtual void tmodulate(const Q *X_N1, R *X_N2)
+	virtual void tmodulate(const Q *X_N1, R *X_N2, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_tmodulate(X_N1 + f * this->N,
 			                 X_N2 + f * this->N_mod,
 			                 f);
@@ -366,7 +385,7 @@ public:
 	 * \param Y_N2: a filtered vector.
 	 */
 	template <class A = std::allocator<R>>
-	void filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2)
+	void filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id = -1)
 	{
 		if (sigma <= 0)
 		{
@@ -391,12 +410,15 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->filter(Y_N1.data(), Y_N2.data());
+		this->filter(Y_N1.data(), Y_N2.data(), frame_id);
 	}
 
-	virtual void filter(const R *Y_N1, R *Y_N2)
+	virtual void filter(const R *Y_N1, R *Y_N2, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_filter(Y_N1 + f * this->N_mod,
 			              Y_N2 + f * this->N_fil,
 			              f);
@@ -409,7 +431,7 @@ public:
 	 * \param Y_N2: a demodulated vector.
 	 */
 	template <class A = std::allocator<Q>>
-	void demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2)
+	void demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id = -1)
 	{
 		if (sigma <= 0)
 		{
@@ -434,12 +456,15 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->demodulate(Y_N1.data(), Y_N2.data());
+		this->demodulate(Y_N1.data(), Y_N2.data(), frame_id);
 	}
 
-	virtual void demodulate(const Q *Y_N1, Q *Y_N2)
+	virtual void demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_demodulate(Y_N1 + f * this->N_fil,
 			                  Y_N2 + f * this->N,
 			                  f);
@@ -453,7 +478,8 @@ public:
 	 * \param Y_N2: a demodulated vector.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2)
+	void demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2,
+	                   const int frame_id = -1)
 	{
 		if (sigma <= 0)
 		{
@@ -486,12 +512,15 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->demodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data());
+		this->demodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data(), frame_id);
 	}
 
-	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2)
+	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_demodulate_wg(H_N  + f * this->N_fil,
 			                     Y_N1 + f * this->N_fil,
 			                     Y_N2 + f * this->N,
@@ -510,7 +539,8 @@ public:
 	 * \param Y_N3: a demodulated vector.
 	 */
 	template <class A = std::allocator<Q>>
-	void tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3)
+	void tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3,
+	                 const int frame_id = -1)
 	{
 		if (sigma <= 0)
 		{
@@ -543,12 +573,15 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->tdemodulate(Y_N1.data(), Y_N2.data(), Y_N3.data());
+		this->tdemodulate(Y_N1.data(), Y_N2.data(), Y_N3.data(), frame_id);
 	}
 
-	virtual void tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+	virtual void tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_tdemodulate(Y_N1 + f * this->N_fil,
 			                   Y_N2 + f * this->N,
 			                   Y_N3 + f * this->N,
@@ -569,7 +602,8 @@ public:
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
 	void tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
-	                    const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3)
+	                    const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3,
+	                    const int frame_id = -1)
 	{
 		if (sigma <= 0)
 		{
@@ -610,12 +644,15 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->tdemodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data(), Y_N3.data());
+		this->tdemodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data(), Y_N3.data(), frame_id);
 	}
 
-	virtual void tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+	virtual void tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1)
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->_tdemodulate_wg(H_N  + f * this->N_fil,
 			                      Y_N1 + f * this->N_fil,
 			                      Y_N2 + f * this->N,
@@ -690,6 +727,16 @@ protected:
 	virtual void _tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
+
+	void set_filter(const bool filter)
+	{
+		this->enable_filter = filter;
+	}
+
+	void set_demodulator(const bool demodulator)
+	{
+		this->enable_demodulator = demodulator;
 	}
 };
 }

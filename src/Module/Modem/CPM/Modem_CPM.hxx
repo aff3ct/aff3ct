@@ -58,6 +58,8 @@ Modem_CPM<B,R,Q,MAX>
 {
 	const std::string name = "Modem_CPM";
 	this->set_name(name);
+
+	this->set_filter(true);
 	
 	if (N % bits_per_symbol)
 	{

@@ -1,3 +1,7 @@
+#include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_std.hpp"
+#include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_naive.hpp"
+#include "Module/Decoder/Generic/Chase/Decoder_chase_std.hpp"
+
 #include "Decoder.hpp"
 
 using namespace aff3ct;
@@ -45,13 +49,23 @@ void Decoder::parameters
 
 	opt_args.add(
 		{p+"-type", "D"},
-		tools::Text(tools::Including_set<std::string>()),
+		tools::Text(tools::Including_set<std::string>("ML", "CHASE")),
 		"select the algorithm you want to decode the codeword.");
 
 	opt_args.add(
 		{p+"-implem"},
-		tools::Text(),
+		tools::Text(tools::Including_set<std::string>("STD", "NAIVE")),
 		"select the implementation of the algorithm to decode.");
+
+	opt_args.add(
+		{p+"-hamming"},
+		tools::None(),
+		"enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.");
+
+	opt_args.add(
+		{p+"-flips"},
+		tools::Integer(tools::Positive()),
+		"set the maximum number of flips in the CHASE decoder.");
 }
 
 void Decoder::parameters
@@ -62,9 +76,11 @@ void Decoder::parameters
 	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int({p+"-info-bits", "K"});
 	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int({p+"-cw-size",   "N"});
 	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int({p+"-fra",       "F"});
+	if(vals.exist({p+"-flips"         })) this->flips      = vals.to_int({p+"-flips"         });
 	if(vals.exist({p+"-type",      "D"})) this->type       = vals.at    ({p+"-type",      "D"});
 	if(vals.exist({p+"-implem"        })) this->implem     = vals.at    ({p+"-implem"        });
 	if(vals.exist({p+"-no-sys"        })) this->systematic = false;
+	if(vals.exist({p+"-hamming"       })) this->hamming    = true;
 
 	this->R = (float)this->K / (float)this->N_cw;
 }
@@ -75,11 +91,46 @@ void Decoder::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Type (D)",this->type));
-	if(this->implem.size())
-		headers[p].push_back(std::make_pair("Implementation", this->implem));
+	if(this->implem.size()) headers[p].push_back(std::make_pair("Implementation", this->implem));
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Codeword size (N)", std::to_string(this->N_cw)));
 	if (full) headers[p].push_back(std::make_pair("Code rate (R)", std::to_string(this->R)));
 	headers[p].push_back(std::make_pair("Systematic", ((this->systematic) ? "yes" : "no")));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+	if(this->type == "ML" || this->type == "CHASE") 
+		headers[p].push_back(std::make_pair("Distance", this->hamming ? "Hamming" : "Euclidean"));
+	if(this->type == "CHASE")
+		headers[p].push_back(std::make_pair("Max flips", std::to_string(this->flips)));
 }
+
+template <typename B, typename Q>
+module::Decoder_SIHO<B,Q>* Decoder::parameters
+::build(module::Encoder<B> *encoder) const
+{
+	if (encoder)
+	{
+		if (this->type == "ML")
+		{
+			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
+			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
+		}
+		else if (this->type == "CHASE")
+		{
+			if (this->implem == "STD") return new module::Decoder_chase_std<B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
+		}
+	}
+	
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::parameters::build<B_8 ,Q_8 >(module::Encoder<B_8 >*) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder::parameters::build<B_16,Q_16>(module::Encoder<B_16>*) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder::parameters::build<B_32,Q_32>(module::Encoder<B_32>*) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder::parameters::build<B_64,Q_64>(module::Encoder<B_64>*) const;
+#else
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder::parameters::build<B,Q>(module::Encoder<B>*) const;
+#endif
+// ==================================================================================== explicit template instantiation

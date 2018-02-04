@@ -1,5 +1,5 @@
 stages:
-  - analyse
+  - analysis
   - build
   - test
 
@@ -10,26 +10,26 @@ before_script:
   - git submodule sync --recursive
   - git submodule update --init --recursive
 
-analyse-cppcheck:
-  stage: analyse
+analysis-cppcheck:
+  stage: analysis
   artifacts:
-     name: analyse-cppcheck-logs
+     name: analysis-cppcheck-logs
      when: always
      paths:
        - cppcheck/
   tags: 
     - cppcheck
   script:
-    - ./ci/analyse-cppcheck.sh
+    - ./ci/analysis-cppcheck.sh
 
-analyse-sonarqube:
-  stage: analyse
+analysis-sonarqube:
+  stage: analysis
   tags: 
     - sonarqube
   only:
     - master
   script:
-    - ./ci/analyse-sonarqube.sh
+    - ./ci/analysis-sonarqube.sh
 
 build-linux-gcc:
   stage: build
@@ -51,6 +51,13 @@ build-linux-gcc-4.8:
    - linux
   script:
     - ./ci/build-linux-gcc-4.8.sh
+
+build-linux-icpc:
+  stage: build
+  tags:
+   - linux
+  script:
+    - ./ci/build-linux-icpc.sh
 
 build-windows-gcc:
   stage: build
@@ -81,8 +88,7 @@ test-regression:
      name: test-regression-results
      when: always
      paths:
-       - tests/results/
+       - test-regression-results/
   script:
     - ./ci/test-build-linux-gcc.sh
-    - cd tests
-    - ./tests.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
+    - ./ci/test-regression.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1

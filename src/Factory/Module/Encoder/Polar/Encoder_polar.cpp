@@ -57,7 +57,7 @@ void Encoder_polar::parameters
 }
 
 template <typename B>
-module::Encoder<B>* Encoder_polar::parameters
+module::Encoder_polar<B>* Encoder_polar::parameters
 ::build(const std::vector<bool> &frozen_bits) const
 {
 	     if (this->type == "POLAR" && !this->systematic) return new module::Encoder_polar    <B>(this->K, this->N_cw, frozen_bits, this->n_frames);
@@ -67,7 +67,7 @@ module::Encoder<B>* Encoder_polar::parameters
 }
 
 template <typename B>
-module::Encoder<B>* Encoder_polar
+module::Encoder_polar<B>* Encoder_polar
 ::build(const parameters& params, const std::vector<bool> &frozen_bits)
 {
 	return params.template build<B>(frozen_bits);
@@ -76,16 +76,16 @@ module::Encoder<B>* Encoder_polar
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_polar::parameters::build<B_8 >(const std::vector<bool>&) const;
-template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_polar::parameters::build<B_16>(const std::vector<bool>&) const;
-template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_polar::parameters::build<B_32>(const std::vector<bool>&) const;
-template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_polar::parameters::build<B_64>(const std::vector<bool>&) const;
-template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_polar::build<B_8 >(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
-template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_polar::build<B_16>(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
-template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_polar::build<B_32>(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
-template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_polar::build<B_64>(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
+template aff3ct::module::Encoder_polar<B_8 >* aff3ct::factory::Encoder_polar::parameters::build<B_8 >(const std::vector<bool>&) const;
+template aff3ct::module::Encoder_polar<B_16>* aff3ct::factory::Encoder_polar::parameters::build<B_16>(const std::vector<bool>&) const;
+template aff3ct::module::Encoder_polar<B_32>* aff3ct::factory::Encoder_polar::parameters::build<B_32>(const std::vector<bool>&) const;
+template aff3ct::module::Encoder_polar<B_64>* aff3ct::factory::Encoder_polar::parameters::build<B_64>(const std::vector<bool>&) const;
+template aff3ct::module::Encoder_polar<B_8 >* aff3ct::factory::Encoder_polar::build<B_8 >(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
+template aff3ct::module::Encoder_polar<B_16>* aff3ct::factory::Encoder_polar::build<B_16>(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
+template aff3ct::module::Encoder_polar<B_32>* aff3ct::factory::Encoder_polar::build<B_32>(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
+template aff3ct::module::Encoder_polar<B_64>* aff3ct::factory::Encoder_polar::build<B_64>(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
 #else
-template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_polar::parameters::build<B>(const std::vector<bool>&) const;
-template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_polar::build<B>(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
+template aff3ct::module::Encoder_polar<B>* aff3ct::factory::Encoder_polar::parameters::build<B>(const std::vector<bool>&) const;
+template aff3ct::module::Encoder_polar<B>* aff3ct::factory::Encoder_polar::build<B>(const aff3ct::factory::Encoder_polar::parameters&, const std::vector<bool>&);
 #endif
 // ==================================================================================== explicit template instantiation

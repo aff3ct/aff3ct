@@ -16,7 +16,7 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_LDPC_from_H<B>
 ::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames)
-: Encoder_LDPC<B>(K, N, n_frames), G(tools::LDPC_matrix_handler::transform_H_to_G(H, info_bits_pos))
+: Encoder_LDPC<B>(K, N, n_frames), G(tools::LDPC_matrix_handler::transform_H_to_G(H, this->info_bits_pos)), H(H)
 {
 	const std::string name = "Encoder_LDPC_from_H";
 	this->set_name(name);
@@ -47,21 +47,6 @@ Encoder_LDPC_from_H<B>
 
 template <typename B>
 void Encoder_LDPC_from_H<B>
-::get_info_bits_pos(std::vector<unsigned>& info_bits_pos)
-{
-	if (this->K != (int)info_bits_pos.size())
-	{
-		std::stringstream message;
-		message << "'info_bits_pos.size()' has to be equal to 'K' ('info_bits_pos.size()' = " << info_bits_pos.size()
-		        << ", 'K' = " << this->K << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	std::copy(this->info_bits_pos.begin(), this->info_bits_pos.end(), info_bits_pos.begin());
-}
-
-template <typename B>
-void Encoder_LDPC_from_H<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	for (unsigned i = 0; i < G.get_n_rows(); i++)
@@ -71,6 +56,48 @@ void Encoder_LDPC_from_H<B>
 			X_N[i] += U_K[ G.get_cols_from_row(i)[j] ];
 		X_N[i] %= 2;
 	}
+}
+
+template <typename B>
+bool Encoder_LDPC_from_H<B>
+::is_codeword(const B *X_N)
+{
+	auto syndrome = false;
+
+	const auto n_CN = (int)this->H.get_n_cols();
+	auto i = 0;
+	while (i < n_CN && !syndrome)
+	{
+		auto sign = 0;
+
+		const auto n_VN = (int)this->H[i].size();
+		for (auto j = 0; j < n_VN; j++)
+		{
+			const auto bit = X_N[this->H[i][j]];
+			const auto tmp_sign = bit ? -1 : 0;
+
+			sign ^= tmp_sign;
+		}
+
+		syndrome = syndrome || sign;
+		i++;
+	}
+
+	return !syndrome;
+}
+
+template <typename B>
+const std::vector<uint32_t>& Encoder_LDPC_from_H<B>
+::get_info_bits_pos()
+{
+	return Encoder<B>::get_info_bits_pos();
+}
+
+template <typename B>
+bool Encoder_LDPC_from_H<B>
+::is_sys() const
+{
+	return Encoder<B>::is_sys();
 }
 
 // ==================================================================================== explicit template instantiation

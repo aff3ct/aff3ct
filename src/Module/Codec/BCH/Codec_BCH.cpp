@@ -64,7 +64,7 @@ Codec_BCH<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	this->set_decoder_siho(factory::Decoder_BCH::build<B,Q>(dec_params, GF_poly));
+	this->set_decoder_siho(factory::Decoder_BCH::build<B,Q>(dec_params, GF_poly, this->get_encoder()));
 }
 
 template <typename B, typename Q>

@@ -189,7 +189,7 @@ void Encoder_turbo::parameters<E1,E2>
 
 template <class E1, class E2>
 template <typename B>
-module::Encoder<B>* Encoder_turbo::parameters<E1,E2>
+module::Encoder_turbo<B>* Encoder_turbo::parameters<E1,E2>
 ::build(const module::Interleaver<B> &itl,
               module::Encoder    <B> *enc_n,
               module::Encoder    <B> *enc_i) const
@@ -198,18 +198,18 @@ module::Encoder<B>* Encoder_turbo::parameters<E1,E2>
 
 	if (this->sub1->buffered)
 	{
-		if (this->type == "TURBO") return new module::Encoder_turbo       <B>(this->K, this->N_cw, itl, *enc_n, *enc_i, this->n_frames);
+		if (this->type == "TURBO") return new module::Encoder_turbo       <B>(this->K, this->N_cw, itl, *enc_n, *enc_i);
 	}
 	else if (enc_n == enc_i)
 	{
-		if (this->type == "TURBO") return new module::Encoder_turbo_legacy<B>(this->K, this->N_cw, itl, *enc_n,         this->n_frames);
+		if (this->type == "TURBO") return new module::Encoder_turbo_legacy<B>(this->K, this->N_cw, itl, *enc_n);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, class E1, class E2>
-module::Encoder<B>* Encoder_turbo
+module::Encoder_turbo<B>* Encoder_turbo
 ::build(const parameters<E1,E2>      &params,
         const module::Interleaver<B> &itl,
               module::Encoder    <B> *enc_n,

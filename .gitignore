@@ -1,0 +1,17 @@
+*.gitignore*
+
+.cproject
+.project
+.pydevproject
+.settings
+cppcheck.xml
+sonar-project.properties
+src_files.txt
+
+.scannerwork/
+build*/
+cppcheck/
+doc/html/
+doc/latex/
+src/Tools/version.cpp
+test-regression-results/

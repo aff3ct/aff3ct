@@ -16,9 +16,9 @@ Coset_real<B,D>::~Coset_real()
 }
 
 template <typename B, typename D>
-void Coset_real<B,D>::apply(const B *ref, const D *in, D *out)
+void Coset_real<B,D>::_apply(const B *ref, const D *in, D *out, const int frame_id)
 {
-	for (auto i = 0; i < this->size * this->n_frames; i++)
+	for (auto i = 0; i < this->size; i++)
 		out[i] = ref[i] ? -in[i] : in[i];
 }
 

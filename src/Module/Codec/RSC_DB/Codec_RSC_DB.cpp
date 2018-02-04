@@ -72,9 +72,16 @@ Codec_RSC_DB<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	auto decoder_siso_siho = factory::Decoder_RSC_DB::build<B,Q>(dec_params, trellis);
-	this->set_decoder_siso(decoder_siso_siho);
-	this->set_decoder_siho(decoder_siso_siho);
+	try
+	{
+		auto decoder_siso_siho = factory::Decoder_RSC_DB::build_siso<B,Q>(dec_params, trellis, this->get_encoder());
+		this->set_decoder_siso(decoder_siso_siho);
+		this->set_decoder_siho(decoder_siso_siho);
+	}
+	catch (tools::cannot_allocate const&)
+	{
+		this->set_decoder_siho(factory::Decoder_RSC_DB::build<B,Q>(dec_params, trellis, this->get_encoder()));
+	}
 }
 
 template <typename B, typename Q>

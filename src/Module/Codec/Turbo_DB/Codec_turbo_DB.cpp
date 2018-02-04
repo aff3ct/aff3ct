@@ -98,36 +98,48 @@ Codec_turbo_DB<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	sub_dec_n = factory::Decoder_RSC_DB::build<B,Q>(*dec_params.sub, trellis);
-	sub_dec_i = factory::Decoder_RSC_DB::build<B,Q>(*dec_params.sub, trellis);
-	auto decoder = factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec_n, *sub_dec_i);
-	this->set_decoder_siho(decoder);
+	Decoder_turbo_DB<B,Q>* decoder_turbo = nullptr;
+	try
+	{
+		this->set_decoder_siho(factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_encoder()));
+	}
+	catch (tools::cannot_allocate const&)
+	{
+		sub_dec_n = factory::Decoder_RSC_DB::build_siso<B,Q>(*dec_params.sub, trellis);
+		sub_dec_i = factory::Decoder_RSC_DB::build_siso<B,Q>(*dec_params.sub, trellis);
+		decoder_turbo = factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec_n, 
+		                                                      *sub_dec_i, this->get_encoder());
+		this->set_decoder_siho(decoder_turbo);
+	}
 
 	// ------------------------------------------------------------------------------------------------ post processing
-	// then add post processing modules
-	if (dec_params.sf->enable)
-		post_pros.push_back(factory::Scaling_factor::build<B,Q>(*dec_params.sf));
-
-	if (dec_params.fnc->enable)
+	if (decoder_turbo)
 	{
-		if (crc == nullptr || crc->get_size() == 0)
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
+		// then add post processing modules
+		if (dec_params.sf->enable)
+			post_pros.push_back(factory::Scaling_factor::build<B,Q>(*dec_params.sf));
 
-		post_pros.push_back(factory::Flip_and_check_DB::build<B,Q>(*dec_params.fnc, *crc));
-	}
-	else if (crc != nullptr && crc->get_size() > 0)
-		post_pros.push_back(new tools::CRC_checker_DB<B,Q>(*crc, 2, decoder->get_simd_inter_frame_level()));
-
-	for (auto i = 0; i < (int)post_pros.size(); i++)
-	{
-		if (post_pros[i] != nullptr)
+		if (dec_params.fnc->enable)
 		{
-			using namespace std::placeholders;
+			if (crc == nullptr || crc->get_size() == 0)
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-			auto pp = post_pros[i];
-			decoder->add_handler_siso_n(std::bind(&tools::Post_processing_SISO<B,Q>::siso_n, pp, _1, _2, _3, _4));
-			decoder->add_handler_siso_i(std::bind(&tools::Post_processing_SISO<B,Q>::siso_i, pp, _1, _2, _3    ));
-			decoder->add_handler_end   (std::bind(&tools::Post_processing_SISO<B,Q>::end,    pp, _1            ));
+			post_pros.push_back(factory::Flip_and_check_DB::build<B,Q>(*dec_params.fnc, *crc));
+		}
+		else if (crc != nullptr && crc->get_size() > 0)
+			post_pros.push_back(new tools::CRC_checker_DB<B,Q>(*crc, 2, decoder_turbo->get_simd_inter_frame_level()));
+
+		for (auto i = 0; i < (int)post_pros.size(); i++)
+		{
+			if (post_pros[i] != nullptr)
+			{
+				using namespace std::placeholders;
+
+				auto pp = post_pros[i];
+				decoder_turbo->add_handler_siso_n(std::bind(&tools::Post_processing_SISO<B,Q>::siso_n, pp, _1, _2, _3, _4));
+				decoder_turbo->add_handler_siso_i(std::bind(&tools::Post_processing_SISO<B,Q>::siso_i, pp, _1, _2, _3    ));
+				decoder_turbo->add_handler_end   (std::bind(&tools::Post_processing_SISO<B,Q>::end,    pp, _1            ));
+			}
 		}
 	}
 }

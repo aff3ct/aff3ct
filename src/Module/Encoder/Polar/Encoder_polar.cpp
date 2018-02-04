@@ -11,10 +11,11 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_polar<B>
 ::Encoder_polar(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames)
-: Encoder<B>(K, N, n_frames), m((int)std::log2(N)), frozen_bits(frozen_bits)
+: Encoder<B>(K, N, n_frames), m((int)std::log2(N)), frozen_bits(frozen_bits), X_N_tmp(this->N)
 {
 	const std::string name = "Encoder_polar";
 	this->set_name(name);
+	this->set_sys(false);
 	
 	if (this->N != (int)frozen_bits.size())
 	{
@@ -32,6 +33,8 @@ Encoder_polar<B>
 		        << k << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->notify_frozenbits_update();
 }
 
 template <typename B>
@@ -71,6 +74,35 @@ void Encoder_polar<B>
 		for (unsigned i = 0; i < frozen_bits.size(); i++)
 			U_N[i] = (frozen_bits[i]) ? (B)0 : U_K[j++];
 	}
+}
+
+template <typename B>
+bool Encoder_polar<B>
+::is_codeword(const B *X_N)
+{
+	std::copy(X_N, X_N + this->N, this->X_N_tmp.data());
+
+	for (auto k = (this->N >> 1); k > 0; k >>= 1)
+		for (auto j = 0; j < this->N; j += 2 * k)
+		{
+			for (auto i = 0; i < k; i++)
+				this->X_N_tmp[j + i] = this->X_N_tmp[j + i] ^ this->X_N_tmp[k + j + i];
+
+			if (this->frozen_bits[j + k -1] && this->X_N_tmp[j + k -1])
+				return false;
+		}
+
+	return true;
+}
+
+template <typename B>
+void Encoder_polar<B>
+::notify_frozenbits_update()
+{
+	auto k = 0;
+	for (auto n = 0; n < this->N; n++)
+		if (!frozen_bits[n])
+			this->info_bits_pos[k++] = n;
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -100,8 +100,15 @@ void Channel_Rayleigh_LLR_user<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR_user<R>
-::add_noise_wg(const R *X_N, R *H_N, R *Y_N)
+::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
+	if (frame_id != -1)
+	{
+		std::stringstream message;
+		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	// get all the needed gains from the stock
 	for (unsigned i = 0; i < gains.size(); ++i)
 	{

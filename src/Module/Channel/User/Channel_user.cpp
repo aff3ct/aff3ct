@@ -112,10 +112,17 @@ Channel_user<R>
 
 template <typename R>
 void Channel_user<R>
-::add_noise(const R *X_N, R *Y_N)
+::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	if (add_users && this->n_frames > 1)
 	{
+		if (frame_id != -1)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (auto f = 0; f < this->n_frames; f++)
 			for (auto i = 0; i < this->N; i++)
@@ -134,7 +141,11 @@ void Channel_user<R>
 			Y_N[i] += this->noise[i];
 	}
 	else
-		for (auto f = 0; f < this->n_frames; f++)
+	{
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 		{
 			std::copy(this->noise_buff[this->noise_counter].begin(),
 			          this->noise_buff[this->noise_counter].end  (),
@@ -145,6 +156,7 @@ void Channel_user<R>
 
 			this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
 		}
+	}
 }
 
 // ==================================================================================== explicit template instantiation

@@ -80,7 +80,7 @@ public:
 	}
 
 	template <class A = std::allocator<D>>
-	inline void interleave(const std::vector<D,A> &nat, std::vector<D,A> &itl) const
+	inline void interleave(const std::vector<D,A> &nat, std::vector<D,A> &itl, const int frame_id = -1) const
 	{
 		if (nat.size() != itl.size())
 		{
@@ -99,25 +99,36 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->interleave(nat.data(), itl.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->interleave(nat.data(), itl.data(), frame_id);
 	}
 
-	inline void interleave(const D *nat, D *itl) const
+	inline void interleave(const D *nat, D *itl, const int frame_id = -1) const
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->interleave(nat + f * this->core.get_size(),
 			                 itl + f * this->core.get_size(),
-			                 f);
+			                 f, 1);
 	}
 
-	inline void interleave(const D *nat, D *itl, const int frame_id, const int n_frames = 1,
+	inline void interleave(const D *nat, D *itl, const int frame_id, const int n_frames,
 	                       const bool frame_reordering = false) const
 	{
 		this->_interleave(nat, itl, core.get_lut(), frame_reordering, n_frames, frame_id);
 	}
 
 	template <class A = std::allocator<D>>
-	inline void deinterleave(const std::vector<D,A> &itl, std::vector<D,A> &nat) const
+	inline void deinterleave(const std::vector<D,A> &itl, std::vector<D,A> &nat, const int frame_id = -1) const
 	{
 		if (nat.size() != itl.size())
 		{
@@ -136,18 +147,29 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->deinterleave(itl.data(), nat.data());
+		if (frame_id != -1 && frame_id >= this->n_frames)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->deinterleave(itl.data(), nat.data(), frame_id);
 	}
 
-	inline void deinterleave(const D *itl, D *nat) const
+	inline void deinterleave(const D *itl, D *nat, const int frame_id = -1) const
 	{
-		for (auto f = 0; f < this->n_frames; f++)
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+		for (auto f = f_start; f < f_stop; f++)
 			this->deinterleave(itl + f * this->core.get_size(),
 			                   nat + f * this->core.get_size(),
-			                   f);
+			                   f, 1);
 	}
 
-	inline void deinterleave(const D *itl, D *nat, const int frame_id, const int n_frames = 1,
+	inline void deinterleave(const D *itl, D *nat, const int frame_id, const int n_frames,
 	                         const bool frame_reordering = false) const
 	{
 		this->_interleave(itl, nat, core.get_lut_inv(), frame_reordering, n_frames, frame_id);

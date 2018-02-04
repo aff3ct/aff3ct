@@ -63,6 +63,11 @@ void Simulation::parameters
 		"enable debug mode: print array values after each step.");
 
 	opt_args.add(
+		{p+"-debug-hex"},
+		tools::None(),
+		"debug mode prints values in the hexadecimal format.");
+
+	opt_args.add(
 		{p+"-debug-prec"},
 		tools::Integer(tools::Positive()),
 		"set the precision of real elements when displayed in debug mode.");
@@ -123,6 +128,11 @@ void Simulation::parameters
 	{
 		this->debug = true;
 		this->debug_limit = vals.to_int({p+"-debug-limit", "d"});
+	}
+	if(vals.exist({p+"-debug-hex"}))
+	{
+		this->debug = true;
+		this->debug_hex = true;
 	}
 	if(vals.exist({p+"-debug-prec"}))
 	{

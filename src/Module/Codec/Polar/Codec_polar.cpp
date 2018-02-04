@@ -21,7 +21,8 @@ Codec_polar<B,Q>
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
   fb_generator     (nullptr),
   puncturer_wangliu(nullptr),
-  fb_decoder       (nullptr)
+  fb_decoder       (nullptr),
+  fb_encoder       (nullptr)
 {
 	const std::string name = "Codec_polar";
 	this->set_name(name);
@@ -93,7 +94,9 @@ Codec_polar<B,Q>
 
 	try
 	{
-		this->set_encoder(factory::Encoder_polar::build<B>(enc_params, frozen_bits));
+		auto *encoder_polar = factory::Encoder_polar::build<B>(enc_params, frozen_bits);
+		this->fb_encoder = encoder_polar;
+		this->set_encoder(encoder_polar);
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -102,18 +105,19 @@ Codec_polar<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits);
+		auto decoder_siso_siho = factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits, this->get_encoder());
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (const std::exception&)
 	{
 		if (generated_decoder)
-			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc));
+			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc, this->get_encoder()));
 		else
-			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc));
+			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, this->get_encoder()));
 	}
-	this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho());
+	if (dec_params.type != "ML")
+		this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
 	if (!generated_decoder)
@@ -161,7 +165,10 @@ void Codec_polar<B,Q>
 		if (this->N_cw != this->N)
 			puncturer_wangliu->gen_frozen_bits(frozen_bits);
 
-		this->fb_decoder->notify_frozenbits_update();
+		if (this->fb_decoder)
+			this->fb_decoder->notify_frozenbits_update();
+		if (this->fb_encoder)
+			this->fb_encoder->notify_frozenbits_update();
 	}
 }
 

@@ -25,7 +25,8 @@ public:
 	Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const int n_frames = 1);
 	virtual ~Encoder_LDPC();
 
-	virtual void get_info_bits_pos(std::vector<unsigned>& info_bits_pos);
+	virtual const std::vector<uint32_t>& get_info_bits_pos();
+	virtual bool is_sys() const;
 
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id);

@@ -1,3 +1,5 @@
+#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+
 #ifndef LAUNCHER_EXIT_HPP_
 #define LAUNCHER_EXIT_HPP_
 
@@ -29,3 +31,5 @@ protected:
 }
 
 #endif /* LAUNCHER_EXIT_HPP_ */
+
+#endif

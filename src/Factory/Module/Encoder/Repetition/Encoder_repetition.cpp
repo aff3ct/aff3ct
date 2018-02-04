@@ -64,7 +64,7 @@ void Encoder_repetition::parameters
 }
 
 template <typename B>
-module::Encoder<B>* Encoder_repetition::parameters
+module::Encoder_repetition_sys<B>* Encoder_repetition::parameters
 ::build() const
 {
 	if (this->type == "REPETITION") return new module::Encoder_repetition_sys<B>(this->K, this->N_cw, this->buffered, this->n_frames);
@@ -73,7 +73,7 @@ module::Encoder<B>* Encoder_repetition::parameters
 }
 
 template <typename B>
-module::Encoder<B>* Encoder_repetition
+module::Encoder_repetition_sys<B>* Encoder_repetition
 ::build(const parameters &params)
 {
 	return params.template build<B>();
@@ -82,17 +82,17 @@ module::Encoder<B>* Encoder_repetition
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_repetition::parameters::build<B_8 >() const;
-template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_repetition::parameters::build<B_16>() const;
-template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_repetition::parameters::build<B_32>() const;
-template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_repetition::parameters::build<B_64>() const;
-template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_repetition::build<B_8 >(const aff3ct::factory::Encoder_repetition::parameters&);
-template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_repetition::build<B_16>(const aff3ct::factory::Encoder_repetition::parameters&);
-template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_repetition::build<B_32>(const aff3ct::factory::Encoder_repetition::parameters&);
-template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_repetition::build<B_64>(const aff3ct::factory::Encoder_repetition::parameters&);
+template aff3ct::module::Encoder_repetition_sys<B_8 >* aff3ct::factory::Encoder_repetition::parameters::build<B_8 >() const;
+template aff3ct::module::Encoder_repetition_sys<B_16>* aff3ct::factory::Encoder_repetition::parameters::build<B_16>() const;
+template aff3ct::module::Encoder_repetition_sys<B_32>* aff3ct::factory::Encoder_repetition::parameters::build<B_32>() const;
+template aff3ct::module::Encoder_repetition_sys<B_64>* aff3ct::factory::Encoder_repetition::parameters::build<B_64>() const;
+template aff3ct::module::Encoder_repetition_sys<B_8 >* aff3ct::factory::Encoder_repetition::build<B_8 >(const aff3ct::factory::Encoder_repetition::parameters&);
+template aff3ct::module::Encoder_repetition_sys<B_16>* aff3ct::factory::Encoder_repetition::build<B_16>(const aff3ct::factory::Encoder_repetition::parameters&);
+template aff3ct::module::Encoder_repetition_sys<B_32>* aff3ct::factory::Encoder_repetition::build<B_32>(const aff3ct::factory::Encoder_repetition::parameters&);
+template aff3ct::module::Encoder_repetition_sys<B_64>* aff3ct::factory::Encoder_repetition::build<B_64>(const aff3ct::factory::Encoder_repetition::parameters&);
 #else
-template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_repetition::parameters::build<B>() const;
-template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_repetition::build<B>(const aff3ct::factory::Encoder_repetition::parameters&);
+template aff3ct::module::Encoder_repetition_sys<B>* aff3ct::factory::Encoder_repetition::parameters::build<B>() const;
+template aff3ct::module::Encoder_repetition_sys<B>* aff3ct::factory::Encoder_repetition::build<B>(const aff3ct::factory::Encoder_repetition::parameters&);
 #endif
 // ==================================================================================== explicit template instantiation
 

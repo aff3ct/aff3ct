@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Module/Encoder/Encoder.hpp"
+#include "Module/Encoder/RA/Encoder_RA.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
@@ -41,11 +41,11 @@ struct Encoder_RA : public Encoder
 
 		// builder
 		template <typename B = int>
-		module::Encoder<B>* build(const module::Interleaver<B> &itl) const;
+		module::Encoder_RA<B>* build(const module::Interleaver<B> &itl) const;
 	};
 
 	template <typename B = int>
-	static module::Encoder<B>* build(const parameters& params, const module::Interleaver<B> &itl);
+	static module::Encoder_RA<B>* build(const parameters& params, const module::Interleaver<B> &itl);
 };
 }
 }

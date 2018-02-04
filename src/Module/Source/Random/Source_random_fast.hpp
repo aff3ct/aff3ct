@@ -21,7 +21,8 @@ public:
 	Source_random_fast(const int K, const int seed = 0, const int n_frames = 1);
 	virtual ~Source_random_fast();
 
-	void generate(B *U_K); using Source<B>::generate;
+protected:
+	void _generate(B *U_K, const int frame_id);
 };
 }
 }

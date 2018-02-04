@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Module/Interleaver/Interleaver.hpp"
-#include "Module/Encoder/Encoder.hpp"
+#include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
@@ -48,16 +48,16 @@ struct Encoder_turbo : public Encoder
 
 		// builder
 		template <typename B = int>
-		module::Encoder<B>* build(const module::Interleaver<B> &itl,
-		                                module::Encoder    <B> *enc_n,
-		                                module::Encoder    <B> *enc_i = nullptr) const;
+		module::Encoder_turbo<B>* build(const module::Interleaver<B> &itl,
+		                                      module::Encoder    <B> *enc_n,
+		                                      module::Encoder    <B> *enc_i = nullptr) const;
 	};
 
 	template <typename B = int, class E1 = Encoder_RSC, class E2 = E1>
-	static module::Encoder<B>* build(const parameters<E1,E2>      &params,
-	                                 const module::Interleaver<B> &itl,
-	                                       module::Encoder    <B> *enc_n,
-	                                       module::Encoder    <B> *enc_i = nullptr);
+	static module::Encoder_turbo<B>* build(const parameters<E1,E2>      &params,
+	                                       const module::Interleaver<B> &itl,
+	                                             module::Encoder    <B> *enc_n,
+	                                             module::Encoder    <B> *enc_i = nullptr);
 };
 }
 }

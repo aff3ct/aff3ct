@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
@@ -43,11 +44,13 @@ struct Decoder_RA : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q> &itl) const;
+		module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q> &itl,
+		                                 module::Encoder<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const module::Interleaver<Q> &itl);
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const module::Interleaver<Q> &itl, 
+	                                        module::Encoder<B> *encoder = nullptr);
 };
 }
 }

@@ -42,23 +42,23 @@ void Modem_OOK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
-::modulate(const B *X_N1, R *X_N2)
+::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
-	auto size = (unsigned int)(this->N * this->n_frames);
+	auto size = (unsigned int)(this->N);
 	for (unsigned i = 0; i < size; i++)
 		X_N2[i] = X_N1[i] ? (R)1 : (R)0;
 }
 
 template <typename B,typename R, typename Q>
 void Modem_OOK<B,R,Q>
-::filter(const R *Y_N1, R *Y_N2)
+::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
+	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
-::demodulate(const Q *Y_N1, Q *Y_N2)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -66,7 +66,7 @@ void Modem_OOK<B,R,Q>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	auto size = (unsigned int)(this->N_fil * this->n_frames);
+	auto size = (unsigned int)(this->N_fil);
 	for (unsigned i = 0; i < size; i++)
 	{
 		Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor;
@@ -75,7 +75,7 @@ void Modem_OOK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
-::demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2)
+::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -83,7 +83,7 @@ void Modem_OOK<B,R,Q>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	auto size = (unsigned int)(this->N_fil * this->n_frames);
+	auto size = (unsigned int)(this->N_fil);
 	for (unsigned i = 0; i < size; i++)
 	{
 		Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor * (Q)H_N[i];
@@ -92,16 +92,16 @@ void Modem_OOK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
-::tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	this->demodulate(Y_N1,Y_N3);
+	this->_demodulate(Y_N1,Y_N3,frame_id);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
-::tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	this->demodulate_wg(H_N, Y_N1, Y_N3);
+	this->_demodulate_wg(H_N, Y_N1, Y_N3, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation

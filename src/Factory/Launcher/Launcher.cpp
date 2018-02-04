@@ -80,7 +80,11 @@ void factory::Launcher::parameters
 
 	opt_args.add(
 		{p+"-type"},
+#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
 		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")),
+#else
+		tools::Text(tools::Including_set("BFER", "BFERI")),
+#endif
 		"select the type of simulation to launch (default is BFER).");
 
 #ifdef MULTI_PREC

@@ -15,6 +15,9 @@ Modem_BPSK<B,R,Q>
 {
 	const std::string name = "Modem_BPSK";
 	this->set_name(name);
+
+	if (disable_sig2)
+		this->set_demodulator(false);
 }
 
 template <typename B, typename R, typename Q>
@@ -33,26 +36,26 @@ void Modem_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
-::modulate(const B *X_N1, R *X_N2)
+::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
-	auto size = (unsigned int)(this->N * this->n_frames);
+	auto size = (unsigned int)(this->N);
 	for (unsigned i = 0; i < size; i++)
 		X_N2[i] = (R)((B)1 - (X_N1[i] + X_N1[i])); // (X_N[i] == 1) ? -1 : +1
 }
 
 template <typename B,typename R, typename Q>
 void Modem_BPSK<B,R,Q>
-::filter(const R *Y_N1, R *Y_N2)
+::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
+	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
-::demodulate(const Q *Y_N1, Q *Y_N2)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (disable_sig2)
-		std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
+		std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 	else
 	{
 		if (typeid(R) != typeid(Q))
@@ -61,7 +64,7 @@ void Modem_BPSK<B,R,Q>
 		if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		auto size = (unsigned int)(this->N_fil * this->n_frames);
+		auto size = (unsigned int)(this->N_fil);
 		for (unsigned i = 0; i < size; i++)
 		{
 			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma;
@@ -72,7 +75,7 @@ void Modem_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
-::demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2)
+::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -82,13 +85,13 @@ void Modem_BPSK<B,R,Q>
 
 	if (disable_sig2)
 	{
-		auto size = (unsigned int)(this->N_fil * this->n_frames);
+		auto size = (unsigned int)(this->N_fil);
 		for (unsigned i = 0; i < size; i++)
 			Y_N2[i] = Y_N1[i] * (Q)H_N[i];
 	}
 	else
 	{
-		auto size = (unsigned int)(this->N_fil * this->n_frames);
+		auto size = (unsigned int)(this->N_fil);
 		for (unsigned i = 0; i < size; i++)
 			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma * (Q)H_N[i];
 	}
@@ -97,16 +100,16 @@ void Modem_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
-::tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	this->demodulate(Y_N1,Y_N3);
+	this->_demodulate(Y_N1,Y_N3, frame_id);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
-::tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	this->demodulate_wg(H_N, Y_N1, Y_N3);
+	this->_demodulate_wg(H_N, Y_N1, Y_N3, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -19,17 +19,31 @@ Channel_NO<R>
 
 template <typename R>
 void Channel_NO<R>
-::add_noise(const R *X_N, R *Y_N)
+::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	if (add_users && this->n_frames > 1)
 	{
+		if (frame_id != -1)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (auto f = 0; f < this->n_frames; f++)
 			for (auto i = 0; i < this->N; i++)
 				Y_N[i] += X_N[f * this->N +i];
 	}
 	else
-		std::copy(X_N, X_N + this->N * this->n_frames, Y_N);
+	{
+		if (frame_id < 0)
+			std::copy(X_N, X_N + this->N * this->n_frames, Y_N);
+		else
+			std::copy(X_N + (frame_id +0) * this->N, 
+			          X_N + (frame_id +1) * this->N, 
+			          Y_N + (frame_id +0) * this->N);
+	}
 }
 
 // ==================================================================================== explicit template instantiation 

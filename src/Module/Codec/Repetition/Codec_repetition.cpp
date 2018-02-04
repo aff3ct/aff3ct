@@ -51,7 +51,7 @@ Codec_repetition<B,Q>
 	pct_params.n_frames = enc_params.n_frames;
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
-
+	
 	try
 	{
 		this->set_encoder(factory::Encoder_repetition::build<B>(enc_params));
@@ -61,7 +61,7 @@ Codec_repetition<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	this->set_decoder_siho(factory::Decoder_repetition::build<B,Q>(dec_params));
+	this->set_decoder_siho(factory::Decoder_repetition::build<B,Q>(dec_params, this->get_encoder()));
 }
 
 template <typename B, typename Q>

@@ -23,6 +23,10 @@ Encoder_repetition_sys<B>
 		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	if (!buffered_encoding)
+		for (auto k = 0; k < this->K; k++)
+			this->info_bits_pos[k] = (rep_count +1) * k;
 }
 
 template <typename B>
@@ -30,7 +34,16 @@ void Encoder_repetition_sys<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	// repetition
-	if (!buffered_encoding)
+	if (buffered_encoding)
+	{
+		// systematic bits
+		std::copy(U_K, U_K + this->K, X_N);
+
+		// parity bits
+		for (auto i = 1; i <= rep_count; i++)
+			std::copy(U_K, U_K + this->K, X_N + i * this->K);
+	}
+	else
 	{
 		for (auto i = 0; i < this->K; i++)
 		{
@@ -46,14 +59,39 @@ void Encoder_repetition_sys<B>
 				X_N[off2 +j] = bit;
 		}
 	}
+}
+
+template <typename B>
+bool Encoder_repetition_sys<B>
+::is_codeword(const B *X_N)
+{
+	bool valid = true;
+
+	if (buffered_encoding)
+	{
+		auto r = 0;
+		while (valid && r < rep_count)
+		{
+			auto k = 0;
+			while (k < this->K && (X_N[k] == X_N[(r +1) * this->K +k])) k++;
+			valid = k == this->K;
+			r++;
+		}
+
+		return valid;
+	}
 	else
 	{
-		// systematic bits
-		std::copy(U_K, U_K + this->K, X_N);
+		auto k = 0;
+		while (valid && k < this->K)
+		{
+			auto r = 0;
+			while (r < rep_count && (X_N[k * (rep_count +1)] == X_N[k * (rep_count +1) + r +1])) r++;
+			valid = r == rep_count;
+			k++;
+		}
 
-		// parity bits
-		for (auto i = 1; i <= rep_count; i++)
-			std::copy(U_K, U_K + this->K, X_N + i * this->K);
+		return valid;
 	}
 }
 

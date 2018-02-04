@@ -24,8 +24,14 @@ public:
 	Encoder_LDPC_from_QC(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1);
 	virtual ~Encoder_LDPC_from_QC();
 
+	bool is_codeword(const B *X_N);
+
+	const std::vector<uint32_t>& get_info_bits_pos();
+
+	bool is_sys() const;
+
 protected:
-	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
+	void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 
 }

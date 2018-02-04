@@ -5,6 +5,7 @@
 
 #include "Factory/Module/Encoder/Encoder.hpp"
 #include "Factory/Module/Decoder/Decoder.hpp"
+#include "Factory/Module/Puncturer/Puncturer.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
 #include "../../Factory.hpp"
@@ -24,6 +25,7 @@ struct Codec : Factory
 		// depending parameters
 		Encoder::parameters     *enc = nullptr;
 		Decoder::parameters     *dec = nullptr;
+		Puncturer::parameters   *pct = nullptr;
 		Interleaver::parameters *itl = nullptr;
 
 		// deduced parameters
@@ -52,6 +54,7 @@ struct Codec : Factory
 
 		void set_enc(Encoder    ::parameters *enc);
 		void set_dec(Decoder    ::parameters *dec);
+		void set_pct(Puncturer  ::parameters *pct);
 		void set_itl(Interleaver::parameters *itl);
 	};
 };

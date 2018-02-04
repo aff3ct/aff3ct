@@ -156,9 +156,9 @@ Quantizer_standard<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_standard<R,Q>
-::process(const R *Y_N1, Q *Y_N2)
+::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {
-	auto size = (unsigned)(this->N * this->n_frames);
+	auto size = (unsigned)(this->N);
 	for (unsigned i = 0; i < size; i++)
 		Y_N2[i] = (Q)tools::saturate((R)std::round((R)factor * Y_N1[i]), (R)val_min, (R)val_max);
 }

@@ -21,7 +21,7 @@ CRC_polynomial_inter<B>
 
 template <typename B>
 bool CRC_polynomial_inter<B>
-::check(const B *V_K, const int n_frames)
+::check(const B *V_K, const int n_frames, const int frame_id)
 {
 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
@@ -30,6 +30,13 @@ bool CRC_polynomial_inter<B>
 		std::stringstream message;
 		message << "'real_n_frames' has to be equal to 'mipp::nElReg<B>()' ('real_n_frames' = " << real_n_frames
 		        << ", 'mipp::nElReg<B>()' = " << mipp::nElReg<B>() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (frame_id != -1)
+	{
+		std::stringstream message;
+		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 

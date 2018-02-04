@@ -51,6 +51,7 @@ void Codec_polar::parameters
 ::enable_puncturer()
 {
 	this->pct = new Puncturer_polar::parameters("pct");
+	this->set_pct(this->pct);
 }
 
 std::vector<std::string> Codec_polar::parameters
@@ -71,7 +72,6 @@ std::vector<std::string> Codec_polar::parameters
 	}
 
 //	if (fbg != nullptr) { auto nn = fbg->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (pct != nullptr) { auto nn = pct->get_names(); for (auto &x : nn) n2.push_back(x); }
 	return n2;
 }
 
@@ -93,7 +93,6 @@ std::vector<std::string> Codec_polar::parameters
 	}
 
 //	if (fbg != nullptr) { auto nn = fbg->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (pct != nullptr) { auto nn = pct->get_short_names(); for (auto &x : nn) sn2.push_back(x); }
 	return sn2;
 }
 
@@ -115,7 +114,6 @@ std::vector<std::string> Codec_polar::parameters
 	}
 
 //	if (fbg != nullptr) { auto nn = fbg->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (pct != nullptr) { auto nn = pct->get_prefixes(); for (auto &x : nn) p2.push_back(x); }
 	return p2;
 }
 

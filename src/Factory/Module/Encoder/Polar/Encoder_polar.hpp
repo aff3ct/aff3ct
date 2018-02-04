@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "Module/Encoder/Encoder.hpp"
+#include "Module/Encoder/Polar/Encoder_polar.hpp"
 
 #include "../Encoder.hpp"
 
@@ -34,11 +34,11 @@ struct Encoder_polar : public Encoder
 
 		// builder
 		template <typename B = int>
-		module::Encoder<B>* build(const std::vector<bool> &frozen_bits) const;
+		module::Encoder_polar<B>* build(const std::vector<bool> &frozen_bits) const;
 	};
 
 	template <typename B = int>
-	static module::Encoder<B>* build(const parameters &params, const std::vector<bool> &frozen_bits);
+	static module::Encoder_polar<B>* build(const parameters &params, const std::vector<bool> &frozen_bits);
 };
 }
 }
