@@ -61,6 +61,9 @@ protected:
 	const int N_fil; /*!< Number of transmitted elements after the filtering process */
 	      R   sigma; /*!< Sigma^2, the noise variance */
 
+	bool enable_filter;
+	bool enable_demodulator;
+
 public:
 	/*!
 	 * \brief Constructor.
@@ -72,7 +75,7 @@ public:
 	 * \param name:     Modem's name.
 	 */
 	Modem(const int N, const int N_mod, const int N_fil, const R sigma = -1.f, const int n_frames = 1)
-	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
+	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma), enable_filter(false), enable_demodulator(true)
 	{
 		const std::string name = "Modem";
 		this->set_name(name);
@@ -111,7 +114,7 @@ public:
 	 * \param name:     Modem's name.
 	 */
 	Modem(const int N, const int N_mod, const R sigma = -1.f, const int n_frames = 1)
-	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
+	: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma), enable_filter(false), enable_demodulator(true)
 	{
 		const std::string name = "Modem";
 		this->set_name(name);
@@ -142,7 +145,7 @@ public:
 	 * \param name:     Modem's name.
 	 */
 	Modem(const int N, const R sigma = -1.f, const int n_frames = 1)
-	: Module(n_frames), N(N), N_mod(N), N_fil(N), sigma(sigma)
+	: Module(n_frames), N(N), N_mod(N), N_fil(N), sigma(sigma), enable_filter(false), enable_demodulator(true)
 	{
 		const std::string name = "Modem";
 		this->set_name(name);
@@ -271,6 +274,16 @@ public:
 	R get_sigma() const
 	{
 		return this->sigma;
+	}
+
+	bool is_filter() const
+	{
+		return this->enable_filter;
+	}
+
+	bool is_demodulator() const
+	{
+		return this->enable_demodulator;
 	}
 
 	virtual void set_sigma(const R sigma)
@@ -714,6 +727,16 @@ protected:
 	virtual void _tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
+
+	void set_filter(const bool filter)
+	{
+		this->enable_filter = filter;
+	}
+
+	void set_demodulator(const bool demodulator)
+	{
+		this->enable_demodulator = demodulator;
 	}
 };
 }
