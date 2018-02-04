@@ -118,6 +118,13 @@ void BFER_std_threads<B,R,Q>
 	}
 	else
 	{
+		if (this->params_BFER_std.crc->type == "NO")
+			crc[crc::tsk::build][crc::sck::build::U_K2](src[src::tsk::generate][src::sck::generate::U_K]);
+		if (this->params_BFER_std.cdc->enc->type == "NO")
+			enc[enc::tsk::encode][enc::sck::encode::X_N](crc[crc::tsk::build][crc::sck::build::U_K2]);
+		if (this->params_BFER_std.cdc->pct == nullptr || this->params_BFER_std.cdc->pct->type == "NO")
+			pct[pct::tsk::puncture][pct::sck::puncture::X_N2](enc[enc::tsk::encode][enc::sck::encode::X_N]);
+
 		crc[crc::tsk::build   ][crc::sck::build   ::U_K1](src[src::tsk::generate][src::sck::generate::U_K ]);
 		enc[enc::tsk::encode  ][enc::sck::encode  ::U_K ](crc[crc::tsk::build   ][crc::sck::build   ::U_K2]);
 		pct[pct::tsk::puncture][pct::sck::puncture::X_N1](enc[enc::tsk::encode  ][enc::sck::encode  ::X_N ]);
@@ -126,6 +133,20 @@ void BFER_std_threads<B,R,Q>
 
 	if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
+		if (this->params_BFER_std.chn->type == "NO")
+		{
+			chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::Y_N](mdm[mdm::tsk::modulate][mdm::sck::modulate::X_N2]);
+			auto chn_data = (uint8_t*)(chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::H_N].get_dataptr());
+			auto chn_bytes = chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::H_N].get_databytes();
+			std::fill(chn_data, chn_data + chn_bytes, 0);
+		}
+		if (!mdm.is_filter())
+			mdm[mdm::tsk::filter][mdm::sck::filter::Y_N2](chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::Y_N]);
+		if (!mdm.is_demodulator())
+			mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2](mdm[mdm::tsk::filter][mdm::sck::filter::Y_N2]);
+		if (this->params_BFER_std.qnt->type == "NO")
+			qnt[qnt::tsk::process][qnt::sck::process::Y_N2](mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2]);
+
 		chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::X_N ](mdm[mdm::tsk::modulate     ][mdm::sck::modulate     ::X_N2]);
 		mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::H_N ](chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::H_N ]);
 		mdm[mdm::tsk::filter       ][mdm::sck::filter       ::Y_N1](chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::Y_N ]);
@@ -134,11 +155,23 @@ void BFER_std_threads<B,R,Q>
 	}
 	else
 	{
+		if (this->params_BFER_std.chn->type == "NO")
+			chn[chn::tsk::add_noise][chn::sck::add_noise::Y_N](mdm[mdm::tsk::modulate][mdm::sck::modulate::X_N2]);
+		if (!mdm.is_filter())
+			mdm[mdm::tsk::filter][mdm::sck::filter::Y_N2](chn[chn::tsk::add_noise][chn::sck::add_noise::Y_N]);
+		if (!mdm.is_demodulator())
+			mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2](mdm[mdm::tsk::filter][mdm::sck::filter::Y_N2]);
+		if (this->params_BFER_std.qnt->type == "NO")
+			qnt[qnt::tsk::process][qnt::sck::process::Y_N2](mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
+
 		chn[chn::tsk::add_noise ][chn::sck::add_noise ::X_N ](mdm[mdm::tsk::modulate  ][mdm::sck::modulate  ::X_N2]);
 		mdm[mdm::tsk::filter    ][mdm::sck::filter    ::Y_N1](chn[chn::tsk::add_noise ][chn::sck::add_noise ::Y_N ]);
 		mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N1](mdm[mdm::tsk::filter    ][mdm::sck::filter    ::Y_N2]);
 		qnt[qnt::tsk::process   ][qnt::sck::process   ::Y_N1](mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
 	}
+
+	if (this->params_BFER_std.cdc->pct == nullptr || this->params_BFER_std.cdc->pct->type == "NO")
+		pct[pct::tsk::depuncture][pct::sck::depuncture::Y_N2](qnt[qnt::tsk::process][qnt::sck::process::Y_N2]);
 
 	pct[pct::tsk::depuncture][pct::sck::depuncture::Y_N1](qnt[qnt::tsk::process][qnt::sck::process::Y_N2]);
 
@@ -155,6 +188,9 @@ void BFER_std_threads<B,R,Q>
 		}
 		else
 		{
+			if (this->params_BFER_std.crc->type == "NO")
+				crc[crc::tsk::extract][crc::sck::extract::V_K2](csb[cst::tsk::apply][cst::sck::apply::out]);
+
 			dec[dec::tsk::decode_siho][dec::sck::decode_siho::Y_N ](csr[cst::tsk::apply      ][cst::sck::apply      ::out ]);
 			csb[cst::tsk::apply      ][cst::sck::apply      ::ref ](crc[crc::tsk::build      ][crc::sck::build      ::U_K2]);
 			csb[cst::tsk::apply      ][cst::sck::apply      ::in  ](dec[dec::tsk::decode_siho][dec::sck::decode_siho::V_K ]);
@@ -169,6 +205,9 @@ void BFER_std_threads<B,R,Q>
 		}
 		else
 		{
+			if (this->params_BFER_std.crc->type == "NO")
+				crc[crc::tsk::extract][crc::sck::extract::V_K2](dec[dec::tsk::decode_siho][dec::sck::decode_siho::V_K]);
+
 			dec[dec::tsk::decode_siho][dec::sck::decode_siho::Y_N ](pct[pct::tsk::depuncture ][pct::sck::depuncture ::Y_N2]);
 			crc[crc::tsk::extract    ][crc::sck::extract    ::V_K1](dec[dec::tsk::decode_siho][dec::sck::decode_siho::V_K ]);
 		}
@@ -233,29 +272,41 @@ void BFER_std_threads<B,R,Q>
 
 		if (this->params_BFER_std.src->type != "AZCW")
 		{
-			source   [src::tsk::generate].exec();
-			crc      [crc::tsk::build   ].exec();
-			encoder  [enc::tsk::encode  ].exec();
-			puncturer[pct::tsk::puncture].exec();
-			modem    [mdm::tsk::modulate].exec();
+			source[src::tsk::generate].exec();
+			if (this->params_BFER_std.crc->type != "NO")
+				crc[crc::tsk::build].exec();
+			if (this->params_BFER_std.cdc->enc->type != "NO")
+				encoder[enc::tsk::encode].exec();
+			if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+				puncturer[pct::tsk::puncture].exec();
+			modem[mdm::tsk::modulate].exec();
 		}
 
 		if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
-			channel  [chn::tsk::add_noise_wg ].exec();
-			modem    [mdm::tsk::filter       ].exec();
-			modem    [mdm::tsk::demodulate_wg].exec();
-			quantizer[qnt::tsk::process      ].exec();
+			if (this->params_BFER_std.chn->type != "NO")
+				channel[chn::tsk::add_noise_wg].exec();
+			if (modem.is_filter())
+				modem[mdm::tsk::filter].exec();
+			if (modem.is_demodulator())
+				modem[mdm::tsk::demodulate_wg].exec();
+			if (this->params_BFER_std.qnt->type != "NO")
+				quantizer[qnt::tsk::process].exec();
 		}
 		else
 		{
-			channel  [chn::tsk::add_noise ].exec();
-			modem    [mdm::tsk::filter    ].exec();
-			modem    [mdm::tsk::demodulate].exec();
-			quantizer[qnt::tsk::process   ].exec();
+			if (this->params_BFER_std.chn->type != "NO")
+				channel[chn::tsk::add_noise].exec();
+			if (modem.is_filter())
+				modem[mdm::tsk::filter].exec();
+			if (modem.is_demodulator())
+				modem[mdm::tsk::demodulate].exec();
+			if (this->params_BFER_std.qnt->type != "NO")
+				quantizer[qnt::tsk::process].exec();
 		}
 
-		puncturer[pct::tsk::depuncture].exec();
+		if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+			puncturer[pct::tsk::depuncture].exec();
 
 		if (this->params_BFER_std.coset)
 		{
@@ -270,7 +321,8 @@ void BFER_std_threads<B,R,Q>
 			{
 				decoder  [dec::tsk::decode_siho].exec();
 				coset_bit[cst::tsk::apply      ].exec();
-				crc      [crc::tsk::extract    ].exec();
+				if (this->params_BFER_std.crc->type != "NO")
+					crc[crc::tsk::extract].exec();
 			}
 		}
 		else
@@ -282,7 +334,8 @@ void BFER_std_threads<B,R,Q>
 			else
 			{
 				decoder[dec::tsk::decode_siho].exec();
-				crc    [crc::tsk::extract    ].exec();
+				if (this->params_BFER_std.crc->type != "NO")
+					crc[crc::tsk::extract].exec();
 			}
 		}
 
