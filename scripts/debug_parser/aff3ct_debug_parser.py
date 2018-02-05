@@ -52,8 +52,12 @@ class OutputStructure:
                     fout.write(value)
                 fout.write("\n")
 
-    def export_as_source(self, path, frame_index):
-        if frame_index > len(self.frames) - 1:
+    def export_as_source(self, path, frame_index=-1):
+        export_all = False
+        if frame_index < 0:
+            export_all = True
+
+        elif frame_index > len(self.frames) - 1:
             print("Specified frame index superior to the number of frames. Frame 0 is exported instead.")
             frame_index = 0
 
@@ -65,31 +69,47 @@ class OutputStructure:
             return
 
         with open(path, "w") as fout:
-            fout.write("#ifndef " + self.name.upper() + "_H\n")
-            fout.write("#define " + self.name.upper() + "_H\n")
+            fout.write("#ifndef {0}_H\n".format(self.name.upper()))
+            fout.write("#define {0}_H\n".format(self.name.upper()))
             fout.write("\n")
-            fout.write(c_type + " " + self.name + "[" + str(self.frame_length) + "] = {\n\t")
-            for i, value in enumerate(self.frames[frame_index]):
-                if i:
-                    fout.write(",")
-                    if i % 8 == 0:
-                        fout.write("\n\t")
-                    else:
-                        fout.write(" ")
-                if self.hex_format and "int" in self.data_format:
-                    if self.data_format == "int8":
-                        value = ctypes.c_int8(int(value, 16)).value
-                    elif self.data_format == "int16":
-                        value = ctypes.c_int16(int(value, 16)).value
-                    elif self.data_format == "int32":
-                        value = ctypes.c_int32(int(value, 16)).value
-                    elif self.data_format == "int64":
-                        value = ctypes.c_int64(int(value, 16)).value
-                    value = str(value)
-                fout.write('{:>4}'.format(value))
-            fout.write("\n")
-            fout.write("};\n\n")
-            fout.write("#endif //" + self.name.upper() + "_H\n")
+            fout.write("{0} {1}".format(c_type, self.name))
+            if export_all:
+                fout.write("[{0}]".format(str(len(self.frames))))
+            fout.write("[{0}] = ".format(str(self.frame_length)))
+
+            if export_all:
+                fout.write("\n{\n")
+                for inner_frame_index in range(0, len(self.frames)):
+                    self.write_array(fout, inner_frame_index)
+                    fout.write("\n")
+                fout.write("}\n")
+            else:
+                self.write_array(fout, frame_index)
+
+            fout.write(";\n\n")
+            fout.write("#endif //{0}_H\n".format(self.name.upper()))
+
+    def write_array(self, fout, frame_index):
+        fout.write("{\n\t")
+        for i, value in enumerate(self.frames[frame_index]):
+            if i:
+                fout.write(",")
+                if i % 8 == 0:
+                    fout.write("\n\t")
+                else:
+                    fout.write(" ")
+            if self.hex_format and "int" in self.data_format:
+                if self.data_format == "int8":
+                    value = ctypes.c_int8(int(value, 16)).value
+                elif self.data_format == "int16":
+                    value = ctypes.c_int16(int(value, 16)).value
+                elif self.data_format == "int32":
+                    value = ctypes.c_int32(int(value, 16)).value
+                elif self.data_format == "int64":
+                    value = ctypes.c_int64(int(value, 16)).value
+                value = str(value)
+            fout.write('{:>4}'.format(value))
+        fout.write("\n}")
 
     def get_c_type(self):
         if self.data_format == "int8":
@@ -176,8 +196,11 @@ def adp_parse_args():
     parser.add_argument("path", type=str, help="path to the file to be parsed")
     parser.add_argument("--mod", type=str, required=True, help="module to be extracted, ex : Source_random_fast")
     parser.add_argument("--tsk", type=str, required=True, help="task to be extracted, ex : generate")
+    parser.add_argument("--txt", help="export as txt", action='store_true')
+    parser.add_argument("--bin", help="export as bin", action='store_true')
+    src_help = "export as c array source. only the frame SRC is exported if SRC is specified"
+    parser.add_argument("--src", help=src_help, type=str, nargs="?", const="all", default="")
     parser.add_argument("-o", "--output", type=str, help="path to the output folder", default="./")
-    parser.add_argument("--src", type=int, help="export specified frame as .h source file")
 
     args = parser.parse_args()
     return args
@@ -239,21 +262,30 @@ def main():
         out_sct.import_frames(lines, key, inter_frame)
 
     # export frames as text
-
-    for out_sct in out_structures:
-        base_path = os.path.join(args.output, out_sct.name)
-        out_sct.export_as_text(base_path + ".txt")
+    if args.txt:
+        for out_sct in out_structures:
+            base_path = os.path.join(args.output, out_sct.name)
+            out_sct.export_as_text(base_path + ".txt")
 
     # export frames as bin
-    for out_sct in out_structures:
-        base_path = os.path.join(args.output, out_sct.name)
-        out_sct.export_as_bin(base_path + ".bin")
+    if args.bin:
+        for out_sct in out_structures:
+            base_path = os.path.join(args.output, out_sct.name)
+            out_sct.export_as_bin(base_path + ".bin")
 
     # export frames as source
     if args.src:
+        try:
+            int(args.src)
+        except ValueError:
+            args.src = "all"
+
         for out_sct in out_structures:
             base_path = os.path.join(args.output, out_sct.name)
-            out_sct.export_as_source(base_path + ".h", args.src)
+            if args.src == "all":
+                out_sct.export_as_source(base_path + ".h")
+            else:
+                out_sct.export_as_source(base_path + ".h", int(args.src))
 
 
 if __name__ == "__main__":
