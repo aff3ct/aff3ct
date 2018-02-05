@@ -57,20 +57,11 @@ class OutputStructure:
             print("Specified frame index superior to the number of frames. Frame 0 is exported instead.")
             frame_index = 0
 
-        if self.data_format == "int8":
-            c_type = "signed char"
-        elif self.data_format == "int16":
-            c_type = "signed short"
-        elif self.data_format == "int32":
-            c_type = "signed int"
-        elif self.data_format == "int64":
-            c_type = "signed long"
-        elif self.data_format == "float32":
-            c_type = "float"
-        elif self.data_format == "float64":
-            c_type = "double"
-        else:
-            "Unknown format"
+        # get c_type (signed char, signed short...)
+        c_type = self.get_c_type()
+
+        # unable to identify c_type -> exit
+        if not c_type:
             return
 
         with open(path, "w") as fout:
@@ -99,6 +90,23 @@ class OutputStructure:
             fout.write("\n")
             fout.write("};\n\n")
             fout.write("#endif //" + self.name.upper() + "_H\n")
+
+    def get_c_type(self):
+        if self.data_format == "int8":
+            c_type = "signed char"
+        elif self.data_format == "int16":
+            c_type = "signed short"
+        elif self.data_format == "int32":
+            c_type = "signed int"
+        elif self.data_format == "int64":
+            c_type = "signed long"
+        elif self.data_format == "float32":
+            c_type = "float"
+        elif self.data_format == "float64":
+            c_type = "double"
+        else:
+            c_type = ""
+        return c_type
 
     def export_as_bin(self, path):
         if self.data_format == "int8":
