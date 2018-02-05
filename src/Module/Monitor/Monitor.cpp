@@ -104,7 +104,12 @@ void Monitor
 		if (d_delta_interrupt < std::chrono::milliseconds(2100))
 		{
 			if (Monitor::interrupt_cnt >= 4)
+			{
+				std::cerr << "\r# Killed by user interruption!"
+				             "                                                                  "
+				          << std::endl;
 				std::exit(EXIT_FAILURE);
+			}
 		}
 		else
 			Monitor::interrupt_cnt = 1;
