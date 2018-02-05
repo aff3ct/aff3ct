@@ -69,9 +69,6 @@ class OutputStructure:
             return
 
         with open(path, "w") as fout:
-            fout.write("#ifndef {0}_H\n".format(self.name.upper()))
-            fout.write("#define {0}_H\n".format(self.name.upper()))
-            fout.write("\n")
             fout.write("{0} {1}".format(c_type, self.name))
             if export_all:
                 fout.write("[{0}]".format(str(len(self.frames))))
@@ -83,12 +80,12 @@ class OutputStructure:
                     if inner_frame_index:
                         fout.write(",\n")
                     self.write_array(fout, inner_frame_index)
-                fout.write("\n}\n")
+                fout.write("\n}")
             else:
+                fout.write("\n")
                 self.write_array(fout, frame_index)
 
-            fout.write(";\n\n")
-            fout.write("#endif //{0}_H\n".format(self.name.upper()))
+            fout.write(";\n")
 
     def write_array(self, fout, frame_index):
         fout.write("{\n\t")
@@ -199,8 +196,8 @@ def adp_parse_args():
     parser.add_argument("--tsk", type=str, required=True, help="task to be extracted, ex : generate")
     parser.add_argument("--txt", help="export as txt", action='store_true')
     parser.add_argument("--bin", help="export as bin", action='store_true')
-    src_help = "export as c array source. only the frame SRC is exported if SRC is specified"
-    parser.add_argument("--src", help=src_help, type=str, nargs="?", const="all", default="")
+    parser.add_argument("--src", help="export as c source", action='store_true')
+    parser.add_argument("--fra", type=int, help="export a single frame, whose index is specified")
     parser.add_argument("-o", "--output", type=str, help="path to the output folder", default="./")
 
     args = parser.parse_args()
@@ -245,7 +242,6 @@ def get_output_structures(lines, key):
 
 
 def main():
-
     args = adp_parse_args()
 
     # open files and store contents
@@ -276,17 +272,12 @@ def main():
 
     # export frames as source
     if args.src:
-        try:
-            int(args.src)
-        except ValueError:
-            args.src = "all"
-
         for out_sct in out_structures:
             base_path = os.path.join(args.output, out_sct.name)
-            if args.src == "all":
-                out_sct.export_as_source(base_path + ".h")
+            if args.fra is not None:
+                out_sct.export_as_source(base_path + ".h", args.fra)
             else:
-                out_sct.export_as_source(base_path + ".h", int(args.src))
+                out_sct.export_as_source(base_path + ".h")
 
 
 if __name__ == "__main__":
