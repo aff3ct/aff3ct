@@ -66,113 +66,45 @@ public:
 	 *
 	 * \param size: number of bits.
 	 */
-	Monitor(const int size, int n_frames = 1)
-	: Module(n_frames), size(size)
-	{
-		const std::string name = "Monitor";
-		this->set_name(name);
-		this->set_short_name(name);
-
-		if (size <= 0)
-		{
-			std::stringstream message;
-			message << "'size' has to be greater than 0 ('size' = " << size << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		Monitor::interrupt = false;
-
-#ifndef ENABLE_MPI
-		// Install a signal handler
-		std::signal(SIGINT, Monitor::signal_interrupt_handler);
-#endif
-
-		this->tasks_with_nullptr.resize(mnt::tsk::SIZE);
-		for (size_t t = 0; t < mnt::tsk::SIZE; t++)
-			this->tasks_with_nullptr[t] = nullptr;
-	}
+	Monitor(const int size, int n_frames = 1);
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Monitor()
-	{
-	}
+	virtual ~Monitor();
 
 	/*!
 	 * \brief Gets the number of bits in a frame.
 	 *
 	 * \return the number of bits.
 	 */
-	int get_size() const
-	{
-		return size;
-	}
+	int get_size() const;
 
-	virtual void reset()
-	{
-		Monitor::interrupt = false;
-		Monitor::interrupt_cnt = 0;
-	}
+	virtual void reset();
 
-	virtual void clear_callbacks()
-	{
-	}
+	virtual void clear_callbacks();
 
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
 	 *
 	 * \return true if the SIGINT (ctrl+c) is called.
 	 */
-	static bool is_interrupt()
-	{
-		return Monitor::interrupt;
-	}
+	static bool is_interrupt();
 
 	/*!
 	 * \brief Tells if the user asked for stopping the whole simulation.
 	 *
 	 * \return true if the SIGINT (ctrl+c) is called twice.
 	 */
-	static bool is_over()
-	{
-		return Monitor::over;
-	}
+	static bool is_over();
 
 	/*!
 	 * \brief Put Monitor<B,R>::interrupt and Monitor<B,R>::over to true.
 	 */
-	static void stop()
-	{
-		Monitor::interrupt = true;
-		Monitor::over      = true;
-	}
+	static void stop();
 
 private:
-	static void signal_interrupt_handler(int signal)
-	{
-		Monitor::interrupt_cnt++;
-
-		auto t_now = std::chrono::steady_clock::now();
-		if (!Monitor::first_interrupt)
-		{
-			auto d_delta_interrupt = t_now - Monitor::t_last_interrupt;
-			if (d_delta_interrupt < std::chrono::milliseconds(500))
-				Monitor::stop();
-
-			if (d_delta_interrupt < std::chrono::milliseconds(2000))
-			{
-				if (Monitor::interrupt_cnt >= 4)
-					std::exit(EXIT_FAILURE);
-			}
-			else
-				Monitor::interrupt_cnt = 1;
-		}
-		Monitor::t_last_interrupt  = t_now;
-
-		Monitor::first_interrupt = false;
-		Monitor::interrupt       = true;
-	}
+	static void signal_interrupt_handler(int signal);
 };
 }
 }
