@@ -52,4 +52,4 @@ diff -s Y_N2.h Y_N2_gold4.h
 rm -f Y_N1.txt Y_N2.txt Y_N1.bin Y_N2.bin Y_N1.h Y_N2.h
 echo "Test 4 Done."
 
-cd -
+cd - > /dev/null
