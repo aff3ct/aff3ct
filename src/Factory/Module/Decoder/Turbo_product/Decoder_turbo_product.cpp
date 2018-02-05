@@ -3,7 +3,6 @@
 
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 #include "Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
-#include "Module/Decoder/ML/Decoder_maximum_likelihood.hpp"
 
 #include "Decoder_turbo_product.hpp"
 
