@@ -2,7 +2,6 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
-#include <chrono>
 
 #include "Decoder_chase_pyndiah.hpp"
 
@@ -217,15 +216,10 @@ void Decoder_chase_pyndiah<B,R>
 #endif
 }
 
-
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
 ::find_least_reliable_pos(const R* R_prime)
 {
-	using namespace std::chrono;
-
-	// high_resolution_clock::time_point t1 = high_resolution_clock::now();
-
 	for (auto it = least_reliable_pos.begin(); it != least_reliable_pos.end(); it++)
 	{
 		it->metric = std::numeric_limits<R>::max();
@@ -247,55 +241,6 @@ void Decoder_chase_pyndiah<B,R>
 			}
 		}
 	}
-
-	// high_resolution_clock::time_point t2 = high_resolution_clock::now();
-
-
-	// std::vector<int> llrs_indexes(this->N);
-	// // high_resolution_clock::time_point t1 = high_resolution_clock::now();
-
-	// std::iota(llrs_indexes.begin(), llrs_indexes.end(), 0);
-	// std::partial_sort(llrs_indexes.begin(), llrs_indexes.begin() + n_least_reliable_positions, llrs_indexes.end(),
-	//                   [&R_prime](const uint32_t i1, const uint32_t i2) { return std::abs(R_prime[i1]) < std::abs(R_prime[i2]);}
-	//                   );
-
-
-	// std::vector<info> least_reliable_pos2(least_reliable_pos.size());
-
-	// bool diff = false;
-
-	// for (int i = 0; i < n_least_reliable_positions; i++)
-	// {
-	// 	least_reliable_pos2[i].pos    = llrs_indexes[i];
-	// 	least_reliable_pos2[i].metric = std::abs(R_prime[llrs_indexes[i]]);
-
-	// 	if (least_reliable_pos2[i].pos != least_reliable_pos[i].pos)
-	// 		diff = true;
-	// }
-
-	// if (diff)
-	// {
-	// 	for (int i = 0; i < n_least_reliable_positions; i++)
-	// 	{
-	// 		std::cerr << i << ". pos " << least_reliable_pos[i].pos << ", metric " << least_reliable_pos[i].metric;
-	// 		std::cerr << " vs  pos " << least_reliable_pos2[i].pos << ", metric " << least_reliable_pos2[i].metric << std::endl;
-	// 	}
-	// }
-
-	// high_resolution_clock::time_point t2 = high_resolution_clock::now();
-
-	// time_span += duration_cast<duration<double>>(t2 - t1);
-	// count++;
-
-	// if (count == 1000000)
-	// {
-	// 	std::stringstream ss;
-	// 	ss << "Total   = " << time_span.count()        << " seconds" << std::endl;
-	// 	ss << "Average = " << time_span.count()/count  << " usec/exec" << std::endl;
-
-	// 	std::cout << ss.str();
-	// 	std::exit(1);
-	// }
 }
 
 template <typename B, typename R>
