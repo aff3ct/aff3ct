@@ -52,6 +52,7 @@ class Monitor : public Module
 protected:
 	static bool interrupt;                                                                                /*!< True if there is a SIGINT signal (ctrl+C). */
 	static bool first_interrupt;                                                                          /*!< True if this is the first time that SIGIN is called. */
+	static int  interrupt_cnt;                                                                            /*!< The number of gor interrupt signal. */
 	static bool over;                                                                                     /*!< True if SIGINT is called twice in the Monitor::d_delta_interrupt time */
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_interrupt; /*!< Time point of the last call to SIGINT */
 
@@ -71,7 +72,7 @@ public:
 		const std::string name = "Monitor";
 		this->set_name(name);
 		this->set_short_name(name);
-		
+
 		if (size <= 0)
 		{
 			std::stringstream message;
@@ -111,6 +112,7 @@ public:
 	virtual void reset()
 	{
 		Monitor::interrupt = false;
+		Monitor::interrupt_cnt = 0;
 	}
 
 	virtual void clear_callbacks()
@@ -149,12 +151,22 @@ public:
 private:
 	static void signal_interrupt_handler(int signal)
 	{
+		Monitor::interrupt_cnt++;
+
 		auto t_now = std::chrono::steady_clock::now();
 		if (!Monitor::first_interrupt)
 		{
 			auto d_delta_interrupt = t_now - Monitor::t_last_interrupt;
 			if (d_delta_interrupt < std::chrono::milliseconds(500))
 				Monitor::stop();
+
+			if (d_delta_interrupt < std::chrono::milliseconds(2000))
+			{
+				if (Monitor::interrupt_cnt >= 4)
+					std::exit(EXIT_FAILURE);
+			}
+			else
+				Monitor::interrupt_cnt = 1;
 		}
 		Monitor::t_last_interrupt  = t_now;
 
