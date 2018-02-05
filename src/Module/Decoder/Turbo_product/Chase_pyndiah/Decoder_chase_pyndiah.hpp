@@ -31,7 +31,6 @@ protected:
 	const int  N_np; // N without the parity bit: can be equal to N if there is no parity bit in the code
 	const bool parity_extended;
 
-	R   alpha;
 	const int n_least_reliable_positions;
 
 	std::vector<info> least_reliable_pos;
@@ -48,24 +47,18 @@ protected:
 
 	std::vector<std::vector<bool>> tv_candidates;
 
-	const std::vector<float>   Alpha;
-
-
-	std::chrono::duration<double> time_span;
-	unsigned count;
 public:
 
 	Decoder_chase_pyndiah(const int K, const int N, // N with the parity bit if any
 	                      Decoder_HIHO<B> &dec,
 	                      Encoder     <B> &enc,
-	                      const R   alpha = 0.5,
 	                      const int n_least_reliable_positions = 2,
 	                      const int n_test_vectors = 0,
 	                      const int n_competitors  = 0);
 
-	void tdecode_siso   (const R *R_cha, const R *R_prime, R *R_dec); // size is length with parity bit if any
-	void tdecode_siho   (const R *R_cha, const R *R_prime, B *R_dec);
-	void tdecode_siho_cw(const R *R_cha, const R *R_prime, B *R_dec);
+	void decode_siso   (const R *R_prime, R *R_dec); // size is length with parity bit if any
+	void decode_siho   (const R *R_prime, B *R_dec);
+	void decode_siho_cw(const R *R_prime, B *R_dec);
 
 	const std::vector<uint32_t>& get_info_bits_pos();
 
@@ -74,7 +67,7 @@ protected:
 	void find_least_reliable_pos(const R* R_prime);
 	void compute_test_vectors   (                );
 	void compute_metrics        (const R* R_prime);
-	void compute_reliability    (const R* R_cha, const R* R_prime, R* R_dec);
+	void compute_reliability    (const R* R_prime, R* R_dec);
 
 	void bit_flipping(B* hard_vect, const int c);
 

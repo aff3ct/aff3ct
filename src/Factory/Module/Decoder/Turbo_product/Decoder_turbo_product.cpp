@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/general_utils.h"
 
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 #include "Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
@@ -91,8 +92,8 @@ void Decoder_turbo_product::parameters
 		 "maximal number of iterations in the turbo."};
 
 	opt_args[{p+"-alpha"}] =
-		{"float",
-		 "extrinsic coefficient."};
+		{"string",
+		 "extrinsic coefficients, one by half iteration (so twice more than number of iterations). If only one, then automatically extended to all iterations."};
 
 	opt_args[{p+"-p"}] =
 		{"strictly_positive_int",
@@ -128,8 +129,36 @@ void Decoder_turbo_product::parameters
 	if(exist(vals, {p+"-p"       })) this->n_least_reliable_positions = std::stoi(vals.at({p+"-p"       }));
 	if(exist(vals, {p+"-t"       })) this->n_test_vectors             = std::stoi(vals.at({p+"-t"       }));
 	if(exist(vals, {p+"-c"       })) this->n_competitors              = std::stoi(vals.at({p+"-c"       }));
-	if(exist(vals, {p+"-alpha"   })) this->alpha                      = std::stof(vals.at({p+"-alpha"   }));
 	if(exist(vals, {p+"-ext"     })) this->parity_extended            = true;
+
+	this->alpha.resize(this->n_ite*2);
+
+	if(exist(vals, {p+"-alpha"}))
+	{
+		auto alpha_list = tools::split(vals.at({p+"-alpha"}), ',');
+
+
+		if (alpha_list.size() == 1)
+		{
+			std::fill(this->alpha.begin(), this->alpha.end(), std::stof(alpha_list.front()));
+		}
+		else if (alpha_list.size() == this->alpha.size())
+		{
+			for (unsigned i = 0; i < alpha_list.size(); i++)
+				this->alpha[i] = std::stof(alpha_list[i]);
+		}
+		else
+		{
+			std::stringstream message;
+			message << "'" << p << "-alpha' argument has to be twice the length given in '" << p << "-ite'.";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+	}
+	else
+	{
+		std::fill(this->alpha.begin(), this->alpha.end(), 0.5f);
+	}
 
 	this->sub->n_frames = this->n_frames;
 
@@ -164,8 +193,15 @@ void Decoder_turbo_product::parameters
 
 		itl->get_headers(headers, full);
 
-		headers[p].push_back(std::make_pair("Num. of iterations (i)",      std::to_string(n_ite                     )));
-		headers[p].push_back(std::make_pair("alpha",                       std::to_string(alpha                     )));
+		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(n_ite)));
+
+		std::stringstream alpha_str;
+		alpha_str << "{";
+		for (unsigned i = 0; i < this->alpha.size(); i++)
+			alpha_str << this->alpha[i] << (i == this->alpha.size()-1 ?"":", ");
+		alpha_str << "}";
+
+		headers[p].push_back(std::make_pair("alpha", alpha_str.str()));
 		headers[p].push_back(std::make_pair("Num. least reliable pos (p)", std::to_string(n_least_reliable_positions)));
 
 		if (n_test_vectors != 0)
@@ -183,8 +219,8 @@ void Decoder_turbo_product::parameters
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
 ::build(const module::Interleaver <Q> &itl,
-               module::Decoder_chase_pyndiah<B,Q> &cp_r,
-               module::Decoder_chase_pyndiah<B,Q> &cp_c,
+              module::Decoder_chase_pyndiah<B,Q> &cp_r,
+              module::Decoder_chase_pyndiah<B,Q> &cp_c,
               module::Encoder     <B> *encoder) const
 {
 	try
@@ -196,7 +232,7 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
 		if (this->type == "CP")
 		{
 			if (this->implem == "STD")
-				return new module::Decoder_turbo_product<B,Q>(n_ite, itl, cp_r, cp_c);
+				return new module::Decoder_turbo_product<B,Q>(n_ite, alpha, itl, cp_r, cp_c);
 		}
 	}
 
@@ -216,8 +252,8 @@ template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_turbo_product
 ::build(const parameters              &params,
         const module::Interleaver <Q> &itl,
-               module::Decoder_chase_pyndiah<B,Q> &cp_r,
-               module::Decoder_chase_pyndiah<B,Q> &cp_c,
+              module::Decoder_chase_pyndiah<B,Q> &cp_r,
+              module::Decoder_chase_pyndiah<B,Q> &cp_c,
               module::Encoder     <B> *encoder)
 {
 	return params.template build<B,Q>(itl, cp_r, cp_c, encoder);

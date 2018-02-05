@@ -19,7 +19,6 @@ Decoder_chase_pyndiah<B,R>
 ::Decoder_chase_pyndiah(const int K, const int N, // N includes the parity bit if any
                         Decoder_HIHO<B> &dec_,
                         Encoder     <B> &enc_,
-                        const R   alpha_,
                         const int n_least_reliable_positions_,
                         const int n_test_vectors_,
                         const int n_competitors_)
@@ -29,7 +28,6 @@ Decoder_chase_pyndiah<B,R>
   enc                       (enc_                                                                    ),
   N_np                      (dec.get_N()                                                             ),
   parity_extended           (this->N == (N_np +1)                                                    ),
-  alpha                     (alpha_                                                                  ),
   n_least_reliable_positions(n_least_reliable_positions_                                             ),
   least_reliable_pos        (n_least_reliable_positions                                              ),
   hard_Rprime               (this->N                                                                 ),
@@ -39,7 +37,6 @@ Decoder_chase_pyndiah<B,R>
   is_wrong                  (n_test_vectors                                                          ),
   n_competitors             (n_competitors_ ? n_competitors_ : n_test_vectors                        ),
   competitors               (n_test_vectors                                                          )
-  // Alpha ({0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.35, 0.35,0.35,0.35,0.35,0.4,0.4,0.4,0.5})
 {
 	const std::string name = "Decoder_chase_pyndiah";
 	this->set_name(name);
@@ -87,9 +84,6 @@ Decoder_chase_pyndiah<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	time_span = std::chrono::seconds(0);
-	count= 0;
-
 	generate_bit_flipping_candidates(); // generate bit flipping patterns
 }
 
@@ -102,7 +96,7 @@ const std::vector<uint32_t>& Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::tdecode_siho(const R *R_cha, const R *R_prime, B *R_dec)
+::decode_siho(const R *R_prime, B *R_dec)
 {
 	decode_chase(R_prime);
 
@@ -115,7 +109,7 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::tdecode_siho_cw(const R *R_cha, const R *R_prime, B *R_dec)
+::decode_siho_cw(const R *R_prime, B *R_dec)
 {
 	decode_chase(R_prime);
 
@@ -126,11 +120,11 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::tdecode_siso(const R *R_cha, const R *R_prime, R *R_dec)
+::decode_siso(const R *R_prime, R *R_dec)
 {
 	decode_chase(R_prime);
 
-	compute_reliability(R_cha, R_prime, R_dec);
+	compute_reliability(R_prime, R_dec);
 
 #ifndef NDEBUG
     std::cerr  << "(II) R_dec : " <<  std::endl;
@@ -339,7 +333,7 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::compute_reliability(const R* R_cha, const R* R_prime, R* R_dec)
+::compute_reliability(const R* R_prime, R* R_dec)
 {
 	const auto & DW = competitors.front(); // the Decided Word
 
@@ -387,10 +381,10 @@ void Decoder_chase_pyndiah<B,R>
 		std::cerr << "Rel:  i = " << i << ", R_prime = " << R_prime[i] << ", competitors[" << j << "].metric = " << competitors[j].metric;
 #endif
 
-		R_dec[i] = R_cha[i] + alpha * (reliability - R_prime[i]);
+		R_dec[i] = reliability - R_prime[i];
 
 #ifndef NDEBUG
-		std::cerr  << ", reliability = " << reliability << ", R_cha = " << R_cha[i]<< ", R_dec = " << R_dec[i] << std::endl;
+		std::cerr  << ", reliability = " << reliability << ", R_dec = " << R_dec[i] << std::endl;
 #endif
 	}
 }

@@ -29,7 +29,7 @@ struct Decoder_turbo_product : public Decoder
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
 		int   n_ite = 4;
-		float alpha = 0.5;
+		std::vector<float> alpha;
 		int   n_least_reliable_positions = 2;
 		int   n_test_vectors = 0;
 		int   n_competitors  = 0;

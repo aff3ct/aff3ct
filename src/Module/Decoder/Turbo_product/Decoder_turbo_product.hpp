@@ -19,6 +19,8 @@ class Decoder_turbo_product : public Decoder_SISO_SIHO<B,R>
 {
 protected:
 	const int  n_ite; // number of iterations
+	const std::vector<float> alpha;
+
 	const Interleaver<R> &pi;
 	Decoder_chase_pyndiah<B,R> &cp_r; // row decoder
 	Decoder_chase_pyndiah<B,R> &cp_c; // col decoder
@@ -32,6 +34,7 @@ protected:
 
 public:
 	Decoder_turbo_product(const int& n_ite,
+	                      const std::vector<float>& alpha,
 	                      const Interleaver<R> &pi,
 	                      Decoder_chase_pyndiah<B,R> &cp_r,
 	                      Decoder_chase_pyndiah<B,R> &cp_c);

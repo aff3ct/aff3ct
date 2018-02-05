@@ -16,12 +16,14 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_turbo_product<B,R>
 ::Decoder_turbo_product(const int& n_ite,
-                        const Interleaver<R> &pi,
+                        const std::vector<float>& alpha,
+                        const Interleaver<R>& pi,
                         Decoder_chase_pyndiah<B,R> &cp_r,
                         Decoder_chase_pyndiah<B,R> &cp_c)
 : Decoder               (cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), cp_r.get_n_frames(), cp_r.get_simd_inter_frame_level()),
   Decoder_SISO_SIHO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), cp_r.get_n_frames(), cp_r.get_simd_inter_frame_level()),
   n_ite(n_ite),
+  alpha(alpha),
   pi   (pi   ),
   cp_r (cp_r ),
   cp_c (cp_c ),
@@ -40,6 +42,13 @@ Decoder_turbo_product<B,R>
 	{
 		std::stringstream message;
 		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (n_ite*2 != (int)alpha.size())
+	{
+		std::stringstream message;
+		message << "'alpha.size()' has to be twice 'n_ite' ('n_ite' = " << n_ite << " and 'alpha.size()' = " << alpha.size() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -167,23 +176,25 @@ void Decoder_turbo_product<B,R>
 
 	pi.interleave(Y_N_cha, Y_N_cha_i.data(), 0, 1); // interleave data from the channel
 
-
 	for (int i = 0; i < n_ite; i++)
 	{
-		// alpha = Alpha[2*i];
-
-
 		pi.interleave(Y_N_i.data(), Y_N_pi.data(), 0, 1); // columns becomes rows
 
 		// decode each col
 		for (int j = 0; j < n_cols; j++)
 		{
-			cp_c.tdecode_siso(Y_N_cha_i   .data() + j*n_rows,
-			                  Y_N_pi.data() + j*n_rows,
-			                  Y_N_pi.data() + j*n_rows); // overwrite Y_N_pi
+			cp_c.decode_siso(Y_N_pi.data() + j*n_rows, Y_N_pi.data() + j*n_rows); // overwrite Y_N_pi
+
+			auto* cha_ptr = Y_N_cha_i.data() + j*n_rows;
+			auto* last_it = Y_N_pi.data() + (j+1)*n_rows;
+
+			for (auto it = Y_N_pi.data() + j*n_rows; it < last_it; it++, cha_ptr++)
+			{
+				*it *= (R)alpha[2*i];
+				*it += *cha_ptr;
+			}
 		}
 
-		// alpha = Alpha[2*i+1];
 
 		pi.deinterleave(Y_N_pi.data(), Y_N_i.data(), 0, 1); // rows go back as columns
 
@@ -192,9 +203,16 @@ void Decoder_turbo_product<B,R>
 		{
 			for (int j = 0; j < n_rows; j++)
 			{
-				cp_r.tdecode_siso(Y_N_cha + j*n_cols,
-				                  Y_N_i.data() + j*n_cols,
-				                  Y_N_i.data() + j*n_cols); // overwrite Y_N_i
+				cp_r.decode_siso(Y_N_i.data() + j*n_cols, Y_N_i.data() + j*n_cols); // overwrite Y_N_i
+
+				auto* cha_ptr = Y_N_cha + j*n_cols;
+				auto* last_it = Y_N_i.data() + (j+1)*n_cols;
+
+				for (auto it = Y_N_i.data() + j*n_cols; it < last_it; it++, cha_ptr++)
+				{
+					*it *= (R)alpha[2*i+1];
+					*it += *cha_ptr;
+				}
 			}
 		}
 		else if(return_K_siso == 0)
@@ -203,19 +221,14 @@ void Decoder_turbo_product<B,R>
 			{
 				auto pos = cp_c.get_info_bits_pos()[j];
 
-				cp_r.tdecode_siho(Y_N_cha + pos*n_cols,
-				                  Y_N_i.data() + pos*n_cols,
-				                  V_K_i.data() + j*cp_r.get_K());
+				cp_r.decode_siho(Y_N_i.data() + pos*n_cols, V_K_i.data() + j*cp_r.get_K());
 			}
 		}
 		else if (return_K_siso == 1)
 		{
 			for (int j = 0; j < n_cols; j++)
-				cp_r.tdecode_siho_cw(Y_N_cha + j*n_cols,
-				                     Y_N_i.data() + j*n_cols,
-				                     V_N_i.data() + j*n_cols);
+				cp_r.decode_siho_cw(Y_N_i.data() + j*n_cols, V_N_i.data() + j*n_cols);
 		}
-
 	}
 }
 

@@ -65,7 +65,6 @@ Codec_turbo_product<B,Q>
 	dec_bch = factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly);
 	cp = new Decoder_chase_pyndiah<B,Q>(dec_bch->get_K(), dec_bch->get_N() + (dec_params.parity_extended?1:0),
 	                                    *dec_bch, *enc_bch,
-	                                    dec_params.alpha,
 	                                    dec_params.n_least_reliable_positions,
 	                                    dec_params.n_test_vectors,
 	                                    dec_params.n_competitors);
