@@ -80,9 +80,10 @@ class OutputStructure:
             if export_all:
                 fout.write("\n{\n")
                 for inner_frame_index in range(0, len(self.frames)):
+                    if inner_frame_index:
+                        fout.write(",\n")
                     self.write_array(fout, inner_frame_index)
-                    fout.write("\n")
-                fout.write("}\n")
+                fout.write("\n}\n")
             else:
                 self.write_array(fout, frame_index)
 
