@@ -1,9 +1,9 @@
-#ifndef DECODER_MAXIMUM_LIKELIHOOD_HPP_
-#define DECODER_MAXIMUM_LIKELIHOOD_HPP_
+#ifndef DECODER_MAXIMUM_LIKELIHOO_HPP_
+#define DECODER_MAXIMUM_LIKELIHOO_HPP_
 
 #include "Module/Encoder/Encoder.hpp"
 
-#include "../Decoder_SIHO_HIHO.hpp"
+#include "../../Decoder_SIHO_HIHO.hpp"
 
 namespace aff3ct
 {
@@ -26,13 +26,12 @@ public:
 protected:
 	Decoder_maximum_likelihood(const int K, const int N, Encoder<B> &encoder, const int n_frames = 1);
 
-	inline float    compute_euclidean_dist   (const B *X_N, const R *Y_N) const;
-	inline uint32_t compute_hamming_dist     (const B *X_N, const B *Y_N) const;
-	inline uint32_t compute_hamming_dist_soft(const B *X_N, const R *Y_N) const;
+	inline float    compute_euclidean_dist(const B *X_N, const R *Y_N) const;
+	inline uint32_t compute_hamming_dist  (const B *X_N, const B *Y_N) const;
 };
 }
 }
 
 #include "Decoder_maximum_likelihood.hxx"
 
-#endif /* DECODER_MAXIMUM_LIKELIHOOD_HPP_ */
+#endif /* DECODER_MAXIMUM_LIKELIHOO_HPP_ */

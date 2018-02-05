@@ -16,6 +16,9 @@ Modem_BPSK_fast<B,R,Q>
 {
 	const std::string name = "Modem_BPSK_fast";
 	this->set_name(name);
+
+	if (disable_sig2)
+		this->set_demodulator(false);
 }
 
 template <typename B, typename R, typename Q>

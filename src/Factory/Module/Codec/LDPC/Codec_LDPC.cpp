@@ -48,30 +48,7 @@ void Codec_LDPC::parameters
 ::enable_puncturer()
 {
 	this->pct = new Puncturer_LDPC::parameters("pct");
-}
-
-std::vector<std::string> Codec_LDPC::parameters
-::get_names() const
-{
-	auto n = Codec::parameters::get_names();
-	if (pct != nullptr) { auto nn = pct->get_names(); for (auto &x : nn) n.push_back(x); }
-	return n;
-}
-
-std::vector<std::string> Codec_LDPC::parameters
-::get_short_names() const
-{
-	auto sn = Codec::parameters::get_short_names();
-	if (pct != nullptr) { auto nn = pct->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	return sn;
-}
-
-std::vector<std::string> Codec_LDPC::parameters
-::get_prefixes() const
-{
-	auto p = Codec::parameters::get_prefixes();
-	if (pct != nullptr) { auto nn = pct->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	return p;
+	this->set_pct(this->pct);
 }
 
 void Codec_LDPC::parameters

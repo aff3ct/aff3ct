@@ -35,10 +35,6 @@ struct Codec_LDPC : public Codec_SISO_SIHO
 		Codec_LDPC::parameters* clone() const;
 		void enable_puncturer();
 
-		virtual std::vector<std::string> get_names      () const;
-		virtual std::vector<std::string> get_short_names() const;
-		virtual std::vector<std::string> get_prefixes   () const;
-
 		// parameters construction
 		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
 		void store          (const arg_val_map &vals                                           );

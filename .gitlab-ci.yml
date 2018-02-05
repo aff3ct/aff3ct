@@ -52,6 +52,13 @@ build-linux-gcc-4.8:
   script:
     - ./ci/build-linux-gcc-4.8.sh
 
+build-linux-icpc:
+  stage: build
+  tags:
+   - linux
+  script:
+    - ./ci/build-linux-icpc.sh
+
 build-windows-gcc:
   stage: build
   tags:

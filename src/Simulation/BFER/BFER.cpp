@@ -75,16 +75,16 @@ BFER<B,R,Q>
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_BFER_reduction_mpi<B>(params_BFER.src->K,
-	                                                              params_BFER.mnt->n_frame_errors,
+	this->monitor_red = new module::Monitor_BFER_reduction_mpi<B>(this->monitor[0]->get_size(),
+	                                                              this->monitor[0]->get_fe_limit(),
 	                                                              this->monitor,
 	                                                              std::this_thread::get_id(),
 	                                                              params_BFER.mpi_comm_freq,
 	                                                              params_BFER.src->n_frames);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_BFER_reduction<B>(params_BFER.src->K,
-	                                                          params_BFER.mnt->n_frame_errors,
+	this->monitor_red = new module::Monitor_BFER_reduction<B>(this->monitor[0]->get_size(),
+	                                                          this->monitor[0]->get_fe_limit(),
 	                                                          this->monitor,
 	                                                          params_BFER.src->n_frames);
 #endif

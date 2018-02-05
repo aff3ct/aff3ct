@@ -118,6 +118,7 @@ if (len(fileNames) - (args.startId -1) > 0) :
 else:
 	print("# (WW) There is no simulation to replay.")
 
+failIds = []
 nErrors = 0
 testId = 0
 for fn in fileNames:
@@ -212,6 +213,8 @@ for fn in fileNames:
 		print(" - ABORTED.", end="\n");
 		print("Error message:", end="\n");
 		print(err)
+		nErrors = nErrors +1
+		failIds.append(testId +1)
 	else:
 		# begin to write the results into a file
 		os.chdir(PathOrigin)
@@ -279,6 +282,7 @@ for fn in fileNames:
 		else:
 			print(" - FAILED.", end="\n");
 			nErrors = nErrors +1
+			failIds.append(testId +1)
 
 		if args.verbose:
 			avgSensibility = 0
@@ -318,6 +322,22 @@ for fn in fileNames:
 		fRes.close();
 
 	testId = testId + 1
+
+
+if len(fileNames) - (args.startId -1) > 0:
+	if nErrors == 0:
+		print("# (II) All the tests PASSED !", end="\n");
+	else:
+		print("# (II) Some tests FAILED: ", end="")
+		f = 0
+		for failId in failIds:
+			print("n°", end="")
+			print(str(failId), end="")
+			if f == len(failIds) -1:
+				print(".", end="\n")
+			else:
+				print(", ", end="")
+			f = f + 1
 
 sys.exit(nErrors);
 

@@ -79,17 +79,5 @@ uint32_t Decoder_maximum_likelihood<B,R>
 
 	return hamming_dist;
 }
-
-template <typename B, typename R>
-uint32_t Decoder_maximum_likelihood<B,R>
-::compute_hamming_dist_soft(const B *X_N, const R *Y_N) const
-{
-	// compute the Hamming distance between the input bits (Y_N) and the current codeword (X_N)
-	uint32_t hamming_dist = 0;
-	for (auto n = 0; n < this->N; n++)
-		hamming_dist += this->X_N[n] != (Y_N[n] > (R)0 ? (B)0 : (B)1);
-
-	return hamming_dist;
-}
 }
 }

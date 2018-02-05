@@ -80,18 +80,19 @@ template <typename B>
 bool Encoder_polar<B>
 ::is_codeword(const B *X_N)
 {
-	for (auto i = 0; i < this->N; i++)
-		this->X_N_tmp[i] = (B)(!this->frozen_bits[i]) && X_N[i];
-	this->light_encode(this->X_N_tmp.data());
+	std::copy(X_N, X_N + this->N, this->X_N_tmp.data());
 
-	for (auto i = 0; i < this->N; i++)
-		this->X_N_tmp[i] = (B)(!this->frozen_bits[i]) && this->X_N_tmp[i];
-	this->light_encode(this->X_N_tmp.data());
+	for (auto k = (this->N >> 1); k > 0; k >>= 1)
+		for (auto j = 0; j < this->N; j += 2 * k)
+		{
+			for (auto i = 0; i < k; i++)
+				this->X_N_tmp[j + i] = this->X_N_tmp[j + i] ^ this->X_N_tmp[k + j + i];
 
-	auto n = 0;
-	while (n < this->N && (X_N[n] == this->X_N_tmp[n])) n++;
+			if (this->frozen_bits[j + k -1] && this->X_N_tmp[j + k -1])
+				return false;
+		}
 
-	return n == this->N;
+	return true;
 }
 
 template <typename B>
