@@ -1,9 +1,10 @@
 # AFF3CT Debug Parser
 This tool is used to parse the debug outputs of the [AFF3CT Software](https://aff3ct.github.io) and convert it into binary and text files.
+This  debug parser supports the hex debug format (`--sim-debug-hex`), which is highly recommended when dealing with floating point representation.
 ## Usage
 ```bash
-usage: aff3ct_debug_parser.py [-h] --mod MOD --tsk TSK [--txt] [--bin]
-                              [--src [SRC]] [-o OUTPUT]
+usage: aff3ct_debug_parser.py [-h] --mod MOD --tsk TSK [--txt] [--bin] [--src]
+                              [--fra FRA] [-o OUTPUT]
                               path
 
 positional arguments:
@@ -15,12 +16,12 @@ optional arguments:
   --tsk TSK             task to be extracted, ex : generate
   --txt                 export as txt
   --bin                 export as bin
-  --src [SRC]           export as c array source. only the frame SRC is
-                        exported if SRC is specified
+  --src                 export as c source
+  --fra FRA             export a single frame, whose index is specified
   -o OUTPUT, --output OUTPUT
                         path to the output folder
 ```
-## Test and example
+## Test and examples
 In the project root directory, run : 
 
 	./test/test.sh
