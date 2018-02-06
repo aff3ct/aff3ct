@@ -49,12 +49,12 @@ void Decoder::parameters
 
 	opt_args.add(
 		{p+"-type", "D"},
-		tools::Text(tools::Including_set<std::string>("ML", "CHASE")),
+		tools::Text(tools::Including_set("ML", "CHASE")),
 		"select the algorithm you want to decode the codeword.");
 
 	opt_args.add(
 		{p+"-implem"},
-		tools::Text(tools::Including_set<std::string>("STD", "NAIVE")),
+		tools::Text(tools::Including_set("STD", "NAIVE")),
 		"select the implementation of the algorithm to decode.");
 
 	opt_args.add(
@@ -97,7 +97,7 @@ void Decoder::parameters
 	if (full) headers[p].push_back(std::make_pair("Code rate (R)", std::to_string(this->R)));
 	headers[p].push_back(std::make_pair("Systematic", ((this->systematic) ? "yes" : "no")));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
-	if(this->type == "ML" || this->type == "CHASE") 
+	if(this->type == "ML" || this->type == "CHASE")
 		headers[p].push_back(std::make_pair("Distance", this->hamming ? "Hamming" : "Euclidean"));
 	if(this->type == "CHASE")
 		headers[p].push_back(std::make_pair("Max flips", std::to_string(this->flips)));
@@ -119,7 +119,7 @@ module::Decoder_SIHO<B,Q>* Decoder::parameters
 			if (this->implem == "STD") return new module::Decoder_chase_std<B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
 		}
 	}
-	
+
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 

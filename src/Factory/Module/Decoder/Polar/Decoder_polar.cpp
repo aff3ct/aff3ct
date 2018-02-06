@@ -77,8 +77,13 @@ void Decoder_polar::parameters
 	auto p = this->get_prefix();
 
 	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN");
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "NAIVE", "FAST");
-	// tools::add_ranges<tools::Text_type<>>(opt_args.at({p+"-implem"}));
+
+	opt_args.erase({p+"-implem"});
+
+	opt_args.add(
+		{p+"-implem"},
+		tools::Text(tools::Example_set("FAST", "NAIVE")),
+		"select the implementation of the algorithm to decode.");
 
 	opt_args.add(
 		{p+"-ite", "i"},
@@ -136,7 +141,7 @@ void Decoder_polar::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (!this->simd_strategy.empty())
 			headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
 
@@ -366,7 +371,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_polar
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_polar
-::build(const parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc, 
+::build(const parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc,
         module::Encoder<B> *encoder)
 {
 	return params.template build<B,Q>(frozen_bits, crc, encoder);
