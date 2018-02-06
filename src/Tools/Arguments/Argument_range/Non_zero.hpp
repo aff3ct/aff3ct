@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Set.hpp"
+#include "Set/Set.hpp"
 
 namespace aff3ct
 {
