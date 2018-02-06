@@ -78,12 +78,7 @@ void Decoder_polar::parameters
 
 	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN");
 
-	opt_args.erase({p+"-implem"});
-
-	opt_args.add(
-		{p+"-implem"},
-		tools::Text(tools::Example_set("FAST", "NAIVE")),
-		"select the implementation of the algorithm to decode.");
+	opt_args.at({p+"-implem"})->change_type(tools::Text(tools::Example_set("FAST", "NAIVE")));
 
 	opt_args.add(
 		{p+"-ite", "i"},

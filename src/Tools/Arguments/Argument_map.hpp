@@ -26,6 +26,10 @@ struct Argument_info
 
 	virtual Argument_info* clone() const;
 
+	void change_type(Argument_type* new_type);
+	void change_doc (const std::string& new_doc);
+	void add_doc    (const std::string& new_doc);
+
 	Argument_type* type = nullptr;
 	std::string    doc  = "";
 };

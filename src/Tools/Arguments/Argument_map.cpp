@@ -31,6 +31,27 @@ void Argument_info
 	type = nullptr;
 }
 
+void Argument_info
+::change_type(Argument_type* new_type)
+{
+	if (type != nullptr)
+		delete type;
+
+	type = new_type;
+}
+
+void Argument_info
+::change_doc(const std::string& new_doc)
+{
+	doc = new_doc;
+}
+
+void Argument_info
+::add_doc(const std::string& new_doc)
+{
+	doc += new_doc;
+}
+
 Argument_info* Argument_info
 ::clone() const
 {
