@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
@@ -39,12 +40,14 @@ struct Encoder_LDPC : public Encoder
 
 		// builder
 		template <typename B = int>
-		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const;
+		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H,
+		                               const tools::dvbs2_values* dvbs2 = nullptr) const;
 	};
 
 	template <typename B = int>
 	static module::Encoder_LDPC<B>* build(const parameters &params, const tools::Sparse_matrix &G,
-	                                                                const tools::Sparse_matrix &H);
+	                                                                const tools::Sparse_matrix &H,
+	                                                                const tools::dvbs2_values* dvbs2 = nullptr);
 };
 }
 }

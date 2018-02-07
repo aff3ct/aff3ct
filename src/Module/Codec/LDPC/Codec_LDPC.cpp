@@ -52,7 +52,7 @@ Codec_LDPC<B,Q>
                    factory::Puncturer_LDPC::parameters *pct_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  info_bits_pos(enc_params.K)
+  info_bits_pos(enc_params.K), dvbs2(nullptr)
 {
 	const std::string name = "Codec_LDPC";
 	this->set_name(name);
@@ -123,32 +123,49 @@ Codec_LDPC<B,Q>
 		}
 	}
 
-	auto H_format = get_matrix_format(dec_params.H_path);
 
-	std::ifstream file_H(dec_params.H_path, std::ifstream::in);
-
-	if (!file_H.is_open() || H_format == "BAD_FILE")
+	if (enc_params.type == "LDPC_DVBS2")
 	{
-		std::stringstream message;
-		message << "'dec_params.H_path' can't be opened ('dec_params.H_path' = \"" + dec_params.H_path + "\").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		dvbs2 = tools::build_dvbs2(this->K, this->N);
+
+		H = tools::build_H(*dvbs2);
 	}
-	else if (H_format == "QC")
+	else
 	{
-		H = tools::QC::read(file_H);
-		if (pct_params && pct_params->pattern.empty())
-			pct_params->pattern = tools::QC::read_pct_pattern(file_H);
-	}
-	else if (H_format == "ALIST")
-	{
-		H = tools::AList::read(file_H);
-
-		try
+		if (dec_params.H_path.empty())
 		{
-			info_bits_pos = tools::AList::read_info_bits_pos(file_H, enc_params.K, enc_params.N_cw);
-			is_info_bits_pos = true;
+			std::stringstream message;
+			message << "'dec_params.H_path' shall not be empty.";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
-		catch (std::exception const&) { }
+
+		auto H_format = get_matrix_format(dec_params.H_path);
+
+		std::ifstream file_H(dec_params.H_path, std::ifstream::in);
+
+		if (!file_H.is_open() || H_format == "BAD_FILE")
+		{
+			std::stringstream message;
+			message << "'dec_params.H_path' can't be opened ('dec_params.H_path' = \"" + dec_params.H_path + "\").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+		else if (H_format == "QC")
+		{
+			H = tools::QC::read(file_H);
+			if (pct_params && pct_params->pattern.empty())
+				pct_params->pattern = tools::QC::read_pct_pattern(file_H);
+		}
+		else if (H_format == "ALIST")
+		{
+			H = tools::AList::read(file_H);
+
+			try
+			{
+				info_bits_pos = tools::AList::read_info_bits_pos(file_H, enc_params.K, enc_params.N_cw);
+				is_info_bits_pos = true;
+			}
+			catch (std::exception const&) { }
+		}
 	}
 
 	if (dec_params.H_reorder != "NONE")
@@ -197,7 +214,7 @@ Codec_LDPC<B,Q>
 
 	try
 	{
-		this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H));
+		this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -220,6 +237,8 @@ template <typename B, typename Q>
 Codec_LDPC<B,Q>
 ::~Codec_LDPC()
 {
+	if (dvbs2 != nullptr)
+		delete dvbs2;
 }
 
 template <typename B, typename Q>
