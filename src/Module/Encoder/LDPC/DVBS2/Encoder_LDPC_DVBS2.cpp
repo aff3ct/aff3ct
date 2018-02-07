@@ -30,7 +30,7 @@ void Encoder_LDPC_DVBS2<B>
 	std::copy(U_K,           U_K + this->K, X_N);
 	std::fill(X_N + this->K, X_N + this->N, 0  );
 
-	B* Px = &X_N[this->K];
+	B* Px = X_N + this->K;
 	const int *p = dvbs2.EncValues.data();
 	int xPos = 0;
 
@@ -45,7 +45,8 @@ void Encoder_LDPC_DVBS2<B>
 			{
 				for (int q = 0; q < nbPos; q++)
 				{
-					int position  = (p[q] + (xPos % 360) * dvbs2.Q) % dvbs2.NmK;
+					// int position  = (p[q] + (xPos % dvbs2.M) * dvbs2.Q) % dvbs2.NmK;
+					int position  = (p[q] + l * dvbs2.Q) % dvbs2.NmK;
 					Px[position] ^= bit;
 				}
 			}

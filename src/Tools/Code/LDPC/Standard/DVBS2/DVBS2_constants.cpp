@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <sstream>
 #include <iostream>
 
@@ -26,12 +25,11 @@ Sparse_matrix aff3ct::tools::build_H(const dvbs2_values& dvbs2)
 
 		for (int l = 0; l < dvbs2.M; l++)
 		{
+
 			for (int q = 0; q < nbPos; q++)
 			{
-				yPos  = (p[q] + (xPos % 360) * dvbs2.Q) % dvbs2.NmK;
-
-				assert( xPos < dvbs2.N );
-				assert( yPos < dvbs2.NmK );
+				// yPos  = (p[q] + (xPos % dvbs2.M) * dvbs2.Q) % dvbs2.NmK;
+				yPos  = (p[q] + l * dvbs2.Q) % dvbs2.NmK;
 
 				H.add_connection(xPos, yPos);
 			}
@@ -46,13 +44,10 @@ Sparse_matrix aff3ct::tools::build_H(const dvbs2_values& dvbs2)
 		yPos = xPos - dvbs2.K;
 
 		H.add_connection(xPos, yPos);
-
 		yPos++;
 
 		if (yPos < dvbs2.NmK)
-		{
-			H.add_connection(xPos, yPos);
-		}
+				H.add_connection(xPos, yPos);
 	}
 
 	return H;
@@ -151,7 +146,7 @@ dvbs2_values* aff3ct::tools::build_dvbs2(const int K, const int N)
 			break;
 	}
 
-	if (!dvbs2)
+	if (dvbs2 == nullptr)
 	{
 		std::stringstream message;
 		message << "The given format doesn't match any known generator matrix ('K' = " << K << ", 'N' = " << N << ").";
@@ -171,6 +166,22 @@ dvbs2_values* aff3ct::tools::build_dvbs2(const int K, const int N)
 		std::stringstream message;
 		message << "'N' has to be equal to 'dvbs2->N' ('N' = " << N
 		        << ", 'dvbs2->N' = " << dvbs2->N << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (dvbs2->Q != (dvbs2->N - dvbs2->K)/dvbs2->M)
+	{
+		std::stringstream message;
+		message << "'Q' has to be equal to ('N' - 'K')/'M'  ('Q' = " << dvbs2->Q << ", 'N' = " << dvbs2->N
+		        << ", 'K' = " << dvbs2->K << ", 'M' = " << dvbs2->M << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (dvbs2->K != (dvbs2->M * dvbs2->N_LINES))
+	{
+		std::stringstream message;
+		message << "'K' has to be equal to ('M' * 'N_LINES')  ('K' = " << dvbs2->K << ", 'M' = " << dvbs2->M
+		        << ", 'N_LINES' = " << dvbs2->N_LINES << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 

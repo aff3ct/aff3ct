@@ -177,12 +177,12 @@ struct dvbs2_values_64800_6480 : dvbs2_values  // r=9/10 & K = 58320
 			3, 17, 3392, 1991
 		});
 
-		N   = 64800;
-		K   = 58320;
-		NmK = 6480;
-		M   = 360;
-		Q   = 18;
-		N_LINES  = 162;
+		this->N        = 64800;
+		this->K        = 58320;
+		this->NmK      = 6480;
+		this->M        = 360;
+		this->Q        = 18;
+		this->N_LINES  = 162;
 	}
 };
 
@@ -353,12 +353,12 @@ struct dvbs2_values_64800_7200 : dvbs2_values  // r=8/9 & K = 57600
 			3, 19, 1696, 1459
 		});
 
-		N   = 64800;
-		K   = 57600;
-		NmK = 7200;
-		M   = 360;
-		Q   = 20;
-		N_LINES  = 160;
+		this->N        = 64800;
+		this->K        = 57600;
+		this->NmK      = 7200;
+		this->M        = 360;
+		this->Q        = 20;
+		this->N_LINES  = 160;
 	}
 };
 
@@ -517,12 +517,12 @@ struct dvbs2_values_64800_10800 : dvbs2_values  // r=5/6 & K = 54000
 			3, 27, 3755, 9536
 		});
 
-		N   = 64800;
-		K   = 54000;
-		NmK = 10800;
-		M   = 360;
-		Q   = 30;
-		N_LINES  = 148;
+		this->N        = 64800;
+		this->K        = 54000;
+		this->NmK      = 10800;
+		this->M        = 360;
+		this->Q        = 30;
+		this->N_LINES  = 148;
 	}
 };
 
@@ -677,12 +677,12 @@ struct dvbs2_values_64800_12960 : dvbs2_values // r=4/5 & K = 51840
 			3, 35, 7108, 5553
 		});
 
-		N   = 64800;
-		K   = 51840;
-		NmK = 12960;
-		M   = 360;
-		Q   = 36;
-		N_LINES  = 144;
+		this->N        = 64800;
+		this->K        = 51840;
+		this->NmK      = 12960;
+		this->M        = 360;
+		this->Q        = 36;
+		this->N_LINES  = 144;
 	}
 };
 
@@ -828,12 +828,12 @@ struct dvbs2_values_64800_16200 : dvbs2_values // r=3/4 & K = 48600
 			3, 44, 2883, 14521
 		});
 
-		N   = 64800;
-		K   = 48600;
-		NmK = 16200;
-		M   = 360;
-		Q   = 45;
-		N_LINES  = 135;
+		this->N        = 64800;
+		this->K        = 48600;
+		this->NmK      = 16200;
+		this->M        = 360;
+		this->Q        = 45;
+		this->N_LINES  = 135;
 	}
 };
 
@@ -964,12 +964,12 @@ struct dvbs2_values_64800_21600 : dvbs2_values // r=2/3 & K = 43200
 			3, 59, 3589, 14630
 		});
 
-		N   = 64800;
-		K   = 43200;
-		NmK = 21600;
-		M   = 360;
-		Q   = 60;
-		N_LINES  = 120;
+		this->N        = 64800;
+		this->K        = 43200;
+		this->NmK      = 21600;
+		this->M        = 360;
+		this->Q        = 60;
+		this->N_LINES  = 120;
 	}
 };
 
@@ -1088,12 +1088,12 @@ struct dvbs2_values_64800_25920 : dvbs2_values // r=3/5 & K = 38880
 			3, 71, 3434, 7769
 		});
 
-		N   = 64800;
-		K   = 38880;
-		NmK = 25920;
-		M   = 360;
-		Q   = 72;
-		N_LINES  = 108;
+		this->N        = 64800;
+		this->K        = 38880;
+		this->NmK      = 25920;
+		this->M        = 360;
+		this->Q        = 72;
+		this->N_LINES  = 108;
 	}
 };
 
@@ -1194,12 +1194,12 @@ struct dvbs2_values_64800_32400 : dvbs2_values // r=1/2 & K = 32400
 			3, 53, 19267, 20113
 		});
 
-		N   = 64800;
-		K   = 32400;
-		NmK = 32400;
-		M   = 360;
-		Q   = 90;
-		N_LINES  = 90;
+		this->N        = 64800;
+		this->K        = 32400;
+		this->NmK      = 32400;
+		this->M        = 360;
+		this->Q        = 90;
+		this->N_LINES  = 90;
 	}
 };
 
@@ -1282,12 +1282,12 @@ struct dvbs2_values_64800_38880 : dvbs2_values // r=2/5 & K = 25920
 			3, 30672, 16927, 14800
 		});
 
-		N   = 64800;
-		K   = 25920;
-		NmK = 38880;
-		M   = 360;
-		Q   = 108;
-		N_LINES  = 72;
+		this->N        = 64800;
+		this->K        = 25920;
+		this->NmK      = 38880;
+		this->M        = 360;
+		this->Q        = 108;
+		this->N_LINES  = 72;
 	}
 };
 
@@ -1358,12 +1358,12 @@ struct dvbs2_values_64800_43200 : dvbs2_values // r=1/3 & K = 21600
 			3, 25353, 4122, 39751
 		});
 
-		N   = 64800;
-		K   = 21600;
-		NmK = 43200;
-		M   = 360;
-		Q   = 120;
-		N_LINES  = 60;
+		this->N        = 64800;
+		this->K        = 21600;
+		this->NmK      = 43200;
+		this->M        = 360;
+		this->Q        = 120;
+		this->N_LINES  = 60;
 	}
 };
 
@@ -1419,12 +1419,12 @@ struct dvbs2_values_64800_48600 : dvbs2_values // r=1/4 & K = 16200
 			3, 46685, 20622, 32806
 		});
 
-		N   = 64800;
-		K   = 16200;
-		NmK = 48600;
-		M   = 360;
-		Q   = 135;
-		N_LINES  = 45;
+		this->N        = 64800;
+		this->K        = 16200;
+		this->NmK      = 48600;
+		this->M        = 360;
+		this->Q        = 135;
+		this->N_LINES  = 45;
 	}
 };
 }

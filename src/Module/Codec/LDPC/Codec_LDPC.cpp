@@ -82,13 +82,6 @@ Codec_LDPC<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (dec_params.H_path.empty())
-	{
-		std::stringstream message;
-		message << "'dec_params.H_path' has to be set to a matrix file.";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	// ---------------------------------------------------------------------------------------------------------- tools
 	bool is_info_bits_pos = false;
 	if (enc_params.type == "LDPC")

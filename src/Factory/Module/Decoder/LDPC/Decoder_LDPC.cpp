@@ -45,7 +45,7 @@ void Decoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	req_args[{p+"-h-path"}] =
+	opt_args[{p+"-h-path"}] =
 		{"string",
 		 "path to the H matrix (AList or QC formated file)."};
 
@@ -115,7 +115,7 @@ void Decoder_LDPC::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (!this->H_path.empty())
 		{
 			headers[p].push_back(std::make_pair("H matrix path", this->H_path));
@@ -146,7 +146,7 @@ void Decoder_LDPC::parameters
 
 template <typename B, typename Q>
 module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
-::build_siso(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos, 
+::build_siso(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos,
              module::Encoder<B> *encoder) const
 {
 	if ((this->type == "BP" || this->type == "BP_FLOODING") && this->simd_strategy.empty())
@@ -179,7 +179,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_LDPC::parameters
-::build(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos, 
+::build(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos,
         module::Encoder<B> *encoder) const
 {
 	try
@@ -209,7 +209,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_LDPC
-::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos, 
+::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos,
         module::Encoder<B> *encoder)
 {
 	return params.template build<B,Q>(H, info_bits_pos, encoder);
