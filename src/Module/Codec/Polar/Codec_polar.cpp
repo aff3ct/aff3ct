@@ -152,6 +152,18 @@ Codec_polar<B,Q>
 
 template <typename B, typename Q>
 void Codec_polar<B,Q>
+::notify_frozenbits_update()
+{
+	if (this->N_cw != this->N)
+		puncturer_wangliu->gen_frozen_bits(frozen_bits);
+	if (this->fb_decoder)
+		this->fb_decoder->notify_frozenbits_update();
+	if (this->fb_encoder)
+		this->fb_encoder->notify_frozenbits_update();
+}
+
+template <typename B, typename Q>
+void Codec_polar<B,Q>
 ::set_sigma(const float sigma)
 {
 	Codec_SISO_SIHO<B,Q>::set_sigma(sigma);
@@ -162,14 +174,15 @@ void Codec_polar<B,Q>
 		fb_generator->set_sigma(sigma);
 		fb_generator->generate(frozen_bits);
 
-		if (this->N_cw != this->N)
-			puncturer_wangliu->gen_frozen_bits(frozen_bits);
-
-		if (this->fb_decoder)
-			this->fb_decoder->notify_frozenbits_update();
-		if (this->fb_encoder)
-			this->fb_encoder->notify_frozenbits_update();
+		this->notify_frozenbits_update();
 	}
+}
+
+template <typename B, typename Q>
+std::vector<bool>& Codec_polar<B,Q>
+::get_frozen_bits()
+{
+	return this->frozen_bits;
 }
 
 template <typename B, typename Q>
