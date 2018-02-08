@@ -154,10 +154,11 @@ void Launcher::launch()
 		stream << this->params_common.pyber << std::endl;
 	}
 
+	if (this->params_common.display_legend)
 #ifdef ENABLE_MPI
-	if (this->params_common.mpi_rank == 0)
+		if (this->params_common.mpi_rank == 0)
 #endif
-		this->print_header();
+			this->print_header();
 
 	// print the warnings
 #ifdef ENABLE_MPI
@@ -178,10 +179,11 @@ void Launcher::launch()
 	if (simu != nullptr)
 	{
 		// launch the simulation
+		if (this->params_common.display_legend)
 #ifdef ENABLE_MPI
-	if (this->params_common.mpi_rank == 0)
+			if (this->params_common.mpi_rank == 0)
 #endif
-			stream << "# " << "The simulation is running..." << std::endl;
+				stream << "# " << "The simulation is running..." << std::endl;
 
 		try
 		{
@@ -193,10 +195,11 @@ void Launcher::launch()
 		}
 	}
 
+	if (this->params_common.display_legend)
 #ifdef ENABLE_MPI
-	if (this->params_common.mpi_rank == 0)
+		if (this->params_common.mpi_rank == 0)
 #endif
-		stream << "# End of the simulation." << std::endl;
+			stream << "# End of the simulation." << std::endl;
 
 	if (simu != nullptr)
 	{

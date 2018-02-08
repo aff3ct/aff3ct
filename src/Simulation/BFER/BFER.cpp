@@ -196,14 +196,15 @@ void BFER<B,R,Q>
 			}
 		}
 
+		if (params_BFER.display_legend)
 #ifdef ENABLE_MPI
-		if (((!params_BFER.ter->disabled && snr == params_BFER.snr_min && !params_BFER.debug) ||
-		    (params_BFER.statistics && !params_BFER.debug)) && params_BFER.mpi_rank == 0)
+			if (((!params_BFER.ter->disabled && snr == params_BFER.snr_min && !params_BFER.debug) ||
+		 	   (params_BFER.statistics && !params_BFER.debug)) && params_BFER.mpi_rank == 0)
 #else
-		if (((!params_BFER.ter->disabled && snr == params_BFER.snr_min && !params_BFER.debug) ||
-		    (params_BFER.statistics && !params_BFER.debug)))
+			if (((!params_BFER.ter->disabled && snr == params_BFER.snr_min && !params_BFER.debug) ||
+			    (params_BFER.statistics && !params_BFER.debug)))
 #endif
-			terminal->legend(std::cout);
+				terminal->legend(std::cout);
 
 		// start the terminal to display BER/FER results
 #ifdef ENABLE_MPI

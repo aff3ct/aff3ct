@@ -124,6 +124,13 @@ void factory::Launcher::parameters
 		tools::None(),
 		"do not enhance the backtrace when displaying exception.",
 		true);
+
+	opt_args.add(
+		{p+"-no-legend"},
+		tools::None(),
+		"Do not display any legend when launching the simulation.",
+		true);
+
 }
 
 void factory::Launcher::parameters
@@ -134,6 +141,7 @@ void factory::Launcher::parameters
 	if(vals.exist({p+"-cde-type", "C"})) this->cde_type        = vals.at({p+"-cde-type", "C"}); // required
 	if(vals.exist({p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
 	if(vals.exist({"version",     "v"})) this->display_version = true;
+	if(vals.exist({p+"-no-legend"    })) this->display_legend  = false;
 
 	if(vals.exist({"help", "h"}))
 	{
