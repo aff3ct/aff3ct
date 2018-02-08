@@ -3,12 +3,14 @@
 import argparse
 import struct
 import os
+import ctypes
 
 
 class OutputStructure:
     index = 0
     frame_length = 0
     data_format = ""
+    hex_format = False
     name = ""
     frames = []
 
@@ -34,26 +36,84 @@ class OutputStructure:
                 frame = frame.replace(",", " ")
                 frame = frame.split(" ")
                 self.frames.append(frame)
+        self.hex_format = "0x" in self.frames[0][0]
 
-    def export_as_text(self, path):
-        # write output information into file
+    def export_as_text(self, path, frame_index=None):
         with open(path, "w") as fout:
-            fout.write(str(len(self.frames)) + "\n")
+            if frame_index is None:
+                fout.write(str(len(self.frames)) + "\n")
+            else:
+                fout.write("1" + "\n")
             fout.write(self.data_format + "\n")
             fout.write(str(self.frame_length) + "\n")
 
-            for frame in self.frames:
-                for i, value in enumerate(frame):
-                    if i:
-                        fout.write(" ")
-                    fout.write(value)
+            if frame_index is None:
+                for frame in self.frames:
+                    self.export_frame_as_text(fout, frame)
+            else:
+                self.export_frame_as_text(fout, self.frames[frame_index])
+
+    def export_frame_as_text(self, fout, frame):
+        for i, value in enumerate(frame):
+            if i:
+                fout.write(" ")
+            fout.write(value)
+        fout.write("\n")
+
+    def export_as_source(self, path, frame_index=None):
+        export_all = False
+        if frame_index is None:
+            export_all = True
+
+        # get c_type (signed char, signed short...)
+        c_type = self.get_c_type()
+
+        # unable to identify c_type -> exit
+        if not c_type:
+            return
+
+        with open(path, "w") as fout:
+            fout.write("{0} {1}".format(c_type, self.name))
+            if export_all:
+                fout.write("[{0}]".format(str(len(self.frames))))
+            fout.write("[{0}] = ".format(str(self.frame_length)))
+
+            if export_all:
+                fout.write("\n{\n")
+                for inner_frame_index in range(0, len(self.frames)):
+                    if inner_frame_index:
+                        fout.write(",\n")
+                    self.write_array(fout, inner_frame_index)
+                fout.write("\n}")
+            else:
                 fout.write("\n")
+                self.write_array(fout, frame_index)
 
-    def export_as_source(self, path, frame_index):
-        if frame_index > len(self.frames) - 1:
-            print("Specified frame index superior to the number of frames. Frame 0 is exported instead.")
-            frame_index = 0
+            fout.write(";\n")
 
+    def write_array(self, fout, frame_index):
+        fout.write("{\n\t")
+        for i, value in enumerate(self.frames[frame_index]):
+            if i:
+                fout.write(",")
+                if i % 8 == 0:
+                    fout.write("\n\t")
+                else:
+                    fout.write(" ")
+            if self.hex_format and "int" in self.data_format:
+                if self.data_format == "int8":
+                    value = ctypes.c_int8(int(value, 16)).value
+                elif self.data_format == "int16":
+                    value = ctypes.c_int16(int(value, 16)).value
+                elif self.data_format == "int32":
+                    value = ctypes.c_int32(int(value, 16)).value
+                elif self.data_format == "int64":
+                    value = ctypes.c_int64(int(value, 16)).value
+                value = str(value)
+            fout.write('{:>4}'.format(value))
+        fout.write("\n}")
+
+    def get_c_type(self):
         if self.data_format == "int8":
             c_type = "signed char"
         elif self.data_format == "int16":
@@ -67,27 +127,10 @@ class OutputStructure:
         elif self.data_format == "float64":
             c_type = "double"
         else:
-            "Unknown format"
-            return
+            c_type = ""
+        return c_type
 
-        with open(path, "w") as fout:
-            fout.write("#ifndef " + self.name.upper() + "_H\n")
-            fout.write("#define " + self.name.upper() + "_H\n")
-            fout.write("\n")
-            fout.write(c_type + " " + self.name + "[" + str(self.frame_length) + "] = {\n\t")
-            for i, value in enumerate(self.frames[frame_index]):
-                if i:
-                    fout.write(",")
-                    if i % 8 == 0:
-                        fout.write("\n\t")
-                    else:
-                        fout.write(" ")
-                fout.write('{:>4}'.format(value))
-            fout.write("\n")
-            fout.write("};\n\n")
-            fout.write("#endif //" + self.name.upper() + "_H\n")
-
-    def export_as_bin(self, path):
+    def export_as_bin(self, path, frame_index=None):
         if self.data_format == "int8":
             float_code = 0
             sizeof_value = 8
@@ -117,17 +160,50 @@ class OutputStructure:
             return
 
         with open(path, "wb") as fout:
-            fout.write(struct.pack('>I', len(self.frames)))
+            if frame_index is None:
+                fout.write(struct.pack('>I', len(self.frames)))
+            else:
+                fout.write(struct.pack('>I', 1))
             fout.write(struct.pack('>I', float_code))
             fout.write(struct.pack('>I', sizeof_value))
             fout.write(struct.pack('>I', self.frame_length))
+            if frame_index is None:
+                for frame in self.frames:
+                    self.export_frame_as_binary(float_code, fout, frame, pack_format)
+            else:
+                self.export_frame_as_binary(float_code, fout, self.frames[frame_index], pack_format)
 
-            for frame in self.frames:
+    def export_frame_as_binary(self, float_code, fout, frame, pack_format):
+        if not self.hex_format:
+
+            if float_code == 1:
                 for value in frame:
-                    if float_code == 1:
-                        fout.write(struct.pack(pack_format, float(value)))
-                    else:
-                        fout.write(struct.pack(pack_format, int(value)))
+                    fout.write(struct.pack(pack_format, float(value)))
+            else:
+                for value in frame:
+                    fout.write(struct.pack(pack_format, int(value)))
+        else:
+            if float_code == 1:
+                for value in frame:
+                    fout.write(struct.pack(pack_format, float.fromhex(value)))
+            else:
+                for value in frame:
+                    if self.data_format == "int8":
+                        value = ctypes.c_int8(int(value, 16)).value
+                    elif self.data_format == "int16":
+                        value = ctypes.c_int16(int(value, 16)).value
+                    elif self.data_format == "int32":
+                        value = ctypes.c_int32(int(value, 16)).value
+                    elif self.data_format == "int64":
+                        value = ctypes.c_int64(int(value, 16)).value
+                    fout.write(struct.pack(pack_format, value))
+
+
+def check_positive(value):
+    ivalue = int(value)
+    if ivalue <= 0:
+         raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
+    return ivalue
 
 
 def adp_parse_args():
@@ -136,8 +212,11 @@ def adp_parse_args():
     parser.add_argument("path", type=str, help="path to the file to be parsed")
     parser.add_argument("--mod", type=str, required=True, help="module to be extracted, ex : Source_random_fast")
     parser.add_argument("--tsk", type=str, required=True, help="task to be extracted, ex : generate")
+    parser.add_argument("--txt", help="export as txt", action='store_true')
+    parser.add_argument("--bin", help="export as bin", action='store_true')
+    parser.add_argument("--src", help="export as c source", action='store_true')
+    parser.add_argument("--fra", type=check_positive, help="export a single frame, whose index is specified")
     parser.add_argument("-o", "--output", type=str, help="path to the output folder", default="./")
-    parser.add_argument("--src", type=int, help="export specified frame as .h source file")
 
     args = parser.parse_args()
     return args
@@ -197,22 +276,37 @@ def main():
     for out_sct in out_structures:
         out_sct.import_frames(lines, key, inter_frame)
 
-    # export frames as text
+    # some things to check if --fra is selected...
+    if args.fra is not None:
+        different_n_frames = False
+        n_frames = len(out_structures[0].frames)
+        for out_sct in out_structures:
+            if len(out_sct.frames) != n_frames:
+                different_n_frames = True
+        if different_n_frames:
+            print("Different n_frames detected in the I/Os. Disabling --fra ...")
+            args.fra = None
+        if args.fra > n_frames:
+            print("--fra index larger than actual n_frames. Disabling --fra...")
+            args.fra = None
 
-    for out_sct in out_structures:
-        base_path = os.path.join(args.output, out_sct.name)
-        out_sct.export_as_text(base_path + ".txt")
+    # export frames as text
+    if args.txt:
+        for out_sct in out_structures:
+            base_path = os.path.join(args.output, out_sct.name)
+            out_sct.export_as_text(base_path + ".txt", args.fra)
 
     # export frames as bin
-    for out_sct in out_structures:
-        base_path = os.path.join(args.output, out_sct.name)
-        out_sct.export_as_bin(base_path + ".bin")
+    if args.bin:
+        for out_sct in out_structures:
+            base_path = os.path.join(args.output, out_sct.name)
+            out_sct.export_as_bin(base_path + ".bin", args.fra)
 
     # export frames as source
     if args.src:
         for out_sct in out_structures:
             base_path = os.path.join(args.output, out_sct.name)
-            out_sct.export_as_source(base_path + ".h", args.src)
+            out_sct.export_as_source(base_path + ".h", args.fra)
 
 
 if __name__ == "__main__":

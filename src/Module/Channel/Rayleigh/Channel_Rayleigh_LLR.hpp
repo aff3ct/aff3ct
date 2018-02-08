@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "Tools/Algo/Noise/Noise.hpp"
-#include "Tools/Algo/Noise/Standard/Noise_std.hpp"
+#include "Tools/Algo/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
+#include "Tools/Algo/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "../Channel.hpp"
 
@@ -19,10 +19,11 @@ private:
 	const bool complex;
 	const bool add_users;
 	std::vector<R> gains;
-	tools::Noise<R> *noise_generator;
+	tools::Gaussian_noise_generator<R> *noise_generator;
 
 public:
-	Channel_Rayleigh_LLR(const int N, const bool complex, tools::Noise<R> *noise_generator = new tools::Noise_std<R>(),
+	Channel_Rayleigh_LLR(const int N, const bool complex,
+	                     tools::Gaussian_gen<R> *noise_generator = new tools::Gaussian_gen_std<R>(),
 	                     const bool add_users = false, const R sigma = (R)1, const int n_frames = 1);
 	Channel_Rayleigh_LLR(const int N, const bool complex, const int seed, const bool add_users = false,
 	                     const R sigma = (R)1, const int n_frames = 1);
