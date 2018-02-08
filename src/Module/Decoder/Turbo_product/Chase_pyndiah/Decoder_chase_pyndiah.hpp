@@ -29,10 +29,11 @@ protected:
 	Encoder     <B> &enc;
 
 	const int  N_np; // N without the parity bit: can be equal to N if there is no parity bit in the code
-	const int  n_least_reliable_positions;
-	const int  n_test_vectors;
-	const int  n_competitors;
-	const bool parity_extended;
+	const int  n_least_reliable_positions;  // the number of least reliable positions to flip to create test vectors
+	const int  n_test_vectors;              // the number of test vectors to really use from the 2^n_least_reliable_positions
+	const int  n_competitors;               // the number of competitors to use from the test vectors
+	      int  n_good_competitors;          // the number of competitors whom test vectors converged at hard decoding step
+	const bool parity_extended;             // true if there is a parity bit
 	// bool parity_diff;
 
 	std::vector<info> least_reliable_pos; // the list of least reliable positions

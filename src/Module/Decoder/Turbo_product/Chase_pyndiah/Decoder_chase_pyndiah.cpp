@@ -272,6 +272,7 @@ void Decoder_chase_pyndiah<B,R>
 {
 	std::fill(metrics.begin(), metrics.end(), (R)0);
 
+	n_good_competitors = 0;
 	for (int c = 0; c < n_test_vectors; c++)
 	{
 		if (is_wrong[c])
@@ -279,6 +280,7 @@ void Decoder_chase_pyndiah<B,R>
 			metrics[c] = std::numeric_limits<R>::max()/2;
 			continue;
 		}
+		n_good_competitors++;
 
 		int tv_off = c*this->N;
 
@@ -297,31 +299,31 @@ void Decoder_chase_pyndiah<B,R>
 	std::sort(competitors.begin(), competitors.end(), [](const info& a, const info& b) { return a.metric < b.metric; });
 
 
-	// remove duplicated metrics
-	unsigned start_pos = 0;
-	while ((int)competitors.size() > n_competitors && start_pos < (competitors.size() -1))
-	{
-		auto it = competitors.begin();
-		std::advance(it, start_pos +1);
+	// // remove duplicated metrics
+	// unsigned start_pos = 0;
+	// while ((int)competitors.size() > n_competitors && start_pos < (competitors.size() -1))
+	// {
+	// 	auto it = competitors.begin();
+	// 	std::advance(it, start_pos +1);
 
-		// remove all duplications of the metric at position 'start_pos'
-		while (it != competitors.end())
-		{
-			if (it->metric == competitors[start_pos].metric)
-			{
-				it = competitors.erase(it);
+	// 	// remove all duplications of the metric at position 'start_pos'
+	// 	while (it != competitors.end())
+	// 	{
+	// 		if (it->metric == competitors[start_pos].metric)
+	// 		{
+	// 			it = competitors.erase(it);
 
-				if ((int)competitors.size() == n_competitors)
-					break;
-			}
-			else
-				it++;
-		}
+	// 			if ((int)competitors.size() == n_competitors)
+	// 				break;
+	// 		}
+	// 		else
+	// 			it++;
+	// 	}
 
-		start_pos++; // try with the next one
-	}
+	// 	start_pos++; // try with the next one
+	// }
 
-	competitors.resize(n_test_vectors);
+	// competitors.resize(n_test_vectors);
 
 
 #ifndef NDEBUG
@@ -351,7 +353,10 @@ void Decoder_chase_pyndiah<B,R>
 
 	beta -= DW.metric;
 
-	for (int j = 1; j < n_competitors; j++)
+	n_good_competitors = std::min(n_good_competitors, n_competitors); // if there is less than 'n_competitors' good competitors
+	                                                                  // then take only them for reliability calculation
+
+	for (int j = 1; j < n_good_competitors; j++)
 		competitors[j].metric -= DW.metric;
 
 
@@ -360,13 +365,13 @@ void Decoder_chase_pyndiah<B,R>
 		const auto DB = test_vect[DW.pos + i]; // decided bit at the position i
 
 		int j = 1;
-		for (; j < n_competitors; j++)
+		for (; j < n_good_competitors; j++)
 			if (test_vect[competitors[j].pos + i] != DB)
 				break;
 
 		R reliability;
 
-		if (j < n_competitors) // then there is a competitor with a different bit at the position i
+		if (j < n_good_competitors) // then there is a competitor with a different bit at the position i
 		{
 			reliability = competitors[j].metric;
 		}
