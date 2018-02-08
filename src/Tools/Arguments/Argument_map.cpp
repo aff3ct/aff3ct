@@ -11,8 +11,8 @@ Argument_info
 { }
 
 Argument_info
-::Argument_info(Argument_type* type, std::string doc)
-: type(type), doc(doc)
+::Argument_info(Argument_type* type, const std::string& doc, const bool advanced_arg)
+: type(type), doc(doc), advanced_arg(advanced_arg)
 {}
 
 
@@ -92,7 +92,7 @@ Argument_map_info& Argument_map_info
 }
 
 void Argument_map_info
-::add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc)
+::add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc, const bool advanced_arg)
 {
 	if (tags.size() == 0)
 		throw std::invalid_argument("No tag has been given ('tag.size()' == 0).");
@@ -100,7 +100,7 @@ void Argument_map_info
 	if (arg_t == nullptr)
 		throw std::invalid_argument("No argument type has been given ('arg_t' == 0).");
 
-	(*this)[tags] = new Argument_info(arg_t, doc);
+	(*this)[tags] = new Argument_info(arg_t, doc, advanced_arg);
 }
 
 void Argument_map_info

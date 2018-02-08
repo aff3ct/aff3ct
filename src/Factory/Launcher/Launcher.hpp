@@ -29,10 +29,11 @@ struct Launcher : public Factory
 		std::string cde_type;
 
 		// optional parameters
-		std::string sim_type        = "BFER";
-		int         sim_prec        = 32;
-		bool        display_help    = false;
-		bool        display_version = false;
+		std::string sim_type         = "BFER";
+		int         sim_prec         = 32;
+		bool        display_help     = false;
+		bool        display_adv_help = false;
+		bool        display_version  = false;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Launcher_prefix);

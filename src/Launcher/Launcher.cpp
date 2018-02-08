@@ -83,7 +83,7 @@ int Launcher::read_arguments()
 	if (params_common.display_help)
 	{
 		auto grps = factory::Factory::create_groups({&params_common});
-		ah.print_help(this->req_args, this->opt_args, grps);
+		ah.print_help(this->req_args, this->opt_args, grps, params_common.display_adv_help);
 	}
 
 	// print usage

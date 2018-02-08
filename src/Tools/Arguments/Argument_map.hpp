@@ -18,7 +18,7 @@ using Argument_tag = std::vector<std::string>;
 struct Argument_info
 {
     Argument_info();
-    Argument_info(Argument_type* type, std::string doc);
+    Argument_info(Argument_type* type, const std::string& doc, const bool advanced_arg = false);
 
 	virtual ~Argument_info();
 
@@ -32,6 +32,7 @@ struct Argument_info
 
 	Argument_type* type = nullptr;
 	std::string    doc  = "";
+	bool           advanced_arg = false;
 };
 
 
@@ -49,7 +50,7 @@ public:
 
 	Argument_map_info& operator=(const Argument_map_info& other);
 
-	void add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc);
+	void add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc, const bool advanced_arg = false);
 
 	void erase(const Argument_tag& tags);
 

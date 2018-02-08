@@ -76,7 +76,8 @@ public:
 	/*!
 	 * \brief Prints the traditional usage and the whole help.
 	 */
-	void print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args) const;
+	void print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args,
+	                const bool print_advanced_args = true) const;
 
 	/*!
 	 * \brief Prints the traditional usage and the whole help grouped by argument categories.
@@ -84,7 +85,8 @@ public:
 	 * \param arg_groups: group of argument based on a prefix,
 	 *                    arg_groups = {{"prefix1", "Group name1"}, {"prefix2", "Group name2"}, [...]}.
 	 */
-	void print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args, const Argument_map_group& arg_groups) const;
+	void print_help(const Argument_map_info & req_args,   const Argument_map_info &opt_args,
+	                const Argument_map_group& arg_groups, const bool print_advanced_args = true) const;
 
 	/*
 	 * return the given tag with its command line argument format.
@@ -120,7 +122,7 @@ private:
 	 * \param required: true if this is a required parameter.
 	 */
 	void print_help(const Argument_tag &tags, const Argument_info &info, const size_t max_n_char_arg,
-	                const bool required = false) const;
+	                const bool required = false,const bool print_advanced_args = true) const;
 
 	void print_help_title(const std::string& title) const;
 

@@ -104,6 +104,11 @@ void factory::Launcher::parameters
 		"print this help.");
 
 	opt_args.add(
+		{"Help", "H"},
+		tools::None(),
+		"print this help with the advanced arguments.");
+
+	opt_args.add(
 		{"version", "v"},
 		tools::None(),
 		"print informations about the version of the code.");
@@ -116,8 +121,19 @@ void factory::Launcher::parameters
 
 	if(vals.exist({p+"-cde-type", "C"})) this->cde_type        = vals.at({p+"-cde-type", "C"}); // required
 	if(vals.exist({p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
-	if(vals.exist({"help",        "h"})) this->display_help    = true;
 	if(vals.exist({"version",     "v"})) this->display_version = true;
+
+	if(vals.exist({"help", "h"}))
+	{
+		this->display_help     = true;
+		this->display_adv_help = false;
+	}
+
+	if(vals.exist({"Help", "H"}))
+	{
+		this->display_help     = true;
+		this->display_adv_help = true;
+	}
 
 #ifdef MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});

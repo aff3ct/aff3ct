@@ -47,11 +47,18 @@ Argument_map_value Argument_handler
 
 	for (unsigned i = 0; i < req_found_pos.size(); ++i)
 	{
+		auto it_arg = req_args.begin();
+		std::advance(it_arg, i);
+
+		if (it_arg->second->advanced_arg)
+		{
+			std::string message = "The \"" + print_tag(it_arg->first) + "\" argument is required and advanced (can't be both)!";
+			warnings.push_back(message);
+		}
+
 		if (req_found_pos[i])
 			continue;
 
-		auto it_arg = req_args.begin();
-		std::advance(it_arg, i);
 		std::string message = "The \"" + print_tag(it_arg->first) + "\" argument is required.";
 		errors.push_back(message);
 	}
@@ -190,7 +197,7 @@ size_t Argument_handler
 }
 
 void Argument_handler
-::print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args) const
+::print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args, const bool print_advanced_args) const
 {
 	this->print_usage(req_args);
 	std::cout << std::endl;
@@ -200,10 +207,10 @@ void Argument_handler
 
 	// print arguments
 	for (auto it = req_args.begin(); it != req_args.end(); ++it)
-		this->print_help(it->first, *it->second, max_n_char_arg, true);
+		this->print_help(it->first, *it->second, max_n_char_arg, true, print_advanced_args);
 
 	for (auto it = opt_args.begin(); it != opt_args.end(); ++it)
-		this->print_help(it->first, *it->second, max_n_char_arg, false);
+		this->print_help(it->first, *it->second, max_n_char_arg, false, print_advanced_args);
 
 	std::cout << std::endl;
 }
@@ -229,17 +236,24 @@ std::string split_doc(const std::string& line, const std::string& start_line, co
 }
 
 void Argument_handler
-::print_help(const Argument_tag &tags, const Argument_info &info, const size_t max_n_char_arg, const bool required) const
+::print_help(const Argument_tag &tags, const Argument_info &info, const size_t max_n_char_arg, const bool required,
+             const bool print_advanced_args) const
 {
 	Format arg_format = 0;
+	const std::string tab = "    ";
+
+	std::string tabr = tab;
+
+	if (required)
+		tabr = format("{R} ", arg_format | Style::BOLD | FG::Color::ORANGE);
+	else if (info.advanced_arg && print_advanced_args)
+		tabr = format("{A} ", arg_format | Style::BOLD | FG::Color::BLUE);
+	else if (info.advanced_arg && !print_advanced_args)
+		return;
+
 
 	std::string tags_str = this->print_tag(tags);
 	tags_str.append(max_n_char_arg - tags_str.size(), ' ');
-
-	const std::string tab = "    ";
-	std::string tabr = tab;
-	if (required)
-		tabr = format("{R} ", arg_format | Style::BOLD | FG::Color::ORANGE);
 
 	std::cout << tabr << format(tags_str, arg_format | Style::BOLD);
 
@@ -260,7 +274,8 @@ void Argument_handler
 }
 
 void Argument_handler
-::print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args, const Argument_map_group& arg_groups) const
+::print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args, const Argument_map_group& arg_groups,
+             const bool print_advanced_args) const
 {
 	this->print_usage(req_args);
 	std::cout << std::endl;
@@ -296,7 +311,7 @@ void Argument_handler
 
 				req_args_print_pos[dist] = true;
 
-				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, true);
+				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, true, print_advanced_args);
 			}
 		}
 
@@ -308,15 +323,18 @@ void Argument_handler
 
 			if (tag.find(prefix) == 0 && !opt_args_print_pos[dist])
 			{
+				opt_args_print_pos[dist] = true;
+
+				if (it_arg->second->advanced_arg && !print_advanced_args)
+					continue;
+
 				if (!title_displayed)
 				{
 					print_help_title(it_grp->second);
 					title_displayed = true;
 				}
 
-				opt_args_print_pos[dist] = true;
-
-				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, false);
+				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, false, print_advanced_args);
 			}
 		}
 
@@ -354,7 +372,7 @@ void Argument_handler
 				title_displayed = true;
 			}
 
-			this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, true);
+			this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, true, print_advanced_args);
 		}
 	}
 
@@ -386,7 +404,7 @@ void Argument_handler
 				title_displayed = true;
 			}
 
-			this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, false);
+			this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, false, print_advanced_args);
 		}
 	}
 }
