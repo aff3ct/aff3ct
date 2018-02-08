@@ -40,13 +40,12 @@ void Command_parser
 		// write the parameters values in "params" from "read_args"
 		Factory::store(params, read_args);
 	}
-	catch(const aff3ct::tools::exception& e)
-	{
-		errors.push_back(e.what_no_bt());
-	}
 	catch(const std::exception& e)
 	{
-		errors.push_back(tools::addr2line(e.what()));
+		auto save = tools::exception::no_backtrace;
+		tools::exception::no_backtrace = true;
+		errors.push_back(e.what());
+		tools::exception::no_backtrace = save;
 	}
 
 	if (read_args.exist(Command_parser::help_tag))

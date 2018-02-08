@@ -224,7 +224,7 @@ void BFER<B,R,Q>
 			module::Monitor::stop();
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
 
-			std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
+			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 			simu_error = true;
 		}
 
@@ -320,10 +320,15 @@ void BFER<B,R,Q>
 
 		simu->mutex_exception.lock();
 
-		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), e.what()) == simu->prev_err_messages.end())
+		auto save = tools::exception::no_backtrace;
+		tools::exception::no_backtrace = true;
+		std::string msg = e.what(); // get only the function signature
+		tools::exception::no_backtrace = save;
+
+		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) == simu->prev_err_messages.end())
 		{
-			std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
-			simu->prev_err_messages.push_back(e.what());
+			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl; // with backtrace if debug mode
+			simu->prev_err_messages.push_back(msg); // save only the function signature
 		}
 		simu->mutex_exception.unlock();
 	}

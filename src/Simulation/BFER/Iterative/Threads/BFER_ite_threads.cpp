@@ -71,8 +71,18 @@ void BFER_ite_threads<B,R,Q>
 		module::Monitor::stop();
 
 		simu->mutex_exception.lock();
-		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), e.what()) == simu->prev_err_messages.end())
-			simu->prev_err_messages.push_back(e.what());
+
+		auto save = tools::exception::no_backtrace;
+		tools::exception::no_backtrace = true;
+		std::string msg = e.what(); // get only the function signature
+		tools::exception::no_backtrace = save;
+
+		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) == simu->prev_err_messages.end())
+		{
+			simu->prev_err_messages.push_back(msg); // save only the function signature
+			simu->prev_err_messages_to_display.push_back(e.what()); // with backtrace if debug mode
+		}
+
 		simu->mutex_exception.unlock();
 	}
 }
@@ -326,7 +336,7 @@ void BFER_ite_threads<B,R,Q>
 	auto t_snr = steady_clock::now();
 
 	while ((!this->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
-	        (this->params_BFER_ite.stop_time == seconds(0) || 
+	        (this->params_BFER_ite.stop_time == seconds(0) ||
 	        (steady_clock::now() - t_snr) < this->params_BFER_ite.stop_time) &&
 	        (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
 	{

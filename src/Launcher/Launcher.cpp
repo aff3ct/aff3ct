@@ -71,13 +71,12 @@ int Launcher::read_arguments()
 	{
 		this->store_args();
 	}
-	catch(const tools::exception& e)
-	{
-		cmd_error.push_back(e.what_no_bt());
-	}
 	catch(const std::exception& e)
 	{
-		cmd_error.push_back(tools::addr2line(e.what()));
+		auto save = tools::exception::no_backtrace;
+		tools::exception::no_backtrace = true;
+		cmd_error.push_back(e.what());
+		tools::exception::no_backtrace = save;
 	}
 
 	if (params_common.display_help)
@@ -171,9 +170,9 @@ void Launcher::launch()
 	{
 		simu = this->build_simu();
 	}
-	catch (std::exception const& e)
+	catch(const std::exception& e)
 	{
-		std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
+		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 	}
 
 	if (simu != nullptr)
@@ -188,9 +187,9 @@ void Launcher::launch()
 		{
 			simu->launch();
 		}
-		catch (std::exception const& e)
+		catch(const std::exception& e)
 		{
-			std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
+			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 		}
 	}
 

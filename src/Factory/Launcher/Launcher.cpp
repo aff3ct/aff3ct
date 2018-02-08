@@ -112,6 +112,18 @@ void factory::Launcher::parameters
 		{"version", "v"},
 		tools::None(),
 		"print informations about the version of the code.");
+
+	opt_args.add(
+		{"except-no-bt"},
+		tools::None(),
+		"do not print the backtrace when displaying exception.",
+		true);
+
+	opt_args.add(
+		{"except-no-a2l"},
+		tools::None(),
+		"do not enhance the backtrace when displaying exception.",
+		true);
 }
 
 void factory::Launcher::parameters
@@ -138,6 +150,9 @@ void factory::Launcher::parameters
 #ifdef MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
+
+	if(vals.exist({"except-no-bt" })) tools::exception::no_backtrace = true;
+	if(vals.exist({"except-no-a2l"})) tools::exception::no_addr2line = true;
 }
 
 void factory::Launcher::parameters

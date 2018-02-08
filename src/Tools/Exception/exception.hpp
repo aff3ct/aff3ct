@@ -10,6 +10,10 @@ namespace tools
 {
 class exception : public std::exception
 {
+public:
+	static bool no_backtrace;
+	static bool no_addr2line;
+
 protected:
 	static const std::string empty_string;
 
@@ -17,6 +21,7 @@ private:
 	std::string message;   // the message only
 #ifdef ENABLE_BACK_TRACE
 	std::string backtrace; // the message + the backtrace
+	std::string backtrace_a2l; // the message + the backtrace with addr2line conversion
 #endif
 
 public:
@@ -31,8 +36,7 @@ public:
 
 	virtual ~exception() throw();
 
-	virtual const char* what      () const throw(); // return the message and the back trace if enabled
-	virtual const char* what_no_bt() const throw(); // return only the message
+	virtual const char* what() const throw(); // return the message and the back trace if enabled
 };
 }
 }

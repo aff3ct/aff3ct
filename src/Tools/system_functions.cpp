@@ -115,7 +115,7 @@ std::string aff3ct::tools::runSystemCommand(std::string cmd)
 
 std::string aff3ct::tools::addr2line(const std::string& backtrace)
 {
-#ifdef DNDEBUG
+#ifdef NDEBUG
 	return backtrace;
 #elif (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
 	// TODO Bug: lines does not always match with the real line where are called the functions.

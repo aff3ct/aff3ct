@@ -32,6 +32,7 @@ private:
 protected:
 	std::mutex               mutex_exception;
 	std::vector<std::string> prev_err_messages;
+	std::vector<std::string> prev_err_messages_to_display;
 
 	// a barrier to synchronize the threads
 	tools::Barrier barrier;

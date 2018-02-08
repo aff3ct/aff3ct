@@ -160,7 +160,7 @@ int sc_main(int argc, char **argv)
 	}
 	catch(std::exception const& e)
 	{
-		std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
+		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 	}
 
 #ifdef ENABLE_MPI

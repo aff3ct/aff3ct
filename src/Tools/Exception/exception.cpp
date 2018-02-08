@@ -12,6 +12,8 @@
 using namespace aff3ct::tools;
 
 const std::string aff3ct::tools::exception::empty_string = "";
+bool aff3ct::tools::exception::no_backtrace = false;
+bool aff3ct::tools::exception::no_addr2line = false;
 
 exception
 ::exception() throw()
@@ -56,14 +58,18 @@ const char* exception
 ::what() const throw()
 {
 #ifdef ENABLE_BACK_TRACE
-	return backtrace.c_str();
+	if (no_backtrace)
+		return message.c_str();
+	else if (no_addr2line)
+		return backtrace.c_str();
+
+	std::string* bt_a2l = const_cast<std::string*>(&backtrace_a2l);
+
+	if (bt_a2l->empty())
+		*bt_a2l = tools::addr2line(backtrace);
+
+	return bt_a2l->c_str();
 #else
 	return message.c_str();
 #endif
-}
-
-const char* exception
-::what_no_bt() const throw()
-{
-	return message.c_str();
 }

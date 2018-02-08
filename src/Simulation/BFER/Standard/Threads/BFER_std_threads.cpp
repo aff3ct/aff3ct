@@ -53,8 +53,8 @@ void BFER_std_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params_BFER_std.n_threads; tid++)
 		threads[tid -1].join();
 
-	if (!this->prev_err_messages.empty())
-		throw std::runtime_error(this->prev_err_messages.back());
+	if (!this->prev_err_messages_to_display.empty())
+		throw std::runtime_error(this->prev_err_messages_to_display.back());
 }
 
 template <typename B, typename R, typename Q>
@@ -71,8 +71,18 @@ void BFER_std_threads<B,R,Q>
 		module::Monitor::stop();
 
 		simu->mutex_exception.lock();
-		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), e.what()) == simu->prev_err_messages.end())
-			simu->prev_err_messages.push_back(e.what());
+
+		auto save = tools::exception::no_backtrace;
+		tools::exception::no_backtrace = true;
+		std::string msg = e.what(); // get only the function signature
+		tools::exception::no_backtrace = save;
+
+		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) == simu->prev_err_messages.end())
+		{
+			simu->prev_err_messages.push_back(msg); // save only the function signature
+			simu->prev_err_messages_to_display.push_back(e.what()); // with backtrace if debug mode
+		}
+
 		simu->mutex_exception.unlock();
 	}
 }
@@ -255,7 +265,7 @@ void BFER_std_threads<B,R,Q>
 
 	// communication chain execution
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
-	       (this->params_BFER_std.stop_time == seconds(0) || 
+	       (this->params_BFER_std.stop_time == seconds(0) ||
 	       (steady_clock::now() - t_snr) < this->params_BFER_std.stop_time) &&
 	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
 	{
