@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_Rayleigh_LLR<R>
-::Channel_Rayleigh_LLR(const int N, const bool complex, tools::Noise<R> *noise_generator, const bool add_users,
+::Channel_Rayleigh_LLR(const int N, const bool complex, tools::Gaussian_gen<R> *noise_generator, const bool add_users,
                        const R sigma, const int n_frames)
 : Channel<R>(N, sigma, n_frames),
   complex(complex),
@@ -40,7 +40,7 @@ Channel_Rayleigh_LLR<R>
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
-  noise_generator(new tools::Noise_std<R>(seed))
+  noise_generator(new tools::Gaussian_noise_generator_std<R>(seed))
 {
 	const std::string name = "Channel_Rayleigh_LLR";
 	this->set_name(name);
