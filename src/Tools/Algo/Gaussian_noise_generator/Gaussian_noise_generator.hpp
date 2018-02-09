@@ -1,5 +1,5 @@
-#ifndef NOISE_HPP_
-#define NOISE_HPP_
+#ifndef GAUSSIAN_NOISE_GENERATOR_HPP_
+#define GAUSSIAN_NOISE_GENERATOR_HPP_
 
 #include <vector>
 
@@ -8,14 +8,14 @@ namespace aff3ct
 namespace tools
 {
 template <typename R = float>
-class Noise
+class Gaussian_noise_generator
 {
 public:
-	Noise()
+	Gaussian_noise_generator()
 	{
 	}
 
-	virtual ~Noise()
+	virtual ~Gaussian_noise_generator()
 	{
 	}
 
@@ -27,8 +27,10 @@ public:
 
 	virtual void set_seed(const int seed) = 0;
 	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0) = 0;
-
 };
+
+template <typename R = float>
+using Gaussian_gen = Gaussian_noise_generator<R>;
 }
 }
 

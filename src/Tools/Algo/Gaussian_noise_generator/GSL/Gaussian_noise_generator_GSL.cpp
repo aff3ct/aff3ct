@@ -2,14 +2,14 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Noise_GSL.hpp"
+#include "Gaussian_noise_generator_GSL.hpp"
 
 using namespace aff3ct::tools;
 
 template <typename R>
-Noise_GSL<R>
-::Noise_GSL(const int seed)
-: Noise<R>(),
+Gaussian_noise_generator_GSL<R>
+::Gaussian_noise_generator_GSL(const int seed)
+: Gaussian_noise_generator<R>(),
   rng(gsl_rng_alloc(gsl_rng_mt19937))
 {
 	if (rng == nullptr)
@@ -19,21 +19,21 @@ Noise_GSL<R>
 }
 
 template <typename R>
-void Noise_GSL<R>
+void Gaussian_noise_generator_GSL<R>
 ::set_seed(const int seed)
 {
 	gsl_rng_set(rng, seed);
 }
 
 template <typename R>
-Noise_GSL<R>
-::~Noise_GSL()
+Gaussian_noise_generator_GSL<R>
+::~Gaussian_noise_generator_GSL()
 {
 	gsl_rng_free(rng);
 }
 
 template <typename R>
-void Noise_GSL<R>
+void Gaussian_noise_generator_GSL<R>
 ::generate(R *noise, const unsigned length, const R sigma, const R mu)
 {
 	for (unsigned i = 0; i < length; i++)
@@ -43,10 +43,10 @@ void Noise_GSL<R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::tools::Noise_GSL<R_32>;
-template class aff3ct::tools::Noise_GSL<R_64>;
+template class aff3ct::tools::Gaussian_noise_generator_GSL<R_32>;
+template class aff3ct::tools::Gaussian_noise_generator_GSL<R_64>;
 #else
-template class aff3ct::tools::Noise_GSL<R>;
+template class aff3ct::tools::Gaussian_noise_generator_GSL<R>;
 #endif
 // ==================================================================================== explicit template instantiation
 

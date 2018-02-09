@@ -11,7 +11,7 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const std::string& gains_filename,
-                            const int gain_occurrences, tools::Noise<R> *noise_generator, const bool add_users,
+                            const int gain_occurrences, tools::Gaussian_gen<R> *noise_generator, const bool add_users,
                             const R sigma, const int n_frames)
 : Channel<R>(N, sigma, n_frames),
   complex(complex),
@@ -45,7 +45,7 @@ Channel_Rayleigh_LLR_user<R>
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
-  noise_generator(new tools::Noise_std<R>(seed)),
+  noise_generator(new tools::Gaussian_noise_generator_std<R>(seed)),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
   gain_index(0)

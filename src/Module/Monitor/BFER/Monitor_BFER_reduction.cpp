@@ -13,11 +13,12 @@ using namespace aff3ct::module;
 
 template <typename B>
 Monitor_BFER_reduction<B>
-::Monitor_BFER_reduction(const int size, const unsigned max_fe, std::vector<Monitor_BFER<B>*> monitors,
-                         const int n_frames)
-: Monitor_BFER<B>           (size, max_fe, n_frames),
-  n_analyzed_frames_historic(0                     ),
-  monitors                  (monitors              )
+::Monitor_BFER_reduction(const std::vector<Monitor_BFER<B>*> &monitors)
+: Monitor_BFER<B>((monitors.size() && monitors[0]) ? monitors[0]->get_size()     : 1,
+                  (monitors.size() && monitors[0]) ? monitors[0]->get_fe_limit() : 1,
+                  (monitors.size() && monitors[0]) ? monitors[0]->get_n_frames() : 1),
+  n_analyzed_frames_historic(0),
+  monitors(monitors)
 {
 	const std::string name = "Monitor_BFER_reduction";
 	this->set_name(name);
@@ -29,9 +30,42 @@ Monitor_BFER_reduction<B>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	for (size_t i = 0; i < monitors.size(); ++i)
-		if (monitors[i] == nullptr)
-			throw tools::logic_error(__FILE__, __LINE__, __func__, "'monitors[i]' can't be null.");
+	for (size_t m = 0; m < monitors.size(); m++)
+	{
+		if (monitors[m] == nullptr)
+		{
+			std::stringstream message;
+			message << "'monitors[m]' can't be null ('m' = " << m << ").";
+			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (monitors[0]->get_size() != monitors[m]->get_size())
+		{
+			std::stringstream message;
+			message << "'monitors[0]->get_size()' and 'monitors[m]->get_size()' have to be equal ('m' = " << m 
+			        << ", 'monitors[0]->get_size()' = " << monitors[0]->get_size() 
+			        << ", 'monitors[m]->get_size()' = " << monitors[m]->get_size() << ").";
+			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (monitors[0]->get_fe_limit() != monitors[m]->get_fe_limit())
+		{
+			std::stringstream message;
+			message << "'monitors[0]->get_fe_limit()' and 'monitors[m]->get_fe_limit()' have to be equal ('m' = " << m 
+			        << ", 'monitors[0]->get_fe_limit()' = " << monitors[0]->get_fe_limit() 
+			        << ", 'monitors[m]->get_fe_limit()' = " << monitors[m]->get_fe_limit() << ").";
+			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (monitors[0]->get_n_frames() != monitors[m]->get_n_frames())
+		{
+			std::stringstream message;
+			message << "'monitors[0]->get_n_frames()' and 'monitors[m]->get_n_frames()' have to be equal ('m' = " << m 
+			        << ", 'monitors[0]->get_n_frames()' = " << monitors[0]->get_n_frames() 
+			        << ", 'monitors[m]->get_n_frames()' = " << monitors[m]->get_n_frames() << ").";
+			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
 }
 
 template <typename B>

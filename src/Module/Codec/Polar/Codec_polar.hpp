@@ -18,7 +18,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename Q = float>
-class Codec_polar : public Codec_SISO_SIHO<B,Q>
+class Codec_polar : public Codec_SISO_SIHO<B,Q>, public tools::Frozenbits_notifier
 {
 protected:
 	const bool adaptive_fb;
@@ -38,6 +38,10 @@ public:
 	virtual ~Codec_polar();
 
 	void set_sigma(const float sigma);
+
+	std::vector<bool>& get_frozen_bits();
+
+	virtual void notify_frozenbits_update();
 
 protected:
 	void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);

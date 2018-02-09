@@ -6,13 +6,13 @@
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
 
-#include "Tools/Algo/Noise/Standard/Noise_std.hpp"
-#include "Tools/Algo/Noise/Fast/Noise_fast.hpp"
+#include "Tools/Algo/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
 #ifdef CHANNEL_MKL
-#include "Tools/Algo/Noise/MKL/Noise_MKL.hpp"
+#include "Tools/Algo/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
 #endif
 #ifdef CHANNEL_GSL
-#include "Tools/Algo/Noise/GSL/Noise_GSL.hpp"
+#include "Tools/Algo/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
 #endif
 
 #include "Channel.hpp"
@@ -153,18 +153,17 @@ template <typename R>
 module::Channel<R>* Channel::parameters
 ::build() const
 {
-	tools::Noise<R>* n = nullptr;
-	     if (implem == "STD" ) n = new tools::Noise_std <R>(seed);
-	else if (implem == "FAST") n = new tools::Noise_fast<R>(seed);
+	tools::Gaussian_noise_generator<R>* n = nullptr;
+	     if (implem == "STD" ) n = new tools::Gaussian_noise_generator_std <R>(seed);
+	else if (implem == "FAST") n = new tools::Gaussian_noise_generator_fast<R>(seed);
 #ifdef CHANNEL_MKL
-	else if (implem == "MKL" ) n = new tools::Noise_MKL <R>(seed);
+	else if (implem == "MKL" ) n = new tools::Gaussian_noise_generator_MKL <R>(seed);
 #endif
 #ifdef CHANNEL_GSL
-	else if (implem == "GSL" ) n = new tools::Noise_GSL <R>(seed);
+	else if (implem == "GSL" ) n = new tools::Gaussian_noise_generator_GSL <R>(seed);
 #endif
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-
 
 	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, sigma, n_frames);
 	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, sigma, n_frames);
