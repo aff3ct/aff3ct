@@ -21,11 +21,15 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_chase_pyndiah<B,R>
 ::Decoder_chase_pyndiah(const int K, const int N, // N includes the parity bit if any
-                        Decoder_HIHO<B> &dec_,
-                        Encoder     <B> &enc_,
+                        Decoder_BCH<B,R> &dec_,
+                        Encoder    <B  > &enc_,
                         const int n_least_reliable_positions_,
                         const int n_test_vectors_,
-                        const int n_competitors_)
+                        const int n_competitors_,
+                        const float a,
+                        const float b,
+                        const float c,
+                        const float d)
 : Decoder               (K, N, dec_.get_n_frames(), dec_.get_simd_inter_frame_level()),
   Decoder_SISO_SIHO<B,R>(K, N, dec_.get_n_frames(), dec_.get_simd_inter_frame_level()),
   dec                       (dec_                                                                    ),
@@ -35,6 +39,11 @@ Decoder_chase_pyndiah<B,R>
   n_test_vectors            (n_test_vectors_ ? n_test_vectors_ : (int)1 << n_least_reliable_positions),
   n_competitors             (n_competitors_  ? n_competitors_  : n_test_vectors                      ),
   parity_extended           (this->N == (N_np +1)                                                    ),
+
+  a_((R)a),
+  b_((R)b),
+  c_((R)c),
+  d_((R)d),
 
   least_reliable_pos        (n_least_reliable_positions                                              ),
   competitors               (n_test_vectors                                                          ),
@@ -89,7 +98,7 @@ Decoder_chase_pyndiah<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	generate_bit_flipping_candidates(); // generate bit flipping patterns in 'tv_candidates'
+	generate_bit_flipping_candidates(); // generate bit flipping patterns in 'test_patterns'
 }
 
 template <typename B, typename R>
@@ -195,8 +204,8 @@ void Decoder_chase_pyndiah<B,R>
     {
         std::cerr << i << ". " << metrics[i] << " -> ";
 
-		for (unsigned j = 0; j < tv_candidates[i].size(); j++)
-			std::cerr << tv_candidates[i][j] << " ";
+		for (unsigned j = 0; j < test_patterns[i].size(); j++)
+			std::cerr << test_patterns[i][j] << " ";
 
 
     	std::cerr << std::endl;
@@ -251,7 +260,8 @@ void Decoder_chase_pyndiah<B,R>
 		bit_flipping(hard_Y_N.data(), c);
 
 		dec.decode_hiho_cw(hard_Y_N.data(), test_vect.data() + c*this->N); // parity bit is ignored by the decoder
-		is_wrong[c] = !enc.is_codeword(test_vect.data() + c*this->N);
+		//is_wrong[c] = !enc.is_codeword(test_vect.data() + c*this->N);
+		is_wrong[c] = !dec.last_is_codeword;
 
 		if (this->parity_extended)
 			test_vect[(c+1)*this->N -1] = tools::compute_parity(test_vect.data() + c*this->N, dec.get_N());
@@ -344,20 +354,20 @@ void Decoder_chase_pyndiah<B,R>
 
 	// compute beta, the sum of the least reliable position reliabilities in the decided word
 	R beta = 0;
-	for (int i = 0; i < n_least_reliable_positions; i++)
+	for (int i = 0; i < n_least_reliable_positions && i < 3; i++)
 		beta += least_reliable_pos[i].metric;
 
-#ifndef NDEBUG
-		std::cerr << "beta = " << beta << ", alpha = " << alpha<< ", DW.metric = " << DW.metric << std::endl;
-#endif
+	beta -= c_ * DW.metric;
 
-	beta -= DW.metric;
+#ifndef NDEBUG
+		std::cerr << "beta = " << beta << ", DW.metric = " << DW.metric << std::endl;
+#endif
 
 	n_good_competitors = std::min(n_good_competitors, n_competitors); // if there is less than 'n_competitors' good competitors
 	                                                                  // then take only them for reliability calculation
 
 	for (int j = 1; j < n_good_competitors; j++)
-		competitors[j].metric -= DW.metric;
+		competitors[j].metric = (competitors[j].metric - DW.metric) * b_;
 
 
 	for (int i = 0; i < this->N; i++)
@@ -377,7 +387,7 @@ void Decoder_chase_pyndiah<B,R>
 		}
 		else // same bits for each candidates
 		{
-			reliability = std::abs(Y_N1[i]) + beta;
+			reliability = beta + d_ * std::abs(Y_N1[i]);
 			if (reliability < 0)
 				reliability = 0;
 		}
@@ -389,7 +399,7 @@ void Decoder_chase_pyndiah<B,R>
 		std::cerr << "Rel:  i = " << i << ", Y_N1 = " << Y_N1[i] << ", competitors[" << j << "].metric = " << competitors[j].metric;
 #endif
 
-		Y_N2[i] = reliability - Y_N1[i];
+		Y_N2[i] = reliability - a_ * Y_N1[i];
 
 #ifndef NDEBUG
 		std::cerr  << ", reliability = " << reliability << ", Y_N2 = " << Y_N2[i] << std::endl;
@@ -402,20 +412,39 @@ void Decoder_chase_pyndiah<B,R>
 ::bit_flipping(B* hard_vect, const int c)
 {
 	for (int i = 0; i < n_least_reliable_positions; i++)
-		hard_vect[least_reliable_pos[i].pos] = tv_candidates[c][i] ? !hard_vect[least_reliable_pos[i].pos] : hard_vect[least_reliable_pos[i].pos];
+		hard_vect[least_reliable_pos[i].pos] = test_patterns[c][i] ? !hard_vect[least_reliable_pos[i].pos] : hard_vect[least_reliable_pos[i].pos];
 }
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
 ::generate_bit_flipping_candidates()
 {
-	tv_candidates.resize(n_test_vectors, std::vector<bool>(n_least_reliable_positions, false));
+	test_patterns.resize(n_test_vectors, std::vector<bool>(n_least_reliable_positions, false));
 
 	std::vector<int> cand(n_test_vectors, 0);
 
 	if (n_test_vectors == (1 << n_least_reliable_positions))
 	{
 		std::iota(cand.begin(), cand.end(), 0);
+	}
+	else if (n_test_vectors == 16 && n_least_reliable_positions == 5)
+	{ // 3 among 5
+		cand[ 0] = 0;
+		cand[ 1] = 1 << 0;
+		cand[ 2] = 1 << 1;
+		cand[ 3] = 1 << 2;
+		cand[ 4] = 1 << 3;
+		cand[ 5] = 1 << 4;
+		cand[ 6] = 1 + (1 << 1);
+		cand[ 7] = 1 + (1 << 2);
+		cand[ 8] = 1 + (1 << 3);
+		cand[ 9] = 1 + (1 << 4);
+		cand[10] = 3 + (1 << 2);
+		cand[11] = 3 + (1 << 3);
+		cand[12] = 3 + (1 << 4);
+		cand[13] = 5 + (1 << 3);
+		cand[14] = 5 + (1 << 4);
+		cand[15] = 9 + (1 << 4);
 	}
 	else if (n_test_vectors <= (n_least_reliable_positions * (n_least_reliable_positions + 1) / 2 + 1))
 	{
@@ -452,12 +481,12 @@ void Decoder_chase_pyndiah<B,R>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "unimplemented method");
 
 
-	// one 'tv_candidates' element is the bit flipping pattern to apply on the least reliable positions
+	// one 'test_patterns' element is the bit flipping pattern to apply on the least reliable positions
 	// in this pattern, the first position is the instruction to flip or not the least reliable position
 	// the second position is the instruction to flip the second least reliable position, and so on.
 	for (int i = 0; i < n_test_vectors; i++)
 		for (int j = 0; j < n_least_reliable_positions; j++)
-			tv_candidates[i][j] = ((cand[i] >> j) & (int)1) != 0;
+			test_patterns[i][j] = ((cand[i] >> j) & (int)1) != 0;
 }
 
 // ==================================================================================== explicit template instantiation

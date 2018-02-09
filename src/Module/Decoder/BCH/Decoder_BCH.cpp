@@ -20,7 +20,7 @@ Decoder_BCH<B, R>
 {
 	const std::string name = "Decoder_BCH";
 	this->set_name(name);
-	
+
 	if (K <= 3)
 	{
 		std::stringstream message;
@@ -59,6 +59,8 @@ void Decoder_BCH<B, R>
 		/* convert syndrome from polynomial form to index form  */
 		s[i] = index_of[s[i]];
 	}
+
+	last_is_codeword = !syn_error;
 
 	if (syn_error)
 	{ /* if there are errors, try to correct them */
@@ -192,9 +194,13 @@ void Decoder_BCH<B, R>
 			}
 
 			if (count == l[u])
+			{
+				last_is_codeword = true;
+
 				/* no. roots = degree of elp hence <= t errors */
 				for (i = 0; i < l[u]; i++)
 					Y_N[loc[i]] ^= 1;
+			}
 		}
 	}
 }

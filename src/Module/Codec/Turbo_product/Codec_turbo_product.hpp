@@ -23,9 +23,9 @@ class Codec_turbo_product : public Codec_SISO_SIHO<B,Q>
 {
 protected:
 	const aff3ct::tools::BCH_polynomial_generator GF_poly;
-	aff3ct::module::Encoder_BCH <B>* enc_bch;
-	aff3ct::module::Decoder_HIHO<B>* dec_bch;
-	aff3ct::module::Decoder_chase_pyndiah<B,Q>* cp;
+	Encoder_BCH<B  >* enc_bch;
+	Decoder_BCH<B,Q>* dec_bch;
+	Decoder_chase_pyndiah<B,Q>* cp;
 
 public:
 	Codec_turbo_product(const factory::Encoder_turbo_product::parameters &enc_params,

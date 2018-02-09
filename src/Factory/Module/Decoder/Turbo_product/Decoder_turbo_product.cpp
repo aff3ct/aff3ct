@@ -92,7 +92,8 @@ void Decoder_turbo_product::parameters
 
 	opt_args[{p+"-alpha"}] =
 		{"string",
-		 "extrinsic coefficients, one by half iteration (so twice more than number of iterations). If only one, then automatically extended to all iterations."};
+		 "extrinsic coefficients, one by half iteration (so twice more than number of iterations)."
+		 " If not enough, then automatically extended the last to all iterations."};
 
 	opt_args[{p+"-p"}] =
 		{"strictly_positive_int",
@@ -110,6 +111,10 @@ void Decoder_turbo_product::parameters
 		{"",
 		 "extends decoder with a parity bits."};
 
+	opt_args[{p+"-abcd"}] =
+		{"string",
+		 "Chase Pyndiah constant coefficients."};
+
 	sub->get_description(req_args, opt_args);
 
 	auto ps = sub->get_prefix();
@@ -126,8 +131,17 @@ void Decoder_turbo_product::parameters
 
 	if(exist(vals, {p+"-ite", "i"})) this->n_ite                      = std::stoi(vals.at({p+"-ite", "i"}));
 	if(exist(vals, {p+"-p"       })) this->n_least_reliable_positions = std::stoi(vals.at({p+"-p"       }));
-	if(exist(vals, {p+"-t"       })) this->n_test_vectors             = std::stoi(vals.at({p+"-t"       }));
-	if(exist(vals, {p+"-c"       })) this->n_competitors              = std::stoi(vals.at({p+"-c"       }));
+
+	if(exist(vals, {p+"-t"}))
+		this->n_test_vectors = std::stoi(vals.at({p+"-t"}));
+	else
+		this->n_test_vectors = 1<<this->n_least_reliable_positions;
+
+	if(exist(vals, {p+"-c"}))
+		this->n_competitors = std::stoi(vals.at({p+"-c"}));
+	else
+		this->n_competitors = this->n_test_vectors;
+
 	if(exist(vals, {p+"-ext"     })) this->parity_extended            = true;
 
 	this->alpha.resize(this->n_ite*2);
@@ -136,28 +150,43 @@ void Decoder_turbo_product::parameters
 	{
 		auto alpha_list = tools::split(vals.at({p+"-alpha"}), ',');
 
+		auto it = this->alpha.begin();
 
-		if (alpha_list.size() == 1)
-		{
-			std::fill(this->alpha.begin(), this->alpha.end(), std::stof(alpha_list.front()));
-		}
-		else if (alpha_list.size() == this->alpha.size())
-		{
-			for (unsigned i = 0; i < alpha_list.size(); i++)
-				this->alpha[i] = std::stof(alpha_list[i]);
-		}
-		else
-		{
-			std::stringstream message;
-			message << "'" << p << "-alpha' argument has to be twice the length given in '" << p << "-ite'.";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+		auto max = std::min(alpha_list.size(), this->alpha.size());
 
+		for (unsigned i = 0; i < max; i++, it++)
+			*it = std::stof(alpha_list[i]);
+
+		std::fill(it, this->alpha.end(), std::stof(alpha_list.back()));
 	}
 	else
 	{
 		std::fill(this->alpha.begin(), this->alpha.end(), 0.5f);
 	}
+
+
+	this->cp_coef.resize(4);
+	if(exist(vals, {p+"-abcd"}))
+	{
+		auto cp_coef_list = tools::split(vals.at({p+"-abcd"}), ',');
+
+		if (cp_coef_list.size() == this->cp_coef.size())
+		{
+			for (unsigned i = 0; i < cp_coef_list.size(); i++)
+				this->cp_coef[i] = std::stof(cp_coef_list[i]);
+		}
+		else
+		{
+			std::stringstream message;
+			message << "'" << p << "-abcd' argument has to be of length 4.";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+	else
+	{
+		std::fill(this->cp_coef.begin(), this->cp_coef.end(), 1.0f);
+	}
+
 
 	this->sub->n_frames = this->n_frames;
 
@@ -201,13 +230,20 @@ void Decoder_turbo_product::parameters
 		alpha_str << "}";
 
 		headers[p].push_back(std::make_pair("alpha", alpha_str.str()));
+
+		std::stringstream cp_coeff_str;
+		cp_coeff_str << "{";
+		for (unsigned i = 0; i < this->cp_coef.size(); i++)
+			cp_coeff_str << this->cp_coef[i] << (i == this->cp_coef.size()-1 ?"":", ");
+		cp_coeff_str << "}";
+
+		headers[p].push_back(std::make_pair("Chase Pyndiah coeff.", cp_coeff_str.str()));
+
 		headers[p].push_back(std::make_pair("Num. least reliable pos (p)", std::to_string(n_least_reliable_positions)));
 
-		if (n_test_vectors != 0)
-			headers[p].push_back(std::make_pair("Num. test vectors (t)", std::to_string(n_test_vectors)));
+		headers[p].push_back(std::make_pair("Num. test vectors (t)", std::to_string(n_test_vectors)));
 
-		if (n_competitors != 0)
-			headers[p].push_back(std::make_pair("Num. competitors (c)", std::to_string(n_competitors)));
+		headers[p].push_back(std::make_pair("Num. competitors (c)", std::to_string(n_competitors)));
 
 		headers[p].push_back(std::make_pair("Parity extended", (this->parity_extended ? "yes" : "no")));
 
