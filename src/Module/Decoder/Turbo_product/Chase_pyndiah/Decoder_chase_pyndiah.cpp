@@ -26,10 +26,7 @@ Decoder_chase_pyndiah<B,R>
                         const int n_least_reliable_positions_,
                         const int n_test_vectors_,
                         const int n_competitors_,
-                        const float a,
-                        const float b,
-                        const float c,
-                        const float d)
+                        const std::vector<float>& cp_coef)
 : Decoder               (K, N, dec_.get_n_frames(), dec_.get_simd_inter_frame_level()),
   Decoder_SISO_SIHO<B,R>(K, N, dec_.get_n_frames(), dec_.get_simd_inter_frame_level()),
   dec                       (dec_                                                                    ),
@@ -39,12 +36,7 @@ Decoder_chase_pyndiah<B,R>
   n_test_vectors            (n_test_vectors_ ? n_test_vectors_ : (int)1 << n_least_reliable_positions),
   n_competitors             (n_competitors_  ? n_competitors_  : n_test_vectors                      ),
   parity_extended           (this->N == (N_np +1)                                                    ),
-
-  a_((R)a),
-  b_((R)b),
-  c_((R)c),
-  d_((R)d),
-
+  cp_coef                   (cp_coef                                                                 ),
   least_reliable_pos        (n_least_reliable_positions                                              ),
   competitors               (n_test_vectors                                                          ),
   hard_Y_N                  (this->N                                                                 ),
@@ -95,6 +87,14 @@ Decoder_chase_pyndiah<B,R>
 		message << "'enc.get_N()' has to be equal to 'dec.get_K()' "
 		        << "('enc.get_N()' = " << enc.get_N()
 		        << ", 'dec.get_N()' = " << dec.get_N() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (cp_coef.size() != 5)
+	{
+		std::stringstream message;
+		message << "'cp_coef.size()' has to be equal to 5 (the 5 coef a, b, c, d and e of the Pyndiah)"
+		        << "('cp_coef.size()' = " << cp_coef.size() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -354,10 +354,11 @@ void Decoder_chase_pyndiah<B,R>
 
 	// compute beta, the sum of the least reliable position reliabilities in the decided word
 	R beta = 0;
-	for (int i = 0; i < n_least_reliable_positions && i < 3; i++)
+	int max_sum = cp_coef[4] ? std::min((int)cp_coef[4], n_least_reliable_positions) : n_least_reliable_positions;
+	for (int i = 0; i < max_sum; i++)
 		beta += least_reliable_pos[i].metric;
 
-	beta -= c_ * DW.metric;
+	beta -= cp_coef[2] * DW.metric;
 
 #ifndef NDEBUG
 		std::cerr << "beta = " << beta << ", DW.metric = " << DW.metric << std::endl;
@@ -367,7 +368,7 @@ void Decoder_chase_pyndiah<B,R>
 	                                                                  // then take only them for reliability calculation
 
 	for (int j = 1; j < n_good_competitors; j++)
-		competitors[j].metric = (competitors[j].metric - DW.metric) * b_;
+		competitors[j].metric = (competitors[j].metric - DW.metric) * cp_coef[1];
 
 
 	for (int i = 0; i < this->N; i++)
@@ -387,7 +388,7 @@ void Decoder_chase_pyndiah<B,R>
 		}
 		else // same bits for each candidates
 		{
-			reliability = beta + d_ * std::abs(Y_N1[i]);
+			reliability = beta + cp_coef[3] * std::abs(Y_N1[i]);
 			if (reliability < 0)
 				reliability = 0;
 		}
@@ -399,7 +400,7 @@ void Decoder_chase_pyndiah<B,R>
 		std::cerr << "Rel:  i = " << i << ", Y_N1 = " << Y_N1[i] << ", competitors[" << j << "].metric = " << competitors[j].metric;
 #endif
 
-		Y_N2[i] = reliability - a_ * Y_N1[i];
+		Y_N2[i] = reliability - cp_coef[0] * Y_N1[i];
 
 #ifndef NDEBUG
 		std::cerr  << ", reliability = " << reliability << ", Y_N2 = " << Y_N2[i] << std::endl;

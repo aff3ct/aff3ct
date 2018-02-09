@@ -68,10 +68,7 @@ Codec_turbo_product<B,Q>
 	                                    dec_params.n_least_reliable_positions,
 	                                    dec_params.n_test_vectors,
 	                                    dec_params.n_competitors,
-	                                    dec_params.cp_coef[0],
-	                                    dec_params.cp_coef[1],
-	                                    dec_params.cp_coef[2],
-	                                    dec_params.cp_coef[3]);
+	                                    dec_params.cp_coef);
 
 
 	Encoder_turbo_product<B> *encoder_tpc = nullptr;

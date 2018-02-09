@@ -111,9 +111,9 @@ void Decoder_turbo_product::parameters
 		{"",
 		 "extends decoder with a parity bits."};
 
-	opt_args[{p+"-abcd"}] =
+	opt_args[{p+"-cp-coef"}] =
 		{"string",
-		 "Chase Pyndiah constant coefficients."};
+		 "the 5 Chase Pyndiah constant coefficients \"a,b,c,d,e\"."};
 
 	sub->get_description(req_args, opt_args);
 
@@ -165,10 +165,10 @@ void Decoder_turbo_product::parameters
 	}
 
 
-	this->cp_coef.resize(4);
-	if(exist(vals, {p+"-abcd"}))
+	this->cp_coef.resize(5);
+	if(exist(vals, {p+"-cp-coef"}))
 	{
-		auto cp_coef_list = tools::split(vals.at({p+"-abcd"}), ',');
+		auto cp_coef_list = tools::split(vals.at({p+"-cp-coef"}), ',');
 
 		if (cp_coef_list.size() == this->cp_coef.size())
 		{
@@ -178,13 +178,17 @@ void Decoder_turbo_product::parameters
 		else
 		{
 			std::stringstream message;
-			message << "'" << p << "-abcd' argument has to be of length 4.";
+			message << "'" << p << "-cp-coef' argument has to be of length " << this->cp_coef.size() << ".";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 	else
 	{
-		std::fill(this->cp_coef.begin(), this->cp_coef.end(), 1.0f);
+		this->cp_coef[0] = 1.f;
+		this->cp_coef[1] = 1.f;
+		this->cp_coef[2] = 1.f;
+		this->cp_coef[3] = 1.f;
+		this->cp_coef[4] = 0;
 	}
 
 
@@ -346,7 +350,7 @@ template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo
 template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_product::build<B_64,Q_64>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q_64>&, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, module::Encoder<B_64>*);
 #else
 template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::parameters::build<B,Q>(const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, module::Encoder<B>*) const;
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::build<B,Q>(const aff3ct::factory::Decoder_turbo_product::parameters&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, module::Encoder<B>*);
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::build<B,Q>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, module::Encoder<B>*);
 #endif
 
 #ifdef MULTI_PREC

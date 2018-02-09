@@ -27,10 +27,12 @@ namespace module
  *          W = F - a * R
  *   - Compute the reliability F of D as, for each bit j of the word:
  *          Fj = Dj * [Cm - Dm] * b                   when Cj /= Dj in the competitor with the smallest metric Cm
- *             = Dj * [sum(Pm) - c * Dm + d * |Rj|]   when there is no such competitor as described above
+ *             = Dj * [beta - c * Dm + d * |Rj|]   when there is no such competitor as described above
  *        with Dj =  1 when Hj = 0
  *                = -1 when Hj = 1
- *   - a, b, c and d are simulation constants changeable by the user
+ *        with beta = sum from 0 to e of the Pm    where 0 <= e < p
+
+ *   - a, b, c, d and e are simulation constants changeable by the user
  */
 
 template <typename B = int, typename R = float>
@@ -55,10 +57,7 @@ protected:
 	const bool parity_extended;             // true if there is a parity bit
 	// bool parity_diff;
 
-	const R a_;
-	const R b_;
-	const R c_;
-	const R d_;
+	const std::vector<float> cp_coef; // the a, b, c, d and e coefficient described above in the class description
 
 	std::vector<info> least_reliable_pos; // the list of least reliable positions
 	std::vector<info> competitors;        // the competitors' metric and their related test vector position
@@ -76,10 +75,7 @@ public:
 	                      const int n_least_reliable_positions = 2,
 	                      const int n_test_vectors = 0,
 	                      const int n_competitors  = 0,
-	                      const float a = 1.f,
-	                      const float b = 1.f,
-	                      const float c = 1.f,
-	                      const float d = 1.f);
+	                      const std::vector<float>& cp_coef = {1,1,1,1,0});
 
 	void decode_siso   (const R *Y_N1, R *Y_N2); // size is length with parity bit if any
 	void decode_siho   (const R *Y_N,  B *V_K );
