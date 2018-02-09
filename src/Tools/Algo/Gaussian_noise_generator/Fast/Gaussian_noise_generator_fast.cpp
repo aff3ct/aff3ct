@@ -3,14 +3,14 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Noise_fast.hpp"
+#include "Gaussian_noise_generator_fast.hpp"
 
 using namespace aff3ct::tools;
 
 template <typename R>
-Noise_fast<R>
-::Noise_fast(const int seed)
-: Noise<R>(),
+Gaussian_noise_generator_fast<R>
+::Gaussian_noise_generator_fast(const int seed)
+: Gaussian_noise_generator<R>(),
   mt19937(seed),
   mt19937_simd()
 {
@@ -18,13 +18,13 @@ Noise_fast<R>
 }
 
 template <typename R>
-Noise_fast<R>
-::~Noise_fast()
+Gaussian_noise_generator_fast<R>
+::~Gaussian_noise_generator_fast()
 {
 }
 
 template <typename R>
-void Noise_fast<R>
+void Gaussian_noise_generator_fast<R>
 ::set_seed(const int seed)
 {
 	mipp::vector<int> seeds(mipp::nElReg<int>());
@@ -34,14 +34,14 @@ void Noise_fast<R>
 }
 
 template <typename R>
-mipp::Reg<R> Noise_fast<R>
+mipp::Reg<R> Gaussian_noise_generator_fast<R>
 ::get_random_simd()
 {
 	throw runtime_error(__FILE__, __LINE__, __func__, "The MT19937 random generator does not support this type.");
 }
 
 template <typename R>
-R Noise_fast<R>
+R Gaussian_noise_generator_fast<R>
 ::get_random()
 {
 	throw runtime_error(__FILE__, __LINE__, __func__, "The MT19937 random generator does not support this type.");
@@ -52,7 +52,7 @@ namespace aff3ct
 namespace tools
 {
 template <>
-mipp::Reg<float> Noise_fast<float>
+mipp::Reg<float> Gaussian_noise_generator_fast<float>
 ::get_random_simd()
 {
 	// return a vector of numbers between ]0,1[
@@ -66,7 +66,7 @@ namespace aff3ct
 namespace tools
 {
 template <>
-float Noise_fast<float>
+float Gaussian_noise_generator_fast<float>
 ::get_random()
 {
 	// return a number between ]0,1[
@@ -76,7 +76,7 @@ float Noise_fast<float>
 }
 
 template <typename R>
-void Noise_fast<R>
+void Gaussian_noise_generator_fast<R>
 ::generate(R *noise, const unsigned length, const R sigma, const R mu) //TODO: integrate mu in the computation
 {
 	if (!mipp::isAligned(noise))
@@ -139,9 +139,9 @@ void Noise_fast<R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::tools::Noise_fast<R_32>;
-template class aff3ct::tools::Noise_fast<R_64>;
+template class aff3ct::tools::Gaussian_noise_generator_fast<R_32>;
+template class aff3ct::tools::Gaussian_noise_generator_fast<R_64>;
 #else
-template class aff3ct::tools::Noise_fast<R>;
+template class aff3ct::tools::Gaussian_noise_generator_fast<R>;
 #endif
 // ==================================================================================== explicit template instantiation
