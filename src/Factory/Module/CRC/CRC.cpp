@@ -32,31 +32,32 @@ CRC::parameters* CRC::parameters
 }
 
 void CRC::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of generated bits (information bits, the CRC is not included).");
+		"number of generated bits (information bits, the CRC is not included).",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("NO", "STD", "FAST", "INTER")),
 		"select the CRC implementation you want to use.");
 
-	opt_args.add(
+	args.add(
 		{p+"-poly"},
 		tools::Text(),
 		"select the CRC polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7).");
 
-	opt_args.add(
+	args.add(
 		{p+"-size"},
 		tools::Integer(tools::Positive()),
 		"size of the CRC (divisor size in bit -1), required if you selected an unknown CRC.");

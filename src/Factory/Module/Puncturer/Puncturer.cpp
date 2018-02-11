@@ -32,26 +32,28 @@ Puncturer::parameters* Puncturer::parameters
 }
 
 void Puncturer::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).");
+		"useful number of bit transmitted (information bits).",
+		tools::Argument_info::REQUIRED);
 
-	req_args.add(
+	args.add(
 		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).");
+		"useful number of bit transmitted (information bits).",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("NO")),
 		"code puncturer type.");

@@ -52,31 +52,31 @@ void Codec_LDPC::parameters
 }
 
 void Codec_LDPC::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SISO_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto penc = enc->get_prefix();
 	auto pdec = dec->get_prefix();
 
-	opt_args.erase({penc+"-h-path"           });
-	opt_args.erase({penc+"-h-reorder"        });
-	req_args.erase({pdec+"-cw-size",   "N"   });
-	req_args.erase({pdec+"-info-bits", "K"   });
-	opt_args.erase({pdec+"-fra",       "F"   });
+	args.erase({penc+"-h-path"           });
+	args.erase({penc+"-h-reorder"        });
+	args.erase({pdec+"-cw-size",   "N"   });
+	args.erase({pdec+"-info-bits", "K"   });
+	args.erase({pdec+"-fra",       "F"   });
 
 	if (this->pct)
 	{
-		pct->get_description(req_args, opt_args);
+		pct->get_description(args);
 
 		auto ppct = pct->get_prefix();
 
-		req_args.erase({ppct+"-info-bits", "K"   });
-		opt_args.erase({ppct+"-fra",       "F"   });
-		req_args.erase({ppct+"-cw-size",   "N_cw"});
+		args.erase({ppct+"-info-bits", "K"   });
+		args.erase({ppct+"-fra",       "F"   });
+		args.erase({ppct+"-cw-size",   "N_cw"});
 	}
 }
 

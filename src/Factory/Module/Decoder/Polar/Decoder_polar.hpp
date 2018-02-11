@@ -37,8 +37,8 @@ struct Decoder_polar : public Decoder
 		Decoder_polar::parameters* clone() const;
 
 		// parameters construction
-		virtual void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const;
-		virtual void store          (const tools::Argument_map_value &vals                                 );
+		virtual void get_description(tools::Argument_map_info &args) const;
+		virtual void store          (const tools::Argument_map_value &vals);
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
@@ -47,7 +47,7 @@ struct Decoder_polar : public Decoder
 		                                           module::Encoder<B> *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc = nullptr, 
+		module::Decoder_SIHO<B,Q>* build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc = nullptr,
 		                                 module::Encoder<B> *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>

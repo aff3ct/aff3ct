@@ -47,16 +47,16 @@ struct check_BCH_N
 };
 
 void Encoder_BCH::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
 	tools::add_ranges<tools::Integer_type<int, tools::Positive_range<>, tools::Non_zero_range<>>>
-	(req_args.at({p+"-cw-size", "N"}), tools::Function<check_BCH_N>("power of 2 minus 1"));
+	(args.at({p+"-cw-size", "N"}), tools::Function<check_BCH_N>("power of 2 minus 1"));
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "BCH");
+	tools::add_options(args.at({p+"-type"}), 0, "BCH");
 }
 
 void Encoder_BCH::parameters

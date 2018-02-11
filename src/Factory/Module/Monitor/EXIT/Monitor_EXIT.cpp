@@ -29,23 +29,24 @@ Monitor_EXIT::parameters* Monitor_EXIT::parameters
 }
 
 void Monitor_EXIT::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Monitor::parameters::get_description(req_args, opt_args);
+	Monitor::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-size", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of bits to check.");
+		"number of bits to check.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p+"-trials", "n"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of frames to simulate per sigma A value.");

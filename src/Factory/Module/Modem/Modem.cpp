@@ -37,95 +37,96 @@ Modem::parameters* Modem::parameters
 }
 
 void Modem::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	req_args.add(
+	args.add(
 		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of symbols by frame.");
+		"number of symbols by frame.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("BPSK", "BPSK_FAST", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")),
 		"type of the modulation to use in the simulation.");
 
-	opt_args.add(
+	args.add(
 		{p+"-bps"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"select the number of bits per symbol (default is 1).");
 
-	opt_args.add(
+	args.add(
 		{p+"-ups"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"select the symbol sampling factor (default is 1).");
 
-	opt_args.add(
+	args.add(
 		{p+"-const-path"},
 		tools::File(tools::openmode::read),
 		"path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\".");
 
-	opt_args.add(
+	args.add(
 		{p+"-cpm-std"},
 		tools::Text(tools::Including_set("GSM")),
 		"the selection of a default CPM standard hardly implemented (any of those parameters is "
 		   "overwritten if the argument is given by the user)");
 
-	opt_args.add(
+	args.add(
 		{p+"-cpm-L"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"CPM pulse width or CPM memory (default is 2).");
 
-	opt_args.add(
+	args.add(
 		{p+"-cpm-k"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"modulation index numerator (default is 1).");
 
-	opt_args.add(
+	args.add(
 		{p+"-cpm-p"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"modulation index denominator (default is 2).");
 
-	opt_args.add(
+	args.add(
 		{p+"-cpm-map"},
 		tools::Text(tools::Including_set("NATURAL", "GRAY")),
 		"symbols mapping layout (default is NATURAL).");
 
-	opt_args.add(
+	args.add(
 		{p+"-cpm-ws"},
 		tools::Text(tools::Including_set("GMSK", "REC", "RCOS")),
 		"wave shape (default is GMSK).");
 
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	opt_args.add(
+	args.add(
 		{p+"-max"},
 		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS", "MAXSS")),
 		"select the type of the max operation to use in the demodulator.");
 
-	opt_args.add(
+	args.add(
 		{p+"-sigma"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
 		"noise variance value for the demodulator.");
 
-	opt_args.add(
+	args.add(
 		{p+"-no-sig2"},
 		tools::None(),
 		"turn off the division by sigma square in the demodulator.");
 
-	opt_args.add(
+	args.add(
 		{p+"-psi"},
 		tools::Text(tools::Including_set("PSI0", "PSI1", "PSI2", "PSI3")),
 		"select the type of the psi function to use in the SCMA demodulator.");
 
-	opt_args.add(
+	args.add(
 		{p+"-ite"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of iteration in the demodulator.");

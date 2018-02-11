@@ -5,7 +5,10 @@
 #include <stdexcept>
 #include <type_traits>
 #include <iostream>
-#include "Argument_map.hpp"
+
+#include "Maps/Argument_map_info.hpp"
+#include "Maps/Argument_map_group.hpp"
+#include "Maps/Argument_map_value.hpp"
 
 namespace aff3ct
 {

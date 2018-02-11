@@ -58,18 +58,18 @@ Encoder_RA::parameters
 }
 
 void Encoder_RA::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
-	this->itl->get_description(req_args, opt_args);
+	this->itl->get_description(args);
 
-	req_args.erase({"itl-size"    });
-	opt_args.erase({"itl-fra", "F"});
+	args.erase({"itl-size"    });
+	args.erase({"itl-fra", "F"});
 
 	auto p = this->get_prefix();
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "RA");
+	tools::add_options(args.at({p+"-type"}), 0, "RA");
 }
 
 void Encoder_RA::parameters

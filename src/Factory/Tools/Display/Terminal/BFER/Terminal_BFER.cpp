@@ -24,13 +24,13 @@ Terminal_BFER::parameters* Terminal_BFER::parameters
 }
 
 void Terminal_BFER::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Terminal::parameters::get_description(req_args, opt_args);
+	Terminal::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("STD")),
 		"select the terminal type you want.");

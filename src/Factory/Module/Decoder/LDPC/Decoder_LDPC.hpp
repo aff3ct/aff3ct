@@ -42,8 +42,8 @@ struct Decoder_LDPC : public Decoder
 		Decoder_LDPC::parameters* clone() const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const;
-		void store          (const tools::Argument_map_value &vals                                 );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
@@ -60,13 +60,13 @@ struct Decoder_LDPC : public Decoder
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters& params, const tools::Sparse_matrix &H,
-	                                        const std::vector<unsigned> &info_bits_pos, 
+	                                        const std::vector<unsigned> &info_bits_pos,
 	                                        module::Encoder<B> *encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters& params, 
+	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters& params,
 	                                                  const tools::Sparse_matrix &H,
-	                                                  const std::vector<unsigned> &info_bits_pos, 
+	                                                  const std::vector<unsigned> &info_bits_pos,
 	                                                  module::Encoder<B> *encoder = nullptr);
 };
 }

@@ -27,21 +27,22 @@ Coset::parameters* Coset::parameters
 }
 
 void Coset::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"coset size.");
+		"coset size.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("STD")),
 		"coset type.");
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");

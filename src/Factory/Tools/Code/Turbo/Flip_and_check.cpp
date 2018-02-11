@@ -32,51 +32,52 @@ Flip_and_check::parameters* Flip_and_check::parameters
 }
 
 void Flip_and_check::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-size"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"size (in bit) of the extrinsic for the fnc processing.");
+		"size (in bit) of the extrinsic for the fnc processing.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p},
 		tools::None(),
 		"enables the flip and check decoder (requires \"--crc-type\").");
 
-	opt_args.add(
+	args.add(
 		{p+"-q"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the search's space for the fnc algorithm.");
 
-	opt_args.add(
+	args.add(
 		{p+"-ite-m"},
 		tools::Integer(tools::Positive()),
 		"set first iteration at which the fnc is used.");
 
-	opt_args.add(
+	args.add(
 		{p+"-ite-M"},
 		tools::Integer(tools::Positive()),
 		"set last iteration at which the fnc is used.");
 
-	opt_args.add(
+	args.add(
 		{p+"-ite-s"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set iteration step for the fnc algorithm.");
 
-	opt_args.add(
+	args.add(
 		{p+"-ite", "i"},
 		tools::Integer(tools::Positive()),
 		"maximal number of iterations in the turbo.");
 
-	opt_args.add(
+	args.add(
 		{p+"-crc-ite"},
 		tools::Integer(tools::Positive()),
 		"set the iteration to start the CRC checking.");

@@ -31,20 +31,21 @@ Puncturer_LDPC::parameters* Puncturer_LDPC::parameters
 }
 
 void Puncturer_LDPC::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Puncturer::parameters::get_description(req_args, opt_args);
+	Puncturer::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-cw-size", "N_cw"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size.");
+		"the codeword size.",
+		tools::Argument_info::REQUIRED);
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "LDPC");
+	tools::add_options(args.at({p+"-type"}), 0, "LDPC");
 
-	opt_args.add(
+	args.add(
 		{p+"-pattern"},
 		tools::Text(),
 		"puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: \"1,1,1,0\").");

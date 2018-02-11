@@ -30,15 +30,15 @@ Encoder_polar::parameters* Encoder_polar::parameters
 }
 
 void Encoder_polar::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "POLAR");
+	tools::add_options(args.at({p+"-type"}), 0, "POLAR");
 
-	opt_args.add(
+	args.add(
 		{p+"-no-sys"},
 		tools::None(),
 		"disable the systematic encoding.");

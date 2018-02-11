@@ -26,8 +26,7 @@ private:
 	std::vector<std::string> warnings;
 	std::vector<std::string> errors;
 
-	tools::Argument_map_info req_args;
-	tools::Argument_map_info opt_args;
+	tools::Argument_map_info args;
 
 	static const tools::Argument_tag help_tag;
 	bool help_asked;

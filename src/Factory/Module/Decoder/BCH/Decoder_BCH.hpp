@@ -35,18 +35,18 @@ struct Decoder_BCH : public Decoder
 		Decoder_BCH::parameters* clone() const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const;
-		void store          (const tools::Argument_map_value &vals                                 );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const tools::BCH_polynomial_generator &GF, 
+		module::Decoder_SIHO<B,Q>* build(const tools::BCH_polynomial_generator &GF,
 		                                 module::Encoder<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::BCH_polynomial_generator &GF, 
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::BCH_polynomial_generator &GF,
 	                                        module::Encoder<B> *encoder = nullptr);
 };
 }

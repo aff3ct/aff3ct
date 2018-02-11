@@ -45,29 +45,29 @@ struct sub_same_length
 };
 
 void Puncturer_turbo::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Puncturer::parameters::get_description(req_args, opt_args);
+	Puncturer::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-fra-size", "N"});
+	args.erase({p+"-fra-size", "N"});
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "TURBO");
+	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
 
-	opt_args.add(
+	args.add(
 		{p+"-pattern"},
 		tools::List2D<bool>(tools::Boolean(),
 		                    std::make_tuple(tools::Length(3, 3), tools::Function<sub_same_length>("elements of same length")),
 		                    std::make_tuple(tools::Length(1))),
 		"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
 
-	opt_args.add(
+	args.add(
 		{p+"-tail-length"},
 		tools::Integer(tools::Positive()),
 		"total number of tail bits at the end of the frame.");
 
-	opt_args.add(
+	args.add(
 		{p+"-no-buff"},
 		tools::None(),
 		"does not suppose a buffered encoding.");

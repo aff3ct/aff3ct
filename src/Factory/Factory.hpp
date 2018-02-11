@@ -53,7 +53,7 @@ struct Factory
 		virtual std::vector<std::string> get_short_names() const;
 		virtual std::vector<std::string> get_prefixes   () const;
 
-		virtual void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const = 0;
+		virtual void get_description(tools::Argument_map_info &args) const = 0;
 		virtual void store          (const tools::Argument_map_value &vals                                 ) = 0;
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true    ) const = 0;
 
@@ -63,8 +63,8 @@ struct Factory
 		const std::string prefix;
 	};
 
-	static std::pair<tools::Argument_map_info, tools::Argument_map_info> get_description(const std::vector<Factory::parameters*> &params);
-	static void get_description(const std::vector<Factory::parameters*> &params, tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args);
+	static tools::Argument_map_info get_description(const std::vector<Factory::parameters*> &params);
+	static void get_description(const std::vector<Factory::parameters*> &params, tools::Argument_map_info &args);
 
 	static void                      store        (std::vector<Factory::parameters*> &params, const tools::Argument_map_value &vals);
 	static tools::Argument_map_group create_groups(const std::vector<Factory::parameters*> &params);

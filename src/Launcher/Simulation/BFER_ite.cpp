@@ -38,16 +38,16 @@ void BFER_ite<B,R,Q>
 {
 	Launcher::get_description_args();
 
-	params.     get_description(this->req_args, this->opt_args);
-	params.src->get_description(this->req_args, this->opt_args);
-	params.crc->get_description(this->req_args, this->opt_args);
-	params.itl->get_description(this->req_args, this->opt_args);
-	params.mdm->get_description(this->req_args, this->opt_args);
-	params.chn->get_description(this->req_args, this->opt_args);
+	params.     get_description(this->args);
+	params.src->get_description(this->args);
+	params.crc->get_description(this->args);
+	params.itl->get_description(this->args);
+	params.mdm->get_description(this->args);
+	params.chn->get_description(this->args);
 	if (std::is_integral<Q>())
-	params.qnt->get_description(this->req_args, this->opt_args);
-	params.mnt->get_description(this->req_args, this->opt_args);
-	params.ter->get_description(this->req_args, this->opt_args);
+	params.qnt->get_description(this->args);
+	params.mnt->get_description(this->args);
+	params.ter->get_description(this->args);
 
 	auto psrc = params.src     ->get_prefix();
 	auto pcrc = params.crc     ->get_prefix();
@@ -60,31 +60,31 @@ void BFER_ite<B,R,Q>
 	auto pmnt = params.mnt     ->get_prefix();
 	auto pter = params.ter     ->get_prefix();
 
-	if (this->req_args.find({penc+"-info-bits", "K"}) != this->req_args.end() ||
-	    this->req_args.find({ppct+"-info-bits", "K"}) != this->req_args.end())
-		this->req_args.erase({psrc+"-info-bits", "K"});
-	this->opt_args.erase({psrc+"-seed",      "S"});
-	this->req_args.erase({pcrc+"-info-bits", "K"});
-	this->opt_args.erase({pcrc+"-fra",       "F"});
-	this->req_args.erase({pitl+"-size"          });
-	this->opt_args.erase({pitl+"-fra",       "F"});
-	this->opt_args.erase({pitl+"-seed",      "S"});
-	this->req_args.erase({pmdm+"-fra-size",  "N"});
-	this->opt_args.erase({pmdm+"-fra",       "F"});
-	this->opt_args.erase({pmdm+"-sigma"        });
-	this->req_args.erase({pchn+"-fra-size",  "N"});
-	this->opt_args.erase({pchn+"-fra",       "F"});
-	this->opt_args.erase({pchn+"-sigma"         });
-	this->opt_args.erase({pchn+"-seed",      "S"});
-	this->opt_args.erase({pchn+"-add-users"     });
-	this->opt_args.erase({pchn+"-complex"       });
-	this->req_args.erase({pqnt+"-size",      "N"});
-	this->opt_args.erase({pqnt+"-fra",       "F"});
-	this->opt_args.erase({pqnt+"-sigma"         });
-	this->req_args.erase({pmnt+"-size",      "K"});
-	this->opt_args.erase({pmnt+"-fra",       "F"});
-	this->req_args.erase({pter+"-info-bits","K"});
-	this->opt_args.erase({pter+"-cw-size",  "N"});
+	if (this->args.exist({penc+"-info-bits", "K"}) || this->args.exist({ppct+"-info-bits", "K"}))
+		this->args.erase({psrc+"-info-bits", "K"});
+
+	this->args.erase({psrc+"-seed",      "S"});
+	this->args.erase({pcrc+"-info-bits", "K"});
+	this->args.erase({pcrc+"-fra",       "F"});
+	this->args.erase({pitl+"-size"          });
+	this->args.erase({pitl+"-fra",       "F"});
+	this->args.erase({pitl+"-seed",      "S"});
+	this->args.erase({pmdm+"-fra-size",  "N"});
+	this->args.erase({pmdm+"-fra",       "F"});
+	this->args.erase({pmdm+"-sigma"        });
+	this->args.erase({pchn+"-fra-size",  "N"});
+	this->args.erase({pchn+"-fra",       "F"});
+	this->args.erase({pchn+"-sigma"         });
+	this->args.erase({pchn+"-seed",      "S"});
+	this->args.erase({pchn+"-add-users"     });
+	this->args.erase({pchn+"-complex"       });
+	this->args.erase({pqnt+"-size",      "N"});
+	this->args.erase({pqnt+"-fra",       "F"});
+	this->args.erase({pqnt+"-sigma"         });
+	this->args.erase({pmnt+"-size",      "K"});
+	this->args.erase({pmnt+"-fra",       "F"});
+	this->args.erase({pter+"-info-bits","K"});
+	this->args.erase({pter+"-cw-size",  "N"});
 }
 
 template <typename B, typename R, typename Q>
@@ -101,9 +101,9 @@ void BFER_ite<B,R,Q>
 
 	auto psrc = params.src->get_prefix();
 
-	auto K    = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->K;
-	auto N    = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N;
-	auto N_cw = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N_cw;
+	auto K    = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->K;
+	auto N    = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->N;
+	auto N_cw = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->N_cw;
 
 	params.crc->store(this->arg_vals);
 

@@ -61,35 +61,35 @@ void Codec_turbo::parameters
 }
 
 void Codec_turbo::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SIHO::parameters::get_description(args);
 
 	if (this->pct)
 	{
-		pct->get_description(req_args, opt_args);
+		pct->get_description(args);
 
 		auto ppct = pct->get_prefix();
 
-		req_args.erase({ppct+"-info-bits", "K"});
-		opt_args.erase({ppct+"-no-buff"       });
-		opt_args.erase({ppct+"-fra",       "F"});
-		opt_args.erase({ppct+"-tail-length"   });
+		args.erase({ppct+"-info-bits", "K"});
+		args.erase({ppct+"-no-buff"       });
+		args.erase({ppct+"-fra",       "F"});
+		args.erase({ppct+"-tail-length"   });
 	}
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
 	auto pdes = dec->sub1->get_prefix();
 
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
-	opt_args.erase({pdes+"-no-buff"       });
-	opt_args.erase({pdes+"-poly"          });
-	opt_args.erase({pdes+"-std"           });
-	opt_args.erase({pdec+"-json"          });
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
+	args.erase({pdes+"-no-buff"       });
+	args.erase({pdes+"-poly"          });
+	args.erase({pdes+"-std"           });
+	args.erase({pdec+"-json"          });
 }
 
 void Codec_turbo::parameters

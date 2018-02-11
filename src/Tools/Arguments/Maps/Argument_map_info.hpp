@@ -1,0 +1,53 @@
+#ifndef ARGUMENT_MAP_INFO_HPP_
+#define ARGUMENT_MAP_INFO_HPP_
+
+#include <string>
+#include <vector>
+#include <map>
+
+#include "Argument_info.hpp"
+#include "Argument_tag.hpp"
+
+namespace aff3ct
+{
+namespace tools
+{
+
+class Argument_map_info : public std::map<Argument_tag, Argument_info*>
+{
+public:
+	using mother_t = std::map<Argument_tag, Argument_info*>;
+
+public:
+	Argument_map_info();
+
+	Argument_map_info(const Argument_map_info& other);
+
+	virtual ~Argument_map_info();
+
+	Argument_map_info& operator=(const Argument_map_info& other);
+
+	void add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc,
+	         const Argument_info::Rank rank = Argument_info::OPTIONAL);
+
+	void erase(const Argument_tag& tags);
+
+	void clear();
+
+	/* \brief: clone itself in the 'other' map
+	 * \return a pointer to the clone map
+	 */
+	Argument_map_info* clone() const;
+
+	/* \brief: clone itself in the 'other' map
+	 * \param 'other' is the other map in which this class will be cloned. Clear it first of all
+	 */
+	void clone(Argument_map_info& other) const;
+
+	bool exist(const Argument_tag &tags);
+};
+
+}
+}
+
+#endif /* ARGUMENT_MAP_INFO_HPP_ */

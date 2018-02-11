@@ -29,22 +29,22 @@ Encoder_RSC_DB::parameters* Encoder_RSC_DB::parameters
 }
 
 void Encoder_RSC_DB::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "RSC_DB");
+	tools::add_options(args.at({p+"-type"}), 0, "RSC_DB");
 
-	opt_args.add(
+	args.add(
 		{p+"-std"},
 		tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")),
 		"select a standard and set automatically some parameters (overwritten with user given arguments).");
 
-	opt_args.add(
+	args.add(
 		{p+"-no-buff"},
 		tools::None(),
 		"disable the buffered encoding.");

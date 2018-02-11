@@ -92,18 +92,18 @@ std::vector<std::string> BFER_ite::parameters
 }
 
 void BFER_ite::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	BFER::parameters::get_description(req_args, opt_args);
+	BFER::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args.add(
+	args.add(
 		{p+"-ite", "I"},
 		tools::Integer(tools::Positive()),
 		"number of global iterations between the demodulator and the decoder.");
 
-	opt_args.add(
+	args.add(
 		{p+"-crc-start"},
 		tools::Integer(tools::Positive()),
 		"iteration number to start the CRC checking in the turbo demodulation process.");

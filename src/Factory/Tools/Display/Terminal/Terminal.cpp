@@ -24,16 +24,16 @@ Terminal::parameters* Terminal::parameters
 }
 
 void Terminal::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	opt_args.add(
+	args.add(
 		{p+"-no"},
 		tools::None(),
 		"disable reporting for each iteration.");
 
-	opt_args.add(
+	args.add(
 		{p+"-freq"},
 		tools::Integer(tools::Positive()),
 		"display frequency in ms (refresh time step for each iteration, 0 = disable display refresh).");

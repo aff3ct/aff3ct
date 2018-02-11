@@ -49,38 +49,38 @@ Decoder_RSC::parameters* Decoder_RSC::parameters
 }
 
 void Decoder_RSC::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "BCJR");
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "GENERIC", "FAST", "VERY_FAST");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
+	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "FAST", "VERY_FAST");
 
-	opt_args.add(
+	args.add(
 		{p+"-simd"},
 		tools::Text(tools::Including_set("INTRA", "INTER")),
 		"the SIMD strategy you want to use.");
 
-	opt_args.add(
+	args.add(
 		{p+"-max"},
 		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
 		"the MAX implementation for the nodes.");
 
-	opt_args.add(
+	args.add(
 		{p+"-no-buff"},
 		tools::None(),
 		"does not suppose a buffered encoding.");
 
-	opt_args.add(
+	args.add(
 		{p+"-poly"},
 		tools::Text(),
 		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
 
-	opt_args.add(
+	args.add(
 		{p+"-std"},
 		tools::Text(tools::Including_set("LTE", "CCSDS")),
 		"select a standard and set automatically some parameters (overwritten with user given arguments).");
@@ -131,7 +131,7 @@ void Decoder_RSC::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 

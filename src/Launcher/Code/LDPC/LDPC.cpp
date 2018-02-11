@@ -31,12 +31,12 @@ template <class L, typename B, typename R, typename Q>
 void LDPC<L,B,R,Q>
 ::get_description_args()
 {
-	params_cdc->get_description(this->req_args, this->opt_args);
+	params_cdc->get_description(this->args);
 
 	auto penc = params_cdc->enc->get_prefix();
 
-	this->opt_args.erase({penc+"-fra",  "F"});
-	this->opt_args.erase({penc+"-seed", "S"});
+	this->args.erase({penc+"-fra",  "F"});
+	this->args.erase({penc+"-seed", "S"});
 
 	L::get_description_args();
 }

@@ -69,16 +69,17 @@ factory::Launcher::parameters* factory::Launcher::parameters
 }
 
 void factory::Launcher::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-cde-type", "C"},
 		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED")),
-		"select the code type you want to use.");
+		"select the code type you want to use.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 #if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
 		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")),
@@ -88,48 +89,48 @@ void factory::Launcher::parameters
 		"select the type of simulation to launch (default is BFER).");
 
 #ifdef MULTI_PREC
-	opt_args.add(
+	args.add(
 		{p+"-prec", "p"},
 		tools::Integer(tools::Including_set(8, 16, 32)),
 		"the simulation precision in bits.");
 
 #if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-	tools::add_options(opt_args.at({p+"-prec", "p"}), 0, 64);
+	tools::add_options(args.at({p+"-prec", "p"}), 0, 64);
 #endif
 #endif
 
-	opt_args.add(
+	args.add(
 		{"help", "h"},
 		tools::None(),
 		"print this help.");
 
-	opt_args.add(
+	args.add(
 		{"Help", "H"},
 		tools::None(),
 		"print this help with the advanced arguments.");
 
-	opt_args.add(
+	args.add(
 		{"version", "v"},
 		tools::None(),
 		"print informations about the version of the code.");
 
-	opt_args.add(
+	args.add(
 		{"except-no-bt"},
 		tools::None(),
 		"do not print the backtrace when displaying exception.",
-		true);
+		tools::Argument_info::ADVANCED);
 
-	opt_args.add(
+	args.add(
 		{"except-no-a2l"},
 		tools::None(),
 		"do not enhance the backtrace when displaying exception.",
-		true);
+		tools::Argument_info::ADVANCED);
 
-	opt_args.add(
+	args.add(
 		{p+"-no-legend"},
 		tools::None(),
 		"Do not display any legend when launching the simulation.",
-		true);
+		tools::Argument_info::ADVANCED);
 
 }
 

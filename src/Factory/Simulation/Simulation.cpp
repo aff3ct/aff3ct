@@ -26,81 +26,83 @@ Simulation::parameters
 }
 
 void Simulation::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Launcher::parameters::get_description(req_args, opt_args);
+	Launcher::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-snr-min", "m"},
 		tools::Real(),
-		"minimal signal/noise ratio to simulate.");
+		"minimal signal/noise ratio to simulate.",
+		tools::Argument_info::REQUIRED);
 
-	req_args.add(
+	args.add(
 		{p+"-snr-max", "M"},
 		tools::Real(),
-		"maximal signal/noise ratio to simulate.");
+		"maximal signal/noise ratio to simulate.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-snr-step", "s"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
 		"signal/noise ratio step between each simulation.");
 
-	opt_args.add(
+	args.add(
 		{p+"-pyber"},
 		tools::Text(),
 		"prepare the output for the PyBER plotter tool, takes the name of the curve in PyBER.");
 
-	opt_args.add(
+	args.add(
 		{p+"-stop-time"},
 		tools::Integer(tools::Positive()),
 		"time in sec after what the current SNR iteration should stop (0 is infinite).");
 
-	opt_args.add(
+	args.add(
 		{p+"-debug"},
 		tools::None(),
 		"enable debug mode: print array values after each step.");
 
-	opt_args.add(
+	args.add(
 		{p+"-debug-hex"},
 		tools::None(),
 		"debug mode prints values in the hexadecimal format.");
 
-	opt_args.add(
+	args.add(
 		{p+"-debug-prec"},
 		tools::Integer(tools::Positive()),
 		"set the precision of real elements when displayed in debug mode.");
 
-	opt_args.add(
+	args.add(
 		{p+"-debug-limit", "d"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the max number of elements to display in the debug mode.");
 
-	opt_args.add(
+	args.add(
 		{p+"-stats"},
 		tools::None(),
 		"display statistics module by module.");
 
-	opt_args.add(
+	args.add(
 		{p+"-threads", "t"},
 		tools::Integer(tools::Positive()),
 		"enable multi-threaded mode and specify the number of threads (0 means the maximum supported by the core.");
 
-	opt_args.add(
+	args.add(
 		{p+"-seed", "S"},
 		tools::Integer(tools::Positive()),
 		"seed used in the simulation to initialize the pseudo random generators in general.");
 
 #ifdef ENABLE_MPI
-	opt_args.add(
+	args.add(
 		{p+"-mpi-comm"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"MPI communication frequency between the nodes (in millisec).");
 #endif
 
 #ifdef ENABLE_COOL_BASH
-	opt_args.add(
+	args.add(
 		{p+"-no-colors"},
 		tools::None(),
 		"disable the colors in the shell.");

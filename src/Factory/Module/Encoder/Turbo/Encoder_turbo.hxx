@@ -78,49 +78,49 @@ Encoder_turbo::parameters<E1,E2>
 
 template <class E1, class E2>
 void Encoder_turbo::parameters<E1,E2>
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(req_args, opt_args);
+	itl->get_description(args);
 
 	auto pi = itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+	args.erase({pi+"-size"    });
+	args.erase({pi+"-fra", "F"});
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "TURBO");
+	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
 
-	opt_args.add(
+	args.add(
 		{p+"-json-path"},
 		tools::File(tools::openmode::write),
 		"path to store the encoder and decoder traces formated in JSON.");
 
-	sub1->get_description(req_args, opt_args);
+	sub1->get_description(args);
 
 	auto ps1 = sub1->get_prefix();
 
-	req_args.erase({ps1+"-info-bits", "K"});
-	req_args.erase({ps1+"-cw-size",   "N"});
-	opt_args.erase({ps1+"-fra",       "F"});
-	opt_args.erase({ps1+"-seed",      "S"});
-	opt_args.erase({ps1+"-path"          });
+	args.erase({ps1+"-info-bits", "K"});
+	args.erase({ps1+"-cw-size",   "N"});
+	args.erase({ps1+"-fra",       "F"});
+	args.erase({ps1+"-seed",      "S"});
+	args.erase({ps1+"-path"          });
 
 	if (!std::is_same<E1,E2>())
 	{
-		sub2->get_description(req_args, opt_args);
+		sub2->get_description(args);
 
 		auto ps2 = sub2->get_prefix();
 
-		req_args.erase({ps2+"-info-bits", "K"});
-		req_args.erase({ps2+"-cw-size",   "N"});
-		opt_args.erase({ps2+"-fra",       "F"});
-		opt_args.erase({ps2+"-seed",      "S"});
-		opt_args.erase({ps2+"-path"          });
+		args.erase({ps2+"-info-bits", "K"});
+		args.erase({ps2+"-cw-size",   "N"});
+		args.erase({ps2+"-fra",       "F"});
+		args.erase({ps2+"-seed",      "S"});
+		args.erase({ps2+"-path"          });
 	}
 }
 

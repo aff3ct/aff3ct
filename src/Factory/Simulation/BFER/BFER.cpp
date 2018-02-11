@@ -90,43 +90,47 @@ std::vector<std::string> BFER::parameters
 }
 
 void BFER::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Simulation::parameters::get_description(req_args, opt_args);
+	Simulation::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args.add(
+	args.add(
 		{p+"-snr-type", "E"},
 		tools::Text(tools::Including_set("ES", "EB")),
 		"select the type of SNR: symbol energy or information bit energy.");
 
-	opt_args.add(
+	args.add(
 		{p+"-coset", "c"},
 		tools::None(),
 		"enable the coset approach.");
 
-	opt_args.add(
+	args.add(
 		{p+"-err-trk"},
 		tools::None(),
-		"enable the tracking of the bad frames (by default the frames are stored in the current folder).");
+		"enable the tracking of the bad frames (by default the frames are stored in the current folder).",
+		tools::Argument_info::ADVANCED);
 
-	opt_args.add(
+	args.add(
 		{p+"-err-trk-rev"},
 		tools::None(),
-		"automatically replay the saved frames.");
+		"automatically replay the saved frames.",
+		tools::Argument_info::ADVANCED);
 
-	opt_args.add(
+	args.add(
 		{p+"-err-trk-path"},
 		tools::File(tools::openmode::read_write),
-		"base path for the files where the bad frames will be stored or read.");
+		"base path for the files where the bad frames will be stored or read.",
+		tools::Argument_info::ADVANCED);
 
-	opt_args.add(
+	args.add(
 		{p+"-err-trk-thold"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"dump only frames with a bit error count above or equal to this threshold.");
+		"dump only frames with a bit error count above or equal to this threshold.",
+		tools::Argument_info::ADVANCED);
 
-	opt_args.add(
+	args.add(
 		{p+"-coded"},
 		tools::None(),
 		"enable the coded monitoring (extends the monitored bits to the entire codeword).");

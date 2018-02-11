@@ -26,9 +26,9 @@ Flip_and_check_DB::parameters* Flip_and_check_DB::parameters
 }
 
 void Flip_and_check_DB::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Flip_and_check::parameters::get_description(req_args, opt_args);
+	Flip_and_check::parameters::get_description(args);
 }
 
 void Flip_and_check_DB::parameters

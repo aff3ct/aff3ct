@@ -68,23 +68,22 @@ std::vector<std::string> Factory::parameters
 	return p;
 }
 
-std::pair<tools::Argument_map_info, tools::Argument_map_info> Factory
+tools::Argument_map_info Factory
 ::get_description(const std::vector<Factory::parameters*> &params)
 {
-	std::pair<tools::Argument_map_info, tools::Argument_map_info> args;
+	tools::Argument_map_info args;
 
-	get_description(params, args.first, args.second);
+	get_description(params, args);
 
 	return args;
 }
 
 void Factory
 ::get_description(const std::vector<Factory::parameters*> &params,
-                     tools::Argument_map_info &req_args,
-                     tools::Argument_map_info &opt_args)
+                     tools::Argument_map_info &args)
 {
 	for (auto *p : params)
-		p->get_description(req_args, opt_args);
+		p->get_description(args);
 }
 
 void Factory

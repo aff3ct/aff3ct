@@ -87,23 +87,25 @@ std::vector<std::string> EXIT::parameters
 }
 
 void EXIT::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Simulation::parameters::get_description(req_args, opt_args);
+	Simulation::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-siga-min", "a"},
 		tools::Real(tools::Positive()),
-		"sigma min value used in EXIT charts.");
+		"sigma min value used in EXIT charts.",
+		tools::Argument_info::REQUIRED);
 
-	req_args.add(
+	args.add(
 		{p+"-siga-max", "A"},
 		tools::Real(tools::Positive()),
-		"sigma max value used in EXIT charts.");
+		"sigma max value used in EXIT charts.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-siga-step"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
 		"sigma step value used in EXIT charts.");

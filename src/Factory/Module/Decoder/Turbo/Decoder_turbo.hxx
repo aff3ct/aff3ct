@@ -90,69 +90,69 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 
 template <class D1, class D2>
 void Decoder_turbo::parameters<D1,D2>
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(req_args, opt_args);
+	itl->get_description(args);
 
 	auto pi = itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+	args.erase({pi+"-size"    });
+	args.erase({pi+"-fra", "F"});
 
-	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "TURBO"      );
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "STD", "FAST");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO"      );
+	tools::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
 
-	opt_args.add(
+	args.add(
 		{p+"-ite", "i"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"maximal number of iterations in the turbo.");
 
-	opt_args.add(
+	args.add(
 		{p+"-sc"},
 		tools::None(),
 		"enables the self corrected decoder (requires \"--crc-type\").");
 
-	opt_args.add(
+	args.add(
 		{p+"-json"},
 		tools::None(),
 		"enable the json output trace.");
 
 
-	sf->get_description(req_args, opt_args);
+	sf->get_description(args);
 
 	auto psf = sf->get_prefix();
 
-	opt_args.erase({psf+"-ite"});
+	args.erase({psf+"-ite"});
 
-	fnc->get_description(req_args, opt_args);
+	fnc->get_description(args);
 
 	auto pfnc = fnc->get_prefix();
 
-	req_args.erase({pfnc+"-size"     });
-	opt_args.erase({pfnc+"-fra",  "F"});
-	opt_args.erase({pfnc+"-ite",  "i"});
+	args.erase({pfnc+"-size"     });
+	args.erase({pfnc+"-fra",  "F"});
+	args.erase({pfnc+"-ite",  "i"});
 
-	sub1->get_description(req_args, opt_args);
+	sub1->get_description(args);
 
 	auto ps1 = sub1->get_prefix();
 
-	req_args.erase({ps1+"-info-bits", "K"});
-	req_args.erase({ps1+"-cw-size",   "N"});
-	opt_args.erase({ps1+"-fra",       "F"});
+	args.erase({ps1+"-info-bits", "K"});
+	args.erase({ps1+"-cw-size",   "N"});
+	args.erase({ps1+"-fra",       "F"});
 
 	if (!std::is_same<D1,D2>())
 	{
 		auto ps2 = sub2->get_prefix();
 
-		req_args.erase({ps2+"-info-bits", "K"});
-		req_args.erase({ps2+"-cw-size",   "N"});
-		opt_args.erase({ps2+"-fra",       "F"});
+		args.erase({ps2+"-info-bits", "K"});
+		args.erase({ps2+"-cw-size",   "N"});
+		args.erase({ps2+"-fra",       "F"});
 	}
 }
 
@@ -221,7 +221,7 @@ void Decoder_turbo::parameters<D1,D2>
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));

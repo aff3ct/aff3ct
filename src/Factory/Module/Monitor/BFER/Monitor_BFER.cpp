@@ -28,23 +28,24 @@ Monitor_BFER::parameters* Monitor_BFER::parameters
 }
 
 void Monitor_BFER::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Monitor::parameters::get_description(req_args, opt_args);
+	Monitor::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-size", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of bits to check.");
+		"number of bits to check.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p+"-max-fe", "e"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"max number of frame errors for each SNR simulation.");

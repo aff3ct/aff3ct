@@ -65,7 +65,7 @@ int Launcher::read_arguments()
 
 	std::vector<std::string> cmd_error;
 
-	this->arg_vals = ah.parse_arguments(this->req_args, this->opt_args, this->cmd_warn, cmd_error);
+	this->arg_vals = ah.parse_arguments(this->args, this->cmd_warn, cmd_error);
 
 	try
 	{
@@ -82,12 +82,12 @@ int Launcher::read_arguments()
 	if (params_common.display_help)
 	{
 		auto grps = factory::Factory::create_groups({&params_common});
-		ah.print_help(this->req_args, this->opt_args, grps, params_common.display_adv_help);
+		ah.print_help(this->args, grps, params_common.display_adv_help);
 	}
 
 	// print usage
 	if (cmd_error.size() && !params_common.display_help)
-		ah.print_usage(this->req_args);
+		ah.print_usage(this->args);
 
 	// print the errors
 	if (cmd_error.size()) std::cerr << std::endl;

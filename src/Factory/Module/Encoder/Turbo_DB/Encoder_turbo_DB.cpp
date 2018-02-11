@@ -64,38 +64,38 @@ std::vector<std::string> Encoder_turbo_DB::parameters
 }
 
 void Encoder_turbo_DB::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(req_args, opt_args);
+	itl->get_description(args);
 
 	auto pi = itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+	args.erase({pi+"-size"    });
+	args.erase({pi+"-fra", "F"});
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "TURBO_DB");
+	tools::add_options(args.at({p+"-type"}), 0, "TURBO_DB");
 
-	opt_args.add(
+	args.add(
 		{p+"-json-path"},
 		tools::File(tools::openmode::write),
 		"path to store the encoder and decoder traces formated in JSON.");
 
-	sub->get_description(req_args, opt_args);
+	sub->get_description(args);
 
 	auto ps = sub->get_prefix();
 
-	req_args.erase({ps+"-info-bits", "K"});
-	req_args.erase({ps+"-cw-size",   "N"});
-	opt_args.erase({ps+"-fra",       "F"});
-	opt_args.erase({ps+"-seed",      "S"});
-	opt_args.erase({ps+"-path"          });
-	opt_args.erase({ps+"-no-buff"       });
+	args.erase({ps+"-info-bits", "K"});
+	args.erase({ps+"-cw-size",   "N"});
+	args.erase({ps+"-fra",       "F"});
+	args.erase({ps+"-seed",      "S"});
+	args.erase({ps+"-path"          });
+	args.erase({ps+"-no-buff"       });
 }
 
 void Encoder_turbo_DB::parameters

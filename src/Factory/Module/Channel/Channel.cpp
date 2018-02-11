@@ -41,68 +41,69 @@ Channel::parameters* Channel::parameters
 }
 
 void Channel::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of symbols by frame.");
+		"number of symbols by frame.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER")),
 		"type of the channel to use in the simulation.");
 
-	opt_args.add(
+	args.add(
 		{p+"-implem"},
 		tools::Text(tools::Including_set("STD", "FAST")),
 		"select the implementation of the algorithm to generate noise.");
 
 #ifdef CHANNEL_GSL
-	tools::add_options(opt_args.at({p+"-implem"}), 0, "GSL");
+	tools::add_options(args.at({p+"-implem"}), 0, "GSL");
 #endif
 #ifdef CHANNEL_MKL
-	tools::add_options(opt_args.at({p+"-implem"}), 0, "MKL");
+	tools::add_options(args.at({p+"-implem"}), 0, "MKL");
 #endif
 
-	opt_args.add(
+	args.add(
 		{p+"-path"},
 		tools::File(tools::openmode::read),
 		"path to a noisy file, to use with \"--chn-type USER\" or to a gain file (used with \"--chn-type RAYLEIGH_USER\").");
 
-	opt_args.add(
+	args.add(
 		{p+"-blk-fad"},
 		tools::Text(tools::Including_set("NO", "FRAME", "ONETAP")),
 		"block fading policy for the RAYLEIGH channel.");
 
-	opt_args.add(
+	args.add(
 		{p+"-sigma"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
 		"noise variance value.");
 
-	opt_args.add(
+	args.add(
 		{p+"-seed", "S"},
 		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");
 
-	opt_args.add(
+	args.add(
 		{p+"-add-users"},
 		tools::None(),
 		"add all the users (= frames) before generating the noise.");
 
-	opt_args.add(
+	args.add(
 		{p+"-complex"},
 		tools::None(),
 		"enable complex noise generation.");
 
-	opt_args.add(
+	args.add(
 		{p+"-gain-occur"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the number of times a gain is used on consecutive symbols (used with \"--chn-type RAYLEIGH_USER\").");

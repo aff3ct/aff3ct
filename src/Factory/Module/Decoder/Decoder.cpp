@@ -28,41 +28,43 @@ Decoder::parameters* Decoder::parameters
 }
 
 void Decoder::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-cw-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size.");
+		"the codeword size.",
+		tools::Argument_info::REQUIRED);
 
-	req_args.add(
+	args.add(
 		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).");
+		"useful number of bit transmitted (information bits).",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p+"-type", "D"},
 		tools::Text(tools::Including_set("ML", "CHASE")),
 		"select the algorithm you want to decode the codeword.");
 
-	opt_args.add(
+	args.add(
 		{p+"-implem"},
 		tools::Text(tools::Including_set("STD", "NAIVE")),
 		"select the implementation of the algorithm to decode.");
 
-	opt_args.add(
+	args.add(
 		{p+"-hamming"},
 		tools::None(),
 		"enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.");
 
-	opt_args.add(
+	args.add(
 		{p+"-flips"},
 		tools::Integer(tools::Positive()),
 		"set the maximum number of flips in the CHASE decoder.");

@@ -59,23 +59,23 @@ std::vector<std::string> Decoder_RA::parameters
 }
 
 void Decoder_RA::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	itl->get_description(req_args, opt_args);
+	itl->get_description(args);
 
 	auto pi = itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+	args.erase({pi+"-size"    });
+	args.erase({pi+"-fra", "F"});
 
-	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "RA");
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "STD");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "RA");
+	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
 
-	opt_args.add(
+	args.add(
 		{p+"-ite", "i"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"maximal number of iterations in the decoder.");
@@ -106,7 +106,7 @@ void Decoder_RA::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
 	}
 }

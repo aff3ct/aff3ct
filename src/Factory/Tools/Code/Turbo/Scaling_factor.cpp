@@ -34,16 +34,16 @@ Scaling_factor::parameters* Scaling_factor::parameters
 }
 
 void Scaling_factor::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")),
 		"scaling factor type.");
 
-	opt_args.add(
+	args.add(
 		{p+"-ite"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of iterations.");

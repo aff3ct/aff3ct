@@ -32,23 +32,23 @@ Decoder_RSC_DB::parameters* Decoder_RSC_DB::parameters
 }
 
 void Decoder_RSC_DB::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "BCJR");
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
+	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
 
-	opt_args.add(
+	args.add(
 		{p+"-max"},
 		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
 		"the MAX implementation for the nodes.");
 
-	opt_args.add(
+	args.add(
 		{p+"-no-buff"},
 		tools::None(),
 		"does not suppose a buffered encoding.");
@@ -76,7 +76,7 @@ void Decoder_RSC_DB::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
@@ -129,7 +129,7 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC_DB::parameters
 
 template <typename B, typename Q>
 module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB
-::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis, 
+::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis,
              module::Encoder<B> *encoder)
 {
 	return params.template build_siso<B,Q>(trellis, encoder);

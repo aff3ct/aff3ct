@@ -38,8 +38,8 @@ struct Decoder_RA : public Decoder
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const;
-		void store          (const tools::Argument_map_value &vals                                 );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
@@ -49,7 +49,7 @@ struct Decoder_RA : public Decoder
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const module::Interleaver<Q> &itl, 
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const module::Interleaver<Q> &itl,
 	                                        module::Encoder<B> *encoder = nullptr);
 };
 }

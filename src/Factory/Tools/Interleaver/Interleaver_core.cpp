@@ -38,41 +38,42 @@ Interleaver_core::parameters* Interleaver_core::parameters
 }
 
 void Interleaver_core::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-size"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of symbols to interleave.");
+		"number of symbols to interleave.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL", "ROW_COL", "COL_ROW", "NO")),
 		"type of the interleaver to use in the simulation.");
 
-	opt_args.add(
+	args.add(
 		{p+"-path"},
 		tools::File(tools::openmode::read),
 		"specify the path to the interleaver file (to use with \"--itl-type USER\").");
 
-	opt_args.add(
+	args.add(
 		{p+"-cols"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver.");
 
-	opt_args.add(
+	args.add(
 		{p+"-uni"},
 		tools::None(),
 		"enable the regeneration of the interleaver at each new frame.");
 
-	opt_args.add(
+	args.add(
 		{p+"-seed", "S"},
 		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");

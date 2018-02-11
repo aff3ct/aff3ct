@@ -32,25 +32,25 @@ Encoder_LDPC::parameters* Encoder_LDPC::parameters
 }
 
 void Encoder_LDPC::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "LDPC", "LDPC_H", "LDPC_DVBS2", "LDPC_QC");
+	tools::add_options(args.at({p+"-type"}), 0, "LDPC", "LDPC_H", "LDPC_DVBS2", "LDPC_QC");
 
-	opt_args.add(
+	args.add(
 		{p+"-h-path"},
 		tools::File(tools::openmode::read),
 		"path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder).");
 
-	opt_args.add(
+	args.add(
 		{p+"-g-path"},
 		tools::File(tools::openmode::read),
 		"path to the G matrix (AList formated file, required by the \"LDPC\" encoder).");
 
-	opt_args.add(
+	args.add(
 		{p+"-h-reorder"},
 		tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
 		"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "

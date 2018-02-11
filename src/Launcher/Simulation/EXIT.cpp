@@ -39,12 +39,12 @@ void EXIT<B,R>
 {
 	Launcher::get_description_args();
 
-	params.     get_description(this->req_args, this->opt_args);
-	params.src->get_description(this->req_args, this->opt_args);
-	params.mdm->get_description(this->req_args, this->opt_args);
-	params.chn->get_description(this->req_args, this->opt_args);
-	params.mnt->get_description(this->req_args, this->opt_args);
-	params.ter->get_description(this->req_args, this->opt_args);
+	params.     get_description(this->args);
+	params.src->get_description(this->args);
+	params.mdm->get_description(this->args);
+	params.chn->get_description(this->args);
+	params.mnt->get_description(this->args);
+	params.ter->get_description(this->args);
 
 	auto psrc = params.src     ->get_prefix();
 	auto penc = params.cdc->enc->get_prefix();
@@ -53,21 +53,21 @@ void EXIT<B,R>
 	auto pmnt = params.mnt     ->get_prefix();
 	auto pter = params.ter     ->get_prefix();
 
-	if (this->req_args.find({penc+"-info-bits", "K"}) != this->req_args.end())
-		this->req_args.erase({psrc+"-info-bits", "K"});
-	this->opt_args.erase({psrc+"-seed",     "S"});
-	this->req_args.erase({pmdm+"-fra-size", "N"});
-	this->opt_args.erase({pmdm+"-fra",      "F"});
-	this->opt_args.erase({pmdm+"-sigma"       });
-	this->req_args.erase({pchn+"-fra-size", "N"});
-	this->opt_args.erase({pchn+"-fra",      "F"});
-	this->opt_args.erase({pchn+"-sigma"        });
-	this->opt_args.erase({pchn+"-seed",     "S"});
-	this->opt_args.erase({pchn+"-add-users"    });
-	this->opt_args.erase({pchn+"-complex"      });
-	this->req_args.erase({pmnt+"-size",     "K"});
-	this->opt_args.erase({pmnt+"-fra",      "F"});
-	this->req_args.erase({pter+"-cw-size",  "N"});
+	if (this->args.exist({penc+"-info-bits", "K"}))
+		this->args.erase({psrc+"-info-bits", "K"});
+	this->args.erase({psrc+"-seed",     "S"});
+	this->args.erase({pmdm+"-fra-size", "N"});
+	this->args.erase({pmdm+"-fra",      "F"});
+	this->args.erase({pmdm+"-sigma"       });
+	this->args.erase({pchn+"-fra-size", "N"});
+	this->args.erase({pchn+"-fra",      "F"});
+	this->args.erase({pchn+"-sigma"        });
+	this->args.erase({pchn+"-seed",     "S"});
+	this->args.erase({pchn+"-add-users"    });
+	this->args.erase({pchn+"-complex"      });
+	this->args.erase({pmnt+"-size",     "K"});
+	this->args.erase({pmnt+"-fra",      "F"});
+	this->args.erase({pter+"-cw-size",  "N"});
 }
 
 template <typename B, typename R>
@@ -84,8 +84,8 @@ void EXIT<B,R>
 
 	auto psrc = params.src->get_prefix();
 
-	auto K = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->K;
-	auto N = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N;
+	auto K = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->K;
+	auto N = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->N;
 
 	params.src->K = params.src->K == 0 ? K : params.src->K;
 	params.mdm->N = N;

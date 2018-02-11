@@ -73,7 +73,7 @@ std::vector<std::string> Codec::parameters
 }
 
 void Codec::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 }
 

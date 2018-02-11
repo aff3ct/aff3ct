@@ -11,9 +11,12 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 #include <map>
 
-#include "Argument_map.hpp"
+#include "Maps/Argument_map_info.hpp"
+#include "Maps/Argument_map_group.hpp"
+#include "Maps/Argument_map_value.hpp"
 
 namespace aff3ct
 {
@@ -29,7 +32,7 @@ class Argument_handler
 private:
 	std::vector<std::string> command;         /*!< The argument list from the command line "char** argv". */
 	std::string              m_program_name;  /*!< Program binary name. */
-	// unsigned int             max_n_char_arg;  /*!< The number of characters of the largest argument name. */
+	std::ostream&            help_os;         /*!< The output stream on which will be displayed the help */
 
 public:
 	/*!
@@ -39,8 +42,9 @@ public:
 	 *
 	 * \param argc: number of arguments.
 	 * \param argv: array of arguments
+	 * \param help_os: the output stream on which is displayed the help
 	 */
-	Argument_handler(const int argc, const char** argv);
+	Argument_handler(const int argc, const char** argv, std::ostream& help_os = std::cout);
 
 	/*!
 	 * \brief Destructor.
@@ -56,7 +60,7 @@ public:
 	 *
 	 * \return true if all the required arguments are in "m_argv", false otherwise.
 	 */
-	Argument_map_value parse_arguments(const Argument_map_info &req_args, const Argument_map_info &opt_args,
+	Argument_map_value parse_arguments(const Argument_map_info &args,
 	                                   std::vector<std::string> &warnings, std::vector<std::string> &errors);
 
 	/*!
@@ -69,15 +73,14 @@ public:
 	bool check_arguments(std::vector<std::string> &error) const;
 
 	/*!
-	 * \brief Prints the traditional usage.
+	 * \brief Prints the traditional usage with only the required arguments.
 	 */
-	void print_usage(const Argument_map_info &req_args) const;
+	void print_usage(const Argument_map_info &args) const;
 
 	/*!
-	 * \brief Prints the traditional usage and the whole help.
+	 * \brief Prints the traditional usage and the whole help for arguments with rank lower or equal to 'print_level'
 	 */
-	void print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args,
-	                const bool print_advanced_args = true) const;
+	void print_help(const Argument_map_info &args, bool print_advanced_args = true) const;
 
 	/*!
 	 * \brief Prints the traditional usage and the whole help grouped by argument categories.
@@ -85,8 +88,8 @@ public:
 	 * \param arg_groups: group of argument based on a prefix,
 	 *                    arg_groups = {{"prefix1", "Group name1"}, {"prefix2", "Group name2"}, [...]}.
 	 */
-	void print_help(const Argument_map_info & req_args,   const Argument_map_info &opt_args,
-	                const Argument_map_group& arg_groups, const bool print_advanced_args = true) const;
+	void print_help(const Argument_map_info & args, const Argument_map_group& arg_groups,
+	                bool print_advanced_args = true) const;
 
 	/*
 	 * return the given tag with its command line argument format.
@@ -121,8 +124,7 @@ private:
 	 *                  values = {"type", ["doc"], ["possible choices separated by a comma"]}.
 	 * \param required: true if this is a required parameter.
 	 */
-	void print_help(const Argument_tag &tags, const Argument_info &info, const size_t max_n_char_arg,
-	                const bool required = false,const bool print_advanced_args = true) const;
+	void print_help(const Argument_tag &tags, const Argument_info &info, const size_t longest_tag) const;
 
 	void print_help_title(const std::string& title) const;
 

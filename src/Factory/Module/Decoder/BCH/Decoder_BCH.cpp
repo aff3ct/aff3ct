@@ -32,18 +32,18 @@ Decoder_BCH::parameters* Decoder_BCH::parameters
 }
 
 void Decoder_BCH::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args.add(
+	args.add(
 		{p+"-corr-pow", "T"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"correction power of the BCH code.");
-	
-	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "ALGEBRAIC");
+
+	tools::add_options(args.at({p+"-type", "D"}), 0, "ALGEBRAIC");
 }
 
 void Decoder_BCH::parameters
@@ -75,7 +75,7 @@ void Decoder_BCH::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		headers[p].push_back(std::make_pair("Galois field order (m)", std::to_string(this->m)));
 		headers[p].push_back(std::make_pair("Correction power (T)",   std::to_string(this->t)));
 	}

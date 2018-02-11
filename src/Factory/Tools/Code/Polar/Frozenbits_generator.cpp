@@ -29,37 +29,39 @@ Frozenbits_generator::parameters* Frozenbits_generator::parameters
 }
 
 void Frozenbits_generator::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).");
+		"useful number of bit transmitted (information bits).",
+		tools::Argument_info::REQUIRED);
 
-	req_args.add(
+	args.add(
 		{p+"-cw-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size.");
+		"the codeword size.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-sigma"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
 		"sigma value for the polar codes generation (adaptive frozen bits if sigma is not set).");
 
-	opt_args.add(
+	args.add(
 		{p+"-gen-method"},
 		tools::Text(tools::Including_set("GA", "FILE", "TV")),
 		"select the frozen bits generation method.");
 
-	opt_args.add(
+	args.add(
 		{p+"-awgn-path"},
 		tools::Path(tools::openmode::read),
 		"path to a file or a directory containing the best channels to use for information bits.");
 
 #ifdef ENABLE_POLAR_BOUNDS
-	opt_args.add(
+	args.add(
 		{p+"-pb-path"},
 		tools::File(tools::openmode::read),
 		"path of the polar bounds code generator (generates best channels to use).");

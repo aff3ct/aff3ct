@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 #include "Argument_type.hpp"
-#include "../Argument_range/Argument_range.hpp"
+#include "../Ranges/Argument_range.hpp"
 
 namespace aff3ct
 {

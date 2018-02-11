@@ -78,50 +78,50 @@ Decoder_turbo_DB::parameters
 }
 
 void Decoder_turbo_DB::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(req_args, opt_args);
+	itl->get_description(args);
 
 	auto pi = this->itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+	args.erase({pi+"-size"    });
+	args.erase({pi+"-fra", "F"});
 
-	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "TURBO_DB");
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "STD");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO_DB");
+	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
 
-	opt_args.add(
+	args.add(
 		{p+"-ite", "i"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"maximal number of iterations in the turbo.");
 
-	sf->get_description(req_args, opt_args);
+	sf->get_description(args);
 
 	auto psf = sf->get_prefix();
 
-	opt_args.erase({psf+"-ite"});
+	args.erase({psf+"-ite"});
 
-	fnc->get_description(req_args, opt_args);
+	fnc->get_description(args);
 
 	auto pfnc = fnc->get_prefix();
 
-	req_args.erase({pfnc+"-size"     });
-	opt_args.erase({pfnc+"-fra",  "F"});
-	opt_args.erase({pfnc+"-ite",  "i"});
+	args.erase({pfnc+"-size"     });
+	args.erase({pfnc+"-fra",  "F"});
+	args.erase({pfnc+"-ite",  "i"});
 
-	sub->get_description(req_args, opt_args);
+	sub->get_description(args);
 
 	auto ps = sub->get_prefix();
 
-	req_args.erase({ps+"-info-bits", "K"});
-	req_args.erase({ps+"-cw-size",   "N"});
-	opt_args.erase({ps+"-fra",       "F"});
+	args.erase({ps+"-info-bits", "K"});
+	args.erase({ps+"-cw-size",   "N"});
+	args.erase({ps+"-fra",       "F"});
 }
 
 void Decoder_turbo_DB::parameters
@@ -171,7 +171,7 @@ void Decoder_turbo_DB::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		itl->get_headers(headers, full);
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));

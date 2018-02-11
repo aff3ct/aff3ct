@@ -32,9 +32,9 @@ Interleaver::parameters* Interleaver::parameters
 }
 
 void Interleaver::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	core->get_description(req_args, opt_args);
+	core->get_description(args);
 }
 
 void Interleaver::parameters

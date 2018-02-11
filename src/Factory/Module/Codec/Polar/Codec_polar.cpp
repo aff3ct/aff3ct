@@ -118,33 +118,33 @@ std::vector<std::string> Codec_polar::parameters
 }
 
 void Codec_polar::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SISO_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	fbg->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	fbg->get_description(args);
+	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
 	auto pfbg = fbg->get_prefix();
 
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
-	opt_args.erase({pdec+"-no-sys"        });
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pfbg+"-cw-size",   "N"});
-	req_args.erase({pfbg+"-info-bits", "K"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
+	args.erase({pdec+"-no-sys"        });
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pfbg+"-cw-size",   "N"});
+	args.erase({pfbg+"-info-bits", "K"});
 
 	if (this->pct)
 	{
-		pct->get_description(req_args, opt_args);
+		pct->get_description(args);
 
 		auto penc = enc->get_prefix();
 
-		req_args.erase({penc+"-cw-size",   "N"});
-		req_args.erase({penc+"-info-bits", "K"});
-		opt_args.erase({penc+"-fra",       "F"});
+		args.erase({penc+"-cw-size",   "N"});
+		args.erase({penc+"-info-bits", "K"});
+		args.erase({penc+"-fra",       "F"});
 	}
 }
 

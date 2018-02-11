@@ -40,8 +40,8 @@ struct BFER_std : BFER
 		void set_cdc(Codec_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const;
-		void store          (const tools::Argument_map_value &vals                                 );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

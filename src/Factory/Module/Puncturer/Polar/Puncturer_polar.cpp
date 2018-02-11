@@ -29,13 +29,13 @@ Puncturer_polar::parameters* Puncturer_polar::parameters
 }
 
 void Puncturer_polar::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Puncturer::parameters::get_description(req_args, opt_args);
+	Puncturer::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	tools::add_options(opt_args.at({p+"-type"}), 0, "WANGLIU");
+	tools::add_options(args.at({p+"-type"}), 0, "WANGLIU");
 }
 
 void Puncturer_polar::parameters

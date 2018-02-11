@@ -83,14 +83,14 @@ int read_arguments(const int argc, const char** argv, factory::Launcher::paramet
 {
 	tools::Argument_handler ah(argc, argv);
 
-	tools::Argument_map_info req_args, opt_args;
+	tools::Argument_map_info args;
 	tools::Argument_map_group arg_group;
 
 	std::vector<std::string> cmd_warn, cmd_error;
 
-	params.get_description(req_args, opt_args);
+	params.get_description(args);
 
-	auto arg_vals = ah.parse_arguments(req_args, opt_args, cmd_warn, cmd_error);
+	auto arg_vals = ah.parse_arguments(args, cmd_warn, cmd_error);
 
 	bool display_help = false;
 	try
@@ -108,7 +108,7 @@ int read_arguments(const int argc, const char** argv, factory::Launcher::paramet
 	if (cmd_error.size() || display_help)
 	{
 		arg_group["sim"] = "Simulation parameter(s)";
-		ah.print_help(req_args, opt_args, arg_group);
+		ah.print_help(args, arg_group, params.display_adv_help);
 
 		if (cmd_error.size()) std::cerr << std::endl;
 		for (auto w = 0; w < (int)cmd_error.size(); w++)

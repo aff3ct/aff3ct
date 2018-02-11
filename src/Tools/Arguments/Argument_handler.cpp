@@ -1,4 +1,3 @@
-#include <iostream>
 #include <sstream>
 #include <algorithm>
 #include <type_traits>
@@ -12,7 +11,8 @@
 using namespace aff3ct::tools;
 
 Argument_handler
-::Argument_handler(const int argc, const char** argv)
+::Argument_handler(const int argc, const char** argv, std::ostream& help_os)
+: help_os(help_os)
 {
 	if (argc <= 0)
 	{
@@ -35,42 +35,32 @@ Argument_handler
 }
 
 Argument_map_value Argument_handler
-::parse_arguments(const Argument_map_info &req_args, const Argument_map_info &opt_args,
+::parse_arguments(const Argument_map_info &args,
                   std::vector<std::string> &warnings, std::vector<std::string> &errors)
 {
 	Argument_map_value m_arg_v;
 	std::vector<bool> command_found_pos(this->command.size(),false);
 
-	auto req_found_pos = this->sub_parse_arguments(req_args, m_arg_v, command_found_pos, errors);
-	auto opt_found_pos = this->sub_parse_arguments(opt_args, m_arg_v, command_found_pos, errors);
+	auto args_found_pos = this->sub_parse_arguments(args, m_arg_v, command_found_pos, errors);
 
-
-	for (unsigned i = 0; i < req_found_pos.size(); ++i)
+	auto it_arg = args.begin();
+	for (unsigned i = 0; i < args_found_pos.size(); i++, it_arg++)
 	{
-		auto it_arg = req_args.begin();
-		std::advance(it_arg, i);
-
-		if (it_arg->second->advanced_arg)
+		if (!args_found_pos[i] && it_arg->second->rank == Argument_info::REQUIRED)
 		{
-			std::string message = "The \"" + print_tag(it_arg->first) + "\" argument is required and advanced (can't be both)!";
-			warnings.push_back(message);
+			std::string message = "The \"" + print_tag(it_arg->first) + "\" argument is required.";
+			errors.push_back(message);
 		}
-
-		if (req_found_pos[i])
-			continue;
-
-		std::string message = "The \"" + print_tag(it_arg->first) + "\" argument is required.";
-		errors.push_back(message);
 	}
 
 	for (unsigned i = 0; i < command_found_pos.size(); ++i)
 	{
-		if (command_found_pos[i])
-			continue;
-
-		std::string message = "Unknown argument \"" + this->command[i] + "\" at the position "
-		                     + std::to_string(i+1) + ".";
-		warnings.push_back(message);
+		if (!command_found_pos[i])
+		{
+			std::string message = "Unknown argument \"" + this->command[i] + "\" at the position "
+			                     + std::to_string(i+1) + ".";
+			warnings.push_back(message);
+		}
 	}
 
 	return m_arg_v;
@@ -85,7 +75,7 @@ std::vector<bool> Argument_handler
 	std::vector<bool> args_found_pos(args.size(), false);
 
 	if (this->command.size() != command_found_pos.size())
-		std::runtime_error("'command' and 'command_found_pos' vectors have to have the same length.");
+		std::runtime_error("'command' and 'command_found_pos' vectors shall have the same length.");
 
 	// unsigned found_arg_count = 0; // number of different arguments found in the command line
 
@@ -165,54 +155,59 @@ std::vector<bool> Argument_handler
 }
 
 void Argument_handler
-::print_usage(const Argument_map_info &req_args) const
+::print_usage(const Argument_map_info &args) const
 {
-	std::cout << "Usage: " << this->m_program_name;
+	help_os << "Usage: " << this->m_program_name;
 
 	std::vector<std::string> existing_flags;
 
-	for (auto it = req_args.begin(); it != req_args.end(); ++it)
+	for (auto it = args.begin(); it != args.end(); ++it)
 	{
-		if (std::find(existing_flags.begin(), existing_flags.end(), it->first.back()) == existing_flags.end())
+		if (it->second->rank == Argument_info::REQUIRED
+		 && std::find(existing_flags.begin(), existing_flags.end(), it->first.back()) == existing_flags.end())
 		{
 			if(it->second->type->get_title() != "")
-				std::cout << " " + print_tag(it->first.back()) << " <" << it->second->type->get_short_title() << ">";
+				help_os << " " + print_tag(it->first.back()) << " <" << it->second->type->get_short_title() << ">";
 			else
-				std::cout << " " + print_tag(it->first.back());
+				help_os << " " + print_tag(it->first.back());
 
 			existing_flags.push_back(it->first.back());
 		}
 	}
-	std::cout << " [optional args...]" << std::endl;
+	help_os << " [optional args...]" << std::endl;
 }
 
 size_t Argument_handler
 ::find_longest_tags(const Argument_map_info &args) const
 {
-	size_t max_n_char_arg = 0;
+	size_t longest_tag = 0;
 	for (auto it = args.begin(); it != args.end(); ++it)
-		max_n_char_arg = std::max(this->print_tag(it->first).size(), max_n_char_arg);
+		longest_tag = std::max(this->print_tag(it->first).size(), longest_tag);
 
-	return max_n_char_arg;
+	return longest_tag;
 }
 
 void Argument_handler
-::print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args, const bool print_advanced_args) const
+::print_help(const Argument_map_info &args, const bool print_advanced_args) const
 {
-	this->print_usage(req_args);
-	std::cout << std::endl;
+	this->print_usage(args);
+	help_os << std::endl;
 
 	// found first the longest tag to align informations
-	size_t max_n_char_arg = std::max(find_longest_tags(req_args), find_longest_tags(opt_args));
+	size_t longest_tag = find_longest_tags(args);
 
-	// print arguments
-	for (auto it = req_args.begin(); it != req_args.end(); ++it)
-		this->print_help(it->first, *it->second, max_n_char_arg, true, print_advanced_args);
+	// print first REQUIRED arguments
+	for (auto it = args.begin(); it != args.end(); ++it)
+		if (it->second->rank == Argument_info::REQUIRED)
+			this->print_help(it->first, *it->second, longest_tag);
 
-	for (auto it = opt_args.begin(); it != opt_args.end(); ++it)
-		this->print_help(it->first, *it->second, max_n_char_arg, false, print_advanced_args);
+	// then print others
+	for (auto it = args.begin(); it != args.end(); ++it)
+		if (it->second->rank == Argument_info::OPTIONAL
+		 || (print_advanced_args && it->second->rank == Argument_info::ADVANCED))
+			this->print_help(it->first, *it->second, longest_tag);
 
-	std::cout << std::endl;
+	help_os << std::endl;
 }
 
 std::string split_doc(const std::string& line, const std::string& start_line, const unsigned max_char)
@@ -236,33 +231,39 @@ std::string split_doc(const std::string& line, const std::string& start_line, co
 }
 
 void Argument_handler
-::print_help(const Argument_tag &tags, const Argument_info &info, const size_t max_n_char_arg, const bool required,
-             const bool print_advanced_args) const
+::print_help(const Argument_tag &tags, const Argument_info &info, const size_t longest_tag) const
 {
 	Format arg_format = 0;
 	const std::string tab = "    ";
 
-	std::string tabr = tab;
+	std::string tabr;
 
-	if (required)
-		tabr = format("{R} ", arg_format | Style::BOLD | FG::Color::ORANGE);
-	else if (info.advanced_arg && print_advanced_args)
-		tabr = format("{A} ", arg_format | Style::BOLD | FG::Color::BLUE);
-	else if (info.advanced_arg && !print_advanced_args)
-		return;
+	switch (info.rank)
+	{
+		case Argument_info::OPTIONAL :
+			tabr = tab;
+			break;
 
+		case Argument_info::REQUIRED :
+			tabr = format("{R} ", arg_format | Style::BOLD | FG::Color::ORANGE);
+			break;
+
+		case Argument_info::ADVANCED :
+			tabr = format("{A} ", arg_format | Style::BOLD | FG::Color::BLUE);
+			break;
+	}
 
 	std::string tags_str = this->print_tag(tags);
-	tags_str.append(max_n_char_arg - tags_str.size(), ' ');
+	tags_str.append(longest_tag - tags_str.size(), ' ');
 
-	std::cout << tabr << format(tags_str, arg_format | Style::BOLD);
+	help_os << tabr << format(tags_str, arg_format | Style::BOLD);
 
 	if (info.type->get_title().size())
-		std::cout << format(" <" + info.type->get_title() + ">", arg_format | FG::GRAY);
+		help_os << format(" <" + info.type->get_title() + ">", arg_format | FG::GRAY);
 
-	std::cout << std::endl;
+	help_os << std::endl;
 	auto splitted_doc = split_doc(info.doc, tab + "  ", 80);
-	std::cout << format(splitted_doc, arg_format) << std::endl;
+	help_os << format(splitted_doc, arg_format) << std::endl;
 }
 
 void Argument_handler
@@ -270,23 +271,22 @@ void Argument_handler
 {
 	Format head_format = Style::BOLD | Style::ITALIC | FG::Color::MAGENTA | FG::INTENSE;
 
-	std::cout << format(title + ":", head_format) << std::endl;
+	help_os << format(title + ":", head_format) << std::endl;
 }
 
 void Argument_handler
-::print_help(const Argument_map_info &req_args, const Argument_map_info &opt_args, const Argument_map_group& arg_groups,
+::print_help(const Argument_map_info &args, const Argument_map_group& arg_groups,
              const bool print_advanced_args) const
 {
-	this->print_usage(req_args);
-	std::cout << std::endl;
+	this->print_usage(args);
+	help_os << std::endl;
 
 	// found first the longest tag to align informations
-	size_t max_n_char_arg = std::max(find_longest_tags(req_args), find_longest_tags(opt_args));
-	bool title_displayed = false;
+	size_t longest_tag = find_longest_tags(args);
+	bool title_displayed;
 
 	// the already displayed positions then it can't be displayed several times in different sub parameters
-	std::vector<bool> req_args_print_pos(req_args.size(), false);
-	std::vector<bool> opt_args_print_pos(opt_args.size(), false);
+	std::vector<bool> args_print_pos(args.size(), false);
 
 	// display each group
 	for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
@@ -295,13 +295,16 @@ void Argument_handler
 
 		auto& prefix = it_grp->first;
 
-		// display first the required arguments of this group
-		for (auto it_arg = req_args.begin(); it_arg != req_args.end(); it_arg++)
+		// display first the REQUIRED arguments of this group
+		for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 		{
-			auto& tag  = it_arg->first.front();
-			auto  dist = std::distance(req_args.begin(), it_arg);
+			if (it_arg->second->rank != Argument_info::REQUIRED)
+				continue;
 
-			if (tag.find(prefix) == 0 && !req_args_print_pos[dist])
+			auto& tag  = it_arg->first.front();
+			auto  dist = std::distance(args.begin(), it_arg);
+
+			if (tag.find(prefix) == 0 && !args_print_pos[dist])
 			{
 				if (!title_displayed)
 				{
@@ -309,23 +312,27 @@ void Argument_handler
 					title_displayed = true;
 				}
 
-				req_args_print_pos[dist] = true;
+				args_print_pos[dist] = true;
 
-				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, true, print_advanced_args);
+				this->print_help(it_arg->first, *it_arg->second, longest_tag);
 			}
 		}
 
-		// display then the optional arguments of this group
-		for (auto it_arg = opt_args.begin(); it_arg != opt_args.end(); it_arg++)
+		// display then the OPTIONAL and ADVANCED arguments of this group
+		for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 		{
+			if (it_arg->second->rank == Argument_info::REQUIRED
+			 || (!print_advanced_args && it_arg->second->rank == Argument_info::ADVANCED))
+				continue;
+
 			auto& tag  = it_arg->first.front();
-			auto  dist = std::distance(opt_args.begin(), it_arg);
+			auto  dist = std::distance(args.begin(), it_arg);
 
-			if (tag.find(prefix) == 0 && !opt_args_print_pos[dist])
+			if (tag.find(prefix) == 0 && !args_print_pos[dist])
 			{
-				opt_args_print_pos[dist] = true;
+				args_print_pos[dist] = true;
 
-				if (it_arg->second->advanced_arg && !print_advanced_args)
+				if (it_arg->second->rank == Argument_info::ADVANCED && !print_advanced_args)
 					continue;
 
 				if (!title_displayed)
@@ -334,35 +341,39 @@ void Argument_handler
 					title_displayed = true;
 				}
 
-				this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, false, print_advanced_args);
+				this->print_help(it_arg->first, *it_arg->second, longest_tag);
 			}
 		}
 
 		if (title_displayed)
-			std::cout << std::endl;
+			help_os << std::endl;
 	}
 
 
 	title_displayed = false;
-	// display the other required parameters
-	for (auto it_arg = req_args.begin(); it_arg != req_args.end(); it_arg++)
+	// display the other REQUIRED parameters
+	for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 	{
+		if (it_arg->second->rank != Argument_info::REQUIRED)
+			continue;
+
 		auto& tag = it_arg->first.front();
 		bool found = false;
 
-		if (req_args_print_pos[std::distance(req_args.begin(), it_arg)])
+		if (args_print_pos[std::distance(args.begin(), it_arg)])
 			continue; // already displayed
 
-		for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
-		{
-			auto& prefix = it_grp->first;
+		// for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
+		// {
+		// 	auto& prefix = it_grp->first;
 
-			if (tag.find(prefix) == 0)
-			{
-				found = true;
-				break;
-			}
-		}
+		// 	if (tag.find(prefix) == 0)
+		// 	{
+		// 		found = true;
+		// 		help_os << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+		// 		break;
+		// 	}
+		// }
 
 		if (!found)
 		{
@@ -372,29 +383,33 @@ void Argument_handler
 				title_displayed = true;
 			}
 
-			this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, true, print_advanced_args);
+			this->print_help(it_arg->first, *it_arg->second, longest_tag);
 		}
 	}
 
-	// display the other optional parameters
-	for (auto it_arg = opt_args.begin(); it_arg != opt_args.end(); it_arg++)
+	// display the other OPTIONAL and ADVANCED parameters
+	for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 	{
+		if (it_arg->second->rank == Argument_info::REQUIRED
+		 || (!print_advanced_args && it_arg->second->rank == Argument_info::ADVANCED))
+			continue;
+
 		auto& tag = it_arg->first.front();
 		bool found = false;
 
-		if (opt_args_print_pos[std::distance(opt_args.begin(), it_arg)])
+		if (args_print_pos[std::distance(args.begin(), it_arg)])
 			continue; // already displayed
 
-		for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
-		{
-			auto& prefix = it_grp->first;
+		// for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
+		// {
+		// 	auto& prefix = it_grp->first;
 
-			if (tag.find(prefix) == 0)
-			{
-				found = true;
-				break;
-			}
-		}
+		// 	if (tag.find(prefix) == 0)
+		// 	{
+		// 		found = true;
+		// 		break;
+		// 	}
+		// }
 
 		if (!found)
 		{
@@ -404,7 +419,7 @@ void Argument_handler
 				title_displayed = true;
 			}
 
-			this->print_help(it_arg->first, *it_arg->second, max_n_char_arg, false, print_advanced_args);
+			this->print_help(it_arg->first, *it_arg->second, longest_tag);
 		}
 	}
 }

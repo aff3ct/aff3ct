@@ -26,18 +26,19 @@ Terminal_EXIT::parameters* Terminal_EXIT::parameters
 }
 
 void Terminal_EXIT::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Terminal::parameters::get_description(req_args, opt_args);
+	Terminal::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-cw-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of bits in the codeword.");
+		"number of bits in the codeword.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("STD")),
 		"select the terminal type you want.");

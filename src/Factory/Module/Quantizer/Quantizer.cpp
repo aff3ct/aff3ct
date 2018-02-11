@@ -33,36 +33,37 @@ Quantizer::parameters* Quantizer::parameters
 }
 
 void Quantizer::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args.add(
+	args.add(
 		{p+"-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of real to quantize.");
+		"number of real to quantize.",
+		tools::Argument_info::REQUIRED);
 
-	opt_args.add(
+	args.add(
 		{p+"-fra", "F"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the number of inter frame level to process.");
 
-	opt_args.add(
+	args.add(
 		{p+"-type"},
 		tools::Text(tools::Including_set("STD", "STD_FAST", "TRICKY")),
 		"type of the quantizer to use in the simulation.");
 
-	opt_args.add(
+	args.add(
 		{p+"-dec"},
 		tools::Integer(tools::Positive()),
 		"the position of the fixed point in the quantified representation.");
 
-	opt_args.add(
+	args.add(
 		{p+"-bits"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the number of bits used for the quantizer.");
 
-	opt_args.add(
+	args.add(
 		{p+"-range"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
 		"the min/max bound for the tricky quantizer.");

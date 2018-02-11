@@ -25,15 +25,15 @@ void Command_parser
 ::parse(bool add_help_tag)
 {
 	// build the required and optional arguments for the cmd line
-	Factory::get_description(params, req_args, opt_args);
+	Factory::get_description(params, args);
 
-	if (add_help_tag && !opt_args.exist(Command_parser::help_tag))
+	if (add_help_tag && !args.exist(Command_parser::help_tag))
 	{
-		opt_args.add(Command_parser::help_tag, tools::None(), "print this help.");
+		args.add(Command_parser::help_tag, tools::None(), "print this help.");
 	}
 
 	// parse the argument from the command line
-	auto read_args = ahandler.parse_arguments(req_args, opt_args, warnings, errors);
+	auto read_args = ahandler.parse_arguments(args, warnings, errors);
 
 	try
 	{
@@ -61,11 +61,11 @@ void Command_parser
 		auto grps = Factory::create_groups(params);
 
 		// display the command usage and the help (the parameters are ordered by group)
-		ahandler.print_help(req_args, opt_args, grps);
+		ahandler.print_help(args, grps);
 
 		std::cout << std::endl;
 	}
-	else if (opt_args.exist(Command_parser::help_tag))
+	else if (args.exist(Command_parser::help_tag))
 	{
 		std::string message = "For more information please display the help (\"";
 		message += tools::Argument_handler::print_tag(Command_parser::help_tag) += "\").";

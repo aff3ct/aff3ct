@@ -31,16 +31,16 @@ Decoder_repetition::parameters* Decoder_repetition::parameters
 }
 
 void Decoder_repetition::parameters
-::get_description(tools::Argument_map_info &req_args, tools::Argument_map_info &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	tools::add_options(opt_args.at({p+"-type", "D"}), 0, "REPETITION" );
-	tools::add_options(opt_args.at({p+"-implem"   }), 0, "STD", "FAST");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "REPETITION" );
+	tools::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
 
-	opt_args.add(
+	args.add(
 		{p+"-no-buff"},
 		tools::None(),
 		"does not suppose a buffered encoding.");
