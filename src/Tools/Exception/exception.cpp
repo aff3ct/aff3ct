@@ -13,7 +13,7 @@ using namespace aff3ct::tools;
 
 const std::string aff3ct::tools::exception::empty_string = "";
 bool aff3ct::tools::exception::no_backtrace = false;
-bool aff3ct::tools::exception::no_addr2line = false;
+bool aff3ct::tools::exception::no_addr2line = true;
 
 exception
 ::exception() throw()

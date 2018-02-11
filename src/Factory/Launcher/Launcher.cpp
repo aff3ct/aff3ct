@@ -121,9 +121,10 @@ void factory::Launcher::parameters
 		tools::Argument_info::ADVANCED);
 
 	args.add(
-		{"except-no-a2l"},
+		{"except-a2l"},
 		tools::None(),
-		"do not enhance the backtrace when displaying exception.",
+		"enhance the backtrace when displaying exception by changing program addresses into "
+		" file names and lines (may take some seconds).",
 		tools::Argument_info::ADVANCED);
 
 	args.add(
@@ -160,8 +161,8 @@ void factory::Launcher::parameters
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
 
-	if(vals.exist({"except-no-bt" })) tools::exception::no_backtrace = true;
-	if(vals.exist({"except-no-a2l"})) tools::exception::no_addr2line = true;
+	tools::exception::no_backtrace =  vals.exist({"except-no-bt"});
+	tools::exception::no_addr2line = !vals.exist({"except-a2l"  });
 }
 
 void factory::Launcher::parameters
