@@ -1,6 +1,7 @@
 #include <thread>
 
 #include "BFER.hpp"
+#include "Tools/Math/utils.h"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -191,7 +192,12 @@ void BFER::parameters
 	if (this->src != nullptr && this->cdc != nullptr)
 	{
 		const auto bit_rate = (float)this->src->K / (float)this->cdc->N;
-		headers[p].push_back(std::make_pair("Bit rate", std::to_string(bit_rate)));
+		// find the greatest common divisor of K and N
+		auto gcd = tools::greatest_common_divisor(this->src->K, this->cdc->N);
+		std::stringstream br_str;
+		br_str << bit_rate << " (" << this->src->K/gcd << "/" << this->cdc->N/gcd << ")";
+
+		headers[p].push_back(std::make_pair("Bit rate", br_str.str()));
 	}
 
 	if (this->src != nullptr)

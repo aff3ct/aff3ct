@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "Tools/general_utils.h"
+#include "Tools/Math/utils.h"
 
 #include "Codec.hpp"
 
@@ -86,7 +87,6 @@ void Codec::parameters
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
-	const auto code_rate = (float)this->K / (float)this->N;
 	auto v = tools::split(this->get_name(), ' ');
 	auto name = v.size() >= 2 ? v[1] : "UNKNOWN";
 	for (size_t i = 2; i < v.size(); i++)
@@ -97,7 +97,15 @@ void Codec::parameters
 	headers[p].push_back(std::make_pair("Info. bits (K)",       std::to_string(this->K        )));
 	headers[p].push_back(std::make_pair("Codeword size (N_cw)", std::to_string(this->N_cw     )));
 	headers[p].push_back(std::make_pair("Frame size (N)",       std::to_string(this->N        )));
-	headers[p].push_back(std::make_pair("Code rate",            std::to_string(code_rate      )));
+
+
+	const auto code_rate = (float)this->K / (float)this->N;
+	// find the greatest common divisor of K and N
+	auto gcd = tools::greatest_common_divisor(this->K, this->N);
+	std::stringstream cr_str;
+	cr_str << code_rate << " (" << this->K/gcd << "/" << this->N/gcd << ")";
+
+	headers[p].push_back(std::make_pair("Code rate", cr_str.str()));
 }
 
 void Codec::parameters

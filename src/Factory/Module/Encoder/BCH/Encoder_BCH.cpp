@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Math/utils.h"
 
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
 
@@ -35,9 +36,7 @@ struct check_BCH_N
 	template <typename T>
 	static void check(const T N)
 	{
-		auto m = (int)std::ceil(std::log2(N));
-
-		if (N != ((1 << m) -1))
+		if (!tools::is_power_of_2(N+1))
 		{
 			std::stringstream message;
 			message << "'N' has to be a power of 2 minus 1";

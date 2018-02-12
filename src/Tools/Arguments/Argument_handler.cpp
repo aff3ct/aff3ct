@@ -357,12 +357,12 @@ void Argument_handler
 		if (it_arg->second->rank != Argument_info::REQUIRED)
 			continue;
 
-		auto& tag = it_arg->first.front();
 		bool found = false;
 
 		if (args_print_pos[std::distance(args.begin(), it_arg)])
 			continue; // already displayed
 
+		// auto& tag = it_arg->first.front();
 		// for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
 		// {
 		// 	auto& prefix = it_grp->first;
@@ -394,12 +394,12 @@ void Argument_handler
 		 || (!print_advanced_args && it_arg->second->rank == Argument_info::ADVANCED))
 			continue;
 
-		auto& tag = it_arg->first.front();
 		bool found = false;
 
 		if (args_print_pos[std::distance(args.begin(), it_arg)])
 			continue; // already displayed
 
+		// auto& tag = it_arg->first.front();
 		// for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
 		// {
 		// 	auto& prefix = it_grp->first;

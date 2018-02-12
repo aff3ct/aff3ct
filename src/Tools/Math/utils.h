@@ -100,6 +100,27 @@ inline R integral(function_type func, const R min, const R max, const int number
 
 	return area;
 }
+
+template <typename T>
+T greatest_common_divisor(T a, T b)
+{
+	T r;
+
+	while ((r = a % b))
+	{
+		a = b;
+		b = r;
+	}
+
+	return b;
+}
+
+template <typename T>
+T least_common_multiple(T a, T b)
+{
+	return (a * b) / greatest_common_divisor(a, b);
+}
+
 }
 }
 

@@ -76,8 +76,7 @@ void Codec_turbo_DB::parameters
 		args.erase({ppct+"-fra",       "F"});
 		args.erase({ppct+"-tail-length"   });
 
-		//opt_args[{ppct+"-fra-size", "N"}] = req_args[{ppct+"-fra-size", "N"}]->clone();
-		args.erase({ppct+"-fra-size", "N"});
+		args[{ppct+"-fra-size", "N"}]->rank = tools::Argument_info::OPTIONAL;
 	}
 
 	enc->get_description(args);
