@@ -80,3 +80,4 @@ A list of the AFF3CT related web pages:
 - [Official wiki](https://github.com/aff3ct/aff3ct/wiki)
 - [Official website](https://aff3ct.github.io/)
 - [Scientific publications](https://aff3ct.github.io/publications.html)
+- [Contributing guidelines](https://github.com/aff3ct/aff3ct/blob/master/CONTRIBUTING.md)
