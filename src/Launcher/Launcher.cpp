@@ -118,8 +118,10 @@ void Launcher::print_header()
 	this->stream << "#" << std::endl;
 }
 
-void Launcher::launch()
+int Launcher::launch()
 {
+	int exit_code = EXIT_SUCCESS;
+
 	std::srand(this->params_common.global_seed);
 
 	// in case of the user call launch multiple times
@@ -137,7 +139,7 @@ void Launcher::launch()
 #endif
 			for (unsigned w = 0; w < cmd_warn.size(); w++)
 				std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
-		return;
+		return EXIT_FAILURE;
 	}
 
 	// write the command and he curve name in the PyBER format
@@ -172,6 +174,7 @@ void Launcher::launch()
 	catch (std::exception const& e)
 	{
 		std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
+		exit_code = EXIT_FAILURE;
 	}
 
 	if (simu != nullptr)
@@ -185,10 +188,13 @@ void Launcher::launch()
 		try
 		{
 			simu->launch();
+			if (simu->is_error())
+				exit_code = EXIT_FAILURE;
 		}
 		catch (std::exception const& e)
 		{
 			std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
+			exit_code = EXIT_FAILURE;
 		}
 	}
 
@@ -202,4 +208,6 @@ void Launcher::launch()
 		delete simu;
 		simu = nullptr;
 	}
+
+	return exit_code;
 }

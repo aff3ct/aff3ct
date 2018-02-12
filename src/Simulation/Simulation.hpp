@@ -30,6 +30,8 @@ protected:
 	// map of Modules
 	std::map<std::string, std::vector<module::Module*>> modules;
 
+	bool simu_error;
+
 public:
 	/*!
 	 *  \brief Constructor.
@@ -40,6 +42,8 @@ public:
 	 *  \brief Destructor.
 	 */
 	virtual ~Simulation();
+
+	bool is_error() const;
 
 	/*!
 	 *  \brief This method has to be overloaded, this is the start point of the Simulation.

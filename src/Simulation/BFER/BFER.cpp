@@ -208,7 +208,6 @@ void BFER<B,R,Q>
 #endif
 			terminal->start_temp_report(params_BFER.ter->frequency);
 
-		auto simu_error = false;
 		try
 		{
 			this->_launch();
@@ -219,13 +218,13 @@ void BFER<B,R,Q>
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
 
 			std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
-			simu_error = true;
+			this->simu_error = true;
 		}
 
 #ifdef ENABLE_MPI
-		if (!params_BFER.ter->disabled && terminal != nullptr && !simu_error && params_BFER.mpi_rank == 0)
+		if (!params_BFER.ter->disabled && terminal != nullptr && !this->simu_error && params_BFER.mpi_rank == 0)
 #else
-		if (!params_BFER.ter->disabled && terminal != nullptr && !simu_error)
+		if (!params_BFER.ter->disabled && terminal != nullptr && !this->simu_error)
 #endif
 		{
 			if (params_BFER.debug)
@@ -250,7 +249,7 @@ void BFER<B,R,Q>
 			}
 		}
 
-		if (this->dumper_red != nullptr && !simu_error)
+		if (this->dumper_red != nullptr && !this->simu_error)
 		{
 			std::stringstream s_snr_b;
 			s_snr_b << std::setprecision(2) << std::fixed << snr_b;

@@ -69,7 +69,7 @@ public:
 	/*!
 	 * \brief Launch the simulation.
 	 */
-	void launch();
+	int launch();
 
 protected:
 	/*!
