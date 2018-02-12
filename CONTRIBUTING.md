@@ -32,7 +32,7 @@ For the readability, we apply some coding conventions:
 
   * We indent using tabulation (hard tabs).
   * We ALWAYS put spaces after list items and method parameters (`[1, 2, 3]`, not `[1,2,3]`), around operators (`x += 1`, not `x+=1`), and around hash arrows.
-  * We use the [snake case](https://en.wikipedia.org/wiki/Snake_case) (`my_variable`, not `myVariable`), classes start with an upper case (`My_class`, not `my_class`) and variables/methods/function start with a lower case.
+  * We use the [snake case](https://en.wikipedia.org/wiki/Snake_case) (`my_variable`, not `myVariable`), classes start with an upper case (`My_class`, not `my_class`) and variables/methods/functions start with a lower case.
   * The number of characters is limited to 120 per line of code.
 
 This is open source software. Consider the people who will read your code, and make it look nice for them.
