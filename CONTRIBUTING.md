@@ -1,4 +1,4 @@
-# How to contribute
+# Contributing Guidelines
 
 We're really glad you're reading this, because we need volunteer developers to expand this project.
 
@@ -40,7 +40,7 @@ It's sort of like driving a car: Perhaps you love doing donuts when you're alone
 
 ## Documentation
 
-At this time, AFF3CT is not as documented as we would like to be. If you are interested in enrich the AFF3CT documentation, We are open to receive suggestions.
+At this time, AFF3CT is not as documented as we would like to be. If you are interested in enrich the AFF3CT documentation, we are open to receive suggestions.
 You can also propose new pages for [the wiki](https://github.com/aff3ct/aff3ct/wiki).
 
 Thanks,
