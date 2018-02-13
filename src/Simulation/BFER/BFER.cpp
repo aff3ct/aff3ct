@@ -310,9 +310,9 @@ void BFER<B,R,Q>
 	catch (std::exception const& e)
 	{
 		module::Monitor::stop();
+		simu->simu_error = true;
 
 		simu->mutex_exception.lock();
-
 		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), e.what()) == simu->prev_err_messages.end())
 		{
 			std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
