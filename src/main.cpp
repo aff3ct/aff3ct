@@ -119,6 +119,7 @@ int main(int argc, char **argv)
 int sc_main(int argc, char **argv)
 #endif
 {
+	int exit_code = EXIT_SUCCESS;
 #ifdef ENABLE_MPI
 	MPI_Init(nullptr, nullptr);
 #endif
@@ -145,18 +146,19 @@ int sc_main(int argc, char **argv)
 #endif
 		if (launcher != nullptr)
 		{
-			launcher->launch();
+			exit_code = launcher->launch();
 			delete launcher;
 		}
 	}
 	catch(std::exception const& e)
 	{
 		std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
+		exit_code = EXIT_FAILURE;
 	}
 
 #ifdef ENABLE_MPI
 	MPI_Finalize();
 #endif
 
-	return EXIT_SUCCESS;
+	return exit_code;
 }
