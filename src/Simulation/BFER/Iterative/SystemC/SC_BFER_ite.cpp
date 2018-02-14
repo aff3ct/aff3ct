@@ -133,7 +133,7 @@ void SC_BFER_ite<B,R,Q>
 
 
 	this->router    = new tools::SC_Router   (p, "Router"   );
-	this->funnel    = new tools::SC_Funnel   (p, "Funnel"   );
+	this->funnel    = new tools::SC_Funnel   (   "Funnel"   );
 	this->predicate = new tools::SC_Predicate(p, "Predicate");
 
 	this->bind_sockets();
@@ -305,7 +305,7 @@ module::Coset<B,Q>* SC_BFER_ite<B,R,Q>
 	return cst_params.template build_real<B,Q>();
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::simulation::SC_BFER_ite<B_8,R_8,Q_8>;
