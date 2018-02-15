@@ -17,14 +17,14 @@ analysis-cppcheck:
      when: always
      paths:
        - cppcheck/
-  tags: 
+  tags:
     - cppcheck
   script:
     - ./ci/analysis-cppcheck.sh
 
 analysis-sonarqube:
   stage: analysis
-  tags: 
+  tags:
     - sonarqube
   only:
     - master
@@ -37,6 +37,27 @@ build-linux-gcc:
    - linux
   script:
     - ./ci/build-linux-gcc.sh
+
+build-linux-gcc-8-bit:
+  stage: build
+  tags:
+   - linux
+  script:
+    - ./ci/build-linux-gcc-8-bit.sh
+
+build-linux-gcc-mpi:
+  stage: build
+  tags:
+   - linux
+  script:
+    - ./ci/build-linux-gcc-mpi.sh
+
+build-linux-gcc-systemc:
+  stage: build
+  tags:
+   - linux
+  script:
+    - ./ci/build-linux-gcc-systemc.sh
 
 build-linux-clang:
   stage: build
