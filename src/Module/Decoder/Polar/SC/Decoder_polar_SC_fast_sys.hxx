@@ -188,7 +188,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 {
 	const std::string name = "Decoder_polar_SC_fast_sys";
 	this->set_name(name);
-	
+
 	static_assert(sizeof(B) == sizeof(R), "");
 
 	if (!tools::is_power_of_2(this->N))
@@ -413,17 +413,10 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 #if defined(ENABLE_BIT_PACKING)
 		if (typeid(B) == typeid(signed char))
 		{
-			if (!(fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
-			                                                 (signed char*)s_bis.data(),
-			                                                 (int)this->N)))
-			{
-				std::stringstream message;
-				message << "Unsupported 'N' value for itransposition: 'N' has to be greater or equal to 128 for "
-				        << "SSE/NEON or to 256 for AVX ('N' = " << this->N << ").";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-			else
-				tools::Bit_packer<B>::unpack(this->s_bis.data(), this->s.data(), this->N, n_frames);
+			fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
+			                                           (signed char*)s_bis.data(),
+			                                           (int)this->N);
+			tools::Bit_packer<B>::unpack(this->s_bis.data(), this->s.data(), this->N, n_frames);
 		}
 #endif
 		if (!fast_deinterleave)
@@ -458,17 +451,10 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 #if defined(ENABLE_BIT_PACKING)
 		if (typeid(B) == typeid(signed char))
 		{
-			if (!(fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
-			                                                 (signed char*)s_bis.data(),
-			                                                 (int)this->N)))
-			{
-				std::stringstream message;
-				message << "Unsupported 'N' value for itransposition: 'N' has to be greater or equal to 128 for "
-				        << "SSE/NEON or to 256 for AVX ('N' = " << this->N << ").";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-			else
-				tools::Bit_packer<B>::unpack(this->s_bis.data(), V_N, this->N, n_frames);
+			fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
+			                                           (signed char*)s_bis.data(),
+			                                           (int)this->N);
+			tools::Bit_packer<B>::unpack(this->s_bis.data(), V_N, this->N, n_frames);
 		}
 #endif
 		if (!fast_deinterleave)
