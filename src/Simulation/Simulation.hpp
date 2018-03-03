@@ -17,7 +17,7 @@ namespace aff3ct
 namespace simulation
 {
 /*!
- * \class Launcher
+ * \class Simulation
  *
  * \brief The Simulation is an abstract and generic container.
  */
