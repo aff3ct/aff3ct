@@ -6,7 +6,7 @@ Doxygen can easily be installed on Ubuntu/Debian systems like this:
 
     $ sudo apt-get install doxygen
 
-To generates the documentation, you simply have to do:
+To generate the documentation, you simply have to do:
 
     $ doxygen config.txt
 
