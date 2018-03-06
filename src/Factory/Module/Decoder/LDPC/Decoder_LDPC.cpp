@@ -45,7 +45,7 @@ void Decoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	req_args.add(
+	opt_args.add(
 		{p+"-h-path"},
 		tools::File(tools::openmode::read),
 		"path to the H matrix (AList or QC formated file).");
