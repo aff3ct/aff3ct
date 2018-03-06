@@ -93,6 +93,7 @@ void Decoder_LDPC::parameters
 		tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
 		"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
 		"smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.");
+
 }
 
 void Decoder_LDPC::parameters
@@ -121,7 +122,7 @@ void Decoder_LDPC::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (!this->H_path.empty())
 		{
 			headers[p].push_back(std::make_pair("H matrix path", this->H_path));
@@ -152,7 +153,7 @@ void Decoder_LDPC::parameters
 
 template <typename B, typename Q>
 module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
-::build_siso(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos, 
+::build_siso(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos,
              module::Encoder<B> *encoder) const
 {
 	if ((this->type == "BP" || this->type == "BP_FLOODING") && this->simd_strategy.empty())
@@ -185,7 +186,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_LDPC::parameters
-::build(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos, 
+::build(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos,
         module::Encoder<B> *encoder) const
 {
 	try
@@ -215,7 +216,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_LDPC
-::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos, 
+::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos,
         module::Encoder<B> *encoder)
 {
 	return params.template build<B,Q>(H, info_bits_pos, encoder);

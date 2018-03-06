@@ -1,10 +1,10 @@
 Run command:
-./bin/aff3ct -p "8" --sim-type "BFER" -C "POLAR" -K "32" -N "64" -m "2.81" -M "2.81" -e "2" --enc-fb-gen-method "GA" --dec-type "SC" --src-type "RAND_FAST" --chn-type "AWGN" --chn-implem "FAST" --dec-implem "FAST" --dec-simd "INTRA" -d --sim-pyber "test dump" 
+./bin/aff3ct -p "8" --sim-type "BFER" -C "POLAR" -K "32" -N "64" -m "2.81" -M "2.81" -e "2" --enc-fb-gen-method "GA" --dec-type "SC" --src-type "RAND_FAST" --chn-type "AWGN" --chn-implem "FAST" --dec-implem "FAST" --dec-simd "INTRA" -d --sim-pyber "test dump"
 Curve name:
 test dump
-# -------------------------------------------------
-# ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
-# -------------------------------------------------
+# ----------------------------------------------------
+# ---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----
+# ----------------------------------------------------
 # Parameters :
 # * Simulation ------------------------------------
 #    ** Type                  = BFER
@@ -1637,12 +1637,12 @@ test dump
 # Returned status: 10
 #
 # ----------------------------------------------------------------------||---------------------
-#       Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  
-#                    on the Signal Noise Ratio (SNR)                    ||  and elapsed time   
+#       Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput
+#                    on the Signal Noise Ratio (SNR)                    ||  and elapsed time
 # ----------------------------------------------------------------------||---------------------
 # -------|-------|----------|----------|----------|----------|----------||----------|----------
-#  Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT 
-#   (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) 
+#  Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT
+#   (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss)
 # -------|-------|----------|----------|----------|----------|----------||----------|----------
-   -0.20 |  2.81 |       23 |       15 |        2 | 2.04e-02 | 8.70e-02 ||     0.03 | 00h00'00  
+   -0.20 |  2.81 |       23 |       15 |        2 | 2.04e-02 | 8.70e-02 ||     0.03 | 00h00'00
 # End of the simulation.

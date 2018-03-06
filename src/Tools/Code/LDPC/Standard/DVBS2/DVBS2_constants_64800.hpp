@@ -1,16 +1,15 @@
-#ifndef ENCODER_LDPC_DVBS2_CONSTANTS_64800_HPP_
-#define ENCODER_LDPC_DVBS2_CONSTANTS_64800_HPP_
+#ifndef DVBS2_CONSTANTS_64800_HPP_
+#define DVBS2_CONSTANTS_64800_HPP_
 
-#include "Encoder_LDPC_DVBS2_constants.hpp"
+#include "DVBS2_constants.hpp"
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 
-class dvbs2_values_64800_6480 : public dvbs2_values  // r=9/10 & K = 58320
+struct dvbs2_values_64800_6480 : dvbs2_values  // r=9/10 & K = 58320
 {
-public:
 	dvbs2_values_64800_6480()
 	{
 		this->EncValues = std::vector<int>({
@@ -178,18 +177,17 @@ public:
 			3, 17, 3392, 1991
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 58320;
-		NmK_LDPC = 6480;
-		M_LDPC   = 360;
-		Q_LDPC   = 18;
-		N_LINES  = 162;
+		this->N        = 64800;
+		this->K        = 58320;
+		this->NmK      = 6480;
+		this->M        = 360;
+		this->Q        = 18;
+		this->N_LINES  = 162;
 	}
 };
 
-class dvbs2_values_64800_7200 : public dvbs2_values  // r=8/9 & K = 57600
+struct dvbs2_values_64800_7200 : dvbs2_values  // r=8/9 & K = 57600
 {
-public:
 	dvbs2_values_64800_7200()
 	{
 		this->EncValues = std::vector<int>({
@@ -355,18 +353,17 @@ public:
 			3, 19, 1696, 1459
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 57600;
-		NmK_LDPC = 7200;
-		M_LDPC   = 360;
-		Q_LDPC   = 20;
-		N_LINES  = 160;
+		this->N        = 64800;
+		this->K        = 57600;
+		this->NmK      = 7200;
+		this->M        = 360;
+		this->Q        = 20;
+		this->N_LINES  = 160;
 	}
 };
 
-class dvbs2_values_64800_10800 : public dvbs2_values  // r=5/6 & K = 54000
+struct dvbs2_values_64800_10800 : dvbs2_values  // r=5/6 & K = 54000
 {
-public:
 	dvbs2_values_64800_10800()
 	{
 		this->EncValues = std::vector<int>({
@@ -520,18 +517,17 @@ public:
 			3, 27, 3755, 9536
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 54000;
-		NmK_LDPC = 10800;
-		M_LDPC   = 360;
-		Q_LDPC   = 30;
-		N_LINES  = 148;
+		this->N        = 64800;
+		this->K        = 54000;
+		this->NmK      = 10800;
+		this->M        = 360;
+		this->Q        = 30;
+		this->N_LINES  = 148;
 	}
 };
 
-class dvbs2_values_64800_12960 : public dvbs2_values // r=4/5 & K = 51840
+struct dvbs2_values_64800_12960 : dvbs2_values // r=4/5 & K = 51840
 {
-public:
 	dvbs2_values_64800_12960()
 	{
 		this->EncValues = std::vector<int>({
@@ -681,18 +677,17 @@ public:
 			3, 35, 7108, 5553
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 51840;
-		NmK_LDPC = 12960;
-		M_LDPC   = 360;
-		Q_LDPC   = 36;
-		N_LINES  = 144;
+		this->N        = 64800;
+		this->K        = 51840;
+		this->NmK      = 12960;
+		this->M        = 360;
+		this->Q        = 36;
+		this->N_LINES  = 144;
 	}
 };
 
-class dvbs2_values_64800_16200 : public dvbs2_values // r=3/4 & K = 48600
+struct dvbs2_values_64800_16200 : dvbs2_values // r=3/4 & K = 48600
 {
-public:
 	dvbs2_values_64800_16200()
 	{
 		this->EncValues = std::vector<int>({
@@ -833,18 +828,17 @@ public:
 			3, 44, 2883, 14521
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 48600;
-		NmK_LDPC = 16200;
-		M_LDPC   = 360;
-		Q_LDPC   = 45;
-		N_LINES  = 135;
+		this->N        = 64800;
+		this->K        = 48600;
+		this->NmK      = 16200;
+		this->M        = 360;
+		this->Q        = 45;
+		this->N_LINES  = 135;
 	}
 };
 
-class dvbs2_values_64800_21600 : public dvbs2_values // r=2/3 & K = 43200
+struct dvbs2_values_64800_21600 : dvbs2_values // r=2/3 & K = 43200
 {
-public:
 	dvbs2_values_64800_21600()
 	{
 		this->EncValues = std::vector<int>({
@@ -970,18 +964,17 @@ public:
 			3, 59, 3589, 14630
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 43200;
-		NmK_LDPC = 21600;
-		M_LDPC   = 360;
-		Q_LDPC   = 60;
-		N_LINES  = 120;
+		this->N        = 64800;
+		this->K        = 43200;
+		this->NmK      = 21600;
+		this->M        = 360;
+		this->Q        = 60;
+		this->N_LINES  = 120;
 	}
 };
 
-class dvbs2_values_64800_25920 : public dvbs2_values // r=3/5 & K = 38880
+struct dvbs2_values_64800_25920 : dvbs2_values // r=3/5 & K = 38880
 {
-public:
 	dvbs2_values_64800_25920()
 	{
 		this->EncValues = std::vector<int>({
@@ -1095,18 +1088,17 @@ public:
 			3, 71, 3434, 7769
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 38880;
-		NmK_LDPC = 25920;
-		M_LDPC   = 360;
-		Q_LDPC   = 72;
-		N_LINES  = 108;
+		this->N        = 64800;
+		this->K        = 38880;
+		this->NmK      = 25920;
+		this->M        = 360;
+		this->Q        = 72;
+		this->N_LINES  = 108;
 	}
 };
 
-class dvbs2_values_64800_32400 : public dvbs2_values // r=1/2 & K = 32400
+struct dvbs2_values_64800_32400 : dvbs2_values // r=1/2 & K = 32400
 {
-public:
 	dvbs2_values_64800_32400()
 	{
 		this->EncValues = std::vector<int>({
@@ -1202,18 +1194,17 @@ public:
 			3, 53, 19267, 20113
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 32400;
-		NmK_LDPC = 32400;
-		M_LDPC   = 360;
-		Q_LDPC   = 90;
-		N_LINES  = 90;
+		this->N        = 64800;
+		this->K        = 32400;
+		this->NmK      = 32400;
+		this->M        = 360;
+		this->Q        = 90;
+		this->N_LINES  = 90;
 	}
 };
 
-class dvbs2_values_64800_38880 : public dvbs2_values // r=2/5 & K = 25920
+struct dvbs2_values_64800_38880 : dvbs2_values // r=2/5 & K = 25920
 {
-public:
 	dvbs2_values_64800_38880()
 	{
 		this->EncValues = std::vector<int>({
@@ -1291,18 +1282,17 @@ public:
 			3, 30672, 16927, 14800
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 25920;
-		NmK_LDPC = 38880;
-		M_LDPC   = 360;
-		Q_LDPC   = 108;
-		N_LINES  = 72;
+		this->N        = 64800;
+		this->K        = 25920;
+		this->NmK      = 38880;
+		this->M        = 360;
+		this->Q        = 108;
+		this->N_LINES  = 72;
 	}
 };
 
-class dvbs2_values_64800_43200 : public dvbs2_values // r=1/3 & K = 21600
+struct dvbs2_values_64800_43200 : dvbs2_values // r=1/3 & K = 21600
 {
-public:
 	dvbs2_values_64800_43200()
 	{
 		this->EncValues = std::vector<int>({
@@ -1368,18 +1358,17 @@ public:
 			3, 25353, 4122, 39751
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 21600;
-		NmK_LDPC = 43200;
-		M_LDPC   = 360;
-		Q_LDPC   = 120;
-		N_LINES  = 60;
+		this->N        = 64800;
+		this->K        = 21600;
+		this->NmK      = 43200;
+		this->M        = 360;
+		this->Q        = 120;
+		this->N_LINES  = 60;
 	}
 };
 
-class dvbs2_values_64800_48600 : public dvbs2_values // r=1/4 & K = 16200
+struct dvbs2_values_64800_48600 : dvbs2_values // r=1/4 & K = 16200
 {
-public:
 	dvbs2_values_64800_48600()
 	{
 		this->EncValues = std::vector<int>({
@@ -1430,15 +1419,15 @@ public:
 			3, 46685, 20622, 32806
 		});
 
-		N_LDPC   = 64800;
-		K_LDPC   = 16200;
-		NmK_LDPC = 48600;
-		M_LDPC   = 360;
-		Q_LDPC   = 135;
-		N_LINES  = 45;
+		this->N        = 64800;
+		this->K        = 16200;
+		this->NmK      = 48600;
+		this->M        = 360;
+		this->Q        = 135;
+		this->N_LINES  = 45;
 	}
 };
 }
 }
 
-#endif /* ENCODER_LDPC_DVBS2_CONSTANTS_64800_HPP_ */
+#endif /* DVBS2_CONSTANTS_64800_HPP_ */

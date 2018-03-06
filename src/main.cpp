@@ -73,7 +73,7 @@ void print_version()
 
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", "
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
-	std::cout << "Copyright (c) 2016-2017 - MIT license."                                      << std::endl;
+	std::cout << "Copyright (c) 2016-2018 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
 	exit(EXIT_SUCCESS);
@@ -127,6 +127,7 @@ int main(int argc, char **argv)
 int sc_main(int argc, char **argv)
 #endif
 {
+	int exit_code = EXIT_SUCCESS;
 #ifdef ENABLE_MPI
 	MPI_Init(nullptr, nullptr);
 #endif
@@ -154,7 +155,7 @@ int sc_main(int argc, char **argv)
 #endif
 		if (launcher != nullptr)
 		{
-			launcher->launch();
+			exit_code = launcher->launch();
 			delete launcher;
 		}
 	}
@@ -167,5 +168,5 @@ int sc_main(int argc, char **argv)
 	MPI_Finalize();
 #endif
 
-	return EXIT_SUCCESS;
+	return exit_code;
 }

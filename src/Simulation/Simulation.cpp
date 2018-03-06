@@ -5,13 +5,19 @@ using namespace aff3ct::simulation;
 
 Simulation
 ::Simulation(const factory::Simulation::parameters& simu_params)
-: params(simu_params)
+: params(simu_params), simu_error(false)
 {
 }
 
 Simulation
 ::~Simulation()
 {
+}
+
+bool Simulation
+::is_error() const
+{
+	return this->simu_error;
 }
 
 void Simulation

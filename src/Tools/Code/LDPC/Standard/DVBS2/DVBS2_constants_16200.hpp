@@ -1,24 +1,23 @@
-#ifndef ENCODER_LDPC_DVBS2_CONSTANTS_16200_HPP_
-#define ENCODER_LDPC_DVBS2_CONSTANTS_16200_HPP_
+#ifndef DVBS2_CONSTANTS_16200_HPP_
+#define DVBS2_CONSTANTS_16200_HPP_
 
-#include "Encoder_LDPC_DVBS2_constants.hpp"
+#include "DVBS2_constants.hpp"
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 
-class dvbs2_values_16200_1800 : public dvbs2_values  // r=8/9 & K = 14400
+struct dvbs2_values_16200_1800 : dvbs2_values  // r=8/9 & K = 14400
 {
-public:
 	dvbs2_values_16200_1800()
 	{
 		this->EncValues = std::vector<int>({
-			3, 0, 1558, 712, 805,
-			3, 1, 1450, 873, 1337,
-			3, 2, 1741, 1129, 1184,
-			3, 3, 294, 806, 1566,
-			3, 4, 482, 605, 923,
+			4, 0, 1558, 712, 805,
+			4, 1, 1450, 873, 1337,
+			4, 2, 1741, 1129, 1184,
+			4, 3, 294, 806, 1566,
+			4, 4, 482, 605, 923,
 			3, 0, 926, 1578,
 			3, 1, 777, 1374,
 			3, 2, 608, 151,
@@ -56,18 +55,17 @@ public:
 			3, 4, 1104, 1172
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 14400;
-		this->NmK_LDPC = 1800;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 5;
+		this->N        = 16200;
+		this->K        = 14400;
+		this->NmK      = 1800;
+		this->M        = 360;
+		this->Q        = 5;
 		this->N_LINES  = 40;
 	}
 };
 
-class dvbs2_values_16200_2880 : public dvbs2_values  // r=5/6 & K = 13320
+struct dvbs2_values_16200_2880 : dvbs2_values  // r=5/6 & K = 13320
 {
-public:
 	dvbs2_values_16200_2880()
 	{
 		this->EncValues = std::vector<int>({
@@ -110,18 +108,17 @@ public:
 			3, 7, 2644, 1704
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 13320;
-		this->NmK_LDPC = 2880;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 8;
+		this->N        = 16200;
+		this->K        = 13320;
+		this->NmK      = 2880;
+		this->M        = 360;
+		this->Q        = 8;
 		this->N_LINES  = 37;
 	}
 };
 
-class dvbs2_values_16200_3600 : public dvbs2_values  // r=4/5 & K = 12600
+struct dvbs2_values_16200_3600 : dvbs2_values  // r=4/5 & K = 12600
 {
-public:
 	dvbs2_values_16200_3600()
 	{
 		this->EncValues = std::vector<int>({
@@ -162,18 +159,17 @@ public:
 			3, 9, 3545, 1168
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 12600;
-		this->NmK_LDPC = 3600;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 10;
+		this->N        = 16200;
+		this->K        = 12600;
+		this->NmK      = 3600;
+		this->M        = 360;
+		this->Q        = 10;
 		this->N_LINES  = 35;
 	}
 };
 
-class dvbs2_values_16200_4320 : public dvbs2_values  // r=3/4 & K = 11880
+struct dvbs2_values_16200_4320 : dvbs2_values  // r=3/4 & K = 11880
 {
-public:
 	dvbs2_values_16200_4320()
 	{
 		this->EncValues = std::vector<int>({
@@ -212,18 +208,17 @@ public:
 			3, 11, 1415, 2808
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 11880;
-		this->NmK_LDPC = 4320;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 12;
+		this->N        = 16200;
+		this->K        = 11880;
+		this->NmK      = 4320;
+		this->M        = 360;
+		this->Q        = 12;
 		this->N_LINES  = 33;
 	}
 };
 
-class dvbs2_values_16200_5400 : public dvbs2_values  // r=2/3 & K = 10800
+struct dvbs2_values_16200_5400 : dvbs2_values  // r=2/3 & K = 10800
 {
-public:
 	dvbs2_values_16200_5400()
 	{
 		this->EncValues = std::vector<int>({
@@ -259,18 +254,17 @@ public:
 			3, 14, 1129, 3894
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 10800;
-		this->NmK_LDPC = 5400;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 15;
+		this->N        = 16200;
+		this->K        = 10800;
+		this->NmK      = 5400;
+		this->M        = 360;
+		this->Q        = 15;
 		this->N_LINES  = 30;
 	}
 };
 
-class dvbs2_values_16200_6480 : public dvbs2_values  // r=3/5 & K = 9720
+struct dvbs2_values_16200_6480 : dvbs2_values  // r=3/5 & K = 9720
 {
-public:
 	dvbs2_values_16200_6480()
 	{
 		this->EncValues = std::vector<int>({
@@ -303,18 +297,17 @@ public:
 			3, 17, 4908, 4177
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 9720;
-		this->NmK_LDPC = 6480;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 18;
+		this->N        = 16200;
+		this->K        = 9720;
+		this->NmK      = 6480;
+		this->M        = 360;
+		this->Q        = 18;
 		this->N_LINES  = 27;
 	}
 };
 
-class dvbs2_values_16200_9000 : public dvbs2_values  // r=1/2 & K =7200
+struct dvbs2_values_16200_9000 : dvbs2_values  // r=1/2 & K =7200
 {
-public:
 	dvbs2_values_16200_9000()
 	{
 		this->EncValues = std::vector<int>({
@@ -340,18 +333,17 @@ public:
 			3, 14, 7411, 3450
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 7200;
-		this->NmK_LDPC = 9000;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 25;
+		this->N        = 16200;
+		this->K        = 7200;
+		this->NmK      = 9000;
+		this->M        = 360;
+		this->Q        = 25;
 		this->N_LINES  = 20;
 	}
 };
 
-class dvbs2_values_16200_9720 : public dvbs2_values  // r=2/5 & K = 6480
+struct dvbs2_values_16200_9720 : dvbs2_values  // r=2/5 & K = 6480
 {
-public:
 	dvbs2_values_16200_9720()
 	{
 		this->EncValues = std::vector<int>({
@@ -375,18 +367,17 @@ public:
 			3, 1387, 8910, 2660
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 6480;
-		this->NmK_LDPC = 9720;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 27;
+		this->N        = 16200;
+		this->K        = 6480;
+		this->NmK      = 9720;
+		this->M        = 360;
+		this->Q        = 27;
 		this->N_LINES  = 18;
 	}
 };
 
-class dvbs2_values_16200_10800 : public dvbs2_values  // r=1/3 & K =5400
+struct dvbs2_values_16200_10800 : dvbs2_values  // r=1/3 & K =5400
 {
-public:
 	dvbs2_values_16200_10800()
 	{
 		this->EncValues = std::vector<int>({
@@ -407,19 +398,18 @@ public:
 			3, 10127, 3334, 8267
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 5400;
-		this->NmK_LDPC = 10800;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 30;
+		this->N        = 16200;
+		this->K        = 5400;
+		this->NmK      = 10800;
+		this->M        = 360;
+		this->Q        = 30;
 		this->N_LINES  = 15;
 	}
 };
 
 
-class dvbs2_values_16200_12960 : public dvbs2_values  // r=1/4 & K = 3240
+struct dvbs2_values_16200_12960 : dvbs2_values  // r=1/4 & K = 3240
 {
-public:
 	dvbs2_values_16200_12960()
 	{
 		this->EncValues = std::vector<int>({
@@ -434,11 +424,11 @@ public:
 			3, 9840, 12726, 4977
 		});
 
-		this->N_LDPC   = 16200;
-		this->K_LDPC   = 3240;
-		this->NmK_LDPC = 12960;
-		this->M_LDPC   = 360;
-		this->Q_LDPC   = 36;
+		this->N        = 16200;
+		this->K        = 3240;
+		this->NmK      = 12960;
+		this->M        = 360;
+		this->Q        = 36;
 		this->N_LINES  = 9;
 	}
 };
@@ -446,4 +436,4 @@ public:
 
 }
 }
-#endif /* ENCODER_LDPC_DVBS2_CONSTANTS_16200_HPP_ */
+#endif /* DVBS2_CONSTANTS_16200_HPP_ */
