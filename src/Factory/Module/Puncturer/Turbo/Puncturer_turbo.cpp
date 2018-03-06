@@ -6,10 +6,16 @@
 
 #include "Puncturer_turbo.hpp"
 
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+using PT = aff3ct::module::Puncturer_turbo<B_32,Q_32>;
+#else
+using PT = aff3ct::module::Puncturer_turbo<B,Q>;
+#endif
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-using PT = aff3ct::module::Puncturer_turbo<>;
 
 const std::string aff3ct::factory::Puncturer_turbo_name   = "Puncturer Turbo";
 const std::string aff3ct::factory::Puncturer_turbo_prefix = "pct";
