@@ -22,7 +22,7 @@ parser.add_argument('--refs-path',      action='store', dest='refsPath',      ty
 parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
 parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
 parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                     # choices=xrange(1,   +inf)
-parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility to verify a SNR point.')                                                    # choices=xrange(0.0, +inf) 
+parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility to verify a SNR point.')                                                    # choices=xrange(0.0, +inf)
 parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                       # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
 parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per SNR point.')                            # choices=xrange(0,   +inf)
@@ -126,7 +126,7 @@ for fn in fileNames:
 		testId = testId + 1
 		continue
 
-	print("Test n°" + str(testId+1) + " / " + str(len(fileNames)) + 
+	print("Test n°" + str(testId+1) + " / " + str(len(fileNames)) +
 	      " - " + fn, end="", flush=True);
 
 	# open the file in read mode (from the fileName "fn" and the path)
@@ -203,22 +203,25 @@ for fn in fileNames:
 
 	os.chdir(args.buildPath)
 	startTime = time.time()
-	processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE, 
+	processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE,
 	                                             stderr=subprocess.PIPE)
 	(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+	returnCode = processAFFECT.returncode
 	elapsedTime = time.time() - startTime
 
-	err = stderrAFFECT.decode(encoding='UTF-8')
-	if err:
+	errAndWarnMessages = stderrAFFECT.decode(encoding='UTF-8')
+
+	os.chdir(PathOrigin)
+
+	if returnCode:
 		print(" - ABORTED.", end="\n");
-		print("Error message:", end="\n");
-		print(err)
+		if errAndWarnMessages:
+			print("---- Error message(s):", end="\n");
+			print(errAndWarnMessages)
 		nErrors = nErrors +1
 		failIds.append(testId +1)
 	else:
 		# begin to write the results into a file
-		os.chdir(PathOrigin)
-
 		fRes = open(args.resultsPath + "/" + fn, 'w+')
 
 		# parse the results
@@ -296,14 +299,14 @@ for fn in fileNames:
 				maxSensibility = max(sensibilityList)
 			rateSensibility = (avgSensibility / args.sensibility) * 100
 
-			print("---- Details: 'valid SNR points' = ", valid, "/", idx, 
-			      ", 'sensibility [avg,min,max,rate]' = [ %.2f" %avgSensibility, 
-			      ", %.2f" %minSensibility, ", %.2f" %maxSensibility, 
+			print("---- Details: 'valid SNR points' = ", valid, "/", idx,
+			      ", 'sensibility [avg,min,max,rate]' = [ %.2f" %avgSensibility,
+			      ", %.2f" %minSensibility, ", %.2f" %maxSensibility,
 			      ", %.1f" % rateSensibility, "% ].", end="\n")
 			if idx > 0:
-				print("---- Details: 'first SNR point' =", float(simuCur[0][1][0:4]), 
-				      "dB (@", simuCur[0][6][0:8], 
-				      "FER), 'last SNR point' =", float(simuCur[idx -1][1][0:4]), 
+				print("---- Details: 'first SNR point' =", float(simuCur[0][1][0:4]),
+				      "dB (@", simuCur[0][6][0:8],
+				      "FER), 'last SNR point' =", float(simuCur[idx -1][1][0:4]),
 				      "dB (@", simuCur[idx -1][6][0:8], "FER).")
 			if len(errorsList):
 				print("---- Details: 'errors list' = [", end="")
@@ -317,6 +320,10 @@ for fn in fileNames:
 						print(", ", end="")
 					el = el + 1
 				print("].", end="\n")
+
+		if errAndWarnMessages:
+			print("---- Warning message(s):", end="\n");
+			print(errAndWarnMessages)
 
 		fRes.write("# End of the simulation.\n")
 		fRes.close();

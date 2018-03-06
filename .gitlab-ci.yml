@@ -13,18 +13,18 @@ before_script:
 analysis-cppcheck:
   stage: analysis
   artifacts:
-     name: analysis-cppcheck-logs
-     when: always
-     paths:
-       - cppcheck/
-  tags: 
+    name: analysis-cppcheck-logs
+    when: always
+    paths:
+      - cppcheck/
+  tags:
     - cppcheck
   script:
     - ./ci/analysis-cppcheck.sh
 
 analysis-sonarqube:
   stage: analysis
-  tags: 
+  tags:
     - sonarqube
   only:
     - master
@@ -34,54 +34,76 @@ analysis-sonarqube:
 build-linux-gcc:
   stage: build
   tags:
-   - linux
+    - linux
   script:
     - ./ci/build-linux-gcc.sh
+
+build-linux-gcc-8-bit:
+  stage: build
+  tags:
+    - linux
+  script:
+    - ./ci/build-linux-gcc-8-bit.sh
+
+build-linux-gcc-mpi:
+  stage: build
+  tags:
+    - linux
+  script:
+    - ./ci/build-linux-gcc-mpi.sh
+
+build-linux-gcc-systemc:
+  stage: build
+  tags:
+    - linux
+  script:
+    - ./ci/build-linux-gcc-systemc.sh
 
 build-linux-clang:
   stage: build
   tags:
-   - linux
+    - linux
   script:
     - ./ci/build-linux-clang.sh
 
 build-linux-gcc-4.8:
   stage: build
   tags:
-   - linux
+    - linux
   script:
     - ./ci/build-linux-gcc-4.8.sh
 
 build-linux-icpc:
   stage: build
   tags:
-   - linux
+    - linux
   script:
     - ./ci/build-linux-icpc.sh
 
 build-windows-gcc:
   stage: build
   tags:
-   - windows
+    - windows
   script:
     - ./ci/build-windows-gcc.bat
 
 build-windows-msvc:
   stage: build
   tags:
-   - windows
+    - windows
   script:
     - ./ci/build-windows-msvc.bat
 
 build-mac-osx-clang:
   stage: build
   tags:
-   - mac-osx
+    - mac-osx
   script:
     - ./ci/build-mac-osx-clang.sh
 
 test-regression:
   stage: test
+  retry: 2
   tags:
     - test
   artifacts:

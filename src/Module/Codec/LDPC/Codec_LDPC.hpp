@@ -8,6 +8,7 @@
 #include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 
 #include "../Codec_SISO_SIHO.hpp"
 
@@ -23,6 +24,7 @@ protected:
 	tools::Sparse_matrix G;
 	std::vector<uint32_t> info_bits_pos;
 	std::vector<bool> pctPattern;
+	const tools::dvbs2_values* dvbs2;
 
 public:
 	Codec_LDPC(const factory::Encoder_LDPC::parameters   &enc_params,

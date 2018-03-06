@@ -22,12 +22,11 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Decoder_SIHO_i
+ * \class Decoder_HIHO
  *
  * \brief A Decoder is an algorithm dedicated to find the initial sequence of information bits (before the noise).
  *
  * \tparam B: type of the bits in the Decoder.
- * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder.
  *
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
  * Please use Decoder for inheritance (instead of Decoder_HIHO).
@@ -56,7 +55,7 @@ public:
 	{
 		const std::string name = "Decoder_HIHO";
 		this->set_name(name);
-		
+
 		auto &p1 = this->create_task("decode_hiho", dec::tsk::decode_hiho);
 		auto &p1s_Y_N = this->template create_socket_in <B>(p1, "Y_N", this->N * this->n_frames);
 		auto &p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
@@ -121,7 +120,7 @@ public:
 		if (frame_id != -1 && frame_id >= this->n_frames)
 		{
 			std::stringstream message;
-			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
 			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
@@ -201,7 +200,7 @@ public:
 		if (frame_id != -1 && frame_id >= this->n_frames)
 		{
 			std::stringstream message;
-			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
 			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}

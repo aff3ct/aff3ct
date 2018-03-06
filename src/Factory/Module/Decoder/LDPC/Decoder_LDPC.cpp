@@ -94,6 +94,7 @@ void Decoder_LDPC::parameters
 		tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
 		"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
 		"smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.");
+
 }
 
 void Decoder_LDPC::parameters
