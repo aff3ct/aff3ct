@@ -8,8 +8,8 @@ const std::string aff3ct::factory::Codec_BCH_prefix = "cdc";
 
 Codec_BCH::parameters
 ::parameters(const std::string &prefix)
-: Codec     ::parameters(Codec_BCH_name, prefix),
-  Codec_SIHO::parameters(Codec_BCH_name, prefix),
+: Codec          ::parameters(Codec_BCH_name, prefix),
+  Codec_SIHO_HIHO::parameters(Codec_BCH_name, prefix),
   enc(new Encoder_BCH::parameters("enc")),
   dec(new Decoder_BCH::parameters("dec"))
 {
@@ -44,7 +44,7 @@ Codec_BCH::parameters* Codec_BCH::parameters
 void Codec_BCH::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(args);
+	Codec_SIHO_HIHO::parameters::get_description(args);
 
 	enc->get_description(args);
 	dec->get_description(args);
@@ -60,7 +60,7 @@ void Codec_BCH::parameters
 void Codec_BCH::parameters
 ::store(const tools::Argument_map_value &vals)
 {
-	Codec_SIHO::parameters::store(vals);
+	Codec_SIHO_HIHO::parameters::store(vals);
 
 	enc->store(vals);
 
@@ -78,7 +78,7 @@ void Codec_BCH::parameters
 void Codec_BCH::parameters
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Codec_SIHO::parameters::get_headers(headers, full);
+	Codec_SIHO_HIHO::parameters::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);

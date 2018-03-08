@@ -34,13 +34,6 @@ Galois
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (N >= 1048576) // 2^20
-	{
-		std::stringstream message;
-		message << "'N' has to be smaller than 1048576 ('N' = " << N << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (m != (int)std::ceil(std::log2(N +1)))
 	{
 		std::stringstream message;

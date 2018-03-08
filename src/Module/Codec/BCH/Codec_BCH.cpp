@@ -13,13 +13,13 @@ template <typename B, typename Q>
 Codec_BCH<B,Q>
 ::Codec_BCH(const factory::Encoder_BCH::parameters &enc_params,
             const factory::Decoder_BCH::parameters &dec_params)
-: Codec     <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+  Codec_SIHO_HIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   GF_poly(dec_params.K, dec_params.N_cw, dec_params.t)
 {
 	const std::string name = "Codec_BCH";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -64,7 +64,9 @@ Codec_BCH<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	this->set_decoder_siho(factory::Decoder_BCH::build<B,Q>(dec_params, GF_poly, this->get_encoder()));
+	auto decoder_hiho_siho = factory::Decoder_BCH::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder());
+	this->set_decoder_siho(decoder_hiho_siho);
+	this->set_decoder_hiho(decoder_hiho_siho);
 }
 
 template <typename B, typename Q>

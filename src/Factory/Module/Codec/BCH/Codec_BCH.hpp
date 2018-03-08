@@ -9,7 +9,7 @@
 
 #include "Module/Codec/BCH/Codec_BCH.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "../Codec_SIHO_HIHO.hpp"
 
 namespace aff3ct
 {
@@ -17,9 +17,9 @@ namespace factory
 {
 extern const std::string Codec_BCH_name;
 extern const std::string Codec_BCH_prefix;
-struct Codec_BCH : public Codec_SIHO
+struct Codec_BCH : public Codec_SIHO_HIHO
 {
-	class parameters : public Codec_SIHO::parameters
+	class parameters : public Codec_SIHO_HIHO::parameters
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS

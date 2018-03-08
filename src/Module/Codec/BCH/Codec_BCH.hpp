@@ -6,14 +6,14 @@
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "../Codec_SIHO_HIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename Q = float>
-class Codec_BCH : public Codec_SIHO<B,Q>
+class Codec_BCH : public Codec_SIHO_HIHO<B,Q>
 {
 protected:
 	const tools::BCH_polynomial_generator GF_poly;

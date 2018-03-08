@@ -15,6 +15,7 @@ class Encoder_BCH : public Encoder<B>
 {
 
 protected:
+	const int n_rdncy;          // number redundancy bits
 	const std::vector<int>& g;  // coefficients of the generator polynomial, g(x)
 	std::vector<B>          bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
 
