@@ -144,7 +144,6 @@ void Modem_user<B,R,Q,MAX>
 	{
 		auto L0 = -std::numeric_limits<Q>::infinity();
 		auto L1 = -std::numeric_limits<Q>::infinity();
-
 		auto b  = n % this->bits_per_symbol; // bit position in the symbol
 		auto k  = n / this->bits_per_symbol; // symbol position
 
@@ -182,7 +181,6 @@ void Modem_user<B,R,Q,MAX>
 	{
 		auto L0 = -std::numeric_limits<Q>::infinity();
 		auto L1 = -std::numeric_limits<Q>::infinity();
-
 		auto b  = n % this->bits_per_symbol; // bit position in the symbol
 		auto k  = n / this->bits_per_symbol; // symbol position
 
@@ -246,7 +244,7 @@ void Modem_user<B,R,Q,MAX>
 			}
 			tempL = std::isnan((R)tempL) ? (Q)0.0 : tempL;
 
-			if ( ( (j>>b) & 1) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
@@ -300,7 +298,7 @@ void Modem_user<B,R,Q,MAX>
 			}
 			tempL = std::isnan((R)tempL) ? (Q)0.0 : tempL;
 
-			if ( ( (j>>b) & 1) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
@@ -309,7 +307,6 @@ void Modem_user<B,R,Q,MAX>
 		Y_N3[n] = (L0 - L1);
 	}
 }
-
 /*
 * \brief Soft Mapper
 */
@@ -362,6 +359,5 @@ void Modem_user<B, R, Q, MAX>
 		}
 	}
 }
-
 }
 }
