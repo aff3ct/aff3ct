@@ -233,7 +233,7 @@ void Modem_user<B,R,Q,MAX>
 				if (l == b)
 					continue;
 
-				if  (( (j>>l) & 1 ) == 1)
+				if  (((j>>l) & 1) == 1)
 				{
 					if (k * this->bits_per_symbol +l < size)
 						tempL += Y_N2[k * this->bits_per_symbol +l];
@@ -254,6 +254,9 @@ void Modem_user<B,R,Q,MAX>
 	}
 }
 
+/*
+ * Demodulator
+ */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
 ::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
@@ -288,7 +291,7 @@ void Modem_user<B,R,Q,MAX>
 				if (l == b)
 					continue;
 
-				if  (( (j>>l) & 1 ) == 1)
+				if  (((j>>l) & 1) == 1)
 				{
 					if (k * this->bits_per_symbol +l < size)
 						tempL += Y_N2[k * this->bits_per_symbol +l];
@@ -307,6 +310,7 @@ void Modem_user<B,R,Q,MAX>
 		Y_N3[n] = (L0 - L1);
 	}
 }
+
 /*
 * \brief Soft Mapper
 */
@@ -352,7 +356,7 @@ void Modem_user<B, R, Q, MAX>
 			for (auto j = 0; j < r; j++)
 			{
 				auto p0 = (R)1.0/((R)1.0 + std::exp(-(R)X_N1[loop_size*this->bits_per_symbol + j]));
-				p *= ((m >> j) & 1) == 0 ? p0 : 1 - p0;
+				p *= ((m >> j) & 1) == 0 ? p0 : (R)1.0 - p0;
 			}
 			X_N2[size_out - 2] += p*soft_symbol.real();
 			X_N2[size_out - 1] += p*soft_symbol.imag();
