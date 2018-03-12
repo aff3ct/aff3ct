@@ -353,7 +353,7 @@ void Modem_QAM<B, R, Q, MAX>
 			for (auto j = 0; j < r; j++)
 			{
 				auto p0 = (R)1.0/((R)1.0 + std::exp(-(R)X_N1[loop_size*this->bits_per_symbol + j]));
-				p *= ((m >> j) & 1) == 0 ? p0 : 1 - p0;
+				p *= ((m >> j) & 1) == 0 ? p0 : (R)1.0 - p0;
 			}
 			X_N2[size_out - 2] += p*soft_symbol.real();
 			X_N2[size_out - 1] += p*soft_symbol.imag();
