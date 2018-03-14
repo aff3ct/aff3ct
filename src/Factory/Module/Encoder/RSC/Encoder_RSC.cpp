@@ -76,6 +76,7 @@ void Encoder_RSC::parameters
 
 	if (exist(vals, {p+"-poly"}))
 	{
+		this->standard = "";
 		auto poly_str = vals.at({p+"-poly"});
 
 #ifdef _MSC_VER
