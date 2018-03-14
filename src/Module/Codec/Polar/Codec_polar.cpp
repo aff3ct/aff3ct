@@ -26,7 +26,7 @@ Codec_polar<B,Q>
 {
 	const std::string name = "Codec_polar";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -127,6 +127,7 @@ Codec_polar<B,Q>
 			fb_generator->generate(frozen_bits);
 			if (this->N_cw != this->N)
 				puncturer_wangliu->gen_frozen_bits(frozen_bits);
+			this->notify_frozenbits_update();
 		}
 	}
 	else
@@ -140,6 +141,7 @@ Codec_polar<B,Q>
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 		std::copy(fb.begin(), fb.end(), frozen_bits.begin());
+		this->notify_frozenbits_update();
 	}
 }
 
@@ -237,7 +239,7 @@ void Codec_polar<B,Q>
 		}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Codec_polar<B_8,Q_8>;
