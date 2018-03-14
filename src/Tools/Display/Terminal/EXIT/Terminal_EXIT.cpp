@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <ios>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -67,6 +68,8 @@ template <typename B, typename R>
 void Terminal_EXIT<B,R>
 ::legend(std::ostream &stream)
 {
+	std::ios::fmtflags f(stream.flags());
+
 	stream << "# " << format("----------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
 	stream << "# " << format("   EXIT chart depending on the Signal Noise Ratio (SNR)   ||  Global throughput  ", Style::BOLD) << std::endl;
 	stream << "# " << format("                  and the channel A noise                 ||  and elapsed time   ", Style::BOLD) << std::endl;
@@ -75,6 +78,8 @@ void Terminal_EXIT<B,R>
 	stream << "# " << format(" Es/N0 | Eb/N0 | SIG_A |      FRA |  A_PRIORI | EXTRINSIC ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
 	stream << "# " << format("  (dB) |  (dB) |  (dB) |          |     (I_A) |     (I_E) ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
 	stream << "# " << format("-------|-------|-------|----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+
+	stream.flags(f);
 }
 
 template <typename B, typename R>
@@ -110,6 +115,8 @@ void Terminal_EXIT<B,R>
 {
 	using namespace std::chrono;
 
+	std::ios::fmtflags f(stream.flags());
+
 	_report(stream);
 
 	const auto n_trials = monitor.get_n_trials();
@@ -134,6 +141,7 @@ void Terminal_EXIT<B,R>
 	stream << "\r";
 
 	stream.flush();
+	stream.flags(f);
 }
 
 template <typename B, typename R>
@@ -141,6 +149,8 @@ void Terminal_EXIT<B,R>
 ::final_report(std::ostream &stream)
 {
 	using namespace std::chrono;
+
+	std::ios::fmtflags f(stream.flags());
 
 	Terminal::final_report(stream);
 
@@ -153,6 +163,8 @@ void Terminal_EXIT<B,R>
 	       << std::endl;
 
 	t_snr = std::chrono::steady_clock::now();
+
+	stream.flags(f);
 }
 
 // ==================================================================================== explicit template instantiation
