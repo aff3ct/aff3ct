@@ -1,4 +1,3 @@
-#include <Module/Decoder/LDPC/BP/Layered/AMS/Decoder_LDPC_BP_layered_approximate_min_star.hpp>
 #include <typeinfo>
 #include <limits>
 #include <cmath>
@@ -6,6 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
+#include "Decoder_LDPC_BP_layered_approximate_min_star.hpp"
 
 namespace aff3ct
 {
@@ -25,7 +25,7 @@ Decoder_LDPC_BP_layered_approximate_min_star<B,R,MIN>
 {
 	const std::string name = "Decoder_LDPC_BP_layered_approximate_min_star";
 	this->set_name(name);
-	
+
 	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
 }
