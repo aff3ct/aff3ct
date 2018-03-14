@@ -104,6 +104,7 @@ void Decoder_RSC::parameters
 
 	if (exist(vals, {p+"-poly"}))
 	{
+		this->standard = "";
 		auto poly_str = vals.at({p+"-poly"});
 
 #ifdef _MSC_VER
@@ -112,6 +113,12 @@ void Decoder_RSC::parameters
 		std::sscanf(poly_str.c_str(), "{%o,%o}", &this->poly[0], &this->poly[1]);
 #endif
 	}
+
+	if (this->poly[0] == 013 && this->poly[1] == 015)
+		this->standard = "LTE";
+
+	if (this->poly[0] == 023 && this->poly[1] == 033)
+		this->standard = "CCSDS";
 
 	if (this->poly[0] != 013 || this->poly[1] != 015)
 		this->implem = "GENERIC";
@@ -129,7 +136,7 @@ void Decoder_RSC::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 

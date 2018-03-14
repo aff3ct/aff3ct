@@ -86,6 +86,12 @@ void Encoder_RSC::parameters
 #endif
 	}
 
+	if (this->poly[0] == 013 && this->poly[1] == 015)
+		this->standard = "LTE";
+
+	if (this->poly[0] == 023 && this->poly[1] == 033)
+		this->standard = "CCSDS";
+
 	this->tail_length = (int)(2 * std::floor(std::log2((float)std::max(this->poly[0], this->poly[1]))));
 	this->N_cw        = 2 * this->K + this->tail_length;
 	this->R           = (float)this->K / (float)this->N_cw;
