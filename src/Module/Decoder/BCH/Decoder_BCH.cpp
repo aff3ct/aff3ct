@@ -20,7 +20,7 @@ Decoder_BCH<B, R>
 {
 	const std::string name = "Decoder_BCH";
 	this->set_name(name);
-	
+
 	if (K <= 3)
 	{
 		std::stringstream message;
@@ -37,7 +37,7 @@ Decoder_BCH<B, R>
 
 template <typename B, typename R>
 void Decoder_BCH<B, R>
-::_decode(B *Y_N)
+::_decode(B *Y_N, const int frame_id)
 {
 	int i, j, t2, syn_error = 0;
 
@@ -208,7 +208,7 @@ void Decoder_BCH<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(YH_N.data());
+	this->_decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -229,7 +229,7 @@ void Decoder_BCH<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(YH_N.data());
+	this->_decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -250,7 +250,7 @@ void Decoder_BCH<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(YH_N.data());
+	this->_decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -271,7 +271,7 @@ void Decoder_BCH<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(YH_N.data());
+	this->_decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
