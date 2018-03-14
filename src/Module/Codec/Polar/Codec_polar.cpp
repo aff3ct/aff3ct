@@ -125,8 +125,6 @@ Codec_polar<B,Q>
 		if (!adaptive_fb)
 		{
 			fb_generator->generate(frozen_bits);
-			if (this->N_cw != this->N)
-				puncturer_wangliu->gen_frozen_bits(frozen_bits);
 			this->notify_frozenbits_update();
 		}
 	}
