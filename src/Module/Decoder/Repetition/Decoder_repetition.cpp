@@ -2,7 +2,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_repetition.hpp"
@@ -19,7 +19,7 @@ Decoder_repetition<B,R>
 {
 	const std::string name = "Decoder_repetition";
 	this->set_name(name);
-	
+
 	if (N % K)
 	{
 		std::stringstream message;

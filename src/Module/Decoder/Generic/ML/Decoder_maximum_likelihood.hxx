@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common.h"
 
 #include "Decoder_maximum_likelihood.hpp"
 
@@ -29,7 +29,7 @@ Decoder_maximum_likelihood<B,R>
 	if (encoder.get_K() != K)
 	{
 		std::stringstream message;
-		message << "'encoder.get_K()' has to be equal to 'K' ('encoder.get_K()' = " << encoder.get_K() 
+		message << "'encoder.get_K()' has to be equal to 'K' ('encoder.get_K()' = " << encoder.get_K()
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -37,7 +37,7 @@ Decoder_maximum_likelihood<B,R>
 	if (encoder.get_N() != N)
 	{
 		std::stringstream message;
-		message << "'encoder.get_N()' has to be equal to 'N' ('encoder.get_N()' = " << encoder.get_N() 
+		message << "'encoder.get_N()' has to be equal to 'N' ('encoder.get_N()' = " << encoder.get_N()
 		        << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}

@@ -2,7 +2,7 @@
 #include <limits>
 #include <sstream>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
@@ -34,7 +34,7 @@ Decoder_LDPC_BP_flooding<B,R>
 {
 	const std::string name = "Decoder_LDPC_BP_flooding";
 	this->set_name(name);
-	
+
 	transpose.resize(this->n_branches);
 	mipp::vector<unsigned char> connections(H.get_n_rows(), 0);
 
@@ -214,7 +214,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 	// begining of the iteration upon all the matrix lines
 	R *C_to_V_ptr = this->C_to_V[frame_id].data();
-	for (auto i = 0; i < this->n_V_nodes; i++) 
+	for (auto i = 0; i < this->n_V_nodes; i++)
 	{
 		const auto length = this->n_parities_per_variable[i];
 
@@ -229,7 +229,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_flooding<B_8,Q_8>;

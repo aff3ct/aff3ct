@@ -1,5 +1,5 @@
-#ifndef HARD_DECISION_H_
-#define HARD_DECISION_H_
+#ifndef COMMON_H_
+#define COMMON_H_
 
 #include <mipp.h>
 
@@ -33,7 +33,33 @@ inline void hard_decide(const R *in, B *out, const int size)
 	for (auto i = vec_loop_size; i < size; i++)
 		out[i] = in[i] < 0;
 }
+
+template <typename B = int>
+inline size_t hamming_distance(const B *in1, const B *in2, const int size)
+{
+	const mipp::Reg<B> zeros = (B)0, ones = (B)1;
+	mipp::Reg<B> counter = (B)0;
+
+	const auto vec_loop_size = (size / mipp::nElReg<B>()) * mipp::nElReg<B>();
+
+	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<B>())
+	{
+		const auto r_in1 = mipp::Reg<B>(&in1[i]);
+		const auto r_in2 = mipp::Reg<B>(&in2[i]);
+		const auto m_in1 = r_in1 != zeros;
+		const auto m_in2 = r_in2 != zeros;
+		counter += mipp::blend(ones, zeros, m_in1 ^ m_in2);
+	}
+
+	size_t ham_dist = mipp::hadd(counter);
+
+	for (auto i = vec_loop_size; i < size; i++)
+		ham_dist += (!in1[i] != !in2[i])? 1 : 0;
+
+	return ham_dist;
+}
+
 }
 }
 
-#endif /* HARD_DECISION_H_ */
+#endif /* COMMON_H_ */

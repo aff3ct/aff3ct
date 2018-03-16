@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common.h"
 
 #include "Decoder_maximum_likelihood_std.hpp"
 
@@ -134,7 +134,7 @@ void Decoder_maximum_likelihood_std<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_maximum_likelihood_std<B_8,Q_8>;

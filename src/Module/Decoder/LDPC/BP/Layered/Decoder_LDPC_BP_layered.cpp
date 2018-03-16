@@ -3,7 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_layered.hpp"
@@ -143,7 +143,7 @@ void Decoder_LDPC_BP_layered<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_layered<B_8,Q_8>;

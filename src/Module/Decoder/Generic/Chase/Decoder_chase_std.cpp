@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common.h"
 
 #include "Decoder_chase_std.hpp"
 
@@ -13,7 +13,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_chase_std<B,R>
-::Decoder_chase_std(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips, const bool hamming, 
+::Decoder_chase_std(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips, const bool hamming,
                     const int n_frames)
 : Decoder          (K, N, n_frames, 1),
   Decoder_SIHO<B,R>(K, N, n_frames, 1),
@@ -152,7 +152,7 @@ void Decoder_chase_std<B,R>
 		std::partial_sort(less_reliable_llrs.begin(),
 		                  less_reliable_llrs.begin() + this->max_flips,
 		                  less_reliable_llrs.end(),
-		                  [&Y_N](const uint32_t i1, const uint32_t i2) { 
+		                  [&Y_N](const uint32_t i1, const uint32_t i2) {
 			return std::abs(Y_N[i1]) < std::abs(Y_N[i2]);
 		});
 
@@ -174,7 +174,7 @@ void Decoder_chase_std<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_chase_std<B_8,Q_8>;

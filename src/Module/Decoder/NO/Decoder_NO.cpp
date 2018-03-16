@@ -1,6 +1,6 @@
 #include <chrono>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common.h"
 
 #include "Decoder_NO.hpp"
 
@@ -59,7 +59,7 @@ void Decoder_NO<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store, d_store);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_NO<B_8,Q_8>;

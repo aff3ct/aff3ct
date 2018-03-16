@@ -3,7 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP.hpp"
@@ -31,7 +31,7 @@ Decoder_LDPC_BP<B,R>
 {
 	const std::string name = "Decoder_LDPC_BP";
 	this->set_name(name);
-	
+
 	if (n_ite <= 0)
 	{
 		std::stringstream message;
@@ -61,7 +61,7 @@ Decoder_LDPC_BP<B,R>
 {
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP<B_8,Q_8>;
