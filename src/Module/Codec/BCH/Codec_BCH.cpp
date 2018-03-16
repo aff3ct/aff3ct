@@ -65,7 +65,7 @@ Codec_BCH<B,Q>
 		encoder = factory::Encoder::build<B>(enc_params);
 	}
 
-	if (dec_params.type == "GENIUS")
+	if (dec_params.implem == "GENIUS")
 		encoder->set_memorizing(true);
 
 	this->set_encoder(encoder);
