@@ -1,7 +1,7 @@
 #include <chrono>
 #include <sstream>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_BCH_genius.hpp"
@@ -11,14 +11,21 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_BCH_genius<B, R>
-::Decoder_BCH_genius(const int& K, const int& N, const tools::BCH_polynomial_generator &GF_poly, Encoder<B> &encoder, const int n_frames)
+::Decoder_BCH_genius(const int K, const int N, const int t, Encoder<B> &encoder, const int n_frames)
 : Decoder         (K, N, n_frames, 1),
-  Decoder_BCH<B,R>(K, N, GF_poly, n_frames),
+  Decoder_BCH<B,R>(K, N, t, n_frames),
   encoder(encoder),
-  error_pos(this->t)
+  error_pos(this->t + 1)
 {
 	const std::string name = "Decoder_BCH_genius";
 	this->set_name(name);
+
+	if (!encoder.is_memorizing())
+	{
+		std::stringstream message;
+		message << "The given 'encoder' has to be memorizing its generated code words.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R>

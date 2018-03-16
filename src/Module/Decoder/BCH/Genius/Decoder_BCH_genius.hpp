@@ -19,7 +19,7 @@ protected:
 	std::vector<unsigned> error_pos;
 
 public:
-	Decoder_BCH_genius(const int& K, const int& N, const tools::BCH_polynomial_generator &GF, Encoder<B> &encoder, const int n_frames = 1);
+	Decoder_BCH_genius(const int K, const int N, const int t, Encoder<B> &encoder, const int n_frames = 1);
 	virtual ~Decoder_BCH_genius();
 
 protected:

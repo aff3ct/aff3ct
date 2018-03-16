@@ -55,14 +55,20 @@ Codec_BCH<B,Q>
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
 
+	Encoder<B>* encoder;
 	try
 	{
-		this->set_encoder(factory::Encoder_BCH::build<B>(enc_params, GF_poly));
+		encoder = factory::Encoder_BCH::build<B>(enc_params, GF_poly);
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		encoder = factory::Encoder::build<B>(enc_params);
 	}
+
+	if (dec_params.type == "GENIUS")
+		encoder->set_memorizing(true);
+
+	this->set_encoder(encoder);
 
 	auto decoder_hiho_siho = factory::Decoder_BCH::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder());
 	this->set_decoder_siho(decoder_hiho_siho);
