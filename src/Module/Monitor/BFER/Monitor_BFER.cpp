@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "Monitor_BFER.hpp"
+#include "Tools/Perf/common.h"
 
 using namespace aff3ct::module;
 
@@ -17,7 +18,7 @@ Monitor_BFER<B>
 {
 	const std::string name = "Monitor_BFER";
 	this->set_name(name);
-	
+
 	auto &p = this->create_task("check_errors", mnt::tsk::check_errors);
 	auto &ps_U = this->template create_socket_in<B>(p, "U", this->size * this->n_frames);
 	auto &ps_V = this->template create_socket_in<B>(p, "V", this->size * this->n_frames);
@@ -48,9 +49,7 @@ template <typename B>
 int Monitor_BFER<B>
 ::_check_errors(const B *U, const B *V, const int frame_id)
 {
-	auto bit_errors_count = 0;
-	for (auto b = 0; b < this->size; b++)
-		bit_errors_count += !U[b] != !V[b];
+	int bit_errors_count = tools::hamming_distance(U, V, this->size);
 
 	if (bit_errors_count)
 	{
