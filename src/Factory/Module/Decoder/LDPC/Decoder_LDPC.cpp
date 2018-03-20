@@ -10,6 +10,7 @@
 #include "Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_ONMS_inter.hpp"
+#include "Module/Decoder/LDPC/BP/Layered/AMS/Decoder_LDPC_BP_layered_approximate_min_star.hpp"
 
 #include "Decoder_LDPC.hpp"
 
@@ -175,6 +176,14 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 		     if (this->implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS      <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		else if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_layered_SPA       <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		else if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_layered_LSPA      <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "AMS" ) {
+			if (this->min == "MIN")
+				return new module::Decoder_LDPC_BP_layered_AMS<B,Q,tools::min<Q>>                  (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINL")
+				return new module::Decoder_LDPC_BP_layered_AMS<B,Q,tools::min_star_linear2<Q>>     (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINS")
+				return new module::Decoder_LDPC_BP_layered_AMS<B,Q,tools::min_star<Q>>             (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		}
 	}
 	else if (this->type == "BP_LAYERED" && this->simd_strategy == "INTER")
 	{

@@ -77,6 +77,7 @@ void Encoder_RSC::parameters
 
 	if (vals.exist({p+"-poly"}))
 	{
+		this->standard = "";
 		auto poly_str = vals.at({p+"-poly"});
 
 #ifdef _MSC_VER
@@ -85,6 +86,12 @@ void Encoder_RSC::parameters
 		std::sscanf(poly_str.c_str(), "{%o,%o}", &this->poly[0], &this->poly[1]);
 #endif
 	}
+
+	if (this->poly[0] == 013 && this->poly[1] == 015)
+		this->standard = "LTE";
+
+	if (this->poly[0] == 023 && this->poly[1] == 033)
+		this->standard = "CCSDS";
 
 	this->tail_length = (int)(2 * std::floor(std::log2((float)std::max(this->poly[0], this->poly[1]))));
 	this->N_cw        = 2 * this->K + this->tail_length;

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <ios>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
@@ -64,6 +65,8 @@ template <typename B>
 void Terminal_BFER<B>
 ::legend(std::ostream &stream)
 {
+	std::ios::fmtflags f(stream.flags());
+
 #ifdef _WIN32
 	stream << "# " << format("---------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
 	stream << "# " << format("         Bit Error Rate (BER) and Frame Error Rate (FER) depending         ||  Global throughput  ", Style::BOLD) << std::endl;
@@ -84,6 +87,8 @@ void Terminal_BFER<B>
 	stream << "# " << format("  (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
 	stream << "# " << format("-------|-------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
 #endif
+
+	stream.flags(f);
 }
 
 template <typename B>
@@ -161,6 +166,8 @@ void Terminal_BFER<B>
 {
 	using namespace std::chrono;
 
+	std::ios::fmtflags f(stream.flags());
+
 	_report(stream);
 
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
@@ -182,6 +189,7 @@ void Terminal_BFER<B>
 	stream << "\r";
 
 	stream.flush();
+	stream.flags(f);
 }
 
 template <typename B>
@@ -189,6 +197,8 @@ void Terminal_BFER<B>
 ::final_report(std::ostream &stream)
 {
 	using namespace std::chrono;
+
+	std::ios::fmtflags f(stream.flags());
 
 	Terminal::final_report(stream);
 
@@ -203,9 +213,11 @@ void Terminal_BFER<B>
 	else                                 stream << "  " << std::endl;
 
 	t_snr = std::chrono::steady_clock::now();
+
+	stream.flags(f);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::tools::Terminal_BFER<B_8>;
