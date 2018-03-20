@@ -66,13 +66,24 @@ inline void saturate(std::vector<T,A> &array, const T min, const T max)
 }
 
 template <typename B, typename R>
-B sgn(R val) { return (B)((R(0) < val) - (val < R(0))); }
+inline B sgn(R val) { return (B)((R(0) < val) - (val < R(0))); }
 
 
 template <typename T>
 constexpr bool is_power_of_2(T x)
 {
 	return (x > 0) && !(x & (x - 1));
+}
+
+template <typename T>
+inline T next_power_of_2(T x)
+{
+	T n = 1;
+
+	while (n <= x)
+		n <<= 1;
+
+	return n;
 }
 
 template <typename R, typename function_type>

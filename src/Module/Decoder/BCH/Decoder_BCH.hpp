@@ -16,6 +16,7 @@ class Decoder_BCH : public Decoder_SIHO_HIHO<B,R>
 {
 protected:
 	const int t;         // correction power
+	const int N_p2;      // the next power 2 of N minus 1
 	std::vector<B> YH_N; // hard decision input vector
 
 public:

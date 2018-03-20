@@ -3,6 +3,7 @@
 
 #include "Tools/Perf/common.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Math/utils.h"
 
 #include "Decoder_BCH.hpp"
 
@@ -14,7 +15,7 @@ Decoder_BCH<B, R>
 ::Decoder_BCH(const int K, const int N, const int t, const int n_frames)
 : Decoder               (K, N, n_frames, 1),
   Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1),
-  t(t), YH_N(N)
+ t(t),  N_p2(tools::next_power_of_2(N) -1), YH_N(N)
 {
 	const std::string name = "Decoder_BCH";
 	this->set_name(name);

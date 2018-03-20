@@ -31,29 +31,12 @@ Encoder_BCH::parameters* Encoder_BCH::parameters
 	return new Encoder_BCH::parameters(*this);
 }
 
-struct check_BCH_N
-{
-	template <typename T>
-	static void check(const T N)
-	{
-		if (!tools::is_power_of_2(N+1))
-		{
-			std::stringstream message;
-			message << "'N' has to be a power of 2 minus 1";
-			throw std::runtime_error(message.str());
-		}
-	}
-};
-
 void Encoder_BCH::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
-
-	tools::add_ranges<tools::Integer_type<int, tools::Positive_range<>, tools::Non_zero_range<>>>
-	(args.at({p+"-cw-size", "N"}), tools::Function<check_BCH_N>("power of 2 minus 1"));
 
 	tools::add_options(args.at({p+"-type"}), 0, "BCH");
 }

@@ -14,6 +14,9 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_BCH_std : public Decoder_BCH<B,R>
 {
+private :
+	const int t2;
+
 protected:
 	std::vector<std::vector<int>> elp;
 	std::vector<int> discrepancy;
@@ -29,8 +32,6 @@ protected:
 	const std::vector<int>& alpha_to; // log table of GF(2**m)
 	const std::vector<int>& index_of; // antilog table of GF(2**m)
 
-private :
-	const int t2;
 
 public:
 	Decoder_BCH_std(const int& K, const int& N, const tools::BCH_polynomial_generator &GF, const int n_frames = 1);
