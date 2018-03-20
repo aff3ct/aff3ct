@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+//********************************************************************************************************** hard_decide
+
 template <typename B, typename Q>
 void aff3ct::tools::hard_decide(const Q *in, B *out, const int size)
 {
@@ -31,6 +33,8 @@ void aff3ct::tools::hard_decide(const Q *in, B *out, const int size)
 
 
 
+//************************************************************************************************* hamming_distance_seq
+
 template <typename B>
 inline size_t aff3ct::tools::hamming_distance_seq(const B *in1, const B *in2, const int size)
 {
@@ -42,6 +46,20 @@ inline size_t aff3ct::tools::hamming_distance_seq(const B *in1, const B *in2, co
 	return ham_dist;
 }
 
+
+
+//***************************************************************************************************** hamming_distance
+
+#ifdef MIPP_AVX1
+
+template <typename B>
+size_t aff3ct::tools::hamming_distance(const B *in1, const B *in2, const int size)
+{
+	return hamming_distance_seq(in1, in2, size);
+}
+
+#else
+
 template <typename B>
 inline mipp::Reg<B> popcnt(const mipp::Reg<B>& q_in1, const mipp::Reg<B>& q_in2)
 {
@@ -50,7 +68,6 @@ inline mipp::Reg<B> popcnt(const mipp::Reg<B>& q_in1, const mipp::Reg<B>& q_in2)
 	const auto m_in2 = q_in2 != zeros;
 	return mipp::blend(ones, zeros, m_in1 ^ m_in2);
 }
-
 
 template <typename B>
 size_t aff3ct::tools::hamming_distance(const B *in1, const B *in2, const int size)
@@ -141,6 +158,8 @@ size_t hamming_distance<int8_t>(const int8_t *in1, const int8_t *in2, const int 
 }
 }
 }
+
+#endif // #ifdef MIPP_AVX
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
