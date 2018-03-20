@@ -134,7 +134,7 @@ void Modem_PAM<B,R,Q,MAX>
 		auto k  = n / this->bits_per_symbol; // symbol position
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j & (1 << b)) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -(Y_N1[k] - (Q)this->constellation[j]) *
 				              (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
 			else
@@ -169,7 +169,7 @@ void Modem_PAM<B,R,Q,MAX>
 		auto k  = n / this->bits_per_symbol; // symbol position
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j & (1 << b)) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -(Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) *
 				              (Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) * inv_sigma2);
 			else
@@ -205,13 +205,23 @@ void Modem_PAM<B,R,Q,MAX>
 			auto tempL  = (Q)((Y_N1[k] - this->constellation[j]) *
 			                  (Y_N1[k] - this->constellation[j]) * inv_sigma2);
 
-			for (auto l = 0; l < b; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+			for (auto l = 0; l < this->bits_per_symbol; l++)
+			{
+				if (l == b)
+					continue;
 
-			for (auto l = b +1; l < this->bits_per_symbol; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+				if  (((j>>l) & 1) == 1)
+				{
+					if (k * this->bits_per_symbol +l < size)
+						tempL += Y_N2[k * this->bits_per_symbol +l];
+					else
+						tempL += std::numeric_limits<Q>::infinity();
+				}
 
-			if ((j & (1 << b)) == 0)
+			}
+			tempL = std::isnan((R)tempL) ? (Q)0.0 : tempL;
+
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
@@ -246,19 +256,77 @@ void Modem_PAM<B,R,Q,MAX>
 			auto tempL = (Q)((Y_N1[k] - (Q)H_N[k] * this->constellation[j]) *
 			                 (Y_N1[k] - (Q)H_N[k] * this->constellation[j]) * inv_sigma2);
 
-			for (auto l = 0; l < b; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+			for (auto l = 0; l < this->bits_per_symbol; l++)
+			{
+				if (l == b)
+					continue;
 
-			for (auto l = b +1; l < this->bits_per_symbol; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+				if  (((j>>l) & 1) == 1)
+				{
+					if (k * this->bits_per_symbol +l < size)
+						tempL += Y_N2[k * this->bits_per_symbol +l];
+					else
+						tempL += std::numeric_limits<Q>::infinity();
+				}
+			}
+			tempL = std::isnan((R)tempL) ? (Q)0.0 : tempL;
 
-			if ((j & (1 << b)) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
 		}
 
 		Y_N3[n] = (L0 - L1);
+	}
+}
+
+/*
+* \brief Soft Mapper
+*/
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+void Modem_PAM<B, R, Q, MAX>
+::_tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
+{
+	auto size_in  = this->N;
+	auto size_out = this->N_mod;
+
+	auto loop_size = size_in / this->bits_per_symbol;
+
+	for (auto i = 0; i < loop_size; i++)
+	{
+		X_N2[i] = (R)0.0;
+
+		for (auto m = 0; m < this->nbr_symbols; m++)
+		{
+			R soft_symbol = this->constellation[m];
+			R p = 1.0;
+			for (auto j = 0; j < this->bits_per_symbol; j++)
+			{
+				R p0 = (R)1.0/((R)1.0 + std::exp(-(R)(X_N1[i*this->bits_per_symbol + j])));
+				p *= ((m >> j) & 1) == 0 ? p0 : (R)1.0 - p0;
+			}
+			X_N2[i]   += p * soft_symbol;
+		}
+	}
+
+	// last elements if "size_in" is not a multiple of the number of bits per symbol
+	if (loop_size * this->bits_per_symbol < size_in)
+	{
+		auto r = size_in - (loop_size * this->bits_per_symbol);
+		X_N2[size_out - 1] = (R)0.0;
+
+		for (auto m = 0; m < (1<<r); m++)
+		{
+			R soft_symbol = this->constellation[m];
+			auto p = (R)1.0;
+			for (auto j = 0; j < r; j++)
+			{
+				auto p0 = (R)1.0/((R)1.0 + std::exp(-(R)X_N1[loop_size*this->bits_per_symbol + j]));
+				p *= ((m >> j) & 1) == 0 ? p0 : (R)1.0 - p0;
+			}
+			X_N2[size_out - 1] += p*soft_symbol;
+		}
 	}
 }
 }

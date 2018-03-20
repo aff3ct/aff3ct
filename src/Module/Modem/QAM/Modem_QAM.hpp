@@ -38,6 +38,7 @@ public:
 	}
 
 protected:
+	void   _tmodulate   (              const Q *X_N1,                 R *X_N2, const int frame_id);
 	void   _modulate    (              const B *X_N1,                 R *X_N2, const int frame_id);
 	void     _filter    (              const R *Y_N1,                 R *Y_N2, const int frame_id);
 	void _demodulate    (              const Q *Y_N1,                 Q *Y_N2, const int frame_id);
