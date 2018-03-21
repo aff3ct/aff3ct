@@ -2,9 +2,11 @@
 #define NUMERICAL_INTEGRATION_HXX_
 
 #include <sstream>
+#include <assert.h>
+#include <mipp.h>
 
+#include "utils.h"
 #include "numerical_integration.h"
-#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {
@@ -12,26 +14,54 @@ namespace tools
 {
 
 template <typename R>
-inline R trapz_integral_seq(const R* in, const R step, int size)
+inline R trapz_integral_seq(const R* y, const R step, int size)
 {
+	assert(y    != 0);
+	assert(step != 0);
+	assert(size != 0);
+
 	if (size <= 1)
 		return (R)0;
 
-	R area = div2(in[0]);
+	R area = div2(y[0]);
 
 	size--;
 
 	for (auto i = 1; i < size; i++)
-		area += in[i];
+		area += y[i];
 
-	area += div2(in[size]);
+	area += div2(y[size]);
 
 	return area * step;
 }
 
 template <typename R>
-inline R trapz_integral(const R* in, const R step, int size)
+inline R trapz_integral_seq(const R* x, const R* y, int size)
 {
+	assert(x    != 0);
+	assert(y    != 0);
+	assert(size != 0);
+
+	if (size <= 1)
+		return (R)0;
+
+	size--;
+
+	R area = div2(y[size]);
+
+	for (auto i = 0; i < size; i++)
+		area += div2((y[i+1] + y[i])) * (x[i+1] - x[i]);
+
+	return area;
+}
+
+template <typename R>
+inline R trapz_integral(const R* y, const R step, int size)
+{
+	assert(y    != 0);
+	assert(step != 0);
+	assert(size != 0);
+
 	if (size <= 1)
 		return (R)0;
 
@@ -42,14 +72,14 @@ inline R trapz_integral(const R* in, const R step, int size)
 	const auto vec_loop_size = (size / mipp::N<R>()) * mipp::N<R>();
 
 	for (auto i = 1; i < vec_loop_size; i += mipp::N<R>())
-		area += mipp::Reg<R>(in+i);
+		area += mipp::Reg<R>(y+i);
 
 	R a = mipp::hadd(area);
 
 	for (auto i = vec_loop_size; i < size; i++)
-		a += in[i];
+		a += y[i];
 
-	a += div2(in[size] + in[0]);
+	a += div2(y[size] + y[0]);
 
 	return a * step;
 }
@@ -57,12 +87,15 @@ inline R trapz_integral(const R* in, const R step, int size)
 template <typename R, typename Function>
 inline R trapz_integral_seq(Function f, const R min, const R max, const int number_steps)
 {
+	assert(number_steps != 0);
+	assert(max >= min);
+
 	R step = (max - min) / number_steps; // width of rectangle
 	R area = (R)0;
 
 	R stop = max - step;
 
-	for (R i = min + step ; i < stop ; i += step)
+	for (R i = min + step ; i <= stop ; i += step)
 		area += f(i);
 
 	area += div2(f(max) + f(min));
@@ -71,23 +104,31 @@ inline R trapz_integral_seq(Function f, const R min, const R max, const int numb
 }
 
 template <typename R>
-inline R rect_integral_seq(const R* in, const R step, const int size)
+inline R rect_integral_seq(const R* y, const R step, const int size)
 {
+	assert(y    != 0);
+	assert(step != 0);
+	assert(size != 0);
+
 	if (size <= 1)
 		return (R)0;
 
 	R area = 0;
 
 	for (auto i = 0; i < size; i++)
-		area += in[i];
+		area += y[i];
 
 	return area * step;
 }
 
 
 template <typename R>
-inline R rect_integral(const R* in, const R step, const int size)
+inline R rect_integral(const R* y, const R step, const int size)
 {
+	assert(y    != 0);
+	assert(step != 0);
+	assert(size != 0);
+
 	if (size <= 1)
 		return (R)0;
 
@@ -96,131 +137,134 @@ inline R rect_integral(const R* in, const R step, const int size)
 	const auto vec_loop_size = (size / mipp::N<R>()) * mipp::N<R>();
 
 	for (auto i = 0; i < vec_loop_size; i += mipp::N<R>())
-		area += mipp::Reg<R>(in+i);
+		area += mipp::Reg<R>(y+i);
 
 	R a = mipp::hadd(area);
 
 	for (auto i = vec_loop_size; i < size; i++)
-		a += in[i];
+		a += y[i];
 
 	return a * step;
 }
 
 template <typename R, typename Function>
-inline R rect_integral_seq(Function f, const R min, const R max, const int number_steps)
+inline R mid_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
 {
+	assert(number_steps != 0);
+	assert(max >= min);
+
 	R step = (max - min) / number_steps; // width of rectangle
 	R area = (R)0;
 
-	for (auto i = 0; i < number_steps; i++)
-		area += f(min + ((R)i + (R)0.5) * step);
+	for (R i = min + step * (R)0.5 ; i < max ; i += step)
+		area += f(i);
+
+	return area * step;
+}
+
+template <typename R, typename Function>
+inline R left_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
+{
+	assert(number_steps != 0);
+	assert(max >= min);
+
+	R step = (max - min) / number_steps; // width of rectangle
+	R area = (R)0;
+
+	for (R i = min ; i < max ; i += step)
+		area += f(i);
+
+	return area * step;
+}
+
+template <typename R, typename Function>
+inline R right_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
+{
+	assert(number_steps != 0);
+	assert(max >= min);
+
+	R step = (max - min) / number_steps; // width of rectangle
+	R area = (R)0;
+
+	for (R i = min + step ; i <= max ; i += step)
+		area += f(i);
 
 	return area * step;
 }
 
 template <typename R>
-inline R integral_seq(const R* in, const R step, const int size, const NUM_INTEG_APPROX approx)
+inline R mid_rect_integral_seq(const R* x, const R* y, int size)
 {
-	if (step <= 0)
-	{
-		std::stringstream message;
-		message << "'step' has to be strictly positive ('step' = " << step << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	assert(x    != 0);
+	assert(y    != 0);
+	assert(size != 0);
 
-	if (size < 0)
-	{
+	if (size <= 1)
+		return (R)0;
 
-		std::stringstream message;
-		message << "'size' has to be positive ('size' = " << size << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	size--;
 
-	switch (approx)
-	{
-		case NUM_INTEG_APPROX::RECT :
-			return rect_integral_seq(in, step, size);
+	R area = 0;
 
-		case NUM_INTEG_APPROX::TRAPZ :
-			return trapz_integral_seq(in, step, size);
+	for (auto i = 0; i < size; i++)
+		area += div2((y[i+1] + y[i])) * (x[i+1] - x[i]);
 
-		default:
-		{
-			std::stringstream message;
-			message << "Unknown approximation method ('approx' = " << approx << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
-
+	return area;
 }
 
 template <typename R>
-inline R integral(const R* in, const R step, const int size, const NUM_INTEG_APPROX approx)
+inline R left_rect_integral_seq(const R* x, const R* y, int size)
 {
-	if (step <= 0)
-	{
-		std::stringstream message;
-		message << "'step' has to be strictly positive ('step' = " << step << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	assert(x    != 0);
+	assert(y    != 0);
+	assert(size != 0);
 
-	if (size < 0)
-	{
+	if (size <= 1)
+		return (R)0;
 
-		std::stringstream message;
-		message << "'size' has to be positive ('size' = " << size << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	size--;
 
-	switch (approx)
-	{
-		case NUM_INTEG_APPROX::RECT :
-			return rect_integral(in, step, size);
+	R area = 0;
 
-		case NUM_INTEG_APPROX::TRAPZ :
-			return trapz_integral(in, step, size);
+	for (auto i = 0; i < size; i++)
+		area += y[i] * (x[i+1] - x[i]);
 
-		default:
-		{
-			std::stringstream message;
-			message << "Unknown approximation method ('approx' = " << approx << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
+	return area;
+}
+
+template <typename R>
+inline R right_rect_integral_seq(const R* x, const R* y, int size)
+{
+	assert(x    != 0);
+	assert(y    != 0);
+	assert(size != 0);
+
+	if (size <= 1)
+		return (R)0;
+
+	size--;
+
+	R area = 0;
+
+	for (auto i = 0; i < size; i++)
+		area += y[i+1] * (x[i+1] - x[i]);
+
+	return area;
 }
 
 template <typename R, typename Function>
-inline R integral_seq(Function f, const R min, const R max, const int number_steps, const NUM_INTEG_APPROX approx)
+inline R simps_integral_seq(Function f, const R min, const R max, const int number_steps)
 {
-	if (max < min)
-	{
-		std::stringstream message;
-		message << "'max' has to be equal or greater than 'min' ('max' = " << max << ", 'min' = " << min << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	assert(number_steps != 0);
+	assert(max >= min);
 
-	if (number_steps <= 0)
-	{
-		std::stringstream message;
-		message << "'number_steps' has to be greater than 0 ('number_steps' = " << number_steps << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	R step = (max - min) / number_steps; // width of rectangle
+	R area = (R)0;
 
-	switch (approx)
-	{
-		case NUM_INTEG_APPROX::RECT :
-			return rect_integral_seq(f, min, max, number_steps);
+	for (R i = min ; i < max ; i += step)
+		area += f(i) + 4*f(i+div2(step)) + f(i+step);
 
-		case NUM_INTEG_APPROX::TRAPZ :
-			return trapz_integral_seq(f, min, max, number_steps);
-
-		default:
-		{
-			std::stringstream message;
-			message << "Unknown approximation method ('approx' = " << approx << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
+	return area * step / (R)6;
 }
 
 }

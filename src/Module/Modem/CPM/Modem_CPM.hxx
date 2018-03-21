@@ -262,7 +262,7 @@ R Modem_CPM<B,R,Q,MAX>
 			return (R)0.0;
 
 		GMSK<R> g((R)0.3, -(R)cpm.L / (R)2.0);
-		return tools::rect_integral_seq(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
+		return tools::mid_rect_integral_seq(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
 	}
 	else if (cpm.wave_shape == "RCOS")
 		return t_stamp / ((R)2.0 * cpm.L) - sin((R)2.0 * (R)M_PI * t_stamp / (R)cpm.L) / (R)4.0 / (R)M_PI;
