@@ -86,32 +86,6 @@ inline T next_power_of_2(T x)
 	return n;
 }
 
-template <typename R, typename function_type>
-inline R integral(function_type func, const R min, const R max, const int number_steps)
-{
-	if (max < min)
-	{
-		std::stringstream message;
-		message << "'max' has to be equal or greater than 'min' ('max' = " << max << ", 'min' = " << min << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (number_steps <= 0)
-	{
-		std::stringstream message;
-		message << "'number_steps' has to be greater than 0 ('number_steps' = " << number_steps << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	R step = (max - min) / number_steps; // width of rectangle
-	R area = (R)0;
-
-	for (auto i = 0; i < number_steps; i++)
-		area += func(min + ((R)i + (R)0.5) * step) * step;
-
-	return area;
-}
-
 template <typename T>
 T greatest_common_divisor(T a, T b)
 {

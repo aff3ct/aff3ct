@@ -10,7 +10,9 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
+#include "Tools/Math/numerical_integration.h"
 #include "Modem_CPM.hpp"
+
 
 namespace aff3ct
 {
@@ -60,7 +62,7 @@ Modem_CPM<B,R,Q,MAX>
 	this->set_name(name);
 
 	this->set_filter(true);
-	
+
 	if (N % bits_per_symbol)
 	{
 		std::stringstream message;
@@ -218,24 +220,35 @@ void Modem_CPM<B,R,Q,MAX>
 	}
 }
 
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795
+#endif
+
 template <typename R>
 class GMSK
 {
 private:
-	const R B;
 	const R off;
+	const R factor;
 
 public:
-	GMSK(const R b, const R offset) : B(b), off(offset){ }
+	GMSK(const R b, const R offset)
+	: off(offset),
+	  factor((R)2.0 * (R)M_PI * b / std::sqrt((R)2.0 * std::log((R)2.0)))
+	{ }
+
+	R apply(const R& t) const
+	{
+		const R x      = t + off;
+		const R minus  = (x - (R)0.5) * factor;
+		const R plus   = (x + (R)0.5) * factor;
+
+		return tools::div4(std::erf(plus) - std::erf(minus));
+	}
 
 	R operator()(const R& t) const
 	{
-		R x      = t + off;
-		R factor = (R)2.0 * (R)M_PI * B / sqrt((R)2.0 * std::log((R)2.0));
-		R minus  = (x - (R)0.5) * factor;
-		R plus   = (x + (R)0.5) * factor;
-
-		return (std::erf(plus) - std::erf(minus))/(R)4.0;
+		return apply(t);
 	}
 };
 
@@ -249,7 +262,7 @@ R Modem_CPM<B,R,Q,MAX>
 			return (R)0.0;
 
 		GMSK<R> g((R)0.3, -(R)cpm.L / (R)2.0);
-		return tools::integral(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
+		return tools::rect_integral_seq(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
 	}
 	else if (cpm.wave_shape == "RCOS")
 		return t_stamp / ((R)2.0 * cpm.L) - sin((R)2.0 * (R)M_PI * t_stamp / (R)cpm.L) / (R)4.0 / (R)M_PI;
