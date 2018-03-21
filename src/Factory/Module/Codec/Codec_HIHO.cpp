@@ -29,7 +29,7 @@ template <typename B, typename Q>
 module::Codec_HIHO<B,Q>* Codec_HIHO::parameters
 ::build(module::CRC<B>* crc) const
 {
-	     if (get_name() == "Codec BCH"       ) return dynamic_cast<const Codec_BCH       ::parameters&>(*this).template build<B,Q>(crc);
+	     if (get_name() == Codec_BCH_name) return dynamic_cast<const Codec_BCH       ::parameters&>(*this).template build<B,Q>(crc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
