@@ -47,7 +47,7 @@ inline R trapz_integral_seq(const R* x, const R* y, int size)
 
 	size--;
 
-	R area = div2(y[size]);
+	R area = 0;
 
 	for (auto i = 0; i < size; i++)
 		area += div2((y[i+1] + y[i])) * (x[i+1] - x[i]);
