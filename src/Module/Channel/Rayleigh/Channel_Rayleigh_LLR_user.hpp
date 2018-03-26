@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include "Tools/Algo/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
-#include "Tools/Algo/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Noise_generator/Noise_generator.hpp"
+#include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "../Channel.hpp"
 
@@ -20,7 +20,7 @@ protected:
 	const bool complex;
 	const bool add_users;
 	std::vector<R> gains;
-	tools::Gaussian_noise_generator<R> *noise_generator;
+	tools::Noise_generator<R> *noise_generator;
 
 	std::vector<R> gains_stock;
 	const unsigned gain_occur;
@@ -30,7 +30,7 @@ protected:
 public:
 	Channel_Rayleigh_LLR_user(const int N, const bool complex, const std::string& gains_filename,
 	                          const int gain_occurrences = 1,
-	                          tools::Gaussian_gen<R> *noise_generator = new tools::Gaussian_gen_std<R>(),
+	                          tools::Noise_generator<R> *noise_generator = new tools::Gaussian_gen_std<R>(),
 	                          const bool add_users = false, const R sigma = (R)1, const int n_frames = 1);
 	Channel_Rayleigh_LLR_user(const int N, const bool complex, const int seed, const std::string& gains_filename,
 	                          const int gain_occurrences = 1, const bool add_users = false, const R sigma = (R)1,

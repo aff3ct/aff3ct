@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "Tools/Algo/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
-#include "Tools/Algo/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
+#include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "../Channel.hpp"
 

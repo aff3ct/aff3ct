@@ -9,7 +9,7 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_AWGN_LLR<R>
-::Channel_AWGN_LLR(const int N, tools::Gaussian_gen<R> *noise_generator, const bool add_users, const R sigma,
+::Channel_AWGN_LLR(const int N, tools::Noise_generator<R> *noise_generator, const bool add_users, const R sigma,
                    const int n_frames)
 : Channel<R>(N, sigma, n_frames),
   add_users(add_users),
@@ -79,7 +79,7 @@ void Channel_AWGN_LLR<R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Channel_AWGN_LLR<R_32>;

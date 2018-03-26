@@ -13,47 +13,9 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename R>
-inline R trapz_integral_seq(const R* y, const R step, int size)
-{
-	assert(y    != 0);
-	assert(step != 0);
-	assert(size != 0);
-
-	if (size <= 1)
-		return (R)0;
-
-	R area = div2(y[0]);
-
-	size--;
-
-	for (auto i = 1; i < size; i++)
-		area += y[i];
-
-	area += div2(y[size]);
-
-	return area * step;
-}
-
-template <typename R>
-inline R trapz_integral_seq(const R* x, const R* y, int size)
-{
-	assert(x    != 0);
-	assert(y    != 0);
-	assert(size != 0);
-
-	if (size <= 1)
-		return (R)0;
-
-	size--;
-
-	R area = 0;
-
-	for (auto i = 0; i < size; i++)
-		area += div2((y[i+1] + y[i])) * (x[i+1] - x[i]);
-
-	return area;
-}
+// =====================================================================================================================
+// =============================================================================== MIPP optimized numerical integrations
+// =====================================================================================================================
 
 template <typename R>
 inline R trapz_integral(const R* y, const R step, int size)
@@ -84,44 +46,6 @@ inline R trapz_integral(const R* y, const R step, int size)
 	return a * step;
 }
 
-template <typename R, typename Function>
-inline R trapz_integral_seq(Function f, const R min, const R max, const int number_steps)
-{
-	assert(number_steps != 0);
-	assert(max >= min);
-
-	R step = (max - min) / number_steps; // width of rectangle
-	R area = (R)0;
-
-	R stop = max - step;
-
-	for (R i = min + step ; i <= stop ; i += step)
-		area += f(i);
-
-	area += div2(f(max) + f(min));
-
-	return area * step;
-}
-
-template <typename R>
-inline R rect_integral_seq(const R* y, const R step, const int size)
-{
-	assert(y    != 0);
-	assert(step != 0);
-	assert(size != 0);
-
-	if (size <= 1)
-		return (R)0;
-
-	R area = 0;
-
-	for (auto i = 0; i < size; i++)
-		area += y[i];
-
-	return area * step;
-}
-
-
 template <typename R>
 inline R rect_integral(const R* y, const R step, const int size)
 {
@@ -147,6 +71,235 @@ inline R rect_integral(const R* y, const R step, const int size)
 	return a * step;
 }
 
+
+
+// =====================================================================================================================
+// =================================================================================== Trapezoidal numerical integration
+// =====================================================================================================================
+
+template <typename R>
+inline R trapz_integral_seq(const R* y, const R step, int size)
+{
+	assert(y    != 0);
+	assert(step != 0);
+	assert(size != 0);
+
+	if (size <= 1)
+		return (R)0;
+
+	R area = div2(y[0]);
+
+	size--;
+
+	for (auto i = 1; i < size; i++)
+		area += y[i];
+
+	area += div2(y[size]);
+
+	return area * step;
+}
+
+template <typename R>
+inline void cumtrapz_integral_seq(const R* y, const R step, R* cumul, int size)
+{
+	assert(y    != 0);
+	assert(cumul!= 0);
+	assert(step != 0);
+	assert(size != 0);
+
+	if (size == 0)
+		return;
+
+	if (size == 1)
+	{
+		*cumul = 0;
+		return;
+	}
+
+	size--;
+
+	R area = 0;
+
+	for (auto i = 0; i < size; i++)
+	{
+		cumul[i] = area;
+		area += div2((y[i+1] + y[i])) * step;
+	}
+
+	cumul[size] = area;
+}
+
+template <typename R>
+inline R trapz_integral_seq(const R* x, const R* y, int size)
+{
+	assert(x    != 0);
+	assert(y    != 0);
+	assert(size != 0);
+
+	if (size <= 1)
+		return (R)0;
+
+	size--;
+
+	R area = 0;
+
+	for (auto i = 0; i < size; i++)
+		area += div2((y[i+1] + y[i])) * (x[i+1] - x[i]);
+
+	return area;
+}
+
+template <typename R>
+inline void cumtrapz_integral_seq(const R* x, const R* y, R* cumul, int size)
+{
+	assert(x    != 0);
+	assert(y    != 0);
+	assert(cumul!= 0);
+	assert(size != 0);
+
+	if (size == 0)
+		return;
+
+	if (size == 1)
+	{
+		*cumul = 0;
+		return;
+	}
+
+	size--;
+
+	R area = 0;
+
+	for (auto i = 0; i < size; i++)
+	{
+		cumul[i] = area;
+		area += div2((y[i+1] + y[i])) * (x[i+1] - x[i]);
+	}
+
+	cumul[size] = area;
+}
+
+template <typename R>
+inline R trapz_integral_seq(const Point<R>* p, int size)
+{
+	assert(p    != 0);
+	assert(size != 0);
+
+	if (size <= 1)
+		return (R)0;
+
+	size--;
+
+	R area = 0;
+
+	for (auto i = 0; i < size; i++)
+		area += div2((p[i+1].y() + p[i].y())) * (p[i+1].x() - p[i].x());
+
+	return area;
+}
+
+template <typename R>
+inline void cumtrapz_integral_seq(const Point<R>* p, R* cumul, int size)
+{
+	assert(p    != 0);
+	assert(cumul!= 0);
+	assert(size != 0);
+
+	if (size == 0)
+		return;
+
+	if (size == 1)
+	{
+		*cumul = 0;
+		return;
+	}
+
+	size--;
+
+	R area = 0;
+
+	for (auto i = 0; i < size; i++)
+	{
+		cumul[i] = area;
+		area += div2((p[i+1].y() + p[i].y())) * (p[i+1].x() - p[i].x());
+	}
+
+	cumul[size] = area;
+}
+
+template <typename R>
+inline void cumtrapz_integral_seq(const Point<R>* p, Point<R>* cumul, int size)
+{
+	assert(p    != 0);
+	assert(cumul!= 0);
+	assert(size != 0);
+
+	if (size == 0)
+		return;
+
+	if (size == 1)
+	{
+		*cumul = 0;
+		return;
+	}
+
+	size--;
+
+	R area = 0;
+
+	for (auto i = 0; i < size; i++)
+	{
+		cumul[i].x(p[i].x());
+		cumul[i].y(area);
+		area += div2((p[i+1].y() + p[i].y())) * (p[i+1].x() - p[i].x());
+	}
+
+	cumul[size].x(p[size].x());
+	cumul[size].y(area);
+}
+
+template <typename R, typename Function>
+inline R trapz_integral_seq(Function f, const R min, const R max, const int number_steps)
+{
+	assert(number_steps != 0);
+	assert(max >= min);
+
+	R step = (max - min) / number_steps; // width of rectangle
+	R area = (R)0;
+
+	R stop = max - step;
+
+	for (R i = min + step ; i <= stop ; i += step)
+		area += f(i);
+
+	area += div2(f(max) + f(min));
+
+	return area * step;
+}
+
+// =====================================================================================================================
+// =================================================================================== Rectangular numerical integration
+// =====================================================================================================================
+
+template <typename R>
+inline R rect_integral_seq(const R* y, const R step, const int size)
+{
+	assert(y    != 0);
+	assert(step != 0);
+	assert(size != 0);
+
+	if (size <= 1)
+		return (R)0;
+
+	R area = 0;
+
+	for (auto i = 0; i < size; i++)
+		area += y[i];
+
+	return area * step;
+}
+
+// ===================================================================== Rectangular numerical integration with function
 template <typename R, typename Function>
 inline R mid_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
 {
@@ -192,6 +345,7 @@ inline R right_rect_integral_seq(Function f, const R min, const R max, const int
 	return area * step;
 }
 
+// ======================================================================== Rectangular numerical integration with (x,y)
 template <typename R>
 inline R mid_rect_integral_seq(const R* x, const R* y, int size)
 {
@@ -242,15 +396,72 @@ inline R right_rect_integral_seq(const R* x, const R* y, int size)
 	if (size <= 1)
 		return (R)0;
 
-	size--;
+	R area = 0;
+
+	for (auto i = 1; i < size; i++)
+		area += y[i] * (x[i] - x[i-1]);
+
+	return area;
+}
+
+
+// ======================================================================== Rectangular numerical integration with Point
+template <typename R>
+inline R mid_rect_integral_seq(const Point<R>* p, const int size)
+{
+	assert(p    != 0);
+	assert(size != 0);
+
+	if (size <= 1)
+		return (R)0;
 
 	R area = 0;
 
 	for (auto i = 0; i < size; i++)
-		area += y[i+1] * (x[i+1] - x[i]);
+		area += div2((p[i+1].y() + p[i].y())) * (p[i+1].x() - p[i].x());
 
 	return area;
 }
+
+
+template <typename R>
+inline R left_rect_integral_seq(const Point<R>* p, const int size)
+{
+	assert(p    != 0);
+	assert(size != 0);
+
+	if (size <= 1)
+		return (R)0;
+
+	R area = 0;
+
+	for (auto i = 0; i < size; i++)
+		area += p[i].y() * (p[i+1].x() - p[i].x());
+
+	return area;
+}
+
+
+template <typename R>
+inline R right_rect_integral_seq(const Point<R>* p, const int size)
+{
+	assert(p    != 0);
+	assert(size != 0);
+
+	if (size <= 1)
+		return (R)0;
+
+	R area = 0;
+
+	for (auto i = 1; i < size; i++)
+		area += p[i].y() * (p[i].x() - p[i-1].x());
+
+	return area;
+}
+
+// =====================================================================================================================
+// ======================================================================================= Simpson numerical integration
+// =====================================================================================================================
 
 template <typename R, typename Function>
 inline R simps_integral_seq(Function f, const R min, const R max, const int number_steps)

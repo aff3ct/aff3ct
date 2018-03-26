@@ -6,13 +6,13 @@
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
 
-#include "Tools/Algo/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
-#include "Tools/Algo/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
+#include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
 #ifdef CHANNEL_MKL
-#include "Tools/Algo/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
+#include "Tools/Algo/Noise_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
 #endif
 #ifdef CHANNEL_GSL
-#include "Tools/Algo/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
+#include "Tools/Algo/Noise_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
 #endif
 
 #include "Channel.hpp"
