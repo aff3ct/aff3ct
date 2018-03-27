@@ -14,8 +14,8 @@ template <typename R = float>
 class User_pdf_noise_generator_std : public User_pdf_noise_generator<R>
 {
 private:
-	std::mt19937                            rd_engine; // Mersenne Twister 19937
-	std::uniform_int_distribution<unsigned> uniform_dist;
+	std::mt19937                      rd_engine; // Mersenne Twister 19937
+	std::uniform_real_distribution<R> uniform_dist;
 
 public:
 	User_pdf_noise_generator_std(const std::vector<R>& _xData, const std::vector<R>& _yData, const int seed = 0);

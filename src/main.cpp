@@ -172,6 +172,7 @@ int read_arguments(const int argc, const char** argv, factory::Launcher::paramet
 // }
 
 #include <aff3ct.hpp>
+#include "Tools/Algo/Noise_generator/histogram.h"
 
 int main(int argc, char **argv)
 {
@@ -185,40 +186,19 @@ int main(int argc, char **argv)
 
 	tools::User_pdf_gen_std<T> noise_gene0(px, p0);
 
-	// unsigned noise_length = 10000;
-	// std::vector<T> noise(noise_length);
-	// noise_gene0.generate(noise.data(), noise_length, 0.0);
+	unsigned noise_length = 1e6;
+	std::vector<T> noise(noise_length);
 
-	// std::sort(noise.begin(), noise.end());
+	noise_gene0.generate(noise.data(), noise_length, 0.0);
 
-	// std::ofstream file0("aff3ct_noise0.txt");
-	// for(auto& n : noise)
-	// 	file0 << n << std::endl;
+	std::ofstream file0("aff3ct_noise0.csv");
+	histogram(file0, noise, noise_gene0.get_min_x(), noise_gene0.get_max_x());
 
-	// int count = 1e6;
-	// T noise = 0;
-	// int nintervals = 100;
-	// std::vector<T> hist(nintervals, 0);
+	tools::User_pdf_gen_std<T> noise_gene1(px, p1);
 
-	// for (int i = 0; i < count; ++i)
-	// {
-	// 	noise_gene0.generate(&noise, 1, 0.0);
-	// 	++hist[int(noise*nintervals)];
-	// }
+	noise_gene1.generate(noise.data(), noise_length, 0.0);
 
-	// // tools::User_pdf_gen_std<T> noise_gene1(px, p1);
+	std::ofstream file1("aff3ct_noise1.csv");
+	histogram(file1, noise, noise_gene1.get_min_x(), noise_gene1.get_max_x());
 
-	// std::cout << "uniform_real_distribution (0.0,1.0):" << std::endl;
-	// std::cout << std::fixed; std::cout.precision(1);
-
-
-	// std::ofstream file0("aff3ct_noise0.txt");
-	// for(auto& n : noise)
-	// 	file0 << n << std::endl;
-
-	// for (int i=0; i<nintervals; ++i)
-	// {
-	// 	std::cout << float(i)/nintervals << "-" << float(i+1)/nintervals << ": ";
-	// 	std::cout << std::string(p[i]*nstars/nrolls,'*') << std::endl;
-	// }
 }

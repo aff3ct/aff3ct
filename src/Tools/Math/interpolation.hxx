@@ -13,7 +13,7 @@ namespace tools
 {
 
 template <typename T>
-T linear_interpolation(const T* xData, const T* yData, const int lData, const T xVal)
+T linear_interpolation(const T* xData, const T* yData, const unsigned lData, const T xVal)
 {
 	auto x_above = std::lower_bound(xData, xData + lData, xVal); // find the position of the first x that is above the xVal
 
@@ -34,7 +34,7 @@ T linear_interpolation(const T* xData, const T* yData, const int lData, const T 
 }
 
 template <typename T>
-T linear_interpolation(const Point<T>* data, const int lData, const T xVal)
+T linear_interpolation(const Point<T>* data, const unsigned lData, const T xVal)
 {
 	// find the position of the first x that is above the xVal
 	auto p_above = std::lower_bound(data, data + lData, xVal, [](const Point<T>& p, const T& x){return p.x() < x;});
@@ -53,10 +53,10 @@ T linear_interpolation(const Point<T>* data, const int lData, const T xVal)
 }
 
 template <typename T>
-void linear_interpolation(const T* xData, const T* yData, const int lData,
-                          const T* xVals,       T* yVals, const int lVals)
+void linear_interpolation(const T* xData, const T* yData, const unsigned lData,
+                          const T* xVals,       T* yVals, const unsigned lVals)
 {
-	for(int j = 0; j < lVals; j++)
+	for(unsigned j = 0; j < lVals; j++)
 		yVals[j] = linear_interpolation(xData, yData, lData, xVals[j]);
 }
 

@@ -25,8 +25,8 @@ template <typename R = float>
 class User_pdf_noise_generator : public Noise_generator<R>
 {
 protected:
-	std::vector<Point<R>> pdf;  // input probability density function
-	std::vector<Point<R>> cdf; //  cumulative density function
+	std::vector<Point<R>> pdf;   // input probability density function
+	std::vector<R> cdf_x, cdf_y; // cumulative density function
 
 public:
 	User_pdf_noise_generator(const std::vector<R>& _xData, const std::vector<R>& _yData)
@@ -40,10 +40,10 @@ public:
 			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		for(unsigned i = 0; i < pdf.size(); i++)
+		for(unsigned i = 0; i < this->pdf.size(); i++)
 		{
-			pdf[i].x(_xData[i]);
-			pdf[i].y(_yData[i]);
+			this->pdf[i].x(_xData[i]);
+			this->pdf[i].y(_yData[i]);
 		}
 
 		compute_cdf();
@@ -58,10 +58,10 @@ public:
 	User_pdf_noise_generator(const std::vector<std::pair<R,R>>& _pdf)
 	: Noise_generator<R>(), pdf(_pdf.size())
 	{
-		for (unsigned i = 0; i < pdf.size(); i++)
+		for (unsigned i = 0; i < this->pdf.size(); i++)
 		{
-			pdf[i].x(_pdf[i].first);
-			pdf[i].y(_pdf[i].second);
+			this->pdf[i].x(_pdf[i].first);
+			this->pdf[i].y(_pdf[i].second);
 		}
 
 		compute_cdf();
@@ -71,20 +71,31 @@ public:
 	{
 	}
 
+	R get_min_x() const
+	{
+		return this->cdf_x.front();
+	}
+
+	R get_max_x() const
+	{
+		return this->cdf_x.back();
+	}
+
+
 protected:
 	void compute_cdf()
 	{
 		// first sort it in ascending order
-		std::sort(pdf.begin(), pdf.end(), tools::x_cmp_lt<R>);
+		std::sort(this->pdf.begin(), this->pdf.end(), tools::x_cmp_lt<R>);
 
 		// then normalize it with its integral value
-		auto integ = tools::trapz_integral_seq(pdf.data(), pdf.size());
-		std::for_each(pdf.begin(), pdf.end(), [integ](Point<R>& p){p.y(p.y()/integ);}); // divide all elements by 'integ'
+		auto integ = tools::trapz_integral_seq(this->pdf.data(), this->pdf.size());
+		std::for_each(this->pdf.begin(), this->pdf.end(), [integ](Point<R>& p){p.y(p.y()/integ);}); // divide all elements by 'integ'
 
 		// interpolation on a bigger vector of the input pdf for better integration
-		cdf.resize(10000);//(pdf.size() * 10);
-		const auto min_x  = pdf.front().x();
-		const auto max_x  = pdf.back().x();
+		std::vector<Point<R>> cdf(10000);//(pdf.size() * 10);
+		const auto min_x  = this->pdf.front().x();
+		const auto max_x  = this->pdf.back().x();
 		const auto step_x = (max_x - min_x) / (cdf.size() - 1);
 
 		R x = min_x;
@@ -92,7 +103,7 @@ protected:
 			cdf[i].x(x);
 		cdf.back().x(max_x); // force the value to have exactly the max instead of an approximation after the "+= step_x"
 
-		linear_interpolation(pdf, cdf);
+		linear_interpolation(this->pdf, cdf);
 
 		// computing the cumulative distribution function for input pdf
 		std::vector<R> cumul(cdf.size());
@@ -110,11 +121,14 @@ protected:
 		for (unsigned i = 0; i < erase_index.size(); i++)
 			cdf.erase(cdf.begin() + erase_index[i] - i);
 
+		this->cdf_x.resize(cdf.size());
+		this->cdf_y.resize(cdf.size());
 
-		// std::ofstream file0("cdf.csv");
-		// for(unsigned i = 0; i < cdf.size(); i++)
-		// 	file0 << i << "; " << cdf[i].x() << "; " << cdf[i].y() << std::endl;
-
+		for (unsigned i = 0; i < cdf.size(); i++)
+		{
+			this->cdf_x[i] = cdf[i].x();
+			this->cdf_y[i] = cdf[i].y();
+		}
 	}
 };
 

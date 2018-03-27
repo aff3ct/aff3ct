@@ -8,7 +8,7 @@ using namespace aff3ct::tools;
 template <typename R>
 User_pdf_noise_generator_std<R>
 ::User_pdf_noise_generator_std(const std::vector<R>& _xData, const std::vector<R>& _yData, const int seed)
-: User_pdf_noise_generator<R>(_xData, _yData), uniform_dist(0, this->cdf.size()-1)
+: User_pdf_noise_generator<R>(_xData, _yData), uniform_dist(0., 1.)
 {
 	this->set_seed(seed);
 }
@@ -16,7 +16,7 @@ User_pdf_noise_generator_std<R>
 template <typename R>
 User_pdf_noise_generator_std<R>
 ::User_pdf_noise_generator_std(const std::vector<Point<R>>& _pdf, const int seed)
-: User_pdf_noise_generator<R>(_pdf), uniform_dist(0, this->cdf.size()-1)
+: User_pdf_noise_generator<R>(_pdf), uniform_dist(0., 1.)
 {
 	this->set_seed(seed);
 }
@@ -24,7 +24,7 @@ User_pdf_noise_generator_std<R>
 template <typename R>
 User_pdf_noise_generator_std<R>
 ::User_pdf_noise_generator_std(const std::vector<std::pair<R,R>>& _pdf, const int seed)
-: User_pdf_noise_generator<R>(_pdf), uniform_dist(0, this->cdf.size()-1)
+: User_pdf_noise_generator<R>(_pdf), uniform_dist(0., 1.)
 {
 	this->set_seed(seed);
 }
@@ -47,7 +47,10 @@ void User_pdf_noise_generator_std<R>
 ::generate(R *noise, const unsigned length, const R sigma, const R mu)
 {
 	for (unsigned i = 0; i < length; i++)
-		noise[i] = this->cdf[this->uniform_dist(this->rd_engine)].x();
+		noise[i] = linear_interpolation(this->cdf_y.data(),
+		                                this->cdf_x.data(),
+		                                this->cdf_x.size(),
+		                                this->uniform_dist(this->rd_engine));
 }
 
 // ==================================================================================== explicit template instantiation

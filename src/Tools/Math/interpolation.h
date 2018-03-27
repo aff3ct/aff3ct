@@ -18,7 +18,7 @@ namespace tools
  * If xVal goes out of xData range, then return the left or right limit value in function of the violated one.
  */
 template <typename T>
-T linear_interpolation(const T* xData, const T* yData, const int lData, const T xVal);
+T linear_interpolation(const T* xData, const T* yData, const unsigned lData, const T xVal);
 
 /*
  * Compute the linear interpolation of xVal from the original data pair (x,y) of length lData.
@@ -26,7 +26,7 @@ T linear_interpolation(const T* xData, const T* yData, const int lData, const T 
  * If xVal goes out of xData range, then return the left or right limit value in function of the violated one.
  */
 template <typename T>
-T linear_interpolation(const Point<T>* data, const int lData, const T xVal);
+T linear_interpolation(const Point<T>* data, const unsigned lData, const T xVal);
 
 /*
  * Compute the linear interpolation of xVals array, of length lVals, from the original data yData matching with its abscissa xData.
@@ -34,8 +34,8 @@ T linear_interpolation(const Point<T>* data, const int lData, const T xVal);
  * Computed interpolation is returned in the filled array yVals of same size than xVals
  */
 template <typename T>
-void linear_interpolation(const T* xData, const T* yData, const int lData,
-                          const T* xVals,       T* yVals, const int lVals);
+void linear_interpolation(const T* xData, const T* yData, const unsigned lData,
+                          const T* xVals,       T* yVals, const unsigned lVals);
 
 /*
  * Compute the linear interpolation of xVals vector, from the original data yData matching with its abscissa xData.
