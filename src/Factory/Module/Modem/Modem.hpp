@@ -71,6 +71,9 @@ struct Modem : public Factory
 
 		template <typename B = int, typename R = float, typename Q = R>
 		inline module::Modem<B,R,Q>* _build_scma() const;
+
+		template <typename B = int, typename R = float, typename Q = R>
+		inline module::Modem<B,R,Q>* _build_optical() const;
 	};
 
 

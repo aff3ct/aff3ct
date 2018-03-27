@@ -10,8 +10,12 @@
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 #include "Module/Modem/SCMA/Modem_SCMA.hpp"
 #include "Module/Modem/User/Modem_user.hpp"
+#include "Module/Modem/Optical/Modem_optical.hpp"
 
 #include "Modem.hpp"
+
+#include "Tools/Algo/Noise_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
+
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -55,7 +59,7 @@ void Modem::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("BPSK", "BPSK_FAST", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")),
+		tools::Text(tools::Including_set("BPSK", "BPSK_FAST", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA", "OPTICAL")),
 		"type of the modulation to use in the simulation.");
 
 	args.add(
@@ -70,7 +74,7 @@ void Modem::parameters
 
 	args.add(
 		{p+"-const-path"},
-		tools::File(tools::openmode::read),
+		tools::File(tools::openmode::read_write),
 		"path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\".");
 
 	args.add(
@@ -280,6 +284,21 @@ module::Modem<B,R,Q>* Modem::parameters
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
+template <typename B, typename R, typename Q>
+module::Modem<B,R,Q>* Modem::parameters
+::_build_optical() const
+{
+	std::ifstream file0(const_path + "0.csv");
+	std::ifstream file1(const_path + "1.csv");
+
+	return new module::Modem_optical<B,R,Q>(N,
+	                                        new tools::User_pdf_noise_generator_std<R>(file0),
+	                                        new tools::User_pdf_noise_generator_std<R>(file1),
+	                                        0.0,
+	                                        n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
@@ -288,6 +307,10 @@ module::Modem<B,R,Q>* Modem::parameters
 	if (this->type == "SCMA")
 	{
 		return _build_scma<B,R,Q>();
+	}
+	else if (this->type == "OPTICAL")
+	{
+		return _build_optical<B,R,Q>();
 	}
 	else
 	{
@@ -324,6 +347,7 @@ int Modem
 	else if (type == "PSK"      ) return module::Modem_PSK      <>::size_mod(N, bps                   );
 	else if (type == "USER"     ) return module::Modem_user     <>::size_mod(N, bps                   );
 	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_mod(N, bps, cpm_L, cpm_p, upf);
+	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::size_mod(N                        );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -343,7 +367,7 @@ int Modem
 	else if (type == "QAM"      ) return module::Modem_QAM      <>::size_fil(N, bps              );
 	else if (type == "PSK"      ) return module::Modem_PSK      <>::size_fil(N, bps              );
 	else if (type == "USER"     ) return module::Modem_user     <>::size_fil(N, bps              );
-	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_fil(N, bps, cpm_L, cpm_p);
+	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::size_fil(N                   );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

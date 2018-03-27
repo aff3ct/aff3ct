@@ -2,6 +2,7 @@
 #define USER_PDF_NOISE_GENERATOR_STD_HPP_
 
 #include <random>
+#include <fstream>
 
 #include "../User_pdf_noise_generator.hpp"
 
@@ -18,13 +19,12 @@ private:
 	std::uniform_real_distribution<R> uniform_dist;
 
 public:
-	User_pdf_noise_generator_std(const std::vector<R>& _x_data, const std::vector<R>& _y_data, const int seed = 0);
-	User_pdf_noise_generator_std(const std::vector<Point<R>>& _pdf                         , const int seed = 0);
-	User_pdf_noise_generator_std(const std::vector<std::pair<R,R>>& _pdf                   , const int seed = 0);
+	User_pdf_noise_generator_std(const int seed = 0);
+	User_pdf_noise_generator_std(std::ifstream& f_distributions, const int seed = 0);
 	virtual ~User_pdf_noise_generator_std();
 
 	virtual void set_seed(const int seed);
-	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0);
+	virtual void generate(R *noise, const unsigned length, const R noise_power, const R mu = 0.0);
 };
 
 template <typename R = float>

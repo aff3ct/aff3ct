@@ -5,6 +5,7 @@
 #include "Module/Channel/AWGN/Channel_AWGN_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
+#include "Module/Channel/Optical/Channel_optical.hpp"
 
 #include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 #include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
@@ -14,6 +15,7 @@
 #ifdef CHANNEL_GSL
 #include "Tools/Algo/Noise_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
 #endif
+#include "Tools/Algo/Noise_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
 
 #include "Channel.hpp"
 
@@ -58,7 +60,7 @@ void Channel::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER")),
+		tools::Text(tools::Including_set("NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "OPTICAL")),
 		"type of the channel to use in the simulation.");
 
 	args.add(
@@ -75,8 +77,8 @@ void Channel::parameters
 
 	args.add(
 		{p+"-path"},
-		tools::File(tools::openmode::read),
-		"path to a noisy file, to use with \"--chn-type USER\" or to a gain file (used with \"--chn-type RAYLEIGH_USER\").");
+		tools::File(tools::openmode::read_write),
+		"path to a noisy file, to use with \"--chn-type USER,OPTICAL\" or to a gain file (used with \"--chn-type RAYLEIGH_USER\").");
 
 	args.add(
 		{p+"-blk-fad"},
@@ -141,7 +143,7 @@ void Channel::parameters
 	if (this->sigma != -1.f)
 		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->sigma)));
 
-	if (this->type == "USER" || this->type == "RAYLEIGH_USER")
+	if (this->type == "USER" || this->type == "OPTICAL" || this->type == "RAYLEIGH_USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
 
 	if (this->type == "RAYLEIGH_USER")
@@ -161,6 +163,18 @@ template <typename R>
 module::Channel<R>* Channel::parameters
 ::build() const
 {
+	if (type == "OPTICAL")
+	{
+		std::ifstream file0(path + "0.csv");
+		std::ifstream file1(path + "1.csv");
+
+		return new module::Channel_optical<R>(N,
+		                                      new tools::User_pdf_noise_generator_std<R>(file0, seed + 0),
+		                                      new tools::User_pdf_noise_generator_std<R>(file1, seed + 1),
+		                                      n_frames);
+	}
+
+
 	tools::Gaussian_noise_generator<R>* n = nullptr;
 	     if (implem == "STD" ) n = new tools::Gaussian_noise_generator_std <R>(seed);
 	else if (implem == "FAST") n = new tools::Gaussian_noise_generator_fast<R>(seed);

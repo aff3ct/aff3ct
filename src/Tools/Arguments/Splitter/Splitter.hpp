@@ -12,9 +12,9 @@ namespace tools
 struct Splitter
 {
 	static std::vector<std::string> split(const std::string& val,
-	                               const std::string& head,
-	                               const std::string& queue,
-	                               const std::string& separator)
+	                                      const std::string& head,
+	                                      const std::string& queue,
+	                                      const std::string& separator)
 	{
 		std::vector<std::string> list_vals;
 
