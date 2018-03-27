@@ -7,8 +7,8 @@ using namespace aff3ct::tools;
 
 template <typename R>
 User_pdf_noise_generator_std<R>
-::User_pdf_noise_generator_std(const std::vector<R>& _xData, const std::vector<R>& _yData, const int seed)
-: User_pdf_noise_generator<R>(_xData, _yData), uniform_dist(0., 1.)
+::User_pdf_noise_generator_std(const std::vector<R>& _x_data, const std::vector<R>& _y_data, const int seed)
+: User_pdf_noise_generator<R>(_x_data, _y_data), uniform_dist(0., 1.)
 {
 	this->set_seed(seed);
 }

@@ -13,17 +13,17 @@ namespace tools
 {
 
 template <typename T>
-T linear_interpolation(const T* xData, const T* yData, const unsigned lData, const T xVal)
+T linear_interpolation(const T* x_data, const T* y_data, const unsigned lData, const T xVal)
 {
-	auto x_above = std::lower_bound(xData, xData + lData, xVal); // find the position of the first x that is above the xVal
+	auto x_above = std::lower_bound(x_data, x_data + lData, xVal); // find the position of the first x that is above the xVal
 
-	if (x_above == xData)
-		return *yData;
+	if (x_above == x_data)
+		return *y_data;
 
 	auto x_below = x_above - 1; // get the position of value just below or equal to xVal
-	auto y_below = yData + (x_below - xData); // get the position of the matching value y of x_below
+	auto y_below = y_data + (x_below - x_data); // get the position of the matching value y of x_below
 
-	if ((x_above == (xData + lData)) || comp_equal(xVal, *x_below)) // if last or x_below == xVal
+	if ((x_above == (x_data + lData)) || comp_equal(xVal, *x_below)) // if last or x_below == xVal
 		return *y_below; // same x so take y directly
 
 
@@ -53,22 +53,22 @@ T linear_interpolation(const Point<T>* data, const unsigned lData, const T xVal)
 }
 
 template <typename T>
-void linear_interpolation(const T* xData, const T* yData, const unsigned lData,
-                          const T* xVals,       T* yVals, const unsigned lVals)
+void linear_interpolation(const T* x_data, const T* y_data, const unsigned lData,
+                          const T* x_vals,       T* y_vals, const unsigned lVals)
 {
 	for(unsigned j = 0; j < lVals; j++)
-		yVals[j] = linear_interpolation(xData, yData, lData, xVals[j]);
+		y_vals[j] = linear_interpolation(x_data, y_data, lData, x_vals[j]);
 }
 
 template <typename T>
-void linear_interpolation(const std::vector<T>& xData, const std::vector<T>& yData,
-                          const std::vector<T>& xVals,       std::vector<T>& yVals)
+void linear_interpolation(const std::vector<T>& x_data, const std::vector<T>& y_data,
+                          const std::vector<T>& x_vals,       std::vector<T>& y_vals)
 {
-	assert(xData.size() == yData.size());
-	assert(xVals.size() == yVals.size());
+	assert(x_data.size() == y_data.size());
+	assert(x_vals.size() == y_vals.size());
 
-	for(unsigned j = 0; j < xVals.size(); j++)
-		yVals[j] = linear_interpolation(xData.data(), yData.data(), xData.size(), xVals[j]);
+	for(unsigned j = 0; j < x_vals.size(); j++)
+		y_vals[j] = linear_interpolation(x_data.data(), y_data.data(), x_data.size(), x_vals[j]);
 }
 
 template <typename T>

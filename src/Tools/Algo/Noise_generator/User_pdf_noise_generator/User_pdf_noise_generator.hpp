@@ -29,21 +29,21 @@ protected:
 	std::vector<R> cdf_x, cdf_y; // cumulative density function
 
 public:
-	User_pdf_noise_generator(const std::vector<R>& _xData, const std::vector<R>& _yData)
-	: Noise_generator<R>(), pdf(_xData.size())
+	User_pdf_noise_generator(const std::vector<R>& _x_data, const std::vector<R>& _y_data)
+	: Noise_generator<R>(), pdf(_x_data.size())
 	{
-		if (_xData.size() != _yData.size())
+		if (_x_data.size() != _y_data.size())
 		{
 			std::stringstream message;
-			message << "'_xData.size()' has to be equal to 0 '_yData.size()' ('_xData.size()'' = " << _xData.size()
-			        << " and '_yData.size()' = " << _yData.size() << ").";
+			message << "'_x_data.size()' has to be equal to 0 '_y_data.size()' ('_x_data.size()'' = " << _x_data.size()
+			        << " and '_y_data.size()' = " << _y_data.size() << ").";
 			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
 		for(unsigned i = 0; i < this->pdf.size(); i++)
 		{
-			this->pdf[i].x(_xData[i]);
-			this->pdf[i].y(_yData[i]);
+			this->pdf[i].x(_x_data[i]);
+			this->pdf[i].y(_y_data[i]);
 		}
 
 		compute_cdf();

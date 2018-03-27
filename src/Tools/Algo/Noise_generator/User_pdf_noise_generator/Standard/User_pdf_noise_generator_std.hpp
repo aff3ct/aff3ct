@@ -18,7 +18,7 @@ private:
 	std::uniform_real_distribution<R> uniform_dist;
 
 public:
-	User_pdf_noise_generator_std(const std::vector<R>& _xData, const std::vector<R>& _yData, const int seed = 0);
+	User_pdf_noise_generator_std(const std::vector<R>& _x_data, const std::vector<R>& _y_data, const int seed = 0);
 	User_pdf_noise_generator_std(const std::vector<Point<R>>& _pdf                         , const int seed = 0);
 	User_pdf_noise_generator_std(const std::vector<std::pair<R,R>>& _pdf                   , const int seed = 0);
 	virtual ~User_pdf_noise_generator_std();
