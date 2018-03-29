@@ -20,7 +20,8 @@ struct Monitor_BFER : public Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		int         size           = 0;
+		int         K = 0;
+		int         N = 0;
 
 		// optional parameters
 		std::string type           = "STD";
@@ -38,12 +39,12 @@ struct Monitor_BFER : public Factory
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
-		template <typename B = int>
-		module::Monitor_BFER<B>* build() const;
+		template <typename B = int, typename R = float>
+		module::Monitor_BFER<B,R>* build() const;
 	};
 
-	template <typename B = int>
-	static module::Monitor_BFER<B>* build(const parameters& params);
+	template <typename B = int, typename R = float>
+	static module::Monitor_BFER<B,R>* build(const parameters& params);
 };
 }
 }

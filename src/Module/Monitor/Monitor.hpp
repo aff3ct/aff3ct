@@ -27,13 +27,14 @@ namespace module
 	{
 		namespace tsk
 		{
-			enum list { check_errors, check_mutual_info, SIZE };
+			enum list { check_errors, check_mutual_info, check_mutual_info_N, SIZE };
 		}
 
 		namespace sck
 		{
-			namespace check_errors      { enum list { U,    V             , SIZE }; }
-			namespace check_mutual_info { enum list { bits, llrs_a, llrs_e, SIZE }; }
+			namespace check_errors        { enum list { U,    V             , SIZE }; }
+			namespace check_mutual_info   { enum list { bits, llrs_a, llrs_e, SIZE }; }
+			namespace check_mutual_info_N { enum list { X,    Y             , SIZE }; }
 		}
 	}
 
@@ -56,7 +57,8 @@ protected:
 	static bool over;                                                                                     /*!< True if SIGINT is called twice in the Monitor::d_delta_interrupt time */
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_interrupt; /*!< Time point of the last call to SIGINT */
 
-	const int size; /*!< Number of bits */
+	const int K; /*!< Number of bits */
+	const int N; /*!< Number of bits */
 
 public:
 	/*!
@@ -64,9 +66,10 @@ public:
 	 *
 	 * Registers the SIGINT (signal interrupt or ctrl+C) interruption.
 	 *
-	 * \param size: number of bits.
+	 * \param K: number of bits of information
+	 * \param N: number of coded bits
 	 */
-	Monitor(const int size, int n_frames = 1);
+	Monitor(const int K, const int N, int n_frames = 1);
 
 	/*!
 	 * \brief Destructor.
@@ -78,7 +81,8 @@ public:
 	 *
 	 * \return the number of bits.
 	 */
-	int get_size() const;
+	int get_K() const;
+	int get_N() const;
 
 	virtual void reset();
 

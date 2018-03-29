@@ -75,12 +75,12 @@ BFER<B,R,Q>
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_BFER_reduction_mpi<B>(this->monitor,
+	this->monitor_red = new module::Monitor_BFER_reduction_mpi<B,Q>(this->monitor,
 	                                                              std::this_thread::get_id(),
 	                                                              params_BFER.mpi_comm_freq);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_BFER_reduction<B>(this->monitor);
+	this->monitor_red = new module::Monitor_BFER_reduction<B,Q>(this->monitor);
 #endif
 }
 
@@ -285,17 +285,17 @@ void BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-module::Monitor_BFER<B>* BFER<B,R,Q>
+module::Monitor_BFER<B,Q>* BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return factory::Monitor_BFER::build<B>(*params_BFER.mnt);
+	return factory::Monitor_BFER::build<B,Q>(*params_BFER.mnt);
 }
 
 template <typename B, typename R, typename Q>
-tools::Terminal_BFER<B>* BFER<B,R,Q>
+tools::Terminal_BFER<B,Q>* BFER<B,R,Q>
 ::build_terminal()
 {
-	return factory::Terminal_BFER::build<B>(*params_BFER.ter, *this->monitor_red);
+	return factory::Terminal_BFER::build<B,Q>(*params_BFER.ter, *this->monitor_red, params_BFER.mutinfo);
 }
 
 template <typename B, typename R, typename Q>

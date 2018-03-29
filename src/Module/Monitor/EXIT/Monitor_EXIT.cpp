@@ -9,8 +9,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Monitor_EXIT<B,R>
-::Monitor_EXIT(const int size, const unsigned n_trials, const int n_frames)
-: Monitor(size, n_frames),
+::Monitor_EXIT(const int N, const unsigned n_trials, const int n_frames)
+: Monitor(N, N, n_frames),
   n_trials(n_trials),
   I_A_sum((R)0),
   n_analyzed_frames(0)
@@ -19,9 +19,9 @@ Monitor_EXIT<B,R>
 	this->set_name(name);
 
 	auto &p = this->create_task("check_mutual_info", mnt::tsk::check_mutual_info);
-	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->size * this->n_frames);
-	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->size * this->n_frames);
-	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", this->size * this->n_frames);
+	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->N * this->n_frames);
+	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->N * this->n_frames);
+	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", this->N * this->n_frames);
 	this->create_codelet(p, [this, &ps_bits, &ps_llrs_a, &ps_llrs_e]() -> int
 	{
 		this->check_mutual_info(static_cast<B*>(ps_bits  .get_dataptr()),
@@ -41,12 +41,12 @@ void Monitor_EXIT<B,R>
 
 	for (auto f = f_start; f < f_stop; f++)
 	{
-		this->_check_mutual_info_avg(bits   + f * this->size,
-		                             llrs_a + f * this->size,
+		this->_check_mutual_info_avg(bits   + f * this->N,
+		                             llrs_a + f * this->N,
 		                             f);
 
-		bits_buff  .insert(bits_buff  .end(), bits   + f * this->size, bits   + (f +1) * this->size);
-		llrs_e_buff.insert(llrs_e_buff.end(), llrs_e + f * this->size, llrs_e + (f +1) * this->size);
+		bits_buff  .insert(bits_buff  .end(), bits   + f * this->N, bits   + (f +1) * this->N);
+		llrs_e_buff.insert(llrs_e_buff.end(), llrs_e + f * this->N, llrs_e + (f +1) * this->N);
 
 		n_analyzed_frames++;
 	}
@@ -59,7 +59,7 @@ template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::_check_mutual_info_avg(const B *bits, const R *llrs_a, const int frame_id)
 {
-	for (int j = 0; j < this->size; j++)
+	for (int j = 0; j < this->N; j++)
 	{
 		double symb = -2.0 * (double)bits[j] +1.0;
 		I_A_sum += (R)(1.0 - std::log2(1.0 + std::exp(-symb * (double)llrs_a[j])));
@@ -70,12 +70,12 @@ template <typename B, typename R>
 R Monitor_EXIT<B,R>
 ::_check_mutual_info_histo() const
 {
-	size_t size = this->bits_buff.size();
+	size_t N = this->bits_buff.size();
 	unsigned bit_1_count = 0;
-	for (size_t i = 0; i < size; i++)
+	for (size_t i = 0; i < N; i++)
 		bit_1_count += (unsigned)bits_buff[i];
 
-	unsigned bit_0_count = (unsigned)size - bit_1_count;
+	unsigned bit_0_count = (unsigned)N - bit_1_count;
 	if (bit_0_count == 0 || bit_1_count == 0)
 	{
 		return (R)0;
@@ -96,7 +96,7 @@ R Monitor_EXIT<B,R>
 		unsigned llr_0_noninfinite_count = 0;
 		unsigned llr_1_noninfinite_count = 0;
 
-		for (unsigned i = 0; i < size; i++)
+		for (unsigned i = 0; i < N; i++)
 		{
 			if (!std::isinf(llrs_e_buff[i]))
 			{
@@ -118,7 +118,7 @@ R Monitor_EXIT<B,R>
 		{
 			R llr_0_mean = (R)0;
 			R llr_1_mean = (R)0;
-			for (unsigned i = 0; i < size; i++)
+			for (unsigned i = 0; i < N; i++)
 			{
 				if (!std::isinf(llrs_e_buff[i]))
 				{
@@ -131,7 +131,7 @@ R Monitor_EXIT<B,R>
 
 			R llr_0_variance = (R)0;
 			R llr_1_variance = (R)0;
-			for (unsigned i = 0; i < size; i++)
+			for (unsigned i = 0; i < N; i++)
 			{
 				if (!std::isinf(llrs_e_buff[i]))
 				{
@@ -167,7 +167,7 @@ R Monitor_EXIT<B,R>
 
 		std::vector<std::vector<unsigned>> histogram(2, std::vector<unsigned>(bin_count));
 		std::vector<std::vector<R       >> pdf      (2, std::vector<R       >(bin_count));
-		for (unsigned i = 0; i < size; i++)
+		for (unsigned i = 0; i < N; i++)
 		{
 			if      (llrs_e_buff[i] == -inf) histogram[(int)bits_buff[i]][0           ]++;
 			else if (llrs_e_buff[i] ==  inf) histogram[(int)bits_buff[i]][bin_count -1]++;
@@ -219,7 +219,7 @@ template <typename B, typename R>
 R Monitor_EXIT<B,R>
 ::get_I_A() const
 {
-	return this->I_A_sum / (R)(this->size * this->n_analyzed_frames);
+	return this->I_A_sum / (R)(this->N * this->n_analyzed_frames);
 }
 
 template <typename B, typename R>
@@ -262,7 +262,7 @@ void Monitor_EXIT<B,R>
 	this->callbacks_measure.clear();
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Monitor_EXIT<B_32,R_32>;

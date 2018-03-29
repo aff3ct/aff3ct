@@ -12,20 +12,21 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
+template <typename B = int, typename R = float>
 class Terminal_BFER : public Terminal
 {
 protected:
-	const module::Monitor_BFER<B>                                                      &monitor;
+	const module::Monitor_BFER<B,R>                                                    &monitor;
 	      float                                                                         esn0;
 	      float                                                                         ebn0;
 	      bool                                                                          is_esn0;
 	      bool                                                                          is_ebn0;
 	      std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>  t_snr;
 	unsigned short                                                                      real_time_state;
+	bool                                                                                display_mutinfo;
 
 public:
-	explicit Terminal_BFER(const module::Monitor_BFER<B> &monitor);
+	explicit Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, const bool display_mutinfo = false);
 
 	virtual ~Terminal_BFER() {}
 

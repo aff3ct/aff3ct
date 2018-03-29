@@ -15,8 +15,8 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int>
-class Monitor_BFER_reduction_mpi : public Monitor_BFER_reduction<B>
+template <typename B = int, typename R = float>
+class Monitor_BFER_reduction_mpi : public Monitor_BFER_reduction<B,R>
 {
 private:
 	const std::thread::id master_thread_id;
@@ -29,7 +29,7 @@ private:
 	MPI_Op       MPI_SUM_monitor_vals;
 
 public:
-	Monitor_BFER_reduction_mpi(const std::vector<Monitor_BFER<B>*> &monitors,
+	Monitor_BFER_reduction_mpi(const std::vector<Monitor_BFER<B,R>*> &monitors,
 	                           const std::thread::id master_thread_id,
 	                           const std::chrono::nanoseconds d_mpi_comm_frequency = std::chrono::milliseconds(1000));
 	virtual ~Monitor_BFER_reduction_mpi();

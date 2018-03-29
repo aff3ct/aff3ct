@@ -48,15 +48,15 @@ protected:
 	unsigned max_fra;
 
 	// the monitors of the the BFER simulation
-	std::vector<module::Monitor_BFER          <B>*> monitor;
-	            module::Monitor_BFER_reduction<B>*  monitor_red;
+	std::vector<module::Monitor_BFER          <B,Q>*> monitor;
+	            module::Monitor_BFER_reduction<B,Q>*  monitor_red;
 
 	// dump frames into files
 	std::vector<tools::Dumper          *> dumper;
 	            tools::Dumper_reduction*  dumper_red;
 
 	// terminal (for the output of the code)
-	tools::Terminal_BFER<B> *terminal;
+	tools::Terminal_BFER<B,Q> *terminal;
 
 public:
 	explicit BFER(const factory::BFER::parameters& params_BFER);
@@ -69,8 +69,8 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	module::Monitor_BFER <B>* build_monitor (const int tid = 0);
-	tools ::Terminal_BFER<B>* build_terminal(                 );
+	module::Monitor_BFER <B,Q>* build_monitor (const int tid = 0);
+	tools ::Terminal_BFER<B,Q>* build_terminal(                 );
 
 private:
 	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);

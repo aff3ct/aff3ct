@@ -34,6 +34,7 @@ struct BFER : Simulation
 		bool        err_track_enable    = false;
 		bool        coset               = false;
 		bool        coded_monitoring    = false;
+		bool        mutinfo             = false;
 
 		// module parameters
 		Source       ::parameters *src = nullptr;

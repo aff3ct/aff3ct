@@ -75,7 +75,8 @@ void BFER_std<B,R,Q>
 	this->args.erase({pqnt+"-size",      "N"});
 	this->args.erase({pqnt+"-fra",       "F"});
 	this->args.erase({pqnt+"-sigma"         });
-	this->args.erase({pmnt+"-size",      "K"});
+	this->args.erase({pmnt+"-info-bits", "K"});
+	this->args.erase({pmnt+"-cw-size",   "N"});
 	this->args.erase({pmnt+"-fra",       "F"});
 	this->args.erase({pter+"-info-bits", "K"});
 	this->args.erase({pter+"-cw-size",   "N"});
@@ -119,7 +120,8 @@ void BFER_std<B,R,Q>
 	if (std::is_integral<Q>())
 		params.qnt->store(this->arg_vals);
 
-	params.mnt->size = params.coded_monitoring ? N_cw : params.src->K;
+	params.mnt->K = params.coded_monitoring ? N_cw : params.src->K;
+	params.mnt->N = N_cw;
 
 	params.mnt->store(this->arg_vals);
 

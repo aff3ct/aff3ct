@@ -89,7 +89,7 @@ void Terminal_EXIT<B,R>
 	using namespace std::chrono;
 	using namespace std;
 
-	const auto size = monitor.get_size();
+	const auto size = monitor.get_K();
 	const auto fra  = monitor.get_n_analyzed_fra();
 	const auto I_A  = monitor.get_I_A();
 	const auto I_E  = monitor.get_I_E();

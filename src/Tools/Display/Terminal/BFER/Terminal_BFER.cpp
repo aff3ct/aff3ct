@@ -11,9 +11,9 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-template <typename B>
-Terminal_BFER<B>
-::Terminal_BFER(const module::Monitor_BFER<B> &monitor)
+template <typename B, typename R>
+Terminal_BFER<B,R>
+::Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, const bool display_mutinfo)
 : Terminal       (                                ),
   monitor        (monitor                         ),
   esn0           (0.f                             ),
@@ -21,28 +21,29 @@ Terminal_BFER<B>
   is_esn0        (false                           ),
   is_ebn0        (false                           ),
   t_snr          (std::chrono::steady_clock::now()),
-  real_time_state(0                               )
+  real_time_state(0                               ),
+  display_mutinfo(display_mutinfo                 )
 {
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::set_esn0(const float esn0)
 {
 	this->is_esn0 = true;
 	this->esn0    = esn0;
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::set_ebn0(const float ebn0)
 {
 	this->is_ebn0 = true;
 	this->ebn0    = ebn0;
 }
 
-template <typename B>
-std::string Terminal_BFER<B>
+template <typename B, typename R>
+std::string Terminal_BFER<B,R>
 ::get_time_format(float secondes)
 {
 	auto ss = (int)secondes % 60;
@@ -61,38 +62,64 @@ std::string Terminal_BFER<B>
 	return time_format2;
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::legend(std::ostream &stream)
 {
 	std::ios::fmtflags f(stream.flags());
 
-#ifdef _WIN32
-	stream << "# " << format("---------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("         Bit Error Rate (BER) and Frame Error Rate (FER) depending         ||  Global throughput  ", Style::BOLD) << std::endl;
-	stream << "# " << format("                      on the Signal Noise Ratio (SNR)                      ||  and elapsed time   ", Style::BOLD) << std::endl;
-	stream << "# " << format("---------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
-	stream << "# " << format(" Es/N0 | Eb/N0 |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
-	stream << "# " << format("  (dB) |  (dB) |           |           |           |           |           ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+	if (display_mutinfo)
+	{
+		#ifdef _WIN32
+			stream << "# " << format("---------------------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+			stream << "# " << format("       Bit Error Rate (BER) and Frame Error Rate (FER) and MutInfo (MI) depending      ||  Global throughput  ", Style::BOLD) << std::endl;
+			stream << "# " << format("                            on the Signal Noise Ratio (SNR)                            ||  and elapsed time   ", Style::BOLD) << std::endl;
+			stream << "# " << format("---------------------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+			stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+			stream << "# " << format(" Es/N0 | Eb/N0 |        MI |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
+			stream << "# " << format("  (dB) |  (dB) |           |           |           |           |           |           ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
+			stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
 
-#else
-	stream << "# " << format("----------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("      Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  ", Style::BOLD) << std::endl;
-	stream << "# " << format("                   on the Signal Noise Ratio (SNR)                    ||  and elapsed time   ", Style::BOLD) << std::endl;
-	stream << "# " << format("----------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
-	stream << "# " << format(" Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
-	stream << "# " << format("  (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
-#endif
+		#else
+			stream << "# " << format("---------------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+			stream << "# " << format("    Bit Error Rate (BER) and Frame Error Rate (FER) and MutInfo (MI) depending   ||  Global throughput  ", Style::BOLD) << std::endl;
+			stream << "# " << format("                         on the Signal Noise Ratio (SNR)                         ||  and elapsed time   ", Style::BOLD) << std::endl;
+			stream << "# " << format("---------------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+			stream << "# " << format("-------|-------|----------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
+			stream << "# " << format(" Es/N0 | Eb/N0 |       MI |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
+			stream << "# " << format("  (dB) |  (dB) |          |          |          |          |          |          ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
+			stream << "# " << format("-------|-------|----------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
+		#endif
+	}
+	else
+	{
+		#ifdef _WIN32
+			stream << "# " << format("---------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+			stream << "# " << format("         Bit Error Rate (BER) and Frame Error Rate (FER) depending         ||  Global throughput  ", Style::BOLD) << std::endl;
+			stream << "# " << format("                      on the Signal Noise Ratio (SNR)                      ||  and elapsed time   ", Style::BOLD) << std::endl;
+			stream << "# " << format("---------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+			stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+			stream << "# " << format(" Es/N0 | Eb/N0 |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
+			stream << "# " << format("  (dB) |  (dB) |           |           |           |           |           ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
+			stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+
+		#else
+			stream << "# " << format("----------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+			stream << "# " << format("      Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  ", Style::BOLD) << std::endl;
+			stream << "# " << format("                   on the Signal Noise Ratio (SNR)                    ||  and elapsed time   ", Style::BOLD) << std::endl;
+			stream << "# " << format("----------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+			stream << "# " << format("-------|-------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
+			stream << "# " << format(" Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
+			stream << "# " << format("  (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
+			stream << "# " << format("-------|-------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
+		#endif
+	}
 
 	stream.flags(f);
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -103,9 +130,10 @@ void Terminal_BFER<B>
 	auto fra = monitor.get_n_analyzed_fra();
 	auto be  = monitor.get_n_be();
 	auto fe  = monitor.get_n_fe();
+	auto MI  = monitor.get_MI  ();
 
 	auto simu_time = (float)duration_cast<nanoseconds>(steady_clock::now() - t_snr).count() * 0.000000001f;
-	auto simu_cthr = ((float)monitor.get_size() * (float)monitor.get_n_analyzed_fra()) /
+	auto simu_cthr = ((float)monitor.get_K() * (float)monitor.get_n_analyzed_fra()) /
 		              simu_time ; // = bps
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
@@ -124,10 +152,11 @@ void Terminal_BFER<B>
 	else
 		ebn0_str << setprecision(2) << fixed << setw(5) << ebn0;
 
+	stringstream str_ber, str_fer, str_MI;
 #ifdef _WIN32
-	stringstream str_ber, str_fer;
 	str_ber << setprecision(2) << scientific << setw(9) << ber;
 	str_fer << setprecision(2) << scientific << setw(9) << fer;
+	str_MI  << setprecision(2) << scientific << setw(9) << MI;
 
 	unsigned long long l0 = 99999999;  // limit 0
 	unsigned long long l1 = 99999999;  // limit 1
@@ -135,6 +164,8 @@ void Terminal_BFER<B>
 	stream << "  ";
 	stream <<                                                                                                     esn0_str.str()  << format(" | ",  Style::BOLD);
 	stream <<                                                                                                     ebn0_str.str()  << format(" | ",  Style::BOLD);
+	if (display_mutinfo)
+	stream <<                                                                                                       str_MI.str()  << format(" | ",  Style::BOLD);
 	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << format(" | ",  Style::BOLD);
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << format(" | ",  Style::BOLD);
 	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << format(" | ",  Style::BOLD);
@@ -142,15 +173,17 @@ void Terminal_BFER<B>
 	stream <<                                                                                                       str_fer.str() << format(" || ", Style::BOLD);
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
 #else
-	stringstream str_ber, str_fer;
 	str_ber << setprecision(2) << scientific << setw(8) << ber;
 	str_fer << setprecision(2) << scientific << setw(8) << fer;
+	str_MI  << setprecision(2) << scientific << setw(8) << MI;
 
 	unsigned long long l0 = 99999999;  // limit 0
 	unsigned long long l1 = 99999999;  // limit 1
 	stream << "  ";
 	stream <<                                                                                                     esn0_str.str()  << format(" | ",  Style::BOLD);
 	stream <<                                                                                                     ebn0_str.str()  << format(" | ",  Style::BOLD);
+	if (display_mutinfo)
+	stream <<                                                                                                       str_MI.str()  << format(" | ",  Style::BOLD);
 	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << format(" | ",  Style::BOLD);
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << format(" | ",  Style::BOLD);
 	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << format(" | ",  Style::BOLD);
@@ -160,8 +193,8 @@ void Terminal_BFER<B>
 #endif
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::temp_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -192,8 +225,8 @@ void Terminal_BFER<B>
 	stream.flags(f);
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::final_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -220,11 +253,11 @@ void Terminal_BFER<B>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::tools::Terminal_BFER<B_8>;
-template class aff3ct::tools::Terminal_BFER<B_16>;
-template class aff3ct::tools::Terminal_BFER<B_32>;
-template class aff3ct::tools::Terminal_BFER<B_64>;
+template class aff3ct::tools::Terminal_BFER<B_8, Q_8>;
+template class aff3ct::tools::Terminal_BFER<B_16,Q_16>;
+template class aff3ct::tools::Terminal_BFER<B_32,Q_32>;
+template class aff3ct::tools::Terminal_BFER<B_64,Q_64>;
 #else
-template class aff3ct::tools::Terminal_BFER<B>;
+template class aff3ct::tools::Terminal_BFER<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
