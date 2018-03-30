@@ -114,9 +114,17 @@ void BFER_std<B,R,Q>
 	// set current sigma
 	for (auto tid = 0; tid < this->params_BFER_std.n_threads; tid++)
 	{
-		this->channel[tid]->set_sigma(                                                                    this->sigma);
-		this->modem  [tid]->set_sigma(this->params_BFER_std.mdm->complex ? this->sigma * std::sqrt(2.f) : this->sigma);
-		this->codec  [tid]->set_sigma(                                                                    this->sigma);
+		if (this->params_BFER_std.chn->type == "OPTICAL")
+			this->channel[tid]->set_sigma(this->snr_b);
+		else
+			this->channel[tid]->set_sigma(this->sigma);
+
+		if (this->params_BFER_std.mdm->type == "OPTICAL")
+			this->modem[tid]->set_sigma(this->snr_b);
+		else
+			this->modem[tid]->set_sigma(this->params_BFER_std.mdm->complex ? this->sigma * std::sqrt(2.f) : this->sigma);
+
+		this->codec  [tid]->set_sigma(this->sigma);
 	}
 }
 
