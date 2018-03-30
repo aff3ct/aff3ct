@@ -24,7 +24,7 @@ template <typename R = float>
 class User_pdf_noise_generator : public Noise_generator<R>
 {
 protected:
-	std::map<R, Distribution<R>*> distributions; // distributions in function of the noise power
+	std::map<int, Distribution<R>*> distributions; // distributions in function of the noise power
 
 public:
 	User_pdf_noise_generator() {}
@@ -33,8 +33,7 @@ public:
 	{
 		std::string line;
 		std::getline(f_distributions, line);
-		auto v_noise_power = tools::Splitter::split(line, "", "", ";");
-
+		auto v_noise_power = tools::Splitter::split(line, "", "", ",;");
 
 		// get the x values
 		std::vector<std::vector<std::string>> v_x(v_noise_power.size());
@@ -42,7 +41,7 @@ public:
 		{
 			std::getline(f_distributions, line);
 
-			v_x[i] = tools::Splitter::split(line, "", "", ";");
+			v_x[i] = tools::Splitter::split(line, "", "", ",;");
 
 			if (i != 0 && v_x[i].size() != v_x[i-1].size())
 			{
@@ -59,7 +58,7 @@ public:
 		{
 			std::getline(f_distributions, line);
 
-			v_y[i] = tools::Splitter::split(line, "", "", ";");
+			v_y[i] = tools::Splitter::split(line, "", "", ",;");
 
 			if (i != 0 && v_y[i].size() != v_y[i-1].size())
 			{
@@ -107,7 +106,9 @@ public:
 
 	const Distribution<R>* get_distribution(const R noise_power)
 	{
-		auto it_dis = this->distributions.find(noise_power);
+		int np = (int)(noise_power*1000);
+
+		auto it_dis = this->distributions.find(np);
 
 		if (it_dis == this->distributions.end())
 			return nullptr;
@@ -127,7 +128,9 @@ public:
 			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->distributions[noise_power] = new_distribution;
+		int np = (int)(noise_power*1000);
+
+		this->distributions[np] = new_distribution;
 	}
 };
 

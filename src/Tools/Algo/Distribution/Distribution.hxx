@@ -26,7 +26,7 @@ Distribution<R>
 	if (_x_data.size() != _y_data.size())
 	{
 		std::stringstream message;
-		message << "'_x_data.size()' has to be equal to 0 '_y_data.size()' ('_x_data.size()'' = " << _x_data.size()
+		message << "'_x_data.size()' has to be equal to '_y_data.size()' ('_x_data.size()' = " << _x_data.size()
 		        << " and '_y_data.size()' = " << _y_data.size() << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -89,14 +89,16 @@ void Distribution<R>
 	// first sort it in ascending order
 	std::sort(this->pdf.begin(), this->pdf.end(), tools::x_cmp_lt<R>);
 
+	this->pdf_norm.resize(pdf.size());
+
 	// then normalize it with its integral value
 	auto integ = tools::trapz_integral_seq(this->pdf.data(), this->pdf.size());
-	std::for_each(this->pdf.begin(), this->pdf.end(), [integ](Point<R>& p){p.y(p.y()/integ);}); // divide all elements by 'integ'
+	std::transform(this->pdf.begin(), this->pdf.end(), this->pdf_norm.begin(), [integ](Point<R> p){p.y(p.y()/integ); return p;}); // divide all elements by 'integ'
 
 	// interpolation on a bigger vector of the input pdf for better integration
 	this->cdf.resize(10000);//(pdf.size() * 10);
-	const auto min_x  = this->pdf.front().x();
-	const auto max_x  = this->pdf.back().x();
+	const auto min_x  = this->pdf_norm.front().x();
+	const auto max_x  = this->pdf_norm.back().x();
 	const auto step_x = (max_x - min_x) / (this->cdf.size() - 1);
 
 	R x = min_x;
@@ -104,7 +106,7 @@ void Distribution<R>
 		this->cdf[i].x(x);
 	this->cdf.back().x(max_x); // force the value to have exactly the max instead of an approximation after the "+= step_x"
 
-	linear_interpolation(this->pdf, this->cdf);
+	linear_interpolation(this->pdf_norm, this->cdf);
 
 	// computing the cumulative distribution function for input pdf
 	std::vector<R> cumul(this->cdf.size());
@@ -139,6 +141,15 @@ void Distribution<R>
 	{
 		this->pdf_x[i] = this->pdf[i].x();
 		this->pdf_y[i] = this->pdf[i].y();
+	}
+
+	// write pdf_norm as x and y vectors
+	this->pdf_norm_x.resize(this->pdf_norm.size());
+	this->pdf_norm_y.resize(this->pdf_norm.size());
+	for (unsigned i = 0; i < this->pdf_norm.size(); i++)
+	{
+		this->pdf_norm_x[i] = this->pdf_norm[i].x();
+		this->pdf_norm_y[i] = this->pdf_norm[i].y();
 	}
 }
 
@@ -183,6 +194,27 @@ const std::vector<R>& Distribution<R>
 ::get_pdf_y() const
 {
 	return this->pdf_y;
+}
+
+template <typename R>
+const std::vector<Point<R>>& Distribution<R>
+::get_pdf_norm  () const
+{
+	return this->pdf_norm;
+}
+
+template <typename R>
+const std::vector<R>& Distribution<R>
+::get_pdf_norm_x() const
+{
+	return this->pdf_norm_x;
+}
+
+template <typename R>
+const std::vector<R>& Distribution<R>
+::get_pdf_norm_y() const
+{
+	return this->pdf_norm_y;
 }
 
 
