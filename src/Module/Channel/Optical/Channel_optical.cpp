@@ -46,15 +46,24 @@ Channel_optical<R>
 
 template <typename R>
 void Channel_optical<R>
+::set_sigma(const R ROP)
+{
+	this->sigma = ROP;
+}
+
+template <typename R>
+void Channel_optical<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	for (auto n = 0; n < this->N; n++)
+	{
 		if (X_N[n])
-			noise_generator_p1->generate(&this->noise[n], 1, this->sigma);
+			noise_generator_p1->generate(&this->noise[frame_id * this->N + n], 1, this->sigma);
 		else
-			noise_generator_p0->generate(&this->noise[n], 1, this->sigma);
+			noise_generator_p0->generate(&this->noise[frame_id * this->N + n], 1, this->sigma);
 
-	std::copy(this->noise.begin(), this->noise.end(), Y_N);
+		Y_N[n] = this->noise[frame_id * this->N + n];
+	}
 }
 
 // ==================================================================================== explicit template instantiation

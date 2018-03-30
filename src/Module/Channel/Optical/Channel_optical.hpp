@@ -32,6 +32,7 @@ public:
 	virtual ~Channel_optical();
 
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
+	virtual void set_sigma(const R ROP);
 };
 }
 }

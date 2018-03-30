@@ -171,6 +171,7 @@ module::Channel<R>* Channel::parameters
 		return new module::Channel_optical<R>(N,
 		                                      new tools::User_pdf_noise_generator_std<R>(file0, seed + 0),
 		                                      new tools::User_pdf_noise_generator_std<R>(file1, seed + 1),
+		                                      sigma,
 		                                      n_frames);
 	}
 

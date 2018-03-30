@@ -40,6 +40,8 @@ public:
 	{
 		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, 1, 0, 1, false);
 	}
+	virtual void set_sigma(const R ROP);
+
 
 protected:
 	void   _modulate    (const B *X_N1, R *X_N2, const int frame_id);
