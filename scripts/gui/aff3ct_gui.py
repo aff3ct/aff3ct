@@ -131,7 +131,7 @@ class aff3ctGui(QTabWidget):
 		self.setWindowTitle('AFF3CT GUI')
 		self.resize(500, 300)
 
-		aff3ctRoot   = "../aff3ct/build";
+		aff3ctRoot   = "../../build";
 		aff3ctBinary = "bin/aff3ct";
 
 		# add main tab
@@ -169,7 +169,7 @@ class aff3ctGui(QTabWidget):
 
 		command = str(command) # Qstring to normal string
 		command = " ".join(command.split()) #remove white spaces
-		print "Command: " + command
+		print("Command: " + command)
 
 		elapsedTime = time.time() - startTime
 
@@ -185,10 +185,9 @@ class aff3ctGui(QTabWidget):
 		command = str(command) # Qstring to normal string
 		command = " ".join(command.split()) #remove white spaces
 
-		print "Command: " + command
+		print("Command: " + command)
 
 		argsAFFECT = command.split(" ")
-		print "Command split : "
 		print(argsAFFECT)
 
 		try:
@@ -203,10 +202,10 @@ class aff3ctGui(QTabWidget):
 		stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
 		errOutput = stderrAFFECT.decode(encoding='UTF-8')
 
-		print "stdOutput : "
-		print stdOutput
-		print "errOutput : "
-		print errOutput
+		print( "stdOutput : ")
+		print( stdOutput)
+		print( "errOutput : ")
+		print( errOutput)
 
 		self.setUpdatesEnabled(False)
 		self.setUpdated(False)
