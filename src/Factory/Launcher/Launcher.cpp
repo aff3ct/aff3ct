@@ -133,6 +133,13 @@ void factory::Launcher::parameters
 		"Do not display any legend when launching the simulation.",
 		tools::Argument_info::ADVANCED);
 
+
+#ifdef ENABLE_COOL_BASH
+	args.add(
+		{p+"-no-colors"},
+		tools::None(),
+		"disable the colors in the shell.");
+#endif
 }
 
 void factory::Launcher::parameters
@@ -163,6 +170,10 @@ void factory::Launcher::parameters
 
 	tools::exception::no_backtrace =  vals.exist({"except-no-bt"});
 	tools::exception::no_addr2line = !vals.exist({"except-a2l"  });
+
+#ifdef ENABLE_COOL_BASH
+	if (vals.exist({p+"-no-colors"})) tools::enable_bash_tools = false;
+#endif
 }
 
 void factory::Launcher::parameters

@@ -100,13 +100,6 @@ void Simulation::parameters
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"MPI communication frequency between the nodes (in millisec).");
 #endif
-
-#ifdef ENABLE_COOL_BASH
-	args.add(
-		{p+"-no-colors"},
-		tools::None(),
-		"disable the colors in the shell.");
-#endif
 }
 
 void Simulation::parameters
@@ -176,8 +169,6 @@ void Simulation::parameters
 	// disable the cool bash mode for PyBER
 	if (!this->pyber.empty())
 		tools::enable_bash_tools = false;
-
-	if (vals.exist({p+"-no-colors"})) tools::enable_bash_tools = false;
 #endif
 
 #ifdef MULTI_PREC
