@@ -69,7 +69,7 @@ R Monitor_BFER<B,R>
 		                                   Y + f * this->K,
 		                                   f);
 
-	return MI_sum / (R)this->n_frames;
+	return MI_sum / (R)this->n_frames * 10000;
 }
 
 
@@ -105,15 +105,11 @@ template <typename B, typename R>
 R Monitor_BFER<B,R>
 ::_check_mutual_info(const B *X, const R *Y, const int frame_id)
 {
-	// auto MI_sum_new = tools::_check_mutual_info_histo(X, Y, this->K);
-	auto MI_sum_old = tools::_check_mutual_info_histo_old(X, Y, this->K);
+	auto mi = tools::_check_mutual_info_histo(X, Y, this->K);
 
-	// if (MI_sum_new != MI_sum_old)
-		// std::cerr << "new = " << MI_sum_new << ", old " << MI_sum_old << std::endl;
+	MI_sum += mi;
 
-	MI_sum += MI_sum_old;
-
-	return MI_sum_old;
+	return mi;
 }
 
 template <typename B, typename R>

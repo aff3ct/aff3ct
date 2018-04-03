@@ -27,21 +27,10 @@ Channel_optical<R>
 
 template <typename R>
 Channel_optical<R>
-::Channel_optical(const int N, const int seed, const R ROP, const int n_frames)
-: Channel<R>(N, ROP, n_frames),
-  noise_generator_p0(nullptr),//new tools::Gaussian_noise_generator_std<R>(seed))
-  noise_generator_p1(nullptr)//new tools::Gaussian_noise_generator_std<R>(seed))
-{
-	const std::string name = "Channel_optical";
-	this->set_name(name);
-}
-
-template <typename R>
-Channel_optical<R>
 ::~Channel_optical()
 {
-	delete noise_generator_p0;
-	delete noise_generator_p1;
+	if (noise_generator_p0 != nullptr) delete noise_generator_p0;
+	if (noise_generator_p1 != nullptr) delete noise_generator_p1;
 }
 
 template <typename R>

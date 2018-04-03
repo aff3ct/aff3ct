@@ -20,7 +20,9 @@ R _check_mutual_info_histo(const B* ref, const R* llr, const unsigned size)
 	// compute the llr_sum2 as the sum of the llr[i]^2
 	// compute the llr_mean as llr_sum / llr_noninfinite_count
 	// compute the llr_variance as sum of (llr[i] - mean)^2 / llr_noninfinite_count
-	//                              = sum( llr_sum2 + 2 * mean * llr_sum + size * mean^2 ) / llr_noninfinite_count
+	//                              = sum( llr_sum2 - 2 * mean * llr_sum + llr_noninfinite_count * mean^2 ) / llr_noninfinite_count
+	//                              = sum( llr_sum2 - 2 * mean * llr_sum + llr_sum * mean ) / llr_noninfinite_count
+	//                              = sum( llr_sum2 - 1 * mean * llr_sum) / llr_noninfinite_count
 
 	unsigned bit_1_count = 0;
 	unsigned llr_0_noninfinite_count = 0;
@@ -80,9 +82,8 @@ R _check_mutual_info_histo(const B* ref, const R* llr, const unsigned size)
 	{
 		R llr_0_mean     = llr_0_sum / (R)llr_0_noninfinite_count;
 		R llr_1_mean     = llr_1_sum / (R)llr_1_noninfinite_count;
-		R llr_0_variance = (llr_0_sum2 - (R)2 * llr_0_mean * llr_0_sum + size * llr_0_mean) / (R)llr_0_noninfinite_count;
-		R llr_1_variance = (llr_1_sum2 - (R)2 * llr_1_mean * llr_1_sum + size * llr_1_mean) / (R)llr_1_noninfinite_count;
-
+		R llr_0_variance = (llr_0_sum2 - (R)1 * llr_0_mean * llr_0_sum) / (R)llr_0_noninfinite_count;
+		R llr_1_variance = (llr_1_sum2 - (R)1 * llr_1_mean * llr_1_sum) / (R)llr_1_noninfinite_count;
 
 		bin_width = (R)0.5 * ((R)3.49 * (R)std::sqrt(llr_0_variance) * (R)(std::pow(llr_0_noninfinite_count, (R)-1.0 / (R)3.0)) +
 		                      (R)3.49 * (R)std::sqrt(llr_1_variance) * (R)(std::pow(llr_1_noninfinite_count, (R)-1.0 / (R)3.0)));
@@ -111,8 +112,8 @@ R _check_mutual_info_histo(const B* ref, const R* llr, const unsigned size)
 		bin_count    = 4;
 	}
 
-	std::vector<std::vector<unsigned>> histogram(2, std::vector<unsigned>(bin_count));
-	std::vector<std::vector<R       >> pdf      (2, std::vector<R       >(bin_count));
+	std::vector<std::vector<unsigned>> histogram(2, std::vector<unsigned>(bin_count, 0));
+	std::vector<std::vector<R       >> pdf      (2, std::vector<R       >(bin_count, 0));
 
 	for (unsigned i = 0; i < size; i++)
 	{
@@ -147,139 +148,6 @@ R _check_mutual_info_histo(const B* ref, const R* llr, const unsigned size)
 				MI += (R)0.5 * pdf[b][bin_ix] * std::log2((R)2.0 * pdf[b][bin_ix] / (pdf[0][bin_ix] + pdf[1][bin_ix]));
 
 	return MI;
-}
-
-template <typename B, typename R>
-R _check_mutual_info_histo_old(const B* ref, const R* llr, const unsigned size)
-{
-	unsigned bit_1_count = 0;
-	for (unsigned i = 0; i < size; i++)
-		bit_1_count += (unsigned)ref[i];
-
-	unsigned bit_0_count = (unsigned)size - bit_1_count;
-	if (bit_0_count == 0 || bit_1_count == 0)
-	{
-		return (R)0;
-	}
-	else
-	{
-		const R inf = std::numeric_limits<R>::infinity();
-
-		bool     lots_of_bins;
-		unsigned bin_count;
-		int      bin_offset = 0;
-		R        bin_width  = (R)0;
-
-		// determine the min and max value for llrs / 0 and llrs / 1
-		R llr_0_max = -inf, llr_1_max = -inf;
-		R llr_0_min = +inf, llr_1_min = +inf;
-
-		unsigned llr_0_noninfinite_count = 0;
-		unsigned llr_1_noninfinite_count = 0;
-
-		for (unsigned i = 0; i < size; i++)
-		{
-			if (!std::isinf(llr[i]))
-			{
-				if ((int)ref[i] == 0)
-				{
-					llr_0_noninfinite_count++;
-					llr_0_min = std::min(llr[i], llr_0_min);
-					llr_0_max = std::max(llr[i], llr_0_max);
-				}
-				else
-				{
-					llr_1_noninfinite_count++;
-					llr_1_min = std::min(llr[i], llr_1_min);
-					llr_1_max = std::max(llr[i], llr_1_max);
-				}
-			}
-		}
-		if (llr_0_noninfinite_count && llr_1_noninfinite_count && llr_0_min <= llr_1_max && llr_1_min <= llr_0_max)
-		{
-			R llr_0_mean = (R)0;
-			R llr_1_mean = (R)0;
-			for (unsigned i = 0; i < size; i++)
-			{
-				if (!std::isinf(llr[i]))
-				{
-					if ((int)ref[i] == 0) llr_0_mean += llr[i];
-					else                        llr_1_mean += llr[i];
-				}
-			}
-			llr_0_mean /= llr_0_noninfinite_count;
-			llr_1_mean /= llr_1_noninfinite_count;
-
-			R llr_0_variance = (R)0;
-			R llr_1_variance = (R)0;
-			for (unsigned i = 0; i < size; i++)
-			{
-				if (!std::isinf(llr[i]))
-				{
-					if ((int)ref[i] == 0) llr_0_variance += std::pow((llr[i] - llr_0_mean), 2);
-					else                        llr_1_variance += std::pow((llr[i] - llr_1_mean), 2);
-				}
-			}
-			llr_0_variance /= llr_0_noninfinite_count;
-			llr_1_variance /= llr_1_noninfinite_count;
-
-			bin_width = (R)0.5 * ((R)3.49 * (R)std::sqrt(llr_0_variance) * (R)(std::pow(llr_0_noninfinite_count, (R)-1.0 / (R)3.0)) +
-			                      (R)3.49 * (R)std::sqrt(llr_1_variance) * (R)(std::pow(llr_1_noninfinite_count, (R)-1.0 / (R)3.0)));
-			if (bin_width > (R)0)
-			{
-				bin_offset = (int)std::floor(std::min(llr_0_min, llr_1_min) / bin_width) -1;
-				auto tmp = std::max(llr_0_max, llr_1_max) / bin_width - (R)bin_offset + (R)1;
-				bin_count = (unsigned)std::ceil(tmp);
-				if ((R)bin_count == tmp)
-					bin_count++;
-			}
-			else
-			{
-				bin_offset = -1;
-				bin_count  = 3;
-			}
-			lots_of_bins = true;
-		}
-		else
-		{
-			lots_of_bins = false;
-			bin_count    = 4;
-		}
-
-		std::vector<std::vector<unsigned>> histogram(2, std::vector<unsigned>(bin_count));
-		std::vector<std::vector<R       >> pdf      (2, std::vector<R       >(bin_count));
-		for (unsigned i = 0; i < size; i++)
-		{
-			if      (llr[i] == -inf) histogram[(int)ref[i]][0           ]++;
-			else if (llr[i] ==  inf) histogram[(int)ref[i]][bin_count -1]++;
-			else
-			{
-				if (lots_of_bins)
-				{
-					if (bin_width > 0.0)
-						histogram[(int)ref[i]][(int)(std::floor(llr[i] / bin_width) - bin_offset)]++;
-					else
-						histogram[(int)ref[i]][1]++;
-				}
-				else
-					histogram[(int)ref[i]][(int)ref[i] +1]++;
-			}
-		}
-
-		for (unsigned i = 0; i < bin_count; i++)
-		{
-			pdf[0][i] = (R)histogram[0][i] / (R)bit_0_count;
-			pdf[1][i] = (R)histogram[1][i] / (R)bit_1_count;
-		}
-
-		R I_E = (R)0;
-		for (auto b = 0; b < 2; b++)
-			for (unsigned bin_ix = 0; bin_ix < bin_count; bin_ix++)
-				if (pdf[b][bin_ix] > (R)0)
-					I_E += (R)0.5 * pdf[b][bin_ix] * std::log2((R)2.0 * pdf[b][bin_ix] / (pdf[0][bin_ix] + pdf[1][bin_ix]));
-
-		return I_E;
-	}
 }
 
 }

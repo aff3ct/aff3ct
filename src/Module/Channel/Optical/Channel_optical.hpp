@@ -23,11 +23,10 @@ protected:
 	tools::Noise_generator<R> *noise_generator_p1;
 
 public:
-	Channel_optical(const int N, tools::Noise_generator<R> *noise_generator_p0 = nullptr,
-	                tools::Noise_generator<R> *noise_generator_p1 = nullptr, const R ROP = (R)1, const int n_frames = 1);
-
-	Channel_optical(const int N, const int seed, const R ROP = (R)1,
-	                const int n_frames = 1);
+	Channel_optical(const int N,
+	                tools::Noise_generator<R> *noise_generator_p0,
+	                tools::Noise_generator<R> *noise_generator_p1,
+	                const R ROP = (R)1, const int n_frames = 1);
 
 	virtual ~Channel_optical();
 

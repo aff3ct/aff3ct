@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include <algorithm>
 
 #include "User_pdf_noise_generator_std.hpp"
