@@ -1,6 +1,6 @@
 #include <chrono>
 
-#include "Tools/Perf/common.h"
+#include "Tools/Perf/common/hard_decide.h"
 
 #include "Decoder_NO.hpp"
 

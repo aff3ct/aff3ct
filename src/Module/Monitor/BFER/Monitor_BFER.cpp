@@ -3,8 +3,9 @@
 #include <stdexcept>
 
 #include "Monitor_BFER.hpp"
-#include "Tools/Algo/mutual_info.h"
-#include "Tools/Perf/common.h"
+#include "Tools/Perf/common/mutual_info.h"
+#include "Tools/Perf/common/hamming_distance.h"
+#include "Tools/Math/utils.h"
 
 using namespace aff3ct::module;
 
@@ -105,7 +106,11 @@ template <typename B, typename R>
 R Monitor_BFER<B,R>
 ::_check_mutual_info(const B *X, const R *Y, const int frame_id)
 {
-	auto mi = tools::_check_mutual_info_histo(X, Y, this->K);
+	auto mi = tools::mutual_info_histo(X, Y, this->N);
+	// auto mi_seq = tools::mutual_info_histo_seq(X, Y, this->N);
+
+	// if (!tools::comp_equal(mi, mi_seq))
+	// 	std::cout << "mi = " << mi << ", mi_seq = " << mi_seq << std::endl;
 
 	MI_sum += mi;
 

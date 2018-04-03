@@ -1,46 +1,15 @@
 #include <limits>
 
-#include "common.h"
-
-//********************************************************************************************************** hard_decide
-
-template <typename B, typename Q>
-void aff3ct::tools::hard_decide(const Q *in, B *out, const int size)
-{
-	const auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
-	if (mipp::isAligned(in) && mipp::isAligned(out))
-	{
-		for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
-		{
-			const auto q_in  = mipp::Reg<Q>(&in[i]);
-			const auto q_out = mipp::cast<Q,B>(q_in) >> (sizeof(B) * 8 - 1);
-			q_out.store(&out[i]);
-		}
-	}
-	else
-	{
-		for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
-		{
-			mipp::Reg<Q> q_in;
-			q_in.loadu(&in[i]);
-			const auto q_out = mipp::cast<Q,B>(q_in) >> (sizeof(B) * 8 - 1);
-			q_out.storeu(&out[i]);
-		}
-	}
-	for (auto i = vec_loop_size; i < size; i++)
-		out[i] = in[i] < 0;
-}
-
-
+#include "hamming_distance.h"
 
 //************************************************************************************************* hamming_distance_seq
 
 template <typename B>
-inline size_t aff3ct::tools::hamming_distance_seq(const B *in1, const B *in2, const int size)
+inline size_t aff3ct::tools::hamming_distance_seq(const B *in1, const B *in2, const unsigned size)
 {
 	size_t ham_dist = 0;
 
-	for (auto i = 0; i < size; i++)
+	for (unsigned i = 0; i < size; i++)
 		ham_dist += (!in1[i] != !in2[i])? (size_t)1 : (size_t)0;
 
 	return ham_dist;
@@ -53,7 +22,7 @@ inline size_t aff3ct::tools::hamming_distance_seq(const B *in1, const B *in2, co
 #ifdef MIPP_AVX1
 
 template <typename B>
-size_t aff3ct::tools::hamming_distance(const B *in1, const B *in2, const int size)
+size_t aff3ct::tools::hamming_distance(const B *in1, const B *in2, const unsigned size)
 {
 	return hamming_distance_seq(in1, in2, size);
 }
@@ -70,13 +39,13 @@ inline mipp::Reg<B> popcnt(const mipp::Reg<B>& q_in1, const mipp::Reg<B>& q_in2)
 }
 
 template <typename B>
-size_t aff3ct::tools::hamming_distance(const B *in1, const B *in2, const int size)
+size_t aff3ct::tools::hamming_distance(const B *in1, const B *in2, const unsigned size)
 {
 	mipp::Reg<B> counter = (B)0;
 
 	const auto vec_loop_size = (size / mipp::N<B>()) * mipp::N<B>();
 
-	for (auto i = 0; i < vec_loop_size; i += mipp::N<B>())
+	for (unsigned i = 0; i < vec_loop_size; i += mipp::N<B>())
 		counter += popcnt<B>(in1 + i, in2 + i);
 
 	size_t ham_dist = mipp::hadd(counter);
@@ -91,18 +60,18 @@ namespace aff3ct
 namespace tools
 {
 template <>
-size_t hamming_distance<int16_t>(const int16_t *in1, const int16_t *in2, const int size)
+size_t hamming_distance<int16_t>(const int16_t *in1, const int16_t *in2, const unsigned size)
 {
 #ifdef MIPP_BW
 	mipp::Reg<int32_t> counter32 = (int32_t)0;
 
 	const auto vec_loop_size = mipp::N<int16_t>() < 2 ? 0 : (size / mipp::N<int16_t>()) * mipp::N<int16_t>();
 	constexpr auto stride = std::numeric_limits<int16_t>::max() * mipp::N<int16_t>();
-	for (auto ii = 0; ii < vec_loop_size; ii += stride)
+	for (unsigned ii = 0; ii < vec_loop_size; ii += stride)
 	{
 		mipp::Reg<int16_t> counter16 = (int16_t)0;
 		const auto vec_loop_size2 = std::min(vec_loop_size, ii + stride);
-		for (auto i = ii; i < vec_loop_size2; i += mipp::N<int16_t>())
+		for (unsigned i = ii; i < vec_loop_size2; i += mipp::N<int16_t>())
 			counter16 += popcnt<int16_t>(in1 + i, in2 + i);
 
 		counter32 += mipp::cvt<int16_t,int32_t>(counter16.low ());
@@ -121,7 +90,7 @@ size_t hamming_distance<int16_t>(const int16_t *in1, const int16_t *in2, const i
 }
 
 template <>
-size_t hamming_distance<int8_t>(const int8_t *in1, const int8_t *in2, const int size)
+size_t hamming_distance<int8_t>(const int8_t *in1, const int8_t *in2, const unsigned size)
 {
 #ifdef MIPP_BW
 	const mipp::Reg<int8_t> zeros = (int8_t)0, ones = (int8_t)1;
@@ -129,11 +98,11 @@ size_t hamming_distance<int8_t>(const int8_t *in1, const int8_t *in2, const int 
 
 	const auto vec_loop_size = mipp::N<int8_t>() < 4 ? 0 : (size / mipp::N<int8_t>()) * mipp::N<int8_t>();
 	constexpr auto stride = std::numeric_limits<int8_t>::max() * mipp::N<int8_t>();
-	for (auto ii = 0; ii < vec_loop_size; ii += stride)
+	for (unsigned ii = 0; ii < vec_loop_size; ii += stride)
 	{
 		mipp::Reg<int8_t> counter8 = (int8_t)0;
 		const auto vec_loop_size2 = std::min(vec_loop_size, ii + stride);
-		for (auto i = ii; i < vec_loop_size2; i += mipp::N<int8_t>())
+		for (unsigned i = ii; i < vec_loop_size2; i += mipp::N<int8_t>())
 			counter8 += popcnt<int8_t>(in1 + i, in2 + i);
 
 		const auto low = mipp::cvt<int8_t,int16_t>(counter8.low());
@@ -164,30 +133,21 @@ size_t hamming_distance<int8_t>(const int8_t *in1, const int8_t *in2, const int 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template size_t aff3ct::tools::hamming_distance<B_8 >(const B_8*,  const B_8*, const int);
-template size_t aff3ct::tools::hamming_distance<B_16>(const B_16*, const B_16*, const int);
-template size_t aff3ct::tools::hamming_distance<B_32>(const B_32*, const B_32*, const int);
-template size_t aff3ct::tools::hamming_distance<B_64>(const B_64*, const B_64*, const int);
+template size_t aff3ct::tools::hamming_distance<B_8 >(const B_8*,  const B_8*, const unsigned);
+template size_t aff3ct::tools::hamming_distance<B_16>(const B_16*, const B_16*, const unsigned);
+template size_t aff3ct::tools::hamming_distance<B_32>(const B_32*, const B_32*, const unsigned);
+template size_t aff3ct::tools::hamming_distance<B_64>(const B_64*, const B_64*, const unsigned);
 #else
-template size_t aff3ct::tools::hamming_distance<B>(const B*, const B*, const int);
+template size_t aff3ct::tools::hamming_distance<B>(const B*, const B*, const unsigned);
 #endif
 
 #ifdef MULTI_PREC
-template void aff3ct::tools::hard_decide<B_8,  Q_8 >(const Q_8*,  B_8*,  const int);
-template void aff3ct::tools::hard_decide<B_16, Q_16>(const Q_16*, B_16*, const int);
-template void aff3ct::tools::hard_decide<B_32, Q_32>(const Q_32*, B_32*, const int);
-template void aff3ct::tools::hard_decide<B_64, Q_64>(const Q_64*, B_64*, const int);
+template size_t aff3ct::tools::hamming_distance_seq<B_8 >(const B_8*,  const B_8*, const unsigned);
+template size_t aff3ct::tools::hamming_distance_seq<B_16>(const B_16*, const B_16*, const unsigned);
+template size_t aff3ct::tools::hamming_distance_seq<B_32>(const B_32*, const B_32*, const unsigned);
+template size_t aff3ct::tools::hamming_distance_seq<B_64>(const B_64*, const B_64*, const unsigned);
 #else
-template void aff3ct::tools::hard_decide<B, Q>(const Q*, B*, const int);
-#endif
-
-#ifdef MULTI_PREC
-template size_t aff3ct::tools::hamming_distance_seq<B_8 >(const B_8*,  const B_8*, const int);
-template size_t aff3ct::tools::hamming_distance_seq<B_16>(const B_16*, const B_16*, const int);
-template size_t aff3ct::tools::hamming_distance_seq<B_32>(const B_32*, const B_32*, const int);
-template size_t aff3ct::tools::hamming_distance_seq<B_64>(const B_64*, const B_64*, const int);
-#else
-template size_t aff3ct::tools::hamming_distance_seq<B>(const B*, const B*, const int);
+template size_t aff3ct::tools::hamming_distance_seq<B>(const B*, const B*, const unsigned);
 #endif
 
 // ==================================================================================== explicit template instantiation

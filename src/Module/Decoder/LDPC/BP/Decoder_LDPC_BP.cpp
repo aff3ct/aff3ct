@@ -3,7 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "Tools/Perf/common.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP.hpp"

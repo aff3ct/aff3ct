@@ -115,12 +115,12 @@ void BFER_std<B,R,Q>
 	for (auto tid = 0; tid < this->params_BFER_std.n_threads; tid++)
 	{
 		if (this->params_BFER_std.chn->type == "OPTICAL")
-			this->channel[tid]->set_sigma(this->snr_b);
+			this->channel[tid]->set_sigma(this->snr_b); // snr_b is the ROP
 		else
 			this->channel[tid]->set_sigma(this->sigma);
 
 		if (this->params_BFER_std.mdm->type == "OPTICAL")
-			this->modem[tid]->set_sigma(this->snr_b);
+			this->modem[tid]->set_sigma(this->snr_b); // snr_b is the ROP
 		else
 			this->modem[tid]->set_sigma(this->params_BFER_std.mdm->complex ? this->sigma * std::sqrt(2.f) : this->sigma);
 

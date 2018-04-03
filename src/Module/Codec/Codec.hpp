@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/common.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Interleaver/Interleaver_core.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"

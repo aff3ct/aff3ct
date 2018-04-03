@@ -2,7 +2,7 @@
 #include <limits>
 #include <sstream>
 
-#include "Tools/Perf/common.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
