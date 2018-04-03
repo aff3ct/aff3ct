@@ -70,7 +70,7 @@ public:
 	}
 
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
-	R check_mutual_info(const std::vector<B,AB>& X, const std::vector<R,AR>& Y, const int frame_id = -1)
+	R get_mutual_info(const std::vector<B,AB>& X, const std::vector<R,AR>& Y, const int frame_id = -1)
 	{
 		if ((int)X.K() != this->K * this->n_frames)
 		{
@@ -99,8 +99,8 @@ public:
 		return this->check_errors(X.data(), Y.data(), frame_id);
 	}
 
-	virtual int check_errors     (const B *U, const B *Y, const int frame_id = -1);
-	virtual R   check_mutual_info(const B *X, const R *Y, const int frame_id = -1);
+	virtual int check_errors   (const B *U, const B *Y, const int frame_id = -1);
+	virtual R   get_mutual_info(const B *X, const R *Y, const int frame_id = -1);
 
 	virtual bool fe_limit_achieved();
 	unsigned get_fe_limit() const;
@@ -122,8 +122,8 @@ public:
 	virtual void clear_callbacks();
 
 protected:
-	virtual R   _check_mutual_info(const B *X, const R *Y, const int frame_id);
-	virtual int _check_errors      (const B *U, const B *Y, const int frame_id);
+	virtual R   _get_mutual_info(const B *X, const R *Y, const int frame_id);
+	virtual int _check_errors   (const B *U, const B *Y, const int frame_id);
 };
 }
 }

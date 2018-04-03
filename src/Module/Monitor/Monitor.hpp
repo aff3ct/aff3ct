@@ -27,14 +27,14 @@ namespace module
 	{
 		namespace tsk
 		{
-			enum list { check_errors, check_mutual_info, check_mutual_info_N, SIZE };
+			enum list { check_errors, check_mutual_info, get_mutual_info, SIZE };
 		}
 
 		namespace sck
 		{
-			namespace check_errors        { enum list { U,    V             , SIZE }; }
-			namespace check_mutual_info   { enum list { bits, llrs_a, llrs_e, SIZE }; }
-			namespace check_mutual_info_N { enum list { X,    Y             , SIZE }; }
+			namespace check_errors     { enum list { U,    V             , SIZE }; }
+			namespace check_mutual_info{ enum list { bits, llrs_a, llrs_e, SIZE }; }
+			namespace get_mutual_info  { enum list { X,    Y             , SIZE }; }
 		}
 	}
 

@@ -31,13 +31,13 @@ Monitor_BFER<B,R>
 		                          static_cast<B*>(ps_V.get_dataptr()));
 	});
 
-	auto &p2 = this->create_task("check_mutual_info_N", mnt::tsk::check_mutual_info_N);
+	auto &p2 = this->create_task("get_mutual_info", mnt::tsk::get_mutual_info);
 	auto &ps_X = this->template create_socket_in<B>(p2, "X", this->N * this->n_frames);
 	auto &ps_Y = this->template create_socket_in<R>(p2, "Y", this->N * this->n_frames);
 	this->create_codelet(p2, [this, &ps_X, &ps_Y]() -> int
 	{
-		return this->check_mutual_info(static_cast<B*>(ps_X.get_dataptr()),
-		                               static_cast<R*>(ps_Y.get_dataptr()));
+		return this->get_mutual_info(static_cast<B*>(ps_X.get_dataptr()),
+		                             static_cast<R*>(ps_Y.get_dataptr()));
 	});
 }
 
@@ -59,16 +59,16 @@ int Monitor_BFER<B,R>
 
 template <typename B, typename R>
 R Monitor_BFER<B,R>
-::check_mutual_info(const B *X, const R *Y, const int frame_id)
+::get_mutual_info(const B *X, const R *Y, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 	R MI_sum = 0;
 	for (auto f = f_start; f < f_stop; f++)
-		MI_sum += this->_check_mutual_info(X + f * this->K,
-		                                   Y + f * this->K,
-		                                   f);
+		MI_sum += this->_get_mutual_info(X + f * this->K,
+		                                 Y + f * this->K,
+		                                 f);
 
 	return MI_sum / (R)this->n_frames * 10000;
 }
@@ -104,16 +104,10 @@ int Monitor_BFER<B,R>
 
 template <typename B, typename R>
 R Monitor_BFER<B,R>
-::_check_mutual_info(const B *X, const R *Y, const int frame_id)
+::_get_mutual_info(const B *X, const R *Y, const int frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, this->N);
-	// auto mi_seq = tools::mutual_info_histo_seq(X, Y, this->N);
-
-	// if (!tools::comp_equal(mi, mi_seq))
-	// 	std::cout << "mi = " << mi << ", mi_seq = " << mi_seq << std::endl;
-
 	MI_sum += mi;
-
 	return mi;
 }
 

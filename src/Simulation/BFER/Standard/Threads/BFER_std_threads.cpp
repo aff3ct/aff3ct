@@ -244,8 +244,8 @@ void BFER_std_threads<B,R,Q>
 
 	if (this->params_BFER_std.mutinfo)
 	{
-		mnt[mnt::tsk::check_mutual_info_N][mnt::sck::check_mutual_info_N::X](enc[enc::tsk::encode][enc::sck::encode::X_N]);
-		mnt[mnt::tsk::check_mutual_info_N][mnt::sck::check_mutual_info_N::Y](qnt[qnt::tsk::process][qnt::sck::process::Y_N2]);
+		mnt[mnt::tsk::get_mutual_info][mnt::sck::get_mutual_info::X](enc[enc::tsk::encode][enc::sck::encode::X_N]);
+		mnt[mnt::tsk::get_mutual_info][mnt::sck::get_mutual_info::Y](qnt[qnt::tsk::process][qnt::sck::process::Y_N2]);
 	}
 
 }
@@ -359,7 +359,7 @@ void BFER_std_threads<B,R,Q>
 		monitor[mnt::tsk::check_errors].exec();
 
 		if (this->params_BFER_std.mutinfo)
-			monitor[mnt::tsk::check_mutual_info_N].exec();
+			monitor[mnt::tsk::get_mutual_info].exec();
 
 	}
 }
