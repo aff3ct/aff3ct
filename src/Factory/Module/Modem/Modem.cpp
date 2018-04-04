@@ -367,6 +367,7 @@ int Modem
 	else if (type == "QAM"      ) return module::Modem_QAM      <>::size_fil(N, bps              );
 	else if (type == "PSK"      ) return module::Modem_PSK      <>::size_fil(N, bps              );
 	else if (type == "USER"     ) return module::Modem_user     <>::size_fil(N, bps              );
+	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_fil(N, bps, cpm_L, cpm_p);
 	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::size_fil(N                   );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
