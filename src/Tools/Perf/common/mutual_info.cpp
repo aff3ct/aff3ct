@@ -257,6 +257,7 @@ R aff3ct::tools::mutual_info_histo(const B* ref, const R* llr, const unsigned si
 		}
 	}
 
+
 	const mipp::Reg<R> r_ln2 = (R)M_LN2;
 	mipp::Reg<R> r_MI = (R)0;
 
@@ -284,16 +285,14 @@ R aff3ct::tools::mutual_info_histo(const B* ref, const R* llr, const unsigned si
 	// reductions
 	R MI = mipp::hadd(r_MI);
 
+	// finish the loop sequentially if needed
 	for (unsigned i = vec_loop_size; i < bin_count; i++)
 	{
 		const auto pdf0 = (hist[0][i] == 0)? (R)0 : (R)hist[0][i] / (R)bit_0_count;
 		const auto pdf1 = (hist[1][i] == 0)? (R)0 : (R)hist[1][i] / (R)bit_1_count;
 		const auto sum = pdf0 + pdf1;
 
-		if (sum == (R)0.0)
-			continue;
-
-		const auto ln_sum = (R)M_LN2 - std::log(pdf0 + pdf1);
+		const auto ln_sum = (R)M_LN2 - std::log(sum);
 
 		MI += (pdf0 == (R)0.0) ? (R)0.0 : pdf0 * (ln_sum + std::log(pdf0));
 		MI += (pdf1 == (R)0.0) ? (R)0.0 : pdf1 * (ln_sum + std::log(pdf1));
