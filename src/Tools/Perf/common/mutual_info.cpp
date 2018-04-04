@@ -4,7 +4,6 @@
 #include <vector>
 #include <assert.h>
 
-#include "Tools/types.h"
 #include "mutual_info.h"
 
 #ifndef M_LN2
@@ -294,23 +293,6 @@ R aff3ct::tools::mutual_info_histo(const B* ref, const R* llr, const unsigned si
 	return MI * (R)0.5 / (R)M_LN2;
 }
 
-namespace aff3ct
-{
-namespace tools
-{
-template <>
-Q_8 mutual_info_histo<B_8,Q_8>(const B_8* ref, const Q_8* llr, const unsigned size)
-{
-	return mutual_info_histo_seq(ref, llr, size);
-}
-
-template <>
-Q_16 mutual_info_histo<B_16,Q_16>(const B_16* ref, const Q_16* llr, const unsigned size)
-{
-	return mutual_info_histo_seq(ref, llr, size);
-}
-}
-}
 #endif // #ifdef MIPP_AVX
 
 template <typename B, typename R>
@@ -454,9 +436,8 @@ R aff3ct::tools::mutual_info_histo_seq(const B* ref, const R* llr, const unsigne
 }
 
 // ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
 #ifdef MULTI_PREC
-template Q_8  aff3ct::tools::mutual_info_histo<B_8,  Q_8 >(const B_8*,  const Q_8*,  const unsigned);
-template Q_16 aff3ct::tools::mutual_info_histo<B_16, Q_16>(const B_16*, const Q_16*, const unsigned);
 template Q_32 aff3ct::tools::mutual_info_histo<B_32, Q_32>(const B_32*, const Q_32*, const unsigned);
 template Q_64 aff3ct::tools::mutual_info_histo<B_64, Q_64>(const B_64*, const Q_64*, const unsigned);
 #else
@@ -464,8 +445,6 @@ template Q aff3ct::tools::mutual_info_histo<B, Q>(const B*, const Q*, const unsi
 #endif
 
 #ifdef MULTI_PREC
-template Q_8  aff3ct::tools::mutual_info_histo_seq<B_8,  Q_8 >(const B_8*,  const Q_8*,  const unsigned);
-template Q_16 aff3ct::tools::mutual_info_histo_seq<B_16, Q_16>(const B_16*, const Q_16*, const unsigned);
 template Q_32 aff3ct::tools::mutual_info_histo_seq<B_32, Q_32>(const B_32*, const Q_32*, const unsigned);
 template Q_64 aff3ct::tools::mutual_info_histo_seq<B_64, Q_64>(const B_64*, const Q_64*, const unsigned);
 #else
