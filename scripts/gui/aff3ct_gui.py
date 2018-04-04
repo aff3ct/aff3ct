@@ -5,8 +5,8 @@ import sys
 import time
 import os
 import subprocess
-from PyQt4.QtCore import *
-from PyQt4.QtGui  import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui  import *
 from gui_argument import *
 
 
