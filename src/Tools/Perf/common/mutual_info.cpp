@@ -6,6 +6,14 @@
 #include "Tools/types.h"
 #include "mutual_info.h"
 
+#ifdef min // for windows MSVC that defines those macros
+#undef min
+#endif
+
+#ifdef max // for windows MSVC that defines those macros
+#undef max
+#endif
+
 #ifndef M_LN2
 #define M_LN2 std::log(2)
 #endif
