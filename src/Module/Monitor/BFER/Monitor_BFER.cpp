@@ -109,13 +109,15 @@ R Monitor_BFER<B,R>
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The mutual_info_histo calculation does not support this type.");
 }
 
+#include "Tools/types.h"
+
 namespace aff3ct
 {
 namespace module
 {
 template <>
-float Monitor_BFER<int,float>
-::_get_mutual_info(const int *X, const float *Y, const int frame_id)
+Q_32 Monitor_BFER<B_32,Q_32>
+::_get_mutual_info(const B_32 *X, const Q_32 *Y, const int frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, this->N);
 	MI_sum += mi;
@@ -123,8 +125,8 @@ float Monitor_BFER<int,float>
 }
 
 template <>
-double Monitor_BFER<long,double>
-::_get_mutual_info(const long *X, const double *Y, const int frame_id)
+Q_64 Monitor_BFER<B_64,Q_64>
+::_get_mutual_info(const B_64 *X, const Q_64 *Y, const int frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, this->N);
 	MI_sum += mi;
