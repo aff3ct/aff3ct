@@ -1,0 +1,1 @@
+To launch the AFF3CT GUI, run __aff3ct_gui.py__ with python3.
