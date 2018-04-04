@@ -398,7 +398,7 @@ R aff3ct::tools::mutual_info_histo_seq(const B* ref, const R* llr, const unsigne
 	}
 
 	std::vector<std::vector<unsigned>> hist(2, std::vector<unsigned>(bin_count, 0));
-	std::vector<std::vector<R       >> pdf      (2, std::vector<R       >(bin_count, 0));
+	std::vector<std::vector<R       >> pdf (2, std::vector<R       >(bin_count, 0));
 
 	for (unsigned i = 0; i < size; i++)
 	{

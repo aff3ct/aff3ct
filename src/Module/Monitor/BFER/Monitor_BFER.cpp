@@ -110,7 +110,7 @@ R Monitor_BFER<B,R>
 }
 
 #include "Tools/types.h"
-
+#if defined(MULTI_PREC) | defined (PREC_32_BIT)
 namespace aff3ct
 {
 namespace module
@@ -123,7 +123,15 @@ Q_32 Monitor_BFER<B_32,Q_32>
 	MI_sum += mi;
 	return mi;
 }
+}
+}
+#endif
 
+#if defined(MULTI_PREC) | defined (PREC_64_BIT)
+namespace aff3ct
+{
+namespace module
+{
 template <>
 Q_64 Monitor_BFER<B_64,Q_64>
 ::_get_mutual_info(const B_64 *X, const Q_64 *Y, const int frame_id)
@@ -134,6 +142,7 @@ Q_64 Monitor_BFER<B_64,Q_64>
 }
 }
 }
+#endif
 
 template <typename B, typename R>
 bool Monitor_BFER<B,R>
