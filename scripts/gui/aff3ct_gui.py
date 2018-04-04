@@ -126,11 +126,11 @@ class mainTab(argumentTab):
 
 
 class aff3ctGui(QTabWidget):
-	def __init__(self, arg):
+	def __init__(self, title):
 		super(QTabWidget, self).__init__()
 
 		# create our window
-		self.setWindowTitle('AFF3CT GUI')
+		self.setWindowTitle(title)
 		self.resize(500, 300)
 
 		aff3ctRoot   = "../../build";
@@ -141,6 +141,7 @@ class aff3ctGui(QTabWidget):
 		self.updateSimu()
 
 	def getCommand(self):
+	    # TODO : return arguments in a list directly to not have to split them in function of a space or other because some arguments (as text) can have spaces
 		command = ""
 		for t in range(self.count()):
 			command += self.widget(t).getCommand() + " "
@@ -266,6 +267,6 @@ class aff3ctGui(QTabWidget):
 ########################################################################### MAIN
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	win = aff3ctGui("coucou")
+	win = aff3ctGui('AFF3CT GUI')
 	win.show()
 	sys.exit(app.exec_())
