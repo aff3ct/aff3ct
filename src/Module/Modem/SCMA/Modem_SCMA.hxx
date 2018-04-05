@@ -65,7 +65,8 @@ Modem_SCMA<B,R,Q,PSI>
 {
 	const std::string name = "Modem_SCMA";
 	this->set_name(name);
-	this->set_sigma(sigma);
+
+	if (sigma != (R)-1.0) this->set_sigma(sigma);
 
 	if (n_frames != 6)
 	{

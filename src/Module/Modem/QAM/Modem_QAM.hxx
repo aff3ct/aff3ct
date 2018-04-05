@@ -29,7 +29,8 @@ Modem_QAM<B,R,Q,MAX>
 {
 	const std::string name = "Modem_QAM";
 	this->set_name(name);
-	this->set_sigma(sigma);
+
+	if (sigma != (R)-1.0) this->set_sigma(sigma);
 
 	if (this->bits_per_symbol % 2)
 	{

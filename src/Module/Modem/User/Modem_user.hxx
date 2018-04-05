@@ -29,7 +29,8 @@ Modem_user<B,R,Q,MAX>
 {
 	const std::string name = "Modem_user";
 	this->set_name(name);
-	this->set_sigma(sigma);
+
+	if (sigma != (R)-1.0) this->set_sigma(sigma);
 
 	if (const_path.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'const_path' should not be empty.");

@@ -106,6 +106,8 @@ public:
 
 	R get_sigma() const;
 
+	R get_sigma_c() const;
+
 	bool is_filter() const;
 
 	bool is_demodulator() const;

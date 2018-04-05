@@ -51,7 +51,16 @@ Modem(const int N, const int N_mod, const int N_fil, const R sigma, const int n_
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->set_sigma(sigma);
+	if (sigma == (R)-1.0)
+	{
+		this->sigma   = (R)-1.0;
+		this->sigma_c = (R)-1.0;
+	}
+	else
+	{
+		this->set_sigma(sigma);
+	}
+
 	this->init_processes();
 }
 
@@ -78,7 +87,16 @@ Modem(const int N, const int N_mod, const R sigma, const int n_frames)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->set_sigma(sigma);
+	if (sigma == (R)-1.0)
+	{
+		this->sigma   = (R)-1.0;
+		this->sigma_c = (R)-1.0;
+	}
+	else
+	{
+		this->set_sigma(sigma);
+	}
+
 	this->init_processes();
 }
 
@@ -98,7 +116,16 @@ Modem(const int N, const R sigma, const int n_frames)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->set_sigma(sigma);
+	if (sigma == (R)-1.0)
+	{
+		this->sigma   = (R)-1.0;
+		this->sigma_c = (R)-1.0;
+	}
+	else
+	{
+		this->set_sigma(sigma);
+	}
+
 	this->init_processes();
 }
 
@@ -224,6 +251,13 @@ R Modem<B,R,Q>::
 get_sigma() const
 {
 	return this->sigma;
+}
+
+template <typename B, typename R, typename Q>
+R Modem<B,R,Q>::
+get_sigma_c() const
+{
+	return this->sigma_c;
 }
 
 template <typename B, typename R, typename Q>

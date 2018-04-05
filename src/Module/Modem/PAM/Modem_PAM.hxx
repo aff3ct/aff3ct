@@ -28,7 +28,8 @@ Modem_PAM<B,R,Q,MAX>
 {
 	const std::string name = "Modem_PAM";
 	this->set_name(name);
-	this->set_sigma(sigma);
+
+	if (sigma != (R)-1.0) this->set_sigma(sigma);
 
 	std::vector<B> bits(this->bits_per_symbol);
 

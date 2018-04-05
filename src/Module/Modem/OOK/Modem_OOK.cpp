@@ -15,7 +15,8 @@ Modem_OOK<B,R,Q>
 {
 	const std::string name = "Modem_OOK";
 	this->set_name(name);
-	this->set_sigma(sigma);
+
+	if (sigma != (R)-1.0) this->set_sigma(sigma);
 }
 
 template <typename B, typename R, typename Q>
