@@ -18,7 +18,7 @@ private:
 	std::vector<Monitor_BFER<B>*> monitors;
 
 public:
-	Monitor_BFER_reduction(const std::vector<Monitor_BFER<B>*> &monitors);
+	explicit Monitor_BFER_reduction(const std::vector<Monitor_BFER<B>*> &monitors);
 	virtual ~Monitor_BFER_reduction();
 
 	unsigned long long get_n_analyzed_fra_historic() const;
