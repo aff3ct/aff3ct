@@ -8,7 +8,7 @@ mkdir cppcheck
 find .\/src\/ -type f -follow -print | grep "[.]h$\|[.]hpp$\|[.]hxx$\|[.]cpp$" > src_files.txt
 sed -i -e 's/.\/src\/Tools\/date.h//g' src_files.txt
 sed -i -e 's/.\/src\/Tools\/MSVC\/dirent.h//g' src_files.txt
-cppcheck --language=c++ --suppress=missingIncludeSystem --force --enable=all --std=c++11 -U_MSC_VER --file-list=src_files.txt 2> cppcheck/cppcheck_all.log
+cppcheck --language=c++ --suppress=missingIncludeSystem --force --enable=all --std=c++11 -U_MSC_VER --xml --file-list=src_files.txt 2> cppcheck/cppcheck_all.log
 cat cppcheck/cppcheck_all.log | grep "(error)"          > cppcheck/cppcheck_error.log
 cat cppcheck/cppcheck_all.log | grep "(warning)"        > cppcheck/cppcheck_warning.log
 cat cppcheck/cppcheck_all.log | grep "(performance)"    > cppcheck/cppcheck_performance.log
@@ -20,7 +20,7 @@ cat cppcheck/cppcheck_all.log | grep "(missingInclude)" > cppcheck/cppcheck_miss
 
 COUNT=$(wc -l < cppcheck/cppcheck_error.log )
 
-if [ $COUNT -gt 5 ]; then
+if [ $COUNT -gt 16 ]; then
 	echo "Error count is $COUNT! cppcheck run failed :-(.";
 	echo ""
 	echo "Errors list:"
