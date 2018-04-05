@@ -179,16 +179,14 @@ void Modem::parameters
 	if(vals.exist({p+"-cpm-map"      })) this->mapping    = vals.at    ({p+"-cpm-map"      });
 	if(vals.exist({p+"-cpm-ws"       })) this->wave_shape = vals.at    ({p+"-cpm-ws"       });
 
-	if (this->type.find("BPSK") != std::string::npos || this->type == "PAM" || this->type == "OOK")
-		this->complex = false;
-
-
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (this->type == "BPSK" || this->type == "BPSK_FAST" || this->type == "OOK")
 		this->bps = 1;
 	// force the number of bits per symbol to 3 when SCMA mod
 	if (this->type == "SCMA")
 		this->bps = 3;
+
+	this->complex = is_complex_mod(this->type, this->bps);
 
 	this->N_mod = get_buffer_size_after_modulation(this->type,
 	                                               this->N,
@@ -369,6 +367,40 @@ int Modem
 	else if (type == "USER"     ) return module::Modem_user     <>::size_fil(N, bps              );
 	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_fil(N, bps, cpm_L, cpm_p);
 	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::size_fil(N                   );
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+bool Modem
+::is_complex_mod(const std::string &type, const int bps)
+{
+	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::is_complex_mod();
+	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::is_complex_mod();
+	else if (type == "OOK"      ) return module::Modem_OOK      <>::is_complex_mod();
+	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::is_complex_mod();
+	else if (type == "PAM"      ) return module::Modem_PAM      <>::is_complex_mod();
+	else if (type == "QAM"      ) return module::Modem_QAM      <>::is_complex_mod();
+	else if (type == "PSK"      ) return module::Modem_PSK      <>::is_complex_mod();
+	else if (type == "USER"     ) return module::Modem_user     <>::is_complex_mod();
+	else if (type == "CPM"      ) return module::Modem_CPM      <>::is_complex_mod();
+	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::is_complex_mod();
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+bool Modem
+::is_complex_fil(const std::string &type, const int bps)
+{
+	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::is_complex_fil();
+	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::is_complex_fil();
+	else if (type == "OOK"      ) return module::Modem_OOK      <>::is_complex_fil();
+	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::is_complex_fil();
+	else if (type == "PAM"      ) return module::Modem_PAM      <>::is_complex_fil();
+	else if (type == "QAM"      ) return module::Modem_QAM      <>::is_complex_fil();
+	else if (type == "PSK"      ) return module::Modem_PSK      <>::is_complex_fil();
+	else if (type == "USER"     ) return module::Modem_user     <>::is_complex_fil();
+	else if (type == "CPM"      ) return module::Modem_CPM      <>::is_complex_fil();
+	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::is_complex_fil();
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

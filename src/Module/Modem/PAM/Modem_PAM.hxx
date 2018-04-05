@@ -28,7 +28,9 @@ Modem_PAM<B,R,Q,MAX>
 {
 	const std::string name = "Modem_PAM";
 	this->set_name(name);
-	
+
+	if (sigma != (R)-1.0) this->set_sigma(sigma);
+
 	std::vector<B> bits(this->bits_per_symbol);
 
 	for (auto j = 0; j < this->nbr_symbols; j++)
@@ -46,9 +48,14 @@ Modem_PAM<B,R,Q,MAX>
 {
 }
 
-/*
- * Mapping function
- */
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+void Modem_PAM<B,R,Q,MAX>
+::set_sigma(const R sigma)
+{
+	Modem<B,R,Q>::set_sigma(sigma);
+	this->inv_sigma2 = this->disable_sig2 ? (R)1.0 : (R)((R)1.0 / ((R)2.0 * this->sigma * this->sigma));
+}
+
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 R Modem_PAM<B,R,Q,MAX>
 ::bits_to_symbol(const B* bits) const
@@ -62,9 +69,6 @@ R Modem_PAM<B,R,Q,MAX>
 	return symbol / this->sqrt_es;
  }
 
-/*
- * Modem
- */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_PAM<B,R,Q,MAX>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
@@ -100,9 +104,6 @@ void Modem_PAM<B,R,Q,MAX>
 	}
 }
 
-/*
- * Filter
- */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_PAM<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
@@ -110,9 +111,6 @@ void Modem_PAM<B,R,Q,MAX>
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
-/*
- * Demodulator
- */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_PAM<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
@@ -124,7 +122,6 @@ void Modem_PAM<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (2 * this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -136,18 +133,15 @@ void Modem_PAM<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -(Y_N1[k] - (Q)this->constellation[j]) *
-				              (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
+				              (Y_N1[k] - (Q)this->constellation[j]) * (Q)inv_sigma2);
 			else
 				L1 = MAX(L1, -(Y_N1[k] - (Q)this->constellation[j]) *
-				              (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
+				              (Y_N1[k] - (Q)this->constellation[j]) * (Q)inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
 }
 
-/*
- * Demodulator
- */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_PAM<B,R,Q,MAX>
 ::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
@@ -159,7 +153,6 @@ void Modem_PAM<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (2 * this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -171,10 +164,10 @@ void Modem_PAM<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -(Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) *
-				              (Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) * inv_sigma2);
+				              (Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) * (Q)inv_sigma2);
 			else
 				L1 = MAX(L1, -(Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) *
-				              (Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) * inv_sigma2);
+				              (Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) * (Q)inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
@@ -191,7 +184,6 @@ void Modem_PAM<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (2 * this->sigma * this->sigma);
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -203,7 +195,7 @@ void Modem_PAM<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
 			auto tempL  = (Q)((Y_N1[k] - this->constellation[j]) *
-			                  (Y_N1[k] - this->constellation[j]) * inv_sigma2);
+			                  (Y_N1[k] - this->constellation[j]) * (Q)inv_sigma2);
 
 			for (auto l = 0; l < this->bits_per_symbol; l++)
 			{
@@ -242,7 +234,6 @@ void Modem_PAM<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (2 * this->sigma * this->sigma);
 
 	for (auto n = 0; n < size; n++) // boucle sur les LLRs
 	{
@@ -254,7 +245,7 @@ void Modem_PAM<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
 			auto tempL = (Q)((Y_N1[k] - (Q)H_N[k] * this->constellation[j]) *
-			                 (Y_N1[k] - (Q)H_N[k] * this->constellation[j]) * inv_sigma2);
+			                 (Y_N1[k] - (Q)H_N[k] * this->constellation[j]) * (Q)inv_sigma2);
 
 			for (auto l = 0; l < this->bits_per_symbol; l++)
 			{

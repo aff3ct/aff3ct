@@ -22,25 +22,37 @@ protected:
 	tools::User_pdf_noise_generator<R> *noise_generator_p0;
 	tools::User_pdf_noise_generator<R> *noise_generator_p1;
 
+	R rop;
 
 public:
 	Modem_optical(const int N,
 	              tools::User_pdf_noise_generator<R> *noise_generator_p0 = nullptr,
 	              tools::User_pdf_noise_generator<R> *noise_generator_p1 = nullptr,
-	              const R ROP = (R)1,
+	              const R ROP = (R)-1.0,
 	              const int n_frames = 1);
 	virtual ~Modem_optical();
 
+	virtual void set_sigma(const R ROP);
+
+	static bool is_complex_mod()
+	{
+		return false;
+	}
+
+	static bool is_complex_fil()
+	{
+		return false;
+	}
+
 	static int size_mod(const int N)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, 1, 0, 1, false);
+		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, 1, 0, 1, is_complex_mod());
 	}
 
 	static int size_fil(const int N)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, 1, 0, 1, false);
+		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, 1, 0, 1, is_complex_fil());
 	}
-	virtual void set_sigma(const R ROP);
 
 
 protected:

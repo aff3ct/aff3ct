@@ -54,7 +54,8 @@ protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
 	const int N_mod; /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
 	const int N_fil; /*!< Number of transmitted elements after the filtering process */
-	      R   sigma; /*!< Sigma^2, the noise variance */
+	      R   sigma; /*!< Sigma, the noise variance */
+	      R   sigma_c; /*!< Sigma*sqrt(2), the complex noise variance */
 
 	bool enable_filter;
 	bool enable_demodulator;
@@ -104,6 +105,8 @@ public:
 	int get_N_fil() const;
 
 	R get_sigma() const;
+
+	R get_sigma_c() const;
 
 	bool is_filter() const;
 

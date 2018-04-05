@@ -15,11 +15,8 @@ Modem_OOK<B,R,Q>
 {
 	const std::string name = "Modem_OOK";
 	this->set_name(name);
-	
-	if(disable_sig2)
-		sigma_factor = (R)0.5;
-	else
-		sigma_factor = (R)1.0 / (2 * sigma * sigma);
+
+	if (sigma != (R)-1.0) this->set_sigma(sigma);
 }
 
 template <typename B, typename R, typename Q>
@@ -34,10 +31,7 @@ void Modem_OOK<B,R,Q>
 {
 	Modem<B,R,Q>::set_sigma(sigma);
 
-	if(disable_sig2)
-		sigma_factor = (R)0.5;
-	else
-		sigma_factor = (R)1.0 / (2 * sigma * sigma);
+	this->sigma_factor = this->disable_sig2 ? (R)0.5 : (R)((R)1.0 / ((R)2.0 * this->sigma * this->sigma));
 }
 
 template <typename B, typename R, typename Q>

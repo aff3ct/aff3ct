@@ -122,7 +122,7 @@ void BFER_std<B,R,Q>
 		if (this->params_BFER_std.mdm->type == "OPTICAL")
 			this->modem[tid]->set_sigma(this->snr_b); // snr_b is the ROP
 		else
-			this->modem[tid]->set_sigma(this->params_BFER_std.mdm->complex ? this->sigma * std::sqrt(2.f) : this->sigma);
+			this->modem[tid]->set_sigma(this->sigma);
 
 		this->codec  [tid]->set_sigma(this->sigma);
 	}

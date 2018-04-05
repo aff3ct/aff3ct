@@ -15,12 +15,14 @@ Modem_optical<B,R,Q>
                 tools::User_pdf_noise_generator<R> *noise_generator_p1,
                 const R ROP,
                 const int n_frames)
-: Modem<B,R,Q>(N, ROP, n_frames),
+: Modem<B,R,Q>(N, (R)-1, n_frames),
   noise_generator_p0(noise_generator_p0),
   noise_generator_p1(noise_generator_p1)
 {
 	const std::string name = "Modem_optical";
 	this->set_name(name);
+
+	this->set_sigma(ROP);
 
 	if (noise_generator_p0 == nullptr)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator_p0' can't be NULL.");
@@ -33,6 +35,13 @@ template <typename B, typename R, typename Q>
 Modem_optical<B,R,Q>
 ::~Modem_optical()
 {
+}
+
+template <typename B, typename R, typename Q>
+void Modem_optical<B,R,Q>
+::set_sigma(const R ROP)
+{
+	this->rop = ROP;
 }
 
 template <typename B, typename R, typename Q>
@@ -63,11 +72,11 @@ void Modem_optical<B,R,Q>
 
 	const Q min_value = 1e-10; // when prob_1 ou prob_0 = 0;
 
-	auto dist0  = noise_generator_p0->get_distribution(this->sigma);
+	auto dist0  = noise_generator_p0->get_distribution(this->rop);
 	auto pdf_x0 = dist0->get_pdf_x();
 	auto pdf_y0 = dist0->get_pdf_y();
 
-	auto dist1 = noise_generator_p1->get_distribution(this->sigma);
+	auto dist1 = noise_generator_p1->get_distribution(this->rop);
 	// auto pdf_x1 = dist1->get_pdf_x(); // shall be same than pdf_x0
 	auto pdf_y1 = dist1->get_pdf_y();
 
@@ -77,9 +86,9 @@ void Modem_optical<B,R,Q>
 		// find the position of the first x that is above the receiver val
 		auto x0_above = std::lower_bound(pdf_x0.begin(), pdf_x0.end(), Y_N1[i]);
 
-		if (x0_above == pdf_x0.end())
+		if (x0_above == pdf_x0.end()) // if last
 			x0_pos = pdf_x0.size() - 1;
-		else if (x0_above == pdf_x0.begin())
+		else if (x0_above == pdf_x0.begin()) // if first
 			x0_pos = 0;
 		else
 		{
@@ -97,13 +106,6 @@ void Modem_optical<B,R,Q>
 
 		Y_N2[i] = std::log(prob_0/prob_1);
 	}
-}
-
-template <typename B, typename R, typename Q>
-void Modem_optical<B,R,Q>
-::set_sigma(const R ROP)
-{
-	this->sigma = ROP;
 }
 
 // ==================================================================================== explicit template instantiation

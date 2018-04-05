@@ -24,7 +24,7 @@ namespace module
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
 Modem(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma), enable_filter(false), enable_demodulator(true)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -51,13 +51,23 @@ Modem(const int N, const int N_mod, const int N_fil, const R sigma, const int n_
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (sigma == (R)-1.0)
+	{
+		this->sigma   = (R)-1.0;
+		this->sigma_c = (R)-1.0;
+	}
+	else
+	{
+		this->set_sigma(sigma);
+	}
+
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
 Modem(const int N, const int N_mod, const R sigma, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma), enable_filter(false), enable_demodulator(true)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -77,13 +87,23 @@ Modem(const int N, const int N_mod, const R sigma, const int n_frames)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (sigma == (R)-1.0)
+	{
+		this->sigma   = (R)-1.0;
+		this->sigma_c = (R)-1.0;
+	}
+	else
+	{
+		this->set_sigma(sigma);
+	}
+
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
 Modem(const int N, const R sigma, const int n_frames)
-: Module(n_frames), N(N), N_mod(N), N_fil(N), sigma(sigma), enable_filter(false), enable_demodulator(true)
+: Module(n_frames), N(N), N_mod(N), N_fil(N), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -94,6 +114,16 @@ Modem(const int N, const R sigma, const int n_frames)
 		std::stringstream message;
 		message << "'N' has to be greater than 0 ('N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (sigma == (R)-1.0)
+	{
+		this->sigma   = (R)-1.0;
+		this->sigma_c = (R)-1.0;
+	}
+	else
+	{
+		this->set_sigma(sigma);
 	}
 
 	this->init_processes();
@@ -224,6 +254,13 @@ get_sigma() const
 }
 
 template <typename B, typename R, typename Q>
+R Modem<B,R,Q>::
+get_sigma_c() const
+{
+	return this->sigma_c;
+}
+
+template <typename B, typename R, typename Q>
 bool Modem<B,R,Q>::
 is_filter() const
 {
@@ -248,7 +285,8 @@ set_sigma(const R sigma)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->sigma = sigma;
+	this->sigma   = sigma;
+	this->sigma_c = sigma * std::sqrt(2.f);
 }
 
 template <typename B, typename R, typename Q>
