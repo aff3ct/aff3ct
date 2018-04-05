@@ -77,6 +77,9 @@ struct Modem : public Factory
 	template <typename B = int, typename R = float, typename Q = R>
 	static module::Modem<B,R,Q>* build(const parameters &params);
 
+	static bool is_complex_mod(const std::string &type, const int bps = 1);
+	static bool is_complex_fil(const std::string &type, const int bps = 1);
+
 	static int get_buffer_size_after_modulation(const std::string &type,
 	                                            const int         N,
 	                                            const int         bps   = 1,

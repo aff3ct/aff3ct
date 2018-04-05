@@ -29,14 +29,24 @@ public:
 
 	void set_sigma(const R sigma);
 
+	static bool is_complex_mod()
+	{
+		return false;
+	}
+
+	static bool is_complex_fil()
+	{
+		return false;
+	}
+
 	static int size_mod(const int N, const int bps)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, 0, 1, false);
+		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, 0, 1, is_complex_mod());
 	}
 
 	static int size_fil(const int N, const int bps)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, 0, 1, false);
+		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, 0, 1, is_complex_fil());
 	}
 
 protected:

@@ -61,12 +61,22 @@ public:
 
 	void set_sigma(const R sigma);
 
+	static bool is_complex_mod()
+	{
+		return true;
+	}
+
+	static bool is_complex_fil()
+	{
+		return false;
+	}
+
 	static int size_mod(const int N, const int bps, const int L, const int p, const int ups)
 	{
 		int m_order = (int)1 << bps;
 		int n_tl	= (int)(std::ceil((float)(p - 1) / (float)(m_order - 1))) + L - 1;
 
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, n_tl, ups, true);
+		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, n_tl, ups, is_complex_mod());
 	}
 
 	static int size_fil(const int N, const int bps, const int L, const int p)
@@ -77,7 +87,7 @@ public:
 		int n_bits_wa = (int)std::ceil(std::log2(n_wa));
 		int max_wa_id = (int)(1 << n_bits_wa);
 
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, n_tl, max_wa_id, false);
+		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, n_tl, max_wa_id, is_complex_fil());
 	}
 
 protected:
