@@ -17,11 +17,11 @@ Sparse_matrix aff3ct::tools::build_H(const dvbs2_values& dvbs2)
 	Sparse_matrix H(dvbs2.N, dvbs2.NmK);
 
 	const int *p = dvbs2.EncValues.data();
-	int xPos = 0, yPos, nbPos;
+	int xPos = 0, yPos;
 
 	for (int y = 0; y < dvbs2.N_LINES; y++)
 	{
-		nbPos = (*p++);
+		int nbPos = (*p++);
 
 		for (int l = 0; l < dvbs2.M; l++)
 		{

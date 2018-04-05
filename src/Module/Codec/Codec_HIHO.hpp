@@ -16,49 +16,20 @@ private:
 	Decoder_HIHO<B>* decoder_hiho;
 
 public:
-	Codec_HIHO(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1)
-	: Codec<B,Q>(K, N_cw, N, tail_length, n_frames), decoder_hiho(nullptr)
-	{
-		const std::string name = "Codec_HIHO";
-		this->set_name(name);
-	}
+	Codec_HIHO(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1);
 
-	virtual ~Codec_HIHO()
-	{
-		if (decoder_hiho != nullptr) { delete decoder_hiho; decoder_hiho = nullptr; }
-	}
+	virtual ~Codec_HIHO();
 
-	Decoder_HIHO<B>* get_decoder_hiho()
-	{
-		if (this->decoder_hiho == nullptr)
-		{
-			std::stringstream message;
-			message << "'decoder_hiho' is NULL.";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
+	Decoder_HIHO<B>* get_decoder_hiho();
 
-		return this->decoder_hiho;
-	}
-
-	virtual void reset()
-	{
-		if (this->decoder_hiho == nullptr)
-		{
-			std::stringstream message;
-			message << "'decoder_hiho' is NULL.";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		this->decoder_hiho->reset();
-	}
+	virtual void reset();
 
 protected:
-	void set_decoder_hiho(Decoder_HIHO<B>* dec)
-	{
-		this->decoder_hiho = dec;
-	}
+	void set_decoder_hiho(Decoder_HIHO<B>* dec);
 };
 }
 }
+
+#include "Codec_HIHO.hxx"
 
 #endif /* CODEC_HIHO_HPP_ */

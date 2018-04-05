@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 # import os
 import sys
 import time
 import os
 import subprocess
-from PyQt4.QtCore import *
-from PyQt4.QtGui  import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui  import *
 from gui_argument import *
 
 
@@ -124,12 +126,12 @@ class mainTab(argumentTab):
 
 
 class aff3ctGui(QTabWidget):
-	def __init__(self, arg):
+	def __init__(self, title):
 		super(QTabWidget, self).__init__()
 
 		# create our window
-		self.setWindowTitle('AFF3CT GUI')
-		self.resize(500, 300)
+		self.setWindowTitle(title)
+		self.resize(1000, 800)
 
 		aff3ctRoot   = "../../build";
 		aff3ctBinary = "bin/aff3ct";
@@ -139,6 +141,7 @@ class aff3ctGui(QTabWidget):
 		self.updateSimu()
 
 	def getCommand(self):
+	    # TODO : return arguments in a list directly to not have to split them in function of a space or other because some arguments (as text) can have spaces
 		command = ""
 		for t in range(self.count()):
 			command += self.widget(t).getCommand() + " "
@@ -264,6 +267,6 @@ class aff3ctGui(QTabWidget):
 ########################################################################### MAIN
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	win = aff3ctGui("coucou")
+	win = aff3ctGui('AFF3CT GUI')
 	win.show()
 	sys.exit(app.exec_())

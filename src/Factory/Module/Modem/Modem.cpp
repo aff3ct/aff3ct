@@ -179,7 +179,7 @@ void Modem::parameters
 	if(vals.exist({p+"-cpm-map"      })) this->mapping    = vals.at    ({p+"-cpm-map"      });
 	if(vals.exist({p+"-cpm-ws"       })) this->wave_shape = vals.at    ({p+"-cpm-ws"       });
 
-	if (this->type.find("BPSK") != std::string::npos || this->type == "PAM")
+	if (this->type.find("BPSK") != std::string::npos || this->type == "PAM" || this->type == "OOK")
 		this->complex = false;
 
 

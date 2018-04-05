@@ -138,7 +138,7 @@ int sc_main(int argc, char **argv)
 
 	try
 	{
-		launcher::Launcher *launcher = nullptr;
+		launcher::Launcher *launcher;
 #ifdef MULTI_PREC
 		switch (params.sim_prec)
 		{
@@ -148,7 +148,7 @@ int sc_main(int argc, char **argv)
 #if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
 			case 64: launcher = factory::Launcher::build<B_64,R_64,Q_64>(params, argc, (const char**)argv); break;
 #endif
-			default: break;
+			default: launcher = nullptr; break;
 		}
 #else
 		launcher = factory::Launcher::build<B,R,Q>(params, argc, (const char**)argv);
