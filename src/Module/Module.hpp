@@ -94,5 +94,6 @@ protected:
 };
 }
 }
+#include "Module.hxx"
 
 #endif /* MODULE_HPP_ */

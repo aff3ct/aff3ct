@@ -96,27 +96,6 @@ create_task(const std::string &name, const int id)
 	return *t;
 }
 
-template <typename T>
-Socket& Module::
-create_socket_in(Task& task, const std::string &name, const size_t n_elmts)
-{
-	return task.template create_socket_in<T>(name, n_elmts);
-}
-
-template <typename T>
-Socket& Module::
-create_socket_in_out(Task& task, const std::string &name, const size_t n_elmts)
-{
-	return task.template create_socket_in_out<T>(name, n_elmts);
-}
-
-template <typename T>
-Socket& Module::
-create_socket_out(Task& task, const std::string &name, const size_t n_elmts)
-{
-	return task.template create_socket_out<T>(name, n_elmts);
-}
-
 void Module::
 create_codelet(Task& task, std::function<int(void)> codelet)
 {
