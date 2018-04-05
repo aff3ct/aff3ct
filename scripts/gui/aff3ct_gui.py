@@ -131,7 +131,7 @@ class aff3ctGui(QTabWidget):
 
 		# create our window
 		self.setWindowTitle(title)
-		self.resize(500, 300)
+		self.resize(1000, 800)
 
 		aff3ctRoot   = "../../build";
 		aff3ctBinary = "bin/aff3ct";
