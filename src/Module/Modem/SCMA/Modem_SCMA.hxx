@@ -60,13 +60,13 @@ Modem_SCMA<B,R,Q,PSI>
                Modem_SCMA<B,R,Q,PSI>::size_fil(N, bps),
                sigma,
                n_frames),
-  disable_sig2(disable_sig2                                    ),
-  n0          (disable_sig2 ? (R)1.0 : (R)2.0 *  sigma * sigma ),
-  n_ite       (n_ite                                           )
+  disable_sig2(disable_sig2),
+  n_ite       (n_ite       )
 {
 	const std::string name = "Modem_SCMA";
 	this->set_name(name);
-	
+	this->set_sigma(sigma);
+
 	if (n_frames != 6)
 	{
 		std::stringstream message;
@@ -101,8 +101,7 @@ void Modem_SCMA<B,R,Q,PSI>
 {
 	Modem<B,R,Q>::set_sigma(sigma);
 
-	if (!disable_sig2)
-		this->n0 = (R)2.0 * sigma * sigma;
+	this->n0 = this->disable_sig2 ? (R)1.0 : (R)2.0 * this->sigma_c * this->sigma_c;
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
@@ -259,17 +258,17 @@ void Modem_SCMA<B,R,Q,PSI>
 				for (auto k = 0; k < 4; k++)
 					for(auto re = 0 ; re < 4 ; re++)
 					{
-						msg_res_user[re][re_user[re][0]][i] = msg_res_user[re][re_user[re][0]][i] 
-						                                      +  arr_phi[re][i][j][k] 
-						                                      * msg_user_res[re_user[re][1]][re][j] 
+						msg_res_user[re][re_user[re][0]][i] = msg_res_user[re][re_user[re][0]][i]
+						                                      +  arr_phi[re][i][j][k]
+						                                      * msg_user_res[re_user[re][1]][re][j]
 						                                      * msg_user_res[re_user[re][2]][re][k];
-						msg_res_user[re][re_user[re][1]][i] = msg_res_user[re][re_user[re][1]][i] 
-						                                      +  arr_phi[re][j][i][k] 
-						                                      * msg_user_res[re_user[re][0]][re][j] 
+						msg_res_user[re][re_user[re][1]][i] = msg_res_user[re][re_user[re][1]][i]
+						                                      +  arr_phi[re][j][i][k]
+						                                      * msg_user_res[re_user[re][0]][re][j]
 						                                      * msg_user_res[re_user[re][2]][re][k];
-						msg_res_user[re][re_user[re][2]][i] = msg_res_user[re][re_user[re][2]][i] 
-						                                      +  arr_phi[re][j][k][i] 
-						                                      * msg_user_res[re_user[re][0]][re][j] 
+						msg_res_user[re][re_user[re][2]][i] = msg_res_user[re][re_user[re][2]][i]
+						                                      +  arr_phi[re][j][k][i]
+						                                      * msg_user_res[re_user[re][0]][re][j]
 						                                      * msg_user_res[re_user[re][1]][re][k];
 					}
 

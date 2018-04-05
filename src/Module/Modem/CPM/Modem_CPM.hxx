@@ -60,7 +60,7 @@ Modem_CPM<B,R,Q,MAX>
 	this->set_name(name);
 
 	this->set_filter(true);
-	
+
 	if (N % bits_per_symbol)
 	{
 		std::stringstream message;
@@ -277,7 +277,7 @@ void Modem_CPM<B,R,Q,MAX>
 	R factor = (R)1;
 
 	if (!no_sig2)
-		factor = (R)2 / (this->sigma * this->sigma);
+		factor = (R)2 / (this->sigma_c * this->sigma_c);
 
 	if (cpm.filters_type == "TOTAL")
 	{

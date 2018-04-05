@@ -21,11 +21,15 @@ private:
 	R sqrt_es;
 	const bool disable_sig2;
 	std::vector<std::complex<R>> constellation;
+	R inv_sigma2;
+
 
 public:
 	Modem_user(const int N, const std::string &const_path, const R sigma = (R)1, const int bits_per_symbol = 2,
 	           const bool disable_sig2 = false, const int n_frames = 1);
 	virtual ~Modem_user();
+
+	void set_sigma(const R sigma);
 
 	static int size_mod(const int N, const int bps)
 	{

@@ -31,7 +31,7 @@ void Modem_BPSK<B,R,Q>
 ::set_sigma(const R sigma)
 {
 	Modem<B,R,Q>::set_sigma(sigma);
-	two_on_square_sigma = (R)2.0 / (sigma * sigma);
+	two_on_square_sigma = (R)2.0 / (this->sigma * this->sigma);
 }
 
 template <typename B, typename R, typename Q>
@@ -112,7 +112,7 @@ void Modem_BPSK<B,R,Q>
 	this->_demodulate_wg(H_N, Y_N1, Y_N3, frame_id);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Modem_BPSK<B_8,R_8,R_8>;
