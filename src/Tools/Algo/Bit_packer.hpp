@@ -49,7 +49,7 @@ struct Bit_packer
 		if (vec_in.size() % n_frames)
 		{
 			std::stringstream message;
-			message << "'vec_in.size()' has to be divisible by 'n_frame' ('vec_in.size()' = " << vec_in.size()
+			message << "'vec_in.size()' has to be divisible by 'n_frames' ('vec_in.size()' = " << vec_in.size()
 			        << ", 'n_frames' = " << n_frames << ").";
 			throw length_error(__FILE__, __LINE__, __func__, message.str());
 		}
@@ -99,7 +99,7 @@ struct Bit_packer
 		if (vec.size() % n_frames)
 		{
 			std::stringstream message;
-			message << "'vec.size()' has to be divisible by 'n_frame' ('vec.size()' = " << vec.size()
+			message << "'vec.size()' has to be divisible by 'n_frames' ('vec.size()' = " << vec.size()
 			        << ", 'n_frames' = " << n_frames << ").";
 			throw length_error(__FILE__, __LINE__, __func__, message.str());
 		}
@@ -141,7 +141,7 @@ struct Bit_packer
 		if (vec_out.size() % n_frames)
 		{
 			std::stringstream message;
-			message << "'vec_out.size()' has to be divisible by 'n_frame' ('vec_out.size()' = " << vec_out.size()
+			message << "'vec_out.size()' has to be divisible by 'n_frames' ('vec_out.size()' = " << vec_out.size()
 			        << ", 'n_frames' = " << n_frames << ").";
 			throw length_error(__FILE__, __LINE__, __func__, message.str());
 		}
@@ -191,7 +191,7 @@ struct Bit_packer
 		if (vec.size() % n_frames)
 		{
 			std::stringstream message;
-			message << "'vec.size()' has to be divisible by 'n_frame' ('vec.size()' = " << vec.size()
+			message << "'vec.size()' has to be divisible by 'n_frames' ('vec.size()' = " << vec.size()
 			        << ", 'n_frames' = " << n_frames << ").";
 			throw length_error(__FILE__, __LINE__, __func__, message.str());
 		}

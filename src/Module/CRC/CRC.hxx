@@ -21,7 +21,7 @@ namespace module
 
 template <typename B>
 CRC<B>::
-CRC(const int K, const int size, const int n_frame)
+CRC(const int K, const int size, const int n_frames)
 : Module(n_frames), K(K), size(size)
 {
 	const std::string name = "CRC";
