@@ -36,21 +36,15 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   decoder name.
 	 */
-	Decoder_SIHO_HIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1)
-	: Decoder          (K, N, n_frames, simd_inter_frame_level),
-	  Decoder_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level),
-	  Decoder_HIHO<B  >(K, N, n_frames, simd_inter_frame_level)
-	{
-		const std::string name = "Decoder_SIHO_HIHO";
-		this->set_name(name);
-	}
+	Decoder_SIHO_HIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1);
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_SIHO_HIHO() {}
+	virtual ~Decoder_SIHO_HIHO();
 };
 }
 }
+#include "Decoder_SIHO_HIHO.hxx"
 
 #endif /* DECODER_SIHO_HIHO_HPP_ */

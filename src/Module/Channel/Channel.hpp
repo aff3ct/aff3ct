@@ -10,10 +10,6 @@
 
 #include <string>
 #include <vector>
-#include <sstream>
-#include <algorithm>
-
-#include "Tools/Exception/exception.hpp"
 
 #include "Module/Module.hpp"
 
@@ -61,78 +57,20 @@ public:
 	 * \param n_frames: number of frames to process in the Channel.
 	 * \param name:     Channel's name.
 	 */
-	Channel(const int N, const R sigma = -1.f, const int n_frames = 1)
-	: Module(n_frames), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
-	{
-		const std::string name = "Channel";
-		this->set_name(name);
-		this->set_short_name(name);
-
-		if (N <= 0)
-		{
-			std::stringstream message;
-			message << "'N' has to be greater than 0 ('N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		auto &p1 = this->create_task("add_noise");
-		auto &p1s_X_N = this->template create_socket_in <R>(p1, "X_N", this->N * this->n_frames);
-		auto &p1s_Y_N = this->template create_socket_out<R>(p1, "Y_N", this->N * this->n_frames);
-		this->create_codelet(p1, [this, &p1s_X_N, &p1s_Y_N]() -> int
-		{
-			this->add_noise(static_cast<R*>(p1s_X_N.get_dataptr()),
-			                static_cast<R*>(p1s_Y_N.get_dataptr()));
-
-			return 0;
-		});
-
-		auto &p2 = this->create_task("add_noise_wg");
-		auto &p2s_X_N = this->template create_socket_in <R>(p2, "X_N", this->N * this->n_frames);
-		auto &p2s_H_N = this->template create_socket_out<R>(p2, "H_N", this->N * this->n_frames);
-		auto &p2s_Y_N = this->template create_socket_out<R>(p2, "Y_N", this->N * this->n_frames);
-		this->create_codelet(p2, [this, &p2s_X_N, &p2s_H_N, &p2s_Y_N]() -> int
-		{
-			this->add_noise_wg(static_cast<R*>(p2s_X_N.get_dataptr()),
-			                   static_cast<R*>(p2s_H_N.get_dataptr()),
-			                   static_cast<R*>(p2s_Y_N.get_dataptr()));
-
-			return 0;
-		});
-	}
+	Channel(const int N, const R sigma = -1.f, const int n_frames = 1);
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Channel()
-	{
-	}
+	virtual ~Channel();
 
-	int get_N() const
-	{
-		return this->N;
-	}
+	int get_N() const;
 
-	R get_sigma() const
-	{
-		return this->sigma;
-	}
+	R get_sigma() const;
 
-	const std::vector<R>& get_noise() const
-	{
-		return noise;
-	}
+	const std::vector<R>& get_noise() const;
 
-	virtual void set_sigma(const R sigma)
-	{
-		if (sigma <= 0)
-		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		this->sigma = sigma;
-	}
+	virtual void set_sigma(const R sigma);
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.
@@ -141,60 +79,9 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id = -1)
-	{
-		if (sigma <= 0)
-		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id = -1);
 
-		if (X_N.size() != Y_N.size())
-		{
-			std::stringstream message;
-			message << "'X_N.size()' has to be equal to 'Y_N.size()' ('X_N.size()' = "
-			        << X_N.size() << ", 'Y_N.size()' = " << Y_N.size() << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (this->N * this->n_frames != (int)X_N.size())
-		{
-			std::stringstream message;
-			message << "'X_N.size()' has to be equal to 'N' * 'n_frames' ('X_N.size()' = "
-			        << X_N.size() << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (this->N * this->n_frames != (int)Y_N.size())
-		{
-			std::stringstream message;
-			message << "'Y_N.size()' has to be equal to 'N' * 'n_frames' ('Y_N.size()' = "
-			        << Y_N.size() << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (frame_id != -1 && frame_id >= this->n_frames)
-		{
-			std::stringstream message;
-			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
-			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		this->add_noise(X_N.data(), Y_N.data(), frame_id);
-	}
-
-	virtual void add_noise(const R *X_N, R *Y_N, const int frame_id = -1)
-	{
-		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-		for (auto f = f_start; f < f_stop; f++)
-			this->_add_noise(X_N + f * this->N,
-			                 Y_N + f * this->N,
-			                 f);
-	}
+	virtual void add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.
@@ -204,82 +91,18 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N, const int frame_id = -1)
-	{
-		if (sigma <= 0)
-		{
-			std::stringstream message;
-			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N, const int frame_id = -1);
 
-		if (X_N.size() != Y_N.size() || Y_N.size() != H_N.size())
-		{
-			std::stringstream message;
-			message << "'X_N.size()' has to be equal to 'Y_N.size()' and 'H_N.size()' ('X_N.size()' = "
-			        << X_N.size() << ", 'Y_N.size()' = " << Y_N.size() << ", 'H_N.size()' = " << H_N.size() << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (this->N * this->n_frames != (int)X_N.size())
-		{
-			std::stringstream message;
-			message << "'X_N.size()' has to be equal to 'N' * 'n_frames' ('X_N.size()' = "
-			        << X_N.size() << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (this->N * this->n_frames != (int)Y_N.size())
-		{
-			std::stringstream message;
-			message << "'Y_N.size()' has to be equal to 'N' * 'n_frames' ('Y_N.size()' = "
-			        << Y_N.size() << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (this->N * this->n_frames != (int)H_N.size())
-		{
-			std::stringstream message;
-			message << "'H_N.size()' has to be equal to 'N' * 'n_frames' ('H_N.size()' = "
-			        << H_N.size() << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (frame_id != -1 && frame_id >= this->n_frames)
-		{
-			std::stringstream message;
-			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
-			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		this->add_noise_wg(X_N.data(), H_N.data(), Y_N.data(), frame_id);
-	}
-
-	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1)
-	{
-		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-		for (auto f = f_start; f < f_stop; f++)
-			this->_add_noise_wg(X_N + f * this->N,
-			                    H_N + f * this->N,
-			                    Y_N + f * this->N,
-			                    f);
-	}
+	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1);
 
 protected:
-	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id)
-	{
-		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
-	}
+	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id);
 
-	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
-	{
-		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
-	}
+	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id);
 };
 }
 }
+
+#include "Channel.hxx"
 
 #endif /* CHANNEL_HPP_ */
