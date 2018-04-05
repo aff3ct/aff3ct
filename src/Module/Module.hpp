@@ -66,15 +66,15 @@ public:
 	 */
 	virtual int get_n_frames() const;
 
-	inline void set_name(const std::string &name);
+	void set_name(const std::string &name);
 
-	inline const std::string& get_name() const;
+	const std::string& get_name() const;
 
-	inline void set_short_name(const std::string &short_name);
+	void set_short_name(const std::string &short_name);
 
-	inline const std::string& get_short_name() const;
+	const std::string& get_short_name() const;
 
-	inline Task& operator[](const int id);
+	Task& operator[](const int id);
 
 protected:
 	Task& create_task(const std::string &name, const int id = -1);

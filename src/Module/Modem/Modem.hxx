@@ -100,8 +100,8 @@ Modem(const int N, const R sigma, const int n_frames)
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,Q>::
-void init_processes()
+void Modem<B,R,Q>::
+init_processes()
 {
 	auto &p1 = this->create_task("modulate");
 	auto &p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N     * this->n_frames);
@@ -584,17 +584,15 @@ tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int fr
 }
 
 template <typename B, typename R, typename Q>
-static int Modem<B,R,Q>::
-get_buffer_size_after_modulation(const int N, const int n_b_per_s, const int tl,
-                                            const int s_factor, const bool complex)
+int Modem<B,R,Q>::
+get_buffer_size_after_modulation(const int N, const int n_b_per_s, const int tl, const int s_factor, const bool complex)
 {
 	return ((int)(std::ceil((float)N / (float)n_b_per_s)) + tl) * s_factor * (complex ? 2 : 1);
 }
 
 template <typename B, typename R, typename Q>
-static int Modem<B,R,Q>::
-get_buffer_size_after_filtering(const int N, const int n_b_per_s, const int tl,
-                                            const int max_wa_id, const bool complex)
+int Modem<B,R,Q>::
+get_buffer_size_after_filtering(const int N, const int n_b_per_s, const int tl, const int max_wa_id, const bool complex)
 {
 	return ((int)(std::ceil((float)N / (float)n_b_per_s)) + tl) * max_wa_id * (complex ? 2 : 1);
 }

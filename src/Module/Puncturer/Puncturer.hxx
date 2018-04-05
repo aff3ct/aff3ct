@@ -159,7 +159,7 @@ puncture(const B *X_N1, B *X_N2, const int frame_id) const
 }
 
 template <typename B, typename Q>
-template <class A = std::allocator<Q>>
+template <class A>
 void Puncturer<B,Q>::
 depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id) const
 {
@@ -192,7 +192,7 @@ depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame
 
 template <typename B, typename Q>
 void Puncturer<B,Q>::
-depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id = -1) const
+depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
