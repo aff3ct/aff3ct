@@ -17,7 +17,7 @@
 #include <Tools/Math/matrix.h>
 #include <Tools/Math/max.h>
 #include <Tools/Math/utils.h>
-#include <Tools/Perf/hard_decision.h>
+#include <Tools/Perf/common.h>
 #include <Tools/Perf/Transpose/transpose_AVX.h>
 #include <Tools/Perf/Transpose/transpose_NEON.h>
 #include <Tools/Perf/Transpose/transpose_selector.h>
@@ -32,7 +32,9 @@
 #include <Factory/Module/Channel/Channel.hpp>
 #include <Factory/Module/Codec/BCH/Codec_BCH.hpp>
 #include <Factory/Module/Codec/Codec.hpp>
+#include <Factory/Module/Codec/Codec_HIHO.hpp>
 #include <Factory/Module/Codec/Codec_SIHO.hpp>
+#include <Factory/Module/Codec/Codec_SIHO_HIHO.hpp>
 #include <Factory/Module/Codec/Codec_SISO.hpp>
 #include <Factory/Module/Codec/Codec_SISO_SIHO.hpp>
 #include <Factory/Module/Codec/LDPC/Codec_LDPC.hpp>
@@ -114,7 +116,9 @@
 #include <Module/Channel/User/Channel_user.hpp>
 #include <Module/Codec/BCH/Codec_BCH.hpp>
 #include <Module/Codec/Codec.hpp>
+#include <Module/Codec/Codec_HIHO.hpp>
 #include <Module/Codec/Codec_SIHO.hpp>
+#include <Module/Codec/Codec_SIHO_HIHO.hpp>
 #include <Module/Codec/Codec_SISO.hpp>
 #include <Module/Codec/Codec_SISO_SIHO.hpp>
 #include <Module/Codec/LDPC/Codec_LDPC.hpp>
@@ -135,6 +139,8 @@
 #include <Module/CRC/Polynomial/CRC_polynomial_fast.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial_inter.hpp>
 #include <Module/Decoder/BCH/Decoder_BCH.hpp>
+#include <Module/Decoder/BCH/Genius/Decoder_BCH_genius.hpp>
+#include <Module/Decoder/BCH/Standard/Decoder_BCH_std.hpp>
 #include <Module/Decoder/Decoder.hpp>
 #include <Module/Decoder/Decoder_HIHO.hpp>
 #include <Module/Decoder/Decoder_SIHO.hpp>
@@ -152,6 +158,7 @@
 #include <Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/ONMS/Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp>
+#include <Module/Decoder/LDPC/BP/Layered/AMS/Decoder_LDPC_BP_layered_approximate_min_star.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/Decoder_LDPC_BP_layered.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp>
