@@ -1,5 +1,6 @@
 #include <type_traits>
 #include <algorithm>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -48,10 +49,43 @@ template <typename B, typename R, typename Q>
 void Modem_optical<B,R,Q>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
-	auto size = (unsigned int)(this->N);
-	for (unsigned i = 0; i < size; i++)
+	for (int i = 0; i < this->N; i++)
 		X_N2[i] = X_N1[i] ? (R)1 : (R)0;
 }
+
+
+namespace aff3ct
+{
+namespace module
+{
+template <>
+void Modem_optical<int,float,float>
+::_modulate(const int *X_N1, float *X_N2, const int frame_id)
+{
+	using B = int;
+	using R = float;
+
+	unsigned size = (unsigned int)(this->N);
+
+	const auto vec_loop_size = (size / mipp::nElReg<B>()) * mipp::nElReg<B>();
+	const mipp::Reg<R> Rone  = (R)1.0;
+	const mipp::Reg<R> Rzero = (R)0.0;
+	const mipp::Reg<B> Bzero = (B)0;
+
+	for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<B>())
+	{
+		const auto x1b = mipp::Reg<B>(&X_N1[i]);
+		const auto x2r = mipp::blend(Rone, Rzero, x1b != Bzero);
+		x2r.store(&X_N2[i]);
+	}
+
+	for (unsigned i = vec_loop_size; i < size; i++)
+		X_N2[i] = X_N1[i] ? (R)1 : (R)0;
+}
+}
+}
+
+
 
 template <typename B,typename R, typename Q>
 void Modem_optical<B,R,Q>
