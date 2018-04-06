@@ -22,9 +22,6 @@ protected:
 	tools::Noise_generator<R> *noise_generator_p0;
 	tools::Noise_generator<R> *noise_generator_p1;
 
-	std::vector<R> gene_noise0;
-	std::vector<R> gene_noise1;
-
 public:
 	Channel_optical(const int N,
 	                tools::Noise_generator<R> *noise_generator_p0,

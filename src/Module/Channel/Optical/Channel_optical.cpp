@@ -1,7 +1,6 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/common/hamming_distance.h"
 
 #include "Channel_optical.hpp"
 
@@ -14,9 +13,7 @@ Channel_optical<R>
                   const R ROP, const int n_frames)
 : Channel<R>(N, ROP, n_frames),
   noise_generator_p0(noise_generator_p0),
-  noise_generator_p1(noise_generator_p1),
-  gene_noise0(this->N),
-  gene_noise1(this->N)
+  noise_generator_p1(noise_generator_p1)
 {
 	const std::string name = "Channel_optical";
 	this->set_name(name);
@@ -48,20 +45,16 @@ template <typename R>
 void Channel_optical<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	auto n1 = tools::hamming_distance(X_N, this->N); // number of 1 in the frame
-
-	noise_generator_p1->generate(this->gene_noise1.data(), n1, this->sigma);
-	noise_generator_p0->generate(this->gene_noise0.data(), this->N - n1, this->sigma);
-
-	unsigned idx0 = 0, idx1 = 0;
 	for (auto n = 0; n < this->N; n++)
 	{
-		if (X_N[n])
-			this->noise[frame_id * this->N + n] = this->gene_noise1[idx1++];
-		else
-			this->noise[frame_id * this->N + n] = this->gene_noise0[idx0++];
+		auto ptr_n = &this->noise[frame_id * this->N + n];
 
-		Y_N[n] = this->noise[frame_id * this->N + n];
+		if (X_N[n])
+			noise_generator_p1->generate(ptr_n, 1, this->sigma);
+		else
+			noise_generator_p0->generate(ptr_n, 1, this->sigma);
+
+		Y_N[n] = *ptr_n;
 	}
 }
 
