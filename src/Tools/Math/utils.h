@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstdint>
 #include <limits>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
 
