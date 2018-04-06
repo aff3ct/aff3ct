@@ -26,9 +26,6 @@ struct Simulation : Launcher
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// for the snr
-		float                     snr_min         = 0.f;
-		float                     snr_max         = 0.f;
-		float                     snr_step        = 0.1f;
 		std::vector<float>        snr_range;
 
 		// other parameters

@@ -62,8 +62,8 @@ void Simulation::parameters
 		tools::List2D<float,SNR_range_D1_splitter,SNR_range_D2_splitter>(
 		              tools::Real(),
 		              std::make_tuple(tools::Length(1)),
-		              std::make_tuple(tools::Length(2,3))),
-		"signal/noise ratio range to run (Matlab style: \"0.5:2.5,2.6:0.05:3\" with a default step of 0.1).",
+		              std::make_tuple(tools::Length(1,3))),
+		"signal/noise ratio range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
 		tools::Argument_info::REQUIRED);
 
 	args.add(
@@ -153,19 +153,20 @@ void Simulation::parameters
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-snr-range", "R"}))
-		this->snr_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-snr-range", "R"}), this->snr_step);
+		this->snr_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-snr-range", "R"}), 0.1f);
 	else
 	{
-		if(vals.exist({p+"-snr-min",  "m"})) this->snr_min  = vals.to_float({p+"-snr-min",  "m"});
-		if(vals.exist({p+"-snr-max",  "M"})) this->snr_max  = vals.to_float({p+"-snr-max",  "M"});
-		if(vals.exist({p+"-snr-step", "s"})) this->snr_step = vals.to_float({p+"-snr-step", "s"});
+		float snr_min = 0.f, snr_max = 0.f, snr_step = 0.1f;
+		if(vals.exist({p+"-snr-min",  "m"})) snr_min  = vals.to_float({p+"-snr-min",  "m"});
+		if(vals.exist({p+"-snr-max",  "M"})) snr_max  = vals.to_float({p+"-snr-max",  "M"});
+		if(vals.exist({p+"-snr-step", "s"})) snr_step = vals.to_float({p+"-snr-step", "s"});
 
-		this->snr_range = tools::generate_range({{this->snr_min, this->snr_max}}, this->snr_step);
+		this->snr_range = tools::generate_range({{snr_min, snr_max}}, snr_step);
 	}
 
-	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"        });
-	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int  ({p+"-stop-time"    }));
-	if(vals.exist({p+"-seed",     "S"   })) this->global_seed =         vals.to_int  ({p+"-seed",     "S"});
+	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"    });
+	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int  ({p+"-stop-time"}));
+	if(vals.exist({p+"-seed",        "S"})) this->global_seed =         vals.to_int  ({p+"-seed", "S"});
 	if(vals.exist({p+"-stats"           })) this->statistics  = true;
 	if(vals.exist({p+"-debug"           })) this->debug       = true;
 	if(vals.exist({p+"-debug-limit", "d"}))
@@ -236,13 +237,12 @@ void Simulation::parameters
 
 	auto p = this->get_prefix();
 
-	// headers[p].push_back(std::make_pair("SNR min (m)",  std::to_string(this->snr_min)  + " dB"));
-	// headers[p].push_back(std::make_pair("SNR max (M)",  std::to_string(this->snr_max)  + " dB"));
-	// headers[p].push_back(std::make_pair("SNR step (s)", std::to_string(this->snr_step) + " dB"));
-
-	std::stringstream snr_range_str;
-	snr_range_str << this->snr_range.front() << " -> " << this->snr_range.back() << " dB";
-	headers[p].push_back(std::make_pair("SNR range", snr_range_str.str()));
+	if (this->snr_range.size())
+	{
+		std::stringstream snr_range_str;
+		snr_range_str << this->snr_range.front() << " -> " << this->snr_range.back() << " dB";
+		headers[p].push_back(std::make_pair("SNR range", snr_range_str.str()));
+	}
 
 	headers[p].push_back(std::make_pair("Seed", std::to_string(this->global_seed)));
 	headers[p].push_back(std::make_pair("Statistics", this->statistics ? "on" : "off"));

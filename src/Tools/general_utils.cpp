@@ -133,10 +133,16 @@ std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& 
 
 	for (auto& s : range_description)
 	{
+		if (s.size() == 1)
+		{
+			range.push_back(s.front());
+			continue;
+		}
+
 		if (s.size() != 3 && s.size() != 2)
 		{
 			std::stringstream message;
-			message << "'s.size()' has to be 2 or 3 ('s.size()' = " << s.size() << ").";
+			message << "'s.size()' has to be 1, 2 or 3 ('s.size()' = " << s.size() << ").";
 			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
