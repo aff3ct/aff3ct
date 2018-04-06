@@ -54,7 +54,7 @@ struct Splitter
 	}
 };
 
-struct Generic_splitter : Splitter
+struct Generic_splitter
 {
 	static std::vector<std::string> split(const std::string& val)
 	{
@@ -78,6 +78,34 @@ struct String_splitter
 		return list_vals;
 	}
 };
+
+struct Matlab_style_splitter
+{
+	struct D1
+	{
+		static std::vector<std::string> split(const std::string& val)
+		{
+			const std::string head      = "{([";
+			const std::string queue     = "})]";
+			const std::string separator = ",;";
+
+			return Splitter::split(val, head, queue, separator);
+		}
+	};
+
+	struct D2
+	{
+		static std::vector<std::string> split(const std::string& val)
+		{
+			const std::string head      = "";
+			const std::string queue     = "";
+			const std::string separator = ":";
+
+			return Splitter::split(val, head, queue, separator);
+		}
+	};
+};
+
 
 }
 }

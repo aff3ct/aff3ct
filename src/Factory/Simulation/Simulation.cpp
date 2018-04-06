@@ -59,10 +59,7 @@ void Simulation::parameters
 
 	args.add(
 		{p+"-snr-range", "R"},
-		tools::List2D<float,SNR_range_D1_splitter,SNR_range_D2_splitter>(
-		              tools::Real(),
-		              std::make_tuple(tools::Length(1)),
-		              std::make_tuple(tools::Length(1,3))),
+		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
 		"signal/noise ratio range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
 		tools::Argument_info::REQUIRED);
 

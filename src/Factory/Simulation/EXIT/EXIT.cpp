@@ -120,10 +120,7 @@ void EXIT::parameters
 
 	args.add(
 		{p+"-siga-range"},
-		tools::List2D<float,sigma_range_D1_splitter,sigma_range_D2_splitter>(
-		              tools::Real(),
-		              std::make_tuple(tools::Length(1)),
-		              std::make_tuple(tools::Length(1,3))),
+		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
 		"sigma range used in EXIT charts (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
 		tools::Argument_info::REQUIRED);
 
