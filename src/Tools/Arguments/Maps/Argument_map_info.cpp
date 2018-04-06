@@ -44,6 +44,24 @@ void Argument_map_info
 }
 
 void Argument_map_info
+::add_link(const Argument_tag& tag1, const Argument_tag& tag2)
+{
+	links.add(tag1,tag2);
+}
+
+bool Argument_map_info
+::has_link(const Argument_tag& tag) const
+{
+	return links.find(tag) != links.size();
+}
+
+const Argument_links& Argument_map_info
+::get_links() const
+{
+	return links;
+}
+
+void Argument_map_info
 ::erase(const Argument_tag& tags)
 {
 	auto it = this->find(tags);

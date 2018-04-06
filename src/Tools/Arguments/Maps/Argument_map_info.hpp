@@ -7,6 +7,7 @@
 
 #include "Argument_info.hpp"
 #include "Argument_tag.hpp"
+#include "Argument_links.hpp"
 
 namespace aff3ct
 {
@@ -17,6 +18,9 @@ class Argument_map_info : public std::map<Argument_tag, Argument_info*>
 {
 public:
 	using mother_t = std::map<Argument_tag, Argument_info*>;
+
+protected:
+	Argument_links links;
 
 public:
 	Argument_map_info();
@@ -29,6 +33,10 @@ public:
 
 	void add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc,
 	         const Argument_info::Rank rank = Argument_info::OPTIONAL);
+
+	void add_link(const Argument_tag& tag1, const Argument_tag& tag2);
+	bool has_link(const Argument_tag& tag) const;
+	const Argument_links& get_links() const;
 
 	void erase(const Argument_tag& tags);
 

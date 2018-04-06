@@ -129,6 +129,8 @@ private:
 	void print_help_title(const std::string& title) const;
 
 	size_t find_longest_tags(const Argument_map_info &args) const;
+
+	bool is_linked(const Argument_map_info &args, const Argument_map_value& arg_v, const Argument_tag &tag) const;
 };
 }
 }

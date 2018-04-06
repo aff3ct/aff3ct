@@ -25,12 +25,13 @@ struct Simulation : Launcher
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// required parameters
-		// float                     snr_min         = 0.f;
-		// float                     snr_max         = 0.f;
+		// for the snr
+		float                     snr_min         = 0.f;
+		float                     snr_max         = 0.f;
+		float                     snr_step        = 0.1f;
 		std::vector<float>        snr_range;
 
-		// optional parameters
+		// other parameters
 #ifdef ENABLE_MPI
 		std::chrono::milliseconds mpi_comm_freq   = std::chrono::milliseconds(1000);
 		int                       mpi_rank        = 0;
@@ -38,7 +39,6 @@ struct Simulation : Launcher
 #endif
 		std::chrono::seconds      stop_time       = std::chrono::seconds(0);
 		std::string               pyber           = "";
-		// float                     snr_step        = 0.1f;
 		bool                      debug           = false;
 		bool                      debug_hex       = false;
 		bool                      statistics      = false;

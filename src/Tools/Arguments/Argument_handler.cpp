@@ -3,7 +3,6 @@
 #include <type_traits>
 
 #include "Tools/Display/bash_tools.h"
-#include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
 #include "Argument_handler.hpp"
@@ -18,7 +17,7 @@ Argument_handler
 	{
 		std::stringstream message;
 		message << "'argc' has to be greater than 0 ('argc' = " << argc << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw std::invalid_argument(message.str());
 	}
 
 	this->m_program_name = argv[0];
@@ -34,6 +33,26 @@ Argument_handler
 {
 }
 
+bool Argument_handler
+::is_linked(const Argument_map_info &args, const Argument_map_value& arg_v, const Argument_tag &tag) const
+{
+	auto& links = args.get_links();
+
+	size_t tag_link_pos = 0;
+	while((tag_link_pos = links.find(tag, tag_link_pos)) < links.size())
+	{
+		auto tag_pair = links[tag_link_pos];
+		auto other_tag = (tag_pair.first == tag) ? tag_pair.second : tag_pair.first;
+
+		if (arg_v.exist(other_tag)) // the other argument has been given
+			return true;
+
+		tag_link_pos++;
+	}
+
+	return false; // no link found
+}
+
 Argument_map_value Argument_handler
 ::parse_arguments(const Argument_map_info &args,
                   std::vector<std::string> &warnings, std::vector<std::string> &errors)
@@ -46,7 +65,9 @@ Argument_map_value Argument_handler
 	auto it_arg = args.begin();
 	for (unsigned i = 0; i < args_found_pos.size(); i++, it_arg++)
 	{
-		if (!args_found_pos[i] && it_arg->second->rank == Argument_info::REQUIRED)
+		if (!args_found_pos[i]
+		  && it_arg->second->rank == Argument_info::REQUIRED
+		  && !is_linked(args, m_arg_v, it_arg->first)) // check if any linked arguments, has been given
 		{
 			std::string message = "The \"" + print_tag(it_arg->first) + "\" argument is required.";
 			errors.push_back(message);
