@@ -25,10 +25,10 @@ struct Simulation : Launcher
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// for the snr
-		std::vector<float>        snr_range;
+		// required arg
+		std::vector<float> snr_range;
 
-		// other parameters
+		// optional parameters
 #ifdef ENABLE_MPI
 		std::chrono::milliseconds mpi_comm_freq   = std::chrono::milliseconds(1000);
 		int                       mpi_rank        = 0;

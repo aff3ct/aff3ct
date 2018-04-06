@@ -146,7 +146,6 @@ void EXIT::parameters
 
 	args.add_link({p+"-siga-range"}, {p+"-siga-min",  "a"});
 	args.add_link({p+"-siga-range"}, {p+"-siga-max",  "A"});
-	args.add_link({p+"-siga-range"}, {p+"-siga-step"     });
 }
 
 void EXIT::parameters

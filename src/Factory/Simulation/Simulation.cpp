@@ -86,8 +86,6 @@ void Simulation::parameters
 
 	args.add_link({p+"-snr-range", "R"}, {p+"-snr-min",  "m"});
 	args.add_link({p+"-snr-range", "R"}, {p+"-snr-max",  "M"});
-	args.add_link({p+"-snr-range", "R"}, {p+"-snr-step", "s"});
-
 
 
 	args.add(
@@ -184,8 +182,6 @@ void Simulation::parameters
 		this->debug = true;
 		this->debug_precision = vals.to_int({p+"-debug-prec"});
 	}
-
-	// this->snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
 	if(vals.exist({p+"-threads", "t"}) && vals.to_int({p+"-threads", "t"}) > 0)
 		if(vals.exist({p+"-threads", "t"})) this->n_threads = vals.to_int({p+"-threads", "t"});

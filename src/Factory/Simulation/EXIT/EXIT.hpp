@@ -39,13 +39,10 @@ struct EXIT : Simulation
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		// float       sig_a_min  = 0.0f;
-		// float       sig_a_max  = 5.0f;
 		std::vector<float> sig_a_range;
 
 		// optional parameters
 		std::string snr_type   = "ES";
-		// float       sig_a_step = 0.5f;
 
 		// module parameters
 		Source       ::parameters *src = nullptr;
