@@ -3,7 +3,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "Tools/general_utils.h"
+#include "Tools/Math/utils.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "general_utils.h"
@@ -145,6 +145,9 @@ std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& 
 		for (R v = s.front(); v <= (s.back() + 0.0001f); v += step) // 0.0001f is a hack to avoid the miss of the last snr
 			range.push_back(v);
 	}
+
+	std::sort  (range.begin(), range.end());
+	std::unique(range.begin(), range.end(), comp_equal<R>);
 
 	return range;
 }
