@@ -86,7 +86,7 @@ signed char V_K[32] = {
 ```
 
 
-## Tips
+## Trick
 To avoid big temporary files when dumping a lof of frames, you can pipe the AFF3CT command with a `grep` parser.
 For example, when you want to get only frames from the LDPC encoder, you can do:
 ```bash
