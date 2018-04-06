@@ -34,7 +34,7 @@ public:
 	void add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc,
 	         const Argument_info::Rank rank = Argument_info::OPTIONAL);
 
-	void add_link(const Argument_tag& tag1, const Argument_tag& tag2);
+	void add_link(const Argument_tag& tag1, const Argument_tag& tag2, bool (*callback)(const void*, const void*) = nullptr);
 	bool has_link(const Argument_tag& tag) const;
 	const Argument_links& get_links() const;
 

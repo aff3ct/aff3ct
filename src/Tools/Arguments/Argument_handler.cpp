@@ -41,11 +41,21 @@ bool Argument_handler
 	size_t tag_link_pos = 0;
 	while((tag_link_pos = links.find(tag, tag_link_pos)) < links.size())
 	{
-		auto tag_pair = links[tag_link_pos];
-		auto other_tag = (tag_pair.first == tag) ? tag_pair.second : tag_pair.first;
+		const auto& link = links[tag_link_pos];
+		auto other_tag = link.other_tag(tag);
 
-		if (arg_v.exist(other_tag)) // the other argument has been given
-			return true;
+		if (arg_v.exist(other_tag))
+		{ // the other argument has been given
+			if (link.callback == nullptr)
+				return true;
+
+			auto val = arg_v.at(other_tag);
+
+			if (link.is_first_tag(tag))
+				return link.callback(nullptr, (const void*)&val);
+			else
+				return link.callback((const void*)&val, nullptr);
+		}
 
 		tag_link_pos++;
 	}

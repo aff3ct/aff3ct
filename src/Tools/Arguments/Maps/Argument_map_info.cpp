@@ -44,9 +44,9 @@ void Argument_map_info
 }
 
 void Argument_map_info
-::add_link(const Argument_tag& tag1, const Argument_tag& tag2)
+::add_link(const Argument_tag& tag1, const Argument_tag& tag2, bool (*callback)(const void*, const void*))
 {
-	links.add(tag1,tag2);
+	links.add(tag1, tag2, callback);
 }
 
 bool Argument_map_info
