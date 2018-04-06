@@ -9,6 +9,8 @@
 
 #include "Tools/Exception/exception.hpp"
 
+#define REAL_COMP_PRECISION 1e-6
+
 namespace aff3ct
 {
 namespace tools
@@ -27,6 +29,11 @@ template <typename R> inline R       div8(R       val) { return val * (R)0.125; 
 template <>           inline int32_t div8(int32_t val) { return val >> 3;       }
 template <>           inline int16_t div8(int16_t val) { return val >> 3;       }
 template <>           inline int8_t  div8(int8_t  val) { return val >> 3;       }
+
+template <typename R> inline R      comp_equal(R      val1, R      val2) { return val1 == val2; }
+template <>           inline float  comp_equal(float  val1, float  val2) { return std::abs(val1 - val2) <  (float)REAL_COMP_PRECISION;}
+template <>           inline double comp_equal(double val1, double val2) { return std::abs(val1 - val2) < (double)REAL_COMP_PRECISION;}
+
 
 // init value depending on the domain
 template <typename R>
