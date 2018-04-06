@@ -126,6 +126,29 @@ R aff3ct::tools::ebn0_to_esn0(const R ebn0, const R bit_rate, const int bps)
 	return esn0;
 }
 
+template <typename R>
+std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& range_description, const R default_step)
+{
+	std::vector<R> range;
+
+	for (auto& s : range_description)
+	{
+		if (s.size() != 3 && s.size() != 2)
+		{
+			std::stringstream message;
+			message << "'s.size()' has to be 2 or 3 ('s.size()' = " << s.size() << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		R step = (s.size() == 3) ? s[1] : default_step;
+
+		for (R v = s.front(); v <= (s.back() + 0.0001f); v += step) // 0.0001f is a hack to avoid the miss of the last snr
+			range.push_back(v);
+	}
+
+	return range;
+}
+
 // ==================================================================================== explicit template instantiation
 template float  aff3ct::tools::sigma_to_esn0<float >(const float,                const int);
 template double aff3ct::tools::sigma_to_esn0<double>(const double,               const int);
@@ -135,4 +158,6 @@ template float  aff3ct::tools::esn0_to_ebn0 <float >(const float,  const float, 
 template double aff3ct::tools::esn0_to_ebn0 <double>(const double, const double, const int);
 template float  aff3ct::tools::ebn0_to_esn0 <float >(const float,  const float,  const int);
 template double aff3ct::tools::ebn0_to_esn0 <double>(const double, const double, const int);
+template std::vector<float > aff3ct::tools::generate_range(const std::vector<std::vector<float >>&, const float );
+template std::vector<double> aff3ct::tools::generate_range(const std::vector<std::vector<double>>&, const double);
 // ==================================================================================== explicit template instantiation

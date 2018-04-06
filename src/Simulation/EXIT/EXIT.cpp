@@ -111,9 +111,11 @@ void EXIT<B,R>
 	this->build_communication_chain();
 	this->sockets_binding();
 
-	// for each channel SNR to be simulated	
-	for (ebn0 = params_EXIT.snr_min; ebn0 <= params_EXIT.snr_max; ebn0 += params_EXIT.snr_step)
+	// for each channel SNR to be simulated
+	for (unsigned snr_idx = 0; snr_idx < params_EXIT.snr_range.size(); snr_idx ++)
 	{
+		ebn0 = params_EXIT.snr_range[snr_idx];
+
 		// For EXIT simulation, SNR is considered as Es/N0
 		const auto bit_rate = 1.f;
 		esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params_EXIT.mdm->bps);
@@ -128,8 +130,10 @@ void EXIT<B,R>
 
 		// for each "a" standard deviation (sig_a) to be simulated
 		using namespace module;
-		for (sig_a = params_EXIT.sig_a_min; sig_a <= params_EXIT.sig_a_max; sig_a += params_EXIT.sig_a_step)
+		for (unsigned sig_a_idx = 0; sig_a_idx < params_EXIT.sig_a_range.size(); sig_a_idx ++)
 		{
+			sig_a = params_EXIT.sig_a_range[sig_a_idx];
+
 			terminal ->set_sig_a(sig_a      );
 			channel_a->set_sigma(2.f / sig_a);
 			modem_a  ->set_sigma(2.f / sig_a);
@@ -151,12 +155,12 @@ void EXIT<B,R>
 				}
 			}
 
-			if (((!params_EXIT.ter->disabled && ebn0 == params_EXIT.snr_min && sig_a == params_EXIT.sig_a_min && 
+			if (((!params_EXIT.ter->disabled && snr_idx == 0 && sig_a_idx == 0 &&
 				!params_EXIT.debug) || (params_EXIT.statistics && !params_EXIT.debug)))
 				terminal->legend(std::cout);
 
 			// start the terminal to display BER/FER results
-			if (!params_EXIT.ter->disabled && params_EXIT.ter->frequency != std::chrono::nanoseconds(0) && 
+			if (!params_EXIT.ter->disabled && params_EXIT.ter->frequency != std::chrono::nanoseconds(0) &&
 				!params_EXIT.debug)
 				this->terminal->start_temp_report(params_EXIT.ter->frequency);
 

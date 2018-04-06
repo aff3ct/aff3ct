@@ -7,6 +7,7 @@
 #include <chrono>
 #include <string>
 #include <sstream>
+#include <vector>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -25,8 +26,9 @@ struct Simulation : Launcher
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		float                     snr_min         = 0.f;
-		float                     snr_max         = 0.f;
+		// float                     snr_min         = 0.f;
+		// float                     snr_max         = 0.f;
+		std::vector<float>        snr_range;
 
 		// optional parameters
 #ifdef ENABLE_MPI
@@ -36,7 +38,7 @@ struct Simulation : Launcher
 #endif
 		std::chrono::seconds      stop_time       = std::chrono::seconds(0);
 		std::string               pyber           = "";
-		float                     snr_step        = 0.1f;
+		// float                     snr_step        = 0.1f;
 		bool                      debug           = false;
 		bool                      debug_hex       = false;
 		bool                      statistics      = false;
