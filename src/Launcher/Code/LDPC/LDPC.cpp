@@ -28,6 +28,14 @@ LDPC<L,B,R,Q>
 {
 }
 
+bool enc_dvb_no_h_matrix(const void*, const void* enc_type)
+{
+	if (enc_type == nullptr)
+		return false;
+
+	return *(const std::string*)enc_type == "LDPC_DVBS2";
+}
+
 template <class L, typename B, typename R, typename Q>
 void LDPC<L,B,R,Q>
 ::get_description_args()
@@ -35,9 +43,13 @@ void LDPC<L,B,R,Q>
 	params_cdc->get_description(this->args);
 
 	auto penc = params_cdc->enc->get_prefix();
+	auto pdec = params_cdc->dec->get_prefix();
 
 	this->args.erase({penc+"-fra",  "F"});
 	this->args.erase({penc+"-seed", "S"});
+
+	this->args.add_link({pdec+"-h-path"}, {penc+"-type"}, enc_dvb_no_h_matrix);
+
 
 	L::get_description_args();
 }

@@ -84,3 +84,22 @@ signed char V_K[32] = {
 
 #endif //V_K_H
 ```
+
+
+## Trick
+To avoid big temporary files when dumping a lof of frames, you can pipe the AFF3CT command with a `grep` parser.
+For example, when you want to get only frames from the LDPC encoder, you can do:
+```bash
+./bin/aff3ct -C "LDPC" ... --sim-debug | grep -A 3 Encoder | grep -v '\-\-' > debug
+../scripts/debug_parser/aff3ct_debug_parser.py --mod Encoder_LDPC --tsk encode --txt debug
+```
+
+The `grep -A 3` is to return the 3 following lines (the frames themselves) in more than the line with "Encoder".
+The `grep -v '\-\-'` is to remove unexpected lines added by the above `grep`.
+
+The pipe is working dynamically, it does not use RAM.
+However, you can still unbuffer the pipes if you want with the [unbuffer command](https://unix.stackexchange.com/questions/25372/turn-off-buffering-in-pipe?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)
+
+
+## Future work
+Need to pipe directly the AFF3CT output on the debug parser by certainly using [sys.stdin](https://stackoverflow.com/questions/1450393/how-do-you-read-from-stdin-in-python?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)

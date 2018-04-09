@@ -136,8 +136,10 @@ void BFER<B,R,Q>
 	}
 
 	// for each SNR to be simulated
-	for (snr = params_BFER.snr_min; snr <= params_BFER.snr_max; snr += params_BFER.snr_step)
+	for (unsigned snr_idx = 0; snr_idx < params_BFER.snr_range.size(); snr_idx ++)
 	{
+		snr = params_BFER.snr_range[snr_idx];
+
 		if (params_BFER.snr_type == "EB")
 		{
 			snr_b = snr;
@@ -192,10 +194,10 @@ void BFER<B,R,Q>
 
 		if (params_BFER.display_legend)
 #ifdef ENABLE_MPI
-			if (((!params_BFER.ter->disabled && snr == params_BFER.snr_min && !params_BFER.debug) ||
+			if (((!params_BFER.ter->disabled && snr_idx == 0 && !params_BFER.debug) ||
 		 	   (params_BFER.statistics && !params_BFER.debug)) && params_BFER.mpi_rank == 0)
 #else
-			if (((!params_BFER.ter->disabled && snr == params_BFER.snr_min && !params_BFER.debug) ||
+			if (((!params_BFER.ter->disabled && snr_idx == 0 && !params_BFER.debug) ||
 			    (params_BFER.statistics && !params_BFER.debug)))
 #endif
 				terminal->legend(std::cout);
