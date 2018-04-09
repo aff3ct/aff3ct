@@ -23,7 +23,14 @@ Modem_optical<B,R,Q>
 	const std::string name = "Modem_optical";
 	this->set_name(name);
 
-	this->set_noise(0,0,ROP);
+	try
+	{
+		this->set_noise(0,0,ROP);
+	}
+	catch(tools::invalid_argument&)
+	{
+
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -111,6 +118,9 @@ void Modem_optical<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	const Q min_value = 1e-10; // when prob_1 ou prob_0 = 0;
+
+	if (current_dist == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No valid noise has been set.");
 
 
 	const auto& pdf_x  = current_dist->get_pdf_x();
