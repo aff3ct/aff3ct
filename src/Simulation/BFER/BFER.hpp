@@ -9,6 +9,7 @@
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
+#include "Tools/Math/Distribution/Distributions.hpp"
 
 #include "Module/Module.hpp"
 #include "Module/Monitor/Monitor.hpp"
@@ -57,6 +58,9 @@ protected:
 
 	// terminal (for the output of the code)
 	tools::Terminal_BFER<B,Q> *terminal;
+
+	// noise distribution
+	tools::Distributions<R> *distributions;
 
 public:
 	explicit BFER(const factory::BFER::parameters& params_BFER);

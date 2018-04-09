@@ -45,6 +45,9 @@ struct Simulation : Launcher
 		int                       debug_limit     = 0;
 		int                       debug_precision = 2;
 
+		std::string               pdf_path        = "";
+
+
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		virtual ~parameters();
 		virtual Simulation::parameters* clone() const;

@@ -211,7 +211,7 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
-	return params_BFER_ite.mdm->template build<B,R,Q>();
+	return params_BFER_ite.mdm->template build<B,R,Q>(this->distributions);
 }
 
 template <typename B, typename R, typename Q>
@@ -222,7 +222,7 @@ module::Channel<R>* BFER_ite<B,R,Q>
 
 	auto params_chn = params_BFER_ite.chn->clone();
 	params_chn->seed = seed_chn;
-	auto c = params_chn->template build<R>();
+	auto c = params_chn->template build<R>(this->distributions);
 	delete params_chn;
 	return c;
 }

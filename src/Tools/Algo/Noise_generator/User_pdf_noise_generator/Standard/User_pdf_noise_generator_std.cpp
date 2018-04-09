@@ -1,21 +1,14 @@
 #include <algorithm>
 
+#include "Tools/Math/interpolation.h"
 #include "User_pdf_noise_generator_std.hpp"
 
 using namespace aff3ct::tools;
 
 template <typename R>
 User_pdf_noise_generator_std<R>
-::User_pdf_noise_generator_std(const int seed)
-: User_pdf_noise_generator<R>(), uniform_dist(0., 1.)
-{
-	this->set_seed(seed);
-}
-
-template <typename R>
-User_pdf_noise_generator_std<R>
-::User_pdf_noise_generator_std(std::ifstream& f_distributions, const int seed)
-: User_pdf_noise_generator<R>(f_distributions), uniform_dist(0., 1.)
+::User_pdf_noise_generator_std(const tools::Distributions<R>& dists, const int seed)
+: User_pdf_noise_generator<R>(dists), uniform_dist(0., 1.)
 {
 	this->set_seed(seed);
 }
@@ -35,9 +28,9 @@ void User_pdf_noise_generator_std<R>
 
 template <typename R>
 void User_pdf_noise_generator_std<R>
-::generate(R *noise, const unsigned length, const R noise_power, const R mu)
+::generate(const R* signal, R *noise, const unsigned length, const R noise_power, const R mu)
 {
-	auto dis = this->get_distribution(noise_power);
+	auto dis = this->distributions.get_distribution(noise_power);
 
 	if (dis == nullptr)
 	{
@@ -46,14 +39,13 @@ void User_pdf_noise_generator_std<R>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto& cdf_x = dis->get_cdf_x();
-	auto& cdf_y = dis->get_cdf_y();
-
 	for (unsigned i = 0; i < length; i++)
-		noise[i] = linear_interpolation(cdf_y.data(),
-		                                cdf_x.data(),
-		                                cdf_x.size(),
-		                                this->uniform_dist(this->rd_engine));
+	{
+		const auto& cdf_y = signal[i] ? dis->get_cdf_y()[1] : dis->get_cdf_y()[0];
+		const auto& cdf_x = signal[i] ? dis->get_cdf_x()[1] : dis->get_cdf_x()[0];
+		noise[i] = tools::linear_interpolation(cdf_y.data(), cdf_x.data(), cdf_x.size(),
+		                                        this->uniform_dist(this->rd_engine));
+	}
 }
 
 // ==================================================================================== explicit template instantiation

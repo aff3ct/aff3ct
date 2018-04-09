@@ -14,9 +14,6 @@
 
 #include "Modem.hpp"
 
-#include "Tools/Algo/Noise_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
-
-
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -282,33 +279,18 @@ module::Modem<B,R,Q>* Modem::parameters
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
-template <typename B, typename R, typename Q>
-module::Modem<B,R,Q>* Modem::parameters
-::_build_optical() const
-{
-	std::ifstream file0(const_path + "0.csv");
-	std::ifstream file1(const_path + "1.csv");
-
-	return new module::Modem_optical<B,R,Q>(N,
-	                                        new tools::User_pdf_noise_generator_std<R>(file0),
-	                                        new tools::User_pdf_noise_generator_std<R>(file1),
-	                                        0.0,
-	                                        n_frames);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-}
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
-::build() const
+::build(const tools::Distributions<R>* dist) const
 {
 	if (this->type == "SCMA")
 	{
 		return _build_scma<B,R,Q>();
 	}
-	else if (this->type == "OPTICAL")
+	else if (this->type == "OPTICAL" && dist != nullptr)
 	{
-		return _build_optical<B,R,Q>();
+		return new module::Modem_optical<B,R,Q>(N, *dist, 0.0, n_frames);
 	}
 	else
 	{
@@ -323,9 +305,9 @@ module::Modem<B,R,Q>* Modem::parameters
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
-::build(const parameters &params)
+::build(const parameters &params, const tools::Distributions<R>* dist)
 {
-	return params.template build<B,R,Q>();
+	return params.template build<B,R,Q>(dist);
 }
 
 int Modem
@@ -408,24 +390,24 @@ bool Modem
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,Q_8 >() const;
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,R_8 >() const;
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,Q_16>() const;
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,R_16>() const;
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::parameters::build<B_32,R_32,Q_32>() const;
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::parameters::build<B_64,R_64,Q_64>() const;
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const aff3ct::factory::Modem::parameters&);
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,Q_8 >(const tools::Distributions<R_8>*) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,R_8 >(const tools::Distributions<R_8>*) const;
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,Q_16>(const tools::Distributions<R_16>*) const;
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,R_16>(const tools::Distributions<R_16>*) const;
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::parameters::build<B_32,R_32,Q_32>(const tools::Distributions<R_32>*) const;
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::parameters::build<B_64,R_64,Q_64>(const tools::Distributions<R_64>*) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_8>*);
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_8>*);
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_16>*);
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_16>*);
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_32>*);
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_64>*);
 #else
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::parameters::build<B,R,Q>() const;
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const aff3ct::factory::Modem::parameters&);
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::parameters::build<B,R,Q>(const tools::Distributions<R>*) const;
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>*);
 #if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::parameters::build<B,R,R>() const;
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const aff3ct::factory::Modem::parameters&);
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::parameters::build<B,R,R>(const tools::Distributions<R>*) const;
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>*);
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

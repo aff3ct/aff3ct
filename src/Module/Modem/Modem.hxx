@@ -290,6 +290,15 @@ set_sigma(const R sigma)
 }
 
 template <typename B, typename R, typename Q>
+void Modem<B,R,Q>::
+set_noise(const R sigma, const R esn0, const R ebn0)
+{
+	this->set_sigma(sigma);
+	this->esn0 = esn0;
+	this->ebn0 = ebn0;
+}
+
+template <typename B, typename R, typename Q>
 template <class AB, class AR>
 void Modem<B,R,Q>::
 modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2, const int frame_id)

@@ -114,15 +114,8 @@ void BFER_std<B,R,Q>
 	// set current sigma
 	for (auto tid = 0; tid < this->params_BFER_std.n_threads; tid++)
 	{
-		if (this->params_BFER_std.chn->type == "OPTICAL")
-			this->channel[tid]->set_sigma(this->snr_b); // snr_b is the ROP
-		else
-			this->channel[tid]->set_sigma(this->sigma);
-
-		if (this->params_BFER_std.mdm->type == "OPTICAL")
-			this->modem[tid]->set_sigma(this->snr_b); // snr_b is the ROP
-		else
-			this->modem[tid]->set_sigma(this->sigma);
+		this->channel[tid]->set_noise(this->sigma, this->snr_s, this->snr_b);
+		this->modem  [tid]->set_noise(this->sigma, this->snr_s, this->snr_b);
 
 		this->codec  [tid]->set_sigma(this->sigma);
 	}
@@ -201,7 +194,7 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,R>* BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
-	return params_BFER_std.mdm->template build<B,R,R>();
+	return params_BFER_std.mdm->template build<B,R,R>(this->distributions);
 }
 
 template <typename B, typename R, typename Q>
@@ -212,7 +205,7 @@ module::Channel<R>* BFER_std<B,R,Q>
 
 	auto params_chn = this->params_BFER_std.chn->clone();
 	params_chn->seed = seed_chn;
-	auto c = params_chn->template build<R>();
+	auto c = params_chn->template build<R>(this->distributions);
 	delete params_chn;
 	return c;
 }

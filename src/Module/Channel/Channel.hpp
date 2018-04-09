@@ -45,6 +45,8 @@ class Channel : public Module
 {
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
+	      R   esn0;  /*!< signal power against noise */
+	      R   ebn0;  /*!< signal power against noise */
 	      R   sigma; /*!< Sigma^2, the noise variance */
 
 	std::vector<R> noise;
@@ -71,6 +73,7 @@ public:
 	const std::vector<R>& get_noise() const;
 
 	virtual void set_sigma(const R sigma);
+	virtual void set_noise(const R sigma, const R esn0, const R ebn0);
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.

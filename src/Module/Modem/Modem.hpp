@@ -54,6 +54,8 @@ protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
 	const int N_mod; /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
 	const int N_fil; /*!< Number of transmitted elements after the filtering process */
+	      R   esn0;  /*!< signal power against noise */
+	      R   ebn0;  /*!< signal power against noise */
 	      R   sigma; /*!< Sigma, the noise variance */
 	      R   sigma_c; /*!< Sigma*sqrt(2), the complex noise variance */
 
@@ -113,6 +115,7 @@ public:
 	bool is_demodulator() const;
 
 	virtual void set_sigma(const R sigma);
+	virtual void set_noise(const R sigma, const R esn0, const R ebn0);
 
 	/*!
 	 * \brief Modulates a vector of bits or symbols.

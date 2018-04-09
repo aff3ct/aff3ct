@@ -45,7 +45,9 @@ BFER<B,R,Q>
   monitor_red(                       nullptr),
   dumper     (params_BFER.n_threads, nullptr),
   dumper_red (                       nullptr),
-  terminal   (                       nullptr)
+  terminal   (                       nullptr),
+
+  distributions(nullptr)
 {
 	if (params_BFER.n_threads < 1)
 	{
@@ -82,6 +84,13 @@ BFER<B,R,Q>
 	// build a monitor to compute BER/FER (reduce the other monitors)
 	this->monitor_red = new module::Monitor_BFER_reduction<B,Q>(this->monitor);
 #endif
+
+	if (!params_BFER.pdf_path.empty())
+	{
+		std::ifstream file(params_BFER.pdf_path);
+		distributions = new tools::Distributions<R>(file);
+	}
+
 }
 
 template <typename B, typename R, typename Q>
@@ -100,6 +109,8 @@ BFER<B,R,Q>
 	}
 
 	if (terminal != nullptr) { delete terminal; terminal = nullptr; }
+
+	if (distributions != nullptr) { delete distributions; distributions = nullptr; }
 }
 
 template <typename B, typename R, typename Q>

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Module/Channel/Channel.hpp"
+#include "Tools/Math/Distribution/Distributions.hpp"
 
 #include "../../Factory.hpp"
 
@@ -46,11 +47,11 @@ struct Channel : public Factory
 
 		// builder
 		template <typename R = float>
-		module::Channel<R>* build() const;
+		module::Channel<R>* build(const tools::Distributions<R>* dist = nullptr) const;
 	};
 
 	template <typename R = float>
-	static module::Channel<R>* build(const parameters &params);
+	static module::Channel<R>* build(const parameters &params, const tools::Distributions<R>* dist = nullptr);
 };
 }
 }

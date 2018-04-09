@@ -161,18 +161,11 @@ void Channel::parameters
 
 template <typename R>
 module::Channel<R>* Channel::parameters
-::build() const
+::build(const tools::Distributions<R>* dist) const
 {
-	if (type == "OPTICAL")
+	if (type == "OPTICAL" && dist != nullptr)
 	{
-		std::ifstream file0(path + "0.csv");
-		std::ifstream file1(path + "1.csv");
-
-		return new module::Channel_optical<R>(N,
-		                                      new tools::User_pdf_noise_generator_std<R>(file0, seed + 0),
-		                                      new tools::User_pdf_noise_generator_std<R>(file1, seed + 1),
-		                                      sigma,
-		                                      n_frames);
+		return new module::Channel_optical<R>(N, new tools::User_pdf_noise_generator_std<R>(*dist, seed), sigma, n_frames);
 	}
 
 
@@ -207,20 +200,20 @@ module::Channel<R>* Channel::parameters
 
 template <typename R>
 module::Channel<R>* Channel
-::build(const parameters &params)
+::build(const parameters &params, const tools::Distributions<R>* dist)
 {
-	return params.template build<R>();
+	return params.template build<R>(dist);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>() const;
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>() const;
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&);
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const aff3ct::factory::Channel::parameters&);
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>(const tools::Distributions<R_32>*) const;
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>(const tools::Distributions<R_64>*) const;
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R_32>*);
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R_64>*);
 #else
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::parameters::build<R>() const;
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const aff3ct::factory::Channel::parameters&);
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::parameters::build<R>(const tools::Distributions<R>*) const;
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R>*);
 #endif
 // ==================================================================================== explicit template instantiation

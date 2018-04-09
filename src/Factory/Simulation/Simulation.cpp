@@ -1,4 +1,7 @@
+#include <fstream>
+#include <algorithm>
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/general_utils.h"
 
 #include "Simulation.hpp"
@@ -80,9 +83,18 @@ void Simulation::parameters
 		tools::Real(tools::Positive(), tools::Non_zero()),
 		"signal/noise ratio step between each simulation.");
 
+	args.add(
+		{p+"-pdf-path"},
+		tools::File(tools::openmode::read),
+		"A file that contains PDF for different SNR. Set the SNR range from the given ones. "
+		"Overwritten by -R or limited by -m and -M with a minimum step of -s");
 
-	args.add_link({p+"-snr-range", "R"}, {p+"-snr-min",  "m"});
-	args.add_link({p+"-snr-range", "R"}, {p+"-snr-max",  "M"});
+
+	args.add_link({p+"-snr-range", "R"}, {p+"-snr-min",   "m"});
+	args.add_link({p+"-snr-range", "R"}, {p+"-snr-max",   "M"});
+	args.add_link({p+"-pdf-path"      }, {p+"-snr-range", "R"});
+	args.add_link({p+"-pdf-path"      }, {p+"-snr-min",   "m"});
+	args.add_link({p+"-pdf-path"      }, {p+"-snr-max",   "M"});
 
 
 	args.add(
@@ -147,16 +159,69 @@ void Simulation::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-snr-range", "R"}))
-		this->snr_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-snr-range", "R"}), 0.1f);
+	if (vals.exist({p+"-pdf-path"}))
+	{
+		this->pdf_path = vals.at({p+"-pdf-path"});
+		std::ifstream file(this->pdf_path);
+
+		this->snr_range = std::move(tools::Distributions<>::get_noise_range(file));
+
+		std::cout << "snr_range : ";
+		for(auto& s : snr_range)
+			std::cout << s << " ";
+		std::cout << std::endl;
+
+		if(vals.exist({p+"-snr-range", "R"}))
+		{
+			this->snr_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-snr-range", "R"}), 0.1f);
+		}
+		else
+		{
+			if (vals.exist({p+"-snr-min",  "m"}))
+			{
+				auto it = std::lower_bound(this->snr_range.begin(), this->snr_range.end(), vals.to_float({p+"-snr-min",  "m"}));
+				this->snr_range.erase(this->snr_range.begin(), it);
+			}
+
+			if (vals.exist({p+"-snr-max",  "M"}))
+			{
+				auto it = std::upper_bound(this->snr_range.begin(), this->snr_range.end(), vals.to_float({p+"-snr-max",  "M"}));
+				this->snr_range.erase(it, this->snr_range.end());
+			}
+
+			if (vals.exist({p+"-snr-step", "s"}))
+			{
+				float step = vals.to_float({p+"-snr-step", "s"});
+
+				auto it = this->snr_range.begin();
+				float start_val = *it++;
+
+				while(it != this->snr_range.end())
+				{
+					if ((start_val + step) > *it) // then original step is too short
+						it = this->snr_range.erase(it);
+					else
+						start_val = *it++; // step large enough, take this new val as new comparative point
+				}
+			}
+		}
+	}
 	else
 	{
-		float snr_min = 0.f, snr_max = 0.f, snr_step = 0.1f;
-		if(vals.exist({p+"-snr-min",  "m"})) snr_min  = vals.to_float({p+"-snr-min",  "m"});
-		if(vals.exist({p+"-snr-max",  "M"})) snr_max  = vals.to_float({p+"-snr-max",  "M"});
-		if(vals.exist({p+"-snr-step", "s"})) snr_step = vals.to_float({p+"-snr-step", "s"});
+		if(vals.exist({p+"-snr-range", "R"}))
+		{
+			this->snr_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-snr-range", "R"}), 0.1f);
+		}
+		else if(vals.exist({p+"-snr-min",  "m"}) && vals.exist({p+"-snr-max",  "M"}))
+		{
+			float snr_min  = vals.to_float({p+"-snr-min",  "m"});
+			float snr_max  = vals.to_float({p+"-snr-max",  "M"});
+			float snr_step = 0.1f;
 
-		this->snr_range = tools::generate_range({{snr_min, snr_max}}, snr_step);
+			if(vals.exist({p+"-snr-step", "s"})) snr_step = vals.to_float({p+"-snr-step", "s"});
+
+			this->snr_range = tools::generate_range({{snr_min, snr_max}}, snr_step);
+		}
 	}
 
 	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"    });

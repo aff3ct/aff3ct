@@ -9,55 +9,42 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_optical<R>
-::Channel_optical(const int N, tools::Noise_generator<R> *noise_generator_p0, tools::Noise_generator<R> *noise_generator_p1,
-                  const R ROP, const int n_frames)
-: Channel<R>(N, ROP, n_frames),
-  noise_generator_p0(noise_generator_p0),
-  noise_generator_p1(noise_generator_p1)
+::Channel_optical(const int N, tools::Noise_generator<R> *noise_generator,
+                  const R sigma, const int n_frames)
+: Channel<R>(N, 1, n_frames),
+  noise_generator(noise_generator)
 {
 	const std::string name = "Channel_optical";
 	this->set_name(name);
 
-	if (noise_generator_p0 == nullptr)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator_p0' can't be NULL.");
+	if (noise_generator == nullptr)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
 
-	if (noise_generator_p1 == nullptr)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator_p1' can't be NULL.");
+	this->ebn0 = sigma;
 }
 
 template <typename R>
 Channel_optical<R>
 ::~Channel_optical()
 {
-	if (noise_generator_p0 != nullptr) delete noise_generator_p0;
-	if (noise_generator_p1 != nullptr) delete noise_generator_p1;
+	if (noise_generator != nullptr) delete noise_generator;
 }
-
-template <typename R>
-void Channel_optical<R>
-::set_sigma(const R ROP)
-{
-	this->sigma = ROP;
-}
-
 
 template <typename R>
 void Channel_optical<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	for (auto n = 0; n < this->N; n++)
-	{
-		auto ptr_n = &this->noise[frame_id * this->N + n];
-
-		if (X_N[n])
-			noise_generator_p1->generate(ptr_n, 1, this->sigma);
-		else
-			noise_generator_p0->generate(ptr_n, 1, this->sigma);
-
-		Y_N[n] = *ptr_n;
-	}
+	noise_generator->generate(X_N, Y_N, this->N, this->ebn0);
 }
 
+template <typename R>
+void Channel_optical<R>
+::set_noise(const R sigma, const R esn0, const R ebn0)
+{
+	this->sigma = sigma;
+	this->esn0  = esn0;
+	this->ebn0  = ebn0;
+}
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

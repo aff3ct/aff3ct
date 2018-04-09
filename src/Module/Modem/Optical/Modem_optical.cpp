@@ -1,8 +1,10 @@
 #include <type_traits>
 #include <algorithm>
+#include <sstream>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/general_utils.h"
 
 #include "Modem_optical.hpp"
 
@@ -12,24 +14,16 @@ using namespace aff3ct::module;
 template <typename B, typename R, typename Q>
 Modem_optical<B,R,Q>
 ::Modem_optical(const int N,
-                tools::User_pdf_noise_generator<R> *noise_generator_p0,
-                tools::User_pdf_noise_generator<R> *noise_generator_p1,
+                const tools::Distributions<R>& dist,
                 const R ROP,
                 const int n_frames)
 : Modem<B,R,Q>(N, (R)-1, n_frames),
-  noise_generator_p0(noise_generator_p0),
-  noise_generator_p1(noise_generator_p1)
+  dist(dist)
 {
 	const std::string name = "Modem_optical";
 	this->set_name(name);
 
 	this->set_sigma(ROP);
-
-	if (noise_generator_p0 == nullptr)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator_p0' can't be NULL.");
-
-	if (noise_generator_p1 == nullptr)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator_p1' can't be NULL.");
 }
 
 template <typename B, typename R, typename Q>
@@ -40,9 +34,21 @@ Modem_optical<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_optical<B,R,Q>
-::set_sigma(const R ROP)
+::set_noise(const R sigma, const R esn0, const R ebn0)
 {
-	this->rop = ROP;
+	this->sigma = sigma;
+	this->esn0  = esn0;
+	this->ebn0  = ebn0;
+
+	this->rop = this->ebn0;
+	this->current_dist = dist.get_distribution(this->rop);
+
+	if (this->current_dist == nullptr)
+	{
+		std::stringstream message;
+		message << "Undefined noise power 'this->rop' in the given distributions ('this->rop' = " << this->rop << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -106,37 +112,34 @@ void Modem_optical<B,R,Q>
 
 	const Q min_value = 1e-10; // when prob_1 ou prob_0 = 0;
 
-	auto dist0  = noise_generator_p0->get_distribution(this->rop);
-	auto pdf_x0 = dist0->get_pdf_x();
-	auto pdf_y0 = dist0->get_pdf_y();
 
-	auto dist1 = noise_generator_p1->get_distribution(this->rop);
-	// auto pdf_x1 = dist1->get_pdf_x(); // shall be same than pdf_x0
-	auto pdf_y1 = dist1->get_pdf_y();
+	const auto& pdf_x  = current_dist->get_pdf_x();
+	const auto& pdf_y0 = current_dist->get_pdf_y()[0];
+	const auto& pdf_y1 = current_dist->get_pdf_y()[1];
 
-	unsigned x0_pos;
+	unsigned x_pos;
 	for (auto i = 0; i < this->N_fil; i++)
 	{
 		// find the position of the first x that is above the receiver val
-		auto x0_above = std::lower_bound(pdf_x0.begin(), pdf_x0.end(), Y_N1[i]);
+		auto x_above = std::lower_bound(pdf_x.begin(), pdf_x.end(), Y_N1[i]);
 
-		if (x0_above == pdf_x0.end()) // if last
-			x0_pos = pdf_x0.size() - 1;
-		else if (x0_above == pdf_x0.begin()) // if first
-			x0_pos = 0;
+		if (x_above == pdf_x.end()) // if last
+			x_pos = pdf_x.size() - 1;
+		else if (x_above == pdf_x.begin()) // if first
+			x_pos = 0;
 		else
 		{
-			x0_pos = std::distance(pdf_x0.begin(), x0_above);
+			x_pos = std::distance(pdf_x.begin(), x_above);
 
-			auto x0_below = x0_above - 1;
+			auto x_below = x_above - 1;
 
 			// find which between x_below and x_above is the nearest of Y_N1[i]
-			x0_pos = (Y_N1[i] - *x0_below) < (Y_N1[i] - *x0_above) ? x0_pos - 1 : x0_pos;
+			x_pos = (Y_N1[i] - *x_below) < (Y_N1[i] - *x_above) ? x_pos - 1 : x_pos;
 		}
 
 		// then get the matching probabilities
-		auto prob_0 = pdf_y0[x0_pos] == (Q)0 ? min_value : pdf_y0[x0_pos];
-		auto prob_1 = pdf_y1[x0_pos] == (Q)0 ? min_value : pdf_y1[x0_pos]; // pdf_x1 shall be same than pdf_x0
+		auto prob_0 = pdf_y0[x_pos] == (Q)0 ? min_value : pdf_y0[x_pos];
+		auto prob_1 = pdf_y1[x_pos] == (Q)0 ? min_value : pdf_y1[x_pos];
 
 		Y_N2[i] = std::log(prob_0/prob_1);
 	}

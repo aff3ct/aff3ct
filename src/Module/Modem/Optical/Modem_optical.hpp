@@ -1,7 +1,7 @@
 #ifndef MODEM_OPTICAL_HPP_
 #define MODEM_OPTICAL_HPP_
 
-#include "Tools/Algo/Noise_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"
+#include "Tools/Math/Distribution/Distributions.hpp"
 
 #include "../Modem.hpp"
 
@@ -19,20 +19,18 @@ template <typename B = int, typename R = float, typename Q = R>
 class Modem_optical : public Modem<B,R,Q>
 {
 protected:
-	tools::User_pdf_noise_generator<R> *noise_generator_p0;
-	tools::User_pdf_noise_generator<R> *noise_generator_p1;
-
+	const tools::Distributions<R>& dist;
 	R rop;
+	const tools::Distribution<R>* current_dist;
 
 public:
 	Modem_optical(const int N,
-	              tools::User_pdf_noise_generator<R> *noise_generator_p0 = nullptr,
-	              tools::User_pdf_noise_generator<R> *noise_generator_p1 = nullptr,
+	              const tools::Distributions<R>& dist,
 	              const R ROP = (R)-1.0,
 	              const int n_frames = 1);
 	virtual ~Modem_optical();
 
-	virtual void set_sigma(const R ROP);
+	virtual void set_noise(const R sigma, const R esn0, const R ebn0);
 
 	static bool is_complex_mod()
 	{

@@ -19,12 +19,11 @@ private:
 	std::uniform_real_distribution<R> uniform_dist;
 
 public:
-	User_pdf_noise_generator_std(const int seed = 0);
-	User_pdf_noise_generator_std(std::ifstream& f_distributions, const int seed = 0);
+	User_pdf_noise_generator_std(const tools::Distributions<R>& dists, const int seed = 0);
 	virtual ~User_pdf_noise_generator_std();
 
 	virtual void set_seed(const int seed);
-	virtual void generate(R *noise, const unsigned length, const R noise_power, const R mu = 0.0);
+	virtual void generate(const R* signal, R *noise, const unsigned length, const R noise_power, const R mu = 0.0);
 };
 
 template <typename R = float>

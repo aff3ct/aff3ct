@@ -2,6 +2,7 @@
 #define NOISE_GENERATOR_HPP_
 
 #include <vector>
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {
@@ -26,7 +27,15 @@ public:
 	}
 
 	virtual void set_seed(const int seed) = 0;
-	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0) = 0;
+	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0)
+	{
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
+
+	virtual void generate(const R* signal, R *noise, const unsigned length, const R sigma, const R mu = 0.0)
+	{
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
 };
 
 }

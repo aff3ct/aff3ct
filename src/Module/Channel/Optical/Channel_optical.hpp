@@ -19,19 +19,19 @@ template <typename R = float>
 class Channel_optical : public Channel<R>
 {
 protected:
-	tools::Noise_generator<R> *noise_generator_p0;
-	tools::Noise_generator<R> *noise_generator_p1;
+	tools::Noise_generator<R> *noise_generator;
 
 public:
 	Channel_optical(const int N,
-	                tools::Noise_generator<R> *noise_generator_p0,
-	                tools::Noise_generator<R> *noise_generator_p1,
-	                const R ROP = (R)1, const int n_frames = 1);
+	                tools::Noise_generator<R> *noise_generator,
+	                const R sigma = -1, const int n_frames = 1);
 
 	virtual ~Channel_optical();
 
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
-	virtual void set_sigma(const R ROP);
+
+	void set_noise(const R sigma, const R esn0, const R ebn0);
+
 };
 }
 }

@@ -101,6 +101,15 @@ set_sigma(const R sigma)
 	this->sigma = sigma;
 }
 
+template <typename R>
+void Channel<R>::
+set_noise(const R sigma, const R esn0, const R ebn0)
+{
+	this->set_sigma(sigma);
+	this->esn0 = esn0;
+	this->ebn0 = ebn0;
+}
+
 /*!
  * \brief Adds the noise to a perfectly clear signal.
  *
