@@ -47,7 +47,7 @@ public:
 	}
 
 	template <typename... NewRanges>
-	Integer_type<T, S, Ranges..., NewRanges...>*
+	List_type<T, S, Ranges..., NewRanges...>*
 	clone(NewRanges*... new_ranges)
 	{
 		auto* clone = new List_type<T, S, Ranges..., NewRanges...>(val_type);
@@ -145,8 +145,8 @@ List2D(Argument_type* val_type,
       const std::tuple<Ranges1*...>& ranges1 = std::tuple<>(),
       const std::tuple<Ranges2*...>& ranges2 = std::tuple<>())
 {
-	Argument_type* listD2 = apply_tuple(List<T,S2,Ranges2...>, std::tuple_cat(std::make_tuple(val_type), ranges2));
-	return apply_tuple(List<std::vector<T>,S1,Ranges1...>, std::tuple_cat(std::make_tuple(listD2), ranges1));
+	Argument_type* listD2 = tools::apply_tuple(List<T,S2,Ranges2...>, std::tuple_cat(std::make_tuple(val_type), ranges2));
+	return tools::apply_tuple(List<std::vector<T>,S1,Ranges1...>, std::tuple_cat(std::make_tuple(listD2), ranges1));
 }
 
 template <typename T = std::string, typename... Ranges1, typename... Ranges2>
