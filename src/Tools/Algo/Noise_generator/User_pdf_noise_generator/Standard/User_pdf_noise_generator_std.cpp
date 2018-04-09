@@ -3,6 +3,7 @@
 #include "Tools/Math/interpolation.h"
 #include "User_pdf_noise_generator_std.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename R>

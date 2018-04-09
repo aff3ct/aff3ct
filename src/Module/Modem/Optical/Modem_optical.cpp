@@ -23,7 +23,7 @@ Modem_optical<B,R,Q>
 	const std::string name = "Modem_optical";
 	this->set_name(name);
 
-	this->set_sigma(ROP);
+	this->set_noise(0,0,ROP);
 }
 
 template <typename B, typename R, typename Q>
