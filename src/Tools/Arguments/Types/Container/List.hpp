@@ -157,8 +157,8 @@ List2D(Argument_type* val_type,
       std::tuple<Ranges1*...>&& ranges1 = std::tuple<>(),
       std::tuple<Ranges2*...>&& ranges2 = std::tuple<>())
 {
-	Argument_type* listD2 = tools::apply_tuple(List<T,S2,Ranges2...>, std::tuple_cat(std::make_tuple(val_type), std::forward(ranges2)));
-	return tools::apply_tuple(List<std::vector<T>,S1,Ranges1...>, std::tuple_cat(std::make_tuple(listD2), std::forward(ranges1)));
+	Argument_type* listD2 = tools::apply_tuple(List<T,S2,Ranges2...>, std::tuple_cat(std::make_tuple(val_type), std::forward<std::tuple<Ranges2*...>>(ranges2)));
+	return tools::apply_tuple(List<std::vector<T>,S1,Ranges1...>, std::tuple_cat(std::make_tuple(listD2), std::forward<std::tuple<Ranges1*...>>(ranges1)));
 }
 
 template <typename T = std::string, typename... Ranges1, typename... Ranges2>
@@ -176,7 +176,7 @@ Matlab_vector(Argument_type* val_type,
               std::tuple<Ranges1*...>&& ranges1 = std::tuple<>(),
               std::tuple<Ranges2*...>&& ranges2 = std::tuple<>())
 {
-	return List2D<T, Matlab_style_splitter::D1, Matlab_style_splitter::D2>(val_type, std::forward(ranges1), std::forward(ranges2));
+	return List2D<T, Matlab_style_splitter::D1, Matlab_style_splitter::D2>(val_type, std::forward<std::tuple<Ranges1*...>>(ranges1), std::forward<std::tuple<Ranges2*...>>(ranges2));
 }
 
 }
