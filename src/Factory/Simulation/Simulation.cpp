@@ -166,11 +166,6 @@ void Simulation::parameters
 
 		this->snr_range = std::move(tools::Distributions<>::get_noise_range(file));
 
-		std::cout << "snr_range : ";
-		for(auto& s : snr_range)
-			std::cout << s << " ";
-		std::cout << std::endl;
-
 		if(vals.exist({p+"-snr-range", "R"}))
 		{
 			this->snr_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-snr-range", "R"}), 0.1f);
