@@ -143,7 +143,7 @@ void Channel::parameters
 	if (this->sigma != -1.f)
 		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->sigma)));
 
-	if (this->type == "USER" || this->type == "OPTICAL" || this->type == "RAYLEIGH_USER")
+	if (this->type == "USER" || this->type == "RAYLEIGH_USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
 
 	if (this->type == "RAYLEIGH_USER")
