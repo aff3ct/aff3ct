@@ -2,7 +2,6 @@
 #define USER_PDF_NOISE_GENERATOR_STD_HPP_
 
 #include <random>
-#include <fstream>
 
 #include "../User_pdf_noise_generator.hpp"
 
