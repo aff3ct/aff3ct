@@ -87,30 +87,6 @@ std::vector<std::string> EXIT::parameters
 	return p;
 }
 
-struct sigma_range_D1_splitter : tools::Splitter
-{
-	static std::vector<std::string> split(const std::string& val)
-	{
-		const std::string head      = "{([";
-		const std::string queue     = "})]";
-		const std::string separator = ",";
-
-		return Splitter::split(val, head, queue, separator);
-	}
-};
-
-struct sigma_range_D2_splitter : tools::Splitter
-{
-	static std::vector<std::string> split(const std::string& val)
-	{
-		const std::string head      = "";
-		const std::string queue     = "";
-		const std::string separator = ":";
-
-		return Splitter::split(val, head, queue, separator);
-	}
-};
-
 void EXIT::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
