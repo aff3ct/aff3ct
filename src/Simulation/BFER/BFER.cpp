@@ -135,7 +135,7 @@ void BFER<B,R,Q>
 	{
 		auto n = params_BFER.noise_range[noise_idx];
 
-		if (params_BFER.noise_type == "EBN0" || params_BFER.noise_type == "EBN0")
+		if (params_BFER.noise_type == "EBN0" || params_BFER.noise_type == "ESN0")
 		{
 			float esn0, ebn0;
 			if (params_BFER.noise_type == "EBN0")
