@@ -44,14 +44,6 @@ template <typename R>
 void Channel_AWGN_LLR<R>
 ::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	if (this->n.get_type() != tools::Noise_type::SIGMA)
-	{
-		std::stringstream message;
-		message << "The given noise does not represent a 'SIGMA' type ('n.get_type()' = "
-		        << this->n.type2str(this->n.get_type()) << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (add_users && this->n_frames > 1)
 	{
 		if (frame_id != -1)
@@ -61,7 +53,7 @@ void Channel_AWGN_LLR<R>
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		noise_generator->generate(this->noise.data(), this->N, this->n.get_noise());
+		noise_generator->generate(this->noise.data(), this->N, this->n.get_sigma()); // trow if noise is not SIGMA type
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (auto f = 0; f < this->n_frames; f++)
@@ -77,9 +69,9 @@ void Channel_AWGN_LLR<R>
 		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		if (frame_id < 0)
-			noise_generator->generate(this->noise, this->n.get_noise());
+			noise_generator->generate(this->noise, this->n.get_sigma());// trow if noise is not SIGMA type
 		else
-			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n.get_noise());
+			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n.get_sigma());// trow if noise is not SIGMA type
 
 		for (auto f = f_start; f < f_stop; f++)
 			for (auto n = 0; n < this->N; n++)

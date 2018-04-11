@@ -135,15 +135,15 @@ void BFER<B,R,Q>
 	{
 		auto n = params_BFER.noise_range[noise_idx];
 
-		if (params_BFER.noise_type == "EB" || params_BFER.noise_type == "EB")
+		if (params_BFER.noise_type == "EBN0" || params_BFER.noise_type == "EBN0")
 		{
 			float esn0, ebn0;
-			if (params_BFER.noise_type == "EB")
+			if (params_BFER.noise_type == "EBN0")
 			{
 				ebn0 = n;
 				esn0 = tools::ebn0_to_esn0(ebn0, bit_rate, params_BFER.mdm->bps);
 			}
-			else // if (params_BFER.sim->noise_type == "ES")
+			else // if (params_BFER.sim->noise_type == "ESN0")
 			{
 				esn0 = n;
 				ebn0 = tools::esn0_to_ebn0(esn0, bit_rate, params_BFER.mdm->bps);

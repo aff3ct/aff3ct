@@ -30,15 +30,7 @@ void Modem_OOK<B,R,Q>
 {
 	Modem<B,R,Q>::set_noise(noise);
 
-	if (this->n.get_type() != tools::Noise_type::SIGMA)
-	{
-		std::stringstream message;
-		message << "The given noise does not represent a 'SIGMA' type ('n.get_type()' = "
-		        << this->n.type2str(this->n.get_type()) << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->sigma_factor = (R)2.0 * this->n.get_noise() * this->n.get_noise();
+	this->sigma_factor = (R)2.0 * this->n.get_sigma() * this->n.get_sigma(); // trow if noise is not SIGMA type
 }
 
 template <typename B, typename R, typename Q>

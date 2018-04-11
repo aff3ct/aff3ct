@@ -101,15 +101,9 @@ void Modem_SCMA<B,R,Q,PSI>
 {
 	Modem<B,R,Q>::set_noise(noise);
 
-	if (this->n.get_type() != tools::Noise_type::SIGMA)
-	{
-		std::stringstream message;
-		message << "The given noise does not represent a 'SIGMA' type ('n.get_type()' = "
-		        << this->n.type2str(this->n.get_type()) << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->n0 = this->disable_sig2 ? (R)1.0 : (R)((R)1.0 / ((R)4.0 * this->n.get_noise() * this->n.get_noise()));
+	this->n0 = this->disable_sig2 ?
+	            (R)1.0 :
+	            (R)((R)1.0 / ((R)4.0 * this->n.get_sigma() * this->n.get_sigma())); // trow if noise is not SIGMA type
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>

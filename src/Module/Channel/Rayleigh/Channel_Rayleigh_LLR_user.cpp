@@ -102,14 +102,6 @@ template <typename R>
 void Channel_Rayleigh_LLR_user<R>
 ::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
-	if (this->n.get_type() != tools::Noise_type::SIGMA)
-	{
-		std::stringstream message;
-		message << "The given noise does not represent a 'SIGMA' type ('n.get_type()' = "
-		        << this->n.type2str(this->n.get_type()) << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (frame_id != -1)
 	{
 		std::stringstream message;
@@ -134,7 +126,7 @@ void Channel_Rayleigh_LLR_user<R>
 	}
 
 	// generate the noise
-	noise_generator->generate(this->noise, this->n.get_noise());
+	noise_generator->generate(this->noise, this->n.get_sigma()); // trow if noise is not SIGMA type
 
 	// use the noise and the gain to modify the signal
 	for (auto i = 0; i < this->N * this->n_frames; i++)

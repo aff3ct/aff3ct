@@ -87,7 +87,7 @@ Modem_CPM<B,R,Q,MAX>
 
 	generate_baseband();
 
-	if (!no_sig2 && this->n.is_set())
+	if (no_sig2 || this->n.is_set())
 		generate_projection();
 }
 
@@ -102,14 +102,6 @@ void Modem_CPM<B,R,Q,MAX>
 ::set_noise(const tools::Noise<R>& noise)
 {
 	Modem<B,R,Q>::set_noise(noise);
-
-	if (this->n.get_type() != tools::Noise_type::SIGMA)
-	{
-		std::stringstream message;
-		message << "The given noise does not represent a 'SIGMA' type ('n.get_type()' = "
-		        << this->n.type2str(this->n.get_type()) << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 
 	if (!no_sig2) this->generate_projection();
 }
@@ -295,7 +287,7 @@ void Modem_CPM<B,R,Q,MAX>
 		if (!this->n.is_set())
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
-		factor = (R)1 / (this->n.get_noise() * this->n.get_noise()); // 2 / sigma_complex^2
+		factor = (R)1 / (this->n.get_sigma() * this->n.get_sigma()); // 2 / sigma_complex^2, trow if noise is not SIGMA type
 	}
 
 	if (cpm.filters_type == "TOTAL")

@@ -99,8 +99,8 @@ void BFER::parameters
 
 	args.add(
 		{p+"-noise-type", "E"},
-		tools::Text(tools::Including_set("ES", "EB", "ROP", "EP")),
-		"select the type of NOISE: Energy per Symbol / Energy per information Bit"
+		tools::Text(tools::Including_set("ESN0", "EBN0", "ROP", "EP")),
+		"select the type of NOISE: SNR per Symbol / SNR per information Bit"
 		" / Received Optical Power / Erasure Probability.");
 
 	args.add(
