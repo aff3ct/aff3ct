@@ -1,5 +1,5 @@
 # CMake entry point
-cmake_minimum_required (VERSION 3.0.2)
+cmake_minimum_required (VERSION 3.4.0)
 cmake_policy(SET CMP0054 NEW)
 
 project (aff3ct)
@@ -68,6 +68,26 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/mipp.h")
 else ()
     message(FATAL_ERROR "MIPP can't be found, try to init the submodules with the following cmd:\n"
                         "$ git submodule update --init -- ../lib/MIPP/")
+endif ()
+
+# rang header
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/rang.hpp")
+    include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/")
+    message(STATUS "rang found")
+else ()
+    message(FATAL_ERROR "rang can't be found, try to init the submodules with the following cmd:\n"
+                        "$ git submodule update --init -- ../lib/rang/")
+endif ()
+
+# CLI11 header
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/CLI.hpp")
+    include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/")
+    message(STATUS "CLI11 found")
+    #add_subdirectory(lib/CLI11)
+    #aff3ct_link_libraries(CLI11::CLI11)
+else ()
+    message(FATAL_ERROR "CLI11 can't be found, try to init the submodules with the following cmd:\n"
+                        "$ git submodule update --init -- ../lib/CLI11/")
 endif ()
 
 
