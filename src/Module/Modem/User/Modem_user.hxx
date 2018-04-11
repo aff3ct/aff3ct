@@ -18,9 +18,9 @@ namespace module
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_user<B,R,Q,MAX>
-::Modem_user(const int N, const std::string &const_path, const R sigma, const int bits_per_symbol,
+::Modem_user(const int N, const std::string &const_path, const tools::Noise<R>& noise, const int bits_per_symbol,
              const bool disable_sig2, const int n_frames)
-: Modem<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), sigma, n_frames),
+: Modem<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), noise, n_frames),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sqrt_es        (0.0),
@@ -29,8 +29,6 @@ Modem_user<B,R,Q,MAX>
 {
 	const std::string name = "Modem_user";
 	this->set_name(name);
-
-	if (sigma != (R)-1.0) this->set_sigma(sigma);
 
 	if (const_path.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'const_path' should not be empty.");
@@ -83,10 +81,19 @@ Modem_user<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
-::set_sigma(const R sigma)
+::set_noise(const tools::Noise<R>& noise)
 {
-	Modem<B,R,Q>::set_sigma(sigma);
-	this->inv_sigma2 = this->disable_sig2 ? (R)1.0 : (R)(1.0 / (this->sigma_c * this->sigma_c));
+	Modem<B,R,Q>::set_noise(noise);
+
+	if (this->n.get_type() != tools::Noise_type::SIGMA)
+	{
+		std::stringstream message;
+		message << "The given noise does not represent a 'SIGMA' type ('n.get_type()' = "
+		        << this->n.type2str(this->n.get_type()) << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	this->inv_sigma2 = this->disable_sig2 ? (R)1.0 : (R)((R)1.0 / (2 * this->n.get_noise() * this->n.get_noise()));
 }
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
@@ -121,9 +128,6 @@ void Modem_user<B,R,Q,MAX>
 	}
 }
 
-/*
- * Filter
- */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
@@ -131,18 +135,18 @@ void Modem_user<B,R,Q,MAX>
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
-/*
- * Demodulator
- */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n.is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
 
@@ -167,18 +171,18 @@ void Modem_user<B,R,Q,MAX>
 	}
 }
 
-/*
- * Demodulator
- */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
 ::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n.is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
 
@@ -210,11 +214,14 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
 ::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n.is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
 
@@ -258,18 +265,18 @@ void Modem_user<B,R,Q,MAX>
 	}
 }
 
-/*
- * Demodulator
- */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
 ::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n.is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
 
@@ -314,9 +321,6 @@ void Modem_user<B,R,Q,MAX>
 	}
 }
 
-/*
-* \brief Soft Mapper
-*/
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B, R, Q, MAX>
 ::_tmodulate(const Q *X_N1, R *X_N2, const int frame_id)

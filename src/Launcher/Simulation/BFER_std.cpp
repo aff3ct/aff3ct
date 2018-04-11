@@ -65,7 +65,7 @@ void BFER_std<B,R,Q>
 	this->args.erase({pcrc+"-fra",       "F"});
 	this->args.erase({pmdm+"-fra-size",  "N"});
 	this->args.erase({pmdm+"-fra",       "F"});
-	this->args.erase({pmdm+"-sigma"        });
+	this->args.erase({pmdm+"-sigma"         });
 	this->args.erase({pchn+"-fra-size",  "N"});
 	this->args.erase({pchn+"-fra",       "F"});
 	this->args.erase({pchn+"-sigma"         });

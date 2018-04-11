@@ -21,7 +21,7 @@ Codec(const int K, const int N_cw, const int N, const int tail_length, const int
   interleaver_llr (nullptr),
   encoder         (nullptr),
   puncturer       (nullptr),
-  K(K), N_cw(N_cw), N(N), tail_length(tail_length), sigma(-1.f)
+  K(K), N_cw(N_cw), N(N), tail_length(tail_length)
 {
 	const std::string name = "Codec";
 	this->set_name(name);
@@ -164,24 +164,24 @@ get_puncturer()
 }
 
 template <typename B, typename Q>
-float Codec<B,Q>::
-get_sigma()
+const tools::Noise<float>& Codec<B,Q>::
+get_noise()
 {
-	return this->sigma;
+	return this->n;
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-set_sigma(const float sigma)
+void Codec<B,Q>
+::set_noise(const tools::Noise<float>& n)
 {
-	if (sigma <= 0.f)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	this->n = n;
+}
 
-	this->sigma = sigma;
+template <typename B, typename Q>
+void Codec<B,Q>
+::set_noise(const tools::Noise<double>& n)
+{
+	this->set_noise(tools::Noise<float>(n.get_noise(), n.get_type()));
 }
 
 template <typename B, typename Q>

@@ -12,8 +12,8 @@ template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const std::string& gains_filename,
                             const int gain_occurrences, tools::Gaussian_gen<R> *noise_generator, const bool add_users,
-                            const R sigma, const int n_frames)
-: Channel<R>(N, sigma, n_frames),
+                            const tools::Noise<R>& noise, const int n_frames)
+: Channel<R>(N, noise, n_frames),
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
@@ -40,8 +40,8 @@ Channel_Rayleigh_LLR_user<R>
 template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const int seed, const std::string& gains_filename,
-                            const int gain_occurrences, const bool add_users, const R sigma, const int n_frames)
-: Channel<R>(N, sigma, n_frames),
+                            const int gain_occurrences, const bool add_users, const tools::Noise<R>& noise, const int n_frames)
+: Channel<R>(N, noise, n_frames),
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
@@ -102,6 +102,14 @@ template <typename R>
 void Channel_Rayleigh_LLR_user<R>
 ::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
+	if (this->n.get_type() != tools::Noise_type::SIGMA)
+	{
+		std::stringstream message;
+		message << "The given noise does not represent a 'SIGMA' type ('n.get_type()' = "
+		        << this->n.type2str(this->n.get_type()) << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (frame_id != -1)
 	{
 		std::stringstream message;
@@ -126,7 +134,7 @@ void Channel_Rayleigh_LLR_user<R>
 	}
 
 	// generate the noise
-	noise_generator->generate(this->noise, this->sigma);
+	noise_generator->generate(this->noise, this->n.get_noise());
 
 	// use the noise and the gain to modify the signal
 	for (auto i = 0; i < this->N * this->n_frames; i++)

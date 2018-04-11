@@ -71,7 +71,7 @@ void BFER_ite<B,R,Q>
 	this->args.erase({pitl+"-seed",      "S"});
 	this->args.erase({pmdm+"-fra-size",  "N"});
 	this->args.erase({pmdm+"-fra",       "F"});
-	this->args.erase({pmdm+"-sigma"        });
+	this->args.erase({pmdm+"-sigma"         });
 	this->args.erase({pchn+"-fra-size",  "N"});
 	this->args.erase({pchn+"-fra",       "F"});
 	this->args.erase({pchn+"-sigma"         });
@@ -83,8 +83,8 @@ void BFER_ite<B,R,Q>
 	this->args.erase({pqnt+"-sigma"         });
 	this->args.erase({pmnt+"-size",      "K"});
 	this->args.erase({pmnt+"-fra",       "F"});
-	this->args.erase({pter+"-info-bits","K"});
-	this->args.erase({pter+"-cw-size",  "N"});
+	this->args.erase({pter+"-info-bits", "K"});
+	this->args.erase({pter+"-cw-size",   "N"});
 }
 
 template <typename B, typename R, typename Q>

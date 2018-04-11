@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_Rayleigh_LLR<R>
 ::Channel_Rayleigh_LLR(const int N, const bool complex, tools::Gaussian_gen<R> *noise_generator, const bool add_users,
-                       const R sigma, const int n_frames)
-: Channel<R>(N, sigma, n_frames),
+                       const tools::Noise<R>& noise, const int n_frames)
+: Channel<R>(N, noise, n_frames),
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
@@ -34,9 +34,9 @@ Channel_Rayleigh_LLR<R>
 
 template <typename R>
 Channel_Rayleigh_LLR<R>
-::Channel_Rayleigh_LLR(const int N, const bool complex, const int seed, const bool add_users, const R sigma,
-                       const int n_frames)
-: Channel<R>(N, sigma, n_frames),
+::Channel_Rayleigh_LLR(const int N, const bool complex, const int seed, const bool add_users,
+                       const tools::Noise<R>& noise, const int n_frames)
+: Channel<R>(N, noise, n_frames),
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
@@ -64,6 +64,14 @@ template <typename R>
 void Channel_Rayleigh_LLR<R>
 ::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
+	if (this->n.get_type() != tools::Noise_type::SIGMA)
+	{
+		std::stringstream message;
+		message << "The given noise does not represent a 'SIGMA' type ('n.get_type()' = "
+		        << this->n.type2str(this->n.get_type()) << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (add_users && this->n_frames > 1)
 	{
 		if (frame_id != -1)
@@ -74,7 +82,7 @@ void Channel_Rayleigh_LLR<R>
 		}
 
 		noise_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
-		noise_generator->generate(this->noise.data(), this->N, this->sigma);
+		noise_generator->generate(this->noise.data(), this->N, this->n.get_noise());
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 
@@ -117,12 +125,12 @@ void Channel_Rayleigh_LLR<R>
 		if (frame_id < 0)
 		{
 			noise_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
-			noise_generator->generate(this->noise, this->sigma);
+			noise_generator->generate(this->noise, this->n.get_noise());
 		}
 		else
 		{
 			noise_generator->generate(this->gains.data() + f_start * this->N, this->N, (R)1 / (R)std::sqrt((R)2));
-			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->sigma);
+			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n.get_noise());
 		}
 
 		if (this->complex)

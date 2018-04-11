@@ -19,9 +19,12 @@ private:
 
 public:
 	Channel_AWGN_LLR(const int N, tools::Gaussian_gen<R> *noise_generator = new tools::Gaussian_gen_std<R>(),
-	                 const bool add_users = false, const R sigma = (R)1, const int n_frames = 1);
+	                 const bool add_users = false,
+	                 const tools::Noise<R>& noise = tools::Noise<R>(),
+	                 const int n_frames = 1);
 
-	Channel_AWGN_LLR(const int N, const int seed, const bool add_users = false, const R sigma = (R)1,
+	Channel_AWGN_LLR(const int N, const int seed, const bool add_users = false,
+	                 const tools::Noise<R>& noise = tools::Noise<R>(),
 	                 const int n_frames = 1);
 
 	virtual ~Channel_AWGN_LLR();

@@ -14,6 +14,7 @@
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
 #include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
+#include "Tools/Noise.hpp"
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
@@ -30,10 +31,9 @@ protected:
 	const factory::EXIT::parameters &params_EXIT; // simulation parameters
 
 	// code specifications
+	tools::Noise<R> noise;   // current noise simulated
+	tools::Noise<R> noise_a; // current noise simulated for the "a" part
 	float sig_a;
-	float sigma;
-	float ebn0;
-	float esn0;
 
 	// communication chain
 	module::Source      <B  > *source;

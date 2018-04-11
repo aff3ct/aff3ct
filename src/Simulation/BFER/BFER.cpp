@@ -34,11 +34,6 @@ BFER<B,R,Q>
 
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
 
-  snr  (0.f),
-  snr_s(0.f),
-  snr_b(0.f),
-  sigma(0.f),
-
   max_fra(0),
 
   monitor    (params_BFER.n_threads, nullptr),
@@ -135,25 +130,40 @@ void BFER<B,R,Q>
 		}
 	}
 
-	// for each SNR to be simulated
-	for (unsigned snr_idx = 0; snr_idx < params_BFER.snr_range.size(); snr_idx ++)
+	// for each NOISE to be simulated
+	for (unsigned noise_idx = 0; noise_idx < params_BFER.noise_range.size(); noise_idx ++)
 	{
-		snr = params_BFER.snr_range[snr_idx];
+		auto n = params_BFER.noise_range[noise_idx];
 
-		if (params_BFER.snr_type == "EB")
+		if (params_BFER.noise_type == "EB" || params_BFER.noise_type == "EB")
 		{
-			snr_b = snr;
-			snr_s = tools::ebn0_to_esn0(snr_b, bit_rate, params_BFER.mdm->bps);
-		}
-		else // if (params_BFER.sim->snr_type == "ES")
-		{
-			snr_s = snr;
-			snr_b = tools::esn0_to_ebn0(snr_s, bit_rate, params_BFER.mdm->bps);
-		}
-		sigma = tools::esn0_to_sigma(snr_s, params_BFER.mdm->upf);
+			float esn0, ebn0;
+			if (params_BFER.noise_type == "EB")
+			{
+				ebn0 = n;
+				esn0 = tools::ebn0_to_esn0(ebn0, bit_rate, params_BFER.mdm->bps);
+			}
+			else // if (params_BFER.sim->noise_type == "ES")
+			{
+				esn0 = n;
+				ebn0 = tools::esn0_to_ebn0(esn0, bit_rate, params_BFER.mdm->bps);
+			}
 
-		this->terminal->set_esn0(snr_s);
-		this->terminal->set_ebn0(snr_b);
+			auto sigma = tools::esn0_to_sigma(esn0, params_BFER.mdm->upf);
+
+			this->noise.set_sigma(sigma, ebn0, esn0);
+		}
+		else if (params_BFER.noise_type == "ROP")
+		{
+			this->noise.set_rop(n);
+		}
+		else // if (params_BFER.noise_type == "EP")
+		{
+			this->noise.set_ep(n);
+		}
+
+		this->terminal->set_noise(this->noise);
+
 
 		if (this->params_BFER.err_track_revert)
 		{
@@ -163,12 +173,12 @@ void BFER<B,R,Q>
 			// dirty hack to override simulation params_BFER
 			auto &params_BFER_writable = const_cast<factory::BFER::parameters&>(params_BFER);
 
-			std::stringstream s_snr_b;
-			s_snr_b << std::setprecision(2) << std::fixed << snr_b;
+			std::stringstream s_noise;
+			s_noise << std::setprecision(2) << std::fixed << this->noise.get_noise();
 
-			params_BFER_writable.src     ->path = params_BFER.err_track_path + "_" + s_snr_b.str() + ".src";
-			params_BFER_writable.cdc->enc->path = params_BFER.err_track_path + "_" + s_snr_b.str() + ".enc";
-			params_BFER_writable.chn     ->path = params_BFER.err_track_path + "_" + s_snr_b.str() + ".chn";
+			params_BFER_writable.src     ->path = params_BFER.err_track_path + "_" + s_noise.str() + ".src";
+			params_BFER_writable.cdc->enc->path = params_BFER.err_track_path + "_" + s_noise.str() + ".enc";
+			params_BFER_writable.chn     ->path = params_BFER.err_track_path + "_" + s_noise.str() + ".chn";
 
 			std::ifstream file(params_BFER.chn->path, std::ios::binary);
 			if (file.is_open())
@@ -194,10 +204,10 @@ void BFER<B,R,Q>
 
 		if (params_BFER.display_legend)
 #ifdef ENABLE_MPI
-			if (((!params_BFER.ter->disabled && snr_idx == 0 && !params_BFER.debug) ||
+			if (((!params_BFER.ter->disabled && noise_idx == 0 && !params_BFER.debug) ||
 		 	   (params_BFER.statistics && !params_BFER.debug)) && params_BFER.mpi_rank == 0)
 #else
-			if (((!params_BFER.ter->disabled && snr_idx == 0 && !params_BFER.debug) ||
+			if (((!params_BFER.ter->disabled && noise_idx == 0 && !params_BFER.debug) ||
 			    (params_BFER.statistics && !params_BFER.debug)))
 #endif
 				terminal->legend(std::cout);
@@ -254,10 +264,10 @@ void BFER<B,R,Q>
 
 		if (this->dumper_red != nullptr && !this->simu_error)
 		{
-			std::stringstream s_snr_b;
-			s_snr_b << std::setprecision(2) << std::fixed << snr_b;
+			std::stringstream s_noise;
+			s_noise << std::setprecision(2) << std::fixed << this->noise.get_noise();
 
-			this->dumper_red->dump(params_BFER.err_track_path + "_" + s_snr_b.str());
+			this->dumper_red->dump(params_BFER.err_track_path + "_" + s_noise.str());
 			this->dumper_red->clear();
 		}
 

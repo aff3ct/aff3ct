@@ -59,6 +59,20 @@ void Terminal_EXIT<B,R>
 
 template <typename B, typename R>
 void Terminal_EXIT<B,R>
+::set_noise(const Noise<float>& n)
+{
+	// this->noise = n;
+}
+
+template <typename B, typename R>
+void Terminal_EXIT<B,R>
+::set_noise(const Noise<double>& n)
+{
+	// this->noise.set_noise(n.get_noise(), n.get_type());
+}
+
+template <typename B, typename R>
+void Terminal_EXIT<B,R>
 ::set_sig_a(const float sig_a)
 {
 	this->sig_a = sig_a;

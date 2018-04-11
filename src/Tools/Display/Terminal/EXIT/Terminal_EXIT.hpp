@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
+#include "Tools/Noise.hpp"
 
 #include "../Terminal.hpp"
 
@@ -32,6 +33,9 @@ public:
 	void set_esn0 (const float esn0 );
 	void set_ebn0 (const float ebn0 );
 	void set_sig_a(const float sig_a);
+
+	void set_noise(const Noise<float>& noise);
+	void set_noise(const Noise<double>& noise);
 
 	void legend      (std::ostream &stream = std::cout);
 	void temp_report (std::ostream &stream = std::cout);

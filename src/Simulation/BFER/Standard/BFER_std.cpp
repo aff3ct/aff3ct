@@ -114,9 +114,9 @@ void BFER_std<B,R,Q>
 	// set current sigma
 	for (auto tid = 0; tid < this->params_BFER_std.n_threads; tid++)
 	{
-		this->channel[tid]->set_sigma(this->sigma);
-		this->modem  [tid]->set_sigma(this->sigma);
-		this->codec  [tid]->set_sigma(this->sigma);
+		this->channel[tid]->set_noise(this->noise);
+		this->modem  [tid]->set_noise(this->noise);
+		this->codec  [tid]->set_noise(this->noise);
 	}
 }
 
@@ -170,11 +170,11 @@ module::Codec_SIHO<B,Q>* BFER_std<B,R,Q>
 	{
 		if (params_BFER_std.err_track_revert && params_cdc->itl->core->uniform)
 		{
-			std::stringstream s_snr_b;
-			s_snr_b << std::setprecision(2) << std::fixed << this->snr_b;
+			std::stringstream s_noise;
+			s_noise << std::setprecision(2) << std::fixed << this->noise.get_noise();
 
 			params_cdc->itl->core->type = "USER";
-			params_cdc->itl->core->path = params_BFER_std.err_track_path + "_" + s_snr_b.str() + ".itl";
+			params_cdc->itl->core->path = params_BFER_std.err_track_path + "_" + s_noise.str() + ".itl";
 		}
 		else if (params_cdc->itl->core->uniform)
 		{

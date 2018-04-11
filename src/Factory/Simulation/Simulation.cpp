@@ -34,31 +34,31 @@ void Simulation::parameters
 	auto p = this->get_prefix();
 
 	args.add(
-		{p+"-snr-range", "R"},
+		{p+"-noise-range", "R"},
 		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
-		"signal/noise ratio range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
+		"noise energy range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
 		tools::Argument_info::REQUIRED);
 
 	args.add(
-		{p+"-snr-min", "m"},
+		{p+"-noise-min", "m"},
 		tools::Real(),
-		"minimal signal/noise ratio to simulate.",
+		"minimal noise energy to simulate.",
 		tools::Argument_info::REQUIRED);
 
 	args.add(
-		{p+"-snr-max", "M"},
+		{p+"-noise-max", "M"},
 		tools::Real(),
-		"maximal signal/noise ratio to simulate.",
+		"maximal noise energy to simulate.",
 		tools::Argument_info::REQUIRED);
 
 	args.add(
-		{p+"-snr-step", "s"},
+		{p+"-noise-step", "s"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
-		"signal/noise ratio step between each simulation.");
+		"noise energy step between each simulation iteration.");
 
 
-	args.add_link({p+"-snr-range", "R"}, {p+"-snr-min",  "m"});
-	args.add_link({p+"-snr-range", "R"}, {p+"-snr-max",  "M"});
+	args.add_link({p+"-noise-range", "R"}, {p+"-noise-min",  "m"});
+	args.add_link({p+"-noise-range", "R"}, {p+"-noise-max",  "M"});
 
 
 	args.add(
@@ -69,7 +69,7 @@ void Simulation::parameters
 	args.add(
 		{p+"-stop-time"},
 		tools::Integer(tools::Positive()),
-		"time in sec after what the current SNR iteration should stop (0 is infinite).");
+		"time in sec after what the current simulatated noise should stop (0 is infinite).");
 
 	args.add(
 		{p+"-debug"},
@@ -123,16 +123,16 @@ void Simulation::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-snr-range", "R"}))
-		this->snr_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-snr-range", "R"}), 0.1f);
+	if(vals.exist({p+"-noise-range", "R"}))
+		this->noise_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-noise-range", "R"}), 0.1f);
 	else
 	{
-		float snr_min = 0.f, snr_max = 0.f, snr_step = 0.1f;
-		if(vals.exist({p+"-snr-min",  "m"})) snr_min  = vals.to_float({p+"-snr-min",  "m"});
-		if(vals.exist({p+"-snr-max",  "M"})) snr_max  = vals.to_float({p+"-snr-max",  "M"});
-		if(vals.exist({p+"-snr-step", "s"})) snr_step = vals.to_float({p+"-snr-step", "s"});
+		float noise_min = 0.f, noise_max = 0.f, noise_step = 0.1f;
+		if(vals.exist({p+"-noise-min",  "m"})) noise_min  = vals.to_float({p+"-noise-min",  "m"});
+		if(vals.exist({p+"-noise-max",  "M"})) noise_max  = vals.to_float({p+"-noise-max",  "M"});
+		if(vals.exist({p+"-noise-step", "s"})) noise_step = vals.to_float({p+"-noise-step", "s"});
 
-		this->snr_range = tools::generate_range({{snr_min, snr_max}}, snr_step);
+		this->noise_range = tools::generate_range({{noise_min, noise_max}}, noise_step);
 	}
 
 	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"    });
@@ -206,11 +206,11 @@ void Simulation::parameters
 
 	auto p = this->get_prefix();
 
-	if (this->snr_range.size())
+	if (this->noise_range.size())
 	{
-		std::stringstream snr_range_str;
-		snr_range_str << this->snr_range.front() << " -> " << this->snr_range.back() << " dB";
-		headers[p].push_back(std::make_pair("SNR range", snr_range_str.str()));
+		std::stringstream noise_range_str;
+		noise_range_str << this->noise_range.front() << " -> " << this->noise_range.back() << " dB";
+		headers[p].push_back(std::make_pair("NOISE range", noise_range_str.str()));
 	}
 
 	headers[p].push_back(std::make_pair("Seed", std::to_string(this->global_seed)));

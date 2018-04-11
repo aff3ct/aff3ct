@@ -19,12 +19,7 @@ EXIT<B,R>
 ::EXIT(const factory::EXIT::parameters& params_EXIT)
 : Simulation(params_EXIT),
   params_EXIT(params_EXIT),
-
-  sig_a(0.f),
-  sigma(0.f),
-  ebn0 (0.f),
-  esn0 (0.f),
-
+  sig_a    ((R)0   ),
   source   (nullptr),
   codec    (nullptr),
   modem    (nullptr),
@@ -111,32 +106,33 @@ void EXIT<B,R>
 	this->build_communication_chain();
 	this->sockets_binding();
 
-	// for each channel SNR to be simulated
-	for (unsigned snr_idx = 0; snr_idx < params_EXIT.snr_range.size(); snr_idx ++)
+	// for each channel NOISE to be simulated
+	for (unsigned noise_idx = 0; noise_idx < params_EXIT.noise_range.size(); noise_idx ++)
 	{
-		ebn0 = params_EXIT.snr_range[snr_idx];
+		float ebn0 = params_EXIT.noise_range[noise_idx];
 
-		// For EXIT simulation, SNR is considered as Es/N0
+		// For EXIT simulation, NOISE is considered as Es/N0
 		const auto bit_rate = 1.f;
-		esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params_EXIT.mdm->bps);
-		sigma = tools::esn0_to_sigma(esn0, params_EXIT.mdm->upf);
+		float esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params_EXIT.mdm->bps);
+		float sigma = tools::esn0_to_sigma(esn0, params_EXIT.mdm->upf);
 
-		terminal->set_esn0(esn0);
-		terminal->set_ebn0(ebn0);
+		this->noise.set_sigma(sigma, ebn0, esn0);
 
-		channel->set_sigma(sigma);
-		modem  ->set_sigma(sigma);
-		codec  ->set_sigma(sigma);
+		terminal->set_noise(this->noise);
+		channel ->set_noise(this->noise);
+		modem   ->set_noise(this->noise);
+		codec   ->set_noise(this->noise);
 
 		// for each "a" standard deviation (sig_a) to be simulated
 		using namespace module;
 		for (unsigned sig_a_idx = 0; sig_a_idx < params_EXIT.sig_a_range.size(); sig_a_idx ++)
 		{
 			sig_a = params_EXIT.sig_a_range[sig_a_idx];
+			this->noise_a.set_sigma(2.f / sig_a);
 
-			terminal ->set_sig_a(sig_a      );
-			channel_a->set_sigma(2.f / sig_a);
-			modem_a  ->set_sigma(2.f / sig_a);
+			terminal ->set_sig_a(sig_a        );
+			channel_a->set_noise(this->noise_a);
+			modem_a  ->set_noise(this->noise_a);
 
 			if (sig_a == 0.f) // if sig_a = 0, La_K2 = 0
 			{
@@ -155,7 +151,7 @@ void EXIT<B,R>
 				}
 			}
 
-			if (((!params_EXIT.ter->disabled && snr_idx == 0 && sig_a_idx == 0 &&
+			if (((!params_EXIT.ter->disabled && noise_idx == 0 && sig_a_idx == 0 &&
 				!params_EXIT.debug) || (params_EXIT.statistics && !params_EXIT.debug)))
 				terminal->legend(std::cout);
 

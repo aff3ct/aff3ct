@@ -26,7 +26,7 @@ struct Simulation : Launcher
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required arg
-		std::vector<float> snr_range;
+		std::vector<float> noise_range;
 
 		// optional parameters
 #ifdef ENABLE_MPI

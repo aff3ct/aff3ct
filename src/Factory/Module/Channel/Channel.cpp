@@ -161,6 +161,10 @@ template <typename R>
 module::Channel<R>* Channel::parameters
 ::build() const
 {
+	tools::Noise<R> noise;
+	if (this->sigma != -1.f)
+		noise.set_sigma((R)this->sigma);
+
 	tools::Gaussian_noise_generator<R>* n = nullptr;
 	     if (implem == "STD" ) n = new tools::Gaussian_noise_generator_std <R>(seed);
 	else if (implem == "FAST") n = new tools::Gaussian_noise_generator_fast<R>(seed);
@@ -173,9 +177,9 @@ module::Channel<R>* Channel::parameters
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, sigma, n_frames);
+	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, noise, n_frames);
+	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, noise, n_frames);
+	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, noise, n_frames);
 	else
 	{
 		module::Channel<R>* c = nullptr;

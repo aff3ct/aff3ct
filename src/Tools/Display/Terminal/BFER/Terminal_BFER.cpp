@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <utility>
 #include <ios>
 
 #include "Tools/Exception/exception.hpp"
@@ -11,34 +12,46 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
+const char comment_tag    = '#';
+const char col_separator  = '|';
+const char line_separator = '-';
+const std::string spaced_scol_separator = " |" ;
+const std::string spaced_dcol_separator = " ||";
+
+#ifdef _WIN32
+const int column_width = 11;
+#else
+const int column_width = 10;
+#endif
+
 template <typename B>
 Terminal_BFER<B>
 ::Terminal_BFER(const module::Monitor_BFER<B> &monitor)
 : Terminal       (                                ),
   monitor        (monitor                         ),
-  esn0           (0.f                             ),
-  ebn0           (0.f                             ),
-  is_esn0        (false                           ),
-  is_ebn0        (false                           ),
   t_snr          (std::chrono::steady_clock::now()),
   real_time_state(0                               )
 {
 }
 
 template <typename B>
-void Terminal_BFER<B>
-::set_esn0(const float esn0)
+Terminal_BFER<B>
+::~Terminal_BFER()
 {
-	this->is_esn0 = true;
-	this->esn0    = esn0;
 }
 
 template <typename B>
 void Terminal_BFER<B>
-::set_ebn0(const float ebn0)
+::set_noise(const Noise<float>& n)
 {
-	this->is_ebn0 = true;
-	this->ebn0    = ebn0;
+	this->noise = n;
+}
+
+template <typename B>
+void Terminal_BFER<B>
+::set_noise(const Noise<double>& n)
+{
+	this->noise.set_noise(n.get_noise(), n.get_type());
 }
 
 template <typename B>
@@ -67,28 +80,167 @@ void Terminal_BFER<B>
 {
 	std::ios::fmtflags f(stream.flags());
 
-#ifdef _WIN32
-	stream << "# " << format("---------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("         Bit Error Rate (BER) and Frame Error Rate (FER) depending         ||  Global throughput  ", Style::BOLD) << std::endl;
-	stream << "# " << format("                      on the Signal Noise Ratio (SNR)                      ||  and elapsed time   ", Style::BOLD) << std::endl;
-	stream << "# " << format("---------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
-	stream << "# " << format(" Es/N0 | Eb/N0 |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
-	stream << "# " << format("  (dB) |  (dB) |           |           |           |           |           ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+	// vector of pairs {group title, columns titles}
+	// group title is a pair {first line, second line}
+	// columns titles is a vector of pair {first line, second line}
+	std::vector<std::pair<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>>> cols_groups(2);
 
-#else
-	stream << "# " << format("----------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("      Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  ", Style::BOLD) << std::endl;
-	stream << "# " << format("                   on the Signal Noise Ratio (SNR)                    ||  and elapsed time   ", Style::BOLD) << std::endl;
-	stream << "# " << format("----------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
-	stream << "# " << format(" Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
-	stream << "# " << format("  (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
-#endif
+
+	auto& bfer_title       = cols_groups[0].first;
+	auto& bfer_cols        = cols_groups[0].second;
+	auto& throughput_title = cols_groups[1].first;
+	auto& throughput_cols  = cols_groups[1].second;
+
+	bfer_title = std::make_pair("Bit Error Rate (BER) and Frame Error Rate (FER)", "");
+
+	switch (this->noise.get_type())
+	{
+		case Noise_type::SIGMA :
+			bfer_title.second = "depending on the Signal Noise Ratio (SNR)";
+			bfer_cols.push_back(std::make_pair("Es/N0", "(dB)"));
+			bfer_cols.push_back(std::make_pair("Eb/N0", "(dB)"));
+		break;
+		case Noise_type::ROP :
+			bfer_title.second = "depending on the Received Optical Power (ROP)";
+			bfer_cols.push_back(std::make_pair("ROP", "(dB)"));
+		break;
+		case Noise_type::EP :
+			bfer_title.second = "depending on the Erasure Probability (EP)";
+			bfer_cols.push_back(std::make_pair("EP", ""));
+		break;
+	}
+
+	bfer_cols.push_back(std::make_pair("FRA", ""));
+	bfer_cols.push_back(std::make_pair("BE",  ""));
+	bfer_cols.push_back(std::make_pair("FE",  ""));
+	bfer_cols.push_back(std::make_pair("BER", ""));
+	bfer_cols.push_back(std::make_pair("FER", ""));
+
+	throughput_title = std::make_pair("Global throughput", "and elapsed time");
+	throughput_cols.push_back(std::make_pair("SIM_THR", "(Mb/s)"));
+	throughput_cols.push_back(std::make_pair("ET/RT", "(hhmmss)"));
+
+
+	// stream << "# " << format("---------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+	// stream << "# " << format("      Bit Error Rate (BER) and Frame Error Rate (FER) depending      ||  Global throughput  ", Style::BOLD) << std::endl;
+	// stream << "# " << format("                   on the Erasure Probability (EP)                   ||  and elapsed time   ", Style::BOLD) << std::endl;
+	// stream << "# " << format("---------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
+	// stream << "# " << format("---------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+	// stream << "# " << format("      EP |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
+	// stream << "# " << format("         |           |           |           |           |           ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
+	// stream << "# " << format("---------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+
+
+	const auto legend_style = Style::BOLD;
+
+	// print first line of the table
+	stream << comment_tag << " ";
+	for (unsigned i = 0; i < cols_groups.size(); i++)
+	{
+		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
+		stream << format(std::string(group_width, line_separator), legend_style);
+
+		if (i < (cols_groups.size() -1)) // print group separator except for last
+			stream << format(std::string(2, col_separator), legend_style);
+	}
+	stream << std::endl;
+
+	// print line 2 and 3 of the table (group title lines)
+	for (auto l = 0; l < 2; l++)
+	{
+		stream << comment_tag << " ";
+		for (unsigned i = 0; i < cols_groups.size(); i++)
+		{
+			const auto& text = l == 0 ? cols_groups[i].first.first : cols_groups[i].first.second;
+
+			const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
+			const int n_spaces = (int)group_width - (int)text.size();
+			const int n_spaces_left  = n_spaces/2;
+			const int n_spaces_right = n_spaces - n_spaces_left; // can be different than n_spaces/2 if odd size
+			stream << format(std::string(n_spaces_left,  ' '), legend_style);
+			stream << format(text, legend_style);
+			stream << format(std::string(n_spaces_right, ' '), legend_style);
+
+			if (i < (cols_groups.size() -1)) // print group separator except for last
+				stream << format(std::string(2, col_separator), legend_style);
+		}
+		stream << std::endl;
+	}
+
+	// print line 4 of the table
+	stream << comment_tag << " ";
+	for (unsigned i = 0; i < cols_groups.size(); i++)
+	{
+		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
+		stream << format(std::string(group_width, line_separator), legend_style);
+
+		if (i < (cols_groups.size() -1)) // print group separator except for last
+			stream << format(std::string(2, col_separator), legend_style);
+	}
+	stream << std::endl;
+
+	// print line 5 of the table
+	stream << comment_tag << " ";
+	for (unsigned i = 0; i < cols_groups.size(); i++)
+	{
+		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
+		{
+			stream << format(std::string(column_width, line_separator), legend_style);
+			if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
+				stream << format(std::string(1, col_separator), legend_style);
+		}
+
+		if (i < (cols_groups.size() -1)) // print group separator except for last
+			stream << format(std::string(2, col_separator), legend_style);
+	}
+	stream << std::endl;
+
+	// print line 6 and 7 of the table (column title lines)
+	for (auto l = 0; l < 2; l++)
+	{
+		stream << comment_tag << " ";
+		for (unsigned i = 0; i < cols_groups.size(); i++)
+		{
+
+			for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
+			{
+				const auto& text = l == 0 ? cols_groups[i].second[j].first : cols_groups[i].second[j].second;
+				const int n_spaces = (int)column_width - (int)text.size() -1;
+				stream << format(std::string(n_spaces,  ' '), legend_style);
+				stream << format(text + " ", legend_style);
+
+				if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
+					stream << format(std::string(1, col_separator), legend_style);
+			}
+
+			if (i < (cols_groups.size() -1)) // print group separator except for last
+				stream << format(std::string(2, col_separator), legend_style);
+		}
+		stream << std::endl;
+	}
+
+	// print line 8 of the table
+	stream << comment_tag << " ";
+	for (unsigned i = 0; i < cols_groups.size(); i++)
+	{
+		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
+		{
+			stream << format(std::string(column_width, line_separator), legend_style);
+			if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
+				stream << format(std::string(1, col_separator), legend_style);
+		}
+
+		if (i < (cols_groups.size() -1)) // print group separator except for last
+			stream << format(std::string(2, col_separator), legend_style);
+	}
+	stream << std::endl;
 
 	stream.flags(f);
+}
+
+std::string get_spaces_left(const std::string& str, const int total_width)
+{
+	return std::string(total_width - str.size() -1, ' '); // -1 because a space is reserved for the right
 }
 
 template <typename B>
@@ -105,59 +257,45 @@ void Terminal_BFER<B>
 	auto fe  = monitor.get_n_fe();
 
 	auto simu_time = (float)duration_cast<nanoseconds>(steady_clock::now() - t_snr).count() * 0.000000001f;
-	auto simu_cthr = ((float)monitor.get_size() * (float)monitor.get_n_analyzed_fra()) /
-		              simu_time ; // = bps
+	auto simu_cthr = ((float)monitor.get_size() * (float)monitor.get_n_analyzed_fra()) / simu_time ; // = bps
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
 	if (module::Monitor::is_interrupt()) stream << "\r";
 
-	std::stringstream esn0_str;
-	if (!is_esn0)
-		esn0_str << "   -  ";
-	else
-		esn0_str << setprecision(2) << fixed << setw(6) << esn0;
+	stream << "  " ; // left offset
 
-	std::stringstream ebn0_str;
-	if (!is_ebn0)
-		ebn0_str << "  -  ";
-	else
-		ebn0_str << setprecision(2) << fixed << setw(5) << ebn0;
+	const std::string undefined_noise_tag = "- ";
 
-#ifdef _WIN32
+
+	switch (this->noise.get_type())
+	{
+		case Noise_type::SIGMA :
+			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_esn0() << format(spaced_scol_separator, Style::BOLD);
+			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_ebn0() << format(spaced_scol_separator, Style::BOLD);
+		break;
+		case Noise_type::ROP :
+		case Noise_type::EP :
+			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_noise() << format(spaced_scol_separator, Style::BOLD);
+		break;
+	}
+	// stream << get_spaces_left(undefined_noise_tag, column_width) << " ";
+
+
 	stringstream str_ber, str_fer;
-	str_ber << setprecision(2) << scientific << setw(9) << ber;
-	str_fer << setprecision(2) << scientific << setw(9) << fer;
+	str_ber << setprecision(2) << scientific << setw(column_width-1) << ber;
+	str_fer << setprecision(2) << scientific << setw(column_width-1) << fer;
 
-	unsigned long long l0 = 99999999;  // limit 0
-	unsigned long long l1 = 99999999;  // limit 1
-//	auto               l2 = 99999.99f; // limit 2
-	stream << "  ";
-	stream <<                                                                                                     esn0_str.str()  << format(" | ",  Style::BOLD);
-	stream <<                                                                                                     ebn0_str.str()  << format(" | ",  Style::BOLD);
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << format(" | ",  Style::BOLD);
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << format(" | ",  Style::BOLD);
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << format(" | ",  Style::BOLD);
-	stream <<                                                                                                       str_ber.str() << format(" | ",  Style::BOLD);
-	stream <<                                                                                                       str_fer.str() << format(" || ", Style::BOLD);
-	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
-#else
-	stringstream str_ber, str_fer;
-	str_ber << setprecision(2) << scientific << setw(8) << ber;
-	str_fer << setprecision(2) << scientific << setw(8) << fer;
+	const unsigned long long l0 = 99999999;  // limit 0
+	const unsigned long long l1 = 99999999;  // limit 1
+	//const auto               l2 = 99999.99f; // limit 2
 
-	unsigned long long l0 = 99999999;  // limit 0
-	unsigned long long l1 = 99999999;  // limit 1
-	stream << "  ";
-	stream <<                                                                                                     esn0_str.str()  << format(" | ",  Style::BOLD);
-	stream <<                                                                                                     ebn0_str.str()  << format(" | ",  Style::BOLD);
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << format(" | ",  Style::BOLD);
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << format(" | ",  Style::BOLD);
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << format(" | ",  Style::BOLD);
-	stream <<                                                                                                       str_ber.str() << format(" | ",  Style::BOLD);
-	stream <<                                                                                                       str_fer.str() << format(" || ", Style::BOLD);
-	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
-#endif
+	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(column_width-1) << ((fra > l0) ? (float)fra : fra) << format(spaced_scol_separator, Style::BOLD);
+	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(column_width-1) << (( be > l1) ? (float) be :  be) << format(spaced_scol_separator, Style::BOLD);
+	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(column_width-1) << (( fe > l1) ? (float) fe :  fe) << format(spaced_scol_separator, Style::BOLD);
+	stream <<                                                                                                                    str_ber.str() << format(spaced_scol_separator, Style::BOLD);
+	stream <<                                                                                                                    str_fer.str() << format(spaced_dcol_separator, Style::BOLD);
+	stream << setprecision(                 2) <<                            fixed  << setw(column_width-1) <<                       simu_cthr;
 }
 
 template <typename B>
@@ -174,7 +312,7 @@ void Terminal_BFER<B>
 	auto tr = et * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe()) - et;
 	auto tr_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : tr);
 
-	stream << format(" | ", Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(8) << tr_format;
+	stream << format(spaced_scol_separator, Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(column_width-1) << tr_format;
 
 	stream << " ";
 	switch (real_time_state)
@@ -207,10 +345,9 @@ void Terminal_BFER<B>
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
 	auto et_format = get_time_format(et);
 
-	stream << format(" | ", Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(8) << et_format;
+	stream << format(spaced_scol_separator, Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(column_width-1) << et_format;
 
-	if (module::Monitor::is_interrupt()) stream << " x" << std::endl;
-	else                                 stream << "  " << std::endl;
+	stream << (module::Monitor::is_interrupt() ? " x" : "  ") << std::endl;
 
 	t_snr = std::chrono::steady_clock::now();
 

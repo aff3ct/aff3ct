@@ -28,13 +28,21 @@ protected:
 	unsigned gain_index;
 
 public:
-	Channel_Rayleigh_LLR_user(const int N, const bool complex, const std::string& gains_filename,
+	Channel_Rayleigh_LLR_user(const int N, const bool complex,
+	                          const std::string& gains_filename,
 	                          const int gain_occurrences = 1,
 	                          tools::Gaussian_gen<R> *noise_generator = new tools::Gaussian_gen_std<R>(),
-	                          const bool add_users = false, const R sigma = (R)1, const int n_frames = 1);
-	Channel_Rayleigh_LLR_user(const int N, const bool complex, const int seed, const std::string& gains_filename,
-	                          const int gain_occurrences = 1, const bool add_users = false, const R sigma = (R)1,
+	                          const bool add_users = false,
+	                          const tools::Noise<R>& noise = tools::Noise<R>(),
 	                          const int n_frames = 1);
+
+	Channel_Rayleigh_LLR_user(const int N, const bool complex, const int seed,
+	                          const std::string& gains_filename,
+	                          const int gain_occurrences = 1,
+	                          const bool add_users = false,
+	                          const tools::Noise<R>& noise = tools::Noise<R>(),
+	                          const int n_frames = 1);
+
 	virtual ~Channel_Rayleigh_LLR_user();
 
 	virtual void add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id = -1); using Channel<R>::add_noise_wg;

@@ -25,11 +25,11 @@ private:
 
 
 public:
-	Modem_user(const int N, const std::string &const_path, const R sigma = (R)1, const int bits_per_symbol = 2,
-	           const bool disable_sig2 = false, const int n_frames = 1);
+	Modem_user(const int N, const std::string &const_path, const tools::Noise<R>& noise = tools::Noise<R>(),
+	           const int bits_per_symbol = 2, const bool disable_sig2 = false, const int n_frames = 1);
 	virtual ~Modem_user();
 
-	void set_sigma(const R sigma);
+	virtual void set_noise(const tools::Noise<R>& noise);
 
 	static bool is_complex_mod()
 	{
