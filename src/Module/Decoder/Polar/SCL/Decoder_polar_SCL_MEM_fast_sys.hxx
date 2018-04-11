@@ -9,7 +9,6 @@
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"

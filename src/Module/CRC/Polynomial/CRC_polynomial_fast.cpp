@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Algo/Bit_packer.hpp"
 
 #include "CRC_polynomial_fast.hpp"
@@ -213,7 +212,7 @@ unsigned CRC_polynomial_fast<B>
 	return crc;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::CRC_polynomial_fast<B_8>;

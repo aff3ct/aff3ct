@@ -3,7 +3,6 @@
 #include "Factory/Module/Coset/Coset.hpp"
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Algo/Predicate_ite.hpp"
 
 #include "SC_BFER_ite.hpp"

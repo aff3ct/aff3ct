@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 
 #include "SC_BFER_std.hpp"
 
@@ -195,7 +194,7 @@ void SC_BFER_std<B,R,Q>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::simulation::SC_BFER_std<B_8,R_8,Q_8>;

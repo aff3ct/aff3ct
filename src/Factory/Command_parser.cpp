@@ -1,3 +1,5 @@
+#include "Tools/Display/bash_tools.h"
+
 #include "Command_parser.hpp"
 
 using namespace aff3ct;
