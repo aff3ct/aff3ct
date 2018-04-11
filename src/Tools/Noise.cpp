@@ -9,18 +9,15 @@ using namespace tools;
 template <typename R>
 Noise<R>::
 Noise()
-: _t(Noise_type::SIGMA, false), _n((R)0., false), _ebn0((R)0., false), _esn0((R)0., false)
 {
-	// init();
+	init();
 }
 
 template <typename R>
 Noise<R>::
 Noise(const R noise, const Noise_type t)
-: Noise()
-// : _t(Noise_type::SIGMA, false), _n((R)0, false), _ebn0((R)0, false), _esn0((R)0, false)
 {
-	// init();
+	init();
 	set_noise(noise, t);
 }
 
