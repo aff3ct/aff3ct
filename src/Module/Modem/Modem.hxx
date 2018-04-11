@@ -51,7 +51,7 @@ Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& nois
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise.has_type()) this->set_noise(noise);
+	if (noise.is_set()) this->set_noise(noise);
 
 	this->init_processes();
 }
@@ -79,7 +79,7 @@ Modem(const int N, const int N_mod, const tools::Noise<R>& noise, const int n_fr
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise.has_type()) this->set_noise(noise);
+	if (noise.is_set()) this->set_noise(noise);
 
 	this->init_processes();
 }
@@ -100,7 +100,7 @@ Modem(const int N, const tools::Noise<R>& noise, const int n_frames)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise.has_type()) this->set_noise(noise);
+	if (noise.is_set()) this->set_noise(noise);
 
 	this->init_processes();
 }
