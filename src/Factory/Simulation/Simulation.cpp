@@ -1,3 +1,5 @@
+#include <rang.hpp>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
@@ -187,7 +189,7 @@ void Simulation::parameters
 #ifdef ENABLE_COOL_BASH
 	// disable the cool bash mode for PyBER
 	if (!this->pyber.empty())
-		tools::enable_bash_tools = false;
+		rang::setControlMode(rang::control::Off);
 #endif
 
 #ifdef MULTI_PREC

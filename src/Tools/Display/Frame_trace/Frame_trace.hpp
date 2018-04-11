@@ -23,7 +23,7 @@ namespace tools
  * \tparam B: type of bits.
  */
 template <typename B = int>
-class Frame_trace 
+class Frame_trace
 {
 private:
 	enum debug_version { BIT, REAL };

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <iomanip>
 #include <ios>
+#include <rang.hpp>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Module.hpp"
@@ -158,12 +158,12 @@ static inline void display_data(const T *data,
 	}
 	else
 	{
-		const auto sty_fra = tools::Style::BOLD | tools::FG::Color::GRAY;
 		std::string spaces = "#"; for (auto s = 0; s < (int)n_spaces -1; s++) spaces += " ";
 		for (auto f = 0; f < (int)n_fra; f++)
 		{
-			std::string fra_id = tools::format("f" + std::to_string(f+1) + ":", sty_fra);
-			std::cout << (f >= 1 ? spaces : "") << fra_id << "(";
+			std::string fra_id = "f" + std::to_string(f+1) + ":";
+			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << fra_id
+			          << rang::style::reset << "(";
 			for (auto i = 0; i < (int)limit; i++)
 			{
 				if (hex)
@@ -189,22 +189,20 @@ int Task::exec()
 		size_t max_n_chars = 0;
 		if (debug)
 		{
-			const auto sty_type   = tools::Style::BOLD | tools::FG::Color::MAGENTA | tools::FG::INTENSE;
-			const auto sty_class  = tools::Style::BOLD;
-			const auto sty_method = tools::Style::BOLD | tools::FG::Color::GREEN;
-
 			auto n_fra = (size_t)this->module.get_n_frames();
 
 			std::cout << "# ";
-			std::cout << tools::format(module.get_name(), sty_class) << "::" << tools::format(get_name(), sty_method)
+			std::cout << rang::style::bold << rang::fg::green << module.get_name() << rang::style::reset
+			          << "::"
+			          << rang::style::bold << rang::fg::magenta << get_name() << rang::style::reset
 			          << "(";
 			for (auto i = 0; i < (int)sockets.size(); i++)
 			{
 				auto &s = *sockets[i];
 				auto s_type = get_socket_type(s);
 				auto n_elmts = s.get_databytes() / (size_t)s.get_datatype_size();
-				std::cout << (s_type == IN ? tools::format("const ", sty_type) : "")
-				          << tools::format(s.get_datatype_string(), sty_type)
+				std::cout << rang::style::bold << rang::fg::blue << (s_type == IN ? "const " : "")
+				          << s.get_datatype_string() << rang::style::reset
 				          << " " << s.get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
 				          << (n_elmts / n_fra) << "]"
 				          << (i < (int)sockets.size() -1 ? ", " : "");
@@ -481,4 +479,3 @@ template Socket& Task::create_socket_out<int64_t>(const std::string&, const size
 template Socket& Task::create_socket_out<float  >(const std::string&, const size_t);
 template Socket& Task::create_socket_out<double >(const std::string&, const size_t);
 // ==================================================================================== explicit template instantiation
-

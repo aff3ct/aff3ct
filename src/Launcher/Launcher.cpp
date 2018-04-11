@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <rang.hpp>
 
 #ifdef ENABLE_MPI
 #include <mpi.h>
@@ -111,10 +112,10 @@ int Launcher::read_arguments()
 void Launcher::print_header()
 {
 	// display configuration and simulation parameters
-	stream << "# " << tools::style("----------------------------------------------------", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::style("---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::style("----------------------------------------------------", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::style(style("Parameters :", tools::Style::BOLD), tools::Style::UNDERLINED) << std::endl;
+	stream << "# " << rang::style::bold << "----------------------------------------------------" << std::endl;
+	stream << "# " <<                      "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
+	stream << "# " <<                      "----------------------------------------------------" << std::endl;
+	stream << "# " << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
 	factory::Header::print_parameters({&params_common}, false, this->stream);
 	this->stream << "#" << std::endl;
 }

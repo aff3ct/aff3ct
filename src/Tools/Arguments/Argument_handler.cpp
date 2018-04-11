@@ -1,8 +1,8 @@
 #include <sstream>
 #include <algorithm>
 #include <type_traits>
+#include <rang.hpp>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/general_utils.h"
 
 #include "Argument_handler.hpp"
@@ -264,45 +264,43 @@ std::string split_doc(const std::string& line, const std::string& start_line, co
 void Argument_handler
 ::print_help(const Argument_tag &tags, const Argument_info &info, const size_t longest_tag) const
 {
-	Format arg_format = 0;
 	const std::string tab = "    ";
 
-	std::string tabr;
+	std::stringstream tabr;
 
 	switch (info.rank)
 	{
 		case Argument_info::OPTIONAL :
-			tabr = tab;
+			tabr << tab;
 			break;
 
 		case Argument_info::REQUIRED :
-			tabr = format("{R} ", arg_format | Style::BOLD | FG::Color::ORANGE);
+			tabr << rang::style::bold << rang::fg::red << "{R} " << rang::style::reset;
 			break;
 
 		case Argument_info::ADVANCED :
-			tabr = format("{A} ", arg_format | Style::BOLD | FG::Color::BLUE);
+			tabr << rang::style::bold << rang::fg::blue << "{A} " << rang::style::reset;
 			break;
 	}
 
 	std::string tags_str = this->print_tag(tags);
 	tags_str.append(longest_tag - tags_str.size(), ' ');
 
-	help_os << tabr << format(tags_str, arg_format | Style::BOLD);
+	help_os << tabr.str() << rang::style::bold << tags_str << rang::style::reset;
 
 	if (info.type->get_title().size())
-		help_os << format(" <" + info.type->get_title() + ">", arg_format | FG::GRAY);
+		help_os << rang::fg::gray << " <" << info.type->get_title() << ">" << rang::style::reset;
 
 	help_os << std::endl;
 	auto splitted_doc = split_doc(info.doc, tab + "  ", 80);
-	help_os << format(splitted_doc, arg_format) << std::endl;
+	help_os << splitted_doc << std::endl;
 }
 
 void Argument_handler
 ::print_help_title(const std::string& title) const
 {
-	Format head_format = Style::BOLD | Style::ITALIC | FG::Color::MAGENTA | FG::INTENSE;
-
-	help_os << format(title + ":", head_format) << std::endl;
+	help_os << rang::style::bold << rang::style::italic << rang::fg::magenta << title << ":" << rang::style::reset
+	        << std::endl;
 }
 
 void Argument_handler

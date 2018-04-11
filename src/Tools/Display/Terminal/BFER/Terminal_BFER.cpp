@@ -2,9 +2,9 @@
 #include <iomanip>
 #include <sstream>
 #include <ios>
+#include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 
 #include "Terminal_BFER.hpp"
 
@@ -68,24 +68,24 @@ void Terminal_BFER<B>
 	std::ios::fmtflags f(stream.flags());
 
 #ifdef _WIN32
-	stream << "# " << format("---------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("         Bit Error Rate (BER) and Frame Error Rate (FER) depending         ||  Global throughput  ", Style::BOLD) << std::endl;
-	stream << "# " << format("                      on the Signal Noise Ratio (SNR)                      ||  and elapsed time   ", Style::BOLD) << std::endl;
-	stream << "# " << format("---------------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
-	stream << "# " << format(" Es/N0 | Eb/N0 |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
-	stream << "# " << format("  (dB) |  (dB) |           |           |           |           |           ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+	stream << "# " << rang::style::bold << "---------------------------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "         Bit Error Rate (BER) and Frame Error Rate (FER) depending         ||  Global throughput  " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "                      on the Signal Noise Ratio (SNR)                      ||  and elapsed time   " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "---------------------------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << " Es/N0 | Eb/N0 |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "  (dB) |  (dB) |           |           |           |           |           ||   (Mb/s) | (hhmmss) " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------" << rang::style::reset << std::endl;
 
 #else
-	stream << "# " << format("----------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("      Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  ", Style::BOLD) << std::endl;
-	stream << "# " << format("                   on the Signal Noise Ratio (SNR)                    ||  and elapsed time   ", Style::BOLD) << std::endl;
-	stream << "# " << format("----------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
-	stream << "# " << format(" Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
-	stream << "# " << format("  (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|----------|----------|----------|----------|----------||----------|----------", Style::BOLD) << std::endl;
+	stream << "# " << rang::style::bold << "----------------------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "      Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "                   on the Signal Noise Ratio (SNR)                    ||  and elapsed time   " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "----------------------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "-------|-------|----------|----------|----------|----------|----------||----------|----------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << " Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "  (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "-------|-------|----------|----------|----------|----------|----------||----------|----------" << rang::style::reset << std::endl;
 #endif
 
 	stream.flags(f);
@@ -133,13 +133,13 @@ void Terminal_BFER<B>
 	unsigned long long l1 = 99999999;  // limit 1
 //	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
-	stream <<                                                                                                     esn0_str.str()  << format(" | ",  Style::BOLD);
-	stream <<                                                                                                     ebn0_str.str()  << format(" | ",  Style::BOLD);
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << format(" | ",  Style::BOLD);
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << format(" | ",  Style::BOLD);
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << format(" | ",  Style::BOLD);
-	stream <<                                                                                                       str_ber.str() << format(" | ",  Style::BOLD);
-	stream <<                                                                                                       str_fer.str() << format(" || ", Style::BOLD);
+	stream <<                                                                                                     esn0_str.str()  << rang::style::bold " | "  << rang::style::reset;
+	stream <<                                                                                                     ebn0_str.str()  << rang::style::bold " | "  << rang::style::reset;
+	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << rang::style::bold " | "  << rang::style::reset;
+	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << rang::style::bold " | "  << rang::style::reset;
+	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << rang::style::bold " | "  << rang::style::reset;
+	stream <<                                                                                                       str_ber.str() << rang::style::bold " | "  << rang::style::reset;
+	stream <<                                                                                                       str_fer.str() << rang::style::bold " || " << rang::style::reset;
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
 #else
 	stringstream str_ber, str_fer;
@@ -149,13 +149,13 @@ void Terminal_BFER<B>
 	unsigned long long l0 = 99999999;  // limit 0
 	unsigned long long l1 = 99999999;  // limit 1
 	stream << "  ";
-	stream <<                                                                                                     esn0_str.str()  << format(" | ",  Style::BOLD);
-	stream <<                                                                                                     ebn0_str.str()  << format(" | ",  Style::BOLD);
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << format(" | ",  Style::BOLD);
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << format(" | ",  Style::BOLD);
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << format(" | ",  Style::BOLD);
-	stream <<                                                                                                       str_ber.str() << format(" | ",  Style::BOLD);
-	stream <<                                                                                                       str_fer.str() << format(" || ", Style::BOLD);
+	stream <<                                                                                                     esn0_str.str()  << rang::style::bold << " | "  << rang::style::reset;
+	stream <<                                                                                                     ebn0_str.str()  << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << rang::style::bold << " | "  << rang::style::reset;
+	stream <<                                                                                                       str_ber.str() << rang::style::bold << " | "  << rang::style::reset;
+	stream <<                                                                                                       str_fer.str() << rang::style::bold << " || " << rang::style::reset;
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
 #endif
 }
@@ -174,15 +174,15 @@ void Terminal_BFER<B>
 	auto tr = et * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe()) - et;
 	auto tr_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : tr);
 
-	stream << format(" | ", Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(8) << tr_format;
+	stream << rang::style::bold << " | " << rang::style::reset << std::setprecision(0) << std::fixed << std::setw(8) << tr_format;
 
 	stream << " ";
 	switch (real_time_state)
 	{
-		case 0: stream << format("*", Style::BOLD | FG::Color::GREEN); break;
-		case 1: stream << format("*", Style::BOLD | FG::Color::GREEN); break;
-		case 2: stream << format(" ", Style::BOLD | FG::Color::GREEN); break;
-		case 3: stream << format(" ", Style::BOLD | FG::Color::GREEN); break;
+		case 0: stream << rang::style::bold << rang::fg::green << "*" << rang::style::reset; break;
+		case 1: stream << rang::style::bold << rang::fg::green << "*" << rang::style::reset; break;
+		case 2: stream << rang::style::bold << rang::fg::green << " " << rang::style::reset; break;
+		case 3: stream << rang::style::bold << rang::fg::green << " " << rang::style::reset; break;
 		default: break;
 	}
 	real_time_state = (real_time_state +1) % 4;
@@ -207,7 +207,8 @@ void Terminal_BFER<B>
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
 	auto et_format = get_time_format(et);
 
-	stream << format(" | ", Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(8) << et_format;
+	stream << rang::style::bold << " | " << rang::style::reset << std::setprecision(0) << std::fixed << std::setw(8)
+	       << et_format;
 
 	if (module::Monitor::is_interrupt()) stream << " x" << std::endl;
 	else                                 stream << "  " << std::endl;
