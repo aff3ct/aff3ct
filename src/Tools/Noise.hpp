@@ -18,8 +18,8 @@ class Noise
 public:
 	Noise();
 	explicit Noise(const R noise, const Noise_type t = Noise_type::SIGMA);
-	// Noise(const Noise& other);
-	// Noise(Noise&& other);
+	Noise(const Noise<R>& other);
+	Noise(Noise<R>&& other);
 	~Noise();
 
 	bool is_set   () const throw();
@@ -45,8 +45,8 @@ public:
 	static Noise_type str2type(const std::string& str);
 	static std::string type2str(const Noise_type& t);
 
-	// Noise& operator=(const Noise& other);
-	// Noise& operator=(Noise&& other);
+	Noise& operator=(const Noise<R>& other);
+	Noise& operator=(Noise<R>&& other);
 
 protected:
 	std::pair<Noise_type, bool> _t;

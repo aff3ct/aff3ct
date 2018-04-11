@@ -9,59 +9,62 @@ using namespace tools;
 template <typename R>
 Noise<R>::
 Noise()
+: _t(Noise_type::SIGMA, false), _n((R)0., false), _ebn0((R)0., false), _esn0((R)0., false)
 {
-	init();
+	// init();
 }
 
 template <typename R>
 Noise<R>::
 Noise(const R noise, const Noise_type t)
+: Noise()
+// : _t(Noise_type::SIGMA, false), _n((R)0, false), _ebn0((R)0, false), _esn0((R)0, false)
 {
-	init();
+	// init();
 	set_noise(noise, t);
 }
 
-// template <typename R>
-// Noise<R>::
-// Noise(const Noise& other)
-// : _t   (other._t   ),
-//   _n   (other._n   ),
-//   _ebn0(other._ebn0),
-//   _esn0(other._esn0)
-// {
-// }
+template <typename R>
+Noise<R>::
+Noise(const Noise<R>& other)
+: _t   (other._t   ),
+  _n   (other._n   ),
+  _ebn0(other._ebn0),
+  _esn0(other._esn0)
+{
+}
 
-// template <typename R>
-// Noise<R>::
-// Noise(Noise&& other)
-// : _t   (std::move(other._t   )),
-//   _n   (std::move(other._n   )),
-//   _ebn0(std::move(other._ebn0)),
-//   _esn0(std::move(other._esn0))
-// {
-// }
+template <typename R>
+Noise<R>::
+Noise(Noise<R>&& other)
+: _t   (std::move(other._t   )),
+  _n   (std::move(other._n   )),
+  _ebn0(std::move(other._ebn0)),
+  _esn0(std::move(other._esn0))
+{
+}
 
-// template <typename R>
-// Noise<R>& Noise<R>::
-// operator=(const Noise& other)
-// {
-// 	_t    = other._t   ;
-// 	_n    = other._n   ;
-// 	_ebn0 = other._ebn0;
-// 	_esn0 = other._esn0;
-// 	return *this;
-// }
+template <typename R>
+Noise<R>& Noise<R>::
+operator=(const Noise<R>& other)
+{
+	_t    = other._t   ;
+	_n    = other._n   ;
+	_ebn0 = other._ebn0;
+	_esn0 = other._esn0;
+	return *this;
+}
 
-// template <typename R>
-// Noise<R>& Noise<R>::
-// operator=(Noise&& other)
-// {
-// 	_t    = std::move(other._t   );
-// 	_n    = std::move(other._n   );
-// 	_ebn0 = std::move(other._ebn0);
-// 	_esn0 = std::move(other._esn0);
-// 	return *this;
-// }
+template <typename R>
+Noise<R>& Noise<R>::
+operator=(Noise<R>&& other)
+{
+	_t    = std::move(other._t   );
+	_n    = std::move(other._n   );
+	_ebn0 = std::move(other._ebn0);
+	_esn0 = std::move(other._esn0);
+	return *this;
+}
 
 template <typename R>
 Noise<R>::
@@ -368,7 +371,6 @@ template <typename R>
 void Noise<R>::
 init()
 {
-
 	_t.second    = false;
 	_n.second    = false;
 	_ebn0.second = false;
