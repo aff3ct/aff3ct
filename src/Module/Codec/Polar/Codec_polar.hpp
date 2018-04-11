@@ -28,6 +28,7 @@ protected:
 	Puncturer_polar_wangliu<B,Q> *puncturer_wangliu;
 	tools::Frozenbits_notifier *fb_decoder;
 	tools::Frozenbits_notifier *fb_encoder;
+	tools::Noise<float> n;
 
 public:
 	Codec_polar(const factory::Frozenbits_generator::parameters &fb_par,
@@ -37,7 +38,7 @@ public:
 	            CRC<B>* crc = nullptr);
 	virtual ~Codec_polar();
 
-	virtual void set_noise(const tools::Noise<float>&  noise);
+	virtual void set_noise(const tools::Noise<float>& noise);
 
 	std::vector<bool>& get_frozen_bits();
 

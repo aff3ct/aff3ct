@@ -172,16 +172,16 @@ get_noise()
 
 template <typename B, typename Q>
 void Codec<B,Q>
-::set_noise(const tools::Noise<float>& n)
+::set_noise(const tools::Noise<float>& noise)
 {
-	this->n = n;
+	// this->n = noise;
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>
-::set_noise(const tools::Noise<double>& n)
+::set_noise(const tools::Noise<double>& noise)
 {
-	this->set_noise(tools::Noise<float>(n.get_noise(), n.get_type()));
+	this->set_noise(tools::Noise<float>(noise.get_noise(), noise.get_type()));
 }
 
 template <typename B, typename Q>

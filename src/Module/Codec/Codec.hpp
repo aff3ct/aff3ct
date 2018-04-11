@@ -48,7 +48,7 @@ protected :
 	const int N_cw;
 	const int N;
 	const int tail_length;
-	tools::Noise<float> n;
+	// tools::Noise<float> n;
 
 public:
 	Codec(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1);
@@ -63,7 +63,7 @@ public:
 
 	const tools::Noise<float>& get_noise();
 
-	virtual void set_noise(const tools::Noise<float>&  noise);
+	virtual void set_noise(const tools::Noise<float>& noise);
 	void set_noise(const tools::Noise<double>& noise);
 
 	template <class A = std::allocator<Q>>

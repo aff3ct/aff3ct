@@ -164,14 +164,15 @@ void Codec_polar<B,Q>
 
 template <typename B, typename Q>
 void Codec_polar<B,Q>
-::set_noise(const tools::Noise<float>& n)
+::set_noise(const tools::Noise<float>& noise)
 {
-	Codec_SISO_SIHO<B,Q>::set_noise(n);
+	Codec_SISO_SIHO<B,Q>::set_noise(noise);
+	this->n = noise;
 
 	// adaptive frozen bits generation
 	if (adaptive_fb && !generated_decoder)
 	{
-		fb_generator->set_sigma(n.get_sigma()); // throw if noise is not of SIGMA type
+		fb_generator->set_sigma(this->n.get_sigma()); // throw if noise is not of SIGMA type
 		fb_generator->generate(frozen_bits);
 
 		this->notify_frozenbits_update();
