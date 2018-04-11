@@ -376,11 +376,6 @@ init()
 }
 
 // ==================================================================================== explicit template instantiation
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class aff3ct::tools::Noise<R_32>;
-template class aff3ct::tools::Noise<R_64>;
-#else
-template class aff3ct::tools::Noise<R>;
-#endif
+template class aff3ct::tools::Noise<float>;
+template class aff3ct::tools::Noise<double>;
 // ==================================================================================== explicit template instantiation

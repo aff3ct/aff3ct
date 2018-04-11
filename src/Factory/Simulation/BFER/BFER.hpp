@@ -27,7 +27,7 @@ struct BFER : Simulation
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
-		std::string noise_type          = "EB";
+		std::string noise_type          = "EBN0";
 		std::string err_track_path      = "error_tracker";
 		int         err_track_threshold = 0;
 		bool        err_track_revert    = false;
