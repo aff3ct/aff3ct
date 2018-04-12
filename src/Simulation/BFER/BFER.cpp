@@ -159,16 +159,16 @@ void BFER<B,R,Q>
 		}
 		else if (params_BFER.noise_type == "EP")
 		{
-            n = params_BFER.noise_range[params_BFER.noise_range.size() - noise_idx -1];
+		    n = params_BFER.noise_range[params_BFER.noise_range.size() - noise_idx -1];
 
-            this->noise.set_ep(n);
+		    this->noise.set_ep(n);
 		}
 		else
-        {
-            std::stringstream message;
-            message << "Unknown noise type ('noise_type' = " << params_BFER.noise_type << ").";
-            throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-        }
+		{
+			std::stringstream message;
+			message << "Unknown noise type ('noise_type' = " << params_BFER.noise_type << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->terminal->set_noise(this->noise);
 
