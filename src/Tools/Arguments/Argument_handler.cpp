@@ -76,7 +76,7 @@ Argument_map_value Argument_handler
 	for (unsigned i = 0; i < args_found_pos.size(); i++, it_arg++)
 	{
 		if (!args_found_pos[i]
-		  && it_arg->second->rank == Argument_info::REQUIRED
+		  && it_arg->second->rank == Argument_info::Rank::REQUIRED
 		  && !is_linked(args, m_arg_v, it_arg->first)) // check if any linked arguments, has been given
 		{
 			std::string message = "The \"" + print_tag(it_arg->first) + "\" argument is required.";
@@ -194,7 +194,7 @@ void Argument_handler
 
 	for (auto it = args.begin(); it != args.end(); ++it)
 	{
-		if (it->second->rank == Argument_info::REQUIRED
+		if (it->second->rank == Argument_info::Rank::REQUIRED
 		 && std::find(existing_flags.begin(), existing_flags.end(), it->first.back()) == existing_flags.end())
 		{
 			if(it->second->type->get_title() != "")
@@ -229,13 +229,13 @@ void Argument_handler
 
 	// print first REQUIRED arguments
 	for (auto it = args.begin(); it != args.end(); ++it)
-		if (it->second->rank == Argument_info::REQUIRED)
+		if (it->second->rank == Argument_info::Rank::REQUIRED)
 			this->print_help(it->first, *it->second, longest_tag);
 
 	// then print others
 	for (auto it = args.begin(); it != args.end(); ++it)
-		if (it->second->rank == Argument_info::OPTIONAL
-		 || (print_advanced_args && it->second->rank == Argument_info::ADVANCED))
+		if (it->second->rank == Argument_info::Rank::OPTIONAL
+		 || (print_advanced_args && it->second->rank == Argument_info::Rank::ADVANCED))
 			this->print_help(it->first, *it->second, longest_tag);
 
 	help_os << std::endl;
@@ -270,15 +270,15 @@ void Argument_handler
 
 	switch (info.rank)
 	{
-		case Argument_info::OPTIONAL :
+		case Argument_info::Rank::OPTIONAL :
 			tabr << tab;
 			break;
 
-		case Argument_info::REQUIRED :
+		case Argument_info::Rank::REQUIRED :
 			tabr << rang::style::bold << rang::fg::red << "{R} " << rang::style::reset;
 			break;
 
-		case Argument_info::ADVANCED :
+		case Argument_info::Rank::ADVANCED :
 			tabr << rang::style::bold << rang::fg::blue << "{A} " << rang::style::reset;
 			break;
 	}
@@ -327,7 +327,7 @@ void Argument_handler
 		// display first the REQUIRED arguments of this group
 		for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 		{
-			if (it_arg->second->rank != Argument_info::REQUIRED)
+			if (it_arg->second->rank != Argument_info::Rank::REQUIRED)
 				continue;
 
 			auto& tag  = it_arg->first.front();
@@ -350,8 +350,8 @@ void Argument_handler
 		// display then the OPTIONAL and ADVANCED arguments of this group
 		for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 		{
-			if (it_arg->second->rank == Argument_info::REQUIRED
-			 || (!print_advanced_args && it_arg->second->rank == Argument_info::ADVANCED))
+			if (it_arg->second->rank == Argument_info::Rank::REQUIRED
+			 || (!print_advanced_args && it_arg->second->rank == Argument_info::Rank::ADVANCED))
 				continue;
 
 			auto& tag  = it_arg->first.front();
@@ -361,7 +361,7 @@ void Argument_handler
 			{
 				args_print_pos[dist] = true;
 
-				if (it_arg->second->rank == Argument_info::ADVANCED && !print_advanced_args)
+				if (it_arg->second->rank == Argument_info::Rank::ADVANCED && !print_advanced_args)
 					continue;
 
 				if (!title_displayed)
@@ -383,7 +383,7 @@ void Argument_handler
 	// display the other REQUIRED parameters
 	for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 	{
-		if (it_arg->second->rank != Argument_info::REQUIRED)
+		if (it_arg->second->rank != Argument_info::Rank::REQUIRED)
 			continue;
 
 		bool found = false;
@@ -419,8 +419,8 @@ void Argument_handler
 	// display the other OPTIONAL and ADVANCED parameters
 	for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 	{
-		if (it_arg->second->rank == Argument_info::REQUIRED
-		 || (!print_advanced_args && it_arg->second->rank == Argument_info::ADVANCED))
+		if (it_arg->second->rank == Argument_info::Rank::REQUIRED
+		 || (!print_advanced_args && it_arg->second->rank == Argument_info::Rank::ADVANCED))
 			continue;
 
 		bool found = false;

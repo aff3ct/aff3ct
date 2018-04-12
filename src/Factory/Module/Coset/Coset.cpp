@@ -35,7 +35,7 @@ void Coset::parameters
 		{p+"-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"coset size.",
-		tools::Argument_info::REQUIRED);
+		tools::Argument_info::Rank::REQUIRED);
 
 	args.add(
 		{p+"-type"},

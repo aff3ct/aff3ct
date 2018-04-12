@@ -12,10 +12,10 @@ namespace tools
 
 struct Argument_info
 {
-	enum Rank {OPTIONAL, REQUIRED, ADVANCED};
+	enum class Rank {OPTIONAL, REQUIRED, ADVANCED};
 
     Argument_info();
-    Argument_info(Argument_type* type, const std::string& doc, const Rank rank = OPTIONAL);
+    Argument_info(Argument_type* type, const std::string& doc, const Rank rank = Rank::OPTIONAL);
 
 	virtual ~Argument_info();
 
@@ -29,7 +29,7 @@ struct Argument_info
 
 	Argument_type* type = nullptr;
 	std::string    doc  = "";
-	Rank           rank = OPTIONAL;
+	Rank           rank = Rank::OPTIONAL;
 };
 
 }

@@ -41,7 +41,7 @@ void Quantizer::parameters
 		{p+"-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of real to quantize.",
-		tools::Argument_info::REQUIRED);
+		tools::Argument_info::Rank::REQUIRED);
 
 	args.add(
 		{p+"-fra", "F"},

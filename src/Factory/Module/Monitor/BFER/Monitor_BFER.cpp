@@ -38,7 +38,7 @@ void Monitor_BFER::parameters
 		{p+"-size", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of bits to check.",
-		tools::Argument_info::REQUIRED);
+		tools::Argument_info::Rank::REQUIRED);
 
 	args.add(
 		{p+"-fra", "F"},

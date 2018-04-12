@@ -46,7 +46,7 @@ void Modem::parameters
 		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of symbols by frame.",
-		tools::Argument_info::REQUIRED);
+		tools::Argument_info::Rank::REQUIRED);
 
 	args.add(
 		{p+"-fra", "F"},

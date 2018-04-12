@@ -39,7 +39,7 @@ void Source::parameters
 		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of generated bits (information bits).",
-		tools::Argument_info::REQUIRED);
+		tools::Argument_info::Rank::REQUIRED);
 
 	args.add(
 		{p+"-fra", "F"},
