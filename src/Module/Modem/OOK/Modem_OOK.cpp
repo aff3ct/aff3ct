@@ -55,21 +55,30 @@ void Modem_OOK<B,R,Q>
 	if (disable_sig2)
 		for (auto i = 0; i < this->N_fil; i++)
 			Y_N2[i] = (Q)0.5 - Y_N1[i];
-	else
-	{
-		if (!std::is_same<R,Q>::value)
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+	else {
+        if (!std::is_same<R, Q>::value)
+            throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-		if (!std::is_floating_point<Q>::value)
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+        if (!std::is_floating_point<Q>::value)
+            throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		if (this->n.get_type() == tools::Noise_type::SIGMA)
-			for (auto i = 0; i < this->N_fil; i++)
-				Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor;
-		else if (this->n.get_type() == tools::Noise_type::EP)
-			for (auto i = 0; i < this->N_fil; i++)
-				std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
-	}
+        switch (this->n.get_type()) {
+            case tools::Noise_type::SIGMA:
+                for (auto i = 0; i < this->N_fil; i++)
+                    Y_N2[i] = -((Q) 2.0 * Y_N1[i] - (Q) 1) * (Q) sigma_factor;
+                break;
+            case tools::Noise_type::EP:
+                for (auto i = 0; i < this->N_fil; i++)
+                    Y_N2[i] = std::isinf(Y_N1[i]) ? (Q) 0 : ((Q) 1 - (Q) 2.0 * Y_N1[i]);
+                break;
+            default: {
+                std::stringstream message;
+                message << "The noise has a type other than SIGMA or EP ('this->n.get_type()' = "
+                        << this->n.type2str(this->n.get_type()) << ").";
+                throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+            }
+        }
+    }
 }
 
 template <typename B, typename R, typename Q>
