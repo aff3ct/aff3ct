@@ -123,8 +123,6 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC_DB::parameters
 	{
 		return build_siso<B,Q>(trellis);
 	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>

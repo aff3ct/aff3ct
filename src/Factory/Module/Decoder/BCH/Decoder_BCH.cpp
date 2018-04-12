@@ -95,8 +95,6 @@ module::Decoder_SIHO<B,Q>* Decoder_BCH::parameters
 	{
 		return build_hiho<B,Q>(GF, encoder);
 	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
