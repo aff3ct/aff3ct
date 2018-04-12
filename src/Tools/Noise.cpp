@@ -297,7 +297,7 @@ check()
 		break;
 
 		case EP:
-			if (n < (R)0 || n > (R)1)
+			if (n < (R)-0.00001 || n > (R)1.00001)
 			{
 				std::stringstream message;
 				message << "The EP noise '_n' has to be between [0,1] ('_n' = " << n << ").";
