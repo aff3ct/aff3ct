@@ -167,7 +167,6 @@ void Codec_polar<B,Q>
 ::set_noise(const tools::Noise<float>& noise)
 {
 	Codec_SISO_SIHO<B,Q>::set_noise(noise);
-	this->n = noise;
 
 	// adaptive frozen bits generation
 	if (adaptive_fb && !generated_decoder)
