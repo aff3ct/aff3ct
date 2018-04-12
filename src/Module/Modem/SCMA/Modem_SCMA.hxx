@@ -103,7 +103,7 @@ void Modem_SCMA<B,R,Q,PSI>
 
 	this->n0 = this->disable_sig2 ?
 	            (R)1.0 :
-	            (R)((R)1.0 / ((R)4.0 * this->n.get_sigma() * this->n.get_sigma())); // trow if noise is not SIGMA type
+	            ((R)4.0 * this->n.get_sigma() * this->n.get_sigma()); // trow if noise is not SIGMA type
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
