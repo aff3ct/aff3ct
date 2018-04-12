@@ -63,7 +63,7 @@ Channel(const int N, const tools::Noise<R>& n, const int n_frames)
 template <typename R>
 Channel<R>::
 Channel(const int N, const int n_frames)
-: Channel(N, tools::Noise<R>(), this->n_frames)
+: Channel(N, tools::Noise<R>(), n_frames)
 {
 }
 
@@ -79,13 +79,6 @@ get_N() const
 {
 	return this->N;
 }
-
-// template <typename R>
-// R Channel<R>::
-// get_sigma() const
-// {
-// 	return this->sigma;
-// }
 
 template <typename R>
 const std::vector<R>& Channel<R>::

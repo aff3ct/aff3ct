@@ -5,6 +5,7 @@
 #include "Module/Channel/AWGN/Channel_AWGN_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
+#include "Module/Channel/BEC/Channel_BEC.hpp"
 
 #include "Tools/Algo/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 #include "Tools/Algo/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
@@ -58,7 +59,7 @@ void Channel::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER")),
+		tools::Text(tools::Including_set("NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC")),
 		"type of the channel to use in the simulation.");
 
 	args.add(
@@ -185,6 +186,7 @@ module::Channel<R>* Channel::parameters
 		module::Channel<R>* c = nullptr;
 		     if (type == "USER") c = new module::Channel_user<R>(N, path, add_users, n_frames);
 		else if (type == "NO"  ) c = new module::Channel_NO  <R>(N,       add_users, n_frames);
+		else if (type == "BEC" ) c = new module::Channel_BEC <R>(N, seed, noise,     n_frames);
 
 		delete n;
 
