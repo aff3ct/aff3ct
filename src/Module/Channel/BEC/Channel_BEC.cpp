@@ -1,6 +1,7 @@
 #include <type_traits>
 #include "Channel_BEC.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename R>
