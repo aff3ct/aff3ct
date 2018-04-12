@@ -30,7 +30,7 @@ Decoder_SIHO(const int K, const int N, const int n_frames, const int simd_inter_
 	const std::string name = "Decoder_SIHO";
 	this->set_name(name);
 
-	auto &p1 = this->create_task("decode_siho", dec::tsk::decode_siho);
+	auto &p1 = this->create_task("decode_siho", (int)dec::tsk::decode_siho);
 	auto &p1s_Y_N = this->template create_socket_in <R>(p1, "Y_N", this->N * this->n_frames);
 	auto &p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
 	this->create_codelet(p1, [this, &p1s_Y_N, &p1s_V_K]() -> int
@@ -45,7 +45,7 @@ Decoder_SIHO(const int K, const int N, const int n_frames, const int simd_inter_
 	this->register_timer(p1, "store");
 	this->register_timer(p1, "total");
 
-	auto &p2 = this->create_task("decode_siho_cw", dec::tsk::decode_siho_cw);
+	auto &p2 = this->create_task("decode_siho_cw", (int)dec::tsk::decode_siho_cw);
 	auto &p2s_Y_N = this->template create_socket_in <R>(p2, "Y_N", this->N * this->n_frames);
 	auto &p2s_V_N = this->template create_socket_out<B>(p2, "V_N", this->N * this->n_frames);
 	this->create_codelet(p2, [this, &p2s_Y_N, &p2s_V_N]() -> int

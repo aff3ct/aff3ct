@@ -24,7 +24,7 @@ namespace module
 class Module;
 class Socket;
 
-enum Socket_type
+enum class Socket_type : uint8_t
 {
 	IN     = 0,
 	IN_OUT = 1,

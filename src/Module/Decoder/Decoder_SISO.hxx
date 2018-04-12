@@ -30,7 +30,7 @@ Decoder_SISO(const int K, const int N, const int n_frames, const int simd_inter_
 	const std::string name = "Decoder_SISO";
 	this->set_name(name);
 
-	auto &p = this->create_task("decode_siso", dec::tsk::decode_siso);
+	auto &p = this->create_task("decode_siso", (int)dec::tsk::decode_siso);
 	auto &ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
 	auto &ps_Y_N2 = this->template create_socket_out<R>(p, "Y_N2", this->N * this->n_frames);
 	this->create_codelet(p, [this, &ps_Y_N1, &ps_Y_N2]() -> int

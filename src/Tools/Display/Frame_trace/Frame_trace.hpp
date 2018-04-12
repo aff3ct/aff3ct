@@ -26,7 +26,7 @@ template <typename B = int>
 class Frame_trace
 {
 private:
-	enum debug_version { BIT, REAL };
+	enum class debug_version : uint8_t { BIT, REAL };
 	std::ostream &stream; /*!< Stream to trace the frame(s). */
 
 	const int n_bits; /*!< Number of bits to display per frame (if n_bits = 0, display all the bits of the frame). */

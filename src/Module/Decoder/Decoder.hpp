@@ -13,26 +13,23 @@ namespace module
 {
 	namespace dec
 	{
-		namespace tsk
-		{
-			enum list { decode_hiho, decode_hiho_cw, decode_siho, decode_siho_cw, decode_siso, SIZE };
-		}
+		enum class tsk : uint8_t { decode_hiho, decode_hiho_cw, decode_siho, decode_siho_cw, decode_siso, SIZE };
 
 		namespace sck
 		{
-			namespace decode_hiho   { enum list { Y_N,  V_K , SIZE }; }
-			namespace decode_hiho_cw{ enum list { Y_N,  V_N , SIZE }; }
-			namespace decode_siho   { enum list { Y_N,  V_K , SIZE }; }
-			namespace decode_siho_cw{ enum list { Y_N,  V_N , SIZE }; }
-			namespace decode_siso   { enum list { Y_N1, Y_N2, SIZE }; }
+			enum class decode_hiho    : uint8_t { Y_N,  V_K , SIZE };
+			enum class decode_hiho_cw : uint8_t { Y_N,  V_N , SIZE };
+			enum class decode_siho    : uint8_t { Y_N,  V_K , SIZE };
+			enum class decode_siho_cw : uint8_t { Y_N,  V_N , SIZE };
+			enum class decode_siso    : uint8_t { Y_N1, Y_N2, SIZE };
 		}
 
 		namespace tm
 		{
-			namespace decode_hiho   { enum list { load, decode, store       , SIZE }; }
-			namespace decode_hiho_cw{ enum list { load, decode, store       , SIZE }; }
-			namespace decode_siho   { enum list { load, decode, store, total, SIZE }; }
-			namespace decode_siho_cw{ enum list { load, decode, store, total, SIZE }; }
+			enum class decode_hiho    : uint8_t { load, decode, store       , SIZE };
+			enum class decode_hiho_cw : uint8_t { load, decode, store       , SIZE };
+			enum class decode_siho    : uint8_t { load, decode, store, total, SIZE };
+			enum class decode_siho_cw : uint8_t { load, decode, store, total, SIZE };
 		}
 	}
 

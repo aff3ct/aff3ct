@@ -19,20 +19,17 @@ namespace module
 {
 	namespace mdm
 	{
-		namespace tsk
-		{
-			enum list { modulate, tmodulate, filter, demodulate, tdemodulate, demodulate_wg, tdemodulate_wg, SIZE };
-		}
+		enum class tsk : uint8_t { modulate, tmodulate, filter, demodulate, tdemodulate, demodulate_wg, tdemodulate_wg, SIZE };
 
 		namespace sck
 		{
-			namespace modulate       { enum list {      X_N1, X_N2      , SIZE }; }
-			namespace tmodulate      { enum list {      X_N1, X_N2      , SIZE }; }
-			namespace filter         { enum list {      Y_N1, Y_N2      , SIZE }; }
-			namespace demodulate     { enum list {      Y_N1, Y_N2      , SIZE }; }
-			namespace tdemodulate    { enum list {      Y_N1, Y_N2, Y_N3, SIZE }; }
-			namespace demodulate_wg  { enum list { H_N, Y_N1, Y_N2      , SIZE }; }
-			namespace tdemodulate_wg { enum list { H_N, Y_N1, Y_N2, Y_N3, SIZE }; }
+			enum class modulate       : uint8_t {      X_N1, X_N2      , SIZE };
+			enum class tmodulate      : uint8_t {      X_N1, X_N2      , SIZE };
+			enum class filter         : uint8_t {      Y_N1, Y_N2      , SIZE };
+			enum class demodulate     : uint8_t {      Y_N1, Y_N2      , SIZE };
+			enum class tdemodulate    : uint8_t {      Y_N1, Y_N2, Y_N3, SIZE };
+			enum class demodulate_wg  : uint8_t { H_N, Y_N1, Y_N2      , SIZE };
+			enum class tdemodulate_wg : uint8_t { H_N, Y_N1, Y_N2, Y_N3, SIZE };
 		}
 	}
 
@@ -50,6 +47,16 @@ namespace module
 template <typename B = int, typename R = float, typename Q = R>
 class Modem : public Module
 {
+public:
+	inline Task&   operator[](const mdm::tsk                 t) { return Module::operator[]((int)t);                                }
+	inline Socket& operator[](const mdm::sck::modulate       s) { return Module::operator[]((int)mdm::tsk::modulate      )[(int)s]; }
+	inline Socket& operator[](const mdm::sck::tmodulate      s) { return Module::operator[]((int)mdm::tsk::tmodulate     )[(int)s]; }
+	inline Socket& operator[](const mdm::sck::filter         s) { return Module::operator[]((int)mdm::tsk::filter        )[(int)s]; }
+	inline Socket& operator[](const mdm::sck::demodulate     s) { return Module::operator[]((int)mdm::tsk::demodulate    )[(int)s]; }
+	inline Socket& operator[](const mdm::sck::tdemodulate    s) { return Module::operator[]((int)mdm::tsk::tdemodulate   )[(int)s]; }
+	inline Socket& operator[](const mdm::sck::demodulate_wg  s) { return Module::operator[]((int)mdm::tsk::demodulate_wg )[(int)s]; }
+	inline Socket& operator[](const mdm::sck::tdemodulate_wg s) { return Module::operator[]((int)mdm::tsk::tdemodulate_wg)[(int)s]; }
+
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
 	const int N_mod; /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */

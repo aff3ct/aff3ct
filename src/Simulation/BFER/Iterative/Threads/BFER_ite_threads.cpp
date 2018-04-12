@@ -111,93 +111,93 @@ void BFER_ite_threads<B,R,Q>
 
 	if (this->params_BFER_ite.src->type == "AZCW")
 	{
-		auto src_data = (uint8_t*)(src[src::tsk::generate  ][src::sck::generate  ::U_K ].get_dataptr());
-		auto crc_data = (uint8_t*)(crc[crc::tsk::build     ][crc::sck::build     ::U_K2].get_dataptr());
-		auto enc_data = (uint8_t*)(enc[enc::tsk::encode    ][enc::sck::encode    ::X_N ].get_dataptr());
-		auto itl_data = (uint8_t*)(itb[itl::tsk::interleave][itl::sck::interleave::itl ].get_dataptr());
+		auto src_data = (uint8_t*)(src[src::sck::generate  ::U_K ].get_dataptr());
+		auto crc_data = (uint8_t*)(crc[crc::sck::build     ::U_K2].get_dataptr());
+		auto enc_data = (uint8_t*)(enc[enc::sck::encode    ::X_N ].get_dataptr());
+		auto itl_data = (uint8_t*)(itb[itl::sck::interleave::itl ].get_dataptr());
 
-		auto src_bytes = src[src::tsk::generate  ][src::sck::generate  ::U_K ].get_databytes();
-		auto crc_bytes = crc[crc::tsk::build     ][crc::sck::build     ::U_K2].get_databytes();
-		auto enc_bytes = enc[enc::tsk::encode    ][enc::sck::encode    ::X_N ].get_databytes();
-		auto itl_bytes = itb[itl::tsk::interleave][itl::sck::interleave::itl ].get_databytes();
+		auto src_bytes = src[src::sck::generate  ::U_K ].get_databytes();
+		auto crc_bytes = crc[crc::sck::build     ::U_K2].get_databytes();
+		auto enc_bytes = enc[enc::sck::encode    ::X_N ].get_databytes();
+		auto itl_bytes = itb[itl::sck::interleave::itl ].get_databytes();
 
 		std::fill(src_data, src_data + src_bytes, 0);
 		std::fill(crc_data, crc_data + crc_bytes, 0);
 		std::fill(enc_data, enc_data + enc_bytes, 0);
 		std::fill(itl_data, itl_data + itl_bytes, 0);
 
-		mdm[mdm::tsk::modulate][mdm::sck::modulate::X_N1](itb[itl::tsk::interleave][itl::sck::interleave::itl]);
+		mdm[mdm::sck::modulate::X_N1](itb[itl::sck::interleave::itl]);
 		mdm[mdm::tsk::modulate].exec();
 		mdm[mdm::tsk::modulate].reset_stats();
 	}
 	else
 	{
 		if (this->params_BFER_ite.crc->type == "NO")
-			crc[crc::tsk::build][crc::sck::build::U_K2](src[src::tsk::generate][src::sck::generate::U_K]);
+			crc[crc::sck::build::U_K2](src[src::sck::generate::U_K]);
 		if (this->params_BFER_ite.cdc->enc->type == "NO")
-			enc[enc::tsk::encode][enc::sck::encode::X_N](crc[crc::tsk::build][crc::sck::build::U_K2]);
+			enc[enc::sck::encode::X_N](crc[crc::sck::build::U_K2]);
 
-		crc[crc::tsk::build     ][crc::sck::build     ::U_K1](src[src::tsk::generate  ][src::sck::generate  ::U_K ]);
-		enc[enc::tsk::encode    ][enc::sck::encode    ::U_K ](crc[crc::tsk::build     ][crc::sck::build     ::U_K2]);
-		itb[itl::tsk::interleave][itl::sck::interleave::nat ](enc[enc::tsk::encode    ][enc::sck::encode    ::X_N ]);
-		mdm[mdm::tsk::modulate  ][mdm::sck::modulate  ::X_N1](itb[itl::tsk::interleave][itl::sck::interleave::itl ]);
+		crc[crc::sck::build     ::U_K1](src[src::sck::generate  ::U_K ]);
+		enc[enc::sck::encode    ::U_K ](crc[crc::sck::build     ::U_K2]);
+		itb[itl::sck::interleave::nat ](enc[enc::sck::encode    ::X_N ]);
+		mdm[mdm::sck::modulate  ::X_N1](itb[itl::sck::interleave::itl ]);
 	}
 
 	if (this->params_BFER_ite.coset)
 	{
 		if (this->params_BFER_ite.coded_monitoring)
-			csb[cst::tsk::apply][cst::sck::apply::ref](enc[enc::tsk::encode][enc::sck::encode::X_N ]);
+			csb[cst::sck::apply::ref](enc[enc::sck::encode::X_N ]);
 		else
-			csb[cst::tsk::apply][cst::sck::apply::ref](crc[crc::tsk::build ][crc::sck::build ::U_K2]);
+			csb[cst::sck::apply::ref](crc[crc::sck::build ::U_K2]);
 
-		csr[cst::tsk::apply][cst::sck::apply::ref](enc[enc::tsk::encode][enc::sck::encode::X_N]);
+		csr[cst::sck::apply::ref](enc[enc::sck::encode::X_N]);
 	}
 
 	if (this->params_BFER_ite.coded_monitoring)
-		mnt[mnt::tsk::check_errors][mnt::sck::check_errors::U](enc[enc::tsk::encode  ][enc::sck::encode  ::X_N]);
+		mnt[mnt::sck::check_errors::U](enc[enc::sck::encode  ::X_N]);
 	else
-		mnt[mnt::tsk::check_errors][mnt::sck::check_errors::U](src[src::tsk::generate][src::sck::generate::U_K]);
+		mnt[mnt::sck::check_errors::U](src[src::sck::generate::U_K]);
 
 	if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
 		if (this->params_BFER_ite.chn->type == "NO")
 		{
-			chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::Y_N](mdm[mdm::tsk::modulate][mdm::sck::modulate::X_N2]);
-			auto chn_data = (uint8_t*)(chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::H_N].get_dataptr());
-			auto chn_bytes = chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::H_N].get_databytes();
+			chn[chn::sck::add_noise_wg::Y_N](mdm[mdm::sck::modulate::X_N2]);
+			auto chn_data = (uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr());
+			auto chn_bytes = chn[chn::sck::add_noise_wg::H_N].get_databytes();
 			std::fill(chn_data, chn_data + chn_bytes, 0);
 		}
 		if (!mdm.is_filter())
-			mdm[mdm::tsk::filter][mdm::sck::filter::Y_N2](chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::Y_N]);
+			mdm[mdm::sck::filter::Y_N2](chn[chn::sck::add_noise_wg::Y_N]);
 		if (this->params_BFER_ite.qnt->type == "NO")
-			qnt[qnt::tsk::process][qnt::sck::process::Y_N2](mdm[mdm::tsk::filter][mdm::sck::filter::Y_N2]);
+			qnt[qnt::sck::process::Y_N2](mdm[mdm::sck::filter::Y_N2]);
 		if (!mdm.is_demodulator())
-			mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2](qnt[qnt::tsk::process][qnt::sck::process::Y_N2]);
+			mdm[mdm::sck::demodulate_wg::Y_N2](qnt[qnt::sck::process::Y_N2]);
 
-		chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::X_N ](mdm[mdm::tsk::modulate     ][mdm::sck::modulate    ::X_N2]);
-		mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::H_N ](chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg::H_N ]);
-		mdm[mdm::tsk::filter       ][mdm::sck::filter       ::Y_N1](chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg::Y_N ]);
-		qnt[qnt::tsk::process      ][qnt::sck::process      ::Y_N1](mdm[mdm::tsk::filter       ][mdm::sck::filter      ::Y_N2]);
-		mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N1](qnt[qnt::tsk::process      ][qnt::sck::process     ::Y_N2]);
+		chn[chn::sck::add_noise_wg ::X_N ](mdm[mdm::sck::modulate    ::X_N2]);
+		mdm[mdm::sck::demodulate_wg::H_N ](chn[chn::sck::add_noise_wg::H_N ]);
+		mdm[mdm::sck::filter       ::Y_N1](chn[chn::sck::add_noise_wg::Y_N ]);
+		qnt[qnt::sck::process      ::Y_N1](mdm[mdm::sck::filter      ::Y_N2]);
+		mdm[mdm::sck::demodulate_wg::Y_N1](qnt[qnt::sck::process     ::Y_N2]);
 	}
 	else
 	{
 		if (this->params_BFER_ite.chn->type == "NO")
-			chn[chn::tsk::add_noise][chn::sck::add_noise::Y_N](mdm[mdm::tsk::modulate][mdm::sck::modulate::X_N2]);
+			chn[chn::sck::add_noise::Y_N](mdm[mdm::sck::modulate::X_N2]);
 		if (!mdm.is_filter())
-			mdm[mdm::tsk::filter][mdm::sck::filter::Y_N2](chn[chn::tsk::add_noise][chn::sck::add_noise::Y_N]);
+			mdm[mdm::sck::filter::Y_N2](chn[chn::sck::add_noise::Y_N]);
 		if (this->params_BFER_ite.qnt->type == "NO")
-			qnt[qnt::tsk::process][qnt::sck::process::Y_N2](mdm[mdm::tsk::filter][mdm::sck::filter::Y_N2]);
+			qnt[qnt::sck::process::Y_N2](mdm[mdm::sck::filter::Y_N2]);
 		if (!mdm.is_demodulator())
-			mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2](qnt[qnt::tsk::process][qnt::sck::process::Y_N2]);
+			mdm[mdm::sck::demodulate::Y_N2](qnt[qnt::sck::process::Y_N2]);
 
-		chn[chn::tsk::add_noise ][chn::sck::add_noise ::X_N ](mdm[mdm::tsk::modulate ][mdm::sck::modulate ::X_N2]);
-		mdm[mdm::tsk::filter    ][mdm::sck::filter    ::Y_N1](chn[chn::tsk::add_noise][chn::sck::add_noise::Y_N ]);
-		qnt[qnt::tsk::process   ][qnt::sck::process   ::Y_N1](mdm[mdm::tsk::filter   ][mdm::sck::filter   ::Y_N2]);
-		mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N1](qnt[qnt::tsk::process  ][qnt::sck::process  ::Y_N2]);
+		chn[chn::sck::add_noise ::X_N ](mdm[mdm::sck::modulate ::X_N2]);
+		mdm[mdm::sck::filter    ::Y_N1](chn[chn::sck::add_noise::Y_N ]);
+		qnt[qnt::sck::process   ::Y_N1](mdm[mdm::sck::filter   ::Y_N2]);
+		mdm[mdm::sck::demodulate::Y_N1](qnt[qnt::sck::process  ::Y_N2]);
 	}
 
-	itl[itl::tsk::deinterleave][itl::sck::deinterleave::itl](mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
+	itl[itl::sck::deinterleave::itl](mdm[mdm::sck::demodulate::Y_N2]);
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ---------------------------------------------------------------------------------------- turbo demodulation loop
@@ -206,58 +206,58 @@ void BFER_ite_threads<B,R,Q>
 	// --------------------------------------------------------------------------------------------------- CRC checking
 	if (this->params_BFER_ite.crc->type != "NO")
 	{
-		cdc[cdc::tsk::extract_sys_bit][cdc::sck::extract_sys_bit::Y_N](itl[itl::tsk::deinterleave   ][itl::sck::deinterleave   ::nat]);
-		crc[crc::tsk::check          ][crc::sck::check          ::V_K](cdc[cdc::tsk::extract_sys_bit][cdc::sck::extract_sys_bit::V_K]);
+		cdc[cdc::sck::extract_sys_bit::Y_N](itl[itl::sck::deinterleave   ::nat]);
+		crc[crc::sck::check          ::V_K](cdc[cdc::sck::extract_sys_bit::V_K]);
 	}
 
 	// ------------------------------------------------------------------------------------------------------- decoding
 	if (this->params_BFER_ite.coset)
 	{
 		// output socket binding (trick to avoid runtime re-binding)
-		dcs[dec::tsk::decode_siso][dec::sck::decode_siso::Y_N2](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat ]);
-		csr[cst::tsk::apply      ][cst::sck::apply      ::in  ](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat ]);
-		dcs[dec::tsk::decode_siso][dec::sck::decode_siso::Y_N1](csr[cst::tsk::apply       ][cst::sck::apply       ::out ]);
-		csr[cst::tsk::apply      ][cst::sck::apply      ::in  ](dcs[dec::tsk::decode_siso ][dec::sck::decode_siso ::Y_N2]);
+		dcs[dec::sck::decode_siso::Y_N2](itl[itl::sck::deinterleave::nat ]);
+		csr[cst::sck::apply      ::in  ](itl[itl::sck::deinterleave::nat ]);
+		dcs[dec::sck::decode_siso::Y_N1](csr[cst::sck::apply       ::out ]);
+		csr[cst::sck::apply      ::in  ](dcs[dec::sck::decode_siso ::Y_N2]);
 	}
 	else
 	{
-		dcs[dec::tsk::decode_siso][dec::sck::decode_siso::Y_N1](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat]);
+		dcs[dec::sck::decode_siso::Y_N1](itl[itl::sck::deinterleave::nat]);
 	}
 
 	// --------------------------------------------------------------------------------------------------- interleaving
 	if (this->params_BFER_ite.coset)
-		itl[itl::tsk::interleave][itl::sck::interleave::nat](csr[cst::tsk::apply      ][cst::sck::apply      ::out ]);
+		itl[itl::sck::interleave::nat](csr[cst::sck::apply      ::out ]);
 	else
-		itl[itl::tsk::interleave][itl::sck::interleave::nat](dcs[dec::tsk::decode_siso][dec::sck::decode_siso::Y_N2]);
+		itl[itl::sck::interleave::nat](dcs[dec::sck::decode_siso::Y_N2]);
 
 	// --------------------------------------------------------------------------------------------------- demodulation
 	if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
 		if (!mdm.is_demodulator())
-			mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::Y_N3](qnt[qnt::tsk::process][qnt::sck::process::Y_N2]);
+			mdm[mdm::sck::tdemodulate_wg::Y_N3](qnt[qnt::sck::process::Y_N2]);
 		else // output socket binding (trick to avoid runtime re-binding)
-			mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::Y_N3](mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
+			mdm[mdm::sck::tdemodulate_wg::Y_N3](mdm[mdm::sck::demodulate::Y_N2]);
 
-		mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::Y_N1](qnt[qnt::tsk::process     ][qnt::sck::process     ::Y_N2]);
-		mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::H_N ](chn[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::H_N ]);
-		mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::Y_N2](itl[itl::tsk::interleave  ][itl::sck::interleave  ::itl ]);
+		mdm[mdm::sck::tdemodulate_wg::Y_N1](qnt[qnt::sck::process     ::Y_N2]);
+		mdm[mdm::sck::tdemodulate_wg::H_N ](chn[chn::sck::add_noise_wg::H_N ]);
+		mdm[mdm::sck::tdemodulate_wg::Y_N2](itl[itl::sck::interleave  ::itl ]);
 	}
 	else
 	{
 		if (!mdm.is_demodulator())
-			mdm[mdm::tsk::tdemodulate][mdm::sck::tdemodulate::Y_N3](qnt[qnt::tsk::process][qnt::sck::process::Y_N2]);
+			mdm[mdm::sck::tdemodulate::Y_N3](qnt[qnt::sck::process::Y_N2]);
 		else // output socket binding (trick to avoid runtime re-binding)
-			mdm[mdm::tsk::tdemodulate][mdm::sck::tdemodulate::Y_N3](mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
+			mdm[mdm::sck::tdemodulate::Y_N3](mdm[mdm::sck::demodulate::Y_N2]);
 
-		mdm[mdm::tsk::tdemodulate][mdm::sck::tdemodulate::Y_N1](qnt[qnt::tsk::process   ][qnt::sck::process   ::Y_N2]);
-		mdm[mdm::tsk::tdemodulate][mdm::sck::tdemodulate::Y_N2](itl[itl::tsk::interleave][itl::sck::interleave::itl ]);
+		mdm[mdm::sck::tdemodulate::Y_N1](qnt[qnt::sck::process   ::Y_N2]);
+		mdm[mdm::sck::tdemodulate::Y_N2](itl[itl::sck::interleave::itl ]);
 	}
 
 	// ------------------------------------------------------------------------------------------------- deinterleaving
 	if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos)
-		itl[itl::tsk::deinterleave][itl::sck::deinterleave::itl](mdm[mdm::tsk::tdemodulate_wg][mdm::sck::tdemodulate_wg::Y_N3]);
+		itl[itl::sck::deinterleave::itl](mdm[mdm::sck::tdemodulate_wg::Y_N3]);
 	else
-		itl[itl::tsk::deinterleave][itl::sck::deinterleave::itl](mdm[mdm::tsk::tdemodulate   ][mdm::sck::tdemodulate   ::Y_N3]);
+		itl[itl::sck::deinterleave::itl](mdm[mdm::sck::tdemodulate   ::Y_N3]);
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------- end of turbo demodulation loop
@@ -265,49 +265,49 @@ void BFER_ite_threads<B,R,Q>
 
 	if (this->params_BFER_ite.coset)
 	{
-		csr[cst::tsk::apply][cst::sck::apply::in](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat]);
+		csr[cst::sck::apply::in](itl[itl::sck::deinterleave::nat]);
 
 		if (this->params_BFER_ite.coded_monitoring)
 		{
-			dch[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::Y_N](csr[cst::tsk::apply         ][cst::sck::apply         ::out]);
-			csb[cst::tsk::apply         ][cst::sck::apply         ::in ](dch[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::V_N]);
+			dch[dec::sck::decode_siho_cw::Y_N](csr[cst::sck::apply         ::out]);
+			csb[cst::sck::apply         ::in ](dch[dec::sck::decode_siho_cw::V_N]);
 		}
 		else
 		{
 			if (this->params_BFER_ite.crc->type == "NO")
-				crc[crc::tsk::extract][crc::sck::extract::V_K2](csb[cst::tsk::apply][cst::sck::apply::out]);
+				crc[crc::sck::extract::V_K2](csb[cst::sck::apply::out]);
 
-			dch[dec::tsk::decode_siho][dec::sck::decode_siho::Y_N ](csr[cst::tsk::apply      ][cst::sck::apply      ::out]);
-			csb[cst::tsk::apply      ][cst::sck::apply      ::in  ](dch[dec::tsk::decode_siho][dec::sck::decode_siho::V_K]);
-			crc[crc::tsk::extract    ][crc::sck::extract    ::V_K1](csb[cst::tsk::apply      ][cst::sck::apply      ::out]);
+			dch[dec::sck::decode_siho::Y_N ](csr[cst::sck::apply      ::out]);
+			csb[cst::sck::apply      ::in  ](dch[dec::sck::decode_siho::V_K]);
+			crc[crc::sck::extract    ::V_K1](csb[cst::sck::apply      ::out]);
 		}
 	}
 	else
 	{
 		if (this->params_BFER_ite.coded_monitoring)
 		{
-			dch[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::Y_N](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat]);
+			dch[dec::sck::decode_siho_cw::Y_N](itl[itl::sck::deinterleave::nat]);
 		}
 		else
 		{
 			if (this->params_BFER_ite.crc->type == "NO")
-				crc[crc::tsk::extract][crc::sck::extract::V_K2](dch[dec::tsk::decode_siho ][dec::sck::decode_siho::V_K]);
+				crc[crc::sck::extract::V_K2](dch[dec::sck::decode_siho::V_K]);
 
-			dch[dec::tsk::decode_siho][dec::sck::decode_siho::Y_N ](itl[itl::tsk::deinterleave][itl::sck::deinterleave::nat]);
-			crc[crc::tsk::extract    ][crc::sck::extract    ::V_K1](dch[dec::tsk::decode_siho ][dec::sck::decode_siho ::V_K]);
+			dch[dec::sck::decode_siho::Y_N ](itl[itl::sck::deinterleave::nat]);
+			crc[crc::sck::extract    ::V_K1](dch[dec::sck::decode_siho ::V_K]);
 		}
 	}
 
 	if (this->params_BFER_ite.coded_monitoring)
 	{
 		if (this->params_BFER_ite.coset)
-			mnt[mnt::tsk::check_errors][mnt::sck::check_errors::V](csb[cst::tsk::apply         ][cst::sck::apply         ::out]);
+			mnt[mnt::sck::check_errors::V](csb[cst::sck::apply         ::out]);
 		else
-			mnt[mnt::tsk::check_errors][mnt::sck::check_errors::V](dch[dec::tsk::decode_siho_cw][dec::sck::decode_siho_cw::V_N]);
+			mnt[mnt::sck::check_errors::V](dch[dec::sck::decode_siho_cw::V_N]);
 	}
 	else
 	{
-		mnt[mnt::tsk::check_errors][mnt::sck::check_errors::V](crc[crc::tsk::extract][crc::sck::extract::V_K2]);
+		mnt[mnt::sck::check_errors::V](crc[crc::sck::extract::V_K2]);
 	}
 }
 

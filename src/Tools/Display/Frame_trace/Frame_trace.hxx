@@ -102,10 +102,10 @@ void Frame_trace<B>
 
 	switch(version)
 	{
-		case BIT:
+		case debug_version::BIT:
 			stream << std::setw(prec+2) << ((value == 0) ? (int) 0 : (int) 1) << "|";
 			break;
-		case REAL:
+		case debug_version::REAL:
 			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
 			value_string = sstream.str();
 			size_t pos = value_string.find('e');
@@ -129,7 +129,7 @@ void Frame_trace<B>
 
 	switch(version)
 	{
-		case BIT:
+		case debug_version::BIT:
 			value_string.append(prec+1, ' ');
 			if (value == 0)
 				if (ref == 0)
@@ -143,7 +143,7 @@ void Frame_trace<B>
 					stream << rang::style::bold << rang::fg::green << value_string << "1" << rang::style::reset << "|";
 			break;
 
-		case REAL:
+		case debug_version::REAL:
 			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
 			value_string = sstream.str();
 			size_t pos = value_string.find('e');

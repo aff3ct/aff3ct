@@ -11,7 +11,7 @@ namespace aff3ct
 namespace tools
 {
 
-enum openmode {read, write, read_write};
+enum class openmode : uint8_t {read, write, read_write};
 
 std::string openmode_to_string(const openmode& mode);
 

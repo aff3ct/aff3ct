@@ -143,14 +143,14 @@ void EXIT<B,R>
 				auto &mdm = *this->modem_a;
 				if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 				{
-					auto mdm_data  = (uint8_t*)(mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2].get_dataptr());
-					auto mdm_bytes =            mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2].get_databytes();
+					auto mdm_data  = (uint8_t*)(mdm[mdm::sck::demodulate_wg::Y_N2].get_dataptr());
+					auto mdm_bytes =            mdm[mdm::sck::demodulate_wg::Y_N2].get_databytes();
 					std::fill(mdm_data, mdm_data + mdm_bytes, 0);
 				}
 				else
 				{
-					auto mdm_data  = (uint8_t*)(mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2].get_dataptr());
-					auto mdm_bytes =            mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2].get_databytes();
+					auto mdm_data  = (uint8_t*)(mdm[mdm::sck::demodulate::Y_N2].get_dataptr());
+					auto mdm_bytes =            mdm[mdm::sck::demodulate::Y_N2].get_databytes();
 					std::fill(mdm_data, mdm_data + mdm_bytes, 0);
 				}
 			}
@@ -222,47 +222,47 @@ void EXIT<B,R>
 
 	using namespace module;
 
-	mnt[mnt::tsk::check_mutual_info][mnt::sck::check_mutual_info::bits](src[src::tsk::generate][src::sck::generate::U_K]);
-	mda[mdm::tsk::modulate         ][mdm::sck::modulate         ::X_N1](src[src::tsk::generate][src::sck::generate::U_K]);
-	enc[enc::tsk::encode           ][enc::sck::encode           ::U_K ](src[src::tsk::generate][src::sck::generate::U_K]);
-	mdm[mdm::tsk::modulate         ][mdm::sck::modulate         ::X_N1](enc[enc::tsk::encode  ][enc::sck::encode  ::X_N]);
+	mnt[mnt::sck::check_mutual_info::bits](src[src::sck::generate::U_K]);
+	mda[mdm::sck::modulate         ::X_N1](src[src::sck::generate::U_K]);
+	enc[enc::sck::encode           ::U_K ](src[src::sck::generate::U_K]);
+	mdm[mdm::sck::modulate         ::X_N1](enc[enc::sck::encode  ::X_N]);
 
 	// Rayleigh channel
 	if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		cha[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::X_N ](mda[mdm::tsk::modulate    ][mdm::sck::modulate    ::X_N2]);
-		mda[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::H_N ](cha[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::H_N ]);
-		mda[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N1](cha[chn::tsk::add_noise_wg][chn::sck::add_noise_wg::Y_N ]);
+		cha[chn::sck::add_noise_wg ::X_N ](mda[mdm::sck::modulate    ::X_N2]);
+		mda[mdm::sck::demodulate_wg::H_N ](cha[chn::sck::add_noise_wg::H_N ]);
+		mda[mdm::sck::demodulate_wg::Y_N1](cha[chn::sck::add_noise_wg::Y_N ]);
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
-		cha[chn::tsk::add_noise ][chn::sck::add_noise ::X_N ](mda[mdm::tsk::modulate ][mdm::sck::modulate ::X_N2]);
-		mda[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N1](cha[chn::tsk::add_noise][chn::sck::add_noise::Y_N ]);
+		cha[chn::sck::add_noise ::X_N ](mda[mdm::sck::modulate ::X_N2]);
+		mda[mdm::sck::demodulate::Y_N1](cha[chn::sck::add_noise::Y_N ]);
 	}
 
 	// Rayleigh channel
 	if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		mnt[mnt::tsk::check_mutual_info][mnt::sck::check_mutual_info::llrs_a](mda[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2]);
-		chn[chn::tsk::add_noise_wg     ][chn::sck::add_noise_wg     ::X_N   ](mdm[mdm::tsk::modulate     ][mdm::sck::modulate     ::X_N2]);
-		mdm[mdm::tsk::demodulate_wg    ][mdm::sck::demodulate_wg    ::H_N   ](chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::H_N ]);
-		mdm[mdm::tsk::demodulate_wg    ][mdm::sck::demodulate_wg    ::Y_N1  ](chn[chn::tsk::add_noise_wg ][chn::sck::add_noise_wg ::Y_N ]);
-		cdc[cdc::tsk::add_sys_ext      ][cdc::sck::add_sys_ext      ::ext   ](mda[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2]);
-		cdc[cdc::tsk::add_sys_ext      ][cdc::sck::add_sys_ext      ::Y_N   ](mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2]);
-		dec[dec::tsk::decode_siso      ][dec::sck::decode_siso      ::Y_N1  ](mdm[mdm::tsk::demodulate_wg][mdm::sck::demodulate_wg::Y_N2]);
+		mnt[mnt::sck::check_mutual_info::llrs_a](mda[mdm::sck::demodulate_wg::Y_N2]);
+		chn[chn::sck::add_noise_wg     ::X_N   ](mdm[mdm::sck::modulate     ::X_N2]);
+		mdm[mdm::sck::demodulate_wg    ::H_N   ](chn[chn::sck::add_noise_wg ::H_N ]);
+		mdm[mdm::sck::demodulate_wg    ::Y_N1  ](chn[chn::sck::add_noise_wg ::Y_N ]);
+		cdc[cdc::sck::add_sys_ext      ::ext   ](mda[mdm::sck::demodulate_wg::Y_N2]);
+		cdc[cdc::sck::add_sys_ext      ::Y_N   ](mdm[mdm::sck::demodulate_wg::Y_N2]);
+		dec[dec::sck::decode_siso      ::Y_N1  ](mdm[mdm::sck::demodulate_wg::Y_N2]);
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
-		mnt[mnt::tsk::check_mutual_info][mnt::sck::check_mutual_info::llrs_a](mda[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
-		chn[chn::tsk::add_noise        ][chn::sck::add_noise        ::X_N   ](mdm[mdm::tsk::modulate  ][mdm::sck::modulate  ::X_N2]);
-		mdm[mdm::tsk::demodulate       ][mdm::sck::demodulate       ::Y_N1  ](chn[chn::tsk::add_noise ][chn::sck::add_noise ::Y_N ]);
-		cdc[cdc::tsk::add_sys_ext      ][cdc::sck::add_sys_ext      ::ext   ](mda[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
-		cdc[cdc::tsk::add_sys_ext      ][cdc::sck::add_sys_ext      ::Y_N   ](mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
-		dec[dec::tsk::decode_siso      ][dec::sck::decode_siso      ::Y_N1  ](mdm[mdm::tsk::demodulate][mdm::sck::demodulate::Y_N2]);
+		mnt[mnt::sck::check_mutual_info::llrs_a](mda[mdm::sck::demodulate::Y_N2]);
+		chn[chn::sck::add_noise        ::X_N   ](mdm[mdm::sck::modulate  ::X_N2]);
+		mdm[mdm::sck::demodulate       ::Y_N1  ](chn[chn::sck::add_noise ::Y_N ]);
+		cdc[cdc::sck::add_sys_ext      ::ext   ](mda[mdm::sck::demodulate::Y_N2]);
+		cdc[cdc::sck::add_sys_ext      ::Y_N   ](mdm[mdm::sck::demodulate::Y_N2]);
+		dec[dec::sck::decode_siso      ::Y_N1  ](mdm[mdm::sck::demodulate::Y_N2]);
 	}
 
-	cdc[cdc::tsk::extract_sys_llr  ][cdc::sck::extract_sys_llr  ::Y_N   ](dec[dec::tsk::decode_siso    ][dec::sck::decode_siso    ::Y_N2]);
-	mnt[mnt::tsk::check_mutual_info][mnt::sck::check_mutual_info::llrs_e](cdc[cdc::tsk::extract_sys_llr][cdc::sck::extract_sys_llr::Y_K ]);
+	cdc[cdc::sck::extract_sys_llr  ::Y_N   ](dec[dec::sck::decode_siso    ::Y_N2]);
+	mnt[mnt::sck::check_mutual_info::llrs_e](cdc[cdc::sck::extract_sys_llr::Y_K ]);
 }
 
 template <typename B, typename R>

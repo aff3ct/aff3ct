@@ -12,7 +12,7 @@ namespace tools
 
 struct Argument_info
 {
-	enum class Rank {OPTIONAL, REQUIRED, ADVANCED};
+	enum class Rank : uint8_t {OPTIONAL, REQUIRED, ADVANCED};
 
     Argument_info();
     Argument_info(Argument_type* type, const std::string& doc, const Rank rank = Rank::OPTIONAL);

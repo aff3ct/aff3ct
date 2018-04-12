@@ -19,15 +19,12 @@ namespace module
 {
 	namespace chn
 	{
-		namespace tsk
-		{
-			enum list { add_noise, add_noise_wg, SIZE };
-		}
+		enum class tsk : uint8_t { add_noise, add_noise_wg, SIZE };
 
 		namespace sck
 		{
-			namespace add_noise    { enum list { X_N, Y_N     , SIZE }; }
-			namespace add_noise_wg { enum list { X_N, H_N, Y_N, SIZE }; }
+			enum class add_noise    : uint8_t { X_N, Y_N     , SIZE };
+			enum class add_noise_wg : uint8_t { X_N, H_N, Y_N, SIZE };
 		}
 	}
 
@@ -43,6 +40,11 @@ namespace module
 template <typename R = float>
 class Channel : public Module
 {
+public:
+	inline Task&   operator[](const chn::tsk               t) { return Module::operator[]((int)t);                              }
+	inline Socket& operator[](const chn::sck::add_noise    s) { return Module::operator[]((int)chn::tsk::add_noise   )[(int)s]; }
+	inline Socket& operator[](const chn::sck::add_noise_wg s) { return Module::operator[]((int)chn::tsk::add_noise_wg)[(int)s]; }
+
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
 	      R   sigma; /*!< Sigma^2, the noise variance */

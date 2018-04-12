@@ -19,15 +19,12 @@ namespace module
 {
 	namespace pct
 	{
-		namespace tsk
-		{
-			enum list { puncture, depuncture, SIZE };
-		}
+		enum class tsk : uint8_t { puncture, depuncture, SIZE };
 
 		namespace sck
 		{
-			namespace puncture   { enum list { X_N1, X_N2, SIZE }; }
-			namespace depuncture { enum list { Y_N1, Y_N2, SIZE }; }
+			enum class puncture   : uint8_t { X_N1, X_N2, SIZE };
+			enum class depuncture : uint8_t { Y_N1, Y_N2, SIZE };
 		}
 	}
 
@@ -44,6 +41,11 @@ namespace module
 template <typename B = int, typename Q = float>
 class Puncturer : public Module
 {
+public:
+	inline Task&   operator[](const pct::tsk             t) { return Module::operator[]((int)t);                            }
+	inline Socket& operator[](const pct::sck::puncture   s) { return Module::operator[]((int)pct::tsk::puncture  )[(int)s]; }
+	inline Socket& operator[](const pct::sck::depuncture s) { return Module::operator[]((int)pct::tsk::depuncture)[(int)s]; }
+
 protected:
 	const int K;    /*!< Number of information bits in one frame */
 	const int N;    /*!< Size of one frame (= number of bits in one frame) */

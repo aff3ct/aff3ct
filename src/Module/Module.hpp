@@ -74,9 +74,9 @@ public:
 
 	const std::string& get_short_name() const;
 
+protected:
 	Task& operator[](const int id);
 
-protected:
 	Task& create_task(const std::string &name, const int id = -1);
 
 	template <typename T>

@@ -34,8 +34,8 @@ Monitor
 	std::signal(SIGINT, Monitor::signal_interrupt_handler);
 #endif
 
-	this->tasks_with_nullptr.resize(mnt::tsk::SIZE);
-	for (size_t t = 0; t < mnt::tsk::SIZE; t++)
+	this->tasks_with_nullptr.resize((size_t)mnt::tsk::SIZE);
+	for (size_t t = 0; t < (size_t)mnt::tsk::SIZE; t++)
 		this->tasks_with_nullptr[t] = nullptr;
 }
 
