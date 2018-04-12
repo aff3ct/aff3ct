@@ -21,7 +21,7 @@ Codec(const int K, const int N_cw, const int N, const int tail_length, const int
   interleaver_llr (nullptr),
   encoder         (nullptr),
   puncturer       (nullptr),
-  K(K), N_cw(N_cw), N(N), tail_length(tail_length), n(tools::Noise<float>())
+  K(K), N_cw(N_cw), N(N), tail_length(tail_length)
 {
 	const std::string name = "Codec";
 	this->set_name(name);
