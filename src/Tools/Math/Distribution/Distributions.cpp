@@ -172,6 +172,7 @@ get_noise_range(std::ifstream& f_distributions)
 		}
 	}
 
+	std::sort(v_noise.begin(), v_noise.end());
 	return v_noise;
 }
 
