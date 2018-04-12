@@ -217,6 +217,7 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parame
 	}
 }
 
+#undef max
 void aff3ct::factory::Header::compute_max_n_chars(const header_list& header, int& max_n_chars)
 {
 	for (unsigned i = 0; i < header.size(); i++)
