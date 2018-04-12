@@ -78,7 +78,7 @@ void factory::Launcher::parameters
 		{p+"-cde-type", "C"},
 		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED")),
 		"select the code type you want to use.",
-		tools::arg_rank::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-type"},
@@ -119,20 +119,20 @@ void factory::Launcher::parameters
 		{"except-no-bt"},
 		tools::None(),
 		"do not print the backtrace when displaying exception.",
-		tools::arg_rank::ADVANCED);
+		tools::arg_rank::ADV);
 
 	args.add(
 		{"except-a2l"},
 		tools::None(),
 		"enhance the backtrace when displaying exception by changing program addresses into "
 		" file names and lines (may take some seconds).",
-		tools::arg_rank::ADVANCED);
+		tools::arg_rank::ADV);
 
 	args.add(
 		{p+"-no-legend"},
 		tools::None(),
 		"Do not display any legend when launching the simulation.",
-		tools::arg_rank::ADVANCED);
+		tools::arg_rank::ADV);
 
 
 #ifdef ENABLE_COOL_BASH

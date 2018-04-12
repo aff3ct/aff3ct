@@ -40,7 +40,7 @@ void Flip_and_check::parameters
 		{p+"-size"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"size (in bit) of the extrinsic for the fnc processing.",
-		tools::arg_rank::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-fra", "F"},

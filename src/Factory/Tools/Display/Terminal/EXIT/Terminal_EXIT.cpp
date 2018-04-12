@@ -36,7 +36,7 @@ void Terminal_EXIT::parameters
 		{p+"-cw-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of bits in the codeword.",
-		tools::arg_rank::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-type"},

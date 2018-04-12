@@ -41,7 +41,7 @@ void Puncturer_LDPC::parameters
 		{p+"-cw-size", "N_cw"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the codeword size.",
-		tools::arg_rank::REQUIRED);
+		tools::arg_rank::REQ);
 
 	tools::add_options(args.at({p+"-type"}), 0, "LDPC");
 
