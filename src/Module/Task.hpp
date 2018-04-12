@@ -24,7 +24,7 @@ namespace module
 class Module;
 class Socket;
 
-enum class socket_t : uint8_t { IN, IN_OUT, OUT };
+enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
 
 class Task
 {
