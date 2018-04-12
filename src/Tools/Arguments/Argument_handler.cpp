@@ -208,6 +208,7 @@ void Argument_handler
 	help_os << " [optional args...]" << std::endl;
 }
 
+#undef max
 size_t Argument_handler
 ::find_longest_tags(const Argument_map_info &args) const
 {
