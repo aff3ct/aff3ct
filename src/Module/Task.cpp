@@ -53,13 +53,13 @@ void Task::set_autoalloc(const bool autoalloc)
 		{
 			this->out_buffers.clear();
 			for (auto *s : sockets)
-				if (get_socket_type(*s) == Socket_type::OUT)
+				if (get_socket_type(*s) == socket_t::OUT)
 					s->dataptr = nullptr;
 		}
 		else
 		{
 			for (auto *s : sockets)
-				if (get_socket_type(*s) == Socket_type::OUT)
+				if (get_socket_type(*s) == socket_t::OUT)
 				{
 					out_buffers.push_back(mipp::vector<uint8_t>(s->databytes));
 					s->dataptr = out_buffers.back().data();
@@ -201,7 +201,7 @@ int Task::exec()
 				auto &s = *sockets[i];
 				auto s_type = get_socket_type(s);
 				auto n_elmts = s.get_databytes() / (size_t)s.get_datatype_size();
-				std::cout << rang::style::bold << rang::fg::blue << (s_type == Socket_type::IN ? "const " : "")
+				std::cout << rang::style::bold << rang::fg::blue << (s_type == socket_t::IN ? "const " : "")
 				          << s.get_datatype_string() << rang::style::reset
 				          << " " << s.get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
 				          << (n_elmts / n_fra) << "]"
@@ -214,7 +214,7 @@ int Task::exec()
 			for (auto *s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
-				if (s_type == Socket_type::IN || s_type == Socket_type::IN_OUT)
+				if (s_type == socket_t::IN || s_type == socket_t::IN_OUT)
 				{
 					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s->get_name().size(); ss++) spaces += " ";
 
@@ -264,7 +264,7 @@ int Task::exec()
 			for (auto *s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
-				if (s_type == Socket_type::OUT || s_type == Socket_type::IN_OUT)
+				if (s_type == socket_t::OUT || s_type == socket_t::IN_OUT)
 				{
 					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s->get_name().size(); ss++) spaces += " ";
 
@@ -331,7 +331,7 @@ Socket& Task::create_socket_in(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
-	socket_type.push_back(Socket_type::IN);
+	socket_type.push_back(socket_t::IN);
 	last_input_socket = &s;
 
 	return s;
@@ -342,7 +342,7 @@ Socket& Task::create_socket_in_out(const std::string &name, const size_t n_elmts
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
-	socket_type.push_back(Socket_type::IN_OUT);
+	socket_type.push_back(socket_t::IN_OUT);
 	last_input_socket = &s;
 
 	return s;
@@ -353,7 +353,7 @@ Socket& Task::create_socket_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
-	socket_type.push_back(Socket_type::OUT);
+	socket_type.push_back(socket_t::OUT);
 
 	// memory allocation
 	if (is_autoalloc())
@@ -423,7 +423,7 @@ const std::vector<std::chrono::nanoseconds>& Task::get_timers_max() const
 	return this->timers_max;
 }
 
-Socket_type Task::get_socket_type(const Socket &s) const
+socket_t Task::get_socket_type(const Socket &s) const
 {
 	for (size_t i = 0; i < sockets.size(); i++)
 		if (sockets[i] == &s)

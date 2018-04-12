@@ -40,7 +40,7 @@ void CRC::parameters
 		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of generated bits (information bits, the CRC is not included).",
-		tools::Argument_info::Rank::REQUIRED);
+		tools::arg_rank::REQUIRED);
 
 	args.add(
 		{p+"-fra", "F"},

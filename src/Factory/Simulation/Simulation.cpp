@@ -39,19 +39,19 @@ void Simulation::parameters
 		{p+"-snr-range", "R"},
 		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
 		"signal/noise ratio range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
-		tools::Argument_info::Rank::REQUIRED);
+		tools::arg_rank::REQUIRED);
 
 	args.add(
 		{p+"-snr-min", "m"},
 		tools::Real(),
 		"minimal signal/noise ratio to simulate.",
-		tools::Argument_info::Rank::REQUIRED);
+		tools::arg_rank::REQUIRED);
 
 	args.add(
 		{p+"-snr-max", "M"},
 		tools::Real(),
 		"maximal signal/noise ratio to simulate.",
-		tools::Argument_info::Rank::REQUIRED);
+		tools::arg_rank::REQUIRED);
 
 	args.add(
 		{p+"-snr-step", "s"},

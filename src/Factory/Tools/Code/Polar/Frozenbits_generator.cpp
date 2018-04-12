@@ -37,13 +37,13 @@ void Frozenbits_generator::parameters
 		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"useful number of bit transmitted (information bits).",
-		tools::Argument_info::Rank::REQUIRED);
+		tools::arg_rank::REQUIRED);
 
 	args.add(
 		{p+"-cw-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"the codeword size.",
-		tools::Argument_info::Rank::REQUIRED);
+		tools::arg_rank::REQUIRED);
 
 	args.add(
 		{p+"-sigma"},

@@ -111,25 +111,25 @@ void BFER::parameters
 		{p+"-err-trk"},
 		tools::None(),
 		"enable the tracking of the bad frames (by default the frames are stored in the current folder).",
-		tools::Argument_info::Rank::ADVANCED);
+		tools::arg_rank::ADVANCED);
 
 	args.add(
 		{p+"-err-trk-rev"},
 		tools::None(),
 		"automatically replay the saved frames.",
-		tools::Argument_info::Rank::ADVANCED);
+		tools::arg_rank::ADVANCED);
 
 	args.add(
 		{p+"-err-trk-path"},
 		tools::File(tools::openmode::read_write),
 		"base path for the files where the bad frames will be stored or read.",
-		tools::Argument_info::Rank::ADVANCED);
+		tools::arg_rank::ADVANCED);
 
 	args.add(
 		{p+"-err-trk-thold"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"dump only frames with a bit error count above or equal to this threshold.",
-		tools::Argument_info::Rank::ADVANCED);
+		tools::arg_rank::ADVANCED);
 
 	args.add(
 		{p+"-coded"},

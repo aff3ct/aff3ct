@@ -46,7 +46,7 @@ void Interleaver_core::parameters
 		{p+"-size"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of symbols to interleave.",
-		tools::Argument_info::Rank::REQUIRED);
+		tools::arg_rank::REQUIRED);
 
 	args.add(
 		{p+"-fra", "F"},
