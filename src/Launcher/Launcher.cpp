@@ -1,9 +1,9 @@
+#include <rang.hpp>
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
 #include <functional>
-#include <rang.hpp>
 
 #ifdef ENABLE_MPI
 #include <mpi.h>

@@ -1,8 +1,8 @@
+#include <rang.hpp>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <ios>
-#include <rang.hpp>
 
 #include "Terminal_EXIT.hpp"
 

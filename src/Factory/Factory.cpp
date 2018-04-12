@@ -1,10 +1,10 @@
+#include <rang.hpp>
 #include <algorithm>
 #include <iostream>
 #include <utility>
 #include <sstream>
 #include <vector>
 #include <map>
-#include <rang.hpp>
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"

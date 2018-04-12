@@ -1,5 +1,5 @@
-#include <sstream>
 #include <rang.hpp>
+#include <sstream>
 
 #include "bash_tools.h"
 

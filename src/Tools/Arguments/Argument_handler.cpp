@@ -1,7 +1,7 @@
+#include <rang.hpp>
 #include <sstream>
 #include <algorithm>
 #include <type_traits>
-#include <rang.hpp>
 
 #include "Tools/general_utils.h"
 
