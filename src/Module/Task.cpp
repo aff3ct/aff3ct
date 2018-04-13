@@ -1,7 +1,8 @@
-#include <rang.hpp>
 #include <iostream>
 #include <iomanip>
 #include <ios>
+
+#include <rang.hpp>
 
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 

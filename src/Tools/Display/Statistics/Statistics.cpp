@@ -1,6 +1,7 @@
-#include <rang.hpp>
 #include <algorithm>
 #include <iomanip>
+
+#include <rang.hpp>
 
 #include "Tools/Display/bash_tools.h"
 

@@ -1,10 +1,10 @@
-#include <rang.hpp>
 #include <algorithm>
 #include <iostream>
 #include <utility>
 #include <sstream>
 #include <vector>
 #include <map>
+#include <rang.hpp>
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
@@ -217,7 +217,6 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory::parame
 	}
 }
 
-#undef max
 void aff3ct::factory::Header::compute_max_n_chars(const header_list& header, int& max_n_chars)
 {
 	for (unsigned i = 0; i < header.size(); i++)

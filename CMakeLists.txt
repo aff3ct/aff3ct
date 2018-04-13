@@ -218,5 +218,11 @@ if (UNIX)
     add_definitions (-fPIC)
 endif()
 
+# mandatory for rang on Windows
+if (WIN32)
+    add_definitions (-D_WIN32_WINNT)
+    add_definitions (-DNOMINMAX)
+endif (WIN32)
+
 # Specific options
 add_definitions (-DENABLE_BIT_PACKING)

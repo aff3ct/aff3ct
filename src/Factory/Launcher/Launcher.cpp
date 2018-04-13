@@ -1,10 +1,10 @@
-#include <rang.hpp>
 #include <vector>
 #include <cstdint>
 #include <sstream>
 #include <typeinfo>
 #include <typeindex>
 #include <unordered_map>
+#include <rang.hpp>
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
