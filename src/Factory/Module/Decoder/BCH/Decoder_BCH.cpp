@@ -44,6 +44,8 @@ void Decoder_BCH::parameters
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"correction power of the BCH code.");
 
+	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});
+
 	tools::add_options(args.at({p+"-type", "D"}), 0, "ALGEBRAIC");
 	tools::add_options(args.at({p+"-implem"   }), 0, "GENIUS");
 }
@@ -65,6 +67,8 @@ void Decoder_BCH::parameters
 
 	if (vals.exist({p+"-corr-pow", "T"}))
 		this->t = vals.to_int({p+"-corr-pow", "T"});
+		if (!vals.exist({p+"-info-bits", "K"}))
+			this->K = this->N_cw - this->t * this->m;
 	else
 		this->t = (this->N_cw - this->K) / this->m;
 }

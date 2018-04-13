@@ -149,9 +149,9 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-noise-type",   "E"})) this->noise_type            = vals.at    ({p+"-noise-type", "E"});
-	if(vals.exist({p+"-err-trk-path"   })) this->err_track_path      = vals.at    ({p+"-err-trk-path" });
-	if(vals.exist({p+"-err-trk-thold"  })) this->err_track_threshold = vals.to_int({p+"-err-trk-thold"});
+	if(vals.exist({p+"-noise-type", "E"})) this->noise_type          = vals.at    ({p+"-noise-type", "E"});
+	if(vals.exist({p+"-err-trk-path"   })) this->err_track_path      = vals.at    ({p+"-err-trk-path"   });
+	if(vals.exist({p+"-err-trk-thold"  })) this->err_track_threshold = vals.to_int({p+"-err-trk-thold"  });
 	if(vals.exist({p+"-err-trk-rev"    })) this->err_track_revert    = true;
 	if(vals.exist({p+"-err-trk"        })) this->err_track_enable    = true;
 	if(vals.exist({p+"-coset",      "c"})) this->coset               = true;
@@ -171,7 +171,7 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("NOISE type", this->noise_type));
+	headers[p].push_back(std::make_pair("NOISE type (E)", this->noise_type));
 	headers[p].push_back(std::make_pair("Coset approach (c)", this->coset ? "yes" : "no"));
 	headers[p].push_back(std::make_pair("Coded monitoring", this->coded_monitoring ? "yes" : "no"));
 
