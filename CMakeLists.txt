@@ -73,7 +73,8 @@ endif()
 
 # by system
 if (WIN32) # for Windows operating system in general
-    add_definitions (-D_WIN32_WINNT=_WIN32_WINNT_VISTA)
+    set (WINDOWS_VISTA 0x0600)
+    add_definitions (-D_WIN32_WINNT=${WINDOWS_VISTA})
     add_definitions (-DNOMINMAX)
     message(STATUS "AFF3CT - System: Windows")
 elseif (APPLE) # for MacOS X
