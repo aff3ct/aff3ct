@@ -14,12 +14,6 @@
 
 #include "Task.hpp"
 
-// convert strongly typed enum to integer
-template <typename E>
-constexpr typename std::underlying_type<E>::type operator+(E e) noexcept {
-	return static_cast<typename std::underlying_type<E>::type>(e);
-}
-
 namespace aff3ct
 {
 namespace module

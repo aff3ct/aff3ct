@@ -22,6 +22,12 @@
 #include "SC_Module.hpp"
 #endif
 
+// convert strongly typed enum to integer
+template <typename E>
+constexpr typename std::underlying_type<E>::type operator+(E e) noexcept {
+	return static_cast<typename std::underlying_type<E>::type>(e);
+}
+
 namespace aff3ct
 {
 namespace module
@@ -74,9 +80,9 @@ public:
 
 	const std::string& get_short_name() const;
 
-protected:
 	Task& operator[](const int id);
 
+protected:
 	Task& create_task(const std::string &name, const int id = -1);
 
 	template <typename T>

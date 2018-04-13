@@ -169,8 +169,8 @@ void factory::Launcher::parameters
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
 
-	tools::exception::no_backtrace =  vals.exist({"except-no-bt"});
-	tools::exception::no_addr2line = !vals.exist({"except-a2l"  });
+	tools::exception::no_backtrace    =  vals.exist({"except-no-bt"});
+	tools::exception::no_addr_to_line = !vals.exist({"except-a2l"  });
 
 #ifdef ENABLE_COOL_BASH
 	if (vals.exist({p+"-no-colors"})) rang::setControlMode(rang::control::Off);
