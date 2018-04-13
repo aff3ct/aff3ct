@@ -3,6 +3,7 @@
 
 #include <utility>
 #include <string>
+#include <limits>
 
 namespace aff3ct
 {
@@ -10,6 +11,12 @@ namespace tools
 {
 
 enum class Noise_type : uint8_t{ SIGMA, ROP, EP }; // Sigma (SNR variance), Received optical power, Erasure Probability
+
+template <typename R = float>
+extern constexpr R erased_value() // return a predefined value that represents an Erased Value in a Binary Erasure Channel
+{
+	return std::numeric_limits<R>::infinity();
+}
 
 
 template <typename R = float>

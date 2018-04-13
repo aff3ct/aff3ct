@@ -70,9 +70,18 @@ void Modem_OOK<B,R,Q>
 					Y_N2[i] = -((Q) 2.0 * Y_N1[i] - (Q) 1) * (Q) sigma_factor;
 				break;
 			case tools::Noise_type::EP:
+			{
+				auto sign = (Q)0.00001;
 				for (auto i = 0; i < this->N_fil; i++)
-					Y_N2[i] = Y_N1[i] == std::numeric_limits<Q>::infinity() ? (Q) 0 : ((Q) 1 - (Q) 2.0 * Y_N1[i]);
+					if (Y_N1[i] == tools::erased_value<Q>())
+					{
+						Y_N2[i] = sign;
+						sign *= (Q) -1;
+					}
+					else
+						Y_N2[i] = ((Q) 1 - (Q) 2.0 * Y_N1[i]);
 				break;
+			}
 			default:
 			{
 				std::stringstream message;

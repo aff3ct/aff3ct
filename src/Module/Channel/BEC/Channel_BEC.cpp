@@ -74,10 +74,9 @@ void Channel_BEC<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	const auto erasure_probability = this->n.get_ep();
-	const auto erased_value        = std::numeric_limits<R>::infinity();
 
 
-	const mipp::Reg<R> r_erased = erased_value;
+	const mipp::Reg<R> r_erased = tools::erased_value<R>();
 	const mipp::Reg<R> r_ep     = erasure_probability;
 
 	const auto vec_loop_size = (std::is_same<R,float>::value) ? ((this->N / mipp::nElReg<R>()) * mipp::nElReg<R>()) : 0;
@@ -91,7 +90,7 @@ void Channel_BEC<R>
 	}
 
 	for (auto i = vec_loop_size; i < this->N; i++)
-		Y_N[i] = get_random() <= erasure_probability ? erased_value : X_N[i];
+		Y_N[i] = get_random() <= erasure_probability ? tools::erased_value<R>() : X_N[i];
 }
 
 // ==================================================================================== explicit template instantiation
