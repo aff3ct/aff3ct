@@ -10,8 +10,15 @@
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
+#include <type_traits>
 
 #include "Task.hpp"
+
+// convert strongly typed enum to integer
+template <typename E>
+constexpr typename std::underlying_type<E>::type operator+(E e) noexcept {
+	return static_cast<typename std::underlying_type<E>::type>(e);
+}
 
 namespace aff3ct
 {
@@ -95,7 +102,6 @@ protected:
 	void b_transport6(tlm::tlm_generic_payload& trans, sc_core::sc_time& t);
 	void b_transport7(tlm::tlm_generic_payload& trans, sc_core::sc_time& t);
 	void b_transport8(tlm::tlm_generic_payload& trans, sc_core::sc_time& t);
-
 };
 
 class SC_Module_container
