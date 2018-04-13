@@ -220,7 +220,7 @@ endif()
 
 # mandatory for rang on Windows
 if (WIN32)
-    add_definitions (-D_WIN32_WINNT)
+    add_definitions (-D_WIN32_WINNT=_WIN32_WINNT_VISTA)
     add_definitions (-DNOMINMAX)
 endif (WIN32)
 
