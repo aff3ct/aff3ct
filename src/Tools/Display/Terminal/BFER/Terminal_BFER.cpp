@@ -273,14 +273,14 @@ void Terminal_BFER<B>
 		case Noise_type::SIGMA :
 			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_esn0() << format(spaced_scol_separator, Style::BOLD);
 			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_ebn0() << format(spaced_scol_separator, Style::BOLD);
-		break;
+			break;
 		case Noise_type::ROP :
+			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_rop() << format(spaced_scol_separator, Style::BOLD);
+			break;
 		case Noise_type::EP :
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_noise() << format(spaced_scol_separator, Style::BOLD);
-		break;
+			stream << setprecision(4) << fixed << setw(column_width-1) << this->noise.get_ep() << format(spaced_scol_separator, Style::BOLD);
+			break;
 	}
-	// stream << get_spaces_left(undefined_noise_tag, column_width) << " ";
-
 
 	stringstream str_ber, str_fer;
 	str_ber << setprecision(2) << scientific << setw(column_width-1) << ber;
@@ -288,14 +288,13 @@ void Terminal_BFER<B>
 
 	const unsigned long long l0 = 99999999;  // limit 0
 	const unsigned long long l1 = 99999999;  // limit 1
-	//const auto               l2 = 99999.99f; // limit 2
 
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(column_width-1) << ((fra > l0) ? (float)fra : fra) << format(spaced_scol_separator, Style::BOLD);
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(column_width-1) << (( be > l1) ? (float) be :  be) << format(spaced_scol_separator, Style::BOLD);
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(column_width-1) << (( fe > l1) ? (float) fe :  fe) << format(spaced_scol_separator, Style::BOLD);
-	stream <<                                                                                                                    str_ber.str() << format(spaced_scol_separator, Style::BOLD);
-	stream <<                                                                                                                    str_fer.str() << format(spaced_dcol_separator, Style::BOLD);
-	stream << setprecision(                 2) <<                            fixed  << setw(column_width-1) <<                       simu_cthr;
+	stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width-1) << ((fra > l) ? (float)fra : fra) << format(spaced_scol_separator, Style::BOLD);
+	stream << setprecision(( be > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width-1) << (( be > l) ? (float) be :  be) << format(spaced_scol_separator, Style::BOLD);
+	stream << setprecision(( fe > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width-1) << (( fe > l) ? (float) fe :  fe) << format(spaced_scol_separator, Style::BOLD);
+	stream <<                                                                                                                 str_ber.str() << format(spaced_scol_separator, Style::BOLD);
+	stream <<                                                                                                                 str_fer.str() << format(spaced_dcol_separator, Style::BOLD);
+	stream << setprecision(                2) <<                           fixed  << setw(column_width-1) <<                      simu_cthr;
 }
 
 template <typename B>
