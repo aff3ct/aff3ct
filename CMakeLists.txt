@@ -214,15 +214,17 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
     aff3ct_link_libraries (-pthread)
 endif()
 
-if (UNIX)
-    add_definitions (-fPIC)
-endif()
-
 # mandatory for rang on Windows
 if (WIN32)
     add_definitions (-D_WIN32_WINNT=_WIN32_WINNT_VISTA)
     add_definitions (-DNOMINMAX)
-endif (WIN32)
+    message(STATUS "System: Windows")
+elseif (UNIX)
+    add_definitions (-fPIC)
+    message(STATUS "System: Unix")
+elseif (APPLE)
+    message(STATUS "System: MacOS")
+endif()
 
 # Specific options
 add_definitions (-DENABLE_BIT_PACKING)
