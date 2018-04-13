@@ -44,6 +44,10 @@ endfunction(assign_source_group)
 
 assign_source_group(${source_files})
 
+# ---------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------- CMAKE OPTIONS
+# ---------------------------------------------------------------------------------------------------------------------
+
 # Command line options
 option (ENABLE_EXEC           "Enable to compile AFF3CT executable"           ON )
 option (ENABLE_STATIC_LIB     "Enable to compile AFF3CT static library"       OFF)
@@ -54,42 +58,88 @@ option (ENABLE_SYSTEMC        "Enable SystemC support"                        OF
 option (ENABLE_SYSTEMC_MODULE "Enable SystemC support (only for the modules)" OFF)
 option (ENABLE_MPI            "Enable MPI support"                            OFF)
 
-# Add includes
-include_directories (src)
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    include_directories (src/Tools/MSVC)
+# ---------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------ COMPILER OPTIONS AND DEFINITIONS
+# ---------------------------------------------------------------------------------------------------------------------
+
+# by compiler
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+    add_compile_options(-Wno-overloaded-virtual)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    add_compile_options(-pthread)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+    add_compile_options(-pthread)
 endif()
 
-# MIPP wrapper includes
+# by system
+if (WIN32) # for Windows operating system in general
+    add_definitions (-D_WIN32_WINNT=_WIN32_WINNT_VISTA)
+    add_definitions (-DNOMINMAX)
+    message(STATUS "AFF3CT - System: Windows")
+elseif (APPLE) # for MacOS X
+    message(STATUS "AFF3CT - System: MacOSX")
+elseif (UNIX AND NOT APPLE) # for Linux, BSD, Solaris, Minix
+    add_compile_options(-fPIC)
+    message(STATUS "AFF3CT - System: Unix/Linux")
+endif()
+
+# common
+add_definitions (-DENABLE_BIT_PACKING)
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- HEADER ONLY LIBRARIES
+# ---------------------------------------------------------------------------------------------------------------------
+
+# AFF3CT headers
+include_directories (src)
+
+# MSVC dirent.h
+if (MSVC)
+    include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/MSVC/include/")
+endif()
+
+# MIPP
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/mipp.h")
     add_definitions (-DMIPP_ENABLE_BACKTRACE)
     include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/")
-    message(STATUS "MIPP found")
+    message(STATUS "AFF3CT - Header found: MIPP")
 else ()
-    message(FATAL_ERROR "MIPP can't be found, try to init the submodules with the following cmd:\n"
+    message(FATAL_ERROR "AFF3CT - MIPP can't be found, try to init the submodule with the following cmd:\n"
                         "$ git submodule update --init -- ../lib/MIPP/")
 endif ()
 
-# rang header
+# rang
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/rang.hpp")
     include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/")
-    message(STATUS "rang found")
+    message(STATUS "AFF3CT - Header found: rang")
 else ()
-    message(FATAL_ERROR "rang can't be found, try to init the submodules with the following cmd:\n"
+    message(FATAL_ERROR "AFF3CT - rang can't be found, try to init the submodule with the following cmd:\n"
                         "$ git submodule update --init -- ../lib/rang/")
 endif ()
 
-# CLI11 header
+# CLI11
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/CLI.hpp")
     include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/")
-    message(STATUS "CLI11 found")
+    message(STATUS "AFF3CT - Header found: CLI11")
     #add_subdirectory(lib/CLI11)
     #aff3ct_link_libraries(CLI11::CLI11)
 else ()
-    message(FATAL_ERROR "CLI11 can't be found, try to init the submodules with the following cmd:\n"
+    message(FATAL_ERROR "AFF3CT - CLI11 can't be found, try to init the submodule with the following cmd:\n"
                         "$ git submodule update --init -- ../lib/CLI11/")
 endif ()
 
+# date
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/date.h")
+    include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/")
+    message(STATUS "AFF3CT - Header found: date")
+else ()
+    message(FATAL_ERROR "AFF3CT - date can't be found, try to init the submodule with the following cmd:\n"
+                        "$ git submodule update --init -- ../lib/date/")
+endif ()
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------- OBJECTS/LIBS/EXE
+# ---------------------------------------------------------------------------------------------------------------------
 
 # Object
 add_library (aff3ct-obj OBJECT ${source_files})
@@ -122,12 +172,17 @@ macro (aff3ct_link_libraries lib)
     endif (ENABLE_STATIC_LIB)
 endmacro()
 
+# ---------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------- COMPILED LIBRARIES
+# ---------------------------------------------------------------------------------------------------------------------
+
 # GSL
 if (ENABLE_GSL)
     add_definitions("-DCHANNEL_GSL")
 
     find_package (GSL REQUIRED)
     if (GSL_FOUND)
+        message(STATUS "AFF3CT - Library found: GSL")
         include_directories (${GSL_INCLUDE_DIRS})
         aff3ct_link_libraries ("${GSL_LIBRARIES}")
     endif (GSL_FOUND)
@@ -139,6 +194,7 @@ if (ENABLE_MKL)
 
     find_package (MKL REQUIRED)
     if (MKL_FOUND)
+        message(STATUS "AFF3CT - Library found: MKL")
         include_directories (${MKL_INCLUDE_DIRS})
         aff3ct_link_libraries ("${MKL_MINIMAL_LIBRARIES}")
     endif (MKL_FOUND)
@@ -155,12 +211,14 @@ if (ENABLE_SYSTEMC)
 
     find_package (SystemC REQUIRED)
     if (SystemC_FOUND)
+        message(STATUS "AFF3CT - Library found: SystemC")
         include_directories (${SystemC_INCLUDE_DIRS})
         aff3ct_link_libraries ("${SystemC_LIBRARIES}")
     endif (SystemC_FOUND)
 
     find_package (TLM REQUIRED)
     if (TLM_FOUND)
+        message(STATUS "AFF3CT - Library found: TLM")
         include_directories (${TLM_INCLUDE_DIRS})
     endif (TLM_FOUND)
 endif (ENABLE_SYSTEMC)
@@ -172,6 +230,7 @@ if (ENABLE_MPI)
     find_package (MPI REQUIRED)
     if (MPI_CXX_FOUND)
 
+        message(STATUS "AFF3CT - Library found: MPI")
         include_directories (${MPI_CXX_INCLUDE_PATH})
         aff3ct_link_libraries ("${MPI_CXX_LIBRARIES}")
 
@@ -202,29 +261,10 @@ if (ENABLE_MPI)
     endif (MPI_CXX_FOUND)
 endif (ENABLE_MPI)
 
-# Enable pthread
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-    add_definitions (-Wno-overloaded-virtual)
+# pthread
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"      OR
+    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang" OR
+    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU"        OR
+    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
     aff3ct_link_libraries (-lpthread)
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    add_definitions (-pthread)
-    aff3ct_link_libraries (-lpthread)
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    add_definitions (-pthread)
-    aff3ct_link_libraries (-pthread)
 endif()
-
-# mandatory for rang on Windows
-if (WIN32)
-    add_definitions (-D_WIN32_WINNT=_WIN32_WINNT_VISTA)
-    add_definitions (-DNOMINMAX)
-    message(STATUS "System: Windows")
-elseif (UNIX)
-    add_definitions (-fPIC)
-    message(STATUS "System: Unix")
-elseif (APPLE)
-    message(STATUS "System: MacOS")
-endif()
-
-# Specific options
-add_definitions (-DENABLE_BIT_PACKING)

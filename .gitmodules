@@ -13,3 +13,6 @@
 [submodule "lib/rang"]
 	path = lib/rang
 	url = https://github.com/agauniyal/rang.git
+[submodule "lib/date"]
+	path = lib/date
+	url = https://github.com/HowardHinnant/date.git

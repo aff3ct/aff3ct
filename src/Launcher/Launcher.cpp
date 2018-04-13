@@ -4,12 +4,12 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <date.h>
 
 #ifdef ENABLE_MPI
 #include <mpi.h>
 #endif
 
-#include "Tools/date.h"
 #include "Tools/general_utils.h"
 #include "Tools/system_functions.h"
 #include "Tools/Display/bash_tools.h"
