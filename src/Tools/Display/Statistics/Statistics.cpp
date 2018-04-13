@@ -96,19 +96,20 @@ void Statistics
 	ssmin_lat << std::setprecision(min_lat      > l1 ? P : 2) << (min_lat      > l2 ? std::scientific : std::fixed) << std::setw( 8) << min_lat;
 	ssmax_lat << std::setprecision(max_lat      > l1 ? P : 2) << (max_lat      > l2 ? std::scientific : std::fixed) << std::setw( 8) << max_lat;
 
-	std::stringstream spercent;
-	     if (percent > 50.0f) spercent << rang::fg::red    << sspercent.str() << rang::style::reset;
-	else if (percent > 25.0f) spercent << rang::fg::yellow << sspercent.str() << rang::style::reset;
-	else if (percent > 12.5f) spercent << rang::fg::green  << sspercent.str() << rang::style::reset;
-	else if (percent <  5.0f) spercent << rang::fg::gray   << sspercent.str() << rang::style::reset;
-
 	stream << "# ";
 	stream << ssmodule .str() << rang::style::bold << " | "  << rang::style::reset
 	       << ssprocess.str() << rang::style::bold << " | "  << rang::style::reset
 	       << sssp     .str() << rang::style::bold << " || " << rang::style::reset
 	       << ssn_calls.str() << rang::style::bold << " | "  << rang::style::reset
-	       << sstot_dur.str() << rang::style::bold << " | "  << rang::style::reset
-	       << spercent .str() << rang::style::bold << " || " << rang::style::reset
+	       << sstot_dur.str() << rang::style::bold << " | "  << rang::style::reset;
+
+	     if (percent > 50.0f) stream << rang::fg::red    << sspercent.str() << rang::style::reset;
+	else if (percent > 25.0f) stream << rang::fg::yellow << sspercent.str() << rang::style::reset;
+	else if (percent > 12.5f) stream << rang::fg::green  << sspercent.str() << rang::style::reset;
+	else if (percent <  5.0f) stream << rang::fg::gray   << sspercent.str() << rang::style::reset;
+	else                      stream <<                     sspercent.str();
+
+	stream <<                    rang::style::bold << " || " << rang::style::reset
 	       << ssavg_thr.str() << rang::style::bold << " | "  << rang::style::reset
 	       << ssmin_thr.str() << rang::style::bold << " | "  << rang::style::reset
 	       << ssmax_thr.str() << rang::style::bold << " || " << rang::style::reset

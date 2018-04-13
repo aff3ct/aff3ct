@@ -267,27 +267,25 @@ void Argument_handler
 {
 	const std::string tab = "    ";
 
-	std::stringstream tabr;
-
 	switch (info.rank)
 	{
 		case arg_rank::OPT :
-			tabr << tab;
+			help_os << tab;
 			break;
 
 		case arg_rank::REQ :
-			tabr << rang::style::bold << rang::fg::red << "{R} " << rang::style::reset;
+			help_os << rang::style::bold << rang::fg::red << "{R} " << rang::style::reset;
 			break;
 
 		case arg_rank::ADV :
-			tabr << rang::style::bold << rang::fg::blue << "{A} " << rang::style::reset;
+			help_os << rang::style::bold << rang::fg::blue << "{A} " << rang::style::reset;
 			break;
 	}
 
 	std::string tags_str = this->print_tag(tags);
 	tags_str.append(longest_tag - tags_str.size(), ' ');
 
-	help_os << tabr.str() << rang::style::bold << tags_str << rang::style::reset;
+	help_os << rang::style::bold << tags_str << rang::style::reset;
 
 	if (info.type->get_title().size())
 		help_os << rang::fg::gray << " <" << info.type->get_title() << ">" << rang::style::reset;
