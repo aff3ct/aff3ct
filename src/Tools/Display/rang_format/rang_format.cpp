@@ -47,7 +47,6 @@ void rang::format_on_each_line(std::ostream& os, const std::string& str, const r
 		os << f << str.substr(old_pos, pos-old_pos) << format::reset << std::endl;
 		old_pos = pos+1;
 	}
-
-	if (!(str.substr(old_pos, pos-old_pos).length() == 1 && str.substr(old_pos, pos-old_pos)[0] == '\n'))
+	if (!str.substr(old_pos, pos-old_pos).empty())
 		os << f << str.substr(old_pos, pos-old_pos) << format::reset;
 }
