@@ -134,13 +134,13 @@ void Terminal_BFER<B>
 	unsigned long long l1 = 99999999;  // limit 1
 //	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
-	stream <<                                                                                                     esn0_str.str()  << rang::style::bold " | "  << rang::style::reset;
-	stream <<                                                                                                     ebn0_str.str()  << rang::style::bold " | "  << rang::style::reset;
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << rang::style::bold " | "  << rang::style::reset;
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << rang::style::bold " | "  << rang::style::reset;
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << rang::style::bold " | "  << rang::style::reset;
-	stream <<                                                                                                       str_ber.str() << rang::style::bold " | "  << rang::style::reset;
-	stream <<                                                                                                       str_fer.str() << rang::style::bold " || " << rang::style::reset;
+	stream <<                                                                                                     esn0_str.str()  << rang::style::bold << " | "  << rang::style::reset;
+	stream <<                                                                                                     ebn0_str.str()  << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << rang::style::bold << " | "  << rang::style::reset;
+	stream <<                                                                                                       str_ber.str() << rang::style::bold << " | "  << rang::style::reset;
+	stream <<                                                                                                       str_fer.str() << rang::style::bold << " || " << rang::style::reset;
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
 #else
 	stringstream str_ber, str_fer;
