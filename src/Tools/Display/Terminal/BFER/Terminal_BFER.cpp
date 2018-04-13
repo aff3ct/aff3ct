@@ -286,8 +286,7 @@ void Terminal_BFER<B>
 	str_ber << setprecision(2) << scientific << setw(column_width-1) << ber;
 	str_fer << setprecision(2) << scientific << setw(column_width-1) << fer;
 
-	const unsigned long long l0 = 99999999;  // limit 0
-	const unsigned long long l1 = 99999999;  // limit 1
+	const unsigned long long l = 99999999;  // limit 0
 
 	stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width-1) << ((fra > l) ? (float)fra : fra) << format(spaced_scol_separator, Style::BOLD);
 	stream << setprecision(( be > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width-1) << (( be > l) ? (float) be :  be) << format(spaced_scol_separator, Style::BOLD);
