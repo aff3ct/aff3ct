@@ -225,15 +225,15 @@ set_noise(const R noise, const Noise_type t)
 {
 	switch(t)
 	{
-		case SIGMA:
+		case Noise_type::SIGMA:
 			set_sigma(noise);
 		break;
 
-		case EP:
+		case Noise_type::EP:
 			set_ep(noise);
 		break;
 
-		case ROP:
+		case Noise_type::ROP:
 			set_rop(noise);
 		break;
 	}
@@ -287,7 +287,7 @@ check()
 
 	switch(get_type())
 	{
-		case SIGMA:
+		case Noise_type::SIGMA:
 			if (n <= (R)0)
 			{
 				std::stringstream message;
@@ -296,7 +296,7 @@ check()
 			}
 		break;
 
-		case EP:
+		case Noise_type::EP:
 			if (n < (R)-0.00001 || n > (R)1.00001)
 			{
 				std::stringstream message;
@@ -305,7 +305,7 @@ check()
 			}
 		break;
 
-		case ROP:
+		case Noise_type::ROP:
 			// nothing to check
 		break;
 	}
@@ -342,13 +342,13 @@ type2str(const Noise_type& t)
 
 	switch(t)
 	{
-		case SIGMA:
+		case Noise_type::SIGMA:
 			str = "SIGMA";
 		break;
-		case EP:
+		case Noise_type::EP:
 			str = "EP";
 		break;
-		case ROP:
+		case Noise_type::ROP:
 			str = "ROP";
 		break;
 	}
@@ -357,7 +357,7 @@ type2str(const Noise_type& t)
 	                 // cases of 'Noise_type' are well represented.
 	{
 		std::stringstream message;
-		message << "The type 't' does not represent a noise type ('t' = " << t << ").";
+		message << "The type 't' does not represent a noise type ('t' = " << (int8_t)t << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 

@@ -9,7 +9,7 @@ namespace aff3ct
 namespace tools
 {
 
-enum Noise_type{ SIGMA, ROP, EP }; // Sigma (SNR variance), Received optical power, Erasure Probability
+enum class Noise_type : uint8_t{ SIGMA, ROP, EP }; // Sigma (SNR variance), Received optical power, Erasure Probability
 
 
 template <typename R = float>
