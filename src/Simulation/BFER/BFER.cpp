@@ -7,7 +7,7 @@
 
 #include "Tools/general_utils.h"
 #include "Tools/system_functions.h"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
@@ -220,7 +220,7 @@ void BFER<B,R,Q>
 			module::Monitor::stop();
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
 
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::format::error);
 			this->simu_error = true;
 		}
 
@@ -325,7 +325,9 @@ void BFER<B,R,Q>
 
 		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) == simu->prev_err_messages.end())
 		{
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl; // with backtrace if debug mode
+			// with backtrace if debug mode
+			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::format::error);
+
 			simu->prev_err_messages.push_back(msg); // save only the function signature
 		}
 		simu->mutex_exception.unlock();

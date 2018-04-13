@@ -13,7 +13,7 @@
 #include <cmath>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 
 #include "Frozenbits_generator_TV.hpp"
 
@@ -101,7 +101,8 @@ void Frozenbits_generator_TV
 				cmd      += " --log-length=" + str_m;                  // m
 				cmd      += " -f=" + filename;                         // filename
 
-				std::clog << format_info("Generating best channels positions file (\"" + filename + "\")...") << "\r";
+				std::clog << rang::format::info << "Generating best channels positions file (\"" << filename << "\")..."
+				          << rang::format::reset << "\r";
 				fflush(stdout); fflush(stderr);
 
 				if (system(cmd.c_str()) == 0)

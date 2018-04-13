@@ -4,7 +4,7 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
@@ -36,8 +36,8 @@ EXIT<B,R>
   terminal (nullptr)
 {
 #ifdef ENABLE_MPI
-	std::clog << tools::format_warning("This simulation is not MPI ready, the same computations will be launched "
-	                                   "on each MPI processes.") << std::endl;
+	std::clog << rang::format::warning << "This simulation is not MPI ready, the same computations will be launched "
+	                                      "on each MPI processes." << rang::format::reset << std::endl;
 #endif
 
 	if (params_EXIT.n_threads > 1)

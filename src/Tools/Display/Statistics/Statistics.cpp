@@ -1,9 +1,7 @@
 #include <algorithm>
 #include <iomanip>
 
-#include <rang.hpp>
-
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 
 #include "Statistics.hpp"
 
@@ -290,8 +288,9 @@ void Statistics
 	}
 	else
 	{
-		stream << "# " << format_info("Statistics are unavailable. Did you enable the statistics in the tasks?")
-		       << std::endl;
+		stream << "# "
+		       << rang::format::info << "Statistics are unavailable. Did you enable the statistics in the tasks?"
+		       << rang::format::reset << std::endl;
 	}
 }
 
@@ -436,7 +435,8 @@ void Statistics
 	}
 	else
 	{
-		stream << "# " << format_info("Statistics are unavailable. Did you enable the statistics in the tasks?")
-		       << std::endl;
+		stream << "# "
+		       << rang::format::info << "Statistics are unavailable. Did you enable the statistics in the tasks?"
+		       << rang::format::reset << std::endl;
 	}
 }

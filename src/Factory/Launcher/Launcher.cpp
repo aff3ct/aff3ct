@@ -173,7 +173,6 @@ void factory::Launcher::parameters
 	tools::exception::no_addr2line = !vals.exist({"except-a2l"  });
 
 #ifdef ENABLE_COOL_BASH
-	rang::setControlMode(rang::control::Force);
 	if (vals.exist({p+"-no-colors"})) rang::setControlMode(rang::control::Off);
 #else
 	rang::setControlMode(rang::control::Off);

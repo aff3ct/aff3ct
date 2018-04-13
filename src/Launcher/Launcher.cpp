@@ -12,7 +12,7 @@
 
 #include "Tools/general_utils.h"
 #include "Tools/system_functions.h"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Factory/Module/Source/Source.hpp"
@@ -93,7 +93,7 @@ int Launcher::read_arguments()
 	// print the errors
 	if (cmd_error.size()) std::cerr << std::endl;
 	for (unsigned e = 0; e < cmd_error.size(); e++)
-		std::cerr << tools::format_error(cmd_error[e]) << std::endl;
+		std::cerr << rang::format::error << cmd_error[e] << rang::format::reset << std::endl;
 
 	// print the help tags
 	if (cmd_error.size() && !params_common.display_help)
@@ -103,7 +103,7 @@ int Launcher::read_arguments()
 		std::string message = "For more information please display the help (\"";
 		message += tools::Argument_handler::print_tag(help_tag) += "\").";
 
-		std::cerr << std::endl << tools::format_info(message) << std::endl;
+		std::cerr << std::endl << rang::format::info << message << rang::format::reset << std::endl;
 	}
 
 	return (cmd_error.size() || params_common.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
@@ -140,7 +140,7 @@ int Launcher::launch()
 		if (this->params_common.mpi_rank == 0)
 #endif
 			for (unsigned w = 0; w < this->cmd_warn.size(); w++)
-				std::clog << tools::format_warning(this->cmd_warn[w]) << std::endl;
+				std::clog << rang::format::warning << this->cmd_warn[w] << rang::format::reset << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -168,7 +168,7 @@ int Launcher::launch()
 	if (this->params_common.mpi_rank == 0)
 #endif
 		for (unsigned w = 0; w < this->cmd_warn.size(); w++)
-			std::clog << tools::format_warning(this->cmd_warn[w]) << std::endl;
+			std::clog << rang::format::warning << this->cmd_warn[w] << rang::format::reset << std::endl;
 
 	try
 	{
@@ -176,7 +176,7 @@ int Launcher::launch()
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+		rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::format::error);
 		exit_code = EXIT_FAILURE;
 	}
 
@@ -197,7 +197,7 @@ int Launcher::launch()
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::format::error);
 			exit_code = EXIT_FAILURE;
 		}
 	}

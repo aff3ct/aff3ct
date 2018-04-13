@@ -6,7 +6,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 
 #include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
@@ -23,9 +23,9 @@ BFER_ite_threads<B,R,Q>
 	if (this->params_BFER_ite.err_track_revert)
 	{
 		if (this->params_BFER_ite.n_threads != 1)
-			std::clog << tools::format_warning("Multi-threading detected with error tracking revert feature! "
-			                                   "Each thread will play the same frames. Please run with one thread.")
-			          << std::endl;
+			std::clog << rang::format::warning << "Multi-threading detected with error tracking revert feature! "
+			                                      "Each thread will play the same frames. Please run with one thread."
+			          << rang::format::reset << std::endl;
 	}
 }
 

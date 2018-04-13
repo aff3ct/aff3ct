@@ -85,7 +85,7 @@ elseif (UNIX AND NOT APPLE) # for Linux, BSD, Solaris, Minix
 endif()
 
 # common
-add_definitions (-DENABLE_BIT_PACKING)
+add_definitions (-DENABLE_BIT_PACKING -DENABLE_COOL_BASH)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------- HEADER ONLY LIBRARIES
