@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <string>
 #include <rang.hpp>
 
 namespace aff3ct

@@ -94,11 +94,6 @@ void Terminal_BFER<B>
 	Terminal::legend(stream); // print effectively the legend
 }
 
-std::string get_spaces_left(const std::string& str, const int total_width)
-{
-	return std::string(total_width - str.size() -1, ' '); // -1 because a space is reserved for the right
-}
-
 template <typename B>
 void Terminal_BFER<B>
 ::_report(std::ostream &stream)
