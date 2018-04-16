@@ -37,12 +37,7 @@ public:
 	static const std::string data_tag;
 	static const rang::style legend_style;
 	static const rang::style report_style;
-
-	#ifdef _WIN32
-	const int column_width = 11;
-	#else
-	const int column_width = 10;
-	#endif
+	static const int         column_width;
 
 
 private:

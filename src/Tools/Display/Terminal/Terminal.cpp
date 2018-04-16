@@ -13,6 +13,11 @@ const std::string aff3ct::tools::Terminal::data_tag              = "  ";
 const rang::style aff3ct::tools::Terminal::legend_style          = rang::style::bold;
 const rang::style aff3ct::tools::Terminal::report_style          = rang::style::bold;
 
+#ifdef _WIN32
+const int aff3ct::tools::Terminal::column_width = 11;
+#else
+const int aff3ct::tools::Terminal::column_width = 10;
+#endif
 
 Terminal
 ::Terminal()
@@ -122,7 +127,6 @@ void Terminal
 		stream << comment_tag;
 		for (unsigned i = 0; i < cols_groups.size(); i++)
 		{
-
 			for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
 			{
 				const auto& text = l == 0 ? cols_groups[i].second[j].first : cols_groups[i].second[j].second;
