@@ -69,7 +69,7 @@ void Decoder_BCH::parameters
 	{
 		this->t = vals.to_int({p + "-corr-pow", "T"});
 		if (K == 0)
-			this->K = this->N_cw - this->t * this->m;
+			this->K = this->N_cw - tools::BCH_polynomial_generator(this->N_cw, this->t).get_n_rdncy();
 	}
 	else
 		this->t = (this->N_cw - this->K) / this->m;

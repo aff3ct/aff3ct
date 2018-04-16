@@ -7,8 +7,8 @@
 using namespace aff3ct::tools;
 
 BCH_polynomial_generator
-::BCH_polynomial_generator(const int& K, const int& N, const int& t)
- : Galois(K, N), t(t), d(2 * t + 1)
+::BCH_polynomial_generator(const int& N, const int& t)
+ : Galois(N), t(t), d(2 * t + 1)
 {
 	if (t < 1)
 	{
@@ -112,16 +112,6 @@ void BCH_polynomial_generator
 					rdncy += (int)cycle_sets[i].size();
 				}
 	}
-
-
-	if (this->K > this->N - rdncy)
-	{
-		std::stringstream message;
-		message << "'K' seems to be too big for this correction power 't' ('K' = " << this->K << ", 't' = " << t
-		        << ", 'N' = " << this->N << ", 'rdncy' = " << rdncy << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 
 	zeros.resize(rdncy+1);
 	int kaux = 1;
