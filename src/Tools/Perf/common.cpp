@@ -1,4 +1,6 @@
 #include <limits>
+#include <algorithm>
+#include <mipp.h>
 
 #include "common.h"
 

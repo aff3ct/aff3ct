@@ -9,8 +9,6 @@
 #include <sstream>
 #include <vector>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Factory/Launcher/Launcher.hpp"
 
 namespace aff3ct

@@ -39,7 +39,7 @@ void Monitor_EXIT::parameters
 		{p+"-size", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of bits to check.",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-fra", "F"},

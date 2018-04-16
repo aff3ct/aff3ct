@@ -19,17 +19,13 @@ namespace module
 {
 	namespace enc
 	{
-		namespace tsk
-		{
-			enum list { encode, SIZE };
-		}
+		enum class tsk : uint8_t { encode, SIZE };
 
 		namespace sck
 		{
-			namespace encode { enum list { U_K, X_N, SIZE }; }
+			enum class encode : uint8_t { U_K, X_N, SIZE };
 		}
 	}
-
 
 /*!
  * \class Encoder
@@ -43,6 +39,10 @@ namespace module
 template <typename B = int>
 class Encoder : public Module
 {
+public:
+	inline Task&   operator[](const enc::tsk         t) { return Module::operator[]((int)t);                        }
+	inline Socket& operator[](const enc::sck::encode s) { return Module::operator[]((int)enc::tsk::encode)[(int)s]; }
+
 protected:
 	const int             K;             /*!< Number of information bits in one frame */
 	const int             N;             /*!< Size of one frame (= number of bits in one frame) */

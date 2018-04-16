@@ -3,7 +3,7 @@
 #include <sstream>
 #include <ios>
 
-#include "Tools/Display/bash_tools.h"
+#include <rang.hpp>
 
 #include "Terminal_EXIT.hpp"
 
@@ -84,14 +84,14 @@ void Terminal_EXIT<B,R>
 {
 	std::ios::fmtflags f(stream.flags());
 
-	stream << "# " << format("----------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("   EXIT chart depending on the Signal Noise Ratio (SNR)   ||  Global throughput  ", Style::BOLD) << std::endl;
-	stream << "# " << format("                  and the channel A noise                 ||  and elapsed time   ", Style::BOLD) << std::endl;
-	stream << "# " << format("----------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|-------|----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
-	stream << "# " << format(" Es/N0 | Eb/N0 | SIG_A |      FRA |  A_PRIORI | EXTRINSIC ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
-	stream << "# " << format("  (dB) |  (dB) |  (dB) |          |     (I_A) |     (I_E) ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
-	stream << "# " << format("-------|-------|-------|----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
+	stream << "# " << rang::style::bold << "----------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "   EXIT chart depending on the Signal Noise Ratio (SNR)   ||  Global throughput  " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "                  and the channel A noise                 ||  and elapsed time   " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "----------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "-------|-------|-------|----------|-----------|-----------||----------|----------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << " Es/N0 | Eb/N0 | SIG_A |      FRA |  A_PRIORI | EXTRINSIC ||  SIM_THR |    ET/RT " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "  (dB) |  (dB) |  (dB) |          |     (I_A) |     (I_E) ||   (Mb/s) | (hhmmss) " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "-------|-------|-------|----------|-----------|-----------||----------|----------" << rang::style::reset << std::endl;
 
 	stream.flags(f);
 }
@@ -114,12 +114,12 @@ void Terminal_EXIT<B,R>
 	simu_cthr /= 1000.f; // = mbps
 
 	stream << "   ";
-	stream << setprecision(2) << fixed << setw(5) << esn0  << format(" | ",  Style::BOLD);
-	stream << setprecision(2) << fixed << setw(5) << ebn0  << format(" | ",  Style::BOLD);
-	stream << setprecision(2) << fixed << setw(5) << sig_a << format(" | ",  Style::BOLD);
-	stream << setprecision(2) << fixed << setw(8) << fra   << format(" | ",  Style::BOLD);
-	stream << setprecision(6) << fixed << setw(9) << I_A   << format(" | ",  Style::BOLD);
-	stream << setprecision(6) << fixed << setw(9) << I_E   << format(" || ", Style::BOLD);
+	stream << setprecision(2) << fixed << setw(5) << esn0  << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision(2) << fixed << setw(5) << ebn0  << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision(2) << fixed << setw(5) << sig_a << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision(2) << fixed << setw(8) << fra   << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision(6) << fixed << setw(9) << I_A   << rang::style::bold << " | "  << rang::style::reset;
+	stream << setprecision(6) << fixed << setw(9) << I_E   << rang::style::bold << " || " << rang::style::reset;
 	stream << setprecision(2) << fixed << setw(8) << simu_cthr;
 }
 
@@ -140,15 +140,15 @@ void Terminal_EXIT<B,R>
 	auto tr = et * (n_trials / cur_fra) - et;
 	auto tr_format = get_time_format((cur_fra == 0) ? 0 : tr);
 
-	stream << format(" | ", Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(8) << tr_format;
+	stream << rang::style::bold << " | " << rang::style::reset << std::setprecision(0) << std::fixed << std::setw(8)
+	       << tr_format << " ";
 
-	stream << " ";
 	switch (real_time_state)
 	{
-		case 0: stream << format("*", Style::BOLD | FG::Color::GREEN); break;
-		case 1: stream << format("*", Style::BOLD | FG::Color::GREEN); break;
-		case 2: stream << format(" ", Style::BOLD | FG::Color::GREEN); break;
-		case 3: stream << format(" ", Style::BOLD | FG::Color::GREEN); break;
+		case 0: stream << rang::style::bold << rang::fg::green << "*" << rang::style::reset; break;
+		case 1: stream << rang::style::bold << rang::fg::green << "*" << rang::style::reset; break;
+		case 2: stream << rang::style::bold << rang::fg::green << " " << rang::style::reset; break;
+		case 3: stream << rang::style::bold << rang::fg::green << " " << rang::style::reset; break;
 		default: break;
 	}
 	real_time_state = (real_time_state +1) % 4;
@@ -173,8 +173,8 @@ void Terminal_EXIT<B,R>
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
 	auto et_format = get_time_format(et);
 
-	stream << format(" | ", Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(8) << et_format << "  "
-	       << std::endl;
+	stream << rang::style::bold << " | " << rang::style::reset << std::setprecision(0) << std::fixed << std::setw(8)
+	       << et_format << "  " << std::endl;
 
 	t_snr = std::chrono::steady_clock::now();
 

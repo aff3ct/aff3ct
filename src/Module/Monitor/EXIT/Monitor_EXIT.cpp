@@ -18,7 +18,7 @@ Monitor_EXIT<B,R>
 	const std::string name = "Monitor_EXIT";
 	this->set_name(name);
 
-	auto &p = this->create_task("check_mutual_info", mnt::tsk::check_mutual_info);
+	auto &p = this->create_task("check_mutual_info", (int)mnt::tsk::check_mutual_info);
 	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->size * this->n_frames);
 	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->size * this->n_frames);
 	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", this->size * this->n_frames);
@@ -262,7 +262,7 @@ void Monitor_EXIT<B,R>
 	this->callbacks_measure.clear();
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Monitor_EXIT<B_32,R_32>;

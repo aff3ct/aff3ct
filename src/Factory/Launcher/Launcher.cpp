@@ -4,11 +4,12 @@
 #include <typeinfo>
 #include <typeindex>
 #include <unordered_map>
+#include <rang.hpp>
+#include <date.h>
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/types.h"
-#include "Tools/date.h"
 #include "Tools/version.h"
 
 #include "Launcher/Launcher.hpp"
@@ -77,7 +78,7 @@ void factory::Launcher::parameters
 		{p+"-cde-type", "C"},
 		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED")),
 		"select the code type you want to use.",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-type"},
@@ -118,20 +119,20 @@ void factory::Launcher::parameters
 		{"except-no-bt"},
 		tools::None(),
 		"do not print the backtrace when displaying exception.",
-		tools::Argument_info::ADVANCED);
+		tools::arg_rank::ADV);
 
 	args.add(
 		{"except-a2l"},
 		tools::None(),
 		"enhance the backtrace when displaying exception by changing program addresses into "
 		" file names and lines (may take some seconds).",
-		tools::Argument_info::ADVANCED);
+		tools::arg_rank::ADV);
 
 	args.add(
 		{p+"-no-legend"},
 		tools::None(),
 		"Do not display any legend when launching the simulation.",
-		tools::Argument_info::ADVANCED);
+		tools::arg_rank::ADV);
 
 
 #ifdef ENABLE_COOL_BASH
@@ -168,11 +169,13 @@ void factory::Launcher::parameters
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
 
-	tools::exception::no_backtrace =  vals.exist({"except-no-bt"});
-	tools::exception::no_addr2line = !vals.exist({"except-a2l"  });
+	tools::exception::no_backtrace    =  vals.exist({"except-no-bt"});
+	tools::exception::no_addr_to_line = !vals.exist({"except-a2l"  });
 
 #ifdef ENABLE_COOL_BASH
-	if (vals.exist({p+"-no-colors"})) tools::enable_bash_tools = false;
+	if (vals.exist({p+"-no-colors"})) rang::setControlMode(rang::control::Off);
+#else
+	rang::setControlMode(rang::control::Off);
 #endif
 }
 

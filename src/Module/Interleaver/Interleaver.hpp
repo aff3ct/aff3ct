@@ -14,21 +14,23 @@ namespace module
 {
 	namespace itl
 	{
-		namespace tsk
-		{
-			enum list { interleave, deinterleave, SIZE };
-		}
+		enum class tsk : uint8_t { interleave, deinterleave, SIZE };
 
 		namespace sck
 		{
-			namespace interleave   { enum list { nat, itl, SIZE }; }
-			namespace deinterleave { enum list { itl, nat, SIZE }; }
+			enum class interleave   : uint8_t { nat, itl, SIZE };
+			enum class deinterleave : uint8_t { itl, nat, SIZE };
 		}
 	}
 
 template <typename D = int32_t, typename T = uint32_t>
 class Interleaver : public Module
 {
+public:
+	inline Task&   operator[](const itl::tsk               t) { return Module::operator[]((int)t);                              }
+	inline Socket& operator[](const itl::sck::interleave   s) { return Module::operator[]((int)itl::tsk::interleave  )[(int)s]; }
+	inline Socket& operator[](const itl::sck::deinterleave s) { return Module::operator[]((int)itl::tsk::deinterleave)[(int)s]; }
+
 protected:
 	const tools::Interleaver_core<T> &core;
 

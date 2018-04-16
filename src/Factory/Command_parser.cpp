@@ -1,3 +1,5 @@
+#include "Tools/Display/rang_format/rang_format.h"
+
 #include "Command_parser.hpp"
 
 using namespace aff3ct;
@@ -70,7 +72,7 @@ void Command_parser
 		std::string message = "For more information please display the help (\"";
 		message += tools::Argument_handler::print_tag(Command_parser::help_tag) += "\").";
 
-		err_stream << tools::format_info(message) << std::endl << std::endl;
+		err_stream << rang::format::info << message << rang::format::reset << std::endl << std::endl;
 	}
 }
 
@@ -78,14 +80,14 @@ void Command_parser
 ::print_errors()
 {
 	for (size_t e = 0; e < errors.size(); e++)
-		err_stream << aff3ct::tools::format_error(errors[e]) << std::endl;
+		err_stream << rang::format::error << errors[e] << rang::format::reset << std::endl;
 }
 
 void Command_parser
 ::print_warnings()
 {
 	for (size_t w = 0; w < warnings.size(); w++)
-		err_stream << aff3ct::tools::format_warning(warnings[w]) << std::endl;
+		err_stream << rang::format::warning << warnings[w] << rang::format::reset << std::endl;
 }
 
 bool Command_parser

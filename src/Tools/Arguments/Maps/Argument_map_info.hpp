@@ -32,7 +32,7 @@ public:
 	Argument_map_info& operator=(const Argument_map_info& other);
 
 	void add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc,
-	         const Argument_info::Rank rank = Argument_info::OPTIONAL);
+	         const arg_rank rank = arg_rank::OPT);
 
 	void add_link(const Argument_tag& tag1, const Argument_tag& tag2, bool (*callback)(const void*, const void*) = nullptr);
 	bool has_link(const Argument_tag& tag) const;

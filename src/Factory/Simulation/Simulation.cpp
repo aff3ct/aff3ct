@@ -1,3 +1,5 @@
+#include <rang.hpp>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
@@ -37,19 +39,19 @@ void Simulation::parameters
 		{p+"-noise-range", "R"},
 		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
 		"noise energy range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-noise-min", "m"},
 		tools::Real(),
 		"minimal noise energy to simulate.",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-noise-max", "M"},
 		tools::Real(),
 		"maximal noise energy to simulate.",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-noise-step", "s"},
@@ -187,7 +189,7 @@ void Simulation::parameters
 #ifdef ENABLE_COOL_BASH
 	// disable the cool bash mode for PyBER
 	if (!this->pyber.empty())
-		tools::enable_bash_tools = false;
+		rang::setControlMode(rang::control::Off);
 #endif
 
 #ifdef MULTI_PREC

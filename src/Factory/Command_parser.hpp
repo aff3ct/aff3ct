@@ -6,7 +6,6 @@
 #include <string>
 
 #include "Factory/Factory.hpp"
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Arguments/Argument_handler.hpp"
 
 #include "Tools/system_functions.h"

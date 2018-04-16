@@ -18,14 +18,11 @@ namespace module
 {
 	namespace qnt
 	{
-		namespace tsk
-		{
-			enum list { process, SIZE };
-		}
+		enum class tsk : uint8_t { process, SIZE };
 
 		namespace sck
 		{
-			namespace process { enum list { Y_N1, Y_N2, SIZE }; }
+			enum class process : uint8_t { Y_N1, Y_N2, SIZE };
 		}
 	}
 
@@ -43,6 +40,10 @@ namespace module
 template <typename R = float, typename Q = int>
 class Quantizer : public Module
 {
+public:
+	inline Task&   operator[](const qnt::tsk          t) { return Module::operator[]((int)t);                         }
+	inline Socket& operator[](const qnt::sck::process s) { return Module::operator[]((int)qnt::tsk::process)[(int)s]; }
+
 protected:
 	const int N; /*!< Size of one frame (= number of bits in one frame) */
 

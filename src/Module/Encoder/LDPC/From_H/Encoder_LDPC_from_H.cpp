@@ -5,7 +5,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/matrix.h"
 
 #include "Encoder_LDPC_from_H.hpp"
@@ -20,7 +19,7 @@ Encoder_LDPC_from_H<B>
 {
 	const std::string name = "Encoder_LDPC_from_H";
 	this->set_name(name);
-	
+
 	// warning G is transposed !
 	if (K != (int)G.get_n_cols())
 	{

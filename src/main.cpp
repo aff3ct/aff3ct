@@ -16,7 +16,7 @@
 #include "Tools/types.h"
 #include "Tools/version.h"
 #include "Tools/Arguments/Argument_handler.hpp"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/system_functions.h"
 
 #include "Launcher/Launcher.hpp"
@@ -112,11 +112,11 @@ int read_arguments(const int argc, const char** argv, factory::Launcher::paramet
 
 		if (cmd_error.size()) std::cerr << std::endl;
 		for (auto w = 0; w < (int)cmd_error.size(); w++)
-			std::cerr << tools::format_error(cmd_error[w]) << std::endl;
+			std::cerr << rang::format::error << cmd_error[w] << rang::format::reset << std::endl;
 
 		if (cmd_warn.size()) std::cerr << std::endl;
 		for (auto w = 0; w < (int)cmd_warn.size(); w++)
-			std::cerr << tools::format_warning(cmd_warn[w]) << std::endl;
+			std::cerr << rang::format::warning << cmd_warn[w] << rang::format::reset << std::endl;
 	}
 	return (cmd_error.size() || display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
@@ -161,7 +161,7 @@ int sc_main(int argc, char **argv)
 	}
 	catch(std::exception const& e)
 	{
-		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+		rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::format::error);
 	}
 
 #ifdef ENABLE_MPI

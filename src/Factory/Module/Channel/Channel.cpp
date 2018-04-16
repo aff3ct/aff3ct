@@ -50,7 +50,7 @@ void Channel::parameters
 		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of symbols by frame.",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-fra", "F"},

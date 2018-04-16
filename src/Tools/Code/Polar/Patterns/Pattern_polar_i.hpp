@@ -16,7 +16,7 @@ namespace aff3ct
 {
 namespace tools
 {
-enum polar_node_t
+enum class polar_node_t : uint8_t
 {
 	STANDARD = 0,
 	RATE_0_LEFT,

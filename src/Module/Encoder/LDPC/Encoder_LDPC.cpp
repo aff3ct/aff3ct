@@ -3,7 +3,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/matrix.h"
 
 #include "Encoder_LDPC.hpp"
@@ -27,7 +26,7 @@ Encoder_LDPC<B>
 {
 	const std::string name = "Encoder_LDPC";
 	this->set_name(name);
-	
+
 	if (K != (int)G.get_n_cols())
 	{
 		std::stringstream message;
@@ -85,7 +84,7 @@ bool Encoder_LDPC<B>
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Encoder_LDPC<B_8>;

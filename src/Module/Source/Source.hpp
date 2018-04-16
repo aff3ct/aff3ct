@@ -20,14 +20,11 @@ namespace module
 {
 	namespace src
 	{
-		namespace tsk
-		{
-			enum list { generate, SIZE };
-		}
+		enum class tsk : uint8_t { generate, SIZE };
 
 		namespace sck
 		{
-			namespace generate { enum list { U_K, SIZE }; }
+			enum class generate : uint8_t { U_K, SIZE };
 		}
 	}
 
@@ -43,6 +40,10 @@ namespace module
 template <typename B = int>
 class Source : public Module
 {
+public:
+	inline Task&   operator[](const src::tsk           t) { return Module::operator[]((int)t);                          }
+	inline Socket& operator[](const src::sck::generate s) { return Module::operator[]((int)src::tsk::generate)[(int)s]; }
+
 protected:
 	const int K; /*!< Number of information bits in one frame */
 

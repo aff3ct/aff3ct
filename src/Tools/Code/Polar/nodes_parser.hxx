@@ -3,7 +3,7 @@
 #include <vector>
 #include <cmath>
 
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 
 #include "Tools/general_utils.h"
 
@@ -197,7 +197,8 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 			}
 			else
 			{
-				std::clog << format_warning("Unrecognized Polar node type (" + v_polar[i] + ").") << std::endl;
+				std::clog << rang::format::warning << "Unrecognized Polar node type (" << v_polar[i] << ")."
+				          << rang::format::reset << std::endl;
 			}
 		}
 	}

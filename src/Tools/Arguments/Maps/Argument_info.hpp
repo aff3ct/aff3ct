@@ -10,12 +10,12 @@ namespace aff3ct
 namespace tools
 {
 
+enum class arg_rank : uint8_t {OPT, REQ, ADV};
+
 struct Argument_info
 {
-	enum Rank {OPTIONAL, REQUIRED, ADVANCED};
-
     Argument_info();
-    Argument_info(Argument_type* type, const std::string& doc, const Rank rank = OPTIONAL);
+    Argument_info(Argument_type* type, const std::string& doc, const arg_rank rank = arg_rank::OPT);
 
 	virtual ~Argument_info();
 
@@ -29,7 +29,7 @@ struct Argument_info
 
 	Argument_type* type = nullptr;
 	std::string    doc  = "";
-	Rank           rank = OPTIONAL;
+	arg_rank       rank = arg_rank::OPT;
 };
 
 }

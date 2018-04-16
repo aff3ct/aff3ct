@@ -4,8 +4,9 @@
 #include <utility>
 #include <ios>
 
+#include <rang.hpp>
+
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 
 #include "Terminal_BFER.hpp"
 
@@ -120,28 +121,27 @@ void Terminal_BFER<B>
 	throughput_cols.push_back(std::make_pair("SIM_THR", "(Mb/s)"));
 	throughput_cols.push_back(std::make_pair("ET/RT", "(hhmmss)"));
 
+	// stream << "# " << "---------------------------------------------------------------------||---------------------" << std::endl;
+	// stream << "# " << "      Bit Error Rate (BER) and Frame Error Rate (FER) depending      ||  Global throughput  " << std::endl;
+	// stream << "# " << "                   on the Erasure Probability (EP)                   ||  and elapsed time   " << std::endl;
+	// stream << "# " << "---------------------------------------------------------------------||---------------------" << std::endl;
+	// stream << "# " << "---------|-----------|-----------|-----------|-----------|-----------||----------|----------" << std::endl;
+	// stream << "# " << "      EP |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT " << std::endl;
+	// stream << "# " << "         |           |           |           |           |           ||   (Mb/s) | (hhmmss) " << std::endl;
+	// stream << "# " << "---------|-----------|-----------|-----------|-----------|-----------||----------|----------" << std::endl;
 
-	// stream << "# " << format("---------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	// stream << "# " << format("      Bit Error Rate (BER) and Frame Error Rate (FER) depending      ||  Global throughput  ", Style::BOLD) << std::endl;
-	// stream << "# " << format("                   on the Erasure Probability (EP)                   ||  and elapsed time   ", Style::BOLD) << std::endl;
-	// stream << "# " << format("---------------------------------------------------------------------||---------------------", Style::BOLD) << std::endl;
-	// stream << "# " << format("---------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
-	// stream << "# " << format("      EP |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT ", Style::BOLD) << std::endl;
-	// stream << "# " << format("         |           |           |           |           |           ||   (Mb/s) | (hhmmss) ", Style::BOLD) << std::endl;
-	// stream << "# " << format("---------|-----------|-----------|-----------|-----------|-----------||----------|----------", Style::BOLD) << std::endl;
 
-
-	const auto legend_style = Style::BOLD;
+	const auto legend_style = rang::style::bold;
 
 	// print first line of the table
 	stream << comment_tag << " ";
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
 		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
-		stream << format(std::string(group_width, line_separator), legend_style);
+		stream << legend_style << std::string(group_width, line_separator) << rang::style::reset ;
 
 		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << format(std::string(2, col_separator), legend_style);
+			stream << legend_style << std::string(2, col_separator) << rang::style::reset ;
 	}
 	stream << std::endl;
 
@@ -157,12 +157,12 @@ void Terminal_BFER<B>
 			const int n_spaces = (int)group_width - (int)text.size();
 			const int n_spaces_left  = n_spaces/2;
 			const int n_spaces_right = n_spaces - n_spaces_left; // can be different than n_spaces/2 if odd size
-			stream << format(std::string(n_spaces_left,  ' '), legend_style);
-			stream << format(text, legend_style);
-			stream << format(std::string(n_spaces_right, ' '), legend_style);
+			stream << legend_style << std::string(n_spaces_left,  ' ') << rang::style::reset ;
+			stream << legend_style << text << rang::style::reset ;
+			stream << legend_style << std::string(n_spaces_right, ' ') << rang::style::reset ;
 
 			if (i < (cols_groups.size() -1)) // print group separator except for last
-				stream << format(std::string(2, col_separator), legend_style);
+				stream << legend_style << std::string(2, col_separator) << rang::style::reset;
 		}
 		stream << std::endl;
 	}
@@ -172,10 +172,10 @@ void Terminal_BFER<B>
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
 		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
-		stream << format(std::string(group_width, line_separator), legend_style);
+		stream << legend_style << std::string(group_width, line_separator) << rang::style::reset;
 
 		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << format(std::string(2, col_separator), legend_style);
+			stream << legend_style << std::string(2, col_separator) << rang::style::reset;
 	}
 	stream << std::endl;
 
@@ -185,13 +185,13 @@ void Terminal_BFER<B>
 	{
 		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
 		{
-			stream << format(std::string(column_width, line_separator), legend_style);
+			stream << legend_style << std::string(column_width, line_separator) << rang::style::reset;
 			if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
-				stream << format(std::string(1, col_separator), legend_style);
+				stream << legend_style << std::string(1, col_separator) << rang::style::reset;
 		}
 
 		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << format(std::string(2, col_separator), legend_style);
+			stream << legend_style << std::string(2, col_separator) << rang::style::reset;
 	}
 	stream << std::endl;
 
@@ -206,15 +206,15 @@ void Terminal_BFER<B>
 			{
 				const auto& text = l == 0 ? cols_groups[i].second[j].first : cols_groups[i].second[j].second;
 				const int n_spaces = (int)column_width - (int)text.size() -1;
-				stream << format(std::string(n_spaces,  ' '), legend_style);
-				stream << format(text + " ", legend_style);
+				stream << legend_style << std::string(n_spaces,  ' ') << rang::style::reset;
+				stream << legend_style << text + " " << rang::style::reset;
 
 				if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
-					stream << format(std::string(1, col_separator), legend_style);
+					stream << legend_style << std::string(1, col_separator) << rang::style::reset;
 			}
 
 			if (i < (cols_groups.size() -1)) // print group separator except for last
-				stream << format(std::string(2, col_separator), legend_style);
+				stream << legend_style << std::string(2, col_separator) << rang::style::reset;
 		}
 		stream << std::endl;
 	}
@@ -225,13 +225,13 @@ void Terminal_BFER<B>
 	{
 		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
 		{
-			stream << format(std::string(column_width, line_separator), legend_style);
+			stream << legend_style << std::string(column_width, line_separator) << rang::style::reset;
 			if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
-				stream << format(std::string(1, col_separator), legend_style);
+				stream << legend_style << std::string(1, col_separator) << rang::style::reset;
 		}
 
 		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << format(std::string(2, col_separator), legend_style);
+			stream << legend_style << std::string(2, col_separator) << rang::style::reset;
 	}
 	stream << std::endl;
 
@@ -267,18 +267,24 @@ void Terminal_BFER<B>
 
 	const std::string undefined_noise_tag = "- ";
 
+	const auto report_style = rang::style::bold;
+
 
 	switch (this->noise.get_type())
 	{
 		case Noise_type::SIGMA :
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_esn0() << format(spaced_scol_separator, Style::BOLD);
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_ebn0() << format(spaced_scol_separator, Style::BOLD);
+			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_esn0() << report_style
+			       << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_ebn0() << report_style
+			       << spaced_scol_separator << rang::style::reset;
 			break;
 		case Noise_type::ROP :
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_rop() << format(spaced_scol_separator, Style::BOLD);
+			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_rop() << report_style
+			       << spaced_scol_separator << rang::style::reset;
 			break;
 		case Noise_type::EP :
-			stream << setprecision(4) << fixed << setw(column_width-1) << this->noise.get_ep() << format(spaced_scol_separator, Style::BOLD);
+			stream << setprecision(4) << fixed << setw(column_width-1) << this->noise.get_ep() << report_style
+			       << spaced_scol_separator << rang::style::reset;
 			break;
 	}
 
@@ -288,11 +294,11 @@ void Terminal_BFER<B>
 
 	const unsigned long long l = 99999999;  // limit 0
 
-	stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width-1) << ((fra > l) ? (float)fra : fra) << format(spaced_scol_separator, Style::BOLD);
-	stream << setprecision(( be > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width-1) << (( be > l) ? (float) be :  be) << format(spaced_scol_separator, Style::BOLD);
-	stream << setprecision(( fe > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width-1) << (( fe > l) ? (float) fe :  fe) << format(spaced_scol_separator, Style::BOLD);
-	stream <<                                                                                                                 str_ber.str() << format(spaced_scol_separator, Style::BOLD);
-	stream <<                                                                                                                 str_fer.str() << format(spaced_dcol_separator, Style::BOLD);
+	stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width-1) << ((fra > l) ? (float)fra : fra) << report_style << spaced_scol_separator << rang::style::reset;
+	stream << setprecision(( be > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width-1) << (( be > l) ? (float) be :  be) << report_style << spaced_scol_separator << rang::style::reset;
+	stream << setprecision(( fe > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width-1) << (( fe > l) ? (float) fe :  fe) << report_style << spaced_scol_separator << rang::style::reset;
+	stream <<                                                                                                                 str_ber.str() << report_style << spaced_scol_separator << rang::style::reset;
+	stream <<                                                                                                                 str_fer.str() << report_style << spaced_dcol_separator << rang::style::reset;
 	stream << setprecision(                2) <<                           fixed  << setw(column_width-1) <<                      simu_cthr;
 }
 
@@ -310,15 +316,16 @@ void Terminal_BFER<B>
 	auto tr = et * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe()) - et;
 	auto tr_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : tr);
 
-	stream << format(spaced_scol_separator, Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(column_width-1) << tr_format;
+	stream << rang::style::bold << spaced_scol_separator << rang::style::reset << std::setprecision(0) << std::fixed
+	       << std::setw(column_width-1) << tr_format;
 
 	stream << " ";
 	switch (real_time_state)
 	{
-		case 0: stream << format("*", Style::BOLD | FG::Color::GREEN); break;
-		case 1: stream << format("*", Style::BOLD | FG::Color::GREEN); break;
-		case 2: stream << format(" ", Style::BOLD | FG::Color::GREEN); break;
-		case 3: stream << format(" ", Style::BOLD | FG::Color::GREEN); break;
+		case 0: stream << rang::style::bold << rang::fg::green << "*" << rang::style::reset; break;
+		case 1: stream << rang::style::bold << rang::fg::green << "*" << rang::style::reset; break;
+		case 2: stream << rang::style::bold << rang::fg::green << " " << rang::style::reset; break;
+		case 3: stream << rang::style::bold << rang::fg::green << " " << rang::style::reset; break;
 		default: break;
 	}
 	real_time_state = (real_time_state +1) % 4;
@@ -343,7 +350,8 @@ void Terminal_BFER<B>
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
 	auto et_format = get_time_format(et);
 
-	stream << format(spaced_scol_separator, Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(column_width-1) << et_format;
+	stream << rang::style::bold << spaced_scol_separator << rang::style::reset << std::setprecision(0) << std::fixed
+	       << std::setw(column_width-1) << et_format;
 
 	stream << (module::Monitor::is_interrupt() ? " x" : "  ") << std::endl;
 
