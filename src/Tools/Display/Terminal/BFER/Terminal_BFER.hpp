@@ -35,7 +35,6 @@ public:
 	void final_report(std::ostream &stream = std::cout);
 
 protected:
-	static std::string get_time_format(float secondes);
 	void _report(std::ostream &stream);
 };
 }

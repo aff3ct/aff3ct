@@ -1,9 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <utility>
 #include <ios>
-
 #include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"
@@ -13,17 +11,6 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-const char comment_tag    = '#';
-const char col_separator  = '|';
-const char line_separator = '-';
-const std::string spaced_scol_separator = " |" ;
-const std::string spaced_dcol_separator = " ||";
-
-#ifdef _WIN32
-const int column_width = 11;
-#else
-const int column_width = 10;
-#endif
 
 template <typename B>
 Terminal_BFER<B>
@@ -56,41 +43,15 @@ void Terminal_BFER<B>
 }
 
 template <typename B>
-std::string Terminal_BFER<B>
-::get_time_format(float secondes)
-{
-	auto ss = (int)secondes % 60;
-	auto mm = ((int)(secondes / 60.f) % 60);
-	auto hh = (int)(secondes / 3600.f);
-
-	// TODO: this is not a C++ style code
-	char time_format[256];
-#ifdef _MSC_VER
-	sprintf_s(time_format, 32, "%2.2dh%2.2d'%2.2d", hh, mm, ss);
-#else
-	sprintf(time_format, "%2.2dh%2.2d'%2.2d", hh, mm, ss);
-#endif
-	std::string time_format2(time_format);
-
-	return time_format2;
-}
-
-template <typename B>
 void Terminal_BFER<B>
 ::legend(std::ostream &stream)
 {
-	std::ios::fmtflags f(stream.flags());
+	this->cols_groups.resize(2);
 
-	// vector of pairs {group title, columns titles}
-	// group title is a pair {first line, second line}
-	// columns titles is a vector of pair {first line, second line}
-	std::vector<std::pair<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>>> cols_groups(2);
-
-
-	auto& bfer_title       = cols_groups[0].first;
-	auto& bfer_cols        = cols_groups[0].second;
-	auto& throughput_title = cols_groups[1].first;
-	auto& throughput_cols  = cols_groups[1].second;
+	auto& bfer_title       = this->cols_groups[0].first;
+	auto& bfer_cols        = this->cols_groups[0].second;
+	auto& throughput_title = this->cols_groups[1].first;
+	auto& throughput_cols  = this->cols_groups[1].second;
 
 	bfer_title = std::make_pair("Bit Error Rate (BER) and Frame Error Rate (FER)", "");
 
@@ -130,112 +91,7 @@ void Terminal_BFER<B>
 	// stream << "# " << "         |           |           |           |           |           ||   (Mb/s) | (hhmmss) " << std::endl;
 	// stream << "# " << "---------|-----------|-----------|-----------|-----------|-----------||----------|----------" << std::endl;
 
-
-	const auto legend_style = rang::style::bold;
-
-	// print first line of the table
-	stream << comment_tag << " ";
-	for (unsigned i = 0; i < cols_groups.size(); i++)
-	{
-		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
-		stream << legend_style << std::string(group_width, line_separator) << rang::style::reset ;
-
-		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << legend_style << std::string(2, col_separator) << rang::style::reset ;
-	}
-	stream << std::endl;
-
-	// print line 2 and 3 of the table (group title lines)
-	for (auto l = 0; l < 2; l++)
-	{
-		stream << comment_tag << " ";
-		for (unsigned i = 0; i < cols_groups.size(); i++)
-		{
-			const auto& text = l == 0 ? cols_groups[i].first.first : cols_groups[i].first.second;
-
-			const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
-			const int n_spaces = (int)group_width - (int)text.size();
-			const int n_spaces_left  = n_spaces/2;
-			const int n_spaces_right = n_spaces - n_spaces_left; // can be different than n_spaces/2 if odd size
-			stream << legend_style << std::string(n_spaces_left,  ' ') << rang::style::reset ;
-			stream << legend_style << text << rang::style::reset ;
-			stream << legend_style << std::string(n_spaces_right, ' ') << rang::style::reset ;
-
-			if (i < (cols_groups.size() -1)) // print group separator except for last
-				stream << legend_style << std::string(2, col_separator) << rang::style::reset;
-		}
-		stream << std::endl;
-	}
-
-	// print line 4 of the table
-	stream << comment_tag << " ";
-	for (unsigned i = 0; i < cols_groups.size(); i++)
-	{
-		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
-		stream << legend_style << std::string(group_width, line_separator) << rang::style::reset;
-
-		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << legend_style << std::string(2, col_separator) << rang::style::reset;
-	}
-	stream << std::endl;
-
-	// print line 5 of the table
-	stream << comment_tag << " ";
-	for (unsigned i = 0; i < cols_groups.size(); i++)
-	{
-		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
-		{
-			stream << legend_style << std::string(column_width, line_separator) << rang::style::reset;
-			if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
-				stream << legend_style << std::string(1, col_separator) << rang::style::reset;
-		}
-
-		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << legend_style << std::string(2, col_separator) << rang::style::reset;
-	}
-	stream << std::endl;
-
-	// print line 6 and 7 of the table (column title lines)
-	for (auto l = 0; l < 2; l++)
-	{
-		stream << comment_tag << " ";
-		for (unsigned i = 0; i < cols_groups.size(); i++)
-		{
-
-			for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
-			{
-				const auto& text = l == 0 ? cols_groups[i].second[j].first : cols_groups[i].second[j].second;
-				const int n_spaces = (int)column_width - (int)text.size() -1;
-				stream << legend_style << std::string(n_spaces,  ' ') << rang::style::reset;
-				stream << legend_style << text + " " << rang::style::reset;
-
-				if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
-					stream << legend_style << std::string(1, col_separator) << rang::style::reset;
-			}
-
-			if (i < (cols_groups.size() -1)) // print group separator except for last
-				stream << legend_style << std::string(2, col_separator) << rang::style::reset;
-		}
-		stream << std::endl;
-	}
-
-	// print line 8 of the table
-	stream << comment_tag << " ";
-	for (unsigned i = 0; i < cols_groups.size(); i++)
-	{
-		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
-		{
-			stream << legend_style << std::string(column_width, line_separator) << rang::style::reset;
-			if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
-				stream << legend_style << std::string(1, col_separator) << rang::style::reset;
-		}
-
-		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << legend_style << std::string(2, col_separator) << rang::style::reset;
-	}
-	stream << std::endl;
-
-	stream.flags(f);
+	Terminal::legend(stream); // print effectively the legend
 }
 
 std::string get_spaces_left(const std::string& str, const int total_width)
@@ -263,12 +119,9 @@ void Terminal_BFER<B>
 
 	if (module::Monitor::is_interrupt()) stream << "\r";
 
-	stream << "  " ; // left offset
-
-	const std::string undefined_noise_tag = "- ";
+	stream << data_tag;
 
 	const auto report_style = rang::style::bold;
-
 
 	switch (this->noise.get_type())
 	{
