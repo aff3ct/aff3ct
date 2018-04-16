@@ -61,7 +61,7 @@ void Decoder_BCH::parameters
 	if (this->m == 0)
 	{
 		std::stringstream message;
-		message << "The Gallois Field order is null (because N_cw = " << this->N_cw << ").";
+		message << "The Galois Field order is null (because N_cw = " << this->N_cw << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
