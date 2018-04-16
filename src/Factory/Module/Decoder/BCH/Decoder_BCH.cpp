@@ -66,9 +66,11 @@ void Decoder_BCH::parameters
 	}
 
 	if (vals.exist({p+"-corr-pow", "T"}))
-		this->t = vals.to_int({p+"-corr-pow", "T"});
-		if (!vals.exist({p+"-info-bits", "K"}))
+	{
+		this->t = vals.to_int({p + "-corr-pow", "T"});
+		if (K == 0)
 			this->K = this->N_cw - this->t * this->m;
+	}
 	else
 		this->t = (this->N_cw - this->K) / this->m;
 }
