@@ -6,7 +6,6 @@ using namespace aff3ct::tools;
 
 const char        aff3ct::tools::Terminal::col_separator         = '|';
 const char        aff3ct::tools::Terminal::line_separator        = '-';
-const std::string aff3ct::tools::Terminal::comment_tag           = "# ";
 const std::string aff3ct::tools::Terminal::spaced_scol_separator = " |" ;
 const std::string aff3ct::tools::Terminal::spaced_dcol_separator = " ||";
 const std::string aff3ct::tools::Terminal::data_tag              = "  ";
@@ -60,7 +59,7 @@ void Terminal
 	// indice (7.2) is "cols_groups[1].second[2].second"
 
 	// print line 1 of the table
-	stream << comment_tag;
+	stream << rang::format::comment;
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
 		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
@@ -74,7 +73,7 @@ void Terminal
 	// print line 2 and 3 of the table (group title lines)
 	for (auto l = 0; l < 2; l++)
 	{
-		stream << comment_tag;
+		stream << rang::format::comment;
 		for (unsigned i = 0; i < cols_groups.size(); i++)
 		{
 			const auto& text = l == 0 ? cols_groups[i].first.first : cols_groups[i].first.second;
@@ -94,7 +93,7 @@ void Terminal
 	}
 
 	// print line 4 of the table
-	stream << comment_tag;
+	stream << rang::format::comment;
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
 		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
@@ -106,7 +105,7 @@ void Terminal
 	stream << std::endl;
 
 	// print line 5 of the table
-	stream << comment_tag;
+	stream << rang::format::comment;
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
 		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
@@ -124,7 +123,7 @@ void Terminal
 	// print line 6 and 7 of the table (column title lines)
 	for (auto l = 0; l < 2; l++)
 	{
-		stream << comment_tag;
+		stream << rang::format::comment;
 		for (unsigned i = 0; i < cols_groups.size(); i++)
 		{
 			for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
@@ -145,7 +144,7 @@ void Terminal
 	}
 
 	// print line 8 of the table
-	stream << comment_tag;
+	stream << rang::format::comment;
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
 		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)

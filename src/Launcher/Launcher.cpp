@@ -114,13 +114,12 @@ int Launcher::read_arguments()
 void Launcher::print_header()
 {
 	// display configuration and simulation parameters
-	stream << rang::style::bold;
-	stream << tools::Terminal::comment_tag << "----------------------------------------------------" << std::endl;
-	stream << tools::Terminal::comment_tag << "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
-	stream << tools::Terminal::comment_tag << "----------------------------------------------------" << std::endl;
-	stream << tools::Terminal::comment_tag << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
+	stream << rang::format::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
+	stream << rang::format::comment << rang::style::bold << "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
+	stream << rang::format::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
+	stream << rang::format::comment << rang::style::bold << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
 	factory::Header::print_parameters({&params_common}, false, this->stream);
-	this->stream << tools::Terminal::comment_tag << std::endl;
+	this->stream << rang::format::comment << std::endl;
 }
 
 int Launcher::launch()
@@ -190,7 +189,7 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 			if (this->params_common.mpi_rank == 0)
 #endif
-				stream << tools::Terminal::comment_tag << "The simulation is running..." << std::endl;
+				stream << rang::format::comment << "The simulation is running..." << std::endl;
 
 		try
 		{
@@ -209,7 +208,7 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 		if (this->params_common.mpi_rank == 0)
 #endif
-			stream << tools::Terminal::comment_tag << "End of the simulation." << std::endl;
+			stream << rang::format::comment << "End of the simulation." << std::endl;
 
 	if (simu != nullptr)
 	{

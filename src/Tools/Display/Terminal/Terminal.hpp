@@ -16,7 +16,8 @@
 #include <vector>
 #include <utility>
 #include <string>
-#include <rang.hpp>
+
+#include "Tools/Display/rang_format/rang_format.h"
 
 namespace aff3ct
 {
@@ -32,7 +33,6 @@ class Terminal
 public:
 	static const char        col_separator;
 	static const char        line_separator;
-	static const std::string comment_tag;
 	static const std::string spaced_scol_separator;
 	static const std::string spaced_dcol_separator;
 	static const std::string data_tag;

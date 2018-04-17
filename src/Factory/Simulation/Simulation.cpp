@@ -186,12 +186,6 @@ void Simulation::parameters
 	this->local_seed = this->global_seed;
 #endif
 
-//#ifdef ENABLE_COOL_BASH
-//	// disable the cool bash mode for PyBER
-//	if (!this->pyber.empty())
-//		rang::setControlMode(rang::control::Off);
-//#endif
-
 #ifdef MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
@@ -212,7 +206,7 @@ void Simulation::parameters
 	{
 		std::stringstream noise_range_str;
 		noise_range_str << this->noise_range.front() << " -> " << this->noise_range.back() << " dB";
-		headers[p].push_back(std::make_pair("NOISE range", noise_range_str.str()));
+		headers[p].push_back(std::make_pair("Noise range", noise_range_str.str()));
 	}
 
 	headers[p].push_back(std::make_pair("Seed", std::to_string(this->global_seed)));
