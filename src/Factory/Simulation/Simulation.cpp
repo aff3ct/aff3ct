@@ -186,11 +186,11 @@ void Simulation::parameters
 	this->local_seed = this->global_seed;
 #endif
 
-#ifdef ENABLE_COOL_BASH
-	// disable the cool bash mode for PyBER
-	if (!this->pyber.empty())
-		rang::setControlMode(rang::control::Off);
-#endif
+//#ifdef ENABLE_COOL_BASH
+//	// disable the cool bash mode for PyBER
+//	if (!this->pyber.empty())
+//		rang::setControlMode(rang::control::Off);
+//#endif
 
 #ifdef MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
