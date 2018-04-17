@@ -6,6 +6,8 @@
 #include <functional>
 #include <date.h>
 
+#include "Tools/Display/Terminal/Terminal.hpp"
+
 #ifdef ENABLE_MPI
 #include <mpi.h>
 #endif
@@ -76,7 +78,7 @@ int Launcher::read_arguments()
 	{
 		auto save = tools::exception::no_backtrace;
 		tools::exception::no_backtrace = true;
-		cmd_error.push_back(e.what());
+		cmd_error.emplace_back(e.what());
 		tools::exception::no_backtrace = save;
 	}
 
@@ -87,16 +89,16 @@ int Launcher::read_arguments()
 	}
 
 	// print usage
-	if (cmd_error.size() && !params_common.display_help)
+	if (!cmd_error.empty() && !params_common.display_help)
 		ah.print_usage(this->args);
 
 	// print the errors
-	if (cmd_error.size()) std::cerr << std::endl;
+	if (!cmd_error.empty()) std::cerr << std::endl;
 	for (unsigned e = 0; e < cmd_error.size(); e++)
 		std::cerr << rang::format::error << cmd_error[e] << rang::format::reset << std::endl;
 
 	// print the help tags
-	if (cmd_error.size() && !params_common.display_help)
+	if (!cmd_error.empty() && !params_common.display_help)
 	{
 		tools::Argument_tag help_tag = {"help", "h"};
 
@@ -106,25 +108,26 @@ int Launcher::read_arguments()
 		std::cerr << std::endl << rang::format::info << message << rang::format::reset << std::endl;
 	}
 
-	return (cmd_error.size() || params_common.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
+	return (!cmd_error.empty() || params_common.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 void Launcher::print_header()
 {
 	// display configuration and simulation parameters
-	stream << "# " << rang::style::bold << "----------------------------------------------------" << std::endl;
-	stream << "# " <<                      "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
-	stream << "# " <<                      "----------------------------------------------------" << std::endl;
-	stream << "# " << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
+	stream << rang::style::bold;
+	stream << tools::Terminal::comment_tag << "----------------------------------------------------" << std::endl;
+	stream << tools::Terminal::comment_tag << "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
+	stream << tools::Terminal::comment_tag << "----------------------------------------------------" << std::endl;
+	stream << tools::Terminal::comment_tag << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
 	factory::Header::print_parameters({&params_common}, false, this->stream);
-	this->stream << "#" << std::endl;
+	this->stream << tools::Terminal::comment_tag << std::endl;
 }
 
 int Launcher::launch()
 {
 	int exit_code = EXIT_SUCCESS;
 
-	std::srand(this->params_common.global_seed);
+	std::srand((unsigned)this->params_common.global_seed);
 
 	// in case of the user call launch multiple times
 	if (simu != nullptr)
@@ -187,7 +190,7 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 			if (this->params_common.mpi_rank == 0)
 #endif
-				stream << "# " << "The simulation is running..." << std::endl;
+				stream << tools::Terminal::comment_tag << "The simulation is running..." << std::endl;
 
 		try
 		{
@@ -206,7 +209,7 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 		if (this->params_common.mpi_rank == 0)
 #endif
-			stream << "# End of the simulation." << std::endl;
+			stream << tools::Terminal::comment_tag << "End of the simulation." << std::endl;
 
 	if (simu != nullptr)
 	{
