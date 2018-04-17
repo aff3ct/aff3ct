@@ -202,8 +202,14 @@ class OutputStructure:
 def check_positive(value):
     ivalue = int(value)
     if ivalue <= 0:
-         raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
+        raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
     return ivalue
+
+
+def check_directory(value):
+    if not os.path.isdir(value):
+        raise argparse.ArgumentTypeError("%s is not a directory" % value)
+    return value
 
 
 def adp_parse_args():
@@ -216,7 +222,7 @@ def adp_parse_args():
     parser.add_argument("--bin", help="export as bin", action='store_true')
     parser.add_argument("--src", help="export as c source", action='store_true')
     parser.add_argument("--fra", type=check_positive, help="export a single frame, whose index is specified")
-    parser.add_argument("-o", "--output", type=str, help="path to the output folder", default="./")
+    parser.add_argument("-o", "--output", type=check_directory, help="path to the output folder", default="./")
 
     args = parser.parse_args()
 
