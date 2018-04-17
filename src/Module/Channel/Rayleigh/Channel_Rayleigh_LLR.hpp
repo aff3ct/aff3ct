@@ -36,6 +36,9 @@ public:
 	virtual ~Channel_Rayleigh_LLR();
 
 	virtual void add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id = -1); using Channel<R>::add_noise_wg;
+
+protected:
+	virtual void check_noise();
 };
 }
 }

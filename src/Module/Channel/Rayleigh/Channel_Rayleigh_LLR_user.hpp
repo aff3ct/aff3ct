@@ -49,6 +49,8 @@ public:
 
 protected:
 	void read_gains(const std::string& gains_filename);
+
+	virtual void check_noise();
 };
 }
 }

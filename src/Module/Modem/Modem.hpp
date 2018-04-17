@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "Module/Module.hpp"
-#include "../../Tools/Noise/Noise.hpp"
+#include "Tools/Noise/Noise.hpp"
 
 namespace aff3ct
 {
@@ -62,7 +62,7 @@ protected:
 	const int N;       /*!< Size of one frame (= number of bits in one frame) */
 	const int N_mod;   /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
 	const int N_fil;   /*!< Number of transmitted elements after the filtering process */
-	tools::Noise<R> n; /*!< the current noise applied to the input signal */
+	tools::Noise<R>* n; /*!< the current noise applied to the input signal */
 
 
 	bool enable_filter;

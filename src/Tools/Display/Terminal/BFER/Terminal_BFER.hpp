@@ -5,7 +5,7 @@
 #include <chrono>
 
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
-#include "../../../Noise/Noise.hpp"
+#include "Tools/Noise/Noise.hpp"
 
 #include "../Terminal.hpp"
 
@@ -20,12 +20,12 @@ protected:
 	const module::Monitor_BFER<B> &monitor;
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>  t_snr;
 	unsigned short real_time_state;
-	Noise<> noise;
+	Noise<>* n;
 
 public:
 	explicit Terminal_BFER(const module::Monitor_BFER<B> &monitor);
 
-	virtual ~Terminal_BFER();
+	virtual ~Terminal_BFER() = default;
 
 	void set_noise(const Noise<float>& noise);
 	void set_noise(const Noise<double>& noise);

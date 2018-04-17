@@ -21,8 +21,8 @@ namespace module
 
 template <typename R>
 Channel<R>::
-Channel(const int N, const tools::Noise<R>& n, const int n_frames)
-: Module(n_frames), N(N), n(n), noise(this->N * this->n_frames, 0)
+Channel(const int N, const tools::Noise<R>& _n, const int n_frames)
+: Module(n_frames), N(N), n(_n.clone()), noise(this->N * this->n_frames, 0)
 {
 	const std::string name = "Channel";
 	this->set_name(name);
@@ -63,7 +63,7 @@ Channel(const int N, const tools::Noise<R>& n, const int n_frames)
 template <typename R>
 Channel<R>::
 Channel(const int N, const int n_frames)
-: Channel(N, tools::Noise<R>(), n_frames)
+: Channel(N, tools::Sigma<R>(), n_frames)
 {
 }
 
@@ -71,6 +71,8 @@ template <typename R>
 Channel<R>::
 ~Channel()
 {
+	if (this->n != nullptr)
+		delete this->n;
 }
 
 template <typename R>
@@ -91,7 +93,11 @@ template <typename R>
 void Channel<R>::
 set_noise(const tools::Noise<R>& noise)
 {
-	this->n = noise;
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = noise.clone();
+	this->check_noise();
 }
 
 template <typename R>
@@ -221,6 +227,17 @@ void Channel<R>::
 _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template<typename R>
+void Channel<R>::check_noise()
+{
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "No noise has been set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 }

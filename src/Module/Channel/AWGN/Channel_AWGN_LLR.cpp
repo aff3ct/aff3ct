@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_AWGN_LLR<R>
 ::Channel_AWGN_LLR(const int N, tools::Gaussian_gen<R> *noise_generator, const bool add_users,
-                   const tools::Noise<R>& noise, const int n_frames)
+                   const tools::Sigma<R>& noise, const int n_frames)
 : Channel<R>(N, noise, n_frames),
   add_users(add_users),
   noise_generator(noise_generator)
@@ -24,13 +24,9 @@ Channel_AWGN_LLR<R>
 
 template <typename R>
 Channel_AWGN_LLR<R>
-::Channel_AWGN_LLR(const int N, const int seed, const bool add_users, const tools::Noise<R>& noise, const int n_frames)
-: Channel<R>(N, noise, n_frames),
-  add_users(add_users),
-  noise_generator(new tools::Gaussian_noise_generator_std<R>(seed))
+::Channel_AWGN_LLR(const int N, const int seed, const bool add_users, const tools::Sigma<R>& noise, const int n_frames)
+: Channel_AWGN_LLR<R>(N, new tools::Gaussian_noise_generator_std<R>(seed), add_users, noise, n_frames)
 {
-	const std::string name = "Channel_AWGN_LLR";
-	this->set_name(name);
 }
 
 template <typename R>
@@ -44,6 +40,8 @@ template <typename R>
 void Channel_AWGN_LLR<R>
 ::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
+	this->check_noise();
+
 	if (add_users && this->n_frames > 1)
 	{
 		if (frame_id != -1)
@@ -53,7 +51,7 @@ void Channel_AWGN_LLR<R>
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		noise_generator->generate(this->noise.data(), this->N, this->n.get_sigma()); // trow if noise is not SIGMA type
+		noise_generator->generate(this->noise.data(), this->N, this->n->get_noise()); // trow if noise is not SIGMA type
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (auto f = 0; f < this->n_frames; f++)
@@ -69,14 +67,22 @@ void Channel_AWGN_LLR<R>
 		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		if (frame_id < 0)
-			noise_generator->generate(this->noise, this->n.get_sigma());// trow if noise is not SIGMA type
+			noise_generator->generate(this->noise, this->n->get_noise()); // trow if noise has not been set
 		else
-			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n.get_sigma());// trow if noise is not SIGMA type
+			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise()); // trow if noise has not been set
 
 		for (auto f = f_start; f < f_stop; f++)
 			for (auto n = 0; n < this->N; n++)
 				Y_N[f * this->N +n] = X_N[f * this->N +n] + this->noise[f * this->N +n];
 	}
+}
+
+template<typename R>
+void Channel_AWGN_LLR<R>::check_noise()
+{
+	Channel<R>::check_noise();
+
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 // ==================================================================================== explicit template instantiation

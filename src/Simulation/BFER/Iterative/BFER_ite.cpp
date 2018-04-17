@@ -126,9 +126,9 @@ void BFER_ite<B,R,Q>
 	// set current sigma
 	for (auto tid = 0; tid < this->params_BFER_ite.n_threads; tid++)
 	{
-		this->channel[tid]->set_noise(this->noise);
-		this->modem  [tid]->set_noise(this->noise);
-		this->codec  [tid]->set_noise(this->noise);
+		this->channel[tid]->set_noise(*this->noise);
+		this->modem  [tid]->set_noise(*this->noise);
+		this->codec  [tid]->set_noise(*this->noise);
 	}
 }
 
@@ -197,7 +197,7 @@ tools ::Interleaver_core<>* BFER_ite<B,R,Q>
 	if (params_BFER_ite.err_track_revert && params_BFER_ite.itl->core->uniform)
 	{
 		std::stringstream s_noise;
-		s_noise << std::setprecision(2) << std::fixed << this->noise.get_noise();
+		s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();
 
 		params_itl->core->path = params_BFER_ite.err_track_path + "_" + s_noise.str() + ".itl";
 	}

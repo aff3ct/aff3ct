@@ -102,6 +102,8 @@ template <typename R>
 void Channel_Rayleigh_LLR_user<R>
 ::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
+	this->check_noise();
+	
 	if (frame_id != -1)
 	{
 		std::stringstream message;
@@ -126,7 +128,7 @@ void Channel_Rayleigh_LLR_user<R>
 	}
 
 	// generate the noise
-	noise_generator->generate(this->noise, this->n.get_sigma()); // trow if noise is not SIGMA type
+	noise_generator->generate(this->noise, this->n->get_noise()); // trow if noise is not SIGMA type
 
 	// use the noise and the gain to modify the signal
 	for (auto i = 0; i < this->N * this->n_frames; i++)
@@ -135,6 +137,14 @@ void Channel_Rayleigh_LLR_user<R>
 
 		Y_N[i] = X_N[i] * H_N[i] + this->noise[i];
 	}
+}
+
+template<typename R>
+void Channel_Rayleigh_LLR_user<R>::check_noise()
+{
+	Channel<R>::check_noise();
+
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 // ==================================================================================== explicit template instantiation

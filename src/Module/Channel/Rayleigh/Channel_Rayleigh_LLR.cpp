@@ -64,6 +64,8 @@ template <typename R>
 void Channel_Rayleigh_LLR<R>
 ::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
+	this->check_noise();
+
 	if (add_users && this->n_frames > 1)
 	{
 		if (frame_id != -1)
@@ -74,7 +76,7 @@ void Channel_Rayleigh_LLR<R>
 		}
 
 		noise_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
-		noise_generator->generate(this->noise.data(), this->N, this->n.get_sigma()); // trow if noise is not SIGMA type
+		noise_generator->generate(this->noise.data(), this->N, this->n->get_noise());
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 
@@ -117,12 +119,12 @@ void Channel_Rayleigh_LLR<R>
 		if (frame_id < 0)
 		{
 			noise_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
-			noise_generator->generate(this->noise, this->n.get_sigma()); // trow if noise is not SIGMA type
+			noise_generator->generate(this->noise, this->n->get_noise());
 		}
 		else
 		{
 			noise_generator->generate(this->gains.data() + f_start * this->N, this->N, (R)1 / (R)std::sqrt((R)2));
-			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n.get_sigma()); // trow if noise is not SIGMA type
+			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise());
 		}
 
 		if (this->complex)
@@ -157,6 +159,14 @@ void Channel_Rayleigh_LLR<R>
 			}
 		}
 	}
+}
+
+template<typename R>
+void Channel_Rayleigh_LLR<R>::check_noise()
+{
+	Channel<R>::check_noise();
+
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 // ==================================================================================== explicit template instantiation

@@ -116,7 +116,7 @@ void EXIT<B,R>
 		float esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params_EXIT.mdm->bps);
 		float sigma = tools::esn0_to_sigma(esn0, params_EXIT.mdm->upf);
 
-		this->noise.set_sigma(sigma, ebn0, esn0);
+		this->noise.set_noise(sigma, ebn0, esn0);
 
 		terminal->set_noise(this->noise);
 		channel ->set_noise(this->noise);
@@ -128,7 +128,7 @@ void EXIT<B,R>
 		for (unsigned sig_a_idx = 0; sig_a_idx < params_EXIT.sig_a_range.size(); sig_a_idx ++)
 		{
 			sig_a = params_EXIT.sig_a_range[sig_a_idx];
-			this->noise_a.set_sigma(2.f / sig_a);
+			this->noise_a.set_noise(2.f / sig_a);
 
 			terminal ->set_sig_a(sig_a        );
 			channel_a->set_noise(this->noise_a);

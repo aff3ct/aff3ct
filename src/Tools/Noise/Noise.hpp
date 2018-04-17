@@ -1,16 +1,16 @@
 #ifndef NOISE_HPP__
 #define NOISE_HPP__
 
-#include "../../../../../../../../../../usr/include/c++/5/utility"
-#include "../../../../../../../../../../usr/include/c++/5/string"
-#include "../../../../../../../../../../usr/include/c++/5/limits"
+#include <utility>
+#include <string>
+#include <limits>
 
 namespace aff3ct
 {
 namespace tools
 {
 
-enum class Noise_type : uint8_t{ SIGMA, ROP, EP }; // Sigma (SNR variance), Received optical power, Erasure Probability
+enum class Noise_type {SIGMA, ROP, EP};
 
 template <typename R = float>
 class Noise
@@ -21,52 +21,65 @@ public:
 
 public:
 	Noise();
-	explicit Noise(R noise, Noise_type t = Noise_type::SIGMA);
+	explicit Noise(R noise);
 	Noise(const Noise<R>& other);
-	Noise(Noise<R>&& other);
-	~Noise();
+	Noise(Noise<R>&& other) noexcept;
+	virtual ~Noise() = default;
 
-	bool is_set   () const noexcept;
-	bool has_type () const noexcept;
-	bool has_noise() const noexcept;
+	virtual bool is_set() const noexcept; // return true if the Noise object has been correctly initialized
+	bool has_noise() const noexcept; // return true if a noise value has been set
 
-	Noise_type get_type () const; // return the noise type,                           throw if not set
-	R          get_noise() const; // return the stocked noise,                        throw if not set
-	R          get_sigma() const; // return the noise as SIGMA type and has been set, throw if it is not
-	R          get_rop  () const; // return the noise as ROP   type and has been set, throw if it is not
-	R          get_ep   () const; // return the noise as EP    type and has been set, throw if it is not
+	R get_noise() const; // return the stocked noise, throw if not set
 
-	const R get_ebn0() const; // return EB/N0 when the noise is of SIGMA type and has been set, throw if it is not
-	const R get_esn0() const; // return ES/N0 when the noise is of SIGMA type and has been set, throw if it is not
+	virtual void set_noise(R noise); // set the noise val and call 'check' to check that it respects the rules
 
-	void set_noise(R noise, Noise_type t = Noise_type::SIGMA);
-	void set_rop  (R rop  ); // set the noise and its type as ROP
-	void set_ep   (R ep   ); // set the noise and its type as EP
-	void set_sigma(R sigma); // set the noise and its type as SIGMA
-	void set_sigma(R sigma, R ebn0, R esn0); // set the noise and its type as SIGMA
-	                                                           // set also EB/N0 and ES/N0
+	Noise& operator=(const Noise<R>&  other);          // set this noise as the 'other' one
+	Noise& operator=(      Noise<R>&& other) noexcept; // set this noise as the 'other' one
+	virtual void copy(const Noise&  other);          // set this noise as the 'other' one
+	virtual void copy(      Noise&& other) noexcept; // set this noise as the 'other' one
 
-	static Noise_type  str2type(const std::string& str);
-	static std::string type2str(const Noise_type& t);
+	virtual Noise_type get_type() const = 0;
+	bool is_of_type(Noise_type t) const noexcept;
+	void is_of_type_throw(Noise_type t) const;
 
-	Noise& operator=(const Noise<R>& other);
-	Noise& operator=(Noise<R>&& other);
+	static Noise_type str2type(const std::string &str);
+	static std::string type2str(Noise_type t);
+	std::string type2str();
+
+	virtual Noise<R>* clone() const = 0;
 
 protected:
-	std::pair<Noise_type, bool> _t;
-	std::pair<R,          bool> _n;
-	std::pair<R,          bool> _ebn0;
-	std::pair<R,          bool> _esn0;
+	std::pair<R, bool> _n;
 
-	void check();
-
-	void set_n(R          n);
-	void set_t(Noise_type t);
-
-	void init();
+	virtual void check();
 };
 
 }
 }
 
+#include "Sigma.hpp"
+#include "Received_optical_power.hpp"
+#include "Erased_probability.hpp"
+
+namespace aff3ct
+{
+namespace tools
+{
+template <typename T, typename R>
+Noise<T>* cast(const Noise<R>& n)
+{
+	Noise<T> * cast_n = nullptr;
+
+//	switch(n.get_type())
+//	{
+//		case Noise<R>::Noise_type::SIGMA: cast_n = dynamic_cast<const Sigma                 <R>&>(n).cast<T>(); break;
+//		case Noise<R>::Noise_type::EP:    cast_n = dynamic_cast<const Erased_probability    <R>&>(n).cast<T>(); break;
+//		case Noise<R>::Noise_type::ROP:   cast_n = dynamic_cast<const Received_optical_power<R>&>(n).cast<T>(); break;
+//	}
+
+	return cast_n;
+}
+
+}
+}
 #endif // NOISE_HPP__

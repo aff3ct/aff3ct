@@ -18,28 +18,29 @@ Terminal_BFER<B>
 : Terminal       (                                ),
   monitor        (monitor                         ),
   t_snr          (std::chrono::steady_clock::now()),
-  real_time_state(0                               )
-{
-}
-
-template <typename B>
-Terminal_BFER<B>
-::~Terminal_BFER()
+  real_time_state(0                               ),
+  n              (nullptr                         )
 {
 }
 
 template <typename B>
 void Terminal_BFER<B>
-::set_noise(const Noise<float>& n)
+::set_noise(const Noise<float>& noise)
 {
-	this->noise = n;
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = noise.clone();
 }
 
 template <typename B>
 void Terminal_BFER<B>
 ::set_noise(const Noise<double>& n)
 {
-	this->noise.set_noise(n.get_noise(), n.get_type());
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = tools::cast<float>(n);
 }
 
 template <typename B>
@@ -55,7 +56,7 @@ void Terminal_BFER<B>
 
 	bfer_title = std::make_pair("Bit Error Rate (BER) and Frame Error Rate (FER)", "");
 
-	switch (this->noise.get_type())
+	switch (this->n->get_type())
 	{
 		case Noise_type::SIGMA :
 			bfer_title.second = "depending on the Signal Noise Ratio (SNR)";
@@ -118,22 +119,29 @@ void Terminal_BFER<B>
 
 	const auto report_style = rang::style::bold;
 
-	switch (this->noise.get_type())
+	switch (this->n->get_type())
 	{
 		case Noise_type::SIGMA :
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_esn0() << report_style
+		{
+			auto sig = dynamic_cast<const tools::Sigma<>*>(this->n);
+			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_esn0() << report_style
 			       << spaced_scol_separator << rang::style::reset;
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_ebn0() << report_style
+			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_ebn0() << report_style
 			       << spaced_scol_separator << rang::style::reset;
 			break;
+		}
 		case Noise_type::ROP :
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_rop() << report_style
+		{
+			stream << setprecision(2) << fixed << setw(column_width - 1) << this->n->get_noise() << report_style
 			       << spaced_scol_separator << rang::style::reset;
 			break;
+		}
 		case Noise_type::EP :
-			stream << setprecision(4) << fixed << setw(column_width-1) << this->noise.get_ep() << report_style
+		{
+			stream << setprecision(4) << fixed << setw(column_width - 1) << this->n->get_noise() << report_style
 			       << spaced_scol_separator << rang::style::reset;
 			break;
+		}
 	}
 
 	stringstream str_ber, str_fer;
@@ -176,7 +184,7 @@ void Terminal_BFER<B>
 		case 3: stream << rang::style::bold << rang::fg::green << " " << rang::style::reset; break;
 		default: break;
 	}
-	real_time_state = (real_time_state +1) % 4;
+	real_time_state = (real_time_state + (unsigned short)1) % (unsigned short)4;
 	stream << "\r";
 
 	stream.flush();

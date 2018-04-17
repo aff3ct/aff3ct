@@ -17,27 +17,34 @@ Terminal_EXIT<B,R>
   monitor(monitor),
   t_snr(std::chrono::steady_clock::now()),
   real_time_state(0),
-  sig_a(0.f)
+  sig_a(0.f),
+  n(nullptr)
 {
 }
 
 template <typename B, typename R>
 void Terminal_EXIT<B,R>
-::set_noise(const Noise<float>& n)
+::set_noise(const Noise<float>& noise)
 {
-	this->noise = n;
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = noise.clone();
 }
 
 template <typename B, typename R>
 void Terminal_EXIT<B,R>
-::set_noise(const Noise<double>& n)
+::set_noise(const Noise<double>& noise)
 {
-	this->noise.set_noise(n.get_noise(), n.get_type());
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = tools::cast<float>(noise);
 }
 
 template <typename B, typename R>
 void Terminal_EXIT<B,R>
-::set_sig_a(const float sig_a)
+::set_sig_a(float sig_a)
 {
 	this->sig_a = sig_a;
 }
@@ -55,7 +62,7 @@ void Terminal_EXIT<B,R>
 
 	bfer_title = std::make_pair("EXIT chart depending on the", "");
 
-	switch (this->noise.get_type())
+	switch (this->n->get_type())
 	{
 		case Noise_type::SIGMA :
 			bfer_title.second = "Signal Noise Ratio (SNR)";
@@ -115,24 +122,30 @@ void Terminal_EXIT<B,R>
 
 	stream << data_tag;
 
-	switch (this->noise.get_type())
+	switch (this->n->get_type())
 	{
 		case Noise_type::SIGMA :
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_esn0() << report_style
+		{
+			auto sig = dynamic_cast<const tools::Sigma<>*>(this->n);
+			stream << setprecision(2) << fixed << setw(column_width-1) << sig->get_esn0() << report_style
 			       << spaced_scol_separator << rang::style::reset;
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_ebn0() << report_style
+			stream << setprecision(2) << fixed << setw(column_width-1) << sig->get_ebn0() << report_style
 			       << spaced_scol_separator << rang::style::reset;
 			break;
+		}
 		case Noise_type::ROP :
-			stream << setprecision(2) << fixed << setw(column_width-1) << this->noise.get_rop() << report_style
+		{
+			stream << setprecision(2) << fixed << setw(column_width-1) << this->n->get_noise() << report_style
 			       << spaced_scol_separator << rang::style::reset;
 			break;
+		}
 		case Noise_type::EP :
-			stream << setprecision(4) << fixed << setw(column_width-1) << this->noise.get_ep() << report_style
+		{
+			stream << setprecision(4) << fixed << setw(column_width-1) << this->n->get_noise() << report_style
 			       << spaced_scol_separator << rang::style::reset;
 			break;
+		}
 	}
-
 
 	stream << setprecision(2) << fixed << setw(column_width-1) << sig_a << rang::style::bold << spaced_scol_separator << rang::style::reset;
 	stream << setprecision(2) << fixed << setw(column_width-1) << fra   << rang::style::bold << spaced_scol_separator << rang::style::reset;
@@ -169,7 +182,7 @@ void Terminal_EXIT<B,R>
 		case 3: stream << rang::style::bold << rang::fg::green << " " << rang::style::reset; break;
 		default: break;
 	}
-	real_time_state = (real_time_state +1) % 4;
+	real_time_state = (real_time_state + (unsigned short)1) % (unsigned short)4;
 	stream << "\r";
 
 	stream.flush();

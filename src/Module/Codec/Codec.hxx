@@ -21,7 +21,8 @@ Codec(const int K, const int N_cw, const int N, const int tail_length, const int
   interleaver_llr (nullptr),
   encoder         (nullptr),
   puncturer       (nullptr),
-  K(K), N_cw(N_cw), N(N), tail_length(tail_length)
+  K(K), N_cw(N_cw), N(N), tail_length(tail_length),
+  n(nullptr)
 {
 	const std::string name = "Codec";
 	this->set_name(name);
@@ -119,6 +120,7 @@ Codec<B,Q>::
 	if (interleaver_bit  != nullptr) { delete interleaver_bit;  interleaver_bit  = nullptr; }
 	if (interleaver_llr  != nullptr) { delete interleaver_llr;  interleaver_llr  = nullptr; }
 	if (interleaver_core != nullptr) { delete interleaver_core; interleaver_core = nullptr; }
+	if (n                != nullptr) { delete n;                n                = nullptr; }
 }
 
 template <typename B, typename Q>
@@ -174,14 +176,20 @@ template <typename B, typename Q>
 void Codec<B,Q>
 ::set_noise(const tools::Noise<float>& noise)
 {
-	this->n = noise;
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = noise.clone();
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>
 ::set_noise(const tools::Noise<double>& noise)
 {
-	this->set_noise(tools::Noise<float>(noise.get_noise(), noise.get_type()));
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = tools::cast<float>(noise);
 }
 
 template <typename B, typename Q>

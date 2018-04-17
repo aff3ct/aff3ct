@@ -24,7 +24,7 @@ namespace module
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
 Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), enable_filter(false), enable_demodulator(true)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -59,7 +59,7 @@ Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& nois
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
 Modem(const int N, const int N_mod, const tools::Noise<R>& noise, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), enable_filter(false), enable_demodulator(true)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -87,7 +87,7 @@ Modem(const int N, const int N_mod, const tools::Noise<R>& noise, const int n_fr
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
 Modem(const int N, const tools::Noise<R>& noise, const int n_frames)
-: Module(n_frames), N(N), N_mod(N), N_fil(N), enable_filter(false), enable_demodulator(true)
+: Module(n_frames), N(N), N_mod(N), N_fil(N), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -199,6 +199,8 @@ template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
 ~Modem()
 {
+	if (this->n != nullptr)
+		delete this->n;
 }
 
 template <typename B, typename R, typename Q>
@@ -247,23 +249,11 @@ template <typename B, typename R, typename Q>
 void Modem<B,R,Q>::
 set_noise(const tools::Noise<R>& noise)
 {
-	this->n = noise;
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = noise.clone();
 }
-
-// template <typename B, typename R, typename Q>
-// void Modem<B,R,Q>::
-// set_sigma(const R sigma)
-// {
-// 	if (sigma <= 0)
-// 	{
-// 		std::stringstream message;
-// 		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-// 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-// 	}
-
-// 	this->sigma   = sigma;
-// 	this->sigma_c = sigma * std::sqrt(2.f);
-// }
 
 template <typename B, typename R, typename Q>
 template <class AB, class AR>

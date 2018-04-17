@@ -33,7 +33,9 @@ void Modem_BPSK<B,R,Q>
 {
 	Modem<B,R,Q>::set_noise(noise);
 
-	two_on_square_sigma = (R)2.0 / (this->n.get_sigma() * this->n.get_sigma()); // trow if noise is not SIGMA type
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
+	two_on_square_sigma = (R)2.0 / (this->n->get_noise() * this->n->get_noise());
 }
 
 template <typename B, typename R, typename Q>
@@ -66,7 +68,7 @@ void Modem_BPSK<B,R,Q>
 		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		if (!this->n.is_set())
+		if (!this->n->is_set())
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 		auto size = (unsigned int)(this->N_fil);
@@ -96,7 +98,7 @@ void Modem_BPSK<B,R,Q>
 	}
 	else
 	{
-		if (!this->n.is_set())
+		if (!this->n->is_set())
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 		auto size = (unsigned int)(this->N_fil);

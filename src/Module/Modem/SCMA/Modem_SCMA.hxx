@@ -101,9 +101,11 @@ void Modem_SCMA<B,R,Q,PSI>
 {
 	Modem<B,R,Q>::set_noise(noise);
 
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
 	this->n0 = this->disable_sig2 ?
 	            (R)1.0 :
-	            ((R)4.0 * this->n.get_sigma() * this->n.get_sigma()); // trow if noise is not SIGMA type
+	            ((R)4.0 * this->n->get_noise() * this->n->get_noise());
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
@@ -168,7 +170,7 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n.is_set())
+	if (!this->n->is_set())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
@@ -201,7 +203,7 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n.is_set())
+	if (!this->n->is_set())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
@@ -227,7 +229,7 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n.is_set())
+	if (!this->n->is_set())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	// declarations

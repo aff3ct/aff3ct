@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "Module/Module.hpp"
-#include "../../Tools/Noise/Noise.hpp"
+#include "Tools/Noise/Noise.hpp"
 
 namespace aff3ct
 {
@@ -48,7 +48,7 @@ public:
 
 protected:
 	const int N;          // Size of one frame (= number of bits in one frame)
-	tools::Noise<R> n;    // the current noise to apply to the input signal
+	tools::Noise<R>* n;   // the current noise to apply to the input signal
 	std::vector<R> noise; // vector of the noise applied to the signal
 
 public:
@@ -75,8 +75,6 @@ public:
 	virtual ~Channel();
 
 	int get_N() const;
-
-	// R get_sigma() const;
 
 	const std::vector<R>& get_noise() const;
 
@@ -109,6 +107,8 @@ protected:
 	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id);
 
 	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id);
+
+	virtual void check_noise(); // check that the noise has the expected type
 };
 }
 }

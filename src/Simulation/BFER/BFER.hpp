@@ -41,7 +41,7 @@ protected:
 	// code specifications
 	const float bit_rate;
 
-	tools::Noise<R> noise; // current noise simulated
+	tools::Noise<R>* noise; // current noise simulated
 
 	unsigned max_fra;
 

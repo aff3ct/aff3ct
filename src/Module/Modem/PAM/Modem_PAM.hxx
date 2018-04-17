@@ -54,9 +54,11 @@ void Modem_PAM<B,R,Q,MAX>
 {
 	Modem<B,R,Q>::set_noise(noise);
 
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
 	this->inv_sigma2 = this->disable_sig2 ?
 	                    (R)1.0 :
-	                    (R)((R)1.0 / ((R)2.0 * this->n.get_sigma() * this->n.get_sigma())); // trow if noise is not SIGMA type
+	                    (R)((R)1.0 / ((R)2.0 * this->n->get_noise() * this->n->get_noise()));
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -124,7 +126,7 @@ void Modem_PAM<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n.is_set())
+	if (!this->n->is_set())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
@@ -158,7 +160,7 @@ void Modem_PAM<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n.is_set())
+	if (!this->n->is_set())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
@@ -192,7 +194,7 @@ void Modem_PAM<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n.is_set())
+	if (!this->n->is_set())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
@@ -245,7 +247,7 @@ void Modem_PAM<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n.is_set())
+	if (!this->n->is_set())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;

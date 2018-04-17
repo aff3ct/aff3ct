@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
-#include "../../../Noise/Noise.hpp"
+#include "Tools/Noise/Noise.hpp"
 
 #include "../Terminal.hpp"
 
@@ -22,14 +22,14 @@ protected:
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>  t_snr;
 	unsigned short real_time_state;
 	float   sig_a;
-	Noise<> noise;
+	Noise<>* n;
 
 public:
 	explicit Terminal_EXIT(const module::Monitor_EXIT<B,R> &monitor);
 
-	virtual ~Terminal_EXIT() {}
+	virtual ~Terminal_EXIT() = default;
 
-	void set_sig_a(const float sig_a);
+	void set_sig_a(float sig_a);
 
 	void set_noise(const Noise<float>& noise);
 	void set_noise(const Noise<double>& noise);

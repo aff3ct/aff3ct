@@ -33,6 +33,7 @@ BFER<B,R,Q>
   barrier(params_BFER.n_threads),
 
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
+  noise(nullptr),
 
   max_fra(0),
 
@@ -135,6 +136,8 @@ void BFER<B,R,Q>
 	{
 		auto n = params_BFER.noise_range[noise_idx];
 
+		if (this->noise != nullptr) delete noise;
+
 		if (params_BFER.noise_type == "EBN0" || params_BFER.noise_type == "ESN0")
 		{
 			float esn0, ebn0;
@@ -151,17 +154,17 @@ void BFER<B,R,Q>
 
 			auto sigma = tools::esn0_to_sigma(esn0, params_BFER.mdm->upf);
 
-			this->noise.set_sigma(sigma, ebn0, esn0);
+			this->noise = new tools::Sigma<R>(sigma, ebn0, esn0);
 		}
 		else if (params_BFER.noise_type == "ROP")
 		{
-			this->noise.set_rop(n);
+			this->noise = new tools::Received_optical_power<R>(n);
 		}
 		else if (params_BFER.noise_type == "EP")
 		{
 		    n = params_BFER.noise_range[params_BFER.noise_range.size() - noise_idx -1];
 
-		    this->noise.set_ep(n);
+		    this->noise = new tools::Erased_probability<R>(n);
 		}
 		else
 		{
@@ -170,7 +173,7 @@ void BFER<B,R,Q>
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->terminal->set_noise(this->noise);
+		this->terminal->set_noise(*this->noise);
 
 
 		if (this->params_BFER.err_track_revert)
@@ -182,7 +185,7 @@ void BFER<B,R,Q>
 			auto &params_BFER_writable = const_cast<factory::BFER::parameters&>(params_BFER);
 
 			std::stringstream s_noise;
-			s_noise << std::setprecision(2) << std::fixed << this->noise.get_noise();
+			s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();
 
 			params_BFER_writable.src     ->path = params_BFER.err_track_path + "_" + s_noise.str() + ".src";
 			params_BFER_writable.cdc->enc->path = params_BFER.err_track_path + "_" + s_noise.str() + ".enc";
@@ -273,7 +276,7 @@ void BFER<B,R,Q>
 		if (this->dumper_red != nullptr && !this->simu_error)
 		{
 			std::stringstream s_noise;
-			s_noise << std::setprecision(2) << std::fixed << this->noise.get_noise();
+			s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();
 
 			this->dumper_red->dump(params_BFER.err_track_path + "_" + s_noise.str());
 			this->dumper_red->clear();

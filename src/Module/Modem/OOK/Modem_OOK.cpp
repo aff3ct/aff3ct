@@ -30,7 +30,7 @@ void Modem_OOK<B,R,Q>
 {
 	Modem<B,R,Q>::set_noise(noise);
 
-	this->sigma_factor = (R)2.0 * this->n.get_noise() * this->n.get_noise(); // trow if noise is not set
+	this->sigma_factor = (R)2.0 * this->n->get_noise() * this->n->get_noise(); // trow if noise is not set
 }
 
 template <typename B, typename R, typename Q>
@@ -63,12 +63,13 @@ void Modem_OOK<B,R,Q>
 		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		switch (this->n.get_type())
+		switch (this->n->get_type())
 		{
 			case tools::Noise_type::SIGMA:
 				for (auto i = 0; i < this->N_fil; i++)
 					Y_N2[i] = -((Q) 2.0 * Y_N1[i] - (Q) 1) * (Q) sigma_factor;
 				break;
+
 			case tools::Noise_type::EP:
 			{
 				auto sign = (Q)tools::Noise<R>::erased_llr_val;
@@ -82,11 +83,12 @@ void Modem_OOK<B,R,Q>
 						Y_N2[i] = ((Q)1 - (Q)2.0 * Y_N1[i]);
 				break;
 			}
+
 			default:
 			{
 				std::stringstream message;
-				message << "The noise has a type other than SIGMA or EP ('this->n.get_type()' = "
-				        << this->n.type2str(this->n.get_type()) << ").";
+				message << "The noise has a type other than SIGMA or EP ('this->n->get_type()' = "
+				        << this->n->type2str(this->n->get_type()) << ").";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 		}
@@ -108,7 +110,7 @@ void Modem_OOK<B,R,Q>
 		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		if (!this->n.is_set())
+		if (!this->n->is_set())
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 		for (auto i = 0; i < this->N_fil; i++)

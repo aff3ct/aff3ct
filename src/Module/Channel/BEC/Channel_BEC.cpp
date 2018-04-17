@@ -6,7 +6,7 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_BEC<R>
-::Channel_BEC(const int N, const int seed, const tools::Noise<R>& noise, const int n_frames)
+::Channel_BEC(const int N, const int seed, const tools::Erased_probability<R>& noise, const int n_frames)
 : Channel<R>(N, noise, n_frames), uni_dist((R)0, (R)1)
 {
 	const std::string name = "Channel_BEC";
@@ -19,13 +19,6 @@ Channel_BEC<R>
 
 	rd_engine.seed(seed);
 }
-
-template <typename R>
-Channel_BEC<R>
-::~Channel_BEC()
-{
-}
-
 
 template <typename R>
 mipp::Reg<R> Channel_BEC<R>
@@ -73,8 +66,9 @@ template <typename R>
 void Channel_BEC<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	const auto erasure_probability = this->n.get_ep();
+	this->check_noise();
 
+	const auto erasure_probability = this->n->get_noise();
 
 	const mipp::Reg<R> r_erased = tools::Noise<R>::erased_symbol_val;
 	const mipp::Reg<R> r_ep     = erasure_probability;
@@ -91,6 +85,14 @@ void Channel_BEC<R>
 
 	for (auto i = vec_loop_size; i < this->N; i++)
 		Y_N[i] = get_random() <= erasure_probability ? tools::Noise<R>::erased_symbol_val : X_N[i];
+}
+
+template<typename R>
+void Channel_BEC<R>::check_noise()
+{
+	Channel<R>::check_noise();
+
+	this->n->is_of_type_throw(tools::Noise_type::EP);
 }
 
 // ==================================================================================== explicit template instantiation

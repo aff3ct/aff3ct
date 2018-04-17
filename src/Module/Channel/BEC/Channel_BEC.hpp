@@ -28,14 +28,17 @@ protected:
 	std::uniform_real_distribution<R> uni_dist;
 
 public:
-	Channel_BEC(const int N, const int seed = 0, const tools::Noise<R>& noise = tools::Noise<R>(), const int n_frames = 1);
-	virtual ~Channel_BEC();
+	Channel_BEC(const int N, const int seed = 0,
+	            const tools::Erased_probability<R>& noise = tools::Erased_probability<R>(),
+	            const int n_frames = 1);
+	virtual ~Channel_BEC() = default;
 
 protected:
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 
 	inline mipp::Reg<R> get_random_simd();
 	inline R            get_random     ();
+	virtual void        check_noise    ();
 };
 }
 }

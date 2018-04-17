@@ -87,7 +87,7 @@ Modem_CPM<B,R,Q,MAX>
 
 	generate_baseband();
 
-	if (no_sig2 || this->n.is_set())
+	if (no_sig2 || this->n->is_set())
 		generate_projection();
 }
 
@@ -138,7 +138,7 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	if (!this->n.is_set())
+	if (!this->n->is_set())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	const auto Y_real = Y_N1;
@@ -284,10 +284,9 @@ void Modem_CPM<B,R,Q,MAX>
 
 	if (!no_sig2)
 	{
-		if (!this->n.is_set())
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+		this->n->is_of_type_throw(tools::Noise_type::SIGMA);
 
-		factor = (R)1 / (this->n.get_sigma() * this->n.get_sigma()); // 2 / sigma_complex^2, trow if noise is not SIGMA type
+		factor = (R)1 / (this->n->get_noise() * this->n->get_noise()); // 2 / sigma_complex^2
 	}
 
 	if (cpm.filters_type == "TOTAL")
