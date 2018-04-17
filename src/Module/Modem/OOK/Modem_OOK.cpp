@@ -71,15 +71,15 @@ void Modem_OOK<B,R,Q>
 				break;
 			case tools::Noise_type::EP:
 			{
-				auto sign = (Q)0.00001;
+				auto sign = (Q)tools::Noise<R>::erased_llr_val;
 				for (auto i = 0; i < this->N_fil; i++)
-					if (Y_N1[i] == tools::erased_value<Q>())
+					if (Y_N1[i] == tools::Noise<R>::erased_symbol_val)
 					{
 						Y_N2[i] = sign;
-						sign *= (Q) -1;
+						sign *= (Q)-1;
 					}
 					else
-						Y_N2[i] = ((Q) 1 - (Q) 2.0 * Y_N1[i]);
+						Y_N2[i] = ((Q)1 - (Q)2.0 * Y_N1[i]);
 				break;
 			}
 			default:
