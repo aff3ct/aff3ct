@@ -219,6 +219,10 @@ def adp_parse_args():
     parser.add_argument("-o", "--output", type=str, help="path to the output folder", default="./")
 
     args = parser.parse_args()
+
+    if not (args.txt or args.bin or args.src):
+        parser.error('At least one of the export types is required (e.g. --txt)')
+
     return args
 
 
