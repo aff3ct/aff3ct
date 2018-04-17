@@ -20,7 +20,7 @@ Noise()
 
 template <typename R>
 Noise<R>::
-Noise(const R noise, const Noise_type t)
+Noise(R noise, Noise_type t)
 {
 	init();
 	set_noise(noise, t);
@@ -77,21 +77,21 @@ Noise<R>::
 
 template <typename R>
 bool Noise<R>::
-is_set() const throw()
+is_set() const noexcept
 {
 	return has_type() && has_noise();
 }
 
 template <typename R>
 bool Noise<R>::
-has_type() const throw()
+has_type() const noexcept
 {
 	return _t.second;
 }
 
 template <typename R>
 bool Noise<R>::
-has_noise() const throw()
+has_noise() const noexcept
 {
 	return _n.second;
 }
@@ -246,7 +246,7 @@ set_noise(const R noise, const Noise_type t)
 
 template <typename R>
 void Noise<R>::
-set_rop(const R rop)
+set_rop(R rop)
 {
 	set_n(rop);
 	set_t(Noise_type::ROP);
@@ -255,7 +255,7 @@ set_rop(const R rop)
 
 template <typename R>
 void Noise<R>::
-set_ep(const R ep)
+set_ep(R ep)
 {
 	set_n(ep);
 	set_t(Noise_type::EP);
@@ -264,7 +264,7 @@ set_ep(const R ep)
 
 template <typename R>
 void Noise<R>::
-set_sigma(const R sigma)
+set_sigma(R sigma)
 {
 	set_n(sigma);
 	set_t(Noise_type::SIGMA);
@@ -275,7 +275,7 @@ set_sigma(const R sigma)
 
 template <typename R>
 void Noise<R>::
-set_sigma(const R sigma, const R ebn0, const R esn0)
+set_sigma(R sigma, R ebn0, R esn0)
 {
 	set_n(sigma);
 	set_t(Noise_type::SIGMA);

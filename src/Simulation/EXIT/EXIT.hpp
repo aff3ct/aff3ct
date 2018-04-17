@@ -14,7 +14,7 @@
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
 #include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
-#include "Tools/Noise.hpp"
+#include "../../Tools/Noise/Noise.hpp"
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 

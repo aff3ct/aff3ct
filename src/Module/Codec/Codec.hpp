@@ -2,7 +2,7 @@
 #define CODEC_HPP_
 
 #include "Tools/Interleaver/Interleaver_core.hpp"
-#include "Tools/Noise.hpp"
+#include "../../Tools/Noise/Noise.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
