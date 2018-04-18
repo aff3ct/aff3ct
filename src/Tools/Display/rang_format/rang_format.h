@@ -8,7 +8,7 @@
 namespace rang
 {
 
-enum class format {
+enum class tag {
 	error = 0,
 	warning,
 	info,
@@ -16,9 +16,9 @@ enum class format {
 	reset
 };
 
-std::ostream& operator<<(std::ostream& os, format f);
+std::ostream& operator<<(std::ostream& os, tag f);
 
-void format_on_each_line(std::ostream& os, const std::string& str, format f);
+void format_on_each_line(std::ostream& os, const std::string& str, tag f);
 
 }
 

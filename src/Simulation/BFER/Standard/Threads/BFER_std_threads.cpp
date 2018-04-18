@@ -23,9 +23,9 @@ BFER_std_threads<B,R,Q>
 	if (this->params_BFER_std.err_track_revert)
 	{
 		if (this->params_BFER_std.n_threads != 1)
-			std::clog << rang::format::warning << "Multi-threading detected with error tracking revert feature! "
+			std::clog << rang::tag::warning << "Multi-threading detected with error tracking revert feature! "
 			                                      "Each thread will play the same frames. Please run with one thread."
-			          << rang::format::reset << std::endl;
+			          << rang::tag::reset << std::endl;
 	}
 }
 

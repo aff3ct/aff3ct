@@ -290,8 +290,8 @@ void Statistics
 	else
 	{
 		stream << "# "
-		       << rang::format::info << "Statistics are unavailable. Did you enable the statistics in the tasks?"
-		       << rang::format::reset << std::endl;
+		       << rang::tag::info << "Statistics are unavailable. Did you enable the statistics in the tasks?"
+		       << rang::tag::reset << std::endl;
 	}
 }
 
@@ -437,7 +437,7 @@ void Statistics
 	else
 	{
 		stream << "# "
-		       << rang::format::info << "Statistics are unavailable. Did you enable the statistics in the tasks?"
-		       << rang::format::reset << std::endl;
+		       << rang::tag::info << "Statistics are unavailable. Did you enable the statistics in the tasks?"
+		       << rang::tag::reset << std::endl;
 	}
 }

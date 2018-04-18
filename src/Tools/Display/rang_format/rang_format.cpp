@@ -33,26 +33,28 @@ std::ostream& format_comment(std::ostream& os)
 	return os;
 }
 
-std::ostream& rang::operator<<(std::ostream& os, format f)
+std::ostream& rang::operator<<(std::ostream& os, tag f)
 {
 	switch (f)
 	{
-		case rang::format::error:   return format_error  (os);
-		case rang::format::warning: return format_warning(os);
-		case rang::format::info:    return format_info   (os);
-		case rang::format::reset:   return format_reset  (os);
-		case rang::format::comment: return format_comment(os);
+		case rang::tag::error:   return format_error  (os);
+		case rang::tag::warning: return format_warning(os);
+		case rang::tag::info:    return format_info   (os);
+		case rang::tag::reset:   return format_reset  (os);
+		case rang::tag::comment: return format_comment(os);
 	}
+
+	return os;
 }
 
-void rang::format_on_each_line(std::ostream& os, const std::string& str, rang::format f)
+void rang::format_on_each_line(std::ostream& os, const std::string& str, rang::tag f)
 {
 	size_t pos = 0, old_pos = 0;
 	while ((pos = str.find('\n', old_pos)) != std::string::npos)
 	{
-		os << f << str.substr(old_pos, pos-old_pos) << format::reset << std::endl;
+		os << f << str.substr(old_pos, pos-old_pos) << tag::reset << std::endl;
 		old_pos = pos+1;
 	}
 	if (!str.substr(old_pos, pos-old_pos).empty())
-		os << f << str.substr(old_pos, pos-old_pos) << format::reset;
+		os << f << str.substr(old_pos, pos-old_pos) << tag::reset;
 }

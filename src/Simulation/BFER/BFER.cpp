@@ -241,7 +241,7 @@ void BFER<B,R,Q>
 			module::Monitor::stop();
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
 
-			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::format::error);
+			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 			this->simu_error = true;
 		}
 
@@ -347,7 +347,7 @@ void BFER<B,R,Q>
 		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) == simu->prev_err_messages.end())
 		{
 			// with backtrace if debug mode
-			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::format::error);
+			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 
 			simu->prev_err_messages.push_back(msg); // save only the function signature
 		}

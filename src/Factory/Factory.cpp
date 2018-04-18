@@ -126,13 +126,13 @@ void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string 
 
 	if (key.size() == 1)
 	{
-		stream << rang::format::comment << "* " << rang::style::bold << rang::style::underline << grp_name << rang::style::reset << " ";
+		stream << rang::tag::comment << "* " << rang::style::bold << rang::style::underline << grp_name << rang::style::reset << " ";
 		for (auto i = 0; i < 46 - (int)grp_name.length(); i++) std::cout << "-";
 		stream << std::endl;
 	}
 	else if (key.size() > 1)
 	{
-		stream << rang::format::comment << "   " << rang::style::bold << rang::style::underline << grp_name << rang::style::reset << " ";
+		stream << rang::tag::comment << "   " << rang::style::bold << rang::style::underline << grp_name << rang::style::reset << " ";
 		for (auto i = 0; i < 45 - (int)grp_name.length(); i++) std::cout << "-";
 		stream << std::endl;
 	}
@@ -142,7 +142,7 @@ void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string 
 	{
 		if (std::find(dup.begin(), dup.end(), header[i].first + header[i].second) == dup.end())
 		{
-			stream << rang::format::comment << "   ** " << rang::style::bold << header[i].first << rang::style::reset;
+			stream << rang::tag::comment << "   ** " << rang::style::bold << header[i].first << rang::style::reset;
 			for (auto j = 0; j < max_n_chars - (int)header[i].first.length(); j++) stream << " ";
 			stream << " = " << header[i].second << std::endl;
 

@@ -95,7 +95,7 @@ int Launcher::read_arguments()
 	// print the errors
 	if (!cmd_error.empty()) std::cerr << std::endl;
 	for (unsigned e = 0; e < cmd_error.size(); e++)
-		std::cerr << rang::format::error << cmd_error[e] << rang::format::reset << std::endl;
+		std::cerr << rang::tag::error << cmd_error[e] << rang::tag::reset << std::endl;
 
 	// print the help tags
 	if (!cmd_error.empty() && !params_common.display_help)
@@ -105,7 +105,7 @@ int Launcher::read_arguments()
 		std::string message = "For more information please display the help (\"";
 		message += tools::Argument_handler::print_tag(help_tag) += "\").";
 
-		std::cerr << std::endl << rang::format::info << message << rang::format::reset << std::endl;
+		std::cerr << std::endl << rang::tag::info << message << rang::tag::reset << std::endl;
 	}
 
 	return (!cmd_error.empty() || params_common.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
@@ -114,12 +114,12 @@ int Launcher::read_arguments()
 void Launcher::print_header()
 {
 	// display configuration and simulation parameters
-	stream << rang::format::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
-	stream << rang::format::comment << rang::style::bold << "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
-	stream << rang::format::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
-	stream << rang::format::comment << rang::style::bold << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
+	stream << rang::tag::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
+	stream << rang::tag::comment << rang::style::bold << "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
+	stream << rang::tag::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
+	stream << rang::tag::comment << rang::style::bold << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
 	factory::Header::print_parameters({&params_common}, false, this->stream);
-	this->stream << rang::format::comment << std::endl;
+	this->stream << rang::tag::comment << std::endl;
 }
 
 int Launcher::launch()
@@ -142,7 +142,7 @@ int Launcher::launch()
 		if (this->params_common.mpi_rank == 0)
 #endif
 			for (unsigned w = 0; w < this->cmd_warn.size(); w++)
-				std::clog << rang::format::warning << this->cmd_warn[w] << rang::format::reset << std::endl;
+				std::clog << rang::tag::warning << this->cmd_warn[w] << rang::tag::reset << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -170,7 +170,7 @@ int Launcher::launch()
 	if (this->params_common.mpi_rank == 0)
 #endif
 		for (unsigned w = 0; w < this->cmd_warn.size(); w++)
-			std::clog << rang::format::warning << this->cmd_warn[w] << rang::format::reset << std::endl;
+			std::clog << rang::tag::warning << this->cmd_warn[w] << rang::tag::reset << std::endl;
 
 	try
 	{
@@ -178,7 +178,7 @@ int Launcher::launch()
 	}
 	catch(const std::exception& e)
 	{
-		rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::format::error);
+		rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 		exit_code = EXIT_FAILURE;
 	}
 
@@ -189,7 +189,7 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 			if (this->params_common.mpi_rank == 0)
 #endif
-				stream << rang::format::comment << "The simulation is running..." << std::endl;
+				stream << rang::tag::comment << "The simulation is running..." << std::endl;
 
 		try
 		{
@@ -199,7 +199,7 @@ int Launcher::launch()
 		}
 		catch(const std::exception& e)
 		{
-			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::format::error);
+			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 			exit_code = EXIT_FAILURE;
 		}
 	}
@@ -208,7 +208,7 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 		if (this->params_common.mpi_rank == 0)
 #endif
-			stream << rang::format::comment << "End of the simulation." << std::endl;
+			stream << rang::tag::comment << "End of the simulation." << std::endl;
 
 	if (simu != nullptr)
 	{
