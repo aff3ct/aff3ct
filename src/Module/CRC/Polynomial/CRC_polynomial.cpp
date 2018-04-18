@@ -35,7 +35,7 @@ CRC_polynomial<B>
 		std::clog << rang::tag::warning << "You specified \"" << this->size
 		                                   << " bits\" for your CRC size but the database advise you to use \""
 		                                   << std::get<1>(known_polynomials.at(crc_name))
-		                                   << " bits\", are you sure?" << rang::tag::reset << std::endl;
+		                                   << " bits\", are you sure?" << std::endl;
 
 	polynomial.push_back(1);
 	for (auto i = 0; i < this->size; i++)

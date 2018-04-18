@@ -12,8 +12,7 @@ enum class tag {
 	error = 0,
 	warning,
 	info,
-	comment,
-	reset
+	comment
 };
 
 std::ostream& operator<<(std::ostream& os, tag f);

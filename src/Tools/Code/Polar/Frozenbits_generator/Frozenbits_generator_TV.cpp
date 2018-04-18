@@ -101,8 +101,7 @@ void Frozenbits_generator_TV
 				cmd      += " --log-length=" + str_m;                  // m
 				cmd      += " -f=" + filename;                         // filename
 
-				std::clog << rang::format::info << "Generating best channels positions file (\"" << filename << "\")..."
-				          << rang::format::reset << "\r";
+				std::clog << rang::tag::info << "Generating best channels positions file (\"" << filename << "\")...\r";
 				fflush(stdout); fflush(stderr);
 
 				if (system(cmd.c_str()) == 0)

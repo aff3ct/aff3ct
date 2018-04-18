@@ -112,11 +112,11 @@ int read_arguments(const int argc, const char** argv, factory::Launcher::paramet
 
 		if (cmd_error.size()) std::cerr << std::endl;
 		for (auto w = 0; w < (int)cmd_error.size(); w++)
-			std::cerr << rang::tag::error << cmd_error[w] << rang::tag::reset << std::endl;
+			std::cerr << rang::tag::error << cmd_error[w] << std::endl;
 
 		if (cmd_warn.size()) std::cerr << std::endl;
 		for (auto w = 0; w < (int)cmd_warn.size(); w++)
-			std::cerr << rang::tag::warning << cmd_warn[w] << rang::tag::reset << std::endl;
+			std::cerr << rang::tag::warning << cmd_warn[w] << std::endl;
 	}
 	return (cmd_error.size() || display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }

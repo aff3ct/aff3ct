@@ -95,7 +95,7 @@ int Launcher::read_arguments()
 	// print the errors
 	if (!cmd_error.empty()) std::cerr << std::endl;
 	for (unsigned e = 0; e < cmd_error.size(); e++)
-		std::cerr << rang::tag::error << cmd_error[e] << rang::tag::reset << std::endl;
+		std::cerr << rang::tag::error << cmd_error[e] << std::endl;
 
 	// print the help tags
 	if (!cmd_error.empty() && !params_common.display_help)
@@ -105,7 +105,7 @@ int Launcher::read_arguments()
 		std::string message = "For more information please display the help (\"";
 		message += tools::Argument_handler::print_tag(help_tag) += "\").";
 
-		std::cerr << std::endl << rang::tag::info << message << rang::tag::reset << std::endl;
+		std::cerr << std::endl << rang::tag::info << message << std::endl;
 	}
 
 	return (!cmd_error.empty() || params_common.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
@@ -142,7 +142,7 @@ int Launcher::launch()
 		if (this->params_common.mpi_rank == 0)
 #endif
 			for (unsigned w = 0; w < this->cmd_warn.size(); w++)
-				std::clog << rang::tag::warning << this->cmd_warn[w] << rang::tag::reset << std::endl;
+				std::clog << rang::tag::warning << this->cmd_warn[w] << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -170,7 +170,7 @@ int Launcher::launch()
 	if (this->params_common.mpi_rank == 0)
 #endif
 		for (unsigned w = 0; w < this->cmd_warn.size(); w++)
-			std::clog << rang::tag::warning << this->cmd_warn[w] << rang::tag::reset << std::endl;
+			std::clog << rang::tag::warning << this->cmd_warn[w] << std::endl;
 
 	try
 	{
