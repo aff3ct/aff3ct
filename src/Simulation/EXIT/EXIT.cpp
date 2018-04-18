@@ -31,8 +31,8 @@ EXIT<B,R>
   terminal (nullptr)
 {
 #ifdef ENABLE_MPI
-	std::clog << rang::format::warning << "This simulation is not MPI ready, the same computations will be launched "
-	                                      "on each MPI processes." << rang::format::reset << std::endl;
+	std::clog << rang::tag::warning << "This simulation is not MPI ready, the same computations will be launched "
+	                                   "on each MPI processes." << std::endl;
 #endif
 
 	if (params_EXIT.n_threads > 1)
