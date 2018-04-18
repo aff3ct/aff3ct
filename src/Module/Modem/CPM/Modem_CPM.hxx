@@ -87,7 +87,7 @@ Modem_CPM<B,R,Q,MAX>
 
 	generate_baseband();
 
-	if (no_sig2 || this->n->is_set())
+	if (no_sig2 || (this->n != nullptr && this->n->is_set()))
 		generate_projection();
 }
 
