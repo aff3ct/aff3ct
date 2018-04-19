@@ -22,18 +22,19 @@ parser = argparse.ArgumentParser(prog='aff3ct-test-regression', formatter_class=
 parser.add_argument('--refs-path',      action='store', dest='refsPath',      type=str,   default="refs",                    help='Path to the references to re-simulate.')
 parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
 parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
-parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                     # choices=xrange(1,   +inf)
-parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility to verify a SNR point.')                                                    # choices=xrange(0.0, +inf)
-parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                       # choices=xrange(0,   +ing)
+parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                       # choices=xrange(1,   +inf)
+parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.5,                       help='Sensibility on the ratio between new vs ref to verify a noise point.')                    # choices=xrange(1.0, +inf)
+parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                         # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
-parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per SNR point.')                            # choices=xrange(0,   +inf)
-parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,                       help='Rate of valid SNR points to passed a test.')                                            # choices=xrange(0.0, 1.0 )
-parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a SNR point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
+parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per noise point.')                            # choices=xrange(0,   +inf)
+parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.9,                       help='Rate of valid noise points to passe a test.')                                             # choices=xrange(0.0, 1.0 )
+parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a noise point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
 parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                     help='Enable the verbose mode.')
 
 # supported file extensions (filename suffix)
-extensions    = ['.txt', '.perf', '.data', '.dat']
-NoiseTypeList = ["Eb/N0", "Es/N0", "ROP", "EP"]
+extensions     = ['.txt', '.perf', '.data', '.dat']
+NoiseTypeList  = ["Eb/N0", "Es/N0", "ROP", "EP"]
+NoiseUnityList = ["dB",    "dB",    "dB",  ""  ]
 
 
 # ================================================================== PARAMETERS
@@ -192,6 +193,13 @@ def dataReader(aff3ctOutput):
 		else:
 			data.MI = data.All[idx]
 
+		# set ESN0
+		idx = getLegendIdx(data.Legend, "Es/N0")
+		if idx == -1 or data.NoiseType == "Es/N0":
+			data.ESN0 = []
+		else:
+			data.ESN0 = data.All[idx]
+
 	return data
 
 def splitAsCommand(runCommand):
@@ -242,35 +250,47 @@ class tableStats:
 		self.tableRef        = tableRef
 		self.name            = name
 		self.sensibility     = sensibility
-		self.minSensibility  = 0
+		self.minSensibility  = float('inf')
 		self.maxSensibility  = 0
 		self.sumSensibility  = 0
+		self.avgSensibility  = 0
+		self.rateSensibility = 0
 		self.valid           = 0
 		self.nData           = len(tableCur)
 		self.errorsList      = []
 		self.errorsPos       = []
 		self.errorsMessage   = []
 
-		for i in range(self.nData):
-			diff = tableCur[i] - tableRef[i];
-			absoluteDiff = math.fabs(diff)
+		self.makeStats()
 
-			if absoluteDiff > self.sensibility:
+	def makeStats(self):
+		for i in range(self.nData):
+			if self.tableCur[i] > self.tableRef[i]:
+				ratio = self.tableCur[i] / self.tableRef[i];
+			else:
+				ratio = self.tableRef[i] / self.tableCur[i];
+
+			if ratio > self.sensibility:
 				self.errorsPos    .append(i)
-				self.errorsList   .append([tableCur[i], diff])
-				self.errorsMessage.append(format_e(tableRef[i]))
+				self.errorsList   .append([self.tableCur[i], ratio])
+				self.errorsMessage.append(format_e(self.tableRef[i]))
 			else:
 				self.valid += 1
 
-			self.sumSensibility += absoluteDiff
-			self.minSensibility  = min(self.minSensibility, absoluteDiff)
-			self.maxSensibility  = max(self.maxSensibility, absoluteDiff)
+			self.sumSensibility += ratio
+			self.minSensibility  = min(self.minSensibility, ratio)
+			self.maxSensibility  = max(self.maxSensibility, ratio)
 
 		if self.nData != 0:
 			self.avgSensibility = self.sumSensibility / float(self.nData)
 		else:
 			self.avgSensibility = 0
-		self.rateSensibility = (self.avgSensibility / self.sensibility) * 100
+
+		if self.sensibility != 0:
+			self.rateSensibility = (self.avgSensibility / self.sensibility) * 100
+		else:
+			self.rateSensibility = float(100)
+
 
 	def errorMessage(self, idx):
 		if len(self.errorsMessage) > idx and len(self.errorsMessage[idx]):
@@ -295,9 +315,10 @@ class compStats:
 		self.dataCur  = dataCur
 		self.dataRef  = dataRef
 		self.dataList = []
-		self.dataList.append(tableStats(dataCur.FER, dataRef.FER, sensibility, "FER"))
-		self.dataList.append(tableStats(dataCur.BER, dataRef.BER, sensibility, "BER"))
-		self.dataList.append(tableStats(dataCur.MI,  dataRef.MI,  sensibility, "MI" ))
+		self.dataList.append(tableStats(dataCur.FER, dataRef.FER, sensibility, "FER"  ))
+		self.dataList.append(tableStats(dataCur.BER, dataRef.BER, sensibility, "BER"  ))
+		self.dataList.append(tableStats(dataCur.MI,  dataRef.MI,  sensibility, "MI"   ))
+		self.dataList.append(tableStats(dataCur.ESN0,dataRef.ESN0,        1.0, "Es/N0"))
 
 	def errorMessage(self, idx):
 		message = ""
@@ -316,32 +337,50 @@ class compStats:
 		if len(self.dataCur.Noise) == 0:
 			return message
 
-		message += "---- Details: first noise point = " + format_e(self.dataCur.Noise[0]) + ", last noise point = " + format_e(self.dataCur.Noise[len(self.dataCur.Noise) -1]) + "\n"
-		message += "---- name | valid points |      sensibility [avg,min,max,rate%]      | [first,last] point \n"
+		# get noise unity
+		unity = ""
+		idx = NoiseTypeList.index(self.dataCur.NoiseType)
+		if idx != -1:
+			unity = NoiseUnityList[idx]
+		if len(unity):
+			unity = " " + unity
+
+		message += "---- Details: Noise type = " + self.dataCur.NoiseType
+		message += ", first noise point = " + format_e(self.dataCur.Noise[0]) + unity
+		message += ", last noise point = " + format_e(self.dataCur.Noise[len(self.dataCur.Noise) -1]) + unity + "\n"
+		message += "---- -------|--------------|--------------------------------|----------------------- \n"
+		message += "----   name | valid points | sensibility [avg,min,max,rate] | [first,last] points    \n"
+		message += "---- -------|--------------|--------------------------------|----------------------- \n"
 
 		for d in self.dataList:
 			if len(d.tableCur):
-				message += d.name.rjust(9) + " | "
+				message += "----" + d.name.rjust(7) + " | "
 				message += (str(d.valid) + "/" + str(d.nData)).rjust(12) + " | "
-				message += ("[" + format_e(d.avgSensibility) + ", " + format_e(d.minSensibility) + ", " + format_e(d.maxSensibility) + ", " + format_e(d.rateSensibility) + "]").rjust(41) + " | "
-				message += ("[" + format_e(d.tableCur[0]) + "," + format_e(d.tableCur[len(d.tableCur) -1]) + "]").rjust(18) + "\n"
+				message += "[ " + ("%.3f" % d.avgSensibility + ", %.2f" % d.minSensibility + ", %.2f" % d.maxSensibility + ", " + ("%.2f" % d.rateSensibility).rjust(6) + "%") + " ] | "
+				message += "[" + (format_e(d.tableCur[0]) + "," + format_e(d.tableCur[len(d.tableCur) -1])).rjust(19) + " ]" + "\n"
 
 		if self.hasError():
-			message += "---- name | errors list \n"
+			message += "\n"
+			message += "---- -------|----------------------------------------------------------------------- \n"
+			message += "----   name | errors list                                                            \n"
+			message += "---- -------|----------------------------------------------------------------------- \n"
 			for d in self.dataList:
 				if d.hasError():
-					message += d.name.rjust(9) + " | "
-
+					message += "----" + d.name.rjust(7) + " | "
 					el = 0
 					for e in d.errorsList:
-						message += "{" + str(e[0]) + " -> "
+						if el != 0 and (el % 3) == 0 :
+							message += "\n----        | "
+
+
+						message += "{ %.3f" %e[0] + " -> "
 						if e[1] > 0: message += "+"
 						message += format_e(e[1]) + "}"
 
 						el += 1
 						if el < len(d.errorsList):
 							message += ", "
-			message += "\n"
+					message += "\n"
 
 		return message
 
@@ -463,6 +502,11 @@ for fn in fileNames:
 	argsAFFECT.append("-R")
 	argsAFFECT.append(noiseVals)
 
+	if simuRef.NoiseType == "Eb/N0":
+		argsAFFECT.append("-E")
+		argsAFFECT.append("EBN0")
+
+
 
 	# run the tested simulator
 	os.chdir(args.buildPath)
@@ -537,9 +581,9 @@ for fn in fileNames:
 		if passRate == float(1):
 			print(" - STRONG PASSED.", end="\n");
 		elif passRate >= args.weakRate:
-			print(" - WEAK PASSED.", end="\n");
+			print(" - WEAK PASSED (rate = %.2f" %passRate, ").", end="\n");
 		else:
-			print(" - FAILED.", end="\n");
+			print(" - FAILED (rate = %.2f" %passRate, ").", end="\n");
 			nErrors = nErrors +1
 			failIds.append(testId +1)
 
