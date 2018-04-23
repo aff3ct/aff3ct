@@ -78,6 +78,8 @@ public:
 
 	const std::vector<R>& get_noise() const;
 
+	const tools::Noise<R>* current_noise() const;
+
 	virtual void set_noise(const tools::Noise<R>& noise);
 
 	/*!

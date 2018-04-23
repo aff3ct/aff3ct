@@ -24,7 +24,7 @@ private:
 	const int                        n_ite;
 
 public:
-	Modem_SCMA(const int N, const tools::Noise<R>& noise = tools::Noise<R>(), const int bps = 3, const bool disable_sig2 = false,
+	Modem_SCMA(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int bps = 3, const bool disable_sig2 = false,
 	           const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA();
 

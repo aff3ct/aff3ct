@@ -100,6 +100,13 @@ set_noise(const tools::Noise<R>& noise)
 	this->check_noise();
 }
 
+template<typename R>
+const tools::Noise <R> *Channel<R>::
+current_noise() const
+{
+	return this->n;
+}
+
 template <typename R>
 template <class A>
 void Channel<R>::

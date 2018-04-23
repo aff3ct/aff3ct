@@ -47,7 +47,7 @@ struct Modem : public Factory
 		bool        no_sig2    = false;     // do not divide by (sig^2) / 2 in the demodulation
 		int         n_ite      = 1;         // number of demodulations/decoding sessions to perform in the BFERI simulations
 		int         N_fil      = 0;         // frame size at the output of the filter
-		float       sigma      = -1.f;      // noise variance sigma
+		float       noise      = -1.f;      // noise value
 
 		// ------- common parameters
 		int         n_frames   = 1;
