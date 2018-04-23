@@ -47,7 +47,7 @@ protected:
 
 public:
 	Modem_CPM(const int  N,
-	          const tools::Noise<R>& noise   = tools::Noise<R>(),
+	          const tools::Noise<R>& noise  = tools::Sigma<R>(),
 	          const int  bits_per_symbol    = 1,
 	          const int  sampling_factor    = 5,
 	          const int  cpm_L              = 3,

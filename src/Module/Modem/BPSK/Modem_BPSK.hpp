@@ -15,7 +15,7 @@ private:
 	R two_on_square_sigma;
 
 public:
-	Modem_BPSK(const int N, const tools::Noise<R>& noise = tools::Noise<R>(), const bool disable_sig2 = false, const int n_frames = 1);
+	Modem_BPSK(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const bool disable_sig2 = false, const int n_frames = 1);
 	virtual ~Modem_BPSK();
 
 	virtual void set_noise(const tools::Noise<R>& noise);

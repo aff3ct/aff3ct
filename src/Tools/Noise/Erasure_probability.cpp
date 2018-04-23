@@ -7,7 +7,7 @@ using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template<typename R>
-Erasure_probability<R>::Erased_probability(R noise)
+Erasure_probability<R>::Erasure_probability(R noise)
 : Noise<R>(noise)
 {
 

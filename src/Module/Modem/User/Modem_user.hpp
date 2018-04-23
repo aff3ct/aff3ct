@@ -25,7 +25,7 @@ private:
 
 
 public:
-	Modem_user(const int N, const std::string &const_path, const tools::Noise<R>& noise = tools::Noise<R>(),
+	Modem_user(const int N, const std::string &const_path, const tools::Noise<R>& noise = tools::Sigma<R>(),
 	           const int bits_per_symbol = 2, const bool disable_sig2 = false, const int n_frames = 1);
 	virtual ~Modem_user();
 

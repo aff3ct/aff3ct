@@ -78,7 +78,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise = tools::Noise<R>(), const int n_frames = 1);
+	Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
@@ -88,7 +88,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem(const int N, const int N_mod, const tools::Noise<R>& noise = tools::Noise<R>(), const int n_frames = 1);
+	Modem(const int N, const int N_mod, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
@@ -97,7 +97,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem(const int N, const tools::Noise<R>& noise = tools::Noise<R>(), const int n_frames = 1);
+	Modem(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
 
 	void init_processes();
 
