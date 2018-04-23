@@ -22,7 +22,7 @@ Monitor_BFER<B,R>
 	const std::string name = "Monitor_BFER";
 	this->set_name(name);
 
-	auto &p1 = this->create_task("check_errors");
+	auto &p1 = this->create_task("check_errors", (int)mnt::tsk::check_errors);
 	auto &ps_U = this->template create_socket_in<B>(p1, "U", this->K * this->n_frames);
 	auto &ps_V = this->template create_socket_in<B>(p1, "V", this->K * this->n_frames);
 	this->create_codelet(p1, [this, &ps_U, &ps_V]() -> int
@@ -31,7 +31,7 @@ Monitor_BFER<B,R>
 		                          static_cast<B*>(ps_V.get_dataptr()));
 	});
 
-	auto &p2 = this->create_task("get_mutual_info");
+	auto &p2 = this->create_task("get_mutual_info", (int)mnt::tsk::get_mutual_info);
 	auto &ps_X = this->template create_socket_in<B>(p2, "X", this->N * this->n_frames);
 	auto &ps_Y = this->template create_socket_in<R>(p2, "Y", this->N * this->n_frames);
 	this->create_codelet(p2, [this, &ps_X, &ps_Y]() -> int
