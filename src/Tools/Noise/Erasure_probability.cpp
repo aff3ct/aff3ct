@@ -1,34 +1,34 @@
 #include <sstream>
 #include "Tools/Exception/exception.hpp"
 
-#include "Erased_probability.hpp"
+#include "Erasure_probability.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template<typename R>
-Erased_probability<R>::Erased_probability(R noise)
+Erasure_probability<R>::Erased_probability(R noise)
 : Noise<R>(noise)
 {
 
 }
 
 //template <typename R>
-//Erased_probability<R>::
-//Erased_probability(const Erased_probability<R>& other)
+//Erasure_probability<R>::
+//Erasure_probability(const Erasure_probability<R>& other)
 //: Noise<R>(other)
 //{
 //}
 //
 //template <typename R>
-//Erased_probability<R>::
-//Erased_probability(Erased_probability<R>&& other)
+//Erasure_probability<R>::
+//Erasure_probability(Erasure_probability<R>&& other)
 //: Noise<R>(std::move(other))
 //{
 //}
 
 template <typename R>
-void Erased_probability<R>::
+void Erasure_probability<R>::
 check()
 {
 	auto n = this->get_noise();
@@ -41,18 +41,18 @@ check()
 }
 
 template<typename R>
-Noise_type Erased_probability<R>::get_type() const
+Noise_type Erasure_probability<R>::get_type() const
 {
 	return Noise_type::EP;
 }
 
 template<typename R>
-Erased_probability<R>* Erased_probability<R>::clone() const
+Erasure_probability<R>* Erasure_probability<R>::clone() const
 {
-	return new Erased_probability(*this);
+	return new Erasure_probability(*this);
 }
 
 // ==================================================================================== explicit template instantiation
-template class aff3ct::tools::Erased_probability<float>;
-template class aff3ct::tools::Erased_probability<double>;
+template class aff3ct::tools::Erasure_probability<float>;
+template class aff3ct::tools::Erasure_probability<double>;
 // ==================================================================================== explicit template instantiation

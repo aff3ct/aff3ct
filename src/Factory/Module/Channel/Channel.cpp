@@ -182,7 +182,7 @@ module::Channel<R>* Channel::parameters
 		module::Channel<R>* c = nullptr;
 		     if (type == "USER") c = new module::Channel_user<R>(N, path, add_users, n_frames);
 		else if (type == "NO"  ) c = new module::Channel_NO  <R>(N,       add_users, n_frames);
-		else if (type == "BEC" ) c = new module::Channel_BEC <R>(N, seed, tools::Erased_probability<R>((R)this->noise), n_frames);
+		else if (type == "BEC" ) c = new module::Channel_BEC <R>(N, seed, tools::Erasure_probability<R>((R)this->noise), n_frames);
 
 		delete n;
 

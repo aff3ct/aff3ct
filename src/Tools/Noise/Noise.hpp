@@ -59,7 +59,7 @@ protected:
 
 #include "Sigma.hpp"
 #include "Received_optical_power.hpp"
-#include "Erased_probability.hpp"
+#include "Erasure_probability.hpp"
 
 namespace aff3ct
 {
@@ -73,7 +73,7 @@ Noise<T>* cast(const Noise<R>& n)
 //	switch(n.get_type())
 //	{
 //		case Noise<R>::Noise_type::SIGMA: cast_n = dynamic_cast<const Sigma                 <R>&>(n).cast<T>(); break;
-//		case Noise<R>::Noise_type::EP:    cast_n = dynamic_cast<const Erased_probability    <R>&>(n).cast<T>(); break;
+//		case Noise<R>::Noise_type::EP:    cast_n = dynamic_cast<const Erasure_probability    <R>&>(n).cast<T>(); break;
 //		case Noise<R>::Noise_type::ROP:   cast_n = dynamic_cast<const Received_optical_power<R>&>(n).cast<T>(); break;
 //	}
 
