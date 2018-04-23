@@ -300,7 +300,7 @@ class tableStats:
 		if self.sensibility != 0:
 			self.rateSensibility = (self.avgSensibility / self.sensibility) * 100
 		else:
-			self.rateSensibility = float(100)
+			self.rateSensibility = float(0)
 
 
 	def errorMessage(self, idx):
@@ -374,7 +374,7 @@ class compStats:
 
 		if self.hasError():
 			message += "---- -------|----------------------------------------------------------------------- \n"
-			message += "----   name | errors list {new -> ref}                                               \n"
+			message += "----   name | errors list {noise: new -> ref}                                        \n"
 			message += "---- -------|----------------------------------------------------------------------- \n"
 			for d in self.dataList:
 				if d.hasError():
@@ -385,7 +385,7 @@ class compStats:
 							message += "\n----        | "
 
 
-						message += "{" + format_e(e[0]) + " -> " + format_e(e[1]) + "}"
+						message += "{" + format_e(self.dataCur.Noise[d.errorsPos[el]]) + ": " + format_e(e[0]) + " -> " + format_e(e[1]) + "}"
 
 						el += 1
 						if el < len(d.errorsList):
