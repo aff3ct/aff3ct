@@ -32,7 +32,7 @@ struct Channel : public Factory
 		int         n_frames     = 1;
 		int         seed         = 0;
 		int         gain_occur   = 1;
-		float       sigma        = -1.f;
+		float       noise        = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Channel_prefix);

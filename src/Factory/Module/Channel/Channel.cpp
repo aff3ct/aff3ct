@@ -85,9 +85,9 @@ void Channel::parameters
 		"block fading policy for the RAYLEIGH channel.");
 
 	args.add(
-		{p+"-sigma"},
+		{p+"-noise"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
-		"noise variance value.");
+		"noise value (for SIGMA, ROP or EP noise type).");
 
 	args.add(
 		{p+"-seed", "S"},
@@ -125,7 +125,7 @@ void Channel::parameters
 	if(vals.exist({p+"-blk-fad"      })) this->block_fading = vals.at    ({p+"-blk-fad"      });
 	if(vals.exist({p+"-add-users"    })) this->add_users    = true;
 	if(vals.exist({p+"-complex"      })) this->complex      = true;
-	if(vals.exist({p+"-sigma"        })) this->sigma        = vals.to_float({p+"-sigma"      });
+	if(vals.exist({p+"-noise"        })) this->noise        = vals.to_float({p+"-noise"      });
 }
 
 void Channel::parameters
@@ -139,8 +139,8 @@ void Channel::parameters
 	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->N)));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 
-	if (this->sigma != -1.f)
-		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->sigma)));
+	if (this->noise != -1.f)
+		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->noise)));
 
 	if (this->type == "USER" || this->type == "RAYLEIGH_USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
@@ -174,15 +174,15 @@ module::Channel<R>* Channel::parameters
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, tools::Sigma<R>((R)this->sigma), n_frames);
-	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, tools::Sigma<R>((R)this->sigma), n_frames);
-	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, tools::Sigma<R>((R)this->sigma), n_frames);
+	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, tools::Sigma<R>((R)this->noise), n_frames);
+	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, tools::Sigma<R>((R)this->noise), n_frames);
+	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, tools::Sigma<R>((R)this->noise), n_frames);
 	else
 	{
 		module::Channel<R>* c = nullptr;
 		     if (type == "USER") c = new module::Channel_user<R>(N, path, add_users, n_frames);
 		else if (type == "NO"  ) c = new module::Channel_NO  <R>(N,       add_users, n_frames);
-		else if (type == "BEC" ) c = new module::Channel_BEC <R>(N, seed, tools::Erased_probability<R>((R)this->sigma), n_frames);
+		else if (type == "BEC" ) c = new module::Channel_BEC <R>(N, seed, tools::Erased_probability<R>((R)this->noise), n_frames);
 
 		delete n;
 

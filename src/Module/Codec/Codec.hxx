@@ -166,8 +166,8 @@ get_puncturer()
 }
 
 template <typename B, typename Q>
-const tools::Noise<float>& Codec<B,Q>::
-get_noise()
+const tools::Noise<float>* Codec<B,Q>::
+current_noise() const
 {
 	return this->n;
 }

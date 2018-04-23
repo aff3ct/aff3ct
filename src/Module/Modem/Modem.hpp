@@ -112,7 +112,7 @@ public:
 
 	int get_N_fil() const;
 
-	const tools::Noise<R>& get_noise();
+	const tools::Noise<R>* current_noise() const;
 
 	bool is_filter() const;
 

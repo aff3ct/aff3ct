@@ -65,7 +65,7 @@ public:
 
 	virtual Puncturer<B,Q>* get_puncturer();
 
-	const tools::Noise<float>& get_noise();
+	const tools::Noise<float>* current_noise() const;
 
 	virtual void set_noise(const tools::Noise<float>& noise);
 	void set_noise(const tools::Noise<double>& noise);

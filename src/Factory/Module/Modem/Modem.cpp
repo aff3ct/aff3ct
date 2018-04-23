@@ -112,7 +112,7 @@ void Modem::parameters
 		"select the type of the max operation to use in the demodulator.");
 
 	args.add(
-		{p+"-sigma"},
+		{p+"-noise"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
 		"noise variance value for the demodulator.");
 
@@ -199,7 +199,7 @@ void Modem::parameters
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(vals.exist({p+"-no-sig2"})) this->no_sig2 = true;
-	if(vals.exist({p+"-sigma"  })) this->sigma   = vals.to_float({p+"-sigma"});
+	if(vals.exist({p+"-noise"  })) this->noise   = vals.to_float({p+"-noise"});
 	if(vals.exist({p+"-ite"    })) this->n_ite   = vals.to_int  ({p+"-ite"  });
 	if(vals.exist({p+"-max"    })) this->max     = vals.at      ({p+"-max"  });
 	if(vals.exist({p+"-psi"    })) this->psi     = vals.at      ({p+"-psi"  });
@@ -239,8 +239,8 @@ void Modem::parameters
 	std::string demod_ite  = std::to_string(this->n_ite);
 	std::string demod_psi  = this->psi;
 
-	if (this->sigma != -1.f && full)
-		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->sigma)));
+	if (this->noise != -1.f && full)
+		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->noise)));
 	headers[p].push_back(std::make_pair("Sigma square", demod_sig2));
 	if (demod_max != "unused")
 		headers[p].push_back(std::make_pair("Max type", demod_max));
@@ -255,14 +255,14 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build() const
 {
-	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->sigma),                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->sigma),                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "OOK"      ) return new module::Modem_OOK      <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->sigma),                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->sigma), this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->sigma), this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->sigma), this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "USER"     ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, tools::Sigma<R>((R)this->sigma), this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "CPM"      ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->sigma), this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
+	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "OOK"      ) return new module::Modem_OOK      <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "USER"     ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "CPM"      ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -271,10 +271,10 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build_scma() const
 {
-	     if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, tools::Sigma<R>((R)this->sigma), this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	else if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, tools::Sigma<R>((R)this->sigma), this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	else if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, tools::Sigma<R>((R)this->sigma), this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	else if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, tools::Sigma<R>((R)this->sigma), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	     if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	else if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	else if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	else if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

@@ -225,8 +225,8 @@ get_N_fil() const
 }
 
 template <typename B, typename R, typename Q>
-const tools::Noise<R>& Modem<B,R,Q>::
-get_noise()
+const tools::Noise<R>* Modem<B,R,Q>::
+current_noise() const
 {
 	return this->n;
 }
