@@ -18,8 +18,8 @@ Terminal_BFER<B,R>
   monitor        (monitor                         ),
   t_snr          (std::chrono::steady_clock::now()),
   real_time_state(0                               ),
-  display_mutinfo(display_mutinfo                 ),
-  n              (nullptr                         )
+  n              (nullptr                         ),
+  display_mutinfo(display_mutinfo                 )
 {
 }
 
