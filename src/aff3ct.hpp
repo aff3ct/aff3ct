@@ -302,6 +302,7 @@
 #include <Tools/Arguments/Argument_handler.hpp>
 #include <Tools/Arguments/Argument_tools.hpp>
 #include <Tools/Arguments/Maps/Argument_info.hpp>
+#include <Tools/Arguments/Maps/Argument_links.hpp>
 #include <Tools/Arguments/Maps/Argument_map_group.hpp>
 #include <Tools/Arguments/Maps/Argument_map_info.hpp>
 #include <Tools/Arguments/Maps/Argument_map_value.hpp>
