@@ -47,7 +47,7 @@ void Modem::parameters
 		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of symbols by frame.",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-fra", "F"},
@@ -256,14 +256,14 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build() const
 {
-	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   this->sigma,                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   this->sigma,                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "OOK"      ) return new module::Modem_OOK      <B,R,Q    >(this->N,                   this->sigma,                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "USER"     ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "CPM"      ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
+	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->sigma),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->sigma),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "OOK"      ) return new module::Modem_OOK      <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->sigma),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->sigma), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->sigma), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->sigma), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "USER"     ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, tools::Sigma<R>((R)this->sigma), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "CPM"      ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->sigma), this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -272,10 +272,10 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build_scma() const
 {
-	     if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, this->sigma, this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	else if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, this->sigma, this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	else if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, this->sigma, this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	else if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, this->sigma, this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	     if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, tools::Sigma<R>((R)this->sigma), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	else if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, tools::Sigma<R>((R)this->sigma), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	else if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, tools::Sigma<R>((R)this->sigma), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	else if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, tools::Sigma<R>((R)this->sigma), this->bps, this->no_sig2, this->n_ite, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -290,7 +290,7 @@ module::Modem<B,R,Q>* Modem::parameters
 	}
 	else if (this->type == "OPTICAL" && dist != nullptr)
 	{
-		return new module::Modem_optical<B,R,Q>(N, *dist, 0.0, n_frames);
+		return new module::Modem_optical<B,R,Q>(N, *dist, tools::Received_optical_power<R>((R)this->sigma), n_frames);
 	}
 	else
 	{

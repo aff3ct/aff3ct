@@ -40,13 +40,13 @@ void Puncturer::parameters
 		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"useful number of bit transmitted (information bits).",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"useful number of bit transmitted (information bits).",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-fra", "F"},

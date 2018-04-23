@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "Module/Module.hpp"
+#include "Tools/Noise/Noise.hpp"
 
 namespace aff3ct
 {
@@ -19,15 +20,12 @@ namespace module
 {
 	namespace chn
 	{
-		namespace tsk
-		{
-			enum list { add_noise, add_noise_wg, SIZE };
-		}
+		enum class tsk : uint8_t { add_noise, add_noise_wg, SIZE };
 
 		namespace sck
 		{
-			namespace add_noise    { enum list { X_N, Y_N     , SIZE }; }
-			namespace add_noise_wg { enum list { X_N, H_N, Y_N, SIZE }; }
+			enum class add_noise    : uint8_t { X_N, Y_N     , SIZE };
+			enum class add_noise_wg : uint8_t { X_N, H_N, Y_N, SIZE };
 		}
 	}
 
@@ -43,23 +41,33 @@ namespace module
 template <typename R = float>
 class Channel : public Module
 {
-protected:
-	const int N;     /*!< Size of one frame (= number of bits in one frame) */
-	      R   esn0;  /*!< signal power against noise */
-	      R   ebn0;  /*!< signal power against noise */
-	      R   sigma; /*!< Sigma^2, the noise variance */
+public:
+	inline Task&   operator[](const chn::tsk               t) { return Module::operator[]((int)t);                              }
+	inline Socket& operator[](const chn::sck::add_noise    s) { return Module::operator[]((int)chn::tsk::add_noise   )[(int)s]; }
+	inline Socket& operator[](const chn::sck::add_noise_wg s) { return Module::operator[]((int)chn::tsk::add_noise_wg)[(int)s]; }
 
-	std::vector<R> noise;
+protected:
+	const int N;          // Size of one frame (= number of bits in one frame)
+	tools::Noise<R>* n;   // the current noise to apply to the input signal
+	std::vector<R> noise; // vector of the noise applied to the signal
 
 public:
 	/*!
 	 * \brief Constructor.
 	 *
 	 * \param N:        size of one frame.
+	 * \param noise:    The noise to apply to the signal
 	 * \param n_frames: number of frames to process in the Channel.
-	 * \param name:     Channel's name.
 	 */
-	Channel(const int N, const R sigma = -1.f, const int n_frames = 1);
+	Channel(const int N, const tools::Noise<R>& noise, const int n_frames = 1);
+
+	/*!
+	 * \brief Constructor.
+	 *
+	 * \param N:        size of one frame.
+	 * \param n_frames: number of frames to process in the Channel.
+	 */
+	Channel(const int N, const int n_frames = 1);
 
 	/*!
 	 * \brief Destructor.
@@ -68,12 +76,9 @@ public:
 
 	int get_N() const;
 
-	R get_sigma() const;
-
 	const std::vector<R>& get_noise() const;
 
-	virtual void set_sigma(const R sigma);
-	virtual void set_noise(const R sigma, const R esn0, const R ebn0);
+	virtual void set_noise(const tools::Noise<R>& noise);
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.
@@ -102,6 +107,8 @@ protected:
 	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id);
 
 	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id);
+
+	virtual void check_noise(); // check that the noise has the expected type
 };
 }
 }

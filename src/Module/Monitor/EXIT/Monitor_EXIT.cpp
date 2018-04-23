@@ -18,10 +18,11 @@ Monitor_EXIT<B,R>
 	const std::string name = "Monitor_EXIT";
 	this->set_name(name);
 
-	auto &p = this->create_task("check_mutual_info", mnt::tsk::check_mutual_info);
+	auto &p = this->create_task("check_mutual_info", (int)mnt::tsk::check_mutual_info);
 	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->N * this->n_frames);
 	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->N * this->n_frames);
 	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", this->N * this->n_frames);
+
 	this->create_codelet(p, [this, &ps_bits, &ps_llrs_a, &ps_llrs_e]() -> int
 	{
 		this->check_mutual_info(static_cast<B*>(ps_bits  .get_dataptr()),

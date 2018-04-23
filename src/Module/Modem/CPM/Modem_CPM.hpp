@@ -47,7 +47,7 @@ protected:
 
 public:
 	Modem_CPM(const int  N,
-	          const R    sigma              = (R)1,
+	          const tools::Noise<R>& noise   = tools::Noise<R>(),
 	          const int  bits_per_symbol    = 1,
 	          const int  sampling_factor    = 5,
 	          const int  cpm_L              = 3,
@@ -59,7 +59,7 @@ public:
 	          const int  n_frames           = 1);
 	virtual ~Modem_CPM();
 
-	void set_sigma(const R sigma);
+	virtual void set_noise(const tools::Noise<R>& noise);
 
 	static bool is_complex_mod()
 	{

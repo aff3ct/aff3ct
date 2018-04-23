@@ -1,17 +1,20 @@
+#include <rang.hpp>
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <date.h>
+
+#include "Tools/Display/Terminal/Terminal.hpp"
 
 #ifdef ENABLE_MPI
 #include <mpi.h>
 #endif
 
-#include "Tools/date.h"
 #include "Tools/general_utils.h"
 #include "Tools/system_functions.h"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Factory/Module/Source/Source.hpp"
@@ -75,7 +78,7 @@ int Launcher::read_arguments()
 	{
 		auto save = tools::exception::no_backtrace;
 		tools::exception::no_backtrace = true;
-		cmd_error.push_back(e.what());
+		cmd_error.emplace_back(e.what());
 		tools::exception::no_backtrace = save;
 	}
 
@@ -86,44 +89,44 @@ int Launcher::read_arguments()
 	}
 
 	// print usage
-	if (cmd_error.size() && !params_common.display_help)
+	if (!cmd_error.empty() && !params_common.display_help)
 		ah.print_usage(this->args);
 
 	// print the errors
-	if (cmd_error.size()) std::cerr << std::endl;
+	if (!cmd_error.empty()) std::cerr << std::endl;
 	for (unsigned e = 0; e < cmd_error.size(); e++)
-		std::cerr << tools::format_error(cmd_error[e]) << std::endl;
+		std::cerr << rang::tag::error << cmd_error[e] << std::endl;
 
 	// print the help tags
-	if (cmd_error.size() && !params_common.display_help)
+	if (!cmd_error.empty() && !params_common.display_help)
 	{
 		tools::Argument_tag help_tag = {"help", "h"};
 
 		std::string message = "For more information please display the help (\"";
 		message += tools::Argument_handler::print_tag(help_tag) += "\").";
 
-		std::cerr << std::endl << tools::format_info(message) << std::endl;
+		std::cerr << std::endl << rang::tag::info << message << std::endl;
 	}
 
-	return (cmd_error.size() || params_common.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
+	return (!cmd_error.empty() || params_common.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 void Launcher::print_header()
 {
 	// display configuration and simulation parameters
-	stream << "# " << tools::style("----------------------------------------------------", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::style("---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::style("----------------------------------------------------", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::style(style("Parameters :", tools::Style::BOLD), tools::Style::UNDERLINED) << std::endl;
+	stream << rang::tag::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
+	stream << rang::tag::comment << rang::style::bold << "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
+	stream << rang::tag::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
+	stream << rang::tag::comment << rang::style::bold << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
 	factory::Header::print_parameters({&params_common}, false, this->stream);
-	this->stream << "#" << std::endl;
+	this->stream << rang::tag::comment << std::endl;
 }
 
 int Launcher::launch()
 {
 	int exit_code = EXIT_SUCCESS;
 
-	std::srand(this->params_common.global_seed);
+	std::srand((unsigned)this->params_common.global_seed);
 
 	// in case of the user call launch multiple times
 	if (simu != nullptr)
@@ -139,7 +142,7 @@ int Launcher::launch()
 		if (this->params_common.mpi_rank == 0)
 #endif
 			for (unsigned w = 0; w < this->cmd_warn.size(); w++)
-				std::clog << tools::format_warning(this->cmd_warn[w]) << std::endl;
+				std::clog << rang::tag::warning << this->cmd_warn[w] << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -167,7 +170,7 @@ int Launcher::launch()
 	if (this->params_common.mpi_rank == 0)
 #endif
 		for (unsigned w = 0; w < this->cmd_warn.size(); w++)
-			std::clog << tools::format_warning(this->cmd_warn[w]) << std::endl;
+			std::clog << rang::tag::warning << this->cmd_warn[w] << std::endl;
 
 	try
 	{
@@ -175,7 +178,7 @@ int Launcher::launch()
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+		rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 		exit_code = EXIT_FAILURE;
 	}
 
@@ -186,7 +189,7 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 			if (this->params_common.mpi_rank == 0)
 #endif
-				stream << "# " << "The simulation is running..." << std::endl;
+				stream << rang::tag::comment << "The simulation is running..." << std::endl;
 
 		try
 		{
@@ -196,7 +199,7 @@ int Launcher::launch()
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
+			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 			exit_code = EXIT_FAILURE;
 		}
 	}
@@ -205,7 +208,7 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 		if (this->params_common.mpi_rank == 0)
 #endif
-			stream << "# End of the simulation." << std::endl;
+			stream << rang::tag::comment << "End of the simulation." << std::endl;
 
 	if (simu != nullptr)
 	{

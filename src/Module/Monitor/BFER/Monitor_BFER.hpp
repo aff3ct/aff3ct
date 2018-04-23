@@ -14,6 +14,11 @@ namespace module
 template <typename B = int, typename R = float>
 class Monitor_BFER : public Monitor
 {
+public:
+	inline Task&   operator[](const mnt::tsk                  t) { return Module::operator[]((int)t);                                 }
+	inline Socket& operator[](const mnt::sck::check_errors    s) { return Module::operator[]((int)mnt::tsk::check_errors   )[(int)s]; }
+	inline Socket& operator[](const mnt::sck::get_mutual_info s) { return Module::operator[]((int)mnt::tsk::get_mutual_info)[(int)s]; }
+
 protected:
 	const unsigned max_fe;
 

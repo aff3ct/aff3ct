@@ -23,12 +23,11 @@ protected:
 
 public:
 	Channel_pdf(const int N, tools::Noise_generator<R> *noise_generator, const bool add_users = false,
-	            const R noise_power = (R)1, const int n_frames = 1);
+	            const tools::Noise<R>& noise = tools::ROP<R>(), const int n_frames = 1);
 
 	virtual ~Channel_pdf();
 
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
-	virtual void set_sigma(const R noise_power);
 };
 }
 }

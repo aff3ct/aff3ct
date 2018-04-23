@@ -2,7 +2,8 @@
 #include <iomanip>
 #include <ios>
 
-#include "Tools/Display/bash_tools.h"
+#include <rang.hpp>
+
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Module.hpp"
@@ -53,13 +54,13 @@ void Task::set_autoalloc(const bool autoalloc)
 		{
 			this->out_buffers.clear();
 			for (auto *s : sockets)
-				if (get_socket_type(*s) == OUT)
+				if (get_socket_type(*s) == socket_t::SOUT)
 					s->dataptr = nullptr;
 		}
 		else
 		{
 			for (auto *s : sockets)
-				if (get_socket_type(*s) == OUT)
+				if (get_socket_type(*s) == socket_t::SOUT)
 				{
 					out_buffers.push_back(mipp::vector<uint8_t>(s->databytes));
 					s->dataptr = out_buffers.back().data();
@@ -158,12 +159,12 @@ static inline void display_data(const T *data,
 	}
 	else
 	{
-		const auto sty_fra = tools::Style::BOLD | tools::FG::Color::GRAY;
 		std::string spaces = "#"; for (auto s = 0; s < (int)n_spaces -1; s++) spaces += " ";
 		for (auto f = 0; f < (int)n_fra; f++)
 		{
-			std::string fra_id = tools::format("f" + std::to_string(f+1) + ":", sty_fra);
-			std::cout << (f >= 1 ? spaces : "") << fra_id << "(";
+			std::string fra_id = "f" + std::to_string(f+1) + ":";
+			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << fra_id
+			          << rang::style::reset << "(";
 			for (auto i = 0; i < (int)limit; i++)
 			{
 				if (hex)
@@ -189,22 +190,20 @@ int Task::exec()
 		size_t max_n_chars = 0;
 		if (debug)
 		{
-			const auto sty_type   = tools::Style::BOLD | tools::FG::Color::MAGENTA | tools::FG::INTENSE;
-			const auto sty_class  = tools::Style::BOLD;
-			const auto sty_method = tools::Style::BOLD | tools::FG::Color::GREEN;
-
 			auto n_fra = (size_t)this->module.get_n_frames();
 
 			std::cout << "# ";
-			std::cout << tools::format(module.get_name(), sty_class) << "::" << tools::format(get_name(), sty_method)
+			std::cout << rang::style::bold << rang::fg::green << module.get_name() << rang::style::reset
+			          << "::"
+			          << rang::style::bold << rang::fg::magenta << get_name() << rang::style::reset
 			          << "(";
 			for (auto i = 0; i < (int)sockets.size(); i++)
 			{
 				auto &s = *sockets[i];
 				auto s_type = get_socket_type(s);
 				auto n_elmts = s.get_databytes() / (size_t)s.get_datatype_size();
-				std::cout << (s_type == IN ? tools::format("const ", sty_type) : "")
-				          << tools::format(s.get_datatype_string(), sty_type)
+				std::cout << rang::style::bold << rang::fg::blue << (s_type == socket_t::SIN ? "const " : "")
+				          << s.get_datatype_string() << rang::style::reset
 				          << " " << s.get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
 				          << (n_elmts / n_fra) << "]"
 				          << (i < (int)sockets.size() -1 ? ", " : "");
@@ -216,7 +215,7 @@ int Task::exec()
 			for (auto *s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
-				if (s_type == IN || s_type == IN_OUT)
+				if (s_type == socket_t::SIN || s_type == socket_t::SIN_SOUT)
 				{
 					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s->get_name().size(); ss++) spaces += " ";
 
@@ -266,7 +265,7 @@ int Task::exec()
 			for (auto *s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
-				if (s_type == OUT || s_type == IN_OUT)
+				if (s_type == socket_t::SOUT || s_type == socket_t::SIN_SOUT)
 				{
 					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s->get_name().size(); ss++) spaces += " ";
 
@@ -333,7 +332,7 @@ Socket& Task::create_socket_in(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
-	socket_type.push_back(Socket_type::IN);
+	socket_type.push_back(socket_t::SIN);
 	last_input_socket = &s;
 
 	return s;
@@ -344,7 +343,7 @@ Socket& Task::create_socket_in_out(const std::string &name, const size_t n_elmts
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
-	socket_type.push_back(Socket_type::IN_OUT);
+	socket_type.push_back(socket_t::SIN_SOUT);
 	last_input_socket = &s;
 
 	return s;
@@ -355,7 +354,7 @@ Socket& Task::create_socket_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
-	socket_type.push_back(Socket_type::OUT);
+	socket_type.push_back(socket_t::SOUT);
 
 	// memory allocation
 	if (is_autoalloc())
@@ -425,7 +424,7 @@ const std::vector<std::chrono::nanoseconds>& Task::get_timers_max() const
 	return this->timers_max;
 }
 
-Socket_type Task::get_socket_type(const Socket &s) const
+socket_t Task::get_socket_type(const Socket &s) const
 {
 	for (size_t i = 0; i < sockets.size(); i++)
 		if (sockets[i] == &s)
@@ -481,4 +480,3 @@ template Socket& Task::create_socket_out<int64_t>(const std::string&, const size
 template Socket& Task::create_socket_out<float  >(const std::string&, const size_t);
 template Socket& Task::create_socket_out<double >(const std::string&, const size_t);
 // ==================================================================================== explicit template instantiation
-

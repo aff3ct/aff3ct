@@ -1,5 +1,5 @@
-#ifndef PROCESS_HPP_
-#define PROCESS_HPP_
+#ifndef TASK_HPP_
+#define TASK_HPP_
 
 #include <string>
 #include <sstream>
@@ -24,12 +24,7 @@ namespace module
 class Module;
 class Socket;
 
-enum Socket_type
-{
-	IN     = 0,
-	IN_OUT = 1,
-	OUT    = 2
-};
+enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
 
 class Task
 {
@@ -63,7 +58,7 @@ protected:
 	std::vector<std::chrono::nanoseconds> timers_max;
 
 	Socket* last_input_socket;
-	std::vector<Socket_type> socket_type;
+	std::vector<socket_t> socket_type;
 
 public:
 	std::vector<Socket*> sockets;
@@ -101,7 +96,7 @@ public:
 	inline const Module& get_module     (               ) const { return this->module;  }
 	inline std::string   get_name       (               ) const { return this->name;    }
 	inline uint32_t      get_n_calls    (               ) const { return this->n_calls; }
-	       Socket_type   get_socket_type(const Socket &s) const;
+	       socket_t      get_socket_type(const Socket &s) const;
 
 	// get stats
 	std::chrono::nanoseconds                     get_duration_total() const;
@@ -161,4 +156,4 @@ private:
 }
 }
 
-#endif /* PROCESS_HPP_ */
+#endif /* TASK_HPP_ */

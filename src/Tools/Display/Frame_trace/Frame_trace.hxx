@@ -1,8 +1,9 @@
 #include <sstream>
 #include <iomanip>
 
+#include <rang.hpp>
+
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 
 #include "Frame_trace.hpp"
 
@@ -49,7 +50,7 @@ void Frame_trace<B>
 {
 	unsigned int stride         = 0;
 	bool         enable_ref     = !ref.empty();
-	
+
 	if (enable_ref && ref.size() != vec.size())
 	{
 		std::stringstream message;
@@ -102,10 +103,10 @@ void Frame_trace<B>
 
 	switch(version)
 	{
-		case BIT:
+		case debug_version::BIT:
 			stream << std::setw(prec+2) << ((value == 0) ? (int) 0 : (int) 1) << "|";
 			break;
-		case REAL:
+		case debug_version::REAL:
 			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
 			value_string = sstream.str();
 			size_t pos = value_string.find('e');
@@ -123,27 +124,27 @@ template <typename B>
 template <typename D>
 void Frame_trace<B>
 ::display_value(D value, debug_version version, B ref)
-{	
+{
 	std::stringstream sstream;
 	std::string value_string;
 
 	switch(version)
 	{
-		case BIT:
+		case debug_version::BIT:
 			value_string.append(prec+1, ' ');
 			if (value == 0)
 				if (ref == 0)
-					stream << tools::format(value_string + "0", Style::BOLD | FG::Color::GREEN) << "|";
+					stream << rang::style::bold << rang::fg::green << value_string << "0" << rang::style::reset << "|";
 				else
-					stream << tools::format(value_string + "0", Style::BOLD | FG::Color::ORANGE) << "|";
+					stream << rang::style::bold << rang::fg::red   << value_string << "0" << rang::style::reset << "|";
 			else
 				if (ref == 0)
-					stream << tools::format(value_string + "1", Style::BOLD | FG::Color::ORANGE) << "|";
-				else	
-					stream << tools::format(value_string + "1", Style::BOLD | FG::Color::GREEN) << "|";
+					stream << rang::style::bold << rang::fg::red   << value_string << "1" << rang::style::reset << "|";
+				else
+					stream << rang::style::bold << rang::fg::green << value_string << "1" << rang::style::reset << "|";
 			break;
 
-		case REAL:
+		case debug_version::REAL:
 			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
 			value_string = sstream.str();
 			size_t pos = value_string.find('e');
@@ -154,14 +155,14 @@ void Frame_trace<B>
 
 			if (value >= 0)
 				if (ref == 0)
-					stream << tools::format(value_string, Style::BOLD | FG::Color::GREEN) << "|";
-				else 
-					stream << tools::format(value_string, Style::BOLD | FG::Color::ORANGE) << "|";
+					stream << rang::style::bold << rang::fg::green << value_string << rang::style::reset << "|";
+				else
+					stream << rang::style::bold << rang::fg::red   << value_string << rang::style::reset << "|";
 			else
 				if (ref == 0)
-					stream << tools::format(value_string, Style::BOLD | FG::Color::ORANGE) << "|";
+					stream << rang::style::bold << rang::fg::red   << value_string << rang::style::reset << "|";
 				else
-					stream << tools::format(value_string, Style::BOLD | FG::Color::GREEN) << "|";
+					stream << rang::style::bold << rang::fg::green << value_string << rang::style::reset << "|";
 			break;
 	}
 }

@@ -24,14 +24,14 @@ protected:
 public:
 	Channel_optical(const int N,
 	                tools::Noise_generator<R> *noise_generator,
-	                const R sigma = -1, const int n_frames = 1);
+	                const tools::Noise<R>& noise = tools::ROP<R>(), const int n_frames = 1);
 
 	virtual ~Channel_optical();
 
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 
-	void set_noise(const R sigma, const R esn0, const R ebn0);
-
+protected:
+	virtual void check_noise();
 };
 }
 }

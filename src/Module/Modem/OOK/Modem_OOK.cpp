@@ -9,14 +9,13 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK<B,R,Q>
-::Modem_OOK(const int N, const R sigma, const bool disable_sig2, const int n_frames)
-: Modem<B,R,Q>(N, sigma, n_frames),
-  disable_sig2(disable_sig2)
+::Modem_OOK(const int N, const tools::Noise<R>& noise, const bool disable_sig2, const int n_frames)
+: Modem<B,R,Q>(N, noise, n_frames),
+  disable_sig2(disable_sig2),
+  sigma_factor((R)0)
 {
 	const std::string name = "Modem_OOK";
 	this->set_name(name);
-
-	if (sigma != (R)-1.0) this->set_sigma(sigma);
 }
 
 template <typename B, typename R, typename Q>
@@ -27,19 +26,18 @@ Modem_OOK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
-::set_sigma(const R sigma)
+::set_noise(const tools::Noise<R>& noise)
 {
-	Modem<B,R,Q>::set_sigma(sigma);
+	Modem<B,R,Q>::set_noise(noise);
 
-	this->sigma_factor = this->disable_sig2 ? (R)0.5 : (R)((R)1.0 / ((R)2.0 * this->sigma * this->sigma));
+	this->sigma_factor = (R)2.0 * this->n->get_noise() * this->n->get_noise(); // trow if noise is not set
 }
 
 template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
-	auto size = (unsigned int)(this->N);
-	for (unsigned i = 0; i < size; i++)
+	for (auto i = 0; i < this->N_fil; i++)
 		X_N2[i] = X_N1[i] ? (R)1 : (R)0;
 }
 
@@ -54,16 +52,46 @@ template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (!std::is_same<R,Q>::value)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
-
-	if (!std::is_floating_point<Q>::value)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	auto size = (unsigned int)(this->N_fil);
-	for (unsigned i = 0; i < size; i++)
+	if (disable_sig2)
+		for (auto i = 0; i < this->N_fil; i++)
+			Y_N2[i] = (Q)0.5 - Y_N1[i];
+	else
 	{
-		Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor;
+		if (!std::is_same<R, Q>::value)
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+
+		if (!std::is_floating_point<Q>::value)
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+		switch (this->n->get_type())
+		{
+			case tools::Noise_type::SIGMA:
+				for (auto i = 0; i < this->N_fil; i++)
+					Y_N2[i] = -((Q) 2.0 * Y_N1[i] - (Q) 1) * (Q) sigma_factor;
+				break;
+
+			case tools::Noise_type::EP:
+			{
+				auto sign = (Q)tools::Noise<R>::erased_llr_val;
+				for (auto i = 0; i < this->N_fil; i++)
+					if (Y_N1[i] == tools::Noise<R>::erased_symbol_val)
+					{
+						Y_N2[i] = sign;
+						sign *= (Q)-1;
+					}
+					else
+						Y_N2[i] = ((Q)1 - (Q)2.0 * Y_N1[i]);
+				break;
+			}
+
+			default:
+			{
+				std::stringstream message;
+				message << "The noise has a type other than SIGMA or EP ('this->n->get_type()' = "
+				        << this->n->type2str(this->n->get_type()) << ").";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+		}
 	}
 }
 
@@ -71,16 +99,22 @@ template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
 ::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (!std::is_same<R,Q>::value)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
-
-	if (!std::is_floating_point<Q>::value)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	auto size = (unsigned int)(this->N_fil);
-	for (unsigned i = 0; i < size; i++)
+	if (disable_sig2)
+		for (auto i = 0; i < this->N_fil; i++)
+			Y_N2[i] = ((Q)0.5 - Y_N1[i]) * (Q)H_N[i];
+	else
 	{
-		Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor * (Q)H_N[i];
+		if (!std::is_same<R,Q>::value)
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+
+		if (!std::is_floating_point<Q>::value)
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+		if (!this->n->is_set())
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+
+		for (auto i = 0; i < this->N_fil; i++)
+			Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor * (Q)H_N[i];
 	}
 }
 

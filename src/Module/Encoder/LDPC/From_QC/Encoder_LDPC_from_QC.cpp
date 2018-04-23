@@ -5,7 +5,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/matrix.h"
 
 #include "Encoder_LDPC_from_QC.hpp"
@@ -22,7 +21,7 @@ Encoder_LDPC_from_QC<B>
 {
 	const std::string name = "Encoder_LDPC_from_QC";
 	this->set_name(name);
-	
+
 	if ((N-K) != (int)H.get_n_rows())
 	{
 		std::stringstream message;

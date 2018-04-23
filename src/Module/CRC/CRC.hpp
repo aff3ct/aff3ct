@@ -19,16 +19,13 @@ namespace module
 {
 	namespace crc
 	{
-		namespace tsk
-		{
-			enum list { build, extract, check, SIZE };
-		}
+		enum class tsk : uint8_t { build, extract, check, SIZE };
 
 		namespace sck
 		{
-			namespace build   { enum list { U_K1, U_K2, SIZE }; }
-			namespace extract { enum list { V_K1, V_K2, SIZE }; }
-			namespace check   { enum list { V_K       , SIZE }; }
+			enum class build   : uint8_t { U_K1, U_K2, SIZE };
+			enum class extract : uint8_t { V_K1, V_K2, SIZE };
+			enum class check   : uint8_t { V_K       , SIZE };
 		}
 	}
 
@@ -44,6 +41,12 @@ namespace module
 template <typename B = int>
 class CRC : public Module
 {
+public:
+	inline Task&   operator[](const crc::tsk          t) { return Module::operator[]((int)t);                         }
+	inline Socket& operator[](const crc::sck::build   s) { return Module::operator[]((int)crc::tsk::build  )[(int)s]; }
+	inline Socket& operator[](const crc::sck::extract s) { return Module::operator[]((int)crc::tsk::extract)[(int)s]; }
+	inline Socket& operator[](const crc::sck::check   s) { return Module::operator[]((int)crc::tsk::check  )[(int)s]; }
+
 protected:
 	const int K; /*!< Number of information bits (the CRC bits are not included in K) */
 	const int size;

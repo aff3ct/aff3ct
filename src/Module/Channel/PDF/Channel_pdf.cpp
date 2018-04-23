@@ -9,9 +9,9 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_pdf<R>
-::Channel_pdf(const int N, tools::Noise_generator<R> *noise_generator, const bool add_users, const R noise_power,
-              const int n_frames)
-: Channel<R>(N, noise_power, n_frames),
+::Channel_pdf(const int N, tools::Noise_generator<R> *noise_generator, const bool add_users,
+              const tools::Noise<R>& noise, const int n_frames)
+: Channel<R>(N, noise, n_frames),
   add_users(add_users),
   noise_generator(noise_generator)
 {
@@ -31,13 +31,6 @@ Channel_pdf<R>
 
 template <typename R>
 void Channel_pdf<R>
-::set_sigma(const R noise_power)
-{
-	this->sigma = noise_power;
-}
-
-template <typename R>
-void Channel_pdf<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	if (add_users && this->n_frames > 1)
@@ -49,7 +42,7 @@ void Channel_pdf<R>
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		noise_generator->generate(this->noise.data(), this->N, this->sigma);
+		noise_generator->generate(this->noise.data(), this->N, this->n->get_noise());
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (auto f = 0; f < this->n_frames; f++)
@@ -65,9 +58,9 @@ void Channel_pdf<R>
 		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		if (frame_id < 0)
-			noise_generator->generate(this->noise, this->sigma);
+			noise_generator->generate(this->noise, this->n->get_noise());
 		else
-			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->sigma);
+			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise());
 
 		for (auto f = f_start; f < f_stop; f++)
 			for (auto n = 0; n < this->N; n++)

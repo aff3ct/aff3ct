@@ -2,7 +2,8 @@
 #include <algorithm>
 #include <type_traits>
 
-#include "Tools/Display/bash_tools.h"
+#include <rang.hpp>
+
 #include "Tools/general_utils.h"
 
 #include "Argument_handler.hpp"
@@ -76,7 +77,7 @@ Argument_map_value Argument_handler
 	for (unsigned i = 0; i < args_found_pos.size(); i++, it_arg++)
 	{
 		if (!args_found_pos[i]
-		  && it_arg->second->rank == Argument_info::REQUIRED
+		  && it_arg->second->rank == arg_rank::REQ
 		  && !is_linked(args, m_arg_v, it_arg->first)) // check if any linked arguments, has been given
 		{
 			std::string message = "The \"" + print_tag(it_arg->first) + "\" argument is required.";
@@ -194,7 +195,7 @@ void Argument_handler
 
 	for (auto it = args.begin(); it != args.end(); ++it)
 	{
-		if (it->second->rank == Argument_info::REQUIRED
+		if (it->second->rank == arg_rank::REQ
 		 && std::find(existing_flags.begin(), existing_flags.end(), it->first.back()) == existing_flags.end())
 		{
 			if(it->second->type->get_title() != "")
@@ -229,13 +230,13 @@ void Argument_handler
 
 	// print first REQUIRED arguments
 	for (auto it = args.begin(); it != args.end(); ++it)
-		if (it->second->rank == Argument_info::REQUIRED)
+		if (it->second->rank == arg_rank::REQ)
 			this->print_help(it->first, *it->second, longest_tag);
 
 	// then print others
 	for (auto it = args.begin(); it != args.end(); ++it)
-		if (it->second->rank == Argument_info::OPTIONAL
-		 || (print_advanced_args && it->second->rank == Argument_info::ADVANCED))
+		if (it->second->rank == arg_rank::OPT
+		 || (print_advanced_args && it->second->rank == arg_rank::ADV))
 			this->print_help(it->first, *it->second, longest_tag);
 
 	help_os << std::endl;
@@ -264,45 +265,41 @@ std::string split_doc(const std::string& line, const std::string& start_line, co
 void Argument_handler
 ::print_help(const Argument_tag &tags, const Argument_info &info, const size_t longest_tag) const
 {
-	Format arg_format = 0;
 	const std::string tab = "    ";
-
-	std::string tabr;
 
 	switch (info.rank)
 	{
-		case Argument_info::OPTIONAL :
-			tabr = tab;
+		case arg_rank::OPT :
+			help_os << tab;
 			break;
 
-		case Argument_info::REQUIRED :
-			tabr = format("{R} ", arg_format | Style::BOLD | FG::Color::ORANGE);
+		case arg_rank::REQ :
+			help_os << rang::style::bold << rang::fg::red << "{R} " << rang::style::reset;
 			break;
 
-		case Argument_info::ADVANCED :
-			tabr = format("{A} ", arg_format | Style::BOLD | FG::Color::BLUE);
+		case arg_rank::ADV :
+			help_os << rang::style::bold << rang::fg::blue << "{A} " << rang::style::reset;
 			break;
 	}
 
 	std::string tags_str = this->print_tag(tags);
 	tags_str.append(longest_tag - tags_str.size(), ' ');
 
-	help_os << tabr << format(tags_str, arg_format | Style::BOLD);
+	help_os << rang::style::bold << tags_str << rang::style::reset;
 
 	if (info.type->get_title().size())
-		help_os << format(" <" + info.type->get_title() + ">", arg_format | FG::GRAY);
+		help_os << rang::fg::gray << " <" << info.type->get_title() << ">" << rang::style::reset;
 
 	help_os << std::endl;
 	auto splitted_doc = split_doc(info.doc, tab + "  ", 80);
-	help_os << format(splitted_doc, arg_format) << std::endl;
+	help_os << splitted_doc << std::endl;
 }
 
 void Argument_handler
 ::print_help_title(const std::string& title) const
 {
-	Format head_format = Style::BOLD | Style::ITALIC | FG::Color::MAGENTA | FG::INTENSE;
-
-	help_os << format(title + ":", head_format) << std::endl;
+	help_os << rang::style::bold << rang::style::italic << rang::fg::magenta << title << ":" << rang::style::reset
+	        << std::endl;
 }
 
 void Argument_handler
@@ -329,7 +326,7 @@ void Argument_handler
 		// display first the REQUIRED arguments of this group
 		for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 		{
-			if (it_arg->second->rank != Argument_info::REQUIRED)
+			if (it_arg->second->rank != arg_rank::REQ)
 				continue;
 
 			auto& tag  = it_arg->first.front();
@@ -352,8 +349,8 @@ void Argument_handler
 		// display then the OPTIONAL and ADVANCED arguments of this group
 		for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 		{
-			if (it_arg->second->rank == Argument_info::REQUIRED
-			 || (!print_advanced_args && it_arg->second->rank == Argument_info::ADVANCED))
+			if (it_arg->second->rank == arg_rank::REQ
+			 || (!print_advanced_args && it_arg->second->rank == arg_rank::ADV))
 				continue;
 
 			auto& tag  = it_arg->first.front();
@@ -363,7 +360,7 @@ void Argument_handler
 			{
 				args_print_pos[dist] = true;
 
-				if (it_arg->second->rank == Argument_info::ADVANCED && !print_advanced_args)
+				if (it_arg->second->rank == arg_rank::ADV && !print_advanced_args)
 					continue;
 
 				if (!title_displayed)
@@ -385,7 +382,7 @@ void Argument_handler
 	// display the other REQUIRED parameters
 	for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 	{
-		if (it_arg->second->rank != Argument_info::REQUIRED)
+		if (it_arg->second->rank != arg_rank::REQ)
 			continue;
 
 		bool found = false;
@@ -421,8 +418,8 @@ void Argument_handler
 	// display the other OPTIONAL and ADVANCED parameters
 	for (auto it_arg = args.begin(); it_arg != args.end(); it_arg++)
 	{
-		if (it_arg->second->rank == Argument_info::REQUIRED
-		 || (!print_advanced_args && it_arg->second->rank == Argument_info::ADVANCED))
+		if (it_arg->second->rank == arg_rank::REQ
+		 || (!print_advanced_args && it_arg->second->rank == arg_rank::ADV))
 			continue;
 
 		bool found = false;

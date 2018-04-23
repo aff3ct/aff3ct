@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <iomanip>
 
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 
 #include "Statistics.hpp"
 
@@ -21,29 +21,29 @@ Statistics
 void Statistics
 ::separation1(std::ostream &stream)
 {
-	stream << "# " << tools::format("-------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
+	stream << "# " << rang::style::bold << "-------------------------------------------||------------------------------||--------------------------------||--------------------------------" << rang::style::reset << std::endl;
 }
 
 void Statistics
 ::separation2(std::ostream &stream)
 {
-	stream << "# " << tools::format("-------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+	stream << "# " << rang::style::bold << "-------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------" << rang::style::reset << std::endl;
 }
 
 void Statistics
 ::show_header(std::ostream &stream)
 {
 	Statistics::separation1(stream);
-//	stream << "# " << tools::format("-------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::format("       Statistics for the given task       ||       Basic statistics       ||       Measured throughput      ||        Measured latency        ", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::format("    ('*' = any, '-' = same as previous)    ||          on the task         ||   considering the last socket  ||   considering the last socket  ", tools::Style::BOLD) << std::endl;
-//	stream << "# " << tools::format("-------------------------------------------||------------------------------||--------------------------------||--------------------------------", tools::Style::BOLD) << std::endl;
+//	stream << "# " << rang::style::bold << "-------------------------------------------||------------------------------||--------------------------------||--------------------------------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "       Statistics for the given task       ||       Basic statistics       ||       Measured throughput      ||        Measured latency        " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "    ('*' = any, '-' = same as previous)    ||          on the task         ||   considering the last socket  ||   considering the last socket  " << rang::style::reset << std::endl;
+//	stream << "# " << rang::style::bold << "-------------------------------------------||------------------------------||--------------------------------||--------------------------------" << rang::style::reset << std::endl;
 	Statistics::separation1(stream);
 	Statistics::separation2(stream);
-//	stream << "# " << tools::format("-------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::format("      MODULE |              TASK |   TIMER ||    CALLS |     TIME |   PERC ||  AVERAGE |  MINIMUM |  MAXIMUM ||  AVERAGE |  MINIMUM |  MAXIMUM ", tools::Style::BOLD) << std::endl;
-	stream << "# " << tools::format("             |                   |         ||          |      (s) |    (%) ||   (Mb/s) |   (Mb/s) |   (Mb/s) ||     (us) |     (us) |     (us) ", tools::Style::BOLD) << std::endl;
-//	stream << "# " << tools::format("-------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------", tools::Style::BOLD) << std::endl;
+//	stream << "# " << rang::style::bold << "-------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------" << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "      MODULE |              TASK |   TIMER ||    CALLS |     TIME |   PERC ||  AVERAGE |  MINIMUM |  MAXIMUM ||  AVERAGE |  MINIMUM |  MAXIMUM " << rang::style::reset << std::endl;
+	stream << "# " << rang::style::bold << "             |                   |         ||          |      (s) |    (%) ||   (Mb/s) |   (Mb/s) |   (Mb/s) ||     (us) |     (us) |     (us) " << rang::style::reset << std::endl;
+//	stream << "# " << rang::style::bold << "-------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------" << rang::style::reset << std::endl;
 	Statistics::separation2(stream);
 }
 
@@ -96,24 +96,25 @@ void Statistics
 	ssmin_lat << std::setprecision(min_lat      > l1 ? P : 2) << (min_lat      > l2 ? std::scientific : std::fixed) << std::setw( 8) << min_lat;
 	ssmax_lat << std::setprecision(max_lat      > l1 ? P : 2) << (max_lat      > l2 ? std::scientific : std::fixed) << std::setw( 8) << max_lat;
 
-	std::string spercent = sspercent.str();
-	     if (percent > 50.0f) spercent = tools::format(spercent, tools::FG::INTENSE | tools::FG::RED);
-	else if (percent > 25.0f) spercent = tools::format(spercent, tools::FG::INTENSE | tools::FG::ORANGE);
-	else if (percent > 12.5f) spercent = tools::format(spercent, tools::FG::INTENSE | tools::FG::GREEN);
-	else if (percent <  5.0f) spercent = tools::format(spercent,                      tools::FG::GRAY);
-
 	stream << "# ";
-	stream << ssmodule .str() << tools::format(" | ",  tools::Style::BOLD)
-	       << ssprocess.str() << tools::format(" | ",  tools::Style::BOLD)
-	       << sssp     .str() << tools::format(" || ", tools::Style::BOLD)
-	       << ssn_calls.str() << tools::format(" | ",  tools::Style::BOLD)
-	       << sstot_dur.str() << tools::format(" | ",  tools::Style::BOLD)
-	       << spercent        << tools::format(" || ", tools::Style::BOLD)
-	       << ssavg_thr.str() << tools::format(" | ",  tools::Style::BOLD)
-	       << ssmin_thr.str() << tools::format(" | ",  tools::Style::BOLD)
-	       << ssmax_thr.str() << tools::format(" || ", tools::Style::BOLD)
-	       << ssavg_lat.str() << tools::format(" | ",  tools::Style::BOLD)
-	       << ssmin_lat.str() << tools::format(" | ",  tools::Style::BOLD)
+	stream << ssmodule .str() << rang::style::bold << " | "  << rang::style::reset
+	       << ssprocess.str() << rang::style::bold << " | "  << rang::style::reset
+	       << sssp     .str() << rang::style::bold << " || " << rang::style::reset
+	       << ssn_calls.str() << rang::style::bold << " | "  << rang::style::reset
+	       << sstot_dur.str() << rang::style::bold << " | "  << rang::style::reset;
+
+	     if (percent > 50.0f) stream << rang::fg::red    << sspercent.str() << rang::style::reset;
+	else if (percent > 25.0f) stream << rang::fg::yellow << sspercent.str() << rang::style::reset;
+	else if (percent > 12.5f) stream << rang::fg::green  << sspercent.str() << rang::style::reset;
+	else if (percent <  5.0f) stream << rang::fg::gray   << sspercent.str() << rang::style::reset;
+	else                      stream <<                     sspercent.str();
+
+	stream <<                    rang::style::bold << " || " << rang::style::reset
+	       << ssavg_thr.str() << rang::style::bold << " | "  << rang::style::reset
+	       << ssmin_thr.str() << rang::style::bold << " | "  << rang::style::reset
+	       << ssmax_thr.str() << rang::style::bold << " || " << rang::style::reset
+	       << ssavg_lat.str() << rang::style::bold << " | "  << rang::style::reset
+	       << ssmin_lat.str() << rang::style::bold << " | "  << rang::style::reset
 	       << ssmax_lat.str() << ""
 	       << std::endl;
 }
@@ -169,18 +170,18 @@ void Statistics
 	ssrmax_lat << std::setprecision(rmax_lat      > l1 ? P : 2) << (rmax_lat      > l2 ? std::scientific : std::fixed) << std::setw( 8) << rmax_lat;
 
 	stream << "# ";
-	stream << spaces.str()                                          << tools::format(" | ",  tools::Style::BOLD)
-	       << tools::format(ssprocess .str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
-	       << tools::format(sssp      .str(), tools::Style::ITALIC) << tools::format(" || ", tools::Style::BOLD)
-	       << tools::format(ssrn_calls.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
-	       << tools::format(ssrtot_dur.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
-	       << tools::format(ssrpercent.str(), tools::Style::ITALIC) << tools::format(" || ", tools::Style::BOLD)
-	       << tools::format(ssravg_thr.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
-	       << tools::format(ssrmin_thr.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
-	       << tools::format(ssrmax_thr.str(), tools::Style::ITALIC) << tools::format(" || ", tools::Style::BOLD)
-	       << tools::format(ssravg_lat.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
-	       << tools::format(ssrmin_lat.str(), tools::Style::ITALIC) << tools::format(" | ",  tools::Style::BOLD)
-	       << tools::format(ssrmax_lat.str(), tools::Style::ITALIC) << ""
+	stream << spaces.str()                                                  << rang::style::bold << " | "  << rang::style::reset
+	       << rang::style::italic << ssprocess .str() << rang::style::reset << rang::style::bold << " | "  << rang::style::reset
+	       << rang::style::italic << sssp      .str() << rang::style::reset << rang::style::bold << " || " << rang::style::reset
+	       << rang::style::italic << ssrn_calls.str() << rang::style::reset << rang::style::bold << " | "  << rang::style::reset
+	       << rang::style::italic << ssrtot_dur.str() << rang::style::reset << rang::style::bold << " | "  << rang::style::reset
+	       << rang::style::italic << ssrpercent.str() << rang::style::reset << rang::style::bold << " || " << rang::style::reset
+	       << rang::style::italic << ssravg_thr.str() << rang::style::reset << rang::style::bold << " | "  << rang::style::reset
+	       << rang::style::italic << ssrmin_thr.str() << rang::style::reset << rang::style::bold << " | "  << rang::style::reset
+	       << rang::style::italic << ssrmax_thr.str() << rang::style::reset << rang::style::bold << " || " << rang::style::reset
+	       << rang::style::italic << ssravg_lat.str() << rang::style::reset << rang::style::bold << " | "  << rang::style::reset
+	       << rang::style::italic << ssrmin_lat.str() << rang::style::reset << rang::style::bold << " | "  << rang::style::reset
+	       << rang::style::italic << ssrmax_lat.str() << rang::style::reset << ""
 	       << std::endl;
 }
 
@@ -288,8 +289,8 @@ void Statistics
 	}
 	else
 	{
-		stream << "# " << format("(II)",  tools::Style::BOLD | tools::FG::BLUE)
-		       << " Statistics are unavailable. Did you enable the statistics in the tasks?" << std::endl;
+		stream << rang::tag::comment << rang::tag::info
+		       << "Statistics are unavailable. Did you enable the statistics in the tasks?" << std::endl;
 	}
 }
 
@@ -337,7 +338,7 @@ void Statistics
 		});
 	}
 
-	
+
 	auto ttask_tot_duration = nanoseconds(0);
 	auto ttask_min_duration = nanoseconds(0);
 	auto ttask_max_duration = nanoseconds(0);
@@ -434,7 +435,7 @@ void Statistics
 	}
 	else
 	{
-		stream << "# " << format("(II)",  tools::Style::BOLD | tools::FG::BLUE)
-		       << " Statistics are unavailable. Did you enable the statistics in the tasks?" << std::endl;
+		stream << rang::tag::comment << rang::tag::info
+		       << "Statistics are unavailable. Did you enable the statistics in the tasks?" << std::endl;
 	}
 }

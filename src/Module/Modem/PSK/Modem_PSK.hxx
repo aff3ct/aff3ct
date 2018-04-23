@@ -1,6 +1,7 @@
 #include <cmath>
 #include <complex>
 #include <limits>
+#include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -17,20 +18,20 @@ namespace module
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_PSK<B,R,Q,MAX>
-::Modem_PSK(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames)
+::Modem_PSK(const int N, const tools::Noise<R>& noise, const int bits_per_symbol,
+            const bool disable_sig2, const int n_frames)
 : Modem<B,R,Q>(N,
                (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
-               sigma,
+               noise,
                n_frames),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   disable_sig2   (disable_sig2),
-  constellation  (nbr_symbols)
+  constellation  (nbr_symbols),
+  inv_sigma2     ((R)1)
 {
 	const std::string name = "Modem_PSK";
 	this->set_name(name);
-
-	if (sigma != (R)-1.0) this->set_sigma(sigma);
 
 	std::vector<B> bits(this->bits_per_symbol);
 
@@ -51,10 +52,15 @@ Modem_PSK<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_PSK<B,R,Q,MAX>
-::set_sigma(const R sigma)
+::set_noise(const tools::Noise<R>& noise)
 {
-	Modem<B,R,Q>::set_sigma(sigma);
-	this->inv_sigma2 = this->disable_sig2 ? (R)1.0 : (R)((R)1.0 / (this->sigma_c * this->sigma_c));
+	Modem<B,R,Q>::set_noise(noise);
+
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
+	this->inv_sigma2 = this->disable_sig2 ?
+	                    (R)1.0 :
+	                    (R)((R)1.0 / (2 * this->n->get_noise() * this->n->get_noise()));
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -119,11 +125,14 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_PSK<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
 
@@ -152,11 +161,14 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_PSK<B,R,Q,MAX>
 ::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
 
@@ -188,13 +200,16 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_PSK<B,R,Q,MAX>
 ::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	auto size       = this->N;
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+
+	auto size = this->N;
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -240,11 +255,14 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_PSK<B,R,Q,MAX>
 ::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	auto size = this->N;
 

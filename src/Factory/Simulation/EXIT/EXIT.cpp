@@ -87,30 +87,6 @@ std::vector<std::string> EXIT::parameters
 	return p;
 }
 
-struct sigma_range_D1_splitter : tools::Splitter
-{
-	static std::vector<std::string> split(const std::string& val)
-	{
-		const std::string head      = "{([";
-		const std::string queue     = "})]";
-		const std::string separator = ",";
-
-		return Splitter::split(val, head, queue, separator);
-	}
-};
-
-struct sigma_range_D2_splitter : tools::Splitter
-{
-	static std::vector<std::string> split(const std::string& val)
-	{
-		const std::string head      = "";
-		const std::string queue     = "";
-		const std::string separator = ":";
-
-		return Splitter::split(val, head, queue, separator);
-	}
-};
-
 void EXIT::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
@@ -122,19 +98,19 @@ void EXIT::parameters
 		{p+"-siga-range"},
 		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
 		"sigma range used in EXIT charts (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-siga-min", "a"},
 		tools::Real(tools::Positive()),
 		"sigma min value used in EXIT charts.",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-siga-max", "A"},
 		tools::Real(tools::Positive()),
 		"sigma max value used in EXIT charts.",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-siga-step"},
@@ -156,12 +132,12 @@ void EXIT::parameters
 		this->sig_a_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-siga-range"}), 0.1f);
 	else
 	{
-		float snr_min = 0.f, snr_max = 0.f, snr_step = 0.1f;
-		if(vals.exist({p+"-siga-min",  "m"})) snr_min  = vals.to_float({p+"-siga-min",  "m"});
-		if(vals.exist({p+"-siga-max",  "M"})) snr_max  = vals.to_float({p+"-siga-max",  "M"});
-		if(vals.exist({p+"-siga-step"     })) snr_step = vals.to_float({p+"-siga-step"     });
+		float sig_a_min = 0.f, sig_a_max = 0.f, sig_a_step = 0.1f;
+		if(vals.exist({p+"-siga-min",  "m"})) sig_a_min  = vals.to_float({p+"-siga-min",  "m"});
+		if(vals.exist({p+"-siga-max",  "M"})) sig_a_max  = vals.to_float({p+"-siga-max",  "M"});
+		if(vals.exist({p+"-siga-step"     })) sig_a_step = vals.to_float({p+"-siga-step"     });
 
-		this->snr_range = tools::generate_range({{snr_min, snr_max}}, snr_step);
+		this->sig_a_range = tools::generate_range({{sig_a_min, sig_a_max}}, sig_a_step);
 	}
 }
 

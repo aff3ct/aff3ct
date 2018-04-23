@@ -98,7 +98,7 @@ void Pattern_polar_parser
 			if (matching_vals[i] > best_matching_val)
 			{
 				best_matching_val = matching_vals[i];
-				matching_id = (polar_node_t)i;
+				matching_id = (int)i;
 			}
 		}
 

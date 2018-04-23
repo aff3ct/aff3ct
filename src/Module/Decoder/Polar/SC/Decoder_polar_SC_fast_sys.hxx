@@ -49,8 +49,8 @@ struct Decoder_polar_SC_fast_sys_static
 			// f
 			switch (node_type)
 			{
-				case tools::STANDARD: API_polar::template f<n_elm_2>(l, off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2); break;
-				case tools::REP_LEFT: API_polar::template f<n_elm_2>(l, off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::STANDARD: API_polar::template f<n_elm_2>(l, off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::REP_LEFT: API_polar::template f<n_elm_2>(l, off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2); break;
 				default:
 					break;
 			}
@@ -61,9 +61,9 @@ struct Decoder_polar_SC_fast_sys_static
 			// g
 			switch (node_type)
 			{
-				case tools::STANDARD:    API_polar::template g <n_elm_2>(s, l, off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2); break;
-				case tools::RATE_0_LEFT: API_polar::template g0<n_elm_2>(   l, off_l, off_l + n_elm_2,        off_l + n_elmts, n_elm_2); break;
-				case tools::REP_LEFT:    API_polar::template gr<n_elm_2>(s, l, off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::STANDARD:    API_polar::template g <n_elm_2>(s, l, off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::RATE_0_LEFT: API_polar::template g0<n_elm_2>(   l, off_l, off_l + n_elm_2,        off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::REP_LEFT:    API_polar::template gr<n_elm_2>(s, l, off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2); break;
 				default:
 					break;
 			}
@@ -74,9 +74,9 @@ struct Decoder_polar_SC_fast_sys_static
 			// xor
 			switch (node_type)
 			{
-				case tools::STANDARD:    API_polar::template xo <n_elm_2>(s, off_s, off_s + n_elm_2, off_s, n_elm_2); break;
-				case tools::RATE_0_LEFT: API_polar::template xo0<n_elm_2>(s,        off_s + n_elm_2, off_s, n_elm_2); break;
-				case tools::REP_LEFT:    API_polar::template xo <n_elm_2>(s, off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+				case tools::polar_node_t::STANDARD:    API_polar::template xo <n_elm_2>(s, off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+				case tools::polar_node_t::RATE_0_LEFT: API_polar::template xo0<n_elm_2>(s,        off_s + n_elm_2, off_s, n_elm_2); break;
+				case tools::polar_node_t::REP_LEFT:    API_polar::template xo <n_elm_2>(s, off_s, off_s + n_elm_2, off_s, n_elm_2); break;
 				default:
 					break;
 			}
@@ -86,11 +86,10 @@ struct Decoder_polar_SC_fast_sys_static
 			// h
 			switch (node_type)
 			{
-				case tools::RATE_0: // if (!polar_patterns.exist_node_type(tools::polar_node_t::RATE_0_LEFT, REV_D+1))
-				                    API_polar::template h0 <n_elmts>(s,           off_s, n_elmts); break;
-				case tools::RATE_1: API_polar::template h  <n_elmts>(s, l, off_l, off_s, n_elmts); break;
-				case tools::REP:    API_polar::template rep<n_elmts>(s, l, off_l, off_s, n_elmts); break;
-				case tools::SPC:    API_polar::template spc<n_elmts>(s, l, off_l, off_s, n_elmts); break;
+				case tools::polar_node_t::RATE_0: API_polar::template h0 <n_elmts>(s,           off_s, n_elmts); break;
+				case tools::polar_node_t::RATE_1: API_polar::template h  <n_elmts>(s, l, off_l, off_s, n_elmts); break;
+				case tools::polar_node_t::REP:    API_polar::template rep<n_elmts>(s, l, off_l, off_s, n_elmts); break;
+				case tools::polar_node_t::SPC:    API_polar::template spc<n_elmts>(s, l, off_l, off_s, n_elmts); break;
 				default:
 					break;
 			}
@@ -111,9 +110,8 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 
 		switch (node_t)
 		{
-			case tools::RATE_0: // if (!polar_patterns.exist_node_type(tools::polar_node_t::RATE_0_LEFT, 1))
-				                API_polar::template h0<n_elmts>(s,           off_s, n_elmts); break;
-			case tools::RATE_1: API_polar::template h <n_elmts>(s, l, off_l, off_s, n_elmts); break;
+			case tools::polar_node_t::RATE_0: API_polar::template h0<n_elmts>(s,           off_s, n_elmts); break;
+			case tools::polar_node_t::RATE_1: API_polar::template h <n_elmts>(s, l, off_l, off_s, n_elmts); break;
 			default:
 				break;
 		}
@@ -352,8 +350,8 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			// f
 			switch (node_type)
 			{
-				case tools::STANDARD: API_polar::f(l, off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2); break;
-				case tools::REP_LEFT: API_polar::f(l, off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::STANDARD: API_polar::f(l, off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::REP_LEFT: API_polar::f(l, off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2); break;
 				default:
 					break;
 			}
@@ -363,9 +361,9 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			// g
 			switch (node_type)
 			{
-				case tools::STANDARD:    API_polar::g (s, l, off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2); break;
-				case tools::RATE_0_LEFT: API_polar::g0(   l, off_l, off_l + n_elm_2,        off_l + n_elmts, n_elm_2); break;
-				case tools::REP_LEFT:    API_polar::gr(s, l, off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::STANDARD:    API_polar::g (s, l, off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::RATE_0_LEFT: API_polar::g0(   l, off_l, off_l + n_elm_2,        off_l + n_elmts, n_elm_2); break;
+				case tools::polar_node_t::REP_LEFT:    API_polar::gr(s, l, off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2); break;
 				default:
 					break;
 			}
@@ -375,9 +373,9 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			// xor
 			switch (node_type)
 			{
-				case tools::STANDARD:    API_polar::xo (s, off_s, off_s + n_elm_2, off_s, n_elm_2); break;
-				case tools::RATE_0_LEFT: API_polar::xo0(s,        off_s + n_elm_2, off_s, n_elm_2); break;
-				case tools::REP_LEFT:    API_polar::xo (s, off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+				case tools::polar_node_t::STANDARD:    API_polar::xo (s, off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+				case tools::polar_node_t::RATE_0_LEFT: API_polar::xo0(s,        off_s + n_elm_2, off_s, n_elm_2); break;
+				case tools::polar_node_t::REP_LEFT:    API_polar::xo (s, off_s, off_s + n_elm_2, off_s, n_elm_2); break;
 				default:
 					break;
 			}
@@ -387,11 +385,10 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			// h
 			switch (node_type)
 			{
-				case tools::RATE_0: // if (!polar_patterns.exist_node_type(tools::polar_node_t::RATE_0_LEFT, REV_D+1))
-				                    API_polar::h0 (s,           off_s, n_elmts); break;
-				case tools::RATE_1: API_polar::h  (s, l, off_l, off_s, n_elmts); break;
-				case tools::REP:    API_polar::rep(s, l, off_l, off_s, n_elmts); break;
-				case tools::SPC:    API_polar::spc(s, l, off_l, off_s, n_elmts); break;
+				case tools::polar_node_t::RATE_0: API_polar::h0 (s,           off_s, n_elmts); break;
+				case tools::polar_node_t::RATE_1: API_polar::h  (s, l, off_l, off_s, n_elmts); break;
+				case tools::polar_node_t::REP:    API_polar::rep(s, l, off_l, off_s, n_elmts); break;
+				case tools::polar_node_t::SPC:    API_polar::spc(s, l, off_l, off_s, n_elmts); break;
 				default:
 					break;
 			}

@@ -262,8 +262,6 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo::parameters<D1,D2>
 ::build(module::Encoder<B> *encoder) const
 {
 	return Decoder::parameters::build<B,Q>(encoder);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q, class D1, class D2>

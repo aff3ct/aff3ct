@@ -20,17 +20,16 @@ class Modem_optical : public Modem<B,R,Q>
 {
 protected:
 	const tools::Distributions<R>& dist;
-	R rop;
 	const tools::Distribution<R>* current_dist;
 
 public:
 	Modem_optical(const int N,
 	              const tools::Distributions<R>& dist,
-	              const R ROP = (R)-1.0,
+	              const tools::Noise<R>& noise = tools::ROP<R>(),
 	              const int n_frames = 1);
 	virtual ~Modem_optical();
 
-	virtual void set_noise(const R sigma, const R esn0, const R ebn0);
+	virtual void set_noise(const tools::Noise<R>& noise);
 
 	static bool is_complex_mod()
 	{

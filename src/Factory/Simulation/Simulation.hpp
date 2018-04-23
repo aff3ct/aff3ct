@@ -9,8 +9,6 @@
 #include <sstream>
 #include <vector>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Factory/Launcher/Launcher.hpp"
 
 namespace aff3ct
@@ -26,7 +24,7 @@ struct Simulation : Launcher
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required arg
-		std::vector<float> snr_range;
+		std::vector<float> noise_range;
 
 		// optional parameters
 #ifdef ENABLE_MPI

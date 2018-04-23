@@ -2,6 +2,7 @@
 #define CODEC_HPP_
 
 #include "Tools/Interleaver/Interleaver_core.hpp"
+#include "../../Tools/Noise/Noise.hpp"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
@@ -17,23 +18,27 @@ namespace module
 {
 	namespace cdc
 	{
-		namespace tsk
-		{
-			enum list { extract_sys_llr, extract_sys_bit, extract_sys_par, add_sys_ext, SIZE };
-		}
+		enum class tsk : uint8_t { extract_sys_llr, extract_sys_bit, extract_sys_par, add_sys_ext, SIZE };
 
 		namespace sck
 		{
-			namespace extract_sys_llr { enum list { Y_N, Y_K     , SIZE }; }
-			namespace extract_sys_bit { enum list { Y_N, V_K     , SIZE }; }
-			namespace extract_sys_par { enum list { Y_N, sys, par, SIZE }; }
-			namespace add_sys_ext     { enum list { ext, Y_N     , SIZE }; }
+			enum class extract_sys_llr : uint8_t { Y_N, Y_K     , SIZE };
+			enum class extract_sys_bit : uint8_t { Y_N, V_K     , SIZE };
+			enum class extract_sys_par : uint8_t { Y_N, sys, par, SIZE };
+			enum class add_sys_ext     : uint8_t { ext, Y_N     , SIZE };
 		}
 	}
 
 template <typename B = int, typename Q = float>
 class Codec : public Module
 {
+public:
+	inline Task&   operator[](const cdc::tsk                  t) { return Module::operator[]((int)t);                                 }
+	inline Socket& operator[](const cdc::sck::extract_sys_llr s) { return Module::operator[]((int)cdc::tsk::extract_sys_llr)[(int)s]; }
+	inline Socket& operator[](const cdc::sck::extract_sys_bit s) { return Module::operator[]((int)cdc::tsk::extract_sys_bit)[(int)s]; }
+	inline Socket& operator[](const cdc::sck::extract_sys_par s) { return Module::operator[]((int)cdc::tsk::extract_sys_par)[(int)s]; }
+	inline Socket& operator[](const cdc::sck::add_sys_ext     s) { return Module::operator[]((int)cdc::tsk::add_sys_ext    )[(int)s]; }
+
 private:
 	tools::Interleaver_core< > *interleaver_core;
 	       Interleaver     <B> *interleaver_bit;
@@ -47,7 +52,7 @@ protected :
 	const int N_cw;
 	const int N;
 	const int tail_length;
-	float sigma;
+	tools::Noise<float>* n;
 
 public:
 	Codec(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1);
@@ -60,9 +65,10 @@ public:
 
 	virtual Puncturer<B,Q>* get_puncturer();
 
-	virtual float get_sigma();
+	const tools::Noise<float>& get_noise();
 
-	virtual void set_sigma(const float sigma);
+	virtual void set_noise(const tools::Noise<float>& noise);
+	void set_noise(const tools::Noise<double>& noise);
 
 	template <class A = std::allocator<Q>>
 	void extract_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id = -1);

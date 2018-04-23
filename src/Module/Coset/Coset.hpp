@@ -19,14 +19,11 @@ namespace module
 {
 	namespace cst
 	{
-		namespace tsk
-		{
-			enum list { apply, SIZE };
-		}
+		enum class tsk : uint8_t { apply, SIZE };
 
 		namespace sck
 		{
-			namespace apply { enum list { ref, in, out, SIZE }; }
+			enum class apply : uint8_t { ref, in, out, SIZE };
 		}
 	}
 
@@ -43,6 +40,10 @@ namespace module
 template <typename B, typename D>
 class Coset : public Module
 {
+public:
+	inline Task&   operator[](const cst::tsk        t) { return Module::operator[]((int)t);                       }
+	inline Socket& operator[](const cst::sck::apply s) { return Module::operator[]((int)cst::tsk::apply)[(int)s]; }
+
 protected:
 	const int size; /*!< Size of the input data */
 

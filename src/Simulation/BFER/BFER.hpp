@@ -10,6 +10,7 @@
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
+#include "../../Tools/Noise/Noise.hpp"
 
 #include "Module/Module.hpp"
 #include "Module/Monitor/Monitor.hpp"
@@ -38,13 +39,10 @@ protected:
 	// a barrier to synchronize the threads
 	tools::Barrier barrier;
 
+	// code specifications
 	const float bit_rate;
 
-	// code specifications
-	float snr;
-	float snr_s;
-	float snr_b;
-	float sigma;
+	tools::Noise<R>* noise; // current noise simulated
 
 	unsigned max_fra;
 

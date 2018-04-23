@@ -21,8 +21,8 @@ namespace module
 
 template <typename R>
 Channel<R>::
-Channel(const int N, const R sigma, const int n_frames)
-: Module(n_frames), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
+Channel(const int N, const tools::Noise<R>& _n, const int n_frames)
+: Module(n_frames), N(N), n(_n.clone()), noise(this->N * this->n_frames, 0)
 {
 	const std::string name = "Channel";
 	this->set_name(name);
@@ -62,8 +62,17 @@ Channel(const int N, const R sigma, const int n_frames)
 
 template <typename R>
 Channel<R>::
+Channel(const int N, const int n_frames)
+: Channel(N, tools::Sigma<R>(), n_frames)
+{
+}
+
+template <typename R>
+Channel<R>::
 ~Channel()
 {
+	if (this->n != nullptr)
+		delete this->n;
 }
 
 template <typename R>
@@ -71,13 +80,6 @@ int Channel<R>::
 get_N() const
 {
 	return this->N;
-}
-
-template <typename R>
-R Channel<R>::
-get_sigma() const
-{
-	return this->sigma;
 }
 
 template <typename R>
@@ -89,45 +91,20 @@ get_noise() const
 
 template <typename R>
 void Channel<R>::
-set_sigma(const R sigma)
+set_noise(const tools::Noise<R>& noise)
 {
-	if (sigma <= 0)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	if (this->n != nullptr)
+		delete this->n;
 
-	this->sigma = sigma;
+	this->n = noise.clone();
+	this->check_noise();
 }
 
-template <typename R>
-void Channel<R>::
-set_noise(const R sigma, const R esn0, const R ebn0)
-{
-	this->set_sigma(sigma);
-	this->esn0 = esn0;
-	this->ebn0 = ebn0;
-}
-
-/*!
- * \brief Adds the noise to a perfectly clear signal.
- *
- * \param X_N: a perfectly clear message.
- * \param Y_N: a noisy signal.
- */
 template <typename R>
 template <class A>
 void Channel<R>::
 add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id)
 {
-	if (sigma <= 0)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (X_N.size() != Y_N.size())
 	{
 		std::stringstream message;
@@ -176,25 +153,11 @@ add_noise(const R *X_N, R *Y_N, const int frame_id)
 		                 f);
 }
 
-/*!
- * \brief Adds the noise to a perfectly clear signal.
- *
- * \param X_N: a perfectly clear message.
- * \param H_N: the channel gains.
- * \param Y_N: a noisy signal.
- */
 template <typename R>
 template <class A>
 void Channel<R>::
 add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N, const int frame_id)
 {
-	if (sigma <= 0)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (X_N.size() != Y_N.size() || Y_N.size() != H_N.size())
 	{
 		std::stringstream message;
@@ -264,6 +227,17 @@ void Channel<R>::
 _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template<typename R>
+void Channel<R>::check_noise()
+{
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "No noise has been set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 }

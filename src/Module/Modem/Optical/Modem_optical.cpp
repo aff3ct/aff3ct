@@ -15,22 +15,13 @@ template <typename B, typename R, typename Q>
 Modem_optical<B,R,Q>
 ::Modem_optical(const int N,
                 const tools::Distributions<R>& dist,
-                const R ROP,
+                const tools::Noise<R>& noise,
                 const int n_frames)
-: Modem<B,R,Q>(N, (R)-1, n_frames),
+: Modem<B,R,Q>(N, noise, n_frames),
   dist(dist)
 {
 	const std::string name = "Modem_optical";
 	this->set_name(name);
-
-	try
-	{
-		this->set_noise(0,0,ROP);
-	}
-	catch(tools::invalid_argument&)
-	{
-
-	}
 }
 
 template <typename B, typename R, typename Q>
@@ -41,19 +32,19 @@ Modem_optical<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_optical<B,R,Q>
-::set_noise(const R sigma, const R esn0, const R ebn0)
+::set_noise(const tools::Noise<R>& noise)
 {
-	this->sigma = sigma;
-	this->esn0  = esn0;
-	this->ebn0  = ebn0;
+	Modem<B,R,Q>::set_noise(noise);
 
-	this->rop = this->ebn0;
-	this->current_dist = dist.get_distribution(this->rop);
+	this->n->is_of_type_throw(tools::Noise_type::ROP);
+
+	this->current_dist = dist.get_distribution(this->n->get_noise());
 
 	if (this->current_dist == nullptr)
 	{
 		std::stringstream message;
-		message << "Undefined noise power 'this->rop' in the given distributions ('this->rop' = " << this->rop << ").";
+		message << "Undefined noise power 'this->n->get_noise()' in the given distributions"
+		           " ('this->n->get_noise()' = " << this->n->get_noise() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }

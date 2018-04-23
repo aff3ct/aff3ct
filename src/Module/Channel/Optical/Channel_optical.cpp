@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_optical<R>
 ::Channel_optical(const int N, tools::Noise_generator<R> *noise_generator,
-                  const R sigma, const int n_frames)
-: Channel<R>(N, 1, n_frames),
+                  const tools::Noise<R>& noise, const int n_frames)
+: Channel<R>(N, noise, n_frames),
   noise_generator(noise_generator)
 {
 	const std::string name = "Channel_optical";
@@ -19,8 +19,6 @@ Channel_optical<R>
 
 	if (noise_generator == nullptr)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
-
-	this->ebn0 = sigma;
 }
 
 template <typename R>
@@ -34,17 +32,18 @@ template <typename R>
 void Channel_optical<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	noise_generator->generate(X_N, Y_N, this->N, this->ebn0);
+	noise_generator->generate(X_N, Y_N, this->N, this->n->get_noise());
 }
 
-template <typename R>
+template<typename R>
 void Channel_optical<R>
-::set_noise(const R sigma, const R esn0, const R ebn0)
+::check_noise()
 {
-	this->sigma = sigma;
-	this->esn0  = esn0;
-	this->ebn0  = ebn0;
+	Channel<R>::check_noise();
+
+	this->n->is_of_type_throw(tools::Noise_type::ROP);
 }
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

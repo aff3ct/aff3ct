@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
+#include "Tools/Noise/Noise.hpp"
 
 #include "../Terminal.hpp"
 
@@ -16,29 +17,25 @@ template <typename B = int, typename R = float>
 class Terminal_BFER : public Terminal
 {
 protected:
-	const module::Monitor_BFER<B,R>                                                    &monitor;
-	      float                                                                         esn0;
-	      float                                                                         ebn0;
-	      bool                                                                          is_esn0;
-	      bool                                                                          is_ebn0;
-	      std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>  t_snr;
-	unsigned short                                                                      real_time_state;
-	bool                                                                                display_mutinfo;
+	const module::Monitor_BFER<B,R> &monitor;
+	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
+	unsigned short real_time_state;
+	Noise<>* n;
+	const bool display_mutinfo;
 
 public:
-	explicit Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, const bool display_mutinfo = false);
+	explicit Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo = false);
 
-	virtual ~Terminal_BFER() {}
+	virtual ~Terminal_BFER() = default;
 
-	void set_esn0(const float esn0);
-	void set_ebn0(const float ebn0);
+	void set_noise(const Noise<float>& noise);
+	void set_noise(const Noise<double>& noise);
 
 	void legend      (std::ostream &stream = std::cout);
 	void temp_report (std::ostream &stream = std::cout);
 	void final_report(std::ostream &stream = std::cout);
 
 protected:
-	static std::string get_time_format(float secondes);
 	void _report(std::ostream &stream);
 };
 }

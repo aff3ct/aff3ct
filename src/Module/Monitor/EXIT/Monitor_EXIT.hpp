@@ -14,6 +14,10 @@ namespace module
 template <typename B = int, typename R = float>
 class Monitor_EXIT : public Monitor
 {
+public:
+	inline Task&   operator[](const mnt::tsk                    t) { return Module::operator[]((int)t);                                   }
+	inline Socket& operator[](const mnt::sck::check_mutual_info s) { return Module::operator[]((int)mnt::tsk::check_mutual_info)[(int)s]; }
+
 protected:
 	const unsigned n_trials;
 
@@ -71,7 +75,7 @@ public:
 		if (frame_id != -1 && frame_id >= this->n_frames)
 		{
 			std::stringstream message;
-			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
+			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
 			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}

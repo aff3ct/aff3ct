@@ -12,7 +12,7 @@
 #include <Tools/Code/Polar/decoder_polar_functions.h>
 #include <Tools/Code/Polar/fb_extract.h>
 #include <Tools/Code/Polar/nodes_parser.h>
-#include <Tools/Display/bash_tools.h>
+#include <Tools/Display/rang_format/rang_format.h>
 #include <Tools/general_utils.h>
 #include <Tools/Math/interpolation.h>
 #include <Tools/Math/matrix.h>

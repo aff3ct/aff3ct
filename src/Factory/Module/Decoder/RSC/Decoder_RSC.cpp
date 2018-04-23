@@ -266,8 +266,6 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC::parameters
 	{
 		return build_siso<B,Q>(trellis, stream, n_ite);
 	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>

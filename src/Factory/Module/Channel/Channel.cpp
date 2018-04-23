@@ -6,6 +6,7 @@
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
 #include "Module/Channel/Optical/Channel_optical.hpp"
+#include "Module/Channel/BEC/Channel_BEC.hpp"
 
 #include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 #include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
@@ -51,7 +52,7 @@ void Channel::parameters
 		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of symbols by frame.",
-		tools::Argument_info::REQUIRED);
+		tools::arg_rank::REQ);
 
 	args.add(
 		{p+"-fra", "F"},
@@ -60,7 +61,7 @@ void Channel::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "OPTICAL")),
+		tools::Text(tools::Including_set("NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "OPTICAL")),
 		"type of the channel to use in the simulation.");
 
 	args.add(
@@ -165,7 +166,7 @@ module::Channel<R>* Channel::parameters
 {
 	if (type == "OPTICAL" && dist != nullptr)
 	{
-		return new module::Channel_optical<R>(N, new tools::User_pdf_noise_generator_std<R>(*dist, seed), sigma, n_frames);
+		return new module::Channel_optical<R>(N, new tools::User_pdf_noise_generator_std<R>(*dist, seed), tools::Received_optical_power<R>((R)this->sigma), n_frames);
 	}
 
 
@@ -181,14 +182,15 @@ module::Channel<R>* Channel::parameters
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, sigma, n_frames);
+	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, tools::Sigma<R>((R)this->sigma), n_frames);
+	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, tools::Sigma<R>((R)this->sigma), n_frames);
+	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, tools::Sigma<R>((R)this->sigma), n_frames);
 	else
 	{
 		module::Channel<R>* c = nullptr;
 		     if (type == "USER") c = new module::Channel_user<R>(N, path, add_users, n_frames);
 		else if (type == "NO"  ) c = new module::Channel_NO  <R>(N,       add_users, n_frames);
+		else if (type == "BEC" ) c = new module::Channel_BEC <R>(N, seed, tools::Erased_probability<R>((R)this->sigma), n_frames);
 
 		delete n;
 

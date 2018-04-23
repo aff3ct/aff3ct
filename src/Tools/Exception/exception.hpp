@@ -12,7 +12,7 @@ class exception : public std::exception
 {
 public:
 	static bool no_backtrace;
-	static bool no_addr2line;
+	static bool no_addr_to_line;
 
 protected:
 	static const std::string empty_string;
@@ -21,7 +21,7 @@ private:
 	std::string message;   // the message only
 #ifdef ENABLE_BACK_TRACE
 	std::string backtrace; // the message + the backtrace
-	std::string backtrace_a2l; // the message + the backtrace with addr2line conversion
+	std::string backtrace_a2l; // the message + the backtrace with addr_to_line conversion
 #endif
 
 public:

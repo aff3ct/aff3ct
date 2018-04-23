@@ -44,6 +44,8 @@ void Decoder_BCH::parameters
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"correction power of the BCH code.");
 
+	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});
+
 	tools::add_options(args.at({p+"-type", "D"}), 0, "ALGEBRAIC");
 	tools::add_options(args.at({p+"-implem"   }), 0, "GENIUS");
 }
@@ -59,12 +61,19 @@ void Decoder_BCH::parameters
 	if (this->m == 0)
 	{
 		std::stringstream message;
-		message << "The Gallois Field order is null (because N_cw = " << this->N_cw << ").";
+		message << "The Galois Field order is null (because N_cw = " << this->N_cw << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (vals.exist({p+"-corr-pow", "T"}))
-		this->t = vals.to_int({p+"-corr-pow", "T"});
+	{
+		this->t = vals.to_int({p + "-corr-pow", "T"});
+		if (K == 0)
+		{
+			this->K = this->N_cw - tools::BCH_polynomial_generator(this->N_cw, this->t).get_n_rdncy();
+			this->R = (float) this->K / (float) this->N_cw;
+		}
+	}
 	else
 		this->t = (this->N_cw - this->K) / this->m;
 }
@@ -95,8 +104,6 @@ module::Decoder_SIHO<B,Q>* Decoder_BCH::parameters
 	{
 		return build_hiho<B,Q>(GF, encoder);
 	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>

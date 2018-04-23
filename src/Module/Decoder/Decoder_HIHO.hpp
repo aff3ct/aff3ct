@@ -31,6 +31,11 @@ namespace module
 template <typename B = int>
 class Decoder_HIHO : virtual public Decoder
 {
+public:
+	inline Task&   operator[](const dec::tsk                 t) { return Module::operator[]((int)t);                                }
+	inline Socket& operator[](const dec::sck::decode_hiho    s) { return Module::operator[]((int)dec::tsk::decode_hiho   )[(int)s]; }
+	inline Socket& operator[](const dec::sck::decode_hiho_cw s) { return Module::operator[]((int)dec::tsk::decode_hiho_cw)[(int)s]; }
+
 private:
 	std::vector<B> Y_N;
 	std::vector<B> V_KN;
