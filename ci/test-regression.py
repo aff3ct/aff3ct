@@ -23,7 +23,7 @@ parser.add_argument('--refs-path',      action='store', dest='refsPath',      ty
 parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
 parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
 parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                       # choices=xrange(1,   +inf)
-parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.5,                       help='Sensibility on the ratio between new vs ref to verify a noise point.')                    # choices=xrange(1.0, +inf)
+parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility on the difference between new vs ref to verify a noise point.')                    # choices=xrange(1.0, +inf)
 parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                         # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
 parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per noise point.')                            # choices=xrange(0,   +inf)
@@ -45,7 +45,10 @@ NoiseUnityList = ["dB",    "dB",    "dB",  ""  ]
 def format_e(n):
 	a = '%.2e' % n
 	return a
-	# return a.split('E')[0].rstrip('0').rstrip('.') + 'E' + a.split('E')[1]
+
+def splitFloat(n):
+	s = format_e(n).split('e')
+	return [float(s[0]), int(s[1])]
 
 
 def getFileNames(currentPath, fileNames):
@@ -265,21 +268,29 @@ class tableStats:
 
 	def makeStats(self):
 		for i in range(self.nData):
-			if self.tableCur[i] > self.tableRef[i]:
-				ratio = self.tableCur[i] / self.tableRef[i];
-			else:
-				ratio = self.tableRef[i] / self.tableCur[i];
+			c = splitFloat(self.tableCur[i])
+			r = splitFloat(self.tableRef[i])
 
-			if ratio > self.sensibility:
+
+			# compute the distance between the two points normalized to the unity with the lowest power
+			if c[1] < r[1]:
+				pw = c[1]
+			else:
+				pw = r[1]
+
+			diff = math.fabs(self.tableCur[i] - self.tableRef[i]) * 10**(-pw)
+
+			if diff > self.sensibility:
 				self.errorsPos    .append(i)
-				self.errorsList   .append([self.tableCur[i], ratio])
+				self.errorsList   .append([self.tableCur[i], self.tableRef[i]])
 				self.errorsMessage.append(format_e(self.tableRef[i]))
 			else:
 				self.valid += 1
+				self.errorsMessage.append("")
 
-			self.sumSensibility += ratio
-			self.minSensibility  = min(self.minSensibility, ratio)
-			self.maxSensibility  = max(self.maxSensibility, ratio)
+			self.sumSensibility += diff
+			self.minSensibility  = min(self.minSensibility, diff)
+			self.maxSensibility  = max(self.maxSensibility, diff)
 
 		if self.nData != 0:
 			self.avgSensibility = self.sumSensibility / float(self.nData)
@@ -315,10 +326,11 @@ class compStats:
 		self.dataCur  = dataCur
 		self.dataRef  = dataRef
 		self.dataList = []
-		self.dataList.append(tableStats(dataCur.FER, dataRef.FER, sensibility, "FER"  ))
-		self.dataList.append(tableStats(dataCur.BER, dataRef.BER, sensibility, "BER"  ))
-		self.dataList.append(tableStats(dataCur.MI,  dataRef.MI,  sensibility, "MI"   ))
-		self.dataList.append(tableStats(dataCur.ESN0,dataRef.ESN0,        1.0, "Es/N0"))
+		self.dataList.append(tableStats(dataCur.Noise, dataRef.Noise,         0.0, dataRef.NoiseType))
+		self.dataList.append(tableStats(dataCur.ESN0,  dataRef.ESN0,          0.0, "Es/N0"))
+		self.dataList.append(tableStats(dataCur.FER,   dataRef.FER,   sensibility, "FER"  ))
+		self.dataList.append(tableStats(dataCur.BER,   dataRef.BER,   sensibility, "BER"  ))
+		self.dataList.append(tableStats(dataCur.MI,    dataRef.MI,    sensibility, "MI"   ))
 
 	def errorMessage(self, idx):
 		message = ""
@@ -339,30 +351,30 @@ class compStats:
 
 		# get noise unity
 		unity = ""
-		idx = NoiseTypeList.index(self.dataCur.NoiseType)
+		idx = NoiseTypeList.index(self.dataRef.NoiseType)
 		if idx != -1:
 			unity = NoiseUnityList[idx]
 		if len(unity):
 			unity = " " + unity
 
-		message += "---- Details: Noise type = " + self.dataCur.NoiseType
-		message += ", first noise point = " + format_e(self.dataCur.Noise[0]) + unity
-		message += ", last noise point = " + format_e(self.dataCur.Noise[len(self.dataCur.Noise) -1]) + unity + "\n"
-		message += "---- -------|--------------|--------------------------------|----------------------- \n"
-		message += "----   name | valid points | sensibility [avg,min,max,rate] | [first,last] points    \n"
-		message += "---- -------|--------------|--------------------------------|----------------------- \n"
+		message += "---- Details: Noise type = " + self.dataRef.NoiseType
+		message += ", first noise point = " + format_e(self.dataRef.Noise[0]) + unity
+		message += ", last noise point = " + format_e(self.dataRef.Noise[len(self.dataRef.Noise) -1]) + unity + "\n"
+		message += "---- -------|-------------------------|--------------|-------------------------------- \n"
+		message += "----   name |   ranges [first,last]   | valid points | sensibility [avg,min,max,rate]  \n"
+		message += "---- -------|-------------------------|--------------|-------------------------------- \n"
 
 		for d in self.dataList:
 			if len(d.tableCur):
-				message += "----" + d.name.rjust(7) + " | "
-				message += (str(d.valid) + "/" + str(d.nData)).rjust(12) + " | "
-				message += "[ " + ("%.3f" % d.avgSensibility + ", %.2f" % d.minSensibility + ", %.2f" % d.maxSensibility + ", " + ("%.2f" % d.rateSensibility).rjust(6) + "%") + " ] | "
-				message += "[" + (format_e(d.tableCur[0]) + "," + format_e(d.tableCur[len(d.tableCur) -1])).rjust(19) + " ]" + "\n"
+				message += "----" + d.name.rjust(7) + " "
+				message += "| ["  + (format_e(d.tableCur[0])).rjust(10) + "," + (format_e(d.tableCur[len(d.tableCur) -1])).rjust(10) + "] "
+				message += "| "   + (str(d.valid) + "/" + str(d.nData)).rjust(12) + " "
+				message += "| [ " + ("%.3f" % d.avgSensibility + ", %.2f" % d.minSensibility + ", %.2f" % d.maxSensibility + ", " + ("%.2f" % d.rateSensibility).rjust(6) + "%") + " ] "
+				message += "\n"
 
 		if self.hasError():
-			message += "\n"
 			message += "---- -------|----------------------------------------------------------------------- \n"
-			message += "----   name | errors list                                                            \n"
+			message += "----   name | errors list {new -> ref}                                               \n"
 			message += "---- -------|----------------------------------------------------------------------- \n"
 			for d in self.dataList:
 				if d.hasError():
@@ -373,9 +385,7 @@ class compStats:
 							message += "\n----        | "
 
 
-						message += "{ %.3f" %e[0] + " -> "
-						if e[1] > 0: message += "+"
-						message += format_e(e[1]) + "}"
+						message += "{" + format_e(e[0]) + " -> " + format_e(e[1]) + "}"
 
 						el += 1
 						if el < len(d.errorsList):
