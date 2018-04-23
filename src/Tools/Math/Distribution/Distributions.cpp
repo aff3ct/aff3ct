@@ -8,121 +8,27 @@
 #include "Distributions.hpp"
 
 using namespace aff3ct;
-using namespace tools;
+using namespace aff3ct::tools;
+template<typename R>
+const int aff3ct::tools::Distributions<R>::saved_noise_precision = 1e6;
 
 template<typename R>
 Distributions<R>::
-Distributions()
-{
-
-}
-
-template<typename R>
-Distributions<R>::
-Distributions(std::ifstream& f_distributions)
+Distributions(const std::string& filename, bool read_all_at_init)
+: f_distributions(filename)
 {
 	if (f_distributions.fail())
 	{
 		std::stringstream message;
-		message << "'f_distributions' file descriptor is not valid: failbit is set.";
+		message << "'filename' file name is not valid: f_distributions failbit is set.";
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	read_noise_range();
 
-	std::string line;
-	std::getline(f_distributions, line);
-	auto desc = tools::Splitter::split(line, "", "", " ");
-
-	auto ROP_pos = std::find(desc.begin(), desc.end(), "ROP");
-	auto x_pos   = std::find(desc.begin(), desc.end(), "x"  );
-	auto y0_pos  = std::find(desc.begin(), desc.end(), "y0" );
-	auto y1_pos  = std::find(desc.begin(), desc.end(), "y1" );
-
-
-	if (ROP_pos == desc.end())
-		throw runtime_error(__FILE__, __LINE__, __func__, "No ROP in the description of the distribution");
-
-	if (x_pos == desc.end())
-		throw runtime_error(__FILE__, __LINE__, __func__, "No x in the description of the distribution");
-
-	if (y0_pos == desc.end())
-		throw runtime_error(__FILE__, __LINE__, __func__, "No y0 in the description of the distribution");
-
-	if (y1_pos == desc.end())
-		throw runtime_error(__FILE__, __LINE__, __func__, "No y1 in the description of the distribution");
-
-	std::string ROP;
-	std::vector<std::string> v_x ;
-	std::vector<std::string> v_y0;
-	std::vector<std::string> v_y1;
-
-	while (!f_distributions.eof())
-	{
-		for (auto it = desc.begin(); it != desc.end(); it++)
-		{
-			if (f_distributions.eof())
-				break;
-
-			std::getline(f_distributions, line);
-
-			if (line.empty())
-			{
-				it--;
-				continue;
-			}
-
-			if (it == ROP_pos)
-				ROP  = std::move(line);
-			else if (it == x_pos)
-				v_x  = std::move(tools::Splitter::split(line, "", "", " "));
-			else if (it == y0_pos)
-				v_y0 = std::move(tools::Splitter::split(line, "", "", " "));
-			else if (it == y1_pos)
-				v_y1 = std::move(tools::Splitter::split(line, "", "", " "));
-			else
-				tools::runtime_error(__FILE__, __LINE__, __func__);
-		}
-
-		if (f_distributions.eof())
-			break;
-
-		if (v_x.size() != v_y0.size() || v_x.size() != v_y1.size() )
-		{
-			std::stringstream message;
-			message << "'v_x' does not have the same size than 'v_y0' or 'v_y1' "
-			        << "('v_x.size()' = " << v_x.size() << ", 'v_y0.size()' = " << v_y0.size()
-			        << ", 'v_y1.size()' = " << v_y1.size() << " and 'ROP' = " << ROP << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-
-		try
-		{
-			auto ROP_R = (R)stof(ROP);
-
-			std::vector<R> v_x_R(v_x.size()) ;
-			std::vector<std::vector<R>> v_y_R(2);
-			for(auto& v : v_y_R)
-				v.resize(v_x.size());
-
-			// convert string vector to 'R' vector
-			for(unsigned j = 0; j < v_x_R.size(); j++)
-			{
-				v_x_R   [j] = (R)stof(v_x [j]);
-				v_y_R[0][j] = (R)stof(v_y0[j]);
-				v_y_R[1][j] = (R)stof(v_y1[j]);
-			}
-
-			add_distribution(ROP_R, new Distribution<R>(std::move(v_x_R), std::move(v_y_R)));
-		}
-		catch(...)
-		{
-			std::stringstream message;
-			message << "A value does not represent a float";
-			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-	}
+	if (read_all_at_init)
+		for(unsigned i = 0; i < this->noise_file_index.size(); i++)
+			read_distribution_from_file(i);
 }
 
 template<typename R>
@@ -130,32 +36,56 @@ Distributions<R>::
 ~Distributions()
 {
 	for (auto& d : distributions)
-		if (d.second)
+		if (d.second != nullptr)
 			delete d.second;
 }
 
 template<typename R>
 std::vector<R> Distributions<R>::
-get_noise_range(std::ifstream& f_distributions)
+get_noise_range() const
 {
-	if (f_distributions.fail())
-	{
-		std::stringstream message;
-		message << "'f_distributions' file descriptor is not valid: failbit is set.";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
+	auto nr = this->noise_range;
+	std::sort(nr.begin(), nr.end());
+
+	return nr;
+}
+
+template<typename R>
+void Distributions<R>::
+read_noise_range()
+{
+	file_go_to_pos(); // set the stream at the beginning of the file
 
 	std::string line;
 	std::getline(f_distributions, line);
-	auto desc = tools::Splitter::split(line, "", "", " ");
 
-	auto ROP_pos = std::find(desc.begin(), desc.end(), "ROP");
+	this->desc = tools::Splitter::split(line, "", "", " ");
 
-	std::vector<R> v_noise;
+	// get the data order
+	this->ROP_pos = std::distance(this->desc.begin(), std::find(this->desc.begin(), this->desc.end(), "ROP"));
+	this->x_pos   = std::distance(this->desc.begin(), std::find(this->desc.begin(), this->desc.end(), "x"  ));
+	this->y0_pos  = std::distance(this->desc.begin(), std::find(this->desc.begin(), this->desc.end(), "y0" ));
+	this->y1_pos  = std::distance(this->desc.begin(), std::find(this->desc.begin(), this->desc.end(), "y1" ));
+
+
+	if (this->ROP_pos == desc.size())
+		throw runtime_error(__FILE__, __LINE__, __func__, "No ROP in the description of the distribution");
+
+	if (this->x_pos == desc.size())
+		throw runtime_error(__FILE__, __LINE__, __func__, "No x in the description of the distribution");
+
+	if (this->y0_pos == desc.size())
+		throw runtime_error(__FILE__, __LINE__, __func__, "No y0 in the description of the distribution");
+
+	if (this->y1_pos == desc.size())
+		throw runtime_error(__FILE__, __LINE__, __func__, "No y1 in the description of the distribution");
 
 	while (!f_distributions.eof())
 	{
-		for (auto it = desc.begin(); it != desc.end(); it++)
+		auto pos = f_distributions.tellg();
+		this->noise_file_index.push_back(pos);
+
+		for (unsigned i = 0; i < this->desc.size(); i++)
 		{
 			if (f_distributions.eof())
 				break;
@@ -163,49 +93,173 @@ get_noise_range(std::ifstream& f_distributions)
 			std::getline(f_distributions, line);
 			if (line.empty())
 			{
-				it--;
+				i--;
 				continue;
 			}
 
-			if (it == ROP_pos)
-				v_noise.push_back((R)stof(line));
+			if (i == ROP_pos)
+				this->noise_range.push_back((R) stof(line));
 		}
 	}
 
-	std::sort(v_noise.begin(), v_noise.end());
-	return v_noise;
+	this->noise_file_index.resize(this->noise_range.size()); // delete the extra noise positions if any
+}
+
+template<typename R>
+bool Distributions<R>::
+has_distribution(R noise) const
+{
+	return this->distributions.find(calibrated_noise(noise)) != this->distributions.end();
 }
 
 template<typename R>
 const Distribution<R>* const Distributions<R>::
-get_distribution(const R noise_power) const
+get_distribution(R noise) const
 {
-	int np = (int)(noise_power*(R)saved_noise_precision);
-
-	auto it_dis = this->distributions.find(np);
-
-	if (it_dis == this->distributions.end())
+	auto it = this->distributions.find(calibrated_noise(noise));
+	if (it == this->distributions.end())
 		return nullptr;
 
-	return it_dis->second;
+	return it->second;
 }
 
 template<typename R>
 void Distributions<R>::
-add_distribution(R noise_power, Distribution<R>* new_distribution)
+add_distribution(R noise, Distribution<R>* new_distribution)
 {
-	if (get_distribution(noise_power))
+	if (get_distribution(noise))
 	{
 		std::stringstream message;
-		message << "A distribution already exist for the given noise power 'noise_power' ('noise_power' = " << noise_power << ").";
+		message << "A distribution already exist for the given noise power 'noise_power' ('noise' = " << noise << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	int np = (int)(noise_power*(R)saved_noise_precision);
-
-	this->distributions[np] = new_distribution;
+	this->distributions[calibrated_noise(noise)] = new_distribution;
 }
 
+template<typename R>
+void Distributions<R>::
+file_go_to_pos(unsigned index)
+{
+	f_distributions.clear();
+
+	if (index == (unsigned)-1)
+		f_distributions.seekg(f_distributions.beg); // set the stream cursor at the beginning of the file
+	else
+		f_distributions.seekg(this->noise_file_index.at(index)); // set the stream cursor at the right position to read the
+}
+
+template<typename R>
+void Distributions<R>::
+read_distribution(R noise)
+{
+	if (has_distribution(noise))
+		return;
+
+	// else has not been read yet
+
+	// check if the distribution exists in the file
+	auto idx = std::find(this->noise_range.begin(),this->noise_range.end(), noise);
+
+	if (idx != this->noise_range.end())
+		read_distribution_from_file(std::distance(this->noise_range.begin(), idx)); // then read it
+}
+
+template<typename R>
+void Distributions<R>::
+read_distribution_from_file(unsigned index)
+{
+	if (has_distribution(this->noise_range.at(index)))
+		return; // distribution already read
+
+	file_go_to_pos(index); // set the stream cursor at the right position to read the asked distribution
+
+	if (f_distributions.fail())
+	{
+		std::stringstream message;
+		message << "Failed to go to the asked position in the file stream 'f_distribution' (this->noise_file_index["
+		        << index << "] = " << this->noise_file_index[index] << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	std::string ROP, line;
+	std::vector<std::string> v_x, v_y0, v_y1;
+
+	for (unsigned i = 0; i < this->desc.size(); i++)
+	{
+		if (f_distributions.eof())
+			throw runtime_error(__FILE__, __LINE__, __func__, "The file stream is at the end while reading it.");
+
+		std::getline(f_distributions, line);
+
+		if (line.empty())
+		{
+			i--;
+			continue;
+		}
+
+		if (i == ROP_pos)
+			ROP  = std::move(line);
+		else if (i == x_pos)
+			v_x  = tools::Splitter::split(line, "", "", " ");
+		else if (i == y0_pos)
+			v_y0 = tools::Splitter::split(line, "", "", " ");
+		else if (i == y1_pos)
+			v_y1 = tools::Splitter::split(line, "", "", " ");
+		else
+			tools::runtime_error(__FILE__, __LINE__, __func__);
+	}
+
+	if (v_x.size() != v_y0.size() || v_x.size() != v_y1.size() )
+	{
+		std::stringstream message;
+		message << "'v_x' does not have the same size than 'v_y0' or 'v_y1' "
+		        << "('v_x.size()' = " << v_x.size() << ", 'v_y0.size()' = " << v_y0.size()
+		        << ", 'v_y1.size()' = " << v_y1.size() << " and 'ROP' = " << ROP << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	try
+	{
+		auto ROP_R = (R)stof(ROP);
+
+		if (ROP_R != this->noise_range[index])
+		{
+			std::stringstream message;
+			message << "'ROP_R' does not match with the asked distribution 'this->noise_range[index]'"
+			        << "('ROP_R' = " << ROP_R << " and 'this->noise_range[" << index << "]' = " << this->noise_range[index] << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		std::vector<R> v_x_R(v_x.size()) ;
+		std::vector<std::vector<R>> v_y_R(2);
+		for(auto& v : v_y_R)
+			v.resize(v_x.size());
+
+		// convert string vector to 'R' vector
+		for(unsigned j = 0; j < v_x_R.size(); j++)
+		{
+			v_x_R   [j] = (R)stof(v_x [j]);
+			v_y_R[0][j] = (R)stof(v_y0[j]);
+			v_y_R[1][j] = (R)stof(v_y1[j]);
+		}
+
+		add_distribution(ROP_R, new Distribution<R>(std::move(v_x_R), std::move(v_y_R)));
+	}
+	catch(...)
+	{
+		std::stringstream message;
+		message << "A value does not represent a float";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+template<typename R>
+int Distributions<R>::
+calibrated_noise(R noise)
+{
+	return (int)(noise*(R)saved_noise_precision);
+}
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

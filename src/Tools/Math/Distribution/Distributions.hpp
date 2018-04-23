@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <vector>
 
 #include "Distribution.hpp"
 
@@ -17,25 +18,44 @@ namespace tools
 template <typename R = float>
 class Distributions
 {
+public:
+	static const int saved_noise_precision;
+
 protected:
 	std::map<int, Distribution<R>*> distributions; // distributions in function of the noise power
-	const int saved_noise_precision = 1e6;
+	std::ifstream f_distributions;
+
+	std::vector<R> noise_range;
+	std::vector<std::streampos> noise_file_index;
+
+	// the data description
+	std::vector<std::string> desc;
+	size_t ROP_pos;
+	size_t x_pos  ;
+	size_t y0_pos ;
+	size_t y1_pos ;
 
 public:
-	Distributions();
-
-	Distributions(std::ifstream& f_distributions);
+	explicit Distributions(const std::string& filename, bool read_all_at_init = false);
 
 	virtual ~Distributions();
 
-	const Distribution<R>* const get_distribution(const R noise_power) const;
+	bool has_distribution(R noise) const;
+	const Distribution<R>* const get_distribution(R noise) const;
+	void read_distribution(R noise);
 
-	static std::vector<R> get_noise_range(std::ifstream& f_distributions);
+	std::vector<R> get_noise_range() const;
 
+protected:
 	/*
 	 * Add a distribution 'new_distribution' associated with the noise power 'noise_power'.
 	 */
-	void add_distribution(R noise_power, Distribution<R>* new_distribution);
+	void add_distribution(R noise, Distribution<R>* new_distribution);
+	void read_noise_range();
+	void read_distribution_from_file(unsigned index);
+
+	static int calibrated_noise(R noise);
+	void file_go_to_pos(unsigned index = -1);
 };
 
 }

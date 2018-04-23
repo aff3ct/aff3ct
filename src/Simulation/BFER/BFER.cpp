@@ -82,11 +82,7 @@ BFER<B,R,Q>
 #endif
 
 	if (!params_BFER.pdf_path.empty())
-	{
-		std::ifstream file(params_BFER.pdf_path);
-		distributions = new tools::Distributions<R>(file);
-	}
-
+		distributions = new tools::Distributions<R>(params_BFER.pdf_path);
 }
 
 template <typename B, typename R, typename Q>
@@ -185,6 +181,11 @@ void BFER<B,R,Q>
 		}
 
 		this->terminal->set_noise(*this->noise);
+
+		// manage noise distributions to be sure it exists
+		if (this->distributions != nullptr)
+			this->distributions->read_distribution(this->noise->get_noise());
+
 
 
 		if (this->params_BFER.err_track_revert)

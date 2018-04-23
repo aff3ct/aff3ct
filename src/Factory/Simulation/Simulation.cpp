@@ -140,9 +140,7 @@ void Simulation::parameters
 	if (vals.exist({p+"-pdf-path"}))
 	{
 		this->pdf_path = vals.at({p+"-pdf-path"});
-		std::ifstream file(this->pdf_path);
-
-		this->noise_range = std::move(tools::Distributions<>::get_noise_range(file));
+		this->noise_range = tools::Distributions<>(this->pdf_path).get_noise_range();
 
 		if(vals.exist({p+"-noise-range", "R"}))
 		{
