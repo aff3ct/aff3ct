@@ -109,6 +109,7 @@
 #include <Launcher/Simulation/BFER_std.hpp>
 #include <Launcher/Simulation/EXIT.hpp>
 #include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
+#include <Module/Channel/BEC/Channel_BEC.hpp>
 #include <Module/Channel/Channel.hpp>
 #include <Module/Channel/NO/Channel_NO.hpp>
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp>
@@ -302,6 +303,7 @@
 #include <Tools/Arguments/Argument_handler.hpp>
 #include <Tools/Arguments/Argument_tools.hpp>
 #include <Tools/Arguments/Maps/Argument_info.hpp>
+#include <Tools/Arguments/Maps/Argument_links.hpp>
 #include <Tools/Arguments/Maps/Argument_map_group.hpp>
 #include <Tools/Arguments/Maps/Argument_map_info.hpp>
 #include <Tools/Arguments/Maps/Argument_map_value.hpp>
@@ -409,6 +411,10 @@
 #include <Tools/Interleaver/Row_column/Interleaver_core_row_column.hpp>
 #include <Tools/Interleaver/User/Interleaver_core_user.hpp>
 #include <Tools/Math/Galois.hpp>
+#include <Tools/Noise/Erasure_probability.hpp>
+#include <Tools/Noise/Noise.hpp>
+#include <Tools/Noise/Received_optical_power.hpp>
+#include <Tools/Noise/Sigma.hpp>
 #include <Tools/Perf/Reorderer/Reorderer.hpp>
 #include <Tools/SystemC/SC_Debug.hpp>
 #include <Tools/SystemC/SC_Dummy.hpp>
