@@ -1,6 +1,7 @@
 #ifndef AFF3CT_HPP
 #define AFF3CT_HPP
 
+#include <Tools/Algo/histogram.h>
 #include <Tools/Code/Polar/API/functions_polar_inter.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_8bit_bitpacking.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_intra.h>
@@ -19,6 +20,9 @@
 #include <Tools/Math/max.h>
 #include <Tools/Math/numerical_integration.h>
 #include <Tools/Math/utils.h>
+#include <Tools/Perf/common/hamming_distance.h>
+#include <Tools/Perf/common/hard_decide.h>
+#include <Tools/Perf/common/mutual_info.h>
 #include <Tools/Perf/common.h>
 #include <Tools/Perf/Transpose/transpose_AVX.h>
 #include <Tools/Perf/Transpose/transpose_NEON.h>
@@ -111,8 +115,11 @@
 #include <Launcher/Simulation/BFER_std.hpp>
 #include <Launcher/Simulation/EXIT.hpp>
 #include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
+#include <Module/Channel/BEC/Channel_BEC.hpp>
 #include <Module/Channel/Channel.hpp>
 #include <Module/Channel/NO/Channel_NO.hpp>
+#include <Module/Channel/Optical/Channel_optical.hpp>
+#include <Module/Channel/PDF/Channel_pdf.hpp>
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp>
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp>
 #include <Module/Channel/User/Channel_user.hpp>
@@ -246,6 +253,7 @@
 #include <Module/Modem/CPM/Modem_CPM.hpp>
 #include <Module/Modem/Modem.hpp>
 #include <Module/Modem/OOK/Modem_OOK.hpp>
+#include <Module/Modem/Optical/Modem_optical.hpp>
 #include <Module/Modem/PAM/Modem_PAM.hpp>
 #include <Module/Modem/PSK/Modem_PSK.hpp>
 #include <Module/Modem/QAM/Modem_QAM.hpp>
@@ -307,6 +315,7 @@
 #include <Tools/Arguments/Argument_handler.hpp>
 #include <Tools/Arguments/Argument_tools.hpp>
 #include <Tools/Arguments/Maps/Argument_info.hpp>
+#include <Tools/Arguments/Maps/Argument_links.hpp>
 #include <Tools/Arguments/Maps/Argument_map_group.hpp>
 #include <Tools/Arguments/Maps/Argument_map_info.hpp>
 #include <Tools/Arguments/Maps/Argument_map_value.hpp>
@@ -413,8 +422,14 @@
 #include <Tools/Interleaver/Random_column/Interleaver_core_random_column.hpp>
 #include <Tools/Interleaver/Row_column/Interleaver_core_row_column.hpp>
 #include <Tools/Interleaver/User/Interleaver_core_user.hpp>
+#include <Tools/Math/Distribution/Distribution.hpp>
+#include <Tools/Math/Distribution/Distributions.hpp>
 #include <Tools/Math/Galois.hpp>
 #include <Tools/Math/Point.hpp>
+#include <Tools/Noise/Erasure_probability.hpp>
+#include <Tools/Noise/Noise.hpp>
+#include <Tools/Noise/Received_optical_power.hpp>
+#include <Tools/Noise/Sigma.hpp>
 #include <Tools/Perf/Reorderer/Reorderer.hpp>
 #include <Tools/SystemC/SC_Debug.hpp>
 #include <Tools/SystemC/SC_Dummy.hpp>
