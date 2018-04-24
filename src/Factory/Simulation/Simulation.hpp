@@ -34,9 +34,11 @@ struct Simulation : Launcher
 #endif
 		std::chrono::seconds      stop_time       = std::chrono::seconds(0);
 		std::string               pyber           = "";
+		unsigned                  max_frame       = 0;
 		bool                      debug           = false;
 		bool                      debug_hex       = false;
 		bool                      statistics      = false;
+		bool                      crit_nostop     = false;
 		int                       n_threads       = 1;
 		int                       local_seed      = 0;
 		int                       global_seed     = 0;
