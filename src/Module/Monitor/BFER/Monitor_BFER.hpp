@@ -6,7 +6,7 @@
 #include <functional>
 
 #include "../Monitor.hpp"
-#include "Tools/Algo/Histogram.hpp"
+//#include "Tools/Algo/Histogram.hpp"
 
 namespace aff3ct
 {
@@ -32,7 +32,7 @@ protected:
 	std::vector<std::function<void(unsigned, int )>> callbacks_fe;
 	std::vector<std::function<void(          void)>> callbacks_check;
 	std::vector<std::function<void(          void)>> callbacks_fe_limit_achieved;
-	tools::Histogram<R> llrs0, llrs1;
+//	tools::Histogram<R> llrs0, llrs1;
 
 public:
 	Monitor_BFER(const int K, const int N, const unsigned max_fe, const int n_frames = 1);
@@ -117,8 +117,8 @@ public:
 	virtual unsigned long long get_n_be          () const;
 	virtual R                  get_MI            () const;
 	virtual R                  get_MI_sum        () const;
-	virtual const tools::Histogram<R>&  get_llrs0();
-	virtual const tools::Histogram<R>&  get_llrs1();
+//	virtual const tools::Histogram<R>&  get_llrs0();
+//	virtual const tools::Histogram<R>&  get_llrs1();
 
 	float get_fer   () const;
 	float get_ber   () const;

@@ -71,11 +71,11 @@ R Monitor_BFER<B,R>
 		                                 Y + f * this->N,
 		                                 f);
 
-	for(auto i = 0; i < this->n_frames*this->N ; i++)
-		if (X[i])
-			this->llrs1.add_value(Y[i]);
-		else
-			this->llrs0.add_value(Y[i]);
+//	for(auto i = 0; i < this->n_frames*this->N ; i++)
+//		if (X[i])
+//			this->llrs1.add_value(Y[i]);
+//		else
+//			this->llrs0.add_value(Y[i]);
 
 	return MI_sum / (R)this->n_frames * 10000; // return the mut info %10000 instead of %100
 }
@@ -256,8 +256,8 @@ void Monitor_BFER<B,R>
 	this->n_frame_errors    = 0;
 	this->n_analyzed_frames = 0;
 	this->MI_sum            = 0;
-	this->llrs0.reset();
-	this->llrs1.reset();
+//	this->llrs0.reset();
+//	this->llrs1.reset();
 }
 
 template <typename B, typename R>
@@ -269,17 +269,17 @@ void Monitor_BFER<B,R>
 	this->callbacks_fe_limit_achieved.clear();
 }
 
-template<typename B, typename R>
-const tools::Histogram<R>& Monitor_BFER<B, R>::get_llrs1()
-{
-	return llrs1;
-}
-
-template<typename B, typename R>
-const tools::Histogram<R>& Monitor_BFER<B, R>::get_llrs0()
-{
-	return llrs0;
-}
+//template<typename B, typename R>
+//const tools::Histogram<R>& Monitor_BFER<B, R>::get_llrs1()
+//{
+//	return llrs1;
+//}
+//
+//template<typename B, typename R>
+//const tools::Histogram<R>& Monitor_BFER<B, R>::get_llrs0()
+//{
+//	return llrs0;
+//}
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

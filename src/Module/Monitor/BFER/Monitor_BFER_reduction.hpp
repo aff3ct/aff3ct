@@ -25,8 +25,8 @@ public:
 	unsigned long long get_n_analyzed_fra         () const;
 	unsigned long long get_n_fe                   () const;
 	unsigned long long get_n_be                   () const;
-	const tools::Histogram<R>&           get_llrs0();
-	const tools::Histogram<R>&           get_llrs1();
+//	const tools::Histogram<R>&           get_llrs0();
+//	const tools::Histogram<R>&           get_llrs1();
 
 	R get_MI    () const;
 	R get_MI_sum() const;
