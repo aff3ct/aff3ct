@@ -7,6 +7,7 @@
 #include "Tools/Perf/common/hamming_distance.h"
 #include "Tools/Math/utils.h"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
@@ -66,13 +67,18 @@ R Monitor_BFER<B,R>
 
 	R MI_sum = 0;
 	for (auto f = f_start; f < f_stop; f++)
-		MI_sum += this->_get_mutual_info(X + f * this->K,
-		                                 Y + f * this->K,
+		MI_sum += this->_get_mutual_info(X + f * this->N,
+		                                 Y + f * this->N,
 		                                 f);
 
-	return MI_sum / (R)this->n_frames * 10000;
-}
+	for(auto i = 0; i < this->n_frames*this->N ; i++)
+		if (X[i])
+			this->llrs1.add_value(Y[i]);
+		else
+			this->llrs0.add_value(Y[i]);
 
+	return MI_sum / (R)this->n_frames * 10000; // return the mut info %10000 instead of %100
+}
 
 template <typename B, typename R>
 int Monitor_BFER<B,R>
@@ -250,6 +256,8 @@ void Monitor_BFER<B,R>
 	this->n_frame_errors    = 0;
 	this->n_analyzed_frames = 0;
 	this->MI_sum            = 0;
+	this->llrs0.reset();
+	this->llrs1.reset();
 }
 
 template <typename B, typename R>
@@ -259,6 +267,18 @@ void Monitor_BFER<B,R>
 	this->callbacks_fe               .clear();
 	this->callbacks_check            .clear();
 	this->callbacks_fe_limit_achieved.clear();
+}
+
+template<typename B, typename R>
+const tools::Histogram<R>& Monitor_BFER<B, R>::get_llrs1()
+{
+	return llrs1;
+}
+
+template<typename B, typename R>
+const tools::Histogram<R>& Monitor_BFER<B, R>::get_llrs0()
+{
+	return llrs0;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -79,12 +80,6 @@ Monitor_BFER_reduction<B,R>
 }
 
 template <typename B, typename R>
-Monitor_BFER_reduction<B,R>
-::~Monitor_BFER_reduction()
-{
-}
-
-template <typename B, typename R>
 unsigned long long Monitor_BFER_reduction<B,R>
 ::get_n_analyzed_fra() const
 {
@@ -140,6 +135,24 @@ R Monitor_BFER_reduction<B,R>
 		cur_mi += monitors[i]->get_MI_sum();
 
 	return cur_mi;
+}
+
+template<typename B, typename R>
+const tools::Histogram<R> & Monitor_BFER_reduction<B, R>::get_llrs0()
+{
+	for (unsigned i = 0; i < monitors.size(); i++)
+		this->llrs0.add_values(monitors[i]->get_llrs0());
+
+	return this->llrs0;
+}
+
+template<typename B, typename R>
+const tools::Histogram<R>& Monitor_BFER_reduction<B, R>::get_llrs1()
+{
+	for (unsigned i = 0; i < monitors.size(); i++)
+		this->llrs1.add_values(monitors[i]->get_llrs1());
+
+	return this->llrs1;
 }
 
 template <typename B, typename R>
