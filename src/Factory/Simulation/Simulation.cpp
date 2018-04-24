@@ -71,7 +71,21 @@ void Simulation::parameters
 	args.add(
 		{p+"-stop-time"},
 		tools::Integer(tools::Positive()),
-		"time in sec after what the current simulatated noise should stop (0 is infinite).");
+		"time in sec after what the current simulatated noise stops (0 is infinite).",
+		tools::arg_rank::ADV);
+
+	args.add(
+		{p+"-max-frame"},
+		tools::Integer(tools::Positive()),
+		"maximum number of frames to play after what the current simulatated noise stops (0 is infinite).",
+		tools::arg_rank::ADV);
+
+	args.add(
+		{p+"-crit-nostop"},
+		tools::None(),
+		"The stop criteria arguments -stop-time or -max-frame kill the current simulatated noise point"
+		" but not the simulation.",
+		tools::arg_rank::ADV);
 
 	args.add(
 		{p+"-debug"},
@@ -139,9 +153,11 @@ void Simulation::parameters
 
 	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"    });
 	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int  ({p+"-stop-time"}));
+	if(vals.exist({p+"-max-frame"       })) this->max_frame   =         vals.to_int  ({p+"-max-frame"});
 	if(vals.exist({p+"-seed",        "S"})) this->global_seed =         vals.to_int  ({p+"-seed", "S"});
 	if(vals.exist({p+"-stats"           })) this->statistics  = true;
 	if(vals.exist({p+"-debug"           })) this->debug       = true;
+	if(vals.exist({p+"-crit-nostop"     })) this->crit_nostop = true;
 	if(vals.exist({p+"-debug-limit", "d"}))
 	{
 		this->debug = true;

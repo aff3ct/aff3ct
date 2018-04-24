@@ -43,8 +43,6 @@ protected:
 
 	tools::Noise<R>* noise; // current noise simulated
 
-	unsigned max_fra;
-
 	// the monitors of the the BFER simulation
 	std::vector<module::Monitor_BFER          <B>*> monitor;
 	            module::Monitor_BFER_reduction<B>*  monitor_red;

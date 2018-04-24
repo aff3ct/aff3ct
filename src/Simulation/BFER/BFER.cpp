@@ -35,8 +35,6 @@ BFER<B,R,Q>
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
   noise(nullptr),
 
-  max_fra(0),
-
   monitor    (params_BFER.n_threads, nullptr),
   monitor_red(                       nullptr),
   dumper     (params_BFER.n_threads, nullptr),
@@ -194,8 +192,11 @@ void BFER<B,R,Q>
 			std::ifstream file(params_BFER.chn->path, std::ios::binary);
 			if (file.is_open())
 			{
+				unsigned max_fra;
 				file.read((char*)&max_fra, sizeof(max_fra));
 				file.close();
+
+				*const_cast<unsigned*>(&params_BFER.max_frame) = max_fra;
 			}
 			else
 			{
@@ -282,9 +283,9 @@ void BFER<B,R,Q>
 			this->dumper_red->clear();
 		}
 
-		if (!params_BFER.err_track_revert && !module::Monitor::is_interrupt() &&
+		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !module::Monitor::is_interrupt() &&
 		    this->monitor_red->get_n_fe() < this->monitor_red->get_fe_limit() &&
-		    (max_fra == 0 || this->monitor_red->get_n_fe() < max_fra))
+		    (params_BFER.max_frame == 0 || this->monitor_red->get_n_fe() < params_BFER.max_frame))
 			module::Monitor::stop();
 
 		this->monitor_red->reset();

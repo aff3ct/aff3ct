@@ -267,7 +267,7 @@ void BFER_std_threads<B,R,Q>
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
 	       (this->params_BFER_std.stop_time == seconds(0) ||
 	       (steady_clock::now() - t_snr) < this->params_BFER_std.stop_time) &&
-	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
+	       (this->params_BFER_std.max_frame == 0 || this->monitor_red->get_n_analyzed_fra() < this->params_BFER_std.max_frame))
 	{
 		if (this->params_BFER_std.debug)
 		{
