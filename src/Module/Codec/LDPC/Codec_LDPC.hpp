@@ -9,6 +9,7 @@
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
+#include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 #include "../Codec_SISO_SIHO.hpp"
 
@@ -22,7 +23,7 @@ class Codec_LDPC : public Codec_SISO_SIHO<B,Q>
 protected:
 	tools::Sparse_matrix H;
 	tools::Sparse_matrix G;
-	std::vector<uint32_t> info_bits_pos;
+	tools::LDPC_matrix_handler::Positions_vector info_bits_pos;
 	std::vector<bool> pctPattern;
 	const tools::dvbs2_values* dvbs2;
 
@@ -36,9 +37,6 @@ protected:
 	void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);
 	void _extract_sys_llr(const Q *Y_N, Q *Y_K,         const int frame_id);
 	void _extract_sys_bit(const Q *Y_N, B *V_K,         const int frame_id);
-
-private:
-	static std::string get_matrix_format(const std::string& filename);
 };
 }
 }
