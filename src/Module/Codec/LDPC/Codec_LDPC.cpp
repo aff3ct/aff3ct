@@ -134,12 +134,18 @@ Codec_LDPC<B,Q>
 
 	try
 	{
-		if (this->get_encoder() == nullptr) // not set when building encoder LDPC_H
-			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
+		this->get_encoder();
 	}
-	catch (tools::cannot_allocate const&)
-	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+	catch (tools::runtime_error const&)
+	{ // encoder not set when building encoder LDPC_H
+		try
+		{
+			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
+		}
+		catch(tools::cannot_allocate const&)
+		{
+			this->set_encoder(factory::Encoder::build<B>(enc_params));
+		}
 	}
 
 

@@ -68,6 +68,9 @@ void Codec_LDPC::parameters
 	args.erase({pdec+"-info-bits", "K"   });
 	args.erase({pdec+"-fra",       "F"   });
 
+	args.add_link({pdec+"-h-path"}, {penc+"-info-bits", "K"});
+	args.add_link({pdec+"-h-path"}, {penc+"-cw-size",   "N"});
+
 	if (this->pct)
 	{
 		pct->get_description(args);
@@ -77,6 +80,8 @@ void Codec_LDPC::parameters
 		args.erase({ppct+"-info-bits", "K"   });
 		args.erase({ppct+"-fra",       "F"   });
 		args.erase({ppct+"-cw-size",   "N_cw"});
+
+		args.add_link({pdec+"-h-path"}, {ppct+"-fra-size", "N"});
 	}
 }
 
@@ -86,24 +91,28 @@ void Codec_LDPC::parameters
 	Codec_SISO_SIHO::parameters::store(vals);
 
 	enc->store(vals);
+	dec->store(vals);
+
+	this->enc->N_cw = this->dec->N_cw;
+	if (this->enc->K != 0)
+		this->dec->K = this->enc->K;
+	else
+		this->enc->K = this->dec->K;
+
+	this->dec->n_frames = this->enc->n_frames;
+
+	this->enc->R = (float)this->enc->K / (float)this->enc->N_cw;
+	this->dec->R = (float)this->dec->K / (float)this->dec->N_cw;
 
 	if (this->pct)
 	{
 		this->pct->K        = this->enc->K;
+		this->pct->N        = this->enc->N_cw;
 		this->pct->N_cw     = this->enc->N_cw;
 		this->pct->n_frames = this->enc->n_frames;
 
 		pct->store(vals);
 	}
-
-	this->dec->K        = this->enc->K;
-	this->dec->N_cw     = this->enc->N_cw;
-	this->dec->n_frames = this->enc->n_frames;
-
-	dec->store(vals);
-
-	this->enc->H_path    = this->dec->H_path;
-	this->enc->H_reorder = this->dec->H_reorder;
 
 	this->K    = this->enc->K;
 	this->N_cw = this->enc->N_cw;
