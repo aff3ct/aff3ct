@@ -12,9 +12,27 @@
 
 using namespace aff3ct::tools;
 
+
+
 LDPC_matrix_handler::Matrix_format LDPC_matrix_handler
-::get_matrix_format(std::istream& file)
+::get_matrix_format(const std::string& filename)
 {
+	std::ifstream file(filename);
+	if (!file.is_open())
+	{
+		std::stringstream message;
+		message << "'filename' couldn't be opened ('filename' = " << filename << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return get_matrix_format(file);
+}
+
+LDPC_matrix_handler::Matrix_format LDPC_matrix_handler
+::get_matrix_format(std::ifstream& file)
+{
+	file.seekg(0);
+
 	std::string line;
 	tools::getline(file, line);
 
@@ -43,6 +61,12 @@ Sparse_matrix LDPC_matrix_handler
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	return read(file, info_bits_pos, pct_pattern);
+}
+
+Sparse_matrix LDPC_matrix_handler
+::read(std::ifstream& file, Positions_vector* info_bits_pos, std::vector<bool>* pct_pattern)
+{
 	auto format = get_matrix_format(file);
 
 	file.seekg(0);
@@ -81,6 +105,44 @@ Sparse_matrix LDPC_matrix_handler
 
 	return S;
 }
+
+void LDPC_matrix_handler
+::read_matrix_size(const std::string& filename, int& H, int& N)
+{
+	std::ifstream file(filename);
+	if (!file.is_open())
+	{
+		std::stringstream message;
+		message << "'filename' couldn't be opened ('filename' = " << filename << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return read_matrix_size(file, H, N);
+}
+
+void LDPC_matrix_handler
+::read_matrix_size(std::ifstream &file, int& H, int& N)
+{
+	auto format = get_matrix_format(file);
+
+	file.seekg(0);
+
+	switch (format)
+	{
+		case Matrix_format::QC:
+		{
+			tools::QC::read_matrix_size(file, H, N);
+			break;
+		}
+		case Matrix_format::ALIST:
+		{
+			tools::AList::read_matrix_size(file, H, N);
+			break;
+		}
+	}
+}
+
+
 
 bool LDPC_matrix_handler
 ::check_info_pos(const Positions_vector& info_bits_pos, int K, int N, bool throw_when_wrong)

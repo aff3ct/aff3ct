@@ -153,3 +153,35 @@ void QC
 {
 	AList::write(matrix, stream);
 }
+
+void QC
+::read_matrix_size(std::istream &stream, int& H, int& N)
+{
+	std::string line;
+
+	getline(stream, line);
+	auto values = split(line);
+	if (values.size() < 3)
+	{
+		std::stringstream message;
+		message << "'values.size()' has to be greater than 2 ('values.size()' = " << values.size() << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	unsigned N_red = 0, M_red = 0, Z = 0;
+
+	N_red = std::stoi(values[0]);
+	M_red = std::stoi(values[1]);
+	Z = std::stoi(values[2]);
+
+	if (N_red == 0 || M_red == 0 || Z == 0)
+	{
+		std::stringstream message;
+		message << "'N_red', 'M_red' and 'Z' have to be greater than 0 ('N_red' = " << N_red
+		        << ", 'M_red' = " << M_red << ", 'Z' = " << Z << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	N = N_red * Z;
+	H = M_red * Z;
+}

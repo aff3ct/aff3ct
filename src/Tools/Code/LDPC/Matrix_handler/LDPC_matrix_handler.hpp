@@ -28,10 +28,23 @@ public:
 	static Sparse_matrix read(const std::string& filename, Positions_vector* info_bits_pos = nullptr,
 	                          std::vector<bool>* pct_pattern = nullptr);
 
+	static Sparse_matrix read(std::ifstream &file, Positions_vector* info_bits_pos = nullptr,
+	                          std::vector<bool>* pct_pattern = nullptr);
+
 	/*
 	 * try to guess the matrix format from the given input stream
 	 */
-	static Matrix_format get_matrix_format(std::istream& file);
+	static Matrix_format get_matrix_format(const std::string& filename);
+	static Matrix_format get_matrix_format(std::ifstream& file);
+
+	/*
+	 * get the matrix dimensions H and N from the input stream
+	 * @H is the height of the matrix
+	 * @N is the width of the matrix
+	 */
+	static void read_matrix_size(const std::string& filename, int& H, int& N);
+	static void read_matrix_size(std::ifstream &file, int& H, int& N);
+
 
 	/*
 	 * Check if the input info bits position are in the matrix dimensions (K*N)

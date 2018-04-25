@@ -82,6 +82,13 @@ void AList
 	}
 }
 
+void AList
+::read_matrix_size(std::istream &stream, int& H, int& N)
+{
+	stream >> N;
+	stream >> H;
+}
+
 std::vector<unsigned> AList
 ::read_info_bits_pos(std::istream &stream)
 {
