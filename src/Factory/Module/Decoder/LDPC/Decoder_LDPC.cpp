@@ -118,9 +118,12 @@ void Decoder_LDPC::parameters
 	if(vals.exist({p+"-norm"      })) this->norm_factor     = vals.to_float({p+"-norm"      });
 	if(vals.exist({p+"-no-synd"   })) this->enable_syndrome = false;
 
-	int H;
-	tools::LDPC_matrix_handler::read_matrix_size(this->H_path, H, this->N_cw);
-	this->K = this->N_cw - H; // considered as regular so H = N - K
+	if (!this->H_path.empty())
+	{
+		int H;
+		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, H, this->N_cw);
+		this->K = this->N_cw - H; // considered as regular so H = N - K
+	}
 
 	Decoder::parameters::store(vals);
 }

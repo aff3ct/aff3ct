@@ -93,11 +93,15 @@ void Codec_LDPC::parameters
 	enc->store(vals);
 	dec->store(vals);
 
-	this->enc->N_cw = this->dec->N_cw;
-	if (this->enc->K != 0)
-		this->dec->K = this->enc->K;
+	if (this->enc->type == "LDPC_DVBS2" || this->enc->type == "LDPC")
+		this->dec->N_cw = this->enc->N_cw; // then the encoder knows the N_cw
 	else
-		this->enc->K = this->dec->K;
+		this->enc->N_cw = this->dec->N_cw; // then the decoder knows the N_cw
+
+	if (this->enc->K != 0)
+		this->dec->K = this->enc->K; // then the encoder knows the K
+	else
+		this->enc->K = this->dec->K; // then the encoder knows the K
 
 	this->dec->n_frames = this->enc->n_frames;
 
