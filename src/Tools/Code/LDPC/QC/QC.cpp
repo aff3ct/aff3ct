@@ -159,7 +159,7 @@ void QC
 {
 	std::string line;
 
-	getline(stream, line);
+	tools::getline(stream, line);
 	auto values = split(line);
 	if (values.size() < 3)
 	{
