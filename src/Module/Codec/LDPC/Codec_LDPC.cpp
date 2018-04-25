@@ -81,13 +81,19 @@ Codec_LDPC<B,Q>
 		H = tools::LDPC_matrix_handler::read(dec_params.H_path, ibp, pct);
 	}
 
+	if (dec_params.H_reorder != "NONE")
+	{	// reorder the H matrix following the check node degrees
+		H.sort_cols_per_density(dec_params.H_reorder);
+	}
+
+
+
 	if (info_bits_pos.empty())
 	{
 		if (enc_params.type == "LDPC_H")
 		{
-			auto encoder_LDPC = factory::Encoder_LDPC::build<B>(enc_params, G, H);
-			info_bits_pos = encoder_LDPC->get_info_bits_pos();
-			delete encoder_LDPC;
+			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H));
+			info_bits_pos = this->get_encoder()->get_info_bits_pos();
 		}
 		else
 		{
@@ -99,11 +105,6 @@ Codec_LDPC<B,Q>
 	else
 	{
 		tools::LDPC_matrix_handler::check_info_pos(info_bits_pos, enc_params.K, enc_params.N_cw);
-	}
-
-	if (dec_params.H_reorder != "NONE")
-	{	// reorder the H matrix following the check node degrees
-		H.sort_cols_per_density(dec_params.H_reorder);
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
@@ -130,14 +131,17 @@ Codec_LDPC<B,Q>
 		}
 	}
 
+
 	try
 	{
-		this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
+		if (this->get_encoder() == nullptr) // not set when building encoder LDPC_H
+			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
 	}
 	catch (tools::cannot_allocate const&)
 	{
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
+
 
 	try
 	{
