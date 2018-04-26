@@ -4,7 +4,7 @@ import argparse
 import struct
 import os
 import ctypes
-
+import mat4py
 
 class OutputStructure:
     index = 0
@@ -130,6 +130,43 @@ class OutputStructure:
             c_type = ""
         return c_type
 
+    def export_as_mat(self, path, frame_index=None):
+        myframes = []
+        sck_name = os.path.basename(path)
+
+        if not self.hex_format:
+            if "float" in self.data_format:
+                for frame in self.frames:
+                    myframe = []
+                    for value in frame:
+                        myframe.append(float(value))
+                    myframes.append(myframe)
+            else:
+                for frame in self.frames:
+                    myframe = []
+                    for value in frame:
+                        myframe.append(int(value))
+                myframes.append(myframe)
+        else:
+            if "float" in self.data_format:
+                for frame in self.frames:
+                    myframe = []
+                    for value in frame:
+                        myframe.append(float.fromhex(value))
+                    myframes.append(myframe)
+            else:
+                for frame in self.frames:
+                    myframe = []
+                    for value in frame:
+                        value = int(value, 16)
+                        if value > 0x7FFFFFFF:
+                            value -= 0x100000000
+                        myframe.append(value)
+                    myframes.append(myframe)
+
+        mat4py.savemat(path + '.mat', dict({sck_name : myframes}));
+
+
     def export_as_bin(self, path, frame_index=None):
         if self.data_format == "int8":
             float_code = 0
@@ -181,7 +218,7 @@ class OutputStructure:
                     fout.write(struct.pack(pack_format, float(value)))
             else:
                 for value in frame:
-                    fout.write(struct.pack(pack_format, int(value)))
+                    fout.write(struct.pack(pack_format, int(value)))                    
         else:
             if float_code == 1:
                 for value in frame:
@@ -221,12 +258,13 @@ def adp_parse_args():
     parser.add_argument("--txt", help="export as txt", action='store_true')
     parser.add_argument("--bin", help="export as bin", action='store_true')
     parser.add_argument("--src", help="export as c source", action='store_true')
+    parser.add_argument("--mat", help="export as matlab .mat file", action='store_true')
     parser.add_argument("--fra", type=check_positive, help="export a single frame, whose index is specified")
     parser.add_argument("-o", "--output", type=check_directory, help="path to the output folder", default="./")
 
     args = parser.parse_args()
 
-    if not (args.txt or args.bin or args.src):
+    if not (args.txt or args.bin or args.src or args.mat):
         parser.error('At least one of the export types is required (e.g. --txt)')
 
     return args
@@ -317,6 +355,12 @@ def main():
         for out_sct in out_structures:
             base_path = os.path.join(args.output, out_sct.name)
             out_sct.export_as_source(base_path + ".h", args.fra)
+
+    # export frames as mat file
+    if args.mat:
+        for out_sct in out_structures:
+            base_path = os.path.join(args.output, out_sct.name)
+            out_sct.export_as_mat(base_path, args.fra)
 
 
 if __name__ == "__main__":
