@@ -1,8 +1,6 @@
 #ifndef NUMERICAL_INTEGRATION_H_
 #define NUMERICAL_INTEGRATION_H_
 
-#include "Tools/Math/Point.hpp"
-
 namespace aff3ct
 {
 namespace tools
@@ -64,29 +62,6 @@ inline R trapz_integral_seq(const R* x, const R* y, int size);
  */
 template <typename R>
 inline void cumtrapz_integral_seq(const R* x, const R* y, R* cumul, int size);
-
-/*
- * Trapezoidal numerical integration
- * Computes the approximate integral of the point ('x','y') array of length 'size' via the trapezoidal method
- */
-template <typename R>
-inline R trapz_integral_seq(const Point<R>* p, int size);
-
-/*
- * Cumulative Trapezoidal numerical integration
- * Computes the approximate cumulative integral of the point ('x','y') array of length 'size' via the trapezoidal method
- * Return the cumulative values in the 'cumul' array of length 'size'
- */
-template <typename R>
-inline void cumtrapz_integral_seq(const Point<R>* p, R* cumul, int size);
-
-/*
- * Cumulative Trapezoidal numerical integration
- * Computes the approximate cumulative integral of the point ('x','y') array of length 'size' via the trapezoidal method
- * Return the cumulative values in the 'cumul' array of length 'size'
- */
-template <typename R>
-inline void cumtrapz_integral_seq(const Point<R>* p, Point<R>* cumul, int size);
 
 /*
  * Trapezoidal numerical integration
@@ -158,29 +133,6 @@ inline R left_rect_integral_seq(const R* x, const R* y, int size);
  */
 template <typename R>
 inline R right_rect_integral_seq(const R* x, const R* y, int size);
-
-
-// ======================================================================== Rectangular numerical integration with Point
-/*
- * Middle Rectangular numerical integration
- * Computes the approximate integral of the point ('x','y') array of length 'size' via the middle rectangular method
- */
-template <typename R>
-inline R mid_rect_integral_seq(const Point<R>* p, const int size);
-
-/*
- * Left Rectangular numerical integration
- * Computes the approximate integral of the point ('x','y') array of length 'size' via the left rectangular method
- */
-template <typename R>
-inline R left_rect_integral_seq(const Point<R>* p, const int size);
-
-/*
- * Right Rectangular numerical integration
- * Computes the approximate integral of the point ('x','y') array of length 'size' via the right rectangular method
- */
-template <typename R>
-inline R right_rect_integral_seq(const Point<R>* p, const int size);
 
 
 // =====================================================================================================================

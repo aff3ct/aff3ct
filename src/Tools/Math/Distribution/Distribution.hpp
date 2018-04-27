@@ -3,8 +3,6 @@
 
 #include <vector>
 
-#include "Tools/Math/Point.hpp"
-
 namespace aff3ct
 {
 namespace tools
