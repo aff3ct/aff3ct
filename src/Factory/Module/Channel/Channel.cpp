@@ -61,8 +61,9 @@ void Channel::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("NO", "USER", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "OPTICAL")),
-		"type of the channel to use in the simulation.");
+		tools::Text(tools::Including_set("NO", "USER", "USER_ADD", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "OPTICAL")),
+		"type of the channel to use in the simulation ('USER' has an output got from a file when 'USER_ADD' has an"
+		" additive noise got from a file).");
 
 	args.add(
 		{p+"-implem"},
@@ -144,7 +145,7 @@ void Channel::parameters
 	if (this->noise != -1.f)
 		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->noise)));
 
-	if (this->type == "USER" || this->type == "RAYLEIGH_USER")
+	if (this->type == "USER" || this->type == "USER_ADD" || this->type == "RAYLEIGH_USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
 
 	if (this->type == "RAYLEIGH_USER")
@@ -153,7 +154,7 @@ void Channel::parameters
 	if (this->type.find("RAYLEIGH") != std::string::npos)
 		headers[p].push_back(std::make_pair("Block fading policy", this->block_fading));
 
-	if ((this->type != "NO" && this->type != "USER") && full)
+	if ((this->type != "NO" && this->type != "USER" && this->type != "USER_ADD") && full)
 		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
 
 	headers[p].push_back(std::make_pair("Complex", this->complex ? "on" : "off"));
@@ -187,14 +188,12 @@ module::Channel<R>* Channel::parameters
 	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, tools::Sigma<R>((R)this->noise), n_frames);
 	else
 	{
-		module::Channel<R>* c = nullptr;
-		     if (type == "USER") c = new module::Channel_user<R>(N, path, add_users, n_frames);
-		else if (type == "NO"  ) c = new module::Channel_NO  <R>(N,       add_users, n_frames);
-		else if (type == "BEC" ) c = new module::Channel_BEC <R>(N, seed, tools::Erasure_probability<R>((R)this->noise), n_frames);
-
 		delete n;
 
-		if (c) return c;
+		     if (type == "USER"    ) return new module::Channel_user<R>(N, path, add_users, false, n_frames);
+		else if (type == "USER_ADD") return new module::Channel_user<R>(N, path, add_users,  true, n_frames);
+		else if (type == "NO"      ) return new module::Channel_NO  <R>(N,       add_users, n_frames);
+		else if (type == "BEC"     ) return new module::Channel_BEC <R>(N, seed, tools::Erasure_probability<R>((R)this->noise), n_frames);
 
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 	}
