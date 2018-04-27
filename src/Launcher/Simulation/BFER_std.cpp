@@ -154,7 +154,11 @@ void BFER_std<B,R,Q>
 			params.cdc->itl->core->path = params.err_track_path + std::string("_$snr.itl");
 		}
 
-		params.chn->type = "USER";
+		if (params.chn->type == "USER_ADD" || params.chn->type == "AWGN" || params.chn->type == "RAYLEIGH" || params.chn->type == "RAYLEIGH_USER")
+			params.chn->type = "USER_ADD";
+		else if (params.chn->type == "USER" || params.chn->type == "BEC" || params.chn->type == "OPTICAL")
+			params.chn->type = "USER";
+		// else params.chn->type == "NO" stays as it is
 		params.chn->path = params.err_track_path + std::string("_$snr.chn");
 	}
 
