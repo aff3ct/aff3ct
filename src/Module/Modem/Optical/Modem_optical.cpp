@@ -89,8 +89,6 @@ void Modem_optical<int,float,float>
 }
 }
 
-
-
 template <typename B,typename R, typename Q>
 void Modem_optical<B,R,Q>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
@@ -135,7 +133,7 @@ void Modem_optical<B,R,Q>
 			auto x_below = x_above - 1;
 
 			// find which between x_below and x_above is the nearest of Y_N1[i]
-			x_pos = (Y_N1[i] - *x_below) < (Y_N1[i] - *x_above) ? x_pos - 1 : x_pos;
+			x_pos = (Y_N1[i] - *x_below) < (*x_above - Y_N1[i]) ? x_pos - 1 : x_pos;
 		}
 
 		// then get the matching probabilities
