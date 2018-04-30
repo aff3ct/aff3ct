@@ -25,7 +25,7 @@ protected:
 	const tools::Distributions<R>& distributions; // distributions in function of the noise power
 
 public:
-	User_pdf_noise_generator(const tools::Distributions<R>& dists)
+	explicit User_pdf_noise_generator(const tools::Distributions<R>& dists)
 	: distributions(dists) {}
 
 	virtual ~User_pdf_noise_generator() {}

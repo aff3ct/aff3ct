@@ -18,7 +18,7 @@ private:
 	std::uniform_real_distribution<R> uniform_dist;
 
 public:
-	User_pdf_noise_generator_std(const tools::Distributions<R>& dists, const int seed = 0);
+	explicit User_pdf_noise_generator_std(const tools::Distributions<R>& dists, const int seed = 0);
 	virtual ~User_pdf_noise_generator_std();
 
 	virtual void set_seed(const int seed);
