@@ -161,6 +161,7 @@ void Distribution<R>
 	const auto min_x  = this->pdf_x.front();
 	const auto max_x  = this->pdf_x.back ();
 	const auto step_x = (max_x - min_x) / (interp_x.size() - 1);
+
 	// create the interpolation x vector
 	R x = min_x;
 	for (unsigned i = 0; i < interp_x.size(); i++, x += step_x)
@@ -184,9 +185,13 @@ void Distribution<R>
 		std::vector<R> cumul_y(interp_x.size());
 		cumtrapz_integral_seq(interp_x.data(), interp_y.data(), cumul_y.data(), interp_x.size());
 
-		// keeping the parts of the cdf not parallel to the X axis
+		// keep the first element of the cdf
+		this->cdf_x[k].push_back((R)0);
+		this->cdf_y[k].push_back(cumul_y[0]);
+
+		// keep the parts of the cdf not parallel to the X axis
 		for (unsigned i = 1; i < cumul_y.size(); i++) // keep the first index
-			if (!tools::comp_equal(cumul_y[i] - cumul_y[i-1], (R)0)) // == 0 means parallel to the X axis
+			if (cumul_y[i] != cumul_y[i-1]) // == means parallel to the X axis
 			{
 				this->cdf_x[k].push_back(interp_x[i]);
 				this->cdf_y[k].push_back(cumul_y [i]);
