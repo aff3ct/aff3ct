@@ -27,17 +27,19 @@ Noise(R noise)
 }
 
 template <typename R>
+template <typename T>
 Noise<R>::
-Noise(const Noise<R>& other)
-: _n(other._n)
+Noise(const Noise<T>& other)
 {
-}
-
-template <typename R>
-Noise<R>::
-Noise(Noise<R>&& other) noexcept
-: _n(std::move(other._n))
-{
+	if (other.has_noise())
+	{
+		set_noise((R)other.get_noise());
+	}
+	else
+	{
+		_n.first  = (R)0;
+		_n.second = false;
+	}
 }
 
 template <typename R>
@@ -49,25 +51,10 @@ operator=(const Noise<R>& other)
 }
 
 template <typename R>
-Noise<R>& Noise<R>::
-operator=(Noise<R>&& other) noexcept
-{
-	this->copy(std::move(other));
-	return *this;
-}
-
-template <typename R>
 void Noise<R>::
 copy(const Noise<R>& other)
 {
 	this->_n = other._n;
-}
-
-template <typename R>
-void Noise<R>::
-copy(Noise<R>&& other) noexcept
-{
-	this->_n = std::move(other._n);
 }
 
 template <typename R>
@@ -196,4 +183,7 @@ void Noise<R>
 // ==================================================================================== explicit template instantiation
 template class aff3ct::tools::Noise<float>;
 template class aff3ct::tools::Noise<double>;
+
+template aff3ct::tools::Noise<double>::Noise(const Noise<float >&);
+template aff3ct::tools::Noise<float >::Noise(const Noise<double>&);
 // ==================================================================================== explicit template instantiation

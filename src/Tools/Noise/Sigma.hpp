@@ -15,8 +15,8 @@ public:
 	Sigma();
 	explicit Sigma(R noise);
 	Sigma(R noise, R ebn0, R esn0);
-	Sigma(const Sigma<R>& other);
-	Sigma(Sigma<R>&& other);
+	template<typename T>
+	Sigma(const Sigma<T>& other);
 	virtual ~Sigma() = default;
 
 	virtual bool is_set() const noexcept; // return true sigma, ebn0 and esn0 have been initialized
@@ -30,25 +30,11 @@ public:
 	using Noise<R>::set_noise;
 	void set_noise(R sigma, R ebn0, R esn0); // set the noise (sigma) and also EB/N0 and ES/N0
 
-	virtual void copy(const Sigma&  other);          // set this noise as the 'other' one
-	virtual void copy(      Sigma&& other) noexcept; // set this noise as the 'other' one
+	virtual void copy(const Sigma& other); // set this noise as the 'other' one
 
 	virtual Noise_type get_type() const;
 
 	virtual Sigma<R>* clone() const;
-
-	template <typename T>
-	Sigma<T>* cast() const
-	{
-		Sigma<T>* sig;
-
-		if (is_set())
-			sig = new Sigma<T>((T)this->_n.first, (T)this->_ebn0.first, (T)this->_esn0.first);
-		else
-			sig = new Sigma<T>();
-
-		return sig;
-	}
 
 protected:
 	std::pair<R, bool> _ebn0;

@@ -5,6 +5,7 @@
 #include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Noise/noise_utils.h"
 
 #include "Terminal_BFER.hpp"
 
@@ -30,17 +31,17 @@ void Terminal_BFER<B,R>
 	if (this->n != nullptr)
 		delete this->n;
 
-	this->n = noise.clone();
+	this->n = tools::cast<float>(noise);
 }
 
 template <typename B, typename R>
 void Terminal_BFER<B,R>
-::set_noise(const Noise<double>& n)
+::set_noise(const Noise<double>& noise)
 {
 	if (this->n != nullptr)
 		delete this->n;
 
-	this->n = tools::cast<float>(n);
+	this->n = tools::cast<float>(noise);
 }
 
 template <typename B, typename R>
@@ -55,6 +56,13 @@ void Terminal_BFER<B,R>
 	auto& throughput_cols  = this->cols_groups[1].second;
 
 	bfer_title = std::make_pair("Bit Error Rate (BER) and Frame Error Rate (FER)", "");
+
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "Undefined noise.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	switch (this->n->get_type())
 	{
@@ -125,6 +133,13 @@ void Terminal_BFER<B,R>
 	stream << data_tag;
 
 	const auto report_style = rang::style::bold;
+
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "Undefined noise.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	switch (this->n->get_type())
 	{

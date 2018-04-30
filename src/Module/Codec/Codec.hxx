@@ -179,7 +179,7 @@ void Codec<B,Q>
 	if (this->n != nullptr)
 		delete this->n;
 
-	this->n = noise.clone();
+	this->n = tools::cast<float>(noise);
 }
 
 template <typename B, typename Q>

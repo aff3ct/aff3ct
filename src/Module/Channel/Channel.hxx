@@ -12,6 +12,7 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Noise/noise_utils.h"
 #include "Channel.hpp"
 
 namespace aff3ct

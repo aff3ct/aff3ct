@@ -20,7 +20,7 @@ protected:
 	const module::Monitor_BFER<B,R> &monitor;
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
 	unsigned short real_time_state;
-	Noise<>* n;
+	Noise<float>* n;
 	const bool display_mutinfo;
 
 public:

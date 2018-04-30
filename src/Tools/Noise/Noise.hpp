@@ -22,8 +22,8 @@ public:
 public:
 	Noise();
 	explicit Noise(R noise);
-	Noise(const Noise<R>& other);
-	Noise(Noise<R>&& other) noexcept;
+	template<typename T>
+	Noise(const Noise<T>& other);
 	virtual ~Noise() = default;
 
 	virtual bool is_set() const noexcept; // return true if the Noise object has been correctly initialized
@@ -33,10 +33,8 @@ public:
 
 	virtual void set_noise(R noise); // set the noise val and call 'check' to check that it respects the rules
 
-	Noise& operator=(const Noise<R>&  other);          // set this noise as the 'other' one
-	Noise& operator=(      Noise<R>&& other) noexcept; // set this noise as the 'other' one
-	virtual void copy(const Noise&  other);          // set this noise as the 'other' one
-	virtual void copy(      Noise&& other) noexcept; // set this noise as the 'other' one
+	Noise& operator= (const Noise<R>& other); // set this noise as the 'other' one
+	virtual void copy(const Noise<R>& other); // set this noise as the 'other' one
 
 	virtual Noise_type get_type() const = 0;
 	bool is_of_type(Noise_type t) const noexcept;
@@ -57,29 +55,4 @@ protected:
 }
 }
 
-#include "Sigma.hpp"
-#include "Received_optical_power.hpp"
-#include "Erasure_probability.hpp"
-
-namespace aff3ct
-{
-namespace tools
-{
-template <typename T, typename R>
-Noise<T>* cast(const Noise<R>& n)
-{
-	Noise<T> * cast_n = nullptr;
-
-//	switch(n.get_type())
-//	{
-//		case Noise<R>::Noise_type::SIGMA: cast_n = dynamic_cast<const Sigma                 <R>&>(n).cast<T>(); break;
-//		case Noise<R>::Noise_type::EP:    cast_n = dynamic_cast<const Erasure_probability    <R>&>(n).cast<T>(); break;
-//		case Noise<R>::Noise_type::ROP:   cast_n = dynamic_cast<const Received_optical_power<R>&>(n).cast<T>(); break;
-//	}
-
-	return cast_n;
-}
-
-}
-}
 #endif // NOISE_HPP__

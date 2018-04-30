@@ -14,24 +14,13 @@ class Erasure_probability : public Noise<R>
 public:
 	Erasure_probability() = default;
 	explicit Erasure_probability(R noise);
+	template<typename T>
+	Erasure_probability(const Erasure_probability<T>& other);
 	virtual ~Erasure_probability() = default;
 
 	virtual Noise_type get_type() const;
 
 	virtual Erasure_probability<R>* clone() const;
-
-	template <typename T>
-	Erasure_probability<T>* cast() const
-	{
-		Erasure_probability<T>* ep;
-
-		if (this->is_set())
-			ep = new Erasure_probability<T>((T)this->_n.first);
-		else
-			ep = new Erasure_probability<T>();
-
-		return ep;
-	}
 
 protected:
 	virtual void check();

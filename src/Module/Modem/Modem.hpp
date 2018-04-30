@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "Module/Module.hpp"
-#include "Tools/Noise/Noise.hpp"
+#include "Tools/Noise/noise_utils.h"
 
 namespace aff3ct
 {

@@ -34,21 +34,32 @@ Sigma<R>::Sigma(R noise, R ebn0, R esn0)
 }
 
 template <typename R>
+template <typename T>
 Sigma<R>::
-Sigma(const Sigma<R>& other)
-: Noise<R>(other),
-  _ebn0(other._ebn0),
-  _esn0(other._esn0)
+Sigma(const Sigma<T>& other)
+: Noise<R>(other)
 {
-}
+	if (other.has_esn0())
+	{
+		_esn0.first = (R)other.get_esn0();
+		_esn0.second = true;
+	}
+	else
+	{
+		_esn0.first  = (R)0;
+		_esn0.second = false;
+	}
 
-template <typename R>
-Sigma<R>::
-Sigma(Sigma<R>&& other)
-: Noise<R>(std::move(other)),
-  _ebn0(std::move(other._ebn0)),
-  _esn0(std::move(other._esn0))
-{
+	if (other.has_ebn0())
+	{
+		_ebn0.first = (R)other.get_ebn0();
+		_ebn0.second = true;
+	}
+	else
+	{
+		_ebn0.first  = (R)0;
+		_ebn0.second = false;
+	}
 }
 
 template <typename R>
@@ -58,15 +69,6 @@ copy(const Sigma<R>& other)
 	_ebn0 = other._ebn0;
 	_esn0 = other._esn0;
 	Noise<R>::copy(other);
-}
-
-template <typename R>
-void Sigma<R>::
-copy(Sigma<R>&& other) noexcept
-{
-	_ebn0 = std::move(other._ebn0);
-	_esn0 = std::move(other._esn0);
-	Noise<R>::copy(std::move(other));
 }
 
 template <typename R>
@@ -148,10 +150,13 @@ Noise_type Sigma<R>::get_type() const
 template<typename R>
 Sigma<R>* Sigma<R>::clone() const
 {
-	return new Sigma(*this);
+	return new Sigma<R>(*this);
 }
 
 // ==================================================================================== explicit template instantiation
 template class aff3ct::tools::Sigma<float>;
 template class aff3ct::tools::Sigma<double>;
+
+template aff3ct::tools::Sigma<double>::Sigma(const Sigma<float >&);
+template aff3ct::tools::Sigma<float >::Sigma(const Sigma<double>&);
 // ==================================================================================== explicit template instantiation

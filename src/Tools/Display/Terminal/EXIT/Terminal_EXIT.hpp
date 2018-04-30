@@ -22,7 +22,7 @@ protected:
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>  t_snr;
 	unsigned short real_time_state;
 	float   sig_a;
-	Noise<>* n;
+	Noise<float>* n;
 
 public:
 	explicit Terminal_EXIT(const module::Monitor_EXIT<B,R> &monitor);

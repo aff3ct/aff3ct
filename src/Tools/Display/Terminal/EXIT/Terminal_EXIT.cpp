@@ -6,6 +6,7 @@
 #include <rang.hpp>
 
 #include "Terminal_EXIT.hpp"
+#include "Tools/Noise/noise_utils.h"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
@@ -29,7 +30,7 @@ void Terminal_EXIT<B,R>
 	if (this->n != nullptr)
 		delete this->n;
 
-	this->n = noise.clone();
+	this->n = tools::cast<float>(noise);
 }
 
 template <typename B, typename R>
@@ -61,6 +62,13 @@ void Terminal_EXIT<B,R>
 	auto& throughput_cols  = this->cols_groups[1].second;
 
 	bfer_title = std::make_pair("EXIT chart depending on the", "");
+
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "Undefined noise.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	switch (this->n->get_type())
 	{
@@ -121,6 +129,13 @@ void Terminal_EXIT<B,R>
 	simu_cthr /= 1000.f; // = mbps
 
 	stream << data_tag;
+
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "Undefined noise.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	switch (this->n->get_type())
 	{
