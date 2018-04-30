@@ -24,6 +24,8 @@ template <typename B, typename R>
 R aff3ct::tools::mutual_info_histo(const B* ref, const R* llr, const unsigned size)
 {
 	static_assert(mipp::N<B>() == mipp::N<R>(), "B and R shall have the same size");
+	if (std::is_same<R,double>::value)
+		return mutual_info_histo_seq(ref, llr, size);
 
 	/* determine the min and max value for llrs / 0 and llrs / 1
 	 * compute the llr_sum  as the sum of the llr[i]
