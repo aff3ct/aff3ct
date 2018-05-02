@@ -226,15 +226,19 @@ void Terminal_BFER<B,R>
 
 	Terminal::final_report(stream);
 
-	this->_report(stream);
-
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
-	auto et_format = get_time_format(et);
 
-	stream << rang::style::bold << spaced_scol_separator << rang::style::reset << std::setprecision(0) << std::fixed
-	       << std::setw(column_width-1) << et_format;
+	if (!module::Monitor::is_over() || et >= 1.f)
+	{
+		this->_report(stream);
 
-	stream << (module::Monitor::is_interrupt() ? " x" : "  ") << std::endl;
+		auto et_format = get_time_format(et);
+
+		stream << rang::style::bold << spaced_scol_separator << rang::style::reset << std::setprecision(0) << std::fixed
+		       << std::setw(column_width - 1) << et_format;
+
+		stream << (module::Monitor::is_interrupt() ? " x" : "  ") << std::endl;
+	}
 
 	t_snr = std::chrono::steady_clock::now();
 
