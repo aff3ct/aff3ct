@@ -27,7 +27,7 @@ protected:
 public:
 	explicit Terminal_EXIT(const module::Monitor_EXIT<B,R> &monitor);
 
-	virtual ~Terminal_EXIT() = default;
+	virtual ~Terminal_EXIT();
 
 	void set_sig_a(float sig_a);
 

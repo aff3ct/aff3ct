@@ -26,7 +26,7 @@ protected:
 public:
 	explicit Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo = false);
 
-	virtual ~Terminal_BFER() = default;
+	virtual ~Terminal_BFER();
 
 	void set_noise(const Noise<float>& noise);
 	void set_noise(const Noise<double>& noise);

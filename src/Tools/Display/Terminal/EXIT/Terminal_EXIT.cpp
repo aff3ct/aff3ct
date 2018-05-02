@@ -23,6 +23,13 @@ Terminal_EXIT<B,R>
 {
 }
 
+template<typename B, typename R>
+Terminal_EXIT<B,R>::~Terminal_EXIT()
+{
+	if (this->n != nullptr)
+		delete this->n;
+}
+
 template <typename B, typename R>
 void Terminal_EXIT<B,R>
 ::set_noise(const Noise<float>& noise)
@@ -62,6 +69,7 @@ void Terminal_EXIT<B,R>
 	auto& throughput_cols  = this->cols_groups[1].second;
 
 	bfer_title = std::make_pair("EXIT chart depending on the", "");
+	bfer_cols.clear();
 
 	if (this->n == nullptr)
 	{
@@ -88,7 +96,7 @@ void Terminal_EXIT<B,R>
 	}
 
 	bfer_title.second += " and the channel A noise";
-
+	throughput_cols.clear();
 	bfer_cols.push_back(std::make_pair("SIG_A",      "(dB)"));
 	bfer_cols.push_back(std::make_pair("FRA",            ""));
 	bfer_cols.push_back(std::make_pair("A_PRIORI",  "(I_A)"));

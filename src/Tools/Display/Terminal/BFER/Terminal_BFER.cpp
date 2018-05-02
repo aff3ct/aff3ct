@@ -24,6 +24,13 @@ Terminal_BFER<B,R>
 {
 }
 
+template<typename B, typename R>
+Terminal_BFER<B, R>::~Terminal_BFER()
+{
+	if (this->n != nullptr)
+		delete this->n;
+}
+
 template <typename B, typename R>
 void Terminal_BFER<B,R>
 ::set_noise(const Noise<float>& noise)
@@ -56,6 +63,7 @@ void Terminal_BFER<B,R>
 	auto& throughput_cols  = this->cols_groups[1].second;
 
 	bfer_title = std::make_pair("Bit Error Rate (BER) and Frame Error Rate (FER)", "");
+	bfer_cols.clear();
 
 	if (this->n == nullptr)
 	{
@@ -94,6 +102,7 @@ void Terminal_BFER<B,R>
 	bfer_cols.push_back(std::make_pair("FER", ""));
 
 	throughput_title = std::make_pair("Global throughput", "and elapsed time");
+	throughput_cols.clear();
 	throughput_cols.push_back(std::make_pair("SIM_THR", "(Mb/s)"));
 	throughput_cols.push_back(std::make_pair("ET/RT", "(hhmmss)"));
 
