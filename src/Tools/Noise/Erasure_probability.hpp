@@ -18,6 +18,7 @@ public:
 	Erasure_probability(const Erasure_probability<T>& other);
 	virtual ~Erasure_probability() = default;
 
+	virtual std::string get_unity() const;
 	virtual Noise_type get_type() const;
 
 	virtual Erasure_probability<R>* clone() const;

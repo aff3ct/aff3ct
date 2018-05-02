@@ -174,6 +174,16 @@ void Monitor_BFER_reduction<B,R>
 		m->clear_callbacks();
 }
 
+template<typename B, typename R>
+tools::Histogram<int> Monitor_BFER_reduction<B, R>::get_err_hist() const
+{
+	auto err_hist_copy = this->err_hist;
+	for (unsigned i = 0; i < monitors.size(); i++)
+		err_hist_copy.add_values(monitors[i]->get_err_hist());
+
+	return err_hist_copy;
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

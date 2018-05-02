@@ -153,6 +153,12 @@ Sigma<R>* Sigma<R>::clone() const
 	return new Sigma<R>(*this);
 }
 
+template<typename R>
+std::string Sigma<R>::get_unity() const
+{
+	return "dB";
+}
+
 // ==================================================================================== explicit template instantiation
 template class aff3ct::tools::Sigma<float>;
 template class aff3ct::tools::Sigma<double>;

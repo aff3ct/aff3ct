@@ -99,9 +99,9 @@ BFER<B,R,Q>
 		if (dumper [tid] != nullptr) { delete dumper [tid]; dumper [tid] = nullptr; }
 	}
 
-	if (terminal != nullptr) { delete terminal; terminal = nullptr; }
-
+	if (terminal      != nullptr) { delete terminal;      terminal      = nullptr; }
 	if (distributions != nullptr) { delete distributions; distributions = nullptr; }
+	if (noise         != nullptr) { delete noise;         noise         = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -303,6 +303,41 @@ void BFER<B,R,Q>
 //		pdf1 << "x; \"PDF of " << mission << " bit 1 (" << this->noise->get_noise() << "dB, on " << llrs1.get_n_values() << " values)\"" << std::endl;
 //		llrs1.dump(pdf1, llrs1.get_hist_min(), llrs1.get_hist_max(), 100, true);
 
+		if (params_BFER.mnt->err_hist != -1)
+		{
+			auto err_hist = monitor_red->get_err_hist();
+
+			if (err_hist.get_n_values() != 0)
+			{
+				std::string noise_value;
+				switch (this->noise->get_type())
+				{
+					case tools::Noise_type::SIGMA:
+						if (params_BFER.noise_type == "EBN0")
+							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise)->get_ebn0());
+						else //(params_BFER.noise_type == "ESN0")
+							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise)->get_esn0());
+						break;
+					case tools::Noise_type::ROP:
+					case tools::Noise_type::EP:
+						noise_value = std::to_string(this->noise->get_noise());
+						break;
+				}
+
+				std::ofstream file_err_hist(params_BFER.mnt->err_hist_path + "_" + noise_value + ".txt");
+				file_err_hist << "\"Number of error bits per wrong frame\"; \"Histogram (noise: " << noise_value
+				              << this->noise->get_unity() << ", on " << err_hist.get_n_values() << " frames)\"" << std::endl;
+
+				int max;
+
+				if (params_BFER.mnt->err_hist == 0)
+					max = err_hist.get_hist_max();
+				else
+					max = params_BFER.mnt->err_hist;
+
+				err_hist.dump(file_err_hist, 0, max, 0, false, false, "; ");
+			}
+		}
 
 		if (this->dumper_red != nullptr && !this->simu_error)
 		{

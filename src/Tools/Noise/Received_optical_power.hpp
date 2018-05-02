@@ -18,6 +18,7 @@ public:
 	Received_optical_power(const Received_optical_power<T>& other);
 	virtual ~Received_optical_power() = default;
 
+	virtual std::string get_unity() const;
 	virtual Noise_type get_type() const;
 
 	virtual Received_optical_power<R>* clone() const;

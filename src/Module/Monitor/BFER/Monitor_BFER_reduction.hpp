@@ -27,6 +27,7 @@ public:
 	unsigned long long get_n_be                   () const;
 //	const tools::Histogram<R>&           get_llrs0();
 //	const tools::Histogram<R>&           get_llrs1();
+	virtual tools::Histogram<int> get_err_hist() const;
 
 	R get_MI    () const;
 	R get_MI_sum() const;

@@ -32,6 +32,7 @@ public:
 
 	virtual void copy(const Sigma& other); // set this noise as the 'other' one
 
+	virtual std::string get_unity() const;
 	virtual Noise_type get_type() const;
 
 	virtual Sigma<R>* clone() const;

@@ -36,6 +36,7 @@ public:
 	Noise& operator= (const Noise<R>& other); // set this noise as the 'other' one
 	virtual void copy(const Noise<R>& other); // set this noise as the 'other' one
 
+	virtual std::string get_unity() const = 0; // return a string with the unity of the noise type
 	virtual Noise_type get_type() const = 0;
 	bool is_of_type(Noise_type t) const noexcept;
 	void is_of_type_throw(Noise_type t) const;

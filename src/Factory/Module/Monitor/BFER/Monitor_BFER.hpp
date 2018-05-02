@@ -25,6 +25,8 @@ struct Monitor_BFER : public Factory
 
 		// optional parameters
 		std::string type           = "STD";
+		std::string err_hist_path  = "hist";
+		int         err_hist       = -1;
 		int         n_frame_errors = 100;
 		int         n_frames       = 1;
 

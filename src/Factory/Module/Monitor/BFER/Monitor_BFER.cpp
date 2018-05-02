@@ -55,6 +55,16 @@ void Monitor_BFER::parameters
 		{p+"-max-fe", "e"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"max number of frame errors for each SNR simulation.");
+
+	args.add(
+			{p+"-err-hist"},
+			tools::Integer(tools::Positive()),
+			"activate the histogram of the number of errors per frame. Set the max number of bit error per frame included in the histogram (0 is no limit).");
+
+	args.add(
+			{p+"-err-hist-path"},
+			tools::File(tools::openmode::write),
+			"path to the output histogram (default is './hist', add automatically the current noise value and the extension '.txt')");
 }
 
 void Monitor_BFER::parameters
@@ -68,6 +78,8 @@ void Monitor_BFER::parameters
 	if(vals.exist({p+"-info-bits", "K"})) this->K              = vals.to_int({p+"-info-bits", "K"});
 	if(vals.exist({p+"-fra",       "F"})) this->n_frames       = vals.to_int({p+"-fra",       "F"});
 	if(vals.exist({p+"-max-fe",    "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe",    "e"});
+	if(vals.exist({p+"-err-hist"      })) this->err_hist       = vals.to_int({p+"-err-hist"      });
+	if(vals.exist({p+"-err-hist-path" })) this->err_hist_path  = vals.at    ({p+"-err-hist-path" });
 }
 
 void Monitor_BFER::parameters

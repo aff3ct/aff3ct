@@ -186,12 +186,13 @@ void Distribution<R>
 		cumtrapz_integral_seq(interp_x.data(), interp_y.data(), cumul_y.data(), interp_x.size());
 
 		// keep the first element of the cdf
-		this->cdf_x[k].push_back((R)0);
-		this->cdf_y[k].push_back(cumul_y[0]);
+//		this->cdf_x[k].push_back(interp_x[0]);
+//		this->cdf_y[k].push_back(cumul_y [0]);
 
 		// keep the parts of the cdf not parallel to the X axis
 		for (unsigned i = 1; i < cumul_y.size(); i++) // keep the first index
-			if (cumul_y[i] != cumul_y[i-1]) // == means parallel to the X axis
+//			if (cumul_y[i] != cumul_y[i-1]) // == means parallel to the X axis
+			if (!tools::comp_equal(cumul_y[i] - cumul_y[i-1], (R)0)) // == means parallel to the X axis
 			{
 				this->cdf_x[k].push_back(interp_x[i]);
 				this->cdf_y[k].push_back(cumul_y [i]);

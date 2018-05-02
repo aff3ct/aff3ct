@@ -33,6 +33,12 @@ Received_optical_power<R>* Received_optical_power<R>::clone() const
 	return new Received_optical_power<R>(*this);
 }
 
+template<typename R>
+std::string Received_optical_power<R>::get_unity() const
+{
+	return "dB";
+}
+
 // ==================================================================================== explicit template instantiation
 template class aff3ct::tools::Received_optical_power<float>;
 template class aff3ct::tools::Received_optical_power<double>;

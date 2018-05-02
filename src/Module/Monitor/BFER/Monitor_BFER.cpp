@@ -18,7 +18,8 @@ Monitor_BFER<B,R>
   n_bit_errors(0),
   n_frame_errors(0),
   n_analyzed_frames(0),
-  MI_sum(0)
+  MI_sum(0),
+  err_hist(0)
 {
 	const std::string name = "Monitor_BFER";
 	this->set_name(name);
@@ -90,6 +91,8 @@ int Monitor_BFER<B,R>
 	{
 		n_bit_errors += bit_errors_count;
 		n_frame_errors++;
+
+		err_hist.add_value(bit_errors_count);
 
 		for (auto c : this->callbacks_fe)
 			c(bit_errors_count, frame_id);
@@ -258,6 +261,7 @@ void Monitor_BFER<B,R>
 	this->MI_sum            = 0;
 //	this->llrs0.reset();
 //	this->llrs1.reset();
+	this->err_hist.reset();
 }
 
 template <typename B, typename R>
@@ -267,6 +271,12 @@ void Monitor_BFER<B,R>
 	this->callbacks_fe               .clear();
 	this->callbacks_check            .clear();
 	this->callbacks_fe_limit_achieved.clear();
+}
+
+template<typename B, typename R>
+tools::Histogram<int> Monitor_BFER<B, R>::get_err_hist() const
+{
+	return err_hist;
 }
 
 //template<typename B, typename R>

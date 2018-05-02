@@ -46,6 +46,12 @@ Erasure_probability<R>* Erasure_probability<R>::clone() const
 	return new Erasure_probability<R>(*this);
 }
 
+template<typename R>
+std::string Erasure_probability<R>::get_unity() const
+{
+	return "";
+}
+
 // ==================================================================================== explicit template instantiation
 template class aff3ct::tools::Erasure_probability<float>;
 template class aff3ct::tools::Erasure_probability<double>;
