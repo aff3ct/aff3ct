@@ -49,6 +49,6 @@ template void aff3ct::tools::hard_decide_seq<B_16, Q_16>(const Q_16*, B_16*, con
 template void aff3ct::tools::hard_decide_seq<B_32, Q_32>(const Q_32*, B_32*, const unsigned);
 template void aff3ct::tools::hard_decide_seq<B_64, Q_64>(const Q_64*, B_64*, const unsigned);
 #else
-template void aff3ct::tools::hard_decide<B, Q>(const Q*, B*, const int);
+template void aff3ct::tools::hard_decide<B, Q>(const Q*, B*, const unsigned);
 #endif
 // ==================================================================================== explicit template instantiation
