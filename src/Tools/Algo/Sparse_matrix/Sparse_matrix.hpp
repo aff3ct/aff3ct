@@ -40,7 +40,15 @@ public:
 	const std::vector<std::vector<unsigned int>>& get_row_to_cols() const;
 	const std::vector<std::vector<unsigned int>>& get_col_to_rows() const;
 
+	/*
+	 * Add a connection
+	 */
 	void add_connection(const size_t row_index, const size_t col_index);
+
+	/*
+	 * Remove the connection
+	 */
+	void rm_connection(const size_t row_index, const size_t col_index);
 
 	/*
 	 * Return the transposed matrix of this matrix

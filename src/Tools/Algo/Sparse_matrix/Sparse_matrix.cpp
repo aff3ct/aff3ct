@@ -139,6 +139,79 @@ void Sparse_matrix
 	this->n_connections++;
 }
 
+void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index)
+{
+	if (col_index >= this->n_cols)
+	{
+		std::stringstream message;
+		message << "'col_index' has to be smaller than 'n_cols' ('col_index' = " << col_index
+		        << ", 'n_cols' = " << this->n_cols << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (row_index >= this->n_rows)
+	{
+		std::stringstream message;
+		message << "'row_index' has to be smaller than 'n_rows' ('row_index' = " << row_index
+		        << ", 'n_rows' = " << this->n_rows << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	// delete the link in the row_to_cols vector
+	auto itr = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
+	if (itr != this->row_to_cols[row_index].end());
+	{
+		this->row_to_cols[row_index].erase(itr);
+
+		// check if need to reduce the rows max degree
+		if (this->row_to_cols[row_index].size() == (this->rows_max_degree-1))
+		{
+			bool found = false;
+			for (auto i = this->row_to_cols.begin(); i != this->row_to_cols.end(); i++ )
+				if (i->size() == this->rows_max_degree)
+				{
+					found = true;
+					break;
+				}
+
+			if (!found)
+				this->rows_max_degree--;
+		}
+	}
+
+	// delete the link in the col_to_rows vector
+	auto itc = std::find(this->col_to_rows[col_index].begin(), this->col_to_rows[col_index].end(), col_index);
+	if (itc != this->col_to_rows[col_index].end());
+	{
+		this->col_to_rows[col_index].erase(itc);
+
+		// check if need to reduce the cols max degree
+		if (this->col_to_rows[col_index].size() == (this->cols_max_degree-1))
+		{
+			bool found = false;
+			for (auto i = this->col_to_rows.begin(); i != this->col_to_rows.end(); i++ )
+				if (i->size() == this->cols_max_degree)
+				{
+					found = true;
+					break;
+				}
+
+			if (!found)
+				this->cols_max_degree--;
+		}
+	}
+
+	if ((itr == this->row_to_cols[row_index].end()) != (itc == this->col_to_rows[col_index].end()))
+	{
+		std::stringstream message;
+		message << "The connection has been found only in one of the two vectors 'row_to_cols' and 'col_to_rows' "
+		        << "('row_index' = " << row_index << "'col_index' = " << col_index << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	this->n_connections--;
+}
+
 Sparse_matrix Sparse_matrix
 ::transpose() const
 {
