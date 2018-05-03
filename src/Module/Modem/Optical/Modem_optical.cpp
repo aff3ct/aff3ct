@@ -10,7 +10,7 @@
 
 using namespace aff3ct;
 using namespace aff3ct::module;
-
+//
 //std::vector<std::vector<float>> llrs;
 //size_t llr_idx;
 
@@ -26,7 +26,7 @@ Modem_optical<B,R,Q>
 	const std::string name = "Modem_optical";
 	this->set_name(name);
 
-//	std::ifstream file("/media/ohartmann/DATA/Documents/Projets/CNES_AIRBUS/vectorTestIMS/TestVec ROP -31_3970/AFF3CT/LLR.txt");
+//	std::ifstream file("/media/ohartmann/DATA/Documents/Projets/CNES_AIRBUS/matrices/2018_05_03/vectorTestIMS/TestVec ROP -32/AFF3CT/LLR.txt");
 //
 //	if (!file.is_open())
 //		throw tools::runtime_error();
