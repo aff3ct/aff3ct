@@ -1,5 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/max.h"
+#include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 #include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp"
@@ -53,6 +54,11 @@ void Decoder_LDPC::parameters
 		"path to the H matrix (AList or QC formated file).",
 		tools::arg_rank::REQ);
 
+	args.add_link({p+"-h-path"}, {p+"-cw-size",   "N"}); // N_cw is H width
+	args.add_link({p+"-h-path"}, {p+"-info-bits", "K"}); // if there is no K, then H is considered regular,
+	                                                     // so K is the N - H's height
+
+
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BP", "BP_FLOODING", "BP_LAYERED", "BP_PEELING");
 	tools::add_options(args.at({p+"-implem"   }), 0, "ONMS", "SPA", "LSPA", "GALA", "AMS");
 
@@ -96,14 +102,11 @@ void Decoder_LDPC::parameters
 		tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
 		"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
 		"smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.");
-
 }
 
 void Decoder_LDPC::parameters
 ::store(const tools::Argument_map_value &vals)
 {
-	Decoder::parameters::store(vals);
-
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-h-path"    })) this->H_path          = vals.at      ({p+"-h-path"    });
@@ -115,6 +118,15 @@ void Decoder_LDPC::parameters
 	if(vals.exist({p+"-off"       })) this->offset          = vals.to_float({p+"-off"       });
 	if(vals.exist({p+"-norm"      })) this->norm_factor     = vals.to_float({p+"-norm"      });
 	if(vals.exist({p+"-no-synd"   })) this->enable_syndrome = false;
+
+	if (!this->H_path.empty())
+	{
+		int H;
+		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, H, this->N_cw);
+		this->K = this->N_cw - H; // considered as regular so H = N - K
+	}
+
+	Decoder::parameters::store(vals);
 }
 
 void Decoder_LDPC::parameters
