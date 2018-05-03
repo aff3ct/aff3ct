@@ -1,5 +1,6 @@
 #include <type_traits>
 
+#include "Tools/Noise/Erased_value.hpp"
 #include "Tools/Exception/exception.hpp"
 
 #include "Modem_OOK.hpp"
@@ -72,9 +73,9 @@ void Modem_OOK<B,R,Q>
 
 			case tools::Noise_type::EP:
 			{
-				auto sign = (Q)tools::Noise<R>::erased_llr_val;
+				auto sign = tools::Erased_value<Q>::llr;
 				for (auto i = 0; i < this->N_fil; i++)
-					if (Y_N1[i] == tools::Noise<R>::erased_symbol_val)
+					if (Y_N1[i] == tools::Erased_value<Q>::symbol)
 					{
 						Y_N2[i] = sign;
 						sign *= (Q)-1;

@@ -3,7 +3,6 @@
 
 #include <utility>
 #include <string>
-#include <limits>
 
 namespace aff3ct
 {
@@ -15,10 +14,6 @@ enum class Noise_type {SIGMA, ROP, EP};
 template <typename R = float>
 class Noise
 {
-public:
-	static const R erased_symbol_val;
-	static const R erased_llr_val;
-
 public:
 	Noise();
 	explicit Noise(R noise);

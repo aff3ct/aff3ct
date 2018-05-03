@@ -1,4 +1,5 @@
 #include <type_traits>
+#include "Tools/Noise/Erased_value.hpp"
 #include "Channel_BEC.hpp"
 
 using namespace aff3ct;
@@ -70,7 +71,7 @@ void Channel_BEC<R>
 
 	const auto erasure_probability = this->n->get_noise();
 
-	const mipp::Reg<R> r_erased = tools::Noise<R>::erased_symbol_val;
+	const mipp::Reg<R> r_erased = tools::Erased_value<R>::symbol;
 	const mipp::Reg<R> r_ep     = erasure_probability;
 
 	const auto vec_loop_size = (std::is_same<R,float>::value) ? ((this->N / mipp::nElReg<R>()) * mipp::nElReg<R>()) : 0;
@@ -84,7 +85,7 @@ void Channel_BEC<R>
 	}
 
 	for (auto i = vec_loop_size; i < this->N; i++)
-		Y_N[i] = get_random() <= erasure_probability ? tools::Noise<R>::erased_symbol_val : X_N[i];
+		Y_N[i] = get_random() <= erasure_probability ? tools::Erased_value<R>::symbol : X_N[i];
 }
 
 template<typename R>

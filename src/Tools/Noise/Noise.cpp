@@ -7,11 +7,6 @@ using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename R>
-const R aff3ct::tools::Noise<R>::erased_symbol_val = std::numeric_limits<R>::infinity();
-template <typename R>
-const R aff3ct::tools::Noise<R>::erased_llr_val = (R)0.00001;
-
-template <typename R>
 Noise<R>::
 Noise()
 : _n((R)0,false)
