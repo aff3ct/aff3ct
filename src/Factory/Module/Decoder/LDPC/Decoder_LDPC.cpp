@@ -11,6 +11,7 @@
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_ONMS_inter.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/AMS/Decoder_LDPC_BP_layered_approximate_min_star.hpp"
+#include "Module/Decoder/LDPC/BP/Peeling/Decoder_LDPC_BP_peeling.hpp"
 
 #include "Decoder_LDPC.hpp"
 
@@ -52,7 +53,7 @@ void Decoder_LDPC::parameters
 		"path to the H matrix (AList or QC formated file).",
 		tools::arg_rank::REQ);
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "BP", "BP_FLOODING", "BP_LAYERED");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BP", "BP_FLOODING", "BP_LAYERED", "BP_PEELING");
 	tools::add_options(args.at({p+"-implem"   }), 0, "ONMS", "SPA", "LSPA", "GALA", "AMS");
 
 	args.add(
@@ -189,6 +190,10 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 	else if (this->type == "BP_LAYERED" && this->simd_strategy == "INTER")
 	{
 		     if (this->implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+	}
+	else if (this->type == "BP_PEELING")
+	{
+		     if (this->implem == "STD") return new module::Decoder_LDPC_BP_peeling<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, false, this->n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
