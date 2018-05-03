@@ -180,7 +180,7 @@ void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index
 	}
 
 	// delete the link in the col_to_rows vector
-	auto itc = std::find(this->col_to_rows[col_index].begin(), this->col_to_rows[col_index].end(), col_index);
+	auto itc = std::find(this->col_to_rows[col_index].begin(), this->col_to_rows[col_index].end(), row_index);
 	if (itc != this->col_to_rows[col_index].end());
 	{
 		this->col_to_rows[col_index].erase(itc);
