@@ -29,7 +29,7 @@ protected:
 
 public:
 	Channel_BEC(const int N, const int seed = 0,
-	            const tools::Erasure_probability<R>& noise = tools::Erasure_probability<R>(),
+	            const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
 	            const int n_frames = 1);
 	virtual ~Channel_BEC() = default;
 

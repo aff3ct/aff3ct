@@ -9,26 +9,26 @@ namespace tools
 {
 
 template <typename R = float>
-class Erasure_probability : public Noise<R>
+class Event_probability : public Noise<R>
 {
 public:
-	Erasure_probability() = default;
-	explicit Erasure_probability(R noise);
+	Event_probability() = default;
+	explicit Event_probability(R noise);
 	template<typename T>
-	Erasure_probability(const Erasure_probability<T>& other);
-	virtual ~Erasure_probability() = default;
+	Event_probability(const Event_probability<T>& other);
+	virtual ~Event_probability() = default;
 
 	virtual std::string get_unity() const;
 	virtual Noise_type get_type() const;
 
-	virtual Erasure_probability<R>* clone() const;
+	virtual Event_probability<R>* clone() const;
 
 protected:
 	virtual void check();
 };
 
 template <typename R = float>
-using EP = Erasure_probability<R>;
+using EP = Event_probability<R>;
 
 }
 }

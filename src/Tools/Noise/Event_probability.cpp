@@ -1,13 +1,13 @@
 #include <sstream>
 #include "Tools/Exception/exception.hpp"
 
-#include "Erasure_probability.hpp"
+#include "Event_probability.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template<typename R>
-Erasure_probability<R>::Erasure_probability(R noise)
+Event_probability<R>::Event_probability(R noise)
 : Noise<R>(noise)
 {
 
@@ -15,14 +15,14 @@ Erasure_probability<R>::Erasure_probability(R noise)
 
 template <typename R>
 template<typename T>
-Erasure_probability<R>::
-Erasure_probability(const Erasure_probability<T>& other)
+Event_probability<R>::
+Event_probability(const Event_probability<T>& other)
 : Noise<R>(other)
 {
 }
 
 template <typename R>
-void Erasure_probability<R>::
+void Event_probability<R>::
 check()
 {
 	auto n = this->get_noise();
@@ -35,27 +35,27 @@ check()
 }
 
 template<typename R>
-Noise_type Erasure_probability<R>::get_type() const
+Noise_type Event_probability<R>::get_type() const
 {
 	return Noise_type::EP;
 }
 
 template<typename R>
-Erasure_probability<R>* Erasure_probability<R>::clone() const
+Event_probability<R>* Event_probability<R>::clone() const
 {
-	return new Erasure_probability<R>(*this);
+	return new Event_probability<R>(*this);
 }
 
 template<typename R>
-std::string Erasure_probability<R>::get_unity() const
+std::string Event_probability<R>::get_unity() const
 {
 	return "";
 }
 
 // ==================================================================================== explicit template instantiation
-template class aff3ct::tools::Erasure_probability<float>;
-template class aff3ct::tools::Erasure_probability<double>;
+template class aff3ct::tools::Event_probability<float>;
+template class aff3ct::tools::Event_probability<double>;
 
-template aff3ct::tools::Erasure_probability<double>::Erasure_probability(const Erasure_probability<float >&);
-template aff3ct::tools::Erasure_probability<float >::Erasure_probability(const Erasure_probability<double>&);
+template aff3ct::tools::Event_probability<double>::Event_probability(const Event_probability<float >&);
+template aff3ct::tools::Event_probability<float >::Event_probability(const Event_probability<double>&);
 // ==================================================================================== explicit template instantiation

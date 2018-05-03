@@ -170,7 +170,7 @@ void BFER<B,R,Q>
 		{
 		    n = params_BFER.noise_range[params_BFER.noise_range.size() - noise_idx -1];
 
-		    this->noise = new tools::Erasure_probability<R>(n);
+		    this->noise = new tools::Event_probability<R>(n);
 		}
 		else
 		{

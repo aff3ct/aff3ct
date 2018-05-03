@@ -426,7 +426,7 @@
 #include <Tools/Math/Distribution/Distributions.hpp>
 #include <Tools/Math/Galois.hpp>
 #include <Tools/Math/Point.hpp>
-#include <Tools/Noise/Erasure_probability.hpp>
+#include "Tools/Noise/Event_probability.hpp"
 #include <Tools/Noise/Noise.hpp>
 #include <Tools/Noise/Received_optical_power.hpp>
 #include <Tools/Noise/Sigma.hpp>

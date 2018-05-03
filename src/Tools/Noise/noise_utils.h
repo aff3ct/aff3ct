@@ -2,7 +2,7 @@
 #define NOISE_UTILS_HPP__
 
 #include "Sigma.hpp"
-#include "Erasure_probability.hpp"
+#include "Event_probability.hpp"
 #include "Received_optical_power.hpp"
 
 namespace aff3ct
@@ -20,7 +20,7 @@ struct Noise_cast
 		switch(n.get_type())
 		{
 			case Noise_type::SIGMA: cast_n = new Sigma                 <T>(dynamic_cast<const Sigma                 <R>&>(n)); break;
-			case Noise_type::EP:    cast_n = new Erasure_probability   <T>(dynamic_cast<const Erasure_probability   <R>&>(n)); break;
+			case Noise_type::EP:    cast_n = new Event_probability     <T>(dynamic_cast<const Event_probability     <R>&>(n)); break;
 			case Noise_type::ROP:   cast_n = new Received_optical_power<T>(dynamic_cast<const Received_optical_power<R>&>(n)); break;
 		}
 

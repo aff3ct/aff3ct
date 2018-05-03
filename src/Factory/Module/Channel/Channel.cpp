@@ -193,7 +193,7 @@ module::Channel<R>* Channel::parameters
 		     if (type == "USER"    ) return new module::Channel_user<R>(N, path, add_users, false, n_frames);
 		else if (type == "USER_ADD") return new module::Channel_user<R>(N, path, add_users,  true, n_frames);
 		else if (type == "NO"      ) return new module::Channel_NO  <R>(N,       add_users, n_frames);
-		else if (type == "BEC"     ) return new module::Channel_BEC <R>(N, seed, tools::Erasure_probability<R>((R)this->noise), n_frames);
+		else if (type == "BEC"     ) return new module::Channel_BEC <R>(N, seed, tools::Event_probability<R>((R)this->noise), n_frames);
 
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 	}
