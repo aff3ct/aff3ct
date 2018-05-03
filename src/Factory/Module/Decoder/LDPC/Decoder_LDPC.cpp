@@ -203,10 +203,6 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 	{
 		     if (this->implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 	}
-	else if (this->type == "BP_PEELING")
-	{
-		     if (this->implem == "STD") return new module::Decoder_LDPC_BP_peeling<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, false, this->n_frames);
-	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -225,6 +221,10 @@ module::Decoder_SIHO<B,Q>* Decoder_LDPC::parameters
 		if ((this->type == "BP" || this->type == "BP_FLOODING") && this->simd_strategy.empty())
 		{
 			if (this->implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		}
+		else if (this->type == "BP_PEELING")
+		{
+			if (this->implem == "STD") return new module::Decoder_LDPC_BP_peeling<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, false, this->n_frames);
 		}
 
 		return build_siso<B,Q>(H, info_bits_pos);

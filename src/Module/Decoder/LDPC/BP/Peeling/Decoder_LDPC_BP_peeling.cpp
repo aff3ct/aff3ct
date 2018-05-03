@@ -42,6 +42,15 @@ void Decoder_LDPC_BP_peeling<B,R>
 
 	std::fill(this->check_nodes[frame_id].begin(), this->check_nodes[frame_id].end(), (B)0);
 
+	std::cout << "(L) var_nodes : " << std::endl;
+	for (unsigned i = 0; i < this->var_nodes[frame_id].size(); i++)
+		std::cout << this->var_nodes[frame_id][i] << " ";
+	std::cout << std::endl;
+	std::cout << "(L) check_nodes : " << std::endl;
+	for (unsigned i = 0; i < this->check_nodes[frame_id].size(); i++)
+		std::cout << this->check_nodes[frame_id][i] << " ";
+	std::cout << std::endl;
+
 	// first propagate known values
 	for (unsigned i = 0; i < links.get_n_rows(); i++)
 	{
@@ -57,6 +66,15 @@ void Decoder_LDPC_BP_peeling<B,R>
 		}
 	}
 
+	std::cout << "(I) var_nodes : " << std::endl;
+	for (unsigned i = 0; i < this->var_nodes[frame_id].size(); i++)
+		std::cout << this->var_nodes[frame_id][i] << " ";
+	std::cout << std::endl;
+	std::cout << "(I) check_nodes : " << std::endl;
+	for (unsigned i = 0; i < this->check_nodes[frame_id].size(); i++)
+		std::cout << this->check_nodes[frame_id][i] << " ";
+	std::cout << std::endl;
+
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		// find degree-1 check nodes
@@ -70,6 +88,15 @@ void Decoder_LDPC_BP_peeling<B,R>
 				links.rm_connection(vn_pos, i);
 			}
 		}
+
+		std::cout << "(" << ite << ") var_nodes : " << std::endl;
+		for (unsigned i = 0; i < this->var_nodes[frame_id].size(); i++)
+			std::cout << this->var_nodes[frame_id][i] << " ";
+		std::cout << std::endl;
+		std::cout << "(" << ite << ") check_nodes : " << std::endl;
+		for (unsigned i = 0; i < this->check_nodes[frame_id].size(); i++)
+			std::cout << this->check_nodes[frame_id][i] << " ";
+		std::cout << std::endl;
 	}
 };
 
