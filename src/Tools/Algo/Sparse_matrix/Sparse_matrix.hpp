@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 namespace aff3ct
 {
@@ -70,6 +71,12 @@ public:
 	 * The "order" parameter can be "ASC" for ascending or "DSC" for descending
 	 */
 	void sort_cols_per_density(std::string order = "DSC");
+
+	/*
+	 * Print the sparsed matrix in its full view with 0s and 1s.
+	 * 'transpose' allow the print in its transposed view
+	 */
+	void print(bool transpose = false, std::ostream& os = std::cout);
 };
 }
 }

@@ -158,10 +158,12 @@ void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index
 	}
 
 	// delete the link in the row_to_cols vector
+	bool row_found = false;
 	auto itr = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
 	if (itr != this->row_to_cols[row_index].end());
 	{
-		this->row_to_cols[row_index].erase(itr);
+		row_found = true;
+		itr = this->row_to_cols[row_index].erase(itr);
 
 		// check if need to reduce the rows max degree
 		if (this->row_to_cols[row_index].size() == (this->rows_max_degree-1))
@@ -180,9 +182,11 @@ void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index
 	}
 
 	// delete the link in the col_to_rows vector
+	bool col_found = false;
 	auto itc = std::find(this->col_to_rows[col_index].begin(), this->col_to_rows[col_index].end(), row_index);
 	if (itc != this->col_to_rows[col_index].end());
 	{
+		col_found = true;
 		this->col_to_rows[col_index].erase(itc);
 
 		// check if need to reduce the cols max degree
@@ -201,15 +205,18 @@ void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index
 		}
 	}
 
-	if ((itr == this->row_to_cols[row_index].end()) != (itc == this->col_to_rows[col_index].end()))
+	if (row_found != col_found)
 	{
 		std::stringstream message;
 		message << "The connection has been found only in one of the two vectors 'row_to_cols' and 'col_to_rows' "
-		        << "('row_index' = " << row_index << "'col_index' = " << col_index << ").";
+		        << "('row_index' = " << row_index << ", 'col_index' = " << col_index
+		        << ", found in row = " << std::boolalpha << row_found
+		        << ", found in col = " << col_found << std::noboolalpha << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	this->n_connections--;
+	else if (row_found && col_found)
+		this->n_connections--;
+	// else the connection has not been found
 }
 
 Sparse_matrix Sparse_matrix
@@ -248,12 +255,12 @@ void Sparse_matrix
 
 	if (order == "ASC")
 	{
-		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
+		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
 		          [](const std::vector<unsigned> &i1, const  std::vector<unsigned> &i2) { return i1.size() < i2.size(); });
 	}
 	else // order == "DSC"
 	{
-		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
+		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
 		          [](const  std::vector<unsigned> &i1, const std::vector<unsigned> &i2) { return i1.size() > i2.size(); });
 	}
 
@@ -262,4 +269,49 @@ void Sparse_matrix
 	for (size_t i = 0; i < this->col_to_rows.size(); i++)
 		for (size_t j = 0; j < this->col_to_rows[i].size(); j++)
 			this->row_to_cols[this->col_to_rows[i][j]].push_back(i);
+}
+
+void Sparse_matrix
+::print(bool transpose, std::ostream& os)
+{
+	if (transpose)
+	{
+		std::vector<unsigned> rows(this->n_rows, 0);
+
+		for (auto& col : this->col_to_rows)
+		{
+			// set the ones
+			for (auto& row : col)
+				rows[row] = 1;
+
+			for (auto& row : rows)
+				os << row << " ";
+
+			os << std::endl;
+
+			// reset the ones
+			for (auto& row : col)
+				rows[row] = 0;
+		}
+	}
+	else
+	{
+		std::vector<unsigned> columns(this->n_cols, 0);
+
+		for (auto& row : this->row_to_cols)
+		{
+			// set the ones
+			for (auto& col : row)
+				columns[col] = 1;
+
+			for (auto& col : columns)
+				os << col << " ";
+
+			os << std::endl;
+
+			// reset the ones
+			for (auto& col : row)
+				columns[col] = 0;
+		}
+	}
 }
