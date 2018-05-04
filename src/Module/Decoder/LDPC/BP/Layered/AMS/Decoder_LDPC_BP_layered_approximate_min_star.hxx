@@ -14,14 +14,14 @@ namespace module
 template <typename B, typename R, tools::proto_min<R> MIN>
 Decoder_LDPC_BP_layered_approximate_min_star<B,R,MIN>
 ::Decoder_LDPC_BP_layered_approximate_min_star(const int K, const int N, const int n_ite,
-                                               const tools::Sparse_matrix &H,
+                                               const tools::Sparse_matrix &_H,
                                                const std::vector<unsigned> &info_bits_pos,
                                                const bool enable_syndrome,
                                                const int syndrome_depth,
                                                const int n_frames)
 : Decoder(K, N, n_frames, 1),
-  Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
-  contributions(H.get_cols_max_degree()), values(H.get_cols_max_degree())
+  Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, _H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
+  contributions(this->H.get_cols_max_degree()), values(this->H.get_cols_max_degree())
 {
 	const std::string name = "Decoder_LDPC_BP_layered_approximate_min_star";
 	this->set_name(name);

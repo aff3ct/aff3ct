@@ -12,18 +12,18 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_sum_product<B,R>
 ::Decoder_LDPC_BP_flooding_sum_product(const int K, const int N, const int n_ite,
-                                       const tools::Sparse_matrix &H,
+                                       const tools::Sparse_matrix &_H,
                                        const std::vector<unsigned> &info_bits_pos,
                                        const bool enable_syndrome,
                                        const int syndrome_depth,
                                        const int n_frames)
 : Decoder(K, N, n_frames, 1),
-  Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
-  values(H.get_cols_max_degree())
+  Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, _H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
+  values(this->H.get_cols_max_degree())
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_sum_product";
 	this->set_name(name);
-	
+
 	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
 }
@@ -101,7 +101,7 @@ void Decoder_LDPC_BP_flooding_sum_product<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_flooding_sum_product<B_8,Q_8>;
