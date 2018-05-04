@@ -9,15 +9,15 @@ using namespace aff3ct::module;
 
 template<typename B, typename R>
 Decoder_LDPC_BP_peeling<B, R>::Decoder_LDPC_BP_peeling(const int K, const int N, const int n_ite,
-                                                       const tools::Sparse_matrix &H,
+                                                       const tools::Sparse_matrix &_H,
                                                        const std::vector<unsigned> &info_bits_pos,
                                                        const bool enable_syndrome, const int syndrome_depth,
                                                        const int n_frames)
-: Decoder                (K, N,                                            n_frames, 1),
-  Decoder_LDPC_BP<B,R>   (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
-  info_bits_pos          (info_bits_pos                                               ),
-  var_nodes              (n_frames, std::vector<B>(N             )                    ),
-  check_nodes            (n_frames, std::vector<B>(H.get_n_cols())                    )
+: Decoder                (K, N,                                             n_frames, 1),
+  Decoder_LDPC_BP<B,R>   (K, N, n_ite, _H, enable_syndrome, syndrome_depth, n_frames, 1),
+  info_bits_pos          (info_bits_pos                                                ),
+  var_nodes              (n_frames, std::vector<B>(N                   )               ),
+  check_nodes            (n_frames, std::vector<B>(this->H.get_n_cols())               )
 {
 	const std::string name = "Decoder_LDPC_BP_peeling";
 	this->set_name(name);
@@ -59,7 +59,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 		auto cur_state = this->var_nodes[frame_id][i];
 		if (cur_state != tools::Erased_value<B>::symbol)
 		{
-			auto& cn_list = links.get_row_to_cols()[i];
+			auto& cn_list = links.get_cols_from_row(i);
 			while (cn_list.size())
 			{
 				auto& cn_pos = cn_list.front();
@@ -91,14 +91,14 @@ void Decoder_LDPC_BP_peeling<B,R>
 		{
 			if (links.get_col_to_rows()[i].size() == 1)
 			{ // then propagate the belief
-				auto& vn_pos = links.get_col_to_rows()[i].front();
+				auto& vn_pos = links.get_rows_from_col(i).front();
 				this->var_nodes  [frame_id][vn_pos] = this->check_nodes[frame_id][i];
 				this->check_nodes[frame_id][     i] = 0;
 				links.rm_connection(vn_pos, i);
 				no_modification = false;
 			}
 			else
-				all_check_nodes_done &= links.get_col_to_rows()[i].size() == 0;
+				all_check_nodes_done &= links.get_rows_from_col(i).size() == 0;
 		}
 
 		// std::cout << "(" << ite << ") var_nodes : " << std::endl;
