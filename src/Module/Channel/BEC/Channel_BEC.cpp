@@ -8,7 +8,7 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_BEC<R>
 ::Channel_BEC(const int N, const int seed, const tools::Event_probability<R>& noise, const int n_frames)
-: Channel<R>(N, noise, n_frames), uni_dist((R)0, (R)1)
+: Channel<R>(N, noise, n_frames), mt19937(seed), uni_dist((R)0, (R)1)
 {
 	const std::string name = "Channel_BEC";
 	this->set_name(name);

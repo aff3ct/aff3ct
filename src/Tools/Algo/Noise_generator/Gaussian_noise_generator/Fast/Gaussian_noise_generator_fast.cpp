@@ -11,7 +11,7 @@ template <typename R>
 Gaussian_noise_generator_fast<R>
 ::Gaussian_noise_generator_fast(const int seed)
 : Gaussian_noise_generator<R>(),
-  mt19937(seed),
+  mt19937(),
   mt19937_simd()
 {
 	this->set_seed(seed);
@@ -27,6 +27,8 @@ template <typename R>
 void Gaussian_noise_generator_fast<R>
 ::set_seed(const int seed)
 {
+	mt19937.seed(seed);
+
 	mipp::vector<int> seeds(mipp::nElReg<int>());
 	for (auto i = 0; i < mipp::nElReg<int>(); i++)
 		seeds[i] = mt19937.rand();
