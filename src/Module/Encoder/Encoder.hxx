@@ -230,7 +230,7 @@ is_codeword(const B *X_N)
 
 template <typename B>
 const std::vector<uint32_t>& Encoder<B>::
-get_info_bits_pos()
+get_info_bits_pos() const
 {
 	return info_bits_pos;
 }

@@ -16,30 +16,30 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::Decoder_LDPC_BP_layered_ONMS_inter(const int K, const int N, const int n_ite,
-                                     const tools::Sparse_matrix &H,
+                                     const tools::Sparse_matrix &_H,
                                      const std::vector<unsigned> &info_bits_pos,
                                      const float normalize_factor,
                                      const R offset,
                                      const bool enable_syndrome,
                                      const int syndrome_depth,
                                      const int n_frames)
-: Decoder               (K, N, n_frames,                                            mipp::nElReg<R>() ),
-  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, mipp::nElReg<R>() ),
-  normalize_factor      (normalize_factor                                                             ),
-  offset                (offset                                                                       ),
-  contributions         (H.get_cols_max_degree()                                                      ),
-  saturation            ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(H.get_rows_max_degree()))) -1)),
-  n_C_nodes             ((int)H.get_n_cols()                                                          ),
-  init_flag             (true                                                                         ),
-  info_bits_pos         (info_bits_pos                                                                ),
-  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                             ),
-  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(H.get_n_connections())         ),
-  Y_N_reorderered       (N                                                                            ),
-  V_reorderered         (N                                                                            )
+: Decoder               (K, N, n_frames,                                             mipp::nElReg<R>()      ),
+  Decoder_LDPC_BP<B,R>  (K, N, n_ite, _H, enable_syndrome, syndrome_depth, n_frames, mipp::nElReg<R>()      ),
+  normalize_factor      (normalize_factor                                                                   ),
+  offset                (offset                                                                             ),
+  contributions         (this->H.get_cols_max_degree()                                                      ),
+  saturation            ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
+  n_C_nodes             ((int)this->H.get_n_cols()                                                          ),
+  init_flag             (true                                                                               ),
+  info_bits_pos         (info_bits_pos                                                                      ),
+  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                                   ),
+  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  Y_N_reorderered       (N                                                                                  ),
+  V_reorderered         (N                                                                                  )
 {
 	const std::string name = "Decoder_LDPC_BP_layered_ONMS_inter";
 	this->set_name(name);
-	
+
 	if (typeid(R) == typeid(signed char))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder does not work in 8-bit fixed-point.");
 
@@ -373,7 +373,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter<B_8,Q_8>;

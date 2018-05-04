@@ -19,9 +19,9 @@ class Encoder_LDPC_DVBS2 : public Encoder_LDPC<B>
 
 public:
 	Encoder_LDPC_DVBS2(const tools::dvbs2_values& dvbs2, const int n_frames = 1);
-	virtual ~Encoder_LDPC_DVBS2();
+	virtual ~Encoder_LDPC_DVBS2() = default;
 
-	const std::vector<uint32_t>& get_info_bits_pos();
+	const std::vector<uint32_t>& get_info_bits_pos() const;
 
 	bool is_sys() const;
 
