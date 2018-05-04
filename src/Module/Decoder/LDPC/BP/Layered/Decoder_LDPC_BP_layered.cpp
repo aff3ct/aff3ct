@@ -14,18 +14,18 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_LDPC_BP_layered<B,R>
 ::Decoder_LDPC_BP_layered(const int K, const int N, const int n_ite,
-                          const tools::Sparse_matrix &H,
+                          const tools::Sparse_matrix &_H,
                           const std::vector<unsigned> &info_bits_pos,
                           const bool enable_syndrome,
                           const int syndrome_depth,
                           const int n_frames)
-: Decoder               (K, N,                                            n_frames, 1),
-  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
-  n_C_nodes             ((int)H.get_n_cols()                                         ),
-  init_flag             (true                                                        ),
-  info_bits_pos         (info_bits_pos                                               ),
-  var_nodes             (n_frames, std::vector<R>(N                    )             ),
-  branches              (n_frames, std::vector<R>(H.get_n_connections())             )
+: Decoder               (K, N,                                             n_frames, 1),
+  Decoder_LDPC_BP<B,R>  (K, N, n_ite, _H, enable_syndrome, syndrome_depth, n_frames, 1),
+  n_C_nodes             ((int)this->H.get_n_cols()                                    ),
+  init_flag             (true                                                         ),
+  info_bits_pos         (info_bits_pos                                                ),
+  var_nodes             (n_frames, std::vector<R>(N                          )        ),
+  branches              (n_frames, std::vector<R>(this->H.get_n_connections())        )
 {
 	const std::string name = "Decoder_LDPC_BP_layered";
 	this->set_name(name);

@@ -16,7 +16,7 @@ Decoder_LDPC_BP<B,R>
 ::Decoder_LDPC_BP(const int K,
                   const int N,
                   const int n_ite,
-                  const tools::Sparse_matrix &H,
+                  const tools::Sparse_matrix &_H,
                   const bool enable_syndrome,
                   const int syndrome_depth,
                   const int n_frames,
@@ -24,7 +24,7 @@ Decoder_LDPC_BP<B,R>
 : Decoder               (K, N, n_frames, simd_inter_frame_level),
   Decoder_SISO_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level),
   n_ite                 (n_ite                                 ),
-  H                     (H                                     ),
+  H                     ((_H.get_n_cols() > _H.get_n_rows()) ? _H.transpose() : _H),
   enable_syndrome       (enable_syndrome                       ),
   syndrome_depth        (syndrome_depth                        ),
   cur_syndrome_depth    (0                                     )
@@ -46,11 +46,11 @@ Decoder_LDPC_BP<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (N != (int)H.get_n_rows())
+	if (N != (int)this->H.get_n_rows())
 	{
 		std::stringstream message;
 		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
-		        << H.get_n_rows() << ").";
+		        << this->H.get_n_rows() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
