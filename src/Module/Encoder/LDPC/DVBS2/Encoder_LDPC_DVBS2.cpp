@@ -18,12 +18,6 @@ Encoder_LDPC_DVBS2<B>
 }
 
 template <typename B>
-Encoder_LDPC_DVBS2<B>
-::~Encoder_LDPC_DVBS2()
-{
-}
-
-template <typename B>
 void Encoder_LDPC_DVBS2<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
@@ -61,7 +55,7 @@ void Encoder_LDPC_DVBS2<B>
 
 template <typename B>
 const std::vector<uint32_t>& Encoder_LDPC_DVBS2<B>
-::get_info_bits_pos()
+::get_info_bits_pos() const
 {
 	return Encoder<B>::get_info_bits_pos();
 }
