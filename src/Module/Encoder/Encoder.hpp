@@ -46,7 +46,7 @@ public:
 protected:
 	const int             K;             /*!< Number of information bits in one frame */
 	const int             N;             /*!< Size of one frame (= number of bits in one frame) */
-	      bool            sys;           /*!< Is the generated codeworde are systematics ? */
+	      bool            sys;           /*!< Is the generated codeword systematic ? */
 	      bool            memorizing;    /*!< If true, keep the last encoded frame(s) in memory */
 	std::vector<uint32_t> info_bits_pos; /*!< Positions of the information bits in the codeword */
 
@@ -99,7 +99,7 @@ public:
 
 	virtual bool is_codeword(const B *X_N);
 
-	virtual const std::vector<uint32_t>& get_info_bits_pos();
+	virtual const std::vector<uint32_t>& get_info_bits_pos() const;
 
 	/*!
 	 * \brief Gets the number of tail bits.

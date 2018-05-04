@@ -12,26 +12,26 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &H,
+::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
                                       const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
                                       const int syndrome_depth, const int n_frames)
-: Decoder               (K, N,                                            n_frames, 1),
-  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
-  hard_decision         (N                                                           ),
-  info_bits_pos         (info_bits_pos                                               ),
-  HY_N                  (N                                                           ),
-  V_N                   (N                                                           ),
-  C_to_V_messages       (H.get_n_connections(), 0                                    ),
-  V_to_C_messages       (H.get_n_connections(), 0                                    )
+: Decoder               (K, N,                                             n_frames, 1),
+  Decoder_LDPC_BP<B,R>  (K, N, n_ite, _H, enable_syndrome, syndrome_depth, n_frames, 1),
+  hard_decision         (N                                                            ),
+  info_bits_pos         (info_bits_pos                                                ),
+  HY_N                  (N                                                            ),
+  V_N                   (N                                                            ),
+  C_to_V_messages       (this->H.get_n_connections(), 0                               ),
+  V_to_C_messages       (this->H.get_n_connections(), 0                               ),
+  transpose             (this->H.get_n_connections()                                  )
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_Gallager_A";
 	this->set_name(name);
-	
-	transpose.resize(H.get_n_connections());
-	std::vector<unsigned char> connections(H.get_n_rows(), 0);
 
-	const auto &CN_to_VN = H.get_col_to_rows();
-	const auto &VN_to_CN = H.get_row_to_cols();
+	std::vector<unsigned char> connections(this->H.get_n_rows(), 0);
+
+	const auto &CN_to_VN = this->H.get_col_to_rows();
+	const auto &VN_to_CN = this->H.get_row_to_cols();
 
 	auto k = 0;
 	for (auto i = 0; i < (int)CN_to_VN.size(); i++)
@@ -241,7 +241,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A<B_8,Q_8>;
