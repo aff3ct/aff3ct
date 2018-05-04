@@ -113,4 +113,4 @@ test-regression:
        - test-regression-results/
   script:
     - ./ci/test-build-linux-gcc.sh
-    - ./ci/test-regression.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
+    - ./ci/test-regression.py --max-snr-time 15 --sensibility 2.5 --weak-rate 0.9 --verbose 1
