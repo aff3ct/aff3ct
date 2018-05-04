@@ -12,8 +12,6 @@ template<typename B = int, typename R = float>
 class Decoder_LDPC_BP_peeling : public Decoder_LDPC_BP<B,R>
 {
 protected:
-	const bool multiframe_interleaving;
-
 	const std::vector<unsigned> &info_bits_pos;
 
 	// data structures for iterative decoding
@@ -26,7 +24,6 @@ public:
 	                        const std::vector<unsigned> &info_bits_pos,
 	                        const bool enable_syndrome = true,
 	                        const int syndrome_depth = 1,
-	                        const bool multiframe_interleaving = false,
 	                        const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_peeling() = default;
 

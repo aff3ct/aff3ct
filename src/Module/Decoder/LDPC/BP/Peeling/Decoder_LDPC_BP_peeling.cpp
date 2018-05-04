@@ -12,10 +12,9 @@ Decoder_LDPC_BP_peeling<B, R>::Decoder_LDPC_BP_peeling(const int K, const int N,
                                                        const tools::Sparse_matrix &H,
                                                        const std::vector<unsigned> &info_bits_pos,
                                                        const bool enable_syndrome, const int syndrome_depth,
-                                                       const bool multiframe_interleaving, const int n_frames)
+                                                       const int n_frames)
 : Decoder                (K, N,                                            n_frames, 1),
   Decoder_LDPC_BP<B,R>   (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
-  multiframe_interleaving(multiframe_interleaving                                     ),
   info_bits_pos          (info_bits_pos                                               ),
   var_nodes              (n_frames, std::vector<B>(N             )                    ),
   check_nodes            (n_frames, std::vector<B>(H.get_n_cols())                    )
@@ -42,14 +41,17 @@ void Decoder_LDPC_BP_peeling<B,R>
 
 	std::fill(this->check_nodes[frame_id].begin(), this->check_nodes[frame_id].end(), (B)0);
 
-	std::cout << "(L) var_nodes : " << std::endl;
-	for (unsigned i = 0; i < this->var_nodes[frame_id].size(); i++)
-		std::cout << this->var_nodes[frame_id][i] << " ";
-	std::cout << std::endl;
-	std::cout << "(L) check_nodes : " << std::endl;
-	for (unsigned i = 0; i < this->check_nodes[frame_id].size(); i++)
-		std::cout << this->check_nodes[frame_id][i] << " ";
-	std::cout << std::endl;
+	// std::cout << "(L) var_nodes : " << std::endl;
+	// for (unsigned i = 0; i < this->var_nodes[frame_id].size(); i++)
+	// 	std::cout << this->var_nodes[frame_id][i] << " ";
+	// std::cout << std::endl;
+	// std::cout << "(L) check_nodes : " << std::endl;
+	// for (unsigned i = 0; i < this->check_nodes[frame_id].size(); i++)
+	// 	std::cout << this->check_nodes[frame_id][i] << " ";
+	// std::cout << std::endl;
+
+	// std::cout << "(L) links : " << std::endl;
+	// links.print(true);
 
 	// first propagate known values
 	for (unsigned i = 0; i < links.get_n_rows(); i++)
@@ -60,23 +62,30 @@ void Decoder_LDPC_BP_peeling<B,R>
 			auto& cn_list = links.get_row_to_cols()[i];
 			while (cn_list.size())
 			{
-				this->check_nodes[frame_id][cn_list.front()] ^= cur_state;
-				links.rm_connection(i, 0);
+				auto& cn_pos = cn_list.front();
+
+				this->check_nodes[frame_id][cn_pos] ^= cur_state;
+				links.rm_connection(i, cn_pos);
 			}
 		}
 	}
 
-	std::cout << "(I) var_nodes : " << std::endl;
-	for (unsigned i = 0; i < this->var_nodes[frame_id].size(); i++)
-		std::cout << this->var_nodes[frame_id][i] << " ";
-	std::cout << std::endl;
-	std::cout << "(I) check_nodes : " << std::endl;
-	for (unsigned i = 0; i < this->check_nodes[frame_id].size(); i++)
-		std::cout << this->check_nodes[frame_id][i] << " ";
-	std::cout << std::endl;
+	// std::cout << "(I) var_nodes : " << std::endl;
+	// for (unsigned i = 0; i < this->var_nodes[frame_id].size(); i++)
+	// 	std::cout << this->var_nodes[frame_id][i] << " ";
+	// std::cout << std::endl;
+	// std::cout << "(I) check_nodes : " << std::endl;
+	// for (unsigned i = 0; i < this->check_nodes[frame_id].size(); i++)
+	// 	std::cout << this->check_nodes[frame_id][i] << " ";
+	// std::cout << std::endl;
+
+	// std::cout << "(I) links : " << std::endl;
+	// links.print(true);
 
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
+		bool all_check_nodes_done = true;
+
 		// find degree-1 check nodes
 		for (unsigned i = 0; i < links.get_n_cols(); i++)
 		{
@@ -87,16 +96,21 @@ void Decoder_LDPC_BP_peeling<B,R>
 				this->check_nodes[frame_id][     i] = 0;
 				links.rm_connection(vn_pos, i);
 			}
+			else
+				all_check_nodes_done &= links.get_col_to_rows()[i].size() == 0;
 		}
 
-		std::cout << "(" << ite << ") var_nodes : " << std::endl;
-		for (unsigned i = 0; i < this->var_nodes[frame_id].size(); i++)
-			std::cout << this->var_nodes[frame_id][i] << " ";
-		std::cout << std::endl;
-		std::cout << "(" << ite << ") check_nodes : " << std::endl;
-		for (unsigned i = 0; i < this->check_nodes[frame_id].size(); i++)
-			std::cout << this->check_nodes[frame_id][i] << " ";
-		std::cout << std::endl;
+		// std::cout << "(" << ite << ") var_nodes : " << std::endl;
+		// for (unsigned i = 0; i < this->var_nodes[frame_id].size(); i++)
+		// 	std::cout << this->var_nodes[frame_id][i] << " ";
+		// std::cout << std::endl;
+		// std::cout << "(" << ite << ") check_nodes : " << std::endl;
+		// for (unsigned i = 0; i < this->check_nodes[frame_id].size(); i++)
+		// 	std::cout << this->check_nodes[frame_id][i] << " ";
+		// std::cout << std::endl;
+
+		if (all_check_nodes_done)
+			break;
 	}
 };
 
