@@ -53,7 +53,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 	// std::cout << "(L) links : " << std::endl;
 	// links.print(true);
 
-	// first propagate known values
+	// first forward known values
 	for (unsigned i = 0; i < links.get_n_rows(); i++)
 	{
 		auto cur_state = this->var_nodes[frame_id][i];
@@ -89,13 +89,26 @@ void Decoder_LDPC_BP_peeling<B,R>
 		// find degree-1 check nodes
 		for (unsigned i = 0; i < links.get_n_cols(); i++)
 		{
-			if (links.get_col_to_rows()[i].size() == 1)
-			{ // then propagate the belief
+			if (links.get_rows_from_col(i).size() == 1)
+			{
+				no_modification = false;
+
+				// then forward the belief
 				auto& vn_pos = links.get_rows_from_col(i).front();
-				this->var_nodes  [frame_id][vn_pos] = this->check_nodes[frame_id][i];
+				auto cur_state = this->check_nodes[frame_id][i];
+				this->var_nodes  [frame_id][vn_pos] = cur_state;
 				this->check_nodes[frame_id][     i] = 0;
 				links.rm_connection(vn_pos, i);
-				no_modification = false;
+
+				// and propagate it
+				auto& cn_list = links.get_cols_from_row(vn_pos);
+				while (cn_list.size())
+				{
+					auto& cn_pos = cn_list.front();
+
+					this->check_nodes[frame_id][cn_pos] ^= cur_state;
+					links.rm_connection(vn_pos, cn_pos);
+				}
 			}
 			else
 				all_check_nodes_done &= links.get_rows_from_col(i).size() == 0;
