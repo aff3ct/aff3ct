@@ -84,7 +84,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
-		bool all_check_nodes_done = true;
+		bool all_check_nodes_done = true, no_modification = true;
 
 		// find degree-1 check nodes
 		for (unsigned i = 0; i < links.get_n_cols(); i++)
@@ -95,6 +95,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 				this->var_nodes  [frame_id][vn_pos] = this->check_nodes[frame_id][i];
 				this->check_nodes[frame_id][     i] = 0;
 				links.rm_connection(vn_pos, i);
+				no_modification = false;
 			}
 			else
 				all_check_nodes_done &= links.get_col_to_rows()[i].size() == 0;
@@ -109,8 +110,14 @@ void Decoder_LDPC_BP_peeling<B,R>
 		// 	std::cout << this->check_nodes[frame_id][i] << " ";
 		// std::cout << std::endl;
 
-		if (all_check_nodes_done)
-			break;
+		if (this->enable_syndrome && (all_check_nodes_done || no_modification))
+		{
+			this->cur_syndrome_depth++;
+			if (this->cur_syndrome_depth == this->syndrome_depth)
+				break;
+		}
+		else
+			this->cur_syndrome_depth = 0;
 	}
 };
 
