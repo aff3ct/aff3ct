@@ -272,7 +272,7 @@ void Sparse_matrix
 }
 
 void Sparse_matrix
-::print(bool transpose, std::ostream& os)
+::print(bool transpose, std::ostream& os) const
 {
 	if (transpose)
 	{

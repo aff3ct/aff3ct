@@ -76,7 +76,7 @@ public:
 	 * Print the sparsed matrix in its full view with 0s and 1s.
 	 * 'transpose' allow the print in its transposed view
 	 */
-	void print(bool transpose = false, std::ostream& os = std::cout);
+	void print(bool transpose = false, std::ostream& os = std::cout) const;
 };
 }
 }
