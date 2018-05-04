@@ -99,7 +99,7 @@ void Encoder_user<B>
 
 template <typename B>
 const std::vector<uint32_t>& Encoder_user<B>
-::get_info_bits_pos()
+::get_info_bits_pos() const
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
@@ -111,7 +111,7 @@ bool Encoder_user<B>
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Encoder_user<B_8>;
