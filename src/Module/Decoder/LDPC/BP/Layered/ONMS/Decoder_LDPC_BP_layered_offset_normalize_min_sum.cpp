@@ -59,7 +59,7 @@ Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 {
 	const std::string name = "Decoder_LDPC_BP_layered_offset_normalize_min_sum";
 	this->set_name(name);
-	
+
 	if (typeid(R) == typeid(signed char))
 	{
 		std::stringstream message;
@@ -119,7 +119,7 @@ void Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_layered_offset_normalize_min_sum<B_8,Q_8>;

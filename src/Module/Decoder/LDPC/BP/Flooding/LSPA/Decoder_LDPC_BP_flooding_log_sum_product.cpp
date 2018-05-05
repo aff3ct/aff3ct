@@ -23,7 +23,7 @@ Decoder_LDPC_BP_flooding_log_sum_product<B,R>
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_log_sum_product";
 	this->set_name(name);
-	
+
 	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
 }
@@ -78,8 +78,7 @@ void Decoder_LDPC_BP_flooding_log_sum_product<B,R>
 			const auto value     = V_to_C[transpose_ptr[j]];
 			const auto v_abs     = (R)std::abs(value);
 			const auto tan_v_abs = std::tanh(v_abs * (R)0.5);
-			const auto res       = (tan_v_abs != 0) ? (R)std::log(tan_v_abs) :
-			                                          std::numeric_limits<R>::min();
+			const auto res       = (tan_v_abs != 0) ? (R)std::log(tan_v_abs) : std::numeric_limits<R>::min();
 			const auto c_sign    = std::signbit((float)value) ? -1 : 0;
 
 			sign ^= c_sign;
@@ -104,7 +103,7 @@ void Decoder_LDPC_BP_flooding_log_sum_product<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_flooding_log_sum_product<B_8,Q_8>;
