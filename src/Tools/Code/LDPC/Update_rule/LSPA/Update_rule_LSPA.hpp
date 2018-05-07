@@ -41,83 +41,71 @@ public:
 	{
 	}
 
-	std::string get_name() { return this->name; }
-
-	// ----------------------------------------------------------------------------------------------------------------
-	// ----------------------------------------------------------------------------------------------------------------
+	std::string get_name() const
+	{
+		return this->name;
+	}
 
 	inline void begin_decoding(const int n_ite)
 	{
 		this->n_ite = n_ite;
 	}
 
-	// FOR EACH iterations --------------------------------------------------------------------------------------- LOOP
+	inline void begin_ite(const int ite)
+	{
+		this->ite = ite;
+	}
 
-		inline void begin_ite(const int ite)
-		{
-			this->ite = ite;
-		}
+	// incoming values from the variable nodes into the check nodes
+	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
+	{
+		assert(chk_degree <= values.size());
 
-		// FOR EACH check nodes ---------------------------------------------------------------------------------- LOOP
+		this->sign = 0;
+		this->sum  = 0;
+	}
 
-			// incoming values from the variable nodes into the check nodes
-			inline void begin_check_node_in(const int CN_id, const int CN_degree)
-			{
-				assert(CN_degree <= values.size());
+	inline void compute_chk_node_in(const int var_id, const R var_val)
+	{
+		const auto val_abs     = (R)std::abs(var_val);
+		const auto tan_val_abs = std::tanh(val_abs * (R)0.5);
+		const auto res         = (tan_val_abs != 0) ? (R)std::log(tan_val_abs) : std::numeric_limits<R>::min();
+		const auto val_sign    = std::signbit((float)var_val) ? -1 : 0;
 
-				this->sign = 0;
-				this->sum  = 0;
-			}
+		this->sign          ^= val_sign;
+		this->sum           += res;
+		this->values[var_id] = res;
+	}
 
-			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
+	inline void end_chk_node_in()
+	{
+	}
 
-				inline void compute_check_node_in(const int VN_id, const R VN_value)
-				{
-					const auto val_abs     = (R)std::abs(VN_value);
-					const auto tan_val_abs = std::tanh(val_abs * (R)0.5);
-					const auto res         = (tan_val_abs != 0) ? (R)std::log(tan_val_abs) :
-					                                              std::numeric_limits<R>::min();
-					const auto val_sign    = std::signbit((float)VN_value) ? -1 : 0;
+	// outcomming values from the check nodes into the variable nodes
+	inline void begin_chk_node_out(const int chk_id, const int chk_degree)
+	{
+	}
 
-					this->sign         ^= val_sign;
-					this->sum          += res;
-					this->values[VN_id] = res;
-				}
+	inline R compute_chk_node_out(const int var_id, const R var_val)
+	{
+		      auto res_tmp = sum - values[var_id];
+		           res_tmp = (res_tmp != (R)1.0) ? std::exp(res_tmp) : (R)1.0 - std::numeric_limits<R>::epsilon();
+		const auto res_abs = (R)2.0 * std::atanh(res_tmp);
+		const auto res_sgn = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);
 
-			inline void end_check_node_in()
-			{
-			}
+		return (R)std::copysign(res_abs, res_sgn);
+	}
 
-			// outcomming values from the check nodes into the variable nodes
-			inline void begin_check_node_out(const int CN_id, const int CN_degree)
-			{
-			}
+	inline void end_chk_node_out()
+	{
+	}
 
-			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
-
-				inline R compute_check_node_out(const int VN_id, const R VN_value)
-				{
-					      auto res_tmp = sum - values[VN_id];
-					           res_tmp = (res_tmp != (R)1.0) ? std::exp(res_tmp) :
-					                                           (R)1.0 - std::numeric_limits<R>::epsilon();
-					const auto res_abs = (R)2.0 * std::atanh(res_tmp);
-					const auto res_sgn = this->sign ^ (std::signbit((float)VN_value) ? -1 : 0);
-
-					return (R)std::copysign(res_abs, res_sgn);
-				}
-
-			inline void end_check_node_out()
-			{
-			}
-
-		inline void end_ite()
-		{
-		}
+	inline void end_ite()
+	{
+	}
 
 	inline void end_decoding()
 	{
-		// if (this->n_ite != (this->ite -1))
-		// 	-> early termination
 	}
 };
 }

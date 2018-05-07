@@ -34,80 +34,70 @@ public:
 	{
 	}
 
-	std::string get_name() { return this->name; }
-
-	// ----------------------------------------------------------------------------------------------------------------
-	// ----------------------------------------------------------------------------------------------------------------
+	std::string get_name() const
+	{
+		return this->name;
+	}
 
 	inline void begin_decoding(const int n_ite)
 	{
 		this->n_ite = n_ite;
 	}
 
-	// FOR EACH iterations --------------------------------------------------------------------------------------- LOOP
+	inline void begin_ite(const int ite)
+	{
+		this->ite = ite;
+	}
 
-		inline void begin_ite(const int ite)
-		{
-			this->ite = ite;
-		}
+	// incoming values from the variable nodes into the check nodes
+	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
+	{
+		this->sign      = 0;
+		this->min       = std::numeric_limits<R>::max();
+		this->delta_min = std::numeric_limits<R>::max();
+	}
 
-		// FOR EACH check nodes ---------------------------------------------------------------------------------- LOOP
+	inline void compute_chk_node_in(const int var_id, const R var_val)
+	{
+		const auto val_abs = (R)std::abs(var_val);
+		const auto val_sgn = std::signbit((float)var_val) ? -1 : 0;
+		const auto tmp     = this->min;
 
-			// incoming values from the variable nodes into the check nodes
-			inline void begin_check_node_in(const int CN_id, const int CN_degree)
-			{
-				this->sign      = 0;
-				this->min       = std::numeric_limits<R>::max();
-				this->delta_min = std::numeric_limits<R>::max();
-			}
+		this->sign     ^= val_sgn;
+		this->min       = std::min(this->min, val_abs);
+		this->delta_min = MIN(this->delta_min, (val_abs == this->min) ? tmp : val_abs);
+	}
 
-			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
+	inline void end_chk_node_in()
+	{
+		this->delta     = std::max((R)0, MIN(this->delta_min, this->min));
+		this->delta_min = std::max((R)0, this->delta_min);
+	}
 
-				inline void compute_check_node_in(const int VN_id, const R VN_value)
-				{
-					const auto val_abs = (R)std::abs(VN_value);
-					const auto val_sgn = std::signbit((float)VN_value) ? -1 : 0;
-					const auto tmp     = this->min;
+	// outcomming values from the check nodes into the variable nodes
+	inline void begin_chk_node_out(const int chk_id, const int chk_degree)
+	{
+	}
 
-					this->sign     ^= val_sgn;
-					this->min       = std::min(this->min, val_abs);
-					this->delta_min = MIN(this->delta_min, (val_abs == this->min) ? tmp : val_abs);
-				}
+	inline R compute_chk_node_out(const int var_id, const R var_val)
+	{
+		const auto val_abs = (R)std::abs(var_val);
+		      auto res_abs = ((val_abs == this->min) ? this->delta_min : this->delta);
+		const auto res_sgn = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);
 
-			inline void end_check_node_in()
-			{
-				this->delta     = std::max((R)0, MIN(this->delta_min, this->min));
-				this->delta_min = std::max((R)0, this->delta_min);
-			}
+		return (R)std::copysign(res_abs, res_sgn);
+	}
 
-			// outcomming values from the check nodes into the variable nodes
-			inline void begin_check_node_out(const int CN_id, const int CN_degree)
-			{
-			}
+	inline void end_chk_node_out()
+	{
+	}
 
-			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
-
-				inline R compute_check_node_out(const int VN_id, const R VN_value)
-				{
-					const auto val_abs = (R)std::abs(VN_value);
-					      auto res_abs = ((val_abs == this->min) ? this->delta_min : this->delta);
-					const auto res_sgn = this->sign ^ (std::signbit((float)VN_value) ? -1 : 0);
-
-					return (R)std::copysign(res_abs, res_sgn);
-				}
-
-			inline void end_check_node_out()
-			{
-			}
-
-		inline void end_ite()
-		{
-		}
+	inline void end_ite()
+	{
+	}
 
 	inline void end_decoding()
 	{
-		// if (this->n_ite != (this->ite -1))
-		// 	-> early termination
 	}
 };
 }

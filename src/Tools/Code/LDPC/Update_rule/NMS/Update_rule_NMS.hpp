@@ -65,68 +65,60 @@ public:
 	{
 	}
 
-	std::string get_name() { return this->name; }
-
-	// ----------------------------------------------------------------------------------------------------------------
-	// ----------------------------------------------------------------------------------------------------------------
+	std::string get_name() const
+	{
+		return this->name;
+	}
 
 	inline void begin_decoding(const int n_ite)
 	{
 		MS.begin_decoding(n_ite);
 	}
 
-	// FOR EACH iterations --------------------------------------------------------------------------------------- LOOP
+	inline void begin_ite(const int ite)
+	{
+		MS.begin_ite(ite);
+	}
 
-		inline void begin_ite(const int ite)
-		{
-			MS.begin_ite(ite);
-		}
+	// incoming values from the variable nodes into the check nodes
+	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
+	{
+		MS.begin_chk_node_in(chk_id, chk_degree);
+	}
 
-		// FOR EACH check nodes ---------------------------------------------------------------------------------- LOOP
+	inline void compute_chk_node_in(const int var_id, const R var_val)
+	{
+		MS.compute_chk_node_in(var_id, var_val);
+	}
 
-			// incoming values from the variable nodes into the check nodes
-			inline void begin_check_node_in(const int CN_id, const int CN_degree)
-			{
-				MS.begin_check_node_in(CN_id, CN_degree);
-			}
+	inline void end_chk_node_in()
+	{
+		MS.cst1 = normalize<R>(MS.min2, this->normalize_factor);
+		MS.cst2 = normalize<R>(MS.min1, this->normalize_factor);
+		MS.cst1 = (MS.cst1 < 0) ? 0 : MS.cst1;
+		MS.cst2 = (MS.cst2 < 0) ? 0 : MS.cst2;
+	}
 
-			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
+	// outcomming values from the check nodes into the variable nodes
+	inline void begin_chk_node_out(const int chk_id, const int chk_degree)
+	{
+		MS.begin_chk_node_out(chk_id, chk_degree);
+	}
 
-				inline void compute_check_node_in(const int VN_id, const R VN_value)
-				{
-					MS.compute_check_node_in(VN_id, VN_value);
-				}
+	inline R compute_chk_node_out(const int var_id, const R var_val)
+	{
+		return MS.compute_chk_node_out(var_id, var_val);
+	}
 
-			inline void end_check_node_in()
-			{
-				MS.cst1 = normalize<R>(MS.min2, this->normalize_factor);
-				MS.cst2 = normalize<R>(MS.min1, this->normalize_factor);
-				MS.cst1 = (MS.cst1 < 0) ? 0 : MS.cst1;
-				MS.cst2 = (MS.cst2 < 0) ? 0 : MS.cst2;
-			}
+	inline void end_chk_node_out()
+	{
+		MS.end_chk_node_out();
+	}
 
-			// outcomming values from the check nodes into the variable nodes
-			inline void begin_check_node_out(const int CN_id, const int CN_degree)
-			{
-				MS.begin_check_node_out(CN_id, CN_degree);
-			}
-
-			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
-
-				inline R compute_check_node_out(const int VN_id, const R VN_value)
-				{
-					return MS.compute_check_node_out(VN_id, VN_value);
-				}
-
-			inline void end_check_node_out()
-			{
-				MS.end_check_node_out();
-			}
-
-		inline void end_ite()
-		{
-			MS.end_ite();
-		}
+	inline void end_ite()
+	{
+		MS.end_ite();
+	}
 
 	inline void end_decoding()
 	{

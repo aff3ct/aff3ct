@@ -17,21 +17,21 @@ Decoder_LDPC_BP_layered<B,R,Update_rule>
 ::Decoder_LDPC_BP_layered(const int K, const int N, const int n_ite,
                           const tools::Sparse_matrix &H,
                           const std::vector<unsigned> &info_bits_pos,
-                          const Update_rule &rule,
+                          const Update_rule &up_rule,
                           const bool enable_syndrome,
                           const int syndrome_depth,
                           const int n_frames)
-: Decoder               (K, N,                                            n_frames, 1),
-  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
-  n_C_nodes             ((int)H.get_n_cols()                                         ),
-  init_flag             (true                                                        ),
-  info_bits_pos         (info_bits_pos                                               ),
-  var_nodes             (n_frames, std::vector<R>(N                    )             ),
-  branches              (n_frames, std::vector<R>(H.get_n_connections())             ),
-  contributions         (H.get_cols_max_degree()                                     ),
-  rule                  (rule                                                        )
+: Decoder             (K, N,                                            n_frames, 1),
+  Decoder_LDPC_BP<B,R>(K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
+  n_chk_nodes         ((int)H.get_n_cols()                                         ),
+  info_bits_pos       (info_bits_pos                                               ),
+  up_rule             (up_rule                                                     ),
+  var_nodes           (n_frames, std::vector<R>(N                    )             ),
+  branches            (n_frames, std::vector<R>(H.get_n_connections())             ),
+  contributions       (H.get_cols_max_degree()                                     ),
+  init_flag           (true                                                        )
 {
-	const std::string name = "Decoder_LDPC_BP_layered<" + this->rule.get_name() + ">";
+	const std::string name = "Decoder_LDPC_BP_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
 }
 
@@ -62,8 +62,8 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 			this->init_flag = false;
 	}
 
-	for (auto i = 0; i < (int)var_nodes[frame_id].size(); i++)
-		this->var_nodes[frame_id][i] += Y_N[i]; // var_nodes contain previous extrinsic information
+	for (auto v = 0; v < (int)var_nodes[frame_id].size(); v++)
+		this->var_nodes[frame_id][v] += Y_N[v]; // var_nodes contain previous extrinsic information
 }
 
 template <typename B, typename R, class Update_rule>
@@ -74,11 +74,11 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 	this->_load(Y_N1, frame_id);
 
 	// actual decoding
-	this->BP_decode(frame_id);
+	this->_decode(frame_id);
 
 	// prepare for next round by processing extrinsic information
-	for (auto i = 0; i < this->N; i++)
-		Y_N2[i] = this->var_nodes[frame_id][i] - Y_N1[i];
+	for (auto v = 0; v < this->N; v++)
+		Y_N2[v] = this->var_nodes[frame_id][v] - Y_N1[v];
 
 	// copy extrinsic information into var_nodes for next TURBO iteration
 	std::copy(Y_N2, Y_N2 + this->N, this->var_nodes[frame_id].begin());
@@ -94,7 +94,7 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->BP_decode(frame_id);
+	this->_decode(frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -121,7 +121,7 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->BP_decode(frame_id);
+	this->_decode(frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -136,47 +136,49 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 // BP algorithm
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_layered<B,R,Update_rule>
-::BP_decode(const int frame_id)
+::_decode(const int frame_id)
 {
-	rule.begin_decoding(this->n_ite);
+	this->up_rule.begin_decoding(this->n_ite);
 
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
-		rule.begin_ite(ite);
-		this->BP_process(this->var_nodes[frame_id], this->branches[frame_id]);
-		rule.end_ite();
+		this->up_rule.begin_ite(ite);
+		this->_decode_single_ite(this->var_nodes[frame_id], this->branches[frame_id]);
+		this->up_rule.end_ite();
 
 		if (this->check_syndrome_soft(this->var_nodes[frame_id].data()))
 			break;
 	}
 
-	rule.end_decoding();
+	this->up_rule.end_decoding();
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_layered<B,R,Update_rule>
-::BP_process(std::vector<R> &var_nodes, std::vector<R> &branches)
+::_decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &branches)
 {
 	auto kr = 0;
 	auto kw = 0;
-	for (auto i = 0; i < this->n_C_nodes; i++)
-	{
-		const auto n_VN = (int)this->H[i].size();
-		rule.begin_check_node_in(i, n_VN);
-		for (auto j = 0; j < n_VN; j++)
-		{
-			contributions[j] = var_nodes[this->H[i][j]] - branches[kr++];
-			rule.compute_check_node_in(j, contributions[j]);
-		}
-		rule.end_check_node_in();
 
-		rule.begin_check_node_out(i, n_VN);
-		for (auto j = 0; j < n_VN; j++)
+	// layered scheduling
+	for (auto c = 0; c < this->n_chk_nodes; c++)
+	{
+		const auto chk_degree = (int)this->H[c].size();
+		this->up_rule.begin_chk_node_in(c, chk_degree);
+		for (auto v = 0; v < chk_degree; v++)
 		{
-			branches[kw] = rule.compute_check_node_out(j, contributions[j]);
-			var_nodes[this->H[i][j]] = contributions[j] + branches[kw++];
+			contributions[v] = var_nodes[this->H[c][v]] - branches[kr++];
+			this->up_rule.compute_chk_node_in(v, contributions[v]);
 		}
-		rule.end_check_node_out();
+		this->up_rule.end_chk_node_in();
+
+		this->up_rule.begin_chk_node_out(c, chk_degree);
+		for (auto v = 0; v < chk_degree; v++)
+		{
+			branches[kw] = this->up_rule.compute_chk_node_out(v, contributions[v]);
+			var_nodes[this->H[c][v]] = contributions[v] + branches[kw++];
+		}
+		this->up_rule.end_chk_node_out();
 	}
 }
 }

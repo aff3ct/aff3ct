@@ -6,8 +6,6 @@
 #include <string>
 #include <cmath>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
-
 namespace aff3ct
 {
 namespace tools
@@ -33,7 +31,7 @@ protected:
 
 public:
 	Update_rule_MS()
-	: name("MS"), sign(0), min1(std::numeric_limits<R>::max()), min2(std::numeric_limits<R>::max()), cst1(0), cst2(0), n_ite(0), ite(0)
+	: name("MS"), sign(0), min1(std::numeric_limits<R>::max()), min2(min1), cst1(0), cst2(0), n_ite(0), ite(0)
 	{
 	}
 
@@ -41,7 +39,10 @@ public:
 	{
 	}
 
-	std::string get_name() { return this->name; }
+	std::string get_name() const
+	{
+		return this->name;
+	}
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
@@ -51,70 +52,60 @@ public:
 		this->n_ite = n_ite;
 	}
 
-	// FOR EACH iterations --------------------------------------------------------------------------------------- LOOP
+	inline void begin_ite(const int ite)
+	{
+		this->ite = ite;
+	}
 
-		inline void begin_ite(const int ite)
-		{
-			this->ite = ite;
-		}
+	// incoming values from the variable nodes into the check nodes
+	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
+	{
+		this->sign = 0;
+		this->min1 = std::numeric_limits<R>::max();
+		this->min2 = std::numeric_limits<R>::max();
+	}
 
-		// FOR EACH check nodes ---------------------------------------------------------------------------------- LOOP
+	inline void compute_chk_node_in(const int var_id, const R var_val)
+	{
+		const auto val_abs  = (R)std::abs(var_val);
+		const auto val_sign = std::signbit((float)var_val) ? -1 : 0;
+		const auto tmp      = min1;
 
-			// incoming values from the variable nodes into the check nodes
-			inline void begin_check_node_in(const int CN_id, const int CN_degree)
-			{
-				this->sign = 0;
-				this->min1 = std::numeric_limits<R>::max();
-				this->min2 = std::numeric_limits<R>::max();
-			}
+		this->sign ^= val_sign;
+		this->min1  = std::min(this->min1,          val_abs      );
+		this->min2  = std::min(this->min2, std::max(val_abs, tmp));
+	}
 
-			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
+	inline void end_chk_node_in()
+	{
+		this->cst1 = (this->min2 < 0) ? 0 : this->min2;
+		this->cst2 = (this->min1 < 0) ? 0 : this->min1;
+	}
 
-				inline void compute_check_node_in(const int VN_id, const R VN_value)
-				{
-					const auto val_abs  = (R)std::abs(VN_value);
-					const auto val_sign = std::signbit((float)VN_value) ? -1 : 0;
-					const auto tmp      = min1;
+	// outcomming values from the check nodes into the variable nodes
+	inline void begin_chk_node_out(const int chk_id, const int chk_degree)
+	{
+	}
 
-					this->sign ^= val_sign;
-					this->min1  = std::min(this->min1,          val_abs      );
-					this->min2  = std::min(this->min2, std::max(val_abs, tmp));
-				}
+	inline R compute_chk_node_out(const int var_id, const R var_val)
+	{
+		const auto val_abs = (R)std::abs(var_val);
+		const auto res_abs = ((val_abs == this->min1) ? this->cst1 : this->cst2);
+		const auto res_sng = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);
 
-			inline void end_check_node_in()
-			{
-				this->cst1 = (this->min2 < 0) ? 0 : this->min2;
-				this->cst2 = (this->min1 < 0) ? 0 : this->min1;
-			}
+		return (R)std::copysign(res_abs, res_sng);
+	}
 
-			// outcomming values from the check nodes into the variable nodes
-			inline void begin_check_node_out(const int CN_id, const int CN_degree)
-			{
-			}
+	inline void end_chk_node_out()
+	{
+	}
 
-			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
-
-				inline R compute_check_node_out(const int VN_id, const R VN_value)
-				{
-					const auto val_abs = (R)std::abs(VN_value);
-					const auto res_abs = ((val_abs == this->min1) ? this->cst1 : this->cst2);
-					const auto res_sng = this->sign ^ (std::signbit((float)VN_value) ? -1 : 0);
-
-					return (R)std::copysign(res_abs, res_sng);
-				}
-
-			inline void end_check_node_out()
-			{
-			}
-
-		inline void end_ite()
-		{
-		}
+	inline void end_ite()
+	{
+	}
 
 	inline void end_decoding()
 	{
-		// if (this->n_ite != (this->ite -1))
-		// 	-> early termination
 	}
 };
 }

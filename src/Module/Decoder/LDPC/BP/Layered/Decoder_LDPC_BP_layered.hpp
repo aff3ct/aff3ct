@@ -14,42 +14,37 @@ template <typename B = int, typename R = float, class Update_rule = tools::Updat
 class Decoder_LDPC_BP_layered : public Decoder_LDPC_BP<B,R>
 {
 protected:
-	const int n_C_nodes; // number of check nodes (= N - K)
-
-	// reset so C_to_V and V_to_C structures can be cleared only at the beginning of the loop in iterative decoding
-	bool init_flag;
-
+	const int n_chk_nodes; // number of check nodes (N - K)
 	const std::vector<unsigned> &info_bits_pos;
+
+	Update_rule up_rule;
 
 	// data structures for iterative decoding
 	std::vector<std::vector<R>> var_nodes;
 	std::vector<std::vector<R>> branches;
-	std::vector<R> contributions;
+	std::vector            <R>  contributions;
 
-	Update_rule rule;
+	bool init_flag; // reset the chk_to_var vector at the begining of the iterative decoding
 
 public:
 	Decoder_LDPC_BP_layered(const int K, const int N, const int n_ite,
 	                        const tools::Sparse_matrix &H,
 	                        const std::vector<unsigned> &info_bits_pos,
-	                        const Update_rule &rule,
+	                        const Update_rule &up_rule,
 	                        const bool enable_syndrome = true,
 	                        const int syndrome_depth = 1,
 	                        const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_layered();
-
 	void reset();
 
 protected:
-	void _load          (const R *Y_N,           const int frame_id);
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
-	// BP functions for decoding
-	void BP_decode(const int frame_id);
-
-	void BP_process(std::vector<R> &var_nodes, std::vector<R> &branches);
+	void _load             (const R *Y_N, const int frame_id);
+	void _decode           (const int frame_id);
+	void _decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &branches);
 };
 }
 }
