@@ -14,8 +14,8 @@ const int aff3ct::tools::Distributions<R>::saved_noise_precision = 1e6;
 
 template<typename R>
 Distributions<R>::
-Distributions(const std::string& filename, bool read_all_at_init)
-: f_distributions(filename)
+Distributions(const std::string& filename, Distribution_mode mode, bool read_all_at_init)
+: f_distributions(filename), mode(mode)
 {
 	if (f_distributions.fail())
 	{

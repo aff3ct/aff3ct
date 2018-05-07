@@ -25,6 +25,8 @@ protected:
 	std::map<int, Distribution<R>*> distributions; // distributions in function of the noise power
 	std::ifstream f_distributions;
 
+	Distribution_mode mode;
+
 	std::vector<R> noise_range;
 	std::vector<std::streampos> noise_file_index;
 
@@ -36,7 +38,7 @@ protected:
 	size_t y1_pos ;
 
 public:
-	explicit Distributions(const std::string& filename, bool read_all_at_init = false);
+	explicit Distributions(const std::string& filename, Distribution_mode mode = Distribution_mode::SUMMATION, bool read_all_at_init = false);
 
 	virtual ~Distributions();
 

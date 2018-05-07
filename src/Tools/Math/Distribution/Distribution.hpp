@@ -8,6 +8,8 @@ namespace aff3ct
 namespace tools
 {
 
+enum class Distribution_mode {INTERPOLATION, SUMMATION};
+
 template <typename R = float>
 class Distribution
 {
@@ -21,10 +23,10 @@ protected:
 	std::vector<std::vector<R>> cdf_y; // cumulative density function as y
 
 public:
-	Distribution(const std::vector<R>& _x_data, const std::vector<R>& _y_data);
-	Distribution(std::vector<R>&& _x_data, std::vector<R>&& _y_data);
-	Distribution(const std::vector<R>& _x_data, const std::vector<std::vector<R>>& _y_data);
-	Distribution(std::vector<R>&& _x_data, std::vector<std::vector<R>>&& _y_data);
+	Distribution(const std::vector<R>&  _x_data, const std::vector<R>&               _y_data, Distribution_mode mode = Distribution_mode::SUMMATION);
+	Distribution(      std::vector<R>&& _x_data,       std::vector<R>&&              _y_data, Distribution_mode mode = Distribution_mode::SUMMATION);
+	Distribution(const std::vector<R>&  _x_data, const std::vector<std::vector<R>>&  _y_data, Distribution_mode mode = Distribution_mode::SUMMATION);
+	Distribution(      std::vector<R>&& _x_data,       std::vector<std::vector<R>>&& _y_data, Distribution_mode mode = Distribution_mode::SUMMATION);
 
 	virtual ~Distribution();
 
@@ -35,7 +37,9 @@ public:
 	const std::vector<std::vector<R>>& get_pdf_norm_y() const;
 
 protected:
-	void compute_cdf();
+	void compute_cdf(Distribution_mode mode);
+	void compute_cdf_interpolation();
+	void compute_cdf_summation();
 	void sort_pdf();
 };
 

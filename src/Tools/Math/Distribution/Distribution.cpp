@@ -2,6 +2,8 @@
 #include <random>
 #include <sstream>
 #include <algorithm>
+#include <vector>
+#include <numeric>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/numerical_integration.h"
@@ -10,109 +12,42 @@
 #include "Distribution.hpp"
 
 using namespace aff3ct;
-using namespace tools;
+using namespace aff3ct::tools;
 
 template <typename R>
 Distribution<R>
-::Distribution(const std::vector<R>& _x_data, const std::vector<R>& _y_data)
+::Distribution(const std::vector<R>& _x_data, const std::vector<R>& _y_data, Distribution_mode mode)
 : pdf_x(_x_data), pdf_y(1)
 {
-	if (pdf_x.size() != _y_data.size())
-	{
-		std::stringstream message;
-		message << "'_x_data.size()' has to be equal to '_y_data.size()' ('_x_data.size()' = " << pdf_x.size()
-		        << " and '_y_data.size()' = " << _y_data.size() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (pdf_x.size() == 0)
-	{
-		std::stringstream message;
-		message << "'_x_data.size()' can't be empty.";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	pdf_y.front() = _y_data;
 
-	compute_cdf();
+	compute_cdf(mode);
 }
 
 template <typename R>
 Distribution<R>
-::Distribution(std::vector<R>&& _x_data, std::vector<R>&& _y_data)
+::Distribution(std::vector<R>&& _x_data, std::vector<R>&& _y_data, Distribution_mode mode)
 : pdf_x(std::move(_x_data)), pdf_y(1)
 {
 	pdf_y.front() = std::move(_y_data);
 
-	if (pdf_x.size() != pdf_y.front().size())
-	{
-		std::stringstream message;
-		message << "'_x_data.size()' has to be equal to '_y_data.size()' ('_x_data.size()' = " << pdf_x.size()
-		        << " and '_y_data.size()' = " << pdf_y.front().size() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (pdf_x.size() == 0)
-	{
-		std::stringstream message;
-		message << "'_x_data.size()' can't be empty.";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	compute_cdf();
+	compute_cdf(mode);
 }
 
 template <typename R>
 Distribution<R>
-::Distribution(const std::vector<R>& _x_data, const std::vector<std::vector<R>>& _y_data)
+::Distribution(const std::vector<R>& _x_data, const std::vector<std::vector<R>>& _y_data, Distribution_mode mode)
 : pdf_x(_x_data), pdf_y(_y_data)
 {
-	for (unsigned k = 0; k < pdf_y.size(); k++)
-	{
-		if (pdf_x.size() != pdf_y[k].size())
-		{
-			std::stringstream message;
-			message << "'_x_data.size()' has to be equal to '_y_data[" << k << "].size()' ('_x_data.size()' = " << pdf_x.size()
-			        << " and '_y_data[" << k << "].size()' = " << pdf_y[k].size() << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
-
-	if (pdf_x.size() == 0)
-	{
-		std::stringstream message;
-		message << "'_x_data.size()' can't be empty.";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	compute_cdf();
+	compute_cdf(mode);
 }
 
 template <typename R>
 Distribution<R>
-::Distribution(std::vector<R>&& _x_data, std::vector<std::vector<R>>&& _y_data)
+::Distribution(std::vector<R>&& _x_data, std::vector<std::vector<R>>&& _y_data, Distribution_mode mode)
 : pdf_x(std::move(_x_data)), pdf_y(std::move(_y_data))
 {
-	for (unsigned k = 0; k < pdf_y.size(); k++)
-	{
-		if (pdf_x.size() != pdf_y[k].size())
-		{
-			std::stringstream message;
-			message << "'_x_data.size()' has to be equal to '_y_data[" << k << "].size()' ('_x_data.size()' = " << pdf_x.size()
-			        << " and '_y_data[" << k << "].size()' = " << pdf_y[k].size() << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
-
-	if (pdf_x.size() == 0)
-	{
-		std::stringstream message;
-		message << "'_x_data.size()' can't be empty.";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-
-	compute_cdf();
+	compute_cdf(mode);
 }
 
 template <typename R>
@@ -134,14 +69,77 @@ void Distribution<R>
 				std::swap(this->pdf_y[k][j], this->pdf_y[k][j-1]); // the y follow their x moving the same way
 		}
 }
+template <typename R>
+void Distribution<R>
+::compute_cdf(Distribution_mode mode)
+{
+	if (this->pdf_x.empty())
+	{
+		std::stringstream message;
+		message << "'pdf_x' can't be empty.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	for (unsigned k = 0; k < this->pdf_y.size(); k++)
+	{
+		if (this->pdf_x.size() != this->pdf_y[k].size())
+		{
+			std::stringstream message;
+			message << "'pdf_x.size()' has to be equal to 'pdf_y[" << k << "].size()' ('pdf_x.size()' = " << pdf_x.size()
+			        << " and 'pdf_y[" << k << "].size()' = " << pdf_y[k].size() << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+
+	sort_pdf(); // first make sure x values are sorted in ascending order
+
+	this->cdf_x.resize(this->pdf_y.size());
+	this->cdf_y.resize(this->pdf_y.size());
+
+	switch (mode)
+	{
+		case Distribution_mode::SUMMATION:
+			compute_cdf_summation();
+			break;
+		case Distribution_mode::INTERPOLATION:
+			compute_cdf_interpolation();
+			break;
+	}
+}
 
 template <typename R>
 void Distribution<R>
-::compute_cdf()
+::compute_cdf_summation()
 {
-	sort_pdf(); // first make sure x values are sorted in ascending order
+	for (unsigned k = 0; k < this->pdf_y.size(); k++)
+	{
+		std::vector<R> cumul_y(this->pdf_y[k].size());
+		std::partial_sum(this->pdf_y[k].begin(), this->pdf_y[k].end(), cumul_y.begin());
 
-	// then normalize it with its integral value
+		auto sum = cumul_y.back();
+
+		if (sum == (R) 0)
+		{
+			std::stringstream message;
+			message << "The sum of pdf_y[" << k << "] is null.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		// keep the parts of the cdf not parallel to the X axis -> pdf_y not null
+		for (unsigned i = 0; i < this->pdf_y[k].size(); i++) // keep the first index
+			if (this->pdf_y[k][i] != (R)0) // proba not null
+			{
+				this->cdf_x[k].push_back(this->pdf_x[i]);
+				this->cdf_y[k].push_back(cumul_y[i]);
+			}
+	}
+}
+
+template <typename R>
+void Distribution<R>
+::compute_cdf_interpolation()
+{
+	// normalize pdf with its integral value
 	this->pdf_norm_y.resize(this->pdf_y.size());
 	for (unsigned k = 0; k < this->pdf_y.size(); k++)
 	{
@@ -150,6 +148,13 @@ void Distribution<R>
 
 		// compute the integral of pdf_y[k] along pdf_x
 		auto integ = tools::trapz_integral_seq(this->pdf_x.data(), this->pdf_y[k].data(), this->pdf_x.size());
+
+		if (integ == (R)0)
+		{
+			std::stringstream message;
+			message << "The integral of pdf_y[" << k << "] along pdf_x is null.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		// divide all elements by 'integ'
 		std::transform(this->pdf_y[k].begin(), this->pdf_y[k].end(), this->pdf_norm_y[k].begin(), [integ](R& y){return y/integ;});
@@ -168,9 +173,6 @@ void Distribution<R>
 		interp_x[i] = x;
 	interp_x.back() = max_x; // force the value to have exactly the max instead of an approximation after all the "+= step_x"
 
-
-	this->cdf_x.resize(this->pdf_y.size());
-	this->cdf_y.resize(this->pdf_y.size());
 
 	// compute linear interpolation and the cumulative distribution
 	for (unsigned k = 0; k < this->pdf_y.size(); k++)
