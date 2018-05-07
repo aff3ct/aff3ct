@@ -3,6 +3,7 @@
 
 #include <random>
 
+#include "Tools/Math/interpolation.h"
 #include "../User_pdf_noise_generator.hpp"
 
 namespace aff3ct
@@ -17,8 +18,10 @@ private:
 	std::mt19937                      rd_engine; // Mersenne Twister 19937
 	std::uniform_real_distribution<R> uniform_dist;
 
+	R (*interp_function)(const R*, const R*, const unsigned, const R);
+
 public:
-	explicit User_pdf_noise_generator_std(const tools::Distributions<R>& dists, const int seed = 0);
+	explicit User_pdf_noise_generator_std(const tools::Distributions<R>& dists, const int seed = 0, Interpolation_type inter_type = Interpolation_type::NEAREST);
 	virtual ~User_pdf_noise_generator_std();
 
 	virtual void set_seed(const int seed);

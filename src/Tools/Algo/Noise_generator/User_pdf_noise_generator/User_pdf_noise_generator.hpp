@@ -18,6 +18,8 @@ namespace aff3ct
 namespace tools
 {
 
+enum class User_pdf_noise_generator_interpolation {LINEAR, NEAREST};
+
 template <typename R = float>
 class User_pdf_noise_generator : public Noise_generator<R>
 {
@@ -28,7 +30,7 @@ public:
 	explicit User_pdf_noise_generator(const tools::Distributions<R>& dists)
 	: distributions(dists) {}
 
-	virtual ~User_pdf_noise_generator() {}
+	virtual ~User_pdf_noise_generator() = default;
 
 	const Distributions<R>& get_distributions()
 	{

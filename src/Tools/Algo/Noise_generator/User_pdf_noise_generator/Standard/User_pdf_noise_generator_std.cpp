@@ -8,10 +8,21 @@ using namespace aff3ct::tools;
 
 template <typename R>
 User_pdf_noise_generator_std<R>
-::User_pdf_noise_generator_std(const tools::Distributions<R>& dists, const int seed)
-: User_pdf_noise_generator<R>(dists), uniform_dist(0., 1.)
+::User_pdf_noise_generator_std(const tools::Distributions<R>& dists, const int seed, Interpolation_type inter_type)
+: User_pdf_noise_generator<R>(dists), uniform_dist(0., 1.), interp_function(nullptr)
 {
 	this->set_seed(seed);
+
+	switch (inter_type)
+	{
+		case Interpolation_type::LINEAR:
+			interp_function = tools::linear_interpolation<R>;
+			break;
+
+		case Interpolation_type::NEAREST:
+			interp_function = tools::nearest_interpolation<R>;
+			break;
+	}
 }
 
 template <typename R>
@@ -44,8 +55,7 @@ void User_pdf_noise_generator_std<R>
 	{
 		const auto& cdf_y = signal[i] ? dis->get_cdf_y()[1] : dis->get_cdf_y()[0];
 		const auto& cdf_x = signal[i] ? dis->get_cdf_x()[1] : dis->get_cdf_x()[0];
-		noise[i] = tools::linear_interpolation(cdf_y.data(), cdf_x.data(), cdf_x.size(),
-		                                        this->uniform_dist(this->rd_engine));
+		noise[i] = interp_function(cdf_y.data(), cdf_x.data(), cdf_x.size(), this->uniform_dist(this->rd_engine));
 	}
 }
 
