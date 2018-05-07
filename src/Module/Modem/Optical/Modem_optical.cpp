@@ -136,27 +136,10 @@ void Modem_optical<B,R,Q>
 	const auto& pdf_y0 = current_dist->get_pdf_y()[0];
 	const auto& pdf_y1 = current_dist->get_pdf_y()[1];
 
-	unsigned x_pos;
 	for (auto i = 0; i < this->N_fil; i++)
 	{
-		// find the position of the first x that is above the receiver val
-		auto x_above = std::lower_bound(pdf_x.begin(), pdf_x.end(), Y_N1[i]);
+		auto x_pos = tools::get_closest_index(pdf_x.begin(), pdf_x.end(), Y_N1[i]);
 
-		if (x_above == pdf_x.end()) // if last
-			x_pos = pdf_x.size() - 1;
-		else if (x_above == pdf_x.begin()) // if first
-			x_pos = 0;
-		else
-		{
-			x_pos = std::distance(pdf_x.begin(), x_above);
-
-			auto x_below = x_above - 1;
-
-			// find which between x_below and x_above is the nearest of Y_N1[i]
-			x_pos = (Y_N1[i] - *x_below) < (*x_above - Y_N1[i]) ? x_pos - 1 : x_pos;
-		}
-
-		// then get the matching probabilities
 		auto prob_0 = pdf_y0[x_pos] == (Q)0 ? min_value : pdf_y0[x_pos];
 		auto prob_1 = pdf_y1[x_pos] == (Q)0 ? min_value : pdf_y1[x_pos];
 
