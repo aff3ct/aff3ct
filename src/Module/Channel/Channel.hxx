@@ -92,12 +92,12 @@ get_noise() const
 
 template <typename R>
 void Channel<R>::
-set_noise(const tools::Noise<R>& noise)
+set_noise(const tools::Noise<R>& _n)
 {
 	if (this->n != nullptr)
 		delete this->n;
 
-	this->n = noise.clone();
+	this->n = _n.clone();
 	this->check_noise();
 }
 

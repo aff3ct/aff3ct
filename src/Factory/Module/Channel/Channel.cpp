@@ -7,6 +7,7 @@
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
 #include "Module/Channel/Optical/Channel_optical.hpp"
 #include "Module/Channel/BEC/Channel_BEC.hpp"
+#include "Module/Channel/BSC/Channel_BSC.hpp"
 
 #include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 #include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
@@ -61,7 +62,8 @@ void Channel::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("NO", "USER", "USER_ADD", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "OPTICAL")),
+		tools::Text(tools::Including_set("NO", "USER", "USER_ADD", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "BSC",
+		                                 "OPTICAL")),
 		"type of the channel to use in the simulation ('USER' has an output got from a file when 'USER_ADD' has an"
 		" additive noise got from a file).");
 
@@ -194,6 +196,7 @@ module::Channel<R>* Channel::parameters
 		else if (type == "USER_ADD") return new module::Channel_user<R>(N, path, add_users,  true, n_frames);
 		else if (type == "NO"      ) return new module::Channel_NO  <R>(N,       add_users, n_frames);
 		else if (type == "BEC"     ) return new module::Channel_BEC <R>(N, seed, tools::Event_probability<R>((R)this->noise), n_frames);
+		else if (type == "BSC"     ) return new module::Channel_BSC <R>(N, seed, tools::Event_probability<R>((R)this->noise), n_frames);
 
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 	}

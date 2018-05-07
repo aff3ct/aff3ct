@@ -10,15 +10,9 @@ namespace module
 template <typename B = int, typename R = float, typename Q = R>
 class Modem_OOK : public Modem<B,R,Q>
 {
-protected:
-	const bool disable_sig2;
-	R sigma_factor;
-
 public:
-	Modem_OOK(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const bool disable_sig2 = false, const int n_frames = 1);
-	virtual ~Modem_OOK();
-
-	virtual void set_noise(const tools::Noise<R>& noise);
+	Modem_OOK(const int N, const tools::Noise<R>& noise, const int n_frames = 1);
+	virtual ~Modem_OOK() = default;
 
 	static bool is_complex_mod()
 	{
@@ -41,12 +35,8 @@ public:
 	}
 
 protected:
-	void   _modulate    (              const B *X_N1,                R *X_N2, const int frame_id);
-	void     _filter    (              const R *Y_N1,                R *Y_N2, const int frame_id);
-	void _demodulate    (              const Q *Y_N1,                Q *Y_N2, const int frame_id);
-	void _demodulate_wg (const R *H_N, const Q *Y_N1,                Q *Y_N2, const int frame_id);
-	void _tdemodulate   (              const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id);
-	void _tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id);
+	void _modulate(const B *X_N1, R *X_N2, const int frame_id);
+	void   _filter(const R *Y_N1, R *Y_N2, const int frame_id);
 };
 }
 }

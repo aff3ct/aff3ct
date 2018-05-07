@@ -1,29 +1,24 @@
 #include <type_traits>
-#include <algorithm>
 #include <sstream>
-#include <mipp.h>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
-#include "Modem_optical.hpp"
+#include "Modem_OOK_optical.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
-//
+
 //std::vector<std::vector<float>> llrs;
 //size_t llr_idx;
 
 template <typename B, typename R, typename Q>
-Modem_optical<B,R,Q>
-::Modem_optical(const int N,
-                const tools::Distributions<R>& dist,
-                const tools::Noise<R>& noise,
-                const int n_frames)
-: Modem<B,R,Q>(N, noise, n_frames),
-  dist(dist)
+Modem_OOK_optical<B,R,Q>
+::Modem_OOK_optical(const int N, const tools::Distributions<R>& dist, const tools::Noise<R>& noise, const int n_frames)
+: Modem_OOK<B,R,Q>(N, noise, n_frames), dist(dist), current_dist(nullptr)
 {
-	const std::string name = "Modem_optical";
+	const std::string name = "Modem_OOK_optical";
 	this->set_name(name);
 
 //	std::ifstream file("/media/ohartmann/DATA/Documents/Projets/CNES_AIRBUS/matrices/2018_05_03/vectorTestIMS/TestVec ROP -32/AFF3CT/LLR.txt");
@@ -45,18 +40,10 @@ Modem_optical<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem_optical<B,R,Q>
-::~Modem_optical()
-{
-}
-
-template <typename B, typename R, typename Q>
-void Modem_optical<B,R,Q>
+void Modem_OOK_optical<B,R,Q>
 ::set_noise(const tools::Noise<R>& noise)
 {
-	Modem<B,R,Q>::set_noise(noise);
-
-	this->n->is_of_type_throw(tools::Noise_type::ROP);
+	Modem_OOK<B,R,Q>::set_noise(noise);
 
 	this->current_dist = dist.get_distribution(this->n->get_noise());
 
@@ -70,54 +57,16 @@ void Modem_optical<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Modem_optical<B,R,Q>
-::_modulate(const B *X_N1, R *X_N2, const int frame_id)
+void Modem_OOK_optical<B,R,Q>
+::check_noise()
 {
-	for (int i = 0; i < this->N; i++)
-		X_N2[i] = X_N1[i] ? (R)1 : (R)0;
-}
+	Modem_OOK<B,R,Q>::check_noise();
 
-
-namespace aff3ct
-{
-namespace module
-{
-template <>
-void Modem_optical<int,float,float>
-::_modulate(const int *X_N1, float *X_N2, const int frame_id)
-{
-	using B = int;
-	using R = float;
-
-	unsigned size = (unsigned int)(this->N);
-
-	const auto vec_loop_size = (size / mipp::nElReg<B>()) * mipp::nElReg<B>();
-	const mipp::Reg<R> Rone  = (R)1.0;
-	const mipp::Reg<R> Rzero = (R)0.0;
-	const mipp::Reg<B> Bzero = (B)0;
-
-	for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<B>())
-	{
-		const auto x1b = mipp::Reg<B>(&X_N1[i]);
-		const auto x2r = mipp::blend(Rone, Rzero, x1b != Bzero);
-		x2r.store(&X_N2[i]);
-	}
-
-	for (unsigned i = vec_loop_size; i < size; i++)
-		X_N2[i] = X_N1[i] ? (R)1 : (R)0;
-}
-}
-}
-
-template <typename B,typename R, typename Q>
-void Modem_optical<B,R,Q>
-::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
-{
-	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
+	this->n->is_of_type_throw(tools::Noise_type::ROP);
 }
 
 template <typename B, typename R, typename Q>
-void Modem_optical<B,R,Q>
+void Modem_OOK_optical<B,R,Q>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (!std::is_same<R,Q>::value)
@@ -126,15 +75,14 @@ void Modem_optical<B,R,Q>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	const Q min_value = 1e-10; // when prob_1 ou prob_0 = 0;
-
-	if (current_dist == nullptr)
+	if (this->current_dist == nullptr)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No valid noise has been set.");
 
+	const auto& pdf_x  = this->current_dist->get_pdf_x();
+	const auto& pdf_y0 = this->current_dist->get_pdf_y()[0];
+	const auto& pdf_y1 = this->current_dist->get_pdf_y()[1];
 
-	const auto& pdf_x  = current_dist->get_pdf_x();
-	const auto& pdf_y0 = current_dist->get_pdf_y()[0];
-	const auto& pdf_y1 = current_dist->get_pdf_y()[1];
+	const Q min_value = 1e-10; // when prob_1 ou prob_0 = 0;
 
 	for (auto i = 0; i < this->N_fil; i++)
 	{
@@ -154,19 +102,20 @@ void Modem_optical<B,R,Q>
 //	std::copy(llrs[llr_idx].begin(), llrs[llr_idx].end(), Y_N2);
 //	llr_idx = (llr_idx + 1) % llrs.size();
 //};
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Modem_optical<B_8,R_8,R_8>;
-template class aff3ct::module::Modem_optical<B_8,R_8,Q_8>;
-template class aff3ct::module::Modem_optical<B_16,R_16,R_16>;
-template class aff3ct::module::Modem_optical<B_16,R_16,Q_16>;
-template class aff3ct::module::Modem_optical<B_32,R_32,R_32>;
-template class aff3ct::module::Modem_optical<B_64,R_64,R_64>;
+template class aff3ct::module::Modem_OOK_optical<B_8,R_8,R_8>;
+template class aff3ct::module::Modem_OOK_optical<B_8,R_8,Q_8>;
+template class aff3ct::module::Modem_OOK_optical<B_16,R_16,R_16>;
+template class aff3ct::module::Modem_OOK_optical<B_16,R_16,Q_16>;
+template class aff3ct::module::Modem_OOK_optical<B_32,R_32,R_32>;
+template class aff3ct::module::Modem_OOK_optical<B_64,R_64,R_64>;
 #else
-template class aff3ct::module::Modem_optical<B,R,Q>;
+template class aff3ct::module::Modem_OOK_optical<B,R,Q>;
 #if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
-template class aff3ct::module::Modem_optical<B,R,R>;
+template class aff3ct::module::Modem_OOK_optical<B,R,R>;
 #endif
 #endif
 // ==================================================================================== explicit template instantiation
