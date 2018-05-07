@@ -1,10 +1,14 @@
 #ifndef UPDATE_RULE_SPA_HPP
 #define UPDATE_RULE_SPA_HPP
 
+#include <sstream>
 #include <cassert>
 #include <vector>
 #include <limits>
+#include <string>
 #include <cmath>
+
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {
@@ -14,6 +18,7 @@ template <typename R = float>
 class Update_rule_SPA // Sum Product Algorithm
 {
 protected:
+	const std::string name;
 	std::vector<R> values;
 	int sign;
 	R   product;
@@ -21,15 +26,22 @@ protected:
 	int ite;
 
 public:
-	Update_rule_SPA(const unsigned max_check_node_degree)
-	: values(max_check_node_degree), sign(0), product(1), n_ite(0), ite(0)
+	explicit Update_rule_SPA(const unsigned max_check_node_degree)
+	: name("SPA"), values(max_check_node_degree), sign(0), product(1), n_ite(0), ite(0)
 	{
-		assert(max_check_node_degree > 0);
+		if (max_check_node_degree == 0)
+		{
+			std::stringstream message;
+			message << "'max_check_node_degree' has to greater than 0.";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	virtual ~Update_rule_SPA()
 	{
 	}
+
+	std::string get_name() { return this->name; }
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
@@ -49,7 +61,7 @@ public:
 		// FOR EACH check nodes ---------------------------------------------------------------------------------- LOOP
 
 			// incoming values from the variable nodes into the check nodes
-			inline void begin_in_check_node(const int CN_id, const int CN_degree)
+			inline void begin_check_node_in(const int CN_id, const int CN_degree)
 			{
 				assert(CN_degree <= values.size());
 
@@ -59,39 +71,39 @@ public:
 
 			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
 
-				inline void compute_in_check_node(const int VN_id, const R VN_value)
+				inline void compute_check_node_in(const int VN_id, const R VN_value)
 				{
-					const auto v_abs  = (R)std::abs(VN_value);
-					const auto res    = (R)std::tanh(v_abs * (R)0.5);
-					const auto c_sign = std::signbit((float)VN_value) ? -1 : 0;
+					const auto val_abs  = (R)std::abs(VN_value);
+					const auto res      = (R)std::tanh(val_abs * (R)0.5);
+					const auto val_sign = std::signbit((float)VN_value) ? -1 : 0;
 
-					this->sign         ^= c_sign;
+					this->sign         ^= val_sign;
 					this->product      *= res;
 					this->values[VN_id] = res;
 				}
 
-			inline void end_in_check_node()
+			inline void end_check_node_in()
 			{
 			}
 
 			// outcomming values from the check nodes into the variable nodes
-			inline void begin_out_check_node(const int CN_id, const int CN_degree)
+			inline void begin_check_node_out(const int CN_id, const int CN_degree)
 			{
 			}
 
 			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
 
-				inline R compute_out_check_node(const int VN_id, const R VN_value)
+				inline R compute_check_node_out(const int VN_id, const R VN_value)
 				{
-					const auto v_sig = sign ^ (std::signbit((float)VN_value) ? -1 : 0);
-					      auto val   = product / values[VN_id];
-					           val   = (val < (R)1.0) ? val : (R)1.0 - std::numeric_limits<R>::epsilon();
-					const auto v_tan = (R)2.0 * std::atanh(val);
+					      auto res_tmp = product / values[VN_id];
+					           res_tmp = (res_tmp < (R)1.0) ? res_tmp : (R)1.0 - std::numeric_limits<R>::epsilon();
+					const auto res_abs = (R)2.0 * std::atanh(res_tmp);
+					const auto res_sng = this->sign ^ (std::signbit((float)VN_value) ? -1 : 0);
 
-					return (R)std::copysign(v_tan, v_sig);
+					return (R)std::copysign(res_abs, res_sng);
 				}
 
-			inline void end_out_check_node()
+			inline void end_check_node_out()
 			{
 			}
 

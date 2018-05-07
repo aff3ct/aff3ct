@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <limits>
+#include <string>
 #include <cmath>
 
 #include "Tools/Math/max.h"
@@ -15,6 +16,7 @@ template <typename R = float, proto_min<R> MIN = min_star_linear2>
 class Update_rule_AMS // Approximate Min Star
 {
 protected:
+	const std::string name;
 	int sign;
 	R min;
 	R delta_min;
@@ -24,13 +26,15 @@ protected:
 
 public:
 	Update_rule_AMS()
-	: sign(0), min(std::numeric_limits<R>::max()), delta_min(min), delta(min), n_ite(0), ite(0)
+	: name("AMS"), sign(0), min(std::numeric_limits<R>::max()), delta_min(min), delta(min), n_ite(0), ite(0)
 	{
 	}
 
 	virtual ~Update_rule_AMS()
 	{
 	}
+
+	std::string get_name() { return this->name; }
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
@@ -61,13 +65,13 @@ public:
 
 				inline void compute_check_node_in(const int VN_id, const R VN_value)
 				{
-					const auto v_abs  = (R)std::abs(VN_value);
-					const auto c_sign = std::signbit((float)VN_value) ? -1 : 0;
-					const auto v_temp = this->min;
+					const auto val_abs = (R)std::abs(VN_value);
+					const auto val_sgn = std::signbit((float)VN_value) ? -1 : 0;
+					const auto tmp     = this->min;
 
-					this->sign     ^= c_sign;
-					this->min       = std::min(this->min, v_abs);
-					this->delta_min = MIN(this->delta_min, (v_abs == this->min) ? v_temp : v_abs);
+					this->sign     ^= val_sgn;
+					this->min       = std::min(this->min, val_abs);
+					this->delta_min = MIN(this->delta_min, (val_abs == this->min) ? tmp : val_abs);
 				}
 
 			inline void end_check_node_in()
@@ -85,11 +89,11 @@ public:
 
 				inline R compute_check_node_out(const int VN_id, const R VN_value)
 				{
-					const auto v_abs = (R)std::abs(VN_value);
-					      auto v_res = ((v_abs == this->min) ? this->delta_min : this->delta);
-					const auto v_sig = sign ^ (std::signbit((float)VN_value) ? -1 : 0);
+					const auto val_abs = (R)std::abs(VN_value);
+					      auto res_abs = ((val_abs == this->min) ? this->delta_min : this->delta);
+					const auto res_sgn = this->sign ^ (std::signbit((float)VN_value) ? -1 : 0);
 
-					return (R)std::copysign(v_res, v_sig);
+					return (R)std::copysign(res_abs, res_sgn);
 				}
 
 			inline void end_check_node_out()

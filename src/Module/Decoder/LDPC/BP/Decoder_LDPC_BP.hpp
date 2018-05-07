@@ -32,7 +32,7 @@ public:
 	virtual ~Decoder_LDPC_BP();
 
 	template <typename T>
-	bool check_syndrome_soft(const T* Y_N)
+	inline bool check_syndrome_soft(const T* Y_N)
 	{
 		if (this->enable_syndrome)
 		{
@@ -64,7 +64,7 @@ public:
 	}
 
 	template <typename T>
-	bool check_syndrome_hard(const T* V_N)
+	inline bool check_syndrome_hard(const T* V_N)
 	{
 		if (this->enable_syndrome)
 		{

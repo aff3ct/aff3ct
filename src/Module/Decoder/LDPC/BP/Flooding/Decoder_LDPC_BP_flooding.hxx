@@ -6,21 +6,21 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_LDPC_BP_flooding_new.hpp"
+#include "Decoder_LDPC_BP_flooding.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B, typename R, class Update_rule>
-Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
-::Decoder_LDPC_BP_flooding_new(const int K, const int N, const int n_ite,
-                               const tools::Sparse_matrix &H,
-                               const std::vector<uint32_t> &info_bits_pos,
-                                     Update_rule &rule,
-                               const bool enable_syndrome,
-                               const int syndrome_depth,
-                               const int n_frames)
+Decoder_LDPC_BP_flooding<B,R,Update_rule>
+::Decoder_LDPC_BP_flooding(const int K, const int N, const int n_ite,
+                           const tools::Sparse_matrix &H,
+                           const std::vector<uint32_t> &info_bits_pos,
+                           const Update_rule &rule,
+                           const bool enable_syndrome,
+                           const int syndrome_depth,
+                           const int n_frames)
 : Decoder               (K, N,                                            n_frames, 1),
   Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
   n_V_nodes             (N                                                           ), // same as N but more explicit
@@ -33,7 +33,7 @@ Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
   V_to_C                (n_frames, std::vector<R>(this->n_branches)                  ),
   rule                  (rule                                                        )
 {
-	const std::string name = "Decoder_LDPC_BP_flooding_new";
+	const std::string name = "Decoder_LDPC_BP_flooding<" + this->rule.get_name() + ">";
 	this->set_name(name);
 
 	transpose.resize(this->n_branches);
@@ -79,20 +79,20 @@ Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
-::~Decoder_LDPC_BP_flooding_new()
+Decoder_LDPC_BP_flooding<B,R,Update_rule>
+::~Decoder_LDPC_BP_flooding()
 {
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
+void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::reset()
 {
 	this->init_flag = true;
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
+void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
@@ -115,7 +115,7 @@ void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
+void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -149,7 +149,7 @@ void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
+void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -179,7 +179,7 @@ void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
 
 // BP algorithm
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
+void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::BP_decode(const R *Y_N, const int frame_id)
 {
 	rule.begin_decoding(this->n_ite);
@@ -235,7 +235,7 @@ void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_new<B,R,Update_rule>
+void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V)
 {
 	// beginning of the iteration upon all the matrix lines

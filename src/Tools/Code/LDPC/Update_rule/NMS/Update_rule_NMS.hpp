@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <limits>
+#include <string>
 #include <cmath>
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
@@ -50,18 +51,21 @@ template <typename R = float>
 class Update_rule_NMS // Normalized Min Sum
 {
 protected:
+	const std::string name;
 	const float normalize_factor;
 	Update_rule_MS<R> MS;
 
 public:
-	Update_rule_NMS(const float normalize_factor)
-	: normalize_factor(normalize_factor), MS()
+	explicit Update_rule_NMS(const float normalize_factor)
+	: name("NMS"), normalize_factor(normalize_factor), MS()
 	{
 	}
 
 	virtual ~Update_rule_NMS()
 	{
 	}
+
+	std::string get_name() { return this->name; }
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
@@ -95,10 +99,10 @@ public:
 
 			inline void end_check_node_in()
 			{
-				MS.cste1 = normalize<R>(MS.min2, this->normalize_factor);
-				MS.cste2 = normalize<R>(MS.min1, this->normalize_factor);
-				MS.cste1 = (MS.cste1 < 0) ? 0 : MS.cste1;
-				MS.cste2 = (MS.cste2 < 0) ? 0 : MS.cste2;
+				MS.cst1 = normalize<R>(MS.min2, this->normalize_factor);
+				MS.cst2 = normalize<R>(MS.min1, this->normalize_factor);
+				MS.cst1 = (MS.cst1 < 0) ? 0 : MS.cst1;
+				MS.cst2 = (MS.cst2 < 0) ? 0 : MS.cst2;
 			}
 
 			// outcomming values from the check nodes into the variable nodes
@@ -111,7 +115,7 @@ public:
 
 				inline R compute_check_node_out(const int VN_id, const R VN_value)
 				{
-					MS.compute_check_node_out(VN_id, VN_value);
+					return MS.compute_check_node_out(VN_id, VN_value);
 				}
 
 			inline void end_check_node_out()

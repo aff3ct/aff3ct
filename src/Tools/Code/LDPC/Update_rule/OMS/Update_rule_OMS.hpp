@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <limits>
+#include <string>
 #include <cmath>
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
@@ -17,18 +18,21 @@ template <typename R = float>
 class Update_rule_OMS // Offset Min Sum
 {
 protected:
+	const std::string name;
 	const R offset;
 	Update_rule_MS<R> MS;
 
 public:
-	Update_rule_OMS(const R offset)
-	: offset(offset), MS()
+	explicit Update_rule_OMS(const R offset)
+	: name("OMS"), offset(offset), MS()
 	{
 	}
 
 	virtual ~Update_rule_OMS()
 	{
 	}
+
+	std::string get_name() { return this->name; }
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
@@ -62,10 +66,10 @@ public:
 
 			inline void end_check_node_in()
 			{
-				MS.cste1 = MS.min2 - this->offset;
-				MS.cste2 = MS.min1 - this->offset;
-				MS.cste1 = (MS.cste1 < 0) ? 0 : MS.cste1;
-				MS.cste2 = (MS.cste2 < 0) ? 0 : MS.cste2;
+				MS.cst1 = MS.min2 - this->offset;
+				MS.cst2 = MS.min1 - this->offset;
+				MS.cst1 = (MS.cst1 < 0) ? 0 : MS.cst1;
+				MS.cst2 = (MS.cst2 < 0) ? 0 : MS.cst2;
 			}
 
 			// outcomming values from the check nodes into the variable nodes
@@ -78,7 +82,7 @@ public:
 
 				inline R compute_check_node_out(const int VN_id, const R VN_value)
 				{
-					MS.compute_check_node_out(VN_id, VN_value);
+					return MS.compute_check_node_out(VN_id, VN_value);
 				}
 
 			inline void end_check_node_out()

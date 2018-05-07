@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <limits>
+#include <string>
 #include <cmath>
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
@@ -11,10 +12,17 @@ namespace aff3ct
 {
 namespace tools
 {
+template <typename R> class Update_rule_OMS;
+template <typename R> class Update_rule_NMS;
+
 template <typename R = float>
 class Update_rule_MS // Min Sum
 {
+	friend Update_rule_OMS<R>;
+	friend Update_rule_NMS<R>;
+
 protected:
+	const std::string name;
 	int sign;
 	R min1;
 	R min2;
@@ -25,13 +33,15 @@ protected:
 
 public:
 	Update_rule_MS()
-	: sign(0), min1(std::numeric_limits<R>::max()), min2(std::numeric_limits<R>::max()), cst1(0), cst2(0), n_ite(0), ite(0)
+	: name("MS"), sign(0), min1(std::numeric_limits<R>::max()), min2(std::numeric_limits<R>::max()), cst1(0), cst2(0), n_ite(0), ite(0)
 	{
 	}
 
 	virtual ~Update_rule_MS()
 	{
 	}
+
+	std::string get_name() { return this->name; }
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
@@ -62,19 +72,19 @@ public:
 
 				inline void compute_check_node_in(const int VN_id, const R VN_value)
 				{
-					const auto v_abs  = (R)std::abs(VN_value);
-					const auto c_sign = std::signbit((float)VN_value) ? -1 : 0;
-					const auto v_temp = min1;
+					const auto val_abs  = (R)std::abs(VN_value);
+					const auto val_sign = std::signbit((float)VN_value) ? -1 : 0;
+					const auto tmp      = min1;
 
-					this->sign ^= c_sign;
-					this->min1  = std::min(this->min1,          v_abs         );
-					this->min2  = std::min(this->min2, std::max(v_abs, v_temp));
+					this->sign ^= val_sign;
+					this->min1  = std::min(this->min1,          val_abs      );
+					this->min2  = std::min(this->min2, std::max(val_abs, tmp));
 				}
 
 			inline void end_check_node_in()
 			{
-				this->cste1 = (this->min2 < 0) ? 0 : this->min2;
-				this->cste2 = (this->min1 < 0) ? 0 : this->min1;
+				this->cst1 = (this->min2 < 0) ? 0 : this->min2;
+				this->cst2 = (this->min1 < 0) ? 0 : this->min1;
 			}
 
 			// outcomming values from the check nodes into the variable nodes
@@ -86,11 +96,11 @@ public:
 
 				inline R compute_check_node_out(const int VN_id, const R VN_value)
 				{
-					const auto v_abs = (R)std::abs(VN_value);
-					const auto v_res = ((v_abs == this->min1) ? this->cste1 : this->cste2);
-					const auto v_sig = sign ^ (std::signbit((float)VN_value) ? -1 : 0);
+					const auto val_abs = (R)std::abs(VN_value);
+					const auto res_abs = ((val_abs == this->min1) ? this->cst1 : this->cst2);
+					const auto res_sng = this->sign ^ (std::signbit((float)VN_value) ? -1 : 0);
 
-					return (R)std::copysign(v_res, v_sig);
+					return (R)std::copysign(res_abs, res_sng);
 				}
 
 			inline void end_check_node_out()

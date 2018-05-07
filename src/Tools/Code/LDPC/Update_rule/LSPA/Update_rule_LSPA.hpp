@@ -1,11 +1,14 @@
 #ifndef UPDATE_RULE_LSPA_HPP
 #define UPDATE_RULE_LSPA_HPP
 
+#include <sstream>
 #include <cassert>
+#include <vector>
 #include <limits>
+#include <string>
 #include <cmath>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {
@@ -15,6 +18,7 @@ template <typename R = float>
 class Update_rule_LSPA // Log Sum Product Algorithm
 {
 protected:
+	const std::string name;
 	std::vector<R> values;
 	int sign;
 	R   sum;
@@ -22,15 +26,22 @@ protected:
 	int ite;
 
 public:
-	Update_rule_LSPA(const unsigned max_check_node_degree)
-	: values(max_check_node_degree), sign(0), sum(1), n_ite(0), ite(0)
+	explicit Update_rule_LSPA(const unsigned max_check_node_degree)
+	: name("LSPA"), values(max_check_node_degree), sign(0), sum(1), n_ite(0), ite(0)
 	{
-		assert(max_check_node_degree > 0);
+		if (max_check_node_degree == 0)
+		{
+			std::stringstream message;
+			message << "'max_check_node_degree' has to greater than 0.";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	virtual ~Update_rule_LSPA()
 	{
 	}
+
+	std::string get_name() { return this->name; }
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
@@ -55,19 +66,20 @@ public:
 				assert(CN_degree <= values.size());
 
 				this->sign = 0;
-				this->sum  = 1;
+				this->sum  = 0;
 			}
 
 			// FOR EACH variable nodes of the current check node ------------------------------------------------- LOOP
 
 				inline void compute_check_node_in(const int VN_id, const R VN_value)
 				{
-					const auto v_abs     = (R)std::abs(VN_value);
-					const auto tan_v_abs = std::tanh(v_abs * (R)0.5);
-					const auto res       = (tan_v_abs != 0) ? (R)std::log(tan_v_abs) : std::numeric_limits<R>::min();
-					const auto c_sign    = std::signbit((float)VN_value) ? -1 : 0;
+					const auto val_abs     = (R)std::abs(VN_value);
+					const auto tan_val_abs = std::tanh(val_abs * (R)0.5);
+					const auto res         = (tan_val_abs != 0) ? (R)std::log(tan_val_abs) :
+					                                              std::numeric_limits<R>::min();
+					const auto val_sign    = std::signbit((float)VN_value) ? -1 : 0;
 
-					this->sign         ^= c_sign;
+					this->sign         ^= val_sign;
 					this->sum          += res;
 					this->values[VN_id] = res;
 				}
@@ -85,12 +97,13 @@ public:
 
 				inline R compute_check_node_out(const int VN_id, const R VN_value)
 				{
-					const auto v_sig = sign ^ (std::signbit((float)VN_value) ? -1 : 0);
-					const auto exp   = (sum - values[VN_id] != 0) ? std::exp(sum - values[VN_id]) :
-					                                                (R)1.0 - std::numeric_limits<R>::epsilon();
-					const auto v_tan = (R)2.0 * std::atanh(exp);
+					      auto res_tmp = sum - values[VN_id];
+					           res_tmp = (res_tmp != (R)1.0) ? std::exp(res_tmp) :
+					                                           (R)1.0 - std::numeric_limits<R>::epsilon();
+					const auto res_abs = (R)2.0 * std::atanh(res_tmp);
+					const auto res_sgn = this->sign ^ (std::signbit((float)VN_value) ? -1 : 0);
 
-					return (R)std::copysign(v_tan, v_sig);
+					return (R)std::copysign(res_abs, res_sgn);
 				}
 
 			inline void end_check_node_out()
