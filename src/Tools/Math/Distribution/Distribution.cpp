@@ -130,7 +130,7 @@ void Distribution<R>
 			if (this->pdf_y[k][i] != (R)0) // proba not null
 			{
 				this->cdf_x[k].push_back(this->pdf_x[i]);
-				this->cdf_y[k].push_back(cumul_y[i]);
+				this->cdf_y[k].push_back(cumul_y[i]/sum);
 			}
 	}
 }
