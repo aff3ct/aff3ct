@@ -67,12 +67,12 @@ public:
 
 	inline void compute_chk_node_in(const int var_id, const R var_val)
 	{
-		const auto val_abs     = (R)std::abs(var_val);
-		const auto tan_val_abs = std::tanh(val_abs * (R)0.5);
-		const auto res         = (tan_val_abs != 0) ? (R)std::log(tan_val_abs) : std::numeric_limits<R>::min();
-		const auto val_sign    = std::signbit((float)var_val) ? -1 : 0;
+		const auto var_abs     = (R)std::abs(var_val);
+		const auto tan_var_abs = std::tanh(var_abs * (R)0.5);
+		const auto res         = (tan_var_abs != 0) ? (R)std::log(tan_var_abs) : std::numeric_limits<R>::min();
+		const auto var_sign    = std::signbit((float)var_val) ? -1 : 0;
 
-		this->sign          ^= val_sign;
+		this->sign          ^= var_sign;
 		this->sum           += res;
 		this->values[var_id] = res;
 	}

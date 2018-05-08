@@ -67,11 +67,11 @@ public:
 
 	inline void compute_chk_node_in(const int var_id, const R var_val)
 	{
-		const auto val_abs  = (R)std::abs(var_val);
-		const auto res      = (R)std::tanh(val_abs * (R)0.5);
-		const auto val_sign = std::signbit((float)var_val) ? -1 : 0;
+		const auto var_abs  = (R)std::abs(var_val);
+		const auto res      = (R)std::tanh(var_abs * (R)0.5);
+		const auto var_sign = std::signbit((float)var_val) ? -1 : 0;
 
-		this->sign          ^= val_sign;
+		this->sign          ^= var_sign;
 		this->product       *= res;
 		this->values[var_id] = res;
 	}

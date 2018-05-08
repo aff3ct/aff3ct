@@ -61,7 +61,7 @@ void Decoder_LDPC::parameters
 
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_FLOODING", "BP_LAYERED");
-	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "ONMS", "AMS", "GALA");
+	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA");
 
 	args.add(
 		{p+"-ite", "i"},
@@ -71,12 +71,12 @@ void Decoder_LDPC::parameters
 	args.add(
 		{p+"-off"},
 		tools::Real(),
-		"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem ONMS\").");
+		"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem NMS\").");
 
 	args.add(
 		{p+"-norm"},
 		tools::Real(tools::Positive()),
-		"normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem ONMS\").");
+		"normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem NMS\").");
 
 	args.add(
 		{p+"-no-synd"},
@@ -150,10 +150,10 @@ void Decoder_LDPC::parameters
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
 
-		if (this->implem == "NMS" || this->implem == "ONMS")
+		if (this->implem == "NMS")
 			headers[p].push_back(std::make_pair("Normalize factor", std::to_string(this->norm_factor)));
 
-		if (this->implem == "OMS" || this->implem == "ONMS")
+		if (this->implem == "OMS")
 			headers[p].push_back(std::make_pair("Offset", std::to_string(this->offset)));
 
 		std::string syndrome = this->enable_syndrome ? "on" : "off";
@@ -206,7 +206,8 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 	}
 	else if (this->type == "BP_LAYERED" && this->simd_strategy == "INTER")
 	{
-		if (this->implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		     if (this->implem == "NMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)0           , this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "OMS")	return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

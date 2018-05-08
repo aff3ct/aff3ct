@@ -67,13 +67,13 @@ public:
 
 	inline void compute_chk_node_in(const int var_id, const R var_val)
 	{
-		const auto val_abs  = (R)std::abs(var_val);
-		const auto val_sign = std::signbit((float)var_val) ? -1 : 0;
+		const auto var_abs  = (R)std::abs(var_val);
+		const auto var_sign = std::signbit((float)var_val) ? -1 : 0;
 		const auto tmp      = min1;
 
-		this->sign ^= val_sign;
-		this->min1  = std::min(this->min1,          val_abs      );
-		this->min2  = std::min(this->min2, std::max(val_abs, tmp));
+		this->sign ^= var_sign;
+		this->min1  = std::min(this->min1,          var_abs      );
+		this->min2  = std::min(this->min2, std::max(var_abs, tmp));
 	}
 
 	inline void end_chk_node_in()
@@ -89,8 +89,8 @@ public:
 
 	inline R compute_chk_node_out(const int var_id, const R var_val)
 	{
-		const auto val_abs = (R)std::abs(var_val);
-		const auto res_abs = ((val_abs == this->min1) ? this->cst1 : this->cst2);
+		const auto var_abs = (R)std::abs(var_val);
+		const auto res_abs = ((var_abs == this->min1) ? this->cst1 : this->cst2);
 		const auto res_sng = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);
 
 		return (R)std::copysign(res_abs, res_sng);
