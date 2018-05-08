@@ -4,6 +4,7 @@
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
 
+#include "../../../Decoder_SISO_SIHO.hpp"
 #include "../Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
@@ -11,7 +12,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float, class Update_rule = tools::Update_rule_SPA<R>>
-class Decoder_LDPC_BP_flooding : public Decoder_LDPC_BP<B,R>
+class Decoder_LDPC_BP_flooding : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
 {
 protected:
 	const std::vector<uint32_t> &info_bits_pos;

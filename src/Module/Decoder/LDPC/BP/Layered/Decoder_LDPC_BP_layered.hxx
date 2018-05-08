@@ -21,14 +21,15 @@ Decoder_LDPC_BP_layered<B,R,Update_rule>
                           const bool enable_syndrome,
                           const int syndrome_depth,
                           const int n_frames)
-: Decoder             (K, N,                                            n_frames, 1),
-  Decoder_LDPC_BP<B,R>(K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
-  info_bits_pos       (info_bits_pos                                               ),
-  up_rule             (up_rule                                                     ),
-  var_nodes           (n_frames, std::vector<R>(N                    )             ),
-  branches            (n_frames, std::vector<R>(H.get_n_connections())             ),
-  contributions       (H.get_cols_max_degree()                                     ),
-  init_flag           (true                                                        )
+: Decoder               (K, N, n_frames, 1                              ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                              ),
+  Decoder_LDPC_BP       (K, N, n_ite, H, enable_syndrome, syndrome_depth),
+  info_bits_pos         (info_bits_pos                                  ),
+  up_rule               (up_rule                                        ),
+  var_nodes             (n_frames, std::vector<R>(N                    )),
+  branches              (n_frames, std::vector<R>(H.get_n_connections())),
+  contributions         (H.get_cols_max_degree()                        ),
+  init_flag             (true                                           )
 {
 	const std::string name = "Decoder_LDPC_BP_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);

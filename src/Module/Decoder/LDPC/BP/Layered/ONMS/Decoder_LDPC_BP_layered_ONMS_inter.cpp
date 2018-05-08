@@ -23,8 +23,9 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
                                      const bool enable_syndrome,
                                      const int syndrome_depth,
                                      const int n_frames)
-: Decoder               (K, N, n_frames,                                            mipp::nElReg<R>() ),
-  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, mipp::nElReg<R>() ),
+: Decoder               (K, N, n_frames, mipp::nElReg<R>()                                            ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::nElReg<R>()                                            ),
+  Decoder_LDPC_BP       (K, N, n_ite, H, enable_syndrome, syndrome_depth                              ),
   normalize_factor      (normalize_factor                                                             ),
   offset                (offset                                                                       ),
   contributions         (H.get_cols_max_degree()                                                      ),
@@ -39,7 +40,7 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 {
 	const std::string name = "Decoder_LDPC_BP_layered_ONMS_inter";
 	this->set_name(name);
-	
+
 	if (typeid(R) == typeid(signed char))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder does not work in 8-bit fixed-point.");
 
@@ -373,7 +374,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter<B_8,Q_8>;

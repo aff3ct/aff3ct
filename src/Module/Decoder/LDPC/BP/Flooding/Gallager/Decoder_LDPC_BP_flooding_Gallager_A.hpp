@@ -5,14 +5,15 @@
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
-#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
+#include "../../../../Decoder_SIHO_HIHO.hpp"
+#include "../../Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_flooding_Gallager_A : public Decoder_LDPC_BP<B,R>
+class Decoder_LDPC_BP_flooding_Gallager_A : public Decoder_SIHO_HIHO<B,R>, public Decoder_LDPC_BP
 {
 protected:
 	const std::vector<uint32_t> &info_bits_pos;

@@ -4,14 +4,11 @@
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 
-#include "../../Decoder_SISO_SIHO.hpp"
-
 namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float>
-class Decoder_LDPC_BP : public Decoder_SISO_SIHO<B,R>
+class Decoder_LDPC_BP
 {
 protected:
 	const int                   n_ite;
@@ -25,13 +22,12 @@ public:
 	Decoder_LDPC_BP(const int K, const int N, const int n_ite,
 	                const tools::Sparse_matrix &H,
 	                const bool enable_syndrome = true,
-	                const int syndrome_depth = 1,
-	                const int n_frames = 1,
-	                const int simd_inter_frame_level = 1);
+	                const int syndrome_depth = 1);
+
 	virtual ~Decoder_LDPC_BP();
 
-	template <typename T>
-	inline bool check_syndrome_soft(const T* Y_N)
+	template <typename R>
+	inline bool check_syndrome_soft(const R* Y_N)
 	{
 		if (this->enable_syndrome)
 		{
@@ -43,8 +39,8 @@ public:
 			return false;
 	}
 
-	template <typename T>
-	inline bool check_syndrome_hard(const T* V_N)
+	template <typename B>
+	inline bool check_syndrome_hard(const B* V_N)
 	{
 		if (this->enable_syndrome)
 		{
