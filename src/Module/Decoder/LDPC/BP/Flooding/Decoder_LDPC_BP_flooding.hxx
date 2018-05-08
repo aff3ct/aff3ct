@@ -23,20 +23,17 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
                            const int n_frames)
 : Decoder             (K, N,                                            n_frames, 1),
   Decoder_LDPC_BP<B,R>(K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
-  n_var_nodes         (N                                                           ),
-  n_chk_nodes         ((int)H.get_n_cols()                                         ),
-  n_branches          ((int)H.get_n_connections()                                  ),
   info_bits_pos       (info_bits_pos                                               ),
   up_rule             (up_rule                                                     ),
+  transpose           (H.get_n_connections()                                       ),
   post                (N, -1                                                       ),
-  chk_to_var          (n_frames, std::vector<R>(this->n_branches)                  ),
-  var_to_chk          (n_frames, std::vector<R>(this->n_branches)                  ),
+  chk_to_var          (n_frames, std::vector<R>(H.get_n_connections())             ),
+  var_to_chk          (n_frames, std::vector<R>(H.get_n_connections())             ),
   init_flag           (true                                                        )
 {
 	const std::string name = "Decoder_LDPC_BP_flooding<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
 
-	transpose.resize(this->n_branches);
 	mipp::vector<unsigned char> connections(H.get_n_rows(), 0);
 
 	const auto &chk_to_var_id = H.get_col_to_rows();
@@ -68,14 +65,6 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
 			k++;
 		}
 	}
-
-	chk_degrees.resize(H.get_n_cols());
-	for (auto i = 0; i < (int)H.get_n_cols(); i++)
-		chk_degrees[i] = (unsigned char)chk_to_var_id[i].size();
-
-	var_degrees.resize(H.get_n_rows());
-	for (auto i = 0; i < (int)H.get_n_rows(); i++)
-		var_degrees[i] = (unsigned char)var_to_chk_id[i].size();
 }
 
 template <typename B, typename R, class Update_rule>
@@ -176,27 +165,6 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_compute_post(const R *Y_N, const std::vector<R> &chk_to_var)
-{
-	// compute the a posteriori info
-	const auto *chk_to_var_ptr = chk_to_var.data();
-	for (auto v = 0; v < this->n_var_nodes; v++)
-	{
-		const auto var_degree = this->var_degrees[v];
-
-		auto sum_chk_to_var = (R)0;
-		for (auto c = 0; c < var_degree; c++)
-			sum_chk_to_var += chk_to_var_ptr[c];
-
-		// filling the output
-		this->post[v] = Y_N[v] + sum_chk_to_var;
-
-		chk_to_var_ptr += var_degree;
-	}
-}
-
-template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::_decode(const R *Y_N, const int frame_id)
 {
 	this->up_rule.begin_decoding(this->n_ite);
@@ -205,32 +173,34 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 	for (; ite < this->n_ite; ite++)
 	{
 		this->up_rule.begin_ite(ite);
-		this->_decode_single_ite(Y_N, this->var_to_chk[frame_id], this->chk_to_var[frame_id]);
+		this->_initialize_var_to_chk(Y_N, this->chk_to_var[frame_id], this->var_to_chk[frame_id]);
+		this->_decode_single_ite(this->var_to_chk[frame_id], this->chk_to_var[frame_id]);
 		this->up_rule.end_ite();
 
 		if (this->enable_syndrome && ite != this->n_ite -1)
 		{
-			this->_compute_post(Y_N, this->chk_to_var[frame_id]);
+			this->_compute_post(Y_N, this->chk_to_var[frame_id], this->post);
 			if (this->check_syndrome_soft(this->post.data()))
 				break;
 		}
 	}
 	if (ite == this->n_ite)
-		this->_compute_post(Y_N, this->chk_to_var[frame_id]);
+		this->_compute_post(Y_N, this->chk_to_var[frame_id], this->post);
 
 	this->up_rule.end_decoding();
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_decode_single_ite(const R *Y_N, std::vector<R> &var_to_chk, std::vector<R> &chk_to_var)
+::_initialize_var_to_chk(const R *Y_N, const std::vector<R> &chk_to_var, std::vector<R> &var_to_chk)
 {
 	auto *chk_to_var_ptr = chk_to_var.data();
 	auto *var_to_chk_ptr = var_to_chk.data();
 
-	for (auto v = 0; v < this->n_var_nodes; v++)
+	const auto n_var_nodes = (int)this->H.get_n_rows();;
+	for (auto v = 0; v < n_var_nodes; v++)
 	{
-		const auto var_degree = this->var_degrees[v];
+		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
 
 		auto sum_chk_to_var = (R)0;
 		for (auto c = 0; c < var_degree; c++)
@@ -243,13 +213,19 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 		chk_to_var_ptr += var_degree;
 		var_to_chk_ptr += var_degree;
 	}
+}
 
+template <typename B, typename R, class Update_rule>
+void Decoder_LDPC_BP_flooding<B,R,Update_rule>
+::_decode_single_ite(const std::vector<R> &var_to_chk, std::vector<R> &chk_to_var)
+{
 	auto transpose_ptr = this->transpose.data();
 
 	// flooding scheduling
-	for (auto c = 0; c < this->n_chk_nodes; c++)
+	const auto n_chk_nodes = (int)this->H.get_n_cols();
+	for (auto c = 0; c < n_chk_nodes; c++)
 	{
-		const auto chk_degree = this->chk_degrees[c];
+		const auto chk_degree = (int)this->H.get_col_to_rows()[c].size();
 
 		this->up_rule.begin_chk_node_in(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
@@ -262,6 +238,28 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 		this->up_rule.end_chk_node_out();
 
 		transpose_ptr += chk_degree;
+	}
+}
+
+template <typename B, typename R, class Update_rule>
+void Decoder_LDPC_BP_flooding<B,R,Update_rule>
+::_compute_post(const R *Y_N, const std::vector<R> &chk_to_var, std::vector<R> &post)
+{
+	// compute the a posteriori info
+	const auto *chk_to_var_ptr = chk_to_var.data();
+	const auto n_var_nodes = (int)this->H.get_n_rows();;
+	for (auto v = 0; v < n_var_nodes; v++)
+	{
+		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
+
+		auto sum_chk_to_var = (R)0;
+		for (auto c = 0; c < var_degree; c++)
+			sum_chk_to_var += chk_to_var_ptr[c];
+
+		// filling the output
+		post[v] = Y_N[v] + sum_chk_to_var;
+
+		chk_to_var_ptr += var_degree;
 	}
 }
 }

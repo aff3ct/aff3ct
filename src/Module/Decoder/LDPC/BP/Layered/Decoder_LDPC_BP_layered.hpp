@@ -14,15 +14,14 @@ template <typename B = int, typename R = float, class Update_rule = tools::Updat
 class Decoder_LDPC_BP_layered : public Decoder_LDPC_BP<B,R>
 {
 protected:
-	const int n_chk_nodes; // number of check nodes (N - K)
-	const std::vector<unsigned> &info_bits_pos;
+	const std::vector<uint32_t> &info_bits_pos;
 
 	Update_rule up_rule;
 
 	// data structures for iterative decoding
 	std::vector<std::vector<R>> var_nodes;
 	std::vector<std::vector<R>> branches;
-	std::vector            <R>  contributions;
+	std::vector<R             > contributions;
 
 	bool init_flag; // reset the chk_to_var vector at the begining of the iterative decoding
 

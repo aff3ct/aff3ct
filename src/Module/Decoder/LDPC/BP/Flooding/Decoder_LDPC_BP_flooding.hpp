@@ -14,18 +14,12 @@ template <typename B = int, typename R = float, class Update_rule = tools::Updat
 class Decoder_LDPC_BP_flooding : public Decoder_LDPC_BP<B,R>
 {
 protected:
-	const int n_var_nodes; // number of variable nodes (N)
-	const int n_chk_nodes; // number of check    nodes (N - K)
-	const int n_branches;  // number of branched in the bi-partite graph (connexions between the var and check nodes)
 	const std::vector<uint32_t> &info_bits_pos;
 
 	Update_rule up_rule;
 
-	std::vector<uint8_t > chk_degrees;
-	std::vector<uint8_t > var_degrees;
-	std::vector<uint32_t> transpose;
-
-	std::vector            <R>  post;       // a posteriori information
+	std::vector<uint32_t      > transpose;
+	std::vector<R             > post;       // a posteriori information
 	std::vector<std::vector<R>> chk_to_var; // check    nodes to variable nodes messages
 	std::vector<std::vector<R>> var_to_chk; // variable nodes to check    nodes messages
 
@@ -47,9 +41,10 @@ protected:
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
-	void _decode           (const R *Y_N, const int frame_id);
-	void _compute_post     (const R *Y_N, const std::vector<R> &chk_to_var);
-	void _decode_single_ite(const R *Y_N, std::vector<R> &var_to_chk, std::vector<R> &chk_to_var);
+	void _decode               (const R *Y_N, const int frame_id);
+	void _initialize_var_to_chk(const R *Y_N, const std::vector<R> &chk_to_var, std::vector<R> &var_to_chk);
+	void _decode_single_ite    (const std::vector<R> &var_to_chk, std::vector<R> &chk_to_var);
+	void _compute_post         (const R *Y_N, const std::vector<R> &chk_to_var, std::vector<R> &post);
 };
 }
 }

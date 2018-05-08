@@ -1,7 +1,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -25,74 +24,6 @@ Sparse_matrix
 Sparse_matrix
 ::~Sparse_matrix()
 {
-}
-
-unsigned Sparse_matrix
-::get_n_rows() const
-{
-	return this->n_rows;
-}
-
-unsigned Sparse_matrix
-::get_n_cols() const
-{
-	return this->n_cols;
-}
-
-unsigned Sparse_matrix
-::get_rows_max_degree() const
-{
-	return this->rows_max_degree;
-}
-
-unsigned Sparse_matrix
-::get_cols_max_degree() const
-{
-	return this->cols_max_degree;
-}
-
-unsigned Sparse_matrix
-::get_n_connections() const
-{
-	return this->n_connections;
-}
-
-const std::vector<unsigned>& Sparse_matrix
-::get_cols_from_row(const size_t row_index) const
-{
-	return this->row_to_cols[row_index];
-}
-
-const std::vector<unsigned>& Sparse_matrix
-::get_rows_from_col(const size_t col_index) const
-{
-	return this->col_to_rows[col_index];
-}
-
-const std::vector<unsigned>& Sparse_matrix
-::operator[](const size_t col_index) const
-{
-	return this->get_rows_from_col(col_index);
-}
-
-bool Sparse_matrix
-::at(const size_t row_index, const size_t col_index) const
-{
-	auto it = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
-
-	return (it != this->row_to_cols[row_index].end());
-}
-
-const std::vector<std::vector<unsigned int>>& Sparse_matrix
-::get_row_to_cols() const
-{
-	return this->row_to_cols;
-}
-
-const std::vector<std::vector<unsigned int>>& Sparse_matrix
-::get_col_to_rows() const
-{
-	return this->col_to_rows;
 }
 
 void Sparse_matrix
@@ -175,12 +106,12 @@ void Sparse_matrix
 
 	if (order == "ASC")
 	{
-		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
+		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
 		          [](const std::vector<unsigned> &i1, const  std::vector<unsigned> &i2) { return i1.size() < i2.size(); });
 	}
 	else // order == "DSC"
 	{
-		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
+		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
 		          [](const  std::vector<unsigned> &i1, const std::vector<unsigned> &i2) { return i1.size() > i2.size(); });
 	}
 

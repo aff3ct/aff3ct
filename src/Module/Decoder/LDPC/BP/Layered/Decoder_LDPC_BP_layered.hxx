@@ -23,7 +23,6 @@ Decoder_LDPC_BP_layered<B,R,Update_rule>
                           const int n_frames)
 : Decoder             (K, N,                                            n_frames, 1),
   Decoder_LDPC_BP<B,R>(K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
-  n_chk_nodes         ((int)H.get_n_cols()                                         ),
   info_bits_pos       (info_bits_pos                                               ),
   up_rule             (up_rule                                                     ),
   var_nodes           (n_frames, std::vector<R>(N                    )             ),
@@ -133,7 +132,6 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
-// BP algorithm
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_layered<B,R,Update_rule>
 ::_decode(const int frame_id)
@@ -161,7 +159,8 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 	auto kw = 0;
 
 	// layered scheduling
-	for (auto c = 0; c < this->n_chk_nodes; c++)
+	const auto n_chk_nodes = (int)this->H.get_n_cols();
+	for (auto c = 0; c < n_chk_nodes; c++)
 	{
 		const auto chk_degree = (int)this->H[c].size();
 		this->up_rule.begin_chk_node_in(c, chk_degree);
