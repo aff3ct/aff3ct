@@ -13,9 +13,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_LDPC_BP<B,R>
-::Decoder_LDPC_BP(const int K,
-                  const int N,
-                  const int n_ite,
+::Decoder_LDPC_BP(const int K, const int N, const int n_ite,
                   const tools::Sparse_matrix &H,
                   const bool enable_syndrome,
                   const int syndrome_depth,

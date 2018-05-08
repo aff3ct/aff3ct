@@ -4,6 +4,7 @@
 #include <functional>
 #include <sstream>
 
+#include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 
@@ -61,28 +62,7 @@ template <typename B>
 bool Encoder_LDPC_from_H<B>
 ::is_codeword(const B *X_N)
 {
-	auto syndrome = false;
-
-	const auto n_CN = (int)this->H.get_n_cols();
-	auto i = 0;
-	while (i < n_CN && !syndrome)
-	{
-		auto sign = 0;
-
-		const auto n_VN = (int)this->H[i].size();
-		for (auto j = 0; j < n_VN; j++)
-		{
-			const auto bit = X_N[this->H[i][j]];
-			const auto tmp_sign = bit ? -1 : 0;
-
-			sign ^= tmp_sign;
-		}
-
-		syndrome = syndrome || sign;
-		i++;
-	}
-
-	return !syndrome;
+	return tools::LDPC_syndrome::check_hard(X_N, this->H);
 }
 
 template <typename B>

@@ -2,6 +2,7 @@
 #define DECODER_LDPC_BP_HPP_
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 
 #include "../../Decoder_SISO_SIHO.hpp"
 
@@ -21,9 +22,7 @@ protected:
 	int cur_syndrome_depth;
 
 public:
-	Decoder_LDPC_BP(const int K,
-	                const int N,
-	                const int n_ite,
+	Decoder_LDPC_BP(const int K, const int N, const int n_ite,
 	                const tools::Sparse_matrix &H,
 	                const bool enable_syndrome = true,
 	                const int syndrome_depth = 1,
@@ -36,31 +35,12 @@ public:
 	{
 		if (this->enable_syndrome)
 		{
-			auto syndrome = false;
-
-			const auto n_CN = (int)this->H.get_n_cols();
-			for (auto i = 0; i < n_CN; i++)
-			{
-				auto sign = 0;
-
-				const auto n_VN = (int)this->H[i].size();
-				for (auto j = 0; j < n_VN; j++)
-				{
-					const auto value = Y_N[this->H[i][j]];
-					const auto tmp_sign = std::signbit((float)value) ? -1 : 0;
-
-					sign ^= tmp_sign;
-				}
-
-				syndrome = syndrome || sign;
-			}
-
-			this->cur_syndrome_depth = (syndrome == 0) ? (this->cur_syndrome_depth +1) % this->syndrome_depth : 0;
-
-			return (syndrome == 0) && (this->cur_syndrome_depth == 0);
+			const auto syndrome = tools::LDPC_syndrome::check_soft(Y_N, this->H);
+			this->cur_syndrome_depth = syndrome ? (this->cur_syndrome_depth +1) % this->syndrome_depth : 0;
+			return syndrome && (this->cur_syndrome_depth == 0);
 		}
-
-		return false;
+		else
+			return false;
 	}
 
 	template <typename T>
@@ -68,31 +48,12 @@ public:
 	{
 		if (this->enable_syndrome)
 		{
-			auto syndrome = false;
-
-			const auto n_CN = (int)this->H.get_n_cols();
-			for (auto i = 0; i < n_CN; i++)
-			{
-				auto sign = 0;
-
-				const auto n_VN = (int)this->H[i].size();
-				for (auto j = 0; j < n_VN; j++)
-				{
-					const auto bit = V_N[this->H[i][j]];
-					const auto tmp_sign = bit ? -1 : 0;
-
-					sign ^= tmp_sign;
-				}
-
-				syndrome = syndrome || sign;
-			}
-
-			this->cur_syndrome_depth = (syndrome == 0) ? (this->cur_syndrome_depth +1) % this->syndrome_depth : 0;
-
-			return (syndrome == 0) && (this->cur_syndrome_depth == 0);
+			const auto syndrome = tools::LDPC_syndrome::check_hard(V_N, this->H);
+			this->cur_syndrome_depth = syndrome ? (this->cur_syndrome_depth +1) % this->syndrome_depth : 0;
+			return syndrome && (this->cur_syndrome_depth == 0);
 		}
-
-		return false;
+		else
+			return false;
 	}
 };
 }
