@@ -299,7 +299,7 @@
 #include <Tools/Algo/Noise_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp>
 #include <Tools/Algo/Noise_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp>
 #include <Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp>
-#include <Tools/Algo/Noise_generator/Noise_generator.hpp>
+#include "Tools/Algo/Noise_generator/Draw_generator.hpp"
 #include <Tools/Algo/Noise_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp>
 #include <Tools/Algo/Noise_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp>
 #include <Tools/Algo/Predicate.hpp>

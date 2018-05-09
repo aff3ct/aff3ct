@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include "Tools/Algo/Noise_generator/Noise_generator.hpp"
-#include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "../Channel.hpp"
 
@@ -20,7 +20,7 @@ protected:
 	const bool complex;
 	const bool add_users;
 	std::vector<R> gains;
-	tools::Noise_generator<R> *noise_generator;
+	tools::Gaussian_noise_generator<R> *noise_generator;
 
 	std::vector<R> gains_stock;
 	const unsigned gain_occur;

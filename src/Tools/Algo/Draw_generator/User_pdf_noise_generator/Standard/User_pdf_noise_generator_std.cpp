@@ -1,6 +1,6 @@
-#include <algorithm>
+#include <sstream>
 
-#include "Tools/Math/interpolation.h"
+#include "Tools/Exception/exception.hpp"
 #include "User_pdf_noise_generator_std.hpp"
 
 using namespace aff3ct;
@@ -26,12 +26,6 @@ User_pdf_noise_generator_std<R>
 }
 
 template <typename R>
-User_pdf_noise_generator_std<R>
-::~User_pdf_noise_generator_std()
-{
-}
-
-template <typename R>
 void User_pdf_noise_generator_std<R>
 ::set_seed(const int seed)
 {
@@ -40,7 +34,7 @@ void User_pdf_noise_generator_std<R>
 
 template <typename R>
 void User_pdf_noise_generator_std<R>
-::generate(const R* signal, R *noise, const unsigned length, const R noise_power, const R mu)
+::generate(const R* signal, R *draw, const unsigned length, const R noise_power)
 {
 	auto dis = this->distributions.get_distribution(noise_power);
 
@@ -55,8 +49,15 @@ void User_pdf_noise_generator_std<R>
 	{
 		const auto& cdf_y = signal[i] ? dis->get_cdf_y()[1] : dis->get_cdf_y()[0];
 		const auto& cdf_x = signal[i] ? dis->get_cdf_x()[1] : dis->get_cdf_x()[0];
-		noise[i] = interp_function(cdf_y.data(), cdf_x.data(), cdf_x.size(), this->uniform_dist(this->rd_engine));
+		draw[i] = interp_function(cdf_y.data(), cdf_x.data(), cdf_x.size(), this->uniform_dist(this->rd_engine));
 	}
+}
+
+template <typename R>
+void User_pdf_noise_generator_std<R>
+::generate(R *draw, const unsigned length, const R noise_power)
+{
+	throw unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation

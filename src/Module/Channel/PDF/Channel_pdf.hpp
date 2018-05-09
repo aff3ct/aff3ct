@@ -1,7 +1,7 @@
 #ifndef CHANNEL_PDF_HPP_
 #define CHANNEL_PDF_HPP_
 
-#include "Tools/Algo/Noise_generator/Noise_generator.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"
 
 #include "../Channel.hpp"
 
@@ -19,10 +19,10 @@ class Channel_pdf : public Channel<R>
 {
 	const bool add_users;
 protected:
-	tools::Noise_generator<R> *noise_generator;
+	tools::User_pdf_noise_generator<R> *draw_generator;
 
 public:
-	Channel_pdf(const int N, tools::Noise_generator<R> *noise_generator, const bool add_users = false,
+	Channel_pdf(const int N, tools::User_pdf_noise_generator<R> *draw_generator, const bool add_users = false,
 	            const tools::Noise<R>& noise = tools::ROP<R>(), const int n_frames = 1);
 
 	virtual ~Channel_pdf();

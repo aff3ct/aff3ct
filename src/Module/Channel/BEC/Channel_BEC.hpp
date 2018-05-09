@@ -6,8 +6,8 @@
 
 #include <random>
 
-#include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
-#include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
 
 #include "../Channel.hpp"
 
@@ -19,25 +19,20 @@ template <typename R = float>
 class Channel_BEC : public Channel<R>
 {
 protected:
-	// for float type
-	tools::PRNG_MT19937      mt19937;      // Mersenne Twister 19937 (scalar)
-	tools::PRNG_MT19937_simd mt19937_simd; // Mersenne Twister 19937 (SIMD)
-
-	// for double type
-	std::mt19937                      rd_engine; // Mersenne Twister 19937
-	std::uniform_real_distribution<R> uni_dist;
+	tools::Event_generator<R> *event_generator;
 
 public:
-	Channel_BEC(const int N, const int seed = 0,
+	Channel_BEC(const int N, tools::Event_generator<R> *event_generator = new tools::Event_generator_std<R>(),
+	            const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
+	            const int n_frames = 1);
+
+	Channel_BEC(const int N, const int seed,
 	            const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
 	            const int n_frames = 1);
 	virtual ~Channel_BEC() = default;
 
 protected:
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
-
-	inline mipp::Reg<R> get_random_simd();
-	inline R            get_random     ();
 	virtual void        check_noise    ();
 };
 }
