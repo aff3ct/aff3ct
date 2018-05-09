@@ -15,11 +15,15 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_LDPC_from_QC<B>
 ::Encoder_LDPC_from_QC(const int K, const int N, const tools::Sparse_matrix &_H, const int n_frames)
-: Encoder_LDPC<B>(K, N, tools::Sparse_matrix(), _H, n_frames),
+: Encoder_LDPC<B>(K, N, n_frames),
   invH2(tools::LDPC_matrix_handler::invert_H2(_H))
 {
 	const std::string name = "Encoder_LDPC_from_QC";
 	this->set_name(name);
+
+	this->H = _H;
+
+	this->check_H_dimensions();
 }
 
 template <typename B>
@@ -70,13 +74,13 @@ template <typename B>
 void Encoder_LDPC_from_QC<B>
 ::_check_H_dimensions()
 {
-	Encoder_LDPC<B>::check_H_dimensions();
+	Encoder_LDPC<B>::_check_H_dimensions();
 
-	if ((this->N-this->K) != (int)this->H.get_n_rows())
+	if ((this->N-this->K) != (int)this->H.get_n_cols())
 	{
 		std::stringstream message;
 		message << "The built H matrix has a dimension '(N-K)' different than the given one ('(N-K)' = " << (this->N-this->K)
-		        << ", 'H.get_n_rows()' = " << this->H.get_n_rows() << ").";
+		        << ", 'H.get_n_cols()' = " << this->H.get_n_cols() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
