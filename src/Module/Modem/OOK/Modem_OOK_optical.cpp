@@ -82,7 +82,7 @@ void Modem_OOK_optical<B,R,Q>
 	const auto& pdf_y0 = this->current_dist->get_pdf_y()[0];
 	const auto& pdf_y1 = this->current_dist->get_pdf_y()[1];
 
-	const Q min_value = 1e-10; // when prob_1 ou prob_0 = 0;
+	const Q min_value = (Q)1e-10; // when prob_1 ou prob_0 = 0;
 
 	for (auto i = 0; i < this->N_fil; i++)
 	{

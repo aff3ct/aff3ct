@@ -113,7 +113,7 @@ has_distribution(R noise) const
 }
 
 template<typename R>
-const Distribution<R>* const Distributions<R>::
+const Distribution<R> const* Distributions<R>::
 get_distribution(R noise) const
 {
 	auto it = this->distributions.find(calibrated_noise(noise));

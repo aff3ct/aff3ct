@@ -43,7 +43,7 @@ public:
 	virtual ~Distributions();
 
 	bool has_distribution(R noise) const;
-	const Distribution<R>* const get_distribution(R noise) const;
+	const Distribution<R> const* get_distribution(R noise) const;
 	void read_distribution(R noise);
 
 	std::vector<R> get_noise_range() const;
