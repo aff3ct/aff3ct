@@ -6,10 +6,54 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-template <typename R>
-const R aff3ct::tools::Noise<R>::erased_symbol_val = std::numeric_limits<R>::infinity();
-template <typename R>
-const R aff3ct::tools::Noise<R>::erased_llr_val = (R)0.00001;
+inline Noise_type aff3ct::tools::str2type(const std::string& str)
+{
+	Noise_type t;
+
+	if (str == "SIGMA")
+		t = Noise_type::SIGMA;
+	else if (str == "ROP")
+		t = Noise_type::ROP;
+	else if (str == "EP")
+		t = Noise_type::EP;
+	else
+	{
+		std::stringstream message;
+		message << "The string 'str' does not represent a noise type ('str' = " << str << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return t;
+}
+
+inline std::string aff3ct::tools::type2str(Noise_type t)
+{
+	std::string str;
+
+	switch(t)
+	{
+		case Noise_type::SIGMA:
+			str = "SIGMA";
+			break;
+		case Noise_type::EP:
+			str = "EP";
+			break;
+		case Noise_type::ROP:
+			str = "ROP";
+			break;
+	}
+
+	if (str.empty()) // this 'if' is a test outside the switch case (instead of default) to keep the compiler check that all
+		// cases of 'Noise_type' are well represented.
+	{
+		std::stringstream message;
+		message << "The type 't' does not represent a noise type ('t' = " << (int8_t)t << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return str;
+}
+
 
 template <typename R>
 Noise<R>::
@@ -101,65 +145,6 @@ check()
 	// nothing to check
 }
 
-template <typename R>
-Noise_type Noise<R>::
-str2type(const std::string& str)
-{
-	Noise_type t;
-
-	if (str == "SIGMA")
-		t = Noise_type::SIGMA;
-	else if (str == "ROP")
-		t = Noise_type::ROP;
-	else if (str == "EP")
-		t = Noise_type::EP;
-	else
-	{
-		std::stringstream message;
-		message << "The string 'str' does not represent a noise type ('str' = " << str << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return t;
-}
-
-template <typename R>
-std::string Noise<R>::
-type2str()
-{
-	return type2str(this->get_type());
-}
-
-template <typename R>
-std::string Noise<R>::
-type2str(Noise_type t)
-{
-	std::string str;
-
-	switch(t)
-	{
-		case Noise_type::SIGMA:
-			str = "SIGMA";
-		break;
-		case Noise_type::EP:
-			str = "EP";
-		break;
-		case Noise_type::ROP:
-			str = "ROP";
-		break;
-	}
-
-	if (str.empty()) // this 'if' is a test outside the switch case (instead of default) to keep the compiler check that all
-	                 // cases of 'Noise_type' are well represented.
-	{
-		std::stringstream message;
-		message << "The type 't' does not represent a noise type ('t' = " << (int8_t)t << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return str;
-}
-
 template<typename R>
 bool Noise<R>
 ::is_of_type(Noise_type t) const noexcept
@@ -174,7 +159,7 @@ void Noise<R>
 	if (!is_of_type(t))
 	{
 		std::stringstream message;
-		message << "The given noise value does not represent a '" << type2str(t) << "' noise type.";
+		message << "The given noise value does not represent a '" << type2str(get_type()) << "' noise type.";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }

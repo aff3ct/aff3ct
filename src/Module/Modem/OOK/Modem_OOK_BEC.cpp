@@ -30,9 +30,9 @@ template <typename B, typename R, typename Q>
 void Modem_OOK_BEC<B,R,Q>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	auto sign = (Q)tools::Noise<R>::erased_llr_val;
+	auto sign = tools::erased_llr_val<Q>();
 	for (auto i = 0; i < this->N_fil; i++)
-		if (Y_N1[i] == tools::Noise<R>::erased_symbol_val)
+		if (Y_N1[i] == tools::erased_symbol_val<Q>())
 		{
 			Y_N2[i] = sign;
 			sign *= (Q)-1;
