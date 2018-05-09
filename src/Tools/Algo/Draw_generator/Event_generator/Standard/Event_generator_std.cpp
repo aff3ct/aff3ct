@@ -7,7 +7,7 @@ using namespace aff3ct::tools;
 template <typename R>
 Event_generator_std<R>
 ::Event_generator_std(const int seed)
-: Event_generator<R>(), uni_dist((R)0, (R)1)
+: Event_generator<R>()
 {
 	this->set_seed(seed);
 }
@@ -21,10 +21,12 @@ void Event_generator_std<R>
 
 template <typename R>
 void Event_generator_std<R>
-::generate(R *draw, const unsigned length, const R event_probability)
+::generate(event_type *draw, const unsigned length, const R event_probability)
 {
+	std::bernoulli_distribution bern_dist(event_probability);
+
 	for (unsigned i = 0; i < length; i++)
-		draw[i] = this->uni_dist(this->rd_engine) <= event_probability;
+		draw[i] = (event_type)bern_dist(this->rd_engine);
 }
 
 

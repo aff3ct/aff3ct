@@ -27,7 +27,7 @@ public:
 
 	virtual void set_seed(const int seed);
 
-	virtual void generate(R *draw, const unsigned length, const R event_probability);
+	virtual void generate(event_type *draw, const unsigned length, const R event_probability);
 
 private:
 	inline mipp::Reg<R> get_random_simd();

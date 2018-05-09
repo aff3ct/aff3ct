@@ -20,6 +20,7 @@ class Channel_BEC : public Channel<R>
 {
 protected:
 	tools::Event_generator<R> *event_generator;
+	std::vector<tools::event_type> event_draw;
 
 public:
 	Channel_BEC(const int N, tools::Event_generator<R> *event_generator = new tools::Event_generator_std<R>(),
@@ -29,11 +30,12 @@ public:
 	Channel_BEC(const int N, const int seed,
 	            const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
 	            const int n_frames = 1);
+
 	virtual ~Channel_BEC() = default;
 
 protected:
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
-	virtual void        check_noise    ();
+	virtual void check_noise();
 };
 }
 }

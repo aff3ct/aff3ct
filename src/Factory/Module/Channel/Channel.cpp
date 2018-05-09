@@ -14,9 +14,11 @@
 #include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
 #include "Tools/Algo/Draw_generator/Event_generator/Fast/Event_generator_fast.hpp"
 #ifdef CHANNEL_MKL
+#include "Tools/Algo/Draw_generator/Event_generator/MKL/Event_generator_MKL.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
 #endif
 #ifdef CHANNEL_GSL
+#include "Tools/Algo/Draw_generator/Event_generator/GSL/Event_generator_GSL.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
 #endif
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
@@ -173,12 +175,12 @@ module::Channel<R>* Channel::parameters
 	tools::Event_generator<R>* n = nullptr;
 	     if (implem == "STD" ) n = new tools::Event_generator_std <R>(seed);
 	else if (implem == "FAST") n = new tools::Event_generator_fast<R>(seed);
-//#ifdef CHANNEL_MKL
-//	else if (implem == "MKL" ) n = new tools::Event_generator_MKL <R>(seed);
-//#endif
-//#ifdef CHANNEL_GSL
-//	else if (implem == "GSL" ) n = new tools::Event_generator_GSL <R>(seed);
-//#endif
+#ifdef CHANNEL_MKL
+	else if (implem == "MKL" ) n = new tools::Event_generator_MKL<R>(seed);
+#endif
+#ifdef CHANNEL_GSL
+	else if (implem == "GSL" ) n = new tools::Event_generator_GSL<R>(seed);
+#endif
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
