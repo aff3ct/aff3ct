@@ -45,7 +45,7 @@ void Modem_OOK_optical<B,R,Q>
 {
 	Modem_OOK<B,R,Q>::set_noise(noise);
 
-	this->current_dist = dist.get_distribution(this->n->get_noise());
+	this->current_dist = &dist.get_distribution(this->n->get_noise());
 
 	if (this->current_dist == nullptr)
 	{
