@@ -1,7 +1,6 @@
-#ifndef AFF3CT_HPP
+-e #ifndef AFF3CT_HPP
 #define AFF3CT_HPP
 
-#include "Tools/Algo/Histogram.hpp"
 #include <Tools/Code/Polar/API/functions_polar_inter.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_8bit_bitpacking.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_intra.h>
@@ -20,6 +19,7 @@
 #include <Tools/Math/max.h>
 #include <Tools/Math/numerical_integration.h>
 #include <Tools/Math/utils.h>
+#include <Tools/Noise/noise_utils.h>
 #include <Tools/Perf/common/hamming_distance.h>
 #include <Tools/Perf/common/hard_decide.h>
 #include <Tools/Perf/common/mutual_info.h>
@@ -31,6 +31,7 @@
 #include <Tools/system_functions.h>
 #include <Tools/types.h>
 #include <Tools/version.h>
+-ne 
 
 #include <Factory/Command_parser.hpp>
 #include <Factory/Factory.hpp>
@@ -115,7 +116,8 @@
 #include <Launcher/Simulation/BFER_std.hpp>
 #include <Launcher/Simulation/EXIT.hpp>
 #include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
-#include <Module/Channel/BEC/Channel_BEC.hpp>
+#include <Module/Channel/Binary_erasure/Channel_binary_erasure.hpp>
+#include <Module/Channel/Binary_symmetric/Channel_binary_symmetric.hpp>
 #include <Module/Channel/Channel.hpp>
 #include <Module/Channel/NO/Channel_NO.hpp>
 #include <Module/Channel/Optical/Channel_optical.hpp>
@@ -253,7 +255,10 @@
 #include <Module/Modem/CPM/Modem_CPM.hpp>
 #include <Module/Modem/Modem.hpp>
 #include <Module/Modem/OOK/Modem_OOK.hpp>
-#include <Module/Modem/Optical/Modem_optical.hpp>
+#include <Module/Modem/OOK/Modem_OOK_AWGN.hpp>
+#include <Module/Modem/OOK/Modem_OOK_BEC.hpp>
+#include <Module/Modem/OOK/Modem_OOK_BSC.hpp>
+#include <Module/Modem/OOK/Modem_OOK_optical.hpp>
 #include <Module/Modem/PAM/Modem_PAM.hpp>
 #include <Module/Modem/PSK/Modem_PSK.hpp>
 #include <Module/Modem/QAM/Modem_QAM.hpp>
@@ -294,14 +299,23 @@
 #include <Simulation/EXIT/EXIT.hpp>
 #include <Simulation/Simulation.hpp>
 #include <Tools/Algo/Bit_packer.hpp>
-#include <Tools/Algo/Noise_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp>
-#include <Tools/Algo/Noise_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp>
-#include <Tools/Algo/Noise_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp>
-#include <Tools/Algo/Noise_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp>
-#include <Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp>
-#include "Tools/Algo/Noise_generator/Draw_generator.hpp"
-#include <Tools/Algo/Noise_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp>
-#include <Tools/Algo/Noise_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp>
+#include <Tools/Algo/Draw_generator/Draw_generator.hpp>
+#include <Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp>
+#include <Tools/Algo/Draw_generator/Event_generator/Fast/Event_generator_fast.hpp>
+#include <Tools/Algo/Draw_generator/Event_generator/GSL/Event_generator_GSL.hpp>
+#include <Tools/Algo/Draw_generator/Event_generator/MKL/Event_generator_MKL.hpp>
+#include <Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp>
+#include <Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp>
+#include <Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp>
+#include <Tools/Algo/Draw_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp>
+#include <Tools/Algo/Draw_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp>
+#include <Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp>
+#include <Tools/Algo/Draw_generator/User_pdf_noise_generator/Fast/User_pdf_noise_generator_fast.hpp>
+#include <Tools/Algo/Draw_generator/User_pdf_noise_generator/GSL/User_pdf_noise_generator_GSL.hpp>
+#include <Tools/Algo/Draw_generator/User_pdf_noise_generator/MKL/User_pdf_noise_generator_MKL.hpp>
+#include <Tools/Algo/Draw_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp>
+#include <Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp>
+#include <Tools/Algo/Histogram.hpp>
 #include <Tools/Algo/Predicate.hpp>
 #include <Tools/Algo/Predicate_ite.hpp>
 #include <Tools/Algo/PRNG/PRNG_MT19937.hpp>
@@ -425,8 +439,7 @@
 #include <Tools/Math/Distribution/Distribution.hpp>
 #include <Tools/Math/Distribution/Distributions.hpp>
 #include <Tools/Math/Galois.hpp>
-#include <Tools/Math/Point.hpp>
-#include "Tools/Noise/Event_probability.hpp"
+#include <Tools/Noise/Event_probability.hpp>
 #include <Tools/Noise/Noise.hpp>
 #include <Tools/Noise/Received_optical_power.hpp>
 #include <Tools/Noise/Sigma.hpp>
@@ -438,5 +451,5 @@
 #include <Tools/SystemC/SC_Predicate.hpp>
 #include <Tools/SystemC/SC_Router.hpp>
 #include <Tools/Threads/Barrier.hpp>
-
+-ne 
 #endif
