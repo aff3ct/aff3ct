@@ -1,4 +1,4 @@
--e #ifndef AFF3CT_HPP
+#ifndef AFF3CT_HPP
 #define AFF3CT_HPP
 
 #include <Tools/Code/Polar/API/functions_polar_inter.h>
@@ -31,7 +31,6 @@
 #include <Tools/system_functions.h>
 #include <Tools/types.h>
 #include <Tools/version.h>
--ne 
 
 #include <Factory/Command_parser.hpp>
 #include <Factory/Factory.hpp>
@@ -451,5 +450,5 @@
 #include <Tools/SystemC/SC_Predicate.hpp>
 #include <Tools/SystemC/SC_Router.hpp>
 #include <Tools/Threads/Barrier.hpp>
--ne 
+
 #endif
