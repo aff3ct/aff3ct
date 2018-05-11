@@ -6,8 +6,8 @@
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
 #include "Module/Channel/Optical/Channel_optical.hpp"
-#include "Module/Channel/BEC/Channel_BEC.hpp"
-#include "Module/Channel/BSC/Channel_BSC.hpp"
+#include "Module/Channel/Binary_erasure/Channel_binary_erasure.hpp"
+#include "Module/Channel/Binary_symmetric/Channel_binary_symmetric.hpp"
 
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
@@ -184,8 +184,8 @@ module::Channel<R>* Channel::parameters
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	     if (type == "BEC"     ) return new module::Channel_BEC <R>(N, n, tools::Event_probability<R>((R)noise), n_frames);
-	else if (type == "BSC"     ) return new module::Channel_BSC <R>(N, n, tools::Event_probability<R>((R)noise), n_frames);
+	     if (type == "BEC"     ) return new module::Channel_binary_erasure  <R>(N, n, tools::Event_probability<R>((R)noise), n_frames);
+	else if (type == "BSC"     ) return new module::Channel_binary_symmetric<R>(N, n, tools::Event_probability<R>((R)noise), n_frames);
 
 	delete n;
 

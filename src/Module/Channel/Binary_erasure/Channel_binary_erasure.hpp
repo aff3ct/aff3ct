@@ -1,5 +1,5 @@
-#ifndef CHANNEL_BSC_HPP_
-#define CHANNEL_BSC_HPP_
+#ifndef CHANNEL_BEC_HPP_
+#define CHANNEL_BEC_HPP_
 
 #include <vector>
 #include <mipp.h>
@@ -16,22 +16,22 @@ namespace aff3ct
 namespace module
 {
 template <typename R = float>
-class Channel_BSC : public Channel<R>
+class Channel_binary_erasure : public Channel<R>
 {
 protected:
 	tools::Event_generator<R> *event_generator;
 	std::vector<tools::event_type> event_draw;
 
 public:
-	Channel_BSC(const int N, tools::Event_generator<R> *event_generator = new tools::Event_generator_std<R>(),
+	Channel_binary_erasure(const int N, tools::Event_generator<R> *event_generator = new tools::Event_generator_std<R>(),
 	            const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
 	            const int n_frames = 1);
 
-	Channel_BSC(const int N, const int seed,
+	Channel_binary_erasure(const int N, const int seed,
 	            const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
 	            const int n_frames = 1);
 
-	virtual ~Channel_BSC() = default;
+	virtual ~Channel_binary_erasure() = default;
 
 protected:
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
@@ -40,4 +40,4 @@ protected:
 }
 }
 
-#endif /* CHANNEL_BSC_HPP_ */
+#endif /* CHANNEL_BEC_HPP_ */

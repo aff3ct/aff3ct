@@ -1,34 +1,28 @@
 #include <type_traits>
-#include "Channel_BSC.hpp"
-
-using namespace aff3ct;
-using namespace aff3ct::module;
-
-#include <type_traits>
-#include "Channel_BSC.hpp"
+#include "Channel_binary_symmetric.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename R>
-Channel_BSC<R>
-::Channel_BSC(const int N, const int seed, const tools::Event_probability<R>& noise, const int n_frames)
-: Channel_BSC<R>(N, new tools::Event_generator_std<R>(seed), noise, n_frames)
+Channel_binary_symmetric<R>
+::Channel_binary_symmetric(const int N, const int seed, const tools::Event_probability<R>& noise, const int n_frames)
+: Channel_binary_symmetric<R>(N, new tools::Event_generator_std<R>(seed), noise, n_frames)
 {
 }
 
 template<typename R>
-Channel_BSC<R>
-::Channel_BSC(const int N, tools::Event_generator<R> *event_generator,
+Channel_binary_symmetric<R>
+::Channel_binary_symmetric(const int N, tools::Event_generator<R> *event_generator,
               const tools::Event_probability<R> &noise, const int n_frames)
 : Channel<R>(N, noise, n_frames), event_generator(event_generator), event_draw(this->N)
 {
-	const std::string name = "Channel_BSC";
+	const std::string name = "Channel_binary_symmetric";
 	this->set_name(name);
 }
 
 template <typename R>
-void Channel_BSC<R>
+void Channel_binary_symmetric<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	this->check_noise();
@@ -62,7 +56,7 @@ void Channel_BSC<R>
 }
 
 template<typename R>
-void Channel_BSC<R>::check_noise()
+void Channel_binary_symmetric<R>::check_noise()
 {
 	Channel<R>::check_noise();
 
@@ -72,9 +66,9 @@ void Channel_BSC<R>::check_noise()
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Channel_BSC<R_32>;
-template class aff3ct::module::Channel_BSC<R_64>;
+template class aff3ct::module::Channel_binary_symmetric<R_32>;
+template class aff3ct::module::Channel_binary_symmetric<R_64>;
 #else
-template class aff3ct::module::Channel_BSC<R>;
+template class aff3ct::module::Channel_binary_symmetric<R>;
 #endif
 // ==================================================================================== explicit template instantiation

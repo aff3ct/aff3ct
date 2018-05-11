@@ -1,27 +1,28 @@
 #include <type_traits>
-#include "Channel_BEC.hpp"
+#include "Channel_binary_erasure.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename R>
-Channel_BEC<R>
-::Channel_BEC(const int N, const int seed, const tools::Event_probability<R>& noise, const int n_frames)
-: Channel_BEC<R>(N, new tools::Event_generator_std<R>(seed), noise, n_frames)
+Channel_binary_erasure<R>
+::Channel_binary_erasure(const int N, const int seed, const tools::Event_probability<R>& noise, const int n_frames)
+: Channel_binary_erasure<R>(N, new tools::Event_generator_std<R>(seed), noise, n_frames)
 {
 }
 
 template<typename R>
-Channel_BEC<R>::Channel_BEC(const int N, tools::Event_generator<R> *event_generator,
-                            const tools::Event_probability<R> &noise, const int n_frames)
+Channel_binary_erasure<R>
+::Channel_binary_erasure(const int N, tools::Event_generator<R> *event_generator,
+                         const tools::Event_probability<R> &noise, const int n_frames)
 : Channel<R>(N, noise, n_frames), event_generator(event_generator), event_draw(this->N)
 {
-	const std::string name = "Channel_BEC";
+	const std::string name = "Channel_binary_erasure";
 	this->set_name(name);
 }
 
 template <typename R>
-void Channel_BEC<R>
+void Channel_binary_erasure<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	this->check_noise();
@@ -50,7 +51,7 @@ void Channel_BEC<R>
 }
 
 template<typename R>
-void Channel_BEC<R>::check_noise()
+void Channel_binary_erasure<R>::check_noise()
 {
 	Channel<R>::check_noise();
 
@@ -60,9 +61,9 @@ void Channel_BEC<R>::check_noise()
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Channel_BEC<R_32>;
-template class aff3ct::module::Channel_BEC<R_64>;
+template class aff3ct::module::Channel_binary_erasure<R_32>;
+template class aff3ct::module::Channel_binary_erasure<R_64>;
 #else
-template class aff3ct::module::Channel_BEC<R>;
+template class aff3ct::module::Channel_binary_erasure<R>;
 #endif
 // ==================================================================================== explicit template instantiation
