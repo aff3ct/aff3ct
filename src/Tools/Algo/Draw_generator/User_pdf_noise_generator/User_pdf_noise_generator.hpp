@@ -26,7 +26,7 @@ public:
 
 	virtual ~User_pdf_noise_generator() = default;
 
-	const Distributions<R>& get_distributions()
+	const Distributions<R>& get_distributions() const
 	{
 		return distributions;
 	}

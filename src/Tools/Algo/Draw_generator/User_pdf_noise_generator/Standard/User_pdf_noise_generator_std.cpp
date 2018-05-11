@@ -38,17 +38,10 @@ void User_pdf_noise_generator_std<R>
 {
 	auto dis = this->distributions.get_distribution(noise_power);
 
-	if (dis == nullptr)
-	{
-		std::stringstream message;
-		message << "Undefined noise power 'noise_power' in the given distributions ('noise_power' = " << noise_power << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	for (unsigned i = 0; i < length; i++)
 	{
-		const auto& cdf_y = signal[i] ? dis->get_cdf_y()[1] : dis->get_cdf_y()[0];
-		const auto& cdf_x = signal[i] ? dis->get_cdf_x()[1] : dis->get_cdf_x()[0];
+		const auto& cdf_y = signal[i] ? dis.get_cdf_y()[1] : dis.get_cdf_y()[0];
+		const auto& cdf_x = signal[i] ? dis.get_cdf_x()[1] : dis.get_cdf_x()[0];
 		draw[i] = interp_function(cdf_y.data(), cdf_x.data(), cdf_x.size(), this->uniform_dist(this->rd_engine));
 	}
 }

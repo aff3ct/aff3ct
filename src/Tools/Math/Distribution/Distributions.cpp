@@ -113,28 +113,49 @@ has_distribution(R noise) const
 }
 
 template<typename R>
-const Distribution<R> const* Distributions<R>::
+const Distribution<R>& Distributions<R>::
 get_distribution(R noise) const
 {
 	auto it = this->distributions.find(calibrated_noise(noise));
 	if (it == this->distributions.end())
-		return nullptr;
+	{
+		std::stringstream message;
+		message << "Undefined noise 'noise' in the distributions ('noise' = " << noise << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+	
+	if (it->second == nullptr)
+	{
+		std::stringstream message;
+		message << "Defined noise but no associated distribution ('noise' = " << noise << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
-	return it->second;
+	return *it->second;
 }
 
 template<typename R>
 void Distributions<R>::
 add_distribution(R noise, Distribution<R>* new_distribution)
 {
-	if (get_distribution(noise))
+	if (new_distribution == nullptr)
 	{
 		std::stringstream message;
-		message << "A distribution already exist for the given noise power 'noise_power' ('noise' = " << noise << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		message << "The given 'new_distribution' is a null pointer.";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->distributions[calibrated_noise(noise)] = new_distribution;
+	try
+	{
+		get_distribution(noise);
+		std::stringstream message;
+		message << "A distribution already exists for the given noise 'noise' ('noise' = " << noise << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+	catch (const tools::invalid_argument&)
+	{
+		this->distributions[calibrated_noise(noise)] = new_distribution;
+	}
 }
 
 template<typename R>
