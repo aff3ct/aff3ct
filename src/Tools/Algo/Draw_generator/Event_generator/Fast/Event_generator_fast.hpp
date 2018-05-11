@@ -1,8 +1,6 @@
 #ifndef EVENT_GENERATOR_FAST_HPP
 #define EVENT_GENERATOR_FAST_HPP
 
-#include <random>
-
 #include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
 #include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
 

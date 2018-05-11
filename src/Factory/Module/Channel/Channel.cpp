@@ -13,15 +13,18 @@
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
 #include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
 #include "Tools/Algo/Draw_generator/Event_generator/Fast/Event_generator_fast.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Fast/User_pdf_noise_generator_fast.hpp"
 #ifdef CHANNEL_MKL
 #include "Tools/Algo/Draw_generator/Event_generator/MKL/Event_generator_MKL.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/MKL/User_pdf_noise_generator_MKL.hpp"
 #endif
 #ifdef CHANNEL_GSL
 #include "Tools/Algo/Draw_generator/Event_generator/GSL/Event_generator_GSL.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/GSL/User_pdf_noise_generator_GSL.hpp"
 #endif
-#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
 
 #include "Channel.hpp"
 
@@ -219,6 +222,32 @@ module::Channel<R>* Channel::parameters
 
 template <typename R>
 module::Channel<R>* Channel::parameters
+::build_userpdf(const tools::Distributions<R>* dist) const
+{
+	if (dist == nullptr)
+		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+
+	tools::User_pdf_noise_generator<R>* n = nullptr;
+	     if (implem == "STD" ) n = new tools::User_pdf_noise_generator_std <R>(*dist, seed);
+	else if (implem == "FAST") n = new tools::User_pdf_noise_generator_fast<R>(*dist, seed);
+#ifdef CHANNEL_MKL
+	else if (implem == "MKL" ) n = new tools::User_pdf_noise_generator_MKL <R>(*dist, seed);
+#endif
+#ifdef CHANNEL_GSL
+	else if (implem == "GSL" ) n = new tools::User_pdf_noise_generator_GSL <R>(*dist, seed);
+#endif
+	else
+		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+
+	     if (type == "OPTICAL") return new module::Channel_optical<R>(N, n, tools::Received_optical_power<R>((R) this->noise), n_frames);
+
+	delete n;
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename R>
+module::Channel<R>* Channel::parameters
 ::build(const tools::Distributions<R>* dist) const
 {
 	try	{
@@ -229,11 +258,10 @@ module::Channel<R>* Channel::parameters
 		return build_event<R>();
 	} catch (tools::cannot_allocate&) {}
 
-	if (type == "OPTICAL" && dist != nullptr)
-	{
-		auto n = new tools::User_pdf_noise_generator_std<R>(*dist, seed);
-		return new module::Channel_optical<R>(N, n, tools::Received_optical_power<R>((R) this->noise), n_frames);
-	}
+	try	{
+		return build_userpdf<R>(dist);
+	} catch (tools::cannot_allocate&) {}
+
 	if (type == "USER"    ) return new module::Channel_user<R>(N, path, add_users, false, n_frames);
 	if (type == "USER_ADD") return new module::Channel_user<R>(N, path, add_users,  true, n_frames);
 	if (type == "NO"      ) return new module::Channel_NO  <R>(N,       add_users,        n_frames);
