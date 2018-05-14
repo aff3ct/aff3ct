@@ -23,7 +23,6 @@
 #include <Tools/Perf/common/hamming_distance.h>
 #include <Tools/Perf/common/hard_decide.h>
 #include <Tools/Perf/common/mutual_info.h>
-#include <Tools/Perf/common.h>
 #include <Tools/Perf/Transpose/transpose_AVX.h>
 #include <Tools/Perf/Transpose/transpose_NEON.h>
 #include <Tools/Perf/Transpose/transpose_selector.h>
