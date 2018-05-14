@@ -96,7 +96,7 @@ bool Monitor_BFER_reduction_mpi<B,R>
 		monitor_vals mvals_send = { this->get_n_be()           - this->n_bit_errors,
 		                            this->get_n_fe()           - this->n_frame_errors,
 		                            this->get_n_analyzed_fra() - this->n_analyzed_frames,
-		                            this->get_MI_sum()         - this->MI_sum };
+		                            (float)(this->get_MI_sum() - this->MI_sum) };
 
 		MPI_Allreduce(&mvals_send, &mvals_recv, 1, MPI_monitor_vals, MPI_SUM_monitor_vals, MPI_COMM_WORLD);
 
