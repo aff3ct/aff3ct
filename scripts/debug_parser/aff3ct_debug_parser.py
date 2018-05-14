@@ -146,7 +146,7 @@ class OutputStructure:
                     myframe = []
                     for value in frame:
                         myframe.append(int(value))
-                myframes.append(myframe)
+                    myframes.append(myframe)
         else:
             if "float" in self.data_format:
                 for frame in self.frames:

@@ -217,13 +217,13 @@ inline mipp::reg g0_LLR_i(const mipp::reg& r_lambda_a, const mipp::reg& r_lambda
 template <typename B, typename R>
 inline B h_LR(const R& lambda_a)
 {
-	return (lambda_a <= init_LR<R>());
+	return (lambda_a < init_LR<R>());
 }
 
 template <typename B, typename R>
 inline B h_LLR(const R& lambda_a)
 {
-	return ((lambda_a <= init_LLR<R>()) * bit_init<B>());
+	return ((lambda_a < init_LLR<R>()) * bit_init<B>());
 }
 
 template <typename B, typename R>
