@@ -333,8 +333,8 @@ void BFER<B,R,Q>
 		}
 
 		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !module::Monitor::is_interrupt() &&
-		    this->monitor_red->get_n_fe() < this->monitor_red->get_fe_limit() &&
-		    (params_BFER.max_frame == 0 || this->monitor_red->get_n_fe() < params_BFER.max_frame))
+			!this->monitor_red->fe_limit_achieved() &&
+		    (params_BFER.max_frame == 0 || this->monitor_red->get_n_analyzed_fra() >= params_BFER.max_frame))
 			module::Monitor::stop();
 
 		this->monitor_red->reset();
