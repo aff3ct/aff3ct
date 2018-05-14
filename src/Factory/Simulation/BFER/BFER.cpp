@@ -136,11 +136,6 @@ void BFER::parameters
 		{p+"-coded"},
 		tools::None(),
 		"enable the coded monitoring (extends the monitored bits to the entire codeword).");
-
-	args.add(
-		{p+"-mutinfo"},
-		tools::None(),
-		"allow the computation of the mutual information.");
 }
 
 void BFER::parameters
@@ -161,7 +156,6 @@ void BFER::parameters
 	if(vals.exist({p+"-err-trk"        })) this->err_track_enable    = true;
 	if(vals.exist({p+"-coset",      "c"})) this->coset               = true;
 	if(vals.exist({p+"-coded",         })) this->coded_monitoring    = true;
-	if(vals.exist({p+"-mutinfo"        })) this->mutinfo             = true;
 
 	if (this->err_track_revert)
 	{
@@ -180,8 +174,6 @@ void BFER::parameters
 	headers[p].push_back(std::make_pair("NOISE type (E)", this->noise_type));
 	headers[p].push_back(std::make_pair("Coset approach (c)", this->coset ? "yes" : "no"));
 	headers[p].push_back(std::make_pair("Coded monitoring", this->coded_monitoring ? "yes" : "no"));
-	headers[p].push_back(std::make_pair("Compute Mutual Info", this->mutinfo ? "yes" : "no"));
-
 
 	std::string enable_track = (this->err_track_enable) ? "on" : "off";
 	headers[p].push_back(std::make_pair("Bad frames tracking", enable_track));
