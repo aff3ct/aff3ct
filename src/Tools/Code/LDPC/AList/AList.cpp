@@ -82,6 +82,24 @@ void AList
 	}
 }
 
+void AList
+::read_matrix_size(std::istream &stream, int& H, int& N)
+{
+	std::string line;
+
+	tools::getline(stream, line);
+	auto values = split(line);
+	if (values.size() < 2)
+	{
+		std::stringstream message;
+		message << "'values.size()' has to be greater than 1 ('values.size()' = " << values.size() << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	N = stoi(values[0]);
+	H = stoi(values[1]);
+}
+
 std::vector<unsigned> AList
 ::read_info_bits_pos(std::istream &stream)
 {

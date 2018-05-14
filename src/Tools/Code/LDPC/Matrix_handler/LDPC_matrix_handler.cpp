@@ -1,11 +1,176 @@
 #include <functional>
 #include <sstream>
+#include <fstream>
+
+#include "Tools/Code/LDPC/AList/AList.hpp"
+#include "Tools/Code/LDPC/QC/QC.hpp"
+#include "Tools/general_utils.h"
 
 #include "Tools/Exception/exception.hpp"
 
 #include "LDPC_matrix_handler.hpp"
 
 using namespace aff3ct::tools;
+
+
+
+LDPC_matrix_handler::Matrix_format LDPC_matrix_handler
+::get_matrix_format(const std::string& filename)
+{
+	std::ifstream file(filename);
+	if (!file.is_open())
+	{
+		std::stringstream message;
+		message << "'filename' couldn't be opened ('filename' = " << filename << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return get_matrix_format(file);
+}
+
+LDPC_matrix_handler::Matrix_format LDPC_matrix_handler
+::get_matrix_format(std::ifstream& file)
+{
+	file.seekg(0);
+
+	std::string line;
+	tools::getline(file, line);
+
+	auto values = tools::split(line);
+
+	if (values.size() == 3)
+		return Matrix_format::QC;
+
+	if (values.size() == 2)
+		return Matrix_format::ALIST;
+
+	std::stringstream message;
+	message << "The given LDPC matrix file does not represent a known matrix type (ALIST, QC).";
+	throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+}
+
+
+Sparse_matrix LDPC_matrix_handler
+::read(const std::string& filename, Positions_vector* info_bits_pos, std::vector<bool>* pct_pattern)
+{
+	std::ifstream file(filename);
+	if (!file.is_open())
+	{
+		std::stringstream message;
+		message << "'filename' couldn't be opened ('filename' = " << filename << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return read(file, info_bits_pos, pct_pattern);
+}
+
+Sparse_matrix LDPC_matrix_handler
+::read(std::ifstream& file, Positions_vector* info_bits_pos, std::vector<bool>* pct_pattern)
+{
+	auto format = get_matrix_format(file);
+
+	file.seekg(0);
+
+	Sparse_matrix S;
+
+	switch (format)
+	{
+		case Matrix_format::QC:
+		{
+			S = tools::QC::read(file);
+
+			if (pct_pattern != nullptr)
+				*pct_pattern = tools::QC::read_pct_pattern(file);
+
+			break;
+		}
+		case Matrix_format::ALIST:
+		{
+			S = tools::AList::read(file);
+
+			if (info_bits_pos != nullptr)
+				try
+				{
+					*info_bits_pos = tools::AList::read_info_bits_pos(file);
+				}
+				catch (std::exception const&)
+				{
+					info_bits_pos->clear();
+					// information bits positions are not in the matrix file
+				}
+
+			break;
+		}
+	}
+
+	return S;
+}
+
+void LDPC_matrix_handler
+::read_matrix_size(const std::string& filename, int& H, int& N)
+{
+	std::ifstream file(filename);
+	if (!file.is_open())
+	{
+		std::stringstream message;
+		message << "'filename' couldn't be opened ('filename' = " << filename << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return read_matrix_size(file, H, N);
+}
+
+void LDPC_matrix_handler
+::read_matrix_size(std::ifstream &file, int& H, int& N)
+{
+	auto format = get_matrix_format(file);
+
+	file.seekg(0);
+
+	switch (format)
+	{
+		case Matrix_format::QC:
+		{
+			tools::QC::read_matrix_size(file, H, N);
+			break;
+		}
+		case Matrix_format::ALIST:
+		{
+			tools::AList::read_matrix_size(file, H, N);
+			break;
+		}
+	}
+}
+
+
+
+bool LDPC_matrix_handler
+::check_info_pos(const Positions_vector& info_bits_pos, int K, int N, bool throw_when_wrong)
+{
+	if (info_bits_pos.size() != (unsigned)K)
+	{
+		if (!throw_when_wrong)
+			return false;
+
+		std::stringstream message;
+		message << "'info_bits_pos.size()' has to be equal to 'K' ('info_bits_pos.size()' = " << info_bits_pos.size()
+		        << ", 'K' = " << K << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	for (auto pos : info_bits_pos)
+		if (pos >= (unsigned)N)
+		{
+			if (!throw_when_wrong)
+				return false;
+
+			std::stringstream message;
+			message << "'pos' has to be smaller than 'N' ('pos' = " << pos << ", 'N' = " << N << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+	return true;
+}
 
 void LDPC_matrix_handler
 ::sparse_to_full(const Sparse_matrix& sparse, Full_matrix& full)
@@ -32,7 +197,7 @@ Sparse_matrix LDPC_matrix_handler
 }
 
 Sparse_matrix LDPC_matrix_handler
-::transform_H_to_G(const Sparse_matrix& H, std::vector<unsigned>& info_bits_pos)
+::transform_H_to_G(const Sparse_matrix& H, Positions_vector& info_bits_pos)
 {
 	LDPC_matrix_handler::Full_matrix mat;
 
@@ -47,7 +212,7 @@ Sparse_matrix LDPC_matrix_handler
 }
 
 void LDPC_matrix_handler
-::transform_H_to_G(Full_matrix& mat, std::vector<unsigned>& info_bits_pos)
+::transform_H_to_G(Full_matrix& mat, Positions_vector& info_bits_pos)
 {
 	unsigned n_row = (unsigned)mat.size();
 	unsigned n_col = (unsigned)mat.front().size();
@@ -60,7 +225,7 @@ void LDPC_matrix_handler
 		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	std::vector<unsigned> swapped_cols;
+	Positions_vector swapped_cols;
 	LDPC_matrix_handler::create_diagonal(mat, swapped_cols);
 	LDPC_matrix_handler::create_identity(mat);
 
@@ -79,7 +244,7 @@ void LDPC_matrix_handler
 	// return info bits positions
 	info_bits_pos.resize(n_col - n_row);
 
-	std::vector<unsigned> bits_pos(n_col);
+	Positions_vector bits_pos(n_col);
 	std::iota(bits_pos.begin(), bits_pos.end(), 0);
 
 	for (unsigned l = 1; l <= (swapped_cols.size() / 2); l++)
@@ -89,7 +254,7 @@ void LDPC_matrix_handler
 }
 
 void LDPC_matrix_handler
-::create_diagonal(Full_matrix& mat, std::vector<unsigned>& swapped_cols)
+::create_diagonal(Full_matrix& mat, Positions_vector& swapped_cols)
 {
 	unsigned n_row = (unsigned)mat.size();
 	unsigned n_col = (unsigned)mat.front().size();
@@ -191,7 +356,7 @@ float LDPC_matrix_handler
 }
 
 Sparse_matrix LDPC_matrix_handler
-::interleave_matrix(const Sparse_matrix& mat, std::vector<unsigned>& old_cols_pos)
+::interleave_matrix(const Sparse_matrix& mat, Positions_vector& old_cols_pos)
 {
 	if (mat.get_n_cols() != old_cols_pos.size())
 	{
@@ -213,8 +378,8 @@ Sparse_matrix LDPC_matrix_handler
 	return itl_mat;
 }
 
-std::vector<unsigned> LDPC_matrix_handler
-::interleave_info_bits_pos(const std::vector<unsigned>& info_bits_pos, std::vector<unsigned>& old_cols_pos)
+LDPC_matrix_handler::Positions_vector LDPC_matrix_handler
+::interleave_info_bits_pos(const Positions_vector& info_bits_pos, Positions_vector& old_cols_pos)
 {
 	if (info_bits_pos.size() > old_cols_pos.size())
 	{
@@ -225,7 +390,7 @@ std::vector<unsigned> LDPC_matrix_handler
 		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	std::vector<unsigned> itl_vec(info_bits_pos.size());
+	Positions_vector itl_vec(info_bits_pos.size());
 	unsigned cnt = 0;
 
 	for (unsigned i = 0; i < info_bits_pos.size(); i++)

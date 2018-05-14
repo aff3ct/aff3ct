@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 #include "Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp"
@@ -45,10 +46,18 @@ void Encoder_LDPC::parameters
 		tools::File(tools::openmode::read),
 		"path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder).");
 
+	args.add_link({p+"-h-path"}, {p+"-cw-size",   "N"}); // N_cw is H width
+	args.add_link({p+"-h-path"}, {p+"-info-bits", "K"}); // if there is no K, then H is considered regular,
+	                                                     // so K is the N - H's height
+
+
 	args.add(
 		{p+"-g-path"},
 		tools::File(tools::openmode::read),
 		"path to the G matrix (AList formated file, required by the \"LDPC\" encoder).");
+
+	args.add_link({p+"-g-path"}, {p+"-info-bits", "K"});
+	args.add_link({p+"-g-path"}, {p+"-cw-size",   "N"});
 
 	args.add(
 		{p+"-h-reorder"},
@@ -60,13 +69,23 @@ void Encoder_LDPC::parameters
 void Encoder_LDPC::parameters
 ::store(const tools::Argument_map_value &vals)
 {
-	Encoder::parameters::store(vals);
-
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-h-path"   })) this->H_path    = vals.at({p+"-h-path"   });
 	if(vals.exist({p+"-g-path"   })) this->G_path    = vals.at({p+"-g-path"   });
 	if(vals.exist({p+"-h-reorder"})) this->H_reorder = vals.at({p+"-h-reorder"});
+
+	if (!this->G_path.empty())
+		tools::LDPC_matrix_handler::read_matrix_size(this->G_path, this->K, this->N_cw);
+
+	else if (!this->H_path.empty())
+	{
+		int H;
+		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, H, this->N_cw);
+		this->K = this->N_cw - H; // considered as regular so H = N - K
+	}
+
+	Encoder::parameters::store(vals);
 }
 
 void Encoder_LDPC::parameters
@@ -78,6 +97,7 @@ void Encoder_LDPC::parameters
 
 	if (this->type == "LDPC")
 		headers[p].push_back(std::make_pair("G matrix path", this->G_path));
+
 	if (this->type == "LDPC_H" || this->type == "LDPC_QC")
 	{
 		headers[p].push_back(std::make_pair("H matrix path", this->H_path));
