@@ -30,29 +30,24 @@ template <typename B>
 void Encoder_LDPC_from_QC<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	unsigned M = this->N - this->K;
+	int M = this->N - this->K;
 
 	//Systematic part
 	std::copy_n(U_K, this->K, X_N);
 
 	//Calculate parity part
-	mipp::vector<int8_t> tableauCalcul(M, 0);
-	for (unsigned i = 0; i < M; i++)
-	{
-		auto& links = this->H.get_cols_from_row(i);
-		for (unsigned j = 0; j < links.size(); j++)
-			if (links[j] < (unsigned)this->K)
-				tableauCalcul[i] ^= U_K[ links[j] ];
-			else
-				break;
-	}
+	mipp::vector<int8_t> parity(M, 0);
 
-	for (unsigned i = 0; i < M; i++)
+	for (auto i = 0; i < M; i++)
+		for (auto& l : this->H.get_rows_from_col(i))
+			parity[i] ^= (l < (unsigned)this->K) ? U_K[l] : (B)0;
+
+	auto* X_N_ptr = X_N + this->K;
+	for (auto i = 0; i < M; i++)
 	{
-		X_N[this->K + i] = 0;
-		for (unsigned j = 0; j < M; j++)
-			X_N[this->K + i] += tableauCalcul[j] & invH2[i][j];
-		X_N[this->K + i] %= 2;
+		X_N_ptr[i] = 0;
+		for (auto j = 0; j < M; j++)
+			X_N_ptr[i] ^= parity[j] & invH2[i][j];
 	}
 }
 
