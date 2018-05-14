@@ -56,6 +56,7 @@ void User_pdf_noise_generator_MKL<R>
 	}
 }
 
+#if defined(MULTI_PREC) | defined(PREC_64_BIT)
 
 namespace aff3ct
 {
@@ -80,6 +81,8 @@ void User_pdf_noise_generator_MKL<double>
 }
 }
 }
+
+#endif
 
 template <typename R>
 void User_pdf_noise_generator_MKL<R>

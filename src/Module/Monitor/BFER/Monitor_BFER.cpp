@@ -72,13 +72,7 @@ R Monitor_BFER<B,R>
 		                                 Y + f * this->N,
 		                                 f);
 
-//	for(auto i = 0; i < this->n_frames*this->N ; i++)
-//		if (X[i])
-//			this->llrs1.add_value(Y[i]);
-//		else
-//			this->llrs0.add_value(Y[i]);
-
-	return MI_sum / (R)this->n_frames * 10000; // return the mut info %10000 instead of %100
+	return MI_sum / (R)(f_stop - f_start) * 10000; // return the mut info %10000 instead of %100
 }
 
 template <typename B, typename R>
@@ -259,8 +253,6 @@ void Monitor_BFER<B,R>
 	this->n_frame_errors    = 0;
 	this->n_analyzed_frames = 0;
 	this->MI_sum            = 0;
-//	this->llrs0.reset();
-//	this->llrs1.reset();
 	this->err_hist.reset();
 }
 
@@ -279,26 +271,14 @@ tools::Histogram<int> Monitor_BFER<B, R>::get_err_hist() const
 	return err_hist;
 }
 
-//template<typename B, typename R>
-//const tools::Histogram<R>& Monitor_BFER<B, R>::get_llrs1()
-//{
-//	return llrs1;
-//}
-//
-//template<typename B, typename R>
-//const tools::Histogram<R>& Monitor_BFER<B, R>::get_llrs0()
-//{
-//	return llrs0;
-//}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Monitor_BFER<B_8, Q_8>;
-template class aff3ct::module::Monitor_BFER<B_16,Q_16>;
-template class aff3ct::module::Monitor_BFER<B_32,Q_32>;
-template class aff3ct::module::Monitor_BFER<B_64,Q_64>;
+template class aff3ct::module::Monitor_BFER<B_8, R_8>;
+template class aff3ct::module::Monitor_BFER<B_16,R_16>;
+template class aff3ct::module::Monitor_BFER<B_32,R_32>;
+template class aff3ct::module::Monitor_BFER<B_64,R_64>;
 #else
-template class aff3ct::module::Monitor_BFER<B,Q>;
+template class aff3ct::module::Monitor_BFER<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

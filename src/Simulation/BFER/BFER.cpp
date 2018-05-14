@@ -77,7 +77,7 @@ BFER<B,R,Q>
 	                                                              params_BFER.mpi_comm_freq);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_BFER_reduction<B,Q>(this->monitor);
+	this->monitor_red = new module::Monitor_BFER_reduction<B,R>(this->monitor);
 #endif
 
 	if (!params_BFER.pdf_path.empty())
@@ -287,22 +287,6 @@ void BFER<B,R,Q>
 			}
 		}
 
-//		auto slash_pos = params_BFER.pdf_path.rfind('/')+1;
-//		auto dot_pos   = params_BFER.pdf_path.find('.', slash_pos);
-//		std::string mission = params_BFER.pdf_path.substr(slash_pos, dot_pos - slash_pos);
-
-//		auto llrs0 = monitor_red->get_llrs0();
-//		std::string filename0 = mission + "/" + mission + "_pdf_" + std::to_string(this->noise->get_noise()) + "_0.txt";
-//		std::ofstream pdf0(filename0);
-//		pdf0 << "x; \"PDF of " << mission << " bit 0 (" << this->noise->get_noise() << "dB, on " << llrs0.get_n_values() << " values)\"" << std::endl;
-//		llrs0.dump(pdf0, llrs0.get_hist_min(), llrs0.get_hist_max(), 100, true);
-//
-//		auto llrs1 = monitor_red->get_llrs1();
-//		std::string filename1 = mission + "/" + mission + "_pdf_" + std::to_string(this->noise->get_noise()) + "_1.txt";
-//		std::ofstream pdf1(filename1);
-//		pdf1 << "x; \"PDF of " << mission << " bit 1 (" << this->noise->get_noise() << "dB, on " << llrs1.get_n_values() << " values)\"" << std::endl;
-//		llrs1.dump(pdf1, llrs1.get_hist_min(), llrs1.get_hist_max(), 100, true);
-
 		if (params_BFER.mnt->err_hist != -1)
 		{
 			auto err_hist = monitor_red->get_err_hist();
@@ -374,17 +358,17 @@ void BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-module::Monitor_BFER<B,Q>* BFER<B,R,Q>
+module::Monitor_BFER<B,R>* BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return factory::Monitor_BFER::build<B,Q>(*params_BFER.mnt);
+	return factory::Monitor_BFER::build<B,R>(*params_BFER.mnt);
 }
 
 template <typename B, typename R, typename Q>
-tools::Terminal_BFER<B,Q>* BFER<B,R,Q>
+tools::Terminal_BFER<B,R>* BFER<B,R,Q>
 ::build_terminal()
 {
-	return factory::Terminal_BFER::build<B,Q>(*params_BFER.ter, *this->monitor_red, params_BFER.mutinfo);
+	return factory::Terminal_BFER::build<B,R>(*params_BFER.ter, *this->monitor_red, params_BFER.mutinfo);
 }
 
 template <typename B, typename R, typename Q>

@@ -123,6 +123,9 @@ template <typename B, typename R>
 R Monitor_BFER_reduction<B,R>
 ::get_MI() const
 {
+	if (this->get_n_analyzed_fra() == 0)
+		return 0;
+
 	return this->get_MI_sum() / (R)this->get_n_analyzed_fra();
 }
 
@@ -136,24 +139,6 @@ R Monitor_BFER_reduction<B,R>
 
 	return cur_mi;
 }
-
-//template<typename B, typename R>
-//const tools::Histogram<R> & Monitor_BFER_reduction<B, R>::get_llrs0()
-//{
-//	for (unsigned i = 0; i < monitors.size(); i++)
-//		this->llrs0.add_values(monitors[i]->get_llrs0());
-//
-//	return this->llrs0;
-//}
-//
-//template<typename B, typename R>
-//const tools::Histogram<R>& Monitor_BFER_reduction<B, R>::get_llrs1()
-//{
-//	for (unsigned i = 0; i < monitors.size(); i++)
-//		this->llrs1.add_values(monitors[i]->get_llrs1());
-//
-//	return this->llrs1;
-//}
 
 template <typename B, typename R>
 void Monitor_BFER_reduction<B,R>
@@ -187,11 +172,11 @@ tools::Histogram<int> Monitor_BFER_reduction<B, R>::get_err_hist() const
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Monitor_BFER_reduction<B_8, Q_8>;
-template class aff3ct::module::Monitor_BFER_reduction<B_16,Q_16>;
-template class aff3ct::module::Monitor_BFER_reduction<B_32,Q_32>;
-template class aff3ct::module::Monitor_BFER_reduction<B_64,Q_64>;
+template class aff3ct::module::Monitor_BFER_reduction<B_8, R_8>;
+template class aff3ct::module::Monitor_BFER_reduction<B_16,R_16>;
+template class aff3ct::module::Monitor_BFER_reduction<B_32,R_32>;
+template class aff3ct::module::Monitor_BFER_reduction<B_64,R_64>;
 #else
-template class aff3ct::module::Monitor_BFER_reduction<B,Q>;
+template class aff3ct::module::Monitor_BFER_reduction<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

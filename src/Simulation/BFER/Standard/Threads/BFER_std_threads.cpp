@@ -244,10 +244,9 @@ void BFER_std_threads<B,R,Q>
 
 	if (this->params_BFER_std.mutinfo)
 	{
-		mnt[mnt::sck::get_mutual_info::X](enc[enc::sck::encode ::X_N ]);
-		mnt[mnt::sck::get_mutual_info::Y](qnt[qnt::sck::process::Y_N2]);
+		mnt[mnt::sck::get_mutual_info::X](enc[enc::sck::encode    ::X_N ]);
+		mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate::Y_N2]);
 	}
-
 }
 
 template <typename B, typename R, typename Q>
