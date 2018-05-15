@@ -30,29 +30,26 @@ void Channel_binary_symmetric<R>
 	const auto event_probability = this->n->get_noise();
 	event_generator->generate(this->event_draw.data(), (unsigned)this->N, event_probability);
 
-	for (auto i = 0; i < this->N; i++)
-		Y_N[i] = event_draw[i] != (X_N[i] == (R)0.0) ? (R)0.0 : (R)1.0;
+	const mipp::Reg<E> r_false = (E)false;
+	const mipp::Reg<R> r_0     = (R)0.0;
+	const mipp::Reg<R> r_1     = (R)1.0;
 
-//	const mipp::Reg<R> r_zero   = (R)false;
-//	const mipp::Reg<R> r_0      = (R)0.0;
-//	const mipp::Reg<R> r_1      = (R)1.0;
-//
-//	const auto vec_loop_size = (this->N / mipp::nElReg<R>()) * mipp::nElReg<R>();
-//
-//	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
-//	{
-//		const auto r_in    = mipp::Reg<R>(X_N + i);
-//		const auto r_event = mipp::Reg<R>(&this->noise[i]);
-//
-//		const auto m_zero  = r_in == r_0;
-//		const auto m_event = r_event == r_zero;
-//
-//		const auto r_out   = mipp::blend(r_0, r_1, m_event ^ m_zero);
-//		r_out.store(Y_N + i);
-//	}
-//
-//	for (auto i = vec_loop_size; i < this->N; i++)
-//		Y_N[i] = this->noise[i] != (X_N[i] == (R)0.0) ? (R)0.0 : (R)1.0;
+	const auto vec_loop_size = (this->N / mipp::nElReg<R>()) * mipp::nElReg<R>();
+
+	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
+	{
+		const mipp::Reg<R> r_in    = X_N + i;
+		const mipp::Reg<E> r_event = &this->event_draw[i];
+
+		const auto m_zero  = r_in == r_0;
+		const auto m_event = r_event != r_false;
+
+		const auto r_out   = mipp::blend(r_0, r_1, m_event ^ m_zero);
+		r_out.store(Y_N + i);
+	}
+
+	for (auto i = vec_loop_size; i < this->N; i++)
+		Y_N[i] = this->noise[i] != (X_N[i] == (R)0.0) ? (R)0.0 : (R)1.0;
 }
 
 template<typename R>

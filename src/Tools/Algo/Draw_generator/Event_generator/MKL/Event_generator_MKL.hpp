@@ -12,8 +12,8 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename R = float>
-class Event_generator_MKL : public Event_generator<R>
+template <typename R = float, typename E = typename tools::matching_types<R>::B>
+class Event_generator_MKL : public Event_generator<R,E>
 {
 private:
 	VSLStreamStatePtr stream_state;
@@ -26,7 +26,7 @@ public:
 
 	virtual void set_seed(const int seed);
 
-	virtual void generate(event_type *draw, const unsigned length, const R event_probability);
+	virtual void generate(E *draw, const unsigned length, const R event_probability);
 };
 
 }

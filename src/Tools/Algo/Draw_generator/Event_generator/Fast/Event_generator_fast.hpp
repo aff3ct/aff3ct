@@ -11,9 +11,11 @@ namespace aff3ct
 namespace tools
 {
 
-template <typename R = float>
-class Event_generator_fast : public Event_generator<R>
+template <typename R = float, typename E = typename tools::matching_types<R>::B>
+class Event_generator_fast : public Event_generator<R,E>
 {
+	static_assert(sizeof(R) == sizeof(E), "R and E have to represent the same number of bits.");
+
 private:
 	tools::PRNG_MT19937      mt19937;      // Mersenne Twister 19937 (scalar)
 	tools::PRNG_MT19937_simd mt19937_simd; // Mersenne Twister 19937 (SIMD)
@@ -25,11 +27,7 @@ public:
 
 	virtual void set_seed(const int seed);
 
-	virtual void generate(event_type *draw, const unsigned length, const R event_probability);
-
-private:
-	inline mipp::Reg<R> get_random_simd();
-	inline R            get_random     ();
+	virtual void generate(E *draw, const unsigned length, const R event_probability);
 };
 
 }
