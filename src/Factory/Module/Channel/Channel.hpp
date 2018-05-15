@@ -47,6 +47,12 @@ struct Channel : public Factory
 
 		// builder
 		template <typename R = float>
+		module::Channel<R>* build_gaussian() const;
+		template <typename R = float>
+		module::Channel<R>* build_event() const;
+		template <typename R = float>
+		module::Channel<R>* build_userpdf(const tools::Distributions<R>* dist) const;
+		template <typename R = float>
 		module::Channel<R>* build(const tools::Distributions<R>* dist = nullptr) const;
 	};
 

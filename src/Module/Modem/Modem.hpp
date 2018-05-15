@@ -260,6 +260,8 @@ protected:
 	void set_filter(const bool filter);
 
 	void set_demodulator(const bool demodulator);
+
+	virtual void check_noise(); // check that the noise has the expected type
 };
 }
 }

@@ -1,8 +1,8 @@
 #ifndef CHANNEL_AWGN_LLR_HPP_
 #define CHANNEL_AWGN_LLR_HPP_
 
-#include "Tools/Algo/Noise_generator/Noise_generator.hpp"
-#include "Tools/Algo/Noise_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "../Channel.hpp"
 
@@ -15,7 +15,7 @@ class Channel_AWGN_LLR : public Channel<R>
 {
 private:
 	const bool add_users;
-	tools::Noise_generator<R> *noise_generator;
+	tools::Gaussian_noise_generator<R> *noise_generator;
 
 public:
 	Channel_AWGN_LLR(const int N, tools::Gaussian_gen<R> *noise_generator = new tools::Gaussian_gen_std<R>(),

@@ -193,7 +193,7 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,R>* BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
-	return params_BFER_std.mdm->template build<B,R,R>(this->distributions);
+	return params_BFER_std.mdm->template build<B,R,R>(this->distributions, this->params_BFER_std.chn->type);
 }
 
 template <typename B, typename R, typename Q>

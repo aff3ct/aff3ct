@@ -110,7 +110,7 @@ template <typename B>
 void Encoder_LDPC<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	for (unsigned i = 0; i < this->N; i++)
+	for (auto i = 0; i < this->N; i++)
 	{
 		X_N[i] = 0;
 		auto& links = this->G.get_cols_from_row(i);

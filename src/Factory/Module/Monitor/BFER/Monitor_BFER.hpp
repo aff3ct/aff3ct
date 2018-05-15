@@ -29,6 +29,7 @@ struct Monitor_BFER : public Factory
 		int         err_hist       = -1;
 		int         n_frame_errors = 100;
 		int         n_frames       = 1;
+		bool        mutinfo        = false;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Monitor_BFER_prefix);

@@ -126,7 +126,6 @@ R aff3ct::tools::ebn0_to_esn0(const R ebn0, const R bit_rate, const int bps)
 	return esn0;
 }
 
-#include <iostream>
 template <typename R>
 std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& range_description, const R default_step)
 {

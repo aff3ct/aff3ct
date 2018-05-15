@@ -9,24 +9,24 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_pdf<R>
-::Channel_pdf(const int N, tools::Noise_generator<R> *noise_generator, const bool add_users,
+::Channel_pdf(const int N, tools::User_pdf_noise_generator<R> *draw_generator, const bool add_users,
               const tools::Noise<R>& noise, const int n_frames)
 : Channel<R>(N, noise, n_frames),
   add_users(add_users),
-  noise_generator(noise_generator)
+  draw_generator(draw_generator)
 {
 	const std::string name = "Channel_pdf";
 	this->set_name(name);
 
-	if (noise_generator == nullptr)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
+	if (draw_generator == nullptr)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'draw_generator' can't be NULL.");
 }
 
 template <typename R>
 Channel_pdf<R>
 ::~Channel_pdf()
 {
-	if (noise_generator != nullptr) delete noise_generator;
+	if (draw_generator != nullptr) delete draw_generator;
 }
 
 template <typename R>
@@ -42,7 +42,7 @@ void Channel_pdf<R>
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		noise_generator->generate(this->noise.data(), this->N, this->n->get_noise());
+		draw_generator->generate(X_N, this->noise.data(), this->N, this->n->get_noise());
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (auto f = 0; f < this->n_frames; f++)
@@ -58,9 +58,9 @@ void Channel_pdf<R>
 		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		if (frame_id < 0)
-			noise_generator->generate(this->noise, this->n->get_noise());
+			draw_generator->generate(this->noise, this->n->get_noise());
 		else
-			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise());
+			draw_generator->generate(X_N, this->noise.data() + f_start * this->N, this->N, this->n->get_noise());
 
 		for (auto f = f_start; f < f_stop; f++)
 			for (auto n = 0; n < this->N; n++)

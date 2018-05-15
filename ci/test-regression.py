@@ -545,13 +545,24 @@ for fn in fileNames:
 		if errAndWarnMessages:
 			print("---- Error message(s):", end="\n");
 			print(errAndWarnMessages)
-		nErrors = nErrors +1
+		nErrors += 1
 		failIds.append(testId +1)
 
-	elif not simuCur.NoiseType == simuRef.NoiseType:
-		failIds.append(testId +1)
+		for i in range(len(stdOutput)):
+			fRes.write(stdOutput[i] + "\n")
+		for i in range(len(errAndWarnMessages)):
+			fRes.write(errAndWarnMessages[i] + "\n")
+
+	elif simuCur.NoiseType != simuRef.NoiseType:
 		nErrors += 1
+		failIds.append(testId +1)
+
 		print(" - NOISE TYPE MISMATCH: " + simuRef.NoiseType + " vs " + simuCur.NoiseType + ".", end="\n");
+
+		for i in range(len(stdOutput)):
+			fRes.write(stdOutput[i] + "\n")
+		for i in range(len(errAndWarnMessages)):
+			fRes.write(errAndWarnMessages[i] + "\n")
 
 	else:
 		# parse the results to validate (or not) the BER/FER/MI performance
@@ -605,8 +616,8 @@ for fn in fileNames:
 		print(errAndWarnMessages)
 		fRes.write(errAndWarnMessages)
 
-		fRes.write("# End of the simulation.\n")
-		fRes.close();
+	fRes.write("# End of the simulation.\n")
+	fRes.close();
 
 	testId = testId + 1
 

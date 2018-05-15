@@ -1,7 +1,10 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 
-#include "Module/Modem/OOK/Modem_OOK.hpp"
+#include "Module/Modem/OOK/Modem_OOK_BSC.hpp"
+#include "Module/Modem/OOK/Modem_OOK_BEC.hpp"
+#include "Module/Modem/OOK/Modem_OOK_AWGN.hpp"
+#include "Module/Modem/OOK/Modem_OOK_optical.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK_fast.hpp"
 #include "Module/Modem/PAM/Modem_PAM.hpp"
@@ -10,7 +13,6 @@
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 #include "Module/Modem/SCMA/Modem_SCMA.hpp"
 #include "Module/Modem/User/Modem_user.hpp"
-#include "Module/Modem/Optical/Modem_optical.hpp"
 
 #include "Modem.hpp"
 
@@ -56,7 +58,7 @@ void Modem::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("BPSK", "BPSK_FAST", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA", "OPTICAL")),
+		tools::Text(tools::Including_set("BPSK", "BPSK_FAST", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")),
 		"type of the modulation to use in the simulation.");
 
 	args.add(
@@ -258,7 +260,6 @@ module::Modem<B,R,Q>* Modem::parameters
 {
 	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
 	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "OOK"      ) return new module::Modem_OOK      <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
 	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
 	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
 	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
@@ -282,15 +283,19 @@ module::Modem<B,R,Q>* Modem::parameters
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
-::build(const tools::Distributions<R>* dist) const
+::build(const tools::Distributions<R>* dist, const std::string& chn_type) const
 {
 	if (this->type == "SCMA")
 	{
 		return _build_scma<B,R,Q>();
 	}
-	else if (this->type == "OPTICAL" && dist != nullptr)
+	else if (this->type == "OOK")
 	{
-		return new module::Modem_optical<B,R,Q>(N, *dist, tools::Received_optical_power<R>((R)this->noise), n_frames);
+		     if (chn_type == "AWGN"   ) return new module::Modem_OOK_AWGN<B,R,Q>(this->N, tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_frames);
+		else if (chn_type == "BEC"    ) return new module::Modem_OOK_BEC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
+		else if (chn_type == "BSC"    ) return new module::Modem_OOK_BSC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
+		else if (chn_type == "OPTICAL" && dist != nullptr)
+			return new module::Modem_OOK_optical<B,R,Q>(this->N, *dist, tools::ROP<R>((R)this->noise), this->n_frames);
 	}
 	else
 	{
@@ -305,9 +310,9 @@ module::Modem<B,R,Q>* Modem::parameters
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
-::build(const parameters &params, const tools::Distributions<R>* dist)
+::build(const parameters &params, const tools::Distributions<R>* dist, const std::string& chn_type)
 {
-	return params.template build<B,R,Q>(dist);
+	return params.template build<B,R,Q>(dist, chn_type);
 }
 
 int Modem
@@ -327,7 +332,6 @@ int Modem
 	else if (type == "PSK"      ) return module::Modem_PSK      <>::size_mod(N, bps                   );
 	else if (type == "USER"     ) return module::Modem_user     <>::size_mod(N, bps                   );
 	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_mod(N, bps, cpm_L, cpm_p, upf);
-	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::size_mod(N                        );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -348,7 +352,6 @@ int Modem
 	else if (type == "PSK"      ) return module::Modem_PSK      <>::size_fil(N, bps              );
 	else if (type == "USER"     ) return module::Modem_user     <>::size_fil(N, bps              );
 	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_fil(N, bps, cpm_L, cpm_p);
-	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::size_fil(N                   );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -365,7 +368,6 @@ bool Modem
 	else if (type == "PSK"      ) return module::Modem_PSK      <>::is_complex_mod();
 	else if (type == "USER"     ) return module::Modem_user     <>::is_complex_mod();
 	else if (type == "CPM"      ) return module::Modem_CPM      <>::is_complex_mod();
-	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::is_complex_mod();
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -382,7 +384,6 @@ bool Modem
 	else if (type == "PSK"      ) return module::Modem_PSK      <>::is_complex_fil();
 	else if (type == "USER"     ) return module::Modem_user     <>::is_complex_fil();
 	else if (type == "CPM"      ) return module::Modem_CPM      <>::is_complex_fil();
-	else if (type == "OPTICAL"  ) return module::Modem_optical  <>::is_complex_fil();
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -390,24 +391,24 @@ bool Modem
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,Q_8 >(const tools::Distributions<R_8>*) const;
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,R_8 >(const tools::Distributions<R_8>*) const;
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,Q_16>(const tools::Distributions<R_16>*) const;
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,R_16>(const tools::Distributions<R_16>*) const;
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::parameters::build<B_32,R_32,Q_32>(const tools::Distributions<R_32>*) const;
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::parameters::build<B_64,R_64,Q_64>(const tools::Distributions<R_64>*) const;
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_8>*);
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_8>*);
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_16>*);
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_16>*);
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_32>*);
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_64>*);
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,Q_8 >(const tools::Distributions<R_8 >*, const std::string&) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,R_8 >(const tools::Distributions<R_8 >*, const std::string&) const;
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,Q_16>(const tools::Distributions<R_16>*, const std::string&) const;
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,R_16>(const tools::Distributions<R_16>*, const std::string&) const;
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::parameters::build<B_32,R_32,Q_32>(const tools::Distributions<R_32>*, const std::string&) const;
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::parameters::build<B_64,R_64,Q_64>(const tools::Distributions<R_64>*, const std::string&) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_8 >*, const std::string&);
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_8 >*, const std::string&);
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_16>*, const std::string&);
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_16>*, const std::string&);
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_32>*, const std::string&);
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_64>*, const std::string&);
 #else
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::parameters::build<B,R,Q>(const tools::Distributions<R>*) const;
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>*);
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::parameters::build<B,R,Q>(const tools::Distributions<R>*, const std::string&) const;
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>*, const std::string&);
 #if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::parameters::build<B,R,R>(const tools::Distributions<R>*) const;
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>*);
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::parameters::build<B,R,R>(const tools::Distributions<R>*, const std::string&) const;
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>*, const std::string&);
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

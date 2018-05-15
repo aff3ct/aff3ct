@@ -96,7 +96,7 @@ bool Monitor_BFER_reduction_mpi<B,R>
 		monitor_vals mvals_send = { this->get_n_be()           - this->n_bit_errors,
 		                            this->get_n_fe()           - this->n_frame_errors,
 		                            this->get_n_analyzed_fra() - this->n_analyzed_frames,
-		                            this->get_MI_sum()         - this->MI_sum };
+		                            (float)(this->get_MI_sum() - this->MI_sum) };
 
 		MPI_Allreduce(&mvals_send, &mvals_recv, 1, MPI_monitor_vals, MPI_SUM_monitor_vals, MPI_COMM_WORLD);
 
@@ -124,12 +124,12 @@ void Monitor_BFER_reduction_mpi<B,R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B_8, Q_8>;
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B_16,Q_16>;
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B_32,Q_32>;
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B_64,Q_64>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B_8, R_8>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B_16,R_16>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B_32,R_32>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B_64,R_64>;
 #else
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B,Q>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation
 

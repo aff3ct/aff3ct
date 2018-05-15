@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include "Tools/Exception/exception.hpp"
 
 #include "Channel_optical.hpp"
@@ -9,7 +7,7 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_optical<R>
-::Channel_optical(const int N, tools::Noise_generator<R> *noise_generator,
+::Channel_optical(const int N, tools::User_pdf_noise_generator<R> *noise_generator,
                   const tools::Noise<R>& noise, const int n_frames)
 : Channel<R>(N, noise, n_frames),
   noise_generator(noise_generator)

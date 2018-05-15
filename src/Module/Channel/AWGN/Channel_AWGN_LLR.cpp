@@ -51,7 +51,7 @@ void Channel_AWGN_LLR<R>
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		noise_generator->generate(this->noise.data(), this->N, this->n->get_noise()); // trow if noise is not SIGMA type
+		noise_generator->generate(this->noise.data(), this->N, this->n->get_noise());
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (auto f = 0; f < this->n_frames; f++)
@@ -67,9 +67,9 @@ void Channel_AWGN_LLR<R>
 		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		if (frame_id < 0)
-			noise_generator->generate(this->noise, this->n->get_noise()); // trow if noise has not been set
+			noise_generator->generate(this->noise, this->n->get_noise());
 		else
-			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise()); // trow if noise has not been set
+			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise());
 
 		for (auto f = f_start; f < f_stop; f++)
 			for (auto n = 0; n < this->N; n++)

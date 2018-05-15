@@ -65,6 +65,11 @@ void Monitor_BFER::parameters
 			{p+"-err-hist-path"},
 			tools::File(tools::openmode::write),
 			"path to the output histogram (default is './hist', add automatically the current noise value and the extension '.txt')");
+
+	args.add(
+			{p+"-mutinfo"},
+			tools::None(),
+			"allow the computation of the mutual information.");
 }
 
 void Monitor_BFER::parameters
@@ -80,6 +85,7 @@ void Monitor_BFER::parameters
 	if(vals.exist({p+"-max-fe",    "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe",    "e"});
 	if(vals.exist({p+"-err-hist"      })) this->err_hist       = vals.to_int({p+"-err-hist"      });
 	if(vals.exist({p+"-err-hist-path" })) this->err_hist_path  = vals.at    ({p+"-err-hist-path" });
+	if(vals.exist({p+"-mutinfo"       })) this->mutinfo        = true;
 }
 
 void Monitor_BFER::parameters
@@ -90,6 +96,7 @@ void Monitor_BFER::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Frame error count (e)", std::to_string(this->n_frame_errors)));
+	headers[p].push_back(std::make_pair("Compute Mutual Info", this->mutinfo ? "yes" : "no"));
 	if (full) headers[p].push_back(std::make_pair("K",                 std::to_string(this->K       )));
 	if (full) headers[p].push_back(std::make_pair("N",                 std::to_string(this->N       )));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
@@ -114,16 +121,16 @@ module::Monitor_BFER<B,R>* Monitor_BFER
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Monitor_BFER<B_8 ,Q_8 >* aff3ct::factory::Monitor_BFER::parameters::build<B_8, Q_8 >() const;
-template aff3ct::module::Monitor_BFER<B_16,Q_16>* aff3ct::factory::Monitor_BFER::parameters::build<B_16,Q_16>() const;
-template aff3ct::module::Monitor_BFER<B_32,Q_32>* aff3ct::factory::Monitor_BFER::parameters::build<B_32,Q_32>() const;
-template aff3ct::module::Monitor_BFER<B_64,Q_64>* aff3ct::factory::Monitor_BFER::parameters::build<B_64,Q_64>() const;
-template aff3ct::module::Monitor_BFER<B_8 ,Q_8 >* aff3ct::factory::Monitor_BFER::build<B_8, Q_8 >(const aff3ct::factory::Monitor_BFER::parameters&);
-template aff3ct::module::Monitor_BFER<B_16,Q_16>* aff3ct::factory::Monitor_BFER::build<B_16,Q_16>(const aff3ct::factory::Monitor_BFER::parameters&);
-template aff3ct::module::Monitor_BFER<B_32,Q_32>* aff3ct::factory::Monitor_BFER::build<B_32,Q_32>(const aff3ct::factory::Monitor_BFER::parameters&);
-template aff3ct::module::Monitor_BFER<B_64,Q_64>* aff3ct::factory::Monitor_BFER::build<B_64,Q_64>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B_8 ,R_8 >* aff3ct::factory::Monitor_BFER::parameters::build<B_8, R_8 >() const;
+template aff3ct::module::Monitor_BFER<B_16,R_16>* aff3ct::factory::Monitor_BFER::parameters::build<B_16,R_16>() const;
+template aff3ct::module::Monitor_BFER<B_32,R_32>* aff3ct::factory::Monitor_BFER::parameters::build<B_32,R_32>() const;
+template aff3ct::module::Monitor_BFER<B_64,R_64>* aff3ct::factory::Monitor_BFER::parameters::build<B_64,R_64>() const;
+template aff3ct::module::Monitor_BFER<B_8 ,R_8 >* aff3ct::factory::Monitor_BFER::build<B_8, R_8 >(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B_16,R_16>* aff3ct::factory::Monitor_BFER::build<B_16,R_16>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B_32,R_32>* aff3ct::factory::Monitor_BFER::build<B_32,R_32>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B_64,R_64>* aff3ct::factory::Monitor_BFER::build<B_64,R_64>(const aff3ct::factory::Monitor_BFER::parameters&);
 #else
-template aff3ct::module::Monitor_BFER<B,Q>* aff3ct::factory::Monitor_BFER::parameters::build<B,Q>() const;
-template aff3ct::module::Monitor_BFER<B,Q>* aff3ct::factory::Monitor_BFER::build<B,Q>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::parameters::build<B,R>() const;
+template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::build<B,R>(const aff3ct::factory::Monitor_BFER::parameters&);
 #endif
 // ==================================================================================== explicit template instantiation

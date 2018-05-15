@@ -32,7 +32,6 @@ protected:
 	std::vector<std::function<void(unsigned, int )>> callbacks_fe;
 	std::vector<std::function<void(          void)>> callbacks_check;
 	std::vector<std::function<void(          void)>> callbacks_fe_limit_achieved;
-//	tools::Histogram<R> llrs0, llrs1;
 	tools::Histogram<int> err_hist;
 
 public:
@@ -118,8 +117,6 @@ public:
 	virtual unsigned long long get_n_be          () const;
 	virtual R                  get_MI            () const;
 	virtual R                  get_MI_sum        () const;
-//	virtual const tools::Histogram<R>&  get_llrs0();
-//	virtual const tools::Histogram<R>&  get_llrs1();
 	virtual tools::Histogram<int> get_err_hist() const;
 
 	float get_fer   () const;

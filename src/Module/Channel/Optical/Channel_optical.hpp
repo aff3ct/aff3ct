@@ -1,7 +1,7 @@
 #ifndef CHANNEL_OPTICAL_HPP_
 #define CHANNEL_OPTICAL_HPP_
 
-#include "Tools/Algo/Noise_generator/Noise_generator.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"
 
 #include "../Channel.hpp"
 
@@ -19,11 +19,11 @@ template <typename R = float>
 class Channel_optical : public Channel<R>
 {
 protected:
-	tools::Noise_generator<R> *noise_generator;
+	tools::User_pdf_noise_generator<R> *noise_generator;
 
 public:
 	Channel_optical(const int N,
-	                tools::Noise_generator<R> *noise_generator,
+	                tools::User_pdf_noise_generator<R> *noise_generator,
 	                const tools::Noise<R>& noise = tools::ROP<R>(), const int n_frames = 1);
 
 	virtual ~Channel_optical();

@@ -1,6 +1,8 @@
 #ifndef NOISE_UTILS_HPP__
 #define NOISE_UTILS_HPP__
 
+#include "Tools/Math/utils.h"
+
 #include "Sigma.hpp"
 #include "Event_probability.hpp"
 #include "Received_optical_power.hpp"
@@ -13,7 +15,7 @@ namespace tools
 template <typename T, typename R>
 struct Noise_cast
 {
-	static Noise<T>* cast(const Noise<R>& n)
+	inline static Noise<T>* cast(const Noise<R>& n)
 	{
 		Noise<T> * cast_n = nullptr;
 
@@ -31,17 +33,24 @@ struct Noise_cast
 template <typename R>
 struct Noise_cast<R,R>
 {
-	static Noise<R>* cast(const Noise<R>& n)
+	inline static Noise<R>* cast(const Noise<R>& n)
 	{
 		return n.clone();
 	}
 };
 
 template <typename T, typename R>
-Noise<T>* cast(const Noise<R>& n)
+inline Noise<T>* cast(const Noise<R>& n)
 {
 	return Noise_cast<T,R>::cast(n);
 }
+
+
+template <typename R>
+constexpr R erased_symbol_val() { return tools::sat_val<R>(); }
+template <typename R>
+constexpr R erased_llr_val() { return (R)1e-5; }
+
 
 }
 }

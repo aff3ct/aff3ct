@@ -253,6 +253,7 @@ set_noise(const tools::Noise<R>& noise)
 		delete this->n;
 
 	this->n = noise.clone();
+	this->check_noise();
 }
 
 template <typename B, typename R, typename Q>
@@ -626,6 +627,18 @@ void Modem<B,R,Q>::
 set_demodulator(const bool demodulator)
 {
 	this->enable_demodulator = demodulator;
+}
+
+template <typename B, typename R, typename Q>
+void Modem<B,R,Q>::
+check_noise()
+{
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "No noise has been set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 }

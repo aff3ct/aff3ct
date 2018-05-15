@@ -242,12 +242,11 @@ void BFER_std_threads<B,R,Q>
 		mnt[mnt::sck::check_errors::V](crc[crc::sck::extract ::V_K2]);
 	}
 
-	if (this->params_BFER_std.mutinfo)
+	if (this->params_BFER_std.mnt->mutinfo)
 	{
-		mnt[mnt::sck::get_mutual_info::X](enc[enc::sck::encode ::X_N ]);
-		mnt[mnt::sck::get_mutual_info::Y](qnt[qnt::sck::process::Y_N2]);
+		mnt[mnt::sck::get_mutual_info::X](enc[enc::sck::encode    ::X_N ]);
+		mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate::Y_N2]);
 	}
-
 }
 
 template <typename B, typename R, typename Q>
@@ -358,7 +357,7 @@ void BFER_std_threads<B,R,Q>
 
 		monitor[mnt::tsk::check_errors].exec();
 
-		if (this->params_BFER_std.mutinfo)
+		if (this->params_BFER_std.mnt->mutinfo)
 			monitor[mnt::tsk::get_mutual_info].exec();
 
 	}
