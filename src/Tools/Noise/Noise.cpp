@@ -58,14 +58,14 @@ inline std::string aff3ct::tools::type2str(Noise_type t)
 template <typename R>
 Noise<R>::
 Noise()
-		: _n((R)0,false)
+: _n((R)0,false)
 {
 }
 
 template <typename R>
 Noise<R>::
 Noise(R noise)
-		: _n((R)0,false)
+: _n((R)0,false)
 {
 	set_noise(noise);
 }
