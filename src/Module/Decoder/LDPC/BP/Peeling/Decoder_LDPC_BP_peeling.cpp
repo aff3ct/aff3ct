@@ -34,21 +34,7 @@ bool Decoder_LDPC_BP_peeling<B,R>
 	auto& VN = this->var_nodes;
 
 	std::fill(CN.begin(), CN.end(), (B)0);
-//
-//	unsigned display_max = 32;
-//
-//	std::cout << "(L) var_nodes : " << std::endl;
-//	for (unsigned i = 0; i < VN.size() && i < display_max; i++)
-//		std::cout << VN[i] << " ";
-//	std::cout << std::endl;
-//	std::cout << "(L) check_nodes : " << std::endl;
-//	for (unsigned i = 0; i < CN.size() && i < display_max; i++)
-//		std::cout << CN[i] << " ";
-//	std::cout << std::endl;
-
-	//	 std::cout << "(L) links : " << std::endl;
-	//	 links.print(true);
-
+	
 	// first forward known values
 	for (unsigned i = 0; i < links.get_n_rows(); i++)
 	{
@@ -65,18 +51,6 @@ bool Decoder_LDPC_BP_peeling<B,R>
 			}
 		}
 	}
-
-//	 std::cout << "(I) var_nodes : " << std::endl;
-//	 for (unsigned i = 0; i < VN.size() && i < display_max; i++)
-//	    std::cout << VN[i] << " ";
-//	 std::cout << std::endl;
-//	 std::cout << "(I) check_nodes : " << std::endl;
-//	 for (unsigned i = 0; i < CN.size() && i < display_max; i++)
-//	    std::cout << CN[i] << " ";
-//	 std::cout << std::endl;
-
-	//	 std::cout << "(I) links : " << std::endl;
-	//	 links.print(true);
 
 	bool all_check_nodes_done = false;
 
@@ -113,21 +87,6 @@ bool Decoder_LDPC_BP_peeling<B,R>
 			else
 				all_check_nodes_done &= vn_list.size() == 0;
 		}
-
-//		 std::cout << "(" << ite << ") var_nodes : " << std::endl;
-//		for (unsigned i = 0; i < VN.size() && i < display_max; i++)
-//		{
-//			std::cout << VN[i] << " ";
-//		}
-//		std::cout << std::endl;
-//		std::cout << "(" << ite << ") check_nodes : " << std::endl;
-//		for (unsigned i = 0; i < CN.size() && i < display_max; i++)
-//		{
-//			std::cout << CN[i] << " ";
-//		}
-//		std::cout << std::endl;
-//		std::cout << "all_check_nodes_done : " << all_check_nodes_done << std::endl;
-//		std::cout << "no_modification      : " << no_modification << std::endl;
 
 		if (this->enable_syndrome && (all_check_nodes_done || no_modification))
 		{
