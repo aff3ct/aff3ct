@@ -112,8 +112,8 @@ void AList
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	N = stoi(values[0]);
-	H = stoi(values[1]);
+	N = std::stoi(values[0]);
+	H = std::stoi(values[1]);
 }
 
 std::vector<unsigned> AList

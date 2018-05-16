@@ -96,6 +96,9 @@ inline T next_power_of_2(T x)
 template <typename T>
 T greatest_common_divisor(T a, T b)
 {
+	if (b == (T)0)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "b is null!");
+
 	T r;
 
 	while ((r = a % b))
