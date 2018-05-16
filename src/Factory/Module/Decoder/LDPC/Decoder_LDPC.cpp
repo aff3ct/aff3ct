@@ -222,9 +222,9 @@ module::Decoder_SIHO<B,Q>* Decoder_LDPC::parameters
 		{
 			if (this->implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
-		else if (this->type == "BP_PEELING")
+		else if (this->type == "BP_PEELING" && encoder != nullptr)
 		{
-			if (this->implem == "STD") return new module::Decoder_LDPC_BP_peeling<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->implem == "STD") return new module::Decoder_LDPC_BP_peeling<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, *encoder, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
 
 		return build_siso<B,Q>(H, info_bits_pos);
