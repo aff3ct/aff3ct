@@ -1,7 +1,7 @@
 #include "Decoder_LDPC_BP_peeling.hpp"
 
 #include "Tools/Perf/common/hard_decide.h"
-#include "Tools/Noise/Erased_value.hpp"
+#include "Tools/Noise/noise_utils.h"
 #include "Tools/Math/utils.h"
 
 using namespace aff3ct;
@@ -29,8 +29,8 @@ void Decoder_LDPC_BP_peeling<B,R>
 {
 	tools::hard_decide(Y_N, var_nodes[frame_id].data(), this->N);
 	for (auto i = 0; i < this->N; i++)
-		if (Y_N[i] <= tools::Erased_value<R>::llr && Y_N[i] >= -tools::Erased_value<R>::llr)
-			var_nodes[frame_id][i] = tools::Erased_value<B>::symbol;
+		if (Y_N[i] <= tools::erased_llr_val<R>() && Y_N[i] >= -tools::erased_llr_val<R>())
+			var_nodes[frame_id][i] = tools::erased_symbol_val<B>();
 }
 
 template <typename B, typename R>
@@ -57,7 +57,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 	for (unsigned i = 0; i < links.get_n_rows(); i++)
 	{
 		auto cur_state = this->var_nodes[frame_id][i];
-		if (cur_state != tools::Erased_value<B>::symbol)
+		if (cur_state != tools::erased_symbol_val<B>())
 		{
 			auto& cn_list = links.get_cols_from_row(i);
 			while (cn_list.size())
