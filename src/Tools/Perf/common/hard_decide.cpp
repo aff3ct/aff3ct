@@ -1,24 +1,34 @@
 #include <limits>
 
+#include "Tools/Noise/noise_utils.h"
 #include "hard_decide.h"
 
 template <typename B, typename Q>
 void aff3ct::tools::hard_decide_seq(const Q *in, B *out, const unsigned size)
 {
 	for (unsigned i = 0; i < size; i++)
-		out[i] = in[i] < 0;
+		if (in[i] <= tools::unknown_llr_val<Q>() && in[i] >= -tools::unknown_llr_val<Q>())
+			out[i] = tools::unknown_symbol_val<B>();
+		else
+			out[i] = in[i] < 0;
 }
 
 template <typename B, typename Q>
 void aff3ct::tools::hard_decide(const Q *in, B *out, const unsigned size)
 {
+	const mipp::Reg<Q> r_unk  =  tools::unknown_llr_val<Q>();
+	const mipp::Reg<Q> r_unkm = -tools::unknown_llr_val<Q>();
+	const mipp::Reg<B> r_unks = tools::unknown_symbol_val<B>();
+
 	const auto vec_loop_size = (size / (unsigned)mipp::nElReg<Q>()) * (unsigned)mipp::nElReg<Q>();
 	if (mipp::isAligned(in) && mipp::isAligned(out))
 	{
 		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
 		{
 			const auto q_in  = mipp::Reg<Q>(&in[i]);
-			const auto q_out = mipp::cast<Q,B>(q_in) >> (sizeof(B) * 8 - 1);
+			const auto m_unk = (q_in <= r_unk) & (q_in >= r_unkm);
+			auto q_out = mipp::cast<Q,B>(q_in) >> (sizeof(B) * 8 - 1);
+			q_out = mipp::blend(r_unks, q_out, m_unk);
 			q_out.store(&out[i]);
 		}
 	}
@@ -28,7 +38,9 @@ void aff3ct::tools::hard_decide(const Q *in, B *out, const unsigned size)
 		{
 			mipp::Reg<Q> q_in;
 			q_in.loadu(&in[i]);
-			const auto q_out = mipp::cast<Q,B>(q_in) >> (sizeof(B) * 8 - 1);
+			const auto m_unk = (q_in <= r_unk) & (q_in >= r_unkm);
+			auto q_out = mipp::cast<Q,B>(q_in) >> (sizeof(B) * 8 - 1);
+			q_out = mipp::blend(r_unks, q_out, m_unk);
 			q_out.storeu(&out[i]);
 		}
 	}

@@ -148,9 +148,6 @@ Codec_LDPC<B,Q>
 		}
 	}
 
-	if (dec_params.type == "BP_PEELING")
-		this->get_encoder()->set_memorizing(true);
-
 
 	try
 	{

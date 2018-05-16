@@ -124,9 +124,8 @@ template <typename B>
 inline mipp::Reg<B> popcnt(const mipp::Reg<B>& q_in1, const mipp::Reg<B>& q_in2)
 {
 	const mipp::Reg<B> zeros = (B)0, ones = (B)1;
-	const auto m_in1 = q_in1 != zeros;
-	const auto m_in2 = q_in2 != zeros;
-	return mipp::blend(ones, zeros, m_in1 ^ m_in2);
+	const auto m_in = q_in1 != q_in2;
+	return mipp::blend(ones, zeros, m_in);
 }
 
 template <typename B>
