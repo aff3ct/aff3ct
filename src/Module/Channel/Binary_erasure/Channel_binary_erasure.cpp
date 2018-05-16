@@ -30,24 +30,21 @@ void Channel_binary_erasure<R>
 	const auto event_probability = this->n->get_noise();
 	event_generator->generate(this->event_draw.data(), (unsigned)this->N, event_probability);
 
-	for (auto i = 0; i < this->N; i++)
-		Y_N[i] = event_draw[i] ? tools::erased_symbol_val<R>() : X_N[i];
-//
-//	const mipp::Reg<R> r_erased = tools::erased_symbol_val<R>();
-//	const mipp::Reg<R> r_zero   = (R)false;
-//
-//	const auto vec_loop_size = (this->N / mipp::nElReg<R>()) * mipp::nElReg<R>();
-//
-//	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
-//	{
-//		const auto r_in    = mipp::Reg<R>(X_N + i);
-//		const auto r_event = mipp::Reg<R>(&this->noise[i]);
-//		const auto r_out   = mipp::blend(r_in, r_erased, r_event == r_zero);
-//		r_out.store(Y_N + i);
-//	}
-//
-//	for (auto i = vec_loop_size; i < this->N; i++)
-//		Y_N[i] = this->noise[i] ? tools::erased_symbol_val<R>() : X_N[i];
+	const mipp::Reg<R> r_erased = tools::erased_symbol_val<R>();
+	const mipp::Reg<E> r_false  = (E)false;
+
+	const auto vec_loop_size = (this->N / mipp::nElReg<R>()) * mipp::nElReg<R>();
+
+	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
+	{
+		const mipp::Reg<R> r_in    = X_N + i;
+		const mipp::Reg<E> r_event = &this->event_draw[i];
+		const auto r_out   = mipp::blend(r_in, r_erased, r_event == r_false);
+		r_out.store(Y_N + i);
+	}
+
+	for (auto i = vec_loop_size; i < this->N; i++)
+		Y_N[i] = this->event_draw[i] ? tools::erased_symbol_val<R>() : X_N[i];
 }
 
 template<typename R>

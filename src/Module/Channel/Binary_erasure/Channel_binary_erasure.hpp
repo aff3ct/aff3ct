@@ -6,6 +6,7 @@
 
 #include <random>
 
+#include "Tools/types.h"
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 #include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
 
@@ -20,7 +21,9 @@ class Channel_binary_erasure : public Channel<R>
 {
 protected:
 	tools::Event_generator<R> *event_generator;
-	std::vector<tools::event_type> event_draw;
+
+	using E = typename tools::matching_types<R>::B;
+	std::vector<E> event_draw;
 
 public:
 	Channel_binary_erasure(const int N, tools::Event_generator<R> *event_generator = new tools::Event_generator_std<R>(),

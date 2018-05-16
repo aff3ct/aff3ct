@@ -131,40 +131,28 @@ class OutputStructure:
         return c_type
 
     def export_as_mat(self, path, frame_index=None):
-        myframes = []
+        local_frames = []
         sck_name = os.path.basename(path)
 
-        if not self.hex_format:
-            if "float" in self.data_format:
-                for frame in self.frames:
-                    myframe = []
-                    for value in frame:
-                        myframe.append(float(value))
-                    myframes.append(myframe)
-            else:
-                for frame in self.frames:
-                    myframe = []
-                    for value in frame:
-                        myframe.append(int(value))
-                    myframes.append(myframe)
-        else:
-            if "float" in self.data_format:
-                for frame in self.frames:
-                    myframe = []
-                    for value in frame:
-                        myframe.append(float.fromhex(value))
-                    myframes.append(myframe)
-            else:
-                for frame in self.frames:
-                    myframe = []
-                    for value in frame:
+        for frame in self.frames:
+            local_frame = []
+            for value in frame:
+                if not self.hex_format:
+                    if "float" in self.data_format:
+                        value = float(value)
+                    else:
+                        value = int(value)
+                else:
+                    if "float" in self.data_format:
+                        value = float.fromhex(value)
+                    else:
                         value = int(value, 16)
                         if value > 0x7FFFFFFF:
                             value -= 0x100000000
-                        myframe.append(value)
-                    myframes.append(myframe)
+                local_frame.append(value)
+            local_frames.append(local_frame)
 
-        mat4py.savemat(path + '.mat', dict({sck_name : myframes}));
+        mat4py.savemat(path + '.mat', dict({sck_name : local_frames}));
 
 
     def export_as_bin(self, path, frame_index=None):

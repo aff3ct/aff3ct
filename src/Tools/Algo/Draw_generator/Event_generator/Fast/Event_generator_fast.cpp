@@ -8,16 +8,16 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-template <typename R>
-Event_generator_fast<R>
+template <typename R, typename E>
+Event_generator_fast<R,E>
 ::Event_generator_fast(const int seed)
-: Event_generator<R>()
+: Event_generator<R,E>()
 {
 	this->set_seed(seed);
 }
 
-template <typename R>
-void Event_generator_fast<R>
+template <typename R, typename E>
+void Event_generator_fast<R,E>
 ::set_seed(const int seed)
 {
 	mt19937.seed(seed);
@@ -28,79 +28,72 @@ void Event_generator_fast<R>
 	mt19937_simd.seed(seeds.data());
 }
 
-template <typename R>
-mipp::Reg<R> Event_generator_fast<R>
-::get_random_simd()
-{
-	throw runtime_error(__FILE__, __LINE__, __func__, "The MT19937 random generator does not support this type.");
-}
-
-template <typename R>
-R Event_generator_fast<R>
-::get_random()
-{
-	throw runtime_error(__FILE__, __LINE__, __func__, "The MT19937 random generator does not support this type.");
-}
-
-namespace aff3ct
-{
-namespace tools
-{
-template <>
-mipp::Reg<float> Event_generator_fast<float>
-::get_random_simd()
-{
-	// return a vector of numbers between [0,1]
-	return mt19937_simd.randf_cc();
-}
-}
-}
-
-namespace aff3ct
-{
-namespace tools
-{
-template <>
-float Event_generator_fast<float>
-::get_random()
-{
-	// return a number between  [0,1]
-	return mt19937.randf_cc();
-}
-}
-}
-
-template <typename R>
-void Event_generator_fast<R>
-::generate(event_type *draw, const unsigned length, const R event_probability)
+template <typename R, typename E>
+void Event_generator_fast<R,E>
+::generate(E *draw, const unsigned length, const R event_probability)
 {
 	throw runtime_error(__FILE__, __LINE__, __func__, "The MT19937 random generator does not support this type.");
 }
 
 
+#include "Tools/types.h"
 namespace aff3ct
 {
 namespace tools
 {
 template <>
-void Event_generator_fast<float>
-::generate(int32_t *draw, const unsigned length, const float event_probability)
+void Event_generator_fast<R_32,B_32>
+::generate(B_32 *draw, const unsigned length, const R_32 event_probability)
 {
-	const mipp::Reg<float  > r_ep   = event_probability;
-	const mipp::Reg<int32_t> r_one  = true;
-	const mipp::Reg<int32_t> r_zero = false;
+	const mipp::Reg<R_32> r_ep   = event_probability;
+	const mipp::Reg<B_32> r_one  = (B_32)true;
+	const mipp::Reg<B_32> r_zero = (B_32)false;
 
-	const unsigned vec_loop_size = (length / mipp::N<float>()) * mipp::N<float>();
+	const unsigned vec_loop_size = (length / mipp::N<R_32>()) * mipp::N<R_32>();
 
-	for (unsigned i = 0; i < vec_loop_size; i += mipp::N<float>())
+	for (unsigned i = 0; i < vec_loop_size; i += mipp::N<R_32>())
 	{
-		const auto r_draw  = get_random_simd();
+		const auto r_draw  = mt19937_simd.randf_cc();
 		const auto r_out   = mipp::blend(r_one, r_zero, r_draw <= r_ep);
 		r_out.store(draw + i);
 	}
 
 	for (auto i = vec_loop_size; i < length; i++)
-		draw[i] = get_random() <= event_probability;
+		draw[i] = mt19937.randf_cc() <= event_probability;
+}
+
+}
+}
+
+namespace aff3ct
+{
+namespace tools
+{
+template <>
+void Event_generator_fast<R_64,B_64>
+::generate(B_64 *draw, const unsigned length, const R_64 event_probability)
+{
+	const mipp::Reg<R_64> r_ep   = event_probability;
+	const mipp::Reg<B_64> r_one  = (B_64)true;
+	const mipp::Reg<B_64> r_zero = (B_64)false;
+
+	const unsigned vec_loop_size = (length / (2*mipp::N<R_64>())) * (2*mipp::N<R_64>());
+
+	for (unsigned i = 0; i < vec_loop_size; i += 2*mipp::N<R_64>())
+	{
+		const auto r_draw  = mt19937_simd.randf_cc(); // on simple floats
+
+		const auto draw_low  = mipp::cvt<float,R_64>(r_draw.low ());
+		const auto draw_high = mipp::cvt<float,R_64>(r_draw.high());
+
+		const auto r_out_low  = mipp::blend(r_one, r_zero, draw_low  <= r_ep);
+		const auto r_out_high = mipp::blend(r_one, r_zero, draw_high <= r_ep);
+		r_out_low .store(draw + i);
+		r_out_high.store(draw + i + mipp::N<R_64>());
+	}
+
+	for (auto i = vec_loop_size; i < length; i++)
+		draw[i] = (R_64)mt19937.randf_cc() <= event_probability;
 }
 
 }
