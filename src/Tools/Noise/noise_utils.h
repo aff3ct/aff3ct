@@ -1,6 +1,7 @@
 #ifndef NOISE_UTILS_HPP__
 #define NOISE_UTILS_HPP__
 
+#include <mipp.h>
 #include "Tools/Math/utils.h"
 
 #include "Sigma.hpp"
@@ -51,6 +52,32 @@ constexpr R unknown_symbol_val() { return tools::sat_val<R>(); }
 template <typename R>
 constexpr R unknown_llr_val() { return (R)1e-5; }
 
+template <typename R>
+inline bool is_unknown_symbol(const R& v)
+{
+	return v == tools::unknown_symbol_val<R>();
+}
+
+template <typename R>
+inline mipp::Msk<mipp::N<R>()> is_unknown_symbol(const mipp::Reg<R>& q_in)
+{
+	const mipp::Reg<R> r_unks = tools::unknown_symbol_val<R>();
+	return q_in == tools::unknown_symbol_val<R>();
+}
+
+template <typename R>
+inline bool is_unknown_llr(const R& v)
+{
+	return (v <= tools::unknown_llr_val<R>() && v >= -tools::unknown_llr_val<R>());
+}
+
+template <typename R>
+inline mipp::Msk<mipp::N<R>()> is_unknown_llr(const mipp::Reg<R>& q_in)
+{
+	const mipp::Reg<R> r_unk  =  tools::unknown_llr_val<R>();
+	const mipp::Reg<R> r_unkm = -tools::unknown_llr_val<R>();
+	return (q_in <= r_unk) & (q_in >= r_unkm);
+}
 
 }
 }

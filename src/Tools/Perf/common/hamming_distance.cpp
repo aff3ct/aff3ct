@@ -1,6 +1,7 @@
 #include <limits>
 #include <cmath>
 
+#include "Tools/Noise/noise_utils.h"
 #include "hamming_distance.h"
 
 //*************************************************************************************** hamming_distance_seq(in1, in2)
@@ -11,7 +12,10 @@ inline size_t aff3ct::tools::hamming_distance_seq(const B *in1, const B *in2, co
 	size_t ham_dist = 0;
 
 	for (unsigned i = 0; i < size; i++)
-		ham_dist += (!in1[i] != !in2[i])? (size_t)1 : (size_t)0;
+		ham_dist += (in1[i] != in2[i])
+		            || aff3ct::tools::is_unknown_symbol<B>(in1[i])
+		            || aff3ct::tools::is_unknown_symbol<B>(in2[i])
+		            ? (size_t)1 : (size_t)0;
 
 	return ham_dist;
 }
@@ -22,7 +26,10 @@ inline size_t hamming_distance_seq_real(const B *in1, const B *in2, const unsign
 	size_t ham_dist = 0;
 
 	for (unsigned i = 0; i < size; i++)
-		ham_dist += std::signbit(in1[i]) ^ std::signbit(in2[i]) ? (size_t)1 : (size_t)0;
+		ham_dist += std::signbit(in1[i]) ^ std::signbit(in2[i])
+		            || aff3ct::tools::is_unknown_symbol<B>(in1[i])
+		            || aff3ct::tools::is_unknown_symbol<B>(in2[i])
+		            ? (size_t)1 : (size_t)0;
 
 	return ham_dist;
 }
@@ -57,7 +64,7 @@ inline size_t aff3ct::tools::hamming_distance_seq(const B *in, const unsigned si
 	size_t ham_dist = 0;
 
 	for (unsigned i = 0; i < size; i++)
-		ham_dist += !in[i] ? (size_t)0 : (size_t)1;
+		ham_dist += in[i] || aff3ct::tools::is_unknown_symbol<B>(in[i]) ? (size_t)1 : (size_t)0;
 
 	return ham_dist;
 }
@@ -69,7 +76,7 @@ inline size_t hamming_distance_seq_real(const B *in, const unsigned size)
 	size_t ham_dist = 0;
 
 	for (unsigned i = 0; i < size; i++)
-		ham_dist += std::signbit(in[i]) ? (size_t)1 : (size_t)0;
+		ham_dist += std::signbit(in[i]) || aff3ct::tools::is_unknown_symbol<B>(in[i]) ? (size_t)1 : (size_t)0;
 
 	return ham_dist;
 }
@@ -123,8 +130,9 @@ size_t aff3ct::tools::hamming_distance(const B *in, const unsigned size)
 template <typename B>
 inline mipp::Reg<B> popcnt(const mipp::Reg<B>& q_in1, const mipp::Reg<B>& q_in2)
 {
-	const mipp::Reg<B> zeros = (B)0, ones = (B)1;
-	const auto m_in = q_in1 != q_in2;
+	const mipp::Reg<B> zeros  = (B)0, ones = (B)1;
+	auto m_in = q_in1 != q_in2;
+	m_in |= aff3ct::tools::is_unknown_symbol<B>(q_in1) | aff3ct::tools::is_unknown_symbol<B>(q_in2);
 	return mipp::blend(ones, zeros, m_in);
 }
 
@@ -132,7 +140,7 @@ template <typename B>
 inline mipp::Reg<B> popcnt(const mipp::Reg<B>& q_in)
 {
 	const mipp::Reg<B> zeros = (B)0, ones = (B)1;
-	const auto m_in = q_in != zeros;
+	const auto m_in = (q_in != zeros) | aff3ct::tools::is_unknown_symbol<B>(q_in);
 	return mipp::blend(ones, zeros, m_in);
 }
 
@@ -140,7 +148,7 @@ template <typename B>
 inline mipp::Reg<B> popcnt_real(const mipp::Reg<B>& q_in)
 {
 	const mipp::Reg<B> zeros = (B)0, ones = (B)1;
-	const auto m_in = q_in < zeros;
+	const auto m_in = (q_in < zeros) | aff3ct::tools::is_unknown_symbol<B>(q_in);
 	return mipp::blend(ones, zeros, m_in);
 }
 

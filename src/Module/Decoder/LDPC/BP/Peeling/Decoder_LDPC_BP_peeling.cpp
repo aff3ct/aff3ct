@@ -53,7 +53,7 @@ bool Decoder_LDPC_BP_peeling<B,R>
 	for (unsigned i = 0; i < links.get_n_rows(); i++)
 	{
 		auto cur_state = VN[i];
-		if (cur_state != tools::unknown_symbol_val<B>())
+		if (!tools::is_unknown_symbol<B>(cur_state))
 		{
 			auto& cn_list = links.get_cols_from_row(i);
 			while (cn_list.size())

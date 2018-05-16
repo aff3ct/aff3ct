@@ -7,17 +7,12 @@ template <typename B, typename Q>
 void aff3ct::tools::hard_decide_seq(const Q *in, B *out, const unsigned size)
 {
 	for (unsigned i = 0; i < size; i++)
-		if (in[i] <= tools::unknown_llr_val<Q>() && in[i] >= -tools::unknown_llr_val<Q>())
-			out[i] = tools::unknown_symbol_val<B>();
-		else
-			out[i] = in[i] < 0;
+		out[i] = tools::is_unknown_llr<Q>(in[i]) ? tools::unknown_symbol_val<B>() : (in[i] < 0);
 }
 
 template <typename B, typename Q>
 void aff3ct::tools::hard_decide(const Q *in, B *out, const unsigned size)
 {
-	const mipp::Reg<Q> r_unk  =  tools::unknown_llr_val<Q>();
-	const mipp::Reg<Q> r_unkm = -tools::unknown_llr_val<Q>();
 	const mipp::Reg<B> r_unks = tools::unknown_symbol_val<B>();
 
 	const auto vec_loop_size = (size / (unsigned)mipp::nElReg<Q>()) * (unsigned)mipp::nElReg<Q>();
@@ -26,7 +21,7 @@ void aff3ct::tools::hard_decide(const Q *in, B *out, const unsigned size)
 		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
 		{
 			const auto q_in  = mipp::Reg<Q>(&in[i]);
-			const auto m_unk = (q_in <= r_unk) & (q_in >= r_unkm);
+			const auto m_unk = tools::is_unknown_llr<Q>(q_in);
 			auto q_out = mipp::cast<Q,B>(q_in) >> (sizeof(B) * 8 - 1);
 			q_out = mipp::blend(r_unks, q_out, m_unk);
 			q_out.store(&out[i]);
@@ -38,7 +33,7 @@ void aff3ct::tools::hard_decide(const Q *in, B *out, const unsigned size)
 		{
 			mipp::Reg<Q> q_in;
 			q_in.loadu(&in[i]);
-			const auto m_unk = (q_in <= r_unk) & (q_in >= r_unkm);
+			const auto m_unk = tools::is_unknown_llr<Q>(q_in);
 			auto q_out = mipp::cast<Q,B>(q_in) >> (sizeof(B) * 8 - 1);
 			q_out = mipp::blend(r_unks, q_out, m_unk);
 			q_out.storeu(&out[i]);

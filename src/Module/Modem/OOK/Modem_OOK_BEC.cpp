@@ -32,7 +32,7 @@ void Modem_OOK_BEC<B,R,Q>
 {
 	auto sign = tools::unknown_llr_val<Q>();
 	for (auto i = 0; i < this->N_fil; i++)
-		if (Y_N1[i] == tools::unknown_symbol_val<Q>())
+		if (tools::is_unknown_symbol<Q>(Y_N1[i]))
 		{
 			Y_N2[i] = sign;
 			sign *= (Q)-1;
