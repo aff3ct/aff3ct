@@ -81,9 +81,9 @@ void Encoder_LDPC::parameters
 
 	else if (!this->H_path.empty())
 	{
-		int H;
-		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, H, this->N_cw);
-		this->K = this->N_cw - H; // considered as regular so H = N - K
+		int M;
+		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, M, this->N_cw);
+		this->K = this->N_cw - M; // considered as regular so M = N - K
 	}
 
 	Encoder::parameters::store(vals);

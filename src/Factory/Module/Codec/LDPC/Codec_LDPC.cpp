@@ -1,4 +1,7 @@
+#include <sstream>
 #include "Codec_LDPC.hpp"
+
+#include "Tools/Exception/exception.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -101,7 +104,17 @@ void Codec_LDPC::parameters
 	if (this->enc->K != 0)
 		this->dec->K = this->enc->K; // then the encoder knows the K
 	else
-		this->enc->K = this->dec->K; // then the encoder knows the K
+		this->enc->K = this->dec->K; // then the decoder knows the K
+
+	if (this->dec->K == 0 || this->dec->N_cw == 0 || this->enc->K == 0 || this->enc->N_cw == 0)
+	{
+		std::stringstream message;
+		message << "Error while initializing decoder and encoder dimensions ('this->dec->K' = " << this->dec->K
+		        << ", 'this->dec->N_cw' = " << this->dec->N_cw << ", 'this->enc->K' = " << this->enc->K
+		        << ", 'this->enc->N_cw' = " << this->enc->N_cw << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 
 	this->dec->n_frames = this->enc->n_frames;
 
@@ -139,8 +152,6 @@ module::Codec_LDPC<B,Q>* Codec_LDPC::parameters
 ::build(module::CRC<B>* crc) const
 {
 	return new module::Codec_LDPC<B,Q>(*enc, *dec, pct);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
