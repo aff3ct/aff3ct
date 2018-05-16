@@ -47,9 +47,9 @@ inline Noise<T>* cast(const Noise<R>& n)
 
 
 template <typename R>
-constexpr R erased_symbol_val() { return tools::sat_val<R>(); }
+constexpr R unknown_symbol_val() { return tools::sat_val<R>(); }
 template <typename R>
-constexpr R erased_llr_val() { return (R)1e-5; }
+constexpr R unknown_llr_val() { return (R)1e-5; }
 
 
 }

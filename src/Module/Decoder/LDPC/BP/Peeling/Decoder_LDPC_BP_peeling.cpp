@@ -32,8 +32,8 @@ void Decoder_LDPC_BP_peeling<B,R>
 {
 	tools::hard_decide(Y_N, var_nodes[frame_id].data(), this->N);
 	for (auto i = 0; i < this->N; i++)
-		if (Y_N[i] <= tools::erased_llr_val<R>() && Y_N[i] >= -tools::erased_llr_val<R>())
-			var_nodes[frame_id][i] = tools::erased_symbol_val<B>();
+		if (Y_N[i] <= tools::unknown_llr_val<R>() && Y_N[i] >= -tools::unknown_llr_val<R>())
+			var_nodes[frame_id][i] = tools::unknown_symbol_val<B>();
 }
 
 template <typename B, typename R>
@@ -65,7 +65,7 @@ bool Decoder_LDPC_BP_peeling<B,R>
 	for (unsigned i = 0; i < links.get_n_rows(); i++)
 	{
 		auto cur_state = VN[i];
-		if (cur_state != tools::erased_symbol_val<B>())
+		if (cur_state != tools::unknown_symbol_val<B>())
 		{
 			auto& cn_list = links.get_cols_from_row(i);
 			while (cn_list.size())
@@ -250,7 +250,7 @@ void Decoder_LDPC_BP_peeling<B,R>::_store(B *V_K, bool syndrome, const int frame
 		for (auto i = 0; i < this->K; i++)
 		{
 			auto ibp = this->info_bits_pos[i];
-			V_K[i] = VN[ibp] == tools::erased_symbol_val<B>() ? !X_N[ibp] : VN[ibp];
+			V_K[i] = VN[ibp] == tools::unknown_symbol_val<B>() ? !X_N[ibp] : VN[ibp];
 		}
 	}
 }
@@ -266,7 +266,7 @@ void Decoder_LDPC_BP_peeling<B,R>::_store_cw(B *V_N, bool syndrome, const int fr
 	{
 		auto& X_N = encoder.get_X_N(frame_id);
 		for (auto i = 0; i < this->N; i++)
-			V_N[i] = VN[i] == tools::erased_symbol_val<B>() ? !X_N[i] : VN[i];
+			V_N[i] = VN[i] == tools::unknown_symbol_val<B>() ? !X_N[i] : VN[i];
 	}
 }
 
