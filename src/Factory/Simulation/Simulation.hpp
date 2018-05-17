@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "Factory/Launcher/Launcher.hpp"
+#include "Factory/Tools/Noise/Noise.hpp"
 
 namespace aff3ct
 {
@@ -24,7 +25,7 @@ struct Simulation : Launcher
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required arg
-		std::vector<float> noise_range;
+		Noise::parameters *noise;
 
 		// optional parameters
 #ifdef ENABLE_MPI
@@ -33,7 +34,6 @@ struct Simulation : Launcher
 		int                       mpi_size        = 1;
 #endif
 		std::chrono::seconds      stop_time       = std::chrono::seconds(0);
-		std::string               noise_type      = "EBN0";
 		std::string               pyber           = "";
 		unsigned                  max_frame       = 0;
 		bool                      debug           = false;
@@ -45,8 +45,6 @@ struct Simulation : Launcher
 		int                       global_seed     = 0;
 		int                       debug_limit     = 0;
 		int                       debug_precision = 2;
-
-		std::string               pdf_path        = "";
 
 
 		// ---------------------------------------------------------------------------------------------------- METHODS

@@ -35,6 +35,14 @@ EXIT<B,R>
 	                                   "on each MPI processes." << std::endl;
 #endif
 
+	if (params_EXIT.noise->type != "EBN0" && params_EXIT.noise->type != "ESN0")
+	{
+		std::stringstream message;
+		message << "Wrong noise type, must be gaussian noise EBN0 or ESN0 ('params_EXIT.noise->typ' = "
+		        << params_EXIT.noise->type << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (params_EXIT.n_threads > 1)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "EXIT simu does not support the multi-threading.");
 
@@ -106,10 +114,12 @@ void EXIT<B,R>
 	this->build_communication_chain();
 	this->sockets_binding();
 
+
+
 	// for each channel NOISE to be simulated
-	for (unsigned noise_idx = 0; noise_idx < params_EXIT.noise_range.size(); noise_idx ++)
+	for (unsigned noise_idx = 0; noise_idx < params_EXIT.noise->range.size(); noise_idx ++)
 	{
-		float ebn0 = params_EXIT.noise_range[noise_idx];
+		float ebn0 = params_EXIT.noise->range[noise_idx];
 
 		// For EXIT simulation, NOISE is considered as Es/N0
 		const auto bit_rate = 1.f;

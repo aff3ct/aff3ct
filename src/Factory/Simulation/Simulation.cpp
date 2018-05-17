@@ -3,8 +3,6 @@
 #include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/Distribution/Distributions.hpp"
-#include "Tools/general_utils.h"
 
 #include "Simulation.hpp"
 
@@ -16,19 +14,25 @@ const std::string aff3ct::factory::Simulation_prefix = "sim";
 
 Simulation::parameters
 ::parameters(const std::string &name, const std::string &prefix)
-: Launcher::parameters(name, Simulation_name, prefix)
+: Launcher::parameters(name, Simulation_name, prefix),
+  noise(new factory::Noise::parameters(prefix))
 {
-}
-
-Simulation::parameters* Simulation::parameters
-::clone() const
-{
-	return new Simulation::parameters(*this);
 }
 
 Simulation::parameters
 ::~parameters()
 {
+	if (noise != nullptr) { delete noise; noise = nullptr; }
+}
+
+Simulation::parameters* Simulation::parameters
+::clone() const
+{
+	auto clone = new Simulation::parameters(*this);
+
+	if (noise != nullptr) {clone->noise = noise->clone(); }
+
+	return clone;
 }
 
 void Simulation::parameters
@@ -36,50 +40,9 @@ void Simulation::parameters
 {
 	Launcher::parameters::get_description(args);
 
+	noise->get_description(args);
+
 	auto p = this->get_prefix();
-
-	args.add(
-		{p+"-noise-range", "R"},
-		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
-		"noise energy range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
-		tools::arg_rank::REQ);
-
-	args.add(
-		{p+"-noise-min", "m"},
-		tools::Real(),
-		"minimal noise energy to simulate.",
-		tools::arg_rank::REQ);
-
-	args.add(
-		{p+"-noise-max", "M"},
-		tools::Real(),
-		"maximal noise energy to simulate.",
-		tools::arg_rank::REQ);
-
-	args.add(
-		{p+"-noise-step", "s"},
-		tools::Real(tools::Positive(), tools::Non_zero()),
-		"noise energy step between each simulation iteration.");
-
-	args.add(
-		{p+"-pdf-path"},
-		tools::File(tools::openmode::read),
-		"A file that contains PDF for different SNR. Set the SNR range from the given ones. "
-		"Overwritten by -R or limited by -m and -M with a minimum step of -s");
-
-
-	args.add_link({p+"-noise-range", "R"}, {p+"-noise-min", "m"});
-	args.add_link({p+"-noise-range", "R"}, {p+"-noise-max", "M"});
-	args.add_link({p+"-pdf-path"        }, {p+"-noise-range", "R"});
-	args.add_link({p+"-pdf-path"        }, {p+"-noise-min",   "m"});
-	args.add_link({p+"-pdf-path"        }, {p+"-noise-max",   "M"});
-
-
-	args.add(
-			{p+"-noise-type", "E"},
-			tools::Text(tools::Including_set("ESN0", "EBN0", "ROP", "EP")),
-			"select the type of NOISE: SNR per Symbol / SNR per information Bit"
-			" / Received Optical Power / Erasure Probability.");
 
 	args.add(
 		{p+"-pyber"},
@@ -155,67 +118,10 @@ void Simulation::parameters
 
 	Launcher::parameters::store(vals);
 
+	noise->store(vals);
+
 	auto p = this->get_prefix();
 
-	if (vals.exist({p+"-pdf-path"}))
-	{
-		this->pdf_path = vals.at({p+"-pdf-path"});
-		this->noise_range = tools::Distributions<>(this->pdf_path).get_noise_range();
-
-		if(vals.exist({p+"-noise-range", "R"}))
-		{
-			this->noise_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-noise-range", "R"}), 0.1f);
-		}
-		else
-		{
-			if (vals.exist({p+"-noise-min",  "m"}))
-			{
-				auto it = std::lower_bound(this->noise_range.begin(), this->noise_range.end(), vals.to_float({p+"-noise-min",  "m"}));
-				this->noise_range.erase(this->noise_range.begin(), it);
-			}
-
-			if (vals.exist({p+"-noise-max",  "M"}))
-			{
-				auto it = std::upper_bound(this->noise_range.begin(), this->noise_range.end(), vals.to_float({p+"-noise-max",  "M"}));
-				this->noise_range.erase(it, this->noise_range.end());
-			}
-
-			if (vals.exist({p+"-noise-step", "s"}))
-			{
-				float step = vals.to_float({p+"-noise-step", "s"});
-
-				auto it = this->noise_range.begin();
-				float start_val = *it++;
-
-				while(it != this->noise_range.end())
-				{
-					if ((start_val + step) > *it) // then original step is too short
-						it = this->noise_range.erase(it);
-					else
-						start_val = *it++; // step large enough, take this new val as new comparative point
-				}
-			}
-		}
-	}
-	else
-	{
-		if(vals.exist({p+"-noise-range", "R"}))
-		{
-			this->noise_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-noise-range", "R"}), 0.1f);
-		}
-		else if(vals.exist({p+"-noise-min",  "m"}) && vals.exist({p+"-noise-max",  "M"}))
-		{
-			float noise_min  = vals.to_float({p+"-noise-min",  "m"});
-			float noise_max  = vals.to_float({p+"-noise-max",  "M"});
-			float noise_step = 0.1f;
-
-			if(vals.exist({p+"-noise-step", "s"})) noise_step = vals.to_float({p+"-noise-step", "s"});
-
-			this->noise_range = tools::generate_range({{noise_min, noise_max}}, noise_step);
-		}
-	}
-
-	if(vals.exist({p+"-noise-type",  "E"})) this->noise_type  =         vals.at      ({p+"-noise-type", "E"});
 	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"    });
 	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int  ({p+"-stop-time"}));
 	if(vals.exist({p+"-max-frame"       })) this->max_frame   =         vals.to_int  ({p+"-max-frame"});
@@ -281,15 +187,9 @@ void Simulation::parameters
 {
 	Launcher::parameters::get_headers(headers);
 
-	auto p = this->get_prefix();
+	noise->get_headers(headers, full);
 
-	if (this->noise_range.size())
-	{
-		std::stringstream noise_range_str;
-		noise_range_str << this->noise_range.front() << " -> " << this->noise_range.back() << " dB";
-		headers[p].push_back(std::make_pair("Noise range", noise_range_str.str()));
-	}
-	headers[p].push_back(std::make_pair("Noise type (E)", this->noise_type));
+	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Seed", std::to_string(this->global_seed)));
 	headers[p].push_back(std::make_pair("Statistics", this->statistics ? "on" : "off"));

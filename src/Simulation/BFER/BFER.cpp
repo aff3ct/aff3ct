@@ -79,8 +79,8 @@ BFER<B,R,Q>
 	this->monitor_red = new module::Monitor_BFER_reduction<B,R>(this->monitor);
 #endif
 
-	if (!params_BFER.pdf_path.empty())
-		distributions = new tools::Distributions<R>(params_BFER.pdf_path);
+	if (!params_BFER.noise->pdf_path.empty())
+		distributions = new tools::Distributions<R>(params_BFER.noise->pdf_path);
 }
 
 template <typename B, typename R, typename Q>
@@ -136,54 +136,29 @@ void BFER<B,R,Q>
 		}
 	}
 
-	// for each NOISE to be simulated
-	for (unsigned noise_idx = 0; noise_idx < params_BFER.noise_range.size(); noise_idx ++)
+	int noise_begin = 0;
+	int noise_end   = params_BFER.noise->range.size();
+	int noise_step  = 1;
+	if (params_BFER.noise->type == "EP")
 	{
-		auto n = params_BFER.noise_range[noise_idx];
+		noise_begin = params_BFER.noise->range.size()-1;
+		noise_end   = -1;
+		noise_step  = -1;
+	}
 
+	// for each NOISE to be simulated
+	for (auto noise_idx = noise_begin; noise_idx != noise_end; noise_idx += noise_step)
+	{
 		if (this->noise != nullptr) delete noise;
 
-		if (params_BFER.noise_type == "EBN0" || params_BFER.noise_type == "ESN0")
-		{
-			float esn0, ebn0;
-			if (params_BFER.noise_type == "EBN0")
-			{
-				ebn0 = n;
-				esn0 = tools::ebn0_to_esn0(ebn0, bit_rate, params_BFER.mdm->bps);
-			}
-			else // if (params_BFER.sim->noise_type == "ESN0")
-			{
-				esn0 = n;
-				ebn0 = tools::esn0_to_ebn0(esn0, bit_rate, params_BFER.mdm->bps);
-			}
-
-			auto sigma = tools::esn0_to_sigma(esn0, params_BFER.mdm->upf);
-
-			this->noise = new tools::Sigma<R>(sigma, ebn0, esn0);
-		}
-		else if (params_BFER.noise_type == "ROP")
-		{
-			this->noise = new tools::Received_optical_power<R>(n);
-		}
-		else if (params_BFER.noise_type == "EP")
-		{
-		    n = params_BFER.noise_range[params_BFER.noise_range.size() - noise_idx -1];
-
-		    this->noise = new tools::Event_probability<R>(n);
-		}
-		else
-		{
-			std::stringstream message;
-			message << "Unknown noise type ('noise_type' = " << params_BFER.noise_type << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
+		this->noise = params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
+		                                                   params_BFER.mdm->bps, params_BFER.mdm->upf);
 
 		this->terminal->set_noise(*this->noise);
 
 		// manage noise distributions to be sure it exists
 		if (this->distributions != nullptr)
 			this->distributions->read_distribution(this->noise->get_noise());
-
 
 
 		if (this->params_BFER.err_track_revert)
@@ -228,10 +203,10 @@ void BFER<B,R,Q>
 
 		if (params_BFER.display_legend)
 #ifdef ENABLE_MPI
-			if (((!params_BFER.ter->disabled && noise_idx == 0 && !params_BFER.debug) ||
+			if (((!params_BFER.ter->disabled && noise_idx == noise_begin && !params_BFER.debug) ||
 		 	   (params_BFER.statistics && !params_BFER.debug)) && params_BFER.mpi_rank == 0)
 #else
-			if (((!params_BFER.ter->disabled && noise_idx == 0 && !params_BFER.debug) ||
+			if (((!params_BFER.ter->disabled && noise_idx == noise_begin && !params_BFER.debug) ||
 			    (params_BFER.statistics && !params_BFER.debug)))
 #endif
 				terminal->legend(std::cout);
@@ -296,7 +271,7 @@ void BFER<B,R,Q>
 				switch (this->noise->get_type())
 				{
 					case tools::Noise_type::SIGMA:
-						if (params_BFER.noise_type == "EBN0")
+						if (params_BFER.noise->type == "EBN0")
 							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise)->get_ebn0());
 						else //(params_BFER.noise_type == "ESN0")
 							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise)->get_esn0());

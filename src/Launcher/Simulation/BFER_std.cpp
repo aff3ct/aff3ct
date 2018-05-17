@@ -118,9 +118,9 @@ void BFER_std<B,R,Q>
 	if (!this->arg_vals.exist({psim+"-noise-type", "E"}))
 	{
 		if (params.chn->type == "OPTICAL")
-			params.noise_type = "ROP";
+			params.noise->type = "ROP";
 		else if (params.chn->type == "BEC" || params.chn->type == "BSC")
-			params.noise_type = "EP";
+			params.noise->type = "EP";
 		// else let the default value EBN0 or ESNO
 	}
 
