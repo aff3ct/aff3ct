@@ -119,7 +119,6 @@
 #include <Module/Channel/Channel.hpp>
 #include <Module/Channel/NO/Channel_NO.hpp>
 #include <Module/Channel/Optical/Channel_optical.hpp>
-#include <Module/Channel/PDF/Channel_pdf.hpp>
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp>
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp>
 #include <Module/Channel/User/Channel_user.hpp>
@@ -173,6 +172,7 @@
 #include <Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_ONMS_inter.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/SPA/Decoder_LDPC_BP_layered_sum_product.hpp>
+#include <Module/Decoder/LDPC/BP/Peeling/Decoder_LDPC_BP_peeling.hpp>
 #include <Module/Decoder/NO/Decoder_NO.hpp>
 #include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_fast_CA_sys.hpp>
 #include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp>
@@ -229,6 +229,7 @@
 #include <Module/Encoder/LDPC/Encoder_LDPC.hpp>
 #include <Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp>
 #include <Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp>
+#include <Module/Encoder/LDPC/From_SeIRA/Encoder_LDPC_from_SeIRA.hpp>
 #include <Module/Encoder/NO/Encoder_NO.hpp>
 #include <Module/Encoder/Polar/Encoder_polar.hpp>
 #include <Module/Encoder/Polar/Encoder_polar_sys.hpp>
