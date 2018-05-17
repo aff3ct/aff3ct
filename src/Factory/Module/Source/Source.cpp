@@ -48,8 +48,13 @@ void Source::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("RAND", "RAND_FAST", "AZCW", "USER")),
+		tools::Text(tools::Including_set("RAND", "AZCW", "USER")),
 		"method used to generate the codewords.");
+
+	args.add(
+		{p+"-implem"},
+		tools::Text(tools::Including_set("STD", "FAST")),
+		"select the implementation of the algorithm to generate the information bits.");
 
 	args.add(
 		{p+"-path"},
@@ -70,6 +75,7 @@ void Source::parameters
 	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int({p+"-info-bits", "K"});
 	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int({p+"-fra",       "F"});
 	if(vals.exist({p+"-type"          })) this->type     = vals.at    ({p+"-type"          });
+	if(vals.exist({p+"-implem"        })) this->implem   = vals.at    ({p+"-implem"        });
 	if(vals.exist({p+"-path"          })) this->path     = vals.at    ({p+"-path"          });
 	if(vals.exist({p+"-seed",      "S"})) this->seed     = vals.to_int({p+"-seed",      "S"});
 }
@@ -92,10 +98,10 @@ template <typename B>
 module::Source<B>* Source::parameters
 ::build() const
 {
-	     if (this->type == "RAND"     ) return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "RAND_FAST") return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "AZCW"     ) return new module::Source_AZCW       <B>(this->K,             this->n_frames);
-	else if (this->type == "USER"     ) return new module::Source_user       <B>(this->K, this->path, this->n_frames);
+	     if (this->type == "RAND" && this->implem == "STD" ) return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
+	else if (this->type == "RAND" && this->implem == "FAST") return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
+	else if (this->type == "AZCW" && this->implem == "STD" ) return new module::Source_AZCW       <B>(this->K,             this->n_frames);
+	else if (this->type == "USER" && this->implem == "STD" ) return new module::Source_user       <B>(this->K, this->path, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

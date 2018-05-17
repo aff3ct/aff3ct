@@ -23,7 +23,8 @@ struct Quantizer : public Factory
 		int         size       = 0;
 
 		// optional parameters
-		std::string type       = "STD";
+		std::string type       = "POW2";
+		std::string implem     = "STD";
 		float       range      = 0.f;
 		int         n_bits     = 8;
 		int         n_decimals = 3;
