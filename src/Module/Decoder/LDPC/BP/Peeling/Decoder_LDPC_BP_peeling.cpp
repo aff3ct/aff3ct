@@ -34,7 +34,7 @@ bool Decoder_LDPC_BP_peeling<B,R>
 	auto& VN = this->var_nodes;
 
 	std::fill(CN.begin(), CN.end(), (B)0);
-	
+
 	// first forward known values
 	for (unsigned i = 0; i < links.get_n_rows(); i++)
 	{
@@ -146,7 +146,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
-	tools::hard_decide(Y_N, var_nodes.data(), this->N);
+	tools::hard_decide_unk(Y_N, var_nodes.data(), this->N);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -167,7 +167,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
-	tools::hard_decide(Y_N, var_nodes.data(), this->N);
+	tools::hard_decide_unk(Y_N, var_nodes.data(), this->N);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE

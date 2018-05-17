@@ -36,8 +36,6 @@ Decoder_BCH_std<B, R>
 {
 }
 
-#include <assert.h>
-
 template <typename B, typename R>
 void Decoder_BCH_std<B, R>
 ::_decode(B *Y_N, const int frame_id)
