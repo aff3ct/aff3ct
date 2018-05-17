@@ -98,9 +98,10 @@ void BFER::parameters
 	auto p = this->get_prefix();
 
 	args.add(
-		{p+"-snr-type", "E"},
-		tools::Text(tools::Including_set("ES", "EB")),
-		"select the type of SNR: symbol energy or information bit energy.");
+		{p+"-noise-type", "E"},
+		tools::Text(tools::Including_set("ESN0", "EBN0", "ROP", "EP")),
+		"select the type of NOISE: SNR per Symbol / SNR per information Bit"
+		" / Received Optical Power / Erasure Probability.");
 
 	args.add(
 		{p+"-coset", "c"},
@@ -148,9 +149,9 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-snr-type",   "E"})) this->snr_type            = vals.at    ({p+"-snr-type", "E"});
-	if(vals.exist({p+"-err-trk-path"   })) this->err_track_path      = vals.at    ({p+"-err-trk-path" });
-	if(vals.exist({p+"-err-trk-thold"  })) this->err_track_threshold = vals.to_int({p+"-err-trk-thold"});
+	if(vals.exist({p+"-noise-type", "E"})) this->noise_type          = vals.at    ({p+"-noise-type", "E"});
+	if(vals.exist({p+"-err-trk-path"   })) this->err_track_path      = vals.at    ({p+"-err-trk-path"   });
+	if(vals.exist({p+"-err-trk-thold"  })) this->err_track_threshold = vals.to_int({p+"-err-trk-thold"  });
 	if(vals.exist({p+"-err-trk-rev"    })) this->err_track_revert    = true;
 	if(vals.exist({p+"-err-trk"        })) this->err_track_enable    = true;
 	if(vals.exist({p+"-coset",      "c"})) this->coset               = true;
@@ -170,7 +171,7 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("SNR type", this->snr_type));
+	headers[p].push_back(std::make_pair("NOISE type (E)", this->noise_type));
 	headers[p].push_back(std::make_pair("Coset approach (c)", this->coset ? "yes" : "no"));
 	headers[p].push_back(std::make_pair("Coded monitoring", this->coded_monitoring ? "yes" : "no"));
 
@@ -185,7 +186,7 @@ void BFER::parameters
 
 	if (this->err_track_enable || this->err_track_revert)
 	{
-		std::string path = this->err_track_path + std::string("_$snr.[src,enc,chn]");
+		std::string path = this->err_track_path + std::string("_$noise.[src,enc,chn]");
 		headers[p].push_back(std::make_pair("Bad frames base path", path));
 	}
 

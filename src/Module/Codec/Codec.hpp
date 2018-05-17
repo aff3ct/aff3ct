@@ -2,6 +2,7 @@
 #define CODEC_HPP_
 
 #include "Tools/Interleaver/Interleaver_core.hpp"
+#include "Tools/Noise/noise_utils.h"
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
@@ -51,7 +52,7 @@ protected :
 	const int N_cw;
 	const int N;
 	const int tail_length;
-	float sigma;
+	tools::Noise<float>* n;
 
 public:
 	Codec(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1);
@@ -64,9 +65,10 @@ public:
 
 	virtual Puncturer<B,Q>* get_puncturer();
 
-	virtual float get_sigma();
+	const tools::Noise<float>* current_noise() const;
 
-	virtual void set_sigma(const float sigma);
+	virtual void set_noise(const tools::Noise<float>& noise);
+	void set_noise(const tools::Noise<double>& noise);
 
 	template <class A = std::allocator<Q>>
 	void extract_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id = -1);

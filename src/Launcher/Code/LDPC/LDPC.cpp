@@ -2,6 +2,7 @@
 #include <mipp.h>
 
 #include "Launcher/Simulation/BFER_std.hpp"
+#include "Launcher/Simulation/BFER_ite.hpp"
 
 #include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
 

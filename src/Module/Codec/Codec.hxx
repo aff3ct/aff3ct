@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/common.h"
+#include "Tools/Perf/common/hard_decide.h"
 
 #include "Codec.hpp"
 
@@ -21,7 +21,8 @@ Codec(const int K, const int N_cw, const int N, const int tail_length, const int
   interleaver_llr (nullptr),
   encoder         (nullptr),
   puncturer       (nullptr),
-  K(K), N_cw(N_cw), N(N), tail_length(tail_length), sigma(-1.f)
+  K(K), N_cw(N_cw), N(N), tail_length(tail_length),
+  n(nullptr)
 {
 	const std::string name = "Codec";
 	this->set_name(name);
@@ -119,6 +120,7 @@ Codec<B,Q>::
 	if (interleaver_bit  != nullptr) { delete interleaver_bit;  interleaver_bit  = nullptr; }
 	if (interleaver_llr  != nullptr) { delete interleaver_llr;  interleaver_llr  = nullptr; }
 	if (interleaver_core != nullptr) { delete interleaver_core; interleaver_core = nullptr; }
+	if (n                != nullptr) { delete n;                n                = nullptr; }
 }
 
 template <typename B, typename Q>
@@ -164,24 +166,30 @@ get_puncturer()
 }
 
 template <typename B, typename Q>
-float Codec<B,Q>::
-get_sigma()
+const tools::Noise<float>* Codec<B,Q>::
+current_noise() const
 {
-	return this->sigma;
+	return this->n;
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-set_sigma(const float sigma)
+void Codec<B,Q>
+::set_noise(const tools::Noise<float>& noise)
 {
-	if (sigma <= 0.f)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	if (this->n != nullptr)
+		delete this->n;
 
-	this->sigma = sigma;
+	this->n = tools::cast<float>(noise);
+}
+
+template <typename B, typename Q>
+void Codec<B,Q>
+::set_noise(const tools::Noise<double>& noise)
+{
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = tools::cast<float>(noise);
 }
 
 template <typename B, typename Q>

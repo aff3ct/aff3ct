@@ -35,7 +35,6 @@ template <typename R> inline R      comp_equal(R      val1, R      val2) { retur
 template <>           inline float  comp_equal(float  val1, float  val2) { return std::abs(val1 - val2) <  (float)REAL_COMP_PRECISION;}
 template <>           inline double comp_equal(double val1, double val2) { return std::abs(val1 - val2) < (double)REAL_COMP_PRECISION;}
 
-
 // init value depending on the domain
 template <typename R>
 constexpr R init_LR () { return (R)1; }
@@ -94,35 +93,12 @@ inline T next_power_of_2(T x)
 	return n;
 }
 
-template <typename R, typename function_type>
-inline R integral(function_type func, const R min, const R max, const int number_steps)
-{
-	if (max < min)
-	{
-		std::stringstream message;
-		message << "'max' has to be equal or greater than 'min' ('max' = " << max << ", 'min' = " << min << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (number_steps <= 0)
-	{
-		std::stringstream message;
-		message << "'number_steps' has to be greater than 0 ('number_steps' = " << number_steps << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	R step = (max - min) / number_steps; // width of rectangle
-	R area = (R)0;
-
-	for (auto i = 0; i < number_steps; i++)
-		area += func(min + ((R)i + (R)0.5) * step) * step;
-
-	return area;
-}
-
 template <typename T>
 T greatest_common_divisor(T a, T b)
 {
+	if (b == (T)0)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "b is null!");
+
 	T r;
 
 	while ((r = a % b))

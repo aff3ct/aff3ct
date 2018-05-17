@@ -32,10 +32,10 @@ CRC_polynomial<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Please specify the CRC 'size'.");
 
 	if (!crc_name.empty() && CRC_polynomial<B>::get_size(crc_name) != this->size)
-		std::clog << rang::format::warning << "You specified \"" << this->size
+		std::clog << rang::tag::warning << "You specified \"" << this->size
 		                                   << " bits\" for your CRC size but the database advise you to use \""
 		                                   << std::get<1>(known_polynomials.at(crc_name))
-		                                   << " bits\", are you sure?" << rang::format::reset << std::endl;
+		                                   << " bits\", are you sure?" << std::endl;
 
 	polynomial.push_back(1);
 	for (auto i = 0; i < this->size; i++)

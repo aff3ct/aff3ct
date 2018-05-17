@@ -1,7 +1,10 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 
-#include "Module/Modem/OOK/Modem_OOK.hpp"
+#include "Module/Modem/OOK/Modem_OOK_BSC.hpp"
+#include "Module/Modem/OOK/Modem_OOK_BEC.hpp"
+#include "Module/Modem/OOK/Modem_OOK_AWGN.hpp"
+#include "Module/Modem/OOK/Modem_OOK_optical.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK_fast.hpp"
 #include "Module/Modem/PAM/Modem_PAM.hpp"
@@ -70,7 +73,7 @@ void Modem::parameters
 
 	args.add(
 		{p+"-const-path"},
-		tools::File(tools::openmode::read),
+		tools::File(tools::openmode::read_write),
 		"path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\".");
 
 	args.add(
@@ -112,7 +115,7 @@ void Modem::parameters
 		"select the type of the max operation to use in the demodulator.");
 
 	args.add(
-		{p+"-sigma"},
+		{p+"-noise"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
 		"noise variance value for the demodulator.");
 
@@ -199,7 +202,7 @@ void Modem::parameters
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(vals.exist({p+"-no-sig2"})) this->no_sig2 = true;
-	if(vals.exist({p+"-sigma"  })) this->sigma   = vals.to_float({p+"-sigma"});
+	if(vals.exist({p+"-noise"  })) this->noise   = vals.to_float({p+"-noise"});
 	if(vals.exist({p+"-ite"    })) this->n_ite   = vals.to_int  ({p+"-ite"  });
 	if(vals.exist({p+"-max"    })) this->max     = vals.at      ({p+"-max"  });
 	if(vals.exist({p+"-psi"    })) this->psi     = vals.at      ({p+"-psi"  });
@@ -239,8 +242,8 @@ void Modem::parameters
 	std::string demod_ite  = std::to_string(this->n_ite);
 	std::string demod_psi  = this->psi;
 
-	if (this->sigma != -1.f && full)
-		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->sigma)));
+	if (this->noise != -1.f && full)
+		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->noise)));
 	headers[p].push_back(std::make_pair("Sigma square", demod_sig2));
 	if (demod_max != "unused")
 		headers[p].push_back(std::make_pair("Max type", demod_max));
@@ -255,14 +258,13 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build() const
 {
-	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   this->sigma,                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   this->sigma,                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "OOK"      ) return new module::Modem_OOK      <B,R,Q    >(this->N,                   this->sigma,                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "USER"     ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, this->sigma, this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "CPM"      ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   this->sigma, this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
+	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "USER"     ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "CPM"      ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -271,21 +273,29 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build_scma() const
 {
-	     if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, this->sigma, this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	else if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, this->sigma, this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	else if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, this->sigma, this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	else if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, this->sigma, this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	     if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	else if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	else if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	else if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
-::build() const
+::build(const tools::Distributions<R>* dist, const std::string& chn_type) const
 {
 	if (this->type == "SCMA")
 	{
 		return _build_scma<B,R,Q>();
+	}
+	else if (this->type == "OOK")
+	{
+		     if (chn_type == "AWGN"   ) return new module::Modem_OOK_AWGN<B,R,Q>(this->N, tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_frames);
+		else if (chn_type == "BEC"    ) return new module::Modem_OOK_BEC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
+		else if (chn_type == "BSC"    ) return new module::Modem_OOK_BSC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
+		else if (chn_type == "OPTICAL" && dist != nullptr)
+			return new module::Modem_OOK_optical<B,R,Q>(this->N, *dist, tools::ROP<R>((R)this->noise), this->n_frames);
 	}
 	else
 	{
@@ -300,9 +310,9 @@ module::Modem<B,R,Q>* Modem::parameters
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
-::build(const parameters &params)
+::build(const parameters &params, const tools::Distributions<R>* dist, const std::string& chn_type)
 {
-	return params.template build<B,R,Q>();
+	return params.template build<B,R,Q>(dist, chn_type);
 }
 
 int Modem
@@ -381,24 +391,24 @@ bool Modem
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,Q_8 >() const;
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,R_8 >() const;
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,Q_16>() const;
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,R_16>() const;
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::parameters::build<B_32,R_32,Q_32>() const;
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::parameters::build<B_64,R_64,Q_64>() const;
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const aff3ct::factory::Modem::parameters&);
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const aff3ct::factory::Modem::parameters&);
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,Q_8 >(const tools::Distributions<R_8 >*, const std::string&) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,R_8 >(const tools::Distributions<R_8 >*, const std::string&) const;
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,Q_16>(const tools::Distributions<R_16>*, const std::string&) const;
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,R_16>(const tools::Distributions<R_16>*, const std::string&) const;
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::parameters::build<B_32,R_32,Q_32>(const tools::Distributions<R_32>*, const std::string&) const;
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::parameters::build<B_64,R_64,Q_64>(const tools::Distributions<R_64>*, const std::string&) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_8 >*, const std::string&);
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_8 >*, const std::string&);
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_16>*, const std::string&);
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_16>*, const std::string&);
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_32>*, const std::string&);
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R_64>*, const std::string&);
 #else
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::parameters::build<B,R,Q>() const;
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const aff3ct::factory::Modem::parameters&);
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::parameters::build<B,R,Q>(const tools::Distributions<R>*, const std::string&) const;
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>*, const std::string&);
 #if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::parameters::build<B,R,R>() const;
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const aff3ct::factory::Modem::parameters&);
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::parameters::build<B,R,R>(const tools::Distributions<R>*, const std::string&) const;
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>*, const std::string&);
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

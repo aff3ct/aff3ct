@@ -23,9 +23,9 @@ BFER_ite_threads<B,R,Q>
 	if (this->params_BFER_ite.err_track_revert)
 	{
 		if (this->params_BFER_ite.n_threads != 1)
-			std::clog << rang::format::warning << "Multi-threading detected with error tracking revert feature! "
+			std::clog << rang::tag::warning << "Multi-threading detected with error tracking revert feature! "
 			                                      "Each thread will play the same frames. Please run with one thread."
-			          << rang::format::reset << std::endl;
+			          << std::endl;
 	}
 }
 
@@ -338,7 +338,7 @@ void BFER_ite_threads<B,R,Q>
 	while ((!this->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
 	        (this->params_BFER_ite.stop_time == seconds(0) ||
 	        (steady_clock::now() - t_snr) < this->params_BFER_ite.stop_time) &&
-	        (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
+	        (this->params_BFER_ite.max_frame == 0 || this->monitor_red->get_n_analyzed_fra() < this->params_BFER_ite.max_frame))
 	{
 		if (this->params_BFER_ite.debug)
 		{

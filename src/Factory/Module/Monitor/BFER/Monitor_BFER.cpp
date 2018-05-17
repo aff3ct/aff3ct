@@ -35,7 +35,13 @@ void Monitor_BFER::parameters
 	auto p = this->get_prefix();
 
 	args.add(
-		{p+"-size", "K"},
+		{p+"-cw-size", "N"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"the codeword size for the mutual information computation.",
+		tools::arg_rank::REQ);
+
+	args.add(
+		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of bits to check.",
 		tools::arg_rank::REQ);
@@ -49,6 +55,21 @@ void Monitor_BFER::parameters
 		{p+"-max-fe", "e"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"max number of frame errors for each SNR simulation.");
+
+	args.add(
+			{p+"-err-hist"},
+			tools::Integer(tools::Positive()),
+			"activate the histogram of the number of errors per frame. Set the max number of bit error per frame included in the histogram (0 is no limit).");
+
+	args.add(
+			{p+"-err-hist-path"},
+			tools::File(tools::openmode::write),
+			"path to the output histogram (default is './hist', add automatically the current noise value and the extension '.txt')");
+
+	args.add(
+			{p+"-mutinfo"},
+			tools::None(),
+			"allow the computation of the mutual information.");
 }
 
 void Monitor_BFER::parameters
@@ -58,9 +79,13 @@ void Monitor_BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-size",   "K"})) this->size           = vals.to_int({p+"-size",   "K"});
-	if(vals.exist({p+"-fra",    "F"})) this->n_frames       = vals.to_int({p+"-fra",    "F"});
-	if(vals.exist({p+"-max-fe", "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe", "e"});
+	if(vals.exist({p+"-cw-size",   "N"})) this->N              = vals.to_int({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-info-bits", "K"})) this->K              = vals.to_int({p+"-info-bits", "K"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames       = vals.to_int({p+"-fra",       "F"});
+	if(vals.exist({p+"-max-fe",    "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe",    "e"});
+	if(vals.exist({p+"-err-hist"      })) this->err_hist       = vals.to_int({p+"-err-hist"      });
+	if(vals.exist({p+"-err-hist-path" })) this->err_hist_path  = vals.at    ({p+"-err-hist-path" });
+	if(vals.exist({p+"-mutinfo"       })) this->mutinfo        = true;
 }
 
 void Monitor_BFER::parameters
@@ -71,39 +96,41 @@ void Monitor_BFER::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Frame error count (e)", std::to_string(this->n_frame_errors)));
-	if (full) headers[p].push_back(std::make_pair("Size (K)", std::to_string(this->size)));
+	headers[p].push_back(std::make_pair("Compute Mutual Info", this->mutinfo ? "yes" : "no"));
+	if (full) headers[p].push_back(std::make_pair("K",                 std::to_string(this->K       )));
+	if (full) headers[p].push_back(std::make_pair("N",                 std::to_string(this->N       )));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 }
 
-template <typename B>
-module::Monitor_BFER<B>* Monitor_BFER::parameters
+template <typename B, typename R>
+module::Monitor_BFER<B,R>* Monitor_BFER::parameters
 ::build() const
 {
-	if (this->type == "STD") return new module::Monitor_BFER<B>(this->size, this->n_frame_errors, this->n_frames);
+	if (this->type == "STD") return new module::Monitor_BFER<B,R>(this->K, this->N, this->n_frame_errors, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::Monitor_BFER<B>* Monitor_BFER
+template <typename B, typename R>
+module::Monitor_BFER<B,R>* Monitor_BFER
 ::build(const parameters& params)
 {
-	return params.template build<B>();
+	return params.template build<B,R>();
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Monitor_BFER<B_8 >* aff3ct::factory::Monitor_BFER::parameters::build<B_8 >() const;
-template aff3ct::module::Monitor_BFER<B_16>* aff3ct::factory::Monitor_BFER::parameters::build<B_16>() const;
-template aff3ct::module::Monitor_BFER<B_32>* aff3ct::factory::Monitor_BFER::parameters::build<B_32>() const;
-template aff3ct::module::Monitor_BFER<B_64>* aff3ct::factory::Monitor_BFER::parameters::build<B_64>() const;
-template aff3ct::module::Monitor_BFER<B_8 >* aff3ct::factory::Monitor_BFER::build<B_8 >(const aff3ct::factory::Monitor_BFER::parameters&);
-template aff3ct::module::Monitor_BFER<B_16>* aff3ct::factory::Monitor_BFER::build<B_16>(const aff3ct::factory::Monitor_BFER::parameters&);
-template aff3ct::module::Monitor_BFER<B_32>* aff3ct::factory::Monitor_BFER::build<B_32>(const aff3ct::factory::Monitor_BFER::parameters&);
-template aff3ct::module::Monitor_BFER<B_64>* aff3ct::factory::Monitor_BFER::build<B_64>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B_8 ,R_8 >* aff3ct::factory::Monitor_BFER::parameters::build<B_8, R_8 >() const;
+template aff3ct::module::Monitor_BFER<B_16,R_16>* aff3ct::factory::Monitor_BFER::parameters::build<B_16,R_16>() const;
+template aff3ct::module::Monitor_BFER<B_32,R_32>* aff3ct::factory::Monitor_BFER::parameters::build<B_32,R_32>() const;
+template aff3ct::module::Monitor_BFER<B_64,R_64>* aff3ct::factory::Monitor_BFER::parameters::build<B_64,R_64>() const;
+template aff3ct::module::Monitor_BFER<B_8 ,R_8 >* aff3ct::factory::Monitor_BFER::build<B_8, R_8 >(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B_16,R_16>* aff3ct::factory::Monitor_BFER::build<B_16,R_16>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B_32,R_32>* aff3ct::factory::Monitor_BFER::build<B_32,R_32>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B_64,R_64>* aff3ct::factory::Monitor_BFER::build<B_64,R_64>(const aff3ct::factory::Monitor_BFER::parameters&);
 #else
-template aff3ct::module::Monitor_BFER<B>* aff3ct::factory::Monitor_BFER::parameters::build<B>() const;
-template aff3ct::module::Monitor_BFER<B>* aff3ct::factory::Monitor_BFER::build<B>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::parameters::build<B,R>() const;
+template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::build<B,R>(const aff3ct::factory::Monitor_BFER::parameters&);
 #endif
 // ==================================================================================== explicit template instantiation

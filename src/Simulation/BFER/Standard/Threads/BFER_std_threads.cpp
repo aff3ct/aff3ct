@@ -23,9 +23,9 @@ BFER_std_threads<B,R,Q>
 	if (this->params_BFER_std.err_track_revert)
 	{
 		if (this->params_BFER_std.n_threads != 1)
-			std::clog << rang::format::warning << "Multi-threading detected with error tracking revert feature! "
+			std::clog << rang::tag::warning << "Multi-threading detected with error tracking revert feature! "
 			                                      "Each thread will play the same frames. Please run with one thread."
-			          << rang::format::reset << std::endl;
+			          << std::endl;
 	}
 }
 
@@ -241,6 +241,12 @@ void BFER_std_threads<B,R,Q>
 		mnt[mnt::sck::check_errors::U](src[src::sck::generate::U_K ]);
 		mnt[mnt::sck::check_errors::V](crc[crc::sck::extract ::V_K2]);
 	}
+
+	if (this->params_BFER_std.mnt->mutinfo)
+	{
+		mnt[mnt::sck::get_mutual_info::X](enc[enc::sck::encode    ::X_N ]);
+		mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate::Y_N2]);
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -267,7 +273,7 @@ void BFER_std_threads<B,R,Q>
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
 	       (this->params_BFER_std.stop_time == seconds(0) ||
 	       (steady_clock::now() - t_snr) < this->params_BFER_std.stop_time) &&
-	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
+	       (this->params_BFER_std.max_frame == 0 || this->monitor_red->get_n_analyzed_fra() < this->params_BFER_std.max_frame))
 	{
 		if (this->params_BFER_std.debug)
 		{
@@ -350,6 +356,10 @@ void BFER_std_threads<B,R,Q>
 		}
 
 		monitor[mnt::tsk::check_errors].exec();
+
+		if (this->params_BFER_std.mnt->mutinfo)
+			monitor[mnt::tsk::get_mutual_info].exec();
+
 	}
 }
 

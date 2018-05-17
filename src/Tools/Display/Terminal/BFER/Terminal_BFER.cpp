@@ -2,98 +2,124 @@
 #include <iomanip>
 #include <sstream>
 #include <ios>
-
 #include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Noise/noise_utils.h"
 
 #include "Terminal_BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-template <typename B>
-Terminal_BFER<B>
-::Terminal_BFER(const module::Monitor_BFER<B> &monitor)
+template <typename B, typename R>
+Terminal_BFER<B,R>
+::Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo)
 : Terminal       (                                ),
   monitor        (monitor                         ),
-  esn0           (0.f                             ),
-  ebn0           (0.f                             ),
-  is_esn0        (false                           ),
-  is_ebn0        (false                           ),
   t_snr          (std::chrono::steady_clock::now()),
-  real_time_state(0                               )
+  real_time_state(0                               ),
+  n              (nullptr                         ),
+  display_mutinfo(display_mutinfo                 )
 {
 }
 
-template <typename B>
-void Terminal_BFER<B>
-::set_esn0(const float esn0)
+template<typename B, typename R>
+Terminal_BFER<B, R>::~Terminal_BFER()
 {
-	this->is_esn0 = true;
-	this->esn0    = esn0;
+	if (this->n != nullptr)
+		delete this->n;
 }
 
-template <typename B>
-void Terminal_BFER<B>
-::set_ebn0(const float ebn0)
+template <typename B, typename R>
+void Terminal_BFER<B,R>
+::set_noise(const Noise<float>& noise)
 {
-	this->is_ebn0 = true;
-	this->ebn0    = ebn0;
+	if (this->n != nullptr)
+		delete this->n;
+
+	this->n = tools::cast<float>(noise);
 }
 
-template <typename B>
-std::string Terminal_BFER<B>
-::get_time_format(float secondes)
+template <typename B, typename R>
+void Terminal_BFER<B,R>
+::set_noise(const Noise<double>& noise)
 {
-	auto ss = (int)secondes % 60;
-	auto mm = ((int)(secondes / 60.f) % 60);
-	auto hh = (int)(secondes / 3600.f);
+	if (this->n != nullptr)
+		delete this->n;
 
-	// TODO: this is not a C++ style code
-	char time_format[256];
-#ifdef _MSC_VER
-	sprintf_s(time_format, 32, "%2.2dh%2.2d'%2.2d", hh, mm, ss);
-#else
-	sprintf(time_format, "%2.2dh%2.2d'%2.2d", hh, mm, ss);
-#endif
-	std::string time_format2(time_format);
-
-	return time_format2;
+	this->n = tools::cast<float>(noise);
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::legend(std::ostream &stream)
 {
-	std::ios::fmtflags f(stream.flags());
+	this->cols_groups.resize(2);
 
-#ifdef _WIN32
-	stream << "# " << rang::style::bold << "---------------------------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "         Bit Error Rate (BER) and Frame Error Rate (FER) depending         ||  Global throughput  " << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "                      on the Signal Noise Ratio (SNR)                      ||  and elapsed time   " << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "---------------------------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------" << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << " Es/N0 | Eb/N0 |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT " << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "  (dB) |  (dB) |           |           |           |           |           ||   (Mb/s) | (hhmmss) " << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------" << rang::style::reset << std::endl;
+	auto& bfer_title       = this->cols_groups[0].first;
+	auto& bfer_cols        = this->cols_groups[0].second;
+	auto& throughput_title = this->cols_groups[1].first;
+	auto& throughput_cols  = this->cols_groups[1].second;
 
-#else
-	stream << "# " << rang::style::bold << "----------------------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "      Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  " << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "                   on the Signal Noise Ratio (SNR)                    ||  and elapsed time   " << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "----------------------------------------------------------------------||---------------------" << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "-------|-------|----------|----------|----------|----------|----------||----------|----------" << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << " Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT " << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "  (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) " << rang::style::reset << std::endl;
-	stream << "# " << rang::style::bold << "-------|-------|----------|----------|----------|----------|----------||----------|----------" << rang::style::reset << std::endl;
-#endif
+	bfer_title = std::make_pair("Bit Error Rate (BER) and Frame Error Rate (FER)", "");
+	bfer_cols.clear();
 
-	stream.flags(f);
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "Undefined noise.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	switch (this->n->get_type())
+	{
+		case Noise_type::SIGMA :
+			bfer_title.second = "depending on the Signal Noise Ratio (SNR)";
+			bfer_cols.push_back(std::make_pair("Es/N0", "(dB)"));
+			bfer_cols.push_back(std::make_pair("Eb/N0", "(dB)"));
+		break;
+		case Noise_type::ROP :
+			bfer_title.second = "depending on the Received Optical Power (ROP)";
+			bfer_cols.push_back(std::make_pair("ROP", "(dB)"));
+		break;
+		case Noise_type::EP :
+			bfer_title.second = "depending on the Erasure Probability (EP)";
+			bfer_cols.push_back(std::make_pair("EP", ""));
+		break;
+	}
+
+	if (display_mutinfo)
+	{
+		bfer_title.first = "MutInfo (MI), " + bfer_title.first;
+		bfer_cols.push_back(std::make_pair("MI", ""));
+	}
+
+	bfer_cols.push_back(std::make_pair("FRA", ""));
+	bfer_cols.push_back(std::make_pair("BE",  ""));
+	bfer_cols.push_back(std::make_pair("FE",  ""));
+	bfer_cols.push_back(std::make_pair("BER", ""));
+	bfer_cols.push_back(std::make_pair("FER", ""));
+
+	throughput_title = std::make_pair("Global throughput", "and elapsed time");
+	throughput_cols.clear();
+	throughput_cols.push_back(std::make_pair("SIM_THR", "(Mb/s)"));
+	throughput_cols.push_back(std::make_pair("ET/RT", "(hhmmss)"));
+
+	// stream << "# " << "---------------------------------------------------------------------||---------------------" << std::endl;
+	// stream << "# " << "      Bit Error Rate (BER) and Frame Error Rate (FER) depending      ||  Global throughput  " << std::endl;
+	// stream << "# " << "                   on the Erasure Probability (EP)                   ||  and elapsed time   " << std::endl;
+	// stream << "# " << "---------------------------------------------------------------------||---------------------" << std::endl;
+	// stream << "# " << "---------|-----------|-----------|-----------|-----------|-----------||----------|----------" << std::endl;
+	// stream << "# " << "      EP |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT " << std::endl;
+	// stream << "# " << "         |           |           |           |           |           ||   (Mb/s) | (hhmmss) " << std::endl;
+	// stream << "# " << "---------|-----------|-----------|-----------|-----------|-----------||----------|----------" << std::endl;
+
+	Terminal::legend(stream); // print effectively the legend
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -104,65 +130,70 @@ void Terminal_BFER<B>
 	auto fra = monitor.get_n_analyzed_fra();
 	auto be  = monitor.get_n_be();
 	auto fe  = monitor.get_n_fe();
+	auto MI  = monitor.get_MI  ();
 
 	auto simu_time = (float)duration_cast<nanoseconds>(steady_clock::now() - t_snr).count() * 0.000000001f;
-	auto simu_cthr = ((float)monitor.get_size() * (float)monitor.get_n_analyzed_fra()) /
-		              simu_time ; // = bps
+	auto simu_cthr = ((float)monitor.get_K() * (float)monitor.get_n_analyzed_fra()) / simu_time ; // = bps
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
 	if (module::Monitor::is_interrupt()) stream << "\r";
 
-	std::stringstream esn0_str;
-	if (!is_esn0)
-		esn0_str << "   -  ";
-	else
-		esn0_str << setprecision(2) << fixed << setw(6) << esn0;
+	stream << data_tag;
 
-	std::stringstream ebn0_str;
-	if (!is_ebn0)
-		ebn0_str << "  -  ";
-	else
-		ebn0_str << setprecision(2) << fixed << setw(5) << ebn0;
+	const auto report_style = rang::style::bold;
 
-#ifdef _WIN32
-	stringstream str_ber, str_fer;
-	str_ber << setprecision(2) << scientific << setw(9) << ber;
-	str_fer << setprecision(2) << scientific << setw(9) << fer;
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "Undefined noise.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
-	unsigned long long l0 = 99999999;  // limit 0
-	unsigned long long l1 = 99999999;  // limit 1
-//	auto               l2 = 99999.99f; // limit 2
-	stream << "  ";
-	stream <<                                                                                                     esn0_str.str()  << rang::style::bold << " | "  << rang::style::reset;
-	stream <<                                                                                                     ebn0_str.str()  << rang::style::bold << " | "  << rang::style::reset;
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << rang::style::bold << " | "  << rang::style::reset;
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << rang::style::bold << " | "  << rang::style::reset;
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << rang::style::bold << " | "  << rang::style::reset;
-	stream <<                                                                                                       str_ber.str() << rang::style::bold << " | "  << rang::style::reset;
-	stream <<                                                                                                       str_fer.str() << rang::style::bold << " || " << rang::style::reset;
-	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
-#else
-	stringstream str_ber, str_fer;
-	str_ber << setprecision(2) << scientific << setw(8) << ber;
-	str_fer << setprecision(2) << scientific << setw(8) << fer;
+	switch (this->n->get_type())
+	{
+		case Noise_type::SIGMA :
+		{
+			auto sig = dynamic_cast<const tools::Sigma<>*>(this->n);
+			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_esn0() << report_style
+			       << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_ebn0() << report_style
+			       << spaced_scol_separator << rang::style::reset;
+			break;
+		}
+		case Noise_type::ROP :
+		{
+			stream << setprecision(2) << fixed << setw(column_width - 1) << this->n->get_noise() << report_style
+			       << spaced_scol_separator << rang::style::reset;
+			break;
+		}
+		case Noise_type::EP :
+		{
+			stream << setprecision(4) << fixed << setw(column_width - 1) << this->n->get_noise() << report_style
+			       << spaced_scol_separator << rang::style::reset;
+			break;
+		}
+	}
 
-	unsigned long long l0 = 99999999;  // limit 0
-	unsigned long long l1 = 99999999;  // limit 1
-	stream << "  ";
-	stream <<                                                                                                     esn0_str.str()  << rang::style::bold << " | "  << rang::style::reset;
-	stream <<                                                                                                     ebn0_str.str()  << rang::style::bold << " | "  << rang::style::reset;
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << rang::style::bold << " | "  << rang::style::reset;
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << rang::style::bold << " | "  << rang::style::reset;
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << rang::style::bold << " | "  << rang::style::reset;
-	stream <<                                                                                                       str_ber.str() << rang::style::bold << " | "  << rang::style::reset;
-	stream <<                                                                                                       str_fer.str() << rang::style::bold << " || " << rang::style::reset;
-	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
-#endif
+	stringstream str_ber, str_fer, str_MI;
+	str_ber << setprecision(2) << scientific << setw(column_width-1) << ber;
+	str_fer << setprecision(2) << scientific << setw(column_width-1) << fer;
+	str_MI  << setprecision(2) << scientific << setw(column_width-1) << MI;
+
+	const unsigned long long l = 99999999;  // limit 0
+
+	if (display_mutinfo)
+	stream <<                                                                                                                  str_MI.str() << report_style << spaced_scol_separator << rang::style::reset;
+	stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width-1) << ((fra > l) ? (float)fra : fra) << report_style << spaced_scol_separator << rang::style::reset;
+	stream << setprecision(( be > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width-1) << (( be > l) ? (float) be :  be) << report_style << spaced_scol_separator << rang::style::reset;
+	stream << setprecision(( fe > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width-1) << (( fe > l) ? (float) fe :  fe) << report_style << spaced_scol_separator << rang::style::reset;
+	stream <<                                                                                                                 str_ber.str() << report_style << spaced_scol_separator << rang::style::reset;
+	stream <<                                                                                                                 str_fer.str() << report_style << spaced_dcol_separator << rang::style::reset;
+	stream << setprecision(                2) <<                           fixed  << setw(column_width-1) <<                      simu_cthr;
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::temp_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -175,7 +206,8 @@ void Terminal_BFER<B>
 	auto tr = et * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe()) - et;
 	auto tr_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : tr);
 
-	stream << rang::style::bold << " | " << rang::style::reset << std::setprecision(0) << std::fixed << std::setw(8) << tr_format;
+	stream << rang::style::bold << spaced_scol_separator << rang::style::reset << std::setprecision(0) << std::fixed
+	       << std::setw(column_width-1) << tr_format;
 
 	stream << " ";
 	switch (real_time_state)
@@ -186,15 +218,15 @@ void Terminal_BFER<B>
 		case 3: stream << rang::style::bold << rang::fg::green << " " << rang::style::reset; break;
 		default: break;
 	}
-	real_time_state = (real_time_state +1) % 4;
+	real_time_state = (real_time_state + (unsigned short)1) % (unsigned short)4;
 	stream << "\r";
 
 	stream.flush();
 	stream.flags(f);
 }
 
-template <typename B>
-void Terminal_BFER<B>
+template <typename B, typename R>
+void Terminal_BFER<B,R>
 ::final_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -203,16 +235,19 @@ void Terminal_BFER<B>
 
 	Terminal::final_report(stream);
 
-	this->_report(stream);
-
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
-	auto et_format = get_time_format(et);
 
-	stream << rang::style::bold << " | " << rang::style::reset << std::setprecision(0) << std::fixed << std::setw(8)
-	       << et_format;
+	if (!module::Monitor::is_over() || et >= 1.f)
+	{
+		this->_report(stream);
 
-	if (module::Monitor::is_interrupt()) stream << " x" << std::endl;
-	else                                 stream << "  " << std::endl;
+		auto et_format = get_time_format(et);
+
+		stream << rang::style::bold << spaced_scol_separator << rang::style::reset << std::setprecision(0) << std::fixed
+		       << std::setw(column_width - 1) << et_format;
+
+		stream << (module::Monitor::is_interrupt() ? " x" : "  ") << std::endl;
+	}
 
 	t_snr = std::chrono::steady_clock::now();
 
@@ -222,11 +257,11 @@ void Terminal_BFER<B>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::tools::Terminal_BFER<B_8>;
-template class aff3ct::tools::Terminal_BFER<B_16>;
-template class aff3ct::tools::Terminal_BFER<B_32>;
-template class aff3ct::tools::Terminal_BFER<B_64>;
+template class aff3ct::tools::Terminal_BFER<B_8, R_8>;
+template class aff3ct::tools::Terminal_BFER<B_16,R_16>;
+template class aff3ct::tools::Terminal_BFER<B_32,R_32>;
+template class aff3ct::tools::Terminal_BFER<B_64,R_64>;
 #else
-template class aff3ct::tools::Terminal_BFER<B>;
+template class aff3ct::tools::Terminal_BFER<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -37,7 +37,7 @@ public:
 	            CRC<B>* crc = nullptr);
 	virtual ~Codec_polar();
 
-	void set_sigma(const float sigma);
+	virtual void set_noise(const tools::Noise<float>& noise);
 
 	std::vector<bool>& get_frozen_bits();
 

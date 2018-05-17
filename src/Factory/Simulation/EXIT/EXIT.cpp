@@ -132,12 +132,12 @@ void EXIT::parameters
 		this->sig_a_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-siga-range"}), 0.1f);
 	else
 	{
-		float snr_min = 0.f, snr_max = 0.f, snr_step = 0.1f;
-		if(vals.exist({p+"-siga-min",  "m"})) snr_min  = vals.to_float({p+"-siga-min",  "m"});
-		if(vals.exist({p+"-siga-max",  "M"})) snr_max  = vals.to_float({p+"-siga-max",  "M"});
-		if(vals.exist({p+"-siga-step"     })) snr_step = vals.to_float({p+"-siga-step"     });
+		float sig_a_min = 0.f, sig_a_max = 0.f, sig_a_step = 0.1f;
+		if(vals.exist({p+"-siga-min",  "m"})) sig_a_min  = vals.to_float({p+"-siga-min",  "m"});
+		if(vals.exist({p+"-siga-max",  "M"})) sig_a_max  = vals.to_float({p+"-siga-max",  "M"});
+		if(vals.exist({p+"-siga-step"     })) sig_a_step = vals.to_float({p+"-siga-step"     });
 
-		this->snr_range = tools::generate_range({{snr_min, snr_max}}, snr_step);
+		this->sig_a_range = tools::generate_range({{sig_a_min, sig_a_max}}, sig_a_step);
 	}
 }
 

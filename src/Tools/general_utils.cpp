@@ -129,13 +129,15 @@ R aff3ct::tools::ebn0_to_esn0(const R ebn0, const R bit_rate, const int bps)
 template <typename R>
 std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& range_description, const R default_step)
 {
-	std::vector<R> range;
+	const R float_precision = 1e5;
+
+	std::vector<int> range;
 
 	for (auto& s : range_description)
 	{
 		if (s.size() == 1)
 		{
-			range.push_back(s.front());
+			range.push_back(s.front() * float_precision);
 			continue;
 		}
 
@@ -146,16 +148,31 @@ std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& 
 			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		R step = (s.size() == 3) ? s[1] : default_step;
+		int min  = (int)(s.front() * float_precision);
+		int max  = (int)(s.back () * float_precision);
+		int step = (int)(((s.size() == 3) ? s[1] : default_step) * float_precision);
 
-		for (R v = s.front(); v <= (s.back() + 0.0001f); v += step) // 0.0001f is a hack to avoid the miss of the last snr
+		if (min > max && step < 0)
+		{
+			std::swap(min, max);
+			step *= -1;
+		}
+
+		for (R v = min; v <= max; v += step)
 			range.push_back(v);
 	}
 
-	std::sort  (range.begin(), range.end());
-	std::unique(range.begin(), range.end(), comp_equal<R>);
+	std::sort(range.begin(), range.end());
 
-	return range;
+	auto last = std::unique(range.begin(), range.end());
+	auto new_length = std::distance(range.begin(), last);
+
+	std::vector<R> rangeR(new_length);
+
+	for (unsigned i = 0; i < new_length; i++)
+		rangeR[i] = ((R)range[i])/float_precision;
+
+	return rangeR;
 }
 
 // ==================================================================================== explicit template instantiation

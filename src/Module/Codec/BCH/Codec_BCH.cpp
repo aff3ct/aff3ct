@@ -16,7 +16,7 @@ Codec_BCH<B,Q>
             const factory::Decoder_BCH::parameters &dec_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SIHO_HIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  GF_poly(dec_params.K, tools::next_power_of_2(dec_params.N_cw) -1, dec_params.t)
+  GF_poly(tools::next_power_of_2(dec_params.N_cw) -1, dec_params.t)
 {
 	const std::string name = "Codec_BCH";
 	this->set_name(name);

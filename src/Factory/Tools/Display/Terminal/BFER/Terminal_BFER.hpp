@@ -36,12 +36,13 @@ struct Terminal_BFER : Terminal
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
-		template <typename B = int>
-		tools::Terminal_BFER<B>* build(const module::Monitor_BFER<B> &monitor) const;
+		template <typename B = int, typename R = float>
+		tools::Terminal_BFER<B,R>* build(const module::Monitor_BFER<B,R> &monitor, const bool display_mutinfo) const;
 	};
 
-	template <typename B = int>
-	static tools::Terminal_BFER<B>* build(const parameters &params, const module::Monitor_BFER<B> &monitor);
+	template <typename B = int, typename R = float>
+	static tools::Terminal_BFER<B,R>* build(const parameters &params, const module::Monitor_BFER<B,R> &monitor,
+	                                        const bool display_mutinfo);
 };
 }
 }

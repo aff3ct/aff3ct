@@ -197,8 +197,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 			}
 			else
 			{
-				std::clog << rang::format::warning << "Unrecognized Polar node type (" << v_polar[i] << ")."
-				          << rang::format::reset << std::endl;
+				std::clog << rang::tag::warning << "Unrecognized Polar node type (" << v_polar[i] << ")." << std::endl;
 			}
 		}
 	}

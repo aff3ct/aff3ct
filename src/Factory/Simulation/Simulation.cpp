@@ -1,6 +1,9 @@
+#include <fstream>
+#include <algorithm>
 #include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/general_utils.h"
 
 #include "Simulation.hpp"
@@ -36,31 +39,40 @@ void Simulation::parameters
 	auto p = this->get_prefix();
 
 	args.add(
-		{p+"-snr-range", "R"},
+		{p+"-noise-range", "R"},
 		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
-		"signal/noise ratio range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
+		"noise energy range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
 		tools::arg_rank::REQ);
 
 	args.add(
-		{p+"-snr-min", "m"},
+		{p+"-noise-min", "m"},
 		tools::Real(),
-		"minimal signal/noise ratio to simulate.",
+		"minimal noise energy to simulate.",
 		tools::arg_rank::REQ);
 
 	args.add(
-		{p+"-snr-max", "M"},
+		{p+"-noise-max", "M"},
 		tools::Real(),
-		"maximal signal/noise ratio to simulate.",
+		"maximal noise energy to simulate.",
 		tools::arg_rank::REQ);
 
 	args.add(
-		{p+"-snr-step", "s"},
+		{p+"-noise-step", "s"},
 		tools::Real(tools::Positive(), tools::Non_zero()),
-		"signal/noise ratio step between each simulation.");
+		"noise energy step between each simulation iteration.");
+
+	args.add(
+		{p+"-pdf-path"},
+		tools::File(tools::openmode::read),
+		"A file that contains PDF for different SNR. Set the SNR range from the given ones. "
+		"Overwritten by -R or limited by -m and -M with a minimum step of -s");
 
 
-	args.add_link({p+"-snr-range", "R"}, {p+"-snr-min",  "m"});
-	args.add_link({p+"-snr-range", "R"}, {p+"-snr-max",  "M"});
+	args.add_link({p+"-noise-range", "R"}, {p+"-noise-min", "m"});
+	args.add_link({p+"-noise-range", "R"}, {p+"-noise-max", "M"});
+	args.add_link({p+"-pdf-path"        }, {p+"-noise-range", "R"});
+	args.add_link({p+"-pdf-path"        }, {p+"-noise-min",   "m"});
+	args.add_link({p+"-pdf-path"        }, {p+"-noise-max",   "M"});
 
 
 	args.add(
@@ -71,7 +83,21 @@ void Simulation::parameters
 	args.add(
 		{p+"-stop-time"},
 		tools::Integer(tools::Positive()),
-		"time in sec after what the current SNR iteration should stop (0 is infinite).");
+		"time in sec after what the current simulatated noise stops (0 is infinite).",
+		tools::arg_rank::ADV);
+
+	args.add(
+		{p+"-max-frame"},
+		tools::Integer(tools::Positive()),
+		"maximum number of frames to play after what the current simulatated noise stops (0 is infinite).",
+		tools::arg_rank::ADV);
+
+	args.add(
+		{p+"-crit-nostop"},
+		tools::None(),
+		"The stop criteria arguments -stop-time or -max-frame kill the current simulatated noise point"
+		" but not the simulation.",
+		tools::arg_rank::ADV);
 
 	args.add(
 		{p+"-debug"},
@@ -125,23 +151,71 @@ void Simulation::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-snr-range", "R"}))
-		this->snr_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-snr-range", "R"}), 0.1f);
+	if (vals.exist({p+"-pdf-path"}))
+	{
+		this->pdf_path = vals.at({p+"-pdf-path"});
+		this->noise_range = tools::Distributions<>(this->pdf_path).get_noise_range();
+
+		if(vals.exist({p+"-noise-range", "R"}))
+		{
+			this->noise_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-noise-range", "R"}), 0.1f);
+		}
+		else
+		{
+			if (vals.exist({p+"-noise-min",  "m"}))
+			{
+				auto it = std::lower_bound(this->noise_range.begin(), this->noise_range.end(), vals.to_float({p+"-noise-min",  "m"}));
+				this->noise_range.erase(this->noise_range.begin(), it);
+			}
+
+			if (vals.exist({p+"-noise-max",  "M"}))
+			{
+				auto it = std::upper_bound(this->noise_range.begin(), this->noise_range.end(), vals.to_float({p+"-noise-max",  "M"}));
+				this->noise_range.erase(it, this->noise_range.end());
+			}
+
+			if (vals.exist({p+"-noise-step", "s"}))
+			{
+				float step = vals.to_float({p+"-noise-step", "s"});
+
+				auto it = this->noise_range.begin();
+				float start_val = *it++;
+
+				while(it != this->noise_range.end())
+				{
+					if ((start_val + step) > *it) // then original step is too short
+						it = this->noise_range.erase(it);
+					else
+						start_val = *it++; // step large enough, take this new val as new comparative point
+				}
+			}
+		}
+	}
 	else
 	{
-		float snr_min = 0.f, snr_max = 0.f, snr_step = 0.1f;
-		if(vals.exist({p+"-snr-min",  "m"})) snr_min  = vals.to_float({p+"-snr-min",  "m"});
-		if(vals.exist({p+"-snr-max",  "M"})) snr_max  = vals.to_float({p+"-snr-max",  "M"});
-		if(vals.exist({p+"-snr-step", "s"})) snr_step = vals.to_float({p+"-snr-step", "s"});
+		if(vals.exist({p+"-noise-range", "R"}))
+		{
+			this->noise_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-noise-range", "R"}), 0.1f);
+		}
+		else if(vals.exist({p+"-noise-min",  "m"}) && vals.exist({p+"-noise-max",  "M"}))
+		{
+			float noise_min  = vals.to_float({p+"-noise-min",  "m"});
+			float noise_max  = vals.to_float({p+"-noise-max",  "M"});
+			float noise_step = 0.1f;
 
-		this->snr_range = tools::generate_range({{snr_min, snr_max}}, snr_step);
+			if(vals.exist({p+"-noise-step", "s"})) noise_step = vals.to_float({p+"-noise-step", "s"});
+
+			this->noise_range = tools::generate_range({{noise_min, noise_max}}, noise_step);
+		}
 	}
 
 	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"    });
 	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int  ({p+"-stop-time"}));
+	if(vals.exist({p+"-max-frame"       })) this->max_frame   =         vals.to_int  ({p+"-max-frame"});
 	if(vals.exist({p+"-seed",        "S"})) this->global_seed =         vals.to_int  ({p+"-seed", "S"});
 	if(vals.exist({p+"-stats"           })) this->statistics  = true;
 	if(vals.exist({p+"-debug"           })) this->debug       = true;
+	if(vals.exist({p+"-crit-nostop"     })) this->crit_nostop = true;
 	if(vals.exist({p+"-debug-limit", "d"}))
 	{
 		this->debug = true;
@@ -186,12 +260,6 @@ void Simulation::parameters
 	this->local_seed = this->global_seed;
 #endif
 
-#ifdef ENABLE_COOL_BASH
-	// disable the cool bash mode for PyBER
-	if (!this->pyber.empty())
-		rang::setControlMode(rang::control::Off);
-#endif
-
 #ifdef MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
@@ -208,11 +276,11 @@ void Simulation::parameters
 
 	auto p = this->get_prefix();
 
-	if (this->snr_range.size())
+	if (this->noise_range.size())
 	{
-		std::stringstream snr_range_str;
-		snr_range_str << this->snr_range.front() << " -> " << this->snr_range.back() << " dB";
-		headers[p].push_back(std::make_pair("SNR range", snr_range_str.str()));
+		std::stringstream noise_range_str;
+		noise_range_str << this->noise_range.front() << " -> " << this->noise_range.back() << " dB";
+		headers[p].push_back(std::make_pair("Noise range", noise_range_str.str()));
 	}
 
 	headers[p].push_back(std::make_pair("Seed", std::to_string(this->global_seed)));

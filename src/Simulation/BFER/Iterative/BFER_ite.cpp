@@ -126,9 +126,9 @@ void BFER_ite<B,R,Q>
 	// set current sigma
 	for (auto tid = 0; tid < this->params_BFER_ite.n_threads; tid++)
 	{
-		this->channel[tid]->set_sigma(this->sigma);
-		this->modem  [tid]->set_sigma(this->sigma);
-		this->codec  [tid]->set_sigma(this->sigma);
+		this->channel[tid]->set_noise(*this->noise);
+		this->modem  [tid]->set_noise(*this->noise);
+		this->codec  [tid]->set_noise(*this->noise);
 	}
 }
 
@@ -196,10 +196,10 @@ tools ::Interleaver_core<>* BFER_ite<B,R,Q>
 	params_itl->core->seed = params_BFER_ite.itl->core->uniform ? seed_itl : params_BFER_ite.itl->core->seed;
 	if (params_BFER_ite.err_track_revert && params_BFER_ite.itl->core->uniform)
 	{
-		std::stringstream s_snr_b;
-		s_snr_b << std::setprecision(2) << std::fixed << this->snr_b;
+		std::stringstream s_noise;
+		s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();
 
-		params_itl->core->path = params_BFER_ite.err_track_path + "_" + s_snr_b.str() + ".itl";
+		params_itl->core->path = params_BFER_ite.err_track_path + "_" + s_noise.str() + ".itl";
 	}
 
 	auto i = params_itl->core->template build<>();
@@ -211,7 +211,7 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
-	return params_BFER_ite.mdm->template build<B,R,Q>();
+	return params_BFER_ite.mdm->template build<B,R,Q>(this->distributions, this->params_BFER_ite.chn->type);
 }
 
 template <typename B, typename R, typename Q>
@@ -222,7 +222,7 @@ module::Channel<R>* BFER_ite<B,R,Q>
 
 	auto params_chn = params_BFER_ite.chn->clone();
 	params_chn->seed = seed_chn;
-	auto c = params_chn->template build<R>();
+	auto c = params_chn->template build<R>(this->distributions);
 	delete params_chn;
 	return c;
 }

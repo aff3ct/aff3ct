@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Tools/Perf/common.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_turbo_fast.hpp"

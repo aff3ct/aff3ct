@@ -1,4 +1,4 @@
-#include <typeinfo>
+#include <type_traits>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
@@ -10,14 +10,13 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_BPSK_fast<B,R,Q>
-::Modem_BPSK_fast(const int N, const R sigma, const bool disable_sig2, const int n_frames)
-: Modem<B,R,Q>(N, sigma, n_frames),
-  disable_sig2(disable_sig2)
+::Modem_BPSK_fast(const int N, const tools::Noise<R>& noise, const bool disable_sig2, const int n_frames)
+: Modem<B,R,Q>(N, noise, n_frames),
+  disable_sig2(disable_sig2),
+  two_on_square_sigma((R)0)
 {
 	const std::string name = "Modem_BPSK_fast";
 	this->set_name(name);
-
-	if (sigma != (R)-1.0) set_sigma(sigma);
 
 	if (disable_sig2)
 		this->set_demodulator(false);
@@ -31,12 +30,14 @@ Modem_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::set_sigma(const R sigma)
+::set_noise(const tools::Noise<R>& noise)
 {
-	Modem<B,R,Q>::set_sigma(sigma);
-	two_on_square_sigma = (R)2.0 / (this->sigma * this->sigma);
-}
+	Modem<B,R,Q>::set_noise(noise);
 
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
+	two_on_square_sigma = (R)2.0 / (this->n->get_noise() * this->n->get_noise());
+}
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
@@ -165,11 +166,14 @@ void Modem_BPSK_fast<B,R,Q>
 		std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 	else
 	{
-		if (typeid(R) != typeid(Q))
+		if (!std::is_same<R,Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-		if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+		if (!this->n->is_set())
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 		auto size = (unsigned int)(this->N);
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();

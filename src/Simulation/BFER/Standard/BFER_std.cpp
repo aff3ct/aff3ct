@@ -114,9 +114,9 @@ void BFER_std<B,R,Q>
 	// set current sigma
 	for (auto tid = 0; tid < this->params_BFER_std.n_threads; tid++)
 	{
-		this->channel[tid]->set_sigma(this->sigma);
-		this->modem  [tid]->set_sigma(this->sigma);
-		this->codec  [tid]->set_sigma(this->sigma);
+		this->channel[tid]->set_noise(*this->noise);
+		this->modem  [tid]->set_noise(*this->noise);
+		this->codec  [tid]->set_noise(*this->noise);
 	}
 }
 
@@ -170,11 +170,11 @@ module::Codec_SIHO<B,Q>* BFER_std<B,R,Q>
 	{
 		if (params_BFER_std.err_track_revert && params_cdc->itl->core->uniform)
 		{
-			std::stringstream s_snr_b;
-			s_snr_b << std::setprecision(2) << std::fixed << this->snr_b;
+			std::stringstream s_noise;
+			s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();
 
 			params_cdc->itl->core->type = "USER";
-			params_cdc->itl->core->path = params_BFER_std.err_track_path + "_" + s_snr_b.str() + ".itl";
+			params_cdc->itl->core->path = params_BFER_std.err_track_path + "_" + s_noise.str() + ".itl";
 		}
 		else if (params_cdc->itl->core->uniform)
 		{
@@ -193,7 +193,7 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,R>* BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
-	return params_BFER_std.mdm->template build<B,R,R>();
+	return params_BFER_std.mdm->template build<B,R,R>(this->distributions, this->params_BFER_std.chn->type);
 }
 
 template <typename B, typename R, typename Q>
@@ -204,7 +204,7 @@ module::Channel<R>* BFER_std<B,R,Q>
 
 	auto params_chn = this->params_BFER_std.chn->clone();
 	params_chn->seed = seed_chn;
-	auto c = params_chn->template build<R>();
+	auto c = params_chn->template build<R>(this->distributions);
 	delete params_chn;
 	return c;
 }

@@ -2,8 +2,8 @@
 #include <limits>
 #include <sstream>
 
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/common.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_Gallager_A.hpp"
@@ -13,26 +13,26 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &H,
+::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
                                       const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
                                       const int syndrome_depth, const int n_frames)
-: Decoder               (K, N, n_frames, 1                              ),
-  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1                              ),
-  Decoder_LDPC_BP       (K, N, n_ite, H, enable_syndrome, syndrome_depth),
-  info_bits_pos         (info_bits_pos                                  ),
-  HY_N                  (N                                              ),
-  V_N                   (N                                              ),
-  chk_to_var            (H.get_n_connections(), 0                       ),
-  var_to_chk            (H.get_n_connections(), 0                       )
+: Decoder               (K, N, n_frames, 1                               ),
+  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1                               ),
+  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
+  info_bits_pos         (info_bits_pos                                   ),
+  HY_N                  (N                                               ),
+  V_N                   (N                                               ),
+  chk_to_var            (this->H.get_n_connections(), 0                  ),
+  var_to_chk            (this->H.get_n_connections(), 0                  ),
+  transpose             (this->H.get_n_connections()                     )
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_Gallager_A";
 	this->set_name(name);
 
-	transpose.resize(H.get_n_connections());
-	std::vector<unsigned char> connections(H.get_n_rows(), 0);
+	std::vector<unsigned char> connections(this->H.get_n_rows(), 0);
 
-	const auto &chk_to_var_id = H.get_col_to_rows();
-	const auto &var_to_chk_id = H.get_row_to_cols();
+	const auto &chk_to_var_id = this->H.get_col_to_rows();
+	const auto &var_to_chk_id = this->H.get_row_to_cols();
 
 	auto k = 0;
 	for (auto i = 0; i < (int)chk_to_var_id.size(); i++)

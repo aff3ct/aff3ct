@@ -24,7 +24,7 @@ struct Simulation : Launcher
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required arg
-		std::vector<float> snr_range;
+		std::vector<float> noise_range;
 
 		// optional parameters
 #ifdef ENABLE_MPI
@@ -34,14 +34,19 @@ struct Simulation : Launcher
 #endif
 		std::chrono::seconds      stop_time       = std::chrono::seconds(0);
 		std::string               pyber           = "";
+		unsigned                  max_frame       = 0;
 		bool                      debug           = false;
 		bool                      debug_hex       = false;
 		bool                      statistics      = false;
+		bool                      crit_nostop     = false;
 		int                       n_threads       = 1;
 		int                       local_seed      = 0;
 		int                       global_seed     = 0;
 		int                       debug_limit     = 0;
 		int                       debug_precision = 2;
+
+		std::string               pdf_path        = "";
+
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		virtual ~parameters();

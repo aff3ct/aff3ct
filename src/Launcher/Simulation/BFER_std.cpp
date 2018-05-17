@@ -65,17 +65,17 @@ void BFER_std<B,R,Q>
 	this->args.erase({pcrc+"-fra",       "F"});
 	this->args.erase({pmdm+"-fra-size",  "N"});
 	this->args.erase({pmdm+"-fra",       "F"});
-	this->args.erase({pmdm+"-sigma"        });
+	this->args.erase({pmdm+"-noise"         });
 	this->args.erase({pchn+"-fra-size",  "N"});
 	this->args.erase({pchn+"-fra",       "F"});
-	this->args.erase({pchn+"-sigma"         });
+	this->args.erase({pchn+"-noise"         });
 	this->args.erase({pchn+"-seed",      "S"});
 	this->args.erase({pchn+"-add-users"     });
 	this->args.erase({pchn+"-complex"       });
 	this->args.erase({pqnt+"-size",      "N"});
 	this->args.erase({pqnt+"-fra",       "F"});
-	this->args.erase({pqnt+"-sigma"         });
-	this->args.erase({pmnt+"-size",      "K"});
+	this->args.erase({pmnt+"-info-bits", "K"});
+	this->args.erase({pmnt+"-cw-size",   "N"});
 	this->args.erase({pmnt+"-fra",       "F"});
 	this->args.erase({pter+"-info-bits", "K"});
 	this->args.erase({pter+"-cw-size",   "N"});
@@ -114,12 +114,23 @@ void BFER_std<B,R,Q>
 
 	params.chn->store(this->arg_vals);
 
+	auto psim = params.get_prefix();
+	if (!this->arg_vals.exist({psim+"-noise-type", "E"}))
+	{
+		if (params.chn->type == "OPTICAL")
+			params.noise_type = "ROP";
+		else if (params.chn->type == "BEC" || params.chn->type == "BSC")
+			params.noise_type = "EP";
+		// else let the default value EBN0 or ESNO
+	}
+
 	params.qnt->size = params.mdm->N;
 
 	if (std::is_integral<Q>())
 		params.qnt->store(this->arg_vals);
 
-	params.mnt->size = params.coded_monitoring ? N_cw : params.src->K;
+	params.mnt->K = params.coded_monitoring ? N_cw : params.src->K;
+	params.mnt->N = N_cw;
 
 	params.mnt->store(this->arg_vals);
 
@@ -153,7 +164,11 @@ void BFER_std<B,R,Q>
 			params.cdc->itl->core->path = params.err_track_path + std::string("_$snr.itl");
 		}
 
-		params.chn->type = "USER";
+		if (params.chn->type == "USER_ADD" || params.chn->type == "AWGN" || params.chn->type == "RAYLEIGH" || params.chn->type == "RAYLEIGH_USER")
+			params.chn->type = "USER_ADD";
+		else if (params.chn->type == "USER" || params.chn->type == "BEC" || params.chn->type == "OPTICAL")
+			params.chn->type = "USER";
+		// else params.chn->type == "NO" stays as it is
 		params.chn->path = params.err_track_path + std::string("_$snr.chn");
 	}
 

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Tools/Perf/common.h"
+#include "Tools/Perf/common/hard_decide.h"
 
 #include "Decoder_turbo_std.hpp"
 

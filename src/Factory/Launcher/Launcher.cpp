@@ -115,18 +115,22 @@ void factory::Launcher::parameters
 		tools::None(),
 		"print informations about the version of the code.");
 
+#ifdef ENABLE_BACK_TRACE
 	args.add(
 		{"except-no-bt"},
 		tools::None(),
 		"do not print the backtrace when displaying exception.",
 		tools::arg_rank::ADV);
+#endif
 
+#ifndef NDEBUG
 	args.add(
 		{"except-a2l"},
 		tools::None(),
 		"enhance the backtrace when displaying exception by changing program addresses into "
 		" file names and lines (may take some seconds).",
 		tools::arg_rank::ADV);
+#endif
 
 	args.add(
 		{p+"-no-legend"},

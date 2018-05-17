@@ -23,11 +23,12 @@ private:
 	R inv_sigma2;
 
 public:
-	Modem_PAM(const int N, const R sigma = (R)1, const int bits_per_symbol = 1, const bool disable_sig2 = false,
+	Modem_PAM(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(),
+	          const int bits_per_symbol = 1, const bool disable_sig2 = false,
 	          const int n_frames = 1);
 	virtual ~Modem_PAM();
 
-	void set_sigma(const R sigma);
+	virtual void set_noise(const tools::Noise<R>& noise);
 
 	static bool is_complex_mod()
 	{

@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "Module/Module.hpp"
+#include "Tools/Noise/noise_utils.h"
 
 namespace aff3ct
 {
@@ -58,11 +59,10 @@ public:
 	inline Socket& operator[](const mdm::sck::tdemodulate_wg s) { return Module::operator[]((int)mdm::tsk::tdemodulate_wg)[(int)s]; }
 
 protected:
-	const int N;     /*!< Size of one frame (= number of bits in one frame) */
-	const int N_mod; /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
-	const int N_fil; /*!< Number of transmitted elements after the filtering process */
-	      R   sigma; /*!< Sigma, the noise variance */
-	      R   sigma_c; /*!< Sigma*sqrt(2), the complex noise variance */
+	const int N;       /*!< Size of one frame (= number of bits in one frame) */
+	const int N_mod;   /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
+	const int N_fil;   /*!< Number of transmitted elements after the filtering process */
+	tools::Noise<R>* n; /*!< the current noise applied to the input signal */
 
 	bool enable_filter;
 	bool enable_demodulator;
@@ -77,7 +77,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem(const int N, const int N_mod, const int N_fil, const R sigma = -1.f, const int n_frames = 1);
+	Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
@@ -87,7 +87,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem(const int N, const int N_mod, const R sigma = -1.f, const int n_frames = 1);
+	Modem(const int N, const int N_mod, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
@@ -96,7 +96,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modem.
 	 * \param name:     Modem's name.
 	 */
-	Modem(const int N, const R sigma = -1.f, const int n_frames = 1);
+	Modem(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
 
 	void init_processes();
 
@@ -111,15 +111,13 @@ public:
 
 	int get_N_fil() const;
 
-	R get_sigma() const;
-
-	R get_sigma_c() const;
+	const tools::Noise<R>* current_noise() const;
 
 	bool is_filter() const;
 
 	bool is_demodulator() const;
 
-	virtual void set_sigma(const R sigma);
+	virtual void set_noise(const tools::Noise<R>& noise);
 
 	/*!
 	 * \brief Modulates a vector of bits or symbols.
@@ -262,6 +260,8 @@ protected:
 	void set_filter(const bool filter);
 
 	void set_demodulator(const bool demodulator);
+
+	virtual void check_noise(); // check that the noise has the expected type
 };
 }
 }

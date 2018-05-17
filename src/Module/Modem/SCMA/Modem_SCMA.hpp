@@ -24,11 +24,11 @@ private:
 	const int                        n_ite;
 
 public:
-	Modem_SCMA(const int N, const R sigma = (R)1, const int bps = 3, const bool disable_sig2 = false,
+	Modem_SCMA(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int bps = 3, const bool disable_sig2 = false,
 	           const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA();
 
-	virtual void set_sigma(const R sigma);
+	virtual void set_noise(const tools::Noise<R>& noise);
 
 	virtual void modulate     (              const B* X_N1, R *X_N2, const int frame_id = -1); using Modem<B,R,Q>::modulate;
 	virtual void demodulate   (              const Q *Y_N1, Q *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::demodulate;

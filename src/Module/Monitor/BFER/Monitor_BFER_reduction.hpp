@@ -10,21 +10,25 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int>
-class Monitor_BFER_reduction : public Monitor_BFER<B>
+template <typename B = int, typename R = float>
+class Monitor_BFER_reduction : public Monitor_BFER<B,R>
 {
 private:
 	unsigned long long n_analyzed_frames_historic;
-	std::vector<Monitor_BFER<B>*> monitors;
+	std::vector<Monitor_BFER<B,R>*> monitors;
 
 public:
-	explicit Monitor_BFER_reduction(const std::vector<Monitor_BFER<B>*> &monitors);
-	virtual ~Monitor_BFER_reduction();
+	explicit Monitor_BFER_reduction(const std::vector<Monitor_BFER<B,R>*> &monitors);
+	virtual ~Monitor_BFER_reduction() = default;
 
 	unsigned long long get_n_analyzed_fra_historic() const;
 	unsigned long long get_n_analyzed_fra         () const;
 	unsigned long long get_n_fe                   () const;
 	unsigned long long get_n_be                   () const;
+	virtual tools::Histogram<int> get_err_hist() const;
+
+	R get_MI    () const;
+	R get_MI_sum() const;
 
 	virtual void reset();
 	virtual void clear_callbacks();

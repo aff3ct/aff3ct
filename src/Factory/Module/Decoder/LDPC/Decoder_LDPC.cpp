@@ -122,9 +122,9 @@ void Decoder_LDPC::parameters
 
 	if (!this->H_path.empty())
 	{
-		int H;
-		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, H, this->N_cw);
-		this->K = this->N_cw - H; // considered as regular so H = N - K
+		int M;
+		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, M, this->N_cw);
+		this->K = this->N_cw - M; // considered as regular so M = N - K
 	}
 
 	Decoder::parameters::store(vals);
@@ -231,8 +231,6 @@ module::Decoder_SIHO<B,Q>* Decoder_LDPC::parameters
 
 		return build_siso<B,Q>(H, info_bits_pos);
 	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>

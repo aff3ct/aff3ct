@@ -3,7 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "Tools/Perf/common.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_layered.hpp"
@@ -15,21 +15,21 @@ namespace module
 template <typename B, typename R, class Update_rule>
 Decoder_LDPC_BP_layered<B,R,Update_rule>
 ::Decoder_LDPC_BP_layered(const int K, const int N, const int n_ite,
-                          const tools::Sparse_matrix &H,
+                          const tools::Sparse_matrix &_H,
                           const std::vector<unsigned> &info_bits_pos,
                           const Update_rule &up_rule,
                           const bool enable_syndrome,
                           const int syndrome_depth,
                           const int n_frames)
-: Decoder               (K, N, n_frames, 1                              ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                              ),
-  Decoder_LDPC_BP       (K, N, n_ite, H, enable_syndrome, syndrome_depth),
-  info_bits_pos         (info_bits_pos                                  ),
-  up_rule               (up_rule                                        ),
-  var_nodes             (n_frames, std::vector<R>(N                    )),
-  branches              (n_frames, std::vector<R>(H.get_n_connections())),
-  contributions         (H.get_cols_max_degree()                        ),
-  init_flag             (true                                           )
+: Decoder               (K, N, n_frames, 1                                    ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                                    ),
+  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth     ),
+  info_bits_pos         (info_bits_pos                                        ),
+  up_rule               (up_rule                                              ),
+  var_nodes             (n_frames, std::vector<R>(N                          )),
+  branches              (n_frames, std::vector<R>(this->H.get_n_connections())),
+  contributions         (this->H.get_cols_max_degree()                        ),
+  init_flag             (true                                                 )
 {
 	const std::string name = "Decoder_LDPC_BP_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);

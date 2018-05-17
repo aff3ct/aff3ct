@@ -23,8 +23,8 @@ namespace module
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
-Modem(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), enable_filter(false), enable_demodulator(true)
+Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise, const int n_frames)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -51,23 +51,15 @@ Modem(const int N, const int N_mod, const int N_fil, const R sigma, const int n_
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (sigma == (R)-1.0)
-	{
-		this->sigma   = (R)-1.0;
-		this->sigma_c = (R)-1.0;
-	}
-	else
-	{
-		this->set_sigma(sigma);
-	}
+	if (noise.has_noise()) this->set_noise(noise);
 
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
-Modem(const int N, const int N_mod, const R sigma, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), enable_filter(false), enable_demodulator(true)
+Modem(const int N, const int N_mod, const tools::Noise<R>& noise, const int n_frames)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -87,23 +79,15 @@ Modem(const int N, const int N_mod, const R sigma, const int n_frames)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (sigma == (R)-1.0)
-	{
-		this->sigma   = (R)-1.0;
-		this->sigma_c = (R)-1.0;
-	}
-	else
-	{
-		this->set_sigma(sigma);
-	}
+	if (noise.has_noise()) this->set_noise(noise);
 
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
-Modem(const int N, const R sigma, const int n_frames)
-: Module(n_frames), N(N), N_mod(N), N_fil(N), enable_filter(false), enable_demodulator(true)
+Modem(const int N, const tools::Noise<R>& noise, const int n_frames)
+: Module(n_frames), N(N), N_mod(N), N_fil(N), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -116,15 +100,7 @@ Modem(const int N, const R sigma, const int n_frames)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (sigma == (R)-1.0)
-	{
-		this->sigma   = (R)-1.0;
-		this->sigma_c = (R)-1.0;
-	}
-	else
-	{
-		this->set_sigma(sigma);
-	}
+	if (noise.has_noise()) this->set_noise(noise);
 
 	this->init_processes();
 }
@@ -223,6 +199,8 @@ template <typename B, typename R, typename Q>
 Modem<B,R,Q>::
 ~Modem()
 {
+	if (this->n != nullptr)
+		delete this->n;
 }
 
 template <typename B, typename R, typename Q>
@@ -247,17 +225,10 @@ get_N_fil() const
 }
 
 template <typename B, typename R, typename Q>
-R Modem<B,R,Q>::
-get_sigma() const
+const tools::Noise<R>* Modem<B,R,Q>::
+current_noise() const
 {
-	return this->sigma;
-}
-
-template <typename B, typename R, typename Q>
-R Modem<B,R,Q>::
-get_sigma_c() const
-{
-	return this->sigma_c;
+	return this->n;
 }
 
 template <typename B, typename R, typename Q>
@@ -276,17 +247,13 @@ is_demodulator() const
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>::
-set_sigma(const R sigma)
+set_noise(const tools::Noise<R>& noise)
 {
-	if (sigma <= 0)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	if (this->n != nullptr)
+		delete this->n;
 
-	this->sigma   = sigma;
-	this->sigma_c = sigma * std::sqrt(2.f);
+	this->n = noise.clone();
+	this->check_noise();
 }
 
 template <typename B, typename R, typename Q>
@@ -368,13 +335,6 @@ template <class A>
 void Modem<B,R,Q>::
 filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id)
 {
-	if (sigma <= 0)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (this->N_mod * this->n_frames != (int)Y_N1.size())
 	{
 		std::stringstream message;
@@ -412,13 +372,6 @@ template <class A>
 void Modem<B,R,Q>::
 demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id)
 {
-	if (sigma <= 0)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (this->N_fil * this->n_frames != (int)Y_N1.size())
 	{
 		std::stringstream message;
@@ -456,13 +409,6 @@ template <class AQ, class AR>
 void Modem<B,R,Q>::
 demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2, const int frame_id)
 {
-	if (sigma <= 0)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (this->N_fil * this->n_frames != (int)Y_N1.size())
 	{
 		std::stringstream message;
@@ -509,13 +455,6 @@ template <class A>
 void Modem<B,R,Q>::
 tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3, const int frame_id)
 {
-	if (sigma <= 0)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (this->N_fil * this->n_frames != (int)Y_N1.size())
 	{
 		std::stringstream message;
@@ -564,13 +503,6 @@ tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
                const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3,
                const int frame_id)
 {
-	if (sigma <= 0)
-	{
-		std::stringstream message;
-		message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (this->N_fil * this->n_frames != (int)Y_N1.size())
 	{
 		std::stringstream message;
@@ -695,6 +627,18 @@ void Modem<B,R,Q>::
 set_demodulator(const bool demodulator)
 {
 	this->enable_demodulator = demodulator;
+}
+
+template <typename B, typename R, typename Q>
+void Modem<B,R,Q>::
+check_noise()
+{
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "No noise has been set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 }

@@ -35,7 +35,22 @@ R ebn0_to_esn0(const R ebn0, const R bit_rate = 1, const int bps = 1);
  */
 template <typename R = float>
 std::vector<R> generate_range(const std::vector<std::vector<R>>& range_description, const R default_step = (R)0.1);
+
+
+/*
+ * Get the nearest position of value in range [first, last[.
+ * the reference data must be sorted and strictly monotonic increasing
+ * If value goes out of x_data range, then return the left or right limit value in function of the violated one.
+ */
+template <typename BidirectionalIterator, typename T>
+inline BidirectionalIterator get_closest(BidirectionalIterator first, BidirectionalIterator last, const T & value);
+
+template <typename BidirectionalIterator, typename T>
+inline std::size_t get_closest_index(BidirectionalIterator first, BidirectionalIterator last, const T & value);
+
 }
 }
+
+#include "general_utils.hxx"
 
 #endif /* GENERAL_UTILS_H_*/

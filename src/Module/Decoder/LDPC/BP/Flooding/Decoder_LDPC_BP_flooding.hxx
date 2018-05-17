@@ -2,8 +2,8 @@
 #include <limits>
 #include <sstream>
 
-#include "Tools/Perf/common.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding.hpp"
@@ -15,30 +15,30 @@ namespace module
 template <typename B, typename R, class Update_rule>
 Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::Decoder_LDPC_BP_flooding(const int K, const int N, const int n_ite,
-                           const tools::Sparse_matrix &H,
+                           const tools::Sparse_matrix &_H,
                            const std::vector<uint32_t> &info_bits_pos,
                            const Update_rule &up_rule,
                            const bool enable_syndrome,
                            const int syndrome_depth,
                            const int n_frames)
-: Decoder               (K, N, n_frames, 1                              ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                              ),
-  Decoder_LDPC_BP       (K, N, n_ite, H, enable_syndrome, syndrome_depth),
-  info_bits_pos         (info_bits_pos                                  ),
-  up_rule               (up_rule                                        ),
-  transpose             (H.get_n_connections()                          ),
-  post                  (N, -1                                          ),
-  chk_to_var            (n_frames, std::vector<R>(H.get_n_connections())),
-  var_to_chk            (n_frames, std::vector<R>(H.get_n_connections())),
-  init_flag             (true                                           )
+: Decoder               (K, N, n_frames, 1                                    ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                                    ),
+  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth     ),
+  info_bits_pos         (info_bits_pos                                        ),
+  up_rule               (up_rule                                              ),
+  transpose             (this->H.get_n_connections()                          ),
+  post                  (N, -1                                                ),
+  chk_to_var            (n_frames, std::vector<R>(this->H.get_n_connections())),
+  var_to_chk            (n_frames, std::vector<R>(this->H.get_n_connections())),
+  init_flag             (true                                                 )
 {
 	const std::string name = "Decoder_LDPC_BP_flooding<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
 
-	mipp::vector<unsigned char> connections(H.get_n_rows(), 0);
+	mipp::vector<unsigned char> connections(this->H.get_n_rows(), 0);
 
-	const auto &chk_to_var_id = H.get_col_to_rows();
-	const auto &var_to_chk_id = H.get_row_to_cols();
+	const auto &chk_to_var_id = this->H.get_col_to_rows();
+	const auto &var_to_chk_id = this->H.get_row_to_cols();
 
 	auto k = 0;
 	for (auto i = 0; i < (int)chk_to_var_id.size(); i++)

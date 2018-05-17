@@ -10,27 +10,13 @@
 using namespace aff3ct::tools;
 
 Galois
-::Galois(const int& K, const int& N)
- : K(K), N(N), m((int)std::ceil(std::log2(N))), alpha_to(N +1), index_of(N +1), p(m +1, 0)
+::Galois(const int& N)
+ : N(N), m((int)std::ceil(std::log2(N))), alpha_to(N +1), index_of(N +1), p(m +1, 0)
 {
-	if (K <= 0)
-	{
-		std::stringstream message;
-		message << "'K' has to be greater than 0 ('K' = " << K << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (N <= 0)
 	{
 		std::stringstream message;
 		message << "'N' has to be greater than 0 ('N' = " << N << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (K > N)
-	{
-		std::stringstream message;
-		message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -62,12 +48,6 @@ Galois
 Galois
 ::~Galois()
 {
-}
-
-int Galois
-::get_K() const
-{
-	return K;
 }
 
 int Galois

@@ -3,8 +3,8 @@
 #include <sstream>
 #include <iostream>
 
-#include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
@@ -16,26 +16,26 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::Decoder_LDPC_BP_layered_ONMS_inter(const int K, const int N, const int n_ite,
-                                     const tools::Sparse_matrix &H,
+                                     const tools::Sparse_matrix &_H,
                                      const std::vector<unsigned> &info_bits_pos,
                                      const float normalize_factor,
                                      const R offset,
                                      const bool enable_syndrome,
                                      const int syndrome_depth,
                                      const int n_frames)
-: Decoder               (K, N, n_frames, mipp::N<R>()                                                 ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::N<R>()                                                 ),
-  Decoder_LDPC_BP       (K, N, n_ite, H, enable_syndrome, syndrome_depth                              ),
-  normalize_factor      (normalize_factor                                                             ),
-  offset                (offset                                                                       ),
-  contributions         (H.get_cols_max_degree()                                                      ),
-  saturation            ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(H.get_rows_max_degree()))) -1)),
-  init_flag             (true                                                                         ),
-  info_bits_pos         (info_bits_pos                                                                ),
-  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                             ),
-  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(H.get_n_connections())         ),
-  Y_N_reorderered       (N                                                                            ),
-  V_reorderered         (N                                                                            )
+: Decoder               (K, N, n_frames, mipp::N<R>()                                                       ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::N<R>()                                                       ),
+  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth                                   ),
+  normalize_factor      (normalize_factor                                                                   ),
+  offset                (offset                                                                             ),
+  contributions         (this->H.get_cols_max_degree()                                                      ),
+  saturation            ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
+  init_flag             (true                                                                               ),
+  info_bits_pos         (info_bits_pos                                                                      ),
+  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                                   ),
+  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  Y_N_reorderered       (N                                                                                  ),
+  V_reorderered         (N                                                                                  )
 {
 	const std::string name = "Decoder_LDPC_BP_layered_ONMS_inter";
 	this->set_name(name);

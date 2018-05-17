@@ -18,7 +18,7 @@ protected:
 	std::vector<int> g; // coefficients of the generator polynomial, g(x)
 
 public:
-	BCH_polynomial_generator(const int& K, const int& N, const int& t);
+	BCH_polynomial_generator(const int& N, const int& t);
 	virtual ~BCH_polynomial_generator();
 
 	int get_d      () const;

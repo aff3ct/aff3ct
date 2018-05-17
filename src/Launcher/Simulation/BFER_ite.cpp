@@ -59,6 +59,7 @@ void BFER_ite<B,R,Q>
 	auto pqnt = params.qnt     ->get_prefix();
 	auto pmnt = params.mnt     ->get_prefix();
 	auto pter = params.ter     ->get_prefix();
+	auto psim = params.          get_prefix();
 
 	if (this->args.exist({penc+"-info-bits", "K"}) || this->args.exist({ppct+"-info-bits", "K"}))
 		this->args.erase({psrc+"-info-bits", "K"});
@@ -71,20 +72,21 @@ void BFER_ite<B,R,Q>
 	this->args.erase({pitl+"-seed",      "S"});
 	this->args.erase({pmdm+"-fra-size",  "N"});
 	this->args.erase({pmdm+"-fra",       "F"});
-	this->args.erase({pmdm+"-sigma"        });
+	this->args.erase({pmdm+"-noise"         });
 	this->args.erase({pchn+"-fra-size",  "N"});
 	this->args.erase({pchn+"-fra",       "F"});
-	this->args.erase({pchn+"-sigma"         });
+	this->args.erase({pchn+"-noise"         });
 	this->args.erase({pchn+"-seed",      "S"});
 	this->args.erase({pchn+"-add-users"     });
 	this->args.erase({pchn+"-complex"       });
 	this->args.erase({pqnt+"-size",      "N"});
 	this->args.erase({pqnt+"-fra",       "F"});
-	this->args.erase({pqnt+"-sigma"         });
-	this->args.erase({pmnt+"-size",      "K"});
+	this->args.erase({pmnt+"-info-bits", "K"});
+	this->args.erase({pmnt+"-cw-size",   "N"});
 	this->args.erase({pmnt+"-fra",       "F"});
-	this->args.erase({pter+"-info-bits","K"});
-	this->args.erase({pter+"-cw-size",  "N"});
+	this->args.erase({pter+"-info-bits", "K"});
+	this->args.erase({pter+"-cw-size",   "N"});
+	this->args.erase({psim+"-mutinfo"       });
 }
 
 template <typename B, typename R, typename Q>
@@ -131,7 +133,8 @@ void BFER_ite<B,R,Q>
 	if (std::is_integral<Q>())
 		params.qnt->store(this->arg_vals);
 
-	params.mnt->size = params.coded_monitoring ? N_cw : params.src->K;
+	params.mnt->K = params.coded_monitoring ? N_cw : params.src->K;
+	params.mnt->N = N_cw;
 
 	params.mnt->store(this->arg_vals);
 

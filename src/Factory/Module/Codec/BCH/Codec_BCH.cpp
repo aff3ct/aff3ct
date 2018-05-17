@@ -50,11 +50,14 @@ void Codec_BCH::parameters
 	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
+	auto penc = enc->get_prefix();
 
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
 	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-no-sys"        });
+
+	args.add_link({pdec+"-corr-pow", "T"}, {penc+"-info-bits", "K"});
 }
 
 void Codec_BCH::parameters
@@ -69,6 +72,9 @@ void Codec_BCH::parameters
 	this->dec->n_frames = this->enc->n_frames;
 
 	dec->store(vals);
+
+	if(this->dec->K != this->enc->K) // when -T has been given but not -K
+		this->enc->K = this->dec->K;
 
 	this->K    = this->enc->K;
 	this->N_cw = this->enc->N_cw;
