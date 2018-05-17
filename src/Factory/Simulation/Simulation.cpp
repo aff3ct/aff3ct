@@ -76,6 +76,12 @@ void Simulation::parameters
 
 
 	args.add(
+			{p+"-noise-type", "E"},
+			tools::Text(tools::Including_set("ESN0", "EBN0", "ROP", "EP")),
+			"select the type of NOISE: SNR per Symbol / SNR per information Bit"
+			" / Received Optical Power / Erasure Probability.");
+
+	args.add(
 		{p+"-pyber"},
 		tools::Text(),
 		"prepare the output for the PyBER plotter tool, takes the name of the curve in PyBER.");
@@ -209,6 +215,7 @@ void Simulation::parameters
 		}
 	}
 
+	if(vals.exist({p+"-noise-type",  "E"})) this->noise_type  =         vals.at      ({p+"-noise-type", "E"});
 	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"    });
 	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int  ({p+"-stop-time"}));
 	if(vals.exist({p+"-max-frame"       })) this->max_frame   =         vals.to_int  ({p+"-max-frame"});
@@ -282,6 +289,7 @@ void Simulation::parameters
 		noise_range_str << this->noise_range.front() << " -> " << this->noise_range.back() << " dB";
 		headers[p].push_back(std::make_pair("Noise range", noise_range_str.str()));
 	}
+	headers[p].push_back(std::make_pair("Noise type (E)", this->noise_type));
 
 	headers[p].push_back(std::make_pair("Seed", std::to_string(this->global_seed)));
 	headers[p].push_back(std::make_pair("Statistics", this->statistics ? "on" : "off"));

@@ -33,6 +33,7 @@ struct Simulation : Launcher
 		int                       mpi_size        = 1;
 #endif
 		std::chrono::seconds      stop_time       = std::chrono::seconds(0);
+		std::string               noise_type      = "EBN0";
 		std::string               pyber           = "";
 		unsigned                  max_frame       = 0;
 		bool                      debug           = false;
