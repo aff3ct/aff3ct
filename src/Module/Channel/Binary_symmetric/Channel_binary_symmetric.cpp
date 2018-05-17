@@ -49,7 +49,7 @@ void Channel_binary_symmetric<R>
 	}
 
 	for (auto i = vec_loop_size; i < this->N; i++)
-		Y_N[i] = this->noise[i] != (X_N[i] == (R)0.0) ? (R)0.0 : (R)1.0;
+		Y_N[i] = this->event_draw[i] != (X_N[i] == (R)0.0) ? (R)0.0 : (R)1.0;
 }
 
 template<typename R>
