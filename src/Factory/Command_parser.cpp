@@ -91,6 +91,12 @@ void Command_parser
 }
 
 bool Command_parser
+::help_required()
+{
+	return help_asked;
+}
+
+bool Command_parser
 ::parsing_failed()
 {
 	return errors.size() > 0;

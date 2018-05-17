@@ -42,6 +42,7 @@ public:
 	void print_errors  ();
 	void print_warnings();
 
+	bool help_required    (); // return true if the help tag is set
 	bool parsing_failed   (); // return true if there are errors
 	bool parsing_succeeded(); // return true if no errors
 
