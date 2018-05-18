@@ -12,9 +12,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Monitor_BFER<B,R>
-::Monitor_BFER(const int K, const int N, const unsigned max_fe, const int n_frames)
+::Monitor_BFER(const int K, const int N, const unsigned max_fe, const bool count_unknown_values, const int n_frames)
 : Monitor(K, N, n_frames),
   max_fe(max_fe),
+  count_unknown_values(count_unknown_values),
   n_bit_errors(0),
   n_frame_errors(0),
   n_analyzed_frames(0),
@@ -79,7 +80,12 @@ template <typename B, typename R>
 int Monitor_BFER<B,R>
 ::_check_errors(const B *U, const B *V, const int frame_id)
 {
-	int bit_errors_count = tools::hamming_distance(U, V, this->K);
+	int bit_errors_count;
+
+	if (count_unknown_values)
+		bit_errors_count = tools::hamming_distance_unk(U, V, this->K);
+	else
+		bit_errors_count = tools::hamming_distance(U, V, this->K);
 
 	if (bit_errors_count)
 	{
@@ -269,6 +275,13 @@ template<typename B, typename R>
 tools::Histogram<int> Monitor_BFER<B, R>::get_err_hist() const
 {
 	return err_hist;
+}
+
+template<typename B, typename R>
+bool Monitor_BFER<B, R>
+::get_count_unknown_values() const
+{
+	return count_unknown_values;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -43,11 +43,11 @@ struct Monitor_BFER : public Factory
 
 		// builder
 		template <typename B = int, typename R = float>
-		module::Monitor_BFER<B,R>* build() const;
+		module::Monitor_BFER<B,R>* build(bool count_unknown_values = false) const;
 	};
 
 	template <typename B = int, typename R = float>
-	static module::Monitor_BFER<B,R>* build(const parameters& params);
+	static module::Monitor_BFER<B,R>* build(const parameters& params, bool count_unknown_values = false);
 };
 }
 }

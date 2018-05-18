@@ -104,31 +104,31 @@ void Monitor_BFER::parameters
 
 template <typename B, typename R>
 module::Monitor_BFER<B,R>* Monitor_BFER::parameters
-::build() const
+::build(bool count_unknown_values) const
 {
-	if (this->type == "STD") return new module::Monitor_BFER<B,R>(this->K, this->N, this->n_frame_errors, this->n_frames);
+	if (this->type == "STD") return new module::Monitor_BFER<B,R>(this->K, this->N, this->n_frame_errors, count_unknown_values, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
 module::Monitor_BFER<B,R>* Monitor_BFER
-::build(const parameters& params)
+::build(const parameters& params, bool count_unknown_values)
 {
-	return params.template build<B,R>();
+	return params.template build<B,R>(count_unknown_values);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Monitor_BFER<B_8 ,R_8 >* aff3ct::factory::Monitor_BFER::parameters::build<B_8, R_8 >() const;
-template aff3ct::module::Monitor_BFER<B_16,R_16>* aff3ct::factory::Monitor_BFER::parameters::build<B_16,R_16>() const;
-template aff3ct::module::Monitor_BFER<B_32,R_32>* aff3ct::factory::Monitor_BFER::parameters::build<B_32,R_32>() const;
-template aff3ct::module::Monitor_BFER<B_64,R_64>* aff3ct::factory::Monitor_BFER::parameters::build<B_64,R_64>() const;
-template aff3ct::module::Monitor_BFER<B_8 ,R_8 >* aff3ct::factory::Monitor_BFER::build<B_8, R_8 >(const aff3ct::factory::Monitor_BFER::parameters&);
-template aff3ct::module::Monitor_BFER<B_16,R_16>* aff3ct::factory::Monitor_BFER::build<B_16,R_16>(const aff3ct::factory::Monitor_BFER::parameters&);
-template aff3ct::module::Monitor_BFER<B_32,R_32>* aff3ct::factory::Monitor_BFER::build<B_32,R_32>(const aff3ct::factory::Monitor_BFER::parameters&);
-template aff3ct::module::Monitor_BFER<B_64,R_64>* aff3ct::factory::Monitor_BFER::build<B_64,R_64>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B_8 ,R_8 >* aff3ct::factory::Monitor_BFER::parameters::build<B_8, R_8 >(bool) const;
+template aff3ct::module::Monitor_BFER<B_16,R_16>* aff3ct::factory::Monitor_BFER::parameters::build<B_16,R_16>(bool) const;
+template aff3ct::module::Monitor_BFER<B_32,R_32>* aff3ct::factory::Monitor_BFER::parameters::build<B_32,R_32>(bool) const;
+template aff3ct::module::Monitor_BFER<B_64,R_64>* aff3ct::factory::Monitor_BFER::parameters::build<B_64,R_64>(bool) const;
+template aff3ct::module::Monitor_BFER<B_8 ,R_8 >* aff3ct::factory::Monitor_BFER::build<B_8, R_8 >(const aff3ct::factory::Monitor_BFER::parameters&, bool);
+template aff3ct::module::Monitor_BFER<B_16,R_16>* aff3ct::factory::Monitor_BFER::build<B_16,R_16>(const aff3ct::factory::Monitor_BFER::parameters&, bool);
+template aff3ct::module::Monitor_BFER<B_32,R_32>* aff3ct::factory::Monitor_BFER::build<B_32,R_32>(const aff3ct::factory::Monitor_BFER::parameters&, bool);
+template aff3ct::module::Monitor_BFER<B_64,R_64>* aff3ct::factory::Monitor_BFER::build<B_64,R_64>(const aff3ct::factory::Monitor_BFER::parameters&, bool);
 #else
 template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::parameters::build<B,R>() const;
 template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::build<B,R>(const aff3ct::factory::Monitor_BFER::parameters&);
