@@ -130,7 +130,7 @@ template aff3ct::module::Monitor_BFER<B_16,R_16>* aff3ct::factory::Monitor_BFER:
 template aff3ct::module::Monitor_BFER<B_32,R_32>* aff3ct::factory::Monitor_BFER::build<B_32,R_32>(const aff3ct::factory::Monitor_BFER::parameters&, bool);
 template aff3ct::module::Monitor_BFER<B_64,R_64>* aff3ct::factory::Monitor_BFER::build<B_64,R_64>(const aff3ct::factory::Monitor_BFER::parameters&, bool);
 #else
-template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::parameters::build<B,R>() const;
-template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::build<B,R>(const aff3ct::factory::Monitor_BFER::parameters&);
+template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::parameters::build<B,R>(bool) const;
+template aff3ct::module::Monitor_BFER<B,R>* aff3ct::factory::Monitor_BFER::build<B,R>(const aff3ct::factory::Monitor_BFER::parameters&, bool);
 #endif
 // ==================================================================================== explicit template instantiation
