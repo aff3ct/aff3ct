@@ -24,8 +24,8 @@ struct CRC : public Factory
 		int         K             = 0;
 
 		// optional parameters
-		std::string type          = "FAST";
-		std::string poly          = "";
+		std::string type          = "NO"; // "32-GZIP"; // type is the polynomial
+		std::string implem        = "FAST";
 		int         size          = 0;
 		int         n_frames      = 1;
 

@@ -2,16 +2,18 @@
 #include "Tools/Math/max.h"
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
-#include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp"
-#include "Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp"
-#include "Module/Decoder/LDPC/BP/Flooding/ONMS/Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp"
-#include "Module/Decoder/LDPC/BP/Flooding/AMS/Decoder_LDPC_BP_flooding_approximate_min_star.hpp"
-#include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
-#include "Module/Decoder/LDPC/BP/Layered/SPA/Decoder_LDPC_BP_layered_sum_product.hpp"
-#include "Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp"
-#include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp"
+#include "Module/Decoder/LDPC/BP/Layered/Decoder_LDPC_BP_layered.hpp"
+
+#include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
+#include "Tools/Code/LDPC/Update_rule/LSPA/Update_rule_LSPA.hpp"
+#include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS.hpp"
+#include "Tools/Code/LDPC/Update_rule/OMS/Update_rule_OMS.hpp"
+#include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS.hpp"
+#include "Tools/Code/LDPC/Update_rule/AMS/Update_rule_AMS.hpp"
+
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_ONMS_inter.hpp"
-#include "Module/Decoder/LDPC/BP/Layered/AMS/Decoder_LDPC_BP_layered_approximate_min_star.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
 #include "Module/Decoder/LDPC/BP/Peeling/Decoder_LDPC_BP_peeling.hpp"
 
 #include "Decoder_LDPC.hpp"
@@ -58,9 +60,8 @@ void Decoder_LDPC::parameters
 	args.add_link({p+"-h-path"}, {p+"-info-bits", "K"}); // if there is no K, then H is considered regular,
 	                                                     // so K is the N - H's height
 
-
-	tools::add_options(args.at({p+"-type", "D"}), 0, "BP", "BP_FLOODING", "BP_LAYERED", "BP_PEELING");
-	tools::add_options(args.at({p+"-implem"   }), 0, "ONMS", "SPA", "LSPA", "GALA", "AMS");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_FLOODING", "BP_LAYERED", "BP_PEELING");
+	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA");
 
 	args.add(
 		{p+"-ite", "i"},
@@ -70,12 +71,12 @@ void Decoder_LDPC::parameters
 	args.add(
 		{p+"-off"},
 		tools::Real(),
-		"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem ONMS\").");
+		"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem NMS\").");
 
 	args.add(
 		{p+"-norm"},
 		tools::Real(tools::Positive()),
-		"normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem ONMS\").");
+		"normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem NMS\").");
 
 	args.add(
 		{p+"-no-synd"},
@@ -149,11 +150,11 @@ void Decoder_LDPC::parameters
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
 
-		if (this->implem == "ONMS")
-		{
-			headers[p].push_back(std::make_pair("Offset", std::to_string(this->offset)));
+		if (this->implem == "NMS")
 			headers[p].push_back(std::make_pair("Normalize factor", std::to_string(this->norm_factor)));
-		}
+
+		if (this->implem == "OMS")
+			headers[p].push_back(std::make_pair("Offset", std::to_string(this->offset)));
 
 		std::string syndrome = this->enable_syndrome ? "on" : "off";
 		headers[p].push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
@@ -171,37 +172,42 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 ::build_siso(const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos,
              module::Encoder<B> *encoder) const
 {
-	if ((this->type == "BP" || this->type == "BP_FLOODING") && this->simd_strategy.empty())
+	if (this->type == "BP_FLOODING" && this->simd_strategy.empty())
 	{
-		     if (this->implem == "ONMS") return new module::Decoder_LDPC_BP_flooding_ONMS     <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		else if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_SPA      <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		else if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_flooding_LSPA     <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		else if (this->implem == "AMS" ) {
-			if (this->min == "MIN")
-				return new module::Decoder_LDPC_BP_flooding_AMS<B,Q,tools::min<Q>>                 (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			else if (this->min == "MINL")
-				return new module::Decoder_LDPC_BP_flooding_AMS<B,Q,tools::min_star_linear2<Q>>    (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			else if (this->min == "MINS")
-				return new module::Decoder_LDPC_BP_flooding_AMS<B,Q,tools::min_star<Q>>            (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		const auto max_CN_degree = H.get_cols_max_degree();
+
+		     if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >(this->offset     ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "NMS" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_NMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS <Q                           >(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "SPA" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_SPA <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA <Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "LSPA")  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_LSPA<Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA<Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "AMS" )
+		{
+			     if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINL") return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINS") return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
 	}
 	else if (this->type == "BP_LAYERED" && this->simd_strategy.empty())
 	{
-		     if (this->implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS      <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		else if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_layered_SPA       <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		else if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_layered_LSPA      <B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		else if (this->implem == "AMS" ) {
-			if (this->min == "MIN")
-				return new module::Decoder_LDPC_BP_layered_AMS<B,Q,tools::min<Q>>                  (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			else if (this->min == "MINL")
-				return new module::Decoder_LDPC_BP_layered_AMS<B,Q,tools::min_star_linear2<Q>>     (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			else if (this->min == "MINS")
-				return new module::Decoder_LDPC_BP_layered_AMS<B,Q,tools::min_star<Q>>             (this->K, this->N_cw, this->n_ite, H, info_bits_pos,                                     this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		const auto max_CN_degree = H.get_cols_max_degree();
+
+		     if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_layered<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_layered<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >(this->offset     ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "NMS" )  return new module::Decoder_LDPC_BP_layered<B,Q,tools::Update_rule_NMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS <Q                           >(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "SPA" )  return new module::Decoder_LDPC_BP_layered<B,Q,tools::Update_rule_SPA <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA <Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "LSPA")  return new module::Decoder_LDPC_BP_layered<B,Q,tools::Update_rule_LSPA<Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA<Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "AMS" )
+		{
+			     if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_layered<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINL") return new module::Decoder_LDPC_BP_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINS") return new module::Decoder_LDPC_BP_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
 	}
 	else if (this->type == "BP_LAYERED" && this->simd_strategy == "INTER")
 	{
-		     if (this->implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		     if (this->implem == "NMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)0           , this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "OMS")	return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

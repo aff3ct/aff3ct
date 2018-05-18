@@ -58,8 +58,13 @@ void Modem::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("BPSK", "BPSK_FAST", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")),
+		tools::Text(tools::Including_set("BPSK", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")),
 		"type of the modulation to use in the simulation.");
+
+	args.add(
+		{p+"-implem"},
+		tools::Text(tools::Including_set("STD", "FAST")),
+		"select the implementation of the modem.");
 
 	args.add(
 		{p+"-bps"},
@@ -141,8 +146,9 @@ void Modem::parameters
 	auto p = this->get_prefix();
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(vals.exist({p+"-type"         })) this->type    = vals.at({p+"-type"   });
-	if(vals.exist({p+"-cpm-std"      })) this->cpm_std = vals.at({p+"-cpm-std"});
+	if(vals.exist({p+"-type"   })) this->type    = vals.at({p+"-type"   });
+	if(vals.exist({p+"-implem" })) this->implem  = vals.at({p+"-implem" });
+	if(vals.exist({p+"-cpm-std"})) this->cpm_std = vals.at({p+"-cpm-std"});
 
 	if (this->type == "CPM")
 	{
@@ -179,7 +185,7 @@ void Modem::parameters
 	if(vals.exist({p+"-cpm-ws"       })) this->wave_shape = vals.at    ({p+"-cpm-ws"       });
 
 	// force the number of bits per symbol to 1 when BPSK mod
-	if (this->type == "BPSK" || this->type == "BPSK_FAST" || this->type == "OOK")
+	if (this->type == "BPSK" || this->type == "OOK")
 		this->bps = 1;
 	// force the number of bits per symbol to 3 when SCMA mod
 	if (this->type == "SCMA")
@@ -214,7 +220,8 @@ void Modem::parameters
 	auto p = this->get_prefix();
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	headers[p].push_back(std::make_pair("Type", this->type));
+	headers[p].push_back(std::make_pair("Type",           this->type  ));
+	headers[p].push_back(std::make_pair("Implementation", this->implem));
 	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->N)));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	if (this->type == "CPM")
@@ -234,10 +241,9 @@ void Modem::parameters
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	std::string demod_sig2 = (this->no_sig2) ? "off" : "on";
-	std::string demod_max  = (this->type == "BPSK"     ) ||
-	                         (this->type == "BPSK_FAST") ||
-	                         (this->type == "OOK"      ) ||
-	                         (this->type == "SCMA"     ) ?
+	std::string demod_max  = (this->type == "BPSK") ||
+	                         (this->type == "OOK" ) ||
+	                         (this->type == "SCMA") ?
 	                         "unused" : this->max;
 	std::string demod_ite  = std::to_string(this->n_ite);
 	std::string demod_psi  = this->psi;
@@ -258,13 +264,13 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build() const
 {
-	     if (this->type == "BPSK"     ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "BPSK_FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
-	else if (this->type == "PAM"      ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "QAM"      ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "PSK"      ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "USER"     ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
-	else if (this->type == "CPM"      ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
+	     if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                               this->no_sig2, this->n_frames);
+	else if (this->type == "PAM"  && this->implem == "STD" ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "QAM"  && this->implem == "STD" ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "PSK"  && this->implem == "STD" ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "USER" && this->implem == "STD" ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, tools::Sigma<R>((R)this->noise), this->bps,                                                                                    this->no_sig2, this->n_frames);
+	else if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps, this->upf, this->cpm_L, this->cpm_k, this->cpm_p, this->mapping, this->wave_shape, this->no_sig2, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -285,15 +291,15 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
 ::build(const tools::Distributions<R>* dist, const std::string& chn_type) const
 {
-	if (this->type == "SCMA")
+	if (this->type == "SCMA" && this->implem == "STD")
 	{
 		return _build_scma<B,R,Q>();
 	}
-	else if (this->type == "OOK")
+	else if (this->type == "OOK" && this->implem == "STD")
 	{
-		     if (chn_type == "AWGN"   ) return new module::Modem_OOK_AWGN<B,R,Q>(this->N, tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_frames);
-		else if (chn_type == "BEC"    ) return new module::Modem_OOK_BEC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
-		else if (chn_type == "BSC"    ) return new module::Modem_OOK_BSC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
+		     if (chn_type == "AWGN") return new module::Modem_OOK_AWGN<B,R,Q>(this->N, tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_frames);
+		else if (chn_type == "BEC" ) return new module::Modem_OOK_BEC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
+		else if (chn_type == "BSC" ) return new module::Modem_OOK_BSC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
 		else if (chn_type == "OPTICAL" && dist != nullptr)
 			return new module::Modem_OOK_optical<B,R,Q>(this->N, *dist, tools::ROP<R>((R)this->noise), this->n_frames);
 	}
@@ -323,15 +329,14 @@ int Modem
                                    const int         cpm_L,
                                    const int         cpm_p)
 {
-	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::size_mod(N                        );
-	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::size_mod(N                        );
-	else if (type == "OOK"      ) return module::Modem_OOK      <>::size_mod(N                        );
-	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::size_mod(N, bps                   );
-	else if (type == "PAM"      ) return module::Modem_PAM      <>::size_mod(N, bps                   );
-	else if (type == "QAM"      ) return module::Modem_QAM      <>::size_mod(N, bps                   );
-	else if (type == "PSK"      ) return module::Modem_PSK      <>::size_mod(N, bps                   );
-	else if (type == "USER"     ) return module::Modem_user     <>::size_mod(N, bps                   );
-	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_mod(N, bps, cpm_L, cpm_p, upf);
+	     if (type == "BPSK") return module::Modem_BPSK     <>::size_mod(N                        );
+	else if (type == "OOK" ) return module::Modem_OOK      <>::size_mod(N                        );
+	else if (type == "SCMA") return module::Modem_SCMA     <>::size_mod(N, bps                   );
+	else if (type == "PAM" ) return module::Modem_PAM      <>::size_mod(N, bps                   );
+	else if (type == "QAM" ) return module::Modem_QAM      <>::size_mod(N, bps                   );
+	else if (type == "PSK" ) return module::Modem_PSK      <>::size_mod(N, bps                   );
+	else if (type == "USER") return module::Modem_user     <>::size_mod(N, bps                   );
+	else if (type == "CPM" ) return module::Modem_CPM      <>::size_mod(N, bps, cpm_L, cpm_p, upf);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -343,15 +348,14 @@ int Modem
                                   const int         cpm_L,
                                   const int         cpm_p)
 {
-	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::size_fil(N                   );
-	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::size_fil(N                   );
-	else if (type == "OOK"      ) return module::Modem_OOK      <>::size_fil(N                   );
-	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::size_fil(N, bps              );
-	else if (type == "PAM"      ) return module::Modem_PAM      <>::size_fil(N, bps              );
-	else if (type == "QAM"      ) return module::Modem_QAM      <>::size_fil(N, bps              );
-	else if (type == "PSK"      ) return module::Modem_PSK      <>::size_fil(N, bps              );
-	else if (type == "USER"     ) return module::Modem_user     <>::size_fil(N, bps              );
-	else if (type == "CPM"      ) return module::Modem_CPM      <>::size_fil(N, bps, cpm_L, cpm_p);
+	     if (type == "BPSK") return module::Modem_BPSK<>::size_fil(N                   );
+	else if (type == "OOK" ) return module::Modem_OOK <>::size_fil(N                   );
+	else if (type == "SCMA") return module::Modem_SCMA<>::size_fil(N, bps              );
+	else if (type == "PAM" ) return module::Modem_PAM <>::size_fil(N, bps              );
+	else if (type == "QAM" ) return module::Modem_QAM <>::size_fil(N, bps              );
+	else if (type == "PSK" ) return module::Modem_PSK <>::size_fil(N, bps              );
+	else if (type == "USER") return module::Modem_user<>::size_fil(N, bps              );
+	else if (type == "CPM" ) return module::Modem_CPM <>::size_fil(N, bps, cpm_L, cpm_p);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -359,15 +363,14 @@ int Modem
 bool Modem
 ::is_complex_mod(const std::string &type, const int bps)
 {
-	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::is_complex_mod();
-	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::is_complex_mod();
-	else if (type == "OOK"      ) return module::Modem_OOK      <>::is_complex_mod();
-	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::is_complex_mod();
-	else if (type == "PAM"      ) return module::Modem_PAM      <>::is_complex_mod();
-	else if (type == "QAM"      ) return module::Modem_QAM      <>::is_complex_mod();
-	else if (type == "PSK"      ) return module::Modem_PSK      <>::is_complex_mod();
-	else if (type == "USER"     ) return module::Modem_user     <>::is_complex_mod();
-	else if (type == "CPM"      ) return module::Modem_CPM      <>::is_complex_mod();
+	     if (type == "BPSK") return module::Modem_BPSK<>::is_complex_mod();
+	else if (type == "OOK" ) return module::Modem_OOK <>::is_complex_mod();
+	else if (type == "SCMA") return module::Modem_SCMA<>::is_complex_mod();
+	else if (type == "PAM" ) return module::Modem_PAM <>::is_complex_mod();
+	else if (type == "QAM" ) return module::Modem_QAM <>::is_complex_mod();
+	else if (type == "PSK" ) return module::Modem_PSK <>::is_complex_mod();
+	else if (type == "USER") return module::Modem_user<>::is_complex_mod();
+	else if (type == "CPM" ) return module::Modem_CPM <>::is_complex_mod();
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -375,15 +378,14 @@ bool Modem
 bool Modem
 ::is_complex_fil(const std::string &type, const int bps)
 {
-	     if (type == "BPSK"     ) return module::Modem_BPSK     <>::is_complex_fil();
-	else if (type == "BPSK_FAST") return module::Modem_BPSK_fast<>::is_complex_fil();
-	else if (type == "OOK"      ) return module::Modem_OOK      <>::is_complex_fil();
-	else if (type == "SCMA"     ) return module::Modem_SCMA     <>::is_complex_fil();
-	else if (type == "PAM"      ) return module::Modem_PAM      <>::is_complex_fil();
-	else if (type == "QAM"      ) return module::Modem_QAM      <>::is_complex_fil();
-	else if (type == "PSK"      ) return module::Modem_PSK      <>::is_complex_fil();
-	else if (type == "USER"     ) return module::Modem_user     <>::is_complex_fil();
-	else if (type == "CPM"      ) return module::Modem_CPM      <>::is_complex_fil();
+	     if (type == "BPSK") return module::Modem_BPSK<>::is_complex_fil();
+	else if (type == "OOK" ) return module::Modem_OOK <>::is_complex_fil();
+	else if (type == "SCMA") return module::Modem_SCMA<>::is_complex_fil();
+	else if (type == "PAM" ) return module::Modem_PAM <>::is_complex_fil();
+	else if (type == "QAM" ) return module::Modem_QAM <>::is_complex_fil();
+	else if (type == "PSK" ) return module::Modem_PSK <>::is_complex_fil();
+	else if (type == "USER") return module::Modem_user<>::is_complex_fil();
+	else if (type == "CPM" ) return module::Modem_CPM <>::is_complex_fil();
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

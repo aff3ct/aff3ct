@@ -5,6 +5,7 @@
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
+#include "../../../../Decoder_SISO_SIHO.hpp"
 #include "../../Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
@@ -12,7 +13,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_layered_ONMS_inter : public Decoder_LDPC_BP<B,R>
+class Decoder_LDPC_BP_layered_ONMS_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
 {
 private:
 	const float normalize_factor;
@@ -21,7 +22,6 @@ private:
 
 protected:
 	const R saturation;
-	const int n_C_nodes; // number of check nodes (= N - K)
 
 	// reset so C_to_V and V_to_C structures can be cleared only at the beginning of the loop in iterative decoding
 	bool init_flag;
@@ -49,19 +49,16 @@ public:
 	void reset();
 
 protected:
-	void _load          (const R *Y_N,           const int frame_id);
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
-	// BP functions for decoding
+	void _load(const R *Y_N, const int frame_id);
 	template <int F = 1>
-	void BP_decode(const int frame_id);
-
-	bool check_syndrome(const int frame_id);
-
+	void _decode(const int frame_id);
 	template <int F = 1>
-	void BP_process(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches);
+	void _decode_single_ite(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches);
+	bool _check_syndrome(const int frame_id);
 };
 }
 }
