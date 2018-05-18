@@ -2,9 +2,9 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Quantizer/Standard/Quantizer_standard.hpp"
-#include "Module/Quantizer/Fast/Quantizer_fast.hpp"
-#include "Module/Quantizer/Tricky/Quantizer_tricky.hpp"
+#include "Module/Quantizer/Pow2/Quantizer_pow2.hpp"
+#include "Module/Quantizer/Pow2/Quantizer_pow2_fast.hpp"
+#include "Module/Quantizer/Custom/Quantizer_custom.hpp"
 #include "Module/Quantizer/NO/Quantizer_NO.hpp"
 
 #include "Quantizer.hpp"
@@ -50,8 +50,13 @@ void Quantizer::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("STD", "STD_FAST", "TRICKY")),
+		tools::Text(tools::Including_set("POW2", "CUSTOM")),
 		"type of the quantizer to use in the simulation.");
+
+	args.add(
+		{p+"-implem"},
+		tools::Text(tools::Including_set("STD", "FAST")),
+		"select the implementation of quantizer.");
 
 	args.add(
 		{p+"-dec"},
@@ -80,6 +85,7 @@ void Quantizer::parameters
 	if(vals.exist({p+"-dec"      })) this->n_decimals = vals.to_int  ({p+"-dec"      });
 	if(vals.exist({p+"-bits"     })) this->n_bits     = vals.to_int  ({p+"-bits"     });
 	if(vals.exist({p+"-type"     })) this->type       = vals.at      ({p+"-type"     });
+	if(vals.exist({p+"-implem"   })) this->implem     = vals.at      ({p+"-implem"   });
 }
 
 void Quantizer::parameters
@@ -88,9 +94,9 @@ void Quantizer::parameters
 	auto p = this->get_prefix();
 
 	std::string quantif = "unused";
-	if (this->type == "TRICKY")
+	if (this->type == "CUSTOM")
 		quantif = "{"+std::to_string(this->n_bits)+", "+std::to_string(this->range)+"f}";
-	else if (this->type == "STD" || this->type == "STD_FAST")
+	else if (this->type == "POW2")
 		quantif = "{"+std::to_string(this->n_bits)+", "+std::to_string(this->n_decimals)+"}";
 
 	headers[p].push_back(std::make_pair("Type", this->type));
@@ -103,10 +109,10 @@ template <typename R, typename Q>
 module::Quantizer<R,Q>* Quantizer::parameters
 ::build() const
 {
-	     if (this->type == "STD"     ) return new module::Quantizer_standard<R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
-	else if (this->type == "STD_FAST") return new module::Quantizer_fast    <R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
-	else if (this->type == "TRICKY"  ) return new module::Quantizer_tricky  <R,Q>(this->size, this->range,      this->n_bits, this->n_frames);
-	else if (this->type == "NO"      ) return new module::Quantizer_NO      <R,Q>(this->size,                                 this->n_frames);
+	     if (this->type == "POW2"   && this->implem == "STD" ) return new module::Quantizer_pow2     <R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
+	else if (this->type == "POW2"   && this->implem == "FAST") return new module::Quantizer_pow2_fast<R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
+	else if (this->type == "CUSTOM" && this->implem == "STD" ) return new module::Quantizer_custom   <R,Q>(this->size, this->range,      this->n_bits, this->n_frames);
+	else if (this->type == "NO"                              ) return new module::Quantizer_NO       <R,Q>(this->size,                                 this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

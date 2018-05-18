@@ -7,21 +7,21 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Quantizer_fast.hpp"
+#include "Quantizer_pow2_fast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename R, typename Q>
-Quantizer_fast<R,Q>
-::Quantizer_fast(const int N, const short& fixed_point_pos, const int n_frames)
+Quantizer_pow2_fast<R,Q>
+::Quantizer_pow2_fast(const int N, const short& fixed_point_pos, const int n_frames)
 : Quantizer<R,Q>(N, n_frames),
   val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
   val_min(-val_max),
   fixed_point_pos(fixed_point_pos),
   factor(1 << fixed_point_pos)
 {
-	const std::string name = "Quantizer_fast";
+	const std::string name = "Quantizer_pow2_fast";
 	this->set_name(name);
 
 	if (sizeof(Q) * 8 <= (unsigned) fixed_point_pos)
@@ -38,11 +38,11 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_fast<float,float>
-::Quantizer_fast(const int N, const short& fixed_point_pos, const int n_frames)
-: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), fixed_point_pos(0), factor(0) 
+Quantizer_pow2_fast<float,float>
+::Quantizer_pow2_fast(const int N, const short& fixed_point_pos, const int n_frames)
+: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), fixed_point_pos(0), factor(0)
 {
-	const std::string name = "Quantizer_fast";
+	const std::string name = "Quantizer_pow2_fast";
 	this->set_name(name);
 }
 }
@@ -53,26 +53,26 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_fast<double,double>
-::Quantizer_fast(const int N, const short& fixed_point_pos, const int n_frames)
-: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), fixed_point_pos(0), factor(0) 
+Quantizer_pow2_fast<double,double>
+::Quantizer_pow2_fast(const int N, const short& fixed_point_pos, const int n_frames)
+: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), fixed_point_pos(0), factor(0)
 {
-	const std::string name = "Quantizer_fast";
+	const std::string name = "Quantizer_pow2_fast";
 	this->set_name(name);
 }
 }
 }
 
 template <typename R, typename Q>
-Quantizer_fast<R,Q>
-::Quantizer_fast(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames)
+Quantizer_pow2_fast<R,Q>
+::Quantizer_pow2_fast(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames)
 : Quantizer<R,Q>(N, n_frames),
   val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
   val_min(-val_max),
   fixed_point_pos(fixed_point_pos),
   factor(1 << fixed_point_pos)
 {
-	const std::string name = "Quantizer_fast";
+	const std::string name = "Quantizer_pow2_fast";
 	this->set_name(name);
 
 	if (fixed_point_pos <= 0)
@@ -125,11 +125,11 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_fast<float, float>
-::Quantizer_fast(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames)
-: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), fixed_point_pos(0), factor(0) 
+Quantizer_pow2_fast<float, float>
+::Quantizer_pow2_fast(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames)
+: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), fixed_point_pos(0), factor(0)
 {
-	const std::string name = "Quantizer_fast";
+	const std::string name = "Quantizer_pow2_fast";
 	this->set_name(name);
 }
 }
@@ -140,24 +140,24 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_fast<double, double>
-::Quantizer_fast(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames)
-: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), fixed_point_pos(0), factor(0) 
+Quantizer_pow2_fast<double, double>
+::Quantizer_pow2_fast(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames)
+: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), fixed_point_pos(0), factor(0)
 {
-	const std::string name = "Quantizer_fast";
+	const std::string name = "Quantizer_pow2_fast";
 	this->set_name(name);
 }
 }
 }
 
 template <typename R, typename Q>
-Quantizer_fast<R,Q>
-::~Quantizer_fast()
+Quantizer_pow2_fast<R,Q>
+::~Quantizer_pow2_fast()
 {
 }
 
 template<typename R, typename Q>
-void Quantizer_fast<R,Q>
+void Quantizer_pow2_fast<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {
 	std::string message = "Supports only 'float' to 'short' and 'float' to 'signed char' conversions.";
@@ -169,7 +169,7 @@ namespace aff3ct
 namespace module
 {
 template<>
-void Quantizer_fast<float,short>
+void Quantizer_pow2_fast<float,short>
 ::_process(const float *Y_N1, short *Y_N2, const int frame_id)
 {
 	if (!mipp::isAligned(Y_N1))
@@ -207,7 +207,7 @@ namespace aff3ct
 namespace module
 {
 template<>
-void Quantizer_fast<float,signed char>
+void Quantizer_pow2_fast<float,signed char>
 ::_process(const float *Y_N1, signed char *Y_N2, const int frame_id)
 {
 	if (!mipp::isAligned(Y_N1))
@@ -247,13 +247,13 @@ void Quantizer_fast<float,signed char>
 }
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Quantizer_fast<R_8,Q_8>;
-template class aff3ct::module::Quantizer_fast<R_16,Q_16>;
-template class aff3ct::module::Quantizer_fast<R_32,Q_32>;
+template class aff3ct::module::Quantizer_pow2_fast<R_8,Q_8>;
+template class aff3ct::module::Quantizer_pow2_fast<R_16,Q_16>;
+template class aff3ct::module::Quantizer_pow2_fast<R_32,Q_32>;
 #else
-template class aff3ct::module::Quantizer_fast<R,Q>;
+template class aff3ct::module::Quantizer_pow2_fast<R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

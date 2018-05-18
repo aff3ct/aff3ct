@@ -361,7 +361,7 @@ class compStats:
 		message += ", first noise point = " + format_e(self.dataRef.Noise[0]) + unity
 		message += ", last noise point = " + format_e(self.dataRef.Noise[len(self.dataRef.Noise) -1]) + unity + "\n"
 		message += "---- -------|-------------------------|--------------|-------------------------------- \n"
-		message += "----   name |   ranges [first,last]   | valid points | sensibility [avg,min,max,rate]  \n"
+		message += "----   name |     ranges [first,last] | valid points | sensibility [avg,min,max,rate]  \n"
 		message += "---- -------|-------------------------|--------------|-------------------------------- \n"
 
 		for d in self.dataList:
@@ -369,21 +369,20 @@ class compStats:
 				message += "----" + d.name.rjust(7) + " "
 				message += "| ["  + (format_e(d.tableCur[0])).rjust(10) + "," + (format_e(d.tableCur[len(d.tableCur) -1])).rjust(10) + "] "
 				message += "| "   + (str(d.valid) + "/" + str(d.nData)).rjust(12) + " "
-				message += "| [ " + ("%.3f" % d.avgSensibility + ", %.2f" % d.minSensibility + ", %.2f" % d.maxSensibility + ", " + ("%.2f" % d.rateSensibility).rjust(6) + "%") + " ] "
+				message += "|  [ " + ("%.2f" % d.avgSensibility + ", %.2f" % d.minSensibility + ", %.2f" % d.maxSensibility + ", " + ("%.2f" % d.rateSensibility).rjust(6) + "%") + " ] "
 				message += "\n"
 
 		if self.hasError():
-			message += "---- -------|----------------------------------------------------------------------- \n"
-			message += "----   name | errors list {noise: new -> ref}                                        \n"
-			message += "---- -------|----------------------------------------------------------------------- \n"
+			message += "---- -------|------------------------------------------------------------------------- \n"
+			message += "----   name | errors list {noise: new -> ref}                                          \n"
+			message += "---- -------|------------------------------------------------------------------------- \n"
 			for d in self.dataList:
 				if d.hasError():
 					message += "----" + d.name.rjust(7) + " | "
 					el = 0
 					for e in d.errorsList:
-						if el != 0 and (el % 3) == 0 :
+						if el != 0 and (el % 2) == 0 :
 							message += "\n----        | "
-
 
 						message += "{" + format_e(self.dataCur.Noise[d.errorsPos[el]]) + ": " + format_e(e[0]) + " -> " + format_e(e[1]) + "}"
 

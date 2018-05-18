@@ -5,20 +5,20 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Quantizer_tricky.hpp"
+#include "Quantizer_custom.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename R, typename Q>
-Quantizer_tricky<R,Q>
-::Quantizer_tricky(const int N, const int n_frames)
+Quantizer_custom<R,Q>
+::Quantizer_custom(const int N, const int n_frames)
 : Quantizer<R,Q>(N, n_frames),
   val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
   val_min(-val_max),
   delta_inv((R)0)
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
 }
 
@@ -27,11 +27,11 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_tricky<float,float>
-::Quantizer_tricky(const int N, const int n_frames)
-: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f) 
+Quantizer_custom<float,float>
+::Quantizer_custom(const int N, const int n_frames)
+: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f)
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
 }
 }
@@ -42,25 +42,25 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_tricky<double,double>
-::Quantizer_tricky(const int N, const int n_frames)
-: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f) 
+Quantizer_custom<double,double>
+::Quantizer_custom(const int N, const int n_frames)
+: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f)
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
 }
 }
 }
 
 template <typename R, typename Q>
-Quantizer_tricky<R,Q>
-::Quantizer_tricky(const int N, const short& saturation_pos, const int n_frames)
+Quantizer_custom<R,Q>
+::Quantizer_custom(const int N, const short& saturation_pos, const int n_frames)
 : Quantizer<R,Q>(N, n_frames),
   val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
   val_min(-val_max),
   delta_inv((R)0)
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
 
 	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
@@ -77,11 +77,11 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_tricky<float,float>
-::Quantizer_tricky(const int N, const short& saturation_pos, const int n_frames)
-: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f) 
+Quantizer_custom<float,float>
+::Quantizer_custom(const int N, const short& saturation_pos, const int n_frames)
+: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f)
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
 }
 }
@@ -92,25 +92,25 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_tricky<double,double>
-::Quantizer_tricky(const int N, const short& saturation_pos, const int n_frames)
-: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f) 
+Quantizer_custom<double,double>
+::Quantizer_custom(const int N, const short& saturation_pos, const int n_frames)
+: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f)
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
 }
 }
 }
 
 template <typename R, typename Q>
-Quantizer_tricky<R,Q>
-::Quantizer_tricky(const int N, const float min_max, const int n_frames)
+Quantizer_custom<R,Q>
+::Quantizer_custom(const int N, const float min_max, const int n_frames)
 : Quantizer<R,Q>(N, n_frames),
   val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
   val_min(-val_max),
   delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max))
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
 }
 
@@ -119,11 +119,11 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_tricky<float,float>
-::Quantizer_tricky(const int N, const float min_max, const int n_frames)
-: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f) 
+Quantizer_custom<float,float>
+::Quantizer_custom(const int N, const float min_max, const int n_frames)
+: Quantizer<float,float>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f)
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
 }
 }
@@ -134,27 +134,27 @@ namespace aff3ct
 namespace module
 {
 template <>
-Quantizer_tricky<double,double>
-::Quantizer_tricky(const int N, const float min_max, const int n_frames)
-: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f) 
+Quantizer_custom<double,double>
+::Quantizer_custom(const int N, const float min_max, const int n_frames)
+: Quantizer<double,double>(N, n_frames), val_max(0), val_min(0), delta_inv(0.f)
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
 }
 }
 }
 
 template <typename R, typename Q>
-Quantizer_tricky<R,Q>
-::Quantizer_tricky(const int N, const float min_max, const short& saturation_pos, const int n_frames)
+Quantizer_custom<R,Q>
+::Quantizer_custom(const int N, const float min_max, const short& saturation_pos, const int n_frames)
 : Quantizer<R,Q>(N, n_frames),
   val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
   val_min(-val_max),
   delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max))
 {
-	const std::string name = "Quantizer_tricky";
+	const std::string name = "Quantizer_custom";
 	this->set_name(name);
-	
+
 	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
 	{
 		std::stringstream message;
@@ -165,13 +165,13 @@ Quantizer_tricky<R,Q>
 }
 
 template <typename R, typename Q>
-Quantizer_tricky<R,Q>
-::~Quantizer_tricky()
+Quantizer_custom<R,Q>
+::~Quantizer_custom()
 {
 }
 
 template<typename R, typename Q>
-void Quantizer_tricky<R,Q>
+void Quantizer_custom<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {
 	const auto size = (unsigned)(this->N);
@@ -195,14 +195,14 @@ void Quantizer_tricky<R,Q>
 		Y_N2[i] = (Q)tools::saturate(std::round(Y_N1[i] * delta_inv), (R)val_min, (R)val_max);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Quantizer_tricky<R_8,Q_8>;
-template class aff3ct::module::Quantizer_tricky<R_16,Q_16>;
-template class aff3ct::module::Quantizer_tricky<R_32,Q_32>;
-template class aff3ct::module::Quantizer_tricky<R_64,Q_64>;
+template class aff3ct::module::Quantizer_custom<R_8,Q_8>;
+template class aff3ct::module::Quantizer_custom<R_16,Q_16>;
+template class aff3ct::module::Quantizer_custom<R_32,Q_32>;
+template class aff3ct::module::Quantizer_custom<R_64,Q_64>;
 #else
-template class aff3ct::module::Quantizer_tricky<R,Q>;
+template class aff3ct::module::Quantizer_custom<R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

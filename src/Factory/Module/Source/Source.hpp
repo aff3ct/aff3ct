@@ -24,6 +24,7 @@ struct Source : public Factory
 
 		// optional parameters
 		std::string type     = "RAND";
+		std::string implem   = "STD";
 		std::string path     = "";
 		int         n_frames = 1;
 		int         seed     = 0;
