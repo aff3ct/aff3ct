@@ -18,6 +18,7 @@ Monitor_BFER_reduction<B,R>
 : Monitor_BFER<B,R>((monitors.size() && monitors[0]) ? monitors[0]->get_K() : 1,
                     (monitors.size() && monitors[0]) ? monitors[0]->get_N() : 1,
                     (monitors.size() && monitors[0]) ? monitors[0]->get_fe_limit() : 1,
+                    (monitors.size() && monitors[0]) ? monitors[0]->get_count_unknown_values() : false,
                     (monitors.size() && monitors[0]) ? monitors[0]->get_n_frames() : 1),
   n_analyzed_frames_historic(0),
   monitors(monitors)

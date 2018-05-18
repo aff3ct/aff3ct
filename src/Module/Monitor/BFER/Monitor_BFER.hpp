@@ -22,6 +22,7 @@ public:
 
 protected:
 	const unsigned max_fe;
+	const bool count_unknown_values;
 
 	unsigned long long n_bit_errors;
 	unsigned long long n_frame_errors;
@@ -35,7 +36,7 @@ protected:
 	tools::Histogram<int> err_hist;
 
 public:
-	Monitor_BFER(const int K, const int N, const unsigned max_fe, const int n_frames = 1);
+	Monitor_BFER(const int K, const int N, const unsigned max_fe, const bool count_unknown_values = false, const int n_frames = 1);
 	virtual ~Monitor_BFER() = default;
 
 	/*!
@@ -111,6 +112,8 @@ public:
 
 	virtual bool fe_limit_achieved();
 	unsigned get_fe_limit() const;
+
+	bool get_count_unknown_values() const;
 
 	virtual unsigned long long get_n_analyzed_fra() const;
 	virtual unsigned long long get_n_fe          () const;
