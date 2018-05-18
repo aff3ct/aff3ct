@@ -86,11 +86,12 @@ void Source::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Type", this->type));
+	headers[p].push_back(std::make_pair("Implementation", this->implem));
 	headers[p].push_back(std::make_pair("Info. bits (K_info)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	if (this->type == "USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
-	if ((this->type == "RAND" || this->type == "RAND_FAST") && full)
+	if (this->type == "RAND" && full)
 		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
 }
 

@@ -100,6 +100,7 @@ void Quantizer::parameters
 		quantif = "{"+std::to_string(this->n_bits)+", "+std::to_string(this->n_decimals)+"}";
 
 	headers[p].push_back(std::make_pair("Type", this->type));
+	headers[p].push_back(std::make_pair("Implementation", this->implem));
 	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->size)));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	headers[p].push_back(std::make_pair("Fixed-point config.", quantif));
