@@ -335,7 +335,7 @@ template <typename B, typename R, typename Q>
 module::Monitor_BFER<B,R>* BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	bool count_unknown_values = params_BFER.noise_type == "EP";
+	bool count_unknown_values = params_BFER.noise->type == "EP";
 
 	return factory::Monitor_BFER::build<B,R>(*params_BFER.mnt, count_unknown_values);
 }
