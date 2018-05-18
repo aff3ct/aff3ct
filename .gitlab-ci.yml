@@ -103,7 +103,7 @@ build-mac-osx-clang:
 
 test-regression:
   stage: test
-  retry: 2
+  retry: 1
   tags:
     - test
   artifacts:
