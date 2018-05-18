@@ -561,7 +561,6 @@ template size_t aff3ct::tools::hamming_distance_unk<B>(const B*, const B*, const
 #endif
 template size_t aff3ct::tools::hamming_distance<float>(const float*, const float*, const unsigned);
 template size_t aff3ct::tools::hamming_distance<double>(const double*, const double*, const unsigned);
-
 template size_t aff3ct::tools::hamming_distance_unk<float>(const float*, const float*, const unsigned);
 template size_t aff3ct::tools::hamming_distance_unk<double>(const double*, const double*, const unsigned);
 
@@ -612,7 +611,7 @@ template size_t aff3ct::tools::hamming_distance_unk_seq<B_16>(const B_16*, const
 template size_t aff3ct::tools::hamming_distance_unk_seq<B_32>(const B_32*, const unsigned);
 template size_t aff3ct::tools::hamming_distance_unk_seq<B_64>(const B_64*, const unsigned);
 #else
-template size_t aff3ct::tools::hamming_distance_unk_seq<B>(const B*, const unsigned);
+template size_t aff3ct::tools::hamming_distance_seq<B>(const B*, const unsigned);
 template size_t aff3ct::tools::hamming_distance_unk_seq<B>(const B*, const unsigned);
 #endif
 template size_t aff3ct::tools::hamming_distance_seq<float>(const float*, const unsigned);
