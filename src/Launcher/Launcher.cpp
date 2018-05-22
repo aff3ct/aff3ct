@@ -153,10 +153,11 @@ int Launcher::launch()
 	if (!this->params_common.pyber.empty())
 #endif
 	{
-		stream << "Run command:"     << std::endl;
-		stream << cmd_line           << std::endl;
-		stream << "Curve name:"      << std::endl;
+		stream << "Run command:"            << std::endl;
+		stream << cmd_line                  << std::endl;
+		stream << "Curve name:"             << std::endl;
 		stream << this->params_common.pyber << std::endl;
+		stream << "Trace:"                  << std::endl;
 	}
 
 	if (this->params_common.display_legend)

@@ -171,7 +171,7 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("NOISE type (E)", this->noise_type));
+	headers[p].push_back(std::make_pair("Noise type (E)", this->noise_type));
 	headers[p].push_back(std::make_pair("Coset approach (c)", this->coset ? "yes" : "no"));
 	headers[p].push_back(std::make_pair("Coded monitoring", this->coded_monitoring ? "yes" : "no"));
 

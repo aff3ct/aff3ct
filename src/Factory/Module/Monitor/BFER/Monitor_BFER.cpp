@@ -96,7 +96,7 @@ void Monitor_BFER::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Frame error count (e)", std::to_string(this->n_frame_errors)));
-	headers[p].push_back(std::make_pair("Compute Mutual Info", this->mutinfo ? "yes" : "no"));
+	headers[p].push_back(std::make_pair("Compute mutual info", this->mutinfo ? "yes" : "no"));
 	if (full) headers[p].push_back(std::make_pair("K",                 std::to_string(this->K       )));
 	if (full) headers[p].push_back(std::make_pair("N",                 std::to_string(this->N       )));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
