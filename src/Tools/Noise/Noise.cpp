@@ -159,7 +159,8 @@ void Noise<R>
 	if (!is_of_type(t))
 	{
 		std::stringstream message;
-		message << "The given noise value does not represent a '" << type2str(get_type()) << "' noise type.";
+		message << "This noise type ('" << type2str(get_type()) << "') is not same as the given checked one ('"
+				<< type2str(t) << "').";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
