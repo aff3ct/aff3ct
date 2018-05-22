@@ -38,7 +38,7 @@ EXIT<B,R>
 	if (params_EXIT.noise->type != "EBN0" && params_EXIT.noise->type != "ESN0")
 	{
 		std::stringstream message;
-		message << "Wrong noise type, must be gaussian noise EBN0 or ESN0 ('params_EXIT.noise->typ' = "
+		message << "Wrong noise type, must be gaussian noise EBN0 or ESN0 ('params_EXIT.noise->type' = "
 		        << params_EXIT.noise->type << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
