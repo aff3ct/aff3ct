@@ -1,5 +1,5 @@
-#ifndef ENCODER_LDPC_FROM_SEIRA_HPP_
-#define ENCODER_LDPC_FROM_SEIRA_HPP_
+#ifndef ENCODER_LDPC_FROM_IRA_HPP_
+#define ENCODER_LDPC_FROM_IRA_HPP_
 
 #include <vector>
 
@@ -14,11 +14,11 @@ namespace module
 {
 
 template <typename B = int>
-class Encoder_LDPC_from_SeIRA : public Encoder_LDPC<B>
+class Encoder_LDPC_from_IRA : public Encoder_LDPC<B>
 {
 public:
-	Encoder_LDPC_from_SeIRA(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1);
-	virtual ~Encoder_LDPC_from_SeIRA() = default;
+	Encoder_LDPC_from_IRA(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1);
+	virtual ~Encoder_LDPC_from_IRA() = default;
 
 	const std::vector<uint32_t>& get_info_bits_pos() const;
 
@@ -32,4 +32,4 @@ protected:
 }
 }
 
-#endif /* ENCODER_LDPC_FROM_SEIRA_HPP_ */
+#endif /* ENCODER_LDPC_FROM_IRA_HPP_ */
