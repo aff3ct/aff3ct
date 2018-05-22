@@ -220,8 +220,8 @@
 #include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp>
 #include <Module/Encoder/LDPC/Encoder_LDPC.hpp>
 #include <Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp>
+#include <Module/Encoder/LDPC/From_IRA/Encoder_LDPC_from_IRA.hpp>
 #include <Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp>
-#include <Module/Encoder/LDPC/From_SeIRA/Encoder_LDPC_from_SeIRA.hpp>
 #include <Module/Encoder/NO/Encoder_NO.hpp>
 #include <Module/Encoder/Polar/Encoder_polar.hpp>
 #include <Module/Encoder/Polar/Encoder_polar_sys.hpp>

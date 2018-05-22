@@ -7,17 +7,17 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 
-#include "Encoder_LDPC_from_SeIRA.hpp"
+#include "Encoder_LDPC_from_IRA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B>
-Encoder_LDPC_from_SeIRA<B>
-::Encoder_LDPC_from_SeIRA(const int K, const int N, const tools::Sparse_matrix &_H, const int n_frames)
+Encoder_LDPC_from_IRA<B>
+::Encoder_LDPC_from_IRA(const int K, const int N, const tools::Sparse_matrix &_H, const int n_frames)
 : Encoder_LDPC<B>(K, N, n_frames)
 {
-	const std::string name = "Encoder_LDPC_from_SeIRA";
+	const std::string name = "Encoder_LDPC_from_IRA";
 	this->set_name(name);
 
 	this->H = _H;
@@ -26,7 +26,7 @@ Encoder_LDPC_from_SeIRA<B>
 }
 
 template <typename B>
-void Encoder_LDPC_from_SeIRA<B>
+void Encoder_LDPC_from_IRA<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	int M = this->N - this->K;
@@ -55,21 +55,21 @@ void Encoder_LDPC_from_SeIRA<B>
 }
 
 template <typename B>
-const std::vector<uint32_t>& Encoder_LDPC_from_SeIRA<B>
+const std::vector<uint32_t>& Encoder_LDPC_from_IRA<B>
 ::get_info_bits_pos() const
 {
 	return Encoder<B>::get_info_bits_pos();
 }
 
 template <typename B>
-bool Encoder_LDPC_from_SeIRA<B>
+bool Encoder_LDPC_from_IRA<B>
 ::is_sys() const
 {
 	return Encoder<B>::is_sys();
 }
 
 template <typename B>
-void Encoder_LDPC_from_SeIRA<B>
+void Encoder_LDPC_from_IRA<B>
 ::_check_H_dimensions()
 {
 	Encoder_LDPC<B>::_check_H_dimensions();
@@ -86,11 +86,11 @@ void Encoder_LDPC_from_SeIRA<B>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Encoder_LDPC_from_SeIRA<B_8>;
-template class aff3ct::module::Encoder_LDPC_from_SeIRA<B_16>;
-template class aff3ct::module::Encoder_LDPC_from_SeIRA<B_32>;
-template class aff3ct::module::Encoder_LDPC_from_SeIRA<B_64>;
+template class aff3ct::module::Encoder_LDPC_from_IRA<B_8>;
+template class aff3ct::module::Encoder_LDPC_from_IRA<B_16>;
+template class aff3ct::module::Encoder_LDPC_from_IRA<B_32>;
+template class aff3ct::module::Encoder_LDPC_from_IRA<B_64>;
 #else
-template class aff3ct::module::Encoder_LDPC_from_SeIRA<B>;
+template class aff3ct::module::Encoder_LDPC_from_IRA<B>;
 #endif
 // ==================================================================================== explicit template instantiation

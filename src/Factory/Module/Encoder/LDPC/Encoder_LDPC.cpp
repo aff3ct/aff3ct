@@ -4,7 +4,7 @@
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 #include "Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp"
 #include "Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp"
-#include "Module/Encoder/LDPC/From_SeIRA/Encoder_LDPC_from_SeIRA.hpp"
+#include "Module/Encoder/LDPC/From_IRA/Encoder_LDPC_from_IRA.hpp"
 #include "Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp"
 
 #include "Encoder_LDPC.hpp"
@@ -40,7 +40,7 @@ void Encoder_LDPC::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options(args.at({p+"-type"}), 0, "LDPC", "LDPC_H", "LDPC_DVBS2", "LDPC_QC", "LDPC_SEIRA");
+	tools::add_options(args.at({p+"-type"}), 0, "LDPC", "LDPC_H", "LDPC_DVBS2", "LDPC_QC", "LDPC_IRA");
 
 	args.add(
 		{p+"-h-path"},
@@ -110,10 +110,10 @@ template <typename B>
 module::Encoder_LDPC<B>* Encoder_LDPC::parameters
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H, const tools::dvbs2_values* dvbs2) const
 {
-	     if (this->type == "LDPC"      ) return new module::Encoder_LDPC           <B>(this->K, this->N_cw, G, this->n_frames);
-	else if (this->type == "LDPC_H"    ) return new module::Encoder_LDPC_from_H    <B>(this->K, this->N_cw, H, this->n_frames);
-	else if (this->type == "LDPC_QC"   ) return new module::Encoder_LDPC_from_QC   <B>(this->K, this->N_cw, H, this->n_frames);
-	else if (this->type == "LDPC_SEIRA") return new module::Encoder_LDPC_from_SeIRA<B>(this->K, this->N_cw, H, this->n_frames);
+	     if (this->type == "LDPC"    ) return new module::Encoder_LDPC           <B>(this->K, this->N_cw, G, this->n_frames);
+	else if (this->type == "LDPC_H"  ) return new module::Encoder_LDPC_from_H    <B>(this->K, this->N_cw, H, this->n_frames);
+	else if (this->type == "LDPC_QC" ) return new module::Encoder_LDPC_from_QC   <B>(this->K, this->N_cw, H, this->n_frames);
+	else if (this->type == "LDPC_IRA") return new module::Encoder_LDPC_from_IRA<B>(this->K, this->N_cw, H, this->n_frames);
 	else if (this->type == "LDPC_DVBS2" && dvbs2 != nullptr)
 		return new module::Encoder_LDPC_DVBS2  <B>(*dvbs2, this->n_frames);
 
