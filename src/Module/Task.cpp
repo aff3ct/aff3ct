@@ -183,10 +183,10 @@ int Task::exec()
 {
 	if (fast)
 	{
-        auto exec_status = this->codelet();
-        this->n_calls++;
-        return exec_status;
-    }
+		auto exec_status = this->codelet();
+		this->n_calls++;
+		return exec_status;
+	}
 
 	if (can_exec())
 	{
