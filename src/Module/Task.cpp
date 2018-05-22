@@ -183,7 +183,10 @@ static inline void display_data(const T *data,
 int Task::exec()
 {
 	if (fast)
-		return this->codelet();
+    {
+        this->n_calls++;
+        return this->codelet();
+    }
 
 	if (can_exec())
 	{
