@@ -78,6 +78,27 @@ void Monitor
 {
 }
 
+void Monitor
+::collect(const Monitor& m)
+{
+	if (this->K != m.K)
+	{
+		std::stringstream message;
+		message << "'this->K' is different than 'm.K' ('this->K' = " << this->K << ", 'm.K' = "
+		        << m.K <<").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->N != m.N)
+	{
+		std::stringstream message;
+		message << "'this->N' is different than 'm.N' ('this->N' = " << this->N << ", 'm.N' = "
+		        << m.N <<").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+
 bool Monitor
 ::is_interrupt()
 {

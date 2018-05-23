@@ -56,7 +56,7 @@ void Simulation::parameters
 		tools::arg_rank::ADV);
 
 	args.add(
-		{p+"-max-frame"},
+		{p+"-max-frame", "n"},
 		tools::Integer(tools::Positive()),
 		"maximum number of frames to play after what the current simulatated noise stops (0 is infinite).",
 		tools::arg_rank::ADV);
@@ -124,7 +124,7 @@ void Simulation::parameters
 
 	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"    });
 	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int  ({p+"-stop-time"}));
-	if(vals.exist({p+"-max-frame"       })) this->max_frame   =         vals.to_int  ({p+"-max-frame"});
+	if(vals.exist({p+"-max-frame",   "n"})) this->max_frame   =         vals.to_int  ({p+"-max-frame","n"});
 	if(vals.exist({p+"-seed",        "S"})) this->global_seed =         vals.to_int  ({p+"-seed", "S"});
 	if(vals.exist({p+"-stats"           })) this->statistics  = true;
 	if(vals.exist({p+"-debug"           })) this->debug       = true;

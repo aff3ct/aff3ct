@@ -54,8 +54,8 @@ protected:
 	static bool over;                                                                                     /*!< True if SIGINT is called twice in the Monitor::d_delta_interrupt time */
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_interrupt; /*!< Time point of the last call to SIGINT */
 
-	const int K; /*!< Number of bits */
-	const int N; /*!< Number of bits */
+	const int K; /*!< Number of source bits*/
+	const int N; /*!< Number of code   bits*/
 
 public:
 	/*!
@@ -85,6 +85,9 @@ public:
 
 	virtual void clear_callbacks();
 
+	virtual void collect(const Monitor& m);
+
+
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
 	 *
@@ -103,6 +106,15 @@ public:
 	 * \brief Put Monitor<B,R>::interrupt and Monitor<B,R>::over to true.
 	 */
 	static void stop();
+
+protected:
+	template<class Sub_monitor>
+	std::vector<Monitor*> cast_to_monitor_ptr(const std::vector<Sub_monitor*> &sm)
+	{
+		std::vector<Monitor*> vm(sm.size());
+		for (unsigned i = 0; i < vm.size(); i++)
+			vm[i] = (Monitor*)sm[i];
+	}
 
 private:
 	static void signal_interrupt_handler(int signal);

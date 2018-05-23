@@ -13,7 +13,7 @@ namespace factory
 {
 extern const std::string Monitor_EXIT_name;
 extern const std::string Monitor_EXIT_prefix;
-struct Monitor_EXIT : public Factory
+struct Monitor_EXIT : public Monitor
 {
 	class parameters : public Monitor::parameters
 	{
