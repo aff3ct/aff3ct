@@ -27,6 +27,7 @@ protected:
 	unsigned long long n_bit_errors;
 	unsigned long long n_frame_errors;
 	unsigned long long n_analyzed_frames;
+	unsigned long long n_MI_trials;
 
 	R MI_sum;
 

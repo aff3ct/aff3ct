@@ -344,7 +344,7 @@ template <typename B, typename R, typename Q>
 tools::Terminal_BFER<B,R>* BFER<B,R,Q>
 ::build_terminal()
 {
-	return factory::Terminal_BFER::build<B,R>(*params_BFER.ter, *this->monitor_red, params_BFER.mnt->mutinfo);
+	return factory::Terminal_BFER::build<B,R>(*params_BFER.ter, *this->monitor_red, params_BFER.mnt->mutinfo, true);
 }
 
 template <typename B, typename R, typename Q>

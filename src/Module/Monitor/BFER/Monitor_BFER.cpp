@@ -19,6 +19,7 @@ Monitor_BFER<B,R>
   n_bit_errors(0),
   n_frame_errors(0),
   n_analyzed_frames(0),
+  n_MI_trials(0),
   MI_sum(0),
   err_hist(0)
 {
@@ -130,6 +131,7 @@ Q_32 Monitor_BFER<B_32,Q_32>
 {
 	auto mi = tools::mutual_info_histo(X, Y, this->N);
 	MI_sum += mi;
+	n_MI_trials++;
 	return mi;
 }
 }
@@ -147,6 +149,7 @@ Q_64 Monitor_BFER<B_64,Q_64>
 {
 	auto mi = tools::mutual_info_histo(X, Y, this->N);
 	MI_sum += mi;
+	n_MI_trials++;
 	return mi;
 }
 }
@@ -218,7 +221,7 @@ template <typename B, typename R>
 R Monitor_BFER<B,R>
 ::get_MI() const
 {
-	return this->MI_sum / (R)this->n_analyzed_frames;
+	return this->MI_sum / (R)this->n_MI_trials;
 }
 
 template <typename B, typename R>
@@ -259,6 +262,7 @@ void Monitor_BFER<B,R>
 	this->n_frame_errors    = 0;
 	this->n_analyzed_frames = 0;
 	this->MI_sum            = 0;
+	this->n_MI_trials       = 0;
 	this->err_hist.reset();
 }
 

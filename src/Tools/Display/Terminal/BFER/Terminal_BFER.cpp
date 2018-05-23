@@ -14,13 +14,14 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Terminal_BFER<B,R>
-::Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo)
+::Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo, bool display_bfer)
 : Terminal       (                                ),
   monitor        (monitor                         ),
   t_snr          (std::chrono::steady_clock::now()),
   real_time_state(0                               ),
   n              (nullptr                         ),
-  display_mutinfo(display_mutinfo                 )
+  display_mutinfo(display_mutinfo                 ),
+  display_bfer   (display_bfer                    )
 {
 }
 
@@ -95,11 +96,14 @@ void Terminal_BFER<B,R>
 		bfer_cols.push_back(std::make_pair("MI", ""));
 	}
 
-	bfer_cols.push_back(std::make_pair("FRA", ""));
-	bfer_cols.push_back(std::make_pair("BE",  ""));
-	bfer_cols.push_back(std::make_pair("FE",  ""));
-	bfer_cols.push_back(std::make_pair("BER", ""));
-	bfer_cols.push_back(std::make_pair("FER", ""));
+	if (display_bfer)
+	{
+		bfer_cols.push_back(std::make_pair("FRA", ""));
+		bfer_cols.push_back(std::make_pair("BE", ""));
+		bfer_cols.push_back(std::make_pair("FE", ""));
+		bfer_cols.push_back(std::make_pair("BER", ""));
+		bfer_cols.push_back(std::make_pair("FER", ""));
+	}
 
 	throughput_title = std::make_pair("Global throughput", "and elapsed time");
 	throughput_cols.clear();
@@ -183,13 +187,18 @@ void Terminal_BFER<B,R>
 	const unsigned long long l = 99999999;  // limit 0
 
 	if (display_mutinfo)
-	stream <<                                                                                                                  str_MI.str() << report_style << spaced_scol_separator << rang::style::reset;
-	stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width-1) << ((fra > l) ? (float)fra : fra) << report_style << spaced_scol_separator << rang::style::reset;
-	stream << setprecision(( be > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width-1) << (( be > l) ? (float) be :  be) << report_style << spaced_scol_separator << rang::style::reset;
-	stream << setprecision(( fe > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width-1) << (( fe > l) ? (float) fe :  fe) << report_style << spaced_scol_separator << rang::style::reset;
-	stream <<                                                                                                                 str_ber.str() << report_style << spaced_scol_separator << rang::style::reset;
-	stream <<                                                                                                                 str_fer.str() << report_style << spaced_dcol_separator << rang::style::reset;
-	stream << setprecision(                2) <<                           fixed  << setw(column_width-1) <<                      simu_cthr;
+		stream << str_MI.str() << report_style << spaced_scol_separator << rang::style::reset;
+
+	if (display_bfer)
+	{
+		stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width - 1) << ((fra > l) ? (float) fra : fra) << report_style << spaced_scol_separator << rang::style::reset;
+		stream << setprecision((be  > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width - 1) << ((be  > l) ? (float) be  : be ) << report_style << spaced_scol_separator << rang::style::reset;
+		stream << setprecision((fe  > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width - 1) << ((fe  > l) ? (float) fe  : fe ) << report_style << spaced_scol_separator << rang::style::reset;
+	}
+
+	stream << str_ber.str() << report_style << spaced_scol_separator << rang::style::reset;
+	stream << str_fer.str() << report_style << spaced_dcol_separator << rang::style::reset;
+	stream << setprecision(2) << fixed  << setw(column_width-1) << simu_cthr;
 }
 
 template <typename B, typename R>
