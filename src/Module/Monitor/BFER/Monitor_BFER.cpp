@@ -68,13 +68,13 @@ R Monitor_BFER<B,R>
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
-	R MI_sum = 0;
+	R loc_MI_sum = 0;
 	for (auto f = f_start; f < f_stop; f++)
-		MI_sum += this->_get_mutual_info(X + f * this->N,
-		                                 Y + f * this->N,
-		                                 f);
+		loc_MI_sum += this->_get_mutual_info(X + f * this->N,
+		                                     Y + f * this->N,
+		                                     f);
 
-	return MI_sum / (R)(f_stop - f_start) * 10000; // return the mut info %10000 instead of %100
+	return loc_MI_sum / (R)(f_stop - f_start) * 10000; // return the mut info %10000 instead of %100
 }
 
 template <typename B, typename R>
@@ -221,7 +221,7 @@ template <typename B, typename R>
 R Monitor_BFER<B,R>
 ::get_MI() const
 {
-	return this->MI_sum / (R)this->n_MI_trials;
+	return get_MI_sum() / (R)this->n_MI_trials;
 }
 
 template <typename B, typename R>
