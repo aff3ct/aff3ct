@@ -59,7 +59,7 @@ public:
 	// incoming values from the variable nodes into the check nodes
 	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
 	{
-		assert(chk_degree <= values.size());
+		assert(chk_degree <= (int)values.size());
 
 		this->sign = 0;
 		this->sum  = 0;
