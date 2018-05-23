@@ -31,8 +31,9 @@ namespace tools
 class Terminal
 {
 public:
-	static const char        col_separator;
 	static const char        line_separator;
+	static const std::string col_separator;
+	static const std::string group_separator;
 	static const std::string spaced_scol_separator;
 	static const std::string spaced_dcol_separator;
 	static const std::string data_tag;
@@ -48,10 +49,12 @@ private:
 	bool stop_terminal;
 
 protected:
-	// vector of pairs {group title, columns titles}
-	// group title is a pair {first line, second line}
-	// columns titles is a vector of pair {first line, second line}
-	std::vector<std::pair<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>>> cols_groups;
+	using title_t        = std::pair<std::string, std::string>;
+	using group_title_t  = title_t;
+	using column_title_t = std::vector<title_t>;
+	using group_t        = std::pair<group_title_t, column_title_t>;
+
+	std::vector<group_t> cols_groups;
 
 
 public:
@@ -91,6 +94,11 @@ public:
 	void stop_temp_report();
 
 	static std::string get_time_format(float secondes);
+
+protected:
+	static unsigned extra_spaces(const title_t& text, const unsigned group_width);
+	static unsigned extra_spaces(const group_t& group);
+	static unsigned get_group_width(const group_t& group);
 
 private:
 	static void start_thread_terminal(Terminal *terminal, const std::chrono::milliseconds freq);

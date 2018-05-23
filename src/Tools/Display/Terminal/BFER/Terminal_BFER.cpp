@@ -63,7 +63,17 @@ void Terminal_BFER<B,R>
 	auto& throughput_title = this->cols_groups[1].first;
 	auto& throughput_cols  = this->cols_groups[1].second;
 
-	bfer_title = std::make_pair("Bit Error Rate (BER) and Frame Error Rate (FER)", "");
+	if (display_mutinfo)
+		bfer_title.first = "MutInfo (MI)";
+
+	if (display_bfer)
+	{
+		if (!bfer_title.first.empty())
+			bfer_title.first += ", ";
+
+		bfer_title.first += "Bit Error Rate (BER) and Frame Error Rate (FER)";
+	}
+
 	bfer_cols.clear();
 
 	if (this->n == nullptr)
@@ -91,10 +101,7 @@ void Terminal_BFER<B,R>
 	}
 
 	if (display_mutinfo)
-	{
-		bfer_title.first = "MutInfo (MI), " + bfer_title.first;
 		bfer_cols.push_back(std::make_pair("MI", ""));
-	}
 
 	if (display_bfer)
 	{
@@ -154,30 +161,30 @@ void Terminal_BFER<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	stream << std::string(extra_spaces(cols_groups[0]), ' ');
+
 	switch (this->n->get_type())
 	{
 		case Noise_type::SIGMA :
 		{
 			auto sig = dynamic_cast<const tools::Sigma<>*>(this->n);
-			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_esn0() << report_style
-			       << spaced_scol_separator << rang::style::reset;
-			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_ebn0() << report_style
-			       << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_esn0() << report_style << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_ebn0();
 			break;
 		}
 		case Noise_type::ROP :
 		{
-			stream << setprecision(2) << fixed << setw(column_width - 1) << this->n->get_noise() << report_style
-			       << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(2) << fixed << setw(column_width - 1) << this->n->get_noise();;
 			break;
 		}
 		case Noise_type::EP :
 		{
-			stream << setprecision(4) << fixed << setw(column_width - 1) << this->n->get_noise() << report_style
-			       << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(4) << fixed << setw(column_width - 1) << this->n->get_noise();;
 			break;
 		}
 	}
+	stream << report_style << ((display_bfer || display_mutinfo) ? spaced_scol_separator : spaced_dcol_separator) << rang::style::reset;
+
 
 	stringstream str_ber, str_fer, str_MI;
 	str_ber << setprecision(2) << scientific << setw(column_width-1) << ber;
@@ -187,17 +194,19 @@ void Terminal_BFER<B,R>
 	const unsigned long long l = 99999999;  // limit 0
 
 	if (display_mutinfo)
-		stream << str_MI.str() << report_style << spaced_scol_separator << rang::style::reset;
+		stream << str_MI.str() << report_style << (display_bfer ? spaced_scol_separator : spaced_dcol_separator) << rang::style::reset;
 
 	if (display_bfer)
 	{
 		stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width - 1) << ((fra > l) ? (float) fra : fra) << report_style << spaced_scol_separator << rang::style::reset;
 		stream << setprecision((be  > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width - 1) << ((be  > l) ? (float) be  : be ) << report_style << spaced_scol_separator << rang::style::reset;
 		stream << setprecision((fe  > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width - 1) << ((fe  > l) ? (float) fe  : fe ) << report_style << spaced_scol_separator << rang::style::reset;
+
+		stream << str_ber.str() << report_style << spaced_scol_separator << rang::style::reset;
+		stream << str_fer.str() << report_style << spaced_dcol_separator << rang::style::reset;
 	}
 
-	stream << str_ber.str() << report_style << spaced_scol_separator << rang::style::reset;
-	stream << str_fer.str() << report_style << spaced_dcol_separator << rang::style::reset;
+	stream << std::string(extra_spaces(cols_groups[1]), ' ');
 	stream << setprecision(2) << fixed  << setw(column_width-1) << simu_cthr;
 }
 
