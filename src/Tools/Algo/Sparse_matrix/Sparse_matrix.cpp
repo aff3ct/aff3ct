@@ -91,7 +91,7 @@ void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index
 	// delete the link in the row_to_cols vector
 	bool row_found = false;
 	auto itr = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
-	if (itr != this->row_to_cols[row_index].end());
+	if (itr != this->row_to_cols[row_index].end())
 	{
 		row_found = true;
 		itr = this->row_to_cols[row_index].erase(itr);
@@ -115,7 +115,7 @@ void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index
 	// delete the link in the col_to_rows vector
 	bool col_found = false;
 	auto itc = std::find(this->col_to_rows[col_index].begin(), this->col_to_rows[col_index].end(), row_index);
-	if (itc != this->col_to_rows[col_index].end());
+	if (itc != this->col_to_rows[col_index].end())
 	{
 		col_found = true;
 		this->col_to_rows[col_index].erase(itc);
