@@ -103,9 +103,10 @@ void Terminal_BFER<B,R>
 	if (display_mutinfo)
 		bfer_cols.push_back(std::make_pair("MI", ""));
 
+	bfer_cols.push_back(std::make_pair("FRA", ""));
+
 	if (display_bfer)
 	{
-		bfer_cols.push_back(std::make_pair("FRA", ""));
 		bfer_cols.push_back(std::make_pair("BE", ""));
 		bfer_cols.push_back(std::make_pair("FE", ""));
 		bfer_cols.push_back(std::make_pair("BER", ""));
@@ -144,7 +145,16 @@ void Terminal_BFER<B,R>
 	auto MI  = monitor.get_MI  ();
 
 	auto simu_time = (float)duration_cast<nanoseconds>(steady_clock::now() - t_snr).count() * 0.000000001f;
-	auto simu_cthr = ((float)monitor.get_K() * (float)monitor.get_n_analyzed_fra()) / simu_time ; // = bps
+	float simu_cthr = 0;
+
+	if (display_bfer)
+		simu_cthr = ((float)monitor.get_K() * (float)monitor.get_n_analyzed_fra()) / simu_time ; // = bps
+	else if (display_mutinfo)
+	{
+		fra = monitor.get_n_MI_trials();
+		simu_cthr = ((float) monitor.get_N() * (float) monitor.get_n_MI_trials()) / simu_time; // = bps
+	}
+
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
@@ -191,16 +201,20 @@ void Terminal_BFER<B,R>
 	str_fer << setprecision(2) << scientific << setw(column_width-1) << fer;
 	str_MI  << setprecision(2) << scientific << setw(column_width-1) << MI;
 
-	const unsigned long long l = 99999999;  // limit 0
+	const auto l = (unsigned long long)(1e8 -1);
 
 	if (display_mutinfo)
-		stream << str_MI.str() << report_style << (display_bfer ? spaced_scol_separator : spaced_dcol_separator) << rang::style::reset;
+		stream << str_MI.str() << report_style << spaced_scol_separator << rang::style::reset;
+
+	stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width - 1) << ((fra > l) ? (float) fra : fra)
+	       << report_style << (display_bfer ? spaced_scol_separator : spaced_dcol_separator) << rang::style::reset;
 
 	if (display_bfer)
 	{
-		stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width - 1) << ((fra > l) ? (float) fra : fra) << report_style << spaced_scol_separator << rang::style::reset;
-		stream << setprecision((be  > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width - 1) << ((be  > l) ? (float) be  : be ) << report_style << spaced_scol_separator << rang::style::reset;
-		stream << setprecision((fe  > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width - 1) << ((fe  > l) ? (float) fe  : fe ) << report_style << spaced_scol_separator << rang::style::reset;
+		stream << setprecision((be  > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width - 1) << ((be  > l) ? (float) be  : be )
+		       << report_style << spaced_scol_separator << rang::style::reset;
+		stream << setprecision((fe  > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width - 1) << ((fe  > l) ? (float) fe  : fe )
+		       << report_style << spaced_scol_separator << rang::style::reset;
 
 		stream << str_ber.str() << report_style << spaced_scol_separator << rang::style::reset;
 		stream << str_fer.str() << report_style << spaced_dcol_separator << rang::style::reset;
@@ -221,8 +235,12 @@ void Terminal_BFER<B,R>
 	_report(stream);
 
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
-	auto tr = et * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe()) - et;
-	auto tr_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : tr);
+	std::string tr_format;
+
+	if (display_bfer)
+		tr_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : et * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe() -1));
+	else
+		tr_format = get_time_format(et);
 
 	stream << rang::style::bold << spaced_scol_separator << rang::style::reset << std::setprecision(0) << std::fixed
 	       << std::setw(column_width-1) << tr_format;
