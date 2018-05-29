@@ -49,7 +49,7 @@ Monitor_BFER_reduction_mpi<B,R>
 	const std::string name = "Monitor_BFER_reduction_mpi";
 	this->set_name(name);
 
-	constexpr n_vals = 4;
+	constexpr int n_vals = 4;
 	int blen[n_vals];
 	MPI_Aint displacements[n_vals];
 	MPI_Datatype oldtypes[n_vals];
