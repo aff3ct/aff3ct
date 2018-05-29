@@ -20,8 +20,9 @@ Monitor_BFER<B,R>
   n_frame_errors(0),
   n_analyzed_frames(0),
   n_MI_trials(0),
-  MI_sum(0),
-  err_hist(0)
+  MI(0),
+  err_hist(0),
+  mutinfo_hist(3)
 {
 	const std::string name = "Monitor_BFER";
 	this->set_name(name);
@@ -130,8 +131,7 @@ Q_32 Monitor_BFER<B_32,Q_32>
 ::_get_mutual_info(const B_32 *X, const Q_32 *Y, const int frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, this->N);
-	MI_sum += mi;
-	n_MI_trials++;
+	this->add_MI_value(mi);
 	return mi;
 }
 }
@@ -148,13 +148,25 @@ Q_64 Monitor_BFER<B_64,Q_64>
 ::_get_mutual_info(const B_64 *X, const Q_64 *Y, const int frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, this->N);
-	MI_sum += mi;
-	n_MI_trials++;
+	this->add_MI_value(mi);
 	return mi;
 }
 }
 }
 #endif
+
+template <typename B, typename R>
+void Monitor_BFER<B,R>
+::add_MI_value(const R mi)
+{
+	auto weight = (R)this->n_MI_trials;
+	this->n_MI_trials++;
+	weight /= (R)this->n_MI_trials;
+
+	this->MI = this->MI * weight + mi / (R)this->n_MI_trials;
+
+	this->mutinfo_hist.add_value(mi);
+}
 
 template <typename B, typename R>
 bool Monitor_BFER<B,R>
@@ -221,14 +233,14 @@ template <typename B, typename R>
 R Monitor_BFER<B,R>
 ::get_MI() const
 {
-	return get_MI_sum() / (R)this->n_MI_trials;
+	return this->MI;
 }
 
 template <typename B, typename R>
-R Monitor_BFER<B,R>
-::get_MI_sum() const
+unsigned long long Monitor_BFER<B,R>
+::get_n_MI_trials() const
 {
-	return this->MI_sum;
+	return this->n_MI_trials;
 }
 
 template <typename B, typename R>
@@ -261,7 +273,7 @@ void Monitor_BFER<B,R>
 	this->n_bit_errors      = 0;
 	this->n_frame_errors    = 0;
 	this->n_analyzed_frames = 0;
-	this->MI_sum            = 0;
+	this->MI                = 0;
 	this->n_MI_trials       = 0;
 	this->err_hist.reset();
 }
@@ -276,13 +288,20 @@ void Monitor_BFER<B,R>
 }
 
 template<typename B, typename R>
-tools::Histogram<int> Monitor_BFER<B, R>::get_err_hist() const
+tools::Histogram<int> Monitor_BFER<B,R>::get_err_hist() const
 {
 	return err_hist;
 }
 
 template<typename B, typename R>
-bool Monitor_BFER<B, R>
+tools::Histogram<R> Monitor_BFER<B,R>::get_mutinfo_hist() const
+{
+	return mutinfo_hist;
+}
+
+
+template<typename B, typename R>
+bool Monitor_BFER<B,R>
 ::get_count_unknown_values() const
 {
 	return count_unknown_values;

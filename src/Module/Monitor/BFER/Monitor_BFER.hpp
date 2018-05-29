@@ -29,12 +29,13 @@ protected:
 	unsigned long long n_analyzed_frames;
 	unsigned long long n_MI_trials;
 
-	R MI_sum;
+	R MI;
 
 	std::vector<std::function<void(unsigned, int )>> callbacks_fe;
 	std::vector<std::function<void(          void)>> callbacks_check;
 	std::vector<std::function<void(          void)>> callbacks_fe_limit_achieved;
 	tools::Histogram<int> err_hist;
+	tools::Histogram<R  > mutinfo_hist;
 
 public:
 	Monitor_BFER(const int K, const int N, const unsigned max_fe, const bool count_unknown_values = false, const int n_frames = 1);
@@ -119,9 +120,12 @@ public:
 	virtual unsigned long long get_n_analyzed_fra() const;
 	virtual unsigned long long get_n_fe          () const;
 	virtual unsigned long long get_n_be          () const;
+
+	virtual unsigned long long get_n_MI_trials   () const;
 	virtual R                  get_MI            () const;
-	virtual R                  get_MI_sum        () const;
-	virtual tools::Histogram<int> get_err_hist() const;
+
+	virtual tools::Histogram<int> get_err_hist    () const;
+	virtual tools::Histogram<R>   get_mutinfo_hist() const;
 
 	float get_fer   () const;
 	float get_ber   () const;
@@ -136,6 +140,8 @@ public:
 protected:
 	virtual R   _get_mutual_info(const B *X, const R *Y, const int frame_id);
 	virtual int _check_errors   (const B *U, const B *Y, const int frame_id);
+
+	void add_MI_value(const R mi);
 };
 }
 }

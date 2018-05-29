@@ -124,21 +124,27 @@ template <typename B, typename R>
 R Monitor_BFER_reduction<B,R>
 ::get_MI() const
 {
-	if (this->get_n_analyzed_fra() == 0)
-		return 0;
+	auto tot_n_trials = (R)this->get_n_MI_trials();
 
-	return this->get_MI_sum() / (R)this->get_n_analyzed_fra();
+	if (tot_n_trials == (R)0)
+		return (R)0;
+
+	auto cur_MI = this->MI * ((R)this->n_MI_trials / tot_n_trials);
+	for (unsigned i = 0; i < monitors.size(); i++)
+		cur_MI += monitors[i]->get_MI() * ((R) monitors[i]->get_n_MI_trials() / tot_n_trials);
+
+	return cur_MI;
 }
 
 template <typename B, typename R>
-R Monitor_BFER_reduction<B,R>
-::get_MI_sum() const
+unsigned long long Monitor_BFER_reduction<B,R>
+::get_n_MI_trials() const
 {
-	auto cur_mi = this->MI_sum;
+	auto cur_n_trials = this->n_MI_trials;
 	for (unsigned i = 0; i < monitors.size(); i++)
-		cur_mi += monitors[i]->get_MI_sum();
+		cur_n_trials += monitors[i]->get_n_MI_trials();
 
-	return cur_mi;
+	return cur_n_trials;
 }
 
 template <typename B, typename R>
@@ -161,13 +167,25 @@ void Monitor_BFER_reduction<B,R>
 }
 
 template<typename B, typename R>
-tools::Histogram<int> Monitor_BFER_reduction<B, R>::get_err_hist() const
+tools::Histogram<int> Monitor_BFER_reduction<B, R>
+::get_err_hist() const
 {
 	auto err_hist_copy = this->err_hist;
 	for (unsigned i = 0; i < monitors.size(); i++)
 		err_hist_copy.add_values(monitors[i]->get_err_hist());
 
 	return err_hist_copy;
+}
+
+template<typename B, typename R>
+tools::Histogram<R> Monitor_BFER_reduction<B, R>
+::get_mutinfo_hist() const
+{
+	auto mut_hist_copy = this->mutinfo_hist;
+	for (unsigned i = 0; i < monitors.size(); i++)
+		mut_hist_copy.add_values(monitors[i]->get_mutinfo_hist());
+
+	return mut_hist_copy;
 }
 
 // ==================================================================================== explicit template instantiation

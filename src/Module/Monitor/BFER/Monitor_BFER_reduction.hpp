@@ -25,10 +25,12 @@ public:
 	unsigned long long get_n_analyzed_fra         () const;
 	unsigned long long get_n_fe                   () const;
 	unsigned long long get_n_be                   () const;
-	virtual tools::Histogram<int> get_err_hist() const;
 
-	R get_MI    () const;
-	R get_MI_sum() const;
+	unsigned long long get_n_MI_trials() const;
+	R                  get_MI         () const;
+
+	tools::Histogram<int> get_err_hist    () const;
+	tools::Histogram<R>   get_mutinfo_hist() const;
 
 	virtual void reset();
 	virtual void clear_callbacks();
