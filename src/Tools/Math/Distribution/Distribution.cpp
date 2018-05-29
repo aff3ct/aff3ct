@@ -8,6 +8,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/numerical_integration.h"
 #include "Tools/Math/interpolation.h"
+#include "Tools/general_utils.h"
 
 #include "Distribution.hpp"
 
@@ -58,19 +59,6 @@ Distribution<R>
 
 template <typename R>
 void Distribution<R>
-::sort_pdf()
-{
-	for (unsigned i = 1; i < this->pdf_x.size(); i++)
-		for (unsigned j = i; j > 0 && this->pdf_x[j] < this->pdf_x[j-1]; j--)
-		{
-			std::swap(this->pdf_x[j], this->pdf_x[j-1]); // order the x position
-
-			for (unsigned k = 0; k < this->pdf_y.size(); k++)
-				std::swap(this->pdf_y[k][j], this->pdf_y[k][j-1]); // the y follow their x moving the same way
-		}
-}
-template <typename R>
-void Distribution<R>
 ::compute_cdf(Distribution_mode mode)
 {
 	if (this->pdf_x.empty())
@@ -91,7 +79,7 @@ void Distribution<R>
 		}
 	}
 
-	sort_pdf(); // first make sure x values are sorted in ascending order
+	tools::mutual_sort(this->pdf_x, this->pdf_y); // first make sure x values are sorted in ascending order
 
 	this->cdf_x.resize(this->pdf_y.size());
 	this->cdf_y.resize(this->pdf_y.size());

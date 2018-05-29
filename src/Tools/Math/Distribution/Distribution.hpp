@@ -40,7 +40,6 @@ protected:
 	void compute_cdf(Distribution_mode mode);
 	void compute_cdf_interpolation();
 	void compute_cdf_summation();
-	void sort_pdf();
 };
 
 }

@@ -30,6 +30,30 @@ std::size_t get_closest_index(BidirectionalIterator first, BidirectionalIterator
 	return std::distance(first, get_closest(first, last, value));
 }
 
+template <typename Ta, typename To>
+void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate)
+{
+	for (unsigned i = 1; i < vec_abscissa.size(); i++)
+		for (unsigned j = i; j > 0 && vec_abscissa[j] < vec_abscissa[j-1]; j--)
+		{
+			std::swap(vec_abscissa[j], vec_abscissa[j-1]); // order the x position
+			std::swap(vec_ordinate[j], vec_ordinate[j-1]); // the y follow their x, moving the same way
+		}
+}
+
+template <typename Ta, typename To>
+void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate)
+{
+	for (unsigned i = 1; i < vec_abscissa.size(); i++)
+		for (unsigned j = i; j > 0 && vec_abscissa[j] < vec_abscissa[j-1]; j--)
+		{
+			std::swap(vec_abscissa[j], vec_abscissa[j-1]); // order the x position
+
+			for (unsigned k = 0; k < vec_ordinate.size(); k++)
+				std::swap(vec_ordinate[k][j], vec_ordinate[k][j-1]); // the y follow their x, moving the same way
+		}
+}
+
 }
 }
 
