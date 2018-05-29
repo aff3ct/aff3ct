@@ -96,8 +96,6 @@ void User_pdf_noise_generator_fast<float>
 {
 	auto dis = this->distributions.get_distribution(noise_power);
 
-
-
 	const unsigned vec_loop_size = (length / mipp::N<float>()) * mipp::N<float>();
 
 	for (unsigned i = 0; i < vec_loop_size; i += mipp::N<float>())

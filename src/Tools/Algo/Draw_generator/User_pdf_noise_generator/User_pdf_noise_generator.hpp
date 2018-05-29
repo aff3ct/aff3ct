@@ -31,7 +31,6 @@ public:
 		return distributions;
 	}
 
-
 	template <class A = std::allocator<R>>
 	void generate(std::vector<R,A> &noise, const R noise_power)
 	{

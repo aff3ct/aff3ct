@@ -153,15 +153,15 @@ void BFER_std<B,R,Q>
 	if (params.err_track_revert)
 	{
 		params.src->type = "USER";
-		params.src->path = params.err_track_path + std::string("_$snr.src");
+		params.src->path = params.err_track_path + std::string("_$noise.src");
 
 		params.cdc->enc->type = "USER";
-		params.cdc->enc->path = params.err_track_path + std::string("_$snr.enc");
+		params.cdc->enc->path = params.err_track_path + std::string("_$noise.enc");
 
 		if (params.cdc->itl != nullptr && params.cdc->itl->core->uniform)
 		{
 			params.cdc->itl->core->type = "USER";
-			params.cdc->itl->core->path = params.err_track_path + std::string("_$snr.itl");
+			params.cdc->itl->core->path = params.err_track_path + std::string("_$noise.itl");
 		}
 
 		if (params.chn->type == "USER_ADD" || params.chn->type == "AWGN" || params.chn->type == "RAYLEIGH" || params.chn->type == "RAYLEIGH_USER")

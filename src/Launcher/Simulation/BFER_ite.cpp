@@ -157,19 +157,19 @@ void BFER_ite<B,R,Q>
 	if (params.err_track_revert)
 	{
 		params.src->type = "USER";
-		params.src->path = params.err_track_path + std::string("_$snr.src");
+		params.src->path = params.err_track_path + std::string("_$noise.src");
 
 		params.cdc->enc->type = "USER";
-		params.cdc->enc->path = params.err_track_path + std::string("_$snr.enc");
+		params.cdc->enc->path = params.err_track_path + std::string("_$noise.enc");
 
 		if (params.itl->core->uniform)
 		{
 			params.itl->core->type = "USER";
-			params.itl->core->path = params.err_track_path + std::string("_$snr.itl");
+			params.itl->core->path = params.err_track_path + std::string("_$noise.itl");
 		}
 
 		params.chn->type = "USER";
-		params.chn->path = params.err_track_path + std::string("_$snr.chn");
+		params.chn->path = params.err_track_path + std::string("_$noise.chn");
 	}
 
 	params.cdc->enc->seed = params.local_seed;
