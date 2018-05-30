@@ -41,13 +41,10 @@ Distributions<R>::
 }
 
 template<typename R>
-std::vector<R> Distributions<R>::
+const std::vector<R>& Distributions<R>::
 get_noise_range() const
 {
-	auto nr = this->noise_range;
-	std::sort(nr.begin(), nr.end());
-
-	return nr;
+	return this->noise_range_sorted;
 }
 
 
@@ -126,6 +123,9 @@ read_noise_range()
 	}
 
 	this->noise_file_index.resize(this->noise_range.size()); // delete the extra noise positions if any
+
+	this->noise_range_sorted = this->noise_range;
+	std::sort(this->noise_range_sorted.begin(), this->noise_range_sorted.end());
 }
 
 template<typename R>
