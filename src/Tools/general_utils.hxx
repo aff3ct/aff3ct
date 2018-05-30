@@ -2,6 +2,7 @@
 #define GENERAL_UTILS_HXX
 
 #include <algorithm>
+#include <cassert>
 #include "general_utils.h"
 
 namespace aff3ct
@@ -33,6 +34,8 @@ std::size_t get_closest_index(BidirectionalIterator first, BidirectionalIterator
 template <typename Ta, typename To>
 void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate)
 {
+	assert(vec_abscissa.size() == vec_ordinate.size());
+
 	for (unsigned i = 1; i < vec_abscissa.size(); i++)
 		for (unsigned j = i; j > 0 && vec_abscissa[j] < vec_abscissa[j-1]; j--)
 		{
@@ -44,6 +47,13 @@ void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate)
 template <typename Ta, typename To>
 void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate)
 {
+#ifndef NDEBUG
+	bool good = true;
+	for (unsigned k = 0; k < vec_ordinate.size(); k++)
+		good &= vec_abscissa.size() == vec_ordinate[k].size();
+	assert(good);
+#endif
+
 	for (unsigned i = 1; i < vec_abscissa.size(); i++)
 		for (unsigned j = i; j > 0 && vec_abscissa[j] < vec_abscissa[j-1]; j--)
 		{
@@ -53,6 +63,50 @@ void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& ve
 				std::swap(vec_ordinate[k][j], vec_ordinate[k][j-1]); // the y follow their x, moving the same way
 		}
 }
+
+template <typename Ta, typename To>
+void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate)
+{
+	assert(vec_abscissa.size() == vec_ordinate.size());
+
+	unsigned r = 0;
+
+	for (unsigned i = 1; i < vec_abscissa.size(); i++)
+	{
+		if ((vec_abscissa[r] != vec_abscissa[i]) && (++r != i))
+		{
+			vec_abscissa[r] = std::move(vec_abscissa[i]);
+			vec_ordinate[r] = std::move(vec_ordinate[i]);
+		}
+	}
+
+	vec_abscissa.resize(r);
+	vec_ordinate.resize(r);
+}
+
+template <typename Ta, typename To>
+void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate)
+{
+#ifndef NDEBUG
+	bool good = true;
+	for (unsigned k = 0; k < vec_ordinate.size(); k++)
+		good &= vec_abscissa.size() == vec_ordinate[k].size();
+	assert(good);
+#endif
+
+	unsigned r = 0;
+
+	for (unsigned i = 1; i < vec_abscissa.size(); i++)
+	{
+		if ((vec_abscissa[r] != vec_abscissa[i]) && (++r != i))
+		{
+			vec_abscissa[r] = std::move(vec_abscissa[i]);
+			for (unsigned k = 0; k < vec_ordinate.size(); k++)
+				vec_ordinate[k][r] = std::move(vec_ordinate[k][i]);
+		}
+	}
+}
+
 
 }
 }
