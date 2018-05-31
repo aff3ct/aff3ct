@@ -97,7 +97,7 @@ template <typename T>
 T greatest_common_divisor(T a, T b)
 {
 	if (b == (T)0)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "b is null!");
+		return 1;
 
 	T r;
 
