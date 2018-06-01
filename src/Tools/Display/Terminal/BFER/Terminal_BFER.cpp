@@ -95,7 +95,7 @@ void Terminal_BFER<B,R>
 			bfer_cols.push_back(std::make_pair("ROP", "(dB)"));
 		break;
 		case Noise_type::EP :
-			bfer_title.second = "depending on the Erasure Probability (EP)";
+			bfer_title.second = "depending on the Event Probability (EP)";
 			bfer_cols.push_back(std::make_pair("EP", ""));
 		break;
 	}
@@ -120,7 +120,7 @@ void Terminal_BFER<B,R>
 
 	// stream << "# " << "---------------------------------------------------------------------||---------------------" << std::endl;
 	// stream << "# " << "      Bit Error Rate (BER) and Frame Error Rate (FER) depending      ||  Global throughput  " << std::endl;
-	// stream << "# " << "                   on the Erasure Probability (EP)                   ||  and elapsed time   " << std::endl;
+	// stream << "# " << "                    on the Event Probability (EP)                    ||  and elapsed time   " << std::endl;
 	// stream << "# " << "---------------------------------------------------------------------||---------------------" << std::endl;
 	// stream << "# " << "---------|-----------|-----------|-----------|-----------|-----------||----------|----------" << std::endl;
 	// stream << "# " << "      EP |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT " << std::endl;
@@ -171,7 +171,8 @@ void Terminal_BFER<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	stream << std::string(extra_spaces(cols_groups[0]), ' ');
+	if (!this->cols_groups.empty())
+		stream << std::string(extra_spaces(this->cols_groups.front()), ' ');
 
 	switch (this->n->get_type())
 	{
