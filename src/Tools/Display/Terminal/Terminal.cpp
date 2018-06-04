@@ -36,7 +36,7 @@ Terminal
 unsigned Terminal
 ::extra_spaces(const title_t& text, const unsigned group_width)
 {
-	const unsigned longest_text = std::max(text.first.size(), text.second.size());
+	const unsigned longest_text = (unsigned)std::max(text.first.size(), text.second.size());
 	return (longest_text > group_width) ? longest_text - group_width : 0;
 }
 
@@ -49,7 +49,7 @@ unsigned Terminal
 unsigned Terminal
 ::get_group_width(const group_t& group)
 {
-	return group.second.size() * (column_width + 1) -1; // add a col separator between each except for the last
+	return (unsigned)(group.second.size() * (column_width + 1) -1); // add a col separator between each except for the last
 }
 
 void Terminal

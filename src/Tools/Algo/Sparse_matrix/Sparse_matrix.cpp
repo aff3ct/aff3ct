@@ -199,7 +199,7 @@ void Sparse_matrix
 		r.clear();
 	for (size_t i = 0; i < this->col_to_rows.size(); i++)
 		for (size_t j = 0; j < this->col_to_rows[i].size(); j++)
-			this->row_to_cols[this->col_to_rows[i][j]].push_back(i);
+			this->row_to_cols[this->col_to_rows[i][j]].push_back((unsigned)i);
 }
 
 void Sparse_matrix

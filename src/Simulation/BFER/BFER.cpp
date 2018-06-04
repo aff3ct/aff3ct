@@ -137,11 +137,11 @@ void BFER<B,R,Q>
 	}
 
 	int noise_begin = 0;
-	int noise_end   = params_BFER.noise->range.size();
+	int noise_end   = (int)params_BFER.noise->range.size();
 	int noise_step  = 1;
 	if (params_BFER.noise->type == "EP")
 	{
-		noise_begin = params_BFER.noise->range.size()-1;
+		noise_begin = (int)params_BFER.noise->range.size()-1;
 		noise_end   = -1;
 		noise_step  = -1;
 	}

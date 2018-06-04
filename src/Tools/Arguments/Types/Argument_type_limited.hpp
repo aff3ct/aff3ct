@@ -155,7 +155,14 @@ private:
 			                                    + std::to_string(this->get_ranges().size()) + "elements. title ="
 			                                    + this->title);
 
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable : 4244)
+#endif
 		static_cast<r*>(this->get_ranges()[pos])->check(val);
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 	}
 
 	template <typename r, typename... R>

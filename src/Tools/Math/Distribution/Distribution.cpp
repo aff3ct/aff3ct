@@ -135,7 +135,7 @@ void Distribution<R>
 		this->pdf_norm_y[k].resize(this->pdf_x.size());
 
 		// compute the integral of pdf_y[k] along pdf_x
-		auto integ = tools::trapz_integral_seq(this->pdf_x.data(), this->pdf_y[k].data(), this->pdf_x.size());
+		auto integ = tools::trapz_integral_seq(this->pdf_x.data(), this->pdf_y[k].data(), (int)this->pdf_x.size());
 
 		if (integ == (R)0)
 		{
@@ -168,12 +168,12 @@ void Distribution<R>
 		std::vector<R> interp_y(interp_x.size());
 
 		// compute the linear interpolation of pdf_norm_y along interp_x
-		linear_interpolation(this->pdf_x.data(), this->pdf_norm_y[k].data(), this->pdf_x.size(),
-		                     interp_x.data(), interp_y.data(), interp_x.size());
+		linear_interpolation(this->pdf_x.data(), this->pdf_norm_y[k].data(), (unsigned)this->pdf_x.size(),
+		                     interp_x.data(), interp_y.data(), (unsigned)interp_x.size());
 
 		// computing the cumulative distribution function for input pdf
 		std::vector<R> cumul_y(interp_x.size());
-		cumtrapz_integral_seq(interp_x.data(), interp_y.data(), cumul_y.data(), interp_x.size());
+		cumtrapz_integral_seq(interp_x.data(), interp_y.data(), cumul_y.data(), (unsigned)interp_x.size());
 
 		// keep the first element of the cdf
 //		this->cdf_x[k].push_back(interp_x[0]);

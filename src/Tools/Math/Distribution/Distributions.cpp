@@ -206,7 +206,7 @@ read_distribution(R noise)
 	auto idx = std::find(this->noise_range.begin(),this->noise_range.end(), noise);
 
 	if (idx != this->noise_range.end())
-		read_distribution_from_file(std::distance(this->noise_range.begin(), idx)); // then read it
+		read_distribution_from_file((unsigned)std::distance(this->noise_range.begin(), idx)); // then read it
 }
 
 template<typename R>

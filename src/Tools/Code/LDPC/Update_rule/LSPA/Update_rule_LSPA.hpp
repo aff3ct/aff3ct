@@ -89,7 +89,7 @@ public:
 	inline R compute_chk_node_out(const int var_id, const R var_val)
 	{
 		      auto res_tmp = sum - values[var_id];
-		           res_tmp = (res_tmp != (R)1.0) ? std::exp(res_tmp) : (R)1.0 - std::numeric_limits<R>::epsilon();
+		           res_tmp = (res_tmp != (R)1.0) ? (R)std::exp(res_tmp) : (R)1.0 - std::numeric_limits<R>::epsilon();
 		const auto res_abs = (R)2.0 * std::atanh(res_tmp);
 		const auto res_sgn = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);
 

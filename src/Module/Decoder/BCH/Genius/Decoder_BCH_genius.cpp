@@ -47,7 +47,7 @@ void Decoder_BCH_genius<B, R>
 {
 	auto& X_N = encoder.get_X_N(frame_id);
 
-	int n_error = tools::hamming_distance(X_N.data(), Y_N, this->N);
+	int n_error = (int)tools::hamming_distance(X_N.data(), Y_N, this->N);
 
 	if (n_error <= this->t) // then copy X_N from the encoder that is Y_N corrected
 		std::copy(X_N.data() + this->N - this->K, X_N.data() + this->N, V_K);
@@ -61,7 +61,7 @@ void Decoder_BCH_genius<B, R>
 {
 	auto& X_N = encoder.get_X_N(frame_id);
 
-	int n_error = tools::hamming_distance(X_N.data(), Y_N, this->N);
+	int n_error = (int)tools::hamming_distance(X_N.data(), Y_N, this->N);
 
 	if (n_error <= this->t) // then copy X_N from the encoder that is Y_N corrected
 		std::copy(X_N.data(), X_N.data() + this->N, V_N);

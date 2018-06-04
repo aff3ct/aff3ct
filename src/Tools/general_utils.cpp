@@ -137,7 +137,7 @@ std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& 
 	{
 		if (s.size() == 1)
 		{
-			range.push_back(s.front() * float_precision);
+			range.push_back((int)(s.front() * float_precision));
 			continue;
 		}
 
@@ -158,7 +158,7 @@ std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& 
 			step *= -1;
 		}
 
-		for (R v = min; v <= max; v += step)
+		for (int v = min; v <= max; v += step)
 			range.push_back(v);
 	}
 
