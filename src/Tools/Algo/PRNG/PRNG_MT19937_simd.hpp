@@ -34,11 +34,11 @@ namespace tools
 class PRNG_MT19937_simd
 {
 protected:
-	mipp::vector<mipp::Reg<int>> MT;
+	mipp::vector<mipp::Reg<int32_t>> MT;
 	unsigned index;
 
 public:
-	explicit PRNG_MT19937_simd(const mipp::Reg<int> seed);
+	explicit PRNG_MT19937_simd(const mipp::Reg<int32_t> seed);
 	PRNG_MT19937_simd();
 	virtual ~PRNG_MT19937_simd();
 
@@ -47,14 +47,14 @@ public:
 	 *
 	 * \param seed: a vector register of seeds to initialize the PRNG.
 	 */
-	void seed(const mipp::Reg<int> seed);
+	void seed(const mipp::Reg<int32_t> seed);
 
 	/*!
 	 * \brief Extracts a pseudo-random signed 32-bit integer in the range INT32_MIN ... INT32_MAX.
 	 *
 	 * \return a vector register of pseudo random numbers.
 	 */
-	mipp::Reg<int> rand_s32();
+	mipp::Reg<int32_t> rand_s32();
 
 	/*!
 	 * \brief Returns a random float in the CLOSED range [0, 1]
