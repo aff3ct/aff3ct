@@ -28,6 +28,7 @@ analysis-sonarqube:
     - sonarqube
   only:
     - master
+    - development
   script:
     - ./ci/analysis-sonarqube.sh
 
