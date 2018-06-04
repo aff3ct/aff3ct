@@ -16,7 +16,7 @@ cppcheck --language=c++ --suppress=missingIncludeSystem --force --enable=all --s
 #cd ..
 
 # Create the sonar config file on the fly
-BRANCH=$(git for-each-ref --format='%(objectname) %(refname:short)' refs/heads | awk "/^$(git rev-parse HEAD)/ {print \$2}")
+BRANCH=$(git branch --remote --verbose --no-abbrev --contains | sed -rne 's/^[^\/]*\/([^\ ]+).*$/\1/p')
 VERSION=$(git tag | tail -n 1 | cut -d $'v' -f2-)
 echo "sonar.projectKey=storm:aff3ct:gitlab:$BRANCH"                >  sonar-project.properties
 #echo "sonar.projectName=AFF3CT"                                    >> sonar-project.properties
