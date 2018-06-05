@@ -2,6 +2,7 @@ stages:
   - analysis
   - build
   - test
+  - coverage
 
 before_script:
   - hostname
@@ -115,3 +116,16 @@ test-regression:
   script:
     - ./ci/test-build-linux-gcc.sh
     - ./ci/test-regression.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
+
+coverage-linux-gcc:
+  stage: coverage
+  tags:
+    - test
+  artifacts:
+     name: code_coverage_report
+     when: always
+     paths:
+       - code_coverage_files/
+       - code_coverage_report/
+  script:
+    - ./ci/coverage-linux-x86-gcc.sh
