@@ -119,7 +119,8 @@ test-regression:
 coverage-linux-gcc:
   stage: coverage
   tags:
-    - test
+    - coverage
+  coverage: '/.*lines\.*: (\d+.\d+\%)/'
   artifacts:
      name: code_coverage_report
      when: always
@@ -127,4 +128,4 @@ coverage-linux-gcc:
        - code_coverage_files/
        - code_coverage_report/
   script:
-    - ./ci/coverage-linux-x86-gcc.sh
+    - ./ci/coverage-linux-gcc.sh
