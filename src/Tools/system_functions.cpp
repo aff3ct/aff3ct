@@ -156,7 +156,7 @@ std::string aff3ct::tools::addr_to_line(const std::string& backtrace)
 			auto function = stack[i].substr(pos_beg_func,    pos_off      - pos_beg_func   );
 			auto address  = stack[i].substr(pos_beg_addr +1, pos_end_addr - pos_beg_addr -1);
 
-			std::string cmd = "addr_to_line -e " + program + " " + address;
+			std::string cmd = "addr2line -e " + program + " " + address;
 			std::string filename_and_line = run_system_command(cmd);
 			filename_and_line = filename_and_line.substr(0, filename_and_line.size() -1); // remove the '\n'
 

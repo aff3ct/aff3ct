@@ -1,11 +1,13 @@
+#include <cassert>
 #include "Terminal.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
 
-const char        aff3ct::tools::Terminal::col_separator         = '|';
 const char        aff3ct::tools::Terminal::line_separator        = '-';
+const std::string aff3ct::tools::Terminal::col_separator         = "|";
+const std::string aff3ct::tools::Terminal::group_separator       = "||" ;
 const std::string aff3ct::tools::Terminal::spaced_scol_separator = " |" ;
 const std::string aff3ct::tools::Terminal::spaced_dcol_separator = " ||";
 const std::string aff3ct::tools::Terminal::data_tag              = "  ";
@@ -30,6 +32,26 @@ Terminal
 	stop_temp_report(); // try to join the thread if this is not been done by the user
 }
 
+// get extra spaces if text is too long for the given group width
+unsigned Terminal
+::extra_spaces(const title_t& text, const unsigned group_width)
+{
+	const unsigned longest_text = (unsigned)std::max(text.first.size(), text.second.size());
+	return (longest_text > group_width) ? longest_text - group_width : 0;
+}
+
+unsigned Terminal
+::extra_spaces(const group_t& group)
+{
+	return extra_spaces(group.first, get_group_width(group));
+}
+
+unsigned Terminal
+::get_group_width(const group_t& group)
+{
+	return (unsigned)(group.second.size() * (column_width + 1) -1); // add a col separator between each except for the last
+}
+
 void Terminal
 ::legend(std::ostream &stream)
 {
@@ -43,30 +65,36 @@ void Terminal
 	// stream << "# " << "   (1.1)  |    (2.1)  |    (3.1)  |    (4.1)  ||   (5.1)  |   (6.1)  |   (7.1)   " << std::endl; // line 6
 	// stream << "# " << "   (1.2)  |    (2.2)  |    (3.2)  |    (4.2)  ||   (5.2)  |   (6.2)  |   (7.2)   " << std::endl; // line 7
 	// stream << "# " << "----------|-----------|-----------|-----------||----------|----------|-----------" << std::endl; // line 8
-	// indice (1.1) is "cols_groups[0].second[0].first"
-	// indice (1.2) is "cols_groups[0].second[0].second"
-	// indice (2.1) is "cols_groups[0].second[1].first"
-	// indice (2.2) is "cols_groups[0].second[1].second"
-	// indice (3.1) is "cols_groups[0].second[2].first"
-	// indice (3.2) is "cols_groups[0].second[2].second"
-	// indice (4.1) is "cols_groups[0].second[3].first"
-	// indice (4.2) is "cols_groups[0].second[3].second"
-	// indice (5.1) is "cols_groups[1].second[0].first"
-	// indice (5.2) is "cols_groups[1].second[0].second"
-	// indice (6.1) is "cols_groups[1].second[1].first"
-	// indice (6.2) is "cols_groups[1].second[1].second"
-	// indice (7.1) is "cols_groups[1].second[2].first"
-	// indice (7.2) is "cols_groups[1].second[2].second"
+	// note (1.1) is "cols_groups[0].second[0].first"
+	// note (1.2) is "cols_groups[0].second[0].second"
+	// note (2.1) is "cols_groups[0].second[1].first"
+	// note (2.2) is "cols_groups[0].second[1].second"
+	// note (3.1) is "cols_groups[0].second[2].first"
+	// note (3.2) is "cols_groups[0].second[2].second"
+	// note (4.1) is "cols_groups[0].second[3].first"
+	// note (4.2) is "cols_groups[0].second[3].second"
+	// note (5.1) is "cols_groups[1].second[0].first"
+	// note (5.2) is "cols_groups[1].second[0].second"
+	// note (6.1) is "cols_groups[1].second[1].first"
+	// note (6.2) is "cols_groups[1].second[1].second"
+	// note (7.1) is "cols_groups[1].second[2].first"
+	// note (7.2) is "cols_groups[1].second[2].second"
+
+	assert(!cols_groups.empty());
 
 	// print line 1 of the table
 	stream << rang::tag::comment;
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
-		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
-		stream << legend_style << std::string(group_width, line_separator) << rang::style::reset ;
+		assert(!cols_groups[i].second.empty());
+
+		const unsigned group_width = get_group_width(cols_groups[i]);
+		const auto n_separators = group_width + extra_spaces(cols_groups[i].first, group_width);
+
+		stream << legend_style << std::string(n_separators, line_separator) << rang::style::reset ;
 
 		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << legend_style << std::string(2, col_separator) << rang::style::reset ;
+			stream << legend_style << group_separator << rang::style::reset ;
 	}
 	stream << std::endl;
 
@@ -78,16 +106,22 @@ void Terminal
 		{
 			const auto& text = l == 0 ? cols_groups[i].first.first : cols_groups[i].first.second;
 
-			const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
-			const int n_spaces = (int)group_width - (int)text.size();
-			const int n_spaces_left  = n_spaces/2;
-			const int n_spaces_right = n_spaces - n_spaces_left; // can be different than n_spaces/2 if odd size
-			stream << legend_style << std::string(n_spaces_left,  ' ') << rang::style::reset ;
-			stream << legend_style << text << rang::style::reset ;
-			stream << legend_style << std::string(n_spaces_right, ' ') << rang::style::reset ;
+			const unsigned group_width = get_group_width(cols_groups[i]);
+			int n_spaces = (int)group_width - (int)text.size();
+
+			if (text.size() != std::max(cols_groups[i].first.first.size(), cols_groups[i].first.second.size()))
+				n_spaces += extra_spaces(cols_groups[i].first, group_width);
+
+
+			const unsigned n_spaces_left  = (n_spaces >= 0) ? (unsigned)n_spaces/2 : 0;
+			const unsigned n_spaces_right = (n_spaces >= 0) ? n_spaces - n_spaces_left : 0;
+
+			stream << legend_style << std::string(n_spaces_left,  ' ') << rang::style::reset;
+			stream << legend_style << text << rang::style::reset;
+			stream << legend_style << std::string(n_spaces_right, ' ') << rang::style::reset;
 
 			if (i < (cols_groups.size() -1)) // print group separator except for last
-				stream << legend_style << std::string(2, col_separator) << rang::style::reset;
+				stream << legend_style << group_separator << rang::style::reset;
 		}
 		stream << std::endl;
 	}
@@ -96,11 +130,13 @@ void Terminal
 	stream << rang::tag::comment;
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
-		const unsigned group_width = cols_groups[i].second.size()*(column_width+1)-1; // add a col separator between each exept for the last
-		stream << legend_style << std::string(group_width, line_separator) << rang::style::reset;
+		const unsigned group_width = get_group_width(cols_groups[i]);
+		const auto n_separators = group_width + extra_spaces(cols_groups[i].first, group_width);
+
+		stream << legend_style << std::string(n_separators, line_separator) << rang::style::reset;
 
 		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << legend_style << std::string(2, col_separator) << rang::style::reset;
+			stream << legend_style << group_separator << rang::style::reset;
 	}
 	stream << std::endl;
 
@@ -108,15 +144,22 @@ void Terminal
 	stream << rang::tag::comment;
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
+		const unsigned group_width = get_group_width(cols_groups[i]);
+		const auto n_extra = extra_spaces(cols_groups[i].first, group_width);
+
 		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
 		{
-			stream << legend_style << std::string(column_width, line_separator) << rang::style::reset;
+			auto n_separators = column_width;
+			if (j == 0)
+				n_separators += n_extra;
+
+			stream << legend_style << std::string(n_separators, line_separator) << rang::style::reset;
 			if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
-				stream << legend_style << std::string(1, col_separator) << rang::style::reset;
+				stream << legend_style << col_separator << rang::style::reset;
 		}
 
 		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << legend_style << std::string(2, col_separator) << rang::style::reset;
+			stream << legend_style << group_separator << rang::style::reset;
 	}
 	stream << std::endl;
 
@@ -126,19 +169,28 @@ void Terminal
 		stream << rang::tag::comment;
 		for (unsigned i = 0; i < cols_groups.size(); i++)
 		{
+			const unsigned group_width = get_group_width(cols_groups[i]);
+			const auto n_extra = extra_spaces(cols_groups[i].first, group_width);
+
 			for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
 			{
 				const auto& text = l == 0 ? cols_groups[i].second[j].first : cols_groups[i].second[j].second;
-				const int n_spaces = (int)column_width - (int)text.size() -1;
-				stream << legend_style << std::string(n_spaces,  ' ') << rang::style::reset;
+				int n_spaces = (int)column_width - (int)text.size() -1;
+
+				if (j == 0)
+					n_spaces += n_extra;
+
+				if (n_spaces > 0)
+					stream << legend_style << std::string(n_spaces,  ' ') << rang::style::reset;
+
 				stream << legend_style << text + " " << rang::style::reset;
 
 				if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
-					stream << legend_style << std::string(1, col_separator) << rang::style::reset;
+					stream << legend_style << col_separator << rang::style::reset;
 			}
 
 			if (i < (cols_groups.size() -1)) // print group separator except for last
-				stream << legend_style << std::string(2, col_separator) << rang::style::reset;
+				stream << legend_style << group_separator << rang::style::reset;
 		}
 		stream << std::endl;
 	}
@@ -147,15 +199,22 @@ void Terminal
 	stream << rang::tag::comment;
 	for (unsigned i = 0; i < cols_groups.size(); i++)
 	{
+		const unsigned group_width = get_group_width(cols_groups[i]);
+		const auto n_extra = extra_spaces(cols_groups[i].first, group_width);
+
 		for (unsigned j = 0; j < cols_groups[i].second.size(); j++)
 		{
-			stream << legend_style << std::string(column_width, line_separator) << rang::style::reset;
+			auto n_separators = column_width;
+			if (j == 0)
+				n_separators += n_extra;
+
+			stream << legend_style << std::string(n_separators, line_separator) << rang::style::reset;
 			if (j < (cols_groups[i].second.size() -1)) // print column separator except for last
-				stream << legend_style << std::string(1, col_separator) << rang::style::reset;
+				stream << legend_style << col_separator << rang::style::reset;
 		}
 
 		if (i < (cols_groups.size() -1)) // print group separator except for last
-			stream << legend_style << std::string(2, col_separator) << rang::style::reset;
+			stream << legend_style << group_separator << rang::style::reset;
 	}
 	stream << std::endl;
 

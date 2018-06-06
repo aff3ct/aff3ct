@@ -179,7 +179,7 @@ unsigned Puncturer_turbo<B,Q>
 	if (pattern_bits.size() == 0)
 		return 0;
 
-	return pattern_bits.front().size();
+	return (unsigned)pattern_bits.front().size();
 }
 
 template <typename B, typename Q>

@@ -60,9 +60,9 @@ int Monitor_BFER<B>
 	int bit_errors_count;
 
 	if (count_unknown_values)
-		bit_errors_count = tools::hamming_distance_unk(U, V, this->K);
+		bit_errors_count = (int)tools::hamming_distance_unk(U, V, this->K);
 	else
-		bit_errors_count = tools::hamming_distance(U, V, this->K);
+		bit_errors_count = (int)tools::hamming_distance(U, V, this->K);
 
 	if (bit_errors_count)
 	{

@@ -48,6 +48,25 @@ inline BidirectionalIterator get_closest(BidirectionalIterator first, Bidirectio
 template <typename BidirectionalIterator, typename T>
 inline std::size_t get_closest_index(BidirectionalIterator first, BidirectionalIterator last, const T & value);
 
+/*
+ * Sort 'vec_abscissa' in ascending order and move the matching ordinate of 'vec_ordinate' by the same time.
+ */
+template <typename Ta, typename To>
+inline void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate);
+
+template <typename Ta, typename To>
+inline void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate);
+
+/*
+ * Eliminates all but the first element from every consecutive group of equivalent elements from the 'vec_abscissa' vector
+ * and remove the matching ordinate of 'vec_ordinate' by the same time.
+ * 'vec_abscissa' and 'vec_ordinate' are resized to their new length.
+ */
+template <typename Ta, typename To>
+inline void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate);
+
+template <typename Ta, typename To>
+inline void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate);
 }
 }
 

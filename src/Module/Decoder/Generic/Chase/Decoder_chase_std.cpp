@@ -83,7 +83,7 @@ void Decoder_chase_std<B,R>
 			{
 				auto index = this->less_reliable_llrs[b];
 				V_N[index] = !V_N[index];
-				cur_euclidean_dist += std::abs(Y_N[index]);
+				cur_euclidean_dist += (float)std::abs(Y_N[index]);
 			}
 
 		if (cur_euclidean_dist < this->min_euclidean_dist)

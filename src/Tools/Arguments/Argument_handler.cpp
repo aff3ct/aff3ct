@@ -245,18 +245,18 @@ void Argument_handler
 std::string split_doc(const std::string& line, const std::string& start_line, const unsigned max_char)
 {
 	auto words = split(line);
-	unsigned cur_char = start_line.length();
+	unsigned cur_char = (unsigned)start_line.length();
 	std::string splitted_lines = start_line;
 	for (auto &w : words)
 	{
 		if (cur_char + (unsigned)w.size() > max_char)
 		{
 			splitted_lines += "\n" + start_line;
-			cur_char = start_line.length();
+			cur_char = (unsigned)start_line.length();
 		}
 		splitted_lines += w + " ";
 
-		cur_char += w.length() +1;
+		cur_char += (unsigned)w.length() +1;
 	}
 
 	return splitted_lines;

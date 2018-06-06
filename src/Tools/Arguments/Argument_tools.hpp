@@ -67,7 +67,7 @@ namespace tools
 			auto* arg_range = static_cast<tools::Set_range<T>*>(set_ptr);
 			arg_range->add_options({new_options...});
 		}
-		catch(std::exception& e)
+		catch(std::exception&)
 		{
 			std::string message = "The Argument Argument_type_limited_T<";
 			message += typeid(T).name();
@@ -85,7 +85,7 @@ namespace tools
 		{
 			limited = dynamic_cast<tools::Argument_type_limited_T<T>*>(&at);
 		}
-		catch(std::exception& e)
+		catch(std::exception&)
 		{
 			std::string message = "The Argument type object '" + at.get_title() + "' has no class child "
 			                    + "Argument_type_limited_T<" + typeid(T).name() + ">";

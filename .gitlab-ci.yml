@@ -2,6 +2,7 @@ stages:
   - analysis
   - build
   - test
+  - coverage
 
 before_script:
   - hostname
@@ -28,6 +29,7 @@ analysis-sonarqube:
     - sonarqube
   only:
     - master
+    - development
   script:
     - ./ci/analysis-sonarqube.sh
 
@@ -114,3 +116,17 @@ test-regression:
   script:
     - ./ci/test-build-linux-gcc.sh
     - ./ci/test-regression.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
+
+coverage-linux-gcc:
+  stage: coverage
+  tags:
+    - coverage
+  coverage: '/.*lines\.*: (\d+.\d+\%)/'
+  artifacts:
+     name: code_coverage_report
+     when: always
+     paths:
+       - code_coverage_files/
+       - code_coverage_report/
+  script:
+    - ./ci/coverage-linux-gcc.sh

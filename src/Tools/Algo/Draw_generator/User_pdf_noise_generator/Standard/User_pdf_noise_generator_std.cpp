@@ -42,7 +42,7 @@ void User_pdf_noise_generator_std<R>
 	{
 		const auto& cdf_y = signal[i] ? dis.get_cdf_y()[1] : dis.get_cdf_y()[0];
 		const auto& cdf_x = signal[i] ? dis.get_cdf_x()[1] : dis.get_cdf_x()[0];
-		draw[i] = interp_function(cdf_y.data(), cdf_x.data(), cdf_x.size(), this->uniform_dist(this->rd_engine));
+		draw[i] = interp_function(cdf_y.data(), cdf_x.data(), (const unsigned)cdf_x.size(), this->uniform_dist(this->rd_engine));
 	}
 }
 

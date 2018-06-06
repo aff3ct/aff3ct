@@ -14,13 +14,14 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Terminal_BFER<B,R>
-::Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo)
+::Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo, bool display_bfer)
 : Terminal       (                                ),
   monitor        (monitor                         ),
   t_snr          (std::chrono::steady_clock::now()),
   real_time_state(0                               ),
   n              (nullptr                         ),
-  display_mutinfo(display_mutinfo                 )
+  display_mutinfo(display_mutinfo                 ),
+  display_bfer   (display_bfer                    )
 {
 }
 
@@ -62,7 +63,17 @@ void Terminal_BFER<B,R>
 	auto& throughput_title = this->cols_groups[1].first;
 	auto& throughput_cols  = this->cols_groups[1].second;
 
-	bfer_title = std::make_pair("Bit Error Rate (BER) and Frame Error Rate (FER)", "");
+	if (display_mutinfo)
+		bfer_title.first = "MutInfo (MI)";
+
+	if (display_bfer)
+	{
+		if (!bfer_title.first.empty())
+			bfer_title.first += ", ";
+
+		bfer_title.first += "Bit Error Rate (BER) and Frame Error Rate (FER)";
+	}
+
 	bfer_cols.clear();
 
 	if (this->n == nullptr)
@@ -84,22 +95,23 @@ void Terminal_BFER<B,R>
 			bfer_cols.push_back(std::make_pair("ROP", "(dB)"));
 		break;
 		case Noise_type::EP :
-			bfer_title.second = "depending on the Erasure Probability (EP)";
+			bfer_title.second = "depending on the Event Probability (EP)";
 			bfer_cols.push_back(std::make_pair("EP", ""));
 		break;
 	}
 
 	if (display_mutinfo)
-	{
-		bfer_title.first = "MutInfo (MI), " + bfer_title.first;
 		bfer_cols.push_back(std::make_pair("MI", ""));
-	}
 
 	bfer_cols.push_back(std::make_pair("FRA", ""));
-	bfer_cols.push_back(std::make_pair("BE",  ""));
-	bfer_cols.push_back(std::make_pair("FE",  ""));
-	bfer_cols.push_back(std::make_pair("BER", ""));
-	bfer_cols.push_back(std::make_pair("FER", ""));
+
+	if (display_bfer)
+	{
+		bfer_cols.push_back(std::make_pair("BE", ""));
+		bfer_cols.push_back(std::make_pair("FE", ""));
+		bfer_cols.push_back(std::make_pair("BER", ""));
+		bfer_cols.push_back(std::make_pair("FER", ""));
+	}
 
 	throughput_title = std::make_pair("Global throughput", "and elapsed time");
 	throughput_cols.clear();
@@ -108,7 +120,7 @@ void Terminal_BFER<B,R>
 
 	// stream << "# " << "---------------------------------------------------------------------||---------------------" << std::endl;
 	// stream << "# " << "      Bit Error Rate (BER) and Frame Error Rate (FER) depending      ||  Global throughput  " << std::endl;
-	// stream << "# " << "                   on the Erasure Probability (EP)                   ||  and elapsed time   " << std::endl;
+	// stream << "# " << "                    on the Event Probability (EP)                    ||  and elapsed time   " << std::endl;
 	// stream << "# " << "---------------------------------------------------------------------||---------------------" << std::endl;
 	// stream << "# " << "---------|-----------|-----------|-----------|-----------|-----------||----------|----------" << std::endl;
 	// stream << "# " << "      EP |       FRA |        BE |        FE |       BER |       FER ||  SIM_THR |    ET/RT " << std::endl;
@@ -133,7 +145,16 @@ void Terminal_BFER<B,R>
 	auto MI  = monitor.get_MI  ();
 
 	auto simu_time = (float)duration_cast<nanoseconds>(steady_clock::now() - t_snr).count() * 0.000000001f;
-	auto simu_cthr = ((float)monitor.get_K() * (float)monitor.get_n_analyzed_fra()) / simu_time ; // = bps
+	float simu_cthr = 0;
+
+	if (display_bfer)
+		simu_cthr = ((float)monitor.get_K() * (float)monitor.get_n_analyzed_fra()) / simu_time ; // = bps
+	else if (display_mutinfo)
+	{
+		fra = monitor.get_n_MI_trials();
+		simu_cthr = ((float) monitor.get_N() * (float) monitor.get_n_MI_trials()) / simu_time; // = bps
+	}
+
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
@@ -150,46 +171,58 @@ void Terminal_BFER<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (!this->cols_groups.empty())
+		stream << std::string(extra_spaces(this->cols_groups.front()), ' ');
+
 	switch (this->n->get_type())
 	{
 		case Noise_type::SIGMA :
 		{
 			auto sig = dynamic_cast<const tools::Sigma<>*>(this->n);
-			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_esn0() << report_style
-			       << spaced_scol_separator << rang::style::reset;
-			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_ebn0() << report_style
-			       << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_esn0() << report_style << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(2) << fixed << setw(column_width - 1) << sig->get_ebn0();
 			break;
 		}
 		case Noise_type::ROP :
 		{
-			stream << setprecision(2) << fixed << setw(column_width - 1) << this->n->get_noise() << report_style
-			       << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(2) << fixed << setw(column_width - 1) << this->n->get_noise();;
 			break;
 		}
 		case Noise_type::EP :
 		{
-			stream << setprecision(4) << fixed << setw(column_width - 1) << this->n->get_noise() << report_style
-			       << spaced_scol_separator << rang::style::reset;
+			stream << setprecision(4) << fixed << setw(column_width - 1) << this->n->get_noise();;
 			break;
 		}
 	}
+	stream << report_style << ((display_bfer || display_mutinfo) ? spaced_scol_separator : spaced_dcol_separator) << rang::style::reset;
+
 
 	stringstream str_ber, str_fer, str_MI;
 	str_ber << setprecision(2) << scientific << setw(column_width-1) << ber;
 	str_fer << setprecision(2) << scientific << setw(column_width-1) << fer;
 	str_MI  << setprecision(2) << scientific << setw(column_width-1) << MI;
 
-	const unsigned long long l = 99999999;  // limit 0
+	const auto l = (unsigned long long)(1e8 -1);
 
 	if (display_mutinfo)
-	stream <<                                                                                                                  str_MI.str() << report_style << spaced_scol_separator << rang::style::reset;
-	stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width-1) << ((fra > l) ? (float)fra : fra) << report_style << spaced_scol_separator << rang::style::reset;
-	stream << setprecision(( be > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width-1) << (( be > l) ? (float) be :  be) << report_style << spaced_scol_separator << rang::style::reset;
-	stream << setprecision(( fe > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width-1) << (( fe > l) ? (float) fe :  fe) << report_style << spaced_scol_separator << rang::style::reset;
-	stream <<                                                                                                                 str_ber.str() << report_style << spaced_scol_separator << rang::style::reset;
-	stream <<                                                                                                                 str_fer.str() << report_style << spaced_dcol_separator << rang::style::reset;
-	stream << setprecision(                2) <<                           fixed  << setw(column_width-1) <<                      simu_cthr;
+		stream << str_MI.str() << report_style << spaced_scol_separator << rang::style::reset;
+
+	stream << setprecision((fra > l) ? 2 : 0) << ((fra > l) ? scientific : fixed) << setw(column_width - 1) << ((fra > l) ? (float) fra : fra)
+	       << report_style << (display_bfer ? spaced_scol_separator : spaced_dcol_separator) << rang::style::reset;
+
+	if (display_bfer)
+	{
+		stream << setprecision((be  > l) ? 2 : 0) << ((be  > l) ? scientific : fixed) << setw(column_width - 1) << ((be  > l) ? (float) be  : be )
+		       << report_style << spaced_scol_separator << rang::style::reset;
+		stream << setprecision((fe  > l) ? 2 : 0) << ((fe  > l) ? scientific : fixed) << setw(column_width - 1) << ((fe  > l) ? (float) fe  : fe )
+		       << report_style << spaced_scol_separator << rang::style::reset;
+
+		stream << str_ber.str() << report_style << spaced_scol_separator << rang::style::reset;
+		stream << str_fer.str() << report_style << spaced_dcol_separator << rang::style::reset;
+	}
+
+	stream << std::string(extra_spaces(cols_groups[1]), ' ');
+	stream << setprecision(2) << fixed  << setw(column_width-1) << simu_cthr;
 }
 
 template <typename B, typename R>
@@ -203,8 +236,12 @@ void Terminal_BFER<B,R>
 	_report(stream);
 
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
-	auto tr = et * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe()) - et;
-	auto tr_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : tr);
+	std::string tr_format;
+
+	if (display_bfer)
+		tr_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : et * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe() -1));
+	else
+		tr_format = get_time_format(et);
 
 	stream << rang::style::bold << spaced_scol_separator << rang::style::reset << std::setprecision(0) << std::fixed
 	       << std::setw(column_width-1) << tr_format;

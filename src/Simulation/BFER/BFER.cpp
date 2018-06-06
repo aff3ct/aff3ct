@@ -137,11 +137,11 @@ void BFER<B,R,Q>
 	}
 
 	int noise_begin = 0;
-	int noise_end   = params_BFER.noise->range.size();
+	int noise_end   = (int)params_BFER.noise->range.size();
 	int noise_step  = 1;
 	if (params_BFER.noise->type == "EP")
 	{
-		noise_begin = params_BFER.noise->range.size()-1;
+		noise_begin = (int)params_BFER.noise->range.size()-1;
 		noise_end   = -1;
 		noise_step  = -1;
 	}
@@ -293,7 +293,7 @@ void BFER<B,R,Q>
 				else
 					max = params_BFER.mnt->err_hist;
 
-				err_hist.dump(file_err_hist, 0, max, 0, false, false, "; ");
+				err_hist.dump(file_err_hist, 0, max, 0, false, false, false, "; ");
 			}
 		}
 
@@ -344,7 +344,7 @@ template <typename B, typename R, typename Q>
 tools::Terminal_BFER<B,R>* BFER<B,R,Q>
 ::build_terminal()
 {
-	return factory::Terminal_BFER::build<B,R>(*params_BFER.ter, *this->monitor_red, params_BFER.mnt->mutinfo);
+	return factory::Terminal_BFER::build<B,R>(*params_BFER.ter, *this->monitor_red, params_BFER.mnt->mutinfo, true);
 }
 
 template <typename B, typename R, typename Q>

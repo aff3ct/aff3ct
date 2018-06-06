@@ -10,9 +10,6 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-//std::vector<std::vector<float>> llrs;
-//size_t llr_idx;
-
 template <typename B, typename R, typename Q>
 Modem_OOK_optical<B,R,Q>
 ::Modem_OOK_optical(const int N, const tools::Distributions<R>& dist, const tools::Noise<R>& noise, const int n_frames)
@@ -20,23 +17,6 @@ Modem_OOK_optical<B,R,Q>
 {
 	const std::string name = "Modem_OOK_optical";
 	this->set_name(name);
-
-//	std::ifstream file("/media/ohartmann/DATA/Documents/Projets/CNES_AIRBUS/matrices/2018_05_03/vectorTestIMS/TestVec ROP -32/AFF3CT/LLR.txt");
-//
-//	if (!file.is_open())
-//		throw tools::runtime_error();
-//
-//	unsigned length, n_llrs;
-//	file >> n_llrs >> length;
-//
-//	llrs.resize(n_llrs, std::vector<float>(length));
-//
-//	for (unsigned i = 0; i < n_llrs; i++)
-//	{
-//		for (unsigned j = 0; j < length; j++)
-//			file >> llrs[i][j];
-//	}
-//	llr_idx = 0;
 }
 
 template <typename B, typename R, typename Q>
@@ -91,17 +71,9 @@ void Modem_OOK_optical<B,R,Q>
 		auto prob_0 = pdf_y0[x_pos] == (Q)0 ? min_value : pdf_y0[x_pos];
 		auto prob_1 = pdf_y1[x_pos] == (Q)0 ? min_value : pdf_y1[x_pos];
 
-		Y_N2[i] = std::log(prob_0/prob_1);
+		Y_N2[i] = (Q)std::log(prob_0/prob_1);
 	}
 }
-
-//template <typename B, typename R, typename Q>
-//void Modem_optical<B,R,Q>
-//::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
-//{
-//	std::copy(llrs[llr_idx].begin(), llrs[llr_idx].end(), Y_N2);
-//	llr_idx = (llr_idx + 1) % llrs.size();
-//};
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

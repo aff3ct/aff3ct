@@ -22,8 +22,7 @@ protected:
 	tools::User_pdf_noise_generator<R> *noise_generator;
 
 public:
-	Channel_optical(const int N,
-	                tools::User_pdf_noise_generator<R> *noise_generator,
+	Channel_optical(const int N, tools::User_pdf_noise_generator<R> *noise_generator,
 	                const tools::Noise<R>& noise = tools::ROP<R>(), const int n_frames = 1);
 
 	virtual ~Channel_optical();

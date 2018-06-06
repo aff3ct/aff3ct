@@ -22,9 +22,10 @@ protected:
 	unsigned short real_time_state;
 	Noise<float>* n;
 	const bool display_mutinfo;
+	const bool display_bfer;
 
 public:
-	explicit Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo = false);
+	explicit Terminal_BFER(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo = false, bool display_bfer = true);
 
 	virtual ~Terminal_BFER();
 

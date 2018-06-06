@@ -10,12 +10,12 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 template<typename R>
-const int aff3ct::tools::Distributions<R>::saved_noise_precision = 1e6;
+const int aff3ct::tools::Distributions<R>::saved_noise_precision = (int)1e6;
 
 template<typename R>
 Distributions<R>::
 Distributions(const std::string& filename, Distribution_mode mode, bool read_all_at_init)
-: f_distributions(filename), mode(mode)
+: f_distributions(filename, std::ios::binary), mode(mode)
 {
 	if (f_distributions.fail())
 	{
@@ -41,13 +41,32 @@ Distributions<R>::
 }
 
 template<typename R>
-std::vector<R> Distributions<R>::
+const std::vector<R>& Distributions<R>::
 get_noise_range() const
 {
-	auto nr = this->noise_range;
-	std::sort(nr.begin(), nr.end());
+	return this->noise_range_sorted;
+}
 
-	return nr;
+
+void my_getline(std::istream &is, std::string &line)
+{
+	line.clear();
+	char c;
+
+	while(is.get(c))
+	{
+		if (c != '\r')
+		{
+			if (c != '\n')
+				line.push_back(c);
+			else
+				break;
+		}
+		else
+		{
+			std::cout << "got \r" << std::endl;
+		}
+	}
 }
 
 template<typename R>
@@ -57,7 +76,7 @@ read_noise_range()
 	file_go_to_pos(); // set the stream at the beginning of the file
 
 	std::string line;
-	std::getline(f_distributions, line);
+	my_getline(f_distributions, line);
 
 	this->desc = tools::Splitter::split(line, "", "", " ");
 
@@ -84,13 +103,14 @@ read_noise_range()
 	{
 		auto pos = f_distributions.tellg();
 		this->noise_file_index.push_back(pos);
+		this->noise_file_index.back();
 
 		for (unsigned i = 0; i < this->desc.size(); i++)
 		{
 			if (f_distributions.eof())
 				break;
 
-			std::getline(f_distributions, line);
+			my_getline(f_distributions, line); 
 			if (line.empty())
 			{
 				i--;
@@ -98,11 +118,14 @@ read_noise_range()
 			}
 
 			if (i == ROP_pos)
-				this->noise_range.push_back((R) stof(line));
+				this->noise_range.push_back((R)std::stof(line));
 		}
 	}
 
 	this->noise_file_index.resize(this->noise_range.size()); // delete the extra noise positions if any
+
+	this->noise_range_sorted = this->noise_range;
+	std::sort(this->noise_range_sorted.begin(), this->noise_range_sorted.end());
 }
 
 template<typename R>
@@ -183,7 +206,7 @@ read_distribution(R noise)
 	auto idx = std::find(this->noise_range.begin(),this->noise_range.end(), noise);
 
 	if (idx != this->noise_range.end())
-		read_distribution_from_file(std::distance(this->noise_range.begin(), idx)); // then read it
+		read_distribution_from_file((unsigned)std::distance(this->noise_range.begin(), idx)); // then read it
 }
 
 template<typename R>
@@ -211,7 +234,7 @@ read_distribution_from_file(unsigned index)
 		if (f_distributions.eof())
 			throw runtime_error(__FILE__, __LINE__, __func__, "The file stream is at the end while reading it.");
 
-		std::getline(f_distributions, line);
+		my_getline(f_distributions, line);
 
 		if (line.empty())
 		{
@@ -240,39 +263,52 @@ read_distribution_from_file(unsigned index)
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	R ROP_R;
+
 	try
 	{
-		auto ROP_R = (R)stof(ROP);
+		ROP_R = (R)std::stof(ROP);
+	}
+	catch (...)
+	{
+		std::stringstream message;
+		message << "'ROP' value does not represent a float (ROP = " << ROP << ")";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
-		if (ROP_R != this->noise_range[index])
-		{
-			std::stringstream message;
-			message << "'ROP_R' does not match with the asked distribution 'this->noise_range[index]'"
-			        << "('ROP_R' = " << ROP_R << " and 'this->noise_range[" << index << "]' = " << this->noise_range[index] << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+	if (ROP_R != this->noise_range[index])
+	{
+		std::stringstream message;
+		message << "'ROP_R' does not match with the asked distribution 'this->noise_range[index]'"
+			    << "('ROP_R' = " << ROP_R << " and 'this->noise_range[" << index << "]' = " << this->noise_range[index] << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
-		std::vector<R> v_x_R(v_x.size()) ;
-		std::vector<std::vector<R>> v_y_R(2);
-		for(auto& v : v_y_R)
-			v.resize(v_x.size());
+	std::vector<R> v_x_R(v_x.size()) ;
+	std::vector<std::vector<R>> v_y_R(2);
+	for(auto& v : v_y_R)
+		v.resize(v_x.size());
 
+	size_t j = 0;
+	try
+	{
 		// convert string vector to 'R' vector
-		for(unsigned j = 0; j < v_x_R.size(); j++)
+		for(; j < v_x_R.size(); j++)
 		{
-			v_x_R   [j] = (R)stof(v_x [j]);
-			v_y_R[0][j] = (R)stof(v_y0[j]);
-			v_y_R[1][j] = (R)stof(v_y1[j]);
+			v_x_R   [j] = (R)std::stof(v_x [j]);
+			v_y_R[0][j] = (R)std::stof(v_y0[j]);
+			v_y_R[1][j] = (R)std::stof(v_y1[j]);
 		}
-
-		add_distribution(ROP_R, new Distribution<R>(std::move(v_x_R), std::move(v_y_R)));
 	}
 	catch(...)
 	{
 		std::stringstream message;
-		message << "A value does not represent a float";
+		message << "A value does not represent a float (ROP = " << ROP << ", ROP_R = " << ROP_R 
+		        << ", j = " << j << ", v_x[j] = " << v_x[j] << ", v_y0[j] = " << v_y0[j] << ", v_y1[j] = " << v_y1[j] << ")";
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	add_distribution(ROP_R, new Distribution<R>(std::move(v_x_R), std::move(v_y_R)));
 }
 
 template<typename R>

@@ -28,6 +28,7 @@ protected:
 	Distribution_mode mode;
 
 	std::vector<R> noise_range;
+	std::vector<R> noise_range_sorted;
 	std::vector<std::streampos> noise_file_index;
 
 	// the data description
@@ -46,7 +47,7 @@ public:
 	const Distribution<R>& get_distribution(R noise) const;
 	void read_distribution(R noise);
 
-	std::vector<R> get_noise_range() const;
+	const std::vector<R>& get_noise_range() const;
 
 protected:
 	/*

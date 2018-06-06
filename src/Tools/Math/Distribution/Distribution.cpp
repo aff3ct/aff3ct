@@ -8,6 +8,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/numerical_integration.h"
 #include "Tools/Math/interpolation.h"
+#include "Tools/general_utils.h"
 
 #include "Distribution.hpp"
 
@@ -58,19 +59,6 @@ Distribution<R>
 
 template <typename R>
 void Distribution<R>
-::sort_pdf()
-{
-	for (unsigned i = 1; i < this->pdf_x.size(); i++)
-		for (unsigned j = i; j > 0 && this->pdf_x[j] < this->pdf_x[j-1]; j--)
-		{
-			std::swap(this->pdf_x[j], this->pdf_x[j-1]); // order the x position
-
-			for (unsigned k = 0; k < this->pdf_y.size(); k++)
-				std::swap(this->pdf_y[k][j], this->pdf_y[k][j-1]); // the y follow their x moving the same way
-		}
-}
-template <typename R>
-void Distribution<R>
 ::compute_cdf(Distribution_mode mode)
 {
 	if (this->pdf_x.empty())
@@ -91,7 +79,7 @@ void Distribution<R>
 		}
 	}
 
-	sort_pdf(); // first make sure x values are sorted in ascending order
+	tools::mutual_sort(this->pdf_x, this->pdf_y); // first make sure x values are sorted in ascending order
 
 	this->cdf_x.resize(this->pdf_y.size());
 	this->cdf_y.resize(this->pdf_y.size());
@@ -147,7 +135,7 @@ void Distribution<R>
 		this->pdf_norm_y[k].resize(this->pdf_x.size());
 
 		// compute the integral of pdf_y[k] along pdf_x
-		auto integ = tools::trapz_integral_seq(this->pdf_x.data(), this->pdf_y[k].data(), this->pdf_x.size());
+		auto integ = tools::trapz_integral_seq(this->pdf_x.data(), this->pdf_y[k].data(), (int)this->pdf_x.size());
 
 		if (integ == (R)0)
 		{
@@ -180,12 +168,12 @@ void Distribution<R>
 		std::vector<R> interp_y(interp_x.size());
 
 		// compute the linear interpolation of pdf_norm_y along interp_x
-		linear_interpolation(this->pdf_x.data(), this->pdf_norm_y[k].data(), this->pdf_x.size(),
-		                     interp_x.data(), interp_y.data(), interp_x.size());
+		linear_interpolation(this->pdf_x.data(), this->pdf_norm_y[k].data(), (unsigned)this->pdf_x.size(),
+		                     interp_x.data(), interp_y.data(), (unsigned)interp_x.size());
 
 		// computing the cumulative distribution function for input pdf
 		std::vector<R> cumul_y(interp_x.size());
-		cumtrapz_integral_seq(interp_x.data(), interp_y.data(), cumul_y.data(), interp_x.size());
+		cumtrapz_integral_seq(interp_x.data(), interp_y.data(), cumul_y.data(), (unsigned)interp_x.size());
 
 		// keep the first element of the cdf
 //		this->cdf_x[k].push_back(interp_x[0]);
