@@ -120,6 +120,7 @@ test-regression:
   retry: 1
   tags:
     - linux
+    - gcc
     - powerful
   artifacts:
      name: test-regression-results
