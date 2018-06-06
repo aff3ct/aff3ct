@@ -36,6 +36,7 @@ build-linux-gcc:
   stage: build
   tags:
     - linux
+    - gcc
   script:
     - ./ci/build-linux-gcc.sh
 
@@ -43,6 +44,8 @@ build-linux-gcc-8-bit:
   stage: build
   tags:
     - linux
+    - gcc
+    - arm32
   script:
     - ./ci/build-linux-gcc-8-bit.sh
 
@@ -50,6 +53,8 @@ build-linux-gcc-mpi:
   stage: build
   tags:
     - linux
+    - gcc
+    - mpi
   script:
     - ./ci/build-linux-gcc-mpi.sh
 
@@ -57,6 +62,8 @@ build-linux-gcc-systemc:
   stage: build
   tags:
     - linux
+    - gcc
+    - systemc
   script:
     - ./ci/build-linux-gcc-systemc.sh
 
@@ -64,6 +71,7 @@ build-linux-clang:
   stage: build
   tags:
     - linux
+    - clang
   script:
     - ./ci/build-linux-clang.sh
 
@@ -71,6 +79,7 @@ build-linux-gcc-4.8:
   stage: build
   tags:
     - linux
+    - gcc-4.8
   script:
     - ./ci/build-linux-gcc-4.8.sh
 
@@ -78,6 +87,7 @@ build-linux-icpc:
   stage: build
   tags:
     - linux
+    - icpc
   script:
     - ./ci/build-linux-icpc.sh
 
@@ -85,6 +95,7 @@ build-windows-gcc:
   stage: build
   tags:
     - windows
+    - gcc
   script:
     - ./ci/build-windows-gcc.bat
 
@@ -92,6 +103,7 @@ build-windows-msvc:
   stage: build
   tags:
     - windows
+    - msvc
   script:
     - ./ci/build-windows-msvc.bat
 
@@ -99,14 +111,16 @@ build-mac-osx-clang:
   stage: build
   tags:
     - mac-osx
+    - apple-clang
   script:
     - ./ci/build-mac-osx-clang.sh
 
 test-regression:
   stage: test
-  retry: 2
+  retry: 1
   tags:
-    - test
+    - linux
+    - powerful
   artifacts:
      name: test-regression-results
      when: always
@@ -119,6 +133,8 @@ test-regression:
 coverage-linux-gcc:
   stage: coverage
   tags:
+    - linux
+    - gcc
     - coverage
   coverage: '/.*lines\.*: (\d+.\d+\%)/'
   artifacts:
