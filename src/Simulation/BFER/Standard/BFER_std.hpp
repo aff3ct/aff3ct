@@ -40,6 +40,7 @@ protected:
 	// a vector of random generator to generate the seeds
 	std::vector<std::mt19937> rd_engine_seed;
 
+
 public:
 	explicit BFER_std(const factory::BFER_std::parameters &params_BFER_std);
 	virtual ~BFER_std();

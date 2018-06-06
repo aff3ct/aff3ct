@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Monitor_EXIT<B,R>
 ::Monitor_EXIT(const int N, const unsigned n_trials, const int n_frames)
-: Monitor(N, N, n_frames),
+: Monitor(n_frames),
   n_trials(n_trials),
   I_A_sum((R)0),
   n_analyzed_frames(0)
@@ -18,19 +18,19 @@ Monitor_EXIT<B,R>
 	const std::string name = "Monitor_EXIT";
 	this->set_name(name);
 
-	auto &p = this->create_task("check_mutual_info", (int)mnt::tsk::check_mutual_info);
-	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->N * this->n_frames);
-	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->N * this->n_frames);
-	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", this->N * this->n_frames);
+// 	auto &p = this->create_task("check_mutual_info", (int)mnt::tsk::check_mutual_info);
+// 	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->N * this->n_frames);
+// 	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->N * this->n_frames);
+// 	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", this->N * this->n_frames);
 
-	this->create_codelet(p, [this, &ps_bits, &ps_llrs_a, &ps_llrs_e]() -> int
-	{
-		this->check_mutual_info(static_cast<B*>(ps_bits  .get_dataptr()),
-		                        static_cast<R*>(ps_llrs_a.get_dataptr()),
-		                        static_cast<R*>(ps_llrs_e.get_dataptr()));
+// 	this->create_codelet(p, [this, &ps_bits, &ps_llrs_a, &ps_llrs_e]() -> int
+// 	{
+// 		this->check_mutual_info(static_cast<B*>(ps_bits  .get_dataptr()),
+// 		                        static_cast<R*>(ps_llrs_a.get_dataptr()),
+// 		                        static_cast<R*>(ps_llrs_e.get_dataptr()));
 
-		return 0;
-	});
+// 		return 0;
+// 	});
 }
 
 template <typename B, typename R>

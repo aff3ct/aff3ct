@@ -17,8 +17,8 @@ using namespace aff3ct::module;
 template<class M>
 void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *datatype)
 {
-	auto    in_cvt = static_cast<M*>(in   );
-	auto inout_cvt = static_cast<M*>(inout);
+	auto    in_cvt = static_cast<M::Values_t*>(in   );
+	auto inout_cvt = static_cast<M::Values_t*>(inout);
 
 	for (auto i = 0; i < *len; i++)
 		inout_cvt[i] += in_cvt[i]
@@ -37,13 +37,13 @@ Monitor_reduction_mpi<M>
 	const std::string name = "Monitor_reduction_mpi<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
 
-	int blen[M::MPI_vals::n_attributes];
-	MPI_Aint displacements[M::MPI_vals::n_attributes];
-	MPI_Datatype oldtypes[M::MPI_vals::n_attributes];
+	int          blen         [M::vals::n_attributes];
+	MPI_Aint     displacements[M::vals::n_attributes];
+	MPI_Datatype oldtypes     [M::vals::n_attributes];
 
-	M::MPI_vals::create_MPI_struct(blen, displacements, oldtypes);
+	M::vals::create_MPI_struct(blen, displacements, oldtypes);
 
-	if (auto ret = MPI_Type_create_struct(4, blen, displacements, oldtypes, &MPI_monitor_vals))
+	if (auto ret = MPI_Type_create_struct(M::vals::n_attributes, blen, displacements, oldtypes, &MPI_monitor_vals))
 	{
 		std::stringstream message;
 		message << "'MPI_Type_create_struct' returned '" << ret << "' error code.";

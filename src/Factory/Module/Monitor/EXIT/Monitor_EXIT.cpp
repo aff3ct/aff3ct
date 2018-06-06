@@ -80,7 +80,7 @@ template <typename B, typename R>
 module::Monitor_EXIT<B,R>* Monitor_EXIT::parameters
 ::build() const
 {
-	if (this->type == "STD") return new module::Monitor_EXIT<B,R>(this->size, this->n_trials, this->n_frames);
+	// if (this->type == "STD") return new module::Monitor_EXIT<B,R>(this->size, this->n_trials, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

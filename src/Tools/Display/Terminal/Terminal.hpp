@@ -13,11 +13,14 @@
 #include <thread>
 #include <condition_variable>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <vector>
 #include <utility>
 #include <string>
 
 #include "Tools/Display/rang_format/rang_format.h"
+#include "Tools/Display/Reporter/Reporter.hpp"
 
 namespace aff3ct
 {
@@ -30,18 +33,6 @@ namespace tools
  */
 class Terminal
 {
-public:
-	static const char        line_separator;
-	static const std::string col_separator;
-	static const std::string group_separator;
-	static const std::string spaced_scol_separator;
-	static const std::string spaced_dcol_separator;
-	static const std::string data_tag;
-	static const rang::style legend_style;
-	static const rang::style report_style;
-	static const int         column_width;
-
-
 private:
 	std::thread term_thread;
 	std::mutex mutex_terminal;
@@ -49,19 +40,16 @@ private:
 	bool stop_terminal;
 
 protected:
-	using title_t        = std::pair<std::string, std::string>;
-	using group_title_t  = title_t;
-	using column_title_t = std::vector<title_t>;
-	using group_t        = std::pair<group_title_t, column_title_t>;
+	std::vector<Reporter*>& reporters;
 
-	std::vector<group_t> cols_groups;
-
+	std::chrono::time_point<std::chrono::steady_clock> t_term;
+	uint8_t real_time_state;
 
 public:
 	/*!
 	 * \brief Constructor.
 	 */
-	Terminal();
+	Terminal(std::vector<Reporter*>& reporters);
 
 	/*!
 	 * \brief Destructor.
@@ -73,14 +61,14 @@ public:
 	 *
 	 * \param stream: the stream to print the legend.
 	 */
-	virtual void legend(std::ostream &stream);
+	void legend(std::ostream &stream) const;
 
 	/*!
 	 * \brief Temporary report.
 	 *
 	 * \param stream: the stream to print the report.
 	 */
-	virtual void temp_report (std::ostream &stream) = 0;
+	virtual void temp_report(std::ostream &stream);
 
 	/*!
 	 * \brief Final report.
@@ -90,15 +78,7 @@ public:
 	virtual void final_report(std::ostream &stream);
 
 	void start_temp_report(const std::chrono::milliseconds freq = std::chrono::milliseconds(500));
-
 	void stop_temp_report();
-
-	static std::string get_time_format(float secondes);
-
-protected:
-	static unsigned extra_spaces(const title_t& text, const unsigned group_width);
-	static unsigned extra_spaces(const group_t& group);
-	static unsigned get_group_width(const group_t& group);
 
 private:
 	static void start_thread_terminal(Terminal *terminal, const std::chrono::milliseconds freq);

@@ -2,6 +2,7 @@
 #define MONITOR_REDUCTION_HXX_
 
 #include <sstream>
+#include <numeric>
 #include "Tools/Exception/exception.hpp"
 
 #include "Monitor_reduction.hpp"
@@ -14,9 +15,11 @@ namespace module
 template <class M>
 Monitor_reduction<M>
 ::Monitor_reduction(const std::vector<M*> &monitors)
-: M((monitors.size() && monitors[0]) ? monitors[0]->get_K       () : 1,
-    (monitors.size() && monitors[0]) ? monitors[0]->get_N       () : 1,
-    (monitors.size() && monitors[0]) ? monitors[0]->get_n_frames() : 1),
+: M((monitors.size() && monitors.front()) ? *monitors.front() : M(),
+     monitors.size() ? std::accumulate(monitors.begin(), monitors.end(), 0,
+                                       [](int tot, const M* m) { return tot + m->get_n_frames(); })
+                     : 1
+   ),
   monitors(monitors)
 {
 	if (monitors.size() == 0)
@@ -55,15 +58,6 @@ Monitor_reduction<M>
 			        << ", 'monitors[m]->get_N()' = " << monitors[m]->get_N() << ").";
 			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
 		}
-
-		if (monitors[0]->get_n_frames() != monitors[m]->get_n_frames())
-		{
-			std::stringstream message;
-			message << "'monitors[0]->get_n_frames()' and 'monitors[m]->get_n_frames()' have to be equal ('m' = " << m
-			        << ", 'monitors[0]->get_n_frames()' = " << monitors[0]->get_n_frames()
-			        << ", 'monitors[m]->get_n_frames()' = " << monitors[m]->get_n_frames() << ").";
-			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
-		}
 	}
 }
 
@@ -94,7 +88,7 @@ void Monitor_reduction<M>
 	M::reset();
 
 	for (auto& m : monitors)
-		M::collect(m);
+		M::collect(*m);
 }
 
 }

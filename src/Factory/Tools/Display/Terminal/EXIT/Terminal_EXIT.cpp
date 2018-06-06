@@ -69,7 +69,7 @@ template <typename B, typename R>
 tools::Terminal_EXIT<B,R>* Terminal_EXIT::parameters
 ::build(const module::Monitor_EXIT<B,R> &monitor) const
 {
-	if (this->type == "STD") return new tools::Terminal_EXIT<B,R>(monitor);
+	// if (this->type == "STD") return new tools::Terminal_EXIT<B,R>(monitor);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

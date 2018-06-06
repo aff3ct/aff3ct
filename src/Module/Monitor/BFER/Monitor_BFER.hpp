@@ -12,12 +12,22 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace mnt_er
+	{
+		enum class tsk : uint8_t { check_errors, SIZE };
+
+		namespace sck
+		{
+			enum class check_errors : uint8_t { U, V, SIZE };
+		}
+	}
+
 template <typename B = int>
 class Monitor_BFER : virtual public Monitor
 {
 public:
-	inline Task&   operator[](const mnt::tsk               t) { return Module::operator[]((int)t);                              }
-	inline Socket& operator[](const mnt::sck::check_errors s) { return Module::operator[]((int)mnt::tsk::check_errors)[(int)s]; }
+	inline Task&   operator[](const mnt_er::tsk               t) { return Module::operator[]((int)t);                                 }
+	inline Socket& operator[](const mnt_er::sck::check_errors s) { return Module::operator[]((int)mnt_er::tsk::check_errors)[(int)s]; }
 
 	struct Values_t
 	{
@@ -25,6 +35,8 @@ public:
 		unsigned long long n_be;
 		unsigned long long n_fe;
 		unsigned long long n_fra;
+
+		Values_t() { reset(); }
 
 		Values_t& operator+=(const Values_t& o)
 		{
@@ -54,19 +66,27 @@ public:
 	};
 
 protected:
+	const int K; /*!< Number of source bits*/
+
 	const unsigned max_fe;
 	const bool count_unknown_values;
 
 	Values_t vals;
+	tools::Histogram<int> err_hist;
 
 	std::vector<std::function<void(unsigned, int )>> callbacks_fe;
 	std::vector<std::function<void(          void)>> callbacks_check;
 	std::vector<std::function<void(          void)>> callbacks_fe_limit_achieved;
-	tools::Histogram<int> err_hist;
 
 public:
-	Monitor_BFER(const int K, const int N, const unsigned max_fe, const bool count_unknown_values = false, const int n_frames = 1);
+	Monitor_BFER(const int K, const unsigned max_fe, const bool count_unknown_values = false, const int n_frames = 1);
+
+	Monitor_BFER() = default;
+	Monitor_BFER(const Monitor_BFER<B>& mon, const int n_frames = -1);
+
 	virtual ~Monitor_BFER() = default;
+
+	int get_K() const;
 
 	/*!
 	 * \brief Compares two messages and counts the number of frame errors and bit errors.
@@ -113,10 +133,10 @@ public:
 
 	bool get_count_unknown_values() const;
 
-	virtual unsigned long long get_n_analyzed_fra() const;
-	virtual unsigned long long get_n_fe          () const;
-	virtual unsigned long long get_n_be          () const;
-	virtual tools::Histogram<int> get_err_hist() const;
+	virtual unsigned long long    get_n_analyzed_fra() const;
+	virtual unsigned long long    get_n_fe          () const;
+	virtual unsigned long long    get_n_be          () const;
+	virtual tools::Histogram<int> get_err_hist      () const;
 
 	float get_fer() const;
 	float get_ber() const;
@@ -127,6 +147,8 @@ public:
 
 	virtual void reset();
 	virtual void clear_callbacks();
+
+	virtual void collect(const Monitor& m);
 	virtual void collect(const Monitor_BFER<B>& m);
 
 protected:

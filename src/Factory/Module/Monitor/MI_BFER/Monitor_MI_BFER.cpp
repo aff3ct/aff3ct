@@ -1,18 +1,19 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Monitor/BFER/Monitor_MI_BFER.hpp"
+#include "Module/Monitor/MI_BFER/Monitor_MI_BFER.hpp"
 
 #include "Monitor_MI_BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Monitor_MI_BFER_name   = "Monitor MI";
+const std::string aff3ct::factory::Monitor_MI_BFER_name   = "Monitor MI BFER";
 const std::string aff3ct::factory::Monitor_MI_BFER_prefix = "mnt";
 
 Monitor_MI_BFER::parameters
 ::parameters(const std::string &prefix)
-: Monitor_MI::parameters  (prefix),
+: Monitor::parameters(Monitor_MI_BFER_name, prefix),
+  Monitor_MI::parameters  (prefix),
   Monitor_BFER::parameters(prefix)
 {
 }
@@ -36,9 +37,8 @@ void Monitor_MI_BFER::parameters
 
 	auto p = this->get_prefix();
 
-	args.erase({p+"-size", "N"})
-	args.erase({p+"-size", "K"})
-
+	args.erase({p+"-size", "N"});
+	args.erase({p+"-size", "K"});
 
 	args.add(
 		{p+"-info-bits", "K"},

@@ -12,14 +12,21 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Monitor_MI<B,R>
-::Monitor_MI(const int K, const int N, const unsigned max_n_trials, const int n_frames)
-: Monitor(K, N, n_frames),
+::Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames)
+: Monitor(n_frames), N(N),
   max_n_trials(max_n_trials)
 {
 	const std::string name = "Monitor_MI";
 	this->set_name(name);
 
-	auto &p = this->create_task("get_mutual_info", (int)mnt::tsk::get_mutual_info);
+	if (N <= 0)
+	{
+		std::stringstream message;
+		message << "'N' has to be greater than 0 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto &p = this->create_task("get_mutual_info", (int)mnt_mi::tsk::get_mutual_info);
 	auto &ps_X = this->template create_socket_in<B>(p, "X", this->N * this->n_frames);
 	auto &ps_Y = this->template create_socket_in<R>(p, "Y", this->N * this->n_frames);
 	this->create_codelet(p, [this, &ps_X, &ps_Y]() -> int
@@ -27,8 +34,20 @@ Monitor_MI<B,R>
 		return this->get_mutual_info(static_cast<B*>(ps_X.get_dataptr()),
 		                             static_cast<R*>(ps_Y.get_dataptr()));
 	});
+}
 
-	this->vals.reset();
+template <typename B, typename R>
+Monitor_MI<B,R>
+::Monitor_MI(const Monitor_MI<B,R>& mon, const int n_frames)
+: Monitor_MI<B,R>(mon.N, mon.max_n_trials, n_frames == -1 ? mon.n_frames : n_frames)
+{
+}
+
+template <typename B, typename R>
+int Monitor_MI<B,R>
+::get_N() const
+{
+	return N;
 }
 
 template <typename B, typename R>
@@ -42,7 +61,10 @@ R Monitor_MI<B,R>
 	for (auto f = f_start; f < f_stop; f++)
 		loc_MI_sum += this->_get_mutual_info(X + f * this->N, Y + f * this->N, f);
 
-	if (n_trials_limit_achieved() && frame_id == this->n_frames -1)
+	for (auto& c : this->callbacks_check)
+		c();
+
+	if (this->n_trials_limit_achieved())
 		for (auto& c : this->callbacks_n_trials_limit_achieved)
 			c();
 
@@ -57,59 +79,49 @@ R Monitor_MI<B,R>
 }
 
 #include "Tools/types.h"
-#if defined(MULTI_PREC) | defined (PREC_32_BIT)
 namespace aff3ct
 {
 namespace module
 {
+#if defined(MULTI_PREC) | defined (PREC_32_BIT)
 template <>
-Q_32 Monitor_MI<B_32,Q_32>
-::_get_mutual_info(const B_32 *X, const Q_32 *Y, const int frame_id)
+R_32 Monitor_MI<B_32,R_32>
+::_get_mutual_info(const B_32 *X, const R_32 *Y, const int frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, this->N);
-	this->vals.MI_sum += mi;
-
-	this->vals.n_fra++;
-
-	if (frame_id == this->n_frames -1)
-		for (auto& c : this->callbacks_check)
-			c();
-
+	this->add_MI_value(mi);
 	return mi;
-}
-}
 }
 #endif
 
 #if defined(MULTI_PREC) | defined (PREC_64_BIT)
-namespace aff3ct
-{
-namespace module
-{
 template <>
-Q_64 Monitor_MI<B_64,Q_64>
-::_get_mutual_info(const B_64 *X, const Q_64 *Y, const int frame_id)
+R_64 Monitor_MI<B_64,R_64>
+::_get_mutual_info(const B_64 *X, const R_64 *Y, const int frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, this->N);
-	this->vals.MI_sum += mi;
-
-	this->vals.n_fra++;
-
-	if (frame_id == this->n_frames -1)
-		for (auto c : this->callbacks_check)
-			c();
-
+	this->add_MI_value(mi);
 	return mi;
 }
-}
-}
 #endif
+}
+}
+
+template <typename B, typename R>
+void Monitor_MI<B,R>
+::add_MI_value(const R mi)
+{
+	this->vals.n_fra++;
+	this->vals.MI += (mi - this->vals.MI) / (R)this->vals.n_fra;
+
+	this->mutinfo_hist.add_value(mi);
+}
 
 template <typename B, typename R>
 bool Monitor_MI<B,R>
 ::n_trials_limit_achieved()
 {
-	return (get_n_analyzed_fra() >= get_n_trials_limit()) || Monitor::interrupt;
+	return (this->get_n_trials_fra() >= this->get_n_trials_limit()) || this->is_interrupt();
 }
 
 template <typename B, typename R>
@@ -121,7 +133,7 @@ unsigned Monitor_MI<B,R>
 
 template <typename B, typename R>
 unsigned long long Monitor_MI<B,R>
-::get_n_analyzed_fra() const
+::get_n_trials_fra() const
 {
 	return this->vals.n_fra;
 }
@@ -130,14 +142,27 @@ template <typename B, typename R>
 R Monitor_MI<B,R>
 ::get_MI() const
 {
-	return this->get_MI_sum() / (R)this->get_n_analyzed_fra();
+	return this->vals.MI;
 }
 
 template <typename B, typename R>
 R Monitor_MI<B,R>
-::get_MI_sum() const
+::get_MI_min() const
 {
-	return this->vals.MI_sum;
+	return this->mutinfo_hist.get_hist_min();
+}
+
+template <typename B, typename R>
+R Monitor_MI<B,R>
+::get_MI_max() const
+{
+	return this->mutinfo_hist.get_hist_max();
+}
+
+template<typename B, typename R>
+tools::Histogram<R> Monitor_MI<B,R>::get_mutinfo_hist() const
+{
+	return this->mutinfo_hist;
 }
 
 template <typename B, typename R>
@@ -160,7 +185,8 @@ void Monitor_MI<B,R>
 {
 	Monitor::reset();
 
-	this->vals.reset();
+	this->vals        .reset();
+	this->mutinfo_hist.reset();
 }
 
 template <typename B, typename R>
@@ -175,11 +201,25 @@ void Monitor_MI<B,R>
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
+::collect(const Monitor& m)
+{
+	collect(dynamic_cast<const Monitor_MI<B,R>&>(m));
+}
+
+template <typename B, typename R>
+void Monitor_MI<B,R>
 ::collect(const Monitor_MI<B,R>& m)
 {
-	Monitor::collect(m);
+	if (this->N != m.N)
+	{
+		std::stringstream message;
+		message << "'this->N' is different than 'm.N' ('this->N' = " << this->N << ", 'm.N' = "
+		        << m.N <<").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	this->vals += m.vals;
+	this->mutinfo_hist.add_values(m.mutinfo_hist);
 }
 
 // ==================================================================================== explicit template instantiation

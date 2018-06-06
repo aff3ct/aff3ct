@@ -13,26 +13,12 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 Monitor
-::Monitor(const int K, const int N, int n_frames)
-: Module(n_frames), K(K), N(N)
+::Monitor(int n_frames)
+: Module(n_frames)
 {
 	const std::string name = "Monitor";
 	this->set_name(name);
 	this->set_short_name(name);
-
-	if (K <= 0)
-	{
-		std::stringstream message;
-		message << "'K' has to be greater than 0 ('K' = " << K << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (N <= 0)
-	{
-		std::stringstream message;
-		message << "'N' has to be greater than 0 ('N' = " << N << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 
 	Monitor::interrupt = false;
 
@@ -40,30 +26,6 @@ Monitor
 	// Install a signal handler
 	std::signal(SIGINT, Monitor::signal_interrupt_handler);
 #endif
-
-	this->tasks_with_nullptr.resize((size_t)mnt::tsk::SIZE);
-	for (size_t t = 0; t < (size_t)mnt::tsk::SIZE; t++)
-		this->tasks_with_nullptr[t] = nullptr;
-}
-
-/*!
- * \brief Destructor.
- */
-Monitor
-::~Monitor()
-{
-}
-
-int Monitor
-::get_K() const
-{
-	return K;
-}
-
-int Monitor
-::get_N() const
-{
-	return N;
 }
 
 void Monitor
@@ -76,26 +38,6 @@ void Monitor
 void Monitor
 ::clear_callbacks()
 {
-}
-
-void Monitor
-::collect(const Monitor& m)
-{
-	if (this->K != m.K)
-	{
-		std::stringstream message;
-		message << "'this->K' is different than 'm.K' ('this->K' = " << this->K << ", 'm.K' = "
-		        << m.K <<").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N != m.N)
-	{
-		std::stringstream message;
-		message << "'this->N' is different than 'm.N' ('this->N' = " << this->N << ", 'm.N' = "
-		        << m.N <<").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 }
 
 
@@ -135,7 +77,7 @@ void Monitor
 			if (Monitor::interrupt_cnt >= 4)
 			{
 				std::cerr << "\r# Killed by user interruption!"
-				             "                                                                  "
+				             "                                                                                         "
 				          << std::endl;
 				std::exit(EXIT_FAILURE);
 			}

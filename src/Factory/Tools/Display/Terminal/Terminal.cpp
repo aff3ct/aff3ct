@@ -7,6 +7,12 @@ const std::string aff3ct::factory::Terminal_name   = "Terminal";
 const std::string aff3ct::factory::Terminal_prefix = "ter";
 
 Terminal::parameters
+::parameters(const std::string &prefix)
+: Factory::parameters(Terminal_name, Terminal_name, prefix)
+{
+}
+
+Terminal::parameters
 ::parameters(const std::string &name, const std::string &prefix)
 : Factory::parameters(name, Terminal_name, prefix)
 {
@@ -55,4 +61,17 @@ void Terminal::parameters
 
 	headers[p].push_back(std::make_pair("Enabled", this->disabled ? "no" : "yes"));
 	headers[p].push_back(std::make_pair("Frequency (ms)", std::to_string(this->frequency.count())));
+}
+
+
+tools::Terminal* Terminal::parameters
+::build(std::vector<tools::Reporter*> &reporters) const
+{
+	return new tools::Terminal(reporters);
+}
+
+tools::Terminal* Terminal
+::build(const parameters &params, std::vector<tools::Reporter*> &reporters)
+{
+	return params.build(reporters);
 }

@@ -9,8 +9,8 @@
 #include "Factory/Module/Modem/Modem.hpp"
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Source/Source.hpp"
-#include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
-#include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
+#include "Factory/Module/Monitor/MI_BFER/Monitor_MI_BFER.hpp"
+#include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
 #include "../Simulation.hpp"
 
@@ -41,8 +41,8 @@ struct BFER : Simulation
 		Modem        ::parameters *mdm = nullptr;
 		Channel      ::parameters *chn = nullptr;
 		Quantizer    ::parameters *qnt = nullptr;
-		Monitor_BFER ::parameters *mnt = nullptr;
-		Terminal_BFER::parameters *ter = nullptr;
+		Monitor_MI_BFER ::parameters *mnt = nullptr;
+		Terminal     ::parameters *ter = nullptr;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		virtual ~parameters();
@@ -59,8 +59,8 @@ struct BFER : Simulation
 		        void set_mdm(Modem        ::parameters *mdm) { this->mdm = mdm; }
 		        void set_chn(Channel      ::parameters *chn) { this->chn = chn; }
 		        void set_qnt(Quantizer    ::parameters *qnt) { this->qnt = qnt; }
-		        void set_mnt(Monitor_BFER ::parameters *mnt) { this->mnt = mnt; }
-		        void set_ter(Terminal_BFER::parameters *ter) { this->ter = ter; }
+		        void set_mnt(Monitor_MI_BFER ::parameters *mnt) { this->mnt = mnt; }
+		        void set_ter(Terminal::parameters *ter) { this->ter = ter; }
 
 		// parameters construction
 		void get_description(tools::Argument_map_info &args) const;

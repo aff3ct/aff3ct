@@ -12,8 +12,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Monitor_BFER<B>
-::Monitor_BFER(const int K, const int N, const unsigned max_fe, const bool count_unknown_values, const int n_frames)
-: Monitor(K, N, n_frames),
+::Monitor_BFER(const int K, const unsigned max_fe, const bool count_unknown_values, const int n_frames)
+: Monitor(n_frames), K(K),
   max_fe(max_fe),
   count_unknown_values(count_unknown_values),
   err_hist(0)
@@ -21,16 +21,35 @@ Monitor_BFER<B>
 	const std::string name = "Monitor_BFER";
 	this->set_name(name);
 
-	auto &p1 = this->create_task("check_errors", (int)mnt::tsk::check_errors);
-	auto &ps_U = this->template create_socket_in<B>(p1, "U", this->K * this->n_frames);
-	auto &ps_V = this->template create_socket_in<B>(p1, "V", this->K * this->n_frames);
-	this->create_codelet(p1, [this, &ps_U, &ps_V]() -> int
+	if (K <= 0)
+	{
+		std::stringstream message;
+		message << "'K' has to be greater than 0 ('K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto &p = this->create_task("check_errors", (int)mnt_er::tsk::check_errors);
+	auto &ps_U = this->template create_socket_in<B>(p, "U", this->K * this->n_frames);
+	auto &ps_V = this->template create_socket_in<B>(p, "V", this->K * this->n_frames);
+	this->create_codelet(p, [this, &ps_U, &ps_V]() -> int
 	{
 		return this->check_errors(static_cast<B*>(ps_U.get_dataptr()),
 		                          static_cast<B*>(ps_V.get_dataptr()));
 	});
+}
 
-	this->vals.reset();
+template <typename B>
+Monitor_BFER<B>
+::Monitor_BFER(const Monitor_BFER<B>& mon, const int n_frames)
+: Monitor_BFER<B>(mon.K,mon.max_fe, mon.count_unknown_values, n_frames == -1 ? mon.n_frames : n_frames)
+{
+}
+
+template <typename B>
+int Monitor_BFER<B>
+::get_K() const
+{
+	return K;
 }
 
 template <typename B>
@@ -45,6 +64,9 @@ int Monitor_BFER<B>
 		n_be += this->_check_errors(U + f * this->K,
 		                            V + f * this->K,
 		                            f);
+
+	for (auto& c : this->callbacks_check)
+		c();
 
 	if (this->fe_limit_achieved())
 		for (auto& c : this->callbacks_fe_limit_achieved)
@@ -73,14 +95,9 @@ int Monitor_BFER<B>
 
 		for (auto& c : this->callbacks_fe)
 			c(bit_errors_count, frame_id);
-
 	}
 
 	vals.n_fra++;
-
-	if (frame_id == this->n_frames -1)
-		for (auto& c : this->callbacks_check)
-			c();
 
 	return bit_errors_count;
 }
@@ -89,7 +106,7 @@ template <typename B>
 bool Monitor_BFER<B>
 ::fe_limit_achieved()
 {
-	return (get_n_fe() >= get_fe_limit()) || Monitor::interrupt;
+	return (get_n_fe() >= get_fe_limit()) || this->is_interrupt();
 }
 
 template <typename B>
@@ -203,12 +220,25 @@ bool Monitor_BFER<B>
 
 template <typename B>
 void Monitor_BFER<B>
+::collect(const Monitor& m)
+{
+	collect(dynamic_cast<const Monitor_BFER<B>&>(m));
+}
+
+template <typename B>
+void Monitor_BFER<B>
 ::collect(const Monitor_BFER<B>& m)
 {
-	Monitor::collect(m);
+	if (this->K != m.K)
+	{
+		std::stringstream message;
+		message << "'this->K' is different than 'm.K' ('this->K' = " << this->K << ", 'm.K' = "
+		        << m.K <<").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	this->vals += m.vals;
-	err_hist.add_values(m.err_hist);
+	this->err_hist.add_values(m.err_hist);
 }
 
 // ==================================================================================== explicit template instantiation

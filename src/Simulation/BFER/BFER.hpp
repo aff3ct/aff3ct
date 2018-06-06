@@ -6,15 +6,20 @@
 #include <vector>
 
 #include "Tools/Threads/Barrier.hpp"
-#include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
+
+#include "Tools/Display/Reporter/BFER/Reporter_BFER.hpp"
+#include "Tools/Display/Reporter/MI/Reporter_MI.hpp"
+#include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
+
+#include "Tools/Display/Terminal/Terminal.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Noise/Noise.hpp"
 
 #include "Module/Module.hpp"
-#include "Module/Monitor/Monitor.hpp"
-#include "Module/Monitor/BFER/Monitor_BFER_reduction.hpp"
+#include "Module/Monitor/MI_BFER/Monitor_MI_BFER.hpp"
+#include "Module/Monitor/Monitor_reduction.hpp"
 
 #include "Factory/Simulation/BFER/BFER.hpp"
 
@@ -45,15 +50,19 @@ protected:
 	tools::Noise<R>* noise; // current noise simulated
 
 	// the monitors of the the BFER simulation
-	std::vector<module::Monitor_BFER          <B,R>*> monitor;
-	            module::Monitor_BFER_reduction<B,R>*  monitor_red;
+	              std::vector<module::Monitor_MI_BFER<B,R>*>  monitor;
+	module::Monitor_reduction<module::Monitor_MI_BFER<B,R> >* monitor_red;
 
 	// dump frames into files
 	std::vector<tools::Dumper          *> dumper;
 	            tools::Dumper_reduction*  dumper_red;
 
-	// terminal (for the output of the code)
-	tools::Terminal_BFER<B,R> *terminal;
+	// terminal and reporters (for the output of the code)
+	tools::Reporter_BFER <B>* rep_er;
+	tools::Reporter_MI <B,R>* rep_mi;
+	tools::Reporter_noise<R>* rep_noise;
+	std::vector<tools::Reporter*> reporters;
+	tools::Terminal* terminal;
 
 	// noise distribution
 	tools::Distributions<R> *distributions;
@@ -69,8 +78,8 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	module::Monitor_BFER <B,R>* build_monitor (const int tid = 0);
-	tools ::Terminal_BFER<B,R>* build_terminal(                 );
+	module::Monitor_MI_BFER<B,R>* build_monitor(const int tid = 0);
+	tools::Terminal* build_terminal();
 
 private:
 	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);

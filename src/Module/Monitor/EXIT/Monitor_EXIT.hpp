@@ -15,8 +15,8 @@ template <typename B = int, typename R = float>
 class Monitor_EXIT : public Monitor
 {
 public:
-	inline Task&   operator[](const mnt::tsk                    t) { return Module::operator[]((int)t);                                   }
-	inline Socket& operator[](const mnt::sck::check_mutual_info s) { return Module::operator[]((int)mnt::tsk::check_mutual_info)[(int)s]; }
+	// inline Task&   operator[](const mnt::tsk                    t) { return Module::operator[]((int)t);                                   }
+	// inline Socket& operator[](const mnt::sck::check_mutual_info s) { return Module::operator[]((int)mnt::tsk::check_mutual_info)[(int)s]; }
 
 protected:
 	const unsigned n_trials;
@@ -29,6 +29,8 @@ protected:
 
 	std::vector<B> bits_buff;
 	std::vector<R> llrs_e_buff;
+
+	int N;
 
 public:
 	Monitor_EXIT(const int size, const unsigned n_trials, const int n_frames = 1);

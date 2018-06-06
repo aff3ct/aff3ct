@@ -23,17 +23,6 @@ namespace aff3ct
 {
 namespace module
 {
-	namespace mnt
-	{
-		enum class tsk : uint8_t { check_errors, check_mutual_info, get_mutual_info, SIZE };
-
-		namespace sck
-		{
-			enum class check_errors      : uint8_t { U,    V             , SIZE };
-			enum class check_mutual_info : uint8_t { bits, llrs_a, llrs_e, SIZE };
-			enum class get_mutual_info   : uint8_t { X,    Y             , SIZE };
-		}
-	}
 
 /*!
  * \class Monitor
@@ -54,9 +43,6 @@ protected:
 	static bool over;                                                                                     /*!< True if SIGINT is called twice in the Monitor::d_delta_interrupt time */
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_interrupt; /*!< Time point of the last call to SIGINT */
 
-	const int K; /*!< Number of source bits*/
-	const int N; /*!< Number of code   bits*/
-
 public:
 	/*!
 	 * \brief Constructor.
@@ -66,26 +52,18 @@ public:
 	 * \param K: number of bits of information
 	 * \param N: number of coded bits
 	 */
-	Monitor(const int K, const int N, int n_frames = 1);
+	Monitor(int n_frames = 1);
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Monitor();
-
-	/*!
-	 * \brief Gets the number of bits in a frame.
-	 *
-	 * \return the number of bits.
-	 */
-	int get_K() const;
-	int get_N() const;
+	virtual ~Monitor() = default;
 
 	virtual void reset();
 
 	virtual void clear_callbacks();
 
-	virtual void collect(const Monitor& m);
+	virtual void collect(const Monitor& m) = 0;
 
 
 	/*!
@@ -106,15 +84,6 @@ public:
 	 * \brief Put Monitor<B,R>::interrupt and Monitor<B,R>::over to true.
 	 */
 	static void stop();
-
-protected:
-	template<class Sub_monitor>
-	std::vector<Monitor*> cast_to_monitor_ptr(const std::vector<Sub_monitor*> &sm)
-	{
-		std::vector<Monitor*> vm(sm.size());
-		for (unsigned i = 0; i < vm.size(); i++)
-			vm[i] = (Monitor*)sm[i];
-	}
 
 private:
 	static void signal_interrupt_handler(int signal);

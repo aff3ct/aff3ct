@@ -8,16 +8,15 @@
 #include "Tools/general_utils.h"
 #include "Tools/system_functions.h"
 #include "Tools/Display/rang_format/rang_format.h"
-#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Statistics/Statistics.hpp"
-#include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
+#include "Tools/Exception/exception.hpp"
 
 #ifdef ENABLE_MPI
-#include "Module/Monitor/BFER/Monitor_BFER_reduction_mpi.hpp"
+#include "Module/Monitor/Monitor_reduction_mpi.hpp"
 #endif
 
 #include "Factory/Module/Monitor/Monitor.hpp"
-#include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
+#include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
 #include "BFER.hpp"
 
@@ -39,7 +38,11 @@ BFER<B,R,Q>
   monitor_red(                       nullptr),
   dumper     (params_BFER.n_threads, nullptr),
   dumper_red (                       nullptr),
-  terminal   (                       nullptr),
+
+  rep_er   (nullptr),
+  rep_mi   (nullptr),
+  rep_noise(nullptr),
+  terminal (nullptr),
 
   distributions(nullptr)
 {
@@ -62,6 +65,8 @@ BFER<B,R,Q>
 		dumper_red = new tools::Dumper_reduction(dumpers);
 	}
 
+
+
 	modules["monitor"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
 	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 	{
@@ -71,16 +76,31 @@ BFER<B,R,Q>
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_BFER_reduction_mpi<B,R>(this->monitor,
-	                                                                std::this_thread::get_id(),
-	                                                                params_BFER.mpi_comm_freq);
+	this->monitor_red = new module::Monitor_reduction_mpi<module::Monitor_MI_BFER<B,R>>(this->monitor,
+	                                                                                    std::this_thread::get_id(),
+	                                                                                    params_BFER.mpi_comm_freq);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_BFER_reduction<B,R>(this->monitor);
+	this->monitor_red = new module::Monitor_reduction<module::Monitor_MI_BFER<B,R>>(this->monitor);
 #endif
 
 	if (!params_BFER.noise->pdf_path.empty())
 		distributions = new tools::Distributions<R>(params_BFER.noise->pdf_path);
+
+
+
+	this->noise = params_BFER.noise->template build<R>(0);
+
+	rep_noise = new tools::Reporter_noise<R>(this->noise);
+	rep_er    = new tools::Reporter_BFER <B>(*this->monitor_red, true);
+	if (params_BFER.mnt->mutinfo)
+	{
+		rep_mi = new tools::Reporter_MI<B,R>(*this->monitor_red);
+		reporters = {rep_noise, rep_mi, rep_er};
+	}
+	else
+		reporters = {rep_noise, rep_er};
+
 }
 
 template <typename B, typename R, typename Q>
@@ -88,6 +108,10 @@ BFER<B,R,Q>
 ::~BFER()
 {
 	release_objects();
+
+	if (rep_noise != nullptr) { delete rep_noise; rep_noise = nullptr; }
+	if (rep_er    != nullptr) { delete rep_er;    rep_er    = nullptr; }
+	if (rep_mi    != nullptr) { delete rep_mi;    rep_mi    = nullptr; }
 
 	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
 	if (dumper_red  != nullptr) { delete dumper_red;  dumper_red  = nullptr; }
@@ -125,6 +149,7 @@ void BFER<B,R,Q>
 {
 	this->terminal = this->build_terminal();
 
+
 	if (!this->params_BFER.err_track_revert)
 	{
 		this->build_communication_chain();
@@ -153,8 +178,6 @@ void BFER<B,R,Q>
 
 		this->noise = params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
 		                                                   params_BFER.mdm->bps, params_BFER.mdm->upf);
-
-		this->terminal->set_noise(*this->noise);
 
 		// manage noise distributions to be sure it exists
 		if (this->distributions != nullptr)
@@ -332,19 +355,19 @@ void BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-module::Monitor_BFER<B,R>* BFER<B,R,Q>
+module::Monitor_MI_BFER<B,R>* BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
 	bool count_unknown_values = params_BFER.noise->type == "EP";
 
-	return factory::Monitor_BFER::build<B,R>(*params_BFER.mnt, count_unknown_values);
+	return params_BFER.mnt->build<B,R>(count_unknown_values);
 }
 
 template <typename B, typename R, typename Q>
-tools::Terminal_BFER<B,R>* BFER<B,R,Q>
+tools::Terminal* BFER<B,R,Q>
 ::build_terminal()
 {
-	return factory::Terminal_BFER::build<B,R>(*params_BFER.ter, *this->monitor_red, params_BFER.mnt->mutinfo, true);
+	return params_BFER.ter->build(this->reporters);
 }
 
 template <typename B, typename R, typename Q>

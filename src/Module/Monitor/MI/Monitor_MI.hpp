@@ -6,34 +6,52 @@
 #endif
 
 #include "../Monitor.hpp"
+#include "Tools/Algo/Histogram.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
+	namespace mnt_mi
+	{
+		enum class tsk : uint8_t { get_mutual_info, SIZE };
+
+		namespace sck
+		{
+			enum class get_mutual_info : uint8_t { X, Y, SIZE };
+		}
+	}
+
 template <typename B = int, typename R = float>
 class Monitor_MI : virtual public Monitor
 {
 public:
-	inline Task&   operator[](const mnt::tsk                  t) { return Module::operator[]((int)t);                                 }
-	inline Socket& operator[](const mnt::sck::get_mutual_info s) { return Module::operator[]((int)mnt::tsk::get_mutual_info)[(int)s]; }
+	inline Task&   operator[](const mnt_mi::tsk                  t) { return Module::operator[]((int)t);                                    }
+	inline Socket& operator[](const mnt_mi::sck::get_mutual_info s) { return Module::operator[]((int)mnt_mi::tsk::get_mutual_info)[(int)s]; }
 
 	struct Values_t
 	{
-		static constexpr unsigned n_attributes = 2;
+		static constexpr unsigned n_attributes = 4;
 		unsigned long long n_fra;
-		R MI_sum;
+		R MI;
+		R MI_max;
+		R MI_min;
+
+		Values_t() { reset(); }
 
 		Values_t& operator+=(const Values_t& o)
 		{
-			n_fra  += o.n_fra;
-			MI_sum += o.MI_sum;
+			MI     = MI * o.MI;
+			n_fra += o.n_fra;
+			MI    += o.MI;
 			return *this;
 		}
 
 		void reset()
 		{
-			MI_sum = 0.;
+			MI     = 0.;
+			MI_max = 0.;
+			MI_min = 0.;
 			n_fra  = 0;
 		}
 
@@ -45,14 +63,21 @@ public:
 		                              MPI_Datatype oldtypes     [n_attributes])
 		{
 			blen[0] = 1; displacements[0] = offsetof(Values_t, n_fra ); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
-			blen[1] = 1; displacements[1] = offsetof(Values_t, MI_sum); oldtypes[1] = MPI_R_type;
+			blen[1] = 1; displacements[1] = offsetof(Values_t, MI    ); oldtypes[1] = MPI_R_type;
+			blen[2] = 1; displacements[2] = offsetof(Values_t, MI_min); oldtypes[2] = MPI_R_type;
+			blen[3] = 1; displacements[3] = offsetof(Values_t, MI_max); oldtypes[3] = MPI_R_type;
 		}
 	#endif
 	};
 
 protected:
+	const int N; /*!< Number of code bits*/
+
 	const unsigned max_n_trials;
+
 	Values_t vals;
+	tools::Histogram<R> mutinfo_hist;
+
 
 	std::vector<std::function<void(void)>> callbacks_check;
 	std::vector<std::function<void(void)>> callbacks_n_trials_limit_achieved;
@@ -61,9 +86,14 @@ public:
 	/*
 	 * 'max_n_cf' is the max number of frames to checked after what the simulation shall stop
 	 */
-	Monitor_MI(const int K, const int N, const unsigned max_n_trials, const int n_frames = 1);
+	Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames = 1);
+
+	Monitor_MI() = default;
+	Monitor_MI(const Monitor_MI<B,R>& mon, const int n_frames = -1);
+
 	virtual ~Monitor_MI() = default;
 
+	int get_N() const;
 
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
 	R get_mutual_info(const std::vector<B,AB>& X, const std::vector<R,AR>& Y, const int frame_id = -1)
@@ -100,10 +130,12 @@ public:
 	virtual bool n_trials_limit_achieved();
 	unsigned get_n_trials_limit() const;
 
-	virtual unsigned long long get_n_analyzed_fra() const;
+	virtual unsigned long long get_n_trials_fra() const;
 
 	virtual R get_MI    () const;
-	virtual R get_MI_sum() const;
+	virtual R get_MI_min() const;
+	virtual R get_MI_max() const;
+	tools::Histogram<R> get_mutinfo_hist() const;
 
 	virtual void add_handler_check                  (std::function<void(void)> callback);
 	virtual void add_handler_n_trials_limit_achieved(std::function<void(void)> callback);
@@ -111,10 +143,13 @@ public:
 	virtual void reset();
 	virtual void clear_callbacks();
 
+	virtual void collect(const Monitor& m);
 	virtual void collect(const Monitor_MI<B,R>& m);
 
 protected:
 	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);
+
+	void add_MI_value(const R mi);
 };
 }
 }

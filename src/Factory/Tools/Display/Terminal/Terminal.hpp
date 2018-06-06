@@ -4,6 +4,8 @@
 #include <string>
 #include <chrono>
 
+#include "Tools/Display/Terminal/Terminal.hpp"
+
 #include "../../../Factory.hpp"
 
 namespace aff3ct
@@ -23,6 +25,7 @@ struct Terminal : Factory
 		bool                      disabled  = false;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
+		parameters(const std::string &p = Terminal_prefix);
 		virtual ~parameters();
 		virtual Terminal::parameters* clone() const;
 
@@ -31,9 +34,14 @@ struct Terminal : Factory
 		virtual void store          (const tools::Argument_map_value &vals);
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
+		// builder
+		tools::Terminal* build(std::vector<tools::Reporter*> &reporters) const;
+
 	protected:
-		parameters(const std::string &n = Terminal_name, const std::string &p = Terminal_prefix);
+		parameters(const std::string &n, const std::string &p);
 	};
+
+	static tools::Terminal* build(const parameters &params, std::vector<tools::Reporter*> &reporters);
 };
 }
 }

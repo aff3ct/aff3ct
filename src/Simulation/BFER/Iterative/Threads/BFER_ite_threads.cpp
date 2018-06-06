@@ -8,8 +8,6 @@
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 
-#include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
-
 #include "BFER_ite_threads.hpp"
 
 using namespace aff3ct;
@@ -466,6 +464,9 @@ void BFER_ite_threads<B,R,Q>
 		}
 
 		monitor[mnt::tsk::check_errors].exec();
+
+		if (tid == 0)
+			this->monitor_red->reduce();
 	}
 }
 

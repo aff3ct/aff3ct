@@ -8,8 +8,6 @@
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 
-#include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
-
 #include "BFER_std_threads.hpp"
 
 using namespace aff3ct;
@@ -360,6 +358,8 @@ void BFER_std_threads<B,R,Q>
 		if (this->params_BFER_std.mnt->mutinfo)
 			monitor[mnt::tsk::get_mutual_info].exec();
 
+		if (tid == 0)
+			this->monitor_red->reduce();
 	}
 }
 
