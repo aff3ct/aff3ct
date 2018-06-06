@@ -27,6 +27,7 @@ analysis-sonarqube:
   stage: analysis
   tags:
     - sonarqube
+    - cppcheck
   only:
     - master
   script:
@@ -137,6 +138,7 @@ coverage-linux-gcc:
     - linux
     - gcc
     - coverage
+    - powerful
   coverage: '/.*lines\.*: (\d+.\d+\%)/'
   artifacts:
      name: code_coverage_report
