@@ -150,6 +150,9 @@ protected:
 	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);
 
 	void add_MI_value(const R mi);
+
+	Monitor_MI(const bool create_task, const int N, const unsigned max_n_trials, const int n_frames);
+
 };
 }
 }

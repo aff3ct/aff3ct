@@ -13,6 +13,13 @@ using namespace aff3ct::module;
 template <typename B>
 Monitor_BFER<B>
 ::Monitor_BFER(const int K, const unsigned max_fe, const bool count_unknown_values, const int n_frames)
+: Monitor_BFER(true, K, max_fe, count_unknown_values, n_frames)
+{
+}
+
+template <typename B>
+Monitor_BFER<B>
+::Monitor_BFER(const bool create_task, const int K, const unsigned max_fe, const bool count_unknown_values, const int n_frames)
 : Monitor(n_frames), K(K),
   max_fe(max_fe),
   count_unknown_values(count_unknown_values),
@@ -28,14 +35,17 @@ Monitor_BFER<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto &p = this->create_task("check_errors", (int)mnt_er::tsk::check_errors);
-	auto &ps_U = this->template create_socket_in<B>(p, "U", this->K * this->n_frames);
-	auto &ps_V = this->template create_socket_in<B>(p, "V", this->K * this->n_frames);
-	this->create_codelet(p, [this, &ps_U, &ps_V]() -> int
+	if (create_task)
 	{
-		return this->check_errors(static_cast<B*>(ps_U.get_dataptr()),
-		                          static_cast<B*>(ps_V.get_dataptr()));
-	});
+		auto &p = this->create_task("check_errors");
+		auto &ps_U = this->template create_socket_in<B>(p, "U", this->K * this->n_frames);
+		auto &ps_V = this->template create_socket_in<B>(p, "V", this->K * this->n_frames);
+		this->create_codelet(p, [this, &ps_U, &ps_V]() -> int
+		{
+			return this->check_errors(static_cast<B*>(ps_U.get_dataptr()),
+			                          static_cast<B*>(ps_V.get_dataptr()));
+		});
+	}
 }
 
 template <typename B>

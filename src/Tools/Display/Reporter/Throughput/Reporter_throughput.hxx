@@ -1,13 +1,18 @@
+#ifndef REPORTER_THROUGHPUT_HXX_
+#define REPORTER_THROUGHPUT_HXX_
+
 #include <ios>
 
 #include "Tools/Exception/exception.hpp"
 #include "Reporter_throughput.hpp"
 
-using namespace aff3ct;
-using namespace aff3ct::tools;
-
-Reporter_throughput
-::Reporter_throughput(PF_t progress_function, const unsigned long long limit)
+namespace aff3ct
+{
+namespace tools
+{
+template <typename T>
+Reporter_throughput<T>
+::Reporter_throughput(std::function<T(void)> progress_function, const unsigned long long limit)
 : Reporter(),
   progress_function(progress_function),
   limit(limit),
@@ -24,7 +29,8 @@ Reporter_throughput
 	this->cols_groups.push_back(throughput_group);
 }
 
-void Reporter_throughput
+template <typename T>
+void Reporter_throughput<T>
 ::report(std::ostream &stream, bool final)
 {
 	std::ios::fmtflags f(stream.flags());
@@ -60,9 +66,14 @@ void Reporter_throughput
 }
 
 
-void Reporter_throughput
+template <typename T>
+void Reporter_throughput<T>
 ::init()
 {
 	t_report = std::chrono::steady_clock::now();
 }
 
+}
+}
+
+#endif /* REPORTER_THROUGHPUT_HXX_ */

@@ -27,26 +27,30 @@ template <typename B = int, typename R = float>
 class Monitor_MI_BFER : public Monitor_MI<B,R>, public Monitor_BFER<B>
 {
 public:
-	inline Task& operator[](const mnt::tsk t)
-	{
-		switch(t)
-		{
-			case mnt::tsk::check_errors    : return Monitor_BFER<B>::operator[](mnt_er::tsk::check_errors   );
-			case mnt::tsk::get_mutual_info : return Monitor_MI<B,R>::operator[](mnt_mi::tsk::get_mutual_info);
-			default : break;
-		}
-		return Monitor_MI<B,R>::operator[](mnt_mi::tsk::SIZE);
-	}
+	inline Task&   operator[](const mnt::tsk                  t) { return Module::operator[]((int)t);                                 }
+	inline Socket& operator[](const mnt::sck::get_mutual_info s) { return Module::operator[]((int)mnt::tsk::get_mutual_info)[(int)s]; }
+	inline Socket& operator[](const mnt::sck::check_errors    s) { return Module::operator[]((int)mnt::tsk::check_errors   )[(int)s]; }
 
-	inline Socket& operator[](const mnt::sck::check_errors s)
-	{
-		return Monitor_BFER<B>::operator[](mnt_er::tsk::check_errors)[(int)s];
-	}
+	// inline Task& operator[](const mnt::tsk t)
+	// {
+	// 	switch(t)
+	// 	{
+	// 		case mnt::tsk::check_errors    : return Monitor_BFER<B>::operator[](mnt_er::tsk::check_errors   );
+	// 		case mnt::tsk::get_mutual_info : return Monitor_MI<B,R>::operator[](mnt_mi::tsk::get_mutual_info);
+	// 		default : break;
+	// 	}
+	// 	return Monitor_MI<B,R>::operator[](mnt_mi::tsk::SIZE);
+	// }
 
-	inline Socket& operator[](const mnt::sck::get_mutual_info s)
-	{
-		return Monitor_MI<B,R>::operator[](mnt_mi::tsk::get_mutual_info)[(int)s];
-	}
+	// inline Socket& operator[](const mnt::sck::check_errors s)
+	// {
+	// 	return Monitor_BFER<B>::operator[](mnt_er::tsk::check_errors)[(int)s];
+	// }
+
+	// inline Socket& operator[](const mnt::sck::get_mutual_info s)
+	// {
+	// 	return Monitor_MI<B,R>::operator[](mnt_mi::tsk::get_mutual_info)[(int)s];
+	// }
 
 	struct Values_t
 	{
@@ -118,6 +122,12 @@ public:
 
 	virtual void collect(const Monitor& m);
 	virtual void collect(const Monitor_MI_BFER<B,R>& m);
+
+protected:
+	Monitor_MI_BFER(const bool create_task, const int K, const int N,
+	                const unsigned mi_max_n_cf,
+	                const unsigned er_max_fe, const bool er_count_unknown_values,
+	                const int n_frames);
 };
 }
 }

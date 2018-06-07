@@ -62,11 +62,11 @@ protected:
 	            tools::Dumper_reduction*  dumper_red;
 
 	// terminal and reporters (for the output of the code)
-	tools::Reporter_BFER <B>* rep_er;
-	tools::Reporter_MI <B,R>* rep_mi;
-	tools::Reporter_noise<R>* rep_noise;
-	tools::Reporter_throughput* rep_throughput;
-	std::vector<tools::Reporter*> reporters;
+	tools::Reporter_BFER <B>*             rep_er;
+	tools::Reporter_MI <B,R>*             rep_mi;
+	tools::Reporter_noise<R>*             rep_noise;
+	tools::Reporter_throughput<uint64_t>* rep_throughput;
+	std::vector<tools::Reporter*>         reporters;
 	tools::Terminal* terminal;
 
 	// noise distribution

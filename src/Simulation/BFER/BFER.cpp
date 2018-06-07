@@ -101,10 +101,10 @@ BFER<B,R,Q>
 		reporters.push_back(rep_mi);
 	}
 
-	rep_er    = new tools::Reporter_BFER <B>(*this->monitor_red);
+	rep_er = new tools::Reporter_BFER<B>(*this->monitor_red);
 	reporters.push_back(rep_er);
 
-	rep_throughput = new tools::Reporter_throughput(std::bind(&Monitor_reduction_type::get_n_fe, *this->monitor_red), this->monitor_red->get_fe_limit());
+	rep_throughput = new tools::Reporter_throughput<uint64_t>(std::bind(&Monitor_reduction_type::get_n_fe, this->monitor_red), this->monitor_red->get_fe_limit());
 	reporters.push_back(rep_throughput);
 }
 

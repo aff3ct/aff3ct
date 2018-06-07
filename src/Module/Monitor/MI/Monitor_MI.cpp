@@ -13,6 +13,13 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Monitor_MI<B,R>
 ::Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames)
+: Monitor_MI(true, N, max_n_trials, n_frames)
+{
+}
+
+template <typename B, typename R>
+Monitor_MI<B,R>
+::Monitor_MI(const bool create_task, const int N, const unsigned max_n_trials, const int n_frames)
 : Monitor(n_frames), N(N),
   max_n_trials(max_n_trials)
 {
@@ -26,14 +33,17 @@ Monitor_MI<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto &p = this->create_task("get_mutual_info", (int)mnt_mi::tsk::get_mutual_info);
-	auto &ps_X = this->template create_socket_in<B>(p, "X", this->N * this->n_frames);
-	auto &ps_Y = this->template create_socket_in<R>(p, "Y", this->N * this->n_frames);
-	this->create_codelet(p, [this, &ps_X, &ps_Y]() -> int
+	if (create_task)
 	{
-		return this->get_mutual_info(static_cast<B*>(ps_X.get_dataptr()),
-		                             static_cast<R*>(ps_Y.get_dataptr()));
-	});
+		auto &p = this->create_task("get_mutual_info");
+		auto &ps_X = this->template create_socket_in<B>(p, "X", this->N * this->n_frames);
+		auto &ps_Y = this->template create_socket_in<R>(p, "Y", this->N * this->n_frames);
+		this->create_codelet(p, [this, &ps_X, &ps_Y]() -> int
+		{
+			return this->get_mutual_info(static_cast<B*>(ps_X.get_dataptr()),
+			                             static_cast<R*>(ps_Y.get_dataptr()));
+		});
+	}
 }
 
 template <typename B, typename R>

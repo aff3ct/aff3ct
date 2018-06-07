@@ -153,6 +153,7 @@ public:
 
 protected:
 	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
+	Monitor_BFER(const bool create_task, const int K, const unsigned max_fe, const bool count_unknown_values, const int n_frames);
 };
 }
 }
