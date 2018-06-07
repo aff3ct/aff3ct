@@ -24,7 +24,7 @@ public:
 
 	virtual ~Reporter_MI() = default;
 
-	void report(std::ostream &stream = std::cout, bool final = false);
+	report_t report(bool final = false);
 };
 }
 }

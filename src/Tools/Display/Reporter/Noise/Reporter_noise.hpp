@@ -25,7 +25,7 @@ public:
 	explicit Reporter_noise(Noise<R>* const& noise);
 	virtual ~Reporter_noise() = default;
 
-	void report(std::ostream &stream = std::cout, bool final = false);
+	report_t report(bool final = false);
 };
 }
 }

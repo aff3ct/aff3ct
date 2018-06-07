@@ -30,12 +30,15 @@ Reporter_throughput<T>
 }
 
 template <typename T>
-void Reporter_throughput<T>
-::report(std::ostream &stream, bool final)
+Reporter::report_t Reporter_throughput<T>
+::report(bool final)
 {
-	std::ios::fmtflags f(stream.flags());
+	assert(this->cols_groups.size() == 1);
 
-	const auto report_style = Reporter_stream::report_style;
+	report_t report(this->cols_groups.size());
+
+	auto& thgput_report = report[0];
+
 
 	auto progress = progress_function();
 
@@ -50,21 +53,19 @@ void Reporter_throughput<T>
 	else
 		t_report = std::chrono::steady_clock::now();
 
-
-	auto str_time = get_time_format(displayed_time);
-
-	stream << std::string(extra_spaces(throughput_group), ' ');
+	auto str_time = get_time_format(displayed_time) + " ";
+	int  n_spaces = (int)Reporter_stream::column_width - (int)str_time.size();
+	str_time = std::string((n_spaces >= 0) ? n_spaces : 0, ' ') + get_time_format(displayed_time);
 
 
 	std::stringstream str_cthr;
-	str_cthr << std::setprecision(3) << std::fixed << std::setw(Reporter_stream::column_width-1) << simu_cthr;
+	str_cthr << std::setprecision(3) << std::fixed << std::setw(Reporter_stream::column_width-1) << simu_cthr << " ";
 
-	stream << str_cthr.str() << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
-	stream << str_time       << report_style << Reporter_stream::spaced_dcol_separator << rang::style::reset;
+	thgput_report.push_back(str_cthr.str());
+	thgput_report.push_back(str_time);
 
-	stream.flags(f);
+	return report;
 }
-
 
 template <typename T>
 void Reporter_throughput<T>

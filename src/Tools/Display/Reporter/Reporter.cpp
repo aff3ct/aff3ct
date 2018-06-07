@@ -52,3 +52,9 @@ void Reporter
 {
 
 }
+
+const std::vector<Reporter::group_t>& Reporter
+::get_groups() const
+{
+	return this->cols_groups;
+}

@@ -25,6 +25,10 @@ public:
 	using column_title_t = std::vector<title_t>;
 	using group_t        = std::pair<group_title_t, column_title_t>;
 
+
+	using report_t = std::vector<std::vector<std::string>>;
+
+protected:
 	std::vector<group_t> cols_groups;
 
 public:
@@ -32,7 +36,14 @@ public:
 
 	virtual ~Reporter() = default;
 
-	virtual void report(std::ostream &stream = std::cout, bool final = false) = 0;
+
+	const std::vector<group_t>& get_groups() const;
+
+	/*
+	 * Report a vector as long as the number of groups (cols_groups.size())
+	 * with each sub vector as long as the number of columns of the matching group (cols_groups[i].second.size())
+	 */
+	virtual report_t report(bool final = false) = 0;
 
 	virtual void init(); // do nothing by default
 

@@ -24,11 +24,11 @@ Terminal
 void Terminal
 ::legend(std::ostream &stream) const
 {
-	std::vector<Reporter::group_t*> cols_groups;
+	std::vector<const Reporter::group_t*> cols_groups;
 
 	for(auto& r : this->reporters)
 		if (r != nullptr)
-			for (auto& g : r->cols_groups)
+			for (auto& g : r->get_groups())
 				cols_groups.push_back(&g);
 		else
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'this->reporters' contains null pointer.");
@@ -203,16 +203,7 @@ void Terminal
 void Terminal
 ::temp_report(std::ostream &stream)
 {
-	std::ios::fmtflags f(stream.flags());
-
-	for(auto& r : this->reporters)
-		r->report(stream, false);
-
-	stream << rang::style::bold << rang::fg::green << (real_time_state++ < 2 ? " *" : "  ") << rang::style::reset << "\r";
-	real_time_state %= (uint8_t)4;
-
-	stream.flush();
-	stream.flags(f);
+	this->report(stream, false);
 }
 
 void Terminal
@@ -223,18 +214,9 @@ void Terminal
 	auto et = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - t_term).count();
 
 	if (!module::Monitor::is_over() || et >= 1.f)
-	{
-		std::ios::fmtflags f(stream.flags());
-		for(auto& r : this->reporters)
-			r->report(stream, true);
-
-		stream << (module::Monitor::is_interrupt() ? " x" : "  ") << std::endl;
-
-		stream.flags(f);
-	}
+		this->report(stream, true);
 
 	t_term = std::chrono::steady_clock::now();
-
 }
 
 void Terminal
@@ -273,4 +255,60 @@ void Terminal
 		if (terminal->cond_terminal.wait_for(lock, sleep_time) == std::cv_status::timeout)
 			terminal->temp_report(std::clog); // display statistics in the terminal
 	}
+}
+
+void Terminal
+::report(std::ostream &stream, bool final)
+{
+	std::ios::fmtflags f(stream.flags());
+
+	const auto report_style = Reporter_stream::report_style;
+
+	stream << "\r" << Reporter_stream::data_tag;
+
+
+	for (unsigned r = 0; r < this->reporters.size(); r++)
+		if (this->reporters[r] != nullptr)
+		{
+			auto  report = this->reporters[r]->report(final);
+			auto& groups = this->reporters[r]->get_groups();
+
+			assert(report.size() == groups.size());
+
+			for (unsigned g = 0; g < groups.size(); g++)
+			{
+				assert(report[g].size() == groups[g].second.size());
+
+				stream << report_style << std::string(Reporter::extra_spaces(groups[g]), ' ') << rang::style::reset;
+
+				for (unsigned c = 0; c < report[g].size(); c++)
+				{
+					stream << report[g][c];
+
+					if (c != (report[g].size() - 1))
+						stream << report_style << Reporter_stream::col_separator << rang::style::reset;
+				}
+
+				if (g != (groups.size() - 1))
+					stream << report_style << Reporter_stream::group_separator << rang::style::reset;
+			}
+
+			if (r != (this->reporters.size() - 1))
+				stream << report_style << Reporter_stream::group_separator << rang::style::reset;
+		}
+		else
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'this->reporters' contains null pointer.");
+
+	if (final)
+	{
+		stream << (module::Monitor::is_interrupt() ? " x" : "  ") << std::endl;
+	}
+	else
+	{
+		stream << rang::style::bold << rang::fg::green << (real_time_state++ < 2 ? " *" : "  ") << rang::style::reset << "\r";
+		real_time_state %= (uint8_t)4;
+	}
+
+	stream.flags(f);
+	stream.flush();
 }

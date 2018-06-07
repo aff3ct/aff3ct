@@ -25,29 +25,27 @@ Reporter_MI<B,R>
 }
 
 template <typename B, typename R>
-void Reporter_MI<B,R>
-::report(std::ostream &stream, bool final)
+Reporter::report_t Reporter_MI<B,R>
+::report(bool final)
 {
-	std::ios::fmtflags f(stream.flags());
+	assert(this->cols_groups.size() == 1);
 
-	const auto report_style = Reporter_stream::report_style;
+	report_t report(this->cols_groups.size());
 
-	stream << report_style << Reporter_stream::spaced_scol_separator << std::string(extra_spaces(MI_group), ' ') << rang::style::reset;
+	auto& mi_report = report[0];
 
-
-	stream << Reporter_stream::format(monitor.get_n_trials_fra()) << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
-
+	mi_report.push_back(Reporter_stream::format(monitor.get_n_trials_fra()) + " ");
 
 	std::stringstream str_MI, str_MI_min, str_MI_max;
-	str_MI     << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI    ();
-	str_MI_min << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI_min();
-	str_MI_max << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI_max();
+	str_MI     << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI    () << " ";
+	str_MI_min << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI_min() << " ";
+	str_MI_max << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI_max() << " ";
 
-	stream << str_MI.str()     << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
-	stream << str_MI_min.str() << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
-	stream << str_MI_max.str() << report_style << Reporter_stream::spaced_dcol_separator << rang::style::reset;
+	mi_report.push_back(str_MI    .str());
+	mi_report.push_back(str_MI_min.str());
+	mi_report.push_back(str_MI_max.str());
 
-	stream.flags(f);
+	return report;
 }
 
 // ==================================================================================== explicit template instantiation

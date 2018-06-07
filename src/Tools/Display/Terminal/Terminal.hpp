@@ -80,6 +80,9 @@ public:
 	void start_temp_report(const std::chrono::milliseconds freq = std::chrono::milliseconds(500));
 	void stop_temp_report();
 
+protected:
+	virtual void report(std::ostream &stream = std::cout, bool final = false);
+
 private:
 	static void start_thread_terminal(Terminal *terminal, const std::chrono::milliseconds freq);
 };

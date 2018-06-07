@@ -22,6 +22,7 @@ Reporter_BFER<B>
 	auto& BFER_cols  = BFER_group.second;
 
 	BFER_title = {"Bit Error Rate (BER) and Frame Error Rate (FER)", ""};
+	BFER_cols.push_back(std::make_pair("FRA", ""));
 	BFER_cols.push_back(std::make_pair("BE", ""));
 	BFER_cols.push_back(std::make_pair("FE", ""));
 	BFER_cols.push_back(std::make_pair("BER", ""));
@@ -31,29 +32,28 @@ Reporter_BFER<B>
 }
 
 template <typename B>
-void Reporter_BFER<B>
-::report(std::ostream &stream, bool final)
+Reporter::report_t Reporter_BFER<B>
+::report(bool final)
 {
-	std::ios::fmtflags f(stream.flags());
+	assert(this->cols_groups.size() == 1);
 
-	const auto report_style = Reporter_stream::report_style;
+	report_t report(this->cols_groups.size());
 
-	stream << report_style << Reporter_stream::spaced_scol_separator << std::string(extra_spaces(BFER_group), ' ') << rang::style::reset;
+	auto& bfer_report = report[0];
 
-
-	stream << Reporter_stream::format(monitor.get_n_analyzed_fra()) << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
-	stream << Reporter_stream::format(monitor.get_n_be()          ) << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
-	stream << Reporter_stream::format(monitor.get_n_fe()          ) << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
+	bfer_report.push_back(Reporter_stream::format(monitor.get_n_analyzed_fra()) + " ");
+	bfer_report.push_back(Reporter_stream::format(monitor.get_n_be          ()) + " ");
+	bfer_report.push_back(Reporter_stream::format(monitor.get_n_fe          ()) + " ");
 
 
 	std::stringstream str_ber, str_fer;
-	str_ber << std::setprecision(2) << std::scientific << std::setw(Reporter_stream::column_width-1) << monitor.get_ber();
-	str_fer << std::setprecision(2) << std::scientific << std::setw(Reporter_stream::column_width-1) << monitor.get_fer();
+	str_ber << std::setprecision(2) << std::scientific << std::setw(Reporter_stream::column_width-1) << monitor.get_ber() << " ";
+	str_fer << std::setprecision(2) << std::scientific << std::setw(Reporter_stream::column_width-1) << monitor.get_fer() << " ";
 
-	stream << str_ber.str() << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
-	stream << str_fer.str() << report_style << Reporter_stream::spaced_dcol_separator << rang::style::reset;
+	bfer_report.push_back(str_ber.str());
+	bfer_report.push_back(str_fer.str());
 
-	stream.flags(f);
+	return report;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -47,8 +47,8 @@ Reporter_noise<R>
 }
 
 template <typename R>
-void Reporter_noise<R>
-::report(std::ostream &stream, bool final)
+Reporter::report_t Reporter_noise<R>
+::report(bool final)
 {
 	if (this->saved_noise_type != this->noise->get_type())
 	{
@@ -59,38 +59,45 @@ void Reporter_noise<R>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	std::ios::fmtflags f(stream.flags());
+	assert(this->cols_groups.size() == 1);
 
-	const auto report_style = Reporter_stream::report_style;
+	report_t report(this->cols_groups.size());
 
-	stream << report_style << Reporter_stream::spaced_scol_separator << std::string(extra_spaces(noise_group), ' ') << rang::style::reset;
+	auto& noise_report = report[0];
 
+
+
+	std::stringstream stream;
 
 	switch (this->noise->get_type())
 	{
 		case Noise_type::SIGMA :
 		{
 			auto sig = dynamic_cast<const tools::Sigma<>*>(this->noise);
-			stream << std::setprecision(2) << std::fixed << std::setw(Reporter_stream::column_width - 1) << sig->get_esn0()
-			       << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
-			stream << std::setprecision(2) << std::fixed << std::setw(Reporter_stream::column_width - 1) << sig->get_ebn0();
+
+			stream << std::setprecision(2) << std::fixed << std::setw(Reporter_stream::column_width - 1) << sig->get_esn0() << " ";
+			noise_report.push_back(stream.str());
+			stream.str("");
+
+			stream << std::setprecision(2) << std::fixed << std::setw(Reporter_stream::column_width - 1) << sig->get_ebn0() << " ";
 			break;
 		}
 		case Noise_type::ROP :
 		{
-			stream << std::setprecision(2) << std::fixed << std::setw(Reporter_stream::column_width - 1) << this->noise->get_noise();;
+			stream << std::setprecision(2) << std::fixed << std::setw(Reporter_stream::column_width - 1) << this->noise->get_noise() << " ";
 			break;
 		}
 		case Noise_type::EP :
 		{
-			stream << std::setprecision(4) << std::fixed << std::setw(Reporter_stream::column_width - 1) << this->noise->get_noise();;
+			stream << std::setprecision(4) << std::fixed << std::setw(Reporter_stream::column_width - 1) << this->noise->get_noise() << " ";
 			break;
 		}
 	}
 
-	stream << report_style << Reporter_stream::spaced_dcol_separator << rang::style::reset;
+	noise_report.push_back(stream.str());
 
-	stream.flags(f);
+
+	return report;
 }
 
 // ==================================================================================== explicit template instantiation
