@@ -42,6 +42,7 @@ BFER<B,R,Q>
   rep_er   (nullptr),
   rep_mi   (nullptr),
   rep_noise(nullptr),
+  rep_throughput(nullptr),
   terminal (nullptr),
 
   distributions(nullptr)
@@ -76,12 +77,12 @@ BFER<B,R,Q>
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_reduction_mpi<module::Monitor_MI_BFER<B,R>>(this->monitor,
-	                                                                                    std::this_thread::get_id(),
-	                                                                                    params_BFER.mpi_comm_freq);
+	this->monitor_red = new module::Monitor_reduction_mpi<Monitor_type>(this->monitor,
+	                                                                    std::this_thread::get_id(),
+	                                                                    params_BFER.mpi_comm_freq);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_reduction<module::Monitor_MI_BFER<B,R>>(this->monitor);
+	this->monitor_red = new Monitor_reduction_type(this->monitor);
 #endif
 
 	if (!params_BFER.noise->pdf_path.empty())
@@ -92,15 +93,19 @@ BFER<B,R,Q>
 	this->noise = params_BFER.noise->template build<R>(0);
 
 	rep_noise = new tools::Reporter_noise<R>(this->noise);
-	rep_er    = new tools::Reporter_BFER <B>(*this->monitor_red, true);
+	reporters.push_back(rep_noise);
+
 	if (params_BFER.mnt->mutinfo)
 	{
 		rep_mi = new tools::Reporter_MI<B,R>(*this->monitor_red);
-		reporters = {rep_noise, rep_mi, rep_er};
+		reporters.push_back(rep_mi);
 	}
-	else
-		reporters = {rep_noise, rep_er};
 
+	rep_er    = new tools::Reporter_BFER <B>(*this->monitor_red);
+	reporters.push_back(rep_er);
+
+	rep_throughput = new tools::Reporter_throughput(std::bind(&Monitor_reduction_type::get_n_fe, *this->monitor_red), this->monitor_red->get_fe_limit());
+	reporters.push_back(rep_throughput);
 }
 
 template <typename B, typename R, typename Q>

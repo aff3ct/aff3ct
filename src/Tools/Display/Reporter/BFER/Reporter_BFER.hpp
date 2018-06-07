@@ -17,14 +17,11 @@ class Reporter_BFER : public Reporter
 {
 protected:
 	const module::Monitor_BFER<B> &monitor;
-	const bool display_throughput;
-	std::chrono::time_point<std::chrono::steady_clock> t_report;
 
 	group_t BFER_group;
-	group_t throughput_group;
 
 public:
-	explicit Reporter_BFER(const module::Monitor_BFER<B> &monitor, const bool display_throughput = false);
+	explicit Reporter_BFER(const module::Monitor_BFER<B> &monitor);
 
 	virtual ~Reporter_BFER() = default;
 

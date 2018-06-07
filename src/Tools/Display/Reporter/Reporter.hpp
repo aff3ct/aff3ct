@@ -34,6 +34,9 @@ public:
 
 	virtual void report(std::ostream &stream = std::cout, bool final = false) = 0;
 
+	virtual void init(); // do nothing by default
+
+
 	static std::string get_time_format(float secondes);
 	static unsigned extra_spaces   (const title_t& text, const unsigned group_width);
 	static unsigned extra_spaces   (const group_t& group);

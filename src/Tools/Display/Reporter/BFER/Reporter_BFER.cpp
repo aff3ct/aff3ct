@@ -14,11 +14,9 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Reporter_BFER<B>
-::Reporter_BFER(const module::Monitor_BFER<B> &monitor, const bool display_throughput)
+::Reporter_BFER(const module::Monitor_BFER<B> &monitor)
 : Reporter(),
-  monitor(monitor),
-  display_throughput(display_throughput),
-  t_report(std::chrono::steady_clock::now())
+  monitor(monitor)
 {
 	auto& BFER_title = BFER_group.first;
 	auto& BFER_cols  = BFER_group.second;
@@ -30,19 +28,6 @@ Reporter_BFER<B>
 	BFER_cols.push_back(std::make_pair("FER", ""));
 
 	this->cols_groups.push_back(BFER_group);
-
-	if (display_throughput)
-	{
-		auto& throughput_title = throughput_group.first;
-		auto& throughput_cols  = throughput_group.second;
-
-		throughput_title = std::make_pair("Global throughput", "and elapsed time");
-		throughput_cols.clear();
-		throughput_cols.push_back(std::make_pair("SIM_THR", "(Mb/s)"));
-		throughput_cols.push_back(std::make_pair("ET/RT", "(hhmmss)"));
-
-		this->cols_groups.push_back(throughput_group);
-	}
 }
 
 template <typename B>
@@ -67,29 +52,6 @@ void Reporter_BFER<B>
 
 	stream << str_ber.str() << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
 	stream << str_fer.str() << report_style << Reporter_stream::spaced_dcol_separator << rang::style::reset;
-
-
-	if (display_throughput)
-	{
-		auto simu_time = (float)std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_report).count(); // usec
-		auto simu_cthr = ((float)monitor.get_K() * (float)monitor.get_n_analyzed_fra()) / simu_time; // = Mbps
-
-		auto displayed_time = (monitor.get_n_analyzed_fra() == 0) ? 0.f : simu_time * 1e-6f;
-
-		if (!final)
-			displayed_time *= (float)monitor.get_n_fe() / (float)monitor.get_n_analyzed_fra() - 1.f;
-
-		auto str_time = get_time_format(displayed_time);
-
-		stream << std::string(extra_spaces(throughput_group), ' ');
-
-
-		std::stringstream str_cthr;
-		str_cthr << std::setprecision(3) << std::fixed << std::setw(Reporter_stream::column_width-1) << simu_cthr;
-
-		stream << str_cthr.str() << report_style << Reporter_stream::spaced_scol_separator << rang::style::reset;
-		stream << str_time       << report_style << Reporter_stream::spaced_dcol_separator << rang::style::reset;
-	}
 
 	stream.flags(f);
 }

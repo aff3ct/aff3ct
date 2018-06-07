@@ -118,9 +118,6 @@ public:
 
 	virtual void collect(const Monitor& m);
 	virtual void collect(const Monitor_MI_BFER<B,R>& m);
-
-protected:
-	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);
 };
 }
 }

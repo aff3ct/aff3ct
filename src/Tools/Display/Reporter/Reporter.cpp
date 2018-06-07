@@ -45,3 +45,10 @@ std::string Reporter
 
 	return time_format2;
 }
+
+
+void Reporter
+::init()
+{
+
+}

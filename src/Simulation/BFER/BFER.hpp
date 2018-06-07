@@ -10,6 +10,7 @@
 #include "Tools/Display/Reporter/BFER/Reporter_BFER.hpp"
 #include "Tools/Display/Reporter/MI/Reporter_MI.hpp"
 #include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
+#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
@@ -50,8 +51,11 @@ protected:
 	tools::Noise<R>* noise; // current noise simulated
 
 	// the monitors of the the BFER simulation
-	              std::vector<module::Monitor_MI_BFER<B,R>*>  monitor;
-	module::Monitor_reduction<module::Monitor_MI_BFER<B,R> >* monitor_red;
+	using Monitor_type = module::Monitor_MI_BFER<B,R>;
+	using Monitor_reduction_type = module::Monitor_reduction<Monitor_type>;
+
+	std::vector<Monitor_type*>  monitor;
+	Monitor_reduction_type*     monitor_red;
 
 	// dump frames into files
 	std::vector<tools::Dumper          *> dumper;
@@ -61,6 +65,7 @@ protected:
 	tools::Reporter_BFER <B>* rep_er;
 	tools::Reporter_MI <B,R>* rep_mi;
 	tools::Reporter_noise<R>* rep_noise;
+	tools::Reporter_throughput* rep_throughput;
 	std::vector<tools::Reporter*> reporters;
 	tools::Terminal* terminal;
 

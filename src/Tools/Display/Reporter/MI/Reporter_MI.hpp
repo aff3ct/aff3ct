@@ -16,14 +16,11 @@ class Reporter_MI : public Reporter
 {
 protected:
 	const module::Monitor_MI<B,R> &monitor;
-	const bool display_throughput;
-	std::chrono::time_point<std::chrono::steady_clock> t_report;
 
 	group_t MI_group;
-	group_t throughput_group;
 
 public:
-	explicit Reporter_MI(const module::Monitor_MI<B,R> &monitor, const bool display_throughput = false);
+	explicit Reporter_MI(const module::Monitor_MI<B,R> &monitor);
 
 	virtual ~Reporter_MI() = default;
 
