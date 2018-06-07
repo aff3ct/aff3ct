@@ -160,6 +160,8 @@ test-regression:
     - sse4.2
     - powerful
     - python
+  dependencies:
+    - build-test-linux-gcc
   artifacts:
      name: test-regression-results
      when: always
@@ -176,6 +178,8 @@ test-coverage-regression:
     - lcov
     - sse4.2
     - powerful
+  dependencies:
+    - build-coverage-linux-gcc
   artifacts:
      name: code_coverage_files
      when: always
@@ -193,6 +197,8 @@ coverage-linux:
     - lcov
     - lcov_cobertura
   coverage: '/.*lines\.*: (\d+.\d+\%)/'
+  dependencies:
+    - test-coverage-regression
   artifacts:
      name: code_coverage_report
      when: always
@@ -209,6 +215,9 @@ sonarqube-linux:
   only:
     - master
     - development
+  dependencies:
+    - coverage-linux
+    - analysis-cppcheck
   artifacts:
     paths:
       - cppcheck/
