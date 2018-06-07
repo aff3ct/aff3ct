@@ -3,6 +3,7 @@ stages:
   - build
   - test
   - coverage
+  - sonarqube
 
 before_script:
   - hostname
@@ -22,16 +23,6 @@ analysis-cppcheck:
     - cppcheck
   script:
     - ./ci/analysis-cppcheck.sh
-
-analysis-sonarqube:
-  stage: analysis
-  tags:
-    - sonarqube
-    - cppcheck
-  only:
-    - master
-  script:
-    - ./ci/analysis-sonarqube.sh
 
 build-linux-gcc:
   stage: build
@@ -92,6 +83,30 @@ build-linux-icpc:
   script:
     - ./ci/build-linux-icpc.sh
 
+build-coverage-linux-gcc:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - sse4.2
+  artifacts:
+    paths:
+      - build_coverage_linux_x86_gcc/bin/
+  script:
+    - ./ci/build-coverage-linux-gcc.sh
+
+build-test-linux-gcc:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - sse4.2
+  artifacts:
+    paths:
+      - build_test_linux_x86_gcc/bin/
+  script:
+    - ./ci/build-test-linux-gcc.sh
+
 build-windows-gcc:
   stage: build
   tags:
@@ -122,23 +137,38 @@ test-regression:
   tags:
     - linux
     - gcc
+    - sse4.2
     - powerful
   artifacts:
      name: test-regression-results
      when: always
      paths:
-       - test-regression-results/
+      - build_test_linux_x86_gcc/bin/
+      - test-regression-results/
   script:
-    - ./ci/test-build-linux-gcc.sh
-    - ./ci/test-regression.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
+    - ./ci/test-regression.py --build-path build_test_linux_x86_gcc --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
 
-coverage-linux-gcc:
+test-coverage-regression:
+  stage: test
+  tags:
+    - linux
+    - coverage
+    - sse4.2
+    - powerful
+  artifacts:
+     name: code_coverage_files
+     when: always
+     paths:
+       - code_coverage_files/
+  script:
+    - ./ci/test-coverage-regression.sh
+
+coverage-linux:
   stage: coverage
   tags:
     - linux
-    - gcc
     - coverage
-    - powerful
+    - lcov-cobertura
   coverage: '/.*lines\.*: (\d+.\d+\%)/'
   artifacts:
      name: code_coverage_report
@@ -147,4 +177,18 @@ coverage-linux-gcc:
        - code_coverage_files/
        - code_coverage_report/
   script:
-    - ./ci/coverage-linux-gcc.sh
+    - ./ci/coverage-linux.sh
+
+sonarqube-linux:
+  stage: sonarqube
+  tags:
+    - sonarqube
+  only:
+    - master
+    - development
+  artifacts:
+    paths:
+      - cppcheck/
+      - code_coverage_files/
+  script:
+    - ./ci/sonarqube-linux.sh
