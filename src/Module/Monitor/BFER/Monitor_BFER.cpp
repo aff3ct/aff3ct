@@ -116,7 +116,7 @@ template <typename B>
 bool Monitor_BFER<B>
 ::fe_limit_achieved()
 {
-	return (get_n_fe() >= get_fe_limit()) || this->is_interrupt();
+	return get_n_fe() >= get_fe_limit();
 }
 
 template <typename B>

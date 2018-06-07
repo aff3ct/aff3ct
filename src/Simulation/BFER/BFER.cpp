@@ -159,7 +159,7 @@ void BFER<B,R,Q>
 	{
 		this->build_communication_chain();
 
-		if (module::Monitor::is_over())
+		if (tools::Terminal::is_over())
 		{
 			this->release_objects();
 			return;
@@ -222,7 +222,7 @@ void BFER<B,R,Q>
 
 			this->build_communication_chain();
 
-			if (module::Monitor::is_over())
+			if (tools::Terminal::is_over())
 			{
 				this->release_objects();
 				return;
@@ -254,7 +254,7 @@ void BFER<B,R,Q>
 		}
 		catch (std::exception const& e)
 		{
-			module::Monitor::stop();
+			tools::Terminal::stop();
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
 
 			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
@@ -334,10 +334,10 @@ void BFER<B,R,Q>
 			this->dumper_red->clear();
 		}
 
-		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !module::Monitor::is_interrupt() &&
+		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
 			!this->monitor_red->fe_limit_achieved() &&
 		    (params_BFER.max_frame == 0 || this->monitor_red->get_n_analyzed_fra() >= params_BFER.max_frame))
-			module::Monitor::stop();
+			tools::Terminal::stop();
 
 		this->monitor_red->reset();
 		for (auto &m : modules)
@@ -346,8 +346,10 @@ void BFER<B,R,Q>
 					for (auto &t : mm->tasks)
 						t->reset_stats();
 
-		if (module::Monitor::is_over())
+		if (tools::Terminal::is_over())
 			break;
+
+		tools::Terminal::reset();
 	}
 
 	this->release_objects();
@@ -388,7 +390,7 @@ void BFER<B,R,Q>
 	}
 	catch (std::exception const& e)
 	{
-		module::Monitor::stop();
+		tools::Terminal::stop();
 		simu->simu_error = true;
 
 		simu->mutex_exception.lock();

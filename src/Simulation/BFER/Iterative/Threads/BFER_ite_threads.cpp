@@ -66,7 +66,7 @@ void BFER_ite_threads<B,R,Q>
 	}
 	catch (std::exception const& e)
 	{
-		module::Monitor::stop();
+		tools::Terminal::stop();
 
 		simu->mutex_exception.lock();
 
@@ -333,10 +333,12 @@ void BFER_ite_threads<B,R,Q>
 	using namespace std::chrono;
 	auto t_snr = steady_clock::now();
 
-	while ((!this->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
-	        (this->params_BFER_ite.stop_time == seconds(0) ||
-	        (steady_clock::now() - t_snr) < this->params_BFER_ite.stop_time) &&
-	        (this->params_BFER_ite.max_frame == 0 || this->monitor_red->get_n_analyzed_fra() < this->params_BFER_ite.max_frame))
+	while (!tools::Terminal::is_interrupt()
+	       && !this->monitor_red->fe_limit_achieved() // while max frame error count has not been reached
+	       && (this->params_BFER_ite.stop_time == seconds(0)
+	           || (steady_clock::now() - t_snr) < this->params_BFER_ite.stop_time)
+	       && (this->params_BFER_ite.max_frame == 0
+	       	   || this->monitor_red->get_n_analyzed_fra() < this->params_BFER_ite.max_frame))
 	{
 		if (this->params_BFER_ite.debug)
 		{

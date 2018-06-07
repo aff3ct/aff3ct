@@ -9,7 +9,6 @@
 #define MONITOR_HPP_
 
 #include <functional>
-#include <csignal>
 #include <chrono>
 #include <vector>
 #include <string>
@@ -36,13 +35,6 @@ namespace module
  */
 class Monitor : public Module
 {
-protected:
-	static bool interrupt;                                                                                /*!< True if there is a SIGINT signal (ctrl+C). */
-	static bool first_interrupt;                                                                          /*!< True if this is the first time that SIGIN is called. */
-	static int  interrupt_cnt;                                                                            /*!< The number of gor interrupt signal. */
-	static bool over;                                                                                     /*!< True if SIGINT is called twice in the Monitor::d_delta_interrupt time */
-	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_interrupt; /*!< Time point of the last call to SIGINT */
-
 public:
 	/*!
 	 * \brief Constructor.
@@ -64,29 +56,6 @@ public:
 	virtual void clear_callbacks();
 
 	virtual void collect(const Monitor& m) = 0;
-
-
-	/*!
-	 * \brief Tells if the user asked for stopping the current computations.
-	 *
-	 * \return true if the SIGINT (ctrl+c) is called.
-	 */
-	static bool is_interrupt();
-
-	/*!
-	 * \brief Tells if the user asked for stopping the whole simulation.
-	 *
-	 * \return true if the SIGINT (ctrl+c) is called twice.
-	 */
-	static bool is_over();
-
-	/*!
-	 * \brief Put Monitor<B,R>::interrupt and Monitor<B,R>::over to true.
-	 */
-	static void stop();
-
-private:
-	static void signal_interrupt_handler(int signal);
 };
 }
 }

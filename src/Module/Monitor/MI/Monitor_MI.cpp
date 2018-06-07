@@ -131,7 +131,7 @@ template <typename B, typename R>
 bool Monitor_MI<B,R>
 ::n_trials_limit_achieved()
 {
-	return (this->get_n_trials_fra() >= this->get_n_trials_limit()) || this->is_interrupt();
+	return this->get_n_trials_fra() >= this->get_n_trials_limit();
 }
 
 template <typename B, typename R>

@@ -66,7 +66,7 @@ void BFER_std_threads<B,R,Q>
 	}
 	catch (std::exception const& e)
 	{
-		module::Monitor::stop();
+		tools::Terminal::stop();
 
 		simu->mutex_exception.lock();
 
@@ -268,10 +268,11 @@ void BFER_std_threads<B,R,Q>
 	auto t_snr = steady_clock::now();
 
 	// communication chain execution
-	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
+	while (!tools::Terminal::is_interrupt() && !this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
 	       (this->params_BFER_std.stop_time == seconds(0) ||
-	       (steady_clock::now() - t_snr) < this->params_BFER_std.stop_time) &&
-	       (this->params_BFER_std.max_frame == 0 || this->monitor_red->get_n_analyzed_fra() < this->params_BFER_std.max_frame))
+	         (steady_clock::now() - t_snr) < this->params_BFER_std.stop_time) &&
+	       (this->params_BFER_std.max_frame == 0 ||
+	         this->monitor_red->get_n_analyzed_fra() < this->params_BFER_std.max_frame))
 	{
 		if (this->params_BFER_std.debug)
 		{
