@@ -38,6 +38,8 @@ build-linux-gcc-8-bit:
     - linux
     - gcc
     - arm32
+    - cmake
+    - gsl
   script:
     - ./ci/build-linux-gcc-8-bit.sh
 
@@ -47,6 +49,8 @@ build-linux-gcc-mpi:
     - linux
     - gcc
     - mpi
+    - cmake
+    - gsl
   script:
     - ./ci/build-linux-gcc-mpi.sh
 
@@ -56,6 +60,7 @@ build-linux-gcc-systemc:
     - linux
     - gcc
     - systemc
+    - cmake
   script:
     - ./ci/build-linux-gcc-systemc.sh
 
@@ -64,6 +69,8 @@ build-linux-clang:
   tags:
     - linux
     - clang
+    - cmake
+    - gsl
   script:
     - ./ci/build-linux-clang.sh
 
@@ -72,6 +79,8 @@ build-linux-gcc-4.8:
   tags:
     - linux
     - gcc-4.8
+    - cmake
+    - gsl
   script:
     - ./ci/build-linux-gcc-4.8.sh
 
@@ -80,6 +89,9 @@ build-linux-icpc:
   tags:
     - linux
     - icpc
+    - cmake
+    - mkl
+    - gsl
   script:
     - ./ci/build-linux-icpc.sh
 
@@ -88,10 +100,11 @@ build-coverage-linux-gcc:
   tags:
     - linux
     - gcc
+    - cmake
     - sse4.2
   artifacts:
     paths:
-      - build_coverage_linux_x86_gcc/bin/
+      - build_coverage_linux_x86_gcc/
   script:
     - ./ci/build-coverage-linux-gcc.sh
 
@@ -101,6 +114,8 @@ build-test-linux-gcc:
     - linux
     - gcc
     - sse4.2
+    - cmake
+    - gsl
   artifacts:
     paths:
       - build_test_linux_x86_gcc/bin/
@@ -112,6 +127,7 @@ build-windows-gcc:
   tags:
     - windows
     - gcc
+    - cmake
   script:
     - ./ci/build-windows-gcc.bat
 
@@ -120,6 +136,7 @@ build-windows-msvc:
   tags:
     - windows
     - msvc
+    - cmake
   script:
     - ./ci/build-windows-msvc.bat
 
@@ -128,6 +145,7 @@ build-mac-osx-clang:
   tags:
     - mac-osx
     - apple-clang
+    - cmake
   script:
     - ./ci/build-mac-osx-clang.sh
 
@@ -139,6 +157,7 @@ test-regression:
     - gcc
     - sse4.2
     - powerful
+    - python
   artifacts:
      name: test-regression-results
      when: always
@@ -152,7 +171,7 @@ test-coverage-regression:
   stage: test
   tags:
     - linux
-    - coverage
+    - lcov
     - sse4.2
     - powerful
   artifacts:
@@ -167,8 +186,8 @@ coverage-linux:
   stage: coverage
   tags:
     - linux
-    - coverage
-    - lcov-cobertura
+    - lcov
+    - lcov_cobertura
   coverage: '/.*lines\.*: (\d+.\d+\%)/'
   artifacts:
      name: code_coverage_report
