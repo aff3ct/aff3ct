@@ -3,6 +3,10 @@ set -x
 
 build_root=build_coverage_linux_x86_gcc
 
+cd ${build_root}
+tar -xvvf CMakeFiles.tar.gz
+cd ..
+
 function gen_coverage_info
 {
 	build=$1

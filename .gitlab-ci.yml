@@ -105,7 +105,8 @@ build-coverage-linux-gcc:
     - sse4.2
   artifacts:
     paths:
-      - build_coverage_linux_x86_gcc/
+      - build_coverage_linux_x86_gcc/bin/
+      - build_coverage_linux_x86_gcc/CMakeFiles.tar.gz
   script:
     - ./ci/build-coverage-linux-gcc.sh
 
@@ -179,7 +180,9 @@ test-coverage-regression:
      name: code_coverage_files
      when: always
      paths:
-       - code_coverage_files/
+      - build_coverage_linux_x86_gcc/bin/
+      - build_coverage_linux_x86_gcc/CMakeFiles.tar.gz
+      - code_coverage_files/
   script:
     - ./ci/test-coverage-regression.sh
 
