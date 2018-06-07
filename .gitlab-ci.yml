@@ -70,6 +70,7 @@ build-linux-clang:
     - linux
     - clang
     - cmake
+    - x86
     - gsl
   script:
     - ./ci/build-linux-clang.sh
