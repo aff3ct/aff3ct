@@ -12,17 +12,20 @@ namespace tools
 {
 template <typename T>
 Reporter_throughput<T>
-::Reporter_throughput(std::function<T(void)> progress_function, const unsigned long long limit)
+::Reporter_throughput(std::function<T(void)>  progress_function, const T progress_limit,
+                      std::function<T(void)> get_nbits_function, const T nbits_factor)
 : Reporter(),
   progress_function(progress_function),
-  limit(limit),
+  get_nbits_function(get_nbits_function),
+  progress_limit(progress_limit),
+  nbits_factor(nbits_factor),
   t_report(std::chrono::steady_clock::now())
 {
 	auto& throughput_title = throughput_group.first;
 	auto& throughput_cols  = throughput_group.second;
 
 	throughput_title = std::make_pair("Global throughput", "and elapsed time");
-	throughput_cols.clear();
+
 	throughput_cols.push_back(std::make_pair("SIM_THR", "(Mb/s)"));
 	throughput_cols.push_back(std::make_pair("ET/RT", "(hhmmss)"));
 
@@ -39,27 +42,34 @@ Reporter::report_t Reporter_throughput<T>
 
 	auto& thgput_report = report[0];
 
+	T progress = 0, nbits = 0;
 
-	auto progress = progress_function();
+	if (progress_function != nullptr)
+		progress = progress_function();
+
+	if (get_nbits_function != nullptr)
+		nbits = get_nbits_function() * nbits_factor;
+
 
 	auto simu_time = (double)std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_report).count(); // usec
-	auto simu_cthr = ((double)progress) / simu_time; // = Mbps
+	double displayed_time = simu_time * 1e-6; // sec
 
-
-	auto displayed_time = (progress == 0) ? 0.f : simu_time * 1e-6f; // sec
-
-	if (!final)
-		displayed_time *= (double)limit / (double)progress - 1.;
+	if (!final && progress_function != nullptr && progress != 0 && progress_limit != 0)
+		displayed_time *= (double)progress_limit / (double)progress - 1.;
 	else
 		t_report = std::chrono::steady_clock::now();
 
+
 	auto str_time = get_time_format(displayed_time) + " ";
 	int  n_spaces = (int)Reporter_stream::column_width - (int)str_time.size();
-	str_time = std::string((n_spaces >= 0) ? n_spaces : 0, ' ') + get_time_format(displayed_time);
+	str_time = std::string((n_spaces >= 0) ? n_spaces : 0, ' ') + str_time;
 
+
+	auto simu_cthr = (double)nbits / simu_time; // = Mbps
 
 	std::stringstream str_cthr;
 	str_cthr << std::setprecision(3) << std::fixed << std::setw(Reporter_stream::column_width-1) << simu_cthr << " ";
+
 
 	thgput_report.push_back(str_cthr.str());
 	thgput_report.push_back(str_time);

@@ -51,6 +51,8 @@ void BFER_ite_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params_BFER_ite.n_threads; tid++)
 		threads[tid -1].join();
 
+	this->monitor_red->reduce();
+
 	if (!this->prev_err_messages.empty())
 		throw std::runtime_error(this->prev_err_messages.back());
 }

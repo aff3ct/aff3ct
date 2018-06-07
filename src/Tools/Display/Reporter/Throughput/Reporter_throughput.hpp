@@ -19,19 +19,20 @@ class Reporter_throughput : public Reporter
 {
 	static_assert(std::is_convertible<T, double>::value, "T type must be convertible to a double.");
 
-public:
-	using PF_t = std::function<T(void)>;
-
 protected:
-	PF_t progress_function;
-	const unsigned long long limit;
+	std::function<T(void)> progress_function;
+	std::function<T(void)> get_nbits_function;
+
+	const T progress_limit;
+	const T nbits_factor;
 
 	std::chrono::time_point<std::chrono::steady_clock> t_report;
 
 	group_t throughput_group;
 
 public:
-	explicit Reporter_throughput(std::function<T(void)> progress_function, const unsigned long long limit = 0);
+	explicit Reporter_throughput(std::function<T(void)> progress_function, const T progress_limit = 0,
+	                             std::function<T(void)> get_nbits_function = nullptr, const T nbits_factor = 1);
 
 	virtual ~Reporter_throughput() = default;
 

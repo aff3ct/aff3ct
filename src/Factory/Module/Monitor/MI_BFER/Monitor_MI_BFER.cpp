@@ -79,13 +79,13 @@ void Monitor_MI_BFER::parameters
 void Monitor_MI_BFER::parameters
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Monitor::parameters::get_headers(headers, full);
+	Monitor_BFER::parameters::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Compute mutual info",         this->mutinfo ? "yes" : "no"));
-	headers[p].push_back(std::make_pair("Number of trials (n)",        std::to_string(this->n_trials)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
+	if (this->mutinfo)
+		Monitor_MI::parameters::get_headers(headers, full);
 }
 
 template <typename B, typename R>

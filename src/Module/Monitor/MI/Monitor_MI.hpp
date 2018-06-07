@@ -41,9 +41,10 @@ public:
 
 		Values_t& operator+=(const Values_t& o)
 		{
-			MI     = MI * o.MI;
 			n_fra += o.n_fra;
-			MI    += o.MI;
+			MI += (o.MI - MI) / n_fra;
+			MI_max = std::max(MI_max, o.MI_max);
+			MI_min = std::min(MI_min, o.MI_min);
 			return *this;
 		}
 
@@ -51,7 +52,7 @@ public:
 		{
 			MI     = 0.;
 			MI_max = 0.;
-			MI_min = 0.;
+			MI_min = 1.;
 			n_fra  = 0;
 		}
 

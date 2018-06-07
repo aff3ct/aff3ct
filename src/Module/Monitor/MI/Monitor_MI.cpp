@@ -124,6 +124,9 @@ void Monitor_MI<B,R>
 	this->vals.n_fra++;
 	this->vals.MI += (mi - this->vals.MI) / (R)this->vals.n_fra;
 
+	this->vals.MI_max = std::max(this->vals.MI_max, mi);
+	this->vals.MI_min = std::min(this->vals.MI_min, mi);
+
 	this->mutinfo_hist.add_value(mi);
 }
 
@@ -159,14 +162,14 @@ template <typename B, typename R>
 R Monitor_MI<B,R>
 ::get_MI_min() const
 {
-	return this->mutinfo_hist.get_hist_min();
+	return this->vals.MI_min;
 }
 
 template <typename B, typename R>
 R Monitor_MI<B,R>
 ::get_MI_max() const
 {
-	return this->mutinfo_hist.get_hist_max();
+	return this->vals.MI_max;
 }
 
 template<typename B, typename R>

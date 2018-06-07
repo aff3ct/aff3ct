@@ -29,16 +29,16 @@ Reporter_noise<R>
 	switch (this->noise->get_type())
 	{
 		case Noise_type::SIGMA :
-			Noise_title = {"Signal Noise Ratio (SNR)", ""};
+			Noise_title = {"Signal Noise Ratio", "(SNR)"};
 			Noise_cols.push_back(std::make_pair("Es/N0", "(dB)"));
 			Noise_cols.push_back(std::make_pair("Eb/N0", "(dB)"));
 		break;
 		case Noise_type::ROP :
-			Noise_title = {"Received Optical Power (ROP)", ""};
+			Noise_title = {"Received Optical", "Power (ROP)"};
 			Noise_cols.push_back(std::make_pair("ROP", "(dB)"));
 		break;
 		case Noise_type::EP :
-			Noise_title = {"Event Probability (EP)", ""};
+			Noise_title = {"Event Probability", "(EP)"};
 			Noise_cols.push_back(std::make_pair("EP", ""));
 		break;
 	}

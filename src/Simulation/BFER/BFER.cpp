@@ -104,7 +104,10 @@ BFER<B,R,Q>
 	rep_er = new tools::Reporter_BFER<B>(*this->monitor_red);
 	reporters.push_back(rep_er);
 
-	rep_throughput = new tools::Reporter_throughput<uint64_t>(std::bind(&Monitor_reduction_type::get_n_fe, this->monitor_red), this->monitor_red->get_fe_limit());
+	rep_throughput = new tools::Reporter_throughput<uint64_t>(std::bind(&Monitor_reduction_type::get_n_fe, this->monitor_red),
+	                                                          this->monitor_red->get_fe_limit(),
+	                                                          std::bind(&Monitor_reduction_type::get_n_analyzed_fra, this->monitor_red),
+	                                                          this->monitor_red->get_K());
 	reporters.push_back(rep_throughput);
 }
 
@@ -230,22 +233,18 @@ void BFER<B,R,Q>
 		}
 
 		if (params_BFER.display_legend)
-#ifdef ENABLE_MPI
-			if (((!params_BFER.ter->disabled && noise_idx == noise_begin && !params_BFER.debug) ||
-		 	   (params_BFER.statistics && !params_BFER.debug)) && params_BFER.mpi_rank == 0)
-#else
-			if (((!params_BFER.ter->disabled && noise_idx == noise_begin && !params_BFER.debug) ||
-			    (params_BFER.statistics && !params_BFER.debug)))
-#endif
+		#ifdef ENABLE_MPI
+			if (params_BFER.mpi_rank == 0)
+		#endif
+			if ((!params_BFER.ter->disabled && noise_idx == noise_begin && !params_BFER.debug)
+				|| (params_BFER.statistics && !params_BFER.debug))
 				terminal->legend(std::cout);
 
 		// start the terminal to display BER/FER results
-#ifdef ENABLE_MPI
-		if (!params_BFER.ter->disabled && params_BFER.ter->frequency != std::chrono::nanoseconds(0) && !params_BFER.debug
-		    && params_BFER.mpi_rank == 0)
-#else
+	#ifdef ENABLE_MPI
+		if (params_BFER.mpi_rank == 0)
+	#endif
 		if (!params_BFER.ter->disabled && params_BFER.ter->frequency != std::chrono::nanoseconds(0) && !params_BFER.debug)
-#endif
 			terminal->start_temp_report(params_BFER.ter->frequency);
 
 		try
@@ -261,11 +260,10 @@ void BFER<B,R,Q>
 			this->simu_error = true;
 		}
 
-#ifdef ENABLE_MPI
-		if (!params_BFER.ter->disabled && terminal != nullptr && !this->simu_error && params_BFER.mpi_rank == 0)
-#else
+	#ifdef ENABLE_MPI
+		if (params_BFER.mpi_rank == 0)
+	#endif
 		if (!params_BFER.ter->disabled && terminal != nullptr && !this->simu_error)
-#endif
 		{
 			if (params_BFER.debug)
 				terminal->legend(std::cout);
@@ -339,6 +337,9 @@ void BFER<B,R,Q>
 		    (params_BFER.max_frame == 0 || this->monitor_red->get_n_analyzed_fra() >= params_BFER.max_frame))
 			tools::Terminal::stop();
 
+		if (tools::Terminal::is_over())
+			break;
+
 		this->monitor_red->reset();
 		for (auto &m : modules)
 			for (auto mm : m.second)
@@ -346,8 +347,7 @@ void BFER<B,R,Q>
 					for (auto &t : mm->tasks)
 						t->reset_stats();
 
-		if (tools::Terminal::is_over())
-			break;
+		std::cout << "end noise : " << noise->get_noise() << std::endl;
 
 		tools::Terminal::reset();
 	}

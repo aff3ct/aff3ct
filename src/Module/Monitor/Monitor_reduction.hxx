@@ -15,11 +15,9 @@ namespace module
 template <class M>
 Monitor_reduction<M>
 ::Monitor_reduction(const std::vector<M*> &monitors)
-: M((monitors.size() && monitors.front()) ? *monitors.front() : M(),
-     monitors.size() ? std::accumulate(monitors.begin(), monitors.end(), 0,
-                                       [](int tot, const M* m) { return tot + m->get_n_frames(); })
-                     : 1
-   ),
+: Monitor(std::accumulate(monitors.begin(), monitors.end(), 0,
+                          [](int tot, const M* m) { return tot + m->get_n_frames(); })),
+  M((monitors.size() && monitors.front()) ? *monitors.front() : M(), this->n_frames),
   monitors(monitors)
 {
 	if (monitors.size() == 0)
