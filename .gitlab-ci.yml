@@ -3,6 +3,7 @@ stages:
   - build
   - test
   - coverage
+  - sonarqube
 
 before_script:
   - hostname
@@ -23,20 +24,11 @@ analysis-cppcheck:
   script:
     - ./ci/analysis-cppcheck.sh
 
-analysis-sonarqube:
-  stage: analysis
-  tags:
-    - sonarqube
-  only:
-    - master
-    - development
-  script:
-    - ./ci/analysis-sonarqube.sh
-
 build-linux-gcc:
   stage: build
   tags:
     - linux
+    - gcc
   script:
     - ./ci/build-linux-gcc.sh
 
@@ -44,6 +36,10 @@ build-linux-gcc-8-bit:
   stage: build
   tags:
     - linux
+    - gcc
+    - arm32
+    - cmake
+    - gsl
   script:
     - ./ci/build-linux-gcc-8-bit.sh
 
@@ -51,6 +47,10 @@ build-linux-gcc-mpi:
   stage: build
   tags:
     - linux
+    - gcc
+    - mpi
+    - cmake
+    - gsl
   script:
     - ./ci/build-linux-gcc-mpi.sh
 
@@ -58,6 +58,9 @@ build-linux-gcc-systemc:
   stage: build
   tags:
     - linux
+    - gcc
+    - systemc
+    - cmake
   script:
     - ./ci/build-linux-gcc-systemc.sh
 
@@ -65,6 +68,10 @@ build-linux-clang:
   stage: build
   tags:
     - linux
+    - clang
+    - cmake
+    - x86
+    - gsl
   script:
     - ./ci/build-linux-clang.sh
 
@@ -72,6 +79,9 @@ build-linux-gcc-4.8:
   stage: build
   tags:
     - linux
+    - gcc-4.8
+    - cmake
+    - gsl
   script:
     - ./ci/build-linux-gcc-4.8.sh
 
@@ -79,13 +89,33 @@ build-linux-icpc:
   stage: build
   tags:
     - linux
+    - icpc
+    - cmake
+    - mkl
+    - gsl
   script:
     - ./ci/build-linux-icpc.sh
+
+build-test-linux-gcc:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - sse4.2
+    - cmake
+    - gsl
+  artifacts:
+    paths:
+      - build_test_linux_x86_gcc/bin/
+  script:
+    - ./ci/build-test-linux-gcc.sh
 
 build-windows-gcc:
   stage: build
   tags:
     - windows
+    - gcc
+    - cmake
   script:
     - ./ci/build-windows-gcc.bat
 
@@ -93,6 +123,8 @@ build-windows-msvc:
   stage: build
   tags:
     - windows
+    - msvc
+    - cmake
   script:
     - ./ci/build-windows-msvc.bat
 
@@ -100,6 +132,8 @@ build-mac-osx-clang:
   stage: build
   tags:
     - mac-osx
+    - apple-clang
+    - cmake
   script:
     - ./ci/build-mac-osx-clang.sh
 
@@ -107,26 +141,56 @@ test-regression:
   stage: test
   retry: 1
   tags:
-    - test
+    - linux
+    - gcc
+    - sse4.2
+    - powerful
+    - python
   artifacts:
      name: test-regression-results
      when: always
      paths:
-       - test-regression-results/
+      - test-regression-results/
   script:
-    - ./ci/test-build-linux-gcc.sh
-    - ./ci/test-regression.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
+    - ./ci/test-regression.py --build-path build_test_linux_x86_gcc --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
 
-coverage-linux-gcc:
-  stage: coverage
+test-build-coverage-regression:
+  stage: test
   tags:
-    - coverage
-  coverage: '/.*lines\.*: (\d+.\d+\%)/'
+    - linux
+    - gcc
+    - lcov
+    - sse4.2
+    - powerful
   artifacts:
-     name: code_coverage_report
+     name: code-coverage-files
      when: always
      paths:
-       - code_coverage_files/
+      - code_coverage_files/
+  script:
+    - ./ci/test-build-coverage-regression.sh
+
+coverage-linux:
+  stage: coverage
+  tags:
+    - linux
+    - lcov
+    - lcov_cobertura
+  coverage: '/.*lines\.*: (\d+.\d+\%)/'
+  artifacts:
+     name: code-coverage-report
+     when: always
+     paths:
        - code_coverage_report/
   script:
-    - ./ci/coverage-linux-gcc.sh
+    - ./ci/coverage-linux.sh
+
+sonarqube-linux:
+  stage: sonarqube
+  tags:
+    - sonarqube
+  only:
+    - master
+    - development
+  script:
+    - ./ci/sonarqube-linux.sh
