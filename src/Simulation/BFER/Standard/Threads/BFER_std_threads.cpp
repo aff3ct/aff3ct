@@ -52,7 +52,7 @@ void BFER_std_threads<B,R,Q>
 		threads[tid -1].join();
 
 
-	this->monitor_red->reduce();
+	this->monitor_red->reduce(true);
 
 	if (!this->prev_err_messages_to_display.empty())
 		throw std::runtime_error(this->prev_err_messages_to_display.back());
@@ -363,7 +363,7 @@ void BFER_std_threads<B,R,Q>
 			monitor[mnt::tsk::get_mutual_info].exec();
 
 		if (tid == 0)
-			this->monitor_red->reduce();
+			this->monitor_red->reduce(false);
 	}
 }
 

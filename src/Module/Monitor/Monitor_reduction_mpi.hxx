@@ -67,13 +67,13 @@ Monitor_reduction_mpi<M>
 
 template <class M>
 void Monitor_reduction_mpi<M>
-::reduce()
+::reduce(bool fully)
 {
 	// only the master thread can do this
 	if (std::this_thread::get_id() == this->master_thread_id &&
 	    ((std::chrono::steady_clock::now() - t_last_mpi_comm) >= d_mpi_comm_frequency))
 	{
-		Monitor_reduction<M>::reduce();
+		Monitor_reduction<M>::reduce(fully);
 
 		M::Values_t mvals_recv;
 		auto& mvals_send = this->vals;

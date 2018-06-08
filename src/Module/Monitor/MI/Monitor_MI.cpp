@@ -214,14 +214,14 @@ void Monitor_MI<B,R>
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
-::collect(const Monitor& m)
+::collect(const Monitor& m, bool fully)
 {
-	collect(dynamic_cast<const Monitor_MI<B,R>&>(m));
+	collect(dynamic_cast<const Monitor_MI<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
-::collect(const Monitor_MI<B,R>& m)
+::collect(const Monitor_MI<B,R>& m, bool fully)
 {
 	if (this->N != m.N)
 	{
@@ -232,7 +232,26 @@ void Monitor_MI<B,R>
 	}
 
 	this->vals += m.vals;
-	this->mutinfo_hist.add_values(m.mutinfo_hist);
+
+	if (fully)
+		this->mutinfo_hist.add_values(m.mutinfo_hist);
+}
+
+template <typename B, typename R>
+const typename Monitor_MI<B,R>::Values_t& Monitor_MI<B,R>
+::get_vals() const
+{
+	return vals;
+}
+
+template <typename B, typename R>
+Monitor_MI<B,R>& Monitor_MI<B,R>
+::operator=(const Monitor_MI<B,R>& m)
+{
+	this->vals         = m.vals;
+	this->mutinfo_hist = m.mutinfo_hist;
+
+	return *this;
 }
 
 // ==================================================================================== explicit template instantiation

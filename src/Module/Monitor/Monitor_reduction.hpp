@@ -25,7 +25,7 @@ public:
 
 	virtual void reset();
 	virtual void clear_callbacks();
-	virtual void reduce();
+	virtual void reduce(bool fully = false);
 };
 }
 }

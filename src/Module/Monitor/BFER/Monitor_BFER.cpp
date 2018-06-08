@@ -230,14 +230,14 @@ bool Monitor_BFER<B>
 
 template <typename B>
 void Monitor_BFER<B>
-::collect(const Monitor& m)
+::collect(const Monitor& m, bool fully)
 {
-	collect(dynamic_cast<const Monitor_BFER<B>&>(m));
+	collect(dynamic_cast<const Monitor_BFER<B>&>(m), fully);
 }
 
 template <typename B>
 void Monitor_BFER<B>
-::collect(const Monitor_BFER<B>& m)
+::collect(const Monitor_BFER<B>& m, bool fully)
 {
 	if (this->K != m.K)
 	{
@@ -248,8 +248,28 @@ void Monitor_BFER<B>
 	}
 
 	this->vals += m.vals;
-	this->err_hist.add_values(m.err_hist);
+
+	if (fully)
+		this->err_hist.add_values(m.err_hist);
 }
+
+template <typename B>
+const typename Monitor_BFER<B>::Values_t& Monitor_BFER<B>
+::get_vals() const
+{
+	return vals;
+}
+
+template <typename B>
+Monitor_BFER<B>& Monitor_BFER<B>
+::operator=(const Monitor_BFER<B>& m)
+{
+	this->vals     = m.vals;
+	this->err_hist = m.err_hist;
+
+	return *this;
+}
+
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

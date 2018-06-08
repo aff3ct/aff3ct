@@ -81,12 +81,17 @@ void Monitor_reduction<M>
 
 template <class M>
 void Monitor_reduction<M>
-::reduce()
+::reduce(bool fully)
 {
-	M::reset();
+	M collecter(*this);
 
 	for (auto& m : monitors)
-		M::collect(*m);
+		collecter.collect(*m, fully);
+
+	if (fully)
+		M::operator=(collecter);
+	else
+		this->vals = collecter.get_vals();
 }
 
 }

@@ -23,3 +23,9 @@ void Monitor
 ::reset()
 {
 }
+
+Monitor& Monitor
+::operator=(const Monitor& m)
+{
+	return *this;
+}

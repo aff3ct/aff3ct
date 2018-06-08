@@ -100,17 +100,34 @@ void Monitor_MI_BFER<B,R>
 
 template <typename B, typename R>
 void Monitor_MI_BFER<B,R>
-::collect(const Monitor& m)
+::collect(const Monitor& m, bool fully)
 {
-	collect(dynamic_cast<const Monitor_MI_BFER<B,R>&>(m));
+	collect(dynamic_cast<const Monitor_MI_BFER<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_MI_BFER<B,R>
-::collect(const Monitor_MI_BFER<B,R>& m)
+::collect(const Monitor_MI_BFER<B,R>& m, bool fully)
 {
-	Monitor_MI<B,R>::collect(m);
-	Monitor_BFER<B>::collect(m);
+	Monitor_MI<B,R>::collect(m, fully);
+	Monitor_BFER<B>::collect(m, fully);
+}
+
+template <typename B, typename R>
+const typename Monitor_MI_BFER<B,R>::Values_t& Monitor_MI_BFER<B,R>
+::get_vals() const
+{
+	return vals;
+}
+
+template <typename B, typename R>
+Monitor_MI_BFER<B,R>& Monitor_MI_BFER<B,R>
+::operator=(const Monitor_MI_BFER<B,R>& m)
+{
+	Monitor_MI<B,R>::operator=(m);
+	Monitor_BFER<B>::operator=(m);
+
+	return *this;
 }
 
 // ==================================================================================== explicit template instantiation

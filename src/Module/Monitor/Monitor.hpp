@@ -55,7 +55,17 @@ public:
 
 	virtual void clear_callbacks();
 
-	virtual void collect(const Monitor& m) = 0;
+	/*!
+	 * \brief collect data from 'm' monitor into this monitor.
+	 * 'fully' flag indicates if only "Value_t" struct vals must be merged
+	 * or also any other attributes of the class.
+	 */
+	virtual void collect(const Monitor& m, bool fully = false) = 0;
+
+	/*!
+	 * \brief completely copy values of the monitor 'm' into this monitor
+	 */
+	Monitor& operator=(const Monitor& m);
 };
 }
 }

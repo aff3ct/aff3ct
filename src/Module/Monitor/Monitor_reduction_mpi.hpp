@@ -34,7 +34,7 @@ public:
 	virtual ~Monitor_reduction_mpi() = default;
 
 	void reset ();
-	void reduce();
+	void reduce(bool fully = false);
 };
 }
 }

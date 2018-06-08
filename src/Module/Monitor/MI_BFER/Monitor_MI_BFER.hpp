@@ -23,6 +23,7 @@ namespace module
 		}
 	}
 
+
 template <typename B = int, typename R = float>
 class Monitor_MI_BFER : public Monitor_MI<B,R>, public Monitor_BFER<B>
 {
@@ -100,7 +101,7 @@ public:
 	#endif
 	};
 
-private:
+protected:
 	Values_t vals;
 
 public:
@@ -115,13 +116,17 @@ public:
 	virtual ~Monitor_MI_BFER() = default;
 
 
+	const Values_t& get_vals() const;
+
 	virtual void add_handler_check(std::function<void(void)> callback);
 
 	virtual void reset();
 	virtual void clear_callbacks();
 
-	virtual void collect(const Monitor& m);
-	virtual void collect(const Monitor_MI_BFER<B,R>& m);
+	virtual void collect(const Monitor& m, bool fully = false);
+	virtual void collect(const Monitor_MI_BFER<B,R>& m, bool fully = false);
+
+	Monitor_MI_BFER<B,R>& operator=(const Monitor_MI_BFER<B,R>& m);
 
 protected:
 	Monitor_MI_BFER(const bool create_task, const int K, const int N,

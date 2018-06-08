@@ -94,6 +94,8 @@ public:
 
 	virtual ~Monitor_MI() = default;
 
+	const Values_t& get_vals() const;
+
 	int get_N() const;
 
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
@@ -144,8 +146,10 @@ public:
 	virtual void reset();
 	virtual void clear_callbacks();
 
-	virtual void collect(const Monitor& m);
-	virtual void collect(const Monitor_MI<B,R>& m);
+	virtual void collect(const Monitor& m, bool fully = false);
+	virtual void collect(const Monitor_MI<B,R>& m, bool fully = false);
+
+	Monitor_MI<B,R>& operator=(const Monitor_MI<B,R>& m);
 
 protected:
 	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);

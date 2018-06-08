@@ -347,8 +347,6 @@ void BFER<B,R,Q>
 					for (auto &t : mm->tasks)
 						t->reset_stats();
 
-		std::cout << "end noise : " << noise->get_noise() << std::endl;
-
 		tools::Terminal::reset();
 	}
 

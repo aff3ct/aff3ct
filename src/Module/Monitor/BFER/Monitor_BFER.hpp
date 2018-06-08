@@ -86,6 +86,8 @@ public:
 
 	virtual ~Monitor_BFER() = default;
 
+	const Values_t& get_vals() const;
+
 	int get_K() const;
 
 	/*!
@@ -148,8 +150,10 @@ public:
 	virtual void reset();
 	virtual void clear_callbacks();
 
-	virtual void collect(const Monitor& m);
-	virtual void collect(const Monitor_BFER<B>& m);
+	virtual void collect(const Monitor& m, bool fully = false);
+	virtual void collect(const Monitor_BFER<B>& m, bool fully = false);
+
+	Monitor_BFER<B>& operator=(const Monitor_BFER<B>& m);
 
 protected:
 	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
