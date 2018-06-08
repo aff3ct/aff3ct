@@ -96,20 +96,6 @@ build-linux-icpc:
   script:
     - ./ci/build-linux-icpc.sh
 
-build-coverage-linux-gcc:
-  stage: build
-  tags:
-    - linux
-    - gcc
-    - cmake
-    - sse4.2
-  artifacts:
-    paths:
-      - build_coverage_linux_x86_gcc/bin/
-      - build_coverage_linux_x86_gcc/CMakeFiles.tar.gz
-  script:
-    - ./ci/build-coverage-linux-gcc.sh
-
 build-test-linux-gcc:
   stage: build
   tags:
@@ -168,10 +154,11 @@ test-regression:
   script:
     - ./ci/test-regression.py --build-path build_test_linux_x86_gcc --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
 
-test-coverage-regression:
+test-build-coverage-regression:
   stage: test
   tags:
     - linux
+    - gcc
     - lcov
     - sse4.2
     - powerful
@@ -181,7 +168,7 @@ test-coverage-regression:
      paths:
       - code_coverage_files/
   script:
-    - ./ci/test-coverage-regression.sh
+    - ./ci/test-build-coverage-regression.sh
 
 coverage-linux:
   stage: coverage
