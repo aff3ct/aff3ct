@@ -160,13 +160,10 @@ test-regression:
     - sse4.2
     - powerful
     - python
-  dependencies:
-    - build-test-linux-gcc
   artifacts:
      name: test-regression-results
      when: always
      paths:
-      - build_test_linux_x86_gcc/bin/
       - test-regression-results/
   script:
     - ./ci/test-regression.py --build-path build_test_linux_x86_gcc --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
@@ -178,14 +175,10 @@ test-coverage-regression:
     - lcov
     - sse4.2
     - powerful
-  dependencies:
-    - build-coverage-linux-gcc
   artifacts:
-     name: code_coverage_files
+     name: code-coverage-files
      when: always
      paths:
-      - build_coverage_linux_x86_gcc/bin/
-      - build_coverage_linux_x86_gcc/CMakeFiles.tar.gz
       - code_coverage_files/
   script:
     - ./ci/test-coverage-regression.sh
@@ -197,13 +190,10 @@ coverage-linux:
     - lcov
     - lcov_cobertura
   coverage: '/.*lines\.*: (\d+.\d+\%)/'
-  dependencies:
-    - test-coverage-regression
   artifacts:
-     name: code_coverage_report
+     name: code-coverage-report
      when: always
      paths:
-       - code_coverage_files/
        - code_coverage_report/
   script:
     - ./ci/coverage-linux.sh
@@ -215,12 +205,5 @@ sonarqube-linux:
   only:
     - master
     - development
-  dependencies:
-    - coverage-linux
-    - analysis-cppcheck
-  artifacts:
-    paths:
-      - cppcheck/
-      - code_coverage_files/
   script:
     - ./ci/sonarqube-linux.sh

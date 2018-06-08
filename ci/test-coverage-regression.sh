@@ -34,6 +34,6 @@ pwd=$(pwd)
 mkdir code_coverage_files || true
 lcov --capture --directory $build_root/CMakeFiles/aff3ct-obj.dir/src --output-file code_coverage_files/aff3ct.info
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-lcov --remove code_coverage_files/aff3ct.info "*/usr*" "*lib/*" --output-file $pwd/code_coverage_files/aff3ct_clean.info
+lcov --remove code_coverage_files/aff3ct.info "*/usr*" "*lib/*" "*/Tools/version.cpp" --output-file $pwd/code_coverage_files/aff3ct_clean.info
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 sed -i -e "s#${WD}/#\./#g" code_coverage_files/aff3ct_clean.info
