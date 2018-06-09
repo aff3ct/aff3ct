@@ -10,7 +10,11 @@ set -x
 #cd ..
 
 # Create the sonar config file on the fly
-BRANCH=$(git branch --remote --verbose --no-abbrev --contains | sed -rne 's/^[^\/]*\/([^\ ]+).*$/\1/p')
+BRANCH=$(git show -s --pretty=%d HEAD | sed -rne 's/.*origin\/(.*),.*/\1/p')
+if [ -z "$BRANCH" ]
+then
+	BRANCH=$(git show -s --pretty=%d HEAD | sed -rne 's/.*origin\/(.*)\)$/\1/p')
+fi
 VERSION=$(git tag | tail -n 1 | cut -d $'v' -f2-)
 echo "sonar.projectKey=storm:aff3ct:gitlab:$BRANCH"                  >  sonar-project.properties
 #echo "sonar.projectName=AFF3CT"                                      >> sonar-project.properties
