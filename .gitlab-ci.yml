@@ -29,6 +29,8 @@ build-linux-gcc:
   tags:
     - linux
     - gcc
+    - cmake
+    - gsl
   script:
     - ./ci/build-linux-gcc.sh
 
@@ -142,7 +144,6 @@ test-regression:
   retry: 1
   tags:
     - linux
-    - gcc
     - sse4.2
     - powerful
     - python
@@ -152,7 +153,8 @@ test-regression:
      paths:
       - test-regression-results/
   script:
-    - ./ci/test-regression.py --build-path build_test_linux_x86_gcc --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
+    - source ./ci/threads.sh
+    - ./ci/test-regression.py --build-path build_test_linux_x86_gcc --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-build-coverage-regression:
   stage: test
