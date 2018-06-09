@@ -1,10 +1,11 @@
 #!/bin/bash
 set -x
 
+source ci/threads.sh
+
 mkdir build
 cd build
 cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++-4.8 -DCMAKE_BUILD_TYPE=Release -DENABLE_GSL=ON -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC"
-THREADS=$(grep -c ^processor /proc/cpuinfo)
 make -j $THREADS
 
 ./bin/aff3ct --version

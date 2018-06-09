@@ -1,7 +1,8 @@
 #!/bin/bash
 set -x
 
-THREADS=$(grep -c ^processor /proc/cpuinfo)
+source ci/threads.sh
+
 WD=$(pwd)
 build_root=build_coverage_linux_x86_gcc
 
