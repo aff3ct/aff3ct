@@ -10,4 +10,4 @@ mingw32-make
 
 cd bin
 aff3ct.exe --version
-aff3ct.exe -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL --ter-freq 0
+aff3ct.exe -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL -t 1 --ter-freq 0
