@@ -38,12 +38,12 @@ struct Terminal_BFER : Terminal
 		// builder
 		template <typename B = int, typename R = float>
 		tools::Terminal_BFER<B,R>* build(const module::Monitor_BFER<B,R> &monitor,
-		                                 bool display_mutinfo, bool display_bfer) const;
+		                                 bool display_mutinfo = false, bool display_bfer = true) const;
 	};
 
 	template <typename B = int, typename R = float>
 	static tools::Terminal_BFER<B,R>* build(const parameters &params, const module::Monitor_BFER<B,R> &monitor,
-	                                        bool display_mutinfo, bool display_bfer);
+	                                        bool display_mutinfo = false, bool display_bfer = true);
 };
 }
 }
