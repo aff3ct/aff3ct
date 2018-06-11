@@ -3,7 +3,7 @@ stages:
   - build
   - test
   - coverage
-  - sonarqube
+  - deploy
 
 before_script:
   - hostname
@@ -188,7 +188,7 @@ coverage-linux:
     - ./ci/coverage-linux.sh
 
 sonarqube-linux:
-  stage: sonarqube
+  stage: deploy
   tags:
     - sonarqube
   only:
