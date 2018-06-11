@@ -199,6 +199,8 @@ sonarqube-linux:
 
 pages:
   stage: deploy
+  tags:
+    - linux
   dependencies:
     - coverage-linux
   script:
