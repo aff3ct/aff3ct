@@ -196,3 +196,16 @@ sonarqube-linux:
     - development
   script:
     - ./ci/sonarqube-linux.sh
+
+pages:
+  stage: deploy
+  dependencies:
+    - coverage-linux
+  script:
+    - mv code_coverage_report/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - development
