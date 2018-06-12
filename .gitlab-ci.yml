@@ -36,9 +36,10 @@ build-linux-gcc-nointr:
     paths:
       - build_linux_gcc_nointr.tar.gz
   script:
-    - export CC="g++"
-    - export OPT="-DCMAKE_EXE_LINKER_FLAGS=\"-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive\" -DENABLE_GSL=ON"
-    - export FLAGS="-DMULTI_PREC -DMIPP_NO_INTRINSICS"
+    - export CC="gcc"
+    - export CXX="g++"
+    - export OPT="-DCMAKE_EXE_LINKER_FLAGS='-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive' -DENABLE_GSL=ON"
+    - export CFLAGS="-DMULTI_PREC -DMIPP_NO_INTRINSICS"
     - export NAME="build_linux_gcc_nointr"
     - ./ci/build-linux-macosx.sh
 
@@ -54,9 +55,10 @@ build-linux-gcc-sse4.2:
     paths:
       - build_linux_gcc_sse4.2.tar.gz
   script:
-    - export CC="g++"
-    - export OPT="-DCMAKE_EXE_LINKER_FLAGS=\"-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive\" -DENABLE_GSL=ON"
-    - export FLAGS="-DMULTI_PREC -msse4.2"
+    - export CC="gcc"
+    - export CXX="g++"
+    - export OPT="-DCMAKE_EXE_LINKER_FLAGS='-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive' -DENABLE_GSL=ON"
+    - export CFLAGS="-DMULTI_PREC -msse4.2"
     - export NAME="build_linux_gcc_sse4.2"
     - ./ci/build-linux-macosx.sh
 
@@ -72,9 +74,10 @@ build-linux-gcc-avx2:
     paths:
       - build_linux_gcc_avx2.tar.gz
   script:
-    - export CC="g++"
-    - export OPT="-DCMAKE_EXE_LINKER_FLAGS=\"-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive\" -DENABLE_GSL=ON"
-    - export FLAGS="-DMULTI_PREC -mavx2 -mfma"
+    - export CC="gcc"
+    - export CXX="g++"
+    - export OPT="-DCMAKE_EXE_LINKER_FLAGS='-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive' -DENABLE_GSL=ON"
+    - export CFLAGS="-DMULTI_PREC -mavx2 -mfma"
     - export NAME="build_linux_gcc_avx2"
     - ./ci/build-linux-macosx.sh
 
@@ -90,9 +93,10 @@ build-linux-gcc-8-bit:
     paths:
       - build_linux_gcc_8_bit.tar.gz
   script:
-    - export CC="g++"
+    - export CC="gcc"
+    - export CXX="g++"
     - export OPT="-DENABLE_GSL=ON"
-    - export FLAGS="-DPREC_8_BIT -march=native"
+    - export CFLAGS="-DPREC_8_BIT -march=native"
     - export NAME="build_linux_gcc_8_bit"
     - ./ci/build-linux-macosx.sh
 
@@ -108,9 +112,10 @@ build-linux-gcc-mpi:
     paths:
       - build_linux_gcc_mpi.tar.gz
   script:
-    - export CC="g++"
+    - export CC="gcc"
+    - export CXX="g++"
     - export OPT="-DENABLE_GSL=ON -DENABLE_MPI=ON"
-    - export FLAGS="-DMULTI_PREC -march=native"
+    - export CFLAGS="-DMULTI_PREC -march=native"
     - export NAME="build_linux_gcc_mpi"
     - ./ci/build-linux-macosx.sh
 
@@ -127,9 +132,10 @@ build-linux-gcc-systemc:
   script:
     - cp $SYSTEMC_HOME/FindSystemC.cmake cmake/Modules/
     - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
-    - export CC="g++"
+    - export CC="gcc"
+    - export CXX="g++"
     - export OPT="-DENABLE_SYSTEMC=ON"
-    - export FLAGS="-DMULTI_PREC -march=native -Wno-deprecated-declarations"
+    - export CFLAGS="-DMULTI_PREC -march=native -Wno-deprecated-declarations"
     - export NAME="build_linux_gcc_systemc"
     - ./ci/build-linux-macosx.sh
 
@@ -144,9 +150,10 @@ build-linux-clang:
     paths:
       - build_linux_clang.tar.gz
   script:
-    - export CC="clang++"
+    - export CC="clang"
+    - export CXX="clang++"
     - export OPT="-DENABLE_GSL=ON"
-    - export FLAGS="-DMULTI_PREC"
+    - export CFLAGS="-DMULTI_PREC"
     - export NAME="build_linux_clang"
     - ./ci/build-linux-macosx.sh
 
@@ -161,9 +168,10 @@ build-linux-gcc-4.8:
     paths:
       - build_linux_gcc-4.8.tar.gz
   script:
-    - export CC="g++-4.8"
+    - export CC="gcc-4.8"
+    - export CXX="g++-4.8"
     - export OPT="-DENABLE_GSL=ON"
-    - export FLAGS="-DMULTI_PREC -march=native"
+    - export CFLAGS="-DMULTI_PREC -march=native"
     - export NAME="build_linux_gcc-4.8"
     - ./ci/build-linux-macosx.sh
 
@@ -180,9 +188,10 @@ build-linux-icpc:
       - build_linux_icpc.tar.gz
   script:
     - source /opt/intel/vars-intel.sh
-    - export CC="icpc"
+    - export CC="icc"
+    - export CXX"icpc"
     - export OPT="-DENABLE_GSL=ON -DENABLE_MKL=ON"
-    - export FLAGS="-DMULTI_PREC -march=native -std=c++11"
+    - export CFLAGS="-DMULTI_PREC -march=native -std=c++11"
     - export NAME="build_linux_icpc"
     - ./ci/build-linux-macosx.sh
 
@@ -221,9 +230,10 @@ build-mac-osx-clang-sse4.2:
     paths:
       - build_macosx_clang_sse4.2.tar.gz
   script:
-    - export CC="clang++"
+    - export CC="clang"
+    - export CXX="clang++"
     - export OPT=""
-    - export FLAGS="-DMULTI_PREC -msse4.2"
+    - export CFLAGS="-DMULTI_PREC -msse4.2"
     - export NAME="build_macosx_clang_sse4.2"
     - ./ci/build-linux-macosx.sh
 
