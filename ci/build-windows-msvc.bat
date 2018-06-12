@@ -7,9 +7,14 @@ set "VSCMD_START_DIR=%CD%"
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
 mkdir build
 cd build
-cmake .. -G"Visual Studio 15 2017 Win64" -DCMAKE_CXX_FLAGS="-D_CRT_SECURE_NO_DEPRECATE -DMULTI_PREC /EHsc /arch:AVX"
+cmake .. -G"Visual Studio 15 2017 Win64" -DCMAKE_CXX_FLAGS="-D_CRT_SECURE_NO_DEPRECATE -DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON -DMULTI_PREC /MT /EHsc /arch:AVX"
 devenv /build Release aff3ct.sln
 
-cd bin\Release
-aff3ct.exe --version
-aff3ct.exe -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL -t 1 --ter-freq 0
+mkdir build_windows_msvc_avx
+mkdir build_windows_msvc_avx\bin\
+mkdir build_windows_msvc_avx\lib\
+
+copy bin\Release\aff3ct.exe    build_windows_msvc_avx\bin\
+copy lib\Release\libaff3ct.lib build_windows_msvc_avx\lib\
+
+move build_windows_msvc_avx ..\

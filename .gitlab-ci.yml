@@ -24,15 +24,59 @@ analysis-cppcheck:
   script:
     - ./ci/analysis-cppcheck.sh
 
-build-linux-gcc:
+build-linux-gcc-nointr:
   stage: build
   tags:
     - linux
     - gcc
     - cmake
     - gsl
+    - x86
+  artifacts:
+    paths:
+      - build_linux_gcc_nointr.tar.gz
   script:
-    - ./ci/build-linux-gcc.sh
+    - export CC="g++"
+    - export OPT="-DCMAKE_EXE_LINKER_FLAGS=\"-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive\" -DENABLE_GSL=ON"
+    - export FLAGS="-DMULTI_PREC -DMIPP_NO_INTRINSICS"
+    - export NAME="build_linux_gcc_nointr"
+    - ./ci/build-linux-macosx.sh
+
+build-linux-gcc-sse4.2:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+  artifacts:
+    paths:
+      - build_linux_gcc_sse4.2.tar.gz
+  script:
+    - export CC="g++"
+    - export OPT="-DCMAKE_EXE_LINKER_FLAGS=\"-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive\" -DENABLE_GSL=ON"
+    - export FLAGS="-DMULTI_PREC -msse4.2"
+    - export NAME="build_linux_gcc_sse4.2"
+    - ./ci/build-linux-macosx.sh
+
+build-linux-gcc-avx2:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+  artifacts:
+    paths:
+      - build_linux_gcc_avx2.tar.gz
+  script:
+    - export CC="g++"
+    - export OPT="-DCMAKE_EXE_LINKER_FLAGS=\"-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive\" -DENABLE_GSL=ON"
+    - export FLAGS="-DMULTI_PREC -mavx2 -mfma"
+    - export NAME="build_linux_gcc_avx2"
+    - ./ci/build-linux-macosx.sh
 
 build-linux-gcc-8-bit:
   stage: build
@@ -42,8 +86,15 @@ build-linux-gcc-8-bit:
     - arm32
     - cmake
     - gsl
+  artifacts:
+    paths:
+      - build_linux_gcc_8_bit.tar.gz
   script:
-    - ./ci/build-linux-gcc-8-bit.sh
+    - export CC="g++"
+    - export OPT="-DENABLE_GSL=ON"
+    - export FLAGS="-DPREC_8_BIT -march=native"
+    - export NAME="build_linux_gcc_8_bit"
+    - ./ci/build-linux-macosx.sh
 
 build-linux-gcc-mpi:
   stage: build
@@ -53,8 +104,15 @@ build-linux-gcc-mpi:
     - mpi
     - cmake
     - gsl
+  artifacts:
+    paths:
+      - build_linux_gcc_mpi.tar.gz
   script:
-    - ./ci/build-linux-gcc-mpi.sh
+    - export CC="g++"
+    - export OPT="-DENABLE_GSL=ON -DENABLE_MPI=ON"
+    - export FLAGS="-DMULTI_PREC -march=native"
+    - export NAME="build_linux_gcc_mpi"
+    - ./ci/build-linux-macosx.sh
 
 build-linux-gcc-systemc:
   stage: build
@@ -63,8 +121,17 @@ build-linux-gcc-systemc:
     - gcc
     - systemc
     - cmake
+  artifacts:
+    paths:
+      - build_linux_gcc_systemc.tar.gz
   script:
-    - ./ci/build-linux-gcc-systemc.sh
+    - cp $SYSTEMC_HOME/FindSystemC.cmake cmake/Modules/
+    - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
+    - export CC="g++"
+    - export OPT="-DENABLE_SYSTEMC=ON"
+    - export FLAGS="-DMULTI_PREC -march=native -Wno-deprecated-declarations"
+    - export NAME="build_linux_gcc_systemc"
+    - ./ci/build-linux-macosx.sh
 
 build-linux-clang:
   stage: build
@@ -72,10 +139,16 @@ build-linux-clang:
     - linux
     - clang
     - cmake
-    - x86
     - gsl
+  artifacts:
+    paths:
+      - build_linux_clang.tar.gz
   script:
-    - ./ci/build-linux-clang.sh
+    - export CC="clang++"
+    - export OPT="-DENABLE_GSL=ON"
+    - export FLAGS="-DMULTI_PREC"
+    - export NAME="build_linux_clang"
+    - ./ci/build-linux-macosx.sh
 
 build-linux-gcc-4.8:
   stage: build
@@ -84,8 +157,15 @@ build-linux-gcc-4.8:
     - gcc-4.8
     - cmake
     - gsl
+  artifacts:
+    paths:
+      - build_linux_gcc-4.8.tar.gz
   script:
-    - ./ci/build-linux-gcc-4.8.sh
+    - export CC="g++-4.8"
+    - export OPT="-DENABLE_GSL=ON"
+    - export FLAGS="-DMULTI_PREC -march=native"
+    - export NAME="build_linux_gcc-4.8"
+    - ./ci/build-linux-macosx.sh
 
 build-linux-icpc:
   stage: build
@@ -95,53 +175,63 @@ build-linux-icpc:
     - cmake
     - mkl
     - gsl
-  script:
-    - ./ci/build-linux-icpc.sh
-
-build-test-linux-gcc:
-  stage: build
-  tags:
-    - linux
-    - gcc
-    - sse4.2
-    - cmake
-    - gsl
   artifacts:
     paths:
-      - build_test_linux_x86_gcc/bin/
+      - build_linux_icpc.tar.gz
   script:
-    - ./ci/build-test-linux-gcc.sh
+    - source /opt/intel/vars-intel.sh
+    - export CC="icpc"
+    - export OPT="-DENABLE_GSL=ON -DENABLE_MKL=ON"
+    - export FLAGS="-DMULTI_PREC -march=native -std=c++11"
+    - export NAME="build_linux_icpc"
+    - ./ci/build-linux-macosx.sh
 
-build-windows-gcc:
+build-windows-gcc-sse4.2:
   stage: build
   tags:
     - windows
     - gcc
     - cmake
+  artifacts:
+    paths:
+      - build_windows_gcc_sse4.2/
   script:
     - ./ci/build-windows-gcc.bat
 
-build-windows-msvc:
+build-windows-msvc-avx:
   stage: build
   tags:
     - windows
     - msvc
     - cmake
+  artifacts:
+    paths:
+      - build_windows_msvc_avx/
   script:
     - ./ci/build-windows-msvc.bat
 
-build-mac-osx-clang:
+build-mac-osx-clang-sse4.2:
   stage: build
   tags:
     - mac-osx
     - apple-clang
     - cmake
+    - x86
+  artifacts:
+    paths:
+      - build_macosx_clang_sse4.2.tar.gz
   script:
-    - ./ci/build-mac-osx-clang.sh
+    - export CC="clang++"
+    - export OPT=""
+    - export FLAGS="-DMULTI_PREC -msse4.2"
+    - export NAME="build_macosx_clang_sse4.2"
+    - ./ci/build-linux-macosx.sh
 
 test-regression:
   stage: test
   retry: 1
+  dependencies:
+    - build-linux-gcc-sse4.2
   tags:
     - linux
     - sse4.2
@@ -153,8 +243,9 @@ test-regression:
      paths:
       - test-regression-results/
   script:
+    - tar -xvvf build_linux_gcc_sse4.2.tar.gz
     - source ./ci/threads.sh
-    - ./ci/test-regression.py --build-path build_test_linux_x86_gcc --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --build-path build_linux_gcc_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-build-coverage-regression:
   stage: test
@@ -174,6 +265,8 @@ test-build-coverage-regression:
 
 coverage-linux:
   stage: coverage
+  dependencies:
+    - test-build-coverage-regression
   tags:
     - linux
     - lcov
@@ -189,6 +282,9 @@ coverage-linux:
 
 sonarqube-linux:
   stage: deploy
+  dependencies:
+    - analysis-cppcheck
+    - coverage-linux
   tags:
     - sonarqube
   only:
