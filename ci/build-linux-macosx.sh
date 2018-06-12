@@ -1,8 +1,6 @@
 #!/bin/bash
 set -x
 
-source ci/threads.sh
-
 mkdir build
 cd build
 
