@@ -39,7 +39,11 @@ fi
 make -j $THREADS
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
-mkdir $NAME $NAME/bin $NAME/lib
+mkdir $NAME $NAME/bin $NAME/lib $NAME/inc
 cp bin/aff3ct $NAME/bin/aff3ct
 cp lib/libaff3ct.a $NAME/lib/libaff3ct.a
+cp -r ../src/* $NAME/inc/
+find $NAME/inc/ -type f -follow -print | grep "[.]cpp$"    | xargs rm -f
+find $NAME/inc/ -type f -follow -print | grep "[.]cpp.in$" | xargs rm -f
+
 mv $NAME ../

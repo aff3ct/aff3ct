@@ -202,6 +202,7 @@ build-linux-icpc:
     - cmake
     - mkl
     - gsl
+    - x86
   artifacts:
     name: build-linux-icpc
     paths:
@@ -222,6 +223,7 @@ build-windows-gcc-sse4.2:
     - windows
     - gcc
     - cmake
+    - x86
   artifacts:
     name: build-windows-gcc-sse4.2
     paths:
@@ -235,6 +237,7 @@ build-windows-msvc-avx:
     - windows
     - msvc
     - cmake
+    - x86
   artifacts:
     name: build-windows-msvc-avx
     paths:
