@@ -7,7 +7,7 @@ set "VSCMD_START_DIR=%CD%"
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
 mkdir build
 cd build
-cmake .. -G"Visual Studio 15 2017 Win64" -DCMAKE_CXX_FLAGS="-D_CRT_SECURE_NO_DEPRECATE -DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON -DMULTI_PREC /MT /EHsc /arch:AVX"
+cmake .. -G"Visual Studio 15 2017 Win64" -DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON -DCMAKE_CXX_FLAGS="-D_CRT_SECURE_NO_DEPRECATE -DMULTI_PREC /MT /EHsc /arch:AVX"
 devenv /build Release aff3ct.sln
 
 mkdir build_windows_msvc_avx
