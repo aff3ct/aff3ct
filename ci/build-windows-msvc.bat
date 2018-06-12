@@ -15,8 +15,8 @@ mkdir build_windows_msvc_avx\bin\
 mkdir build_windows_msvc_avx\lib\
 mkdir build_windows_msvc_avx\inc\
 
-copy bin\Release\aff3ct.exe build_windows_msvc_avx\bin\
-copy lib\Release\aff3ct.lib build_windows_msvc_avx\lib\
-copy ..\src\*               build_windows_msvc_avx\inc\
+ copy bin\Release\aff3ct.exe build_windows_msvc_avx\bin\
+ copy lib\Release\aff3ct.lib build_windows_msvc_avx\lib\
+xcopy ..\src\*               build_windows_msvc_avx\inc\ /s /e
 
 move build_windows_msvc_avx ..\
