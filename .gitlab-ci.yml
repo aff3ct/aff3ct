@@ -229,10 +229,10 @@ build-windows-gcc-sse4.2:
     paths:
       - build_windows_gcc_sse4.2
   script:
-    - set CFLAGS="-DMULTI_PREC -msse4.2"
-    - set LFLAGS="-static -static-libgcc -static-libstdc++"
-    - set CMAKE_OPT="-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
-    - set NAME="build_windows_gcc_sse4.2"
+    - set "CFLAGS=-DMULTI_PREC -msse4.2"
+    - set "LFLAGS=-static -static-libgcc -static-libstdc++"
+    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "NAME=build_windows_gcc_sse4.2"
     - ./ci/build-windows-gcc.bat
 
 build-windows-msvc-avx:
@@ -247,9 +247,9 @@ build-windows-msvc-avx:
     paths:
       - build_windows_msvc_avx
   script:
-    - set CFLAGS="-DMULTI_PREC /arch:AVX"
-    - set CMAKE_OPT="-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
-    - set NAME="build_windows_msvc_avx"
+    - set "CFLAGS=-DMULTI_PREC /arch:AVX"
+    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "NAME=build_windows_msvc_avx"
     - ./ci/build-windows-msvc.bat
 
 build-mac-osx-clang-sse4.2:
