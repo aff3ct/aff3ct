@@ -12,7 +12,7 @@ mkdir build_windows_gcc_sse4.2
 mkdir build_windows_gcc_sse4.2\bin\
 mkdir build_windows_gcc_sse4.2\lib\
 
-copy bin\aff3ct.exe  build_windows_gcc_sse4.2\bin\
-copy lib\libaff3ct.a build_windows_gcc_sse4.2\lib\
+copy bin\aff3ct.exe  build_windows_gcc_sse4.2\bin\aff3ct.exe
+copy lib\libaff3ct.a build_windows_gcc_sse4.2\lib\aff3ct.lib
 
 move build_windows_gcc_sse4.2 ..\
