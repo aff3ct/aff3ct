@@ -24,15 +24,71 @@ analysis-cppcheck:
   script:
     - ./ci/analysis-cppcheck.sh
 
-build-linux-gcc:
+build-linux-gcc-nointr:
   stage: build
   tags:
     - linux
     - gcc
     - cmake
     - gsl
+    - x86
+  artifacts:
+    name: build-linux-gcc-nointr
+    paths:
+      - build_linux_gcc_nointr
   script:
-    - ./ci/build-linux-gcc.sh
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -DMIPP_NO_INTRINSICS"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc_nointr"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
+
+build-linux-gcc-sse4.2:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+  artifacts:
+    name: build-linux-gcc-sse4.2
+    paths:
+      - build_linux_gcc_sse4.2
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -msse4.2"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc_sse4.2"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
+
+build-linux-gcc-avx2:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+  artifacts:
+    name: build-linux-gcc-avx2
+    paths:
+      - build_linux_gcc_avx2
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -mavx2 -mfma"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc_avx2"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
 
 build-linux-gcc-8-bit:
   stage: build
@@ -42,8 +98,18 @@ build-linux-gcc-8-bit:
     - arm32
     - cmake
     - gsl
+  artifacts:
+    name: build-linux-gcc-8-bit
+    paths:
+      - build_linux_gcc_8_bit
   script:
-    - ./ci/build-linux-gcc-8-bit.sh
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DPREC_8_BIT -march=native"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc_8_bit"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
 
 build-linux-gcc-mpi:
   stage: build
@@ -53,8 +119,18 @@ build-linux-gcc-mpi:
     - mpi
     - cmake
     - gsl
+  artifacts:
+    name: build-linux-gcc-mpi
+    paths:
+      - build_linux_gcc_mpi
   script:
-    - ./ci/build-linux-gcc-mpi.sh
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -march=native"
+    - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MPI=ON"
+    - export NAME="build_linux_gcc_mpi"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
 
 build-linux-gcc-systemc:
   stage: build
@@ -63,8 +139,20 @@ build-linux-gcc-systemc:
     - gcc
     - systemc
     - cmake
+  artifacts:
+    name: build-linux-gcc-systemc
+    paths:
+      - build_linux_gcc_systemc
   script:
-    - ./ci/build-linux-gcc-systemc.sh
+    - cp $SYSTEMC_HOME/FindSystemC.cmake cmake/Modules/
+    - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -march=native -Wno-deprecated-declarations"
+    - export CMAKE_OPT="-DENABLE_SYSTEMC=ON"
+    - export NAME="build_linux_gcc_systemc"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
 
 build-linux-clang:
   stage: build
@@ -72,10 +160,19 @@ build-linux-clang:
     - linux
     - clang
     - cmake
-    - x86
     - gsl
+  artifacts:
+    name: build-linux-clang
+    paths:
+      - build_linux_clang
   script:
-    - ./ci/build-linux-clang.sh
+    - export CC="clang"
+    - export CXX="clang++"
+    - export CFLAGS="-DMULTI_PREC"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_clang"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
 
 build-linux-gcc-4.8:
   stage: build
@@ -84,8 +181,18 @@ build-linux-gcc-4.8:
     - gcc-4.8
     - cmake
     - gsl
+  artifacts:
+    name: build-linux-gcc-4.8
+    paths:
+      - build_linux_gcc-4.8
   script:
-    - ./ci/build-linux-gcc-4.8.sh
+    - export CC="gcc-4.8"
+    - export CXX="g++-4.8"
+    - export CFLAGS="-DMULTI_PREC -march=native"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc-4.8"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
 
 build-linux-icpc:
   stage: build
@@ -95,53 +202,81 @@ build-linux-icpc:
     - cmake
     - mkl
     - gsl
-  script:
-    - ./ci/build-linux-icpc.sh
-
-build-test-linux-gcc:
-  stage: build
-  tags:
-    - linux
-    - gcc
-    - sse4.2
-    - cmake
-    - gsl
+    - x86
   artifacts:
+    name: build-linux-icpc
     paths:
-      - build_test_linux_x86_gcc/bin/
+      - build_linux_icpc
   script:
-    - ./ci/build-test-linux-gcc.sh
+    - source /opt/intel/vars-intel.sh
+    - export CC="icc"
+    - export CXX="icpc"
+    - export CFLAGS="-DMULTI_PREC -march=native -std=c++11"
+    - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MKL=ON"
+    - export NAME="build_linux_icpc"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
 
-build-windows-gcc:
+build-windows-gcc-sse4.2:
   stage: build
   tags:
     - windows
     - gcc
     - cmake
+    - x86
+  artifacts:
+    name: build-windows-gcc-sse4.2
+    paths:
+      - build_windows_gcc_sse4.2
   script:
+    - set "CFLAGS=-DMULTI_PREC -msse4.2"
+    - set "LFLAGS=-static -static-libgcc -static-libstdc++"
+    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "NAME=build_windows_gcc_sse4.2"
     - ./ci/build-windows-gcc.bat
 
-build-windows-msvc:
+build-windows-msvc-avx:
   stage: build
   tags:
     - windows
     - msvc
     - cmake
+    - x86
+  artifacts:
+    name: build-windows-msvc-avx
+    paths:
+      - build_windows_msvc_avx
   script:
+    - set "CFLAGS=-DMULTI_PREC /arch:AVX"
+    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "NAME=build_windows_msvc_avx"
     - ./ci/build-windows-msvc.bat
 
-build-mac-osx-clang:
+build-mac-osx-clang-sse4.2:
   stage: build
   tags:
     - mac-osx
     - apple-clang
     - cmake
+    - x86
+  artifacts:
+    name: build-macosx-clang-sse4.2
+    paths:
+      - build_macosx_clang_sse4.2
   script:
-    - ./ci/build-mac-osx-clang.sh
+    - export CC="clang"
+    - export CXX="clang++"
+    - export CFLAGS="-DMULTI_PREC -msse4.2"
+    - export CMAKE_OPT=""
+    - export NAME="build_macosx_clang_sse4.2"
+    - source ./ci/threads.sh
+    - ./ci/build-linux-macosx.sh
 
 test-regression:
   stage: test
   retry: 1
+  dependencies:
+    - build-linux-gcc-sse4.2
   tags:
     - linux
     - sse4.2
@@ -154,7 +289,7 @@ test-regression:
       - test-regression-results/
   script:
     - source ./ci/threads.sh
-    - ./ci/test-regression.py --build-path build_test_linux_x86_gcc --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --build-path build_linux_gcc_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-build-coverage-regression:
   stage: test
@@ -174,6 +309,8 @@ test-build-coverage-regression:
 
 coverage-linux:
   stage: coverage
+  dependencies:
+    - test-build-coverage-regression
   tags:
     - linux
     - lcov
@@ -189,6 +326,9 @@ coverage-linux:
 
 sonarqube-linux:
   stage: deploy
+  dependencies:
+    - analysis-cppcheck
+    - coverage-linux
   tags:
     - sonarqube
   only:

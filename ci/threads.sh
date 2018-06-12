@@ -2,6 +2,10 @@
 # set -x
 
 if [ -z "$THREADS" ]; then
-	THREADS=$(grep -c ^processor /proc/cpuinfo)
-	export THREADS
+	if [ ! -f /proc/cpuinfo ]; then
+		export THREADS=1
+	else
+		THREADS=$(grep -c ^processor /proc/cpuinfo)
+		export THREADS
+	fi
 fi
