@@ -33,8 +33,9 @@ build-linux-gcc-nointr:
     - gsl
     - x86
   artifacts:
+    name: build-linux-gcc-nointr
     paths:
-      - build_linux_gcc_nointr.tar.gz
+      - build_linux_gcc_nointr
   script:
     - export CC="gcc"
     - export CXX="g++"
@@ -53,8 +54,9 @@ build-linux-gcc-sse4.2:
     - gsl
     - x86
   artifacts:
+    name: build-linux-gcc-sse4.2
     paths:
-      - build_linux_gcc_sse4.2.tar.gz
+      - build_linux_gcc_sse4.2
   script:
     - export CC="gcc"
     - export CXX="g++"
@@ -73,8 +75,9 @@ build-linux-gcc-avx2:
     - gsl
     - x86
   artifacts:
+    name: build-linux-gcc-avx2
     paths:
-      - build_linux_gcc_avx2.tar.gz
+      - build_linux_gcc_avx2
   script:
     - export CC="gcc"
     - export CXX="g++"
@@ -93,8 +96,9 @@ build-linux-gcc-8-bit:
     - cmake
     - gsl
   artifacts:
+    name: build-linux-gcc-8-bit
     paths:
-      - build_linux_gcc_8_bit.tar.gz
+      - build_linux_gcc_8_bit
   script:
     - export CC="gcc"
     - export CXX="g++"
@@ -113,8 +117,9 @@ build-linux-gcc-mpi:
     - cmake
     - gsl
   artifacts:
+    name: build-linux-gcc-mpi
     paths:
-      - build_linux_gcc_mpi.tar.gz
+      - build_linux_gcc_mpi
   script:
     - export CC="gcc"
     - export CXX="g++"
@@ -132,8 +137,9 @@ build-linux-gcc-systemc:
     - systemc
     - cmake
   artifacts:
+    name: build-linux-gcc-systemc
     paths:
-      - build_linux_gcc_systemc.tar.gz
+      - build_linux_gcc_systemc
   script:
     - cp $SYSTEMC_HOME/FindSystemC.cmake cmake/Modules/
     - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
@@ -153,8 +159,9 @@ build-linux-clang:
     - cmake
     - gsl
   artifacts:
+    name: build-linux-clang
     paths:
-      - build_linux_clang.tar.gz
+      - build_linux_clang
   script:
     - export CC="clang"
     - export CXX="clang++"
@@ -172,8 +179,9 @@ build-linux-gcc-4.8:
     - cmake
     - gsl
   artifacts:
+    name: build-linux-gcc-4.8
     paths:
-      - build_linux_gcc-4.8.tar.gz
+      - build_linux_gcc-4.8
   script:
     - export CC="gcc-4.8"
     - export CXX="g++-4.8"
@@ -192,8 +200,9 @@ build-linux-icpc:
     - mkl
     - gsl
   artifacts:
+    name: build-linux-icpc
     paths:
-      - build_linux_icpc.tar.gz
+      - build_linux_icpc
   script:
     - source /opt/intel/vars-intel.sh
     - export CC="icc"
@@ -211,8 +220,9 @@ build-windows-gcc-sse4.2:
     - gcc
     - cmake
   artifacts:
+    name: build-windows-gcc-sse4.2
     paths:
-      - build_windows_gcc_sse4.2/
+      - build_windows_gcc_sse4.2
   script:
     - ./ci/build-windows-gcc.bat
 
@@ -223,8 +233,9 @@ build-windows-msvc-avx:
     - msvc
     - cmake
   artifacts:
+    name: build-windows-msvc-avx
     paths:
-      - build_windows_msvc_avx/
+      - build_windows_msvc_avx
   script:
     - ./ci/build-windows-msvc.bat
 
@@ -236,8 +247,9 @@ build-mac-osx-clang-sse4.2:
     - cmake
     - x86
   artifacts:
+    name: build-macosx-clang-sse4.2
     paths:
-      - build_macosx_clang_sse4.2.tar.gz
+      - build_macosx_clang_sse4.2
   script:
     - export CC="clang"
     - export CXX="clang++"
@@ -263,7 +275,6 @@ test-regression:
      paths:
       - test-regression-results/
   script:
-    - tar -xvvf build_linux_gcc_sse4.2.tar.gz
     - source ./ci/threads.sh
     - ./ci/test-regression.py --build-path build_linux_gcc_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 

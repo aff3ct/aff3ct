@@ -15,5 +15,4 @@ rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 mkdir $NAME $NAME/bin $NAME/lib
 cp bin/aff3ct $NAME/bin/aff3ct
 cp lib/libaff3ct.a $NAME/lib/libaff3ct.a
-tar -zcvf $NAME.tar.gz $NAME/
-mv $NAME.tar.gz ../
+mv $NAME ../
