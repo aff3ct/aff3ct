@@ -209,7 +209,7 @@ build-linux-icpc:
   script:
     - source /opt/intel/vars-intel.sh
     - export CC="icc"
-    - export CXX"icpc"
+    - export CXX="icpc"
     - export CFLAGS="-DMULTI_PREC -march=native -std=c++11"
     - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MKL=ON"
     - export NAME="build_linux_icpc"
