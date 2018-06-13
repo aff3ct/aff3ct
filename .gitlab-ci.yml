@@ -44,7 +44,7 @@ build-linux-gcc-nointr:
     - export CMAKE_OPT="-DENABLE_GSL=ON"
     - export NAME="build_linux_gcc_nointr"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 build-linux-gcc-sse4.2:
   stage: build
@@ -66,7 +66,7 @@ build-linux-gcc-sse4.2:
     - export CMAKE_OPT="-DENABLE_GSL=ON"
     - export NAME="build_linux_gcc_sse4.2"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 build-linux-gcc-avx2:
   stage: build
@@ -88,7 +88,7 @@ build-linux-gcc-avx2:
     - export CMAKE_OPT="-DENABLE_GSL=ON"
     - export NAME="build_linux_gcc_avx2"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 build-linux-gcc-8-bit:
   stage: build
@@ -109,7 +109,7 @@ build-linux-gcc-8-bit:
     - export CMAKE_OPT="-DENABLE_GSL=ON"
     - export NAME="build_linux_gcc_8_bit"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 build-linux-gcc-mpi:
   stage: build
@@ -130,7 +130,7 @@ build-linux-gcc-mpi:
     - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MPI=ON"
     - export NAME="build_linux_gcc_mpi"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 build-linux-gcc-systemc:
   stage: build
@@ -152,7 +152,7 @@ build-linux-gcc-systemc:
     - export CMAKE_OPT="-DENABLE_SYSTEMC=ON"
     - export NAME="build_linux_gcc_systemc"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 build-linux-clang:
   stage: build
@@ -172,7 +172,7 @@ build-linux-clang:
     - export CMAKE_OPT="-DENABLE_GSL=ON"
     - export NAME="build_linux_clang"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 build-linux-gcc-4.8:
   stage: build
@@ -192,7 +192,7 @@ build-linux-gcc-4.8:
     - export CMAKE_OPT="-DENABLE_GSL=ON"
     - export NAME="build_linux_gcc-4.8"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 build-linux-icpc:
   stage: build
@@ -215,7 +215,7 @@ build-linux-icpc:
     - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MKL=ON"
     - export NAME="build_linux_icpc"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 build-windows-gcc-sse4.2:
   stage: build
@@ -252,25 +252,25 @@ build-windows-msvc-avx:
     - set "NAME=build_windows_msvc_avx"
     - ./ci/build-windows-msvc.bat
 
-build-mac-osx-clang-sse4.2:
+build-macos-clang-sse4.2:
   stage: build
   tags:
-    - mac-osx
+    - macos
     - apple-clang
     - cmake
     - x86
   artifacts:
-    name: build-macosx-clang-sse4.2
+    name: build-macos-clang-sse4.2
     paths:
-      - build_macosx_clang_sse4.2
+      - build_macos_clang_sse4.2
   script:
     - export CC="clang"
     - export CXX="clang++"
     - export CFLAGS="-DMULTI_PREC -msse4.2"
     - export CMAKE_OPT=""
-    - export NAME="build_macosx_clang_sse4.2"
+    - export NAME="build_macos_clang_sse4.2"
     - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macosx.sh
+    - ./ci/build-linux-macos.sh
 
 test-regression:
   stage: test
@@ -345,7 +345,7 @@ deploy-builds-linux:
     - build-linux-gcc-sse4.2
     - build-linux-gcc-avx2
     - build-windows-gcc-sse4.2
-    - build-mac-osx-clang-sse4.2
+    - build-macos-clang-sse4.2
   tags:
     - linux
     - github
@@ -359,7 +359,7 @@ deploy-builds-linux:
     - source ./ci/tools/git-date.sh
     - source ./ci/tools/git-message.sh
     - source ./ci/tools/git-author.sh
-    - ./ci/deploy-builds-linux.sh build_linux_gcc_sse4.2 build_linux_gcc_avx2 build_windows_gcc_sse4.2 build_mac_osx_clang_sse4.2
+    - ./ci/deploy-builds-linux.sh build_linux_gcc_sse4.2 build_linux_gcc_avx2 build_windows_gcc_sse4.2 build_macos_clang_sse4.2
 
 pages:
   stage: deploy

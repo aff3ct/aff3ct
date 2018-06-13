@@ -18,9 +18,16 @@ do
 	zip -r $ZIP_NAME $BUILD
 
 	cp $ZIP_NAME aff3ct.github.io/ressources/builds/
+
+	if [ -z "$BUILDS_LIST" ]
+	then
+		BUILDS_LIST=${ZIP_NAME}
+	else
+		BUILDS_LIST=${FILE},${ZIP_NAME}
+	fi
 done
 
-echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\"" >> aff3ct.github.io/ressources/download_${GIT_BRANCH}.csv
+echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> aff3ct.github.io/ressources/download_${GIT_BRANCH}.csv
 
 cd aff3ct.github.io
 git add -f ressources/builds/*
