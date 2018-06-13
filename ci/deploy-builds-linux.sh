@@ -23,7 +23,7 @@ do
 	then
 		BUILDS_LIST=${ZIP_NAME}
 	else
-		BUILDS_LIST=${FILE},${ZIP_NAME}
+		BUILDS_LIST=${BUILDS_LIST},${ZIP_NAME}
 	fi
 done
 
