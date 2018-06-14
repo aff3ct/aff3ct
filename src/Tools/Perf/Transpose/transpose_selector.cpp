@@ -79,7 +79,7 @@ bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, in
 #elif defined(__SSE4_1__)
 	if (n >= 128)
 	{
-		if (((uintptr_t)src) % (128))
+		if (((uintptr_t)src) % (128 / 8))
 			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
 		if (((uintptr_t)dst) % (128 / 8))
 			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
@@ -90,7 +90,7 @@ bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, in
 #elif (defined(__ARM_NEON__) || defined(__ARM_NEON))
 	if (n >= 128)
 	{
-		if (((uintptr_t)src) % (128))
+		if (((uintptr_t)src) % (128 / 8))
 			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
 		if (((uintptr_t)dst) % (128 / 8))
 			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
