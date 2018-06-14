@@ -57,6 +57,12 @@ void Terminal_BFER<B,R>
 ::legend(std::ostream &stream)
 {
 	this->cols_groups.resize(2);
+	for (size_t i = 0; i < this->cols_groups.size(); i++)
+	{
+		this->cols_groups[i].first.first.clear();
+		this->cols_groups[i].first.second.clear();
+		this->cols_groups[i].second.clear();
+	}
 
 	auto& bfer_title       = this->cols_groups[0].first;
 	auto& bfer_cols        = this->cols_groups[0].second;
@@ -73,8 +79,6 @@ void Terminal_BFER<B,R>
 
 		bfer_title.first += "Bit Error Rate (BER) and Frame Error Rate (FER)";
 	}
-
-	bfer_cols.clear();
 
 	if (this->n == nullptr)
 	{
@@ -114,7 +118,6 @@ void Terminal_BFER<B,R>
 	}
 
 	throughput_title = std::make_pair("Global throughput", "and elapsed time");
-	throughput_cols.clear();
 	throughput_cols.push_back(std::make_pair("SIM_THR", "(Mb/s)"));
 	throughput_cols.push_back(std::make_pair("ET/RT", "(hhmmss)"));
 
