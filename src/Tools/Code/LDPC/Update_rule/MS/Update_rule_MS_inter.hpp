@@ -83,7 +83,6 @@ public:
 		const auto var_sign = mipp::sign(var_val);
 		const auto tmp      = this->min1;
 
-
 		this->sign ^= var_sign;
 		this->min1  = mipp::min(this->min1,           var_abs      );
 		this->min2  = mipp::min(this->min2, mipp::max(var_abs, tmp));
