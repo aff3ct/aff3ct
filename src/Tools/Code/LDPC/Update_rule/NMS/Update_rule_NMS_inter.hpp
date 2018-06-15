@@ -18,16 +18,24 @@ template <typename R, int F = 0> inline mipp::Reg<R> normalize(const mipp::Reg<R
 {
 	return val * mipp::Reg<R>((R)factor);
 }
-template <> inline mipp::Reg<int16_t > normalize<int16_t, 1>(const mipp::Reg<int16_t > v, const float f) { return (v >> 3);                       } // v * 0.125
-template <> inline mipp::Reg<int16_t > normalize<int16_t, 2>(const mipp::Reg<int16_t > v, const float f) { return            (v >> 2);            } // v * 0.250
-template <> inline mipp::Reg<int16_t > normalize<int16_t, 3>(const mipp::Reg<int16_t > v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
-template <> inline mipp::Reg<int16_t > normalize<int16_t, 4>(const mipp::Reg<int16_t > v, const float f) { return                       (v >> 1); } // v * 0.500
-template <> inline mipp::Reg<int16_t > normalize<int16_t, 5>(const mipp::Reg<int16_t > v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
-template <> inline mipp::Reg<int16_t > normalize<int16_t, 6>(const mipp::Reg<int16_t > v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
-template <> inline mipp::Reg<int16_t > normalize<int16_t, 7>(const mipp::Reg<int16_t > v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
-template <> inline mipp::Reg<int16_t > normalize<int16_t, 8>(const mipp::Reg<int16_t > v, const float f) { return v;                              } // v * 1.000
-template <> inline mipp::Reg<float   > normalize<float  , 8>(const mipp::Reg<float   > v, const float f) { return v;                              } // v * 1.000
-template <> inline mipp::Reg<double  > normalize<double , 8>(const mipp::Reg<double  > v, const float f) { return v;                              } // v * 1.000
+template <> inline mipp::Reg<int16_t> normalize<int16_t, 1>(const mipp::Reg<int16_t> v, const float f) { return (v >> 3);                       } // v * 0.125
+template <> inline mipp::Reg<int8_t > normalize<int8_t , 1>(const mipp::Reg<int8_t > v, const float f) { return (v >> 3);                       }
+template <> inline mipp::Reg<int16_t> normalize<int16_t, 2>(const mipp::Reg<int16_t> v, const float f) { return            (v >> 2);            } // v * 0.250
+template <> inline mipp::Reg<int8_t > normalize<int8_t , 2>(const mipp::Reg<int8_t > v, const float f) { return            (v >> 2);            }
+template <> inline mipp::Reg<int16_t> normalize<int16_t, 3>(const mipp::Reg<int16_t> v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
+template <> inline mipp::Reg<int8_t > normalize<int8_t , 3>(const mipp::Reg<int8_t > v, const float f) { return (v >> 3) + (v >> 2);            }
+template <> inline mipp::Reg<int16_t> normalize<int16_t, 4>(const mipp::Reg<int16_t> v, const float f) { return                       (v >> 1); } // v * 0.500
+template <> inline mipp::Reg<int8_t > normalize<int8_t , 4>(const mipp::Reg<int8_t > v, const float f) { return                       (v >> 1); }
+template <> inline mipp::Reg<int16_t> normalize<int16_t, 5>(const mipp::Reg<int16_t> v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
+template <> inline mipp::Reg<int8_t > normalize<int8_t , 5>(const mipp::Reg<int8_t > v, const float f) { return (v >> 3) +            (v >> 1); }
+template <> inline mipp::Reg<int16_t> normalize<int16_t, 6>(const mipp::Reg<int16_t> v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
+template <> inline mipp::Reg<int8_t > normalize<int8_t , 6>(const mipp::Reg<int8_t > v, const float f) { return            (v >> 2) + (v >> 1); }
+template <> inline mipp::Reg<int16_t> normalize<int16_t, 7>(const mipp::Reg<int16_t> v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
+template <> inline mipp::Reg<int8_t > normalize<int8_t , 7>(const mipp::Reg<int8_t > v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); }
+template <> inline mipp::Reg<int16_t> normalize<int16_t, 8>(const mipp::Reg<int16_t> v, const float f) { return v;                              } // v * 1.000
+template <> inline mipp::Reg<int8_t > normalize<int8_t , 8>(const mipp::Reg<int8_t > v, const float f) { return v;                              }
+template <> inline mipp::Reg<float  > normalize<float  , 8>(const mipp::Reg<float  > v, const float f) { return v;                              }
+template <> inline mipp::Reg<double > normalize<double , 8>(const mipp::Reg<double > v, const float f) { return v;                              }
 
 
 template <typename R = float, int F = 0>
@@ -42,6 +50,9 @@ public:
 	explicit Update_rule_NMS_inter(const float normalize_factor)
 	: name("NMS"), normalize_factor(normalize_factor), MS()
 	{
+		if (sizeof(R) == 1)
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "This update rule does not work in 8-bit fixed-point.");
+
 		if (typeid(R) == typeid(int16_t) || typeid(R) == typeid(int8_t))
 		{
 			bool error = false;

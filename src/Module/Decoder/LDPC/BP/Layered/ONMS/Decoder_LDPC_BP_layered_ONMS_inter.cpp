@@ -40,7 +40,7 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	const std::string name = "Decoder_LDPC_BP_layered_ONMS_inter";
 	this->set_name(name);
 
-	if (typeid(R) == typeid(signed char))
+	if (sizeof(R) == 1)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder does not work in 8-bit fixed-point.");
 
 	if (saturation <= 0)
