@@ -416,6 +416,16 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
 			                                           (signed char*)s_bis.data(),
 			                                           (int)this->N);
+			if (!fast_deinterleave)
+			{
+				std::stringstream message;
+				message << "Inverse transposition only supports NEON, SSE4.1 and AVX2 instruction sets and the "
+				           "frame size 'N' has to be greater than 128 for NEON/SSE4.1 and greater than 256 for AVX2 "
+				           "('N' = " << this->N << "). "
+				           "To ensure the portability please do not compile with the -DENABLE_BIT_PACKING definition.";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+
 			tools::Bit_packer<B>::unpack(this->s_bis.data(), this->s.data(), this->N, n_frames);
 		}
 #endif
@@ -454,6 +464,15 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
 			                                           (signed char*)s_bis.data(),
 			                                           (int)this->N);
+			if (!fast_deinterleave)
+			{
+				std::stringstream message;
+				message << "Inverse transposition only supports NEON, SSE4.1 and AVX2 instruction sets and the "
+				           "frame size 'N' has to be greater than 128 for NEON/SSE4.1 and greater than 256 for AVX2 "
+				           "('N' = " << this->N << "). "
+				           "To ensure the portability please do not compile with the -DENABLE_BIT_PACKING definition.";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
 			tools::Bit_packer<B>::unpack(this->s_bis.data(), V_N, this->N, n_frames);
 		}
 #endif
