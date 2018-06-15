@@ -357,7 +357,8 @@ bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 	auto n_chk_nodes = (int)H.get_n_cols();
 	auto c = 0;
-	while (c < n_chk_nodes && mipp::testz(syndrome))
+	auto syndrome_scalar = true;
+	while (c < n_chk_nodes && (syndrome_scalar = mipp::testz(syndrome)))
 	{
 		auto sign = zero;
 		const auto chk_degree = (int)this->H[c].size();
@@ -371,7 +372,7 @@ bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		c++;
 	}
 
-	return (mipp::testz(syndrome));
+	return syndrome_scalar;
 }
 
 // ==================================================================================== explicit template instantiation

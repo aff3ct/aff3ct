@@ -241,7 +241,8 @@ bool Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
 
 		auto n_chk_nodes = (int)H.get_n_cols();
 		auto c = 0;
-		while (c < n_chk_nodes && mipp::testz(syndrome))
+		auto syndrome_scalar = true;
+		while (c < n_chk_nodes && (syndrome_scalar = mipp::testz(syndrome)))
 		{
 			auto sign = zero;
 			const auto chk_degree = (int)this->H[c].size();
@@ -254,8 +255,6 @@ bool Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
 			syndrome |= sign;
 			c++;
 		}
-
-		const auto syndrome_scalar = mipp::testz(syndrome);
 
 		this->cur_syndrome_depth = syndrome_scalar ? (this->cur_syndrome_depth +1) % this->syndrome_depth : 0;
 		return syndrome_scalar && (this->cur_syndrome_depth == 0);

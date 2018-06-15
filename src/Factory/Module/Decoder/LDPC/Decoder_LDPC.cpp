@@ -14,6 +14,7 @@
 
 #ifdef __cpp_aligned_new
 #include "Module/Decoder/LDPC/BP/Layered/Decoder_LDPC_BP_layered_inter.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_inter.hpp"
 #include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS_inter.hpp"
 #include "Tools/Code/LDPC/Update_rule/OMS/Update_rule_OMS_inter.hpp"
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_inter.hpp"
@@ -240,6 +241,31 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 		else if (this->implem == "OMS")	return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 #endif
 	}
+#ifdef __cpp_aligned_new // new LDPC flooding SIMD
+	else if (this->type == "BP_FLOODING" && this->simd_strategy == "INTER")
+	{
+		     if (this->implem == "MS" ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_MS_inter <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS_inter <Q>(            ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "OMS") return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_OMS_inter<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS_inter<Q>(this->offset), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "NMS")
+		{
+			if (typeid(Q) == typeid(int16_t) || typeid(Q) == typeid(int8_t))
+			{
+				     if (this->norm_factor == 0.125f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q,1>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q,1>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				else if (this->norm_factor == 0.250f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q,2>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q,2>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				else if (this->norm_factor == 0.375f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q,3>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q,3>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				else if (this->norm_factor == 0.500f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q,4>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q,4>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				else if (this->norm_factor == 0.625f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q,5>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q,5>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				else if (this->norm_factor == 0.750f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q,6>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q,6>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				else if (this->norm_factor == 0.875f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q,7>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q,7>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				else if (this->norm_factor == 1.000f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q,8>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q,8>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				else
+					return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			}
+			else
+				return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_inter<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		}
+	}
+#endif
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
