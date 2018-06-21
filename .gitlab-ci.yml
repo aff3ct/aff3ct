@@ -234,6 +234,7 @@ build-windows-gcc-sse4.2:
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
     - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
     - set "NAME=build_windows_gcc_sse4.2"
+    - ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
 
 build-windows-msvc-avx:
@@ -251,6 +252,7 @@ build-windows-msvc-avx:
     - set "CFLAGS=-DMULTI_PREC /arch:AVX"
     - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
     - set "NAME=build_windows_msvc_avx"
+    - ./ci/tools/threads.bat
     - ./ci/build-windows-msvc.bat
 
 build-macos-clang-sse4.2:
