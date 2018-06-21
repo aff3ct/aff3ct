@@ -1,7 +1,9 @@
 @echo on
+VS_PATH
 
 set "VSCMD_START_DIR=%CD%"
-call "vcvars64.bat"
+call "%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat"
+
 mkdir build
 cd build
 cmake .. -G"Visual Studio 15 2017 Win64" %CMAKE_OPT% -DCMAKE_CXX_FLAGS="-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc %CFLAGS%"
