@@ -95,7 +95,7 @@ build-linux-gcc-8-bit:
   tags:
     - linux
     - gcc
-    - arm32
+    - arm
     - cmake
     - gsl
   artifacts:
@@ -221,6 +221,7 @@ build-windows-gcc-sse4.2:
   stage: build
   tags:
     - windows
+    - 64-bit
     - gcc
     - cmake
     - x86
