@@ -1,6 +1,6 @@
 @echo off
 
-IF "%THREADS%"=="" goto End
+IF "%THREADS%" NEQ "" goto End
 
 set "THREADS=%NUMBER_OF_PROCESSORS%"
 
