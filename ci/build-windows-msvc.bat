@@ -1,8 +1,5 @@
 @echo on
 
-set PATH=%PATH%;C:\Program Files\Git\cmd
-set PATH=%PATH%;C:\Program Files\CMake\bin
-set PATH=%PATH%;C:\Program Files\Git\mingw64\bin
 set "VSCMD_START_DIR=%CD%"
 call "vcvars64.bat"
 mkdir build
