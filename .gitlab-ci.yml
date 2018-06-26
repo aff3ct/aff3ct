@@ -226,6 +226,7 @@ build-windows-gcc-x86-sse4.2:
     - gcc
     - cmake
     - x86
+    - 32-bit
   artifacts:
     name: build-windows-gcc-x86-sse4.2
     paths:
