@@ -51,7 +51,7 @@ namespace aff3ct
 namespace tools
 {
 
-template<size_t precision> // the wanted precision 8, 1-, 32, 64
+template<size_t precision> // the wanted precision 8, 16, 32, 64
 struct types_from_prec
 {
 
