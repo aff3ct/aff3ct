@@ -46,7 +46,7 @@ build-linux-gcc-nointr:
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
-build-linux-gcc-sse4.2:
+build-linux-gcc-x64-sse4.2:
   stage: build
   tags:
     - linux
@@ -54,21 +54,22 @@ build-linux-gcc-sse4.2:
     - cmake
     - gsl
     - x86
+    - 64-bit
   artifacts:
-    name: build-linux-gcc-sse4.2
+    name: build-linux-gcc-x64-sse4.2
     paths:
-      - build_linux_gcc_sse4.2
+      - build_linux_gcc_x64_sse4.2
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -msse4.2"
+    - export CFLAGS="-DMULTI_PREC -m64 -msse4.2"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
     - export CMAKE_OPT="-DENABLE_GSL=ON"
-    - export NAME="build_linux_gcc_sse4.2"
+    - export NAME="build_linux_gcc_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
-build-linux-gcc-avx2:
+build-linux-gcc-x64-avx2:
   stage: build
   tags:
     - linux
@@ -76,17 +77,18 @@ build-linux-gcc-avx2:
     - cmake
     - gsl
     - x86
+    - 64-bit
   artifacts:
-    name: build-linux-gcc-avx2
+    name: build-linux-gcc-x64-avx2
     paths:
-      - build_linux_gcc_avx2
+      - build_linux_gcc_x64_avx2
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -mavx2 -mfma"
+    - export CFLAGS="-DMULTI_PREC -m64 -mavx2 -mfma"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
     - export CMAKE_OPT="-DENABLE_GSL=ON"
-    - export NAME="build_linux_gcc_avx2"
+    - export NAME="build_linux_gcc_x64_avx2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
@@ -217,7 +219,26 @@ build-linux-icpc:
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
-build-windows-gcc-sse4.2:
+build-windows-gcc-x86-sse4.2:
+  stage: build
+  tags:
+    - windows
+    - gcc
+    - cmake
+    - x86
+  artifacts:
+    name: build-windows-gcc-x86-sse4.2
+    paths:
+      - build_windows_gcc_x86_sse4.2
+  script:
+    - set "CFLAGS=-DMULTI_PREC -m32 -msse4.2"
+    - set "LFLAGS=-static -static-libgcc -static-libstdc++"
+    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "NAME=build_windows_gcc_x86_sse4.2"
+    - call ./ci/tools/threads.bat
+    - ./ci/build-windows-gcc.bat
+
+build-windows-gcc-x64-avx2:
   stage: build
   tags:
     - windows
@@ -226,14 +247,14 @@ build-windows-gcc-sse4.2:
     - cmake
     - x86
   artifacts:
-    name: build-windows-gcc-sse4.2
+    name: build-windows-gcc-x64-avx2
     paths:
-      - build_windows_gcc_sse4.2
+      - build_windows_gcc_x64_avx2
   script:
-    - set "CFLAGS=-DMULTI_PREC -msse4.2"
+    - set "CFLAGS=-DMULTI_PREC -m64 -mavx2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
     - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
-    - set "NAME=build_windows_gcc_sse4.2"
+    - set "NAME=build_windows_gcc_x64_avx2"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
 
@@ -255,7 +276,7 @@ build-windows-msvc-avx:
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-msvc.bat
 
-build-macos-clang-sse4.2:
+build-macos-clang-x64-sse4.2:
   stage: build
   tags:
     - macos
@@ -263,15 +284,15 @@ build-macos-clang-sse4.2:
     - cmake
     - x86
   artifacts:
-    name: build-macos-clang-sse4.2
+    name: build-macos-clang-x64-sse4.2
     paths:
-      - build_macos_clang_sse4.2
+      - build_macos_clang_x64_sse4.2
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-DMULTI_PREC -msse4.2"
+    - export CFLAGS="-DMULTI_PREC -m64 -msse4.2"
     - export CMAKE_OPT=""
-    - export NAME="build_macos_clang_sse4.2"
+    - export NAME="build_macos_clang_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
@@ -345,10 +366,11 @@ deploy-sonarqube-linux:
 deploy-builds-linux:
   stage: deploy
   dependencies:
-    - build-linux-gcc-sse4.2
-    - build-linux-gcc-avx2
-    - build-windows-gcc-sse4.2
-    - build-macos-clang-sse4.2
+    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
+    - build-windows-gcc-x86-sse4.2
+    - build-windows-gcc-x64-avx2
+    - build-macos-clang-x64-sse4.2
   tags:
     - linux
     - github
@@ -362,7 +384,7 @@ deploy-builds-linux:
     - source ./ci/tools/git-date.sh
     - source ./ci/tools/git-message.sh
     - source ./ci/tools/git-author.sh
-    - ./ci/deploy-builds-linux.sh build_linux_gcc_sse4.2 build_linux_gcc_avx2 build_windows_gcc_sse4.2 build_macos_clang_sse4.2
+    - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
 
 pages:
   stage: deploy
