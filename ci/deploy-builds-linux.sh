@@ -33,4 +33,42 @@ cd aff3ct.github.io
 git add -f ressources/builds/*
 git add -f ressources/download_${GIT_BRANCH}.csv
 git commit -m "Automatic from Gitlab: add new AFF3CT builds to the download section ($GIT_HASH)."
-git push origin master
+
+#delete old builds
+BUILD_CSV=ressources/download_${GIT_BRANCH}.csv
+N_BUILDS_TO_KEEP=0
+if [ "${GIT_BRANCH}" == "master" ]; then
+	N_BUILDS_TO_KEEP=5
+else
+	N_BUILDS_TO_KEEP=10
+fi
+N_BUILDS=$(wc -l $BUILD_CSV | cut -d " " -f1)
+N_BUILDS=$(($N_BUILDS-1))
+N_BUILDS_TO_RM=$(($N_BUILDS-$N_BUILDS_TO_KEEP))
+if (( $N_BUILDS_TO_RM >= 1 )); then
+	B=0
+	cat $BUILD_CSV | while read line
+	do
+		if (( $B != 0 )); then
+			FILES=$(echo $line | cut -d ";" -f6)
+			s1="\""
+			s2=""
+			FILES=$(echo "${FILES//$s1/$s2}")
+			N_FILES=$(echo $FILES |  sed 's/,/\n/g' | wc -l)
+			for (( F=1; F<=N_FILES; F++ ))
+			do
+				FILE=$(echo $FILES | cut -d "," -f$F)
+				FILE_PATH=ressources/builds/$FILE;
+				if [ -f $FILE_PATH ]; then
+					git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch ${FILE_PATH}' --prune-empty --tag-name-filter cat -- --all
+				fi
+			done
+		fi
+		if [ "${B}" -eq $N_BUILDS_TO_RM ]; then
+			break
+		fi
+		B=$((B+1))
+	done
+fi
+
+git push origin master --force
