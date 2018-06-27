@@ -60,7 +60,7 @@ if (( $N_BUILDS_TO_RM >= 1 )); then
 				FILE=$(echo $FILES | cut -d "," -f$F)
 				FILE_PATH=ressources/builds/$FILE;
 				if [ -f $FILE_PATH ]; then
-					git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch ${FILE_PATH}' --prune-empty --tag-name-filter cat -- --all
+					git filter-branch --force --index-filter "git rm --cached --ignore-unmatch ${FILE_PATH}" --prune-empty --tag-name-filter cat -- --all
 				fi
 			done
 		fi
