@@ -136,9 +136,7 @@ int sc_main(int argc, char **argv)
 			case 8 : launcher = factory::Launcher::build<B_8, R_8, Q_8 >(params, argc, (const char**)argv); break;
 			case 16: launcher = factory::Launcher::build<B_16,R_16,Q_16>(params, argc, (const char**)argv); break;
 			case 32: launcher = factory::Launcher::build<B_32,R_32,Q_32>(params, argc, (const char**)argv); break;
-#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
 			case 64: launcher = factory::Launcher::build<B_64,R_64,Q_64>(params, argc, (const char**)argv); break;
-#endif
 			default: break;
 		}
 #else

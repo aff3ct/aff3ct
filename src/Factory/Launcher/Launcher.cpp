@@ -91,11 +91,7 @@ void factory::Launcher::parameters
 	opt_args[{p+"-prec", "p"}] =
 		{"positive_int",
 		 "the simulation precision in bit.",
-		 "8, 16, 32"};
-
-#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-	opt_args[{p+"-prec", "p"}][2] += ", 64";
-#endif
+		 "8, 16, 32, 64"};
 #endif
 
 	opt_args[{"help", "h"}] =
@@ -160,13 +156,12 @@ void factory::Launcher::parameters
 			id_Q = typeid(Q_32);
 		break;
 
-#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
 		case 64:
 			id_B = typeid(B_64);
 			id_R = typeid(R_64);
 			id_Q = typeid(Q_64);
 		break;
-#endif
+
 		default :
 			std::stringstream message;
 			message << "Unsupported bit precision: " << this->sim_prec << ").";
