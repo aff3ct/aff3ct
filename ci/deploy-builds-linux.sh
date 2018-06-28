@@ -1,8 +1,12 @@
 #!/bin/bash
 set -x
 
-git clone git@gitlab.com:aff3ct/ressources.git
+REPO=aff3ct.github.io
+git clone git@github.com:aff3ct/${REPO}.git
+cd ${REPO}
+git submodule update --init --recursive
 mkdir ressources/aff3ct_builds
+cd ..
 
 for BUILD in "$@"
 do
@@ -17,7 +21,7 @@ do
 
 	zip -r $ZIP_NAME $BUILD
 
-	cp $ZIP_NAME ressources/aff3ct_builds/
+	cp $ZIP_NAME ${REPO}/ressources/aff3ct_builds/
 
 	if [ -z "$BUILDS_LIST" ]
 	then
@@ -27,13 +31,19 @@ do
 	fi
 done
 
-echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ressources/aff3ct_builds/download_${GIT_BRANCH}.csv
+echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ${REPO}/download/download_${GIT_BRANCH}.csv
+
+cd ${REPO}
+git add -f download/download_${GIT_BRANCH}.csv
+git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
+git push origin master
 
 cd ressources
+git checkout master
+git pull origin master
 # git lfs install --local
-# git lfs track aff3ct_builds/aff3ct_*
+# git lfs track aff3ct_builds/*
 git add -f aff3ct_builds/*
-git add -f aff3ct_builds/download_${GIT_BRANCH}.csv
 git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
 
 #delete old builds
