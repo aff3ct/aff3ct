@@ -377,6 +377,7 @@ deploy-builds-linux:
   tags:
     - linux
     - github
+    - git-lfs
   only:
     - master
     - development
