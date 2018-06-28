@@ -376,7 +376,7 @@ deploy-builds-linux:
     - build-macos-clang-x64-sse4.2
   tags:
     - linux
-    - github
+    - gitlab.com
     - git-lfs
   only:
     - master
