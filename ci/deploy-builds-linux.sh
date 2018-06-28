@@ -33,12 +33,7 @@ done
 
 echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ${REPO}/download/download_${GIT_BRANCH}.csv
 
-cd ${REPO}
-git add -f download/download_${GIT_BRANCH}.csv
-git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
-git push origin master
-
-cd ressources
+cd ${REPO}/ressources
 git checkout master
 git pull origin master
 # git lfs install --local
@@ -88,3 +83,9 @@ if (( $N_BUILDS_TO_RM >= 1 )); then
 fi
 
 git push origin master --force
+
+cd ..
+git add -f download/download_${GIT_BRANCH}.csv
+git add -f ressources
+git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
+git push origin master
