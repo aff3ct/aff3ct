@@ -47,7 +47,7 @@ git add -f aff3ct_builds/*
 git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
 
 #delete old builds
-BUILD_CSV=aff3ct_builds/download_${GIT_BRANCH}.csv
+BUILD_CSV=../download/download_${GIT_BRANCH}.csv
 N_BUILDS_TO_KEEP=0
 if [ "${GIT_BRANCH}" == "master" ]; then
 	N_BUILDS_TO_KEEP=5
