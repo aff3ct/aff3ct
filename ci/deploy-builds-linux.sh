@@ -30,6 +30,8 @@ done
 echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> aff3ct.github.io/ressources/download_${GIT_BRANCH}.csv
 
 cd aff3ct.github.io
+git lfs install --local
+git lfs track ressources/builds/*
 git add -f ressources/builds/*
 git add -f ressources/download_${GIT_BRANCH}.csv
 git commit -m "Automatic from Gitlab: add new AFF3CT builds to the download section ($GIT_HASH)."
@@ -61,6 +63,10 @@ if (( $N_BUILDS_TO_RM >= 1 )); then
 				FILE_PATH=ressources/builds/$FILE;
 				if [ -f $FILE_PATH ]; then
 					git filter-branch --force --index-filter "git rm --cached --ignore-unmatch ${FILE_PATH}" --prune-empty --tag-name-filter cat -- --all
+					rm -rf .git/refs/original/
+					git reflog expire --expire=now --all
+					git gc --prune=now
+					git gc --aggressive --prune=now
 				fi
 			done
 		fi
