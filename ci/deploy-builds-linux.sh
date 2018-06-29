@@ -1,8 +1,12 @@
 #!/bin/bash
 set -x
 
-git clone git@github.com:aff3ct/aff3ct.github.io.git
-mkdir aff3ct.github.io/ressources/builds
+REPO=aff3ct.github.io
+git clone git@github.com:aff3ct/${REPO}.git
+cd ${REPO}
+git submodule update --init --recursive
+mkdir ressources/aff3ct_builds
+cd ..
 
 for BUILD in "$@"
 do
@@ -17,7 +21,7 @@ do
 
 	zip -r $ZIP_NAME $BUILD
 
-	cp $ZIP_NAME aff3ct.github.io/ressources/builds/
+	cp $ZIP_NAME ${REPO}/ressources/aff3ct_builds/
 
 	if [ -z "$BUILDS_LIST" ]
 	then
@@ -27,17 +31,18 @@ do
 	fi
 done
 
-echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> aff3ct.github.io/ressources/download_${GIT_BRANCH}.csv
+echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ${REPO}/download/download_${GIT_BRANCH}.csv
 
-cd aff3ct.github.io
-git lfs install --local
-git lfs track ressources/builds/*
-git add -f ressources/builds/*
-git add -f ressources/download_${GIT_BRANCH}.csv
-git commit -m "Automatic from Gitlab: add new AFF3CT builds to the download section ($GIT_HASH)."
+cd ${REPO}/ressources
+git checkout master
+git pull origin master
+# git lfs install --local
+# git lfs track aff3ct_builds/*
+git add -f aff3ct_builds/*
+git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
 
 #delete old builds
-BUILD_CSV=ressources/download_${GIT_BRANCH}.csv
+BUILD_CSV=../download/download_${GIT_BRANCH}.csv
 N_BUILDS_TO_KEEP=0
 if [ "${GIT_BRANCH}" == "master" ]; then
 	N_BUILDS_TO_KEEP=5
@@ -60,13 +65,11 @@ if (( $N_BUILDS_TO_RM >= 1 )); then
 			for (( F=1; F<=N_FILES; F++ ))
 			do
 				FILE=$(echo $FILES | cut -d "," -f$F)
-				FILE_PATH=ressources/builds/$FILE;
+				FILE_PATH=aff3ct_builds/$FILE;
 				if [ -f $FILE_PATH ]; then
 					git filter-branch --force --index-filter "git rm --cached --ignore-unmatch ${FILE_PATH}" --prune-empty --tag-name-filter cat -- --all
 					rm -rf .git/refs/original/
 					git reflog expire --expire=now --all
-					git gc --prune=now
-					git gc --aggressive --prune=now
 				fi
 			done
 		fi
@@ -77,4 +80,12 @@ if (( $N_BUILDS_TO_RM >= 1 )); then
 	done
 fi
 
+git gc --prune=now
+# git gc --aggressive --prune=now
 git push origin master --force
+
+cd ..
+git add -f download/download_${GIT_BRANCH}.csv
+git add -f ressources
+git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
+git push origin master
