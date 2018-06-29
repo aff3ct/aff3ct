@@ -70,8 +70,6 @@ if (( $N_BUILDS_TO_RM >= 1 )); then
 					git filter-branch --force --index-filter "git rm --cached --ignore-unmatch ${FILE_PATH}" --prune-empty --tag-name-filter cat -- --all
 					rm -rf .git/refs/original/
 					git reflog expire --expire=now --all
-					git gc --prune=now
-					# git gc --aggressive --prune=now
 				fi
 			done
 		fi
@@ -82,6 +80,8 @@ if (( $N_BUILDS_TO_RM >= 1 )); then
 	done
 fi
 
+git gc --prune=now
+# git gc --aggressive --prune=now
 git push origin master --force
 
 cd ..
