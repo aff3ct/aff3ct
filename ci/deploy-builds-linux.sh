@@ -1,9 +1,11 @@
 #!/bin/bash
 set -x
 
-REPO=aff3ct.github.io
-git clone git@github.com:aff3ct/${REPO}.git
-cd ${REPO}
+REPO_WEB=aff3ct.github.io
+REPO_RESSOURCES=ressources
+git clone git@github.com:aff3ct/${REPO_WEB}.git
+cd ${REPO_WEB}
+git clone git@github.com:aff3ct/${REPO_RESSOURCES}.git
 git submodule update --init --recursive
 mkdir ressources/aff3ct_builds
 cd ..
@@ -21,7 +23,7 @@ do
 
 	zip -r $ZIP_NAME $BUILD
 
-	cp $ZIP_NAME ${REPO}/ressources/aff3ct_builds/
+	cp $ZIP_NAME ${REPO_WEB}/${REPO_RESSOURCES}/aff3ct_builds/
 
 	if [ -z "$BUILDS_LIST" ]
 	then
@@ -31,11 +33,9 @@ do
 	fi
 done
 
-echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ${REPO}/download/download_${GIT_BRANCH}.csv
+echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ${REPO_WEB}/download/download_${GIT_BRANCH}.csv
 
-cd ${REPO}/ressources
-git checkout master
-git pull origin master
+cd ${REPO_WEB}/${REPO_RESSOURCES}
 # git lfs install --local
 # git lfs track aff3ct_builds/*
 git add -f aff3ct_builds/*
@@ -86,6 +86,5 @@ git push origin master --force
 
 cd ..
 git add -f download/download_${GIT_BRANCH}.csv
-git add -f ressources
 git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
 git push origin master
