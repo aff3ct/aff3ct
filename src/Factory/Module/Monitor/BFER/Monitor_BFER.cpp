@@ -35,9 +35,9 @@ void Monitor_BFER::parameters
 	auto p = this->get_prefix();
 
 	args.add(
-		{p+"-cw-size", "N"},
+		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size for the mutual information computation.",
+		"the frame size for the mutual information computation.",
 		tools::arg_rank::REQ);
 
 	args.add(

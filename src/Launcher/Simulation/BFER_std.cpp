@@ -130,7 +130,7 @@ void BFER_std<B,R,Q>
 		params.qnt->store(this->arg_vals);
 
 	params.mnt->K = params.coded_monitoring ? N_cw : params.src->K;
-	params.mnt->N = N_cw;
+	params.mnt->N = N;
 
 	params.mnt->store(this->arg_vals);
 
