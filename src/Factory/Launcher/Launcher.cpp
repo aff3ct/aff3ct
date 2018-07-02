@@ -92,12 +92,8 @@ void factory::Launcher::parameters
 #ifdef MULTI_PREC
 	args.add(
 		{p+"-prec", "p"},
-		tools::Integer(tools::Including_set(8, 16, 32)),
+		tools::Integer(tools::Including_set(8, 16, 32, 64)),
 		"the simulation precision in bits.");
-
-#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-	tools::add_options(args.at({p+"-prec", "p"}), 0, 64);
-#endif
 #endif
 
 	args.add(
@@ -221,13 +217,12 @@ void factory::Launcher::parameters
 			id_Q = typeid(Q_32);
 		break;
 
-#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
 		case 64:
 			id_B = typeid(B_64);
 			id_R = typeid(R_64);
 			id_Q = typeid(Q_64);
 		break;
-#endif
+
 		default :
 			std::stringstream message;
 			message << "Unsupported bit precision: " << this->sim_prec << ").";

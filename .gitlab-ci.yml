@@ -3,6 +3,7 @@ stages:
   - build
   - test
   - coverage
+  - deploy
 
 before_script:
   - hostname
@@ -23,110 +24,383 @@ analysis-cppcheck:
   script:
     - ./ci/analysis-cppcheck.sh
 
-analysis-sonarqube:
-  stage: analysis
+build-linux-gcc-nointr:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+  artifacts:
+    name: build-linux-gcc-nointr
+    paths:
+      - build_linux_gcc_nointr
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -DMIPP_NO_INTRINSICS"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc_nointr"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+build-linux-gcc-x64-sse4.2:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+    - 64-bit
+  artifacts:
+    name: build-linux-gcc-x64-sse4.2
+    paths:
+      - build_linux_gcc_x64_sse4.2
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -m64 -msse4.2"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc_x64_sse4.2"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+build-linux-gcc-x64-avx2:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+    - 64-bit
+  artifacts:
+    name: build-linux-gcc-x64-avx2
+    paths:
+      - build_linux_gcc_x64_avx2
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -m64 -mavx2 -mfma"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc_x64_avx2"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+build-linux-gcc-8-bit:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - arm
+    - cmake
+    - gsl
+  artifacts:
+    name: build-linux-gcc-8-bit
+    paths:
+      - build_linux_gcc_8_bit
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DPREC_8_BIT -march=native"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc_8_bit"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+build-linux-gcc-mpi:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - mpi
+    - cmake
+    - gsl
+  artifacts:
+    name: build-linux-gcc-mpi
+    paths:
+      - build_linux_gcc_mpi
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -march=native"
+    - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MPI=ON"
+    - export NAME="build_linux_gcc_mpi"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+build-linux-gcc-systemc:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - systemc
+    - cmake
+  artifacts:
+    name: build-linux-gcc-systemc
+    paths:
+      - build_linux_gcc_systemc
+  script:
+    - cp $SYSTEMC_HOME/FindSystemC.cmake cmake/Modules/
+    - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-DMULTI_PREC -march=native -Wno-deprecated-declarations"
+    - export CMAKE_OPT="-DENABLE_SYSTEMC=ON"
+    - export NAME="build_linux_gcc_systemc"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+build-linux-clang:
+  stage: build
+  tags:
+    - linux
+    - clang
+    - cmake
+    - gsl
+  artifacts:
+    name: build-linux-clang
+    paths:
+      - build_linux_clang
+  script:
+    - export CC="clang"
+    - export CXX="clang++"
+    - export CFLAGS="-DMULTI_PREC"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_clang"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+build-linux-gcc-4.8:
+  stage: build
+  tags:
+    - linux
+    - gcc-4.8
+    - cmake
+    - gsl
+  artifacts:
+    name: build-linux-gcc-4.8
+    paths:
+      - build_linux_gcc-4.8
+  script:
+    - export CC="gcc-4.8"
+    - export CXX="g++-4.8"
+    - export CFLAGS="-DMULTI_PREC -march=native"
+    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export NAME="build_linux_gcc-4.8"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+build-linux-icpc:
+  stage: build
+  tags:
+    - linux
+    - icpc
+    - cmake
+    - mkl
+    - gsl
+    - x86
+  artifacts:
+    name: build-linux-icpc
+    paths:
+      - build_linux_icpc
+  script:
+    - source /opt/intel/vars-intel.sh
+    - export CC="icc"
+    - export CXX="icpc"
+    - export CFLAGS="-DMULTI_PREC -march=native -std=c++11"
+    - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MKL=ON"
+    - export NAME="build_linux_icpc"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+build-windows-gcc-x86-sse4.2:
+  stage: build
+  tags:
+    - windows
+    - gcc
+    - cmake
+    - x86
+    - 32-bit
+  artifacts:
+    name: build-windows-gcc-x86-sse4.2
+    paths:
+      - build_windows_gcc_x86_sse4.2
+  script:
+    - set "CFLAGS=-DMULTI_PREC -m32 -msse4.2"
+    - set "LFLAGS=-static -static-libgcc -static-libstdc++"
+    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "NAME=build_windows_gcc_x86_sse4.2"
+    - call ./ci/tools/threads.bat
+    - ./ci/build-windows-gcc.bat
+
+build-windows-gcc-x64-avx2:
+  stage: build
+  tags:
+    - windows
+    - 64-bit
+    - gcc
+    - cmake
+    - x86
+  artifacts:
+    name: build-windows-gcc-x64-avx2
+    paths:
+      - build_windows_gcc_x64_avx2
+  script:
+    - set "CFLAGS=-DMULTI_PREC -m64 -mavx2"
+    - set "LFLAGS=-static -static-libgcc -static-libstdc++"
+    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "NAME=build_windows_gcc_x64_avx2"
+    - call ./ci/tools/threads.bat
+    - ./ci/build-windows-gcc.bat
+
+build-windows-msvc-avx:
+  stage: build
+  tags:
+    - windows
+    - msvc
+    - cmake
+    - x86
+  artifacts:
+    name: build-windows-msvc-avx
+    paths:
+      - build_windows_msvc_avx
+  script:
+    - set "CFLAGS=-DMULTI_PREC /arch:AVX"
+    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "NAME=build_windows_msvc_avx"
+    - call ./ci/tools/threads.bat
+    - ./ci/build-windows-msvc.bat
+
+build-macos-clang-x64-sse4.2:
+  stage: build
+  tags:
+    - macos
+    - apple-clang
+    - cmake
+    - x86
+  artifacts:
+    name: build-macos-clang-x64-sse4.2
+    paths:
+      - build_macos_clang_x64_sse4.2
+  script:
+    - export CC="clang"
+    - export CXX="clang++"
+    - export CFLAGS="-DMULTI_PREC -m64 -msse4.2"
+    - export CMAKE_OPT=""
+    - export NAME="build_macos_clang_x64_sse4.2"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
+test-regression:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - powerful
+    - python
+  artifacts:
+     name: test-regression-results
+     when: always
+     paths:
+      - test-regression-results/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+
+test-build-coverage-regression:
+  stage: test
+  tags:
+    - linux
+    - gcc
+    - lcov
+    - sse4.2
+    - powerful
+  artifacts:
+     name: code-coverage-files
+     when: always
+     paths:
+      - code_coverage_files/
+  script:
+    - ./ci/test-build-coverage-regression.sh
+
+coverage-linux:
+  stage: coverage
+  dependencies:
+    - test-build-coverage-regression
+  tags:
+    - linux
+    - lcov
+    - lcov_cobertura
+  coverage: '/.*lines\.*: (\d+.\d+\%)/'
+  artifacts:
+     name: code-coverage-report
+     when: always
+     paths:
+       - code_coverage_report/
+  script:
+    - ./ci/coverage-linux.sh
+
+deploy-sonarqube-linux:
+  stage: deploy
+  dependencies:
+    - analysis-cppcheck
+    - coverage-linux
   tags:
     - sonarqube
   only:
     - master
     - development
   script:
-    - ./ci/analysis-sonarqube.sh
+    - source ./ci/tools/git-tag.sh
+    - source ./ci/tools/git-branch.sh
+    - ./ci/deploy-sonarqube-linux.sh
 
-build-linux-gcc:
-  stage: build
+deploy-builds-linux:
+  stage: deploy
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
+    - build-windows-gcc-x86-sse4.2
+    - build-windows-gcc-x64-avx2
+    - build-macos-clang-x64-sse4.2
   tags:
     - linux
+    - github
+    - git-lfs
+  only:
+    - master
+    - development
   script:
-    - ./ci/build-linux-gcc.sh
+    - source ./ci/tools/git-branch.sh
+    - source ./ci/tools/git-tag.sh
+    - source ./ci/tools/git-hash.sh
+    - source ./ci/tools/git-date.sh
+    - source ./ci/tools/git-message.sh
+    - source ./ci/tools/git-author.sh
+    - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
 
-build-linux-gcc-8-bit:
-  stage: build
+pages:
+  stage: deploy
   tags:
     - linux
+  dependencies:
+    - coverage-linux
   script:
-    - ./ci/build-linux-gcc-8-bit.sh
-
-build-linux-gcc-mpi:
-  stage: build
-  tags:
-    - linux
-  script:
-    - ./ci/build-linux-gcc-mpi.sh
-
-build-linux-gcc-systemc:
-  stage: build
-  tags:
-    - linux
-  script:
-    - ./ci/build-linux-gcc-systemc.sh
-
-build-linux-clang:
-  stage: build
-  tags:
-    - linux
-  script:
-    - ./ci/build-linux-clang.sh
-
-build-linux-gcc-4.8:
-  stage: build
-  tags:
-    - linux
-  script:
-    - ./ci/build-linux-gcc-4.8.sh
-
-build-linux-icpc:
-  stage: build
-  tags:
-    - linux
-  script:
-    - ./ci/build-linux-icpc.sh
-
-build-windows-gcc:
-  stage: build
-  tags:
-    - windows
-  script:
-    - ./ci/build-windows-gcc.bat
-
-build-windows-msvc:
-  stage: build
-  tags:
-    - windows
-  script:
-    - ./ci/build-windows-msvc.bat
-
-build-mac-osx-clang:
-  stage: build
-  tags:
-    - mac-osx
-  script:
-    - ./ci/build-mac-osx-clang.sh
-
-test-regression:
-  stage: test
-  retry: 1
-  tags:
-    - test
+    - mv code_coverage_report/ public/
   artifacts:
-     name: test-regression-results
-     when: always
-     paths:
-       - test-regression-results/
-  script:
-    - ./ci/test-build-linux-gcc.sh
-    - ./ci/test-regression.py --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1
-
-coverage-linux-gcc:
-  stage: coverage
-  tags:
-    - coverage
-  coverage: '/.*lines\.*: (\d+.\d+\%)/'
-  artifacts:
-     name: code_coverage_report
-     when: always
-     paths:
-       - code_coverage_files/
-       - code_coverage_report/
-  script:
-    - ./ci/coverage-linux-gcc.sh
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - development

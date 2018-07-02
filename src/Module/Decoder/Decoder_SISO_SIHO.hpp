@@ -27,6 +27,12 @@ template <typename B = int, typename R = float>
 class Decoder_SISO_SIHO : public Decoder_SIHO<B,R>, public Decoder_SISO<R>
 {
 public:
+	inline Task&   operator[](const dec::tsk                 t) { return Module::operator[]((int)t);                                }
+	inline Socket& operator[](const dec::sck::decode_siso    s) { return Module::operator[]((int)dec::tsk::decode_siso   )[(int)s]; }
+	inline Socket& operator[](const dec::sck::decode_siho    s) { return Module::operator[]((int)dec::tsk::decode_siho   )[(int)s]; }
+	inline Socket& operator[](const dec::sck::decode_siho_cw s) { return Module::operator[]((int)dec::tsk::decode_siho_cw)[(int)s]; }
+
+public:
 	/*!
 	 * \brief Constructor.
 	 *

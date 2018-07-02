@@ -1,13 +1,19 @@
 @echo on
 
-set PATH=%PATH%;C:\Program Files\Git\cmd
-set PATH=%PATH%;C:\Program Files\CMake\bin
-set PATH=%PATH%;C:\Program Files\Git\mingw64\bin
 mkdir build
 cd build
-cmake .. -G"MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Wall -Wno-misleading-indentation -funroll-loops -march=native -DMULTI_PREC"
-mingw32-make
+cmake .. -G"MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_BUILD_TYPE=Release %CMAKE_OPT% -DCMAKE_CXX_FLAGS="-Wall -Wno-misleading-indentation -funroll-loops %CFLAGS%" -DCMAKE_EXE_LINKER_FLAGS="%LFLAGS%"
+if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
+mingw32-make -j %THREADS%
+if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 
-cd bin
-aff3ct.exe --version
-aff3ct.exe -C POLAR -m 1.0 -M 3.5 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL --ter-freq 0
+mkdir %NAME%
+mkdir %NAME%\bin\
+mkdir %NAME%\lib\
+mkdir %NAME%\inc\
+
+ copy bin\aff3ct.exe  %NAME%\bin\aff3ct.exe
+ copy lib\libaff3ct.a %NAME%\lib\aff3ct.lib
+xcopy ..\src\*        %NAME%\inc\ /s /e
+
+move %NAME% ..\

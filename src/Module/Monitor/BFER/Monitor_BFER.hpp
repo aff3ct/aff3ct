@@ -101,18 +101,18 @@ public:
 	template <class A = std::allocator<B>>
 	int check_errors(const std::vector<B,A>& U, const std::vector<B,A>& Y, const int frame_id = -1)
 	{
-		if ((int)U.K() != this->K * this->n_frames)
+		if ((int)U.size() != this->K * this->n_frames)
 		{
 			std::stringstream message;
-			message << "'U.K()' has to be equal to 'K' * 'n_frames' ('U.K()' = " << U.K()
+			message << "'U.size()' has to be equal to 'K' * 'n_frames' ('U.size()' = " << U.size()
 			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if ((int)Y.K() != this->K * this->n_frames)
+		if ((int)Y.size() != this->K * this->n_frames)
 		{
 			std::stringstream message;
-			message << "'Y.K()' has to be equal to 'K' * 'n_frames' ('Y.K()' = " << Y.K()
+			message << "'Y.size()' has to be equal to 'K' * 'n_frames' ('Y.size()' = " << Y.size()
 			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}

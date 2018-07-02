@@ -97,8 +97,8 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 	this->_decode(Y_N1, frame_id);
 
 	// prepare for next round by processing extrinsic information
-	for (auto i = 0; i < this->N; i++)
-		Y_N2[i] = this->post[i] - Y_N1[i];
+	for (auto v = 0; v < this->N; v++)
+		Y_N2[v] = this->post[v] - Y_N1[v];
 }
 
 template <typename B, typename R, class Update_rule>
@@ -123,10 +123,10 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
-	for (auto i = 0; i < this->K; i++)
+	for (auto v = 0; v < this->K; v++)
 	{
-		const auto k = this->info_bits_pos[i];
-		V_K[i] = !(this->post[k] >= 0);
+		const auto k = this->info_bits_pos[v];
+		V_K[v] = !(this->post[k] >= 0);
 	}
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
@@ -230,12 +230,12 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 		this->up_rule.begin_chk_node_in(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
-			up_rule.compute_chk_node_in(v, var_to_chk[transpose_ptr[v]]);
+			this->up_rule.compute_chk_node_in(v, var_to_chk[transpose_ptr[v]]);
 		this->up_rule.end_chk_node_in();
 
 		this->up_rule.begin_chk_node_out(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
-			chk_to_var[transpose_ptr[v]] = up_rule.compute_chk_node_out(v, var_to_chk[transpose_ptr[v]]);
+			chk_to_var[transpose_ptr[v]] = this->up_rule.compute_chk_node_out(v, var_to_chk[transpose_ptr[v]]);
 		this->up_rule.end_chk_node_out();
 
 		transpose_ptr += chk_degree;
