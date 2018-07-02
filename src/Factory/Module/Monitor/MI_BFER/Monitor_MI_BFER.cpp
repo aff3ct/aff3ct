@@ -13,7 +13,7 @@ const std::string aff3ct::factory::Monitor_MI_BFER_prefix = "mnt";
 Monitor_MI_BFER::parameters
 ::parameters(const std::string &prefix)
 : Monitor::parameters(Monitor_MI_BFER_name, prefix),
-  Monitor_MI::parameters  (prefix),
+  Monitor_MI  ::parameters(prefix),
   Monitor_BFER::parameters(prefix)
 {
 }
@@ -37,21 +37,6 @@ void Monitor_MI_BFER::parameters
 
 	auto p = this->get_prefix();
 
-	args.erase({p+"-size", "N"});
-	args.erase({p+"-size", "K"});
-
-	args.add(
-		{p+"-info-bits", "K"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).",
-		tools::arg_rank::REQ);
-
-	args.add(
-		{p+"-fra-size", "N"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).",
-		tools::arg_rank::REQ);
-
 	args.add(
 		{p+"-mutinfo"},
 		tools::None(),
@@ -66,12 +51,7 @@ void Monitor_MI_BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K = vals.to_int({p+"-info-bits", "K"});
-	if(vals.exist({p+"-fra-size",  "N"})) this->N = vals.to_int({p+"-fra-size",  "N"});
-	if(vals.exist({p+"-mutinfo"       })) this->mutinfo = true;
-
-	Monitor_BFER::parameters::size = this->K;
-	Monitor_MI  ::parameters::size = this->N;
+	if(vals.exist({p+"-mutinfo"})) this->mutinfo = true;
 
 	this->n_frames = Monitor_MI::parameters::n_frames;
 }
@@ -83,7 +63,7 @@ void Monitor_MI_BFER::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("Compute mutual info",         this->mutinfo ? "yes" : "no"));
+	headers[p].push_back(std::make_pair("Compute mutual info", this->mutinfo ? "yes" : "no"));
 	if (this->mutinfo)
 		Monitor_MI::parameters::get_headers(headers, full);
 }

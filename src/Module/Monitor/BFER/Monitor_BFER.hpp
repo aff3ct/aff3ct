@@ -12,22 +12,13 @@ namespace aff3ct
 {
 namespace module
 {
-	namespace mnt_er
-	{
-		enum class tsk : uint8_t { check_errors, SIZE };
-
-		namespace sck
-		{
-			enum class check_errors : uint8_t { U, V, SIZE };
-		}
-	}
 
 template <typename B = int>
 class Monitor_BFER : virtual public Monitor
 {
 public:
-	inline Task&   operator[](const mnt_er::tsk               t) { return Module::operator[]((int)t);                                 }
-	inline Socket& operator[](const mnt_er::sck::check_errors s) { return Module::operator[]((int)mnt_er::tsk::check_errors)[(int)s]; }
+	inline Task&   operator[](const mnt::tsk               t) { return Module::operator[]((int)t);                              }
+	inline Socket& operator[](const mnt::sck::check_errors s) { return Module::operator[]((int)mnt::tsk::check_errors)[(int)s]; }
 
 	struct Values_t
 	{

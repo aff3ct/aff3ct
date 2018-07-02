@@ -20,7 +20,7 @@ struct Monitor_BFER : public Monitor
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		int         size = 0;
+		int         K = 0;
 
 		// optional parameters
 		std::string type           = "STD";

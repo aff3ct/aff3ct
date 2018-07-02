@@ -37,7 +37,7 @@ Monitor_BFER<B>
 
 	if (create_task)
 	{
-		auto &p = this->create_task("check_errors");
+		auto &p = this->create_task("check_errors", (int)mnt::tsk::check_errors);
 		auto &ps_U = this->template create_socket_in<B>(p, "U", this->K * this->n_frames);
 		auto &ps_V = this->template create_socket_in<B>(p, "V", this->K * this->n_frames);
 		this->create_codelet(p, [this, &ps_U, &ps_V]() -> int

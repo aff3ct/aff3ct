@@ -20,7 +20,7 @@ struct Monitor_MI : public Monitor
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		int         size = 0;
+		int         N = 0;
 
 		// optional parameters
 		std::string type = "STD";

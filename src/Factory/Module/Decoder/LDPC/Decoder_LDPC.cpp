@@ -69,6 +69,9 @@ void Decoder_LDPC::parameters
 	                                                     // so K is the N - H's height
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_FLOODING", "BP_LAYERED", "BP_PEELING");
+#ifdef __cpp_aligned_new
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_LAYERED_LEGACY");
+#endif
 	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA");
 
 	args.add(
@@ -212,9 +215,9 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 			else if (this->min == "MINS") return new module::Decoder_LDPC_BP_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
 	}
+#ifdef __cpp_aligned_new
 	else if (this->type == "BP_LAYERED" && this->simd_strategy == "INTER")
 	{
-#ifdef __cpp_aligned_new // new LDPC layered SIMD
 		     if (this->implem == "MS" ) return new module::Decoder_LDPC_BP_layered_inter<B,Q,tools::Update_rule_MS_inter <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS_inter <Q>(            ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		else if (this->implem == "OMS") return new module::Decoder_LDPC_BP_layered_inter<B,Q,tools::Update_rule_OMS_inter<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS_inter<Q>(this->offset), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		else if (this->implem == "NMS")
@@ -235,13 +238,19 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 			else
 				return new module::Decoder_LDPC_BP_layered_inter<B,Q,tools::Update_rule_NMS_inter<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_inter<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
-#else // legacy LDPC layered SIMD
+	}
+#endif
+#ifdef __cpp_aligned_new
+	else if (this->type == "BP_LAYERED_LEGACY" && this->simd_strategy == "INTER")
+#else
+	else if (this->type == "BP_LAYERED" && this->simd_strategy == "INTER")
+#endif
+	{
 		     if (this->implem == "MS" ) return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)0           , this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		else if (this->implem == "NMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)0           , this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		else if (this->implem == "OMS")	return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
-#endif
 	}
-#ifdef __cpp_aligned_new // new LDPC flooding SIMD
+#ifdef __cpp_aligned_new
 	else if (this->type == "BP_FLOODING" && this->simd_strategy == "INTER")
 	{
 		     if (this->implem == "MS" ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_MS_inter <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS_inter <Q>(            ), this->enable_syndrome, this->syndrome_depth, this->n_frames);

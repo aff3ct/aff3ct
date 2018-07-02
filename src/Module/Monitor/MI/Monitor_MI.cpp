@@ -35,7 +35,7 @@ Monitor_MI<B,R>
 
 	if (create_task)
 	{
-		auto &p = this->create_task("get_mutual_info");
+		auto &p = this->create_task("get_mutual_info", (int)mnt::tsk::get_mutual_info);
 		auto &ps_X = this->template create_socket_in<B>(p, "X", this->N * this->n_frames);
 		auto &ps_Y = this->template create_socket_in<R>(p, "Y", this->N * this->n_frames);
 		this->create_codelet(p, [this, &ps_X, &ps_Y]() -> int
@@ -121,8 +121,8 @@ template <typename B, typename R>
 void Monitor_MI<B,R>
 ::add_MI_value(const R mi)
 {
-	this->vals.n_fra++;
-	this->vals.MI += (mi - this->vals.MI) / (R)this->vals.n_fra;
+	this->vals.n_trials++;
+	this->vals.MI += (mi - this->vals.MI) / (R)this->vals.n_trials;
 
 	this->vals.MI_max = std::max(this->vals.MI_max, mi);
 	this->vals.MI_min = std::min(this->vals.MI_min, mi);
@@ -148,7 +148,7 @@ template <typename B, typename R>
 unsigned long long Monitor_MI<B,R>
 ::get_n_trials_fra() const
 {
-	return this->vals.n_fra;
+	return this->vals.n_trials;
 }
 
 template <typename B, typename R>
@@ -227,7 +227,7 @@ void Monitor_MI<B,R>
 	{
 		std::stringstream message;
 		message << "'this->N' is different than 'm.N' ('this->N' = " << this->N << ", 'm.N' = "
-		        << m.N <<").";
+		        << m.N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 

@@ -35,9 +35,9 @@ void Monitor_MI::parameters
 	auto p = this->get_prefix();
 
 	args.add(
-		{p+"-size", "N"},
+		{p+"-fra-size", "N"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size for the mutual information computation.",
+		"the frame size for the mutual information computation.",
 		tools::arg_rank::REQ);
 
 	args.add(
@@ -58,9 +58,9 @@ void Monitor_MI::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-size",   "N"})) this->size     = vals.to_int({p+"-size",   "N"});
-	if(vals.exist({p+"-fra",    "F"})) this->n_frames = vals.to_int({p+"-fra",    "F"});
-	if(vals.exist({p+"-trials", "n"})) this->n_trials = vals.to_int({p+"-trials", "n"});
+	if(vals.exist({p+"-fra-size", "N"})) this->N        = vals.to_int({p+"-fra-size", "N"});
+	if(vals.exist({p+"-fra",      "F"})) this->n_frames = vals.to_int({p+"-fra",      "F"});
+	if(vals.exist({p+"-trials",   "n"})) this->n_trials = vals.to_int({p+"-trials",   "n"});
 }
 
 void Monitor_MI::parameters
@@ -71,7 +71,7 @@ void Monitor_MI::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Number of trials (n)",        std::to_string(this->n_trials)));
-	if (full) headers[p].push_back(std::make_pair("Size (N)",          std::to_string(this->size    )));
+	if (full) headers[p].push_back(std::make_pair("Size (N)",          std::to_string(this->N       )));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 }
 
@@ -79,7 +79,7 @@ template <typename B, typename R>
 module::Monitor_MI<B,R>* Monitor_MI::parameters
 ::build() const
 {
-	if (this->type == "STD") return new module::Monitor_MI<B,R>(this->size, this->n_trials, this->n_frames);
+	if (this->type == "STD") return new module::Monitor_MI<B,R>(this->N, this->n_trials, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

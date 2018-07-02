@@ -82,7 +82,7 @@ void BFER_ite<B,R,Q>
 	this->args.erase({pqnt+"-size",      "N"});
 	this->args.erase({pqnt+"-fra",       "F"});
 	this->args.erase({pmnt+"-info-bits", "K"});
-	this->args.erase({pmnt+"-cw-size",   "N"});
+	this->args.erase({pmnt+"-fra-size",  "N"});
 	this->args.erase({pmnt+"-fra",       "F"});
 	this->args.erase({pter+"-info-bits", "K"});
 	this->args.erase({pter+"-cw-size",   "N"});

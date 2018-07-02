@@ -35,7 +35,7 @@ void Monitor_BFER::parameters
 	auto p = this->get_prefix();
 
 	args.add(
-		{p+"-size", "K"},
+		{p+"-info-bits", "K"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of bits to check.",
 		tools::arg_rank::REQ);
@@ -68,7 +68,7 @@ void Monitor_BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-size",      "K"})) this->size           = vals.to_int({p+"-size",      "K"});
+	if(vals.exist({p+"-info-bits", "K"})) this->K              = vals.to_int({p+"-info-bits", "K"});
 	if(vals.exist({p+"-fra",       "F"})) this->n_frames       = vals.to_int({p+"-fra",       "F"});
 	if(vals.exist({p+"-max-fe",    "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe",    "e"});
 	if(vals.exist({p+"-err-hist"      })) this->err_hist       = vals.to_int({p+"-err-hist"      });
@@ -83,7 +83,7 @@ void Monitor_BFER::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Frame error count (e)", std::to_string(this->n_frame_errors)));
-	if (full) headers[p].push_back(std::make_pair("Size (K)",          std::to_string(this->size    )));
+	if (full) headers[p].push_back(std::make_pair("Size (K)",          std::to_string(this->K       )));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 
 	if (this->err_hist >= 0)
@@ -94,7 +94,7 @@ template <typename B>
 module::Monitor_BFER<B>* Monitor_BFER::parameters
 ::build(bool count_unknown_values) const
 {
-	if (this->type == "STD") return new module::Monitor_BFER<B>(this->size, this->n_frame_errors, count_unknown_values, this->n_frames);
+	if (this->type == "STD") return new module::Monitor_BFER<B>(this->K, this->n_frame_errors, count_unknown_values, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

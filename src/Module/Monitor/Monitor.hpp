@@ -22,6 +22,17 @@ namespace aff3ct
 {
 namespace module
 {
+	namespace mnt
+	{
+		enum class tsk : uint8_t { check_errors, get_mutual_info, SIZE };
+
+		namespace sck
+		{
+			enum class check_errors    : uint8_t { U, V, SIZE };
+			enum class get_mutual_info : uint8_t { X, Y, SIZE };
+		}
+	}
+
 
 /*!
  * \class Monitor
@@ -36,6 +47,7 @@ namespace module
 class Monitor : public Module
 {
 public:
+
 	/*!
 	 * \brief Constructor.
 	 *

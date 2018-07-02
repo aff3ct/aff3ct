@@ -12,27 +12,18 @@ namespace aff3ct
 {
 namespace module
 {
-	namespace mnt_mi
-	{
-		enum class tsk : uint8_t { get_mutual_info, SIZE };
-
-		namespace sck
-		{
-			enum class get_mutual_info : uint8_t { X, Y, SIZE };
-		}
-	}
 
 template <typename B = int, typename R = float>
 class Monitor_MI : virtual public Monitor
 {
 public:
-	inline Task&   operator[](const mnt_mi::tsk                  t) { return Module::operator[]((int)t);                                    }
-	inline Socket& operator[](const mnt_mi::sck::get_mutual_info s) { return Module::operator[]((int)mnt_mi::tsk::get_mutual_info)[(int)s]; }
+	inline Task&   operator[](const mnt::tsk                  t) { return Module::operator[]((int)t);                                 }
+	inline Socket& operator[](const mnt::sck::get_mutual_info s) { return Module::operator[]((int)mnt::tsk::get_mutual_info)[(int)s]; }
 
 	struct Values_t
 	{
 		static constexpr unsigned n_attributes = 4;
-		unsigned long long n_fra;
+		unsigned long long n_trials;
 		R MI;
 		R MI_max;
 		R MI_min;
@@ -41,8 +32,8 @@ public:
 
 		Values_t& operator+=(const Values_t& o)
 		{
-			n_fra += o.n_fra;
-			MI += (o.MI - MI) / n_fra;
+			n_trials += o.n_trials;
+			MI += (o.MI - MI) / n_trials;
 			MI_max = std::max(MI_max, o.MI_max);
 			MI_min = std::min(MI_min, o.MI_min);
 			return *this;
@@ -53,7 +44,7 @@ public:
 			MI     = 0.;
 			MI_max = 0.;
 			MI_min = 1.;
-			n_fra  = 0;
+			n_trials  = 0;
 		}
 
 	#ifdef ENABLE_MPI
@@ -63,7 +54,7 @@ public:
 		                              MPI_Aint     displacements[n_attributes],
 		                              MPI_Datatype oldtypes     [n_attributes])
 		{
-			blen[0] = 1; displacements[0] = offsetof(Values_t, n_fra ); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
+			blen[0] = 1; displacements[0] = offsetof(Values_t, n_trials ); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
 			blen[1] = 1; displacements[1] = offsetof(Values_t, MI    ); oldtypes[1] = MPI_R_type;
 			blen[2] = 1; displacements[2] = offsetof(Values_t, MI_min); oldtypes[2] = MPI_R_type;
 			blen[3] = 1; displacements[3] = offsetof(Values_t, MI_max); oldtypes[3] = MPI_R_type;
