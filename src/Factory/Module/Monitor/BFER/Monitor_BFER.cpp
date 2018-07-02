@@ -57,19 +57,19 @@ void Monitor_BFER::parameters
 		"max number of frame errors for each SNR simulation.");
 
 	args.add(
-			{p+"-err-hist"},
-			tools::Integer(tools::Positive()),
-			"activate the histogram of the number of errors per frame. Set the max number of bit error per frame included in the histogram (0 is no limit).");
+		{p+"-err-hist"},
+		tools::Integer(tools::Positive()),
+		"activate the histogram of the number of errors per frame. Set the max number of bit error per frame included in the histogram (0 is no limit).");
 
 	args.add(
-			{p+"-err-hist-path"},
-			tools::File(tools::openmode::write),
-			"path to the output histogram (default is './hist', add automatically the current noise value and the extension '.txt')");
+		{p+"-err-hist-path"},
+		tools::File(tools::openmode::write),
+		"path to the output histogram (default is './hist', add automatically the current noise value and the extension '.txt')");
 
 	args.add(
-			{p+"-mutinfo"},
-			tools::None(),
-			"allow the computation of the mutual information.");
+		{p+"-mutinfo"},
+		tools::None(),
+		"allow the computation of the mutual information.");
 }
 
 void Monitor_BFER::parameters
@@ -79,7 +79,7 @@ void Monitor_BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-cw-size",   "N"})) this->N              = vals.to_int({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-fra-size",  "N"})) this->N              = vals.to_int({p+"-fra-size",  "N"});
 	if(vals.exist({p+"-info-bits", "K"})) this->K              = vals.to_int({p+"-info-bits", "K"});
 	if(vals.exist({p+"-fra",       "F"})) this->n_frames       = vals.to_int({p+"-fra",       "F"});
 	if(vals.exist({p+"-max-fe",    "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe",    "e"});
