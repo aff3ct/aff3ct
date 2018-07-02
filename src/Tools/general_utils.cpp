@@ -169,7 +169,7 @@ std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& 
 
 	std::vector<R> rangeR(new_length);
 
-	for (unsigned i = 0; i < new_length; i++)
+	for (auto i = 0; i < new_length; i++)
 		rangeR[i] = ((R)range[i])/float_precision;
 
 	return rangeR;
