@@ -21,6 +21,7 @@ struct Terminal : Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
+		std::string               type = "STD";
 		std::chrono::milliseconds frequency = std::chrono::milliseconds(500);
 		bool                      disabled  = false;
 

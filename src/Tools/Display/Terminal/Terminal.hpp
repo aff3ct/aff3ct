@@ -14,9 +14,6 @@
 #include <condition_variable>
 #include <iostream>
 #include <sstream>
-#include <iomanip>
-#include <vector>
-#include <utility>
 #include <string>
 
 #include "Tools/Display/rang_format/rang_format.h"
@@ -47,8 +44,6 @@ private:
 
 
 protected:
-	std::vector<Reporter*>& reporters;
-
 	std::chrono::time_point<std::chrono::steady_clock> t_term;
 	uint8_t real_time_state;
 
@@ -56,7 +51,7 @@ public:
 	/*!
 	 * \brief Constructor.
 	 */
-	Terminal(std::vector<Reporter*>& reporters);
+	Terminal();
 
 	/*!
 	 * \brief Destructor.
@@ -68,21 +63,22 @@ public:
 	 *
 	 * \param stream: the stream to print the legend.
 	 */
-	void legend(std::ostream &stream) const;
+	virtual void legend(std::ostream &stream) const = 0;
 
 	/*!
 	 * \brief Temporary report.
 	 *
 	 * \param stream: the stream to print the report.
 	 */
-	virtual void temp_report(std::ostream &stream);
+	void temp_report(std::ostream &stream);
 
 	/*!
 	 * \brief Final report.
 	 *
 	 * \param stream: the stream to print the report.
 	 */
-	virtual void final_report(std::ostream &stream);
+	void final_report(std::ostream &stream);
+
 
 	void start_temp_report(const std::chrono::milliseconds freq = std::chrono::milliseconds(500));
 	void stop_temp_report();
@@ -113,7 +109,7 @@ public:
 	static void reset();
 
 protected:
-	virtual void report(std::ostream &stream = std::cout, bool final = false);
+	virtual void report(std::ostream &stream = std::cout, bool final = false) = 0;
 
 private:
 	static void start_thread_terminal(Terminal *terminal, const std::chrono::milliseconds freq);

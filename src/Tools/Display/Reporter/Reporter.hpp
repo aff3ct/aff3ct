@@ -10,7 +10,6 @@
 #include <string>
 
 #include "Tools/Display/rang_format/rang_format.h"
-#include "Reporter_stream.hpp"
 
 namespace aff3ct
 {
@@ -46,12 +45,6 @@ public:
 	virtual report_t report(bool final = false) = 0;
 
 	virtual void init(); // do nothing by default
-
-
-	static std::string get_time_format(float secondes);
-	static unsigned extra_spaces   (const title_t& text, const unsigned group_width);
-	static unsigned extra_spaces   (const group_t& group);
-	static unsigned get_group_width(const group_t& group);
 };
 }
 }

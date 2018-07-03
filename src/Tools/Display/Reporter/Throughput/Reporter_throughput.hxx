@@ -4,6 +4,8 @@
 #include <ios>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/general_utils.h"
+
 #include "Reporter_throughput.hpp"
 
 namespace aff3ct
@@ -84,19 +86,18 @@ Reporter::report_t Reporter_throughput<T>
 		displayed_time *= (double)progress_limit / (double)progress - 1.;
 
 
-	auto str_time = get_time_format(displayed_time) + " ";
-	int  n_spaces = (int)Reporter_stream::column_width - (int)str_time.size();
-	str_time = std::string((n_spaces >= 0) ? n_spaces : 0, ' ') + str_time;
+	auto str_time = get_time_format(displayed_time);
+	auto simu_thr = (double)nbits / simu_time; // = Mbps
+
+	std::stringstream str_thr;
+	str_thr << std::setprecision(3) << std::fixed << simu_thr;
 
 
-	auto simu_cthr = (double)nbits / simu_time; // = Mbps
-
-	std::stringstream str_cthr;
-	str_cthr << std::setprecision(3) << std::fixed << std::setw(Reporter_stream::column_width-1) << simu_cthr << " ";
-
-
-	thgput_report.push_back(str_cthr.str());
+	thgput_report.push_back(str_thr.str());
 	thgput_report.push_back(str_time);
+
+	if (final)
+		init();
 
 	return report;
 }

@@ -30,22 +30,29 @@ Reporter::report_t Reporter_MI<B,R>
 {
 	assert(this->cols_groups.size() == 1);
 
-	report_t report(this->cols_groups.size());
+	report_t the_report(this->cols_groups.size());
 
-	auto& mi_report = report[0];
+	auto& mi_report = the_report[0];
 
-	mi_report.push_back(Reporter_stream::format(monitor.get_n_trials()) + " ");
 
-	std::stringstream str_MI, str_MI_min, str_MI_max;
-	str_MI     << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI    () << " ";
-	str_MI_min << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI_min() << " ";
-	str_MI_max << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI_max() << " ";
+	std::stringstream str_trials, str_MI, str_MI_min, str_MI_max;
+	auto n_trials = monitor.get_n_trials();
 
+	if (n_trials > (unsigned long long)(1e8 -1))
+		str_trials << std::setprecision(2) << std::scientific << (double)n_trials;
+	else
+		str_trials << std::setprecision(0) << std::fixed      << n_trials;
+
+	str_MI     << std::setprecision(4) << monitor.get_MI    ();
+	str_MI_min << std::setprecision(4) << monitor.get_MI_min();
+	str_MI_max << std::setprecision(4) << monitor.get_MI_max();
+
+	mi_report.push_back(str_trials.str());
 	mi_report.push_back(str_MI    .str());
 	mi_report.push_back(str_MI_min.str());
 	mi_report.push_back(str_MI_max.str());
 
-	return report;
+	return the_report;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -67,6 +67,16 @@ inline void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_or
 
 template <typename Ta, typename To>
 inline void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate);
+
+
+/*
+ * Convert the number of seconds into a __h__'__ string format
+ * For exemple 3662 secondes would be displayed as "01h01'02".
+ * "secondes" is first converted into a "int" type to be processed
+ */
+template <typename T>
+std::string get_time_format(T secondes);
+
 }
 }
 

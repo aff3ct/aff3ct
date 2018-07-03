@@ -9,6 +9,7 @@
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
+
 #include "../Reporter.hpp"
 
 namespace aff3ct

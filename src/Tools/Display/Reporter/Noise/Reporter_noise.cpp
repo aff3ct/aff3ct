@@ -61,9 +61,9 @@ Reporter::report_t Reporter_noise<R>
 
 	assert(this->cols_groups.size() == 1);
 
-	report_t report(this->cols_groups.size());
+	report_t the_report(this->cols_groups.size());
 
-	auto& noise_report = report[0];
+	auto& noise_report = the_report[0];
 
 
 
@@ -75,21 +75,21 @@ Reporter::report_t Reporter_noise<R>
 		{
 			auto sig = dynamic_cast<const tools::Sigma<>*>(this->noise);
 
-			stream << std::setprecision(2) << std::fixed << std::setw(Reporter_stream::column_width - 1) << sig->get_esn0() << " ";
+			stream << std::setprecision(2) << std::fixed << sig->get_esn0();
 			noise_report.push_back(stream.str());
 			stream.str("");
 
-			stream << std::setprecision(2) << std::fixed << std::setw(Reporter_stream::column_width - 1) << sig->get_ebn0() << " ";
+			stream << std::setprecision(2) << std::fixed << sig->get_ebn0();
 			break;
 		}
 		case Noise_type::ROP :
 		{
-			stream << std::setprecision(2) << std::fixed << std::setw(Reporter_stream::column_width - 1) << this->noise->get_noise() << " ";
+			stream << std::setprecision(2) << std::fixed << this->noise->get_noise();
 			break;
 		}
 		case Noise_type::EP :
 		{
-			stream << std::setprecision(4) << std::fixed << std::setw(Reporter_stream::column_width - 1) << this->noise->get_noise() << " ";
+			stream << std::setprecision(4) << std::fixed << this->noise->get_noise();
 			break;
 		}
 	}
@@ -97,7 +97,7 @@ Reporter::report_t Reporter_noise<R>
 	noise_report.push_back(stream.str());
 
 
-	return report;
+	return the_report;
 }
 
 // ==================================================================================== explicit template instantiation

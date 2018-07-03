@@ -1,5 +1,10 @@
 #include "Terminal.hpp"
 
+#include "Tools/Exception/exception.hpp"
+
+#include "Tools/Display/Terminal/Standard/Terminal_std.hpp"
+
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -35,6 +40,11 @@ void Terminal::parameters
 	auto p = this->get_prefix();
 
 	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("STD")),
+		"type of the terminal to use to display results.");
+
+	args.add(
 		{p+"-no"},
 		tools::None(),
 		"disable reporting for each iteration.");
@@ -50,6 +60,7 @@ void Terminal::parameters
 {
 	auto p = this->get_prefix();
 
+	if(vals.exist({p+"-type"})) this->type      = vals.at({p+"-type"});
 	if(vals.exist({p+"-no"  })) this->disabled  = true;
 	if(vals.exist({p+"-freq"})) this->frequency = std::chrono::milliseconds(vals.to_int({p+"-freq"}));
 }
@@ -67,7 +78,9 @@ void Terminal::parameters
 tools::Terminal* Terminal::parameters
 ::build(std::vector<tools::Reporter*> &reporters) const
 {
-	return new tools::Terminal(reporters);
+	if (this->type == "STD") return new tools::Terminal_std(reporters);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 tools::Terminal* Terminal
