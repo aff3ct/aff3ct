@@ -12,6 +12,8 @@ Monitor
 	const std::string name = "Monitor";
 	this->set_name(name);
 	this->set_short_name(name);
+
+	this->tasks_with_nullptr.resize((size_t)mnt::tsk::SIZE, nullptr);
 }
 
 void Monitor

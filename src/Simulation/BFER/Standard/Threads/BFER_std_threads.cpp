@@ -52,7 +52,10 @@ void BFER_std_threads<B,R,Q>
 		threads[tid -1].join();
 
 
-	this->monitor_red->reduce(true);
+	this->monitor_er_red->reduce(true);
+
+	if (this->params_BFER_std.mutinfo) // this->monitor_mi_red != nullptr
+		this->monitor_mi_red->reduce(true);
 
 	if (!this->prev_err_messages_to_display.empty())
 		throw std::runtime_error(this->prev_err_messages_to_display.back());
@@ -104,7 +107,7 @@ void BFER_std_threads<B,R,Q>
 	auto &csr = *this->coset_real[tid];
 	auto &dec = *this->codec     [tid]->get_decoder_siho();
 	auto &csb = *this->coset_bit [tid];
-	auto &mnt = *this->monitor   [tid];
+	auto &mnt = *this->monitor_er[tid];
 
 	if (this->params_BFER_std.src->type == "AZCW")
 	{
@@ -243,8 +246,10 @@ void BFER_std_threads<B,R,Q>
 		mnt[mnt::sck::check_errors::V](crc[crc::sck::extract ::V_K2]);
 	}
 
-	if (this->params_BFER_std.mnt->mutinfo)
+	if (this->params_BFER_std.mutinfo) // this->monitor_mi[tid] != nullptr
 	{
+		auto &mnt = *this->monitor_mi[tid];
+
 		mnt[mnt::sck::get_mutual_info::X](mdm[mdm::sck::modulate  ::X_N1]);
 		mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate::Y_N2]);
 	}
@@ -264,18 +269,18 @@ void BFER_std_threads<B,R,Q>
 	auto &coset_real = *this->coset_real[tid];
 	auto &decoder    = *this->codec     [tid]->get_decoder_siho();
 	auto &coset_bit  = *this->coset_bit [tid];
-	auto &monitor    = *this->monitor   [tid];
+	auto &monitor    = *this->monitor_er[tid];
 
 	using namespace module;
 	using namespace std::chrono;
 	auto t_snr = steady_clock::now();
 
 	// communication chain execution
-	while (!tools::Terminal::is_interrupt() && !this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
+	while (!tools::Terminal::is_interrupt() && !this->monitor_er_red->fe_limit_achieved() && // while max frame error count has not been reached
 	       (this->params_BFER_std.stop_time == seconds(0) ||
 	         (steady_clock::now() - t_snr) < this->params_BFER_std.stop_time) &&
 	       (this->params_BFER_std.max_frame == 0 ||
-	         this->monitor_red->get_n_analyzed_fra() < this->params_BFER_std.max_frame))
+	         this->monitor_er_red->get_n_analyzed_fra() < this->params_BFER_std.max_frame))
 	{
 		if (this->params_BFER_std.debug)
 		{
@@ -359,11 +364,18 @@ void BFER_std_threads<B,R,Q>
 
 		monitor[mnt::tsk::check_errors].exec();
 
-		if (this->params_BFER_std.mnt->mutinfo)
+		if (this->params_BFER_std.mutinfo)
+		{
+			auto &monitor = *this->monitor_mi[tid];
+
 			monitor[mnt::tsk::get_mutual_info].exec();
 
+			if (tid == 0)
+				this->monitor_mi_red->reduce(false);
+		}
+
 		if (tid == 0)
-			this->monitor_red->reduce(false);
+			this->monitor_er_red->reduce(false);
 	}
 }
 

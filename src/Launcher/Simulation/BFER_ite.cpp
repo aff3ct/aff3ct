@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-#include "Factory/Module/Monitor/MI_BFER/Monitor_MI_BFER.hpp"
+#include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 
 #include "BFER_ite.hpp"
 
@@ -22,7 +22,7 @@ BFER_ite<B,R,Q>
 	params.set_mdm(new factory::Modem          ::parameters("mdm"));
 	params.set_chn(new factory::Channel        ::parameters("chn"));
 	params.set_qnt(new factory::Quantizer      ::parameters("qnt"));
-	params.set_mnt(new factory::Monitor_MI_BFER::parameters("mnt"));
+	params.set_mnt_er(new factory::Monitor_BFER::parameters("mnt"));
 	params.set_ter(new factory::Terminal       ::parameters("ter"));
 }
 
@@ -46,7 +46,7 @@ void BFER_ite<B,R,Q>
 	params.chn->get_description(this->args);
 	if (std::is_integral<Q>())
 	params.qnt->get_description(this->args);
-	params.mnt->get_description(this->args);
+	params.mnt_er->get_description(this->args);
 	params.ter->get_description(this->args);
 
 	auto psrc = params.src     ->get_prefix();
@@ -57,7 +57,7 @@ void BFER_ite<B,R,Q>
 	auto pmdm = params.mdm     ->get_prefix();
 	auto pchn = params.chn     ->get_prefix();
 	auto pqnt = params.qnt     ->get_prefix();
-	auto pmnt = params.mnt     ->get_prefix();
+	auto pmnt = params.mnt_er  ->get_prefix();
 	auto pter = params.ter     ->get_prefix();
 	auto psim = params.          get_prefix();
 
@@ -82,7 +82,6 @@ void BFER_ite<B,R,Q>
 	this->args.erase({pqnt+"-size",      "N"});
 	this->args.erase({pqnt+"-fra",       "F"});
 	this->args.erase({pmnt+"-info-bits", "K"});
-	this->args.erase({pmnt+"-fra-size",  "N"});
 	this->args.erase({pmnt+"-fra",       "F"});
 	this->args.erase({pter+"-info-bits", "K"});
 	this->args.erase({pter+"-cw-size",   "N"});
@@ -133,10 +132,9 @@ void BFER_ite<B,R,Q>
 	if (std::is_integral<Q>())
 		params.qnt->store(this->arg_vals);
 
-	params.mnt->K = params.coded_monitoring ? N_cw : params.src->K;
-	params.mnt->N = N_cw;
+	params.mnt_er->K = params.coded_monitoring ? N_cw : params.src->K;
 
-	params.mnt->store(this->arg_vals);
+	params.mnt_er->store(this->arg_vals);
 
 	params.ter->store(this->arg_vals);
 
@@ -179,7 +177,7 @@ void BFER_ite<B,R,Q>
 	params.mdm->      n_frames = params.src->n_frames;
 	params.chn->      n_frames = params.src->n_frames;
 	params.qnt->      n_frames = params.src->n_frames;
-	params.mnt->      n_frames = params.src->n_frames;
+	params.mnt_er->      n_frames = params.src->n_frames;
 }
 
 template <typename B, typename R, typename Q>

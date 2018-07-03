@@ -51,7 +51,7 @@ void BFER_ite_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params_BFER_ite.n_threads; tid++)
 		threads[tid -1].join();
 
-	this->monitor_red->reduce(true);
+	this->monitor_er_red->reduce(true);
 
 	if (!this->prev_err_messages.empty())
 		throw std::runtime_error(this->prev_err_messages.back());
@@ -101,7 +101,7 @@ void BFER_ite_threads<B,R,Q>
 	auto &itl = *this->interleaver_llr[tid];
 	auto &csr = *this->coset_real     [tid];
 	auto &csb = *this->coset_bit      [tid];
-	auto &mnt = *this->monitor        [tid];
+	auto &mnt = *this->monitor_er     [tid];
 
 	auto &enc = *cdc.get_encoder();
 	auto &dcs = *cdc.get_decoder_siso();
@@ -325,7 +325,7 @@ void BFER_ite_threads<B,R,Q>
 	auto &interleaver_llr = *this->interleaver_llr[tid];
 	auto &coset_real      = *this->coset_real     [tid];
 	auto &coset_bit       = *this->coset_bit      [tid];
-	auto &monitor         = *this->monitor        [tid];
+	auto &monitor         = *this->monitor_er     [tid];
 
 	auto &encoder      = *codec.get_encoder();
 	auto &decoder_siso = *codec.get_decoder_siso();
@@ -336,11 +336,11 @@ void BFER_ite_threads<B,R,Q>
 	auto t_snr = steady_clock::now();
 
 	while (!tools::Terminal::is_interrupt()
-	       && !this->monitor_red->fe_limit_achieved() // while max frame error count has not been reached
+	       && !this->monitor_er_red->fe_limit_achieved() // while max frame error count has not been reached
 	       && (this->params_BFER_ite.stop_time == seconds(0)
 	           || (steady_clock::now() - t_snr) < this->params_BFER_ite.stop_time)
 	       && (this->params_BFER_ite.max_frame == 0
-	       	   || this->monitor_red->get_n_analyzed_fra() < this->params_BFER_ite.max_frame))
+	       	   || this->monitor_er_red->get_n_analyzed_fra() < this->params_BFER_ite.max_frame))
 	{
 		if (this->params_BFER_ite.debug)
 		{
@@ -470,7 +470,7 @@ void BFER_ite_threads<B,R,Q>
 		monitor[mnt::tsk::check_errors].exec();
 
 		if (tid == 0)
-			this->monitor_red->reduce(false);
+			this->monitor_er_red->reduce(false);
 	}
 }
 

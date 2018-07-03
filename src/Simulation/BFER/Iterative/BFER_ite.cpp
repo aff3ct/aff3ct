@@ -85,11 +85,11 @@ void BFER_ite<B,R,Q>
 	    dynamic_cast<module::Decoder*>(codec[tid]->get_decoder_siho()))
 		this->modules["decoder_siho"][tid] = codec[tid]->get_decoder_siho();
 
-	this->monitor[tid]->add_handler_check(std::bind(&module::Codec_SISO_SIHO<B,Q>::reset, codec[tid]));
+	this->monitor_er[tid]->add_handler_check(std::bind(&module::Codec_SISO_SIHO<B,Q>::reset, codec[tid]));
 
 	interleaver_core[tid]->init();
 	if (interleaver_core[tid]->is_uniform())
-		this->monitor[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh,
+		this->monitor_er[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh,
 		                                                this->interleaver_core[tid]));
 
 	if (this->params_BFER_ite.err_track_enable)

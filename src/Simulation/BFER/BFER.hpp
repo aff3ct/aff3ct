@@ -19,7 +19,8 @@
 #include "Tools/Noise/Noise.hpp"
 
 #include "Module/Module.hpp"
-#include "Module/Monitor/MI_BFER/Monitor_MI_BFER.hpp"
+#include "Module/Monitor/MI/Monitor_MI.hpp"
+#include "Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Module/Monitor/Monitor_reduction.hpp"
 
 #include "Factory/Simulation/BFER/BFER.hpp"
@@ -51,11 +52,17 @@ protected:
 	tools::Noise<R>* noise; // current noise simulated
 
 	// the monitors of the the BFER simulation
-	using Monitor_type = module::Monitor_MI_BFER<B,R>;
-	using Monitor_reduction_type = module::Monitor_reduction<Monitor_type>;
+	using Monitor_BFER_type = module::Monitor_BFER<B>;
+	using Monitor_BFER_reduction_type = module::Monitor_reduction<Monitor_BFER_type>;
 
-	std::vector<Monitor_type*>  monitor;
-	Monitor_reduction_type*     monitor_red;
+	using Monitor_MI_type = module::Monitor_MI<B,R>;
+	using Monitor_MI_reduction_type = module::Monitor_reduction<Monitor_MI_type>;
+
+	std::vector<Monitor_MI_type*>  monitor_mi;
+	Monitor_MI_reduction_type*     monitor_mi_red;
+
+	std::vector<Monitor_BFER_type*> monitor_er;
+	Monitor_BFER_reduction_type*    monitor_er_red;
 
 	// dump frames into files
 	std::vector<tools::Dumper          *> dumper;
@@ -83,7 +90,9 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	module::Monitor_MI_BFER<B,R>* build_monitor(const int tid = 0);
+	Monitor_MI_type*   build_monitor_mi(const int tid = 0);
+	Monitor_BFER_type* build_monitor_er(const int tid = 0);
+
 	tools::Terminal* build_terminal();
 
 private:

@@ -34,8 +34,11 @@ BFER<B,R,Q>
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
   noise(nullptr),
 
-  monitor    (params_BFER.n_threads, nullptr),
-  monitor_red(                       nullptr),
+  monitor_mi    (params_BFER.n_threads, nullptr),
+  monitor_mi_red(                       nullptr),
+  monitor_er    (params_BFER.n_threads, nullptr),
+  monitor_er_red(                       nullptr),
+
   dumper     (params_BFER.n_threads, nullptr),
   dumper_red (                       nullptr),
 
@@ -68,22 +71,43 @@ BFER<B,R,Q>
 
 
 
-	modules["monitor"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
+	modules["monitor_er"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
 	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 	{
-		this->monitor[tid] = this->build_monitor(tid);
-		modules["monitor"][tid] = this->monitor[tid];
+		this->monitor_er[tid] = this->build_monitor_er(tid);
+		modules["monitor_er"][tid] = this->monitor_er[tid];
 	}
 
-#ifdef ENABLE_MPI
-	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new module::Monitor_reduction_mpi<Monitor_type>(this->monitor,
-	                                                                    std::this_thread::get_id(),
-	                                                                    params_BFER.mpi_comm_freq);
-#else
-	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new Monitor_reduction_type(this->monitor);
-#endif
+	#ifdef ENABLE_MPI
+		// build a monitor to compute BER/FER (reduce the other monitors)
+		this->monitor_er_red = new module::Monitor_reduction_mpi<Monitor_BFER_type*>(this->monitor_er,
+		                                                                             std::this_thread::get_id(),
+		                                                                             params_BFER.mpi_comm_freq);
+	#else
+		// build a monitor to compute BER/FER (reduce the other monitors)
+		this->monitor_er_red = new Monitor_BFER_reduction_type(this->monitor_er);
+	#endif
+
+
+	if (params_BFER.mutinfo)
+	{
+		modules["monitor_mi"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
+		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
+		{
+			this->monitor_mi[tid] = this->build_monitor_mi(tid);
+			modules["monitor_mi"][tid] = this->monitor_mi[tid];
+		}
+
+		#ifdef ENABLE_MPI
+			// build a monitor to compute BER/FER (reduce the other monitors)
+			this->monitor_mi_red = new module::Monitor_reduction_mpi<Monitor_MI_type>(this->monitor,
+			                                                                          std::this_thread::get_id(),
+			                                                                          params_BFER.mpi_comm_freq);
+		#else
+			// build a monitor to compute BER/FER (reduce the other monitors)
+			this->monitor_mi_red = new Monitor_MI_reduction_type(this->monitor_mi);
+		#endif
+	}
 
 	if (!params_BFER.noise->pdf_path.empty())
 		distributions = new tools::Distributions<R>(params_BFER.noise->pdf_path);
@@ -95,19 +119,19 @@ BFER<B,R,Q>
 	rep_noise = new tools::Reporter_noise<R>(this->noise);
 	reporters.push_back(rep_noise);
 
-	if (params_BFER.mnt->mutinfo)
+	if (params_BFER.mutinfo)
 	{
-		rep_mi = new tools::Reporter_MI<B,R>(*this->monitor_red);
+		rep_mi = new tools::Reporter_MI<B,R>(*this->monitor_mi_red);
 		reporters.push_back(rep_mi);
 	}
 
-	rep_er = new tools::Reporter_BFER<B>(*this->monitor_red);
+	rep_er = new tools::Reporter_BFER<B>(*this->monitor_er_red);
 	reporters.push_back(rep_er);
 
-	rep_throughput = new tools::Reporter_throughput<uint64_t>(std::bind(&Monitor_reduction_type::get_n_fe, this->monitor_red),
-	                                                          this->monitor_red->get_fe_limit(),
-	                                                          std::bind(&Monitor_reduction_type::get_n_analyzed_fra, this->monitor_red),
-	                                                          this->monitor_red->get_K());
+	rep_throughput = new tools::Reporter_throughput<uint64_t>(std::bind(&Monitor_BFER_type::get_n_fe, this->monitor_er_red),
+	                                                          this->monitor_er_red->get_fe_limit(),
+	                                                          std::bind(&Monitor_BFER_type::get_n_analyzed_fra, this->monitor_er_red),
+	                                                          this->monitor_er_red->get_K());
 	reporters.push_back(rep_throughput);
 }
 
@@ -121,13 +145,15 @@ BFER<B,R,Q>
 	if (rep_er    != nullptr) { delete rep_er;    rep_er    = nullptr; }
 	if (rep_mi    != nullptr) { delete rep_mi;    rep_mi    = nullptr; }
 
-	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
-	if (dumper_red  != nullptr) { delete dumper_red;  dumper_red  = nullptr; }
+	if (monitor_mi_red != nullptr) { delete monitor_mi_red; monitor_mi_red = nullptr; }
+	if (monitor_er_red != nullptr) { delete monitor_er_red; monitor_er_red = nullptr; }
+	if (dumper_red     != nullptr) { delete dumper_red;     dumper_red     = nullptr; }
 
 	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 	{
-		if (monitor[tid] != nullptr) { delete monitor[tid]; monitor[tid] = nullptr; }
-		if (dumper [tid] != nullptr) { delete dumper [tid]; dumper [tid] = nullptr; }
+		if (monitor_mi[tid] != nullptr) { delete monitor_mi[tid]; monitor_mi[tid] = nullptr; }
+		if (monitor_er[tid] != nullptr) { delete monitor_er[tid]; monitor_er[tid] = nullptr; }
+		if (dumper    [tid] != nullptr) { delete dumper    [tid]; dumper    [tid] = nullptr; }
 	}
 
 	if (terminal      != nullptr) { delete terminal;      terminal      = nullptr; }
@@ -195,7 +221,10 @@ void BFER<B,R,Q>
 		if (this->params_BFER.err_track_revert)
 		{
 			this->release_objects();
-			this->monitor_red->clear_callbacks();
+			this->monitor_er_red->clear_callbacks();
+
+			if (this->monitor_mi_red != nullptr)
+				this->monitor_mi_red->clear_callbacks();
 
 			// dirty hack to override simulation params_BFER
 			auto &params_BFER_writable = const_cast<factory::BFER::parameters&>(params_BFER);
@@ -287,9 +316,9 @@ void BFER<B,R,Q>
 			}
 		}
 
-		if (params_BFER.mnt->err_hist != -1)
+		if (params_BFER.mnt_er->err_hist != -1)
 		{
-			auto err_hist = monitor_red->get_err_hist();
+			auto err_hist = monitor_er_red->get_err_hist();
 
 			if (err_hist.get_n_values() != 0)
 			{
@@ -308,16 +337,16 @@ void BFER<B,R,Q>
 						break;
 				}
 
-				std::ofstream file_err_hist(params_BFER.mnt->err_hist_path + "_" + noise_value + ".txt");
+				std::ofstream file_err_hist(params_BFER.mnt_er->err_hist_path + "_" + noise_value + ".txt");
 				file_err_hist << "\"Number of error bits per wrong frame\"; \"Histogram (noise: " << noise_value
 				              << this->noise->get_unity() << ", on " << err_hist.get_n_values() << " frames)\"" << std::endl;
 
 				int max;
 
-				if (params_BFER.mnt->err_hist == 0)
+				if (params_BFER.mnt_er->err_hist == 0)
 					max = err_hist.get_hist_max();
 				else
-					max = params_BFER.mnt->err_hist;
+					max = params_BFER.mnt_er->err_hist;
 
 				err_hist.dump(file_err_hist, 0, max, 0, false, false, false, "; ");
 			}
@@ -333,14 +362,17 @@ void BFER<B,R,Q>
 		}
 
 		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
-			!this->monitor_red->fe_limit_achieved() &&
-		    (params_BFER.max_frame == 0 || this->monitor_red->get_n_analyzed_fra() >= params_BFER.max_frame))
+			!this->monitor_er_red->fe_limit_achieved() &&
+		    (params_BFER.max_frame == 0 || this->monitor_er_red->get_n_analyzed_fra() >= params_BFER.max_frame))
 			tools::Terminal::stop();
 
 		if (tools::Terminal::is_over())
 			break;
 
-		this->monitor_red->reset();
+		this->monitor_er_red->reset();
+		if (this->monitor_mi_red != nullptr)
+			this->monitor_mi_red->reset();
+
 		for (auto &m : modules)
 			for (auto mm : m.second)
 				if (mm != nullptr)
@@ -360,12 +392,19 @@ void BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-module::Monitor_MI_BFER<B,R>* BFER<B,R,Q>
-::build_monitor(const int tid)
+module::Monitor_MI<B,R>* BFER<B,R,Q>
+::build_monitor_mi(const int tid)
+{
+	return params_BFER.mnt_mi->build<B,R>();
+}
+
+template <typename B, typename R, typename Q>
+module::Monitor_BFER<B>* BFER<B,R,Q>
+::build_monitor_er(const int tid)
 {
 	bool count_unknown_values = params_BFER.noise->type == "EP";
 
-	return params_BFER.mnt->build<B,R>(count_unknown_values);
+	return params_BFER.mnt_er->build<B>(count_unknown_values);
 }
 
 template <typename B, typename R, typename Q>
@@ -384,7 +423,7 @@ void BFER<B,R,Q>
 		simu->__build_communication_chain(tid);
 
 		if (simu->params_BFER.err_track_enable)
-			simu->monitor[tid]->add_handler_fe(std::bind(&tools::Dumper::add, simu->dumper[tid], std::placeholders::_1, std::placeholders::_2));
+			simu->monitor_er[tid]->add_handler_fe(std::bind(&tools::Dumper::add, simu->dumper[tid], std::placeholders::_1, std::placeholders::_2));
 	}
 	catch (std::exception const& e)
 	{

@@ -24,7 +24,8 @@ BFER::parameters
 	if (mdm != nullptr) { delete mdm; mdm = nullptr; }
 	if (chn != nullptr) { delete chn; chn = nullptr; }
 	if (qnt != nullptr) { delete qnt; qnt = nullptr; }
-	if (mnt != nullptr) { delete mnt; mnt = nullptr; }
+	if (mnt_mi != nullptr) { delete mnt_mi; mnt_mi = nullptr; }
+	if (mnt_er != nullptr) { delete mnt_er; mnt_er = nullptr; }
 	if (ter != nullptr) { delete ter; ter = nullptr; }
 }
 
@@ -39,7 +40,8 @@ BFER::parameters* BFER::parameters
 	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
 	if (chn != nullptr) { clone->chn = chn->clone(); }
 	if (qnt != nullptr) { clone->qnt = qnt->clone(); }
-	if (mnt != nullptr) { clone->mnt = mnt->clone(); }
+	if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
+	if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
 	if (ter != nullptr) { clone->ter = ter->clone(); }
 
 	return clone;
@@ -55,7 +57,8 @@ std::vector<std::string> BFER::parameters
 	if (mdm != nullptr) { auto nn = mdm->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (chn != nullptr) { auto nn = chn->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (qnt != nullptr) { auto nn = qnt->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (mnt != nullptr) { auto nn = mnt->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (mnt_mi != nullptr) { auto nn = mnt_mi->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (mnt_er != nullptr) { auto nn = mnt_er->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (ter != nullptr) { auto nn = ter->get_names(); for (auto &x : nn) n.push_back(x); }
 	return n;
 }
@@ -70,7 +73,8 @@ std::vector<std::string> BFER::parameters
 	if (mdm != nullptr) { auto nn = mdm->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (chn != nullptr) { auto nn = chn->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (qnt != nullptr) { auto nn = qnt->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (mnt != nullptr) { auto nn = mnt->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (mnt_mi != nullptr) { auto nn = mnt_mi->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (mnt_er != nullptr) { auto nn = mnt_er->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (ter != nullptr) { auto nn = ter->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	return sn;
 }
@@ -85,7 +89,8 @@ std::vector<std::string> BFER::parameters
 	if (mdm != nullptr) { auto nn = mdm->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (chn != nullptr) { auto nn = chn->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (qnt != nullptr) { auto nn = qnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (mnt != nullptr) { auto nn = mnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (mnt_mi != nullptr) { auto nn = mnt_mi->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (mnt_er != nullptr) { auto nn = mnt_er->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (ter != nullptr) { auto nn = ter->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
 }
@@ -130,6 +135,14 @@ void BFER::parameters
 		{p+"-coded"},
 		tools::None(),
 		"enable the coded monitoring (extends the monitored bits to the entire codeword).");
+
+
+	auto pmi = mnt_mi->get_prefix();
+
+	args.add(
+		{pmi+"-mutinfo"},
+		tools::None(),
+		"allow the computation of the mutual information.");
 }
 
 void BFER::parameters
@@ -155,6 +168,10 @@ void BFER::parameters
 		this->err_track_enable = false;
 		this->n_threads = 1;
 	}
+
+	auto pmi = mnt_mi->get_prefix();
+
+	if(vals.exist({pmi+"-mutinfo"})) this->mutinfo = true;
 }
 
 void BFER::parameters
@@ -202,6 +219,12 @@ void BFER::parameters
 	if (this->mdm != nullptr) { this->mdm->get_headers(headers, full); }
 	if (this->chn != nullptr) { this->chn->get_headers(headers, full); }
 	if (this->qnt != nullptr) { this->qnt->get_headers(headers, full); }
-	if (this->mnt != nullptr) { this->mnt->get_headers(headers, full); }
+
+	if (this->mnt_er != nullptr) { this->mnt_er->get_headers(headers, full); }
+
+	headers[this->mnt_mi->get_prefix()].push_back(std::make_pair("Compute mutual info", this->mutinfo ? "yes" : "no"));
+	if (this->mutinfo)
+		if (this->mnt_mi != nullptr) { this->mnt_mi->get_headers(headers, full); }
+
 	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }

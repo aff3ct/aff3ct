@@ -14,56 +14,24 @@ namespace module
 {
 
 template <typename B = int>
-class Monitor_BFER : virtual public Monitor
+class Monitor_BFER : public Monitor
 {
 public:
 	inline Task&   operator[](const mnt::tsk               t) { return Module::operator[]((int)t);                              }
 	inline Socket& operator[](const mnt::sck::check_errors s) { return Module::operator[]((int)mnt::tsk::check_errors)[(int)s]; }
 
-	struct Values_t
-	{
-		static constexpr unsigned n_attributes = 3;
-		unsigned long long n_be;
-		unsigned long long n_fe;
-		unsigned long long n_fra;
+	static constexpr unsigned n_MPI_attributes = 3;
 
-		Values_t() { reset(); }
+	unsigned long long n_fra; // the number of checked frames
+	unsigned long long n_be;  // the number of wrong bits
+	unsigned long long n_fe;  // the number of wrong frames
 
-		Values_t& operator+=(const Values_t& o)
-		{
-			n_be  += o.n_be;
-			n_fe  += o.n_fe;
-			n_fra += o.n_fra;
-			return *this;
-		}
 
-		void reset()
-		{
-			n_be  = 0;
-			n_fe  = 0;
-			n_fra = 0;
-		}
+	const int K; // Number of source bits
+	const unsigned max_fe; // max number of wrong frames to get then fe_limit_achieved() returns true
+	const bool count_unknown_values; // take into account or not the unknown values as wrong values in the checked frames
 
-	#ifdef ENABLE_MPI
-		static void create_MPI_struct(int          blen         [n_attributes],
-		                              MPI_Aint     displacements[n_attributes],
-		                              MPI_Datatype oldtypes     [n_attributes])
-		{
-			blen[0] = 1; displacements[0] = offsetof(Values_t, n_be ); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
-			blen[1] = 1; displacements[1] = offsetof(Values_t, n_fe ); oldtypes[1] = MPI_UNSIGNED_LONG_LONG;
-			blen[2] = 1; displacements[2] = offsetof(Values_t, n_fra); oldtypes[2] = MPI_UNSIGNED_LONG_LONG;
-		}
-	#endif
-	};
-
-protected:
-	const int K; /*!< Number of source bits*/
-
-	const unsigned max_fe;
-	const bool count_unknown_values;
-
-	Values_t vals;
-	tools::Histogram<int> err_hist;
+	tools::Histogram<int> err_hist; // the error histogram record
 
 	std::vector<std::function<void(unsigned, int )>> callbacks_fe;
 	std::vector<std::function<void(          void)>> callbacks_check;
@@ -71,15 +39,17 @@ protected:
 
 public:
 	Monitor_BFER(const int K, const unsigned max_fe, const bool count_unknown_values = false, const int n_frames = 1);
-
-	Monitor_BFER() = default;
-	Monitor_BFER(const Monitor_BFER<B>& mon, const int n_frames = -1);
+	Monitor_BFER(const Monitor_BFER<B>& m, const int n_frames = -1); // construct with the same parameters than "m"
+	                                                                 // if n_frames != -1 then set it has "n_frames" value
+	Monitor_BFER(); // construct with null and default parameters.
 
 	virtual ~Monitor_BFER() = default;
 
-	const Values_t& get_vals() const;
-
 	int get_K() const;
+
+	bool equivalent(const Monitor_BFER<B>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
+	                                                                        // and then can be merged by "collect" or "copy" methods
+
 
 	/*!
 	 * \brief Compares two messages and counts the number of frame errors and bit errors.
@@ -141,14 +111,26 @@ public:
 	virtual void reset();
 	virtual void clear_callbacks();
 
-	virtual void collect(const Monitor& m, bool fully = false);
+	virtual void collect(const Monitor& m,         bool fully = false);
 	virtual void collect(const Monitor_BFER<B>& m, bool fully = false);
 
-	Monitor_BFER<B>& operator=(const Monitor_BFER<B>& m);
+	Monitor_BFER<B>& operator+=(const Monitor_BFER<B>& m); // not full "collect" call
+
+
+	virtual void copy(const Monitor& m,         bool fully = false);
+	virtual void copy(const Monitor_BFER<B>& m, bool fully = false);
+
+	Monitor_BFER<B>& operator=(const Monitor_BFER<B>& m); // not full "copy" call
+
+
+	#ifdef ENABLE_MPI
+		static void create_MPI_struct(int          blen         [n_MPI_attributes],
+		                              MPI_Aint     displacements[n_MPI_attributes],
+		                              MPI_Datatype oldtypes     [n_MPI_attributes]);
+	#endif
 
 protected:
 	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
-	Monitor_BFER(const bool create_task, const int K, const unsigned max_fe, const bool count_unknown_values, const int n_frames);
 };
 }
 }

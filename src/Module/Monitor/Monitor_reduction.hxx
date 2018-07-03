@@ -15,9 +15,9 @@ namespace module
 template <class M>
 Monitor_reduction<M>
 ::Monitor_reduction(const std::vector<M*> &_monitors)
-: Monitor(std::accumulate(_monitors.begin(), _monitors.end(), 0,
-                          [](int tot, const M* m) { return tot + m->get_n_frames(); })),
-  M((_monitors.size() && _monitors.front()) ? *_monitors.front() : M(), this->n_frames),
+: M((_monitors.size() && _monitors.front()) ? *_monitors.front() : M(),
+	std::accumulate(_monitors.begin(), _monitors.end(), 0,
+                    [](int tot, const M* m) { return tot + m->get_n_frames(); })),
   monitors(_monitors)
 {
 	if (monitors.size() == 0)
@@ -35,26 +35,26 @@ Monitor_reduction<M>
 		if (monitors[m] == nullptr)
 		{
 			std::stringstream message;
-			message << "'monitors[m]' can't be null ('m' = " << m << ").";
+			message << "'monitors[" << m << "]' can't be null.";
 			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (monitors[0]->get_K() != monitors[m]->get_K())
+		try
 		{
-			std::stringstream message;
-			message << "'monitors[0]->get_K()' and 'monitors[m]->get_K()' have to be equal ('m' = " << m
-			        << ", 'monitors[0]->get_K()' = " << monitors[0]->get_K()
-			        << ", 'monitors[m]->get_K()' = " << monitors[m]->get_K() << ").";
-			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
+			monitors[0]->equivalent(*monitors[m], true);
 		}
-
-		if (monitors[0]->get_N() != monitors[m]->get_N())
+		catch(tools::exception& e)
 		{
 			std::stringstream message;
-			message << "'monitors[0]->get_N()' and 'monitors[m]->get_N()' have to be equal ('m' = " << m
-			        << ", 'monitors[0]->get_N()' = " << monitors[0]->get_N()
-			        << ", 'monitors[m]->get_N()' = " << monitors[m]->get_N() << ").";
+
+			auto save = tools::exception::no_backtrace;
+
+			tools::exception::no_backtrace = true;
+			message << "'monitors[0]' and 'monitors[" << m << "]' have to be equivalent: " << e.what();
+			tools::exception::no_backtrace = save;
+
 			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
+
 		}
 	}
 }
@@ -88,10 +88,7 @@ void Monitor_reduction<M>
 	for (auto& m : monitors)
 		collecter.collect(*m, fully);
 
-	if (fully)
-		M::operator=(collecter);
-	else
-		this->vals = collecter.get_vals();
+	M::copy(collecter, fully);
 }
 
 }

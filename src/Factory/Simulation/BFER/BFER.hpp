@@ -9,7 +9,8 @@
 #include "Factory/Module/Modem/Modem.hpp"
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Source/Source.hpp"
-#include "Factory/Module/Monitor/MI_BFER/Monitor_MI_BFER.hpp"
+#include "Factory/Module/Monitor/MI/Monitor_MI.hpp"
+#include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
 #include "../Simulation.hpp"
@@ -33,16 +34,18 @@ struct BFER : Simulation
 		bool        err_track_enable    = false;
 		bool        coset               = false;
 		bool        coded_monitoring    = false;
+		bool        mutinfo             = false;
 
 		// module parameters
-		Source       ::parameters *src = nullptr;
-		CRC          ::parameters *crc = nullptr;
-		Codec        ::parameters *cdc = nullptr;
-		Modem        ::parameters *mdm = nullptr;
-		Channel      ::parameters *chn = nullptr;
-		Quantizer    ::parameters *qnt = nullptr;
-		Monitor_MI_BFER ::parameters *mnt = nullptr;
-		Terminal     ::parameters *ter = nullptr;
+		Source       ::parameters *src    = nullptr;
+		CRC          ::parameters *crc    = nullptr;
+		Codec        ::parameters *cdc    = nullptr;
+		Modem        ::parameters *mdm    = nullptr;
+		Channel      ::parameters *chn    = nullptr;
+		Quantizer    ::parameters *qnt    = nullptr;
+		Monitor_BFER ::parameters *mnt_er = nullptr;
+		Monitor_MI   ::parameters *mnt_mi = nullptr;
+		Terminal     ::parameters *ter    = nullptr;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		virtual ~parameters();
@@ -53,14 +56,15 @@ struct BFER : Simulation
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// setters
-		        void set_src(Source       ::parameters *src) { this->src = src; }
-		        void set_crc(CRC          ::parameters *crc) { this->crc = crc; }
-		virtual void set_cdc(Codec        ::parameters *cdc) { this->cdc = cdc; }
-		        void set_mdm(Modem        ::parameters *mdm) { this->mdm = mdm; }
-		        void set_chn(Channel      ::parameters *chn) { this->chn = chn; }
-		        void set_qnt(Quantizer    ::parameters *qnt) { this->qnt = qnt; }
-		        void set_mnt(Monitor_MI_BFER ::parameters *mnt) { this->mnt = mnt; }
-		        void set_ter(Terminal::parameters *ter) { this->ter = ter; }
+		        void set_src   (Source      ::parameters *src) { this->src    = src; }
+		        void set_crc   (CRC         ::parameters *crc) { this->crc    = crc; }
+		virtual void set_cdc   (Codec       ::parameters *cdc) { this->cdc    = cdc; }
+		        void set_mdm   (Modem       ::parameters *mdm) { this->mdm    = mdm; }
+		        void set_chn   (Channel     ::parameters *chn) { this->chn    = chn; }
+		        void set_qnt   (Quantizer   ::parameters *qnt) { this->qnt    = qnt; }
+		        void set_mnt_mi(Monitor_MI  ::parameters *mnt) { this->mnt_mi = mnt; }
+		        void set_mnt_er(Monitor_BFER::parameters *mnt) { this->mnt_er = mnt; }
+		        void set_ter   (Terminal    ::parameters *ter) { this->ter    = ter; }
 
 		// parameters construction
 		void get_description(tools::Argument_map_info &args) const;

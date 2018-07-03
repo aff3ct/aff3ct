@@ -15,7 +15,7 @@ extern const std::string Monitor_BFER_name;
 extern const std::string Monitor_BFER_prefix;
 struct Monitor_BFER : public Monitor
 {
-	class parameters : virtual public Monitor::parameters
+	class parameters : public Monitor::parameters
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
