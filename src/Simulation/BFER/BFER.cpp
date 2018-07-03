@@ -128,10 +128,7 @@ BFER<B,R,Q>
 	rep_er = new tools::Reporter_BFER<B>(*this->monitor_er_red);
 	reporters.push_back(rep_er);
 
-	rep_throughput = new tools::Reporter_throughput<uint64_t>(std::bind(&Monitor_BFER_type::get_n_fe, this->monitor_er_red),
-	                                                          this->monitor_er_red->get_fe_limit(),
-	                                                          std::bind(&Monitor_BFER_type::get_n_analyzed_fra, this->monitor_er_red),
-	                                                          this->monitor_er_red->get_K());
+	rep_throughput = new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red);
 	reporters.push_back(rep_throughput);
 }
 

@@ -30,6 +30,31 @@ Reporter_throughput<T>
 	throughput_cols.push_back(std::make_pair("ET/RT", "(hhmmss)"));
 
 	this->cols_groups.push_back(throughput_group);
+
+}
+
+template <typename T>
+template <typename B>
+Reporter_throughput<T>
+::Reporter_throughput(const module::Monitor_BFER<B>& m)
+: Reporter_throughput(std::bind(&module::Monitor_BFER<B>::get_n_fe, &m),
+	                  (T)m.get_fe_limit(),
+	                  std::bind(&module::Monitor_BFER<B>::get_n_analyzed_fra, &m),
+	                  (T)m.get_K())
+{
+
+}
+
+template <typename T>
+template <typename B, typename R>
+Reporter_throughput<T>
+::Reporter_throughput(const module::Monitor_MI<B,R>& m)
+: Reporter_throughput(std::bind(&module::Monitor_MI<B,R>::get_n_trials, &m),
+	                  (T)m.get_n_trials_limit(),
+	                  std::bind(&module::Monitor_MI<B,R>::get_n_trials, &m),
+	                  (T)m.get_N())
+{
+
 }
 
 template <typename T>
@@ -50,14 +75,13 @@ Reporter::report_t Reporter_throughput<T>
 	if (get_nbits_function != nullptr)
 		nbits = get_nbits_function() * nbits_factor;
 
+	using namespace std::chrono;
 
-	auto simu_time = (double)std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - t_report).count(); // usec
+	auto simu_time = (double)duration_cast<microseconds>(steady_clock::now() - t_report).count(); // usec
 	double displayed_time = simu_time * 1e-6; // sec
 
-	if (!final && progress_function != nullptr && progress != 0 && progress_limit != 0)
+	if (!final && progress != 0 && progress_limit != 0)
 		displayed_time *= (double)progress_limit / (double)progress - 1.;
-	else
-		t_report = std::chrono::steady_clock::now();
 
 
 	auto str_time = get_time_format(displayed_time) + " ";
@@ -81,6 +105,8 @@ template <typename T>
 void Reporter_throughput<T>
 ::init()
 {
+	Reporter::init();
+
 	t_report = std::chrono::steady_clock::now();
 }
 

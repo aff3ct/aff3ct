@@ -90,7 +90,7 @@ public:
 	virtual bool n_trials_limit_achieved();
 	unsigned get_n_trials_limit() const;
 
-	virtual unsigned long long get_n_trials_fra() const;
+	virtual unsigned long long get_n_trials() const;
 
 	virtual R get_MI    () const;
 	virtual R get_MI_min() const;

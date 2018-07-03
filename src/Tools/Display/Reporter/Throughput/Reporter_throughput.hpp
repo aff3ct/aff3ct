@@ -8,6 +8,7 @@
 #include <type_traits>
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
+#include "Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "../Reporter.hpp"
 
 namespace aff3ct
@@ -33,6 +34,12 @@ protected:
 public:
 	explicit Reporter_throughput(std::function<T(void)> progress_function, const T progress_limit = 0,
 	                             std::function<T(void)> get_nbits_function = nullptr, const T nbits_factor = 1);
+
+	template<typename B>
+	explicit Reporter_throughput(const module::Monitor_BFER<B>& m);
+
+	template<typename B, typename R>
+	explicit Reporter_throughput(const module::Monitor_MI<B,R>& m);
 
 	virtual ~Reporter_throughput() = default;
 

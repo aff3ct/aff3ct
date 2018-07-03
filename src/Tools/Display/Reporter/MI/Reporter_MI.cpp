@@ -34,7 +34,7 @@ Reporter::report_t Reporter_MI<B,R>
 
 	auto& mi_report = report[0];
 
-	mi_report.push_back(Reporter_stream::format(monitor.get_n_trials_fra()) + " ");
+	mi_report.push_back(Reporter_stream::format(monitor.get_n_trials()) + " ");
 
 	std::stringstream str_MI, str_MI_min, str_MI_max;
 	str_MI     << std::setprecision(3) << std::setw(Reporter_stream::column_width-1) << monitor.get_MI    () << " ";
