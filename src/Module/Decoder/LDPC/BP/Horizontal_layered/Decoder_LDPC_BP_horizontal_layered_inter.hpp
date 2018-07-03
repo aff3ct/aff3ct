@@ -1,5 +1,5 @@
-#ifndef DECODER_LDPC_BP_LAYERED_INTER_HPP_
-#define DECODER_LDPC_BP_LAYERED_INTER_HPP_
+#ifndef DECODER_LDPC_BP_HORIZONTAL_LAYERED_INTER_HPP_
+#define DECODER_LDPC_BP_HORIZONTAL_LAYERED_INTER_HPP_
 
 #include <mipp.h>
 
@@ -14,7 +14,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float, class Update_rule = tools::Update_rule_NMS_inter<R>>
-class Decoder_LDPC_BP_layered_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
+class Decoder_LDPC_BP_horizontal_layered_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
 {
 protected:
 	const std::vector<unsigned> &info_bits_pos;
@@ -34,14 +34,14 @@ protected:
 	bool init_flag;
 
 public:
-	Decoder_LDPC_BP_layered_inter(const int K, const int N, const int n_ite,
-	                              const tools::Sparse_matrix &H,
-	                              const std::vector<unsigned> &info_bits_pos,
-	                              const Update_rule &up_rule,
-	                              const bool enable_syndrome = true,
-	                              const int syndrome_depth = 1,
-	                              const int n_frames = 1);
-	virtual ~Decoder_LDPC_BP_layered_inter();
+	Decoder_LDPC_BP_horizontal_layered_inter(const int K, const int N, const int n_ite,
+	                                         const tools::Sparse_matrix &H,
+	                                         const std::vector<unsigned> &info_bits_pos,
+	                                         const Update_rule &up_rule,
+	                                         const bool enable_syndrome = true,
+	                                         const int syndrome_depth = 1,
+	                                         const int n_frames = 1);
+	virtual ~Decoder_LDPC_BP_horizontal_layered_inter();
 	void reset();
 
 protected:
@@ -57,6 +57,6 @@ protected:
 }
 }
 
-#include "Decoder_LDPC_BP_layered_inter.hxx"
+#include "Decoder_LDPC_BP_horizontal_layered_inter.hxx"
 
-#endif /* DECODER_LDPC_BP_LAYERED_INTER_HPP_ */
+#endif /* DECODER_LDPC_BP_HORIZONTAL_LAYERED_INTER_HPP_ */

@@ -8,21 +8,21 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
-#include "Decoder_LDPC_BP_layered_ONMS_inter.hpp"
+#include "Decoder_LDPC_BP_horizontal_layered_ONMS_inter.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
-Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::Decoder_LDPC_BP_layered_ONMS_inter(const int K, const int N, const int n_ite,
-                                     const tools::Sparse_matrix &_H,
-                                     const std::vector<unsigned> &info_bits_pos,
-                                     const float normalize_factor,
-                                     const R offset,
-                                     const bool enable_syndrome,
-                                     const int syndrome_depth,
-                                     const int n_frames)
+Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
+::Decoder_LDPC_BP_horizontal_layered_ONMS_inter(const int K, const int N, const int n_ite,
+                                                const tools::Sparse_matrix &_H,
+                                                const std::vector<unsigned> &info_bits_pos,
+                                                const float normalize_factor,
+                                                const R offset,
+                                                const bool enable_syndrome,
+                                                const int syndrome_depth,
+                                                const int n_frames)
 : Decoder               (K, N, n_frames, mipp::N<R>()                                                       ),
   Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::N<R>()                                                       ),
   Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth                                   ),
@@ -37,7 +37,7 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
   Y_N_reorderered       (N                                                                                  ),
   V_reorderered         (N                                                                                  )
 {
-	const std::string name = "Decoder_LDPC_BP_layered_ONMS_inter";
+	const std::string name = "Decoder_LDPC_BP_horizontal_layered_ONMS_inter";
 	this->set_name(name);
 
 	if (sizeof(R) == 1)
@@ -52,20 +52,20 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 }
 
 template <typename B, typename R>
-Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::~Decoder_LDPC_BP_layered_ONMS_inter()
+Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
+::~Decoder_LDPC_BP_horizontal_layered_ONMS_inter()
 {
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::reset()
 {
 	this->init_flag = true;
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_load(const R *Y_N, const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
@@ -89,7 +89,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
@@ -131,7 +131,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -186,7 +186,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -239,7 +239,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 template <int F>
-void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode(const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
@@ -299,7 +299,7 @@ template <> inline mipp::Reg<double> simd_normalize<double,8>(const mipp::Reg<do
 // BP algorithm
 template <typename B, typename R>
 template <int F>
-void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode_single_ite(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches)
 {
 	auto kr = 0;
@@ -348,7 +348,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 }
 
 template <typename B, typename R>
-bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+bool Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_check_syndrome(const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
@@ -378,11 +378,11 @@ bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter<B_8,Q_8>;
-template class aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter<B_16,Q_16>;
-template class aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter<B_32,Q_32>;
-template class aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter<B_64,Q_64>;
+template class aff3ct::module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B_8,Q_8>;
+template class aff3ct::module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B_16,Q_16>;
+template class aff3ct::module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B_32,Q_32>;
+template class aff3ct::module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B_64,Q_64>;
 #else
-template class aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter<B,Q>;
+template class aff3ct::module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

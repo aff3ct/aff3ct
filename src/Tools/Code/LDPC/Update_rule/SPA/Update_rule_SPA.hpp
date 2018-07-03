@@ -59,7 +59,7 @@ public:
 	// incoming values from the variable nodes into the check nodes
 	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
 	{
-		assert(chk_degree <= (int)values.size());
+		assert(chk_degree <= (int)this->values.size());
 
 		this->sign    = 0;
 		this->product = 1;
@@ -87,7 +87,7 @@ public:
 
 	inline R compute_chk_node_out(const int var_id, const R var_val)
 	{
-		      auto res_tmp = product / values[var_id];
+		      auto res_tmp = product / this->values[var_id];
 		           res_tmp = (res_tmp < (R)1.0) ? res_tmp : (R)1.0 - std::numeric_limits<R>::epsilon();
 		const auto res_abs = (R)2.0 * std::atanh(res_tmp);
 		const auto res_sng = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);

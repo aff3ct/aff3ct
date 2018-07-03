@@ -8,7 +8,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
-#include "Decoder_LDPC_BP_layered_inter.hpp"
+#include "Decoder_LDPC_BP_horizontal_layered_inter.hpp"
 
 namespace aff3ct
 {
@@ -32,14 +32,14 @@ inline mipp::Reg<int8_t> saturate(const mipp::Reg<int8_t> v, const int8_t s)
 }
 
 template <typename B, typename R, class Update_rule>
-Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
-::Decoder_LDPC_BP_layered_inter(const int K, const int N, const int n_ite,
-                                const tools::Sparse_matrix &_H,
-                                const std::vector<unsigned> &info_bits_pos,
-                                const Update_rule &up_rule,
-                                const bool enable_syndrome,
-                                const int syndrome_depth,
-                                const int n_frames)
+Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
+::Decoder_LDPC_BP_horizontal_layered_inter(const int K, const int N, const int n_ite,
+                                           const tools::Sparse_matrix &_H,
+                                           const std::vector<unsigned> &info_bits_pos,
+                                           const Update_rule &up_rule,
+                                           const bool enable_syndrome,
+                                           const int syndrome_depth,
+                                           const int n_frames)
 : Decoder               (K, N, n_frames, mipp::N<R>()                                                       ),
   Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::N<R>()                                                       ),
   Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth                                   ),
@@ -53,7 +53,7 @@ Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
   V_reorderered         (N                                                                                  ),
   init_flag             (true                                                                               )
 {
-	const std::string name = "Decoder_LDPC_BP_layered_inter<" + this->up_rule.get_name() + ">";
+	const std::string name = "Decoder_LDPC_BP_horizontal_layered_inter<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
 
 	if (this->sat_val <= 0)
@@ -65,20 +65,20 @@ Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
-::~Decoder_LDPC_BP_layered_inter()
+Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
+::~Decoder_LDPC_BP_horizontal_layered_inter()
 {
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::reset()
 {
 	this->init_flag = true;
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_load(const R *Y_N, const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
@@ -102,7 +102,7 @@ void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
@@ -121,7 +121,7 @@ void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -152,7 +152,7 @@ void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -180,7 +180,7 @@ void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_decode(const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
@@ -201,7 +201,7 @@ void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_decode_single_ite(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches)
 {
 	auto kr = 0;
@@ -231,7 +231,7 @@ void Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-bool Decoder_LDPC_BP_layered_inter<B,R,Update_rule>
+bool Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_check_syndrome_soft(const mipp::vector<mipp::Reg<R>> &var_nodes)
 {
 	if (this->enable_syndrome)

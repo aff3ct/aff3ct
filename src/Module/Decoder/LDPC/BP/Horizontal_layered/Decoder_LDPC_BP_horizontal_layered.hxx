@@ -6,21 +6,21 @@
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_LDPC_BP_layered.hpp"
+#include "Decoder_LDPC_BP_horizontal_layered.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B, typename R, class Update_rule>
-Decoder_LDPC_BP_layered<B,R,Update_rule>
-::Decoder_LDPC_BP_layered(const int K, const int N, const int n_ite,
-                          const tools::Sparse_matrix &_H,
-                          const std::vector<unsigned> &info_bits_pos,
-                          const Update_rule &up_rule,
-                          const bool enable_syndrome,
-                          const int syndrome_depth,
-                          const int n_frames)
+Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
+::Decoder_LDPC_BP_horizontal_layered(const int K, const int N, const int n_ite,
+                                     const tools::Sparse_matrix &_H,
+                                     const std::vector<unsigned> &info_bits_pos,
+                                     const Update_rule &up_rule,
+                                     const bool enable_syndrome,
+                                     const int syndrome_depth,
+                                     const int n_frames)
 : Decoder               (K, N, n_frames, 1                                    ),
   Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                                    ),
   Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth     ),
@@ -31,25 +31,25 @@ Decoder_LDPC_BP_layered<B,R,Update_rule>
   contributions         (this->H.get_cols_max_degree()                        ),
   init_flag             (true                                                 )
 {
-	const std::string name = "Decoder_LDPC_BP_layered<" + this->up_rule.get_name() + ">";
+	const std::string name = "Decoder_LDPC_BP_horizontal_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
 }
 
 template <typename B, typename R, class Update_rule>
-Decoder_LDPC_BP_layered<B,R,Update_rule>
-::~Decoder_LDPC_BP_layered()
+Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
+::~Decoder_LDPC_BP_horizontal_layered()
 {
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::reset()
 {
 	this->init_flag = true;
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_load(const R *Y_N, const int frame_id)
 {
 	// memory zones initialization
@@ -67,7 +67,7 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
@@ -85,7 +85,7 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -112,7 +112,7 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -134,7 +134,7 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_decode(const int frame_id)
 {
 	this->up_rule.begin_decoding(this->n_ite);
@@ -153,7 +153,7 @@ void Decoder_LDPC_BP_layered<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_layered<B,R,Update_rule>
+void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &branches)
 {
 	auto kr = 0;
