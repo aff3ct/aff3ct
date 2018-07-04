@@ -4,6 +4,7 @@
 
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp"
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered.hpp"
+#include "Module/Decoder/LDPC/BP/Vertical_layered/Decoder_LDPC_BP_vertical_layered.hpp"
 
 #include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
 #include "Tools/Code/LDPC/Update_rule/LSPA/Update_rule_LSPA.hpp"
@@ -68,7 +69,7 @@ void Decoder_LDPC::parameters
 	args.add_link({p+"-h-path"}, {p+"-info-bits", "K"}); // if there is no K, then H is considered regular,
 	                                                     // so K is the N - H's height
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_FLOODING", "BP_HORIZONTAL_LAYERED", "BP_PEELING");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_FLOODING", "BP_HORIZONTAL_LAYERED", "BP_VERTICAL_LAYERED", "BP_PEELING");
 #ifdef __cpp_aligned_new
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_HORIZONTAL_LAYERED_LEGACY");
 #endif
@@ -213,6 +214,22 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 			     if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 			else if (this->min == "MINL") return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 			else if (this->min == "MINS") return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		}
+	}
+	else if (this->type == "BP_VERTICAL_LAYERED" && this->simd_strategy.empty())
+	{
+		const auto max_CN_degree = H.get_cols_max_degree();
+
+		     if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "NMS" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_NMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS <Q                           >(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "SPA" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_SPA <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA <Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "LSPA")  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_LSPA<Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA<Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		else if (this->implem == "AMS" )
+		{
+			     if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINL") return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			else if (this->min == "MINS") return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
 	}
 #ifdef __cpp_aligned_new

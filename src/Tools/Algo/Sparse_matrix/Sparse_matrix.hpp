@@ -123,4 +123,6 @@ public:
 }
 }
 
+std::ostream& operator<<(std::ostream& os, const aff3ct::tools::Sparse_matrix& sm);
+
 #endif /* SPARSE_MATRIX_HPP_ */

@@ -207,7 +207,7 @@ void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 	auto kr = 0;
 	auto kw = 0;
 
-	// layered scheduling
+	// horizontal layered scheduling
 	const auto n_chk_nodes = (int)this->H.get_n_cols();
 	for (auto c = 0; c < n_chk_nodes; c++)
 	{
