@@ -37,48 +37,55 @@ Encoder::parameters* Encoder::parameters
 }
 
 void Encoder::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-info-bits", "K"}] =
-		{"strictly_positive_int",
-		 "useful number of bit transmitted (information bits)."};
+	args.add(
+		{p+"-info-bits", "K"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"useful number of bit transmitted (information bits).",
+		tools::arg_rank::REQ);
 
-	req_args[{p+"-cw-size", "N"}] =
-		{"strictly_positive_int",
-		 "the codeword size."};
+	args.add(
+		{p+"-cw-size", "N"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"the codeword size.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	args.add(
+		{p+"-fra", "F"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "select the type of encoder you want to use.",
-		 "NO, AZCW, COSET, USER"};
+	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("NO", "USER", "AZCW", "COSET")),
+		"type of the encoder to use in the simulation.");
 
-	opt_args[{p+"-path"}] =
-		{"string",
-		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
+	args.add(
+		{p+"-path"},
+		tools::File(tools::openmode::read),
+		"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
 
-	opt_args[{p+"-seed", "S"}] =
-		{"positive_int",
-		 "seed used to initialize the pseudo random generators."};
+	args.add(
+		{p+"-seed", "S"},
+		tools::Integer(tools::Positive()),
+		"seed used to initialize the pseudo random generators.");
 }
 
 void Encoder::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-info-bits", "K"})) this->K          = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-cw-size",   "N"})) this->N_cw       = std::stoi(vals.at({p+"-cw-size",   "N"}));
-	if(exist(vals, {p+"-fra",       "F"})) this->n_frames   = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-seed",      "S"})) this->seed       = std::stoi(vals.at({p+"-seed",      "S"}));
-	if(exist(vals, {p+"-type"          })) this->type       =           vals.at({p+"-type"          });
-	if(exist(vals, {p+"-path"          })) this->path       =           vals.at({p+"-path"          });
-	if(exist(vals, {p+"-no-sys"        })) this->systematic = false;
+	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int({p+"-info-bits", "K"});
+	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int({p+"-fra",       "F"});
+	if(vals.exist({p+"-seed",      "S"})) this->seed       = vals.to_int({p+"-seed",      "S"});
+	if(vals.exist({p+"-type"          })) this->type       = vals.at    ({p+"-type"          });
+	if(vals.exist({p+"-path"          })) this->path       = vals.at    ({p+"-path"          });
+	if(vals.exist({p+"-no-sys"        })) this->systematic = false;
 
 	this->R = (float)this->K / (float)this->N_cw;
 }

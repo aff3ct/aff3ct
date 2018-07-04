@@ -49,61 +49,64 @@ Decoder_RSC::parameters* Decoder_RSC::parameters
 }
 
 void Decoder_RSC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type", "D"}][2] += ", BCJR";
-	opt_args[{p+"-implem"   }][2] += ", GENERIC, FAST, VERY_FAST";
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
+	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "FAST", "VERY_FAST");
 
-	opt_args[{p+"-simd"}] =
-		{"string",
-		 "the SIMD strategy you want to use.",
-		 "INTRA, INTER"};
+	args.add(
+		{p+"-simd"},
+		tools::Text(tools::Including_set("INTRA", "INTER")),
+		"the SIMD strategy you want to use.");
 
-	opt_args[{p+"-max"}] =
-		{"string",
-		 "the MAX implementation for the nodes.",
-		 "MAX, MAXL, MAXS"};
+	args.add(
+		{p+"-max"},
+		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
+		"the MAX implementation for the nodes.");
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "does not suppose a buffered encoding."};
+	args.add(
+		{p+"-no-buff"},
+		tools::None(),
+		"does not suppose a buffered encoding.");
 
-	opt_args[{p+"-poly"}] =
-		{"string",
-		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+	args.add(
+		{p+"-poly"},
+		tools::Text(),
+		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
 
-	opt_args[{p+"-std"}] =
-		{"string",
-		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
-		 "LTE, CCSDS"};
+	args.add(
+		{p+"-std"},
+		tools::Text(tools::Including_set("LTE", "CCSDS")),
+		"select a standard and set automatically some parameters (overwritten with user given arguments).");
 }
 
 void Decoder_RSC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-simd"   })) this->simd_strategy = vals.at({p+"-simd"});
-	if(exist(vals, {p+"-max"    })) this->max           = vals.at({p+"-max" });
-	if(exist(vals, {p+"-std"    })) this->standard      = vals.at({p+"-std" });
-	if(exist(vals, {p+"-no-buff"})) this->buffered      = false;
+	if(vals.exist({p+"-simd"   })) this->simd_strategy = vals.at({p+"-simd"});
+	if(vals.exist({p+"-max"    })) this->max           = vals.at({p+"-max" });
+	if(vals.exist({p+"-std"    })) this->standard      = vals.at({p+"-std" });
+	if(vals.exist({p+"-no-buff"})) this->buffered      = false;
 
-	if (this->standard == "LTE" && !exist(vals, {p+"-poly"}))
+	if (this->standard == "LTE" && !vals.exist({p+"-poly"}))
 		this->poly = {013, 015};
 
-	if (this->standard == "CCSDS" && !exist(vals, {p+"-poly"}))
+	if (this->standard == "CCSDS" && !vals.exist({p+"-poly"}))
 		this->poly = {023, 033};
 
-	if (exist(vals, {p+"-poly"}))
+	if (vals.exist({p+"-poly"}))
 	{
+		this->standard = "";
 		auto poly_str = vals.at({p+"-poly"});
 
 #ifdef _MSC_VER
@@ -112,6 +115,12 @@ void Decoder_RSC::parameters
 		std::sscanf(poly_str.c_str(), "{%o,%o}", &this->poly[0], &this->poly[1]);
 #endif
 	}
+
+	if (this->poly[0] == 013 && this->poly[1] == 015)
+		this->standard = "LTE";
+
+	if (this->poly[0] == 023 && this->poly[1] == 033)
+		this->standard = "CCSDS";
 
 	if (this->poly[0] != 013 || this->poly[1] != 015)
 		this->implem = "GENERIC";
@@ -129,7 +138,7 @@ void Decoder_RSC::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
@@ -257,8 +266,6 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC::parameters
 	{
 		return build_siso<B,Q>(trellis, stream, n_ite);
 	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>

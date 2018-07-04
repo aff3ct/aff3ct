@@ -1,4 +1,7 @@
+#include <cmath>
+
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Math/utils.h"
 
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
 
@@ -29,17 +32,17 @@ Encoder_BCH::parameters* Encoder_BCH::parameters
 }
 
 void Encoder_BCH::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type"}][2] += ", BCH";
+	tools::add_options(args.at({p+"-type"}), 0, "BCH");
 }
 
 void Encoder_BCH::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 }

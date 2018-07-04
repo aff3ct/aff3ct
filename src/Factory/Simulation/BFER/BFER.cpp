@@ -1,6 +1,7 @@
 #include <thread>
 
 #include "BFER.hpp"
+#include "Tools/Math/utils.h"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -90,44 +91,49 @@ std::vector<std::string> BFER::parameters
 }
 
 void BFER::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Simulation::parameters::get_description(req_args, opt_args);
+	Simulation::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-snr-type", "E"}] =
-		{"string",
-		 "select the type of SNR: symbol energy or information bit energy.",
-		 "ES, EB"};
+	args.add(
+		{p+"-coset", "c"},
+		tools::None(),
+		"enable the coset approach.");
 
-	opt_args[{p+"-coset", "c"}] =
-		{"",
-		 "enable the coset approach."};
+	args.add(
+		{p+"-err-trk"},
+		tools::None(),
+		"enable the tracking of the bad frames (by default the frames are stored in the current folder).",
+		tools::arg_rank::ADV);
 
-	opt_args[{p+"-err-trk"}] =
-		{"",
-		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
+	args.add(
+		{p+"-err-trk-rev"},
+		tools::None(),
+		"automatically replay the saved frames.",
+		tools::arg_rank::ADV);
 
-	opt_args[{p+"-err-trk-rev"}] =
-		{"",
-		 "automatically replay the saved frames."};
+	args.add(
+		{p+"-err-trk-path"},
+		tools::File(tools::openmode::read_write),
+		"base path for the files where the bad frames will be stored or read.",
+		tools::arg_rank::ADV);
 
-	opt_args[{p+"-err-trk-path"}] =
-		{"string",
-		 "base path for the files where the bad frames will be stored or read."};
+	args.add(
+		{p+"-err-trk-thold"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"dump only frames with a bit error count above or equal to this threshold.",
+		tools::arg_rank::ADV);
 
-	opt_args[{p+"-err-trk-thold"}] =
-		{"positive_int",
-		 "dump only frames with a bit error count above or equal to this threshold."};
-
-	opt_args[{p+"-coded"}] =
-		{"",
-		 "enable the coded monitoring (extends the monitored bits to the entire codeword)."};
+	args.add(
+		{p+"-coded"},
+		tools::None(),
+		"enable the coded monitoring (extends the monitored bits to the entire codeword).");
 }
 
 void BFER::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 #if !defined(SYSTEMC)
 	this->n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
@@ -137,13 +143,12 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-snr-type",   "E"})) this->snr_type            =           vals.at({p+"-snr-type", "E"});
-	if(exist(vals, {p+"-err-trk-path"   })) this->err_track_path      =           vals.at({p+"-err-trk-path" });
-	if(exist(vals, {p+"-err-trk-thold"  })) this->err_track_threshold = std::stoi(vals.at({p+"-err-trk-thold"}));
-	if(exist(vals, {p+"-err-trk-rev"    })) this->err_track_revert    = true;
-	if(exist(vals, {p+"-err-trk"        })) this->err_track_enable    = true;
-	if(exist(vals, {p+"-coset",      "c"})) this->coset               = true;
-	if(exist(vals, {p+"-coded",         })) this->coded_monitoring    = true;
+	if(vals.exist({p+"-err-trk-path"   })) this->err_track_path      = vals.at    ({p+"-err-trk-path"   });
+	if(vals.exist({p+"-err-trk-thold"  })) this->err_track_threshold = vals.to_int({p+"-err-trk-thold"  });
+	if(vals.exist({p+"-err-trk-rev"    })) this->err_track_revert    = true;
+	if(vals.exist({p+"-err-trk"        })) this->err_track_enable    = true;
+	if(vals.exist({p+"-coset",      "c"})) this->coset               = true;
+	if(vals.exist({p+"-coded",         })) this->coded_monitoring    = true;
 
 	if (this->err_track_revert)
 	{
@@ -159,7 +164,6 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("SNR type", this->snr_type));
 	headers[p].push_back(std::make_pair("Coset approach (c)", this->coset ? "yes" : "no"));
 	headers[p].push_back(std::make_pair("Coded monitoring", this->coded_monitoring ? "yes" : "no"));
 
@@ -174,14 +178,19 @@ void BFER::parameters
 
 	if (this->err_track_enable || this->err_track_revert)
 	{
-		std::string path = this->err_track_path + std::string("_$snr.[src,enc,chn]");
+		std::string path = this->err_track_path + std::string("_$noise.[src,enc,chn]");
 		headers[p].push_back(std::make_pair("Bad frames base path", path));
 	}
 
 	if (this->src != nullptr && this->cdc != nullptr)
 	{
 		const auto bit_rate = (float)this->src->K / (float)this->cdc->N;
-		headers[p].push_back(std::make_pair("Bit rate", std::to_string(bit_rate)));
+		// find the greatest common divisor of K and N
+		auto gcd = tools::greatest_common_divisor(this->src->K, this->cdc->N);
+		std::stringstream br_str;
+		br_str << bit_rate << " (" << this->src->K/gcd << "/" << this->cdc->N/gcd << ")";
+
+		headers[p].push_back(std::make_pair("Bit rate", br_str.str()));
 	}
 
 	if (this->src != nullptr)

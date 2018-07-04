@@ -24,26 +24,26 @@ Terminal_BFER::parameters* Terminal_BFER::parameters
 }
 
 void Terminal_BFER::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Terminal::parameters::get_description(req_args, opt_args);
+	Terminal::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "select the terminal type you want.",
-		 "STD"};
+	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("STD")),
+		"select the terminal type you want.");
 }
 
 void Terminal_BFER::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Terminal::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-type"})) this->type = vals.at({p+"-type"});
+	if(vals.exist({p+"-type"})) this->type = vals.at({p+"-type"});
 }
 
 void Terminal_BFER::parameters
@@ -56,34 +56,34 @@ void Terminal_BFER::parameters
 	Terminal::parameters::get_headers(headers, full);
 }
 
-template <typename B>
-tools::Terminal_BFER<B>* Terminal_BFER::parameters
-::build(const module::Monitor_BFER<B> &monitor) const
+template <typename B, typename R>
+tools::Terminal_BFER<B,R>* Terminal_BFER::parameters
+::build(const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo, bool display_bfer) const
 {
-	if (this->type == "STD") return new tools::Terminal_BFER<B>(monitor);
+	if (this->type == "STD") return new tools::Terminal_BFER<B,R>(monitor, display_mutinfo, display_bfer);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-tools::Terminal_BFER<B>* Terminal_BFER
-::build(const parameters &params, const module::Monitor_BFER<B> &monitor)
+template <typename B, typename R>
+tools::Terminal_BFER<B,R>* Terminal_BFER
+::build(const parameters &params, const module::Monitor_BFER<B,R> &monitor, bool display_mutinfo, bool display_bfer)
 {
-	return params.template build<B>(monitor);
+	return params.template build<B,R>(monitor, display_mutinfo, display_bfer);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::tools::Terminal_BFER<B_8 >* aff3ct::factory::Terminal_BFER::parameters::build<B_8 >(const aff3ct::module::Monitor_BFER<B_8 >&) const;
-template aff3ct::tools::Terminal_BFER<B_16>* aff3ct::factory::Terminal_BFER::parameters::build<B_16>(const aff3ct::module::Monitor_BFER<B_16>&) const;
-template aff3ct::tools::Terminal_BFER<B_32>* aff3ct::factory::Terminal_BFER::parameters::build<B_32>(const aff3ct::module::Monitor_BFER<B_32>&) const;
-template aff3ct::tools::Terminal_BFER<B_64>* aff3ct::factory::Terminal_BFER::parameters::build<B_64>(const aff3ct::module::Monitor_BFER<B_64>&) const;
-template aff3ct::tools::Terminal_BFER<B_8 >* aff3ct::factory::Terminal_BFER::build<B_8 >(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_8 >&);
-template aff3ct::tools::Terminal_BFER<B_16>* aff3ct::factory::Terminal_BFER::build<B_16>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_16>&);
-template aff3ct::tools::Terminal_BFER<B_32>* aff3ct::factory::Terminal_BFER::build<B_32>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_32>&);
-template aff3ct::tools::Terminal_BFER<B_64>* aff3ct::factory::Terminal_BFER::build<B_64>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_64>&);
+template aff3ct::tools::Terminal_BFER<B_8 ,R_8 >* aff3ct::factory::Terminal_BFER::parameters::build<B_8 ,R_8 >(const aff3ct::module::Monitor_BFER<B_8 ,R_8 >&, bool, bool) const;
+template aff3ct::tools::Terminal_BFER<B_16,R_16>* aff3ct::factory::Terminal_BFER::parameters::build<B_16,R_16>(const aff3ct::module::Monitor_BFER<B_16,R_16>&, bool, bool) const;
+template aff3ct::tools::Terminal_BFER<B_32,R_32>* aff3ct::factory::Terminal_BFER::parameters::build<B_32,R_32>(const aff3ct::module::Monitor_BFER<B_32,R_32>&, bool, bool) const;
+template aff3ct::tools::Terminal_BFER<B_64,R_64>* aff3ct::factory::Terminal_BFER::parameters::build<B_64,R_64>(const aff3ct::module::Monitor_BFER<B_64,R_64>&, bool, bool) const;
+template aff3ct::tools::Terminal_BFER<B_8 ,R_8 >* aff3ct::factory::Terminal_BFER::build<B_8 ,R_8 >(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_8 ,R_8 >&, bool, bool);
+template aff3ct::tools::Terminal_BFER<B_16,R_16>* aff3ct::factory::Terminal_BFER::build<B_16,R_16>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_16,R_16>&, bool, bool);
+template aff3ct::tools::Terminal_BFER<B_32,R_32>* aff3ct::factory::Terminal_BFER::build<B_32,R_32>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_32,R_32>&, bool, bool);
+template aff3ct::tools::Terminal_BFER<B_64,R_64>* aff3ct::factory::Terminal_BFER::build<B_64,R_64>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B_64,R_64>&, bool, bool);
 #else
-template aff3ct::tools::Terminal_BFER<B>* aff3ct::factory::Terminal_BFER::parameters::build<B>(const aff3ct::module::Monitor_BFER<B>&) const;
-template aff3ct::tools::Terminal_BFER<B>* aff3ct::factory::Terminal_BFER::build<B>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B>&);
+template aff3ct::tools::Terminal_BFER<B,R>* aff3ct::factory::Terminal_BFER::parameters::build<B,R>(const aff3ct::module::Monitor_BFER<B,R>&, bool, bool) const;
+template aff3ct::tools::Terminal_BFER<B,R>* aff3ct::factory::Terminal_BFER::build<B,R>(const aff3ct::factory::Terminal_BFER::parameters&, const aff3ct::module::Monitor_BFER<B,R>&, bool, bool);
 #endif

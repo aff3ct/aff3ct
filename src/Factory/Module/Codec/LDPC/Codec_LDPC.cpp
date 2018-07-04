@@ -1,4 +1,7 @@
+#include <sstream>
 #include "Codec_LDPC.hpp"
+
+#include "Tools/Exception/exception.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -52,58 +55,81 @@ void Codec_LDPC::parameters
 }
 
 void Codec_LDPC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SISO_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto penc = enc->get_prefix();
 	auto pdec = dec->get_prefix();
 
-	opt_args.erase({penc+"-h-path"           });
-	opt_args.erase({penc+"-h-reorder"        });
-	req_args.erase({pdec+"-cw-size",   "N"   });
-	req_args.erase({pdec+"-info-bits", "K"   });
-	opt_args.erase({pdec+"-fra",       "F"   });
+	args.erase({penc+"-h-path"           });
+	args.erase({penc+"-h-reorder"        });
+	args.erase({pdec+"-cw-size",   "N"   });
+	args.erase({pdec+"-info-bits", "K"   });
+	args.erase({pdec+"-fra",       "F"   });
+
+	args.add_link({pdec+"-h-path"}, {penc+"-info-bits", "K"});
+	args.add_link({pdec+"-h-path"}, {penc+"-cw-size",   "N"});
 
 	if (this->pct)
 	{
-		pct->get_description(req_args, opt_args);
+		pct->get_description(args);
 
 		auto ppct = pct->get_prefix();
 
-		req_args.erase({ppct+"-info-bits", "K"   });
-		opt_args.erase({ppct+"-fra",       "F"   });
-		req_args.erase({ppct+"-cw-size",   "N_cw"});
+		args.erase({ppct+"-info-bits", "K"   });
+		args.erase({ppct+"-fra",       "F"   });
+		args.erase({ppct+"-cw-size",   "N_cw"});
+
+		args.add_link({pdec+"-h-path"}, {ppct+"-fra-size", "N"});
 	}
 }
 
 void Codec_LDPC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 
 	enc->store(vals);
+	dec->store(vals);
+
+	if (this->enc->type == "LDPC_DVBS2" || this->enc->type == "LDPC")
+		this->dec->N_cw = this->enc->N_cw; // then the encoder knows the N_cw
+	else
+		this->enc->N_cw = this->dec->N_cw; // then the decoder knows the N_cw
+
+	if (this->enc->K != 0)
+		this->dec->K = this->enc->K; // then the encoder knows the K
+	else
+		this->enc->K = this->dec->K; // then the decoder knows the K
+
+	// if (this->dec->K == 0 || this->dec->N_cw == 0 || this->enc->K == 0 || this->enc->N_cw == 0)
+	// {
+	// 	std::stringstream message;
+	// 	message << "Error while initializing decoder and encoder dimensions ('this->dec->K' = " << this->dec->K
+	// 	        << ", 'this->dec->N_cw' = " << this->dec->N_cw << ", 'this->enc->K' = " << this->enc->K
+	// 	        << ", 'this->enc->N_cw' = " << this->enc->N_cw << ").";
+	// 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	// }
+
+
+	this->dec->n_frames = this->enc->n_frames;
+
+	this->enc->R = (float)this->enc->K / (float)this->enc->N_cw;
+	this->dec->R = (float)this->dec->K / (float)this->dec->N_cw;
 
 	if (this->pct)
 	{
 		this->pct->K        = this->enc->K;
+		this->pct->N        = this->enc->N_cw;
 		this->pct->N_cw     = this->enc->N_cw;
 		this->pct->n_frames = this->enc->n_frames;
 
 		pct->store(vals);
 	}
-
-	this->dec->K        = this->enc->K;
-	this->dec->N_cw     = this->enc->N_cw;
-	this->dec->n_frames = this->enc->n_frames;
-
-	dec->store(vals);
-
-	this->enc->H_path    = this->dec->H_path;
-	this->enc->H_reorder = this->dec->H_reorder;
 
 	this->K    = this->enc->K;
 	this->N_cw = this->enc->N_cw;
@@ -126,8 +152,6 @@ module::Codec_LDPC<B,Q>* Codec_LDPC::parameters
 ::build(module::CRC<B>* crc) const
 {
 	return new module::Codec_LDPC<B,Q>(*enc, *dec, pct);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>

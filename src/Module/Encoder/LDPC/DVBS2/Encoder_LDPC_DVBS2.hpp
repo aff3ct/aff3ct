@@ -5,7 +5,7 @@
 
 #include "../Encoder_LDPC.hpp"
 
-#include "Encoder_LDPC_DVBS2_constants.hpp"
+#include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 
 namespace aff3ct
 {
@@ -15,21 +15,18 @@ namespace module
 template <typename B = int>
 class Encoder_LDPC_DVBS2 : public Encoder_LDPC<B>
 {
-	const dvbs2_values* dvbs2 = nullptr;
+	const tools::dvbs2_values& dvbs2;
 
 public:
-	Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames = 1);
-	virtual ~Encoder_LDPC_DVBS2();
+	Encoder_LDPC_DVBS2(const tools::dvbs2_values& dvbs2, const int n_frames = 1);
+	virtual ~Encoder_LDPC_DVBS2() = default;
 
-	const std::vector<uint32_t>& get_info_bits_pos();
+	const std::vector<uint32_t>& get_info_bits_pos() const;
 
 	bool is_sys() const;
 
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);
-
-private:
-	void build_dvbs2();
 };
 
 }

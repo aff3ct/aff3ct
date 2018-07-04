@@ -42,25 +42,25 @@ Codec_RSC::parameters* Codec_RSC::parameters
 }
 
 void Codec_RSC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SISO_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
 
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
-	opt_args.erase({pdec+"-no-buff"       });
-	opt_args.erase({pdec+"-poly"          });
-	opt_args.erase({pdec+"-std"           });
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
+	args.erase({pdec+"-no-buff"       });
+	args.erase({pdec+"-poly"          });
+	args.erase({pdec+"-std"           });
 }
 
 void Codec_RSC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 

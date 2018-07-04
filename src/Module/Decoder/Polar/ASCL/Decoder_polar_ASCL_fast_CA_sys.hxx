@@ -74,6 +74,7 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 			this->L = this->L_max;
 			this->init_buffers();
 			this->recursive_decode(Y_N, off_l, off_s, this->m, first_node_id);
+			this->select_best_path();
 		}
 	}
 }

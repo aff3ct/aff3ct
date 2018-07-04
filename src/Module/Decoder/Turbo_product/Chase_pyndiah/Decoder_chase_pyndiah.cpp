@@ -6,7 +6,7 @@
 #include "Decoder_chase_pyndiah.hpp"
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/compute_parity.h"
 
 

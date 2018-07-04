@@ -8,8 +8,8 @@ const std::string aff3ct::factory::Codec_BCH_prefix = "cdc";
 
 Codec_BCH::parameters
 ::parameters(const std::string &prefix)
-: Codec     ::parameters(Codec_BCH_name, prefix),
-  Codec_SIHO::parameters(Codec_BCH_name, prefix),
+: Codec          ::parameters(Codec_BCH_name, prefix),
+  Codec_SIHO_HIHO::parameters(Codec_BCH_name, prefix),
   enc(new Encoder_BCH::parameters("enc")),
   dec(new Decoder_BCH::parameters("dec"))
 {
@@ -42,25 +42,28 @@ Codec_BCH::parameters* Codec_BCH::parameters
 }
 
 void Codec_BCH::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SIHO_HIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
+	auto penc = enc->get_prefix();
 
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
-	opt_args.erase({pdec+"-no-sys"        });
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
+	args.erase({pdec+"-no-sys"        });
+
+	args.add_link({pdec+"-corr-pow", "T"}, {penc+"-info-bits", "K"});
 }
 
 void Codec_BCH::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
-	Codec_SIHO::parameters::store(vals);
+	Codec_SIHO_HIHO::parameters::store(vals);
 
 	enc->store(vals);
 
@@ -70,6 +73,9 @@ void Codec_BCH::parameters
 
 	dec->store(vals);
 
+	if(this->dec->K != this->enc->K) // when -T has been given but not -K
+		this->enc->K = this->dec->K;
+
 	this->K    = this->enc->K;
 	this->N_cw = this->enc->N_cw;
 	this->N    = this->enc->N_cw;
@@ -78,7 +84,7 @@ void Codec_BCH::parameters
 void Codec_BCH::parameters
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Codec_SIHO::parameters::get_headers(headers, full);
+	Codec_SIHO_HIHO::parameters::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);

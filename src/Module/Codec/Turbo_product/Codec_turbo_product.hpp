@@ -22,7 +22,7 @@ template <typename B = int, typename Q = float>
 class Codec_turbo_product : public Codec_SISO_SIHO<B,Q>
 {
 protected:
-	const aff3ct::tools::BCH_polynomial_generator GF_poly;
+	const tools::BCH_polynomial_generator GF_poly;
 	Encoder_BCH<B  >* enc_bch;
 	Decoder_BCH<B,Q>* dec_bch;
 	Decoder_chase_pyndiah<B,Q>* cp;

@@ -15,8 +15,8 @@
 
 #include "Tools/types.h"
 #include "Tools/version.h"
-#include "Tools/Arguments_reader.hpp"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Arguments/Argument_handler.hpp"
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/system_functions.h"
 
 #include "Launcher/Launcher.hpp"
@@ -73,44 +73,52 @@ void print_version()
 
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", "
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
-	std::cout << "Copyright (c) 2016-2017 - MIT license."                                      << std::endl;
+	std::cout << "Copyright (c) 2016-2018 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
 	exit(EXIT_SUCCESS);
 }
 
-#ifdef MULTI_PREC
-void read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
-#else
-void read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
-#endif
+int read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
 {
-	tools::Arguments_reader ar(argc, argv);
+	tools::Argument_handler ah(argc, argv);
 
-	factory::arg_map req_args, opt_args;
-	factory::arg_grp arg_group;
+	tools::Argument_map_info args;
+	tools::Argument_map_group arg_group;
 
 	std::vector<std::string> cmd_warn, cmd_error;
 
-	params.get_description(req_args, opt_args);
+	params.get_description(args);
 
-	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
-	bool error    = !ar.check_arguments(cmd_error);
+	auto arg_vals = ah.parse_arguments(args, cmd_warn, cmd_error);
 
-	params.store(ar.get_args());
+	bool display_help = false;
+	try
+	{
+		params.store(arg_vals);
+	}
+	catch(std::exception&)
+	{
+		display_help = true;
+	}
 
 	if (params.display_version)
 		print_version();
 
-	if (error || miss_arg)
+	if (cmd_error.size() || display_help)
 	{
-		arg_group.push_back({"sim", "Simulation parameter(s)"});
-		ar.print_usage(arg_group);
+		arg_group["sim"] = "Simulation parameter(s)";
+		ah.print_help(args, arg_group, params.display_adv_help);
 
+		if (cmd_error.size()) std::cerr << std::endl;
 		for (auto w = 0; w < (int)cmd_error.size(); w++)
-			std::cerr << tools::format_error(cmd_error[w]) << std::endl;
-		std::exit(EXIT_FAILURE);
+			std::cerr << rang::tag::error << cmd_error[w] << std::endl;
+
+		if (cmd_warn.size()) std::cerr << std::endl;
+		for (auto w = 0; w < (int)cmd_warn.size(); w++)
+			std::cerr << rang::tag::warning << cmd_warn[w] << std::endl;
 	}
+	return (cmd_error.size() || display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 #ifndef SYSTEMC
@@ -119,44 +127,44 @@ int main(int argc, char **argv)
 int sc_main(int argc, char **argv)
 #endif
 {
+	int exit_code = EXIT_SUCCESS;
 #ifdef ENABLE_MPI
 	MPI_Init(nullptr, nullptr);
 #endif
 
 	factory::Launcher::parameters params("sim");
-	read_arguments(argc, (const char**)argv, params);
+	if (read_arguments(argc, (const char**)argv, params) == EXIT_FAILURE)
+		return EXIT_FAILURE;
 
 	try
 	{
-		launcher::Launcher *launcher = nullptr;
+		launcher::Launcher *launcher;
 #ifdef MULTI_PREC
 		switch (params.sim_prec)
 		{
 			case 8 : launcher = factory::Launcher::build<B_8, R_8, Q_8 >(params, argc, (const char**)argv); break;
 			case 16: launcher = factory::Launcher::build<B_16,R_16,Q_16>(params, argc, (const char**)argv); break;
 			case 32: launcher = factory::Launcher::build<B_32,R_32,Q_32>(params, argc, (const char**)argv); break;
-#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
 			case 64: launcher = factory::Launcher::build<B_64,R_64,Q_64>(params, argc, (const char**)argv); break;
-#endif
-			default: break;
+			default: launcher = nullptr; break;
 		}
 #else
 		launcher = factory::Launcher::build<B,R,Q>(params, argc, (const char**)argv);
 #endif
 		if (launcher != nullptr)
 		{
-			launcher->launch();
+			exit_code = launcher->launch();
 			delete launcher;
 		}
 	}
 	catch(std::exception const& e)
 	{
-		std::cerr << tools::apply_on_each_line(tools::addr2line(e.what()), &tools::format_error) << std::endl;
+		rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 	}
 
 #ifdef ENABLE_MPI
 	MPI_Finalize();
 #endif
 
-	return EXIT_SUCCESS;
+	return exit_code;
 }

@@ -33,40 +33,41 @@ Encoder_RSC::parameters* Encoder_RSC::parameters
 }
 
 void Encoder_RSC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type"}][2] += ", RSC";
+	tools::add_options(args.at({p+"-type"}), 0, "RSC");
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "disable the buffered encoding."};
+	args.add(
+		{p+"-no-buff"},
+		tools::None(),
+		"disable the buffered encoding.");
 
-	opt_args[{p+"-poly"}] =
-		{"string",
-		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+	args.add(
+		{p+"-poly"},
+		tools::Text(),
+		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
 
-	opt_args[{p+"-std"}] =
-		{"string",
-		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
-		 "LTE, CCSDS"};
+	args.add(
+		{p+"-std"},
+		tools::Text(tools::Including_set("LTE", "CCSDS")),
+		"select a standard and set automatically some parameters (overwritten with user given arguments)");
 }
 
 void Encoder_RSC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
-
-	if(exist(vals, {p+"-std"})) this->standard = vals.at({p+"-std"});
+	if(vals.exist({p+"-no-buff"})) this->buffered = false;
+	if(vals.exist({p+"-std"    })) this->standard = vals.at({p+"-std"});
 
 	if (this->standard == "LTE")
 		this->poly = {013, 015};
@@ -74,8 +75,9 @@ void Encoder_RSC::parameters
 	if (this->standard == "CCSDS")
 		this->poly = {023, 033};
 
-	if (exist(vals, {p+"-poly"}))
+	if (vals.exist({p+"-poly"}))
 	{
+		this->standard = "";
 		auto poly_str = vals.at({p+"-poly"});
 
 #ifdef _MSC_VER
@@ -84,6 +86,12 @@ void Encoder_RSC::parameters
 		std::sscanf(poly_str.c_str(), "{%o,%o}", &this->poly[0], &this->poly[1]);
 #endif
 	}
+
+	if (this->poly[0] == 013 && this->poly[1] == 015)
+		this->standard = "LTE";
+
+	if (this->poly[0] == 023 && this->poly[1] == 033)
+		this->standard = "CCSDS";
 
 	this->tail_length = (int)(2 * std::floor(std::log2((float)std::max(this->poly[0], this->poly[1]))));
 	this->N_cw        = 2 * this->K + this->tail_length;

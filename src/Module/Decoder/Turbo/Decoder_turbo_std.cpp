@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 
 #include "Decoder_turbo_std.hpp"
 
@@ -57,7 +57,7 @@ void Decoder_turbo_std<B,R>
 
 		for (auto i = this->K * n_frames; i < (this->K + tail_n_2) * n_frames; i++)
 			this->l_sen[i] = this->l_sn[i];
-	
+
 		// SISO in the natural domain
 		this->siso_n.decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 

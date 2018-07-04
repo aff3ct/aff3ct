@@ -7,10 +7,13 @@
 #include <cmath>
 #include <ctgmath>
 #include <sstream>
+#include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
+#include "Tools/Math/numerical_integration.h"
 #include "Modem_CPM.hpp"
+
 
 namespace aff3ct
 {
@@ -24,7 +27,7 @@ const std::string Modem_CPM<B,R,Q,MAX>::wave_shape_default = "GMSK";
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_CPM<B,R,Q,MAX>
 ::Modem_CPM(const int  N,
-            const R    sigma,
+            const tools::Noise<R>& noise,
             const int  bits_per_symbol,
             const int  sampling_factor,
             const int  cpm_L,
@@ -37,7 +40,7 @@ Modem_CPM<B,R,Q,MAX>
 : Modem<B,R,Q>(N,
                Modem_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, cpm_p, sampling_factor),
                Modem_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
-               sigma,
+               noise,
                n_frames),
   no_sig2   (no_sig2                            ),
   cpm       (cpm_L,
@@ -60,7 +63,7 @@ Modem_CPM<B,R,Q,MAX>
 	this->set_name(name);
 
 	this->set_filter(true);
-	
+
 	if (N % bits_per_symbol)
 	{
 		std::stringstream message;
@@ -82,10 +85,12 @@ Modem_CPM<B,R,Q,MAX>
 	cpe.generate_anti_trellis      (cpm.anti_trellis_original_state,
 	                                cpm.anti_trellis_input_transition);
 
-	cpe.generate_tail_symb_transition(                               );
+	cpe.generate_tail_symb_transition();
 
-	generate_baseband              (                                 );
-	generate_projection            (                                 );
+	generate_baseband();
+
+	if (no_sig2 || (this->n != nullptr && this->n->is_set()))
+		generate_projection();
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -96,11 +101,11 @@ Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::set_sigma(const R sigma)
+::set_noise(const tools::Noise<R>& noise)
 {
-	Modem<B,R,Q>::set_sigma(sigma);
-	if (!no_sig2) this->generate_projection();
+	Modem<B,R,Q>::set_noise(noise);
 
+	if (!no_sig2) this->generate_projection();
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -135,6 +140,9 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+
 	const auto Y_real = Y_N1;
 	const auto Y_imag = Y_N1 + this->N_mod / 2;
 	const auto p_real = projection.data();
@@ -218,24 +226,35 @@ void Modem_CPM<B,R,Q,MAX>
 	}
 }
 
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795
+#endif
+
 template <typename R>
 class GMSK
 {
 private:
-	const R B;
 	const R off;
+	const R factor;
 
 public:
-	GMSK(const R b, const R offset) : B(b), off(offset){ }
+	GMSK(const R b, const R offset)
+	: off(offset),
+	  factor((R)2.0 * (R)M_PI * b / std::sqrt((R)2.0 * std::log((R)2.0)))
+	{ }
+
+	R apply(const R& t) const
+	{
+		const R x      = t + off;
+		const R minus  = (x - (R)0.5) * factor;
+		const R plus   = (x + (R)0.5) * factor;
+
+		return tools::div4(std::erf(plus) - std::erf(minus));
+	}
 
 	R operator()(const R& t) const
 	{
-		R x      = t + off;
-		R factor = (R)2.0 * (R)M_PI * B / sqrt((R)2.0 * std::log((R)2.0));
-		R minus  = (x - (R)0.5) * factor;
-		R plus   = (x + (R)0.5) * factor;
-
-		return (std::erf(plus) - std::erf(minus))/(R)4.0;
+		return apply(t);
 	}
 };
 
@@ -249,7 +268,7 @@ R Modem_CPM<B,R,Q,MAX>
 			return (R)0.0;
 
 		GMSK<R> g((R)0.3, -(R)cpm.L / (R)2.0);
-		return tools::integral(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
+		return tools::mid_rect_integral_seq(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
 	}
 	else if (cpm.wave_shape == "RCOS")
 		return t_stamp / ((R)2.0 * cpm.L) - sin((R)2.0 * (R)M_PI * t_stamp / (R)cpm.L) / (R)4.0 / (R)M_PI;
@@ -277,7 +296,11 @@ void Modem_CPM<B,R,Q,MAX>
 	R factor = (R)1;
 
 	if (!no_sig2)
-		factor = (R)2 / (this->sigma * this->sigma);
+	{
+		this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
+		factor = (R)1 / (this->n->get_noise() * this->n->get_noise()); // 2 / sigma_complex^2
+	}
 
 	if (cpm.filters_type == "TOTAL")
 	{

@@ -5,8 +5,6 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Code/LDPC/AList/AList.hpp"
-#include "Tools/Code/LDPC/QC/QC.hpp"
 #include "Tools/general_utils.h"
 
 #include "Factory/Module/Puncturer/Puncturer.hpp"
@@ -21,38 +19,13 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename Q>
-std::string Codec_LDPC<B,Q>
-::get_matrix_format(const std::string& filename)
-{
-	std::ifstream file(filename, std::ifstream::in);
-
-	if (file.is_open())
-	{
-		std::string line;
-		tools::getline(file, line);
-		file.close();
-
-		auto values = tools::split(line);
-
-		if (values.size() == 3)
-			return "QC";
-		else
-			return "ALIST";
-	}
-	else
-	{
-		return "BAD_FILE";
-	}
-}
-
-template <typename B, typename Q>
 Codec_LDPC<B,Q>
 ::Codec_LDPC(const factory::Encoder_LDPC  ::parameters &enc_params,
              const factory::Decoder_LDPC  ::parameters &dec_params,
                    factory::Puncturer_LDPC::parameters *pct_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  info_bits_pos(enc_params.K)
+  dvbs2(nullptr)
 {
 	const std::string name = "Codec_LDPC";
 	this->set_name(name);
@@ -82,97 +55,60 @@ Codec_LDPC<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (dec_params.H_path.empty())
-	{
-		std::stringstream message;
-		message << "'dec_params.H_path' has to be set to a matrix file.";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	// ---------------------------------------------------------------------------------------------------------- tools
-	bool is_info_bits_pos = false;
 	if (enc_params.type == "LDPC")
 	{
-		auto G_format = get_matrix_format(enc_params.G_path);
+		G = tools::LDPC_matrix_handler::read(enc_params.G_path, &info_bits_pos);
+	}
+	else if (enc_params.type == "LDPC_DVBS2")
+	{
+		dvbs2 = tools::build_dvbs2(this->K, this->N);
 
-		std::ifstream file_G(enc_params.G_path, std::ifstream::in);
-
-		if (!file_G.is_open() || G_format == "BAD_FILE")
-		{
-			std::stringstream message;
-			message << "'enc_params.G_path' can't be opened ('enc_params.G_path' = \"" + enc_params.G_path + "\").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-		else if (G_format == "QC")
-		{
-			G = tools::QC::read(file_G);
-		}
-		else if (G_format == "ALIST")
-		{
-			G = tools::AList::read(file_G);
-
-			try
-			{
-				info_bits_pos = tools::AList::read_info_bits_pos(file_G, this->K, this->N_cw);
-				is_info_bits_pos = true;
-			}
-			catch (std::exception const&)
-			{
-				// information bits positions are not in the G matrix file
-			}
-		}
+		H = tools::build_H(*dvbs2);
 	}
 
-	auto H_format = get_matrix_format(dec_params.H_path);
-
-	std::ifstream file_H(dec_params.H_path, std::ifstream::in);
-
-	if (!file_H.is_open() || H_format == "BAD_FILE")
+	if (H.get_n_connections() == 0)
 	{
-		std::stringstream message;
-		message << "'dec_params.H_path' can't be opened ('dec_params.H_path' = \"" + dec_params.H_path + "\").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-	else if (H_format == "QC")
-	{
-		H = tools::QC::read(file_H);
-		if (pct_params && pct_params->pattern.empty())
-			pct_params->pattern = tools::QC::read_pct_pattern(file_H);
-	}
-	else if (H_format == "ALIST")
-	{
-		H = tools::AList::read(file_H);
+		tools::LDPC_matrix_handler::Positions_vector* ibp = nullptr;
+		std::vector<bool>* pct = nullptr;
 
-		try
-		{
-			info_bits_pos = tools::AList::read_info_bits_pos(file_H, enc_params.K, enc_params.N_cw);
-			is_info_bits_pos = true;
-		}
-		catch (std::exception const&) { }
+		if (info_bits_pos.empty())
+			ibp = &info_bits_pos;
+
+		if (pct_params != nullptr && pct_params->pattern.empty())
+			pct = &pct_params->pattern;
+
+		H = tools::LDPC_matrix_handler::read(dec_params.H_path, ibp, pct);
 	}
 
 	if (dec_params.H_reorder != "NONE")
-	{
-		// reorder the H matrix following the check node degrees
+	{	// reorder the H matrix following the check node degrees
 		H.sort_cols_per_density(dec_params.H_reorder);
 	}
 
-	if (!is_info_bits_pos)
+
+
+	if (info_bits_pos.empty())
 	{
 		if (enc_params.type == "LDPC_H")
 		{
-			auto encoder_LDPC = factory::Encoder_LDPC::build<B>(enc_params, G, H);
-			info_bits_pos = encoder_LDPC->get_info_bits_pos();
-			delete encoder_LDPC;
+			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H));
+			info_bits_pos = this->get_encoder()->get_info_bits_pos();
 		}
 		else
 		{
+			// generate a default vector [0, 1, 2, 3, ..., K-1]
+			info_bits_pos.resize(enc_params.K);
 			std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
 		}
 	}
+	else
+	{
+		tools::LDPC_matrix_handler::check_info_pos(info_bits_pos, enc_params.K, enc_params.N_cw);
+	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	if (!pct_params)
+	if (pct_params == nullptr)
 	{
 		factory::Puncturer::parameters pctno_params;
 		pctno_params.type     = "NO";
@@ -195,14 +131,23 @@ Codec_LDPC<B,Q>
 		}
 	}
 
+
 	try
 	{
-		this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H));
+		this->get_encoder();
 	}
-	catch (tools::cannot_allocate const&)
-	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+	catch (tools::runtime_error const&)
+	{ // encoder not set when building encoder LDPC_H
+		try
+		{
+			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
+		}
+		catch(tools::cannot_allocate const&)
+		{
+			this->set_encoder(factory::Encoder::build<B>(enc_params));
+		}
 	}
+
 
 	try
 	{
@@ -220,6 +165,8 @@ template <typename B, typename Q>
 Codec_LDPC<B,Q>
 ::~Codec_LDPC()
 {
+	if (dvbs2 != nullptr)
+		delete dvbs2;
 }
 
 template <typename B, typename Q>

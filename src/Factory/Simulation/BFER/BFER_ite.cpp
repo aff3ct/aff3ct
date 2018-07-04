@@ -92,30 +92,32 @@ std::vector<std::string> BFER_ite::parameters
 }
 
 void BFER_ite::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	BFER::parameters::get_description(req_args, opt_args);
+	BFER::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-ite", "I"}] =
-		{"positive_int",
-		 "number of global iterations between the demodulator and the decoder."};
+	args.add(
+		{p+"-ite", "I"},
+		tools::Integer(tools::Positive()),
+		"number of global iterations between the demodulator and the decoder.");
 
-	opt_args[{p+"-crc-start"}] =
-		{"positive_int",
-		 "iteration number to start the CRC checking in the turbo demodulation process."};
+	args.add(
+		{p+"-crc-start"},
+		tools::Integer(tools::Positive()),
+		"iteration number to start the CRC checking in the turbo demodulation process.");
 }
 
 void BFER_ite::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	BFER::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ite",  "I"})) this->n_ite     = std::stoi(vals.at({p+"-ite",  "I"}));
-	if(exist(vals, {p+"-crc-start"})) this->crc_start = std::stoi(vals.at({p+"-crc-start"}));
+	if(vals.exist({p+"-ite",  "I"})) this->n_ite     = vals.to_int({p+"-ite",  "I"});
+	if(vals.exist({p+"-crc-start"})) this->crc_start = vals.to_int({p+"-crc-start"});
 }
 
 void BFER_ite::parameters

@@ -67,127 +67,128 @@ Decoder_turbo_product::parameters
 	if (itl != nullptr) { delete itl; itl = nullptr; }
 }
 
-void Decoder_turbo_product::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+struct Real_splitter
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	static std::vector<std::string> split(const std::string& val)
+	{
+		const std::string head      = "{([";
+		const std::string queue     = "})]";
+		const std::string separator = ",";
+
+		return Splitter::split(val, head, queue, separator);
+	}
+};
+
+void Decoder_turbo_product::parameters
+::get_description(tools::Argument_map_info &args) const
+{
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-info-bits", "K"});
-	req_args.erase({p+"-cw-size",   "N"});
+	args.erase({p+"-info-bits", "K"});
+	args.erase({p+"-cw-size",   "N"});
 
-	itl->get_description(req_args, opt_args);
+	itl->get_description(args);
 
 	auto pi = this->itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+	args.erase({pi+"-size"    });
+	args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}][2] += ", CP";
+	tools::add_options(args.at({p+"-type", "D"}), 0, "CP");
 
-	opt_args[{p+"-ite", "i"}] =
-		{"strictly_positive_int",
-		 "maximal number of iterations in the turbo."};
 
-	opt_args[{p+"-alpha"}] =
-		{"string",
-		 "extrinsic coefficients, one by half iteration (so twice more than number of iterations)."
-		 " If not enough, then automatically extended the last to all iterations."};
+	args.add(
+		{p+"-ite", "i"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"maximal number of iterations in the turbo.");
 
-	opt_args[{p+"-p"}] =
-		{"strictly_positive_int",
-		 "number of least reliable positions."};
+	args.add(
+		{p+"-alpha"},
+		tools::List<float,Real_splitter>(tools::Real()),
+		"extrinsic coefficients, one by half iteration (so twice more than number of iterations)."
+		" If not enough given values, then automatically extends the last to all iterations.");
 
-	opt_args[{p+"-t"}] =
-		{"positive_int",
-		 "number of test vectors (0 means equal to 2^p)."};
+	args.add(
+		{p+"-alpha"},
+		tools::Text(),
+		"extrinsic coefficients, one by half iteration (so twice more than number of iterations)."
+		" If not enough given values, then automatically extends the last to all iterations.");
 
-	opt_args[{p+"-c"}] =
-		{"positive_int",
-		 "number of competitors (0 means equal to number of test vectors, 1 means only the decided word)."};
+	args.add(
+		{p+"-p"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"number of least reliable positions.");
 
-	opt_args[{p+"-ext"}] =
-		{"",
-		 "extends decoder with a parity bits."};
+	args.add(
+		{p+"-t"},
+		tools::Integer(tools::Positive()),
+		"number of test vectors (0 means equal to 2^p).");
 
-	opt_args[{p+"-cp-coef"}] =
-		{"string",
-		 "the 5 Chase Pyndiah constant coefficients \"a,b,c,d,e\"."};
+	args.add(
+		{p+"-c"},
+		tools::Integer(tools::Positive()),
+		"number of competitors (0 means equal to number of test vectors, 1 means only the decided word).");
 
-	sub->get_description(req_args, opt_args);
+	args.add(
+		{p+"-ext"},
+		tools::None(),
+		"extends code with a parity bits.");
+
+	args.add(
+		{p+"-cp-coef"},
+		tools::List<float,Real_splitter>(tools::Real(), tools::Length(5,5)),
+		"the 5 Chase Pyndiah constant coefficients \"a,b,c,d,e\".");
+
+	sub->get_description(args);
 
 	auto ps = sub->get_prefix();
 
-	opt_args.erase({ps+"-fra", "F"});
+	args.erase({ps+"-fra", "F"});
 }
 
 void Decoder_turbo_product::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ite", "i"})) this->n_ite                      = std::stoi(vals.at({p+"-ite", "i"}));
-	if(exist(vals, {p+"-p"       })) this->n_least_reliable_positions = std::stoi(vals.at({p+"-p"       }));
+	if(vals.exist({p+"-ite", "i"})) this->n_ite                      = vals.to_int({p+"-ite", "i"});
+	if(vals.exist({p+"-p"       })) this->n_least_reliable_positions = vals.to_int({p+"-p"       });
 
-	if(exist(vals, {p+"-t"}))
-		this->n_test_vectors = std::stoi(vals.at({p+"-t"}));
+	if(vals.exist({p+"-t"}))
+		this->n_test_vectors = vals.to_int({p+"-t"});
 	else
 		this->n_test_vectors = 1<<this->n_least_reliable_positions;
 
-	if(exist(vals, {p+"-c"}))
-		this->n_competitors = std::stoi(vals.at({p+"-c"}));
+	if(vals.exist({p+"-c"}))
+		this->n_competitors = vals.to_int({p+"-c"});
 	else
 		this->n_competitors = this->n_test_vectors;
 
-	if(exist(vals, {p+"-ext"     })) this->parity_extended            = true;
+	if(vals.exist({p+"-ext"})) this->parity_extended = true;
 
-	this->alpha.resize(this->n_ite*2);
 
-	if(exist(vals, {p+"-alpha"}))
+	if(vals.exist({p+"-alpha"}))
 	{
-		auto alpha_list = tools::split(vals.at({p+"-alpha"}), ',');
-
-		auto it = this->alpha.begin();
-
-		auto max = std::min(alpha_list.size(), this->alpha.size());
-
-		for (unsigned i = 0; i < max; i++, it++)
-			*it = std::stof(alpha_list[i]);
-
-		std::fill(it, this->alpha.end(), std::stof(alpha_list.back()));
+		this->alpha = vals.to_list<float>({p+"-alpha"});
+		this->alpha.resize(this->n_ite*2, alpha.back());
 	}
 	else
 	{
-		std::fill(this->alpha.begin(), this->alpha.end(), 0.5f);
+		this->alpha.clear();
+		this->alpha.resize(this->n_ite*2, 0.5f);
 	}
 
 
-	this->cp_coef.resize(5);
-	if(exist(vals, {p+"-cp-coef"}))
-	{
-		auto cp_coef_list = tools::split(vals.at({p+"-cp-coef"}), ',');
-
-		if (cp_coef_list.size() == this->cp_coef.size())
-		{
-			for (unsigned i = 0; i < cp_coef_list.size(); i++)
-				this->cp_coef[i] = std::stof(cp_coef_list[i]);
-		}
-		else
-		{
-			std::stringstream message;
-			message << "'" << p << "-cp-coef' argument has to be of length " << this->cp_coef.size() << ".";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
+	if(vals.exist({p+"-cp-coef"}))
+		this->cp_coef = vals.to_list<float>({p+"-cp-coef"});
 	else
 	{
-		this->cp_coef[0] = 1.f;
-		this->cp_coef[1] = 1.f;
-		this->cp_coef[2] = 1.f;
-		this->cp_coef[3] = 1.f;
+		this->cp_coef.clear();
+		this->cp_coef.resize(5, 1.f);
 		this->cp_coef[4] = 0;
 	}
 

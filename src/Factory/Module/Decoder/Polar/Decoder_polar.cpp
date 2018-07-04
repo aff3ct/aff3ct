@@ -70,53 +70,59 @@ Decoder_polar::parameters* Decoder_polar::parameters
 }
 
 void Decoder_polar::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}][2] += ", SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN";
-	opt_args[{p+"-implem"   }].pop_back();
+	tools::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN");
 
-	opt_args[{p+"-ite", "i"}] =
-		{"strictly_positive_int",
-		 "maximal number of iterations in the SCAN decoder."};
+	args.at({p+"-implem"})->change_type(tools::Text(tools::Example_set("FAST", "NAIVE")));
 
-	opt_args[{p+"-lists", "L"}] =
-		{"strictly_positive_int",
-		 "maximal number of paths in the SCL decoder."};
+	args.add(
+		{p+"-ite", "i"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"maximal number of iterations in the SCAN decoder.");
 
-	opt_args[{p+"-simd"}] =
-		{"string",
-		 "the SIMD strategy you want to use.",
-		 "INTRA, INTER"};
+	args.add(
+		{p+"-lists", "L"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"maximal number of paths in the SCL decoder.");
 
-	opt_args[{p+"-polar-nodes"}] =
-		{"string",
-		 "the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\")."};
+	args.add(
+		{p+"-simd"},
+		tools::Text(tools::Including_set("INTRA", "INTER")),
+		"the SIMD strategy you want to use.");
 
-	opt_args[{p+"-partial-adaptive"}] =
-		{"",
-		 "enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected)."};
+	args.add(
+		{p+"-polar-nodes"},
+		tools::Text(),
+		"the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\").");
 
-	opt_args[{p+"-no-sys"}] =
-		{"",
-		 "does not suppose a systematic encoding."};
+	args.add(
+		{p+"-partial-adaptive"},
+		tools::None(),
+		"enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected).");
+
+	args.add(
+		{p+"-no-sys"},
+		tools::None(),
+		"does not suppose a systematic encoding.");
 }
 
 void Decoder_polar::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ite",         "i"})) this->n_ite         = std::stoi(vals.at({p+"-ite",    "i"}));
-	if(exist(vals, {p+"-lists",       "L"})) this->L             = std::stoi(vals.at({p+"-lists",  "L"}));
-	if(exist(vals, {p+"-simd"            })) this->simd_strategy =           vals.at({p+"-simd"       });
-	if(exist(vals, {p+"-polar-nodes"     })) this->polar_nodes   =           vals.at({p+"-polar-nodes"});
-	if(exist(vals, {p+"-partial-adaptive"})) this->full_adaptive = false;
+	if(vals.exist({p+"-ite",         "i"})) this->n_ite         = vals.to_int({p+"-ite",    "i"});
+	if(vals.exist({p+"-lists",       "L"})) this->L             = vals.to_int({p+"-lists",  "L"});
+	if(vals.exist({p+"-simd"            })) this->simd_strategy = vals.at    ({p+"-simd"       });
+	if(vals.exist({p+"-polar-nodes"     })) this->polar_nodes   = vals.at    ({p+"-polar-nodes"});
+	if(vals.exist({p+"-partial-adaptive"})) this->full_adaptive = false;
 
 	// force 1 iteration max if not SCAN (and polar code)
 	if (this->type != "SCAN") this->n_ite = 1;
@@ -130,7 +136,7 @@ void Decoder_polar::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (!this->simd_strategy.empty())
 			headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
 
@@ -360,7 +366,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_polar
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_polar
-::build(const parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc, 
+::build(const parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc,
         module::Encoder<B> *encoder)
 {
 	return params.template build<B,Q>(frozen_bits, crc, encoder);

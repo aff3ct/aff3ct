@@ -13,17 +13,24 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 Monitor
-::Monitor(const int size, int n_frames)
-: Module(n_frames), size(size)
+::Monitor(const int K, const int N, int n_frames)
+: Module(n_frames), K(K), N(N)
 {
 	const std::string name = "Monitor";
 	this->set_name(name);
 	this->set_short_name(name);
 
-	if (size <= 0)
+	if (K <= 0)
 	{
 		std::stringstream message;
-		message << "'size' has to be greater than 0 ('size' = " << size << ").";
+		message << "'K' has to be greater than 0 ('K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (N <= 0)
+	{
+		std::stringstream message;
+		message << "'N' has to be greater than 0 ('N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -34,8 +41,8 @@ Monitor
 	std::signal(SIGINT, Monitor::signal_interrupt_handler);
 #endif
 
-	this->tasks_with_nullptr.resize(mnt::tsk::SIZE);
-	for (size_t t = 0; t < mnt::tsk::SIZE; t++)
+	this->tasks_with_nullptr.resize((size_t)mnt::tsk::SIZE);
+	for (size_t t = 0; t < (size_t)mnt::tsk::SIZE; t++)
 		this->tasks_with_nullptr[t] = nullptr;
 }
 
@@ -47,15 +54,16 @@ Monitor
 {
 }
 
-/*!
- * \brief Gets the number of bits in a frame.
- *
- * \return the number of bits.
- */
 int Monitor
-::get_size() const
+::get_K() const
 {
-	return size;
+	return K;
+}
+
+int Monitor
+::get_N() const
+{
+	return N;
 }
 
 void Monitor

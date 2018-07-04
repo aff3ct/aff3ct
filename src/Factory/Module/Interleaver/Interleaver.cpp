@@ -32,13 +32,13 @@ Interleaver::parameters* Interleaver::parameters
 }
 
 void Interleaver::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	core->get_description(req_args, opt_args);
+	core->get_description(args);
 }
 
 void Interleaver::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	core->store(vals);
 }
@@ -67,7 +67,7 @@ module::Interleaver<D>* Interleaver
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 template aff3ct::module::Interleaver<int8_t >* aff3ct::factory::Interleaver::parameters::build<int8_t >(const aff3ct::tools::Interleaver_core<>&) const;
 template aff3ct::module::Interleaver<int16_t>* aff3ct::factory::Interleaver::parameters::build<int16_t>(const aff3ct::tools::Interleaver_core<>&) const;
 template aff3ct::module::Interleaver<int32_t>* aff3ct::factory::Interleaver::parameters::build<int32_t>(const aff3ct::tools::Interleaver_core<>&) const;

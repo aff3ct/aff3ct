@@ -78,58 +78,60 @@ Decoder_turbo_DB::parameters
 }
 
 void Decoder_turbo_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(req_args, opt_args);
+	itl->get_description(args);
 
 	auto pi = this->itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+	args.erase({pi+"-size"    });
+	args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type", "D"}][2] += ", TURBO_DB";
+	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO_DB");
+	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
 
-	opt_args[{p+"-ite", "i"}] =
-		{"strictly_positive_int",
-		 "maximal number of iterations in the turbo."};
+	args.add(
+		{p+"-ite", "i"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"maximal number of iterations in the turbo.");
 
-	sf->get_description(req_args, opt_args);
+	sf->get_description(args);
 
 	auto psf = sf->get_prefix();
 
-	opt_args.erase({psf+"-ite"});
+	args.erase({psf+"-ite"});
 
-	fnc->get_description(req_args, opt_args);
+	fnc->get_description(args);
 
 	auto pfnc = fnc->get_prefix();
 
-	req_args.erase({pfnc+"-size", "K"});
-	opt_args.erase({pfnc+"-fra",  "F"});
-	opt_args.erase({pfnc+"-ite",  "i"});
+	args.erase({pfnc+"-size"     });
+	args.erase({pfnc+"-fra",  "F"});
+	args.erase({pfnc+"-ite",  "i"});
 
-	sub->get_description(req_args, opt_args);
+	sub->get_description(args);
 
 	auto ps = sub->get_prefix();
 
-	req_args.erase({ps+"-info-bits", "K"});
-	req_args.erase({ps+"-cw-size",   "N"});
-	opt_args.erase({ps+"-fra",       "F"});
+	args.erase({ps+"-info-bits", "K"});
+	args.erase({ps+"-cw-size",   "N"});
+	args.erase({ps+"-fra",       "F"});
 }
 
 void Decoder_turbo_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ite", "i"})) this->n_ite = std::stoi(vals.at({p+"-ite", "i"}));
+	if(vals.exist({p+"-ite", "i"})) this->n_ite = vals.to_int({p+"-ite", "i"});
 
 	this->sub->K        = this->K;
 	this->sub->n_frames = this->n_frames;
@@ -144,10 +146,10 @@ void Decoder_turbo_DB::parameters
 
 	itl->store(vals);
 
-	if (this->sub->implem == "DVB-RCS1" && !exist(vals, {"itl-type"}))
+	if (this->sub->implem == "DVB-RCS1" && !vals.exist({"itl-type"}))
 		this->itl->core->type = "DVB-RCS1";
 
-	if (this->sub->implem == "DVB-RCS2" && !exist(vals, {"itl-type"}))
+	if (this->sub->implem == "DVB-RCS2" && !vals.exist({"itl-type"}))
 		this->itl->core->type = "DVB-RCS2";
 
 	this->sf->n_ite = this->n_ite;
@@ -169,7 +171,7 @@ void Decoder_turbo_DB::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		itl->get_headers(headers, full);
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
@@ -202,8 +204,6 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_DB::parameters
 ::build(module::Encoder<B> *encoder) const
 {
 	return Decoder::parameters::build<B,Q>(encoder);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>

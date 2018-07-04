@@ -1,4 +1,3 @@
-
 #if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
 	#include <execinfo.h> // backtrace, backtrace_symbols
 	#include <cxxabi.h>   // __cxa_demangle
@@ -25,7 +24,7 @@ std::string aff3ct::tools::get_back_trace(int first_call)
 	char** bt_symbs = backtrace_symbols(bt_array, size);
 
 
-	bt_str += "\nBacktrace:";
+	bt_str += "Backtrace:";
 	for (size_t i = first_call; i < size; i++)
 	{
 		std::string symbol = bt_symbs[i];
@@ -79,7 +78,7 @@ std::string aff3ct::tools::get_back_trace(int first_call)
 	return bt_str;
 }
 
-std::string aff3ct::tools::runSystemCommand(std::string cmd)
+std::string aff3ct::tools::run_system_command(std::string cmd)
 {
 	std::string data;
 
@@ -108,14 +107,14 @@ std::string aff3ct::tools::runSystemCommand(std::string cmd)
 #endif
 	}
 	else
-		throw std::runtime_error("runSystemCommand error: Couldn't open the pipe to run system command.");
+		throw std::runtime_error("run_system_command error: Couldn't open the pipe to run system command.");
 
 	return data;
 }
 
-std::string aff3ct::tools::addr2line(const std::string& backtrace)
+std::string aff3ct::tools::addr_to_line(const std::string& backtrace)
 {
-#ifdef DNDEBUG
+#ifdef NDEBUG
 	return backtrace;
 #elif (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
 	// TODO Bug: lines does not always match with the real line where are called the functions.
@@ -158,7 +157,7 @@ std::string aff3ct::tools::addr2line(const std::string& backtrace)
 			auto address  = stack[i].substr(pos_beg_addr +1, pos_end_addr - pos_beg_addr -1);
 
 			std::string cmd = "addr2line -e " + program + " " + address;
-			std::string filename_and_line = runSystemCommand(cmd);
+			std::string filename_and_line = run_system_command(cmd);
 			filename_and_line = filename_and_line.substr(0, filename_and_line.size() -1); // remove the '\n'
 
 			bt_str += program + function + " [" + filename_and_line + "]";

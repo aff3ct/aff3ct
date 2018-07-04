@@ -20,26 +20,42 @@ Sparse_matrix AList
 	{
 		return AList::read_format1(stream);
 	}
-	catch (std::exception const&)
+	catch (std::exception const& e1)
 	{
+		auto save = exception::no_backtrace;
+		exception::no_backtrace = true;
+
+		std::stringstream message;
+		message << "The given stream does not refer to a AList format file: ";
+		message << std::endl << e1.what();
+		exception::no_backtrace = save;
+
 		try
 		{
 			stream.clear();
 			stream.seekg(init_pos);
 			return AList::read_format2(stream);
 		}
-		catch (std::exception const&)
+		catch (std::exception const& e2)
 		{
+			auto save = exception::no_backtrace;
+			exception::no_backtrace = true;
+			message << std::endl << e2.what();
+			exception::no_backtrace = save;
+
 			try
 			{
 				stream.clear();
 				stream.seekg(init_pos);
 				return AList::read_format3(stream);
 			}
-			catch (std::exception const&)
+			catch (std::exception const& e3)
 			{
-				std::stringstream message;
-				message << "The given stream does not refer to a AList format file.";
+				auto save = exception::no_backtrace;
+				exception::no_backtrace = true;
+				message << std::endl << e3.what();
+				exception::no_backtrace = save;
+
 				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 		}
@@ -80,6 +96,24 @@ void AList
 			stream << 0 << " ";
 		stream << std::endl;
 	}
+}
+
+void AList
+::read_matrix_size(std::istream &stream, int& H, int& N)
+{
+	std::string line;
+
+	tools::getline(stream, line);
+	auto values = split(line);
+	if (values.size() < 2)
+	{
+		std::stringstream message;
+		message << "'values.size()' has to be greater than 1 ('values.size()' = " << values.size() << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	N = std::stoi(values[0]);
+	H = std::stoi(values[1]);
 }
 
 std::vector<unsigned> AList

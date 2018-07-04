@@ -29,51 +29,58 @@ Frozenbits_generator::parameters* Frozenbits_generator::parameters
 }
 
 void Frozenbits_generator::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-info-bits", "K"}] =
-		{"strictly_positive_int",
-		 "useful number of bit transmitted (information bits)."};
+	args.add(
+		{p+"-info-bits", "K"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"useful number of bit transmitted (information bits).",
+		tools::arg_rank::REQ);
 
-	req_args[{p+"-cw-size", "N"}] =
-		{"strictly_positive_int",
-		 "the codeword size."};
+	args.add(
+		{p+"-cw-size", "N"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"the codeword size.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-sigma"}] =
-		{"strictly_positive_float",
-		 "sigma value for the polar codes generation (adaptive frozen bits if sigma is not set)."};
+	args.add(
+		{p+"-sigma"},
+		tools::Real(tools::Positive(), tools::Non_zero()),
+		"sigma value for the polar codes generation (adaptive frozen bits if sigma is not set).");
 
-	opt_args[{p+"-gen-method"}] =
-		{"string",
-		 "select the frozen bits generation method.",
-		 "GA, FILE, TV"};
+	args.add(
+		{p+"-gen-method"},
+		tools::Text(tools::Including_set("GA", "FILE", "TV")),
+		"select the frozen bits generation method.");
 
-	opt_args[{p+"-awgn-path"}] =
-		{"string",
-		 "path to a file or a directory containing the best channels to use for information bits."};
+	args.add(
+		{p+"-awgn-path"},
+		tools::Path(tools::openmode::read),
+		"path to a file or a directory containing the best channels to use for information bits.");
 
 #ifdef ENABLE_POLAR_BOUNDS
-	opt_args[{p+"-pb-path"}] =
-		{"string",
-		 "path of the polar bounds code generator (generates best channels to use)."};
+	args.add(
+		{p+"-pb-path"},
+		tools::File(tools::openmode::read),
+		"path of the polar bounds code generator (generates best channels to use).");
 #endif
 }
 
 void Frozenbits_generator::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-info-bits", "K"})) this->K       = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-cw-size",   "N"})) this->N_cw    = std::stoi(vals.at({p+"-cw-size",   "N"}));
-	if(exist(vals, {p+"-sigma"         })) this->sigma   = std::stof(vals.at({p+"-sigma"         }));
-	if(exist(vals, {p+"-awgn-path"     })) this->path_fb =           vals.at({p+"-awgn-path"     });
-	if(exist(vals, {p+"-gen-method"    })) this->type    =           vals.at({p+"-gen-method"    });
+	if(vals.exist({p+"-info-bits", "K"})) this->K       = vals.to_int  ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw    = vals.to_int  ({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-sigma"         })) this->sigma   = vals.to_float({p+"-sigma"         });
+	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.at      ({p+"-awgn-path"     });
+	if(vals.exist({p+"-gen-method"    })) this->type    = vals.at      ({p+"-gen-method"    });
 
 #ifdef ENABLE_POLAR_BOUNDS
-	if(exist(vals, {p+"-pb-path"})) this->path_pb = vals.at({p+"-pb-path"});
+	if(vals.exist({p+"-pb-path"})) this->path_pb = vals.at({p+"-pb-path"});
 #endif
 }
 

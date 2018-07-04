@@ -39,12 +39,10 @@ struct EXIT : Simulation
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		float       sig_a_min  = 0.0f;
-		float       sig_a_max  = 5.0f;
+		std::vector<float> sig_a_range;
 
 		// optional parameters
 		std::string snr_type   = "ES";
-		float       sig_a_step = 0.5f;
 
 		// module parameters
 		Source       ::parameters *src = nullptr;
@@ -74,8 +72,8 @@ struct EXIT : Simulation
 		void set_ter(Terminal_EXIT::parameters *ter) { this->ter = ter; }
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "Tools/Algo/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
-#include "Tools/Algo/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "../Channel.hpp"
 
@@ -24,12 +24,21 @@ private:
 public:
 	Channel_Rayleigh_LLR(const int N, const bool complex,
 	                     tools::Gaussian_gen<R> *noise_generator = new tools::Gaussian_gen_std<R>(),
-	                     const bool add_users = false, const R sigma = (R)1, const int n_frames = 1);
-	Channel_Rayleigh_LLR(const int N, const bool complex, const int seed, const bool add_users = false,
-	                     const R sigma = (R)1, const int n_frames = 1);
+	                     const bool add_users = false,
+	                     const tools::Noise<R>& noise = tools::Noise<R>(),
+	                     const int n_frames = 1);
+
+	Channel_Rayleigh_LLR(const int N, const bool complex, const int seed,
+	                     const bool add_users = false,
+	                     const tools::Noise<R>& noise = tools::Noise<R>(),
+	                     const int n_frames = 1);
+
 	virtual ~Channel_Rayleigh_LLR();
 
 	virtual void add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id = -1); using Channel<R>::add_noise_wg;
+
+protected:
+	virtual void check_noise();
 };
 }
 }

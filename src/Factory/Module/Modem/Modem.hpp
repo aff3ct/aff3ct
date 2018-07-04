@@ -6,6 +6,7 @@
 #include "Tools/Math/max.h"
 
 #include "Module/Modem/Modem.hpp"
+#include "Tools/Math/Distribution/Distributions.hpp"
 
 #include "../../Factory.hpp"
 
@@ -27,6 +28,7 @@ struct Modem : public Factory
 		// optional parameters
 		// ------- modulator parameters
 		std::string type       = "BPSK";    // modulation type (PAM, QAM, ...)
+		std::string implem     = "STD";
 		std::string const_path = "";        // PATH to constellation file (CSV file)
 		bool        complex    = true;      // true if the modulated signal is complex
 		int         bps        = 1;         // bits per symbol
@@ -46,7 +48,7 @@ struct Modem : public Factory
 		bool        no_sig2    = false;     // do not divide by (sig^2) / 2 in the demodulation
 		int         n_ite      = 1;         // number of demodulations/decoding sessions to perform in the BFERI simulations
 		int         N_fil      = 0;         // frame size at the output of the filter
-		float       sigma      = -1.f;      // noise variance sigma
+		float       noise      = -1.f;      // noise value
 
 		// ------- common parameters
 		int         n_frames   = 1;
@@ -57,13 +59,14 @@ struct Modem : public Factory
 		Modem::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
 		template <typename B = int, typename R = float, typename Q = R>
-		module::Modem<B,R,Q>* build() const;
+		module::Modem<B,R,Q>* build(const tools::Distributions<R>* dist = nullptr,
+		                            const std::string& chn_type = "AWGN") const;
 
 	private:
 		template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX>
@@ -75,7 +78,11 @@ struct Modem : public Factory
 
 
 	template <typename B = int, typename R = float, typename Q = R>
-	static module::Modem<B,R,Q>* build(const parameters &params);
+	static module::Modem<B,R,Q>* build(const parameters &params, const tools::Distributions<R>* dist = nullptr,
+	                                   const std::string& chn_type = "AWGN");
+
+	static bool is_complex_mod(const std::string &type, const int bps = 1);
+	static bool is_complex_fil(const std::string &type, const int bps = 1);
 
 	static int get_buffer_size_after_modulation(const std::string &type,
 	                                            const int         N,

@@ -65,43 +65,45 @@ Encoder_turbo_product::parameters
 }
 
 void Encoder_turbo_product::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-info-bits", "K"});
-	req_args.erase({p+"-cw-size",   "N"});
+	args.erase({p+"-info-bits", "K"});
+	args.erase({p+"-cw-size",   "N"});
 
-	itl->get_description(req_args, opt_args);
+	itl->get_description(args);
 
 	auto pi = this->itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+	args.erase({pi+"-size"    });
+	args.erase({pi+"-fra", "F"});
 
-	opt_args[{p+"-type"}][2] += ", TURBO_PROD";
+	tools::add_options(args.at({p+"-type"}), 0, "TURBO_PROD");
 
-	opt_args[{p+"-ext"}] =
-		{"",
-		 "extends decoder with a parity bits."};
+	args.add(
+		{p+"-ext"},
+		tools::None(),
+		"extends code with a parity bits.");
 
-	sub->get_description(req_args, opt_args);
+
+	sub->get_description(args);
 
 	auto ps = sub->get_prefix();
 
-	opt_args.erase({ps+"-fra", "F"});
+	args.erase({ps+"-fra", "F"});
 }
 
 void Encoder_turbo_product::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ext"})) this->parity_extended = true;
+	if(vals.exist({p+"-ext"})) this->parity_extended = true;
 
 	this->sub->n_frames = this->n_frames;
 
@@ -145,8 +147,7 @@ module::Encoder_turbo_product<B>* Encoder_turbo_product::parameters
               module::Encoder_BCH<B> &enc_n,
               module::Encoder_BCH<B> &enc_i) const
 {
-	if (this->type == "TURBO_PROD")
-		return new module::Encoder_turbo_product<B>(itl, enc_n, enc_i);
+	if (this->type == "TURBO_PROD") return new module::Encoder_turbo_product<B>(itl, enc_n, enc_i);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

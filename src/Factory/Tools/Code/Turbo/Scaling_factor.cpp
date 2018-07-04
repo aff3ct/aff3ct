@@ -34,26 +34,27 @@ Scaling_factor::parameters* Scaling_factor::parameters
 }
 
 void Scaling_factor::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "scaling factor type.",
-		 "CST, LTE, LTE_VEC, ARRAY, ADAPTIVE"};
+	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")),
+		"scaling factor type.");
 
-	opt_args[{p+"-ite"}] =
-		{"strictly_positive_int",
-		 "number of iterations."};
+	args.add(
+		{p+"-ite"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"number of iterations.");
 }
 
 void Scaling_factor::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-type"}))
+	if(vals.exist({p+"-type"}))
 	{
 		this->enable = true;
 		this->type = vals.at({p+"-type"});
@@ -65,7 +66,7 @@ void Scaling_factor::parameters
 		}
 	}
 
-	if(exist(vals, {p+"-ite", "i"})) this->n_ite = std::stoi(vals.at({p+"-ite", "i"}));
+	if(vals.exist({p+"-ite", "i"})) this->n_ite = vals.to_int({p+"-ite", "i"});
 }
 
 void Scaling_factor::parameters

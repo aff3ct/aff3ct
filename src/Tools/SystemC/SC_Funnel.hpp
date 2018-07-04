@@ -25,12 +25,9 @@ public:
 	tlm_utils::simple_target_socket   <SC_Funnel> s_in2;
 	tlm_utils::simple_initiator_socket<SC_Funnel> s_out;
 
-private:
-	Predicate &p;
-
 public:
-	SC_Funnel(Predicate &p, sc_core::sc_module_name name = "SC_Double_input")
-	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out"), p(p)
+	SC_Funnel(sc_core::sc_module_name name = "SC_Double_input")
+	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out")
 	{
 		s_in1.register_b_transport(this, &SC_Funnel::b_transport);
 		s_in2.register_b_transport(this, &SC_Funnel::b_transport);

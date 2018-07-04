@@ -61,41 +61,40 @@ void Codec_turbo_DB::parameters
 }
 
 void Codec_turbo_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SIHO::parameters::get_description(args);
 
 	if (this->pct)
 	{
-		pct->get_description(req_args, opt_args);
+		pct->get_description(args);
 
 		auto ppct = pct->get_prefix();
 
-		req_args.erase({ppct+"-info-bits", "K"});
-		opt_args.erase({ppct+"-no-buff"       });
-		opt_args.erase({ppct+"-fra",       "F"});
-		opt_args.erase({ppct+"-tail-length"   });
+		args.erase({ppct+"-info-bits", "K"});
+		args.erase({ppct+"-no-buff"       });
+		args.erase({ppct+"-fra",       "F"});
+		args.erase({ppct+"-tail-length"   });
 
-		opt_args[{ppct+"-fra-size", "N"}] = req_args[{ppct+"-fra-size", "N"}];
-		req_args.erase({ppct+"-fra-size", "N"});
+		args[{ppct+"-fra-size", "N"}]->rank = tools::arg_rank::OPT;
 	}
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
 	auto pdes = dec->sub->get_prefix();
 
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
-	opt_args.erase({pdes+"-no-buff"       });
-	opt_args.erase({pdes+"-std"           });
-	opt_args.erase({pdec+"-json"          });
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
+	args.erase({pdes+"-no-buff"       });
+	args.erase({pdes+"-std"           });
+	args.erase({pdec+"-json"          });
 }
 
 void Codec_turbo_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SIHO::parameters::store(vals);
 
@@ -121,7 +120,7 @@ void Codec_turbo_DB::parameters
 
 	auto pdes = dec->sub->get_prefix();
 
-	if (!this->enc->sub->standard.empty() && !exist(vals, {pdes+"-implem"}))
+	if (!this->enc->sub->standard.empty() && !vals.exist({pdes+"-implem"}))
 		this->dec->sub->implem = this->enc->sub->standard;
 
 	this->K    = this->enc->K;

@@ -14,7 +14,7 @@ Next, install the required dependencies to run **PyBER**:
 
 ## Run PyBER
 
-From the `plotter/PyBER/` directory: 
+From the https://github.com/aff3ct/PyBER repo root directory:
 
 	$ python3 pyBER.py
 

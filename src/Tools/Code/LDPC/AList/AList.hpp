@@ -15,6 +15,13 @@ public:
 	static Sparse_matrix read (                             std::istream &stream);
 	static void          write(const Sparse_matrix &matrix, std::ostream &stream);
 
+	/*
+	 * get the matrix dimensions H and N from the input stream
+	 * @H is the height of the matrix
+	 * @N is the width of the matrix
+	 */
+	static void                  read_matrix_size   (std::istream &stream, int& H, int& N);
+
 	static std::vector<unsigned> read_info_bits_pos (std::istream &stream);
 	static std::vector<unsigned> read_info_bits_pos (std::istream &stream, const int K, const int N);
 	static void                  write_info_bits_pos(const std::vector<unsigned> &info_bits_pos, std::ostream &stream);

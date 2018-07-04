@@ -42,27 +42,27 @@ Codec_uncoded::parameters* Codec_uncoded::parameters
 }
 
 void Codec_uncoded::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SISO_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto penc = enc->get_prefix();
 	auto pdec = dec->get_prefix();
 
-	opt_args.erase({penc+"-type"          });
-	req_args.erase({penc+"-cw-size",   "N"});
-	opt_args.erase({penc+"-path"          });
-	opt_args.erase({penc+"-seed",      "S"});
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
+	args.erase({penc+"-type"          });
+	args.erase({penc+"-cw-size",   "N"});
+	args.erase({penc+"-path"          });
+	args.erase({penc+"-seed",      "S"});
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
 }
 
 void Codec_uncoded::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 

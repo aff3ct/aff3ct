@@ -29,10 +29,12 @@ struct Launcher : public Factory
 		std::string cde_type;
 
 		// optional parameters
-		std::string sim_type        = "BFER";
-		int         sim_prec        = 32;
-		bool        display_help    = false;
-		bool        display_version = false;
+		std::string sim_type         = "BFER";
+		int         sim_prec         = 32;
+		bool        display_help     = false;
+		bool        display_adv_help = false;
+		bool        display_version  = false;
+		bool        display_legend   = true;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Launcher_prefix);
@@ -40,8 +42,8 @@ struct Launcher : public Factory
 		virtual Launcher::parameters* clone() const;
 
 		// parameters construction
-		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_description(tools::Argument_map_info &args) const;
+		virtual void store          (const tools::Argument_map_value &vals);
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

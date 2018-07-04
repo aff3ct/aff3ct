@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <algorithm>
 
 namespace aff3ct
 {
@@ -22,25 +24,74 @@ private:
 
 public:
 	Sparse_matrix(const unsigned n_rows = 0, const unsigned n_cols = 1);
+
 	virtual ~Sparse_matrix();
 
-	unsigned get_n_rows         () const;
-	unsigned get_n_cols         () const;
-	unsigned get_rows_max_degree() const;
-	unsigned get_cols_max_degree() const;
-	unsigned get_n_connections  () const;
+	inline unsigned get_n_rows() const
+	{
+		return this->n_rows;
+	}
 
-	const std::vector<unsigned>& get_cols_from_row(const size_t row_index) const;
-	const std::vector<unsigned>& get_rows_from_col(const size_t col_index) const;
+	inline unsigned get_n_cols() const
+	{
+		return this->n_cols;
+	}
 
-	const std::vector<unsigned>& operator[](const size_t col_index) const;
+	inline unsigned get_rows_max_degree() const
+	{
+		return this->rows_max_degree;
+	}
 
-	bool at(const size_t row_index, const size_t col_index) const;
+	inline unsigned get_cols_max_degree() const
+	{
+		return this->cols_max_degree;
+	}
 
-	const std::vector<std::vector<unsigned int>>& get_row_to_cols() const;
-	const std::vector<std::vector<unsigned int>>& get_col_to_rows() const;
+	inline unsigned get_n_connections() const
+	{
+		return this->n_connections;
+	}
 
+	const std::vector<unsigned>& get_cols_from_row(const size_t row_index) const
+	{
+		return this->row_to_cols[row_index];
+	}
+
+	const std::vector<unsigned>& get_rows_from_col(const size_t col_index) const
+	{
+		return this->col_to_rows[col_index];
+	}
+
+	inline const std::vector<unsigned>& operator[](const size_t col_index) const
+	{
+		return this->get_rows_from_col(col_index);
+	}
+
+	inline bool at(const size_t row_index, const size_t col_index) const
+	{
+		auto it = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
+		return (it != this->row_to_cols[row_index].end());
+	}
+
+	inline const std::vector<std::vector<unsigned>>& get_row_to_cols() const
+	{
+		return this->row_to_cols;
+	}
+
+	inline const std::vector<std::vector<unsigned>>& get_col_to_rows() const
+	{
+		return this->col_to_rows;
+	}
+
+	/*
+	 * Add a connection
+	 */
 	void add_connection(const size_t row_index, const size_t col_index);
+
+	/*
+	 * Remove the connection
+	 */
+	void rm_connection(const size_t row_index, const size_t col_index);
 
 	/*
 	 * Return the transposed matrix of this matrix
@@ -62,6 +113,12 @@ public:
 	 * The "order" parameter can be "ASC" for ascending or "DSC" for descending
 	 */
 	void sort_cols_per_density(std::string order = "DSC");
+
+	/*
+	 * Print the sparsed matrix in its full view with 0s and 1s.
+	 * 'transpose' allow the print in its transposed view
+	 */
+	void print(bool transpose = false, std::ostream& os = std::cout) const;
 };
 }
 }

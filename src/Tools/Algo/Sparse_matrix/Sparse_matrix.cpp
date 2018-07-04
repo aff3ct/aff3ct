@@ -1,7 +1,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -25,74 +24,6 @@ Sparse_matrix
 Sparse_matrix
 ::~Sparse_matrix()
 {
-}
-
-unsigned Sparse_matrix
-::get_n_rows() const
-{
-	return this->n_rows;
-}
-
-unsigned Sparse_matrix
-::get_n_cols() const
-{
-	return this->n_cols;
-}
-
-unsigned Sparse_matrix
-::get_rows_max_degree() const
-{
-	return this->rows_max_degree;
-}
-
-unsigned Sparse_matrix
-::get_cols_max_degree() const
-{
-	return this->cols_max_degree;
-}
-
-unsigned Sparse_matrix
-::get_n_connections() const
-{
-	return this->n_connections;
-}
-
-const std::vector<unsigned>& Sparse_matrix
-::get_cols_from_row(const size_t row_index) const
-{
-	return this->row_to_cols[row_index];
-}
-
-const std::vector<unsigned>& Sparse_matrix
-::get_rows_from_col(const size_t col_index) const
-{
-	return this->col_to_rows[col_index];
-}
-
-const std::vector<unsigned>& Sparse_matrix
-::operator[](const size_t col_index) const
-{
-	return this->get_rows_from_col(col_index);
-}
-
-bool Sparse_matrix
-::at(const size_t row_index, const size_t col_index) const
-{
-	auto it = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
-
-	return (it != this->row_to_cols[row_index].end());
-}
-
-const std::vector<std::vector<unsigned int>>& Sparse_matrix
-::get_row_to_cols() const
-{
-	return this->row_to_cols;
-}
-
-const std::vector<std::vector<unsigned int>>& Sparse_matrix
-::get_col_to_rows() const
-{
-	return this->col_to_rows;
 }
 
 void Sparse_matrix
@@ -139,6 +70,86 @@ void Sparse_matrix
 	this->n_connections++;
 }
 
+void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index)
+{
+	if (col_index >= this->n_cols)
+	{
+		std::stringstream message;
+		message << "'col_index' has to be smaller than 'n_cols' ('col_index' = " << col_index
+		        << ", 'n_cols' = " << this->n_cols << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (row_index >= this->n_rows)
+	{
+		std::stringstream message;
+		message << "'row_index' has to be smaller than 'n_rows' ('row_index' = " << row_index
+		        << ", 'n_rows' = " << this->n_rows << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	// delete the link in the row_to_cols vector
+	bool row_found = false;
+	auto itr = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
+	if (itr != this->row_to_cols[row_index].end())
+	{
+		row_found = true;
+		itr = this->row_to_cols[row_index].erase(itr);
+
+		// check if need to reduce the rows max degree
+		if (this->row_to_cols[row_index].size() == (this->rows_max_degree-1))
+		{
+			bool found = false;
+			for (auto i = this->row_to_cols.begin(); i != this->row_to_cols.end(); i++ )
+				if (i->size() == this->rows_max_degree)
+				{
+					found = true;
+					break;
+				}
+
+			if (!found)
+				this->rows_max_degree--;
+		}
+	}
+
+	// delete the link in the col_to_rows vector
+	bool col_found = false;
+	auto itc = std::find(this->col_to_rows[col_index].begin(), this->col_to_rows[col_index].end(), row_index);
+	if (itc != this->col_to_rows[col_index].end())
+	{
+		col_found = true;
+		this->col_to_rows[col_index].erase(itc);
+
+		// check if need to reduce the cols max degree
+		if (this->col_to_rows[col_index].size() == (this->cols_max_degree-1))
+		{
+			bool found = false;
+			for (auto i = this->col_to_rows.begin(); i != this->col_to_rows.end(); i++ )
+				if (i->size() == this->cols_max_degree)
+				{
+					found = true;
+					break;
+				}
+
+			if (!found)
+				this->cols_max_degree--;
+		}
+	}
+
+	if (row_found != col_found)
+	{
+		std::stringstream message;
+		message << "The connection has been found only in one of the two vectors 'row_to_cols' and 'col_to_rows' "
+		        << "('row_index' = " << row_index << ", 'col_index' = " << col_index
+		        << ", found in row = " << std::boolalpha << row_found
+		        << ", found in col = " << col_found << std::noboolalpha << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+	else if (row_found && col_found)
+		this->n_connections--;
+	// else the connection has not been found
+}
+
 Sparse_matrix Sparse_matrix
 ::transpose() const
 {
@@ -175,12 +186,12 @@ void Sparse_matrix
 
 	if (order == "ASC")
 	{
-		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
+		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
 		          [](const std::vector<unsigned> &i1, const  std::vector<unsigned> &i2) { return i1.size() < i2.size(); });
 	}
 	else // order == "DSC"
 	{
-		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(), 
+		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
 		          [](const  std::vector<unsigned> &i1, const std::vector<unsigned> &i2) { return i1.size() > i2.size(); });
 	}
 
@@ -188,5 +199,50 @@ void Sparse_matrix
 		r.clear();
 	for (size_t i = 0; i < this->col_to_rows.size(); i++)
 		for (size_t j = 0; j < this->col_to_rows[i].size(); j++)
-			this->row_to_cols[this->col_to_rows[i][j]].push_back(i);
+			this->row_to_cols[this->col_to_rows[i][j]].push_back((unsigned)i);
+}
+
+void Sparse_matrix
+::print(bool transpose, std::ostream& os) const
+{
+	if (transpose)
+	{
+		std::vector<unsigned> rows(this->n_rows, 0);
+
+		for (auto& col : this->col_to_rows)
+		{
+			// set the ones
+			for (auto& row : col)
+				rows[row] = 1;
+
+			for (auto& row : rows)
+				os << row << " ";
+
+			os << std::endl;
+
+			// reset the ones
+			for (auto& row : col)
+				rows[row] = 0;
+		}
+	}
+	else
+	{
+		std::vector<unsigned> columns(this->n_cols, 0);
+
+		for (auto& row : this->row_to_cols)
+		{
+			// set the ones
+			for (auto& col : row)
+				columns[col] = 1;
+
+			for (auto& col : columns)
+				os << col << " ";
+
+			os << std::endl;
+
+			// reset the ones
+			for (auto& col : row)
+				columns[col] = 0;
+		}
+	}
 }

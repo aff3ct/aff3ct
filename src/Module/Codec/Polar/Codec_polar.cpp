@@ -26,7 +26,7 @@ Codec_polar<B,Q>
 {
 	const std::string name = "Codec_polar";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -125,8 +125,7 @@ Codec_polar<B,Q>
 		if (!adaptive_fb)
 		{
 			fb_generator->generate(frozen_bits);
-			if (this->N_cw != this->N)
-				puncturer_wangliu->gen_frozen_bits(frozen_bits);
+			this->notify_frozenbits_update();
 		}
 	}
 	else
@@ -140,6 +139,7 @@ Codec_polar<B,Q>
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 		std::copy(fb.begin(), fb.end(), frozen_bits.begin());
+		this->notify_frozenbits_update();
 	}
 }
 
@@ -164,14 +164,16 @@ void Codec_polar<B,Q>
 
 template <typename B, typename Q>
 void Codec_polar<B,Q>
-::set_sigma(const float sigma)
+::set_noise(const tools::Noise<float>& noise)
 {
-	Codec_SISO_SIHO<B,Q>::set_sigma(sigma);
+	Codec_SISO_SIHO<B,Q>::set_noise(noise);
 
 	// adaptive frozen bits generation
 	if (adaptive_fb && !generated_decoder)
 	{
-		fb_generator->set_sigma(sigma);
+		this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
+		fb_generator->set_sigma(this->n->get_noise());
 		fb_generator->generate(frozen_bits);
 
 		this->notify_frozenbits_update();
@@ -237,7 +239,7 @@ void Codec_polar<B,Q>
 		}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Codec_polar<B_8,Q_8>;

@@ -38,16 +38,16 @@ void BFER_ite<B,R,Q>
 {
 	Launcher::get_description_args();
 
-	params.     get_description(this->req_args, this->opt_args);
-	params.src->get_description(this->req_args, this->opt_args);
-	params.crc->get_description(this->req_args, this->opt_args);
-	params.itl->get_description(this->req_args, this->opt_args);
-	params.mdm->get_description(this->req_args, this->opt_args);
-	params.chn->get_description(this->req_args, this->opt_args);
+	params.     get_description(this->args);
+	params.src->get_description(this->args);
+	params.crc->get_description(this->args);
+	params.itl->get_description(this->args);
+	params.mdm->get_description(this->args);
+	params.chn->get_description(this->args);
 	if (std::is_integral<Q>())
-	params.qnt->get_description(this->req_args, this->opt_args);
-	params.mnt->get_description(this->req_args, this->opt_args);
-	params.ter->get_description(this->req_args, this->opt_args);
+	params.qnt->get_description(this->args);
+	params.mnt->get_description(this->args);
+	params.ter->get_description(this->args);
 
 	auto psrc = params.src     ->get_prefix();
 	auto pcrc = params.crc     ->get_prefix();
@@ -59,32 +59,34 @@ void BFER_ite<B,R,Q>
 	auto pqnt = params.qnt     ->get_prefix();
 	auto pmnt = params.mnt     ->get_prefix();
 	auto pter = params.ter     ->get_prefix();
+	auto psim = params.          get_prefix();
 
-	if (this->req_args.find({penc+"-info-bits", "K"}) != this->req_args.end() ||
-	    this->req_args.find({ppct+"-info-bits", "K"}) != this->req_args.end())
-		this->req_args.erase({psrc+"-info-bits", "K"});
-	this->opt_args.erase({psrc+"-seed",      "S"});
-	this->req_args.erase({pcrc+"-info-bits", "K"});
-	this->opt_args.erase({pcrc+"-fra",       "F"});
-	this->req_args.erase({pitl+"-size"          });
-	this->opt_args.erase({pitl+"-fra",       "F"});
-	this->opt_args.erase({pitl+"-seed",      "S"});
-	this->req_args.erase({pmdm+"-fra-size",  "N"});
-	this->opt_args.erase({pmdm+"-fra",       "F"});
-	this->opt_args.erase({pmdm+"-sigma"        });
-	this->req_args.erase({pchn+"-fra-size",  "N"});
-	this->opt_args.erase({pchn+"-fra",       "F"});
-	this->opt_args.erase({pchn+"-sigma"         });
-	this->opt_args.erase({pchn+"-seed",      "S"});
-	this->opt_args.erase({pchn+"-add-users"     });
-	this->opt_args.erase({pchn+"-complex"       });
-	this->req_args.erase({pqnt+"-size",      "N"});
-	this->opt_args.erase({pqnt+"-fra",       "F"});
-	this->opt_args.erase({pqnt+"-sigma"         });
-	this->req_args.erase({pmnt+"-size",      "K"});
-	this->opt_args.erase({pmnt+"-fra",       "F"});
-	this->req_args.erase({pter+"-info-bits","K"});
-	this->opt_args.erase({pter+"-cw-size",  "N"});
+	if (this->args.exist({penc+"-info-bits", "K"}) || this->args.exist({ppct+"-info-bits", "K"}))
+		this->args.erase({psrc+"-info-bits", "K"});
+
+	this->args.erase({psrc+"-seed",      "S"});
+	this->args.erase({pcrc+"-info-bits", "K"});
+	this->args.erase({pcrc+"-fra",       "F"});
+	this->args.erase({pitl+"-size"          });
+	this->args.erase({pitl+"-fra",       "F"});
+	this->args.erase({pitl+"-seed",      "S"});
+	this->args.erase({pmdm+"-fra-size",  "N"});
+	this->args.erase({pmdm+"-fra",       "F"});
+	this->args.erase({pmdm+"-noise"         });
+	this->args.erase({pchn+"-fra-size",  "N"});
+	this->args.erase({pchn+"-fra",       "F"});
+	this->args.erase({pchn+"-noise"         });
+	this->args.erase({pchn+"-seed",      "S"});
+	this->args.erase({pchn+"-add-users"     });
+	this->args.erase({pchn+"-complex"       });
+	this->args.erase({pqnt+"-size",      "N"});
+	this->args.erase({pqnt+"-fra",       "F"});
+	this->args.erase({pmnt+"-info-bits", "K"});
+	this->args.erase({pmnt+"-fra-size",  "N"});
+	this->args.erase({pmnt+"-fra",       "F"});
+	this->args.erase({pter+"-info-bits", "K"});
+	this->args.erase({pter+"-cw-size",   "N"});
+	this->args.erase({psim+"-mutinfo"       });
 }
 
 template <typename B, typename R, typename Q>
@@ -93,19 +95,19 @@ void BFER_ite<B,R,Q>
 {
 	Launcher::store_args();
 
-	params.store(this->ar.get_args());
+	params.store(this->arg_vals);
 
 	params.src->seed = params.local_seed;
 
-	params.src->store(this->ar.get_args());
+	params.src->store(this->arg_vals);
 
 	auto psrc = params.src->get_prefix();
 
-	auto K    = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->K;
-	auto N    = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N;
-	auto N_cw = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N_cw;
+	auto K    = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->K;
+	auto N    = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->N;
+	auto N_cw = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->N_cw;
 
-	params.crc->store(this->ar.get_args());
+	params.crc->store(this->arg_vals);
 
 	params.crc->K = K - params.crc->size;
 	params.src->K = params.src->K == 0 ? params.crc->K : params.src->K;
@@ -113,29 +115,30 @@ void BFER_ite<B,R,Q>
 	params.itl->core->size = N;
 	params.itl->core->seed = params.local_seed;
 
-	params.itl->store(this->ar.get_args());
+	params.itl->store(this->arg_vals);
 
 	params.mdm->N = N;
 
-	params.mdm->store(this->ar.get_args());
+	params.mdm->store(this->arg_vals);
 
 	params.chn->N         = params.mdm->N_mod;
 	params.chn->complex   = params.mdm->complex;
 	params.chn->add_users = params.mdm->type == "SCMA";
 	params.chn->seed      = params.local_seed;
 
-	params.chn->store(this->ar.get_args());
+	params.chn->store(this->arg_vals);
 
 	params.qnt->size = params.mdm->N_fil;
 
 	if (std::is_integral<Q>())
-		params.qnt->store(this->ar.get_args());
+		params.qnt->store(this->arg_vals);
 
-	params.mnt->size = params.coded_monitoring ? N_cw : params.src->K;
+	params.mnt->K = params.coded_monitoring ? N_cw : params.src->K;
+	params.mnt->N = N_cw;
 
-	params.mnt->store(this->ar.get_args());
+	params.mnt->store(this->arg_vals);
 
-	params.ter->store(this->ar.get_args());
+	params.ter->store(this->arg_vals);
 
 	if (!std::is_integral<Q>())
 		params.qnt->type = "NO";
@@ -154,19 +157,19 @@ void BFER_ite<B,R,Q>
 	if (params.err_track_revert)
 	{
 		params.src->type = "USER";
-		params.src->path = params.err_track_path + std::string("_$snr.src");
+		params.src->path = params.err_track_path + std::string("_$noise.src");
 
 		params.cdc->enc->type = "USER";
-		params.cdc->enc->path = params.err_track_path + std::string("_$snr.enc");
+		params.cdc->enc->path = params.err_track_path + std::string("_$noise.enc");
 
 		if (params.itl->core->uniform)
 		{
 			params.itl->core->type = "USER";
-			params.itl->core->path = params.err_track_path + std::string("_$snr.itl");
+			params.itl->core->path = params.err_track_path + std::string("_$noise.itl");
 		}
 
 		params.chn->type = "USER";
-		params.chn->path = params.err_track_path + std::string("_$snr.chn");
+		params.chn->path = params.err_track_path + std::string("_$noise.chn");
 	}
 
 	params.cdc->enc->seed = params.local_seed;

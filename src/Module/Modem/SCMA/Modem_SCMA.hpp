@@ -24,16 +24,26 @@ private:
 	const int                        n_ite;
 
 public:
-	Modem_SCMA(const int N, const R sigma = (R)1, const int bps = 3, const bool disable_sig2 = false,
+	Modem_SCMA(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int bps = 3, const bool disable_sig2 = false,
 	           const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA();
 
-	virtual void set_sigma(const R sigma);
+	virtual void set_noise(const tools::Noise<R>& noise);
 
 	virtual void modulate     (              const B* X_N1, R *X_N2, const int frame_id = -1); using Modem<B,R,Q>::modulate;
 	virtual void demodulate   (              const Q *Y_N1, Q *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::demodulate;
 	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::demodulate_wg;
 	virtual void filter       (              const R *Y_N1, R *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::filter;
+
+	static bool is_complex_mod()
+	{
+		return true;
+	}
+
+	static bool is_complex_fil()
+	{
+		return true;
+	}
 
 	static int size_mod(const int N, const int bps)
 	{

@@ -3,8 +3,8 @@
 #include <sstream>
 #include <iostream>
 
-#include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
@@ -16,31 +16,31 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::Decoder_LDPC_BP_layered_ONMS_inter(const int K, const int N, const int n_ite,
-                                     const tools::Sparse_matrix &H,
+                                     const tools::Sparse_matrix &_H,
                                      const std::vector<unsigned> &info_bits_pos,
                                      const float normalize_factor,
                                      const R offset,
                                      const bool enable_syndrome,
                                      const int syndrome_depth,
                                      const int n_frames)
-: Decoder               (K, N, n_frames,                                            mipp::nElReg<R>() ),
-  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, mipp::nElReg<R>() ),
-  normalize_factor      (normalize_factor                                                             ),
-  offset                (offset                                                                       ),
-  contributions         (H.get_cols_max_degree()                                                      ),
-  saturation            ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(H.get_rows_max_degree()))) -1)),
-  n_C_nodes             ((int)H.get_n_cols()                                                          ),
-  init_flag             (true                                                                         ),
-  info_bits_pos         (info_bits_pos                                                                ),
-  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                             ),
-  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(H.get_n_connections())         ),
-  Y_N_reorderered       (N                                                                            ),
-  V_reorderered         (N                                                                            )
+: Decoder               (K, N, n_frames, mipp::N<R>()                                                       ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::N<R>()                                                       ),
+  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth                                   ),
+  normalize_factor      (normalize_factor                                                                   ),
+  offset                (offset                                                                             ),
+  contributions         (this->H.get_cols_max_degree()                                                      ),
+  saturation            ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
+  init_flag             (true                                                                               ),
+  info_bits_pos         (info_bits_pos                                                                      ),
+  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                                   ),
+  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  Y_N_reorderered       (N                                                                                  ),
+  V_reorderered         (N                                                                                  )
 {
 	const std::string name = "Decoder_LDPC_BP_layered_ONMS_inter";
 	this->set_name(name);
-	
-	if (typeid(R) == typeid(signed char))
+
+	if (sizeof(R) == 1)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder does not work in 8-bit fixed-point.");
 
 	if (saturation <= 0)
@@ -80,9 +80,9 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
 
-	std::vector<const R*> frames(mipp::nElReg<R>());
-	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = Y_N + f * this->N;
-	tools::Reorderer_static<R,mipp::nElReg<R>()>::apply(frames, (R*)this->Y_N_reorderered.data(), this->N);
+	std::vector<const R*> frames(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = Y_N + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply(frames, (R*)this->Y_N_reorderered.data(), this->N);
 
 	for (auto i = 0; i < (int)var_nodes[cur_wave].size(); i++)
 		this->var_nodes[cur_wave][i] += this->Y_N_reorderered[i]; // var_nodes contain previous extrinsic information
@@ -98,14 +98,14 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	// actual decoding
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
-		     if (normalize_factor == 0.125f) this->BP_decode<1>(frame_id);
-		else if (normalize_factor == 0.250f) this->BP_decode<2>(frame_id);
-		else if (normalize_factor == 0.375f) this->BP_decode<3>(frame_id);
-		else if (normalize_factor == 0.500f) this->BP_decode<4>(frame_id);
-		else if (normalize_factor == 0.625f) this->BP_decode<5>(frame_id);
-		else if (normalize_factor == 0.750f) this->BP_decode<6>(frame_id);
-		else if (normalize_factor == 0.875f) this->BP_decode<7>(frame_id);
-		else if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
+		     if (normalize_factor == 0.125f) this->_decode<1>(frame_id);
+		else if (normalize_factor == 0.250f) this->_decode<2>(frame_id);
+		else if (normalize_factor == 0.375f) this->_decode<3>(frame_id);
+		else if (normalize_factor == 0.500f) this->_decode<4>(frame_id);
+		else if (normalize_factor == 0.625f) this->_decode<5>(frame_id);
+		else if (normalize_factor == 0.750f) this->_decode<6>(frame_id);
+		else if (normalize_factor == 0.875f) this->_decode<7>(frame_id);
+		else if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
 		else
 		{
 			std::stringstream message;
@@ -116,18 +116,18 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	}
 	else // float or double
 	{
-		if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
-		else                            this->BP_decode<0>(frame_id);
+		if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
+		else                            this->_decode<0>(frame_id);
 	}
 
 	// prepare for next round by processing extrinsic information
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
-	for (auto i = 0; i < this->N; i++)
-		this->var_nodes[cur_wave][i] -= Y_N_reorderered[i];
+	for (auto v = 0; v < this->N; v++)
+		this->var_nodes[cur_wave][v] -= Y_N_reorderered[v];
 
-	std::vector<R*> frames(mipp::nElReg<R>());
-	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = Y_N2 + f * this->N;
-	tools::Reorderer_static<R,mipp::nElReg<R>()>::apply_rev((R*)this->var_nodes[cur_wave].data(), frames, this->N);
+	std::vector<R*> frames(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = Y_N2 + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply_rev((R*)this->var_nodes[cur_wave].data(), frames, this->N);
 }
 
 template <typename B, typename R>
@@ -142,14 +142,14 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	// actual decoding
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
-		     if (normalize_factor == 0.125f) this->BP_decode<1>(frame_id);
-		else if (normalize_factor == 0.250f) this->BP_decode<2>(frame_id);
-		else if (normalize_factor == 0.375f) this->BP_decode<3>(frame_id);
-		else if (normalize_factor == 0.500f) this->BP_decode<4>(frame_id);
-		else if (normalize_factor == 0.625f) this->BP_decode<5>(frame_id);
-		else if (normalize_factor == 0.750f) this->BP_decode<6>(frame_id);
-		else if (normalize_factor == 0.875f) this->BP_decode<7>(frame_id);
-		else if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
+		     if (normalize_factor == 0.125f) this->_decode<1>(frame_id);
+		else if (normalize_factor == 0.250f) this->_decode<2>(frame_id);
+		else if (normalize_factor == 0.375f) this->_decode<3>(frame_id);
+		else if (normalize_factor == 0.500f) this->_decode<4>(frame_id);
+		else if (normalize_factor == 0.625f) this->_decode<5>(frame_id);
+		else if (normalize_factor == 0.750f) this->_decode<6>(frame_id);
+		else if (normalize_factor == 0.875f) this->_decode<7>(frame_id);
+		else if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
 		else
 		{
 			std::stringstream message;
@@ -160,8 +160,8 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	}
 	else // float or double
 	{
-		if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
-		else                            this->BP_decode<0>(frame_id);
+		if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
+		else                            this->_decode<0>(frame_id);
 	}
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
@@ -175,9 +175,9 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		V_reorderered[i] = mipp::cast<R,B>(this->var_nodes[cur_wave][k]) >> (sizeof(B) * 8 - 1);
 	}
 
-	std::vector<B*> frames(mipp::nElReg<R>());
-	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_K + f * this->K;
-	tools::Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->K);
+	std::vector<B*> frames(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = V_K + f * this->K;
+	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->K);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
@@ -197,14 +197,14 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	// actual decoding
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
-		     if (normalize_factor == 0.125f) this->BP_decode<1>(frame_id);
-		else if (normalize_factor == 0.250f) this->BP_decode<2>(frame_id);
-		else if (normalize_factor == 0.375f) this->BP_decode<3>(frame_id);
-		else if (normalize_factor == 0.500f) this->BP_decode<4>(frame_id);
-		else if (normalize_factor == 0.625f) this->BP_decode<5>(frame_id);
-		else if (normalize_factor == 0.750f) this->BP_decode<6>(frame_id);
-		else if (normalize_factor == 0.875f) this->BP_decode<7>(frame_id);
-		else if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
+		     if (normalize_factor == 0.125f) this->_decode<1>(frame_id);
+		else if (normalize_factor == 0.250f) this->_decode<2>(frame_id);
+		else if (normalize_factor == 0.375f) this->_decode<3>(frame_id);
+		else if (normalize_factor == 0.500f) this->_decode<4>(frame_id);
+		else if (normalize_factor == 0.625f) this->_decode<5>(frame_id);
+		else if (normalize_factor == 0.750f) this->_decode<6>(frame_id);
+		else if (normalize_factor == 0.875f) this->_decode<7>(frame_id);
+		else if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
 		else
 		{
 			std::stringstream message;
@@ -215,8 +215,8 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	}
 	else // float or double
 	{
-		if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
-		else                            this->BP_decode<0>(frame_id);
+		if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
+		else                            this->_decode<0>(frame_id);
 	}
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
@@ -224,12 +224,12 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	// take the hard decision
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 	const auto zero = mipp::Reg<R>((R)0);
-	for (auto i = 0; i < this->N; i++)
-		V_reorderered[i] = mipp::cast<R,B>(this->var_nodes[cur_wave][i]) >> (sizeof(B) * 8 - 1);
+	for (auto v = 0; v < this->N; v++)
+		V_reorderered[v] = mipp::cast<R,B>(this->var_nodes[cur_wave][v]) >> (sizeof(B) * 8 - 1);
 
-	std::vector<B*> frames(mipp::nElReg<R>());
-	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_N + f * this->N;
-	tools::Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->N);
+	std::vector<B*> frames(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = V_N + f * this->N;
+	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->N);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
@@ -237,11 +237,10 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
-// BP algorithm
 template <typename B, typename R>
 template <int F>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::BP_decode(const int frame_id)
+::_decode(const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 
@@ -249,10 +248,10 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
-		this->BP_process<F>(this->var_nodes[cur_wave], this->branches[cur_wave]);
+		this->_decode_single_ite<F>(this->var_nodes[cur_wave], this->branches[cur_wave]);
 
 		// stop criterion
-		if (this->enable_syndrome && this->check_syndrome(frame_id))
+		if (this->enable_syndrome && this->_check_syndrome(frame_id))
 		{
 			cur_syndrome_depth++;
 			if (cur_syndrome_depth == this->syndrome_depth)
@@ -263,36 +262,10 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	}
 }
 
-template <typename B, typename R>
-bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::check_syndrome(const int frame_id)
-{
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
-	const auto zero = mipp::Msk<mipp::N<B>()>(false);
-	auto syndrome = zero;
-
-	//auto k = 0;
-	for (auto i = 0; i < this->n_C_nodes; i++)
-	{
-		auto sign = zero;
-
-		const auto n_VN = (int)this->H[i].size();
-		for (auto j = 0; j < n_VN; j++)
-		{
-			const auto value = this->var_nodes[cur_wave][this->H[i][j]];// - this->branches[cur_wave][k++];
-			sign ^= mipp::sign(value);
-		}
-
-		syndrome |= sign;
-	}
-
-	return (mipp::testz(syndrome));
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------- SIMD TOOLS
 
-//                                                                                                           saturation
+// --------------------------------------------------------------------------------------------------------- saturation
 template <typename R>
 inline mipp::Reg<R> simd_sat(const mipp::Reg<R> val, const R saturation)
 {
@@ -304,7 +277,7 @@ inline mipp::Reg<short> simd_sat(const mipp::Reg<short> v, const short s)
 	return mipp::sat(v, (short)-s, (short)+s);
 }
 
-//                                                                                                        normalization
+// ------------------------------------------------------------------------------------------------------ normalization
 template <typename R, int F = 0> inline mipp::Reg<R> simd_normalize(const mipp::Reg<R> val, const float factor)
 {
 	return val * mipp::Reg<R>((R)factor);
@@ -327,30 +300,31 @@ template <> inline mipp::Reg<double> simd_normalize<double,8>(const mipp::Reg<do
 template <typename B, typename R>
 template <int F>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::BP_process(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches)
+::_decode_single_ite(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches)
 {
 	auto kr = 0;
 	auto kw = 0;
 
-	const auto zero_msk = mipp::Msk<mipp::N<B>()>(false);
-	const auto zero     = mipp::Reg<R>((R)0);
-	for (auto i = 0; i < this->n_C_nodes; i++)
+	const auto zero_msk    = mipp::Msk<mipp::N<B>()>(false);
+	const auto zero        = mipp::Reg<R>((R)0);
+	const auto n_chk_nodes = (int)H.get_n_cols();
+	for (auto c = 0; c < n_chk_nodes; c++)
 	{
 		auto sign = zero_msk;
 		auto min1 = mipp::Reg<R>(std::numeric_limits<R>::max());
 		auto min2 = mipp::Reg<R>(std::numeric_limits<R>::max());
 
-		const auto n_VN = (int)this->H[i].size();
-		for (auto j = 0; j < n_VN; j++)
+		const auto chk_degree = (int)this->H[c].size();
+		for (auto v = 0; v < chk_degree; v++)
 		{
-			contributions[j]  = var_nodes[this->H[i][j]] - branches[kr++];
-			const auto v_abs  = mipp::abs (contributions[j]);
-			const auto c_sign = mipp::sign(contributions[j]);
-			const auto v_temp = min1;
+			contributions[v]    = var_nodes[this->H[c][v]] - branches[kr++];
+			const auto var_abs  = mipp::abs (contributions[v]);
+			const auto var_sign = mipp::sign(contributions[v]);
+			const auto tmp      = min1;
 
-			sign ^= c_sign;
-			min1  = mipp::min(min1,           v_abs         );
-			min2  = mipp::min(min2, mipp::max(v_abs, v_temp));
+			sign ^= var_sign;
+			min1  = mipp::min(min1,           var_abs      );
+			min2  = mipp::min(min2, mipp::max(var_abs, tmp));
 		}
 
 		auto cste1 = simd_sat<R>(simd_normalize<R,F>(min2 - offset, normalize_factor), saturation);
@@ -359,21 +333,49 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		cste1 = mipp::blend(zero, cste1, zero > cste1);
 		cste2 = mipp::blend(zero, cste2, zero > cste2);
 
-		for (auto j = 0; j < n_VN; j++)
+		for (auto v = 0; v < chk_degree; v++)
 		{
-			const auto value = contributions[j];
-			const auto v_abs = mipp::abs(value);
-			      auto v_res = mipp::blend(cste1, cste2, v_abs == min1);
-			const auto v_sig = sign ^ mipp::sign(value);
-			           v_res = mipp::copysign(v_res, v_sig);
+			const auto var_val = contributions[v];
+			const auto var_abs = mipp::abs(var_val);
+			      auto res_abs = mipp::blend(cste1, cste2, var_abs == min1);
+			const auto res_sng = sign ^ mipp::sign(var_val);
+			const auto res     = mipp::copysign(res_abs, res_sng);
 
-			branches[kw++] = v_res;
-			var_nodes[this->H[i][j]] = contributions[j] + v_res;
+			branches[kw++] = res;
+			var_nodes[this->H[c][v]] = contributions[v] + res;
 		}
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+template <typename B, typename R>
+bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+::_check_syndrome(const int frame_id)
+{
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto zero = mipp::Msk<mipp::N<B>()>(false);
+	auto syndrome = zero;
+
+	auto n_chk_nodes = (int)H.get_n_cols();
+	auto c = 0;
+	auto syndrome_scalar = true;
+	while (c < n_chk_nodes && (syndrome_scalar = mipp::testz(syndrome)))
+	{
+		auto sign = zero;
+		const auto chk_degree = (int)this->H[c].size();
+		for (auto v = 0; v < chk_degree; v++)
+		{
+			const auto value = this->var_nodes[cur_wave][this->H[c][v]];
+			sign ^= mipp::sign(value);
+		}
+
+		syndrome |= sign;
+		c++;
+	}
+
+	return syndrome_scalar;
+}
+
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter<B_8,Q_8>;

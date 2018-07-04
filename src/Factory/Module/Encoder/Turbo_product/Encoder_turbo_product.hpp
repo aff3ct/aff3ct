@@ -41,8 +41,8 @@ struct Encoder_turbo_product : public Encoder
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
@@ -54,9 +54,9 @@ struct Encoder_turbo_product : public Encoder
 
 	template <typename B = int>
 	static module::Encoder_turbo_product<B>* build(const parameters             &params,
-	                                                    const module::Interleaver<B> &itl,
-	                                                          module::Encoder_BCH<B> &enc_n,
-	                                                          module::Encoder_BCH<B> &enc_i);
+	                                               const module::Interleaver<B> &itl,
+	                                                     module::Encoder_BCH<B> &enc_n,
+	                                                     module::Encoder_BCH<B> &enc_i);
 };
 }
 }

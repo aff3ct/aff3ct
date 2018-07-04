@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Module/Channel/Channel.hpp"
+#include "Tools/Math/Distribution/Distributions.hpp"
 
 #include "../../Factory.hpp"
 
@@ -32,7 +33,7 @@ struct Channel : public Factory
 		int         n_frames     = 1;
 		int         seed         = 0;
 		int         gain_occur   = 1;
-		float       sigma        = -1.f;
+		float       noise        = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Channel_prefix);
@@ -40,17 +41,23 @@ struct Channel : public Factory
 		Channel::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
 		template <typename R = float>
-		module::Channel<R>* build() const;
+		module::Channel<R>* build_gaussian() const;
+		template <typename R = float>
+		module::Channel<R>* build_event() const;
+		template <typename R = float>
+		module::Channel<R>* build_userpdf(const tools::Distributions<R>* dist) const;
+		template <typename R = float>
+		module::Channel<R>* build(const tools::Distributions<R>* dist = nullptr) const;
 	};
 
 	template <typename R = float>
-	static module::Channel<R>* build(const parameters &params);
+	static module::Channel<R>* build(const parameters &params, const tools::Distributions<R>* dist = nullptr);
 };
 }
 }

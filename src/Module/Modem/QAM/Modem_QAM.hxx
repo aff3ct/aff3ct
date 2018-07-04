@@ -16,10 +16,11 @@ namespace module
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_QAM<B,R,Q,MAX>
-::Modem_QAM(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames)
+::Modem_QAM(const int N, const tools::Noise<R>& noise, const int bits_per_symbol,
+            const bool disable_sig2, const int n_frames)
 : Modem<B,R,Q>(N,
                (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
-               sigma,
+               noise,
                n_frames),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
@@ -29,7 +30,7 @@ Modem_QAM<B,R,Q,MAX>
 {
 	const std::string name = "Modem_QAM";
 	this->set_name(name);
-	
+
 	if (this->bits_per_symbol % 2)
 	{
 		std::stringstream message;
@@ -54,9 +55,6 @@ Modem_QAM<B,R,Q,MAX>
 {
 }
 
-/*
- * Mapping function
- */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 std::complex<R> Modem_QAM<B,R,Q,MAX>
 ::bits_to_symbol(const B* bits) const
@@ -75,9 +73,19 @@ std::complex<R> Modem_QAM<B,R,Q,MAX>
 	return std::complex<R>(symbol_I, symbol_Q) / (std::complex<R>)this->sqrt_es;
 }
 
-/*
- * Modem
- */
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+void Modem_QAM<B,R,Q,MAX>
+::set_noise(const tools::Noise<R>& noise)
+{
+	Modem<B,R,Q>::set_noise(noise);
+
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
+	this->inv_sigma2 = this->disable_sig2 ?
+	                    (R)1.0 :
+	                    (R)((R)1.0 / (2 * this->n->get_noise() * this->n->get_noise()));
+}
+
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_QAM<B,R,Q,MAX>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
@@ -115,9 +123,6 @@ void Modem_QAM<B,R,Q,MAX>
 	}
 }
 
-/*
- * Filter
- */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_QAM<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
@@ -125,22 +130,21 @@ void Modem_QAM<B,R,Q,MAX>
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
-/*
- * Demodulator
- */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_QAM<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-	
-	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)((Q)1.0 / (this->sigma * this->sigma));
-	
+
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+
+	auto size = this->N;
+
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
 		auto L0 = -std::numeric_limits<Q>::infinity();
@@ -151,12 +155,12 @@ void Modem_QAM<B,R,Q,MAX>
 		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j & (1 << b)) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
+				                                                     (Q)this->constellation[j].imag())) * (Q)inv_sigma2);
 			else
 				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
+				                                                     (Q)this->constellation[j].imag())) * (Q)inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
@@ -169,14 +173,16 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_QAM<B,R,Q,MAX>
 ::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)((Q)1.0 / (this->sigma * this->sigma));
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+
+	auto size = this->N;
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -189,14 +195,14 @@ void Modem_QAM<B,R,Q,MAX>
 		auto complex_Hk = std::complex<Q>((Q)H_N [2*k], (Q)H_N [2*k+1]);
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j & (1 << b)) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -std::norm(complex_Yk -
 				                        complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
+				                                                     (Q)this->constellation[j].imag())) * (Q)inv_sigma2);
 			else
 				L1 = MAX(L1, -std::norm(complex_Yk -
 				                        complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
+				                                                     (Q)this->constellation[j].imag())) * (Q)inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
@@ -206,14 +212,16 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_QAM<B,R,Q,MAX>
 ::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+
+	auto size = this->N;
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -227,15 +235,25 @@ void Modem_QAM<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
 			auto tempL = (Q)(std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-			                                                        (Q)this->constellation[j].imag())) * inv_sigma2);
+			                                                        (Q)this->constellation[j].imag())) * (Q)inv_sigma2);
 
-			for (auto l = 0; l < b; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+			for (auto l = 0; l < this->bits_per_symbol; l++)
+			{
+				if (l == b)
+					continue;
 
-			for (auto l = b +1; l < this->bits_per_symbol; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+				if  (( (j>>l) & 1 ) == 1)
+				{
+					if (k * this->bits_per_symbol +l < size)
+						tempL += Y_N2[k * this->bits_per_symbol +l];
+					else
+						tempL += std::numeric_limits<Q>::infinity();
+				}
 
-			if ((j & (1 << b)) == 0)
+			}
+			tempL = std::isnan((R)tempL) ? (Q)0.0 : tempL;
+
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
@@ -249,14 +267,16 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_QAM<B,R,Q,MAX>
 ::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	auto size       = this->N;
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+
+	auto size = this->N;
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -272,21 +292,82 @@ void Modem_QAM<B,R,Q,MAX>
 		{
 			auto tempL = (Q)(std::norm(complex_Yk -
 			                           complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
-			                                                        (Q)this->constellation[j].imag())) * inv_sigma2);
+			                                                        (Q)this->constellation[j].imag())) * (Q)inv_sigma2);
 
-			for (auto l = 0; l < b; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+			for (auto l = 0; l < this->bits_per_symbol; l++)
+			{
+				if (l == b)
+					continue;
 
-			for (auto l = b +1; l < this->bits_per_symbol; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+				if  (( (j>>l) & 1 ) == 1)
+				{
+					if (k * this->bits_per_symbol +l < size)
+						tempL += Y_N2[k * this->bits_per_symbol +l];
+					else
+						tempL += std::numeric_limits<Q>::infinity();
+				}
+			}
+			tempL = std::isnan((R)tempL) ? (Q)0.0 : tempL;
 
-			if ((j & (1 << b)) == 0)
+			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
 		}
 
 		Y_N3[n] = (L0 - L1);
+	}
+}
+/*
+* \brief Soft Mapper
+*/
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+void Modem_QAM<B, R, Q, MAX>
+::_tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
+{
+	auto size_in  = this->N;
+	auto size_out = this->N_mod;
+
+	auto loop_size = size_in / this->bits_per_symbol;
+
+	for (auto i = 0; i < loop_size; i++)
+	{
+		X_N2[2*i+0] = (R)0.0;
+		X_N2[2*i+1] = (R)0.0;
+
+		for (auto m = 0; m < this->nbr_symbols; m++)
+		{
+			std::complex<R> soft_symbol = this->constellation[m];
+			auto p = (R)1.0;
+			for (auto j = 0; j < this->bits_per_symbol; j++)
+			{
+				auto p0 = (R)1.0/((R)1.0 + std::exp(-(R)(X_N1[i*this->bits_per_symbol + j])));
+				p *= ((m >> j) & 1) == 0 ? p0 : (R)1.0 - p0;
+			}
+			X_N2[2*i]   += p * soft_symbol.real();
+			X_N2[2*i+1] += p * soft_symbol.imag();
+		}
+	}
+
+	// last elements if "size_in" is not a multiple of the number of bits per symbol
+	if (loop_size * this->bits_per_symbol < size_in)
+	{
+		auto r = size_in - (loop_size * this->bits_per_symbol);
+		X_N2[size_out - 2] = (R)0.0;
+		X_N2[size_out - 1] = (R)0.0;
+
+		for (auto m = 0; m < (1<<r); m++)
+		{
+			std::complex<R> soft_symbol = this->constellation[m];
+			auto p = (R)1.0;
+			for (auto j = 0; j < r; j++)
+			{
+				auto p0 = (R)1.0/((R)1.0 + std::exp(-(R)X_N1[loop_size*this->bits_per_symbol + j]));
+				p *= ((m >> j) & 1) == 0 ? p0 : (R)1.0 - p0;
+			}
+			X_N2[size_out - 2] += p*soft_symbol.real();
+			X_N2[size_out - 1] += p*soft_symbol.imag();
+		}
 	}
 }
 }

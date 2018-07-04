@@ -26,7 +26,50 @@ R esn0_to_ebn0(const R esn0, const R bit_rate = 1, const int bps = 1);
 
 template <typename R = float>
 R ebn0_to_esn0(const R ebn0, const R bit_rate = 1, const int bps = 1);
+
+/* Transform a Matlab style description of a range into a vector.
+ * For ex: "0:1.2,3.4:0.2:4.4" gives the vector "0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 3.4 3.6 3.8 4 4.2 4.4"
+ * The first dimension of 'range_description' can have any size.
+ * The second is between 1 to 3. If 1, then a value alone, else the first element is the min value, the last is the max value. The one between if any
+ * is the step to use else use the step 'default_step'.
+ */
+template <typename R = float>
+std::vector<R> generate_range(const std::vector<std::vector<R>>& range_description, const R default_step = (R)0.1);
+
+
+/*
+ * Get the nearest position of value in range [first, last[.
+ * the reference data must be sorted and strictly monotonic increasing
+ * If value goes out of x_data range, then return the left or right limit value in function of the violated one.
+ */
+template <typename BidirectionalIterator, typename T>
+inline BidirectionalIterator get_closest(BidirectionalIterator first, BidirectionalIterator last, const T & value);
+
+template <typename BidirectionalIterator, typename T>
+inline std::size_t get_closest_index(BidirectionalIterator first, BidirectionalIterator last, const T & value);
+
+/*
+ * Sort 'vec_abscissa' in ascending order and move the matching ordinate of 'vec_ordinate' by the same time.
+ */
+template <typename Ta, typename To>
+inline void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate);
+
+template <typename Ta, typename To>
+inline void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate);
+
+/*
+ * Eliminates all but the first element from every consecutive group of equivalent elements from the 'vec_abscissa' vector
+ * and remove the matching ordinate of 'vec_ordinate' by the same time.
+ * 'vec_abscissa' and 'vec_ordinate' are resized to their new length.
+ */
+template <typename Ta, typename To>
+inline void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate);
+
+template <typename Ta, typename To>
+inline void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate);
 }
 }
+
+#include "general_utils.hxx"
 
 #endif /* GENERAL_UTILS_H_*/

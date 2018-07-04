@@ -21,20 +21,34 @@ private:
 	R sqrt_es;
 	const bool disable_sig2;
 	std::vector<std::complex<R>> constellation;
+	R inv_sigma2;
+
 
 public:
-	Modem_user(const int N, const std::string &const_path, const R sigma = (R)1, const int bits_per_symbol = 2,
-	           const bool disable_sig2 = false, const int n_frames = 1);
+	Modem_user(const int N, const std::string &const_path, const tools::Noise<R>& noise = tools::Sigma<R>(),
+	           const int bits_per_symbol = 2, const bool disable_sig2 = false, const int n_frames = 1);
 	virtual ~Modem_user();
+
+	virtual void set_noise(const tools::Noise<R>& noise);
+
+	static bool is_complex_mod()
+	{
+		return true;
+	}
+
+	static bool is_complex_fil()
+	{
+		return true;
+	}
 
 	static int size_mod(const int N, const int bps)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, 0, 1, true);
+		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, 0, 1, is_complex_mod());
 	}
 
 	static int size_fil(const int N, const int bps)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, 0, 1, true);
+		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, 0, 1, is_complex_fil());
 	}
 
 protected:

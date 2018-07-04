@@ -1,10 +1,23 @@
 # AFF3CT Debug Parser
+
 This tool is used to parse the debug outputs of the [AFF3CT Software](https://aff3ct.github.io) and convert it into binary and text files.
 This  debug parser supports the hex debug format (`--sim-debug-hex`), which is highly recommended when dealing with floating point representation.
+
+## Dependencies
+```
+pip3 install argparse mat4py
+```
+For dynamic parsing, on Ubuntu, run the following command (and add it to your bashrc !)
+```
+eval "$(register-python-argcomplete polar_tce_tools.py)"
+```
+For other OSs, please refer to the documentation of the argparse project (https://docs.python.org/3/library/argparse.html).
+
+
 ## Usage
 ```bash
 usage: aff3ct_debug_parser.py [-h] --mod MOD --tsk TSK [--txt] [--bin] [--src]
-                              [--fra FRA] [-o OUTPUT]
+                              [--mat] [--fra FRA] [-o OUTPUT]
                               path
 
 positional arguments:
@@ -17,6 +30,7 @@ optional arguments:
   --txt                 export as txt
   --bin                 export as bin
   --src                 export as c source
+  --mat                 export as matlab .mat file
   --fra FRA             export a single frame, whose index is specified
   -o OUTPUT, --output OUTPUT
                         path to the output folder
@@ -84,3 +98,22 @@ signed char V_K[32] = {
 
 #endif //V_K_H
 ```
+
+
+## Trick
+To avoid big temporary files when dumping a lof of frames, you can pipe the AFF3CT command with a `grep` parser.
+For example, when you want to get only frames from the LDPC encoder, you can do:
+```bash
+./bin/aff3ct -C "LDPC" ... --sim-debug | grep -A 3 Encoder | grep -v '\-\-' > debug
+../scripts/debug_parser/aff3ct_debug_parser.py --mod Encoder_LDPC --tsk encode --txt debug
+```
+
+The `grep -A 3` is to return the 3 following lines (the frames themselves) in more than the line with "Encoder".
+The `grep -v '\-\-'` is to remove unexpected lines added by the above `grep`.
+
+The pipe is working dynamically, it does not use RAM.
+However, you can still unbuffer the pipes if you want with the [unbuffer command](https://unix.stackexchange.com/questions/25372/turn-off-buffering-in-pipe?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)
+
+
+## Future work
+Need to pipe directly the AFF3CT output on the debug parser by certainly using [sys.stdin](https://stackoverflow.com/questions/1450393/how-do-you-read-from-stdin-in-python?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)

@@ -26,7 +26,7 @@ _aff3ct() {
 	done
 
 	# add base opts
-	opts="--sim-cde-type --sim-type -v --version -h --help"
+	opts="-C --sim-cde-type --sim-type -v --version -h --help -H --Help"
 
 	# add contents of Launcher.cpp
 	if [[ ${codetype} == "POLAR"      && ${simutype} == "EXIT"  || \
@@ -57,7 +57,8 @@ _aff3ct() {
 		      --qnt-dec --qnt-bits --qnt-range --dec-type --dec-implem        \
 		      --ter-no --ter-freq --sim-seed --sim-mpi-comm --sim-pyber       \
 		      --sim-no-colors --sim-err-trk --sim-err-trk-rev                 \
-		      --sim-err-trk-path --sim-debug-prec"
+		      --sim-err-trk-path --sim-debug-prec --sim-no-legend --except-a2l\
+		      --except-no-bt"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -203,7 +204,7 @@ _aff3ct() {
 		--mdm-bps | --mdm-ups | --mdm-cpm-L | --mdm-cpm-p | --mdm-cpm-k |      \
 		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                    \
 		--sim-benchs | -b | --sim-debug-limit | --sim-debug-prec |             \
-		--mnt-max-fe | -e |                                                    \
+		--mnt-max-fe | -e | -d |                                               \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step | -I |     \
 		--sim-ite | --enc-fb-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
 		-L | --enc-json-path | --dec-off | --dec-norm | --ter-freq |           \
@@ -214,11 +215,12 @@ _aff3ct() {
 			;;
 
 		# awaiting nothing
-		-v | --version | -h | --help | --mdm-no-sig2 | --ter-no |          \
-		--sim-debug | -d | --sim-debug-fe | --sim-stats |                  \
+		-v | --version | -h | --help |  -H | --Help | --mdm-no-sig2 |      \
+		--sim-debug | --sim-debug-fe | --sim-stats | --sim-no-legend |     \
 		--sim-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
 		--crc-rate | --sim-err-trk | --sim-err-trk-rev | --itl-uni |       \
-		--dec-partial-adaptive | --dec-fnc | --dec-sc                      )
+		--dec-partial-adaptive | --dec-fnc | --dec-sc | --except-a2l |     \
+		--except-no-bt | --ter-no                                          )
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
 

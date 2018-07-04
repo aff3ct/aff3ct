@@ -1,13 +1,9 @@
 #ifndef DECODER_HPP_
 #define DECODER_HPP_
 
-#include <cmath>
 #include <chrono>
 #include <string>
 #include <vector>
-#include <sstream>
-
-#include "Tools/Exception/exception.hpp"
 
 #include "Module/Module.hpp"
 
@@ -17,26 +13,23 @@ namespace module
 {
 	namespace dec
 	{
-		namespace tsk
-		{
-			enum list { decode_hiho, decode_hiho_cw, decode_siho, decode_siho_cw, decode_siso, SIZE };
-		}
+		enum class tsk : uint8_t { decode_hiho, decode_hiho_cw, decode_siho, decode_siho_cw, decode_siso, SIZE };
 
 		namespace sck
 		{
-			namespace decode_hiho   { enum list { Y_N,  V_K , SIZE }; }
-			namespace decode_hiho_cw{ enum list { Y_N,  V_N , SIZE }; }
-			namespace decode_siho   { enum list { Y_N,  V_K , SIZE }; }
-			namespace decode_siho_cw{ enum list { Y_N,  V_N , SIZE }; }
-			namespace decode_siso   { enum list { Y_N1, Y_N2, SIZE }; }
+			enum class decode_hiho    : uint8_t { Y_N,  V_K , SIZE };
+			enum class decode_hiho_cw : uint8_t { Y_N,  V_N , SIZE };
+			enum class decode_siho    : uint8_t { Y_N,  V_K , SIZE };
+			enum class decode_siho_cw : uint8_t { Y_N,  V_N , SIZE };
+			enum class decode_siso    : uint8_t { Y_N1, Y_N2, SIZE };
 		}
 
 		namespace tm
 		{
-			namespace decode_hiho   { enum list { load, decode, store       , SIZE }; }
-			namespace decode_hiho_cw{ enum list { load, decode, store       , SIZE }; }
-			namespace decode_siho   { enum list { load, decode, store, total, SIZE }; }
-			namespace decode_siho_cw{ enum list { load, decode, store, total, SIZE }; }
+			enum class decode_hiho    : uint8_t { load, decode, store       , SIZE };
+			enum class decode_hiho_cw : uint8_t { load, decode, store       , SIZE };
+			enum class decode_siho    : uint8_t { load, decode, store, total, SIZE };
+			enum class decode_siho_cw : uint8_t { load, decode, store, total, SIZE };
 		}
 	}
 
@@ -51,85 +44,27 @@ protected:
 	const int n_dec_waves;
 
 public:
-	Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1)
-	: Module(n_frames),
-	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
-	  K(K),
-	  N(N),
-	  simd_inter_frame_level(simd_inter_frame_level),
-	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
-	{
-		const std::string name = "Decoder";
-		this->set_name(name);
-		this->set_short_name(name);
-
-		if (K <= 0)
-		{
-			std::stringstream message;
-			message << "'K' has to be greater than 0 ('K' = " << K << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (N <= 0)
-		{
-			std::stringstream message;
-			message << "'N' has to be greater than 0 ('N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (simd_inter_frame_level <= 0)
-		{
-			std::stringstream message;
-			message << "'simd_inter_frame_level' has to be greater than 0 ('simd_inter_frame_level' = "
-			        << simd_inter_frame_level << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (K > N)
-		{
-			std::stringstream message;
-			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		this->tasks_with_nullptr.resize(dec::tsk::SIZE);
-		for (size_t t = 0; t < dec::tsk::SIZE; t++)
-			this->tasks_with_nullptr[t] = nullptr;
-	}
+	Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1);
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder()
-	{
-	}
+	virtual ~Decoder();
 
-	int get_K() const
-	{
-		return this->K;
-	}
+	int get_K() const;
 
-	int get_N() const
-	{
-		return this->N;
-	}
+	int get_N() const;
 
 	/*!
 	 * \brief Gets the number of frames absorbed by the SIMD instructions.
 	 *
 	 * \return the number of frames absorbed by the SIMD instructions.
 	 */
-	int get_simd_inter_frame_level() const
-	{
-		return this->simd_inter_frame_level;
-	}
+	int get_simd_inter_frame_level() const;
 
-	int get_n_dec_waves() const
-	{
-		return this->n_dec_waves;
-	}
+	int get_n_dec_waves() const;
 
-	virtual void reset() {};
+	virtual void reset();
 };
 }
 }

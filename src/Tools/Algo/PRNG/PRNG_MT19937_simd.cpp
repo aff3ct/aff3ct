@@ -18,11 +18,11 @@ constexpr unsigned DIFF   = SIZE-PERIOD;
 
 #define UNROLL(expr) \
 	y = M32(MT[i]) | L31(MT[i+1]); \
-	m = mipp::toReg<int>((y & 1) == 1) & 0x9908b0df; \
+	m = mipp::blend(MATRIX[1], MATRIX[0], (y & 1) == 1); \
 	MT[i] = MT[expr] ^ (y >> 1) ^ m; \
 	++i;
 
-PRNG_MT19937_simd::PRNG_MT19937_simd(const mipp::Reg<int> seed)
+PRNG_MT19937_simd::PRNG_MT19937_simd(const mipp::Reg<int32_t> seed)
 : MT(SIZE), index(0)
 {
 	this->seed(seed);
@@ -31,8 +31,8 @@ PRNG_MT19937_simd::PRNG_MT19937_simd(const mipp::Reg<int> seed)
 PRNG_MT19937_simd::PRNG_MT19937_simd()
 : MT(SIZE), index(0)
 {
-	mipp::vector<int> seed(mipp::nElReg<int>());
-	for (auto i = 0; i < mipp::nElReg<int>(); i++)
+	mipp::vector<int32_t> seed(mipp::nElReg<int32_t>());
+	for (auto i = 0; i < mipp::N<int32_t>(); i++)
 		seed[i] = i;
 	this->seed(seed.data());
 }
@@ -41,7 +41,7 @@ PRNG_MT19937_simd::~PRNG_MT19937_simd()
 {
 }
 
-void PRNG_MT19937_simd::seed(const mipp::Reg<int> seed)
+void PRNG_MT19937_simd::seed(const mipp::Reg<int32_t> seed)
 {
 	/*
 	 * The equation below is a linear congruential generator (LCG),
@@ -100,7 +100,8 @@ void PRNG_MT19937_simd::generate_numbers()
 	 * http://www.quadibloc.com/crypto/co4814.htm
 	 *
 	 */
-	mipp::Reg<int> y, m;
+	mipp::Reg<int32_t> MATRIX[2] = {mipp::Reg<int32_t>(0), mipp::Reg<int32_t>(0x9908b0df)};
+	mipp::Reg<int32_t> y, m;
 	uint32_t i = 0;
 
 	// i = [0 ... 225]
@@ -139,11 +140,11 @@ void PRNG_MT19937_simd::generate_numbers()
 
 	// i = 623
 	y = M32(MT[SIZE-1]) | L31(MT[0]);
-	m = mipp::toReg<int>((y & 1) == 1) & 0x9908b0df;
+	m = mipp::blend(MATRIX[1], MATRIX[0], (y & 1) == 1);
 	MT[SIZE-1] = MT[PERIOD-1] ^ (y >> 1) ^ m;
 }
 
-mipp::Reg<int> PRNG_MT19937_simd::rand_s32()
+mipp::Reg<int32_t> PRNG_MT19937_simd::rand_s32()
 {
 	if (!index)
 		generate_numbers();
@@ -164,24 +165,24 @@ mipp::Reg<int> PRNG_MT19937_simd::rand_s32()
 
 mipp::Reg<float> PRNG_MT19937_simd::randf_cc()
 {
-	mipp::Reg<int>   rand_s32 = this->rand_s32();
-	mipp::Reg<float> max      = (float)std::numeric_limits<int>::max();
+	mipp::Reg<int32_t> rand_s32 = this->rand_s32();
+	mipp::Reg<float>   max      = (float)std::numeric_limits<int32_t>::max();
 
 	return mipp::abs(rand_s32.cvt<float>() / max);
 }
 
 mipp::Reg<float> PRNG_MT19937_simd::randf_co()
 {
-	mipp::Reg<int>   rand_s32 = this->rand_s32();
-	mipp::Reg<float> max      = (float)std::numeric_limits<int>::max();
+	mipp::Reg<int32_t> rand_s32 = this->rand_s32();
+	mipp::Reg<float>   max      = (float)std::numeric_limits<int32_t>::max();
 
 	return mipp::abs(rand_s32.cvt<float>() / (max + 1.0f));
 }
 
 mipp::Reg<float> PRNG_MT19937_simd::randf_oo()
 {
-	mipp::Reg<int>   rand_s32 = this->rand_s32();
-	mipp::Reg<float> max      = (float)std::numeric_limits<int>::max();;
+	mipp::Reg<int32_t> rand_s32 = this->rand_s32();
+	mipp::Reg<float>   max      = (float)std::numeric_limits<int32_t>::max();
 
 	return mipp::abs((rand_s32.cvt<float>() + 0.5f) / (max + 1.0f));
 }

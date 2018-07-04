@@ -26,30 +26,33 @@ Terminal_EXIT::parameters* Terminal_EXIT::parameters
 }
 
 void Terminal_EXIT::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Terminal::parameters::get_description(req_args, opt_args);
+	Terminal::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args[{p+"-cw-size", "N"}] =
-		{"strictly_positive_int",
-		 "number of bits in the codeword."};
+	args.add(
+		{p+"-cw-size", "N"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"number of bits in the codeword.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "select the terminal type you want.",
-		 "STD"};
+	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("STD")),
+		"select the terminal type you want.");
+
 }
 
 void Terminal_EXIT::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Terminal::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-type"})) this->type = vals.at({p+"-type"});
+	if(vals.exist({p+"-type"})) this->type = vals.at({p+"-type"});
 }
 
 void Terminal_EXIT::parameters

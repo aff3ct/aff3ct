@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
@@ -16,92 +17,70 @@
 
 bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int n)
 {
-	bool is_transposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
-	// is_transposed = false;
+	int min_n = std::numeric_limits<int>::max();
 #elif defined(__AVX2__)
-	if (n >= 256)
-	{
-		if (((uintptr_t)src) % (256 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
-		if (((uintptr_t)dst) % (256 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
-
-		uchar_transpose_avx((__m256i*) src, (__m256i*) dst, n);
-		is_transposed = true;
-	}
-#elif defined(__SSE4_1__)
-	if (n >= 128)
-	{
-		if (((uintptr_t)src) % (128 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
-		if (((uintptr_t)dst) % (128 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
-
-		uchar_transpose_sse((__m128i*) src, (__m128i*) dst, n);
-		is_transposed = true;
-	}
-#elif (defined(__ARM_NEON__) || defined(__ARM_NEON))
-	if (n >= 128)
-	{
-		if (((uintptr_t)src) % (128 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
-		if (((uintptr_t)dst) % (128 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
-
-		uchar_transpose_neon((trans_TYPE*) src, (trans_TYPE*) dst, n);
-		is_transposed = true;
-	}
+	int min_n = 256;
+#elif defined(__SSE4_1__) || (defined(__ARM_NEON__) || defined(__ARM_NEON))
+	int min_n = 128;
 #else
-	throw runtime_error(__FILE__, __LINE__, __func__, "Transposition does not support this architecture "
-	                                                  "(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).");
+	int min_n = std::numeric_limits<int>::max();
 #endif
 
-	return is_transposed;
+	if (n >= min_n)
+	{
+		if (((uintptr_t)src) % (min_n / 8))
+			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
+		if (((uintptr_t)dst) % (min_n / 8))
+			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
+#if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
+		return false;
+#elif defined(__AVX2__)
+		uchar_transpose_avx((__m256i*) src, (__m256i*) dst, n);
+		return true;
+#elif defined(__SSE4_1__)
+		uchar_transpose_sse((__m128i*) src, (__m128i*) dst, n);
+		return true;
+#elif (defined(__ARM_NEON__) || defined(__ARM_NEON))
+		uchar_transpose_neon((trans_TYPE*) src, (trans_TYPE*) dst, n);
+		return true;
+#endif
+	}
+
+	return false;
 }
 
 bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, int n)
 {
-	bool is_itransposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
-	// is_itransposed = false;
+	int min_n = std::numeric_limits<int>::max();
 #elif defined(__AVX2__)
-	if (n >= 256)
-	{
-		if (((uintptr_t)src) % (256 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
-		if (((uintptr_t)dst) % (256 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
-
-		uchar_itranspose_avx((__m256i*) src, (__m256i*) dst, n / 8);
-		is_itransposed = true;
-	}
-#elif defined(__SSE4_1__)
-	if (n >= 128)
-	{
-		if (((uintptr_t)src) % (128))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
-		if (((uintptr_t)dst) % (128 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
-
-		uchar_itranspose_sse((__m128i*) src, (__m128i*) dst, n / 8);
-		is_itransposed = true;
-	}
-#elif (defined(__ARM_NEON__) || defined(__ARM_NEON))
-	if (n >= 128)
-	{
-		if (((uintptr_t)src) % (128))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
-		if (((uintptr_t)dst) % (128 / 8))
-			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
-
-		uchar_itranspose_neon((trans_TYPE*) src, (trans_TYPE*) dst, n / 8);
-		is_itransposed = true;
-	}
+	int min_n = 256;
+#elif defined(__SSE4_1__) || (defined(__ARM_NEON__) || defined(__ARM_NEON))
+	int min_n = 128;
 #else
-	throw runtime_error(__FILE__, __LINE__, __func__, "Transposition inverse does not support this architecture "
-	                                                  "(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).");
+	int min_n = std::numeric_limits<int>::max();
 #endif
 
-	return is_itransposed;
+	if (n >= min_n)
+	{
+		if (((uintptr_t)src) % (min_n / 8))
+			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
+		if (((uintptr_t)dst) % (min_n / 8))
+			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
+#if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
+		return false;
+#elif defined(__AVX2__)
+		uchar_itranspose_avx((__m256i*) src, (__m256i*) dst, n / 8);
+		return true;
+#elif defined(__SSE4_1__)
+		uchar_itranspose_sse((__m128i*) src, (__m128i*) dst, n / 8);
+		return true;
+#elif (defined(__ARM_NEON__) || defined(__ARM_NEON))
+		uchar_itranspose_neon((trans_TYPE*) src, (trans_TYPE*) dst, n / 8);
+		return true;
+#endif
+	}
+
+	return false;
 }

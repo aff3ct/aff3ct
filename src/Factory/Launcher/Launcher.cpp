@@ -4,11 +4,12 @@
 #include <typeinfo>
 #include <typeindex>
 #include <unordered_map>
+#include <rang.hpp>
+#include <date.h>
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/types.h"
-#include "Tools/date.h"
 #include "Tools/version.h"
 
 #include "Launcher/Launcher.hpp"
@@ -70,56 +71,112 @@ factory::Launcher::parameters* factory::Launcher::parameters
 }
 
 void factory::Launcher::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-cde-type", "C"}] =
-		{"string",
-		 "select the code type you want to use.",
-		 "POLAR, TURBO, TURBO_DB, TURBO_PROD, LDPC, REP, RA, RSC, RSC_DB, BCH, UNCODED"};
+	args.add(
+		{p+"-cde-type", "C"},
+		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TURBO_PROD", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED")),
+		"select the code type you want to use.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "select the type of simulation to launch (default is BFER).",
-		 "BFER, BFERI"};
-
+	args.add(
+		{p+"-type"},
 #if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
-		 opt_args[{p+"-type"}][2] += ", EXIT";
+		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")),
+#else
+		tools::Text(tools::Including_set("BFER", "BFERI")),
 #endif
+		"select the type of simulation to launch (default is BFER).");
 
 #ifdef MULTI_PREC
-	opt_args[{p+"-prec", "p"}] =
-		{"positive_int",
-		 "the simulation precision in bit.",
-		 "8, 16, 32"};
-
-#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-	opt_args[{p+"-prec", "p"}][2] += ", 64";
-#endif
+	args.add(
+		{p+"-prec", "p"},
+		tools::Integer(tools::Including_set(8, 16, 32, 64)),
+		"the simulation precision in bits.");
 #endif
 
-	opt_args[{"help", "h"}] =
-		{"",
-		 "print this help."};
+	args.add(
+		{"help", "h"},
+		tools::None(),
+		"print this help.");
 
-	opt_args[{"version", "v"}] =
-		{"",
-		 "print informations about the version of the code."};
+	args.add(
+		{"Help", "H"},
+		tools::None(),
+		"print this help with the advanced arguments.");
+
+	args.add(
+		{"version", "v"},
+		tools::None(),
+		"print informations about the version of the code.");
+
+#ifdef ENABLE_BACK_TRACE
+	args.add(
+		{"except-no-bt"},
+		tools::None(),
+		"do not print the backtrace when displaying exception.",
+		tools::arg_rank::ADV);
+#endif
+
+#ifndef NDEBUG
+	args.add(
+		{"except-a2l"},
+		tools::None(),
+		"enhance the backtrace when displaying exception by changing program addresses into "
+		" file names and lines (may take some seconds).",
+		tools::arg_rank::ADV);
+#endif
+
+	args.add(
+		{p+"-no-legend"},
+		tools::None(),
+		"Do not display any legend when launching the simulation.",
+		tools::arg_rank::ADV);
+
+
+#ifdef ENABLE_COOL_BASH
+	args.add(
+		{p+"-no-colors"},
+		tools::None(),
+		"disable the colors in the shell.");
+#endif
 }
 
 void factory::Launcher::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-cde-type", "C"})) this->cde_type        = vals.at({p+"-cde-type", "C"}); // required
-	if(exist(vals, {p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
-	if(exist(vals, {"help",        "h"})) this->display_help    = true;
-	if(exist(vals, {"version",     "v"})) this->display_version = true;
+	if(vals.exist({p+"-cde-type", "C"})) this->cde_type        = vals.at({p+"-cde-type", "C"}); // required
+	if(vals.exist({p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
+	if(vals.exist({"version",     "v"})) this->display_version = true;
+	if(vals.exist({p+"-no-legend"    })) this->display_legend  = false;
+
+	if(vals.exist({"help", "h"}))
+	{
+		this->display_help     = true;
+		this->display_adv_help = false;
+	}
+
+	if(vals.exist({"Help", "H"}))
+	{
+		this->display_help     = true;
+		this->display_adv_help = true;
+	}
 
 #ifdef MULTI_PREC
-	if(exist(vals, {p+"-prec", "p"})) this->sim_prec = std::stoi(vals.at({p+"-prec", "p"}));
+	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
+#endif
+
+	tools::exception::no_backtrace    =  vals.exist({"except-no-bt"});
+	tools::exception::no_addr_to_line = !vals.exist({"except-a2l"  });
+
+#ifdef ENABLE_COOL_BASH
+	if (vals.exist({p+"-no-colors"})) rang::setControlMode(rang::control::Off);
+#else
+	rang::setControlMode(rang::control::Off);
 #endif
 }
 
@@ -161,13 +218,12 @@ void factory::Launcher::parameters
 			id_Q = typeid(Q_32);
 		break;
 
-#if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
 		case 64:
 			id_B = typeid(B_64);
 			id_R = typeid(R_64);
 			id_Q = typeid(Q_64);
 		break;
-#endif
+
 		default :
 			std::stringstream message;
 			message << "Unsupported bit precision: " << this->sim_prec << ").";

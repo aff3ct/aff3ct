@@ -20,23 +20,38 @@ private:
 	const R sqrt_es;
 	const bool disable_sig2;
 	std::vector<R> constellation;
+	R inv_sigma2;
 
 public:
-	Modem_PAM(const int N, const R sigma = (R)1, const int bits_per_symbol = 1, const bool disable_sig2 = false,
+	Modem_PAM(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(),
+	          const int bits_per_symbol = 1, const bool disable_sig2 = false,
 	          const int n_frames = 1);
 	virtual ~Modem_PAM();
 
+	virtual void set_noise(const tools::Noise<R>& noise);
+
+	static bool is_complex_mod()
+	{
+		return false;
+	}
+
+	static bool is_complex_fil()
+	{
+		return false;
+	}
+
 	static int size_mod(const int N, const int bps)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, 0, 1, false);
+		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, 0, 1, is_complex_mod());
 	}
 
 	static int size_fil(const int N, const int bps)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, 0, 1, false);
+		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, 0, 1, is_complex_fil());
 	}
 
 protected:
+	void   _tmodulate   (              const Q *X_N1,                 R *X_N2, const int frame_id);
 	void   _modulate    (              const B *X_N1,                 R *X_N2, const int frame_id);
 	void     _filter    (              const R *Y_N1,                 R *Y_N2, const int frame_id);
 	void _demodulate    (              const Q *Y_N1,                 Q *Y_N2, const int frame_id);

@@ -27,7 +27,6 @@ struct BFER : Simulation
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
-		std::string snr_type            = "EB";
 		std::string err_track_path      = "error_tracker";
 		int         err_track_threshold = 0;
 		bool        err_track_revert    = false;
@@ -64,8 +63,8 @@ struct BFER : Simulation
 		        void set_ter(Terminal_BFER::parameters *ter) { this->ter = ter; }
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:

@@ -10,7 +10,6 @@ namespace tools
 class Galois
 {
 protected:
-	const int K;
 	const int N; // number of non-nul elements in the field : N = 2^m - 1
 	const int m; // order of the Galois Field
 
@@ -19,10 +18,9 @@ protected:
 	std::vector<int> p;        // coefficients of a primitive polynomial used to generate GF(2**m)
 
 public:
-	Galois(const int& K, const int& N);
+	Galois(const int& N);
 	virtual ~Galois();
 
-	int get_K() const;
 	int get_N() const;
 	int get_m() const;
 

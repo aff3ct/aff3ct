@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_RA.hpp"
@@ -31,7 +31,7 @@ Decoder_RA<B, R>
 {
 	const std::string name = "Decoder_RA";
 	this->set_name(name);
-	
+
 	if (max_iter <= 0)
 	{
 		std::stringstream message;

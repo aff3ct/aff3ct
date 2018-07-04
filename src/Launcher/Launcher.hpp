@@ -12,7 +12,7 @@
 #include <string>
 
 #include "Tools/types.h"
-#include "Tools/Arguments_reader.hpp"
+#include "Tools/Arguments/Argument_handler.hpp"
 
 #include "Factory/Simulation/Simulation.hpp"
 
@@ -36,15 +36,11 @@ private:
 	std::vector<std::string>         cmd_warn;
 
 protected:
-	tools::Arguments_reader          ar;            /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
-	tools::Arguments_reader::arg_map req_args;      /*!< List of the required arguments, syntax is the following:
-	                                                 *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	tools::Arguments_reader::arg_map opt_args;      /*!< List of the optional arguments, syntax is the following:
-	                                                 *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-
-	factory::Simulation::parameters &params_common; /*!< A structure of parameters to store and pass to the simulation. */
-
-	std::ostream                    &stream;        /*!< The dedicated stream in which the Launcher writes the parameters. */
+	tools::Argument_handler         ah;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
+	tools::Argument_map_info        args;     /*!< List of the arguments to find in the command line */
+	tools::Argument_map_value       arg_vals; /*!< List of the arguments with their values */
+	factory::Simulation::parameters &params_common;  /*!< A structure of parameters to store and pass to the simulation. */
+	std::ostream                    &stream;  /*!< The dedicated stream in which the Launcher writes the parameters. */
 
 public:
 	/*!
@@ -69,7 +65,7 @@ public:
 	/*!
 	 * \brief Launch the simulation.
 	 */
-	void launch();
+	int launch();
 
 protected:
 	/*!

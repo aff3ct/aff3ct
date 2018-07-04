@@ -93,13 +93,13 @@ void BFER_std<B,R,Q>
 		auto &channel = *this->channel[tid];
 
 		source[src::tsk::generate].set_autoalloc(true);
-		auto src_data = (B*)(source[src::tsk::generate][src::sck::generate::U_K].get_dataptr());
-		auto src_size = (source[src::tsk::generate][src::sck::generate::U_K].get_databytes() / sizeof(B)) / this->params_BFER_std.src->n_frames;
+		auto src_data = (B*)(source[src::sck::generate::U_K].get_dataptr());
+		auto src_size = (source[src::sck::generate::U_K].get_databytes() / sizeof(B)) / this->params_BFER_std.src->n_frames;
 		this->dumper[tid]->register_data(src_data, (unsigned int)src_size, this->params_BFER_std.err_track_threshold, "src", false, this->params_BFER_std.src->n_frames, {});
 
 		encoder[enc::tsk::encode].set_autoalloc(true);
-		auto enc_data = (B*)(encoder[enc::tsk::encode][enc::sck::encode::X_N].get_dataptr());
-		auto enc_size = (encoder[enc::tsk::encode][enc::sck::encode::X_N].get_databytes() / sizeof(B)) / this->params_BFER_std.src->n_frames;
+		auto enc_data = (B*)(encoder[enc::sck::encode::X_N].get_dataptr());
+		auto enc_size = (encoder[enc::sck::encode::X_N].get_databytes() / sizeof(B)) / this->params_BFER_std.src->n_frames;
 		this->dumper[tid]->register_data(enc_data, (unsigned int)enc_size, this->params_BFER_std.err_track_threshold, "enc", false, this->params_BFER_std.src->n_frames,
 		                                 {(unsigned)this->params_BFER_std.cdc->enc->K});
 
@@ -114,9 +114,9 @@ void BFER_std<B,R,Q>
 	// set current sigma
 	for (auto tid = 0; tid < this->params_BFER_std.n_threads; tid++)
 	{
-		this->channel[tid]->set_sigma(                                                                    this->sigma);
-		this->modem  [tid]->set_sigma(this->params_BFER_std.mdm->complex ? this->sigma * std::sqrt(2.f) : this->sigma);
-		this->codec  [tid]->set_sigma(                                                                    this->sigma);
+		this->channel[tid]->set_noise(*this->noise);
+		this->modem  [tid]->set_noise(*this->noise);
+		this->codec  [tid]->set_noise(*this->noise);
 	}
 }
 
@@ -170,11 +170,11 @@ module::Codec_SIHO<B,Q>* BFER_std<B,R,Q>
 	{
 		if (params_BFER_std.err_track_revert && params_cdc->itl->core->uniform)
 		{
-			std::stringstream s_snr_b;
-			s_snr_b << std::setprecision(2) << std::fixed << this->snr_b;
+			std::stringstream s_noise;
+			s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();
 
 			params_cdc->itl->core->type = "USER";
-			params_cdc->itl->core->path = params_BFER_std.err_track_path + "_" + s_snr_b.str() + ".itl";
+			params_cdc->itl->core->path = params_BFER_std.err_track_path + "_" + s_noise.str() + ".itl";
 		}
 		else if (params_cdc->itl->core->uniform)
 		{
@@ -193,7 +193,7 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,R>* BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
-	return params_BFER_std.mdm->template build<B,R,R>();
+	return params_BFER_std.mdm->template build<B,R,R>(this->distributions, this->params_BFER_std.chn->type);
 }
 
 template <typename B, typename R, typename Q>
@@ -204,7 +204,7 @@ module::Channel<R>* BFER_std<B,R,Q>
 
 	auto params_chn = this->params_BFER_std.chn->clone();
 	params_chn->seed = seed_chn;
-	auto c = params_chn->template build<R>();
+	auto c = params_chn->template build<R>(this->distributions);
 	delete params_chn;
 	return c;
 }

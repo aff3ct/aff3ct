@@ -32,62 +32,72 @@ Flip_and_check::parameters* Flip_and_check::parameters
 }
 
 void Flip_and_check::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-size", "K"}] =
-		{"strictly_positive_int",
-		 "size (in bit) of the extrinsic for the fnc processing."};
+	args.add(
+		{p+"-size"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"size (in bit) of the extrinsic for the fnc processing.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p}] =
-		{"",
-		 "enables the flip and check decoder (requires \"--crc-type\")."};
+	args.add(
+		{p+"-fra", "F"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-q"}] =
-		{"strictly_positive_int",
-		 "set the search's space for the fnc algorithm."};
+	args.add(
+		{p},
+		tools::None(),
+		"enables the flip and check decoder (requires \"--crc-type\").");
 
-	opt_args[{p+"-ite-m"}] =
-		{"positive_int",
-		 "set first iteration at which the fnc is used."};
+	args.add(
+		{p+"-q"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the search's space for the fnc algorithm.");
 
-	opt_args[{p+"-ite-M"}] =
-		{"positive_int",
-		 "set last iteration at which the fnc is used."};
+	args.add(
+		{p+"-ite-m"},
+		tools::Integer(tools::Positive()),
+		"set first iteration at which the fnc is used.");
 
-	opt_args[{p+"-ite-s"}] =
-		{"strictly_positive_int",
-		 "set iteration step for the fnc algorithm."};
+	args.add(
+		{p+"-ite-M"},
+		tools::Integer(tools::Positive()),
+		"set last iteration at which the fnc is used.");
 
-	opt_args[{p+"-ite", "i"}] =
-		{"positive_int",
-		 "maximal number of iterations in the turbo."};
+	args.add(
+		{p+"-ite-s"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set iteration step for the fnc algorithm.");
 
-	opt_args[{p+"-crc-ite"}] =
-		{"positive_int",
-		 "set the iteration to start the CRC checking."};
+	args.add(
+		{p+"-ite", "i"},
+		tools::Integer(tools::Positive()),
+		"maximal number of iterations in the turbo.");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	args.add(
+		{p+"-crc-ite"},
+		tools::Integer(tools::Positive()),
+		"set the iteration to start the CRC checking.");
 }
 
 void Flip_and_check::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p             })) this->enable              = true;
-	if(exist(vals, {p+"-size"     })) this->size                = std::stoi(vals.at({p+"-size"     }));
-	if(exist(vals, {p+"-q"        })) this->q                   = std::stoi(vals.at({p+"-q"        }));
-	if(exist(vals, {p+"-ite-s"    })) this->ite_step            = std::stoi(vals.at({p+"-ite-s"    }));
-	if(exist(vals, {p+"-ite",  "i"})) this->n_ite               = std::stoi(vals.at({p+"-ite",  "i"}));
-	if(exist(vals, {p+"-ite-m"    })) this->ite_min             = std::stoi(vals.at({p+"-ite-m"    }));
-	if(exist(vals, {p+"-ite-M"    })) this->ite_max             = std::stoi(vals.at({p+"-ite-M"    }));
+	if(vals.exist({p             })) this->enable              = true;
+	if(vals.exist({p+"-size"     })) this->size                = vals.to_int({p+"-size"     });
+	if(vals.exist({p+"-q"        })) this->q                   = vals.to_int({p+"-q"        });
+	if(vals.exist({p+"-crc-ite"  })) this->start_crc_check_ite = vals.to_int({p+"-crc-ite"  });
+	if(vals.exist({p+"-fra",  "F"})) this->n_frames            = vals.to_int({p+"-fra", "F" });
+	if(vals.exist({p+"-ite-s"    })) this->ite_step            = vals.to_int({p+"-ite-s"    });
+	if(vals.exist({p+"-ite",  "i"})) this->n_ite               = vals.to_int({p+"-ite",  "i"});
+	if(vals.exist({p+"-ite-m"    })) this->ite_min             = vals.to_int({p+"-ite-m"    });
+	if(vals.exist({p+"-ite-M"    })) this->ite_max             = vals.to_int({p+"-ite-M"    });
 	else                              this->ite_max             = this->n_ite;
-	if(exist(vals, {p+"-crc-ite"  })) this->start_crc_check_ite = std::stoi(vals.at({p+"-crc-ite"  }));
-	if(exist(vals, {p+"-fra",  "F"})) this->n_frames            = std::stoi(vals.at({p+"-fra", "F" }));
 }
 
 void Flip_and_check::parameters
@@ -98,9 +108,9 @@ void Flip_and_check::parameters
 	headers[p].push_back(std::make_pair("Enabled", ((this->enable) ? "yes" : "no")));
 	if (this->enable)
 	{
-		headers[p].push_back(std::make_pair("FNC q", std::to_string(this->q)));
-		headers[p].push_back(std::make_pair("FNC ite min", std::to_string(this->ite_min)));
-		headers[p].push_back(std::make_pair("FNC ite max", std::to_string(this->ite_max)));
+		headers[p].push_back(std::make_pair("FNC q",        std::to_string(this->q       )));
+		headers[p].push_back(std::make_pair("FNC ite min",  std::to_string(this->ite_min )));
+		headers[p].push_back(std::make_pair("FNC ite max",  std::to_string(this->ite_max )));
 		headers[p].push_back(std::make_pair("FNC ite step", std::to_string(this->ite_step)));
 	}
 }

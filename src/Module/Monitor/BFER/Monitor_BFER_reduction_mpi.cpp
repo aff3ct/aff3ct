@@ -15,6 +15,8 @@ struct monitor_vals
 	unsigned long long n_be;
 	unsigned long long n_fe;
 	unsigned long long n_fra;
+	unsigned long long n_tri;
+//	float              MI_sum;
 };
 
 void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *datatype)
@@ -26,16 +28,19 @@ void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *da
 	{
 		inout_cvt[i].n_be  += in_cvt[i].n_be;
 		inout_cvt[i].n_fe  += in_cvt[i].n_fe;
+
 		inout_cvt[i].n_fra += in_cvt[i].n_fra;
+		inout_cvt[i].n_tri += in_cvt[i].n_tri;
+//		inout_cvt[i].MI    += in_cvt[i].MI;
 	}
 }
 
-template <typename B>
-Monitor_BFER_reduction_mpi<B>
-::Monitor_BFER_reduction_mpi(const std::vector<Monitor_BFER<B>*> &monitors,
+template <typename B, typename R>
+Monitor_BFER_reduction_mpi<B,R>
+::Monitor_BFER_reduction_mpi(const std::vector<Monitor_BFER<B,R>*> &monitors,
                              const std::thread::id master_thread_id,
                              const std::chrono::nanoseconds d_mpi_comm_frequency)
-: Monitor_BFER_reduction<B>(monitors),
+: Monitor_BFER_reduction<B,R>(monitors),
   master_thread_id(master_thread_id),
   is_fe_limit_achieved(false),
   t_last_mpi_comm(std::chrono::steady_clock::now()),
@@ -44,15 +49,18 @@ Monitor_BFER_reduction_mpi<B>
 	const std::string name = "Monitor_BFER_reduction_mpi";
 	this->set_name(name);
 
-	int blen[3];
-	MPI_Aint displacements[3];
-	MPI_Datatype oldtypes[3];
+	constexpr int n_vals = 4;
+	int blen[n_vals];
+	MPI_Aint displacements[n_vals];
+	MPI_Datatype oldtypes[n_vals];
 
-	blen[0] = 1; displacements[0] = offsetof(monitor_vals, n_be);  oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
-	blen[1] = 1; displacements[1] = offsetof(monitor_vals, n_fe);  oldtypes[1] = MPI_UNSIGNED_LONG_LONG;
-	blen[2] = 1; displacements[2] = offsetof(monitor_vals, n_fra); oldtypes[2] = MPI_UNSIGNED_LONG_LONG;
+	blen[0] = 1; displacements[0] = offsetof(monitor_vals, n_be  ); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
+	blen[1] = 1; displacements[1] = offsetof(monitor_vals, n_fe  ); oldtypes[1] = MPI_UNSIGNED_LONG_LONG;
+	blen[2] = 1; displacements[2] = offsetof(monitor_vals, n_fra ); oldtypes[2] = MPI_UNSIGNED_LONG_LONG;
+	blen[3] = 1; displacements[3] = offsetof(monitor_vals, n_tri ); oldtypes[3] = MPI_UNSIGNED_LONG_LONG;
+	//	blen[4] = 1; displacements[4] = offsetof(monitor_vals, MI    ); oldtypes[4] = MPI_FLOAT;
 
-	if (auto ret = MPI_Type_create_struct(3, blen, displacements, oldtypes, &MPI_monitor_vals))
+	if (auto ret = MPI_Type_create_struct(n_vals, blen, displacements, oldtypes, &MPI_monitor_vals))
 	{
 		std::stringstream message;
 		message << "'MPI_Type_create_struct' returned '" << ret << "' error code.";
@@ -74,14 +82,14 @@ Monitor_BFER_reduction_mpi<B>
 	}
 }
 
-template <typename B>
-Monitor_BFER_reduction_mpi<B>
+template <typename B, typename R>
+Monitor_BFER_reduction_mpi<B,R>
 ::~Monitor_BFER_reduction_mpi()
 {
 }
 
-template <typename B>
-bool Monitor_BFER_reduction_mpi<B>
+template <typename B, typename R>
+bool Monitor_BFER_reduction_mpi<B,R>
 ::fe_limit_achieved()
 {
 	// only the master thread can do this
@@ -91,13 +99,17 @@ bool Monitor_BFER_reduction_mpi<B>
 		monitor_vals mvals_recv;
 		monitor_vals mvals_send = { this->get_n_be()           - this->n_bit_errors,
 		                            this->get_n_fe()           - this->n_frame_errors,
-		                            this->get_n_analyzed_fra() - this->n_analyzed_frames };
+		                            this->get_n_analyzed_fra() - this->n_analyzed_frames,
+		                            this->get_n_MI_trials()    - this->n_MI_trials};
+		                            //(float)(this->get_MI()     - this->MI) };
 
 		MPI_Allreduce(&mvals_send, &mvals_recv, 1, MPI_monitor_vals, MPI_SUM_monitor_vals, MPI_COMM_WORLD);
 
-		this->n_bit_errors      = mvals_recv.n_be  - mvals_send.n_be;
-		this->n_frame_errors    = mvals_recv.n_fe  - mvals_send.n_fe;
-		this->n_analyzed_frames = mvals_recv.n_fra - mvals_send.n_fra;
+		this->n_bit_errors      = mvals_recv.n_be   - mvals_send.n_be;
+		this->n_frame_errors    = mvals_recv.n_fe   - mvals_send.n_fe;
+		this->n_analyzed_frames = mvals_recv.n_fra  - mvals_send.n_fra;
+		this->n_MI_trials       = mvals_recv.n_tri  - mvals_send.n_tri;
+		//this->MI                = mvals_recv.MI     - mvals_send.MI;
 
 		t_last_mpi_comm = std::chrono::steady_clock::now();
 
@@ -107,23 +119,23 @@ bool Monitor_BFER_reduction_mpi<B>
 	return is_fe_limit_achieved;
 }
 
-template <typename B>
-void Monitor_BFER_reduction_mpi<B>
+template <typename B, typename R>
+void Monitor_BFER_reduction_mpi<B,R>
 ::reset()
 {
-	Monitor_BFER_reduction<B>::reset();
+	Monitor_BFER_reduction<B,R>::reset();
 	is_fe_limit_achieved = false;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B_8>;
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B_16>;
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B_32>;
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B_64>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B_8, R_8>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B_16,R_16>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B_32,R_32>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B_64,R_64>;
 #else
-template class aff3ct::module::Monitor_BFER_reduction_mpi<B>;
+template class aff3ct::module::Monitor_BFER_reduction_mpi<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation
 

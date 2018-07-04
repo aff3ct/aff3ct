@@ -4,6 +4,7 @@
 #include <string>
 #include <cmath>
 
+#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
@@ -34,8 +35,8 @@ struct Decoder_BCH : public Decoder
 		Decoder_BCH::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
@@ -44,12 +45,9 @@ struct Decoder_BCH : public Decoder
 		                                 module::Encoder<B> *encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_HIHO<B>* build_hiho(const tools::BCH_polynomial_generator &GF,
-		                                    module::Encoder<B> *encoder = nullptr) const;
+		module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const tools::BCH_polynomial_generator &GF,
+		                                           module::Encoder<B> *encoder = nullptr) const;
 
-		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO_HIHO<B,Q>* build_siho_hiho(const tools::BCH_polynomial_generator &GF,
-		                                                module::Encoder<B> *encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
@@ -57,11 +55,8 @@ struct Decoder_BCH : public Decoder
 	                                        module::Encoder<B> *encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_HIHO<B>* build_hiho(const parameters &params, const tools::BCH_polynomial_generator &GF,
-	                                    module::Encoder<B> *encoder = nullptr);
-	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO_HIHO<B,Q>* build_siho_hiho(const parameters &params, const tools::BCH_polynomial_generator &GF,
-	                                                module::Encoder<B> *encoder = nullptr);
+	static module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const parameters &params, const tools::BCH_polynomial_generator &GF,
+	                                                  module::Encoder<B> *encoder = nullptr);
 };
 }
 }

@@ -51,24 +51,24 @@ Codec_turbo_product::parameters* Codec_turbo_product::parameters
 }
 
 void Codec_turbo_product::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
 	auto pdes = dec->sub->get_prefix();
 
-	req_args.erase({pdes+"-cw-size",   "N"});
-	req_args.erase({pdes+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
-	opt_args.erase({pdec+"-ext",          });
+	args.erase({pdes+"-cw-size",   "N"});
+	args.erase({pdes+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
+	args.erase({pdec+"-ext",          });
 }
 
 void Codec_turbo_product::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SIHO::parameters::store(vals);
 

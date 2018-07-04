@@ -23,7 +23,7 @@ namespace aff3ct
 namespace tools
 {
 /*!
- * \class Pattern_parser_polar
+ * \class Pattern_polar_parser
  * \brief Parses a polar code (represented as a tree) and returns a simplified tree with specialized nodes and tree
  *        cuts when possible.
  */

@@ -32,36 +32,37 @@ Decoder_RSC_DB::parameters* Decoder_RSC_DB::parameters
 }
 
 void Decoder_RSC_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type", "D"}][2] += ", BCJR";
-	opt_args[{p+"-implem"   }][2] += ", GENERIC, DVB-RCS1, DVB-RCS2";
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
+	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
 
-	opt_args[{p+"-max"}] =
-		{"string",
-		 "the MAX implementation for the nodes.",
-		 "MAX, MAXL, MAXS"};
+	args.add(
+		{p+"-max"},
+		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
+		"the MAX implementation for the nodes.");
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "does not suppose a buffered encoding."};
+	args.add(
+		{p+"-no-buff"},
+		tools::None(),
+		"does not suppose a buffered encoding.");
 }
 
 void Decoder_RSC_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-max"    })) this->max      = vals.at({p+"-max"});
-	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
+	if(vals.exist({p+"-max"    })) this->max      = vals.at({p+"-max"});
+	if(vals.exist({p+"-no-buff"})) this->buffered = false;
 
 	this->N_cw = 2 * this->K;
 	this->R    = (float)this->K / (float)this->N_cw;
@@ -75,7 +76,7 @@ void Decoder_RSC_DB::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
@@ -122,13 +123,11 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC_DB::parameters
 	{
 		return build_siso<B,Q>(trellis);
 	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
 module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB
-::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis, 
+::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis,
              module::Encoder<B> *encoder)
 {
 	return params.template build_siso<B,Q>(trellis, encoder);

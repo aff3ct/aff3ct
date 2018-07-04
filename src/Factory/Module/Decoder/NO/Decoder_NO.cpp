@@ -32,18 +32,18 @@ Decoder_NO::parameters* Decoder_NO::parameters
 }
 
 void Decoder_NO::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type", "D"}][2] += ", NONE";
-	opt_args[{p+"-implem"   }][2] += ", HARD_DECISION";
+	tools::add_options(args.at({p+"-type", "D"}), 0, "NONE");
+	tools::add_options(args.at({p+"-implem"   }), 0, "HARD_DECISION");
 }
 
 void Decoder_NO::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 }

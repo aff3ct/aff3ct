@@ -1,6 +1,7 @@
 #if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
 
 #include "Simulation/EXIT/EXIT.hpp"
+#include "Tools/general_utils.h"
 
 #include "EXIT.hpp"
 
@@ -87,37 +88,57 @@ std::vector<std::string> EXIT::parameters
 }
 
 void EXIT::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Simulation::parameters::get_description(req_args, opt_args);
+	Simulation::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args[{p+"-siga-min", "a"}] =
-		{"positive_float",
-		 "sigma min value used in EXIT charts."};
+	args.add(
+		{p+"-siga-range"},
+		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
+		"sigma range used in EXIT charts (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
+		tools::arg_rank::REQ);
 
-	req_args[{p+"-siga-max", "A"}] =
-		{"positive_float",
-		 "sigma max value used in EXIT charts."};
+	args.add(
+		{p+"-siga-min", "a"},
+		tools::Real(tools::Positive()),
+		"sigma min value used in EXIT charts.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-siga-step"}] =
-		{"strictly_positive_float",
-		 "sigma step value used in EXIT charts."};
+	args.add(
+		{p+"-siga-max", "A"},
+		tools::Real(tools::Positive()),
+		"sigma max value used in EXIT charts.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-inter-lvl"}].push_back("1");
+	args.add(
+		{p+"-siga-step"},
+		tools::Real(tools::Positive(), tools::Non_zero()),
+		"sigma step value used in EXIT charts.");
+
+	args.add_link({p+"-siga-range"}, {p+"-siga-min",  "a"});
+	args.add_link({p+"-siga-range"}, {p+"-siga-max",  "A"});
 }
 
 void EXIT::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Simulation::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-siga-min", "a"})) this->sig_a_min  = std::stof(vals.at({p+"-siga-min", "a"}));
-	if(exist(vals, {p+"-siga-max", "A"})) this->sig_a_max  = std::stof(vals.at({p+"-siga-max", "A"}));
-	if(exist(vals, {p+"-siga-step"    })) this->sig_a_step = std::stof(vals.at({p+"-siga-step"    }));
+	if(vals.exist({p+"-siga-range"}))
+		this->sig_a_range = tools::generate_range(vals.to_list<std::vector<float>>({p+"-siga-range"}), 0.1f);
+	else
+	{
+		float sig_a_min = 0.f, sig_a_max = 0.f, sig_a_step = 0.1f;
+		if(vals.exist({p+"-siga-min",  "m"})) sig_a_min  = vals.to_float({p+"-siga-min",  "m"});
+		if(vals.exist({p+"-siga-max",  "M"})) sig_a_max  = vals.to_float({p+"-siga-max",  "M"});
+		if(vals.exist({p+"-siga-step"     })) sig_a_step = vals.to_float({p+"-siga-step"     });
+
+		this->sig_a_range = tools::generate_range({{sig_a_min, sig_a_max}}, sig_a_step);
+	}
 }
 
 void EXIT::parameters
@@ -127,9 +148,9 @@ void EXIT::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("Sigma-A min (a)", std::to_string(this->sig_a_min )));
-	headers[p].push_back(std::make_pair("Sigma-A max (A)", std::to_string(this->sig_a_max )));
-	headers[p].push_back(std::make_pair("Sigma-A step",    std::to_string(this->sig_a_step)));
+	std::stringstream sig_a_range_str;
+	sig_a_range_str << this->sig_a_range.front() << " -> " << this->sig_a_range.back();
+	headers[p].push_back(std::make_pair("Sigma-A range (a)", sig_a_range_str.str()));
 
 	if (this->src != nullptr && this->cdc != nullptr)
 	{

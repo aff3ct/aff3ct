@@ -31,17 +31,19 @@ struct Terminal_BFER : Terminal
 		Terminal_BFER::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
-		template <typename B = int>
-		tools::Terminal_BFER<B>* build(const module::Monitor_BFER<B> &monitor) const;
+		template <typename B = int, typename R = float>
+		tools::Terminal_BFER<B,R>* build(const module::Monitor_BFER<B,R> &monitor,
+		                                 bool display_mutinfo = false, bool display_bfer = true) const;
 	};
 
-	template <typename B = int>
-	static tools::Terminal_BFER<B>* build(const parameters &params, const module::Monitor_BFER<B> &monitor);
+	template <typename B = int, typename R = float>
+	static tools::Terminal_BFER<B,R>* build(const parameters &params, const module::Monitor_BFER<B,R> &monitor,
+	                                        bool display_mutinfo = false, bool display_bfer = true);
 };
 }
 }
