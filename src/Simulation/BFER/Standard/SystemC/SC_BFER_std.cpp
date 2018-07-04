@@ -37,9 +37,9 @@ void SC_BFER_std<B,R,Q>
 {
 	BFER_std<B,R,Q>::__build_communication_chain(tid);
 
-	this->monitor[tid]->add_handler_check([&]() -> void
+	this->monitor_er[tid]->add_handler_check([&]() -> void
 	{
-		if (this->monitor_red->fe_limit_achieved()) // will make the MPI communication
+		if (this->monitor_er_red->fe_limit_achieved()) // will make the MPI communication
 			sc_core::sc_stop();
 	});
 }
@@ -70,9 +70,10 @@ void SC_BFER_std<B,R,Q>
 		this->channel[tid]->sc.create_module(+chn::tsk::add_noise );
 		this->modem  [tid]->sc.create_module(+mdm::tsk::demodulate);
 	}
-	this->quantizer[tid]                    ->sc.create_module(+qnt::tsk::process     );
-	this->codec    [tid]->get_decoder_siho()->sc.create_module(+dec::tsk::decode_siho );
-	this->monitor  [tid]                    ->sc.create_module(+mnt::tsk::check_errors);
+	this->quantizer [tid]                    ->sc.create_module(+qnt::tsk::process        );
+	this->codec     [tid]->get_decoder_siho()->sc.create_module(+dec::tsk::decode_siho    );
+	this->monitor_er[tid]                    ->sc.create_module(+mnt::tsk::check_errors   );
+	this->monitor_mi[tid]                    ->sc.create_module(+mnt::tsk::get_mutual_info);
 	if (this->params_BFER_std.coset)
 	{
 		this->coset_real[tid]->sc.create_module(+cst::tsk::apply);
@@ -134,7 +135,7 @@ void SC_BFER_std<B,R,Q>
 	auto &csr = *this->coset_real[0];
 	auto &dec = *this->codec     [0]->get_decoder_siho();
 	auto &csb = *this->coset_bit [0];
-	auto &mnt = *this->monitor   [0];
+	auto &mnt = *this->monitor_er[0];
 
 	if (this->params_BFER_std.coset)
 	{
@@ -191,6 +192,17 @@ void SC_BFER_std<B,R,Q>
 		pct.sc    [+pct::tsk::depuncture   ].s_out [+pct::sck::depuncture   ::Y_N2](dec.sc[+dec::tsk::decode_siho  ].s_in[+dec::sck::decode_siho  ::Y_N ]);
 		dec.sc    [+dec::tsk::decode_siho  ].s_out [+dec::sck::decode_siho  ::V_K ](crc.sc[+crc::tsk::extract      ].s_in[+crc::sck::extract      ::V_K1]);
 		crc.sc    [+crc::tsk::extract      ].s_out [+crc::sck::extract      ::V_K2](mnt.sc[+mnt::tsk::check_errors ].s_in[+mnt::sck::check_errors ::V   ]);
+	}
+
+	if (this->params_BFER_std.mutinfo)
+	{
+		auto &mnt = *this->monitor_mi[0];
+		pct.sc[+pct::tsk::puncture].s_out [+pct::sck::puncture::X_N2](mnt.sc[+mnt::tsk::get_mutual_info].s_in[+mnt::sck::get_mutual_info::X]);
+
+		if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos) // Rayleigh chn
+			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate_wg::Y_N2](mnt.sc[+mnt::tsk::get_mutual_info].s_in[+mnt::sck::get_mutual_info::Y]);
+		else
+			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate::Y_N2](mnt.sc[+mnt::tsk::get_mutual_info].s_in[+mnt::sck::get_mutual_info::Y]);
 	}
 }
 

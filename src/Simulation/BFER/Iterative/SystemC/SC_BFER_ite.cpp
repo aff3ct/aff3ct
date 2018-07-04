@@ -49,9 +49,9 @@ void SC_BFER_ite<B,R,Q>
 	this->interleaver_bit[tid]->set_name(this->interleaver_llr[tid]->get_name() + "_bit");
 	this->interleaver_llr[tid]->set_name(this->interleaver_llr[tid]->get_name() + "_llr");
 
-	this->monitor[tid]->add_handler_check([&]() -> void
+	this->monitor_er[tid]->add_handler_check([&]() -> void
 	{
-		if (this->monitor_red->fe_limit_achieved()) // will make the MPI communication
+		if (this->monitor_er_red->fe_limit_achieved()) // will make the MPI communication
 			sc_core::sc_stop();
 	});
 }
@@ -87,7 +87,8 @@ void SC_BFER_ite<B,R,Q>
 	this->interleaver_llr[tid]                    ->sc.create_module(+itl::tsk::deinterleave);
 	this->codec          [tid]->get_decoder_siho()->sc.create_module(+dec::tsk::decode_siho );
 	this->codec          [tid]->get_decoder_siso()->sc.create_module(+dec::tsk::decode_siso );
-	this->monitor        [tid]                    ->sc.create_module(+mnt::tsk::check_errors);
+	this->monitor_er     [tid]                    ->sc.create_module(+mnt::tsk::check_errors);
+
 	if (this->params_BFER_ite.coset)
 	{
 		this->coset_real[tid]->sc.create_module(+cst::tsk::apply);
@@ -186,7 +187,7 @@ void SC_BFER_ite<B,R,Q>
 	auto &dch = *this->codec          [0]->get_decoder_siho();
 	auto &dcs = *this->codec          [0]->get_decoder_siso();
 	auto &csb = *this->coset_bit      [0];
-	auto &mnt = *this->monitor        [0];
+	auto &mnt = *this->monitor_er     [0];
 
 	using namespace module;
 	if (this->params_BFER_ite.coset)
