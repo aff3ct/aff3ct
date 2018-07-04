@@ -106,13 +106,7 @@ void Decoder_turbo_product::parameters
 
 	args.add(
 		{p+"-alpha"},
-		tools::List<float,Real_splitter>(tools::Real()),
-		"extrinsic coefficients, one by half iteration (so twice more than number of iterations)."
-		" If not enough given values, then automatically extends the last to all iterations.");
-
-	args.add(
-		{p+"-alpha"},
-		tools::Text(),
+		tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)),
 		"extrinsic coefficients, one by half iteration (so twice more than number of iterations)."
 		" If not enough given values, then automatically extends the last to all iterations.");
 
