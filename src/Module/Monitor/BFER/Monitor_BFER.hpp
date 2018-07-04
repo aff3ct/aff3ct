@@ -20,8 +20,6 @@ public:
 	inline Task&   operator[](const mnt::tsk               t) { return Module::operator[]((int)t);                              }
 	inline Socket& operator[](const mnt::sck::check_errors s) { return Module::operator[]((int)mnt::tsk::check_errors)[(int)s]; }
 
-	static constexpr unsigned n_MPI_attributes = 3;
-
 	unsigned long long n_fra; // the number of checked frames
 	unsigned long long n_be;  // the number of wrong bits
 	unsigned long long n_fe;  // the number of wrong frames
@@ -122,19 +120,14 @@ public:
 
 	Monitor_BFER<B>& operator=(const Monitor_BFER<B>& m); // not full "copy" call
 
-
-	// #ifdef ENABLE_MPI
-	// 	static void create_MPI_struct(int          blen         [n_MPI_attributes],
-	// 	                              MPI_Aint     displacements[n_MPI_attributes],
-	// 	                              MPI_Datatype oldtypes     [n_MPI_attributes]);
-	// #endif
-
 protected:
 	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
 
 
 #ifdef ENABLE_MPI
 public:
+
+	// static constexpr unsigned n_MPI_attributes = 3;
 
 	struct Vals_mpi
 	{

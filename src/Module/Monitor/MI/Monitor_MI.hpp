@@ -121,6 +121,8 @@ protected:
 #ifdef ENABLE_MPI
 public:
 
+	// static constexpr unsigned n_MPI_attributes = 4;
+
 	struct Vals_mpi
 	{
 		int n_frames;

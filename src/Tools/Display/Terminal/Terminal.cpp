@@ -22,8 +22,10 @@ Terminal
 {
 	Terminal::interrupt = false;
 
-#ifndef ENABLE_MPI
 	// Install a signal handler
+#ifdef ENABLE_MPI
+	std::signal(SIGUSR1, Terminal::signal_interrupt_handler);
+#else
 	std::signal(SIGINT, Terminal::signal_interrupt_handler);
 #endif
 }
