@@ -251,7 +251,12 @@ void BFER_std_threads<B,R,Q>
 		auto &mnt = *this->monitor_mi[tid];
 
 		mnt[mnt::sck::get_mutual_info::X](mdm[mdm::sck::modulate  ::X_N1]);
-		mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate::Y_N2]);
+
+		if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
+			mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate_wg::Y_N2]);
+		else
+			mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate::Y_N2]);
+
 	}
 }
 
