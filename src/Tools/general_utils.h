@@ -77,6 +77,16 @@ inline void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<std::vector
 template <typename T>
 std::string get_time_format(T secondes);
 
+/*
+ * calculate offset of a class member at compile time
+ * Source : https://stackoverflow.com/a/20141143/7219905
+ */
+template<typename T, typename U>
+constexpr size_t offsetOf(U T::*member)
+{
+    return (char*)&((T*)nullptr->*member) - (char*)nullptr;
+}
+
 }
 }
 

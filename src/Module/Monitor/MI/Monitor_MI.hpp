@@ -20,9 +20,7 @@ public:
 	inline Task&   operator[](const mnt::tsk                  t) { return Module::operator[]((int)t);                                 }
 	inline Socket& operator[](const mnt::sck::get_mutual_info s) { return Module::operator[]((int)mnt::tsk::get_mutual_info)[(int)s]; }
 
-protected:
-	static constexpr unsigned n_MPI_attributes = 4;
-
+public://protected:
 	unsigned long long n_trials; // Number of checked trials
 	R MI;     // the mutual information
 	R MI_max; // the maximum obtained MI
@@ -113,16 +111,69 @@ public:
 
 	Monitor_MI<B,R>& operator=(const Monitor_MI<B,R>& m); // not full "copy" call
 
-	#ifdef ENABLE_MPI
-		static void create_MPI_struct(int          blen         [n_MPI_attributes],
-		                              MPI_Aint     displacements[n_MPI_attributes],
-		                              MPI_Datatype oldtypes     [n_MPI_attributes]);
-	#endif
 
 protected:
 	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);
 
 	void add_MI_value(const R mi);
+
+
+#ifdef ENABLE_MPI
+public:
+
+	struct Vals_mpi
+	{
+		int n_frames;
+
+		int N;
+		unsigned max_n_trials;
+
+		unsigned long long n_trials;
+		R MI;
+		R MI_max;
+		R MI_min;
+	};
+
+	// static void create_MPI_struct(int          blen         [n_MPI_attributes],
+	//                               MPI_Aint     displacements[n_MPI_attributes],
+	//                               MPI_Datatype oldtypes     [n_MPI_attributes]);
+
+	Monitor_MI(const Vals_mpi& v)
+	: Monitor     (v.n_frames),
+	  n_trials    (v.n_trials),
+	  MI          (v.MI),
+	  MI_max      (v.MI_max),
+	  MI_min      (v.MI_min),
+	  N           (v.N),
+	  max_n_trials(v.max_n_trials)
+	{
+
+	}
+
+	Vals_mpi get_vals_mpi() const
+	{
+		Vals_mpi v;
+
+		v.n_frames     = this->n_frames;
+		v.N            = this->N;
+		v.max_n_trials = this->max_n_trials;
+		v.n_trials     = this->n_trials;
+		v.MI           = this->MI;
+		v.MI_max       = this->MI_max;
+		v.MI_min       = this->MI_min;
+
+		return v;
+	}
+
+	virtual void copy(const Vals_mpi& v)
+	{
+		n_trials     = v.n_trials;
+		MI           = v.MI;
+		MI_max       = v.MI_max;
+		MI_min       = v.MI_min;
+	}
+
+#endif
 };
 }
 }

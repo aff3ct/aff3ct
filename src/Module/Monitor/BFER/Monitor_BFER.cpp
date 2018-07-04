@@ -6,6 +6,7 @@
 #include "Tools/Perf/common/mutual_info.h"
 #include "Tools/Perf/common/hamming_distance.h"
 #include "Tools/Math/utils.h"
+#include "Tools/general_utils.h"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
@@ -326,18 +327,18 @@ Monitor_BFER<B>& Monitor_BFER<B>
 	return *this;
 }
 
-#ifdef ENABLE_MPI
-template <typename B>
-void Monitor_BFER<B>
-::create_MPI_struct(int          blen         [n_MPI_attributes],
-                    MPI_Aint     displacements[n_MPI_attributes],
-                    MPI_Datatype oldtypes     [n_MPI_attributes])
-{
-	blen[0] = 1; displacements[0] = offsetof(Monitor_BFER<B>, n_be ); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
-	blen[1] = 1; displacements[1] = offsetof(Monitor_BFER<B>, n_fe ); oldtypes[1] = MPI_UNSIGNED_LONG_LONG;
-	blen[2] = 1; displacements[2] = offsetof(Monitor_BFER<B>, n_fra); oldtypes[2] = MPI_UNSIGNED_LONG_LONG;
-}
-#endif
+// #ifdef ENABLE_MPI
+// template <typename B>
+// void Monitor_BFER<B>
+// ::create_MPI_struct(int          blen         [n_MPI_attributes],
+//                     MPI_Aint     displacements[n_MPI_attributes],
+//                     MPI_Datatype oldtypes     [n_MPI_attributes])
+// {
+// 	blen[0] = 1; displacements[0] = tools::offsetOf(&Monitor_BFER<B>::n_be ); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
+// 	blen[1] = 1; displacements[1] = tools::offsetOf(&Monitor_BFER<B>::n_fe ); oldtypes[1] = MPI_UNSIGNED_LONG_LONG;
+// 	blen[2] = 1; displacements[2] = tools::offsetOf(&Monitor_BFER<B>::n_fra); oldtypes[2] = MPI_UNSIGNED_LONG_LONG;
+// }
+// #endif
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

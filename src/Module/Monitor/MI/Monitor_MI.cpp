@@ -3,9 +3,11 @@
 #include <stdexcept>
 
 #include "Monitor_MI.hpp"
+
 #include "Tools/Perf/common/mutual_info.h"
 #include "Tools/Perf/common/hamming_distance.h"
 #include "Tools/Math/utils.h"
+#include "Tools/general_utils.h"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
@@ -305,21 +307,32 @@ Monitor_MI<B,R>& Monitor_MI<B,R>
 	return *this;
 }
 
-#ifdef ENABLE_MPI
-template <typename B, typename R>
-void Monitor_MI<B,R>
-::create_MPI_struct(int          blen         [n_MPI_attributes],
-                    MPI_Aint     displacements[n_MPI_attributes],
-                    MPI_Datatype oldtypes     [n_MPI_attributes])
-{
-	using MPI_R_type = typename std::conditional<std::is_same<R,double>::value, MPI_DOUBLE, MPI_FLOAT>;
+// #ifdef ENABLE_MPI
+// template <typename B, typename R>
+// void Monitor_MI<B,R>
+// ::create_MPI_struct(int          blen         [n_MPI_attributes],
+//                     MPI_Aint     displacements[n_MPI_attributes],
+//                     MPI_Datatype oldtypes     [n_MPI_attributes])
+// {
+//     int world_rank;
+//     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-	blen[0] = 1; displacements[0] = offsetof(Monitor_MI<B,R>, n_trials); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
-	blen[1] = 1; displacements[1] = offsetof(Monitor_MI<B,R>, MI      ); oldtypes[1] = MPI_R_type;
-	blen[2] = 1; displacements[2] = offsetof(Monitor_MI<B,R>, MI_min  ); oldtypes[2] = MPI_R_type;
-	blen[3] = 1; displacements[3] = offsetof(Monitor_MI<B,R>, MI_max  ); oldtypes[3] = MPI_R_type;
-}
-#endif
+// 	std::cout << world_rank << " : create_MPI_struct" << std::endl;
+
+// 	auto MPI_R_type = std::is_same<R,double>::value ? MPI_DOUBLE : MPI_FLOAT;
+
+// 	blen[0] = 1; displacements[0] = tools::offsetOf(&Monitor_MI<B,R>::n_trials); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
+// 	blen[1] = 1; displacements[1] = tools::offsetOf(&Monitor_MI<B,R>::MI      ); oldtypes[1] = MPI_R_type;
+// 	blen[2] = 1; displacements[2] = tools::offsetOf(&Monitor_MI<B,R>::MI_min  ); oldtypes[2] = MPI_R_type;
+// 	blen[3] = 1; displacements[3] = tools::offsetOf(&Monitor_MI<B,R>::MI_max  ); oldtypes[3] = MPI_R_type;
+
+
+// 	std::cout << "tools::offsetOf(&Monitor_MI<B,R>::n_trials): " << tools::offsetOf(&Monitor_MI<B,R>::n_trials) << std::endl;
+// 	std::cout << "tools::offsetOf(&Monitor_MI<B,R>::MI      ): " << tools::offsetOf(&Monitor_MI<B,R>::MI      ) << std::endl;
+// 	std::cout << "tools::offsetOf(&Monitor_MI<B,R>::MI_min  ): " << tools::offsetOf(&Monitor_MI<B,R>::MI_min  ) << std::endl;
+// 	std::cout << "tools::offsetOf(&Monitor_MI<B,R>::MI_max  ): " << tools::offsetOf(&Monitor_MI<B,R>::MI_max  ) << std::endl;
+// }
+// #endif
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

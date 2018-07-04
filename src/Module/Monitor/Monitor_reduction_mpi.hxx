@@ -9,19 +9,26 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Monitor_reduction_mpi.hpp"
+#include "MI/Monitor_MI.hpp"
 
-using namespace aff3ct;
-using namespace aff3ct::module;
-
+namespace aff3ct
+{
+namespace module
+{
 
 template<class M>
 void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *datatype)
 {
-	auto    in_cvt = static_cast<M::Values_t*>(in   );
-	auto inout_cvt = static_cast<M::Values_t*>(inout);
+	auto    in_cvt = static_cast<typename M::Vals_mpi*>(in   );
+	auto inout_cvt = static_cast<typename M::Vals_mpi*>(inout);
 
 	for (auto i = 0; i < *len; i++)
-		inout_cvt[i] += in_cvt[i]
+	{
+		M m_in   (in_cvt   [i]);
+		M m_inout(inout_cvt[i]);
+		m_inout += m_in;
+		inout_cvt[i] = m_inout.get_vals_mpi();
+	}
 }
 
 template <class M>
@@ -31,19 +38,38 @@ Monitor_reduction_mpi<M>
                         const std::chrono::nanoseconds d_mpi_comm_frequency)
 : Monitor_reduction<M>(monitors),
   master_thread_id(master_thread_id),
-  t_last_mpi_comm(std::chrono::steady_clock::now()),
-  d_mpi_comm_frequency(d_mpi_comm_frequency)
+  d_mpi_comm_frequency(d_mpi_comm_frequency),
+  t_last_mpi_comm(std::chrono::steady_clock::now())
 {
 	const std::string name = "Monitor_reduction_mpi<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
 
-	int          blen         [M::vals::n_attributes];
-	MPI_Aint     displacements[M::vals::n_attributes];
-	MPI_Datatype oldtypes     [M::vals::n_attributes];
+	// int          blen         [M::n_MPI_attributes];
+	// MPI_Aint     displacements[M::n_MPI_attributes];
+	// MPI_Datatype oldtypes     [M::n_MPI_attributes];
 
-	M::vals::create_MPI_struct(blen, displacements, oldtypes);
+	// M::create_MPI_struct(blen, displacements, oldtypes);
 
-	if (auto ret = MPI_Type_create_struct(M::vals::n_attributes, blen, displacements, oldtypes, &MPI_monitor_vals))
+	// MPI_Datatype MPI_monitor_vals_tmp;
+
+	// if (auto ret = MPI_Type_create_struct(M::n_MPI_attributes, blen, displacements, oldtypes, &MPI_monitor_vals_tmp))
+	// {
+	// 	std::stringstream message;
+	// 	message << "'MPI_Type_create_struct' returned '" << ret << "' error code.";
+	// 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	// }
+
+
+	// MPI_Aint lb, extent;
+	// MPI_Type_get_extent( MPI_monitor_vals_tmp, &lb, &extent );
+	// extent = sizeof (M);
+	// MPI_Type_create_resized( MPI_monitor_vals_tmp, lb, extent, &MPI_monitor_vals );
+
+	int          blen          = sizeof(typename M::Vals_mpi);
+	MPI_Aint     displacements = 0;
+	MPI_Datatype oldtypes      = MPI_CHAR;
+
+	if (auto ret = MPI_Type_create_struct(1, &blen, &displacements, &oldtypes, &MPI_monitor_vals))
 	{
 		std::stringstream message;
 		message << "'MPI_Type_create_struct' returned '" << ret << "' error code.";
@@ -69,21 +95,37 @@ template <class M>
 void Monitor_reduction_mpi<M>
 ::reduce(bool fully)
 {
+	fully = false;
+
 	// only the master thread can do this
 	if (std::this_thread::get_id() == this->master_thread_id &&
 	    ((std::chrono::steady_clock::now() - t_last_mpi_comm) >= d_mpi_comm_frequency))
 	{
 		Monitor_reduction<M>::reduce(fully);
 
-		M::Values_t mvals_recv;
-		auto& mvals_send = this->vals;
+		typename M::Vals_mpi mvals_recv;
 
-		MPI_Allreduce(&mvals_send, &mvals_recv, 1, MPI_monitor_vals, MPI_SUM_monitor_vals, MPI_COMM_WORLD);
+		auto mvals_send = this->get_vals_mpi();
 
-		this->vals = mvals_recv;
+		MPI_Allreduce(&mvals_send, &mvals_recv, 1,
+		              MPI_monitor_vals, MPI_SUM_monitor_vals, MPI_COMM_WORLD);
+
+		M::copy(mvals_recv);
 
 		t_last_mpi_comm = std::chrono::steady_clock::now();
 	}
+}
+
+template <class M>
+void Monitor_reduction_mpi<M>
+::reset()
+{
+	Monitor_reduction<M>::reset();
+
+	t_last_mpi_comm = std::chrono::steady_clock::now();
+}
+
+}
 }
 
 #endif // MONITOR_REDUCTION_MPI_HXX_

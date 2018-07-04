@@ -19,10 +19,10 @@ template <class M> // M is the monitor on which must be applied the reduction
 class Monitor_reduction_mpi : public Monitor_reduction<M>
 {
 private:
-	const std::thread::id master_thread_id;
+	const std::thread::id          master_thread_id;
+	const std::chrono::nanoseconds d_mpi_comm_frequency;
 
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_mpi_comm;
-	std::chrono::nanoseconds                                                     d_mpi_comm_frequency;
 
 	MPI_Datatype MPI_monitor_vals;
 	MPI_Op       MPI_SUM_monitor_vals;
@@ -38,6 +38,7 @@ public:
 };
 }
 }
+#include "Monitor_reduction_mpi.hxx"
 
 #endif /* MONITOR_REDUCTION_MPI_HPP_ */
 

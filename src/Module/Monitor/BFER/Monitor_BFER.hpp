@@ -123,14 +123,71 @@ public:
 	Monitor_BFER<B>& operator=(const Monitor_BFER<B>& m); // not full "copy" call
 
 
-	#ifdef ENABLE_MPI
-		static void create_MPI_struct(int          blen         [n_MPI_attributes],
-		                              MPI_Aint     displacements[n_MPI_attributes],
-		                              MPI_Datatype oldtypes     [n_MPI_attributes]);
-	#endif
+	// #ifdef ENABLE_MPI
+	// 	static void create_MPI_struct(int          blen         [n_MPI_attributes],
+	// 	                              MPI_Aint     displacements[n_MPI_attributes],
+	// 	                              MPI_Datatype oldtypes     [n_MPI_attributes]);
+	// #endif
 
 protected:
 	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
+
+
+#ifdef ENABLE_MPI
+public:
+
+	struct Vals_mpi
+	{
+		int n_frames;
+
+		unsigned long long n_fra;
+		unsigned long long n_be;
+		unsigned long long n_fe;
+
+		int K;
+		unsigned max_fe;
+		bool count_unknown_values;
+	};
+
+	// static void create_MPI_struct(int          blen         [n_MPI_attributes],
+	//                               MPI_Aint     displacements[n_MPI_attributes],
+	//                               MPI_Datatype oldtypes     [n_MPI_attributes]);
+
+	Monitor_BFER(const Vals_mpi& v)
+	: Monitor(v.n_frames),
+	  n_fra  (v.n_fra),
+	  n_be   (v.n_be),
+	  n_fe   (v.n_fe),
+	  K      (v.K),
+	  max_fe (v.max_fe),
+	  count_unknown_values(v.count_unknown_values)
+	{
+
+	}
+
+	Vals_mpi get_vals_mpi() const
+	{
+		Vals_mpi v;
+
+		v.n_frames = this->n_frames;
+		v.n_fra    = this->n_fra;
+		v.n_be     = this->n_be;
+		v.n_fe     = this->n_fe;
+		v.K        = this->K;
+		v.max_fe   = this->max_fe;
+		v.count_unknown_values = this->count_unknown_values;
+
+		return v;
+	}
+
+	virtual void copy(const Vals_mpi& v)
+	{
+		n_fra = v.n_fra;
+		n_be  = v.n_be;
+		n_fe  = v.n_fe;
+	}
+
+#endif
 };
 }
 }
