@@ -137,10 +137,10 @@ void BFER::parameters
 		"enable the coded monitoring (extends the monitored bits to the entire codeword).");
 
 
-	auto pmi = mnt_mi->get_prefix();
+	auto pmon = mnt_er->get_prefix();
 
 	args.add(
-		{pmi+"-mutinfo"},
+		{pmon+"-mutinfo"},
 		tools::None(),
 		"allow the computation of the mutual information.");
 }
@@ -169,9 +169,9 @@ void BFER::parameters
 		this->n_threads = 1;
 	}
 
-	auto pmi = mnt_mi->get_prefix();
+	auto pmon = mnt_er->get_prefix();
 
-	if(vals.exist({pmi+"-mutinfo"})) this->mutinfo = true;
+	if(vals.exist({pmon+"-mutinfo"})) this->mutinfo = true;
 }
 
 void BFER::parameters
@@ -222,9 +222,9 @@ void BFER::parameters
 
 	if (this->mnt_er != nullptr) { this->mnt_er->get_headers(headers, full); }
 
-	headers[this->mnt_mi->get_prefix()].push_back(std::make_pair("Compute mutual info", this->mutinfo ? "yes" : "no"));
+	headers[this->mnt_er->get_prefix()].push_back(std::make_pair("Compute mutual info", this->mutinfo ? "yes" : "no"));
 	if (this->mutinfo)
-		if (this->mnt_mi != nullptr) { this->mnt_mi->get_headers(headers, full); }
+		if (this->mnt_er != nullptr) { this->mnt_er->get_headers(headers, full); }
 
 	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }

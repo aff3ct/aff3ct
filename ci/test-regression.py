@@ -30,6 +30,7 @@ parser.add_argument('--max-fe',         action='store', dest='maxFE',         ty
 parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,                       help='Rate of valid noise points to passe a test.')                                             # choices=xrange(0.0, 1.0 )
 parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a noise point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
 parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                     help='Enable the verbose mode.')
+parser.add_argument('--mpi-np',         action='store', dest='mpinp',         type=int,   default=0,                         help='Enable MPI run with the given number of process each running on "--n-threads" threads.')
 
 # supported file extensions (filename suffix)
 extensions     = ['.txt', '.perf', '.data', '.dat']
@@ -442,6 +443,7 @@ print('# max fe         =', args.maxFE        )
 print('# weak rate      =', args.weakRate     )
 print('# max snr time   =', args.maxSNRTime   )
 print('# verbose        =', args.verbose      )
+print('# MPI nbr proc   =', args.mpinp        )
 print('#')
 
 PathOrigin = os.getcwd()
@@ -489,6 +491,13 @@ for fn in fileNames:
 
 	# get the command line to run
 	argsAFFECT = splitAsCommand(simuRef.RunCommand)
+
+	if args.mpinp > 0:
+		argsAFFECT.insert(0, str(args.mpinp))
+		argsAFFECT.insert(0, "-np")
+		argsAFFECT.insert(0, "mpirun")
+
+
 	argsAFFECT.append("--ter-freq")
 	argsAFFECT.append("0")
 	if args.maxFE:
@@ -514,7 +523,6 @@ for fn in fileNames:
 	if simuRef.NoiseType == "Eb/N0":
 		argsAFFECT.append("-E")
 		argsAFFECT.append("EBN0")
-
 
 
 	# run the tested simulator
