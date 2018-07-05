@@ -42,7 +42,6 @@ Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 		messages_offsets[c] = (uint32_t)cur_off_msg;
 		cur_off_msg += this->H[c].size();
 	}
-
 }
 
 template <typename B, typename R, class Update_rule>
