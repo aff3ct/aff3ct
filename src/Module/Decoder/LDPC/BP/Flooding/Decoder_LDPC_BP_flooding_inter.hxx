@@ -32,8 +32,8 @@ Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
   sat_val               ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
   transpose             (this->H.get_n_connections()                                                        ),
   post                  (N, -1                                                                              ),
-  chk_to_var            (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
-  var_to_chk            (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  msg_chk_to_var        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  msg_var_to_chk        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
   Y_N_reorderered       (N                                                                                  ),
   V_reorderered         (N                                                                                  ),
   init_flag             (true                                                                               )
@@ -50,28 +50,28 @@ Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 	mipp::vector<unsigned char> connections(this->H.get_n_rows(), 0);
 
-	const auto &chk_to_var_id = this->H.get_col_to_rows();
-	const auto &var_to_chk_id = this->H.get_row_to_cols();
+	const auto &msg_chk_to_var_id = this->H.get_col_to_rows();
+	const auto &msg_var_to_chk_id = this->H.get_row_to_cols();
 
 	auto k = 0;
-	for (auto i = 0; i < (int)chk_to_var_id.size(); i++)
+	for (auto i = 0; i < (int)msg_chk_to_var_id.size(); i++)
 	{
-		for (auto j = 0; j < (int)chk_to_var_id[i].size(); j++)
+		for (auto j = 0; j < (int)msg_chk_to_var_id[i].size(); j++)
 		{
-			auto var_id = chk_to_var_id[i][j];
+			auto var_id = msg_chk_to_var_id[i][j];
 
 			auto branch_id = 0;
 			for (auto ii = 0; ii < (int)var_id; ii++)
-				branch_id += (int)var_to_chk_id[ii].size();
+				branch_id += (int)msg_var_to_chk_id[ii].size();
 			branch_id += connections[var_id];
 			connections[var_id]++;
 
-			if (connections[var_id] > (int)var_to_chk_id[var_id].size())
+			if (connections[var_id] > (int)msg_var_to_chk_id[var_id].size())
 			{
 				std::stringstream message;
-				message << "'connections[var_id]' has to be equal or smaller than 'var_to_chk_id[var_id].size()' "
+				message << "'connections[var_id]' has to be equal or smaller than 'msg_var_to_chk_id[var_id].size()' "
 				        << "('var_id' = " << var_id << ", 'connections[var_id]' = " << connections[var_id]
-				        << ", 'var_to_chk_id[var_id].size()' = " << var_to_chk_id[var_id].size() << ").";
+				        << ", 'msg_var_to_chk_id[var_id].size()' = " << msg_var_to_chk_id[var_id].size() << ").";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
@@ -104,7 +104,7 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	if (this->init_flag)
 	{
 		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->chk_to_var[cur_wave].begin(), this->chk_to_var[cur_wave].end(), zero);
+		std::fill(this->msg_chk_to_var[cur_wave].begin(), this->msg_chk_to_var[cur_wave].end(), zero);
 
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
@@ -130,7 +130,7 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	if (this->init_flag)
 	{
 		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->chk_to_var[cur_wave].begin(), this->chk_to_var[cur_wave].end(), zero);
+		std::fill(this->msg_chk_to_var[cur_wave].begin(), this->msg_chk_to_var[cur_wave].end(), zero);
 
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
@@ -170,7 +170,7 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	if (this->init_flag)
 	{
 		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->chk_to_var[frame_id].begin(), this->chk_to_var[frame_id].end(), zero);
+		std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), zero);
 
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
@@ -205,19 +205,19 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	for (; ite < this->n_ite; ite++)
 	{
 		this->up_rule.begin_ite(ite);
-		this->_initialize_var_to_chk(Y_N, this->chk_to_var[cur_wave], this->var_to_chk[cur_wave]);
-		this->_decode_single_ite(this->var_to_chk[cur_wave], this->chk_to_var[cur_wave]);
+		this->_initialize_var_to_chk(Y_N, this->msg_chk_to_var[cur_wave], this->msg_var_to_chk[cur_wave]);
+		this->_decode_single_ite(this->msg_var_to_chk[cur_wave], this->msg_chk_to_var[cur_wave]);
 		this->up_rule.end_ite();
 
 		if (this->enable_syndrome && ite != this->n_ite -1)
 		{
-			this->_compute_post(Y_N, this->chk_to_var[cur_wave], this->post);
+			this->_compute_post(Y_N, this->msg_chk_to_var[cur_wave], this->post);
 			if (this->_check_syndrome_soft(this->post))
 				break;
 		}
 	}
 	if (ite == this->n_ite)
-		this->_compute_post(Y_N, this->chk_to_var[cur_wave], this->post);
+		this->_compute_post(Y_N, this->msg_chk_to_var[cur_wave], this->post);
 
 	this->up_rule.end_decoding();
 }
@@ -225,33 +225,33 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 ::_initialize_var_to_chk(const              mipp::Reg<R>  *Y_N,
-                         const mipp::vector<mipp::Reg<R>> &chk_to_var,
-                               mipp::vector<mipp::Reg<R>> &var_to_chk)
+                         const mipp::vector<mipp::Reg<R>> &msg_chk_to_var,
+                               mipp::vector<mipp::Reg<R>> &msg_var_to_chk)
 {
-	auto *chk_to_var_ptr = chk_to_var.data();
-	auto *var_to_chk_ptr = var_to_chk.data();
+	auto *msg_chk_to_var_ptr = msg_chk_to_var.data();
+	auto *msg_var_to_chk_ptr = msg_var_to_chk.data();
 
 	const auto n_var_nodes = (int)this->H.get_n_rows();;
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
 
-		auto sum_chk_to_var = mipp::Reg<R>((R)0);
+		auto sum_msg_chk_to_var = mipp::Reg<R>((R)0);
 		for (auto c = 0; c < var_degree; c++)
-			sum_chk_to_var += chk_to_var_ptr[c];
+			sum_msg_chk_to_var += msg_chk_to_var_ptr[c];
 
-		const auto tmp = Y_N[v] + sum_chk_to_var;
+		const auto tmp = Y_N[v] + sum_msg_chk_to_var;
 		for (auto c = 0; c < var_degree; c++)
-			var_to_chk_ptr[c] = tmp - chk_to_var_ptr[c];
+			msg_var_to_chk_ptr[c] = tmp - msg_chk_to_var_ptr[c];
 
-		chk_to_var_ptr += var_degree;
-		var_to_chk_ptr += var_degree;
+		msg_chk_to_var_ptr += var_degree;
+		msg_var_to_chk_ptr += var_degree;
 	}
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
-::_decode_single_ite(const mipp::vector<mipp::Reg<R>> &var_to_chk, mipp::vector<mipp::Reg<R>> &chk_to_var)
+::_decode_single_ite(const mipp::vector<mipp::Reg<R>> &msg_var_to_chk, mipp::vector<mipp::Reg<R>> &msg_chk_to_var)
 {
 	auto transpose_ptr = this->transpose.data();
 
@@ -263,14 +263,14 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 		this->up_rule.begin_chk_node_in(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
-			this->up_rule.compute_chk_node_in(v, var_to_chk[transpose_ptr[v]]);
+			this->up_rule.compute_chk_node_in(v, msg_var_to_chk[transpose_ptr[v]]);
 		this->up_rule.end_chk_node_in();
 
 		this->up_rule.begin_chk_node_out(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
 		{
-			auto val = saturate<R>(this->up_rule.compute_chk_node_out(v, var_to_chk[transpose_ptr[v]]), this->sat_val);
-			chk_to_var[transpose_ptr[v]] = val;
+			auto val = saturate<R>(this->up_rule.compute_chk_node_out(v, msg_var_to_chk[transpose_ptr[v]]), this->sat_val);
+			msg_chk_to_var[transpose_ptr[v]] = val;
 		}
 		this->up_rule.end_chk_node_out();
 
@@ -281,24 +281,24 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 ::_compute_post(const              mipp::Reg<R>  *Y_N,
-                const mipp::vector<mipp::Reg<R>> &chk_to_var,
+                const mipp::vector<mipp::Reg<R>> &msg_chk_to_var,
                       mipp::vector<mipp::Reg<R>> &post)
 {
 	// compute the a posteriori info
-	const auto *chk_to_var_ptr = chk_to_var.data();
+	const auto *msg_chk_to_var_ptr = msg_chk_to_var.data();
 	const auto n_var_nodes = (int)this->H.get_n_rows();;
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
 
-		auto sum_chk_to_var = mipp::Reg<R>((R)0);
+		auto sum_msg_chk_to_var = mipp::Reg<R>((R)0);
 		for (auto c = 0; c < var_degree; c++)
-			sum_chk_to_var += chk_to_var_ptr[c];
+			sum_msg_chk_to_var += msg_chk_to_var_ptr[c];
 
 		// filling the output
-		post[v] = Y_N[v] + sum_chk_to_var;
+		post[v] = Y_N[v] + sum_msg_chk_to_var;
 
-		chk_to_var_ptr += var_degree;
+		msg_chk_to_var_ptr += var_degree;
 	}
 }
 

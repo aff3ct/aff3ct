@@ -27,7 +27,7 @@ Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
   info_bits_pos         (info_bits_pos                                        ),
   up_rule               (up_rule                                              ),
   var_nodes             (n_frames, std::vector<R>(N                          )),
-  branches              (n_frames, std::vector<R>(this->H.get_n_connections())),
+  messages              (n_frames, std::vector<R>(this->H.get_n_connections())),
   contributions         (this->H.get_cols_max_degree()                        ),
   init_flag             (true                                                 )
 {
@@ -55,7 +55,7 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->branches [frame_id].begin(), this->branches [frame_id].end(), (R)0);
+		std::fill(this->messages [frame_id].begin(), this->messages [frame_id].end(), (R)0);
 		std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
 
 		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
@@ -142,7 +142,7 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		this->up_rule.begin_ite(ite);
-		this->_decode_single_ite(this->var_nodes[frame_id], this->branches[frame_id]);
+		this->_decode_single_ite(this->var_nodes[frame_id], this->messages[frame_id]);
 		this->up_rule.end_ite();
 
 		if (this->check_syndrome_soft(this->var_nodes[frame_id].data()))
@@ -154,7 +154,7 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
-::_decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &branches)
+::_decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &messages)
 {
 	auto kr = 0;
 	auto kw = 0;
@@ -167,7 +167,7 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 		this->up_rule.begin_chk_node_in(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
 		{
-			contributions[v] = var_nodes[this->H[c][v]] - branches[kr++];
+			contributions[v] = var_nodes[this->H[c][v]] - messages[kr++];
 			this->up_rule.compute_chk_node_in(v, contributions[v]);
 		}
 		this->up_rule.end_chk_node_in();
@@ -175,8 +175,8 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 		this->up_rule.begin_chk_node_out(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
 		{
-			branches[kw] = this->up_rule.compute_chk_node_out(v, contributions[v]);
-			var_nodes[this->H[c][v]] = contributions[v] + branches[kw++];
+			messages[kw] = this->up_rule.compute_chk_node_out(v, contributions[v]);
+			var_nodes[this->H[c][v]] = contributions[v] + messages[kw++];
 		}
 		this->up_rule.end_chk_node_out();
 	}

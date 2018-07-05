@@ -27,20 +27,20 @@ Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
   info_bits_pos         (info_bits_pos                                        ),
   up_rule               (up_rule                                              ),
   var_nodes             (n_frames, std::vector<R>(N                          )),
-  branches              (n_frames, std::vector<R>(this->H.get_n_connections())),
+  messages              (n_frames, std::vector<R>(this->H.get_n_connections())),
   contributions         (this->H.get_cols_max_degree()                        ),
-  branches_offsets      (this->H.get_n_cols()                                 ),
+  messages_offsets      (this->H.get_n_cols()                                 ),
   init_flag             (true                                                 )
 {
 	const std::string name = "Decoder_LDPC_BP_vertical_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
 
-	size_t cur_offb = 0;
+	size_t cur_off_msg = 0;
 	const auto n_chk_nodes = (int)this->H.get_n_cols();
 	for (auto c = 0; c < n_chk_nodes; c++)
 	{
-		branches_offsets[c] = (uint32_t)cur_offb;
-		cur_offb += this->H[c].size();
+		messages_offsets[c] = (uint32_t)cur_off_msg;
+		cur_off_msg += this->H[c].size();
 	}
 
 }
@@ -65,7 +65,7 @@ void Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->branches [frame_id].begin(), this->branches [frame_id].end(), (R)0);
+		std::fill(this->messages [frame_id].begin(), this->messages [frame_id].end(), (R)0);
 		std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
 
 		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
@@ -152,7 +152,7 @@ void Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		this->up_rule.begin_ite(ite);
-		this->_decode_single_ite(this->var_nodes[frame_id], this->branches[frame_id]);
+		this->_decode_single_ite(this->var_nodes[frame_id], this->messages[frame_id]);
 		this->up_rule.end_ite();
 
 		if (this->check_syndrome_soft(this->var_nodes[frame_id].data()))
@@ -164,36 +164,35 @@ void Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
-::_decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &branches)
+::_decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &messages)
 {
 	// vertical layered scheduling
 	const auto n_var_nodes = (int)this->H.get_n_rows();
 	for (auto vv = 0; vv < n_var_nodes; vv++)
 	{
 		auto msg_acc = (R)0;
-		// auto msg_acc = var_nodes[vv];
 		const auto var_degree = (int)this->H.get_cols_from_row(vv).size();
 		for (auto c = 0; c < var_degree; c++)
 		{
 			auto v_out = -1;
 			const auto cc = (int)this->H.get_cols_from_row(vv)[c];
-			const auto offb = (int)this->branches_offsets[cc];
+			const auto off_msg = (int)this->messages_offsets[cc];
 			const auto chk_degree = (int)this->H[cc].size();
 			this->up_rule.begin_chk_node_in(cc, chk_degree);
 			for (auto v = 0; v < chk_degree; v++)
 			{
 				const auto var_id = this->H[cc][v];
 				v_out = (var_id == (unsigned)vv) ? v : v_out;
-				contributions[v] = var_nodes[var_id] - branches[offb +v];
+				contributions[v] = var_nodes[var_id] - messages[off_msg +v];
 				this->up_rule.compute_chk_node_in(v, contributions[v]);
 			}
 			this->up_rule.end_chk_node_in();
 
+			msg_acc -= messages[off_msg + v_out];
 			this->up_rule.begin_chk_node_out(cc, chk_degree);
-			branches[offb + v_out] = this->up_rule.compute_chk_node_out(v_out, contributions[v_out]);
-			// msg_acc += contributions[v_out] + branches[offb + v_out];
-			msg_acc += (contributions[v_out] - var_nodes[vv]) + branches[offb + v_out];
+			messages[off_msg + v_out] = this->up_rule.compute_chk_node_out(v_out, contributions[v_out]);
 			this->up_rule.end_chk_node_out();
+			msg_acc += messages[off_msg + v_out];
 		}
 		var_nodes[vv] += msg_acc;
 	}

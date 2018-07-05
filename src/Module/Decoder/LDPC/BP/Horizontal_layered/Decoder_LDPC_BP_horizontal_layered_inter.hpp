@@ -25,7 +25,7 @@ protected:
 
 	// data structures for iterative decoding
 	std::vector<mipp::vector<mipp::Reg<R>>> var_nodes;
-	std::vector<mipp::vector<mipp::Reg<R>>> branches;
+	std::vector<mipp::vector<mipp::Reg<R>>> messages;
 
 	mipp::vector<mipp::Reg<R>> contributions;
 	mipp::vector<mipp::Reg<R>> Y_N_reorderered;
@@ -51,7 +51,7 @@ protected:
 
 	void _load               (const R *Y_N, const int frame_id);
 	void _decode             (const int frame_id);
-	void _decode_single_ite  (mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches);
+	void _decode_single_ite  (mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &messages);
 	bool _check_syndrome_soft(const mipp::vector<mipp::Reg<R>> &var_nodes);
 };
 }

@@ -47,7 +47,7 @@ Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
   up_rule               (up_rule                                                                            ),
   sat_val               ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
   var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                                   ),
-  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  messages              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
   contributions         (this->H.get_cols_max_degree()                                                      ),
   Y_N_reorderered       (N                                                                                  ),
   V_reorderered         (N                                                                                  ),
@@ -87,7 +87,7 @@ void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 	if (this->init_flag)
 	{
 		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->branches [cur_wave].begin(), this->branches [cur_wave].end(), zero);
+		std::fill(this->messages [cur_wave].begin(), this->messages [cur_wave].end(), zero);
 		std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
 
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
@@ -190,7 +190,7 @@ void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		this->up_rule.begin_ite(ite);
-		this->_decode_single_ite(this->var_nodes[cur_wave], this->branches[cur_wave]);
+		this->_decode_single_ite(this->var_nodes[cur_wave], this->messages[cur_wave]);
 		this->up_rule.end_ite();
 
 		if (this->_check_syndrome_soft(this->var_nodes[cur_wave]))
@@ -202,7 +202,7 @@ void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
-::_decode_single_ite(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches)
+::_decode_single_ite(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &messages)
 {
 	auto kr = 0;
 	auto kw = 0;
@@ -215,7 +215,7 @@ void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 		this->up_rule.begin_chk_node_in(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
 		{
-			this->contributions[v] = var_nodes[this->H[c][v]] - branches[kr++];
+			this->contributions[v] = var_nodes[this->H[c][v]] - messages[kr++];
 			this->up_rule.compute_chk_node_in(v, this->contributions[v]);
 		}
 		this->up_rule.end_chk_node_in();
@@ -223,8 +223,8 @@ void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 		this->up_rule.begin_chk_node_out(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
 		{
-			branches[kw] = saturate<R>(this->up_rule.compute_chk_node_out(v, this->contributions[v]), this->sat_val);
-			var_nodes[this->H[c][v]] = this->contributions[v] + branches[kw++];
+			messages[kw] = saturate<R>(this->up_rule.compute_chk_node_out(v, this->contributions[v]), this->sat_val);
+			var_nodes[this->H[c][v]] = this->contributions[v] + messages[kw++];
 		}
 		this->up_rule.end_chk_node_out();
 	}

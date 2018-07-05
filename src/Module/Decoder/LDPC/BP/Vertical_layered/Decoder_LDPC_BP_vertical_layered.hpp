@@ -21,9 +21,9 @@ protected:
 
 	// data structures for iterative decoding
 	std::vector<std::vector<R>> var_nodes;
-	std::vector<std::vector<R>> branches;
+	std::vector<std::vector<R>> messages;
 	std::vector<R             > contributions;
-	std::vector<uint32_t      > branches_offsets;
+	std::vector<uint32_t      > messages_offsets;
 
 	bool init_flag; // reset the chk_to_var vector at the begining of the iterative decoding
 
@@ -45,7 +45,7 @@ protected:
 
 	void _load             (const R *Y_N, const int frame_id);
 	void _decode           (const int frame_id);
-	void _decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &branches);
+	void _decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &messages);
 };
 }
 }
