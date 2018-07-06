@@ -16,7 +16,7 @@ public:
 	explicit Sigma(R noise);
 	Sigma(R noise, R ebn0, R esn0);
 	template<typename T>
-	Sigma(const Sigma<T>& other);
+	explicit Sigma(const Sigma<T>& other);
 	virtual ~Sigma() = default;
 
 	virtual bool is_set() const noexcept; // return true sigma, ebn0 and esn0 have been initialized

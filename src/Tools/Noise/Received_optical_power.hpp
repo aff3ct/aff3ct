@@ -15,7 +15,7 @@ public:
 	Received_optical_power() = default;
 	explicit Received_optical_power(R noise);
 	template<typename T>
-	Received_optical_power(const Received_optical_power<T>& other);
+	explicit Received_optical_power(const Received_optical_power<T>& other);
 	virtual ~Received_optical_power() = default;
 
 	virtual std::string get_unity() const;
