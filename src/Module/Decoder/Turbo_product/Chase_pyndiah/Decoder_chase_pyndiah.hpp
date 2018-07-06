@@ -76,7 +76,10 @@ public:
 	                      const int n_least_reliable_positions = 2,
 	                      const int n_test_vectors = 0,
 	                      const int n_competitors  = 0,
-	                      const std::vector<float>& cp_coef = {1,1,1,1,0});
+	                      const std::vector<float>& cp_coef = {1,1,1,1,0}); // the a b c d and e coef
+
+	~Decoder_chase_pyndiah() = default;
+
 
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id); // size is length with parity bit if any
 	void _decode_siho   (const R *Y_N,  B *V_K , const int frame_id);
@@ -85,11 +88,11 @@ public:
 	const std::vector<uint32_t>& get_info_bits_pos();
 
 protected:
-	void decode_chase           (const R *Y_N, const int frame_id);
-	void find_least_reliable_pos(const R* Y_N);
-	void compute_test_vectors   (              const int frame_id);
-	void compute_metrics        (const R* Y_N);
-	void compute_reliability    (const R* Y_N1, R* Y_N2);
+	virtual void decode_chase           (const R *Y_N, const int frame_id);
+	virtual void find_least_reliable_pos(const R* Y_N);
+	virtual void compute_test_vectors   (              const int frame_id);
+	virtual void compute_metrics        (const R* Y_N);
+	virtual void compute_reliability    (const R* Y_N1, R* Y_N2);
 
 	void bit_flipping(B* hard_vect, const int c);
 

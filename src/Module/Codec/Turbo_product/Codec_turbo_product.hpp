@@ -8,6 +8,7 @@
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
+#include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah_fast.hpp"
 
 #include "Factory/Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 #include "Factory/Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
