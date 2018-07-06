@@ -22,7 +22,7 @@ public:
 	Noise();
 	explicit Noise(R noise);
 	template<typename T>
-	Noise(const Noise<T>& other);
+	explicit Noise(const Noise<T>& other);
 	virtual ~Noise() = default;
 
 	virtual bool is_set() const noexcept; // return true if the Noise object has been correctly initialized
