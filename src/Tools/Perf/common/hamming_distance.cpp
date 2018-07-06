@@ -23,7 +23,7 @@ inline size_t hamming_distance_seq_real(const B *in1, const B *in2, const unsign
 	size_t ham_dist = 0;
 
 	for (unsigned i = 0; i < size; i++)
-		ham_dist += std::signbit(in1[i]) ^ std::signbit(in2[i]) ? (size_t)1 : (size_t)0;
+		ham_dist += (std::signbit(in1[i]) ^ std::signbit(in2[i])) ? (size_t)1 : (size_t)0;
 
 	return ham_dist;
 }
