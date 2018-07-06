@@ -12,8 +12,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_product<B>
-::Encoder_turbo_product(const Interleaver<B> &pi, Encoder<B> &enc_r, Encoder<B> &enc_c)
-: Encoder<B>(enc_r.get_K() * enc_c.get_K(), pi.get_core().get_size(), 1), //enc_r.get_n_frames()),
+::Encoder_turbo_product(const Interleaver<B> &pi, Encoder<B> &enc_r, Encoder<B> &enc_c, const int n_frames)
+: Encoder<B>(enc_r.get_K() * enc_c.get_K(), pi.get_core().get_size(), n_frames),
   pi   (pi   ),
   enc_r(enc_r),
   enc_c(enc_c),

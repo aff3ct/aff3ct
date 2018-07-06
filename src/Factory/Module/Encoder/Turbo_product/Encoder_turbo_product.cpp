@@ -105,7 +105,7 @@ void Encoder_turbo_product::parameters
 
 	if(vals.exist({p+"-ext"})) this->parity_extended = true;
 
-	this->sub->n_frames = this->n_frames;
+	// this->sub->n_frames = this->n_frames;
 
 	sub->store(vals);
 
@@ -147,7 +147,7 @@ module::Encoder_turbo_product<B>* Encoder_turbo_product::parameters
               module::Encoder_BCH<B> &enc_r,
               module::Encoder_BCH<B> &enc_c) const
 {
-	if (this->type == "TURBO_PROD") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c);
+	if (this->type == "TURBO_PROD") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c, n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

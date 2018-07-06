@@ -37,7 +37,8 @@ public:
 	                      const std::vector<float>& alpha,
 	                      const Interleaver<R> &pi,
 	                      Decoder_chase_pyndiah<B,R> &cp_r,
-	                      Decoder_chase_pyndiah<B,R> &cp_c);
+	                      Decoder_chase_pyndiah<B,R> &cp_c,
+	                      const int n_frames = 1);
 	virtual ~Decoder_turbo_product();
 
 protected:

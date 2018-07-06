@@ -51,19 +51,19 @@ Codec_turbo_product<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (enc_params.n_frames != 1)
-	{
-		std::stringstream message;
-		message << "'enc_params.n_frames' has to be equal to 1 ('enc_params.n_frames' = "
-		        << enc_params.n_frames << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (dec_params.sub->implem == "GENIUS")
 	{
 		std::stringstream message;
 		message << "sub decoder can't have a GENIUS implem (dec_params.sub->implem).";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+
+		// if (enc_params.n_frames != 1)
+		// {
+		// 	std::stringstream message;
+		// 	message << "'enc_params.n_frames' has to be equal to 1 ('enc_params.n_frames' = "
+		// 	        << enc_params.n_frames << ").";
+		// 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		// }
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations

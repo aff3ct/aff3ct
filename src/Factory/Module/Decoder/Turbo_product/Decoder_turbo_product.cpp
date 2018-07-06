@@ -187,7 +187,7 @@ void Decoder_turbo_product::parameters
 	}
 
 
-	this->sub->n_frames = this->n_frames;
+	// this->sub->n_frames = this->n_frames;
 
 	sub->store(vals);
 
@@ -266,7 +266,7 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
 		if (this->type == "CP")
 		{
 			if (this->implem == "STD")
-				return new module::Decoder_turbo_product<B,Q>(n_ite, alpha, itl, cp_r, cp_c);
+				return new module::Decoder_turbo_product<B,Q>(n_ite, alpha, itl, cp_r, cp_c, n_frames);
 		}
 	}
 

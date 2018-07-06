@@ -19,9 +19,10 @@ Decoder_turbo_product<B,R>
                         const std::vector<float>& alpha,
                         const Interleaver<R>& pi,
                         Decoder_chase_pyndiah<B,R> &cp_r,
-                        Decoder_chase_pyndiah<B,R> &cp_c)
-: Decoder               (cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), 1, 1),//cp_r.get_n_frames(), cp_r.get_simd_inter_frame_level()),
-  Decoder_SISO_SIHO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), 1, 1),//cp_r.get_n_frames(), cp_r.get_simd_inter_frame_level()),
+                        Decoder_chase_pyndiah<B,R> &cp_c,
+                        const int n_frames)
+: Decoder               (cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), n_frames, 1),
+  Decoder_SISO_SIHO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), n_frames, 1),
   n_ite(n_ite),
   alpha(alpha),
   pi   (pi   ),

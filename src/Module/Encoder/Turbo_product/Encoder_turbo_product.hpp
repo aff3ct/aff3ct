@@ -25,12 +25,13 @@ protected:
 	std::vector<B> X_N_i;     // internal buffer in the interleaved domain
 
 public:
-	Encoder_turbo_product(const Interleaver<B> &pi, Encoder<B> &enc_r, Encoder<B> &enc_c);
+	Encoder_turbo_product(const Interleaver<B> &pi, Encoder<B> &enc_r, Encoder<B> &enc_c, const int n_frames = 1);
 	virtual ~Encoder_turbo_product() {}
 
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id); using Encoder<B>::encode;
 
-	/* to use with a GENIUS BCH decoder
+	/* to use with a GENIUS BCH decoder to save data in the sub encoders : will work only with a inter frame level of 1
+	   else data is overwritten by the following frames
 private :
 
 	// access to enc_r protected/private members thanks to this robber
