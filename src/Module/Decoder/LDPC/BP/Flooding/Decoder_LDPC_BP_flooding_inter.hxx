@@ -109,14 +109,22 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
 
-	this->_decode((const mipp::Reg<R>*)Y_N1, cur_wave);
+	std::vector<const R*> frames_in(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_in[f] = Y_N1 + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply(frames_in, (R*)this->Y_N_reorderered.data(), this->N);
+
+	this->_decode(this->Y_N_reorderered.data(), cur_wave);
 
 	// prepare for next round by processing extrinsic information
 	for (auto v = 0; v < this->N; v++)
 	{
 		auto ext = this->post[v] - mipp::Reg<R>(&Y_N1[v * mipp::N<R>()]);
-		ext.store(&Y_N2[v * mipp::N<R>()]);
+		this->post[v] = ext;
 	}
+
+	std::vector<R*> frames_out(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_out[f] = Y_N2 + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply_rev((R*)this->post.data(), frames_out, this->N);
 }
 
 template <typename B, typename R, class Update_rule>
@@ -134,11 +142,16 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
+
+	std::vector<const R*> frames_in(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_in[f] = Y_N + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply(frames_in, (R*)this->Y_N_reorderered.data(), this->N);
+
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->_decode((const mipp::Reg<R>*)Y_N, cur_wave);
+	this->_decode(this->Y_N_reorderered.data(), cur_wave);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -149,9 +162,9 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 		V_reorderered[v] = mipp::cast<R,B>(this->post[k]) >> (sizeof(B) * 8 - 1);
 	}
 
-	std::vector<B*> frames(mipp::N<R>());
-	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = V_K + f * this->K;
-	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->K);
+	std::vector<B*> frames_out(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_out[f] = V_K + f * this->K;
+	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames_out, this->K);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
@@ -174,20 +187,25 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
+
+	std::vector<const R*> frames_in(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_in[f] = Y_N + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply(frames_in, (R*)this->Y_N_reorderered.data(), this->N);
+
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->_decode((const mipp::Reg<R>*)Y_N, cur_wave);
+	this->_decode(this->Y_N_reorderered.data(), cur_wave);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	for (auto v = 0; v < this->N; v++)
 		V_reorderered[v] = mipp::cast<R,B>(this->post[v]) >> (sizeof(B) * 8 - 1);
 
-	std::vector<B*> frames(mipp::N<R>());
-	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = V_N + f * this->N;
-	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->N);
+	std::vector<B*> frames_out(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_out[f] = V_N + f * this->N;
+	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames_out, this->N);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);

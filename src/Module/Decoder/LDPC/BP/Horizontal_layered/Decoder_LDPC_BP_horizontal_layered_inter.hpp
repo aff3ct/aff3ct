@@ -4,7 +4,7 @@
 #include <mipp.h>
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
-#include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_inter.hpp"
+#include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
 
 #include "../../../Decoder_SISO_SIHO.hpp"
 #include "../Decoder_LDPC_BP.hpp"
@@ -13,7 +13,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float, class Update_rule = tools::Update_rule_NMS_inter<R>>
+template <typename B = int, typename R = float, class Update_rule = tools::Update_rule_NMS_simd<R>>
 class Decoder_LDPC_BP_horizontal_layered_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
 {
 protected:

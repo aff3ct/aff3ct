@@ -27,13 +27,20 @@ protected:
 
 public:
 	explicit Update_rule_LSPA(const unsigned max_check_node_degree)
-	: name("LSPA"), values(max_check_node_degree), sign(0), sum(1), n_ite(0), ite(0)
+	: name("LSPA"), values(max_check_node_degree), sign(0), sum(0), n_ite(0), ite(0)
 	{
 		if (max_check_node_degree == 0)
 		{
 			std::stringstream message;
 			message << "'max_check_node_degree' has to greater than 0.";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (typeid(R) != typeid(double) && typeid(R) != typeid(float))
+		{
+			std::stringstream message;
+			message << "The 'LSPA' update rule supports only 'float' or 'double' datatypes.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 
@@ -89,7 +96,7 @@ public:
 	inline R compute_chk_node_out(const int var_id, const R var_val)
 	{
 		      auto res_tmp = this->sum - this->values[var_id];
-		           res_tmp = (res_tmp != (R)1.0) ? (R)std::exp(res_tmp) : (R)1.0 - std::numeric_limits<R>::epsilon();
+		           res_tmp = (res_tmp != (R)0) ? (R)std::exp(res_tmp) : (R)1.0 - std::numeric_limits<R>::epsilon();
 		const auto res_abs = (R)2.0 * std::atanh(res_tmp);
 		const auto res_sgn = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);
 

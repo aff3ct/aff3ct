@@ -1,12 +1,12 @@
-#ifndef UPDATE_RULE_NMS_INTER_HPP
-#define UPDATE_RULE_NMS_INTER_HPP
+#ifndef UPDATE_RULE_NMS_SIMD_HPP
+#define UPDATE_RULE_NMS_SIMD_HPP
 
 #include <cassert>
 #include <limits>
 #include <string>
 #include <cmath>
 
-#include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS_inter.hpp"
+#include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS_simd.hpp"
 #include "Tools/Math/utils.h"
 
 namespace aff3ct
@@ -39,15 +39,15 @@ template <> inline mipp::Reg<double > normalize<double , 8>(const mipp::Reg<doub
 
 
 template <typename R = float, int F = 0>
-class Update_rule_NMS_inter // Normalized Min Sum
+class Update_rule_NMS_simd // Normalized Min Sum
 {
 protected:
 	const std::string name;
 	const float normalize_factor;
-	Update_rule_MS_inter<R> MS;
+	Update_rule_MS_simd<R> MS;
 
 public:
-	explicit Update_rule_NMS_inter(const float normalize_factor)
+	explicit Update_rule_NMS_simd(const float normalize_factor)
 	: name("NMS"), normalize_factor(normalize_factor), MS()
 	{
 		if (sizeof(R) == 1)
@@ -82,7 +82,7 @@ public:
 		}
 	}
 
-	virtual ~Update_rule_NMS_inter()
+	virtual ~Update_rule_NMS_simd()
 	{
 	}
 
@@ -149,4 +149,4 @@ public:
 }
 }
 
-#endif /* UPDATE_RULE_NMS_INTER_HPP */
+#endif /* UPDATE_RULE_NMS_SIMD_HPP */

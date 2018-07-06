@@ -1,12 +1,12 @@
-#ifndef UPDATE_RULE_OMS_INTER_HPP
-#define UPDATE_RULE_OMS_INTER_HPP
+#ifndef UPDATE_RULE_OMS_SIMD_HPP
+#define UPDATE_RULE_OMS_SIMD_HPP
 
 #include <cassert>
 #include <limits>
 #include <string>
 #include <cmath>
 
-#include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS_inter.hpp"
+#include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS_simd.hpp"
 #include "Tools/Math/utils.h"
 
 namespace aff3ct
@@ -14,20 +14,20 @@ namespace aff3ct
 namespace tools
 {
 template <typename R = float>
-class Update_rule_OMS_inter // Offset Min Sum
+class Update_rule_OMS_simd // Offset Min Sum
 {
 protected:
 	const std::string name;
 	const mipp::Reg<R> offset;
-	Update_rule_MS_inter<R> MS;
+	Update_rule_MS_simd<R> MS;
 
 public:
-	explicit Update_rule_OMS_inter(const R offset)
+	explicit Update_rule_OMS_simd(const R offset)
 	: name("OMS"), offset(offset), MS()
 	{
 	}
 
-	virtual ~Update_rule_OMS_inter()
+	virtual ~Update_rule_OMS_simd()
 	{
 	}
 
@@ -94,4 +94,4 @@ public:
 }
 }
 
-#endif /* UPDATE_RULE_OMS_INTER_HPP */
+#endif /* UPDATE_RULE_OMS_SIMD_HPP */

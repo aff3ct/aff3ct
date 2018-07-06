@@ -35,6 +35,13 @@ public:
 			message << "'max_chk_node_degree' has to greater than 0.";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		if (typeid(R) != typeid(double) && typeid(R) != typeid(float))
+		{
+			std::stringstream message;
+			message << "The 'LSPA' update rule supports only 'float' or 'double' datatypes.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	virtual ~Update_rule_SPA()
