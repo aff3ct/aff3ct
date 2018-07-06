@@ -48,8 +48,7 @@ template <typename D, class AD, class AB>
 void Frame_trace<B>
 ::display_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref, debug_version version)
 {
-	unsigned int stride         = 0;
-	bool         enable_ref     = !ref.empty();
+	bool enable_ref = !ref.empty();
 
 	if (enable_ref && ref.size() != vec.size())
 	{
@@ -67,19 +66,27 @@ void Frame_trace<B>
 	}
 
 	const auto n_bits = this->n_bits ? (this->n_bits <= (int)vec.size() ? this->n_bits : (int)vec.size()) : (int)vec.size();
-	if (row_width == vec.size())
+
+	// display the bits indexes
+	if (this->display_indexes)
 	{
 		for (auto i = 0; i < n_bits; i++)
-			stream << std::setw(prec+2) << i << "|";
+			stream << rang::style::bold << std::setw(prec+2) << i
+			       << rang::style::underline << "|"
+			       << rang::style::reset;
 
 		if (n_bits < (int)vec.size())
 			stream << " ...";
+
 		stream << std::endl;
 	}
 
+
+	unsigned int stride = 0;
+
 	while (stride < vec.size())
 	{
-		for (auto i = stride; (i < stride + n_bits) && i < vec.size(); i++)
+		for (auto i = stride; (i < stride + row_width) && (i < stride + n_bits) &&  i < vec.size(); i++)
 			if (enable_ref)
 				display_value(vec[i], version, ref[i]);
 			else
@@ -87,6 +94,7 @@ void Frame_trace<B>
 
 		if (n_bits < (int)vec.size())
 			stream << " ...";
+
 		stream << std::endl;
 
 		stride += row_width;
@@ -96,75 +104,45 @@ void Frame_trace<B>
 template <typename B>
 template <typename D>
 void Frame_trace<B>
-::display_value(D value, debug_version version)
-{
-	std::stringstream sstream;
-	std::string value_string;
-
-	switch(version)
-	{
-		case debug_version::BIT:
-			stream << std::setw(prec+2) << ((value == 0) ? (int) 0 : (int) 1) << "|";
-			break;
-		case debug_version::REAL:
-			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
-			value_string = sstream.str();
-			size_t pos = value_string.find('e');
-			if (pos != std::string::npos) // then scientific notation has been used (too big number)
-				value_string = value_string.substr(0, prec-2) + value_string.substr(pos);
-			else
-				value_string = value_string.substr(0, prec+2);
-
-			stream << value_string << "|";
-			break;
-	}
-}
-
-template <typename B>
-template <typename D>
-void Frame_trace<B>
 ::display_value(D value, debug_version version, B ref)
 {
-	std::stringstream sstream;
-	std::string value_string;
+	if (ref != -1)
+		stream << rang::style::bold;
 
 	switch(version)
 	{
 		case debug_version::BIT:
-			value_string.append(prec+1, ' ');
-			if (value == 0)
-				if (ref == 0)
-					stream << rang::style::bold << rang::fg::green << value_string << "0" << rang::style::reset << "|";
-				else
-					stream << rang::style::bold << rang::fg::red   << value_string << "0" << rang::style::reset << "|";
-			else
-				if (ref == 0)
-					stream << rang::style::bold << rang::fg::red   << value_string << "1" << rang::style::reset << "|";
-				else
-					stream << rang::style::bold << rang::fg::green << value_string << "1" << rang::style::reset << "|";
+			if (ref != -1)
+			stream << ( ((value == 0) != (ref == 0)) ? rang::fg::red : rang::fg::green);
+			stream << std::setw(prec+2) << ((value == 0) ? (int) 0 : (int) 1);
+
 			break;
 
 		case debug_version::REAL:
-			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
-			value_string = sstream.str();
-			size_t pos = value_string.find('e');
+		{
+			std::stringstream sstream;
+			sstream << std::setprecision(prec) << std::setw(prec+2) << +value;
+
+			auto value_string = sstream.str();
+
+			auto pos = value_string.find('e');
 			if (pos != std::string::npos) // then scientific notation has been used (too big number)
 				value_string = value_string.substr(0, prec-2) + value_string.substr(pos);
 			else
 				value_string = value_string.substr(0, prec+2);
 
-			if (value >= 0)
-				if (ref == 0)
-					stream << rang::style::bold << rang::fg::green << value_string << rang::style::reset << "|";
-				else
-					stream << rang::style::bold << rang::fg::red   << value_string << rang::style::reset << "|";
-			else
-				if (ref == 0)
-					stream << rang::style::bold << rang::fg::red   << value_string << rang::style::reset << "|";
-				else
-					stream << rang::style::bold << rang::fg::green << value_string << rang::style::reset << "|";
+			if (ref != -1)
+			stream << ( ((value >= (D)0) != (ref == 0)) ? rang::fg::red : rang::fg::green);
+			stream << value_string;
+
 			break;
+		}
 	}
+
+	if (ref != -1)
+		stream << rang::style::reset;
+
+	stream << "|";
 }
 }
 }
