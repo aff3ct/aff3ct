@@ -48,15 +48,15 @@ struct Encoder_turbo_product : public Encoder
 		// builder
 		template <typename B = int>
 		module::Encoder_turbo_product<B>* build(const module::Interleaver<B> &itl,
-		                                                   module::Encoder_BCH<B> &enc_n,
-		                                                   module::Encoder_BCH<B> &enc_i) const;
+		                                                   module::Encoder_BCH<B> &enc_r,
+		                                                   module::Encoder_BCH<B> &enc_c) const;
 	};
 
 	template <typename B = int>
 	static module::Encoder_turbo_product<B>* build(const parameters             &params,
 	                                               const module::Interleaver<B> &itl,
-	                                                     module::Encoder_BCH<B> &enc_n,
-	                                                     module::Encoder_BCH<B> &enc_i);
+	                                                     module::Encoder_BCH<B> &enc_r,
+	                                                     module::Encoder_BCH<B> &enc_c);
 };
 }
 }

@@ -144,10 +144,10 @@ void Encoder_turbo_product::parameters
 template <typename B>
 module::Encoder_turbo_product<B>* Encoder_turbo_product::parameters
 ::build(const module::Interleaver<B> &itl,
-              module::Encoder_BCH<B> &enc_n,
-              module::Encoder_BCH<B> &enc_i) const
+              module::Encoder_BCH<B> &enc_r,
+              module::Encoder_BCH<B> &enc_c) const
 {
-	if (this->type == "TURBO_PROD") return new module::Encoder_turbo_product<B>(itl, enc_n, enc_i);
+	if (this->type == "TURBO_PROD") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -156,10 +156,10 @@ template <typename B>
 module::Encoder_turbo_product<B>* Encoder_turbo_product
 ::build(const parameters              &params,
         const module::Interleaver<B> &itl,
-              module::Encoder_BCH<B> &enc_n,
-              module::Encoder_BCH<B> &enc_i)
+              module::Encoder_BCH<B> &enc_r,
+              module::Encoder_BCH<B> &enc_c)
 {
-	return params.template build<B>(itl, enc_n, enc_i);
+	return params.template build<B>(itl, enc_r, enc_c);
 }
 
 // ==================================================================================== explicit template instantiation

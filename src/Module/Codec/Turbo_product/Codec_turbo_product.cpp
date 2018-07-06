@@ -16,9 +16,12 @@ Codec_turbo_product<B,Q>
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
   GF_poly(dec_params.sub->N_cw, dec_params.sub->t),
-  enc_bch(nullptr),
-  dec_bch(nullptr),
-  cp     (nullptr)
+  enc_bch_rows(nullptr),
+  enc_bch_cols(nullptr),
+  dec_bch_rows(nullptr),
+  dec_bch_cols(nullptr),
+  cp_rows     (nullptr),
+  cp_cols     (nullptr)
 {
 	const std::string name = "Codec_turbo_product";
 	this->set_name(name);
@@ -48,6 +51,21 @@ Codec_turbo_product<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (enc_params.n_frames != 1)
+	{
+		std::stringstream message;
+		message << "'enc_params.n_frames' has to be equal to 1 ('enc_params.n_frames' = "
+		        << enc_params.n_frames << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (dec_params.sub->implem == "GENIUS")
+	{
+		std::stringstream message;
+		message << "sub decoder can't have a GENIUS implem (dec_params.sub->implem).";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	// ---------------------------------------------------------------------------------------------------- allocations
 	this->set_interleaver(factory::Interleaver_core::build<>(*dec_params.itl->core));
 
@@ -60,21 +78,40 @@ Codec_turbo_product<B,Q>
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 
+	int N_cw_p = enc_params.sub->N_cw + (dec_params.parity_extended ? 1 : 0);
+	enc_params.sub->n_frames = N_cw_p;
 
-	enc_bch = factory::Encoder_BCH::build     <B  >(*enc_params.sub, GF_poly);
-	dec_bch = dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly));
-	cp = new Decoder_chase_pyndiah<B,Q>(dec_bch->get_K(), dec_bch->get_N() + (dec_params.parity_extended?1:0),
-	                                    *dec_bch, *enc_bch,
-	                                    dec_params.n_least_reliable_positions,
-	                                    dec_params.n_test_vectors,
-	                                    dec_params.n_competitors,
-	                                    dec_params.cp_coef);
+	enc_bch_rows = factory::Encoder_BCH::build<B>(*enc_params.sub, GF_poly);
+	// enc_bch_rows->set_memorizing(dec_params.sub->implem == "GENIUS");
+
+	enc_bch_cols = factory::Encoder_BCH::build<B>(*enc_params.sub, GF_poly);
+	// enc_bch_cols->set_memorizing(dec_params.sub->implem == "GENIUS");
+
+
+	dec_params.sub->n_frames = N_cw_p;
+
+	dec_bch_rows = dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly, enc_bch_rows));
+	dec_bch_cols = dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly, enc_bch_cols));
+
+	cp_rows = new Decoder_chase_pyndiah<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
+	                                         *dec_bch_rows, *enc_bch_rows,
+	                                         dec_params.n_least_reliable_positions,
+	                                         dec_params.n_test_vectors,
+	                                         dec_params.n_competitors,
+	                                         dec_params.cp_coef);
+
+	cp_cols = new Decoder_chase_pyndiah<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
+	                                         *dec_bch_cols, *enc_bch_cols,
+	                                         dec_params.n_least_reliable_positions,
+	                                         dec_params.n_test_vectors,
+	                                         dec_params.n_competitors,
+	                                         dec_params.cp_coef);
 
 
 	Encoder_turbo_product<B> *encoder_tpc = nullptr;
 	try
 	{
-		encoder_tpc = factory::Encoder_turbo_product::build<B>(enc_params, this->get_interleaver_bit(), *enc_bch, *enc_bch);
+		encoder_tpc = factory::Encoder_turbo_product::build<B>(enc_params, this->get_interleaver_bit(), *enc_bch_rows, *enc_bch_cols);
 		this->set_encoder(encoder_tpc);
 	}
 	catch (tools::cannot_allocate const&)
@@ -84,13 +121,13 @@ Codec_turbo_product<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(), *cp, *cp);
+		auto decoder_siso_siho = factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols);
 		this->set_decoder_siso(decoder_siso_siho);
 		this->set_decoder_siho(decoder_siso_siho);
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(factory::Decoder_turbo_product::build<B,Q>(dec_params, this->get_interleaver_llr(), *cp, *cp));
+		this->set_decoder_siho(factory::Decoder_turbo_product::build<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols));
 	}
 }
 
@@ -98,8 +135,12 @@ template <typename B, typename Q>
 Codec_turbo_product<B,Q>
 ::~Codec_turbo_product()
 {
-	if (enc_bch != nullptr) { delete enc_bch; enc_bch = nullptr; }
-	if (dec_bch != nullptr) { delete dec_bch; dec_bch = nullptr; }
+	if (enc_bch_rows != nullptr) { delete enc_bch_rows; enc_bch_rows = nullptr; }
+	if (enc_bch_cols != nullptr) { delete enc_bch_cols; enc_bch_cols = nullptr; }
+	if (dec_bch_rows != nullptr) { delete dec_bch_rows; dec_bch_rows = nullptr; }
+	if (dec_bch_cols != nullptr) { delete dec_bch_cols; dec_bch_cols = nullptr; }
+	if (cp_rows      != nullptr) { delete cp_rows;      cp_rows      = nullptr; }
+	if (cp_cols      != nullptr) { delete cp_cols;      cp_cols      = nullptr; }
 }
 
 // ==================================================================================== explicit template instantiation

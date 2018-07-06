@@ -29,6 +29,29 @@ public:
 	virtual ~Encoder_turbo_product() {}
 
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id); using Encoder<B>::encode;
+
+	/* to use with a GENIUS BCH decoder
+private :
+
+	// access to enc_r protected/private members thanks to this robber
+	// source:  http://bloglitb.blogspot.com/2010/07/access-to-private-members-thats-easy.html
+	template <typename Tag>
+	struct result {
+		typedef typename Tag::type type;
+		static type ptr;
+	};
+
+
+	template<typename Tag, typename Tag::type p>
+	struct rob : result<Tag> {
+		struct filler {
+		filler() { result<Tag>::ptr = p; }
+		};
+		static filler filler_obj;
+	};
+
+	struct Enc_X_N_mem { typedef std::vector<std::vector<B>> Encoder<B>::*type; };
+	*/
 };
 }
 }

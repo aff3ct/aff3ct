@@ -40,6 +40,7 @@ void Turbo_product<L,B,R,Q>
 
 	auto psrc = this->params.src->get_prefix();
 	this->args.erase({psrc+"-info-bits", "K"});
+	this->args.erase({psrc+"-fra",       "F"});
 }
 
 template <class L, typename B, typename R, typename Q>

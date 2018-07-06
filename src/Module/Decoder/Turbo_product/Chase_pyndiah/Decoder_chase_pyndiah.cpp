@@ -21,14 +21,15 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_chase_pyndiah<B,R>
 ::Decoder_chase_pyndiah(const int K, const int N, // N includes the parity bit if any
+                        const int n_frames,
                         Decoder_BCH<B,R> &dec_,
                         Encoder    <B  > &enc_,
                         const int n_least_reliable_positions_,
                         const int n_test_vectors_,
                         const int n_competitors_,
                         const std::vector<float>& cp_coef)
-: Decoder               (K, N, dec_.get_n_frames(), dec_.get_simd_inter_frame_level()),
-  Decoder_SISO_SIHO<B,R>(K, N, dec_.get_n_frames(), dec_.get_simd_inter_frame_level()),
+: Decoder               (K, N, n_frames),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames),
   dec                       (dec_                                                                    ),
   enc                       (enc_                                                                    ),
   N_np                      (dec.get_N()                                                             ),
@@ -110,9 +111,9 @@ const std::vector<uint32_t>& Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::decode_siho(const R *Y_N, B *V_K)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	decode_chase(Y_N);
+	decode_chase(Y_N, frame_id);
 
 	auto* DW = test_vect.data() + competitors.front().pos;
 	auto& info_bits_pos = enc.get_info_bits_pos();
@@ -123,9 +124,9 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::decode_siho_cw(const R *Y_N, B *V_N)
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
-	decode_chase(Y_N);
+	decode_chase(Y_N, frame_id);
 
 	auto* DW = test_vect.data() + competitors.front().pos;
 
@@ -134,9 +135,9 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::decode_siso(const R *Y_N1, R *Y_N2)
+::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	decode_chase(Y_N1);
+	decode_chase(Y_N1, frame_id);
 
 	compute_reliability(Y_N1, Y_N2);
 
@@ -151,7 +152,7 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::decode_chase(const R *Y_N)
+::decode_chase(const R *Y_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, hard_Y_N.data(), this->N);
 
@@ -185,7 +186,7 @@ void Decoder_chase_pyndiah<B,R>
 	// 	parity_diff = false;
 
 	find_least_reliable_pos(Y_N); // without parity bit if any
-	compute_test_vectors   (   ); // make bit flipping of least reliable positions and try to decode them
+	compute_test_vectors   (frame_id); // make bit flipping of least reliable positions and try to decode them
 	compute_metrics        (Y_N); // compute euclidian metrics for each test vectors
 
 #ifndef NDEBUG
@@ -251,22 +252,26 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::compute_test_vectors()
+::compute_test_vectors(const int frame_id)
 {
-	tools::Frame_trace<> ft(0,3,std::cerr);
+	int dec_offset = frame_id * N_np; // dec add automaticaly an address offset to process the frame_id-th frame
+	                                  // hard_Y_N. But there is only one frame so we need to substract a forecast
+	                                  // address offset.
+
 	for (int c = 0; c < n_test_vectors; c++)
 	{
 		// rearrange hard_Y_N to be a good candidate
 		bit_flipping(hard_Y_N.data(), c);
 
-		dec.decode_hiho_cw(hard_Y_N.data(), test_vect.data() + c*this->N); // parity bit is ignored by the decoder
+		dec.decode_hiho_cw(hard_Y_N.data() - dec_offset, test_vect.data() + c*this->N - dec_offset, frame_id); // parity bit is ignored by the decoder
 		//is_wrong[c] = !enc.is_codeword(test_vect.data() + c*this->N);
 		is_wrong[c] = !dec.last_is_codeword;
 
 		if (this->parity_extended)
-			test_vect[(c+1)*this->N -1] = tools::compute_parity(test_vect.data() + c*this->N, dec.get_N());
+			test_vect[(c+1)*this->N -1] = tools::compute_parity(test_vect.data() + c*this->N, N_np);
 
 #ifndef NDEBUG
+		tools::Frame_trace<> ft(0,3,std::cerr);
 	    std::cerr << "(II) Test vectors " << c << " before correction" << std::endl;
 	    ft.display_bit_vector(hard_Y_N);
 	    std::cerr << "(II) Test vectors " << c << " after correction : is wrong = " << is_wrong[c] << std::endl;
@@ -382,7 +387,7 @@ void Decoder_chase_pyndiah<B,R>
 
 		R reliability;
 
-		if (j < n_good_competitors) // then there is a competitor with a different bit at the position i
+		if (j < n_good_competitors) // then the competitor j has a different bit at the position i
 		{
 			reliability = competitors[j].metric;
 		}

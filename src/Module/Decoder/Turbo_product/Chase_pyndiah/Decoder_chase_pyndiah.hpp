@@ -70,6 +70,7 @@ protected:
 public:
 
 	Decoder_chase_pyndiah(const int K, const int N, // N with the parity bit if any
+	                      const int n_frames,
 	                      Decoder_BCH<B,R> &dec,
 	                      Encoder    <B  > &enc,
 	                      const int n_least_reliable_positions = 2,
@@ -77,16 +78,16 @@ public:
 	                      const int n_competitors  = 0,
 	                      const std::vector<float>& cp_coef = {1,1,1,1,0});
 
-	void decode_siso   (const R *Y_N1, R *Y_N2); // size is length with parity bit if any
-	void decode_siho   (const R *Y_N,  B *V_K );
-	void decode_siho_cw(const R *Y_N,  B *V_N );
+	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id); // size is length with parity bit if any
+	void _decode_siho   (const R *Y_N,  B *V_K , const int frame_id);
+	void _decode_siho_cw(const R *Y_N,  B *V_N , const int frame_id);
 
 	const std::vector<uint32_t>& get_info_bits_pos();
 
 protected:
-	void decode_chase           (const R *Y_N);
+	void decode_chase           (const R *Y_N, const int frame_id);
 	void find_least_reliable_pos(const R* Y_N);
-	void compute_test_vectors   (            );
+	void compute_test_vectors   (              const int frame_id);
 	void compute_metrics        (const R* Y_N);
 	void compute_reliability    (const R* Y_N1, R* Y_N2);
 
