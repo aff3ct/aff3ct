@@ -10,13 +10,9 @@
 #include "Tools/Perf/compute_parity.h"
 
 
-#include "Tools/Display/Frame_trace/Frame_trace.hpp"
-
-
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-#define NDEBUG
 
 template <typename B, typename R>
 Decoder_chase_pyndiah_fast<B,R>
@@ -81,7 +77,9 @@ void Decoder_chase_pyndiah_fast<B,R>
 		this->competitors[c].pos    = c*this->N;
 	}
 
-	std::sort(this->competitors.begin(), this->competitors.end(), [](const typename Decoder_chase_pyndiah<B,R>::info& a, const typename Decoder_chase_pyndiah<B,R>::info& b) { return a.metric < b.metric; });
+	std::sort(this->competitors.begin(), this->competitors.end(),
+	         [](const typename Decoder_chase_pyndiah<B,R>::info& a,
+	            const typename Decoder_chase_pyndiah<B,R>::info& b) { return a.metric < b.metric; });
 }
 
 template <typename B, typename R>

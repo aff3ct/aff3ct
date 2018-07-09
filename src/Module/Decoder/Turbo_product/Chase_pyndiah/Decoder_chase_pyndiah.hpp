@@ -1,13 +1,13 @@
 #ifndef DECODER_CHASE_PYNDIAH_HPP_
 #define	DECODER_CHASE_PYNDIAH_HPP_
 
-#include <aff3ct.hpp>
 #include <vector>
 
-#include <chrono>
-
-// #include "../Decoder_turbo_product.hpp"
 #include "../../Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/BCH/Decoder_BCH.hpp"
+#include "Module/Encoder/Encoder.hpp"
+
+
 
 namespace aff3ct
 {
@@ -38,14 +38,20 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_chase_pyndiah : public Decoder_SISO_SIHO<B,R>
 {
+// Test for GCC > 5.1.0
+// Compilation error under when struct 'info' is protected
+#if GCC_VERSION >= 50100
 protected:
-
+#else
+public:
+#endif
 	struct info
 	{
 		R metric;
 		int pos;
 	};
 
+protected:
 	Decoder_BCH<B,R> &dec;
 	Encoder    <B  > &enc;
 

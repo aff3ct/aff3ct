@@ -1,13 +1,6 @@
 #ifndef Decoder_chase_pyndiah_fast_HPP_
 #define	Decoder_chase_pyndiah_fast_HPP_
 
-#include <aff3ct.hpp>
-#include <vector>
-#include <cassert>
-#include <chrono>
-
-// #include "../Decoder_turbo_product.hpp"
-#include "../../Decoder_SISO_SIHO.hpp"
 
 #include "Decoder_chase_pyndiah.hpp"
 

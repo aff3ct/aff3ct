@@ -10,13 +10,15 @@
 #include "Tools/Perf/compute_parity.h"
 
 
-#include "Tools/Display/Frame_trace/Frame_trace.hpp"
-
-
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-#define NDEBUG
+#define NDEBUG_TPC
+
+#ifndef NDEBUG_TPC
+#include "Tools/Display/Frame_trace/Frame_trace.hpp"
+#endif
+
 
 template <typename B, typename R>
 Decoder_chase_pyndiah<B,R>
@@ -141,7 +143,7 @@ void Decoder_chase_pyndiah<B,R>
 
 	compute_reliability(Y_N1, Y_N2);
 
-#ifndef NDEBUG
+#ifndef NDEBUG_TPC
     std::cerr  << "(II) Y_N2 : " <<  std::endl;
 
     for (int i = 0; i < this->N; i++)
@@ -156,7 +158,7 @@ void Decoder_chase_pyndiah<B,R>
 {
 	tools::hard_decide(Y_N, hard_Y_N.data(), this->N);
 
-#ifndef NDEBUG
+#ifndef NDEBUG_TPC
 	tools::Frame_trace<> ft(0,3,std::cerr);
 
     std::cerr << "(II) Y_N : " << std::endl;
@@ -189,7 +191,7 @@ void Decoder_chase_pyndiah<B,R>
 	compute_test_vectors   (frame_id); // make bit flipping of least reliable positions and try to decode them
 	compute_metrics        (Y_N); // compute euclidian metrics for each test vectors
 
-#ifndef NDEBUG
+#ifndef NDEBUG_TPC
     std::cerr << "(II) least_reliable_pos : " << std::endl;
     for (unsigned i = 0; i < least_reliable_pos.size(); i++)
     {
@@ -270,7 +272,7 @@ void Decoder_chase_pyndiah<B,R>
 		if (this->parity_extended)
 			test_vect[(c+1)*this->N -1] = tools::compute_parity(test_vect.data() + c*this->N, N_np);
 
-#ifndef NDEBUG
+#ifndef NDEBUG_TPC
 		tools::Frame_trace<> ft(0,3,std::cerr);
 	    std::cerr << "(II) Test vectors " << c << " before correction" << std::endl;
 	    ft.display_bit_vector(hard_Y_N);
@@ -341,7 +343,7 @@ void Decoder_chase_pyndiah<B,R>
 	// competitors.resize(n_test_vectors);
 
 
-#ifndef NDEBUG
+#ifndef NDEBUG_TPC
     std::cerr << "(II) competitors : " << std::endl;
     for (unsigned i = 0; i < competitors.size(); i++)
     {
@@ -365,7 +367,7 @@ void Decoder_chase_pyndiah<B,R>
 
 	beta -= cp_coef[2] * DW.metric;
 
-#ifndef NDEBUG
+#ifndef NDEBUG_TPC
 		std::cerr << "beta = " << beta << ", DW.metric = " << DW.metric << std::endl;
 #endif
 
@@ -401,13 +403,13 @@ void Decoder_chase_pyndiah<B,R>
 		if (DB) // if DB is a 1
 			reliability = -reliability; // set as negative
 
-#ifndef NDEBUG
+#ifndef NDEBUG_TPC
 		std::cerr << "Rel:  i = " << i << ", Y_N1 = " << Y_N1[i] << ", competitors[" << j << "].metric = " << competitors[j].metric;
 #endif
 
 		Y_N2[i] = reliability - cp_coef[0] * Y_N1[i];
 
-#ifndef NDEBUG
+#ifndef NDEBUG_TPC
 		std::cerr  << ", reliability = " << reliability << ", Y_N2 = " << Y_N2[i] << std::endl;
 #endif
 	}

@@ -1,5 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
+#include "Tools/Arguments/Splitter/Splitter.hpp"
 
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 #include "Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
@@ -75,7 +76,7 @@ struct Real_splitter
 		const std::string queue     = "})]";
 		const std::string separator = ",";
 
-		return Splitter::split(val, head, queue, separator);
+		return tools::Splitter::split(val, head, queue, separator);
 	}
 };
 
