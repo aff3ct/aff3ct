@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 
@@ -106,7 +108,11 @@ void Puncturer_LDPC::parameters
 
 	if (this->type != "NO")
 	{
-		headers[p].push_back(std::make_pair(std::string("Pattern"), std::string("{" + std::string(this->pattern.begin(),this->pattern.end())) + "}"));
+		std::stringstream pat;
+		for(auto p : this->pattern)
+			pat << p;
+
+		headers[p].push_back(std::make_pair(std::string("Pattern"), std::string("{" + pat.str() + "}")));
 	}
 }
 
