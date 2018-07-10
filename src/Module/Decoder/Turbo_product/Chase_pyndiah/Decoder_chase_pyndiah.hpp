@@ -38,13 +38,7 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_chase_pyndiah : public Decoder_SISO_SIHO<B,R>
 {
-// Test for GCC > 5.1.0
-// Compilation error under when struct 'info' is protected
-#if GCC_VERSION >= 50100
 protected:
-#else
-public:
-#endif
 	struct info
 	{
 		R metric;

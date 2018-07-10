@@ -77,9 +77,11 @@ void Decoder_chase_pyndiah_fast<B,R>
 		this->competitors[c].pos    = c*this->N;
 	}
 
+	using I = typename Decoder_chase_pyndiah<B,R>::info; // trick to avoid g++4.x compilation error
+
 	std::sort(this->competitors.begin(), this->competitors.end(),
-	         [](const typename Decoder_chase_pyndiah<B,R>::info& a,
-	            const typename Decoder_chase_pyndiah<B,R>::info& b) { return a.metric < b.metric; });
+	         [](const I& a,
+	            const I& b) { return a.metric < b.metric; });
 }
 
 template <typename B, typename R>
