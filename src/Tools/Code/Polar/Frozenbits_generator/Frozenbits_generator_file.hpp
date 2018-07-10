@@ -16,7 +16,7 @@ private:
 	const std::string filename;
 
 protected:
-	Frozenbits_generator_file(const int K, const int N, const float sigma = 0.f);
+	Frozenbits_generator_file(const int K, const int N);
 
 public:
 	Frozenbits_generator_file(const int K, const int N, const std::string& filename);
@@ -26,6 +26,7 @@ public:
 protected:
 	void evaluate();
 	bool load_channels_file(const std::string& filename);
+	virtual void check_noise();
 };
 }
 }

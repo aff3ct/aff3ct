@@ -15,13 +15,13 @@ using namespace aff3ct::tools;
 
 Frozenbits_generator_file
 ::Frozenbits_generator_file(const int K, const int N, const std::string& filename)
-: Frozenbits_generator(K, N, 0.f), filename(filename)
+: Frozenbits_generator(K, N), filename(filename)
 {
 }
 
 Frozenbits_generator_file
-::Frozenbits_generator_file(const int K, const int N, const float sigma)
-: Frozenbits_generator(K, N, sigma), filename("")
+::Frozenbits_generator_file(const int K, const int N)
+: Frozenbits_generator(K, N), filename("")
 {
 }
 
@@ -65,4 +65,10 @@ bool Frozenbits_generator_file
 	}
 	else
 		return false;
+}
+
+void Frozenbits_generator_file
+::check_noise()
+{
+	Frozenbits_generator::check_noise();
 }

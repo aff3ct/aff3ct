@@ -171,9 +171,7 @@ void Codec_polar<B,Q>
 	// adaptive frozen bits generation
 	if (adaptive_fb && !generated_decoder)
 	{
-		this->n->is_of_type_throw(tools::Noise_type::SIGMA);
-
-		fb_generator->set_sigma(this->n->get_noise());
+		fb_generator->set_noise(noise);
 		fb_generator->generate(frozen_bits);
 
 		this->notify_frozenbits_update();

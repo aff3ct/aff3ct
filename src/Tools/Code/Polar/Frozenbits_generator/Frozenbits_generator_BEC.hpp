@@ -1,5 +1,5 @@
-#ifndef FROZENBITS_GENERATOR_GA_HPP_
-#define FROZENBITS_GENERATOR_GA_HPP_
+#ifndef FROZENBITS_GENERATOR_BEC_HPP_
+#define FROZENBITS_GENERATOR_BEC_HPP_
 
 #include <limits>
 #include <vector>
@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-class Frozenbits_generator_GA : public Frozenbits_generator
+class Frozenbits_generator_BEC : public Frozenbits_generator
 {
 private:
 	const int m;
@@ -30,9 +30,9 @@ private:
 	const double bisection_max = std::numeric_limits<double>::max();
 
 public:
-	Frozenbits_generator_GA(const int K, const int N);
+	Frozenbits_generator_BEC(const int K, const int N);
 
-	~Frozenbits_generator_GA();
+	~Frozenbits_generator_BEC();
 
 protected:
 	void   evaluate();
@@ -43,4 +43,4 @@ protected:
 }
 }
 
-#endif /* FROZENBITS_GENERATOR_GA_HPP_ */
+#endif /* FROZENBITS_GENERATOR_BEC_HPP_ */
