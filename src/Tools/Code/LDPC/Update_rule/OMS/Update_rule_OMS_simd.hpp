@@ -61,8 +61,8 @@ public:
 	{
 		MS.cst1 = MS.min2 - this->offset;
 		MS.cst2 = MS.min1 - this->offset;
-		MS.cst1 = mipp::blend(MS.zero, MS.cst1, MS.cst1 < MS.zero);
-		MS.cst2 = mipp::blend(MS.zero, MS.cst2, MS.cst2 < MS.zero);
+		MS.cst1 = mipp::max(MS.zero, MS.cst1);
+		MS.cst2 = mipp::max(MS.zero, MS.cst2);
 	}
 
 	// outcomming values from the check nodes into the variable nodes

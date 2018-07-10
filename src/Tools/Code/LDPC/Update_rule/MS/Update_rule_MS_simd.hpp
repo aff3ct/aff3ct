@@ -81,17 +81,16 @@ public:
 	{
 		const auto var_abs  = mipp::abs(var_val);
 		const auto var_sign = mipp::sign(var_val);
-		const auto tmp      = this->min1;
 
 		this->sign ^= var_sign;
-		this->min1  = mipp::min(this->min1,           var_abs      );
-		this->min2  = mipp::min(this->min2, mipp::max(var_abs, tmp));
+		this->min2  = mipp::min(this->min2, mipp::max(var_abs, this->min1));
+		this->min1  = mipp::min(this->min1,           var_abs             );
 	}
 
 	inline void end_chk_node_in()
 	{
-		this->cst1 = mipp::blend(this->zero, this->min2, this->min2 < this->zero);
-		this->cst2 = mipp::blend(this->zero, this->min1, this->min1 < this->zero);
+		this->cst1 = mipp::max(this->zero, this->min2);
+		this->cst2 = mipp::max(this->zero, this->min1);
 	}
 
 	// outcomming values from the check nodes into the variable nodes

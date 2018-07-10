@@ -62,8 +62,8 @@ public:
 	{
 		MS.cst1 = MS.min2 - this->offset;
 		MS.cst2 = MS.min1 - this->offset;
-		MS.cst1 = (MS.cst1 < 0) ? 0 : MS.cst1;
-		MS.cst2 = (MS.cst2 < 0) ? 0 : MS.cst2;
+		MS.cst1 = std::max((R)0, MS.cst1);
+		MS.cst2 = std::max((R)0, MS.cst2);
 	}
 
 	// outcomming values from the check nodes into the variable nodes
