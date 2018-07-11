@@ -27,6 +27,7 @@ parser.add_argument('--sensibility',    action='store', dest='sensibility',   ty
 parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                         # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
 parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per noise point.')                            # choices=xrange(0,   +inf)
+parser.add_argument('--min-fe',         action='store', dest='minFE',         type=int,   default=50,                        help='Minimum number of frames errors to take into account the simulated noise point.')         # choices=xrange(0,   +inf)
 parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,                       help='Rate of valid noise points to passe a test.')                                             # choices=xrange(0.0, 1.0 )
 parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a noise point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
 parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                     help='Enable the verbose mode.')
@@ -126,6 +127,7 @@ class simuData:
 		self.BER        = []
 		self.FER        = []
 		self.MI         = []
+		self.FE         = []
 		self.RunCommand = ""
 		self.CurveName  = ""
 		self.NoiseType  = ""
@@ -197,6 +199,13 @@ def dataReader(aff3ctOutput):
 		else:
 			data.MI = data.All[idx]
 
+		# set FE
+		idx = getLegendIdx(data.Legend, "FE")
+		if idx == -1:
+			data.FE = []
+		else:
+			data.FE = data.All[idx]
+
 		# set ESN0
 		idx = getLegendIdx(data.Legend, "Es/N0")
 		if idx == -1 or data.NoiseType == "Es/N0":
@@ -246,7 +255,7 @@ def splitAsCommand(runCommand):
 	return argsList
 
 class tableStats:
-	def __init__(self, tableCur, tableRef, sensibility, name):
+	def __init__(self, tableCur, tableRef, sensibility, name, nData = 0):
 		if len(tableCur) > len(tableRef) : # can't have less ref than checked points
 			raise RuntimeError
 
@@ -260,7 +269,11 @@ class tableStats:
 		self.avgSensibility  = 0
 		self.rateSensibility = 0
 		self.valid           = 0
-		self.nData           = len(tableCur)
+
+		if nData == 0 or nData > len(tableCur) :
+			self.nData       = len(tableCur)
+		else :
+			self.nData       = nData
 		self.errorsList      = []
 		self.errorsPos       = []
 		self.errorsMessage   = []
@@ -320,18 +333,24 @@ class tableStats:
 		return float(self.valid) / float(self.nData)
 
 class compStats:
-	def __init__(self, dataCur, dataRef, sensibility):
+	def __init__(self, dataCur, dataRef, sensibility, asked_n_fe):
 		if not isinstance(dataCur, simuData) or not isinstance(dataRef, simuData) :
 			raise TypeError
+
+		self.nValidData = len(dataCur.FE)
+		for d in range(len(dataCur.FE)) :
+			if dataCur.FE[d] < asked_n_fe :
+				self.nValidData = d
+
 
 		self.dataCur  = dataCur
 		self.dataRef  = dataRef
 		self.dataList = []
-		self.dataList.append(tableStats(dataCur.Noise, dataRef.Noise,         0.0, dataRef.NoiseType))
-		self.dataList.append(tableStats(dataCur.ESN0,  dataRef.ESN0,          0.0, "Es/N0"))
-		self.dataList.append(tableStats(dataCur.FER,   dataRef.FER,   sensibility, "FER"  ))
-		self.dataList.append(tableStats(dataCur.BER,   dataRef.BER,   sensibility, "BER"  ))
-		self.dataList.append(tableStats(dataCur.MI,    dataRef.MI,    sensibility, "MI"   ))
+		self.dataList.append(tableStats(dataCur.Noise, dataRef.Noise,         0.0, dataRef.NoiseType, self.nValidData))
+		self.dataList.append(tableStats(dataCur.ESN0,  dataRef.ESN0,          0.0, "Es/N0"          , self.nValidData))
+		self.dataList.append(tableStats(dataCur.FER,   dataRef.FER,   sensibility, "FER"            , self.nValidData))
+		self.dataList.append(tableStats(dataCur.BER,   dataRef.BER,   sensibility, "BER"            , self.nValidData))
+		self.dataList.append(tableStats(dataCur.MI,    dataRef.MI,    sensibility, "MI"             , self.nValidData))
 
 	def errorMessage(self, idx):
 		message = ""
@@ -537,7 +556,7 @@ for fn in fileNames:
 	errAndWarnMessages = stderrAFFECT.decode(encoding='UTF-8')
 
 
-	# compare ref and nex results to check if the simulator is still OK
+	# compare ref and new results to check if the simulator is still OK
 	os.chdir(PathOrigin)
 
 	# get the results
@@ -573,7 +592,7 @@ for fn in fileNames:
 
 	else:
 		# parse the results to validate (or not) the BER/FER/MI performance
-		comp = compStats(simuCur, simuRef, args.sensibility)
+		comp = compStats(simuCur, simuRef, args.sensibility, args.minFE)
 
 		# print the header
 		fRes.write("Run command:\n" + simuCur.RunCommand + "\n")

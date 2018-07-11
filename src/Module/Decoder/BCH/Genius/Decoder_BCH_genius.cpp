@@ -53,6 +53,8 @@ void Decoder_BCH_genius<B, R>
 		std::copy(X_N.data() + this->N - this->K, X_N.data() + this->N, V_K);
 	else // then copy Y_N uncorrected
 		std::copy(Y_N + this->N - this->K, Y_N + this->N, V_K);
+
+	this->last_is_codeword = n_error <= this->t;
 }
 
 template <typename B, typename R>
@@ -67,6 +69,8 @@ void Decoder_BCH_genius<B, R>
 		std::copy(X_N.data(), X_N.data() + this->N, V_N);
 	else // then copy Y_N uncorrected
 		std::copy(Y_N, Y_N + this->N, V_N);
+
+	this->last_is_codeword = n_error <= this->t;
 }
 
 template <typename B, typename R>

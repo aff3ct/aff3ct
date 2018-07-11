@@ -5,7 +5,6 @@
 #include <thread>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 
 #include "BFER_ite_threads.hpp"

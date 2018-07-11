@@ -108,8 +108,8 @@ decode_siho(const R *Y_N, B *V_K, const int frame_id)
 		const auto w_start = (frame_id < 0) ? 0 : frame_id % this->n_dec_waves;
 		const auto w_stop  = (frame_id < 0) ? this->n_dec_waves : w_start +1;
 
-		auto w = w_start;
-		for (w = 0; w < w_stop -1; w++)
+		auto w = 0;
+		for (w = w_start; w < w_stop -1; w++)
 			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
 			                   w * this->simd_inter_frame_level);
