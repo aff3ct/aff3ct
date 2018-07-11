@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_user<B>
-::Encoder_user(const int K, const int N, const std::string &filename, const int n_frames)
-: Encoder<B>(K, N, n_frames), codewords(), cw_counter(0)
+::Encoder_user(const int K, const int N, const std::string &filename, const int n_frames, const int start_idx)
+: Encoder<B>(K, N, n_frames), codewords(), cw_counter(start_idx)
 {
 	const std::string name = "Encoder_user";
 	this->set_name(name);
@@ -78,6 +78,8 @@ Encoder_user<B>
 		message << "Can't open '" + filename + "' file.";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	cw_counter %= (int)codewords.size();
 }
 
 template <typename B>
