@@ -69,6 +69,11 @@ void Encoder::parameters
 		"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
 
 	args.add(
+		{p+"-start-idx"},
+		tools::Integer(tools::Positive()),
+		"Start idx to use in the USER type encoder.");
+
+	args.add(
 		{p+"-seed", "S"},
 		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");
@@ -86,6 +91,7 @@ void Encoder::parameters
 	if(vals.exist({p+"-type"          })) this->type       = vals.at    ({p+"-type"          });
 	if(vals.exist({p+"-path"          })) this->path       = vals.at    ({p+"-path"          });
 	if(vals.exist({p+"-no-sys"        })) this->systematic = false;
+	if(vals.exist({p+"-start-idx"     })) this->start_idx  = vals.to_int({p+"-start-idx"     });
 
 	this->R = (float)this->K / (float)this->N_cw;
 }
