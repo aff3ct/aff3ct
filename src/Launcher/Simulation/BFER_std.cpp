@@ -80,6 +80,7 @@ void BFER_std<B,R,Q>
 	this->args.erase({pmnt+"-info-bits", "K"});
 	this->args.erase({pmnt+"-fra-size",  "N"});
 	this->args.erase({pmnt+"-fra",       "F"});
+	this->args.erase({pmnt+"-trials",    "n"});
 	this->args.erase({pter+"-info-bits", "K"});
 	this->args.erase({pter+"-cw-size",   "N"});
 }
