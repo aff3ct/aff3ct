@@ -30,6 +30,7 @@ struct Encoder : public Factory
 		int         n_frames    = 1;
 		int         seed        = 0;
 		int         tail_length = 0;
+		int         start_idx   = 0;
 
 		// deduced parameters
 		float       R           = -1.f;

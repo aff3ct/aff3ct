@@ -99,10 +99,15 @@ template <typename B>
 module::Source<B>* Source::parameters
 ::build() const
 {
-	     if (this->type == "RAND" && this->implem == "STD" ) return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "RAND" && this->implem == "FAST") return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "AZCW" && this->implem == "STD" ) return new module::Source_AZCW       <B>(this->K,             this->n_frames);
-	else if (this->type == "USER" && this->implem == "STD" ) return new module::Source_user       <B>(this->K, this->path, this->n_frames);
+	if (this->type == "RAND")
+	{
+		if (this->implem == "STD")
+			return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
+		else if (this->implem == "FAST")
+			return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
+	}
+	else if (this->type == "AZCW") return new module::Source_AZCW<B>(this->K,             this->n_frames);
+	else if (this->type == "USER") return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
