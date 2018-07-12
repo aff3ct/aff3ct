@@ -24,12 +24,13 @@ namespace module
 {
 	namespace mnt
 	{
-		enum class tsk : uint8_t { check_errors, get_mutual_info, SIZE };
+		enum class tsk : uint8_t { check_errors, get_mutual_info, check_mutual_info, SIZE };
 
 		namespace sck
 		{
-			enum class check_errors    : uint8_t { U, V, SIZE };
-			enum class get_mutual_info : uint8_t { X, Y, SIZE };
+			enum class check_errors      : uint8_t { U, V, SIZE };
+			enum class get_mutual_info   : uint8_t { X, Y, SIZE };
+			enum class check_mutual_info : uint8_t { bits, llrs_a, llrs_e, SIZE };
 		}
 	}
 

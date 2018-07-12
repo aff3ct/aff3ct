@@ -60,6 +60,18 @@ Reporter_throughput<T>
 }
 
 template <typename T>
+template <typename B, typename R>
+Reporter_throughput<T>
+::Reporter_throughput(const module::Monitor_EXIT<B,R>& m)
+: Reporter_throughput(std::bind(&module::Monitor_EXIT<B,R>::get_n_trials, &m),
+	                  (T)m.get_n_trials_limit(),
+	                  std::bind(&module::Monitor_EXIT<B,R>::get_n_trials, &m),
+	                  (T)m.get_N())
+{
+
+}
+
+template <typename T>
 Reporter::report_t Reporter_throughput<T>
 ::report(bool final)
 {

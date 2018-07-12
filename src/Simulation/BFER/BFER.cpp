@@ -141,6 +141,7 @@ BFER<B,R,Q>
 	if (rep_noise != nullptr) { delete rep_noise; rep_noise = nullptr; }
 	if (rep_er    != nullptr) { delete rep_er;    rep_er    = nullptr; }
 	if (rep_mi    != nullptr) { delete rep_mi;    rep_mi    = nullptr; }
+	if (rep_throughput != nullptr) { delete rep_throughput; rep_throughput = nullptr; }
 
 	if (monitor_mi_red != nullptr) { delete monitor_mi_red; monitor_mi_red = nullptr; }
 	if (monitor_er_red != nullptr) { delete monitor_er_red; monitor_er_red = nullptr; }

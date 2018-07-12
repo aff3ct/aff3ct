@@ -9,6 +9,7 @@
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
+#include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
 #include "../Reporter.hpp"
 
@@ -41,6 +42,9 @@ public:
 
 	template<typename B, typename R>
 	explicit Reporter_throughput(const module::Monitor_MI<B,R>& m);
+
+	template<typename B, typename R>
+	explicit Reporter_throughput(const module::Monitor_EXIT<B,R>& m);
 
 	virtual ~Reporter_throughput() = default;
 
