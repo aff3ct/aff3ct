@@ -216,14 +216,14 @@ void Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
 			{
 				const auto var_id = this->H[cc][v];
 				v_out = (var_id == (unsigned)vv) ? v : v_out;
-				contributions[v] = var_nodes[var_id] - messages[off_msg +v];
-				this->up_rule.compute_chk_node_in(v, contributions[v]);
+				this->contributions[v] = var_nodes[var_id] - messages[off_msg +v];
+				this->up_rule.compute_chk_node_in(v, this->contributions[v]);
 			}
 			this->up_rule.end_chk_node_in();
 
 			msg_acc -= messages[off_msg + v_out];
 			this->up_rule.begin_chk_node_out(cc, chk_degree);
-			messages[off_msg + v_out] = this->up_rule.compute_chk_node_out(v_out, contributions[v_out]);
+			messages[off_msg + v_out] = this->up_rule.compute_chk_node_out(v_out, this->contributions[v_out]);
 			this->up_rule.end_chk_node_out();
 			msg_acc += messages[off_msg + v_out];
 		}

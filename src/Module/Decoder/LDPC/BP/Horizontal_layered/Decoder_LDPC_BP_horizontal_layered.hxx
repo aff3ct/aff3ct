@@ -167,16 +167,16 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 		this->up_rule.begin_chk_node_in(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
 		{
-			contributions[v] = var_nodes[this->H[c][v]] - messages[kr++];
-			this->up_rule.compute_chk_node_in(v, contributions[v]);
+			this->contributions[v] = var_nodes[this->H[c][v]] - messages[kr++];
+			this->up_rule.compute_chk_node_in(v, this->contributions[v]);
 		}
 		this->up_rule.end_chk_node_in();
 
 		this->up_rule.begin_chk_node_out(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
 		{
-			messages[kw] = this->up_rule.compute_chk_node_out(v, contributions[v]);
-			var_nodes[this->H[c][v]] = contributions[v] + messages[kw++];
+			messages[kw] = this->up_rule.compute_chk_node_out(v, this->contributions[v]);
+			var_nodes[this->H[c][v]] = this->contributions[v] + messages[kw++];
 		}
 		this->up_rule.end_chk_node_out();
 	}
