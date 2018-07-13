@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Source_user<B>
-::Source_user(const int K, const std::string filename, const int n_frames)
-: Source<B>(K, n_frames), source(), src_counter(0)
+::Source_user(const int K, const std::string filename, const int n_frames, const int start_idx)
+: Source<B>(K, n_frames), source(), src_counter(start_idx)
 {
 	const std::string name = "Source_user";
 	this->set_name(name);
@@ -64,6 +64,8 @@ Source_user<B>
 	}
 	else
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Can't open '" + filename + "' file.");
+
+	src_counter %= (int)source.size();
 }
 
 template <typename B>
@@ -83,7 +85,7 @@ void Source_user<B>
 	this->src_counter = (this->src_counter +1) % (int)this->source.size();
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Source_user<B_8>;

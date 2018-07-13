@@ -28,6 +28,7 @@ struct Source : public Factory
 		std::string path     = "";
 		int         n_frames = 1;
 		int         seed     = 0;
+		int         start_idx= 0;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Source_prefix);

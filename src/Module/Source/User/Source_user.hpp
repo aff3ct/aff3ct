@@ -19,7 +19,7 @@ private:
 	int src_counter;
 
 public:
-	Source_user(const int K, std::string filename, const int n_frames = 1);
+	Source_user(const int K, std::string filename, const int n_frames = 1, const int start_idx = 0);
 	virtual ~Source_user();
 
 protected:
