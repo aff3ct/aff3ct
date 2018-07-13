@@ -14,19 +14,40 @@ using namespace aff3ct::tools;
 
 template <typename R>
 Reporter_noise<R>
-::Reporter_noise(Noise<R>* const& noise)
-: Reporter(),
-  noise(noise),
-  saved_noise_type(noise != nullptr ? noise->get_type() : Noise_type::SIGMA)
+::Reporter_noise(const Noise<R>* const* _noise)
+: Reporter_noise(new Noise_ptr(_noise))
 {
-	if (noise == nullptr)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "'noise' is null pointer.");
+}
+
+template <typename R>
+Reporter_noise<R>
+::Reporter_noise(const Noise<R>* _noise)
+: Reporter_noise(new Noise_ptr(_noise))
+{
+}
+
+template <typename R>
+Reporter_noise<R>
+::Reporter_noise(const Noise<R>& _noise)
+: Reporter_noise(new Noise_ptr(_noise))
+{
+}
+
+template <typename R>
+Reporter_noise<R>
+::Reporter_noise(Noise_ptr* noise_ptr)
+: Reporter(),
+  noise_ptr(noise_ptr),
+  saved_noise_type(get_noise_ptr() != nullptr ? get_noise_ptr()->get_type() : Noise_type::SIGMA)
+{
+	if (get_noise_ptr() == nullptr)
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'noise' is a null pointer.");
 
 
 	auto& Noise_title = noise_group.first;
 	auto& Noise_cols  = noise_group.second;
 
-	switch (this->noise->get_type())
+	switch (get_noise_ptr()->get_type())
 	{
 		case Noise_type::SIGMA :
 			Noise_title = {"Signal Noise Ratio", "(SNR)"};
@@ -47,15 +68,22 @@ Reporter_noise<R>
 }
 
 template <typename R>
+Reporter_noise<R>
+::~Reporter_noise()
+{
+	if (noise_ptr != nullptr) delete noise_ptr;
+}
+
+template <typename R>
 Reporter::report_t Reporter_noise<R>
 ::report(bool final)
 {
-	if (this->saved_noise_type != this->noise->get_type())
+	if (this->saved_noise_type != get_noise_ptr()->get_type())
 	{
 		std::stringstream message;
-		message << "The noise to report has a different noise type 'noise.get_type()' than the one saved in"
+		message << "The noise to report has a different noise type '(*noise)->get_type()' than the one saved in"
 		        << " the constructor 'saved_noise_type' ('saved_noise_type' = " << type_to_str(this->saved_noise_type)
-		        << " and 'noise.get_type()' = " << type_to_str(this->noise->get_type()) << ").";
+		        << " and '(*noise)->get_type()' = " << type_to_str(get_noise_ptr()->get_type()) << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -69,11 +97,11 @@ Reporter::report_t Reporter_noise<R>
 
 	std::stringstream stream;
 
-	switch (this->noise->get_type())
+	switch (get_noise_ptr()->get_type())
 	{
 		case Noise_type::SIGMA :
 		{
-			auto sig = dynamic_cast<const tools::Sigma<>*>(this->noise);
+			auto sig = dynamic_cast<const tools::Sigma<>*>(get_noise_ptr());
 
 			stream << std::setprecision(2) << std::fixed << sig->get_esn0();
 			noise_report.push_back(stream.str());
@@ -84,12 +112,12 @@ Reporter::report_t Reporter_noise<R>
 		}
 		case Noise_type::ROP :
 		{
-			stream << std::setprecision(2) << std::fixed << this->noise->get_noise();
+			stream << std::setprecision(2) << std::fixed << get_noise_ptr()->get_noise();
 			break;
 		}
 		case Noise_type::EP :
 		{
-			stream << std::setprecision(4) << std::fixed << this->noise->get_noise();
+			stream << std::setprecision(4) << std::fixed << get_noise_ptr()->get_noise();
 			break;
 		}
 	}
@@ -99,6 +127,15 @@ Reporter::report_t Reporter_noise<R>
 
 	return the_report;
 }
+
+template <typename R>
+const Noise<R>* Reporter_noise<R>
+::get_noise_ptr() const
+{
+	return noise_ptr->get_noise_ptr();
+}
+
+
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
