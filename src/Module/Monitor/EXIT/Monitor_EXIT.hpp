@@ -146,7 +146,7 @@ public:
 	//                               MPI_Aint     displacements[n_MPI_attributes],
 	//                               MPI_Datatype oldtypes     [n_MPI_attributes]);
 
-	Monitor_BFER(const Vals_mpi& v)
+	Monitor_EXIT(const Vals_mpi& v)
 	: Monitor(v.n_frames),
 	  I_A_sum(v.I_A_sum),
 	  n_trials(v.n_trials),
