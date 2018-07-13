@@ -131,11 +131,6 @@ protected:
 public:
 
 	// static constexpr unsigned n_MPI_attributes = 3;
-
-	R I_A_sum;
-	unsigned long long n_trials;
-
-	const unsigned max_n_trials;
 	struct Vals_mpi
 	{
 		int n_frames;
