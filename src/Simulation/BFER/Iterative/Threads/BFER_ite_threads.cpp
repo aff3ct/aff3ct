@@ -54,7 +54,11 @@ void BFER_ite_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params_BFER_ite.n_threads; tid++)
 		threads[tid -1].join();
 
+#ifndef ENABLE_MPI
 	this->monitor_er_red->reduce(true);
+#else
+	module::Monitor_mpi::reduce(true);
+#endif
 
 	if (!this->prev_err_messages.empty())
 		throw std::runtime_error(this->prev_err_messages.back());
