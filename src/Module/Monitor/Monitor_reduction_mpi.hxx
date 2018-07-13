@@ -33,13 +33,9 @@ void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *da
 
 template <class M>
 Monitor_reduction_mpi<M>
-::Monitor_reduction_mpi(const std::vector<M*> &monitors,
-                        const std::thread::id master_thread_id,
-                        const std::chrono::nanoseconds d_mpi_comm_frequency)
-: Monitor_reduction<M>(monitors),
-  master_thread_id(master_thread_id),
-  d_mpi_comm_frequency(d_mpi_comm_frequency),
-  t_last_mpi_comm(std::chrono::steady_clock::now())
+::Monitor_reduction_mpi(const std::vector<M*> &monitors)
+: Monitor_mpi(),
+  Monitor_reduction<M>(monitors)
 {
 	const std::string name = "Monitor_reduction_mpi<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
@@ -93,27 +89,18 @@ Monitor_reduction_mpi<M>
 
 template <class M>
 void Monitor_reduction_mpi<M>
-::reduce(bool fully)
+::_reduce(bool fully)
 {
-	fully = false;
+	Monitor_reduction<M>::reduce(fully);
 
-	// only the master thread can do this
-	if (std::this_thread::get_id() == this->master_thread_id &&
-	    ((std::chrono::steady_clock::now() - t_last_mpi_comm) >= d_mpi_comm_frequency))
-	{
-		Monitor_reduction<M>::reduce(fully);
+	typename M::Vals_mpi mvals_recv;
 
-		typename M::Vals_mpi mvals_recv;
+	auto mvals_send = this->get_vals_mpi();
 
-		auto mvals_send = this->get_vals_mpi();
+	MPI_Allreduce(&mvals_send, &mvals_recv, 1,
+	              MPI_monitor_vals, MPI_SUM_monitor_vals, MPI_COMM_WORLD);
 
-		MPI_Allreduce(&mvals_send, &mvals_recv, 1,
-		              MPI_monitor_vals, MPI_SUM_monitor_vals, MPI_COMM_WORLD);
-
-		M::copy(mvals_recv);
-
-		t_last_mpi_comm = std::chrono::steady_clock::now();
-	}
+	M::copy(mvals_recv);
 }
 
 template <class M>

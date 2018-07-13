@@ -4,6 +4,10 @@
 #include <chrono>
 #include <thread>
 
+#ifdef ENABLE_MPI
+#include "Module/Monitor/Monitor_reduction_mpi.hpp"
+#endif
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 
@@ -468,8 +472,12 @@ void BFER_ite_threads<B,R,Q>
 
 		monitor[mnt::tsk::check_errors].exec();
 
+#ifndef ENABLE_MPI
 		if (tid == 0)
 			this->monitor_er_red->reduce(false);
+#else
+		module::Monitor_mpi::reduce(false);
+#endif
 	}
 }
 
