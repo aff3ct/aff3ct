@@ -64,8 +64,7 @@ EXIT<B,R>
 
 	this->modules["monitor"][0] = this->monitor;
 
-
-	rep_noise = new tools::Reporter_noise<R>(&this->noise);
+	rep_noise = new tools::Reporter_noise<R>(this->noise);
 	reporters.push_back(rep_noise);
 
 	rep_exit = new tools::Reporter_EXIT<B,R>(*this->monitor, this->noise_a);
@@ -173,17 +172,23 @@ void EXIT<B,R>
 					auto mdm_bytes =            mdm[mdm::sck::demodulate::Y_N2].get_databytes();
 					std::fill(mdm_data, mdm_data + mdm_bytes, 0);
 				}
+				this->noise_a.set_noise(std::numeric_limits<R>::infinity());
 			}
 			else
 			{
-				this->noise_a.set_noise(2.f / sig_a);
+				const R bit_rate = 1.;
+				auto sig_a_2 = (R)2. / sig_a;
+				R sig_a_esn0 = tools::sigma_to_esn0(sig_a_2, params_EXIT.mdm->upf);
+				R sig_a_ebn0 = tools::esn0_to_ebn0 (sig_a_esn0, bit_rate, params_EXIT.mdm->bps);
+
+				this->noise_a.set_noise(sig_a_2, sig_a_ebn0, sig_a_esn0);
 				channel_a->set_noise(this->noise_a);
 				modem_a  ->set_noise(this->noise_a);
 			}
 
 
-			if (((!params_EXIT.ter->disabled && noise_idx == 0 && sig_a_idx == 0 &&
-				!params_EXIT.debug) || (params_EXIT.statistics && !params_EXIT.debug)))
+			if ((!params_EXIT.ter->disabled && noise_idx == 0 && sig_a_idx == 0 && !params_EXIT.debug)
+				|| (params_EXIT.statistics && !params_EXIT.debug))
 				terminal->legend(std::cout);
 
 			// start the terminal to display BER/FER results
@@ -191,7 +196,9 @@ void EXIT<B,R>
 				!params_EXIT.debug)
 				this->terminal->start_temp_report(params_EXIT.ter->frequency);
 
+
 			this->simulation_loop();
+
 
 			if (!params_EXIT.ter->disabled)
 			{
@@ -327,7 +334,7 @@ void EXIT<B,R>
 		modem  [mdm::tsk::modulate].exec();
 
 		//if sig_a = 0, La_K = 0, no noise to add
-		if (sig_a != 0)
+		if (sig_a != (R)0.)
 		{
 			// Rayleigh channel
 			if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)

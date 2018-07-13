@@ -116,7 +116,7 @@ BFER<B,R,Q>
 
 	this->noise = params_BFER.noise->template build<R>(0);
 
-	rep_noise = new tools::Reporter_noise<R>(this->noise);
+	rep_noise = new tools::Reporter_noise<R>(&this->noise);
 	reporters.push_back(rep_noise);
 
 	if (params_BFER.mutinfo)

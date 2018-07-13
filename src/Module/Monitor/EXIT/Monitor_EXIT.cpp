@@ -13,7 +13,8 @@ Monitor_EXIT<B,R>
 : Monitor(n_frames),
   I_A_sum((R)0),
   n_trials(0),
-  max_n_trials(max_n_trials)
+  max_n_trials(max_n_trials),
+  N(N)
 {
 	const std::string name = "Monitor_EXIT";
 	this->set_name(name);

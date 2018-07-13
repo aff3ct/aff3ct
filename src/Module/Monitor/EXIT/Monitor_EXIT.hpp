@@ -24,13 +24,13 @@ protected:
 	unsigned long long n_trials;
 
 	const unsigned max_n_trials;
+	const int N;
 
 	std::vector<std::function<void(void)>> callbacks_measure;
 
 	std::vector<B> bits_buff;
 	std::vector<R> llrs_e_buff;
 
-	int N;
 
 public:
 	Monitor_EXIT(const int size, const unsigned max_n_trials, const int n_frames = 1);
@@ -137,8 +137,8 @@ public:
 
 		R I_A_sum;
 		unsigned long long n_trials;
-		unsigned max_n_trials;
 
+		unsigned max_n_trials;
 		int N;
 	};
 

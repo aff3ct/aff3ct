@@ -44,11 +44,19 @@ Reporter::report_t Reporter_EXIT<B,R>
 	const auto fra   = monitor.get_n_trials();
 	const auto I_A   = monitor.get_I_A();
 	const auto I_E   = monitor.get_I_E();
-	const auto sig_a = noise_a.get_noise();
 
 	std::stringstream str_sig_a, str_fra, str_I_A, str_I_E;
 
-	str_sig_a << std::setprecision(2) << std::fixed << sig_a;
+	str_sig_a << std::setprecision(2) << std::fixed;
+	try
+	{
+		str_sig_a << noise_a.get_noise();
+	}
+	catch(tools::runtime_error&)
+	{
+		str_sig_a << (R)0.;
+	}
+
 	str_fra   << std::setprecision(2) << std::fixed << fra;
 	str_I_A   << std::setprecision(6) << std::fixed << I_A;
 	str_I_E   << std::setprecision(6) << std::fixed << I_E;

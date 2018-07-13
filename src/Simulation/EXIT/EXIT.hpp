@@ -35,9 +35,9 @@ protected:
 	const factory::EXIT::parameters &params_EXIT; // simulation parameters
 
 	// code specifications
-	tools::Sigma<R> noise;   // current noise simulated
-	tools::Sigma<R> noise_a; // current noise simulated for the "a" part
-	float sig_a;
+	tools::Sigma<R>  noise;   // current noise simulated
+	tools::Sigma<R>  noise_a; // current noise simulated for the "a" part
+	R sig_a;
 
 	// communication chain
 	module::Source      <B  > *source;
