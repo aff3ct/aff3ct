@@ -500,18 +500,6 @@ if args.mpinp > 0 or args.mpihost != "":
 		argsAFFECTcommand += ["--hostfile", str(args.mpihost)]
 
 
-argsAFFECTcommand += ["./bin/aff3ct"]
-
-
-argsAFFECTcommand += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
-if args.maxFE:
-	argsAFFECTcommand += ["-e", str(args.maxFE)]
-
-if args.maxSNRTime:
-	argsAFFECTcommand += ["--sim-stop-time", str(args.maxSNRTime)]
-
-
-
 failIds = []
 nErrors = 0
 testId = 0
@@ -541,7 +529,15 @@ for fn in fileNames:
 
 	# get the command line to run
 	argsAFFECT = argsAFFECTcommand
-	argsAFFECT += splitAsCommand(simuRef.RunCommand)[1:]
+	argsAFFECT += splitAsCommand(simuRef.RunCommand)
+
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
+	if args.maxFE:
+		argsAFFECT += ["-e", str(args.maxFE)]
+
+	if args.maxSNRTime:
+		argsAFFECT += ["--sim-stop-time", str(args.maxSNRTime)]
+
 
 	noiseVals = ""
 	for n in range(len(simuRef.Noise)):
