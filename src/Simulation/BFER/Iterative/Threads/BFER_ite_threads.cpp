@@ -57,7 +57,7 @@ void BFER_ite_threads<B,R,Q>
 #ifndef ENABLE_MPI
 	this->monitor_er_red->reduce(true);
 #else
-	module::Monitor_mpi::reduce(true);
+	module::Monitor_mpi::reduce(true, true);
 #endif
 
 	if (!this->prev_err_messages.empty())
@@ -480,8 +480,7 @@ void BFER_ite_threads<B,R,Q>
 		if (tid == 0)
 			this->monitor_er_red->reduce(false);
 #else
-		if (tid == 0)
-			module::Monitor_mpi::reduce(false);
+		module::Monitor_mpi::reduce(false);
 #endif
 	}
 }

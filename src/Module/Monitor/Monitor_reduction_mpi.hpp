@@ -19,7 +19,7 @@ namespace module
 class Monitor_mpi
 {
 public:
-	static void reduce(bool fully = false);
+	static void reduce(bool fully = false, bool force = false);
 
 	static void set_master_thread_id  (std::thread::id         );
 	static void set_mpi_comm_frequency(std::chrono::nanoseconds);

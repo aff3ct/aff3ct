@@ -34,11 +34,11 @@ void Monitor_mpi
 }
 
 void Monitor_mpi
-::reduce(bool fully)
+::reduce(bool fully, bool force)
 {
 	// only the master thread can do this
-	if (std::this_thread::get_id() == master_thread_id &&
-	    ((std::chrono::steady_clock::now() - t_last_mpi_comm) >= d_mpi_comm_frequency))
+	if (force || (std::this_thread::get_id() == master_thread_id &&
+	    ((std::chrono::steady_clock::now() - t_last_mpi_comm) >= d_mpi_comm_frequency)))
 	{
 		fully = false;
 
