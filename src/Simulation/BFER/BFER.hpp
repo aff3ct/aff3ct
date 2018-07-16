@@ -23,6 +23,13 @@
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Module/Monitor/Monitor_reduction.hpp"
 
+#ifdef ENABLE_MPI
+#include "Module/Monitor/Monitor_reduction_mpi.hpp"
+#define FORCE_REDUCE_EVERY_LOOP false
+#else
+#define FORCE_REDUCE_EVERY_LOOP true
+#endif
+
 #include "Factory/Simulation/BFER/BFER.hpp"
 
 #include "../Simulation.hpp"
@@ -53,10 +60,15 @@ protected:
 
 	// the monitors of the the BFER simulation
 	using Monitor_BFER_type = module::Monitor_BFER<B>;
-	using Monitor_BFER_reduction_type = module::Monitor_reduction<Monitor_BFER_type>;
+	using Monitor_MI_type   = module::Monitor_MI<B,R>;
 
-	using Monitor_MI_type = module::Monitor_MI<B,R>;
-	using Monitor_MI_reduction_type = module::Monitor_reduction<Monitor_MI_type>;
+#ifdef ENABLE_MPI
+	using Monitor_BFER_reduction_type = module::Monitor_reduction_mpi<Monitor_BFER_type>;
+	using Monitor_MI_reduction_type   = module::Monitor_reduction_mpi<Monitor_MI_type  >;
+#else
+	using Monitor_BFER_reduction_type = module::Monitor_reduction_M<Monitor_BFER_type>;
+	using Monitor_MI_reduction_type   = module::Monitor_reduction_M<Monitor_MI_type  >;
+#endif
 
 	std::vector<Monitor_MI_type*>  monitor_mi;
 	Monitor_MI_reduction_type*     monitor_mi_red;

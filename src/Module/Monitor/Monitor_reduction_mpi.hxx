@@ -34,8 +34,7 @@ void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *da
 template <class M>
 Monitor_reduction_mpi<M>
 ::Monitor_reduction_mpi(const std::vector<M*> &monitors)
-: Monitor_mpi(),
-  Monitor_reduction<M>(monitors)
+: Monitor_reduction_M<M>(monitors)
 {
 	const std::string name = "Monitor_reduction_mpi<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
@@ -91,7 +90,9 @@ template <class M>
 void Monitor_reduction_mpi<M>
 ::_reduce(bool fully)
 {
-	Monitor_reduction<M>::reduce(fully);
+	fully = false;
+
+	Monitor_reduction_M<M>::_reduce(fully);
 
 	typename M::Vals_mpi mvals_recv;
 
@@ -107,9 +108,7 @@ template <class M>
 void Monitor_reduction_mpi<M>
 ::reset()
 {
-	Monitor_reduction<M>::reset();
-
-	t_last_mpi_comm = std::chrono::steady_clock::now();
+	Monitor_reduction_M<M>::reset();
 }
 
 }

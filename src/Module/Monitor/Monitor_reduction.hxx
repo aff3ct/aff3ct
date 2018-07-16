@@ -13,9 +13,10 @@ namespace module
 {
 
 template <class M>
-Monitor_reduction<M>
-::Monitor_reduction(const std::vector<M*> &_monitors)
-: M((_monitors.size() && _monitors.front()) ? *_monitors.front() : M(),
+Monitor_reduction_M<M>
+::Monitor_reduction_M(const std::vector<M*> &_monitors)
+: Monitor_reduction(),
+  M((_monitors.size() && _monitors.front()) ? *_monitors.front() : M(),
 	std::accumulate(_monitors.begin(), _monitors.end(), 0,
                     [](int tot, const M* m) { return tot + m->get_n_frames(); })),
   monitors(_monitors)
@@ -27,7 +28,7 @@ Monitor_reduction<M>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	const std::string name = "Monitor_reduction<" + monitors[0]->get_name() + ">";
+	const std::string name = "Monitor_reduction_M<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
 
 	for (size_t m = 0; m < monitors.size(); m++)
@@ -60,7 +61,7 @@ Monitor_reduction<M>
 }
 
 template <class M>
-void Monitor_reduction<M>
+void Monitor_reduction_M<M>
 ::reset()
 {
 	M::reset();
@@ -70,7 +71,7 @@ void Monitor_reduction<M>
 }
 
 template <class M>
-void Monitor_reduction<M>
+void Monitor_reduction_M<M>
 ::clear_callbacks()
 {
 	M::clear_callbacks();
@@ -80,8 +81,8 @@ void Monitor_reduction<M>
 }
 
 template <class M>
-void Monitor_reduction<M>
-::reduce(bool fully)
+void Monitor_reduction_M<M>
+::_reduce(bool fully)
 {
 	M collecter(*this);
 

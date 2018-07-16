@@ -11,10 +11,6 @@
 #include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/Exception/exception.hpp"
 
-#ifdef ENABLE_MPI
-#include "Module/Monitor/Monitor_reduction_mpi.hpp"
-#endif
-
 #include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
@@ -78,13 +74,8 @@ BFER<B,R,Q>
 		modules["monitor_er"][tid] = this->monitor_er[tid];
 	}
 
-	#ifdef ENABLE_MPI
-		// build a monitor to compute BER/FER (reduce the other monitors)
-		this->monitor_er_red = new module::Monitor_reduction_mpi<Monitor_BFER_type>(this->monitor_er);
-	#else
-		// build a monitor to compute BER/FER (reduce the other monitors)
-		this->monitor_er_red = new Monitor_BFER_reduction_type(this->monitor_er);
-	#endif
+	// build a monitor to compute BER/FER (reduce the other monitors)
+	this->monitor_er_red = new Monitor_BFER_reduction_type(this->monitor_er);
 
 
 	if (params_BFER.mutinfo)
@@ -96,19 +87,14 @@ BFER<B,R,Q>
 			modules["monitor_mi"][tid] = this->monitor_mi[tid];
 		}
 
-		#ifdef ENABLE_MPI
-			// build a monitor to compute BER/FER (reduce the other monitors)
-			this->monitor_mi_red = new module::Monitor_reduction_mpi<Monitor_MI_type>(this->monitor_mi);
-		#else
-			// build a monitor to compute BER/FER (reduce the other monitors)
-			this->monitor_mi_red = new Monitor_MI_reduction_type(this->monitor_mi);
-		#endif
+		// build a monitor to compute MI (reduce the other monitors)
+		this->monitor_mi_red = new Monitor_MI_reduction_type(this->monitor_mi);
 	}
 
 
+	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
 	#ifdef ENABLE_MPI
-		module::Monitor_mpi::set_master_thread_id  (std::this_thread::get_id());
-		module::Monitor_mpi::set_mpi_comm_frequency(params_BFER.mpi_comm_freq );
+	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
 	#endif
 
 	if (!params_BFER.noise->pdf_path.empty())

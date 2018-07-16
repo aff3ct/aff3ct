@@ -4,10 +4,6 @@
 #include <chrono>
 #include <thread>
 
-#ifdef ENABLE_MPI
-#include "Module/Monitor/Monitor_reduction_mpi.hpp"
-#endif
-
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 
@@ -54,13 +50,9 @@ void BFER_std_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params_BFER_std.n_threads; tid++)
 		threads[tid -1].join();
 
-#ifndef ENABLE_MPI
-	this->monitor_er_red->reduce(true);
-	if (this->params_BFER_std.mutinfo) // this->monitor_mi_red != nullptr
-		this->monitor_mi_red->reduce(true);
-#else
-	module::Monitor_mpi::reduce(true, true);
-#endif
+
+	module::Monitor_reduction::reduce(true, true);
+
 
 	if (!this->prev_err_messages_to_display.empty())
 		throw std::runtime_error(this->prev_err_messages_to_display.back());
@@ -379,20 +371,9 @@ void BFER_std_threads<B,R,Q>
 			auto &monitor = *this->monitor_mi[tid];
 
 			monitor[mnt::tsk::get_mutual_info].exec();
-
-#ifndef ENABLE_MPI
-			if (tid == 0)
-				this->monitor_mi_red->reduce(false);
-#endif
 		}
 
-#ifndef ENABLE_MPI
-		if (tid == 0)
-			this->monitor_er_red->reduce(false);
-#else
-		module::Monitor_mpi::reduce(false); // if (tid == 0) done inside
-#endif
-
+		module::Monitor_reduction::reduce(false, FORCE_REDUCE_EVERY_LOOP); // if (tid == 0) done inside
 	}
 }
 

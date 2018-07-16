@@ -40,9 +40,6 @@ namespace module
  *
  * \brief Monitors the simulated frames, tells if there is a frame errors and counts the number of bit errors.
  *
- * \tparam B: type of the bits in the frames to compare.
- * \tparam R: type of the samples in the channel frame.
- *
  * Please use Monitor for inheritance (instead of Monitor).
  */
 class Monitor : public Module
