@@ -32,6 +32,7 @@ parser.add_argument('--weak-rate',      action='store', dest='weakRate',      ty
 parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a noise point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
 parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                     help='Enable the verbose mode.')
 parser.add_argument('--mpi-np',         action='store', dest='mpinp',         type=int,   default=0,                         help='Enable MPI run with the given number of process each running on "--n-threads" threads.')
+parser.add_argument('--mpi-host',       action='store', dest='mpihost',       type=str,   default="",                        help='Run MPI with the given hosts (file).')
 
 # supported file extensions (filename suffix)
 extensions     = ['.txt', '.perf', '.data', '.dat']
@@ -463,6 +464,7 @@ print('# weak rate      =', args.weakRate     )
 print('# max snr time   =', args.maxSNRTime   )
 print('# verbose        =', args.verbose      )
 print('# MPI nbr proc   =', args.mpinp        )
+print('# MPI host file  =', args.mpihost      )
 print('#')
 
 PathOrigin = os.getcwd()
@@ -508,40 +510,42 @@ for fn in fileNames:
 	# parse the reference file
 	simuRef = dataReader(lines)
 
+	argsAFFECT = []
+
+	if args.mpinp > 0 or args.mpihost != "":
+		argsAFFECT += ["mpirun", "--map-by", "socket"]
+
+		if args.mpinp > 0:
+			argsAFFECT += ["-np", str(args.mpinp)]
+
+		if args.mpihost != "":
+			argsAFFECT += ["--hostfile", str(args.mpihost)]
+
+
 	# get the command line to run
-	argsAFFECT = splitAsCommand(simuRef.RunCommand)
-
-	if args.mpinp > 0:
-		argsAFFECT.insert(0, str(args.mpinp))
-		argsAFFECT.insert(0, "-np")
-		argsAFFECT.insert(0, "mpirun")
+	argsAFFECT += splitAsCommand(simuRef.RunCommand)
 
 
-	argsAFFECT.append("--ter-freq")
-	argsAFFECT.append("0")
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
 	if args.maxFE:
-		argsAFFECT.append("-e")
-		argsAFFECT.append(str(args.maxFE))
-	argsAFFECT.append("-t")
-	argsAFFECT.append(str(args.nThreads))
-	argsAFFECT.append("--sim-no-colors")
+		argsAFFECT += ["-e", str(args.maxFE)]
+
 	if args.maxSNRTime:
-		argsAFFECT.append("--sim-stop-time")
-		argsAFFECT.append(str(args.maxSNRTime))
+		argsAFFECT += ["--sim-stop-time", str(args.maxSNRTime)]
+
 
 	noiseVals = ""
 	for n in range(len(simuRef.Noise)):
 		if n != 0:
 			noiseVals += ",";
-
 		noiseVals += str(simuRef.Noise[n])
 
-	argsAFFECT.append("-R")
-	argsAFFECT.append(noiseVals)
+
+	argsAFFECT += ["-R", noiseVals]
 
 	if simuRef.NoiseType == "Eb/N0":
-		argsAFFECT.append("-E")
-		argsAFFECT.append("EBN0")
+		argsAFFECT += ["-E", "EBN0"]
+
 
 
 	# run the tested simulator
