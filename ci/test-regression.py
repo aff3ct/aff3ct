@@ -528,7 +528,7 @@ for fn in fileNames:
 
 
 	# get the command line to run
-	argsAFFECT = argsAFFECTcommand
+	argsAFFECT = argsAFFECTcommand[:]
 	argsAFFECT += splitAsCommand(simuRef.RunCommand)
 
 	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
@@ -550,7 +550,6 @@ for fn in fileNames:
 
 	if simuRef.NoiseType == "Eb/N0":
 		argsAFFECT += ["-E", "EBN0"]
-
 
 
 	# run the tested simulator
