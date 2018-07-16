@@ -177,7 +177,14 @@ void BFER_ite<B,R,Q>
 	params.mdm->      n_frames = params.src->n_frames;
 	params.chn->      n_frames = params.src->n_frames;
 	params.qnt->      n_frames = params.src->n_frames;
-	params.mnt_er->      n_frames = params.src->n_frames;
+	params.mnt_er->   n_frames = params.src->n_frames;
+
+
+#ifdef ENABLE_MPI
+	auto pter = params.ter->get_prefix();
+	if (!this->arg_vals.exist({pter+"-freq"}))
+		params.ter->frequency = params.mpi_comm_freq;
+#endif
 }
 
 template <typename B, typename R, typename Q>
