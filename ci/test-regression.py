@@ -486,9 +486,37 @@ if (len(fileNames) - (args.startId -1) > 0) :
 else:
 	print("# (WW) There is no simulation to replay.")
 
+
+
+argsAFFECTcommand = []
+
+if args.mpinp > 0 or args.mpihost != "":
+	argsAFFECTcommand += ["mpirun", "--map-by", "socket"]
+
+	if args.mpinp > 0:
+		argsAFFECTcommand += ["-np", str(args.mpinp)]
+
+	if args.mpihost != "":
+		argsAFFECTcommand += ["--hostfile", str(args.mpihost)]
+
+
+argsAFFECTcommand += ["./bin/aff3ct"]
+
+
+argsAFFECTcommand += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
+if args.maxFE:
+	argsAFFECTcommand += ["-e", str(args.maxFE)]
+
+if args.maxSNRTime:
+	argsAFFECTcommand += ["--sim-stop-time", str(args.maxSNRTime)]
+
+
+
 failIds = []
 nErrors = 0
 testId = 0
+
+
 for fn in fileNames:
 	if testId < args.startId -1:
 		testId = testId + 1
@@ -510,29 +538,10 @@ for fn in fileNames:
 	# parse the reference file
 	simuRef = dataReader(lines)
 
-	argsAFFECT = []
-
-	if args.mpinp > 0 or args.mpihost != "":
-		argsAFFECT += ["mpirun", "--map-by", "socket"]
-
-		if args.mpinp > 0:
-			argsAFFECT += ["-np", str(args.mpinp)]
-
-		if args.mpihost != "":
-			argsAFFECT += ["--hostfile", str(args.mpihost)]
-
 
 	# get the command line to run
-	argsAFFECT += splitAsCommand(simuRef.RunCommand)
-
-
-	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
-	if args.maxFE:
-		argsAFFECT += ["-e", str(args.maxFE)]
-
-	if args.maxSNRTime:
-		argsAFFECT += ["--sim-stop-time", str(args.maxSNRTime)]
-
+	argsAFFECT = argsAFFECTcommand
+	argsAFFECT += splitAsCommand(simuRef.RunCommand)[1:]
 
 	noiseVals = ""
 	for n in range(len(simuRef.Noise)):
