@@ -390,7 +390,8 @@ void BFER_std_threads<B,R,Q>
 		if (tid == 0)
 			this->monitor_er_red->reduce(false);
 #else
-		module::Monitor_mpi::reduce(false);
+		if (tid == 0)
+			module::Monitor_mpi::reduce(false);
 #endif
 
 	}
