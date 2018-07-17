@@ -4,6 +4,7 @@
 # ==================================================================== PACKAGES
 
 import os
+import signal
 import sys
 import math
 import time
@@ -555,9 +556,15 @@ for fn in fileNames:
 	# run the tested simulator
 	os.chdir(args.buildPath)
 	startTime = time.time()
-	processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE,
-	                                             stderr=subprocess.PIPE)
-	(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+	try:
+		processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE,
+		                                             stderr=subprocess.PIPE)
+		(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+	except KeyboardInterrupt:
+		os.kill(processAFFECT.pid, signal.SIGINT)
+		(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+
+
 	returnCode = processAFFECT.returncode
 	elapsedTime = time.time() - startTime
 
@@ -645,7 +652,7 @@ for fn in fileNames:
 		if args.verbose:
 			print (comp.getResumeTable())
 
-	if errAndWarnMessages:
+	if not returnCode and errAndWarnMessages:
 		print("---- Warning message(s):", end="\n");
 		print(errAndWarnMessages)
 		fRes.write(errAndWarnMessages)
@@ -656,11 +663,16 @@ for fn in fileNames:
 	testId = testId + 1
 
 
+	if elapsedTime < 0.5:
+		break;
+
+
+
 if len(fileNames) - (args.startId -1) > 0:
 	if nErrors == 0:
-		print("# (II) All the tests PASSED !", end="\n");
+		print("\n# (II) All the tests PASSED !", end="\n");
 	else:
-		print("# (II) Some tests FAILED: ", end="")
+		print("\n# (II) Some tests FAILED: ", end="")
 		f = 0
 		for failId in failIds:
 			print("n°", end="")
