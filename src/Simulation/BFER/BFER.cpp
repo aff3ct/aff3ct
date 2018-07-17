@@ -65,59 +65,13 @@ BFER<B,R,Q>
 		dumper_red = new tools::Dumper_reduction(dumpers);
 	}
 
-
-
-	modules["monitor_er"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
-	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-	{
-		this->monitor_er[tid] = this->build_monitor_er(tid);
-		modules["monitor_er"][tid] = this->monitor_er[tid];
-	}
-
-	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_er_red = new Monitor_BFER_reduction_type(this->monitor_er);
-
-
-	if (params_BFER.mutinfo)
-	{
-		modules["monitor_mi"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
-		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-		{
-			this->monitor_mi[tid] = this->build_monitor_mi(tid);
-			modules["monitor_mi"][tid] = this->monitor_mi[tid];
-		}
-
-		// build a monitor to compute MI (reduce the other monitors)
-		this->monitor_mi_red = new Monitor_MI_reduction_type(this->monitor_mi);
-	}
-
-
-	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
-	#ifdef ENABLE_MPI
-	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
-	#endif
-
 	if (!params_BFER.noise->pdf_path.empty())
 		distributions = new tools::Distributions<R>(params_BFER.noise->pdf_path);
 
+	this->build_monitors ();
+	this->build_reporters();
 
-
-	this->noise = params_BFER.noise->template build<R>(0);
-
-	rep_noise = new tools::Reporter_noise<R>(&this->noise);
-	reporters.push_back(rep_noise);
-
-	if (params_BFER.mutinfo)
-	{
-		rep_mi = new tools::Reporter_MI<B,R>(*this->monitor_mi_red);
-		reporters.push_back(rep_mi);
-	}
-
-	rep_er = new tools::Reporter_BFER<B>(*this->monitor_er_red);
-	reporters.push_back(rep_er);
-
-	rep_throughput = new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red);
-	reporters.push_back(rep_throughput);
+	this->terminal = this->build_terminal();
 }
 
 template <typename B, typename R, typename Q>
@@ -167,10 +121,7 @@ template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
 ::launch()
 {
-	this->terminal = this->build_terminal();
-
-
-	if (!this->params_BFER.err_track_revert)
+	if (!params_BFER.err_track_revert)
 	{
 		this->build_communication_chain();
 
@@ -204,7 +155,7 @@ void BFER<B,R,Q>
 			this->distributions->read_distribution(this->noise->get_noise());
 
 
-		if (this->params_BFER.err_track_revert)
+		if (params_BFER.err_track_revert)
 		{
 			this->release_objects();
 			this->monitor_er_red->clear_callbacks();
@@ -247,10 +198,10 @@ void BFER<B,R,Q>
 			}
 		}
 
-		if (params_BFER.display_legend)
 		#ifdef ENABLE_MPI
-			if (params_BFER.mpi_rank == 0)
+		if (params_BFER.mpi_rank == 0)
 		#endif
+		if (params_BFER.display_legend)
 			if ((!params_BFER.ter->disabled && noise_idx == noise_begin && !params_BFER.debug)
 				|| (params_BFER.statistics && !params_BFER.debug))
 				terminal->legend(std::cout);
@@ -261,6 +212,9 @@ void BFER<B,R,Q>
 	#endif
 		if (!params_BFER.ter->disabled && params_BFER.ter->frequency != std::chrono::nanoseconds(0) && !params_BFER.debug)
 			terminal->start_temp_report(params_BFER.ter->frequency);
+
+
+		this->t_start_noise_point = std::chrono::steady_clock::now();
 
 		try
 		{
@@ -402,6 +356,66 @@ tools::Terminal* BFER<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
+::build_reporters()
+{
+	this->noise = params_BFER.noise->template build<R>(0);
+
+	this->rep_noise = new tools::Reporter_noise<R>(&this->noise);
+	this->reporters.push_back(this->rep_noise);
+
+	if (params_BFER.mutinfo)
+	{
+		this->rep_mi = new tools::Reporter_MI<B,R>(*this->monitor_mi_red);
+		this->reporters.push_back(this->rep_mi);
+	}
+
+	this->rep_er = new tools::Reporter_BFER<B>(*this->monitor_er_red);
+	this->reporters.push_back(this->rep_er);
+
+	this->rep_throughput = new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red);
+	this->reporters.push_back(this->rep_throughput);
+
+}
+
+template <typename B, typename R, typename Q>
+void BFER<B,R,Q>
+::build_monitors()
+{
+	// build a monitor to compute BER/FER on each thread
+	this->modules["monitor_er"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
+	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
+	{
+		this->monitor_er[tid] = this->build_monitor_er(tid);
+		this->modules["monitor_er"][tid] = this->monitor_er[tid];
+	}
+
+	// build a monitor to reduce BER/FER from the other monitors
+	this->monitor_er_red = new Monitor_BFER_reduction_type(this->monitor_er);
+
+
+	if (params_BFER.mutinfo)
+	{
+		// build a monitor to compute MIon each thread
+		this->modules["monitor_mi"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
+		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
+		{
+			this->monitor_mi[tid] = this->build_monitor_mi(tid);
+			this->modules["monitor_mi"][tid] = this->monitor_mi[tid];
+		}
+
+		// build a monitor to reduce M from the other monitors
+		this->monitor_mi_red = new Monitor_MI_reduction_type(this->monitor_mi);
+	}
+
+	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
+	#ifdef ENABLE_MPI
+	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
+	// #else reduction is forced for every loop with macro FORCE_REDUCE_EVERY_LOOP
+	#endif
+}
+
+template <typename B, typename R, typename Q>
+void BFER<B,R,Q>
 ::start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid)
 {
 	try
@@ -432,6 +446,32 @@ void BFER<B,R,Q>
 		}
 		simu->mutex_exception.unlock();
 	}
+}
+
+template <typename B, typename R, typename Q>
+bool BFER<B,R,Q>
+::keep_looping_noise_point()
+{
+	// communication chain execution
+	return !tools::Terminal::is_interrupt()             // if user stopped the simulation
+	      && !this->monitor_er_red->fe_limit_achieved() // while max frame error count has not been reached
+	      && !this->stop_time_reached()
+	      && !this->max_frame_reached();
+}
+
+template <typename B, typename R, typename Q>
+bool BFER<B,R,Q>
+::max_frame_reached()
+{
+	return params_BFER.max_frame > 0 && this->monitor_er_red->get_n_analyzed_fra() >= params_BFER.max_frame;
+}
+
+template <typename B, typename R, typename Q>
+bool BFER<B,R,Q>
+::stop_time_reached()
+{
+	using namespace std::chrono;
+	return params_BFER.stop_time != seconds(0) && (steady_clock::now() - this->t_start_noise_point) >= params_BFER.stop_time;
 }
 
 // ==================================================================================== explicit template instantiation

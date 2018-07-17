@@ -91,6 +91,9 @@ protected:
 	// noise distribution
 	tools::Distributions<R> *distributions;
 
+	std::chrono::steady_clock::time_point t_start_noise_point;
+
+
 public:
 	explicit BFER(const factory::BFER::parameters& params_BFER);
 	virtual ~BFER();
@@ -106,9 +109,17 @@ protected:
 	Monitor_BFER_type* build_monitor_er(const int tid = 0);
 
 	tools::Terminal* build_terminal();
+	void build_reporters();
+	void build_monitors ();
+
+	virtual bool keep_looping_noise_point();
+	bool max_frame_reached();
+	bool stop_time_reached();
 
 private:
 	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);
+
+
 };
 }
 }

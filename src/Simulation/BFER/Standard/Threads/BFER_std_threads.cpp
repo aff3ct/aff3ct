@@ -50,9 +50,7 @@ void BFER_std_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params_BFER_std.n_threads; tid++)
 		threads[tid -1].join();
 
-
 	module::Monitor_reduction::reduce(true, true);
-
 
 	if (!this->prev_err_messages_to_display.empty())
 		throw std::runtime_error(this->prev_err_messages_to_display.back());
@@ -274,15 +272,9 @@ void BFER_std_threads<B,R,Q>
 	auto &monitor    = *this->monitor_er[tid];
 
 	using namespace module;
-	using namespace std::chrono;
-	auto t_snr = steady_clock::now();
 
 	// communication chain execution
-	while (!tools::Terminal::is_interrupt() && !this->monitor_er_red->fe_limit_achieved() && // while max frame error count has not been reached
-	       (this->params_BFER_std.stop_time == seconds(0) ||
-	         (steady_clock::now() - t_snr) < this->params_BFER_std.stop_time) &&
-	       (this->params_BFER_std.max_frame == 0 ||
-	         this->monitor_er_red->get_n_analyzed_fra() < this->params_BFER_std.max_frame))
+	while (this->keep_looping_noise_point())
 	{
 		if (this->params_BFER_std.debug)
 		{
