@@ -8,7 +8,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Monitor_reduction_mpi.hpp"
+#include "Monitor_reduction_MPI.hpp"
 #include "MI/Monitor_MI.hpp"
 
 namespace aff3ct
@@ -32,11 +32,11 @@ void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *da
 }
 
 template <class M>
-Monitor_reduction_mpi<M>
-::Monitor_reduction_mpi(const std::vector<M*> &monitors)
+Monitor_reduction_MPI<M>
+::Monitor_reduction_MPI(const std::vector<M*> &monitors)
 : Monitor_reduction_M<M>(monitors)
 {
-	const std::string name = "Monitor_reduction_mpi<" + monitors[0]->get_name() + ">";
+	const std::string name = "Monitor_reduction_MPI<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
 
 	// int          blen         [M::n_MPI_attributes];
@@ -87,7 +87,7 @@ Monitor_reduction_mpi<M>
 }
 
 template <class M>
-void Monitor_reduction_mpi<M>
+void Monitor_reduction_MPI<M>
 ::_reduce(bool fully)
 {
 	fully = false;
@@ -107,7 +107,7 @@ void Monitor_reduction_mpi<M>
 }
 
 template <class M>
-void Monitor_reduction_mpi<M>
+void Monitor_reduction_MPI<M>
 ::reset()
 {
 	Monitor_reduction_M<M>::reset();
