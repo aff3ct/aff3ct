@@ -98,6 +98,8 @@ void Monitor_reduction_mpi<M>
 
 	auto mvals_send = this->get_vals_mpi();
 
+	MPI_Barrier(MPI_COMM_WORLD);
+
 	MPI_Allreduce(&mvals_send, &mvals_recv, 1,
 	              MPI_monitor_vals, MPI_SUM_monitor_vals, MPI_COMM_WORLD);
 
