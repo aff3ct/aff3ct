@@ -72,8 +72,6 @@ Reporter::report_t Reporter_EXIT<B,R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::tools::Reporter_EXIT<B_8 , R_8 >;
-template class aff3ct::tools::Reporter_EXIT<B_16, R_16>;
 template class aff3ct::tools::Reporter_EXIT<B_32, R_32>;
 template class aff3ct::tools::Reporter_EXIT<B_64, R_64>;
 #else
