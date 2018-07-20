@@ -14,18 +14,18 @@ namespace module
 template <class M> // M is the monitor on which must be applied the reduction
 class Monitor_reduction_MPI : public Monitor_reduction_M<M>
 {
-private:
-	MPI_Datatype MPI_monitor_vals;
-	MPI_Op       MPI_SUM_monitor_vals;
-
 public:
 	Monitor_reduction_MPI(const std::vector<M*> &monitors);
 	virtual ~Monitor_reduction_MPI() = default;
 
-	void reset();
+	virtual void reset();
 
 protected:
-	virtual void _reduce(bool fully = false);
+	virtual bool _reduce(bool fully = false, bool last = false);
+
+private:
+	MPI_Datatype MPI_monitor_vals;
+	MPI_Op       MPI_SUM_monitor_vals;
 };
 }
 }

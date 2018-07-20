@@ -72,6 +72,13 @@ void Monitor_reduction_M<M>
 
 template <class M>
 void Monitor_reduction_M<M>
+::reset_mr()
+{
+	this->reset();
+}
+
+template <class M>
+void Monitor_reduction_M<M>
 ::clear_callbacks()
 {
 	M::clear_callbacks();
@@ -81,8 +88,8 @@ void Monitor_reduction_M<M>
 }
 
 template <class M>
-void Monitor_reduction_M<M>
-::_reduce(bool fully)
+bool Monitor_reduction_M<M>
+::_reduce(bool fully, bool last)
 {
 	M collecter(*this);
 
@@ -90,6 +97,8 @@ void Monitor_reduction_M<M>
 		collecter.collect(*m, fully);
 
 	M::copy(collecter, fully);
+
+	return last;
 }
 
 }

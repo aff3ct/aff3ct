@@ -50,7 +50,7 @@ void BFER_ite_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params_BFER_ite.n_threads; tid++)
 		threads[tid -1].join();
 
-	module::Monitor_reduction::reduce(true, true);
+	module::Monitor_reduction::last_reduce(true);
 
 	if (!this->prev_err_messages.empty())
 		throw std::runtime_error(this->prev_err_messages.back());

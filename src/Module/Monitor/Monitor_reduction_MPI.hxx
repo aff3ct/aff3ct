@@ -87,23 +87,27 @@ Monitor_reduction_MPI<M>
 }
 
 template <class M>
-void Monitor_reduction_MPI<M>
-::_reduce(bool fully)
+bool Monitor_reduction_MPI<M>
+::_reduce(bool fully, bool last)
 {
 	fully = false;
 
 	Monitor_reduction_M<M>::_reduce(fully);
 
 	typename M::Vals_mpi mvals_recv;
-
 	auto mvals_send = this->get_vals_mpi();
-
-	MPI_Barrier(MPI_COMM_WORLD);
 
 	MPI_Allreduce(&mvals_send, &mvals_recv, 1,
 	              MPI_monitor_vals, MPI_SUM_monitor_vals, MPI_COMM_WORLD);
-
 	M::copy(mvals_recv);
+
+
+	char last_recv = true;
+
+	MPI_Allreduce(&last, &last_recv, 1,
+	              MPI_CHAR, MPI_LAND, MPI_COMM_WORLD);
+
+	return last_recv;
 }
 
 template <class M>

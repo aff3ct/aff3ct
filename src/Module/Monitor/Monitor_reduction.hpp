@@ -16,26 +16,47 @@ namespace module
 class Monitor_reduction
 {
 public:
+	/*
+	 * make a reduction every 'd_reduce_frequency' except if the 'force' argument is set
+	 * the reduction can be done only by the master thread 'master_thread_id'
+	 */
 	static void reduce(bool fully = false, bool force = false);
+
+	/*
+	 * loop on a forced reduction until all '__reduce__' call return 'true'
+	 * the reduction can be done only by the master thread 'master_thread_id'
+	 */
+	static void last_reduce(bool fully = false);
+
+
+	/*
+	 * reset 't_last_mpi_comm', clear 'at_last_reduce' and call 'reset_mr' on each monitor
+	 */
+	static void reset_all();
 
 	static void set_master_thread_id(std::thread::id          t);
 	static void set_reduce_frequency(std::chrono::nanoseconds d);
+
 
 protected:
 	Monitor_reduction();
 	virtual ~Monitor_reduction() = default;
 
-	virtual void _reduce(bool fully = false) = 0;
+	virtual bool _reduce(bool fully = false, bool last = false) = 0;
+	virtual void reset_mr() = 0;
 
 private:
 	static void add_monitor(Monitor_reduction*);
-	static void reset();
 
+	static bool                            at_last_reduce;
 	static std::vector<Monitor_reduction*> monitors;
 	static std::thread::id                 master_thread_id;
 	static std::chrono::nanoseconds        d_reduce_frequency;
 
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_mpi_comm;
+
+	static bool __reduce__(bool fully, bool force, bool last);
+
 };
 
 
@@ -55,7 +76,10 @@ public:
 	virtual void clear_callbacks();
 
 protected:
-	virtual void _reduce(bool fully = false);
+	virtual bool _reduce(bool fully = false, bool last = false);
+
+private:
+	void reset_mr();
 };
 }
 }

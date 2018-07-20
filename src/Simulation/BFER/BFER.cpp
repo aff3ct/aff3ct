@@ -216,6 +216,7 @@ void BFER<B,R,Q>
 
 		this->t_start_noise_point = std::chrono::steady_clock::now();
 
+
 		try
 		{
 			this->_launch();
@@ -228,6 +229,7 @@ void BFER<B,R,Q>
 			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 			this->simu_error = true;
 		}
+
 
 	#ifdef ENABLE_MPI
 		if (params_BFER.mpi_rank == 0)
@@ -306,12 +308,15 @@ void BFER<B,R,Q>
 		    (params_BFER.max_frame == 0 || this->monitor_er_red->get_n_analyzed_fra() >= params_BFER.max_frame))
 			tools::Terminal::stop();
 
+		#ifdef ENABLE_MPI
+		if (MPI_simu_is_over())
+			tools::Terminal::stop();
+		#endif
+
+
 		if (tools::Terminal::is_over())
 			break;
 
-		this->monitor_er_red->reset();
-		if (this->monitor_mi_red != nullptr)
-			this->monitor_mi_red->reset();
 
 		for (auto &m : modules)
 			for (auto mm : m.second)
@@ -319,7 +324,9 @@ void BFER<B,R,Q>
 					for (auto &t : mm->tasks)
 						t->reset_stats();
 
+		module::Monitor_reduction::reset_all();
 		tools::Terminal::reset();
+
 	}
 
 	this->release_objects();
@@ -412,6 +419,8 @@ void BFER<B,R,Q>
 	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
 	// #else reduction is forced for every loop with macro FORCE_REDUCE_EVERY_LOOP
 	#endif
+
+	module::Monitor_reduction::reset_all();
 }
 
 template <typename B, typename R, typename Q>
@@ -453,8 +462,8 @@ bool BFER<B,R,Q>
 ::keep_looping_noise_point()
 {
 	// communication chain execution
-	return !tools::Terminal::is_interrupt()             // if user stopped the simulation
-	      && !this->monitor_er_red->fe_limit_achieved() // while max frame error count has not been reached
+	return !tools::Terminal::is_interrupt() // if user stopped the simulation
+	      && !this->monitor_er_red->done() // while max frame error count has not been reached
 	      && !this->stop_time_reached()
 	      && !this->max_frame_reached();
 }
@@ -473,6 +482,21 @@ bool BFER<B,R,Q>
 	using namespace std::chrono;
 	return params_BFER.stop_time != seconds(0) && (steady_clock::now() - this->t_start_noise_point) >= params_BFER.stop_time;
 }
+
+#ifdef ENABLE_MPI
+template <typename B, typename R, typename Q>
+bool BFER<B,R,Q>
+::MPI_simu_is_over()
+{
+	char over_send = tools::Terminal::is_over();
+	char over_recv;
+
+	MPI_Allreduce(&over_send, &over_recv, 1,
+	              MPI_CHAR, MPI_LOR, MPI_COMM_WORLD);
+
+	return (bool)over_recv;
+}
+#endif
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

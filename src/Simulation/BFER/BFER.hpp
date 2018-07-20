@@ -119,6 +119,9 @@ protected:
 private:
 	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);
 
+#ifdef ENABLE_MPI
+	bool MPI_simu_is_over();
+#endif
 
 };
 }
