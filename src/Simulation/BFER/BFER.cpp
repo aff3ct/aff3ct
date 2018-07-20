@@ -417,7 +417,10 @@ void BFER<B,R,Q>
 	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
 	#ifdef ENABLE_MPI
 	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
-	// #else reduction is forced for every loop with macro FORCE_REDUCE_EVERY_LOOP
+	module::Monitor_reduction::set_n_processes     (params_BFER.mpi_size     );
+	#else
+	//reduction is forced for every loop with macro FORCE_REDUCE_EVERY_LOOP
+	module::Monitor_reduction::set_n_processes(1);
 	#endif
 
 	module::Monitor_reduction::reset_all();
@@ -462,10 +465,11 @@ bool BFER<B,R,Q>
 ::keep_looping_noise_point()
 {
 	// communication chain execution
-	return !tools::Terminal::is_interrupt() // if user stopped the simulation
-	      && !this->monitor_er_red->done() // while max frame error count has not been reached
-	      && !this->stop_time_reached()
-	      && !this->max_frame_reached();
+	return !(tools::Terminal::is_interrupt() // if user stopped the simulation
+	         || this->monitor_er_red->done() // while max frame error count has not been reached
+	         || module::Monitor_reduction::get_stop_loop()
+	         || this->stop_time_reached()
+	         || this->max_frame_reached());
 }
 
 template <typename B, typename R, typename Q>

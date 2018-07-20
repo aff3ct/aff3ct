@@ -21,7 +21,7 @@ public:
 	virtual void reset();
 
 protected:
-	virtual bool _reduce(bool fully = false, bool last = false);
+	virtual int _reduce(bool fully = false, bool stop_simu = false); // return the number of process that stopped the simu
 
 private:
 	MPI_Datatype MPI_monitor_vals;

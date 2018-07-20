@@ -6,11 +6,12 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-bool                                                                         aff3ct::module::Monitor_reduction::at_last_reduce = false;
+int                                                                          aff3ct::module::Monitor_reduction::number_processes = 1;
+bool                                                                         aff3ct::module::Monitor_reduction::stop_loop = false;
 std::vector<aff3ct::module::Monitor_reduction*>                              aff3ct::module::Monitor_reduction::monitors;
 std::thread::id                                                              aff3ct::module::Monitor_reduction::master_thread_id = std::this_thread::get_id();
 std::chrono::nanoseconds                                                     aff3ct::module::Monitor_reduction::d_reduce_frequency = std::chrono::milliseconds(1000);
-std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> aff3ct::module::Monitor_reduction::t_last_mpi_comm;
+std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> aff3ct::module::Monitor_reduction::t_last_reduction;
 
 
 Monitor_reduction
@@ -28,8 +29,8 @@ void Monitor_reduction
 void Monitor_reduction
 ::reset_all()
 {
-	t_last_mpi_comm  = std::chrono::steady_clock::now();
-	at_last_reduce   = false;
+	t_last_reduction = std::chrono::steady_clock::now();
+	stop_loop        = false;
 
 		for(auto& m : monitors)
 			m->reset_mr();
@@ -38,12 +39,14 @@ void Monitor_reduction
 void Monitor_reduction
 ::reduce(bool fully, bool force)
 {
-	__reduce__(fully, force, false);
+	stop_loop = __reduce__(fully, force, false);
 }
 
 void Monitor_reduction
 ::last_reduce(bool fully)
 {
+	stop_loop = true;
+
 	while(!__reduce__(fully, true, true))
 		;
 }
@@ -55,27 +58,45 @@ void Monitor_reduction
 }
 
 void Monitor_reduction
+::set_n_processes(int np)
+{
+	number_processes = np;
+}
+
+void Monitor_reduction
 ::set_reduce_frequency(std::chrono::nanoseconds d)
 {
 	d_reduce_frequency = d;
 }
 
+bool Monitor_reduction
+::get_stop_loop()
+{
+	return stop_loop;
+}
+
 
 bool Monitor_reduction
-::__reduce__(bool fully, bool force, bool last)
+::__reduce__(bool fully, bool force, bool stop_simu)
 {
-	bool all_done = last;
+	bool stop = stop_simu;
 
 	// only the master thread can do this
 	if (std::this_thread::get_id() == master_thread_id
-	    && (force || (std::chrono::steady_clock::now() - t_last_mpi_comm) >= d_reduce_frequency)
+	    && (force || (std::chrono::steady_clock::now() - t_last_reduction) >= d_reduce_frequency)
 	   )
 	{
 		for(auto& m : monitors)
-			all_done &= m->_reduce(fully, last);
+		{
+			int n_stop = m->_reduce(fully, stop_simu);
+			if (stop_simu)
+				stop &= n_stop == number_processes;
+			else
+				stop |= n_stop != 0;
+		}
 
-		t_last_mpi_comm = std::chrono::steady_clock::now();
+		t_last_reduction = std::chrono::steady_clock::now();
 	}
 
-	return all_done;
+	return stop;
 }

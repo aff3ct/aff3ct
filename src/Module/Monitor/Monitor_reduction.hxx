@@ -88,8 +88,8 @@ void Monitor_reduction_M<M>
 }
 
 template <class M>
-bool Monitor_reduction_M<M>
-::_reduce(bool fully, bool last)
+int Monitor_reduction_M<M>
+::_reduce(bool fully, bool stop_simu)
 {
 	M collecter(*this);
 
@@ -98,7 +98,7 @@ bool Monitor_reduction_M<M>
 
 	M::copy(collecter, fully);
 
-	return last;
+	return stop_simu ? 1 : 0;
 }
 
 }

@@ -25,37 +25,43 @@ public:
 	/*
 	 * loop on a forced reduction until all '__reduce__' call return 'true'
 	 * the reduction can be done only by the master thread 'master_thread_id'
+	 * set 'stop_loop' to true
 	 */
 	static void last_reduce(bool fully = false);
 
 
 	/*
-	 * reset 't_last_mpi_comm', clear 'at_last_reduce' and call 'reset_mr' on each monitor
+	 * reset 't_last_mpi_comm', clear 'stop_loop' and call 'reset_mr' on each monitor
 	 */
 	static void reset_all();
 
 	static void set_master_thread_id(std::thread::id          t);
 	static void set_reduce_frequency(std::chrono::nanoseconds d);
+	static void set_n_processes     (int                     np);
+	static bool get_stop_loop();
 
 
 protected:
 	Monitor_reduction();
 	virtual ~Monitor_reduction() = default;
 
-	virtual bool _reduce(bool fully = false, bool last = false) = 0;
+	// return the number of process that asked to stop the simulation (at last_reduce)
+	virtual int _reduce(bool fully = false, bool stop_simu = false) = 0;
+
 	virtual void reset_mr() = 0;
 
 private:
 	static void add_monitor(Monitor_reduction*);
 
-	static bool                            at_last_reduce;
+	static int                             number_processes;
+	static bool                            stop_loop;
 	static std::vector<Monitor_reduction*> monitors;
 	static std::thread::id                 master_thread_id;
 	static std::chrono::nanoseconds        d_reduce_frequency;
 
-	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_mpi_comm;
+	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_reduction;
 
-	static bool __reduce__(bool fully, bool force, bool last);
+	static bool __reduce__(bool fully, bool force, bool stop_simu);
 
 };
 
@@ -76,7 +82,7 @@ public:
 	virtual void clear_callbacks();
 
 protected:
-	virtual bool _reduce(bool fully = false, bool last = false);
+	virtual int _reduce(bool fully = false, bool stop_simu = false);  // return the number of process that stopped the simu
 
 private:
 	void reset_mr();
