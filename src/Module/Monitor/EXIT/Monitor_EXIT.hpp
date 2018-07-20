@@ -98,12 +98,12 @@ public:
 
 	unsigned get_n_trials_limit() const;
 
-	virtual bool n_trials_achieved() const;
+	bool n_trials_achieved() const;
 
-	virtual R get_I_E() const;
-	virtual R get_I_A() const;
+	R get_I_E() const;
+	R get_I_A() const;
 
-	virtual unsigned long long get_n_trials() const;
+	unsigned long long get_n_trials() const;
 
 	virtual void add_handler_measure(std::function<void(void)> callback);
 
@@ -121,6 +121,8 @@ public:
 
 	Monitor_EXIT<B,R>& operator=(const Monitor_EXIT<B,R>& m); // not full "copy" call
 
+
+	virtual bool done() const;
 
 protected:
 	virtual void _check_mutual_info_avg  (const B *bits, const R *llrs_a, const int frame_id);

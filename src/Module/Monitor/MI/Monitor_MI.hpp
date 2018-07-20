@@ -85,14 +85,14 @@ public:
 
 	virtual R get_mutual_info(const B *X, const R *Y, const int frame_id = -1);
 
-	virtual bool n_trials_limit_achieved();
+	bool n_trials_limit_achieved() const;
 	unsigned get_n_trials_limit() const;
 
-	virtual unsigned long long get_n_trials() const;
+	unsigned long long get_n_trials() const;
 
-	virtual R get_MI    () const;
-	virtual R get_MI_min() const;
-	virtual R get_MI_max() const;
+	R get_MI    () const;
+	R get_MI_min() const;
+	R get_MI_max() const;
 	tools::Histogram<R> get_mutinfo_hist() const;
 
 	virtual void add_handler_check                  (std::function<void(void)> callback);
@@ -111,6 +111,7 @@ public:
 
 	Monitor_MI<B,R>& operator=(const Monitor_MI<B,R>& m); // not full "copy" call
 
+	virtual bool done() const;
 
 protected:
 	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);

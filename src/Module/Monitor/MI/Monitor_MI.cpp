@@ -162,7 +162,7 @@ void Monitor_MI<B,R>
 
 template <typename B, typename R>
 bool Monitor_MI<B,R>
-::n_trials_limit_achieved()
+::n_trials_limit_achieved() const
 {
 	return this->get_n_trials() >= this->get_n_trials_limit();
 }
@@ -305,6 +305,13 @@ Monitor_MI<B,R>& Monitor_MI<B,R>
 {
 	copy(m, false);
 	return *this;
+}
+
+template <typename B, typename R>
+bool Monitor_MI<B,R>
+::done() const
+{
+	return n_trials_limit_achieved();
 }
 
 // #ifdef ENABLE_MPI

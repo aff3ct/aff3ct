@@ -366,6 +366,13 @@ Monitor_EXIT<B,R>& Monitor_EXIT<B,R>
 	return *this;
 }
 
+template <typename B, typename R>
+bool Monitor_EXIT<B,R>
+::done() const
+{
+	return n_trials_achieved();
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

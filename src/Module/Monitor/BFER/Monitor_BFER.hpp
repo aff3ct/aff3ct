@@ -89,15 +89,15 @@ public:
 
 	virtual int check_errors(const B *U, const B *Y, const int frame_id = -1);
 
-	virtual bool fe_limit_achieved();
+	bool fe_limit_achieved() const;
 	unsigned get_fe_limit() const;
 
 	bool get_count_unknown_values() const;
 
-	virtual unsigned long long    get_n_analyzed_fra() const;
-	virtual unsigned long long    get_n_fe          () const;
-	virtual unsigned long long    get_n_be          () const;
-	virtual tools::Histogram<int> get_err_hist      () const;
+	unsigned long long    get_n_analyzed_fra() const;
+	unsigned long long    get_n_fe          () const;
+	unsigned long long    get_n_be          () const;
+	tools::Histogram<int> get_err_hist      () const;
 
 	float get_fer() const;
 	float get_ber() const;
@@ -119,6 +119,9 @@ public:
 	virtual void copy(const Monitor_BFER<B>& m, bool fully = false);
 
 	Monitor_BFER<B>& operator=(const Monitor_BFER<B>& m); // not full "copy" call
+
+
+	virtual bool done() const;
 
 protected:
 	virtual int _check_errors(const B *U, const B *Y, const int frame_id);

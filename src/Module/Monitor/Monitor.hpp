@@ -72,6 +72,11 @@ public:
 	 */
 	virtual void collect(const Monitor& m, bool fully = false) = 0;
 
+	/*
+	 * \brief return true if enough data have been processed and respect check conditions
+	 */
+	virtual bool done() const = 0;
+
 	/*!
 	 * \brief completely copy values of the monitor 'm' into this monitor
 	 */

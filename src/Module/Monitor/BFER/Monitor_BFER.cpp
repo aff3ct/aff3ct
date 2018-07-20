@@ -152,7 +152,7 @@ int Monitor_BFER<B>
 
 template <typename B>
 bool Monitor_BFER<B>
-::fe_limit_achieved()
+::fe_limit_achieved() const
 {
 	return get_n_fe() >= get_fe_limit();
 }
@@ -325,6 +325,13 @@ Monitor_BFER<B>& Monitor_BFER<B>
 {
 	copy(m, false);
 	return *this;
+}
+
+template <typename B>
+bool Monitor_BFER<B>
+::done() const
+{
+	return fe_limit_achieved();
 }
 
 // #ifdef ENABLE_MPI
