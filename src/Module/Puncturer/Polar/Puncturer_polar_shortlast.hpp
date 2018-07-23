@@ -1,5 +1,5 @@
-#ifndef PUNCTURER_POLAR_WANGLIU_HPP_
-#define PUNCTURER_POLAR_WANGLIU_HPP_
+#ifndef PUNCTURER_POLAR_SHORTLAST_HPP_
+#define PUNCTURER_POLAR_SHORTLAST_HPP_
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
@@ -10,17 +10,17 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename Q = float>
-class Puncturer_polar_wangliu : public Puncturer<B,Q>
+class Puncturer_polar_shortlast : public Puncturer<B,Q>
 {
 protected:
 	const tools::Frozenbits_generator &fb_generator;
 
 public:
-	Puncturer_polar_wangliu(const int &K,
+	Puncturer_polar_shortlast(const int &K,
 	                        const int &N,
 	                        const tools::Frozenbits_generator &fb_generator,
 	                        const int n_frames = 1);
-	virtual ~Puncturer_polar_wangliu();
+	virtual ~Puncturer_polar_shortlast();
 
 	void gen_frozen_bits(std::vector<bool> &frozen_bits);
 
@@ -31,4 +31,4 @@ protected:
 }
 }
 
-#endif /* PUNCTURER_POLAR_WANGLIU_HPP_ */
+#endif /* PUNCTURER_POLAR_SHORTLAST_HPP_ */

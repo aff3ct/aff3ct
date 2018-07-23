@@ -263,7 +263,7 @@
 #include <Module/Monitor/Monitor.hpp>
 #include <Module/Puncturer/LDPC/Puncturer_LDPC.hpp>
 #include <Module/Puncturer/NO/Puncturer_NO.hpp>
-#include <Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp>
+#include <Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp>
 #include <Module/Puncturer/Puncturer.hpp>
 #include <Module/Puncturer/Turbo/Puncturer_turbo.hpp>
 #include <Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp>

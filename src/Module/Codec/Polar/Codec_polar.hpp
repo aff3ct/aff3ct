@@ -4,7 +4,7 @@
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
-#include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
+#include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 
 #include "Factory/Module/Encoder/Polar/Encoder_polar.hpp"
 #include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
@@ -25,7 +25,7 @@ protected:
 	std::vector<bool> frozen_bits; // known bits (alias frozen bits) are set to true
 	const bool generated_decoder;
 	tools::Frozenbits_generator *fb_generator;
-	Puncturer_polar_wangliu<B,Q> *puncturer_wangliu;
+	Puncturer_polar_shortlast<B,Q> *puncturer_shortlast;
 	tools::Frozenbits_notifier *fb_decoder;
 	tools::Frozenbits_notifier *fb_encoder;
 
