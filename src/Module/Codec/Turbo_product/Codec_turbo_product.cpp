@@ -93,20 +93,42 @@ Codec_turbo_product<B,Q>
 	dec_bch_rows = dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly, enc_bch_rows));
 	dec_bch_cols = dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly, enc_bch_cols));
 
-	cp_rows = new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
-	                                         *dec_bch_rows, *enc_bch_rows,
-	                                         dec_params.n_least_reliable_positions,
-	                                         dec_params.n_test_vectors,
-	                                         dec_params.n_competitors,
-	                                         dec_params.cp_coef);
 
-	cp_cols = new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
-	                                         *dec_bch_cols, *enc_bch_cols,
-	                                         dec_params.n_least_reliable_positions,
-	                                         dec_params.n_test_vectors,
-	                                         dec_params.n_competitors,
-	                                         dec_params.cp_coef);
+	if (dec_params.implem == "FAST")
+	{
 
+		cp_rows = new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
+		                                         *dec_bch_rows, *enc_bch_rows,
+		                                         dec_params.n_least_reliable_positions,
+		                                         dec_params.n_test_vectors,
+		                                         dec_params.n_competitors,
+		                                         dec_params.cp_coef);
+
+		cp_cols = new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
+		                                         *dec_bch_cols, *enc_bch_cols,
+		                                         dec_params.n_least_reliable_positions,
+		                                         dec_params.n_test_vectors,
+		                                         dec_params.n_competitors,
+		                                         dec_params.cp_coef);
+	}
+	else
+	{
+		cp_rows = new Decoder_chase_pyndiah<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
+		                                         *dec_bch_rows, *enc_bch_rows,
+		                                         dec_params.n_least_reliable_positions,
+		                                         dec_params.n_test_vectors,
+		                                         dec_params.n_competitors,
+		                                         dec_params.cp_coef);
+
+		cp_cols = new Decoder_chase_pyndiah<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
+		                                         *dec_bch_cols, *enc_bch_cols,
+		                                         dec_params.n_least_reliable_positions,
+		                                         dec_params.n_test_vectors,
+		                                         dec_params.n_competitors,
+		                                         dec_params.cp_coef);
+	}
+
+	(*const_cast<std::string*>(&dec_params.implem)) = "STD";
 
 	Encoder_turbo_product<B> *encoder_tpc = nullptr;
 	try

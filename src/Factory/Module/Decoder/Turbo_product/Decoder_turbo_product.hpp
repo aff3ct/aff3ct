@@ -30,6 +30,7 @@ struct Decoder_turbo_product : public Decoder
 		// optional parameters
 		int   n_ite = 4;
 		std::vector<float> alpha;
+		std::vector<float> beta;
 		std::vector<float> cp_coef;
 		int   n_least_reliable_positions = 2;
 		int   n_test_vectors = 0;

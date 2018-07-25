@@ -23,16 +23,18 @@ namespace module
  *   - select the competitor with the smallest metric Dm -> get the decided word D
  *   - if SIHO, return D, if SISO, compute reliabilities of each bit of D -> Pyndiah
  * Pyndiah :
+ *   - a, b, c, d and e are simulation constants changeable by the user
  *   - Compute extrinsic W as
  *          W = F - a * R
  *   - Compute the reliability F of D as, for each bit j of the word:
- *          Fj = Dj * [Cm - Dm] * b                   when Cj /= Dj in the competitor with the smallest metric Cm
- *             = Dj * [beta - c * Dm + d * |Rj|]   when there is no such competitor as described above
+ *        - when Cj /= Dj in the competitor with the smallest metric Cm:
+ *           Fj = Dj * [Cm - Dm] * b
+ *        - when there is no such competitor as described above
+ *           Fj = Dj * beta                        when set by user with 'set_beta' method, or
+ *           Fj = Dj * [slm - c * Dm + d * |Rj|]   with 'slm' the sum from 0 to e of the least reliable metrics Pm
+ *                                                 where 0 < e < p. If e == 0 then sum all Pm.
  *        with Dj =  1 when Hj = 0
  *                = -1 when Hj = 1
- *        with beta = sum from 0 to e of the Pm    where 0 <= e < p
-
- *   - a, b, c, d and e are simulation constants changeable by the user
  */
 
 template <typename B = int, typename R = float>
@@ -67,6 +69,10 @@ protected:
 	std::vector<bool> is_wrong;           // if true then the matching test vector is not a codeword
 	std::vector<std::vector<bool>> test_patterns; // the patterns of the least reliable position to flip
 
+
+	R beta;
+	bool beta_is_set;
+
 public:
 
 	Decoder_chase_pyndiah(const int K, const int N, // N with the parity bit if any
@@ -86,6 +92,11 @@ public:
 	void _decode_siho_cw(const R *Y_N,  B *V_N , const int frame_id);
 
 	const std::vector<uint32_t>& get_info_bits_pos();
+
+	// set the value of beta to use it in the reliability computation
+	// when beta is clear, then compute it dynamically
+	void set_beta(R b);
+	void clear_beta();
 
 protected:
 	virtual void decode_chase           (const R *Y_N, const int frame_id);
