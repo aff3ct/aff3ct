@@ -34,7 +34,6 @@ namespace module
 		}
 	}
 
-
 /*!
  * \class Monitor
  *

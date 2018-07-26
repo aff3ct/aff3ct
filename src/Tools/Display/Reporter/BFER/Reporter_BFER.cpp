@@ -31,7 +31,6 @@ Reporter_BFER<B>
 	this->cols_groups.push_back(BFER_group);
 }
 
-
 std::string format(unsigned long long val)
 {
 	std::stringstream os;

@@ -34,9 +34,9 @@ protected:
 	// the data description
 	std::vector<std::string> desc;
 	size_t ROP_pos;
-	size_t x_pos  ;
-	size_t y0_pos ;
-	size_t y1_pos ;
+	size_t x_pos;
+	size_t y0_pos;
+	size_t y1_pos;
 
 public:
 	explicit Distributions(const std::string& filename, Distribution_mode mode = Distribution_mode::SUMMATION, bool read_all_at_init = false);

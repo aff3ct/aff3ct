@@ -13,7 +13,6 @@ std::thread::id                                                              aff
 std::chrono::nanoseconds                                                     aff3ct::module::Monitor_reduction::d_reduce_frequency = std::chrono::milliseconds(1000);
 std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> aff3ct::module::Monitor_reduction::t_last_reduction;
 
-
 Monitor_reduction
 ::Monitor_reduction()
 {
@@ -47,8 +46,7 @@ void Monitor_reduction
 {
 	stop_loop = true;
 
-	while(!__reduce__(fully, true, true))
-		;
+	while(!__reduce__(fully, true, true));
 }
 
 void Monitor_reduction

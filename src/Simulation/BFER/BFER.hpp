@@ -84,7 +84,7 @@ protected:
 	tools::Reporter_BFER <B>*             rep_er;
 	tools::Reporter_MI <B,R>*             rep_mi;
 	tools::Reporter_noise<R>*             rep_noise;
-	tools::Reporter_throughput<uint64_t>* rep_throughput;
+	tools::Reporter_throughput<uint64_t>* rep_thr;
 	std::vector<tools::Reporter*>         reporters;
 	tools::Terminal* terminal;
 
@@ -92,7 +92,6 @@ protected:
 	tools::Distributions<R> *distributions;
 
 	std::chrono::steady_clock::time_point t_start_noise_point;
-
 
 public:
 	explicit BFER(const factory::BFER::parameters& params_BFER);
@@ -122,7 +121,6 @@ private:
 #ifdef ENABLE_MPI
 	bool MPI_simu_is_over();
 #endif
-
 };
 }
 }

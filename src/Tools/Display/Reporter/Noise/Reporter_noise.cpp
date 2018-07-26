@@ -93,10 +93,7 @@ Reporter::report_t Reporter_noise<R>
 
 	auto& noise_report = the_report[0];
 
-
-
 	std::stringstream stream;
-
 	switch (get_noise_ptr()->get_type())
 	{
 		case Noise_type::SIGMA :

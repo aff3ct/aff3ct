@@ -24,7 +24,6 @@ public:
 	unsigned long long n_be;  // the number of wrong bits
 	unsigned long long n_fe;  // the number of wrong frames
 
-
 	const int K; // Number of source bits
 	const unsigned max_fe; // max number of wrong frames to get then fe_limit_achieved() returns true
 	const bool count_unknown_values; // take into account or not the unknown values as wrong values in the checked frames
@@ -47,7 +46,6 @@ public:
 
 	bool equivalent(const Monitor_BFER<B>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                        // and then can be merged by "collect" or "copy" methods
-
 
 	/*!
 	 * \brief Compares two messages and counts the number of frame errors and bit errors.
@@ -126,10 +124,8 @@ public:
 protected:
 	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
 
-
 #ifdef ENABLE_MPI
 public:
-
 	// static constexpr unsigned n_MPI_attributes = 3;
 
 	struct Vals_mpi
@@ -158,7 +154,6 @@ public:
 	  max_fe (v.max_fe),
 	  count_unknown_values(v.count_unknown_values)
 	{
-
 	}
 
 	Vals_mpi get_vals_mpi() const
@@ -182,7 +177,6 @@ public:
 		n_be  = v.n_be;
 		n_fe  = v.n_fe;
 	}
-
 #endif
 };
 }
