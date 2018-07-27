@@ -15,7 +15,7 @@ Decoder_BCH_std<B, R>
 : Decoder         (K, N,                  n_frames, 1),
   Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames),
   t2(2 * this->t),
-  elp(this->N_p2+2, std::vector<int>(this->N_p2)), discrepancy(this->N_p2+2), l(this->N_p2+2), u_lu(this->N_p2+2), s(t2+1), loc(this->t +1), reg(this->t +1),
+  elp(this->N_p2_1+2, std::vector<int>(this->N_p2_1)), discrepancy(this->N_p2_1+2), l(this->N_p2_1+2), u_lu(this->N_p2_1+2), s(t2+1), loc(this->t +1), reg(this->t +1),
   m(GF_poly.get_m()), d(GF_poly.get_d()), alpha_to(GF_poly.get_alpha_to()), index_of(GF_poly.get_index_of())
 {
 	const std::string name = "Decoder_BCH_std";
@@ -48,7 +48,7 @@ void Decoder_BCH_std<B, R>
 		s[i] = 0;
 		for (j = 0; j < this->N; j++)
 			if (Y_N[j] != 0)
-				s[i] ^= alpha_to[(i * j) % this->N_p2];
+				s[i] ^= alpha_to[(i * j) % this->N_p2_1];
 		if (s[i] != 0)
 			syn_error = 1; /* set error flag if non-zero syndrome */
 		/*
@@ -139,7 +139,7 @@ void Decoder_BCH_std<B, R>
 				for (i = 0; i <= l[q]; i++)
 					if (elp[q][i] != -1)
 						elp[u + 1][i + u - q] =
-							alpha_to[(discrepancy[u] + this->N_p2 - discrepancy[q] + elp[q][i]) % this->N_p2];
+							alpha_to[(discrepancy[u] + this->N_p2_1 - discrepancy[q] + elp[q][i]) % this->N_p2_1];
 				for (i = 0; i <= l[u]; i++)
 				{
 					elp[u + 1][i] ^= elp[u][i];
@@ -158,7 +158,7 @@ void Decoder_BCH_std<B, R>
 					discrepancy[u + 1] = 0;
 				for (i = 1; i <= l[u + 1]; i++)
 					if ((s[u + 1 - i] != -1) && (elp[u + 1][i] != 0))
-						discrepancy[u + 1] ^= alpha_to[(s[u + 1 - i] + index_of[elp[u + 1][i]]) % this->N_p2];
+						discrepancy[u + 1] ^= alpha_to[(s[u + 1 - i] + index_of[elp[u + 1][i]]) % this->N_p2_1];
 				/* put d[u+1] into index form */
 				discrepancy[u + 1] = index_of[discrepancy[u + 1]];
 			}
@@ -176,19 +176,19 @@ void Decoder_BCH_std<B, R>
 			for (i = 1; i <= l[u]; i++)
 				reg[i] = elp[u][i];
 			int count = 0;
-			for (i = 1; i <= this->N_p2; i++)
+			for (i = 1; i <= this->N_p2_1; i++)
 			{
 				q = 1;
 				for (j = 1; j <= l[u]; j++)
 					if (reg[j] != -1)
 					{
-						reg[j] = (reg[j] + j) % this->N_p2;
+						reg[j] = (reg[j] + j) % this->N_p2_1;
 						q ^= alpha_to[reg[j]];
 					}
 				if (!q)
 				{ /* store root and error
 				   * location number indices */
-					loc[count] = this->N_p2 - i;
+					loc[count] = this->N_p2_1 - i;
 					count++;
 				}
 			}
