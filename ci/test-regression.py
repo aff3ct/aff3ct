@@ -134,6 +134,13 @@ class simuData:
 		self.CurveName  = ""
 		self.NoiseType  = ""
 
+def findLine(stringArray, string):
+	for i in range(len(stringArray)):
+		if string in stringArray[i]:
+			return i
+
+	return -1
+
 def dataReader(aff3ctOutput):
 	data = simuData()
 
@@ -151,22 +158,19 @@ def dataReader(aff3ctOutput):
 
 	data.All = np.array(data.All).transpose()
 
-	# get the command to to run to reproduce this trace
-	if len(aff3ctOutput) >= 2 and "Run command:" in aff3ctOutput[0]:
-		data.RunCommand = str(aff3ctOutput[1].strip())
-	elif len(aff3ctOutput) >= 4 and "Run command:" in aff3ctOutput[2]:
-		data.RunCommand = str(aff3ctOutput[3].strip())
+	# get the command to reproduce this trace
+	idx = findLine(aff3ctOutput, "Run command:")
+	if idx != -1 and len(aff3ctOutput) >= idx +1:
+		data.RunCommand = str(aff3ctOutput[idx +1].strip())
 	else:
 		data.RunCommand = ""
 
 	# get the curve name (if there is one)
-	if len(lines) >= 2 and "Curve name:" in lines[0]:
-		data.CurveName = str(lines[1].strip())
-	elif len(lines) >= 4 and "Curve name:" in lines[2]:
-		data.CurveName = str(lines[3].strip())
+	idx = findLine(aff3ctOutput, "Curve name:")
+	if idx != -1 and len(aff3ctOutput) >= idx +1:
+		data.CurveName = str(aff3ctOutput[idx +1].strip())
 	else:
 		data.CurveName = ""
-
 
 	# find the type of noise used in this simulation
 	idx = -1
@@ -504,6 +508,7 @@ if args.mpinp > 0 or args.mpihost != "":
 failIds = []
 nErrors = 0
 testId = 0
+nIgnored = 0
 
 
 for fn in fileNames:
@@ -523,6 +528,13 @@ for fn in fileNames:
 		lines.append(line)
 
 	f.close()
+
+	if lines[0].startswith("#CI"):
+		if lines[0].find("IGNORE") != -1:
+			print(" - IGNORED.", end="\n");
+			testId += 1
+			nIgnored += 1
+			continue
 
 	# parse the reference file
 	simuRef = dataReader(lines)
@@ -660,8 +672,8 @@ for fn in fileNames:
 	fRes.write("# End of the simulation.\n")
 	fRes.close();
 
-	testId = testId + 1
 
+	testId += 1
 
 	if elapsedTime < 0.5:
 		break;
@@ -670,7 +682,7 @@ for fn in fileNames:
 
 if len(fileNames) - (args.startId -1) > 0:
 	if nErrors == 0:
-		print("\n# (II) All the tests PASSED !", end="\n");
+		print("\n# (II) All the tests PASSED !", end="");
 	else:
 		print("\n# (II) Some tests FAILED: ", end="")
 		f = 0
@@ -678,10 +690,13 @@ if len(fileNames) - (args.startId -1) > 0:
 			print("n°", end="")
 			print(str(failId), end="")
 			if f == len(failIds) -1:
-				print(".", end="\n")
+				print(".", end="")
 			else:
 				print(", ", end="")
 			f = f + 1
+
+	print(" " + str(nIgnored) + " files ignored.", end="\n")
+
 
 sys.exit(nErrors);
 
