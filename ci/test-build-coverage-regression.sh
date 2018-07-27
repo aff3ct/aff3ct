@@ -24,6 +24,9 @@ function gen_coverage_info
 	for path in $folder/*
 	do [ -f $path ] && {
 		cmd=$(cat $path | sed -n 2p)
+		if [ cmd=='Run command:' ]; then
+			cmd=$(cat $path | sed -n 3p)
+		fi
 		echo $cmd
 		cd $build
 		eval "${cmd} --sim-stop-time 1 -t 1"
