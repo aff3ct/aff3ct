@@ -34,6 +34,13 @@ Galois
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (m > 20)
+	{
+		std::stringstream message;
+		message << "'m' is supported until 20 ('m' = " << m << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != ((1 << m) -1))
 	{
 		std::stringstream message;
