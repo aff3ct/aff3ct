@@ -40,7 +40,7 @@ function gen_coverage_info
 	done
 }
 
-#compile "${build_root}"
+compile "${build_root}"
 cd ${WD}
 gen_coverage_info "${build_root}" "refs"
 cd ${WD}
