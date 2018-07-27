@@ -24,7 +24,7 @@ function gen_coverage_info
 	for path in $folder/*
 	do [ -f $path ] && {
 		cmd=$(cat $path | sed -n 2p)
-		if [ cmd=='Run command:' ]; then
+		if [ "$cmd" == 'Run command:' ]; then
 			cmd=$(cat $path | sed -n 3p)
 		fi
 		echo $cmd
@@ -40,7 +40,7 @@ function gen_coverage_info
 	done
 }
 
-compile "${build_root}"
+#compile "${build_root}"
 cd ${WD}
 gen_coverage_info "${build_root}" "refs"
 cd ${WD}
