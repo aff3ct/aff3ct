@@ -1,3 +1,4 @@
+
 /*!
  * \file
  * \brief Packs and unpacks bits.
@@ -12,6 +13,7 @@
 #include <sstream>
 #include <vector>
 #include <climits>
+#include <iostream>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -22,24 +24,22 @@ namespace tools
 /*!
  * \class Bit_packer
  *
- * \brief Packs and unpacks bits.
- *
- * \tparam B: type of data to pack/unpack.
+ * \brief Packs and unpacks bits into symbols
  */
-template <typename B = int>
 struct Bit_packer
 {
 	/*!
 	 * \brief Packs bits.
 	 *
-	 * \param vec_in:     an input vector of unpacked bits (only 1 bit per data is used to transport data) (used as size reference).
-	 * \param vec_out:    an output vector of packed bits.
-	 * \param msb_to_lsb: pack from MSB to LSB else from LSB to MSB
- 	 * \tparam Nbps:      the number of bits packed in one symbol (between 1 and 8 (CHAR_BIT)).
+	 * \param vec_in:        an input vector of unpacked bits (only 1 bit per element is used to transport data) (used as size reference).
+	 * \param vec_out:       an output vector of packed bits in symbols
+	 * \param msb_to_lsb:    pack from MSB to LSB else from LSB to MSB
+ 	 * \param pack_per_byte: pack bits in each byte (type char) of vec_out, else pack per each symbol (of type S) of vec_out
+ 	 * \param Nbps:          the number of bits packed in one symbol (between 1 and (sizeof(S) * CHAR_BIT)).
 	 */
-	template <class A = std::allocator<B>>
-	static inline void pack(const std::vector<B,A> &vec_in, std::vector<B,A> &vec_out, const int n_frames = 1,
-	                        const bool msb_to_lsb = false, int Nbps = CHAR_BIT)
+	template <typename B, class AB = std::allocator<B>, typename S, class AS = std::allocator<S>>
+	static inline void pack(const std::vector<B,AB> &vec_in, std::vector<S,AS> &vec_out, const int n_frames = 1,
+	                        const bool msb_to_lsb = false, const bool pack_per_byte = true, const int Nbps = CHAR_BIT)
 	{
 		if (n_frames <= 0)
 		{
@@ -56,58 +56,78 @@ struct Bit_packer
 			throw length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if ((vec_out.size() * sizeof(B) * Nbps) < vec_in.size())
+		if (pack_per_byte)
 		{
-			std::stringstream message;
-			message << "('vec_out.size()' * 'sizeof(B)' * 'Nbps') has to be equal or greater than 'vec_in.size()' "
-			        << "('vec_out.size()' = " << vec_out.size() << ", 'vec_in.size()' = " << vec_in.size()
-			        << ", 'sizeof(B)' = " << sizeof(B) << ", 'Nbps' = " << Nbps << ").";
-			throw length_error(__FILE__, __LINE__, __func__, message.str());
+
+			if ((vec_out.size() * sizeof(S) * Nbps) < vec_in.size())
+			{
+				std::stringstream message;
+				message << "'vec_out.size()' has to be equal or greater than ('vec_in.size()' / 'sizeof(S)' / 'Nbps') "
+				        << "('vec_out.size()' = " << vec_out.size() << ", 'vec_in.size()' = " << vec_in.size()
+				        << ", 'sizeof(S)' = " << sizeof(S) << ", 'Nbps' = " << Nbps << ").";
+				throw length_error(__FILE__, __LINE__, __func__, message.str());
+			}
+
+			Bit_packer::pack(vec_in.data(), (unsigned char*)vec_out.data(), (int)(vec_in.size() / n_frames),
+			                 n_frames, msb_to_lsb, Nbps);
 		}
-
-		Bit_packer<B>::pack(vec_in.data(), vec_out.data(), (int)(vec_in.size() / n_frames), n_frames, msb_to_lsb, Nbps);
-	}
-
-	static inline void pack(const B *vec_in, B *vec_out, const int n_bits_per_frame,
-	                        const int n_frames = 1, const bool msb_to_lsb = false, int Nbps = CHAR_BIT)
-	{
-		if (Nbps > CHAR_BIT && Nbps <= 0)
+		else
 		{
-			std::stringstream message;
-			message << "'Nbps' must be between 1 and CHAR_BIT. ('Nbps' = " << Nbps << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+			if ((vec_out.size() * Nbps) < vec_in.size())
+			{
+				std::stringstream message;
+				message << "'vec_out.size()' has to be equal or greater than ('vec_in.size()' / 'Nbps') "
+				        << "('vec_out.size()' = " << vec_out.size() << ", 'vec_in.size()' = " << vec_in.size()
+				        << ", 'Nbps' = " << Nbps << ").";
+				throw length_error(__FILE__, __LINE__, __func__, message.str());
+			}
+
+			Bit_packer::pack(vec_in.data(), vec_out.data(), (int)(vec_in.size() / n_frames),
+			                 n_frames, msb_to_lsb, Nbps);
 		}
-
-		if (n_bits_per_frame % Nbps)
-		{
-			std::stringstream message;
-			message << "'n_bits_per_frame' has to be divisible by 'Nbps' ('n_bits_per_frame' = " << n_bits_per_frame
-			        << ", 'Nbps' = " << Nbps << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		const auto n_bytes_per_frame = n_bits_per_frame / Nbps;
-
-		auto bytes_out = (unsigned char*)vec_out;
-
-		for (auto f = 0; f < n_frames; f++)
-			Bit_packer<B>::_pack(vec_in         + f * n_bits_per_frame,
-			                     bytes_out      + f * n_bytes_per_frame,
-			                     n_bits_per_frame,
-			                     msb_to_lsb,
-			                     Nbps);
 	}
 
 	/*!
-	 * \brief Packs bits.
+	 * \brief Packs bits into symbols of type S
 	 *
-	 * \param vec:        a vector of unpacked bits (only 1 bit per data is used to transport data).
-	 * \param msb_to_lsb: pack from MSB to LSB else from LSB to MSB
- 	 * \tparam Nbps:      the number of bits packed in one symbol (between 1 and 8 (CHAR_BIT)).
+	 * \param vec_in:          an input vector of unpacked bits (only 1 bit per element is used to transport data)
+	 * \param vec_out:         an output vector of packed bits in symbols of type S
+	 * \param n_bits_per_frame:the number of bits that has to be extracted from vec_in and stocked in vec_out
+	 * \param msb_to_lsb:      pack from MSB to LSB else from LSB to MSB
+ 	 * \param Nbps:            the number of bits packed in one symbol (between 1 and (sizeof(S) * CHAR_BIT)).
 	 */
-	template <class A = std::allocator<B>>
-	static inline void pack(std::vector<B,A> &vec, const int n_frames = 1, const bool msb_to_lsb = false,
-	                        int Nbps = CHAR_BIT)
+	template <typename B, typename S>
+	static inline void pack(const B *vec_in, S *vec_out, const int n_bits_per_frame,
+	                        const int n_frames = 1, const bool msb_to_lsb = false, const int Nbps = CHAR_BIT)
+	{
+		if (Nbps > (int)(sizeof(S) * CHAR_BIT) || Nbps <= 0)
+		{
+			std::stringstream message;
+			message << "'Nbps' must be between 1 and (sizeof(S) * CHAR_BIT). ('Nbps' = " << Nbps
+			        << ", 'sizeof(S)' = " << sizeof(S) << ", 'CHAR_BIT' = " << CHAR_BIT << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		const auto n_symbols_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / Nbps));
+
+		for (auto f = 0; f < n_frames; f++)
+			Bit_packer::_pack(vec_in  + f * n_bits_per_frame,
+			                  vec_out + f * n_symbols_per_frame,
+			                  n_bits_per_frame,
+			                  msb_to_lsb,
+			                  Nbps);
+	}
+
+	/*!
+	 * \brief Packs bits per byte in 'vec'.
+	 *
+	 * \param vec:           a vector of unpacked bits (only 1 bit per data is used to transport data).
+	 * \param msb_to_lsb:    pack from MSB to LSB else from LSB to MSB
+ 	 * \param Nbps:          the number of bits packed in one symbol (between 1 and 8 (CHAR_BIT)).
+	 */
+	template <typename B, class AB = std::allocator<B>>
+	static inline void pack(std::vector<B,AB> &vec, const int n_frames = 1, const bool msb_to_lsb = false,
+	                        const int Nbps = CHAR_BIT)
 	{
 		if (n_frames <= 0)
 		{
@@ -124,50 +144,44 @@ struct Bit_packer
 			throw length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		Bit_packer<B>::pack(vec.data(), (int)(vec.size() / n_frames), n_frames, msb_to_lsb, Nbps);
+		Bit_packer::pack(vec.data(), (int)(vec.size() / n_frames), n_frames, msb_to_lsb, Nbps);
 	}
 
+	template <typename B>
 	static inline void pack(B *vec, const int n_bits_per_frame, const int n_frames = 1, const bool msb_to_lsb = false,
-	                        int Nbps = CHAR_BIT)
+	                        const int Nbps = CHAR_BIT)
 	{
-		if (Nbps > CHAR_BIT && Nbps <= 0)
+		if (Nbps > (int)CHAR_BIT || Nbps <= 0)
 		{
 			std::stringstream message;
 			message << "'Nbps' must be between 1 and CHAR_BIT. ('Nbps' = " << Nbps << ").";
 			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (n_bits_per_frame % Nbps)
-		{
-			std::stringstream message;
-			message << "'n_bits_per_frame' has to be divisible by 'Nbps' ('n_bits_per_frame' = " << n_bits_per_frame
-			        << ", 'Nbps' = " << Nbps << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+		const auto n_symbs_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / Nbps));
 
-		const auto n_bytes_per_frame = n_bits_per_frame / Nbps;
-
-		unsigned char* bytes_out = (unsigned char*)vec;
+		unsigned char* symbs_out = (unsigned char*)vec;
 
 		for (auto f = 0; f < n_frames; f++)
-			Bit_packer<B>::_pack(vec        + f * n_bits_per_frame,
-			                     bytes_out  + f * n_bytes_per_frame,
-			                     n_bits_per_frame,
-			                     msb_to_lsb,
-			                     Nbps);
+			Bit_packer::_pack(vec        + f * n_bits_per_frame,
+			                  symbs_out  + f * n_symbs_per_frame,
+			                  n_bits_per_frame,
+			                  msb_to_lsb,
+			                  Nbps);
 	}
 
 	/*!
-	 * \brief Unpacks bits.
+	 * \brief Unpacks bits from symbols.
 	 *
-	 * \param vec_in:     an input vector of packed bits.
-	 * \param vec_out:    an output vector of unpacked bits (used as size reference)
-	 * \param msb_to_lsb: unpack from MSB to LSB else from LSB to MSB.
- 	 * \tparam Nbps:      the number of bits packed in one symbol (between 1 and 8 (CHAR_BIT)).
+	 * \param vec_in:          an input vector of packed bits.
+	 * \param vec_out:         an output vector of unpacked bits (1 bit per element) (used as size reference)
+	 * \param msb_to_lsb:      unpack from MSB to LSB else from LSB to MSB.
+ 	 * \param unpack_per_byte: unpack symbol in each byte (type char) of vec_out, else unpack per each symbol (of type S) of vec_in
+ 	 * \param Nbps:            the number of bits packed in one symbol (between 1 and (sizeof(S) * CHAR_BIT)).
 	 */
-	template <class A = std::allocator<B>>
-	static inline void unpack(const std::vector<B,A> &vec_in, std::vector<B,A> &vec_out, const int n_frames = 1,
-	                          const bool msb_to_lsb = false, int Nbps = CHAR_BIT)
+	template <typename B, class AB = std::allocator<B>, typename S, class AS = std::allocator<S>>
+	static inline void unpack(const std::vector<S,AS> &vec_in, std::vector<B,AB> &vec_out, const int n_frames = 1,
+	                          const bool msb_to_lsb = false, const bool unpack_per_byte = true, const int Nbps = CHAR_BIT)
 	{
 		if (n_frames <= 0)
 		{
@@ -184,59 +198,77 @@ struct Bit_packer
 			throw length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-
-		if ((vec_in.size() * sizeof(B) * Nbps) < vec_out.size())
+		if (unpack_per_byte)
 		{
-			std::stringstream message;
-			message << "('vec_in.size()' * 'sizeof(B)' * 'Nbps') has to be equal or greater than 'vec_out.size()' "
-			        << "('vec_in.size()' = " << vec_in.size() << ", 'vec_out.size()' = " << vec_out.size()
-			        << ", 'sizeof(B)' = " << sizeof(B) << ", 'Nbps' = " << Nbps << ").";
-			throw length_error(__FILE__, __LINE__, __func__, message.str());
+			if ((vec_in.size() * sizeof(B) * Nbps) < vec_out.size())
+			{
+				std::stringstream message;
+				message << "('vec_in.size()' * 'sizeof(B)' * 'Nbps') has to be equal or greater than 'vec_out.size()' "
+				        << "('vec_in.size()' = " << vec_in.size() << ", 'vec_out.size()' = " << vec_out.size()
+				        << ", 'sizeof(B)' = " << sizeof(B) << ", 'Nbps' = " << Nbps << ").";
+				throw length_error(__FILE__, __LINE__, __func__, message.str());
+			}
+
+			Bit_packer::unpack((unsigned char*)vec_in.data(), vec_out.data(), (int)(vec_out.size() / n_frames),
+			                   n_frames, msb_to_lsb, Nbps);
 		}
-
-		Bit_packer<B>::unpack(vec_in.data(), vec_out.data(), (int)(vec_out.size() / n_frames), n_frames, msb_to_lsb, Nbps);
-	}
-
-	static inline void unpack(const B *vec_in, B *vec_out, const int n_bits_per_frame,
-	                          const int n_frames = 1, const bool msb_to_lsb = false, int Nbps = CHAR_BIT)
-	{
-		if (Nbps > CHAR_BIT && Nbps <= 0)
+		else
 		{
-			std::stringstream message;
-			message << "'Nbps' must be between 1 and CHAR_BIT. ('Nbps' = " << Nbps << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+			if ((vec_in.size() * Nbps) < vec_out.size())
+			{
+				std::stringstream message;
+				message << "('vec_in.size()' * 'Nbps') has to be equal or greater than 'vec_out.size()' "
+				        << "('vec_in.size()' = " << vec_in.size() << ", 'vec_out.size()' = " << vec_out.size()
+				        << ", 'Nbps' = " << Nbps << ").";
+				throw length_error(__FILE__, __LINE__, __func__, message.str());
+			}
+
+			Bit_packer::unpack(vec_in.data(), vec_out.data(), (int)(vec_out.size() / n_frames),
+			                   n_frames, msb_to_lsb, Nbps);
 		}
-
-		if (n_bits_per_frame % Nbps)
-		{
-			std::stringstream message;
-			message << "'n_bits_per_frame' has to be divisible by 'Nbps' ('n_bits_per_frame' = " << n_bits_per_frame
-			        << ", 'Nbps' = " << Nbps << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		const auto n_bytes_per_frame = n_bits_per_frame / Nbps;
-
-		unsigned char* bytes_in = (unsigned char*)vec_in;
-
-		for (auto f = 0; f < n_frames; f++)
-			Bit_packer<B>::_unpack(bytes_in       + f * n_bytes_per_frame,
-			                       vec_out        + f * n_bits_per_frame,
-			                       n_bits_per_frame,
-			                       msb_to_lsb,
-			                       Nbps);
 	}
 
 	/*!
-	 * \brief Unpacks bits.
+	 * \brief Unpacks bits from symbols of type S.
+	 *
+	 * \param vec_in:          an input vector of packed bits in symbols S.
+	 * \param vec_out:         an output vector of unpacked bits (1 bit per element)
+	 * \param n_bits_per_frame:the number of bits that has to be extracted from vec_in and stocked in vec_out
+	 * \param msb_to_lsb:      unpack from MSB to LSB else from LSB to MSB.
+ 	 * \param Nbps:            the number of bits packed in one symbol (between 1 and (sizeof(S) * CHAR_BIT)).
+	 */
+	template <typename B, typename S>
+	static inline void unpack(const S *vec_in, B *vec_out, const int n_bits_per_frame,
+	                          const int n_frames = 1, const bool msb_to_lsb = false, const int Nbps = CHAR_BIT)
+	{
+		if (Nbps > (int)(sizeof(S) * CHAR_BIT) || Nbps <= 0)
+		{
+			std::stringstream message;
+			message << "'Nbps' must be between 1 and (sizeof(S) * CHAR_BIT). ('Nbps' = " << Nbps
+			        << ", 'sizeof(S)' = " << sizeof(S) << ", 'CHAR_BIT' = " << CHAR_BIT << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		const auto n_symbs_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / Nbps));
+
+		for (auto f = 0; f < n_frames; f++)
+			Bit_packer::_unpack(vec_in  + f * n_symbs_per_frame,
+			                    vec_out + f * n_bits_per_frame,
+			                    n_bits_per_frame,
+			                    msb_to_lsb,
+			                    Nbps);
+	}
+
+	/*!
+	 * \brief Unpacks bits per byte of vec
 	 *
 	 * \param vec:        a vector of packed bits (all the bits in each element of vec are used to store bits).
 	 * \param msb_to_lsb: unpack from MSB to LSB else from LSB to MSB
- 	 * \tparam Nbps:      the number of bits packed in one symbol (between 1 and 8 (CHAR_BIT)).
+ 	 * \param Nbps:       the number of bits packed in one symbol (between 1 and 8 (CHAR_BIT)).
 	 */
-	template <class A = std::allocator<B>>
-	static inline void unpack(std::vector<B,A> &vec, const int n_frames = 1, bool msb_to_lsb = false,
-	                          int Nbps = CHAR_BIT)
+	template <typename B, class AB = std::allocator<B>>
+	static inline void unpack(std::vector<B,AB> &vec, const int n_frames = 1, const bool msb_to_lsb = false,
+	                          const int Nbps = CHAR_BIT)
 	{
 		if (n_frames <= 0)
 		{
@@ -253,118 +285,107 @@ struct Bit_packer
 			throw length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		Bit_packer<B>::unpack(vec.data(), (int)(vec.size() / n_frames), n_frames, msb_to_lsb, Nbps);
+		Bit_packer::unpack(vec.data(), (int)(vec.size() / n_frames), n_frames, msb_to_lsb, Nbps);
 	}
 
-	static inline void unpack(B *vec, const int n_bits_per_frame, const int n_frames = 1, bool msb_to_lsb = false,
-	                          int Nbps = CHAR_BIT)
+	template <typename B>
+	static inline void unpack(B *vec, const int n_bits_per_frame, const int n_frames = 1, const bool msb_to_lsb = false,
+	                          const int Nbps = CHAR_BIT)
 	{
-		if (Nbps > CHAR_BIT && Nbps <= 0)
+		if (Nbps > (int)CHAR_BIT || Nbps <= 0)
 		{
 			std::stringstream message;
 			message << "'Nbps' must be between 1 and CHAR_BIT. ('Nbps' = " << Nbps << ").";
 			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (n_bits_per_frame % Nbps)
-		{
-			std::stringstream message;
-			message << "'n_bits_per_frame' has to be divisible by 'Nbps' ('n_bits_per_frame' = " << n_bits_per_frame
-			        << ", 'Nbps' = " << Nbps << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		const auto n_bytes_per_frame = n_bits_per_frame / Nbps;
+		const auto n_symbs_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / Nbps));
 
 		unsigned char* bytes = (unsigned char*)vec;
-		std::vector<unsigned char> bytes_cpy(n_bytes_per_frame); //TODO: find a way to avoid this allocation
+		std::vector<unsigned char> bytes_cpy(n_symbs_per_frame); //TODO: find a way to avoid this allocation
 
 		for (auto f = 0; f < n_frames; f++)
 		{
 			//TODO: find a way to avoid this copy
-			std::copy(&bytes[f * n_bytes_per_frame], &bytes[(f +1) * n_bytes_per_frame], bytes_cpy.begin());
+			std::copy(&bytes[f * n_symbs_per_frame], &bytes[(f +1) * n_symbs_per_frame], bytes_cpy.begin());
 
-			Bit_packer<B>::_unpack(bytes_cpy.data() + f * n_bytes_per_frame,
-			                       vec              + f * n_bits_per_frame,
-			                       n_bits_per_frame,
-			                       msb_to_lsb,
-			                       Nbps);
+			Bit_packer::_unpack(bytes_cpy.data() + f * n_symbs_per_frame,
+			                    vec              + f * n_bits_per_frame,
+			                    n_bits_per_frame,
+			                    msb_to_lsb,
+			                    Nbps);
 		}
 	}
 
 private:
-	static inline void _pack(const B* vec_in, unsigned char* bytes_out, const int n_bits, const bool msb_to_lsb, int Nbps)
+	template <typename B, typename S>
+	static inline void _pack(const B* vec_in, S* symbs_out, const int n_bits, const bool msb_to_lsb, const int Nbps)
 	{
-		auto n_bytes = n_bits / Nbps;
+		const auto n_symbs = n_bits / Nbps;
+		const auto rest = n_bits - n_symbs * Nbps;
+
 		if (!msb_to_lsb) // lsb_to_msb
 		{
-			for (auto i = 0; i < n_bytes; i++, bytes_out++)
+			for (auto i = 0; i < n_symbs; i++, symbs_out++)
 			{
-				unsigned char byte = 0;
+				S symb = 0;
 				for (auto j = 0; j < Nbps; j++, vec_in++)
-					byte |= ((unsigned char)(*vec_in != 0)) << j;
-				*bytes_out = byte;
+					symb |= ((S)(*vec_in != 0)) << j;
+				*symbs_out = symb;
 			}
 
-			const auto rest = n_bits % Nbps;
 			if (rest != 0)
 			{
-				unsigned char byte = 0;
+				S symb = 0;
 				for (auto j = 0; j < rest; j++, vec_in++)
-					byte |= ((unsigned char)(*vec_in != 0)) << j;
-				*bytes_out = byte;
+					symb |= ((S)(*vec_in != 0)) << j;
+				*symbs_out = symb;
 			}
 		}
 		else // msb_to_lsb
 		{
-			for (auto i = 0; i < n_bytes; i++, bytes_out++)
+			for (auto i = 0; i < n_symbs; i++, symbs_out++)
 			{
-				unsigned char byte = 0;
+				S symb = 0;
 				for (auto j = 0; j < Nbps; j++, vec_in++)
-				{
-					byte <<= 1;
-					byte |= *vec_in != 0;
-				}
-				*bytes_out = byte;
+					symb |= (symb << 1) | (*vec_in != 0);
+				*symbs_out = symb << (sizeof(S) * CHAR_BIT - Nbps);
 			}
 
-			const auto rest = n_bits % Nbps;
 			if (rest != 0)
 			{
-				unsigned char byte = 0;
-				for (auto j = 0; j < Nbps; j++, vec_in++)
-				{
-					byte <<= 1;
-					if (j < rest)
-						byte |= *vec_in != 0;
-				}
-				*bytes_out = byte;
+				S symb = 0;
+				for (auto j = 0; j < rest; j++, vec_in++)
+					symb |= (symb << 1) | (*vec_in != 0);
+				*symbs_out = symb << (sizeof(S) * CHAR_BIT - rest);
 			}
 		}
 	}
 
-	static inline void _unpack(const unsigned char *bytes_in, B* vec_out, const int n_bits, const bool msb_to_lsb, int Nbps)
+	template <typename B, typename S>
+	static inline void _unpack(const S *symbs_in, B* vec_out, const int n_bits, const bool msb_to_lsb, const int Nbps)
 	{
-		auto n_bytes = n_bits / Nbps;
+
+		const auto n_symbs = n_bits / Nbps;
+		const auto rest = n_bits - n_symbs * Nbps;
+
 		if (!msb_to_lsb) // lsb_to_msb
 		{
-			for (auto i = 0; i < n_bytes; i++, bytes_in++)
+			for (auto i = 0; i < n_symbs; i++, symbs_in++)
 				for (auto j = 0; j < Nbps; j++, vec_out++)
-					*vec_out = (*bytes_in >> j) & 1;
+					*vec_out = (*symbs_in >> j) & (S)1;
 
-			const auto rest = n_bits % Nbps;
 			for (auto j = 0; j < rest; j++, vec_out++)
-				*vec_out = (*bytes_in >> j) & 1;
+				*vec_out = (*symbs_in >> j) & (S)1;
 		}
 		else // msb_to_lsb
 		{
-			for (auto i = 0; i < n_bytes; i++, bytes_in++)
+			for (auto i = 0; i < n_symbs; i++, symbs_in++)
 				for (auto j = 0; j < Nbps; j++, vec_out++)
-					*vec_out = (*bytes_in >> (CHAR_BIT -1 -j)) & 1;
+					*vec_out = (*symbs_in >> (sizeof(S) * CHAR_BIT -1 -j)) & (S)1;
 
-			const auto rest = n_bits % Nbps;
 			for (auto j = 0; j < rest; j++, vec_out++)
-				*vec_out = (*bytes_in >> (CHAR_BIT -1 -j)) & 1;
+				*vec_out = (*symbs_in >> (sizeof(S) * CHAR_BIT -1 -j)) & (S)1;
 		}
 	}
 };
@@ -385,41 +406,56 @@ int main(int argc, char** argv)
 {
 	using namespace aff3ct;
 	using B = int;
+	using S = short;
 
 	std::random_device rd;
 
-    size_t size_in    = (argc >= 2) ? std::stoi(argv[1]) : 16;
-    int    Nbps       = (argc >= 3) ? std::stoi(argv[2]) : CHAR_BIT;
-    int    n_frames   = (argc >= 4) ? std::stoi(argv[3]) : 1;
-    int    msb_to_lsb = (argc >= 5) ? std::stoi(argv[4]) : 0;
-    int    seed       = (argc >= 6) ? std::stoi(argv[5]) : rd();
-    size_t size_out = std::ceil(1.f * size_in / Nbps / sizeof(B));
+	size_t size_in    = (argc >= 2) ? std::stoi(argv[1]) : 16;
+	int    Nbps       = (argc >= 3) ? std::stoi(argv[2]) : CHAR_BIT;
+	int    n_frames   = (argc >= 4) ? std::stoi(argv[3]) : 1;
+	int    msb_to_lsb = (argc >= 5) ? std::stoi(argv[4]) : 0;
+	int pack_per_byte = (argc >= 6) ? std::stoi(argv[5]) : 1;
+	int    seed       = (argc >= 7) ? std::stoi(argv[6]) : rd();
 
-    std::vector<B> vec_in (size_in  * n_frames);
-    std::vector<B> vec_out(size_out * n_frames);
+	size_t size_out   = std::ceil(1.f * size_in / Nbps);
 
-    std::mt19937 gen(seed);
-    std::bernoulli_distribution d(0.5);
+	std::vector<B> vec_in      (size_in  * n_frames);
+	std::vector<S> vec_packed  (size_out * n_frames);
+	std::vector<B> vec_unpacked(size_in  * n_frames);
 
-    for(auto& v : vec_in)
-    	v = d(gen);
+	std::mt19937 gen(seed);
+	std::bernoulli_distribution d(0.5);
 
-    tools::Frame_trace<> ft;
+	for (auto& v : vec_in)
+		v = d(gen);
 
-    std::cout << "Vec in" << std::endl;
-    ft.display_bit_vector(vec_in, Nbps);
+	tools::Frame_trace<> ft;
 
-    tools::Bit_packer<int>::pack(vec_in, vec_out, n_frames, msb_to_lsb, Nbps);
+	std::cout << "Vec in" << std::endl;
+	ft.display_bit_vector(vec_in, Nbps);
 
-    std::cout << "Vec packed" << std::endl;
+	tools::Bit_packer::pack(vec_in, vec_packed, n_frames, msb_to_lsb, pack_per_byte, Nbps);
 
-    std::vector<char> vec_char(vec_out.size() * sizeof(B));
-    std::copy_n((char*)vec_out.data(), vec_char.size(), vec_char.data());
-    ft.display_hex_vector(vec_char, size_out * sizeof(B));
+	std::cout << "Vec packed" << std::endl;
 
-    tools::Bit_packer<int>::unpack(vec_out, vec_in, n_frames, msb_to_lsb, Nbps);
+	if (pack_per_byte)
+	{
+		std::vector<char> vec_char(vec_packed.size() * sizeof(S));
+		std::copy_n((char*)vec_packed.data(), vec_char.size(), vec_char.data());
+		ft.display_hex_vector(vec_char, size_out * sizeof(S));
+	}
+	else
+		ft.display_hex_vector(vec_packed, size_out);
 
-    std::cout << "Vec unpacked" << std::endl;
-    ft.display_bit_vector(vec_in, size_in);
+	tools::Bit_packer::unpack(vec_packed, vec_unpacked, n_frames, msb_to_lsb, pack_per_byte, Nbps);
+
+	std::cout << "Vec unpacked" << std::endl;
+	ft.display_bit_vector(vec_unpacked, Nbps);
+
+	bool same = true;
+	for (unsigned i = 0; i < vec_unpacked.size(); i++)
+		same &= vec_unpacked[i] == vec_in[i];
+
+	std::cout << "Same in and unpacked = " << same << std::endl;
 }
 */

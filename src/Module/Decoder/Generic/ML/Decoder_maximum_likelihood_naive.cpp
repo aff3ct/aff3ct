@@ -82,7 +82,7 @@ void Decoder_maximum_likelihood_naive<B,R>
 			std::fill(this->X_N.begin(), this->X_N.end(), (B)0);
 			auto data = (uint64_t*)this->X_N.data();
 			data[0] = x;
-			tools::Bit_packer<B>::unpack(this->X_N.data(), this->N);
+			tools::Bit_packer::unpack(this->X_N.data(), this->N);
 			if (this->encoder.is_codeword(this->X_N.data()))
 			{
 				// compute the Euclidean distance between the input LLR and the current codeword
@@ -134,7 +134,7 @@ void Decoder_maximum_likelihood_naive<B,R>
 		std::fill(this->X_N.begin(), this->X_N.end(), (B)0);
 		auto data = (uint64_t*)this->X_N.data();
 		data[0] = x;
-		tools::Bit_packer<B>::unpack(this->X_N.data(), this->N);
+		tools::Bit_packer::unpack(this->X_N.data(), this->N);
 		if (this->encoder.is_codeword(this->X_N.data()))
 		{
 			// compute the Hamming distance between the input bits and the current codeword
