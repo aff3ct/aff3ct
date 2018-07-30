@@ -28,6 +28,14 @@ void Frame_trace<B>
 }
 
 template <typename B>
+template <typename D, class AD>
+void Frame_trace<B>
+::display_hex_vector(std::vector<D,AD> vec)
+{
+	display_hex_vector(vec, (int)vec.size());
+}
+
+template <typename B>
 template <typename D, class AD, class AB>
 void Frame_trace<B>
 ::display_bit_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref)
@@ -44,10 +52,20 @@ void Frame_trace<B>
 }
 
 template <typename B>
+template <typename D, class AD>
+void Frame_trace<B>
+::display_hex_vector(std::vector<D,AD> vec, unsigned int row_width)
+{
+	display_vector(vec, row_width, {}, debug_version::HEX);
+}
+
+template <typename B>
 template <typename D, class AD, class AB>
 void Frame_trace<B>
 ::display_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref, debug_version version)
 {
+	std::ios_base::fmtflags f( stream.flags() );
+
 	bool enable_ref = !ref.empty();
 
 	if (enable_ref && ref.size() != vec.size())
@@ -70,7 +88,8 @@ void Frame_trace<B>
 	// display the bits indexes
 	if (this->display_indexes)
 	{
-		for (auto i = 0; i < n_bits; i++)
+		stream << std::dec;
+		for (unsigned i = 0; i < row_width; i++)
 			stream << rang::style::bold << std::setw(prec+2) << i
 			       << rang::style::underline << "|"
 			       << rang::style::reset;
@@ -99,6 +118,8 @@ void Frame_trace<B>
 
 		stride += row_width;
 	}
+
+	stream.flags( f );
 }
 
 template <typename B>
@@ -115,6 +136,14 @@ void Frame_trace<B>
 			if (ref != -1)
 			stream << ( ((value == 0) != (ref == 0)) ? rang::fg::red : rang::fg::green);
 			stream << std::setw(prec+2) << ((value == 0) ? (int) 0 : (int) 1);
+
+			break;
+
+		case debug_version::HEX:
+			if (ref != -1)
+			stream << ( value != ref ? rang::fg::red : rang::fg::green);
+			stream << std::setw(prec+2) << std::hex;
+			stream << (sizeof(D) == 1 ? (unsigned short)(unsigned char)value : value);
 
 			break;
 
