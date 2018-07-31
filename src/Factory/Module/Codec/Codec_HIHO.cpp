@@ -1,4 +1,5 @@
 #include "BCH/Codec_BCH.hpp"
+#include "RS/Codec_RS.hpp"
 
 #include "Codec_HIHO.hpp"
 
@@ -30,6 +31,7 @@ module::Codec_HIHO<B,Q>* Codec_HIHO::parameters
 ::build(module::CRC<B>* crc) const
 {
 	     if (get_name() == Codec_BCH_name) return dynamic_cast<const Codec_BCH       ::parameters&>(*this).template build<B,Q>(crc);
+	     if (get_name() == Codec_RS_name ) return dynamic_cast<const Codec_RS        ::parameters&>(*this).template build<B,Q>(crc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

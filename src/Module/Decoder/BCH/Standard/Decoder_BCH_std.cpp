@@ -51,10 +51,6 @@ void Decoder_BCH_std<B, R>
 				s[i] ^= alpha_to[(i * j) % this->N_p2_1];
 		if (s[i] != 0)
 			syn_error = 1; /* set error flag if non-zero syndrome */
-		/*
-		 * Note:    If the code is used only for ERROR DETECTION, then
-		 *          exit program here indicating the presence of errors.
-		 */
 		/* convert syndrome from polynomial form to index form  */
 		s[i] = index_of[s[i]];
 	}
@@ -102,11 +98,7 @@ void Decoder_BCH_std<B, R>
 				}
 			}
 			else
-			/*
-			 * search for words with greatest u_lu[q] for
-			 * which d[q]!=0
-			 */
-			{
+			{ // search for words with greatest u_lu[q] for which d[q]!=0
 				q = u - 1;
 				while ((discrepancy[q] == -1) && (q > 0))
 					q--;

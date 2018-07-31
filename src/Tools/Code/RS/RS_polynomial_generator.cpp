@@ -1,14 +1,15 @@
 #include <sstream>
+  #include <iostream>
 
-#include "BCH_polynomial_generator.hpp"
+#include "RS_polynomial_generator.hpp"
 
 #include "Tools/Exception/exception.hpp"
 
 using namespace aff3ct::tools;
 
-BCH_polynomial_generator
-::BCH_polynomial_generator(const int& N, const int& t)
- : Galois(N), t(t), d(2 * t + 1)
+RS_polynomial_generator
+::RS_polynomial_generator(const int& N, const int& t)
+ : Galois(N), t(t), d(2 * t + 1), g(d, 0)
 {
 	if (t < 1)
 	{
@@ -20,41 +21,44 @@ BCH_polynomial_generator
 	compute_polynomial();
 }
 
-BCH_polynomial_generator
-::~BCH_polynomial_generator()
+RS_polynomial_generator
+::~RS_polynomial_generator()
 {
 }
 
-int BCH_polynomial_generator
+int RS_polynomial_generator
 ::get_d() const
 {
 	return d;
 }
 
-int BCH_polynomial_generator
+int RS_polynomial_generator
 ::get_t() const
 {
 	return t;
 }
 
 
-int BCH_polynomial_generator
+int RS_polynomial_generator
 ::get_n_rdncy() const
 {
 	return (int)g.size() -1;
 }
 
-const std::vector<int>& BCH_polynomial_generator
+const std::vector<int>& RS_polynomial_generator
 ::get_g() const
 {
 	return g;
 }
 
-void BCH_polynomial_generator
+void RS_polynomial_generator
 ::compute_polynomial()
 {
+	int rdncy = 0;
+
 	bool test;
 
+	std::vector<int> zeros, min;
 	std::vector<std::vector<int>> cycle_sets(2, std::vector<int>(1));
 
 	/* Generate cycle sets modulo N, N = 2**m - 1 */
@@ -96,8 +100,6 @@ void BCH_polynomial_generator
 
 
 	/* Search for roots 1, 2, ..., d-1 in cycle sets */
-	int rdncy = 0;
-	std::vector<int> min;
 	for (unsigned i = 1; i < cycle_sets.size(); i++)
 	{
 		test = false;
@@ -112,8 +114,7 @@ void BCH_polynomial_generator
 				}
 	}
 
-
-	std::vector<int> zeros(rdncy+1);
+	zeros.resize(rdncy+1);
 	int kaux = 1;
 	test = true;
 
@@ -126,20 +127,25 @@ void BCH_polynomial_generator
 		}
 
 
-	g.resize(rdncy+1);
+
 
 	/* Compute the generator polynomial */
-	g[0] = alpha_to[zeros[1]];
+	auto init_root = zeros[1];
+	g[0] = alpha_to[init_root];
 	g[1] = 1; /* g(x) = (X + zeros[1]) initially */
-	for (int i = 2; i <= rdncy; i++)
+	for (auto i = 2; i < (int)g.size(); i++)
 	{
 		g[i] = 1;
-		for (int j = i - 1; j > 0; j--)
+		for (auto j = i - 1; j > 0; j--)
 			if (g[j] != 0)
-				g[j] = g[j - 1] ^ alpha_to[(index_of[g[j]] + zeros[i]) % N];
+				g[j] = g[j - 1] ^ alpha_to[(index_of[g[j]] + init_root + i -1) % N];
 			else
 				g[j] = g[j - 1];
 
-		g[0] = alpha_to[(index_of[g[0]] + zeros[i]) % N];
+		g[0] = alpha_to[(index_of[g[0]] + init_root + i -1) % N];
 	}
+
+	for (auto i = 0; i < (int)g.size(); i++)
+		g[i] = index_of[g[i]] ;
+
 }
