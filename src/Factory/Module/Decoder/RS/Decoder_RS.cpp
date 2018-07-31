@@ -70,12 +70,12 @@ void Decoder_RS::parameters
 		this->t = vals.to_int({p + "-corr-pow", "T"});
 		if (K == 0)
 		{
-			this->K = this->N_cw - tools::RS_polynomial_generator(this->N_cw, this->t).get_n_rdncy();
+			this->K = this->N_cw - this->t * 2;
 			this->R = (float) this->K / (float) this->N_cw;
 		}
 	}
 	else
-		this->t = (this->N_cw - this->K) / this->m;
+		this->t = (this->N_cw - this->K) / 2;
 }
 
 void Decoder_RS::parameters
