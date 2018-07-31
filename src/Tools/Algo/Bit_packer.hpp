@@ -348,7 +348,7 @@ private:
 			{
 				S symb = 0;
 				for (auto j = 0; j < Nbps; j++, vec_in++)
-					symb |= (symb << 1) | (*vec_in != 0);
+					symb = (symb << 1) | (*vec_in != 0);
 				*symbs_out = symb << (sizeof(S) * CHAR_BIT - Nbps);
 			}
 
@@ -356,7 +356,7 @@ private:
 			{
 				S symb = 0;
 				for (auto j = 0; j < rest; j++, vec_in++)
-					symb |= (symb << 1) | (*vec_in != 0);
+					symb = (symb << 1) | (*vec_in != 0);
 				*symbs_out = symb << (sizeof(S) * CHAR_BIT - rest);
 			}
 		}

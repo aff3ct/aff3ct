@@ -31,13 +31,6 @@ Decoder_RS<B, R>
 	const std::string name = "Decoder_RS";
 	this->set_name(name);
 
-	if (K <= 3)
-	{
-		std::stringstream message;
-		message << "'K' has to be greater than 3 ('K' = " << K << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if ((this->N_rs - this->K_rs) != this->n_rdncy)
 	{
 		std::stringstream message;
