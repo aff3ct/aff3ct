@@ -2,7 +2,8 @@
 #include <sstream>
 
 #include "Tools/Perf/common/hard_decide.h"
-#include "Tools/Perf/common/hamming_distance.h"
+#include "Tools/Perf/distance/distance.h"
+#include "Tools/Perf/distance/Bitwise_diff.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
 
@@ -57,7 +58,9 @@ void Decoder_RS_genius<B,R>
 
 	tools::Bit_packer::pack(X_N.data(), this->X_Ns.data(), this->N, 1, false, this->m);
 	tools::Bit_packer::pack(Y_N,        this->YH_N.data(), this->N, 1, false, this->m);
-	auto n_error = this->hamming_distance();
+	// auto n_error = this->hamming_distance();
+
+	auto n_error = (int) tools::distance<B,tools::Bitwise_diff<B,true>>(this->X_Ns.data(), this->YH_N.data(), this->N_rs);
 
 	// auto n_error = (int)tools::hamming_distance(X_N.data(), Y_N, this->N);
 

@@ -5,7 +5,7 @@
 #include "Monitor_MI.hpp"
 
 #include "Tools/Perf/common/mutual_info.h"
-#include "Tools/Perf/common/hamming_distance.h"
+#include "Tools/Perf/distance/hamming_distance.h"
 #include "Tools/Math/utils.h"
 #include "Tools/general_utils.h"
 

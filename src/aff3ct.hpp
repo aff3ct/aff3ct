@@ -20,7 +20,7 @@
 #include <Tools/Math/numerical_integration.h>
 #include <Tools/Math/utils.h>
 #include <Tools/Noise/noise_utils.h>
-#include <Tools/Perf/common/hamming_distance.h>
+#include <Tools/Perf/distance/hamming_distance.h>
 #include <Tools/Perf/common/hard_decide.h>
 #include <Tools/Perf/common/mutual_info.h>
 #include <Tools/Perf/Transpose/transpose_AVX.h>
