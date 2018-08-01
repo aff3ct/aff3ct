@@ -47,7 +47,7 @@ void Decoder_RS::parameters
 	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "ALGEBRAIC");
-	// tools::add_options(args.at({p+"-implem"   }), 0, "GENIUS");
+	tools::add_options(args.at({p+"-implem"   }), 0, "GENIUS");
 }
 
 void Decoder_RS::parameters
@@ -121,10 +121,10 @@ module::Decoder_SIHO_HIHO<B,Q>* Decoder_RS::parameters
 	{
 		if (this->implem == "STD") return new module::Decoder_RS_std<B,Q>(this->K, this->N_cw, GF, this->n_frames);
 
-		// if (encoder)
-		// {
-		// 	if (this->implem == "GENIUS") return new module::Decoder_RS_genius<B,Q>(this->K, this->N_cw, this->t, *encoder, this->n_frames);
-		// }
+		if (encoder)
+		{
+			if (this->implem == "GENIUS") return new module::Decoder_RS_genius<B,Q>(this->K, this->N_cw, GF, *encoder, this->n_frames);
+		}
 	}
 
 

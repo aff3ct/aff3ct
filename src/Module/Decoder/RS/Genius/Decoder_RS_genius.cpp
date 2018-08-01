@@ -4,6 +4,7 @@
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/common/hamming_distance.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Algo/Bit_packer.hpp"
 
 #include "Decoder_RS_genius.hpp"
 
@@ -15,7 +16,8 @@ Decoder_RS_genius<B,R>
 ::Decoder_RS_genius(const int K, const int N, const tools::RS_polynomial_generator &GF, Encoder<B> &encoder, const int n_frames)
 : Decoder        (K * GF.get_m(), N * GF.get_m(), n_frames, 1),
   Decoder_RS<B,R>(K, N, GF, n_frames                         ),
-  encoder        (encoder                                    )
+  encoder        (encoder                                    ),
+  X_Ns           (this->N_rs                                 )
 {
 	const std::string name = "Decoder_RS_genius";
 	this->set_name(name);
@@ -36,13 +38,28 @@ void Decoder_RS_genius<B,R>
 }
 
 template <typename B, typename R>
+int Decoder_RS_genius<B,R>
+::hamming_distance()
+{
+	int n_error = 0;
+	for (auto x = this->X_Ns.begin(), y = this->YH_N.begin(); x != this->X_Ns.end(); x++, y++)
+		if (*x != *y)
+			n_error ++;
+
+	return n_error;
+}
+
+template <typename B, typename R>
 void Decoder_RS_genius<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	auto& X_N = encoder.get_X_N(frame_id);
 
-	int n_error = (int)tools::hamming_distance(X_N.data(), Y_N, this->N);
+	tools::Bit_packer::pack(X_N.data(), this->X_Ns.data(), this->N, 1, false, this->m);
+	tools::Bit_packer::pack(Y_N,        this->YH_N.data(), this->N, 1, false, this->m);
+	auto n_error = this->hamming_distance();
+
+	// auto n_error = (int)tools::hamming_distance(X_N.data(), Y_N, this->N);
 
 	if (n_error <= this->t) // then copy X_N from the encoder that is Y_N corrected
 		std::copy(X_N.data() + this->N - this->K, X_N.data() + this->N, V_K);
@@ -56,10 +73,13 @@ template <typename B, typename R>
 void Decoder_RS_genius<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	auto& X_N = encoder.get_X_N(frame_id);
 
-	int n_error = (int)tools::hamming_distance(X_N.data(), Y_N, this->N);
+	tools::Bit_packer::pack(X_N.data(), this->X_Ns.data(), this->N, 1, false, this->m);
+	tools::Bit_packer::pack(Y_N,        this->YH_N.data(), this->N, 1, false, this->m);
+	auto n_error = hamming_distance();
+
+	// int n_error = (int)tools::hamming_distance(X_N.data(), Y_N, this->N);
 
 	if (n_error <= this->t) // then copy X_N from the encoder that is Y_N corrected
 		std::copy(X_N.data(), X_N.data() + this->N, V_N);
@@ -73,20 +93,18 @@ template <typename B, typename R>
 void Decoder_RS_genius<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
-	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
+	tools::hard_decide(Y_N, this->YH_Nb.data(), this->N);
 
-	this->_decode_hiho(this->YH_N.data(), V_K, frame_id);
+	this->_decode_hiho(this->YH_Nb.data(), V_K, frame_id);
 }
 
 template <typename B, typename R>
 void Decoder_RS_genius<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
-	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
+	tools::hard_decide(Y_N, this->YH_Nb.data(), this->N);
 
-	this->_decode_hiho_cw(this->YH_N.data(), V_N, frame_id);
+	this->_decode_hiho_cw(this->YH_Nb.data(), V_N, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation

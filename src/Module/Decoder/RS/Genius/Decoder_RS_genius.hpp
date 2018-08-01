@@ -18,6 +18,7 @@ public:
 
 protected:
 	Encoder<B> &encoder;
+	std::vector<S> X_Ns; // packed as symbols X_N
 
 public:
 	Decoder_RS_genius(const int K, const int N, const tools::RS_polynomial_generator &GF, Encoder<B> &encoder, const int n_frames = 1);
@@ -29,6 +30,9 @@ protected:
 	virtual void _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
 	virtual void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
 	virtual void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+
+private:
+	int hamming_distance();
 };
 }
 }
