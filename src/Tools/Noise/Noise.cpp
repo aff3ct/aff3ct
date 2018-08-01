@@ -1,58 +1,7 @@
-#include <sstream>
-#include "Tools/Exception/exception.hpp"
-
 #include "Noise.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
-
-inline Noise_type aff3ct::tools::str2type(const std::string& str)
-{
-	Noise_type t;
-
-	if (str == "SIGMA")
-		t = Noise_type::SIGMA;
-	else if (str == "ROP")
-		t = Noise_type::ROP;
-	else if (str == "EP")
-		t = Noise_type::EP;
-	else
-	{
-		std::stringstream message;
-		message << "The string 'str' does not represent a noise type ('str' = " << str << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return t;
-}
-
-inline std::string aff3ct::tools::type2str(Noise_type t)
-{
-	std::string str;
-
-	switch(t)
-	{
-		case Noise_type::SIGMA:
-			str = "SIGMA";
-			break;
-		case Noise_type::EP:
-			str = "EP";
-			break;
-		case Noise_type::ROP:
-			str = "ROP";
-			break;
-	}
-
-	if (str.empty()) // this 'if' is a test outside the switch case (instead of default) to keep the compiler check that all
-		// cases of 'Noise_type' are well represented.
-	{
-		std::stringstream message;
-		message << "The type 't' does not represent a noise type ('t' = " << (int8_t)t << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return str;
-}
 
 
 template <typename R>
@@ -159,8 +108,8 @@ void Noise<R>
 	if (!is_of_type(t))
 	{
 		std::stringstream message;
-		message << "This noise type ('" << type2str(get_type()) << "') is not same as the given checked one ('"
-				<< type2str(t) << "').";
+		message << "This noise type ('" << type_to_str(get_type()) << "') is not same as the given checked one ('"
+				<< type_to_str(t) << "').";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }

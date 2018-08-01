@@ -15,7 +15,7 @@ public:
 	Event_probability() = default;
 	explicit Event_probability(R noise);
 	template<typename T>
-	Event_probability(const Event_probability<T>& other);
+	explicit Event_probability(const Event_probability<T>& other);
 	virtual ~Event_probability() = default;
 
 	virtual std::string get_unity() const;

@@ -62,6 +62,11 @@ void Source::parameters
 		"path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\".");
 
 	args.add(
+		{p+"-start-idx"},
+		tools::Integer(tools::Positive()),
+		"Start idx to use in the USER type source.");
+
+	args.add(
 		{p+"-seed", "S"},
 		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");
@@ -78,6 +83,7 @@ void Source::parameters
 	if(vals.exist({p+"-implem"        })) this->implem   = vals.at    ({p+"-implem"        });
 	if(vals.exist({p+"-path"          })) this->path     = vals.at    ({p+"-path"          });
 	if(vals.exist({p+"-seed",      "S"})) this->seed     = vals.to_int({p+"-seed",      "S"});
+	if(vals.exist({p+"-start-idx"     })) this->start_idx= vals.to_int({p+"-start-idx"     });
 }
 
 void Source::parameters
@@ -99,10 +105,15 @@ template <typename B>
 module::Source<B>* Source::parameters
 ::build() const
 {
-	     if (this->type == "RAND" && this->implem == "STD" ) return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "RAND" && this->implem == "FAST") return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "AZCW" && this->implem == "STD" ) return new module::Source_AZCW       <B>(this->K,             this->n_frames);
-	else if (this->type == "USER" && this->implem == "STD" ) return new module::Source_user       <B>(this->K, this->path, this->n_frames);
+	if (this->type == "RAND")
+	{
+		if (this->implem == "STD")
+			return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
+		else if (this->implem == "FAST")
+			return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
+	}
+	else if (this->type == "AZCW") return new module::Source_AZCW<B>(this->K,             this->n_frames);
+	else if (this->type == "USER") return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

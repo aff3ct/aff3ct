@@ -34,7 +34,8 @@ BFER_ite::parameters* BFER_ite::parameters
 	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
 	if (chn != nullptr) { clone->chn = chn->clone(); }
 	if (qnt != nullptr) { clone->qnt = qnt->clone(); }
-	if (mnt != nullptr) { clone->mnt = mnt->clone(); }
+	if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
+	if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
 	if (ter != nullptr) { clone->ter = ter->clone(); }
 	if (itl != nullptr) { clone->itl = itl->clone(); }
 
@@ -54,7 +55,8 @@ std::vector<std::string> BFER_ite::parameters
 	if (this->mdm != nullptr) { auto nn = this->mdm->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (this->chn != nullptr) { auto nn = this->chn->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (this->qnt != nullptr) { auto nn = this->qnt->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (this->mnt != nullptr) { auto nn = this->mnt->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->mnt_er != nullptr) { auto nn = this->mnt_er->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->mnt_mi != nullptr) { auto nn = this->mnt_mi->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (this->ter != nullptr) { auto nn = this->ter->get_names(); for (auto &x : nn) n.push_back(x); }
 	return n;
 }
@@ -70,7 +72,8 @@ std::vector<std::string> BFER_ite::parameters
 	if (this->mdm != nullptr) { auto nn = this->mdm->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (this->chn != nullptr) { auto nn = this->chn->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (this->qnt != nullptr) { auto nn = this->qnt->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (this->mnt != nullptr) { auto nn = this->mnt->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->mnt_er != nullptr) { auto nn = this->mnt_er->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->mnt_mi != nullptr) { auto nn = this->mnt_mi->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (this->ter != nullptr) { auto nn = this->ter->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	return sn;
 }
@@ -86,7 +89,8 @@ std::vector<std::string> BFER_ite::parameters
 	if (this->mdm != nullptr) { auto nn = this->mdm->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (this->chn != nullptr) { auto nn = this->chn->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (this->qnt != nullptr) { auto nn = this->qnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->mnt != nullptr) { auto nn = this->mnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->mnt_er != nullptr) { auto nn = this->mnt_er->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->mnt_mi != nullptr) { auto nn = this->mnt_mi->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (this->ter != nullptr) { auto nn = this->ter->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
 }
@@ -118,6 +122,8 @@ void BFER_ite::parameters
 
 	if(vals.exist({p+"-ite",  "I"})) this->n_ite     = vals.to_int({p+"-ite",  "I"});
 	if(vals.exist({p+"-crc-start"})) this->crc_start = vals.to_int({p+"-crc-start"});
+
+	this->mutinfo = false;
 }
 
 void BFER_ite::parameters
@@ -139,7 +145,7 @@ void BFER_ite::parameters
 	if (this->mdm != nullptr) { this->mdm->get_headers(headers, full); }
 	if (this->chn != nullptr) { this->chn->get_headers(headers, full); }
 	if (this->qnt != nullptr) { this->qnt->get_headers(headers, full); }
-	if (this->mnt != nullptr) { this->mnt->get_headers(headers, full); }
+	if (this->mnt_er != nullptr) { this->mnt_er->get_headers(headers, full); }
 	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }
 

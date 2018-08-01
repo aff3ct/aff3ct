@@ -4,6 +4,7 @@
 # ==================================================================== PACKAGES
 
 import os
+import signal
 import sys
 import math
 import time
@@ -27,9 +28,12 @@ parser.add_argument('--sensibility',    action='store', dest='sensibility',   ty
 parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                         # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
 parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per noise point.')                            # choices=xrange(0,   +inf)
+parser.add_argument('--min-fe',         action='store', dest='minFE',         type=int,   default=50,                        help='Minimum number of frames errors to take into account the simulated noise point.')         # choices=xrange(0,   +inf)
 parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,                       help='Rate of valid noise points to passe a test.')                                             # choices=xrange(0.0, 1.0 )
 parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a noise point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
 parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                     help='Enable the verbose mode.')
+parser.add_argument('--mpi-np',         action='store', dest='mpinp',         type=int,   default=0,                         help='Enable MPI run with the given number of process each running on "--n-threads" threads.')
+parser.add_argument('--mpi-host',       action='store', dest='mpihost',       type=str,   default="",                        help='Run MPI with the given hosts (file).')
 
 # supported file extensions (filename suffix)
 extensions     = ['.txt', '.perf', '.data', '.dat']
@@ -125,6 +129,7 @@ class simuData:
 		self.BER        = []
 		self.FER        = []
 		self.MI         = []
+		self.FE         = []
 		self.RunCommand = ""
 		self.CurveName  = ""
 		self.NoiseType  = ""
@@ -196,6 +201,13 @@ def dataReader(aff3ctOutput):
 		else:
 			data.MI = data.All[idx]
 
+		# set FE
+		idx = getLegendIdx(data.Legend, "FE")
+		if idx == -1:
+			data.FE = []
+		else:
+			data.FE = data.All[idx]
+
 		# set ESN0
 		idx = getLegendIdx(data.Legend, "Es/N0")
 		if idx == -1 or data.NoiseType == "Es/N0":
@@ -245,7 +257,7 @@ def splitAsCommand(runCommand):
 	return argsList
 
 class tableStats:
-	def __init__(self, tableCur, tableRef, sensibility, name):
+	def __init__(self, tableCur, tableRef, sensibility, name, nData = 0):
 		if len(tableCur) > len(tableRef) : # can't have less ref than checked points
 			raise RuntimeError
 
@@ -259,7 +271,11 @@ class tableStats:
 		self.avgSensibility  = 0
 		self.rateSensibility = 0
 		self.valid           = 0
-		self.nData           = len(tableCur)
+
+		if nData == 0 or nData > len(tableCur) :
+			self.nData       = len(tableCur)
+		else :
+			self.nData       = nData
 		self.errorsList      = []
 		self.errorsPos       = []
 		self.errorsMessage   = []
@@ -319,18 +335,24 @@ class tableStats:
 		return float(self.valid) / float(self.nData)
 
 class compStats:
-	def __init__(self, dataCur, dataRef, sensibility):
+	def __init__(self, dataCur, dataRef, sensibility, asked_n_fe):
 		if not isinstance(dataCur, simuData) or not isinstance(dataRef, simuData) :
 			raise TypeError
+
+		self.nValidData = len(dataCur.FE)
+		for d in range(len(dataCur.FE)) :
+			if dataCur.FE[d] < asked_n_fe :
+				self.nValidData = d
+
 
 		self.dataCur  = dataCur
 		self.dataRef  = dataRef
 		self.dataList = []
-		self.dataList.append(tableStats(dataCur.Noise, dataRef.Noise,         0.0, dataRef.NoiseType))
-		self.dataList.append(tableStats(dataCur.ESN0,  dataRef.ESN0,          0.0, "Es/N0"))
-		self.dataList.append(tableStats(dataCur.FER,   dataRef.FER,   sensibility, "FER"  ))
-		self.dataList.append(tableStats(dataCur.BER,   dataRef.BER,   sensibility, "BER"  ))
-		self.dataList.append(tableStats(dataCur.MI,    dataRef.MI,    sensibility, "MI"   ))
+		self.dataList.append(tableStats(dataCur.Noise, dataRef.Noise,         0.0, dataRef.NoiseType, self.nValidData))
+		self.dataList.append(tableStats(dataCur.ESN0,  dataRef.ESN0,          0.0, "Es/N0"          , self.nValidData))
+		self.dataList.append(tableStats(dataCur.FER,   dataRef.FER,   sensibility, "FER"            , self.nValidData))
+		self.dataList.append(tableStats(dataCur.BER,   dataRef.BER,   sensibility, "BER"            , self.nValidData))
+		self.dataList.append(tableStats(dataCur.MI,    dataRef.MI,    sensibility, "MI"             , self.nValidData))
 
 	def errorMessage(self, idx):
 		message = ""
@@ -442,6 +464,8 @@ print('# max fe         =', args.maxFE        )
 print('# weak rate      =', args.weakRate     )
 print('# max snr time   =', args.maxSNRTime   )
 print('# verbose        =', args.verbose      )
+print('# MPI nbr proc   =', args.mpinp        )
+print('# MPI host file  =', args.mpihost      )
 print('#')
 
 PathOrigin = os.getcwd()
@@ -463,9 +487,25 @@ if (len(fileNames) - (args.startId -1) > 0) :
 else:
 	print("# (WW) There is no simulation to replay.")
 
+
+
+argsAFFECTcommand = []
+
+if args.mpinp > 0 or args.mpihost != "":
+	argsAFFECTcommand += ["mpirun", "--map-by", "socket"]
+
+	if args.mpinp > 0:
+		argsAFFECTcommand += ["-np", str(args.mpinp)]
+
+	if args.mpihost != "":
+		argsAFFECTcommand += ["--hostfile", str(args.mpihost)]
+
+
 failIds = []
 nErrors = 0
 testId = 0
+
+
 for fn in fileNames:
 	if testId < args.startId -1:
 		testId = testId + 1
@@ -487,49 +527,51 @@ for fn in fileNames:
 	# parse the reference file
 	simuRef = dataReader(lines)
 
+
 	# get the command line to run
-	argsAFFECT = splitAsCommand(simuRef.RunCommand)
-	argsAFFECT.append("--ter-freq")
-	argsAFFECT.append("0")
+	argsAFFECT = argsAFFECTcommand[:]
+	argsAFFECT += splitAsCommand(simuRef.RunCommand)
+
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
 	if args.maxFE:
-		argsAFFECT.append("-e")
-		argsAFFECT.append(str(args.maxFE))
-	argsAFFECT.append("-t")
-	argsAFFECT.append(str(args.nThreads))
-	argsAFFECT.append("--sim-no-colors")
+		argsAFFECT += ["-e", str(args.maxFE)]
+
 	if args.maxSNRTime:
-		argsAFFECT.append("--sim-stop-time")
-		argsAFFECT.append(str(args.maxSNRTime))
+		argsAFFECT += ["--sim-stop-time", str(args.maxSNRTime)]
+
 
 	noiseVals = ""
 	for n in range(len(simuRef.Noise)):
 		if n != 0:
 			noiseVals += ",";
-
 		noiseVals += str(simuRef.Noise[n])
 
-	argsAFFECT.append("-R")
-	argsAFFECT.append(noiseVals)
+
+	argsAFFECT += ["-R", noiseVals]
 
 	if simuRef.NoiseType == "Eb/N0":
-		argsAFFECT.append("-E")
-		argsAFFECT.append("EBN0")
-
+		argsAFFECT += ["-E", "EBN0"]
 
 
 	# run the tested simulator
 	os.chdir(args.buildPath)
 	startTime = time.time()
-	processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE,
-	                                             stderr=subprocess.PIPE)
-	(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+	try:
+		processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE,
+		                                             stderr=subprocess.PIPE)
+		(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+	except KeyboardInterrupt:
+		os.kill(processAFFECT.pid, signal.SIGINT)
+		(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+
+
 	returnCode = processAFFECT.returncode
 	elapsedTime = time.time() - startTime
 
 	errAndWarnMessages = stderrAFFECT.decode(encoding='UTF-8')
 
 
-	# compare ref and nex results to check if the simulator is still OK
+	# compare ref and new results to check if the simulator is still OK
 	os.chdir(PathOrigin)
 
 	# get the results
@@ -565,7 +607,7 @@ for fn in fileNames:
 
 	else:
 		# parse the results to validate (or not) the BER/FER/MI performance
-		comp = compStats(simuCur, simuRef, args.sensibility)
+		comp = compStats(simuCur, simuRef, args.sensibility, args.minFE)
 
 		# print the header
 		fRes.write("Run command:\n" + simuCur.RunCommand + "\n")
@@ -610,7 +652,7 @@ for fn in fileNames:
 		if args.verbose:
 			print (comp.getResumeTable())
 
-	if errAndWarnMessages:
+	if not returnCode and errAndWarnMessages:
 		print("---- Warning message(s):", end="\n");
 		print(errAndWarnMessages)
 		fRes.write(errAndWarnMessages)
@@ -621,11 +663,16 @@ for fn in fileNames:
 	testId = testId + 1
 
 
+	if elapsedTime < 0.5:
+		break;
+
+
+
 if len(fileNames) - (args.startId -1) > 0:
 	if nErrors == 0:
-		print("# (II) All the tests PASSED !", end="\n");
+		print("\n# (II) All the tests PASSED !", end="\n");
 	else:
-		print("# (II) Some tests FAILED: ", end="")
+		print("\n# (II) Some tests FAILED: ", end="")
 		f = 0
 		for failId in failIds:
 			print("n°", end="")

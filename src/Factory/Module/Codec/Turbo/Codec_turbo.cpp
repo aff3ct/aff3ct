@@ -29,6 +29,7 @@ Codec_turbo::parameters
 
 	Codec::parameters::enc = nullptr;
 	Codec::parameters::dec = nullptr;
+	Codec::parameters::pct = nullptr;
 	if (Codec::parameters::itl != nullptr)
 	{
 		delete Codec::parameters::itl;
@@ -47,6 +48,7 @@ Codec_turbo::parameters* Codec_turbo::parameters
 
 	clone->set_enc(clone->enc);
 	clone->set_dec(clone->dec);
+	clone->set_pct(clone->pct);
 	clone->set_itl(clone->enc->itl);
 	delete clone->dec->itl; clone->dec->itl = clone->enc->itl;
 

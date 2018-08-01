@@ -59,6 +59,9 @@ void Decoder_BCH_std<B, R>
 		s.at(i) = index_of.at(s.at(i));
 	}
 
+	this->last_is_codeword = !syn_error;
+
+
 	if (syn_error)
 	{ /* if there are errors, try to correct them */
 		/*
@@ -192,10 +195,14 @@ void Decoder_BCH_std<B, R>
 			}
 
 			if (count == l.at(u))
+			{
+				this->last_is_codeword = true;
+
 				/* no. roots = degree of elp hence <= this->t errors */
 				for (i = 0; i < l.at(u); i++)
 					if (loc.at(i) < this->N)
 						Y_N[loc.at(i)] ^= 1;
+			}
 		}
 	}
 }

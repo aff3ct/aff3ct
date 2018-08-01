@@ -18,7 +18,7 @@ protected:
 	std::vector<int> p;        // coefficients of a primitive polynomial used to generate GF(2**m)
 
 public:
-	Galois(const int& N);
+	explicit Galois(const int& N);
 	virtual ~Galois();
 
 	int get_N() const;

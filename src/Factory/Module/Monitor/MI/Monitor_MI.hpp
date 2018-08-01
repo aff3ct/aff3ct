@@ -1,34 +1,36 @@
-#ifndef FACTORY_TERMINAL_EXIT_HPP_
-#define FACTORY_TERMINAL_EXIT_HPP_
+#ifndef FACTORY_MONITOR_MI_HPP
+#define FACTORY_MONITOR_MI_HPP
 
 #include <string>
-#include <chrono>
 
-#include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
+#include "Module/Monitor/MI/Monitor_MI.hpp"
 
-#include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
-
-#include "../Terminal.hpp"
+#include "../Monitor.hpp"
 
 namespace aff3ct
 {
 namespace factory
 {
-extern const std::string Terminal_EXIT_name;
-extern const std::string Terminal_EXIT_prefix;
-struct Terminal_EXIT : Terminal
+extern const std::string Monitor_MI_name;
+extern const std::string Monitor_MI_prefix;
+struct Monitor_MI : public Monitor
 {
-	class parameters : public Terminal::parameters
+	class parameters : public Monitor::parameters
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
+		// required parameters
+		int         N = 0;
+
 		// optional parameters
 		std::string type = "STD";
+		int         n_trials = 200;
+		int         n_frames = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Terminal_EXIT_prefix);
+		explicit parameters(const std::string &p = Monitor_MI_prefix);
 		virtual ~parameters();
-		Terminal_EXIT::parameters* clone() const;
+		Monitor_MI::parameters* clone() const;
 
 		// parameters construction
 		void get_description(tools::Argument_map_info &args) const;
@@ -37,13 +39,13 @@ struct Terminal_EXIT : Terminal
 
 		// builder
 		template <typename B = int, typename R = float>
-		tools::Terminal_EXIT<B,R>* build(const module::Monitor_EXIT<B,R> &monitor) const;
+		module::Monitor_MI<B,R>* build() const;
 	};
 
 	template <typename B = int, typename R = float>
-	static tools::Terminal_EXIT<B,R>* build(const parameters &params, const module::Monitor_EXIT<B,R> &monitor);
+	static module::Monitor_MI<B,R>* build(const parameters& params);
 };
 }
 }
 
-#endif /* FACTORY_TERMINAL_EXIT_HPP_ */
+#endif /* FACTORY_MONITOR_MI_HPP */

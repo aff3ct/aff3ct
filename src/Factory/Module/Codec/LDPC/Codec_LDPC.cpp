@@ -30,6 +30,7 @@ Codec_LDPC::parameters
 
 	Codec::parameters::enc = nullptr;
 	Codec::parameters::dec = nullptr;
+	Codec::parameters::pct = nullptr;
 }
 
 Codec_LDPC::parameters* Codec_LDPC::parameters
@@ -43,6 +44,7 @@ Codec_LDPC::parameters* Codec_LDPC::parameters
 
 	clone->set_enc(clone->enc);
 	clone->set_dec(clone->dec);
+	clone->set_pct(clone->pct);
 
 	return clone;
 }

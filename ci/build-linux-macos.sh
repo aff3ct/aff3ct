@@ -36,7 +36,7 @@ else
 	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 fi
 
-make -j $THREADS
+make -j $THREADS -k
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
 mkdir $NAME $NAME/bin $NAME/lib $NAME/inc

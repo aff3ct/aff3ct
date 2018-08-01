@@ -69,6 +69,11 @@ void Encoder::parameters
 		"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
 
 	args.add(
+		{p+"-start-idx"},
+		tools::Integer(tools::Positive()),
+		"Start idx to use in the USER type encoder.");
+
+	args.add(
 		{p+"-seed", "S"},
 		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");
@@ -86,6 +91,7 @@ void Encoder::parameters
 	if(vals.exist({p+"-type"          })) this->type       = vals.at    ({p+"-type"          });
 	if(vals.exist({p+"-path"          })) this->path       = vals.at    ({p+"-path"          });
 	if(vals.exist({p+"-no-sys"        })) this->systematic = false;
+	if(vals.exist({p+"-start-idx"     })) this->start_idx  = vals.to_int({p+"-start-idx"     });
 
 	this->R = (float)this->K / (float)this->N_cw;
 }
@@ -114,7 +120,7 @@ module::Encoder<B>* Encoder::parameters
 	     if (this->type == "NO"   ) return new module::Encoder_NO   <B>(this->K,                         this->n_frames);
 	else if (this->type == "AZCW" ) return new module::Encoder_AZCW <B>(this->K, this->N_cw,             this->n_frames);
 	else if (this->type == "COSET") return new module::Encoder_coset<B>(this->K, this->N_cw, this->seed, this->n_frames);
-	else if (this->type == "USER" ) return new module::Encoder_user <B>(this->K, this->N_cw, this->path, this->n_frames);
+	else if (this->type == "USER" ) return new module::Encoder_user <B>(this->K, this->N_cw, this->path, this->n_frames, this->start_idx);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

@@ -9,11 +9,12 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Monitor_EXIT<B,R>
-::Monitor_EXIT(const int N, const unsigned n_trials, const int n_frames)
-: Monitor(N, N, n_frames),
-  n_trials(n_trials),
+::Monitor_EXIT(const int N, const unsigned max_n_trials, const int n_frames)
+: Monitor(n_frames),
   I_A_sum((R)0),
-  n_analyzed_frames(0)
+  n_trials(0),
+  max_n_trials(max_n_trials),
+  N(N)
 {
 	const std::string name = "Monitor_EXIT";
 	this->set_name(name);
@@ -31,6 +32,58 @@ Monitor_EXIT<B,R>
 
 		return 0;
 	});
+
+	reset();
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>
+::Monitor_EXIT(const Monitor_EXIT<B,R>& mon, const int n_frames)
+: Monitor_EXIT<B,R>(mon.N, mon.max_n_trials, n_frames == -1 ? mon.n_frames : n_frames)
+{
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>
+::Monitor_EXIT()
+: Monitor_EXIT<B,R>(1, 0)
+{
+}
+
+template <typename B, typename R>
+int Monitor_EXIT<B,R>
+::get_N() const
+{
+	return N;
+}
+
+template <typename B, typename R>
+bool Monitor_EXIT<B,R>
+::equivalent(const Monitor_EXIT<B,R>& m, bool do_throw) const
+{
+	if (this->N != m.N)
+	{
+		if (!do_throw)
+			return false;
+
+		std::stringstream message;
+		message << "'this->N' is different than 'm.N' ('this->N' = " << this->N << ", 'm.N' = "
+		        << m.N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->max_n_trials != m.max_n_trials)
+	{
+		if (!do_throw)
+			return false;
+
+		std::stringstream message;
+		message << "'this->max_n_trials' is different than 'm.max_n_trials' ('this->max_n_trials' = " << this->max_n_trials << ", 'm.max_n_trials' = "
+		        << m.max_n_trials << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return true;
 }
 
 template <typename B, typename R>
@@ -49,7 +102,7 @@ void Monitor_EXIT<B,R>
 		bits_buff  .insert(bits_buff  .end(), bits   + f * this->N, bits   + (f +1) * this->N);
 		llrs_e_buff.insert(llrs_e_buff.end(), llrs_e + f * this->N, llrs_e + (f +1) * this->N);
 
-		n_analyzed_frames++;
+		n_trials++;
 	}
 
 	for (auto c : this->callbacks_measure)
@@ -204,23 +257,23 @@ R Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 unsigned Monitor_EXIT<B,R>
-::get_n_trials() const
+::get_n_trials_limit() const
 {
-	return n_trials;
+	return max_n_trials;
 }
 
 template <typename B, typename R>
 bool Monitor_EXIT<B,R>
 ::n_trials_achieved() const
 {
-	return (get_n_analyzed_fra() >= get_n_trials()) || Monitor::interrupt;
+	return get_n_trials() >= get_n_trials_limit();
 }
 
 template <typename B, typename R>
 R Monitor_EXIT<B,R>
 ::get_I_A() const
 {
-	return this->I_A_sum / (R)(this->N * this->n_analyzed_frames);
+	return this->I_A_sum / (R)(this->N * this->n_trials);
 }
 
 template <typename B, typename R>
@@ -232,9 +285,9 @@ R Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 unsigned long long Monitor_EXIT<B,R>
-::get_n_analyzed_fra() const
+::get_n_trials() const
 {
-	return n_analyzed_frames;
+	return n_trials;
 }
 
 template <typename B, typename R>
@@ -250,10 +303,10 @@ void Monitor_EXIT<B,R>
 {
 	Monitor::reset();
 
-	this->n_analyzed_frames = 0;
-	this->I_A_sum = (R)0;
-	this->bits_buff.clear();
-	this->llrs_e_buff.clear();
+	n_trials = 0;
+	I_A_sum = (R)0;
+	bits_buff.clear();
+	llrs_e_buff.clear();
 }
 
 template <typename B, typename R>
@@ -261,6 +314,63 @@ void Monitor_EXIT<B,R>
 ::clear_callbacks()
 {
 	this->callbacks_measure.clear();
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::collect(const Monitor& m, bool fully)
+{
+	collect(dynamic_cast<const Monitor_EXIT<B,R>&>(m), fully);
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::collect(const Monitor_EXIT<B,R>& m, bool fully)
+{
+	equivalent(m, true);
+
+	n_trials += m.n_trials;
+	I_A_sum  += m.I_A_sum;
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>& Monitor_EXIT<B,R>
+::operator+=(const Monitor_EXIT<B,R>& m)
+{
+	collect(m, false);
+	return *this;
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::copy(const Monitor& m, bool fully)
+{
+	copy(dynamic_cast<const Monitor_EXIT<B,R>&>(m), fully);
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::copy(const Monitor_EXIT<B,R>& m, bool fully)
+{
+	equivalent(m, true);
+
+	n_trials = m.n_trials;
+	I_A_sum  = m.I_A_sum;
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>& Monitor_EXIT<B,R>
+::operator=(const Monitor_EXIT<B,R>& m)
+{
+	copy(m, false);
+	return *this;
+}
+
+template <typename B, typename R>
+bool Monitor_EXIT<B,R>
+::done() const
+{
+	return n_trials_achieved();
 }
 
 // ==================================================================================== explicit template instantiation

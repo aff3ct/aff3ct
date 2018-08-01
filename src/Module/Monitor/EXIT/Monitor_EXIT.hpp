@@ -19,11 +19,11 @@ public:
 	inline Socket& operator[](const mnt::sck::check_mutual_info s) { return Module::operator[]((int)mnt::tsk::check_mutual_info)[(int)s]; }
 
 protected:
-	const unsigned n_trials;
-
 	R I_A_sum;
+	unsigned long long n_trials;
 
-	unsigned long long n_analyzed_frames;
+	const unsigned max_n_trials;
+	const int N;
 
 	std::vector<std::function<void(void)>> callbacks_measure;
 
@@ -31,8 +31,16 @@ protected:
 	std::vector<R> llrs_e_buff;
 
 public:
-	Monitor_EXIT(const int size, const unsigned n_trials, const int n_frames = 1);
-	virtual ~Monitor_EXIT(){};
+	Monitor_EXIT(const int size, const unsigned max_n_trials, const int n_frames = 1);
+	Monitor_EXIT(const Monitor_EXIT<B,R>& m, const int n_frames = -1); // construct with the same parameters than "m"
+	Monitor_EXIT(); // construct with null and default parameters.
+
+	virtual ~Monitor_EXIT() = default;
+
+	int get_N() const;
+
+	bool equivalent(const Monitor_EXIT<B,R>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
+	                                                                          // and then can be merged by "collect" or "copy" methods
 
 	/*!
 	 * \brief Compares two messages and counts the number of frame errors and bit errors.
@@ -85,23 +93,82 @@ public:
 
 	virtual void check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id = -1);
 
-	unsigned get_n_trials() const;
+	unsigned get_n_trials_limit() const;
 
-	virtual bool n_trials_achieved() const;
+	bool n_trials_achieved() const;
 
-	virtual R get_I_E() const;
-	virtual R get_I_A() const;
+	R get_I_E() const;
+	R get_I_A() const;
 
-	virtual unsigned long long get_n_analyzed_fra() const;
+	unsigned long long get_n_trials() const;
 
 	virtual void add_handler_measure(std::function<void(void)> callback);
 
 	virtual void reset();
 	virtual void clear_callbacks();
 
+	virtual void collect(const Monitor& m,           bool fully = false);
+	virtual void collect(const Monitor_EXIT<B,R>& m, bool fully = false);
+
+	Monitor_EXIT<B,R>& operator+=(const Monitor_EXIT<B,R>& m); // not full "collect" call
+
+	virtual void copy(const Monitor& m,           bool fully = false);
+	virtual void copy(const Monitor_EXIT<B,R>& m, bool fully = false);
+
+	Monitor_EXIT<B,R>& operator=(const Monitor_EXIT<B,R>& m); // not full "copy" call
+
+	virtual bool done() const;
+
 protected:
 	virtual void _check_mutual_info_avg  (const B *bits, const R *llrs_a, const int frame_id);
 	virtual R _check_mutual_info_histo() const;
+
+#ifdef ENABLE_MPI
+public:
+	// static constexpr unsigned n_MPI_attributes = 3;
+	struct Vals_mpi
+	{
+		int n_frames;
+
+		R I_A_sum;
+		unsigned long long n_trials;
+
+		unsigned max_n_trials;
+		int N;
+	};
+
+	// static void create_MPI_struct(int          blen         [n_MPI_attributes],
+	//                               MPI_Aint     displacements[n_MPI_attributes],
+	//                               MPI_Datatype oldtypes     [n_MPI_attributes]);
+
+	Monitor_EXIT(const Vals_mpi& v)
+	: Monitor(v.n_frames),
+	  I_A_sum(v.I_A_sum),
+	  n_trials(v.n_trials),
+	  max_n_trials(v.max_n_trials),
+	  N(v.N)
+	{
+	}
+
+	Vals_mpi get_vals_mpi() const
+	{
+		Vals_mpi v;
+
+		v.n_frames     = this->n_frames;
+		v.I_A_sum      = this->I_A_sum;
+		v.n_trials     = this->n_trials;
+		v.max_n_trials = this->max_n_trials;
+		v.N            = this->N;
+
+		return v;
+	}
+
+	virtual void copy(const Vals_mpi& v)
+	{
+		I_A_sum           = v.I_A_sum;
+		n_trials = v.n_trials;
+	}
+#endif
 };
 }
 }

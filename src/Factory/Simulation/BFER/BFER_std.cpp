@@ -31,7 +31,8 @@ BFER_std::parameters* BFER_std::parameters
 	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
 	if (chn != nullptr) { clone->chn = chn->clone(); }
 	if (qnt != nullptr) { clone->qnt = qnt->clone(); }
-	if (mnt != nullptr) { clone->mnt = mnt->clone(); }
+	if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
+	if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
 	if (ter != nullptr) { clone->ter = ter->clone(); }
 
 	clone->set_cdc(clone->cdc);

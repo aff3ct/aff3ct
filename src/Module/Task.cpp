@@ -4,8 +4,6 @@
 
 #include <rang.hpp>
 
-#include "Tools/Display/Frame_trace/Frame_trace.hpp"
-
 #include "Module.hpp"
 #include "Socket.hpp"
 #include "Task.hpp"

@@ -82,31 +82,38 @@ int Launcher::read_arguments()
 		tools::exception::no_backtrace = save;
 	}
 
-	if (params_common.display_help)
+#ifdef ENABLE_MPI
+	if (this->params_common.mpi_rank == 0)
 	{
-		auto grps = factory::Factory::create_groups({&params_common});
-		ah.print_help(this->args, grps, params_common.display_adv_help);
+#endif
+		if (params_common.display_help)
+		{
+			auto grps = factory::Factory::create_groups({&params_common});
+			ah.print_help(this->args, grps, params_common.display_adv_help);
+		}
+
+		// print usage
+		if (!cmd_error.empty() && !params_common.display_help)
+			ah.print_usage(this->args);
+
+		// print the errors
+		if (!cmd_error.empty()) std::cerr << std::endl;
+		for (unsigned e = 0; e < cmd_error.size(); e++)
+			std::cerr << rang::tag::error << cmd_error[e] << std::endl;
+
+		// print the help tags
+		if (!cmd_error.empty() && !params_common.display_help)
+		{
+			tools::Argument_tag help_tag = {"help", "h"};
+
+			std::string message = "For more information please display the help (\"";
+			message += tools::Argument_handler::print_tag(help_tag) += "\").";
+
+			std::cerr << std::endl << rang::tag::info << message << std::endl;
+		}
+#ifdef ENABLE_MPI
 	}
-
-	// print usage
-	if (!cmd_error.empty() && !params_common.display_help)
-		ah.print_usage(this->args);
-
-	// print the errors
-	if (!cmd_error.empty()) std::cerr << std::endl;
-	for (unsigned e = 0; e < cmd_error.size(); e++)
-		std::cerr << rang::tag::error << cmd_error[e] << std::endl;
-
-	// print the help tags
-	if (!cmd_error.empty() && !params_common.display_help)
-	{
-		tools::Argument_tag help_tag = {"help", "h"};
-
-		std::string message = "For more information please display the help (\"";
-		message += tools::Argument_handler::print_tag(help_tag) += "\").";
-
-		std::cerr << std::endl << rang::tag::info << message << std::endl;
-	}
+#endif
 
 	return (!cmd_error.empty() || params_common.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
@@ -148,10 +155,9 @@ int Launcher::launch()
 
 	// write the command and he curve name in the PyBER format
 #ifdef ENABLE_MPI
-	if (!this->params_common.pyber.empty() && this->params_common.mpi_rank == 0)
-#else
-	if (!this->params_common.pyber.empty())
+	if (this->params_common.mpi_rank == 0)
 #endif
+	if (!this->params_common.pyber.empty())
 	{
 		stream << "Run command:"            << std::endl;
 		stream << cmd_line                  << std::endl;

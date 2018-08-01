@@ -64,7 +64,6 @@ protected:
 	virtual module::Coset           <B,Q  >* build_coset_real (const int tid = 0);
 	virtual module::Coset           <B,B  >* build_coset_bit  (const int tid = 0);
 	virtual tools ::Interleaver_core<     >* build_interleaver(const int tid = 0);
-
 };
 }
 }
