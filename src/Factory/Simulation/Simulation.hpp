@@ -34,7 +34,7 @@ struct Simulation : Launcher
 		int                       mpi_size        = 1;
 #endif
 		std::chrono::seconds      stop_time       = std::chrono::seconds(0);
-		std::string               pyber           = "";
+		std::string               meta            = "";
 		unsigned                  max_frame       = 0;
 		bool                      debug           = false;
 		bool                      debug_hex       = false;
