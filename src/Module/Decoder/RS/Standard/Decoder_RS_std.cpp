@@ -36,16 +36,16 @@ void Decoder_RS_std<B,R>
 {
 	bool syn_error = false;
 
-	for (auto j = 0; j < this->N_rs; j++)
-		Y_N[j] = this->index_of[Y_N[j]];
-
 	// first form the syndromes
 	for (auto i = 1; i <= t2; i++)
 	{
 		s[i] = 0;
 		for (auto j = 0; j < this->N_rs; j++)
-			if (Y_N[j] != -1)
-				s[i] ^= this->alpha_to[(Y_N[j] + i * j) % this->N_p2_1];
+		{
+			auto y_idx = this->index_of[Y_N[j]];
+			if (y_idx != -1)
+				s[i] ^= this->alpha_to[(y_idx + i * j) % this->N_p2_1];
+		}
 
 		syn_error |= s[i] != 0; // set error flag if non-zero syndrome
 
@@ -215,11 +215,6 @@ void Decoder_RS_std<B,R>
 
 				// evaluate errors at locations given by error location numbers loc[i]
 				std::fill(err.begin(), err.end(), 0);
-				for (auto i = 0; i < this->N_rs; i++)
-					if (Y_N[i] != -1) // convert Y_N[] to polynomial form
-						Y_N[i] = this->alpha_to[Y_N[i]];
-					else
-						Y_N[i] = 0;
 
 				for (auto i = 0; i < l[u]; i++) // compute numerator of error term first
 				{
@@ -243,27 +238,12 @@ void Decoder_RS_std<B,R>
 					}
 				}
 			}
-			else // no. roots != degree of elp => over t errors and cannot solve
-				cvt_to_polynomial(Y_N);
+			// else // no. roots != degree of elp => over t errors and cannot solve
 		}
-		else // elp has degree has degree > t hence cannot solve
-			cvt_to_polynomial(Y_N);
+		// else // elp has degree has degree > t hence cannot solve
 	}
-	else // no non-zero syndromes => no errors: output received codeword
-		cvt_to_polynomial(Y_N);
+	// else // no non-zero syndromes => no errors: output received codeword
 }
-
-template <typename B, typename R>
-void Decoder_RS_std<B,R>
-::cvt_to_polynomial(S *Y_N)
-{
-	for (auto i = 0; i < this->N_rs; i++)
-		if (Y_N[i] != -1)
-			Y_N[i] = this->alpha_to[Y_N[i]];
-		else
-			Y_N[i] = 0;
-}
-
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

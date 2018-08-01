@@ -39,8 +39,6 @@ public:
 
 protected:
 	virtual void _decode(S *Y_N, const int frame_id);
-
-	void cvt_to_polynomial(S *Y_N);
 };
 }
 }
