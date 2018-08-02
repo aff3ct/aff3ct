@@ -268,7 +268,7 @@ void Terminal_std
 	}
 	else
 	{
-		stream << rang::style::bold << rang::fg::green << (real_time_state++ < 2 ? " *" : "  ") << rang::style::reset << "\r";
+		stream << rang::style::bold << rang::fg::green << (real_time_state++ < 2 ? " *" : "  ") << rang::style::reset;
 		real_time_state %= (uint8_t)4;
 	}
 

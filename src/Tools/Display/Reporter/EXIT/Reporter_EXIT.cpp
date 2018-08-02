@@ -57,9 +57,9 @@ Reporter::report_t Reporter_EXIT<B,R>
 		str_sig_a << (R)0.;
 	}
 
-	str_fra   << std::setprecision(2) << std::fixed << fra;
-	str_I_A   << std::setprecision(6) << std::fixed << I_A;
-	str_I_E   << std::setprecision(6) << std::fixed << I_E;
+	str_fra << std::setprecision(2) << std::fixed << fra;
+	str_I_A << std::setprecision(6) << std::fixed << I_A;
+	str_I_E << std::setprecision(6) << std::fixed << I_E;
 
 	EXIT_report.push_back(str_sig_a.str());
 	EXIT_report.push_back(str_fra  .str());

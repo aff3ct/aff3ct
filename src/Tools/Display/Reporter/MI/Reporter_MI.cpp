@@ -34,7 +34,6 @@ Reporter::report_t Reporter_MI<B,R>
 
 	auto& mi_report = the_report[0];
 
-
 	std::stringstream str_trials, str_MI, str_MI_min, str_MI_max;
 	auto n_trials = monitor.get_n_trials();
 

@@ -32,7 +32,6 @@ Reporter_throughput<T>
 	throughput_cols.push_back(std::make_pair("ET/RT", "(hhmmss)"));
 
 	this->cols_groups.push_back(throughput_group);
-
 }
 
 template <typename T>
@@ -44,7 +43,6 @@ Reporter_throughput<T>
 	                  std::bind(&module::Monitor_BFER<B>::get_n_analyzed_fra, &m),
 	                  (T)m.get_K())
 {
-
 }
 
 template <typename T>
@@ -56,7 +54,6 @@ Reporter_throughput<T>
 	                  std::bind(&module::Monitor_MI<B,R>::get_n_trials, &m),
 	                  (T)m.get_N())
 {
-
 }
 
 template <typename T>
@@ -68,7 +65,6 @@ Reporter_throughput<T>
 	                  std::bind(&module::Monitor_EXIT<B,R>::get_n_trials, &m),
 	                  (T)m.get_N())
 {
-
 }
 
 template <typename T>
@@ -104,7 +100,6 @@ Reporter::report_t Reporter_throughput<T>
 	std::stringstream str_thr;
 	str_thr << std::setprecision(3) << std::fixed << simu_thr;
 
-
 	thgput_report.push_back(str_thr.str());
 	thgput_report.push_back(str_time);
 
@@ -122,7 +117,6 @@ void Reporter_throughput<T>
 
 	t_report = std::chrono::steady_clock::now();
 }
-
 }
 }
 

@@ -19,7 +19,6 @@ public:
 	inline Socket& operator[](const mnt::sck::check_mutual_info s) { return Module::operator[]((int)mnt::tsk::check_mutual_info)[(int)s]; }
 
 protected:
-
 	R I_A_sum;
 	unsigned long long n_trials;
 
@@ -30,7 +29,6 @@ protected:
 
 	std::vector<B> bits_buff;
 	std::vector<R> llrs_e_buff;
-
 
 public:
 	Monitor_EXIT(const int size, const unsigned max_n_trials, const int n_frames = 1);
@@ -43,7 +41,6 @@ public:
 
 	bool equivalent(const Monitor_EXIT<B,R>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                          // and then can be merged by "collect" or "copy" methods
-
 
 	/*!
 	 * \brief Compares two messages and counts the number of frame errors and bit errors.
@@ -110,17 +107,15 @@ public:
 	virtual void reset();
 	virtual void clear_callbacks();
 
-
-	virtual void collect(const Monitor& m,         bool fully = false);
+	virtual void collect(const Monitor& m,           bool fully = false);
 	virtual void collect(const Monitor_EXIT<B,R>& m, bool fully = false);
 
 	Monitor_EXIT<B,R>& operator+=(const Monitor_EXIT<B,R>& m); // not full "collect" call
 
-	virtual void copy(const Monitor& m,         bool fully = false);
+	virtual void copy(const Monitor& m,           bool fully = false);
 	virtual void copy(const Monitor_EXIT<B,R>& m, bool fully = false);
 
 	Monitor_EXIT<B,R>& operator=(const Monitor_EXIT<B,R>& m); // not full "copy" call
-
 
 	virtual bool done() const;
 
@@ -128,10 +123,8 @@ protected:
 	virtual void _check_mutual_info_avg  (const B *bits, const R *llrs_a, const int frame_id);
 	virtual R _check_mutual_info_histo() const;
 
-
 #ifdef ENABLE_MPI
 public:
-
 	// static constexpr unsigned n_MPI_attributes = 3;
 	struct Vals_mpi
 	{
@@ -155,7 +148,6 @@ public:
 	  max_n_trials(v.max_n_trials),
 	  N(v.N)
 	{
-
 	}
 
 	Vals_mpi get_vals_mpi() const
@@ -176,7 +168,6 @@ public:
 		I_A_sum           = v.I_A_sum;
 		n_trials = v.n_trials;
 	}
-
 #endif
 };
 }

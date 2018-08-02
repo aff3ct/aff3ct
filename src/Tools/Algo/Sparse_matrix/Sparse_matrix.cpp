@@ -246,3 +246,9 @@ void Sparse_matrix
 		}
 	}
 }
+
+std::ostream& operator<<(std::ostream& os, const Sparse_matrix& sm)
+{
+	sm.print(0, os);
+	return os;
+}

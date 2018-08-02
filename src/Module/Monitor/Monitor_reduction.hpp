@@ -29,7 +29,6 @@ public:
 	 */
 	static void last_reduce(bool fully = false);
 
-
 	/*
 	 * reset 't_last_mpi_comm', clear 'stop_loop' and call 'reset_mr' on each monitor
 	 */
@@ -39,7 +38,6 @@ public:
 	static void set_reduce_frequency(std::chrono::nanoseconds d);
 	static void set_n_processes     (int                     np);
 	static bool get_stop_loop();
-
 
 protected:
 	Monitor_reduction();
@@ -62,7 +60,6 @@ private:
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_reduction;
 
 	static bool __reduce__(bool fully, bool force, bool stop_simu);
-
 };
 
 

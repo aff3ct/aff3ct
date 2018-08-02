@@ -16,7 +16,6 @@
 #include <sstream>
 #include <string>
 
-#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Display/Reporter/Reporter.hpp"
 
 namespace aff3ct
@@ -41,7 +40,6 @@ private:
 	static int  interrupt_cnt;                                                  /*!< The number of gor interrupt signal. */
 	static bool over;                                                           /*!< True if SIGINT is called twice in the Terminal::d_delta_interrupt time */
 	static std::chrono::time_point<std::chrono::steady_clock> t_last_interrupt; /*!< Time point of the last call to SIGINT */
-
 
 protected:
 	std::chrono::time_point<std::chrono::steady_clock> t_term;
@@ -79,10 +77,9 @@ public:
 	 */
 	void final_report(std::ostream &stream);
 
-
 	void start_temp_report(const std::chrono::milliseconds freq = std::chrono::milliseconds(500));
-	void stop_temp_report();
 
+	void stop_temp_report();
 
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.

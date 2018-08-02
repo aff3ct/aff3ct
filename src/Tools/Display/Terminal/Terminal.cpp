@@ -10,7 +10,6 @@ bool aff3ct::tools::Terminal::over            = false;
 
 std::chrono::time_point<std::chrono::steady_clock> aff3ct::tools::Terminal::t_last_interrupt;
 
-
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
@@ -100,7 +99,6 @@ void Terminal
 	Terminal::interrupt_cnt = 0;
 }
 
-
 bool Terminal
 ::is_interrupt()
 {
@@ -145,7 +143,7 @@ void Terminal
 		else
 			Terminal::interrupt_cnt = 1;
 	}
-	Terminal::t_last_interrupt  = t_now;
+	Terminal::t_last_interrupt = t_now;
 
 	Terminal::first_interrupt = false;
 	Terminal::interrupt       = true;
