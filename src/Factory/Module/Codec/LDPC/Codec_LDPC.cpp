@@ -108,6 +108,9 @@ void Codec_LDPC::parameters
 	else
 		this->enc->K = this->dec->K; // then the decoder knows the K
 
+	if (this->enc->type == "LDPC_H")
+		this->enc->H_path = this->dec->H_path;
+
 	// if (this->dec->K == 0 || this->dec->N_cw == 0 || this->enc->K == 0 || this->enc->N_cw == 0)
 	// {
 	// 	std::stringstream message;
@@ -116,7 +119,6 @@ void Codec_LDPC::parameters
 	// 	        << ", 'this->enc->N_cw' = " << this->enc->N_cw << ").";
 	// 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	// }
-
 
 	this->dec->n_frames = this->enc->n_frames;
 
