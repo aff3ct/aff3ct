@@ -1,7 +1,11 @@
 #!/bin/bash
 set -x
 
-source ci/threads.sh
+if [ -z "$THREADS" ]
+then
+	echo "The 'THREADS' environment variable is not set, default value = 1."
+	THREADS=1
+fi
 
 WD=$(pwd)
 build_root=build_coverage_linux_x86_gcc
@@ -24,6 +28,7 @@ function gen_coverage_info
 	for path in $folder/*
 	do [ -f $path ] && {
 		cmd=$(cat $path | sed -n 2p)
+		cmd=${cmd/command=/""}
 		echo $cmd
 		cd $build
 		eval "${cmd} --sim-stop-time 1 -t 1"

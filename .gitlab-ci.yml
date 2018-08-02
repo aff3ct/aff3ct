@@ -458,6 +458,7 @@ test-build-coverage-regression:
      paths:
       - code_coverage_files/
   script:
+    - source ./ci/tools/threads.sh
     - ./ci/test-build-coverage-regression.sh
 
 coverage-linux:
