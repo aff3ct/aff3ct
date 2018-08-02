@@ -1,5 +1,5 @@
-#ifndef DECODER_LDPC_BP_LAYERED_ONMS_INTER_HPP_
-#define DECODER_LDPC_BP_LAYERED_ONMS_INTER_HPP_
+#ifndef DECODER_LDPC_BP_HORIZONTAL_LAYERED_ONMS_INTER_HPP_
+#define DECODER_LDPC_BP_HORIZONTAL_LAYERED_ONMS_INTER_HPP_
 
 #include <mipp.h>
 
@@ -13,7 +13,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_layered_ONMS_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
+class Decoder_LDPC_BP_horizontal_layered_ONMS_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
 {
 private:
 	const float normalize_factor;
@@ -36,15 +36,15 @@ protected:
 	mipp::vector<mipp::Reg<B>> V_reorderered;
 
 public:
-	Decoder_LDPC_BP_layered_ONMS_inter(const int K, const int N, const int n_ite,
-	                                   const tools::Sparse_matrix &H,
-	                                   const std::vector<unsigned> &info_bits_pos,
-	                                   const float normalize_factor = 1.f,
-	                                   const R offset = (R)0,
-	                                   const bool enable_syndrome = true,
-	                                   const int syndrome_depth = 1,
-	                                   const int n_frames = 1);
-	virtual ~Decoder_LDPC_BP_layered_ONMS_inter();
+	Decoder_LDPC_BP_horizontal_layered_ONMS_inter(const int K, const int N, const int n_ite,
+	                                              const tools::Sparse_matrix &H,
+	                                              const std::vector<unsigned> &info_bits_pos,
+	                                              const float normalize_factor = 1.f,
+	                                              const R offset = (R)0,
+	                                              const bool enable_syndrome = true,
+	                                              const int syndrome_depth = 1,
+	                                              const int n_frames = 1);
+	virtual ~Decoder_LDPC_BP_horizontal_layered_ONMS_inter();
 
 	void reset();
 
@@ -63,4 +63,4 @@ protected:
 }
 }
 
-#endif /* DECODER_LDPC_BP_LAYERED_ONMS_INTER_HPP_ */
+#endif /* DECODER_LDPC_BP_HORIZONTAL_LAYERED_ONMS_INTER_HPP_ */

@@ -35,6 +35,13 @@ public:
 			message << "'max_chk_node_degree' has to greater than 0.";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		if (typeid(R) != typeid(double) && typeid(R) != typeid(float))
+		{
+			std::stringstream message;
+			message << "The 'LSPA' update rule supports only 'float' or 'double' datatypes.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	virtual ~Update_rule_SPA()
@@ -59,7 +66,7 @@ public:
 	// incoming values from the variable nodes into the check nodes
 	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
 	{
-		assert(chk_degree <= (int)values.size());
+		assert(chk_degree <= (int)this->values.size());
 
 		this->sign    = 0;
 		this->product = 1;
@@ -87,7 +94,7 @@ public:
 
 	inline R compute_chk_node_out(const int var_id, const R var_val)
 	{
-		      auto res_tmp = product / values[var_id];
+		      auto res_tmp = this->product / this->values[var_id];
 		           res_tmp = (res_tmp < (R)1.0) ? res_tmp : (R)1.0 - std::numeric_limits<R>::epsilon();
 		const auto res_abs = (R)2.0 * std::atanh(res_tmp);
 		const auto res_sng = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);
