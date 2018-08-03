@@ -165,7 +165,7 @@ template <typename B>
 bool Monitor_BFER<B>
 ::frame_limit_achieved() const
 {
-	return get_max_n_frames() != 0 && get_n_frames() >= (int)get_max_n_frames();
+	return get_max_n_frames() != 0 && get_n_analyzed_fra() >= (int)get_max_n_frames();
 }
 
 template <typename B>
