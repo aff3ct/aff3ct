@@ -27,8 +27,10 @@ Terminal
 	Terminal::interrupt = false;
 
 	// Install a signal handler
+#if !defined(_WIN64) && !defined(_WIN32)
 	std::signal(SIGUSR1, Terminal::signal_interrupt_handler);
 	std::signal(SIGUSR2, Terminal::signal_interrupt_handler);
+#endif
 	std::signal(SIGINT,  Terminal::signal_interrupt_handler);
 	std::signal(SIGTERM, Terminal::signal_interrupt_handler);
 }

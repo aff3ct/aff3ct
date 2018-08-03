@@ -112,7 +112,6 @@ protected:
 	void build_monitors ();
 
 	virtual bool keep_looping_noise_point();
-	bool max_frame_reached();
 	bool stop_time_reached();
 
 private:
