@@ -130,21 +130,28 @@ class simuData:
 		self.FER        = []
 		self.MI         = []
 		self.FE         = []
-		self.RunCommand = ""
-		self.CurveName  = ""
 		self.NoiseType  = ""
+		self.metadata = {'command': '', 'title': '', 'ci': 'on'}
+
+	def getHeader(self):
+		header = "[metadata]\n"
+		for key in self.metadata:
+			header += key + "=" + self.metadata[key] + "\n"
+
+		header += "\n[trace]\n"
+
+		return header
 
 
 def dataReader(aff3ctOutput):
 	data = simuData()
-	metadata = {'command': '', 'title': '', 'ci': 'on'}
 	startMeta = False;
 	startTrace = False;
 	for line in aff3ctOutput:
 		if startMeta:
 			vals = line.split('=', 1);
 			if len(vals) == 2:
-				metadata[vals[0]] = vals[1];
+				data.metadata[vals[0]] = vals[1].strip();
 		if line.startswith("[metadata]"):
 			startMeta = True;
 
@@ -161,9 +168,7 @@ def dataReader(aff3ctOutput):
 			startTrace = True;
 			startMeta = False;
 
-	data.RunCommand = str(metadata['command'].strip());
-	data.CurveName  = str(metadata['title'  ].strip());
-	data.All        = np.array(data.All).transpose()
+	data.All = np.array(data.All).transpose()
 
 	# find the type of noise used in this simulation
 	idx = -1
@@ -504,6 +509,7 @@ failIds = []
 nErrors = 0
 testId = 0
 nIgnored = 0
+nStrongPass = 0
 
 
 for fn in fileNames:
@@ -524,21 +530,21 @@ for fn in fileNames:
 
 	f.close()
 
-	# if lines[0].startswith("#CI"):
-	# 	if lines[0].find("IGNORE") != -1:
-	# 		print(" - IGNORED.", end="\n");
-	# 		testId += 1
-	# 		nIgnored += 1
-	# 		continue
-
 	# parse the reference file
 	simuRef = dataReader(lines)
+
+	if simuRef.metadata["ci"] == "off":
+		print(" - IGNORED.", end="\n");
+		testId   += 1
+		nIgnored += 1
+		continue
+
 
 
 	# get the command line to run
 	argsAFFECT = argsAFFECTcommand[:]
-	argsAFFECT += splitAsCommand(simuRef.RunCommand)
-	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.CurveName]
+	argsAFFECT += splitAsCommand(simuRef.metadata["command"])
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.metadata["title"]]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]
 
@@ -615,10 +621,6 @@ for fn in fileNames:
 		# parse the results to validate (or not) the BER/FER/MI performance
 		comp = compStats(simuCur, simuRef, args.sensibility, args.minFE)
 
-		# print the header
-		fRes.write("Run command:\n" + simuCur.RunCommand + "\n")
-		fRes.write("Curve name:\n"  + simuCur.CurveName  + "\n")
-
 		# print the parameters directly and add to the wrong data the ref values
 		idxNoise = 0
 		i = 0
@@ -627,9 +629,6 @@ for fn in fileNames:
 			if l.startswith("#"):
 				if "# End of the simulation." not in l:
 					fRes.write(l + "\n")
-
-			elif l == "Run command:" or l == "Curve name:":
-				i += 1 # ignore the following line
 
 			else:
 				em = comp.errorMessage(idxNoise)
@@ -648,8 +647,11 @@ for fn in fileNames:
 
 		if passRate == float(1):
 			print(" - STRONG PASSED.", end="\n");
+			nStrongPass += 1
+
 		elif passRate >= args.weakRate:
 			print(" - WEAK PASSED (rate = %.2f" %passRate, ").", end="\n");
+
 		else:
 			print(" - FAILED (rate = %.2f" %passRate, ").", end="\n");
 			nErrors = nErrors +1
@@ -668,15 +670,14 @@ for fn in fileNames:
 
 	testId += 1
 
-	if elapsedTime < 0.5:
-		break;
-
-
 if len(fileNames) - (args.startId -1) > 0:
+	print("\n# " + str(testId) + " tests executed: " + str(nStrongPass) + " strong passed tests, "
+		  + str(testId - nErrors - nIgnored - nStrongPass) + " weak passed tests, " + str(nErrors) + " failed tests, " + str(nIgnored) + " ignored files.", end="\n")
+
 	if nErrors == 0:
 		print("\n# (II) All the tests PASSED !", end="");
 	else:
-		print("\n# (II) Some tests FAILED: ", end="")
+		print("\n# (II) FAILED tests: ", end="")
 		f = 0
 		for failId in failIds:
 			print("n°", end="")
@@ -687,7 +688,7 @@ if len(fileNames) - (args.startId -1) > 0:
 				print(", ", end="")
 			f = f + 1
 
-	print(" " + str(nIgnored) + " files ignored.", end="\n")
+	print("\n")
 
 
 sys.exit(nErrors);
