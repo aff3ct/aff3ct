@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <regex>
 #include <date.h>
 
 #include "Tools/Display/Terminal/Terminal.hpp"
@@ -157,13 +158,18 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 	if (this->params_common.mpi_rank == 0)
 #endif
-	if (!this->params_common.pyber.empty())
+	if (!this->params_common.meta.empty())
 	{
-		stream << "Run command:"            << std::endl;
-		stream << cmd_line                  << std::endl;
-		stream << "Curve name:"             << std::endl;
-		stream << this->params_common.pyber << std::endl;
-		stream << "Trace:"                  << std::endl;
+// trick to compile on the GNU compiler version 4 (where 'std::regex' is unavailable)
+#if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
+		const auto cmd = cmd_line;
+#else
+		const auto cmd = std::regex_replace(cmd_line, std::regex("( --sim-meta \"[^\"]*\")"), "");
+#endif
+		stream << "[metadata]" << std::endl;
+		stream << "command=" << cmd << std::endl;
+		stream << "title=" << this->params_common.meta << std::endl;
+		stream << std::endl << "[trace]" << std::endl;
 	}
 
 	if (this->params_common.display_legend)
