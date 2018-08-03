@@ -24,7 +24,7 @@ parser.add_argument('--refs-path',      action='store', dest='refsPath',      ty
 parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
 parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
 parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                       # choices=xrange(1,   +inf)
-parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility on the difference between new vs ref to verify a noise point.')                    # choices=xrange(1.0, +inf)
+parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility on the difference between new vs ref to verify a noise point.')               # choices=xrange(1.0, +inf)
 parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                         # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
 parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per noise point.')                            # choices=xrange(0,   +inf)
@@ -134,43 +134,36 @@ class simuData:
 		self.CurveName  = ""
 		self.NoiseType  = ""
 
-def findLine(stringArray, string):
-	for i in range(len(stringArray)):
-		if string in stringArray[i]:
-			return i
-
-	return -1
 
 def dataReader(aff3ctOutput):
 	data = simuData()
-
+	metadata = {'command': '', 'title': '', 'ci': 'on'}
+	startMeta = False;
+	startTrace = False;
 	for line in aff3ctOutput:
-		if line.startswith("#"):
-			if len(line) > 20 and (line.find("FRA |") != -1 or line.find("BER |") != -1 or line.find("FER |") != -1):
-				data.Legend = getLegend(line)
+		if startMeta:
+			vals = line.split('=', 1);
+			if len(vals) == 2:
+				metadata[vals[0]] = vals[1];
+		if line.startswith("[metadata]"):
+			startMeta = True;
 
-		else:
-			if len(data.Legend) != 0:
-				d = getVal(line)
-				if len(d) == len(data.Legend):
-					data.All.append(d)
+		if startTrace:
+			if line.startswith("#"):
+				if len(line) > 20 and (line.find("FRA |") != -1 or line.find("BER |") != -1 or line.find("FER |") != -1):
+					data.Legend = getLegend(line)
+			else:
+				if len(data.Legend) != 0:
+					d = getVal(line)
+					if len(d) == len(data.Legend):
+						data.All.append(d)
+		if line.startswith("[trace]"):
+			startTrace = True;
+			startMeta = False;
 
-
-	data.All = np.array(data.All).transpose()
-
-	# get the command to reproduce this trace
-	idx = findLine(aff3ctOutput, "Run command:")
-	if idx != -1 and len(aff3ctOutput) >= idx +1:
-		data.RunCommand = str(aff3ctOutput[idx +1].strip())
-	else:
-		data.RunCommand = ""
-
-	# get the curve name (if there is one)
-	idx = findLine(aff3ctOutput, "Curve name:")
-	if idx != -1 and len(aff3ctOutput) >= idx +1:
-		data.CurveName = str(aff3ctOutput[idx +1].strip())
-	else:
-		data.CurveName = ""
+	data.RunCommand = str(metadata['command'].strip());
+	data.CurveName  = str(metadata['title'  ].strip());
+	data.All        = np.array(data.All).transpose()
 
 	# find the type of noise used in this simulation
 	idx = -1
@@ -222,6 +215,7 @@ def dataReader(aff3ctOutput):
 	return data
 
 def splitAsCommand(runCommand):
+
 	# split the run command
 	argsList = [""]
 	idx = 0
@@ -256,7 +250,8 @@ def splitAsCommand(runCommand):
 			else:
 				argsList[idx] += s
 
-	del argsList[idx]
+	if argsList[idx] == "":
+		del argsList[idx]
 
 	return argsList
 
@@ -513,7 +508,7 @@ nIgnored = 0
 
 for fn in fileNames:
 	if testId < args.startId -1:
-		testId = testId + 1
+		testId += 1
 		continue
 
 	print("Test n°" + str(testId+1) + " / " + str(len(fileNames)) +
@@ -529,12 +524,12 @@ for fn in fileNames:
 
 	f.close()
 
-	if lines[0].startswith("#CI"):
-		if lines[0].find("IGNORE") != -1:
-			print(" - IGNORED.", end="\n");
-			testId += 1
-			nIgnored += 1
-			continue
+	# if lines[0].startswith("#CI"):
+	# 	if lines[0].find("IGNORE") != -1:
+	# 		print(" - IGNORED.", end="\n");
+	# 		testId += 1
+	# 		nIgnored += 1
+	# 		continue
 
 	# parse the reference file
 	simuRef = dataReader(lines)
@@ -543,8 +538,7 @@ for fn in fileNames:
 	# get the command line to run
 	argsAFFECT = argsAFFECTcommand[:]
 	argsAFFECT += splitAsCommand(simuRef.RunCommand)
-
-	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.CurveName]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]
 
@@ -672,12 +666,10 @@ for fn in fileNames:
 	fRes.write("# End of the simulation.\n")
 	fRes.close();
 
-
 	testId += 1
 
 	if elapsedTime < 0.5:
 		break;
-
 
 
 if len(fileNames) - (args.startId -1) > 0:
