@@ -27,8 +27,7 @@ function gen_coverage_info
 	local folder=$2
 	for path in $folder/*
 	do [ -f $path ] && {
-		cmd=$(cat $path | sed -n 2p)
-		cmd=${cmd/command=/""}
+		cmd=$(awk -F "=" '/command/ {print $2}' $path)
 		echo $cmd
 		cd $build
 		eval "${cmd} --sim-stop-time 1 -t 1"
@@ -38,7 +37,7 @@ function gen_coverage_info
 		[ -d $path ] && {
 			gen_coverage_info $build $path
 		}
- 	}
+	}
 	done
 }
 

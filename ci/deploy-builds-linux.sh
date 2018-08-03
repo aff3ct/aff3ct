@@ -1,6 +1,42 @@
 #!/bin/bash
 set -x
 
+if [ -z "$GIT_BRANCH" ]
+then
+	echo "Please define the 'GIT_BRANCH' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_TAG" ]
+then
+	echo "Please define the 'GIT_TAG' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_HASH" ]
+then
+	echo "Please define the 'GIT_HASH' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_DATE" ]
+then
+	echo "Please define the 'GIT_DATE' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_MESSAGE" ]
+then
+	echo "Please define the 'GIT_MESSAGE' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_AUTHOR" ]
+then
+	echo "Please define the 'GIT_AUTHOR' environment variable."
+	exit 1
+fi
+
 REPO_WEB=aff3ct.github.io
 REPO_RESSOURCES=ressources
 git clone git@github.com:aff3ct/${REPO_WEB}.git
