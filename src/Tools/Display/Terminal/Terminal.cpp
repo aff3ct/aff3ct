@@ -162,7 +162,7 @@ void Terminal
 		Terminal::first_interrupt = false;
 		Terminal::interrupt       = true;
 	}
-#if defined(_WIN64) || defined(_WIN32)
+#if !defined(_WIN64) && !defined(_WIN32)
 	else if (signal == SIGUSR2)
 	{
 		Terminal::stop();
