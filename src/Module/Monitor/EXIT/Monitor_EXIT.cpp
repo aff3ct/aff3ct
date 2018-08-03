@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Monitor_EXIT<B,R>
 ::Monitor_EXIT(const int N, const unsigned max_n_trials, const int n_frames)
-: Monitor(n_frames), N(N), max_n_trials(max_n_trials), vals(Attributes{0, 0})
+: Monitor(n_frames), N(N), max_n_trials(max_n_trials)
 {
 	const std::string name = "Monitor_EXIT";
 	this->set_name(name);
@@ -317,9 +317,7 @@ void Monitor_EXIT<B,R>
 ::reset()
 {
 	Monitor::reset();
-
-	vals.n_trials = 0;
-	vals.I_A_sum  = (R)0.;
+	vals.reset();
 
 	bits_buff  .clear();
 	llrs_e_buff.clear();
@@ -402,6 +400,21 @@ typename Monitor_EXIT<B,R>::Attributes& Monitor_EXIT<B,R>::Attributes
 	I_A_sum  += a.I_A_sum;
 
 	return *this;
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>::Attributes
+::reset()
+{
+	n_trials = 0;
+	I_A_sum  = 0.;
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>::Attributes
+::Attributes()
+{
+	reset();
 }
 
 

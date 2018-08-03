@@ -16,7 +16,7 @@ template <typename B, typename R>
 Monitor_MI<B,R>
 ::Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames)
 : Monitor(n_frames), N(N), max_n_trials(max_n_trials),
-  vals(Attributes{0, 0, 0, 0}), mutinfo_hist(1)
+  mutinfo_hist(1)
 {
 	const std::string name = "Monitor_MI";
 	this->set_name(name);
@@ -250,11 +250,7 @@ void Monitor_MI<B,R>
 ::reset()
 {
 	Monitor::reset();
-
-	vals.n_trials  = 0;
-	vals.MI        = 0.;
-	vals.MI_max    = 0.;
-	vals.MI_min    = 1.;
+	vals.reset();
 
 	this->mutinfo_hist.reset();
 }
@@ -303,14 +299,6 @@ Monitor_MI<B,R>& Monitor_MI<B,R>
 	return *this;
 }
 
-template <typename B, typename R>
-Monitor_MI<B,R>& Monitor_MI<B,R>
-::operator+=(const Attributes& v)
-{
-	collect(v);
-	return *this;
-}
-
 
 
 template <typename B, typename R>
@@ -349,23 +337,36 @@ Monitor_MI<B,R>& Monitor_MI<B,R>
 }
 
 template <typename B, typename R>
-Monitor_MI<B,R>& Monitor_MI<B,R>
-::operator=(const Attributes& v)
-{
-	copy(v);
-	return *this;
-}
-
-template <typename B, typename R>
 typename Monitor_MI<B,R>::Attributes& Monitor_MI<B,R>::Attributes
 ::operator+=(const Attributes& v)
 {
 	n_trials += v.n_trials;
-	MI       += (v.MI - MI) * ((R)v.n_trials / (R)n_trials);
+
+	if (n_trials != 0)
+		MI += (v.MI - MI) * ((R)v.n_trials / (R)n_trials);
+	else
+		MI = (R)0.;
 
 	MI_max = std::max(MI_max, v.MI_max);
 	MI_min = std::min(MI_min, v.MI_min);
 	return *this;
+}
+
+template <typename B, typename R>
+void Monitor_MI<B,R>::Attributes
+::reset()
+{
+	n_trials  = 0;
+	MI        = 0.;
+	MI_max    = 0.;
+	MI_min    = 1.;
+}
+
+template <typename B, typename R>
+Monitor_MI<B,R>::Attributes
+::Attributes()
+{
+	reset();
 }
 
 // ==================================================================================== explicit template instantiation

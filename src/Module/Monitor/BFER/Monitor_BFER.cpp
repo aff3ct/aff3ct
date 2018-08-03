@@ -16,7 +16,7 @@ Monitor_BFER<B>
 ::Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames,
                const bool count_unknown_values, const int n_frames)
 : Monitor(n_frames), K(K), max_fe(max_fe), max_n_frames(max_n_frames),
-  count_unknown_values(count_unknown_values), vals(Attributes{0, 0, 0}), err_hist(0)
+  count_unknown_values(count_unknown_values), err_hist(0)
 {
 	const std::string name = "Monitor_BFER";
 	this->set_name(name);
@@ -231,7 +231,7 @@ float Monitor_BFER<B>
 ::get_fer() const
 {
 	auto t_fer = 0.f;
-	if (this->get_n_be() != 0)
+	if (this->get_n_fe() != 0)
 		t_fer = (float)this->get_n_fe() / (float)this->get_n_analyzed_fra();
 	else
 		t_fer = (1.f) / ((float)this->get_n_analyzed_fra());
@@ -295,10 +295,7 @@ void Monitor_BFER<B>
 ::reset()
 {
 	Monitor::reset();
-
-	vals.n_be  = 0;
-	vals.n_fe  = 0;
-	vals.n_fra = 0;
+	vals.reset();
 
 	this->err_hist.reset();
 }
@@ -396,6 +393,21 @@ typename Monitor_BFER<B>::Attributes& Monitor_BFER<B>::Attributes
 	return *this;
 }
 
+template <typename B>
+void Monitor_BFER<B>::Attributes
+::reset()
+{
+	n_be  = 0;
+	n_fe  = 0;
+	n_fra = 0;
+}
+
+template <typename B>
+Monitor_BFER<B>::Attributes
+::Attributes()
+{
+	reset();
+}
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

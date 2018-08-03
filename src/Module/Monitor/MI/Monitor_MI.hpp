@@ -24,6 +24,8 @@ protected:
 		R                  MI_max;   // the maximum obtained MI
 		R                  MI_min;   // the minimum obtained MI
 
+		Attributes();
+		void reset();
 		Attributes& operator+=(const Attributes&);
 	};
 
@@ -111,16 +113,13 @@ public:
 	virtual void collect(const Attributes& v);
 
 	Monitor_MI<B,R>& operator+=(const Monitor_MI<B,R>& m); // "collect" call with fully = false
-	Monitor_MI<B,R>& operator+=(const Attributes&      v); // "collect" call
 
 
 	virtual void copy(const Monitor& m,         bool fully = false);
 	virtual void copy(const Monitor_MI<B,R>& m, bool fully = false);
 	virtual void copy(const Attributes& v);
 
-
 	Monitor_MI<B,R>& operator=(const Monitor_MI<B,R>& m); // "copy" call  with fully = false
-	Monitor_MI<B,R>& operator=(const Attributes&      v); // "copy" call
 
 
 protected:

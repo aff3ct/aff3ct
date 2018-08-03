@@ -24,6 +24,8 @@ protected:
 		unsigned long long n_trials; // Number of checked trials
 		R                  I_A_sum;  // the mutual information
 
+		Attributes();
+		void reset();
 		Attributes& operator+=(const Attributes&);
 	};
 

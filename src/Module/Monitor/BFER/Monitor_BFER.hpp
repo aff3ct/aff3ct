@@ -23,6 +23,8 @@ protected:
 		unsigned long long n_be;            // the number of wrong bits
 		unsigned long long n_fe;            // the number of wrong frames
 
+		Attributes();
+		void reset();
 		Attributes& operator+=(const Attributes&);
 	};
 
