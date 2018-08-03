@@ -53,7 +53,7 @@ void Terminal
 
 	auto et = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - t_term).count();
 
-	if (!Terminal::is_over() || et >= 1.f)
+	if (!Terminal::over || et >= 1.f)
 		this->report(stream, true);
 
 	t_term = std::chrono::steady_clock::now();
