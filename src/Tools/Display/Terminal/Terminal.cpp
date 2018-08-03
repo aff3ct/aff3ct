@@ -137,7 +137,11 @@ void Terminal
 {
 	bool kill = false;
 
+#if !defined(_WIN64) && !defined(_WIN32)
+	if (signal == SIGINT)
+#else
 	if (signal == SIGUSR1 || signal == SIGINT)
+#endif
 	{
 		Terminal::interrupt_cnt++;
 
@@ -158,10 +162,12 @@ void Terminal
 		Terminal::first_interrupt = false;
 		Terminal::interrupt       = true;
 	}
+#if !defined(_WIN64) && !defined(_WIN32)
 	else if (signal == SIGUSR2)
 	{
 		Terminal::stop();
 	}
+#endif
 	else if (signal == SIGTERM)
 	{
 		kill = true;
