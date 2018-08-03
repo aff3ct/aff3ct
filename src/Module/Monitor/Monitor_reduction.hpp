@@ -36,7 +36,7 @@ public:
 	static void last_reduce_all(bool fully = false);
 
 	/*
-	 * reset 't_last_mpi_comm', clear 'stop_loop' and 'has_been_checked' and call 'reset_mr' on each monitor
+	 * reset 't_last_mpi_comm', clear 'stop_loop' and call 'reset_mr' on each monitor
 	 */
 	static void reset_all();
 
@@ -54,6 +54,11 @@ public:
 	 * \brief set that the current simulation loop must be stopped
 	 */
 	static void set_stop_loop();
+
+	/*
+	 * \brief throw if all process do not have the same number of monitors to reduce
+	 */
+	static void check_reducible();
 
 
 protected:
@@ -83,11 +88,6 @@ private:
 	static void add_monitor(Monitor_reduction*);
 
 	/*
-	 * \brief throw if all process do not have the same number of monitors to reduce
-	 */
-	static void check_reducible();
-
-	/*
 	 * \brief do a reduction of the number of process that are at the final reduce step
 	 * \return true if all process are at the final reduce step (always true without MPI)
 	 */
@@ -103,7 +103,6 @@ private:
 	static bool __reduce__(bool fully, bool force);
 
 	static bool                            stop_loop;
-	static bool                            has_been_checked;
 	static std::vector<Monitor_reduction*> monitors;
 	static std::thread::id                 master_thread_id;
 	static std::chrono::nanoseconds        d_reduce_frequency;

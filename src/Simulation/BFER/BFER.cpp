@@ -414,6 +414,8 @@ void BFER<B,R,Q>
 #endif
 
 	module::Monitor_reduction::reset_all();
+	module::Monitor_reduction::check_reducible();
+
 }
 
 template <typename B, typename R, typename Q>

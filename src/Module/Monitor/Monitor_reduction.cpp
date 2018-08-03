@@ -13,7 +13,6 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 bool                                                                         aff3ct::module::Monitor_reduction::stop_loop = false;
-bool                                                                         aff3ct::module::Monitor_reduction::has_been_checked = false;
 std::vector<aff3ct::module::Monitor_reduction*>                              aff3ct::module::Monitor_reduction::monitors;
 std::thread::id                                                              aff3ct::module::Monitor_reduction::master_thread_id = std::this_thread::get_id();
 std::chrono::nanoseconds                                                     aff3ct::module::Monitor_reduction::d_reduce_frequency = std::chrono::milliseconds(1000);
@@ -29,7 +28,6 @@ void Monitor_reduction
 ::add_monitor(Monitor_reduction* m)
 {
 	Monitor_reduction::monitors.push_back(m);
-	Monitor_reduction::has_been_checked = false;
 }
 
 void Monitor_reduction
@@ -37,7 +35,6 @@ void Monitor_reduction
 {
 	Monitor_reduction::t_last_reduction = std::chrono::steady_clock::now();
 	Monitor_reduction::stop_loop        = false;
-	Monitor_reduction::has_been_checked = false;
 
 	for(auto& m : Monitor_reduction::monitors)
 		m->reset_mr();
@@ -79,11 +76,7 @@ void Monitor_reduction
 void Monitor_reduction
 ::check_reducible()
 {
-	if (Monitor_reduction::has_been_checked)
-		return;
-
 #ifdef ENABLE_MPI
-
 	int n_monitor_send = Monitor_reduction::monitors.size(), n_monitor_recv;
 	MPI_Allreduce(&n_monitor_send, &n_monitor_recv, 1, MPI_INT, MPI_PROD, MPI_COMM_WORLD);
 
@@ -104,8 +97,6 @@ void Monitor_reduction
 	}
 
 #endif
-
-	Monitor_reduction::has_been_checked = true;
 }
 
 bool Monitor_reduction
@@ -132,8 +123,6 @@ bool Monitor_reduction
 bool Monitor_reduction
 ::__reduce__(bool fully, bool force)
 {
-	Monitor_reduction::check_reducible();
-
 	bool all_process_on_last = false;
 
 	// only the master thread can do this
