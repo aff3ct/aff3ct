@@ -39,7 +39,7 @@ template <typename B>
 Reporter_throughput<T>
 ::Reporter_throughput(const module::Monitor_BFER<B>& m)
 : Reporter_throughput(std::bind(&module::Monitor_BFER<B>::get_n_fe, &m),
-	                  (T)m.get_fe_limit(),
+	                  (T)m.get_max_fe(),
 	                  std::bind(&module::Monitor_BFER<B>::get_n_analyzed_fra, &m),
 	                  (T)m.get_K())
 {
@@ -50,7 +50,7 @@ template <typename B, typename R>
 Reporter_throughput<T>
 ::Reporter_throughput(const module::Monitor_MI<B,R>& m)
 : Reporter_throughput(std::bind(&module::Monitor_MI<B,R>::get_n_trials, &m),
-	                  (T)m.get_n_trials_limit(),
+	                  (T)m.get_max_n_trials(),
 	                  std::bind(&module::Monitor_MI<B,R>::get_n_trials, &m),
 	                  (T)m.get_N())
 {
@@ -61,7 +61,7 @@ template <typename B, typename R>
 Reporter_throughput<T>
 ::Reporter_throughput(const module::Monitor_EXIT<B,R>& m)
 : Reporter_throughput(std::bind(&module::Monitor_EXIT<B,R>::get_n_trials, &m),
-	                  (T)m.get_n_trials_limit(),
+	                  (T)m.get_max_n_trials(),
 	                  std::bind(&module::Monitor_EXIT<B,R>::get_n_trials, &m),
 	                  (T)m.get_N())
 {

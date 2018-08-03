@@ -5,26 +5,29 @@
 #include <chrono>
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
-#include "../Reporter.hpp"
+#include "../Reporter_monitor.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename R = float>
-class Reporter_MI : public Reporter
+class Reporter_MI : public Reporter_monitor<module::Monitor_MI<B,R>>
 {
-protected:
-	const module::Monitor_MI<B,R> &monitor;
-
-	group_t MI_group;
+public:
+	using Rm = Reporter_monitor<module::Monitor_MI<B,R>>;
+	using typename Rm::M;
+	using typename Rm::report_t;
 
 public:
-	explicit Reporter_MI(const module::Monitor_MI<B,R> &monitor);
+	explicit Reporter_MI(const M &monitor);
 
 	virtual ~Reporter_MI() = default;
 
 	report_t report(bool final = false);
+
+private:
+	void create_groups();
 };
 }
 }

@@ -5,27 +5,28 @@
 #include <chrono>
 
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
-
-#include "../Reporter.hpp"
+#include "../Reporter_monitor.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int>
-class Reporter_BFER : public Reporter
+class Reporter_BFER : public Reporter_monitor<module::Monitor_BFER<B>>
 {
-protected:
-	const module::Monitor_BFER<B> &monitor;
-
-	group_t BFER_group;
-
 public:
-	explicit Reporter_BFER(const module::Monitor_BFER<B> &monitor);
+	using Rm = Reporter_monitor<module::Monitor_BFER<B>>;
+	using typename Rm::M;
+	using typename Rm::report_t;
+
+	explicit Reporter_BFER(const M &monitor);
 
 	virtual ~Reporter_BFER() = default;
 
 	report_t report(bool final = false);
+
+private:
+	void create_groups();
 };
 }
 }

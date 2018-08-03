@@ -108,7 +108,15 @@ bool Terminal
 bool Terminal
 ::is_over()
 {
+#ifdef ENABLE_MPI
+	char over_send = (char)Terminal::over, over_recv;
+
+	MPI_Allreduce(&over_send, &over_recv, 1, MPI_CHAR, MPI_LOR, MPI_COMM_WORLD);
+
+	return (bool)over_recv;
+#else
 	return Terminal::over;
+#endif
 }
 
 void Terminal

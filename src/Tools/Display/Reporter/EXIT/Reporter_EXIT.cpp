@@ -14,13 +14,19 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Reporter_EXIT<B,R>
-::Reporter_EXIT(const module::Monitor_EXIT<B,R> &monitor, const Noise<R>& noise_a)
-: Reporter(),
-  monitor(monitor),
+::Reporter_EXIT(const M &monitor, const Noise<R>& noise_a)
+: Rm(monitor),
   noise_a(noise_a)
 {
-	auto& EXIT_title = EXIT_group.first;
-	auto& EXIT_cols  = EXIT_group.second;
+	create_groups();
+}
+
+template <typename B, typename R>
+void Reporter_EXIT<B,R>
+::create_groups()
+{
+	auto& EXIT_title = this->monitor_group.first;
+	auto& EXIT_cols  = this->monitor_group.second;
 
 	EXIT_title = {"EXIT chart depending on", "the channel A noise"};
 	EXIT_cols.push_back(std::make_pair("SIG_A",      "(dB)"));
@@ -28,11 +34,11 @@ Reporter_EXIT<B,R>
 	EXIT_cols.push_back(std::make_pair("A_PRIORI",  "(I_A)"));
 	EXIT_cols.push_back(std::make_pair("EXTRINSIC", "(I_E)"));
 
-	this->cols_groups.push_back(EXIT_group);
+	this->cols_groups.push_back(this->monitor_group);
 }
 
 template <typename B, typename R>
-Reporter::report_t Reporter_EXIT<B,R>
+typename Reporter_EXIT<B,R>::report_t Reporter_EXIT<B,R>
 ::report(bool final)
 {
 	assert(this->cols_groups.size() == 1);
@@ -41,9 +47,9 @@ Reporter::report_t Reporter_EXIT<B,R>
 
 	auto& EXIT_report = the_report[0];
 
-	const auto fra   = monitor.get_n_trials();
-	const auto I_A   = monitor.get_I_A();
-	const auto I_E   = monitor.get_I_E();
+	const auto fra   = this->monitor.get_n_trials();
+	const auto I_A   = this->monitor.get_I_A();
+	const auto I_E   = this->monitor.get_I_E();
 
 	std::stringstream str_sig_a, str_fra, str_I_A, str_I_E;
 
