@@ -30,6 +30,7 @@ Terminal
 	std::signal(SIGUSR1, Terminal::signal_interrupt_handler);
 	std::signal(SIGUSR2, Terminal::signal_interrupt_handler);
 	std::signal(SIGINT,  Terminal::signal_interrupt_handler);
+	std::signal(SIGTERM, Terminal::signal_interrupt_handler);
 }
 
 Terminal
@@ -132,36 +133,47 @@ void Terminal
 void Terminal
 ::signal_interrupt_handler(int signal)
 {
-	if (signal == SIGUSR2)
+	bool kill = false;
+
+	if (signal == SIGUSR1 || signal == SIGINT)
+	{
+		Terminal::interrupt_cnt++;
+
+		auto t_now = std::chrono::steady_clock::now();
+		if (!Terminal::first_interrupt)
+		{
+			auto d_delta_interrupt = t_now - Terminal::t_last_interrupt;
+			if (d_delta_interrupt < std::chrono::milliseconds(500))
+				Terminal::stop();
+
+			if (d_delta_interrupt < std::chrono::milliseconds(2100))
+				kill = true;
+			else
+				Terminal::interrupt_cnt = 1;
+		}
+		Terminal::t_last_interrupt = t_now;
+
+		Terminal::first_interrupt = false;
+		Terminal::interrupt       = true;
+	}
+	else if (signal == SIGUSR2)
 	{
 		Terminal::stop();
-		return;
 	}
-
-	Terminal::interrupt_cnt++;
-
-	auto t_now = std::chrono::steady_clock::now();
-	if (!Terminal::first_interrupt)
+	else if (signal == SIGTERM)
 	{
-		auto d_delta_interrupt = t_now - Terminal::t_last_interrupt;
-		if (d_delta_interrupt < std::chrono::milliseconds(500))
-			Terminal::stop();
-
-		if (d_delta_interrupt < std::chrono::milliseconds(2100))
-		{
-			if (Terminal::interrupt_cnt >= 4)
-			{
-				std::cerr << "\r# Killed by user interruption!"
-				             "                                                                                         "
-				          << std::endl;
-				std::exit(EXIT_FAILURE);
-			}
-		}
-		else
-			Terminal::interrupt_cnt = 1;
+		kill = true;
 	}
-	Terminal::t_last_interrupt = t_now;
 
-	Terminal::first_interrupt = false;
-	Terminal::interrupt       = true;
+
+	if (kill)
+	{
+		if (Terminal::interrupt_cnt >= 4)
+		{
+			std::cerr << "\r# Killed by user interruption!"
+			             "                                                                                         "
+			          << std::endl;
+			std::exit(EXIT_FAILURE);
+		}
+	}
 }
