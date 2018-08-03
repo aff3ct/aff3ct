@@ -21,15 +21,16 @@ public:
 protected:
 	struct Attributes
 	{
-		const int      N;            // Number of frame bits
-		const int      n_frames;     // Number of frames
-		const unsigned max_n_trials; // max number of trials to check then n_trials_limit_achieved() returns true
-
 		unsigned long long n_trials; // Number of checked trials
 		R                  I_A_sum;  // the mutual information
+
+		Attributes& operator+=(const Attributes&);
 	};
 
 private:
+	const int      N;            // Number of frame bits
+	const unsigned max_n_trials; // max number of trials to check then n_trials_limit_achieved() returns true
+
 	Attributes vals;
 
 	std::vector<std::function<void(void)>> callbacks_measure;
@@ -42,7 +43,6 @@ public:
 	Monitor_EXIT(const Monitor_EXIT<B,R>& m, const int n_frames = -1); // construct with the same parameters than "m"
 	                                                                   // if n_frames != -1 then set it has "n_frames" value
 	Monitor_EXIT(); // construct with null and default parameters.
-	Monitor_EXIT(const Attributes& v); // init the monitor with the given values
 
 	virtual ~Monitor_EXIT() = default;
 

@@ -1,5 +1,10 @@
 #include <cmath>
 #include <sstream>
+
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Monitor_reduction.hpp"

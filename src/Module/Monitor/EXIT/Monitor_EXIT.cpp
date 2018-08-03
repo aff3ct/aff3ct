@@ -10,8 +10,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Monitor_EXIT<B,R>
 ::Monitor_EXIT(const int N, const unsigned max_n_trials, const int n_frames)
-: Monitor(n_frames),
-  vals(Attributes{N, n_frames, max_n_trials, 0, 0})
+: Monitor(n_frames), N(N), max_n_trials(max_n_trials), vals(Attributes{0, 0})
 {
 	const std::string name = "Monitor_EXIT";
 	this->set_name(name);
@@ -44,13 +43,6 @@ template <typename B, typename R>
 Monitor_EXIT<B,R>
 ::Monitor_EXIT()
 : Monitor_EXIT<B,R>(1, 0)
-{
-}
-
-template <typename B, typename R>
-Monitor_EXIT<B,R>
-::Monitor_EXIT(const Attributes& v)
-: Monitor(v.n_frames), vals(v)
 {
 }
 
@@ -282,14 +274,14 @@ template <typename B, typename R>
 int Monitor_EXIT<B,R>
 ::get_N() const
 {
-	return vals.N;
+	return N;
 }
 
 template <typename B, typename R>
 unsigned Monitor_EXIT<B,R>
 ::get_max_n_trials() const
 {
-	return vals.max_n_trials;
+	return max_n_trials;
 }
 
 template <typename B, typename R>
@@ -360,8 +352,7 @@ template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::collect(const Attributes& v)
 {
-	vals.n_trials += v.n_trials;
-	vals.I_A_sum  += v.I_A_sum;
+	vals += v;
 }
 
 template <typename B, typename R>
@@ -392,8 +383,7 @@ template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::copy(const Attributes& v)
 {
-	vals.n_trials = v.n_trials;
-	vals.I_A_sum  = v.I_A_sum;
+	vals = v;
 }
 
 template <typename B, typename R>
@@ -403,6 +393,17 @@ Monitor_EXIT<B,R>& Monitor_EXIT<B,R>
 	copy(m, false);
 	return *this;
 }
+
+template <typename B, typename R>
+typename Monitor_EXIT<B,R>::Attributes& Monitor_EXIT<B,R>::Attributes
+::operator+=(const Attributes& a)
+{
+	n_trials += a.n_trials;
+	I_A_sum  += a.I_A_sum;
+
+	return *this;
+}
+
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

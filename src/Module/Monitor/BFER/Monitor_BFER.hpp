@@ -16,21 +16,22 @@ public:
 	inline Task&   operator[](const mnt::tsk               t) { return Module::operator[]((int)t);                              }
 	inline Socket& operator[](const mnt::sck::check_errors s) { return Module::operator[]((int)mnt::tsk::check_errors)[(int)s]; }
 
-private:
+protected:
 	struct Attributes
 	{
-		const int      K;                    // Number of source bits
-		const int      n_frames;             // Number of frames
-		const unsigned max_fe;               // max number of wrong frames to get then fe_limit_achieved() returns true else if 0
-		const unsigned max_n_frames;         // max number of frames to check then frame_limit_achieved() returns true else if 0
-		const bool     count_unknown_values; // take into account or not the unknown values as wrong values in the checked frames
-
 		unsigned long long n_fra;           // the number of checked frames
 		unsigned long long n_be;            // the number of wrong bits
 		unsigned long long n_fe;            // the number of wrong frames
+
+		Attributes& operator+=(const Attributes&);
 	};
 
 private:
+	const int      K;                    // Number of source bits
+	const unsigned max_fe;               // max number of wrong frames to get then fe_limit_achieved() returns true else if 0
+	const unsigned max_n_frames;         // max number of frames to check then frame_limit_achieved() returns true else if 0
+	const bool     count_unknown_values; // take into account or not the unknown values as wrong values in the checked frames
+
 	Attributes vals;
 	tools::Histogram<int> err_hist; // the error histogram record
 
@@ -43,7 +44,6 @@ public:
 	Monitor_BFER(const Monitor_BFER<B>& m, const int n_frames = -1); // construct with the same parameters than "m"
 	                                                                 // if n_frames != -1 then set it has "n_frames" value
 	Monitor_BFER(); // construct with null and default parameters.
-	Monitor_BFER(const Attributes& v);
 
 	virtual ~Monitor_BFER() = default;
 

@@ -13,10 +13,10 @@ using namespace aff3ct::module;
 
 template <typename B>
 Monitor_BFER<B>
-::Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames, const bool count_unknown_values, const int n_frames)
-: Monitor(n_frames),
-  vals(Attributes{K, n_frames, max_fe, max_n_frames, count_unknown_values, 0, 0, 0}),
-  err_hist(0)
+::Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames,
+               const bool count_unknown_values, const int n_frames)
+: Monitor(n_frames), K(K), max_fe(max_fe), max_n_frames(max_n_frames),
+  count_unknown_values(count_unknown_values), vals(Attributes{0, 0, 0}), err_hist(0)
 {
 	const std::string name = "Monitor_BFER";
 	this->set_name(name);
@@ -54,15 +54,6 @@ Monitor_BFER<B>
 : Monitor_BFER<B>(1, 0)
 {
 }
-
-
-template <typename B>
-Monitor_BFER<B>
-::Monitor_BFER(const Attributes& v)
-: Monitor(v.n_frames), vals(v)
-{
-}
-
 
 
 template <typename B>
@@ -174,7 +165,7 @@ template <typename B>
 bool Monitor_BFER<B>
 ::frame_limit_achieved() const
 {
-	return get_max_n_frames() != 0 && get_n_frames() >= get_max_n_frames();
+	return get_max_n_frames() != 0 && get_n_frames() >= (int)get_max_n_frames();
 }
 
 template <typename B>
@@ -197,21 +188,21 @@ template <typename B>
 int Monitor_BFER<B>
 ::get_K() const
 {
-	return vals.K;
+	return K;
 }
 
 template <typename B>
 unsigned Monitor_BFER<B>
 ::get_max_n_frames() const
 {
-	return vals.max_n_frames;
+	return max_n_frames;
 }
 
 template <typename B>
 unsigned Monitor_BFER<B>
 ::get_max_fe() const
 {
-	return vals.max_fe;
+	return max_fe;
 }
 
 template <typename B>
@@ -265,7 +256,7 @@ template<typename B>
 bool Monitor_BFER<B>
 ::get_count_unknown_values() const
 {
-	return vals.count_unknown_values;
+	return count_unknown_values;
 }
 
 template<typename B>
@@ -346,9 +337,7 @@ template <typename B>
 void Monitor_BFER<B>
 ::collect(const Attributes& v)
 {
-	vals.n_be  += v.n_be;
-	vals.n_fe  += v.n_fe;
-	vals.n_fra += v.n_fra;
+	vals += v;
 }
 
 template <typename B>
@@ -384,9 +373,7 @@ template <typename B>
 void Monitor_BFER<B>
 ::copy(const Attributes& v)
 {
-	vals.n_fra = v.n_fra;
-	vals.n_be  = v.n_be;
-	vals.n_fe  = v.n_fe;
+	vals = v;
 }
 
 template <typename B>
@@ -396,6 +383,20 @@ Monitor_BFER<B>& Monitor_BFER<B>
 	copy(m, false);
 	return *this;
 }
+
+
+template <typename B>
+typename Monitor_BFER<B>::Attributes& Monitor_BFER<B>::Attributes
+::operator+=(const Attributes& a)
+{
+	n_be  += a.n_be;
+	n_fe  += a.n_fe;
+	n_fra += a.n_fra;
+
+	return *this;
+}
+
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

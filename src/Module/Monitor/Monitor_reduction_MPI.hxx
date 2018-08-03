@@ -24,27 +24,6 @@ Monitor_reduction_MPI<M>
 	const std::string name = "Monitor_reduction_MPI<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
 
-	// int          blen         [M::n_MPI_attributes];
-	// MPI_Aint     displacements[M::n_MPI_attributes];
-	// MPI_Datatype oldtypes     [M::n_MPI_attributes];
-
-	// M::create_MPI_struct(blen, displacements, oldtypes);
-
-	// MPI_Datatype MPI_monitor_vals_tmp;
-
-	// if (auto ret = MPI_Type_create_struct(M::n_MPI_attributes, blen, displacements, oldtypes, &MPI_monitor_vals_tmp))
-	// {
-	// 	std::stringstream message;
-	// 	message << "'MPI_Type_create_struct' returned '" << ret << "' error code.";
-	// 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	// }
-
-
-	// MPI_Aint lb, extent;
-	// MPI_Type_get_extent( MPI_monitor_vals_tmp, &lb, &extent );
-	// extent = sizeof (M);
-	// MPI_Type_create_resized( MPI_monitor_vals_tmp, lb, extent, &MPI_monitor_vals );
-
 	int          blen          = sizeof(Attributes);
 	MPI_Aint     displacements = 0;
 	MPI_Datatype oldtypes      = MPI_CHAR;
@@ -79,8 +58,7 @@ void Monitor_reduction_MPI<M>
 
 	Monitor_reduction_M<M>::_reduce(fully);
 
-	// Attributes mvals_recv;
-	auto mvals_send = M::get_attributes(), mvals_recv;
+	Attributes mvals_send = M::get_attributes(), mvals_recv;
 	MPI_Allreduce(&mvals_send, &mvals_recv, 1, MPI_monitor_vals, MPI_Op_reduce_monitors, MPI_COMM_WORLD);
 
 	M::copy(mvals_recv);
@@ -101,12 +79,7 @@ void Monitor_reduction_MPI<M>
 	auto inout_cvt = static_cast<Attributes*>(inout);
 
 	for (auto i = 0; i < *len; i++)
-	{
-		// M m_in   (in_cvt   [i]);
-		M m_inout(inout_cvt[i]);
-		m_inout.collect(in_cvt[i]);
-		inout_cvt[i] = m_inout.get_vals_mpi();
-	}
+		inout_cvt[i] += in_cvt[i];
 }
 
 }

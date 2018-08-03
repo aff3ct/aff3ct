@@ -23,13 +23,13 @@ public:
 protected:
 	using Attributes = typename M::Attributes;
 
-	virtual void reduce(bool fully = false, bool stop_simu = false); // return the number of process that stopped the simu
+	virtual void _reduce(bool fully = false, bool stop_simu = false); // return the number of process that stopped the simu
 
 private:
 	MPI_Datatype MPI_monitor_vals;
 	MPI_Op       MPI_Op_reduce_monitors;
 
-	static MPI_reduce_monitors(void *in, void *inout, int *len, MPI_Datatype *datatype);
+	static void MPI_reduce_monitors(void *in, void *inout, int *len, MPI_Datatype *datatype);
 };
 }
 }

@@ -15,9 +15,8 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Monitor_MI<B,R>
 ::Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames)
-: Monitor(n_frames),
-  vals(Attributes{N, n_frames, max_n_trials, 0, 0, 0, 0}),
-  mutinfo_hist(1)
+: Monitor(n_frames), N(N), max_n_trials(max_n_trials),
+  vals(Attributes{0, 0, 0, 0}), mutinfo_hist(1)
 {
 	const std::string name = "Monitor_MI";
 	this->set_name(name);
@@ -52,13 +51,6 @@ template <typename B, typename R>
 Monitor_MI<B,R>
 ::Monitor_MI()
 : Monitor_MI<B,R>(1, 0)
-{
-}
-
-template <typename B, typename R>
-Monitor_MI<B,R>
-::Monitor_MI(const Attributes& v)
-: Monitor(v.n_frames), vals(v)
 {
 }
 
@@ -193,14 +185,14 @@ template <typename B, typename R>
 int Monitor_MI<B,R>
 ::get_N() const
 {
-	return vals.N;
+	return N;
 }
 
 template <typename B, typename R>
 unsigned Monitor_MI<B,R>
 ::get_max_n_trials() const
 {
-	return vals.max_n_trials;
+	return max_n_trials;
 }
 
 template <typename B, typename R>
@@ -300,11 +292,7 @@ template <typename B, typename R>
 void Monitor_MI<B,R>
 ::collect(const Attributes& v)
 {
-	vals.n_trials += v.n_trials;
-	vals.MI       += (v.MI - vals.MI) * ((R)v.n_trials / (R)vals.n_trials);
-
-	vals.MI_max = std::max(vals.MI_max, v.MI_max);
-	vals.MI_min = std::min(vals.MI_min, v.MI_min);
+	vals += v;
 }
 
 template <typename B, typename R>
@@ -348,10 +336,7 @@ template <typename B, typename R>
 void Monitor_MI<B,R>
 ::copy(const Attributes& v)
 {
-	vals.n_trials     = v.n_trials;
-	vals.MI           = v.MI;
-	vals.MI_max       = v.MI_max;
-	vals.MI_min       = v.MI_min;
+	vals = v;
 }
 
 
@@ -368,6 +353,18 @@ Monitor_MI<B,R>& Monitor_MI<B,R>
 ::operator=(const Attributes& v)
 {
 	copy(v);
+	return *this;
+}
+
+template <typename B, typename R>
+typename Monitor_MI<B,R>::Attributes& Monitor_MI<B,R>::Attributes
+::operator+=(const Attributes& v)
+{
+	n_trials += v.n_trials;
+	MI       += (v.MI - MI) * ((R)v.n_trials / (R)n_trials);
+
+	MI_max = std::max(MI_max, v.MI_max);
+	MI_min = std::min(MI_min, v.MI_min);
 	return *this;
 }
 

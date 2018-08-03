@@ -19,17 +19,18 @@ public:
 protected:
 	struct Attributes
 	{
-		const int      N;            // Number of frame bits
-		const int      n_frames;     // Number of frames
-		const unsigned max_n_trials; // max number of trials to check then n_trials_limit_achieved() returns true
-
 		unsigned long long n_trials; // Number of checked trials
 		R                  MI;       // the mutual information
 		R                  MI_max;   // the maximum obtained MI
 		R                  MI_min;   // the minimum obtained MI
+
+		Attributes& operator+=(const Attributes&);
 	};
 
 private:
+	const int      N;            // Number of frame bits
+	const unsigned max_n_trials; // max number of trials to check then n_trials_limit_achieved() returns true
+
 	Attributes vals;
 	tools::Histogram<R> mutinfo_hist; // the MI histogram record
 
@@ -44,7 +45,6 @@ public:
 	Monitor_MI(const Monitor_MI<B,R>& m, const int n_frames = -1); // construct with the same parameters than "m"
 	                                                               // if n_frames != -1 then set it has "n_frames" value
 	Monitor_MI(); // construct with null and default parameters.
-	Monitor_MI(const Attributes& v); // init the monitor with the given values
 
 	virtual ~Monitor_MI() = default;
 

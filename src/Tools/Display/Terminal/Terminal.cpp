@@ -1,3 +1,8 @@
+
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 #include <csignal>
 
 #include "Tools/Exception/exception.hpp"
