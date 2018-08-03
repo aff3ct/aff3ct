@@ -27,11 +27,9 @@ Terminal
 	Terminal::interrupt = false;
 
 	// Install a signal handler
-#ifdef ENABLE_MPI
 	std::signal(SIGUSR1, Terminal::signal_interrupt_handler);
-#else
-	std::signal(SIGINT, Terminal::signal_interrupt_handler);
-#endif
+	std::signal(SIGUSR2, Terminal::signal_interrupt_handler);
+	std::signal(SIGINT,  Terminal::signal_interrupt_handler);
 }
 
 Terminal
@@ -134,6 +132,12 @@ void Terminal
 void Terminal
 ::signal_interrupt_handler(int signal)
 {
+	if (signal == SIGUSR2)
+	{
+		Terminal::stop();
+		return;
+	}
+
 	Terminal::interrupt_cnt++;
 
 	auto t_now = std::chrono::steady_clock::now();
