@@ -529,8 +529,7 @@ for fn in fileNames:
 	# get the command line to run
 	argsAFFECT = argsAFFECTcommand[:]
 	argsAFFECT += splitAsCommand(simuRef.RunCommand)
-	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
-	argsAFFECT += ["--sim-meta", simuRef.CurveName]
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.CurveName]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]
 
