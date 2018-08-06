@@ -214,16 +214,15 @@ void BFER<B,R,Q>
 
 		this->t_start_noise_point = std::chrono::steady_clock::now();
 
-		bool monitor_criteria;
 		try
 		{
 			this->_launch();
-			monitor_criteria = module::Monitor_reduction::is_done_all(true, true); // final reduction
+			module::Monitor_reduction::is_done_all(true, true); // final reduction
 		}
 		catch (std::exception const& e)
 		{
 			tools::Terminal::stop();
-			monitor_criteria = module::Monitor_reduction::is_done_all(true, true); // final reduction
+			module::Monitor_reduction::is_done_all(true, true); // final reduction
 
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
 
@@ -232,9 +231,9 @@ void BFER<B,R,Q>
 		}
 
 
-		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert &&
-		    !tools::Terminal::is_interrupt() && !monitor_criteria &&
-		    (params_BFER.max_frame == 0 || this->monitor_er_red->get_n_analyzed_fra() >= params_BFER.max_frame))
+		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
+		    !this->monitor_er_red->fe_limit_achieved() &&
+		    (this->monitor_er_red->frame_limit_achieved() || this->stop_time_reached()))
 			tools::Terminal::stop();
 
 
