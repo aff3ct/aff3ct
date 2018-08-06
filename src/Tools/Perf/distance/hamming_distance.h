@@ -12,7 +12,7 @@ namespace tools
  * when B is a floating point type then compute the hamming distance from their sign
  */
 template <typename B = int32_t>
-size_t hamming_distance_seq(const B *in1, const B *in2, const unsigned size);
+inline size_t hamming_distance_seq(const B *in1, const B *in2, const unsigned size);
 
 /*
  * compute the Hamming distance between the arrays 'in1' and 'in2' of length 'size'
@@ -20,14 +20,14 @@ size_t hamming_distance_seq(const B *in1, const B *in2, const unsigned size);
  * when B is a floating point type then compute the hamming distance from their sign
  */
 template <typename B = int32_t>
-size_t hamming_distance(const B *in1, const B *in2, const unsigned size);
+inline size_t hamming_distance(const B *in1, const B *in2, const unsigned size);
 
 /*
  * compute the Hamming distance between the arrays 'in' and a all zero word of length 'size'
  * when B is a floating point type then compute the hamming distance from the sign
  */
 template <typename B = int32_t>
-size_t hamming_distance_seq(const B *in, const unsigned size);
+inline size_t hamming_distance_seq(const B *in, const unsigned size);
 
 /*
  * compute the Hamming distance between the arrays 'in' and a all zero word of length 'size'
@@ -35,7 +35,7 @@ size_t hamming_distance_seq(const B *in, const unsigned size);
  * when B is a floating point type then compute the hamming distance from the sign
  */
 template <typename B = int32_t>
-size_t hamming_distance(const B *in, const unsigned size);
+inline size_t hamming_distance(const B *in, const unsigned size);
 
 
 
@@ -46,7 +46,7 @@ size_t hamming_distance(const B *in, const unsigned size);
  * Check if 'in' values are unknown symbol (tools::is_unknown_symbol<B>(in[i])) and then count as different
  */
 template <typename B = int32_t>
-size_t hamming_distance_unk_seq(const B *in1, const B *in2, const unsigned size);
+inline size_t hamming_distance_unk_seq(const B *in1, const B *in2, const unsigned size);
 
 /*
  * compute the Hamming distance between the arrays 'in1' and 'in2' of length 'size'
@@ -55,7 +55,7 @@ size_t hamming_distance_unk_seq(const B *in1, const B *in2, const unsigned size)
  * Check if 'in' values are unknown symbol (tools::is_unknown_symbol<B>(in[i])) and then count as different
  */
 template <typename B = int32_t>
-size_t hamming_distance_unk(const B *in1, const B *in2, const unsigned size);
+inline size_t hamming_distance_unk(const B *in1, const B *in2, const unsigned size);
 
 /*
  * compute the Hamming distance between the arrays 'in' and a all zero word of length 'size'
@@ -63,7 +63,7 @@ size_t hamming_distance_unk(const B *in1, const B *in2, const unsigned size);
  * Check if 'in' values are unknown symbol (tools::is_unknown_symbol<B>(in[i])) and then count as different
  */
 template <typename B = int32_t>
-size_t hamming_distance_unk_seq(const B *in, const unsigned size);
+inline size_t hamming_distance_unk_seq(const B *in, const unsigned size);
 
 /*
  * compute the Hamming distance between the arrays 'in' and a all zero word of length 'size'
@@ -72,8 +72,10 @@ size_t hamming_distance_unk_seq(const B *in, const unsigned size);
  * Check if 'in' values are unknown symbol (tools::is_unknown_symbol<B>(in[i])) and then count as different
  */
 template <typename B = int32_t>
-size_t hamming_distance_unk(const B *in, const unsigned size);
+inline size_t hamming_distance_unk(const B *in, const unsigned size);
 }
 }
+
+#include "hamming_distance.hxx"
 
 #endif /* HAMMING_DISTANCE_H_ */
