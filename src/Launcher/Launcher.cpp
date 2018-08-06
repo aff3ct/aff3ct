@@ -169,7 +169,6 @@ int Launcher::launch()
 		stream << "[metadata]" << std::endl;
 		stream << "command=" << cmd << std::endl;
 		stream << "title=" << this->params_common.meta << std::endl;
-		stream << "ci=on" << std::endl;
 		stream << std::endl << "[trace]" << std::endl;
 	}
 
