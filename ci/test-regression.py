@@ -40,8 +40,8 @@ parser.add_argument('--mpi-host',       action='store', dest='mpihost',       ty
 
 # supported file extensions (filename suffix)
 extensions     = ['.txt', '.perf', '.data', '.dat']
-NoiseTypeList  = ["ebn0",  "esn0",  "rop", "ep"]
-NoiseUnityList = ["dB",    "dB",    "dB",  ""  ]
+NoiseTypeList  = ["ebn0", "esn0",  "rop",    "ep" ]
+NoiseUnityList = ["dB",   "dB",    "dB",     ""   ]
 
 
 # ================================================================== PARAMETERS
@@ -56,7 +56,6 @@ def format_e(n):
 def splitFloat(n):
 	s = format_e(n).split('e')
 	return [float(s[0]), int(s[1])]
-
 
 def getFileNames(currentPath, fileNames):
 	if os.path.isdir(currentPath):
@@ -88,13 +87,11 @@ def getFileNames(currentPath, fileNames):
 		print("# (WW) The path '", currentPath, "' does not exist.")
 
 def splitAsCommand(runCommand):
-
-	# split the run command
 	argsList = [""]
 	idx = 0
-
 	new = 0
 	found_dashes = 0
+
 	for s in runCommand:
 		if found_dashes == 0:
 			if s == ' ':
@@ -145,9 +142,10 @@ class tableStats:
 		self.valid           = 0
 
 		if nData == 0 or nData > len(tableCur) :
-			self.nData       = len(tableCur)
+			self.nData = len(tableCur)
 		else :
-			self.nData       = nData
+			self.nData = nData
+
 		self.errorsList      = []
 		self.errorsPos       = []
 		self.errorsMessage   = []
@@ -158,7 +156,6 @@ class tableStats:
 		for i in range(self.nData):
 			c = splitFloat(self.tableCur[i])
 			r = splitFloat(self.tableRef[i])
-
 
 			# compute the distance between the two points normalized to the unity with the lowest power
 			if c[1] < r[1]:
@@ -190,7 +187,6 @@ class tableStats:
 		else:
 			self.rateSensibility = float(0)
 
-
 	def errorMessage(self, idx):
 		if len(self.errorsMessage) > idx and len(self.errorsMessage[idx]):
 			return self.name + "=" + self.errorsMessage[idx]
@@ -220,11 +216,19 @@ class compStats:
 		self.dataCur  = dataCur
 		self.dataRef  = dataRef
 		self.dataList = []
-		self.dataList.append(tableStats(dataCur.getNoise(         ), dataRef.getNoise(         ), 0.0,         dataRef.NoiseType, self.nValidData))
-		self.dataList.append(tableStats(dataCur.getTrace("esn0"   ), dataRef.getTrace("esn0"   ), 0.0,         "Es/N0"          , self.nValidData))
-		self.dataList.append(tableStats(dataCur.getTrace("fe_rate"), dataRef.getTrace("fe_rate"), sensibility, "FER"            , self.nValidData))
-		self.dataList.append(tableStats(dataCur.getTrace("be_rate"), dataRef.getTrace("be_rate"), sensibility, "BER"            , self.nValidData))
-		self.dataList.append(tableStats(dataCur.getTrace("mi"     ), dataRef.getTrace("mi"     ), sensibility, "MI"             , self.nValidData))
+
+		noiseName = dataRef.NoiseLegendsList[dataRef.NoiseType]
+
+		if dataRef.NoiseType == "ebn0" or dataRef.NoiseType == "esn0":
+			self.dataList.append(tableStats(dataCur.getTrace("ebn0"   ), dataRef.getTrace("ebn0"   ), 0.0, "Eb/N0", self.nValidData))
+			self.dataList.append(tableStats(dataCur.getTrace("esn0"   ), dataRef.getTrace("esn0"   ), 0.0, "Es/N0", self.nValidData))
+		else:
+			self.dataList.append(tableStats(dataCur.getNoise(         ), dataRef.getNoise(         ), 0.0, noiseName, self.nValidData))
+
+
+		self.dataList.append(tableStats(dataCur.getTrace("fe_rate"), dataRef.getTrace("fe_rate"), sensibility, "FER"  , self.nValidData))
+		self.dataList.append(tableStats(dataCur.getTrace("be_rate"), dataRef.getTrace("be_rate"), sensibility, "BER"  , self.nValidData))
+		self.dataList.append(tableStats(dataCur.getTrace("mi"     ), dataRef.getTrace("mi"     ), sensibility, "MI"   , self.nValidData))
 
 	def errorMessage(self, idx):
 		message = ""
@@ -421,6 +425,8 @@ for fn in fileNames:
 
 	if simuRef.getNoiseType() == "ebn0":
 		argsAFFECT += ["-E", "EBN0"]
+	elif simuRef.getNoiseType() == "esn0":
+		argsAFFECT += ["-E", "ESN0"]
 
 
 	# run the tested simulator
