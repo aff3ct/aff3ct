@@ -130,6 +130,20 @@ void Launcher::print_header()
 	this->stream << rang::tag::comment << std::endl;
 }
 
+std::string remove_sim_meta(const std::string& cmd)
+{
+	const std::string simmeta = " --sim-meta ";
+	auto pos_arg = cmd.find(simmeta);
+
+	if (pos_arg == std::string::npos)
+		return cmd;
+
+	auto pos_start = cmd.find("\"", pos_arg + simmeta.size());
+	auto pos_end   = cmd.find("\"", pos_start + 1);
+
+	return cmd.substr(0, pos_arg) + cmd.substr(pos_end + 1);
+}
+
 int Launcher::launch()
 {
 	int exit_code = EXIT_SUCCESS;
@@ -160,14 +174,8 @@ int Launcher::launch()
 #endif
 	if (!this->params_common.meta.empty())
 	{
-// trick to compile on the GNU compiler version 4 (where 'std::regex' is unavailable)
-#if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
-		const auto cmd = cmd_line;
-#else
-		const auto cmd = std::regex_replace(cmd_line, std::regex("( --sim-meta \"[^\"]*\")"), "");
-#endif
 		stream << "[metadata]" << std::endl;
-		stream << "command=" << cmd << std::endl;
+		stream << "command=" << remove_sim_meta(cmd_line) << std::endl;
 		stream << "title=" << this->params_common.meta << std::endl;
 		stream << std::endl << "[trace]" << std::endl;
 	}
