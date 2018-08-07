@@ -25,9 +25,6 @@
 
 #ifdef ENABLE_MPI
 #include "Module/Monitor/Monitor_reduction_MPI.hpp"
-#define FORCE_REDUCE_EVERY_LOOP false
-#else
-#define FORCE_REDUCE_EVERY_LOOP true
 #endif
 
 #include "Factory/Simulation/BFER/BFER.hpp"
@@ -58,6 +55,7 @@ protected:
 
 	tools::Noise<R>* noise; // current noise simulated
 
+
 	// the monitors of the the BFER simulation
 	using Monitor_BFER_type = module::Monitor_BFER<B>;
 	using Monitor_MI_type   = module::Monitor_MI<B,R>;
@@ -76,11 +74,13 @@ protected:
 	std::vector<Monitor_BFER_type*> monitor_er;
 	Monitor_BFER_reduction_type*    monitor_er_red;
 
+
 	// dump frames into files
 	std::vector<tools::Dumper          *> dumper;
 	            tools::Dumper_reduction*  dumper_red;
 
-	// terminal and reporters (for the output of the code)
+
+	// terminal and reporters (for the output of the simu)
 	tools::Reporter_BFER <B>*             rep_er;
 	tools::Reporter_MI <B,R>*             rep_mi;
 	tools::Reporter_noise<R>*             rep_noise;
@@ -112,15 +112,10 @@ protected:
 	void build_monitors ();
 
 	virtual bool keep_looping_noise_point();
-	bool max_frame_reached();
 	bool stop_time_reached();
 
 private:
 	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);
-
-#ifdef ENABLE_MPI
-	bool MPI_simu_is_over();
-#endif
 };
 }
 }

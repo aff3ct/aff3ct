@@ -27,6 +27,10 @@ function gen_coverage_info
 	local folder=$2
 	for path in $folder/*
 	do [ -f $path ] && {
+		if [ ${path: -3} == ".py" ]; then
+			continue
+		fi
+
 		cmd=$(awk -F "=" '/command/ {print $2}' $path)
 		echo $cmd
 		ci=$(awk -F "=" '/ci/ {print $2}' $path)

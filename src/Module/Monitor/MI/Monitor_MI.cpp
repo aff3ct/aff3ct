@@ -15,8 +15,8 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Monitor_MI<B,R>
 ::Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames)
-: Monitor(n_frames), N(N),
-  max_n_trials(max_n_trials)
+: Monitor(n_frames), N(N), max_n_trials(max_n_trials),
+  mutinfo_hist(1)
 {
 	const std::string name = "Monitor_MI";
 	this->set_name(name);
@@ -29,8 +29,8 @@ Monitor_MI<B,R>
 	}
 
 	auto &p = this->create_task("get_mutual_info", (int)mnt::tsk::get_mutual_info);
-	auto &ps_X = this->template create_socket_in<B>(p, "X", this->N * this->n_frames);
-	auto &ps_Y = this->template create_socket_in<R>(p, "Y", this->N * this->n_frames);
+	auto &ps_X = this->template create_socket_in<B>(p, "X", get_N() * get_n_frames());
+	auto &ps_Y = this->template create_socket_in<R>(p, "Y", get_N() * get_n_frames());
 	this->create_codelet(p, [this, &ps_X, &ps_Y]() -> int
 	{
 		return this->get_mutual_info(static_cast<B*>(ps_X.get_dataptr()),
@@ -43,7 +43,7 @@ Monitor_MI<B,R>
 template <typename B, typename R>
 Monitor_MI<B,R>
 ::Monitor_MI(const Monitor_MI<B,R>& mon, const int n_frames)
-: Monitor_MI<B,R>(mon.N, mon.max_n_trials, n_frames == -1 ? mon.n_frames : n_frames)
+: Monitor_MI<B,R>(mon.get_N(), mon.get_max_n_trials(), n_frames == -1 ? mon.get_n_frames() : n_frames)
 {
 }
 
@@ -54,36 +54,30 @@ Monitor_MI<B,R>
 {
 }
 
-template <typename B, typename R>
-int Monitor_MI<B,R>
-::get_N() const
-{
-	return N;
-}
 
 template <typename B, typename R>
 bool Monitor_MI<B,R>
 ::equivalent(const Monitor_MI<B,R>& m, bool do_throw) const
 {
-	if (this->N != m.N)
+	if (get_N() != m.get_N())
 	{
 		if (!do_throw)
 			return false;
 
 		std::stringstream message;
-		message << "'this->N' is different than 'm.N' ('this->N' = " << this->N << ", 'm.N' = "
-		        << m.N << ").";
+		message << "'get_N()' is different than 'm.get_N()' ('get_N()' = " << get_N() << ", 'm.get_N()' = "
+		        << m.get_N() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (this->max_n_trials != m.max_n_trials)
+	if (get_max_n_trials() != m.get_max_n_trials())
 	{
 		if (!do_throw)
 			return false;
 
 		std::stringstream message;
-		message << "'this->max_n_trials' is different than 'm.max_n_trials' ('this->max_n_trials' = "
-		        << this->max_n_trials << ", 'm.max_n_trials' = " << m.max_n_trials << ").";
+		message << "'get_max_n_trials()' is different than 'm.get_max_n_trials()' ('get_max_n_trials()' = "
+		        << get_max_n_trials() << ", 'm.get_max_n_trials()' = " << m.get_max_n_trials() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -94,12 +88,12 @@ template <typename B, typename R>
 R Monitor_MI<B,R>
 ::get_mutual_info(const B *X, const R *Y, const int frame_id)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+	const auto f_start = (frame_id < 0) ? 0 : frame_id % get_n_frames();
+	const auto f_stop  = (frame_id < 0) ? get_n_frames() : f_start +1;
 
 	R loc_MI_sum = 0;
 	for (auto f = f_start; f < f_stop; f++)
-		loc_MI_sum += this->_get_mutual_info(X + f * this->N, Y + f * this->N, f);
+		loc_MI_sum += this->_get_mutual_info(X + f * get_N(), Y + f * get_N(), f);
 
 	for (auto& c : this->callbacks_check)
 		c();
@@ -129,7 +123,7 @@ template <>
 R_32 Monitor_MI<B_32,R_32>
 ::_get_mutual_info(const B_32 *X, const R_32 *Y, const int frame_id)
 {
-	auto mi = tools::mutual_info_histo(X, Y, this->N);
+	auto mi = tools::mutual_info_histo(X, Y, get_N());
 	this->add_MI_value(mi);
 	return mi;
 }
@@ -140,7 +134,7 @@ template <>
 R_64 Monitor_MI<B_64,R_64>
 ::_get_mutual_info(const B_64 *X, const R_64 *Y, const int frame_id)
 {
-	auto mi = tools::mutual_info_histo(X, Y, this->N);
+	auto mi = tools::mutual_info_histo(X, Y, get_N());
 	this->add_MI_value(mi);
 	return mi;
 }
@@ -152,25 +146,51 @@ template <typename B, typename R>
 void Monitor_MI<B,R>
 ::add_MI_value(const R mi)
 {
-	this->n_trials++;
-	this->MI += (mi - this->MI) / (R)this->n_trials;
+	vals.n_trials++;
+	vals.MI += (mi - vals.MI) / (R)vals.n_trials;
 
-	this->MI_max = std::max(this->MI_max, mi);
-	this->MI_min = std::min(this->MI_min, mi);
+	vals.MI_max = std::max(vals.MI_max, mi);
+	vals.MI_min = std::min(vals.MI_min, mi);
 
 	this->mutinfo_hist.add_value(mi);
 }
+
+
 
 template <typename B, typename R>
 bool Monitor_MI<B,R>
 ::n_trials_limit_achieved() const
 {
-	return this->get_n_trials() >= this->get_n_trials_limit();
+	return get_max_n_trials() != 0 && get_n_trials() >= get_max_n_trials();
+}
+
+template <typename B, typename R>
+bool Monitor_MI<B,R>
+::is_done() const
+{
+	return n_trials_limit_achieved();
+}
+
+
+
+
+template <typename B, typename R>
+const typename Monitor_MI<B,R>::Attributes& Monitor_MI<B,R>
+::get_attributes() const
+{
+	return vals;
+}
+
+template <typename B, typename R>
+int Monitor_MI<B,R>
+::get_N() const
+{
+	return N;
 }
 
 template <typename B, typename R>
 unsigned Monitor_MI<B,R>
-::get_n_trials_limit() const
+::get_max_n_trials() const
 {
 	return max_n_trials;
 }
@@ -179,29 +199,31 @@ template <typename B, typename R>
 unsigned long long Monitor_MI<B,R>
 ::get_n_trials() const
 {
-	return this->n_trials;
+	return vals.n_trials;
 }
 
 template <typename B, typename R>
 R Monitor_MI<B,R>
 ::get_MI() const
 {
-	return this->MI;
+	return vals.MI;
 }
 
 template <typename B, typename R>
 R Monitor_MI<B,R>
 ::get_MI_min() const
 {
-	return this->MI_min;
+	return vals.MI_min;
 }
 
 template <typename B, typename R>
 R Monitor_MI<B,R>
 ::get_MI_max() const
 {
-	return this->MI_max;
+	return vals.MI_max;
 }
+
+
 
 template<typename B, typename R>
 tools::Histogram<R> Monitor_MI<B,R>::get_mutinfo_hist() const
@@ -228,11 +250,7 @@ void Monitor_MI<B,R>
 ::reset()
 {
 	Monitor::reset();
-
-	n_trials  = 0;
-	MI        = 0.;
-	MI_max    = 0.;
-	MI_min    = 1.;
+	vals.reset();
 
 	this->mutinfo_hist.reset();
 }
@@ -260,14 +278,17 @@ void Monitor_MI<B,R>
 {
 	equivalent(m, true);
 
-	n_trials += m.n_trials;
-	MI       += (m.MI - MI) * ((R)m.n_trials / (R)n_trials);
-
-	MI_max = std::max(MI_max, m.MI_max);
-	MI_min = std::min(MI_min, m.MI_min);
+	collect(m.get_attributes());
 
 	if (fully)
 		this->mutinfo_hist.add_values(m.mutinfo_hist);
+}
+
+template <typename B, typename R>
+void Monitor_MI<B,R>
+::collect(const Attributes& v)
+{
+	vals += v;
 }
 
 template <typename B, typename R>
@@ -277,6 +298,8 @@ Monitor_MI<B,R>& Monitor_MI<B,R>
 	collect(m, false);
 	return *this;
 }
+
+
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
@@ -291,14 +314,19 @@ void Monitor_MI<B,R>
 {
 	equivalent(m, true);
 
-	n_trials = m.n_trials;
-	MI       = m.MI;
-	MI_max   = m.MI_max;
-	MI_min   = m.MI_min;
+	copy(m.get_attributes());
 
 	if (fully)
 		this->mutinfo_hist = m.mutinfo_hist;
 }
+
+template <typename B, typename R>
+void Monitor_MI<B,R>
+::copy(const Attributes& v)
+{
+	vals = v;
+}
+
 
 template <typename B, typename R>
 Monitor_MI<B,R>& Monitor_MI<B,R>
@@ -309,38 +337,37 @@ Monitor_MI<B,R>& Monitor_MI<B,R>
 }
 
 template <typename B, typename R>
-bool Monitor_MI<B,R>
-::done() const
+typename Monitor_MI<B,R>::Attributes& Monitor_MI<B,R>::Attributes
+::operator+=(const Attributes& v)
 {
-	return n_trials_limit_achieved();
+	n_trials += v.n_trials;
+
+	if (n_trials != 0)
+		MI += (v.MI - MI) * ((R)v.n_trials / (R)n_trials);
+	else
+		MI = (R)0.;
+
+	MI_max = std::max(MI_max, v.MI_max);
+	MI_min = std::min(MI_min, v.MI_min);
+	return *this;
 }
 
-// #ifdef ENABLE_MPI
-// template <typename B, typename R>
-// void Monitor_MI<B,R>
-// ::create_MPI_struct(int          blen         [n_MPI_attributes],
-//                     MPI_Aint     displacements[n_MPI_attributes],
-//                     MPI_Datatype oldtypes     [n_MPI_attributes])
-// {
-//     int world_rank;
-//     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+template <typename B, typename R>
+void Monitor_MI<B,R>::Attributes
+::reset()
+{
+	n_trials  = 0;
+	MI        = 0.;
+	MI_max    = 0.;
+	MI_min    = 1.;
+}
 
-// 	std::cout << world_rank << " : create_MPI_struct" << std::endl;
-
-// 	auto MPI_R_type = std::is_same<R,double>::value ? MPI_DOUBLE : MPI_FLOAT;
-
-// 	blen[0] = 1; displacements[0] = tools::offsetOf(&Monitor_MI<B,R>::n_trials); oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
-// 	blen[1] = 1; displacements[1] = tools::offsetOf(&Monitor_MI<B,R>::MI      ); oldtypes[1] = MPI_R_type;
-// 	blen[2] = 1; displacements[2] = tools::offsetOf(&Monitor_MI<B,R>::MI_min  ); oldtypes[2] = MPI_R_type;
-// 	blen[3] = 1; displacements[3] = tools::offsetOf(&Monitor_MI<B,R>::MI_max  ); oldtypes[3] = MPI_R_type;
-
-
-// 	std::cout << "tools::offsetOf(&Monitor_MI<B,R>::n_trials): " << tools::offsetOf(&Monitor_MI<B,R>::n_trials) << std::endl;
-// 	std::cout << "tools::offsetOf(&Monitor_MI<B,R>::MI      ): " << tools::offsetOf(&Monitor_MI<B,R>::MI      ) << std::endl;
-// 	std::cout << "tools::offsetOf(&Monitor_MI<B,R>::MI_min  ): " << tools::offsetOf(&Monitor_MI<B,R>::MI_min  ) << std::endl;
-// 	std::cout << "tools::offsetOf(&Monitor_MI<B,R>::MI_max  ): " << tools::offsetOf(&Monitor_MI<B,R>::MI_max  ) << std::endl;
-// }
-// #endif
+template <typename B, typename R>
+Monitor_MI<B,R>::Attributes
+::Attributes()
+{
+	reset();
+}
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

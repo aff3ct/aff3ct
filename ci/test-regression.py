@@ -13,6 +13,9 @@ import argparse
 import subprocess
 import numpy as np
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../refs")))
+from aff3ct_refs_reader import aff3ctRefsReader
+
 # ==================================================================== PACKAGES
 # =============================================================================
 
@@ -37,8 +40,8 @@ parser.add_argument('--mpi-host',       action='store', dest='mpihost',       ty
 
 # supported file extensions (filename suffix)
 extensions     = ['.txt', '.perf', '.data', '.dat']
-NoiseTypeList  = ["Eb/N0", "Es/N0", "ROP", "EP"]
-NoiseUnityList = ["dB",    "dB",    "dB",  ""  ]
+NoiseTypeList  = ["ebn0", "esn0",  "rop",    "ep" ]
+NoiseUnityList = ["dB",   "dB",    "dB",     ""   ]
 
 
 # ================================================================== PARAMETERS
@@ -53,7 +56,6 @@ def format_e(n):
 def splitFloat(n):
 	s = format_e(n).split('e')
 	return [float(s[0]), int(s[1])]
-
 
 def getFileNames(currentPath, fileNames):
 	if os.path.isdir(currentPath):
@@ -84,149 +86,12 @@ def getFileNames(currentPath, fileNames):
 	else:
 		print("# (WW) The path '", currentPath, "' does not exist.")
 
-def getLegend(line):
-	line = line.replace("#", "")
-	line = line.replace("||", "|")
-	line = line.split('|')
-	for i in range(len(line)):
-		line[i] = line[i].strip()
-
-	return line
-
-def getVal(line):
-	line = line.replace("#", "")
-	line = line.replace("||", "|")
-	line = line.split('|')
-
-	valLine = []
-	for i in range(len(line)):
-		val = float(0.0)
-
-		try:
-			val = float(line[i])
-
-			if "inf" in str(val):
-				val = float(0.0)
-
-		except ValueError:
-			pass
-
-		valLine.append(val)
-
-	return valLine
-
-def getLegendIdx(legend, colName):
-	for i in range(len(legend)):
-		if legend[i] == colName:
-			return i
-	return -1
-
-class simuData:
-	def __init__(self):
-		self.Legend     = []
-		self.All        = []
-		self.Noise      = []
-		self.BER        = []
-		self.FER        = []
-		self.MI         = []
-		self.FE         = []
-		self.NoiseType  = ""
-		self.metadata = {'command': '', 'title': '', 'ci': 'on'}
-
-	def getHeader(self):
-		header = "[metadata]\n"
-		for key in self.metadata:
-			header += key + "=" + self.metadata[key] + "\n"
-
-		header += "\n[trace]\n"
-
-		return header
-
-
-def dataReader(aff3ctOutput):
-	data = simuData()
-	startMeta = False;
-	startTrace = False;
-	for line in aff3ctOutput:
-		if startMeta:
-			vals = line.split('=', 1);
-			if len(vals) == 2:
-				data.metadata[vals[0]] = vals[1].strip();
-		if line.startswith("[metadata]"):
-			startMeta = True;
-
-		if startTrace:
-			if line.startswith("#"):
-				if len(line) > 20 and (line.find("FRA |") != -1 or line.find("BER |") != -1 or line.find("FER |") != -1):
-					data.Legend = getLegend(line)
-			else:
-				if len(data.Legend) != 0:
-					d = getVal(line)
-					if len(d) == len(data.Legend):
-						data.All.append(d)
-		if line.startswith("[trace]"):
-			startTrace = True;
-			startMeta = False;
-
-	data.All = np.array(data.All).transpose()
-
-	# find the type of noise used in this simulation
-	idx = -1
-	for n in NoiseTypeList:
-		idx = getLegendIdx(data.Legend, n)
-		if idx != -1:
-			data.NoiseType = n
-			break
-
-	if len(data.All) and idx != -1 :
-		# set noise range
-		data.Noise = data.All[idx]
-
-		# set BER
-		idx = getLegendIdx(data.Legend, "BER")
-		if idx == -1:
-			data.BER = [0 for x in range(len(data.Noise))]
-		else:
-			data.BER = data.All[idx]
-
-		# set FER
-		idx = getLegendIdx(data.Legend, "FER")
-		if idx == -1:
-			data.FER = [0 for x in range(len(data.Noise))]
-		else:
-			data.FER = data.All[idx]
-
-		# set MI
-		idx = getLegendIdx(data.Legend, "MI")
-		if idx == -1:
-			data.MI = []
-		else:
-			data.MI = data.All[idx]
-
-		# set FE
-		idx = getLegendIdx(data.Legend, "FE")
-		if idx == -1:
-			data.FE = []
-		else:
-			data.FE = data.All[idx]
-
-		# set ESN0
-		idx = getLegendIdx(data.Legend, "Es/N0")
-		if idx == -1 or data.NoiseType == "Es/N0":
-			data.ESN0 = []
-		else:
-			data.ESN0 = data.All[idx]
-
-	return data
-
 def splitAsCommand(runCommand):
-
-	# split the run command
 	argsList = [""]
 	idx = 0
-
 	new = 0
 	found_dashes = 0
+
 	for s in runCommand:
 		if found_dashes == 0:
 			if s == ' ':
@@ -277,9 +142,10 @@ class tableStats:
 		self.valid           = 0
 
 		if nData == 0 or nData > len(tableCur) :
-			self.nData       = len(tableCur)
+			self.nData = len(tableCur)
 		else :
-			self.nData       = nData
+			self.nData = nData
+
 		self.errorsList      = []
 		self.errorsPos       = []
 		self.errorsMessage   = []
@@ -290,7 +156,6 @@ class tableStats:
 		for i in range(self.nData):
 			c = splitFloat(self.tableCur[i])
 			r = splitFloat(self.tableRef[i])
-
 
 			# compute the distance between the two points normalized to the unity with the lowest power
 			if c[1] < r[1]:
@@ -322,7 +187,6 @@ class tableStats:
 		else:
 			self.rateSensibility = float(0)
 
-
 	def errorMessage(self, idx):
 		if len(self.errorsMessage) > idx and len(self.errorsMessage[idx]):
 			return self.name + "=" + self.errorsMessage[idx]
@@ -340,23 +204,31 @@ class tableStats:
 
 class compStats:
 	def __init__(self, dataCur, dataRef, sensibility, asked_n_fe):
-		if not isinstance(dataCur, simuData) or not isinstance(dataRef, simuData) :
+		if not isinstance(dataCur, aff3ctRefsReader) or not isinstance(dataRef, aff3ctRefsReader) :
 			raise TypeError
 
-		self.nValidData = len(dataCur.FE)
-		for d in range(len(dataCur.FE)) :
-			if dataCur.FE[d] < asked_n_fe :
+		self.nValidData = len(dataCur.getTrace("n_fe"))
+		for d in range(len(dataCur.getTrace("n_fe"))) :
+			if dataCur.getTrace("n_fe")[d] < asked_n_fe :
 				self.nValidData = d
 
 
 		self.dataCur  = dataCur
 		self.dataRef  = dataRef
 		self.dataList = []
-		self.dataList.append(tableStats(dataCur.Noise, dataRef.Noise,         0.0, dataRef.NoiseType, self.nValidData))
-		self.dataList.append(tableStats(dataCur.ESN0,  dataRef.ESN0,          0.0, "Es/N0"          , self.nValidData))
-		self.dataList.append(tableStats(dataCur.FER,   dataRef.FER,   sensibility, "FER"            , self.nValidData))
-		self.dataList.append(tableStats(dataCur.BER,   dataRef.BER,   sensibility, "BER"            , self.nValidData))
-		self.dataList.append(tableStats(dataCur.MI,    dataRef.MI,    sensibility, "MI"             , self.nValidData))
+
+		noiseName = dataRef.NoiseLegendsList[dataRef.NoiseType]
+
+		if dataRef.NoiseType == "ebn0" or dataRef.NoiseType == "esn0":
+			self.dataList.append(tableStats(dataCur.getTrace("ebn0"   ), dataRef.getTrace("ebn0"   ), 0.0, "Eb/N0", self.nValidData))
+			self.dataList.append(tableStats(dataCur.getTrace("esn0"   ), dataRef.getTrace("esn0"   ), 0.0, "Es/N0", self.nValidData))
+		else:
+			self.dataList.append(tableStats(dataCur.getNoise(         ), dataRef.getNoise(         ), 0.0, noiseName, self.nValidData))
+
+
+		self.dataList.append(tableStats(dataCur.getTrace("fe_rate"), dataRef.getTrace("fe_rate"), sensibility, "FER"  , self.nValidData))
+		self.dataList.append(tableStats(dataCur.getTrace("be_rate"), dataRef.getTrace("be_rate"), sensibility, "BER"  , self.nValidData))
+		self.dataList.append(tableStats(dataCur.getTrace("mi"     ), dataRef.getTrace("mi"     ), sensibility, "MI"   , self.nValidData))
 
 	def errorMessage(self, idx):
 		message = ""
@@ -372,7 +244,7 @@ class compStats:
 
 	def getResumeTable(self):
 		message = ""
-		if len(self.dataCur.Noise) == 0:
+		if len(self.dataCur.getNoise()) == 0:
 			return message
 
 		# get noise unity
@@ -384,8 +256,8 @@ class compStats:
 			unity = " " + unity
 
 		message += "---- Details: Noise type = " + self.dataRef.NoiseType
-		message += ", first noise point = " + format_e(self.dataRef.Noise[0]) + unity
-		message += ", last noise point = " + format_e(self.dataRef.Noise[len(self.dataRef.Noise) -1]) + unity + "\n"
+		message += ", first noise point = " + format_e(self.dataRef.getNoise()[0]) + unity
+		message += ", last noise point = " + format_e(self.dataRef.getNoise()[len(self.dataRef.getNoise()) -1]) + unity + "\n"
 		message += "---- -------|-------------------------|--------------|-------------------------------- \n"
 		message += "----   name |     ranges [first,last] | valid points | sensibility [avg,min,max,rate]  \n"
 		message += "---- -------|-------------------------|--------------|-------------------------------- \n"
@@ -410,7 +282,7 @@ class compStats:
 						if el != 0 and (el % 2) == 0 :
 							message += "\n----        | "
 
-						message += "{" + format_e(self.dataCur.Noise[d.errorsPos[el]]) + ": " + format_e(e[0]) + " -> " + format_e(e[1]) + "}"
+						message += "{" + format_e(self.dataCur.getNoise()[d.errorsPos[el]]) + ": " + format_e(e[0]) + " -> " + format_e(e[1]) + "}"
 
 						el += 1
 						if el < len(d.errorsList):
@@ -494,21 +366,22 @@ else:
 
 
 argsAFFECTcommand = []
-
+activateMPI = False
 if args.mpinp > 0 or args.mpihost != "":
+	activateMPI = True
 	argsAFFECTcommand += ["mpirun", "--map-by", "socket"]
 
 	if args.mpinp > 0:
 		argsAFFECTcommand += ["-np", str(args.mpinp)]
 
 	if args.mpihost != "":
-		argsAFFECTcommand += ["--hostfile", str(args.mpihost)]
+		argsAFFECTcommand += ["--hostfile", str(os.path.abspath(args.mpihost))]
 
 
-failIds = []
-nErrors = 0
-testId = 0
-nIgnored = 0
+failIds     = []
+nErrors     = 0
+testId      = 0
+nIgnored    = 0
 nStrongPass = 0
 
 
@@ -520,20 +393,10 @@ for fn in fileNames:
 	print("Test n°" + str(testId+1) + " / " + str(len(fileNames)) +
 	      " - " + fn, end="", flush=True);
 
-	# open the file in read mode (from the fileName "fn" and the path)
-	f = open(args.refsPath + "/" + fn, 'r')
-
-	# read all the lines from the reference file f
-	lines = []
-	for line in f:
-		lines.append(line)
-
-	f.close()
-
 	# parse the reference file
-	simuRef = dataReader(lines)
+	simuRef = aff3ctRefsReader(args.refsPath + "/" + fn)
 
-	if simuRef.metadata["ci"] == "off":
+	if simuRef.getMetadata("ci") == "off":
 		print(" - IGNORED.", end="\n");
 		testId   += 1
 		nIgnored += 1
@@ -542,27 +405,32 @@ for fn in fileNames:
 
 
 	# get the command line to run
-	argsAFFECT = argsAFFECTcommand[:]
-	argsAFFECT += splitAsCommand(simuRef.metadata["command"])
-	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.metadata["title"]]
+	argsAFFECT = argsAFFECTcommand[:] # hard copy
+	argsAFFECT += splitAsCommand(simuRef.getMetadata("command"))
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.getMetadata("title")]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]
 
 	if args.maxSNRTime:
 		argsAFFECT += ["--sim-stop-time", str(args.maxSNRTime)]
 
+	if activateMPI:
+		argsAFFECT += ["--sim-no-colors"]
+
 
 	noiseVals = ""
-	for n in range(len(simuRef.Noise)):
+	for n in range(len(simuRef.getNoise())):
 		if n != 0:
 			noiseVals += ",";
-		noiseVals += str(simuRef.Noise[n])
+		noiseVals += str(simuRef.getNoise()[n])
 
 
 	argsAFFECT += ["-R", noiseVals]
 
-	if simuRef.NoiseType == "Eb/N0":
+	if simuRef.getNoiseType() == "ebn0":
 		argsAFFECT += ["-E", "EBN0"]
+	elif simuRef.getNoiseType() == "esn0":
+		argsAFFECT += ["-E", "ESN0"]
 
 
 	# run the tested simulator
@@ -588,7 +456,7 @@ for fn in fileNames:
 
 	# get the results
 	stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
-	simuCur = dataReader(stdOutput)
+	simuCur = aff3ctRefsReader(stdOutput)
 
 	# result file
 	fRes = open(args.resultsPath + "/" + fn, 'w+')
@@ -606,11 +474,11 @@ for fn in fileNames:
 		for i in range(len(errAndWarnMessages)):
 			fRes.write(errAndWarnMessages[i] + "\n")
 
-	elif simuCur.NoiseType != simuRef.NoiseType:
+	elif simuCur.getNoiseType() != simuRef.getNoiseType():
 		nErrors += 1
 		failIds.append(testId +1)
 
-		print(" - NOISE TYPE MISMATCH: " + simuRef.NoiseType + " vs " + simuCur.NoiseType + ".", end="\n");
+		print(" - NOISE TYPE MISMATCH: " + simuRef.getNoiseType() + " vs " + simuCur.getNoiseType() + ".", end="\n");
 
 		for i in range(len(stdOutput)):
 			fRes.write(stdOutput[i] + "\n")
@@ -640,7 +508,6 @@ for fn in fileNames:
 
 		fRes.flush()
 
-		# validate (or not) the BER/FER/MI performance
 		print(" - %.2f" %elapsedTime, "sec", end="")
 
 		passRate = comp.passRate()
@@ -671,8 +538,9 @@ for fn in fileNames:
 	testId += 1
 
 if len(fileNames) - (args.startId -1) > 0:
-	print("\n# " + str(testId) + " tests executed: " + str(nStrongPass) + " strong passed tests, "
-		  + str(testId - nErrors - nIgnored - nStrongPass) + " weak passed tests, " + str(nErrors) + " failed tests, " + str(nIgnored) + " ignored files.", end="\n")
+	print("\n# " + str(testId-nIgnored) + " tests executed: " + str(nStrongPass) + " strong passed tests, "
+		  + str(testId - nErrors - nIgnored - nStrongPass) + " weak passed tests, " + str(nErrors) + " failed tests", end="\n")
+	print("# " + str(nIgnored) + " files ignored.", end="\n")
 
 	if nErrors == 0:
 		print("\n# (II) All the tests PASSED !", end="");

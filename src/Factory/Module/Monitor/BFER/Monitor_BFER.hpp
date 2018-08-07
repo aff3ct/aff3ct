@@ -27,6 +27,7 @@ struct Monitor_BFER : public Monitor
 		std::string err_hist_path  = "hist";
 		int         err_hist       = -1;
 		int         n_frame_errors = 100;
+		int         max_frame      = 0;
 		int         n_frames       = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS

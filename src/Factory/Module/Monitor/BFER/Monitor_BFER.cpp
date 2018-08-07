@@ -48,7 +48,13 @@ void Monitor_BFER::parameters
 	args.add(
 		{p+"-max-fe", "e"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"max number of frame errors for each SNR simulation.");
+		"max number of frame errors for each noise point simulation.");
+
+	args.add(
+		{p+"-max-frame", "n"},
+		tools::Integer(tools::Positive()),
+		"maximum number of frames for each noise point simulation.",
+		tools::arg_rank::ADV);
 
 	args.add(
 		{p+"-err-hist"},
@@ -73,6 +79,7 @@ void Monitor_BFER::parameters
 	if(vals.exist({p+"-max-fe",    "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe",    "e"});
 	if(vals.exist({p+"-err-hist"      })) this->err_hist       = vals.to_int({p+"-err-hist"      });
 	if(vals.exist({p+"-err-hist-path" })) this->err_hist_path  = vals.at    ({p+"-err-hist-path" });
+	if(vals.exist({p+"-max-frame", "n"})) this->max_frame      = vals.to_int({p+"-max-frame", "n"});
 }
 
 void Monitor_BFER::parameters
@@ -94,7 +101,7 @@ template <typename B>
 module::Monitor_BFER<B>* Monitor_BFER::parameters
 ::build(bool count_unknown_values) const
 {
-	if (this->type == "STD") return new module::Monitor_BFER<B>(this->K, this->n_frame_errors, count_unknown_values, this->n_frames);
+	if (this->type == "STD") return new module::Monitor_BFER<B>(this->K, this->n_frame_errors, this->max_frame, count_unknown_values, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

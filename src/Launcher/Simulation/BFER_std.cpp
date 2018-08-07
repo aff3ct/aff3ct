@@ -80,6 +80,7 @@ void BFER_std<B,R,Q>
 	this->args.erase({pmnt+"-info-bits", "K"});
 	this->args.erase({pmnt+"-fra-size",  "N"});
 	this->args.erase({pmnt+"-fra",       "F"});
+	this->args.erase({pmnt+"-max-frame", "n"});
 	this->args.erase({pmnt+"-trials",    "n"});
 	this->args.erase({pter+"-info-bits", "K"});
 	this->args.erase({pter+"-cw-size",   "N"});
@@ -186,6 +187,8 @@ void BFER_std<B,R,Q>
 	params.mnt_er->n_frames = params.src->n_frames;
 	params.mnt_mi->n_frames = params.src->n_frames;
 
+	params.mnt_er->max_frame = params.max_frame;
+	params.mnt_mi->n_trials  = 0;
 
 #ifdef ENABLE_MPI
 	auto pter = params.ter->get_prefix();

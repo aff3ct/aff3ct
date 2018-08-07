@@ -50,8 +50,6 @@ void BFER_std_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params_BFER_std.n_threads; tid++)
 		threads[tid -1].join();
 
-	module::Monitor_reduction::last_reduce(true);
-
 	if (!this->prev_err_messages_to_display.empty())
 		throw std::runtime_error(this->prev_err_messages_to_display.back());
 }
@@ -364,8 +362,6 @@ void BFER_std_threads<B,R,Q>
 
 			monitor[mnt::tsk::get_mutual_info].exec();
 		}
-
-		module::Monitor_reduction::reduce(false, FORCE_REDUCE_EVERY_LOOP); // if (tid == 0) done inside
 	}
 }
 

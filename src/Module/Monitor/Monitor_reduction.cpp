@@ -1,4 +1,10 @@
+#include <cmath>
 #include <sstream>
+
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Monitor_reduction.hpp"
@@ -6,7 +12,6 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-int                                                                          aff3ct::module::Monitor_reduction::number_processes = 1;
 bool                                                                         aff3ct::module::Monitor_reduction::stop_loop = false;
 std::vector<aff3ct::module::Monitor_reduction*>                              aff3ct::module::Monitor_reduction::monitors;
 std::thread::id                                                              aff3ct::module::Monitor_reduction::master_thread_id = std::this_thread::get_id();
@@ -22,79 +27,141 @@ Monitor_reduction
 void Monitor_reduction
 ::add_monitor(Monitor_reduction* m)
 {
-	monitors.push_back(m);
+	Monitor_reduction::monitors.push_back(m);
 }
 
 void Monitor_reduction
 ::reset_all()
 {
-	t_last_reduction = std::chrono::steady_clock::now();
-	stop_loop        = false;
+	Monitor_reduction::t_last_reduction = std::chrono::steady_clock::now();
+	Monitor_reduction::stop_loop        = false;
 
-		for(auto& m : monitors)
-			m->reset_mr();
+	for(auto& m : Monitor_reduction::monitors)
+		m->reset_mr();
+}
+
+bool Monitor_reduction
+::is_done_all(bool fully, bool final)
+{
+	if (final)
+		last_reduce_all(fully);
+	else
+		reduce_all(fully, false);
+
+	bool is_done = false;
+
+	for(auto& m : Monitor_reduction::monitors)
+		is_done |= m->is_done_mr();
+
+	if (is_done)
+		set_stop_loop();
+
+	return get_stop_loop();
 }
 
 void Monitor_reduction
-::reduce(bool fully, bool force)
+::reduce_all(bool fully, bool force)
 {
-	stop_loop = __reduce__(fully, force, false);
+	__reduce__(fully, force);
 }
 
 void Monitor_reduction
-::last_reduce(bool fully)
+::last_reduce_all(bool fully)
 {
-	stop_loop = true;
+	Monitor_reduction::set_stop_loop();
 
-	while(!__reduce__(fully, true, true));
+	while(!__reduce__(fully, true));
+}
+
+void Monitor_reduction
+::check_reducible()
+{
+#ifdef ENABLE_MPI
+	int n_monitor_send = Monitor_reduction::monitors.size(), n_monitor_recv;
+	MPI_Allreduce(&n_monitor_send, &n_monitor_recv, 1, MPI_INT, MPI_PROD, MPI_COMM_WORLD);
+
+	int np;
+	MPI_Comm_size(MPI_COMM_WORLD, &np);
+
+	int pow_np = std::pow(n_monitor_send, np);
+	if (n_monitor_recv != pow_np)
+	{
+		int mpi_rank;
+		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+
+		std::stringstream message;
+		message << "The number of monitors to reduce (" << n_monitor_send << " monitors) with MPI on the process "
+		        << mpi_rank << " is different than for others processes. ('n_monitor_recv' = " << n_monitor_recv
+		        << ", and 'pow_np' = " << pow_np << ").";
+		throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+#endif
+}
+
+bool Monitor_reduction
+::reduce_stop_loop()
+{
+#ifdef ENABLE_MPI
+	int n_stop_recv, stop_send = Monitor_reduction::get_stop_loop() ? 1 : 0;
+	MPI_Allreduce(&stop_send, &n_stop_recv, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+
+	if (n_stop_recv > 0)
+		Monitor_reduction::set_stop_loop();
+
+
+	int np;
+	MPI_Comm_size(MPI_COMM_WORLD, &np);
+
+	return n_stop_recv == np;
+#else
+	return true;
+#endif
+
+}
+
+bool Monitor_reduction
+::__reduce__(bool fully, bool force)
+{
+	bool all_process_on_last = false;
+
+	// only the master thread can do this
+	if (force
+		|| (std::this_thread::get_id() == Monitor_reduction::master_thread_id
+	        && (std::chrono::steady_clock::now() - Monitor_reduction::t_last_reduction) >= Monitor_reduction::d_reduce_frequency)
+	   )
+	{
+		for(auto& m : Monitor_reduction::monitors)
+			m->_reduce(fully);
+
+		all_process_on_last = reduce_stop_loop();
+
+		Monitor_reduction::t_last_reduction = std::chrono::steady_clock::now();
+	}
+
+	return all_process_on_last;
 }
 
 void Monitor_reduction
 ::set_master_thread_id(std::thread::id t)
 {
-	master_thread_id = t;
-}
-
-void Monitor_reduction
-::set_n_processes(int np)
-{
-	number_processes = np;
+	Monitor_reduction::master_thread_id = t;
 }
 
 void Monitor_reduction
 ::set_reduce_frequency(std::chrono::nanoseconds d)
 {
-	d_reduce_frequency = d;
+	Monitor_reduction::d_reduce_frequency = d;
 }
 
 bool Monitor_reduction
 ::get_stop_loop()
 {
-	return stop_loop;
+	return Monitor_reduction::stop_loop;
 }
 
-
-bool Monitor_reduction
-::__reduce__(bool fully, bool force, bool stop_simu)
+void Monitor_reduction
+::set_stop_loop()
 {
-	bool stop = stop_simu;
-
-	// only the master thread can do this
-	if (std::this_thread::get_id() == master_thread_id
-	    && (force || (std::chrono::steady_clock::now() - t_last_reduction) >= d_reduce_frequency)
-	   )
-	{
-		for(auto& m : monitors)
-		{
-			int n_stop = m->_reduce(fully, stop_simu);
-			if (stop_simu)
-				stop &= n_stop == number_processes;
-			else
-				stop |= n_stop != 0;
-		}
-
-		t_last_reduction = std::chrono::steady_clock::now();
-	}
-
-	return stop;
+	Monitor_reduction::stop_loop = true;
 }
