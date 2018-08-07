@@ -1,5 +1,5 @@
-#ifndef UPDATE_RULE_MS_INTER_HPP
-#define UPDATE_RULE_MS_INTER_HPP
+#ifndef UPDATE_RULE_MS_SIMD_HPP
+#define UPDATE_RULE_MS_SIMD_HPP
 
 #include <limits>
 #include <string>
@@ -9,22 +9,22 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename R       > class Update_rule_OMS_inter;
-template <typename R, int N> class Update_rule_NMS_inter;
+template <typename R       > class Update_rule_OMS_simd;
+template <typename R, int N> class Update_rule_NMS_simd;
 
 template <typename R = float>
-class Update_rule_MS_inter // Min Sum
+class Update_rule_MS_simd // Min Sum
 {
-	friend Update_rule_OMS_inter<R  >;
-	friend Update_rule_NMS_inter<R,0>;
-	friend Update_rule_NMS_inter<R,1>;
-	friend Update_rule_NMS_inter<R,2>;
-	friend Update_rule_NMS_inter<R,3>;
-	friend Update_rule_NMS_inter<R,4>;
-	friend Update_rule_NMS_inter<R,5>;
-	friend Update_rule_NMS_inter<R,6>;
-	friend Update_rule_NMS_inter<R,7>;
-	friend Update_rule_NMS_inter<R,8>;
+	friend Update_rule_OMS_simd<R  >;
+	friend Update_rule_NMS_simd<R,0>;
+	friend Update_rule_NMS_simd<R,1>;
+	friend Update_rule_NMS_simd<R,2>;
+	friend Update_rule_NMS_simd<R,3>;
+	friend Update_rule_NMS_simd<R,4>;
+	friend Update_rule_NMS_simd<R,5>;
+	friend Update_rule_NMS_simd<R,6>;
+	friend Update_rule_NMS_simd<R,7>;
+	friend Update_rule_NMS_simd<R,8>;
 
 protected:
 	const std::string name;
@@ -41,13 +41,13 @@ protected:
 	int ite;
 
 public:
-	Update_rule_MS_inter()
+	Update_rule_MS_simd()
 	: name("MS"), false_msk(false), zero((R)0), max(std::numeric_limits<R>::max()), sign(false), min1(max), min2(max),
 	  cst1(zero), cst2(zero), n_ite(0), ite(0)
 	{
 	}
 
-	virtual ~Update_rule_MS_inter()
+	virtual ~Update_rule_MS_simd()
 	{
 	}
 
@@ -81,17 +81,16 @@ public:
 	{
 		const auto var_abs  = mipp::abs(var_val);
 		const auto var_sign = mipp::sign(var_val);
-		const auto tmp      = this->min1;
 
 		this->sign ^= var_sign;
-		this->min1  = mipp::min(this->min1,           var_abs      );
-		this->min2  = mipp::min(this->min2, mipp::max(var_abs, tmp));
+		this->min2  = mipp::min(this->min2, mipp::max(var_abs, this->min1));
+		this->min1  = mipp::min(this->min1,           var_abs             );
 	}
 
 	inline void end_chk_node_in()
 	{
-		this->cst1 = mipp::blend(this->zero, this->min2, this->min2 < this->zero);
-		this->cst2 = mipp::blend(this->zero, this->min1, this->min1 < this->zero);
+		this->cst1 = mipp::max(this->zero, this->min2);
+		this->cst2 = mipp::max(this->zero, this->min1);
 	}
 
 	// outcomming values from the check nodes into the variable nodes
@@ -123,4 +122,4 @@ public:
 }
 }
 
-#endif /* UPDATE_RULE_MS_INTER_HPP */
+#endif /* UPDATE_RULE_MS_SIMD_HPP */

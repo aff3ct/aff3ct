@@ -121,7 +121,6 @@ protected:
 
 #ifdef ENABLE_MPI
 public:
-
 	// static constexpr unsigned n_MPI_attributes = 4;
 
 	struct Vals_mpi
@@ -175,7 +174,6 @@ public:
 		MI_max       = v.MI_max;
 		MI_min       = v.MI_min;
 	}
-
 #endif
 };
 }

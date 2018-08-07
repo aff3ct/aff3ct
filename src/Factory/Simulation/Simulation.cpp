@@ -45,9 +45,9 @@ void Simulation::parameters
 	auto p = this->get_prefix();
 
 	args.add(
-		{p+"-pyber"},
+		{p+"-meta"},
 		tools::Text(),
-		"prepare the output for the PyBER plotter tool, takes the name of the curve in PyBER.");
+		"print the output with metadata, takes the simulation title.");
 
 	args.add(
 		{p+"-stop-time"},
@@ -122,10 +122,10 @@ void Simulation::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-pyber"           })) this->pyber       =         vals.at      ({p+"-pyber"    });
-	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int  ({p+"-stop-time"}));
-	if(vals.exist({p+"-max-frame",   "n"})) this->max_frame   =         vals.to_int  ({p+"-max-frame","n"});
-	if(vals.exist({p+"-seed",        "S"})) this->global_seed =         vals.to_int  ({p+"-seed", "S"});
+	if(vals.exist({p+"-meta"            })) this->meta        =         vals.at    ({p+"-meta"          });
+	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int({p+"-stop-time"     }));
+	if(vals.exist({p+"-max-frame",   "n"})) this->max_frame   =         vals.to_int({p+"-max-frame", "n"});
+	if(vals.exist({p+"-seed",        "S"})) this->global_seed =         vals.to_int({p+"-seed",      "S"});
 	if(vals.exist({p+"-stats"           })) this->statistics  = true;
 	if(vals.exist({p+"-debug"           })) this->debug       = true;
 	if(vals.exist({p+"-crit-nostop"     })) this->crit_nostop = true;

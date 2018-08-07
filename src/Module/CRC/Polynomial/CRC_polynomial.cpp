@@ -155,7 +155,7 @@ bool CRC_polynomial<B>
 {
 	std::vector<B> V_K_unpack(this->K + this->size);
 	std::copy(V_K, V_K + this->K + this->size, V_K_unpack.begin());
-	tools::Bit_packer<B>::unpack(V_K_unpack, this->K + this->size);
+	tools::Bit_packer::unpack(V_K_unpack, this->K + this->size);
 	return _check(V_K_unpack.data(), frame_id);
 }
 

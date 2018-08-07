@@ -69,17 +69,16 @@ public:
 	{
 		const auto var_abs  = (R)std::abs(var_val);
 		const auto var_sign = std::signbit((float)var_val) ? -1 : 0;
-		const auto tmp      = min1;
 
 		this->sign ^= var_sign;
-		this->min1  = std::min(this->min1,          var_abs      );
-		this->min2  = std::min(this->min2, std::max(var_abs, tmp));
+		this->min2  = std::min(this->min2, std::max(var_abs, this->min1));
+		this->min1  = std::min(this->min1,          var_abs             );
 	}
 
 	inline void end_chk_node_in()
 	{
-		this->cst1 = (this->min2 < 0) ? 0 : this->min2;
-		this->cst2 = (this->min1 < 0) ? 0 : this->min1;
+		this->cst1 = std::max((R)0, this->min2);
+		this->cst2 = std::max((R)0, this->min1);
 	}
 
 	// outcomming values from the check nodes into the variable nodes

@@ -5,7 +5,7 @@
 #include "Monitor_MI.hpp"
 
 #include "Tools/Perf/common/mutual_info.h"
-#include "Tools/Perf/common/hamming_distance.h"
+#include "Tools/Perf/distance/hamming_distance.h"
 #include "Tools/Math/utils.h"
 #include "Tools/general_utils.h"
 
@@ -82,8 +82,8 @@ bool Monitor_MI<B,R>
 			return false;
 
 		std::stringstream message;
-		message << "'this->max_n_trials' is different than 'm.max_n_trials' ('this->max_n_trials' = " << this->max_n_trials << ", 'm.max_n_trials' = "
-		        << m.max_n_trials << ").";
+		message << "'this->max_n_trials' is different than 'm.max_n_trials' ('this->max_n_trials' = "
+		        << this->max_n_trials << ", 'm.max_n_trials' = " << m.max_n_trials << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -115,7 +115,8 @@ template <typename B, typename R>
 R Monitor_MI<B,R>
 ::_get_mutual_info(const B *X, const R *Y, const int frame_id)
 {
-	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The _get_mutual_info() function does not support this type.");
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The _get_mutual_info() function does not support this "
+	                                                         "type.");
 }
 
 #include "Tools/types.h"

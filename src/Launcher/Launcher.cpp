@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <regex>
 #include <date.h>
 
 #include "Tools/Display/Terminal/Terminal.hpp"
@@ -129,6 +130,20 @@ void Launcher::print_header()
 	this->stream << rang::tag::comment << std::endl;
 }
 
+std::string remove_sim_meta(const std::string& cmd)
+{
+	const std::string simmeta = " --sim-meta ";
+	auto pos_arg = cmd.find(simmeta);
+
+	if (pos_arg == std::string::npos)
+		return cmd;
+
+	auto pos_start = cmd.find("\"", pos_arg + simmeta.size());
+	auto pos_end   = cmd.find("\"", pos_start + 1);
+
+	return cmd.substr(0, pos_arg) + cmd.substr(pos_end + 1);
+}
+
 int Launcher::launch()
 {
 	int exit_code = EXIT_SUCCESS;
@@ -157,13 +172,12 @@ int Launcher::launch()
 #ifdef ENABLE_MPI
 	if (this->params_common.mpi_rank == 0)
 #endif
-	if (!this->params_common.pyber.empty())
+	if (!this->params_common.meta.empty())
 	{
-		stream << "Run command:"            << std::endl;
-		stream << cmd_line                  << std::endl;
-		stream << "Curve name:"             << std::endl;
-		stream << this->params_common.pyber << std::endl;
-		stream << "Trace:"                  << std::endl;
+		stream << "[metadata]" << std::endl;
+		stream << "command=" << remove_sim_meta(cmd_line) << std::endl;
+		stream << "title=" << this->params_common.meta << std::endl;
+		stream << std::endl << "[trace]" << std::endl;
 	}
 
 	if (this->params_common.display_legend)

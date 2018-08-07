@@ -15,7 +15,6 @@ namespace aff3ct
 {
 namespace tools
 {
-
 class Reporter
 {
 public:
@@ -23,7 +22,6 @@ public:
 	using group_title_t  = title_t;
 	using column_title_t = std::vector<title_t>;
 	using group_t        = std::pair<group_title_t, column_title_t>;
-
 
 	using report_t = std::vector<std::vector<std::string>>;
 
@@ -34,7 +32,6 @@ public:
 	Reporter() = default;
 
 	virtual ~Reporter() = default;
-
 
 	const std::vector<group_t>& get_groups() const;
 

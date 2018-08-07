@@ -24,7 +24,7 @@ parser.add_argument('--refs-path',      action='store', dest='refsPath',      ty
 parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
 parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
 parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                       # choices=xrange(1,   +inf)
-parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility on the difference between new vs ref to verify a noise point.')                    # choices=xrange(1.0, +inf)
+parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility on the difference between new vs ref to verify a noise point.')               # choices=xrange(1.0, +inf)
 parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                         # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
 parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per noise point.')                            # choices=xrange(0,   +inf)
@@ -130,43 +130,45 @@ class simuData:
 		self.FER        = []
 		self.MI         = []
 		self.FE         = []
-		self.RunCommand = ""
-		self.CurveName  = ""
 		self.NoiseType  = ""
+		self.metadata = {'command': '', 'title': '', 'ci': 'on'}
+
+	def getHeader(self):
+		header = "[metadata]\n"
+		for key in self.metadata:
+			header += key + "=" + self.metadata[key] + "\n"
+
+		header += "\n[trace]\n"
+
+		return header
+
 
 def dataReader(aff3ctOutput):
 	data = simuData()
-
+	startMeta = False;
+	startTrace = False;
 	for line in aff3ctOutput:
-		if line.startswith("#"):
-			if len(line) > 20 and (line.find("FRA |") != -1 or line.find("BER |") != -1 or line.find("FER |") != -1):
-				data.Legend = getLegend(line)
+		if startMeta:
+			vals = line.split('=', 1);
+			if len(vals) == 2:
+				data.metadata[vals[0]] = vals[1].strip();
+		if line.startswith("[metadata]"):
+			startMeta = True;
 
-		else:
-			if len(data.Legend) != 0:
-				d = getVal(line)
-				if len(d) == len(data.Legend):
-					data.All.append(d)
-
+		if startTrace:
+			if line.startswith("#"):
+				if len(line) > 20 and (line.find("FRA |") != -1 or line.find("BER |") != -1 or line.find("FER |") != -1):
+					data.Legend = getLegend(line)
+			else:
+				if len(data.Legend) != 0:
+					d = getVal(line)
+					if len(d) == len(data.Legend):
+						data.All.append(d)
+		if line.startswith("[trace]"):
+			startTrace = True;
+			startMeta = False;
 
 	data.All = np.array(data.All).transpose()
-
-	# get the command to to run to reproduce this trace
-	if len(aff3ctOutput) >= 2 and "Run command:" in aff3ctOutput[0]:
-		data.RunCommand = str(aff3ctOutput[1].strip())
-	elif len(aff3ctOutput) >= 4 and "Run command:" in aff3ctOutput[2]:
-		data.RunCommand = str(aff3ctOutput[3].strip())
-	else:
-		data.RunCommand = ""
-
-	# get the curve name (if there is one)
-	if len(lines) >= 2 and "Curve name:" in lines[0]:
-		data.CurveName = str(lines[1].strip())
-	elif len(lines) >= 4 and "Curve name:" in lines[2]:
-		data.CurveName = str(lines[3].strip())
-	else:
-		data.CurveName = ""
-
 
 	# find the type of noise used in this simulation
 	idx = -1
@@ -218,6 +220,7 @@ def dataReader(aff3ctOutput):
 	return data
 
 def splitAsCommand(runCommand):
+
 	# split the run command
 	argsList = [""]
 	idx = 0
@@ -252,7 +255,8 @@ def splitAsCommand(runCommand):
 			else:
 				argsList[idx] += s
 
-	del argsList[idx]
+	if argsList[idx] == "":
+		del argsList[idx]
 
 	return argsList
 
@@ -504,11 +508,13 @@ if args.mpinp > 0 or args.mpihost != "":
 failIds = []
 nErrors = 0
 testId = 0
+nIgnored = 0
+nStrongPass = 0
 
 
 for fn in fileNames:
 	if testId < args.startId -1:
-		testId = testId + 1
+		testId += 1
 		continue
 
 	print("Test n°" + str(testId+1) + " / " + str(len(fileNames)) +
@@ -527,12 +533,18 @@ for fn in fileNames:
 	# parse the reference file
 	simuRef = dataReader(lines)
 
+	if simuRef.metadata["ci"] == "off":
+		print(" - IGNORED.", end="\n");
+		testId   += 1
+		nIgnored += 1
+		continue
+
+
 
 	# get the command line to run
 	argsAFFECT = argsAFFECTcommand[:]
-	argsAFFECT += splitAsCommand(simuRef.RunCommand)
-
-	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-no-colors"]
+	argsAFFECT += splitAsCommand(simuRef.metadata["command"])
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.metadata["title"]]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]
 
@@ -609,10 +621,6 @@ for fn in fileNames:
 		# parse the results to validate (or not) the BER/FER/MI performance
 		comp = compStats(simuCur, simuRef, args.sensibility, args.minFE)
 
-		# print the header
-		fRes.write("Run command:\n" + simuCur.RunCommand + "\n")
-		fRes.write("Curve name:\n"  + simuCur.CurveName  + "\n")
-
 		# print the parameters directly and add to the wrong data the ref values
 		idxNoise = 0
 		i = 0
@@ -621,9 +629,6 @@ for fn in fileNames:
 			if l.startswith("#"):
 				if "# End of the simulation." not in l:
 					fRes.write(l + "\n")
-
-			elif l == "Run command:" or l == "Curve name:":
-				i += 1 # ignore the following line
 
 			else:
 				em = comp.errorMessage(idxNoise)
@@ -642,8 +647,11 @@ for fn in fileNames:
 
 		if passRate == float(1):
 			print(" - STRONG PASSED.", end="\n");
+			nStrongPass += 1
+
 		elif passRate >= args.weakRate:
 			print(" - WEAK PASSED (rate = %.2f" %passRate, ").", end="\n");
+
 		else:
 			print(" - FAILED (rate = %.2f" %passRate, ").", end="\n");
 			nErrors = nErrors +1
@@ -660,28 +668,28 @@ for fn in fileNames:
 	fRes.write("# End of the simulation.\n")
 	fRes.close();
 
-	testId = testId + 1
-
-
-	if elapsedTime < 0.5:
-		break;
-
-
+	testId += 1
 
 if len(fileNames) - (args.startId -1) > 0:
+	print("\n# " + str(testId) + " tests executed: " + str(nStrongPass) + " strong passed tests, "
+		  + str(testId - nErrors - nIgnored - nStrongPass) + " weak passed tests, " + str(nErrors) + " failed tests, " + str(nIgnored) + " ignored files.", end="\n")
+
 	if nErrors == 0:
-		print("\n# (II) All the tests PASSED !", end="\n");
+		print("\n# (II) All the tests PASSED !", end="");
 	else:
-		print("\n# (II) Some tests FAILED: ", end="")
+		print("\n# (II) FAILED tests: ", end="")
 		f = 0
 		for failId in failIds:
 			print("n°", end="")
 			print(str(failId), end="")
 			if f == len(failIds) -1:
-				print(".", end="\n")
+				print(".", end="")
 			else:
 				print(", ", end="")
 			f = f + 1
+
+	print("\n")
+
 
 sys.exit(nErrors);
 
