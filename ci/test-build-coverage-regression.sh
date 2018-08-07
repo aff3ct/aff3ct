@@ -27,7 +27,7 @@ function gen_coverage_info
 	local folder=$2
 	for path in $folder/*
 	do [ -f $path ] && {
-		if [ ${file: -3} == ".py" ]; then
+		if [ ${path: -3} == ".py" ]; then
 			continue
 		fi
 
