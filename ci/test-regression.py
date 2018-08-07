@@ -494,15 +494,16 @@ else:
 
 
 argsAFFECTcommand = []
-
+activateMPI = False
 if args.mpinp > 0 or args.mpihost != "":
+	activateMPI = True
 	argsAFFECTcommand += ["mpirun", "--map-by", "socket"]
 
 	if args.mpinp > 0:
 		argsAFFECTcommand += ["-np", str(args.mpinp)]
 
 	if args.mpihost != "":
-		argsAFFECTcommand += ["--hostfile", str(args.mpihost)]
+		argsAFFECTcommand += ["--hostfile", str(os.path.abspath(args.mpihost))]
 
 
 failIds = []
@@ -550,6 +551,9 @@ for fn in fileNames:
 
 	if args.maxSNRTime:
 		argsAFFECT += ["--sim-stop-time", str(args.maxSNRTime)]
+
+	if activateMPI:
+		argsAFFECT += ["--sim-no-colors"]
 
 
 	noiseVals = ""
@@ -640,7 +644,6 @@ for fn in fileNames:
 
 		fRes.flush()
 
-		# validate (or not) the BER/FER/MI performance
 		print(" - %.2f" %elapsedTime, "sec", end="")
 
 		passRate = comp.passRate()
