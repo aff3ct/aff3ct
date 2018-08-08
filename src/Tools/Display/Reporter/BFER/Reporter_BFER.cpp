@@ -14,12 +14,18 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Reporter_BFER<B>
-::Reporter_BFER(const module::Monitor_BFER<B> &monitor)
-: Reporter(),
-  monitor(monitor)
+::Reporter_BFER(const M &monitor)
+: Rm(monitor)
 {
-	auto& BFER_title = BFER_group.first;
-	auto& BFER_cols  = BFER_group.second;
+	create_groups();
+}
+
+template <typename B>
+void Reporter_BFER<B>
+::create_groups()
+{
+	auto& BFER_title = this->monitor_group.first;
+	auto& BFER_cols  = this->monitor_group.second;
 
 	BFER_title = {"Bit Error Rate (BER) and Frame Error Rate (FER)", ""};
 	BFER_cols.push_back(std::make_pair("FRA", ""));
@@ -28,9 +34,8 @@ Reporter_BFER<B>
 	BFER_cols.push_back(std::make_pair("BER", ""));
 	BFER_cols.push_back(std::make_pair("FER", ""));
 
-	this->cols_groups.push_back(BFER_group);
+	this->cols_groups.push_back(this->monitor_group);
 }
-
 
 std::string format(unsigned long long val)
 {
@@ -45,7 +50,7 @@ std::string format(unsigned long long val)
 }
 
 template <typename B>
-Reporter::report_t Reporter_BFER<B>
+typename Reporter_BFER<B>::report_t Reporter_BFER<B>
 ::report(bool final)
 {
 	assert(this->cols_groups.size() == 1);
@@ -54,13 +59,13 @@ Reporter::report_t Reporter_BFER<B>
 
 	auto& bfer_report = the_report[0];
 
-	bfer_report.push_back(format(monitor.get_n_analyzed_fra()));
-	bfer_report.push_back(format(monitor.get_n_be          ()));
-	bfer_report.push_back(format(monitor.get_n_fe          ()));
+	bfer_report.push_back(format(this->monitor.get_n_analyzed_fra()));
+	bfer_report.push_back(format(this->monitor.get_n_be          ()));
+	bfer_report.push_back(format(this->monitor.get_n_fe          ()));
 
 	std::stringstream str_ber, str_fer;
-	str_ber << std::setprecision(2) << std::scientific << monitor.get_ber();
-	str_fer << std::setprecision(2) << std::scientific << monitor.get_fer();
+	str_ber << std::setprecision(2) << std::scientific << this->monitor.get_ber();
+	str_fer << std::setprecision(2) << std::scientific << this->monitor.get_fer();
 
 	bfer_report.push_back(str_ber.str());
 	bfer_report.push_back(str_fer.str());

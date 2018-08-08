@@ -3,6 +3,7 @@
 #include "Polar/Codec_polar.hpp"
 #include "RA/Codec_RA.hpp"
 #include "Repetition/Codec_repetition.hpp"
+#include "RS/Codec_RS.hpp"
 #include "RSC/Codec_RSC.hpp"
 #include "RSC_DB/Codec_RSC_DB.hpp"
 #include "Turbo/Codec_turbo.hpp"
@@ -44,6 +45,7 @@ module::Codec_SIHO<B,Q>* Codec_SIHO::parameters
 	else if (get_name() == Codec_polar_name        ) return dynamic_cast<const Codec_polar        ::parameters&>(*this).template build<B,Q>(crc);
 	else if (get_name() == Codec_RA_name           ) return dynamic_cast<const Codec_RA           ::parameters&>(*this).template build<B,Q>(crc);
 	else if (get_name() == Codec_repetition_name   ) return dynamic_cast<const Codec_repetition   ::parameters&>(*this).template build<B,Q>(crc);
+	else if (get_name() == Codec_RS_name           ) return dynamic_cast<const Codec_RS           ::parameters&>(*this).template build<B,Q>(crc);
 	else if (get_name() == Codec_RSC_name          ) return dynamic_cast<const Codec_RSC          ::parameters&>(*this).template build<B,Q>(crc);
 	else if (get_name() == Codec_RSC_DB_name       ) return dynamic_cast<const Codec_RSC_DB       ::parameters&>(*this).template build<B,Q>(crc);
 	else if (get_name() == Codec_turbo_name        ) return dynamic_cast<const Codec_turbo        ::parameters&>(*this).template build<B,Q>(crc);

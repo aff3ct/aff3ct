@@ -21,7 +21,7 @@ Monitor_reduction_M<M>
                     [](int tot, const M* m) { return tot + m->get_n_frames(); })),
   monitors(_monitors)
 {
-	if (monitors.size() == 0)
+	if (this->monitors.size() == 0)
 	{
 		std::stringstream message;
 		message << "'monitors.size()' has to be greater than 0 ('monitors.size()' = " << monitors.size() << ").";
@@ -31,9 +31,9 @@ Monitor_reduction_M<M>
 	const std::string name = "Monitor_reduction_M<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
 
-	for (size_t m = 0; m < monitors.size(); m++)
+	for (size_t m = 0; m < this->monitors.size(); m++)
 	{
-		if (monitors[m] == nullptr)
+		if (this->monitors[m] == nullptr)
 		{
 			std::stringstream message;
 			message << "'monitors[" << m << "]' can't be null.";
@@ -42,7 +42,7 @@ Monitor_reduction_M<M>
 
 		try
 		{
-			monitors[0]->equivalent(*monitors[m], true);
+			this->monitors[0]->equivalent(*this->monitors[m], true);
 		}
 		catch(tools::exception& e)
 		{
@@ -66,7 +66,7 @@ void Monitor_reduction_M<M>
 {
 	M::reset();
 
-	for (auto& m : monitors)
+	for (auto& m : this->monitors)
 		m->reset();
 }
 
@@ -75,6 +75,13 @@ void Monitor_reduction_M<M>
 ::reset_mr()
 {
 	this->reset();
+}
+
+template <class M>
+bool Monitor_reduction_M<M>
+::is_done_mr()
+{
+	return M::is_done();
 }
 
 template <class M>
@@ -88,17 +95,15 @@ void Monitor_reduction_M<M>
 }
 
 template <class M>
-int Monitor_reduction_M<M>
-::_reduce(bool fully, bool stop_simu)
+void Monitor_reduction_M<M>
+::_reduce(bool fully)
 {
 	M collecter(*this);
 
-	for (auto& m : monitors)
+	for (auto& m : this->monitors)
 		collecter.collect(*m, fully);
 
 	M::copy(collecter, fully);
-
-	return stop_simu ? 1 : 0;
 }
 
 }

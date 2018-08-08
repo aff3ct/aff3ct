@@ -2,7 +2,7 @@
 #include <sstream>
 
 #include "Tools/Perf/common/hard_decide.h"
-#include "Tools/Perf/common/hamming_distance.h"
+#include "Tools/Perf/distance/hamming_distance.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_BCH_genius.hpp"
@@ -11,7 +11,7 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
-Decoder_BCH_genius<B, R>
+Decoder_BCH_genius<B,R>
 ::Decoder_BCH_genius(const int K, const int N, const int t, Encoder<B> &encoder, const int n_frames)
 : Decoder         (K, N, n_frames, 1),
   Decoder_BCH<B,R>(K, N, t, n_frames),
@@ -29,20 +29,20 @@ Decoder_BCH_genius<B, R>
 }
 
 template <typename B, typename R>
-Decoder_BCH_genius<B, R>
+Decoder_BCH_genius<B,R>
 ::~Decoder_BCH_genius()
 {
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B, R>
+void Decoder_BCH_genius<B,R>
 ::_decode(B *Y_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B, R>
+void Decoder_BCH_genius<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	auto& X_N = encoder.get_X_N(frame_id);
@@ -58,7 +58,7 @@ void Decoder_BCH_genius<B, R>
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B, R>
+void Decoder_BCH_genius<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	auto& X_N = encoder.get_X_N(frame_id);
@@ -74,7 +74,7 @@ void Decoder_BCH_genius<B, R>
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B, R>
+void Decoder_BCH_genius<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
@@ -83,7 +83,7 @@ void Decoder_BCH_genius<B, R>
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B, R>
+void Decoder_BCH_genius<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N);

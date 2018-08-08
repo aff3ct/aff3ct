@@ -50,9 +50,7 @@ Decoder(const int K, const int N, const int n_frames, const int simd_inter_frame
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->tasks_with_nullptr.resize((size_t)dec::tsk::SIZE);
-	for (size_t t = 0; t < (size_t)dec::tsk::SIZE; t++)
-		this->tasks_with_nullptr[t] = nullptr;
+	this->tasks_with_nullptr.resize((size_t)dec::tsk::SIZE, nullptr);
 }
 
 Decoder::

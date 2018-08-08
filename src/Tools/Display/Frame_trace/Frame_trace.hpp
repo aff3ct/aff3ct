@@ -26,7 +26,7 @@ template <typename B = int>
 class Frame_trace
 {
 private:
-	enum class debug_version : uint8_t { BIT, REAL };
+	enum class debug_version : uint8_t { BIT, REAL, HEX };
 	std::ostream &stream; /*!< Stream to trace the frame(s). */
 
 	const int n_bits; /*!< Number of bits to display per frame (if n_bits = 0, display all the bits of the frame). */
@@ -77,6 +77,16 @@ public:
 	void display_real_vector(std::vector<D,AD> vec, std::vector<B,AB> ref = {});
 
 	/*!
+	 * \brief Display a vector (= a frame) of hexadecimals.
+	 *
+	 * \tparam D: type of the values in the input vector.
+	 *
+	 * \param vec: a vector to display.
+	 */
+	template <typename D, class AD = std::allocator<D>>
+	void display_hex_vector(std::vector<D,AD> vec);
+
+	/*!
 	 * \brief Display a vector (= a frame) of bits (0 or 1) in 2D.
 	 *
 	 * \tparam D: type of the bits in the input vector.
@@ -101,6 +111,17 @@ public:
 	 */
 	template <typename D, class AD = std::allocator<D>, class AB = std::allocator<B>>
 	void display_real_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref = {});
+
+	/*!
+	 * \brief Display a vector (= a frame) of hexadecimals in 2D.
+	 *
+	 * \tparam D: type of the values in the input vector.
+	 *
+	 * \param vec:       a vector to display.
+	 * \param row_width: number of values in a row (size of the x dimension).
+	 */
+	template <typename D, class AD = std::allocator<D>>
+	void display_hex_vector(std::vector<D,AD> vec, unsigned int row_width);
 
 private:
 	template <typename D, class AD = std::allocator<D>, class AB = std::allocator<B>>

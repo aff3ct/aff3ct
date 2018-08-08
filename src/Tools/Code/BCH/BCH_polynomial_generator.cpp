@@ -60,11 +60,8 @@ template <typename I>
 void BCH_polynomial_generator<I>
 ::compute_polynomial()
 {
-	int rdncy = 0;
-
 	bool test;
 
-	std::vector<int> zeros, min;
 	std::vector<std::vector<int>> cycle_sets(2, std::vector<int>(1));
 
 	/* Generate cycle sets modulo N, N = 2**m - 1 */
@@ -106,6 +103,8 @@ void BCH_polynomial_generator<I>
 
 
 	/* Search for roots 1, 2, ..., d-1 in cycle sets */
+	int rdncy = 0;
+	std::vector<int> min;
 	for (unsigned i = 1; i < cycle_sets.size(); i++)
 	{
 		test = false;
@@ -120,7 +119,8 @@ void BCH_polynomial_generator<I>
 				}
 	}
 
-	zeros.resize(rdncy+1);
+
+	std::vector<int> zeros(rdncy+1);
 	int kaux = 1;
 	test = true;
 
@@ -133,7 +133,7 @@ void BCH_polynomial_generator<I>
 		}
 
 
-    g.resize(rdncy+1);
+	g.resize(rdncy+1);
 
 	/* Compute the generator polynomial */
 	g[0] = this->get_alpha_to()[zeros[1]];

@@ -35,6 +35,13 @@ Galois<I>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (m > 20)
+	{
+		std::stringstream message;
+		message << "'m' is supported until 20 ('m' = " << m << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != ((1 << m) -1))
 	{
 		std::stringstream message;
@@ -42,8 +49,8 @@ Galois<I>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	Select_Polynomial();
-	Generate_GF();
+	select_polynomial();
+	generate_gf();
 }
 
 template <typename I>
@@ -83,7 +90,7 @@ const std::vector<I>& Galois<I>
 
 template <typename I>
 void Galois<I>
-::Select_Polynomial()
+::select_polynomial()
 {
 	p[0] = p[m] = 1;
 	if      (m ==  2) p[1] = 1;
@@ -109,7 +116,7 @@ void Galois<I>
 
 template <typename I>
 void Galois<I>
-::Generate_GF()
+::generate_gf()
 {
 	int i, mask;
 

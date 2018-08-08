@@ -17,18 +17,23 @@ class Monitor_reduction
 {
 public:
 	/*
-	 * make a reduction every 'd_reduce_frequency' except if the 'force' argument is set
-	 * the reduction can be done only by the master thread 'master_thread_id'
+	 * \brief check if any recorded monitor reduction has done after having done a reduction
+	 *        if any monitor is done then call 'set_stop_loop()'
+	 * \param final is true then call 'last_reduce_all()' else 'reduce_all()'
+	 * \param fully call the reduction functions with this parameter
+	 * \return 'get_stop_loop()' result
 	 */
-	static void reduce(bool fully = false, bool force = false);
+	static bool is_done_all(bool fully = false, bool final = false);
 
 	/*
-	 * loop on a forced reduction until all '__reduce__' call return 'true'
-	 * the reduction can be done only by the master thread 'master_thread_id'
-	 * set 'stop_loop' to true
+	 * \brief call __reduce__ with 'fully' and 'force' arguments
 	 */
-	static void last_reduce(bool fully = false);
+	static void reduce_all(bool fully = false, bool force = false);
 
+	/*
+	 * \brief loop on a forced reduction until '__reduce__' call return 'true' after having call 'set_stop_loop()'
+	 */
+	static void last_reduce_all(bool fully = false);
 
 	/*
 	 * reset 't_last_mpi_comm', clear 'stop_loop' and call 'reset_mr' on each monitor
@@ -37,32 +42,72 @@ public:
 
 	static void set_master_thread_id(std::thread::id          t);
 	static void set_reduce_frequency(std::chrono::nanoseconds d);
-	static void set_n_processes     (int                     np);
+
+
+	/*
+	 * \brief get if the current simulation loop must be stopped or not
+	 * \return true if loop must be stopped
+	 */
 	static bool get_stop_loop();
+
+	/*
+	 * \brief set that the current simulation loop must be stopped
+	 */
+	static void set_stop_loop();
+
+	/*
+	 * \brief throw if all process do not have the same number of monitors to reduce
+	 */
+	static void check_reducible();
 
 
 protected:
 	Monitor_reduction();
 	virtual ~Monitor_reduction() = default;
 
-	// return the number of process that asked to stop the simulation (at last_reduce)
-	virtual int _reduce(bool fully = false, bool stop_simu = false) = 0;
+	/*
+	 * \brief do the reduction of this monitor
+	 */
+	virtual void _reduce(bool fully = false) = 0;
 
+	/*
+	 * \brief reset this monitor
+	 */
 	virtual void reset_mr() = 0;
 
+	/*
+	 * \brief check if this monitor has done
+	 * \return true if has done
+	 */
+	virtual bool is_done_mr() = 0;
+
 private:
+	/*
+	 * \brief add the monitor in the 'monitors' list
+	 */
 	static void add_monitor(Monitor_reduction*);
 
-	static int                             number_processes;
+	/*
+	 * \brief do a reduction of the number of process that are at the final reduce step
+	 * \return true if all process are at the final reduce step (always true without MPI)
+	 */
+	static bool reduce_stop_loop();
+
+	/*
+	 * \brief do the reductions of all 'monitors' if the thread calling it is the master thread and if the
+	 *        'd_reduce_frequency' criteria is reached.
+	 * \param force if set, do the reduction anyway
+	 * \param fully if set, do a full reduction of all attributes
+	 * \return the result of the 'reduce_stop_loop()' call after the reductions. If there were not, then return false.
+	 */
+	static bool __reduce__(bool fully, bool force);
+
 	static bool                            stop_loop;
 	static std::vector<Monitor_reduction*> monitors;
 	static std::thread::id                 master_thread_id;
 	static std::chrono::nanoseconds        d_reduce_frequency;
 
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_reduction;
-
-	static bool __reduce__(bool fully, bool force, bool stop_simu);
-
 };
 
 
@@ -75,6 +120,10 @@ private:
 	std::vector<M*> monitors;
 
 public:
+	/*
+	 * \brief do reductions upon a monitor list to merge data in this monitor
+	 * \param monitors is the list of monitors on which the reductions are done
+	 */
 	explicit Monitor_reduction_M(const std::vector<M*> &monitors);
 	virtual ~Monitor_reduction_M() = default;
 
@@ -82,10 +131,18 @@ public:
 	virtual void clear_callbacks();
 
 protected:
-	virtual int _reduce(bool fully = false, bool stop_simu = false);  // return the number of process that stopped the simu
+	virtual void _reduce(bool fully = false);
 
-private:
-	void reset_mr();
+	/*
+	 * \brief call reset()
+	 */
+	virtual void reset_mr();
+
+	/*
+	 * \brief call is_done()
+	 */
+	virtual bool is_done_mr();
+
 };
 }
 }

@@ -8,7 +8,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
-#include "../Layered/Decoder_LDPC_BP_layered_inter.hpp"
+#include "../Horizontal_layered/Decoder_LDPC_BP_horizontal_layered_inter.hpp"
 #include "Decoder_LDPC_BP_flooding_inter.hpp"
 
 namespace aff3ct
@@ -32,8 +32,8 @@ Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
   sat_val               ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
   transpose             (this->H.get_n_connections()                                                        ),
   post                  (N, -1                                                                              ),
-  chk_to_var            (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
-  var_to_chk            (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  msg_chk_to_var        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  msg_var_to_chk        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
   Y_N_reorderered       (N                                                                                  ),
   V_reorderered         (N                                                                                  ),
   init_flag             (true                                                                               )
@@ -50,28 +50,28 @@ Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 	mipp::vector<unsigned char> connections(this->H.get_n_rows(), 0);
 
-	const auto &chk_to_var_id = this->H.get_col_to_rows();
-	const auto &var_to_chk_id = this->H.get_row_to_cols();
+	const auto &msg_chk_to_var_id = this->H.get_col_to_rows();
+	const auto &msg_var_to_chk_id = this->H.get_row_to_cols();
 
 	auto k = 0;
-	for (auto i = 0; i < (int)chk_to_var_id.size(); i++)
+	for (auto i = 0; i < (int)msg_chk_to_var_id.size(); i++)
 	{
-		for (auto j = 0; j < (int)chk_to_var_id[i].size(); j++)
+		for (auto j = 0; j < (int)msg_chk_to_var_id[i].size(); j++)
 		{
-			auto var_id = chk_to_var_id[i][j];
+			auto var_id = msg_chk_to_var_id[i][j];
 
 			auto branch_id = 0;
 			for (auto ii = 0; ii < (int)var_id; ii++)
-				branch_id += (int)var_to_chk_id[ii].size();
+				branch_id += (int)msg_var_to_chk_id[ii].size();
 			branch_id += connections[var_id];
 			connections[var_id]++;
 
-			if (connections[var_id] > (int)var_to_chk_id[var_id].size())
+			if (connections[var_id] > (int)msg_var_to_chk_id[var_id].size())
 			{
 				std::stringstream message;
-				message << "'connections[var_id]' has to be equal or smaller than 'var_to_chk_id[var_id].size()' "
+				message << "'connections[var_id]' has to be equal or smaller than 'msg_var_to_chk_id[var_id].size()' "
 				        << "('var_id' = " << var_id << ", 'connections[var_id]' = " << connections[var_id]
-				        << ", 'var_to_chk_id[var_id].size()' = " << var_to_chk_id[var_id].size() << ").";
+				        << ", 'msg_var_to_chk_id[var_id].size()' = " << msg_var_to_chk_id[var_id].size() << ").";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
@@ -104,19 +104,27 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	if (this->init_flag)
 	{
 		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->chk_to_var[cur_wave].begin(), this->chk_to_var[cur_wave].end(), zero);
+		std::fill(this->msg_chk_to_var[cur_wave].begin(), this->msg_chk_to_var[cur_wave].end(), zero);
 
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
 
-	this->_decode((const mipp::Reg<R>*)Y_N1, cur_wave);
+	std::vector<const R*> frames_in(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_in[f] = Y_N1 + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply(frames_in, (R*)this->Y_N_reorderered.data(), this->N);
+
+	this->_decode(this->Y_N_reorderered.data(), cur_wave);
 
 	// prepare for next round by processing extrinsic information
 	for (auto v = 0; v < this->N; v++)
 	{
 		auto ext = this->post[v] - mipp::Reg<R>(&Y_N1[v * mipp::N<R>()]);
-		ext.store(&Y_N2[v * mipp::N<R>()]);
+		this->post[v] = ext;
 	}
+
+	std::vector<R*> frames_out(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_out[f] = Y_N2 + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply_rev((R*)this->post.data(), frames_out, this->N);
 }
 
 template <typename B, typename R, class Update_rule>
@@ -130,15 +138,20 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	if (this->init_flag)
 	{
 		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->chk_to_var[cur_wave].begin(), this->chk_to_var[cur_wave].end(), zero);
+		std::fill(this->msg_chk_to_var[cur_wave].begin(), this->msg_chk_to_var[cur_wave].end(), zero);
 
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
+
+	std::vector<const R*> frames_in(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_in[f] = Y_N + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply(frames_in, (R*)this->Y_N_reorderered.data(), this->N);
+
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->_decode((const mipp::Reg<R>*)Y_N, cur_wave);
+	this->_decode(this->Y_N_reorderered.data(), cur_wave);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -149,9 +162,9 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 		V_reorderered[v] = mipp::cast<R,B>(this->post[k]) >> (sizeof(B) * 8 - 1);
 	}
 
-	std::vector<B*> frames(mipp::N<R>());
-	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = V_K + f * this->K;
-	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->K);
+	std::vector<B*> frames_out(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_out[f] = V_K + f * this->K;
+	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames_out, this->K);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
@@ -170,24 +183,29 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	if (this->init_flag)
 	{
 		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->chk_to_var[frame_id].begin(), this->chk_to_var[frame_id].end(), zero);
+		std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), zero);
 
 		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
+
+	std::vector<const R*> frames_in(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_in[f] = Y_N + f * this->N;
+	tools::Reorderer_static<R,mipp::N<R>()>::apply(frames_in, (R*)this->Y_N_reorderered.data(), this->N);
+
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->_decode((const mipp::Reg<R>*)Y_N, cur_wave);
+	this->_decode(this->Y_N_reorderered.data(), cur_wave);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	for (auto v = 0; v < this->N; v++)
 		V_reorderered[v] = mipp::cast<R,B>(this->post[v]) >> (sizeof(B) * 8 - 1);
 
-	std::vector<B*> frames(mipp::N<R>());
-	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = V_N + f * this->N;
-	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->N);
+	std::vector<B*> frames_out(mipp::N<R>());
+	for (auto f = 0; f < mipp::N<R>(); f++) frames_out[f] = V_N + f * this->N;
+	tools::Reorderer_static<B,mipp::N<R>()>::apply_rev((B*)V_reorderered.data(), frames_out, this->N);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
@@ -205,19 +223,19 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	for (; ite < this->n_ite; ite++)
 	{
 		this->up_rule.begin_ite(ite);
-		this->_initialize_var_to_chk(Y_N, this->chk_to_var[cur_wave], this->var_to_chk[cur_wave]);
-		this->_decode_single_ite(this->var_to_chk[cur_wave], this->chk_to_var[cur_wave]);
+		this->_initialize_var_to_chk(Y_N, this->msg_chk_to_var[cur_wave], this->msg_var_to_chk[cur_wave]);
+		this->_decode_single_ite(this->msg_var_to_chk[cur_wave], this->msg_chk_to_var[cur_wave]);
 		this->up_rule.end_ite();
 
 		if (this->enable_syndrome && ite != this->n_ite -1)
 		{
-			this->_compute_post(Y_N, this->chk_to_var[cur_wave], this->post);
+			this->_compute_post(Y_N, this->msg_chk_to_var[cur_wave], this->post);
 			if (this->_check_syndrome_soft(this->post))
 				break;
 		}
 	}
 	if (ite == this->n_ite)
-		this->_compute_post(Y_N, this->chk_to_var[cur_wave], this->post);
+		this->_compute_post(Y_N, this->msg_chk_to_var[cur_wave], this->post);
 
 	this->up_rule.end_decoding();
 }
@@ -225,33 +243,33 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 ::_initialize_var_to_chk(const              mipp::Reg<R>  *Y_N,
-                         const mipp::vector<mipp::Reg<R>> &chk_to_var,
-                               mipp::vector<mipp::Reg<R>> &var_to_chk)
+                         const mipp::vector<mipp::Reg<R>> &msg_chk_to_var,
+                               mipp::vector<mipp::Reg<R>> &msg_var_to_chk)
 {
-	auto *chk_to_var_ptr = chk_to_var.data();
-	auto *var_to_chk_ptr = var_to_chk.data();
+	auto *msg_chk_to_var_ptr = msg_chk_to_var.data();
+	auto *msg_var_to_chk_ptr = msg_var_to_chk.data();
 
 	const auto n_var_nodes = (int)this->H.get_n_rows();;
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
 
-		auto sum_chk_to_var = mipp::Reg<R>((R)0);
+		auto sum_msg_chk_to_var = mipp::Reg<R>((R)0);
 		for (auto c = 0; c < var_degree; c++)
-			sum_chk_to_var += chk_to_var_ptr[c];
+			sum_msg_chk_to_var += msg_chk_to_var_ptr[c];
 
-		const auto tmp = Y_N[v] + sum_chk_to_var;
+		const auto tmp = Y_N[v] + sum_msg_chk_to_var;
 		for (auto c = 0; c < var_degree; c++)
-			var_to_chk_ptr[c] = tmp - chk_to_var_ptr[c];
+			msg_var_to_chk_ptr[c] = tmp - msg_chk_to_var_ptr[c];
 
-		chk_to_var_ptr += var_degree;
-		var_to_chk_ptr += var_degree;
+		msg_chk_to_var_ptr += var_degree;
+		msg_var_to_chk_ptr += var_degree;
 	}
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
-::_decode_single_ite(const mipp::vector<mipp::Reg<R>> &var_to_chk, mipp::vector<mipp::Reg<R>> &chk_to_var)
+::_decode_single_ite(const mipp::vector<mipp::Reg<R>> &msg_var_to_chk, mipp::vector<mipp::Reg<R>> &msg_chk_to_var)
 {
 	auto transpose_ptr = this->transpose.data();
 
@@ -263,14 +281,14 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 		this->up_rule.begin_chk_node_in(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
-			this->up_rule.compute_chk_node_in(v, var_to_chk[transpose_ptr[v]]);
+			this->up_rule.compute_chk_node_in(v, msg_var_to_chk[transpose_ptr[v]]);
 		this->up_rule.end_chk_node_in();
 
 		this->up_rule.begin_chk_node_out(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
 		{
-			auto val = saturate<R>(this->up_rule.compute_chk_node_out(v, var_to_chk[transpose_ptr[v]]), this->sat_val);
-			chk_to_var[transpose_ptr[v]] = val;
+			auto val = saturate<R>(this->up_rule.compute_chk_node_out(v, msg_var_to_chk[transpose_ptr[v]]), this->sat_val);
+			msg_chk_to_var[transpose_ptr[v]] = val;
 		}
 		this->up_rule.end_chk_node_out();
 
@@ -281,24 +299,24 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 ::_compute_post(const              mipp::Reg<R>  *Y_N,
-                const mipp::vector<mipp::Reg<R>> &chk_to_var,
+                const mipp::vector<mipp::Reg<R>> &msg_chk_to_var,
                       mipp::vector<mipp::Reg<R>> &post)
 {
 	// compute the a posteriori info
-	const auto *chk_to_var_ptr = chk_to_var.data();
+	const auto *msg_chk_to_var_ptr = msg_chk_to_var.data();
 	const auto n_var_nodes = (int)this->H.get_n_rows();;
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
 
-		auto sum_chk_to_var = mipp::Reg<R>((R)0);
+		auto sum_msg_chk_to_var = mipp::Reg<R>((R)0);
 		for (auto c = 0; c < var_degree; c++)
-			sum_chk_to_var += chk_to_var_ptr[c];
+			sum_msg_chk_to_var += msg_chk_to_var_ptr[c];
 
 		// filling the output
-		post[v] = Y_N[v] + sum_chk_to_var;
+		post[v] = Y_N[v] + sum_msg_chk_to_var;
 
-		chk_to_var_ptr += var_degree;
+		msg_chk_to_var_ptr += var_degree;
 	}
 }
 

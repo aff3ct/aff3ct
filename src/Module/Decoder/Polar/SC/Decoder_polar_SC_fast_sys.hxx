@@ -423,7 +423,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
-			tools::Bit_packer<B>::unpack(this->s_bis.data(), this->s.data(), this->N, n_frames);
+			tools::Bit_packer::unpack(this->s_bis.data(), (unsigned char*)this->s.data(), this->N, n_frames);
 		}
 #endif
 		if (!fast_deinterleave)
@@ -470,7 +470,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 				           "To ensure the portability please do not compile with the -DENABLE_BIT_PACKING definition.";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
-			tools::Bit_packer<B>::unpack(this->s_bis.data(), V_N, this->N, n_frames);
+			tools::Bit_packer::unpack(this->s_bis.data(), (unsigned char*)V_N, this->N, n_frames);
 		}
 #endif
 		if (!fast_deinterleave)

@@ -19,7 +19,7 @@ Encoder_BCH<B>
 	{
 		std::stringstream message;
 		message << "'N - K' is different than 'n_rdncy' ('K' = " << K << ", 'N' = " << N
-		        << ", 'n_rdncy' = " << n_rdncy << ").";
+		        << ", 'n_rdncy' = " << n_rdncy << ", 'N - K' = " << (this->N - this->K) << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 

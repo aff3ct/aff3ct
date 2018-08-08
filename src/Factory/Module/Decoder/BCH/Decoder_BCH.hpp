@@ -24,7 +24,7 @@ struct Decoder_BCH : public Decoder
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
-		int t = 5; // correction power of th BCH
+		int t = 5; // correction power of the BCH
 
 		// deduced parameters
 		int m = 0; // Gallois field order

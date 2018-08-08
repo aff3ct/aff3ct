@@ -35,13 +35,13 @@ BFER<B,R,Q>
   monitor_er    (params_BFER.n_threads, nullptr),
   monitor_er_red(                       nullptr),
 
-  dumper     (params_BFER.n_threads, nullptr),
-  dumper_red (                       nullptr),
+  dumper    (params_BFER.n_threads, nullptr),
+  dumper_red(                       nullptr),
 
   rep_er   (nullptr),
   rep_mi   (nullptr),
   rep_noise(nullptr),
-  rep_throughput(nullptr),
+  rep_thr  (nullptr),
   terminal (nullptr),
 
   distributions(nullptr)
@@ -83,7 +83,7 @@ BFER<B,R,Q>
 	if (rep_noise != nullptr) { delete rep_noise; rep_noise = nullptr; }
 	if (rep_er    != nullptr) { delete rep_er;    rep_er    = nullptr; }
 	if (rep_mi    != nullptr) { delete rep_mi;    rep_mi    = nullptr; }
-	if (rep_throughput != nullptr) { delete rep_throughput; rep_throughput = nullptr; }
+	if (rep_thr   != nullptr) { delete rep_thr;   rep_thr   = nullptr; }
 
 	if (monitor_mi_red != nullptr) { delete monitor_mi_red; monitor_mi_red = nullptr; }
 	if (monitor_er_red != nullptr) { delete monitor_er_red; monitor_er_red = nullptr; }
@@ -154,7 +154,6 @@ void BFER<B,R,Q>
 		if (this->distributions != nullptr)
 			this->distributions->read_distribution(this->noise->get_noise());
 
-
 		if (params_BFER.err_track_revert)
 		{
 			this->release_objects();
@@ -198,32 +197,33 @@ void BFER<B,R,Q>
 			}
 		}
 
-		#ifdef ENABLE_MPI
+#ifdef ENABLE_MPI
 		if (params_BFER.mpi_rank == 0)
-		#endif
+#endif
 		if (params_BFER.display_legend)
 			if ((!params_BFER.ter->disabled && noise_idx == noise_begin && !params_BFER.debug)
 				|| (params_BFER.statistics && !params_BFER.debug))
 				terminal->legend(std::cout);
 
-		// start the terminal to display BER/FER results
-	#ifdef ENABLE_MPI
+#ifdef ENABLE_MPI
 		if (params_BFER.mpi_rank == 0)
-	#endif
+#endif
+		// start the terminal to display BER/FER results
 		if (!params_BFER.ter->disabled && params_BFER.ter->frequency != std::chrono::nanoseconds(0) && !params_BFER.debug)
 			terminal->start_temp_report(params_BFER.ter->frequency);
 
-
 		this->t_start_noise_point = std::chrono::steady_clock::now();
-
 
 		try
 		{
 			this->_launch();
+			module::Monitor_reduction::is_done_all(true, true); // final reduction
 		}
 		catch (std::exception const& e)
 		{
 			tools::Terminal::stop();
+			module::Monitor_reduction::is_done_all(true, true); // final reduction
+
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
 
 			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
@@ -231,9 +231,16 @@ void BFER<B,R,Q>
 		}
 
 
-	#ifdef ENABLE_MPI
+		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
+		    !this->monitor_er_red->fe_limit_achieved() &&
+		    (this->monitor_er_red->frame_limit_achieved() || this->stop_time_reached()))
+			tools::Terminal::stop();
+
+
+
+#ifdef ENABLE_MPI
 		if (params_BFER.mpi_rank == 0)
-	#endif
+#endif
 		if (!params_BFER.ter->disabled && terminal != nullptr && !this->simu_error)
 		{
 			if (params_BFER.debug)
@@ -281,15 +288,14 @@ void BFER<B,R,Q>
 
 				std::ofstream file_err_hist(params_BFER.mnt_er->err_hist_path + "_" + noise_value + ".txt");
 				file_err_hist << "\"Number of error bits per wrong frame\"; \"Histogram (noise: " << noise_value
-				              << this->noise->get_unity() << ", on " << err_hist.get_n_values() << " frames)\"" << std::endl;
+				              << this->noise->get_unity() << ", on " << err_hist.get_n_values() << " frames)\""
+				              << std::endl;
 
 				int max;
-
 				if (params_BFER.mnt_er->err_hist == 0)
 					max = err_hist.get_hist_max();
 				else
 					max = params_BFER.mnt_er->err_hist;
-
 				err_hist.dump(file_err_hist, 0, max, 0, false, false, false, "; ");
 			}
 		}
@@ -303,20 +309,8 @@ void BFER<B,R,Q>
 			this->dumper_red->clear();
 		}
 
-		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
-			!this->monitor_er_red->fe_limit_achieved() &&
-		    (params_BFER.max_frame == 0 || this->monitor_er_red->get_n_analyzed_fra() >= params_BFER.max_frame))
-			tools::Terminal::stop();
-
-		#ifdef ENABLE_MPI
-		if (MPI_simu_is_over())
-			tools::Terminal::stop();
-		#endif
-
-
 		if (tools::Terminal::is_over())
 			break;
-
 
 		for (auto &m : modules)
 			for (auto mm : m.second)
@@ -326,7 +320,6 @@ void BFER<B,R,Q>
 
 		module::Monitor_reduction::reset_all();
 		tools::Terminal::reset();
-
 	}
 
 	this->release_objects();
@@ -379,9 +372,8 @@ void BFER<B,R,Q>
 	this->rep_er = new tools::Reporter_BFER<B>(*this->monitor_er_red);
 	this->reporters.push_back(this->rep_er);
 
-	this->rep_throughput = new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red);
-	this->reporters.push_back(this->rep_throughput);
-
+	this->rep_thr = new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red);
+	this->reporters.push_back(this->rep_thr);
 }
 
 template <typename B, typename R, typename Q>
@@ -399,7 +391,6 @@ void BFER<B,R,Q>
 	// build a monitor to reduce BER/FER from the other monitors
 	this->monitor_er_red = new Monitor_BFER_reduction_type(this->monitor_er);
 
-
 	if (params_BFER.mutinfo)
 	{
 		// build a monitor to compute MIon each thread
@@ -415,15 +406,15 @@ void BFER<B,R,Q>
 	}
 
 	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
-	#ifdef ENABLE_MPI
+#ifdef ENABLE_MPI
 	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
-	module::Monitor_reduction::set_n_processes     (params_BFER.mpi_size     );
-	#else
-	//reduction is forced for every loop with macro FORCE_REDUCE_EVERY_LOOP
-	module::Monitor_reduction::set_n_processes(1);
-	#endif
+#else
+	module::Monitor_reduction::set_reduce_frequency(std::chrono::milliseconds(0));
+#endif
 
 	module::Monitor_reduction::reset_all();
+	module::Monitor_reduction::check_reducible();
+
 }
 
 template <typename B, typename R, typename Q>
@@ -466,17 +457,8 @@ bool BFER<B,R,Q>
 {
 	// communication chain execution
 	return !(tools::Terminal::is_interrupt() // if user stopped the simulation
-	         || this->monitor_er_red->done() // while max frame error count has not been reached
-	         || module::Monitor_reduction::get_stop_loop()
-	         || this->stop_time_reached()
-	         || this->max_frame_reached());
-}
-
-template <typename B, typename R, typename Q>
-bool BFER<B,R,Q>
-::max_frame_reached()
-{
-	return params_BFER.max_frame > 0 && this->monitor_er_red->get_n_analyzed_fra() >= params_BFER.max_frame;
+	         || module::Monitor_reduction::is_done_all() // while any monitor criteria is not reached -> do reduction
+	         || this->stop_time_reached());
 }
 
 template <typename B, typename R, typename Q>
@@ -486,21 +468,6 @@ bool BFER<B,R,Q>
 	using namespace std::chrono;
 	return params_BFER.stop_time != seconds(0) && (steady_clock::now() - this->t_start_noise_point) >= params_BFER.stop_time;
 }
-
-#ifdef ENABLE_MPI
-template <typename B, typename R, typename Q>
-bool BFER<B,R,Q>
-::MPI_simu_is_over()
-{
-	char over_send = tools::Terminal::is_over();
-	char over_recv;
-
-	MPI_Allreduce(&over_send, &over_recv, 1,
-	              MPI_CHAR, MPI_LOR, MPI_COMM_WORLD);
-
-	return (bool)over_recv;
-}
-#endif
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
@@ -513,4 +480,3 @@ template class aff3ct::simulation::BFER<B_64,R_64,Q_64>;
 template class aff3ct::simulation::BFER<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
-

@@ -1,7 +1,6 @@
 #ifndef UPDATE_RULE_AMS_HPP
 #define UPDATE_RULE_AMS_HPP
 
-#include <cassert>
 #include <limits>
 #include <string>
 #include <cmath>

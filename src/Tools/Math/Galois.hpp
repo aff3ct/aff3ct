@@ -34,8 +34,8 @@ public:
 	const std::vector<I>& get_p       () const;
 
 private:
-	void Select_Polynomial();
-	void Generate_GF();
+	void select_polynomial();
+	void generate_gf();
 };
 }
 }

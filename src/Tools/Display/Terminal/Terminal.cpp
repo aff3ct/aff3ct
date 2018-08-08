@@ -1,3 +1,8 @@
+
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 #include <csignal>
 
 #include "Tools/Exception/exception.hpp"
@@ -9,7 +14,6 @@ int  aff3ct::tools::Terminal::interrupt_cnt   = 0;
 bool aff3ct::tools::Terminal::over            = false;
 
 std::chrono::time_point<std::chrono::steady_clock> aff3ct::tools::Terminal::t_last_interrupt;
-
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
@@ -23,11 +27,12 @@ Terminal
 	Terminal::interrupt = false;
 
 	// Install a signal handler
-#ifdef ENABLE_MPI
+#if !defined(_WIN64) && !defined(_WIN32)
 	std::signal(SIGUSR1, Terminal::signal_interrupt_handler);
-#else
-	std::signal(SIGINT, Terminal::signal_interrupt_handler);
+	std::signal(SIGUSR2, Terminal::signal_interrupt_handler);
 #endif
+	std::signal(SIGINT,  Terminal::signal_interrupt_handler);
+	std::signal(SIGTERM, Terminal::signal_interrupt_handler);
 }
 
 Terminal
@@ -49,7 +54,7 @@ void Terminal
 
 	auto et = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - t_term).count();
 
-	if (!Terminal::is_over() || et >= 1.f)
+	if (!Terminal::over || et >= 1.f)
 		this->report(stream, true);
 
 	t_term = std::chrono::steady_clock::now();
@@ -100,7 +105,6 @@ void Terminal
 	Terminal::interrupt_cnt = 0;
 }
 
-
 bool Terminal
 ::is_interrupt()
 {
@@ -110,7 +114,15 @@ bool Terminal
 bool Terminal
 ::is_over()
 {
+#ifdef ENABLE_MPI
+	char over_send = (char)Terminal::over, over_recv;
+
+	MPI_Allreduce(&over_send, &over_recv, 1, MPI_CHAR, MPI_LOR, MPI_COMM_WORLD);
+
+	return (bool)over_recv;
+#else
 	return Terminal::over;
+#endif
 }
 
 void Terminal
@@ -123,30 +135,53 @@ void Terminal
 void Terminal
 ::signal_interrupt_handler(int signal)
 {
-	Terminal::interrupt_cnt++;
+	bool kill = false;
 
-	auto t_now = std::chrono::steady_clock::now();
-	if (!Terminal::first_interrupt)
+#if defined(_WIN64) || defined(_WIN32)
+	if (signal == SIGINT)
+#else
+	if (signal == SIGUSR1 || signal == SIGINT)
+#endif
 	{
-		auto d_delta_interrupt = t_now - Terminal::t_last_interrupt;
-		if (d_delta_interrupt < std::chrono::milliseconds(500))
-			Terminal::stop();
+		Terminal::interrupt_cnt++;
 
-		if (d_delta_interrupt < std::chrono::milliseconds(2100))
+		auto t_now = std::chrono::steady_clock::now();
+		if (!Terminal::first_interrupt)
 		{
-			if (Terminal::interrupt_cnt >= 4)
-			{
-				std::cerr << "\r# Killed by user interruption!"
-				             "                                                                                         "
-				          << std::endl;
-				std::exit(EXIT_FAILURE);
-			}
-		}
-		else
-			Terminal::interrupt_cnt = 1;
-	}
-	Terminal::t_last_interrupt  = t_now;
+			auto d_delta_interrupt = t_now - Terminal::t_last_interrupt;
+			if (d_delta_interrupt < std::chrono::milliseconds(500))
+				Terminal::stop();
 
-	Terminal::first_interrupt = false;
-	Terminal::interrupt       = true;
+			if (d_delta_interrupt < std::chrono::milliseconds(2100))
+				kill = true;
+			else
+				Terminal::interrupt_cnt = 1;
+		}
+		Terminal::t_last_interrupt = t_now;
+
+		Terminal::first_interrupt = false;
+		Terminal::interrupt       = true;
+	}
+#if !defined(_WIN64) && !defined(_WIN32)
+	else if (signal == SIGUSR2)
+	{
+		Terminal::stop();
+	}
+#endif
+	else if (signal == SIGTERM)
+	{
+		kill = true;
+	}
+
+
+	if (kill)
+	{
+		if (Terminal::interrupt_cnt >= 4)
+		{
+			std::cerr << "\r# Killed by user interruption!"
+			             "                                                                                         "
+			          << std::endl;
+			std::exit(EXIT_FAILURE);
+		}
+	}
 }

@@ -50,8 +50,6 @@ void BFER_ite_threads<B,R,Q>
 	for (auto tid = 1; tid < this->params_BFER_ite.n_threads; tid++)
 		threads[tid -1].join();
 
-	module::Monitor_reduction::last_reduce(true);
-
 	if (!this->prev_err_messages.empty())
 		throw std::runtime_error(this->prev_err_messages.back());
 }
@@ -460,8 +458,6 @@ void BFER_ite_threads<B,R,Q>
 		}
 
 		monitor[mnt::tsk::check_errors].exec();
-
-		module::Monitor_reduction::reduce(false, FORCE_REDUCE_EVERY_LOOP);
 	}
 }
 
