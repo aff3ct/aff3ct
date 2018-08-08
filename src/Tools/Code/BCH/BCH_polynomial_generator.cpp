@@ -6,9 +6,10 @@
 
 using namespace aff3ct::tools;
 
-BCH_polynomial_generator
+template <typename I>
+BCH_polynomial_generator<I>
 ::BCH_polynomial_generator(const int& N, const int& t)
- : Galois(N), t(t), d(2 * t + 1)
+ : Galois<I>(N), t(t), d(2 * t + 1)
 {
 	if (t < 1)
 	{
@@ -20,37 +21,43 @@ BCH_polynomial_generator
 	compute_polynomial();
 }
 
-BCH_polynomial_generator
+template <typename I>
+BCH_polynomial_generator<I>
 ::~BCH_polynomial_generator()
 {
 }
 
-int BCH_polynomial_generator
+template <typename I>
+int BCH_polynomial_generator<I>
 ::get_d() const
 {
 	return d;
 }
 
-int BCH_polynomial_generator
+template <typename I>
+int BCH_polynomial_generator<I>
 ::get_t() const
 {
 	return t;
 }
 
 
-int BCH_polynomial_generator
+template <typename I>
+int BCH_polynomial_generator<I>
 ::get_n_rdncy() const
 {
 	return (int)g.size() -1;
 }
 
-const std::vector<int>& BCH_polynomial_generator
+template <typename I>
+const std::vector<I>& BCH_polynomial_generator<I>
 ::get_g() const
 {
 	return g;
 }
 
-void BCH_polynomial_generator
+template <typename I>
+void BCH_polynomial_generator<I>
 ::compute_polynomial()
 {
 	int rdncy = 0;
@@ -72,7 +79,7 @@ void BCH_polynomial_generator
 		cycle_set.reserve(32);
 		do
 		{
-			cycle_set.push_back((cycle_set.back() * 2) % N);
+			cycle_set.push_back((cycle_set.back() * 2) % this->get_N());
 		}
 		while (((cycle_set.back() * 2) % this->N) != cycle_set.front());
 
@@ -129,17 +136,29 @@ void BCH_polynomial_generator
     g.resize(rdncy+1);
 
 	/* Compute the generator polynomial */
-	g[0] = alpha_to[zeros[1]];
+	g[0] = this->get_alpha_to()[zeros[1]];
 	g[1] = 1; /* g(x) = (X + zeros[1]) initially */
 	for (int i = 2; i <= rdncy; i++)
 	{
 		g[i] = 1;
 		for (int j = i - 1; j > 0; j--)
 			if (g[j] != 0)
-				g[j] = g[j - 1] ^ alpha_to[(index_of[g[j]] + zeros[i]) % N];
+				g[j] = g[j - 1] ^ this->get_alpha_to()[(this->get_index_of()[g[j]] + zeros[i]) % this->get_N()];
 			else
 				g[j] = g[j - 1];
 
-		g[0] = alpha_to[(index_of[g[0]] + zeros[i]) % N];
+		g[0] = this->get_alpha_to()[(this->get_index_of()[g[0]] + zeros[i]) % this->get_N()];
 	}
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class aff3ct::tools::BCH_polynomial_generator<B_8>;
+template class aff3ct::tools::BCH_polynomial_generator<B_16>;
+template class aff3ct::tools::BCH_polynomial_generator<B_32>;
+template class aff3ct::tools::BCH_polynomial_generator<B_64>;
+#else
+template class aff3ct::tools::BCH_polynomial_generator<B>;
+#endif
+// ==================================================================================== explicit template instantiation

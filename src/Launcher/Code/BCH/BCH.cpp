@@ -42,6 +42,9 @@ void BCH<L,B,R,Q>
 {
 	params_cdc->store(this->arg_vals);
 
+	if (params_cdc->dec->implem == "FAST")
+		this->params.src->n_frames = mipp::N<B>();
+
 	L::store_args();
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;

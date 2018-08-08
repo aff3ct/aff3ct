@@ -15,7 +15,7 @@ Decoder_BCH<B, R>
 ::Decoder_BCH(const int K, const int N, const int t, const int n_frames)
 : Decoder               (K, N, n_frames, 1),
   Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1),
- t(t),  N_p2(tools::next_power_of_2(N) -1), YH_N(N)
+ t(t),  N_p2(tools::next_power_of_2(N) -1), YH_N(N), last_is_codeword(n_frames)
 {
 	const std::string name = "Decoder_BCH";
 	this->set_name(name);
@@ -32,6 +32,13 @@ template <typename B, typename R>
 Decoder_BCH<B, R>
 ::~Decoder_BCH()
 {
+}
+
+template <typename B, typename R>
+bool Decoder_BCH<B, R>
+::get_last_is_codeword(const int frame_id) const
+{
+	return last_is_codeword[frame_id < 0 ? 0 : frame_id];
 }
 
 template <typename B, typename R>

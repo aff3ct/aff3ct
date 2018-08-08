@@ -18,13 +18,14 @@ protected:
 	const int t;         // correction power
 	const int N_p2;      // the next power 2 of N minus 1
 	std::vector<B> YH_N; // hard decision input vector
+	std::vector<B> last_is_codeword; // a value per frame
 
 public:
-	bool last_is_codeword;
-
 	Decoder_BCH(const int K, const int N, const int t, const int n_frames = 1);
 
 	virtual ~Decoder_BCH();
+
+	bool get_last_is_codeword(const int frame_id = -1) const;
 
 protected:
 	virtual void _decode        (      B *Y_N,         const int frame_id) = 0;

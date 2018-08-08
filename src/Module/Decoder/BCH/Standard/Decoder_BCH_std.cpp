@@ -11,7 +11,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_BCH_std<B, R>
-::Decoder_BCH_std(const int& K, const int& N, const tools::BCH_polynomial_generator &GF_poly, const int n_frames)
+::Decoder_BCH_std(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF_poly, const int n_frames)
 : Decoder         (K, N,                  n_frames, 1),
   Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames),
   t2(2 * this->t),
@@ -59,7 +59,7 @@ void Decoder_BCH_std<B, R>
 		s.at(i) = index_of.at(s.at(i));
 	}
 
-	this->last_is_codeword = !syn_error;
+	this->last_is_codeword[frame_id] = !syn_error;
 
 
 	if (syn_error)
@@ -196,7 +196,7 @@ void Decoder_BCH_std<B, R>
 
 			if (count == l.at(u))
 			{
-				this->last_is_codeword = true;
+				this->last_is_codeword[frame_id] = true;
 
 				/* no. roots = degree of elp hence <= this->t errors */
 				for (i = 0; i < l.at(u); i++)

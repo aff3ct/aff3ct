@@ -29,12 +29,12 @@ protected:
 	const int m;               // order of the Galois Field
 	const int d;               // minimum distance of the code (d=2t+1))
 
-	const std::vector<int>& alpha_to; // log table of GF(2**m)
-	const std::vector<int>& index_of; // antilog table of GF(2**m)
+	const std::vector<B>& alpha_to; // log table of GF(2**m)
+	const std::vector<B>& index_of; // antilog table of GF(2**m)
 
 
 public:
-	Decoder_BCH_std(const int& K, const int& N, const tools::BCH_polynomial_generator &GF, const int n_frames = 1);
+	Decoder_BCH_std(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF, const int n_frames = 1);
 	virtual ~Decoder_BCH_std();
 
 protected:

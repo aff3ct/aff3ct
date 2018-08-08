@@ -9,7 +9,8 @@
 
 using namespace aff3ct::tools;
 
-Galois
+template <typename I>
+Galois<I>
 ::Galois(const int& N)
  : N(N), m((int)std::ceil(std::log2(N))), alpha_to(N +1), index_of(N +1), p(m +1, 0)
 {
@@ -45,42 +46,43 @@ Galois
 	Generate_GF();
 }
 
-Galois
-::~Galois()
-{
-}
-
-int Galois
+template <typename I>
+int Galois<I>
 ::get_N() const
 {
 	return N;
 }
 
-int Galois
+template <typename I>
+int Galois<I>
 ::get_m() const
 {
 	return m;
 }
 
-const std::vector<int>& Galois
+template <typename I>
+const std::vector<I>& Galois<I>
 ::get_alpha_to() const
 {
 	return alpha_to;
 }
 
-const std::vector<int>& Galois
+template <typename I>
+const std::vector<I>& Galois<I>
 ::get_index_of() const
 {
 	return index_of;
 }
 
-const std::vector<int>& Galois
+template <typename I>
+const std::vector<I>& Galois<I>
 ::get_p() const
 {
 	return p;
 }
 
-void Galois
+template <typename I>
+void Galois<I>
 ::Select_Polynomial()
 {
 	p[0] = p[m] = 1;
@@ -105,7 +107,8 @@ void Galois
 	else if (m == 20) p[3] = 1;
 }
 
-void Galois
+template <typename I>
+void Galois<I>
 ::Generate_GF()
 {
 	int i, mask;
@@ -133,3 +136,15 @@ void Galois
 	}
 	index_of[0] = -1;
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class aff3ct::tools::Galois<B_8>;
+template class aff3ct::tools::Galois<B_16>;
+template class aff3ct::tools::Galois<B_32>;
+template class aff3ct::tools::Galois<B_64>;
+#else
+template class aff3ct::tools::Galois<B>;
+#endif
+// ==================================================================================== explicit template instantiation

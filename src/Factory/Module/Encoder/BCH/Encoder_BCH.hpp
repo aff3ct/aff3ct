@@ -34,11 +34,11 @@ struct Encoder_BCH : public Encoder
 
 		// builder
 		template <typename B = int>
-		module::Encoder_BCH<B>* build(const tools::BCH_polynomial_generator &GF) const;
+		module::Encoder_BCH<B>* build(const tools::BCH_polynomial_generator<B> &GF) const;
 	};
 
 	template <typename B = int>
-	static module::Encoder_BCH<B>* build(const parameters &params, const tools::BCH_polynomial_generator &GF);
+	static module::Encoder_BCH<B>* build(const parameters &params, const tools::BCH_polynomial_generator<B> &GF);
 };
 }
 }

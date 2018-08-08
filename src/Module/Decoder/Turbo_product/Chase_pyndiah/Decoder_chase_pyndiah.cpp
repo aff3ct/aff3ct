@@ -267,7 +267,7 @@ void Decoder_chase_pyndiah<B,R>
 
 		dec.decode_hiho_cw(hard_Y_N.data() - dec_offset, test_vect.data() + c*this->N - dec_offset, frame_id); // parity bit is ignored by the decoder
 		//is_wrong[c] = !enc.is_codeword(test_vect.data() + c*this->N);
-		is_wrong[c] = !dec.last_is_codeword;
+		is_wrong[c] = !dec.get_last_is_codeword(frame_id);
 
 		if (this->parity_extended)
 			test_vect[(c+1)*this->N -1] = tools::compute_parity(test_vect.data() + c*this->N, N_np);
