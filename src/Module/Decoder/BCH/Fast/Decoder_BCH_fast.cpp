@@ -76,6 +76,12 @@ void write_array(std::vector<mipp::Reg<B>,A>& array, const mipp::Reg<B>& r_idx, 
 	}
 }
 
+template <typename B>
+mipp::Reg<B> operator%(const mipp::Reg<B>& r, int mod)
+{
+	return r & (B)mod; // works only with mod == 2^n -1
+}
+
 template <typename B, typename R>
 void Decoder_BCH_fast<B, R>
 ::_decode(B *Y_N, const int frame_id)
@@ -92,10 +98,11 @@ void Decoder_BCH_fast<B, R>
 
 	const auto r_zero = mipp::Reg<B>((B)0);
 	const auto r_one  = mipp::Reg<B>((B)1);
+	const auto r_mone = mipp::Reg<B>((B)-1);
 
 	for (auto i = 1; i <= t2; i++)
 	{
-		s[i] = (B)0;
+		s[i] = r_zero;
 		for (auto j = 0; j < this->N; j++)
 		{
 			const mipp::Reg<B> r_alpha = alpha_to[(i * j) % this->N_p2];
@@ -110,19 +117,19 @@ void Decoder_BCH_fast<B, R>
 	if (!mipp::testz(syn_error))
 	{
 		// initialise table entries
-		discrepancy[0] = (B)0; // index form
+		discrepancy[0] = r_zero; // index form
 		discrepancy[1] = s[1]; // index form
-		elp[0][0] = (B)0; // index form
-		elp[1][0] = (B)1; // polynomial form
+		elp[0][0] = r_zero; // index form
+		elp[1][0] = r_one; // polynomial form
 		for (auto i = 1; i < t2; i++)
 		{
-			elp[0][i] = (B)-1; // index form
-			elp[1][i] = (B)0; // polynomial form
+			elp[0][i] = r_mone; // index form
+			elp[1][i] = r_zero; // polynomial form
 		}
-		l[0]    = (B)0;
-		l[1]    = (B)0;
-		u_lu[0] = (B)-1;
-		u_lu[1] = (B)0;
+		l[0]    = r_zero;
+		l[1]    = r_zero;
+		u_lu[0] = r_mone;
+		u_lu[1] = r_zero;
 
 		auto u = 0;
 		auto m_process = syn_error;
@@ -132,8 +139,8 @@ void Decoder_BCH_fast<B, R>
 			u++;
 			mipp::Reg<B> r_u = (B)u;
 
-			const auto m_disc     = (discrepancy[u] == (B)-1) & m_process;
-			const auto m_not_disc = (discrepancy[u] != (B)-1) & m_process;
+			const auto m_disc     = (discrepancy[u] == r_mone) & m_process;
+			const auto m_not_disc = (discrepancy[u] != r_mone) & m_process;
 
 			//***** part if (discrepancy[u] == -1)
 			if (!mipp::testz(m_disc))
@@ -143,8 +150,8 @@ void Decoder_BCH_fast<B, R>
 				auto m_lu = (l[u] >= i) & m_disc;
 				while(!mipp::testz(m_lu))
 				{
-					elp[u+1][i] = mipp::blend(elp[u][i], elp[u+1][i], m_lu);
-					elp[u+0][i] = mipp::blend(read_array(index_of, elp[u][i]), elp[u][i], m_lu);
+					elp[u + 1][i] = mipp::blend(elp[u][i], elp[u + 1][i], m_lu);
+					elp[u + 0][i] = mipp::blend(read_array(index_of, elp[u][i]), elp[u][i], m_lu);
 
 					i++;
 					m_lu = (l[u] >= i) & m_disc;
@@ -161,7 +168,7 @@ void Decoder_BCH_fast<B, R>
 
 				for (auto q = u_1 - 1; q >= 0; q--)
 				{
-					auto m_ok = m_not_disc & (discrepancy[q] != (B)-1) & (r_u_lu_q > u_lu[q]);
+					auto m_ok = m_not_disc & (discrepancy[q] != r_mone) & (r_u_lu_q > u_lu[q]);
 
 					r_q      = mipp::blend(mipp::Reg<B>(q), r_q,      m_ok);
 					r_disc_q = mipp::blend( discrepancy[q], r_disc_q, m_ok);
@@ -174,30 +181,30 @@ void Decoder_BCH_fast<B, R>
 
 				// store degree of new elp polynomial
 				auto l_u_q = r_l_q + r_u - r_q;
-				l_u_q    = mipp::blend(l_u_q, l[u  ], l[u] <= l_u_q);
-				l[u + 1] = mipp::blend(l_u_q, l[u+1],    m_not_disc);
+				l_u_q    = mipp::blend(l_u_q, l[u    ], l[u] <= l_u_q);
+				l[u + 1] = mipp::blend(l_u_q, l[u + 1],    m_not_disc);
 
 				// form new elp(x)
 				for (auto i = 0; i < t2; i++)
-					elp[u + 1][i] = mipp::blend(r_zero, elp[u+1][i], m_not_disc);
+					elp[u + 1][i] = mipp::blend(r_zero, elp[u + 1][i], m_not_disc);
 
-				auto l_max = mipp::hmax(r_l_q);
+				auto l_max = mipp::hmax(mipp::blend(r_l_q, r_zero, m_not_disc));
 				for (auto i = 0; i <= l_max; i++)
 				{
-					auto m_ok = m_not_disc & (r_elp_q[i] != (B)-1) & (r_l_q >= i);
+					auto m_ok = m_not_disc & (r_elp_q[i] != r_mone) & (r_l_q >= i);
 
 					if (mipp::testz(m_ok))
 						continue;
 
-					auto r_aplha_idx = r_elp_q[i] - r_disc_q + discrepancy[u] + this->N_p2;
-					r_aplha_idx = mipp::blend(r_aplha_idx, r_aplha_idx - this->N_p2, r_aplha_idx < this->N_p2);
+					auto r_alpha_idx = r_elp_q[i] - r_disc_q + discrepancy[u] + this->N_p2;
+					r_alpha_idx = r_alpha_idx % this->N_p2;
 
 					auto r_idx = mipp::Reg<B>(i) + r_u - r_q;
 
-					write_array(elp[u + 1], r_idx, m_ok, read_array(alpha_to, r_aplha_idx));
+					write_array(elp[u + 1], r_idx, m_ok, read_array(alpha_to, r_alpha_idx));
 				}
 
-				l_max = mipp::hmax(l[u]);
+				l_max = mipp::hmax(mipp::blend(l[u], r_zero, m_not_disc));
 				for (auto i = 0; i <= l_max; i++)
 				{
 					auto m_ok = m_not_disc & (l[u] >= i);
@@ -222,15 +229,15 @@ void Decoder_BCH_fast<B, R>
 				auto l_max = mipp::hmax(l[u+1]);
 				for (auto i = 0; i <= l_max; i++)
 				{
-					auto m_ok = m_process & (s[u + 1 - i] != (B)-1) & (elp[u + 1][i] != (B)0) & (l[u+1] >= i);
+					auto m_ok = m_process & (s[u + 1 - i] != r_mone) & (elp[u + 1][i] != r_zero) & (l[u + 1] >= i);
 
 					if (mipp::testz(m_ok))
 						continue;
 
-					auto r_aplha_idx = s[u + 1 - i] + read_array(index_of, elp[u + 1][i]);
-					r_aplha_idx = mipp::blend(r_aplha_idx, r_aplha_idx - this->N_p2, r_aplha_idx < this->N_p2);
+					auto r_alpha_idx = s[u + 1 - i] + read_array(index_of, elp[u + 1][i]);
+					r_alpha_idx = r_alpha_idx % this->N_p2;
 
-					auto r_alpha = read_array(alpha_to, r_aplha_idx);
+					auto r_alpha = read_array(alpha_to, r_alpha_idx);
 					auto r_disc  = discrepancy[u + 1] ^ r_alpha;
 
 					discrepancy[u + 1] = mipp::blend(r_disc, discrepancy[u + 1], m_ok);
@@ -256,7 +263,7 @@ void Decoder_BCH_fast<B, R>
 			{
 				auto r_idx = mipp::blend(elp[u][i], r_zero, l[u] >= i);
 				r_idx = read_array(index_of, elp[u][i]) + i; // min 0 even if index_of == -1
-				r_idx = mipp::blend(r_idx, r_idx - this->N_p2, r_idx < this->N_p2);
+				r_idx = r_idx % this->N_p2;
 				reg[i] = read_array(alpha_to, r_idx);
 			}
 
