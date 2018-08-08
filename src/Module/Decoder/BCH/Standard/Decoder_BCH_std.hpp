@@ -18,6 +18,7 @@ private :
 	const int t2;
 
 protected:
+	std::vector<B> YH_N; // hard decision input vector
 	std::vector<std::vector<int>> elp;
 	std::vector<int> discrepancy;
 	std::vector<int> l;
@@ -38,7 +39,11 @@ public:
 	virtual ~Decoder_BCH_std();
 
 protected:
-	virtual void _decode(B *Y_N, const int frame_id);
+	virtual void _decode        (      B *Y_N,         const int frame_id);
+	virtual void _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);
+	virtual void _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
+	virtual void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
+	virtual void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
 };
 }
 }

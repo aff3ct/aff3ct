@@ -3,6 +3,7 @@
 #include <numeric>
 #include <type_traits>
 
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Exception/exception.hpp"
 
@@ -12,10 +13,11 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
-Decoder_BCH_fast<B, R>
+Decoder_BCH_fast<B,R>
 ::Decoder_BCH_fast(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF_poly, const int n_frames)
 : Decoder         (K, N,                  n_frames, mipp::N<B>()           ),
   Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames                         ),
+  YH_N            (this->N * mipp::N<B>()                                  ),
   t2              (2 * this->t                                             ),
   Y_N_reorderered (this->N                                                 ),
   elp             (this->N_p2_1+2, mipp::vector<mipp::Reg<B>>(this->N_p2_1)),
@@ -83,18 +85,13 @@ mipp::Reg<B> operator%(const mipp::Reg<B>& r, int mod)
 }
 
 template <typename B, typename R>
-void Decoder_BCH_fast<B, R>
-::_decode(B *Y_N, const int frame_id)
+void Decoder_BCH_fast<B,R>
+::_decode(const int frame_id)
 {
 	const auto r_zero = mipp::Reg<B>((B)0);
 	const auto r_one  = mipp::Reg<B>((B)1);
 	const auto r_mone = mipp::Reg<B>((B)-1);
 
-
-	// reorder data into mipp registers
-	std::vector<const B*> frames(mipp::N<B>());
-	for (auto f = 0; f < mipp::N<B>(); f++) frames[f] = Y_N + f * this->N;
-	tools::Reorderer_static<B,mipp::N<B>()>::apply(frames, (B*)this->Y_N_reorderered.data(), this->N);
 
 	// form the syndromes
 	auto syn_error = r_zero != r_zero; // init to false
@@ -281,12 +278,66 @@ void Decoder_BCH_fast<B, R>
 	}
 
 	mipp::toReg<B>(~syn_error).store(this->last_is_codeword.data() + frame_id);
+}
 
+template <typename B, typename R>
+void Decoder_BCH_fast<B,R>
+::_load(const B *Y_N, const int frame_id)
+{
+	// reorder data into mipp registers
+	std::vector<const B*> frames(mipp::N<B>());
+	for (auto f = 0; f < mipp::N<B>(); f++)
+		frames[f] = Y_N + f * this->N;
+
+	tools::Reorderer_static<B,mipp::N<B>()>::apply(frames, (B*)this->Y_N_reorderered.data(), this->N);
+}
+
+template <typename B, typename R>
+void Decoder_BCH_fast<B,R>
+::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+{
+	_load(Y_N, frame_id);
+
+	this->_decode(frame_id);
 
 	// reorder data into standard registers
 	std::vector<B*> frames_rev(mipp::N<B>());
-	for (auto f = 0; f < mipp::N<B>(); f++) frames_rev[f] = Y_N + f * this->N;
+	for (auto f = 0; f < mipp::N<B>(); f++)
+		frames_rev[f] = V_K + f * this->K;
+	tools::Reorderer_static<B,mipp::N<B>()>::apply_rev((B*)(this->Y_N_reorderered.data() + this->N - this->K), frames_rev, this->K);
+}
+
+template <typename B, typename R>
+void Decoder_BCH_fast<B,R>
+::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+{
+	_load(Y_N, frame_id);
+
+	this->_decode(frame_id);
+
+	// reorder data into standard registers
+	std::vector<B*> frames_rev(mipp::N<B>());
+	for (auto f = 0; f < mipp::N<B>(); f++)
+		frames_rev[f] = V_N + f * this->N;
 	tools::Reorderer_static<B,mipp::N<B>()>::apply_rev((B*)this->Y_N_reorderered.data(), frames_rev, this->N);
+}
+
+template <typename B, typename R>
+void Decoder_BCH_fast<B,R>
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+{
+	tools::hard_decide(Y_N, this->YH_N.data(), this->N * mipp::N<B>());
+
+	this->_decode_hiho(this->YH_N.data(), V_K, frame_id);
+}
+
+template <typename B, typename R>
+void Decoder_BCH_fast<B,R>
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+{
+	tools::hard_decide(Y_N, this->YH_N.data(), this->N * mipp::N<B>());
+
+	this->_decode_hiho_cw(this->YH_N.data(), V_N, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation

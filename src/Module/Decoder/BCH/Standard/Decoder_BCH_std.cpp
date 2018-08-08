@@ -14,7 +14,7 @@ Decoder_BCH_std<B, R>
 ::Decoder_BCH_std(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF_poly, const int n_frames)
 : Decoder         (K, N,                  n_frames, 1),
   Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames),
-  t2(2 * this->t),
+  YH_N(N), t2(2 * this->t),
   elp(this->N_p2_1+2, std::vector<int>(this->N_p2_1)), discrepancy(this->N_p2_1+2), l(this->N_p2_1+2), u_lu(this->N_p2_1+2), s(t2+1), loc(this->t +1), reg(this->t +1),
   m(GF_poly.get_m()), d(GF_poly.get_d()), alpha_to(GF_poly.get_alpha_to()), index_of(GF_poly.get_index_of())
 {
@@ -196,6 +196,51 @@ void Decoder_BCH_std<B, R>
 			}
 		}
 	}
+}
+
+
+template <typename B, typename R>
+void Decoder_BCH_std<B, R>
+::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+{
+	std::copy(Y_N, Y_N + this->N, this->YH_N.begin());
+
+	this->_decode(this->YH_N.data(), frame_id);
+
+	std::copy(this->YH_N.data() + this->N - this->K, this->YH_N.data() + this->N, V_K);
+}
+
+template <typename B, typename R>
+void Decoder_BCH_std<B, R>
+::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+{
+	std::copy(Y_N, Y_N + this->N, this->YH_N.begin());
+
+	this->_decode(this->YH_N.data(), frame_id);
+
+	std::copy(this->YH_N.data(), this->YH_N.data() + this->N, V_N);
+}
+
+template <typename B, typename R>
+void Decoder_BCH_std<B, R>
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+{
+	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
+
+	this->_decode(this->YH_N.data(), frame_id);
+
+	std::copy(this->YH_N.data() + this->N - this->K, this->YH_N.data() + this->N, V_K);
+}
+
+template <typename B, typename R>
+void Decoder_BCH_std<B, R>
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+{
+	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
+
+	this->_decode(this->YH_N.data(), frame_id);
+
+	std::copy(this->YH_N.data(), this->YH_N.data() + this->N, V_N);
 }
 
 // ==================================================================================== explicit template instantiation
