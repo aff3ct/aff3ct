@@ -14,20 +14,20 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_BCH_fast<B, R>
 ::Decoder_BCH_fast(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF_poly, const int n_frames)
-: Decoder         (K, N,                  n_frames, mipp::N<B>()       ),
-  Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames                     ),
-  t2              (2 * this->t                                         ),
-  Y_N_reorderered (this->N                                             ),
+: Decoder         (K, N,                  n_frames, mipp::N<B>()           ),
+  Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames                         ),
+  t2              (2 * this->t                                             ),
+  Y_N_reorderered (this->N                                                 ),
   elp             (this->N_p2_1+2, mipp::vector<mipp::Reg<B>>(this->N_p2_1)),
-  discrepancy     (this->N_p2_1+2                                        ),
-  l               (this->N_p2_1+2                                        ),
-  u_lu            (this->N_p2_1+2                                        ),
-  s               (t2+1                                                ),
-  reg             (this->t +1                                          ),
-  m               (GF_poly.get_m()                                     ),
-  d               (GF_poly.get_d()                                     ),
-  alpha_to        (GF_poly.get_alpha_to()                              ),
-  index_of        (GF_poly.get_index_of()                              )
+  discrepancy     (this->N_p2_1+2                                          ),
+  l               (this->N_p2_1+2                                          ),
+  u_lu            (this->N_p2_1+2                                          ),
+  s               (t2+1                                                    ),
+  reg             (this->t +1                                              ),
+  m               (GF_poly.get_m()                                         ),
+  d               (GF_poly.get_d()                                         ),
+  alpha_to        (GF_poly.get_alpha_to()                                  ),
+  index_of        (GF_poly.get_index_of()                                  )
 {
 	const std::string name = "Decoder_BCH_fast";
 	this->set_name(name);
@@ -223,15 +223,16 @@ void Decoder_BCH_fast<B, R>
 				discrepancy[u_p1]      = mipp::blend(r_read, discrepancy[u_p1], m_process);
 
 
-				auto l_max = mipp::hmax(l[u_p1]);
-				for (auto i = 0; i <= l_max; i++)
+				auto l_max = mipp::hmax(mipp::blend(l[u_p1], r_zero, m_not_disc));
+				for (auto i = 1; i <= l_max; i++)
 				{
-					auto m_ok = m_process & (s[u_p1 - i] != r_mone) & (elp[u_p1][i] != r_zero) & (l[u_p1] >= i);
+					auto u_p1_i = ((u_p1 - i) < 0) ? 0 : (u_p1 - i);
+					auto m_ok = m_process & (s[u_p1_i] != r_mone) & (elp[u_p1][i] != r_zero) & (l[u_p1] >= i);
 
 					if (mipp::testz(m_ok))
 						continue;
 
-					const auto r_alpha_idx = (s[u_p1 - i] + read_array(index_of, elp[u_p1][i] % this->N_p2_1)) % this->N_p2_1;
+					const auto r_alpha_idx = (s[u_p1_i] + read_array(index_of, elp[u_p1][i] % this->N_p2_1)) % this->N_p2_1;
 					const auto r_alpha = read_array(alpha_to, r_alpha_idx);
 					const auto r_disc  = discrepancy[u_p1] ^ r_alpha;
 
