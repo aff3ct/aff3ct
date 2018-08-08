@@ -231,7 +231,7 @@ void Decoder_BCH_fast<B, R>
 					if (mipp::testz(m_ok))
 						continue;
 
-					const auto r_alpha_idx = s[u_p1 - i] + read_array(index_of, elp[u_p1][i] % this->N_p2_1) % this->N_p2_1;
+					const auto r_alpha_idx = (s[u_p1 - i] + read_array(index_of, elp[u_p1][i] % this->N_p2_1)) % this->N_p2_1;
 					const auto r_alpha = read_array(alpha_to, r_alpha_idx);
 					const auto r_disc  = discrepancy[u_p1] ^ r_alpha;
 
@@ -253,7 +253,7 @@ void Decoder_BCH_fast<B, R>
 		if (!mipp::testz(m_corr))
 		{
 			// Chien search: find roots of the error location polynomial
-			auto l_max = mipp::hmax(l[u]);
+			auto l_max = mipp::hmax(mipp::blend(l[u], r_zero, m_corr));
 			for (auto i = 1; i <= l_max; i++)
 			{
 				auto r_idx = mipp::blend(elp[u][i], r_zero, l[u] >= i) % this->N_p2_1;
