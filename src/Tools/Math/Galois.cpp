@@ -145,13 +145,7 @@ void Galois<I>
 }
 
 // ==================================================================================== explicit template instantiation
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class aff3ct::tools::Galois<B_8>;
-template class aff3ct::tools::Galois<B_16>;
-template class aff3ct::tools::Galois<B_32>;
-template class aff3ct::tools::Galois<B_64>;
-#else
-template class aff3ct::tools::Galois<B>;
-#endif
-// ==================================================================================== explicit template instantiation
+template class aff3ct::tools::Galois<signed char>;
+template class aff3ct::tools::Galois<short>;
+template class aff3ct::tools::Galois<int  >;
+template class aff3ct::tools::Galois<long >;
