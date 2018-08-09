@@ -132,6 +132,7 @@ void Launcher::print_header()
 
 std::string remove_sim_meta(const std::string& cmd)
 {
+#if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
 	const std::string simmeta = " --sim-meta ";
 	auto pos_arg = cmd.find(simmeta);
 
@@ -142,6 +143,9 @@ std::string remove_sim_meta(const std::string& cmd)
 	auto pos_end   = cmd.find("\"", pos_start + 1);
 
 	return cmd.substr(0, pos_arg) + cmd.substr(pos_end + 1);
+#else
+	return std::regex_replace(cmd, std::regex("( --sim-meta \"[^\"]*\")"), "");
+#endif
 }
 
 int Launcher::launch()
