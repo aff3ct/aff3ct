@@ -152,8 +152,9 @@ void BCH_polynomial_generator<I>
 }
 
 // ==================================================================================== explicit template instantiation
-template class aff3ct::tools::BCH_polynomial_generator<signed char>;
-template class aff3ct::tools::BCH_polynomial_generator<short>;
-template class aff3ct::tools::BCH_polynomial_generator<int  >;
-template class aff3ct::tools::BCH_polynomial_generator<long >;
+#include "Tools/types.h"
+template class aff3ct::tools::BCH_polynomial_generator<B_8 >;
+template class aff3ct::tools::BCH_polynomial_generator<B_16>;
+template class aff3ct::tools::BCH_polynomial_generator<B_32>;
+template class aff3ct::tools::BCH_polynomial_generator<B_64>;
 // ==================================================================================== explicit template instantiation
