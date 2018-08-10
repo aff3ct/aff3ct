@@ -44,6 +44,9 @@ function gen_coverage_info
 		fi
 	} || {
 		[ -d $path ] && {
+			if [ ${path: -11} == "__pycache__" ]; then
+				continue
+			fi
 			gen_coverage_info $build $path
 		}
 	}

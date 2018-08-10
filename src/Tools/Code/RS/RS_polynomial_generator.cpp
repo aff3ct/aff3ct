@@ -9,7 +9,7 @@ using namespace aff3ct::tools;
 
 RS_polynomial_generator
 ::RS_polynomial_generator(const int& N, const int& t)
- : Galois(N), t(t), d(2 * t + 1), g(d, 0)
+ : Galois<int>(N), t(t), d(2 * t + 1), g(d, 0)
 {
 	if (t < 1)
 	{

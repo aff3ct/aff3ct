@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace tools
 {
-class RS_polynomial_generator : public Galois
+class RS_polynomial_generator : public Galois<int>
 {
 protected:
 	const int t;
