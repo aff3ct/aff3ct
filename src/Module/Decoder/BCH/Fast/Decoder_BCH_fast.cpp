@@ -42,11 +42,11 @@ Decoder_BCH_fast<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (this->N_p2_1 >= std::numeric_limits<B>::max() && std::is_unsigned<B>::value)
+	if (this->N_p2_1*2 >= std::numeric_limits<B>::max() || std::is_unsigned<B>::value)
 	{
 		std::stringstream message;
-		message << "'N_p2_1' must be less than 'std::numeric_limits<B>::max()' and 'B' must be signed ('N_p2_1' = "
-		        << this->N_p2_1 << ", 'std::numeric_limits<B>::max()' = " << std::numeric_limits<B>::max() << ").";
+		message << "'N_p2_1'*2 must be less than 'std::numeric_limits<B>::max()' and 'B' must be signed ('N_p2_1'*2 = "
+		        << this->N_p2_1*2 << ", 'std::numeric_limits<B>::max()' = " << std::numeric_limits<B>::max() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
