@@ -218,7 +218,7 @@ void Terminal_std
 {
 	std::ios::fmtflags f(stream.flags());
 
-	stream << "\r" << data_tag;
+	stream << data_tag;
 
 
 	for (unsigned r = 0; r < this->reporters.size(); r++)
@@ -268,7 +268,7 @@ void Terminal_std
 	}
 	else
 	{
-		stream << rang::style::bold << rang::fg::green << (real_time_state++ < 2 ? " *" : "  ") << rang::style::reset;
+		stream << rang::style::bold << rang::fg::green << (real_time_state++ < 2 ? " *" : "  ") << rang::style::reset << "\r";
 		real_time_state %= (uint8_t)4;
 	}
 

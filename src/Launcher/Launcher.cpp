@@ -133,7 +133,6 @@ void Launcher::print_header()
 std::string remove_argument(const std::string& cmd, std::string arg)
 {
 #if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
-
 	if (arg.front() != ' ')
 		arg = " " + arg;
 	auto pos_arg = cmd.find(arg);
@@ -148,6 +147,13 @@ std::string remove_argument(const std::string& cmd, std::string arg)
 #else
 	return std::regex_replace(cmd, std::regex("( " + arg + " \"[^\"]*\")"), "");
 #endif
+}
+
+std::string remove_argument(std::string cmd, const std::vector<std::string>& args)
+{
+	for (auto& a : args)
+		cmd = remove_argument(cmd, a);
+	return cmd;
 }
 
 int Launcher::launch()
@@ -181,7 +187,7 @@ int Launcher::launch()
 	if (!this->params_common.meta.empty())
 	{
 		stream << "[metadata]" << std::endl;
-		stream << "command=" << remove_argument(remove_argument(cmd_line, "--sim-meta"), "-t") << std::endl;
+		stream << "command=" << remove_argument(cmd_line, {"--sim-meta", "-t", "--ter-freq"}) << std::endl;
 		stream << "title=" << this->params_common.meta << std::endl;
 		stream << std::endl << "[trace]" << std::endl;
 	}
