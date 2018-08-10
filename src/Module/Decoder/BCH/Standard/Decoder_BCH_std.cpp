@@ -14,7 +14,7 @@ Decoder_BCH_std<B, R>
 ::Decoder_BCH_std(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF_poly, const int n_frames)
 : Decoder         (K, N,                  n_frames, 1),
   Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames),
-  YH_N(N), t2(2 * this->t),
+  t2(2 * this->t), YH_N(N),
   elp(this->N_p2_1+2, std::vector<int>(this->N_p2_1)), discrepancy(this->N_p2_1+2), l(this->N_p2_1+2), u_lu(this->N_p2_1+2), s(t2+1), loc(this->t +1), reg(this->t +1),
   m(GF_poly.get_m()), d(GF_poly.get_d()), alpha_to(GF_poly.get_alpha_to()), index_of(GF_poly.get_index_of())
 {
@@ -88,6 +88,7 @@ void Decoder_BCH_std<B, R>
 		do
 		{
 			u++;
+
 			if (discrepancy[u] == -1)
 			{
 				l[u + 1] = l[u];
@@ -148,6 +149,7 @@ void Decoder_BCH_std<B, R>
 					discrepancy[u + 1] = alpha_to[s[u + 1]];
 				else
 					discrepancy[u + 1] = 0;
+
 				for (i = 1; i <= l[u + 1]; i++)
 					if ((s[u + 1 - i] != -1) && (elp[u + 1][i] != 0))
 						discrepancy[u + 1] ^= alpha_to[(s[u + 1 - i] + index_of[elp[u + 1][i]]) % this->N_p2_1];
@@ -167,6 +169,7 @@ void Decoder_BCH_std<B, R>
 			/* Chien search: find roots of the error location polynomial */
 			for (i = 1; i <= l[u]; i++)
 				reg[i] = elp[u][i];
+
 			int count = 0;
 			for (i = 1; i <= this->N_p2_1; i++)
 			{
