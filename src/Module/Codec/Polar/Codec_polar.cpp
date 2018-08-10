@@ -20,7 +20,7 @@ Codec_polar<B,Q>
   frozen_bits(fb_params.N_cw, true),
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
   fb_generator     (nullptr),
-  puncturer_wangliu(nullptr),
+  puncturer_shortlast(nullptr),
   fb_decoder       (nullptr),
   fb_encoder       (nullptr)
 {
@@ -83,8 +83,8 @@ Codec_polar<B,Q>
 	{
 		try
 		{
-			puncturer_wangliu = factory::Puncturer_polar::build<B,Q>(*pct_params, *fb_generator);
-			this->set_puncturer(puncturer_wangliu);
+			puncturer_shortlast = factory::Puncturer_polar::build<B,Q>(*pct_params, *fb_generator);
+			this->set_puncturer(puncturer_shortlast);
 		}
 		catch(tools::cannot_allocate const&)
 		{
@@ -155,7 +155,7 @@ void Codec_polar<B,Q>
 ::notify_frozenbits_update()
 {
 	if (this->N_cw != this->N)
-		puncturer_wangliu->gen_frozen_bits(frozen_bits);
+		puncturer_shortlast->gen_frozen_bits(frozen_bits);
 	if (this->fb_decoder)
 		this->fb_decoder->notify_frozenbits_update();
 	if (this->fb_encoder)

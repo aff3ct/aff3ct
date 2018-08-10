@@ -3,7 +3,7 @@
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
-#include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
+#include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 
 #include "../Puncturer.hpp"
 
@@ -33,11 +33,11 @@ struct Puncturer_polar : public Puncturer
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Puncturer_polar_wangliu<B,Q>* build(const tools::Frozenbits_generator &fb_generator) const;
+		module::Puncturer_polar_shortlast<B,Q>* build(const tools::Frozenbits_generator &fb_generator) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Puncturer_polar_wangliu<B,Q>* build(const parameters                  &params,
+	static module::Puncturer_polar_shortlast<B,Q>* build(const parameters                  &params,
 	                                                   const tools::Frozenbits_generator &fb_generator);
 };
 }

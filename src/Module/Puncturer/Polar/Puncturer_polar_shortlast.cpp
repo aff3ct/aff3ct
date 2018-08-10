@@ -4,21 +4,21 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Puncturer_polar_wangliu.hpp"
+#include "Puncturer_polar_shortlast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename Q>
-Puncturer_polar_wangliu<B,Q>
-::Puncturer_polar_wangliu(const int &K,
+Puncturer_polar_shortlast<B,Q>
+::Puncturer_polar_shortlast(const int &K,
                           const int &N,
                           const tools::Frozenbits_generator &fb_generator,
                           const int n_frames)
 : Puncturer<B,Q>(K, N, (int)std::exp2(std::ceil(std::log2(N))), n_frames),
   fb_generator(fb_generator)
 {
-	const std::string name = "Puncturer_polar_wangliu";
+	const std::string name = "Puncturer_polar_shortlast";
 	this->set_name(name);
 	
 	if (fb_generator.get_K() != K)
@@ -39,13 +39,13 @@ Puncturer_polar_wangliu<B,Q>
 }
 
 template <typename B, typename Q>
-Puncturer_polar_wangliu<B,Q>
-::~Puncturer_polar_wangliu()
+Puncturer_polar_shortlast<B,Q>
+::~Puncturer_polar_shortlast()
 {
 }
 
 template <typename B, typename Q>
-void Puncturer_polar_wangliu<B,Q>
+void Puncturer_polar_shortlast<B,Q>
 ::gen_frozen_bits(std::vector<bool> &frozen_bits)
 {
 	auto best_channels = fb_generator.get_best_channels();
@@ -68,14 +68,14 @@ void Puncturer_polar_wangliu<B,Q>
 }
 
 template <typename B, typename Q>
-void Puncturer_polar_wangliu<B,Q>
+void Puncturer_polar_shortlast<B,Q>
 ::_puncture(const B *X_N1, B *X_N2, const int frame_id) const
 {
 	std::copy(X_N1, X_N1 + this->N, X_N2);
 }
 
 template <typename B, typename Q>
-void Puncturer_polar_wangliu<B,Q>
+void Puncturer_polar_shortlast<B,Q>
 ::_depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
 {
 	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
@@ -87,11 +87,11 @@ void Puncturer_polar_wangliu<B,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Puncturer_polar_wangliu<B_8,Q_8>;
-template class aff3ct::module::Puncturer_polar_wangliu<B_16,Q_16>;
-template class aff3ct::module::Puncturer_polar_wangliu<B_32,Q_32>;
-template class aff3ct::module::Puncturer_polar_wangliu<B_64,Q_64>;
+template class aff3ct::module::Puncturer_polar_shortlast<B_8,Q_8>;
+template class aff3ct::module::Puncturer_polar_shortlast<B_16,Q_16>;
+template class aff3ct::module::Puncturer_polar_shortlast<B_32,Q_32>;
+template class aff3ct::module::Puncturer_polar_shortlast<B_64,Q_64>;
 #else
-template class aff3ct::module::Puncturer_polar_wangliu<B,Q>;
+template class aff3ct::module::Puncturer_polar_shortlast<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

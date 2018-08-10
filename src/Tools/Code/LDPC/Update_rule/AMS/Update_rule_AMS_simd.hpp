@@ -60,8 +60,6 @@ public:
 	// incoming values from the variable nodes into the check nodes
 	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
 	{
-		assert(chk_degree <= (int)this->values.size());
-
 		this->sign      = this->false_msk;
 		this->min       = this->max;
 		this->delta_min = this->max;
