@@ -130,21 +130,23 @@ void Launcher::print_header()
 	this->stream << rang::tag::comment << std::endl;
 }
 
-std::string remove_sim_meta(const std::string& cmd)
+std::string remove_argument(const std::string& cmd, std::string arg)
 {
 #if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
-	const std::string simmeta = " --sim-meta ";
-	auto pos_arg = cmd.find(simmeta);
+
+	if (arg.front() != ' ')
+		arg = " " + arg;
+	auto pos_arg = cmd.find(arg);
 
 	if (pos_arg == std::string::npos)
 		return cmd;
 
-	auto pos_start = cmd.find("\"", pos_arg + simmeta.size());
+	auto pos_start = cmd.find("\"", pos_arg + arg.size());
 	auto pos_end   = cmd.find("\"", pos_start + 1);
 
 	return cmd.substr(0, pos_arg) + cmd.substr(pos_end + 1);
 #else
-	return std::regex_replace(cmd, std::regex("( --sim-meta \"[^\"]*\")"), "");
+	return std::regex_replace(cmd, std::regex("( " + arg + " \"[^\"]*\")"), "");
 #endif
 }
 
@@ -179,7 +181,7 @@ int Launcher::launch()
 	if (!this->params_common.meta.empty())
 	{
 		stream << "[metadata]" << std::endl;
-		stream << "command=" << remove_sim_meta(cmd_line) << std::endl;
+		stream << "command=" << remove_argument(remove_argument(cmd_line, "--sim-meta"), "-t") << std::endl;
 		stream << "title=" << this->params_common.meta << std::endl;
 		stream << std::endl << "[trace]" << std::endl;
 	}
