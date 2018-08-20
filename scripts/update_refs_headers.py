@@ -22,12 +22,12 @@ import aff3ct_refs_reader as arr
 # ================================================================== PARAMETERS
 
 parser = argparse.ArgumentParser(prog='aff3ct-test-regression', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument('--refs-path',      action='store', dest='refsPath',      type=str,   default="refs",                    help='Path to the references to re-simulate.')
-parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
-parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
-parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                       # choices=xrange(1,   +inf)
-parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
-parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                     help='Enable the verbose mode.')
+parser.add_argument('--refs-path',      action='store', dest='refsPath',      type=str,   default="refs",                help='Path to the references to update.')
+parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="update-refs-results", help='Path to the updated results.')
+parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",               help='Path to the AFF3CT build.')
+parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                     help='Starting id to avoid computing results one again.') # choices=xrange(1,   +inf)
+parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                  help='If enabled, scan the path of refs recursively.')
+parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                 help='Enable the verbose mode.')
 
 extensions = ['.txt', '.perf', '.data', '.dat']
 # ================================================================== PARAMETERS
@@ -64,6 +64,15 @@ def getFileNames(currentPath, fileNames):
 				fileNames.append(shortenPath)
 	else:
 		print("# (WW) The path '", currentPath, "' does not exist.")
+
+
+def setBackOldParameters(ref, new):
+	ValuesToSetBack = ["Date (UTC)", "Git version", "Multi-threading"]
+
+	for v in ValuesToSetBack:
+		refVal = ref.getSimuHeader(v)
+		if refVal != "":
+			new.setSimuHeader(v,refVal)
 
 # =================================================================== FUNCTIONS
 # =============================================================================
@@ -153,6 +162,8 @@ for fn in fileNames:
 	newFile = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
 	newData = arr.aff3ctRefsReader(newFile)
 
+	# set back multi-threading or git version or data values of the reference
+	setBackOldParameters(refData, newData)
 
 	# result file
 	fRes = open(args.resultsPath + "/" + fn, 'w+')
@@ -172,21 +183,17 @@ for fn in fileNames:
 			fRes.write(errAndWarnMessages[i] + "\n")
 
 	else:
-		fRes.write(refData.getMetadataAsString())
+		fRes.write(refData.getMetadataAsString   ())
+		fRes.write(newData.getSimuTitleAsString  ())
+		fRes.write(newData.getSimuHeaderAsString ())
+		fRes.write(refData.getLegendTitleAsString())
 
-		i = 0
-		while( i < len(newFile)):
-			l = newFile[i]
-			if l.startswith("# The simulation is running..."):
-				break
-			fRes.write(l + "\n")
-			i += 1 # to next line
-
+		# write ref trace
 		i = 0
 		dump = False
 		while( i < len(refFile)):
 			l = refFile[i]
-			if dump:
+			if dump and (not l.startswith("#") or l.startswith("# End of the simulation")):
 				fRes.write(l + "\n")
 			elif l.startswith("# The simulation is running..."):
 				dump = True

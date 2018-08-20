@@ -165,7 +165,7 @@ class tableStats:
 
 class compStats:
 	def __init__(self, dataCur, dataRef, sensibility, asked_n_fe):
-		if not isinstance(dataCur, aff3ctRefsReader) or not isinstance(dataRef, aff3ctRefsReader) :
+		if not isinstance(dataCur, arr.aff3ctRefsReader) or not isinstance(dataRef, arr.aff3ctRefsReader) :
 			raise TypeError
 
 		self.nValidData = len(dataCur.getTrace("n_fe"))
