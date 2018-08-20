@@ -220,7 +220,6 @@ void Terminal_std
 
 	stream << data_tag;
 
-
 	for (unsigned r = 0; r < this->reporters.size(); r++)
 		if (this->reporters[r] != nullptr)
 		{
@@ -268,7 +267,8 @@ void Terminal_std
 	}
 	else
 	{
-		stream << rang::style::bold << rang::fg::green << (real_time_state++ < 2 ? " *" : "  ") << rang::style::reset << "\r";
+		stream << rang::style::bold << rang::fg::green << (real_time_state++ < 2 ? " *" : "  ") << rang::style::reset;
+		stream << "\r"; // put the carrier return character only on temporary reports
 		real_time_state %= (uint8_t)4;
 	}
 
