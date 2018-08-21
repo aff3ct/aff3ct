@@ -83,7 +83,7 @@ Codec_LDPC<B,Q>
 
 	if (dec_params.H_reorder != "NONE")
 	{	// reorder the H matrix following the check node degrees
-		H.sort_cols_per_density(dec_params.H_reorder);
+		H.sort_cols_per_density(dec_params.H_reorder == "ASC" ? tools::Matrix::Sort::ASCENDING : tools::Matrix::Sort::DESCENDING);
 	}
 
 

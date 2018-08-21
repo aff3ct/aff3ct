@@ -7,7 +7,7 @@
 #include "Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 #include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 

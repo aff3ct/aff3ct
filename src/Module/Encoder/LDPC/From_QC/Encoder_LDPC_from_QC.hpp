@@ -5,7 +5,6 @@
 
 #include "../Encoder_LDPC.hpp"
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 namespace aff3ct

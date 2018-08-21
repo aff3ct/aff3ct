@@ -47,30 +47,16 @@ template <typename B>
 void Encoder_LDPC<B>
 ::check_G_dimensions()
 {
-	try
-	{
-		this->_check_G_dimensions();
-	}
-	catch(tools::invalid_argument&)
-	{
-		this->G.self_transpose();
-		this->_check_G_dimensions();
-	}
+	G.self_turn(tools::Sparse_matrix::Way::VERTICAL);
+	this->_check_G_dimensions();
 }
 
 template <typename B>
 void Encoder_LDPC<B>
 ::check_H_dimensions()
 {
-	try
-	{
-		this->_check_H_dimensions();
-	}
-	catch(tools::invalid_argument&)
-	{
-		this->H.self_transpose();
-		this->_check_H_dimensions();
-	}
+	H.self_turn(tools::Sparse_matrix::Way::VERTICAL);
+	this->_check_H_dimensions();
 }
 
 template <typename B>

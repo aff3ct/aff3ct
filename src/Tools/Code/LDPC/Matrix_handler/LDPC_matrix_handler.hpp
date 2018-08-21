@@ -7,7 +7,8 @@
 #include <string>
 #include <mipp.h>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
+// #include "Tools/Algo/Matrix/Full_matrix/Full_matrix.hpp"
 
 namespace aff3ct
 {
@@ -85,7 +86,7 @@ public:
 
 	/*
 	 * Compute a G matrix related to the given H matrix.
-	 * Warning G is transposed !
+	 * Warning G is vertical !
 	 * Return also the information bits positions in the returned G matrix.
 	 */
 	static Sparse_matrix transform_H_to_G(const Sparse_matrix& H, Positions_vector& info_bits_pos);
@@ -110,6 +111,13 @@ public:
 	 * inverse H2 (H = [H1 H2] with size(H2) = M x M) to allow encoding with p = H1 x inv(H2) x u
 	 */
 	static QCFull_matrix invert_H2(const Sparse_matrix& H);
+
+
+	/*
+	 * \brief Compute a G.H to check if result is a null vector
+	 * \return true if G.H == 0
+	 */
+	static bool check_GH(Sparse_matrix H, Sparse_matrix G);
 
 protected :
 	static void transform_H_to_G(Full_matrix& mat, Positions_vector& info_bits_pos);

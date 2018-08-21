@@ -3,7 +3,6 @@
 
 #include <mipp.h>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
 
 #include "../../../Decoder_SISO_SIHO.hpp"

@@ -1,7 +1,6 @@
 #ifndef DECODER_LDPC_BP_FLOODING_HPP_
 #define DECODER_LDPC_BP_FLOODING_HPP_
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
 
 #include "../../../Decoder_SISO_SIHO.hpp"

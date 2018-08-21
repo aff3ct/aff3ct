@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BP_HPP_
 #define DECODER_LDPC_BP_HPP_
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 
 namespace aff3ct
@@ -12,7 +12,8 @@ class Decoder_LDPC_BP
 {
 protected:
 	const int                   n_ite;
-	const tools::Sparse_matrix  H; // CN are along the columns -> H.get_n_cols() == M (often M=N-K)
+	const tools::Sparse_matrix  H; // In vertical way
+	                               // CN are along the columns -> H.get_n_cols() == M (often M=N-K)
 	                               // VN are along the rows    -> H.get_n_rows() == N
 	                               // automatically transpose in the constructor if needed
 	const bool                  enable_syndrome;

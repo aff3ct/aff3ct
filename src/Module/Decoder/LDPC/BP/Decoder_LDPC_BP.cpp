@@ -12,11 +12,11 @@ Decoder_LDPC_BP
                   const tools::Sparse_matrix &_H,
                   const bool enable_syndrome,
                   const int syndrome_depth)
-: n_ite             (n_ite                                                    ),
-  H                 ((_H.get_n_cols() > _H.get_n_rows()) ? _H.transpose() : _H),
-  enable_syndrome   (enable_syndrome                                          ),
-  syndrome_depth    (syndrome_depth                                           ),
-  cur_syndrome_depth(0                                                        )
+: n_ite             (n_ite                                       ),
+  H                 (_H.turn(tools::Sparse_matrix::Way::VERTICAL)),
+  enable_syndrome   (enable_syndrome                             ),
+  syndrome_depth    (syndrome_depth                              ),
+  cur_syndrome_depth(0                                           )
 {
 	if (n_ite <= 0)
 	{

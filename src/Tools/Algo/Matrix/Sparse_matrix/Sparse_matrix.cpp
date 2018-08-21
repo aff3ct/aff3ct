@@ -11,82 +11,44 @@ using namespace aff3ct::tools;
 
 Sparse_matrix
 ::Sparse_matrix(const unsigned n_rows, const unsigned n_cols)
-: n_rows         (n_rows),
-  n_cols         (n_cols),
-  rows_max_degree(0     ),
-  cols_max_degree(0     ),
-  n_connections  (0     ),
-  row_to_cols    (n_rows),
-  col_to_rows    (n_cols)
+: Matrix(n_rows, n_cols),
+  row_to_cols(n_rows),
+  col_to_rows(n_cols)
 {
 }
 
-Sparse_matrix
-::~Sparse_matrix()
+bool Sparse_matrix
+::at(const size_t row_index, const size_t col_index) const
 {
+	check_indexes(row_index, col_index);
+
+	auto it = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
+	return (it != this->row_to_cols[row_index].end());
 }
 
 void Sparse_matrix
 ::add_connection(const size_t row_index, const size_t col_index)
 {
-	if (col_index >= this->n_cols)
+	if (at(row_index, col_index))
 	{
 		std::stringstream message;
-		message << "'col_index' has to be smaller than 'n_cols' ('col_index' = " << col_index
-		        << ", 'n_cols' = " << this->n_cols << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		message << "('row_index';'col_index') connection already exists ('row_index' = " << row_index
+		        << ", 'col_index' = " << col_index << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	if (row_index >= this->n_rows)
-	{
-		std::stringstream message;
-		message << "'row_index' has to be smaller than 'n_rows' ('row_index' = " << row_index
-		        << ", 'n_rows' = " << this->n_rows << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	for (size_t i = 0; i < this->row_to_cols[row_index].size(); i++)
-		if (this->row_to_cols[row_index][i] == col_index)
-		{
-			std::stringstream message;
-			message << "'col_index' already exists ('col_index' = " << col_index << ").";
-			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-	for (size_t i = 0; i < this->col_to_rows[col_index].size(); i++)
-		if (this->col_to_rows[col_index][i] == row_index)
-		{
-			std::stringstream message;
-			message << "'row_index' already exists ('row_index' = " << row_index << ").";
-			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
 
 	this->row_to_cols[row_index].push_back((unsigned)col_index);
 	this->col_to_rows[col_index].push_back((unsigned)row_index);
 
-	rows_max_degree = std::max(rows_max_degree, (unsigned)this->row_to_cols[row_index].size());
-	cols_max_degree = std::max(cols_max_degree, (unsigned)this->col_to_rows[col_index].size());
+	this->rows_max_degree = std::max(get_rows_max_degree(), (unsigned)row_to_cols[row_index].size());
+	this->cols_max_degree = std::max(get_cols_max_degree(), (unsigned)col_to_rows[col_index].size());
 
 	this->n_connections++;
 }
 
 void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index)
 {
-	if (col_index >= this->n_cols)
-	{
-		std::stringstream message;
-		message << "'col_index' has to be smaller than 'n_cols' ('col_index' = " << col_index
-		        << ", 'n_cols' = " << this->n_cols << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (row_index >= this->n_rows)
-	{
-		std::stringstream message;
-		message << "'row_index' has to be smaller than 'n_rows' ('row_index' = " << row_index
-		        << ", 'n_rows' = " << this->n_rows << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	check_indexes(row_index, col_index);
 
 	// delete the link in the row_to_cols vector
 	bool row_found = false;
@@ -163,28 +125,25 @@ Sparse_matrix Sparse_matrix
 void Sparse_matrix
 ::self_transpose()
 {
-	std::swap(this->n_rows,          this->n_cols         );
-	std::swap(this->rows_max_degree, this->cols_max_degree);
-	std::swap(this->row_to_cols,     this->col_to_rows    );
+	Matrix::self_transpose();
+
+	std::swap(row_to_cols, col_to_rows);
 }
 
-float Sparse_matrix
-::compute_density() const
+Sparse_matrix Sparse_matrix
+::turn(Way w) const
 {
-	return ((float)n_connections / (float)(n_rows * n_cols));
+	Sparse_matrix turned(*this);
+
+	turned.self_turn(w);
+
+	return turned;
 }
 
 void Sparse_matrix
-::sort_cols_per_density(std::string order)
+::sort_cols_per_density(Sort order)
 {
-	if (order != "ASC" && order != "DSC")
-	{
-		std::stringstream message;
-		message << "'order' is unsupported, it sould be 'ASC' or 'DSC' ('order' = " << order << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (order == "ASC")
+	if (order == Sort::ASCENDING)
 	{
 		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
 		          [](const std::vector<unsigned> &i1, const  std::vector<unsigned> &i2) { return i1.size() < i2.size(); });
@@ -207,7 +166,7 @@ void Sparse_matrix
 {
 	if (transpose)
 	{
-		std::vector<unsigned> rows(this->n_rows, 0);
+		std::vector<unsigned> rows(get_n_rows(), 0);
 
 		for (auto& col : this->col_to_rows)
 		{
@@ -227,7 +186,7 @@ void Sparse_matrix
 	}
 	else
 	{
-		std::vector<unsigned> columns(this->n_cols, 0);
+		std::vector<unsigned> columns(get_n_cols(), 0);
 
 		for (auto& row : this->row_to_cols)
 		{
@@ -245,10 +204,4 @@ void Sparse_matrix
 				columns[col] = 0;
 		}
 	}
-}
-
-std::ostream& operator<<(std::ostream& os, const Sparse_matrix& sm)
-{
-	sm.print(0, os);
-	return os;
 }

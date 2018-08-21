@@ -3,8 +3,6 @@
 
 #include <cstdint>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
-
 #include "../../../../Decoder_SIHO_HIHO.hpp"
 #include "../../Decoder_LDPC_BP.hpp"
 

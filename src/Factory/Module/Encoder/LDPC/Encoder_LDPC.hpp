@@ -2,7 +2,7 @@
 #define FACTORY_ENCODER_LDPC_HPP
 
 #include <string>
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"

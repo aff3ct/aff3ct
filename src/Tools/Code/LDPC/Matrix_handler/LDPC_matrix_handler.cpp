@@ -5,13 +5,13 @@
 #include "Tools/Code/LDPC/AList/AList.hpp"
 #include "Tools/Code/LDPC/QC/QC.hpp"
 #include "Tools/general_utils.h"
+#include "Tools/Math/matrix.h"
 
 #include "Tools/Exception/exception.hpp"
 
 #include "LDPC_matrix_handler.hpp"
 
 using namespace aff3ct::tools;
-
 
 
 LDPC_matrix_handler::Matrix_format LDPC_matrix_handler
@@ -517,4 +517,13 @@ LDPC_matrix_handler::QCFull_matrix LDPC_matrix_handler
 	MatriceCalcul.clear();
 
 	return invH2;
+}
+
+bool LDPC_matrix_handler
+::check_GH(Sparse_matrix H, Sparse_matrix G)
+{
+	H.self_turn(aff3ct::tools::Sparse_matrix::Way::VERTICAL  );
+	G.self_turn(aff3ct::tools::Sparse_matrix::Way::HORIZONTAL);
+
+
 }

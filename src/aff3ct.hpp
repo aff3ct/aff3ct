@@ -335,13 +335,15 @@
 #include <Tools/Algo/Draw_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp>
 #include <Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp>
 #include <Tools/Algo/Histogram.hpp>
+#include <Tools/Algo/Matrix/Full_matrix/Full_matrix.hpp>
+#include <Tools/Algo/Matrix/Matrix.hpp>
+#include <Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp>
 #include <Tools/Algo/Predicate.hpp>
 #include <Tools/Algo/Predicate_ite.hpp>
 #include <Tools/Algo/PRNG/PRNG_MT19937.hpp>
 #include <Tools/Algo/PRNG/PRNG_MT19937_simd.hpp>
 #include <Tools/Algo/Sort/LC_sorter.hpp>
 #include <Tools/Algo/Sort/LC_sorter_simd.hpp>
-#include <Tools/Algo/Sparse_matrix/Sparse_matrix.hpp>
 #include <Tools/Algo/Tree/Binary_node.hpp>
 #include <Tools/Algo/Tree/Binary_tree.hpp>
 #include <Tools/Algo/Tree/Binary_tree_metric.hpp>
