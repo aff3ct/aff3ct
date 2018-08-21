@@ -218,7 +218,12 @@ void Terminal_std
 {
 	std::ios::fmtflags f(stream.flags());
 
+	// Ugly hack to manage correctly the interruption by the user and to remove the ^C from the screen
+	if (Terminal::is_interrupt())
+		std::clog << "\r";
+
 	stream << data_tag;
+
 
 	for (unsigned r = 0; r < this->reporters.size(); r++)
 		if (this->reporters[r] != nullptr)

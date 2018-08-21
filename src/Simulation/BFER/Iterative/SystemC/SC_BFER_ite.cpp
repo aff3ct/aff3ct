@@ -51,7 +51,7 @@ void SC_BFER_ite<B,R,Q>
 
 	this->monitor_er[tid]->add_handler_check([&]() -> void
 	{
-		if (this->monitor_er_red->fe_limit_achieved()) // will make the MPI communication
+		if (!this->keep_looping_noise_point()) // will make the MPI communication
 			sc_core::sc_stop();
 	});
 }
