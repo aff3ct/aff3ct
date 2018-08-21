@@ -22,7 +22,7 @@ public:
 	using SI_t = tlm_utils::simple_target_socket   <SC_Duplicator>;
 	using SO_t = tlm_utils::simple_initiator_socket<SC_Duplicator>;
 
-	SI s_in;
+	SI_t s_in;
 	std::vector<SO_t*> s_out;
 
 public:
