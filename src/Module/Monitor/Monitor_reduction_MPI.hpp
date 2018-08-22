@@ -23,7 +23,7 @@ public:
 protected:
 	using Attributes = typename M::Attributes;
 
-	virtual void _reduce(bool fully = false, bool stop_simu = false); // return the number of process that stopped the simu
+	virtual void _reduce(bool fully = false);
 
 private:
 	MPI_Datatype MPI_monitor_vals;
