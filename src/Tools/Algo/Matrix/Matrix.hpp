@@ -12,15 +12,6 @@ namespace tools
 {
 class Matrix
 {
-private:
-	unsigned n_rows;
-	unsigned n_cols;
-
-protected:
-	unsigned rows_max_degree;
-	unsigned cols_max_degree;
-	unsigned n_connections;
-
 public:
 	enum class Way
 	{
@@ -34,37 +25,37 @@ public:
 		DESCENDING    // meaning longest side depicts rows
 	};
 
-	Matrix(const unsigned n_rows = 0, const unsigned n_cols = 1);
+	Matrix(const size_t n_rows = 0, const size_t n_cols = 1);
 
 	virtual ~Matrix() = default;
 
-	inline unsigned get_n_rows() const
+	inline size_t get_n_rows() const
 	{
 		return this->n_rows;
 	}
 
-	inline unsigned get_n_cols() const
+	inline size_t get_n_cols() const
 	{
 		return this->n_cols;
 	}
 
-	inline unsigned get_rows_max_degree() const
+	inline size_t get_rows_max_degree() const
 	{
 		return this->rows_max_degree;
 	}
 
-	inline unsigned get_cols_max_degree() const
+	inline size_t get_cols_max_degree() const
 	{
 		return this->cols_max_degree;
 	}
 
-	inline unsigned get_n_connections() const
+	inline size_t get_n_connections() const
 	{
 		return this->n_connections;
 	}
 
 	/*
-	 * return true if there is a connexion there
+	 * return true if there is a connection there
 	 */
 	virtual bool at(const size_t row_index, const size_t col_index) const = 0;
 
@@ -89,7 +80,13 @@ public:
 	virtual void self_transpose();
 
 	/*
-	 * Return turn the matrix in horizontal or vertical way
+	 * \return the way the matrix is : horizontal or vertical
+	 * if scaren then it is horizontal
+	 */
+	Way get_way() const;
+
+	/*
+	 * \brief turn the matrix in horizontal or vertical way, when square do nothing
 	 */
 	void self_turn(Way w);
 
@@ -108,6 +105,16 @@ public:
 	 * 'transpose' allow the print in its transposed view
 	 */
 	virtual void print(bool transpose = false, std::ostream& os = std::cout) const = 0;
+
+private:
+	size_t n_rows;
+	size_t n_cols;
+
+protected:
+	size_t rows_max_degree;
+	size_t cols_max_degree;
+	size_t n_connections;
+
 };
 }
 }

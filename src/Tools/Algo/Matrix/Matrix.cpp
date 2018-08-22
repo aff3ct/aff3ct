@@ -10,7 +10,7 @@ using namespace aff3ct;
 using namespace aff3ct::tools;
 
 Matrix
-::Matrix(const unsigned n_rows, const unsigned n_cols)
+::Matrix(const size_t n_rows, const size_t n_cols)
 : n_rows         (n_rows),
   n_cols         (n_cols),
   rows_max_degree(0     ),
@@ -39,6 +39,12 @@ void Matrix
 		if (get_n_cols() < get_n_rows())
 			this->self_transpose();
 	}
+}
+
+Matrix::Way Matrix
+::get_way() const
+{
+	return (get_n_cols() >= get_n_rows()) ? Way::HORIZONTAL : Way::VERTICAL;
 }
 
 float Matrix

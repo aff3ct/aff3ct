@@ -10,7 +10,7 @@ using namespace aff3ct;
 using namespace aff3ct::tools;
 
 Sparse_matrix
-::Sparse_matrix(const unsigned n_rows, const unsigned n_cols)
+::Sparse_matrix(const size_t n_rows, const size_t n_cols)
 : Matrix(n_rows, n_cols),
   row_to_cols(n_rows),
   col_to_rows(n_cols)
@@ -20,8 +20,6 @@ Sparse_matrix
 bool Sparse_matrix
 ::at(const size_t row_index, const size_t col_index) const
 {
-	check_indexes(row_index, col_index);
-
 	auto it = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
 	return (it != this->row_to_cols[row_index].end());
 }
@@ -29,6 +27,8 @@ bool Sparse_matrix
 void Sparse_matrix
 ::add_connection(const size_t row_index, const size_t col_index)
 {
+	check_indexes(row_index, col_index);
+
 	if (at(row_index, col_index))
 	{
 		std::stringstream message;
@@ -37,16 +37,17 @@ void Sparse_matrix
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->row_to_cols[row_index].push_back((unsigned)col_index);
-	this->col_to_rows[col_index].push_back((unsigned)row_index);
+	this->row_to_cols[row_index].push_back(col_index);
+	this->col_to_rows[col_index].push_back(row_index);
 
-	this->rows_max_degree = std::max(get_rows_max_degree(), (unsigned)row_to_cols[row_index].size());
-	this->cols_max_degree = std::max(get_cols_max_degree(), (unsigned)col_to_rows[col_index].size());
+	this->rows_max_degree = std::max(get_rows_max_degree(), row_to_cols[row_index].size());
+	this->cols_max_degree = std::max(get_cols_max_degree(), col_to_rows[col_index].size());
 
 	this->n_connections++;
 }
 
-void Sparse_matrix::rm_connection(const size_t row_index, const size_t col_index)
+void Sparse_matrix
+::rm_connection(const size_t row_index, const size_t col_index)
 {
 	check_indexes(row_index, col_index);
 
@@ -143,22 +144,23 @@ Sparse_matrix Sparse_matrix
 void Sparse_matrix
 ::sort_cols_per_density(Sort order)
 {
-	if (order == Sort::ASCENDING)
+	switch(order)
 	{
-		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
-		          [](const std::vector<unsigned> &i1, const  std::vector<unsigned> &i2) { return i1.size() < i2.size(); });
-	}
-	else // order == "DSC"
-	{
-		std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
-		          [](const  std::vector<unsigned> &i1, const std::vector<unsigned> &i2) { return i1.size() > i2.size(); });
+		case Sort::ASCENDING:
+			std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
+			          [](const std::vector<size_t> &i1, const  std::vector<size_t> &i2) { return i1.size() < i2.size(); });
+		break;
+		case Sort::DESCENDING:
+			std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
+		          [](const  std::vector<size_t> &i1, const std::vector<size_t> &i2) { return i1.size() > i2.size(); });
+		break;
 	}
 
 	for (auto &r : this->row_to_cols)
 		r.clear();
 	for (size_t i = 0; i < this->col_to_rows.size(); i++)
 		for (size_t j = 0; j < this->col_to_rows[i].size(); j++)
-			this->row_to_cols[this->col_to_rows[i][j]].push_back((unsigned)i);
+			this->row_to_cols[this->col_to_rows[i][j]].push_back(i);
 }
 
 void Sparse_matrix
