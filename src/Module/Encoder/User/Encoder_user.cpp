@@ -2,11 +2,63 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/general_utils.h"
 
 #include "Encoder_user.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
+
+
+std::vector<uint32_t> read_info_bits_pos(std::istream &stream)
+{
+	std::string line;
+
+	// look for the position in the file where the info bits begin
+	while (std::getline(stream, line))
+		if (line == "# Positions of the information bits in the codewords:" || stream.eof() || stream.fail() || stream.bad())
+			break;
+
+	getline(stream, line);
+	auto values = tools::split(line);
+	if (values.size() != 1)
+	{
+		std::stringstream message;
+		message << "'values.size()' has to be equal to 1 ('values.size()' = " << values.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	const uint32_t size = std::stoi(values[0]);
+
+	getline(stream, line);
+	values = tools::split(line);
+	if (values.size() != size)
+	{
+		std::stringstream message;
+		message << "'values.size()' has to be equal to 'size' ('values.size()' = " << values.size()
+		        << ", 'size' = " << size << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	std::vector<uint32_t> info_bits_pos;
+	for (auto v : values)
+	{
+		const uint32_t pos = std::stoi(v);
+
+		if (std::find(info_bits_pos.begin(), info_bits_pos.end(), pos) != info_bits_pos.end())
+		{
+			std::stringstream message;
+			message << "'pos' already exists in the 'info_bits_pos' vector ('pos' = " << pos << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		info_bits_pos.push_back(pos);
+	}
+
+	return info_bits_pos;
+}
+
+
 
 template <typename B>
 Encoder_user<B>
@@ -61,8 +113,6 @@ Encoder_user<B>
 		}
 		else
 		{
-			file.close();
-
 			std::stringstream message;
 			message << "The number of information bits or the codeword size is wrong "
 			        << "(read: {" << src_size << "," << cw_size << "}, "
@@ -70,7 +120,22 @@ Encoder_user<B>
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		file.close();
+		try
+		{
+			this->info_bits_pos = read_info_bits_pos(file);
+		}
+		catch (std::exception const&)
+		{
+			// information bits positions are not in the matrix file
+		}
+
+		if ((int)this->info_bits_pos.size() != this->K)
+		{
+			std::stringstream message;
+			message << "'this->info_bits_pos.size()' has to be equal to 'this->K' ('this->info_bits_pos.size()' = "
+			        << this->info_bits_pos.size() << ", 'this->K' = " << this->K << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 	else
 	{
@@ -83,12 +148,6 @@ Encoder_user<B>
 }
 
 template <typename B>
-Encoder_user<B>
-::~Encoder_user()
-{
-}
-
-template <typename B>
 void Encoder_user<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
@@ -97,13 +156,6 @@ void Encoder_user<B>
 	          X_N);
 
 	this->cw_counter = (this->cw_counter +1) % (int)this->codewords.size();
-}
-
-template <typename B>
-const std::vector<uint32_t>& Encoder_user<B>
-::get_info_bits_pos() const
-{
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>

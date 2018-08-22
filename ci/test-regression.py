@@ -14,7 +14,7 @@ import subprocess
 import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../refs")))
-from aff3ct_refs_reader import aff3ctRefsReader
+import aff3ct_refs_reader as arr
 
 # ==================================================================== PACKAGES
 # =============================================================================
@@ -85,45 +85,6 @@ def getFileNames(currentPath, fileNames):
 				fileNames.append(shortenPath)
 	else:
 		print("# (WW) The path '", currentPath, "' does not exist.")
-
-def splitAsCommand(runCommand):
-	argsList = [""]
-	idx = 0
-	new = 0
-	found_dashes = 0
-
-	for s in runCommand:
-		if found_dashes == 0:
-			if s == ' ':
-				if new == 0:
-					argsList.append("")
-					idx = idx + 1
-					new = 1
-
-			elif s == '\"':
-				if new == 0:
-					argsList.append("")
-					idx = idx + 1
-					new = 1
-				found_dashes = 1
-
-			else:
-				argsList[idx] += s
-				new = 0
-
-		else: # between dashes
-			if s == '\"':
-				argsList.append("")
-				idx = idx + 1
-				found_dashes = 0
-
-			else:
-				argsList[idx] += s
-
-	if argsList[idx] == "":
-		del argsList[idx]
-
-	return argsList
 
 class tableStats:
 	def __init__(self, tableCur, tableRef, sensibility, name, nData = 0):
@@ -204,7 +165,7 @@ class tableStats:
 
 class compStats:
 	def __init__(self, dataCur, dataRef, sensibility, asked_n_fe):
-		if not isinstance(dataCur, aff3ctRefsReader) or not isinstance(dataRef, aff3ctRefsReader) :
+		if not isinstance(dataCur, arr.aff3ctRefsReader) or not isinstance(dataRef, arr.aff3ctRefsReader) :
 			raise TypeError
 
 		self.nValidData = len(dataCur.getTrace("n_fe"))
@@ -394,7 +355,7 @@ for fn in fileNames:
 	      " - " + fn, end="", flush=True);
 
 	# parse the reference file
-	simuRef = aff3ctRefsReader(args.refsPath + "/" + fn)
+	simuRef = arr.aff3ctRefsReader(args.refsPath + "/" + fn)
 
 	if simuRef.getMetadata("ci") == "off":
 		print(" - IGNORED.", end="\n");
@@ -406,7 +367,7 @@ for fn in fileNames:
 
 	# get the command line to run
 	argsAFFECT = argsAFFECTcommand[:] # hard copy
-	argsAFFECT += splitAsCommand(simuRef.getMetadata("command"))
+	argsAFFECT += simuRef.getSplitCommand()
 	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.getMetadata("title")]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]
@@ -437,8 +398,7 @@ for fn in fileNames:
 	os.chdir(args.buildPath)
 	startTime = time.time()
 	try:
-		processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE,
-		                                             stderr=subprocess.PIPE)
+		processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
 	except KeyboardInterrupt:
 		os.kill(processAFFECT.pid, signal.SIGINT)
@@ -456,7 +416,7 @@ for fn in fileNames:
 
 	# get the results
 	stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
-	simuCur = aff3ctRefsReader(stdOutput)
+	simuCur = arr.aff3ctRefsReader(stdOutput)
 
 	# result file
 	fRes = open(args.resultsPath + "/" + fn, 'w+')
