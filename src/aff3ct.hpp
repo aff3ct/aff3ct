@@ -1,6 +1,7 @@
 #ifndef AFF3CT_HPP
 #define AFF3CT_HPP
 
+#include <Tools/Algo/Matrix/matrix_utils.h>
 #include <Tools/Code/Polar/API/functions_polar_inter.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_8bit_bitpacking.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_intra.h>

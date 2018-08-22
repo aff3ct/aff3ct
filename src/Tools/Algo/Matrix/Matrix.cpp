@@ -73,6 +73,13 @@ void Matrix
 	}
 }
 
+void Matrix
+::self_resize(const size_t _n_rows, const size_t _n_cols)
+{
+	n_rows = _n_rows;
+	n_cols = _n_cols;
+}
+
 
 std::ostream& operator<<(std::ostream& os, const Matrix& sm)
 {

@@ -7,8 +7,7 @@
 #include <string>
 #include <mipp.h>
 
-#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-// #include "Tools/Algo/Matrix/Full_matrix/Full_matrix.hpp"
+#include "Tools/Algo/Matrix/matrix_utils.h"
 
 namespace aff3ct
 {
@@ -17,8 +16,7 @@ namespace tools
 struct LDPC_matrix_handler
 {
 public:
-	using Full_matrix   = std::vector<std::vector<bool>>;
-	using QCFull_matrix = std::vector<mipp::vector<int8_t>>;
+	using LDPC_matrix = Full_matrix<uint8_t>;
 	using Positions_vector = std::vector<uint32_t>;
 
 	enum class Matrix_format : int8_t {ALIST, QC};
@@ -53,40 +51,24 @@ public:
 	 */
 	static bool check_info_pos(const Positions_vector& info_bits_pos, int K, int N, bool throw_when_wrong = true);
 
-
-	/*
-	 * convert a binary sparse matrix to a binary full matrix
-	 */
-	static void sparse_to_full(const Sparse_matrix& sparse, Full_matrix& full);
-
-	/*
-	 * convert a binary full matrix to a binary sparse matrix
-	 */
-	static Sparse_matrix full_to_sparse(const Full_matrix& full);
-
 	/*
 	 * Reorder rows and columns to create a diagonal of binary ones on the left part of the matrix.
-	 * High of the matrix must be smaller than its width.
+	 * Matrix is turned in Horizontal way
 	 * At the end, the left part of the matrix does not necessary form the identity, but includes it.
 	 * swapped_cols is completed each time with couple of positions of the two swapped columns.
 	 * A column might be swapped several times.
 	 */
-	static void create_diagonal(Full_matrix& mat, Positions_vector& swapped_cols);
+	static void form_diagonal(LDPC_matrix& mat, Positions_vector& swapped_cols);
 
 	/*
 	 * Reorder rows and columns to create an identity of binary ones on the left part of the matrix.
-	 * High of the matrix must be smaller than its width.
+	 * Matrix is turned in Horizontal way
 	 */
-	static void create_identity(Full_matrix& mat);
-
-	/*
-	 * Return the density of ones in the given matrix.
-	 */
-	static float compute_density(Full_matrix & mat);
+	static void form_identity(LDPC_matrix& mat);
 
 	/*
 	 * Compute a G matrix related to the given H matrix.
-	 * Warning G is vertical !
+	 * G is returned vertical.
 	 * Return also the information bits positions in the returned G matrix.
 	 */
 	static Sparse_matrix transform_H_to_G(const Sparse_matrix& H, Positions_vector& info_bits_pos);
@@ -110,17 +92,10 @@ public:
 	/*
 	 * inverse H2 (H = [H1 H2] with size(H2) = M x M) to allow encoding with p = H1 x inv(H2) x u
 	 */
-	static QCFull_matrix invert_H2(const Sparse_matrix& H);
-
-
-	/*
-	 * \brief Compute a G.H to check if result is a null vector
-	 * \return true if G.H == 0
-	 */
-	static bool check_GH(Sparse_matrix H, Sparse_matrix G);
+	static LDPC_matrix invert_H2(const Sparse_matrix& H);
 
 protected :
-	static void transform_H_to_G(Full_matrix& mat, Positions_vector& info_bits_pos);
+	static void transform_H_to_G(LDPC_matrix& mat, Positions_vector& info_bits_pos);
 };
 }
 }

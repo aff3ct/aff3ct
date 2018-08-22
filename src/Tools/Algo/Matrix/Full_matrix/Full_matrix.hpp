@@ -14,35 +14,20 @@ namespace tools
 {
 /*
  * \param T must be uint8_t or uint16_t or uint32_t or uint64_t
+ * Warning ! Never call modification methods (resize, erase, push_back and so on), on the second dimension of the Full_matrix
+ *   always pass through Full_matrix methods, else you may obtain runtime errors
  */
 
 template <typename T = uint32_t>
-class Full_matrix : public Matrix
+class Full_matrix : public Matrix, public std::vector<std::vector<T>>
 {
 public:
+	using Container = std::vector<std::vector<T>>;
+	using value_type = T;
+
 	Full_matrix(const unsigned n_rows = 0, const unsigned n_cols = 1);
 
 	virtual ~Full_matrix() = default;
-
-	inline const std::vector<T>& get_cols_from_row(const size_t row_index) const
-	{
-		return values[row_index];
-	}
-
-	inline const std::vector<T>& operator[](const size_t row_index) const
-	{
-		return get_cols_from_row(row_index);
-	}
-
-	inline std::vector<T>& get_cols_from_row(const size_t row_index)
-	{
-		return values[row_index];
-	}
-
-	inline std::vector<T>& operator[](const size_t row_index)
-	{
-		return get_cols_from_row(row_index);
-	}
 
 	/*
 	 * return true if there is a connection there
@@ -60,8 +45,35 @@ public:
 	void rm_connection(const size_t row_index, const size_t col_index);
 
 	/*
+	 * Resize the matrix to the new dimensions in function of the part of the matrix considered as the origin
+	 * Ex: if o == BOTTOM_RIGHT, and need to extend the matrix then add rows on the top and columns on the left
+	 */
+	void self_resize(const size_t n_rows, const size_t n_cols, Origin o);
+
+	/*
+	 * Resize the matrix by calling self_resize on a copy matrix
+	 */
+	Full_matrix resize(const size_t n_rows, const size_t n_cols, Origin o) const;
+
+
+	/*
+	 * Erase the 'n_rows' rows from the given index 'row_index'
+	 */
+	void erase_row(const size_t row_index, const size_t n_rows = 1);
+
+	/*
+	 * Erase the 'n_cols' cols from the given index 'col_index'
+	 */
+	void erase_col(const size_t col_index, const size_t n_cols = 1);
+
+
+	void erase(); // never use 'erase' methods, use instead erase_col or erase_row
+
+
+	/*
 	 * Compute the rows and cols degrees values when the matrix values have been modified
-	 * without the use of 'add_connection' and 'rm_connection' interface
+	 * without the use of 'add_connection' and 'rm_connection' interface, so after any modification
+	 * call this function if you need degrees information
 	 */
 	void parse_connections();
 
@@ -82,6 +94,7 @@ public:
 
 	/*
 	 * Sort the matrix per density of lines in ascending or descending order
+	 * You need to call 'parse_connections()' before to assure good work.
 	 */
 	void sort_cols_per_density(Sort order);
 
@@ -91,9 +104,20 @@ public:
 	 */
 	void print(bool transpose = false, std::ostream& os = std::cout) const;
 
-private:
-	std::vector<std::vector<T>> values;
 
+	/*
+	 * \brief create a matrix of the given size filled with identity diagonal
+	 * \return the identity matrix
+	 */
+	static Full_matrix<T> identity(const size_t n_rows, const size_t n_cols);
+
+	/*
+	 * \brief create a matrix of the given size filled with only zeros
+	 * \return the zero matrix
+	 */
+	static Full_matrix<T> zero(const size_t n_rows, const size_t n_cols);
+
+private:
 	std::vector<size_t> rows_degrees;
 	std::vector<size_t> cols_degrees;
 };

@@ -25,6 +25,14 @@ public:
 		DESCENDING    // meaning longest side depicts rows
 	};
 
+	enum class Origin
+	{
+		TOP_LEFT,
+		TOP_RIGHT,
+		BOTTOM_LEFT,
+		BOTTOM_RIGHT,
+	};
+
 	Matrix(const size_t n_rows = 0, const size_t n_cols = 1);
 
 	virtual ~Matrix() = default;
@@ -75,6 +83,12 @@ public:
 	virtual void rm_connection(const size_t row_index, const size_t col_index) = 0;
 
 	/*
+	 * Resize the matrix to the new dimensions in function of the part of the matrix considered as the origin
+	 * Ex: if o == BOTTOM_RIGHT, and need to extend the matrix then add rows on the top and columns on the left
+	 */
+	virtual void self_resize(const size_t n_rows, const size_t n_cols, Origin o) = 0;
+
+	/*
 	 * Transpose internally this matrix
 	 */
 	virtual void self_transpose();
@@ -111,6 +125,11 @@ private:
 	size_t n_cols;
 
 protected:
+	/*
+	 * Change n_rows and n_cols with the new values
+	 */
+	void self_resize(const size_t n_rows, const size_t n_cols);
+
 	size_t rows_max_degree;
 	size_t cols_max_degree;
 	size_t n_connections;

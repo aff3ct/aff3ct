@@ -61,6 +61,17 @@ public:
 	void rm_connection(const size_t row_index, const size_t col_index);
 
 	/*
+	 * Resize the matrix to the new dimensions in function of the part of the matrix considered as the origin
+	 * Ex: if o == BOTTOM_RIGHT, and need to extend the matrix then add rows on the top and columns on the left
+	 */
+	void self_resize(const size_t n_rows, const size_t n_cols, Origin o);
+
+	/*
+	 * Resize the matrix by calling self_resize on a copy matrix
+	 */
+	Sparse_matrix resize(const size_t n_rows, const size_t n_cols, Origin o) const;
+
+	/*
 	 * Return the transposed matrix of this matrix
 	 */
 	Sparse_matrix transpose() const;
@@ -86,6 +97,18 @@ public:
 	 * 'transpose' allow the print in its transposed view
 	 */
 	void print(bool transpose = false, std::ostream& os = std::cout) const;
+
+	/*
+	 * \brief create a matrix of the given size filled with identity diagonal
+	 * \return the identity matrix
+	 */
+	static Sparse_matrix identity(const size_t n_rows, const size_t n_cols);
+
+	/*
+	 * \brief create a matrix of the given size filled with only zeros
+	 * \return the zero matrix
+	 */
+	static Sparse_matrix zero(const size_t n_rows, const size_t n_cols);
 
 private:
 	std::vector<std::vector<size_t>> row_to_cols;
