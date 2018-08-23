@@ -13,15 +13,19 @@ template <typename B, typename R, typename Q>
 SC_BFER_std<B,R,Q>
 ::SC_BFER_std(const factory::BFER_std::parameters &params_BFER_std)
 : BFER_std<B,R,Q>(params_BFER_std),
-  duplicator(5, nullptr)
+  duplicator(3, nullptr)
 {
 	if (this->params_BFER_std.n_threads > 1)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support "
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support "
 		                                                            "multi-threading.");
 
 	if (params_BFER_std.coded_monitoring)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded "
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the coded "
 		                                                            "monitoring.");
+
+	if (params_BFER_std.mutinfo)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the mututal
+		                                                             information computation.");
 }
 
 template <typename B, typename R, typename Q>
@@ -86,6 +90,13 @@ void SC_BFER_std<B,R,Q>
 		this->coset_bit [tid]->sc.create_module(+cst::tsk::apply);
 	}
 	this->crc[tid]->sc.create_module(+crc::tsk::extract);
+
+	this->duplicator[0] = new tools::SC_Duplicator("Duplicator_src");
+	if (this->params_BFER_std.coset)
+	{
+		this->duplicator[1] = new tools::SC_Duplicator("Duplicator1");
+		this->duplicator[2] = new tools::SC_Duplicator("Duplicator2");
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -95,15 +106,6 @@ void SC_BFER_std<B,R,Q>
 	BFER_std<B,R,Q>::_launch();
 
 	this->create_sc_modules();
-
-	this->duplicator[0] = new tools::SC_Duplicator("Duplicator_src");
-	if (this->params_BFER_std.coset)
-	{
-		this->duplicator[1] = new tools::SC_Duplicator("Duplicator1");
-		this->duplicator[2] = new tools::SC_Duplicator("Duplicator2");
-	}
-	this->duplicator[3] = new tools::SC_Duplicator("Duplicator_pct", this->params_BFER_std.mutinfo ? 2 : 1);
-	this->duplicator[4] = new tools::SC_Duplicator("Duplicator_dmd", this->params_BFER_std.mutinfo ? 2 : 1);
 
 	this->bind_sockets();
 	sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
@@ -130,10 +132,6 @@ void SC_BFER_std<B,R,Q>
 	using namespace module;
 
 	auto &dp_src = *this->duplicator[0];
-	auto &dp1    = *this->duplicator[1];
-	auto &dp2    = *this->duplicator[2];
-	auto &dp_pct = *this->duplicator[3];
-	auto &dp_dmd = *this->duplicator[4];
 
 	auto &src = *this->source    [0];
 	auto &crc = *this->crc       [0];
@@ -149,30 +147,31 @@ void SC_BFER_std<B,R,Q>
 
 	if (this->params_BFER_std.coset)
 	{
+		auto &dp1 = *this->duplicator[1];
+		auto &dp2 = *this->duplicator[2];
+
 		src.sc    [+src::tsk::generate     ].s_out [+src::sck::generate     ::U_K ](dp_src                          .s_in                                );
-		dp_src                              [0]                                    (mnt.sc[+mnt::tsk::check_errors ].s_in[+mnt::sck::check_errors ::U   ]);
-		dp_src                              [1]                                    (crc.sc[+crc::tsk::build        ].s_in[+crc::sck::build        ::U_K1]);
+		dp_src                              .s_out1                                (mnt.sc[+mnt::tsk::check_errors ].s_in[+mnt::sck::check_errors ::U   ]);
+		dp_src                              .s_out2                                (crc.sc[+crc::tsk::build        ].s_in[+crc::sck::build        ::U_K1]);
 		crc.sc    [+crc::tsk::build        ].s_out [+crc::sck::build        ::U_K2](dp1                             .s_in                                );
-		dp1                                 [0]                                    (csb.sc[+cst::tsk::apply        ].s_in[+cst::sck::apply        ::ref ]);
-		dp1                                 [1]                                    (enc.sc[+enc::tsk::encode       ].s_in[+enc::sck::encode       ::U_K ]);
+		dp1                                 .s_out1                                (csb.sc[+cst::tsk::apply        ].s_in[+cst::sck::apply        ::ref ]);
+		dp1                                 .s_out2                                (enc.sc[+enc::tsk::encode       ].s_in[+enc::sck::encode       ::U_K ]);
 		enc.sc    [+enc::tsk::encode       ].s_out [+enc::sck::encode       ::X_N ](dp2                             .s_in                                );
-		dp2                                 [0]                                    (csr.sc[+cst::tsk::apply        ].s_in[+cst::sck::apply        ::ref ]);
-		dp2                                 [1]                                    (pct.sc[+pct::tsk::puncture     ].s_in[+pct::sck::puncture     ::X_N1]);
-		pct.sc    [+pct::tsk::puncture     ].s_out [+pct::sck::puncture     ::X_N2](dp_pct                          .s_in                                );
-		dp_pct                              [0]                                    (mdm.sc[+mdm::tsk::modulate     ].s_in[+mdm::sck::modulate     ::X_N1]);
+		dp2                                 .s_out1                                (csr.sc[+cst::tsk::apply        ].s_in[+cst::sck::apply        ::ref ]);
+		dp2                                 .s_out2                                (pct.sc[+pct::tsk::puncture     ].s_in[+pct::sck::puncture     ::X_N1]);
+		pct.sc    [+pct::tsk::puncture     ].s_out [+pct::sck::puncture     ::X_N2](mdm.sc[+mdm::tsk::modulate     ].s_in[+mdm::sck::modulate     ::X_N1]);
 		if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh chn
 			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](chn.sc[+chn::tsk::add_noise_wg ].s_in[+chn::sck::add_noise_wg ::X_N ]);
 			chn.sc[+chn::tsk::add_noise_wg ].s_out [+chn::sck::add_noise_wg ::H_N ](mdm.sc[+mdm::tsk::demodulate_wg].s_in[+mdm::sck::demodulate_wg::H_N ]);
 			chn.sc[+chn::tsk::add_noise_wg ].s_out [+chn::sck::add_noise_wg ::Y_N ](mdm.sc[+mdm::tsk::filter       ].s_in[+mdm::sck::filter       ::Y_N1]);
 			mdm.sc[+mdm::tsk::filter       ].s_out [+mdm::sck::filter       ::Y_N2](mdm.sc[+mdm::tsk::demodulate_wg].s_in[+mdm::sck::demodulate_wg::Y_N1]);
-			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate_wg::Y_N2](dp_dmd                          .s_in                                );
+			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate_wg::Y_N2](qnt.sc[+qnt::tsk::process      ].s_in[+qnt::sck::process      ::Y_N1]);
 		} else { // additive channel (AWGN, USER, NO)
 			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](chn.sc[+chn::tsk::add_noise    ].s_in[+chn::sck::add_noise    ::X_N ]);
 			chn.sc[+chn::tsk::add_noise    ].s_out [+chn::sck::add_noise    ::Y_N ](mdm.sc[+mdm::tsk::filter       ].s_in[+mdm::sck::filter       ::Y_N1]);
 			mdm.sc[+mdm::tsk::filter       ].s_out [+mdm::sck::filter       ::Y_N2](mdm.sc[+mdm::tsk::demodulate   ].s_in[+mdm::sck::demodulate   ::Y_N1]);
-			mdm.sc[+mdm::tsk::demodulate   ].s_out [+mdm::sck::demodulate   ::Y_N2](dp_dmd                          .s_in                                );
+			mdm.sc[+mdm::tsk::demodulate   ].s_out [+mdm::sck::demodulate   ::Y_N2](qnt.sc[+qnt::tsk::process      ].s_in[+qnt::sck::process      ::Y_N1]);
 		}
-		dp_dmd                              [0]                                    (qnt.sc[+qnt::tsk::process      ].s_in[+qnt::sck::process      ::Y_N1]);
 		qnt.sc    [+qnt::tsk::process      ].s_out [+qnt::sck::process      ::Y_N2](pct.sc[+pct::tsk::depuncture   ].s_in[+pct::sck::depuncture   ::Y_N1]);
 		pct.sc    [+pct::tsk::depuncture   ].s_out [+pct::sck::depuncture   ::Y_N2](csr.sc[+cst::tsk::apply        ].s_in[+cst::sck::apply        ::in  ]);
 		csr.sc    [+cst::tsk::apply        ].s_out [+cst::sck::apply        ::out ](dec.sc[+dec::tsk::decode_siho  ].s_in[+dec::sck::decode_siho  ::Y_N ]);
@@ -183,36 +182,27 @@ void SC_BFER_std<B,R,Q>
 	else // standard simulation
 	{
 		src.sc    [+src::tsk::generate     ].s_out [+src::sck::generate     ::U_K ](dp_src                          .s_in                                );
-		dp_src                              [0]                                    (mnt.sc[+mnt::tsk::check_errors ].s_in[+mnt::sck::check_errors ::U   ]);
-		dp_src                              [1]                                    (crc.sc[+crc::tsk::build        ].s_in[+crc::sck::build        ::U_K1]);
+		dp_src                              .s_out1                                (mnt.sc[+mnt::tsk::check_errors ].s_in[+mnt::sck::check_errors ::U   ]);
+		dp_src                              .s_out2                                (crc.sc[+crc::tsk::build        ].s_in[+crc::sck::build        ::U_K1]);
 		crc.sc    [+crc::tsk::build        ].s_out [+crc::sck::build        ::U_K2](enc.sc[+enc::tsk::encode       ].s_in[+enc::sck::encode       ::U_K ]);
 		enc.sc    [+enc::tsk::encode       ].s_out [+enc::sck::encode       ::X_N ](pct.sc[+pct::tsk::puncture     ].s_in[+pct::sck::puncture     ::X_N1]);
-		pct.sc    [+pct::tsk::puncture     ].s_out [+pct::sck::puncture     ::X_N2](dp_pct                          .s_in                                );
-		dp_pct                              [0]                                    (mdm.sc[+mdm::tsk::modulate     ].s_in[+mdm::sck::modulate     ::X_N1]);
+		pct.sc    [+pct::tsk::puncture     ].s_out [+pct::sck::puncture     ::X_N2](mdm.sc[+mdm::tsk::modulate     ].s_in[+mdm::sck::modulate     ::X_N1]);
 		if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos) { // Rayleigh chn
 			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](chn.sc[+chn::tsk::add_noise_wg ].s_in[+chn::sck::add_noise_wg ::X_N ]);
 			chn.sc[+chn::tsk::add_noise_wg ].s_out [+chn::sck::add_noise_wg ::H_N ](mdm.sc[+mdm::tsk::demodulate_wg].s_in[+mdm::sck::demodulate_wg::H_N ]);
 			chn.sc[+chn::tsk::add_noise_wg ].s_out [+chn::sck::add_noise_wg ::Y_N ](mdm.sc[+mdm::tsk::filter       ].s_in[+mdm::sck::filter       ::Y_N1]);
 			mdm.sc[+mdm::tsk::filter       ].s_out [+mdm::sck::filter       ::Y_N2](mdm.sc[+mdm::tsk::demodulate_wg].s_in[+mdm::sck::demodulate_wg::Y_N1]);
-			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate_wg::Y_N2](dp_dmd                          .s_in                                );
+			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate_wg::Y_N2](qnt.sc[+qnt::tsk::process      ].s_in[+qnt::sck::process      ::Y_N1]);
 		} else { // additive channel (AWGN, USER, NO)
 			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](chn.sc[+chn::tsk::add_noise    ].s_in[+chn::sck::add_noise    ::X_N ]);
 			chn.sc[+chn::tsk::add_noise    ].s_out [+chn::sck::add_noise    ::Y_N ](mdm.sc[+mdm::tsk::filter       ].s_in[+mdm::sck::filter       ::Y_N1]);
 			mdm.sc[+mdm::tsk::filter       ].s_out [+mdm::sck::filter       ::Y_N2](mdm.sc[+mdm::tsk::demodulate   ].s_in[+mdm::sck::demodulate   ::Y_N1]);
-			mdm.sc[+mdm::tsk::demodulate   ].s_out [+mdm::sck::demodulate   ::Y_N2](dp_dmd                          .s_in                                );
+			mdm.sc[+mdm::tsk::demodulate   ].s_out [+mdm::sck::demodulate   ::Y_N2](qnt.sc[+qnt::tsk::process      ].s_in[+qnt::sck::process      ::Y_N1]);
 		}
-		dp_dmd                              [0]                                    (qnt.sc[+qnt::tsk::process      ].s_in[+qnt::sck::process      ::Y_N1]);
 		qnt.sc    [+qnt::tsk::process      ].s_out [+qnt::sck::process      ::Y_N2](pct.sc[+pct::tsk::depuncture   ].s_in[+pct::sck::depuncture   ::Y_N1]);
 		pct.sc    [+pct::tsk::depuncture   ].s_out [+pct::sck::depuncture   ::Y_N2](dec.sc[+dec::tsk::decode_siho  ].s_in[+dec::sck::decode_siho  ::Y_N ]);
 		dec.sc    [+dec::tsk::decode_siho  ].s_out [+dec::sck::decode_siho  ::V_K ](crc.sc[+crc::tsk::extract      ].s_in[+crc::sck::extract      ::V_K1]);
 		crc.sc    [+crc::tsk::extract      ].s_out [+crc::sck::extract      ::V_K2](mnt.sc[+mnt::tsk::check_errors ].s_in[+mnt::sck::check_errors ::V   ]);
-	}
-
-	if (this->params_BFER_std.mutinfo)
-	{
-		auto &mnt_mi = *this->monitor_mi[0];
-		dp_pct[1](mnt_mi.sc[+mnt::tsk::get_mutual_info].s_in[+mnt::sck::get_mutual_info::X]);
-		dp_dmd[1](mnt_mi.sc[+mnt::tsk::get_mutual_info].s_in[+mnt::sck::get_mutual_info::Y]);
 	}
 }
 
