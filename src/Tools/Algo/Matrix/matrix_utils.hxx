@@ -109,7 +109,7 @@ void modulo2(Full_matrix<T>& M)
 }
 
 template <typename T>
-bool all_zero(const Full_matrix<T>& M)
+bool all_zeros(const Full_matrix<T>& M)
 {
 	bool all_z = true;
 

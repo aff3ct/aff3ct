@@ -57,7 +57,7 @@ void modulo2(Full_matrix<T>&);
  * \brief check if all elements of the matrix are zero
  */
 template <typename T>
-bool all_zero(const Full_matrix<T>&);
+bool all_zeros(const Full_matrix<T>&);
 
 
 
