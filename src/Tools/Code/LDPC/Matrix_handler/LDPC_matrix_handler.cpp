@@ -194,17 +194,6 @@ void LDPC_matrix_handler
 	LDPC_matrix_handler::form_diagonal(mat, swapped_cols);
 	LDPC_matrix_handler::form_identity(mat);
 
-
-	// for (size_t i = 0; i < M; i++) // erase the just created identity in the left part of H
-	// 	mat[i].erase( mat[i].begin(), mat[i].begin() + M );
-
-	// // mat dimension is now N*M (above it was M*N)
-	// mat.resize(N, std::vector<bool>(N - M, 0));
-	// for (auto i = M; i < N; i++) // Add identity at the end
-	// 	mat[i][i-M] = 1;
-
-
-
 	// erase the just created M*M identity in the left part of H and add the K*K identity below
 	mat.self_resize(N, K, Matrix::Origin::TOP_RIGHT);
 	for (auto i = M; i < N; i++) // Add rising diagonal identity at the end
@@ -458,4 +447,21 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 	MatriceCalcul.resize(M, M, Matrix::Origin::TOP_RIGHT);
 
 	return MatriceCalcul;
+}
+
+bool LDPC_matrix_handler
+::check_GH(Sparse_matrix H, Sparse_matrix G)
+{
+	G.self_turn(Matrix::Way::HORIZONTAL);
+	H.self_turn(Matrix::Way::HORIZONTAL);
+
+	auto Gf = sparse_to_full<uint8_t>(G);
+	auto Hf = sparse_to_full<uint8_t>(H);
+	auto GH = rgemmt(Gf, Hf);
+
+	assert(GH.get_n_rows() == G.get_n_rows());
+	assert(GH.get_n_cols() == H.get_n_rows());
+
+	modulo2(GH);
+	return all_zeros(GH);
 }

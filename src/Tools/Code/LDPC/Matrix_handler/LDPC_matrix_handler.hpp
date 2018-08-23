@@ -94,6 +94,13 @@ public:
 	 */
 	static LDPC_matrix invert_H2(const Sparse_matrix& H);
 
+
+	/*
+	 * \brief Compute a G.H to check if result is a null vector
+	 * \return true if G.H == 0
+	 */
+	static bool check_GH(Sparse_matrix H, Sparse_matrix G);
+
 protected :
 	static void transform_H_to_G(LDPC_matrix& mat, Positions_vector& info_bits_pos);
 };
