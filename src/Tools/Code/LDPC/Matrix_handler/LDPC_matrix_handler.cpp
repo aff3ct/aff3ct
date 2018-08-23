@@ -217,9 +217,6 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 
 	std::copy(bits_pos.begin() + M, bits_pos.end(), info_bits_pos.begin());
 
-	if (!check_GH(H, G))
-		throw runtime_error(__FILE__, __LINE__, __func__, "G and H do not fit (G*H != 0).");
-
 	return G;
 }
 
@@ -297,7 +294,6 @@ void LDPC_matrix_handler
 				                mat[i  ].begin(), mat[j-1].begin(),
 				                std::not_equal_to<LDPC_matrix::value_type>());
 }
-
 
 Sparse_matrix LDPC_matrix_handler
 ::interleave_matrix(const Sparse_matrix& mat, Positions_vector& old_cols_pos)
@@ -457,35 +453,26 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 bool LDPC_matrix_handler
 ::check_GH(const Sparse_matrix& H, const Sparse_matrix& G)
 {
-	auto Gf = sparse_to_full<uint8_t>(G);
-	auto Hf = sparse_to_full<uint8_t>(H);
+	Sparse_matrix GH;
 
-	return check_GH(Hf, Gf);
-}
-
-bool LDPC_matrix_handler
-::check_GH(const LDPC_matrix& H, const LDPC_matrix& G)
-{
-	LDPC_matrix GH;
-
-	switch(H.get_way())
+	switch (H.get_way())
 	{
 		case Matrix::Way::HORIZONTAL:
-			switch(G.get_way())
+			switch (G.get_way())
 			{
 				case Matrix::Way::HORIZONTAL:
-					GH = rgemmt(H, G);
+					GH = bgemmt(H, G);
 				break;
 				case Matrix::Way::VERTICAL:
-					GH = rgemm(H, G);
+					GH = bgemm(H, G);
 				break;
 			}
 		break;
 		case Matrix::Way::VERTICAL:
-			switch(G.get_way())
+			switch (G.get_way())
 			{
 				case Matrix::Way::HORIZONTAL:
-					GH = rgemm(G, H);
+					GH = bgemm(G, H);
 				break;
 				case Matrix::Way::VERTICAL:
 					throw runtime_error(__FILE__, __LINE__, __func__, "G and H can't be both in VERTICAL way.");
@@ -494,7 +481,39 @@ bool LDPC_matrix_handler
 		break;
 	}
 
-	modulo2(GH);
+	return all_zeros(GH);
+}
+
+bool LDPC_matrix_handler
+::check_GH(const LDPC_matrix& H, const LDPC_matrix& G)
+{
+	LDPC_matrix GH;
+
+	switch (H.get_way())
+	{
+		case Matrix::Way::HORIZONTAL:
+			switch (G.get_way())
+			{
+				case Matrix::Way::HORIZONTAL:
+					GH = bgemmt(H, G);
+				break;
+				case Matrix::Way::VERTICAL:
+					GH = bgemm(H, G);
+				break;
+			}
+		break;
+		case Matrix::Way::VERTICAL:
+			switch (G.get_way())
+			{
+				case Matrix::Way::HORIZONTAL:
+					GH = bgemm(G, H);
+				break;
+				case Matrix::Way::VERTICAL:
+					throw runtime_error(__FILE__, __LINE__, __func__, "G and H can't be both in VERTICAL way.");
+				break;
+			}
+		break;
+	}
 
 	return all_zeros(GH);
 }

@@ -5,7 +5,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/matrix.h"
 
 #include "Encoder_LDPC_from_H.hpp"
 
@@ -20,7 +19,7 @@ Encoder_LDPC_from_H<B>
 	const std::string name = "Encoder_LDPC_from_H";
 	this->set_name(name);
 
-	this->G = tools::LDPC_matrix_handler::transform_H_to_G(H, this->info_bits_pos);
+	this->G = tools::LDPC_matrix_handler::transform_H_to_G(H.turn(tools::Matrix::Way::HORIZONTAL), this->info_bits_pos);
 	this->H = H;
 
 	this->check_G_dimensions();

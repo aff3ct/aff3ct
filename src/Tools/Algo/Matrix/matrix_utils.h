@@ -21,45 +21,42 @@ template <typename T>
 Sparse_matrix full_to_sparse(const Full_matrix<T>&);
 
 /*
- * real general matrix multiplication: C = A * B
+ * binary general matrix multiplication: C = A * B
  * \param A must be of size L * M
  * \param B must be of size M * N
  * \return C of size L * N
  */
 template <typename T>
-Full_matrix<T> rgemm(const Full_matrix<T>& A, const Full_matrix<T>& B);
+Full_matrix<T> bgemm(const Full_matrix<T>& A, const Full_matrix<T>& B);
+Sparse_matrix  bgemm(const Sparse_matrix&  A, const Sparse_matrix&  B);
+
 
 /*
- * real general matrix multiplication: C = A * B
+ * binary general matrix multiplication: C = A * B
  * \param A must be of size L * M
  * \param B must be of size M * N
  * \return C of size L * N
  */
 template <typename T>
 Full_matrix<T> operator*(const Full_matrix<T>& A, const Full_matrix<T>& B);
+Sparse_matrix  operator*(const Sparse_matrix&  A, const Sparse_matrix&  B);
 
 /*
- * real general matrix multiplication with B transposed: tC = A * tB, tB is B transposed, tC is C transposed
+ * binary general matrix multiplication with B transposed: tC = A * tB, tB is B transposed, tC is C transposed
  * \param A must be of size L * M
  * \param tB must be of size N * M
  * \return C of size L * N
  */
 template <typename T>
-Full_matrix<T> rgemmt(const Full_matrix<T>& A, const Full_matrix<T>& tB);
-
-/*
- * \brief apply a modulo 2 on each element of the matrix
- */
-template <typename T>
-void modulo2(Full_matrix<T>&);
+Full_matrix<T> bgemmt(const Full_matrix<T>& A, const Full_matrix<T>& tB);
+Sparse_matrix  bgemmt(const Sparse_matrix&  A, const Sparse_matrix&  tB);
 
 /*
  * \brief check if all elements of the matrix are zero
  */
 template <typename T>
 bool all_zeros(const Full_matrix<T>&);
-
-
+bool all_zeros(const Sparse_matrix& );
 
 }
 }

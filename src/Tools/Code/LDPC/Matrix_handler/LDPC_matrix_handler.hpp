@@ -98,11 +98,20 @@ public:
 
 	/*
 	 * \brief Compute a G.H to check if result is a null vector
-	 *        H and G can be permuted, the function handle their order
+	 *        H and G can be permuted except both vertical, the function handle their order
+	 *        Best performance check is when do not have the same way
 	 * \return true if G.H == 0
 	 */
 	static bool check_GH(const Sparse_matrix& H, const Sparse_matrix& G);
-	static bool check_GH(const LDPC_matrix&   H, const LDPC_matrix&   G);
+
+
+	/*
+	 * \brief Compute a G.H to check if result is a null vector
+	 *        H and G can be permuted except both vertical, the function handle their order
+	 *        Best performance check is when both are horizontal
+	 * \return true if G.H == 0
+	 */
+	static bool check_GH(const LDPC_matrix& H, const LDPC_matrix& G);
 };
 }
 }

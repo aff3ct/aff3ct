@@ -37,7 +37,7 @@ Sparse_matrix full_to_sparse(const Full_matrix<T>& full)
 }
 
 template <typename T>
-Full_matrix<T> rgemm(const Full_matrix<T>& A, const Full_matrix<T>& B)
+Full_matrix<T> bgemm(const Full_matrix<T>& A, const Full_matrix<T>& B)
 {
 	if (A.get_n_cols() != B.get_n_rows())
 	{
@@ -60,20 +60,20 @@ Full_matrix<T> rgemm(const Full_matrix<T>& A, const Full_matrix<T>& B)
 			for (size_t m = 0; m < M; m++)
 				sum += A[l][m] * B[m][n];
 
-			C[l][n] = sum;
+			C[l][n] = sum & (T)1; // modulo 2
 		}
 
 	return C;
 }
 
 template <typename T>
-Full_matrix<T> operator*(const Full_matrix<T>& A, const Full_matrix<T>& B)
+inline Full_matrix<T> operator*(const Full_matrix<T>& A, const Full_matrix<T>& B)
 {
-	return rgemm(A,B);
+	return bgemm(A,B);
 }
 
 template <typename T>
-Full_matrix<T> rgemmt(const Full_matrix<T>& A, const Full_matrix<T>& tB)
+Full_matrix<T> bgemmt(const Full_matrix<T>& A, const Full_matrix<T>& tB)
 {
 	if (A.get_n_cols() != tB.get_n_cols())
 	{
@@ -96,18 +96,10 @@ Full_matrix<T> rgemmt(const Full_matrix<T>& A, const Full_matrix<T>& tB)
 			for (size_t m = 0; m < M; m++)
 				sum += A[l][m] * tB[n][m];
 
-			C[l][n] = sum;
+			C[l][n] = sum & (T)1; // modulo 2
 		}
 
 	return C;
-}
-
-template <typename T>
-void modulo2(Full_matrix<T>& M)
-{
-	for (size_t r = 0; r < M.get_n_rows(); r++)
-		for (size_t c = 0; c < M.get_n_cols(); c++)
-			M[r][c] &= (T)1;
 }
 
 template <typename T>
