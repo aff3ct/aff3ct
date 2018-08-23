@@ -22,6 +22,12 @@ then
 	THREADS=1
 fi
 
+if [ -z "$NAME" ]
+then
+	echo "The 'NAME' environment variable is not set, default value = 'build_linux_macos'."
+	NAME="build_linux_macos"
+fi
+
 if [ -z "$LFLAGS" ]
 then
 	cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX \
@@ -36,7 +42,7 @@ else
 	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 fi
 
-make -j $THREADS
+make -j $THREADS -k
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
 mkdir $NAME $NAME/bin $NAME/lib $NAME/inc

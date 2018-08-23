@@ -13,7 +13,7 @@
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp"
 #include "Factory/Module/Codec/Codec_SISO.hpp"
-#include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
+#include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
 #include "../Simulation.hpp"
 
@@ -51,7 +51,7 @@ struct EXIT : Simulation
 		Channel      ::parameters *chn = nullptr;
 		Quantizer    ::parameters *qnt = nullptr;
 		Monitor_EXIT ::parameters *mnt = nullptr;
-		Terminal_EXIT::parameters *ter = nullptr;
+		Terminal     ::parameters *ter = nullptr;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = EXIT_prefix);
@@ -69,7 +69,7 @@ struct EXIT : Simulation
 		void set_chn(Channel      ::parameters *chn) { this->chn = chn; }
 		void set_qnt(Quantizer    ::parameters *qnt) { this->qnt = qnt; }
 		void set_mnt(Monitor_EXIT ::parameters *mnt) { this->mnt = mnt; }
-		void set_ter(Terminal_EXIT::parameters *ter) { this->ter = ter; }
+		void set_ter(Terminal     ::parameters *ter) { this->ter = ter; }
 
 		// parameters construction
 		void get_description(tools::Argument_map_info &args) const;

@@ -34,6 +34,22 @@ public:
 
 	~Histogram() = default;
 
+	Histogram<R>& operator=(const Histogram<R>& other)
+	{
+		if (this->precision != other.precision)
+		{
+			std::stringstream message;
+			message << "Histograms do not have the same precision ('this->precision' = " << this->precision
+			        << ", other.precision = " << other.precision << ")." << std::endl;
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		n_values = other.n_values;
+		hist     = other.hist;
+
+		return *this;
+	}
+
 	inline void add_values(const Histogram<R>& other)
 	{
 		if (this->precision != other.precision)

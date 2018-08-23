@@ -28,6 +28,10 @@ EXIT<B,R>
   channel_a(nullptr),
   siso     (nullptr),
   monitor  (nullptr),
+
+  rep_exit (nullptr),
+  rep_noise(nullptr),
+  rep_throughput(nullptr),
   terminal (nullptr)
 {
 #ifdef ENABLE_MPI
@@ -59,12 +63,25 @@ EXIT<B,R>
 	this->monitor = this->build_monitor();
 
 	this->modules["monitor"][0] = this->monitor;
+
+	rep_noise = new tools::Reporter_noise<R>(this->noise);
+	reporters.push_back(rep_noise);
+
+	rep_exit = new tools::Reporter_EXIT<B,R>(*this->monitor, this->noise_a);
+	reporters.push_back(rep_exit);
+
+	rep_throughput = new tools::Reporter_throughput<uint64_t>(*this->monitor);
+	reporters.push_back(rep_throughput);
 }
 
 template <typename B, typename R>
 EXIT<B,R>
 ::~EXIT()
 {
+	if (rep_noise != nullptr) { delete rep_noise; rep_noise = nullptr; }
+	if (rep_exit  != nullptr) { delete rep_exit;  rep_exit  = nullptr; }
+	if (rep_throughput != nullptr) { delete rep_throughput; rep_throughput = nullptr; }
+
 	if (monitor != nullptr) { delete monitor; monitor = nullptr; }
 	release_objects();
 }
@@ -110,6 +127,8 @@ template <typename B, typename R>
 void EXIT<B,R>
 ::launch()
 {
+	this->terminal = this->build_terminal();
+
 	// allocate and build all the communication chain to generate EXIT chart
 	this->build_communication_chain();
 	this->sockets_binding();
@@ -119,16 +138,15 @@ void EXIT<B,R>
 	// for each channel NOISE to be simulated
 	for (unsigned noise_idx = 0; noise_idx < params_EXIT.noise->range.size(); noise_idx ++)
 	{
-		float ebn0 = params_EXIT.noise->range[noise_idx];
+		R ebn0 = params_EXIT.noise->range[noise_idx];
 
 		// For EXIT simulation, NOISE is considered as Es/N0
-		const auto bit_rate = 1.f;
-		float esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params_EXIT.mdm->bps);
-		float sigma = tools::esn0_to_sigma(esn0, params_EXIT.mdm->upf);
+		const R bit_rate = 1.;
+		R esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params_EXIT.mdm->bps);
+		R sigma = tools::esn0_to_sigma(esn0, params_EXIT.mdm->upf);
 
 		this->noise.set_noise(sigma, ebn0, esn0);
 
-		terminal->set_noise(this->noise);
 		channel ->set_noise(this->noise);
 		modem   ->set_noise(this->noise);
 		codec   ->set_noise(this->noise);
@@ -138,11 +156,6 @@ void EXIT<B,R>
 		for (unsigned sig_a_idx = 0; sig_a_idx < params_EXIT.sig_a_range.size(); sig_a_idx ++)
 		{
 			sig_a = params_EXIT.sig_a_range[sig_a_idx];
-			this->noise_a.set_noise(2.f / sig_a);
-
-			terminal ->set_sig_a(sig_a        );
-			channel_a->set_noise(this->noise_a);
-			modem_a  ->set_noise(this->noise_a);
 
 			if (sig_a == 0.f) // if sig_a = 0, La_K2 = 0
 			{
@@ -159,10 +172,23 @@ void EXIT<B,R>
 					auto mdm_bytes =            mdm[mdm::sck::demodulate::Y_N2].get_databytes();
 					std::fill(mdm_data, mdm_data + mdm_bytes, 0);
 				}
+				this->noise_a.set_noise(std::numeric_limits<R>::infinity());
+			}
+			else
+			{
+				const R bit_rate = 1.;
+				auto sig_a_2 = (R)2. / sig_a;
+				R sig_a_esn0 = tools::sigma_to_esn0(sig_a_2, params_EXIT.mdm->upf);
+				R sig_a_ebn0 = tools::esn0_to_ebn0 (sig_a_esn0, bit_rate, params_EXIT.mdm->bps);
+
+				this->noise_a.set_noise(sig_a_2, sig_a_ebn0, sig_a_esn0);
+				channel_a->set_noise(this->noise_a);
+				modem_a  ->set_noise(this->noise_a);
 			}
 
-			if (((!params_EXIT.ter->disabled && noise_idx == 0 && sig_a_idx == 0 &&
-				!params_EXIT.debug) || (params_EXIT.statistics && !params_EXIT.debug)))
+
+			if ((!params_EXIT.ter->disabled && noise_idx == 0 && sig_a_idx == 0 && !params_EXIT.debug)
+				|| (params_EXIT.statistics && !params_EXIT.debug))
 				terminal->legend(std::cout);
 
 			// start the terminal to display BER/FER results
@@ -170,7 +196,9 @@ void EXIT<B,R>
 				!params_EXIT.debug)
 				this->terminal->start_temp_report(params_EXIT.ter->frequency);
 
+
 			this->simulation_loop();
+
 
 			if (!params_EXIT.ter->disabled)
 			{
@@ -203,11 +231,11 @@ void EXIT<B,R>
 						for (auto &t : mm->tasks)
 							t->reset_stats();
 
-			if (module::Monitor::is_over())
+			if (tools::Terminal::is_over())
 				break;
 		}
 
-		if (module::Monitor::is_over())
+		if (tools::Terminal::is_over())
 			break;
 	}
 }
@@ -306,7 +334,7 @@ void EXIT<B,R>
 		modem  [mdm::tsk::modulate].exec();
 
 		//if sig_a = 0, La_K = 0, no noise to add
-		if (sig_a != 0)
+		if (sig_a != (R)0.)
 		{
 			// Rayleigh channel
 			if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
@@ -416,10 +444,10 @@ module::Monitor_EXIT<B,R>* EXIT<B,R>
 }
 
 template <typename B, typename R>
-tools::Terminal_EXIT<B,R>* EXIT<B,R>
+tools::Terminal* EXIT<B,R>
 ::build_terminal()
 {
-	return params_EXIT.ter->template build<B,R>(*this->monitor);
+	return params_EXIT.ter->build(this->reporters);
 }
 
 // ==================================================================================== explicit template instantiation

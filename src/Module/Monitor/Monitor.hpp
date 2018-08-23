@@ -9,7 +9,6 @@
 #define MONITOR_HPP_
 
 #include <functional>
-#include <csignal>
 #include <chrono>
 #include <vector>
 #include <string>
@@ -25,13 +24,13 @@ namespace module
 {
 	namespace mnt
 	{
-		enum class tsk : uint8_t { check_errors, check_mutual_info, get_mutual_info, SIZE };
+		enum class tsk : uint8_t { check_errors, get_mutual_info, check_mutual_info, SIZE };
 
 		namespace sck
 		{
-			enum class check_errors      : uint8_t { U,    V             , SIZE };
+			enum class check_errors      : uint8_t { U, V, SIZE };
+			enum class get_mutual_info   : uint8_t { X, Y, SIZE };
 			enum class check_mutual_info : uint8_t { bits, llrs_a, llrs_e, SIZE };
-			enum class get_mutual_info   : uint8_t { X,    Y             , SIZE };
 		}
 	}
 
@@ -40,24 +39,12 @@ namespace module
  *
  * \brief Monitors the simulated frames, tells if there is a frame errors and counts the number of bit errors.
  *
- * \tparam B: type of the bits in the frames to compare.
- * \tparam R: type of the samples in the channel frame.
- *
  * Please use Monitor for inheritance (instead of Monitor).
  */
 class Monitor : public Module
 {
-protected:
-	static bool interrupt;                                                                                /*!< True if there is a SIGINT signal (ctrl+C). */
-	static bool first_interrupt;                                                                          /*!< True if this is the first time that SIGIN is called. */
-	static int  interrupt_cnt;                                                                            /*!< The number of gor interrupt signal. */
-	static bool over;                                                                                     /*!< True if SIGINT is called twice in the Monitor::d_delta_interrupt time */
-	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_interrupt; /*!< Time point of the last call to SIGINT */
-
-	const int K; /*!< Number of bits */
-	const int N; /*!< Number of bits */
-
 public:
+
 	/*!
 	 * \brief Constructor.
 	 *
@@ -66,46 +53,33 @@ public:
 	 * \param K: number of bits of information
 	 * \param N: number of coded bits
 	 */
-	Monitor(const int K, const int N, int n_frames = 1);
+	Monitor(int n_frames = 1);
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Monitor();
-
-	/*!
-	 * \brief Gets the number of bits in a frame.
-	 *
-	 * \return the number of bits.
-	 */
-	int get_K() const;
-	int get_N() const;
+	virtual ~Monitor() = default;
 
 	virtual void reset();
 
 	virtual void clear_callbacks();
 
 	/*!
-	 * \brief Tells if the user asked for stopping the current computations.
-	 *
-	 * \return true if the SIGINT (ctrl+c) is called.
+	 * \brief collect data from 'm' monitor into this monitor.
+	 * 'fully' flag indicates if only "Value_t" struct vals must be merged
+	 * or also any other attributes of the class.
 	 */
-	static bool is_interrupt();
+	virtual void collect(const Monitor& m, bool fully = false) = 0;
+
+	/*
+	 * \brief return true if enough data have been processed and respect check conditions
+	 */
+	virtual bool is_done() const = 0;
 
 	/*!
-	 * \brief Tells if the user asked for stopping the whole simulation.
-	 *
-	 * \return true if the SIGINT (ctrl+c) is called twice.
+	 * \brief completely copy values of the monitor 'm' into this monitor
 	 */
-	static bool is_over();
-
-	/*!
-	 * \brief Put Monitor<B,R>::interrupt and Monitor<B,R>::over to true.
-	 */
-	static void stop();
-
-private:
-	static void signal_interrupt_handler(int signal);
+	Monitor& operator=(const Monitor& m);
 };
 }
 }

@@ -19,12 +19,12 @@ EXIT<B,R>
 ::EXIT(const int argc, const char **argv, std::ostream &stream)
 : Launcher(argc, argv, params, stream)
 {
-	params.set_src(new factory::Source       ::parameters("src"));
-	params.set_mdm(new factory::Modem        ::parameters("mdm"));
-	params.set_chn(new factory::Channel      ::parameters("chn"));
-	params.set_qnt(new factory::Quantizer    ::parameters("qnt"));
-	params.set_mnt(new factory::Monitor_EXIT ::parameters("mnt"));
-	params.set_ter(new factory::Terminal_EXIT::parameters("ter"));
+	params.set_src(new factory::Source      ::parameters("src"));
+	params.set_mdm(new factory::Modem       ::parameters("mdm"));
+	params.set_chn(new factory::Channel     ::parameters("chn"));
+	params.set_qnt(new factory::Quantizer   ::parameters("qnt"));
+	params.set_mnt(new factory::Monitor_EXIT::parameters("mnt"));
+	params.set_ter(new factory::Terminal    ::parameters("ter"));
 }
 
 template <typename B, typename R>

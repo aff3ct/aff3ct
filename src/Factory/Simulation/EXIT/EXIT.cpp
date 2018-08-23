@@ -96,7 +96,7 @@ void EXIT::parameters
 
 	args.add(
 		{p+"-siga-range"},
-		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
+		tools::Matlab_vector<float>(tools::Real(tools::Positive()), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
 		"sigma range used in EXIT charts (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
 		tools::arg_rank::REQ);
 
@@ -133,8 +133,8 @@ void EXIT::parameters
 	else
 	{
 		float sig_a_min = 0.f, sig_a_max = 0.f, sig_a_step = 0.1f;
-		if(vals.exist({p+"-siga-min",  "m"})) sig_a_min  = vals.to_float({p+"-siga-min",  "m"});
-		if(vals.exist({p+"-siga-max",  "M"})) sig_a_max  = vals.to_float({p+"-siga-max",  "M"});
+		if(vals.exist({p+"-siga-min",  "a"})) sig_a_min  = vals.to_float({p+"-siga-min",  "a"});
+		if(vals.exist({p+"-siga-max",  "A"})) sig_a_max  = vals.to_float({p+"-siga-max",  "A"});
 		if(vals.exist({p+"-siga-step"     })) sig_a_step = vals.to_float({p+"-siga-step"     });
 
 		this->sig_a_range = tools::generate_range({{sig_a_min, sig_a_max}}, sig_a_step);
@@ -179,6 +179,8 @@ simulation::EXIT<B,R>* EXIT::parameters
 #else
 	return new simulation::EXIT<B,R>(*this);
 #endif
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>

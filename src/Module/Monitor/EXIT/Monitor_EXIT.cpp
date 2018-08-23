@@ -9,19 +9,16 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Monitor_EXIT<B,R>
-::Monitor_EXIT(const int N, const unsigned n_trials, const int n_frames)
-: Monitor(N, N, n_frames),
-  n_trials(n_trials),
-  I_A_sum((R)0),
-  n_analyzed_frames(0)
+::Monitor_EXIT(const int N, const unsigned max_n_trials, const int n_frames)
+: Monitor(n_frames), N(N), max_n_trials(max_n_trials)
 {
 	const std::string name = "Monitor_EXIT";
 	this->set_name(name);
 
 	auto &p = this->create_task("check_mutual_info", (int)mnt::tsk::check_mutual_info);
-	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   this->N * this->n_frames);
-	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", this->N * this->n_frames);
-	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", this->N * this->n_frames);
+	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   get_N() * get_n_frames());
+	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", get_N() * get_n_frames());
+	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", get_N() * get_n_frames());
 
 	this->create_codelet(p, [this, &ps_bits, &ps_llrs_a, &ps_llrs_e]() -> int
 	{
@@ -31,25 +28,71 @@ Monitor_EXIT<B,R>
 
 		return 0;
 	});
+
+	reset();
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>
+::Monitor_EXIT(const Monitor_EXIT<B,R>& mon, const int n_frames)
+: Monitor_EXIT<B,R>(mon.get_N(), mon.get_max_n_trials(), n_frames == -1 ? mon.n_frames : n_frames)
+{
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>
+::Monitor_EXIT()
+: Monitor_EXIT<B,R>(1, 0)
+{
+}
+
+
+template <typename B, typename R>
+bool Monitor_EXIT<B,R>
+::equivalent(const Monitor_EXIT<B,R>& m, bool do_throw) const
+{
+	if (get_N() != m.get_N())
+	{
+		if (!do_throw)
+			return false;
+
+		std::stringstream message;
+		message << "'get_N()' is different than 'm.get_N()' ('get_N()' = " << get_N() << ", 'm.get_N()' = "
+		        << m.get_N() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (get_max_n_trials() != m.get_max_n_trials())
+	{
+		if (!do_throw)
+			return false;
+
+		std::stringstream message;
+		message << "'get_max_n_trials()' is different than 'm.get_max_n_trials()' ('get_max_n_trials()' = "
+		        << get_max_n_trials() << ", 'm.get_max_n_trials()' = " << m.get_max_n_trials() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return true;
 }
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+	const auto f_start = (frame_id < 0) ? 0 : frame_id % get_n_frames();
+	const auto f_stop  = (frame_id < 0) ? get_n_frames() : f_start +1;
 
 	for (auto f = f_start; f < f_stop; f++)
 	{
-		this->_check_mutual_info_avg(bits   + f * this->N,
-		                             llrs_a + f * this->N,
+		this->_check_mutual_info_avg(bits   + f * get_N(),
+		                             llrs_a + f * get_N(),
 		                             f);
 
-		bits_buff  .insert(bits_buff  .end(), bits   + f * this->N, bits   + (f +1) * this->N);
-		llrs_e_buff.insert(llrs_e_buff.end(), llrs_e + f * this->N, llrs_e + (f +1) * this->N);
+		bits_buff  .insert(bits_buff  .end(), bits   + f * get_N(), bits   + (f +1) * get_N());
+		llrs_e_buff.insert(llrs_e_buff.end(), llrs_e + f * get_N(), llrs_e + (f +1) * get_N());
 
-		n_analyzed_frames++;
+		vals.n_trials++;
 	}
 
 	for (auto c : this->callbacks_measure)
@@ -60,10 +103,10 @@ template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::_check_mutual_info_avg(const B *bits, const R *llrs_a, const int frame_id)
 {
-	for (int j = 0; j < this->N; j++)
+	for (int j = 0; j < get_N(); j++)
 	{
 		double symb = -2.0 * (double)bits[j] +1.0;
-		I_A_sum += (R)(1.0 - std::log2(1.0 + std::exp(-symb * (double)llrs_a[j])));
+		vals.I_A_sum += (R)(1.0 - std::log2(1.0 + std::exp(-symb * (double)llrs_a[j])));
 	}
 }
 
@@ -202,25 +245,50 @@ R Monitor_EXIT<B,R>
 	}
 }
 
-template <typename B, typename R>
-unsigned Monitor_EXIT<B,R>
-::get_n_trials() const
-{
-	return n_trials;
-}
 
 template <typename B, typename R>
 bool Monitor_EXIT<B,R>
 ::n_trials_achieved() const
 {
-	return (get_n_analyzed_fra() >= get_n_trials()) || Monitor::interrupt;
+	return get_max_n_trials() != 0 && get_n_trials() >= get_max_n_trials();
+}
+
+template <typename B, typename R>
+bool Monitor_EXIT<B,R>
+::is_done() const
+{
+	return n_trials_achieved();
+}
+
+
+
+
+template <typename B, typename R>
+const typename Monitor_EXIT<B,R>::Attributes& Monitor_EXIT<B,R>
+::get_attributes() const
+{
+	return vals;
+}
+
+template <typename B, typename R>
+int Monitor_EXIT<B,R>
+::get_N() const
+{
+	return N;
+}
+
+template <typename B, typename R>
+unsigned Monitor_EXIT<B,R>
+::get_max_n_trials() const
+{
+	return max_n_trials;
 }
 
 template <typename B, typename R>
 R Monitor_EXIT<B,R>
 ::get_I_A() const
 {
-	return this->I_A_sum / (R)(this->N * this->n_analyzed_frames);
+	return vals.I_A_sum / (R)(get_N() * get_n_trials());
 }
 
 template <typename B, typename R>
@@ -232,9 +300,9 @@ R Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 unsigned long long Monitor_EXIT<B,R>
-::get_n_analyzed_fra() const
+::get_n_trials() const
 {
-	return n_analyzed_frames;
+	return vals.n_trials;
 }
 
 template <typename B, typename R>
@@ -249,11 +317,10 @@ void Monitor_EXIT<B,R>
 ::reset()
 {
 	Monitor::reset();
+	vals.reset();
 
-	this->n_analyzed_frames = 0;
-	this->I_A_sum = (R)0;
-	this->bits_buff.clear();
-	this->llrs_e_buff.clear();
+	bits_buff  .clear();
+	llrs_e_buff.clear();
 }
 
 template <typename B, typename R>
@@ -262,6 +329,94 @@ void Monitor_EXIT<B,R>
 {
 	this->callbacks_measure.clear();
 }
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::collect(const Monitor& m, bool fully)
+{
+	collect(dynamic_cast<const Monitor_EXIT<B,R>&>(m), fully);
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::collect(const Monitor_EXIT<B,R>& m, bool fully)
+{
+	equivalent(m, true);
+
+	collect(m.get_attributes());
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::collect(const Attributes& v)
+{
+	vals += v;
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>& Monitor_EXIT<B,R>
+::operator+=(const Monitor_EXIT<B,R>& m)
+{
+	collect(m, false);
+	return *this;
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::copy(const Monitor& m, bool fully)
+{
+	copy(dynamic_cast<const Monitor_EXIT<B,R>&>(m), fully);
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::copy(const Monitor_EXIT<B,R>& m, bool fully)
+{
+	equivalent(m, true);
+
+	copy(m.get_attributes());
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::copy(const Attributes& v)
+{
+	vals = v;
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>& Monitor_EXIT<B,R>
+::operator=(const Monitor_EXIT<B,R>& m)
+{
+	copy(m, false);
+	return *this;
+}
+
+template <typename B, typename R>
+typename Monitor_EXIT<B,R>::Attributes& Monitor_EXIT<B,R>::Attributes
+::operator+=(const Attributes& a)
+{
+	n_trials += a.n_trials;
+	I_A_sum  += a.I_A_sum;
+
+	return *this;
+}
+
+template <typename B, typename R>
+void Monitor_EXIT<B,R>::Attributes
+::reset()
+{
+	n_trials = 0;
+	I_A_sum  = 0.;
+}
+
+template <typename B, typename R>
+Monitor_EXIT<B,R>::Attributes
+::Attributes()
+{
+	reset();
+}
+
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

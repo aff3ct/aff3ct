@@ -70,14 +70,14 @@ void BFER_std<B,R,Q>
 	this->modules["decoder"   ][tid] = codec     [tid]->get_decoder_siho();
 	this->modules["coset_bit" ][tid] = coset_bit [tid];
 
-	this->monitor[tid]->add_handler_check(std::bind(&module::Codec_SIHO<B,Q>::reset, codec[tid]));
+	this->monitor_er[tid]->add_handler_check(std::bind(&module::Codec_SIHO<B,Q>::reset, codec[tid]));
 
 	try
 	{
 		auto *interleaver = codec[tid]->get_interleaver(); // can raise an exceptions
 		interleaver->init();
 		if (interleaver->is_uniform())
-			this->monitor[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh, interleaver));
+			this->monitor_er[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh, interleaver));
 
 		if (this->params_BFER_std.err_track_enable && interleaver->is_uniform())
 			this->dumper[tid]->register_data(interleaver->get_lut(), this->params_BFER_std.err_track_threshold, "itl", false, this->params_BFER_std.src->n_frames, {});
@@ -247,4 +247,3 @@ template class aff3ct::simulation::BFER_std<B_64,R_64,Q_64>;
 template class aff3ct::simulation::BFER_std<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
-

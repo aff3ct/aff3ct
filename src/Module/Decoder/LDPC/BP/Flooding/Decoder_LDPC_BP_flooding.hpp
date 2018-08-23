@@ -21,10 +21,10 @@ protected:
 
 	std::vector<uint32_t      > transpose;
 	std::vector<R             > post;       // a posteriori information
-	std::vector<std::vector<R>> chk_to_var; // check    nodes to variable nodes messages
-	std::vector<std::vector<R>> var_to_chk; // variable nodes to check    nodes messages
+	std::vector<std::vector<R>> msg_chk_to_var; // check    nodes to variable nodes messages
+	std::vector<std::vector<R>> msg_var_to_chk; // variable nodes to check    nodes messages
 
-	bool init_flag; // reset the chk_to_var vector at the begining of the iterative decoding
+	bool init_flag; // reset the msg_chk_to_var vector at the begining of the iterative decoding
 
 public:
 	Decoder_LDPC_BP_flooding(const int K, const int N, const int n_ite,
@@ -43,9 +43,9 @@ protected:
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
 	void _decode               (const R *Y_N, const int frame_id);
-	void _initialize_var_to_chk(const R *Y_N, const std::vector<R> &chk_to_var, std::vector<R> &var_to_chk);
-	void _decode_single_ite    (const std::vector<R> &var_to_chk, std::vector<R> &chk_to_var);
-	void _compute_post         (const R *Y_N, const std::vector<R> &chk_to_var, std::vector<R> &post);
+	void _initialize_var_to_chk(const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &msg_var_to_chk);
+	void _decode_single_ite    (              const std::vector<R> &msg_var_to_chk, std::vector<R> &msg_chk_to_var);
+	void _compute_post         (const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &post);
 };
 }
 }

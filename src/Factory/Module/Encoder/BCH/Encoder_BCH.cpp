@@ -55,7 +55,7 @@ void Encoder_BCH::parameters
 
 template <typename B>
 module::Encoder_BCH<B>* Encoder_BCH::parameters
-::build(const tools::BCH_polynomial_generator &GF) const
+::build(const tools::BCH_polynomial_generator<B> &GF) const
 {
 	if (this->type == "BCH") return new module::Encoder_BCH<B>(this->K, this->N_cw, GF, this->n_frames);
 
@@ -64,7 +64,7 @@ module::Encoder_BCH<B>* Encoder_BCH::parameters
 
 template <typename B>
 module::Encoder_BCH<B>* Encoder_BCH
-::build(const parameters &params, const tools::BCH_polynomial_generator &GF)
+::build(const parameters &params, const tools::BCH_polynomial_generator<B> &GF)
 {
 	return params.template build<B>(GF);
 }
@@ -72,16 +72,16 @@ module::Encoder_BCH<B>* Encoder_BCH
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Encoder_BCH<B_8 >* aff3ct::factory::Encoder_BCH::parameters::build<B_8 >(const aff3ct::tools::BCH_polynomial_generator&) const;
-template aff3ct::module::Encoder_BCH<B_16>* aff3ct::factory::Encoder_BCH::parameters::build<B_16>(const aff3ct::tools::BCH_polynomial_generator&) const;
-template aff3ct::module::Encoder_BCH<B_32>* aff3ct::factory::Encoder_BCH::parameters::build<B_32>(const aff3ct::tools::BCH_polynomial_generator&) const;
-template aff3ct::module::Encoder_BCH<B_64>* aff3ct::factory::Encoder_BCH::parameters::build<B_64>(const aff3ct::tools::BCH_polynomial_generator&) const;
-template aff3ct::module::Encoder_BCH<B_8 >* aff3ct::factory::Encoder_BCH::build<B_8 >(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator&);
-template aff3ct::module::Encoder_BCH<B_16>* aff3ct::factory::Encoder_BCH::build<B_16>(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator&);
-template aff3ct::module::Encoder_BCH<B_32>* aff3ct::factory::Encoder_BCH::build<B_32>(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator&);
-template aff3ct::module::Encoder_BCH<B_64>* aff3ct::factory::Encoder_BCH::build<B_64>(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator&);
+template aff3ct::module::Encoder_BCH<B_8 >* aff3ct::factory::Encoder_BCH::parameters::build<B_8 >(const aff3ct::tools::BCH_polynomial_generator<B_8 >&) const;
+template aff3ct::module::Encoder_BCH<B_16>* aff3ct::factory::Encoder_BCH::parameters::build<B_16>(const aff3ct::tools::BCH_polynomial_generator<B_16>&) const;
+template aff3ct::module::Encoder_BCH<B_32>* aff3ct::factory::Encoder_BCH::parameters::build<B_32>(const aff3ct::tools::BCH_polynomial_generator<B_32>&) const;
+template aff3ct::module::Encoder_BCH<B_64>* aff3ct::factory::Encoder_BCH::parameters::build<B_64>(const aff3ct::tools::BCH_polynomial_generator<B_64>&) const;
+template aff3ct::module::Encoder_BCH<B_8 >* aff3ct::factory::Encoder_BCH::build<B_8 >(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator<B_8 >&);
+template aff3ct::module::Encoder_BCH<B_16>* aff3ct::factory::Encoder_BCH::build<B_16>(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator<B_16>&);
+template aff3ct::module::Encoder_BCH<B_32>* aff3ct::factory::Encoder_BCH::build<B_32>(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator<B_32>&);
+template aff3ct::module::Encoder_BCH<B_64>* aff3ct::factory::Encoder_BCH::build<B_64>(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator<B_64>&);
 #else
-template aff3ct::module::Encoder_BCH<B>* aff3ct::factory::Encoder_BCH::parameters::build<B>(const aff3ct::tools::BCH_polynomial_generator&) const;
-template aff3ct::module::Encoder_BCH<B>* aff3ct::factory::Encoder_BCH::build<B>(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator&);
+template aff3ct::module::Encoder_BCH<B>* aff3ct::factory::Encoder_BCH::parameters::build<B>(const aff3ct::tools::BCH_polynomial_generator<B>&) const;
+template aff3ct::module::Encoder_BCH<B>* aff3ct::factory::Encoder_BCH::build<B>(const aff3ct::factory::Encoder_BCH::parameters&, const aff3ct::tools::BCH_polynomial_generator<B>&);
 #endif
 // ==================================================================================== explicit template instantiation

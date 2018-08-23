@@ -15,6 +15,7 @@ class Decoder_BCH_genius : public Decoder_BCH<B,R>
 {
 protected:
 	Encoder<B> &encoder;
+	std::vector<B> YH_N; // hard decision input vector
 
 public:
 	Decoder_BCH_genius(const int K, const int N, const int t, Encoder<B> &encoder, const int n_frames = 1);

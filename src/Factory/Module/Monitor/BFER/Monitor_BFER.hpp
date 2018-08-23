@@ -13,7 +13,7 @@ namespace factory
 {
 extern const std::string Monitor_BFER_name;
 extern const std::string Monitor_BFER_prefix;
-struct Monitor_BFER : public Factory
+struct Monitor_BFER : public Monitor
 {
 	class parameters : public Monitor::parameters
 	{
@@ -21,15 +21,14 @@ struct Monitor_BFER : public Factory
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
 		int         K = 0;
-		int         N = 0;
 
 		// optional parameters
 		std::string type           = "STD";
 		std::string err_hist_path  = "hist";
 		int         err_hist       = -1;
 		int         n_frame_errors = 100;
+		int         max_frame      = 0;
 		int         n_frames       = 1;
-		bool        mutinfo        = false;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Monitor_BFER_prefix);
@@ -42,12 +41,12 @@ struct Monitor_BFER : public Factory
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
-		template <typename B = int, typename R = float>
-		module::Monitor_BFER<B,R>* build(bool count_unknown_values = false) const;
+		template <typename B = int>
+		module::Monitor_BFER<B>* build(bool count_unknown_values = false) const;
 	};
 
-	template <typename B = int, typename R = float>
-	static module::Monitor_BFER<B,R>* build(const parameters& params, bool count_unknown_values = false);
+	template <typename B = int>
+	static module::Monitor_BFER<B>* build(const parameters& params, bool count_unknown_values = false);
 };
 }
 }

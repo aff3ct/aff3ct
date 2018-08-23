@@ -3,6 +3,8 @@
 
 #include <algorithm>
 #include <cassert>
+#include <sstream>
+#include <iomanip>
 #include "general_utils.h"
 
 namespace aff3ct
@@ -107,6 +109,22 @@ void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& 
 	}
 }
 
+
+template <typename T>
+std::string get_time_format(T secondes)
+{
+	auto ss = (int)secondes % 60;
+	auto mm = ((int)(secondes / 60.f) % 60);
+	auto hh = (int)(secondes / 3600.f);
+
+	std::stringstream time_format;
+
+	time_format << std::setw(2) << std::setfill('0') << hh << "h";
+	time_format << std::setw(2) << std::setfill('0') << mm << "'";
+	time_format << std::setw(2) << std::setfill('0') << ss;
+
+	return time_format.str();
+}
 
 }
 }

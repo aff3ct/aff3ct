@@ -4,7 +4,7 @@
 #include <mipp.h>
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
-#include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_inter.hpp"
+#include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
 
 #include "../../../Decoder_SISO_SIHO.hpp"
 #include "../Decoder_LDPC_BP.hpp"
@@ -13,7 +13,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float, class Update_rule = tools::Update_rule_NMS_inter<R>>
+template <typename B = int, typename R = float, class Update_rule = tools::Update_rule_NMS_simd<R>>
 class Decoder_LDPC_BP_flooding_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
 {
 protected:
@@ -26,8 +26,8 @@ protected:
 	std::vector<uint32_t> transpose;
 
 	mipp::vector<mipp::Reg<R>>              post;       // a posteriori information
-	std::vector<mipp::vector<mipp::Reg<R>>> chk_to_var; // check    nodes to variable nodes messages
-	std::vector<mipp::vector<mipp::Reg<R>>> var_to_chk; // variable nodes to check    nodes messages
+	std::vector<mipp::vector<mipp::Reg<R>>> msg_chk_to_var; // check    nodes to variable nodes messages
+	std::vector<mipp::vector<mipp::Reg<R>>> msg_var_to_chk; // variable nodes to check    nodes messages
 
 	mipp::vector<mipp::Reg<R>> Y_N_reorderered;
 	mipp::vector<mipp::Reg<B>> V_reorderered;
@@ -52,10 +52,11 @@ protected:
 
 	void _load                 (const R *Y_N, const int frame_id);
 	void _decode               (const mipp::Reg<R> *Y_N, const int cur_wave);
-	void _initialize_var_to_chk(const mipp::Reg<R> *Y_N, const mipp::vector<mipp::Reg<R>> &chk_to_var,
-	                                                           mipp::vector<mipp::Reg<R>> &var_to_chk);
-	void _decode_single_ite    (const mipp::vector<mipp::Reg<R>> &var_to_chk, mipp::vector<mipp::Reg<R>> &chk_to_var);
-	void _compute_post         (const mipp::Reg<R> *Y_N, const mipp::vector<mipp::Reg<R>> &chk_to_var,
+	void _initialize_var_to_chk(const mipp::Reg<R> *Y_N, const mipp::vector<mipp::Reg<R>> &msg_chk_to_var,
+	                                                           mipp::vector<mipp::Reg<R>> &msg_var_to_chk);
+	void _decode_single_ite    (const mipp::vector<mipp::Reg<R>> &msg_var_to_chk,
+		                              mipp::vector<mipp::Reg<R>> &msg_chk_to_var);
+	void _compute_post         (const mipp::Reg<R> *Y_N, const mipp::vector<mipp::Reg<R>> &msg_chk_to_var,
 	                                                           mipp::vector<mipp::Reg<R>> &post);
 	bool _check_syndrome_soft  (const mipp::vector<mipp::Reg<R>> &var_nodes);
 };

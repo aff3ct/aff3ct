@@ -13,8 +13,12 @@
 #include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
-#include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
-#include "../../Tools/Noise/Noise.hpp"
+#include "Tools/Display/Terminal/Terminal.hpp"
+#include "Tools/Noise/Noise.hpp"
+
+#include "Tools/Display/Reporter/EXIT/Reporter_EXIT.hpp"
+#include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
+#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
@@ -31,9 +35,9 @@ protected:
 	const factory::EXIT::parameters &params_EXIT; // simulation parameters
 
 	// code specifications
-	tools::Sigma<R> noise;   // current noise simulated
-	tools::Sigma<R> noise_a; // current noise simulated for the "a" part
-	float sig_a;
+	tools::Sigma<R>  noise;   // current noise simulated
+	tools::Sigma<R>  noise_a; // current noise simulated for the "a" part
+	R sig_a;
 
 	// communication chain
 	module::Source      <B  > *source;
@@ -44,7 +48,14 @@ protected:
 	module::Channel     <  R> *channel_a;
 	module::Decoder_SISO<  R> *siso;
 	module::Monitor_EXIT<B,R> *monitor;
-	tools::Terminal_EXIT<B,R> *terminal;
+
+	// terminal and reporters (for the output of the code)
+	tools::Reporter_EXIT <B,R>*           rep_exit;
+	tools::Reporter_noise<  R>*           rep_noise;
+	tools::Reporter_throughput<uint64_t>* rep_throughput;
+	std::vector<tools::Reporter*>         reporters;
+	tools::Terminal* terminal;
+
 
 public:
 	explicit EXIT(const factory::EXIT::parameters &params_EXIT);
@@ -65,7 +76,7 @@ protected:
 	module::Channel     <  R>* build_channel  (const int size);
 	module::Channel     <  R>* build_channel_a(const int size);
 	module::Monitor_EXIT<B,R>* build_monitor  (              );
-	tools::Terminal_EXIT<B,R>* build_terminal (              );
+	tools::Terminal*           build_terminal (              );
 };
 }
 }

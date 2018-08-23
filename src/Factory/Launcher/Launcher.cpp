@@ -18,6 +18,7 @@
 #include "Launcher/Code/Polar/Polar.hpp"
 #include "Launcher/Code/RA/RA.hpp"
 #include "Launcher/Code/Repetition/Repetition.hpp"
+#include "Launcher/Code/RS/RS.hpp"
 #include "Launcher/Code/RSC/RSC.hpp"
 #include "Launcher/Code/RSC_DB/RSC_DB.hpp"
 #include "Launcher/Code/Turbo/Turbo.hpp"
@@ -77,7 +78,7 @@ void factory::Launcher::parameters
 
 	args.add(
 		{p+"-cde-type", "C"},
-		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TURBO_PROD", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED")),
+		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TURBO_PROD", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED", "RS")),
 		"select the code type you want to use.",
 		tools::arg_rank::REQ);
 
@@ -354,6 +355,12 @@ launcher::Launcher* factory::Launcher::parameters
 	{
 		if (this->sim_type == "BFER")
 			return new launcher::BCH<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "RS")
+	{
+		if (this->sim_type == "BFER")
+			return new launcher::RS<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RA")

@@ -28,8 +28,8 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
   up_rule               (up_rule                                              ),
   transpose             (this->H.get_n_connections()                          ),
   post                  (N, -1                                                ),
-  chk_to_var            (n_frames, std::vector<R>(this->H.get_n_connections())),
-  var_to_chk            (n_frames, std::vector<R>(this->H.get_n_connections())),
+  msg_chk_to_var        (n_frames, std::vector<R>(this->H.get_n_connections())),
+  msg_var_to_chk        (n_frames, std::vector<R>(this->H.get_n_connections())),
   init_flag             (true                                                 )
 {
 	const std::string name = "Decoder_LDPC_BP_flooding<" + this->up_rule.get_name() + ">";
@@ -37,28 +37,28 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 	mipp::vector<unsigned char> connections(this->H.get_n_rows(), 0);
 
-	const auto &chk_to_var_id = this->H.get_col_to_rows();
-	const auto &var_to_chk_id = this->H.get_row_to_cols();
+	const auto &msg_chk_to_var_id = this->H.get_col_to_rows();
+	const auto &msg_var_to_chk_id = this->H.get_row_to_cols();
 
 	auto k = 0;
-	for (auto i = 0; i < (int)chk_to_var_id.size(); i++)
+	for (auto i = 0; i < (int)msg_chk_to_var_id.size(); i++)
 	{
-		for (auto j = 0; j < (int)chk_to_var_id[i].size(); j++)
+		for (auto j = 0; j < (int)msg_chk_to_var_id[i].size(); j++)
 		{
-			auto var_id = chk_to_var_id[i][j];
+			auto var_id = msg_chk_to_var_id[i][j];
 
 			auto branch_id = 0;
 			for (auto ii = 0; ii < (int)var_id; ii++)
-				branch_id += (int)var_to_chk_id[ii].size();
+				branch_id += (int)msg_var_to_chk_id[ii].size();
 			branch_id += connections[var_id];
 			connections[var_id]++;
 
-			if (connections[var_id] > (int)var_to_chk_id[var_id].size())
+			if (connections[var_id] > (int)msg_var_to_chk_id[var_id].size())
 			{
 				std::stringstream message;
-				message << "'connections[var_id]' has to be equal or smaller than 'var_to_chk_id[var_id].size()' "
+				message << "'connections[var_id]' has to be equal or smaller than 'msg_var_to_chk_id[var_id].size()' "
 				        << "('var_id' = " << var_id << ", 'connections[var_id]' = " << connections[var_id]
-				        << ", 'var_to_chk_id[var_id].size()' = " << var_to_chk_id[var_id].size() << ").";
+				        << ", 'msg_var_to_chk_id[var_id].size()' = " << msg_var_to_chk_id[var_id].size() << ").";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
@@ -88,7 +88,7 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->chk_to_var[frame_id].begin(), this->chk_to_var[frame_id].end(), (R)0);
+		std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), (R)0);
 
 		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 			this->init_flag = false;
@@ -109,7 +109,7 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->chk_to_var[frame_id].begin(), this->chk_to_var[frame_id].end(), (R)0);
+		std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), (R)0);
 
 		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 			this->init_flag = false;
@@ -143,7 +143,7 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->chk_to_var[frame_id].begin(), this->chk_to_var[frame_id].end(), (R)0);
+		std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), (R)0);
 
 		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 			this->init_flag = false;
@@ -174,51 +174,51 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 	for (; ite < this->n_ite; ite++)
 	{
 		this->up_rule.begin_ite(ite);
-		this->_initialize_var_to_chk(Y_N, this->chk_to_var[frame_id], this->var_to_chk[frame_id]);
-		this->_decode_single_ite(this->var_to_chk[frame_id], this->chk_to_var[frame_id]);
+		this->_initialize_var_to_chk(Y_N, this->msg_chk_to_var[frame_id], this->msg_var_to_chk[frame_id]);
+		this->_decode_single_ite(this->msg_var_to_chk[frame_id], this->msg_chk_to_var[frame_id]);
 		this->up_rule.end_ite();
 
 		if (this->enable_syndrome && ite != this->n_ite -1)
 		{
-			this->_compute_post(Y_N, this->chk_to_var[frame_id], this->post);
+			this->_compute_post(Y_N, this->msg_chk_to_var[frame_id], this->post);
 			if (this->check_syndrome_soft(this->post.data()))
 				break;
 		}
 	}
 	if (ite == this->n_ite)
-		this->_compute_post(Y_N, this->chk_to_var[frame_id], this->post);
+		this->_compute_post(Y_N, this->msg_chk_to_var[frame_id], this->post);
 
 	this->up_rule.end_decoding();
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_initialize_var_to_chk(const R *Y_N, const std::vector<R> &chk_to_var, std::vector<R> &var_to_chk)
+::_initialize_var_to_chk(const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &msg_var_to_chk)
 {
-	auto *chk_to_var_ptr = chk_to_var.data();
-	auto *var_to_chk_ptr = var_to_chk.data();
+	auto *msg_chk_to_var_ptr = msg_chk_to_var.data();
+	auto *msg_var_to_chk_ptr = msg_var_to_chk.data();
 
 	const auto n_var_nodes = (int)this->H.get_n_rows();;
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
 
-		auto sum_chk_to_var = (R)0;
+		auto sum_msg_chk_to_var = (R)0;
 		for (auto c = 0; c < var_degree; c++)
-			sum_chk_to_var += chk_to_var_ptr[c];
+			sum_msg_chk_to_var += msg_chk_to_var_ptr[c];
 
-		const auto tmp = Y_N[v] + sum_chk_to_var;
+		const auto tmp = Y_N[v] + sum_msg_chk_to_var;
 		for (auto c = 0; c < var_degree; c++)
-			var_to_chk_ptr[c] = tmp - chk_to_var_ptr[c];
+			msg_var_to_chk_ptr[c] = tmp - msg_chk_to_var_ptr[c];
 
-		chk_to_var_ptr += var_degree;
-		var_to_chk_ptr += var_degree;
+		msg_chk_to_var_ptr += var_degree;
+		msg_var_to_chk_ptr += var_degree;
 	}
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_decode_single_ite(const std::vector<R> &var_to_chk, std::vector<R> &chk_to_var)
+::_decode_single_ite(const std::vector<R> &msg_var_to_chk, std::vector<R> &msg_chk_to_var)
 {
 	auto transpose_ptr = this->transpose.data();
 
@@ -230,12 +230,12 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 		this->up_rule.begin_chk_node_in(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
-			this->up_rule.compute_chk_node_in(v, var_to_chk[transpose_ptr[v]]);
+			this->up_rule.compute_chk_node_in(v, msg_var_to_chk[transpose_ptr[v]]);
 		this->up_rule.end_chk_node_in();
 
 		this->up_rule.begin_chk_node_out(c, chk_degree);
 		for (auto v = 0; v < chk_degree; v++)
-			chk_to_var[transpose_ptr[v]] = this->up_rule.compute_chk_node_out(v, var_to_chk[transpose_ptr[v]]);
+			msg_chk_to_var[transpose_ptr[v]] = this->up_rule.compute_chk_node_out(v, msg_var_to_chk[transpose_ptr[v]]);
 		this->up_rule.end_chk_node_out();
 
 		transpose_ptr += chk_degree;
@@ -244,23 +244,23 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_compute_post(const R *Y_N, const std::vector<R> &chk_to_var, std::vector<R> &post)
+::_compute_post(const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &post)
 {
 	// compute the a posteriori info
-	const auto *chk_to_var_ptr = chk_to_var.data();
+	const auto *msg_chk_to_var_ptr = msg_chk_to_var.data();
 	const auto n_var_nodes = (int)this->H.get_n_rows();;
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
 
-		auto sum_chk_to_var = (R)0;
+		auto sum_msg_chk_to_var = (R)0;
 		for (auto c = 0; c < var_degree; c++)
-			sum_chk_to_var += chk_to_var_ptr[c];
+			sum_msg_chk_to_var += msg_chk_to_var_ptr[c];
 
 		// filling the output
-		post[v] = Y_N[v] + sum_chk_to_var;
+		post[v] = Y_N[v] + sum_msg_chk_to_var;
 
-		chk_to_var_ptr += var_degree;
+		msg_chk_to_var_ptr += var_degree;
 	}
 }
 }

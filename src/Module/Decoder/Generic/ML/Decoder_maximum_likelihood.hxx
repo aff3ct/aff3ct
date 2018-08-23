@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Perf/common/hard_decide.h"
 
 #include "Decoder_maximum_likelihood.hpp"

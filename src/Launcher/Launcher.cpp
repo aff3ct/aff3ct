@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <regex>
 #include <date.h>
 
 #include "Tools/Display/Terminal/Terminal.hpp"
@@ -82,31 +83,38 @@ int Launcher::read_arguments()
 		tools::exception::no_backtrace = save;
 	}
 
-	if (params_common.display_help)
+#ifdef ENABLE_MPI
+	if (this->params_common.mpi_rank == 0)
 	{
-		auto grps = factory::Factory::create_groups({&params_common});
-		ah.print_help(this->args, grps, params_common.display_adv_help);
+#endif
+		if (params_common.display_help)
+		{
+			auto grps = factory::Factory::create_groups({&params_common});
+			ah.print_help(this->args, grps, params_common.display_adv_help);
+		}
+
+		// print usage
+		if (!cmd_error.empty() && !params_common.display_help)
+			ah.print_usage(this->args);
+
+		// print the errors
+		if (!cmd_error.empty()) std::cerr << std::endl;
+		for (unsigned e = 0; e < cmd_error.size(); e++)
+			std::cerr << rang::tag::error << cmd_error[e] << std::endl;
+
+		// print the help tags
+		if (!cmd_error.empty() && !params_common.display_help)
+		{
+			tools::Argument_tag help_tag = {"help", "h"};
+
+			std::string message = "For more information please display the help (\"";
+			message += tools::Argument_handler::print_tag(help_tag) += "\").";
+
+			std::cerr << std::endl << rang::tag::info << message << std::endl;
+		}
+#ifdef ENABLE_MPI
 	}
-
-	// print usage
-	if (!cmd_error.empty() && !params_common.display_help)
-		ah.print_usage(this->args);
-
-	// print the errors
-	if (!cmd_error.empty()) std::cerr << std::endl;
-	for (unsigned e = 0; e < cmd_error.size(); e++)
-		std::cerr << rang::tag::error << cmd_error[e] << std::endl;
-
-	// print the help tags
-	if (!cmd_error.empty() && !params_common.display_help)
-	{
-		tools::Argument_tag help_tag = {"help", "h"};
-
-		std::string message = "For more information please display the help (\"";
-		message += tools::Argument_handler::print_tag(help_tag) += "\").";
-
-		std::cerr << std::endl << rang::tag::info << message << std::endl;
-	}
+#endif
 
 	return (!cmd_error.empty() || params_common.display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
@@ -120,6 +128,32 @@ void Launcher::print_header()
 	stream << rang::tag::comment << rang::style::bold << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
 	factory::Header::print_parameters({&params_common}, false, this->stream);
 	this->stream << rang::tag::comment << std::endl;
+}
+
+std::string remove_argument(const std::string& cmd, std::string arg)
+{
+#if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
+	if (arg.front() != ' ')
+		arg = " " + arg;
+	auto pos_arg = cmd.find(arg);
+
+	if (pos_arg == std::string::npos)
+		return cmd;
+
+	auto pos_start = cmd.find("\"", pos_arg + arg.size());
+	auto pos_end   = cmd.find("\"", pos_start + 1);
+
+	return cmd.substr(0, pos_arg) + cmd.substr(pos_end + 1);
+#else
+	return std::regex_replace(cmd, std::regex("( " + arg + " \"[^\"]*\")"), "");
+#endif
+}
+
+std::string remove_argument(std::string cmd, const std::vector<std::string>& args)
+{
+	for (auto& a : args)
+		cmd = remove_argument(cmd, a);
+	return cmd;
 }
 
 int Launcher::launch()
@@ -148,16 +182,14 @@ int Launcher::launch()
 
 	// write the command and he curve name in the PyBER format
 #ifdef ENABLE_MPI
-	if (!this->params_common.pyber.empty() && this->params_common.mpi_rank == 0)
-#else
-	if (!this->params_common.pyber.empty())
+	if (this->params_common.mpi_rank == 0)
 #endif
+	if (!this->params_common.meta.empty())
 	{
-		stream << "Run command:"            << std::endl;
-		stream << cmd_line                  << std::endl;
-		stream << "Curve name:"             << std::endl;
-		stream << this->params_common.pyber << std::endl;
-		stream << "Trace:"                  << std::endl;
+		stream << "[metadata]" << std::endl;
+		stream << "command=" << remove_argument(cmd_line, {"--sim-meta", "-t", "--ter-freq"}) << std::endl;
+		stream << "title=" << this->params_common.meta << std::endl;
+		stream << std::endl << "[trace]" << std::endl;
 	}
 
 	if (this->params_common.display_legend)
