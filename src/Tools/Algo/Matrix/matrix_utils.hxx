@@ -24,7 +24,7 @@ Full_matrix<T> sparse_to_full(const Sparse_matrix& sparse)
 }
 
 template <typename T>
-static Sparse_matrix full_to_sparse(const Full_matrix<T>& full)
+Sparse_matrix full_to_sparse(const Full_matrix<T>& full)
 {
 	auto sparse = Sparse_matrix::zero(full.get_n_rows(), full.get_n_cols());
 
@@ -62,6 +62,8 @@ Full_matrix<T> rgemm(const Full_matrix<T>& A, const Full_matrix<T>& B)
 
 			C[l][n] = sum;
 		}
+
+	return C;
 }
 
 template <typename T>

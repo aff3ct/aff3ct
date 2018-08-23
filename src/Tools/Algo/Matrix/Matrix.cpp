@@ -81,9 +81,59 @@ void Matrix
 }
 
 
+
+bool Matrix
+::is_of_way(Way w) const noexcept
+{
+	return get_way() == w;
+}
+
+void Matrix
+::is_of_way_throw(Way w) const
+{
+	if (!is_of_way(w))
+	{
+		std::stringstream message;
+		message << "This matrix way ('" << way_to_str(get_way()) << "') is not same as the given checked one ('"
+				<< way_to_str(w) << "').";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+
+
+std::string Matrix
+::way_to_str(Way w)
+{
+	std::string str;
+
+	switch(w)
+	{
+		case Way::HORIZONTAL:
+			str = "HORIZONTAL";
+			break;
+		case Way::VERTICAL:
+			str = "VERTICAL";
+			break;
+	}
+
+	if (str.empty()) // this 'if' is a test outside the switch case (instead of default) to keep the compiler check that all
+		// cases of 'Way' are well represented.
+	{
+		std::stringstream message;
+		message << "The way 'w' does not represent a matrix way ('w' = " << (short)w << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return str;
+}
+
+
+
+
+
 std::ostream& operator<<(std::ostream& os, const Matrix& sm)
 {
 	sm.print(0, os);
 	return os;
 }
-

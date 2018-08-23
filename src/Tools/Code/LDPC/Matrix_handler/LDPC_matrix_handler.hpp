@@ -72,6 +72,7 @@ public:
 	 * Return also the information bits positions in the returned G matrix.
 	 */
 	static Sparse_matrix transform_H_to_G(const Sparse_matrix& H, Positions_vector& info_bits_pos);
+	static LDPC_matrix   transform_H_to_G(const LDPC_matrix&   H, Positions_vector& info_bits_pos);
 
 	/*
 	 * integrate an interleaver inside the matrix to avoid this step.
@@ -87,7 +88,7 @@ public:
 	 * old_cols_pos[j] == info_bits_pos[i]
 	 */
 	static Positions_vector interleave_info_bits_pos(const Positions_vector& info_bits_pos,
-	                                                      Positions_vector& old_cols_pos);
+	                                                       Positions_vector& old_cols_pos);
 
 	/*
 	 * inverse H2 (H = [H1 H2] with size(H2) = M x M) to allow encoding with p = H1 x inv(H2) x u
@@ -97,12 +98,11 @@ public:
 
 	/*
 	 * \brief Compute a G.H to check if result is a null vector
+	 *        H and G can be permuted, the function handle their order
 	 * \return true if G.H == 0
 	 */
-	static bool check_GH(Sparse_matrix H, Sparse_matrix G);
-
-protected :
-	static void transform_H_to_G(LDPC_matrix& mat, Positions_vector& info_bits_pos);
+	static bool check_GH(const Sparse_matrix& H, const Sparse_matrix& G);
+	static bool check_GH(const LDPC_matrix&   H, const LDPC_matrix&   G);
 };
 }
 }

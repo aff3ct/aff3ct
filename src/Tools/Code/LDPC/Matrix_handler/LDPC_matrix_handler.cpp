@@ -173,37 +173,38 @@ bool LDPC_matrix_handler
 Sparse_matrix LDPC_matrix_handler
 ::transform_H_to_G(const Sparse_matrix& H, Positions_vector& info_bits_pos)
 {
-	auto Ht = H.turn(Matrix::Way::HORIZONTAL);
-	LDPC_matrix mat = sparse_to_full<LDPC_matrix::value_type>(Ht);
+	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
+	LDPC_matrix Hf = sparse_to_full<LDPC_matrix::value_type>(H);
 
-	LDPC_matrix_handler::transform_H_to_G(mat, info_bits_pos);
+	auto Gf = LDPC_matrix_handler::transform_H_to_G(Hf, info_bits_pos);
 
-	return full_to_sparse(mat);
+	return full_to_sparse(Gf);
 }
 
-void LDPC_matrix_handler
-::transform_H_to_G(LDPC_matrix& mat, Positions_vector& info_bits_pos)
+LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
+::transform_H_to_G(const LDPC_matrix& H, Positions_vector& info_bits_pos)
 {
-	mat.self_turn(Matrix::Way::HORIZONTAL);
+	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
+	auto G = H;
 
-	auto M = mat.get_n_rows();
-	auto N = mat.get_n_cols();
+	auto M = G.get_n_rows();
+	auto N = G.get_n_cols();
 	auto K = N - M;
 
 	Positions_vector swapped_cols;
-	LDPC_matrix_handler::form_diagonal(mat, swapped_cols);
-	LDPC_matrix_handler::form_identity(mat);
+	LDPC_matrix_handler::form_diagonal(G, swapped_cols);
+	LDPC_matrix_handler::form_identity(G);
 
 	// erase the just created M*M identity in the left part of H and add the K*K identity below
-	mat.self_resize(N, K, Matrix::Origin::TOP_RIGHT);
+	G.self_resize(N, K, Matrix::Origin::TOP_RIGHT);
 	for (auto i = M; i < N; i++) // Add rising diagonal identity at the end
-		mat[i][i - M] = 1;
+		G[i][i - M] = 1;
 
 	// G is now VERTICAL
 
 	// Re-organization: get G
 	for (auto l = (swapped_cols.size() / 2); l > 0; l--)
-		std::swap(mat[swapped_cols[l*2-2]], mat[swapped_cols[l*2-1]]);
+		std::swap(G[swapped_cols[l*2-2]], G[swapped_cols[l*2-1]]);
 
 	// return info bits positions
 	info_bits_pos.resize(K);
@@ -215,6 +216,11 @@ void LDPC_matrix_handler
 		std::swap(bits_pos[swapped_cols[l*2-2]], bits_pos[swapped_cols[l*2-1]]);
 
 	std::copy(bits_pos.begin() + M, bits_pos.end(), info_bits_pos.begin());
+
+	if (!check_GH(H, G))
+		throw runtime_error(__FILE__, __LINE__, __func__, "G and H do not fit (G*H != 0).");
+
+	return G;
 }
 
 void LDPC_matrix_handler
@@ -358,7 +364,6 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 {
 	using V = LDPC_matrix::value_type;
 
-
 	auto H = _H.turn(Matrix::Way::HORIZONTAL);
 
 	auto M = H.get_n_rows();
@@ -450,18 +455,46 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 }
 
 bool LDPC_matrix_handler
-::check_GH(Sparse_matrix H, Sparse_matrix G)
+::check_GH(const Sparse_matrix& H, const Sparse_matrix& G)
 {
-	G.self_turn(Matrix::Way::HORIZONTAL);
-	H.self_turn(Matrix::Way::HORIZONTAL);
-
 	auto Gf = sparse_to_full<uint8_t>(G);
 	auto Hf = sparse_to_full<uint8_t>(H);
-	auto GH = rgemmt(Gf, Hf);
 
-	assert(GH.get_n_rows() == G.get_n_rows());
-	assert(GH.get_n_cols() == H.get_n_rows());
+	return check_GH(Hf, Gf);
+}
+
+bool LDPC_matrix_handler
+::check_GH(const LDPC_matrix& H, const LDPC_matrix& G)
+{
+	LDPC_matrix GH;
+
+	switch(H.get_way())
+	{
+		case Matrix::Way::HORIZONTAL:
+			switch(G.get_way())
+			{
+				case Matrix::Way::HORIZONTAL:
+					GH = rgemmt(H, G);
+				break;
+				case Matrix::Way::VERTICAL:
+					GH = rgemm(H, G);
+				break;
+			}
+		break;
+		case Matrix::Way::VERTICAL:
+			switch(G.get_way())
+			{
+				case Matrix::Way::HORIZONTAL:
+					GH = rgemm(G, H);
+				break;
+				case Matrix::Way::VERTICAL:
+					throw runtime_error(__FILE__, __LINE__, __func__, "G and H can't be both in VERTICAL way.");
+				break;
+			}
+		break;
+	}
 
 	modulo2(GH);
+
 	return all_zeros(GH);
 }

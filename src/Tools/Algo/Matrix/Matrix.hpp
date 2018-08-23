@@ -18,6 +18,7 @@ public:
 		HORIZONTAL, // meaning longest side depicts columns,
 		VERTICAL    // meaning longest side depicts rows
 	};
+	static std::string way_to_str(Way w);
 
 	enum class Sort
 	{
@@ -119,6 +120,11 @@ public:
 	 * 'transpose' allow the print in its transposed view
 	 */
 	virtual void print(bool transpose = false, std::ostream& os = std::cout) const = 0;
+
+
+	bool is_of_way      (Way w) const noexcept;
+	void is_of_way_throw(Way w) const;
+
 
 private:
 	size_t n_rows;
