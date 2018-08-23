@@ -24,8 +24,8 @@ SC_BFER_std<B,R,Q>
 		                                                            "monitoring.");
 
 	if (params_BFER_std.mutinfo)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the mututal
-		                                                             information computation.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the mututal"
+		                                                            "information computation.");
 }
 
 template <typename B, typename R, typename Q>
