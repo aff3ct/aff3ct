@@ -52,7 +52,7 @@ Monitor_reduction_MPI<M>
 
 template <class M>
 void Monitor_reduction_MPI<M>
-::_reduce(bool fully, bool stop_simu)
+::_reduce(bool fully)
 {
 	fully = false;
 
