@@ -60,7 +60,7 @@ public:
 	 *
 	 * \param stream: the stream to print the legend.
 	 */
-	void legend(std::ostream &stream) const;
+	void legend(std::ostream &stream = std::cout) const;
 
 protected:
 	virtual void report(std::ostream &stream = std::cout, bool final = false);

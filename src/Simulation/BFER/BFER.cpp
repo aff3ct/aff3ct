@@ -221,21 +221,15 @@ void BFER<B,R,Q>
 		}
 		catch (std::exception const& e)
 		{
-			tools::Terminal::stop();
 			module::Monitor_reduction::is_done_all(true, true); // final reduction
 
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
 
 			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 			this->simu_error = true;
-		}
 
-
-		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
-		    !this->monitor_er_red->fe_limit_achieved() &&
-		    (this->monitor_er_red->frame_limit_achieved() || this->stop_time_reached()))
 			tools::Terminal::stop();
-
+		}
 
 
 #ifdef ENABLE_MPI
@@ -264,6 +258,12 @@ void BFER<B,R,Q>
 				std::cout << "#" << std::endl;
 			}
 		}
+
+		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
+		    !this->monitor_er_red->fe_limit_achieved() &&
+		    (this->monitor_er_red->frame_limit_achieved() || this->stop_time_reached()))
+			tools::Terminal::stop();
+
 
 		if (params_BFER.mnt_er->err_hist != -1)
 		{
