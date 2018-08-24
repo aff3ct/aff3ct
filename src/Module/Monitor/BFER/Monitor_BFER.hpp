@@ -36,6 +36,7 @@ private:
 
 	Attributes vals;
 	tools::Histogram<int> err_hist; // the error histogram record
+	bool err_hist_activated;
 
 	std::vector<std::function<void(unsigned, int )>> callbacks_fe;
 	std::vector<std::function<void(          void)>> callbacks_check;
@@ -107,7 +108,9 @@ public:
 	unsigned long long    get_n_be                () const;
 	float                 get_fer                 () const;
 	float                 get_ber                 () const;
+
 	tools::Histogram<int> get_err_hist            () const;
+	void activate_err_histogram(bool val);
 
 	virtual void add_handler_fe               (std::function<void(unsigned, int )> callback);
 	virtual void add_handler_check            (std::function<void(          void)> callback);

@@ -16,7 +16,7 @@ Monitor_BFER<B>
 ::Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames,
                const bool count_unknown_values, const int n_frames)
 : Monitor(n_frames), K(K), max_fe(max_fe), max_n_frames(max_n_frames),
-  count_unknown_values(count_unknown_values), err_hist(0)
+  count_unknown_values(count_unknown_values), err_hist(0), err_hist_activated(false)
 {
 	const std::string name = "Monitor_BFER";
 	this->set_name(name);
@@ -143,7 +143,8 @@ int Monitor_BFER<B>
 		vals.n_be += bit_errors_count;
 		vals.n_fe ++;
 
-		err_hist.add_value(bit_errors_count);
+		if (err_hist_activated)
+			err_hist.add_value(bit_errors_count);
 
 		for (auto& c : this->callbacks_fe)
 			c(bit_errors_count, frame_id);
@@ -263,6 +264,13 @@ template<typename B>
 tools::Histogram<int> Monitor_BFER<B>::get_err_hist() const
 {
 	return err_hist;
+}
+
+template<typename B>
+void Monitor_BFER<B>
+::activate_err_histogram(bool val)
+{
+	err_hist_activated = val;
 }
 
 

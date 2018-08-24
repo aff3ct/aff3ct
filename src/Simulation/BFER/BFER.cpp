@@ -344,7 +344,10 @@ module::Monitor_BFER<B>* BFER<B,R,Q>
 {
 	bool count_unknown_values = params_BFER.noise->type == "EP";
 
-	return params_BFER.mnt_er->build<B>(count_unknown_values);
+	auto mnt = params_BFER.mnt_er->build<B>(count_unknown_values);
+	mnt->activate_err_histogram(params_BFER.mnt_er->err_hist != -1);
+
+	return mnt;
 }
 
 template <typename B, typename R, typename Q>
