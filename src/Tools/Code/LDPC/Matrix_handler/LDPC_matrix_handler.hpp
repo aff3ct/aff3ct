@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <functional>
 #include <numeric>
 #include <string>
 #include <mipp.h>
@@ -16,8 +17,9 @@ namespace tools
 struct LDPC_matrix_handler
 {
 public:
-	using LDPC_matrix = Full_matrix<int8_t>;
-	using Positions_vector = std::vector<uint32_t>;
+	using LDPC_matrix           = Full_matrix<int8_t>;
+	using Positions_vector      = std::vector<uint32_t>;
+	using Positions_pair_vector = std::vector<std::pair<size_t,size_t>>;
 
 	enum class Matrix_format : int8_t {ALIST, QC};
 
@@ -52,19 +54,17 @@ public:
 	static bool check_info_pos(const Positions_vector& info_bits_pos, int K, int N, bool throw_when_wrong = true);
 
 	/*
-	 * Reorder rows and columns to create a diagonal of binary ones on the left part of the matrix.
+	 * \brief Reorder rows and columns to create a diagonal of binary ones from the given origin of the matrix.
 	 * Matrix is turned in Horizontal way
-	 * At the end, the left part of the matrix does not necessary form the identity, but includes it.
-	 * swapped_cols is completed each time with couple of positions of the two swapped columns.
-	 * A column might be swapped several times.
+	 * \return swapped columns positions pairs. Warning, a column might be swapped several times.
 	 */
-	static void form_diagonal(LDPC_matrix& mat, Positions_vector& swapped_cols);
+	static Positions_pair_vector form_diagonal(LDPC_matrix& mat, Matrix::Origin o = Matrix::Origin::TOP_LEFT);
 
 	/*
 	 * Reorder rows and columns to create an identity of binary ones on the left part of the matrix.
-	 * Matrix is turned in Horizontal way
+	 * This function need you call first form_diagonal().
 	 */
-	static void form_identity(LDPC_matrix& mat);
+	static void form_identity(LDPC_matrix& mat, Matrix::Origin o = Matrix::Origin::TOP_LEFT);
 
 	/*
 	 * Compute a G matrix related to the given H matrix.

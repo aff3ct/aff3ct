@@ -191,9 +191,9 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 	auto N = G.get_n_cols();
 	auto K = N - M;
 
-	Positions_vector swapped_cols;
-	LDPC_matrix_handler::form_diagonal(G, swapped_cols);
-	LDPC_matrix_handler::form_identity(G);
+	auto swapped_cols = LDPC_matrix_handler::form_diagonal(G, Matrix::Origin::TOP_LEFT);
+	LDPC_matrix_handler::form_identity(G, Matrix::Origin::TOP_LEFT);
+
 
 	// erase the just created M*M identity in the left part of H and add the K*K identity below
 	G.self_resize(N, K, Matrix::Origin::TOP_RIGHT);
@@ -203,8 +203,8 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 	// G is now VERTICAL
 
 	// Re-organization: get G
-	for (auto l = (swapped_cols.size() / 2); l > 0; l--)
-		std::swap(G[swapped_cols[l*2-2]], G[swapped_cols[l*2-1]]);
+	for (auto l = swapped_cols.size(); l > 0; l--)
+		std::swap(G[swapped_cols[l-1].first], G[swapped_cols[l-1].second]);
 
 	// return info bits positions
 	info_bits_pos.resize(K);
@@ -212,87 +212,360 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 	Positions_vector bits_pos(N);
 	std::iota(bits_pos.begin(), bits_pos.end(), 0);
 
-	for (size_t l = 1; l <= (swapped_cols.size() / 2); l++)
-		std::swap(bits_pos[swapped_cols[l*2-2]], bits_pos[swapped_cols[l*2-1]]);
+	for (auto& p : swapped_cols)
+		std::swap(bits_pos[p.first], bits_pos[p.second]);
 
 	std::copy(bits_pos.begin() + M, bits_pos.end(), info_bits_pos.begin());
 
 	return G;
+
+
+
+
+	// // erase the just created M*M identity in the right part of H
+	// G.self_resize(M, K, Matrix::Origin::TOP_LEFT);
+
+	// // transpose G
+	// G.self_transpose();
+
+	// // add the K*K falling diagonal identity on the left
+	// G.self_resize(K, N, Matrix::Origin::TOP_RIGHT);
+	// for (size_t i = 0; i < K; i++)
+	// 	G[i][i] = 1;
+
+	// // G is now HORIZONTAL
+
+	// // Re-organization: get G
+	// // TODO: transpose G
+	// // for (auto& p : swapped_cols)
+	// // 	std::swap(G[p.first], G[p.second]);
+
+	// // return info bits positions
+	// info_bits_pos.resize(K);
+
+	// // Positions_vector bits_pos(N);
+	// // std::iota(bits_pos.begin(), bits_pos.end(), 0);
+
+	// // for (size_t l = 1; l <= (swapped_cols.size() / 2); l++)
+	// // 	std::swap(bits_pos[swapped_cols[l*2-2]], bits_pos[swapped_cols[l*2-1]]);
+
+	// // std::copy(bits_pos.begin() + M, bits_pos.end(), info_bits_pos.begin());
+	// std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+
+	// return G;
 }
 
-void LDPC_matrix_handler
-::form_diagonal(LDPC_matrix& mat, Positions_vector& swapped_cols)
+void swap_columns(LDPC_matrix_handler::LDPC_matrix& mat, size_t idx1, size_t idx2)
+{
+	auto n_row = mat.get_n_rows();
+	std::vector<LDPC_matrix_handler::LDPC_matrix::value_type> tmp(n_row);
+	for (size_t l = 0; l < n_row; l++) tmp[l]       = mat[l][idx1];
+	for (size_t l = 0; l < n_row; l++) mat[l][idx1] = mat[l][idx2];
+	for (size_t l = 0; l < n_row; l++) mat[l][idx2] = tmp[l];
+}
+
+LDPC_matrix_handler::Positions_pair_vector LDPC_matrix_handler
+::form_diagonal(LDPC_matrix& mat, Matrix::Origin o)
 {
 	mat.self_turn(Matrix::Way::HORIZONTAL);
 
 	auto n_row = mat.get_n_rows();
 	auto n_col = mat.get_n_cols();
 
-	size_t i = 0;
-	bool found = false;
+	Positions_pair_vector swapped_cols;
 
-	while (i < n_row)
+	switch (o)
 	{
-		if (mat[i][i])
-		{
-			for (auto j = i +1; j < n_row; j++)
- 				if (mat[j][i])
-					std::transform(mat[j].begin(), mat[j].end(),
-					               mat[i].begin(), mat[j].begin(),
-					               std::not_equal_to<LDPC_matrix::value_type>());
-		}
-		else
-		{
-			for (auto j = i +1; j < n_row; j++) // find an other row which is good
-				if (mat[j][i])
+		case Matrix::Origin::TOP_LEFT:
+			for (size_t i = 0; i < n_row; i++)
+			{
+				bool found = mat[i][i];
+
+				if (!found)
 				{
-					std::swap(mat[i], mat[j]);
-					i--;
-					found = true;
-					break;
+					// try to find an other row which as a 1 in column i
+					for (auto j = i +1; j < n_row; j++)
+						if (mat[j][i])
+						{
+							std::swap(mat[i], mat[j]);
+							found = true;
+							break;
+						}
+
+
+					if (!found) // no other row after (i+1) of the same column i with a 1
+					{
+						for (auto j = i +1; j < n_col; j++) // find an other column which is good on row i
+						{
+							if (mat[i][j])
+							{
+								swapped_cols.push_back(std::make_pair(i,j));
+
+								swap_columns(mat, i, j);
+
+								found = true;
+								break;
+							}
+						}
+					}
 				}
 
-			if (!found) // if does not found
-				for (auto j = i +1; j < n_col; j++) // find an other column which is good
-					if (mat[i][j])
+				if (found)
+				{
+					// there is a 1 on row i of the column i
+					// then remove any 1 of the column i from the row (i+1)
+					for (auto j = i +1; j < n_row; j++)
+		 				if (mat[j][i])
+							std::transform(mat[i].begin() + i, mat[i].end(), //ref
+							               mat[j].begin() + i, mat[j].begin() + i,
+							               std::not_equal_to<LDPC_matrix::value_type>());
+				}
+				else
+				{
+					// the row is the null vector then delete it
+					mat.erase_row(i);
+					i--;
+					n_row--;
+				}
+			}
+		break;
+		case Matrix::Origin::TOP_RIGHT:
+			for (size_t i = 0; i < n_row; i++)
+			{
+				auto ref_col = n_col - i - 1;
+				bool found = mat[i][ref_col];
+
+				if (!found)
+				{
+					// try to find an other row which as a 1 in column ref_col
+					for (auto j = i +1; j < n_row; j++)
+						if (mat[j][ref_col])
+						{
+							std::swap(mat[i], mat[j]);
+							found = true;
+							break;
+						}
+
+
+					if (!found) // no other row after (i+1) of the same column ref_col with a 1
 					{
-						swapped_cols.push_back(i);
-						swapped_cols.push_back(j);
+						for (auto j = ref_col; j > 0; j--) // find an other column which is good on row i
+						{
+							auto c = j -1;
+							if (mat[i][c])
+							{
+								swapped_cols.push_back(std::make_pair(i,c));
 
-						// swap the columns
-						std::vector<int8_t> column_save(n_row);
-						for (size_t l = 0; l < n_row; l++) column_save[l] = (mat[l][i]);
-						for (size_t l = 0; l < n_row; l++) mat[l][i] = mat[l][j];
-						for (size_t l = 0; l < n_row; l++) mat[l][j] = column_save[l];
+								swap_columns(mat, i, c);
 
-						i--;
-						found = true;
-						break;
+								found = true;
+								break;
+							}
+						}
+					}
+				}
+
+				if (found)
+				{
+					// there is a 1 on row i of the column ref_col
+					// then remove any 1 of the column ref_col from the row (i+1)
+					for (auto j = i +1; j < n_row; j++)
+		 				if (mat[j][ref_col])
+							std::transform(mat[i].begin(), mat[i].begin() + ref_col + 1, //ref
+							               mat[j].begin(), mat[j].begin(),
+							               std::not_equal_to<LDPC_matrix::value_type>());
+				}
+				else
+				{
+					// the row is the null vector then delete it
+					mat.erase_row(i);
+					i--;
+					n_row--;
+				}
+			}
+		break;
+		case Matrix::Origin::BOTTOM_LEFT:
+			for (auto i = n_row; i > 0; i--)
+			{
+				auto ref_row = i - 1;
+				auto ref_col = n_row - ref_row - 1;
+				bool found = mat[ref_row][ref_col];
+
+				if (!found)
+				{
+					// try to find an other row which as a 1 in column ref_col
+					for (auto j = ref_row; j > 0; j--)
+					{
+						auto tested_row = j - 1;
+						if (mat[tested_row][ref_col])
+						{
+							std::swap(mat[ref_row], mat[tested_row]);
+							found = true;
+							break;
+						}
 					}
 
-			if (!found) // if does not found again this mean that the row is the null vector
-			{
-				mat.erase_row(i);
-				i--;
-				n_row--;
+
+					if (!found) // no other row before (ref_row-1) of the same column ref_col with a 1
+					{
+						for (auto j = ref_col +1; j < n_col; j++) // find an other column which is good on row ref_row
+						{
+							if (mat[ref_row][j])
+							{
+								swapped_cols.push_back(std::make_pair(ref_col,j));
+
+								swap_columns(mat, ref_col, j);
+
+								found = true;
+								break;
+							}
+						}
+					}
+				}
+
+				if (found)
+				{
+					// there is a 1 on row ref_row of the column ref_col
+					// then remove any 1 of the column ref_col from the row (ref_row-1)
+					for (auto j = ref_row; j > 0; j--)
+					{
+						auto tested_row = j - 1;
+		 				if (mat[tested_row][ref_col])
+							std::transform(mat[ref_row   ].begin() + ref_col, mat[ref_row   ].end(), //ref
+							               mat[tested_row].begin() + ref_col, mat[tested_row].begin() + ref_col,
+							               std::not_equal_to<LDPC_matrix::value_type>());
+					}
+				}
+				else
+				{
+					// the row is the null vector then delete it
+					mat.erase_row(ref_row);
+					n_row--;
+				}
 			}
-			found = false;
-		}
-		i++;
+		break;
+		case Matrix::Origin::BOTTOM_RIGHT:
+			for (auto i = n_row; i > 0; i--)
+			{
+				auto ref_row = i - 1;
+				auto ref_col = n_col - n_row + ref_row;
+				bool found = mat[ref_row][ref_col];
+
+				if (!found)
+				{
+					// try to find an other row which as a 1 in column ref_col
+					for (auto j = ref_row; j > 0; j--)
+					{
+						auto tested_row = j - 1;
+						if (mat[tested_row][ref_col])
+						{
+							std::swap(mat[ref_row], mat[tested_row]);
+							found = true;
+							break;
+						}
+					}
+
+
+					if (!found) // no other row before (ref_row-1) of the same column ref_col with a 1
+					{
+						for (auto j = ref_col; j > 0; j--) // find an other column which is good on row ref_row
+						{
+							auto tested_col = j - 1;
+							if (mat[ref_row][tested_col])
+							{
+								swapped_cols.push_back(std::make_pair(ref_col,tested_col));
+
+								swap_columns(mat, ref_col, tested_col);
+
+								found = true;
+								break;
+							}
+						}
+					}
+				}
+
+				if (found)
+				{
+					// there is a 1 on row ref_row of the column ref_col
+					// then remove any 1 of the column ref_col from the row (ref_row-1)
+					for (auto j = ref_row; j > 0; j--)
+					{
+						auto tested_row = j - 1;
+		 				if (mat[tested_row][ref_col])
+							std::transform(mat[ref_row   ].begin() + ref_col, mat[ref_row   ].end(), //ref
+							               mat[tested_row].begin() + ref_col, mat[tested_row].begin() + ref_col,
+							               std::not_equal_to<LDPC_matrix::value_type>());
+					}
+				}
+				else
+				{
+					// the row is the null vector then delete it
+					mat.erase_row(ref_row);
+					n_row--;
+				}
+			}
+		break;
 	}
+
+	return swapped_cols;
 }
 
 void LDPC_matrix_handler
-::form_identity(LDPC_matrix& mat)
+::form_identity(LDPC_matrix& mat, Matrix::Origin o)
 {
 	mat.self_turn(Matrix::Way::HORIZONTAL);
 
-	for (auto i = mat.get_n_rows() - 1 ; i > 0; i--)
-		for (auto j = i; j > 0; j--)
-			if (mat[j-1][i])
-				std::transform (mat[j-1].begin(), mat[j-1].end(),
-				                mat[i  ].begin(), mat[j-1].begin(),
-				                std::not_equal_to<LDPC_matrix::value_type>());
+	auto n_row = mat.get_n_rows();
+	auto n_col = mat.get_n_cols();
+	auto diff  = n_col - n_row;
+
+	switch (o)
+	{
+		case Matrix::Origin::TOP_LEFT:
+			for (auto c = n_row - 1; c > 0; c--)
+			{
+				auto ref_row = c;
+				for (auto r = c; r > 0; r--)
+					if (mat[r - 1][c])
+						std::transform (mat[ref_row].begin() + c, mat[ref_row].end(), // ref
+						                mat[r - 1  ].begin() + c, mat[r - 1  ].begin() + c,
+						                std::not_equal_to<LDPC_matrix::value_type>());
+			}
+		break;
+		case Matrix::Origin::TOP_RIGHT:
+			for (auto c = diff; c < (n_col - 1); c++)
+			{
+				auto ref_row = n_row - c + diff - 1;
+				for (auto r = ref_row; r > 0; r--)
+					if (mat[r - 1][c])
+						std::transform (mat[ref_row].begin(), mat[ref_row].begin() + c + 1, // ref
+						                mat[r - 1  ].begin(), mat[r - 1  ].begin(),
+						                std::not_equal_to<LDPC_matrix::value_type>());
+			}
+		break;
+		case Matrix::Origin::BOTTOM_LEFT:
+			for (auto c = n_row - 1; c > 0; c--)
+			{
+				auto ref_row = n_row - c - 1;
+				for (auto r = ref_row + 1; r < n_row; r++)
+					if (mat[r][c])
+						std::transform (mat[ref_row].begin() + c, mat[ref_row].end(), // ref
+						                mat[r      ].begin() + c, mat[r      ].begin() + c,
+						                std::not_equal_to<LDPC_matrix::value_type>());
+			}
+		break;
+		case Matrix::Origin::BOTTOM_RIGHT:
+			for (auto c = diff; c < (n_col - 1); c++)
+			{
+				auto ref_row = c - diff;
+				for (auto r = ref_row + 1; r < n_row; r++)
+					if (mat[r][c])
+						std::transform (mat[ref_row].begin(), mat[ref_row].begin() + c + 1, // ref
+						                mat[r      ].begin(), mat[r      ].begin(),
+						                std::not_equal_to<LDPC_matrix::value_type>());
+			}
+		break;
+	}
 }
 
 Sparse_matrix LDPC_matrix_handler
