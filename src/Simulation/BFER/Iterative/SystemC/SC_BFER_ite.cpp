@@ -16,8 +16,7 @@ SC_BFER_ite<B,R,Q>
 : BFER_ite<B,R,Q>(params_BFER_ite),
 
   coset_real_i(nullptr),
-
-  duplicator {nullptr, nullptr, nullptr, nullptr, nullptr},
+  duplicator(7, nullptr),
   router     (nullptr),
   predicate  (nullptr)
 {
@@ -36,6 +35,12 @@ template <typename B, typename R, typename Q>
 SC_BFER_ite<B,R,Q>
 ::~SC_BFER_ite()
 {
+	for (auto& d : this->duplicator)
+		if (d != nullptr)
+		{
+			delete d;
+			d = nullptr;
+		}
 }
 
 template <typename B, typename R, typename Q>
@@ -51,7 +56,7 @@ void SC_BFER_ite<B,R,Q>
 
 	this->monitor_er[tid]->add_handler_check([&]() -> void
 	{
-		if (this->monitor_er_red->fe_limit_achieved()) // will make the MPI communication
+		if (!this->keep_looping_noise_point()) // will make the MPI communication
 			sc_core::sc_stop();
 	});
 }
@@ -140,11 +145,11 @@ void SC_BFER_ite<B,R,Q>
 	sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
 	sc_core::sc_start(); // start simulation
 
-	for (auto i = 0; i < 7; i++)
-		if (this->duplicator[i] != nullptr)
+	for (auto& d : this->duplicator)
+		if (d != nullptr)
 		{
-			delete this->duplicator[i];
-			this->duplicator[i] = nullptr;
+			delete d;
+			d = nullptr;
 		}
 
 	delete this->router;    this->router    = nullptr;
@@ -164,11 +169,7 @@ void SC_BFER_ite<B,R,Q>
 {
 	auto &dp0 = *this->duplicator[0];
 	auto &dp1 = *this->duplicator[1];
-	auto &dp2 = *this->duplicator[2];
-	auto &dp3 = *this->duplicator[3];
-	auto &dp4 = *this->duplicator[4];
 	auto &dp5 = *this->duplicator[5];
-	auto &dp6 = *this->duplicator[6];
 
 	auto &rtr = *this->router;
 	auto &fnl = *this->funnel;
@@ -192,6 +193,10 @@ void SC_BFER_ite<B,R,Q>
 	using namespace module;
 	if (this->params_BFER_ite.coset)
 	{
+		auto &dp2 = *this->duplicator[2];
+		auto &dp3 = *this->duplicator[3];
+		auto &dp4 = *this->duplicator[4];
+
 		src.sc    [+src::tsk::generate      ].s_out [+src::sck::generate      ::U_K ](dp0                              .s_in                                  );
 		dp0                                  .s_out1                                 (mnt.sc[+mnt::tsk::check_errors  ].s_in [+mnt::sck::check_errors  ::U   ]);
 		dp0                                  .s_out2                                 (crc.sc[+crc::tsk::build         ].s_in [+crc::sck::build         ::U_K1]);
@@ -205,6 +210,7 @@ void SC_BFER_ite<B,R,Q>
 		dp3                                  .s_out2                                 (itb.sc[+itl::tsk::interleave    ].s_in [+itl::sck::interleave    ::nat ]);
 		itb.sc    [+itl::tsk::interleave    ].s_out [+itl::sck::interleave    ::itl ](mdm.sc[+mdm::tsk::modulate      ].s_in [+mdm::sck::modulate      ::X_N1]);
 		if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos) {
+			auto &dp6 = *this->duplicator[6];
 			mdm.sc[+mdm::tsk::modulate      ].s_out [+mdm::sck::modulate      ::X_N2](chn.sc[+chn::tsk::add_noise_wg  ].s_in [+chn::sck::add_noise_wg  ::X_N ]);
 			chn.sc[+chn::tsk::add_noise_wg  ].s_out [+chn::sck::add_noise_wg  ::H_N ](dp6                              .s_in                                  );
 			dp6                              .s_out1                                 (mdm.sc[+mdm::tsk::demodulate_wg ].s_in [+mdm::sck::demodulate_wg ::H_N ]);
@@ -253,6 +259,7 @@ void SC_BFER_ite<B,R,Q>
 		enc.sc    [+enc::tsk::encode        ].s_out [+enc::sck::encode        ::X_N ](itb.sc[+itl::tsk::interleave    ].s_in [+itl::sck::interleave    ::nat ]);
 		itb.sc    [+itl::tsk::interleave    ].s_out [+itl::sck::interleave    ::itl ](mdm.sc[+mdm::tsk::modulate      ].s_in [+mdm::sck::modulate      ::X_N1]);
 		if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos) {
+			auto &dp6 = *this->duplicator[6];
 			mdm.sc[+mdm::tsk::modulate      ].s_out [+mdm::sck::modulate      ::X_N2](chn.sc[+chn::tsk::add_noise_wg  ].s_in [+chn::sck::add_noise_wg  ::X_N ]);
 			chn.sc[+chn::tsk::add_noise_wg  ].s_out [+chn::sck::add_noise_wg  ::H_N ](dp6                              .s_in                                  );
 			dp6                              .s_out1                                 (mdm.sc[+mdm::tsk::demodulate_wg ].s_in [+mdm::sck::demodulate_wg ::H_N ]);

@@ -22,7 +22,7 @@ class SC_BFER_ite : public BFER_ite<B,R,Q>
 protected:
 	module::Coset<B,Q> *coset_real_i;
 
-	tools::SC_Duplicator *duplicator[7];
+	std::vector<tools::SC_Duplicator*> duplicator;
 	tools::SC_Router     *router;
 	tools::SC_Funnel     *funnel;
 	tools::SC_Predicate  *predicate;
