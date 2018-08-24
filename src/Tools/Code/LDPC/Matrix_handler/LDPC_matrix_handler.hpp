@@ -16,7 +16,7 @@ namespace tools
 struct LDPC_matrix_handler
 {
 public:
-	using LDPC_matrix = Full_matrix<uint8_t>;
+	using LDPC_matrix = Full_matrix<int8_t>;
 	using Positions_vector = std::vector<uint32_t>;
 
 	enum class Matrix_format : int8_t {ALIST, QC};

@@ -13,12 +13,12 @@ namespace aff3ct
 namespace tools
 {
 /*
- * \param T must be uint8_t or uint16_t or uint32_t or uint64_t
+ * \param T must be int8_t or int16_t or int32_t or int64_t
  * Warning ! Never call modification methods (resize, erase, push_back and so on), on the second dimension of the Full_matrix
  *   always pass through Full_matrix methods, else you may obtain runtime errors
  */
 
-template <typename T = uint32_t>
+template <typename T = int32_t>
 class Full_matrix : public Matrix, public std::vector<std::vector<T>>
 {
 public:

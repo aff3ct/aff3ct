@@ -354,8 +354,8 @@ void Full_matrix<T>
 }
 
 // ==================================================================================== explicit template instantiation
-template class aff3ct::tools::Full_matrix< uint8_t>;
-template class aff3ct::tools::Full_matrix<uint16_t>;
-template class aff3ct::tools::Full_matrix<uint32_t>;
-template class aff3ct::tools::Full_matrix<uint64_t>;
+template class aff3ct::tools::Full_matrix< int8_t>;
+template class aff3ct::tools::Full_matrix<int16_t>;
+template class aff3ct::tools::Full_matrix<int32_t>;
+template class aff3ct::tools::Full_matrix<int64_t>;
 // ==================================================================================== explicit template instantiation
