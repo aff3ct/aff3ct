@@ -98,6 +98,7 @@ void Decoder_turbo_product::parameters
 	args.erase({pi+"-fra", "F"});
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "CP");
+	tools::add_options(args.at({p+"-implem"   }), 0, "FAST");
 
 
 	args.add(
@@ -108,8 +109,15 @@ void Decoder_turbo_product::parameters
 	args.add(
 		{p+"-alpha"},
 		tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)),
-		"extrinsic coefficients, one by half iteration (so twice more than number of iterations)."
+		"weighting factor, one by half iteration (so twice more than number of iterations)."
 		" If not enough given values, then automatically extends the last to all iterations.");
+
+	args.add(
+		{p+"-beta"},
+		tools::List<float,Real_splitter>(tools::Real(tools::Positive()), tools::Length(1)),
+		"reliability factor, one by half iteration (so twice more than number of iterations)."
+		" If not enough given values, then automatically extends the last to all iterations."
+		" If not given, then computes beta dynamically from the least reliable position metrics.");
 
 	args.add(
 		{p+"-p"},
@@ -177,6 +185,16 @@ void Decoder_turbo_product::parameters
 		this->alpha.resize(this->n_ite*2, 0.5f);
 	}
 
+	if(vals.exist({p+"-beta"}))
+	{
+		this->beta = vals.to_list<float>({p+"-beta"});
+		this->beta.resize(this->n_ite*2, beta.back());
+	}
+	else
+	{
+		this->beta.clear();
+	}
+
 
 	if(vals.exist({p+"-cp-coef"}))
 		this->cp_coef = vals.to_list<float>({p+"-cp-coef"});
@@ -231,6 +249,17 @@ void Decoder_turbo_product::parameters
 
 		headers[p].push_back(std::make_pair("alpha", alpha_str.str()));
 
+		if (this->beta.size())
+		{
+			std::stringstream beta_str;
+			beta_str << "{";
+			for (unsigned i = 0; i < this->beta.size(); i++)
+				beta_str << this->beta[i] << (i == this->beta.size()-1 ?"":", ");
+			beta_str << "}";
+
+			headers[p].push_back(std::make_pair("beta", beta_str.str()));
+		}
+
 		std::stringstream cp_coeff_str;
 		cp_coeff_str << "{";
 		for (unsigned i = 0; i < this->cp_coef.size(); i++)
@@ -267,7 +296,7 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
 		if (this->type == "CP")
 		{
 			if (this->implem == "STD")
-				return new module::Decoder_turbo_product<B,Q>(n_ite, alpha, itl, cp_r, cp_c, n_frames);
+				return new module::Decoder_turbo_product<B,Q>(n_ite, alpha, itl, cp_r, cp_c, beta, n_frames);
 		}
 	}
 

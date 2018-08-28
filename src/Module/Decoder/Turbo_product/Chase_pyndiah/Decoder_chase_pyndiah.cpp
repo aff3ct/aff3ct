@@ -45,7 +45,8 @@ Decoder_chase_pyndiah<B,R>
   hard_Y_N                  (this->N                                                                 ),
   test_vect                 (n_test_vectors * hard_Y_N.size()                                        ),
   metrics                   (n_test_vectors                                                          ),
-  is_wrong                  (n_test_vectors                                                          )
+  is_wrong                  (n_test_vectors                                                          ),
+  beta_is_set               (false                                                                   )
 {
 	const std::string name = "Decoder_chase_pyndiah";
 	this->set_name(name);
@@ -109,6 +110,28 @@ const std::vector<uint32_t>& Decoder_chase_pyndiah<B,R>
 ::get_info_bits_pos()
 {
 	return enc.get_info_bits_pos();
+}
+
+template <typename B, typename R>
+void Decoder_chase_pyndiah<B,R>
+::set_beta(R b)
+{
+	if (b < (R)0.)
+	{
+		std::stringstream message;
+		message << "beta value 'b' has to be positive or null ('b' = " << b << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	beta_is_set = true;
+	beta = b;
+}
+
+template <typename B, typename R>
+void Decoder_chase_pyndiah<B,R>
+::clear_beta()
+{
+	beta_is_set = false;
 }
 
 template <typename B, typename R>
@@ -359,16 +382,22 @@ void Decoder_chase_pyndiah<B,R>
 {
 	const auto & DW = competitors.front(); // the Decided Word
 
-	// compute beta, the sum of the least reliable position reliabilities in the decided word
-	R beta = 0;
-	int max_sum = cp_coef[4] ? std::min((int)cp_coef[4], n_least_reliable_positions) : n_least_reliable_positions;
-	for (int i = 0; i < max_sum; i++)
-		beta += least_reliable_pos[i].metric;
+	R beta_applied = this->beta;
 
-	beta -= cp_coef[2] * DW.metric;
+	if (!this->beta_is_set)
+	{
+		// compute beta, the sum of the least reliable position reliabilities in the decided word
+		beta_applied = 0;
+		int max_sum = cp_coef[4] ? std::min((int)cp_coef[4], n_least_reliable_positions) : n_least_reliable_positions;
+		for (int i = 0; i < max_sum; i++)
+			beta_applied += least_reliable_pos[i].metric;
+
+		beta_applied -= cp_coef[2] * DW.metric;
+	}
+
 
 #ifndef NDEBUG_TPC
-		std::cerr << "beta = " << beta << ", DW.metric = " << DW.metric << std::endl;
+		std::cerr << "beta = " << beta_applied << ", DW.metric = " << DW.metric << std::endl;
 #endif
 
 	n_good_competitors = std::min(n_good_competitors, n_competitors); // if there is less than 'n_competitors' good competitors
@@ -393,9 +422,13 @@ void Decoder_chase_pyndiah<B,R>
 		{
 			reliability = competitors[j].metric;
 		}
+		else if (beta_is_set)
+		{
+			reliability = this->beta;
+		}
 		else // same bits for each candidates
 		{
-			reliability = beta + cp_coef[3] * std::abs(Y_N1[i]);
+			reliability = beta_applied + cp_coef[3] * std::abs(Y_N1[i]);
 			if (reliability < 0)
 				reliability = 0;
 		}

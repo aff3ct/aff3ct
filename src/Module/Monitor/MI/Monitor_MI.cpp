@@ -16,7 +16,7 @@ template <typename B, typename R>
 Monitor_MI<B,R>
 ::Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames)
 : Monitor(n_frames), N(N), max_n_trials(max_n_trials),
-  mutinfo_hist(1)
+  mutinfo_hist(1), mutinfo_hist_activated(false)
 {
 	const std::string name = "Monitor_MI";
 	this->set_name(name);
@@ -152,7 +152,8 @@ void Monitor_MI<B,R>
 	vals.MI_max = std::max(vals.MI_max, mi);
 	vals.MI_min = std::min(vals.MI_min, mi);
 
-	this->mutinfo_hist.add_value(mi);
+	if (mutinfo_hist_activated)
+		this->mutinfo_hist.add_value(mi);
 }
 
 
@@ -223,13 +224,20 @@ R Monitor_MI<B,R>
 	return vals.MI_max;
 }
 
-
-
 template<typename B, typename R>
-tools::Histogram<R> Monitor_MI<B,R>::get_mutinfo_hist() const
+tools::Histogram<R> Monitor_MI<B,R>
+::get_mutinfo_hist() const
 {
 	return this->mutinfo_hist;
 }
+
+template<typename B, typename R>
+void  Monitor_MI<B,R>
+::activate_mutinfo_histogram(bool val)
+{
+	mutinfo_hist_activated = val;
+}
+
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
