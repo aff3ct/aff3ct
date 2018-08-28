@@ -171,12 +171,12 @@ bool LDPC_matrix_handler
 }
 
 Sparse_matrix LDPC_matrix_handler
-::transform_H_to_G_sparse(const Sparse_matrix& H, Positions_vector& info_bits_pos)
+::transform_H_to_G_identity(const Sparse_matrix& H, Positions_vector& info_bits_pos)
 {
 	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
 	LDPC_matrix Hf = sparse_to_full<LDPC_matrix::value_type>(H);
 
-	auto Gf = LDPC_matrix_handler::transform_H_to_G_sparse(Hf, info_bits_pos);
+	auto Gf = LDPC_matrix_handler::transform_H_to_G_identity(Hf, info_bits_pos);
 
 	return full_to_sparse(Gf);
 }
@@ -329,7 +329,7 @@ LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::
 
 // Benjamin's version
 LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
-::transform_H_to_G_sparse(const LDPC_matrix& H, Positions_vector& info_bits_pos)
+::transform_H_to_G_identity(const LDPC_matrix& H, Positions_vector& info_bits_pos)
 {
 	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
 

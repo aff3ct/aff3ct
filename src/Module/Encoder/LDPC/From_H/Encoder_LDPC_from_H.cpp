@@ -26,8 +26,8 @@ Encoder_LDPC_from_H<B>
 
 	if (G_method == "FAST")
 		this->G = tools::LDPC_matrix_handler::transform_H_to_G_fast(this->H, this->info_bits_pos);
-	else if (G_method == "SPARSE")
-		this->G = tools::LDPC_matrix_handler::transform_H_to_G_sparse(this->H, this->info_bits_pos);
+	else if (G_method == "IDENTITY")
+		this->G = tools::LDPC_matrix_handler::transform_H_to_G_identity(this->H, this->info_bits_pos);
 	else
 	{
 		std::stringstream message;
