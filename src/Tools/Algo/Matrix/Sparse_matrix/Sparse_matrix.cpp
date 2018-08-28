@@ -114,109 +114,102 @@ void Sparse_matrix
 }
 
 void Sparse_matrix
+::parse_connections()
+{
+	this->n_connections = std::accumulate(row_to_cols.begin(), row_to_cols.end(), (size_t)0,
+	                                      [](size_t init, const std::vector<size_t>& a){ return init + a.size();});
+
+	this->rows_max_degree = std::max_element(row_to_cols.begin(), row_to_cols.end(),
+	                                         [](const std::vector<size_t>& a, const std::vector<size_t>& b){ return a.size() < b.size();})
+	                        ->size();
+	this->cols_max_degree = std::max_element(col_to_rows.begin(), col_to_rows.end(),
+	                                         [](const std::vector<size_t>& a, const std::vector<size_t>& b){ return a.size() < b.size();})
+	                        ->size();
+}
+
+void Sparse_matrix
 ::self_resize(const size_t n_rows, const size_t n_cols, Origin o)
 {
-	// const auto min_r = std::min(n_rows, get_n_rows());
-
-	// switch(o)
-	// {
-	// 	case Origin::TOP_LEFT:
-	// 	{
-	// 		values.resize(n_rows, std::vector<T>(n_cols, 0));
-	// 		for (size_t r = 0; r < min_r; r++)
-	// 			values[r].resize(n_cols, 0);
-	// 	}
-	// 	break;
-	// 	case Origin::TOP_RIGHT:
-	// 	{
-	// 		values.resize(n_rows, std::vector<T>(n_cols, 0));
-	// 		if (n_cols < get_n_cols())
-	// 		{
-	// 			auto n_erase = get_n_cols() - n_cols;
-	// 			for (size_t r = 0; r < n_rows; r++)
-	// 				values[r].erase(values[r].begin(), values[r].begin() + n_erase);
-	// 		}
-	// 		else
-	// 		{
-	// 			auto n_insert = n_cols - get_n_cols();
-	// 			for (size_t r = 0; r < min_r; r++)
-	// 				values[r].insert(values[r].begin(), n_insert, 0);
-	// 		}
-	// 	}
-	// 	break;
-	// 	case Origin::BOTTOM_LEFT:
-	// 	{
-	// 		if (n_rows < get_n_rows())
-	// 		{
-	// 			auto n_erase = get_n_rows() - n_rows;
-	// 			values.erase(values.begin(), values.begin() + n_erase);
-
-	// 			for (size_t r = 0; r < min_r; r++)
-	// 				values[r].resize(n_cols, 0);
-	// 		}
-	// 		else
-	// 		{
-	// 			auto n_insert = n_rows - get_n_rows();
-	// 			values.insert(values.begin(), n_insert, std::vector<T>(n_cols, 0));
-
-	// 			for (size_t r = n_insert; r < n_rows; r++)
-	// 				values[r].resize(n_cols, 0);
-	// 		}
-	// 	}
-	// 	break;
-	// 	case Origin::BOTTOM_RIGHT:
-	// 	{
-	// 		if (n_rows < get_n_rows())
-	// 		{
-	// 			auto n_erase = get_n_rows() - n_rows;
-	// 			values.erase(values.begin(), values.begin() + n_erase);
-
-	// 			if (n_cols < get_n_cols())
-	// 			{
-	// 				auto n_erase = get_n_cols() - n_cols;
-	// 				for (size_t r = 0; r < n_rows; r++)
-	// 					values[r].erase(values[r].begin(), values[r].begin() + n_erase);
-	// 			}
-	// 			else
-	// 			{
-	// 				auto n_insert = n_cols - get_n_cols();
-	// 				for (size_t r = 0; r < min_r; r++)
-	// 					values[r].insert(values[r].begin(), n_insert, 0);
-	// 			}
-	// 		}
-	// 		else
-	// 		{
-	// 			auto n_insert = n_rows - get_n_rows();
-	// 			values.insert(values.begin(), n_insert, std::vector<T>(n_cols, 0));
-
-	// 			if (n_cols < get_n_cols())
-	// 			{
-	// 				auto n_erase = get_n_cols() - n_cols;
-	// 				for (size_t r = n_insert; r < n_rows; r++)
-	// 					values[r].erase(values[r].begin(), values[r].begin() + n_erase);
-	// 			}
-	// 			else
-	// 			{
-	// 				auto n_insert = n_cols - get_n_cols();
-	// 				for (size_t r = n_insert; r < min_r; r++)
-	// 					values[r].insert(values[r].begin(), n_insert, 0);
-	// 			}
-	// 		}
-	// 	}
-	// 	break;
-	// }
-
-	// Matrix::self_resize(n_rows, n_cols);
-
-	// parse_connections();
+	*this = this->resize(n_rows, n_rows, o);
 }
 
 Sparse_matrix Sparse_matrix
 ::resize(const size_t n_rows, const size_t n_cols, Origin o) const
 {
-	Sparse_matrix resized(*this);
+	Sparse_matrix resized(n_rows, n_cols);
 
-	resized.self_resize(n_rows, n_cols, o);
+	const auto min_r = std::min(n_rows, get_n_rows());
+	const auto min_c = std::min(n_cols, get_n_cols());
+	const auto diff_r = get_n_rows() - min_r;
+	const auto diff_c = get_n_cols() - min_c;
+	const auto diff_n_rows = (int)n_rows - (int)get_n_rows();
+	const auto diff_n_cols = (int)n_cols - (int)get_n_cols();
+
+	switch(o)
+	{
+		case Origin::TOP_LEFT:
+		{
+			for (size_t c = 0; c < min_c; c++)
+				for (size_t r = 0; r < col_to_rows[c].size(); r++)
+				{
+					const auto col_index = c;
+					const auto row_index = col_to_rows[c][r];
+					if (row_index < n_rows)
+					{
+						resized.row_to_cols[row_index].push_back(col_index);
+						resized.col_to_rows[col_index].push_back(row_index);
+					}
+				}
+		}
+		break;
+		case Origin::TOP_RIGHT:
+		{
+			for (size_t c = diff_c; c < get_n_cols(); c++)
+				for (size_t r = 0; r < col_to_rows[c].size(); r++)
+				{
+					const auto col_index = diff_n_cols + c;
+					const auto row_index = col_to_rows[c][r];
+					if (row_index < n_rows)
+					{
+						resized.row_to_cols[row_index].push_back(col_index);
+						resized.col_to_rows[col_index].push_back(row_index);
+					}
+				}
+		}
+		break;
+		case Origin::BOTTOM_LEFT:
+		{
+			for (size_t c = 0; c < min_c; c++)
+				for (size_t r = 0; r < col_to_rows[c].size(); r++)
+				{
+					const auto col_index = c;
+					const auto row_index = diff_n_rows + (int)col_to_rows[c][r];
+					if (row_index >= 0)
+					{
+						resized.row_to_cols[row_index].push_back(col_index);
+						resized.col_to_rows[col_index].push_back(row_index);
+					}
+				}
+		}
+		break;
+		case Origin::BOTTOM_RIGHT:
+		{
+			for (size_t c = diff_c; c < get_n_cols(); c++)
+				for (size_t r = 0; r < col_to_rows[c].size(); r++)
+				{
+					const auto col_index = diff_n_cols + c;
+					const auto row_index = diff_n_rows + (int)col_to_rows[c][r];
+					if (row_index >= 0)
+					{
+						resized.row_to_cols[row_index].push_back(col_index);
+						resized.col_to_rows[col_index].push_back(row_index);
+					}
+				}
+		}
+		break;
+	}
+
+	resized.parse_connections();
 
 	return resized;
 }

@@ -113,6 +113,14 @@ public:
 private:
 	std::vector<std::vector<size_t>> row_to_cols;
 	std::vector<std::vector<size_t>> col_to_rows;
+
+
+	/*
+	 * Compute the rows and cols degrees values when the matrix values have been modified
+	 * without the use of 'add_connection' and 'rm_connection' interface, so after any modification
+	 * call this function if you need degrees information
+	 */
+	void parse_connections();
 };
 }
 }
