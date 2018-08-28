@@ -53,20 +53,6 @@ void Encoder_LDPC_from_QC<B>
 }
 
 template <typename B>
-const std::vector<uint32_t>& Encoder_LDPC_from_QC<B>
-::get_info_bits_pos() const
-{
-	return Encoder<B>::get_info_bits_pos();
-}
-
-template <typename B>
-bool Encoder_LDPC_from_QC<B>
-::is_sys() const
-{
-	return Encoder<B>::is_sys();
-}
-
-template <typename B>
 void Encoder_LDPC_from_QC<B>
 ::_check_H_dimensions()
 {

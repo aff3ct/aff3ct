@@ -50,8 +50,6 @@ void Encoder_LDPC::parameters
 	args.add_link({p+"-h-path"}, {p+"-cw-size",   "N"}); // N_cw is H width
 	args.add_link({p+"-h-path"}, {p+"-info-bits", "K"}); // if there is no K, then H is considered regular,
 	                                                     // so K is the N - H's height
-
-
 	args.add(
 		{p+"-g-path"},
 		tools::File(tools::openmode::read),
@@ -65,6 +63,18 @@ void Encoder_LDPC::parameters
 		tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
 		"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
 		"smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.");
+
+	args.add(
+		{p+"-g-method"},
+		tools::Text(tools::Including_set("FAST", "SPARSE")),
+		"The method used to generate G from H when using 'LDPC_H' encoder type. 'SPARSE' method generates a hollow G "
+		"with a guarantee to have the systematic identity (do not work with irregular matrices) when the 'FAST' method "
+		"favors a fastest way to create it.");
+
+	args.add(
+		{p+"-save-g"},
+		tools::File(tools::openmode::write),
+		"path where the generated G matrix with the 'LDPC_H' encoder type will be saved.");
 }
 
 void Encoder_LDPC::parameters
@@ -75,6 +85,8 @@ void Encoder_LDPC::parameters
 	if(vals.exist({p+"-h-path"   })) this->H_path    = vals.at({p+"-h-path"   });
 	if(vals.exist({p+"-g-path"   })) this->G_path    = vals.at({p+"-g-path"   });
 	if(vals.exist({p+"-h-reorder"})) this->H_reorder = vals.at({p+"-h-reorder"});
+	if(vals.exist({p+"-g-method" })) this->G_method  = vals.at({p+"-g-method" });
+	if(vals.exist({p+"-save-g"   })) this->G_save    = vals.at({p+"-save-g"   });
 
 	if (!this->G_path.empty())
 		tools::LDPC_matrix_handler::read_matrix_size(this->G_path, this->K, this->N_cw);
@@ -104,15 +116,22 @@ void Encoder_LDPC::parameters
 		headers[p].push_back(std::make_pair("H matrix path", this->H_path));
 		headers[p].push_back(std::make_pair("H matrix reordering", this->H_reorder));
 	}
+
+	if (this->type == "LDPC_H")
+	{
+		headers[p].push_back(std::make_pair("G build method", this->G_method));
+		if (this->G_save != "")
+		headers[p].push_back(std::make_pair("G save path", this->G_save));
+	}
 }
 
 template <typename B>
 module::Encoder_LDPC<B>* Encoder_LDPC::parameters
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H, const tools::dvbs2_values* dvbs2) const
 {
-	     if (this->type == "LDPC"    ) return new module::Encoder_LDPC           <B>(this->K, this->N_cw, G, this->n_frames);
-	else if (this->type == "LDPC_H"  ) return new module::Encoder_LDPC_from_H    <B>(this->K, this->N_cw, H, this->n_frames);
-	else if (this->type == "LDPC_QC" ) return new module::Encoder_LDPC_from_QC   <B>(this->K, this->N_cw, H, this->n_frames);
+	     if (this->type == "LDPC"    ) return new module::Encoder_LDPC         <B>(this->K, this->N_cw, G, this->n_frames);
+	else if (this->type == "LDPC_H"  ) return new module::Encoder_LDPC_from_H  <B>(this->K, this->N_cw, H, this->G_method, this->G_save, this->n_frames);
+	else if (this->type == "LDPC_QC" ) return new module::Encoder_LDPC_from_QC <B>(this->K, this->N_cw, H, this->n_frames);
 	else if (this->type == "LDPC_IRA") return new module::Encoder_LDPC_from_IRA<B>(this->K, this->N_cw, H, this->n_frames);
 	else if (this->type == "LDPC_DVBS2" && dvbs2 != nullptr)
 		return new module::Encoder_LDPC_DVBS2  <B>(*dvbs2, this->n_frames);

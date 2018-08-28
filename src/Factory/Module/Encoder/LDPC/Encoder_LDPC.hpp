@@ -21,12 +21,16 @@ struct Encoder_LDPC : public Encoder
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional
+		// matrices
 		std::string H_path = "";
 		std::string G_path = "";
 
 		// optional parameters
 		std::string H_reorder = "NONE";
+
+		// G generator method
+		std::string G_method = "FAST";
+		std::string G_save   = "";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_LDPC_prefix);

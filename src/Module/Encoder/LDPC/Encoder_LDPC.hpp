@@ -33,8 +33,6 @@ public:
 	Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const tools::Sparse_matrix &H, const int n_frames = 1);
 	virtual ~Encoder_LDPC() = default;
 
-	virtual const std::vector<uint32_t>& get_info_bits_pos() const;
-	virtual bool is_sys() const;
 	virtual bool is_codeword(const B *X_N);
 
 protected:
