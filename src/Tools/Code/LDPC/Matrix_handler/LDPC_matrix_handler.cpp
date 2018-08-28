@@ -182,12 +182,12 @@ Sparse_matrix LDPC_matrix_handler
 }
 
 Sparse_matrix LDPC_matrix_handler
-::transform_H_to_G_fast(const Sparse_matrix& H, Positions_vector& info_bits_pos)
+::transform_H_to_G_identity(const Sparse_matrix& H, Positions_vector& info_bits_pos)
 {
 	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
 	LDPC_matrix Hf = sparse_to_full<LDPC_matrix::value_type>(H);
 
-	auto Gf = LDPC_matrix_handler::transform_H_to_G_fast(Hf, info_bits_pos);
+	auto Gf = LDPC_matrix_handler::transform_H_to_G_identity(Hf, info_bits_pos);
 
 	return full_to_sparse(Gf);
 }
@@ -486,7 +486,7 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 
 // Valentin's version
 LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
-::transform_H_to_G_fast(const LDPC_matrix& H, Positions_vector& info_bits_pos)
+::transform_H_to_G_identity(const LDPC_matrix& H, Positions_vector& info_bits_pos)
 {
 	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
 	auto G = H;
@@ -528,7 +528,7 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 // Olivier's version = Valentin's version with identity formed on the right part but does not work, why ?
 // This may be as fast as the Valentin's version but more hollow
 /*LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
-::transform_H_to_G(const LDPC_matrix& H, Positions_vector& info_bits_pos)
+::transform_H_to_G_identity(const LDPC_matrix& H, Positions_vector& info_bits_pos)
 {
 	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
 	auto G = H;

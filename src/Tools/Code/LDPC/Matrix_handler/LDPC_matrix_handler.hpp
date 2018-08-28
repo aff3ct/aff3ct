@@ -67,8 +67,8 @@ public:
 	static void form_identity(LDPC_matrix& mat, Matrix::Origin o = Matrix::Origin::TOP_LEFT);
 
 	/*
-	 * \brief Compute a G matrix related to the given H matrix. This method favors a hallowed generator matrix build
-	 *        but it may take long time. Warning do not work yet with irregular matrices.
+	 * \brief Compute a G matrix related to the given H matrix. This method favors a hallowed generator matrix build.
+	 *        It uses the LU decomposition. Warning do not work yet with irregular matrices.
 	 * \return G horizontal with a guarantee to have the identity on the left part.
 	 * \param info_bits_pos is filled with the positions (that are 0 to K-1) of the information bits.
 	 * \param H (in Horizontal way) is the parity matrix from which G is built.
@@ -77,14 +77,14 @@ public:
 	static LDPC_matrix   transform_H_to_G_decomp_LU(const LDPC_matrix&   H, Positions_vector& info_bits_pos);
 
 	/*
-	 * \brief Compute a G matrix related to the given H matrix. This method is quite fast and build a matrix that is not
-	 *        necessary the hollowest.
+	 * \brief Compute a G matrix related to the given H matrix. This method builds a matrix by creating an identity on
+	 *        the left part of H then taking the parity part to create G.
 	 * \return G vertical with not necessary an identity.
 	 * \param info_bits_pos is filled with the positions (between 0 to N-1) of the information bits in G.
 	 * \param H (in Horizontal way) is the parity matrix from which G is built.
 	 */
-	static Sparse_matrix transform_H_to_G_fast(const Sparse_matrix& H, Positions_vector& info_bits_pos);
-	static LDPC_matrix   transform_H_to_G_fast(const LDPC_matrix&   H, Positions_vector& info_bits_pos);
+	static Sparse_matrix transform_H_to_G_identity(const Sparse_matrix& H, Positions_vector& info_bits_pos);
+	static LDPC_matrix   transform_H_to_G_identity(const LDPC_matrix&   H, Positions_vector& info_bits_pos);
 
 	/*
 	 * integrate an interleaver inside the matrix to avoid this step.

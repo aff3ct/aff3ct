@@ -29,7 +29,7 @@ struct Encoder_LDPC : public Encoder
 		std::string H_reorder = "NONE";
 
 		// G generator method
-		std::string G_method = "FAST";
+		std::string G_method = "IDENTITY";
 		std::string G_save   = "";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS

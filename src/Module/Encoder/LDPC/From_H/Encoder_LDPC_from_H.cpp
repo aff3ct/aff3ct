@@ -24,8 +24,8 @@ Encoder_LDPC_from_H<B>
 
 	this->H = _H.turn(tools::Matrix::Way::HORIZONTAL);
 
-	if (G_method == "FAST")
-		this->G = tools::LDPC_matrix_handler::transform_H_to_G_fast(this->H, this->info_bits_pos);
+	if (G_method == "IDENTITY")
+		this->G = tools::LDPC_matrix_handler::transform_H_to_G_identity(this->H, this->info_bits_pos);
 	else if (G_method == "LU_DEC")
 		this->G = tools::LDPC_matrix_handler::transform_H_to_G_decomp_LU(this->H, this->info_bits_pos);
 	else
