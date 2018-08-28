@@ -171,24 +171,218 @@ bool LDPC_matrix_handler
 }
 
 Sparse_matrix LDPC_matrix_handler
-::transform_H_to_G(const Sparse_matrix& H, Positions_vector& info_bits_pos)
+::transform_H_to_G_sparse(const Sparse_matrix& H, Positions_vector& info_bits_pos)
 {
 	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
 	LDPC_matrix Hf = sparse_to_full<LDPC_matrix::value_type>(H);
 
-	auto Gf = LDPC_matrix_handler::transform_H_to_G(Hf, info_bits_pos);
+	auto Gf = LDPC_matrix_handler::transform_H_to_G_sparse(Hf, info_bits_pos);
 
 	return full_to_sparse(Gf);
 }
 
+Sparse_matrix LDPC_matrix_handler
+::transform_H_to_G_fast(const Sparse_matrix& H, Positions_vector& info_bits_pos)
+{
+	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
+	LDPC_matrix Hf = sparse_to_full<LDPC_matrix::value_type>(H);
+
+	auto Gf = LDPC_matrix_handler::transform_H_to_G_fast(Hf, info_bits_pos);
+
+	return full_to_sparse(Gf);
+}
+
+void swap_columns(LDPC_matrix_handler::LDPC_matrix& mat, size_t idx1, size_t idx2)
+{
+	auto n_row = mat.get_n_rows();
+	std::vector<LDPC_matrix_handler::LDPC_matrix::value_type> tmp(n_row);
+	for (size_t l = 0; l < n_row; l++) tmp[l]       = mat[l][idx1];
+	for (size_t l = 0; l < n_row; l++) mat[l][idx1] = mat[l][idx2];
+	for (size_t l = 0; l < n_row; l++) mat[l][idx2] = tmp[l];
+}
+
+template<bool allow_rank_deficient = true>
+LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::LDPC_matrix& Hp)
+{
+	using V = LDPC_matrix_handler::LDPC_matrix::value_type;
+
+	auto mat = Hp;
+
+	auto n_rows = mat.get_n_rows();
+	auto n_cols = mat.get_n_cols();
+
+	auto n_min = std::min(n_rows, n_cols);
+	bool rank_deficient = false;
+	LDPC_matrix_handler::Positions_vector null_rows;
+
+
+	// add an identity to the right part
+	mat.self_resize(n_rows, n_cols + n_rows, Matrix::Origin::TOP_LEFT);
+	for (size_t i = 0; i < n_rows; i++) // Add falling diagonal identity at the end
+		mat[i][i + n_cols] = true;
+
+	LDPC_matrix_handler::Positions_vector pos_rows(n_rows), pos_cols(n_cols);
+	std::iota(pos_rows.begin(), pos_rows.end(), 0);
+	std::iota(pos_cols.begin(), pos_cols.end(), 0);
+
+	// try to generate an identity diagonal in the left part
+	for (size_t d = 0; d < n_min; d++)
+	{
+		// permutation step
+		bool found = false;
+		for (size_t c = d; c < n_cols; c++)
+		{
+			for (size_t r = d; r < n_rows; r++)
+				if (mat[r][c])
+				{
+					if (r != d)
+					{
+						// row permutation
+						std::swap(pos_rows[d], pos_rows[r]);
+						std::swap(mat     [d], mat     [r]);
+					}
+
+					if (c != d)
+					{
+						// col permutation
+						std::swap(pos_cols[d], pos_cols[c]);
+						swap_columns(mat, d, c);
+					}
+
+					found = true;
+					break;
+				}
+
+			if (found)
+				break;
+		}
+
+		if (!found)
+		{
+			// throw (d - 1);
+			n_min = d;
+			rank_deficient = true;
+			break;
+		}
+
+		// elimination step
+		for (size_t r = d + 1; r < n_rows; r++)
+			if (mat[r][d])
+				std::transform(mat[d].begin() + d + 1, mat[d].end(), //ref
+				               mat[r].begin() + d + 1, mat[r].begin() + d + 1,
+				               std::not_equal_to<V>());
+	}
+
+
+	// keep the right part of the initial identity and add zeros below to find back original mat size
+	auto X = mat.resize(n_min, n_rows, Matrix::Origin::TOP_RIGHT); // delete rows below n_min
+	X.self_resize(n_cols, n_rows, Matrix::Origin::TOP_LEFT); // add null rows below part if n_cols != n_min
+
+
+	// back substitution
+	X.self_transpose(); // X is now HORIZONTAL
+	for (size_t r = 0; r < X.get_n_rows(); r++)
+		for (size_t d = n_min - 1; d > 0; d--)
+			for (size_t c = d; c < n_min; c++)
+				X[r][d - 1] = X[r][d - 1] != ((mat[d - 1][c] != (V)0) && (X[r][c] != (V)0)); // row of 'mat' * row of 'X'
+
+
+	if (allow_rank_deficient && rank_deficient)
+	{
+		auto Hp2 = Hp;
+		// find null rows of X and delete them in Hp2
+		for (auto r = X.get_n_rows(); r > 0; r--)
+		{
+			auto r_test = r - 1;
+			if (std::find(X[r_test].begin(), X[r_test].end(), (V)true) == X[r_test].end())
+				Hp2.erase_row(r_test);
+		}
+
+		X.self_transpose(); // X is now VERTICAL
+
+		// permute rows of "X" according to permuted cols of "mat"
+		for (size_t i = 0; i < n_cols; i++)
+			std::swap(X[i], X[pos_cols[i]]);
+
+		// find null cols of X and delete them in Hp2
+		for (auto r = X.get_n_rows(); r > 0; r--)
+		{
+			auto r_test = r - 1;
+			if (std::find(X[r_test].begin(), X[r_test].end(), (V)true) == X[r_test].end())
+				Hp2.erase_col(r_test);
+		}
+
+		return gauss_decomposition<false>(Hp2);
+	}
+	else
+	{
+		X.self_transpose(); // X is now VERTICAL
+
+		// permute rows of "X" according to permuted cols of "mat"
+		for (size_t i = 0; i < n_cols; i++)
+			std::swap(X[i], X[pos_cols[i]]);
+
+		return X;
+	}
+}
+
+// Benjamin's version
 LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
-::transform_H_to_G(const LDPC_matrix& H, Positions_vector& info_bits_pos)
+::transform_H_to_G_sparse(const LDPC_matrix& H, Positions_vector& info_bits_pos)
+{
+	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
+
+	auto M = H.get_n_rows();
+	auto N = H.get_n_cols();
+	auto K = N - M;
+
+	auto Hp = H.resize(M, M, Matrix::Origin::TOP_RIGHT); // parity part of H -> Horizontal M * M
+
+	LDPC_matrix Gp;
+
+	Gp = gauss_decomposition(Hp); // Gp is VERTICAL -> M * M
+
+	auto Hs = H.resize(M, K, Matrix::Origin::TOP_LEFT); // systematic part of H
+	Hs.self_transpose();
+	auto GH = bgemmt(Gp, Hs); // Gp * Hs -> horizontal M * K
+	// GH.self_resize(GH.get_n_rows(), GH.get_n_cols() - M, Matrix::Origin::TOP_LEFT); // remove right part
+	GH.self_transpose(); // now vertical K * M
+
+	// add identity on the left part
+	GH.self_resize(K, N, Matrix::Origin::TOP_RIGHT);
+	for (size_t r = 0; r < K; r++)
+		GH[r][r] = 1;
+
+	// GH is now G -> K * N
+
+
+	// // check that G is good
+	// Hp.self_transpose(); // now vertical M*M
+	// auto GHp = bgemmt(Gp, Hp); // Gp * Hp
+
+	// // remove the identy
+	// auto min_size = std::min(GHp.get_n_rows(), GHp.get_n_cols());
+	// for (size_t r = 0; r < min_size; r++)
+	// 	GHp[r][r] = !GHp[r][r];
+
+	// if (!all_zeros(GHp))
+	// 	throw runtime_error(__FILE__, __LINE__, __func__, "Generated Gp from H is not good (Gp * Hp != Identity).");
+
+	info_bits_pos.resize(K);
+	std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+
+	return GH;
+}
+
+// Valentin's version
+LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
+::transform_H_to_G_fast(const LDPC_matrix& H, Positions_vector& info_bits_pos)
 {
 	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
 	auto G = H;
 
-	auto M = G.get_n_rows();
-	auto N = G.get_n_cols();
+	auto M = H.get_n_rows();
+	auto N = H.get_n_cols();
 	auto K = N - M;
 
 	auto swapped_cols = LDPC_matrix_handler::form_diagonal(G, Matrix::Origin::TOP_LEFT);
@@ -218,51 +412,45 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 	std::copy(bits_pos.begin() + M, bits_pos.end(), info_bits_pos.begin());
 
 	return G;
-
-
-
-
-	// // erase the just created M*M identity in the right part of H
-	// G.self_resize(M, K, Matrix::Origin::TOP_LEFT);
-
-	// // transpose G
-	// G.self_transpose();
-
-	// // add the K*K falling diagonal identity on the left
-	// G.self_resize(K, N, Matrix::Origin::TOP_RIGHT);
-	// for (size_t i = 0; i < K; i++)
-	// 	G[i][i] = 1;
-
-	// // G is now HORIZONTAL
-
-	// // Re-organization: get G
-	// // TODO: transpose G
-	// // for (auto& p : swapped_cols)
-	// // 	std::swap(G[p.first], G[p.second]);
-
-	// // return info bits positions
-	// info_bits_pos.resize(K);
-
-	// // Positions_vector bits_pos(N);
-	// // std::iota(bits_pos.begin(), bits_pos.end(), 0);
-
-	// // for (size_t l = 1; l <= (swapped_cols.size() / 2); l++)
-	// // 	std::swap(bits_pos[swapped_cols[l*2-2]], bits_pos[swapped_cols[l*2-1]]);
-
-	// // std::copy(bits_pos.begin() + M, bits_pos.end(), info_bits_pos.begin());
-	// std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
-
-	// return G;
 }
 
-void swap_columns(LDPC_matrix_handler::LDPC_matrix& mat, size_t idx1, size_t idx2)
+
+// Olivier's version
+/*LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
+::transform_H_to_G(const LDPC_matrix& H, Positions_vector& info_bits_pos)
 {
-	auto n_row = mat.get_n_rows();
-	std::vector<LDPC_matrix_handler::LDPC_matrix::value_type> tmp(n_row);
-	for (size_t l = 0; l < n_row; l++) tmp[l]       = mat[l][idx1];
-	for (size_t l = 0; l < n_row; l++) mat[l][idx1] = mat[l][idx2];
-	for (size_t l = 0; l < n_row; l++) mat[l][idx2] = tmp[l];
-}
+	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
+	auto G = H;
+
+	auto M = H.get_n_rows();
+	auto N = H.get_n_cols();
+	auto K = N - M;
+
+	auto swapped_cols = LDPC_matrix_handler::form_diagonal(G, Matrix::Origin::BOTTOM_RIGHT);
+	LDPC_matrix_handler::form_identity(G, Matrix::Origin::BOTTOM_RIGHT);
+
+
+	G.self_resize(N, K, Matrix::Origin::BOTTOM_LEFT); // G is now VERTICAL N*K
+	for (size_t i = 0; i < K; i++) // Add falling diagonal identity above
+		G[i][i] = 1;
+
+	// Re-organization: get G
+	for (auto l = swapped_cols.size(); l > 0; l--)
+		std::swap(G[swapped_cols[l-1].first], G[swapped_cols[l-1].second]);
+
+	// return info bits positions
+	info_bits_pos.resize(K);
+
+	Positions_vector bits_pos(N);
+	std::iota(bits_pos.begin(), bits_pos.end(), 0);
+
+	for (auto& p : swapped_cols)
+		std::swap(bits_pos[p.first], bits_pos[p.second]);
+
+	std::copy(bits_pos.begin() + M, bits_pos.end(), info_bits_pos.begin());
+
+	return G;
+}*/
 
 LDPC_matrix_handler::Positions_pair_vector LDPC_matrix_handler
 ::form_diagonal(LDPC_matrix& mat, Matrix::Origin o)
