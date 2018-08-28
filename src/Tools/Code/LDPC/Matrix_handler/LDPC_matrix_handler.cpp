@@ -433,8 +433,6 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 ::LU_decomposition(const LDPC_matrix& H)
 {
-	using V = LDPC_matrix::value_type;
-
 	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
 
 	auto M = H.get_n_rows();

@@ -138,9 +138,9 @@ Sparse_matrix Sparse_matrix
 {
 	Sparse_matrix resized(n_rows, n_cols);
 
-	const auto min_r = std::min(n_rows, get_n_rows());
+	// const auto min_r = std::min(n_rows, get_n_rows());
 	const auto min_c = std::min(n_cols, get_n_cols());
-	const auto diff_r = get_n_rows() - min_r;
+	// const auto diff_r = get_n_rows() - min_r;
 	const auto diff_c = get_n_cols() - min_c;
 	const auto diff_n_rows = (int)n_rows - (int)get_n_rows();
 	const auto diff_n_cols = (int)n_cols - (int)get_n_cols();
