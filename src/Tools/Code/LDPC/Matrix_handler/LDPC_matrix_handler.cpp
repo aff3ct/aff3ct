@@ -289,6 +289,7 @@ LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::
 
 	if (allow_rank_deficient && rank_deficient)
 	{
+		throw runtime_error(__FILE__, __LINE__, __func__, "The matrix H is rank deficient, the SPARSE method can't handle it for now.");
 		auto Hp2 = Hp;
 		// find null rows of X and delete them in Hp2
 		for (auto r = X.get_n_rows(); r > 0; r--)
