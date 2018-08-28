@@ -26,7 +26,7 @@ Sparse_matrix aff3ct::tools::bgemm(const Sparse_matrix& A, const Sparse_matrix& 
 		{
 			size_t sum = 0; // number of common bits
 			for (auto& c : A.get_cols_from_row(l))
-				sum += B.at(c,n) ? 1 : 0;
+				sum += B.at(c,n);
 
 			if (sum & (size_t)1) // modulo 2
 				C.add_connection(l, n);
@@ -60,7 +60,7 @@ Sparse_matrix aff3ct::tools::bgemmt(const Sparse_matrix& A, const Sparse_matrix&
 		{
 			size_t sum = 0; // number of common bits
 			for (auto& c : A.get_cols_from_row(l))
-				sum += tB.at(n,c) ? 1 : 0;
+				sum += tB.at(n,c);
 
 			if (sum & (size_t)1) // modulo 2
 				C.add_connection(l, n);

@@ -2,6 +2,7 @@
 #define MATRIX_UTILS_HXX__
 
 #include <sstream>
+#include <mipp.h>
 
 #include "matrix_utils.h"
 
@@ -56,11 +57,11 @@ Full_matrix<T> bgemm(const Full_matrix<T>& A, const Full_matrix<T>& B)
 	for (size_t l = 0; l < L; l++)
 		for (size_t n = 0; n < N; n++)
 		{
-			T sum = 0;
+			T res = 0;
 			for (size_t m = 0; m < M; m++)
-				sum += A[l][m] * B[m][n];
+				res = res != ((A[l][m] != (T)0) && (B[m][n] != (T)0));
 
-			C[l][n] = sum & (T)1; // modulo 2
+			C[l][n] = res;
 		}
 
 	return C;
@@ -89,14 +90,29 @@ Full_matrix<T> bgemmt(const Full_matrix<T>& A, const Full_matrix<T>& tB)
 
 	Full_matrix<T> C(L, N);
 
+	const auto M_loop_size = (M / (size_t)mipp::nElReg<T>()) * (size_t)mipp::nElReg<T>();
+
 	for (size_t l = 0; l < L; l++)
 		for (size_t n = 0; n < N; n++)
 		{
-			T sum = 0;
-			for (size_t m = 0; m < M; m++)
-				sum += A[l][m] * tB[n][m];
+			mipp::Msk<mipp::N<T>()> m_res = false;
+			const mipp::Reg<T> r_zero = (T)0;
+			const mipp::Reg<T> r_one  = (T)1;
+			for (size_t m = 0; m < M_loop_size; m += mipp::nElReg<T>())
+			{
+				const auto a_in = mipp::Reg<T>(& A[l][m]);
+				const auto b_in = mipp::Reg<T>(&tB[n][m]);
 
-			C[l][n] = sum & (T)1; // modulo 2
+				m_res ^= ((a_in != r_zero) & (b_in != r_zero));
+			}
+
+			auto r_res = mipp::blend(r_one, r_zero, m_res);
+
+			T res = mipp::hadd(r_res) & (T)1; // modulo 2
+			for (size_t m = M_loop_size; m < M; m++)
+				res = res != ((A[l][m] != (T)0) && (tB[n][m] != (T)0));
+
+			C[l][n] = res;
 		}
 
 	return C;
