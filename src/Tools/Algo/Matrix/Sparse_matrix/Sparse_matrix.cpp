@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <numeric>
 
 #include "Tools/Exception/exception.hpp"
 
