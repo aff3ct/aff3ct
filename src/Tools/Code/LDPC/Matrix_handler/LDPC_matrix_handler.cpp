@@ -907,7 +907,7 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 	}
 
 
-	Hinv.resize(M, M, Matrix::Origin::TOP_RIGHT);
+	Hinv.self_resize(M, M, Matrix::Origin::TOP_RIGHT);
 
 	return Hinv;
 }
