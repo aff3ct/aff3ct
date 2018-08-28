@@ -828,88 +828,88 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 	auto N = H.get_n_cols();
 	auto K = N - M;
 
-	LDPC_matrix MatriceCalcul(M, 2 * M);
+	LDPC_matrix Hinv(M, 2 * M);
 
 	//Copy H2 on left
 	for (size_t i = 0; i < M; i++)
 		for (size_t j = 0; j < H.get_cols_from_row(i).size(); j++)
 			if (H.get_cols_from_row(i)[j] >= K)
-				MatriceCalcul[i][H.get_cols_from_row(i)[j] - K] = 1;
+				Hinv[i][H.get_cols_from_row(i)[j] - K] = 1;
 
 	//Create identity on right
 	for (size_t i = 0; i < M; i++)
-			MatriceCalcul[i][M + i] = 1;
+			Hinv[i][M + i] = 1;
 
-	//Pivot de Gauss (Forward)
-	for (size_t indLgn = 0; indLgn < M; indLgn++)
+	// Gaussian elimination (Forward)
+	for (size_t r = 0; r < M; r++)
 	{
-		if (MatriceCalcul[indLgn][indLgn] == 0)
+		if (Hinv[r][r] == 0)
 		{
-			size_t indLgnSwap = 0;
-			for (auto indLgn2 = indLgn + 1; indLgn2 < M; indLgn2++)
+			size_t r_swap = 0;
+			for (auto r2 = r + 1; r2 < M; r2++)
 			{
-				if (MatriceCalcul[indLgn2][indLgn] != 0)
+				if (Hinv[r2][r] != 0)
 				{
-					indLgnSwap = indLgn2;
+					r_swap = r2;
 					break;
 				}
 			}
 
-			if (indLgnSwap == 0)
+			if (r_swap == 0)
 			{
 				std::stringstream message;
 				message << "Matrix H2 (H = [H1 H2]) is not invertible";
 				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
-			std::swap(MatriceCalcul[indLgn], MatriceCalcul[indLgnSwap]);
+			std::swap(Hinv[r], Hinv[r_swap]);
 		}
 
-		//XOR des lignes
-		for (auto indLgn2 = indLgn + 1; indLgn2 < M; indLgn2++)
+		//XOR on lines
+		for (auto r2 = r + 1; r2 < M; r2++)
 		{
-			if (MatriceCalcul[indLgn2][indLgn] != 0)
+			if (Hinv[r2][r] != 0)
 			{
 				const auto loop_size1 = (size_t)(2 * M / mipp::nElReg<V>());
 				for (size_t i = 0; i < loop_size1; i++)
 				{
-					const auto rLgn  = mipp::Reg<V>(&MatriceCalcul[indLgn ][i * mipp::nElReg<V>()]);
-					const auto rLgn2 = mipp::Reg<V>(&MatriceCalcul[indLgn2][i * mipp::nElReg<V>()]);
+					const auto rLgn  = mipp::Reg<V>(&Hinv[r ][i * mipp::nElReg<V>()]);
+					const auto rLgn2 = mipp::Reg<V>(&Hinv[r2][i * mipp::nElReg<V>()]);
 					auto rLgn3       = rLgn2 ^ rLgn;
-					rLgn3.store(&MatriceCalcul[indLgn2][i * mipp::nElReg<V>()]);
+					rLgn3.store(&Hinv[r2][i * mipp::nElReg<V>()]);
 				}
 				for (unsigned i = loop_size1 * mipp::nElReg<V>(); i < 2 * M; i++)
-					MatriceCalcul[indLgn2][i] = MatriceCalcul[indLgn2][i] ^ MatriceCalcul[indLgn][i];
+					Hinv[r2][i] = Hinv[r2][i] ^ Hinv[r][i];
 			}
 		}
 	}
 
-	//Pivot de Gauss (Backward)
-	for (auto indLgn = M - 1; indLgn > 0; indLgn--)
+	// Gaussian elimination (Backward)
+	for (auto r = M - 1; r > 0; r--)
 	{
-		//XOR des lignes
-		for (auto indLgn2 = indLgn - 1; indLgn2 > 0; indLgn2--)
+		//XOR on lines
+		for (auto r2 = r - 1; r2 > 0; r2--)
 		{
-			if (MatriceCalcul[indLgn2][indLgn] != 0)
+			if (Hinv[r2][r] != 0)
 			{
 				const auto loop_size1 = (size_t)(2 * M / mipp::nElReg<V>());
 				for (size_t i = 0; i < loop_size1; i++)
 				{
-					const auto rLgn  = mipp::Reg<V>(&MatriceCalcul[indLgn][i * mipp::nElReg<V>()]);
-					const auto rLgn2 = mipp::Reg<V>(&MatriceCalcul[indLgn2][i * mipp::nElReg<V>()]);
+					const auto rLgn  = mipp::Reg<V>(&Hinv[r ][i * mipp::nElReg<V>()]);
+					const auto rLgn2 = mipp::Reg<V>(&Hinv[r2][i * mipp::nElReg<V>()]);
 					auto rLgn3       = rLgn2 ^ rLgn;
-					rLgn3.store(&MatriceCalcul[indLgn2][i * mipp::nElReg<V>()]);
+					rLgn3.store(&Hinv[r2][i * mipp::nElReg<V>()]);
 				}
 				for (auto i = loop_size1 * mipp::nElReg<V>(); i < 2 * M; i++)
-					MatriceCalcul[indLgn2][i] = MatriceCalcul[indLgn2][i] ^ MatriceCalcul[indLgn][i];
+					Hinv[r2][i] = Hinv[r2][i] ^ Hinv[r][i];
 			}
 		}
 	}
 
 
-	MatriceCalcul.resize(M, M, Matrix::Origin::TOP_RIGHT);
+	Hinv.resize(M, M, Matrix::Origin::TOP_RIGHT);
 
-	return MatriceCalcul;
+	return Hinv;
 }
 
 bool LDPC_matrix_handler
