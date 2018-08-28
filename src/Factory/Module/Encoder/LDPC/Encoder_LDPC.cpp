@@ -66,10 +66,10 @@ void Encoder_LDPC::parameters
 
 	args.add(
 		{p+"-g-method"},
-		tools::Text(tools::Including_set("FAST", "IDENTITY")),
-		"The method used to generate G from H when using 'LDPC_H' encoder type. 'IDENTITY' method generates an hollow G "
-		"with a guarantee to have the systematic identity (do not work with irregular matrices and may take a lot of "
-		"time for large matrices) when the 'FAST' method favors a fastest way to create it.");
+		tools::Text(tools::Including_set("FAST", "LU_DEC")),
+		"The method used to generate G from H when using 'LDPC_H' encoder type. 'LU_DEC' method generates a hollow G "
+		"thanks to the LU decomposition with a guarantee to have the systematic identity (do not work with irregular "
+		"matrices) when the 'FAST' method favors a fastest way to create it.");
 
 	args.add(
 		{p+"-save-g"},

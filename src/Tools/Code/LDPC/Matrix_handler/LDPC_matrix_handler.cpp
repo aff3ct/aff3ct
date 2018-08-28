@@ -171,12 +171,12 @@ bool LDPC_matrix_handler
 }
 
 Sparse_matrix LDPC_matrix_handler
-::transform_H_to_G_identity(const Sparse_matrix& H, Positions_vector& info_bits_pos)
+::transform_H_to_G_decomp_LU(const Sparse_matrix& H, Positions_vector& info_bits_pos)
 {
 	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
 	LDPC_matrix Hf = sparse_to_full<LDPC_matrix::value_type>(H);
 
-	auto Gf = LDPC_matrix_handler::transform_H_to_G_identity(Hf, info_bits_pos);
+	auto Gf = LDPC_matrix_handler::transform_H_to_G_decomp_LU(Hf, info_bits_pos);
 
 	return full_to_sparse(Gf);
 }
@@ -201,8 +201,97 @@ void swap_columns(LDPC_matrix_handler::LDPC_matrix& mat, size_t idx1, size_t idx
 	for (size_t l = 0; l < n_row; l++) mat[l][idx2] = tmp[l];
 }
 
+
+LDPC_matrix_handler::LDPC_matrix LU_decomp(const LDPC_matrix_handler::LDPC_matrix& Hp)
+{
+	using V = LDPC_matrix_handler::LDPC_matrix::value_type;
+
+	Hp.is_of_way_throw(Matrix::Way::HORIZONTAL);
+
+	auto M = Hp.get_n_rows();
+
+	LDPC_matrix_handler::LDPC_matrix Hinv = Hp.resize(M, 2 * M, Matrix::Origin::TOP_LEFT);
+
+	// Create identity on right part
+	for (size_t i = 0; i < M; i++)
+			Hinv[i][M + i] = 1;
+
+	// Gaussian elimination (Forward)
+	for (size_t r = 0; r < M; r++)
+	{
+		if (Hinv[r][r] == 0)
+		{
+			size_t r_swap = 0;
+			for (auto r2 = r + 1; r2 < M; r2++)
+			{
+				if (Hinv[r2][r] != 0)
+				{
+					r_swap = r2;
+					break;
+				}
+			}
+
+			if (r_swap == 0)
+			{
+				std::stringstream message;
+				message << "Matrix H2 (H = [H1 H2]) is not invertible";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+
+			std::swap(Hinv[r], Hinv[r_swap]);
+		}
+
+		// XOR on lines
+		for (auto r2 = r + 1; r2 < M; r2++)
+		{
+			if (Hinv[r2][r] != 0)
+			{
+				const auto loop_size1 = (size_t)(2 * M / mipp::nElReg<V>());
+				for (size_t i = 0; i < loop_size1; i++)
+				{
+					const auto rLgn  = mipp::Reg<V>(&Hinv[r ][i * mipp::nElReg<V>()]);
+					const auto rLgn2 = mipp::Reg<V>(&Hinv[r2][i * mipp::nElReg<V>()]);
+					auto rLgn3       = rLgn2 ^ rLgn;
+					rLgn3.store(&Hinv[r2][i * mipp::nElReg<V>()]);
+				}
+				for (unsigned i = loop_size1 * mipp::nElReg<V>(); i < 2 * M; i++)
+					Hinv[r2][i] = Hinv[r2][i] ^ Hinv[r][i];
+			}
+		}
+	}
+
+	// Gaussian elimination (Backward)
+	for (auto r = M - 1; r > 0; r--)
+	{
+		// XOR on lines
+		for (auto r2 = r; r2 > 0; r2--)
+		{
+			auto rm1 = r2 - 1;
+			if (Hinv[rm1][r] != 0)
+			{
+				const auto loop_size1 = (size_t)(2 * M / mipp::nElReg<V>());
+				for (size_t i = 0; i < loop_size1; i++)
+				{
+					const auto rLgn  = mipp::Reg<V>(&Hinv[r  ][i * mipp::nElReg<V>()]);
+					const auto rLgn2 = mipp::Reg<V>(&Hinv[rm1][i * mipp::nElReg<V>()]);
+					auto rLgn3       = rLgn2 ^ rLgn;
+					rLgn3.store(&Hinv[rm1][i * mipp::nElReg<V>()]);
+				}
+				for (auto i = loop_size1 * mipp::nElReg<V>(); i < 2 * M; i++)
+					Hinv[rm1][i] = Hinv[rm1][i] ^ Hinv[r][i];
+			}
+		}
+	}
+
+
+	Hinv.self_resize(M, M, Matrix::Origin::TOP_RIGHT);
+
+	return Hinv;
+}
+
+/* // Benjamin's version
 template<bool allow_rank_deficient = true>
-LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::LDPC_matrix& Hp)
+LDPC_matrix_handler::LDPC_matrix LU_decomp2(const LDPC_matrix_handler::LDPC_matrix& Hp)
 {
 	using V = LDPC_matrix_handler::LDPC_matrix::value_type;
 
@@ -225,12 +314,13 @@ LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::
 	std::iota(pos_rows.begin(), pos_rows.end(), 0);
 	std::iota(pos_cols.begin(), pos_cols.end(), 0);
 
+	// Gaussian elimination (Forward)
 	// try to generate an identity diagonal in the left part
 	for (size_t d = 0; d < n_min; d++)
 	{
 		// permutation step
 		bool found = false;
-		for (size_t c = d; c < n_cols; c++)
+		for (auto c = d; c < n_cols; c++)
 		{
 			for (size_t r = d; r < n_rows; r++)
 				if (mat[r][c])
@@ -259,14 +349,14 @@ LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::
 
 		if (!found)
 		{
-			// throw (d - 1);
 			n_min = d;
 			rank_deficient = true;
+			throw runtime_error(__FILE__, __LINE__, __func__, "The matrix H is rank deficient, the SPARSE method can't handle it for now.");
 			break;
 		}
 
 		// elimination step
-		for (size_t r = d + 1; r < n_rows; r++)
+		for (auto r = d + 1; r < n_rows; r++)
 			if (mat[r][d])
 				std::transform(mat[d].begin() + d + 1, mat[d].end(), //ref
 				               mat[r].begin() + d + 1, mat[r].begin() + d + 1,
@@ -279,6 +369,7 @@ LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::
 	X.self_resize(n_cols, n_rows, Matrix::Origin::TOP_LEFT); // add null rows below part if n_cols != n_min
 
 
+	// Gaussian elimination (Backward)
 	// back substitution
 	X.self_transpose(); // X is now HORIZONTAL
 	for (size_t r = 0; r < X.get_n_rows(); r++)
@@ -289,7 +380,6 @@ LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::
 
 	if (allow_rank_deficient && rank_deficient)
 	{
-		throw runtime_error(__FILE__, __LINE__, __func__, "The matrix H is rank deficient, the SPARSE method can't handle it for now.");
 		auto Hp2 = Hp;
 		// find null rows of X and delete them in Hp2
 		for (auto r = X.get_n_rows(); r > 0; r--)
@@ -313,7 +403,7 @@ LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::
 				Hp2.erase_col(r_test);
 		}
 
-		return gauss_decomposition<false>(Hp2);
+		return LU_decomp2<false>(Hp2);
 	}
 	else
 	{
@@ -325,23 +415,44 @@ LDPC_matrix_handler::LDPC_matrix gauss_decomposition(const LDPC_matrix_handler::
 
 		return X;
 	}
+}*/
+
+LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
+::LU_decomposition(const Sparse_matrix& H)
+{
+	using V = LDPC_matrix::value_type;
+
+	auto Ht = H.turn(Matrix::Way::HORIZONTAL);
+
+	auto M = Ht.get_n_rows();
+	Ht.self_resize(M, M, Matrix::Origin::TOP_RIGHT);
+
+	return LU_decomp(tools::sparse_to_full<V>(Ht));
+}
+
+LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
+::LU_decomposition(const LDPC_matrix& H)
+{
+	using V = LDPC_matrix::value_type;
+
+	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
+
+	auto M = H.get_n_rows();
+	auto Hp = H.resize(M, M, Matrix::Origin::TOP_RIGHT); // parity part of H -> Horizontal M * M
+
+	return LU_decomp(Hp);
 }
 
 // Benjamin's version
 LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
-::transform_H_to_G_identity(const LDPC_matrix& H, Positions_vector& info_bits_pos)
+::transform_H_to_G_decomp_LU(const LDPC_matrix& H, Positions_vector& info_bits_pos)
 {
-	H.is_of_way_throw(Matrix::Way::HORIZONTAL);
-
 	auto M = H.get_n_rows();
 	auto N = H.get_n_cols();
 	auto K = N - M;
 
-	auto Hp = H.resize(M, M, Matrix::Origin::TOP_RIGHT); // parity part of H -> Horizontal M * M
+	LDPC_matrix Gp = LU_decomposition(H); // Gp is VERTICAL -> M * M
 
-	LDPC_matrix Gp;
-
-	Gp = gauss_decomposition(Hp); // Gp is VERTICAL -> M * M
 
 	auto Hs = H.resize(M, K, Matrix::Origin::TOP_LEFT); // systematic part of H
 	Hs.self_transpose();
@@ -416,7 +527,8 @@ LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 }
 
 
-// Olivier's version
+// Olivier's version = Valentin's version with identity formed on the right part but does not work, why ?
+// This may be as fast as the Valentin's version but more hollow
 /*LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
 ::transform_H_to_G(const LDPC_matrix& H, Positions_vector& info_bits_pos)
 {
@@ -815,101 +927,6 @@ LDPC_matrix_handler::Positions_vector LDPC_matrix_handler
 	}
 
 	return itl_vec;
-}
-
-LDPC_matrix_handler::LDPC_matrix LDPC_matrix_handler
-::invert_H2(const Sparse_matrix& _H)
-{
-	using V = LDPC_matrix::value_type;
-
-	auto H = _H.turn(Matrix::Way::HORIZONTAL);
-
-	auto M = H.get_n_rows();
-	auto N = H.get_n_cols();
-	auto K = N - M;
-
-	LDPC_matrix Hinv(M, 2 * M);
-
-	//Copy H2 on left
-	for (size_t i = 0; i < M; i++)
-		for (size_t j = 0; j < H.get_cols_from_row(i).size(); j++)
-			if (H.get_cols_from_row(i)[j] >= K)
-				Hinv[i][H.get_cols_from_row(i)[j] - K] = 1;
-
-	//Create identity on right
-	for (size_t i = 0; i < M; i++)
-			Hinv[i][M + i] = 1;
-
-	// Gaussian elimination (Forward)
-	for (size_t r = 0; r < M; r++)
-	{
-		if (Hinv[r][r] == 0)
-		{
-			size_t r_swap = 0;
-			for (auto r2 = r + 1; r2 < M; r2++)
-			{
-				if (Hinv[r2][r] != 0)
-				{
-					r_swap = r2;
-					break;
-				}
-			}
-
-			if (r_swap == 0)
-			{
-				std::stringstream message;
-				message << "Matrix H2 (H = [H1 H2]) is not invertible";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-
-			std::swap(Hinv[r], Hinv[r_swap]);
-		}
-
-		//XOR on lines
-		for (auto r2 = r + 1; r2 < M; r2++)
-		{
-			if (Hinv[r2][r] != 0)
-			{
-				const auto loop_size1 = (size_t)(2 * M / mipp::nElReg<V>());
-				for (size_t i = 0; i < loop_size1; i++)
-				{
-					const auto rLgn  = mipp::Reg<V>(&Hinv[r ][i * mipp::nElReg<V>()]);
-					const auto rLgn2 = mipp::Reg<V>(&Hinv[r2][i * mipp::nElReg<V>()]);
-					auto rLgn3       = rLgn2 ^ rLgn;
-					rLgn3.store(&Hinv[r2][i * mipp::nElReg<V>()]);
-				}
-				for (unsigned i = loop_size1 * mipp::nElReg<V>(); i < 2 * M; i++)
-					Hinv[r2][i] = Hinv[r2][i] ^ Hinv[r][i];
-			}
-		}
-	}
-
-	// Gaussian elimination (Backward)
-	for (auto r = M - 1; r > 0; r--)
-	{
-		//XOR on lines
-		for (auto r2 = r - 1; r2 > 0; r2--)
-		{
-			if (Hinv[r2][r] != 0)
-			{
-				const auto loop_size1 = (size_t)(2 * M / mipp::nElReg<V>());
-				for (size_t i = 0; i < loop_size1; i++)
-				{
-					const auto rLgn  = mipp::Reg<V>(&Hinv[r ][i * mipp::nElReg<V>()]);
-					const auto rLgn2 = mipp::Reg<V>(&Hinv[r2][i * mipp::nElReg<V>()]);
-					auto rLgn3       = rLgn2 ^ rLgn;
-					rLgn3.store(&Hinv[r2][i * mipp::nElReg<V>()]);
-				}
-				for (auto i = loop_size1 * mipp::nElReg<V>(); i < 2 * M; i++)
-					Hinv[r2][i] = Hinv[r2][i] ^ Hinv[r][i];
-			}
-		}
-	}
-
-
-	Hinv.self_resize(M, M, Matrix::Origin::TOP_RIGHT);
-
-	return Hinv;
 }
 
 bool LDPC_matrix_handler

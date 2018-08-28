@@ -73,8 +73,8 @@ public:
 	 * \param info_bits_pos is filled with the positions (that are 0 to K-1) of the information bits.
 	 * \param H (in Horizontal way) is the parity matrix from which G is built.
 	 */
-	static Sparse_matrix transform_H_to_G_identity(const Sparse_matrix& H, Positions_vector& info_bits_pos);
-	static LDPC_matrix   transform_H_to_G_identity(const LDPC_matrix&   H, Positions_vector& info_bits_pos);
+	static Sparse_matrix transform_H_to_G_decomp_LU(const Sparse_matrix& H, Positions_vector& info_bits_pos);
+	static LDPC_matrix   transform_H_to_G_decomp_LU(const LDPC_matrix&   H, Positions_vector& info_bits_pos);
 
 	/*
 	 * \brief Compute a G matrix related to the given H matrix. This method is quite fast and build a matrix that is not
@@ -105,7 +105,8 @@ public:
 	/*
 	 * inverse H2 (H = [H1 H2] with size(H2) = M x M) to allow encoding with p = H1 x inv(H2) x u
 	 */
-	static LDPC_matrix invert_H2(const Sparse_matrix& H);
+	static LDPC_matrix LU_decomposition(const Sparse_matrix& H);
+	static LDPC_matrix LU_decomposition(const LDPC_matrix&   H);
 
 
 	/*
