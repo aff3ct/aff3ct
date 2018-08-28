@@ -83,8 +83,11 @@ void AList
 		for (i = 0; i < r.size(); i++)
 			stream << (r[i] +1) << " ";
 		if (zero_padding)
-		for (; i < matrix.get_rows_max_degree(); i++)
+			for (; i < matrix.get_rows_max_degree(); i++)
+				stream << 0 << " ";
+		else if (r.size() == 0)
 			stream << 0 << " ";
+
 		stream << std::endl;
 	}
 	stream << std::endl;
@@ -95,7 +98,9 @@ void AList
 		for (i = 0; i < c.size(); i++)
 			stream << (c[i] +1) << " ";
 		if (zero_padding)
-		for (; i < matrix.get_cols_max_degree(); i++)
+			for (; i < matrix.get_cols_max_degree(); i++)
+				stream << 0 << " ";
+		else if (c.size() == 0)
 			stream << 0 << " ";
 		stream << std::endl;
 	}
