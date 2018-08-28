@@ -27,14 +27,21 @@ std::ostream& format_comment(std::ostream& os)
 	return os;
 }
 
+std::ostream& format_positive(std::ostream& os)
+{
+	os << rang::style::bold << rang::fg::green << "(II) " << rang::style::reset;
+	return os;
+}
+
 std::ostream& rang::operator<<(std::ostream& os, tag f)
 {
 	switch (f)
 	{
-		case rang::tag::error:   return format_error  (os);
-		case rang::tag::warning: return format_warning(os);
-		case rang::tag::info:    return format_info   (os);
-		case rang::tag::comment: return format_comment(os);
+		case rang::tag::error:    return format_error   (os);
+		case rang::tag::warning:  return format_warning (os);
+		case rang::tag::info:     return format_info    (os);
+		case rang::tag::comment:  return format_comment (os);
+		case rang::tag::positive: return format_positive(os);
 	}
 
 	return os;
