@@ -15,32 +15,33 @@ namespace tools
 class Sparse_matrix : public Matrix
 {
 public:
+	using Idx_t = uint32_t;
 
 	Sparse_matrix(const size_t n_rows = 0, const size_t n_cols = 1);
 
 	virtual ~Sparse_matrix() = default;
 
-	inline const std::vector<size_t>& get_cols_from_row(const size_t row_index) const
+	inline const std::vector<Idx_t>& get_cols_from_row(const size_t row_index) const
 	{
 		return this->row_to_cols[row_index];
 	}
 
-	inline const std::vector<size_t>& get_rows_from_col(const size_t col_index) const
+	inline const std::vector<Idx_t>& get_rows_from_col(const size_t col_index) const
 	{
 		return this->col_to_rows[col_index];
 	}
 
-	inline const std::vector<size_t>& operator[](const size_t col_index) const
+	inline const std::vector<Idx_t>& operator[](const size_t col_index) const
 	{
 		return this->get_rows_from_col(col_index);
 	}
 
-	inline const std::vector<std::vector<size_t>>& get_row_to_cols() const
+	inline const std::vector<std::vector<Idx_t>>& get_row_to_cols() const
 	{
 		return this->row_to_cols;
 	}
 
-	inline const std::vector<std::vector<size_t>>& get_col_to_rows() const
+	inline const std::vector<std::vector<Idx_t>>& get_col_to_rows() const
 	{
 		return this->col_to_rows;
 	}
@@ -111,8 +112,8 @@ public:
 	static Sparse_matrix zero(const size_t n_rows, const size_t n_cols);
 
 private:
-	std::vector<std::vector<size_t>> row_to_cols;
-	std::vector<std::vector<size_t>> col_to_rows;
+	std::vector<std::vector<Idx_t>> row_to_cols;
+	std::vector<std::vector<Idx_t>> col_to_rows;
 
 
 	/*

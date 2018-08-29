@@ -118,13 +118,13 @@ void Sparse_matrix
 ::parse_connections()
 {
 	this->n_connections = std::accumulate(row_to_cols.begin(), row_to_cols.end(), (size_t)0,
-	                                      [](size_t init, const std::vector<size_t>& a){ return init + a.size();});
+	                                      [](size_t init, const std::vector<Idx_t>& a){ return init + a.size();});
 
 	this->rows_max_degree = std::max_element(row_to_cols.begin(), row_to_cols.end(),
-	                                         [](const std::vector<size_t>& a, const std::vector<size_t>& b){ return a.size() < b.size();})
+	                                         [](const std::vector<Idx_t>& a, const std::vector<Idx_t>& b){ return a.size() < b.size();})
 	                        ->size();
 	this->cols_max_degree = std::max_element(col_to_rows.begin(), col_to_rows.end(),
-	                                         [](const std::vector<size_t>& a, const std::vector<size_t>& b){ return a.size() < b.size();})
+	                                         [](const std::vector<Idx_t>& a, const std::vector<Idx_t>& b){ return a.size() < b.size();})
 	                        ->size();
 }
 
@@ -250,11 +250,11 @@ void Sparse_matrix
 	{
 		case Sort::ASCENDING:
 			std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
-			          [](const std::vector<size_t> &i1, const  std::vector<size_t> &i2) { return i1.size() < i2.size(); });
+			          [](const std::vector<Idx_t> &i1, const  std::vector<Idx_t> &i2) { return i1.size() < i2.size(); });
 		break;
 		case Sort::DESCENDING:
 			std::sort(this->col_to_rows.begin(), this->col_to_rows.end(),
-		          [](const  std::vector<size_t> &i1, const std::vector<size_t> &i2) { return i1.size() > i2.size(); });
+		          [](const  std::vector<Idx_t> &i1, const std::vector<Idx_t> &i2) { return i1.size() > i2.size(); });
 		break;
 	}
 
