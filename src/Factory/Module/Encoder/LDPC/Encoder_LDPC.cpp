@@ -89,12 +89,20 @@ void Encoder_LDPC::parameters
 	if(vals.exist({p+"-save-g"   })) this->G_save    = vals.at({p+"-save-g"   });
 
 	if (!this->G_path.empty())
+	{
 		tools::LDPC_matrix_handler::read_matrix_size(this->G_path, this->K, this->N_cw);
 
+		if (this->K > this->N_cw)
+			std::swap(this->K, this->N_cw);
+	}
 	else if (!this->H_path.empty())
 	{
 		int M;
 		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, M, this->N_cw);
+
+		if (M > this->N_cw)
+			std::swap(M, this->N_cw);
+
 		this->K = this->N_cw - M; // considered as regular so M = N - K
 	}
 

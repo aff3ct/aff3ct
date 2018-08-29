@@ -77,7 +77,7 @@ Sparse_matrix LDPC_matrix_handler
 	{
 		case Matrix_format::QC:
 		{
-			S = tools::QC::read(file);
+			S = std::move(tools::QC::read(file));
 
 			if (pct_pattern != nullptr)
 				*pct_pattern = tools::QC::read_pct_pattern(file);
@@ -86,7 +86,7 @@ Sparse_matrix LDPC_matrix_handler
 		}
 		case Matrix_format::ALIST:
 		{
-			S = tools::AList::read(file);
+			S = std::move(tools::AList::read(file));
 
 			if (info_bits_pos != nullptr)
 				try
@@ -98,7 +98,6 @@ Sparse_matrix LDPC_matrix_handler
 					info_bits_pos->clear();
 					// information bits positions are not in the matrix file
 				}
-
 			break;
 		}
 	}

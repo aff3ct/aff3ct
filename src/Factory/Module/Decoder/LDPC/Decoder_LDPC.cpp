@@ -140,6 +140,10 @@ void Decoder_LDPC::parameters
 	{
 		int M;
 		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, M, this->N_cw);
+
+		if (M > this->N_cw)
+			std::swap(M, this->N_cw);
+
 		this->K = this->N_cw - M; // considered as regular so M = N - K
 	}
 
