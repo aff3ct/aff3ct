@@ -30,6 +30,7 @@ protected:
 	// BF functions for decoding
 	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V, const R *Y_min, short *decis);
 };
-
+}
+}
 
 #endif /* DECODER_LDPC_BIT_FLIPPING_OMWBF_HPP_ */
