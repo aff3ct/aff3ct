@@ -53,7 +53,7 @@ public:
 	 * \param K: number of bits of information
 	 * \param N: number of coded bits
 	 */
-	Monitor(int n_frames = 1);
+	explicit Monitor(int n_frames = 1);
 
 	/*!
 	 * \brief Destructor.

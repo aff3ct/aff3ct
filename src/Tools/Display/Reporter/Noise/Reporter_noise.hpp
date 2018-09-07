@@ -27,9 +27,9 @@ public:
 private:
 	struct Noise_ptr
 	{
-		Noise_ptr(const Noise<R>* const* n) : noise(nullptr), noise_ptr(n) {}
-		Noise_ptr(const Noise<R>*        n) : noise(n),  noise_ptr(&noise) {}
-		Noise_ptr(const Noise<R>&        n) : noise(&n), noise_ptr(&noise) {}
+		explicit Noise_ptr(const Noise<R>* const* n) : noise(nullptr), noise_ptr(n) {}
+		explicit Noise_ptr(const Noise<R>*        n) : noise(n),  noise_ptr(&noise) {}
+		explicit Noise_ptr(const Noise<R>&        n) : noise(&n), noise_ptr(&noise) {}
 
 		const Noise<R>* get_noise_ptr() const
 		{

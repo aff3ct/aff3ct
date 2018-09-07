@@ -156,6 +156,9 @@ private:
 	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_polar_i>* node_curr);
 	void generate_nodes_indexes             (const Binary_node<Pattern_polar_i>* node_curr);
 	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_polar_i>* node_curr);
+
+	void operator=(Pattern_polar_parser&) = delete;
+	Pattern_polar_parser(Pattern_polar_parser&) = delete;
 };
 }
 }
