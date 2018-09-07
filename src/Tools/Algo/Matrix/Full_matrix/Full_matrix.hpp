@@ -19,13 +19,13 @@ namespace tools
  */
 
 template <typename T = int32_t>
-class Full_matrix : public Matrix, public std::vector<std::vector<T>>
+class Full_matrix : public Matrix, private std::vector<std::vector<T>>
 {
 public:
 	using Container = std::vector<std::vector<T>>;
 	using value_type = T;
 
-	Full_matrix(const unsigned n_rows = 0, const unsigned n_cols = 1);
+	explicit Full_matrix(const unsigned n_rows = 0, const unsigned n_cols = 1);
 
 	virtual ~Full_matrix() = default;
 
@@ -67,8 +67,8 @@ public:
 	void erase_col(const size_t col_index, const size_t n_cols = 1);
 
 
-	void erase(); // never use 'erase' methods, use instead erase_col or erase_row
-
+	using Container::size;
+	using Container::operator[];
 
 	/*
 	 * Compute the rows and cols degrees values when the matrix values have been modified
