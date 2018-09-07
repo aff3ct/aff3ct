@@ -55,7 +55,7 @@ bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
 		for (auto j = 0; j < this->n_variables_per_parity[i]; ++j)
 			synd[i] ^= this->decis[this->H.get_rows_from_col(i).at(j)];
 
-		syndrome |= synd[i];
+		syndrome |= (synd[i] != 0);
 	}
 
 	for (auto i = 0; i < this->n_V_nodes; ++i)
@@ -69,19 +69,20 @@ bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
 		energy[i] -= this->mwbf_factor * (R)std::abs(Y_N[i]); 
 	}
 
-	auto indMax = 0;
-	R valMax = energy[0];
+	auto ind_max = 0;
+	R val_max = energy[0];
 
 	for (auto i = 1; i < this->n_V_nodes; ++i)
 	{
-		if (valMax < energy[i])
+		if (val_max < energy[i])
 		{
-			valMax = energy[i];
-			indMax = i;
+			val_max = energy[i];
+			ind_max = i;
 		}
 	}
-	if (syndrome == 1)
-		this->decis[indMax] = (this->decis[indMax] == 0)?1:0;
+	if (syndrome)
+		this->decis[ind_max] = (this->decis[ind_max] == 0)?1:0;
+	
 	return !syndrome;
 }
 

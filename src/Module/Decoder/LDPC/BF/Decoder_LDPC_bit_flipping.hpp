@@ -59,7 +59,7 @@ protected:
 
 
 	std::vector<R> Y_min;
-	std::vector<short> decis;
+	std::vector<B> decis;
 };
 }
 }

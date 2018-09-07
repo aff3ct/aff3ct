@@ -223,15 +223,15 @@ void Decoder_LDPC_bit_flipping<B,R>
 	{
 //		printf("*****\n");
 		const auto length = this->n_variables_per_parity[imin];
-		auto minVal = std::numeric_limits<R>::max();
+		auto min_val = std::numeric_limits<R>::max();
 		for (auto mmin = 0; mmin < length; ++mmin)
 		{
 			auto comp = (R)std::abs(Y_N[this->H.get_rows_from_col(imin)[mmin]]);
-			minVal = (minVal > comp)?comp:minVal;
+			min_val = (min_val > comp)?comp:min_val;
 //			std::cout << comp << std::endl;
 		}
-		Y_min[imin] = minVal;
-//		std::cout << "Min : " << minVal << std::endl;		
+		Y_min[imin] = min_val;
+//		std::cout << "Min : " << min_val << std::endl;		
 	}
 //	printf("-----\n");
 

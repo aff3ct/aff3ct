@@ -30,8 +30,8 @@ protected:
 	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V);
 
 
-	std::vector<short> synd  ;
-	std::vector<R>     energy;
+	std::vector<B> synd  ;
+	std::vector<R> energy;
 };
 }
 }
