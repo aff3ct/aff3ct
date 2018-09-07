@@ -45,8 +45,7 @@ protected:
 	                         const R mwbf_factor = 0.0f,
 	                         const bool enable_syndrome = true,
 	                         const int syndrome_depth = 1,
-	                         const int n_frames = 1,
-	                         const std::string name = "Decoder_LDPC_bit_flipping");
+	                         const int n_frames = 1);
 	virtual ~Decoder_LDPC_bit_flipping();
 
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
@@ -56,7 +55,11 @@ protected:
 	// BP functions for decoding
 	void BF_decode(const R *Y_N, const int frame_id);
 
-	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V, const R *Y_min, short *decis) = 0;
+	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V) = 0;
+
+
+	std::vector<R> Y_min;
+	std::vector<short> decis;
 };
 }
 }

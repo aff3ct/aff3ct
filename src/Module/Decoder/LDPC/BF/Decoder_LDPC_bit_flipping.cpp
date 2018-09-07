@@ -21,10 +21,9 @@ Decoder_LDPC_bit_flipping<B,R>
                            const R mwbf_factor,
                            const bool enable_syndrome,
                            const int syndrome_depth,
-                           const int n_frames,
-                           const std::string name)
-: Decoder               (K, N, n_frames, 1                  ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                  ),
+                           const int n_frames)
+: Decoder               (K, N, n_frames, 1                        ),
+  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                        ),
   n_ite                 (n_ite                                    ),
   n_V_nodes             (N                                        ), // same as N but more explicit
   n_C_nodes             ((int)H.get_n_cols()                      ),
@@ -37,8 +36,13 @@ Decoder_LDPC_bit_flipping<B,R>
   info_bits_pos         (info_bits_pos                            ),
   Lp_N                  (N,                                      -1), // -1 in order to fail when AZCW
   C_to_V                (n_frames, std::vector<R>(this->n_branches)),
-  V_to_C                (n_frames, std::vector<R>(this->n_branches))
+  V_to_C                (n_frames, std::vector<R>(this->n_branches)),
+  Y_min                 (this->n_C_nodes                           ),
+  decis                 (this->n_V_nodes                           )
 {
+	const std::string name = "Decoder_LDPC_bit_flipping";
+	this->set_name(name);
+
 	/*if (n_ite <= 0)
 	{
 		std::stringstream message;
@@ -212,9 +216,6 @@ void Decoder_LDPC_bit_flipping<B,R>
 {
 	//printf("Je suis dans BF_decode1\n");
 	auto cur_syndrome_depth = 0;
-	R Y_min[this->n_C_nodes];
-
-	short decis[this->n_V_nodes];
 
 	//compute y_min,m for n in N(m)
 	//printf("-----\n");
@@ -245,7 +246,7 @@ void Decoder_LDPC_bit_flipping<B,R>
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		// specific inner code depending on the selected implementation (WBF for example)
-		auto syndrome = this->BF_process(Y_N, this->V_to_C[frame_id], this->C_to_V[frame_id], Y_min, decis);
+		auto syndrome = this->BF_process(Y_N, this->V_to_C[frame_id], this->C_to_V[frame_id]);
 
 		// stop criterion
 		if (this->enable_syndrome && syndrome)

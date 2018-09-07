@@ -22,13 +22,16 @@ public:
 	                              const R mwbf_factor = (R)0,
 	                              const bool enable_syndrome = true,
 	                              const int syndrome_depth = 1,
-	                              const int n_frames = 1,
-	                              const std::string name = "Decoder_LDPC_bit_flipping_OMWBF");
+	                              const int n_frames = 1);
 	virtual ~Decoder_LDPC_bit_flipping_OMWBF();
 
 protected:
 	// BF functions for decoding
-	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V, const R *Y_min, short *decis);
+	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V);
+
+
+	std::vector<short> synd  ;
+	std::vector<R>     energy;
 };
 }
 }

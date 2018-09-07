@@ -19,11 +19,15 @@ Decoder_LDPC_bit_flipping_OMWBF<B,R>
                                 const R mwbf_factor,
                                 const bool enable_syndrome,
                                 const int syndrome_depth,
-                                const int n_frames,
-                                const std::string name)
+                                const int n_frames)
 : Decoder(K, N, n_frames, 1),
-  Decoder_LDPC_bit_flipping<B,R>(K, N, n_ite, H, info_bits_pos,mwbf_factor , enable_syndrome, syndrome_depth, n_frames, name)
+  Decoder_LDPC_bit_flipping<B,R>(K, N, n_ite, H, info_bits_pos,mwbf_factor , enable_syndrome, syndrome_depth, n_frames),
+  synd  (this->n_C_nodes),
+  energy(this->n_V_nodes)
 {
+	const std::string name = "Decoder_LDPC_bit_flipping_OMWBF";
+	this->set_name(name);
+
 	if (typeid(R) == typeid(signed char))
 	{
 		std::stringstream message;
@@ -40,18 +44,16 @@ Decoder_LDPC_bit_flipping_OMWBF<B,R>
 
 template <typename B, typename R>
 bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
-::BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V, const R *Y_min, short *decis)
+::BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V)
 {
-	short synd[this->n_C_nodes];
 	bool syndrome = 0;
-	R energy[this->n_V_nodes];
 
 	for (auto i = 0; i < this->n_C_nodes; ++i)
 	{
 		synd[i] = 0;
 
 		for (auto j = 0; j < this->n_variables_per_parity[i]; ++j)
-			synd[i] ^= decis[this->H.get_rows_from_col(i).at(j)];
+			synd[i] ^= this->decis[this->H.get_rows_from_col(i).at(j)];
 
 		syndrome |= synd[i];
 	}
@@ -62,7 +64,7 @@ bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
 		for (auto j = 0; j < this->n_parities_per_variable[i]; ++j)
 		{
 			auto m = this->H.get_cols_from_row(i)[j];
-			energy[i] += (2 * synd[m] - 1) * Y_min[m];
+			energy[i] += (2 * synd[m] - 1) * this->Y_min[m];
 		}
 		energy[i] -= this->mwbf_factor * (R)std::abs(Y_N[i]); 
 	}
@@ -79,7 +81,7 @@ bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
 		}
 	}
 	if (syndrome == 1)
-		decis[indMax] = (decis[indMax] == 0)?1:0;
+		this->decis[indMax] = (this->decis[indMax] == 0)?1:0;
 	return !syndrome;
 }
 
