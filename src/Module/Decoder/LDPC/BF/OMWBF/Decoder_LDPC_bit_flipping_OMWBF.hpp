@@ -31,9 +31,5 @@ protected:
 	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V, const R *Y_min, short *decis);
 };
 
-template <typename B = int, typename R = float>
-using Decoder_LDPC_bit_flipping_OMWBF = Decoder_LDPC_bit_flipping_OMWBF<B,R>;
-}
-}
 
 #endif /* DECODER_LDPC_BIT_FLIPPING_OMWBF_HPP_ */

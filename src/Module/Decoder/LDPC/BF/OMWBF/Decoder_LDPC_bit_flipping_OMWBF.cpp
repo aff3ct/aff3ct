@@ -46,8 +46,6 @@ bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
 	bool syndrome = 0;
 	R energy[this->n_V_nodes];
 
-	R alpha = 0.4;
-
 	for (auto i = 0; i < this->n_C_nodes; ++i)
 	{
 		synd[i] = 0;
