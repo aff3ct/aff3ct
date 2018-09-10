@@ -28,7 +28,6 @@ BFER<B,R,Q>
   barrier(params_BFER.n_threads),
 
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
-  noise(nullptr),
 
   monitor_mi(params_BFER.n_threads),
   monitor_er(params_BFER.n_threads),
@@ -63,8 +62,6 @@ BFER<B,R,Q>
 ::~BFER()
 {
 	release_objects();
-
-	if (noise         != nullptr) { delete noise;         noise         = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -111,10 +108,8 @@ void BFER<B,R,Q>
 	// for each NOISE to be simulated
 	for (auto noise_idx = noise_begin; noise_idx != noise_end; noise_idx += noise_step)
 	{
-		if (this->noise != nullptr) delete noise;
-
-		this->noise = params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
-		                                                   params_BFER.mdm->bps, params_BFER.mdm->upf);
+		this->noise.reset(params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
+		                                                       params_BFER.mdm->bps, params_BFER.mdm->upf));
 
 		// manage noise distributions to be sure it exists
 		if (this->distributions != nullptr)
@@ -242,9 +237,9 @@ void BFER<B,R,Q>
 				{
 					case tools::Noise_type::SIGMA:
 						if (params_BFER.noise->type == "EBN0")
-							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise)->get_ebn0());
+							noise_value = std::to_string(std::dynamic_pointer_cast<tools::Sigma<>>(this->noise)->get_ebn0());
 						else //(params_BFER.noise_type == "ESN0")
-							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise)->get_esn0());
+							noise_value = std::to_string(std::dynamic_pointer_cast<tools::Sigma<>>(this->noise)->get_esn0());
 						break;
 					case tools::Noise_type::ROP:
 					case tools::Noise_type::EP:
@@ -327,7 +322,7 @@ template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
 ::build_reporters()
 {
-	this->noise = params_BFER.noise->template build<R>(0);
+	this->noise.reset(params_BFER.noise->template build<R>(0));
 	this->reporters.push_back(std::make_shared<tools::Reporter_noise<R>>(&this->noise));
 
 	if (params_BFER.mutinfo)

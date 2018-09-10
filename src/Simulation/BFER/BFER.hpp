@@ -54,7 +54,7 @@ protected:
 	// code specifications
 	const float bit_rate;
 
-	tools::Noise<R>* noise; // current noise simulated
+	std::shared_ptr<tools::Noise<R>> noise; // current noise simulated
 
 
 	// the monitors of the the BFER simulation
