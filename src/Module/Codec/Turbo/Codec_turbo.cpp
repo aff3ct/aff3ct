@@ -25,13 +25,11 @@ Codec_turbo<B,Q>
               const factory::Puncturer_turbo::parameters   *pct_params,
               CRC<B>* crc)
 : Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  sub_enc(nullptr),
-  sub_dec(nullptr)
+  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
 {
 	const std::string name = "Codec_turbo";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -64,22 +62,21 @@ Codec_turbo<B,Q>
 		json_stream << "[" << std::endl;
 	}
 
-	auto encoder_RSC = factory::Encoder_RSC::build<B>(*enc_params.sub1);
+	std::unique_ptr<Encoder_RSC_sys<B>> encoder_RSC(factory::Encoder_RSC::build<B>(*enc_params.sub1));
 	trellis = encoder_RSC->get_trellis();
-	delete encoder_RSC;
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	this->set_interleaver(factory::Interleaver_core::build<>(*dec_params.itl->core));
+	this->set_interleaver(std::shared_ptr<tools::Interleaver_core<>>(factory::Interleaver_core::build<>(*dec_params.itl->core)));
 
 	if (pct_params)
 	{
 		try
 		{
-			this->set_puncturer(factory::Puncturer_turbo::build<B,Q>(*pct_params));
+			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer_turbo::build<B,Q>(*pct_params)));
 		}
 		catch (tools::cannot_allocate const&)
 		{
-			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
+			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(*pct_params)));
 		}
 	}
 	else
@@ -91,54 +88,58 @@ Codec_turbo<B,Q>
 		pctno_params.N_cw     = enc_params.N_cw;
 		pctno_params.n_frames = enc_params.n_frames;
 
-		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
+		this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(pctno_params)));
 	}
+
 
 	try
 	{
-		sub_enc = factory::Encoder_RSC::build<B>(*enc_params.sub1, json_stream);
-		this->set_encoder(factory::Encoder_turbo::build<B>(enc_params, this->get_interleaver_bit(), sub_enc, sub_enc));
+		sub_enc.reset(factory::Encoder_RSC::build<B>(*enc_params.sub1, json_stream));
+
+		std::shared_ptr<Encoder_turbo<B>> enc(factory::Encoder_turbo::build<B>(enc_params, this->get_interleaver_bit(), sub_enc, sub_enc));
+		this->set_encoder(std::static_pointer_cast<Encoder<B>>(enc));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder::build<B>(enc_params)));
 	}
 
-	Decoder_turbo<B,Q>* decoder_turbo = nullptr;
+
+	std::shared_ptr<Decoder_turbo<B,Q>> decoder_turbo;
 	try
 	{
-		this->set_decoder_siho(factory::Decoder_turbo::build<B,Q>(dec_params, this->get_encoder()));
+		this->set_decoder_siho(std::shared_ptr<Decoder_SIHO<B,Q>>(factory::Decoder_turbo::build<B,Q>(dec_params, this->get_encoder())));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		sub_dec = factory::Decoder_RSC::build_siso<B,Q>(*dec_params.sub1, trellis, json_stream, dec_params.n_ite);
-		decoder_turbo = factory::Decoder_turbo::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec, *sub_dec,
-		                                                   this->get_encoder());
-		this->set_decoder_siho(decoder_turbo);
+		sub_dec      .reset(factory::Decoder_RSC::build_siso<B,Q>(*dec_params.sub1, trellis, json_stream, dec_params.n_ite));
+		decoder_turbo.reset(factory::Decoder_turbo::build<B,Q>(dec_params, this->get_interleaver_llr(),
+		                                                       *sub_dec, *sub_dec, this->get_encoder()));
+		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_turbo));
 	}
 
 	// ------------------------------------------------------------------------------------------------ post processing
 	if (decoder_turbo)
 	{
 		if (dec_params.sf->enable)
-			post_pros.push_back(factory::Scaling_factor::build<B,Q>(*dec_params.sf));
+			add_post_pro(factory::Scaling_factor::build<B,Q>(*dec_params.sf));
 
 		if (dec_params.fnc->enable)
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-			post_pros.push_back(factory::Flip_and_check::build<B,Q>(*dec_params.fnc, *crc));
+			add_post_pro(factory::Flip_and_check::build<B,Q>(*dec_params.fnc, *crc));
 		}
 		else if (crc != nullptr && crc->get_size() > 0)
-			post_pros.push_back(new tools::CRC_checker<B,Q>(*crc, 2, decoder_turbo->get_simd_inter_frame_level()));
+			add_post_pro(new tools::CRC_checker<B,Q>(*crc, 2, decoder_turbo->get_simd_inter_frame_level()));
 
 		if (dec_params.self_corrected)
-			post_pros.push_back(new tools::Self_corrected<B,Q>(dec_params.K,
-			                                                   dec_params.n_ite,
-			                                                   4,
-			                                                   dec_params.n_ite,
-			                                                   decoder_turbo->get_simd_inter_frame_level()));
+			add_post_pro(new tools::Self_corrected<B,Q>(dec_params.K,
+			                                            dec_params.n_ite,
+			                                            4,
+			                                            dec_params.n_ite,
+			                                            decoder_turbo->get_simd_inter_frame_level()));
 
 		for (auto i = 0; i < (int)post_pros.size(); i++)
 			if (post_pros[i] != nullptr)
@@ -157,18 +158,6 @@ template <typename B, typename Q>
 Codec_turbo<B,Q>
 ::~Codec_turbo()
 {
-	if (sub_enc != nullptr) { delete sub_enc; sub_enc = nullptr; }
-	if (sub_dec != nullptr) { delete sub_dec; sub_dec = nullptr; }
-
-	if (post_pros.size())
-		for (auto i = 0; i < (int)post_pros.size(); i++)
-			if (post_pros[i] != nullptr)
-			{
-				delete post_pros[i];
-				post_pros[i] = nullptr;
-			}
-	post_pros.clear();
-
 	if (json_stream.is_open())
 	{
 		json_stream << "[{\"stage\": \"end\"}]]" << std::endl;
@@ -176,7 +165,15 @@ Codec_turbo<B,Q>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+template <typename B, typename Q>
+void Codec_turbo<B,Q>
+::add_post_pro(tools::Post_processing_SISO<B,Q>* p)
+{
+	post_pros.push_back(std::shared_ptr<tools::Post_processing_SISO<B,Q>>(p));
+}
+
+
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Codec_turbo<B_8,Q_8>;

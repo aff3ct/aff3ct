@@ -50,24 +50,24 @@ struct Decoder_LDPC : public Decoder
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const tools::Sparse_matrix &H,
 		                                 const std::vector<unsigned> &info_bits_pos,
-		                                 module::Encoder<B> *encoder = nullptr) const;
+		                                 std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SISO_SIHO<B,Q>* build_siso(const tools::Sparse_matrix &H,
 		                                           const std::vector<unsigned> &info_bits_pos,
-		                                           module::Encoder<B> *encoder = nullptr) const;
+		                                           std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters& params, const tools::Sparse_matrix &H,
 	                                        const std::vector<unsigned> &info_bits_pos,
-	                                        module::Encoder<B> *encoder = nullptr);
+	                                        std::shared_ptr<module::Encoder<B>> encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters& params,
 	                                                  const tools::Sparse_matrix &H,
 	                                                  const std::vector<unsigned> &info_bits_pos,
-	                                                  module::Encoder<B> *encoder = nullptr);
+	                                                  std::shared_ptr<module::Encoder<B>> encoder = nullptr);
 };
 }
 }

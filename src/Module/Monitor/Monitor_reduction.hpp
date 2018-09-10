@@ -117,14 +117,14 @@ class Monitor_reduction_M : public Monitor_reduction, public M
 	static_assert(std::is_base_of<Monitor, M>::value, "M shall be based on a module::Monitor class.");
 
 private:
-	std::vector<M*> monitors;
+	std::vector<std::shared_ptr<M>> monitors;
 
 public:
 	/*
 	 * \brief do reductions upon a monitor list to merge data in this monitor
 	 * \param monitors is the list of monitors on which the reductions are done
 	 */
-	explicit Monitor_reduction_M(const std::vector<M*> &monitors);
+	explicit Monitor_reduction_M(const std::vector<std::shared_ptr<M>> &monitors);
 	virtual ~Monitor_reduction_M() = default;
 
 	virtual void reset();

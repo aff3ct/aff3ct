@@ -19,7 +19,7 @@ Codec_RSC<B,Q>
 {
 	const std::string name = "Codec_RSC";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -49,9 +49,8 @@ Codec_RSC<B,Q>
 	auto enc_cpy = enc_params;
 	enc_cpy.type = "RSC";
 
-	auto encoder_RSC = factory::Encoder_RSC::build<B>(enc_cpy);
+	std::unique_ptr<Encoder_RSC_sys<B>> encoder_RSC(factory::Encoder_RSC::build<B>(enc_cpy));
 	trellis = encoder_RSC->get_trellis();
-	delete encoder_RSC;
 
 	// ---------------------------------------------------------------------------------------------------- allocations
 	factory::Puncturer::parameters pct_params;
@@ -61,33 +60,29 @@ Codec_RSC<B,Q>
 	pct_params.N_cw     = enc_params.N_cw;
 	pct_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
+	this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(pct_params)));
 
 	try
 	{
-		this->set_encoder(factory::Encoder_RSC::build<B>(enc_params));
+		std::shared_ptr<Encoder_RSC_sys<B>> enc(factory::Encoder_RSC::build<B>(enc_params));
+		this->set_encoder(std::static_pointer_cast<Encoder<B>>(enc));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder::build<B>(enc_params)));
 	}
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_RSC::build_siso<B,Q>(dec_params, trellis, std::cout, 1, this->get_encoder());
-		this->set_decoder_siso(decoder_siso_siho);
-		this->set_decoder_siho(decoder_siso_siho);
+		std::shared_ptr<Decoder_SISO_SIHO<B,Q>> decoder_siso_siho(factory::Decoder_RSC::build_siso<B,Q>(dec_params, trellis, std::cout, 1, this->get_encoder()));
+		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_siso_siho));
+		this->set_decoder_siso(std::static_pointer_cast<Decoder_SISO<  Q>>(decoder_siso_siho));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(factory::Decoder_RSC::build<B,Q>(dec_params, trellis, std::cout, 1, this->get_encoder()));
+		std::shared_ptr<Decoder_SIHO<B,Q>> dec(factory::Decoder_RSC::build<B,Q>(dec_params, trellis, std::cout, 1, this->get_encoder()));
+		this->set_decoder_siho(dec);
 	}
-}
-
-template <typename B, typename Q>
-Codec_RSC<B,Q>
-::~Codec_RSC()
-{
 }
 
 template <typename B, typename Q>
@@ -149,7 +144,7 @@ void Codec_RSC<B,Q>
 }
 
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Codec_RSC<B_8,Q_8>;

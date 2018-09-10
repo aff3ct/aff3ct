@@ -17,22 +17,9 @@ using namespace aff3ct::simulation;
 template <typename B, typename R>
 EXIT<B,R>
 ::EXIT(const factory::EXIT::parameters& params_EXIT)
-: Simulation(params_EXIT),
+: Simulation (params_EXIT),
   params_EXIT(params_EXIT),
-  sig_a    ((R)0   ),
-  source   (nullptr),
-  codec    (nullptr),
-  modem    (nullptr),
-  modem_a  (nullptr),
-  channel  (nullptr),
-  channel_a(nullptr),
-  siso     (nullptr),
-  monitor  (nullptr),
-
-  rep_exit (nullptr),
-  rep_noise(nullptr),
-  rep_throughput(nullptr),
-  terminal (nullptr)
+  sig_a      ((R)0       )
 {
 #ifdef ENABLE_MPI
 	std::clog << rang::tag::warning << "This simulation is not MPI ready, the same computations will be launched "
@@ -50,39 +37,29 @@ EXIT<B,R>
 	if (params_EXIT.n_threads > 1)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "EXIT simu does not support the multi-threading.");
 
-	this->modules["source"   ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
-	this->modules["codec"    ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
-	this->modules["encoder"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
-	this->modules["decoder"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
-	this->modules["modem"    ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
-	this->modules["modem_a"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
-	this->modules["channel"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
-	this->modules["channel_a"] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
-	this->modules["monitor"  ] = std::vector<module::Module*>(params_EXIT.n_threads, nullptr);
+	this->add_module("source"   , params_EXIT.n_threads);
+	this->add_module("codec"    , params_EXIT.n_threads);
+	this->add_module("encoder"  , params_EXIT.n_threads);
+	this->add_module("decoder"  , params_EXIT.n_threads);
+	this->add_module("modem"    , params_EXIT.n_threads);
+	this->add_module("modem_a"  , params_EXIT.n_threads);
+	this->add_module("channel"  , params_EXIT.n_threads);
+	this->add_module("channel_a", params_EXIT.n_threads);
+	this->add_module("monitor"  , params_EXIT.n_threads);
 
 	this->monitor = this->build_monitor();
 
-	this->modules["monitor"][0] = this->monitor;
+	this->set_module("monitor", 0, this->monitor);
 
-	rep_noise = new tools::Reporter_noise<R>(this->noise);
-	reporters.push_back(rep_noise);
-
-	rep_exit = new tools::Reporter_EXIT<B,R>(*this->monitor, this->noise_a);
-	reporters.push_back(rep_exit);
-
-	rep_throughput = new tools::Reporter_throughput<uint64_t>(*this->monitor);
-	reporters.push_back(rep_throughput);
+	reporters.push_back(std::make_shared<tools::Reporter_noise< R>>(this->noise));
+	reporters.push_back(std::make_shared<tools::Reporter_EXIT<B,R>>(*this->monitor, this->noise_a));
+	reporters.push_back(std::make_shared<tools::Reporter_throughput<uint64_t>>(*this->monitor));
 }
 
 template <typename B, typename R>
 EXIT<B,R>
 ::~EXIT()
 {
-	if (rep_noise != nullptr) { delete rep_noise; rep_noise = nullptr; }
-	if (rep_exit  != nullptr) { delete rep_exit;  rep_exit  = nullptr; }
-	if (rep_throughput != nullptr) { delete rep_throughput; rep_throughput = nullptr; }
-
-	if (monitor != nullptr) { delete monitor; monitor = nullptr; }
 	release_objects();
 }
 
@@ -108,14 +85,14 @@ void EXIT<B,R>
 	channel_a = build_channel_a(K_mod);
 	terminal  = build_terminal (     );
 
-	this->modules["source"   ][0] = source;
-	this->modules["codec"    ][0] = codec;
-	this->modules["encoder"  ][0] = codec->get_encoder();
-	this->modules["decoder"  ][0] = codec->get_decoder_siso();
-	this->modules["modem"    ][0] = modem;
-	this->modules["modem_a"  ][0] = modem_a;
-	this->modules["channel"  ][0] = channel;
-	this->modules["channel_a"][0] = channel_a;
+	this->set_module("source"   , 0, source);
+	this->set_module("codec"    , 0, codec);
+	this->set_module("encoder"  , 0, codec->get_encoder());
+	this->set_module("decoder"  , 0, codec->get_decoder_siso());
+	this->set_module("modem"    , 0, modem);
+	this->set_module("modem_a"  , 0, modem_a);
+	this->set_module("channel"  , 0, channel);
+	this->set_module("channel_a", 0, channel_a);
 
 	this->monitor->add_handler_measure(std::bind(&module::Codec_SISO<B,R>::reset, codec));
 
@@ -132,7 +109,6 @@ void EXIT<B,R>
 	// allocate and build all the communication chain to generate EXIT chart
 	this->build_communication_chain();
 	this->sockets_binding();
-
 
 
 	// for each channel NOISE to be simulated
@@ -209,11 +185,11 @@ void EXIT<B,R>
 
 				if (params_EXIT.statistics)
 				{
-					std::vector<std::vector<const module::Module*>> mod_vec;
+					std::vector<std::vector<std::shared_ptr<const module::Module>>> mod_vec;
 					for (auto &vm : modules)
 					{
-						std::vector<const module::Module*> sub_mod_vec;
-						for (auto *m : vm.second)
+						std::vector<std::shared_ptr<const module::Module>> sub_mod_vec;
+						for (auto& m : vm.second)
 							sub_mod_vec.push_back(m);
 						mod_vec.push_back(sub_mod_vec);
 					}
@@ -372,82 +348,71 @@ template <typename B, typename R>
 void EXIT<B,R>
 ::release_objects()
 {
-	if (source    != nullptr) { delete source;    source    = nullptr; }
-	if (codec     != nullptr) { delete codec;     codec     = nullptr; }
-	if (modem     != nullptr) { delete modem;     modem     = nullptr; }
-	if (modem_a   != nullptr) { delete modem_a;   modem_a   = nullptr; }
-	if (channel   != nullptr) { delete channel;   channel   = nullptr; }
-	if (channel_a != nullptr) { delete channel_a; channel_a = nullptr; }
-	if (terminal  != nullptr) { delete terminal;  terminal  = nullptr; }
 }
 
 template <typename B, typename R>
-module::Source<B>* EXIT<B,R>
+std::shared_ptr<module::Source<B>> EXIT<B,R>
 ::build_source()
 {
-	return params_EXIT.src->template build<B>();
+	return std::shared_ptr<module::Source<B>>(params_EXIT.src->template build<B>());
 }
 
 template <typename B, typename R>
-module::Codec_SISO<B,R>* EXIT<B,R>
+std::shared_ptr<module::Codec_SISO<B,R>> EXIT<B,R>
 ::build_codec()
 {
-	return params_EXIT.cdc->template build<B,R>();
+	return std::shared_ptr<module::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
 }
 
 template <typename B, typename R>
-module::Modem<B,R,R>* EXIT<B,R>
+std::shared_ptr<module::Modem<B,R,R>> EXIT<B,R>
 ::build_modem()
 {
-	return params_EXIT.mdm->template build<B,R>();
+	return std::shared_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>());
 }
 
 template <typename B, typename R>
-module::Modem<B,R>* EXIT<B,R>
+std::shared_ptr<module::Modem<B,R>> EXIT<B,R>
 ::build_modem_a()
 {
-	auto mdm_params = params_EXIT.mdm->clone();
-	mdm_params->N   = params_EXIT.cdc->K;
-	auto m = mdm_params->template build<B,R>();
-	delete mdm_params;
-	return m;
+	std::unique_ptr<factory::Modem::parameters> mdm_params(params_EXIT.mdm->clone());
+	mdm_params->N = params_EXIT.cdc->K;
+	return std::shared_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>());
 }
 
 template <typename B, typename R>
-module::Channel<R>* EXIT<B,R>
+std::shared_ptr<module::Channel<R>> EXIT<B,R>
 ::build_channel(const int size)
 {
-	return params_EXIT.chn->template build<R>();
+	return std::shared_ptr<module::Channel<R>>(params_EXIT.chn->template build<R>());
 }
 
 template <typename B, typename R>
-module::Channel<R>* EXIT<B,R>
+std::shared_ptr<module::Channel<R>> EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	auto chn_params = params_EXIT.chn->clone();
+	std::unique_ptr<factory::Channel::parameters> chn_params(params_EXIT.chn->clone());
 	chn_params->N   = factory::Modem::get_buffer_size_after_modulation(params_EXIT.mdm->type,
 	                                                                   params_EXIT.cdc->K,
 	                                                                   params_EXIT.mdm->bps,
 	                                                                   params_EXIT.mdm->upf,
 	                                                                   params_EXIT.mdm->cpm_L);
 
-	auto c = chn_params->template build<R>();
-	delete chn_params;
-	return c;
+	return std::shared_ptr<module::Channel<R>>(chn_params->template build<R>());
 }
 
 template <typename B, typename R>
-module::Monitor_EXIT<B,R>* EXIT<B,R>
+std::shared_ptr<module::Monitor_EXIT<B,R>> EXIT<B,R>
 ::build_monitor()
 {
-	return params_EXIT.mnt->template build<B,R>();
+	return std::shared_ptr<module::Monitor_EXIT<B,R>>(params_EXIT.mnt->template build<B,R>());
 }
 
 template <typename B, typename R>
-tools::Terminal* EXIT<B,R>
+std::shared_ptr<tools::Terminal> EXIT<B,R>
 ::build_terminal()
 {
-	return params_EXIT.ter->build(this->reporters);
+	return std::shared_ptr<tools::Terminal>(params_EXIT.ter->build(this->reporters));
 }
 
 // ==================================================================================== explicit template instantiation

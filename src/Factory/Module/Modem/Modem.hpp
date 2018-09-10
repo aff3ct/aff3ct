@@ -1,6 +1,7 @@
 #ifndef FACTORY_MODEM_HPP
 #define FACTORY_MODEM_HPP
 
+#include <memory>
 #include <string>
 
 #include "Tools/Math/max.h"
@@ -65,7 +66,7 @@ struct Modem : public Factory
 
 		// builder
 		template <typename B = int, typename R = float, typename Q = R>
-		module::Modem<B,R,Q>* build(const tools::Distributions<R>* dist = nullptr,
+		module::Modem<B,R,Q>* build(std::shared_ptr<const tools::Distributions<R>> dist = nullptr,
 		                            const std::string& chn_type = "AWGN") const;
 
 	private:
@@ -78,7 +79,7 @@ struct Modem : public Factory
 
 
 	template <typename B = int, typename R = float, typename Q = R>
-	static module::Modem<B,R,Q>* build(const parameters &params, const tools::Distributions<R>* dist = nullptr,
+	static module::Modem<B,R,Q>* build(const parameters &params, std::shared_ptr<const tools::Distributions<R>> dist = nullptr,
 	                                   const std::string& chn_type = "AWGN");
 
 	static bool is_complex_mod(const std::string &type, const int bps = 1);

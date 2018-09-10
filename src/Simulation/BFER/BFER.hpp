@@ -4,6 +4,7 @@
 #include <map>
 #include <chrono>
 #include <vector>
+#include <memory>
 
 #include "Tools/Threads/Barrier.hpp"
 
@@ -68,28 +69,24 @@ protected:
 	using Monitor_MI_reduction_type   = module::Monitor_reduction_M<Monitor_MI_type  >;
 #endif
 
-	std::vector<Monitor_MI_type*>  monitor_mi;
-	Monitor_MI_reduction_type*     monitor_mi_red;
+	std::vector<std::shared_ptr<Monitor_MI_type>>    monitor_mi;
+	std::shared_ptr<Monitor_MI_reduction_type>       monitor_mi_red;
 
-	std::vector<Monitor_BFER_type*> monitor_er;
-	Monitor_BFER_reduction_type*    monitor_er_red;
+	std::vector<std::shared_ptr<Monitor_BFER_type>>  monitor_er;
+	std::shared_ptr<Monitor_BFER_reduction_type>     monitor_er_red;
 
 
 	// dump frames into files
-	std::vector<tools::Dumper          *> dumper;
-	            tools::Dumper_reduction*  dumper_red;
+	std::vector<std::shared_ptr<tools::Dumper          >> dumper;
+	            std::shared_ptr<tools::Dumper_reduction>  dumper_red;
 
 
 	// terminal and reporters (for the output of the simu)
-	tools::Reporter_BFER <B>*             rep_er;
-	tools::Reporter_MI <B,R>*             rep_mi;
-	tools::Reporter_noise<R>*             rep_noise;
-	tools::Reporter_throughput<uint64_t>* rep_thr;
-	std::vector<tools::Reporter*>         reporters;
-	tools::Terminal* terminal;
+	std::vector<std::shared_ptr<tools::Reporter>> reporters;
+	std::shared_ptr<tools::Terminal>              terminal;
 
 	// noise distribution
-	tools::Distributions<R> *distributions;
+	std::shared_ptr<tools::Distributions<R>> distributions;
 
 	std::chrono::steady_clock::time_point t_start_noise_point;
 
@@ -104,10 +101,9 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	Monitor_MI_type*   build_monitor_mi(const int tid = 0);
-	Monitor_BFER_type* build_monitor_er(const int tid = 0);
-
-	tools::Terminal* build_terminal();
+	std::shared_ptr<Monitor_MI_type>   build_monitor_mi(const int tid = 0);
+	std::shared_ptr<Monitor_BFER_type> build_monitor_er(const int tid = 0);
+	std::shared_ptr<tools::Terminal>   build_terminal();
 	void build_reporters();
 	void build_monitors ();
 

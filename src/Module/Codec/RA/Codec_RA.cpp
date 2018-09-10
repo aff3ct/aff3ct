@@ -17,7 +17,7 @@ Codec_RA<B,Q>
 {
 	const std::string name = "Codec_RA";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -51,28 +51,24 @@ Codec_RA<B,Q>
 	pct_params.N_cw     = enc_params.N_cw;
 	pct_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
-	this->set_interleaver(factory::Interleaver_core::build<>(*dec_params.itl->core));
-	
+	this->set_puncturer  (std::shared_ptr<Puncturer<B,Q>            >(factory::Puncturer::build<B,Q>(pct_params)));
+	this->set_interleaver(std::shared_ptr<tools::Interleaver_core< >>(factory::Interleaver_core::build<>(*dec_params.itl->core)));
+
 	try
 	{
-		this->set_encoder(factory::Encoder_RA::build<B>(enc_params, this->get_interleaver_bit()));
+		std::shared_ptr<Encoder_RA<B>> enc(factory::Encoder_RA::build<B>(enc_params, this->get_interleaver_bit()));
+		this->set_encoder(std::static_pointer_cast<Encoder<B>>(enc));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder::build<B>(enc_params)));
 	}
 
-	this->set_decoder_siho(factory::Decoder_RA::build<B,Q>(dec_params, this->get_interleaver_llr(), this->get_encoder()));
+	this->set_decoder_siho(std::shared_ptr<Decoder_SIHO<B,Q>>(
+		factory::Decoder_RA::build<B,Q>(dec_params, this->get_interleaver_llr(), this->get_encoder())));
 }
 
-template <typename B, typename Q>
-Codec_RA<B,Q>
-::~Codec_RA()
-{
-}
-
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Codec_RA<B_8,Q_8>;

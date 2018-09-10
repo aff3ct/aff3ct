@@ -24,8 +24,7 @@ Codec_LDPC<B,Q>
              const factory::Decoder_LDPC  ::parameters &dec_params,
                    factory::Puncturer_LDPC::parameters *pct_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  dvbs2(nullptr)
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
 {
 	const std::string name = "Codec_LDPC";
 	this->set_name(name);
@@ -62,7 +61,7 @@ Codec_LDPC<B,Q>
 	}
 	else if (enc_params.type == "LDPC_DVBS2")
 	{
-		dvbs2 = tools::build_dvbs2(this->K, this->N);
+		dvbs2.reset(tools::build_dvbs2(this->K, this->N));
 
 		H = tools::build_H(*dvbs2);
 	}
@@ -91,7 +90,7 @@ Codec_LDPC<B,Q>
 	if (info_bits_pos.empty())
 	{
 		if (enc_params.type == "LDPC_H")
-			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H));
+			this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder_LDPC::build<B>(enc_params, G, H)));
 	}
 	else
 	{
@@ -108,17 +107,17 @@ Codec_LDPC<B,Q>
 		pctno_params.N_cw     = enc_params.N_cw;
 		pctno_params.n_frames = enc_params.n_frames;
 
-		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
+		this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(pctno_params)));
 	}
 	else
 	{
 		try
 		{
-			this->set_puncturer(factory::Puncturer_LDPC::build<B,Q>(*pct_params));
+			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer_LDPC::build<B,Q>(*pct_params)));
 		}
 		catch (tools::cannot_allocate const&)
 		{
-			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
+			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(*pct_params)));
 		}
 	}
 
@@ -131,11 +130,12 @@ Codec_LDPC<B,Q>
 	{ // encoder not set when building encoder LDPC_H
 		try
 		{
-			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
+			std::shared_ptr<Encoder_LDPC<B>> enc(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
+			this->set_encoder(std::static_pointer_cast<Encoder<B>>(enc));
 		}
 		catch(tools::cannot_allocate const&)
 		{
-			this->set_encoder(factory::Encoder::build<B>(enc_params));
+			this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder::build<B>(enc_params)));
 		}
 	}
 
@@ -155,22 +155,15 @@ Codec_LDPC<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, this->get_encoder());
-		this->set_decoder_siso(decoder_siso_siho);
-		this->set_decoder_siho(decoder_siso_siho);
+		std::shared_ptr<Decoder_SISO_SIHO<B,Q>> decoder_siso_siho(factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
+		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_siso_siho));
+		this->set_decoder_siso(std::static_pointer_cast<Decoder_SISO<  Q>>(decoder_siso_siho));
 	}
 	catch (const std::exception&)
 	{
-		this->set_decoder_siho(factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
+		std::shared_ptr<Decoder_SIHO<B,Q>> dec(factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
+		this->set_decoder_siho(dec);
 	}
-}
-
-template <typename B, typename Q>
-Codec_LDPC<B,Q>
-::~Codec_LDPC()
-{
-	if (dvbs2 != nullptr)
-		delete dvbs2;
 }
 
 template <typename B, typename Q>

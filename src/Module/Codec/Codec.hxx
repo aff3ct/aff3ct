@@ -16,11 +16,6 @@ template <typename B, typename Q>
 Codec<B,Q>::
 Codec(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
 : Module(n_frames),
-  interleaver_core(nullptr),
-  interleaver_bit (nullptr),
-  interleaver_llr (nullptr),
-  encoder         (nullptr),
-  puncturer       (nullptr),
   K(K), N_cw(N_cw), N(N), tail_length(tail_length),
   n(nullptr)
 {
@@ -115,16 +110,11 @@ template <typename B, typename Q>
 Codec<B,Q>::
 ~Codec()
 {
-	if (encoder          != nullptr) { delete encoder;          encoder          = nullptr; }
-	if (puncturer        != nullptr) { delete puncturer;        puncturer        = nullptr; }
-	if (interleaver_bit  != nullptr) { delete interleaver_bit;  interleaver_bit  = nullptr; }
-	if (interleaver_llr  != nullptr) { delete interleaver_llr;  interleaver_llr  = nullptr; }
-	if (interleaver_core != nullptr) { delete interleaver_core; interleaver_core = nullptr; }
-	if (n                != nullptr) { delete n;                n                = nullptr; }
+	if (n != nullptr) { delete n; n = nullptr; }
 }
 
 template <typename B, typename Q>
-tools::Interleaver_core<>* Codec<B,Q>::
+std::shared_ptr<tools::Interleaver_core<>> Codec<B,Q>::
 get_interleaver()
 {
 	if (this->interleaver_core == nullptr)
@@ -138,7 +128,7 @@ get_interleaver()
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec<B,Q>::
+std::shared_ptr<Encoder<B>> Codec<B,Q>::
 get_encoder()
 {
 	if (this->encoder == nullptr)
@@ -152,7 +142,7 @@ get_encoder()
 }
 
 template <typename B, typename Q>
-Puncturer<B,Q>* Codec<B,Q>::
+std::shared_ptr<Puncturer<B,Q>> Codec<B,Q>::
 get_puncturer()
 {
 	if (this->puncturer == nullptr)
@@ -420,23 +410,23 @@ _add_sys_ext(const Q *ext, Q *Y_N, const int frame_id)
 
 template <typename B, typename Q>
 void Codec<B,Q>::
-set_interleaver(tools::Interleaver_core<>* itl)
+set_interleaver(std::shared_ptr<tools::Interleaver_core<>> itl)
 {
 	this->interleaver_core = itl;
-	this->interleaver_bit  = factory::Interleaver::build<B>(*itl);
-	this->interleaver_llr  = factory::Interleaver::build<Q>(*itl);
+	this->interleaver_bit .reset(factory::Interleaver::build<B>(*itl));
+	this->interleaver_llr .reset(factory::Interleaver::build<Q>(*itl));
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>::
-set_encoder(Encoder<B>* enc)
+set_encoder(std::shared_ptr<Encoder<B>> enc)
 {
 	this->encoder = enc;
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>::
-set_puncturer(Puncturer<B,Q>* pct)
+set_puncturer(std::shared_ptr<Puncturer<B,Q>> pct)
 {
 	this->puncturer = pct;
 }

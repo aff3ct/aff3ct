@@ -1,3 +1,6 @@
+#include <sstream>
+#include "Tools/Exception/exception.hpp"
+
 #include "Simulation.hpp"
 
 using namespace aff3ct;
@@ -49,4 +52,17 @@ void Simulation
 					if (!t->is_stats() && !t->is_debug())
 						t->set_fast(true);
 				}
+}
+
+void Simulation
+::add_module(const std::string& module_name, const int n_threads)
+{
+	if (this->modules.find(module_name) != this->modules.end())
+	{
+		std::stringstream message;
+		message << "'module_name' has already been given in the modules list ('module_name' = " << module_name << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	this->modules[module_name] = std::vector<std::shared_ptr<module::Module>>(n_threads);
 }

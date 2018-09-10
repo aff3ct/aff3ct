@@ -2,6 +2,7 @@
 #define FACTORY_DECODER_HPP_
 
 #include <string>
+#include <memory>
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Encoder/Encoder.hpp"
@@ -49,7 +50,7 @@ struct Decoder : Factory
 		parameters(const std::string &n, const std::string &p);
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
 	};
 };
 }

@@ -245,7 +245,7 @@ module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 ::build(const module::Interleaver<Q>  &itl,
               module::Decoder_SISO<Q> &siso_n,
               module::Decoder_SISO<Q> &siso_i,
-              module::Encoder<B>      *encoder) const
+              std::shared_ptr<module::Encoder<B>> encoder) const
 {
 	if (this->type == "TURBO")
 	{
@@ -259,7 +259,7 @@ module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 template <class D1, class D2>
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_turbo::parameters<D1,D2>
-::build(module::Encoder<B> *encoder) const
+::build(std::shared_ptr<module::Encoder<B>> encoder) const
 {
 	return Decoder::parameters::build<B,Q>(encoder);
 }
@@ -270,14 +270,14 @@ module::Decoder_turbo<B,Q>* Decoder_turbo
         const module::Interleaver<Q>  &itl,
               module::Decoder_SISO<Q> &siso_n,
               module::Decoder_SISO<Q> &siso_i,
-              module::Encoder<B>      *encoder)
+              std::shared_ptr<module::Encoder<B>> encoder)
 {
 	return params.template build<B,Q>(itl, siso_n, siso_i, encoder);
 }
 
 template <typename B, typename Q, class D1, class D2>
 module::Decoder_SIHO<B,Q>* Decoder_turbo
-::build(const parameters<D1,D2> &params, module::Encoder<B> *encoder)
+::build(const parameters<D1,D2> &params, std::shared_ptr<module::Encoder<B>> encoder)
 {
 	return params.template build<B,Q>(encoder);
 }

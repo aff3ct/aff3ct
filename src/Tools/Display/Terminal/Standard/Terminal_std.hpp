@@ -14,6 +14,7 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <memory>
 
 #include "../Terminal.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
@@ -42,13 +43,13 @@ public:
 	static const int         column_width;
 
 protected:
-	std::vector<Reporter*>& reporters;
+	const std::vector<std::shared_ptr<tools::Reporter>>& reporters;
 
 public:
 	/*!
 	 * \brief Constructor.
 	 */
-	explicit Terminal_std(std::vector<Reporter*>& reporters);
+	explicit Terminal_std(const std::vector<std::shared_ptr<tools::Reporter>>& reporters);
 
 	/*!
 	 * \brief Destructor.
@@ -68,11 +69,6 @@ protected:
 	static unsigned extra_spaces   (const Reporter::title_t& text, const unsigned group_width);
 	static unsigned extra_spaces   (const Reporter::group_t& group);
 	static unsigned get_group_width(const Reporter::group_t& group);
-
-private:
-	static void start_thread_terminal(Terminal_std *terminal_std, const std::chrono::milliseconds freq);
-
-	static void signal_interrupt_handler(int signal);
 };
 }
 }

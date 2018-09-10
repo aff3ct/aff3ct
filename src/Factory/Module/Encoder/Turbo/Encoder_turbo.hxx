@@ -191,8 +191,8 @@ template <class E1, class E2>
 template <typename B>
 module::Encoder_turbo<B>* Encoder_turbo::parameters<E1,E2>
 ::build(const module::Interleaver<B> &itl,
-              module::Encoder    <B> *enc_n,
-              module::Encoder    <B> *enc_i) const
+              std::shared_ptr<module::Encoder<B>> enc_n,
+              std::shared_ptr<module::Encoder<B>> enc_i) const
 {
 	enc_i = (enc_i == nullptr) ? enc_n : enc_i;
 
@@ -212,8 +212,8 @@ template <typename B, class E1, class E2>
 module::Encoder_turbo<B>* Encoder_turbo
 ::build(const parameters<E1,E2>      &params,
         const module::Interleaver<B> &itl,
-              module::Encoder    <B> *enc_n,
-              module::Encoder    <B> *enc_i)
+              std::shared_ptr<module::Encoder<B>> enc_n,
+              std::shared_ptr<module::Encoder<B>> enc_i)
 {
 	return params.template build<B>(itl, enc_n, enc_i);
 }

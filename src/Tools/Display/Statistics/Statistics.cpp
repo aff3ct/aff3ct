@@ -186,10 +186,10 @@ void Statistics
 }
 
 void Statistics
-::show(std::vector<const module::Module*> modules, const bool ordered, std::ostream &stream)
+::show(std::vector<std::shared_ptr<const module::Module>> modules, const bool ordered, std::ostream &stream)
 {
 	std::vector<const module::Task*> tasks;
-	for (auto *m : modules)
+	for (auto& m : modules)
 		if (m != nullptr)
 			for (auto *t : m->tasks)
 				if (t->get_n_calls())
@@ -295,7 +295,7 @@ void Statistics
 }
 
 void Statistics
-::show(std::vector<std::vector<const module::Module*>> modules, const bool ordered, std::ostream &stream)
+::show(std::vector<std::vector<std::shared_ptr<const module::Module>>> modules, const bool ordered, std::ostream &stream)
 {
 	std::vector<std::vector<const module::Task*>> tasks;
 	for (auto &vm : modules)
@@ -305,7 +305,7 @@ void Statistics
 			for (size_t t = 0; t < tasks0.size(); t++)
 			{
 				std::vector<const module::Task*> tsk;
-				for (auto *m : vm)
+				for (auto& m : vm)
 					tsk.push_back(m->tasks[t]);
 				tasks.push_back(tsk);
 			}

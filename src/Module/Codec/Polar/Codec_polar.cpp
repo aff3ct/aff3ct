@@ -18,11 +18,7 @@ Codec_polar<B,Q>
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   adaptive_fb(fb_params.sigma == -1.f),
   frozen_bits(fb_params.N_cw, true),
-  generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
-  fb_generator     (nullptr),
-  puncturer_shortlast(nullptr),
-  fb_decoder       (nullptr),
-  fb_encoder       (nullptr)
+  generated_decoder((dec_params.implem.find("_SNR") != std::string::npos))
 {
 	const std::string name = "Codec_polar";
 	this->set_name(name);
@@ -55,15 +51,14 @@ Codec_polar<B,Q>
 	// ---------------------------------------------------------------------------------------------------------- tools
 	if (!generated_decoder)
 		// build the frozen bits generator
-		fb_generator = factory::Frozenbits_generator::build(fb_params);
-	else
-		if (this->N_cw != this->N)
-		{
-			std::stringstream message;
-			message << "'N_cw' has to be equal to 'N' ('N_cw' = " << this->N_cw << ", 'N' = "
-			        << this->N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+		fb_generator.reset(factory::Frozenbits_generator::build(fb_params));
+	else if (this->N_cw != this->N)
+	{
+		std::stringstream message;
+		message << "'N_cw' has to be equal to 'N' ('N_cw' = " << this->N_cw << ", 'N' = "
+		        << this->N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
 	std::fill(frozen_bits.begin(), frozen_bits.begin() + this->K, false);
@@ -77,47 +72,50 @@ Codec_polar<B,Q>
 		pctno_params.N_cw     = enc_params.N_cw;
 		pctno_params.n_frames = enc_params.n_frames;
 
-		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
+		this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(pctno_params)));
 	}
 	else
 	{
 		try
 		{
-			puncturer_shortlast = factory::Puncturer_polar::build<B,Q>(*pct_params, *fb_generator);
+			puncturer_shortlast.reset(factory::Puncturer_polar::build<B,Q>(*pct_params, *fb_generator));
 			this->set_puncturer(puncturer_shortlast);
 		}
 		catch(tools::cannot_allocate const&)
 		{
-			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
+			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(*pct_params)));
 		}
 	}
 
 	try
 	{
-		auto *encoder_polar = factory::Encoder_polar::build<B>(enc_params, frozen_bits);
-		this->fb_encoder = encoder_polar;
-		this->set_encoder(encoder_polar);
+		std::shared_ptr<Encoder_polar<B>> encoder_polar(factory::Encoder_polar::build<B>(enc_params, frozen_bits));
+		this->fb_encoder = std::static_pointer_cast<tools::Frozenbits_notifier>(encoder_polar);
+		this->set_encoder(std::static_pointer_cast<Encoder<B>>(encoder_polar));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder::build<B>(enc_params)));
 	}
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits, this->get_encoder());
-		this->set_decoder_siso(decoder_siso_siho);
-		this->set_decoder_siho(decoder_siso_siho);
+		std::shared_ptr<Decoder_SISO_SIHO<B,Q>> decoder_siso_siho(factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits, this->get_encoder()));
+		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_siso_siho));
+		this->set_decoder_siso(std::static_pointer_cast<Decoder_SISO<  Q>>(decoder_siso_siho));
 	}
 	catch (const std::exception&)
 	{
+		std::shared_ptr<Decoder_SIHO<B,Q>> dec;
 		if (generated_decoder)
-			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc, this->get_encoder()));
+			dec.reset(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc, this->get_encoder()));
 		else
-			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, this->get_encoder()));
+			dec.reset(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, this->get_encoder()));
+
+		this->set_decoder_siho(dec);
 	}
 	if (dec_params.type != "ML")
-		this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho());
+		this->fb_decoder = std::dynamic_pointer_cast<tools::Frozenbits_notifier>(this->get_decoder_siho());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
 	if (!generated_decoder)
@@ -141,13 +139,6 @@ Codec_polar<B,Q>
 		std::copy(fb.begin(), fb.end(), frozen_bits.begin());
 		this->notify_frozenbits_update();
 	}
-}
-
-template <typename B, typename Q>
-Codec_polar<B,Q>
-::~Codec_polar()
-{
-	if (fb_generator != nullptr) { delete fb_generator; fb_generator = nullptr; }
 }
 
 template <typename B, typename Q>

@@ -13,21 +13,14 @@ namespace module
 template <typename B, typename Q>
 Codec_SIHO<B,Q>::
 Codec_SIHO(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
-: Codec<B,Q>(K, N_cw, N, tail_length, n_frames), decoder_siho(nullptr)
+: Codec<B,Q>(K, N_cw, N, tail_length, n_frames)
 {
 	const std::string name = "Codec_SIHO";
 	this->set_name(name);
 }
 
 template <typename B, typename Q>
-Codec_SIHO<B,Q>::
-~Codec_SIHO()
-{
-	if (decoder_siho != nullptr) { delete decoder_siho; decoder_siho = nullptr; }
-}
-
-template <typename B, typename Q>
-Decoder_SIHO<B,Q>* Codec_SIHO<B,Q>::
+std::shared_ptr<Decoder_SIHO<B,Q>> Codec_SIHO<B,Q>::
 get_decoder_siho()
 {
 	if (this->decoder_siho == nullptr)
@@ -56,7 +49,7 @@ reset()
 
 template <typename B, typename Q>
 void Codec_SIHO<B,Q>::
-set_decoder_siho(Decoder_SIHO<B,Q>* dec)
+set_decoder_siho(std::shared_ptr<Decoder_SIHO<B,Q>> dec)
 {
 	this->decoder_siho = dec;
 }

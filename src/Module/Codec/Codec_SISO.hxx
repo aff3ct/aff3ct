@@ -17,14 +17,7 @@ Codec_SISO(const int K, const int N_cw, const int N, const int tail_length, cons
 }
 
 template <typename B, typename Q>
-Codec_SISO<B,Q>::
-~Codec_SISO()
-{
-	if (decoder_siso != nullptr) { delete decoder_siso; decoder_siso = nullptr; }
-}
-
-template <typename B, typename Q>
-Decoder_SISO<Q>* Codec_SISO<B,Q>::
+std::shared_ptr<Decoder_SISO<Q>> Codec_SISO<B,Q>::
 get_decoder_siso()
 {
 	if (this->decoder_siso == nullptr)
@@ -53,7 +46,7 @@ reset()
 
 template <typename B, typename Q>
 void Codec_SISO<B,Q>::
-set_decoder_siso(Decoder_SISO<Q>* dec)
+set_decoder_siso(std::shared_ptr<Decoder_SISO<Q>> dec)
 {
 	this->decoder_siso = dec;
 }

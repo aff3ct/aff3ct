@@ -222,7 +222,7 @@ module::Channel<R>* Channel::parameters
 
 template <typename R>
 module::Channel<R>* Channel::parameters
-::build_userpdf(const tools::Distributions<R>* dist) const
+::build_userpdf(std::shared_ptr<const tools::Distributions<R>> dist) const
 {
 	if (dist == nullptr)
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -248,7 +248,7 @@ module::Channel<R>* Channel::parameters
 
 template <typename R>
 module::Channel<R>* Channel::parameters
-::build(const tools::Distributions<R>* dist) const
+::build(std::shared_ptr<const tools::Distributions<R>> dist) const
 {
 	try	{
 		return build_gaussian<R>();
@@ -271,7 +271,7 @@ module::Channel<R>* Channel::parameters
 
 template <typename R>
 module::Channel<R>* Channel
-::build(const parameters &params, const tools::Distributions<R>* dist)
+::build(const parameters &params, std::shared_ptr<const tools::Distributions<R>> dist)
 {
 	return params.template build<R>(dist);
 }
@@ -279,12 +279,12 @@ module::Channel<R>* Channel
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>(const tools::Distributions<R_32>*) const;
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>(const tools::Distributions<R_64>*) const;
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R_32>*);
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R_64>*);
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>(std::shared_ptr<const tools::Distributions<R_32>>) const;
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>(std::shared_ptr<const tools::Distributions<R_64>>) const;
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&, std::shared_ptr<const tools::Distributions<R_32>>);
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const aff3ct::factory::Channel::parameters&, std::shared_ptr<const tools::Distributions<R_64>>);
 #else
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::parameters::build<R>(const tools::Distributions<R>*) const;
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R>*);
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::parameters::build<R>(std::shared_ptr<const tools::Distributions<R>>) const;
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const aff3ct::factory::Channel::parameters&, std::shared_ptr<const tools::Distributions<R>>);
 #endif
 // ==================================================================================== explicit template instantiation

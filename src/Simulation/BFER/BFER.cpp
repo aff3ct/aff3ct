@@ -30,21 +30,9 @@ BFER<B,R,Q>
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
   noise(nullptr),
 
-  monitor_mi    (params_BFER.n_threads, nullptr),
-  monitor_mi_red(                       nullptr),
-  monitor_er    (params_BFER.n_threads, nullptr),
-  monitor_er_red(                       nullptr),
-
-  dumper    (params_BFER.n_threads, nullptr),
-  dumper_red(                       nullptr),
-
-  rep_er   (nullptr),
-  rep_mi   (nullptr),
-  rep_noise(nullptr),
-  rep_thr  (nullptr),
-  terminal (nullptr),
-
-  distributions(nullptr)
+  monitor_mi(params_BFER.n_threads),
+  monitor_er(params_BFER.n_threads),
+  dumper    (params_BFER.n_threads)
 {
 	if (params_BFER.n_threads < 1)
 	{
@@ -56,17 +44,13 @@ BFER<B,R,Q>
 	if (params_BFER.err_track_enable)
 	{
 		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-			dumper[tid] = new tools::Dumper();
+			dumper[tid] = std::make_shared<tools::Dumper>();
 
-		std::vector<tools::Dumper*> dumpers;
-		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-			dumpers.push_back(dumper[tid]);
-
-		dumper_red = new tools::Dumper_reduction(dumpers);
+		dumper_red = std::make_shared<tools::Dumper_reduction>(dumper);
 	}
 
 	if (!params_BFER.noise->pdf_path.empty())
-		distributions = new tools::Distributions<R>(params_BFER.noise->pdf_path);
+		distributions = std::make_shared<tools::Distributions<R>>(params_BFER.noise->pdf_path);
 
 	this->build_monitors ();
 	this->build_reporters();
@@ -80,24 +64,6 @@ BFER<B,R,Q>
 {
 	release_objects();
 
-	if (rep_noise != nullptr) { delete rep_noise; rep_noise = nullptr; }
-	if (rep_er    != nullptr) { delete rep_er;    rep_er    = nullptr; }
-	if (rep_mi    != nullptr) { delete rep_mi;    rep_mi    = nullptr; }
-	if (rep_thr   != nullptr) { delete rep_thr;   rep_thr   = nullptr; }
-
-	if (monitor_mi_red != nullptr) { delete monitor_mi_red; monitor_mi_red = nullptr; }
-	if (monitor_er_red != nullptr) { delete monitor_er_red; monitor_er_red = nullptr; }
-	if (dumper_red     != nullptr) { delete dumper_red;     dumper_red     = nullptr; }
-
-	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-	{
-		if (monitor_mi[tid] != nullptr) { delete monitor_mi[tid]; monitor_mi[tid] = nullptr; }
-		if (monitor_er[tid] != nullptr) { delete monitor_er[tid]; monitor_er[tid] = nullptr; }
-		if (dumper    [tid] != nullptr) { delete dumper    [tid]; dumper    [tid] = nullptr; }
-	}
-
-	if (terminal      != nullptr) { delete terminal;      terminal      = nullptr; }
-	if (distributions != nullptr) { delete distributions; distributions = nullptr; }
 	if (noise         != nullptr) { delete noise;         noise         = nullptr; }
 }
 
@@ -244,11 +210,11 @@ void BFER<B,R,Q>
 
 			if (params_BFER.statistics)
 			{
-				std::vector<std::vector<const module::Module*>> mod_vec;
+				std::vector<std::vector<std::shared_ptr<const module::Module>>> mod_vec;
 				for (auto &vm : modules)
 				{
-					std::vector<const module::Module*> sub_mod_vec;
-					for (auto *m : vm.second)
+					std::vector<std::shared_ptr<const module::Module>> sub_mod_vec;
+					for (auto& m : vm.second)
 						sub_mod_vec.push_back(m);
 					mod_vec.push_back(sub_mod_vec);
 				}
@@ -332,29 +298,29 @@ void BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-module::Monitor_MI<B,R>* BFER<B,R,Q>
+std::shared_ptr<typename BFER<B,R,Q>::Monitor_MI_type> BFER<B,R,Q>
 ::build_monitor_mi(const int tid)
 {
-	return params_BFER.mnt_mi->build<B,R>();
+	return std::shared_ptr<typename BFER<B,R,Q>::Monitor_MI_type>(params_BFER.mnt_mi->build<B,R>());
 }
 
 template <typename B, typename R, typename Q>
-module::Monitor_BFER<B>* BFER<B,R,Q>
+std::shared_ptr<typename BFER<B,R,Q>::Monitor_BFER_type> BFER<B,R,Q>
 ::build_monitor_er(const int tid)
 {
 	bool count_unknown_values = params_BFER.noise->type == "EP";
 
-	auto mnt = params_BFER.mnt_er->build<B>(count_unknown_values);
+	auto mnt = std::shared_ptr<typename BFER<B,R,Q>::Monitor_BFER_type>(params_BFER.mnt_er->build<B>(count_unknown_values));
 	mnt->activate_err_histogram(params_BFER.mnt_er->err_hist != -1);
 
 	return mnt;
 }
 
 template <typename B, typename R, typename Q>
-tools::Terminal* BFER<B,R,Q>
+std::shared_ptr<tools::Terminal> BFER<B,R,Q>
 ::build_terminal()
 {
-	return params_BFER.ter->build(this->reporters);
+	return std::shared_ptr<tools::Terminal>(params_BFER.ter->build(this->reporters));
 }
 
 template <typename B, typename R, typename Q>
@@ -362,21 +328,15 @@ void BFER<B,R,Q>
 ::build_reporters()
 {
 	this->noise = params_BFER.noise->template build<R>(0);
-
-	this->rep_noise = new tools::Reporter_noise<R>(&this->noise);
-	this->reporters.push_back(this->rep_noise);
+	this->reporters.push_back(std::make_shared<tools::Reporter_noise<R>>(&this->noise));
 
 	if (params_BFER.mutinfo)
 	{
-		this->rep_mi = new tools::Reporter_MI<B,R>(*this->monitor_mi_red);
-		this->reporters.push_back(this->rep_mi);
+		this->reporters.push_back(std::make_shared<tools::Reporter_MI<B,R>>(*this->monitor_mi_red));
 	}
 
-	this->rep_er = new tools::Reporter_BFER<B>(*this->monitor_er_red);
-	this->reporters.push_back(this->rep_er);
-
-	this->rep_thr = new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red);
-	this->reporters.push_back(this->rep_thr);
+	this->reporters.push_back(std::make_shared<tools::Reporter_BFER<B>>(*this->monitor_er_red));
+	this->reporters.push_back(std::make_shared<tools::Reporter_throughput<uint64_t>>(*this->monitor_er_red));
 }
 
 template <typename B, typename R, typename Q>
@@ -384,7 +344,7 @@ void BFER<B,R,Q>
 ::build_monitors()
 {
 	// build a monitor to compute BER/FER on each thread
-	this->modules["monitor_er"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
+	this->add_module("monitor_er", params_BFER.n_threads);
 	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 	{
 		this->monitor_er[tid] = this->build_monitor_er(tid);
@@ -392,12 +352,12 @@ void BFER<B,R,Q>
 	}
 
 	// build a monitor to reduce BER/FER from the other monitors
-	this->monitor_er_red = new Monitor_BFER_reduction_type(this->monitor_er);
+	this->monitor_er_red = std::make_shared<Monitor_BFER_reduction_type>(this->monitor_er);
 
 	if (params_BFER.mutinfo)
 	{
 		// build a monitor to compute MIon each thread
-		this->modules["monitor_mi"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
+		this->add_module("monitor_mi", params_BFER.n_threads);
 		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 		{
 			this->monitor_mi[tid] = this->build_monitor_mi(tid);
@@ -405,7 +365,7 @@ void BFER<B,R,Q>
 		}
 
 		// build a monitor to reduce M from the other monitors
-		this->monitor_mi_red = new Monitor_MI_reduction_type(this->monitor_mi);
+		this->monitor_mi_red = std::make_shared<Monitor_MI_reduction_type>(this->monitor_mi);
 	}
 
 	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());

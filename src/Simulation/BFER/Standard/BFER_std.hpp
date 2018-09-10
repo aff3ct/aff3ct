@@ -4,6 +4,7 @@
 #include <chrono>
 #include <vector>
 #include <random>
+#include <memory>
 
 #include "Module/Source/Source.hpp"
 #include "Module/CRC/CRC.hpp"
@@ -28,14 +29,14 @@ protected:
 	const factory::BFER_std::parameters &params_BFER_std;
 
 	// communication chain
-	std::vector<module::Source    <B    >*> source;
-	std::vector<module::CRC       <B    >*> crc;
-	std::vector<module::Codec_SIHO<B,Q  >*> codec;
-	std::vector<module::Modem     <B,R,R>*> modem;
-	std::vector<module::Channel   <R    >*> channel;
-	std::vector<module::Quantizer <R,Q  >*> quantizer;
-	std::vector<module::Coset     <B,Q  >*> coset_real;
-	std::vector<module::Coset     <B,B  >*> coset_bit;
+	std::vector<std::shared_ptr<module::Source    <B    >>> source;
+	std::vector<std::shared_ptr<module::CRC       <B    >>> crc;
+	std::vector<std::shared_ptr<module::Codec_SIHO<B,Q  >>> codec;
+	std::vector<std::shared_ptr<module::Modem     <B,R,R>>> modem;
+	std::vector<std::shared_ptr<module::Channel   <R    >>> channel;
+	std::vector<std::shared_ptr<module::Quantizer <R,Q  >>> quantizer;
+	std::vector<std::shared_ptr<module::Coset     <B,Q  >>> coset_real;
+	std::vector<std::shared_ptr<module::Coset     <B,B  >>> coset_bit;
 
 	// a vector of random generator to generate the seeds
 	std::vector<std::mt19937> rd_engine_seed;
@@ -49,14 +50,14 @@ protected:
 	virtual void _launch();
 	virtual void release_objects();
 
-	module::Source    <B    >* build_source    (const int tid = 0);
-	module::CRC       <B    >* build_crc       (const int tid = 0);
-	module::Codec_SIHO<B,Q  >* build_codec     (const int tid = 0);
-	module::Modem     <B,R,R>* build_modem     (const int tid = 0);
-	module::Channel   <R    >* build_channel   (const int tid = 0);
-	module::Quantizer <R,Q  >* build_quantizer (const int tid = 0);
-	module::Coset     <B,Q  >* build_coset_real(const int tid = 0);
-	module::Coset     <B,B  >* build_coset_bit (const int tid = 0);
+	std::shared_ptr<module::Source    <B    >> build_source    (const int tid = 0);
+	std::shared_ptr<module::CRC       <B    >> build_crc       (const int tid = 0);
+	std::shared_ptr<module::Codec_SIHO<B,Q  >> build_codec     (const int tid = 0);
+	std::shared_ptr<module::Modem     <B,R,R>> build_modem     (const int tid = 0);
+	std::shared_ptr<module::Channel   <R    >> build_channel   (const int tid = 0);
+	std::shared_ptr<module::Quantizer <R,Q  >> build_quantizer (const int tid = 0);
+	std::shared_ptr<module::Coset     <B,Q  >> build_coset_real(const int tid = 0);
+	std::shared_ptr<module::Coset     <B,B  >> build_coset_bit (const int tid = 0);
 };
 }
 }

@@ -2,6 +2,7 @@
 #define FACTORY_CHANNEL_HPP
 
 #include <string>
+#include <memory>
 
 #include "Module/Channel/Channel.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
@@ -51,13 +52,13 @@ struct Channel : public Factory
 		template <typename R = float>
 		module::Channel<R>* build_event() const;
 		template <typename R = float>
-		module::Channel<R>* build_userpdf(const tools::Distributions<R>* dist) const;
+		module::Channel<R>* build_userpdf(std::shared_ptr<const tools::Distributions<R>> dist) const;
 		template <typename R = float>
-		module::Channel<R>* build(const tools::Distributions<R>* dist = nullptr) const;
+		module::Channel<R>* build(std::shared_ptr<const tools::Distributions<R>> dist = nullptr) const;
 	};
 
 	template <typename R = float>
-	static module::Channel<R>* build(const parameters &params, const tools::Distributions<R>* dist = nullptr);
+	static module::Channel<R>* build(const parameters &params, std::shared_ptr<const tools::Distributions<R>> dist = nullptr);
 };
 }
 }

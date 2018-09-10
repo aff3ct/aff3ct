@@ -21,7 +21,7 @@ protected:
 public:
 	Codec_BCH(const factory::Encoder_BCH::parameters &enc_params,
 	          const factory::Decoder_BCH::parameters &dec_params);
-	virtual ~Codec_BCH();
+	virtual ~Codec_BCH() = default;
 };
 }
 }

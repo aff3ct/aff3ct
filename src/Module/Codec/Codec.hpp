@@ -1,6 +1,8 @@
 #ifndef CODEC_HPP_
 #define CODEC_HPP_
 
+#include <memory>
+
 #include "Tools/Interleaver/Interleaver_core.hpp"
 #include "Tools/Noise/noise_utils.h"
 
@@ -40,12 +42,12 @@ public:
 	inline Socket& operator[](const cdc::sck::add_sys_ext     s) { return Module::operator[]((int)cdc::tsk::add_sys_ext    )[(int)s]; }
 
 private:
-	tools::Interleaver_core< > *interleaver_core;
-	       Interleaver     <B> *interleaver_bit;
-	       Interleaver     <Q> *interleaver_llr;
+	std::shared_ptr<tools::Interleaver_core< >> interleaver_core;
+	std::shared_ptr<       Interleaver     <B>> interleaver_bit;
+	std::shared_ptr<       Interleaver     <Q>> interleaver_llr;
 
-	Encoder  <B  > *encoder;
-	Puncturer<B,Q> *puncturer;
+	std::shared_ptr<Encoder  <B  >> encoder;
+	std::shared_ptr<Puncturer<B,Q>> puncturer;
 
 protected :
 	const int K;
@@ -59,11 +61,11 @@ public:
 
 	virtual ~Codec();
 
-	virtual tools::Interleaver_core<>* get_interleaver();
+	virtual std::shared_ptr<tools::Interleaver_core<>> get_interleaver();
 
-	virtual Encoder<B>* get_encoder();
+	virtual std::shared_ptr<Encoder<B>> get_encoder();
 
-	virtual Puncturer<B,Q>* get_puncturer();
+	virtual std::shared_ptr<Puncturer<B,Q>> get_puncturer();
 
 	const tools::Noise<float>* current_noise() const;
 
@@ -102,11 +104,11 @@ protected:
 
 	virtual void _add_sys_ext(const Q *ext, Q *Y_N, const int frame_id);
 
-	virtual void set_interleaver(tools::Interleaver_core<>* itl);
+	virtual void set_interleaver(std::shared_ptr<tools::Interleaver_core<>> itl);
 
-	virtual void set_encoder(Encoder<B>* enc);
+	virtual void set_encoder(std::shared_ptr<Encoder<B>> enc);
 
-	virtual void set_puncturer(Puncturer<B,Q>* pct);
+	virtual void set_puncturer(std::shared_ptr<Puncturer<B,Q>> pct);
 
 	virtual const Interleaver<B>& get_interleaver_bit();
 

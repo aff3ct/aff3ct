@@ -40,21 +40,18 @@ protected:
 	R sig_a;
 
 	// communication chain
-	module::Source      <B  > *source;
-	module::Codec_SISO  <B,R> *codec;
-	module::Modem       <B,R> *modem;
-	module::Modem       <B,R> *modem_a;
-	module::Channel     <  R> *channel;
-	module::Channel     <  R> *channel_a;
-	module::Decoder_SISO<  R> *siso;
-	module::Monitor_EXIT<B,R> *monitor;
+	std::shared_ptr<module::Source      <B  >> source;
+	std::shared_ptr<module::Codec_SISO  <B,R>> codec;
+	std::shared_ptr<module::Modem       <B,R>> modem;
+	std::shared_ptr<module::Modem       <B,R>> modem_a;
+	std::shared_ptr<module::Channel     <  R>> channel;
+	std::shared_ptr<module::Channel     <  R>> channel_a;
+	std::shared_ptr<module::Decoder_SISO<  R>> siso;
+	std::shared_ptr<module::Monitor_EXIT<B,R>> monitor;
 
 	// terminal and reporters (for the output of the code)
-	tools::Reporter_EXIT <B,R>*           rep_exit;
-	tools::Reporter_noise<  R>*           rep_noise;
-	tools::Reporter_throughput<uint64_t>* rep_throughput;
-	std::vector<tools::Reporter*>         reporters;
-	tools::Terminal* terminal;
+	std::vector<std::shared_ptr<tools::Reporter>> reporters;
+	std::shared_ptr<tools::Terminal>              terminal;
 
 
 public:
@@ -69,14 +66,14 @@ protected:
 	void simulation_loop           ();
 	void release_objects           ();
 
-	module::Source      <B  >* build_source   (              );
-	module::Codec_SISO  <B,R>* build_codec    (              );
-	module::Modem       <B,R>* build_modem    (              );
-	module::Modem       <B,R>* build_modem_a  (              );
-	module::Channel     <  R>* build_channel  (const int size);
-	module::Channel     <  R>* build_channel_a(const int size);
-	module::Monitor_EXIT<B,R>* build_monitor  (              );
-	tools::Terminal*           build_terminal (              );
+	std::shared_ptr<module::Source      <B  >> build_source   (              );
+	std::shared_ptr<module::Codec_SISO  <B,R>> build_codec    (              );
+	std::shared_ptr<module::Modem       <B,R>> build_modem    (              );
+	std::shared_ptr<module::Modem       <B,R>> build_modem_a  (              );
+	std::shared_ptr<module::Channel     <  R>> build_channel  (const int size);
+	std::shared_ptr<module::Channel     <  R>> build_channel_a(const int size);
+	std::shared_ptr<module::Monitor_EXIT<B,R>> build_monitor  (              );
+	std::shared_ptr<tools::Terminal          > build_terminal (              );
 };
 }
 }
