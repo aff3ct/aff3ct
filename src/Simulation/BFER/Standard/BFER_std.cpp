@@ -195,7 +195,10 @@ std::shared_ptr<module::Channel<R>> BFER_std<B,R,Q>
 	std::unique_ptr<factory::Channel::parameters> params_chn(this->params_BFER_std.chn->clone());
 	params_chn->seed = seed_chn;
 
-	return std::shared_ptr<module::Channel<R>>(params_chn->template build<R>(this->distributions));
+	if (this->distributions != nullptr)
+		return std::shared_ptr<module::Channel<R>>(params_chn->template build<R>(*this->distributions));
+	else
+		return std::shared_ptr<module::Channel<R>>(params_chn->template build<R>());
 }
 
 template <typename B, typename R, typename Q>
