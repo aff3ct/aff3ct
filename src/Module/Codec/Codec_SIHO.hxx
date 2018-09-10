@@ -54,6 +54,13 @@ set_decoder_siho(std::shared_ptr<Decoder_SIHO<B,Q>> dec)
 	this->decoder_siho = dec;
 }
 
+template <typename B, typename Q>
+void Codec_SIHO<B,Q>::
+set_decoder_siho(Decoder_SIHO<B,Q>* dec)
+{
+	this->set_decoder_siho(std::shared_ptr<Decoder_SIHO<B,Q>>(dec));
+}
+
 }
 }
 

@@ -54,27 +54,23 @@ Codec_BCH<B,Q>
 	pct_params.N_cw     = enc_params.N_cw;
 	pct_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(pct_params)));
+	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
 
-	std::shared_ptr<Encoder<B>> encoder;
 	try
 	{
-		std::shared_ptr<Encoder_BCH<B>> enc(factory::Encoder_BCH::build<B>(enc_params, GF_poly));
-		encoder = std::static_pointer_cast<Encoder<B>>(enc);
+		this->set_encoder(factory::Encoder_BCH::build<B>(enc_params, GF_poly));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		encoder.reset(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
 	if (dec_params.implem == "GENIUS")
-		encoder->set_memorizing(true);
+		this->get_encoder()->set_memorizing(true);
 
-	this->set_encoder(encoder);
-
-	std::shared_ptr<Decoder_SIHO_HIHO<B,Q>> decoder_hiho_siho(factory::Decoder_BCH::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder()));
-	this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_hiho_siho));
-	this->set_decoder_hiho(std::static_pointer_cast<Decoder_HIHO<B  >>(decoder_hiho_siho));
+	auto dec = factory::Decoder_BCH::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder());
+	this->set_decoder_siho(dec);
+	this->set_decoder_hiho(dec);
 }
 
 // ==================================================================================== explicit template instantiation

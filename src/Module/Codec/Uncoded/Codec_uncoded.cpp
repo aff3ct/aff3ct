@@ -62,19 +62,18 @@ Codec_uncoded<B,Q>
 	pct_params.N_cw     = enc_params.N_cw;
 	pct_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer ::build<B,Q>(pct_params)));
-	this->set_encoder  (std::shared_ptr<Encoder<B>    >(factory::Encoder::build<B>(enc_params)));
+	this->set_puncturer(factory::Puncturer ::build<B,Q>(pct_params));
+	this->set_encoder  (factory::Encoder::build<B>(enc_params));
 
 	try
 	{
-		std::shared_ptr<Decoder_SISO_SIHO<B,Q>> decoder_siso_siho(factory::Decoder_NO::build_siso<B,Q>(dec_params, this->get_encoder()));
-		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_siso_siho));
-		this->set_decoder_siso(std::static_pointer_cast<Decoder_SISO<  Q>>(decoder_siso_siho));
+		auto dec = factory::Decoder_NO::build_siso<B,Q>(dec_params, this->get_encoder());
+		this->set_decoder_siho(dec);
+		this->set_decoder_siso(dec);
 	}
 	catch (const std::exception&)
 	{
-		std::shared_ptr<Decoder_SIHO<B,Q>> dec(factory::Decoder_NO::build<B,Q>(dec_params, this->get_encoder()));
-		this->set_decoder_siho(dec);
+		this->set_decoder_siho(factory::Decoder_NO::build<B,Q>(dec_params, this->get_encoder()));
 	}
 }
 

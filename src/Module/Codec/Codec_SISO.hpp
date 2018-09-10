@@ -26,6 +26,7 @@ public:
 
 protected:
 	void set_decoder_siso(std::shared_ptr<Decoder_SISO<Q>> dec);
+	void set_decoder_siso(Decoder_SISO<Q>* dec);
 };
 }
 }

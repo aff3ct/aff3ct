@@ -90,7 +90,7 @@ Codec_LDPC<B,Q>
 	if (info_bits_pos.empty())
 	{
 		if (enc_params.type == "LDPC_H")
-			this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder_LDPC::build<B>(enc_params, G, H)));
+			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H));
 	}
 	else
 	{
@@ -107,17 +107,17 @@ Codec_LDPC<B,Q>
 		pctno_params.N_cw     = enc_params.N_cw;
 		pctno_params.n_frames = enc_params.n_frames;
 
-		this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(pctno_params)));
+		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 	}
 	else
 	{
 		try
 		{
-			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer_LDPC::build<B,Q>(*pct_params)));
+			this->set_puncturer(factory::Puncturer_LDPC::build<B,Q>(*pct_params));
 		}
 		catch (tools::cannot_allocate const&)
 		{
-			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(*pct_params)));
+			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
 		}
 	}
 
@@ -130,12 +130,11 @@ Codec_LDPC<B,Q>
 	{ // encoder not set when building encoder LDPC_H
 		try
 		{
-			std::shared_ptr<Encoder_LDPC<B>> enc(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
-			this->set_encoder(std::static_pointer_cast<Encoder<B>>(enc));
+			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
 		}
 		catch(tools::cannot_allocate const&)
 		{
-			this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder::build<B>(enc_params)));
+			this->set_encoder(factory::Encoder::build<B>(enc_params));
 		}
 	}
 
@@ -155,13 +154,13 @@ Codec_LDPC<B,Q>
 
 	try
 	{
-		std::shared_ptr<Decoder_SISO_SIHO<B,Q>> decoder_siso_siho(factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
-		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_siso_siho));
-		this->set_decoder_siso(std::static_pointer_cast<Decoder_SISO<  Q>>(decoder_siso_siho));
+		auto dec = factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, this->get_encoder());
+		this->set_decoder_siho(dec);
+		this->set_decoder_siso(dec);
 	}
 	catch (const std::exception&)
 	{
-		std::shared_ptr<Decoder_SIHO<B,Q>> dec(factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
+		auto dec = factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos, this->get_encoder());
 		this->set_decoder_siho(dec);
 	}
 }

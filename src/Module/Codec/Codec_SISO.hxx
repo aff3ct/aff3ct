@@ -51,6 +51,13 @@ set_decoder_siso(std::shared_ptr<Decoder_SISO<Q>> dec)
 	this->decoder_siso = dec;
 }
 
+template <typename B, typename Q>
+void Codec_SISO<B,Q>::
+set_decoder_siso(Decoder_SISO<Q>* dec)
+{
+	this->set_decoder_siso(std::shared_ptr<Decoder_SISO<Q>>(dec));
+}
+
 }
 }
 

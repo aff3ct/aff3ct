@@ -51,6 +51,13 @@ set_decoder_hiho(std::shared_ptr<Decoder_HIHO<B>> dec)
 	this->decoder_hiho = dec;
 }
 
+template <typename B, typename Q>
+void Codec_HIHO<B,Q>::
+set_decoder_hiho(Decoder_HIHO<B>* dec)
+{
+	this->set_decoder_hiho(std::shared_ptr<Decoder_HIHO<B>>(dec));
+}
+
 }
 }
 

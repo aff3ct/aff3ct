@@ -124,24 +124,22 @@ Codec_turbo_product<B,Q>
 
 	try
 	{
-		std::shared_ptr<Encoder_turbo_product<B>> enc(factory::Encoder_turbo_product::build<B>(enc_params, this->get_interleaver_bit(), *enc_bch_rows, *enc_bch_cols));
-		this->set_encoder(std::static_pointer_cast<Encoder<B>>(enc));
+		this->set_encoder(factory::Encoder_turbo_product::build<B>(enc_params, this->get_interleaver_bit(), *enc_bch_rows, *enc_bch_cols));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder::build<B>(enc_params)));
+		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
 	try
 	{
-		std::shared_ptr<Decoder_SISO_SIHO<B,Q>> decoder_siso_siho(factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols));
-		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_siso_siho));
-		this->set_decoder_siso(std::static_pointer_cast<Decoder_SISO<  Q>>(decoder_siso_siho));
+		auto dec = factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols);
+		this->set_decoder_siho(dec);
+		this->set_decoder_siso(dec);
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		std::shared_ptr<Decoder_SIHO<B,Q>> dec(factory::Decoder_turbo_product::build<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols));
-		this->set_decoder_siho(dec);
+		this->set_decoder_siho(factory::Decoder_turbo_product::build<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols));
 	}
 }
 

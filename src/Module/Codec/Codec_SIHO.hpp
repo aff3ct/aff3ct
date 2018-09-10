@@ -26,6 +26,7 @@ public:
 
 protected:
 	virtual void set_decoder_siho(std::shared_ptr<Decoder_SIHO<B,Q>> dec);
+	virtual void set_decoder_siho(Decoder_SIHO<B,Q>* dec);
 };
 }
 }

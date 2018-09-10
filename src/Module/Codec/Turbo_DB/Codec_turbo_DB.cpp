@@ -59,18 +59,18 @@ Codec_turbo_DB<B,Q>
 	trellis = encoder_RSC->get_trellis();
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	this->set_interleaver(std::shared_ptr<tools::Interleaver_core<>>(factory::Interleaver_core::build<>(*enc_params.itl->core)));
+	this->set_interleaver(factory::Interleaver_core::build<>(*enc_params.itl->core));
 
 
 	if (pct_params)
 	{
 		try
 		{
-			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer_turbo_DB::build<B,Q>(*pct_params)));
+			this->set_puncturer(factory::Puncturer_turbo_DB::build<B,Q>(*pct_params));
 		}
 		catch (tools::cannot_allocate const&)
 		{
-			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(*pct_params)));
+			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
 		}
 	}
 	else
@@ -82,27 +82,25 @@ Codec_turbo_DB<B,Q>
 		pctno_params.N_cw     = enc_params.N_cw;
 		pctno_params.n_frames = enc_params.n_frames;
 
-		this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(pctno_params)));
+		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 	}
 
 
 	try
 	{
 		sub_enc.reset(factory::Encoder_RSC_DB::build<B>(*enc_params.sub));
-
-		std::shared_ptr<Encoder_turbo_DB<B>> enc(factory::Encoder_turbo_DB::build<B>(enc_params, this->get_interleaver_bit(), *sub_enc));
-		this->set_encoder(std::static_pointer_cast<Encoder<B>>(enc));
+		this->set_encoder(factory::Encoder_turbo_DB::build<B>(enc_params, this->get_interleaver_bit(), *sub_enc));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder::build<B>(enc_params)));
+		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
 
 	std::shared_ptr<Decoder_turbo_DB<B,Q>> decoder_turbo;
 	try
 	{
-		this->set_decoder_siho(std::shared_ptr<Decoder_SIHO<B,Q>>(factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_encoder())));
+		this->set_decoder_siho(factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_encoder()));
 	}
 	catch (tools::cannot_allocate const&)
 	{

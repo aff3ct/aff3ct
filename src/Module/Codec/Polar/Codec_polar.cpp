@@ -72,7 +72,7 @@ Codec_polar<B,Q>
 		pctno_params.N_cw     = enc_params.N_cw;
 		pctno_params.n_frames = enc_params.n_frames;
 
-		this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(pctno_params)));
+		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 	}
 	else
 	{
@@ -83,7 +83,7 @@ Codec_polar<B,Q>
 		}
 		catch(tools::cannot_allocate const&)
 		{
-			this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(factory::Puncturer::build<B,Q>(*pct_params)));
+			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
 		}
 	}
 
@@ -95,27 +95,27 @@ Codec_polar<B,Q>
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(std::shared_ptr<Encoder<B>>(factory::Encoder::build<B>(enc_params)));
+		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
 	try
 	{
-		std::shared_ptr<Decoder_SISO_SIHO<B,Q>> decoder_siso_siho(factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits, this->get_encoder()));
-		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_siso_siho));
-		this->set_decoder_siso(std::static_pointer_cast<Decoder_SISO<  Q>>(decoder_siso_siho));
+		auto dec = factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits, this->get_encoder());
+		this->set_decoder_siho(dec);
+		this->set_decoder_siso(dec);
 	}
 	catch (const std::exception&)
 	{
-		std::shared_ptr<Decoder_SIHO<B,Q>> dec;
 		if (generated_decoder)
-			dec.reset(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc, this->get_encoder()));
+			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc, this->get_encoder()));
 		else
-			dec.reset(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, this->get_encoder()));
-
-		this->set_decoder_siho(dec);
+			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, this->get_encoder()));
 	}
-	if (dec_params.type != "ML")
+
+	try
+	{
 		this->fb_decoder = std::dynamic_pointer_cast<tools::Frozenbits_notifier>(this->get_decoder_siho());
+	} catch(std::exception&) { }
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
 	if (!generated_decoder)

@@ -96,22 +96,20 @@ public:
 	virtual void reset();
 
 protected:
-	virtual void _extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id);
-
-	virtual void _extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id);
-
+	virtual void _extract_sys_llr(const Q *Y_N, Q *Y_K,         const int frame_id);
+	virtual void _extract_sys_bit(const Q *Y_N, B *V_K,         const int frame_id);
 	virtual void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);
-
-	virtual void _add_sys_ext(const Q *ext, Q *Y_N, const int frame_id);
+	virtual void _add_sys_ext    (const Q *ext, Q *Y_N,         const int frame_id);
 
 	virtual void set_interleaver(std::shared_ptr<tools::Interleaver_core<>> itl);
+	virtual void set_encoder    (std::shared_ptr<Encoder<B>>                enc);
+	virtual void set_puncturer  (std::shared_ptr<Puncturer<B,Q>>            pct);
 
-	virtual void set_encoder(std::shared_ptr<Encoder<B>> enc);
-
-	virtual void set_puncturer(std::shared_ptr<Puncturer<B,Q>> pct);
+	virtual void set_interleaver(tools::Interleaver_core<>* itl);
+	virtual void set_encoder    (Encoder<B>*                enc);
+	virtual void set_puncturer  (Puncturer<B,Q>*            pct);
 
 	virtual const Interleaver<B>& get_interleaver_bit();
-
 	virtual const Interleaver<Q>& get_interleaver_llr();
 };
 }

@@ -432,6 +432,27 @@ set_puncturer(std::shared_ptr<Puncturer<B,Q>> pct)
 }
 
 template <typename B, typename Q>
+void Codec<B,Q>::
+set_interleaver(tools::Interleaver_core<>* itl)
+{
+	this->set_interleaver(std::shared_ptr<tools::Interleaver_core<>>(itl));
+}
+
+template <typename B, typename Q>
+void Codec<B,Q>::
+set_encoder(Encoder<B>* enc)
+{
+	this->set_encoder(std::shared_ptr<Encoder<B>>(enc));
+}
+
+template <typename B, typename Q>
+void Codec<B,Q>::
+set_puncturer(Puncturer<B,Q>* pct)
+{
+	this->set_puncturer(std::shared_ptr<Puncturer<B,Q>>(pct));
+}
+
+template <typename B, typename Q>
 const Interleaver<B>& Codec<B,Q>::
 get_interleaver_bit()
 {

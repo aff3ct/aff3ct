@@ -26,6 +26,7 @@ public:
 
 protected:
 	void set_decoder_hiho(std::shared_ptr<Decoder_HIHO<B>> dec);
+	void set_decoder_hiho(Decoder_HIHO<B>* dec);
 };
 }
 }
