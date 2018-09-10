@@ -67,9 +67,7 @@ Codec_uncoded<B,Q>
 
 	try
 	{
-		auto dec = factory::Decoder_NO::build_siso<B,Q>(dec_params, this->get_encoder());
-		this->set_decoder_siho(dec);
-		this->set_decoder_siso(dec);
+		this->set_decoder_siso_siho(factory::Decoder_NO::build_siso<B,Q>(dec_params, this->get_encoder()));
 	}
 	catch (const std::exception&)
 	{

@@ -25,6 +25,21 @@ reset()
 	this->get_decoder_siho()->reset();
 }
 
+template <typename B, typename Q>
+void Codec_SISO_SIHO<B,Q>::
+set_decoder_siso_siho(std::shared_ptr<Decoder_SISO_SIHO<B,Q>> dec)
+{
+	this->set_decoder_siso(dec);
+	this->set_decoder_siho(dec);
+}
+
+template <typename B, typename Q>
+void Codec_SISO_SIHO<B,Q>::
+set_decoder_siso_siho(Decoder_SISO_SIHO<B,Q>* dec)
+{
+	this->set_decoder_siso_siho(std::shared_ptr<Decoder_SISO_SIHO<B,Q>>(dec));
+}
+
 }
 }
 

@@ -68,9 +68,7 @@ Codec_BCH<B,Q>
 	if (dec_params.implem == "GENIUS")
 		this->get_encoder()->set_memorizing(true);
 
-	auto dec = factory::Decoder_BCH::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder());
-	this->set_decoder_siho(dec);
-	this->set_decoder_hiho(dec);
+	this->set_decoder_siho_hiho(factory::Decoder_BCH::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder()));
 }
 
 // ==================================================================================== explicit template instantiation

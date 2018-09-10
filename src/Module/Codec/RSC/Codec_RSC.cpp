@@ -73,9 +73,7 @@ Codec_RSC<B,Q>
 
 	try
 	{
-		auto dec = factory::Decoder_RSC::build_siso<B,Q>(dec_params, trellis, std::cout, 1, this->get_encoder());
-		this->set_decoder_siho(dec);
-		this->set_decoder_siso(dec);
+		this->set_decoder_siso_siho(factory::Decoder_RSC::build_siso<B,Q>(dec_params, trellis, std::cout, 1, this->get_encoder()));
 	}
 	catch (tools::cannot_allocate const&)
 	{

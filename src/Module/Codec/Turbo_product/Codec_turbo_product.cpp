@@ -133,9 +133,7 @@ Codec_turbo_product<B,Q>
 
 	try
 	{
-		auto dec = factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols);
-		this->set_decoder_siho(dec);
-		this->set_decoder_siso(dec);
+		this->set_decoder_siso_siho(factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols));
 	}
 	catch (tools::cannot_allocate const&)
 	{
