@@ -13,7 +13,7 @@ template <typename B, typename R, typename Q>
 SC_BFER_std<B,R,Q>
 ::SC_BFER_std(const factory::BFER_std::parameters &params_BFER_std)
 : BFER_std<B,R,Q>(params_BFER_std),
-  duplicator(3, nullptr)
+  duplicator(3)
 {
 	if (this->params_BFER_std.n_threads > 1)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support "
@@ -32,12 +32,6 @@ template <typename B, typename R, typename Q>
 SC_BFER_std<B,R,Q>
 ::~SC_BFER_std()
 {
-	for (auto& d : this->duplicator)
-		if (d != nullptr)
-		{
-			delete d;
-			d = nullptr;
-		}
 }
 
 template <typename B, typename R, typename Q>
@@ -91,11 +85,11 @@ void SC_BFER_std<B,R,Q>
 	}
 	this->crc[tid]->sc.create_module(+crc::tsk::extract);
 
-	this->duplicator[0] = new tools::SC_Duplicator("Duplicator_src");
+	this->duplicator[0] = std::make_shared<tools::SC_Duplicator>("Duplicator_src");
 	if (this->params_BFER_std.coset)
 	{
-		this->duplicator[1] = new tools::SC_Duplicator("Duplicator1");
-		this->duplicator[2] = new tools::SC_Duplicator("Duplicator2");
+		this->duplicator[1] = std::make_shared<tools::SC_Duplicator>("Duplicator1");
+		this->duplicator[2] = std::make_shared<tools::SC_Duplicator>("Duplicator2");
 	}
 }
 

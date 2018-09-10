@@ -14,11 +14,7 @@ template <typename B, typename R, typename Q>
 SC_BFER_ite<B,R,Q>
 ::SC_BFER_ite(const factory::BFER_ite::parameters &params_BFER_ite)
 : BFER_ite<B,R,Q>(params_BFER_ite),
-
-  coset_real_i(nullptr),
-  duplicator(7, nullptr),
-  router     (nullptr),
-  predicate  (nullptr)
+  duplicator(7)
 {
 	if (this->params_BFER_ite.n_threads > 1)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support "
@@ -28,19 +24,13 @@ SC_BFER_ite<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded "
 		                                                            "monitoring.");
 
-	this->modules["coset_real_i"] = std::vector<module::Module*>(params_BFER_ite.n_threads, nullptr);
+	this->add_module("coset_real_i", params_BFER_ite.n_threads);
 }
 
 template <typename B, typename R, typename Q>
 SC_BFER_ite<B,R,Q>
 ::~SC_BFER_ite()
 {
-	for (auto& d : this->duplicator)
-		if (d != nullptr)
-		{
-			delete d;
-			d = nullptr;
-		}
 }
 
 template <typename B, typename R, typename Q>
@@ -49,7 +39,7 @@ void SC_BFER_ite<B,R,Q>
 {
 	BFER_ite<B,R,Q>::__build_communication_chain(tid);
 
-	this->modules["coset_real_i"][tid] = coset_real_i;
+	this->set_module("coset_real_i", tid, coset_real_i);
 
 	this->interleaver_bit[tid]->set_name(this->interleaver_llr[tid]->get_name() + "_bit");
 	this->interleaver_llr[tid]->set_name(this->interleaver_llr[tid]->get_name() + "_llr");
@@ -122,39 +112,29 @@ void SC_BFER_ite<B,R,Q>
 
 	tools::Predicate_ite p(this->params_BFER_ite.n_ite);
 
-	this->duplicator[0] = new tools::SC_Duplicator("Duplicator0");
-	this->duplicator[1] = new tools::SC_Duplicator("Duplicator1");
-	this->duplicator[5] = new tools::SC_Duplicator("Duplicator5");
+	this->duplicator[0] = std::make_shared<tools::SC_Duplicator>("Duplicator0");
+	this->duplicator[1] = std::make_shared<tools::SC_Duplicator>("Duplicator1");
+	this->duplicator[5] = std::make_shared<tools::SC_Duplicator>("Duplicator5");
 	if (this->params_BFER_ite.coset)
 	{
-		this->duplicator[2] = new tools::SC_Duplicator("Duplicator2");
-		this->duplicator[3] = new tools::SC_Duplicator("Duplicator3");
-		this->duplicator[4] = new tools::SC_Duplicator("Duplicator4");
+		this->duplicator[2] = std::make_shared<tools::SC_Duplicator>("Duplicator2");
+		this->duplicator[3] = std::make_shared<tools::SC_Duplicator>("Duplicator3");
+		this->duplicator[4] = std::make_shared<tools::SC_Duplicator>("Duplicator4");
 	}
 	if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		this->duplicator[6] = new tools::SC_Duplicator("Duplicator6");
+		this->duplicator[6] = std::make_shared<tools::SC_Duplicator>("Duplicator6");
 	}
 
 
-	this->router    = new tools::SC_Router   (p, "Router"   );
-	this->funnel    = new tools::SC_Funnel   (   "Funnel"   );
-	this->predicate = new tools::SC_Predicate(p, "Predicate");
+	this->router    = std::make_shared<tools::SC_Router>   (p, "Router"   );
+	this->funnel    = std::make_shared<tools::SC_Funnel>   (   "Funnel"   );
+	this->predicate = std::make_shared<tools::SC_Predicate>(p, "Predicate");
 
 	this->bind_sockets();
 	sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
 	sc_core::sc_start(); // start simulation
 
-	for (auto& d : this->duplicator)
-		if (d != nullptr)
-		{
-			delete d;
-			d = nullptr;
-		}
-
-	delete this->router;    this->router    = nullptr;
-	delete this->funnel;    this->funnel    = nullptr;
-	delete this->predicate; this->predicate = nullptr;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STD! /!\ //
@@ -299,17 +279,17 @@ void SC_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-module::Coset<B,Q>* SC_BFER_ite<B,R,Q>
+std::shared_ptr<module::Coset<B,Q>> SC_BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
 	factory::Coset::parameters cst_params;
-	cst_params.size = this->params_BFER_ite.cdc->N_cw;
+	cst_params.size     = this->params_BFER_ite.cdc->N_cw;
 	cst_params.n_frames = this->params_BFER_ite.src->n_frames;
 
 	this->coset_real_i = cst_params.template build_real<B,Q>();
 	this->coset_real_i->set_name("Coset_real_i");
 
-	return cst_params.template build_real<B,Q>();
+	return std::shared_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
 }
 
 // ==================================================================================== explicit template instantiation
