@@ -105,13 +105,6 @@ void SC_BFER_std<B,R,Q>
 	sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
 	sc_core::sc_start(); // start simulation
 
-	for (auto& d : this->duplicator)
-		if (d != nullptr)
-		{
-			delete d;
-			d = nullptr;
-		}
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STD! /!\ //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////

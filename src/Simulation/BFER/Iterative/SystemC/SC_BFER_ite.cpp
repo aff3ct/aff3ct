@@ -31,6 +31,7 @@ template <typename B, typename R, typename Q>
 SC_BFER_ite<B,R,Q>
 ::~SC_BFER_ite()
 {
+	release_objects()
 }
 
 template <typename B, typename R, typename Q>
@@ -97,8 +98,6 @@ template <typename B, typename R, typename Q>
 void SC_BFER_ite<B,R,Q>
 ::release_objects()
 {
-	if (coset_real_i != nullptr) { delete coset_real_i; coset_real_i = nullptr; }
-
 	BFER_ite<B,R,Q>::release_objects();
 }
 
@@ -286,7 +285,7 @@ std::shared_ptr<module::Coset<B,Q>> SC_BFER_ite<B,R,Q>
 	cst_params.size     = this->params_BFER_ite.cdc->N_cw;
 	cst_params.n_frames = this->params_BFER_ite.src->n_frames;
 
-	this->coset_real_i = cst_params.template build_real<B,Q>();
+	this->coset_real_i.reset(cst_params.template build_real<B,Q>());
 	this->coset_real_i->set_name("Coset_real_i");
 
 	return std::shared_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
