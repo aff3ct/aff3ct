@@ -31,7 +31,7 @@ template <typename B, typename R, typename Q>
 SC_BFER_ite<B,R,Q>
 ::~SC_BFER_ite()
 {
-	release_objects()
+	release_objects();
 }
 
 template <typename B, typename R, typename Q>
