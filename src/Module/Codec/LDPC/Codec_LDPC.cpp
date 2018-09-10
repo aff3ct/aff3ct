@@ -130,7 +130,7 @@ Codec_LDPC<B,Q>
 	{ // encoder not set when building encoder LDPC_H
 		try
 		{
-			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
+			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, *dvbs2));
 		}
 		catch(tools::cannot_allocate const&)
 		{

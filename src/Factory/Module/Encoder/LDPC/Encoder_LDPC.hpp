@@ -45,14 +45,19 @@ struct Encoder_LDPC : public Encoder
 
 		// builder
 		template <typename B = int>
+		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const;
+		template <typename B = int>
 		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H,
-		                               std::shared_ptr<const tools::dvbs2_values> dvbs2 = nullptr) const;
+		                               const tools::dvbs2_values& dvbs2) const;
 	};
 
 	template <typename B = int>
 	static module::Encoder_LDPC<B>* build(const parameters &params, const tools::Sparse_matrix &G,
+	                                                                const tools::Sparse_matrix &H);
+	template <typename B = int>
+	static module::Encoder_LDPC<B>* build(const parameters &params, const tools::Sparse_matrix &G,
 	                                                                const tools::Sparse_matrix &H,
-	                                                                std::shared_ptr<const tools::dvbs2_values> dvbs2 = nullptr);
+	                                                                const tools::dvbs2_values& dvbs2);
 };
 }
 }
