@@ -28,6 +28,9 @@
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/ONMS/Decoder_LDPC_BP_horizontal_layered_ONMS_inter.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
 #include "Module/Decoder/LDPC/BP/Peeling/Decoder_LDPC_BP_peeling.hpp"
+#include "Module/Decoder/LDPC/BF/OMWBF/Decoder_LDPC_bit_flipping_OMWBF.hpp"
+
+
 
 #include "Decoder_LDPC.hpp"
 
@@ -73,11 +76,11 @@ void Decoder_LDPC::parameters
 	args.add_link({p+"-h-path"}, {p+"-info-bits", "K"}); // if there is no K, then H is considered regular,
 	                                                     // so K is the N - H's height
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_FLOODING", "BP_HORIZONTAL_LAYERED", "BP_VERTICAL_LAYERED", "BP_PEELING");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_FLOODING", "BP_HORIZONTAL_LAYERED", "BP_VERTICAL_LAYERED", "BP_PEELING", "BIT_FLIPPING");
 #ifdef __cpp_aligned_new
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_HORIZONTAL_LAYERED_LEGACY");
 #endif
-	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA");
+	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA", "WBF");
 
 	args.add(
 		{p+"-ite", "i"},
@@ -88,6 +91,11 @@ void Decoder_LDPC::parameters
 		{p+"-off"},
 		tools::Real(),
 		"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem NMS\").");
+
+	args.add(
+		{p+"-mwbf"},
+		tools::Real(),
+		"factor used in the modified WBF algorithm (works only with \"--dec-implem WBF\"). Set 0 for basic WBF");
 
 	args.add(
 		{p+"-norm"},
@@ -133,6 +141,7 @@ void Decoder_LDPC::parameters
 	if(vals.exist({p+"-ite",   "i"})) this->n_ite           = vals.to_int  ({p+"-ite",   "i"});
 	if(vals.exist({p+"-synd-depth"})) this->syndrome_depth  = vals.to_int  ({p+"-synd-depth"});
 	if(vals.exist({p+"-off"       })) this->offset          = vals.to_float({p+"-off"       });
+	if(vals.exist({p+"-mwbf"      })) this->mwbf_factor     = vals.to_float({p+"-mwbf"       });
 	if(vals.exist({p+"-norm"      })) this->norm_factor     = vals.to_float({p+"-norm"      });
 	if(vals.exist({p+"-no-synd"   })) this->enable_syndrome = false;
 
@@ -239,6 +248,10 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 			else if (this->min == "MINL") return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 			else if (this->min == "MINS") return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
+	}
+	else if (this->type == "BIT_FLIPPING")
+	{
+		     if (this->implem == "WBF")      return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(     this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 	}
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_HORIZONTAL_LAYERED" && this->simd_strategy == "INTER")
@@ -354,6 +367,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 			else if (this->min == "MINS") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
 	}
+
 #endif
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

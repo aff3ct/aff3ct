@@ -32,6 +32,7 @@ struct Decoder_LDPC : public Decoder
 		std::string simd_strategy   = "";
 		float       norm_factor     = 1.f;
 		float       offset          = 0.f;
+		float       mwbf_factor     = 0.f;
 		bool        enable_syndrome = true;
 		int         syndrome_depth  = 1;
 		int         n_ite           = 10;
