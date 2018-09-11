@@ -13,8 +13,8 @@ import argparse
 import subprocess
 import numpy as np
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../refs")))
-import aff3ct_refs_reader as arr
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../refs/readers/")))
+import aff3ct_trace_reader as atr
 
 # ==================================================================== PACKAGES
 # =============================================================================
@@ -165,7 +165,7 @@ class tableStats:
 
 class compStats:
 	def __init__(self, dataCur, dataRef, sensibility, asked_n_fe):
-		if not isinstance(dataCur, arr.aff3ctRefsReader) or not isinstance(dataRef, arr.aff3ctRefsReader) :
+		if not isinstance(dataCur, atr.aff3ctTraceReader) or not isinstance(dataRef, atr.aff3ctTraceReader) :
 			raise TypeError
 
 		self.nValidData = len(dataCur.getTrace("n_fe"))
@@ -355,7 +355,7 @@ for fn in fileNames:
 	      " - " + fn, end="", flush=True);
 
 	# parse the reference file
-	simuRef = arr.aff3ctRefsReader(args.refsPath + "/" + fn)
+	simuRef = atr.aff3ctTraceReader(args.refsPath + "/" + fn)
 
 	if simuRef.getMetadata("ci") == "off":
 		print(" - IGNORED.", end="\n");
@@ -416,7 +416,7 @@ for fn in fileNames:
 
 	# get the results
 	stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
-	simuCur = arr.aff3ctRefsReader(stdOutput)
+	simuCur = atr.aff3ctTraceReader(stdOutput)
 
 	# result file
 	fRes = open(args.resultsPath + "/" + fn, 'w+')
