@@ -15,7 +15,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class SC_BFER_std : public BFER_std<B,R,Q>
 {
 protected:
-	std::vector<std::shared_ptr<tools::SC_Duplicator>> duplicator;
+	std::vector<std::unique_ptr<tools::SC_Duplicator>> duplicator;
 
 public:
 	explicit SC_BFER_std(const factory::BFER_std::parameters &params_BFER_std);

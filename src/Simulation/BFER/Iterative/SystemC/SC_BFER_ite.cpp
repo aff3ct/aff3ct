@@ -111,24 +111,24 @@ void SC_BFER_ite<B,R,Q>
 
 	tools::Predicate_ite p(this->params_BFER_ite.n_ite);
 
-	this->duplicator[0] = std::make_shared<tools::SC_Duplicator>("Duplicator0");
-	this->duplicator[1] = std::make_shared<tools::SC_Duplicator>("Duplicator1");
-	this->duplicator[5] = std::make_shared<tools::SC_Duplicator>("Duplicator5");
+	this->duplicator[0].reset( new tools::SC_Duplicator("Duplicator0"));
+	this->duplicator[1].reset( new tools::SC_Duplicator("Duplicator1"));
+	this->duplicator[5].reset( new tools::SC_Duplicator("Duplicator5"));
 	if (this->params_BFER_ite.coset)
 	{
-		this->duplicator[2] = std::make_shared<tools::SC_Duplicator>("Duplicator2");
-		this->duplicator[3] = std::make_shared<tools::SC_Duplicator>("Duplicator3");
-		this->duplicator[4] = std::make_shared<tools::SC_Duplicator>("Duplicator4");
+		this->duplicator[2].reset( new tools::SC_Duplicator("Duplicator2"));
+		this->duplicator[3].reset( new tools::SC_Duplicator("Duplicator3"));
+		this->duplicator[4].reset( new tools::SC_Duplicator("Duplicator4"));
 	}
 	if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		this->duplicator[6] = std::make_shared<tools::SC_Duplicator>("Duplicator6");
+		this->duplicator[6].reset( new tools::SC_Duplicator("Duplicator6"));
 	}
 
 
-	this->router    = std::make_shared<tools::SC_Router>   (p, "Router"   );
-	this->funnel    = std::make_shared<tools::SC_Funnel>   (   "Funnel"   );
-	this->predicate = std::make_shared<tools::SC_Predicate>(p, "Predicate");
+	this->router   .reset( new tools::SC_Router   (p, "Router"   ));
+	this->funnel   .reset( new tools::SC_Funnel   (   "Funnel"   ));
+	this->predicate.reset( new tools::SC_Predicate(p, "Predicate"));
 
 	this->bind_sockets();
 	sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
@@ -278,7 +278,7 @@ void SC_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<module::Coset<B,Q>> SC_BFER_ite<B,R,Q>
+std::unique_ptr<module::Coset<B,Q>> SC_BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
 	factory::Coset::parameters cst_params;
@@ -288,7 +288,7 @@ std::shared_ptr<module::Coset<B,Q>> SC_BFER_ite<B,R,Q>
 	this->coset_real_i.reset(cst_params.template build_real<B,Q>());
 	this->coset_real_i->set_name("Coset_real_i");
 
-	return std::shared_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
+	return std::unique_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
 }
 
 // ==================================================================================== explicit template instantiation

@@ -85,11 +85,11 @@ void SC_BFER_std<B,R,Q>
 	}
 	this->crc[tid]->sc.create_module(+crc::tsk::extract);
 
-	this->duplicator[0] = std::make_shared<tools::SC_Duplicator>("Duplicator_src");
+	this->duplicator[0].reset(new tools::SC_Duplicator("Duplicator_src"));
 	if (this->params_BFER_std.coset)
 	{
-		this->duplicator[1] = std::make_shared<tools::SC_Duplicator>("Duplicator1");
-		this->duplicator[2] = std::make_shared<tools::SC_Duplicator>("Duplicator2");
+		this->duplicator[1].reset(new tools::SC_Duplicator("Duplicator1"));
+		this->duplicator[2].reset(new tools::SC_Duplicator("Duplicator2"));
 	}
 }
 
