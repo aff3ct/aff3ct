@@ -42,27 +42,27 @@ struct Decoder_RSC_DB : public Decoder
 		// builder
 		template <typename B = int, typename Q = float>
 		module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const std::vector<std::vector<int>> &trellis,
-		                                             std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
+		                                             const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const std::vector<std::vector<int>> &trellis,
-		                                       std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
+		                                       const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 	private:
 		template <typename B = int, typename Q = float, tools::proto_max<Q> MAX>
 		module::Decoder_RSC_DB_BCJR<B,Q>* _build_siso(const std::vector<std::vector<int>> &trellis,
-		                                                    std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
+		                                                    const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const parameters &params,
 	                                                    const std::vector<std::vector<int>> &trellis,
-	                                                          std::shared_ptr<module::Encoder<B>> encoder = nullptr);
+	                                                          const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters                    &params,
 	                                        const std::vector<std::vector<int>> &trellis,
-	                                              std::shared_ptr<module::Encoder<B>> encoder = nullptr);
+	                                              const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };
 }
 }

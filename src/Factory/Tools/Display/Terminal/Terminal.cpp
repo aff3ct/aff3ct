@@ -76,7 +76,7 @@ void Terminal::parameters
 
 
 tools::Terminal* Terminal::parameters
-::build(std::vector<std::shared_ptr<tools::Reporter>> &reporters) const
+::build(const std::vector<std::unique_ptr<tools::Reporter>> &reporters) const
 {
 	if (this->type == "STD") return new tools::Terminal_std(reporters);
 
@@ -84,7 +84,7 @@ tools::Terminal* Terminal::parameters
 }
 
 tools::Terminal* Terminal
-::build(const parameters &params, std::vector<std::shared_ptr<tools::Reporter>> &reporters)
+::build(const parameters &params, const std::vector<std::unique_ptr<tools::Reporter>> &reporters)
 {
 	return params.build(reporters);
 }

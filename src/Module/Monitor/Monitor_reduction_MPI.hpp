@@ -15,7 +15,7 @@ template <class M> // M is the monitor on which must be applied the reduction
 class Monitor_reduction_MPI : public Monitor_reduction_M<M>
 {
 public:
-	explicit Monitor_reduction_MPI(const std::vector<std::shared_ptr<M>> &monitors);
+	explicit Monitor_reduction_MPI(const std::vector<std::unique_ptr<M>> &monitors);
 	virtual ~Monitor_reduction_MPI() = default;
 
 	virtual void reset();

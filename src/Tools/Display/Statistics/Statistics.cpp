@@ -186,7 +186,7 @@ void Statistics
 }
 
 void Statistics
-::show(std::vector<std::shared_ptr<const module::Module>> modules, const bool ordered, std::ostream &stream)
+::show(std::vector<const module::Module*> modules, const bool ordered, std::ostream &stream)
 {
 	std::vector<const module::Task*> tasks;
 	for (auto& m : modules)
@@ -295,7 +295,7 @@ void Statistics
 }
 
 void Statistics
-::show(std::vector<std::vector<std::shared_ptr<const module::Module>>> modules, const bool ordered, std::ostream &stream)
+::show(std::vector<std::vector<const module::Module*>> modules, const bool ordered, std::ostream &stream)
 {
 	std::vector<std::vector<const module::Task*>> tasks;
 	for (auto &vm : modules)

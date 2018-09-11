@@ -29,7 +29,7 @@ protected:
 	const factory::Simulation::parameters &params;
 
 	// map of Modules
-	std::map<std::string, std::vector<std::shared_ptr<module::Module>>> modules;
+	std::map<std::string, std::vector<const module::Module*>> modules;
 
 	bool simu_error;
 
@@ -59,7 +59,13 @@ protected:
 
 	// cast module T in module::Module
 	template <typename T>
-	typename std::enable_if<std::is_base_of<module::Module, T>::value, void>::type set_module(const std::string& module_name, const int tid, std::shared_ptr<T> mod);
+	typename std::enable_if<std::is_base_of<module::Module, T>::value, void>::type
+		set_module(const std::string& module_name, const int tid, const std::shared_ptr<T>& mod);
+
+	// cast module T in module::Module
+	template <typename T>
+	typename std::enable_if<std::is_base_of<module::Module, T>::value, void>::type
+		set_module(const std::string& module_name, const int tid, const std::unique_ptr<T>& mod);
 };
 }
 }

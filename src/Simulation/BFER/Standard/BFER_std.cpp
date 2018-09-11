@@ -13,14 +13,14 @@ BFER_std<B,R,Q>
 : BFER<B,R,Q>(params_BFER_std),
   params_BFER_std(params_BFER_std),
 
-  source    (params_BFER_std.n_threads, nullptr),
-  crc       (params_BFER_std.n_threads, nullptr),
-  codec     (params_BFER_std.n_threads, nullptr),
-  modem     (params_BFER_std.n_threads, nullptr),
-  channel   (params_BFER_std.n_threads, nullptr),
-  quantizer (params_BFER_std.n_threads, nullptr),
-  coset_real(params_BFER_std.n_threads, nullptr),
-  coset_bit (params_BFER_std.n_threads, nullptr),
+  source    (params_BFER_std.n_threads),
+  crc       (params_BFER_std.n_threads),
+  codec     (params_BFER_std.n_threads),
+  modem     (params_BFER_std.n_threads),
+  channel   (params_BFER_std.n_threads),
+  quantizer (params_BFER_std.n_threads),
+  coset_real(params_BFER_std.n_threads),
+  coset_bit (params_BFER_std.n_threads),
 
   rd_engine_seed(params_BFER_std.n_threads)
 {
@@ -70,14 +70,14 @@ void BFER_std<B,R,Q>
 	this->set_module("decoder"   , tid, codec     [tid]->get_decoder_siho());
 	this->set_module("coset_bit" , tid, coset_bit [tid]);
 
-	this->monitor_er[tid]->add_handler_check(std::bind(&module::Codec_SIHO<B,Q>::reset, codec[tid]));
+	this->monitor_er[tid]->add_handler_check(std::bind(&module::Codec_SIHO<B,Q>::reset, codec[tid].get()));
 
 	try
 	{
-		auto interleaver = codec[tid]->get_interleaver(); // can raise an exceptions
+		auto& interleaver = codec[tid]->get_interleaver(); // can raise an exceptions
 		interleaver->init();
 		if (interleaver->is_uniform())
-			this->monitor_er[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh, interleaver));
+			this->monitor_er[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh, interleaver.get()));
 
 		if (this->params_BFER_std.err_track_enable && interleaver->is_uniform())
 			this->dumper[tid]->register_data(interleaver->get_lut(), this->params_BFER_std.err_track_threshold, "itl", false, this->params_BFER_std.src->n_frames, {});
@@ -128,7 +128,7 @@ void BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<module::Source<B>> BFER_std<B,R,Q>
+std::unique_ptr<module::Source<B>> BFER_std<B,R,Q>
 ::build_source(const int tid)
 {
 	const auto seed_src = rd_engine_seed[tid]();
@@ -136,23 +136,23 @@ std::shared_ptr<module::Source<B>> BFER_std<B,R,Q>
 	std::unique_ptr<factory::Source::parameters> params_src(params_BFER_std.src->clone());
 	params_src->seed = seed_src;
 
-	return std::shared_ptr<module::Source<B>>(params_src->template build<B>());
+	return std::unique_ptr<module::Source<B>>(params_src->template build<B>());
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<module::CRC<B>> BFER_std<B,R,Q>
+std::unique_ptr<module::CRC<B>> BFER_std<B,R,Q>
 ::build_crc(const int tid)
 {
-	return std::shared_ptr<module::CRC<B>>(params_BFER_std.crc->template build<B>());
+	return std::unique_ptr<module::CRC<B>>(params_BFER_std.crc->template build<B>());
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
+std::unique_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 ::build_codec(const int tid)
 {
 	const auto seed_enc = rd_engine_seed[tid]();
 
-	std::shared_ptr<factory::Codec::parameters> params_cdc(params_BFER_std.cdc->clone());
+	std::unique_ptr<factory::Codec::parameters> params_cdc(params_BFER_std.cdc->clone());
 	params_cdc->enc->seed = seed_enc;
 
 	if (params_cdc->itl != nullptr)
@@ -174,20 +174,24 @@ std::shared_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 
 	auto crc = this->params_BFER_std.crc->type == "NO" ? nullptr : this->crc[tid].get();
 
-	auto param_siho = std::dynamic_pointer_cast<factory::Codec_SIHO::parameters>(params_cdc);
-	return std::shared_ptr<module::Codec_SIHO<B,Q>>(param_siho->template build<B, Q>(crc));
+	auto param_siho = dynamic_cast<factory::Codec_SIHO::parameters*>(params_cdc.get());
+	return std::unique_ptr<module::Codec_SIHO<B,Q>>(param_siho->template build<B, Q>(crc));
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<module::Modem<B,R,R>> BFER_std<B,R,Q>
+std::unique_ptr<module::Modem<B,R,R>> BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
-	return std::shared_ptr<module::Modem<B,R,R>>(
-		params_BFER_std.mdm->template build<B,R,R>(this->distributions, this->params_BFER_std.chn->type));
+	if (this->distributions != nullptr)
+		return std::unique_ptr<module::Modem<B,R,R>>(
+			params_BFER_std.mdm->template build<B,R,R>(*this->distributions, this->params_BFER_std.chn->type));
+	else
+		return std::unique_ptr<module::Modem<B,R,R>>(
+			params_BFER_std.mdm->template build<B,R,R>(this->params_BFER_std.chn->type));
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<module::Channel<R>> BFER_std<B,R,Q>
+std::unique_ptr<module::Channel<R>> BFER_std<B,R,Q>
 ::build_channel(const int tid)
 {
 	const auto seed_chn = rd_engine_seed[tid]();
@@ -196,36 +200,36 @@ std::shared_ptr<module::Channel<R>> BFER_std<B,R,Q>
 	params_chn->seed = seed_chn;
 
 	if (this->distributions != nullptr)
-		return std::shared_ptr<module::Channel<R>>(params_chn->template build<R>(*this->distributions));
+		return std::unique_ptr<module::Channel<R>>(params_chn->template build<R>(*this->distributions));
 	else
-		return std::shared_ptr<module::Channel<R>>(params_chn->template build<R>());
+		return std::unique_ptr<module::Channel<R>>(params_chn->template build<R>());
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<module::Quantizer<R,Q>> BFER_std<B,R,Q>
+std::unique_ptr<module::Quantizer<R,Q>> BFER_std<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return std::shared_ptr<module::Quantizer<R,Q>>(params_BFER_std.qnt->template build<R,Q>());
+	return std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_std.qnt->template build<R,Q>());
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<module::Coset<B,Q>> BFER_std<B,R,Q>
+std::unique_ptr<module::Coset<B,Q>> BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
 	factory::Coset::parameters cst_params;
 	cst_params.size = params_BFER_std.cdc->N_cw;
 	cst_params.n_frames = params_BFER_std.src->n_frames;
-	return std::shared_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
+	return std::unique_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<module::Coset<B,B>> BFER_std<B,R,Q>
+std::unique_ptr<module::Coset<B,B>> BFER_std<B,R,Q>
 ::build_coset_bit(const int tid)
 {
 	factory::Coset::parameters cst_params;
 	cst_params.size = this->params_BFER_std.coded_monitoring ? params_BFER_std.cdc->N_cw : params_BFER_std.cdc->K;
 	cst_params.n_frames = params_BFER_std.src->n_frames;
-	return std::shared_ptr<module::Coset<B,B>>(cst_params.template build_bit<B,B>());
+	return std::unique_ptr<module::Coset<B,B>>(cst_params.template build_bit<B,B>());
 }
 
 // ==================================================================================== explicit template instantiation

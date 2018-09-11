@@ -24,12 +24,12 @@ class Codec_turbo_product : public Codec_SISO_SIHO<B,Q>
 {
 protected:
 	const tools::BCH_polynomial_generator<B>    GF_poly;
-	std::shared_ptr<Encoder_BCH<B  >>           enc_bch_rows;
-	std::shared_ptr<Encoder_BCH<B  >>           enc_bch_cols;
-	std::shared_ptr<Decoder_BCH<B,Q>>           dec_bch_rows;
-	std::shared_ptr<Decoder_BCH<B,Q>>           dec_bch_cols;
-	std::shared_ptr<Decoder_chase_pyndiah<B,Q>> cp_rows;
-	std::shared_ptr<Decoder_chase_pyndiah<B,Q>> cp_cols;
+	std::unique_ptr<Encoder_BCH<B  >>           enc_bch_rows;
+	std::unique_ptr<Encoder_BCH<B  >>           enc_bch_cols;
+	std::unique_ptr<Decoder_BCH<B,Q>>           dec_bch_rows;
+	std::unique_ptr<Decoder_BCH<B,Q>>           dec_bch_cols;
+	std::unique_ptr<Decoder_chase_pyndiah<B,Q>> cp_rows;
+	std::unique_ptr<Decoder_chase_pyndiah<B,Q>> cp_cols;
 
 public:
 	Codec_turbo_product(const factory::Encoder_turbo_product::parameters &enc_params,

@@ -23,6 +23,8 @@ public:
 
 	explicit Reporter_noise(const std::shared_ptr<Noise<R>>* noise);
 	explicit Reporter_noise(const std::shared_ptr<Noise<R>>& noise);
+	explicit Reporter_noise(const std::unique_ptr<Noise<R>>* noise);
+	explicit Reporter_noise(const std::unique_ptr<Noise<R>>& noise);
 
 	virtual ~Reporter_noise();
 

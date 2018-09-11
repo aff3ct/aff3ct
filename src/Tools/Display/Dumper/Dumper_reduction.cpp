@@ -10,7 +10,7 @@
 using namespace aff3ct::tools;
 
 Dumper_reduction
-::Dumper_reduction(std::vector<std::shared_ptr<Dumper>> &dumpers)
+::Dumper_reduction(std::vector<std::unique_ptr<Dumper>> &dumpers)
 : Dumper(), dumpers(dumpers)
 {
 	this->checks();
@@ -153,7 +153,7 @@ void Dumper_reduction
 	for (auto i = 0; i < (int)this->registered_data_ptr.size(); i++)
 	{
 		unsigned n_data = (unsigned)this->buffer[i].size();
-		for (auto d : this->dumpers)
+		for (auto& d : this->dumpers)
 			n_data += (unsigned)d->buffer[i].size();
 
 		const auto size    = this->registered_data_size  [i];
@@ -172,7 +172,7 @@ void Dumper_reduction
 
 			this->write_header_binary(file, n_data, size, head);
 			this->write_body_binary(file, this->buffer[i], size * size_of);
-			for (auto d : this->dumpers)
+			for (auto& d : this->dumpers)
 				this->write_body_binary(file, d->buffer[i], size * size_of);
 		}
 		else
@@ -181,7 +181,7 @@ void Dumper_reduction
 
 			this->write_header_text(file, n_data, size, head);
 			this->write_body_text(file, this->buffer[i], size, type);
-			for (auto d : this->dumpers)
+			for (auto& d : this->dumpers)
 				this->write_body_text(file, d->buffer[i], size, type);
 		}
 
@@ -193,7 +193,7 @@ void Dumper_reduction
 ::clear()
 {
 	Dumper::clear();
-	for (auto d : this->dumpers)
+	for (auto& d : this->dumpers)
 		if (d != nullptr)
 			d->clear();
 }

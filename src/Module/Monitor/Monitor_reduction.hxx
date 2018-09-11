@@ -14,11 +14,11 @@ namespace module
 
 template <class M>
 Monitor_reduction_M<M>
-::Monitor_reduction_M(const std::vector<std::shared_ptr<M>> &_monitors)
+::Monitor_reduction_M(const std::vector<std::unique_ptr<M>>& _monitors)
 : Monitor_reduction(),
   M((_monitors.size() && _monitors.front()) ? *_monitors.front() : M(),
 	std::accumulate(_monitors.begin(), _monitors.end(), 0,
-                    [](int tot, const std::shared_ptr<M>& m) { return tot + m->get_n_frames(); })),
+                    [](int tot, const std::unique_ptr<M>& m) { return tot + m->get_n_frames(); })),
   monitors(_monitors)
 {
 	if (this->monitors.size() == 0)

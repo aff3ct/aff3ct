@@ -20,11 +20,11 @@ protected:
 public:
 	virtual ~Statistics();
 
-	static void show(std::vector<std::shared_ptr<const module::Module>> modules, const bool ordered = false,
+	static void show(std::vector<const module::Module*> modules, const bool ordered = false,
 	                 std::ostream &stream = std::cout);
 	static void show(std::vector<const module::Task*> tasks, const bool ordered = false,
 	                 std::ostream &stream = std::cout);
-	static void show(std::vector<std::vector<std::shared_ptr<const module::Module>>> modules, const bool ordered = false,
+	static void show(std::vector<std::vector<const module::Module*>> modules, const bool ordered = false,
 	                 std::ostream &stream = std::cout);
 	static void show(std::vector<std::vector<const module::Task*>> tasks, const bool ordered = false,
 	                 std::ostream &stream = std::cout);

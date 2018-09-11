@@ -45,12 +45,12 @@ struct Decoder_RA : public Decoder
 		// builder
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q> &itl,
-		                                 std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
+		                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const module::Interleaver<Q> &itl,
-	                                        std::shared_ptr<module::Encoder<B>> encoder = nullptr);
+	                                        const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };
 }
 }

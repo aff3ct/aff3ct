@@ -20,7 +20,7 @@ public:
 
 	virtual ~Codec_SIHO() = default;
 
-	std::shared_ptr<Decoder_SIHO<B,Q>> get_decoder_siho();
+	const std::shared_ptr<Decoder_SIHO<B,Q>>& get_decoder_siho();
 
 	virtual void reset();
 

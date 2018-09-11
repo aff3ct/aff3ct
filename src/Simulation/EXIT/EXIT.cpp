@@ -51,9 +51,9 @@ EXIT<B,R>
 
 	this->set_module("monitor", 0, this->monitor);
 
-	reporters.push_back(std::make_shared<tools::Reporter_noise< R>>(this->noise));
-	reporters.push_back(std::make_shared<tools::Reporter_EXIT<B,R>>(*this->monitor, this->noise_a));
-	reporters.push_back(std::make_shared<tools::Reporter_throughput<uint64_t>>(*this->monitor));
+	reporters.push_back(std::unique_ptr<tools::Reporter_noise< R>           >(new tools::Reporter_noise< R>           (this->noise                  )));
+	reporters.push_back(std::unique_ptr<tools::Reporter_EXIT<B,R>           >(new tools::Reporter_EXIT<B,R>           (*this->monitor, this->noise_a)));
+	reporters.push_back(std::unique_ptr<tools::Reporter_throughput<uint64_t>>(new tools::Reporter_throughput<uint64_t>(*this->monitor               )));
 }
 
 template <typename B, typename R>
@@ -94,7 +94,7 @@ void EXIT<B,R>
 	this->set_module("channel"  , 0, channel);
 	this->set_module("channel_a", 0, channel_a);
 
-	this->monitor->add_handler_measure(std::bind(&module::Codec_SISO<B,R>::reset, codec));
+	this->monitor->add_handler_measure(std::bind(&module::Codec_SISO<B,R>::reset, codec.get()));
 
 	if (codec->get_decoder_siso()->get_n_frames() > 1)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "The inter frame is not supported.");
@@ -185,13 +185,13 @@ void EXIT<B,R>
 
 				if (params_EXIT.statistics)
 				{
-					std::vector<std::vector<std::shared_ptr<const module::Module>>> mod_vec;
+					std::vector<std::vector<const module::Module*>> mod_vec;
 					for (auto &vm : modules)
 					{
-						std::vector<std::shared_ptr<const module::Module>> sub_mod_vec;
+						std::vector<const module::Module*> sub_mod_vec;
 						for (auto& m : vm.second)
 							sub_mod_vec.push_back(m);
-						mod_vec.push_back(sub_mod_vec);
+						mod_vec.push_back(std::move(sub_mod_vec));
 					}
 
 					std::cout << "#" << std::endl;
@@ -351,44 +351,44 @@ void EXIT<B,R>
 }
 
 template <typename B, typename R>
-std::shared_ptr<module::Source<B>> EXIT<B,R>
+std::unique_ptr<module::Source<B>> EXIT<B,R>
 ::build_source()
 {
-	return std::shared_ptr<module::Source<B>>(params_EXIT.src->template build<B>());
+	return std::unique_ptr<module::Source<B>>(params_EXIT.src->template build<B>());
 }
 
 template <typename B, typename R>
-std::shared_ptr<module::Codec_SISO<B,R>> EXIT<B,R>
+std::unique_ptr<module::Codec_SISO<B,R>> EXIT<B,R>
 ::build_codec()
 {
-	return std::shared_ptr<module::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
+	return std::unique_ptr<module::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
 }
 
 template <typename B, typename R>
-std::shared_ptr<module::Modem<B,R,R>> EXIT<B,R>
+std::unique_ptr<module::Modem<B,R,R>> EXIT<B,R>
 ::build_modem()
 {
-	return std::shared_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>());
+	return std::unique_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>());
 }
 
 template <typename B, typename R>
-std::shared_ptr<module::Modem<B,R>> EXIT<B,R>
+std::unique_ptr<module::Modem<B,R>> EXIT<B,R>
 ::build_modem_a()
 {
 	std::unique_ptr<factory::Modem::parameters> mdm_params(params_EXIT.mdm->clone());
 	mdm_params->N = params_EXIT.cdc->K;
-	return std::shared_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>());
+	return std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>());
 }
 
 template <typename B, typename R>
-std::shared_ptr<module::Channel<R>> EXIT<B,R>
+std::unique_ptr<module::Channel<R>> EXIT<B,R>
 ::build_channel(const int size)
 {
-	return std::shared_ptr<module::Channel<R>>(params_EXIT.chn->template build<R>());
+	return std::unique_ptr<module::Channel<R>>(params_EXIT.chn->template build<R>());
 }
 
 template <typename B, typename R>
-std::shared_ptr<module::Channel<R>> EXIT<B,R>
+std::unique_ptr<module::Channel<R>> EXIT<B,R>
 ::build_channel_a(const int size)
 {
 	std::unique_ptr<factory::Channel::parameters> chn_params(params_EXIT.chn->clone());
@@ -398,21 +398,21 @@ std::shared_ptr<module::Channel<R>> EXIT<B,R>
 	                                                                   params_EXIT.mdm->upf,
 	                                                                   params_EXIT.mdm->cpm_L);
 
-	return std::shared_ptr<module::Channel<R>>(chn_params->template build<R>());
+	return std::unique_ptr<module::Channel<R>>(chn_params->template build<R>());
 }
 
 template <typename B, typename R>
-std::shared_ptr<module::Monitor_EXIT<B,R>> EXIT<B,R>
+std::unique_ptr<module::Monitor_EXIT<B,R>> EXIT<B,R>
 ::build_monitor()
 {
-	return std::shared_ptr<module::Monitor_EXIT<B,R>>(params_EXIT.mnt->template build<B,R>());
+	return std::unique_ptr<module::Monitor_EXIT<B,R>>(params_EXIT.mnt->template build<B,R>());
 }
 
 template <typename B, typename R>
-std::shared_ptr<tools::Terminal> EXIT<B,R>
+std::unique_ptr<tools::Terminal> EXIT<B,R>
 ::build_terminal()
 {
-	return std::shared_ptr<tools::Terminal>(params_EXIT.ter->build(this->reporters));
+	return std::unique_ptr<tools::Terminal>(params_EXIT.ter->build(this->reporters));
 }
 
 // ==================================================================================== explicit template instantiation

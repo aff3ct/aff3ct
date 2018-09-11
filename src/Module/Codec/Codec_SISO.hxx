@@ -17,7 +17,7 @@ Codec_SISO(const int K, const int N_cw, const int N, const int tail_length, cons
 }
 
 template <typename B, typename Q>
-std::shared_ptr<Decoder_SISO<Q>> Codec_SISO<B,Q>::
+const std::shared_ptr<Decoder_SISO<Q>>& Codec_SISO<B,Q>::
 get_decoder_siso()
 {
 	if (this->decoder_siso == nullptr)

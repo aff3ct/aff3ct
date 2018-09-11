@@ -64,5 +64,5 @@ void Simulation
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->modules[module_name] = std::vector<std::shared_ptr<module::Module>>(n_threads);
+	this->modules[module_name] = std::vector<const module::Module*>(n_threads);
 }

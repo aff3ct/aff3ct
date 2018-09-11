@@ -24,7 +24,7 @@ const int aff3ct::tools::Terminal_std::column_width = 10;
 #endif
 
 Terminal_std
-::Terminal_std(const std::vector<std::shared_ptr<tools::Reporter>>& reporters)
+::Terminal_std(const std::vector<std::unique_ptr<tools::Reporter>>& reporters)
 : Terminal(), reporters(reporters)
 {
 }

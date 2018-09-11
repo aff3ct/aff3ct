@@ -17,7 +17,7 @@ Codec_HIHO(const int K, const int N_cw, const int N, const int tail_length, cons
 }
 
 template <typename B, typename Q>
-std::shared_ptr<Decoder_HIHO<B>> Codec_HIHO<B,Q>::
+const std::shared_ptr<Decoder_HIHO<B>>& Codec_HIHO<B,Q>::
 get_decoder_hiho()
 {
 	if (this->decoder_hiho == nullptr)

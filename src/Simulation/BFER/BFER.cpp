@@ -43,13 +43,13 @@ BFER<B,R,Q>
 	if (params_BFER.err_track_enable)
 	{
 		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-			dumper[tid] = std::make_shared<tools::Dumper>();
+			dumper[tid].reset(new tools::Dumper());
 
-		dumper_red = std::make_shared<tools::Dumper_reduction>(dumper);
+		dumper_red.reset(new tools::Dumper_reduction(dumper));
 	}
 
 	if (!params_BFER.noise->pdf_path.empty())
-		distributions = std::make_shared<tools::Distributions<R>>(params_BFER.noise->pdf_path);
+		distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path));
 
 	this->build_monitors ();
 	this->build_reporters();
@@ -205,13 +205,13 @@ void BFER<B,R,Q>
 
 			if (params_BFER.statistics)
 			{
-				std::vector<std::vector<std::shared_ptr<const module::Module>>> mod_vec;
+				std::vector<std::vector<const module::Module*>> mod_vec;
 				for (auto &vm : modules)
 				{
-					std::vector<std::shared_ptr<const module::Module>> sub_mod_vec;
+					std::vector<const module::Module*> sub_mod_vec;
 					for (auto& m : vm.second)
 						sub_mod_vec.push_back(m);
-					mod_vec.push_back(sub_mod_vec);
+					mod_vec.push_back(std::move(sub_mod_vec));
 				}
 
 				std::cout << "#" << std::endl;
@@ -237,9 +237,9 @@ void BFER<B,R,Q>
 				{
 					case tools::Noise_type::SIGMA:
 						if (params_BFER.noise->type == "EBN0")
-							noise_value = std::to_string(std::dynamic_pointer_cast<tools::Sigma<>>(this->noise)->get_ebn0());
+							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise.get())->get_ebn0());
 						else //(params_BFER.noise_type == "ESN0")
-							noise_value = std::to_string(std::dynamic_pointer_cast<tools::Sigma<>>(this->noise)->get_esn0());
+							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise.get())->get_esn0());
 						break;
 					case tools::Noise_type::ROP:
 					case tools::Noise_type::EP:
@@ -293,29 +293,29 @@ void BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<typename BFER<B,R,Q>::Monitor_MI_type> BFER<B,R,Q>
+std::unique_ptr<typename BFER<B,R,Q>::Monitor_MI_type> BFER<B,R,Q>
 ::build_monitor_mi(const int tid)
 {
-	return std::shared_ptr<typename BFER<B,R,Q>::Monitor_MI_type>(params_BFER.mnt_mi->build<B,R>());
+	return std::unique_ptr<typename BFER<B,R,Q>::Monitor_MI_type>(params_BFER.mnt_mi->build<B,R>());
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<typename BFER<B,R,Q>::Monitor_BFER_type> BFER<B,R,Q>
+std::unique_ptr<typename BFER<B,R,Q>::Monitor_BFER_type> BFER<B,R,Q>
 ::build_monitor_er(const int tid)
 {
 	bool count_unknown_values = params_BFER.noise->type == "EP";
 
-	auto mnt = std::shared_ptr<typename BFER<B,R,Q>::Monitor_BFER_type>(params_BFER.mnt_er->build<B>(count_unknown_values));
+	auto mnt = std::unique_ptr<typename BFER<B,R,Q>::Monitor_BFER_type>(params_BFER.mnt_er->build<B>(count_unknown_values));
 	mnt->activate_err_histogram(params_BFER.mnt_er->err_hist != -1);
 
 	return mnt;
 }
 
 template <typename B, typename R, typename Q>
-std::shared_ptr<tools::Terminal> BFER<B,R,Q>
+std::unique_ptr<tools::Terminal> BFER<B,R,Q>
 ::build_terminal()
 {
-	return std::shared_ptr<tools::Terminal>(params_BFER.ter->build(this->reporters));
+	return std::unique_ptr<tools::Terminal>(params_BFER.ter->build(this->reporters));
 }
 
 template <typename B, typename R, typename Q>
@@ -323,15 +323,15 @@ void BFER<B,R,Q>
 ::build_reporters()
 {
 	this->noise.reset(params_BFER.noise->template build<R>(0));
-	this->reporters.push_back(std::make_shared<tools::Reporter_noise<R>>(&this->noise));
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_noise<R>>(new tools::Reporter_noise<R>(this->noise)));
 
 	if (params_BFER.mutinfo)
 	{
-		this->reporters.push_back(std::make_shared<tools::Reporter_MI<B,R>>(*this->monitor_mi_red));
+		this->reporters.push_back(std::unique_ptr<tools::Reporter_MI<B,R>>(new tools::Reporter_MI<B,R>(*this->monitor_mi_red)));
 	}
 
-	this->reporters.push_back(std::make_shared<tools::Reporter_BFER<B>>(*this->monitor_er_red));
-	this->reporters.push_back(std::make_shared<tools::Reporter_throughput<uint64_t>>(*this->monitor_er_red));
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_BFER<B>>(new tools::Reporter_BFER<B>(*this->monitor_er_red)));
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_throughput<uint64_t>>(new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red)));
 }
 
 template <typename B, typename R, typename Q>
@@ -343,11 +343,11 @@ void BFER<B,R,Q>
 	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 	{
 		this->monitor_er[tid] = this->build_monitor_er(tid);
-		this->modules["monitor_er"][tid] = this->monitor_er[tid];
+		this->set_module("monitor_er", tid, this->monitor_er[tid]);
 	}
 
 	// build a monitor to reduce BER/FER from the other monitors
-	this->monitor_er_red = std::make_shared<Monitor_BFER_reduction_type>(this->monitor_er);
+	this->monitor_er_red.reset(new Monitor_BFER_reduction_type(this->monitor_er));
 
 	if (params_BFER.mutinfo)
 	{
@@ -356,11 +356,11 @@ void BFER<B,R,Q>
 		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 		{
 			this->monitor_mi[tid] = this->build_monitor_mi(tid);
-			this->modules["monitor_mi"][tid] = this->monitor_mi[tid];
+			this->set_module("monitor_mi", tid, this->monitor_mi[tid]);
 		}
 
 		// build a monitor to reduce M from the other monitors
-		this->monitor_mi_red = std::make_shared<Monitor_MI_reduction_type>(this->monitor_mi);
+		this->monitor_mi_red.reset(new Monitor_MI_reduction_type(this->monitor_mi));
 	}
 
 	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
@@ -384,7 +384,7 @@ void BFER<B,R,Q>
 		simu->__build_communication_chain(tid);
 
 		if (simu->params_BFER.err_track_enable)
-			simu->monitor_er[tid]->add_handler_fe(std::bind(&tools::Dumper::add, simu->dumper[tid], std::placeholders::_1, std::placeholders::_2));
+			simu->monitor_er[tid]->add_handler_fe(std::bind(&tools::Dumper::add, simu->dumper[tid].get(), std::placeholders::_1, std::placeholders::_2));
 	}
 	catch (std::exception const& e)
 	{

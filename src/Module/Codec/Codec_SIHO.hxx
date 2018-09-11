@@ -20,7 +20,7 @@ Codec_SIHO(const int K, const int N_cw, const int N, const int tail_length, cons
 }
 
 template <typename B, typename Q>
-std::shared_ptr<Decoder_SIHO<B,Q>> Codec_SIHO<B,Q>::
+const std::shared_ptr<Decoder_SIHO<B,Q>>& Codec_SIHO<B,Q>::
 get_decoder_siho()
 {
 	if (this->decoder_siho == nullptr)

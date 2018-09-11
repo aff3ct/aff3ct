@@ -78,8 +78,8 @@ Codec_polar<B,Q>
 	{
 		try
 		{
-			puncturer_shortlast.reset(factory::Puncturer_polar::build<B,Q>(*pct_params, *fb_generator));
-			this->set_puncturer(puncturer_shortlast);
+			this->set_puncturer(factory::Puncturer_polar::build<B,Q>(*pct_params, *fb_generator));
+			puncturer_shortlast = dynamic_cast<Puncturer_polar_shortlast<B,Q>*>(this->get_puncturer().get());
 		}
 		catch(tools::cannot_allocate const&)
 		{
@@ -89,9 +89,8 @@ Codec_polar<B,Q>
 
 	try
 	{
-		std::shared_ptr<Encoder_polar<B>> encoder_polar(factory::Encoder_polar::build<B>(enc_params, frozen_bits));
-		this->fb_encoder = std::static_pointer_cast<tools::Frozenbits_notifier>(encoder_polar);
-		this->set_encoder(std::static_pointer_cast<Encoder<B>>(encoder_polar));
+		this->set_encoder(factory::Encoder_polar::build<B>(enc_params, frozen_bits));
+		fb_encoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_encoder().get());
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -112,7 +111,7 @@ Codec_polar<B,Q>
 
 	try
 	{
-		this->fb_decoder = std::dynamic_pointer_cast<tools::Frozenbits_notifier>(this->get_decoder_siho());
+		this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho().get());
 	} catch(std::exception&) { }
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen

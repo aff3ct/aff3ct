@@ -12,10 +12,10 @@ namespace tools
 class Dumper_reduction : Dumper
 {
 protected:
-	std::vector<std::shared_ptr<Dumper>> dumpers;
+	std::vector<std::unique_ptr<Dumper>>& dumpers;
 
 public:
-	explicit Dumper_reduction(std::vector<std::shared_ptr<Dumper>> &dumpers);
+	explicit Dumper_reduction(std::vector<std::unique_ptr<Dumper>> &dumpers);
 	virtual ~Dumper_reduction();
 
 	virtual void dump (const std::string& base_path);

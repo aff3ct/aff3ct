@@ -23,15 +23,22 @@ struct Reporter_noise<R>::Noise_ptr
 	explicit Noise_ptr(const std::shared_ptr<Noise<R>>* noise) : noise(nullptr), noise_ptr(nullptr), sh_ptr( noise) {}
 	explicit Noise_ptr(const std::shared_ptr<Noise<R>>& noise) : noise(nullptr), noise_ptr(nullptr), sh_ptr(&noise) {}
 
+	explicit Noise_ptr(const std::unique_ptr<Noise<R>>* noise) : noise(nullptr), noise_ptr(nullptr), un_ptr( noise) {}
+	explicit Noise_ptr(const std::unique_ptr<Noise<R>>& noise) : noise(nullptr), noise_ptr(nullptr), un_ptr(&noise) {}
+
 	const Noise<R>* get_noise_ptr() const
 	{
-		return noise_ptr != nullptr ? *noise_ptr : (sh_ptr != nullptr ? sh_ptr->get() : nullptr);
+		return noise_ptr != nullptr ? *noise_ptr :
+		         (un_ptr != nullptr ? un_ptr->get() :
+		         (sh_ptr != nullptr ? sh_ptr->get() :
+		                              nullptr));
 	}
 
 private:
 	const Noise<R>*                  noise;
 	const Noise<R>* const*           noise_ptr;
 	const std::shared_ptr<Noise<R>>* sh_ptr;
+	const std::unique_ptr<Noise<R>>* un_ptr;
 };
 
 
@@ -66,6 +73,20 @@ Reporter_noise<R>
 template <typename R>
 Reporter_noise<R>
 ::Reporter_noise(const std::shared_ptr<Noise<R>>& _noise)
+: Reporter_noise(new Noise_ptr(_noise))
+{
+}
+
+template <typename R>
+Reporter_noise<R>
+::Reporter_noise(const std::unique_ptr<Noise<R>>* _noise)
+: Reporter_noise(new Noise_ptr(_noise))
+{
+}
+
+template <typename R>
+Reporter_noise<R>
+::Reporter_noise(const std::unique_ptr<Noise<R>>& _noise)
 : Reporter_noise(new Noise_ptr(_noise))
 {
 }

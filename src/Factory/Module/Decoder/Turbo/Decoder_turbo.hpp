@@ -60,10 +60,10 @@ struct Decoder_turbo : public Decoder
 		module::Decoder_turbo<B,Q>* build(const module::Interleaver<Q>  &itl,
 		                                        module::Decoder_SISO<Q> &siso_n,
 		                                        module::Decoder_SISO<Q> &siso_i,
-		                                        std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
+		                                        const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
@@ -71,10 +71,10 @@ struct Decoder_turbo : public Decoder
 	                                         const module::Interleaver<Q>  &itl,
 	                                               module::Decoder_SISO<Q> &siso_n,
 	                                               module::Decoder_SISO<Q> &siso_i,
-	                                               std::shared_ptr<module::Encoder<B>> encoder = nullptr);
+	                                               const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
-	static module::Decoder_SIHO<B,Q>* build(const parameters<D1,D2> &params, std::shared_ptr<module::Encoder<B>> encoder = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters<D1,D2> &params, const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };
 }
 }

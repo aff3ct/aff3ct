@@ -37,13 +37,13 @@ struct Terminal : Factory
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
-		tools::Terminal* build(std::vector<std::shared_ptr<tools::Reporter>> &reporters) const;
+		tools::Terminal* build(const std::vector<std::unique_ptr<tools::Reporter>> &reporters) const;
 
 	protected:
 		parameters(const std::string &n, const std::string &p);
 	};
 
-	static tools::Terminal* build(const parameters &params, std::vector<std::shared_ptr<tools::Reporter>> &reporters);
+	static tools::Terminal* build(const parameters &params, const std::vector<std::unique_ptr<tools::Reporter>> &reporters);
 };
 }
 }

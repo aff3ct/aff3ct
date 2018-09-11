@@ -20,7 +20,7 @@ public:
 
 	virtual ~Codec_HIHO() = default;
 
-	std::shared_ptr<Decoder_HIHO<B>> get_decoder_hiho();
+	const std::shared_ptr<Decoder_HIHO<B>>& get_decoder_hiho();
 
 	virtual void reset();
 

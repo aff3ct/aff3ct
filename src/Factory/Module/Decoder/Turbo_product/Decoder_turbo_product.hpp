@@ -60,7 +60,7 @@ struct Decoder_turbo_product : public Decoder
 		module::Decoder_SIHO<B,Q>* build(const module::Interleaver <Q> &itl,
 		                                       module::Decoder_chase_pyndiah<B,Q> &cp_r,
 		                                       module::Decoder_chase_pyndiah<B,Q> &cp_c,
-		                                       std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
+		                                       const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SISO_SIHO<B,Q>* build_siso(const module::Interleaver <Q> &itl,
@@ -74,7 +74,7 @@ struct Decoder_turbo_product : public Decoder
 	                                        const module::Interleaver <Q> &itl,
 	                                              module::Decoder_chase_pyndiah<B,Q> &cp_r,
 	                                              module::Decoder_chase_pyndiah<B,Q> &cp_c,
-	                                              std::shared_ptr<module::Encoder<B>> encoder = nullptr);
+	                                              const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters              &params,

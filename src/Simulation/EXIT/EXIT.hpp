@@ -40,18 +40,18 @@ protected:
 	R sig_a;
 
 	// communication chain
-	std::shared_ptr<module::Source      <B  >> source;
-	std::shared_ptr<module::Codec_SISO  <B,R>> codec;
-	std::shared_ptr<module::Modem       <B,R>> modem;
-	std::shared_ptr<module::Modem       <B,R>> modem_a;
-	std::shared_ptr<module::Channel     <  R>> channel;
-	std::shared_ptr<module::Channel     <  R>> channel_a;
-	std::shared_ptr<module::Decoder_SISO<  R>> siso;
-	std::shared_ptr<module::Monitor_EXIT<B,R>> monitor;
+	std::unique_ptr<module::Source      <B  >> source;
+	std::unique_ptr<module::Codec_SISO  <B,R>> codec;
+	std::unique_ptr<module::Modem       <B,R>> modem;
+	std::unique_ptr<module::Modem       <B,R>> modem_a;
+	std::unique_ptr<module::Channel     <  R>> channel;
+	std::unique_ptr<module::Channel     <  R>> channel_a;
+	std::unique_ptr<module::Decoder_SISO<  R>> siso;
+	std::unique_ptr<module::Monitor_EXIT<B,R>> monitor;
 
 	// terminal and reporters (for the output of the code)
-	std::vector<std::shared_ptr<tools::Reporter>> reporters;
-	std::shared_ptr<tools::Terminal>              terminal;
+	std::vector<std::unique_ptr<tools::Reporter>> reporters;
+	std::unique_ptr<tools::Terminal>              terminal;
 
 
 public:
@@ -66,14 +66,14 @@ protected:
 	void simulation_loop           ();
 	void release_objects           ();
 
-	std::shared_ptr<module::Source      <B  >> build_source   (              );
-	std::shared_ptr<module::Codec_SISO  <B,R>> build_codec    (              );
-	std::shared_ptr<module::Modem       <B,R>> build_modem    (              );
-	std::shared_ptr<module::Modem       <B,R>> build_modem_a  (              );
-	std::shared_ptr<module::Channel     <  R>> build_channel  (const int size);
-	std::shared_ptr<module::Channel     <  R>> build_channel_a(const int size);
-	std::shared_ptr<module::Monitor_EXIT<B,R>> build_monitor  (              );
-	std::shared_ptr<tools::Terminal          > build_terminal (              );
+	std::unique_ptr<module::Source      <B  >> build_source   (              );
+	std::unique_ptr<module::Codec_SISO  <B,R>> build_codec    (              );
+	std::unique_ptr<module::Modem       <B,R>> build_modem    (              );
+	std::unique_ptr<module::Modem       <B,R>> build_modem_a  (              );
+	std::unique_ptr<module::Channel     <  R>> build_channel  (const int size);
+	std::unique_ptr<module::Channel     <  R>> build_channel_a(const int size);
+	std::unique_ptr<module::Monitor_EXIT<B,R>> build_monitor  (              );
+	std::unique_ptr<tools::Terminal          > build_terminal (              );
 };
 }
 }

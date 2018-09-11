@@ -54,7 +54,7 @@ protected:
 	// code specifications
 	const float bit_rate;
 
-	std::shared_ptr<tools::Noise<R>> noise; // current noise simulated
+	std::unique_ptr<tools::Noise<R>> noise; // current noise simulated
 
 
 	// the monitors of the the BFER simulation
@@ -69,24 +69,24 @@ protected:
 	using Monitor_MI_reduction_type   = module::Monitor_reduction_M<Monitor_MI_type  >;
 #endif
 
-	std::vector<std::shared_ptr<Monitor_MI_type>>    monitor_mi;
-	std::shared_ptr<Monitor_MI_reduction_type>       monitor_mi_red;
+	std::vector<std::unique_ptr<Monitor_MI_type>>    monitor_mi;
+	std::unique_ptr<Monitor_MI_reduction_type>       monitor_mi_red;
 
-	std::vector<std::shared_ptr<Monitor_BFER_type>>  monitor_er;
-	std::shared_ptr<Monitor_BFER_reduction_type>     monitor_er_red;
+	std::vector<std::unique_ptr<Monitor_BFER_type>>  monitor_er;
+	std::unique_ptr<Monitor_BFER_reduction_type>     monitor_er_red;
 
 
 	// dump frames into files
-	std::vector<std::shared_ptr<tools::Dumper          >> dumper;
-	            std::shared_ptr<tools::Dumper_reduction>  dumper_red;
+	std::vector<std::unique_ptr<tools::Dumper          >> dumper;
+	            std::unique_ptr<tools::Dumper_reduction>  dumper_red;
 
 
 	// terminal and reporters (for the output of the simu)
-	std::vector<std::shared_ptr<tools::Reporter>> reporters;
-	std::shared_ptr<tools::Terminal>              terminal;
+	std::vector<std::unique_ptr<tools::Reporter>> reporters;
+	std::unique_ptr<tools::Terminal>              terminal;
 
 	// noise distribution
-	std::shared_ptr<tools::Distributions<R>> distributions;
+	std::unique_ptr<tools::Distributions<R>> distributions;
 
 	std::chrono::steady_clock::time_point t_start_noise_point;
 
@@ -101,9 +101,9 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	std::shared_ptr<Monitor_MI_type>   build_monitor_mi(const int tid = 0);
-	std::shared_ptr<Monitor_BFER_type> build_monitor_er(const int tid = 0);
-	std::shared_ptr<tools::Terminal>   build_terminal();
+	std::unique_ptr<Monitor_MI_type>   build_monitor_mi(const int tid = 0);
+	std::unique_ptr<Monitor_BFER_type> build_monitor_er(const int tid = 0);
+	std::unique_ptr<tools::Terminal>   build_terminal();
 	void build_reporters();
 	void build_monitors ();
 

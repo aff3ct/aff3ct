@@ -20,7 +20,7 @@ public:
 
 	virtual ~Codec_SISO() = default;
 
-	std::shared_ptr<Decoder_SISO<Q>> get_decoder_siso();
+	const std::shared_ptr<Decoder_SISO<Q>>& get_decoder_siso();
 
 	virtual void reset();
 

@@ -42,21 +42,21 @@ struct Decoder_RS : public Decoder
 		// builder
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const tools::RS_polynomial_generator &GF,
-		                                 std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
+		                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const tools::RS_polynomial_generator &GF,
-		                                           std::shared_ptr<module::Encoder<B>> encoder = nullptr) const;
+		                                           const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 	};
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::RS_polynomial_generator &GF,
-	                                        std::shared_ptr<module::Encoder<B>> encoder = nullptr);
+	                                        const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const parameters &params, const tools::RS_polynomial_generator &GF,
-	                                                  std::shared_ptr<module::Encoder<B>> encoder = nullptr);
+	                                                  const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };
 }
 }

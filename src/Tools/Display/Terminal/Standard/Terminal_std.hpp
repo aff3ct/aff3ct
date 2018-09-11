@@ -43,13 +43,13 @@ public:
 	static const int         column_width;
 
 protected:
-	const std::vector<std::shared_ptr<tools::Reporter>>& reporters;
+	const std::vector<std::unique_ptr<tools::Reporter>>& reporters;
 
 public:
 	/*!
 	 * \brief Constructor.
 	 */
-	explicit Terminal_std(const std::vector<std::shared_ptr<tools::Reporter>>& reporters);
+	explicit Terminal_std(const std::vector<std::unique_ptr<tools::Reporter>>& reporters);
 
 	/*!
 	 * \brief Destructor.

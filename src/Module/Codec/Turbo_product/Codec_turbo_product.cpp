@@ -68,8 +68,8 @@ Codec_turbo_product<B,Q>
 	pctno_params.N_cw     = enc_params.N_cw;
 	pctno_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer  (std::shared_ptr<Puncturer<B,Q>            >(factory::Puncturer::build<B,Q>(pctno_params)));
-	this->set_interleaver(std::shared_ptr<tools::Interleaver_core< >>(factory::Interleaver_core::build<>(*dec_params.itl->core)));
+	this->set_puncturer  (factory::Puncturer::build<B,Q>(pctno_params));
+	this->set_interleaver(factory::Interleaver_core::build<>(*dec_params.itl->core));
 
 	int N_cw_p = enc_params.sub->N_cw + (dec_params.parity_extended ? 1 : 0);
 	enc_params.sub->n_frames = N_cw_p;
@@ -83,8 +83,8 @@ Codec_turbo_product<B,Q>
 
 	dec_params.sub->n_frames = N_cw_p;
 
-	dec_bch_rows.reset(dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly, enc_bch_rows)));
-	dec_bch_cols.reset(dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly, enc_bch_cols)));
+	dec_bch_rows.reset(dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly)));
+	dec_bch_cols.reset(dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly)));
 
 
 	if (dec_params.implem == "FAST")
