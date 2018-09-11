@@ -40,7 +40,7 @@ function gen_coverage_info
 		fi
 	} || {
 		[ -d $path ] && {
-			if [ ${path: -11} == "readers" ]; then
+			if [ ${path: -7} == "readers" ]; then
 				continue
 			fi
 			gen_coverage_info $build $path
