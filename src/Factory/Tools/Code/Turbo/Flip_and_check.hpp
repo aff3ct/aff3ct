@@ -34,7 +34,7 @@ struct Flip_and_check : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Flip_and_check_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Flip_and_check::parameters* clone() const;
 
 		// parameters construction

@@ -16,11 +16,6 @@ Monitor_MI::parameters
 {
 }
 
-Monitor_MI::parameters
-::~parameters()
-{
-}
-
 Monitor_MI::parameters* Monitor_MI::parameters
 ::clone() const
 {

@@ -15,7 +15,7 @@ protected:
 
 public:
 	Turbo(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Turbo();
+	virtual ~Turbo() = default;
 
 protected:
 	virtual void get_description_args();

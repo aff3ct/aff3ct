@@ -15,7 +15,7 @@ protected:
 
 public:
 	Turbo_product(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Turbo_product();
+	virtual ~Turbo_product() = default;
 
 protected:
 	virtual void get_description_args();

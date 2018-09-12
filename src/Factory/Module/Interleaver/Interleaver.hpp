@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Tools/Interleaver/Interleaver_core.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 
 #include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 
@@ -25,11 +26,11 @@ struct Interleaver : public Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// depending parameters
-		factory::Interleaver_core::parameters *core;
+		tools::auto_cloned_unique_ptr<factory::Interleaver_core::parameters> core;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Interleaver_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Interleaver::parameters* clone() const;
 
 		// parameters construction

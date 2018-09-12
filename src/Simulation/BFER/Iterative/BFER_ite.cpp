@@ -46,12 +46,6 @@ BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-BFER_ite<B,R,Q>
-::~BFER_ite()
-{
-}
-
-template <typename B, typename R, typename Q>
 void BFER_ite<B,R,Q>
 ::__build_communication_chain(const int tid)
 {
@@ -133,13 +127,6 @@ void BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void BFER_ite<B,R,Q>
-::release_objects()
-{
-	BFER<B,R,Q>::release_objects();
-}
-
-template <typename B, typename R, typename Q>
 std::unique_ptr<module::Source<B>> BFER_ite<B,R,Q>
 ::build_source(const int tid)
 {
@@ -147,6 +134,7 @@ std::unique_ptr<module::Source<B>> BFER_ite<B,R,Q>
 
 	std::unique_ptr<factory::Source::parameters> params_src(params_BFER_ite.src->clone());
 	params_src->seed = seed_src;
+
 	return std::unique_ptr<module::Source<B>>(params_src->template build<B>());
 }
 
@@ -163,11 +151,13 @@ std::unique_ptr<module::Codec_SISO_SIHO<B,Q>> BFER_ite<B,R,Q>
 {
 	const auto seed_enc = rd_engine_seed[tid]();
 
-	std::unique_ptr<factory::Codec_SISO_SIHO::parameters> params_cdc(params_BFER_ite.cdc->clone());
+	std::unique_ptr<factory::Codec::parameters> params_cdc(params_BFER_ite.cdc->clone());
 	params_cdc->enc->seed = seed_enc;
 
 	auto crc = this->params_BFER_ite.crc->type == "NO" ? nullptr : this->crc[tid].get();
-	return std::unique_ptr<module::Codec_SISO_SIHO<B,Q>>(params_cdc->template build<B,Q>(crc));
+
+	auto param_siso_siho = dynamic_cast<factory::Codec_SISO_SIHO::parameters*>(params_cdc.get());
+	return std::unique_ptr<module::Codec_SISO_SIHO<B,Q>>(param_siso_siho->template build<B,Q>(crc));
 }
 
 template <typename B, typename R, typename Q>

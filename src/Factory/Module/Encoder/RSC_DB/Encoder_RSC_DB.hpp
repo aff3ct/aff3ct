@@ -25,7 +25,7 @@ struct Encoder_RSC_DB : public Encoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_RSC_DB_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Encoder_RSC_DB::parameters* clone() const;
 
 		// parameters construction

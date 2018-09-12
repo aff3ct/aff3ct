@@ -29,15 +29,16 @@ struct BFER_std : BFER
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// module parameters
-		Codec_SIHO::parameters *cdc = nullptr;
+		// Codec_SIHO::parameters *cdc = nullptr;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = BFER_std_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		BFER_std::parameters* clone() const;
 
 		// setters
-		void set_cdc(Codec_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
+		// void set_cdc(Codec_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
+		const Codec_SIHO::parameters* get_cdc() const;
 
 		// parameters construction
 		void get_description(tools::Argument_map_info &args) const;

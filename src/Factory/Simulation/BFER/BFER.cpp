@@ -15,36 +15,22 @@ BFER::parameters
 {
 }
 
-BFER::parameters
-::~parameters()
-{
-	if (src != nullptr) { delete src; src = nullptr; }
-	if (crc != nullptr) { delete crc; crc = nullptr; }
-	if (cdc != nullptr) { delete cdc; cdc = nullptr; }
-	if (mdm != nullptr) { delete mdm; mdm = nullptr; }
-	if (chn != nullptr) { delete chn; chn = nullptr; }
-	if (qnt != nullptr) { delete qnt; qnt = nullptr; }
-	if (mnt_mi != nullptr) { delete mnt_mi; mnt_mi = nullptr; }
-	if (mnt_er != nullptr) { delete mnt_er; mnt_er = nullptr; }
-	if (ter != nullptr) { delete ter; ter = nullptr; }
-}
-
 BFER::parameters* BFER::parameters
 ::clone() const
 {
-	auto clone = new BFER::parameters(*this);
+	return new BFER::parameters(*this);
 
-	if (src != nullptr) { clone->src = src->clone(); }
-	if (crc != nullptr) { clone->crc = crc->clone(); }
-	if (cdc != nullptr) { clone->cdc = cdc->clone(); }
-	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
-	if (chn != nullptr) { clone->chn = chn->clone(); }
-	if (qnt != nullptr) { clone->qnt = qnt->clone(); }
-	if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
-	if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
-	if (ter != nullptr) { clone->ter = ter->clone(); }
+	// if (src != nullptr) { clone->src = src->clone(); }
+	// if (crc != nullptr) { clone->crc = crc->clone(); }
+	// if (cdc != nullptr) { clone->cdc = cdc->clone(); }
+	// if (mdm != nullptr) { clone->mdm = mdm->clone(); }
+	// if (chn != nullptr) { clone->chn = chn->clone(); }
+	// if (qnt != nullptr) { clone->qnt = qnt->clone(); }
+	// if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
+	// if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
+	// if (ter != nullptr) { clone->ter = ter->clone(); }
 
-	return clone;
+	// return clone;
 }
 
 std::vector<std::string> BFER::parameters
@@ -228,3 +214,65 @@ void BFER::parameters
 
 	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }
+
+
+void BFER::parameters
+::set_src(Source::parameters *src)
+{
+	this->src.reset(src);
+}
+
+void BFER::parameters
+::set_crc(CRC::parameters *crc)
+{
+	this->crc.reset(crc);
+}
+
+void BFER::parameters
+::set_cdc(Codec::parameters *cdc)
+{
+	this->cdc.reset(cdc);
+}
+
+void BFER::parameters
+::set_mdm(Modem::parameters *mdm)
+{
+	this->mdm.reset(mdm);
+}
+
+void BFER::parameters
+::set_chn(Channel::parameters *chn)
+{
+	this->chn.reset(chn);
+}
+
+void BFER::parameters
+::set_qnt(Quantizer::parameters *qnt)
+{
+	this->qnt.reset(qnt);
+}
+
+void BFER::parameters
+::set_mnt_mi(Monitor_MI::parameters *mnt)
+{
+	this->mnt_mi.reset(mnt);
+}
+
+void BFER::parameters
+::set_mnt_er(Monitor_BFER::parameters *mnt)
+{
+	this->mnt_er.reset(mnt);
+}
+
+void BFER::parameters
+::set_ter(Terminal::parameters *ter)
+{
+	this->ter.reset(ter);
+}
+
+const Codec::parameters* BFER::parameters
+::get_cdc() const
+{
+	return this->cdc.get();
+}
+

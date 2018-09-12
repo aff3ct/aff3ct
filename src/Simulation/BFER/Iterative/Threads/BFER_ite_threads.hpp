@@ -12,7 +12,7 @@ class BFER_ite_threads : public BFER_ite<B,R,Q>
 {
 public:
 	explicit BFER_ite_threads(const factory::BFER_ite::parameters &params_BFER_ite);
-	virtual ~BFER_ite_threads();
+	virtual ~BFER_ite_threads() = default;
 
 protected:
 	virtual void _launch();

@@ -17,31 +17,25 @@ BFER_ite::parameters
 {
 }
 
-BFER_ite::parameters
-::~parameters()
-{
-	if (itl != nullptr) { delete itl; itl = nullptr; }
-}
-
 BFER_ite::parameters* BFER_ite::parameters
 ::clone() const
 {
-	auto clone = new BFER_ite::parameters(*this);
+	return new BFER_ite::parameters(*this);
 
-	if (src != nullptr) { clone->src = src->clone(); }
-	if (crc != nullptr) { clone->crc = crc->clone(); }
-	if (cdc != nullptr) { clone->cdc = cdc->clone(); }
-	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
-	if (chn != nullptr) { clone->chn = chn->clone(); }
-	if (qnt != nullptr) { clone->qnt = qnt->clone(); }
-	if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
-	if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
-	if (ter != nullptr) { clone->ter = ter->clone(); }
-	if (itl != nullptr) { clone->itl = itl->clone(); }
+	// if (src != nullptr) { clone->src = src->clone(); }
+	// if (crc != nullptr) { clone->crc = crc->clone(); }
+	// if (cdc != nullptr) { clone->cdc = cdc->clone(); }
+	// if (mdm != nullptr) { clone->mdm = mdm->clone(); }
+	// if (chn != nullptr) { clone->chn = chn->clone(); }
+	// if (qnt != nullptr) { clone->qnt = qnt->clone(); }
+	// if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
+	// if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
+	// if (ter != nullptr) { clone->ter = ter->clone(); }
+	// if (itl != nullptr) { clone->itl = itl->clone(); }
 
-	clone->set_cdc(clone->cdc);
+	// clone->set_cdc(clone->cdc);
 
-	return clone;
+	// return clone;
 }
 
 std::vector<std::string> BFER_ite::parameters
@@ -148,6 +142,14 @@ void BFER_ite::parameters
 	if (this->mnt_er != nullptr) { this->mnt_er->get_headers(headers, full); }
 	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }
+
+const Codec_SISO_SIHO::parameters* BFER_ite::parameters
+::get_cdc() const
+{
+	return dynamic_cast<Codec_SISO_SIHO::parameters*>(this->cdc.get());
+}
+
+
 
 template <typename B, typename R, typename Q>
 simulation::BFER_ite<B,R,Q>* BFER_ite::parameters

@@ -5,9 +5,6 @@
 #include <cmath>
 
 #include "Factory/Tools/Code/Polar/Frozenbits_generator.hpp"
-#include "Factory/Module/Encoder/Polar/Encoder_polar.hpp"
-#include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
-#include "Factory/Module/Puncturer/Polar/Puncturer_polar.hpp"
 
 #include "Module/CRC/CRC.hpp"
 #include "Module/Codec/Polar/Codec_polar.hpp"
@@ -27,14 +24,11 @@ struct Codec_polar : public Codec_SISO_SIHO
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// depending parameters
-		Encoder_polar       ::parameters *enc;
-		Frozenbits_generator::parameters *fbg;
-		Decoder_polar       ::parameters *dec;
-		Puncturer_polar     ::parameters *pct;
+		tools::auto_cloned_unique_ptr<Frozenbits_generator::parameters> fbg;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_polar_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Codec_polar::parameters* clone() const;
 		void enable_puncturer();
 

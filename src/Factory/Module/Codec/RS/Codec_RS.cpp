@@ -1,5 +1,8 @@
 #include "Codec_RS.hpp"
 
+#include "Factory/Module/Encoder/RS/Encoder_RS.hpp"
+#include "Factory/Module/Decoder/RS/Decoder_RS.hpp"
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -9,36 +12,16 @@ const std::string aff3ct::factory::Codec_RS_prefix = "cdc";
 Codec_RS::parameters
 ::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_RS_name, prefix),
-  Codec_SIHO_HIHO::parameters(Codec_RS_name, prefix),
-  enc(new Encoder_RS::parameters("enc")),
-  dec(new Decoder_RS::parameters("dec"))
+  Codec_SIHO_HIHO::parameters(Codec_RS_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-}
-
-Codec_RS::parameters
-::~parameters()
-{
-	if (enc != nullptr) { delete enc; enc = nullptr; }
-	if (dec != nullptr) { delete dec; dec = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
+	Codec::parameters::set_enc(new Encoder_RS::parameters("enc"));
+	Codec::parameters::set_dec(new Decoder_RS::parameters("dec"));
 }
 
 Codec_RS::parameters* Codec_RS::parameters
 ::clone() const
 {
-	auto clone = new Codec_RS::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-
-	return clone;
+	return new Codec_RS::parameters(*this);
 }
 
 void Codec_RS::parameters
@@ -65,20 +48,22 @@ void Codec_RS::parameters
 {
 	Codec_SIHO_HIHO::parameters::store(vals);
 
+	auto dec_rs = dynamic_cast<Decoder_RS::parameters*>(dec.get());
+
 	enc->store(vals);
 
-	this->dec->K        = this->enc->K;
-	this->dec->N_cw     = this->enc->N_cw;
-	this->dec->n_frames = this->enc->n_frames;
+	dec->K        = enc->K;
+	dec->N_cw     = enc->N_cw;
+	dec->n_frames = enc->n_frames;
 
 	dec->store(vals);
 
-	if(this->dec->K != this->enc->K) // when -T has been given but not -K
-		this->enc->K = this->dec->K;
+	if(dec->K != enc->K) // when -T has been given but not -K
+		enc->K = dec->K;
 
-	this->K    = this->enc->K * this->dec->m;
-	this->N_cw = this->enc->N_cw * this->dec->m;
-	this->N    = this->enc->N_cw * this->dec->m;
+	K    = enc->K    * dec_rs->m;
+	N_cw = enc->N_cw * dec_rs->m;
+	N    = enc->N_cw * dec_rs->m;
 }
 
 void Codec_RS::parameters
@@ -86,10 +71,10 @@ void Codec_RS::parameters
 {
 	Codec_SIHO_HIHO::parameters::get_headers(headers, full);
 
-	auto p = this->get_prefix();
+	auto p = get_prefix();
 
-	headers[p].push_back(std::make_pair("Symbols Source size",   std::to_string(this->enc->K   )));
-	headers[p].push_back(std::make_pair("Symbols Codeword size", std::to_string(this->enc->N_cw)));
+	headers[p].push_back(std::make_pair("Symbols Source size",   std::to_string(enc->K   )));
+	headers[p].push_back(std::make_pair("Symbols Codeword size", std::to_string(enc->N_cw)));
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
@@ -99,9 +84,8 @@ template <typename B, typename Q>
 module::Codec_RS<B,Q>* Codec_RS::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_RS<B,Q>(*enc, *dec);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_RS<B,Q>(dynamic_cast<const Encoder_RS::parameters&>(*enc),
+	                                 dynamic_cast<const Decoder_RS::parameters&>(*dec));
 }
 
 template <typename B, typename Q>

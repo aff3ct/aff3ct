@@ -1,5 +1,6 @@
 #include <type_traits>
 #include "Channel_binary_symmetric.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
@@ -7,15 +8,16 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_binary_symmetric<R>
 ::Channel_binary_symmetric(const int N, const int seed, const tools::Event_probability<R>& noise, const int n_frames)
-: Channel_binary_symmetric<R>(N, new tools::Event_generator_std<R>(seed), noise, n_frames)
+: Channel_binary_symmetric<R>(N, std::unique_ptr<tools::Event_generator_std<R>>(new tools::Event_generator_std<R>(seed)),
+  noise, n_frames)
 {
 }
 
 template<typename R>
 Channel_binary_symmetric<R>
-::Channel_binary_symmetric(const int N, tools::Event_generator<R> *event_generator,
+::Channel_binary_symmetric(const int N, std::unique_ptr<tools::Event_generator<R>>&& event_generator,
               const tools::Event_probability<R> &noise, const int n_frames)
-: Channel<R>(N, noise, n_frames), event_generator(event_generator), event_draw(this->N)
+: Channel<R>(N, noise, n_frames), event_generator(std::move(event_generator)), event_draw(this->N)
 {
 	const std::string name = "Channel_binary_symmetric";
 	this->set_name(name);

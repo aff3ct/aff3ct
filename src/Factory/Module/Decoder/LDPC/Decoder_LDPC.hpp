@@ -39,7 +39,7 @@ struct Decoder_LDPC : public Decoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_LDPC_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_LDPC::parameters* clone() const;
 
 		// parameters construction

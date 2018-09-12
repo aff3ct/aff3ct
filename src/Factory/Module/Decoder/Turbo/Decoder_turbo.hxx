@@ -15,38 +15,19 @@ Decoder_turbo::parameters<D1,D2>
 : Decoder::parameters(Decoder_turbo_name, prefix),
   sub1(new typename D1::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub1")),
   sub2(new typename D2::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub2")),
-  itl(new Interleaver::parameters("itl")),
-  sf(new Scaling_factor::parameters(prefix+"-sf")),
-  fnc(new Flip_and_check::parameters(prefix+"-fnc"))
+  itl (new Interleaver::parameters("itl")),
+  sf  (new Scaling_factor::parameters(prefix+"-sf")),
+  fnc (new Flip_and_check::parameters(prefix+"-fnc"))
 {
 	this->type   = "TURBO";
 	this->implem = "FAST";
 }
 
 template <class D1, class D2>
-Decoder_turbo::parameters<D1,D2>
-::~parameters()
-{
-	if (sub1 != nullptr) { delete sub1; sub1 = nullptr; }
-	if (sub2 != nullptr) { delete sub2; sub2 = nullptr; }
-	if (itl  != nullptr) { delete itl;  itl  = nullptr; }
-	if (sf   != nullptr) { delete sf ;  sf   = nullptr; }
-	if (fnc  != nullptr) { delete fnc;  fnc  = nullptr; }
-}
-
-template <class D1, class D2>
 Decoder_turbo::parameters<D1,D2>* Decoder_turbo::parameters<D1,D2>
 ::clone() const
 {
-	auto clone = new Decoder_turbo::parameters<D1,D2>(*this);
-
-	if (sub1 != nullptr) { clone->sub1 = sub1->clone(); }
-	if (sub2 != nullptr) { clone->sub2 = sub2->clone(); }
-	if (itl  != nullptr) { clone->itl  = itl ->clone(); }
-	if (sf   != nullptr) { clone->sf   = sf  ->clone(); }
-	if (fnc  != nullptr) { clone->fnc  = fnc ->clone(); }
-
-	return clone;
+	return new Decoder_turbo::parameters<D1,D2>(*this);
 }
 
 template <class D1, class D2>
@@ -249,8 +230,8 @@ module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 {
 	if (this->type == "TURBO")
 	{
-		     if (this->implem == "STD" ) return new module::Decoder_turbo_std <B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
-		else if (this->implem == "FAST") return new module::Decoder_turbo_fast<B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
+		if (this->implem == "STD" ) return new module::Decoder_turbo_std <B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
+		if (this->implem == "FAST") return new module::Decoder_turbo_fast<B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

@@ -56,7 +56,7 @@ protected:
 
 public:
 	explicit EXIT(const factory::EXIT::parameters &params_EXIT);
-	virtual ~EXIT();
+	virtual ~EXIT() = default;
 
 	void launch();
 
@@ -64,7 +64,6 @@ protected:
 	void _build_communication_chain();
 	void sockets_binding           ();
 	void simulation_loop           ();
-	void release_objects           ();
 
 	std::unique_ptr<module::Source      <B  >> build_source   (              );
 	std::unique_ptr<module::Codec_SISO  <B,R>> build_codec    (              );

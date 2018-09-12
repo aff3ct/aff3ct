@@ -14,6 +14,8 @@
 #include "Factory/Tools/Code/Turbo/Scaling_factor.hpp"
 #include "Factory/Module/Decoder/RSC/Decoder_RSC.hpp"
 
+#include "Tools/auto_cloned_unique_ptr.hpp"
+
 #include "../Decoder.hpp"
 
 namespace aff3ct
@@ -35,15 +37,15 @@ struct Decoder_turbo : public Decoder
 		int  n_ite          = 6;
 
 		// depending parameters
-		typename D1   ::parameters *sub1;
-		typename D2   ::parameters *sub2;
-		Interleaver   ::parameters *itl;
-		Scaling_factor::parameters *sf;
-		Flip_and_check::parameters *fnc;
+		tools::auto_cloned_unique_ptr<typename D1   ::parameters> sub1;
+		tools::auto_cloned_unique_ptr<typename D2   ::parameters> sub2;
+		tools::auto_cloned_unique_ptr<Interleaver   ::parameters> itl;
+		tools::auto_cloned_unique_ptr<Scaling_factor::parameters> sf;
+		tools::auto_cloned_unique_ptr<Flip_and_check::parameters> fnc;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_turbo_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_turbo::parameters<D1,D2>* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;

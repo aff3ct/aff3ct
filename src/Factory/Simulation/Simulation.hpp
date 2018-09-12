@@ -11,6 +11,7 @@
 
 #include "Factory/Launcher/Launcher.hpp"
 #include "Factory/Tools/Noise/Noise.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 
 namespace aff3ct
 {
@@ -25,7 +26,7 @@ struct Simulation : Launcher
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required arg
-		Noise::parameters *noise;
+		tools::auto_cloned_unique_ptr<Noise::parameters> noise;
 
 		// optional parameters
 #ifdef ENABLE_MPI
@@ -48,7 +49,7 @@ struct Simulation : Launcher
 
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Simulation::parameters* clone() const;
 
 		// parameters construction

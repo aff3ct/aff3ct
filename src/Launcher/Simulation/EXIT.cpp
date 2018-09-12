@@ -28,12 +28,6 @@ EXIT<B,R>
 }
 
 template <typename B, typename R>
-EXIT<B,R>
-::~EXIT()
-{
-}
-
-template <typename B, typename R>
 void EXIT<B,R>
 ::get_description_args()
 {

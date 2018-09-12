@@ -34,12 +34,11 @@ struct BFER_ite : BFER
 		int crc_start = 2;
 
 		// module parameters
-		Interleaver    ::parameters *itl = nullptr;
-		Codec_SISO_SIHO::parameters *cdc = nullptr;
+		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = BFER_ite_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		BFER_ite::parameters* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;
@@ -47,8 +46,11 @@ struct BFER_ite : BFER
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// setters
-		void set_cdc(Codec_SISO_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
-		void set_itl(Interleaver    ::parameters *itl) { this->itl = itl;                                 }
+		// void set_cdc(Codec_SISO_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
+		void set_itl(Interleaver::parameters *itl) { this->itl.reset(itl); }
+
+		const Codec_SISO_SIHO::parameters* get_cdc() const;
+
 
 		// parameters construction
 		void get_description(tools::Argument_map_info &args) const;

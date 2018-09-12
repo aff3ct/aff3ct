@@ -29,7 +29,7 @@ struct Noise : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Noise_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Noise::parameters* clone() const;
 
 		// parameters construction

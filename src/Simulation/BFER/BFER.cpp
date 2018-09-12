@@ -58,13 +58,6 @@ BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-BFER<B,R,Q>
-::~BFER()
-{
-	release_objects();
-}
-
-template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
 ::_build_communication_chain()
 {
@@ -89,10 +82,7 @@ void BFER<B,R,Q>
 		this->build_communication_chain();
 
 		if (tools::Terminal::is_over())
-		{
-			this->release_objects();
 			return;
-		}
 	}
 
 	int noise_begin = 0;
@@ -117,7 +107,6 @@ void BFER<B,R,Q>
 
 		if (params_BFER.err_track_revert)
 		{
-			this->release_objects();
 			this->monitor_er_red->clear_callbacks();
 
 			if (this->monitor_mi_red != nullptr)
@@ -152,10 +141,7 @@ void BFER<B,R,Q>
 			this->build_communication_chain();
 
 			if (tools::Terminal::is_over())
-			{
-				this->release_objects();
 				return;
-			}
 		}
 
 #ifdef ENABLE_MPI
@@ -282,14 +268,6 @@ void BFER<B,R,Q>
 		module::Monitor_reduction::reset_all();
 		tools::Terminal::reset();
 	}
-
-	this->release_objects();
-}
-
-template <typename B, typename R, typename Q>
-void BFER<B,R,Q>
-::release_objects()
-{
 }
 
 template <typename B, typename R, typename Q>

@@ -1,5 +1,8 @@
 #include "Codec_RA.hpp"
 
+#include "Factory/Module/Encoder/RA/Encoder_RA.hpp"
+#include "Factory/Module/Decoder/RA/Decoder_RA.hpp"
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -9,45 +12,19 @@ const std::string aff3ct::factory::Codec_RA_prefix = "cdc";
 Codec_RA::parameters
 ::parameters(const std::string &prefix)
 : Codec     ::parameters(Codec_RA_name, prefix),
-  Codec_SIHO::parameters(Codec_RA_name, prefix),
-  enc(new Encoder_RA::parameters("enc")),
-  dec(new Decoder_RA::parameters("dec"))
+  Codec_SIHO::parameters(Codec_RA_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-	Codec::parameters::itl = enc->itl;
-	delete dec->itl; dec->itl = enc->itl;
-}
-
-Codec_RA::parameters
-::~parameters()
-{
-	if (enc != nullptr) { enc->itl = nullptr; delete enc; enc = nullptr; }
-	if (dec != nullptr) { dec->itl = nullptr; delete dec; dec = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
-	if (Codec::parameters::itl != nullptr)
-	{
-		delete Codec::parameters::itl;
-		Codec::parameters::itl = nullptr;
-	}
+	auto enc_ra = new Encoder_RA::parameters("enc");
+	Codec::parameters::set_enc(enc_ra);
+	Codec::parameters::set_dec(new Decoder_RA::parameters("dec"));
+	Codec::parameters::set_itl(std::move(enc_ra->itl));
+	// delete dec->itl; dec->itl = enc->itl;
 }
 
 Codec_RA::parameters* Codec_RA::parameters
 ::clone() const
 {
-	auto clone = new Codec_RA::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-	clone->set_itl(clone->enc->itl);
-	delete clone->dec->itl; clone->dec->itl = clone->enc->itl;
-
-	return clone;
+	return new Codec_RA::parameters(*this);
 }
 
 void Codec_RA::parameters
@@ -70,18 +47,20 @@ void Codec_RA::parameters
 {
 	Codec_SIHO::parameters::store(vals);
 
+	auto dec_ra = dynamic_cast<Decoder_RA::parameters*>(dec.get());
+
 	enc->store(vals);
 
-	this->dec->K                   = this->enc->K;
-	this->dec->N_cw                = this->enc->N_cw;
-	this->dec->n_frames            = this->enc->n_frames;
-	this->dec->itl->core->n_frames = this->enc->n_frames;
+	dec_ra->K                   = enc->K;
+	dec_ra->N_cw                = enc->N_cw;
+	dec_ra->n_frames            = enc->n_frames;
+	dec_ra->itl->core->n_frames = enc->n_frames;
 
 	dec->store(vals);
 
-	this->K    = this->enc->K;
-	this->N_cw = this->enc->N_cw;
-	this->N    = this->enc->N_cw;
+	K    = enc->K;
+	N_cw = enc->N_cw;
+	N    = enc->N_cw;
 }
 
 void Codec_RA::parameters
@@ -97,9 +76,8 @@ template <typename B, typename Q>
 module::Codec_RA<B,Q>* Codec_RA::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_RA<B,Q>(*enc, *dec);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_RA<B,Q>(dynamic_cast<const Encoder_RA::parameters&>(*enc),
+	                                 dynamic_cast<const Decoder_RA::parameters&>(*dec));
 }
 
 template <typename B, typename Q>

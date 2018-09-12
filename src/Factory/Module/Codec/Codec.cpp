@@ -23,11 +23,6 @@ Codec::parameters
 {
 }
 
-Codec::parameters
-::~parameters()
-{
-}
-
 Codec::parameters* Codec::parameters
 ::clone() const
 {
@@ -111,23 +106,48 @@ void Codec::parameters
 void Codec::parameters
 ::set_enc(Encoder::parameters *enc)
 {
-	this->enc = enc;
+	this->enc.reset(enc);
 }
 
 void Codec::parameters
 ::set_dec(Decoder::parameters *dec)
 {
-	this->dec = dec;
+	this->dec.reset(dec);
 }
 
 void Codec::parameters
 ::set_pct(Puncturer::parameters *pct)
 {
-	this->pct = pct;
+	this->pct.reset(pct);
 }
 
 void Codec::parameters
 ::set_itl(Interleaver::parameters *itl)
 {
-	this->itl = itl;
+	this->itl.reset(itl);
+}
+
+
+void Codec::parameters
+::set_enc(tools::auto_cloned_unique_ptr<Encoder::parameters>&& enc)
+{
+	this->enc = std::move(enc);
+}
+
+void Codec::parameters
+::set_dec(tools::auto_cloned_unique_ptr<Decoder::parameters>&& dec)
+{
+	this->dec = std::move(dec);
+}
+
+void Codec::parameters
+::set_pct(tools::auto_cloned_unique_ptr<Puncturer::parameters>&& pct)
+{
+	this->pct = std::move(pct);
+}
+
+void Codec::parameters
+::set_itl(tools::auto_cloned_unique_ptr<Interleaver::parameters>&& itl)
+{
+	this->itl = std::move(itl);
 }

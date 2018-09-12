@@ -28,13 +28,12 @@ protected:
 
 public:
 	explicit SC_BFER_ite(const factory::BFER_ite::parameters &params_BFER_ite);
-	virtual ~SC_BFER_ite();
+	virtual ~SC_BFER_ite() = default;
 
 protected:
 	void create_sc_modules();
 
 	virtual void __build_communication_chain(const int tid = 0);
-	virtual void release_objects();
 	virtual void _launch();
 
 	virtual std::unique_ptr<module::Coset<B,Q>> build_coset_real(const int tid = 0);

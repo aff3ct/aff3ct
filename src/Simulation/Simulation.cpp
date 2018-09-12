@@ -12,11 +12,6 @@ Simulation
 {
 }
 
-Simulation
-::~Simulation()
-{
-}
-
 bool Simulation
 ::is_error() const
 {

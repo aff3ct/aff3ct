@@ -18,11 +18,6 @@ Encoder_polar::parameters
 	this->type = "POLAR";
 }
 
-Encoder_polar::parameters
-::~parameters()
-{
-}
-
 Encoder_polar::parameters* Encoder_polar::parameters
 ::clone() const
 {
@@ -60,8 +55,8 @@ template <typename B>
 module::Encoder_polar<B>* Encoder_polar::parameters
 ::build(const std::vector<bool> &frozen_bits) const
 {
-	     if (this->type == "POLAR" && !this->systematic) return new module::Encoder_polar    <B>(this->K, this->N_cw, frozen_bits, this->n_frames);
-	else if (this->type == "POLAR" &&  this->systematic) return new module::Encoder_polar_sys<B>(this->K, this->N_cw, frozen_bits, this->n_frames);
+	if (this->type == "POLAR" && !this->systematic) return new module::Encoder_polar    <B>(this->K, this->N_cw, frozen_bits, this->n_frames);
+	if (this->type == "POLAR" &&  this->systematic) return new module::Encoder_polar_sys<B>(this->K, this->N_cw, frozen_bits, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

@@ -20,11 +20,6 @@ CRC::parameters
 {
 }
 
-CRC::parameters
-::~parameters()
-{
-}
-
 CRC::parameters* CRC::parameters
 ::clone() const
 {
@@ -118,11 +113,11 @@ module::CRC<B>* CRC::parameters
 	{
 		const auto poly = this->type;
 
-		     if (this->implem == "STD"  ) return new module::CRC_polynomial      <B>(K, poly, size, n_frames);
-		else if (this->implem == "FAST" ) return new module::CRC_polynomial_fast <B>(K, poly, size, n_frames);
-		else if (this->implem == "INTER") return new module::CRC_polynomial_inter<B>(K, poly, size, n_frames);
+		if (this->implem == "STD"  ) return new module::CRC_polynomial      <B>(K, poly, size, n_frames);
+		if (this->implem == "FAST" ) return new module::CRC_polynomial_fast <B>(K, poly, size, n_frames);
+		if (this->implem == "INTER") return new module::CRC_polynomial_inter<B>(K, poly, size, n_frames);
 	}
-	else                                  return new module::CRC_NO              <B>(K,             n_frames);
+	else                             return new module::CRC_NO              <B>(K,             n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

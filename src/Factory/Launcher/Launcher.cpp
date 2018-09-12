@@ -60,11 +60,6 @@ factory::Launcher::parameters
 {
 }
 
-factory::Launcher::parameters
-::~parameters()
-{
-}
-
 factory::Launcher::parameters* factory::Launcher::parameters
 ::clone() const
 {
@@ -305,84 +300,67 @@ launcher::Launcher* factory::Launcher::parameters
 {
 	if (this->cde_type == "POLAR")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Polar<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::Polar<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::Polar<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::Polar<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RSC")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::RSC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::RSC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::RSC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::RSC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RSC_DB")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::RSC_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::RSC_DB<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::RSC_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::RSC_DB<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "TURBO")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Turbo<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::Turbo<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "TURBO_DB")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Turbo_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::Turbo_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "TURBO_PROD")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Turbo_product<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::Turbo_product<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "REP")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Repetition<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::Repetition<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "BCH")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::BCH<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::BCH<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RS")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::RS<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::RS<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RA")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::RA<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::RA<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "LDPC")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::LDPC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::LDPC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::LDPC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::LDPC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "UNCODED")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Uncoded<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::Uncoded<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::Uncoded<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::Uncoded<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	return build_exit<B,R,Q>(argc, argv);

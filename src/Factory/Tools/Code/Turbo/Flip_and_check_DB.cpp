@@ -14,11 +14,6 @@ Flip_and_check_DB::parameters
 {
 }
 
-Flip_and_check_DB::parameters
-::~parameters()
-{
-}
-
 Flip_and_check_DB::parameters* Flip_and_check_DB::parameters
 ::clone() const
 {

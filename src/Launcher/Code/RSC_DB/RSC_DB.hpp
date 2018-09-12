@@ -15,7 +15,7 @@ protected:
 
 public:
 	RSC_DB(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~RSC_DB();
+	virtual ~RSC_DB() = default;
 
 protected:
 	virtual void get_description_args();

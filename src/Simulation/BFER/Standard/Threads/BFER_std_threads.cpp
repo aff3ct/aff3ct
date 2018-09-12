@@ -27,12 +27,6 @@ BFER_std_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-BFER_std_threads<B,R,Q>
-::~BFER_std_threads()
-{
-}
-
-template <typename B, typename R, typename Q>
 void BFER_std_threads<B,R,Q>
 ::_launch()
 {

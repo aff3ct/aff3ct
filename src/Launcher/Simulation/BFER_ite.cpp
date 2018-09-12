@@ -27,12 +27,6 @@ BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-BFER_ite<B,R,Q>
-::~BFER_ite()
-{
-}
-
-template <typename B, typename R, typename Q>
 void BFER_ite<B,R,Q>
 ::get_description_args()
 {

@@ -56,7 +56,7 @@ struct Modem : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Modem_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Modem::parameters* clone() const;
 
 		// parameters construction

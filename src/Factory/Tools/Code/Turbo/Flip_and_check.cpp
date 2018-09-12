@@ -20,11 +20,6 @@ Flip_and_check::parameters
 {
 }
 
-Flip_and_check::parameters
-::~parameters()
-{
-}
-
 Flip_and_check::parameters* Flip_and_check::parameters
 ::clone() const
 {

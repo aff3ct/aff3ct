@@ -28,13 +28,6 @@ SC_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-SC_BFER_ite<B,R,Q>
-::~SC_BFER_ite()
-{
-	release_objects();
-}
-
-template <typename B, typename R, typename Q>
 void SC_BFER_ite<B,R,Q>
 ::__build_communication_chain(const int tid)
 {
@@ -92,13 +85,6 @@ void SC_BFER_ite<B,R,Q>
 		this->coset_bit [tid]->sc.create_module(+cst::tsk::apply);
 	}
 	this->crc[tid]->sc.create_module(+crc::tsk::extract);
-}
-
-template <typename B, typename R, typename Q>
-void SC_BFER_ite<B,R,Q>
-::release_objects()
-{
-	BFER_ite<B,R,Q>::release_objects();
 }
 
 template <typename B, typename R, typename Q>

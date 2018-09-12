@@ -38,7 +38,7 @@ struct Channel : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Channel_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Channel::parameters* clone() const;
 
 		// parameters construction

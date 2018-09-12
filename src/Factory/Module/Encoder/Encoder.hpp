@@ -37,7 +37,7 @@ struct Encoder : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Encoder::parameters* clone() const;
 
 		// parameters construction

@@ -32,7 +32,7 @@ struct Interleaver_core : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Interleaver_core_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Interleaver_core::parameters* clone() const;
 
 		// parameters construction

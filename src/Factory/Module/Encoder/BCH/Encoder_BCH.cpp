@@ -20,11 +20,6 @@ Encoder_BCH::parameters
 	this->type = "BCH";
 }
 
-Encoder_BCH::parameters
-::~parameters()
-{
-}
-
 Encoder_BCH::parameters* Encoder_BCH::parameters
 ::clone() const
 {

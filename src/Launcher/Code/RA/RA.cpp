@@ -16,12 +16,6 @@ RA<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-RA<L,B,R,Q>
-::~RA()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void RA<L,B,R,Q>
 ::get_description_args()
 {

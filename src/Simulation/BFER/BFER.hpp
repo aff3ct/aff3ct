@@ -92,13 +92,12 @@ protected:
 
 public:
 	explicit BFER(const factory::BFER::parameters& params_BFER);
-	virtual ~BFER();
+	virtual ~BFER() = default;
 	void launch();
 
 protected:
 	        void  _build_communication_chain();
 	virtual void __build_communication_chain(const int tid = 0) = 0;
-	virtual void release_objects();
 	virtual void _launch() = 0;
 
 	std::unique_ptr<Monitor_MI_type>   build_monitor_mi(const int tid = 0);

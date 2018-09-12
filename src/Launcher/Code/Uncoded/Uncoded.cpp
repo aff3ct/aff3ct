@@ -16,12 +16,6 @@ Uncoded<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-Uncoded<L,B,R,Q>
-::~Uncoded()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void Uncoded<L,B,R,Q>
 ::get_description_args()
 {

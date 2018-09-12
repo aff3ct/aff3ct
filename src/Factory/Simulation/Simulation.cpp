@@ -19,20 +19,14 @@ Simulation::parameters
 {
 }
 
-Simulation::parameters
-::~parameters()
-{
-	if (noise != nullptr) { delete noise; noise = nullptr; }
-}
-
 Simulation::parameters* Simulation::parameters
 ::clone() const
 {
-	auto clone = new Simulation::parameters(*this);
+	return new Simulation::parameters(*this);
 
-	if (noise != nullptr) {clone->noise = noise->clone(); }
+	// if (noise != nullptr) {clone->noise = noise->clone(); }
 
-	return clone;
+	// return clone;
 }
 
 void Simulation::parameters

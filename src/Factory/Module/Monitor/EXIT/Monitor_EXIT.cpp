@@ -17,11 +17,6 @@ Monitor_EXIT::parameters
 {
 }
 
-Monitor_EXIT::parameters
-::~parameters()
-{
-}
-
 Monitor_EXIT::parameters* Monitor_EXIT::parameters
 ::clone() const
 {

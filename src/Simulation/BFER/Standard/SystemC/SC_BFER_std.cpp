@@ -29,12 +29,6 @@ SC_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-SC_BFER_std<B,R,Q>
-::~SC_BFER_std()
-{
-}
-
-template <typename B, typename R, typename Q>
 void SC_BFER_std<B,R,Q>
 ::__build_communication_chain(const int tid)
 {

@@ -20,11 +20,6 @@ Puncturer::parameters
 {
 }
 
-Puncturer::parameters
-::~parameters()
-{
-}
-
 Puncturer::parameters* Puncturer::parameters
 ::clone() const
 {

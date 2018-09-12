@@ -22,11 +22,6 @@ Monitor::parameters
 {
 }
 
-Monitor::parameters
-::~parameters()
-{
-}
-
 Monitor::parameters* Monitor::parameters
 ::clone() const
 {

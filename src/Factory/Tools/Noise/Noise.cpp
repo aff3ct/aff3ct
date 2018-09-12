@@ -19,11 +19,6 @@ Noise::parameters
 {
 }
 
-Noise::parameters
-::~parameters()
-{
-}
-
 Noise::parameters* Noise::parameters
 ::clone() const
 {
@@ -186,8 +181,9 @@ tools::Noise<R>* Noise::parameters
 
 		return new tools::Sigma<R>(sigma, ebn0, esn0);
 	}
-	else if (this->type == "ROP") return new tools::Received_optical_power<R>(noise_val);
-	else if (this->type == "EP" ) return new tools::Event_probability     <R>(noise_val);
+
+	if (this->type == "ROP") return new tools::Received_optical_power<R>(noise_val);
+	if (this->type == "EP" ) return new tools::Event_probability     <R>(noise_val);
 
 	std::stringstream message;
 	message << "Unknown noise type ('noise_type' = " << this->type << ").";

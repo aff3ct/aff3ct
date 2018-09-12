@@ -28,11 +28,6 @@ Puncturer_turbo::parameters
 	this->type = "TURBO";
 }
 
-Puncturer_turbo::parameters
-::~parameters()
-{
-}
-
 Puncturer_turbo::parameters* Puncturer_turbo::parameters
 ::clone() const
 {

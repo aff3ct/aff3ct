@@ -21,7 +21,7 @@ private:
 
 public:
 	Channel_user(const int N, const std::string &filename, const bool add_users = false, const bool additive_noise = true, const int n_frames = 1);
-	virtual ~Channel_user();
+	virtual ~Channel_user() = default;
 
 	void add_noise(const R *X_N, R *Y_N, const int frame_id = -1);  using Channel<R>::add_noise;
 

@@ -23,11 +23,6 @@ Terminal::parameters
 {
 }
 
-Terminal::parameters
-::~parameters()
-{
-}
-
 Terminal::parameters* Terminal::parameters
 ::clone() const
 {

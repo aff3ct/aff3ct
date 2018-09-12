@@ -16,12 +16,6 @@ Repetition<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-Repetition<L,B,R,Q>
-::~Repetition()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void Repetition<L,B,R,Q>
 ::get_description_args()
 {

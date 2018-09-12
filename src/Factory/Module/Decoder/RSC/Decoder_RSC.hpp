@@ -34,7 +34,7 @@ struct Decoder_RSC : public Decoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_RSC_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_RSC::parameters* clone() const;
 
 		// parameters construction

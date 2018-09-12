@@ -13,6 +13,8 @@
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
 
+#include "Tools/auto_cloned_unique_ptr.hpp"
+
 #include "../Decoder.hpp"
 
 namespace aff3ct
@@ -38,12 +40,12 @@ struct Decoder_turbo_product : public Decoder
 		int   parity_extended = false;
 
 		// depending parameters
-		Decoder_BCH ::parameters *sub;
-		Interleaver ::parameters *itl;
+		tools::auto_cloned_unique_ptr<Decoder_BCH::parameters> sub;
+		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_turbo_product_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_turbo_product::parameters* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;

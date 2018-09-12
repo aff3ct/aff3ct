@@ -21,11 +21,7 @@ Encoder_RA::parameters
 Encoder_RA::parameters* Encoder_RA::parameters
 ::clone() const
 {
-	auto clone = new Encoder_RA::parameters(*this);
-
-	if (itl != nullptr) { clone->itl = itl->clone(); }
-
-	return clone;
+	return new Encoder_RA::parameters(*this);
 }
 
 std::vector<std::string> Encoder_RA::parameters
@@ -49,12 +45,6 @@ std::vector<std::string> Encoder_RA::parameters
 	auto p = Encoder::parameters::get_prefixes();
 	if (itl != nullptr) { auto nn = itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
-}
-
-Encoder_RA::parameters
-::~parameters()
-{
-	if (itl != nullptr) { delete itl; itl = nullptr; }
 }
 
 void Encoder_RA::parameters

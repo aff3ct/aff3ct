@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "Channel_Rayleigh_LLR_user.hpp"
 
@@ -11,13 +12,13 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const std::string& gains_filename,
-                            const int gain_occurrences, tools::Gaussian_gen<R> *noise_generator, const bool add_users,
-                            const tools::Noise<R>& noise, const int n_frames)
+                            std::unique_ptr<tools::Gaussian_gen<R>>&& _ng, const int gain_occurrences,
+                            const bool add_users, const tools::Noise<R>& noise, const int n_frames)
 : Channel<R>(N, noise, n_frames),
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
-  noise_generator(noise_generator),
+  noise_generator(std::move(_ng)),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
   gain_index(0)
@@ -63,13 +64,6 @@ Channel_Rayleigh_LLR_user<R>
 }
 
 template <typename R>
-Channel_Rayleigh_LLR_user<R>
-::~Channel_Rayleigh_LLR_user()
-{
-	delete noise_generator;
-}
-
-template <typename R>
 void Channel_Rayleigh_LLR_user<R>
 ::read_gains(const std::string& gains_filename)
 {
@@ -103,7 +97,7 @@ void Channel_Rayleigh_LLR_user<R>
 ::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
 	this->check_noise();
-	
+
 	if (frame_id != -1)
 	{
 		std::stringstream message;

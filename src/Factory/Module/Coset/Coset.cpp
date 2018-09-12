@@ -15,11 +15,6 @@ Coset::parameters
 {
 }
 
-Coset::parameters
-::~parameters()
-{
-}
-
 Coset::parameters* Coset::parameters
 ::clone() const
 {

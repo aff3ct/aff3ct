@@ -16,12 +16,6 @@ BCH<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-BCH<L,B,R,Q>
-::~BCH()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void BCH<L,B,R,Q>
 ::get_description_args()
 {

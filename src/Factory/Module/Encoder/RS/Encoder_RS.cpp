@@ -20,11 +20,6 @@ Encoder_RS::parameters
 	this->type = "RS";
 }
 
-Encoder_RS::parameters
-::~parameters()
-{
-}
-
 Encoder_RS::parameters* Encoder_RS::parameters
 ::clone() const
 {

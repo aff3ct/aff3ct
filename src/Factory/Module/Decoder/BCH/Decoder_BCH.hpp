@@ -31,7 +31,7 @@ struct Decoder_BCH : public Decoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_BCH_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_BCH::parameters* clone() const;
 
 		// parameters construction

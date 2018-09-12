@@ -19,11 +19,6 @@ Source::parameters
 {
 }
 
-Source::parameters
-::~parameters()
-{
-}
-
 Source::parameters* Source::parameters
 ::clone() const
 {
@@ -112,8 +107,9 @@ module::Source<B>* Source::parameters
 		else if (this->implem == "FAST")
 			return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
 	}
-	else if (this->type == "AZCW") return new module::Source_AZCW<B>(this->K,             this->n_frames);
-	else if (this->type == "USER") return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
+
+	if (this->type == "AZCW") return new module::Source_AZCW<B>(this->K,             this->n_frames);
+	if (this->type == "USER") return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

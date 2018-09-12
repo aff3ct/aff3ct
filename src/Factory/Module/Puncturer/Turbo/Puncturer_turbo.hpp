@@ -27,7 +27,7 @@ struct Puncturer_turbo : public Puncturer
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Puncturer_turbo_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Puncturer_turbo::parameters* clone() const;
 
 		// parameters construction

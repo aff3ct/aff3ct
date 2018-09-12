@@ -1,5 +1,8 @@
 #include "Codec_BCH.hpp"
 
+#include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
+#include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -9,36 +12,16 @@ const std::string aff3ct::factory::Codec_BCH_prefix = "cdc";
 Codec_BCH::parameters
 ::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_BCH_name, prefix),
-  Codec_SIHO_HIHO::parameters(Codec_BCH_name, prefix),
-  enc(new Encoder_BCH::parameters("enc")),
-  dec(new Decoder_BCH::parameters("dec"))
+  Codec_SIHO_HIHO::parameters(Codec_BCH_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-}
-
-Codec_BCH::parameters
-::~parameters()
-{
-	if (enc != nullptr) { delete enc; enc = nullptr; }
-	if (dec != nullptr) { delete dec; dec = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
+	Codec::parameters::set_enc(new Encoder_BCH::parameters("enc"));
+	Codec::parameters::set_dec(new Decoder_BCH::parameters("dec"));
 }
 
 Codec_BCH::parameters* Codec_BCH::parameters
 ::clone() const
 {
-	auto clone = new Codec_BCH::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-
-	return clone;
+	return new Codec_BCH::parameters(*this);
 }
 
 void Codec_BCH::parameters
@@ -67,18 +50,18 @@ void Codec_BCH::parameters
 
 	enc->store(vals);
 
-	this->dec->K        = this->enc->K;
-	this->dec->N_cw     = this->enc->N_cw;
-	this->dec->n_frames = this->enc->n_frames;
+	dec->K        = enc->K;
+	dec->N_cw     = enc->N_cw;
+	dec->n_frames = enc->n_frames;
 
 	dec->store(vals);
 
-	if(this->dec->K != this->enc->K) // when -T has been given but not -K
-		this->enc->K = this->dec->K;
+	if(dec->K != enc->K) // when -T has been given but not -K
+		enc->K = dec->K;
 
-	this->K    = this->enc->K;
-	this->N_cw = this->enc->N_cw;
-	this->N    = this->enc->N_cw;
+	K    = enc->K;
+	N_cw = enc->N_cw;
+	N    = enc->N_cw;
 }
 
 void Codec_BCH::parameters
@@ -94,9 +77,8 @@ template <typename B, typename Q>
 module::Codec_BCH<B,Q>* Codec_BCH::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_BCH<B,Q>(*enc, *dec);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_BCH<B,Q>(dynamic_cast<const Encoder_BCH::parameters&>(*enc),
+	                                  dynamic_cast<const Decoder_BCH::parameters&>(*dec));
 }
 
 template <typename B, typename Q>

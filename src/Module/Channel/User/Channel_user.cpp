@@ -176,12 +176,6 @@ void Channel_user<R>::open_as_binary(const std::string &filename)
 }
 
 template <typename R>
-Channel_user<R>
-::~Channel_user()
-{
-}
-
-template <typename R>
 void Channel_user<R>
 ::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {

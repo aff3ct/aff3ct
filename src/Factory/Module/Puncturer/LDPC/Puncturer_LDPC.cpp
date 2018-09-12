@@ -21,11 +21,6 @@ Puncturer_LDPC::parameters
 	this->type = "LDPC";
 }
 
-Puncturer_LDPC::parameters
-::~parameters()
-{
-}
-
 Puncturer_LDPC::parameters* Puncturer_LDPC::parameters
 ::clone() const
 {

@@ -51,10 +51,6 @@ Launcher::Launcher(const int argc, const char **argv, factory::Simulation::param
 	}
 }
 
-Launcher::~Launcher()
-{
-}
-
 void Launcher::get_description_args()
 {
 }
@@ -162,13 +158,6 @@ int Launcher::launch()
 
 	std::srand((unsigned)this->params_common.global_seed);
 
-	// in case of the user call launch multiple times
-	if (simu != nullptr)
-	{
-		delete simu;
-		simu = nullptr;
-	}
-
 	if (this->read_arguments() == EXIT_FAILURE)
 	{
 		// print the warnings
@@ -207,7 +196,7 @@ int Launcher::launch()
 
 	try
 	{
-		simu = this->build_simu();
+		simu.reset(this->build_simu());
 	}
 	catch(const std::exception& e)
 	{
@@ -242,12 +231,6 @@ int Launcher::launch()
 		if (this->params_common.mpi_rank == 0)
 #endif
 			stream << rang::tag::comment << "End of the simulation." << std::endl;
-
-	if (simu != nullptr)
-	{
-		delete simu;
-		simu = nullptr;
-	}
 
 	return exit_code;
 }

@@ -10,6 +10,8 @@
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
 
+#include "Tools/auto_cloned_unique_ptr.hpp"
+
 #include "../Encoder.hpp"
 
 namespace aff3ct
@@ -29,13 +31,13 @@ struct Encoder_turbo : public Encoder
 		std::string json_path = "";
 
 		// depending parameters
-		Interleaver::parameters *itl;
-		typename E1::parameters *sub1;
-		typename E2::parameters *sub2;
+		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
+		tools::auto_cloned_unique_ptr<typename E1::parameters> sub1;
+		tools::auto_cloned_unique_ptr<typename E2::parameters> sub2;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_turbo_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Encoder_turbo::parameters<E1,E2>* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;

@@ -42,7 +42,7 @@ public:
 	/*!
 	 *  \brief Destructor.
 	 */
-	virtual ~Simulation();
+	virtual ~Simulation() = default;
 
 	bool is_error() const;
 

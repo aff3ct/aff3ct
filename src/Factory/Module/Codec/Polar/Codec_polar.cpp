@@ -1,5 +1,9 @@
 #include "Codec_polar.hpp"
 
+#include "Factory/Module/Encoder/Polar/Encoder_polar.hpp"
+#include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
+#include "Factory/Module/Puncturer/Polar/Puncturer_polar.hpp"
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -10,50 +14,22 @@ Codec_polar::parameters
 ::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_polar_name, prefix),
   Codec_SISO_SIHO::parameters(Codec_polar_name, prefix),
-  enc(new Encoder_polar::parameters("enc")),
-  fbg(new Frozenbits_generator::parameters(enc->get_prefix()+"-fb")),
-  dec(new Decoder_polar::parameters("dec")),
-  pct(nullptr)
+  fbg(new Frozenbits_generator::parameters(enc->get_prefix()+"-fb"))
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-}
-
-Codec_polar::parameters
-::~parameters()
-{
-	if (enc != nullptr) { delete enc; enc = nullptr; }
-	if (fbg != nullptr) { delete fbg; fbg = nullptr; }
-	if (dec != nullptr) { delete dec; dec = nullptr; }
-	if (pct != nullptr) { delete pct; pct = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
-	Codec::parameters::pct = nullptr;
+	Codec::parameters::set_enc(new Encoder_polar::parameters("enc"));
+	Codec::parameters::set_dec(new Decoder_polar::parameters("dec"));
 }
 
 Codec_polar::parameters* Codec_polar::parameters
 ::clone() const
 {
-	auto clone = new Codec_polar::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (fbg != nullptr) { clone->fbg = fbg->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-	if (pct != nullptr) { clone->pct = pct->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-	clone->set_pct(clone->pct);
-
-	return clone;
+	return new Codec_polar::parameters(*this);
 }
 
 void Codec_polar::parameters
 ::enable_puncturer()
 {
-	this->pct = new Puncturer_polar::parameters("pct");
-	this->set_pct(this->pct);
+	set_pct(new Puncturer_polar::parameters("pct"));
 }
 
 std::vector<std::string> Codec_polar::parameters
@@ -138,7 +114,7 @@ void Codec_polar::parameters
 	args.erase({pfbg+"-cw-size",   "N"});
 	args.erase({pfbg+"-info-bits", "K"});
 
-	if (this->pct)
+	if (pct != nullptr)
 	{
 		pct->get_description(args);
 
@@ -155,33 +131,33 @@ void Codec_polar::parameters
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 
-	if (this->pct)
+	if (pct != nullptr)
 	{
 		pct->store(vals);
 
-		this->enc->K        = this->fbg->K    = this->dec->K        = this->pct->K;
-		this->enc->N_cw     = this->fbg->N_cw = this->dec->N_cw     = this->pct->N_cw;
-		this->enc->n_frames                   = this->dec->n_frames = this->pct->n_frames;
+		enc->K        = fbg->K    = dec->K        = pct->K;
+		enc->N_cw     = fbg->N_cw = dec->N_cw     = pct->N_cw;
+		enc->n_frames             = dec->n_frames = pct->n_frames;
 	}
 
 	enc->store(vals);
 
-	if (!this->pct)
+	if (pct == nullptr)
 	{
-		this->fbg->K    = this->dec->K        = this->enc->K;
-		this->fbg->N_cw = this->dec->N_cw     = this->enc->N_cw;
-		                  this->dec->n_frames = this->enc->n_frames;
+		fbg->K    = dec->K        = enc->K;
+		fbg->N_cw = dec->N_cw     = enc->N_cw;
+		            dec->n_frames = enc->n_frames;
 	}
 
 	fbg->store(vals);
 
-	this->dec->systematic = this->enc->systematic;
+	dec->systematic = enc->systematic;
 
 	dec->store(vals);
 
-	this->K    = this->pct ? this->pct->K    : this->enc->K;
-	this->N_cw = this->pct ? this->pct->N_cw : this->enc->N_cw;
-	this->N    = this->pct ? this->pct->N    : this->enc->N_cw;
+	K    = pct != nullptr ? pct->K    : enc->K;
+	N_cw = pct != nullptr ? pct->N_cw : enc->N_cw;
+	N    = pct != nullptr ? pct->N    : enc->N_cw;
 }
 
 void Codec_polar::parameters
@@ -192,7 +168,7 @@ void Codec_polar::parameters
 	enc->get_headers(headers, full);
 	fbg->get_headers(headers, full);
 	dec->get_headers(headers, full);
-	if (this->pct)
+	if (pct != nullptr)
 		pct->get_headers(headers, full);
 }
 
@@ -200,9 +176,11 @@ template <typename B, typename Q>
 module::Codec_polar<B,Q>* Codec_polar::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_polar<B,Q>(*fbg, *enc, *dec, pct, crc);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_polar<B,Q>(*fbg,
+	                                    dynamic_cast<const Encoder_polar  ::parameters&>(*enc),
+	                                    dynamic_cast<const Decoder_polar  ::parameters&>(*dec),
+	                                    dynamic_cast<const Puncturer_polar::parameters*>(pct.get()),
+	                                    crc);
 }
 
 template <typename B, typename Q>

@@ -22,11 +22,6 @@ Decoder_BCH::parameters
 	this->implem = "STD";
 }
 
-Decoder_BCH::parameters
-::~parameters()
-{
-}
-
 Decoder_BCH::parameters* Decoder_BCH::parameters
 ::clone() const
 {

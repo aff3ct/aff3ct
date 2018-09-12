@@ -29,7 +29,7 @@ struct Frozenbits_generator : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Frozenbits_generator_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Frozenbits_generator::parameters* clone() const;
 
 		// parameters construction

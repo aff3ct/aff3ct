@@ -24,7 +24,7 @@ struct Decoder_NO : public Decoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_NO_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_NO::parameters* clone() const;
 
 		// parameters construction

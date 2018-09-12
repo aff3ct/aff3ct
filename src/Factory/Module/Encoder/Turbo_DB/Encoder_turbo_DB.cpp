@@ -19,22 +19,10 @@ Encoder_turbo_DB::parameters
 	this->type = "TURBO_DB";
 }
 
-Encoder_turbo_DB::parameters
-::~parameters()
-{
-	if (itl != nullptr) { delete itl; itl = nullptr; }
-	if (sub != nullptr) { delete sub; sub = nullptr; }
-}
-
 Encoder_turbo_DB::parameters* Encoder_turbo_DB::parameters
 ::clone() const
 {
-	auto clone = new Encoder_turbo_DB::parameters(*this);
-
-	if (itl != nullptr) { clone->itl = itl->clone(); }
-	if (sub != nullptr) { clone->sub = sub->clone(); }
-
-	return clone;
+	return new Encoder_turbo_DB::parameters(*this);
 }
 
 std::vector<std::string> Encoder_turbo_DB::parameters

@@ -24,11 +24,6 @@ Factory::parameters
 {
 }
 
-Factory::parameters
-::~parameters()
-{
-}
-
 std::string Factory::parameters
 ::get_name() const
 {

@@ -20,11 +20,6 @@ Decoder_RSC_DB::parameters
 	this->implem = "GENERIC";
 }
 
-Decoder_RSC_DB::parameters
-::~parameters()
-{
-}
-
 Decoder_RSC_DB::parameters* Decoder_RSC_DB::parameters
 ::clone() const
 {
@@ -104,9 +99,9 @@ template <typename B, typename Q>
 module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB::parameters
 ::build_siso(const std::vector<std::vector<int>> &trellis, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
-	     if (this->max == "MAX" ) return _build_siso<B,Q,tools::max       <Q>>(trellis, encoder);
-	else if (this->max == "MAXS") return _build_siso<B,Q,tools::max_star  <Q>>(trellis, encoder);
-	else if (this->max == "MAXL") return _build_siso<B,Q,tools::max_linear<Q>>(trellis, encoder);
+	if (this->max == "MAX" ) return _build_siso<B,Q,tools::max       <Q>>(trellis, encoder);
+	if (this->max == "MAXS") return _build_siso<B,Q,tools::max_star  <Q>>(trellis, encoder);
+	if (this->max == "MAXL") return _build_siso<B,Q,tools::max_linear<Q>>(trellis, encoder);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

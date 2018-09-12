@@ -17,11 +17,6 @@ Puncturer_polar::parameters
 	this->type = "SHORTLAST";
 }
 
-Puncturer_polar::parameters
-::~parameters()
-{
-}
-
 Puncturer_polar::parameters* Puncturer_polar::parameters
 ::clone() const
 {

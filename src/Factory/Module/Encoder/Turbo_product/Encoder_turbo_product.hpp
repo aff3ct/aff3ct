@@ -10,6 +10,8 @@
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
 
+#include "Tools/auto_cloned_unique_ptr.hpp"
+
 #include "../Encoder.hpp"
 
 namespace aff3ct
@@ -28,12 +30,12 @@ struct Encoder_turbo_product : public Encoder
 		int parity_extended = false;
 
 		// depending parameters
-		Encoder_BCH ::parameters *sub;
-		Interleaver ::parameters *itl;
+		tools::auto_cloned_unique_ptr<Encoder_BCH::parameters> sub;
+		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_turbo_product_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Encoder_turbo_product::parameters* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;

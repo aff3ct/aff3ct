@@ -16,11 +16,6 @@ Monitor_BFER::parameters
 {
 }
 
-Monitor_BFER::parameters
-::~parameters()
-{
-}
-
 Monitor_BFER::parameters* Monitor_BFER::parameters
 ::clone() const
 {

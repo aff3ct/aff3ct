@@ -40,11 +40,6 @@ Channel::parameters
 {
 }
 
-Channel::parameters
-::~parameters()
-{
-}
-
 Channel::parameters* Channel::parameters
 ::clone() const
 {
@@ -174,23 +169,20 @@ template <typename R>
 module::Channel<R>* Channel::parameters
 ::build_event() const
 {
-
-	tools::Event_generator<R>* n = nullptr;
-	     if (implem == "STD" ) n = new tools::Event_generator_std <R>(seed);
-	else if (implem == "FAST") n = new tools::Event_generator_fast<R>(seed);
+	std::unique_ptr<tools::Event_generator<R>> n;
+	     if (implem == "STD" ) n.reset(new tools::Event_generator_std <R>(seed));
+	else if (implem == "FAST") n.reset(new tools::Event_generator_fast<R>(seed));
 #ifdef CHANNEL_MKL
-	else if (implem == "MKL" ) n = new tools::Event_generator_MKL<R>(seed);
+	else if (implem == "MKL" ) n.reset(new tools::Event_generator_MKL<R>(seed));
 #endif
 #ifdef CHANNEL_GSL
-	else if (implem == "GSL" ) n = new tools::Event_generator_GSL<R>(seed);
+	else if (implem == "GSL" ) n.reset(new tools::Event_generator_GSL<R>(seed));
 #endif
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	     if (type == "BEC"     ) return new module::Channel_binary_erasure  <R>(N, n, tools::Event_probability<R>((R)noise), n_frames);
-	else if (type == "BSC"     ) return new module::Channel_binary_symmetric<R>(N, n, tools::Event_probability<R>((R)noise), n_frames);
-
-	delete n;
+	if (type == "BEC") return new module::Channel_binary_erasure  <R>(N, std::move(n), tools::Event_probability<R>((R)noise), n_frames);
+	if (type == "BSC") return new module::Channel_binary_symmetric<R>(N, std::move(n), tools::Event_probability<R>((R)noise), n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -199,23 +191,21 @@ template <typename R>
 module::Channel<R>* Channel::parameters
 ::build_gaussian() const
 {
-	tools::Gaussian_noise_generator<R>* n = nullptr;
-	     if (implem == "STD" ) n = new tools::Gaussian_noise_generator_std <R>(seed);
-	else if (implem == "FAST") n = new tools::Gaussian_noise_generator_fast<R>(seed);
+	std::unique_ptr<tools::Gaussian_noise_generator<R>> n = nullptr;
+	     if (implem == "STD" ) n.reset(new tools::Gaussian_noise_generator_std <R>(seed));
+	else if (implem == "FAST") n.reset(new tools::Gaussian_noise_generator_fast<R>(seed));
 #ifdef CHANNEL_MKL
-	else if (implem == "MKL" ) n = new tools::Gaussian_noise_generator_MKL <R>(seed);
+	else if (implem == "MKL" ) n.reset(new tools::Gaussian_noise_generator_MKL <R>(seed));
 #endif
 #ifdef CHANNEL_GSL
-	else if (implem == "GSL" ) n = new tools::Gaussian_noise_generator_GSL <R>(seed);
+	else if (implem == "GSL" ) n.reset(new tools::Gaussian_noise_generator_GSL <R>(seed));
 #endif
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, tools::Sigma<R>((R)noise), n_frames);
-	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, tools::Sigma<R>((R)noise), n_frames);
-	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, tools::Sigma<R>((R)noise), n_frames);
-
-	delete n;
+	if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                std::move(n),             add_users, tools::Sigma<R>((R)noise), n_frames);
+	if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,       std::move(n),             add_users, tools::Sigma<R>((R)noise), n_frames);
+	if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, std::move(n), gain_occur, add_users, tools::Sigma<R>((R)noise), n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -224,21 +214,19 @@ template <typename R>
 module::Channel<R>* Channel::parameters
 ::build_userpdf(const tools::Distributions<R>& dist) const
 {
-	tools::User_pdf_noise_generator<R>* n = nullptr;
-	     if (implem == "STD" ) n = new tools::User_pdf_noise_generator_std <R>(dist, seed);
-	else if (implem == "FAST") n = new tools::User_pdf_noise_generator_fast<R>(dist, seed);
+	std::unique_ptr<tools::User_pdf_noise_generator<R>> n = nullptr;
+	     if (implem == "STD" ) n.reset(new tools::User_pdf_noise_generator_std <R>(dist, seed));
+	else if (implem == "FAST") n.reset(new tools::User_pdf_noise_generator_fast<R>(dist, seed));
 #ifdef CHANNEL_MKL
-	else if (implem == "MKL" ) n = new tools::User_pdf_noise_generator_MKL <R>(dist, seed);
+	else if (implem == "MKL" ) n.reset(new tools::User_pdf_noise_generator_MKL <R>(dist, seed));
 #endif
 #ifdef CHANNEL_GSL
-	else if (implem == "GSL" ) n = new tools::User_pdf_noise_generator_GSL <R>(dist, seed);
+	else if (implem == "GSL" ) n.reset(new tools::User_pdf_noise_generator_GSL <R>(dist, seed));
 #endif
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	if (type == "OPTICAL") return new module::Channel_optical<R>(N, n, tools::Received_optical_power<R>((R) this->noise), n_frames);
-
-	delete n;
+	if (type == "OPTICAL") return new module::Channel_optical<R>(N, std::move(n), tools::Received_optical_power<R>((R) this->noise), n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

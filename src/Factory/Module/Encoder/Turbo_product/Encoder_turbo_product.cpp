@@ -22,12 +22,7 @@ Encoder_turbo_product::parameters
 Encoder_turbo_product::parameters* Encoder_turbo_product::parameters
 ::clone() const
 {
-	auto clone = new Encoder_turbo_product::parameters(*this);
-
-	if (sub != nullptr) { clone->sub = sub->clone(); }
-	if (itl != nullptr) { clone->itl = itl->clone(); }
-
-	return clone;
+	return new Encoder_turbo_product::parameters(*this);
 }
 
 std::vector<std::string> Encoder_turbo_product::parameters
@@ -55,13 +50,6 @@ std::vector<std::string> Encoder_turbo_product::parameters
 	if (sub != nullptr) { auto nn = sub->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
-}
-
-Encoder_turbo_product::parameters
-::~parameters()
-{
-	if (sub != nullptr) { delete sub; sub = nullptr; }
-	if (itl != nullptr) { delete itl; itl = nullptr; }
 }
 
 void Encoder_turbo_product::parameters

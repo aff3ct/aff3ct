@@ -15,7 +15,7 @@ protected:
 
 public:
 	Turbo_DB(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Turbo_DB();
+	virtual ~Turbo_DB() = default;
 
 protected:
 	virtual void get_description_args();

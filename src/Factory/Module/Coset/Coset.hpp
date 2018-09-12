@@ -28,7 +28,7 @@ struct Coset : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Coset_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Coset::parameters* clone() const;
 
 		// parameters construction

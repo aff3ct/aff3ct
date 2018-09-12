@@ -20,11 +20,6 @@ Decoder_NO::parameters
 	this->implem = "HARD_DECISION";
 }
 
-Decoder_NO::parameters
-::~parameters()
-{
-}
-
 Decoder_NO::parameters* Decoder_NO::parameters
 ::clone() const
 {

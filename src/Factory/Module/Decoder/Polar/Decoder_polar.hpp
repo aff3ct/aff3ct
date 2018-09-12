@@ -33,7 +33,7 @@ struct Decoder_polar : public Decoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_polar_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_polar::parameters* clone() const;
 
 		// parameters construction

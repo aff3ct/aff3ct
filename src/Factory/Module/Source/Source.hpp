@@ -32,7 +32,7 @@ struct Source : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Source_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Source::parameters* clone() const;
 
 		// parameters construction

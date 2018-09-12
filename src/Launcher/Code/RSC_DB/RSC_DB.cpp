@@ -16,12 +16,6 @@ RSC_DB<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-RSC_DB<L,B,R,Q>
-::~RSC_DB()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void RSC_DB<L,B,R,Q>
 ::get_description_args()
 {

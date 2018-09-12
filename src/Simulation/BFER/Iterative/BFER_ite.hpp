@@ -48,12 +48,11 @@ protected:
 
 public:
 	explicit BFER_ite(const factory::BFER_ite::parameters &params_BFER_ite);
-	virtual ~BFER_ite();
+	virtual ~BFER_ite() = default;
 
 protected:
 	virtual void __build_communication_chain(const int tid = 0);
 	virtual void _launch();
-	virtual void release_objects();
 
 	virtual std::unique_ptr<module::Source          <B    >> build_source     (const int tid = 0);
 	virtual std::unique_ptr<module::CRC             <B    >> build_crc        (const int tid = 0);

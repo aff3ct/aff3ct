@@ -21,11 +21,6 @@ Decoder_RS::parameters
 	this->implem = "STD";
 }
 
-Decoder_RS::parameters
-::~parameters()
-{
-}
-
 Decoder_RS::parameters* Decoder_RS::parameters
 ::clone() const
 {

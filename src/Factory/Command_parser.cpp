@@ -17,12 +17,6 @@ Command_parser
 	parse(add_help_tag);
 }
 
-Command_parser
-::~Command_parser()
-{
-
-}
-
 void Command_parser
 ::parse(bool add_help_tag)
 {

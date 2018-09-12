@@ -17,11 +17,6 @@ Frozenbits_generator::parameters
 {
 }
 
-Frozenbits_generator::parameters
-::~parameters()
-{
-}
-
 Frozenbits_generator::parameters* Frozenbits_generator::parameters
 ::clone() const
 {
@@ -104,9 +99,9 @@ void Frozenbits_generator::parameters
 tools::Frozenbits_generator* Frozenbits_generator::parameters
 ::build() const
 {
-	     if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw,                               this->sigma);
-	else if (this->type == "TV"  ) return new tools::Frozenbits_generator_TV  (this->K, this->N_cw, this->path_fb, this->path_pb, this->sigma);
-	else if (this->type == "FILE") return new tools::Frozenbits_generator_file(this->K, this->N_cw, this->path_fb                            );
+	if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw,                               this->sigma);
+	if (this->type == "TV"  ) return new tools::Frozenbits_generator_TV  (this->K, this->N_cw, this->path_fb, this->path_pb, this->sigma);
+	if (this->type == "FILE") return new tools::Frozenbits_generator_file(this->K, this->N_cw, this->path_fb                            );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

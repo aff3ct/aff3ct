@@ -15,7 +15,7 @@ protected:
 
 public:
 	RA(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~RA();
+	virtual ~RA() = default;
 
 protected:
 	virtual void get_description_args();

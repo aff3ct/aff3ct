@@ -15,7 +15,7 @@ protected:
 
 public:
 	Polar(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Polar();
+	virtual ~Polar() = default;
 
 protected:
 	virtual void get_description_args();

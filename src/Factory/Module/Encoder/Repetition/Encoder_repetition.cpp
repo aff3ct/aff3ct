@@ -17,11 +17,6 @@ Encoder_repetition::parameters
 	this->type = "REPETITION";
 }
 
-Encoder_repetition::parameters
-::~parameters()
-{
-}
-
 Encoder_repetition::parameters* Encoder_repetition::parameters
 ::clone() const
 {

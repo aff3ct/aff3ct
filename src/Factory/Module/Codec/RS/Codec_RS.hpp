@@ -4,9 +4,6 @@
 #include <string>
 #include <cmath>
 
-#include "Factory/Module/Encoder/RS/Encoder_RS.hpp"
-#include "Factory/Module/Decoder/RS/Decoder_RS.hpp"
-
 #include "Module/Codec/RS/Codec_RS.hpp"
 
 #include "../Codec_SIHO_HIHO.hpp"
@@ -22,14 +19,8 @@ struct Codec_RS : public Codec_SIHO_HIHO
 	class parameters : public Codec_SIHO_HIHO::parameters
 	{
 	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// depending parameters
-		Encoder_RS::parameters *enc;
-		Decoder_RS::parameters *dec;
-
-		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_RS_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Codec_RS::parameters* clone() const;
 
 		// parameters construction

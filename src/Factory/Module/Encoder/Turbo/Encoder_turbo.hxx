@@ -25,13 +25,7 @@ template <class E1, class E2>
 Encoder_turbo::parameters<E1,E2>* Encoder_turbo::parameters<E1,E2>
 ::clone() const
 {
-	auto clone = new Encoder_turbo::parameters<E1,E2>(*this);
-
-	if (itl  != nullptr) { clone->itl  = itl ->clone(); }
-	if (sub1 != nullptr) { clone->sub1 = sub1->clone(); }
-	if (sub2 != nullptr) { clone->sub2 = sub2->clone(); }
-
-	return clone;
+	return new Encoder_turbo::parameters<E1,E2>(*this);
 }
 
 template <class E1, class E2>
@@ -65,15 +59,6 @@ std::vector<std::string> Encoder_turbo::parameters<E1,E2>
 	if (sub2 != nullptr) { auto nn = sub2->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (itl  != nullptr) { auto nn = itl ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
-}
-
-template <class E1, class E2>
-Encoder_turbo::parameters<E1,E2>
-::~parameters()
-{
-	if (itl  != nullptr) { delete itl;  itl  = nullptr; }
-	if (sub1 != nullptr) { delete sub1; sub1 = nullptr; }
-	if (sub2 != nullptr) { delete sub2; sub2 = nullptr; }
 }
 
 template <class E1, class E2>

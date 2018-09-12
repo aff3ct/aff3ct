@@ -12,12 +12,6 @@ Channel_NO<R>
 }
 
 template <typename R>
-Channel_NO<R>
-::~Channel_NO()
-{
-}
-
-template <typename R>
 void Channel_NO<R>
 ::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {

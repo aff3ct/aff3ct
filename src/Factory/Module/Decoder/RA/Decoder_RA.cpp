@@ -19,20 +19,10 @@ Decoder_RA::parameters
 	this->implem = "STD";
 }
 
-Decoder_RA::parameters
-::~parameters()
-{
-	if (itl != nullptr) { delete itl; itl = nullptr; }
-}
-
 Decoder_RA::parameters* Decoder_RA::parameters
 ::clone() const
 {
-	auto clone = new Decoder_RA::parameters(*this);
-
-	if (itl != nullptr) { clone->itl = itl->clone(); }
-
-	return clone;
+	return new Decoder_RA::parameters(*this);
 }
 
 std::vector<std::string> Decoder_RA::parameters

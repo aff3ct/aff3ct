@@ -40,12 +40,6 @@ BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-BFER_std<B,R,Q>
-::~BFER_std()
-{
-}
-
-template <typename B, typename R, typename Q>
 void BFER_std<B,R,Q>
 ::__build_communication_chain(const int tid)
 {
@@ -118,13 +112,6 @@ void BFER_std<B,R,Q>
 		this->modem  [tid]->set_noise(*this->noise);
 		this->codec  [tid]->set_noise(*this->noise);
 	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER_std<B,R,Q>
-::release_objects()
-{
-	BFER<B,R,Q>::release_objects();
 }
 
 template <typename B, typename R, typename Q>

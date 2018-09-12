@@ -38,7 +38,7 @@ struct Launcher : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Launcher_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Launcher::parameters* clone() const;
 
 		// parameters construction

@@ -22,11 +22,6 @@ Scaling_factor::parameters
 {
 }
 
-Scaling_factor::parameters
-::~parameters()
-{
-}
-
 Scaling_factor::parameters* Scaling_factor::parameters
 ::clone() const
 {
@@ -92,11 +87,11 @@ template<typename B, typename Q>
 tools::Scaling_factor<B,Q>* Scaling_factor::parameters
 ::build() const
 {
-	     if (this->type == "CST"     ) return new tools::Scaling_factor_constant<B,Q>(this->n_ite, this->cst        );
-	else if (this->type == "LTE_VEC" ) return new tools::Scaling_factor_vec     <B,Q>(this->n_ite                   );
-	else if (this->type == "LTE"     ) return new tools::Scaling_factor_seq     <B,Q>(this->n_ite                   );
-	else if (this->type == "ARRAY"   ) return new tools::Scaling_factor_array   <B,Q>(this->n_ite, this->alpha_array);
-	else if (this->type == "ADAPTIVE") return new tools::Scaling_factor_adaptive<B,Q>(this->n_ite                   );
+	if (this->type == "CST"     ) return new tools::Scaling_factor_constant<B,Q>(this->n_ite, this->cst        );
+	if (this->type == "LTE_VEC" ) return new tools::Scaling_factor_vec     <B,Q>(this->n_ite                   );
+	if (this->type == "LTE"     ) return new tools::Scaling_factor_seq     <B,Q>(this->n_ite                   );
+	if (this->type == "ARRAY"   ) return new tools::Scaling_factor_array   <B,Q>(this->n_ite, this->alpha_array);
+	if (this->type == "ADAPTIVE") return new tools::Scaling_factor_adaptive<B,Q>(this->n_ite                   );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

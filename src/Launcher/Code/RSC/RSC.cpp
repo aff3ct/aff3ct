@@ -19,12 +19,6 @@ RSC<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-RSC<L,B,R,Q>
-::~RSC()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void RSC<L,B,R,Q>
 ::get_description_args()
 {
@@ -42,11 +36,13 @@ template <class L, typename B, typename R, typename Q>
 void RSC<L,B,R,Q>
 ::store_args()
 {
+	auto dec_rsc = dynamic_cast<factory::Decoder_RSC::parameters*>(params_cdc->dec.get());
+
 	params_cdc->store(this->arg_vals);
 
-	if (params_cdc->dec->simd_strategy == "INTER")
+	if (dec_rsc->simd_strategy == "INTER")
 		this->params.src->n_frames = mipp::N<Q>();
-	if (params_cdc->dec->simd_strategy == "INTRA")
+	if (dec_rsc->simd_strategy == "INTRA")
 		this->params.src->n_frames = (int)std::ceil(mipp::N<Q>() / 8.f);
 
 	if (std::is_same<Q,int8_t>())

@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "Module/Module.hpp"
 #include "Tools/Noise/Noise.hpp"

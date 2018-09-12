@@ -16,12 +16,6 @@ RS<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-RS<L,B,R,Q>
-::~RS()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void RS<L,B,R,Q>
 ::get_description_args()
 {

@@ -4,9 +4,6 @@
 #include <string>
 #include <cmath>
 
-#include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
-#include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
-
 #include "Module/Codec/BCH/Codec_BCH.hpp"
 
 #include "../Codec_SIHO_HIHO.hpp"
@@ -22,14 +19,8 @@ struct Codec_BCH : public Codec_SIHO_HIHO
 	class parameters : public Codec_SIHO_HIHO::parameters
 	{
 	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// depending parameters
-		Encoder_BCH::parameters *enc;
-		Decoder_BCH::parameters *dec;
-
-		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_BCH_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Codec_BCH::parameters* clone() const;
 
 		// parameters construction

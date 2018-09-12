@@ -57,18 +57,9 @@ EXIT<B,R>
 }
 
 template <typename B, typename R>
-EXIT<B,R>
-::~EXIT()
-{
-	release_objects();
-}
-
-template <typename B, typename R>
 void EXIT<B,R>
 ::_build_communication_chain()
 {
-	release_objects();
-
 	const auto N_mod = params_EXIT.mdm->N_mod;
 	const auto K_mod = factory::Modem::get_buffer_size_after_modulation(params_EXIT.mdm->type,
 	                                                                    params_EXIT.cdc->K,
@@ -342,12 +333,6 @@ void EXIT<B,R>
 		codec  [cdc::tsk::extract_sys_llr  ].exec();
 		monitor[mnt::tsk::check_mutual_info].exec();
 	}
-}
-
-template <typename B, typename R>
-void EXIT<B,R>
-::release_objects()
-{
 }
 
 template <typename B, typename R>

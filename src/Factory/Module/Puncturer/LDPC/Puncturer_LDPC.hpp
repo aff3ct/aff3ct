@@ -24,7 +24,7 @@ struct Puncturer_LDPC : public Puncturer
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Puncturer_LDPC_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Puncturer_LDPC::parameters* clone() const;
 
 		// parameters construction

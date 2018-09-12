@@ -17,11 +17,6 @@ Encoder_RSC_DB::parameters
 	this->type = "RSC_DB";
 }
 
-Encoder_RSC_DB::parameters
-::~parameters()
-{
-}
-
 Encoder_RSC_DB::parameters* Encoder_RSC_DB::parameters
 ::clone() const
 {

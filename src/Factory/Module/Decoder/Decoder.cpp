@@ -16,11 +16,6 @@ Decoder::parameters
 {
 }
 
-Decoder::parameters
-::~parameters()
-{
-}
-
 Decoder::parameters* Decoder::parameters
 ::clone() const
 {

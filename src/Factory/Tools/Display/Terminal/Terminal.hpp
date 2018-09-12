@@ -28,7 +28,7 @@ struct Terminal : Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		parameters(const std::string &p = Terminal_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Terminal::parameters* clone() const;
 
 		// parameters construction

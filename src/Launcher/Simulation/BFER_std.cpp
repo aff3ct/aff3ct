@@ -29,12 +29,6 @@ BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-BFER_std<B,R,Q>
-::~BFER_std()
-{
-}
-
-template <typename B, typename R, typename Q>
 void BFER_std<B,R,Q>
 ::get_description_args()
 {

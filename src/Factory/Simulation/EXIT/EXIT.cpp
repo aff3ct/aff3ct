@@ -17,32 +17,20 @@ EXIT::parameters
 {
 }
 
-EXIT::parameters
-::~parameters()
-{
-	if (src != nullptr) { delete src; src = nullptr; }
-	if (cdc != nullptr) { delete cdc; cdc = nullptr; }
-	if (mdm != nullptr) { delete mdm; mdm = nullptr; }
-	if (chn != nullptr) { delete chn; chn = nullptr; }
-	if (qnt != nullptr) { delete qnt; qnt = nullptr; }
-	if (mnt != nullptr) { delete mnt; mnt = nullptr; }
-	if (ter != nullptr) { delete ter; ter = nullptr; }
-}
-
 EXIT::parameters* EXIT::parameters
 ::clone() const
 {
-	auto clone = new EXIT::parameters(*this);
+	return new EXIT::parameters(*this);
 
-	if (src != nullptr) { clone->src = src->clone(); }
-	if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SISO::parameters*>(cdc->clone()); }
-	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
-	if (chn != nullptr) { clone->chn = chn->clone(); }
-	if (qnt != nullptr) { clone->qnt = qnt->clone(); }
-	if (mnt != nullptr) { clone->mnt = mnt->clone(); }
-	if (ter != nullptr) { clone->ter = ter->clone(); }
+	// if (src != nullptr) { clone->src = src->clone(); }
+	// if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SISO::parameters*>(cdc->clone()); }
+	// if (mdm != nullptr) { clone->mdm = mdm->clone(); }
+	// if (chn != nullptr) { clone->chn = chn->clone(); }
+	// if (qnt != nullptr) { clone->qnt = qnt->clone(); }
+	// if (mnt != nullptr) { clone->mnt = mnt->clone(); }
+	// if (ter != nullptr) { clone->ter = ter->clone(); }
 
-	return clone;
+	// return clone;
 }
 
 std::vector<std::string> EXIT::parameters
@@ -170,6 +158,49 @@ void EXIT::parameters
 	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }
 
+void EXIT::parameters
+::set_src(Source::parameters *src)
+{
+	this->src.reset(src);
+}
+
+void EXIT::parameters
+::set_cdc(Codec_SISO::parameters *cdc)
+{
+	this->cdc.reset(cdc);
+}
+
+void EXIT::parameters
+::set_mdm(Modem::parameters *mdm)
+{
+	this->mdm.reset(mdm);
+}
+
+void EXIT::parameters
+::set_chn(Channel::parameters *chn)
+{
+	this->chn.reset(chn);
+}
+
+void EXIT::parameters
+::set_qnt(Quantizer::parameters *qnt)
+{
+	this->qnt.reset(qnt);
+}
+
+void EXIT::parameters
+::set_mnt(Monitor_EXIT::parameters *mnt)
+{
+	this->mnt.reset(mnt);
+}
+
+void EXIT::parameters
+::set_ter(Terminal::parameters *ter)
+{
+	this->ter.reset(ter);
+}
+
+
 template <typename B, typename R>
 simulation::EXIT<B,R>* EXIT::parameters
 ::build() const
@@ -189,6 +220,8 @@ simulation::EXIT<B,R>* EXIT
 {
 	return params.template build<B,R>();
 }
+
+
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

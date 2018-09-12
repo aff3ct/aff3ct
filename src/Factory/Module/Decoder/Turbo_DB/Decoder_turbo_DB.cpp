@@ -15,7 +15,7 @@ Decoder_turbo_DB::parameters
 : Decoder::parameters(Decoder_turbo_DB_name, prefix),
   sub(new Decoder_RSC_DB::parameters(prefix+"-sub")),
   itl(new Interleaver::parameters("itl")),
-  sf(new Scaling_factor::parameters(prefix+"-sf")),
+  sf (new Scaling_factor::parameters(prefix+"-sf")),
   fnc(new Flip_and_check_DB::parameters(prefix+"-fnc"))
 {
 	this->type   = "TURBO_DB";
@@ -25,14 +25,7 @@ Decoder_turbo_DB::parameters
 Decoder_turbo_DB::parameters* Decoder_turbo_DB::parameters
 ::clone() const
 {
-	auto clone = new Decoder_turbo_DB::parameters(*this);
-
-	if (sub != nullptr) { clone->sub = sub->clone(); }
-	if (itl != nullptr) { clone->itl = itl->clone(); }
-	if (sf  != nullptr) { clone->sf  = sf ->clone(); }
-	if (fnc != nullptr) { clone->fnc = fnc->clone(); }
-
-	return clone;
+	return new Decoder_turbo_DB::parameters(*this);
 }
 
 std::vector<std::string> Decoder_turbo_DB::parameters
@@ -66,15 +59,6 @@ std::vector<std::string> Decoder_turbo_DB::parameters
 	if (sub != nullptr) { auto nn = sub->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
-}
-
-Decoder_turbo_DB::parameters
-::~parameters()
-{
-	if (sub != nullptr) { delete sub; sub = nullptr; }
-	if (itl != nullptr) { delete itl; itl = nullptr; }
-	if (sf  != nullptr) { delete sf ; sf  = nullptr; }
-	if (fnc != nullptr) { delete fnc; fnc = nullptr; }
 }
 
 void Decoder_turbo_DB::parameters

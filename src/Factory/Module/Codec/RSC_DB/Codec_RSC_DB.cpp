@@ -1,5 +1,8 @@
 #include "Codec_RSC_DB.hpp"
 
+#include "Factory/Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
+#include "Factory/Module/Decoder/RSC_DB/Decoder_RSC_DB.hpp"
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -9,36 +12,16 @@ const std::string aff3ct::factory::Codec_RSC_DB_prefix = "cdc";
 Codec_RSC_DB::parameters
 ::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_RSC_DB_name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_RSC_DB_name, prefix),
-  enc(new Encoder_RSC_DB::parameters("enc")),
-  dec(new Decoder_RSC_DB::parameters("dec"))
+  Codec_SISO_SIHO::parameters(Codec_RSC_DB_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
+	Codec::parameters::set_enc(new Encoder_RSC_DB::parameters("enc"));
+	Codec::parameters::set_dec(new Decoder_RSC_DB::parameters("dec"));
 }
 
 Codec_RSC_DB::parameters* Codec_RSC_DB::parameters
 ::clone() const
 {
-	auto clone = new Codec_RSC_DB::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-
-	return clone;
-}
-
-Codec_RSC_DB::parameters
-::~parameters()
-{
-	if (enc != nullptr) { delete enc; enc = nullptr; }
-	if (dec != nullptr) { delete dec; dec = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
+	return new Codec_RSC_DB::parameters(*this);
 }
 
 void Codec_RSC_DB::parameters
@@ -62,23 +45,26 @@ void Codec_RSC_DB::parameters
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 
+	auto enc_rsc = dynamic_cast<Encoder_RSC_DB::parameters*>(enc.get());
+	auto dec_rsc = dynamic_cast<Decoder_RSC_DB::parameters*>(dec.get());
+
 	enc->store(vals);
 
-	this->dec->K        = this->enc->K;
-	this->dec->N_cw     = this->enc->N_cw;
-	this->dec->n_frames = this->enc->n_frames;
-	this->dec->buffered = this->enc->buffered;
+	dec_rsc->K        = enc_rsc->K;
+	dec_rsc->N_cw     = enc_rsc->N_cw;
+	dec_rsc->n_frames = enc_rsc->n_frames;
+	dec_rsc->buffered = enc_rsc->buffered;
 
 	dec->store(vals);
 
 	auto pdec = dec->get_prefix();
 
-	if (!this->enc->standard.empty() && !vals.exist({pdec+"-implem"}))
-		this->dec->implem = this->enc->standard;
+	if (!enc_rsc->standard.empty() && !vals.exist({pdec+"-implem"}))
+		dec->implem = enc_rsc->standard;
 
-	this->K    = this->enc->K;
-	this->N_cw = this->enc->N_cw;
-	this->N    = this->enc->N_cw;
+	K    = enc->K;
+	N_cw = enc->N_cw;
+	N    = enc->N_cw;
 }
 
 void Codec_RSC_DB::parameters
@@ -94,9 +80,8 @@ template <typename B, typename Q>
 module::Codec_RSC_DB<B,Q>* Codec_RSC_DB::parameters
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_RSC_DB<B,Q>(*enc, *dec);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_RSC_DB<B,Q>(dynamic_cast<const Encoder_RSC_DB::parameters&>(*enc),
+	                                      dynamic_cast<const Decoder_RSC_DB::parameters&>(*dec));
 }
 
 template <typename B, typename Q>

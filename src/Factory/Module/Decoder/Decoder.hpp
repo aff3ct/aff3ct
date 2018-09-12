@@ -38,7 +38,7 @@ struct Decoder : Factory
 		float       R           = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Decoder::parameters* clone() const;
 
 		// parameters construction

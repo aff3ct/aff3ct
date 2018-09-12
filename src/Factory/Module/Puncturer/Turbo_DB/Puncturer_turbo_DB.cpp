@@ -19,11 +19,6 @@ Puncturer_turbo_DB::parameters
 	this->type = "TURBO_DB";
 }
 
-Puncturer_turbo_DB::parameters
-::~parameters()
-{
-}
-
 Puncturer_turbo_DB::parameters* Puncturer_turbo_DB::parameters
 ::clone() const
 {
