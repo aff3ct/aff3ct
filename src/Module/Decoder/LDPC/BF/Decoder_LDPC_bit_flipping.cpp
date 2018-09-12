@@ -209,36 +209,27 @@ void Decoder_LDPC_bit_flipping<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
-// BP algorithm
+// BF algorithm
 template <typename B, typename R>
 void Decoder_LDPC_bit_flipping<B,R>
 ::BF_decode(const R *Y_N, const int frame_id)
 {
-	//printf("Je suis dans BF_decode1\n");
-	auto cur_syndrome_depth = 0;
 
 	//compute y_min,m for n in N(m)
-	//printf("-----\n");
 	for (auto imin = 0; imin < this->n_C_nodes; imin++)
 	{
-//		printf("*****\n");
 		const auto length = this->n_variables_per_parity[imin];
 		auto min_val = std::numeric_limits<R>::max();
 		for (auto mmin = 0; mmin < length; ++mmin)
 		{
 			auto comp = (R)std::abs(Y_N[this->H.get_rows_from_col(imin)[mmin]]);
 			min_val = (min_val > comp)?comp:min_val;
-//			std::cout << comp << std::endl;
 		}
 		Y_min[imin] = min_val;
-//		std::cout << "Min : " << min_val << std::endl;		
 	}
-//	printf("-----\n");
-
 	// compute init Zn
 	for (int i = 0; i < this->n_V_nodes; ++i)
 	{
-//		printf("%f\n", Y_N[i]);
 		decis[i] = (Y_N[i]<0)?1:0;
 	}
 
@@ -251,12 +242,8 @@ void Decoder_LDPC_bit_flipping<B,R>
 		// stop criterion
 		if (this->enable_syndrome && syndrome)
 		{
-		//	cur_syndrome_depth++;
-		//	if (cur_syndrome_depth == this->syndrome_depth)
 				break;
 		}
-		//else
-		//	cur_syndrome_depth = 0;
 	}
 	
 	//output
@@ -266,7 +253,6 @@ void Decoder_LDPC_bit_flipping<B,R>
 		this->Lp_N[i] = (decis[i] == 0)?1:-1;
 	}
 
-	//printf("-----\n");
 }
 
 // ==================================================================================== explicit template instantiation 

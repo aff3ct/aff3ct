@@ -23,12 +23,13 @@ protected:
 	const bool enable_syndrome;
 	const int  syndrome_depth;
 
+	const tools::Sparse_matrix &H;
+
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
 
 	const std::vector<unsigned> &info_bits_pos;
 
-	const tools::Sparse_matrix &H;
 
 	std::vector<unsigned char> n_variables_per_parity;
 	std::vector<unsigned char> n_parities_per_variable;
