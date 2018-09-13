@@ -61,9 +61,8 @@ Codec_LDPC<B,Q>
 	}
 	else if (enc_params.type == "LDPC_DVBS2")
 	{
-		dvbs2.reset(tools::build_dvbs2(this->K, this->N));
-
-		H = tools::build_H(*dvbs2);
+		dvbs2 = tools::build_dvbs2(this->K, this->N);
+		H     = tools::build_H(*dvbs2);
 	}
 
 	if (H.get_n_connections() == 0)

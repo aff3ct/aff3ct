@@ -53,9 +53,9 @@ Sparse_matrix aff3ct::tools::build_H(const dvbs2_values& dvbs2)
 	return H;
 }
 
-dvbs2_values* aff3ct::tools::build_dvbs2(const int K, const int N)
+std::unique_ptr<dvbs2_values> aff3ct::tools::build_dvbs2(const int K, const int N)
 {
-	dvbs2_values* dvbs2 = nullptr;
+	std::unique_ptr<dvbs2_values> dvbs2;
 
 	auto NmK = N - K;
 
@@ -65,38 +65,17 @@ dvbs2_values* aff3ct::tools::build_dvbs2(const int K, const int N)
 		{
 			switch (NmK)
 			{
-				case 1800 :
-					dvbs2 = new tools::dvbs2_values_16200_1800();
-					break;
-				case 2880 :
-					dvbs2 = new tools::dvbs2_values_16200_2880();
-					break;
-				case 3600 :
-					dvbs2 = new tools::dvbs2_values_16200_3600();
-					break;
-				case 4320 :
-					dvbs2 = new tools::dvbs2_values_16200_4320();
-					break;
-				case 5400 :
-					dvbs2 = new tools::dvbs2_values_16200_5400();
-					break;
-				case 6480 :
-					dvbs2 = new tools::dvbs2_values_16200_6480();
-					break;
-				case 9000 :
-					dvbs2 = new tools::dvbs2_values_16200_9000();
-					break;
-				case 9720 :
-					dvbs2 = new tools::dvbs2_values_16200_9720();
-					break;
-				case 10800 :
-					dvbs2 = new tools::dvbs2_values_16200_10800();
-					break;
-				case 12960 :
-					dvbs2 = new tools::dvbs2_values_16200_12960();
-					break;
-				default :
-					break;
+				case 1800 : dvbs2.reset(new tools::dvbs2_values_16200_1800 ()); break;
+				case 2880 : dvbs2.reset(new tools::dvbs2_values_16200_2880 ()); break;
+				case 3600 : dvbs2.reset(new tools::dvbs2_values_16200_3600 ()); break;
+				case 4320 : dvbs2.reset(new tools::dvbs2_values_16200_4320 ()); break;
+				case 5400 : dvbs2.reset(new tools::dvbs2_values_16200_5400 ()); break;
+				case 6480 : dvbs2.reset(new tools::dvbs2_values_16200_6480 ()); break;
+				case 9000 : dvbs2.reset(new tools::dvbs2_values_16200_9000 ()); break;
+				case 9720 : dvbs2.reset(new tools::dvbs2_values_16200_9720 ()); break;
+				case 10800: dvbs2.reset(new tools::dvbs2_values_16200_10800()); break;
+				case 12960: dvbs2.reset(new tools::dvbs2_values_16200_12960()); break;
+				default   : break;
 			}
 			break;
 		}
@@ -104,41 +83,18 @@ dvbs2_values* aff3ct::tools::build_dvbs2(const int K, const int N)
 		{
 			switch (NmK)
 			{
-				case 6480 :
-					dvbs2 = new tools::dvbs2_values_64800_6480();
-					break;
-				case 7200 :
-					dvbs2 = new tools::dvbs2_values_64800_7200();
-					break;
-				case 10800 :
-					dvbs2 = new tools::dvbs2_values_64800_10800();
-					break;
-				case 12960 :
-					dvbs2 = new tools::dvbs2_values_64800_12960();
-					break;
-				case 16200 :
-					dvbs2 = new tools::dvbs2_values_64800_16200();
-					break;
-				case 21600 :
-					dvbs2 = new tools::dvbs2_values_64800_21600();
-					break;
-				case 25920 :
-					dvbs2 = new tools::dvbs2_values_64800_25920();
-					break;
-				case 32400 :
-					dvbs2 = new tools::dvbs2_values_64800_32400();
-					break;
-				case 38880 :
-					dvbs2 = new tools::dvbs2_values_64800_38880();
-					break;
-				case 43200 :
-					dvbs2 = new tools::dvbs2_values_64800_43200();
-					break;
-				case 48600 :
-					dvbs2 = new tools::dvbs2_values_64800_48600();
-					break;
-				default :
-					break;
+				case 6480 : dvbs2.reset(new tools::dvbs2_values_64800_6480 ()); break;
+				case 7200 : dvbs2.reset(new tools::dvbs2_values_64800_7200 ()); break;
+				case 10800: dvbs2.reset(new tools::dvbs2_values_64800_10800()); break;
+				case 12960: dvbs2.reset(new tools::dvbs2_values_64800_12960()); break;
+				case 16200: dvbs2.reset(new tools::dvbs2_values_64800_16200()); break;
+				case 21600: dvbs2.reset(new tools::dvbs2_values_64800_21600()); break;
+				case 25920: dvbs2.reset(new tools::dvbs2_values_64800_25920()); break;
+				case 32400: dvbs2.reset(new tools::dvbs2_values_64800_32400()); break;
+				case 38880: dvbs2.reset(new tools::dvbs2_values_64800_38880()); break;
+				case 43200: dvbs2.reset(new tools::dvbs2_values_64800_43200()); break;
+				case 48600: dvbs2.reset(new tools::dvbs2_values_64800_48600()); break;
+				default   : break;
 			}
 			break;
 		}

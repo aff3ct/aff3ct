@@ -25,7 +25,7 @@ protected:
 	tools::Sparse_matrix G;
 	tools::LDPC_matrix_handler::Positions_vector info_bits_pos;
 	std::vector<bool> pctPattern;
-	std::unique_ptr<const tools::dvbs2_values> dvbs2;
+	std::unique_ptr<tools::dvbs2_values> dvbs2;
 
 public:
 	Codec_LDPC(const factory::Encoder_LDPC::parameters   &enc_params,
