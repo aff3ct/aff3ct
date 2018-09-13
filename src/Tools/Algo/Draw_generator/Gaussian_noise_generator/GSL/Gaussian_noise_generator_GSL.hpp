@@ -5,6 +5,7 @@
 
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include <memory>
 
 #include "../Gaussian_noise_generator.hpp"
 
@@ -16,11 +17,11 @@ template <typename R = float>
 class Gaussian_noise_generator_GSL : public Gaussian_noise_generator<R>
 {
 private:
-	gsl_rng *rng;
+	std::unique_ptr<gsl_rng,decltype(&gsl_rng_free)> rng;
 
 public:
 	explicit Gaussian_noise_generator_GSL(const int seed = 0);
-	virtual ~Gaussian_noise_generator_GSL();
+	virtual ~Gaussian_noise_generator_GSL() = default;
 
 	virtual void set_seed(const int seed);
 	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0);

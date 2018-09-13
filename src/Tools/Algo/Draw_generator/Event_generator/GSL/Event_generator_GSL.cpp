@@ -10,23 +10,16 @@ using namespace aff3ct::tools;
 template <typename R, typename E>
 Event_generator_GSL<R,E>
 ::Event_generator_GSL(const int seed)
-: Event_generator<R,E>(), rng(gsl_rng_alloc(gsl_rng_mt19937))
+: Event_generator<R,E>(), rng(gsl_rng_alloc(gsl_rng_mt19937), gsl_rng_free)
 {
 	this->set_seed(seed);
-}
-
-template <typename R, typename E>
-Event_generator_GSL<R,E>
-::~Event_generator_GSL()
-{
-	gsl_rng_free(rng);
 }
 
 template <typename R, typename E>
 void Event_generator_GSL<R,E>
 ::set_seed(const int seed)
 {
-	gsl_rng_set(rng, seed);
+	gsl_rng_set(rng.get(), seed);
 }
 
 template <typename R, typename E>
@@ -34,7 +27,7 @@ void Event_generator_GSL<R,E>
 ::generate(E *draw, const unsigned length, const R event_probability)
 {
 	for (unsigned i = 0; i < length; i++)
-		draw[i] = (E)gsl_ran_bernoulli(rng, (double)event_probability);
+		draw[i] = (E)gsl_ran_bernoulli(rng.get(), (double)event_probability);
 }
 
 // ==================================================================================== explicit template instantiation

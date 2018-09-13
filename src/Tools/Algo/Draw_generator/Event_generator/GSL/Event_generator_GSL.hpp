@@ -5,6 +5,7 @@
 
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include <memory>
 
 #include "../Event_generator.hpp"
 
@@ -17,12 +18,12 @@ template <typename R = float, typename E = typename tools::matching_types<R>::B>
 class Event_generator_GSL : public Event_generator<R,E>
 {
 private:
-	gsl_rng *rng;
+	std::unique_ptr<gsl_rng,decltype(&gsl_rng_free)> rng;
 
 public:
 	explicit Event_generator_GSL(const int seed = 0);
 
-	virtual ~Event_generator_GSL();
+	virtual ~Event_generator_GSL() = default;
 
 	virtual void set_seed(const int seed);
 
