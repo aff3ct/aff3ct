@@ -40,14 +40,14 @@ protected:
 	std::vector<std::vector<R>> C_to_V; // check    nodes to variable nodes messages
 	std::vector<std::vector<R>> V_to_C; // variable nodes to check    nodes messages
 
-	Decoder_LDPC_bit_flipping(const int &K, const int &N, const int& n_ite, 
+	Decoder_LDPC_bit_flipping(const int &K, const int &N, const int& n_ite,
 	                         const tools::Sparse_matrix &H,
 	                         const std::vector<unsigned> &info_bits_pos,
 	                         const R mwbf_factor = 0.0f,
 	                         const bool enable_syndrome = true,
 	                         const int syndrome_depth = 1,
 	                         const int n_frames = 1);
-	virtual ~Decoder_LDPC_bit_flipping();
+	virtual ~Decoder_LDPC_bit_flipping() = default;
 
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);

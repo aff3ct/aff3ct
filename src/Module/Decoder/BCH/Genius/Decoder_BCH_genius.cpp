@@ -29,12 +29,6 @@ Decoder_BCH_genius<B,R>
 }
 
 template <typename B, typename R>
-Decoder_BCH_genius<B,R>
-::~Decoder_BCH_genius()
-{
-}
-
-template <typename B, typename R>
 void Decoder_BCH_genius<B,R>
 ::_decode(B *Y_N, const int frame_id)
 {

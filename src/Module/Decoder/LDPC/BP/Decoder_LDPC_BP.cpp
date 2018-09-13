@@ -40,8 +40,3 @@ Decoder_LDPC_BP
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
-
-Decoder_LDPC_BP
-::~Decoder_LDPC_BP()
-{
-}

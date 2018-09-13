@@ -215,13 +215,6 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-Decoder_polar_SC_fast_sys<B,R,API_polar>
-::~Decoder_polar_SC_fast_sys()
-{
-	polar_patterns.release_patterns();
-}
-
-template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::notify_frozenbits_update()
 {

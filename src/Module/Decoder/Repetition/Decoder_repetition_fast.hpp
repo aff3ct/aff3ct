@@ -15,7 +15,7 @@ class Decoder_repetition_fast : public Decoder_repetition<B,R>
 {
 public:
 	Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
-	virtual ~Decoder_repetition_fast();
+	virtual ~Decoder_repetition_fast() = default;
 
 protected:
 	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);

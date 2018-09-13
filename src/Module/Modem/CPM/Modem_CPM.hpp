@@ -57,7 +57,7 @@ public:
 	          const std::string &wave_shape = wave_shape_default,
 	          const bool no_sig2            = false,
 	          const int  n_frames           = 1);
-	virtual ~Modem_CPM();
+	virtual ~Modem_CPM() = default;
 
 	virtual void set_noise(const tools::Noise<R>& noise);
 

@@ -28,12 +28,6 @@ Decoder_turbo_std<B,R>
 }
 
 template <typename B, typename R>
-Decoder_turbo_std<B,R>
-::~Decoder_turbo_std()
-{
-}
-
-template <typename B, typename R>
 void Decoder_turbo_std<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {

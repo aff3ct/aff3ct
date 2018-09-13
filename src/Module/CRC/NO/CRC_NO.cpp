@@ -12,12 +12,6 @@ CRC_NO<B>
 }
 
 template <typename B>
-CRC_NO<B>
-::~CRC_NO()
-{
-}
-
-template <typename B>
 int CRC_NO<B>
 ::get_size() const
 {
@@ -41,8 +35,8 @@ void CRC_NO<B>
 template <typename B>
 bool CRC_NO<B>
 ::_check(const B *V_K, const int frame_id)
-{ 
-	return false; 
+{
+	return false;
 }
 
 template <typename B>
@@ -52,7 +46,7 @@ bool CRC_NO<B>
 	return false;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::CRC_NO<B_8>;

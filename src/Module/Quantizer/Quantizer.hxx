@@ -49,12 +49,6 @@ Quantizer(const int N, const int n_frames)
 }
 
 template <typename R, typename Q>
-Quantizer<R,Q>::
-~Quantizer()
-{
-}
-
-template <typename R, typename Q>
 int Quantizer<R,Q>::
 get_N() const
 {

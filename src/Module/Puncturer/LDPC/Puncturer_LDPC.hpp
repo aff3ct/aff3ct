@@ -22,7 +22,7 @@ public:
 	               const int &N_cw,
 	               const std::vector<bool> &pattern,
 	               const int n_frames = 1);
-	virtual ~Puncturer_LDPC();
+	virtual ~Puncturer_LDPC() = default;
 
 protected:
 	void   _puncture(const B *X_N1, B *X_N2, const int frame_id) const;

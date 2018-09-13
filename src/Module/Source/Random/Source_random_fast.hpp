@@ -19,7 +19,7 @@ private:
 
 public:
 	Source_random_fast(const int K, const int seed = 0, const int n_frames = 1);
-	virtual ~Source_random_fast();
+	virtual ~Source_random_fast() = default;
 
 protected:
 	void _generate(B *U_K, const int frame_id);

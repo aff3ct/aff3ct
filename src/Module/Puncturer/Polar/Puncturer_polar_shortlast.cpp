@@ -20,7 +20,7 @@ Puncturer_polar_shortlast<B,Q>
 {
 	const std::string name = "Puncturer_polar_shortlast";
 	this->set_name(name);
-	
+
 	if (fb_generator.get_K() != K)
 	{
 		std::stringstream message;
@@ -36,12 +36,6 @@ Puncturer_polar_shortlast<B,Q>
 		        << fb_generator.get_N() << ", 'N_cw' = " << this->N_cw << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename Q>
-Puncturer_polar_shortlast<B,Q>
-::~Puncturer_polar_shortlast()
-{
 }
 
 template <typename B, typename Q>
@@ -84,7 +78,7 @@ void Puncturer_polar_shortlast<B,Q>
 	std::fill(Y_N2 + this->N, Y_N2 + this->N_cw, tools::sat_vals<Q>().second);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Puncturer_polar_shortlast<B_8,Q_8>;

@@ -14,12 +14,6 @@ Quantizer_NO<R,Q>
 	this->set_name(name);
 }
 
-template <typename R, typename Q>
-Quantizer_NO<R,Q>
-::~Quantizer_NO()
-{
-}
-
 template<typename R, typename Q>
 void Quantizer_NO<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
@@ -55,7 +49,7 @@ void Quantizer_NO<double,double>
 }
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Quantizer_NO<R_8,Q_8>;

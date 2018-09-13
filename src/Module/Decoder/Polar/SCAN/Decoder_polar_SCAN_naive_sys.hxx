@@ -18,19 +18,12 @@ Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
-Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
-::~Decoder_polar_SCAN_naive_sys()
-{
-}
-
-template <typename B, typename R,
-          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 	this->_load_init();
-	
+
 	// init the softGraph (special case for the right most stage)
 	auto sys_idx = 0, par_idx = 0;
 	for (auto i = 0; i < this->N; i++)

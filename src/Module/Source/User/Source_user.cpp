@@ -69,12 +69,6 @@ Source_user<B>
 }
 
 template <typename B>
-Source_user<B>
-::~Source_user()
-{
-}
-
-template <typename B>
 void Source_user<B>
 ::_generate(B *U_K, const int frame_id)
 {

@@ -36,12 +36,6 @@ Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
-::~Decoder_LDPC_BP_horizontal_layered()
-{
-}
-
-template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::reset()
 {

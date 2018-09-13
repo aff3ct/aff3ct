@@ -29,12 +29,6 @@ Decoder_BCH<B, R>
 }
 
 template <typename B, typename R>
-Decoder_BCH<B, R>
-::~Decoder_BCH()
-{
-}
-
-template <typename B, typename R>
 bool Decoder_BCH<B, R>
 ::get_last_is_codeword(const int frame_id) const
 {

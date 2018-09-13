@@ -52,12 +52,6 @@ Coset(const int size, const int n_frames)
 }
 
 template <typename B, typename D>
-Coset<B,D>::
-~Coset()
-{
-}
-
-template <typename B, typename D>
 int Coset<B,D>::
 get_size() const
 {

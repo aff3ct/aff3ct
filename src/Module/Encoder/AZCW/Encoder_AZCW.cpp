@@ -12,12 +12,6 @@ Encoder_AZCW<B>
 }
 
 template <typename B>
-Encoder_AZCW<B>
-::~Encoder_AZCW()
-{
-}
-
-template <typename B>
 void Encoder_AZCW<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {

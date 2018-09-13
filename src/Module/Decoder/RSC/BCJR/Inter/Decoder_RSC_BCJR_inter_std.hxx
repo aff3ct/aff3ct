@@ -20,12 +20,6 @@ Decoder_RSC_BCJR_inter_std<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
-Decoder_RSC_BCJR_inter_std<B,R,MAX>
-::~Decoder_RSC_BCJR_inter_std()
-{
-}
-
-template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 ::compute_gamma(const R *sys, const R *par)
 {

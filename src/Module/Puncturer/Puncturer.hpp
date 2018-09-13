@@ -66,7 +66,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Puncturer();
+	virtual ~Puncturer() = default;
 
 	int get_K() const;
 

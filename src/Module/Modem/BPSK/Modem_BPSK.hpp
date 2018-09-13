@@ -16,7 +16,7 @@ private:
 
 public:
 	Modem_BPSK(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const bool disable_sig2 = false, const int n_frames = 1);
-	virtual ~Modem_BPSK();
+	virtual ~Modem_BPSK() = default;
 
 	virtual void set_noise(const tools::Noise<R>& noise);
 

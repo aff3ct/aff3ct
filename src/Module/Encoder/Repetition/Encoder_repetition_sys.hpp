@@ -14,10 +14,10 @@ protected:
 	const int rep_count; // number of repetition
 
 	const bool buffered_encoding;
-	
+
 public:
 	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
-	virtual ~Encoder_repetition_sys() {}
+	virtual ~Encoder_repetition_sys() = default;
 
 	bool is_codeword(const B *X_N);
 

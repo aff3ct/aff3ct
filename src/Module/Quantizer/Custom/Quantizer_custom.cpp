@@ -164,12 +164,6 @@ Quantizer_custom<R,Q>
 	}
 }
 
-template <typename R, typename Q>
-Quantizer_custom<R,Q>
-::~Quantizer_custom()
-{
-}
-
 template<typename R, typename Q>
 void Quantizer_custom<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const int frame_id)

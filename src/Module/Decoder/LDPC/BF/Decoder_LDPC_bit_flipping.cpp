@@ -108,12 +108,6 @@ Decoder_LDPC_bit_flipping<B,R>
 }
 
 template <typename B, typename R>
-Decoder_LDPC_bit_flipping<B,R>
-::~Decoder_LDPC_bit_flipping()
-{
-}
-
-template <typename B, typename R>
 void Decoder_LDPC_bit_flipping<B,R>
 ::reset()
 {
@@ -245,9 +239,9 @@ void Decoder_LDPC_bit_flipping<B,R>
 				break;
 		}
 	}
-	
+
 	//output
- 	for (auto i = 0; i < this->n_V_nodes; i++) 
+ 	for (auto i = 0; i < this->n_V_nodes; i++)
 	{
 		// filling the output
 		this->Lp_N[i] = (decis[i] == 0)?1:-1;
@@ -255,7 +249,7 @@ void Decoder_LDPC_bit_flipping<B,R>
 
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_bit_flipping<B_8,Q_8>;

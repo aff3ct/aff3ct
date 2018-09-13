@@ -61,12 +61,6 @@ Decoder_RA<B, R>
 }
 
 template <typename B, typename R>
-Decoder_RA<B, R>
-::~Decoder_RA()
-{
-}
-
-template <typename B, typename R>
 void Decoder_RA<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {

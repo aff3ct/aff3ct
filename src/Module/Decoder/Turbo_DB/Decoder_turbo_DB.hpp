@@ -52,7 +52,7 @@ public:
 	                 const Interleaver<R> &pi,
 	                 Decoder_RSC_DB_BCJR<B,R> &siso_n,
 	                 Decoder_RSC_DB_BCJR<B,R> &siso_i);
-	virtual ~Decoder_turbo_DB();
+	virtual ~Decoder_turbo_DB() = default;
 
 	void add_handler_siso_n(std::function<bool(const int,
 	                                           const mipp::vector<R>&,

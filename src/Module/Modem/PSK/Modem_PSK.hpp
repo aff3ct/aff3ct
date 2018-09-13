@@ -25,7 +25,7 @@ private:
 public:
 	Modem_PSK(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int bits_per_symbol = 2, const bool disable_sig2 = false,
 	          const int n_frames = 1);
-	virtual ~Modem_PSK();
+	virtual ~Modem_PSK() = default;
 
 	virtual void set_noise(const tools::Noise<R>& noise);
 

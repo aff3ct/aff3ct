@@ -18,12 +18,6 @@ Decoder_NO<B,R>
 }
 
 template <typename B, typename R>
-Decoder_NO<B,R>
-::~Decoder_NO()
-{
-}
-
-template <typename B, typename R>
 void Decoder_NO<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {

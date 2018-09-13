@@ -67,7 +67,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Encoder();
+	virtual ~Encoder() = default;
 
 	int get_K() const;
 

@@ -18,7 +18,7 @@ protected:
 
 public:
 	Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding);
-	virtual ~Encoder_RSC_sys() {}
+	virtual ~Encoder_RSC_sys() = default;
 
 	int get_n_ff   ();
 	int tail_length() const;
@@ -35,7 +35,7 @@ protected:
 
 private:
 	void __encode(const B* U_K, B* sys, B* tail_sys, B* par, B* tail_par, const int stride = 1, const int stride_tail = 1);
-	bool _is_codeword(const B* sys, const B* tail_sys, const B* par, const B* tail_par, const int stride = 1, 
+	bool _is_codeword(const B* sys, const B* tail_sys, const B* par, const B* tail_par, const int stride = 1,
 	                  const int stride_tail = 1);
 };
 }

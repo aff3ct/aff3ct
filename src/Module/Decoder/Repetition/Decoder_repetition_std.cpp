@@ -16,12 +16,6 @@ Decoder_repetition_std<B,R>
 }
 
 template <typename B, typename R>
-Decoder_repetition_std<B,R>
-::~Decoder_repetition_std()
-{
-}
-
-template <typename B, typename R>
 void Decoder_repetition_std<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {

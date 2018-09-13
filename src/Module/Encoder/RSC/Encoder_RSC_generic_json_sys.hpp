@@ -23,7 +23,7 @@ public:
 	Encoder_RSC_generic_json_sys(const int& K, const int& N,
 	                             const bool buffered_encoding = true, std::vector<int> poly = {5,7},
 	                             std::ostream &stream = std::cout, const int n_frames = 1);
-	virtual ~Encoder_RSC_generic_json_sys() {}
+	virtual ~Encoder_RSC_generic_json_sys() = default;
 
 	std::vector<std::vector<int>> get_trellis();
 

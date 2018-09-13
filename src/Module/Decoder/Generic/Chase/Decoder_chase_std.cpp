@@ -45,12 +45,6 @@ Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
-Decoder_chase_std<B,R>
-::~Decoder_chase_std()
-{
-}
-
-template <typename B, typename R>
 void Decoder_chase_std<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {

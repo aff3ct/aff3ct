@@ -27,12 +27,6 @@ Encoder_BCH<B>
 }
 
 template <typename B>
-Encoder_BCH<B>
-::~Encoder_BCH()
-{
-}
-
-template <typename B>
 void Encoder_BCH<B>
 ::__encode(const B *U_K, B *par)
 {

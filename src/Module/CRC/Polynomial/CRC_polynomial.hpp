@@ -20,7 +20,7 @@ protected:
 
 public:
 	CRC_polynomial(const int K, std::string poly_key, const int size = 0, const int n_frames = 1);
-	virtual ~CRC_polynomial(){};
+	virtual ~CRC_polynomial() = default;
 
 	static int         get_size (std::string poly_key);
 	static std::string get_name (std::string poly_key);
@@ -34,8 +34,8 @@ protected:
 
 	void _generate(const B *U_in,
 	                     B *U_out,
-	               const int off_in, 
-	               const int off_out, 
+	               const int off_in,
+	               const int off_out,
 	               const int loop_size);
 };
 

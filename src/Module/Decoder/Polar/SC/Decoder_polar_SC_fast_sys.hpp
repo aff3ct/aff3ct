@@ -49,7 +49,7 @@ public:
 	                          const std::vector<tools::Pattern_polar_i*> &polar_patterns,
 	                          const int idx_r0, const int idx_r1, const int n_frames = 1);
 
-	virtual ~Decoder_polar_SC_fast_sys();
+	virtual ~Decoder_polar_SC_fast_sys() = default;
 
 	virtual void notify_frozenbits_update();
 

@@ -74,12 +74,6 @@ Modem_user<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modem_user<B,R,Q,MAX>
-::~Modem_user()
-{
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_user<B,R,Q,MAX>
 ::set_noise(const tools::Noise<R>& noise)
 {

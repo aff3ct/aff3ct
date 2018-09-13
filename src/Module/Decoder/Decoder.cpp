@@ -53,11 +53,6 @@ Decoder(const int K, const int N, const int n_frames, const int simd_inter_frame
 	this->tasks_with_nullptr.resize((size_t)dec::tsk::SIZE, nullptr);
 }
 
-Decoder::
-~Decoder()
-{
-}
-
 int Decoder::
 get_K() const
 {

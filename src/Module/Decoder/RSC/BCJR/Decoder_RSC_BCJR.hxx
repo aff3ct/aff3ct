@@ -14,8 +14,8 @@ namespace module
 {
 template <typename B, typename R>
 Decoder_RSC_BCJR<B,R>
-::Decoder_RSC_BCJR(const int K, 
-                   const std::vector<std::vector<int>> &trellis, 
+::Decoder_RSC_BCJR(const int K,
+                   const std::vector<std::vector<int>> &trellis,
                    const bool buffered_encoding,
                    const int n_frames,
                    const int simd_inter_frame_level)
@@ -32,19 +32,13 @@ Decoder_RSC_BCJR<B,R>
 {
 	const std::string name = "Decoder_RSC_BCJR";
 	this->set_name(name);
-	
+
 	if (!tools::is_power_of_2(n_states))
 	{
 		std::stringstream message;
 		message << "'n_states' has to be a power of 2 ('n_states' = " << n_states << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R>
-Decoder_RSC_BCJR<B,R>
-::~Decoder_RSC_BCJR()
-{
 }
 
 template <typename B, typename R>

@@ -32,7 +32,7 @@ protected:
 	             const Task &task, const std::vector<int> &indirect_sockets)
 	: sockets(sockets), task(task), indirect_sockets(indirect_sockets) {}
 public:
-	virtual ~SC_Socket_in() {}
+	virtual ~SC_Socket_in() = default;
 	inline tlm_utils::simple_target_socket<C>& operator[](const int id)
 	{
 		return *sockets[indirect_sockets[id]];
@@ -51,7 +51,7 @@ protected:
 	              const Task &task, const std::vector<int> &indirect_sockets)
 	: sockets(sockets), task(task), indirect_sockets(indirect_sockets) {}
 public:
-	virtual ~SC_Socket_out() {}
+	virtual ~SC_Socket_out() = default;
 	inline tlm_utils::simple_initiator_socket<C>& operator[](const int id)
 	{
 		return *sockets[indirect_sockets[id]];

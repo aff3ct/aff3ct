@@ -84,7 +84,7 @@ public:
 	                      const int n_competitors  = 0,
 	                      const std::vector<float>& cp_coef = {1,1,1,1,0}); // the a b c d and e coef
 
-	~Decoder_chase_pyndiah() = default;
+	virtual ~Decoder_chase_pyndiah() = default;
 
 
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id); // size is length with parity bit if any

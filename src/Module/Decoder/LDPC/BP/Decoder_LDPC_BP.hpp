@@ -27,7 +27,7 @@ public:
 	                const bool enable_syndrome = true,
 	                const int syndrome_depth = 1);
 
-	virtual ~Decoder_LDPC_BP();
+	virtual ~Decoder_LDPC_BP() = default;
 
 	template <typename R>
 	inline bool check_syndrome_soft(const R* Y_N)

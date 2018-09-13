@@ -19,7 +19,7 @@ protected:
 
 public:
 	Decoder_BCH_genius(const int K, const int N, const int t, Encoder<B> &encoder, const int n_frames = 1);
-	virtual ~Decoder_BCH_genius();
+	virtual ~Decoder_BCH_genius() = default;
 
 protected:
 	virtual void _decode        (      B *Y_N,         const int frame_id);

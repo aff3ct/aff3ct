@@ -90,12 +90,6 @@ Modem_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-Modem_SCMA<B,R,Q,PSI>
-::~Modem_SCMA()
-{
-}
-
-template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
 ::set_noise(const tools::Noise<R>& noise)
 {

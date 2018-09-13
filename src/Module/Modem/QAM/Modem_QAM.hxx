@@ -50,12 +50,6 @@ Modem_QAM<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modem_QAM<B,R,Q,MAX>
-::~Modem_QAM()
-{
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 std::complex<R> Modem_QAM<B,R,Q,MAX>
 ::bits_to_symbol(const B* bits) const
 {

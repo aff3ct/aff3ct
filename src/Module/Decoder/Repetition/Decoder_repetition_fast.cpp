@@ -16,7 +16,7 @@ Decoder_repetition_fast<B,R>
 {
 	const std::string name = "Decoder_repetition_fast";
 	this->set_name(name);
-	
+
 	if (this->K % mipp::nElReg<R>())
 	{
 		std::stringstream message;
@@ -24,12 +24,6 @@ Decoder_repetition_fast<B,R>
 		        << ", 'mipp::nElReg<R>()' = " << mipp::nElReg<R>() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R>
-Decoder_repetition_fast<B,R>
-::~Decoder_repetition_fast()
-{
 }
 
 template <typename B, typename R>

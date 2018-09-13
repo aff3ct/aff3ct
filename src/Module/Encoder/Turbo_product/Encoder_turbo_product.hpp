@@ -26,7 +26,7 @@ protected:
 
 public:
 	Encoder_turbo_product(const Interleaver<B> &pi, Encoder<B> &enc_r, Encoder<B> &enc_c, const int n_frames = 1);
-	virtual ~Encoder_turbo_product() {}
+	virtual ~Encoder_turbo_product() = default;
 
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id); using Encoder<B>::encode;
 

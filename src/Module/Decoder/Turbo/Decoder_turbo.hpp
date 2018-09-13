@@ -55,7 +55,7 @@ public:
 	              Decoder_SISO<R> &siso_i,
 	              const bool buffered_encoding = true);
 
-	virtual ~Decoder_turbo();
+	virtual ~Decoder_turbo() = default;
 
 	void add_handler_siso_n(std::function<bool(const int,
 	                                           const mipp::vector<R>&,

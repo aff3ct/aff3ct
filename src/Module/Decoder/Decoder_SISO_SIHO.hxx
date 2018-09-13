@@ -26,13 +26,6 @@ Decoder_SISO_SIHO(const int K, const int N, const int n_frames, const int simd_i
 	this->set_name(name);
 }
 
-template <typename B, typename R>
-Decoder_SISO_SIHO<B,R>::
-~Decoder_SISO_SIHO()
-{
-
-}
-
 }
 }
 

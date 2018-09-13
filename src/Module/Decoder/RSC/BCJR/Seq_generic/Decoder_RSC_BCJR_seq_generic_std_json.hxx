@@ -6,7 +6,7 @@ namespace module
 {
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
-::Decoder_RSC_BCJR_seq_generic_std_json(const int &K, 
+::Decoder_RSC_BCJR_seq_generic_std_json(const int &K,
                                         const std::vector<std::vector<int>> &trellis,
                                         const int n_ite,
                                         const bool buffered_encoding,
@@ -18,12 +18,6 @@ Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 {
 	const std::string name = "Decoder_RSC_BCJR_seq_generic_std_json";
 	this->set_name(name);
-}
-
-template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
-Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
-::~Decoder_RSC_BCJR_seq_generic_std_json()
-{
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>

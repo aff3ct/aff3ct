@@ -12,12 +12,6 @@ Encoder_coset<B>
 }
 
 template <typename B>
-Encoder_coset<B>
-::~Encoder_coset()
-{
-}
-
-template <typename B>
 void Encoder_coset<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {

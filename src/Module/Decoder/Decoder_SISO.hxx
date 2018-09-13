@@ -43,13 +43,6 @@ Decoder_SISO(const int K, const int N, const int n_frames, const int simd_inter_
 }
 
 template <typename R>
-Decoder_SISO<R>::
-~Decoder_SISO()
-{
-
-}
-
-template <typename R>
 template <class A>
 void Decoder_SISO<R>::
 decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,

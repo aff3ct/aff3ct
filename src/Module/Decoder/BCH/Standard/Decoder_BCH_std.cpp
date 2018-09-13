@@ -31,12 +31,6 @@ Decoder_BCH_std<B, R>
 }
 
 template <typename B, typename R>
-Decoder_BCH_std<B, R>
-::~Decoder_BCH_std()
-{
-}
-
-template <typename B, typename R>
 void Decoder_BCH_std<B, R>
 ::_decode(B *Y_N, const int frame_id)
 {

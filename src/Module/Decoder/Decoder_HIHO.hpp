@@ -55,7 +55,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_HIHO();
+	virtual ~Decoder_HIHO() = default;
 
 	/*!
 	 * \brief Decodes the noisy frame.

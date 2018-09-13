@@ -22,12 +22,6 @@ Modem_BPSK<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem_BPSK<B,R,Q>
-::~Modem_BPSK()
-{
-}
-
-template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
 ::set_noise(const tools::Noise<R>& noise)
 {

@@ -23,12 +23,6 @@ Modem_BPSK_fast<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem_BPSK_fast<B,R,Q>
-::~Modem_BPSK_fast()
-{
-}
-
-template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
 ::set_noise(const tools::Noise<R>& noise)
 {

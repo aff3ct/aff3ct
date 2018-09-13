@@ -29,12 +29,6 @@ Decoder_repetition<B,R>
 }
 
 template <typename B, typename R>
-Decoder_repetition<B,R>
-::~Decoder_repetition()
-{
-}
-
-template <typename B, typename R>
 void Decoder_repetition<B,R>
 ::_load(const R *Y_N)
 {

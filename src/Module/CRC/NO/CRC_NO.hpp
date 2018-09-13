@@ -12,7 +12,7 @@ class CRC_NO : public CRC<B>
 {
 public:
 	CRC_NO(const int K, const int n_frames = 1);
-	virtual ~CRC_NO();
+	virtual ~CRC_NO() = default;
 
 	int get_size() const;
 

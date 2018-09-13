@@ -52,12 +52,6 @@ Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 }
 
 template <typename B, typename R>
-Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::~Decoder_LDPC_BP_horizontal_layered_ONMS_inter()
-{
-}
-
-template <typename B, typename R>
 void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::reset()
 {

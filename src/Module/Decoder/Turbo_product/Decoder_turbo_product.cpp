@@ -115,12 +115,6 @@ Decoder_turbo_product<B,R>
 }
 
 template <typename B, typename R>
-Decoder_turbo_product<B,R>
-::~Decoder_turbo_product()
-{
-}
-
-template <typename B, typename R>
 void Decoder_turbo_product<B, R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {

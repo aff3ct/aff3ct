@@ -26,13 +26,6 @@ Decoder_SIHO_HIHO(const int K, const int N, const int n_frames, const int simd_i
 	this->set_name(name);
 }
 
-template <typename B, typename R>
-Decoder_SIHO_HIHO<B,R>::
-~Decoder_SIHO_HIHO()
-{
-
-}
-
 }
 }
 

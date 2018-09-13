@@ -37,12 +37,6 @@ Decoder_LDPC_bit_flipping_OMWBF<B,R>
 }
 
 template <typename B, typename R>
-Decoder_LDPC_bit_flipping_OMWBF<B,R>
-::~Decoder_LDPC_bit_flipping_OMWBF()
-{
-}
-
-template <typename B, typename R>
 bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
 ::BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V)
 {
@@ -66,7 +60,7 @@ bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
 			auto m = this->H.get_cols_from_row(i)[j];
 			energy[i] += (2 * synd[m] - 1) * this->Y_min[m];
 		}
-		energy[i] -= this->mwbf_factor * (R)std::abs(Y_N[i]); 
+		energy[i] -= this->mwbf_factor * (R)std::abs(Y_N[i]);
 	}
 
 	auto ind_max = 0;
@@ -82,11 +76,11 @@ bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
 	}
 	if (syndrome)
 		this->decis[ind_max] = (this->decis[ind_max] == 0)?1:0;
-	
+
 	return !syndrome;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_bit_flipping_OMWBF<B_8,Q_8>;

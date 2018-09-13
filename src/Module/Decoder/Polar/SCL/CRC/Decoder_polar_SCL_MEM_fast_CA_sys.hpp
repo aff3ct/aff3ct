@@ -34,7 +34,7 @@ public:
 	                                  const std::vector<tools::Pattern_polar_i*>& polar_patterns,
 	                                  const int idx_r0, const int idx_r1, CRC<B>& crc, const int n_frames = 1);
 
-	virtual ~Decoder_polar_SCL_MEM_fast_CA_sys(){};
+	virtual ~Decoder_polar_SCL_MEM_fast_CA_sys() = default;
 
 protected:
 	        bool crc_check       (mipp::vector<B> &s);

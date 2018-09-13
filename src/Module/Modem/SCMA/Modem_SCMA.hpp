@@ -26,7 +26,7 @@ private:
 public:
 	Modem_SCMA(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int bps = 3, const bool disable_sig2 = false,
 	           const int n_ite = 1, const int n_frames = 6);
-	virtual ~Modem_SCMA();
+	virtual ~Modem_SCMA() = default;
 
 	virtual void set_noise(const tools::Noise<R>& noise);
 

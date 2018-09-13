@@ -69,12 +69,6 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::~Decoder_LDPC_BP_flooding()
-{
-}
-
-template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::reset()
 {

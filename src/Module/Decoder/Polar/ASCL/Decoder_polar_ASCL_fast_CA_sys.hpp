@@ -35,7 +35,7 @@ public:
 	                               const int idx_r0, const int idx_r1,
 	                               CRC<B>& crc, const bool is_full_adaptive = true, const int n_frames = 1);
 
-	virtual ~Decoder_polar_ASCL_fast_CA_sys(){};
+	virtual ~Decoder_polar_ASCL_fast_CA_sys() = default;
 
 	virtual void notify_frozenbits_update();
 

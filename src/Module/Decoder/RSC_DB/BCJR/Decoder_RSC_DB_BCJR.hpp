@@ -31,7 +31,7 @@ public:
 	                    const std::vector<std::vector<int>> &trellis,
 	                    const bool buffered_encoding = true,
 	                    const int n_frames = 1);
-	virtual ~Decoder_RSC_DB_BCJR();
+	virtual ~Decoder_RSC_DB_BCJR() = default;
 
 	void notify_new_frame();
 

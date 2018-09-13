@@ -29,12 +29,6 @@ Decoder_turbo_fast<B,R>
 }
 
 template <typename B, typename R>
-Decoder_turbo_fast<B,R>
-::~Decoder_turbo_fast()
-{
-}
-
-template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
 ::_load(const R *Y_N, const int frame_id)
 {

@@ -73,12 +73,6 @@ Encoder(const int K, const int N, const int n_frames)
 }
 
 template <typename B>
-Encoder<B>::
-~Encoder()
-{
-}
-
-template <typename B>
 int Encoder<B>::
 get_K() const
 {

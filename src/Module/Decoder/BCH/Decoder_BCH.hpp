@@ -22,7 +22,7 @@ protected:
 public:
 	Decoder_BCH(const int K, const int N, const int t, const int n_frames = 1);
 
-	virtual ~Decoder_BCH();
+	virtual ~Decoder_BCH() = default;
 
 	bool get_last_is_codeword(const int frame_id = -1) const;
 };

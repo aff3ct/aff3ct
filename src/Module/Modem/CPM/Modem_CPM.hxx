@@ -94,12 +94,6 @@ Modem_CPM<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modem_CPM<B,R,Q,MAX>
-::~Modem_CPM()
-{
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
 ::set_noise(const tools::Noise<R>& noise)
 {

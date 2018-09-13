@@ -148,12 +148,6 @@ Quantizer_pow2<double, double>
 }
 }
 
-template <typename R, typename Q>
-Quantizer_pow2<R,Q>
-::~Quantizer_pow2()
-{
-}
-
 template<typename R, typename Q>
 void Quantizer_pow2<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const int frame_id)

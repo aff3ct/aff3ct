@@ -54,7 +54,7 @@ public:
 	                      Decoder_chase_pyndiah<B,R> &cp_c,
 	                      const std::vector<float>& beta = {},
 	                      const int n_frames = 1);
-	virtual ~Decoder_turbo_product();
+	virtual ~Decoder_turbo_product() = default;
 
 protected:
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);

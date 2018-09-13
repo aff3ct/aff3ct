@@ -196,14 +196,6 @@ init_processes()
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,Q>::
-~Modem()
-{
-	if (this->n != nullptr)
-		delete this->n;
-}
-
-template <typename B, typename R, typename Q>
 int Modem<B,R,Q>::
 get_N() const
 {
@@ -249,10 +241,7 @@ template <typename B, typename R, typename Q>
 void Modem<B,R,Q>::
 set_noise(const tools::Noise<R>& noise)
 {
-	if (this->n != nullptr)
-		delete this->n;
-
-	this->n = noise.clone();
+	this->n.reset(noise.clone());
 	this->check_noise();
 }
 

@@ -25,7 +25,7 @@ public:
 	                           const int n_competitors  = 0,
 	                           const std::vector<float>& cp_coef = {1,1,1,1,0}); // the a b c d and e coef
 
-	~Decoder_chase_pyndiah_fast() = default;
+	virtual ~Decoder_chase_pyndiah_fast() = default;
 
 protected:
 	virtual void compute_metrics    (const R* Y_N);

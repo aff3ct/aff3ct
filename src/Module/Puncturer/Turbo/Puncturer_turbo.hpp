@@ -24,7 +24,7 @@ public:
 	                const std::vector<std::vector<bool>> &pattern_bits,
 	                const bool buff_enc = true,
 	                const int n_frames = 1);
-	virtual ~Puncturer_turbo();
+	virtual ~Puncturer_turbo() = default;
 
 	static unsigned    get_period     (const std::vector<std::vector<bool>>& pattern_bits);
 	static unsigned    get_bit_count  (const std::vector<std::vector<bool>>& pattern_bits);

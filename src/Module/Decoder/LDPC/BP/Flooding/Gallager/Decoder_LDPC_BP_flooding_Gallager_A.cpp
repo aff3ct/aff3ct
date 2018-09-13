@@ -63,12 +63,6 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 }
 
 template <typename B, typename R>
-Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::~Decoder_LDPC_BP_flooding_Gallager_A()
-{
-}
-
-template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
