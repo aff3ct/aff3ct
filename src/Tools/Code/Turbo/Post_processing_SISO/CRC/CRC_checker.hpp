@@ -20,7 +20,7 @@ protected:
 public:
 	CRC_checker(module::CRC<B> &crc, const int start_crc_check_ite = 2, const int simd_inter_frame_level = 1);
 
-	virtual ~CRC_checker();
+	virtual ~CRC_checker() = default;
 
 	virtual bool siso_n(const int ite,
 	                    const mipp::vector<R>& sys,

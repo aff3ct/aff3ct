@@ -15,10 +15,10 @@ namespace tools
 class Statistics
 {
 protected:
-	Statistics();
+	Statistics() = default;
 
 public:
-	virtual ~Statistics();
+	virtual ~Statistics() = default;
 
 	static void show(std::vector<const module::Module*> modules, const bool ordered = false,
 	                 std::ostream &stream = std::cout);

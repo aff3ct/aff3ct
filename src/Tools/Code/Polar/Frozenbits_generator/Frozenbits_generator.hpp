@@ -38,13 +38,13 @@ public:
 	 * \param N:     codeword size (or frame size).
 	 * \param sigma: the AWGN channel sigma value.
 	 */
-	Frozenbits_generator(const int K, const int N, const float sigma = 0.f) 
+	Frozenbits_generator(const int K, const int N, const float sigma = 0.f)
 	: K(K), N(N), sigma(sigma), best_channels(N) {}
-	
+
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Frozenbits_generator() {}
+	virtual ~Frozenbits_generator() = default;
 
 	int get_K() const
 	{
@@ -90,7 +90,7 @@ public:
 
 		// init frozen_bits vector, true means frozen bits, false means information bits
 		std::fill(frozen_bits.begin(), frozen_bits.end(), true);
-		for (auto i = 0; i < K; i++) 
+		for (auto i = 0; i < K; i++)
 			frozen_bits[best_channels[i]] = false;
 	}
 

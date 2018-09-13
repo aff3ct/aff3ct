@@ -24,8 +24,3 @@ range_error
 : exception(filename, line_num, funcname, message.empty() ? default_message : message)
 {
 }
-
-range_error
-::~range_error() throw()
-{
-}

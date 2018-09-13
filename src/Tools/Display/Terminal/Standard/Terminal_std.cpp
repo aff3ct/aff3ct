@@ -29,11 +29,6 @@ Terminal_std
 {
 }
 
-Terminal_std
-::~Terminal_std()
-{
-}
-
 void Terminal_std
 ::legend(std::ostream &stream) const
 {

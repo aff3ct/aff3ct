@@ -22,12 +22,6 @@ BCH_polynomial_generator<I>
 }
 
 template <typename I>
-BCH_polynomial_generator<I>
-::~BCH_polynomial_generator()
-{
-}
-
-template <typename I>
 int BCH_polynomial_generator<I>
 ::get_d() const
 {

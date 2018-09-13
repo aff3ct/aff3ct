@@ -21,7 +21,7 @@ protected:
 
 public:
 	RS_polynomial_generator(const int& N, const int& t);
-	virtual ~RS_polynomial_generator();
+	virtual ~RS_polynomial_generator() = default;
 
 	int get_d      () const;
 	int get_t      () const; // get the correction power

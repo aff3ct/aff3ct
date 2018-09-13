@@ -25,11 +25,6 @@ Frozenbits_generator_file
 {
 }
 
-Frozenbits_generator_file
-::~Frozenbits_generator_file()
-{
-}
-
 void Frozenbits_generator_file
 ::evaluate()
 {

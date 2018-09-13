@@ -121,11 +121,6 @@ void Dumper_reduction
 	}
 }
 
-Dumper_reduction
-::~Dumper_reduction()
-{
-}
-
 void Dumper_reduction
 ::add(const int frame_id)
 {

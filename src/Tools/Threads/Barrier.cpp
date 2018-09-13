@@ -20,11 +20,6 @@ Barrier
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
-	
-Barrier
-::~Barrier()
-{
-}
 
 void Barrier
 ::operator()(const int tid)

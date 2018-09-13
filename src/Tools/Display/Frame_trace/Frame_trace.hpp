@@ -46,13 +46,6 @@ public:
 	}
 
 	/*!
-	 * \brief Destructor.
-	 */
-	~Frame_trace()
-	{
-	}
-
-	/*!
 	 * \brief Display a vector (= a frame) of bits (0 or 1).
 	 *
 	 * \tparam D: type of the bits in the input vector.

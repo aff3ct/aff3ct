@@ -21,7 +21,6 @@ public:
 	using typename Rm::M;
 	using typename Rm::report_t;
 
-
 protected:
 	const Noise<R>& noise_a;
 

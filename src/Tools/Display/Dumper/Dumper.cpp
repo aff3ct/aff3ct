@@ -18,11 +18,6 @@ Dumper
 {
 }
 
-Dumper
-::~Dumper()
-{
-}
-
 template <typename T>
 void Dumper
 ::register_data(const T *ptr, const unsigned size, const unsigned add_threshold, const std::string &file_ext,

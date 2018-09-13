@@ -54,7 +54,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Terminal_std();
+	virtual ~Terminal_std() = default;
 
 	/*!
 	 * \brief Displays the terminal_std legend.

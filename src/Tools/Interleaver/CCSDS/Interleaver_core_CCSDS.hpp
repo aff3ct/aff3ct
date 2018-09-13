@@ -12,7 +12,7 @@ class Interleaver_core_CCSDS : public Interleaver_core<T>
 {
 public:
 	Interleaver_core_CCSDS(const int size, const int n_frames = 1);
-	virtual ~Interleaver_core_CCSDS();
+	virtual ~Interleaver_core_CCSDS() = default;
 
 protected:
 	void gen_lut(T *lut, const int frame_id);

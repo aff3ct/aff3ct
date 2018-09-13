@@ -49,11 +49,6 @@ exception
 #endif
 }
 
-exception
-::~exception() throw()
-{
-}
-
 const char* exception
 ::what() const throw()
 {

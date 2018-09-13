@@ -30,11 +30,6 @@ Frozenbits_generator_TV
 {
 }
 
-Frozenbits_generator_TV
-::~Frozenbits_generator_TV()
-{
-}
-
 void Frozenbits_generator_TV
 ::evaluate()
 {

@@ -16,7 +16,7 @@ protected:
 
 public:
 	explicit Dumper_reduction(std::vector<std::unique_ptr<Dumper>> &dumpers);
-	virtual ~Dumper_reduction();
+	virtual ~Dumper_reduction() = default;
 
 	virtual void dump (const std::string& base_path);
 	virtual void add  (const int frame_id = 0      );

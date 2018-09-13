@@ -8,16 +8,6 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-Statistics
-::Statistics()
-{
-}
-
-Statistics
-::~Statistics()
-{
-}
-
 void Statistics
 ::separation1(std::ostream &stream)
 {

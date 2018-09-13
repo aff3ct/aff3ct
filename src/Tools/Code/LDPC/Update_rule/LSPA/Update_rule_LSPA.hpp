@@ -7,6 +7,7 @@
 #include <limits>
 #include <string>
 #include <cmath>
+#include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -36,7 +37,7 @@ public:
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (typeid(R) != typeid(double) && typeid(R) != typeid(float))
+		if (!std::is_same<R, double>::value && !std::is_same<R, float>::value)
 		{
 			std::stringstream message;
 			message << "The 'LSPA' update rule supports only 'float' or 'double' datatypes.";
