@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "Distribution.hpp"
@@ -22,7 +23,7 @@ public:
 	static const int saved_noise_precision;
 
 protected:
-	std::map<int, Distribution<R>*> distributions; // distributions in function of the noise power
+	std::map<int, std::unique_ptr<Distribution<R>>> distributions; // distributions in function of the noise power
 	std::ifstream f_distributions;
 
 	Distribution_mode mode;
@@ -41,7 +42,7 @@ protected:
 public:
 	explicit Distributions(const std::string& filename, Distribution_mode mode = Distribution_mode::SUMMATION, bool read_all_at_init = false);
 
-	virtual ~Distributions();
+	virtual ~Distributions() = default;
 
 	bool has_distribution(R noise) const;
 	const Distribution<R>& get_distribution(R noise) const;
@@ -53,7 +54,7 @@ protected:
 	/*
 	 * Add a distribution 'new_distribution' associated with the noise power 'noise_power'.
 	 */
-	void add_distribution(R noise, Distribution<R>* new_distribution);
+	void add_distribution(R noise, std::unique_ptr<Distribution<R>>&& new_distribution);
 	void read_noise_range();
 	void read_distribution_from_file(unsigned index);
 
