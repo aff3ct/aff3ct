@@ -48,7 +48,7 @@ public:
 	/*!
 	 * \brief Constructor.
 	 */
-	Terminal_std(std::vector<Reporter*>& reporters);
+	explicit Terminal_std(std::vector<Reporter*>& reporters);
 
 	/*!
 	 * \brief Destructor.

@@ -100,11 +100,10 @@ void Decoder_RS_std<B,R>
 				while ((discrepancy[q] == -1) && (q > 0))
 					q--;
 
-				int j;
 				// have found first non-zero discrepancy[q]
 				if (q > 0)
 				{
-					j = q;
+					int j = q;
 					do
 					{
 						j--;

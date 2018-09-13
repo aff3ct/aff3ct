@@ -33,7 +33,7 @@ protected:
 	int ite;
 
 public:
-	Update_rule_LSPA_simd(const unsigned max_chk_node_degree)
+	explicit Update_rule_LSPA_simd(const unsigned max_chk_node_degree)
 	: name("LSPA"), false_msk(false), zero((R)0), half((R)0.5), two((R)2), min(std::numeric_limits<R>::min()),
 	  epsilon1m((R)1.0 - std::numeric_limits<R>::epsilon()), values(max_chk_node_degree), sign(false), sum(zero),
 	  n_ite(0), ite(0)

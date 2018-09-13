@@ -32,7 +32,7 @@ protected:
 	int ite;
 
 public:
-	Update_rule_SPA_simd(const unsigned max_chk_node_degree)
+	explicit Update_rule_SPA_simd(const unsigned max_chk_node_degree)
 	: name("SPA"), false_msk(false), one((R)1), half((R)0.5), two((R)2),
 	  epsilon1m((R)1.0 - std::numeric_limits<R>::epsilon()), values(max_chk_node_degree), sign(false), product(one),
 	  n_ite(0), ite(0)

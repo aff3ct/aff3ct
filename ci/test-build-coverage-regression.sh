@@ -27,10 +27,6 @@ function gen_coverage_info
 	local folder=$2
 	for path in $folder/*
 	do [ -f $path ] && {
-		if [ ${path: -3} == ".py" ]; then
-			continue
-		fi
-
 		cmd=$(awk -F "=" '/command/ {print $2}' $path)
 		echo $cmd
 		ci=$(awk -F "=" '/ci/ {print $2}' $path)
@@ -44,7 +40,7 @@ function gen_coverage_info
 		fi
 	} || {
 		[ -d $path ] && {
-			if [ ${path: -11} == "__pycache__" ]; then
+			if [ ${path: -7} == "readers" ]; then
 				continue
 			fi
 			gen_coverage_info $build $path
