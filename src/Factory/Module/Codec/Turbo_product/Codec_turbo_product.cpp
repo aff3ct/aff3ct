@@ -15,10 +15,11 @@ Codec_turbo_product::parameters
   Codec_SISO_SIHO::parameters(Codec_turbo_product_name, prefix)
 {
 	auto enc_t = new Encoder_turbo_product::parameters("enc");
+	auto dec_t = new Decoder_turbo_product::parameters("dec");
 	Codec::parameters::set_enc(enc_t);
-	Codec::parameters::set_dec(new Decoder_turbo_product::parameters("dec"));
+	Codec::parameters::set_dec(dec_t);
 	Codec::parameters::set_itl(std::move(enc_t->itl));
-	// delete dec->itl; dec->itl = enc->itl;
+	dec_t->itl = nullptr;
 }
 
 Codec_turbo_product::parameters* Codec_turbo_product::parameters
@@ -44,6 +45,17 @@ void Codec_turbo_product::parameters
 	args.erase({pdes+"-info-bits", "K"});
 	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-ext",          });
+
+
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
+
+		auto pi = itl->get_prefix();
+
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 }
 
 void Codec_turbo_product::parameters
@@ -63,6 +75,23 @@ void Codec_turbo_product::parameters
 
 	dec->store(vals);
 
+	if (itl != nullptr)
+	{
+		itl->core->n_frames = enc_tur->n_frames;
+		itl->core->type     = "ROW_COL";
+
+		if (enc_tur->parity_extended)
+			itl->core->n_cols = enc_tur->sub->N_cw +1;
+		else
+			itl->core->n_cols = enc_tur->sub->N_cw;
+
+		itl->core->size = itl->core->n_cols * itl->core->n_cols;
+		enc->N_cw = itl->core->size;
+		dec->N_cw = itl->core->size;
+
+		itl->store(vals);
+	}
+
 	K    = enc->K;
 	N_cw = enc->N_cw;
 	N    = enc->N_cw;
@@ -74,6 +103,9 @@ void Codec_turbo_product::parameters
 	Codec_SIHO::parameters::get_headers(headers, full);
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
+
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 }
 
 template <typename B, typename Q>
@@ -81,7 +113,8 @@ module::Codec_turbo_product<B,Q>* Codec_turbo_product::parameters
 ::build(module::CRC<B> *crc) const
 {
 	return new module::Codec_turbo_product<B,Q>(dynamic_cast<const Encoder_turbo_product::parameters&>(*enc),
-	                                            dynamic_cast<const Decoder_turbo_product::parameters&>(*dec));
+	                                            dynamic_cast<const Decoder_turbo_product::parameters&>(*dec),
+	                                            *itl);
 }
 
 

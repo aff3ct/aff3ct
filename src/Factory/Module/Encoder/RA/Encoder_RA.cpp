@@ -52,10 +52,15 @@ void Encoder_RA::parameters
 {
 	Encoder::parameters::get_description(args);
 
-	this->itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	args.erase({"itl-size"    });
-	args.erase({"itl-fra", "F"});
+		auto pi = itl->get_prefix();
+
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
 	auto p = this->get_prefix();
 
@@ -67,10 +72,13 @@ void Encoder_RA::parameters
 {
 	Encoder::parameters::store(vals);
 
-	this->itl->core->size     = this->N_cw;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->N_cw;
+		this->itl->core->n_frames = this->n_frames;
 
-	this->itl->store(vals);
+		this->itl->store(vals);
+	}
 }
 
 void Encoder_RA::parameters
@@ -78,7 +86,8 @@ void Encoder_RA::parameters
 {
 	Encoder::parameters::get_headers(headers, full);
 
-	this->itl->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 }
 
 template <typename B>

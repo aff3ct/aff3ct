@@ -60,12 +60,15 @@ void Encoder_turbo_DB::parameters
 
 	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = itl->get_prefix();
+		auto pi = itl->get_prefix();
 
-	args.erase({pi+"-size"    });
-	args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
 	tools::add_options(args.at({p+"-type"}), 0, "TURBO_DB");
 
@@ -100,16 +103,19 @@ void Encoder_turbo_DB::parameters
 	this->N_cw = 2 * this->sub->N_cw - this->K;
 	this->R    = (float)this->K / (float)this->N_cw;
 
-	this->itl->core->size     = this->K >> 1;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->K >> 1;
+		this->itl->core->n_frames = this->n_frames;
 
-	itl->store(vals);
+		itl->store(vals);
 
-	if (this->sub->standard == "DVB-RCS1" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "DVB-RCS1";
+		if (this->sub->standard == "DVB-RCS1" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "DVB-RCS1";
 
-	if (this->sub->standard == "DVB-RCS2" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "DVB-RCS2";
+		if (this->sub->standard == "DVB-RCS2" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "DVB-RCS2";
+	}
 }
 
 void Encoder_turbo_DB::parameters
@@ -117,7 +123,8 @@ void Encoder_turbo_DB::parameters
 {
 	Encoder::parameters::get_headers(headers, full);
 
-	itl->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 
 	auto p = this->get_prefix();
 

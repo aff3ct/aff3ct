@@ -16,10 +16,11 @@ Codec_turbo::parameters
   Codec_SIHO::parameters(Codec_turbo_name, prefix)
 {
 	auto enc_t = new Encoder_turbo::parameters<>("enc");
+	auto dec_t = new Decoder_turbo::parameters<>("dec");
 	Codec::parameters::set_enc(enc_t);
-	Codec::parameters::set_dec(new Decoder_turbo::parameters<>("dec"));
+	Codec::parameters::set_dec(dec_t);
 	Codec::parameters::set_itl(std::move(enc_t->itl));
-	// delete dec->itl; dec->itl = enc->itl;
+	dec_t->itl = nullptr;
 }
 
 Codec_turbo::parameters* Codec_turbo::parameters
@@ -66,6 +67,17 @@ void Codec_turbo::parameters
 	args.erase({pdes+"-poly"          });
 	args.erase({pdes+"-std"           });
 	args.erase({pdec+"-json"          });
+
+
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
+
+		auto pi = itl->get_prefix();
+
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 }
 
 void Codec_turbo::parameters
@@ -113,6 +125,20 @@ void Codec_turbo::parameters
 	N_cw        = enc->N_cw;
 	N           = pct != nullptr ? pct->N : enc->N_cw;
 	tail_length = enc->tail_length;
+
+	if (itl != nullptr)
+	{
+		itl->core->size     = enc->K;
+		itl->core->n_frames = enc->n_frames;
+
+		itl->store(vals);
+
+		if (enc_tur->sub1->standard == "LTE" && !vals.exist({"itl-type"}))
+			itl->core->type = "LTE";
+
+		if (enc_tur->sub1->standard == "CCSDS" && !vals.exist({"itl-type"}))
+			itl->core->type = "CCSDS";
+	}
 }
 
 void Codec_turbo::parameters
@@ -123,6 +149,8 @@ void Codec_turbo::parameters
 	dec->get_headers(headers, full);
 	if (pct != nullptr)
 		pct->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 }
 
 template <typename B, typename Q>
@@ -131,6 +159,7 @@ module::Codec_turbo<B,Q>* Codec_turbo::parameters
 {
 	return new module::Codec_turbo<B,Q>(dynamic_cast<const Encoder_turbo  ::parameters<>&>(*enc),
 	                                    dynamic_cast<const Decoder_turbo  ::parameters<>&>(*dec),
+	                                    *itl,
 	                                    dynamic_cast<const Puncturer_turbo::parameters*  >(pct.get()),
 	                                    crc);
 }

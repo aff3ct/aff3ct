@@ -55,12 +55,15 @@ void Decoder_RA::parameters
 
 	auto p = this->get_prefix();
 
-	itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = itl->get_prefix();
+		auto pi = itl->get_prefix();
 
-	args.erase({pi+"-size"    });
-	args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "RA");
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
@@ -78,10 +81,13 @@ void Decoder_RA::parameters
 
 	auto p = this->get_prefix();
 
-	this->itl->core->size     = this->N_cw;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->N_cw;
+		this->itl->core->n_frames = this->n_frames;
 
-	itl->store(vals);
+		itl->store(vals);
+	}
 
 	if(vals.exist({p+"-ite", "i"})) this->n_ite = vals.to_int({p+"-ite", "i"});
 }
@@ -91,7 +97,8 @@ void Decoder_RA::parameters
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	itl->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 
 	if (this->type != "ML" && this->type != "CHASE")
 	{

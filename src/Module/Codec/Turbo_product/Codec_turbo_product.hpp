@@ -33,7 +33,8 @@ protected:
 
 public:
 	Codec_turbo_product(const factory::Encoder_turbo_product::parameters &enc_params,
-	                    const factory::Decoder_turbo_product::parameters &dec_params);
+	                    const factory::Decoder_turbo_product::parameters &dec_params,
+	                    const factory::Interleaver          ::parameters &itl_params);
 	virtual ~Codec_turbo_product() = default;
 };
 }

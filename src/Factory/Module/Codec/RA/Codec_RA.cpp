@@ -14,11 +14,12 @@ Codec_RA::parameters
 : Codec     ::parameters(Codec_RA_name, prefix),
   Codec_SIHO::parameters(Codec_RA_name, prefix)
 {
-	auto enc_ra = new Encoder_RA::parameters("enc");
-	Codec::parameters::set_enc(enc_ra);
-	Codec::parameters::set_dec(new Decoder_RA::parameters("dec"));
-	Codec::parameters::set_itl(std::move(enc_ra->itl));
-	// delete dec->itl; dec->itl = enc->itl;
+	auto enc_t = new Encoder_RA::parameters("enc");
+	auto dec_t = new Decoder_RA::parameters("dec");
+	Codec::parameters::set_enc(enc_t);
+	Codec::parameters::set_dec(dec_t);
+	Codec::parameters::set_itl(std::move(enc_t->itl));
+	dec_t->itl = nullptr;
 }
 
 Codec_RA::parameters* Codec_RA::parameters
@@ -40,6 +41,16 @@ void Codec_RA::parameters
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
 	args.erase({pdec+"-fra",       "F"});
+
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
+
+		auto pi = itl->get_prefix();
+
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 }
 
 void Codec_RA::parameters
@@ -54,13 +65,23 @@ void Codec_RA::parameters
 	dec_ra->K                   = enc->K;
 	dec_ra->N_cw                = enc->N_cw;
 	dec_ra->n_frames            = enc->n_frames;
-	dec_ra->itl->core->n_frames = enc->n_frames;
+
+	if (dec_ra->itl != nullptr)
+		dec_ra->itl->core->n_frames = enc->n_frames;
 
 	dec->store(vals);
 
 	K    = enc->K;
 	N_cw = enc->N_cw;
 	N    = enc->N_cw;
+
+	if (itl != nullptr)
+	{
+		itl->core->size     = dec_ra->N_cw;
+		itl->core->n_frames = dec_ra->n_frames;
+
+		itl->store(vals);
+	}
 }
 
 void Codec_RA::parameters
@@ -77,7 +98,8 @@ module::Codec_RA<B,Q>* Codec_RA::parameters
 ::build(module::CRC<B> *crc) const
 {
 	return new module::Codec_RA<B,Q>(dynamic_cast<const Encoder_RA::parameters&>(*enc),
-	                                 dynamic_cast<const Decoder_RA::parameters&>(*dec));
+	                                 dynamic_cast<const Decoder_RA::parameters&>(*dec),
+	                                 *itl);
 }
 
 template <typename B, typename Q>

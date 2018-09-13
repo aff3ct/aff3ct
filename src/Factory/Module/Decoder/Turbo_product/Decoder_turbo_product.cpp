@@ -78,12 +78,15 @@ void Decoder_turbo_product::parameters
 	args.erase({p+"-info-bits", "K"});
 	args.erase({p+"-cw-size",   "N"});
 
-	itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = this->itl->get_prefix();
+		auto pi = this->itl->get_prefix();
 
-	args.erase({pi+"-size"    });
-	args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "CP");
 	tools::add_options(args.at({p+"-implem"   }), 0, "FAST");
@@ -202,18 +205,21 @@ void Decoder_turbo_product::parameters
 
 	this->R = (float)this->K / (float)this->N_cw;
 
-	this->itl->core->n_frames = this->n_frames;
-	this->itl->core->type     = "ROW_COL";
+	if (itl != nullptr)
+	{
+		this->itl->core->n_frames = this->n_frames;
+		this->itl->core->type     = "ROW_COL";
 
-	if (parity_extended)
-		this->itl->core->n_cols = this->sub->N_cw +1;
-	else
-		this->itl->core->n_cols = this->sub->N_cw;
+		if (parity_extended)
+			this->itl->core->n_cols = this->sub->N_cw +1;
+		else
+			this->itl->core->n_cols = this->sub->N_cw;
 
-	this->itl->core->size = this->itl->core->n_cols * this->itl->core->n_cols;
-	this->N_cw = this->itl->core->size;
+		this->itl->core->size = this->itl->core->n_cols * this->itl->core->n_cols;
+		this->N_cw = this->itl->core->size;
 
-	itl->store(vals);
+		itl->store(vals);
+	}
 }
 
 void Decoder_turbo_product::parameters
@@ -225,7 +231,8 @@ void Decoder_turbo_product::parameters
 	{
 		auto p = this->get_prefix();
 
-		itl->get_headers(headers, full);
+		if (itl != nullptr)
+			itl->get_headers(headers, full);
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(n_ite)));
 

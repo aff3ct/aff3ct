@@ -79,12 +79,15 @@ void Decoder_turbo::parameters<D1,D2>
 
 	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = itl->get_prefix();
+		auto pi = itl->get_prefix();
 
-	args.erase({pi+"-size"    });
-	args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO"      );
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
@@ -169,16 +172,19 @@ void Decoder_turbo::parameters<D1,D2>
 	this->N_cw        = this->sub1->N_cw + this->sub2->N_cw - this->K;
 	this->R           = (float)this->K / (float)this->N_cw;
 
-	this->itl->core->size     = this->K;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->K;
+		this->itl->core->n_frames = this->n_frames;
 
-	itl->store(vals);
+		itl->store(vals);
 
-	if (this->sub1->standard == "LTE" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "LTE";
+		if (this->sub1->standard == "LTE" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "LTE";
 
-	if (this->sub1->standard == "CCSDS" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "CCSDS";
+		if (this->sub1->standard == "CCSDS" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "CCSDS";
+	}
 
 	this->sf->n_ite = this->n_ite;
 
@@ -197,7 +203,8 @@ void Decoder_turbo::parameters<D1,D2>
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	itl->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 
 	if (this->type != "ML" && this->type != "CHASE")
 	{

@@ -71,12 +71,16 @@ void Encoder_turbo::parameters<E1,E2>
 
 	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = itl->get_prefix();
+		auto pi = itl->get_prefix();
 
-	args.erase({pi+"-size"    });
-	args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+
+	}
 
 	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
 
@@ -139,16 +143,19 @@ void Encoder_turbo::parameters<E1,E2>
 	this->N_cw        = this->sub1->N_cw + this->sub2->N_cw - this->K;
 	this->R           = (float)this->K / (float)this->N_cw;
 
-	this->itl->core->size     = this->K;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->K;
+		this->itl->core->n_frames = this->n_frames;
 
-	itl->store(vals);
+		itl->store(vals);
 
-	if (this->sub1->standard == "LTE" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "LTE";
+		if (this->sub1->standard == "LTE" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "LTE";
 
-	if (this->sub1->standard == "CCSDS" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "CCSDS";
+		if (this->sub1->standard == "CCSDS" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "CCSDS";
+	}
 }
 
 template <class E1, class E2>
@@ -157,7 +164,8 @@ void Encoder_turbo::parameters<E1,E2>
 {
 	Encoder::parameters::get_headers(headers, full);
 
-	itl->get_headers(headers);
+	if (itl != nullptr)
+		itl->get_headers(headers);
 
 	auto p = this->get_prefix();
 

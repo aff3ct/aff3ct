@@ -21,6 +21,7 @@ template <typename B, typename Q>
 Codec_turbo_DB<B,Q>
 ::Codec_turbo_DB(const factory::Encoder_turbo_DB  ::parameters &enc_params,
                  const factory::Decoder_turbo_DB  ::parameters &dec_params,
+                 const factory::Interleaver       ::parameters &itl_params,
                  const factory::Puncturer_turbo_DB::parameters *pct_params,
                  CRC<B>* crc)
 : Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
@@ -59,7 +60,7 @@ Codec_turbo_DB<B,Q>
 	trellis = encoder_RSC->get_trellis();
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	this->set_interleaver(factory::Interleaver_core::build<>(*enc_params.itl->core));
+	this->set_interleaver(factory::Interleaver_core::build<>(*itl_params.core));
 
 
 	if (pct_params)

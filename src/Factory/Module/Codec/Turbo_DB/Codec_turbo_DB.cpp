@@ -12,10 +12,11 @@ Codec_turbo_DB::parameters
   Codec_SIHO::parameters(Codec_turbo_DB_name, prefix)
 {
 	auto enc_t = new Encoder_turbo_DB::parameters("enc");
+	auto dec_t = new Decoder_turbo_DB::parameters("dec");
 	Codec::parameters::set_enc(enc_t);
-	Codec::parameters::set_dec(new Decoder_turbo_DB::parameters("dec"));
+	Codec::parameters::set_dec(dec_t);
 	Codec::parameters::set_itl(std::move(enc_t->itl));
-	// delete dec->itl; dec->itl = enc->itl;
+	dec_t->itl = nullptr;
 }
 
 Codec_turbo_DB::parameters* Codec_turbo_DB::parameters
@@ -63,6 +64,17 @@ void Codec_turbo_DB::parameters
 	args.erase({pdes+"-no-buff"       });
 	args.erase({pdes+"-std"           });
 	args.erase({pdec+"-json"          });
+
+
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
+
+		auto pi = itl->get_prefix();
+
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 }
 
 void Codec_turbo_DB::parameters
@@ -97,10 +109,26 @@ void Codec_turbo_DB::parameters
 
 	if (!enc_tur->sub->standard.empty() && !vals.exist({pdes+"-implem"}))
 		dec_tur->sub->implem = enc_tur->sub->standard;
+	enc_tur->sub->standard = dec_tur->sub->implem;
 
 	K    = enc->K;
 	N_cw = enc->N_cw;
 	N    = pct != nullptr ? pct->N : enc->N_cw;
+
+
+	if (itl != nullptr)
+	{
+		itl->core->size     = enc->K >> 1;
+		itl->core->n_frames = enc->n_frames;
+
+		itl->store(vals);
+
+		if (dec_tur->sub->implem == "DVB-RCS1" && !vals.exist({"itl-type"}))
+			itl->core->type = "DVB-RCS1";
+
+		if (dec_tur->sub->implem == "DVB-RCS2" && !vals.exist({"itl-type"}))
+			itl->core->type = "DVB-RCS2";
+	}
 }
 
 void Codec_turbo_DB::parameters
@@ -112,6 +140,8 @@ void Codec_turbo_DB::parameters
 	dec->get_headers(headers, full);
 	if (pct != nullptr)
 		pct->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 }
 
 template <typename B, typename Q>
@@ -120,6 +150,7 @@ module::Codec_turbo_DB<B,Q>* Codec_turbo_DB::parameters
 {
 	return new module::Codec_turbo_DB<B,Q>(dynamic_cast<const Encoder_turbo_DB  ::parameters&>(*enc),
 	                                       dynamic_cast<const Decoder_turbo_DB  ::parameters&>(*dec),
+	                                       *itl,
 	                                       dynamic_cast<const Puncturer_turbo_DB::parameters*>(pct.get()),
 	                                       crc);
 }

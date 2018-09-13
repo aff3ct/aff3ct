@@ -70,12 +70,15 @@ void Decoder_turbo_DB::parameters
 
 	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = this->itl->get_prefix();
+		auto pi = this->itl->get_prefix();
 
-	args.erase({pi+"-size"    });
-	args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO_DB");
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
@@ -125,16 +128,19 @@ void Decoder_turbo_DB::parameters
 	this->N_cw = 2 * this->sub->N_cw - this->K;
 	this->R    = (float)this->K / (float)this->N_cw;
 
-	this->itl->core->size     = this->K >> 1;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->K >> 1;
+		this->itl->core->n_frames = this->n_frames;
 
-	itl->store(vals);
+		itl->store(vals);
 
-	if (this->sub->implem == "DVB-RCS1" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "DVB-RCS1";
+		if (this->sub->implem == "DVB-RCS1" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "DVB-RCS1";
 
-	if (this->sub->implem == "DVB-RCS2" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "DVB-RCS2";
+		if (this->sub->implem == "DVB-RCS2" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "DVB-RCS2";
+	}
 
 	this->sf->n_ite = this->n_ite;
 
@@ -156,7 +162,8 @@ void Decoder_turbo_DB::parameters
 	{
 		auto p = this->get_prefix();
 
-		itl->get_headers(headers, full);
+		if (itl != nullptr)
+			itl->get_headers(headers, full);
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
 		if (this->tail_length && full)

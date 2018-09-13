@@ -73,7 +73,7 @@ void Codec_LDPC::parameters
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 
-	auto enc_ldpc = dynamic_cast<Encoder_LDPC::parameters*>(dec.get());
+	auto enc_ldpc = dynamic_cast<Encoder_LDPC::parameters*>(enc.get());
 	auto dec_ldpc = dynamic_cast<Decoder_LDPC::parameters*>(dec.get());
 
 	enc->store(vals);

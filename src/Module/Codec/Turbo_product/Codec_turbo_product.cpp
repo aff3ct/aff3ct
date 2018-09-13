@@ -12,7 +12,8 @@ using namespace aff3ct::module;
 template <typename B, typename Q>
 Codec_turbo_product<B,Q>
 ::Codec_turbo_product(const factory::Encoder_turbo_product::parameters &enc_params,
-                      const factory::Decoder_turbo_product::parameters &dec_params)
+                      const factory::Decoder_turbo_product::parameters &dec_params,
+                      const factory::Interleaver          ::parameters &itl_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
   GF_poly(dec_params.sub->N_cw, dec_params.sub->t)
@@ -69,7 +70,7 @@ Codec_turbo_product<B,Q>
 	pctno_params.n_frames = enc_params.n_frames;
 
 	this->set_puncturer  (factory::Puncturer::build<B,Q>(pctno_params));
-	this->set_interleaver(factory::Interleaver_core::build<>(*dec_params.itl->core));
+	this->set_interleaver(factory::Interleaver_core::build<>(*itl_params.core));
 
 	int N_cw_p = enc_params.sub->N_cw + (dec_params.parity_extended ? 1 : 0);
 	enc_params.sub->n_frames = N_cw_p;
