@@ -175,6 +175,8 @@
 #include <Module/Decoder/Generic/ML/Decoder_maximum_likelihood.hpp>
 #include <Module/Decoder/Generic/ML/Decoder_maximum_likelihood_naive.hpp>
 #include <Module/Decoder/Generic/ML/Decoder_maximum_likelihood_std.hpp>
+#include <Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping.hpp>
+#include <Module/Decoder/LDPC/BF/OMWBF/Decoder_LDPC_bit_flipping_OMWBF.hpp>
 #include <Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_inter.hpp>
@@ -382,6 +384,7 @@
 #include <Tools/Arguments/Types/Number/Integer.hpp>
 #include <Tools/Arguments/Types/Number/Real.hpp>
 #include <Tools/Arguments/utilities.hpp>
+#include <Tools/auto_cloned_unique_ptr.hpp>
 #include <Tools/Code/BCH/BCH_polynomial_generator.hpp>
 #include <Tools/Code/LDPC/AList/AList.hpp>
 #include <Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp>
