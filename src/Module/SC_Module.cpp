@@ -39,7 +39,8 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 		case socket_t::SIN:
 			indirect_sockets_in[i] = id_in;
 			indirect_sockets_in_rev.push_back(i);
-			sockets_in.push_back(new tlm_utils::simple_target_socket<SC_Module>(name.c_str()));
+			sockets_in.push_back(std::unique_ptr<tlm_utils::simple_target_socket<SC_Module>>(
+			                          new tlm_utils::simple_target_socket<SC_Module>(name.c_str())));
 			ptr_input_sockets.push_back(s);
 			switch (ptr_input_sockets.size())
 			{
@@ -60,7 +61,8 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 		case socket_t::SOUT:
 			indirect_sockets_out[i] = id_out;
 			indirect_sockets_out_rev.push_back(i);
-			sockets_out.push_back(new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str()));
+			sockets_out.push_back(std::unique_ptr<tlm_utils::simple_initiator_socket<SC_Module>>(
+			                          new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str())));
 			if (!is_inputs)
 				SC_THREAD(start_sc_thread);
 			break;
@@ -68,7 +70,8 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 		case socket_t::SIN_SOUT:
 			indirect_sockets_in[i] = id_in;
 			indirect_sockets_in_rev.push_back(i);
-			sockets_in.push_back(new tlm_utils::simple_target_socket<SC_Module>(name.c_str()));
+			sockets_in.push_back(std::unique_ptr<tlm_utils::simple_target_socket<SC_Module>>(
+			                          new tlm_utils::simple_target_socket<SC_Module>(name.c_str())));
 			ptr_input_sockets.push_back(s);
 			switch (ptr_input_sockets.size())
 			{
@@ -86,7 +89,8 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 			}
 			indirect_sockets_out[i] = id_out;
 			indirect_sockets_out_rev.push_back(i);
-			sockets_out.push_back(new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str()));
+			sockets_out.push_back(std::unique_ptr<tlm_utils::simple_initiator_socket<SC_Module>>(
+			                          new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str())));
 			break;
 
 		default:

@@ -25,10 +25,10 @@ class SC_Socket_in
 {
 	friend SC_Module;
 protected:
-	std::vector<tlm_utils::simple_target_socket<C>*> &sockets;
+	std::vector<std::unique_ptr<tlm_utils::simple_target_socket<C>>> &sockets;
 	const Task &task;
 	const std::vector<int> &indirect_sockets;
-	SC_Socket_in(std::vector<tlm_utils::simple_target_socket<C>*> &sockets,
+	SC_Socket_in(std::vector<std::unique_ptr<tlm_utils::simple_target_socket<C>>> &sockets,
 	             const Task &task, const std::vector<int> &indirect_sockets)
 	: sockets(sockets), task(task), indirect_sockets(indirect_sockets) {}
 public:
@@ -44,10 +44,10 @@ class SC_Socket_out
 {
 	friend SC_Module;
 protected:
-	std::vector<tlm_utils::simple_initiator_socket<C>*> &sockets;
+	std::vector<std::unique_ptr<tlm_utils::simple_initiator_socket<C>>> &sockets;
 	const Task &task;
 	const std::vector<int> &indirect_sockets;
-	SC_Socket_out(std::vector<tlm_utils::simple_initiator_socket<C>*> &sockets,
+	SC_Socket_out(std::vector<std::unique_ptr<tlm_utils::simple_initiator_socket<C>>> &sockets,
 	              const Task &task, const std::vector<int> &indirect_sockets)
 	: sockets(sockets), task(task), indirect_sockets(indirect_sockets) {}
 public:
