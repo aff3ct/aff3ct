@@ -37,23 +37,14 @@ Pattern_polar_parser
                        const std::vector<Pattern_polar_i*> &patterns,
                        const int pattern_rate0_id,
                        const int pattern_rate1_id)
-: N(N),
-  m((int)std::log2(N)),
-  frozen_bits(frozen_bits),
-  patterns(patterns),
-  pattern_rate0(patterns[pattern_rate0_id]),
-  pattern_rate1(patterns[pattern_rate1_id]),
-  polar_tree(new Binary_tree<Pattern_polar_i>(m +1)),
-  pattern_types(),
-  leaves_pattern_types()
+: Pattern_polar_parser(N, frozen_bits, patterns, patterns[pattern_rate0_id], patterns[pattern_rate1_id])
 {
-	this->recursive_allocate_nodes_patterns(this->polar_tree->get_root());
-	this->generate_nodes_indexes           (this->polar_tree->get_root());
 }
 
 Pattern_polar_parser
 ::~Pattern_polar_parser()
 {
+	release_patterns();
 	this->recursive_deallocate_nodes_patterns(this->polar_tree->get_root());
 	delete polar_tree;
 }
@@ -167,7 +158,7 @@ void Pattern_polar_parser
 ::release_patterns() const
 {
 	for (auto i = 0; i < (int)patterns.size(); i++)
-		if (patterns[i] != pattern_rate0 && patterns[i] != pattern_rate1)
+		if (patterns[i] != nullptr && patterns[i] != pattern_rate0 && patterns[i] != pattern_rate1)
 			delete patterns[i];
 
 	delete pattern_rate0;

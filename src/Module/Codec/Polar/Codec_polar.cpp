@@ -18,7 +18,10 @@ Codec_polar<B,Q>
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   adaptive_fb(fb_params.sigma == -1.f),
   frozen_bits(fb_params.N_cw, true),
-  generated_decoder((dec_params.implem.find("_SNR") != std::string::npos))
+  generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
+  puncturer_shortlast(nullptr),
+  fb_decoder(nullptr),
+  fb_encoder(nullptr)
 {
 	const std::string name = "Codec_polar";
 	this->set_name(name);
@@ -142,7 +145,7 @@ template <typename B, typename Q>
 void Codec_polar<B,Q>
 ::notify_frozenbits_update()
 {
-	if (this->N_cw != this->N)
+	if (this->N_cw != this->N && puncturer_shortlast)
 		puncturer_shortlast->gen_frozen_bits(frozen_bits);
 	if (this->fb_decoder)
 		this->fb_decoder->notify_frozenbits_update();

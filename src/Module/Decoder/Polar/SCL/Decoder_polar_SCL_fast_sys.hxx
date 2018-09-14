@@ -234,7 +234,6 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::~Decoder_polar_SCL_fast_sys()
 {
-	polar_patterns.release_patterns();
 }
 
 template <typename B, typename R, class API_polar>

@@ -72,7 +72,7 @@ public:
 	                     const int pattern_rate1_id);
 
 	/*!
-	 * \brief Destructor.
+	 * \brief Destructor. call release_patterns()
 	 */
 	virtual ~Pattern_polar_parser();
 
@@ -147,11 +147,6 @@ public:
 		return false;
 	}
 
-	/*!
-	 * \brief Release the polar patterns given in the constructor.
-	 */
-	void release_patterns() const;
-
 private:
 	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_polar_i>* node_curr);
 	void generate_nodes_indexes             (const Binary_node<Pattern_polar_i>* node_curr);
@@ -159,6 +154,11 @@ private:
 
 	void operator=(Pattern_polar_parser&) = delete;
 	Pattern_polar_parser(Pattern_polar_parser&) = delete;
+
+	/*!
+	 * \brief Release the polar patterns given in the constructor.
+	 */
+	void release_patterns() const;
 };
 }
 }
