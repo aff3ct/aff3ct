@@ -61,7 +61,7 @@ function check_valgrind
 
 compile "${build_root}"
 cd ${WD}
-check_valgrind "${build_root}" "refs/POLAR/AWGN/BPSK/SCL"
+check_valgrind "${build_root}" "refs"
 
 COUNT=$(wc -l < ${log_file} )
 
