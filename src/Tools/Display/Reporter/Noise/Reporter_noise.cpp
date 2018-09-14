@@ -168,7 +168,7 @@ Reporter::report_t Reporter_noise<R>
 		}
 		case Noise_type::ROP :
 		{
-			stream << std::setprecision(2) << std::fixed << get_noise_ptr()->get_noise();
+			stream << std::setprecision(4) << std::fixed << get_noise_ptr()->get_noise();
 			break;
 		}
 		case Noise_type::EP :
