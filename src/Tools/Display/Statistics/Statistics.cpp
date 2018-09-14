@@ -181,9 +181,9 @@ void Statistics
 	std::vector<const module::Task*> tasks;
 	for (auto& m : modules)
 		if (m != nullptr)
-			for (auto *t : m->tasks)
+			for (auto& t : m->tasks)
 				if (t->get_n_calls())
-					tasks.push_back(t);
+					tasks.push_back(t.get());
 
 	Statistics::show(tasks, ordered, stream);
 }
@@ -296,7 +296,7 @@ void Statistics
 			{
 				std::vector<const module::Task*> tsk;
 				for (auto& m : vm)
-					tsk.push_back(m->tasks[t]);
+					tsk.push_back(m->tasks[t].get());
 				tasks.push_back(tsk);
 			}
 		}

@@ -24,7 +24,7 @@ void Simulation
 	_build_communication_chain();
 
 	for (auto &m : modules)
-		for (auto mm : m.second)
+		for (auto& mm : m.second)
 			if (mm != nullptr)
 				for (auto &t : mm->tasks)
 				{

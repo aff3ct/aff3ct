@@ -260,7 +260,7 @@ void BFER<B,R,Q>
 			break;
 
 		for (auto &m : modules)
-			for (auto mm : m.second)
+			for (auto& mm : m.second)
 				if (mm != nullptr)
 					for (auto &t : mm->tasks)
 						t->reset_stats();

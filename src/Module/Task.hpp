@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <memory>
 
 #include <map>
 #include <chrono>
@@ -61,7 +62,7 @@ protected:
 	std::vector<socket_t> socket_type;
 
 public:
-	std::vector<Socket*> sockets;
+	std::vector<std::shared_ptr<Socket>> sockets;
 
 	Task(const Module &module,
 	     const std::string &name,
@@ -71,7 +72,7 @@ public:
 	     const bool fast      = false,
 	     const bool debug     = false);
 
-	virtual ~Task();
+	virtual ~Task() = default;
 
 	void reset_stats();
 

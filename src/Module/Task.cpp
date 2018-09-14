@@ -32,16 +32,6 @@ Task::Task(const Module &module, const std::string &name, const bool autoalloc, 
 {
 }
 
-Task::~Task()
-{
-	for (size_t i = 0; i < sockets.size(); i++)
-		if (sockets[i] != nullptr)
-		{
-			delete sockets[i];
-			sockets[i] = nullptr;
-		}
-}
-
 void Task::set_autoalloc(const bool autoalloc)
 {
 	if (autoalloc != this->autoalloc)
@@ -51,13 +41,13 @@ void Task::set_autoalloc(const bool autoalloc)
 		if (!autoalloc)
 		{
 			this->out_buffers.clear();
-			for (auto *s : sockets)
+			for (auto& s : sockets)
 				if (get_socket_type(*s) == socket_t::SOUT)
 					s->dataptr = nullptr;
 		}
 		else
 		{
-			for (auto *s : sockets)
+			for (auto& s : sockets)
 				if (get_socket_type(*s) == socket_t::SOUT)
 				{
 					out_buffers.push_back(mipp::vector<uint8_t>(s->databytes));
@@ -214,7 +204,7 @@ int Task::exec()
 			}
 			std::cout << ")" << std::endl;
 
-			for (auto *s : sockets)
+			for (auto& s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
 				if (s_type == socket_t::SIN || s_type == socket_t::SIN_SOUT)
@@ -264,7 +254,7 @@ int Task::exec()
 		if (debug)
 		{
 			auto n_fra = (size_t)this->module.get_n_frames();
-			for (auto *s : sockets)
+			for (auto& s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
 				if (s_type == socket_t::SOUT || s_type == socket_t::SIN_SOUT)
@@ -322,11 +312,11 @@ Socket& Task::create_socket(const std::string &name, const size_t n_elmts)
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-	auto *s = new Socket(*this, name, typeid(T), n_elmts * sizeof(T), this->is_fast());
+	auto s = std::make_shared<Socket>(*this, name, typeid(T), n_elmts * sizeof(T), this->is_fast());
 
-	sockets.push_back(s);
+	sockets.push_back(std::move(s));
 
-	return *s;
+	return *sockets.back();
 }
 
 template <typename T>
@@ -361,7 +351,7 @@ Socket& Task::create_socket_out(const std::string &name, const size_t n_elmts)
 	// memory allocation
 	if (is_autoalloc())
 	{
-		out_buffers.push_back(mipp::vector<uint8_t>(s.databytes));
+		out_buffers.push_back(mipp::vector<uint8_t>(s.get_databytes()));
 		s.dataptr = out_buffers.back().data();
 	}
 
@@ -429,11 +419,11 @@ const std::vector<std::chrono::nanoseconds>& Task::get_timers_max() const
 socket_t Task::get_socket_type(const Socket &s) const
 {
 	for (size_t i = 0; i < sockets.size(); i++)
-		if (sockets[i] == &s)
+		if (sockets[i].get() == &s)
 			return socket_type[i];
 
 	std::stringstream message;
-	message << "The socket does not exist ('s.name' = " << s.name << ", 'task.name' = " << this->get_name()
+	message << "The socket does not exist ('s.name' = " << s.get_name() << ", 'task.name' = " << this->get_name()
 	        << ", 'module.name' = " << module.get_name() << ").";
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }

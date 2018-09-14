@@ -193,7 +193,7 @@ void EXIT<B,R>
 
 			this->monitor->reset();
 			for (auto &m : modules)
-				for (auto mm : m.second)
+				for (auto& mm : m.second)
 					if (mm != nullptr)
 						for (auto &t : mm->tasks)
 							t->reset_stats();
