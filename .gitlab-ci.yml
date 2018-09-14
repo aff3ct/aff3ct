@@ -482,6 +482,23 @@ test-build-coverage-regression:
     - source ./ci/tools/threads.sh
     - ./ci/test-build-coverage-regression.sh
 
+test-valgrind:
+  stage: test
+  tags:
+    - linux
+    - gcc
+    - valgrind
+    - sse4.2
+    - powerful
+  artifacts:
+     name: valgrind-result
+     when: always
+     paths:
+      - valgrind_result/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-valgrind.sh
+
 coverage-linux:
   stage: coverage
   dependencies:
