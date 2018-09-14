@@ -1,31 +1,21 @@
 #!/bin/bash
-set -x
 
-if [ -z "$THREADS" ]
+if [ -z "$2" ]
 then
-	echo "The 'THREADS' environment variable is not set, default value = 1."
-	THREADS=1
+	echo "Usage $0 build_path refs_path [result_file]"
+	exit 1
 fi
 
-WD=$(pwd)
-build_root=build_coverage_linux_x86_gcc
+build_root=$1
+refs_root=$2
 
-output_folder="valgrind";
-mkdir -p ${output_folder}
+log_file="valgrind_error.log"
+if [ ! -z "$3" ]
+then
+	log_file="$3"
+fi
 
-log_file="${output_folder}/valgrind_error.log";
 touch ${log_file}
-
-function compile {
-	build=$1
-	mkdir $build
-	cd $build
-	cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS_DEBUG="-O0" -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -msse4.2 -DMULTI_PREC -DENABLE_COOL_BASH" -DCMAKE_EXE_LINKER_FLAGS=""
-	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-	make -j $THREADS
-	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-	cd ..
-}
 
 function check_valgrind
 {
@@ -59,9 +49,7 @@ function check_valgrind
 	done
 }
 
-compile "${build_root}"
-cd ${WD}
-check_valgrind "${build_root}" "refs"
+check_valgrind ${build_root} ${refs_root}
 
 COUNT=$(wc -l < ${log_file} )
 

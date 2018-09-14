@@ -297,23 +297,6 @@ build-macos-clang-x64-sse4.2:
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
-test-valgrind:
-  stage: test
-  tags:
-    - linux
-    - gcc
-    - valgrind
-    - sse4.2
-    - powerful
-  artifacts:
-     name: valgrind-result
-     when: always
-     paths:
-      - valgrind_result/
-  script:
-    - source ./ci/tools/threads.sh
-    - ./ci/test-valgrind.sh
-
 test-regression-bch:
   stage: test
   retry: 1
