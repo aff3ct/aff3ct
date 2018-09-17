@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 #include <initializer_list>
+#include <memory>
 
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
