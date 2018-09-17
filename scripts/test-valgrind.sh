@@ -30,11 +30,11 @@ function check_valgrind
 			cd $build
 			eval "valgrind -q --error-exitcode=1 --leak-check=full ${cmd} --sim-stop-time 1 -t 1 -e 10000"
 			rc=$?;
+			cd ..
 			if [[ $rc != 0 ]]; then
-				echo "MEMCHECK ERROR";
+				echo "MEMCHECK ERROR"
 				echo "valgrind --leak-check=full ${cmd}" >> ${log_file}
 			fi
-			cd ..
 		else
 			echo "The valgrind check is skipped because this test is disabled in the CI."
 		fi
