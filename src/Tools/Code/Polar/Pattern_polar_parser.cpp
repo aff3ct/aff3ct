@@ -1,10 +1,6 @@
 #include <stdexcept>
 #include <cmath>
 #include <algorithm>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <string>
 
 #include "Pattern_polar_parser.hpp"
 
@@ -14,13 +10,13 @@ using namespace aff3ct::tools;
 Pattern_polar_parser
 ::Pattern_polar_parser(const int& N,
                        const std::vector<bool> &frozen_bits,
-                       const std::vector<Pattern_polar_i*> &patterns,
-                       const Pattern_polar_i *pattern_rate0,
-                       const Pattern_polar_i *pattern_rate1)
+                       std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&patterns,
+                       const std::unique_ptr<tools::Pattern_polar_i>& pattern_rate0,
+                       const std::unique_ptr<tools::Pattern_polar_i>& pattern_rate1)
 : N(N),
   m((int)std::log2(N)),
   frozen_bits(frozen_bits),
-  patterns(patterns),
+  patterns(std::move(patterns)),
   pattern_rate0(pattern_rate0),
   pattern_rate1(pattern_rate1),
   polar_tree(new Binary_tree<Pattern_polar_i>(m +1)),
@@ -34,31 +30,51 @@ Pattern_polar_parser
 Pattern_polar_parser
 ::Pattern_polar_parser(const int& N,
                        const std::vector<bool>& frozen_bits,
-                       const std::vector<Pattern_polar_i*> &patterns,
+                       std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&patterns,
                        const int pattern_rate0_id,
                        const int pattern_rate1_id)
-: Pattern_polar_parser(N, frozen_bits, patterns, patterns[pattern_rate0_id], patterns[pattern_rate1_id])
+: Pattern_polar_parser(N, frozen_bits, std::move(patterns), patterns[pattern_rate0_id], patterns[pattern_rate1_id])
+{
+}
+
+Pattern_polar_parser
+::Pattern_polar_parser(const int& N,
+                       const std::vector<bool> &frozen_bits,
+                       std::initializer_list<tools::Pattern_polar_i*> patterns,
+                       const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate0,
+                       const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate1)
+: Pattern_polar_parser(N, frozen_bits,
+  std::vector<std::unique_ptr<tools::Pattern_polar_i>>(std::make_move_iterator(patterns.begin()), std::make_move_iterator(patterns.end())),
+  pattern_rate0, pattern_rate1)
+{
+}
+
+Pattern_polar_parser
+::Pattern_polar_parser(const int& N,
+                       const std::vector<bool>& frozen_bits,
+                       std::initializer_list<tools::Pattern_polar_i*> patterns,
+                       const int pattern_rate0_id,
+                       const int pattern_rate1_id)
+: Pattern_polar_parser(N, frozen_bits,
+  std::vector<std::unique_ptr<tools::Pattern_polar_i>>(std::make_move_iterator(patterns.begin()), std::make_move_iterator(patterns.end())),
+  pattern_rate0_id, pattern_rate1_id)
 {
 }
 
 Pattern_polar_parser
 ::~Pattern_polar_parser()
 {
-	release_patterns();
 	this->recursive_deallocate_nodes_patterns(this->polar_tree->get_root());
-	delete polar_tree;
 }
 
 void Pattern_polar_parser
 ::notify_frozenbits_update()
 {
 	this->recursive_deallocate_nodes_patterns(this->polar_tree->get_root());
-	delete this->polar_tree;
-	this->polar_tree = nullptr;
 	this->pattern_types.clear();
 	this->leaves_pattern_types.clear();
 
-	this->polar_tree = new Binary_tree<Pattern_polar_i>(m +1);
+	this->polar_tree.reset(new Binary_tree<Pattern_polar_i>(m +1));
 	this->recursive_allocate_nodes_patterns(this->polar_tree->get_root());
 	this->generate_nodes_indexes           (this->polar_tree->get_root());
 }
@@ -154,19 +170,8 @@ const std::vector<std::pair<unsigned char, int>>& Pattern_polar_parser
 	return leaves_pattern_types;
 }
 
-void Pattern_polar_parser
-::release_patterns() const
-{
-	for (auto i = 0; i < (int)patterns.size(); i++)
-		if (patterns[i] != nullptr && patterns[i] != pattern_rate0 && patterns[i] != pattern_rate1)
-			delete patterns[i];
-
-	delete pattern_rate0;
-	delete pattern_rate1;
-}
-
-const Binary_tree<Pattern_polar_i>* Pattern_polar_parser
+const Binary_tree<Pattern_polar_i>& Pattern_polar_parser
 ::get_polar_tree() const
 {
-	return polar_tree;
+	return *polar_tree;
 }

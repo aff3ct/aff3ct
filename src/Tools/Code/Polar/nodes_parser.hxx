@@ -10,9 +10,10 @@
 #include "nodes_parser.h"
 
 template <class R0, class R0L, class R1, class REP, class REPL, class SPC, class STD>
-std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
+std::vector<std::unique_ptr<aff3ct::tools::Pattern_polar_i>> aff3ct::tools
 ::nodes_parser(const std::string &str_polar, int &idx_r0, int &idx_r1)
 {
+	using namespace aff3ct::tools;
 	idx_r0 = -1;
 	idx_r1 = -1;
 
@@ -24,9 +25,11 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 	str_polar_bis.erase(std::remove(str_polar_bis.begin(), str_polar_bis.end(), '('), str_polar_bis.end());
 	str_polar_bis.erase(std::remove(str_polar_bis.begin(), str_polar_bis.end(), ')'), str_polar_bis.end());
 
-	std::vector<aff3ct::tools::Pattern_polar_i*> polar_patterns;
+	using Pattern_polar_ptr = std::unique_ptr<Pattern_polar_i>;
 
-	polar_patterns.push_back(new STD);
+	std::vector<Pattern_polar_ptr> polar_patterns;
+
+	polar_patterns.push_back(Pattern_polar_ptr(Pattern_polar_ptr(new STD)));
 
 	auto v_polar = split(str_polar_bis, ',');
 	for (auto i = 0; i < (int)v_polar.size(); i++)
@@ -38,7 +41,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 			if (v_str1[0] == "R0L")
 			{
 				if (v_str1.size() == 1)
-					polar_patterns.push_back(new R0L);
+					polar_patterns.push_back(Pattern_polar_ptr(new R0L));
 				else
 				{
 					auto v_str2 = split(v_str1[1], '-');
@@ -48,7 +51,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-						polar_patterns.push_back(new R0L(min, max));
+						polar_patterns.push_back(Pattern_polar_ptr(new R0L(min, max)));
 					}
 					else
 					{
@@ -56,8 +59,8 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 
-						if (plus) polar_patterns.push_back(new R0L(min     ));
-						else      polar_patterns.push_back(new R0L(min, min));
+						if (plus) polar_patterns.push_back(Pattern_polar_ptr(new R0L(min     )));
+						else      polar_patterns.push_back(Pattern_polar_ptr(new R0L(min, min)));
 					}
 				}
 			}
@@ -66,7 +69,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 				idx_r0 = (int)polar_patterns.size();
 
 				if (v_str1.size() == 1)
-					polar_patterns.push_back(new R0);
+					polar_patterns.push_back(Pattern_polar_ptr(new R0));
 				else
 				{
 					auto v_str2 = split(v_str1[1], '-');
@@ -76,7 +79,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-						polar_patterns.push_back(new R0(min, max));
+						polar_patterns.push_back(Pattern_polar_ptr(new R0(min, max)));
 					}
 					else
 					{
@@ -84,8 +87,8 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 
-						if (plus) polar_patterns.push_back(new R0(min     ));
-						else      polar_patterns.push_back(new R0(min, min));
+						if (plus) polar_patterns.push_back(Pattern_polar_ptr(new R0(min     )));
+						else      polar_patterns.push_back(Pattern_polar_ptr(new R0(min, min)));
 					}
 				}
 			}
@@ -94,7 +97,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 				idx_r1 = (int)polar_patterns.size();
 
 				if (v_str1.size() == 1)
-					polar_patterns.push_back(new R1);
+					polar_patterns.push_back(Pattern_polar_ptr(new R1));
 				else
 				{
 					auto v_str2 = split(v_str1[1], '-');
@@ -104,7 +107,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-						polar_patterns.push_back(new R1(min, max));
+						polar_patterns.push_back(Pattern_polar_ptr(new R1(min, max)));
 					}
 					else
 					{
@@ -112,15 +115,15 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 
-						if (plus) polar_patterns.push_back(new R1(min     ));
-						else      polar_patterns.push_back(new R1(min, min));
+						if (plus) polar_patterns.push_back(Pattern_polar_ptr(new R1(min     )));
+						else      polar_patterns.push_back(Pattern_polar_ptr(new R1(min, min)));
 					}
 				}
 			}
 			else if (v_str1[0] == "REPL")
 			{
 				if (v_str1.size() == 1)
-					polar_patterns.push_back(new REPL);
+					polar_patterns.push_back(Pattern_polar_ptr(new REPL));
 				else
 				{
 					auto v_str2 = split(v_str1[1], '-');
@@ -130,7 +133,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-						polar_patterns.push_back(new REPL(min, max));
+						polar_patterns.push_back(Pattern_polar_ptr(new REPL(min, max)));
 					}
 					else
 					{
@@ -138,15 +141,15 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 
-						if (plus) polar_patterns.push_back(new REPL(min     ));
-						else      polar_patterns.push_back(new REPL(min, min));
+						if (plus) polar_patterns.push_back(Pattern_polar_ptr(new REPL(min     )));
+						else      polar_patterns.push_back(Pattern_polar_ptr(new REPL(min, min)));
 					}
 				}
 			}
 			else if (v_str1[0] == "REP")
 			{
 				if (v_str1.size() == 1)
-					polar_patterns.push_back(new REP);
+					polar_patterns.push_back(Pattern_polar_ptr(new REP));
 				else
 				{
 					auto v_str2 = split(v_str1[1], '-');
@@ -156,7 +159,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-						polar_patterns.push_back(new REP(min, max));
+						polar_patterns.push_back(Pattern_polar_ptr(new REP(min, max)));
 					}
 					else
 					{
@@ -164,15 +167,15 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 
-						if (plus) polar_patterns.push_back(new REP(min     ));
-						else      polar_patterns.push_back(new REP(min, min));
+						if (plus) polar_patterns.push_back(Pattern_polar_ptr(new REP(min     )));
+						else      polar_patterns.push_back(Pattern_polar_ptr(new REP(min, min)));
 					}
 				}
 			}
 			else if (v_str1[0] == "SPC")
 			{
 				if (v_str1.size() == 1)
-					polar_patterns.push_back(new SPC);
+					polar_patterns.push_back(Pattern_polar_ptr(new SPC));
 				else
 				{
 					auto v_str2 = split(v_str1[1], '-');
@@ -182,7 +185,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-						polar_patterns.push_back(new SPC(min, max));
+						polar_patterns.push_back(Pattern_polar_ptr(new SPC(min, max)));
 					}
 					else
 					{
@@ -190,8 +193,8 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 
 						auto min = (int)std::log2(std::stoi(v_str2[0]));
 
-						if (plus) polar_patterns.push_back(new SPC(min     ));
-						else      polar_patterns.push_back(new SPC(min, min));
+						if (plus) polar_patterns.push_back(Pattern_polar_ptr(new SPC(min     )));
+						else      polar_patterns.push_back(Pattern_polar_ptr(new SPC(min, min)));
 					}
 				}
 			}
@@ -205,13 +208,13 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools
 	if (idx_r0 == -1)
 	{
 		idx_r0 = (int)polar_patterns.size();
-		polar_patterns.push_back(new R0(0,0));
+		polar_patterns.push_back(Pattern_polar_ptr(new R0(0,0)));
 	}
 
 	if (idx_r1 == -1)
 	{
 		idx_r1 = (int)polar_patterns.size();
-		polar_patterns.push_back(new R1(0,0));
+		polar_patterns.push_back(Pattern_polar_ptr(new R1(0,0)));
 	}
 
 	return polar_patterns;
