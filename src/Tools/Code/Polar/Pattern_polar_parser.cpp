@@ -7,6 +7,17 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
+std::vector<std::unique_ptr<tools::Pattern_polar_i>> convert_initlist_to_vecuniptr(std::initializer_list<tools::Pattern_polar_i*> patterns)
+{
+	std::vector<std::unique_ptr<tools::Pattern_polar_i>> v;
+
+	for (auto& p : patterns)
+		v.push_back(std::unique_ptr<tools::Pattern_polar_i>(p));
+
+	return v;
+}
+
+
 Pattern_polar_parser
 ::Pattern_polar_parser(const int& N,
                        const std::vector<bool> &frozen_bits,
@@ -43,9 +54,7 @@ Pattern_polar_parser
                        std::initializer_list<tools::Pattern_polar_i*> patterns,
                        const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate0,
                        const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate1)
-: Pattern_polar_parser(N, frozen_bits,
-  std::vector<std::unique_ptr<tools::Pattern_polar_i>>(std::make_move_iterator(patterns.begin()), std::make_move_iterator(patterns.end())),
-  pattern_rate0, pattern_rate1)
+: Pattern_polar_parser(N, frozen_bits, convert_initlist_to_vecuniptr(patterns), pattern_rate0, pattern_rate1)
 {
 }
 
@@ -55,9 +64,7 @@ Pattern_polar_parser
                        std::initializer_list<tools::Pattern_polar_i*> patterns,
                        const int pattern_rate0_id,
                        const int pattern_rate1_id)
-: Pattern_polar_parser(N, frozen_bits,
-  std::vector<std::unique_ptr<tools::Pattern_polar_i>>(std::make_move_iterator(patterns.begin()), std::make_move_iterator(patterns.end())),
-  pattern_rate0_id, pattern_rate1_id)
+: Pattern_polar_parser(N, frozen_bits, convert_initlist_to_vecuniptr(patterns), pattern_rate0_id, pattern_rate1_id)
 {
 }
 
