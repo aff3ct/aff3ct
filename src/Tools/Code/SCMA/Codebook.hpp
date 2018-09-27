@@ -22,7 +22,8 @@ public:
 	int get_number_of_users()                const;
 	int get_number_of_orthogonal_resources() const;
 	int get_codebook_size()                  const;
-	int get_re_user(int r, int df)           const;
+	int get_re_user(int r, int u)            const;
+	int get_user_re(int u, int r)            const;
 
 private:
 	std::vector<std::vector<std::vector<std::complex<R>>>> data;
@@ -32,6 +33,7 @@ private:
 	int codebook_size;
 
 	int re_user[4][3];
+	int user_re[6][2];
 
 	void read_codebook(const std::string& codebook_path);
 };

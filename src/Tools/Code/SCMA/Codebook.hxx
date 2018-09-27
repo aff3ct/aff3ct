@@ -74,7 +74,7 @@ void Codebook<R>
 	}
 
 	// Factor graph calculation TODO:  Now constants and fixed size (-> dynamic allocation later)
-	int F[4][6]        = {};
+	int F[4][6] = {};
 
     for (int u = 0; u < number_of_users; ++u)
 	{
@@ -99,6 +99,19 @@ void Codebook<R>
 			if (F[r][u] == 1)
 			{
 				re_user[r][idx] = u;
+				idx++;
+			}
+		}
+	}
+
+	for (int u = 0; u < number_of_users; ++u)
+	{
+		int idx = 0;
+		for (int r = 0; r < number_of_orthogonal_resources; ++r)
+		{
+			if (F[r][u] == 1)
+			{
+				user_re[u][idx] = r;
 				idx++;
 			}
 		}
@@ -135,14 +148,19 @@ inline int Codebook<R>
 	return codebook_size;
 }
 
+template <typename R>
+inline int Codebook<R>
+::get_re_user(int r, int u) const
+{
+	return re_user[r][u];
+}
 
 template <typename R>
 inline int Codebook<R>
-::get_re_user(int r, int df) const
+::get_user_re(int u, int r) const
 {
-	return re_user[r][df];
+	return user_re[u][r];
 }
-
 
 }
 }
