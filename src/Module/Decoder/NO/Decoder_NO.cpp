@@ -1,6 +1,6 @@
 #include <chrono>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 
 #include "Decoder_NO.hpp"
 
@@ -15,12 +15,6 @@ Decoder_NO<B,R>
 {
 	const std::string name = "Decoder_NO";
 	this->set_name(name);
-}
-
-template <typename B, typename R>
-Decoder_NO<B,R>
-::~Decoder_NO()
-{
 }
 
 template <typename B, typename R>
@@ -42,7 +36,7 @@ void Decoder_NO<B,R>
 ::_decode_siho(const R *Y_K, B *V_K, const int frame_id)
 {
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	tools::hard_decide(Y_K, V_K, this->K);
+	tools::hard_decide_unk(Y_K, V_K, this->K);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store, d_store);
@@ -53,13 +47,13 @@ void Decoder_NO<B,R>
 ::_decode_siho_cw(const R *Y_K, B *V_K, const int frame_id)
 {
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	tools::hard_decide(Y_K, V_K, this->K);
+	tools::hard_decide_unk(Y_K, V_K, this->K);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store, d_store);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_NO<B_8,Q_8>;

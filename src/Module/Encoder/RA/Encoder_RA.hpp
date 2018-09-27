@@ -20,7 +20,7 @@ protected:
 public:
 	Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver, const int n_frames = 1);
 
-	virtual ~Encoder_RA() {}
+	virtual ~Encoder_RA() = default;
 
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);

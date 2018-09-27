@@ -12,7 +12,7 @@ class Quantizer_NO : public Quantizer<R,Q>
 {
 public:
 	Quantizer_NO(const int N, const int n_frames = 1);
-	virtual ~Quantizer_NO();
+	virtual ~Quantizer_NO() = default;
 
 protected:
 	void _process(const R *Y_N1, Q *Y_N2, const int frame_id);

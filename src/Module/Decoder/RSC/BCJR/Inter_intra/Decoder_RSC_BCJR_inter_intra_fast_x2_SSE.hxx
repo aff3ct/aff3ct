@@ -44,7 +44,7 @@ struct RSC_BCJR_inter_intra_fast_x2_SSE_init <signed char>
 	static void apply(mipp::vector<signed char> &alpha)
 	{
 		constexpr auto n_frames = 2;
-		
+
 		for (auto f = 0; f < n_frames; f++)
 			alpha[0*2 + f] = 0;
 		for (auto i = 1; i < 8; i++)
@@ -64,7 +64,7 @@ Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 {
 	const std::string name = "Decoder_RSC_BCJR_inter_intra_fast_x2_SSE";
 	this->set_name(name);
-	
+
 	if (mipp::nElReg<R>() != 16)
 	{
 		std::stringstream message;
@@ -80,12 +80,6 @@ Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 	}
 
 	RSC_BCJR_inter_intra_fast_x2_SSE_init<R>::apply(this->alpha);
-}
-
-template <typename B, typename R, tools::proto_max_i<R> MAX>
-Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
-::~Decoder_RSC_BCJR_inter_intra_fast_x2_SSE()
-{
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
@@ -334,7 +328,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 
 		// saturate r_post if the computation are made in 8-bit, do nothing else.
 		auto r_post = RSC_BCJR_inter_intra_post<R>::compute(mipp::sub<R>(r_max0[0], r_max1[0]));
-	
+
 		// store the extrinsic values
 		const auto r_ext = r_post - &sys[i*n_frames];
 		r_ext.store(&ext[i*n_frames]);

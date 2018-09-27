@@ -19,11 +19,6 @@ Puncturer_turbo_DB::parameters
 	this->type = "TURBO_DB";
 }
 
-Puncturer_turbo_DB::parameters
-::~parameters()
-{
-}
-
 Puncturer_turbo_DB::parameters* Puncturer_turbo_DB::parameters
 ::clone() const
 {
@@ -31,17 +26,17 @@ Puncturer_turbo_DB::parameters* Puncturer_turbo_DB::parameters
 }
 
 void Puncturer_turbo_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Puncturer::parameters::get_description(req_args, opt_args);
+	Puncturer::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type"}][2] += ", TURBO_DB";
+	tools::add_options(args.at({p+"-type"}), 0, "TURBO_DB");
 }
 
 void Puncturer_turbo_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Puncturer::parameters::store(vals);
 

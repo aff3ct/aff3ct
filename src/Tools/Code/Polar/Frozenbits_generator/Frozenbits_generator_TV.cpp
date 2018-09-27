@@ -13,7 +13,7 @@
 #include <cmath>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 
 #include "Frozenbits_generator_TV.hpp"
 
@@ -27,11 +27,6 @@ Frozenbits_generator_TV
                           const std::string &bin_pb_path,
                           const float sigma)
 : Frozenbits_generator_file(K, N, sigma), m((int)std::log2(N)), awgn_codes_dir(awgn_codes_dir), bin_pb_path(bin_pb_path)
-{
-}
-
-Frozenbits_generator_TV
-::~Frozenbits_generator_TV()
 {
 }
 
@@ -101,9 +96,8 @@ void Frozenbits_generator_TV
 				cmd      += " --log-length=" + str_m;                  // m
 				cmd      += " -f=" + filename;                         // filename
 
-				std::clog << format("(II) Generating best channels positions file (\"" + filename + "\")...",
-				                    Style::BOLD | FG::Color::BLUE) << "\r";
-				fflush(stdout);
+				std::clog << rang::tag::info << "Generating best channels positions file (\"" << filename << "\")...\r";
+				fflush(stdout); fflush(stderr);
 
 				if (system(cmd.c_str()) == 0)
 				{

@@ -20,7 +20,7 @@ private:
 public:
 	Encoder_RSC_generic_sys(const int& K, const int& N, const bool buffered_encoding = true,
 	                        std::vector<int> poly = {5,7}, const int n_frames = 1);
-	virtual ~Encoder_RSC_generic_sys() {}
+	virtual ~Encoder_RSC_generic_sys() = default;
 
 protected:
 	virtual int inner_encode(const int bit_sys, int &state);

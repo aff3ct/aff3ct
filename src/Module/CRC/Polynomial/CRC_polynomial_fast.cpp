@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Algo/Bit_packer.hpp"
 
 #include "CRC_polynomial_fast.hpp"
@@ -50,9 +49,9 @@ void CRC_polynomial_fast<B>
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
 #endif
 
-	tools::Bit_packer<B>::pack(U_K1, this->buff_crc.data(), this->K);
-
 	const auto data = (unsigned char*)this->buff_crc.data();
+	tools::Bit_packer::pack(U_K1, data, this->K);
+
 	const auto crc  = this->compute_crc_v3((void*)data, this->K);
 
 	std::copy(U_K1, U_K1 + this->K, U_K2);
@@ -64,7 +63,7 @@ template <typename B>
 bool CRC_polynomial_fast<B>
 ::_check(const B *V_K, const int frame_id)
 {
-	tools::Bit_packer<B>::pack(V_K, this->buff_crc.data(), this->K + this->size);
+	tools::Bit_packer::pack(V_K, (unsigned char*)this->buff_crc.data(), this->K + this->size);
 	return this->_check_packed(this->buff_crc.data(), frame_id);
 }
 
@@ -213,7 +212,7 @@ unsigned CRC_polynomial_fast<B>
 	return crc;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::CRC_polynomial_fast<B_8>;

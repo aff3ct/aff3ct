@@ -1,5 +1,8 @@
 #include "Codec_RSC.hpp"
 
+#include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
+#include "Factory/Module/Decoder/RSC/Decoder_RSC.hpp"
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -9,76 +12,59 @@ const std::string aff3ct::factory::Codec_RSC_prefix = "cdc";
 Codec_RSC::parameters
 ::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_RSC_name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_RSC_name, prefix),
-  enc(new Encoder_RSC::parameters("enc")),
-  dec(new Decoder_RSC::parameters("dec"))
+  Codec_SISO_SIHO::parameters(Codec_RSC_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-}
-
-Codec_RSC::parameters
-::~parameters()
-{
-	if (enc != nullptr) { delete enc; enc = nullptr; }
-	if (dec != nullptr) { delete dec; dec = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
+	Codec::parameters::set_enc(new Encoder_RSC::parameters("enc"));
+	Codec::parameters::set_dec(new Decoder_RSC::parameters("dec"));
 }
 
 Codec_RSC::parameters* Codec_RSC::parameters
 ::clone() const
 {
-	auto clone = new Codec_RSC::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-
-	return clone;
+	return new Codec_RSC::parameters(*this);
 }
 
 void Codec_RSC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SISO_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
 
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
-	opt_args.erase({pdec+"-no-buff"       });
-	opt_args.erase({pdec+"-poly"          });
-	opt_args.erase({pdec+"-std"           });
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
+	args.erase({pdec+"-no-buff"       });
+	args.erase({pdec+"-poly"          });
+	args.erase({pdec+"-std"           });
 }
 
 void Codec_RSC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 
+	auto enc_rsc = dynamic_cast<Encoder_RSC::parameters*>(enc.get());
+	auto dec_rsc = dynamic_cast<Decoder_RSC::parameters*>(dec.get());
+
 	enc->store(vals);
 
-	this->dec->K        = this->enc->K;
-	this->dec->N_cw     = this->enc->N_cw;
-	this->dec->n_frames = this->enc->n_frames;
-	this->dec->buffered = this->enc->buffered;
-	this->dec->poly     = this->enc->poly;
-	this->dec->standard = this->enc->standard;
+	dec_rsc->K        = enc_rsc->K;
+	dec_rsc->N_cw     = enc_rsc->N_cw;
+	dec_rsc->n_frames = enc_rsc->n_frames;
+	dec_rsc->buffered = enc_rsc->buffered;
+	dec_rsc->poly     = enc_rsc->poly;
+	dec_rsc->standard = enc_rsc->standard;
 
 	dec->store(vals);
 
-	this->K           = this->enc->K;
-	this->N_cw        = this->enc->N_cw;
-	this->N           = this->enc->N_cw;
-	this->tail_length = this->enc->tail_length;
+	K           = enc->K;
+	N_cw        = enc->N_cw;
+	N           = enc->N_cw;
+	tail_length = enc->tail_length;
 }
 
 void Codec_RSC::parameters
@@ -94,9 +80,8 @@ template <typename B, typename Q>
 module::Codec_RSC<B,Q>* Codec_RSC::parameters
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_RSC<B,Q>(*enc, *dec);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_RSC<B,Q>(dynamic_cast<const Encoder_RSC::parameters&>(*enc),
+	                                  dynamic_cast<const Decoder_RSC::parameters&>(*dec));
 }
 
 template <typename B, typename Q>

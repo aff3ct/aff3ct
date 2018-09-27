@@ -14,12 +14,6 @@ CRC_checker_DB<B,R>
 }
 
 template <typename B, typename R>
-CRC_checker_DB<B,R>
-::~CRC_checker_DB()
-{
-}
-
-template <typename B, typename R>
 bool CRC_checker_DB<B,R>
 ::siso_n(const int ite,
          const mipp::vector<R>& sys,
@@ -44,7 +38,7 @@ bool CRC_checker_DB<B,R>
 	return false;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::tools::CRC_checker_DB<B_8,Q_8>;

@@ -23,13 +23,13 @@ private:
 	std::ostream &stream;
 
 public:
-	Decoder_RSC_BCJR_seq_generic_std_json(const int &K, 
+	Decoder_RSC_BCJR_seq_generic_std_json(const int &K,
 	                                      const std::vector<std::vector<int>> &trellis,
-	                                      const int n_ite = 1, 
+	                                      const int n_ite = 1,
 	                                      const bool buffered_encoding = true,
 	                                      std::ostream &stream = std::cout,
 	                                      const int n_frames = 1);
-	virtual ~Decoder_RSC_BCJR_seq_generic_std_json();
+	virtual ~Decoder_RSC_BCJR_seq_generic_std_json() = default;
 
 protected:
 	virtual void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);

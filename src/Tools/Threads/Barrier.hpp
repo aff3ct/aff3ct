@@ -39,11 +39,6 @@ public:
 	explicit Barrier(const int n_threads);
 
 	/*!
-	 * \brief Destructor.
-	 */
-	~Barrier();
-
-	/*!
 	 * \brief Blocking method, wait until "n_threads" threads call this method.
 	 *
 	 * \param tid: the number id of the thread which call this method.
@@ -53,4 +48,4 @@ public:
 }
 }
 
-#endif /* BARRIER_HPP */ 
+#endif /* BARRIER_HPP */

@@ -24,21 +24,21 @@ struct Encoder_BCH : public Encoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_BCH_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Encoder_BCH::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
 		template <typename B = int>
-		module::Encoder_BCH<B>* build(const tools::BCH_polynomial_generator &GF) const;
+		module::Encoder_BCH<B>* build(const tools::BCH_polynomial_generator<B> &GF) const;
 	};
 
 	template <typename B = int>
-	static module::Encoder_BCH<B>* build(const parameters &params, const tools::BCH_polynomial_generator &GF);
+	static module::Encoder_BCH<B>* build(const parameters &params, const tools::BCH_polynomial_generator<B> &GF);
 };
 }
 }

@@ -15,11 +15,6 @@ Coset::parameters
 {
 }
 
-Coset::parameters
-::~parameters()
-{
-}
-
 Coset::parameters* Coset::parameters
 ::clone() const
 {
@@ -27,32 +22,35 @@ Coset::parameters* Coset::parameters
 }
 
 void Coset::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-size", "N"}] =
-		{"strictly_positive_int",
-		 "coset size."};
+	args.add(
+		{p+"-size", "N"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"coset size.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "coset type.",
-		 "STD"};
+	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("STD")),
+		"coset type.");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	args.add(
+		{p+"-fra", "F"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the number of inter frame level to process.");
 }
 
 void Coset::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-size", "N"})) this->size     = std::stoi(vals.at({p+"-size", "N"}));
-	if(exist(vals, {p+"-fra",  "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",  "F"}));
-	if(exist(vals, {p+"-type"     })) this->type     =           vals.at({p+"-type"     });
+	if(vals.exist({p+"-size", "N"})) this->size     = vals.to_int({p+"-size", "N"});
+	if(vals.exist({p+"-fra",  "F"})) this->n_frames = vals.to_int({p+"-fra",  "F"});
+	if(vals.exist({p+"-type"     })) this->type     = vals.at    ({p+"-type"     });
 }
 
 void Coset::parameters

@@ -52,7 +52,7 @@ public :
 	{
 	}
 
-	virtual ~CPM_parameters(){}
+	virtual ~CPM_parameters() = default;
 
 	int L;                          // CPM pulse width or CPm memory
 	int k;                          // modulation index numerator

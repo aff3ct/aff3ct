@@ -20,7 +20,7 @@ public:
 	Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
 	                           CRC<B>& crc, const int n_frames = 1);
 
-	virtual ~Decoder_polar_SCL_naive_CA() {}
+	virtual ~Decoder_polar_SCL_naive_CA() = default;
 
 protected:
 	virtual void select_best_path();

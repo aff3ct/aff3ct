@@ -33,7 +33,7 @@ public:
 		return new Pattern_polar_r0(N, node, min_level, max_level);
 	}
 
-	virtual ~Pattern_polar_r0() {}
+	virtual ~Pattern_polar_r0() = default;
 
 	virtual polar_node_t type()       const { return polar_node_t::RATE_0; }
 	virtual std::string  name()       const { return "Rate 0";             }

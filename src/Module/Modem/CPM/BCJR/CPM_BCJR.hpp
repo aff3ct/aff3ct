@@ -30,7 +30,7 @@ protected:
 
 public:
 	CPM_BCJR(const CPM_parameters<SIN,SOUT>& _cpm, const int _frame_size);
-	virtual ~CPM_BCJR();
+	virtual ~CPM_BCJR() = default;
 
 	// CPM_BCJR for the demodulation
 	void decode(const std::vector<Q> &Lch_N,                               std::vector<Q> &Le_N);

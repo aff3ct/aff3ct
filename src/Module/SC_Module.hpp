@@ -10,6 +10,7 @@
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
+#include <type_traits>
 
 #include "Task.hpp"
 
@@ -24,14 +25,14 @@ class SC_Socket_in
 {
 	friend SC_Module;
 protected:
-	std::vector<tlm_utils::simple_target_socket<C>*> &sockets;
+	std::vector<std::unique_ptr<tlm_utils::simple_target_socket<C>>> &sockets;
 	const Task &task;
 	const std::vector<int> &indirect_sockets;
-	SC_Socket_in(std::vector<tlm_utils::simple_target_socket<C>*> &sockets,
+	SC_Socket_in(std::vector<std::unique_ptr<tlm_utils::simple_target_socket<C>>> &sockets,
 	             const Task &task, const std::vector<int> &indirect_sockets)
 	: sockets(sockets), task(task), indirect_sockets(indirect_sockets) {}
 public:
-	virtual ~SC_Socket_in() {}
+	virtual ~SC_Socket_in() = default;
 	inline tlm_utils::simple_target_socket<C>& operator[](const int id)
 	{
 		return *sockets[indirect_sockets[id]];
@@ -43,14 +44,14 @@ class SC_Socket_out
 {
 	friend SC_Module;
 protected:
-	std::vector<tlm_utils::simple_initiator_socket<C>*> &sockets;
+	std::vector<std::unique_ptr<tlm_utils::simple_initiator_socket<C>>> &sockets;
 	const Task &task;
 	const std::vector<int> &indirect_sockets;
-	SC_Socket_out(std::vector<tlm_utils::simple_initiator_socket<C>*> &sockets,
+	SC_Socket_out(std::vector<std::unique_ptr<tlm_utils::simple_initiator_socket<C>>> &sockets,
 	              const Task &task, const std::vector<int> &indirect_sockets)
 	: sockets(sockets), task(task), indirect_sockets(indirect_sockets) {}
 public:
-	virtual ~SC_Socket_out() {}
+	virtual ~SC_Socket_out() = default;
 	inline tlm_utils::simple_initiator_socket<C>& operator[](const int id)
 	{
 		return *sockets[indirect_sockets[id]];
@@ -64,10 +65,10 @@ class SC_Module : public sc_core::sc_module
 protected:
 	Task &task;
 
-	std::vector<tlm_utils::simple_target_socket   <SC_Module>*> sockets_in;
-	std::vector<tlm_utils::simple_initiator_socket<SC_Module>*> sockets_out;
+	std::vector<std::unique_ptr<tlm_utils::simple_target_socket   <SC_Module>>> sockets_in;
+	std::vector<std::unique_ptr<tlm_utils::simple_initiator_socket<SC_Module>>> sockets_out;
 
-	std::vector<Socket*> ptr_input_sockets;
+	std::vector<std::shared_ptr<Socket>> ptr_input_sockets;
 
 	std::vector<int> indirect_sockets_in;
 	std::vector<int> indirect_sockets_out;
@@ -80,7 +81,7 @@ public:
 	SC_Socket_out<SC_Module> s_out;
 
 	SC_Module(Task &task, sc_core::sc_module_name sc_name);
-	virtual ~SC_Module();
+	virtual ~SC_Module() = default;
 
 protected:
 	void b_transport         (tlm::tlm_generic_payload& trans, sc_core::sc_time& t, Socket &socket);
@@ -95,18 +96,17 @@ protected:
 	void b_transport6(tlm::tlm_generic_payload& trans, sc_core::sc_time& t);
 	void b_transport7(tlm::tlm_generic_payload& trans, sc_core::sc_time& t);
 	void b_transport8(tlm::tlm_generic_payload& trans, sc_core::sc_time& t);
-
 };
 
 class SC_Module_container
 {
 protected:
 	Module &module;
-	std::vector<SC_Module*> sc_modules;
+	std::vector<std::unique_ptr<SC_Module>> sc_modules;
 
 public:
 	explicit SC_Module_container(Module &module);
-	virtual ~SC_Module_container();
+	virtual ~SC_Module_container() = default;
 
 	void create_module(const int id);
 	void erase_module(const int id);

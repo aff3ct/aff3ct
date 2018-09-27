@@ -7,10 +7,6 @@ Frozenbits_notifier::Frozenbits_notifier()
 {
 }
 
-Frozenbits_notifier::~Frozenbits_notifier()
-{
-}
-
 void Frozenbits_notifier::notify_frozenbits_update()
 {
 }

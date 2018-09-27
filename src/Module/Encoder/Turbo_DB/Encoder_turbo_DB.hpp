@@ -32,7 +32,7 @@ protected:
 public:
 	Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
 	                 Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i);
-	virtual ~Encoder_turbo_DB() {}
+	virtual ~Encoder_turbo_DB() = default;
 
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);

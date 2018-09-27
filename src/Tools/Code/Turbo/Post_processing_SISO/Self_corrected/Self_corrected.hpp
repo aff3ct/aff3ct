@@ -28,7 +28,7 @@ public:
 	Self_corrected(const int K, const int n_ite, const int m = 4, const int M = -1,
 	               const int simd_inter_frame_level = 1);
 
-	virtual ~Self_corrected();
+	virtual ~Self_corrected() = default;
 
 	bool siso_n(const int ite,
 	            const mipp::vector<R>& sys,

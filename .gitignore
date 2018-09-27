@@ -9,9 +9,13 @@ sonar-project.properties
 src_files.txt
 *sublime-*
 .fuse_*
+.idea/
+.vs
+CMakeSettings.json
 
 .scannerwork/
 build*/
+cmake-build*/
 cppcheck/
 doc/html/
 doc/latex/

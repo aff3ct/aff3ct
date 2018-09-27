@@ -22,11 +22,6 @@ Monitor::parameters
 {
 }
 
-Monitor::parameters
-::~parameters()
-{
-}
-
 Monitor::parameters* Monitor::parameters
 ::clone() const
 {
@@ -34,12 +29,12 @@ Monitor::parameters* Monitor::parameters
 }
 
 void Monitor::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 }
 
 void Monitor::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 }
 

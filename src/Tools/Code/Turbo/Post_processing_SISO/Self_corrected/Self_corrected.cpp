@@ -22,12 +22,6 @@ Self_corrected<B,R>
 }
 
 template <typename B, typename R>
-Self_corrected<B,R>
-::~Self_corrected()
-{
-}
-
-template <typename B, typename R>
 bool Self_corrected<B,R>
 ::siso_n(const int ite,
          const mipp::vector<R>& sys,
@@ -105,7 +99,7 @@ inline void Self_corrected<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::tools::Self_corrected<B_8,Q_8>;

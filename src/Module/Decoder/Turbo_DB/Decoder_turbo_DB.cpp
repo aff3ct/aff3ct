@@ -105,12 +105,6 @@ Decoder_turbo_DB<B,R>
 }
 
 template <typename B, typename R>
-Decoder_turbo_DB<B,R>
-::~Decoder_turbo_DB()
-{
-}
-
-template <typename B, typename R>
 void Decoder_turbo_DB<B,R>
 ::add_handler_siso_n(std::function<bool(const int,
                                         const mipp::vector<R>&,

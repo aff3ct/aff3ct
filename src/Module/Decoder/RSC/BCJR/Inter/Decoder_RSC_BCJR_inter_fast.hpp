@@ -16,11 +16,11 @@ template <typename B = int, typename R = float, tools::proto_max_i<R> MAX = tool
 class Decoder_RSC_BCJR_inter_fast : public Decoder_RSC_BCJR_inter<B,R>
 {
 public:
-	Decoder_RSC_BCJR_inter_fast(const int &K, 
-	                            const std::vector<std::vector<int>> &trellis, 
+	Decoder_RSC_BCJR_inter_fast(const int &K,
+	                            const std::vector<std::vector<int>> &trellis,
 	                            const bool buffered_encoding = true,
 	                            const int n_frames = 1);
-	virtual ~Decoder_RSC_BCJR_inter_fast();
+	virtual ~Decoder_RSC_BCJR_inter_fast() = default;
 
 protected:
 	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);

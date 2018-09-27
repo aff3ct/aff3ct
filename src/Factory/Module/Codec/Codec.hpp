@@ -7,6 +7,7 @@
 #include "Factory/Module/Decoder/Decoder.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 
 #include "../../Factory.hpp"
 
@@ -23,10 +24,10 @@ struct Codec : Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// depending parameters
-		Encoder::parameters     *enc = nullptr;
-		Decoder::parameters     *dec = nullptr;
-		Puncturer::parameters   *pct = nullptr;
-		Interleaver::parameters *itl = nullptr;
+		tools::auto_cloned_unique_ptr<Encoder    ::parameters> enc;
+		tools::auto_cloned_unique_ptr<Decoder    ::parameters> dec;
+		tools::auto_cloned_unique_ptr<Puncturer  ::parameters> pct;
+		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
 
 		// deduced parameters
 		int K           = 0;
@@ -36,7 +37,7 @@ struct Codec : Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Codec::parameters* clone() const;
 		virtual void enable_puncturer();
 
@@ -45,8 +46,8 @@ struct Codec : Factory
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
-		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_description(tools::Argument_map_info &args) const;
+		virtual void store          (const tools::Argument_map_value &vals);
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:
@@ -56,6 +57,11 @@ struct Codec : Factory
 		void set_dec(Decoder    ::parameters *dec);
 		void set_pct(Puncturer  ::parameters *pct);
 		void set_itl(Interleaver::parameters *itl);
+
+		void set_enc(tools::auto_cloned_unique_ptr<Encoder    ::parameters>&& enc);
+		void set_dec(tools::auto_cloned_unique_ptr<Decoder    ::parameters>&& dec);
+		void set_pct(tools::auto_cloned_unique_ptr<Puncturer  ::parameters>&& pct);
+		void set_itl(tools::auto_cloned_unique_ptr<Interleaver::parameters>&& itl);
 	};
 };
 }

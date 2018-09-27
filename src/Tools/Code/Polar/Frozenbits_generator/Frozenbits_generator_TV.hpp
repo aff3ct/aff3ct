@@ -26,7 +26,7 @@ public:
 	                        const std::string &bin_pb_path,
 	                        float sigma = 0.f);
 
-	virtual ~Frozenbits_generator_TV();
+	virtual ~Frozenbits_generator_TV() = default;
 
 protected:
 	void evaluate();

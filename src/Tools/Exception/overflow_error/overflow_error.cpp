@@ -24,8 +24,3 @@ overflow_error
 : exception(filename, line_num, funcname, message.empty() ? default_message : message)
 {
 }
-
-overflow_error
-::~overflow_error() throw()
-{
-}

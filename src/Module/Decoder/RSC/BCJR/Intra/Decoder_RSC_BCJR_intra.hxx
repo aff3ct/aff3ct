@@ -59,7 +59,7 @@ Decoder_RSC_BCJR_intra<B,R>
 {
 	const std::string name = "Decoder_RSC_BCJR_intra";
 	this->set_name(name);
-	
+
 	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));
 	req_trellis[0] = { 0,  2,  4,  6,  0,  2,  4,  6};
 	req_trellis[1] = { 1, -1,  1, -1, -1,  1, -1,  1};
@@ -78,12 +78,6 @@ Decoder_RSC_BCJR_intra<B,R>
 
 	// init alpha values
 	RSC_BCJR_intra_init<R>::apply(alpha);
-}
-
-template <typename B, typename R>
-Decoder_RSC_BCJR_intra<B,R>
-::~Decoder_RSC_BCJR_intra()
-{
 }
 
 template <typename B, typename R>
@@ -178,7 +172,7 @@ template <>
 struct RSC_BCJR_intra_normalize <short, -1>
 {
 	static mipp::Reg<short> apply(const mipp::Reg<short> &r_metrics, const mipp::Reg<short> &r_cmask_norm, const int &i = 0)
-	{  
+	{
 		if (i % 4 == 0)
 			return RSC_BCJR_intra_normalize_core<short>::apply(r_metrics, r_cmask_norm);
 		else

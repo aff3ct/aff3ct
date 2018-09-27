@@ -13,7 +13,12 @@
 #include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
-#include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
+#include "Tools/Display/Terminal/Terminal.hpp"
+#include "Tools/Noise/Noise.hpp"
+
+#include "Tools/Display/Reporter/EXIT/Reporter_EXIT.hpp"
+#include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
+#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
@@ -30,25 +35,28 @@ protected:
 	const factory::EXIT::parameters &params_EXIT; // simulation parameters
 
 	// code specifications
-	float sig_a;
-	float sigma;
-	float ebn0;
-	float esn0;
+	tools::Sigma<R>  noise;   // current noise simulated
+	tools::Sigma<R>  noise_a; // current noise simulated for the "a" part
+	R sig_a;
 
 	// communication chain
-	module::Source      <B  > *source;
-	module::Codec_SISO  <B,R> *codec;
-	module::Modem       <B,R> *modem;
-	module::Modem       <B,R> *modem_a;
-	module::Channel     <  R> *channel;
-	module::Channel     <  R> *channel_a;
-	module::Decoder_SISO<  R> *siso;
-	module::Monitor_EXIT<B,R> *monitor;
-	tools::Terminal_EXIT<B,R> *terminal;
+	std::unique_ptr<module::Source      <B  >> source;
+	std::unique_ptr<module::Codec_SISO  <B,R>> codec;
+	std::unique_ptr<module::Modem       <B,R>> modem;
+	std::unique_ptr<module::Modem       <B,R>> modem_a;
+	std::unique_ptr<module::Channel     <  R>> channel;
+	std::unique_ptr<module::Channel     <  R>> channel_a;
+	std::unique_ptr<module::Decoder_SISO<  R>> siso;
+	std::unique_ptr<module::Monitor_EXIT<B,R>> monitor;
+
+	// terminal and reporters (for the output of the code)
+	std::vector<std::unique_ptr<tools::Reporter>> reporters;
+	std::unique_ptr<tools::Terminal>              terminal;
+
 
 public:
 	explicit EXIT(const factory::EXIT::parameters &params_EXIT);
-	virtual ~EXIT();
+	virtual ~EXIT() = default;
 
 	void launch();
 
@@ -56,16 +64,15 @@ protected:
 	void _build_communication_chain();
 	void sockets_binding           ();
 	void simulation_loop           ();
-	void release_objects           ();
 
-	module::Source      <B  >* build_source   (              );
-	module::Codec_SISO  <B,R>* build_codec    (              );
-	module::Modem       <B,R>* build_modem    (              );
-	module::Modem       <B,R>* build_modem_a  (              );
-	module::Channel     <  R>* build_channel  (const int size);
-	module::Channel     <  R>* build_channel_a(const int size);
-	module::Monitor_EXIT<B,R>* build_monitor  (              );
-	tools::Terminal_EXIT<B,R>* build_terminal (              );
+	std::unique_ptr<module::Source      <B  >> build_source   (              );
+	std::unique_ptr<module::Codec_SISO  <B,R>> build_codec    (              );
+	std::unique_ptr<module::Modem       <B,R>> build_modem    (              );
+	std::unique_ptr<module::Modem       <B,R>> build_modem_a  (              );
+	std::unique_ptr<module::Channel     <  R>> build_channel  (const int size);
+	std::unique_ptr<module::Channel     <  R>> build_channel_a(const int size);
+	std::unique_ptr<module::Monitor_EXIT<B,R>> build_monitor  (              );
+	std::unique_ptr<tools::Terminal          > build_terminal (              );
 };
 }
 }

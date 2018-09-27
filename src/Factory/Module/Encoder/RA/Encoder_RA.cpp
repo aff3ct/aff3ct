@@ -21,11 +21,7 @@ Encoder_RA::parameters
 Encoder_RA::parameters* Encoder_RA::parameters
 ::clone() const
 {
-	auto clone = new Encoder_RA::parameters(*this);
-
-	if (itl != nullptr) { clone->itl = itl->clone(); }
-
-	return clone;
+	return new Encoder_RA::parameters(*this);
 }
 
 std::vector<std::string> Encoder_RA::parameters
@@ -51,36 +47,38 @@ std::vector<std::string> Encoder_RA::parameters
 	return p;
 }
 
-Encoder_RA::parameters
-::~parameters()
-{
-	if (itl != nullptr) { delete itl; itl = nullptr; }
-}
-
 void Encoder_RA::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
-	this->itl->get_description(req_args, opt_args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	req_args.erase({"itl-size"    });
-	opt_args.erase({"itl-fra", "F"});
+		auto pi = itl->get_prefix();
+
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
 	auto p = this->get_prefix();
 
-	opt_args[{p+"-type"}][2] += ", RA";
+	tools::add_options(args.at({p+"-type"}), 0, "RA");
 }
 
 void Encoder_RA::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
-	this->itl->core->size     = this->N_cw;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->N_cw;
+		this->itl->core->n_frames = this->n_frames;
 
-	this->itl->store(vals);
+		this->itl->store(vals);
+	}
 }
 
 void Encoder_RA::parameters
@@ -88,7 +86,8 @@ void Encoder_RA::parameters
 {
 	Encoder::parameters::get_headers(headers, full);
 
-	this->itl->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 }
 
 template <typename B>

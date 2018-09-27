@@ -16,12 +16,6 @@ Interleaver_core_LTE<T>
 }
 
 template <typename T>
-Interleaver_core_LTE<T>
-::~Interleaver_core_LTE()
-{
-}
-
-template <typename T>
 void Interleaver_core_LTE<T>
 ::gen_lut(T *lut, const int frame_id)
 {

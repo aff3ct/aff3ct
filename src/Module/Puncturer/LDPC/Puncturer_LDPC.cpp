@@ -19,10 +19,10 @@ Puncturer_LDPC<B,Q>
 {
 	const std::string name = "Puncturer_LDPC";
 	this->set_name(name);
-	
+
 	auto N_pattern = (int)pattern.size();
 	pattern_bits = pattern;
-	
+
 	if (N_pattern == 0)
 	{
 		std::stringstream message;
@@ -47,12 +47,6 @@ Puncturer_LDPC<B,Q>
 		        << ", 'bit_count' = " << bit_count << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename Q>
-Puncturer_LDPC<B,Q>
-::~Puncturer_LDPC()
-{
 }
 
 template <typename B, typename Q>
@@ -83,7 +77,7 @@ void Puncturer_LDPC<B,Q>
 			std::fill_n(Y_N2 + (i * this->Z), this->Z, (Q)0);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Puncturer_LDPC<B_8,Q_8>;

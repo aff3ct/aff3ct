@@ -15,19 +15,20 @@ class Encoder_BCH : public Encoder<B>
 {
 
 protected:
-	const std::vector<int>& g;  // coefficients of the generator polynomial, g(x)
-	std::vector<B>          bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
+	const int n_rdncy;        // number redundancy bits
+	const std::vector<B>& g;  // coefficients of the generator polynomial, g(x)
+	std::vector<B>        bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
 
 public:
-	Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator& GF, const int n_frames = 1);
+	Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator<B>& GF, const int n_frames = 1);
 
-	virtual ~Encoder_BCH();
+	virtual ~Encoder_BCH() = default;
 
 	bool is_codeword(const B *X_N);
 
 protected:
-	void  _encode(const B *U_K, B *X_N, const int frame_id);
-	void __encode(const B *U_K, B *bb);
+	virtual void  _encode(const B *U_K, B *X_N, const int frame_id);
+	virtual void __encode(const B *U_K, B *bb);
 };
 }
 }

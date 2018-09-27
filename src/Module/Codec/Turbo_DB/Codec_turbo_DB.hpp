@@ -24,18 +24,22 @@ template <typename B = int, typename Q = float>
 class Codec_turbo_DB : public Codec_SIHO<B,Q>
 {
 protected:
-	std::vector<std::vector<int>>                  trellis;
-	module::Encoder_RSC_DB<B>*                     sub_enc;
-	module::Decoder_RSC_DB_BCJR<B,Q>*              sub_dec_n;
-	module::Decoder_RSC_DB_BCJR<B,Q>*              sub_dec_i;
-	std::vector<tools::Post_processing_SISO<B,Q>*> post_pros;
+	std::vector<std::vector<int>>                                  trellis;
+	std::shared_ptr<module::Encoder_RSC_DB<B>>                     sub_enc;
+	std::shared_ptr<module::Decoder_RSC_DB_BCJR<B,Q>>              sub_dec_n;
+	std::shared_ptr<module::Decoder_RSC_DB_BCJR<B,Q>>              sub_dec_i;
+	std::vector<std::shared_ptr<tools::Post_processing_SISO<B,Q>>> post_pros;
 
 public:
 	Codec_turbo_DB(const factory::Encoder_turbo_DB  ::parameters &enc_params,
 	               const factory::Decoder_turbo_DB  ::parameters &dec_params,
+	               const factory::Interleaver       ::parameters &itl_params,
 	               const factory::Puncturer_turbo_DB::parameters *pct_params = nullptr,
 	               CRC<B>* crc = nullptr);
-	virtual ~Codec_turbo_DB();
+	virtual ~Codec_turbo_DB() = default;
+
+protected:
+	void add_post_pro(tools::Post_processing_SISO<B,Q>* p);
 };
 }
 }

@@ -5,16 +5,10 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_NO<R>
 ::Channel_NO(const int N, const bool add_users, const int n_frames)
-: Channel<R>(N, (R)1, n_frames), add_users(add_users)
+: Channel<R>(N, n_frames), add_users(add_users)
 {
 	const std::string name = "Channel_NO";
 	this->set_name(name);
-}
-
-template <typename R>
-Channel_NO<R>
-::~Channel_NO() 
-{
 }
 
 template <typename R>
@@ -40,13 +34,13 @@ void Channel_NO<R>
 		if (frame_id < 0)
 			std::copy(X_N, X_N + this->N * this->n_frames, Y_N);
 		else
-			std::copy(X_N + (frame_id +0) * this->N, 
-			          X_N + (frame_id +1) * this->N, 
+			std::copy(X_N + (frame_id +0) * this->N,
+			          X_N + (frame_id +1) * this->N,
 			          Y_N + (frame_id +0) * this->N);
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Channel_NO<R_32>;

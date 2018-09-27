@@ -31,38 +31,38 @@ struct Decoder_RSC_DB : public Decoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_RSC_DB_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_RSC_DB::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
 		template <typename B = int, typename Q = float>
 		module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const std::vector<std::vector<int>> &trellis,
-		                                             module::Encoder<B>                  *encoder = nullptr) const;
+		                                             const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const std::vector<std::vector<int>> &trellis,
-		                                       module::Encoder<B>            *encoder = nullptr) const;
+		                                       const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 	private:
 		template <typename B = int, typename Q = float, tools::proto_max<Q> MAX>
 		module::Decoder_RSC_DB_BCJR<B,Q>* _build_siso(const std::vector<std::vector<int>> &trellis,
-		                                                    module::Encoder<B>            *encoder = nullptr) const;
+		                                                    const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const parameters &params,
 	                                                    const std::vector<std::vector<int>> &trellis,
-	                                                          module::Encoder<B>           *encoder = nullptr);
+	                                                          const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_SIHO<B,Q>* build(const parameters                    &params,
 	                                        const std::vector<std::vector<int>> &trellis,
-	                                              module::Encoder<B>            *encoder = nullptr);
+	                                              const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };
 }
 }
