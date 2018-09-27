@@ -77,6 +77,11 @@ void Modem::parameters
 		"path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\".");
 
 	args.add(
+		{p+"-codebook"},
+		tools::File(tools::openmode::read),
+		"path to the codebook, to use with \"--mod-type SCMA\".");
+
+	args.add(
 		{p+"-cpm-std"},
 		tools::Text(tools::Including_set("GSM")),
 		"the selection of a default CPM standard hardly implemented (any of those parameters is "
@@ -173,6 +178,7 @@ void Modem::parameters
 	if(vals.exist({p+"-bps"          })) this->bps        = vals.to_int({p+"-bps"          });
 	if(vals.exist({p+"-ups"          })) this->upf        = vals.to_int({p+"-ups"          });
 	if(vals.exist({p+"-const-path"   })) this->const_path = vals.at    ({p+"-const-path"   });
+	if(vals.exist({p+"-codebook"     })) this->codebook   = vals.at    ({p+"-codebook"     });
 	if(vals.exist({p+"-cpm-L"        })) this->cpm_L      = vals.to_int({p+"-cpm-L"        });
 	if(vals.exist({p+"-cpm-p"        })) this->cpm_p      = vals.to_int({p+"-cpm-p"        });
 	if(vals.exist({p+"-cpm-k"        })) this->cpm_k      = vals.to_int({p+"-cpm-k"        });
@@ -274,10 +280,10 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build_scma() const
 {
-	if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, this->codebook, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, this->codebook, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, this->codebook, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, this->codebook, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

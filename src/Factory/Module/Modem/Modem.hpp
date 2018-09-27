@@ -31,6 +31,7 @@ struct Modem : public Factory
 		std::string type       = "BPSK";    // modulation type (PAM, QAM, ...)
 		std::string implem     = "STD";
 		std::string const_path = "";        // PATH to constellation file (CSV file)
+		std::string codebook   = "";        // PATH to codebook file
 		bool        complex    = true;      // true if the modulated signal is complex
 		int         bps        = 1;         // bits per symbol
 		int         upf        = 1;         // samples per symbol

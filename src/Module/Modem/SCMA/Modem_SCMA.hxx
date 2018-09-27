@@ -11,70 +11,74 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-const std::complex<float> Modem_SCMA<B,R,Q,PSI>::CB[6][4][4] =
-{
-	{ // codebook1 (code layer 1)
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-		{ { -0.1815f, -0.1318f }, { -0.6351f, -0.4615f }, {  0.6351f,  0.4615f }, {  0.1815f,  0.1318f } },
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } }
-	},
-	{ // codebook2 (code layer 2)
-		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } },
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-		{ { -0.1815f, -0.1318f }, { -0.6351f, -0.4615f }, {  0.6351f,  0.4615f }, {  0.1815f,  0.1318f } },
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
-	},
-	{ // codebook3 (code layer 3)
-		{ { -0.6351f,  0.4615f }, {  0.1815f, -0.1318f }, { -0.1815f,  0.1318f }, {  0.6351f, -0.4615f } },
-		{ {  0.1392f, -0.1759f }, {  0.4873f, -0.6156f }, { -0.4873f,  0.6156f }, { -0.1392f,  0.1759f } },
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
-	},
-	{ // codebook4 (code layer 4)
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } },
-		{ { -0.0055f, -0.2242f }, { -0.0193f, -0.7848f }, {  0.0193f,  0.7848f }, {  0.0055f,  0.2242f } }
-	},
-	{ // codebook5 (code layer 5)
-		{ { -0.0055f, -0.2242f }, { -0.0193f, -0.7848f }, {  0.0193f,  0.7848f }, {  0.0055f,  0.2242f } },
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-		{ { -0.6351f,  0.4615f }, {  0.1815f, -0.1318f }, { -0.1815f,  0.1318f }, {  0.6351f, -0.4615f } }
-	},
-	{ // codebook6 (code layer 6)
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } },
-		{ {  0.1392f, -0.1759f }, {  0.4873f, -0.6156f }, { -0.4873f,  0.6156f }, { -0.1392f,  0.1759f } },
-		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
-	},
-};
+// template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+// const std::complex<float> Modem_SCMA<B,R,Q,PSI>::CB[6][4][4] =
+// {
+// 	{ // codebook1 (code layer 1)
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
+// 		{ { -0.1815f, -0.1318f }, { -0.6351f, -0.4615f }, {  0.6351f,  0.4615f }, {  0.1815f,  0.1318f } },
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
+// 		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } }
+// 	},
+// 	{ // codebook2 (code layer 2)
+// 		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } },
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
+// 		{ { -0.1815f, -0.1318f }, { -0.6351f, -0.4615f }, {  0.6351f,  0.4615f }, {  0.1815f,  0.1318f } },
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
+// 	},
+// 	{ // codebook3 (code layer 3)
+// 		{ { -0.6351f,  0.4615f }, {  0.1815f, -0.1318f }, { -0.1815f,  0.1318f }, {  0.6351f, -0.4615f } },
+// 		{ {  0.1392f, -0.1759f }, {  0.4873f, -0.6156f }, { -0.4873f,  0.6156f }, { -0.1392f,  0.1759f } },
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
+// 	},
+// 	{ // codebook4 (code layer 4)
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
+// 		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } },
+// 		{ { -0.0055f, -0.2242f }, { -0.0193f, -0.7848f }, {  0.0193f,  0.7848f }, {  0.0055f,  0.2242f } }
+// 	},
+// 	{ // codebook5 (code layer 5)
+// 		{ { -0.0055f, -0.2242f }, { -0.0193f, -0.7848f }, {  0.0193f,  0.7848f }, {  0.0055f,  0.2242f } },
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
+// 		{ { -0.6351f,  0.4615f }, {  0.1815f, -0.1318f }, { -0.1815f,  0.1318f }, {  0.6351f, -0.4615f } }
+// 	},
+// 	{ // codebook6 (code layer 6)
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
+// 		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } },
+// 		{ {  0.1392f, -0.1759f }, {  0.4873f, -0.6156f }, { -0.4873f,  0.6156f }, { -0.1392f,  0.1759f } },
+// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
+// 	},
+// };
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
-::Modem_SCMA(const int N, const tools::Noise<R>& noise, const int bps, const bool disable_sig2, const int n_ite,
-             const int n_frames)
+::Modem_SCMA(const int N, const std::string& codebook_path, const tools::Noise<R>& noise, const int bps,
+             const bool disable_sig2, const int n_ite, const int n_frames)
 : Modem<B,R,Q>(N,
                Modem_SCMA<B,R,Q,PSI>::size_mod(N, bps),
                Modem_SCMA<B,R,Q,PSI>::size_fil(N, bps),
                noise,
                n_frames),
-  disable_sig2(disable_sig2),
-  n_ite       (n_ite       )
+  CB          (codebook_path),
+  disable_sig2(disable_sig2 ),
+  n_ite       (n_ite        ),
+  bps         (bps          )
 {
 	const std::string name = "Modem_SCMA";
 	this->set_name(name);
 
-	if (n_frames != 6)
+	if (n_frames != CB.get_number_of_users())
 	{
 		std::stringstream message;
-		message << "'n_frames' has to be equal to 6 ('n_frames' = " << n_frames << ").";
+		message << "'n_frames' has to be equal to CB.get_number_of_users() ('n_frames' = " << n_frames
+		        << ", 'CB.get_number_of_users()' = " << CB.get_number_of_users() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (bps != 3)
+	if (bps != 3) // TODO: With what should "3" be replaced ? -> have added "bps" attribute to the class, maybe you'll
+	              //       need to use it in the code to have it generic
 	{
 		std::stringstream message;
 		message << "'bps' has to be equal to 3 ('bps' = " << bps << ").";
@@ -113,7 +117,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	const auto N_mod = 8 * ((this->N + 1) / 2);
+	const auto N_mod = 8 * ((this->N + 1) / 2); // TODO:  With what should "8" be replaced ?
 
 	for (auto f = 0 ; f < this->n_frames ; f++)
 	{
@@ -121,13 +125,13 @@ void Modem_SCMA<B,R,Q,PSI>
 		{
 			unsigned idx = 0;
 
-			for (unsigned i = 0 ; i < 2 ; i++)
+			for (unsigned i = 0 ; i < 2 ; i++) // TODO:  With what should "2" be replaced ?
 				idx += (1 << i) * (unsigned)X_N1[f * this->N + 2 * j + i];
 
-			for (auto i = 0 ; i < 4 ; i++)
+			for (auto i = 0 ; i < CB.get_number_of_orthogonal_resources() ; i++)
 			{
-				X_N2[f * N_mod + 8 * j + 2 * i   ] = CB[f][i][idx].real();
-				X_N2[f * N_mod + 8 * j + 2 * i +1] = CB[f][i][idx].imag();
+				X_N2[f * N_mod + 8 * j + 2 * i   ] = CB(f, i, idx).real();
+				X_N2[f * N_mod + 8 * j + 2 * i +1] = CB(f, i, idx).imag();
 			}
 		}
 	}
@@ -138,10 +142,10 @@ void Modem_SCMA<B,R,Q,PSI>
 		{
 			unsigned idx = (unsigned)X_N1[f * this->N + this->N - 1];
 
-			for (auto i = 0 ; i < 4 ; i++)
+			for (auto i = 0 ; i < CB.get_number_of_orthogonal_resources() ; i++)
 			{
-				X_N2[f * N_mod + 8 * (this->N / 2) + 2 * i   ] = CB[f][i][idx].real();
-				X_N2[f * N_mod + 8 * (this->N / 2) + 2 * i +1] = CB[f][i][idx].imag();
+				X_N2[f * N_mod + 8 * (this->N / 2) + 2 * i   ] = CB(f, i, idx).real(); // TODO:  With what should "8" be replaced ?
+				X_N2[f * N_mod + 8 * (this->N / 2) + 2 * i +1] = CB(f, i, idx).imag(); // TODO:  With what should "2" be replaced ?
 			}
 		}
 	}
@@ -170,10 +174,10 @@ void Modem_SCMA<B,R,Q,PSI>
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
 		// filling array_phi luts
-		for (auto i = 0; i < 4; i++)
-			for (auto j = 0; j < 4; j++)
-				for (auto k = 0; k < 4; k++)
-					for (auto re = 0; re < 4; re++)
+		for (auto i = 0; i < CB.get_codebook_size(); i++)
+			for (auto j = 0; j < CB.get_codebook_size(); j++)
+				for (auto k = 0; k < CB.get_codebook_size(); k++)
+					for (auto re = 0; re < CB.get_number_of_orthogonal_resources(); re++)
 						arr_phi[re][i][j][k] = phi(Y_N1, i, j, k, re, batch, H_N);
 
 		demodulate_batch(Y_N1,Y_N2,batch);
@@ -203,10 +207,10 @@ void Modem_SCMA<B,R,Q,PSI>
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
 		// filling array_phi luts
-		for (auto i = 0; i < 4; i++)
-			for (auto j = 0; j < 4; j++)
-				for (auto k = 0; k < 4; k++)
-					for (auto re = 0; re < 4; re++)
+		for (auto i = 0; i < CB.get_codebook_size(); i++)
+			for (auto j = 0; j < CB.get_codebook_size(); j++)
+				for (auto k = 0; k < CB.get_codebook_size(); k++)
+					for (auto re = 0; re < CB.get_number_of_orthogonal_resources(); re++)
 						arr_phi[re][i][j][k] = phi(Y_N1, i, j, k, re, batch);
 
 		demodulate_batch(Y_N1,Y_N2,batch);
@@ -358,9 +362,9 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 	auto Y_N = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
 
-	const auto CB0 = std::complex<Q>((Q)CB[re_user[re][0]][re][i].real(), (Q)CB[re_user[re][0]][re][i].imag());
-	const auto CB1 = std::complex<Q>((Q)CB[re_user[re][1]][re][j].real(), (Q)CB[re_user[re][1]][re][j].imag());
-	const auto CB2 = std::complex<Q>((Q)CB[re_user[re][2]][re][k].real(), (Q)CB[re_user[re][2]][re][k].imag());
+	const auto CB0 = std::complex<Q>((Q)CB(re_user[re][0], re, i).real(), (Q)CB(re_user[re][0], re, i).imag());
+	const auto CB1 = std::complex<Q>((Q)CB(re_user[re][1], re, j).real(), (Q)CB(re_user[re][1], re, j).imag());
+	const auto CB2 = std::complex<Q>((Q)CB(re_user[re][2], re, k).real(), (Q)CB(re_user[re][2], re, k).imag());
 
 	tmp = Y_N - (CB0 + CB1 + CB2);
 
@@ -386,9 +390,9 @@ Q Modem_SCMA<B,R,Q,PSI>
 	const auto H_N2 = std::complex<Q>((Q)H_N[re_user[re][2] * Nmod + 8 * batch + 2 * re   ],
 	                                  (Q)H_N[re_user[re][2] * Nmod + 8 * batch + 2 * re +1]);
 
-	const auto CB0  = std::complex<Q>((Q)CB[re_user[re][0]][re][i].real(), (Q)CB[re_user[re][0]][re][i].imag());
-	const auto CB1  = std::complex<Q>((Q)CB[re_user[re][1]][re][j].real(), (Q)CB[re_user[re][1]][re][j].imag());
-	const auto CB2  = std::complex<Q>((Q)CB[re_user[re][2]][re][k].real(), (Q)CB[re_user[re][2]][re][k].imag());
+	const auto CB0  = std::complex<Q>((Q)CB(re_user[re][0], re, i).real(), (Q)CB(re_user[re][0], re, i).imag());
+	const auto CB1  = std::complex<Q>((Q)CB(re_user[re][1], re, j).real(), (Q)CB(re_user[re][1], re, j).imag());
+	const auto CB2  = std::complex<Q>((Q)CB(re_user[re][2], re, k).real(), (Q)CB(re_user[re][2], re, k).imag());
 
 	tmp = Y_N - (H_N0 * CB0 + H_N1 * CB1 + H_N2 * CB2);
 

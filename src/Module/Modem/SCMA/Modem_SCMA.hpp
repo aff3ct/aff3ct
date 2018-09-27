@@ -3,8 +3,10 @@
 
 #include <complex>
 #include <vector>
+#include <string>
 
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
+#include "Tools/Code/SCMA/Codebook.hpp"
 
 #include "../Modem.hpp"
 
@@ -12,19 +14,21 @@ namespace aff3ct
 {
 namespace module
 {
+
 template <typename B = int, typename R = float, typename Q = R, tools::proto_psi<Q> PSI = tools::psi_0>
 class Modem_SCMA : public Modem<B,R,Q>
 {
 private:
-	const static std::complex<float> CB[6][4][4];
-	const int                        re_user[4][3]       = {{1,2,4},{0,2,5},{1,3,5},{0,3,4}};
-	      Q                          arr_phi[4][4][4][4] = {}; // probability functions
-	const bool                       disable_sig2;
-	      R                          n0; // 1 / n0 = 179.856115108
-	const int                        n_ite;
+	const tools::Codebook<R> CB;
+	const int                re_user[4][3]       = {{1,2,4},{0,2,5},{1,3,5},{0,3,4}};
+	      Q                  arr_phi[4][4][4][4] = {}; // probability functions
+	const bool               disable_sig2;
+	      R                  n0; // 1 / n0 = 179.856115108
+	const int                n_ite;
+	const int                bps;
 
 public:
-	Modem_SCMA(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int bps = 3, const bool disable_sig2 = false,
+	Modem_SCMA(const int N, const std::string& codebook_path, const tools::Noise<R>& noise = tools::Sigma<R>(), const int bps = 3, const bool disable_sig2 = false,
 	           const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA() = default;
 
