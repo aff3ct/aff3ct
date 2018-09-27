@@ -4,12 +4,9 @@
 #include <string>
 #include <cmath>
 
-#include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
-#include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
-
 #include "Module/Codec/BCH/Codec_BCH.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "../Codec_SIHO_HIHO.hpp"
 
 namespace aff3ct
 {
@@ -17,24 +14,18 @@ namespace factory
 {
 extern const std::string Codec_BCH_name;
 extern const std::string Codec_BCH_prefix;
-struct Codec_BCH : public Codec_SIHO
+struct Codec_BCH : public Codec_SIHO_HIHO
 {
-	class parameters : public Codec_SIHO::parameters
+	class parameters : public Codec_SIHO_HIHO::parameters
 	{
 	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// depending parameters
-		Encoder_BCH::parameters *enc;
-		Decoder_BCH::parameters *dec;
-
-		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_BCH_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Codec_BCH::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

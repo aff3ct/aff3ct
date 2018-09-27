@@ -16,21 +16,15 @@ Uncoded<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-Uncoded<L,B,R,Q>
-::~Uncoded()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void Uncoded<L,B,R,Q>
 ::get_description_args()
 {
-	params_cdc->get_description(this->req_args, this->opt_args);
+	params_cdc->get_description(this->args);
 
 	auto penc = params_cdc->enc->get_prefix();
 
-	this->req_args.erase({penc+"-info-bits", "K"});
-	this->opt_args.erase({penc+"-fra",       "F"});
+	this->args.erase({penc+"-info-bits", "K"});
+	this->args.erase({penc+"-fra",       "F"});
 
 	L::get_description_args();
 }
@@ -43,7 +37,7 @@ void Uncoded<L,B,R,Q>
 
 	params_cdc->enc->K = this->params.src->K;
 
-	params_cdc->store(this->ar.get_args());
+	params_cdc->store(this->arg_vals);
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;

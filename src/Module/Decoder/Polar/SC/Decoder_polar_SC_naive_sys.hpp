@@ -20,7 +20,7 @@ class Decoder_polar_SC_naive_sys : public Decoder_polar_SC_naive<B,R,F,G,H>
 public:
 	Decoder_polar_SC_naive_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
 	                           const int n_frames = 1);
-	virtual ~Decoder_polar_SC_naive_sys();
+	virtual ~Decoder_polar_SC_naive_sys() = default;
 
 protected:
 	void _store(B *V, bool coded = false) const;

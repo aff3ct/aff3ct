@@ -23,9 +23,9 @@ protected:
 	uint32_t best_test;
 
 public:
-	Decoder_chase_std(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips = 3, 
+	Decoder_chase_std(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips = 3,
 	                  const bool hamming = false, const int n_frames = 1);
-	virtual ~Decoder_chase_std();
+	virtual ~Decoder_chase_std() = default;
 
 protected:
 	void _decode_siho   (const R *Y_N,  B *V_K, const int frame_id);

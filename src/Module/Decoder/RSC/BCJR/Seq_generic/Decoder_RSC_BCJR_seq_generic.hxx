@@ -11,8 +11,8 @@ namespace module
 template <typename R>
 struct RSC_BCJR_seq_generic_init
 {
-	static void apply(mipp::vector<mipp::vector<R>> &alpha, 
-	                  mipp::vector<mipp::vector<R>> &beta, 
+	static void apply(mipp::vector<mipp::vector<R>> &alpha,
+	                  mipp::vector<mipp::vector<R>> &beta,
 	                  const int &K, const int &n_states, const int &n_ff)
 	{
 		// init alpha values
@@ -34,8 +34,8 @@ struct RSC_BCJR_seq_generic_init
 template <>
 struct RSC_BCJR_seq_generic_init <short>
 {
-	static void apply(mipp::vector<mipp::vector<short>> &alpha, 
-	                  mipp::vector<mipp::vector<short>> &beta, 
+	static void apply(mipp::vector<mipp::vector<short>> &alpha,
+	                  mipp::vector<mipp::vector<short>> &beta,
 	                  const int &K, const int &n_states, const int &n_ff)
 	{
 		// init alpha values
@@ -57,8 +57,8 @@ struct RSC_BCJR_seq_generic_init <short>
 template <>
 struct RSC_BCJR_seq_generic_init <signed char>
 {
-	static void apply(mipp::vector<mipp::vector<signed char>> &alpha, 
-	                  mipp::vector<mipp::vector<signed char>> &beta, 
+	static void apply(mipp::vector<mipp::vector<signed char>> &alpha,
+	                  mipp::vector<mipp::vector<signed char>> &beta,
 	                  const int &K, const int &n_states, const int &n_ff)
 	{
 		// init alpha values
@@ -89,18 +89,12 @@ Decoder_RSC_BCJR_seq_generic<B,R>
 {
 	const std::string name = "Decoder_RSC_BCJR_seq_generic";
 	this->set_name(name);
-	
+
 	for (unsigned i = 0; i < alpha.size(); i++) alpha[i].resize(K + this->n_ff +1);
 	for (unsigned i = 0; i < beta .size(); i++) beta [i].resize(K + this->n_ff +1);
 	for (unsigned i = 0; i < gamma.size(); i++) gamma[i].resize(K + this->n_ff +0);
 
 	RSC_BCJR_seq_generic_init<R>::apply(alpha, beta, K, this->n_states, this->n_ff);
-}
-
-template <typename B, typename R>
-Decoder_RSC_BCJR_seq_generic<B,R>
-::~Decoder_RSC_BCJR_seq_generic()
-{
 }
 
 // =================================================================================================== sys/par division

@@ -17,11 +17,6 @@ Monitor_EXIT::parameters
 {
 }
 
-Monitor_EXIT::parameters
-::~parameters()
-{
-}
-
 Monitor_EXIT::parameters* Monitor_EXIT::parameters
 ::clone() const
 {
@@ -29,35 +24,39 @@ Monitor_EXIT::parameters* Monitor_EXIT::parameters
 }
 
 void Monitor_EXIT::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Monitor::parameters::get_description(req_args, opt_args);
+	Monitor::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args[{p+"-size", "K"}] =
-		{"strictly_positive_int",
-		 "number of bits to check."};
+	args.add(
+		{p+"-size", "K"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"number of bits to check.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	args.add(
+		{p+"-fra", "F"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-trials", "n"}] =
-		{"strictly_positive_int",
-		 "number of frames to simulate per sigma A value."};
+	args.add(
+		{p+"-trials", "n"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"number of frames to simulate per sigma A value.");
 }
 
 void Monitor_EXIT::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Monitor::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-size",   "K"})) this->size     = std::stoi(vals.at({p+"-size",   "K"}));
-	if(exist(vals, {p+"-fra",    "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",    "F"}));
-	if(exist(vals, {p+"-trials", "n"})) this->n_trials = std::stoi(vals.at({p+"-trials", "n"}));
+	if(vals.exist({p+"-size",   "K"})) this->size     = vals.to_int({p+"-size",   "K"});
+	if(vals.exist({p+"-fra",    "F"})) this->n_frames = vals.to_int({p+"-fra",    "F"});
+	if(vals.exist({p+"-trials", "n"})) this->n_trials = vals.to_int({p+"-trials", "n"});
 }
 
 void Monitor_EXIT::parameters

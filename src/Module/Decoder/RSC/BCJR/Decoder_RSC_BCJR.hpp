@@ -29,7 +29,7 @@ protected:
 	                 const bool buffered_encoding = true,
 	                 const int n_frames = 1,
 	                 const int simd_inter_frame_level = 1);
-	virtual ~Decoder_RSC_BCJR();
+	virtual ~Decoder_RSC_BCJR() = default;
 
 public:
 	virtual int tail_length() const { return 2 * n_ff; }

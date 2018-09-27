@@ -50,7 +50,7 @@ public:
 		return new Pattern_polar_spc(N, node, min_level, max_level);
 	}
 
-	virtual ~Pattern_polar_spc() {}
+	virtual ~Pattern_polar_spc() = default;
 
 	virtual polar_node_t type()       const { return polar_node_t::SPC; }
 	virtual std::string  name()       const { return "SPC";             }

@@ -46,4 +46,54 @@ using Q_64 = double;
 	#endif
 #endif
 
+namespace aff3ct
+{
+namespace tools
+{
+
+template<size_t precision> // the wanted precision 8, 16, 32, 64
+struct types_from_prec
+{
+
+};
+
+template<>
+struct types_from_prec<8>
+{
+	using B = B_8;
+	using R = R_8;
+	using Q = Q_8;
+};
+
+template<>
+struct types_from_prec<16>
+{
+	using B = B_16;
+	using R = R_16;
+	using Q = Q_16;
+};
+
+template<>
+struct types_from_prec<32>
+{
+	using B = B_32;
+	using R = R_32;
+	using Q = Q_32;
+};
+
+template<>
+struct types_from_prec<64>
+{
+	using B = B_64;
+	using R = R_64;
+	using Q = Q_64;
+};
+
+template<typename T> // give a type T and get the B R Q of the same size
+struct matching_types : types_from_prec<sizeof(T) * 8>
+{
+};
+}
+}
+
 #endif /* TYPES_H_ */

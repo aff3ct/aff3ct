@@ -9,7 +9,6 @@
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
@@ -126,7 +125,7 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_MEM_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                                 const std::vector<tools::Pattern_polar_i*>& polar_patterns,
+                                 std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
                                  const int idx_r0, const int idx_r1,
                                  const int n_frames)
 : Decoder          (K, N, n_frames, API_polar::get_n_frames()),
@@ -134,7 +133,7 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
   m                ((int)std::log2(N)),
   L                (L),
   frozen_bits      (frozen_bits),
-  polar_patterns   (N, frozen_bits, polar_patterns, idx_r0, idx_r1),
+  polar_patterns   (N, frozen_bits, std::move(polar_patterns), idx_r0, idx_r1),
   paths            (L),
   metrics          (L),
   l                (L, mipp::vector<R>(N + mipp::nElReg<R>())),
@@ -212,7 +211,6 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::~Decoder_polar_SCL_MEM_fast_sys()
 {
-	polar_patterns.release_patterns();
 }
 
 template <typename B, typename R, class API_polar>
@@ -327,10 +325,10 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		// f
 		switch (node_type)
 		{
-			case tools::STANDARD:
+			case tools::polar_node_t::STANDARD:
 				API_polar::f(Y_N, Y_N + n_elm_2, l[0].data(), n_elm_2);
 				break;
-			case tools::REP_LEFT:
+			case tools::polar_node_t::REP_LEFT:
 				API_polar::f(Y_N, Y_N + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			default:
@@ -342,7 +340,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		// g
 		switch (node_type)
 		{
-			case tools::STANDARD:
+			case tools::polar_node_t::STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto path  = paths[i];
@@ -350,7 +348,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 					API_polar::g (Y_N, Y_N + n_elm_2, s[path].data() + off_s, child, n_elm_2);
 				}
 				break;
-			case tools::RATE_0_LEFT:
+			case tools::polar_node_t::RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto path  = paths[i];
@@ -358,7 +356,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 					API_polar::g0(Y_N, Y_N + n_elm_2,                         child, n_elm_2);
 				}
 				break;
-			case tools::REP_LEFT:
+			case tools::polar_node_t::REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto path  = paths[i];
@@ -375,7 +373,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		// xor
 		switch (node_type)
 		{
-			case tools::STANDARD:
+			case tools::polar_node_t::STANDARD:
 				copy_left(rev_depth, off_s);
 				for (auto i = 0; i < n_active_paths; i++)
 				{
@@ -393,7 +391,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 						API_polar::xo (s[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
 				}
 				break;
-			case tools::RATE_0_LEFT:
+			case tools::polar_node_t::RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto is_left = (((off_s / n_elmts) % 2) == 0);
@@ -402,7 +400,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 					API_polar::xo0(s[paths[i]],        off_s + n_elm_2, off_s, n_elm_2);
 				}
 				break;
-			case tools::REP_LEFT:
+			case tools::polar_node_t::REP_LEFT:
 				copy_left(rev_depth, off_s);
 				for (auto i = 0; i < n_active_paths; i++)
 				{
@@ -429,7 +427,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		// f
 		switch (node_type)
 		{
-			case tools::STANDARD:
+			case tools::polar_node_t::STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto path   = paths[i];
@@ -438,7 +436,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 					API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
-			case tools::REP_LEFT:
+			case tools::polar_node_t::REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto path   = paths[i];
@@ -447,7 +445,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 					API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
-			case tools::RATE_0_LEFT:
+			case tools::polar_node_t::RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths && n_active_paths > 1; i++)
 				{
 					const auto path   = paths[i];
@@ -465,7 +463,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		// g
 		switch (node_type)
 		{
-			case tools::STANDARD:
+			case tools::polar_node_t::STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto path   = paths[i];
@@ -474,7 +472,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 					API_polar::g (parent + off_l, parent + off_l + n_elm_2, s[path].data() + off_s, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
-			case tools::RATE_0_LEFT:
+			case tools::polar_node_t::RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto path   = paths[i];
@@ -483,7 +481,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 					API_polar::g0(parent + off_l, parent + off_l + n_elm_2,                         child + off_l + n_elmts, n_elm_2);
 				}
 				break;
-			case tools::REP_LEFT:
+			case tools::polar_node_t::REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto path   = paths[i];
@@ -502,7 +500,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 		switch (node_type)
 		{
-			case tools::STANDARD:
+			case tools::polar_node_t::STANDARD:
 				copy_left(rev_depth, off_s);
 				for (auto i = 0; i < n_active_paths; i++)
 				{
@@ -520,7 +518,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 						API_polar::xo (s[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
 				}
 				break;
-			case tools::RATE_0_LEFT:
+			case tools::polar_node_t::RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					const auto is_left = (((off_s / n_elmts) % 2) == 0);
@@ -529,7 +527,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 					API_polar::xo0(s[paths[i]],        off_s + n_elm_2, off_s, n_elm_2);
 				}
 				break;
-			case tools::REP_LEFT:
+			case tools::polar_node_t::REP_LEFT:
 				copy_left(rev_depth, off_s);
 				for (auto i = 0; i < n_active_paths; i++)
 				{
@@ -564,10 +562,10 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		// h
 		switch (node_type)
 		{
-			case tools::RATE_0: update_paths_r0 (rev_depth, off_l, off_s, n_elmts); break;
-			case tools::REP:    update_paths_rep(rev_depth, off_l, off_s, n_elmts); break;
-			case tools::RATE_1: update_paths_r1 (rev_depth, off_l, off_s, n_elmts); break;
-			case tools::SPC:    update_paths_spc(rev_depth, off_l, off_s, n_elmts); break;
+			case tools::polar_node_t::RATE_0: update_paths_r0 (rev_depth, off_l, off_s, n_elmts); break;
+			case tools::polar_node_t::REP:    update_paths_rep(rev_depth, off_l, off_s, n_elmts); break;
+			case tools::polar_node_t::RATE_1: update_paths_r1 (rev_depth, off_l, off_s, n_elmts); break;
+			case tools::polar_node_t::SPC:    update_paths_spc(rev_depth, off_l, off_s, n_elmts); break;
 			default:
 				break;
 		}

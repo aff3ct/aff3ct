@@ -60,9 +60,7 @@ public:
 		}
 	}
 
-	virtual ~Interleaver_core()
-	{
-	}
+	virtual ~Interleaver_core() = default;
 
 	const std::vector<T>& get_lut() const
 	{

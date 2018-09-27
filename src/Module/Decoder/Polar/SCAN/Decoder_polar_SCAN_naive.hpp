@@ -34,7 +34,7 @@ protected:
 public:
 	Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
 	                         const int n_frames = 1);
-	virtual ~Decoder_polar_SCAN_naive() {}
+	virtual ~Decoder_polar_SCAN_naive() = default;
 
 	void reset();
 

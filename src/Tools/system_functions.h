@@ -22,7 +22,7 @@ std::string get_back_trace(int first_call = 1);
  * \param cmd is the command to run on the system
  * \return the standard and error output mixed
  */
-std::string runSystemCommand(std::string cmd);
+std::string run_system_command(std::string cmd);
 
 /*!
  * \brief transform in the backtrace the addresses into function name and line index
@@ -30,7 +30,7 @@ std::string runSystemCommand(std::string cmd);
  * \param backtrace is the backtrace got with get_back_trace(int)
  * \return the backtrace with function name and line index
  */
-std::string addr2line(const std::string& backtrace);
+std::string addr_to_line(const std::string& backtrace);
 
 }
 }

@@ -17,4 +17,4 @@
 # 	export GIT_BRANCH
 # fi
 
-export GIT_BRANCH=master
+export GIT_BRANCH=development

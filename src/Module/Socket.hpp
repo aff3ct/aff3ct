@@ -30,7 +30,6 @@ static std::unordered_map<std::type_index,uint8_t> type_to_size = {{typeid(int8_
 class Socket
 {
 	friend Task;
-
 protected:
 	Task &task;
 
@@ -40,17 +39,13 @@ protected:
 	      bool            fast;
 	      void*           dataptr;
 
+public:
 	Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
 	       const bool fast = false, void *dataptr = nullptr)
 	: task(task), name(name), datatype(datatype), databytes(databytes), fast(fast), dataptr(dataptr)
 	{
 	}
 
-	~Socket()
-	{
-	}
-
-public:
 	inline std::string     get_name           () const { return name;                                          }
 	inline std::type_index get_datatype       () const { return datatype;                                      }
 	inline std::string     get_datatype_string() const { return type_to_string[datatype];                      }

@@ -13,7 +13,7 @@ namespace factory
 {
 extern const std::string Monitor_EXIT_name;
 extern const std::string Monitor_EXIT_prefix;
-struct Monitor_EXIT : public Factory
+struct Monitor_EXIT : public Monitor
 {
 	class parameters : public Monitor::parameters
 	{
@@ -29,12 +29,12 @@ struct Monitor_EXIT : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Monitor_EXIT_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Monitor_EXIT::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

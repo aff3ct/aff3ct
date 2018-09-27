@@ -2,6 +2,7 @@
 #include <limits>
 #include <sstream>
 
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
@@ -12,156 +13,52 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &H,
+::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
                                       const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
                                       const int syndrome_depth, const int n_frames)
-: Decoder               (K, N,                                            n_frames, 1),
-  Decoder_LDPC_BP<B,R>  (K, N, n_ite, H, enable_syndrome, syndrome_depth, n_frames, 1),
-  hard_decision         (N                                                           ),
-  info_bits_pos         (info_bits_pos                                               ),
-  HY_N                  (N                                                           ),
-  V_N                   (N                                                           ),
-  C_to_V_messages       (H.get_n_connections(), 0                                    ),
-  V_to_C_messages       (H.get_n_connections(), 0                                    )
+: Decoder               (K, N, n_frames, 1                               ),
+  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1                               ),
+  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
+  info_bits_pos         (info_bits_pos                                   ),
+  HY_N                  (N                                               ),
+  V_N                   (N                                               ),
+  chk_to_var            (this->H.get_n_connections(), 0                  ),
+  var_to_chk            (this->H.get_n_connections(), 0                  ),
+  transpose             (this->H.get_n_connections()                     )
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_Gallager_A";
 	this->set_name(name);
-	
-	transpose.resize(H.get_n_connections());
-	std::vector<unsigned char> connections(H.get_n_rows(), 0);
 
-	const auto &CN_to_VN = H.get_col_to_rows();
-	const auto &VN_to_CN = H.get_row_to_cols();
+	std::vector<unsigned char> connections(this->H.get_n_rows(), 0);
+
+	const auto &chk_to_var_id = this->H.get_col_to_rows();
+	const auto &var_to_chk_id = this->H.get_row_to_cols();
 
 	auto k = 0;
-	for (auto i = 0; i < (int)CN_to_VN.size(); i++)
+	for (auto i = 0; i < (int)chk_to_var_id.size(); i++)
 	{
-		for (auto j = 0; j < (int)CN_to_VN[i].size(); j++)
+		for (auto j = 0; j < (int)chk_to_var_id[i].size(); j++)
 		{
-			auto id_V = CN_to_VN[i][j];
+			auto var_id = chk_to_var_id[i][j];
 
 			auto branch_id = 0;
-			for (auto ii = 0; ii < (int)id_V; ii++)
-				branch_id += (int)VN_to_CN[ii].size();
-			branch_id += connections[id_V];
-			connections[id_V]++;
+			for (auto ii = 0; ii < (int)var_id; ii++)
+				branch_id += (int)var_to_chk_id[ii].size();
+			branch_id += connections[var_id];
+			connections[var_id]++;
 
-			if (connections[id_V] > (int)VN_to_CN[id_V].size())
+			if (connections[var_id] > (int)var_to_chk_id[var_id].size())
 			{
 				std::stringstream message;
-				message << "'connections[id_V]' has to be equal or smaller than 'VN_to_CN[id_V].size()' "
-				        << "('id_V' = " << id_V << ", 'connections[id_V]' = " << connections[id_V]
-				        << ", 'VN_to_CN[id_V].size()' = " << VN_to_CN[id_V].size() << ")'.";
+				message << "'connections[var_id]' has to be equal or smaller than 'var_to_chk_id[var_id].size()' "
+				        << "('var_id' = " << var_id << ", 'connections[var_id]' = " << connections[var_id]
+				        << ", 'var_to_chk_id[var_id].size()' = " << var_to_chk_id[var_id].size() << ").";
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
 			transpose[k] = branch_id;
 			k++;
 		}
-	}
-}
-
-template <typename B, typename R>
-Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::~Decoder_LDPC_BP_flooding_Gallager_A()
-{
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_decode(const B *Y_N)
-{
-	for (auto ite = 0; ite < this->n_ite; ite++)
-	{
-		auto C_to_V_mess_ptr = C_to_V_messages.data();
-		auto V_to_C_mess_ptr = V_to_C_messages.data();
-
-		// V -> C (for each variable nodes)
-		for (auto i = 0; i < (int)this->H.get_n_rows(); i++)
-		{
-			const auto node_degree = (int)this->H.get_row_to_cols()[i].size();
-
-			for (auto j = 0; j < node_degree; j++)
-			{
-				auto cur_state = Y_N[i];
-				if (ite > 0)
-				{
-					auto count = 0;
-					for (auto k = 0; k < node_degree; k++)
-						if (k != j && C_to_V_mess_ptr[k] != cur_state)
-							count++;
-
-					cur_state = count == (node_degree -1) ? !cur_state : cur_state;
-				}
-
-				V_to_C_mess_ptr[j] = (int8_t)cur_state;
-			}
-
-			C_to_V_mess_ptr += node_degree; // jump to the next node
-			V_to_C_mess_ptr += node_degree; // jump to the next node
-		}
-
-		// C -> V (for each check nodes)
-		auto transpose_ptr = this->transpose.data();
-		for (auto i = 0; i < (int)this->H.get_n_cols(); i++)
-		{
-			const auto node_degree = (int)this->H.get_col_to_rows()[i].size();
-
-			// accumulate the incoming information in CN
-			auto acc = 0;
-			for (auto j = 0; j < node_degree; j++)
-				acc ^= V_to_C_messages[transpose_ptr[j]];
-
-			// regenerate the CN outcoming values
-			for (auto j = 0; j < node_degree; j++)
-				C_to_V_messages[transpose_ptr[j]] = acc ^ V_to_C_messages[transpose_ptr[j]];
-
-			transpose_ptr += node_degree; // jump to the next node
-		}
-
-		if (this->enable_syndrome && ite != this->n_ite -1)
-		{
-			auto C_to_V_ptr = C_to_V_messages.data();
-			// for the K variable nodes (make a majority vote with the entering messages)
-			for (auto i = 0; i < this->N; i++)
-			{
-				const auto node_degree = (int)this->H.get_row_to_cols()[i].size();
-				auto count = 0;
-
-				for (auto j = 0; j < node_degree; j++)
-					count += C_to_V_ptr[j] ? 1 : -1;
-
-				if (node_degree % 2 == 0)
-					count += Y_N[i] ? 1 : -1;
-
-				// take the hard decision
-				this->V_N[i] = count > 0 ? 1 : 0;
-
-				C_to_V_ptr += node_degree; // jump to the next node
-			}
-
-			if (this->check_syndrome_hard(this->V_N.data()))
-				break;
-		}
-	}
-
-	auto C_to_V_ptr = C_to_V_messages.data();
-	// for the K variable nodes (make a majority vote with the entering messages)
-	for (auto i = 0; i < this->N; i++)
-	{
-		const auto node_degree = (int)this->H.get_row_to_cols()[i].size();
-		auto count = 0;
-
-		for (auto j = 0; j < node_degree; j++)
-			count += C_to_V_ptr[j] ? 1 : -1;
-
-		if (node_degree % 2 == 0)
-			count += Y_N[i] ? 1 : -1;
-
-		// take the hard decision
-		this->V_N[i] = count > 0 ? 1 : 0;
-
-		C_to_V_ptr += node_degree; // jump to the next node
 	}
 }
 
@@ -203,7 +100,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
-	hard_decision.decode_siho(Y_N, HY_N.data());
+	tools::hard_decide(Y_N, HY_N.data(), this->N);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -225,7 +122,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
-	hard_decision.decode_siho(Y_N, HY_N.data());
+	tools::hard_decide(Y_N, HY_N.data(), this->N);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -241,7 +138,113 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
-// ==================================================================================== explicit template instantiation 
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::_decode(const B *Y_N)
+{
+	auto ite = 0;
+	for (; ite < this->n_ite; ite++)
+	{
+		this->_initialize_var_to_chk(Y_N, chk_to_var, var_to_chk, ite == 0);
+		this->_decode_single_ite(this->var_to_chk, this->chk_to_var);
+
+		if (this->enable_syndrome && ite != this->n_ite -1)
+		{
+			// for the K variable nodes (make a majority vote with the entering messages)
+			this->_make_majority_vote(Y_N, this->V_N);
+			if (this->check_syndrome_hard(this->V_N.data()))
+				break;
+		}
+	}
+	if (ite == this->n_ite)
+		this->_make_majority_vote(Y_N, this->V_N);
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::_initialize_var_to_chk(const B *Y_N, const std::vector<int8_t> &chk_to_var, std::vector<int8_t> &var_to_chk,
+                         const bool first_ite)
+{
+	auto chk_to_var_ptr = chk_to_var.data();
+	auto var_to_chk_ptr = var_to_chk.data();
+
+	// for each variable nodes
+	const auto n_var_nodes = (int)this->H.get_n_rows();
+	for (auto v = 0; v < n_var_nodes; v++)
+	{
+		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
+
+		for (auto c = 0; c < var_degree; c++)
+		{
+			auto cur_state = Y_N[v];
+			if (!first_ite)
+			{
+				auto count = 0;
+				for (auto cc = 0; cc < var_degree; cc++)
+					if (cc != c && chk_to_var_ptr[cc] != cur_state)
+						count++;
+
+				cur_state = count == (var_degree -1) ? !cur_state : cur_state;
+			}
+
+			var_to_chk_ptr[c] = (int8_t)cur_state;
+		}
+
+		chk_to_var_ptr += var_degree;
+		var_to_chk_ptr += var_degree;
+	}
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::_decode_single_ite(const std::vector<int8_t> &var_to_chk, std::vector<int8_t> &chk_to_var)
+{
+	auto transpose_ptr = this->transpose.data();
+
+	// for each check nodes
+	const auto n_chk_nodes = (int)this->H.get_n_cols();
+	for (auto c = 0; c < n_chk_nodes; c++)
+	{
+		const auto chk_degree = (int)this->H.get_col_to_rows()[c].size();
+
+		auto acc = 0;
+		for (auto v = 0; v < chk_degree; v++)
+			acc ^= var_to_chk[transpose_ptr[v]];
+
+		for (auto v = 0; v < chk_degree; v++)
+			chk_to_var[transpose_ptr[v]] = acc ^ var_to_chk[transpose_ptr[v]];
+
+		transpose_ptr += chk_degree;
+	}
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::_make_majority_vote(const B *Y_N, std::vector<int8_t> &V_N)
+{
+	auto chk_to_var_ptr = this->chk_to_var.data();
+
+	// for the K variable nodes (make a majority vote with the entering messages)
+	const auto n_var_nodes = (int)this->H.get_n_rows();
+	for (auto v = 0; v < n_var_nodes; v++)
+	{
+		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
+		auto count = 0;
+
+		for (auto c = 0; c < var_degree; c++)
+			count += chk_to_var_ptr[c] ? 1 : -1;
+
+		if (var_degree % 2 == 0)
+			count += Y_N[v] ? 1 : -1;
+
+		// take the hard decision
+		V_N[v] = count > 0 ? 1 : 0;
+
+		chk_to_var_ptr += var_degree;
+	}
+}
+
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A<B_8,Q_8>;

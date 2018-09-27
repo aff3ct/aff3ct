@@ -43,12 +43,6 @@ Flip_and_check<B,R>
 }
 
 template <typename B, typename R>
-Flip_and_check<B,R>
-::~Flip_and_check()
-{
-}
-
-template <typename B, typename R>
 bool Flip_and_check<B,R>
 ::siso_n(const int ite,
          const mipp::vector<R>& sys,
@@ -107,7 +101,7 @@ bool Flip_and_check<B,R>
 	return check_crc;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::tools::Flip_and_check<B_8,Q_8>;

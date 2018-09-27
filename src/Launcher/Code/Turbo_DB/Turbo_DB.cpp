@@ -16,28 +16,22 @@ Turbo_DB<L,B,R,Q>
 {
 	this->params.set_cdc(params_cdc);
 
-	if (typeid(L) == typeid(BFER_std<B,R,Q>))
+	if (std::is_same<L, BFER_std<B,R,Q>>::value)
 		params_cdc->enable_puncturer();
-}
-
-template <class L, typename B, typename R, typename Q>
-Turbo_DB<L,B,R,Q>
-::~Turbo_DB()
-{
 }
 
 template <class L, typename B, typename R, typename Q>
 void Turbo_DB<L,B,R,Q>
 ::get_description_args()
 {
-	params_cdc->get_description(this->req_args, this->opt_args);
+	params_cdc->get_description(this->args);
 
 	auto penc = params_cdc->enc->get_prefix();
 	auto pitl = params_cdc->itl->get_prefix();
 
-	this->opt_args.erase({penc+"-fra",  "F"});
-	this->opt_args.erase({penc+"-seed", "S"});
-	this->opt_args.erase({pitl+"-seed", "S"});
+	this->args.erase({penc+"-fra",  "F"});
+	this->args.erase({penc+"-seed", "S"});
+	this->args.erase({pitl+"-seed", "S"});
 
 	L::get_description_args();
 }
@@ -46,7 +40,10 @@ template <class L, typename B, typename R, typename Q>
 void Turbo_DB<L,B,R,Q>
 ::store_args()
 {
-	params_cdc->store(this->ar.get_args());
+	auto enc_tur = dynamic_cast<factory::Encoder_turbo_DB::parameters*>(params_cdc->enc.get());
+	auto dec_tur = dynamic_cast<factory::Decoder_turbo_DB::parameters*>(params_cdc->dec.get());
+
+	params_cdc->store(this->arg_vals);
 
 	if (std::is_same<Q,int8_t>())
 	{
@@ -62,12 +59,12 @@ void Turbo_DB<L,B,R,Q>
 	L::store_args();
 
 	params_cdc->enc      ->n_frames = this->params.src->n_frames;
-	if (params_cdc->pct)
+	if (params_cdc->pct != nullptr)
 	params_cdc->pct      ->n_frames = this->params.src->n_frames;
 	params_cdc->dec      ->n_frames = this->params.src->n_frames;
 	params_cdc->itl->core->n_frames = this->params.src->n_frames;
-	params_cdc->enc->sub ->n_frames = this->params.src->n_frames;
-	params_cdc->dec->sub ->n_frames = this->params.src->n_frames;
+	enc_tur->sub         ->n_frames = this->params.src->n_frames;
+	dec_tur->sub         ->n_frames = this->params.src->n_frames;
 
 	params_cdc->itl->core->seed = this->params.global_seed;
 }

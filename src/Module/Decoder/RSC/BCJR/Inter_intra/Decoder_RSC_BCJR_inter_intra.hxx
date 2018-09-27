@@ -13,7 +13,7 @@ namespace module
 template <typename B, typename R>
 Decoder_RSC_BCJR_inter_intra<B,R>
 ::Decoder_RSC_BCJR_inter_intra(const int &K,
-                               const std::vector<std::vector<int>> &trellis, 
+                               const std::vector<std::vector<int>> &trellis,
                                const bool buffered_encoding,
                                const int n_frames)
 : Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>()/8),
@@ -23,8 +23,8 @@ Decoder_RSC_BCJR_inter_intra<B,R>
 {
 	const std::string name = "Decoder_RSC_BCJR_inter_intra";
 	this->set_name(name);
-	
-	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));	
+
+	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));
 	req_trellis[0] = { 0,  2,  4,  6,  0,  2,  4,  6};
 	req_trellis[1] = { 1, -1,  1, -1, -1,  1, -1,  1};
 	req_trellis[2] = { 0,  1,  1,  0,  0,  1,  1,  0};
@@ -39,12 +39,6 @@ Decoder_RSC_BCJR_inter_intra<B,R>
 	for (unsigned i = 0; i < req_trellis.size(); i++)
 		if (trellis[i] != req_trellis[i])
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Unsupported trellis.");
-}
-
-template <typename B, typename R>
-Decoder_RSC_BCJR_inter_intra<B,R>
-::~Decoder_RSC_BCJR_inter_intra()
-{
 }
 
 template <typename B, typename R>
@@ -231,7 +225,7 @@ template <>
 struct RSC_BCJR_inter_intra_normalize <short, -1>
 {
 	static mipp::Reg<short> apply(const mipp::Reg<short> &r_metrics, const mipp::Reg<short> &r_cmask_norm, const int &i = 0)
-	{  
+	{
 		if (i % 4 == 0)
 			return RSC_BCJR_inter_intra_normalize_core<short>::apply(r_metrics, r_cmask_norm);
 		else

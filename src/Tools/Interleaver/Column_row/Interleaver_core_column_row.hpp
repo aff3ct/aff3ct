@@ -21,7 +21,7 @@ private:
 
 public:
 	Interleaver_core_column_row(const int size, const int n_cols, const int n_frames = 1);
-	virtual ~Interleaver_core_column_row();
+	virtual ~Interleaver_core_column_row() = default;
 
 protected:
 	void gen_lut(T *lut, const int frame_id);

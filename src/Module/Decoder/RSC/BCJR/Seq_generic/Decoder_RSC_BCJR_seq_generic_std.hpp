@@ -21,11 +21,11 @@ private:
 	mipp::vector<R> beta_cur;
 
 public:
-	Decoder_RSC_BCJR_seq_generic_std(const int &K, 
-	                                 const std::vector<std::vector<int>> &trellis, 
+	Decoder_RSC_BCJR_seq_generic_std(const int &K,
+	                                 const std::vector<std::vector<int>> &trellis,
 	                                 const bool buffered_encoding = true,
 	                                 const int n_frames = 1);
-	virtual ~Decoder_RSC_BCJR_seq_generic_std();
+	virtual ~Decoder_RSC_BCJR_seq_generic_std() = default;
 
 protected:
 	virtual void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);

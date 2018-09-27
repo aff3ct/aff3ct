@@ -22,12 +22,6 @@ Decoder_RSC_BCJR_seq_scan<B,R,RD>
 }
 
 template <typename B, typename R, typename RD>
-Decoder_RSC_BCJR_seq_scan<B,R,RD>
-::~Decoder_RSC_BCJR_seq_scan()
-{
-}
-
-template <typename B, typename R, typename RD>
 void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 ::compute_gamma(const R *sys, const R *par)
 {
@@ -127,7 +121,7 @@ struct RSC_BCJR_seq_scan_normalize2
 template <>
 struct RSC_BCJR_seq_scan_normalize2 <short>
 {
-	static void apply(short &ab0, short &ab1, short &ab2, short &ab3, short &ab4, short &ab5, short &ab6, short &ab7, 
+	static void apply(short &ab0, short &ab1, short &ab2, short &ab3, short &ab4, short &ab5, short &ab6, short &ab7,
 	                  const int i)
 	{
 		// normalization
@@ -149,8 +143,8 @@ struct RSC_BCJR_seq_scan_normalize2 <short>
 template <>
 struct RSC_BCJR_seq_scan_normalize2 <signed char>
 {
-	static void apply(signed char &ab0, signed char &ab1, signed char &ab2, signed char &ab3, 
-	                  signed char &ab4, signed char &ab5, signed char &ab6, signed char &ab7, 
+	static void apply(signed char &ab0, signed char &ab1, signed char &ab2, signed char &ab3,
+	                  signed char &ab4, signed char &ab5, signed char &ab6, signed char &ab7,
 	                  const int i)
 	{
 		// normalization & saturation
@@ -241,8 +235,8 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 					this->alpha[k][w + i+j] = max[k];
 
 				// normalization
-				RSC_BCJR_seq_scan_normalize2<R>::apply(this->alpha[0][w+i+j], this->alpha[1][w+i+j], 
-				                                       this->alpha[2][w+i+j], this->alpha[3][w+i+j], 
+				RSC_BCJR_seq_scan_normalize2<R>::apply(this->alpha[0][w+i+j], this->alpha[1][w+i+j],
+				                                       this->alpha[2][w+i+j], this->alpha[3][w+i+j],
 				                                       this->alpha[4][w+i+j], this->alpha[5][w+i+j],
 				                                       this->alpha[6][w+i+j], this->alpha[7][w+i+j],
 				                                       w+i+j);
@@ -264,8 +258,8 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 		this->alpha[7][i] = std::max(this->alpha[6][i -1] + g0, this->alpha[7][i -1] - g0);
 
 		// normalization
-		RSC_BCJR_seq_scan_normalize2<R>::apply(this->alpha[0][i], this->alpha[1][i], this->alpha[2][i], 
-		                                       this->alpha[3][i], this->alpha[4][i], this->alpha[5][i], 
+		RSC_BCJR_seq_scan_normalize2<R>::apply(this->alpha[0][i], this->alpha[1][i], this->alpha[2][i],
+		                                       this->alpha[3][i], this->alpha[4][i], this->alpha[5][i],
 		                                       this->alpha[6][i], this->alpha[7][i], i);
 	}
 }
@@ -343,8 +337,8 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 					this->beta[k][w - (i+j)] = max[k];
 
 				// normalization
-				RSC_BCJR_seq_scan_normalize2<R>::apply(this->beta[0][w-(i+j)], this->beta[1][w-(i+j)], 
-				                                       this->beta[2][w-(i+j)], this->beta[3][w-(i+j)], 
+				RSC_BCJR_seq_scan_normalize2<R>::apply(this->beta[0][w-(i+j)], this->beta[1][w-(i+j)],
+				                                       this->beta[2][w-(i+j)], this->beta[3][w-(i+j)],
 				                                       this->beta[4][w-(i+j)], this->beta[5][w-(i+j)],
 				                                       this->beta[6][w-(i+j)], this->beta[7][w-(i+j)],
 				                                       w-(i+j));
@@ -366,8 +360,8 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 		this->beta[7][i] = std::max(this->beta[3][i +1] + g0, this->beta[7][i +1] - g0);
 
 		// normalization
-		RSC_BCJR_seq_scan_normalize2<R>::apply(this->beta[0][i], this->beta[1][i], this->beta[2][i], 
-		                                       this->beta[3][i], this->beta[4][i], this->beta[5][i], 
+		RSC_BCJR_seq_scan_normalize2<R>::apply(this->beta[0][i], this->beta[1][i], this->beta[2][i],
+		                                       this->beta[3][i], this->beta[4][i], this->beta[5][i],
 		                                       this->beta[6][i], this->beta[7][i], i);
 	}
 }

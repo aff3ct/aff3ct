@@ -25,27 +25,27 @@ inline void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_
 	const auto loop_size = (int)leaves_patterns.size();
 	for (auto l = 0; l < loop_size; l++)
 	{
-		const auto node_type = (tools::polar_node_t)leaves_patterns[l].first;
+		const auto node_type = (polar_node_t)leaves_patterns[l].first;
 		const auto n_elmts = leaves_patterns[l].second;
 		switch (node_type)
 		{
-			case tools::RATE_0:
+			case polar_node_t::RATE_0:
 				break;
-			case tools::RATE_1:
+			case polar_node_t::RATE_1:
 				std::copy(V_N +  off_s            * N_FRAMES,
 				          V_N + (off_s + n_elmts) * N_FRAMES,
 				          V_K + sk_idx);
 
 				sk_idx += n_elmts * N_FRAMES;
 				break;
-			case tools::REP:
+			case polar_node_t::REP:
 				std::copy(V_N + (off_s + n_elmts -1) * N_FRAMES,
 				          V_N + (off_s + n_elmts +0) * N_FRAMES,
 				          V_K + sk_idx);
 
 				sk_idx += N_FRAMES;
 				break;
-			case tools::SPC:
+			case polar_node_t::SPC:
 				std::copy(V_N + (off_s + 1      ) * N_FRAMES,
 				          V_N + (off_s + n_elmts) * N_FRAMES,
 				          V_K + sk_idx);

@@ -2,7 +2,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_repetition.hpp"
@@ -19,19 +19,13 @@ Decoder_repetition<B,R>
 {
 	const std::string name = "Decoder_repetition";
 	this->set_name(name);
-	
+
 	if (N % K)
 	{
 		std::stringstream message;
 		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R>
-Decoder_repetition<B,R>
-::~Decoder_repetition()
-{
 }
 
 template <typename B, typename R>

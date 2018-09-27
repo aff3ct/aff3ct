@@ -13,21 +13,32 @@ class Modem_BPSK_fast : public Modem<B,R,Q>
 private:
 	const bool disable_sig2;
 	R two_on_square_sigma;
-	
-public:
-	Modem_BPSK_fast(const int N, const R sigma = (R)1, const bool disable_sig2 = false, const int n_frames = 1);
-	virtual ~Modem_BPSK_fast();
 
-	void set_sigma(const R sigma);
+public:
+	Modem_BPSK_fast(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const bool disable_sig2 = false,
+	                const int n_frames = 1);
+	virtual ~Modem_BPSK_fast() = default;
+
+	virtual void set_noise(const tools::Noise<R>& noise);
+
+	static bool is_complex_mod()
+	{
+		return false;
+	}
+
+	static bool is_complex_fil()
+	{
+		return false;
+	}
 
 	static int size_mod(const int N)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, 1, 0, 1, false);
+		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, 1, 0, 1, is_complex_mod());
 	}
 
 	static int size_fil(const int N)
 	{
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, 1, 0, 1, false);
+		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, 1, 0, 1, is_complex_fil());
 	}
 
 protected:

@@ -33,7 +33,7 @@ protected:
 
 public:
 	Dumper(/*const int n_frames = 1*/);
-	virtual ~Dumper();
+	virtual ~Dumper() = default;
 
 	template <typename T>
 	void register_data(const T *ptr, const unsigned size, const unsigned add_threshold = 0,

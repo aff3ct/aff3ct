@@ -16,7 +16,7 @@ private:
 
 public:
 	Interleaver_core_user(const int size, const std::string &filename, const int n_frames = 1);
-	virtual ~Interleaver_core_user();
+	virtual ~Interleaver_core_user() = default;
 
 protected:
 	void gen_lut(T *lut, const int frame_id);

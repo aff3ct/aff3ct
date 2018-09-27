@@ -2,6 +2,7 @@
 #include <mipp.h>
 
 #include "Launcher/Simulation/BFER_std.hpp"
+#include "Launcher/Simulation/BFER_ite.hpp"
 
 #include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
 
@@ -17,26 +18,32 @@ LDPC<L,B,R,Q>
 {
 	this->params.set_cdc(params_cdc);
 
-	if (typeid(L) == typeid(BFER_std<B,R,Q>))
+	if (std::is_same<L, BFER_std<B,R,Q>>::value)
 		params_cdc->enable_puncturer();
 }
 
-template <class L, typename B, typename R, typename Q>
-LDPC<L,B,R,Q>
-::~LDPC()
+bool enc_dvb_no_h_matrix(const void*, const void* enc_type)
 {
+	if (enc_type == nullptr)
+		return false;
+
+	return *(const std::string*)enc_type == "LDPC_DVBS2";
 }
 
 template <class L, typename B, typename R, typename Q>
 void LDPC<L,B,R,Q>
 ::get_description_args()
 {
-	params_cdc->get_description(this->req_args, this->opt_args);
+	params_cdc->get_description(this->args);
 
 	auto penc = params_cdc->enc->get_prefix();
+	auto pdec = params_cdc->dec->get_prefix();
 
-	this->opt_args.erase({penc+"-fra",  "F"});
-	this->opt_args.erase({penc+"-seed", "S"});
+	this->args.erase({penc+"-fra",  "F"});
+	this->args.erase({penc+"-seed", "S"});
+
+	this->args.add_link({pdec+"-h-path"}, {penc+"-type"}, enc_dvb_no_h_matrix);
+
 
 	L::get_description_args();
 }
@@ -45,9 +52,11 @@ template <class L, typename B, typename R, typename Q>
 void LDPC<L,B,R,Q>
 ::store_args()
 {
-	params_cdc->store(this->ar.get_args());
+	auto dec_ldpc = dynamic_cast<factory::Decoder_LDPC::parameters*>(params_cdc->dec.get());
 
-	if (params_cdc->dec->simd_strategy == "INTER")
+	params_cdc->store(this->arg_vals);
+
+	if (dec_ldpc->simd_strategy == "INTER")
 		this->params.src->n_frames = mipp::N<Q>();
 
 	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
@@ -59,7 +68,7 @@ void LDPC<L,B,R,Q>
 	L::store_args();
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
-	if (params_cdc->pct)
+	if (params_cdc->pct != nullptr)
 	params_cdc->pct->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;
 }

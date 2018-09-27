@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "Channel_Rayleigh_LLR_user.hpp"
 
@@ -11,13 +12,13 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const std::string& gains_filename,
-                            const int gain_occurrences, tools::Gaussian_gen<R> *noise_generator, const bool add_users,
-                            const R sigma, const int n_frames)
-: Channel<R>(N, sigma, n_frames),
+                            std::unique_ptr<tools::Gaussian_gen<R>>&& _ng, const int gain_occurrences,
+                            const bool add_users, const tools::Noise<R>& noise, const int n_frames)
+: Channel<R>(N, noise, n_frames),
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
-  noise_generator(noise_generator),
+  noise_generator(std::move(_ng)),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
   gain_index(0)
@@ -40,8 +41,8 @@ Channel_Rayleigh_LLR_user<R>
 template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N, const bool complex, const int seed, const std::string& gains_filename,
-                            const int gain_occurrences, const bool add_users, const R sigma, const int n_frames)
-: Channel<R>(N, sigma, n_frames),
+                            const int gain_occurrences, const bool add_users, const tools::Noise<R>& noise, const int n_frames)
+: Channel<R>(N, noise, n_frames),
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
@@ -60,13 +61,6 @@ Channel_Rayleigh_LLR_user<R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Argument 'gain_occurrences' must be strictly positive.");
 
 	read_gains(gains_filename);
-}
-
-template <typename R>
-Channel_Rayleigh_LLR_user<R>
-::~Channel_Rayleigh_LLR_user()
-{
-	delete noise_generator;
 }
 
 template <typename R>
@@ -102,6 +96,8 @@ template <typename R>
 void Channel_Rayleigh_LLR_user<R>
 ::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
+	this->check_noise();
+
 	if (frame_id != -1)
 	{
 		std::stringstream message;
@@ -126,7 +122,7 @@ void Channel_Rayleigh_LLR_user<R>
 	}
 
 	// generate the noise
-	noise_generator->generate(this->noise, this->sigma);
+	noise_generator->generate(this->noise, this->n->get_noise()); // trow if noise is not SIGMA type
 
 	// use the noise and the gain to modify the signal
 	for (auto i = 0; i < this->N * this->n_frames; i++)
@@ -135,6 +131,14 @@ void Channel_Rayleigh_LLR_user<R>
 
 		Y_N[i] = X_N[i] * H_N[i] + this->noise[i];
 	}
+}
+
+template<typename R>
+void Channel_Rayleigh_LLR_user<R>::check_noise()
+{
+	Channel<R>::check_noise();
+
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 // ==================================================================================== explicit template instantiation

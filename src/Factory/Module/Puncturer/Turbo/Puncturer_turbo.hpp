@@ -2,6 +2,7 @@
 #define FACTORY_PUNCTURER_TURBO_HPP
 
 #include <string>
+#include <vector>
 
 #include "Module/Puncturer/Puncturer.hpp"
 
@@ -20,18 +21,18 @@ struct Puncturer_turbo : public Puncturer
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
-		std::string pattern     = "111,111,111";
+		std::vector<std::vector<bool>> pattern = {{1,1,1},{1,1,1},{1,1,1}};
 		bool        buffered    = true;
 		int         tail_length = 0;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Puncturer_turbo_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Puncturer_turbo::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

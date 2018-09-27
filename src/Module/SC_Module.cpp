@@ -20,8 +20,8 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 	task.set_autoalloc(true );
 
 	auto is_inputs = false;
-	for (auto *s : task.sockets)
-		if (task.get_socket_type(*s) == IN || task.get_socket_type(*s) == IN_OUT)
+	for (auto& s : task.sockets)
+		if (task.get_socket_type(*s) == socket_t::SIN || task.get_socket_type(*s) == socket_t::SIN_SOUT)
 		{
 			is_inputs = true;
 			break;
@@ -29,17 +29,18 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 
 	for (size_t i = 0; i < task.sockets.size(); i++)
 	{
-		auto *s = task.sockets[i];
+		auto& s = task.sockets[i];
 		auto name = s->get_name();
 
 		const auto id_in  = (int)sockets_in.size();
 		const auto id_out = (int)sockets_out.size();
 		switch (task.get_socket_type(*s))
 		{
-		case IN:
+		case socket_t::SIN:
 			indirect_sockets_in[i] = id_in;
 			indirect_sockets_in_rev.push_back(i);
-			sockets_in.push_back(new tlm_utils::simple_target_socket<SC_Module>(name.c_str()));
+			sockets_in.push_back(std::unique_ptr<tlm_utils::simple_target_socket<SC_Module>>(
+			                          new tlm_utils::simple_target_socket<SC_Module>(name.c_str())));
 			ptr_input_sockets.push_back(s);
 			switch (ptr_input_sockets.size())
 			{
@@ -51,22 +52,26 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 				case 6: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport6); break;
 				case 7: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport7); break;
 				case 8: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport8); break;
-				default: throw tools::runtime_error(__FILE__, __LINE__, __func__, "This should never happen."); break;
+				default:
+					throw tools::runtime_error(__FILE__, __LINE__, __func__, "This should never happen.");
+					break;
 			}
 			break;
 
-		case OUT:
+		case socket_t::SOUT:
 			indirect_sockets_out[i] = id_out;
 			indirect_sockets_out_rev.push_back(i);
-			sockets_out.push_back(new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str()));
+			sockets_out.push_back(std::unique_ptr<tlm_utils::simple_initiator_socket<SC_Module>>(
+			                          new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str())));
 			if (!is_inputs)
 				SC_THREAD(start_sc_thread);
 			break;
 
-		case IN_OUT:
+		case socket_t::SIN_SOUT:
 			indirect_sockets_in[i] = id_in;
 			indirect_sockets_in_rev.push_back(i);
-			sockets_in.push_back(new tlm_utils::simple_target_socket<SC_Module>(name.c_str()));
+			sockets_in.push_back(std::unique_ptr<tlm_utils::simple_target_socket<SC_Module>>(
+			                          new tlm_utils::simple_target_socket<SC_Module>(name.c_str())));
 			ptr_input_sockets.push_back(s);
 			switch (ptr_input_sockets.size())
 			{
@@ -78,11 +83,14 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 				case 6: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport6); break;
 				case 7: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport7); break;
 				case 8: sockets_in[id_in]->register_b_transport(this, &SC_Module::b_transport8); break;
-				default: throw tools::runtime_error(__FILE__, __LINE__, __func__, "This should never happen."); break;
+				default:
+					throw tools::runtime_error(__FILE__, __LINE__, __func__, "This should never happen.");
+					break;
 			}
 			indirect_sockets_out[i] = id_out;
 			indirect_sockets_out_rev.push_back(i);
-			sockets_out.push_back(new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str()));
+			sockets_out.push_back(std::unique_ptr<tlm_utils::simple_initiator_socket<SC_Module>>(
+			                          new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str())));
 			break;
 
 		default:
@@ -90,12 +98,6 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 			break;
 		}
 	}
-}
-
-SC_Module::~SC_Module()
-{
-	for (auto *s : sockets_in ) delete s;
-	for (auto *s : sockets_out) delete s;
 }
 
 void SC_Module::b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t, Socket &socket)
@@ -226,16 +228,11 @@ void SC_Module::start_sc_thread()
 	}
 }
 
+
+
 SC_Module_container::SC_Module_container(Module &module)
 : module(module), sc_modules()
 {
-}
-
-SC_Module_container::~SC_Module_container()
-{
-	for (auto *m : sc_modules)
-		if (m != nullptr)
-			delete m;
 }
 
 void SC_Module_container::create_module(const int id)
@@ -251,7 +248,7 @@ void SC_Module_container::create_module(const int id)
 		if (sc_modules[id] != nullptr)
 			erase_module(id);
 
-		sc_modules[id] = new SC_Module(module[id], (module.get_name() + "::" + module[id].get_name()).c_str());
+		sc_modules[id] = std::unique_ptr<SC_Module>(new SC_Module(module[id], (module.get_name() + "::" + module[id].get_name()).c_str()));
 	}
 	else
 	{
@@ -265,7 +262,6 @@ void SC_Module_container::erase_module(const int id)
 {
 	if ((size_t)id < sc_modules.size() && sc_modules[id] != nullptr)
 	{
-		delete sc_modules[id];
 		sc_modules[id] = nullptr;
 	}
 	else

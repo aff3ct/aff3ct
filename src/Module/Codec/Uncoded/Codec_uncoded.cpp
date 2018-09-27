@@ -63,23 +63,16 @@ Codec_uncoded<B,Q>
 	pct_params.n_frames = enc_params.n_frames;
 
 	this->set_puncturer(factory::Puncturer ::build<B,Q>(pct_params));
-	this->set_encoder(factory::Encoder::build<B>(enc_params));
+	this->set_encoder  (factory::Encoder::build<B>(enc_params));
+
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_NO::build_siso<B,Q>(dec_params, this->get_encoder());
-		this->set_decoder_siso(decoder_siso_siho);
-		this->set_decoder_siho(decoder_siso_siho);
+		this->set_decoder_siso_siho(factory::Decoder_NO::build_siso<B,Q>(dec_params, this->get_encoder()));
 	}
-	catch (tools::cannot_allocate const&)
+	catch (const std::exception&)
 	{
 		this->set_decoder_siho(factory::Decoder_NO::build<B,Q>(dec_params, this->get_encoder()));
 	}
-}
-
-template <typename B, typename Q>
-Codec_uncoded<B,Q>
-::~Codec_uncoded()
-{
 }
 
 template <typename B, typename Q>
@@ -90,7 +83,7 @@ void Codec_uncoded<B,Q>
 	std::copy(Y_N, Y_N + K, sys);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Codec_uncoded<B_8,Q_8>;

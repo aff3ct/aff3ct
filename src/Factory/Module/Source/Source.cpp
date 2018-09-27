@@ -19,11 +19,6 @@ Source::parameters
 {
 }
 
-Source::parameters
-::~parameters()
-{
-}
-
 Source::parameters* Source::parameters
 ::clone() const
 {
@@ -31,42 +26,59 @@ Source::parameters* Source::parameters
 }
 
 void Source::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-info-bits", "K"}] =
-		{"strictly_positive_int",
-		 "number of generated bits (information bits)."};
+	args.add(
+		{p+"-info-bits", "K"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"number of generated bits (information bits).",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	args.add(
+		{p+"-fra", "F"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "method used to generate the codewords.",
-		 "RAND, RAND_FAST, AZCW, USER"};
+	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("RAND", "AZCW", "USER")),
+		"method used to generate the codewords.");
 
-	opt_args[{p+"-path"}] =
-		{"string",
-		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\"."};
+	args.add(
+		{p+"-implem"},
+		tools::Text(tools::Including_set("STD", "FAST")),
+		"select the implementation of the algorithm to generate the information bits.");
 
-	opt_args[{p+"-seed", "S"}] =
-		{"positive_int",
-		 "seed used to initialize the pseudo random generators."};
+	args.add(
+		{p+"-path"},
+		tools::File(tools::openmode::read),
+		"path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\".");
+
+	args.add(
+		{p+"-start-idx"},
+		tools::Integer(tools::Positive()),
+		"Start idx to use in the USER type source.");
+
+	args.add(
+		{p+"-seed", "S"},
+		tools::Integer(tools::Positive()),
+		"seed used to initialize the pseudo random generators.");
 }
 
 void Source::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-info-bits", "K"})) this->K        = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-fra",       "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-type"          })) this->type     =           vals.at({p+"-type"          });
-	if(exist(vals, {p+"-path"          })) this->path     =           vals.at({p+"-path"          });
-	if(exist(vals, {p+"-seed",      "S"})) this->seed     = std::stoi(vals.at({p+"-seed",      "S"}));
+	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int({p+"-info-bits", "K"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int({p+"-fra",       "F"});
+	if(vals.exist({p+"-type"          })) this->type     = vals.at    ({p+"-type"          });
+	if(vals.exist({p+"-implem"        })) this->implem   = vals.at    ({p+"-implem"        });
+	if(vals.exist({p+"-path"          })) this->path     = vals.at    ({p+"-path"          });
+	if(vals.exist({p+"-seed",      "S"})) this->seed     = vals.to_int({p+"-seed",      "S"});
+	if(vals.exist({p+"-start-idx"     })) this->start_idx= vals.to_int({p+"-start-idx"     });
 }
 
 void Source::parameters
@@ -75,11 +87,12 @@ void Source::parameters
 	auto p = this->get_prefix();
 
 	headers[p].push_back(std::make_pair("Type", this->type));
+	headers[p].push_back(std::make_pair("Implementation", this->implem));
 	headers[p].push_back(std::make_pair("Info. bits (K_info)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	if (this->type == "USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
-	if ((this->type == "RAND" || this->type == "RAND_FAST") && full)
+	if (this->type == "RAND" && full)
 		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
 }
 
@@ -87,10 +100,16 @@ template <typename B>
 module::Source<B>* Source::parameters
 ::build() const
 {
-	     if (this->type == "RAND"     ) return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "RAND_FAST") return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
-	else if (this->type == "AZCW"     ) return new module::Source_AZCW       <B>(this->K,             this->n_frames);
-	else if (this->type == "USER"     ) return new module::Source_user       <B>(this->K, this->path, this->n_frames);
+	if (this->type == "RAND")
+	{
+		if (this->implem == "STD")
+			return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
+		else if (this->implem == "FAST")
+			return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
+	}
+
+	if (this->type == "AZCW") return new module::Source_AZCW<B>(this->K,             this->n_frames);
+	if (this->type == "USER") return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

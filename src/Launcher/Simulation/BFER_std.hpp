@@ -17,7 +17,7 @@ protected:
 
 public:
 	BFER_std(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~BFER_std();
+	virtual ~BFER_std() = default;
 
 protected:
 	virtual void get_description_args();

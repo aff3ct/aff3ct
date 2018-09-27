@@ -19,7 +19,7 @@ Decoder_RSC_BCJR_intra_fast<B,R,MAX>
 {
 	const std::string name = "Decoder_RSC_BCJR_intra_fast";
 	this->set_name(name);
-	
+
 	if (mipp::nElReg<R>() != 8)
 	{
 		std::stringstream message;
@@ -33,12 +33,6 @@ Decoder_RSC_BCJR_intra_fast<B,R,MAX>
 		message << "'K' has to be divisible by 8 ('K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R, tools::proto_max_i<R> MAX>
-Decoder_RSC_BCJR_intra_fast<B,R,MAX>
-::~Decoder_RSC_BCJR_intra_fast()
-{
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>

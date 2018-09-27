@@ -11,13 +11,7 @@ template <typename B = int, typename R = float>
 class Post_processing_SISO
 {
 public:
-	Post_processing_SISO()
-	{
-	}
-
-	virtual ~Post_processing_SISO()
-	{
-	}
+	virtual ~Post_processing_SISO() = default;
 
 	virtual bool siso_n(const int ite,
 	                    const mipp::vector<R>& sys,

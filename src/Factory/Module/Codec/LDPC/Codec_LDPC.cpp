@@ -1,4 +1,11 @@
+#include <sstream>
 #include "Codec_LDPC.hpp"
+
+#include "Factory/Module/Encoder/LDPC/Encoder_LDPC.hpp"
+#include "Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
+#include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
+
+#include "Tools/Exception/exception.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -9,105 +16,109 @@ const std::string aff3ct::factory::Codec_LDPC_prefix = "cdc";
 Codec_LDPC::parameters
 ::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_LDPC_name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_LDPC_name, prefix),
-  enc(new Encoder_LDPC::parameters("enc")),
-  dec(new Decoder_LDPC::parameters("dec")),
-  pct(nullptr)
+  Codec_SISO_SIHO::parameters(Codec_LDPC_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-}
-
-Codec_LDPC::parameters
-::~parameters()
-{
-	if (enc != nullptr) { delete enc; enc = nullptr; }
-	if (pct != nullptr) { delete pct; pct = nullptr; }
-	if (dec != nullptr) { delete dec; dec = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
+	Codec::parameters::set_enc(new Encoder_LDPC::parameters("enc"));
+	Codec::parameters::set_dec(new Decoder_LDPC::parameters("dec"));
 }
 
 Codec_LDPC::parameters* Codec_LDPC::parameters
 ::clone() const
 {
-	auto clone = new Codec_LDPC::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (pct != nullptr) { clone->pct = pct->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-
-	return clone;
+	return new Codec_LDPC::parameters(*this);
 }
 
 void Codec_LDPC::parameters
 ::enable_puncturer()
 {
-	this->pct = new Puncturer_LDPC::parameters("pct");
-	this->set_pct(this->pct);
+	set_pct(new Puncturer_LDPC::parameters("pct"));
 }
 
 void Codec_LDPC::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SISO_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto penc = enc->get_prefix();
 	auto pdec = dec->get_prefix();
 
-	opt_args.erase({penc+"-h-path"           });
-	opt_args.erase({penc+"-h-reorder"        });
-	req_args.erase({pdec+"-cw-size",   "N"   });
-	req_args.erase({pdec+"-info-bits", "K"   });
-	opt_args.erase({pdec+"-fra",       "F"   });
+	args.erase({penc+"-h-path"           });
+	args.erase({penc+"-h-reorder"        });
+	args.erase({pdec+"-cw-size",   "N"   });
+	args.erase({pdec+"-info-bits", "K"   });
+	args.erase({pdec+"-fra",       "F"   });
 
-	if (this->pct)
+	args.add_link({pdec+"-h-path"}, {penc+"-info-bits", "K"});
+	args.add_link({pdec+"-h-path"}, {penc+"-cw-size",   "N"});
+
+	if (pct != nullptr)
 	{
-		pct->get_description(req_args, opt_args);
+		pct->get_description(args);
 
 		auto ppct = pct->get_prefix();
 
-		req_args.erase({ppct+"-info-bits", "K"   });
-		opt_args.erase({ppct+"-fra",       "F"   });
-		req_args.erase({ppct+"-cw-size",   "N_cw"});
+		args.erase({ppct+"-info-bits", "K"   });
+		args.erase({ppct+"-fra",       "F"   });
+		args.erase({ppct+"-cw-size",   "N_cw"});
+
+		args.add_link({pdec+"-h-path"}, {ppct+"-fra-size", "N"});
 	}
 }
 
 void Codec_LDPC::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 
-	enc->store(vals);
+	auto enc_ldpc = dynamic_cast<Encoder_LDPC::parameters*>(enc.get());
+	auto dec_ldpc = dynamic_cast<Decoder_LDPC::parameters*>(dec.get());
 
-	if (this->pct)
+	enc->store(vals);
+	dec->store(vals);
+
+	if (enc->type == "LDPC_DVBS2" || enc->type == "LDPC")
+		dec->N_cw = enc->N_cw; // then the encoder knows the N_cw
+	else
+		enc->N_cw = dec->N_cw; // then the decoder knows the N_cw
+
+	if (enc->K != 0)
+		dec->K = enc->K; // then the encoder knows the K
+	else
+		enc->K = dec->K; // then the decoder knows the K
+
+	if (enc->type == "LDPC_H")
+		enc_ldpc->H_path = dec_ldpc->H_path;
+
+	// if (dec->K == 0 || dec->N_cw == 0 || enc->K == 0 || enc->N_cw == 0)
+	// {
+	// 	std::stringstream message;
+	// 	message << "Error while initializing decoder and encoder dimensions ('dec->K' = " << dec->K
+	// 	        << ", 'dec->N_cw' = " << dec->N_cw << ", 'enc->K' = " << enc->K
+	// 	        << ", 'enc->N_cw' = " << enc->N_cw << ").";
+	// 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	// }
+
+	dec->n_frames = enc->n_frames;
+
+	enc->R = (float)enc->K / (float)enc->N_cw;
+	dec->R = (float)dec->K / (float)dec->N_cw;
+
+	if (pct != nullptr)
 	{
-		this->pct->K        = this->enc->K;
-		this->pct->N_cw     = this->enc->N_cw;
-		this->pct->n_frames = this->enc->n_frames;
+		pct->K        = enc->K;
+		pct->N        = enc->N_cw;
+		pct->N_cw     = enc->N_cw;
+		pct->n_frames = enc->n_frames;
 
 		pct->store(vals);
 	}
 
-	this->dec->K        = this->enc->K;
-	this->dec->N_cw     = this->enc->N_cw;
-	this->dec->n_frames = this->enc->n_frames;
-
-	dec->store(vals);
-
-	this->enc->H_path    = this->dec->H_path;
-	this->enc->H_reorder = this->dec->H_reorder;
-
-	this->K    = this->enc->K;
-	this->N_cw = this->enc->N_cw;
-	this->N    = this->pct ? this->pct->N : this->N_cw;
+	K    = enc->K;
+	N_cw = enc->N_cw;
+	N    = pct != nullptr ? pct->N : N_cw;
 }
 
 void Codec_LDPC::parameters
@@ -117,7 +128,7 @@ void Codec_LDPC::parameters
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
-	if (this->pct)
+	if (pct != nullptr)
 		pct->get_headers(headers, full);
 }
 
@@ -125,9 +136,9 @@ template <typename B, typename Q>
 module::Codec_LDPC<B,Q>* Codec_LDPC::parameters
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_LDPC<B,Q>(*enc, *dec, pct);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_LDPC<B,Q>(dynamic_cast<const Encoder_LDPC  ::parameters&>(*enc),
+	                                   dynamic_cast<const Decoder_LDPC  ::parameters&>(*dec),
+	                                   dynamic_cast<Puncturer_LDPC::parameters*>(pct.get()));
 }
 
 template <typename B, typename Q>

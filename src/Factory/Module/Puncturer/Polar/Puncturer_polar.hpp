@@ -3,7 +3,7 @@
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
-#include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
+#include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 
 #include "../Puncturer.hpp"
 
@@ -23,21 +23,21 @@ struct Puncturer_polar : public Puncturer
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Puncturer_polar_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Puncturer_polar::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Puncturer_polar_wangliu<B,Q>* build(const tools::Frozenbits_generator &fb_generator) const;
+		module::Puncturer_polar_shortlast<B,Q>* build(const tools::Frozenbits_generator &fb_generator) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Puncturer_polar_wangliu<B,Q>* build(const parameters                  &params,
+	static module::Puncturer_polar_shortlast<B,Q>* build(const parameters                  &params,
 	                                                   const tools::Frozenbits_generator &fb_generator);
 };
 }

@@ -14,6 +14,8 @@
 #include "Factory/Tools/Code/Turbo/Scaling_factor.hpp"
 #include "Factory/Module/Decoder/RSC_DB/Decoder_RSC_DB.hpp"
 
+#include "Tools/auto_cloned_unique_ptr.hpp"
+
 #include "../Decoder.hpp"
 
 namespace aff3ct
@@ -32,14 +34,14 @@ struct Decoder_turbo_DB : public Decoder
 		int n_ite = 6;
 
 		// depending parameters
-		Decoder_RSC_DB   ::parameters *sub;
-		Interleaver      ::parameters *itl;
-		Scaling_factor   ::parameters *sf;
-		Flip_and_check_DB::parameters *fnc;
+		tools::auto_cloned_unique_ptr<Decoder_RSC_DB   ::parameters> sub;
+		tools::auto_cloned_unique_ptr<Interleaver      ::parameters> itl;
+		tools::auto_cloned_unique_ptr<Scaling_factor   ::parameters> sf;
+		tools::auto_cloned_unique_ptr<Flip_and_check_DB::parameters> fnc;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_turbo_DB_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_turbo_DB::parameters* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;
@@ -47,8 +49,8 @@ struct Decoder_turbo_DB : public Decoder
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
@@ -56,10 +58,10 @@ struct Decoder_turbo_DB : public Decoder
 		module::Decoder_turbo_DB<B,Q>* build(const module::Interleaver<Q>           &itl,
 		                                           module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
 		                                           module::Decoder_RSC_DB_BCJR<B,Q> &siso_i,
-		                                           module::Encoder<B>               *encoder = nullptr) const;
+		                                           const std::unique_ptr<module::Encoder<B>>& = nullptr) const;
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
@@ -67,10 +69,10 @@ struct Decoder_turbo_DB : public Decoder
 	                                            const module::Interleaver<Q>           &itl,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_i,
-	                                                  module::Encoder<B>               *encoder = nullptr);
+	                                                  const std::unique_ptr<module::Encoder<B>>& = nullptr);
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, module::Encoder<B> *encoder = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };
 }
 }

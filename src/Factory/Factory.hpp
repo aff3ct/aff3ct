@@ -12,18 +12,13 @@
 #include <vector>
 #include <map>
 
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Arguments/Argument_tools.hpp"
 
 namespace aff3ct
 {
 namespace factory
 {
 using header_list = std::vector<std::pair<std::string,std::string>>;
-using arg_map     = std::map<std::vector<std::string>, std::vector<std::string>>;
-using arg_grp     = std::vector<std::vector<std::string>>;
-using arg_val_map = std::map<std::vector<std::string>, std::string>;
-
-bool exist(const arg_val_map &vals, const std::vector<std::string> &tags);
 
 extern const std::string Factory_name;
 extern const std::string Factory_short_name;
@@ -46,7 +41,7 @@ struct Factory
 		parameters(const std::string &name       = Factory_name,
 		           const std::string &short_name = Factory_short_name,
 		           const std::string &prefix     = Factory_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Factory::parameters* clone() const = 0;
 
 		        std::string              get_name       () const;
@@ -57,8 +52,8 @@ struct Factory
 		virtual std::vector<std::string> get_short_names() const;
 		virtual std::vector<std::string> get_prefixes   () const;
 
-		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const = 0;
-		virtual void store          (const arg_val_map &vals                                           )       = 0;
+		virtual void get_description(tools::Argument_map_info &args) const = 0;
+		virtual void store          (const tools::Argument_map_value &vals                             ) = 0;
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const = 0;
 
 	private:
@@ -67,9 +62,11 @@ struct Factory
 		const std::string prefix;
 	};
 
-	static std::pair<arg_map, arg_map> get_description(const std::vector<Factory::parameters*> &params);
-	static void                        store(std::vector<Factory::parameters*> &params, const arg_val_map &vals);
-	static aff3ct::factory::arg_grp    create_groups(const std::vector<Factory::parameters*> &params);
+	static tools::Argument_map_info get_description(const std::vector<Factory::parameters*> &params);
+	static void get_description(const std::vector<Factory::parameters*> &params, tools::Argument_map_info &args);
+
+	static void                      store        (std::vector<Factory::parameters*> &params, const tools::Argument_map_value &vals);
+	static tools::Argument_map_group create_groups(const std::vector<Factory::parameters*> &params);
 };
 
 struct Header

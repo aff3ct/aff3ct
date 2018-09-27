@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_turbo_fast.hpp"
@@ -26,12 +26,6 @@ Decoder_turbo_fast<B,R>
 {
 	const std::string name = "Decoder_turbo_fast";
 	this->set_name(name);
-}
-
-template <typename B, typename R>
-Decoder_turbo_fast<B,R>
-::~Decoder_turbo_fast()
-{
 }
 
 template <typename B, typename R>

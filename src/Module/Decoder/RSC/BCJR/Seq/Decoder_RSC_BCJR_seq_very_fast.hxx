@@ -19,7 +19,7 @@ Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 {
 	const std::string name = "Decoder_RSC_BCJR_seq_very_fast";
 	this->set_name(name);
-	
+
 	if (this->K % mipp::nElReg<R>())
 	{
 		std::stringstream message;
@@ -27,12 +27,6 @@ Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 		        << ", 'mipp::nElReg<R>()' = " << mipp::nElReg<R>() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
-Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
-::~Decoder_RSC_BCJR_seq_very_fast()
-{
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
@@ -92,7 +86,7 @@ void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 // 			                   beta_prev[idx_b2[j]] - this->gamma[idx_g2[j]][i]);
 
 // 		RSC_BCJR_seq_normalize<R>::apply(beta_cur, i);
-	
+
 // 		for (auto j = 0; j < 8; j++)
 // 			beta_prev[j] = beta_cur[j];
 // 	}
@@ -125,13 +119,13 @@ void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 // 		for (auto j = 0; j < block; j++)
 // 		{
 // 			for (auto k = 0; k < 8; k++)
-// 				tmp_post[0][k][j] = (RD)this->alpha[       k ][i-j] + 
-// 				                    (RD)beta_tmp   [idx_b1[k]][  j] + 
+// 				tmp_post[0][k][j] = (RD)this->alpha[       k ][i-j] +
+// 				                    (RD)beta_tmp   [idx_b1[k]][  j] +
 // 				                    (RD)this->gamma[idx_g2[k]][i-j];
 
 // 			for (auto k = 0; k < 8; k++)
-// 				tmp_post[1][k][j] = (RD)this->alpha[       k ][i-j] + 
-// 				                    (RD)beta_tmp   [idx_b2[k]][  j] - 
+// 				tmp_post[1][k][j] = (RD)this->alpha[       k ][i-j] +
+// 				                    (RD)beta_tmp   [idx_b2[k]][  j] -
 // 				                    (RD)this->gamma[idx_g2[k]][i-j];
 // 		}
 
@@ -175,7 +169,7 @@ void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 		beta_cur[7] = MAX1(beta_prev[3] + g0, beta_prev[7] - g0);
 
 		RSC_BCJR_seq_normalize<R>::apply(beta_cur, i);
-	
+
 		std::copy(beta_cur +0, beta_cur +8 -1, beta_prev);
 	}
 

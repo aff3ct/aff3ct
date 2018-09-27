@@ -30,18 +30,19 @@ struct Encoder : public Factory
 		int         n_frames    = 1;
 		int         seed        = 0;
 		int         tail_length = 0;
+		int         start_idx   = 0;
 
 		// deduced parameters
 		float       R           = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Encoder::parameters* clone() const;
 
 		// parameters construction
-		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_description(tools::Argument_map_info &args) const;
+		virtual void store          (const tools::Argument_map_value &vals);
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 
@@ -17,19 +18,9 @@ const std::string aff3ct::factory::Factory_name       = "Factory";
 const std::string aff3ct::factory::Factory_short_name = "Factory";
 const std::string aff3ct::factory::Factory_prefix     = "fac";
 
-bool aff3ct::factory::exist(const arg_val_map &vals, const std::vector<std::string> &tags)
-{
-	return (vals.find(tags) != vals.end());
-}
-
 Factory::parameters
 ::parameters(const std::string &name, const std::string &short_name, const std::string &prefix)
 : name(name), short_name(short_name), prefix(prefix)
-{
-}
-
-Factory::parameters
-::~parameters()
 {
 }
 
@@ -73,28 +64,36 @@ std::vector<std::string> Factory::parameters
 	return p;
 }
 
-std::pair<arg_map, arg_map> Factory
+tools::Argument_map_info Factory
 ::get_description(const std::vector<Factory::parameters*> &params)
 {
-	std::pair<arg_map, arg_map> args;
-	for (auto *p : params)
-		p->get_description(args.first, args.second);
+	tools::Argument_map_info args;
+
+	get_description(params, args);
 
 	return args;
 }
 
 void Factory
-::store(std::vector<Factory::parameters*> &params, const arg_val_map &vals)
+::get_description(const std::vector<Factory::parameters*> &params,
+                     tools::Argument_map_info &args)
+{
+	for (auto *p : params)
+		p->get_description(args);
+}
+
+void Factory
+::store(std::vector<Factory::parameters*> &params, const tools::Argument_map_value &vals)
 {
 	for (auto *p : params)
 		p->store(vals);
 }
 
-aff3ct::factory::arg_grp Factory
+tools::Argument_map_group Factory
 ::create_groups(const std::vector<Factory::parameters*> &params)
 {
 	// create groups of arguments
-	aff3ct::factory::arg_grp grps;
+	tools::Argument_map_group grps;
 	for (auto *p : params)
 	{
 		auto prefixes    = p->get_prefixes   ();
@@ -109,7 +108,7 @@ aff3ct::factory::arg_grp Factory
 		}
 
 		for (size_t i = 0; i < prefixes.size(); i++)
-			grps.push_back({prefixes[i], short_names[i] + " parameter(s)"});
+			grps[prefixes[i]] = short_names[i] + " parameter(s)";
 	}
 
 	return grps;
@@ -122,13 +121,13 @@ void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string 
 
 	if (key.size() == 1)
 	{
-		stream << "# * " << tools::format(grp_name, tools::Style::BOLD | tools::Style::UNDERLINED) << " ";
+		stream << rang::tag::comment << "* " << rang::style::bold << rang::style::underline << grp_name << rang::style::reset << " ";
 		for (auto i = 0; i < 46 - (int)grp_name.length(); i++) std::cout << "-";
 		stream << std::endl;
 	}
 	else if (key.size() > 1)
 	{
-		stream << "#    " << tools::format(grp_name, tools::Style::BOLD | tools::Style::UNDERLINED) << " ";
+		stream << rang::tag::comment << "   " << rang::style::bold << rang::style::underline << grp_name << rang::style::reset << " ";
 		for (auto i = 0; i < 45 - (int)grp_name.length(); i++) std::cout << "-";
 		stream << std::endl;
 	}
@@ -138,7 +137,7 @@ void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string 
 	{
 		if (std::find(dup.begin(), dup.end(), header[i].first + header[i].second) == dup.end())
 		{
-			stream << "#    ** " << tools::style(header[i].first, tools::Style::BOLD);
+			stream << rang::tag::comment << "   ** " << rang::style::bold << header[i].first << rang::style::reset;
 			for (auto j = 0; j < max_n_chars - (int)header[i].first.length(); j++) stream << " ";
 			stream << " = " << header[i].second << std::endl;
 

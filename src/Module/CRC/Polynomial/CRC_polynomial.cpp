@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/rang_format/rang_format.h"
 
 #include "CRC_polynomial.hpp"
 
@@ -32,11 +32,10 @@ CRC_polynomial<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Please specify the CRC 'size'.");
 
 	if (!crc_name.empty() && CRC_polynomial<B>::get_size(crc_name) != this->size)
-		std::clog << tools::format_warning("You specified \"" + std::to_string(this->size)
-		                                 + " bits\" for your CRC size but the database advise you to use \""
-		                                 + std::to_string(std::get<1>(known_polynomials.at(crc_name)))
-		                                 + " bits\", are you sure?")
-		          << std::endl;
+		std::clog << rang::tag::warning << "You specified \"" << this->size
+		                                   << " bits\" for your CRC size but the database advise you to use \""
+		                                   << std::get<1>(known_polynomials.at(crc_name))
+		                                   << " bits\", are you sure?" << std::endl;
 
 	polynomial.push_back(1);
 	for (auto i = 0; i < this->size; i++)
@@ -109,8 +108,8 @@ template <typename B>
 void CRC_polynomial<B>
 ::_generate(const B *U_in,
                   B *U_out,
-            const int off_in, 
-            const int off_out, 
+            const int off_in,
+            const int off_out,
             const int loop_size)
 {
 	std::copy(U_in + off_in, U_in + off_in + loop_size, buff_crc.begin());
@@ -156,11 +155,11 @@ bool CRC_polynomial<B>
 {
 	std::vector<B> V_K_unpack(this->K + this->size);
 	std::copy(V_K, V_K + this->K + this->size, V_K_unpack.begin());
-	tools::Bit_packer<B>::unpack(V_K_unpack, this->K + this->size);
+	tools::Bit_packer::unpack(V_K_unpack, this->K + this->size);
 	return _check(V_K_unpack.data(), frame_id);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::CRC_polynomial<B_8>;

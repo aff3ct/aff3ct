@@ -19,18 +19,12 @@ EXIT<B,R>
 ::EXIT(const int argc, const char **argv, std::ostream &stream)
 : Launcher(argc, argv, params, stream)
 {
-	params.set_src(new factory::Source       ::parameters("src"));
-	params.set_mdm(new factory::Modem        ::parameters("mdm"));
-	params.set_chn(new factory::Channel      ::parameters("chn"));
-	params.set_qnt(new factory::Quantizer    ::parameters("qnt"));
-	params.set_mnt(new factory::Monitor_EXIT ::parameters("mnt"));
-	params.set_ter(new factory::Terminal_EXIT::parameters("ter"));
-}
-
-template <typename B, typename R>
-EXIT<B,R>
-::~EXIT()
-{
+	params.set_src(new factory::Source      ::parameters("src"));
+	params.set_mdm(new factory::Modem       ::parameters("mdm"));
+	params.set_chn(new factory::Channel     ::parameters("chn"));
+	params.set_qnt(new factory::Quantizer   ::parameters("qnt"));
+	params.set_mnt(new factory::Monitor_EXIT::parameters("mnt"));
+	params.set_ter(new factory::Terminal    ::parameters("ter"));
 }
 
 template <typename B, typename R>
@@ -39,12 +33,12 @@ void EXIT<B,R>
 {
 	Launcher::get_description_args();
 
-	params.     get_description(this->req_args, this->opt_args);
-	params.src->get_description(this->req_args, this->opt_args);
-	params.mdm->get_description(this->req_args, this->opt_args);
-	params.chn->get_description(this->req_args, this->opt_args);
-	params.mnt->get_description(this->req_args, this->opt_args);
-	params.ter->get_description(this->req_args, this->opt_args);
+	params.     get_description(this->args);
+	params.src->get_description(this->args);
+	params.mdm->get_description(this->args);
+	params.chn->get_description(this->args);
+	params.mnt->get_description(this->args);
+	params.ter->get_description(this->args);
 
 	auto psrc = params.src     ->get_prefix();
 	auto penc = params.cdc->enc->get_prefix();
@@ -53,21 +47,21 @@ void EXIT<B,R>
 	auto pmnt = params.mnt     ->get_prefix();
 	auto pter = params.ter     ->get_prefix();
 
-	if (this->req_args.find({penc+"-info-bits", "K"}) != this->req_args.end())
-		this->req_args.erase({psrc+"-info-bits", "K"});
-	this->opt_args.erase({psrc+"-seed",     "S"});
-	this->req_args.erase({pmdm+"-fra-size", "N"});
-	this->opt_args.erase({pmdm+"-fra",      "F"});
-	this->opt_args.erase({pmdm+"-sigma"       });
-	this->req_args.erase({pchn+"-fra-size", "N"});
-	this->opt_args.erase({pchn+"-fra",      "F"});
-	this->opt_args.erase({pchn+"-sigma"        });
-	this->opt_args.erase({pchn+"-seed",     "S"});
-	this->opt_args.erase({pchn+"-add-users"    });
-	this->opt_args.erase({pchn+"-complex"      });
-	this->req_args.erase({pmnt+"-size",     "K"});
-	this->opt_args.erase({pmnt+"-fra",      "F"});
-	this->req_args.erase({pter+"-cw-size",  "N"});
+	if (this->args.exist({penc+"-info-bits", "K"}))
+		this->args.erase({psrc+"-info-bits", "K"});
+	this->args.erase({psrc+"-seed",     "S"});
+	this->args.erase({pmdm+"-fra-size", "N"});
+	this->args.erase({pmdm+"-fra",      "F"});
+	this->args.erase({pmdm+"-noise"       });
+	this->args.erase({pchn+"-fra-size", "N"});
+	this->args.erase({pchn+"-fra",      "F"});
+	this->args.erase({pchn+"-noise"        });
+	this->args.erase({pchn+"-seed",     "S"});
+	this->args.erase({pchn+"-add-users"    });
+	this->args.erase({pchn+"-complex"      });
+	this->args.erase({pmnt+"-size",     "K"});
+	this->args.erase({pmnt+"-fra",      "F"});
+	this->args.erase({pter+"-cw-size",  "N"});
 }
 
 template <typename B, typename R>
@@ -76,34 +70,34 @@ void EXIT<B,R>
 {
 	Launcher::store_args();
 
-	params.store(this->ar.get_args());
+	params.store(this->arg_vals);
 
 	params.src->seed = params.local_seed;
 
-	params.src->store(this->ar.get_args());
+	params.src->store(this->arg_vals);
 
 	auto psrc = params.src->get_prefix();
 
-	auto K = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->K;
-	auto N = this->req_args.find({psrc+"-info-bits", "K"}) != this->req_args.end() ? params.src->K : params.cdc->N;
+	auto K = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->K;
+	auto N = this->args.exist({psrc+"-info-bits", "K"}) ? params.src->K : params.cdc->N;
 
 	params.src->K = params.src->K == 0 ? K : params.src->K;
 	params.mdm->N = N;
 
-	params.mdm->store(this->ar.get_args());
+	params.mdm->store(this->arg_vals);
 
 	params.chn->N         = params.mdm->N_mod;
 	params.chn->complex   = params.mdm->complex;
 	params.chn->add_users = params.mdm->type == "SCMA";
 	params.chn->seed      = params.local_seed;
 
-	params.chn->store(this->ar.get_args());
+	params.chn->store(this->arg_vals);
 
 	params.mnt->size = K;
 
-	params.mnt->store(this->ar.get_args());
+	params.mnt->store(this->arg_vals);
 
-	params.ter->store(this->ar.get_args());
+	params.ter->store(this->arg_vals);
 
 	if (params.src->type == "AZCW" || params.cdc->enc->type == "AZCW")
 	{
@@ -118,7 +112,7 @@ void EXIT<B,R>
 
 	auto pmnt = params.mnt->get_prefix();
 
-	if (!this->ar.exist_arg({pmnt+"-trials", "n"}) && params.cdc->K != 0)
+	if (!this->arg_vals.exist({pmnt+"-trials", "n"}) && params.cdc->K != 0)
 		params.mnt->n_trials = 200000 / params.cdc->K;
 }
 

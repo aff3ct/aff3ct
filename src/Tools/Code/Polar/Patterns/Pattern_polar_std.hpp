@@ -29,7 +29,7 @@ public:
 		return new Pattern_polar_std(N, node);
 	}
 
-	virtual ~Pattern_polar_std() {}
+	virtual ~Pattern_polar_std() = default;
 
 	virtual polar_node_t type()       const { return polar_node_t::STANDARD; }
 	virtual std::string  name()       const { return "Default";              }

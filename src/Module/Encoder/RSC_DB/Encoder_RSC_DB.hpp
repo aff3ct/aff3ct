@@ -36,7 +36,7 @@ public:
 	               const std::string &standard = default_std,
 	               const bool buffered_encoding = true,
 	               const int n_frames = 1);
-	virtual ~Encoder_RSC_DB() {}
+	virtual ~Encoder_RSC_DB() = default;
 
 	int tail_length() const {return 0;}
 	std::vector<std::vector<int>> get_trellis();

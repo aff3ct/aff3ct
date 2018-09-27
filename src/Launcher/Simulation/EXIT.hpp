@@ -19,7 +19,7 @@ protected:
 
 public:
 	EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~EXIT();
+	virtual ~EXIT() = default;
 
 protected:
 	virtual void get_description_args();

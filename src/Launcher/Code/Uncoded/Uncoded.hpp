@@ -15,7 +15,7 @@ protected:
 
 public:
 	Uncoded(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Uncoded();
+	virtual ~Uncoded() = default;
 
 protected:
 	virtual void get_description_args();

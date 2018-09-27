@@ -9,10 +9,10 @@
 #ifndef PATTERN_POLAR_PARSER_HPP
 #define PATTERN_POLAR_PARSER_HPP
 
-#include <map>
 #include <utility>
 #include <vector>
-#include <vector>
+#include <initializer_list>
+#include <memory>
 
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
@@ -30,15 +30,15 @@ namespace tools
 class Pattern_polar_parser
 {
 protected:
-	const int                            N;             /*!< Codeword size. */
-	const int                            m;             /*!< Tree depth. */
-	const std::vector<bool>             &frozen_bits;   /*!< Vector of frozen bits (true if frozen, false otherwise). */
-	const std::vector<Pattern_polar_i*>  patterns;      /*!< Vector of patterns. */
-	const Pattern_polar_i               *pattern_rate0; /*!< Terminal pattern when the bit is frozen. */
-	const Pattern_polar_i               *pattern_rate1; /*!< Terminal pattern when the bit is an information bit. */
-	      Binary_tree<Pattern_polar_i>  *polar_tree;    /*!< Tree of patterns. */
-	      std::vector<unsigned char>     pattern_types; /*!< Tree of patterns represented with a vector of pattern IDs. */
-	      std::vector<std::pair<unsigned char, int>> leaves_pattern_types;
+	const int                                                   N;             /*!< Codeword size. */
+	const int                                                   m;             /*!< Tree depth. */
+	const std::vector<bool>                                    &frozen_bits;   /*!< Vector of frozen bits (true if frozen, false otherwise). */
+	const std::vector<std::unique_ptr<tools::Pattern_polar_i>>  patterns;      /*!< Vector of patterns. */
+	const std::unique_ptr<tools::Pattern_polar_i>&              pattern_rate0; /*!< Terminal pattern when the bit is frozen. */
+	const std::unique_ptr<tools::Pattern_polar_i>&              pattern_rate1; /*!< Terminal pattern when the bit is an information bit. */
+	      std::unique_ptr<Binary_tree<Pattern_polar_i>>         polar_tree;    /*!< Tree of patterns. */
+	      std::vector<unsigned char>                            pattern_types; /*!< Tree of patterns represented with a vector of pattern IDs. */
+	      std::vector<std::pair<unsigned char, int>>            leaves_pattern_types;
 
 public:
 	/*!
@@ -52,9 +52,9 @@ public:
 	 */
 	Pattern_polar_parser(const int& N,
 	                     const std::vector<bool> &frozen_bits,
-	                     const std::vector<Pattern_polar_i*> &patterns,
-	                     const Pattern_polar_i *pattern_rate0,
-	                     const Pattern_polar_i *pattern_rate1);
+	                     std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&patterns,
+	                     const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate0,
+	                     const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate1);
 
 	/*!
 	 * \brief Constructor.
@@ -67,12 +67,42 @@ public:
 	 */
 	Pattern_polar_parser(const int& N,
 	                     const std::vector<bool>& frozen_bits,
-	                     const std::vector<Pattern_polar_i*> &patterns,
+	                     std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&patterns,
 	                     const int pattern_rate0_id,
 	                     const int pattern_rate1_id);
 
 	/*!
-	 * \brief Destructor.
+	 * \brief Constructor.
+	 *
+	 * \param N:             codeword size.
+	 * \param frozen_bits:   vector of frozen bits (true if frozen, false otherwise).
+	 * \param patterns:      vector of patterns.
+	 * \param pattern_rate0: terminal pattern when the bit is frozen.
+	 * \param pattern_rate1: terminal pattern when the bit is an information bit.
+	 */
+	Pattern_polar_parser(const int& N,
+	                     const std::vector<bool> &frozen_bits,
+	                     std::initializer_list<tools::Pattern_polar_i*> patterns,
+	                     const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate0,
+	                     const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate1);
+
+	/*!
+	 * \brief Constructor.
+	 *
+	 * \param N:                codeword size.
+	 * \param frozen_bits:      vector of frozen bits (true if frozen, false otherwise).
+	 * \param patterns:         vector of patterns.
+	 * \param pattern_rate0_id: id of the terminal pattern when the bit is frozen (id in the patterns vector).
+	 * \param pattern_rate1_id: id of the terminal pattern when the bit is an info. bit (id in the patterns vector).
+	 */
+	Pattern_polar_parser(const int& N,
+	                     const std::vector<bool>& frozen_bits,
+	                     std::initializer_list<tools::Pattern_polar_i*> patterns,
+	                     const int pattern_rate0_id,
+	                     const int pattern_rate1_id);
+
+	/*!
+	 * \brief Destructor. call release_patterns()
 	 */
 	virtual ~Pattern_polar_parser();
 
@@ -83,7 +113,7 @@ public:
 	 *
 	 * \return a binary tree of patterns.
 	 */
-	const Binary_tree<Pattern_polar_i>* get_polar_tree() const;
+	const Binary_tree<Pattern_polar_i>& get_polar_tree() const;
 
 	/*!
 	 * \brief Gets a vector of pattern IDs.
@@ -147,15 +177,18 @@ public:
 		return false;
 	}
 
-	/*!
-	 * \brief Release the polar patterns given in the constructor.
-	 */
-	void release_patterns() const;
-
 private:
 	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_polar_i>* node_curr);
 	void generate_nodes_indexes             (const Binary_node<Pattern_polar_i>* node_curr);
 	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_polar_i>* node_curr);
+
+	void operator=(Pattern_polar_parser&) = delete;
+	Pattern_polar_parser(Pattern_polar_parser&) = delete;
+
+	/*!
+	 * \brief Release the polar patterns given in the constructor.
+	 */
+	void release_patterns() const;
 };
 }
 }
