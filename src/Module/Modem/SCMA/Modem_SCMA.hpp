@@ -20,7 +20,6 @@ class Modem_SCMA : public Modem<B,R,Q>
 {
 private:
 	const tools::Codebook<R> CB;
-	const int                re_user[4][3]       = {{1,2,4},{0,2,5},{1,3,5},{0,3,4}};
 	      Q                  arr_phi[4][4][4][4] = {}; // probability functions
 	const bool               disable_sig2;
 	      R                  n0; // 1 / n0 = 179.856115108

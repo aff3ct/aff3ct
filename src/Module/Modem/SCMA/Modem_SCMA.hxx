@@ -278,18 +278,18 @@ void Modem_SCMA<B,R,Q,PSI>
 				for (auto k = 0; k < 4; k++)
 					for(auto re = 0 ; re < 4 ; re++)
 					{
-						msg_res_user[re][re_user[re][0]][i] = msg_res_user[re][re_user[re][0]][i]
-						                                      +  arr_phi[re][i][j][k]
-						                                      * msg_user_res[re_user[re][1]][re][j]
-						                                      * msg_user_res[re_user[re][2]][re][k];
-						msg_res_user[re][re_user[re][1]][i] = msg_res_user[re][re_user[re][1]][i]
-						                                      +  arr_phi[re][j][i][k]
-						                                      * msg_user_res[re_user[re][0]][re][j]
-						                                      * msg_user_res[re_user[re][2]][re][k];
-						msg_res_user[re][re_user[re][2]][i] = msg_res_user[re][re_user[re][2]][i]
-						                                      +  arr_phi[re][j][k][i]
-						                                      * msg_user_res[re_user[re][0]][re][j]
-						                                      * msg_user_res[re_user[re][1]][re][k];
+						msg_res_user[re][CB.get_re_user(re,0)][i] = msg_res_user[re][CB.get_re_user(re,0)][i]
+						                                            +  arr_phi[re][i][j][k]
+						                                            * msg_user_res[CB.get_re_user(re,1)][re][j]
+						                                            * msg_user_res[CB.get_re_user(re,2)][re][k];
+						msg_res_user[re][CB.get_re_user(re,1)][i] = msg_res_user[re][CB.get_re_user(re,1)][i]
+						                                            +  arr_phi[re][j][i][k]
+						                                            * msg_user_res[CB.get_re_user(re,0)][re][j]
+						                                            * msg_user_res[CB.get_re_user(re,2)][re][k];
+						msg_res_user[re][CB.get_re_user(re,2)][i] = msg_res_user[re][CB.get_re_user(re,2)][i]
+						                                            +  arr_phi[re][j][k][i]
+						                                            * msg_user_res[CB.get_re_user(re,0)][re][j]
+						                                            * msg_user_res[CB.get_re_user(re,1)][re][k];
 					}
 
 		// user to resource messaging
@@ -362,9 +362,9 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 	auto Y_N = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
 
-	const auto CB0 = std::complex<Q>((Q)CB(re_user[re][0], re, i).real(), (Q)CB(re_user[re][0], re, i).imag());
-	const auto CB1 = std::complex<Q>((Q)CB(re_user[re][1], re, j).real(), (Q)CB(re_user[re][1], re, j).imag());
-	const auto CB2 = std::complex<Q>((Q)CB(re_user[re][2], re, k).real(), (Q)CB(re_user[re][2], re, k).imag());
+	const auto CB0 = std::complex<Q>((Q)CB(CB.get_re_user(re,0), re, i).real(), (Q)CB(CB.get_re_user(re,0), re, i).imag());
+	const auto CB1 = std::complex<Q>((Q)CB(CB.get_re_user(re,1), re, j).real(), (Q)CB(CB.get_re_user(re,1), re, j).imag());
+	const auto CB2 = std::complex<Q>((Q)CB(CB.get_re_user(re,2), re, k).real(), (Q)CB(CB.get_re_user(re,2), re, k).imag());
 
 	tmp = Y_N - (CB0 + CB1 + CB2);
 
@@ -383,16 +383,16 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 	const auto Y_N  = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
 
-	const auto H_N0 = std::complex<Q>((Q)H_N[re_user[re][0] * Nmod + 8 * batch + 2 * re   ],
-	                                  (Q)H_N[re_user[re][0] * Nmod + 8 * batch + 2 * re +1]);
-	const auto H_N1 = std::complex<Q>((Q)H_N[re_user[re][1] * Nmod + 8 * batch + 2 * re   ],
-	                                  (Q)H_N[re_user[re][1] * Nmod + 8 * batch + 2 * re +1]);
-	const auto H_N2 = std::complex<Q>((Q)H_N[re_user[re][2] * Nmod + 8 * batch + 2 * re   ],
-	                                  (Q)H_N[re_user[re][2] * Nmod + 8 * batch + 2 * re +1]);
+	const auto H_N0 = std::complex<Q>((Q)H_N[CB.get_re_user(re,0) * Nmod + 8 * batch + 2 * re   ],
+	                                  (Q)H_N[CB.get_re_user(re,0) * Nmod + 8 * batch + 2 * re +1]);
+	const auto H_N1 = std::complex<Q>((Q)H_N[CB.get_re_user(re,1) * Nmod + 8 * batch + 2 * re   ],
+	                                  (Q)H_N[CB.get_re_user(re,1) * Nmod + 8 * batch + 2 * re +1]);
+	const auto H_N2 = std::complex<Q>((Q)H_N[CB.get_re_user(re,2) * Nmod + 8 * batch + 2 * re   ],
+	                                  (Q)H_N[CB.get_re_user(re,2) * Nmod + 8 * batch + 2 * re +1]);
 
-	const auto CB0  = std::complex<Q>((Q)CB(re_user[re][0], re, i).real(), (Q)CB(re_user[re][0], re, i).imag());
-	const auto CB1  = std::complex<Q>((Q)CB(re_user[re][1], re, j).real(), (Q)CB(re_user[re][1], re, j).imag());
-	const auto CB2  = std::complex<Q>((Q)CB(re_user[re][2], re, k).real(), (Q)CB(re_user[re][2], re, k).imag());
+	const auto CB0  = std::complex<Q>((Q)CB(CB.get_re_user(re,0), re, i).real(), (Q)CB(CB.get_re_user(re,0), re, i).imag());
+	const auto CB1  = std::complex<Q>((Q)CB(CB.get_re_user(re,1), re, j).real(), (Q)CB(CB.get_re_user(re,1), re, j).imag());
+	const auto CB2  = std::complex<Q>((Q)CB(CB.get_re_user(re,2), re, k).real(), (Q)CB(CB.get_re_user(re,2), re, k).imag());
 
 	tmp = Y_N - (H_N0 * CB0 + H_N1 * CB1 + H_N2 * CB2);
 
