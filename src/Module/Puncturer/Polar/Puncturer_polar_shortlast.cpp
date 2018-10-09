@@ -12,9 +12,9 @@ using namespace aff3ct::module;
 template <typename B, typename Q>
 Puncturer_polar_shortlast<B,Q>
 ::Puncturer_polar_shortlast(const int &K,
-                          const int &N,
-                          const tools::Frozenbits_generator &fb_generator,
-                          const int n_frames)
+                            const int &N,
+                            const tools::Frozenbits_generator &fb_generator,
+                            const int n_frames)
 : Puncturer<B,Q>(K, N, (int)std::exp2(std::ceil(std::log2(N))), n_frames),
   fb_generator(fb_generator)
 {
@@ -52,8 +52,8 @@ void Puncturer_polar_shortlast<B,Q>
 	auto i = 0;
 	while (info_bits_placed < this->K)
 	{
- 		if (best_channels[i] < (uint32_t)this->N) // choose best channels in interval [0 ; N]
-		{                               // interval [0 ; N] are frozen
+		if (best_channels[i] < (uint32_t)this->N) // choose best channels in interval [0 ; N]
+		{                                         // interval [0 ; N] are frozen
 			frozen_bits[best_channels[i]] = false;
 			info_bits_placed++;
 		}

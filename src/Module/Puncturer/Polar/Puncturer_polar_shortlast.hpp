@@ -17,9 +17,9 @@ protected:
 
 public:
 	Puncturer_polar_shortlast(const int &K,
-	                        const int &N,
-	                        const tools::Frozenbits_generator &fb_generator,
-	                        const int n_frames = 1);
+	                          const int &N,
+	                          const tools::Frozenbits_generator &fb_generator,
+	                          const int n_frames = 1);
 	virtual ~Puncturer_polar_shortlast() = default;
 
 	void gen_frozen_bits(std::vector<bool> &frozen_bits);
