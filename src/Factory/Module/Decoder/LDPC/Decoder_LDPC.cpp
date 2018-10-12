@@ -27,6 +27,7 @@
 
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/ONMS/Decoder_LDPC_BP_horizontal_layered_ONMS_inter.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_SPA.hpp"
 #include "Module/Decoder/LDPC/BP/Peeling/Decoder_LDPC_BP_peeling.hpp"
 #include "Module/Decoder/LDPC/BF/OMWBF/Decoder_LDPC_bit_flipping_OMWBF.hpp"
 
@@ -109,7 +110,7 @@ void Decoder_LDPC::parameters
 
 	args.add(
 		{p+"-simd"},
-		tools::Text(tools::Including_set("INTER")),
+		tools::Text(tools::Including_set("INTER", "INTRA")),
 		"the SIMD strategy you want to use.");
 
 	args.add(
@@ -362,8 +363,11 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 			if (this->min == "MINS") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
 	}
-
 #endif
+	else if (this->type == "BP_FLOODING" && this->simd_strategy == "INTRA")
+	{
+		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_SPA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
