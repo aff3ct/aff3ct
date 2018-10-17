@@ -1,6 +1,7 @@
 #include "BCH/Codec_BCH.hpp"
 #include "LDPC/Codec_LDPC.hpp"
 #include "Polar/Codec_polar.hpp"
+#include "Polar_MK/Codec_polar_MK.hpp"
 #include "RA/Codec_RA.hpp"
 #include "Repetition/Codec_repetition.hpp"
 #include "RS/Codec_RS.hpp"
@@ -38,6 +39,7 @@ module::Codec_SIHO<B,Q>* Codec_SIHO::parameters
 	if (get_name() == Codec_BCH_name          ) return dynamic_cast<const Codec_BCH          ::parameters&>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_LDPC_name         ) return dynamic_cast<const Codec_LDPC         ::parameters&>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_polar_name        ) return dynamic_cast<const Codec_polar        ::parameters&>(*this).template build<B,Q>(crc);
+	if (get_name() == Codec_polar_MK_name     ) return dynamic_cast<const Codec_polar_MK     ::parameters&>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_RA_name           ) return dynamic_cast<const Codec_RA           ::parameters&>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_repetition_name   ) return dynamic_cast<const Codec_repetition   ::parameters&>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_RS_name           ) return dynamic_cast<const Codec_RS           ::parameters&>(*this).template build<B,Q>(crc);

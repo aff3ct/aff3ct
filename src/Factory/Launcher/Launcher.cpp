@@ -16,6 +16,7 @@
 #include "Launcher/Code/BCH/BCH.hpp"
 #include "Launcher/Code/LDPC/LDPC.hpp"
 #include "Launcher/Code/Polar/Polar.hpp"
+#include "Launcher/Code/Polar_MK/Polar_MK.hpp"
 #include "Launcher/Code/RA/RA.hpp"
 #include "Launcher/Code/Repetition/Repetition.hpp"
 #include "Launcher/Code/RS/RS.hpp"
@@ -73,7 +74,7 @@ void factory::Launcher::parameters
 
 	args.add(
 		{p+"-cde-type", "C"},
-		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TURBO_PROD", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED", "RS")),
+		tools::Text(tools::Including_set("POLAR", "POLAR_MK", "TURBO", "TURBO_DB", "TURBO_PROD", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED", "RS")),
 		"select the code type you want to use.",
 		tools::arg_rank::REQ);
 
@@ -302,6 +303,11 @@ launcher::Launcher* factory::Launcher::parameters
 	{
 		if (this->sim_type == "BFER" ) return new launcher::Polar<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 		if (this->sim_type == "BFERI") return new launcher::Polar<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+	}
+
+	if (this->cde_type == "POLAR_MK")
+	{
+		if (this->sim_type == "BFER" ) return new launcher::Polar_MK<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RSC")
