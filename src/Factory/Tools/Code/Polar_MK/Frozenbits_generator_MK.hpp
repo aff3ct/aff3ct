@@ -23,7 +23,7 @@ struct Frozenbits_generator_MK : public Factory
 
 		// optional parameters
 		std::string type    = "FILE";
-		std::string path_fb = "../conf/cde/awgn_polar_mk_codes/";
+		std::string path_fb = "../conf/cde/awgn_polar_codes/TV";
 		float       sigma   = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
