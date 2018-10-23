@@ -90,14 +90,13 @@ Encoder_polar_MK<B>
 ::Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits,
                    const std::vector<std::vector<bool>>& kernel_matrix, const int n_frames)
 : Encoder<B>(K, N, n_frames),
-  b(kernel_matrix.size()),
-  m((int)(std::log(N)/std::log(b))),
+  bp(kernel_matrix.size()),
+  m((int)(std::log(N)/std::log(bp))),
   frozen_bits(frozen_bits),
   kernel_matrix(kernel_matrix),
   X_N_tmp(this->N),
-  tmp1(this->N),
-  tmp2(this->N),
-  Ke(kernel_matrix.size() * kernel_matrix.size())
+  Ke(kernel_matrix.size() * kernel_matrix.size()),
+  idx(kernel_matrix.size())
 {
 	const std::string name = "Encoder_polar_MK";
 	this->set_name(name);
@@ -140,31 +139,9 @@ Encoder_polar_MK<B>
 		}
 	}
 
-	// std::cout << "kernel_matrix: " << std::endl;
-	// display_matrix(this->kernel_matrix);
-	// std::cout << std::endl;
-
-	// generate the "G" matrix from the "kernel_matrix"
-	this->G = this->kernel_matrix;
-	for (auto mm = 0; mm < m-1; mm++)
-	{
-		this->G = kronecker_product<bool>(this->G, this->kernel_matrix);
-		// if (mm < 3)
-		// {
-		// 	std::cout << "G: " << std::endl;
-		// 	display_matrix(this->G);
-		// 	std::cout << std::endl;
-		// }
-	}
-
-	this->G_trans.resize(this->G[0].size(), std::vector<int8_t>(this->G.size()));
-	for (auto i = 0; i < this->G[0].size(); i++)
-		for (auto j = 0; j < this->G.size(); j++)
-			this->G_trans[i][j] = (int8_t)this->G[j][i];
-
-	// for (auto i = 0; i < (int)this->kernel_matrix.size(); i++)
-	// 	for (auto j = 0; j < (int)this->kernel_matrix.size(); j++)
-	// 		this->K[i * (int)this->kernel_matrix.size() +j] = (int8_t)this->kernel_matrix[j][i];
+	for (auto i = 0; i < (int)this->kernel_matrix.size(); i++)
+		for (auto j = 0; j < (int)this->kernel_matrix.size(); j++)
+			this->Ke[i * (int)this->kernel_matrix.size() +j] = (int8_t)this->kernel_matrix[j][i];
 
 	this->notify_frozenbits_update();
 }
@@ -173,80 +150,68 @@ template <typename B>
 void Encoder_polar_MK<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	this->convert(U_K, this->tmp1.data());
-	this->light_encode(this->tmp1.data(), this->tmp2.data());
-
-	for (auto n = 0; n < this->N; n++)
-		X_N[n] = (int8_t)this->tmp2[n];
+	this->convert(U_K, X_N);
+	this->light_encode(X_N);
 }
 
-// void small_product(const int8_t *u, const int8_t *Ke, int8_t *x, const int size)
-// {
-// 	for (auto i = 0; i < size; i++)
-// 	{
-// 		const auto stride = i * size;
-// 		auto sum = 0;
-// 		for (auto j = 0; j < size; j++)
-// 			sum += u[j] & Ke[stride +j];
-// 		x[i] = sum & (int8_t)1;
-// 	}
-// }
-
 template <typename B>
-void Encoder_polar_MK<B>
-::light_encode(const int8_t *in, int8_t *out)
+void kernel(const B *u, const uint32_t *idx, const int8_t *Ke, B *x, const int size)
 {
-	for (auto i = 0; i < this->N; i++)
+	for (auto i = 0; i < size; i++)
 	{
+		const auto stride = i * size;
 		auto sum = 0;
-		for (auto j = 0; j < this->N; j++)
-			sum += in[j] & this->G_trans[i][j];
-		out[i] = sum & (B)1;
+		for (auto j = 0; j < size; j++)
+			sum += u[idx[j]] & Ke[stride +j];
+		x[idx[i]] = sum & (int8_t)1;
 	}
-
-	// const int n_kernels_per_stage = this->N / (int)this->Ke.size();
-	// std::vector<int8_t> u(this->Ke.size());
-	// std::vector<int8_t> x(this->Ke.size());
-	// for (auto s = 0; s < this->m; s++)
-	// {
-	// 	for (auto k = 0; k < n_kernels_per_stage; k++)
-	// 	{
-	// 		for (auto i = 0; i < (int)this->Ke.size(); i++)
-	// 			u[i] = in[k * (int)this->Ke.size() +i];
-
-	// 		small_product(u, this->Ke.data(), x, (int)this->Ke.size());
-
-	// 		for (auto i = 0; i < (int)this->Ke.size(); i++)
-	// 			u[i] = in[k * (int)this->Ke.size() +i];
-	// 	}
-	// }
-
-	// for (auto k = (this->N >> 1); k > 0; k >>= 1)
-	// 	for (auto j = 0; j < this->N; j += 2 * k)
-	// 		for (auto i = 0; i < k; i++)
-	// 			bits[j + i] = bits[j + i] ^ bits[k + j + i];
 }
-
-// template <typename B>
-// void Encoder_polar_MK<B>
-// ::light_encode_fast(const B *in, B *out)
-// {
-// 	for (auto i = 0; i < this->N; i++)
-// 	{
-// 		auto sum = 0;
-// 		for (auto j = 0; j < this->N; j++)
-// 			sum += in[j] & this->G_trans[i][j];
-// 		out[i] = sum & (B)1;
-// 	}
-// }
 
 template <typename B>
 void Encoder_polar_MK<B>
-::convert(const B *U_K, int8_t *U_N)
+::light_encode(B *X_N)
 {
-	auto j = 0;
-	for (unsigned i = 0; i < frozen_bits.size(); i++)
-		U_N[i] = (frozen_bits[i]) ? (int8_t)0 : (int8_t)U_K[j++];
+	const auto kernel_size = (int)this->kernel_matrix.size();
+
+	for (auto s = 0; s < this->m; s++)
+	{
+		const auto block_size = (int)std::pow((float)kernel_size, s);
+		const auto n_blocks = this->N / (block_size * kernel_size);
+
+		for (auto b = 0; b < n_blocks; b++)
+		{
+			const auto n_kernels = block_size;
+			for (auto k = 0; k < n_kernels; k++)
+			{
+				for (auto i = 0; i < kernel_size; i++)
+					this->idx[i] = (uint32_t)(b * block_size * kernel_size + block_size * i +k);
+
+				const auto off_out = b * block_size * kernel_size + k * kernel_size;
+				kernel(X_N, this->idx.data(), this->Ke.data(), X_N, kernel_size);
+			}
+		}
+	}
+}
+
+template <typename B>
+void Encoder_polar_MK<B>
+::convert(const B *U_K, B *U_N)
+{
+	if (U_K == U_N)
+	{
+		std::vector<B> U_K_tmp(this->K);
+		std::copy(U_K, U_K + this->K, U_K_tmp.begin());
+
+		auto j = 0;
+		for (unsigned i = 0; i < frozen_bits.size(); i++)
+			U_N[i] = (frozen_bits[i]) ? (B)0 : U_K_tmp[j++];
+	}
+	else
+	{
+		auto j = 0;
+		for (unsigned i = 0; i < frozen_bits.size(); i++)
+			U_N[i] = (frozen_bits[i]) ? (B)0 : U_K[j++];
+	}
 }
 
 // template <typename B>
