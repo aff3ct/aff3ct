@@ -10,30 +10,96 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-// DEBUG
+// // DEBUG
+// template <typename T = int32_t>
+// void display_matrix(const std::vector<std::vector<T>>& M)
+// {
+// 	for (auto row = 0; row < (int)M.size(); row++)
+// 	{
+// 		for (auto col = 0; col < (int)M[0].size(); col++)
+// 		{
+// 			std::cout << M[row][col] << "\t";
+// 		}
+// 		std::cout << std::endl;
+// 	}
+// }
+
+// template <typename T = int32_t>
+// void kronecker_product(const std::vector<std::vector<T>>& A,
+//                        const std::vector<std::vector<T>>& B,
+//                              std::vector<std::vector<T>>& C)
+// {
+// 	for (auto row_A = 0; row_A < (int)A.size(); row_A++)
+// 		for (auto col_A = 0; col_A < (int)A[0].size(); col_A++)
+// 			for (auto row_B = 0; row_B < (int)B.size(); row_B++)
+// 				for (auto col_B = 0; col_B < (int)B[0].size(); col_B++)
+// 					C[row_A * B.size() + row_B][col_A * B[0].size() + col_B] = A[row_A][col_A] * B[row_B][col_B];
+// }
+
+// Function to get cofactor of mat[p][q] in tmp[][]. n is current
+// dimension of mat[][]
 template <typename T = int32_t>
-void display_matrix(const std::vector<std::vector<T>>& M)
+void get_cofactor(const std::vector<std::vector<T>> &mat, std::vector<std::vector<T>> &tmp,
+                  const int p, const int q, const int n)
 {
-	for (auto row = 0; row < (int)M.size(); row++)
+	int i = 0, j = 0;
+
+	// Looping for each element of the matrix
+	for (int row = 0; row < n; row++)
 	{
-		for (auto col = 0; col < (int)M[0].size(); col++)
+		for (int col = 0; col < n; col++)
 		{
-			std::cout << M[row][col] << "\t";
+			// Copying into temporary matrix only those element
+			// which are not in given row and column
+			if (row != p && col != q)
+			{
+				tmp[i][j++] = mat[row][col];
+
+				// Row is filled, so increase row index and
+				// reset col index
+				if (j == n - 1)
+				{
+					j = 0;
+					i++;
+				}
+			}
 		}
-		std::cout << std::endl;
 	}
 }
 
+/* Recursive function for finding determinant of matrix.
+n is current dimension of mat[][]. */
 template <typename T = int32_t>
-void kronecker_product(const std::vector<std::vector<T>>& A,
-                       const std::vector<std::vector<T>>& B,
-                             std::vector<std::vector<T>>& C)
+int determinant_of_matrix(const std::vector<std::vector<T>> &mat, const int n)
 {
-	for (auto row_A = 0; row_A < (int)A.size(); row_A++)
-		for (auto col_A = 0; col_A < (int)A[0].size(); col_A++)
-			for (auto row_B = 0; row_B < (int)B.size(); row_B++)
-				for (auto col_B = 0; col_B < (int)B[0].size(); col_B++)
-					C[row_A * B.size() + row_B][col_A * B[0].size() + col_B] = A[row_A][col_A] * B[row_B][col_B];
+	int D = 0; // Initialize result
+
+	// Base case : if matrix contains single element
+	if (n == 1)
+		return mat[0][0];
+
+	std::vector<std::vector<T>> tmp(mat.size(), std::vector<T>(mat.size())); // To store cofactors
+
+	int sign = 1; // To store sign multiplier
+
+	// Iterate for each element of first row
+	for (int f = 0; f < n; f++)
+	{
+		// Getting Cofactor of mat[0][f]
+		get_cofactor(mat, tmp, 0, f, n);
+		D += sign * mat[0][f] * determinant_of_matrix(tmp, n - 1);
+
+		// terms are to be added with alternate sign
+		sign = -sign;
+	}
+
+	return D;
+}
+
+template <typename T>
+bool is_invertible(const std::vector<std::vector<T>> &mat)
+{
+	return determinant_of_matrix(mat, (int)mat.size()) != 0;
 }
 
 template <typename T = int32_t>
@@ -94,9 +160,10 @@ Encoder_polar_MK<B>
   m((int)(std::log(N)/std::log(bp))),
   frozen_bits(frozen_bits),
   kernel_matrix(kernel_matrix),
-  X_N_tmp(this->N),
+  // X_N_tmp(this->N),
   Ke(kernel_matrix.size() * kernel_matrix.size()),
-  idx(kernel_matrix.size())
+  idx(kernel_matrix.size()),
+  u(kernel_matrix.size())
 {
 	const std::string name = "Encoder_polar_MK";
 	this->set_name(name);
@@ -127,6 +194,13 @@ Encoder_polar_MK<B>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (!is_invertible<bool>(kernel_matrix))
+	{
+		std::stringstream message;
+		message << "'kernel_matrix' has to be invertible.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	for (auto l = 0; l < (int)kernel_matrix.size(); l++)
 	{
 		if (kernel_matrix[l].size() != kernel_matrix.size())
@@ -155,14 +229,14 @@ void Encoder_polar_MK<B>
 }
 
 template <typename B>
-void kernel(const B *u, const uint32_t *idx, const int8_t *Ke, B *x, const int size)
+void polar_kernel(const B *u, const uint32_t *idx, const int8_t *Ke, B *x, const int size)
 {
 	for (auto i = 0; i < size; i++)
 	{
 		const auto stride = i * size;
 		auto sum = 0;
 		for (auto j = 0; j < size; j++)
-			sum += u[idx[j]] & Ke[stride +j];
+			sum += u[j] & Ke[stride +j];
 		x[idx[i]] = sum & (int8_t)1;
 	}
 }
@@ -172,7 +246,6 @@ void Encoder_polar_MK<B>
 ::light_encode(B *X_N)
 {
 	const auto kernel_size = (int)this->kernel_matrix.size();
-
 	for (auto s = 0; s < this->m; s++)
 	{
 		const auto block_size = (int)std::pow((float)kernel_size, s);
@@ -184,10 +257,13 @@ void Encoder_polar_MK<B>
 			for (auto k = 0; k < n_kernels; k++)
 			{
 				for (auto i = 0; i < kernel_size; i++)
+				{
 					this->idx[i] = (uint32_t)(b * block_size * kernel_size + block_size * i +k);
+					this->u[i] = X_N[this->idx[i]];
+				}
 
 				const auto off_out = b * block_size * kernel_size + k * kernel_size;
-				kernel(X_N, this->idx.data(), this->Ke.data(), X_N, kernel_size);
+				polar_kernel(this->u.data(), this->idx.data(), this->Ke.data(), X_N, kernel_size);
 			}
 		}
 	}

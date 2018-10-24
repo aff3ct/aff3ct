@@ -7,14 +7,14 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Encoder_polar_MK_name   = "Encoder Polar";
+const std::string aff3ct::factory::Encoder_polar_MK_name   = "Encoder Polar MK";
 const std::string aff3ct::factory::Encoder_polar_MK_prefix = "enc";
 
 Encoder_polar_MK::parameters
 ::parameters(const std::string &prefix)
 : Encoder::parameters(Encoder_polar_MK_name, prefix)
 {
-	this->type = "POLAR";
+	this->type = "POLAR_MK";
 	this->systematic = false;
 }
 
@@ -31,7 +31,7 @@ void Encoder_polar_MK::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options(args.at({p+"-type"}), 0, "POLAR");
+	tools::add_options(args.at({p+"-type"}), 0, "POLAR_MK");
 }
 
 void Encoder_polar_MK::parameters
@@ -50,10 +50,11 @@ template <typename B>
 module::Encoder_polar_MK<B>* Encoder_polar_MK::parameters
 ::build(const std::vector<bool> &frozen_bits) const
 {
-	if (this->type == "POLAR" && !this->systematic)
+	if (this->type == "POLAR_MK" && !this->systematic)
 	{
 		return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, {{1,0},{1,1}}, this->n_frames);
 		// return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, {{1,1,1},{1,0,1},{0,1,1}}, this->n_frames);
+		// return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,1,1}}, this->n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

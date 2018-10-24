@@ -20,9 +20,10 @@ protected:
 	const int                            m;           // log_b of code length
 	const std::vector<bool>&             frozen_bits; // true means frozen, false means set to 0/1
 	const std::vector<std::vector<bool>> kernel_matrix;
-	      std::vector<B>                 X_N_tmp;
+//	      std::vector<B>                 X_N_tmp;
 	      std::vector<int8_t>            Ke;
 	      std::vector<uint32_t>          idx;
+	      std::vector<B>                 u;
 
 public:
 	Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits,
