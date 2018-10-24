@@ -61,13 +61,20 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK::parameters
 ::build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc,
         const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
-	if (!this->systematic) // non-systematic encoding
+	try
 	{
-		if (this->implem == "NAIVE")
+		return Decoder::parameters::build<B,Q>(encoder);
+	}
+	catch (tools::cannot_allocate const&)
+	{
+		if (!this->systematic) // non-systematic encoding
 		{
-			if (crc == nullptr || crc->get_size() == 0)
+			if (this->implem == "NAIVE")
 			{
-				if (this->type == "SC") return new module::Decoder_polar_MK_SC_naive<B,Q>(this->K, this->N_cw, frozen_bits, this->n_frames);
+				if (crc == nullptr || crc->get_size() == 0)
+				{
+					if (this->type == "SC") return new module::Decoder_polar_MK_SC_naive<B,Q>(this->K, this->N_cw, frozen_bits, this->n_frames);
+				}
 			}
 		}
 	}
