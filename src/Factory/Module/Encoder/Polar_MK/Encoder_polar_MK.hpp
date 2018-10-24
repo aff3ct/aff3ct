@@ -20,7 +20,8 @@ struct Encoder_polar_MK : public Encoder
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
+		// optional
+		std::vector<std::vector<bool>> kernel_matrix = {{1,0},{1,1}};
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_polar_MK_prefix);

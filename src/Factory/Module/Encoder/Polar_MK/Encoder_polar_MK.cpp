@@ -24,6 +24,17 @@ Encoder_polar_MK::parameters* Encoder_polar_MK::parameters
 	return new Encoder_polar_MK::parameters(*this);
 }
 
+struct sub_same_length
+{
+	template <typename T>
+	static void check(const std::vector<T>& v)
+	{
+		for(unsigned i = 0; i < v.size(); i++)
+			if (v[i].size() != v[0].size())
+				throw std::runtime_error("all elements do not have the same length");
+	}
+};
+
 void Encoder_polar_MK::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
@@ -32,18 +43,51 @@ void Encoder_polar_MK::parameters
 	auto p = this->get_prefix();
 
 	tools::add_options(args.at({p+"-type"}), 0, "POLAR_MK");
+
+	args.add(
+		{p+"-kernel"},
+		tools::List2D<bool>(tools::Boolean(),
+		                    std::make_tuple(tools::Length(1), tools::Function<sub_same_length>("elements of same length")),
+		                    std::make_tuple(tools::Length(1))),
+		"kernel of the polar code (squared matrix only) (ex: \"111,101,011\").");
 }
 
 void Encoder_polar_MK::parameters
 ::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(vals.exist({p+"-kernel"})) this->kernel_matrix = vals.to_list<std::vector<bool>>({p+"-kernel"});
+}
+
+std::string display_kernel(const std::vector<std::vector<bool>>& pattern_bits)
+{
+	std::string m;
+
+	for(auto &v : pattern_bits)
+	{
+		for(const auto &vb : v)
+			m += std::to_string(vb);
+
+		m += ",";
+	}
+
+	if (m.size())
+		m.erase(m.size() -1);
+
+	return m;
 }
 
 void Encoder_polar_MK::parameters
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	Encoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	headers[p].push_back(std::make_pair(std::string("Kernel"), std::string("{" + display_kernel(this->kernel_matrix) + "}")));
 }
 
 template <typename B>
@@ -52,9 +96,7 @@ module::Encoder_polar_MK<B>* Encoder_polar_MK::parameters
 {
 	if (this->type == "POLAR_MK" && !this->systematic)
 	{
-		return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, {{1,0},{1,1}}, this->n_frames);
-		// return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, {{1,1,1},{1,0,1},{0,1,1}}, this->n_frames);
-		// return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,1,1}}, this->n_frames);
+		return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, kernel_matrix, this->n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
