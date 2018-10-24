@@ -72,6 +72,12 @@ void Interleaver_core::parameters
 		{p+"-seed", "S"},
 		tools::Integer(tools::Positive()),
 		"seed used to initialize the pseudo random generators.");
+
+	args.add(
+		{p+"-read-order"},
+		tools::Text(tools::Including_set("TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT")),
+		"Read order of the COL_ROW and ROW_COL interleavers.");
+
 }
 
 void Interleaver_core::parameters
@@ -86,6 +92,7 @@ void Interleaver_core::parameters
 	if(vals.exist({p+"-cols"     })) this->n_cols   = vals.to_int({p+"-cols"     });
 	if(vals.exist({p+"-seed", "S"})) this->seed     = vals.to_int({p+"-seed", "S"});
 	if(vals.exist({p+"-uni"      })) this->uniform  = true;
+	if(vals.exist({p+"-read-order"})) this->read_order = vals.at({p+"-read-order"});
 }
 
 void Interleaver_core::parameters
@@ -117,8 +124,8 @@ tools::Interleaver_core<T>* Interleaver_core::parameters
 	if (this->type == "DVB-RCS2") return new tools::Interleaver_core_ARP_DVB_RCS2 <T>(this->size,                                          this->n_frames);
 	if (this->type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(this->size,               this->seed, this->uniform, this->n_frames);
 	if (this->type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(this->size, this->n_cols, this->seed, this->uniform, this->n_frames);
-	if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols,                            this->n_frames);
-	if (this->type == "COL_ROW" ) return new tools::Interleaver_core_column_row   <T>(this->size, this->n_cols,                            this->n_frames);
+	if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols, this->read_order,          this->n_frames);
+	if (this->type == "COL_ROW" ) return new tools::Interleaver_core_column_row   <T>(this->size, this->n_cols, this->read_order,          this->n_frames);
 	if (this->type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(this->size,               this->seed, this->uniform, this->n_frames);
 	if (this->type == "USER"    ) return new tools::Interleaver_core_user         <T>(this->size, this->path,                              this->n_frames);
 	if (this->type == "NO"      ) return new tools::Interleaver_core_NO           <T>(this->size,                                          this->n_frames);
