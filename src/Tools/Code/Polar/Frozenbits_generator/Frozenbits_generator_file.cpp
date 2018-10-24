@@ -44,16 +44,20 @@ bool Frozenbits_generator_file
 
 		try
 		{
-			if (std::stoi(trash) != this->N)
-			{
-				std::stringstream message;
-				message << "'trash' has to be equal to 'N' ('trash' = " << trash << ", 'N' = " << this->N << ").";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
+			std::stoi(trash);
 		}
 		catch(std::exception&)
 		{
-			return false;
+			std::stringstream message;
+			message << "'std::stoi' did not work, something went wrong when reading the file.";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (std::stoi(trash) != this->N)
+		{
+			std::stringstream message;
+			message << "'trash' has to be equal to 'N' ('trash' = " << trash << ", 'N' = " << this->N << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
 		in_code >> trash; // type
