@@ -10,25 +10,39 @@
 
 namespace aff3ct
 {
+namespace tools
+{
+std::string display_kernel(const std::vector<std::vector<bool>>& pattern_bits);
+}
+}
+
+namespace aff3ct
+{
 namespace module
 {
 template <typename B = int>
 class Encoder_polar_MK : public Encoder<B>, public tools::Frozenbits_notifier
 {
 protected:
-	const int                            bp;          // base power
-	const int                            m;           // log_b of code length
-	const std::vector<bool>&             frozen_bits; // true means frozen, false means set to 0/1
-	const std::vector<std::vector<bool>> kernel_matrix;
-//	      std::vector<B>                 X_N_tmp;
-	      std::vector<int8_t>            Ke;
-	      std::vector<uint32_t>          idx;
-	      std::vector<B>                 u;
+	const std::vector<bool>&                          frozen_bits; // true means frozen, false means set to 0/1
+	const std::vector<std::vector<std::vector<bool>>> kernel_matrices;
+	const std::vector<uint32_t>                       stages;
+//	      std::vector<B>                              X_N_tmp;
+	      std::vector<std::vector<int8_t>>            Ke;
+	      std::vector<uint32_t>                       idx;
+	      std::vector<B>                              u;
 
 public:
 	Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits,
 	                 const std::vector<std::vector<bool>>& kernel_matrix = {{1,0},{1,1}}, const int n_frames = 1);
+
+	Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits,
+	                 const std::vector<std::vector<std::vector<bool>>>& kernel_matrices,
+	                 const std::vector<uint32_t> &stages, const int n_frames = 1);
+
 	virtual ~Encoder_polar_MK() = default;
+
+	void init();
 
 	// bool is_codeword(const B *X_N);
 

@@ -62,24 +62,6 @@ void Encoder_polar_MK::parameters
 	if(vals.exist({p+"-kernel"})) this->kernel_matrix = vals.to_list<std::vector<bool>>({p+"-kernel"});
 }
 
-std::string display_kernel(const std::vector<std::vector<bool>>& pattern_bits)
-{
-	std::string m;
-
-	for(auto &v : pattern_bits)
-	{
-		for(const auto &vb : v)
-			m += std::to_string(vb);
-
-		m += ",";
-	}
-
-	if (m.size())
-		m.erase(m.size() -1);
-
-	return m;
-}
-
 void Encoder_polar_MK::parameters
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
@@ -87,7 +69,7 @@ void Encoder_polar_MK::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair(std::string("Kernel"), std::string("{" + display_kernel(this->kernel_matrix) + "}")));
+	headers[p].push_back(std::make_pair(std::string("Kernel"), std::string(tools::display_kernel(this->kernel_matrix))));
 }
 
 template <typename B>

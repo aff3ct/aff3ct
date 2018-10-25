@@ -1,5 +1,6 @@
 #include <vector>
 #include <cmath>
+#include <map>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -35,6 +36,75 @@ using namespace aff3ct::module;
 // 				for (auto col_B = 0; col_B < (int)B[0].size(); col_B++)
 // 					C[row_A * B.size() + row_B][col_A * B[0].size() + col_B] = A[row_A][col_A] * B[row_B][col_B];
 // }
+
+// template <typename T = int32_t>
+// std::vector<std::vector<T>> kronecker_product(const std::vector<std::vector<T>>& A,
+//                                               const std::vector<std::vector<T>>& B)
+// {
+// 	// verifications --------------------------------------------------------------------------------------------------
+// 	if (A.size() == 0)
+// 	{
+// 		std::stringstream message;
+// 		message << "'A.size()' should be higher than 0 ('A.size()' = " << A.size() << ").";
+// 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+// 	}
+
+// 	if (B.size() == 0)
+// 	{
+// 		std::stringstream message;
+// 		message << "'B.size()' should be higher than 0 ('B.size()' = " << B.size() << ").";
+// 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+// 	}
+
+// 	for (auto l = 0; l < (int)A.size(); l++)
+// 	{
+// 		if (A[l].size() != A.size())
+// 		{
+// 			std::stringstream message;
+// 			message << "'A[l].size()' has to be equal to 'A.size()' ('l' = " << l
+// 			        << ", 'A[l].size()' = " << A[l].size()
+// 			        << ", 'A.size()' = " << A.size() << ").";
+// 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+// 		}
+// 	}
+
+// 	for (auto l = 0; l < (int)B.size(); l++)
+// 	{
+// 		if (B[l].size() != B.size())
+// 		{
+// 			std::stringstream message;
+// 			message << "'B[l].size()' has to be equal to 'B.size()' ('l' = " << l
+// 			        << ", 'B[l].size()' = " << B[l].size()
+// 			        << ", 'B.size()' = " << B.size() << ").";
+// 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+// 		}
+// 	}
+// 	// ----------------------------------------------------------------------------------------------------------------
+
+// 	std::vector<std::vector<T>> C(A.size() * B.size(), std::vector<T>(A[0].size() * B[0].size()));
+// 	kronecker_product(A, B, C);
+// 	return C;
+// }
+
+std::string aff3ct::tools::display_kernel(const std::vector<std::vector<bool>>& pattern_bits)
+{
+	std::string m = "{";
+
+	for(auto &v : pattern_bits)
+	{
+		for(const auto &vb : v)
+			m += std::to_string(vb);
+
+		m += ",";
+	}
+
+	if (m.size())
+		m.erase(m.size() -1);
+
+	m += "}";
+
+	return m;
+}
 
 // Function to get cofactor of mat[p][q] in tmp[][]. n is current
 // dimension of mat[][]
@@ -96,59 +166,10 @@ int determinant_of_matrix(const std::vector<std::vector<T>> &mat, const int n)
 	return D;
 }
 
-template <typename T>
+template <typename T = int32_t>
 bool is_invertible(const std::vector<std::vector<T>> &mat)
 {
 	return determinant_of_matrix(mat, (int)mat.size()) != 0;
-}
-
-template <typename T = int32_t>
-std::vector<std::vector<T>> kronecker_product(const std::vector<std::vector<T>>& A,
-                                              const std::vector<std::vector<T>>& B)
-{
-	// verifications --------------------------------------------------------------------------------------------------
-	if (A.size() == 0)
-	{
-		std::stringstream message;
-		message << "'A.size()' should be higher than 0 ('A.size()' = " << A.size() << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (B.size() == 0)
-	{
-		std::stringstream message;
-		message << "'B.size()' should be higher than 0 ('B.size()' = " << B.size() << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	for (auto l = 0; l < (int)A.size(); l++)
-	{
-		if (A[l].size() != A.size())
-		{
-			std::stringstream message;
-			message << "'A[l].size()' has to be equal to 'A.size()' ('l' = " << l
-			        << ", 'A[l].size()' = " << A[l].size()
-			        << ", 'A.size()' = " << A.size() << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
-
-	for (auto l = 0; l < (int)B.size(); l++)
-	{
-		if (B[l].size() != B.size())
-		{
-			std::stringstream message;
-			message << "'B[l].size()' has to be equal to 'B.size()' ('l' = " << l
-			        << ", 'B[l].size()' = " << B[l].size()
-			        << ", 'B.size()' = " << B.size() << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
-	// ----------------------------------------------------------------------------------------------------------------
-
-	std::vector<std::vector<T>> C(A.size() * B.size(), std::vector<T>(A[0].size() * B[0].size()));
-	kronecker_product(A, B, C);
-	return C;
 }
 
 template <typename B>
@@ -156,12 +177,11 @@ Encoder_polar_MK<B>
 ::Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits,
                    const std::vector<std::vector<bool>>& kernel_matrix, const int n_frames)
 : Encoder<B>(K, N, n_frames),
-  bp(kernel_matrix.size()),
-  m((int)(std::log(N)/std::log(bp))),
   frozen_bits(frozen_bits),
-  kernel_matrix(kernel_matrix),
+  kernel_matrices(1, kernel_matrix),
+  stages((int)(std::log(N)/std::log(kernel_matrix.size())), 0),
   // X_N_tmp(this->N),
-  Ke(kernel_matrix.size() * kernel_matrix.size()),
+  Ke(1, std::vector<int8_t>(kernel_matrix.size() * kernel_matrix.size())),
   idx(kernel_matrix.size()),
   u(kernel_matrix.size())
 {
@@ -169,53 +189,124 @@ Encoder_polar_MK<B>
 	this->set_name(name);
 	this->set_sys(false);
 
-	if (this->N != (int)frozen_bits.size())
+	this->init();
+}
+
+template <typename B>
+Encoder_polar_MK<B>
+::Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits,
+                   const std::vector<std::vector<std::vector<bool>>>& kernel_matrices,
+                   const std::vector<uint32_t> &stages, const int n_frames)
+: Encoder<B>(K, N, n_frames),
+  frozen_bits(frozen_bits),
+  kernel_matrices(kernel_matrices),
+  stages(stages),
+  // X_N_tmp(this->N),
+  Ke(kernel_matrices.size()),
+  idx(),
+  u()
+{
+	const std::string name = "Encoder_polar_MK";
+	this->set_name(name);
+	this->set_sys(false);
+
+	size_t biggest_kernel_size = 0;
+	for (auto ke = 0; ke < (int)kernel_matrices.size(); ke++)
+	{
+		Ke[ke].resize(kernel_matrices[ke].size() * kernel_matrices[ke].size());
+		biggest_kernel_size = std::max(biggest_kernel_size, kernel_matrices[ke].size());
+	}
+
+	idx.resize(biggest_kernel_size);
+	u.resize(biggest_kernel_size);
+
+	for (auto s : stages)
+		if(s >= kernel_matrices.size())
+		{
+			std::stringstream message;
+			message << "'s' should not be higher than 'kernel_matrices.size()' ("
+			        << "'s' = " << s << ", "
+			        << "'kernel_matrices.size()' = " << kernel_matrices.size() << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+	this->init();
+}
+
+template <typename B>
+void Encoder_polar_MK<B>
+::init()
+{
+	if (this->N != (int)this->frozen_bits.size())
 	{
 		std::stringstream message;
-		message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
-		        << ", 'N' = " << N << ").";
+		message << "'frozen_bits.size()' has to be equal to 'N' ("
+		        << "'frozen_bits.size()' = " << this->frozen_bits.size() << ", "
+		        << "'N' = " << this->N << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (this->frozen_bits[i] == 0) k++;
 	if (this->K != k)
 	{
 		std::stringstream message;
-		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
-		        << k << ").";
+		message << "The number of information bits in the frozen_bits is invalid ("
+		        << "'K' = " << this->K << ", "
+		        << "'k' = " << k << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (!tools::is_power((int)kernel_matrix.size(), N))
+	for (auto ke = 0; ke < (int)this->kernel_matrices.size(); ke++)
+		for (auto l = 0; l < (int)this->kernel_matrices[ke].size(); l++)
+			if (this->kernel_matrices[ke][l].size() != this->kernel_matrices[ke].size())
+			{
+				std::stringstream message;
+				message << "Square matrices are required for the polar kernels: 'kernel_matrices[ke][l].size()' has to "
+				        << "be equal to 'kernel_matrices[ke].size()' ("
+				        << "'ke' = " << ke << ", "
+				        << "'l' = " << l << ", "
+				        << "'kernel_matrices[ke][l].size()' = " << this->kernel_matrices[ke][l].size() << ", "
+				        << "'kernel_matrices[ke].size()' = " << this->kernel_matrices[ke].size() << ").";
+				throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+			}
+
+	for (auto ke = 0; ke < (int)this->kernel_matrices.size(); ke++)
+		if (!is_invertible(this->kernel_matrices[ke]))
+		{
+			std::stringstream message;
+			message << "'kernel_matrices[ke]' has to be invertible ("
+			        << "'ke' = " << ke << ", "
+			        << "'kernel_matrices[ke]' = " << tools::display_kernel(this->kernel_matrices[ke]) << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+	std::map<int,int> n_kernels_per_type;
+	for (auto s : stages)
+	{
+		if (n_kernels_per_type.find(s) != n_kernels_per_type.end())
+			n_kernels_per_type[s]++;
+		else
+			n_kernels_per_type[s] = 1;
+	}
+	auto expected_N = (int)1;
+	for (auto kt : n_kernels_per_type)
+		expected_N *= (int)std::pow((float)kernel_matrices[stages[kt.first]].size(), (int)kt.second);
+	if (expected_N != this->N)
 	{
 		std::stringstream message;
-		message << "'kernel_matrix.size()' has to be a power of 'N' ('kernel_matrix.size()' = " << kernel_matrix.size()
-		        << ", 'N' = " << N << ").";
+		message << "'expected_N' should be equal to 'N' ("
+		        << "'expected_N' = " << expected_N << ", "
+		        << "'N' = " << this->N << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (!is_invertible<bool>(kernel_matrix))
+	for (auto ke = 0; ke < (int)this->kernel_matrices.size(); ke++)
 	{
-		std::stringstream message;
-		message << "'kernel_matrix' has to be invertible.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		const auto kernel_size = (int)this->kernel_matrices[ke].size();
+		for (auto i = 0; i < kernel_size; i++)
+			for (auto j = 0; j < kernel_size; j++)
+				this->Ke[ke][i * kernel_size +j] = (int8_t)this->kernel_matrices[ke][j][i];
 	}
-
-	for (auto l = 0; l < (int)kernel_matrix.size(); l++)
-	{
-		if (kernel_matrix[l].size() != kernel_matrix.size())
-		{
-			std::stringstream message;
-			message << "'kernel_matrix[l].size()' has to be equal to 'kernel_matrix.size()' ('l' = " << l
-			        << ", 'kernel_matrix[l].size()' = " << kernel_matrix[l].size()
-			        << ", 'kernel_matrix.size()' = " << kernel_matrix.size() << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
-
-	for (auto i = 0; i < (int)this->kernel_matrix.size(); i++)
-		for (auto j = 0; j < (int)this->kernel_matrix.size(); j++)
-			this->Ke[i * (int)this->kernel_matrix.size() +j] = (int8_t)this->kernel_matrix[j][i];
 
 	this->notify_frozenbits_update();
 }
@@ -245,9 +336,9 @@ template <typename B>
 void Encoder_polar_MK<B>
 ::light_encode(B *X_N)
 {
-	const auto kernel_size = (int)this->kernel_matrix.size();
-	for (auto s = 0; s < this->m; s++)
+	for (auto s = 0; s < (int)this->stages.size(); s++)
 	{
+		const auto kernel_size = (int)this->kernel_matrices[stages[s]].size();
 		const auto block_size = (int)std::pow((float)kernel_size, s);
 		const auto n_blocks = this->N / (block_size * kernel_size);
 
@@ -263,7 +354,7 @@ void Encoder_polar_MK<B>
 				}
 
 				const auto off_out = b * block_size * kernel_size + k * kernel_size;
-				polar_kernel(this->u.data(), this->idx.data(), this->Ke.data(), X_N, kernel_size);
+				polar_kernel(this->u.data(), this->idx.data(), this->Ke[stages[s]].data(), X_N, kernel_size);
 			}
 		}
 	}
