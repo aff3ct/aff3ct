@@ -28,7 +28,7 @@ protected:
 	const std::vector<std::vector<std::vector<bool>>> kernel_matrices;
 	const std::vector<uint32_t>                       stages;
 //	      std::vector<B>                              X_N_tmp;
-	      std::vector<std::vector<int8_t>>            Ke;
+	      std::vector<std::vector<B>>                 Ke;
 	      std::vector<uint32_t>                       idx;
 	      std::vector<B>                              u;
 

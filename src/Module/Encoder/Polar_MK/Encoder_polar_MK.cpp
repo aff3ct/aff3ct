@@ -181,7 +181,7 @@ Encoder_polar_MK<B>
   kernel_matrices(1, kernel_matrix),
   stages((int)(std::log(N)/std::log(kernel_matrix.size())), 0),
   // X_N_tmp(this->N),
-  Ke(1, std::vector<int8_t>(kernel_matrix.size() * kernel_matrix.size())),
+  Ke(1, std::vector<B>(kernel_matrix.size() * kernel_matrix.size())),
   idx(kernel_matrix.size()),
   u(kernel_matrix.size())
 {
@@ -290,7 +290,7 @@ void Encoder_polar_MK<B>
 	}
 	auto expected_N = (int)1;
 	for (auto kt : n_kernels_per_type)
-		expected_N *= (int)std::pow((float)kernel_matrices[stages[kt.first]].size(), (int)kt.second);
+		expected_N *= (int)std::pow((float)kernel_matrices[kt.first].size(), (int)kt.second);
 	if (expected_N != this->N)
 	{
 		std::stringstream message;
@@ -305,7 +305,7 @@ void Encoder_polar_MK<B>
 		const auto kernel_size = (int)this->kernel_matrices[ke].size();
 		for (auto i = 0; i < kernel_size; i++)
 			for (auto j = 0; j < kernel_size; j++)
-				this->Ke[ke][i * kernel_size +j] = (int8_t)this->kernel_matrices[ke][j][i];
+				this->Ke[ke][i * kernel_size +j] = (B)this->kernel_matrices[ke][j][i];
 	}
 
 	this->notify_frozenbits_update();
@@ -320,7 +320,7 @@ void Encoder_polar_MK<B>
 }
 
 template <typename B>
-void polar_kernel(const B *u, const uint32_t *idx, const int8_t *Ke, B *x, const int size)
+void polar_kernel(const B *u, const uint32_t *idx, const B *Ke, B *x, const int size)
 {
 	for (auto i = 0; i < size; i++)
 	{
@@ -328,7 +328,7 @@ void polar_kernel(const B *u, const uint32_t *idx, const int8_t *Ke, B *x, const
 		auto sum = 0;
 		for (auto j = 0; j < size; j++)
 			sum += u[j] & Ke[stride +j];
-		x[idx[i]] = sum & (int8_t)1;
+		x[idx[i]] = sum & (B)1;
 	}
 }
 
@@ -336,27 +336,27 @@ template <typename B>
 void Encoder_polar_MK<B>
 ::light_encode(B *X_N)
 {
+	auto n_kernels = (int)1;
 	for (auto s = 0; s < (int)this->stages.size(); s++)
 	{
 		const auto kernel_size = (int)this->kernel_matrices[stages[s]].size();
-		const auto block_size = (int)std::pow((float)kernel_size, s);
-		const auto n_blocks = this->N / (block_size * kernel_size);
+		const auto n_blocks = this->N / (n_kernels * kernel_size);
 
 		for (auto b = 0; b < n_blocks; b++)
 		{
-			const auto n_kernels = block_size;
 			for (auto k = 0; k < n_kernels; k++)
 			{
 				for (auto i = 0; i < kernel_size; i++)
 				{
-					this->idx[i] = (uint32_t)(b * block_size * kernel_size + block_size * i +k);
+					this->idx[i] = (uint32_t)(b * n_kernels * kernel_size + n_kernels * i +k);
 					this->u[i] = X_N[this->idx[i]];
 				}
 
-				const auto off_out = b * block_size * kernel_size + k * kernel_size;
 				polar_kernel(this->u.data(), this->idx.data(), this->Ke[stages[s]].data(), X_N, kernel_size);
 			}
 		}
+
+		n_kernels *= kernel_size;
 	}
 }
 
