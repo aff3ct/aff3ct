@@ -131,7 +131,7 @@ void Sparse_matrix
 void Sparse_matrix
 ::self_resize(const size_t n_rows, const size_t n_cols, Origin o)
 {
-	*this = this->resize(n_rows, n_rows, o);
+	*this = this->resize(n_rows, n_cols, o);
 }
 
 Sparse_matrix Sparse_matrix
