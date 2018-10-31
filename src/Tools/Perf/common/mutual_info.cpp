@@ -439,14 +439,14 @@ R aff3ct::tools::mutual_info_histo_seq(const B* ref, const R* llr, const unsigne
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template Q_32 aff3ct::tools::mutual_info_histo<B_32, Q_32>(const B_32*, const Q_32*, const unsigned);
 template Q_64 aff3ct::tools::mutual_info_histo<B_64, Q_64>(const B_64*, const Q_64*, const unsigned);
 #else
 template Q aff3ct::tools::mutual_info_histo<B, Q>(const B*, const Q*, const unsigned);
 #endif
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template Q_32 aff3ct::tools::mutual_info_histo_seq<B_32, Q_32>(const B_32*, const Q_32*, const unsigned);
 template Q_64 aff3ct::tools::mutual_info_histo_seq<B_64, Q_64>(const B_64*, const Q_64*, const unsigned);
 #else

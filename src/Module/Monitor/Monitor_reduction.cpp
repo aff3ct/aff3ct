@@ -1,7 +1,7 @@
 #include <cmath>
 #include <sstream>
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
 
@@ -76,7 +76,7 @@ void Monitor_reduction
 void Monitor_reduction
 ::check_reducible()
 {
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	int n_monitor_send = Monitor_reduction::monitors.size(), n_monitor_recv;
 	MPI_Allreduce(&n_monitor_send, &n_monitor_recv, 1, MPI_INT, MPI_PROD, MPI_COMM_WORLD);
 
@@ -102,7 +102,7 @@ void Monitor_reduction
 bool Monitor_reduction
 ::reduce_stop_loop()
 {
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	int n_stop_recv, stop_send = Monitor_reduction::get_stop_loop() ? 1 : 0;
 	MPI_Allreduce(&stop_send, &n_stop_recv, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 

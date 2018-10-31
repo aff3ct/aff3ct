@@ -155,7 +155,7 @@ template <typename B, typename R, typename Q>
 simulation::BFER_ite<B,R,Q>* BFER_ite::parameters
 ::build() const
 {
-#if defined(SYSTEMC)
+#if defined(AFF3CT_SYSTEMC)
 	return new simulation::SC_BFER_ite<B,R,Q>(*this);
 #else
 	return new simulation::BFER_ite_threads<B,R,Q>(*this);
@@ -171,7 +171,7 @@ simulation::BFER_ite<B,R,Q>* BFER_ite
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::simulation::BFER_ite<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_ite::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::BFER_ite::parameters&);
 template aff3ct::simulation::BFER_ite<B_16,R_16,Q_16>* aff3ct::factory::BFER_ite::build<B_16,R_16,Q_16>(const aff3ct::factory::BFER_ite::parameters&);
 template aff3ct::simulation::BFER_ite<B_32,R_32,Q_32>* aff3ct::factory::BFER_ite::build<B_32,R_32,Q_32>(const aff3ct::factory::BFER_ite::parameters&);

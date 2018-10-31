@@ -199,7 +199,7 @@ void Decoder_LDPC_BP_peeling<B,R>::_store_cw(B *V_N, const int frame_id)
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_peeling<B_8,Q_8>;
 template class aff3ct::module::Decoder_LDPC_BP_peeling<B_16,Q_16>;
 template class aff3ct::module::Decoder_LDPC_BP_peeling<B_32,Q_32>;

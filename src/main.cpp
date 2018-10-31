@@ -5,11 +5,11 @@
 #include <map>
 #include <mipp.h>
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
 
-#ifdef SYSTEMC
+#ifdef AFF3CT_SYSTEMC
 #include <systemc>
 #endif
 
@@ -121,14 +121,14 @@ int read_arguments(const int argc, const char** argv, factory::Launcher::paramet
 	return (cmd_error.size() || display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
-#ifndef SYSTEMC
+#ifndef AFF3CT_SYSTEMC
 int main(int argc, char **argv)
 #else
 int sc_main(int argc, char **argv)
 #endif
 {
 	int exit_code = EXIT_SUCCESS;
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	MPI_Init(nullptr, nullptr);
 #endif
 
@@ -139,7 +139,7 @@ int sc_main(int argc, char **argv)
 	try
 	{
 		launcher::Launcher *launcher;
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 		switch (params.sim_prec)
 		{
 			case 8 : launcher = factory::Launcher::build<B_8, R_8, Q_8 >(params, argc, (const char**)argv); break;
@@ -162,7 +162,7 @@ int sc_main(int argc, char **argv)
 		rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 	}
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	MPI_Finalize();
 #endif
 

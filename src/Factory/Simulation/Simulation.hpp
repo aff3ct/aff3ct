@@ -1,7 +1,7 @@
 #ifndef FACTORY_SIMULATION_HPP
 #define FACTORY_SIMULATION_HPP
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
 #include <chrono>
@@ -29,7 +29,7 @@ struct Simulation : Launcher
 		tools::auto_cloned_unique_ptr<Noise::parameters> noise;
 
 		// optional parameters
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		std::chrono::milliseconds mpi_comm_freq   = std::chrono::milliseconds(1000);
 		int                       mpi_rank        = 0;
 		int                       mpi_size        = 1;

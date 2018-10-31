@@ -64,7 +64,7 @@ void Channel_binary_symmetric<R>::check_noise()
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Channel_binary_symmetric<R_32>;
 template class aff3ct::module::Channel_binary_symmetric<R_64>;
 #else

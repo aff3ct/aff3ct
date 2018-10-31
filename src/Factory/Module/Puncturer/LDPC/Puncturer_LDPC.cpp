@@ -129,7 +129,7 @@ module::Puncturer<B,Q>* Puncturer_LDPC
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer_LDPC::parameters::build<B_8 ,Q_8 >() const;
 template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer_LDPC::parameters::build<B_16,Q_16>() const;
 template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer_LDPC::parameters::build<B_32,Q_32>() const;

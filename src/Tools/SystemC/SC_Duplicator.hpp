@@ -1,4 +1,4 @@
-#if defined(SYSTEMC) || defined(SYSTEMC_MODULE)
+#if defined(AFF3CT_SYSTEMC) || defined(AFF3CT_SYSTEMC_MODULE)
 
 #ifndef SC_DUPLICATOR_HPP_
 #define SC_DUPLICATOR_HPP_
@@ -47,4 +47,4 @@ private:
 
 #endif /* SC_DUPLICATOR_HPP_ */
 
-#endif /* SYSTEMC */
+#endif /* AFF3CT_SYSTEMC */

@@ -221,7 +221,7 @@ std::unique_ptr<module::Coset<B,B>> BFER_std<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::BFER_std<B_8,R_8,Q_8>;
 template class aff3ct::simulation::BFER_std<B_16,R_16,Q_16>;
 template class aff3ct::simulation::BFER_std<B_32,R_32,Q_32>;

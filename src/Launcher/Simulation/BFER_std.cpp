@@ -184,7 +184,7 @@ void BFER_std<B,R,Q>
 	params.mnt_er->max_frame = params.max_frame;
 	params.mnt_mi->n_trials  = 0;
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	auto pter = params.ter->get_prefix();
 	if (!this->arg_vals.exist({pter+"-freq"}))
 		params.ter->frequency = params.mpi_comm_freq;
@@ -201,7 +201,7 @@ simulation::Simulation* BFER_std<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::BFER_std<B_8,R_8,Q_8>;
 template class aff3ct::launcher::BFER_std<B_16,R_16,Q_16>;
 template class aff3ct::launcher::BFER_std<B_32,R_32,Q_32>;

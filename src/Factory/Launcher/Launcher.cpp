@@ -79,14 +79,14 @@ void factory::Launcher::parameters
 
 	args.add(
 		{p+"-type"},
-#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")),
 #else
 		tools::Text(tools::Including_set("BFER", "BFERI")),
 #endif
 		"select the type of simulation to launch (default is BFER).");
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 	args.add(
 		{p+"-prec", "p"},
 		tools::Integer(tools::Including_set(8, 16, 32, 64)),
@@ -108,7 +108,7 @@ void factory::Launcher::parameters
 		tools::None(),
 		"print informations about the version of the code.");
 
-#ifdef ENABLE_BACK_TRACE
+#ifdef AFF3CT_BACKTRACE
 	args.add(
 		{"except-no-bt"},
 		tools::None(),
@@ -132,7 +132,7 @@ void factory::Launcher::parameters
 		tools::arg_rank::ADV);
 
 
-#ifdef ENABLE_COOL_BASH
+#ifdef AFF3CT_NO_COLOR
 	args.add(
 		{p+"-no-colors"},
 		tools::None(),
@@ -162,14 +162,14 @@ void factory::Launcher::parameters
 		this->display_adv_help = true;
 	}
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
 
 	tools::exception::no_backtrace    =  vals.exist({"except-no-bt"});
 	tools::exception::no_addr_to_line = !vals.exist({"except-a2l"  });
 
-#ifdef ENABLE_COOL_BASH
+#ifdef AFF3CT_NO_COLOR
 	if (vals.exist({p+"-no-colors"})) rang::setControlMode(rang::control::Off);
 #else
 	rang::setControlMode(rang::control::Off);
@@ -192,7 +192,7 @@ void factory::Launcher::parameters
 
 	params_headers[p].push_back(std::make_pair("Type", this->sim_type));
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 	std::type_index id_B = typeid(int32_t), id_R = typeid(float), id_Q = typeid(float);
 	switch (this->sim_prec)
 	{
@@ -258,7 +258,7 @@ namespace aff3ct
 {
 namespace factory
 {
-#if defined(MULTI_PREC) || defined(PREC_32_BIT)
+#if defined(AFF3CT_MULTI_PREC) || defined(AFF3CT_32BIT_PREC)
 template <>
 launcher::Launcher* Launcher::parameters
 ::build_exit<int32_t, float, float>(const int argc, const char **argv) const
@@ -275,7 +275,7 @@ launcher::Launcher* Launcher::parameters
 }
 #endif
 
-#if defined(MULTI_PREC) || defined(PREC_64_BIT)
+#if defined(AFF3CT_MULTI_PREC) || defined(AFF3CT_64BIT_PREC)
 template <>
 launcher::Launcher* Launcher::parameters
 ::build_exit<int64_t, double, double>(const int argc, const char **argv) const
@@ -375,7 +375,7 @@ launcher::Launcher* factory::Launcher
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_8 ,R_8 ,Q_8 >(const int, const char**) const;
 template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_16,R_16,Q_16>(const int, const char**) const;
 template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_32,R_32,Q_32>(const int, const char**) const;

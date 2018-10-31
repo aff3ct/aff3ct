@@ -55,7 +55,7 @@ void Decoder_NO<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_NO<B_8,Q_8>;
 template class aff3ct::module::Decoder_NO<B_16,Q_16>;
 template class aff3ct::module::Decoder_NO<B_32,Q_32>;

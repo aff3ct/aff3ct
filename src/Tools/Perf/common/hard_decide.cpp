@@ -81,7 +81,7 @@ void aff3ct::tools::hard_decide_unk(const Q *in, B *out, const unsigned size)
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template void aff3ct::tools::hard_decide<B_8,  Q_8 >(const Q_8*,  B_8*,  const unsigned);
 template void aff3ct::tools::hard_decide<B_16, Q_16>(const Q_16*, B_16*, const unsigned);
 template void aff3ct::tools::hard_decide<B_32, Q_32>(const Q_32*, B_32*, const unsigned);

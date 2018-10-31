@@ -144,7 +144,7 @@ void BFER<B,R,Q>
 				return;
 		}
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
 #endif
 		if (params_BFER.display_legend)
@@ -152,7 +152,7 @@ void BFER<B,R,Q>
 				|| (params_BFER.statistics && !params_BFER.debug))
 				terminal->legend(std::cout);
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
 #endif
 		// start the terminal to display BER/FER results
@@ -179,7 +179,7 @@ void BFER<B,R,Q>
 		}
 
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
 #endif
 		if (!params_BFER.ter->disabled && terminal != nullptr && !this->simu_error)
@@ -342,7 +342,7 @@ void BFER<B,R,Q>
 	}
 
 	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
 #else
 	module::Monitor_reduction::set_reduce_frequency(std::chrono::milliseconds(0));
@@ -407,7 +407,7 @@ bool BFER<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::BFER<B_8,R_8,Q_8>;
 template class aff3ct::simulation::BFER<B_16,R_16,Q_16>;
 template class aff3ct::simulation::BFER<B_32,R_32,Q_32>;

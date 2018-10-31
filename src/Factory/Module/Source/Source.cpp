@@ -123,7 +123,7 @@ module::Source<B>* Source
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Source<B_8 >* aff3ct::factory::Source::parameters::build<B_8 >() const;
 template aff3ct::module::Source<B_16>* aff3ct::factory::Source::parameters::build<B_16>() const;
 template aff3ct::module::Source<B_32>* aff3ct::factory::Source::parameters::build<B_32>() const;

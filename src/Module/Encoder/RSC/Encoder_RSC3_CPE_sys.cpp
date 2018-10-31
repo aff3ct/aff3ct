@@ -40,9 +40,9 @@ int Encoder_RSC3_CPE_sys<B>
 		return 0;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_RSC3_CPE_sys<B_8>;
 template class aff3ct::module::Encoder_RSC3_CPE_sys<B_16>;
 template class aff3ct::module::Encoder_RSC3_CPE_sys<B_32>;

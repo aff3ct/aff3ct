@@ -1,4 +1,4 @@
-#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
 #include <cmath>
 #include <algorithm>
@@ -21,7 +21,7 @@ EXIT<B,R>
   params_EXIT(params_EXIT),
   sig_a      ((R)0       )
 {
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	std::clog << rang::tag::warning << "This simulation is not MPI ready, the same computations will be launched "
 	                                   "on each MPI processes." << std::endl;
 #endif
@@ -402,7 +402,7 @@ std::unique_ptr<tools::Terminal> EXIT<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::EXIT<B_32,R_32>;
 template class aff3ct::simulation::EXIT<B_64,R_64>;
 #else

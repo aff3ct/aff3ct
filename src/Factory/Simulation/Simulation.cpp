@@ -97,7 +97,7 @@ void Simulation::parameters
 		tools::Integer(tools::Positive()),
 		"seed used in the simulation to initialize the pseudo random generators in general.");
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	args.add(
 		{p+"-mpi-comm"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
@@ -142,7 +142,7 @@ void Simulation::parameters
 	if(vals.exist({p+"-threads", "t"}) && vals.to_int({p+"-threads", "t"}) > 0)
 		if(vals.exist({p+"-threads", "t"})) this->n_threads = vals.to_int({p+"-threads", "t"});
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	MPI_Comm_size(MPI_COMM_WORLD, &this->mpi_size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &this->mpi_rank);
 
@@ -167,7 +167,7 @@ void Simulation::parameters
 	this->local_seed = this->global_seed;
 #endif
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
 
@@ -195,7 +195,7 @@ void Simulation::parameters
 			headers[p].push_back(std::make_pair("Debug limit", std::to_string(this->debug_limit)));
 	}
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	headers[p].push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(this->mpi_comm_freq.count())));
 	headers[p].push_back(std::make_pair("MPI size",             std::to_string(this->mpi_size             )));
 #endif

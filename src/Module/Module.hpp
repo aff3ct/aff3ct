@@ -19,7 +19,7 @@
 
 #include "Task.hpp"
 #include "Socket.hpp"
-#ifdef SYSTEMC_MODULE
+#ifdef AFF3CT_SYSTEMC_MODULE
 #include "SC_Module.hpp"
 #endif
 
@@ -48,7 +48,7 @@ protected:
 
 public:
 	std::vector<std::shared_ptr<Task>> tasks;
-#ifdef SYSTEMC_MODULE
+#ifdef AFF3CT_SYSTEMC_MODULE
 	friend SC_Module_container;
 	SC_Module_container sc;
 #endif

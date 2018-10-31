@@ -19,7 +19,7 @@ void Coset_real<B,D>::_apply(const B *ref, const D *in, D *out, const int frame_
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Coset_real<B_8,  Q_8 >;
 template class aff3ct::module::Coset_real<B_16, Q_16>;
 template class aff3ct::module::Coset_real<B_32, Q_32>;

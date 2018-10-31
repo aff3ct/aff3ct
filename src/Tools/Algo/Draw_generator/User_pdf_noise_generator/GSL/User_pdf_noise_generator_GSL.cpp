@@ -1,4 +1,4 @@
-#ifdef CHANNEL_GSL
+#ifdef AFF3CT_CHANNEL_GSL
 
 #include <sstream>
 
@@ -58,7 +58,7 @@ void User_pdf_noise_generator_GSL<R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::tools::User_pdf_noise_generator_GSL<R_32>;
 template class aff3ct::tools::User_pdf_noise_generator_GSL<R_64>;
 #else

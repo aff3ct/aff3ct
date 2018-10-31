@@ -402,7 +402,7 @@ bool Modem
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,Q_8 >(const std::string&) const;
 template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::parameters::build<B_8 ,R_8 ,R_8 >(const std::string&) const;
 template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::parameters::build<B_16,R_16,Q_16>(const std::string&) const;
@@ -434,7 +434,7 @@ template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(cons
 
 template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::parameters::build<B,R,Q>(const tools::Distributions<R>&, const std::string&) const;
 template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>&, const std::string&);
-#if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
+#if !defined(AFF3CT_32BIT_PREC) && !defined(AFF3CT_64BIT_PREC)
 template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::parameters::build<B,R,R>(const std::string&) const;
 template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const aff3ct::factory::Modem::parameters&, const std::string&);
 

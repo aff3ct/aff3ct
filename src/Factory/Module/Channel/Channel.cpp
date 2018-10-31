@@ -15,12 +15,12 @@
 #include "Tools/Algo/Draw_generator/Event_generator/Fast/Event_generator_fast.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Fast/User_pdf_noise_generator_fast.hpp"
-#ifdef CHANNEL_MKL
+#ifdef AFF3CT_CHANNEL_MKL
 #include "Tools/Algo/Draw_generator/Event_generator/MKL/Event_generator_MKL.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/MKL/User_pdf_noise_generator_MKL.hpp"
 #endif
-#ifdef CHANNEL_GSL
+#ifdef AFF3CT_CHANNEL_GSL
 #include "Tools/Algo/Draw_generator/Event_generator/GSL/Event_generator_GSL.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/GSL/User_pdf_noise_generator_GSL.hpp"
@@ -74,10 +74,10 @@ void Channel::parameters
 		tools::Text(tools::Including_set("STD", "FAST")),
 		"select the implementation of the algorithm to generate noise.");
 
-#ifdef CHANNEL_GSL
+#ifdef AFF3CT_CHANNEL_GSL
 	tools::add_options(args.at({p+"-implem"}), 0, "GSL");
 #endif
-#ifdef CHANNEL_MKL
+#ifdef AFF3CT_CHANNEL_MKL
 	tools::add_options(args.at({p+"-implem"}), 0, "MKL");
 #endif
 
@@ -172,10 +172,10 @@ module::Channel<R>* Channel::parameters
 	std::unique_ptr<tools::Event_generator<R>> n;
 	     if (implem == "STD" ) n.reset(new tools::Event_generator_std <R>(seed));
 	else if (implem == "FAST") n.reset(new tools::Event_generator_fast<R>(seed));
-#ifdef CHANNEL_MKL
+#ifdef AFF3CT_CHANNEL_MKL
 	else if (implem == "MKL" ) n.reset(new tools::Event_generator_MKL<R>(seed));
 #endif
-#ifdef CHANNEL_GSL
+#ifdef AFF3CT_CHANNEL_GSL
 	else if (implem == "GSL" ) n.reset(new tools::Event_generator_GSL<R>(seed));
 #endif
 	else
@@ -194,10 +194,10 @@ module::Channel<R>* Channel::parameters
 	std::unique_ptr<tools::Gaussian_noise_generator<R>> n = nullptr;
 	     if (implem == "STD" ) n.reset(new tools::Gaussian_noise_generator_std <R>(seed));
 	else if (implem == "FAST") n.reset(new tools::Gaussian_noise_generator_fast<R>(seed));
-#ifdef CHANNEL_MKL
+#ifdef AFF3CT_CHANNEL_MKL
 	else if (implem == "MKL" ) n.reset(new tools::Gaussian_noise_generator_MKL <R>(seed));
 #endif
-#ifdef CHANNEL_GSL
+#ifdef AFF3CT_CHANNEL_GSL
 	else if (implem == "GSL" ) n.reset(new tools::Gaussian_noise_generator_GSL <R>(seed));
 #endif
 	else
@@ -217,10 +217,10 @@ module::Channel<R>* Channel::parameters
 	std::unique_ptr<tools::User_pdf_noise_generator<R>> n = nullptr;
 	     if (implem == "STD" ) n.reset(new tools::User_pdf_noise_generator_std <R>(dist, seed));
 	else if (implem == "FAST") n.reset(new tools::User_pdf_noise_generator_fast<R>(dist, seed));
-#ifdef CHANNEL_MKL
+#ifdef AFF3CT_CHANNEL_MKL
 	else if (implem == "MKL" ) n.reset(new tools::User_pdf_noise_generator_MKL <R>(dist, seed));
 #endif
-#ifdef CHANNEL_GSL
+#ifdef AFF3CT_CHANNEL_GSL
 	else if (implem == "GSL" ) n.reset(new tools::User_pdf_noise_generator_GSL <R>(dist, seed));
 #endif
 	else
@@ -277,7 +277,7 @@ module::Channel<R>* Channel
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>() const;
 template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>() const;
 template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&);
