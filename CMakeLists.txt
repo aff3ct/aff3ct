@@ -334,11 +334,11 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct
         FILES_MATCHING PATTERN "*.hpp")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct
         FILES_MATCHING PATTERN "*.hxx")
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/conf/itl/GSM-LDPC_4224.itl")
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/conf/cde/")
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/conf/" DESTINATION share/aff3ct/conf
             FILES_MATCHING PATTERN "*")
 endif()
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/refs/BCH/AWGN/BPSK/ALGEBRAIC/BCH_N7_K4_algebraic_T1.txt")
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/refs/BCH/")
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/refs/" DESTINATION share/aff3ct/refs
             FILES_MATCHING PATTERN "*.txt")
 endif()
