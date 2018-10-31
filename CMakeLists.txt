@@ -313,3 +313,32 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"      OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
     aff3ct_link_libraries (-lpthread)
 endif()
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------- INSTALL
+# ---------------------------------------------------------------------------------------------------------------------
+
+if (AFF3CT_COMPILE_EXE)
+    install(TARGETS aff3ct-bin RUNTIME DESTINATION bin)
+endif()
+if (AFF3CT_COMPILE_SHARED_LIB)
+    install(TARGETS aff3ct-shared-lib LIBRARY DESTINATION lib)
+endif()
+if (AFF3CT_COMPILE_STATIC_LIB)
+    install(TARGETS aff3ct-static-lib ARCHIVE DESTINATION lib)
+endif()
+
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct
+        FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct
+        FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct
+        FILES_MATCHING PATTERN "*.hxx")
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/conf/itl/GSM-LDPC_4224.itl")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/conf/" DESTINATION share/aff3ct/conf
+            FILES_MATCHING PATTERN "*")
+endif()
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/refs/BCH/AWGN/BPSK/ALGEBRAIC/BCH_N7_K4_algebraic_T1.txt")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/refs/" DESTINATION share/aff3ct/refs
+            FILES_MATCHING PATTERN "*.txt")
+endif()
