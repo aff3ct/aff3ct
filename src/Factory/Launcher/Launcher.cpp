@@ -132,7 +132,7 @@ void factory::Launcher::parameters
 		tools::arg_rank::ADV);
 
 
-#ifdef AFF3CT_NO_COLOR
+#ifdef AFF3CT_COLORS
 	args.add(
 		{p+"-no-colors"},
 		tools::None(),
@@ -169,7 +169,7 @@ void factory::Launcher::parameters
 	tools::exception::no_backtrace    =  vals.exist({"except-no-bt"});
 	tools::exception::no_addr_to_line = !vals.exist({"except-a2l"  });
 
-#ifdef AFF3CT_NO_COLOR
+#ifdef AFF3CT_COLORS
 	if (vals.exist({p+"-no-colors"})) rang::setControlMode(rang::control::Off);
 #else
 	rang::setControlMode(rang::control::Off);
