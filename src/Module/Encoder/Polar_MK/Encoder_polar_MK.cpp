@@ -2,9 +2,11 @@
 #include <cmath>
 #include <map>
 #include <sstream>
+#include <fstream>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
+#include "Tools/general_utils.h"
 
 #include "Encoder_polar_MK.hpp"
 
@@ -25,67 +27,6 @@ using namespace aff3ct::module;
 // 	}
 // }
 
-// template <typename T = int32_t>
-// void kronecker_product(const std::vector<std::vector<T>>& A,
-//                        const std::vector<std::vector<T>>& B,
-//                              std::vector<std::vector<T>>& C)
-// {
-// 	for (auto row_A = 0; row_A < (int)A.size(); row_A++)
-// 		for (auto col_A = 0; col_A < (int)A[0].size(); col_A++)
-// 			for (auto row_B = 0; row_B < (int)B.size(); row_B++)
-// 				for (auto col_B = 0; col_B < (int)B[0].size(); col_B++)
-// 					C[row_A * B.size() + row_B][col_A * B[0].size() + col_B] = A[row_A][col_A] * B[row_B][col_B];
-// }
-
-// template <typename T = int32_t>
-// std::vector<std::vector<T>> kronecker_product(const std::vector<std::vector<T>>& A,
-//                                               const std::vector<std::vector<T>>& B)
-// {
-// 	// verifications --------------------------------------------------------------------------------------------------
-// 	if (A.size() == 0)
-// 	{
-// 		std::stringstream message;
-// 		message << "'A.size()' should be higher than 0 ('A.size()' = " << A.size() << ").";
-// 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-// 	}
-
-// 	if (B.size() == 0)
-// 	{
-// 		std::stringstream message;
-// 		message << "'B.size()' should be higher than 0 ('B.size()' = " << B.size() << ").";
-// 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-// 	}
-
-// 	for (auto l = 0; l < (int)A.size(); l++)
-// 	{
-// 		if (A[l].size() != A.size())
-// 		{
-// 			std::stringstream message;
-// 			message << "'A[l].size()' has to be equal to 'A.size()' ('l' = " << l
-// 			        << ", 'A[l].size()' = " << A[l].size()
-// 			        << ", 'A.size()' = " << A.size() << ").";
-// 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-// 		}
-// 	}
-
-// 	for (auto l = 0; l < (int)B.size(); l++)
-// 	{
-// 		if (B[l].size() != B.size())
-// 		{
-// 			std::stringstream message;
-// 			message << "'B[l].size()' has to be equal to 'B.size()' ('l' = " << l
-// 			        << ", 'B[l].size()' = " << B[l].size()
-// 			        << ", 'B.size()' = " << B.size() << ").";
-// 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-// 		}
-// 	}
-// 	// ----------------------------------------------------------------------------------------------------------------
-
-// 	std::vector<std::vector<T>> C(A.size() * B.size(), std::vector<T>(A[0].size() * B[0].size()));
-// 	kronecker_product(A, B, C);
-// 	return C;
-// }
-
 std::string aff3ct::tools::display_kernel(const std::vector<std::vector<bool>>& pattern_bits)
 {
 	std::string m = "{";
@@ -104,6 +45,154 @@ std::string aff3ct::tools::display_kernel(const std::vector<std::vector<bool>>& 
 	m += "}";
 
 	return m;
+}
+
+void aff3ct::tools::read_polar_MK_code(const std::string                                 &code_path,
+                                             std::vector<std::vector<std::vector<bool>>> &kernel_matrices,
+                                             std::vector<uint32_t>                       &stages)
+{
+	std::ifstream file(code_path.c_str(), std::ios::in);
+	std::string line;
+
+	if (file.is_open())
+	{
+		tools::getline(file, line);
+		auto values = tools::split(line);
+
+		if (values.size() > 0)
+		{
+			auto n_kernels = std::stoi(values[0]);
+			if (n_kernels > 0)
+			{
+				kernel_matrices.resize(n_kernels);
+
+				for (auto k = 0; k < n_kernels; k++)
+				{
+					tools::getline(file, line);
+					auto values = tools::split(line);
+
+					if (values.size() > 0)
+					{
+						auto kernel_size = std::stoi(values[0]);
+						std::vector<std::vector<bool>> kernel(kernel_size, std::vector<bool>(kernel_size));
+
+						if (kernel_size > 1)
+						{
+							for (auto i = 0; i < kernel_size; i++)
+							{
+								tools::getline(file, line);
+								auto values = tools::split(line);
+
+								if (values.size() == kernel_size)
+								{
+									for (auto j = 0; j < kernel_size; j++)
+										kernel[i][j] = (bool)std::stoi(values[j]);
+								}
+								else
+								{
+									file.close();
+
+									std::stringstream message;
+									message << "'values.size()' should be equal to 'kernel_size' ('values.size()' = "
+									        << values.size() << ", 'kernel_size' = " << kernel_size << ").";
+									throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+								}
+							}
+						}
+						else
+						{
+							file.close();
+
+							std::stringstream message;
+							message << "'kernel_size' should be greater than 1 ('kernel_size' = "
+							        << kernel_size << ").";
+							throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+						}
+
+						kernel_matrices[k] = kernel;
+					}
+					else
+					{
+						file.close();
+
+						std::stringstream message;
+						message << "'values.size()' should be greater than 0 ('values.size()' = "
+						        << values.size() << ").";
+						throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+					}
+				}
+			}
+			else
+			{
+				file.close();
+
+				std::stringstream message;
+				message << "'n_kernels' should be greater than 0 ('n_kernels' = " << n_kernels << ").";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+
+			tools::getline(file, line);
+			auto values = tools::split(line);
+
+			if (values.size() > 0)
+			{
+				auto n_stages = std::stoi(values[0]);
+				if (n_stages > 0)
+				{
+					stages.resize(n_stages);
+
+					tools::getline(file, line);
+					auto values = tools::split(line);
+
+					if (values.size() == n_stages)
+					{
+						for (auto s = 0; s < n_stages; s++)
+							stages[s] = (uint32_t)std::stoi(values[s]);
+					}
+					else
+					{
+						file.close();
+
+						std::stringstream message;
+						message << "'values.size()' should be equal to 'n_stages' ('values.size()' = "
+						        << values.size() << ", 'n_stages' = " << n_stages << ").";
+						throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+					}
+				}
+				else
+				{
+					file.close();
+
+					std::stringstream message;
+					message << "'n_stages' should be greater than 0 ('n_stages' = " << n_stages << ").";
+					throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+				}
+			}
+			else
+			{
+				file.close();
+
+				std::stringstream message;
+				message << "'values.size()' should be greater than 0 ('values.size()' = "
+				        << values.size() << ").";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+		}
+		else
+		{
+			file.close();
+
+			std::stringstream message;
+			message << "'values.size()' should be greater than 0 ('values.size()' = " << values.size() << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+	else
+	{
+		std::stringstream message;
+		message << "Can't open '" + code_path + "' file.";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 // Function to get cofactor of mat[p][q] in tmp[][]. n is current
@@ -210,23 +299,73 @@ Encoder_polar_MK<B>
 	this->set_name(name);
 	this->set_sys(false);
 
+	this->init_MK();
+}
+
+template <typename B>
+Encoder_polar_MK<B>
+::Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits, const std::string &code_path,
+                   const int n_frames)
+: Encoder<B>(K, N, n_frames),
+  frozen_bits(frozen_bits),
+  kernel_matrices(),
+  stages(),
+  // X_N_tmp(this->N),
+  Ke(),
+  idx(),
+  u()
+{
+	const std::string name = "Encoder_polar_MK";
+	this->set_name(name);
+	this->set_sys(false);
+
+	// dark cpp but I know what I'm doing... I suppose...
+	auto kernel_matrices_bis = const_cast<std::vector<std::vector<std::vector<bool>>>*>(&this->kernel_matrices);
+	auto stages_bis = const_cast<std::vector<uint32_t>*>(&this->stages);
+	tools::read_polar_MK_code(code_path, *kernel_matrices_bis, *stages_bis);
+
+	this->Ke.resize(this->kernel_matrices.size());
+	this->init_MK();
+}
+
+template <typename B>
+void Encoder_polar_MK<B>
+::init_MK()
+{
 	size_t biggest_kernel_size = 0;
-	for (auto ke = 0; ke < (int)kernel_matrices.size(); ke++)
+	for (auto ke = 0; ke < (int)this->kernel_matrices.size(); ke++)
 	{
-		Ke[ke].resize(kernel_matrices[ke].size() * kernel_matrices[ke].size());
-		biggest_kernel_size = std::max(biggest_kernel_size, kernel_matrices[ke].size());
+		Ke[ke].resize(this->kernel_matrices[ke].size() * this->kernel_matrices[ke].size());
+		biggest_kernel_size = std::max(biggest_kernel_size, this->kernel_matrices[ke].size());
 	}
 
 	idx.resize(biggest_kernel_size);
 	u.resize(biggest_kernel_size);
 
-	for (auto s : stages)
-		if(s >= kernel_matrices.size())
+	if (this->stages.size() == 0)
+	{
+		std::stringstream message;
+		message << "'stages.size()' has to be higher than 0 ("
+		        << "'stages.size()' = " << this->stages.size() << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->stages.size() < this->kernel_matrices.size())
+	{
+		std::stringstream message;
+		message << "'stages.size()' has to be higher or equal to 'kernel_matrices.size()' ("
+		        << "'stages.size()' = " << this->stages.size() << ", "
+		        << "'kernel_matrices.size()' = " << this->kernel_matrices.size() << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	for (auto s : this->stages)
+		if(s >= this->kernel_matrices.size())
 		{
 			std::stringstream message;
 			message << "'s' should not be higher than 'kernel_matrices.size()' ("
 			        << "'s' = " << s << ", "
-			        << "'kernel_matrices.size()' = " << kernel_matrices.size() << ").";
+			        << "'kernel_matrices.size()' = " << this->kernel_matrices.size() << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -380,6 +519,7 @@ void Encoder_polar_MK<B>
 			U_N[i] = (frozen_bits[i]) ? (B)0 : U_K[j++];
 	}
 }
+
 
 // template <typename B>
 // bool Encoder_polar_MK<B>

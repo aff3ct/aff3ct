@@ -1,6 +1,7 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
+#include "Module/Encoder/Polar_MK/Encoder_polar_MK_sys.hpp"
 
 #include "Encoder_polar_MK.hpp"
 
@@ -45,11 +46,21 @@ void Encoder_polar_MK::parameters
 	tools::add_options(args.at({p+"-type"}), 0, "POLAR_MK");
 
 	args.add(
+		{p+"-sys"},
+		tools::None(),
+		"enable the systematic encoding.");
+
+	args.add(
 		{p+"-kernel"},
 		tools::List2D<bool>(tools::Boolean(),
 		                    std::make_tuple(tools::Length(1), tools::Function<sub_same_length>("elements of same length")),
 		                    std::make_tuple(tools::Length(1))),
 		"kernel of the polar code (squared matrix only) (ex: \"111,101,011\").");
+
+	args.add(
+		{p+"-code-path"},
+		tools::File(tools::openmode::read),
+		"path to a file containing the polar code description (kernels definition and stages).");
 }
 
 void Encoder_polar_MK::parameters
@@ -59,7 +70,9 @@ void Encoder_polar_MK::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-kernel"})) this->kernel_matrix = vals.to_list<std::vector<bool>>({p+"-kernel"});
+	if(vals.exist({p+"-kernel"   })) this->kernel_matrix = vals.to_list<std::vector<bool>>({p+"-kernel"});
+	if(vals.exist({p+"-code-path"})) this->code_path     = vals.at({p+"-code-path"});
+	if(vals.exist({p+"-sys"      })) this->systematic    = true;
 }
 
 void Encoder_polar_MK::parameters
@@ -69,16 +82,54 @@ void Encoder_polar_MK::parameters
 
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair(std::string("Kernel"), std::string(tools::display_kernel(this->kernel_matrix))));
+	if (this->code_path.empty())
+	{
+		headers[p].push_back(std::make_pair(std::string("Kernel"), tools::display_kernel(this->kernel_matrix)));
+	}
+	else
+	{
+		std::vector<std::vector<std::vector<bool>>> kernel_matrices;
+		std::vector<uint32_t> stages;
+		tools::read_polar_MK_code(this->code_path, kernel_matrices, stages);
+		if (kernel_matrices.size() > 0)
+		{
+			std::string kernels_str = "{" + tools::display_kernel(kernel_matrices[0]);
+			for (auto k = 1; k < kernel_matrices.size(); k++)
+				kernels_str += "," + tools::display_kernel(kernel_matrices[k]);
+			kernels_str += "}";
+			headers[p].push_back(std::make_pair(std::string("Kernels"), kernels_str));
+		}
+		if (stages.size() > 0)
+		{
+			std::string stages_str = "{" + std::to_string(stages[0]);
+			for (auto s = 1; s < stages.size(); s++)
+				stages_str += "," + std::to_string(stages[s]);
+			stages_str += "}";
+			headers[p].push_back(std::make_pair(std::string("Stages"), stages_str));
+		}
+	}
 }
 
 template <typename B>
 module::Encoder_polar_MK<B>* Encoder_polar_MK::parameters
 ::build(const std::vector<bool> &frozen_bits) const
 {
-	if (this->type == "POLAR_MK" && !this->systematic)
+	if (this->type == "POLAR_MK")
 	{
-		return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, kernel_matrix, this->n_frames);
+		if (this->systematic)
+		{
+			if (this->code_path.empty())
+				return new module::Encoder_polar_MK_sys<B>(this->K, this->N_cw, frozen_bits, kernel_matrix, this->n_frames);
+			else
+				return new module::Encoder_polar_MK_sys<B>(this->K, this->N_cw, frozen_bits, this->code_path, this->n_frames);
+		}
+		else
+		{
+			if (this->code_path.empty())
+				return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, kernel_matrix, this->n_frames);
+			else
+				return new module::Encoder_polar_MK<B>(this->K, this->N_cw, frozen_bits, this->code_path, this->n_frames);
+		}
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

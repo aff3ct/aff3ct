@@ -32,7 +32,7 @@ void Encoder_polar_sys<B>
 	this->light_encode(X_N);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class aff3ct::module::Encoder_polar_sys<B_8>;

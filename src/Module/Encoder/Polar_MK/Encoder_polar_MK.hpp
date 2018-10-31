@@ -2,6 +2,7 @@
 #define ENCODER_POLAR_MK_HPP_
 
 #include <vector>
+#include <string>
 
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 #include "Tools/Algo/Matrix/Full_matrix/Full_matrix.hpp"
@@ -13,6 +14,9 @@ namespace aff3ct
 namespace tools
 {
 std::string display_kernel(const std::vector<std::vector<bool>>& pattern_bits);
+void read_polar_MK_code(const std::string                                 &code_path,
+                              std::vector<std::vector<std::vector<bool>>> &kernel_matrices,
+                              std::vector<uint32_t>                       &stages);
 }
 }
 
@@ -40,8 +44,12 @@ public:
 	                 const std::vector<std::vector<std::vector<bool>>>& kernel_matrices,
 	                 const std::vector<uint32_t> &stages, const int n_frames = 1);
 
+	Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits, const std::string &code_path,
+	                 const int n_frames = 1);
+
 	virtual ~Encoder_polar_MK() = default;
 
+	void init_MK();
 	void init();
 
 	// bool is_codeword(const B *X_N);
