@@ -52,10 +52,14 @@ do
 	ZIP_NAME=$(echo "${BUILD/build/$PREFIX}")
 	ZIP_NAME=$(echo "${ZIP_NAME/\./\_}_$GIT_HASH.zip")
 
-	find $BUILD/inc/ -type f -follow -print | grep "[.]cpp$"    | xargs rm -f
-	find $BUILD/inc/ -type f -follow -print | grep "[.]cpp.in$" | xargs rm -f
-	cp -r conf $BUILD/
-	rm -rf $BUILD/conf/.git
+	find $BUILD/include/aff3ct/ -type f -follow -print | grep "[.]cpp$"    | xargs rm -f
+	find $BUILD/include/aff3ct/ -type f -follow -print | grep "[.]cpp.in$" | xargs rm -f
+	mkdir $BUILD/share
+	mkdir $BUILD/share/aff3ct
+	cp -r conf $BUILD/share/aff3ct/
+	cp -r refs $BUILD/share/aff3ct/
+	rm -rf $BUILD/share/aff3ct/conf/.git
+	rm -rf $BUILD/share/aff3ct/refs/.git
 
 	zip -r $ZIP_NAME $BUILD
 
