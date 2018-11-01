@@ -320,12 +320,12 @@ endif (AFF3CT_LINK_MKL)
 
 # SystemC
 if (AFF3CT_SYSTEMC_SIMU OR AFF3CT_SYSTEMC_MODULE)
-    if (AFF3CT_SYSTEMC_MODULE)
-        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_MODULE")
-    else ()
+    if (AFF3CT_SYSTEMC_SIMU)
         aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_SIMU")
         aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_MODULE")
-	endif (AFF3CT_SYSTEMC_MODULE)
+    else ()
+        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_MODULE")
+	endif ()
 
     find_package (SystemC REQUIRED)
     if (SystemC_FOUND)
