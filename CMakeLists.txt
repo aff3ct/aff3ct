@@ -27,12 +27,6 @@ option (AFF3CT_16BIT_PREC         "Compile only in 16-bit precision (fixed-point
 option (AFF3CT_32BIT_PREC         "Compile only in 32-bit precision (floating-point)"                            OFF)
 option (AFF3CT_64BIT_PREC         "Compile only in 64-bit precision (floating-point)"                            OFF)
 
-if(AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
-    set(AFF3CT_COMPILE_LIB ON)
-else()
-    set(AFF3CT_COMPILE_LIB OFF)
-endif()
-
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------- CMAKE CONFIGURATION
 # ---------------------------------------------------------------------------------------------------------------------
@@ -383,11 +377,13 @@ endif()
 # ----------------------------------------------------------------------------------------- GENERATE CMAKE CONFIG FILES
 # ---------------------------------------------------------------------------------------------------------------------
 
-# Auto generate cmake config files to link with AFF3CT
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config.cmake.in"
-               "${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config.cmake" @ONLY)
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config-version.cmake.in"
-               "${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config-version.cmake" @ONLY)
+# Auto generate cmake config files to link with AFF3CT library (only if an AFF3CT library has been compiled)
+if (AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config.cmake.in"
+                   "lib/cmake/aff3ct-config.cmake" @ONLY)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config-version.cmake.in"
+                   "lib/cmake/aff3ct-config-version.cmake" @ONLY)
+endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------- INSTALL
@@ -401,6 +397,13 @@ if (AFF3CT_COMPILE_SHARED_LIB)
 endif()
 if (AFF3CT_COMPILE_STATIC_LIB)
     install(TARGETS aff3ct-static-lib ARCHIVE DESTINATION lib/aff3ct-${GIT_VERSION_RMV})
+endif()
+
+if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    install(FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-config.cmake"
+                  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-config-version.cmake"
+            DESTINATION lib/cmake/aff3ct-${GIT_VERSION_RMV})
 endif()
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/aff3ct
@@ -431,5 +434,3 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/refs/BCH/")
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/refs/" DESTINATION share/aff3ct-${GIT_VERSION_RMV}/refs
             FILES_MATCHING PATTERN "*.txt")
 endif()
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config.cmake" "${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config-version.cmake"
-        DESTINATION lib/cmake/aff3ct-${GIT_VERSION_RMV})

@@ -12,8 +12,6 @@ src_files.txt
 .idea/
 .vs
 CMakeSettings.json
-aff3ct-config.cmake
-aff3ct-config-version.cmake
 
 .scannerwork/
 build*/
