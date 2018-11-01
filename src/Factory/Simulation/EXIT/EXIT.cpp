@@ -205,7 +205,7 @@ template <typename B, typename R>
 simulation::EXIT<B,R>* EXIT::parameters
 ::build() const
 {
-#if defined(AFF3CT_SYSTEMC)
+#if defined(AFF3CT_SYSTEMC_SIMU)
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC/TLM  simulation is not available.");
 #else
 	return new simulation::EXIT<B,R>(*this);

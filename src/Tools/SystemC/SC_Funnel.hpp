@@ -1,4 +1,4 @@
-#if defined(AFF3CT_SYSTEMC) || defined(AFF3CT_SYSTEMC_MODULE)
+#if defined(AFF3CT_SYSTEMC_SIMU) || defined(AFF3CT_SYSTEMC_MODULE)
 
 #ifndef SC_FUNNEL_HPP_
 #define SC_FUNNEL_HPP_

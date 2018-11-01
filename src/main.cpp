@@ -9,7 +9,7 @@
 #include <mpi.h>
 #endif
 
-#ifdef AFF3CT_SYSTEMC
+#ifdef AFF3CT_SYSTEMC_SIMU
 #include <systemc>
 #endif
 
@@ -121,7 +121,7 @@ int read_arguments(const int argc, const char** argv, factory::Launcher::paramet
 	return (cmd_error.size() || display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
-#ifndef AFF3CT_SYSTEMC
+#ifndef AFF3CT_SYSTEMC_SIMU
 int main(int argc, char **argv)
 #else
 int sc_main(int argc, char **argv)

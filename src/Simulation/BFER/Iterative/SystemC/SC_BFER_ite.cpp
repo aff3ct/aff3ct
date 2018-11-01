@@ -1,4 +1,4 @@
-#ifdef AFF3CT_SYSTEMC
+#ifdef AFF3CT_SYSTEMC_SIMU
 
 #include "Factory/Module/Coset/Coset.hpp"
 

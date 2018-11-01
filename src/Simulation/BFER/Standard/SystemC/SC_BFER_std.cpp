@@ -1,4 +1,4 @@
-#ifdef AFF3CT_SYSTEMC
+#ifdef AFF3CT_SYSTEMC_SIMU
 
 #include <iostream>
 
@@ -199,4 +199,4 @@ template class aff3ct::simulation::SC_BFER_std<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
 
-#endif /* AFF3CT_SYSTEMC*/
+#endif /* AFF3CT_SYSTEMC_SIMU */

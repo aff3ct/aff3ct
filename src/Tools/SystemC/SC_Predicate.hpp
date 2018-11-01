@@ -1,4 +1,4 @@
-#if defined(AFF3CT_SYSTEMC) || defined(AFF3CT_SYSTEMC_MODULE)
+#if defined(AFF3CT_SYSTEMC_SIMU) || defined(AFF3CT_SYSTEMC_MODULE)
 
 #ifndef SC_PREDICATE_HPP_
 #define SC_PREDICATE_HPP_
@@ -41,4 +41,4 @@ private:
 
 #endif /* SC_PREDICATE_HPP_ */
 
-#endif /* AFF3CT_SYSTEMC */
+#endif /* AFF3CT_SYSTEMC_SIMU */

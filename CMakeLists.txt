@@ -10,22 +10,26 @@ project (aff3ct)
 # ------------------------------------------------------------------------------------------------------- CMAKE OPTIONS
 # ---------------------------------------------------------------------------------------------------------------------
 
-option (AFF3CT_COMPILE_EXE        "Compile the executable"                                                       ON )
-option (AFF3CT_COMPILE_STATIC_LIB "Compile the static library"                                                   OFF)
-option (AFF3CT_COMPILE_SHARED_LIB "Compile the shared library"                                                   OFF)
-option (AFF3CT_LINK_GSL           "Link with the GSL library (used in the channels)"                             OFF)
-option (AFF3CT_LINK_MKL           "Link with the MKL library (used in the channels)"                             OFF)
-option (AFF3CT_SYSTEMC            "Enable the SystemC support"                                                   OFF)
-option (AFF3CT_SYSTEMC_MODULE     "Enable the SystemC support (only for the modules)"                            OFF)
-option (AFF3CT_MPI                "Enable the MPI support"                                                       OFF)
-option (AFF3CT_POLAR_BIT_PACKING  "Enable the bit packing technique for Polar code SC decoding"                  ON )
-option (AFF3CT_COLORS             "Enable the colors in the terminal"                                            ON )
-option (AFF3CT_BACKTRACE          "Enable the backtrace display when and exception is raised (for Unix systems)" ON )
-option (AFF3CT_MULTI_PREC         "Compile in 8-bit, 16-bit, 32-bit and 64-bit precisions"                       ON )
-option (AFF3CT_8BIT_PREC          "Compile only in 8-bit precision (fixed-point)"                                OFF)
-option (AFF3CT_16BIT_PREC         "Compile only in 16-bit precision (fixed-point)"                               OFF)
-option (AFF3CT_32BIT_PREC         "Compile only in 32-bit precision (floating-point)"                            OFF)
-option (AFF3CT_64BIT_PREC         "Compile only in 64-bit precision (floating-point)"                            OFF)
+option (AFF3CT_COMPILE_EXE        "Compile the executable"                                                    ON )
+option (AFF3CT_COMPILE_STATIC_LIB "Compile the static library"                                                OFF)
+option (AFF3CT_COMPILE_SHARED_LIB "Compile the shared library"                                                OFF)
+option (AFF3CT_LINK_GSL           "Link with the GSL library (used in the channels)"                          OFF)
+option (AFF3CT_LINK_MKL           "Link with the MKL library (used in the channels)"                          OFF)
+option (AFF3CT_SYSTEMC_SIMU       "Enable the SystemC simulation (incompatible with the library compilation)" OFF)
+option (AFF3CT_SYSTEMC_MODULE     "Enable the SystemC support (only for the modules)"                         OFF)
+option (AFF3CT_MPI                "Enable the MPI support"                                                    OFF)
+option (AFF3CT_POLAR_BIT_PACKING  "Enable the bit packing technique for Polar code SC decoding"               ON )
+option (AFF3CT_COLORS             "Enable the colors in the terminal"                                         ON )
+
+if (NOT (WIN32 AND APPLE))
+    option (AFF3CT_BACKTRACE "Enable the backtrace display when and exception is raised" ON)
+endif()
+
+set(AFF3CT_PREC "MULTI" CACHE STRING "Select the precision in bits (can be '8', '16', '32', '64' or 'MULTI')")
+
+if (AFF3CT_SYSTEMC_SIMU AND (AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB))
+    message(FATAL_ERROR "It is impossible to compile the AFF3CT library if AFF3CT_SYSTEMC_SIMU='ON'.")
+endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------- CMAKE CONFIGURATION
@@ -49,9 +53,10 @@ set (LIBRARY_OUTPUT_PATH lib/)
 file (GLOB_RECURSE source_files src/*)
 
 # Lists used to generate the CMake config files
-set(AFF3CT_DEFINITIONS  "")
-set(AFF3CT_INCLUDE_DIRS "")
-set(AFF3CT_LIBRARIES    "")
+set(AFF3CT_DEFINITIONS     "")
+set(AFF3CT_INCLUDE_DIRS    "")
+set(AFF3CT_LIBRARIES       "")
+set(AFF3CT_COMPILE_OPTIONS "")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------ GET VERSION FROM GIT
@@ -123,13 +128,18 @@ macro (aff3ct_add_definitions def)
     list(APPEND AFF3CT_DEFINITIONS ${def})
 endmacro()
 
+macro (aff3ct_add_compile_options opt)
+    add_compile_options (${opt})
+    list(APPEND AFF3CT_COMPILE_OPTIONS ${opt})
+endmacro()
+
 # by compiler
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-    add_compile_options(-Wno-overloaded-virtual)
+    aff3ct_add_compile_options(-Wno-overloaded-virtual)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    add_compile_options(-pthread)
+    aff3ct_add_compile_options(-pthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    add_compile_options(-pthread)
+    aff3ct_add_compile_options(-pthread)
 endif()
 
 # by system
@@ -141,7 +151,7 @@ if (WIN32) # for Windows operating system in general
 elseif (APPLE) # for macOS
     message(STATUS "AFF3CT - System: macOS")
 elseif (UNIX AND NOT APPLE) # for Linux, BSD, Solaris, Minix
-    add_compile_options(-fPIC)
+    aff3ct_add_compile_options(-fPIC)
     message(STATUS "AFF3CT - System: Unix/Linux")
 endif()
 
@@ -158,27 +168,31 @@ if (AFF3CT_COLORS)
 else()
     message(STATUS "AFF3CT - Terminal colors: off")
 endif()
-if (AFF3CT_BACKTRACE AND NOT (WIN32 AND APPLE))
-    aff3ct_add_definitions (-DAFF3CT_BACKTRACE)
-    message(STATUS "AFF3CT - Backtrace: on")
-else()
-    message(STATUS "AFF3CT - Backtrace: off")
+if (NOT (WIN32 AND APPLE))
+    if (AFF3CT_BACKTRACE)
+        aff3ct_add_definitions (-DAFF3CT_BACKTRACE)
+        message(STATUS "AFF3CT - Backtrace: on")
+    else()
+        message(STATUS "AFF3CT - Backtrace: off")
+    endif()
 endif()
-if (AFF3CT_8BIT_PREC)
+if (AFF3CT_PREC STREQUAL "8")
     aff3ct_add_definitions (-DAFF3CT_8BIT_PREC)
     message(STATUS "AFF3CT - Precision: 8-bit")
-elseif(AFF3CT_16BIT_PREC)
+elseif (AFF3CT_PREC STREQUAL "16")
     aff3ct_add_definitions (-DAFF3CT_16BIT_PREC)
     message(STATUS "AFF3CT - Precision: 16-bit")
-elseif (AFF3CT_32BIT_PREC)
+elseif (AFF3CT_PREC STREQUAL "32")
     aff3ct_add_definitions (-DAFF3CT_32BIT_PREC)
     message(STATUS "AFF3CT - Precision: 32-bit")
-elseif (AFF3CT_64BIT_PREC)
+elseif (AFF3CT_PREC STREQUAL "64")
     aff3ct_add_definitions (-DAFF3CT_64BIT_PREC)
     message(STATUS "AFF3CT - Precision: 64-bit")
-else()
+elseif (AFF3CT_PREC STREQUAL "MULTI")
     aff3ct_add_definitions (-DAFF3CT_MULTI_PREC)
     message(STATUS "AFF3CT - Precision: 8/16/32/64-bit")
+else()
+    message(FATAL_ERROR "AFF3CT_PREC='${AFF3CT_PREC}' and should be '8', '16', '32', '64' or 'MULTI'.")
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -305,11 +319,11 @@ if (AFF3CT_LINK_MKL)
 endif (AFF3CT_LINK_MKL)
 
 # SystemC
-if (AFF3CT_SYSTEMC)
+if (AFF3CT_SYSTEMC_SIMU OR AFF3CT_SYSTEMC_MODULE)
     if (AFF3CT_SYSTEMC_MODULE)
         aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_MODULE")
     else ()
-        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC")
+        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_SIMU")
         aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_MODULE")
 	endif (AFF3CT_SYSTEMC_MODULE)
 
@@ -325,7 +339,7 @@ if (AFF3CT_SYSTEMC)
         message(STATUS "AFF3CT - Library found: TLM")
         aff3ct_include_directories (${TLM_INCLUDE_DIRS})
     endif (TLM_FOUND)
-endif (AFF3CT_SYSTEMC)
+endif ()
 
 # MPI
 if (AFF3CT_MPI)

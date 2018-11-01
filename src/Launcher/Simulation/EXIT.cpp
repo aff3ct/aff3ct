@@ -120,7 +120,7 @@ template <typename B, typename R>
 simulation::Simulation* EXIT<B,R>
 ::build_simu()
 {
-#if !defined(AFF3CT_SYSTEMC)
+#if !defined(AFF3CT_SYSTEMC_SIMU)
 	return factory::EXIT::build<B,R>(params);
 #else
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC/TLM  simulation is not available.");

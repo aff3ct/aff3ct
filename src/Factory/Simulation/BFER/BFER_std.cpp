@@ -65,7 +65,7 @@ template <typename B, typename R, typename Q>
 simulation::BFER_std<B,R,Q>* BFER_std::parameters
 ::build() const
 {
-#if defined(AFF3CT_SYSTEMC)
+#if defined(AFF3CT_SYSTEMC_SIMU)
 	return new simulation::SC_BFER_std<B,R,Q>(*this);
 #else
 	return new simulation::BFER_std_threads<B,R,Q>(*this);

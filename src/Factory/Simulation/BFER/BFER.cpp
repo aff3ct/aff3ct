@@ -134,7 +134,7 @@ void BFER::parameters
 void BFER::parameters
 ::store(const tools::Argument_map_value &vals)
 {
-#if !defined(AFF3CT_SYSTEMC)
+#if !defined(AFF3CT_SYSTEMC_SIMU)
 	this->n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
 
