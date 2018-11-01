@@ -1,0 +1,71 @@
+# - Config file for the AFF3CT package
+# It defines the following variables
+#  AFF3CT_EXE          - true if an executable has been compiled
+#  AFF3CT_LIB          - true if a library has been compiled
+#  AFF3CT_STATIC       - true if the library has been compiled statically
+#  AFF3CT_INCLUDE_DIRS - include directories for AFF3CT
+#  AFF3CT_LIBRARIES    - libraries to link against
+#  AFF3CT_EXECUTABLE   - the AFF3CT executable
+#  AFF3CT_DEFINITIONS  - the list of preprocessor definitions
+
+set(AFF3CT_EXE          @AFF3CT_COMPILE_EXE@)
+set(AFF3CT_LIB          @AFF3CT_COMPILE_LIB@)
+set(AFF3CT_STATIC       @AFF3CT_COMPILE_STATIC_LIB@)
+set(AFF3CT_INCLUDE_DIRS "@AFF3CT_INCLUDE_DIRS@")
+set(AFF3CT_LIBRARIES    "@AFF3CT_LIBRARIES@")
+set(AFF3CT_DEFINITIONS  "@AFF3CT_DEFINITIONS@")
+
+if(WIN32)
+    set(AFF3CT_EXE_EXT ".exe")
+    if(AFF3CT_STATIC)
+        set(AFF3CT_LIB_PREFIX "")
+        set(AFF3CT_LIB_EXT ".lib")
+    else()
+        set(AFF3CT_LIB_PREFIX "")
+        set(AFF3CT_LIB_EXT ".dll")
+    endif()
+else()
+    set(AFF3CT_EXE_EXT "")
+    if(APPLE)
+        if(AFF3CT_STATIC)
+            set(AFF3CT_LIB_PREFIX "lib")
+            set(AFF3CT_LIB_EXT ".a")
+        else()
+            set(AFF3CT_LIB_PREFIX "lib")
+            set(AFF3CT_LIB_EXT ".dylib")
+        endif()
+    else()
+        if(AFF3CT_STATIC)
+            set(AFF3CT_LIB_PREFIX "lib")
+            set(AFF3CT_LIB_EXT ".a")
+        else()
+            set(AFF3CT_LIB_PREFIX "lib")
+            set(AFF3CT_LIB_EXT ".so")
+        endif()
+    endif()
+endif()
+
+set(AFF3CT_INCLUDE_ROOT "@CMAKE_INSTALL_PREFIX@/include/aff3ct-@GIT_VERSION_MAJOR@.@GIT_VERSION_MINOR@.@GIT_VERSION_PATCH@@GIT_TAIL@")
+set(AFF3CT_INCLUDE_DIRS "${AFF3CT_INCLUDE_ROOT}/aff3ct"
+                        "${AFF3CT_INCLUDE_ROOT}/CLI11"
+                        "${AFF3CT_INCLUDE_ROOT}/date"
+                        "${AFF3CT_INCLUDE_ROOT}/MIPP"
+                        "${AFF3CT_INCLUDE_ROOT}/rang")
+
+if (MSVC)
+    list(APPEND AFF3CT_INCLUDE_DIRS "${AFF3CT_INCLUDE_ROOT}/dirent")
+endif()
+
+if(AFF3CT_EXE)
+    set(AFF3CT_EXECUTABLE_ROOT "@CMAKE_INSTALL_PREFIX@/bin/aff3ct-@GIT_VERSION_MAJOR@.@GIT_VERSION_MINOR@.@GIT_VERSION_PATCH@@GIT_TAIL@)
+    list(APPEND AFF3CT_EXECUTABLE "${AFF3CT_EXECUTABLE_ROOT}/aff3ct${AFF3CT_EXE_EXT}")
+else()
+    set(AFF3CT_EXECUTABLE "")
+endif()
+
+if(AFF3CT_LIB)
+    set(AFF3CT_LIBRARIES_ROOT "@CMAKE_INSTALL_PREFIX@/lib/aff3ct-@GIT_VERSION_MAJOR@.@GIT_VERSION_MINOR@.@GIT_VERSION_PATCH@@GIT_TAIL@)
+    list(APPEND AFF3CT_LIBRARIES "${AFF3CT_LIBRARIES_ROOT}/${AFF3CT_LIB_PREFIX}aff3ct${AFF3CT_LIB_EXT}")
+else()
+    set(AFF3CT_LIBRARIES "")
+endif()
