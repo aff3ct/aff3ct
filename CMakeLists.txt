@@ -21,7 +21,7 @@ option (AFF3CT_MPI                "Enable the MPI support"                      
 option (AFF3CT_POLAR_BIT_PACKING  "Enable the bit packing technique for Polar code SC decoding"               ON )
 option (AFF3CT_COLORS             "Enable the colors in the terminal"                                         ON )
 
-if (NOT (WIN32 AND APPLE))
+if (NOT (WIN32 OR APPLE))
     option (AFF3CT_BACKTRACE "Enable the backtrace display when and exception is raised" ON)
 endif()
 
