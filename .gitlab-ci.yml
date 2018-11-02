@@ -307,7 +307,6 @@ test-regression-bch:
     - x86
     - 64-bit
     - sse4.2
-    - powerful
     - python
   artifacts:
      name: test-regression-results-bch
@@ -370,7 +369,6 @@ test-regression-rs:
     - x86
     - 64-bit
     - sse4.2
-    - powerful
     - python
   artifacts:
      name: test-regression-results-rs
@@ -454,7 +452,6 @@ test-regression-uncoded:
     - x86
     - 64-bit
     - sse4.2
-    - powerful
     - python
   artifacts:
      name: test-regression-results-uncoded
