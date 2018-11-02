@@ -10,6 +10,8 @@
 #  AFF3CT_SYSTEMC_MODULE    - true if AFF3CT has been linked with SystemC
 #  AFF3CT_POLAR_BIT_PACKING - true if AFF3CT bit packing for Polar SC decoder is enabled
 #  AFF3CT_COLORS            - true if AFF3CT has been compiled with the terminal colors
+#  AFF3CT_BACKTRACE         - true if AFF3CT has been compiled to print the backtrace when a exception is raised
+#  AFF3CT_PREC              - specify the precision in bits ('8', '16', '32', '64' or 'MULTI')
 
 set(AFF3CT_INCLUDE_DIRS       "@AFF3CT_INCLUDE_DIRS@")
 set(AFF3CT_LIBRARIES          "@AFF3CT_LIBRARIES@")
@@ -22,6 +24,8 @@ set(AFF3CT_SYSTEMC_MODULE     @AFF3CT_SYSTEMC_MODULE@)
 set(AFF3CT_MPI                @AFF3CT_MPI@)
 set(AFF3CT_POLAR_BIT_PACKING  @AFF3CT_POLAR_BIT_PACKING@)
 set(AFF3CT_COLORS             @AFF3CT_COLORS@)
+set(AFF3CT_BACKTRACE          @AFF3CT_BACKTRACE@)
+set(AFF3CT_PREC               "@AFF3CT_PREC@")
 
 if(WIN32)
     if(AFF3CT_STATIC_LIB)
@@ -52,11 +56,11 @@ else()
 endif()
 
 set(AFF3CT_INCLUDE_ROOT "@CMAKE_INSTALL_PREFIX@/include/aff3ct-@GIT_VERSION_MAJOR@.@GIT_VERSION_MINOR@.@GIT_VERSION_PATCH@@GIT_TAIL@")
-list(INSERT AFF3CT_INCLUDE_DIRS 0 "${AFF3CT_INCLUDE_ROOT}/CLI11"
+list(INSERT AFF3CT_INCLUDE_DIRS 0 "${AFF3CT_INCLUDE_ROOT}/aff3ct"
+                                  "${AFF3CT_INCLUDE_ROOT}/CLI11"
                                   "${AFF3CT_INCLUDE_ROOT}/date"
                                   "${AFF3CT_INCLUDE_ROOT}/MIPP"
-                                  "${AFF3CT_INCLUDE_ROOT}/rang"
-                                  "${AFF3CT_INCLUDE_ROOT}/aff3ct")
+                                  "${AFF3CT_INCLUDE_ROOT}/rang")
 
 if (MSVC)
     list(INSERT AFF3CT_INCLUDE_DIRS 0 "${AFF3CT_INCLUDE_ROOT}/dirent")
