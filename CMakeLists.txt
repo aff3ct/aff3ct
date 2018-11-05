@@ -294,6 +294,29 @@ endmacro()
 # -------------------------------------------------------------------------------------------------- COMPILED LIBRARIES
 # ---------------------------------------------------------------------------------------------------------------------
 
+# SystemC (it is very important to have SystemC link before the other libraries !!!)
+if (AFF3CT_SYSTEMC_SIMU OR AFF3CT_SYSTEMC_MODULE)
+    if (AFF3CT_SYSTEMC_SIMU)
+        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_SIMU")
+        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_MODULE")
+    else ()
+        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_MODULE")
+    endif ()
+
+    find_package (SystemC REQUIRED)
+    if (SystemC_FOUND)
+        message(STATUS "AFF3CT - Library found: SystemC")
+        aff3ct_include_directories (${SystemC_INCLUDE_DIRS})
+        aff3ct_link_libraries ("${SystemC_LIBRARIES}")
+    endif (SystemC_FOUND)
+
+    find_package (TLM REQUIRED)
+    if (TLM_FOUND)
+        message(STATUS "AFF3CT - Library found: TLM")
+        aff3ct_include_directories (${TLM_INCLUDE_DIRS})
+    endif (TLM_FOUND)
+endif ()
+
 # GSL
 if (AFF3CT_LINK_GSL)
     aff3ct_add_definitions("-DAFF3CT_CHANNEL_GSL")
@@ -317,29 +340,6 @@ if (AFF3CT_LINK_MKL)
         aff3ct_link_libraries ("${MKL_MINIMAL_LIBRARIES}")
     endif (MKL_FOUND)
 endif (AFF3CT_LINK_MKL)
-
-# SystemC
-if (AFF3CT_SYSTEMC_SIMU OR AFF3CT_SYSTEMC_MODULE)
-    if (AFF3CT_SYSTEMC_SIMU)
-        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_SIMU")
-        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_MODULE")
-    else ()
-        aff3ct_add_definitions ("-DAFF3CT_SYSTEMC_MODULE")
-    endif ()
-
-    find_package (SystemC REQUIRED)
-    if (SystemC_FOUND)
-        message(STATUS "AFF3CT - Library found: SystemC")
-        aff3ct_include_directories (${SystemC_INCLUDE_DIRS})
-        aff3ct_link_libraries ("${SystemC_LIBRARIES}")
-    endif (SystemC_FOUND)
-
-    find_package (TLM REQUIRED)
-    if (TLM_FOUND)
-        message(STATUS "AFF3CT - Library found: TLM")
-        aff3ct_include_directories (${TLM_INCLUDE_DIRS})
-    endif (TLM_FOUND)
-endif ()
 
 # MPI
 if (AFF3CT_MPI)
