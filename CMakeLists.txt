@@ -393,9 +393,9 @@ endif()
 
 # Auto generate cmake config files to link with AFF3CT library (only if an AFF3CT library has been compiled)
 if (AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config.cmake.in"
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/aff3ct-config.cmake.in"
                    "lib/cmake/aff3ct-config.cmake" @ONLY)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/aff3ct-config-version.cmake.in"
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/aff3ct-config-version.cmake.in"
                    "lib/cmake/aff3ct-config-version.cmake" @ONLY)
 endif()
 
