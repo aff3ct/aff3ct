@@ -29,7 +29,6 @@ set(AFF3CT_PREC               "@AFF3CT_PREC@")
 
 set(AFF3CT_INCLUDE_ROOT "@CMAKE_INSTALL_PREFIX@/include/aff3ct-@GIT_VERSION_MAJOR@.@GIT_VERSION_MINOR@.@GIT_VERSION_PATCH@@GIT_TAIL@")
 list(INSERT AFF3CT_INCLUDE_DIRS 0 "${AFF3CT_INCLUDE_ROOT}/aff3ct"
-                                  "${AFF3CT_INCLUDE_ROOT}/CLI11"
                                   "${AFF3CT_INCLUDE_ROOT}/date"
                                   "${AFF3CT_INCLUDE_ROOT}/MIPP"
                                   "${AFF3CT_INCLUDE_ROOT}/rang")

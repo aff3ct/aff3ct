@@ -226,17 +226,6 @@ else ()
                         "$ git submodule update --init -- ../lib/rang/")
 endif ()
 
-# CLI11
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/CLI.hpp")
-    include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/")
-    message(STATUS "AFF3CT - Header found: CLI11")
-    #add_subdirectory(lib/CLI11)
-    #aff3ct_link_libraries(CLI11::CLI11)
-else ()
-    message(FATAL_ERROR "AFF3CT - CLI11 can't be found, try to init the submodule with the following cmd:\n"
-                        "$ git submodule update --init -- ../lib/CLI11/")
-endif ()
-
 # date
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/date.h")
     include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/")
@@ -427,8 +416,6 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct-
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/aff3ct
         FILES_MATCHING PATTERN "*.hxx")
 
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/CLI11
-        FILES_MATCHING PATTERN "*.hpp")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/date
         FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/MIPP
