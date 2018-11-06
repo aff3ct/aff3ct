@@ -23,3 +23,6 @@ src/Tools/version.cpp
 test-regression-results/
 code_coverage_files/
 code_coverage_report/
+
+
+__pycache__/
