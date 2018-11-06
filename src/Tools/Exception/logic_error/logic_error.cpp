@@ -24,8 +24,3 @@ logic_error
 : exception(filename, line_num, funcname, message.empty() ? default_message : message)
 {
 }
-
-logic_error
-::~logic_error() throw()
-{
-}

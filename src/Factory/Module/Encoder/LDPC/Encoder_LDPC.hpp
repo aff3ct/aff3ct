@@ -2,7 +2,8 @@
 #define FACTORY_ENCODER_LDPC_HPP
 
 #include <string>
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include <memory>
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
@@ -21,33 +22,42 @@ struct Encoder_LDPC : public Encoder
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional
+		// matrices
 		std::string H_path = "";
 		std::string G_path = "";
 
 		// optional parameters
 		std::string H_reorder = "NONE";
 
+		// G generator method
+		std::string G_method = "IDENTITY";
+		std::string G_save   = "";
+
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_LDPC_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Encoder_LDPC::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
 		template <typename B = int>
+		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const;
+		template <typename B = int>
 		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H,
-		                               const tools::dvbs2_values* dvbs2 = nullptr) const;
+		                               const tools::dvbs2_values& dvbs2) const;
 	};
 
 	template <typename B = int>
 	static module::Encoder_LDPC<B>* build(const parameters &params, const tools::Sparse_matrix &G,
+	                                                                const tools::Sparse_matrix &H);
+	template <typename B = int>
+	static module::Encoder_LDPC<B>* build(const parameters &params, const tools::Sparse_matrix &G,
 	                                                                const tools::Sparse_matrix &H,
-	                                                                const tools::dvbs2_values* dvbs2 = nullptr);
+	                                                                const tools::dvbs2_values& dvbs2);
 };
 }
 }

@@ -55,12 +55,6 @@ Flip_and_check_DB<B,R>
 }
 
 template <typename B, typename R>
-Flip_and_check_DB<B,R>
-::~Flip_and_check_DB()
-{
-}
-
-template <typename B, typename R>
 bool Flip_and_check_DB<B,R>
 ::siso_n(const int ite,
          const mipp::vector<R>& sys,
@@ -149,9 +143,9 @@ bool Flip_and_check_DB<B,R>
 	return check_crc;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::tools::Flip_and_check_DB<B_8,Q_8>;
 template class aff3ct::tools::Flip_and_check_DB<B_16,Q_16>;
 template class aff3ct::tools::Flip_and_check_DB<B_32,Q_32>;

@@ -18,7 +18,7 @@ public:
 	                   Decoder_SISO<R> &siso_n,
 	                   Decoder_SISO<R> &siso_i,
 	                   const bool buffered_encoding = true);
-	virtual ~Decoder_turbo_fast();
+	virtual ~Decoder_turbo_fast() = default;
 
 protected:
 	void _load       (const R *Y_N,         const int frame_id);

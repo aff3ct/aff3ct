@@ -39,9 +39,9 @@ build-linux-gcc-nointr:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -DMIPP_NO_INTRINSICS"
+    - export CFLAGS="-DMIPP_NO_INTRINSICS"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_nointr"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -62,9 +62,9 @@ build-linux-gcc-x64-sse4.2:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -m64 -msse4.2"
+    - export CFLAGS="-m64 -msse4.2"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -85,9 +85,9 @@ build-linux-gcc-x64-avx2:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -m64 -mavx2 -mfma"
+    - export CFLAGS="-m64 -mavx2 -mfma"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_x64_avx2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -107,8 +107,8 @@ build-linux-gcc-8-bit:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DPREC_8_BIT -march=native"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CFLAGS="-march=native"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=8 -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_8_bit"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -128,8 +128,8 @@ build-linux-gcc-mpi:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -march=native"
-    - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MPI=ON"
+    - export CFLAGS="-march=native"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON -DAFF3CT_MPI=ON"
     - export NAME="build_linux_gcc_mpi"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -150,8 +150,8 @@ build-linux-gcc-systemc:
     - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -march=native -Wno-deprecated-declarations"
-    - export CMAKE_OPT="-DENABLE_SYSTEMC=ON"
+    - export CFLAGS="-march=native -Wno-deprecated-declarations"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_PREC=MULTI -DAFF3CT_SYSTEMC_SIMU=ON"
     - export NAME="build_linux_gcc_systemc"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -170,8 +170,8 @@ build-linux-clang:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-DMULTI_PREC"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CFLAGS=""
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_clang"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -190,8 +190,8 @@ build-linux-gcc-4.8:
   script:
     - export CC="gcc-4.8"
     - export CXX="g++-4.8"
-    - export CFLAGS="-DMULTI_PREC -march=native"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CFLAGS="-march=native"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc-4.8"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -213,8 +213,8 @@ build-linux-icpc:
     - source /opt/intel/vars-intel.sh
     - export CC="icc"
     - export CXX="icpc"
-    - export CFLAGS="-DMULTI_PREC -march=native -std=c++11"
-    - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MKL=ON"
+    - export CFLAGS="-march=native -std=c++11"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON -DAFF3CT_LINK_MKL=ON"
     - export NAME="build_linux_icpc"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -232,9 +232,9 @@ build-windows-gcc-x86-sse4.2:
     paths:
       - build_windows_gcc_x86_sse4.2
   script:
-    - set "CFLAGS=-DMULTI_PREC -m32 -msse4.2"
+    - set "CFLAGS=-m32 -msse4.2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
     - set "NAME=build_windows_gcc_x86_sse4.2"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
@@ -252,9 +252,9 @@ build-windows-gcc-x64-avx2:
     paths:
       - build_windows_gcc_x64_avx2
   script:
-    - set "CFLAGS=-DMULTI_PREC -m64 -mavx2"
+    - set "CFLAGS=-m64 -mavx2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
     - set "NAME=build_windows_gcc_x64_avx2"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
@@ -271,8 +271,8 @@ build-windows-msvc-avx:
     paths:
       - build_windows_msvc_avx
   script:
-    - set "CFLAGS=-DMULTI_PREC /arch:AVX"
-    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "CFLAGS=/arch:AVX"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
     - set "NAME=build_windows_msvc_avx"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-msvc.bat
@@ -291,8 +291,8 @@ build-macos-clang-x64-sse4.2:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-DMULTI_PREC -m64 -msse4.2"
-    - export CMAKE_OPT=""
+    - export CFLAGS="-m64 -msse4.2"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI"
     - export NAME="build_macos_clang_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -307,7 +307,6 @@ test-regression-bch:
     - x86
     - 64-bit
     - sse4.2
-    - powerful
     - python
   artifacts:
      name: test-regression-results-bch
@@ -360,6 +359,26 @@ test-regression-polar:
     - source ./ci/tools/threads.sh
     - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
+test-regression-rs:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - python
+  artifacts:
+     name: test-regression-results-rs
+     when: always
+     paths:
+      - test-regression-results-rs/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+
 test-regression-turbo:
   stage: test
   retry: 1
@@ -402,7 +421,7 @@ test-regression-turbo-db:
     - source ./ci/tools/threads.sh
     - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-test-regression-uncoded:
+test-regression-turbo-prod:
   stage: test
   retry: 1
   dependencies:
@@ -413,6 +432,26 @@ test-regression-uncoded:
     - 64-bit
     - sse4.2
     - powerful
+    - python
+  artifacts:
+     name: test-regression-results-turbo-prod
+     when: always
+     paths:
+      - test-regression-results-turbo-prod/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 30 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+
+test-regression-uncoded:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
     - python
   artifacts:
      name: test-regression-results-uncoded
@@ -437,6 +476,7 @@ test-build-coverage-regression:
      paths:
       - code_coverage_files/
   script:
+    - source ./ci/tools/threads.sh
     - ./ci/test-build-coverage-regression.sh
 
 coverage-linux:

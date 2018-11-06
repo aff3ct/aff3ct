@@ -8,9 +8,33 @@ using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename T>
+static typename Interleaver_core_row_column<T>::READ_ORDER read_order_cvt(const std::string& read_order)
+{
+	if (read_order == "TOP_LEFT")
+		return Interleaver_core_row_column<T>::READ_ORDER::TOP_LEFT;
+	if (read_order == "TOP_RIGHT")
+		return Interleaver_core_row_column<T>::READ_ORDER::TOP_RIGHT;
+	if (read_order == "BOTTOM_LEFT")
+		return Interleaver_core_row_column<T>::READ_ORDER::BOTTOM_LEFT;
+	if (read_order == "BOTTOM_RIGHT")
+		return Interleaver_core_row_column<T>::READ_ORDER::BOTTOM_RIGHT;
+
+	std::stringstream message;
+	message << "Unknown 'read_order' ( = " << read_order << ").";
+	throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+}
+
+template <typename T>
 Interleaver_core_row_column<T>
-::Interleaver_core_row_column(const int size, const int n_cols, const int n_frames)
-: Interleaver_core<T>(size, "row_column", false, n_frames), n_cols(n_cols), n_rows(size / n_cols)
+::Interleaver_core_row_column(const int size, const int n_cols, const std::string& read_order, const int n_frames)
+: Interleaver_core_row_column<T>(size, n_cols, read_order_cvt<T>(read_order), n_frames)
+{
+}
+
+template <typename T>
+Interleaver_core_row_column<T>
+::Interleaver_core_row_column(const int size, const int n_cols, const READ_ORDER read_order, const int n_frames)
+: Interleaver_core<T>(size, "row_column", false, n_frames), n_cols(n_cols), n_rows(size / n_cols), read_order(read_order)
 {
 	if (n_rows * n_cols != size)
 	{
@@ -22,18 +46,33 @@ Interleaver_core_row_column<T>
 }
 
 template <typename T>
-Interleaver_core_row_column<T>
-::~Interleaver_core_row_column()
-{
-}
-
-template <typename T>
 void Interleaver_core_row_column<T>
 ::gen_lut(T *lut, const int frame_id)
 {
-	for (auto i = 0; i < n_cols; i++)
-		for (auto j = 0; j < n_rows; j++)
-			lut[i * n_rows +j] = j * n_cols +i;
+	T idx = 0;
+	switch (read_order)
+	{
+		case READ_ORDER::TOP_LEFT:
+			for (auto i = 0; i < n_cols; i++)
+				for (auto j = 0; j < n_rows; j++)
+					lut[idx++] = j * n_cols +i;
+		break;
+		case READ_ORDER::TOP_RIGHT:
+			for (auto i = n_cols - 1; i >= 0; i--)
+				for (auto j = 0; j < n_rows; j++)
+					lut[idx++] = j * n_cols +i;
+		break;
+		case READ_ORDER::BOTTOM_LEFT:
+			for (auto i = 0; i < n_cols; i++)
+				for (auto j = n_rows -1; j >= 0; j--)
+					lut[idx++] = j * n_cols +i;
+		break;
+		case READ_ORDER::BOTTOM_RIGHT:
+			for (auto i = n_cols - 1; i >= 0; i--)
+				for (auto j = n_rows -1; j >= 0; j--)
+					lut[idx++] = j * n_cols +i;
+		break;
+	};
 }
 
 // ==================================================================================== explicit template instantiation

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 
 #include "Decoder_turbo_std.hpp"
 
@@ -25,12 +25,6 @@ Decoder_turbo_std<B,R>
 {
 	const std::string name = "Decoder_turbo_std";
 	this->set_name(name);
-}
-
-template <typename B, typename R>
-Decoder_turbo_std<B,R>
-::~Decoder_turbo_std()
-{
 }
 
 template <typename B, typename R>
@@ -57,7 +51,7 @@ void Decoder_turbo_std<B,R>
 
 		for (auto i = this->K * n_frames; i < (this->K + tail_n_2) * n_frames; i++)
 			this->l_sen[i] = this->l_sn[i];
-	
+
 		// SISO in the natural domain
 		this->siso_n.decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 
@@ -121,7 +115,7 @@ void Decoder_turbo_std<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_turbo_std<B_8,Q_8>;
 template class aff3ct::module::Decoder_turbo_std<B_16,Q_16>;
 template class aff3ct::module::Decoder_turbo_std<B_32,Q_32>;

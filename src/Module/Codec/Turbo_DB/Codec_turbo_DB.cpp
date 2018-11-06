@@ -21,13 +21,11 @@ template <typename B, typename Q>
 Codec_turbo_DB<B,Q>
 ::Codec_turbo_DB(const factory::Encoder_turbo_DB  ::parameters &enc_params,
                  const factory::Decoder_turbo_DB  ::parameters &dec_params,
+                 const factory::Interleaver       ::parameters &itl_params,
                  const factory::Puncturer_turbo_DB::parameters *pct_params,
                  CRC<B>* crc)
 : Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  sub_enc  (nullptr),
-  sub_dec_n(nullptr),
-  sub_dec_i(nullptr)
+  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
 {
 	const std::string name = "Codec_turbo_DB";
 	this->set_name(name);
@@ -58,12 +56,12 @@ Codec_turbo_DB<B,Q>
 	}
 
 	// ---------------------------------------------------------------------------------------------------------- tools
-	auto encoder_RSC = factory::Encoder_RSC_DB::build<B>(*enc_params.sub);
+	std::unique_ptr<Encoder_RSC_DB<B>> encoder_RSC(factory::Encoder_RSC_DB::build<B>(*enc_params.sub));
 	trellis = encoder_RSC->get_trellis();
-	delete encoder_RSC;
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	this->set_interleaver(factory::Interleaver_core::build<>(*enc_params.itl->core));
+	this->set_interleaver(factory::Interleaver_core::build<>(*itl_params.core));
+
 
 	if (pct_params)
 	{
@@ -88,9 +86,10 @@ Codec_turbo_DB<B,Q>
 		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
 	}
 
+
 	try
 	{
-		sub_enc = factory::Encoder_RSC_DB::build<B>(*enc_params.sub);
+		sub_enc.reset(factory::Encoder_RSC_DB::build<B>(*enc_params.sub));
 		this->set_encoder(factory::Encoder_turbo_DB::build<B>(enc_params, this->get_interleaver_bit(), *sub_enc));
 	}
 	catch (tools::cannot_allocate const&)
@@ -98,18 +97,19 @@ Codec_turbo_DB<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	Decoder_turbo_DB<B,Q>* decoder_turbo = nullptr;
+
+	std::shared_ptr<Decoder_turbo_DB<B,Q>> decoder_turbo;
 	try
 	{
 		this->set_decoder_siho(factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_encoder()));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		sub_dec_n = factory::Decoder_RSC_DB::build_siso<B,Q>(*dec_params.sub, trellis);
-		sub_dec_i = factory::Decoder_RSC_DB::build_siso<B,Q>(*dec_params.sub, trellis);
-		decoder_turbo = factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec_n, 
-		                                                      *sub_dec_i, this->get_encoder());
-		this->set_decoder_siho(decoder_turbo);
+		sub_dec_n    .reset(factory::Decoder_RSC_DB  ::build_siso<B,Q>(*dec_params.sub, trellis));
+		sub_dec_i    .reset(factory::Decoder_RSC_DB  ::build_siso<B,Q>(*dec_params.sub, trellis));
+		decoder_turbo.reset(factory::Decoder_turbo_DB::build<B,Q>(dec_params, this->get_interleaver_llr(), *sub_dec_n,
+		                                                          *sub_dec_i, this->get_encoder()));
+		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_turbo));
 	}
 
 	// ------------------------------------------------------------------------------------------------ post processing
@@ -117,17 +117,17 @@ Codec_turbo_DB<B,Q>
 	{
 		// then add post processing modules
 		if (dec_params.sf->enable)
-			post_pros.push_back(factory::Scaling_factor::build<B,Q>(*dec_params.sf));
+			add_post_pro(factory::Scaling_factor::build<B,Q>(*dec_params.sf));
 
 		if (dec_params.fnc->enable)
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-			post_pros.push_back(factory::Flip_and_check_DB::build<B,Q>(*dec_params.fnc, *crc));
+			add_post_pro(factory::Flip_and_check_DB::build<B,Q>(*dec_params.fnc, *crc));
 		}
 		else if (crc != nullptr && crc->get_size() > 0)
-			post_pros.push_back(new tools::CRC_checker_DB<B,Q>(*crc, 2, decoder_turbo->get_simd_inter_frame_level()));
+			add_post_pro(new tools::CRC_checker_DB<B,Q>(*crc, 2, decoder_turbo->get_simd_inter_frame_level()));
 
 		for (auto i = 0; i < (int)post_pros.size(); i++)
 		{
@@ -145,26 +145,15 @@ Codec_turbo_DB<B,Q>
 }
 
 template <typename B, typename Q>
-Codec_turbo_DB<B,Q>
-::~Codec_turbo_DB()
+void Codec_turbo_DB<B,Q>
+::add_post_pro(tools::Post_processing_SISO<B,Q>* p)
 {
-	if (sub_enc   != nullptr) { delete sub_enc;   sub_enc   = nullptr; }
-	if (sub_dec_n != nullptr) { delete sub_dec_n; sub_dec_n = nullptr; }
-	if (sub_dec_i != nullptr) { delete sub_dec_i; sub_dec_i = nullptr; }
-
-	if (post_pros.size())
-		for (auto i = 0; i < (int)post_pros.size(); i++)
-			if (post_pros[i] != nullptr)
-			{
-				delete post_pros[i];
-				post_pros[i] = nullptr;
-			}
-	post_pros.clear();
+	post_pros.push_back(std::shared_ptr<tools::Post_processing_SISO<B,Q>>(p));
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Codec_turbo_DB<B_8,Q_8>;
 template class aff3ct::module::Codec_turbo_DB<B_16,Q_16>;
 template class aff3ct::module::Codec_turbo_DB<B_32,Q_32>;

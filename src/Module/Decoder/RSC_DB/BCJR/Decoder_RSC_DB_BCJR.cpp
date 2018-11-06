@@ -35,19 +35,13 @@ Decoder_RSC_DB_BCJR<B,R>
 {
 	const std::string name = "Decoder_RSC_DB_BCJR";
 	this->set_name(name);
-	
+
 	if (!tools::is_power_of_2(n_states))
 	{
 		std::stringstream message;
 		message << "'n_states' has to be a power of 2 ('n_states' = " << n_states << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R>
-Decoder_RSC_DB_BCJR<B,R>
-::~Decoder_RSC_DB_BCJR()
-{
 }
 
 template <typename B, typename R>
@@ -169,7 +163,7 @@ void Decoder_RSC_DB_BCJR<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_RSC_DB_BCJR<B_8,Q_8>;
 template class aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>;
 template class aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>;

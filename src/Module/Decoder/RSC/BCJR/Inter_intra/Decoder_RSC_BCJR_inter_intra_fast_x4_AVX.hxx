@@ -21,7 +21,7 @@ struct RSC_BCJR_inter_intra_fast_x4_AVX_init
 		alpha[10] = -std::numeric_limits<R>::max(); alpha[11] = -std::numeric_limits<R>::max();
 		alpha[12] = -std::numeric_limits<R>::max(); alpha[13] = -std::numeric_limits<R>::max();
 		alpha[14] = -std::numeric_limits<R>::max(); alpha[15] = -std::numeric_limits<R>::max();
-		
+
 		alpha[16] = 0;                              alpha[17] = 0;
 		alpha[18] = -std::numeric_limits<R>::max(); alpha[19] = -std::numeric_limits<R>::max();
 		alpha[20] = -std::numeric_limits<R>::max(); alpha[21] = -std::numeric_limits<R>::max();
@@ -46,7 +46,7 @@ struct RSC_BCJR_inter_intra_fast_x4_AVX_init <short>
 		alpha[10] = -(1 << (sizeof(short) * 8 -2)); alpha[11] = -(1 << (sizeof(short) * 8 -2));
 		alpha[12] = -(1 << (sizeof(short) * 8 -2)); alpha[13] = -(1 << (sizeof(short) * 8 -2));
 		alpha[14] = -(1 << (sizeof(short) * 8 -2)); alpha[15] = -(1 << (sizeof(short) * 8 -2));
-		
+
 		alpha[16] = 0;                              alpha[17] = 0;
 		alpha[18] = -(1 << (sizeof(short) * 8 -2)); alpha[19] = -(1 << (sizeof(short) * 8 -2));
 		alpha[20] = -(1 << (sizeof(short) * 8 -2)); alpha[21] = -(1 << (sizeof(short) * 8 -2));
@@ -71,7 +71,7 @@ struct RSC_BCJR_inter_intra_fast_x4_AVX_init <signed char>
 		alpha[10] = -63; alpha[11] = -63;
 		alpha[12] = -63; alpha[13] = -63;
 		alpha[14] = -63; alpha[15] = -63;
-		
+
 		alpha[16] =   0; alpha[17] =   0;
 		alpha[18] = -63; alpha[19] = -63;
 		alpha[20] = -63; alpha[21] = -63;
@@ -94,7 +94,7 @@ Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 {
 	const std::string name = "Decoder_RSC_BCJR_inter_intra_fast_x4_AVX";
 	this->set_name(name);
-	
+
 	if (mipp::nElReg<R>() != 32)
 	{
 		std::stringstream message;
@@ -110,12 +110,6 @@ Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 	}
 
 	RSC_BCJR_inter_intra_fast_x4_AVX_init<R>::apply(this->alpha);
-}
-
-template <typename B, typename R, tools::proto_max_i<R> MAX>
-Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
-::~Decoder_RSC_BCJR_inter_intra_fast_x4_AVX()
-{
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
@@ -373,7 +367,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 
 		// saturate r_post if the computation are made in 8-bit, do nothing else.
 		auto r_post = RSC_BCJR_inter_intra_post<R>::compute(mipp::sub<R>(r_max0[0], r_max1[0]));
-	
+
 		// store the extrinsic values
 		const auto r_ext = r_post.interleavex16() - &sys[i*n_frames];
 		r_ext.store(&ext[i*n_frames]);

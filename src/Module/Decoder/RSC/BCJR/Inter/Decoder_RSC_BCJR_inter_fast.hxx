@@ -8,7 +8,7 @@ namespace module
 {
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 Decoder_RSC_BCJR_inter_fast<B,R,MAX>
-::Decoder_RSC_BCJR_inter_fast(const int &K, 
+::Decoder_RSC_BCJR_inter_fast(const int &K,
                               const std::vector<std::vector<int>> &trellis,
                               const bool buffered_encoding,
                               const int n_frames)
@@ -17,12 +17,6 @@ Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 {
 	const std::string name = "Decoder_RSC_BCJR_inter_fast";
 	this->set_name(name);
-}
-
-template <typename B, typename R, tools::proto_max_i<R> MAX>
-Decoder_RSC_BCJR_inter_fast<B,R,MAX>
-::~Decoder_RSC_BCJR_inter_fast()
-{
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
@@ -48,7 +42,7 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 template <typename R>
 struct RSC_BCJR_inter_fast_normalize
 {
-	static void apply(mipp::Reg<R> &r_ab0, mipp::Reg<R> &r_ab1, mipp::Reg<R> &r_ab2, mipp::Reg<R> &r_ab3, 
+	static void apply(mipp::Reg<R> &r_ab0, mipp::Reg<R> &r_ab1, mipp::Reg<R> &r_ab2, mipp::Reg<R> &r_ab3,
 	                  mipp::Reg<R> &r_ab4, mipp::Reg<R> &r_ab5, mipp::Reg<R> &r_ab6, mipp::Reg<R> &r_ab7,
 	                  const int &i)
 	{
@@ -59,7 +53,7 @@ struct RSC_BCJR_inter_fast_normalize
 template <>
 struct RSC_BCJR_inter_fast_normalize <short>
 {
-	static void apply(mipp::Reg<short> &r_ab0, mipp::Reg<short> &r_ab1, mipp::Reg<short> &r_ab2, mipp::Reg<short> &r_ab3, 
+	static void apply(mipp::Reg<short> &r_ab0, mipp::Reg<short> &r_ab1, mipp::Reg<short> &r_ab2, mipp::Reg<short> &r_ab3,
 	                  mipp::Reg<short> &r_ab4, mipp::Reg<short> &r_ab5, mipp::Reg<short> &r_ab6, mipp::Reg<short> &r_ab7,
 	                  const int &i)
 	{
@@ -84,8 +78,8 @@ struct RSC_BCJR_inter_fast_normalize <short>
 template <>
 struct RSC_BCJR_inter_fast_normalize <signed char>
 {
-	static void apply(mipp::Reg<signed char> &r_ab0, mipp::Reg<signed char> &r_ab1, mipp::Reg<signed char> &r_ab2, 
-	                  mipp::Reg<signed char> &r_ab3, mipp::Reg<signed char> &r_ab4, mipp::Reg<signed char> &r_ab5, 
+	static void apply(mipp::Reg<signed char> &r_ab0, mipp::Reg<signed char> &r_ab1, mipp::Reg<signed char> &r_ab2,
+	                  mipp::Reg<signed char> &r_ab3, mipp::Reg<signed char> &r_ab4, mipp::Reg<signed char> &r_ab5,
 	                  mipp::Reg<signed char> &r_ab6, mipp::Reg<signed char> &r_ab7,
 	                  const int &i)
 	{

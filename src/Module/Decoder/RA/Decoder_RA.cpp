@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_RA.hpp"
@@ -31,7 +31,7 @@ Decoder_RA<B, R>
 {
 	const std::string name = "Decoder_RA";
 	this->set_name(name);
-	
+
 	if (max_iter <= 0)
 	{
 		std::stringstream message;
@@ -58,12 +58,6 @@ Decoder_RA<B, R>
 	Xd[1].resize(N);
 	Xu[0].resize(N);
 	Xu[1].resize(N);
-}
-
-template <typename B, typename R>
-Decoder_RA<B, R>
-::~Decoder_RA()
-{
 }
 
 template <typename B, typename R>
@@ -162,7 +156,7 @@ int Decoder_RA<B, R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_RA<B_8,Q_8>;
 template class aff3ct::module::Decoder_RA<B_16,Q_16>;
 template class aff3ct::module::Decoder_RA<B_32,Q_32>;

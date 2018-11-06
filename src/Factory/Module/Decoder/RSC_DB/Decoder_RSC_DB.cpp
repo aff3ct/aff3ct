@@ -20,11 +20,6 @@ Decoder_RSC_DB::parameters
 	this->implem = "GENERIC";
 }
 
-Decoder_RSC_DB::parameters
-::~parameters()
-{
-}
-
 Decoder_RSC_DB::parameters* Decoder_RSC_DB::parameters
 ::clone() const
 {
@@ -32,36 +27,37 @@ Decoder_RSC_DB::parameters* Decoder_RSC_DB::parameters
 }
 
 void Decoder_RSC_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type", "D"}][2] += ", BCJR";
-	opt_args[{p+"-implem"   }][2] += ", GENERIC, DVB-RCS1, DVB-RCS2";
+	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
+	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
 
-	opt_args[{p+"-max"}] =
-		{"string",
-		 "the MAX implementation for the nodes.",
-		 "MAX, MAXL, MAXS"};
+	args.add(
+		{p+"-max"},
+		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
+		"the MAX implementation for the nodes.");
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "does not suppose a buffered encoding."};
+	args.add(
+		{p+"-no-buff"},
+		tools::None(),
+		"does not suppose a buffered encoding.");
 }
 
 void Decoder_RSC_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-max"    })) this->max      = vals.at({p+"-max"});
-	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
+	if(vals.exist({p+"-max"    })) this->max      = vals.at({p+"-max"});
+	if(vals.exist({p+"-no-buff"})) this->buffered = false;
 
 	this->N_cw = 2 * this->K;
 	this->R    = (float)this->K / (float)this->N_cw;
@@ -75,7 +71,7 @@ void Decoder_RSC_DB::parameters
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
@@ -87,7 +83,7 @@ void Decoder_RSC_DB::parameters
 
 template <typename B, typename Q, tools::proto_max<Q> MAX>
 module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB::parameters
-::_build_siso(const std::vector<std::vector<int>> &trellis, module::Encoder<B> *encoder) const
+::_build_siso(const std::vector<std::vector<int>> &trellis, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	if (this->type == "BCJR")
 	{
@@ -101,18 +97,18 @@ module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB::parameters
 
 template <typename B, typename Q>
 module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB::parameters
-::build_siso(const std::vector<std::vector<int>> &trellis, module::Encoder<B> *encoder) const
+::build_siso(const std::vector<std::vector<int>> &trellis, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
-	     if (this->max == "MAX" ) return _build_siso<B,Q,tools::max       <Q>>(trellis, encoder);
-	else if (this->max == "MAXS") return _build_siso<B,Q,tools::max_star  <Q>>(trellis, encoder);
-	else if (this->max == "MAXL") return _build_siso<B,Q,tools::max_linear<Q>>(trellis, encoder);
+	if (this->max == "MAX" ) return _build_siso<B,Q,tools::max       <Q>>(trellis, encoder);
+	if (this->max == "MAXS") return _build_siso<B,Q,tools::max_star  <Q>>(trellis, encoder);
+	if (this->max == "MAXL") return _build_siso<B,Q,tools::max_linear<Q>>(trellis, encoder);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_RSC_DB::parameters
-::build(const std::vector<std::vector<int>> &trellis, module::Encoder<B> *encoder) const
+::build(const std::vector<std::vector<int>> &trellis, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	try
 	{
@@ -122,52 +118,51 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC_DB::parameters
 	{
 		return build_siso<B,Q>(trellis);
 	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
 module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB
-::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis, 
-             module::Encoder<B> *encoder)
+::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis,
+             const std::unique_ptr<module::Encoder<B>>& encoder)
 {
 	return params.template build_siso<B,Q>(trellis, encoder);
 }
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_RSC_DB
-::build(const parameters &params, const std::vector<std::vector<int>> &trellis, module::Encoder<B> *encoder)
+::build(const parameters &params, const std::vector<std::vector<int>> &trellis,
+        const std::unique_ptr<module::Encoder<B>>& encoder)
 {
 	return params.template build<B,Q>(trellis, encoder);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, module::Encoder<B_8 >*) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_16,Q_16>(const std::vector<std::vector<int>>&, module::Encoder<B_16>*) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_32,Q_32>(const std::vector<std::vector<int>>&, module::Encoder<B_32>*) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_64,Q_64>(const std::vector<std::vector<int>>&, module::Encoder<B_64>*) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::build_siso<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B_8 >*);
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_16,Q_16>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B_16>*);
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_32,Q_32>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B_32>*);
-template aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_64,Q_64>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B_64>*);
+#ifdef AFF3CT_MULTI_PREC
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_16,Q_16>(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_32,Q_32>(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B_64,Q_64>(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_64>>&) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::build_siso<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_8 >>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_16,Q_16>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_16>>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_32,Q_32>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_32>>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::build_siso<B_64,Q_64>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_64>>&);
 #else
-template aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B,Q>(const std::vector<std::vector<int>>&, module::Encoder<B>*) const;
-template aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>* aff3ct::factory::Decoder_RSC_DB::build_siso<B,Q>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B>*);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>* aff3ct::factory::Decoder_RSC_DB::parameters::build_siso<B,Q>(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B>>&) const;
+template aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>* aff3ct::factory::Decoder_RSC_DB::build_siso<B,Q>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B>>&);
 #endif
 
-#ifdef MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::parameters::build<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, module::Encoder<B_8 >*) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::parameters::build<B_16,Q_16>(const std::vector<std::vector<int>>&, module::Encoder<B_16>*) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::parameters::build<B_32,Q_32>(const std::vector<std::vector<int>>&, module::Encoder<B_32>*) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::parameters::build<B_64,Q_64>(const std::vector<std::vector<int>>&, module::Encoder<B_64>*) const;
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B_8 >*);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::build<B_16,Q_16>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B_16>*);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::build<B_32,Q_32>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B_32>*);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::build<B_64,Q_64>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B_64>*);
+#ifdef AFF3CT_MULTI_PREC
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::parameters::build<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::parameters::build<B_16,Q_16>(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::parameters::build<B_32,Q_32>(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::parameters::build<B_64,Q_64>(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_64>>&) const;
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_8 >>&);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::build<B_16,Q_16>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_16>>&);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::build<B_32,Q_32>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_32>>&);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::build<B_64,Q_64>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B_64>>&);
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RSC_DB::parameters::build<B,Q>(const std::vector<std::vector<int>>&, module::Encoder<B>*) const;
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RSC_DB::build<B,Q>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, module::Encoder<B>*);
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RSC_DB::parameters::build<B,Q>(const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B>>&) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RSC_DB::build<B,Q>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&, const std::unique_ptr<module::Encoder<B>>&);
 #endif
 // ==================================================================================== explicit template instantiation

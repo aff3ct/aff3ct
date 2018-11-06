@@ -20,12 +20,6 @@ Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
 	this->set_name(name);
 }
 
-template <typename B, typename R, tools::proto_max_i<R> MAX>
-Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
-::~Decoder_RSC_BCJR_inter_very_fast()
-{
-}
-
 // Slower and I don't know why... It should be faster without the loading of the alpha metrics
 //
 // template <typename B, typename R, tools::proto_max_i<R> MAX>

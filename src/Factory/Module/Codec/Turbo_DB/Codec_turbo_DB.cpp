@@ -9,124 +9,126 @@ const std::string aff3ct::factory::Codec_turbo_DB_prefix = "cdc";
 Codec_turbo_DB::parameters
 ::parameters(const std::string &prefix)
 : Codec     ::parameters(Codec_turbo_DB_name, prefix),
-  Codec_SIHO::parameters(Codec_turbo_DB_name, prefix),
-  enc(new Encoder_turbo_DB::parameters("enc")),
-  dec(new Decoder_turbo_DB::parameters("dec")),
-  pct(nullptr)
+  Codec_SIHO::parameters(Codec_turbo_DB_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-	Codec::parameters::itl = enc->itl;
-	delete dec->itl; dec->itl = enc->itl;
-}
-
-Codec_turbo_DB::parameters
-::~parameters()
-{
-	if (enc != nullptr) { enc->itl = nullptr; delete enc; enc = nullptr; }
-	if (dec != nullptr) { dec->itl = nullptr; delete dec; dec = nullptr; }
-	if (pct != nullptr) {                     delete pct; pct = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
-	if (Codec::parameters::itl != nullptr)
-	{
-		delete Codec::parameters::itl;
-		Codec::parameters::itl = nullptr;
-	}
+	auto enc_t = new Encoder_turbo_DB::parameters("enc");
+	auto dec_t = new Decoder_turbo_DB::parameters("dec");
+	Codec::parameters::set_enc(enc_t);
+	Codec::parameters::set_dec(dec_t);
+	Codec::parameters::set_itl(std::move(enc_t->itl));
+	dec_t->itl = nullptr;
 }
 
 Codec_turbo_DB::parameters* Codec_turbo_DB::parameters
 ::clone() const
 {
-	auto clone = new Codec_turbo_DB::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-	if (pct != nullptr) { clone->pct = pct->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-	clone->set_itl(clone->enc->itl);
-	delete clone->dec->itl; clone->dec->itl = clone->enc->itl;
-
-	return clone;
+	return new Codec_turbo_DB::parameters(*this);
 }
 
 void Codec_turbo_DB::parameters
 ::enable_puncturer()
 {
-	this->pct = new Puncturer_turbo_DB::parameters("pct");
-	this->set_pct(this->pct);
+	set_pct(new Puncturer_turbo_DB::parameters("pct"));
 }
 
 void Codec_turbo_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SIHO::parameters::get_description(args);
 
-	if (this->pct)
+	auto dec_tur = dynamic_cast<Decoder_turbo_DB::parameters*>(dec.get());
+
+	if (pct != nullptr)
 	{
-		pct->get_description(req_args, opt_args);
+		pct->get_description(args);
 
 		auto ppct = pct->get_prefix();
 
-		req_args.erase({ppct+"-info-bits", "K"});
-		opt_args.erase({ppct+"-no-buff"       });
-		opt_args.erase({ppct+"-fra",       "F"});
-		opt_args.erase({ppct+"-tail-length"   });
+		args.erase({ppct+"-info-bits", "K"});
+		args.erase({ppct+"-no-buff"       });
+		args.erase({ppct+"-fra",       "F"});
+		args.erase({ppct+"-tail-length"   });
 
-		opt_args[{ppct+"-fra-size", "N"}] = req_args[{ppct+"-fra-size", "N"}];
-		req_args.erase({ppct+"-fra-size", "N"});
+		args[{ppct+"-fra-size", "N"}]->rank = tools::arg_rank::OPT;
 	}
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
-	auto pdec = dec->get_prefix();
-	auto pdes = dec->sub->get_prefix();
+	auto pdec = dec_tur->get_prefix();
+	auto pdes = dec_tur->sub->get_prefix();
 
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
-	opt_args.erase({pdes+"-no-buff"       });
-	opt_args.erase({pdes+"-std"           });
-	opt_args.erase({pdec+"-json"          });
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
+	args.erase({pdes+"-no-buff"       });
+	args.erase({pdes+"-std"           });
+	args.erase({pdec+"-json"          });
+
+
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
+
+		auto pi = itl->get_prefix();
+
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 }
 
 void Codec_turbo_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SIHO::parameters::store(vals);
 
+	auto enc_tur = dynamic_cast<Encoder_turbo_DB::parameters*>(enc.get());
+	auto dec_tur = dynamic_cast<Decoder_turbo_DB::parameters*>(dec.get());
+
 	enc->store(vals);
 
-	if (this->pct)
+	if (pct != nullptr)
 	{
-		this->pct->K        = this->enc->K;
-		this->pct->N        = this->enc->N_cw;
-		this->pct->N_cw     = this->enc->N_cw;
-		this->pct->n_frames = this->enc->n_frames;
+		pct->K        = enc->K;
+		pct->N        = enc->N_cw;
+		pct->N_cw     = enc->N_cw;
+		pct->n_frames = enc->n_frames;
 
 		pct->store(vals);
 	}
 
-	this->dec->K             = this->enc->K;
-	this->dec->N_cw          = this->enc->N_cw;
-	this->dec->sub->buffered = this->enc->sub->buffered;
-	this->dec->n_frames      = this->enc->n_frames;
-	this->dec->sub->n_frames = this->enc->sub->n_frames;
+	dec_tur->K             = enc_tur->K;
+	dec_tur->N_cw          = enc_tur->N_cw;
+	dec_tur->sub->buffered = enc_tur->sub->buffered;
+	dec_tur->n_frames      = enc_tur->n_frames;
+	dec_tur->sub->n_frames = enc_tur->sub->n_frames;
 
 	dec->store(vals);
 
-	auto pdes = dec->sub->get_prefix();
+	auto pdes = dec_tur->sub->get_prefix();
 
-	if (!this->enc->sub->standard.empty() && !exist(vals, {pdes+"-implem"}))
-		this->dec->sub->implem = this->enc->sub->standard;
+	if (!enc_tur->sub->standard.empty() && !vals.exist({pdes+"-implem"}))
+		dec_tur->sub->implem = enc_tur->sub->standard;
+	enc_tur->sub->standard = dec_tur->sub->implem;
 
-	this->K    = this->enc->K;
-	this->N_cw = this->enc->N_cw;
-	this->N    = this->pct ? this->pct->N : this->enc->N_cw;
+	K    = enc->K;
+	N_cw = enc->N_cw;
+	N    = pct != nullptr ? pct->N : enc->N_cw;
+
+
+	if (itl != nullptr)
+	{
+		itl->core->size     = enc->K >> 1;
+		itl->core->n_frames = enc->n_frames;
+
+		itl->store(vals);
+
+		if (dec_tur->sub->implem == "DVB-RCS1" && !vals.exist({"itl-type"}))
+			itl->core->type = "DVB-RCS1";
+
+		if (dec_tur->sub->implem == "DVB-RCS2" && !vals.exist({"itl-type"}))
+			itl->core->type = "DVB-RCS2";
+	}
 }
 
 void Codec_turbo_DB::parameters
@@ -136,17 +138,21 @@ void Codec_turbo_DB::parameters
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
-	if (this->pct)
+	if (pct != nullptr)
 		pct->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 }
 
 template <typename B, typename Q>
 module::Codec_turbo_DB<B,Q>* Codec_turbo_DB::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_turbo_DB<B,Q>(*enc, *dec, pct, crc);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_turbo_DB<B,Q>(dynamic_cast<const Encoder_turbo_DB  ::parameters&>(*enc),
+	                                       dynamic_cast<const Decoder_turbo_DB  ::parameters&>(*dec),
+	                                       *itl,
+	                                       dynamic_cast<const Puncturer_turbo_DB::parameters*>(pct.get()),
+	                                       crc);
 }
 
 template <typename B, typename Q>
@@ -158,7 +164,7 @@ module::Codec_turbo_DB<B,Q>* Codec_turbo_DB
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Codec_turbo_DB<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo_DB::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
 template aff3ct::module::Codec_turbo_DB<B_16,Q_16>* aff3ct::factory::Codec_turbo_DB::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
 template aff3ct::module::Codec_turbo_DB<B_32,Q_32>* aff3ct::factory::Codec_turbo_DB::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;

@@ -26,12 +26,6 @@ Decoder_RSC_DB_BCJR_generic<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>
-Decoder_RSC_DB_BCJR_generic<B,R,MAX>
-::~Decoder_RSC_DB_BCJR_generic()
-{
-}
-
-template <typename B, typename R, tools::proto_max<R> MAX>
 void Decoder_RSC_DB_BCJR_generic<B,R,MAX>
 ::__fwd_recursion(const R *sys, const R *par)
 {

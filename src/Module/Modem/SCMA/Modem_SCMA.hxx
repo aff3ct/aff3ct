@@ -1,5 +1,6 @@
 #include <cassert>
 #include <iomanip>
+#include <type_traits>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -53,20 +54,19 @@ const std::complex<float> Modem_SCMA<B,R,Q,PSI>::CB[6][4][4] =
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
-::Modem_SCMA(const int N, const R sigma, const int bps, const bool disable_sig2, const int n_ite,
+::Modem_SCMA(const int N, const tools::Noise<R>& noise, const int bps, const bool disable_sig2, const int n_ite,
              const int n_frames)
 : Modem<B,R,Q>(N,
                Modem_SCMA<B,R,Q,PSI>::size_mod(N, bps),
                Modem_SCMA<B,R,Q,PSI>::size_fil(N, bps),
-               sigma,
+               noise,
                n_frames),
-  disable_sig2(disable_sig2                                    ),
-  n0          (disable_sig2 ? (R)1.0 : (R)2.0 *  sigma * sigma ),
-  n_ite       (n_ite                                           )
+  disable_sig2(disable_sig2),
+  n_ite       (n_ite       )
 {
 	const std::string name = "Modem_SCMA";
 	this->set_name(name);
-	
+
 	if (n_frames != 6)
 	{
 		std::stringstream message;
@@ -90,19 +90,16 @@ Modem_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-Modem_SCMA<B,R,Q,PSI>
-::~Modem_SCMA()
-{
-}
-
-template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::set_sigma(const R sigma)
+::set_noise(const tools::Noise<R>& noise)
 {
-	Modem<B,R,Q>::set_sigma(sigma);
+	Modem<B,R,Q>::set_noise(noise);
 
-	if (!disable_sig2)
-		this->n0 = (R)2.0 * sigma * sigma;
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
+	this->n0 = this->disable_sig2 ?
+	            (R)1.0 :
+	            ((R)4.0 * this->n->get_noise() * this->n->get_noise());
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
@@ -161,8 +158,14 @@ void Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (!std::is_same<R,Q>::value)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+
+	if (!std::is_floating_point<Q>::value)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
@@ -188,8 +191,14 @@ void Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (!std::is_same<R,Q>::value)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+
+	if (!std::is_floating_point<Q>::value)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
@@ -208,8 +217,14 @@ template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
 ::demodulate_batch(const Q* Y_N1, Q* Y_N2, int batch)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (!std::is_same<R,Q>::value)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+
+	if (!std::is_floating_point<Q>::value)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+	if (!this->n->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 	// declarations
 	Q msg_user_res[6][4][4] = {};
@@ -259,17 +274,17 @@ void Modem_SCMA<B,R,Q,PSI>
 				for (auto k = 0; k < 4; k++)
 					for(auto re = 0 ; re < 4 ; re++)
 					{
-						msg_res_user[re][re_user[re][0]][i] = msg_res_user[re][re_user[re][0]][i] 
-						                                      +  arr_phi[re][i][j][k] 
-						                                      * msg_user_res[re_user[re][1]][re][j] 
+						msg_res_user[re][re_user[re][0]][i] = msg_res_user[re][re_user[re][0]][i]
+						                                      +  arr_phi[re][i][j][k]
+						                                      * msg_user_res[re_user[re][1]][re][j]
 						                                      * msg_user_res[re_user[re][2]][re][k];
-						msg_res_user[re][re_user[re][1]][i] = msg_res_user[re][re_user[re][1]][i] 
-						                                      +  arr_phi[re][j][i][k] 
-						                                      * msg_user_res[re_user[re][0]][re][j] 
+						msg_res_user[re][re_user[re][1]][i] = msg_res_user[re][re_user[re][1]][i]
+						                                      +  arr_phi[re][j][i][k]
+						                                      * msg_user_res[re_user[re][0]][re][j]
 						                                      * msg_user_res[re_user[re][2]][re][k];
-						msg_res_user[re][re_user[re][2]][i] = msg_res_user[re][re_user[re][2]][i] 
-						                                      +  arr_phi[re][j][k][i] 
-						                                      * msg_user_res[re_user[re][0]][re][j] 
+						msg_res_user[re][re_user[re][2]][i] = msg_res_user[re][re_user[re][2]][i]
+						                                      +  arr_phi[re][j][k][i]
+						                                      * msg_user_res[re_user[re][0]][re][j]
 						                                      * msg_user_res[re_user[re][1]][re][k];
 					}
 

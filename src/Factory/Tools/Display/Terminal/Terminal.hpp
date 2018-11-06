@@ -3,6 +3,9 @@
 
 #include <string>
 #include <chrono>
+#include <memory>
+
+#include "Tools/Display/Terminal/Terminal.hpp"
 
 #include "../../../Factory.hpp"
 
@@ -19,21 +22,28 @@ struct Terminal : Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
+		std::string               type = "STD";
 		std::chrono::milliseconds frequency = std::chrono::milliseconds(500);
 		bool                      disabled  = false;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		virtual ~parameters();
+		parameters(const std::string &p = Terminal_prefix);
+		virtual ~parameters() = default;
 		virtual Terminal::parameters* clone() const;
 
 		// parameters construction
-		virtual void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		virtual void store          (const arg_val_map &vals                                           );
+		virtual void get_description(tools::Argument_map_info &args) const;
+		virtual void store          (const tools::Argument_map_value &vals);
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
+		// builder
+		tools::Terminal* build(const std::vector<std::unique_ptr<tools::Reporter>> &reporters) const;
+
 	protected:
-		parameters(const std::string &n = Terminal_name, const std::string &p = Terminal_prefix);
+		parameters(const std::string &n, const std::string &p);
 	};
+
+	static tools::Terminal* build(const parameters &params, const std::vector<std::unique_ptr<tools::Reporter>> &reporters);
 };
 }
 }

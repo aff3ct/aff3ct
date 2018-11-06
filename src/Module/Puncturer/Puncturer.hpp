@@ -10,9 +10,6 @@
 
 #include <string>
 #include <vector>
-#include <sstream>
-
-#include "Tools/Exception/exception.hpp"
 
 #include "Module/Module.hpp"
 
@@ -22,15 +19,12 @@ namespace module
 {
 	namespace pct
 	{
-		namespace tsk
-		{
-			enum list { puncture, depuncture, SIZE };
-		}
+		enum class tsk : uint8_t { puncture, depuncture, SIZE };
 
 		namespace sck
 		{
-			namespace puncture   { enum list { X_N1, X_N2, SIZE }; }
-			namespace depuncture { enum list { Y_N1, Y_N2, SIZE }; }
+			enum class puncture   : uint8_t { X_N1, X_N2, SIZE };
+			enum class depuncture : uint8_t { Y_N1, Y_N2, SIZE };
 		}
 	}
 
@@ -47,6 +41,11 @@ namespace module
 template <typename B = int, typename Q = float>
 class Puncturer : public Module
 {
+public:
+	inline Task&   operator[](const pct::tsk             t) { return Module::operator[]((int)t);                            }
+	inline Socket& operator[](const pct::sck::puncture   s) { return Module::operator[]((int)pct::tsk::puncture  )[(int)s]; }
+	inline Socket& operator[](const pct::sck::depuncture s) { return Module::operator[]((int)pct::tsk::depuncture)[(int)s]; }
+
 protected:
 	const int K;    /*!< Number of information bits in one frame */
 	const int N;    /*!< Size of one frame (= number of bits in one frame) */
@@ -62,90 +61,18 @@ public:
 	 * \param n_frames: number of frames to process in the Puncturer.
 	 * \param name:     Puncturer's name.
 	 */
-	Puncturer(const int K, const int N, const int N_cw, const int n_frames = 1)
-	: Module(n_frames), K(K), N(N), N_cw(N_cw)
-	{
-		const std::string name = "Puncturer";
-		this->set_name(name);
-		this->set_short_name(name);
-
-		if (K <= 0)
-		{
-			std::stringstream message;
-			message << "'K' has to be greater than 0 ('K' = " << K << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (N <= 0)
-		{
-			std::stringstream message;
-			message << "'N' has to be greater than 0 ('N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (N_cw <= 0)
-		{
-			std::stringstream message;
-			message << "'N_cw' has to be greater than 0 ('N_cw' = " << N_cw << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (K > N)
-		{
-			std::stringstream message;
-			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (N > N_cw)
-		{
-			std::stringstream message;
-			message << "'N' has to be smaller or equal to 'N_cw' ('N' = " << N << ", 'N_cw' = " << N_cw << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		auto &p1 = this->create_task("puncture");
-		auto &p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N_cw * this->n_frames);
-		auto &p1s_X_N2 = this->template create_socket_out<B>(p1, "X_N2", this->N      * this->n_frames);
-		this->create_codelet(p1, [this, &p1s_X_N1, &p1s_X_N2]() -> int
-		{
-			this->puncture(static_cast<B*>(p1s_X_N1.get_dataptr()),
-			               static_cast<B*>(p1s_X_N2.get_dataptr()));
-
-			return 0;
-		});
-
-		auto &p2 = this->create_task("depuncture");
-		auto &p2s_Y_N1 = this->template create_socket_in <Q>(p2, "Y_N1", this->N      * this->n_frames);
-		auto &p2s_Y_N2 = this->template create_socket_out<Q>(p2, "Y_N2", this->N_cw * this->n_frames);
-		this->create_codelet(p2, [this, &p2s_Y_N1, &p2s_Y_N2]() -> int
-		{
-			this->depuncture(static_cast<Q*>(p2s_Y_N1.get_dataptr()),
-			                 static_cast<Q*>(p2s_Y_N2.get_dataptr()));
-
-			return 0;
-		});
-	}
+	Puncturer(const int K, const int N, const int N_cw, const int n_frames = 1);
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Puncturer() {}
+	virtual ~Puncturer() = default;
 
-	int get_K() const
-	{
-		return K;
-	}
+	int get_K() const;
 
-	int get_N() const
-	{
-		return N;
-	}
+	int get_N() const;
 
-	int get_N_cw() const
-	{
-		return N_cw;
-	}
+	int get_N_cw() const;
 
 	/*!
 	 * \brief Punctures a codeword.
@@ -154,45 +81,9 @@ public:
 	 * \param X_N2: a punctured codeword (corresponding to the frame size).
 	 */
 	template <class A = std::allocator<B>>
-	void puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id = -1) const
-	{
-		if (this->N_cw * this->n_frames != (int)X_N1.size())
-		{
-			std::stringstream message;
-			message << "'X_N1.size()' has to be equal to 'N_cw' * 'n_frames' ('X_N1.size()' = " << X_N1.size()
-			        << ", 'N_cw' = " << this->N_cw << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
+	void puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id = -1) const;
 
-		if (this->N * this->n_frames != (int)X_N2.size())
-		{
-			std::stringstream message;
-			message << "'X_N2.size()' has to be equal to 'N' * 'n_frames' ('X_N2.size()' = " << X_N2.size()
-			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (frame_id != -1 && frame_id >= this->n_frames)
-		{
-			std::stringstream message;
-			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
-			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		this->puncture(X_N1.data(), X_N2.data(), frame_id);
-	}
-
-	virtual void puncture(const B *X_N1, B *X_N2, const int frame_id = -1) const
-	{
-		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-		for (auto f = f_start; f < f_stop; f++)
-			this->_puncture(X_N1 + f * this->N_cw,
-			                X_N2 + f * this->N,
-			                f);
-	}
+	virtual void puncture(const B *X_N1, B *X_N2, const int frame_id = -1) const;
 
 	/*!
 	 * \brief Depunctures a codeword.
@@ -201,58 +92,17 @@ public:
 	 * \param Y_N2: a noised and complete/valid codeword.
 	 */
 	template <class A = std::allocator<Q>>
-	void depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id = -1) const
-	{
-		if (this->N * this->n_frames != (int)Y_N1.size())
-		{
-			std::stringstream message;
-			message << "'Y_N1.size()' has to be equal to 'N' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
-			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
+	void depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id = -1) const;
 
-		if (this->N_cw * this->n_frames != (int)Y_N2.size())
-		{
-			std::stringstream message;
-			message << "'Y_N2.size()' has to be equal to 'N_cw' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
-			        << ", 'N_cw' = " << this->N_cw << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (frame_id != -1 && frame_id >= this->n_frames)
-		{
-			std::stringstream message;
-			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = " 
-			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		this->depuncture(Y_N1.data(), Y_N2.data(), frame_id);
-	}
-
-	virtual void depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id = -1) const
-	{
-		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-		for (auto f = f_start; f < f_stop; f++)
-			this->_depuncture(Y_N1 + f * this->N,
-			                  Y_N2 + f * this->N_cw,
-			                  f);
-	}
+	virtual void depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id = -1) const;
 
 protected:
-	virtual void _puncture(const B *X_N1, B *X_N2, const int frame_id) const
-	{
-		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
-	}
+	virtual void _puncture(const B *X_N1, B *X_N2, const int frame_id) const;
 
-	virtual void _depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
-	{
-		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
-	}
+	virtual void _depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const;
 };
 }
 }
+#include "Puncturer.hxx"
 
 #endif /* PUNCTURER_HPP_ */

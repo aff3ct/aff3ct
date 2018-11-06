@@ -19,21 +19,15 @@ RSC<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-RSC<L,B,R,Q>
-::~RSC()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void RSC<L,B,R,Q>
 ::get_description_args()
 {
-	params_cdc->get_description(this->req_args, this->opt_args);
+	params_cdc->get_description(this->args);
 
 	auto penc = params_cdc->enc->get_prefix();
 
-	this->opt_args.erase({penc+"-fra",  "F"});
-	this->opt_args.erase({penc+"-seed", "S"});
+	this->args.erase({penc+"-fra",  "F"});
+	this->args.erase({penc+"-seed", "S"});
 
 	L::get_description_args();
 }
@@ -42,11 +36,13 @@ template <class L, typename B, typename R, typename Q>
 void RSC<L,B,R,Q>
 ::store_args()
 {
-	params_cdc->store(this->ar.get_args());
+	auto dec_rsc = dynamic_cast<factory::Decoder_RSC::parameters*>(params_cdc->dec.get());
 
-	if (params_cdc->dec->simd_strategy == "INTER")
+	params_cdc->store(this->arg_vals);
+
+	if (dec_rsc->simd_strategy == "INTER")
 		this->params.src->n_frames = mipp::N<Q>();
-	if (params_cdc->dec->simd_strategy == "INTRA")
+	if (dec_rsc->simd_strategy == "INTRA")
 		this->params.src->n_frames = (int)std::ceil(mipp::N<Q>() / 8.f);
 
 	if (std::is_same<Q,int8_t>())
@@ -71,7 +67,7 @@ void RSC<L,B,R,Q>
 #include "Launcher/Simulation/EXIT.hpp"
 #include "Launcher/Simulation/BFER_std.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::RSC<aff3ct::launcher::EXIT    <B_32,R_32     >,B_32,R_32     >;
 template class aff3ct::launcher::RSC<aff3ct::launcher::EXIT    <B_64,R_64     >,B_64,R_64     >;
 template class aff3ct::launcher::RSC<aff3ct::launcher::BFER_std<B_8, R_8, Q_8 >,B_8 ,R_8 ,Q_8 >;
@@ -83,7 +79,7 @@ template class aff3ct::launcher::RSC<aff3ct::launcher::BFER_ite<B_16,R_16,Q_16>,
 template class aff3ct::launcher::RSC<aff3ct::launcher::BFER_ite<B_32,R_32,Q_32>,B_32,R_32,Q_32>;
 template class aff3ct::launcher::RSC<aff3ct::launcher::BFER_ite<B_64,R_64,Q_64>,B_64,R_64,Q_64>;
 #else
-#if defined(PREC_32_BIT) || defined(PREC_64_BIT)
+#if defined(AFF3CT_32BIT_PREC) || defined(AFF3CT_64BIT_PREC)
 template class aff3ct::launcher::RSC<aff3ct::launcher::EXIT    <B,R  >,B,R  >;
 #endif
 template class aff3ct::launcher::RSC<aff3ct::launcher::BFER_std<B,R,Q>,B,R,Q>;

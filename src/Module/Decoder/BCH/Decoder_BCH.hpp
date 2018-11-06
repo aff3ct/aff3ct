@@ -14,35 +14,17 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_BCH : public Decoder_SIHO_HIHO<B,R>
 {
-private:
-	std::vector<std::vector<int>> elp;
-	std::vector<int> discrepancy;
-	std::vector<int> l;
-	std::vector<int> u_lu;
-	std::vector<int> s;
-	std::vector<int> loc;
-	std::vector<int> reg;
-
 protected:
-	const int m;               // order of the Galois Field
-	const int t;               // correction power
-	const int d;               // minimum distance of the code (d=2t+1))
-
-	const std::vector<int>& alpha_to; // log table of GF(2**m)
-	const std::vector<int>& index_of; // antilog table of GF(2**m)
-
-	std::vector<B> YH_N;       // hard decision input vector
+	const int t;         // correction power
+	const int N_p2_1;      // the next power 2 of N minus 1
+	std::vector<B> last_is_codeword; // a value per frame
 
 public:
-	Decoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator &GF, const int n_frames = 1);
-	virtual ~Decoder_BCH();
+	Decoder_BCH(const int K, const int N, const int t, const int n_frames = 1);
 
-protected:
-	void _decode        (      B *Y_N                            );
-	void _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);
-	void _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
-	void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+	virtual ~Decoder_BCH() = default;
+
+	bool get_last_is_codeword(const int frame_id = -1) const;
 };
 }
 }

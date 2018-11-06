@@ -50,12 +50,6 @@ CPM_BCJR<SIN,SOUT,Q,MAX>
 }
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
-CPM_BCJR<SIN,SOUT,Q,MAX>
-::~CPM_BCJR()
-{
-}
-
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const std::vector<Q> &Lch_N, std::vector<Q> &Le_N)
 {

@@ -8,6 +8,8 @@
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
+#include "Tools/auto_cloned_unique_ptr.hpp"
+
 #include "../Encoder.hpp"
 
 namespace aff3ct
@@ -23,11 +25,11 @@ struct Encoder_RA : public Encoder
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// depending parameters
-		Interleaver::parameters *itl;
+		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_RA_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Encoder_RA::parameters* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;
@@ -35,8 +37,8 @@ struct Encoder_RA : public Encoder
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

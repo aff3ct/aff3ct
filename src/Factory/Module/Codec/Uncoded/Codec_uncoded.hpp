@@ -4,9 +4,6 @@
 #include <string>
 #include <cmath>
 
-#include "Factory/Module/Encoder/Encoder.hpp"
-#include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
-
 #include "Module/Codec/Uncoded/Codec_uncoded.hpp"
 
 #include "../Codec_SISO_SIHO.hpp"
@@ -22,19 +19,13 @@ struct Codec_uncoded : public Codec_SISO_SIHO
 	class parameters : public Codec_SISO_SIHO::parameters
 	{
 	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// depending parameters
-		Encoder   ::parameters *enc;
-		Decoder_NO::parameters *dec;
-
-		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_uncoded_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Codec_uncoded::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

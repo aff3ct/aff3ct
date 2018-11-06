@@ -47,7 +47,7 @@ bool Scaling_factor_vec<B,R>
 		}
 
 		for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
-			ext[i] = div2<R>(ext[i]) + div4<R>(ext[i]); 
+			ext[i] = div2<R>(ext[i]) + div4<R>(ext[i]);
 	// }
 
 	return false;
@@ -95,9 +95,9 @@ bool Scaling_factor_vec<B,R>
 	return false;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::tools::Scaling_factor_vec<B_8,Q_8>;
 template class aff3ct::tools::Scaling_factor_vec<B_16,Q_16>;
 template class aff3ct::tools::Scaling_factor_vec<B_32,Q_32>;

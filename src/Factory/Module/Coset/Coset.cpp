@@ -15,11 +15,6 @@ Coset::parameters
 {
 }
 
-Coset::parameters
-::~parameters()
-{
-}
-
 Coset::parameters* Coset::parameters
 ::clone() const
 {
@@ -27,32 +22,35 @@ Coset::parameters* Coset::parameters
 }
 
 void Coset::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-size", "N"}] =
-		{"strictly_positive_int",
-		 "coset size."};
+	args.add(
+		{p+"-size", "N"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"coset size.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "coset type.",
-		 "STD"};
+	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("STD")),
+		"coset type.");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	args.add(
+		{p+"-fra", "F"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the number of inter frame level to process.");
 }
 
 void Coset::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-size", "N"})) this->size     = std::stoi(vals.at({p+"-size", "N"}));
-	if(exist(vals, {p+"-fra",  "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",  "F"}));
-	if(exist(vals, {p+"-type"     })) this->type     =           vals.at({p+"-type"     });
+	if(vals.exist({p+"-size", "N"})) this->size     = vals.to_int({p+"-size", "N"});
+	if(vals.exist({p+"-fra",  "F"})) this->n_frames = vals.to_int({p+"-fra",  "F"});
+	if(vals.exist({p+"-type"     })) this->type     = vals.at    ({p+"-type"     });
 }
 
 void Coset::parameters
@@ -99,7 +97,7 @@ module::Coset<B,R>* Coset
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Coset<B_8 ,B_8 >* aff3ct::factory::Coset::parameters::build_bit<B_8 ,B_8 >() const;
 template aff3ct::module::Coset<B_16,B_16>* aff3ct::factory::Coset::parameters::build_bit<B_16,B_16>() const;
 template aff3ct::module::Coset<B_32,B_32>* aff3ct::factory::Coset::parameters::build_bit<B_32,B_32>() const;
@@ -113,7 +111,7 @@ template aff3ct::module::Coset<B,B>* aff3ct::factory::Coset::parameters::build_b
 template aff3ct::module::Coset<B,B>* aff3ct::factory::Coset::build_bit<B,B>(const aff3ct::factory::Coset::parameters&);
 #endif
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Coset<B_8 ,Q_8 >* aff3ct::factory::Coset::parameters::build_real<B_8 ,Q_8 >() const;
 template aff3ct::module::Coset<B_16,Q_16>* aff3ct::factory::Coset::parameters::build_real<B_16,Q_16>() const;
 template aff3ct::module::Coset<B_32,Q_32>* aff3ct::factory::Coset::parameters::build_real<B_32,Q_32>() const;

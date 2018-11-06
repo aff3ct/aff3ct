@@ -20,24 +20,25 @@ struct Interleaver_core : public Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		int         size     = 0;
+		int         size       = 0;
 
 		// optional parameters
-		std::string type     = "RANDOM";
-		std::string path     = "";
-		int         n_cols   = 4; // number of columns of the columns interleaver
-		int         n_frames = 1;
-		int         seed     = 0;
-		bool        uniform  = false; // set at true to regenerate the interleaver at each new frame
+		std::string type       = "RANDOM";
+		std::string path       = "";
+		std::string read_order = "TOP_LEFT";
+		int         n_cols     = 4; // number of columns of the columns interleaver
+		int         n_frames   = 1;
+		int         seed       = 0;
+		bool        uniform    = false; // set at true to regenerate the interleaver at each new frame
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Interleaver_core_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Interleaver_core::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

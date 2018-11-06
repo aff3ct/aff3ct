@@ -1,3 +1,7 @@
+#include <fstream>
+#include <algorithm>
+#include <rang.hpp>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Simulation.hpp"
@@ -10,7 +14,8 @@ const std::string aff3ct::factory::Simulation_prefix = "sim";
 
 Simulation::parameters
 ::parameters(const std::string &name, const std::string &prefix)
-: Launcher::parameters(name, Simulation_name, prefix)
+: Launcher::parameters(name, Simulation_name, prefix),
+  noise(new factory::Noise::parameters(prefix))
 {
 }
 
@@ -18,124 +23,130 @@ Simulation::parameters* Simulation::parameters
 ::clone() const
 {
 	return new Simulation::parameters(*this);
-}
 
-Simulation::parameters
-::~parameters()
-{
+	// if (noise != nullptr) {clone->noise = noise->clone(); }
+
+	// return clone;
 }
 
 void Simulation::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Launcher::parameters::get_description(req_args, opt_args);
+	Launcher::parameters::get_description(args);
+
+	noise->get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args[{p+"-snr-min", "m"}] =
-		{"float",
-		 "minimal signal/noise ratio to simulate."};
+	args.add(
+		{p+"-meta"},
+		tools::Text(),
+		"print the output with metadata, takes the simulation title.");
 
-	req_args[{p+"-snr-max", "M"}] =
-		{"float",
-		 "maximal signal/noise ratio to simulate."};
+	args.add(
+		{p+"-stop-time"},
+		tools::Integer(tools::Positive()),
+		"time in sec after what the current simulatated noise stops (0 is infinite).",
+		tools::arg_rank::ADV);
 
-	opt_args[{p+"-snr-step", "s"}] =
-		{"strictly_positive_float",
-		 "signal/noise ratio step between each simulation."};
+	args.add(
+		{p+"-max-frame", "n"},
+		tools::Integer(tools::Positive()),
+		"maximum number of frames to play after what the current simulatated noise stops (0 is infinite).",
+		tools::arg_rank::ADV);
 
-	opt_args[{p+"-pyber"}] =
-		{"string",
-		 "prepare the output for the PyBER plotter tool, takes the name of the curve in PyBER."};
+	args.add(
+		{p+"-crit-nostop"},
+		tools::None(),
+		"The stop criteria arguments -stop-time or -max-frame kill the current simulatated noise point"
+		" but not the simulation.",
+		tools::arg_rank::ADV);
 
-	opt_args[{p+"-stop-time"}] =
-		{"positive_int",
-		 "time in sec after what the current SNR iteration should stop (0 is infinite)."};
+	args.add(
+		{p+"-debug"},
+		tools::None(),
+		"enable debug mode: print array values after each step.");
 
-	opt_args[{p+"-debug", "d"}] =
-		{"",
-		 "enable debug mode: print array values after each step."};
+	args.add(
+		{p+"-debug-hex"},
+		tools::None(),
+		"debug mode prints values in the hexadecimal format.");
 
-	opt_args[{p+"-debug-hex"}] =
-		{"",
-		 "debug mode prints values in the hexadecimal format."};
+	args.add(
+		{p+"-debug-prec"},
+		tools::Integer(tools::Positive()),
+		"set the precision of real elements when displayed in debug mode.");
 
-	opt_args[{p+"-debug-prec"}] =
-		{"positive_int",
-		 "set the decimal precision of real elements when displayed in debug mode."};
+	args.add(
+		{p+"-debug-limit", "d"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the max number of elements to display in the debug mode.");
 
-	opt_args[{p+"-debug-limit"}] =
-		{"positive_int",
-		 "set the max number of elements to display in the debug mode (0 is infinite)."};
+	args.add(
+		{p+"-stats"},
+		tools::None(),
+		"display statistics module by module.");
 
-	opt_args[{p+"-stats"}] =
-		{"",
-		 "display statistics module by module."};
+	args.add(
+		{p+"-threads", "t"},
+		tools::Integer(tools::Positive()),
+		"enable multi-threaded mode and specify the number of threads (0 means the maximum supported by the core.");
 
-	opt_args[{p+"-threads", "t"}] =
-		{"positive_int",
-		 "specify the number of threads used (0 or default is the number of CPU cores)."};
+	args.add(
+		{p+"-seed", "S"},
+		tools::Integer(tools::Positive()),
+		"seed used in the simulation to initialize the pseudo random generators in general.");
 
-	opt_args[{p+"-seed", "S"}] =
-		{"positive_int",
-		 "seed used in the simulation to initialize the pseudo random generators in general."};
-
-#ifdef ENABLE_MPI
-	opt_args[{p+"-mpi-comm"}] =
-		{"strictly_positive_int",
-		 "MPI communication frequency between the nodes (in millisec)."};
-#endif
-
-#ifdef ENABLE_COOL_BASH
-	opt_args[{p+"-no-colors"}] =
-		{"",
-		 "disable the colors in the shell."};
+#ifdef AFF3CT_MPI
+	args.add(
+		{p+"-mpi-comm"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"MPI communication frequency between the nodes (in millisec).");
 #endif
 }
 
 void Simulation::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	using namespace std::chrono;
 
 	Launcher::parameters::store(vals);
 
+	noise->store(vals);
+
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-snr-min",  "m"})) this->snr_min     =         std::stof(vals.at({p+"-snr-min",  "m"}));
-	if(exist(vals, {p+"-snr-max",  "M"})) this->snr_max     =         std::stof(vals.at({p+"-snr-max",  "M"}));
-	if(exist(vals, {p+"-pyber"        })) this->pyber       =                   vals.at({p+"-pyber"        });
-	if(exist(vals, {p+"-snr-step", "s"})) this->snr_step    =         std::stof(vals.at({p+"-snr-step", "s"}));
-	if(exist(vals, {p+"-stop-time"    })) this->stop_time   = seconds(std::stoi(vals.at({p+"-stop-time"    })));
-	if(exist(vals, {p+"-seed",     "S"})) this->global_seed =         std::stoi(vals.at({p+"-seed",     "S"}));
-	if(exist(vals, {p+"-stats"        })) this->statistics  = true;
-	if(exist(vals, {p+"-debug",    "d"})) this->debug       = true;
-	if(exist(vals, {p+"-debug-limit"}))
+	if(vals.exist({p+"-meta"            })) this->meta        =         vals.at    ({p+"-meta"          });
+	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int({p+"-stop-time"     }));
+	if(vals.exist({p+"-max-frame",   "n"})) this->max_frame   =         vals.to_int({p+"-max-frame", "n"});
+	if(vals.exist({p+"-seed",        "S"})) this->global_seed =         vals.to_int({p+"-seed",      "S"});
+	if(vals.exist({p+"-stats"           })) this->statistics  = true;
+	if(vals.exist({p+"-debug"           })) this->debug       = true;
+	if(vals.exist({p+"-crit-nostop"     })) this->crit_nostop = true;
+	if(vals.exist({p+"-debug-limit", "d"}))
 	{
 		this->debug = true;
-		this->debug_limit = std::stoi(vals.at({p+"-debug-limit"}));
+		this->debug_limit = vals.to_int({p+"-debug-limit", "d"});
 	}
-	if(exist(vals, {p+"-debug-hex"}))
+	if(vals.exist({p+"-debug-hex"}))
 	{
 		this->debug = true;
 		this->debug_hex = true;
 	}
-	if(exist(vals, {p+"-debug-prec"}))
+	if(vals.exist({p+"-debug-prec"}))
 	{
 		this->debug = true;
-		this->debug_precision = std::stoi(vals.at({p+"-debug-prec"}));
+		this->debug_precision = vals.to_int({p+"-debug-prec"});
 	}
 
-	this->snr_max += 0.0001f; // hack to avoid the miss of the last snr
+	if(vals.exist({p+"-threads", "t"}) && vals.to_int({p+"-threads", "t"}) > 0)
+		if(vals.exist({p+"-threads", "t"})) this->n_threads = vals.to_int({p+"-threads", "t"});
 
-	if(exist(vals, {p+"-threads", "t"}) && std::stoi(vals.at({p+"-threads", "t"})) > 0)
-		if(exist(vals, {p+"-threads", "t"})) this->n_threads = std::stoi(vals.at({p+"-threads", "t"}));
-
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	MPI_Comm_size(MPI_COMM_WORLD, &this->mpi_size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &this->mpi_rank);
 
-	if(exist(vals, {p+"-mpi-comm"})) this->mpi_comm_freq = milliseconds(std::stoi(vals.at({p+"-mpi-comm"})));
+	if(vals.exist({p+"-mpi-comm"})) this->mpi_comm_freq = milliseconds(vals.to_int({p+"-mpi-comm"}));
 
 	int max_n_threads_global;
 	int max_n_threads_local = this->n_threads;
@@ -156,19 +167,11 @@ void Simulation::parameters
 	this->local_seed = this->global_seed;
 #endif
 
-#ifdef ENABLE_COOL_BASH
-	// disable the cool bash mode for PyBER
-	if (!this->pyber.empty())
-		tools::enable_bash_tools = false;
-
-	if (exist(vals, {p+"-no-colors"})) tools::enable_bash_tools = false;
+#ifdef AFF3CT_MULTI_PREC
+	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
 
-#ifdef MULTI_PREC
-	if(exist(vals, {p+"-prec", "p"})) this->sim_prec = std::stoi(vals.at({p+"-prec", "p"}));
-#endif
-
-	if (this->debug && !(exist(vals, {p+"-threads", "t"}) && std::stoi(vals.at({p+"-threads", "t"})) > 0))
+	if (this->debug && !(vals.exist({p+"-threads", "t"}) && vals.to_int({p+"-threads", "t"}) > 0))
 		// check if debug is asked and if n_thread kept its default value
 		this->n_threads = 1;
 }
@@ -178,11 +181,10 @@ void Simulation::parameters
 {
 	Launcher::parameters::get_headers(headers);
 
+	noise->get_headers(headers, full);
+
 	auto p = this->get_prefix();
 
-	headers[p].push_back(std::make_pair("SNR min (m)",  std::to_string(this->snr_min)  + " dB"));
-	headers[p].push_back(std::make_pair("SNR max (M)",  std::to_string(this->snr_max)  + " dB"));
-	headers[p].push_back(std::make_pair("SNR step (s)", std::to_string(this->snr_step) + " dB"));
 	headers[p].push_back(std::make_pair("Seed", std::to_string(this->global_seed)));
 	headers[p].push_back(std::make_pair("Statistics", this->statistics ? "on" : "off"));
 	headers[p].push_back(std::make_pair("Debug mode", this->debug ? "on" : "off"));
@@ -193,7 +195,7 @@ void Simulation::parameters
 			headers[p].push_back(std::make_pair("Debug limit", std::to_string(this->debug_limit)));
 	}
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	headers[p].push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(this->mpi_comm_freq.count())));
 	headers[p].push_back(std::make_pair("MPI size",             std::to_string(this->mpi_size             )));
 #endif

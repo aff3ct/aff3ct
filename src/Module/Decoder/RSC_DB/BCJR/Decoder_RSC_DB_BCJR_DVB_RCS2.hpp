@@ -19,7 +19,7 @@ public:
 	                             const std::vector<std::vector<int>> &trellis,
 	                             const bool buffered_encoding = true,
 	                             const int n_frames = 1);
-	virtual ~Decoder_RSC_DB_BCJR_DVB_RCS2();
+	virtual ~Decoder_RSC_DB_BCJR_DVB_RCS2() = default;
 
 protected:
 	void __fwd_recursion(const R *sys, const R *par        );

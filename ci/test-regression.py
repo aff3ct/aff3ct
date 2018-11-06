@@ -4,12 +4,17 @@
 # ==================================================================== PACKAGES
 
 import os
+import signal
 import sys
 import math
 import time
 import pathlib
 import argparse
 import subprocess
+import numpy as np
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../refs/readers/")))
+import aff3ct_trace_reader as atr
 
 # ==================================================================== PACKAGES
 # =============================================================================
@@ -21,23 +26,36 @@ parser = argparse.ArgumentParser(prog='aff3ct-test-regression', formatter_class=
 parser.add_argument('--refs-path',      action='store', dest='refsPath',      type=str,   default="refs",                    help='Path to the references to re-simulate.')
 parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
 parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
-parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                     # choices=xrange(1,   +inf)
-parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility to verify a SNR point.')                                                    # choices=xrange(0.0, +inf)
-parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                       # choices=xrange(0,   +ing)
+parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                       # choices=xrange(1,   +inf)
+parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility on the difference between new vs ref to verify a noise point.')               # choices=xrange(1.0, +inf)
+parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                         # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
-parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per SNR point.')                            # choices=xrange(0,   +inf)
-parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,                       help='Rate of valid SNR points to passed a test.')                                            # choices=xrange(0.0, 1.0 )
-parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a SNR point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
+parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per noise point.')                            # choices=xrange(0,   +inf)
+parser.add_argument('--min-fe',         action='store', dest='minFE',         type=int,   default=50,                        help='Minimum number of frames errors to take into account the simulated noise point.')         # choices=xrange(0,   +inf)
+parser.add_argument('--weak-rate',      action='store', dest='weakRate',      type=float, default=0.8,                       help='Rate of valid noise points to passe a test.')                                             # choices=xrange(0.0, 1.0 )
+parser.add_argument('--max-snr-time',   action='store', dest='maxSNRTime',    type=int,   default=600,                       help='The maximum amount of time to spend to compute a noise point in seconds (0 = illimited)') # choices=xrange(0,   +inf)
 parser.add_argument('--verbose',        action='store', dest='verbose',       type=bool,  default=False,                     help='Enable the verbose mode.')
+parser.add_argument('--mpi-np',         action='store', dest='mpinp',         type=int,   default=0,                         help='Enable MPI run with the given number of process each running on "--n-threads" threads.')
+parser.add_argument('--mpi-host',       action='store', dest='mpihost',       type=str,   default="",                        help='Run MPI with the given hosts (file).')
 
 # supported file extensions (filename suffix)
-extensions = ['.txt', '.perf', '.data', '.dat']
+extensions     = ['.txt', '.perf', '.data', '.dat']
+NoiseTypeList  = ["ebn0", "esn0",  "rop",    "ep" ]
+NoiseUnityList = ["dB",   "dB",    "dB",     ""   ]
+
 
 # ================================================================== PARAMETERS
 # =============================================================================
 
 # =============================================================================
 # =================================================================== FUNCTIONS
+def format_e(n):
+	a = '%.2e' % n
+	return a
+
+def splitFloat(n):
+	s = format_e(n).split('e')
+	return [float(s[0]), int(s[1])]
 
 def getFileNames(currentPath, fileNames):
 	if os.path.isdir(currentPath):
@@ -68,7 +86,193 @@ def getFileNames(currentPath, fileNames):
 	else:
 		print("# (WW) The path '", currentPath, "' does not exist.")
 
-# -----
+class tableStats:
+	def __init__(self, tableCur, tableRef, sensibility, name, nData = 0):
+		if len(tableCur) > len(tableRef) : # can't have less ref than checked points
+			raise RuntimeError
+
+		self.tableCur        = tableCur
+		self.tableRef        = tableRef
+		self.name            = name
+		self.sensibility     = sensibility
+		self.minSensibility  = float('inf')
+		self.maxSensibility  = 0
+		self.sumSensibility  = 0
+		self.avgSensibility  = 0
+		self.rateSensibility = 0
+		self.valid           = 0
+
+		if nData == 0 or nData > len(tableCur) :
+			self.nData = len(tableCur)
+		else :
+			self.nData = nData
+
+		self.errorsList      = []
+		self.errorsPos       = []
+		self.errorsMessage   = []
+
+		self.makeStats()
+
+	def makeStats(self):
+		for i in range(self.nData):
+			c = splitFloat(self.tableCur[i])
+			r = splitFloat(self.tableRef[i])
+
+			# compute the distance between the two points normalized to the unity with the lowest power
+			if c[1] < r[1]:
+				pw = c[1]
+			else:
+				pw = r[1]
+
+			diff = math.fabs(self.tableCur[i] - self.tableRef[i]) * 10**(-pw)
+
+			if diff > self.sensibility:
+				self.errorsPos    .append(i)
+				self.errorsList   .append([self.tableCur[i], self.tableRef[i]])
+				self.errorsMessage.append(format_e(self.tableRef[i]))
+			else:
+				self.valid += 1
+				self.errorsMessage.append("")
+
+			self.sumSensibility += diff
+			self.minSensibility  = min(self.minSensibility, diff)
+			self.maxSensibility  = max(self.maxSensibility, diff)
+
+		if self.nData != 0:
+			self.avgSensibility = self.sumSensibility / float(self.nData)
+		else:
+			self.avgSensibility = 0
+
+		if self.sensibility != 0:
+			self.rateSensibility = (self.avgSensibility / self.sensibility) * 100
+		else:
+			self.rateSensibility = float(0)
+
+	def errorMessage(self, idx):
+		if len(self.errorsMessage) > idx and len(self.errorsMessage[idx]):
+			return self.name + "=" + self.errorsMessage[idx]
+		else:
+			return ""
+
+	def hasError(self):
+		return self.valid != self.nData
+
+	def passRate(self):
+		if self.nData == 0:
+			raise RuntimeError
+
+		return float(self.valid) / float(self.nData)
+
+class compStats:
+	def __init__(self, dataCur, dataRef, sensibility, asked_n_fe):
+		if not isinstance(dataCur, atr.aff3ctTraceReader) or not isinstance(dataRef, atr.aff3ctTraceReader) :
+			raise TypeError
+
+		self.nValidData = len(dataCur.getTrace("n_fe"))
+		for d in range(len(dataCur.getTrace("n_fe"))) :
+			if dataCur.getTrace("n_fe")[d] < asked_n_fe :
+				self.nValidData = d
+
+
+		self.dataCur  = dataCur
+		self.dataRef  = dataRef
+		self.dataList = []
+
+		noiseName = dataRef.NoiseLegendsList[dataRef.NoiseType]
+
+		if dataRef.NoiseType == "ebn0" or dataRef.NoiseType == "esn0":
+			self.dataList.append(tableStats(dataCur.getTrace("ebn0"   ), dataRef.getTrace("ebn0"   ), 0.0, "Eb/N0", self.nValidData))
+			self.dataList.append(tableStats(dataCur.getTrace("esn0"   ), dataRef.getTrace("esn0"   ), 0.0, "Es/N0", self.nValidData))
+		else:
+			self.dataList.append(tableStats(dataCur.getNoise(         ), dataRef.getNoise(         ), 0.0, noiseName, self.nValidData))
+
+
+		self.dataList.append(tableStats(dataCur.getTrace("fe_rate"), dataRef.getTrace("fe_rate"), sensibility, "FER"  , self.nValidData))
+		self.dataList.append(tableStats(dataCur.getTrace("be_rate"), dataRef.getTrace("be_rate"), sensibility, "BER"  , self.nValidData))
+		self.dataList.append(tableStats(dataCur.getTrace("mi"     ), dataRef.getTrace("mi"     ), sensibility, "MI"   , self.nValidData))
+
+	def errorMessage(self, idx):
+		message = ""
+		for d in self.dataList:
+			dm = d.errorMessage(idx)
+			if len(dm):
+				message += dm + " "
+
+		if len(message):
+			return "WRONG! " + message
+		else:
+			return ""
+
+	def getResumeTable(self):
+		message = ""
+		if len(self.dataCur.getNoise()) == 0:
+			return message
+
+		# get noise unity
+		unity = ""
+		idx = NoiseTypeList.index(self.dataRef.NoiseType)
+		if idx != -1:
+			unity = NoiseUnityList[idx]
+		if len(unity):
+			unity = " " + unity
+
+		message += "---- Details: Noise type = " + self.dataRef.NoiseType
+		message += ", first noise point = " + format_e(self.dataRef.getNoise()[0]) + unity
+		message += ", last noise point = " + format_e(self.dataRef.getNoise()[len(self.dataRef.getNoise()) -1]) + unity + "\n"
+		message += "---- -------|-------------------------|--------------|-------------------------------- \n"
+		message += "----   name |     ranges [first,last] | valid points | sensibility [avg,min,max,rate]  \n"
+		message += "---- -------|-------------------------|--------------|-------------------------------- \n"
+
+		for d in self.dataList:
+			if len(d.tableCur):
+				message += "----" + d.name.rjust(7) + " "
+				message += "| ["  + (format_e(d.tableCur[0])).rjust(10) + "," + (format_e(d.tableCur[len(d.tableCur) -1])).rjust(10) + "] "
+				message += "| "   + (str(d.valid) + "/" + str(d.nData)).rjust(12) + " "
+				message += "|  [ " + ("%.2f" % d.avgSensibility + ", %.2f" % d.minSensibility + ", %.2f" % d.maxSensibility + ", " + ("%.2f" % d.rateSensibility).rjust(6) + "%") + " ] "
+				message += "\n"
+
+		if self.hasError():
+			message += "---- -------|------------------------------------------------------------------------- \n"
+			message += "----   name | errors list {noise: new -> ref}                                          \n"
+			message += "---- -------|------------------------------------------------------------------------- \n"
+			for d in self.dataList:
+				if d.hasError():
+					message += "----" + d.name.rjust(7) + " | "
+					el = 0
+					for e in d.errorsList:
+						if el != 0 and (el % 2) == 0 :
+							message += "\n----        | "
+
+						message += "{" + format_e(self.dataCur.getNoise()[d.errorsPos[el]]) + ": " + format_e(e[0]) + " -> " + format_e(e[1]) + "}"
+
+						el += 1
+						if el < len(d.errorsList):
+							message += ", "
+					message += "\n"
+
+		return message
+
+	def hasError(self):
+		hasError = False
+		for d in self.dataList:
+			hasError = hasError or d.hasError()
+		return hasError
+
+	def passRate(self):
+		passRate = float(0)
+
+		nGoodList = 0
+		for d in self.dataList:
+			try:
+				passRate += d.passRate()
+				nGoodList += 1
+			except RuntimeError:
+				pass
+
+		if nGoodList:
+			return passRate / float(nGoodList)
+		else:
+			return passRate
 
 # =================================================================== FUNCTIONS
 # =============================================================================
@@ -97,6 +301,8 @@ print('# max fe         =', args.maxFE        )
 print('# weak rate      =', args.weakRate     )
 print('# max snr time   =', args.maxSNRTime   )
 print('# verbose        =', args.verbose      )
+print('# MPI nbr proc   =', args.mpinp        )
+print('# MPI host file  =', args.mpihost      )
 print('#')
 
 PathOrigin = os.getcwd()
@@ -118,233 +324,200 @@ if (len(fileNames) - (args.startId -1) > 0) :
 else:
 	print("# (WW) There is no simulation to replay.")
 
-failIds = []
-nErrors = 0
-testId = 0
+
+
+argsAFFECTcommand = []
+activateMPI = False
+if args.mpinp > 0 or args.mpihost != "":
+	activateMPI = True
+	argsAFFECTcommand += ["mpirun", "--map-by", "socket"]
+
+	if args.mpinp > 0:
+		argsAFFECTcommand += ["-np", str(args.mpinp)]
+
+	if args.mpihost != "":
+		argsAFFECTcommand += ["--hostfile", str(os.path.abspath(args.mpihost))]
+
+
+failIds     = []
+nErrors     = 0
+testId      = 0
+nIgnored    = 0
+nStrongPass = 0
+
+
 for fn in fileNames:
 	if testId < args.startId -1:
-		testId = testId + 1
+		testId += 1
 		continue
 
 	print("Test n°" + str(testId+1) + " / " + str(len(fileNames)) +
 	      " - " + fn, end="", flush=True);
 
-	# open the file in read mode (from the fileName "fn" and the path)
-	f = open(args.refsPath + "/" + fn, 'r')
+	# parse the reference file
+	simuRef = atr.aff3ctTraceReader(args.refsPath + "/" + fn)
 
-	# read all the lines from the current file f
-	lines = []
-	for line in f:
-		lines.append(line)
+	if simuRef.getMetadata("ci") == "off":
+		print(" - IGNORED.", end="\n");
+		testId   += 1
+		nIgnored += 1
+		continue
 
-	# get the main infos from the lines
-	runCommand = lines[1].strip()
 
-	currentSection = ""
-	idx = 0
-	simuRef = []
-	for l in lines:
-		# avoid the first lines and the comments
-		if idx > 6 and l.replace(" ", "") != ""   and \
-		               l.replace(" ", "") != "\n" and \
-		               l[0] != '#':
-			simuRef.append(l.strip().replace("||", "|").replace(" ", "").split("|"))
-		idx = idx +1
 
-	f.close()
-
-	# split the run command
-	argsAFFECT = [""]
-	idx = 0
-
-	new = 0
-	found_dashes = 0
-	for s in runCommand:
-		if found_dashes == 0:
-			if s == ' ':
-				if new == 0:
-					argsAFFECT.append("")
-					idx = idx + 1
-					new = 1
-
-			elif s == '\"':
-				if new == 0:
-					argsAFFECT.append("")
-					idx = idx + 1
-					new = 1
-				found_dashes = 1
-
-			else:
-				argsAFFECT[idx] += s
-				new = 0
-
-		else: # between dashes
-			if s == '\"':
-				argsAFFECT.append("")
-				idx = idx + 1
-				found_dashes = 0
-
-			else:
-				argsAFFECT[idx] += s
-
-	del argsAFFECT[idx]
-
-	argsAFFECT.append("--ter-freq")
-	argsAFFECT.append("0")
+	# get the command line to run
+	argsAFFECT = argsAFFECTcommand[:] # hard copy
+	argsAFFECT += simuRef.getSplitCommand()
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.getMetadata("title")]
 	if args.maxFE:
-		argsAFFECT.append("-e")
-		argsAFFECT.append(str(args.maxFE))
-	argsAFFECT.append("-t")
-	argsAFFECT.append(str(args.nThreads))
-	argsAFFECT.append("--sim-no-colors")
-	if args.maxSNRTime:
-		argsAFFECT.append("--sim-stop-time")
-		argsAFFECT.append(str(args.maxSNRTime))
+		argsAFFECT += ["-e", str(args.maxFE)]
 
+	if args.maxSNRTime:
+		argsAFFECT += ["--sim-stop-time", str(args.maxSNRTime)]
+
+	if activateMPI:
+		argsAFFECT += ["--sim-no-colors"]
+
+
+	noiseVals = ""
+	for n in range(len(simuRef.getNoise())):
+		if n != 0:
+			noiseVals += ",";
+		noiseVals += str(simuRef.getNoise()[n])
+
+
+	argsAFFECT += ["-R", noiseVals]
+
+	if simuRef.getNoiseType() == "ebn0":
+		argsAFFECT += ["-E", "EBN0"]
+	elif simuRef.getNoiseType() == "esn0":
+		argsAFFECT += ["-E", "ESN0"]
+
+
+	# run the tested simulator
 	os.chdir(args.buildPath)
 	startTime = time.time()
-	processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE,
-	                                             stderr=subprocess.PIPE)
-	(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+	try:
+		processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+	except KeyboardInterrupt:
+		os.kill(processAFFECT.pid, signal.SIGINT)
+		(stdoutAFFECT, stderrAFFECT) = processAFFECT.communicate()
+
+
 	returnCode = processAFFECT.returncode
 	elapsedTime = time.time() - startTime
 
 	errAndWarnMessages = stderrAFFECT.decode(encoding='UTF-8')
 
+
+	# compare ref and new results to check if the simulator is still OK
 	os.chdir(PathOrigin)
+
+	# get the results
+	stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
+	simuCur = atr.aff3ctTraceReader(stdOutput)
+
+	# result file
+	fRes = open(args.resultsPath + "/" + fn, 'w+')
 
 	if returnCode:
 		print(" - ABORTED.", end="\n");
 		if errAndWarnMessages:
 			print("---- Error message(s):", end="\n");
 			print(errAndWarnMessages)
-		nErrors = nErrors +1
+		nErrors += 1
 		failIds.append(testId +1)
-	else:
-		# begin to write the results into a file
-		fRes = open(args.resultsPath + "/" + fn, 'w+')
 
-		# parse the results
-		stdOutput = stdoutAFFECT.decode(encoding='UTF-8').split("\n")
-		outputAFFECTLines = []
-		simuCur = []
-		for l in stdOutput:
-			if l != "" and l[0] != '#' and l[0] != "(": # avoid the first lines and the comments
-				array = l.strip().replace("||", "|").replace(" ", "").split("|")
-				if (len(array) == 12 or len(array) == 9):
-					outputAFFECTLines.append(l)
-					simuCur.append(array)
-				else:
+		for i in range(len(stdOutput)):
+			fRes.write(stdOutput[i] + "\n")
+		for i in range(len(errAndWarnMessages)):
+			fRes.write(errAndWarnMessages[i] + "\n")
+
+	elif simuCur.getNoiseType() != simuRef.getNoiseType():
+		nErrors += 1
+		failIds.append(testId +1)
+
+		print(" - NOISE TYPE MISMATCH: " + simuRef.getNoiseType() + " vs " + simuCur.getNoiseType() + ".", end="\n");
+
+		for i in range(len(stdOutput)):
+			fRes.write(stdOutput[i] + "\n")
+		for i in range(len(errAndWarnMessages)):
+			fRes.write(errAndWarnMessages[i] + "\n")
+
+	else:
+		# parse the results to validate (or not) the BER/FER/MI performance
+		comp = compStats(simuCur, simuRef, args.sensibility, args.minFE)
+
+		# print the parameters directly and add to the wrong data the ref values
+		idxNoise = 0
+		i = 0
+		while( i < len(stdOutput)):
+			l = stdOutput[i]
+			if l.startswith("#"):
+				if "# End of the simulation." not in l:
 					fRes.write(l + "\n")
-			elif l != "" and l[0] == '#' and "# End of the simulation." not in l:
-				fRes.write(l + "\n")
+
+			else:
+				em = comp.errorMessage(idxNoise)
+				fRes.write(l + em + "\n")
+				idxNoise += 1
+
+			i += 1 # to next line
+
 
 		fRes.flush()
 
-		# validate (or not) the BER/FER performance
-		valid = 0
-		idx = 0
-		errorsList = []
-		sensibilityList = []
-		for ref in simuRef:
-			try:
-				cur_fe = int(simuCur[idx][4])
-			except IndexError: # no such line
-				break
-
-			if cur_fe < args.maxFE / 2:
-				break
-
-			numRef = float(ref[6][0:4])
-			powerRef = int(ref[6][6:8])
-			numCur = float(simuCur[idx][6][0:4])
-			powerCur = int(simuCur[idx][6][6:8])
-
-			if powerRef - powerCur != 0:
-				if powerRef > powerCur:
-					numCur = numCur * 10**(math.fabs(powerCur - powerRef))
-				else:
-					numRef = numRef * 10**(math.fabs(powerCur - powerRef))
-
-			absoluteNumDiff = math.fabs(numCur - numRef)
-			sensibilityList.append(absoluteNumDiff)
-			if absoluteNumDiff > args.sensibility:
-				fRes.write(outputAFFECTLines[idx] + "WRONG! FER=" + ref[6][0:8] + "\n")
-				errorsList.append([float(simuCur[idx][1][0:4]), numCur - numRef])
-			else:
-				valid = valid + 1
-				fRes.write(outputAFFECTLines[idx] + "\n")
-
-			idx = idx + 1
-
 		print(" - %.2f" %elapsedTime, "sec", end="")
-		if valid == idx:
+
+		passRate = comp.passRate()
+
+		if passRate == float(1):
 			print(" - STRONG PASSED.", end="\n");
-		elif idx != 0 and float(valid) / float(idx) >= args.weakRate:
-			print(" - WEAK PASSED.", end="\n");
+			nStrongPass += 1
+
+		elif passRate >= args.weakRate:
+			print(" - WEAK PASSED (rate = %.2f" %passRate, ").", end="\n");
+
 		else:
-			print(" - FAILED.", end="\n");
+			print(" - FAILED (rate = %.2f" %passRate, ").", end="\n");
 			nErrors = nErrors +1
 			failIds.append(testId +1)
 
 		if args.verbose:
-			avgSensibility = 0
-			minSensibility = 0
-			maxSensibility = 0
-			if idx == 0:
-				avgSensibility = 0
-			else:
-				avgSensibility = sum(sensibilityList) / float(idx)
-				minSensibility = min(sensibilityList)
-				maxSensibility = max(sensibilityList)
-			rateSensibility = (avgSensibility / args.sensibility) * 100
+			print (comp.getResumeTable())
 
-			print("---- Details: 'valid SNR points' = ", valid, "/", idx,
-			      ", 'sensibility [avg,min,max,rate]' = [ %.2f" %avgSensibility,
-			      ", %.2f" %minSensibility, ", %.2f" %maxSensibility,
-			      ", %.1f" % rateSensibility, "% ].", end="\n")
-			if idx > 0:
-				print("---- Details: 'first SNR point' =", float(simuCur[0][1][0:4]),
-				      "dB (@", simuCur[0][6][0:8],
-				      "FER), 'last SNR point' =", float(simuCur[idx -1][1][0:4]),
-				      "dB (@", simuCur[idx -1][6][0:8], "FER).")
-			if len(errorsList):
-				print("---- Details: 'errors list' = [", end="")
-				el = 0
-				for error in errorsList:
-					if error[1] > 0:
-						print("{", error[0], "dB -> +%.2f" %error[1], "}", end="")
-					else:
-						print("{", error[0], "dB -> %.2f" %error[1], "}", end="")
-					if el < len(errorsList) -1:
-						print(", ", end="")
-					el = el + 1
-				print("].", end="\n")
+	if not returnCode and errAndWarnMessages:
+		print("---- Warning message(s):", end="\n");
+		print(errAndWarnMessages)
+		fRes.write(errAndWarnMessages)
 
-		if errAndWarnMessages:
-			print("---- Warning message(s):", end="\n");
-			print(errAndWarnMessages)
+	fRes.write("# End of the simulation.\n")
+	fRes.close();
 
-		fRes.write("# End of the simulation.\n")
-		fRes.close();
-
-	testId = testId + 1
-
+	testId += 1
 
 if len(fileNames) - (args.startId -1) > 0:
+	print("\n# " + str(testId-nIgnored) + " tests executed: " + str(nStrongPass) + " strong passed tests, "
+		  + str(testId - nErrors - nIgnored - nStrongPass) + " weak passed tests, " + str(nErrors) + " failed tests", end="\n")
+	print("# " + str(nIgnored) + " files ignored.", end="\n")
+
 	if nErrors == 0:
-		print("# (II) All the tests PASSED !", end="\n");
+		print("\n# (II) All the tests PASSED !", end="");
 	else:
-		print("# (II) Some tests FAILED: ", end="")
+		print("\n# (II) FAILED tests: ", end="")
 		f = 0
 		for failId in failIds:
 			print("n°", end="")
 			print(str(failId), end="")
 			if f == len(failIds) -1:
-				print(".", end="\n")
+				print(".", end="")
 			else:
 				print(", ", end="")
 			f = f + 1
+
+	print("\n")
+
 
 sys.exit(nErrors);
 

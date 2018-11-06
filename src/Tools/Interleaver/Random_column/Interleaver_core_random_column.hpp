@@ -21,7 +21,7 @@ private:
 public:
 	Interleaver_core_random_column(const int size, const int n_cols, const int seed = 0, const bool uniform = false,
 	                               const int n_frames = 1);
-	virtual ~Interleaver_core_random_column();
+	virtual ~Interleaver_core_random_column() = default;
 
 protected:
 	void gen_lut(T *lut, const int frame_id);

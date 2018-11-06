@@ -24,8 +24,3 @@ domain_error
 : exception(filename, line_num, funcname, message.empty() ? default_message : message)
 {
 }
-
-domain_error
-::~domain_error() throw()
-{
-}

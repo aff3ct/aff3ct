@@ -99,8 +99,8 @@ struct RSC_BCJR_inter_init <signed char>
 
 template <typename B, typename R>
 Decoder_RSC_BCJR_inter<B,R>
-::Decoder_RSC_BCJR_inter(const int &K, 
-                         const std::vector<std::vector<int>> &trellis, 
+::Decoder_RSC_BCJR_inter(const int &K,
+                         const std::vector<std::vector<int>> &trellis,
                          const bool buffered_encoding,
                          const int n_frames)
 : Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, mipp::N<R>()),
@@ -108,7 +108,7 @@ Decoder_RSC_BCJR_inter<B,R>
 {
 	const std::string name = "Decoder_RSC_BCJR_inter";
 	this->set_name(name);
-	
+
 	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));
 	req_trellis[0] = { 0,  2,  4,  6,  0,  2,  4,  6};
 	req_trellis[1] = { 1, -1,  1, -1, -1,  1, -1,  1};
@@ -124,18 +124,12 @@ Decoder_RSC_BCJR_inter<B,R>
 	for (unsigned i = 0; i < req_trellis.size(); i++)
 		if (trellis[i] != req_trellis[i])
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Unsupported trellis.");
-		
+
 	for (auto i = 0; i < 8; i++) alpha[i].resize((K +4) * mipp::nElmtsPerRegister<R>());
 	for (auto i = 0; i < 8; i++) beta [i].resize((K +4) * mipp::nElmtsPerRegister<R>());
 	for (auto i = 0; i < 2; i++) gamma[i].resize((K +3) * mipp::nElmtsPerRegister<R>());
 
 	RSC_BCJR_inter_init<R>::apply(alpha, beta, K);
-}
-
-template <typename B, typename R>
-Decoder_RSC_BCJR_inter<B,R>
-::~Decoder_RSC_BCJR_inter()
-{
 }
 
 template <typename B, typename R>

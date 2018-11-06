@@ -6,7 +6,7 @@ namespace module
 {
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
-::Decoder_RSC_BCJR_seq_std(const int &K, 
+::Decoder_RSC_BCJR_seq_std(const int &K,
                            const std::vector<std::vector<int>> &trellis,
                            const bool buffered_encoding,
                            const int n_frames)
@@ -15,12 +15,6 @@ Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 {
 	const std::string name = "Decoder_RSC_BCJR_seq_std";
 	this->set_name(name);
-}
-
-template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
-Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
-::~Decoder_RSC_BCJR_seq_std()
-{
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
@@ -115,7 +109,7 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 			                   beta_prev[idx_b2[j]] - this->gamma[idx_g2[j]][i]);
 
 		RSC_BCJR_seq_normalize<R>::apply(beta_cur, i);
-	
+
 		for (auto j = 0; j < 8; j++)
 			beta_prev[j] = beta_cur[j];
 	}
@@ -141,7 +135,7 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 			                   beta_prev[idx_b2[j]] - this->gamma[idx_g2[j]][i]);
 
 		RSC_BCJR_seq_normalize<R>::apply(beta_cur, i);
-	
+
 		for (auto j = 0; j < 8; j++)
 			beta_prev[j] = beta_cur[j];
 	}

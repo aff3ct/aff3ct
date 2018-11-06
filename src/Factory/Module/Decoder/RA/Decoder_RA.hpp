@@ -6,6 +6,8 @@
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Encoder/Encoder.hpp"
 
+#include "Tools/auto_cloned_unique_ptr.hpp"
+
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
 #include "../Decoder.hpp"
@@ -26,11 +28,11 @@ struct Decoder_RA : public Decoder
 		int n_ite = 10;
 
 		// depending parameters
-		Interleaver::parameters *itl;
+		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_RA_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_RA::parameters* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;
@@ -38,19 +40,19 @@ struct Decoder_RA : public Decoder
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q> &itl,
-		                                 module::Encoder<B> *encoder = nullptr) const;
+		                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const module::Interleaver<Q> &itl, 
-	                                        module::Encoder<B> *encoder = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const module::Interleaver<Q> &itl,
+	                                        const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };
 }
 }

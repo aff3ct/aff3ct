@@ -1,6 +1,42 @@
 #!/bin/bash
 set -x
 
+if [ -z "$GIT_BRANCH" ]
+then
+	echo "Please define the 'GIT_BRANCH' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_TAG" ]
+then
+	echo "Please define the 'GIT_TAG' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_HASH" ]
+then
+	echo "Please define the 'GIT_HASH' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_DATE" ]
+then
+	echo "Please define the 'GIT_DATE' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_MESSAGE" ]
+then
+	echo "Please define the 'GIT_MESSAGE' environment variable."
+	exit 1
+fi
+
+if [ -z "$GIT_AUTHOR" ]
+then
+	echo "Please define the 'GIT_AUTHOR' environment variable."
+	exit 1
+fi
+
 REPO_WEB=aff3ct.github.io
 REPO_RESSOURCES=ressources
 git clone git@github.com:aff3ct/${REPO_WEB}.git
@@ -16,10 +52,14 @@ do
 	ZIP_NAME=$(echo "${BUILD/build/$PREFIX}")
 	ZIP_NAME=$(echo "${ZIP_NAME/\./\_}_$GIT_HASH.zip")
 
-	find $BUILD/inc/ -type f -follow -print | grep "[.]cpp$"    | xargs rm -f
-	find $BUILD/inc/ -type f -follow -print | grep "[.]cpp.in$" | xargs rm -f
-	cp -r conf $BUILD/
-	rm -rf $BUILD/conf/.git
+	find $BUILD/include/aff3ct/ -type f -follow -print | grep "[.]cpp$"    | xargs rm -f
+	find $BUILD/include/aff3ct/ -type f -follow -print | grep "[.]cpp.in$" | xargs rm -f
+	mkdir $BUILD/share
+	mkdir $BUILD/share/aff3ct
+	cp -r conf $BUILD/share/aff3ct/
+	cp -r refs $BUILD/share/aff3ct/
+	rm -rf $BUILD/share/aff3ct/conf/.git
+	rm -rf $BUILD/share/aff3ct/refs/.git
 
 	zip -r $ZIP_NAME $BUILD
 

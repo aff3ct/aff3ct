@@ -12,21 +12,15 @@ Source_AZCW<B>
 }
 
 template <typename B>
-Source_AZCW<B>
-::~Source_AZCW()
-{
-}
-
-template <typename B>
 void Source_AZCW<B>
 ::_generate(B *U_K, const int frame_id)
 {
 	std::fill(U_K, U_K + this->K, 0);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Source_AZCW<B_8>;
 template class aff3ct::module::Source_AZCW<B_16>;
 template class aff3ct::module::Source_AZCW<B_32>;

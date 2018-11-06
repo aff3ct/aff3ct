@@ -84,7 +84,7 @@ Decoder_RSC_BCJR_seq<B,R>
 {
 	const std::string name = "Decoder_RSC_BCJR_seq";
 	this->set_name(name);
-	
+
 	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));
 	req_trellis[0] = { 0,  2,  4,  6,  0,  2,  4,  6};
 	req_trellis[1] = { 1, -1,  1, -1, -1,  1, -1,  1};
@@ -106,12 +106,6 @@ Decoder_RSC_BCJR_seq<B,R>
 	for (auto i = 0; i < 2; i++) gamma[i].resize(K +3);
 
 	RSC_BCJR_seq_init<R>::apply(alpha, beta, K);
-}
-
-template <typename B, typename R>
-Decoder_RSC_BCJR_seq<B,R>
-::~Decoder_RSC_BCJR_seq()
-{
 }
 
 // =================================================================================================== sys/par division

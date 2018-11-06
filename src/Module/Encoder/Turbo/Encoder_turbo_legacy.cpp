@@ -20,7 +20,7 @@ Encoder_turbo_legacy<B>
 {
 	const std::string name = "Encoder_turbo_legacy";
 	this->set_name(name);
-	
+
 	if (N - 2 * sub_enc.tail_length() != 3 * K)
 	{
 		std::stringstream message;
@@ -118,9 +118,9 @@ bool Encoder_turbo_legacy<B>
 	return true;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_turbo_legacy<B_8>;
 template class aff3ct::module::Encoder_turbo_legacy<B_16>;
 template class aff3ct::module::Encoder_turbo_legacy<B_32>;

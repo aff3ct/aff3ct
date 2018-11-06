@@ -1,4 +1,4 @@
-#include <typeinfo>
+#include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -9,9 +9,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_BPSK<B,R,Q>
-::Modem_BPSK(const int N, const R sigma, const bool disable_sig2, const int n_frames)
-: Modem<B,R,Q>(N, sigma, n_frames),
-  disable_sig2(disable_sig2), two_on_square_sigma((R)2.0 / (sigma * sigma))
+::Modem_BPSK(const int N, const tools::Noise<R>& noise, const bool disable_sig2, const int n_frames)
+: Modem<B,R,Q>(N, noise, n_frames),
+  disable_sig2(disable_sig2),
+  two_on_square_sigma((R)0)
 {
 	const std::string name = "Modem_BPSK";
 	this->set_name(name);
@@ -21,17 +22,14 @@ Modem_BPSK<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem_BPSK<B,R,Q>
-::~Modem_BPSK()
-{
-}
-
-template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
-::set_sigma(const R sigma)
+::set_noise(const tools::Noise<R>& noise)
 {
-	Modem<B,R,Q>::set_sigma(sigma);
-	two_on_square_sigma = (R)2.0 / (sigma * sigma);
+	Modem<B,R,Q>::set_noise(noise);
+
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+
+	two_on_square_sigma = (R)2.0 / (this->n->get_noise() * this->n->get_noise());
 }
 
 template <typename B, typename R, typename Q>
@@ -58,11 +56,14 @@ void Modem_BPSK<B,R,Q>
 		std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 	else
 	{
-		if (typeid(R) != typeid(Q))
+		if (!std::is_same<R,Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-		if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+		if (!this->n->is_set())
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
 		auto size = (unsigned int)(this->N_fil);
 		for (unsigned i = 0; i < size; i++)
@@ -77,10 +78,10 @@ template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
 ::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (typeid(R) != typeid(Q))
+	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (disable_sig2)
@@ -91,6 +92,9 @@ void Modem_BPSK<B,R,Q>
 	}
 	else
 	{
+		if (!this->n->is_set())
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+
 		auto size = (unsigned int)(this->N_fil);
 		for (unsigned i = 0; i < size; i++)
 			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma * (Q)H_N[i];
@@ -112,9 +116,9 @@ void Modem_BPSK<B,R,Q>
 	this->_demodulate_wg(H_N, Y_N1, Y_N3, frame_id);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Modem_BPSK<B_8,R_8,R_8>;
 template class aff3ct::module::Modem_BPSK<B_8,R_8,Q_8>;
 template class aff3ct::module::Modem_BPSK<B_16,R_16,R_16>;
@@ -123,7 +127,7 @@ template class aff3ct::module::Modem_BPSK<B_32,R_32,R_32>;
 template class aff3ct::module::Modem_BPSK<B_64,R_64,R_64>;
 #else
 template class aff3ct::module::Modem_BPSK<B,R,Q>;
-#if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
+#if !defined(AFF3CT_32BIT_PREC) && !defined(AFF3CT_64BIT_PREC)
 template class aff3ct::module::Modem_BPSK<B,R,R>;
 #endif
 #endif

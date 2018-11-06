@@ -9,7 +9,7 @@ class Frozenbits_notifier
 {
 public:
 	Frozenbits_notifier();
-	virtual ~Frozenbits_notifier();
+	virtual ~Frozenbits_notifier() = default;
 
 	virtual void notify_frozenbits_update();
 };

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_turbo_fast.hpp"
@@ -26,12 +26,6 @@ Decoder_turbo_fast<B,R>
 {
 	const std::string name = "Decoder_turbo_fast";
 	this->set_name(name);
-}
-
-template <typename B, typename R>
-Decoder_turbo_fast<B,R>
-::~Decoder_turbo_fast()
-{
 }
 
 template <typename B, typename R>
@@ -222,7 +216,7 @@ void Decoder_turbo_fast<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_turbo_fast<B_8,Q_8>;
 template class aff3ct::module::Decoder_turbo_fast<B_16,Q_16>;
 template class aff3ct::module::Decoder_turbo_fast<B_32,Q_32>;

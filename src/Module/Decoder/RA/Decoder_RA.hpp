@@ -25,7 +25,7 @@ protected:
 
 public:
 	Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter, const int n_frames = 1);
-	virtual ~Decoder_RA();
+	virtual ~Decoder_RA() = default;
 
 protected:
 	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);

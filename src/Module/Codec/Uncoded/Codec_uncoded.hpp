@@ -16,7 +16,7 @@ class Codec_uncoded : public Codec_SISO_SIHO<B,Q>
 public:
 	Codec_uncoded(const factory::Encoder   ::parameters &enc_params,
 	              const factory::Decoder_NO::parameters &dec_params);
-	virtual ~Codec_uncoded();
+	virtual ~Codec_uncoded() = default;
 
 protected:
 	void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);

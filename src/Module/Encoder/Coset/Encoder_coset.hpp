@@ -22,9 +22,9 @@ private:
 
 public:
 	Encoder_coset(const int K, const int N, const int seed = 0, const int n_frames = 1);
-	virtual ~Encoder_coset();
+	virtual ~Encoder_coset() = default;
 
-	const std::vector<uint32_t>& get_info_bits_pos();
+	const std::vector<uint32_t>& get_info_bits_pos() const;
 
 	bool is_sys() const;
 

@@ -12,7 +12,7 @@ class Puncturer_NO : public Puncturer<B,Q>
 {
 public:
 	Puncturer_NO(const int K, const int N, const int n_frames = 1);
-	virtual ~Puncturer_NO();
+	virtual ~Puncturer_NO() = default;
 
 protected:
 	void   _puncture(const B *X_N1, B *X_N2, const int frame_id) const;

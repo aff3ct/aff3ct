@@ -20,11 +20,6 @@ Puncturer::parameters
 {
 }
 
-Puncturer::parameters
-::~parameters()
-{
-}
-
 Puncturer::parameters* Puncturer::parameters
 ::clone() const
 {
@@ -32,37 +27,42 @@ Puncturer::parameters* Puncturer::parameters
 }
 
 void Puncturer::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-info-bits", "K"}] =
-		{"strictly_positive_int",
-		 "useful number of bit transmitted (information bits)."};
+	args.add(
+		{p+"-info-bits", "K"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"useful number of bit transmitted (information bits).",
+		tools::arg_rank::REQ);
 
-	req_args[{p+"-fra-size", "N"}] =
-		{"strictly_positive_int",
-		 "total number of bit transmitted (frame size)."};
+	args.add(
+		{p+"-fra-size", "N"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"useful number of bit transmitted (information bits).",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "code puncturer type.",
-		 "NO"};
+	args.add(
+		{p+"-fra", "F"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("NO")),
+		"code puncturer type.");
 }
 
 void Puncturer::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-info-bits", "K"})) this->K        = std::stoi(vals.at({p+"-info-bits", "K"}));
-	if(exist(vals, {p+"-fra-size",  "N"})) this->N        = std::stoi(vals.at({p+"-fra-size",  "N"}));
-	if(exist(vals, {p+"-fra",       "F"})) this->n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
-	if(exist(vals, {p+"-type"          })) this->type     =           vals.at({p+"-type"          });
+	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int({p+"-info-bits", "K"});
+	if(vals.exist({p+"-fra-size",  "N"})) this->N        = vals.to_int({p+"-fra-size",  "N"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int({p+"-fra",       "F"});
+	if(vals.exist({p+"-type"          })) this->type     = vals.at    ({p+"-type"          });
 
 	this->N_cw = this->N;
 }
@@ -96,7 +96,7 @@ module::Puncturer<B,Q>* Puncturer
 }
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer::parameters::build<B_8 ,Q_8 >() const;
 template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer::parameters::build<B_16,Q_16>() const;
 template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer::parameters::build<B_32,Q_32>() const;

@@ -39,9 +39,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Scaling_factor()
-	{
-	}
+	virtual ~Scaling_factor() = default;
 };
 }
 }

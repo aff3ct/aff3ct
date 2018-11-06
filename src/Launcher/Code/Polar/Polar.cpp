@@ -18,32 +18,26 @@ Polar<L,B,R,Q>
 {
 	this->params.set_cdc(params_cdc);
 
-	if (typeid(L) == typeid(BFER_std<B,R,Q>))
+	if (std::is_same<L, BFER_std<B,R,Q>>::value)
 		params_cdc->enable_puncturer();
-}
-
-template <class L, typename B, typename R, typename Q>
-Polar<L,B,R,Q>
-::~Polar()
-{
 }
 
 template <class L, typename B, typename R, typename Q>
 void Polar<L,B,R,Q>
 ::get_description_args()
 {
-	params_cdc->get_description(this->req_args, this->opt_args);
+	params_cdc->get_description(this->args);
 
 	auto penc = params_cdc->enc->get_prefix();
-	this->opt_args.erase({penc+"-seed", "S"});
+	this->args.erase({penc+"-seed", "S"});
 
-	if (params_cdc->pct)
+	if (params_cdc->pct != nullptr)
 	{
 		auto ppct = params_cdc->pct->get_prefix();
-		this->opt_args.erase({ppct+"-fra", "F"});
+		this->args.erase({ppct+"-fra", "F"});
 	}
 	else
-		this->opt_args.erase({penc+"-fra", "F"});
+		this->args.erase({penc+"-fra", "F"});
 
 	L::get_description_args();
 }
@@ -52,9 +46,11 @@ template <class L, typename B, typename R, typename Q>
 void Polar<L,B,R,Q>
 ::store_args()
 {
-	params_cdc->store(this->ar.get_args());
+	auto dec_polar = dynamic_cast<factory::Decoder_polar::parameters*>(params_cdc->dec.get());
 
-	if (params_cdc->dec->simd_strategy == "INTER")
+	params_cdc->store(this->arg_vals);
+
+	if (dec_polar->simd_strategy == "INTER")
 		this->params.src->n_frames = mipp::N<Q>();
 
 	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
@@ -66,7 +62,7 @@ void Polar<L,B,R,Q>
 	L::store_args();
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
-	if (params_cdc->pct)
+	if (params_cdc->pct != nullptr)
 	params_cdc->pct->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;
 }
@@ -76,7 +72,7 @@ void Polar<L,B,R,Q>
 #include "Launcher/Simulation/EXIT.hpp"
 #include "Launcher/Simulation/BFER_std.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::Polar<aff3ct::launcher::EXIT    <B_32,R_32     >,B_32,R_32     >;
 template class aff3ct::launcher::Polar<aff3ct::launcher::EXIT    <B_64,R_64     >,B_64,R_64     >;
 template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_std<B_8, R_8, Q_8 >,B_8 ,R_8 ,Q_8 >;
@@ -88,7 +84,7 @@ template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_ite<B_16,R_16,Q_16
 template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_ite<B_32,R_32,Q_32>,B_32,R_32,Q_32>;
 template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_ite<B_64,R_64,Q_64>,B_64,R_64,Q_64>;
 #else
-#if defined(PREC_32_BIT) || defined(PREC_64_BIT)
+#if defined(AFF3CT_32BIT_PREC) || defined(AFF3CT_64BIT_PREC)
 template class aff3ct::launcher::Polar<aff3ct::launcher::EXIT    <B,R  >,B,R  >;
 #endif
 template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_std<B,R,Q>,B,R,Q>;

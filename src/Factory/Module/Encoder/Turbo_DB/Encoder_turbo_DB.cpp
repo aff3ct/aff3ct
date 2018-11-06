@@ -19,22 +19,10 @@ Encoder_turbo_DB::parameters
 	this->type = "TURBO_DB";
 }
 
-Encoder_turbo_DB::parameters
-::~parameters()
-{
-	if (itl != nullptr) { delete itl; itl = nullptr; }
-	if (sub != nullptr) { delete sub; sub = nullptr; }
-}
-
 Encoder_turbo_DB::parameters* Encoder_turbo_DB::parameters
 ::clone() const
 {
-	auto clone = new Encoder_turbo_DB::parameters(*this);
-
-	if (itl != nullptr) { clone->itl = itl->clone(); }
-	if (sub != nullptr) { clone->sub = sub->clone(); }
-
-	return clone;
+	return new Encoder_turbo_DB::parameters(*this);
 }
 
 std::vector<std::string> Encoder_turbo_DB::parameters
@@ -64,41 +52,45 @@ std::vector<std::string> Encoder_turbo_DB::parameters
 }
 
 void Encoder_turbo_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(req_args, opt_args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = itl->get_prefix();
+		auto pi = itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
-	opt_args[{p+"-type"}][2] += ", TURBO_DB";
+	tools::add_options(args.at({p+"-type"}), 0, "TURBO_DB");
 
-	opt_args[{p+"-json-path"}] =
-		{"string",
-		 "path to store the encoder and decoder traces formated in JSON."};
+	args.add(
+		{p+"-json-path"},
+		tools::File(tools::openmode::write),
+		"path to store the encoder and decoder traces formated in JSON.");
 
-	sub->get_description(req_args, opt_args);
+	sub->get_description(args);
 
 	auto ps = sub->get_prefix();
 
-	req_args.erase({ps+"-info-bits", "K"});
-	req_args.erase({ps+"-cw-size",   "N"});
-	opt_args.erase({ps+"-fra",       "F"});
-	opt_args.erase({ps+"-seed",      "S"});
-	opt_args.erase({ps+"-path"          });
-	opt_args.erase({ps+"-no-buff"       });
+	args.erase({ps+"-info-bits", "K"});
+	args.erase({ps+"-cw-size",   "N"});
+	args.erase({ps+"-fra",       "F"});
+	args.erase({ps+"-seed",      "S"});
+	args.erase({ps+"-path"          });
+	args.erase({ps+"-no-buff"       });
 }
 
 void Encoder_turbo_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
@@ -111,16 +103,19 @@ void Encoder_turbo_DB::parameters
 	this->N_cw = 2 * this->sub->N_cw - this->K;
 	this->R    = (float)this->K / (float)this->N_cw;
 
-	this->itl->core->size     = this->K >> 1;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->K >> 1;
+		this->itl->core->n_frames = this->n_frames;
 
-	itl->store(vals);
+		itl->store(vals);
 
-	if (this->sub->standard == "DVB-RCS1" && !exist(vals, {"itl-type"}))
-		this->itl->core->type = "DVB-RCS1";
+		if (this->sub->standard == "DVB-RCS1" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "DVB-RCS1";
 
-	if (this->sub->standard == "DVB-RCS2" && !exist(vals, {"itl-type"}))
-		this->itl->core->type = "DVB-RCS2";
+		if (this->sub->standard == "DVB-RCS2" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "DVB-RCS2";
+	}
 }
 
 void Encoder_turbo_DB::parameters
@@ -128,7 +123,8 @@ void Encoder_turbo_DB::parameters
 {
 	Encoder::parameters::get_headers(headers, full);
 
-	itl->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -161,7 +157,7 @@ module::Encoder_turbo_DB<B>* Encoder_turbo_DB
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_turbo_DB<B_8 >* aff3ct::factory::Encoder_turbo_DB::parameters::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&, aff3ct::module::Encoder_RSC_DB<B_8 >&) const;
 template aff3ct::module::Encoder_turbo_DB<B_16>* aff3ct::factory::Encoder_turbo_DB::parameters::build<B_16>(const aff3ct::module::Interleaver<B_16>&, aff3ct::module::Encoder_RSC_DB<B_16>&) const;
 template aff3ct::module::Encoder_turbo_DB<B_32>* aff3ct::factory::Encoder_turbo_DB::parameters::build<B_32>(const aff3ct::module::Interleaver<B_32>&, aff3ct::module::Encoder_RSC_DB<B_32>&) const;

@@ -1,5 +1,8 @@
 #include "Codec_repetition.hpp"
 
+#include "Factory/Module/Encoder/Repetition/Encoder_repetition.hpp"
+#include "Factory/Module/Decoder/Repetition/Decoder_repetition.hpp"
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -9,71 +12,54 @@ const std::string aff3ct::factory::Codec_repetition_prefix = "cdc";
 Codec_repetition::parameters
 ::parameters(const std::string &prefix)
 : Codec     ::parameters(Codec_repetition_name, prefix),
-  Codec_SIHO::parameters(Codec_repetition_name, prefix),
-  enc(new Encoder_repetition::parameters("enc")),
-  dec(new Decoder_repetition::parameters("dec"))
+  Codec_SIHO::parameters(Codec_repetition_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-}
-
-Codec_repetition::parameters
-::~parameters()
-{
-	if (enc != nullptr) { delete enc; enc = nullptr; }
-	if (dec != nullptr) { delete dec; dec = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
+	Codec::parameters::set_enc(new Encoder_repetition::parameters("enc"));
+	Codec::parameters::set_dec(new Decoder_repetition::parameters("dec"));
 }
 
 Codec_repetition::parameters* Codec_repetition::parameters
 ::clone() const
 {
-	auto clone = new Codec_repetition::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-
-	return clone;
+	return new Codec_repetition::parameters(*this);
 }
 
 void Codec_repetition::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
 
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-no-buff"       });
-	opt_args.erase({pdec+"-fra",       "F"});
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-no-buff"       });
+	args.erase({pdec+"-fra",       "F"});
 }
 
 void Codec_repetition::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SIHO::parameters::store(vals);
 
+	auto enc_r = dynamic_cast<Encoder_repetition::parameters*>(enc.get());
+	auto dec_r = dynamic_cast<Decoder_repetition::parameters*>(dec.get());
+
 	enc->store(vals);
 
-	this->dec->K        = this->enc->K;
-	this->dec->N_cw     = this->enc->N_cw;
-	this->dec->buffered = this->enc->buffered;
-	this->dec->n_frames = this->enc->n_frames;
+	dec_r->K        = enc_r->K;
+	dec_r->N_cw     = enc_r->N_cw;
+	dec_r->buffered = enc_r->buffered;
+	dec_r->n_frames = enc_r->n_frames;
 
 	dec->store(vals);
 
-	this->K    = this->enc->K;
-	this->N_cw = this->enc->N_cw;
-	this->N    = this->enc->N_cw;
+	K    = enc->K;
+	N_cw = enc->N_cw;
+	N    = enc->N_cw;
 }
 
 void Codec_repetition::parameters
@@ -89,9 +75,8 @@ template <typename B, typename Q>
 module::Codec_repetition<B,Q>* Codec_repetition::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_repetition<B,Q>(*enc, *dec);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_repetition<B,Q>(dynamic_cast<const Encoder_repetition::parameters&>(*enc),
+	                                         dynamic_cast<const Decoder_repetition::parameters&>(*dec));
 }
 
 template <typename B, typename Q>
@@ -103,7 +88,7 @@ module::Codec_repetition<B,Q>* Codec_repetition
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Codec_repetition<B_8 ,Q_8 >* aff3ct::factory::Codec_repetition::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
 template aff3ct::module::Codec_repetition<B_16,Q_16>* aff3ct::factory::Codec_repetition::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
 template aff3ct::module::Codec_repetition<B_32,Q_32>* aff3ct::factory::Codec_repetition::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;

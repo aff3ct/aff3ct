@@ -21,7 +21,7 @@ public:
 	               const std::string &funcname = exception::empty_string,
 	               const std::string &message = exception::empty_string) throw();
 
-	virtual ~overflow_error() throw();
+	virtual ~overflow_error() throw() = default;
 };
 }
 }

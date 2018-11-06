@@ -15,7 +15,7 @@ private:
 
 public:
 	Interleaver_core_ARP_DVB_RCS2(const int size, const int n_frames = 1);
-	virtual ~Interleaver_core_ARP_DVB_RCS2();
+	virtual ~Interleaver_core_ARP_DVB_RCS2() = default;
 
 protected:
 	void gen_lut(T *lut, const int frame_id);

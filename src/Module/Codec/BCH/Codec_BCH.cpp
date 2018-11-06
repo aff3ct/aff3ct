@@ -1,6 +1,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Math/utils.h"
 
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
@@ -13,13 +14,13 @@ template <typename B, typename Q>
 Codec_BCH<B,Q>
 ::Codec_BCH(const factory::Encoder_BCH::parameters &enc_params,
             const factory::Decoder_BCH::parameters &dec_params)
-: Codec     <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  GF_poly(dec_params.K, dec_params.N_cw, dec_params.t)
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+  Codec_SIHO_HIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+  GF_poly(tools::next_power_of_2(dec_params.N_cw) -1, dec_params.t)
 {
 	const std::string name = "Codec_BCH";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -64,18 +65,15 @@ Codec_BCH<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	this->set_decoder_siho(factory::Decoder_BCH::build<B,Q>(dec_params, GF_poly, this->get_encoder()));
-}
+	if (dec_params.implem == "GENIUS")
+		this->get_encoder()->set_memorizing(true);
 
-template <typename B, typename Q>
-Codec_BCH<B,Q>
-::~Codec_BCH()
-{
+	this->set_decoder_siho_hiho(factory::Decoder_BCH::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder()));
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Codec_BCH<B_8,Q_8>;
 template class aff3ct::module::Codec_BCH<B_16,Q_16>;
 template class aff3ct::module::Codec_BCH<B_32,Q_32>;

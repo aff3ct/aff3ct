@@ -4,7 +4,7 @@
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
-#include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
+#include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 
 #include "Factory/Module/Encoder/Polar/Encoder_polar.hpp"
 #include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
@@ -24,10 +24,12 @@ protected:
 	const bool adaptive_fb;
 	std::vector<bool> frozen_bits; // known bits (alias frozen bits) are set to true
 	const bool generated_decoder;
-	tools::Frozenbits_generator *fb_generator;
-	Puncturer_polar_wangliu<B,Q> *puncturer_wangliu;
-	tools::Frozenbits_notifier *fb_decoder;
-	tools::Frozenbits_notifier *fb_encoder;
+
+	std::unique_ptr<tools::Frozenbits_generator>    fb_generator;
+
+	Puncturer_polar_shortlast<B,Q>*  puncturer_shortlast;
+	tools::Frozenbits_notifier*      fb_decoder;
+	tools::Frozenbits_notifier*      fb_encoder;
 
 public:
 	Codec_polar(const factory::Frozenbits_generator::parameters &fb_par,
@@ -35,9 +37,9 @@ public:
 	            const factory::Decoder_polar       ::parameters &dec_par,
 	            const factory::Puncturer_polar     ::parameters *pct_par = nullptr,
 	            CRC<B>* crc = nullptr);
-	virtual ~Codec_polar();
+	virtual ~Codec_polar() = default;
 
-	void set_sigma(const float sigma);
+	virtual void set_noise(const tools::Noise<float>& noise);
 
 	std::vector<bool>& get_frozen_bits();
 

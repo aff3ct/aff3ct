@@ -15,12 +15,6 @@ Interleaver_core_random<T>
 }
 
 template <typename T>
-Interleaver_core_random<T>
-::~Interleaver_core_random()
-{
-}
-
-template <typename T>
 void Interleaver_core_random<T>
 ::gen_lut(T *lut, const int frame_id)
 {

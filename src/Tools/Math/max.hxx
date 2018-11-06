@@ -113,5 +113,39 @@ inline R min_star(const R a, const R b)
 {
 	return std::min(a, b) + (R)std::log1p(std::exp(-(a + b))) - (R)std::log1p(std::exp(-std::abs(a - b)));
 }
+
+template <typename R>
+inline mipp::Reg<R> min_i(const mipp::Reg<R> a, const mipp::Reg<R> b)
+{
+	return mipp::min(a, b);
+}
+
+template <typename R>
+inline mipp::Reg<R> correction_linear2_i(const mipp::Reg<R> x)
+{
+	auto res =             x * (R)-0.1875 +              (R)0.5000;
+	     res = mipp::blend(                 mipp::Reg<R>((R)0.0000), res, x > mipp::Reg<R>((R)2.625));
+	     res = mipp::blend(x * (R)-0.3750 +              (R)0.6825,  res, x < mipp::Reg<R>((R)1.000));
+
+	return res;
+}
+
+template <typename R>
+inline mipp::Reg<R> min_star_linear2_i(const mipp::Reg<R> a, const mipp::Reg<R> b)
+{
+	return mipp::min(a, b) + correction_linear2_i(a + b) - correction_linear2_i(mipp::abs(a - b));
+}
+
+template <typename R>
+inline mipp::Reg<R> min_star_i(const mipp::Reg<R> a, const mipp::Reg<R> b)
+{
+	auto zero = mipp::Reg<R>((R)0);
+	auto one = mipp::Reg<R>((R)1);
+
+	auto log1pp = mipp::log(one + mipp::exp(zero -          (a + b)));
+	auto log1pm = mipp::log(one + mipp::exp(zero - mipp::abs(a - b)));
+
+	return mipp::min(a, b) + log1pp - log1pm;
+}
 }
 }

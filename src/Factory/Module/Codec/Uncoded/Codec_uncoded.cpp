@@ -1,5 +1,7 @@
 #include "Codec_uncoded.hpp"
 
+#include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -9,80 +11,60 @@ const std::string aff3ct::factory::Codec_uncoded_prefix = "cdc";
 Codec_uncoded::parameters
 ::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_uncoded_name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_uncoded_name, prefix),
-  enc(new Encoder::parameters("enc")),
-  dec(new Decoder_NO::parameters("dec"))
+  Codec_SISO_SIHO::parameters(Codec_uncoded_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-}
-
-Codec_uncoded::parameters
-::~parameters()
-{
-	if (enc != nullptr) { delete enc; enc = nullptr; }
-	if (dec != nullptr) { delete dec; dec = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
+	Codec::parameters::set_enc(new Encoder   ::parameters("enc"));
+	Codec::parameters::set_dec(new Decoder_NO::parameters("dec"));
 }
 
 Codec_uncoded::parameters* Codec_uncoded::parameters
 ::clone() const
 {
-	auto clone = new Codec_uncoded::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-
-	return clone;
+	return new Codec_uncoded::parameters(*this);
 }
 
 void Codec_uncoded::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(req_args, opt_args);
+	Codec_SISO_SIHO::parameters::get_description(args);
 
-	enc->get_description(req_args, opt_args);
-	dec->get_description(req_args, opt_args);
+	enc->get_description(args);
+	dec->get_description(args);
 
 	auto penc = enc->get_prefix();
 	auto pdec = dec->get_prefix();
 
-	opt_args.erase({penc+"-type"          });
-	req_args.erase({penc+"-cw-size",   "N"});
-	opt_args.erase({penc+"-path"          });
-	opt_args.erase({penc+"-seed",      "S"});
-	req_args.erase({pdec+"-cw-size",   "N"});
-	req_args.erase({pdec+"-info-bits", "K"});
-	opt_args.erase({pdec+"-fra",       "F"});
+	args.erase({penc+"-type"          });
+	args.erase({penc+"-cw-size",   "N"});
+	args.erase({penc+"-path"          });
+	args.erase({penc+"-seed",      "S"});
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
+	args.erase({pdec+"-fra",       "F"});
 }
 
 void Codec_uncoded::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Codec_SISO_SIHO::parameters::store(vals);
 
-	this->enc->type = "NO";
+	enc->type = "NO";
 
 	enc->store(vals);
 
-	this->enc->N_cw     = this->enc->K;
+	enc->N_cw     = enc->K;
 
-	this->dec->type     = "NONE";
-	this->dec->implem   = "HARD_DECISION";
-	this->dec->K        = this->enc->K;
-	this->dec->N_cw     = this->enc->N_cw;
-	this->dec->n_frames = this->enc->n_frames;
+	dec->type     = "NONE";
+	dec->implem   = "HARD_DECISION";
+	dec->K        = enc->K;
+	dec->N_cw     = enc->N_cw;
+	dec->n_frames = enc->n_frames;
 
 	dec->store(vals);
 
-	this->K    = this->enc->K;
-	this->N_cw = this->enc->N_cw;
-	this->N    = this->enc->N_cw;
+	K    = enc->K;
+	N_cw = enc->N_cw;
+	N    = enc->N_cw;
 }
 
 void Codec_uncoded::parameters
@@ -98,9 +80,7 @@ template <typename B, typename Q>
 module::Codec_uncoded<B,Q>* Codec_uncoded::parameters
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_uncoded<B,Q>(*enc, *dec);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_uncoded<B,Q>(*enc, dynamic_cast<const Decoder_NO::parameters&>(*dec));
 }
 
 template <typename B, typename Q>
@@ -112,7 +92,7 @@ module::Codec_uncoded<B,Q>* Codec_uncoded
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Codec_uncoded<B_8 ,Q_8 >* aff3ct::factory::Codec_uncoded::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
 template aff3ct::module::Codec_uncoded<B_16,Q_16>* aff3ct::factory::Codec_uncoded::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
 template aff3ct::module::Codec_uncoded<B_32,Q_32>* aff3ct::factory::Codec_uncoded::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;

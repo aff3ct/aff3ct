@@ -9,36 +9,16 @@
 
 using namespace aff3ct::tools;
 
-Galois
-::Galois(const int& K, const int& N)
- : K(K), N(N), m((int)std::ceil(std::log2(N))), alpha_to(N +1), index_of(N +1), p(m +1, 0)
+template <typename I>
+Galois<I>
+::Galois(const int& N)
+ : N(N), m((int)std::ceil(std::log2(N))), alpha_to(N +1), index_of(N +1), p(m +1, 0)
 {
-	if (K <= 0)
-	{
-		std::stringstream message;
-		message << "'K' has to be greater than 0 ('K' = " << K << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (N <= 0)
 	{
 		std::stringstream message;
 		message << "'N' has to be greater than 0 ('N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (K > N)
-	{
-		std::stringstream message;
-		message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (N >= 1048576) // 2^20
-	{
-		std::stringstream message;
-		message << "'N' has to be smaller than 1048576 ('N' = " << N << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (m != (int)std::ceil(std::log2(N +1)))
@@ -55,6 +35,13 @@ Galois
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (m > 20)
+	{
+		std::stringstream message;
+		message << "'m' is supported until 20 ('m' = " << m << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != ((1 << m) -1))
 	{
 		std::stringstream message;
@@ -62,53 +49,48 @@ Galois
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	Select_Polynomial();
-	Generate_GF();
+	select_polynomial();
+	generate_gf();
 }
 
-Galois
-::~Galois()
-{
-}
-
-int Galois
-::get_K() const
-{
-	return K;
-}
-
-int Galois
+template <typename I>
+int Galois<I>
 ::get_N() const
 {
 	return N;
 }
 
-int Galois
+template <typename I>
+int Galois<I>
 ::get_m() const
 {
 	return m;
 }
 
-const std::vector<int>& Galois
+template <typename I>
+const std::vector<I>& Galois<I>
 ::get_alpha_to() const
 {
 	return alpha_to;
 }
 
-const std::vector<int>& Galois
+template <typename I>
+const std::vector<I>& Galois<I>
 ::get_index_of() const
 {
 	return index_of;
 }
 
-const std::vector<int>& Galois
+template <typename I>
+const std::vector<I>& Galois<I>
 ::get_p() const
 {
 	return p;
 }
 
-void Galois
-::Select_Polynomial()
+template <typename I>
+void Galois<I>
+::select_polynomial()
 {
 	p[0] = p[m] = 1;
 	if      (m ==  2) p[1] = 1;
@@ -132,8 +114,9 @@ void Galois
 	else if (m == 20) p[3] = 1;
 }
 
-void Galois
-::Generate_GF()
+template <typename I>
+void Galois<I>
+::generate_gf()
 {
 	int i, mask;
 
@@ -160,3 +143,10 @@ void Galois
 	}
 	index_of[0] = -1;
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+template class aff3ct::tools::Galois<B_8 >;
+template class aff3ct::tools::Galois<B_16>;
+template class aff3ct::tools::Galois<B_32>;
+template class aff3ct::tools::Galois<B_64>;

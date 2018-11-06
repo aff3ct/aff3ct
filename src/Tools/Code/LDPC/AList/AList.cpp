@@ -5,6 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
+#include "Tools/Display/rang_format/rang_format.h"
 
 #include "AList.hpp"
 
@@ -20,26 +21,42 @@ Sparse_matrix AList
 	{
 		return AList::read_format1(stream);
 	}
-	catch (std::exception const&)
+	catch (std::exception const& e1)
 	{
+		auto save = exception::no_backtrace;
+		exception::no_backtrace = true;
+
+		std::stringstream message;
+		message << "The given stream does not refer to a AList format file: ";
+		message << std::endl << e1.what();
+		exception::no_backtrace = save;
+
 		try
 		{
 			stream.clear();
 			stream.seekg(init_pos);
 			return AList::read_format2(stream);
 		}
-		catch (std::exception const&)
+		catch (std::exception const& e2)
 		{
+			auto save = exception::no_backtrace;
+			exception::no_backtrace = true;
+			message << std::endl << e2.what();
+			exception::no_backtrace = save;
+
 			try
 			{
 				stream.clear();
 				stream.seekg(init_pos);
 				return AList::read_format3(stream);
 			}
-			catch (std::exception const&)
+			catch (std::exception const& e3)
 			{
-				std::stringstream message;
-				message << "The given stream does not refer to a AList format file.";
+				auto save = exception::no_backtrace;
+				exception::no_backtrace = true;
+				message << std::endl << e3.what();
+				exception::no_backtrace = save;
+
 				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 		}
@@ -47,7 +64,7 @@ Sparse_matrix AList
 }
 
 void AList
-::write(const Sparse_matrix &matrix, std::ostream &stream)
+::write(const Sparse_matrix &matrix, std::ostream &stream, bool zero_padding)
 {
 	stream << matrix.get_n_rows()          << " " << matrix.get_n_cols()          << std::endl << std::endl;
 	stream << matrix.get_rows_max_degree() << " " << matrix.get_cols_max_degree() << std::endl << std::endl;
@@ -65,8 +82,12 @@ void AList
 		unsigned i;
 		for (i = 0; i < r.size(); i++)
 			stream << (r[i] +1) << " ";
-		for (; i < matrix.get_rows_max_degree(); i++)
+		if (zero_padding)
+			for (; i < matrix.get_rows_max_degree(); i++)
+				stream << 0 << " ";
+		else if (r.size() == 0)
 			stream << 0 << " ";
+
 		stream << std::endl;
 	}
 	stream << std::endl;
@@ -76,10 +97,31 @@ void AList
 		unsigned i;
 		for (i = 0; i < c.size(); i++)
 			stream << (c[i] +1) << " ";
-		for (; i < matrix.get_cols_max_degree(); i++)
+		if (zero_padding)
+			for (; i < matrix.get_cols_max_degree(); i++)
+				stream << 0 << " ";
+		else if (c.size() == 0)
 			stream << 0 << " ";
 		stream << std::endl;
 	}
+}
+
+void AList
+::read_matrix_size(std::istream &stream, int& H, int& N)
+{
+	std::string line;
+
+	tools::getline(stream, line);
+	auto values = split(line);
+	if (values.size() < 2)
+	{
+		std::stringstream message;
+		message << "'values.size()' has to be greater than 1 ('values.size()' = " << values.size() << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	N = std::stoi(values[0]);
+	H = std::stoi(values[1]);
 }
 
 std::vector<unsigned> AList
@@ -289,8 +331,9 @@ Sparse_matrix AList
 ::read_format2(std::istream &stream)
 {
 	std::string line;
+	bool warning_message_displayed = false;
 
-	getline(stream, line);
+	tools::getline(stream, line);
 	auto values = split(line);
 	if (values.size() < 2)
 	{
@@ -314,7 +357,7 @@ Sparse_matrix AList
 
 	Sparse_matrix matrix(n_rows, n_cols);
 
-	getline(stream, line);
+	tools::getline(stream, line);
 	values = split(line);
 	if (values.size() < 2)
 	{
@@ -334,7 +377,7 @@ Sparse_matrix AList
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	getline(stream, line);
+	tools::getline(stream, line);
 	values = split(line);
 	if (values.size() < n_rows)
 	{
@@ -348,18 +391,24 @@ Sparse_matrix AList
 	for (unsigned i = 0; i < n_rows; i++)
 	{
 		unsigned n_connections = std::stoi(values[i]);
-		if (n_connections > 0 && n_connections <= rows_max_degree)
+		if (!warning_message_displayed && n_connections == 0)
+		{
+			std::clog << rang::tag::warning << "Found in Alist file connections of degree 0!" << std::endl;
+			warning_message_displayed = true;
+		}
+
+		if (n_connections <= rows_max_degree)
 			rows_degree[i] = n_connections;
 		else
 		{
 			std::stringstream message;
-			message << "'n_connections' has to be greater than 0 and smaller than 'rows_max_degree' "
+			message << "'n_connections' has to be smaller than 'rows_max_degree' "
 			        << "('n_connections' = " << n_connections << ", 'rows_max_degree' = " << rows_max_degree << ").";
 			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 
-	getline(stream, line);
+	tools::getline(stream, line);
 	values = split(line);
 	if (values.size() < n_cols)
 	{
@@ -373,10 +422,10 @@ Sparse_matrix AList
 	for (unsigned i = 0; i < n_cols; i++)
 	{
 		unsigned n_connections = std::stoi(values[i]);
-		if (!(n_connections > 0 && n_connections <= cols_max_degree))
+		if (!(n_connections <= cols_max_degree))
 		{
 			std::stringstream message;
-			message << "'n_connections' has to be greater than 0 and smaller than 'cols_max_degree' "
+			message << "'n_connections' has to be smaller than 'cols_max_degree' "
 			        << "('n_connections' = " << n_connections << ", 'cols_max_degree' = " << cols_max_degree << ").";
 			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
@@ -386,7 +435,7 @@ Sparse_matrix AList
 
 	for (unsigned i = 0; i < n_rows; i++)
 	{
-		getline(stream, line);
+		tools::getline(stream, line);
 		values = split(line);
 
 		if (values.size() < rows_degree[i])
@@ -418,7 +467,7 @@ Sparse_matrix AList
 	// TODO: this verif. is time consuming
 //	for (unsigned i = 0; i < n_cols; i++)
 //	{
-//		getline(stream, line);
+//		tools::getline(stream, line);
 //		values = split(line);
 //
 //		if (values.size() < cols_degree[i])
@@ -466,7 +515,7 @@ Sparse_matrix AList
 {
 	std::string line;
 
-	getline(stream, line);
+	tools::getline(stream, line);
 	auto values = split(line);
 	if (values.size() < 2)
 	{
@@ -490,7 +539,7 @@ Sparse_matrix AList
 
 	Sparse_matrix matrix(n_rows, n_cols);
 
-	getline(stream, line);
+	tools::getline(stream, line);
 	values = split(line);
 	if (values.size() < n_rows)
 	{
@@ -517,7 +566,7 @@ Sparse_matrix AList
 
 	for (unsigned i = 0; i < n_cols; i++)
 	{
-		getline(stream, line);
+		tools::getline(stream, line);
 		values = split(line);
 
 		if (values.size() < cols_degree[i])

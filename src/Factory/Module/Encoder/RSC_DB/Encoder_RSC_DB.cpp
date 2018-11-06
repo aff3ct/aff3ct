@@ -17,11 +17,6 @@ Encoder_RSC_DB::parameters
 	this->type = "RSC_DB";
 }
 
-Encoder_RSC_DB::parameters
-::~parameters()
-{
-}
-
 Encoder_RSC_DB::parameters* Encoder_RSC_DB::parameters
 ::clone() const
 {
@@ -29,36 +24,36 @@ Encoder_RSC_DB::parameters* Encoder_RSC_DB::parameters
 }
 
 void Encoder_RSC_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(req_args, opt_args);
+	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type"}][2] += ", RSC_DB";
+	tools::add_options(args.at({p+"-type"}), 0, "RSC_DB");
 
-	opt_args[{p+"-no-buff"}] =
-		{"",
-		 "disable the buffered encoding."};
+	args.add(
+		{p+"-std"},
+		tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")),
+		"select a standard and set automatically some parameters (overwritten with user given arguments).");
 
-	opt_args[{p+"-std"}] =
-		{"string",
-		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
-		 "DVB-RCS1, DVB-RCS2"};
+	args.add(
+		{p+"-no-buff"},
+		tools::None(),
+		"disable the buffered encoding.");
 }
 
 void Encoder_RSC_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-no-buff"})) this->buffered = false;
-
-	if(exist(vals, {p+"-std"})) this->standard = vals.at({p+"-std"});
+	if(vals.exist({p+"-no-buff"})) this->buffered = false;
+	if(vals.exist({p+"-std"    })) this->standard = vals.at({p+"-std"});
 
 	this->N_cw = 2 * this->K;
 	this->R    = (float)this->K / (float)this->N_cw;
@@ -95,7 +90,7 @@ module::Encoder_RSC_DB<B>* Encoder_RSC_DB
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_RSC_DB<B_8 >* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_8 >() const;
 template aff3ct::module::Encoder_RSC_DB<B_16>* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_16>() const;
 template aff3ct::module::Encoder_RSC_DB<B_32>* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_32>() const;

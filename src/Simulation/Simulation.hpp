@@ -8,6 +8,7 @@
 #ifndef SIMULATION_HPP_
 #define SIMULATION_HPP_
 
+#include <memory>
 #include "Module/Module.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Factory/Simulation/Simulation.hpp"
@@ -28,7 +29,7 @@ protected:
 	const factory::Simulation::parameters &params;
 
 	// map of Modules
-	std::map<std::string, std::vector<module::Module*>> modules;
+	std::map<std::string, std::vector<const module::Module*>> modules;
 
 	bool simu_error;
 
@@ -41,7 +42,7 @@ public:
 	/*!
 	 *  \brief Destructor.
 	 */
-	virtual ~Simulation();
+	virtual ~Simulation() = default;
 
 	bool is_error() const;
 
@@ -53,8 +54,22 @@ public:
 protected:
 	void build_communication_chain();
 	virtual void _build_communication_chain() = 0;
+
+	void add_module(const std::string& module_name, const int n_threads);
+
+	// cast module T in module::Module
+	template <typename T>
+	typename std::enable_if<std::is_base_of<module::Module, T>::value, void>::type
+		set_module(const std::string& module_name, const int tid, const std::shared_ptr<T>& mod);
+
+	// cast module T in module::Module
+	template <typename T>
+	typename std::enable_if<std::is_base_of<module::Module, T>::value, void>::type
+		set_module(const std::string& module_name, const int tid, const std::unique_ptr<T>& mod);
 };
 }
 }
+
+#include "Simulation.hxx"
 
 #endif /* SIMULATION_HPP_ */

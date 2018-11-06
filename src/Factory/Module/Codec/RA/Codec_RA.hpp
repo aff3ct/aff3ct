@@ -4,9 +4,6 @@
 #include <string>
 #include <cmath>
 
-#include "Factory/Module/Encoder/RA/Encoder_RA.hpp"
-#include "Factory/Module/Decoder/RA/Decoder_RA.hpp"
-
 #include "Module/Codec/RA/Codec_RA.hpp"
 
 #include "../Codec_SIHO.hpp"
@@ -22,19 +19,13 @@ struct Codec_RA : public Codec_SIHO
 	class parameters : public Codec_SIHO::parameters
 	{
 	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// depending parameters
-		Encoder_RA::parameters *enc;
-		Decoder_RA::parameters *dec;
-
-		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_RA_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Codec_RA::parameters* clone() const;
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

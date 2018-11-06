@@ -20,7 +20,7 @@ protected:
 public:
 	Codec_RSC_DB(const factory::Encoder_RSC_DB::parameters &enc_params,
 	             const factory::Decoder_RSC_DB::parameters &dec_params);
-	virtual ~Codec_RSC_DB();
+	virtual ~Codec_RSC_DB() = default;
 };
 }
 }

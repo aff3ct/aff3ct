@@ -4,10 +4,6 @@
 #include <string>
 #include <cmath>
 
-#include "Factory/Module/Encoder/LDPC/Encoder_LDPC.hpp"
-#include "Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
-#include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
-
 #include "Module/Codec/LDPC/Codec_LDPC.hpp"
 
 #include "../Codec_SISO_SIHO.hpp"
@@ -23,21 +19,14 @@ struct Codec_LDPC : public Codec_SISO_SIHO
 	class parameters : public Codec_SISO_SIHO::parameters
 	{
 	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// depending parameters
-		Encoder_LDPC  ::parameters *enc;
-		Decoder_LDPC  ::parameters *dec;
-		Puncturer_LDPC::parameters *pct;
-
-		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_LDPC_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Codec_LDPC::parameters* clone() const;
 		void enable_puncturer();
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

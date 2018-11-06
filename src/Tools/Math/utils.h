@@ -6,8 +6,11 @@
 #include <vector>
 #include <cstdint>
 #include <limits>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
+
+#define REAL_COMP_PRECISION 1e-6
 
 namespace aff3ct
 {
@@ -27,6 +30,10 @@ template <typename R> inline R       div8(R       val) { return val * (R)0.125; 
 template <>           inline int32_t div8(int32_t val) { return val >> 3;       }
 template <>           inline int16_t div8(int16_t val) { return val >> 3;       }
 template <>           inline int8_t  div8(int8_t  val) { return val >> 3;       }
+
+template <typename R> inline R      comp_equal(R      val1, R      val2) { return val1 == val2; }
+template <>           inline float  comp_equal(float  val1, float  val2) { return std::abs(val1 - val2) <  (float)REAL_COMP_PRECISION;}
+template <>           inline double comp_equal(double val1, double val2) { return std::abs(val1 - val2) < (double)REAL_COMP_PRECISION;}
 
 // init value depending on the domain
 template <typename R>
@@ -66,7 +73,7 @@ inline void saturate(std::vector<T,A> &array, const T min, const T max)
 }
 
 template <typename B, typename R>
-B sgn(R val) { return (B)((R(0) < val) - (val < R(0))); }
+inline B sgn(R val) { return (B)((R(0) < val) - (val < R(0))); }
 
 
 template <typename T>
@@ -75,31 +82,40 @@ constexpr bool is_power_of_2(T x)
 	return (x > 0) && !(x & (x - 1));
 }
 
-template <typename R, typename function_type>
-inline R integral(function_type func, const R min, const R max, const int number_steps)
+template <typename T>
+inline T next_power_of_2(T x)
 {
-	if (max < min)
-	{
-		std::stringstream message;
-		message << "'max' has to be equal or greater than 'min' ('max' = " << max << ", 'min' = " << min << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	T n = 1;
 
-	if (number_steps <= 0)
-	{
-		std::stringstream message;
-		message << "'number_steps' has to be greater than 0 ('number_steps' = " << number_steps << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	while (n <= x)
+		n <<= 1;
 
-	R step = (max - min) / number_steps; // width of rectangle
-	R area = (R)0;
-
-	for (auto i = 0; i < number_steps; i++)
-		area += func(min + ((R)i + (R)0.5) * step) * step;
-
-	return area;
+	return n;
 }
+
+template <typename T>
+T greatest_common_divisor(T a, T b)
+{
+	if (b == (T)0)
+		return 1;
+
+	T r;
+
+	while ((r = a % b))
+	{
+		a = b;
+		b = r;
+	}
+
+	return b;
+}
+
+template <typename T>
+T least_common_multiple(T a, T b)
+{
+	return (a * b) / greatest_common_divisor(a, b);
+}
+
 }
 }
 

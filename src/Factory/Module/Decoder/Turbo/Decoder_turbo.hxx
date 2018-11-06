@@ -15,38 +15,19 @@ Decoder_turbo::parameters<D1,D2>
 : Decoder::parameters(Decoder_turbo_name, prefix),
   sub1(new typename D1::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub1")),
   sub2(new typename D2::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub2")),
-  itl(new Interleaver::parameters("itl")),
-  sf(new Scaling_factor::parameters(prefix+"-sf")),
-  fnc(new Flip_and_check::parameters(prefix+"-fnc"))
+  itl (new Interleaver::parameters("itl")),
+  sf  (new Scaling_factor::parameters(prefix+"-sf")),
+  fnc (new Flip_and_check::parameters(prefix+"-fnc"))
 {
 	this->type   = "TURBO";
 	this->implem = "FAST";
 }
 
 template <class D1, class D2>
-Decoder_turbo::parameters<D1,D2>
-::~parameters()
-{
-	if (sub1 != nullptr) { delete sub1; sub1 = nullptr; }
-	if (sub2 != nullptr) { delete sub2; sub2 = nullptr; }
-	if (itl  != nullptr) { delete itl;  itl  = nullptr; }
-	if (sf   != nullptr) { delete sf ;  sf   = nullptr; }
-	if (fnc  != nullptr) { delete fnc;  fnc  = nullptr; }
-}
-
-template <class D1, class D2>
 Decoder_turbo::parameters<D1,D2>* Decoder_turbo::parameters<D1,D2>
 ::clone() const
 {
-	auto clone = new Decoder_turbo::parameters<D1,D2>(*this);
-
-	if (sub1 != nullptr) { clone->sub1 = sub1->clone(); }
-	if (sub2 != nullptr) { clone->sub2 = sub2->clone(); }
-	if (itl  != nullptr) { clone->itl  = itl ->clone(); }
-	if (sf   != nullptr) { clone->sf   = sf  ->clone(); }
-	if (fnc  != nullptr) { clone->fnc  = fnc ->clone(); }
-
-	return clone;
+	return new Decoder_turbo::parameters<D1,D2>(*this);
 }
 
 template <class D1, class D2>
@@ -90,79 +71,86 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 
 template <class D1, class D2>
 void Decoder_turbo::parameters<D1,D2>
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(req_args, opt_args);
+	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	req_args.erase({p+"-cw-size", "N"});
+	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(req_args, opt_args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = itl->get_prefix();
+		auto pi = itl->get_prefix();
 
-	req_args.erase({pi+"-size"    });
-	opt_args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
-	opt_args[{p+"-type", "D"}][2] += ", TURBO";
-	opt_args[{p+"-implem"   }][2] += ", FAST";
+	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO"      );
+	tools::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
 
-	opt_args[{p+"-ite", "i"}] =
-		{"strictly_positive_int",
-		 "maximal number of iterations in the turbo."};
+	args.add(
+		{p+"-ite", "i"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"maximal number of iterations in the turbo.");
 
-	opt_args[{p+"-sc"}] =
-		{"",
-		 "enables the self corrected decoder (requires \"--crc-type\")."};
+	args.add(
+		{p+"-sc"},
+		tools::None(),
+		"enables the self corrected decoder (requires \"--crc-type\").");
 
-	opt_args[{p+"-json"}] =
-		{"",
-		 "enable the json output trace."};
+	args.add(
+		{p+"-json"},
+		tools::None(),
+		"enable the json output trace.");
 
-	sf->get_description(req_args, opt_args);
+
+	sf->get_description(args);
 
 	auto psf = sf->get_prefix();
 
-	opt_args.erase({psf+"-ite"});
+	args.erase({psf+"-ite"});
 
-	fnc->get_description(req_args, opt_args);
+	fnc->get_description(args);
 
 	auto pfnc = fnc->get_prefix();
 
-	req_args.erase({pfnc+"-size", "K"});
-	opt_args.erase({pfnc+"-fra",  "F"});
-	opt_args.erase({pfnc+"-ite",  "i"});
+	args.erase({pfnc+"-size"     });
+	args.erase({pfnc+"-fra",  "F"});
+	args.erase({pfnc+"-ite",  "i"});
 
-	sub1->get_description(req_args, opt_args);
+	sub1->get_description(args);
 
 	auto ps1 = sub1->get_prefix();
 
-	req_args.erase({ps1+"-info-bits", "K"});
-	req_args.erase({ps1+"-cw-size",   "N"});
-	opt_args.erase({ps1+"-fra",       "F"});
+	args.erase({ps1+"-info-bits", "K"});
+	args.erase({ps1+"-cw-size",   "N"});
+	args.erase({ps1+"-fra",       "F"});
 
 	if (!std::is_same<D1,D2>())
 	{
 		auto ps2 = sub2->get_prefix();
 
-		req_args.erase({ps2+"-info-bits", "K"});
-		req_args.erase({ps2+"-cw-size",   "N"});
-		opt_args.erase({ps2+"-fra",       "F"});
+		args.erase({ps2+"-info-bits", "K"});
+		args.erase({ps2+"-cw-size",   "N"});
+		args.erase({ps2+"-fra",       "F"});
 	}
 }
 
 template <class D1, class D2>
 void Decoder_turbo::parameters<D1,D2>
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-ite", "i"})) this->n_ite          = std::stoi(vals.at({p+"-ite", "i"}));
-	if(exist(vals, {p+"-sc"      })) this->self_corrected = true;
-	if(exist(vals, {p+"-json"    })) this->enable_json    = true;
+	if(vals.exist({p+"-ite", "i"})) this->n_ite          = vals.to_int({p+"-ite", "i"});
+	if(vals.exist({p+"-sc"      })) this->self_corrected = true;
+	if(vals.exist({p+"-json"    })) this->enable_json    = true;
 
 	this->sub1->K        = this->K;
 	this->sub2->K        = this->K;
@@ -184,16 +172,19 @@ void Decoder_turbo::parameters<D1,D2>
 	this->N_cw        = this->sub1->N_cw + this->sub2->N_cw - this->K;
 	this->R           = (float)this->K / (float)this->N_cw;
 
-	this->itl->core->size     = this->K;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->K;
+		this->itl->core->n_frames = this->n_frames;
 
-	itl->store(vals);
+		itl->store(vals);
 
-	if (this->sub1->standard == "LTE" && !exist(vals, {"itl-type"}))
-		this->itl->core->type = "LTE";
+		if (this->sub1->standard == "LTE" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "LTE";
 
-	if (this->sub1->standard == "CCSDS" && !exist(vals, {"itl-type"}))
-		this->itl->core->type = "CCSDS";
+		if (this->sub1->standard == "CCSDS" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "CCSDS";
+	}
 
 	this->sf->n_ite = this->n_ite;
 
@@ -212,12 +203,13 @@ void Decoder_turbo::parameters<D1,D2>
 {
 	Decoder::parameters::get_headers(headers, full);
 
-	itl->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 
 	if (this->type != "ML" && this->type != "CHASE")
 	{
 		auto p = this->get_prefix();
-		
+
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
@@ -241,12 +233,12 @@ module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 ::build(const module::Interleaver<Q>  &itl,
               module::Decoder_SISO<Q> &siso_n,
               module::Decoder_SISO<Q> &siso_i,
-              module::Encoder<B>      *encoder) const
+              const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	if (this->type == "TURBO")
 	{
-		     if (this->implem == "STD" ) return new module::Decoder_turbo_std <B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
-		else if (this->implem == "FAST") return new module::Decoder_turbo_fast<B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
+		if (this->implem == "STD" ) return new module::Decoder_turbo_std <B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
+		if (this->implem == "FAST") return new module::Decoder_turbo_fast<B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -255,11 +247,9 @@ module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 template <class D1, class D2>
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_turbo::parameters<D1,D2>
-::build(module::Encoder<B> *encoder) const
+::build(const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	return Decoder::parameters::build<B,Q>(encoder);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q, class D1, class D2>
@@ -268,14 +258,14 @@ module::Decoder_turbo<B,Q>* Decoder_turbo
         const module::Interleaver<Q>  &itl,
               module::Decoder_SISO<Q> &siso_n,
               module::Decoder_SISO<Q> &siso_i,
-              module::Encoder<B>      *encoder)
+              const std::unique_ptr<module::Encoder<B>>& encoder)
 {
 	return params.template build<B,Q>(itl, siso_n, siso_i, encoder);
 }
 
 template <typename B, typename Q, class D1, class D2>
 module::Decoder_SIHO<B,Q>* Decoder_turbo
-::build(const parameters<D1,D2> &params, module::Encoder<B> *encoder)
+::build(const parameters<D1,D2> &params, const std::unique_ptr<module::Encoder<B>>& encoder)
 {
 	return params.template build<B,Q>(encoder);
 }

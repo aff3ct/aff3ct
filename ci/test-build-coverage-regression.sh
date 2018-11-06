@@ -1,7 +1,11 @@
 #!/bin/bash
 set -x
 
-source ci/threads.sh
+if [ -z "$THREADS" ]
+then
+	echo "The 'THREADS' environment variable is not set, default value = 1."
+	THREADS=1
+fi
 
 WD=$(pwd)
 build_root=build_coverage_linux_x86_gcc
@@ -23,17 +27,25 @@ function gen_coverage_info
 	local folder=$2
 	for path in $folder/*
 	do [ -f $path ] && {
-		cmd=$(cat $path | sed -n 2p)
+		cmd=$(awk -F "=" '/command/ {print $2}' $path)
 		echo $cmd
-		cd $build
-		eval "${cmd} --sim-stop-time 1 -t 1"
-		rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-		cd ..
+		ci=$(awk -F "=" '/ci/ {print $2}' $path)
+		if [ "$ci" != "off" ]; then
+			cd $build
+			eval "${cmd} --sim-stop-time 1 -t 1"
+			rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+			cd ..
+		else
+			echo "The code coverage is skipped because this test is disabled in the CI."
+		fi
 	} || {
 		[ -d $path ] && {
+			if [[ ${path: -7} == "readers" || ${path: -11} == "__pycache__" ]]; then
+				continue
+			fi
 			gen_coverage_info $build $path
 		}
- 	}
+	}
 	done
 }
 

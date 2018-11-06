@@ -1,8 +1,9 @@
 #include <sstream>
 #include <iomanip>
 
+#include <rang.hpp>
+
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/bash_tools.h"
 
 #include "Frame_trace.hpp"
 
@@ -27,6 +28,14 @@ void Frame_trace<B>
 }
 
 template <typename B>
+template <typename D, class AD>
+void Frame_trace<B>
+::display_hex_vector(std::vector<D,AD> vec)
+{
+	display_hex_vector(vec, (int)vec.size());
+}
+
+template <typename B>
 template <typename D, class AD, class AB>
 void Frame_trace<B>
 ::display_bit_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref)
@@ -43,13 +52,22 @@ void Frame_trace<B>
 }
 
 template <typename B>
+template <typename D, class AD>
+void Frame_trace<B>
+::display_hex_vector(std::vector<D,AD> vec, unsigned int row_width)
+{
+	display_vector(vec, row_width, {}, debug_version::HEX);
+}
+
+template <typename B>
 template <typename D, class AD, class AB>
 void Frame_trace<B>
 ::display_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref, debug_version version)
 {
-	unsigned int stride         = 0;
-	bool         enable_ref     = !ref.empty();
-	
+	std::ios_base::fmtflags f( stream.flags() );
+
+	bool enable_ref = !ref.empty();
+
 	if (enable_ref && ref.size() != vec.size())
 	{
 		std::stringstream message;
@@ -66,19 +84,28 @@ void Frame_trace<B>
 	}
 
 	const auto n_bits = this->n_bits ? (this->n_bits <= (int)vec.size() ? this->n_bits : (int)vec.size()) : (int)vec.size();
-	if (row_width == vec.size())
+
+	// display the bits indexes
+	if (this->display_indexes)
 	{
-		for (auto i = 0; i < n_bits; i++)
-			stream << std::setw(prec+2) << i << "|";
+		stream << std::dec;
+		for (unsigned i = 0; i < row_width; i++)
+			stream << rang::style::bold << std::setw(prec+2) << i
+			       << rang::style::underline << "|"
+			       << rang::style::reset;
 
 		if (n_bits < (int)vec.size())
 			stream << " ...";
+
 		stream << std::endl;
 	}
 
+
+	unsigned int stride = 0;
+
 	while (stride < vec.size())
 	{
-		for (auto i = stride; (i < stride + n_bits) && i < vec.size(); i++)
+		for (auto i = stride; (i < stride + row_width) && (i < stride + n_bits) &&  i < vec.size(); i++)
 			if (enable_ref)
 				display_value(vec[i], version, ref[i]);
 			else
@@ -86,84 +113,65 @@ void Frame_trace<B>
 
 		if (n_bits < (int)vec.size())
 			stream << " ...";
+
 		stream << std::endl;
 
 		stride += row_width;
 	}
-}
 
-template <typename B>
-template <typename D>
-void Frame_trace<B>
-::display_value(D value, debug_version version)
-{
-	std::stringstream sstream;
-	std::string value_string;
-
-	switch(version)
-	{
-		case BIT:
-			stream << std::setw(prec+2) << ((value == 0) ? (int) 0 : (int) 1) << "|";
-			break;
-		case REAL:
-			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
-			value_string = sstream.str();
-			size_t pos = value_string.find('e');
-			if (pos != std::string::npos) // then scientific notation has been used (too big number)
-				value_string = value_string.substr(0, prec-2) + value_string.substr(pos);
-			else
-				value_string = value_string.substr(0, prec+2);
-
-			stream << value_string << "|";
-			break;
-	}
+	stream.flags( f );
 }
 
 template <typename B>
 template <typename D>
 void Frame_trace<B>
 ::display_value(D value, debug_version version, B ref)
-{	
-	std::stringstream sstream;
-	std::string value_string;
+{
+	if (ref != -1)
+		stream << rang::style::bold;
 
 	switch(version)
 	{
-		case BIT:
-			value_string.append(prec+1, ' ');
-			if (value == 0)
-				if (ref == 0)
-					stream << tools::format(value_string + "0", Style::BOLD | FG::Color::GREEN) << "|";
-				else
-					stream << tools::format(value_string + "0", Style::BOLD | FG::Color::ORANGE) << "|";
-			else
-				if (ref == 0)
-					stream << tools::format(value_string + "1", Style::BOLD | FG::Color::ORANGE) << "|";
-				else	
-					stream << tools::format(value_string + "1", Style::BOLD | FG::Color::GREEN) << "|";
+		case debug_version::BIT:
+			if (ref != -1)
+			stream << ( ((value == 0) != (ref == 0)) ? rang::fg::red : rang::fg::green);
+			stream << std::setw(prec+2) << ((value == 0) ? (int) 0 : (int) 1);
+
 			break;
 
-		case REAL:
-			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
-			value_string = sstream.str();
-			size_t pos = value_string.find('e');
+		case debug_version::HEX:
+			if (ref != -1)
+			stream << ( value != ref ? rang::fg::red : rang::fg::green);
+			stream << std::setw(prec+2) << std::hex;
+			stream << (sizeof(D) == 1 ? (unsigned short)(unsigned char)value : value);
+
+			break;
+
+		case debug_version::REAL:
+		{
+			std::stringstream sstream;
+			sstream << std::setprecision(prec) << std::setw(prec+2) << +value;
+
+			auto value_string = sstream.str();
+
+			auto pos = value_string.find('e');
 			if (pos != std::string::npos) // then scientific notation has been used (too big number)
 				value_string = value_string.substr(0, prec-2) + value_string.substr(pos);
 			else
 				value_string = value_string.substr(0, prec+2);
 
-			if (value >= 0)
-				if (ref == 0)
-					stream << tools::format(value_string, Style::BOLD | FG::Color::GREEN) << "|";
-				else 
-					stream << tools::format(value_string, Style::BOLD | FG::Color::ORANGE) << "|";
-			else
-				if (ref == 0)
-					stream << tools::format(value_string, Style::BOLD | FG::Color::ORANGE) << "|";
-				else
-					stream << tools::format(value_string, Style::BOLD | FG::Color::GREEN) << "|";
+			if (ref != -1)
+			stream << ( ((value >= (D)0) != (ref == 0)) ? rang::fg::red : rang::fg::green);
+			stream << value_string;
+
 			break;
+		}
 	}
+
+	if (ref != -1)
+		stream << rang::style::reset;
+
+	stream << "|";
 }
 }
 }

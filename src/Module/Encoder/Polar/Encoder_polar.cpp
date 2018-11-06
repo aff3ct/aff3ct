@@ -16,7 +16,7 @@ Encoder_polar<B>
 	const std::string name = "Encoder_polar";
 	this->set_name(name);
 	this->set_sys(false);
-	
+
 	if (this->N != (int)frozen_bits.size())
 	{
 		std::stringstream message;
@@ -105,9 +105,9 @@ void Encoder_polar<B>
 			this->info_bits_pos[k++] = n;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_polar<B_8>;
 template class aff3ct::module::Encoder_polar<B_16>;
 template class aff3ct::module::Encoder_polar<B_32>;

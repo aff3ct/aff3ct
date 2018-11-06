@@ -24,8 +24,3 @@ cannot_allocate
 : exception(filename, line_num, funcname, message.empty() ? default_message : message)
 {
 }
-
-cannot_allocate
-::~cannot_allocate() throw()
-{
-}

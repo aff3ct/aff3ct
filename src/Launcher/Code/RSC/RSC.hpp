@@ -15,7 +15,7 @@ protected:
 
 public:
 	RSC(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~RSC();
+	virtual ~RSC() = default;
 
 protected:
 	virtual void get_description_args();

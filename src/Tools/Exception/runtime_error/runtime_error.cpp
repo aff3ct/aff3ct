@@ -24,8 +24,3 @@ runtime_error
 : exception(filename, line_num, funcname, message.empty() ? default_message : message)
 {
 }
-
-runtime_error
-::~runtime_error() throw()
-{
-}

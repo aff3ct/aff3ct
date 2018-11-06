@@ -1,4 +1,4 @@
-#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
 #ifndef FACTORY_SIMULATION_EXIT_HPP_
 #define FACTORY_SIMULATION_EXIT_HPP_
@@ -13,7 +13,7 @@
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp"
 #include "Factory/Module/Codec/Codec_SISO.hpp"
-#include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
+#include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
 #include "../Simulation.hpp"
 
@@ -39,25 +39,23 @@ struct EXIT : Simulation
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		float       sig_a_min  = 0.0f;
-		float       sig_a_max  = 5.0f;
+		std::vector<float> sig_a_range;
 
 		// optional parameters
 		std::string snr_type   = "ES";
-		float       sig_a_step = 0.5f;
 
 		// module parameters
-		Source       ::parameters *src = nullptr;
-		Codec_SISO   ::parameters *cdc = nullptr;
-		Modem        ::parameters *mdm = nullptr;
-		Channel      ::parameters *chn = nullptr;
-		Quantizer    ::parameters *qnt = nullptr;
-		Monitor_EXIT ::parameters *mnt = nullptr;
-		Terminal_EXIT::parameters *ter = nullptr;
+		tools::auto_cloned_unique_ptr<Source      ::parameters> src;
+		tools::auto_cloned_unique_ptr<Codec_SISO  ::parameters> cdc;
+		tools::auto_cloned_unique_ptr<Modem       ::parameters> mdm;
+		tools::auto_cloned_unique_ptr<Channel     ::parameters> chn;
+		tools::auto_cloned_unique_ptr<Quantizer   ::parameters> qnt;
+		tools::auto_cloned_unique_ptr<Monitor_EXIT::parameters> mnt;
+		tools::auto_cloned_unique_ptr<Terminal    ::parameters> ter;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = EXIT_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual EXIT::parameters* clone() const;
 
 		virtual std::vector<std::string> get_names      () const;
@@ -65,17 +63,17 @@ struct EXIT : Simulation
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// setters
-		void set_src(Source       ::parameters *src) { this->src = src; }
-		void set_cdc(Codec_SISO   ::parameters *cdc) { this->cdc = cdc; }
-		void set_mdm(Modem        ::parameters *mdm) { this->mdm = mdm; }
-		void set_chn(Channel      ::parameters *chn) { this->chn = chn; }
-		void set_qnt(Quantizer    ::parameters *qnt) { this->qnt = qnt; }
-		void set_mnt(Monitor_EXIT ::parameters *mnt) { this->mnt = mnt; }
-		void set_ter(Terminal_EXIT::parameters *ter) { this->ter = ter; }
+		void set_src(Source       ::parameters *src);
+		void set_cdc(Codec_SISO   ::parameters *cdc);
+		void set_mdm(Modem        ::parameters *mdm);
+		void set_chn(Channel      ::parameters *chn);
+		void set_qnt(Quantizer    ::parameters *qnt);
+		void set_mnt(Monitor_EXIT ::parameters *mnt);
+		void set_ter(Terminal     ::parameters *ter);
 
 		// parameters construction
-		void get_description(arg_map &req_args, arg_map &opt_args                              ) const;
-		void store          (const arg_val_map &vals                                           );
+		void get_description(tools::Argument_map_info &args) const;
+		void store          (const tools::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

@@ -6,17 +6,11 @@ template <typename B>
 Source_random<B>
 ::Source_random(const int K, const int seed, const int n_frames)
 : Source<B>(K, n_frames),
-  rd_engine(seed), 
-  uniform_dist(0, 1) 
+  rd_engine(seed),
+  uniform_dist(0, 1)
 {
 	const std::string name = "Source_random";
 	this->set_name(name);
-}
-
-template <typename B>
-Source_random<B>
-::~Source_random()
-{
 }
 
 template <typename B>
@@ -28,9 +22,9 @@ void Source_random<B>
 		U_K[i] = (B)this->uniform_dist(this->rd_engine);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Source_random<B_8>;
 template class aff3ct::module::Source_random<B_16>;
 template class aff3ct::module::Source_random<B_32>;

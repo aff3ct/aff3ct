@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
@@ -24,7 +25,7 @@ template <class R0   = Pattern_polar_r0,
           class REPL = Pattern_polar_rep_left,
           class SPC  = Pattern_polar_spc,
           class STD  = Pattern_polar_std>
-std::vector<Pattern_polar_i*> nodes_parser(const std::string &str_polar, int &idx_r0, int &idx_r1);
+std::vector<std::unique_ptr<aff3ct::tools::Pattern_polar_i>> nodes_parser(const std::string &str_polar, int &idx_r0, int &idx_r1);
 }
 }
 

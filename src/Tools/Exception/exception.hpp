@@ -10,11 +10,19 @@ namespace tools
 {
 class exception : public std::exception
 {
+public:
+	static bool no_backtrace;
+	static bool no_addr_to_line;
+
 protected:
 	static const std::string empty_string;
 
 private:
-	std::string message;
+	std::string message;   // the message only
+#ifdef AFF3CT_BACKTRACE
+	std::string backtrace; // the message + the backtrace
+	std::string backtrace_a2l; // the message + the backtrace with addr_to_line conversion
+#endif
 
 public:
 	exception() throw();
@@ -26,9 +34,9 @@ public:
 	          const std::string &funcname,
 	          const std::string &message) throw();
 
-	virtual ~exception() throw();
+	virtual ~exception() throw() = default;
 
-	virtual const char* what() const throw();
+	virtual const char* what() const throw(); // return the message and the back trace if enabled
 };
 }
 }

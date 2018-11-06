@@ -10,9 +10,10 @@
 
 #include <map>
 #include <string>
+#include <memory>
 
 #include "Tools/types.h"
-#include "Tools/Arguments_reader.hpp"
+#include "Tools/Arguments/Argument_handler.hpp"
 
 #include "Factory/Simulation/Simulation.hpp"
 
@@ -31,20 +32,16 @@ namespace launcher
 class Launcher
 {
 private:
-	simulation::Simulation          *simu;          /*!< A generic simulation pointer to allocate a specific simulation. */
+	std::unique_ptr<simulation::Simulation> simu; /*!< A generic simulation pointer to allocate a specific simulation. */
 	std::string                      cmd_line;
 	std::vector<std::string>         cmd_warn;
 
 protected:
-	tools::Arguments_reader          ar;            /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
-	tools::Arguments_reader::arg_map req_args;      /*!< List of the required arguments, syntax is the following:
-	                                                 *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	tools::Arguments_reader::arg_map opt_args;      /*!< List of the optional arguments, syntax is the following:
-	                                                 *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-
-	factory::Simulation::parameters &params_common; /*!< A structure of parameters to store and pass to the simulation. */
-
-	std::ostream                    &stream;        /*!< The dedicated stream in which the Launcher writes the parameters. */
+	tools::Argument_handler         ah;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
+	tools::Argument_map_info        args;     /*!< List of the arguments to find in the command line */
+	tools::Argument_map_value       arg_vals; /*!< List of the arguments with their values */
+	factory::Simulation::parameters &params_common;  /*!< A structure of parameters to store and pass to the simulation. */
+	std::ostream                    &stream;  /*!< The dedicated stream in which the Launcher writes the parameters. */
 
 public:
 	/*!
@@ -64,7 +61,7 @@ public:
 	 *
 	 * Deallocates the simulation.
 	 */
-	virtual ~Launcher();
+	virtual ~Launcher() = default;
 
 	/*!
 	 * \brief Launch the simulation.

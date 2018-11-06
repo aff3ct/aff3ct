@@ -3,8 +3,7 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Algo/Bit_packer.hpp"
-#include "Tools/Perf/hard_decision.h"
+#include "Tools/Perf/common/hard_decide.h"
 
 #include "Decoder_chase_std.hpp"
 
@@ -13,7 +12,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_chase_std<B,R>
-::Decoder_chase_std(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips, const bool hamming, 
+::Decoder_chase_std(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips, const bool hamming,
                     const int n_frames)
 : Decoder          (K, N, n_frames, 1),
   Decoder_SIHO<B,R>(K, N, n_frames, 1),
@@ -43,12 +42,6 @@ Decoder_chase_std<B,R>
 		message << "'max_flips' has to be smaller or equal to 31 ('max_flips' = " << max_flips << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R>
-Decoder_chase_std<B,R>
-::~Decoder_chase_std()
-{
 }
 
 template <typename B, typename R>
@@ -83,7 +76,7 @@ void Decoder_chase_std<B,R>
 			{
 				auto index = this->less_reliable_llrs[b];
 				V_N[index] = !V_N[index];
-				cur_euclidean_dist += std::abs(Y_N[index]);
+				cur_euclidean_dist += (float)std::abs(Y_N[index]);
 			}
 
 		if (cur_euclidean_dist < this->min_euclidean_dist)
@@ -152,7 +145,7 @@ void Decoder_chase_std<B,R>
 		std::partial_sort(less_reliable_llrs.begin(),
 		                  less_reliable_llrs.begin() + this->max_flips,
 		                  less_reliable_llrs.end(),
-		                  [&Y_N](const uint32_t i1, const uint32_t i2) { 
+		                  [&Y_N](const uint32_t i1, const uint32_t i2) {
 			return std::abs(Y_N[i1]) < std::abs(Y_N[i2]);
 		});
 
@@ -174,9 +167,9 @@ void Decoder_chase_std<B,R>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_chase_std<B_8,Q_8>;
 template class aff3ct::module::Decoder_chase_std<B_16,Q_16>;
 template class aff3ct::module::Decoder_chase_std<B_32,Q_32>;

@@ -14,10 +14,11 @@ if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 mkdir %NAME%
 mkdir %NAME%\bin\
 mkdir %NAME%\lib\
-mkdir %NAME%\inc\
+mkdir %NAME%\include\
+mkdir %NAME%\include\aff3ct\
 
  copy bin\Release\aff3ct.exe %NAME%\bin\
  copy lib\Release\aff3ct.lib %NAME%\lib\
-xcopy ..\src\*               %NAME%\inc\ /s /e
+xcopy ..\src\*               %NAME%\include\aff3ct\ /s /e
 
 move %NAME% ..\

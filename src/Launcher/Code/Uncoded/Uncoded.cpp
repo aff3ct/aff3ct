@@ -16,21 +16,15 @@ Uncoded<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-Uncoded<L,B,R,Q>
-::~Uncoded()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void Uncoded<L,B,R,Q>
 ::get_description_args()
 {
-	params_cdc->get_description(this->req_args, this->opt_args);
+	params_cdc->get_description(this->args);
 
 	auto penc = params_cdc->enc->get_prefix();
 
-	this->req_args.erase({penc+"-info-bits", "K"});
-	this->opt_args.erase({penc+"-fra",       "F"});
+	this->args.erase({penc+"-info-bits", "K"});
+	this->args.erase({penc+"-fra",       "F"});
 
 	L::get_description_args();
 }
@@ -43,7 +37,7 @@ void Uncoded<L,B,R,Q>
 
 	params_cdc->enc->K = this->params.src->K;
 
-	params_cdc->store(this->ar.get_args());
+	params_cdc->store(this->arg_vals);
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;
@@ -54,7 +48,7 @@ void Uncoded<L,B,R,Q>
 #include "Launcher/Simulation/EXIT.hpp"
 #include "Launcher/Simulation/BFER_std.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::Uncoded<aff3ct::launcher::EXIT    <B_32,R_32     >,B_32,R_32     >;
 template class aff3ct::launcher::Uncoded<aff3ct::launcher::EXIT    <B_64,R_64     >,B_64,R_64     >;
 template class aff3ct::launcher::Uncoded<aff3ct::launcher::BFER_std<B_8, R_8, Q_8 >,B_8 ,R_8 ,Q_8 >;
@@ -66,7 +60,7 @@ template class aff3ct::launcher::Uncoded<aff3ct::launcher::BFER_ite<B_16,R_16,Q_
 template class aff3ct::launcher::Uncoded<aff3ct::launcher::BFER_ite<B_32,R_32,Q_32>,B_32,R_32,Q_32>;
 template class aff3ct::launcher::Uncoded<aff3ct::launcher::BFER_ite<B_64,R_64,Q_64>,B_64,R_64,Q_64>;
 #else
-#if defined(PREC_32_BIT) || defined(PREC_64_BIT)
+#if defined(AFF3CT_32BIT_PREC) || defined(AFF3CT_64BIT_PREC)
 template class aff3ct::launcher::Uncoded<aff3ct::launcher::EXIT    <B,R  >,B,R  >;
 #endif
 template class aff3ct::launcher::Uncoded<aff3ct::launcher::BFER_std<B,R,Q>,B,R,Q>;

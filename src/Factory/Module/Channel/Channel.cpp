@@ -5,14 +5,25 @@
 #include "Module/Channel/AWGN/Channel_AWGN_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
+#include "Module/Channel/Optical/Channel_optical.hpp"
+#include "Module/Channel/Binary_erasure/Channel_binary_erasure.hpp"
+#include "Module/Channel/Binary_symmetric/Channel_binary_symmetric.hpp"
 
-#include "Tools/Algo/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
-#include "Tools/Algo/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
-#ifdef CHANNEL_MKL
-#include "Tools/Algo/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/Fast/Event_generator_fast.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Fast/User_pdf_noise_generator_fast.hpp"
+#ifdef AFF3CT_CHANNEL_MKL
+#include "Tools/Algo/Draw_generator/Event_generator/MKL/Event_generator_MKL.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/MKL/User_pdf_noise_generator_MKL.hpp"
 #endif
-#ifdef CHANNEL_GSL
-#include "Tools/Algo/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
+#ifdef AFF3CT_CHANNEL_GSL
+#include "Tools/Algo/Draw_generator/Event_generator/GSL/Event_generator_GSL.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/GSL/User_pdf_noise_generator_GSL.hpp"
 #endif
 
 #include "Channel.hpp"
@@ -29,11 +40,6 @@ Channel::parameters
 {
 }
 
-Channel::parameters
-::~parameters()
-{
-}
-
 Channel::parameters* Channel::parameters
 ::clone() const
 {
@@ -41,82 +47,92 @@ Channel::parameters* Channel::parameters
 }
 
 void Channel::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 
-	req_args[{p+"-fra-size", "N"}] =
-		{"strictly_positive_int",
-		 "number of symbols by frame."};
+	args.add(
+		{p+"-fra-size", "N"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"number of symbols by frame.",
+		tools::arg_rank::REQ);
 
-	opt_args[{p+"-fra", "F"}] =
-		{"strictly_positive_int",
-		 "set the number of inter frame level to process."};
+	args.add(
+		{p+"-fra", "F"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the number of inter frame level to process.");
 
-	opt_args[{p+"-type"}] =
-		{"string",
-		 "type of the channel to use in the simulation.",
-		 "NO, USER, AWGN, RAYLEIGH, RAYLEIGH_USER"};
+	args.add(
+		{p+"-type"},
+		tools::Text(tools::Including_set("NO", "USER", "USER_ADD", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "BSC",
+		                                 "OPTICAL")),
+		"type of the channel to use in the simulation ('USER' has an output got from a file when 'USER_ADD' has an"
+		" additive noise got from a file).");
 
-	std::string implem_avail = "STD, FAST";
-#ifdef CHANNEL_GSL
-	implem_avail += ", GSL";
+	args.add(
+		{p+"-implem"},
+		tools::Text(tools::Including_set("STD", "FAST")),
+		"select the implementation of the algorithm to generate noise.");
+
+#ifdef AFF3CT_CHANNEL_GSL
+	tools::add_options(args.at({p+"-implem"}), 0, "GSL");
 #endif
-#ifdef CHANNEL_MKL
-	implem_avail += ", MKL";
+#ifdef AFF3CT_CHANNEL_MKL
+	tools::add_options(args.at({p+"-implem"}), 0, "MKL");
 #endif
 
-	opt_args[{p+"-implem"}] =
-		{"string",
-		 "select the implementation of the algorithm to generate noise.",
-		 implem_avail};
+	args.add(
+		{p+"-path"},
+		tools::File(tools::openmode::read_write),
+		"path to a noisy file, to use with \"--chn-type USER,OPTICAL\" or to a gain file (used with \"--chn-type RAYLEIGH_USER\").");
 
-	opt_args[{p+"-path"}] =
-		{"string",
-		 "path to a noisy file, to use with \"--chn-type USER\" or to a gains file (used with \"--chn-type RAYLEIGH_USER\")."};
+	args.add(
+		{p+"-blk-fad"},
+		tools::Text(tools::Including_set("NO", "FRAME", "ONETAP")),
+		"block fading policy for the RAYLEIGH channel.");
 
-	opt_args[{p+"-blk-fad"}] =
-		{"string",
-		 "block fading policy for the RAYLEIGH channel.",
-		 "NO, FRAME, ONETAP"};
+	args.add(
+		{p+"-noise"},
+		tools::Real(tools::Positive(), tools::Non_zero()),
+		"noise value (for SIGMA, ROP or EP noise type).");
 
-	opt_args[{p+"-sigma"}] =
-		{"strictly_positive_float",
-		 "noise variance value."};
+	args.add(
+		{p+"-seed", "S"},
+		tools::Integer(tools::Positive()),
+		"seed used to initialize the pseudo random generators.");
 
-	opt_args[{p+"-seed", "S"}] =
-		{"positive_int",
-		 "seed used to initialize the pseudo random generators."};
+	args.add(
+		{p+"-add-users"},
+		tools::None(),
+		"add all the users (= frames) before generating the noise.");
 
-	opt_args[{p+"-add-users"}] =
-		{"",
-		 "add all the users (= frames) before generating the noise."};
+	args.add(
+		{p+"-complex"},
+		tools::None(),
+		"enable complex noise generation.");
 
-	opt_args[{p+"-complex"}] =
-		{"",
-		 "enable complex noise generation."};
-
-	opt_args[{p+"-gain-occur"}] =
-		{"strictly_positive_int",
-		 "the number of times a gain is used on consecutive symbols (used with \"--chn-type RAYLEIGH_USER\")."};
+	args.add(
+		{p+"-gain-occur"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"the number of times a gain is used on consecutive symbols (used with \"--chn-type RAYLEIGH_USER\").");
 }
 
 void Channel::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 
-	if(exist(vals, {p+"-fra-size", "N"})) this->N            = std::stoi(vals.at({p+"-fra-size", "N"}));
-	if(exist(vals, {p+"-fra",      "F"})) this->n_frames     = std::stoi(vals.at({p+"-fra",      "F"}));
-	if(exist(vals, {p+"-type"         })) this->type         =           vals.at({p+"-type"         });
-	if(exist(vals, {p+"-implem"       })) this->implem       =           vals.at({p+"-implem"       });
-	if(exist(vals, {p+"-path"         })) this->path         =           vals.at({p+"-path"         });
-	if(exist(vals, {p+"-blk-fad"      })) this->block_fading =           vals.at({p+"-blk-fad"      });
-	if(exist(vals, {p+"-sigma"        })) this->sigma        = std::stof(vals.at({p+"-sigma"        }));
-	if(exist(vals, {p+"-seed",     "S"})) this->seed         = std::stoi(vals.at({p+"-seed",     "S"}));
-	if(exist(vals, {p+"-add-users"    })) this->add_users    = true;
-	if(exist(vals, {p+"-complex"      })) this->complex      = true;
-	if(exist(vals, {p+"-gain-occur"   })) this->gain_occur   = std::stoi(vals.at({p+"-gain-occur"   }));
+	if(vals.exist({p+"-fra-size", "N"})) this->N            = vals.to_int({p+"-fra-size", "N"});
+	if(vals.exist({p+"-fra",      "F"})) this->n_frames     = vals.to_int({p+"-fra",      "F"});
+	if(vals.exist({p+"-seed",     "S"})) this->seed         = vals.to_int({p+"-seed",     "S"});
+	if(vals.exist({p+"-gain-occur"   })) this->gain_occur   = vals.to_int({p+"-gain-occur"   });
+	if(vals.exist({p+"-type"         })) this->type         = vals.at    ({p+"-type"         });
+	if(vals.exist({p+"-implem"       })) this->implem       = vals.at    ({p+"-implem"       });
+	if(vals.exist({p+"-path"         })) this->path         = vals.at    ({p+"-path"         });
+	if(vals.exist({p+"-blk-fad"      })) this->block_fading = vals.at    ({p+"-blk-fad"      });
+	if(vals.exist({p+"-add-users"    })) this->add_users    = true;
+	if(vals.exist({p+"-complex"      })) this->complex      = true;
+	if(vals.exist({p+"-noise"        })) this->noise        = vals.to_float({p+"-noise"      });
 }
 
 void Channel::parameters
@@ -130,10 +146,10 @@ void Channel::parameters
 	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->N)));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 
-	if (this->sigma != -1.f)
-		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->sigma)));
+	if (this->noise != -1.f)
+		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->noise)));
 
-	if (this->type == "USER" || this->type == "RAYLEIGH_USER")
+	if (this->type == "USER" || this->type == "USER_ADD" || this->type == "RAYLEIGH_USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
 
 	if (this->type == "RAYLEIGH_USER")
@@ -142,7 +158,7 @@ void Channel::parameters
 	if (this->type.find("RAYLEIGH") != std::string::npos)
 		headers[p].push_back(std::make_pair("Block fading policy", this->block_fading));
 
-	if ((this->type != "NO" && this->type != "USER") && full)
+	if ((this->type != "NO" && this->type != "USER" && this->type != "USER_ADD") && full)
 		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
 
 	headers[p].push_back(std::make_pair("Complex", this->complex ? "on" : "off"));
@@ -151,35 +167,98 @@ void Channel::parameters
 
 template <typename R>
 module::Channel<R>* Channel::parameters
+::build_event() const
+{
+	std::unique_ptr<tools::Event_generator<R>> n;
+	     if (implem == "STD" ) n.reset(new tools::Event_generator_std <R>(seed));
+	else if (implem == "FAST") n.reset(new tools::Event_generator_fast<R>(seed));
+#ifdef AFF3CT_CHANNEL_MKL
+	else if (implem == "MKL" ) n.reset(new tools::Event_generator_MKL<R>(seed));
+#endif
+#ifdef AFF3CT_CHANNEL_GSL
+	else if (implem == "GSL" ) n.reset(new tools::Event_generator_GSL<R>(seed));
+#endif
+	else
+		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+
+	if (type == "BEC") return new module::Channel_binary_erasure  <R>(N, std::move(n), tools::Event_probability<R>((R)noise), n_frames);
+	if (type == "BSC") return new module::Channel_binary_symmetric<R>(N, std::move(n), tools::Event_probability<R>((R)noise), n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename R>
+module::Channel<R>* Channel::parameters
+::build_gaussian() const
+{
+	std::unique_ptr<tools::Gaussian_noise_generator<R>> n = nullptr;
+	     if (implem == "STD" ) n.reset(new tools::Gaussian_noise_generator_std <R>(seed));
+	else if (implem == "FAST") n.reset(new tools::Gaussian_noise_generator_fast<R>(seed));
+#ifdef AFF3CT_CHANNEL_MKL
+	else if (implem == "MKL" ) n.reset(new tools::Gaussian_noise_generator_MKL <R>(seed));
+#endif
+#ifdef AFF3CT_CHANNEL_GSL
+	else if (implem == "GSL" ) n.reset(new tools::Gaussian_noise_generator_GSL <R>(seed));
+#endif
+	else
+		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+
+	if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                std::move(n),             add_users, tools::Sigma<R>((R)noise), n_frames);
+	if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,       std::move(n),             add_users, tools::Sigma<R>((R)noise), n_frames);
+	if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, std::move(n), gain_occur, add_users, tools::Sigma<R>((R)noise), n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename R>
+module::Channel<R>* Channel::parameters
+::build_userpdf(const tools::Distributions<R>& dist) const
+{
+	std::unique_ptr<tools::User_pdf_noise_generator<R>> n = nullptr;
+	     if (implem == "STD" ) n.reset(new tools::User_pdf_noise_generator_std <R>(dist, seed));
+	else if (implem == "FAST") n.reset(new tools::User_pdf_noise_generator_fast<R>(dist, seed));
+#ifdef AFF3CT_CHANNEL_MKL
+	else if (implem == "MKL" ) n.reset(new tools::User_pdf_noise_generator_MKL <R>(dist, seed));
+#endif
+#ifdef AFF3CT_CHANNEL_GSL
+	else if (implem == "GSL" ) n.reset(new tools::User_pdf_noise_generator_GSL <R>(dist, seed));
+#endif
+	else
+		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+
+	if (type == "OPTICAL") return new module::Channel_optical<R>(N, std::move(n), tools::Received_optical_power<R>((R) this->noise), n_frames);
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename R>
+module::Channel<R>* Channel::parameters
 ::build() const
 {
-	tools::Gaussian_noise_generator<R>* n = nullptr;
-	     if (implem == "STD" ) n = new tools::Gaussian_noise_generator_std <R>(seed);
-	else if (implem == "FAST") n = new tools::Gaussian_noise_generator_fast<R>(seed);
-#ifdef CHANNEL_MKL
-	else if (implem == "MKL" ) n = new tools::Gaussian_noise_generator_MKL <R>(seed);
-#endif
-#ifdef CHANNEL_GSL
-	else if (implem == "GSL" ) n = new tools::Gaussian_noise_generator_GSL <R>(seed);
-#endif
-	else
-		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	try	{
+		return build_gaussian<R>();
+	} catch (tools::cannot_allocate&) {}
 
-	     if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(N,                            n, add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(N, complex,                   n, add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(N, complex, path, gain_occur, n, add_users, sigma, n_frames);
-	else
-	{
-		module::Channel<R>* c = nullptr;
-		     if (type == "USER") c = new module::Channel_user<R>(N, path, add_users, n_frames);
-		else if (type == "NO"  ) c = new module::Channel_NO  <R>(N,       add_users, n_frames);
+	try	{
+		return build_event<R>();
+	} catch (tools::cannot_allocate&) {}
 
-		delete n;
+	if (type == "USER"    ) return new module::Channel_user<R>(N, path, add_users, false, n_frames);
+	if (type == "USER_ADD") return new module::Channel_user<R>(N, path, add_users,  true, n_frames);
+	if (type == "NO"      ) return new module::Channel_NO  <R>(N,       add_users,        n_frames);
 
-		if (c) return c;
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
 
-		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-	}
+template <typename R>
+module::Channel<R>* Channel::parameters
+::build(const tools::Distributions<R>& dist) const
+{
+	try	{
+		return build_userpdf<R>(dist);
+	} catch (tools::cannot_allocate&) {}
+
+	return build<R>();
 }
 
 template <typename R>
@@ -189,15 +268,30 @@ module::Channel<R>* Channel
 	return params.template build<R>();
 }
 
+template <typename R>
+module::Channel<R>* Channel
+::build(const parameters &params, const tools::Distributions<R>& dist)
+{
+	return params.template build<R>(dist);
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>() const;
 template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>() const;
 template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&);
 template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const aff3ct::factory::Channel::parameters&);
+
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>(const tools::Distributions<R_32>&) const;
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>(const tools::Distributions<R_64>&) const;
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R_32>&);
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R_64>&);
 #else
 template aff3ct::module::Channel<R>* aff3ct::factory::Channel::parameters::build<R>() const;
 template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const aff3ct::factory::Channel::parameters&);
+
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::parameters::build<R>(const tools::Distributions<R>&) const;
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R>&);
 #endif
 // ==================================================================================== explicit template instantiation

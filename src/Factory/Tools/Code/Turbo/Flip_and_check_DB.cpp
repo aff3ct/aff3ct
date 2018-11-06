@@ -14,11 +14,6 @@ Flip_and_check_DB::parameters
 {
 }
 
-Flip_and_check_DB::parameters
-::~parameters()
-{
-}
-
 Flip_and_check_DB::parameters* Flip_and_check_DB::parameters
 ::clone() const
 {
@@ -26,13 +21,13 @@ Flip_and_check_DB::parameters* Flip_and_check_DB::parameters
 }
 
 void Flip_and_check_DB::parameters
-::get_description(arg_map &req_args, arg_map &opt_args) const
+::get_description(tools::Argument_map_info &args) const
 {
-	Flip_and_check::parameters::get_description(req_args, opt_args);
+	Flip_and_check::parameters::get_description(args);
 }
 
 void Flip_and_check_DB::parameters
-::store(const arg_val_map &vals)
+::store(const tools::Argument_map_value &vals)
 {
 	Flip_and_check::parameters::store(vals);
 }
@@ -62,7 +57,7 @@ tools::Flip_and_check_DB<B,Q>* Flip_and_check_DB
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::tools::Flip_and_check_DB<B_8 ,Q_8 >* aff3ct::factory::Flip_and_check_DB::parameters::build<B_8 ,Q_8 >(module::CRC<B_8 >&) const;
 template aff3ct::tools::Flip_and_check_DB<B_16,Q_16>* aff3ct::factory::Flip_and_check_DB::parameters::build<B_16,Q_16>(module::CRC<B_16>&) const;
 template aff3ct::tools::Flip_and_check_DB<B_32,Q_32>* aff3ct::factory::Flip_and_check_DB::parameters::build<B_32,Q_32>(module::CRC<B_32>&) const;
