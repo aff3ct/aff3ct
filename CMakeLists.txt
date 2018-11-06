@@ -73,19 +73,27 @@ string(REGEX REPLACE "-.*"                   "" GIT_VERSION_MMP   ${GIT_VERSION_
 string(REGEX REPLACE "^.*-"                  "" GIT_HASH          ${GIT_VERSION_RMV})
 string(      REPLACE "-"                     "" GIT_BUILD         ${GIT_VERSION_RMV})
 string(      REPLACE "${GIT_VERSION_MMP}"    "" GIT_BUILD         ${GIT_BUILD})
-string(      REPLACE "${GIT_HASH}"           "" GIT_BUILD         ${GIT_BUILD})
 string(REGEX REPLACE "[.].*"                 "" GIT_VERSION_MAJOR ${GIT_VERSION_MMP})
 string(      REPLACE "${GIT_VERSION_MAJOR}." "" GIT_VERSION_MINOR ${GIT_VERSION_MMP})
 string(REGEX REPLACE "[.].*"                 "" GIT_VERSION_MINOR ${GIT_VERSION_MINOR})
 string(      REPLACE "${GIT_VERSION_MAJOR}." "" GIT_VERSION_PATCH ${GIT_VERSION_MMP})
 string(      REPLACE "${GIT_VERSION_MINOR}." "" GIT_VERSION_PATCH ${GIT_VERSION_PATCH})
 string(REGEX REPLACE "[.].*"                 "" GIT_VERSION_PATCH ${GIT_VERSION_PATCH})
+if (NOT "${GIT_BUILD}" STREQUAL "")
+    string(  REPLACE "${GIT_HASH}"           "" GIT_BUILD         ${GIT_BUILD})
+else()
+    set(GIT_HASH "")
+endif()
 
 message(STATUS "AFF3CT - Git Version: ${GIT_VERSION_MAJOR}.${GIT_VERSION_MINOR}.${GIT_VERSION_PATCH}")
-message(STATUS "AFF3CT - Git Build: ${GIT_BUILD}")
-message(STATUS "AFF3CT - Git Hash: ${GIT_HASH}")
+if (NOT "${GIT_BUILD}" STREQUAL "")
+    message(STATUS "AFF3CT - Git Build: ${GIT_BUILD}")
+endif()
+if (NOT "${GIT_HASH}" STREQUAL "")
+    message(STATUS "AFF3CT - Git Hash: ${GIT_HASH}")
+endif()
 
-if(("GIT_BUILD" STREQUAL "") OR ("GIT_HASH" STREQUAL ""))
+if(("${GIT_BUILD}" STREQUAL "") OR ("${GIT_HASH}" STREQUAL ""))
     set(GIT_TAIL "")
 else()
     set(GIT_TAIL "-${GIT_BUILD}-${GIT_HASH}")
@@ -224,17 +232,6 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/rang.hpp")
 else ()
     message(FATAL_ERROR "AFF3CT - rang can't be found, try to init the submodule with the following cmd:\n"
                         "$ git submodule update --init -- ../lib/rang/")
-endif ()
-
-# CLI11
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/CLI.hpp")
-    include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/")
-    message(STATUS "AFF3CT - Header found: CLI11")
-    #add_subdirectory(lib/CLI11)
-    #aff3ct_link_libraries(CLI11::CLI11)
-else ()
-    message(FATAL_ERROR "AFF3CT - CLI11 can't be found, try to init the submodule with the following cmd:\n"
-                        "$ git submodule update --init -- ../lib/CLI11/")
 endif ()
 
 # date
@@ -427,8 +424,6 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct-
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/aff3ct
         FILES_MATCHING PATTERN "*.hxx")
 
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/CLI11/include/CLI/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/CLI11
-        FILES_MATCHING PATTERN "*.hpp")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/date
         FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/MIPP
