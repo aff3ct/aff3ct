@@ -98,7 +98,7 @@ void Codebook<R>
 		{
 			if (F[r][u] == 1)
 			{
-				re_user[r][idx] = u;
+				resource_to_user[r][idx] = u;
 				idx++;
 			}
 		}
@@ -111,7 +111,7 @@ void Codebook<R>
 		{
 			if (F[r][u] == 1)
 			{
-				user_re[u][idx] = r;
+				user_to_resource[u][idx] = r;
 				idx++;
 			}
 		}
@@ -150,16 +150,16 @@ inline int Codebook<R>
 
 template <typename R>
 inline int Codebook<R>
-::get_re_user(int r, int u) const
+::get_resource_to_user(int r, int u) const
 {
-	return re_user[r][u];
+	return resource_to_user[r][u];
 }
 
 template <typename R>
 inline int Codebook<R>
-::get_user_re(int u, int r) const
+::get_user_to_resource(int u, int r) const
 {
-	return user_re[u][r];
+	return user_to_resource[u][r];
 }
 
 }
