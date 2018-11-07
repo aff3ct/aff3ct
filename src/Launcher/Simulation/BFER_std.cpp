@@ -174,6 +174,10 @@ void BFER_std<B,R,Q>
 
 	params.cdc->enc->seed = params.local_seed;
 
+
+	if (!this->arg_vals.exist({psrc+"-fra", "F"}) && params.mdm->type == "SCMA")
+		params.src->n_frames = params.mdm->n_frames;
+
 	params.crc   ->n_frames = params.src->n_frames;
 	params.mdm   ->n_frames = params.src->n_frames;
 	params.chn   ->n_frames = params.src->n_frames;

@@ -146,9 +146,10 @@ void Modem::parameters
 	auto p = this->get_prefix();
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(vals.exist({p+"-type"   })) this->type    = vals.at({p+"-type"   });
-	if(vals.exist({p+"-implem" })) this->implem  = vals.at({p+"-implem" });
-	if(vals.exist({p+"-cpm-std"})) this->cpm_std = vals.at({p+"-cpm-std"});
+	if(vals.exist({p+"-type"    })) this->type     = vals.at({p+"-type"    });
+	if(vals.exist({p+"-implem"  })) this->implem   = vals.at({p+"-implem"  });
+	if(vals.exist({p+"-cpm-std" })) this->cpm_std  = vals.at({p+"-cpm-std" });
+	if(vals.exist({p+"-codebook"})) this->codebook = vals.at({p+"-codebook"});
 
 	if (this->type == "CPM")
 	{
@@ -173,12 +174,19 @@ void Modem::parameters
 		}
 	}
 
+
+	if (this->type == "SCMA")
+	{
+		this->bps = 3; // set by default the number of bits per symbol to 3 when SCMA mod
+		this->n_frames = tools::Codebook<float>(this->codebook).get_number_of_users();
+	}
+
+
 	if(vals.exist({p+"-fra-size", "N"})) this->N          = vals.to_int({p+"-fra-size", "N"});
 	if(vals.exist({p+"-fra",      "F"})) this->n_frames   = vals.to_int({p+"-fra",      "F"});
 	if(vals.exist({p+"-bps"          })) this->bps        = vals.to_int({p+"-bps"          });
 	if(vals.exist({p+"-ups"          })) this->upf        = vals.to_int({p+"-ups"          });
 	if(vals.exist({p+"-const-path"   })) this->const_path = vals.at    ({p+"-const-path"   });
-	if(vals.exist({p+"-codebook"     })) this->codebook   = vals.at    ({p+"-codebook"     });
 	if(vals.exist({p+"-cpm-L"        })) this->cpm_L      = vals.to_int({p+"-cpm-L"        });
 	if(vals.exist({p+"-cpm-p"        })) this->cpm_p      = vals.to_int({p+"-cpm-p"        });
 	if(vals.exist({p+"-cpm-k"        })) this->cpm_k      = vals.to_int({p+"-cpm-k"        });
@@ -188,9 +196,8 @@ void Modem::parameters
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (this->type == "BPSK" || this->type == "OOK")
 		this->bps = 1;
-	// force the number of bits per symbol to 3 when SCMA mod
-	if (this->type == "SCMA")
-		this->bps = 3;
+
+
 
 	this->complex = is_complex_mod(this->type, this->bps);
 
