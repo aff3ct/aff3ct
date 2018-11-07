@@ -62,6 +62,7 @@ Modem_SCMA<B,R,Q,PSI>
                noise,
                n_frames),
   CB          (codebook_path),
+  arr_phi     (CB.get_codebook_size(), CB.get_codebook_size(), CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
   disable_sig2(disable_sig2 ),
   n_ite       (n_ite        ),
   bps         (bps          )
@@ -178,7 +179,7 @@ void Modem_SCMA<B,R,Q,PSI>
 			for (auto j = 0; j < CB.get_codebook_size(); j++)
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
 					for (auto re = 0; re < CB.get_number_of_orthogonal_resources(); re++)
-						arr_phi[re][i][j][k] = phi(Y_N1, i, j, k, re, batch, H_N);
+						arr_phi(re,i,j,k) = phi(Y_N1, i, j, k, re, batch, H_N);
 
 		demodulate_batch(Y_N1,Y_N2,batch);
 	}
@@ -211,7 +212,7 @@ void Modem_SCMA<B,R,Q,PSI>
 			for (auto j = 0; j < CB.get_codebook_size(); j++)
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
 					for (auto re = 0; re < CB.get_number_of_orthogonal_resources(); re++)
-						arr_phi[re][i][j][k] = phi(Y_N1, i, j, k, re, batch);
+						arr_phi(re,i,j,k) = phi(Y_N1, i, j, k, re, batch);
 
 		demodulate_batch(Y_N1,Y_N2,batch);
 	}
@@ -279,15 +280,15 @@ void Modem_SCMA<B,R,Q,PSI>
 					for(auto re = 0; re < CB.get_number_of_orthogonal_resources(); re++)
 					{
 						msg_res_user[re][CB.get_resource_to_user(re,0)][i] = msg_res_user[re][CB.get_resource_to_user(re,0)][i]
-						                                            +  arr_phi[re][i][j][k]
+						                                            + arr_phi(re,i,j,k)
 						                                            * msg_user_to_resources[CB.get_resource_to_user(re,1)][re][j]
 						                                            * msg_user_to_resources[CB.get_resource_to_user(re,2)][re][k];
 						msg_res_user[re][CB.get_resource_to_user(re,1)][i] = msg_res_user[re][CB.get_resource_to_user(re,1)][i]
-						                                            +  arr_phi[re][j][i][k]
+						                                            + arr_phi(re,j,i,k)
 						                                            * msg_user_to_resources[CB.get_resource_to_user(re,0)][re][j]
 						                                            * msg_user_to_resources[CB.get_resource_to_user(re,2)][re][k];
 						msg_res_user[re][CB.get_resource_to_user(re,2)][i] = msg_res_user[re][CB.get_resource_to_user(re,2)][i]
-						                                            +  arr_phi[re][j][k][i]
+						                                            + arr_phi(re,j,k,i)
 						                                            * msg_user_to_resources[CB.get_resource_to_user(re,0)][re][j]
 						                                            * msg_user_to_resources[CB.get_resource_to_user(re,1)][re][k];
 					}

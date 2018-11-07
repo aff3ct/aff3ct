@@ -7,6 +7,7 @@
 
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 #include "Tools/Code/SCMA/Codebook.hpp"
+#include "Tools/Algo/Multidimensional_vector/Vector_4D.hpp"
 
 #include "../Modem.hpp"
 
@@ -20,7 +21,7 @@ class Modem_SCMA : public Modem<B,R,Q>
 {
 private:
 	const tools::Codebook<R> CB;
-	      Q                  arr_phi[4][4][4][4] = {}; // probability functions
+	tools::Vector_4D<Q>      arr_phi;
 	const bool               disable_sig2;
 	      R                  n0; // 1 / n0 = 179.856115108
 	const int                n_ite;
