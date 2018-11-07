@@ -1,5 +1,5 @@
-Source Code
-===========
+Get the Source Code
+===================
 
 .. _Git: https://en.wikipedia.org/wiki/Git
 .. _GitHub: https://github.com/
@@ -7,7 +7,7 @@ Source Code
 
 This project uses `Git`_ as the version-control system to manage the source
 code. The AFF3CT repository is hosted on `GitHub`_. To get the source code,
-first you need to install the Git software and secondly you have to `clone` the
+first install the Git software and secondly `clone` the
 `AFF3CT repository`_ locally.
 
 Git Installation
@@ -26,7 +26,7 @@ installation is over.
 .. note:: On Windows, during the installation you may want to check the **Linux
           symbolic links** support.
 
-.. warning:: We recommend to add Git in your system PATH during the
+.. warning:: It is recommended to add Git to your system PATH during the
              installation.
 
 .. warning:: On Windows, Git comes with the **Git Bash** terminal which is,
@@ -37,7 +37,7 @@ installation is over.
 Linux
 ^^^^^
 
-Install Git from your package manager:
+Install Git from the package manager:
 
 .. code-block:: bash
 
@@ -60,7 +60,8 @@ From your favorite terminal:
 The AFF3CT repository contains some dependencies to other repositories.
 Technically those dependencies are managed by the `Git submodule feature`_.
 By default the submodules are not downloaded during the ``git clone`` process.
-Before doing anything else it is highly recommended to get those submodules:
+Before doing anything else it is highly recommended to get those submodules with
+the following command:
 
 .. code-block:: bash
 

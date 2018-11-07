@@ -20,21 +20,21 @@ Download CMake from `the official web page <https://cmake.org/download/>`_
 and launch the executable file. Just press the `Next` button until the
 installation is over.
 
-.. note:: On Windows, if you plan to build AFF3CT from Visual Studio IDE you can
-          skip the CMake installation. You can directly go to the
+.. note:: On Windows, if you plan to build AFF3CT from the Visual Studio IDE you
+          can skip the CMake installation and directly go to the
           :ref:`Compilation with Visual Studio <compilation-visual_studio_project>`
           section.
 
-.. note:: On Windows, we recommend to download a version of CMake with an
+.. note:: On Windows, it is recommended to download a version of CMake with an
           installer.
 
-.. warning:: We recommend to add CMake in your system PATH during the
+.. warning:: It is recommended to add CMake to your system PATH during the
              installation.
 
 Linux
 ^^^^^
 
-Install Make and CMake from your package manager:
+Install Make and CMake from the package manager:
 
 .. code-block:: bash
 
@@ -61,25 +61,22 @@ Unzip the archive. Copy the extracted ``mingw64`` folder in the
 macOS
 ^^^^^
 
-We do not give the instructions to install the C++ GNU compiler because we will
-use the macOS native Clang compiler in the next steps, you can directly go to
-the :ref:`Compilation with a Makefile project on macOS <compilation-makefile_project>`
+The instructions to install the C++ GNU compiler are not given for macOS
+because the native Clang compiler will be used instead in the next steps.
+Directly go to the
+:ref:`Compilation with a Makefile project on macOS <compilation-makefile_project>`
 section.
 
 Linux
 ^^^^^
 
-Install the C++ GNU compiler from your package manager:
+Install the C++ GNU compiler from the package manager:
 
 .. code-block:: bash
 
    sudo apt install g++
 
 .. note:: On CentOS-like systems you have to replace ``apt`` by ``yum``.
-
-.. warning:: The GNU compiler version has to be equal to or higher than 4.8 to
-             support the C++11 standard.
-
 
 Compilation with a Makefile Project
 -----------------------------------
@@ -110,7 +107,7 @@ Build AFF3CT with the Makefile:
 
    mingw32-make -j4
 
-Once finished, the AFF3CT binary should be located in the
+Once finished, the AFF3CT executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
 
 .. warning:: We encourage you to run the previous commands on **Git Bash**
@@ -135,7 +132,7 @@ Build AFF3CT with the Makefile:
 
    make -j4
 
-Once finished, the AFF3CT binary should be located in the
+Once finished, the AFF3CT executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
 
 Linux
@@ -155,7 +152,7 @@ Build AFF3CT with the Makefile:
 
    make -j4
 
-Once finished, the AFF3CT binary should be located in the
+Once finished, the AFF3CT executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
 
 .. _compilation-visual_studio_project:
@@ -164,10 +161,9 @@ Compilation with a Visual Studio 2017 Solution
 ----------------------------------------------
 
 Since Microsoft Visual Studio 2017, Visual natively supports CMake.
-To generate the AFF3CT solution you simply need to open the
-``$AFF3CT_ROOT/CMakeList.txt`` file from the IDE. At this point you can select
-the `Release` target instead of the `Debug` target and press the `green play`
-button to start the compilation.
+To generate the AFF3CT solution, open the ``$AFF3CT_ROOT/CMakeList.txt`` file
+from the IDE. Select the `Release` target instead of the `Debug` target and
+press the `green play` button to start the compilation.
 
 .. note:: **Visual Studio** should not be confounded with
           **Visual Studio Code**.
@@ -180,8 +176,8 @@ button to start the compilation.
 
 .. warning:: The Visual Studio default compiler (MSVC) is known to generate
              slower AFF3CT executable than with the GNU compiler. **If you
-             target an high speed executable we recommend you to compile with
-             the GNU compiler.**
+             target an high speed executable it is recommended to use the GNU
+             compiler.**
 
 The compilation can also be started from the command line after calling the
 ``%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat`` batch script (where ``%VS_PATH%``
@@ -246,18 +242,12 @@ feature and provides the following options:
 .. |cmake-opt-prec| replace:: Select the precision in bits (can be '8', '16',
    '32', '64' or 'MULTI').
 
-Lets consider an option named ``AFF3CT_OPTION`` that you want to set to ``ON``:
-when calling the CMake command, you need to prefix the option by ``-D`` and to
-specify its value preceded by ``=``:
+Considering an option ``AFF3CT_OPTION`` we want to set to ``ON``, here is the
+syntax to follow:
 
 .. code-block:: bash
 
    cmake .. -DAFF3CT_OPTION=ON
-
-It can be done even if CMake has be called before and as many time as wanted, it
-will affect the project generation. For instance, if CMake is configured to
-generate a Makefile and a option changed, the Makefile will be regenerated by
-CMake and AFF3CT will have to be rebuilt.
 
 Compiler Options
 ----------------
@@ -265,20 +255,20 @@ Compiler Options
 Build Type
 ^^^^^^^^^^
 
-CMake allows build type selection among several predefined ones through the
-``CMAKE_BUILD_TYPE`` built-in variable. ``Release`` and ``Debug`` are the most
-famous values that the variable can get. For instance, to compile in release
-mode:
+CMake allows to select the type of build through the ``CMAKE_BUILD_TYPE``
+built-in variable. ``Release`` and ``Debug`` are the common values that the
+variable can get. For instance, to compile in release mode:
 
 .. code-block:: bash
 
    cmake .. -DCMAKE_BUILD_TYPE=Release
 
-In CMake it is recommended to not explicitly set the compiler optimization level
-flags (``-O0``, ``-O1``, ``-O2``, ``-O3``, etc.). Those compiler options will
-be set automatically by the ``CMAKE_BUILD_TYPE`` built-in variable.
-For instance, with the GNU compiler, if ``CMAKE_BUILD_TYPE`` is set to
-``Release``, the code will be compiled with the ``-O3`` flag.
+.. note:: In CMake it is recommended to not explicitly set the compiler
+          optimization level flags (``-O0``, ``-O1``, ``-O2``, ``-O3``, etc.).
+          Those compiler options will be set automatically by the
+          ``CMAKE_BUILD_TYPE`` built-in variable. For instance, with the GNU
+          compiler, if ``CMAKE_BUILD_TYPE`` is set to ``Release``, the code will
+          be compiled with the ``-O3`` flag.
 
 .. note:: In Visual Studio solutions, the ``CMAKE_BUILD_TYPE`` built-in
           variable has no effect and the build type is directly managed by
@@ -336,5 +326,5 @@ compiler options to be enabled:
    compatible).
 
 .. warning:: Previous options are only valid for the GNU and the Clang compilers
-             but it exists equivalent options for the other compilers like
+             but it exists similar options for the other compilers like
              the Microsoft compiler (MSVC) or the Intel compiler (icpc).
