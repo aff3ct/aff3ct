@@ -80,32 +80,74 @@ void Codebook<R>
 		}
 	}
 
-	// Factor graph calculation TODO:  Now constants and fixed size (-> dynamic allocation later)
-	int F[number_of_orthogonal_resources][number_of_users];
+	// Factor graph calculation
+	std::vector<std::vector<bool>> F(number_of_orthogonal_resources, std::vector<bool>(number_of_users, false));
 
-    for (int u = 0; u < number_of_users; ++u)
+	for (int r = 0; r < number_of_orthogonal_resources; ++r)
 	{
-		for (int r = 0; r < number_of_orthogonal_resources; ++r)
+		F[r].resize(number_of_users, false);
+		for (int u = 0; u < number_of_users; ++u)
 		{
 			for (int c = 0; c < codebook_size; ++c)
 			{
 				if ((data[u][r][c].real() != (R)0.0) || (data[u][r][c].imag() != (R)0.0))
-                {
-					F[r][u] = 1;
+				{
+					F[r][u] = true;
 					break;
-                }
+				}
 			}
 		}
 	}
 
-	resource_to_user.resize(4);
+
+	int number_of_resources_per_user = 0; // number of resources per user
+	int number_of_users_per_resource = 0; // number of users per resource
+
 	for (int r = 0; r < number_of_orthogonal_resources; ++r)
 	{
-		resource_to_user[r].resize(3);
+		int n = 0; // number of users on this resource
+		for (int u = 0; u < number_of_users; ++u)
+			if (F[r][u])
+				n++;
+
+		if (r == 0)
+			number_of_users_per_resource = n;
+
+		else if (number_of_users_per_resource != n)
+		{
+			std::stringstream message;
+			message << "All resources do not have the same number of users (the first one have " << number_of_users_per_resource << " of them).";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+
+	for (int u = 0; u < number_of_users; ++u)
+	{
+		int n = 0; // number of resources used by this user
+		for (int r = 0; r < number_of_orthogonal_resources; ++r)
+			if (F[r][u])
+				n++;
+
+		if (u == 0)
+			number_of_resources_per_user = n;
+
+		else if (number_of_resources_per_user != n)
+		{
+			std::stringstream message;
+			message << "All users do not use the same number of resources (the first one use " << number_of_resources_per_user << " of them).";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+
+
+	resource_to_user.resize(number_of_orthogonal_resources);
+	for (int r = 0; r < number_of_orthogonal_resources; ++r)
+	{
+		resource_to_user[r].resize(number_of_users_per_resource);
 		int idx = 0;
 		for (int u = 0; u < number_of_users; ++u)
 		{
-			if (F[r][u] == 1)
+			if (F[r][u])
 			{
 				resource_to_user[r][idx] = u;
 				idx++;
@@ -113,14 +155,14 @@ void Codebook<R>
 		}
 	}
 
-	user_to_resource.resize(6);
+	user_to_resource.resize(number_of_users);
 	for (int u = 0; u < number_of_users; ++u)
 	{
-		user_to_resource[u].resize(2);
+		user_to_resource[u].resize(number_of_resources_per_user);
 		int idx = 0;
 		for (int r = 0; r < number_of_orthogonal_resources; ++r)
 		{
-			if (F[r][u] == 1)
+			if (F[r][u])
 			{
 				user_to_resource[u][idx] = r;
 				idx++;
@@ -143,6 +185,19 @@ inline int Codebook<R>
 ::get_number_of_users() const
 {
 	return number_of_users;
+}
+
+template <typename R>
+inline int Codebook<R>
+::get_number_of_resources_per_user() const
+{
+	return number_of_resources_per_user;
+}
+template <typename R>
+inline int Codebook<R>
+::get_number_of_users_per_resource() const
+{
+	return number_of_users_per_resource;
 }
 
 template <typename R>
