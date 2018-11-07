@@ -5,7 +5,7 @@ call "%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat"
 
 mkdir build
 cd build
-cmake .. -G"Visual Studio 15 2017 Win64" %CMAKE_OPT% -DCMAKE_CXX_FLAGS="-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc /MP%THREADS% %CFLAGS%"
+cmake .. -G"Visual Studio 15 2017 Win64" %CMAKE_OPT% -DCMAKE_CXX_FLAGS="%CFLAGS% /MP%THREADS%"
 if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 devenv /build Release aff3ct.sln
 rem msbuild aff3ct.sln /t:Build /p:Configuration=Release
