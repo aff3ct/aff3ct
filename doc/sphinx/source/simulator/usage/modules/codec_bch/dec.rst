@@ -8,7 +8,7 @@ Decoder parameters
 ``--dec-corr-pow, -T``
 """"""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-corr-pow 1``
 
 Correction power of the BCH code.
@@ -18,7 +18,7 @@ Correction power of the BCH code.
 ``--dec-flips``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -36,8 +36,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``GENIUS`` ``NAIVE`` ``STD`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``GENIUS`` ``NAIVE`` ``STD``
    :Examples: ``--dec-implem FAST``
 
 Select the implementation of the algorithm to decode.
@@ -67,8 +67,8 @@ Description of the allowed values:
 ``--dec-type, -D``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``ALGEBRAIC`` ``CHASE`` ``ML`` 
+   :Type: text
+   :Allowed values: ``ALGEBRAIC`` ``CHASE`` ``ML``
    :Examples: ``--dec-type ALGEBRAIC``
 
 Select the algorithm you want to decode the codeword.

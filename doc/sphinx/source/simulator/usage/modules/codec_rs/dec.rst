@@ -8,7 +8,7 @@ Decoder parameters
 ``--dec-corr-pow, -T``
 """"""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-corr-pow 1``
 
 Correction power of the RS code.
@@ -18,7 +18,7 @@ Correction power of the RS code.
 ``--dec-flips``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -36,8 +36,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``GENIUS`` ``NAIVE`` ``STD`` 
+   :Type: text
+   :Allowed values: ``GENIUS`` ``NAIVE`` ``STD``
    :Examples: ``--dec-implem GENIUS``
 
 Select the implementation of the algorithm to decode.
@@ -64,8 +64,8 @@ Description of the allowed values:
 ``--dec-type, -D``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``ALGEBRAIC`` ``CHASE`` ``ML`` 
+   :Type: text
+   :Allowed values: ``ALGEBRAIC`` ``CHASE`` ``ML``
    :Examples: ``--dec-type ALGEBRAIC``
 
 Select the algorithm you want to decode the codeword.

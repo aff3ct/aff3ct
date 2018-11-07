@@ -8,8 +8,8 @@ Simulation parameters
 ``--sim-cde-type, -C`` |image_required_argument|
 """"""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: text
-   :Allowed values: ``BCH`` ``LDPC`` ``POLAR`` ``RA`` ``REP`` ``RS`` ``RSC`` ``RSC_DB`` ``TURBO`` ``TURBO_DB`` ``TURBO_PROD`` ``UNCODED`` 
+   :Type: text
+   :Allowed values: ``BCH`` ``LDPC`` ``POLAR`` ``RA`` ``REP`` ``RS`` ``RSC`` ``RSC_DB`` ``TURBO`` ``TURBO_DB`` ``TURBO_PROD`` ``UNCODED``
    :Examples: ``--sim-cde-type BCH``
 
 Select the code type you want to use.
@@ -63,7 +63,7 @@ Description of the allowed values:
 ``--sim-noise-max, -M`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: real number
+   :Type: real number
    :Examples: ``--sim-noise-max 1.0``
 
 Maximal noise energy to simulate.
@@ -73,7 +73,7 @@ Maximal noise energy to simulate.
 ``--sim-noise-min, -m`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: real number
+   :Type: real number
    :Examples: ``--sim-noise-min 1.0``
 
 Minimal noise energy to simulate.
@@ -83,7 +83,7 @@ Minimal noise energy to simulate.
 ``--sim-noise-range, -R`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: list of (list of (real number):limited length [1;3]):limited length [1;inf]
+   :Type: list of (list of (real number):limited length [1;3]):limited length [1;inf]
    :Examples: ``--sim-noise-range TODO``
 
 Noise energy range to run (Matlab style: "0.5:2.5,2.55,2.6:0.05:3" with a default step of 0.1).
@@ -109,7 +109,7 @@ Enable the coset approach.
 ``--sim-crc-start``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--sim-crc-start 1``
 
 Iteration number to start the CRC checking in the turbo demodulation process.
@@ -135,7 +135,7 @@ Debug mode prints values in the hexadecimal format.
 ``--sim-debug-limit, -d``
 """""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--sim-debug-limit 1``
 
 Set the max number of elements to display in the debug mode.
@@ -145,7 +145,7 @@ Set the max number of elements to display in the debug mode.
 ``--sim-debug-prec``
 """"""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--sim-debug-prec 1``
 
 Set the precision of real elements when displayed in debug mode.
@@ -155,7 +155,7 @@ Set the precision of real elements when displayed in debug mode.
 ``--sim-ite, -I``
 """""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--sim-ite 1``
 
 Number of global iterations between the demodulator and the decoder.
@@ -165,7 +165,7 @@ Number of global iterations between the demodulator and the decoder.
 ``--sim-meta``
 """"""""""""""
 
-   :type: text
+   :Type: text
    :Examples: ``--sim-meta "TODO CHECK VALUE"``
 
 Print the output with metadata, takes the simulation title.
@@ -183,7 +183,7 @@ Disable the colors in the shell.
 ``--sim-noise-step, -s``
 """"""""""""""""""""""""
 
-   :type: real number
+   :Type: real number
    :Examples: ``--sim-noise-step 1.0``
 
 Noise energy step between each simulation iteration.
@@ -193,8 +193,8 @@ Noise energy step between each simulation iteration.
 ``--sim-noise-type, -E``
 """"""""""""""""""""""""
 
-   :type: text
-   :Allowed values: ``EBN0`` ``EP`` ``ESN0`` ``ROP`` 
+   :Type: text
+   :Allowed values: ``EBN0`` ``EP`` ``ESN0`` ``ROP``
    :Examples: ``--sim-noise-type EBN0``
 
 Select the type of NOISE: SNR per Symbol / SNR per information Bit / Received Optical Power / Erasure Probability.
@@ -224,7 +224,7 @@ Description of the allowed values:
 ``--sim-pdf-path``
 """"""""""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--sim-pdf-path example/path/to/the/right/file``
 
@@ -235,8 +235,8 @@ A file that contains PDF for different SNR. Set the SNR range from the given one
 ``--sim-prec, -p``
 """"""""""""""""""
 
-   :type: integer
-   :Allowed values: ``8`` ``16`` ``32`` ``64`` 
+   :Type: integer
+   :Allowed values: ``8`` ``16`` ``32`` ``64``
    :Examples: ``--sim-prec 8``
 
 The simulation precision in bits.
@@ -266,7 +266,7 @@ Description of the allowed values:
 ``--sim-seed, -S``
 """"""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--sim-seed 1``
 
 Seed used in the simulation to initialize the pseudo random generators in general.
@@ -284,7 +284,7 @@ Display statistics module by module.
 ``--sim-threads, -t``
 """""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--sim-threads 1``
 
 Enable multi-threaded mode and specify the number of threads (0 means the maximum supported by the core.
@@ -294,8 +294,8 @@ Enable multi-threaded mode and specify the number of threads (0 means the maximu
 ``--sim-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``BFER`` ``BFERI`` ``EXIT`` 
+   :Type: text
+   :Allowed values: ``BFER`` ``BFERI`` ``EXIT``
    :Examples: ``--sim-type BFER``
 
 Select the type of simulation to launch (default is BFER).
@@ -338,7 +338,7 @@ Enable the tracking of the bad frames (by default the frames are stored in the c
 ``--sim-err-trk-path`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read/write
    :Examples: ``--sim-err-trk-path example/path/to/the/right/file``
 
@@ -357,7 +357,7 @@ Automatically replay the saved frames.
 ``--sim-err-trk-thold`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--sim-err-trk-thold 1``
 
 Dump only frames with a bit error count above or equal to this threshold.
@@ -367,7 +367,7 @@ Dump only frames with a bit error count above or equal to this threshold.
 ``--sim-max-frame, -n`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--sim-max-frame 1``
 
 Maximum number of frames to play after what the current simulatated noise stops (0 is infinite).
@@ -385,7 +385,7 @@ Do not display any legend when launching the simulation.
 ``--sim-stop-time`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--sim-stop-time 1``
 
 Time in sec after what the current simulatated noise stops (0 is infinite).

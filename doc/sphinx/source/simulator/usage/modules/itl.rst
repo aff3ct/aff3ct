@@ -8,7 +8,7 @@ Interleaver parameters
 ``--itl-cols``
 """"""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--itl-cols 1``
 
 Specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver.
@@ -18,7 +18,7 @@ Specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interlea
 ``--itl-path``
 """"""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--itl-path example/path/to/the/right/file``
 
@@ -29,8 +29,8 @@ Specify the path to the interleaver file (to use with "\\-\\-itl-type USER").
 ``--itl-read-order``
 """"""""""""""""""""
 
-   :type: text
-   :Allowed values: ``BOTTOM_LEFT`` ``BOTTOM_RIGHT`` ``TOP_LEFT`` ``TOP_RIGHT`` 
+   :Type: text
+   :Allowed values: ``BOTTOM_LEFT`` ``BOTTOM_RIGHT`` ``TOP_LEFT`` ``TOP_RIGHT``
    :Examples: ``--itl-read-order BOTTOM_LEFT``
 
 Read order of the COL_ROW and ROW_COL interleavers.
@@ -60,8 +60,8 @@ Description of the allowed values:
 ``--itl-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``CCSDS`` ``COL_ROW`` ``DVB-RCS1`` ``DVB-RCS2`` ``GOLDEN`` ``LTE`` ``NO`` ``RANDOM`` ``RAND_COL`` ``ROW_COL`` ``USER`` 
+   :Type: text
+   :Allowed values: ``CCSDS`` ``COL_ROW`` ``DVB-RCS1`` ``DVB-RCS2`` ``GOLDEN`` ``LTE`` ``NO`` ``RANDOM`` ``RAND_COL`` ``ROW_COL`` ``USER``
    :Examples: ``--itl-type CCSDS``
 
 Type of the interleaver to use in the simulation.

@@ -8,7 +8,7 @@ Terminal parameters
 ``--ter-freq``
 """"""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--ter-freq 1``
 
 Display frequency in ms (refresh time step for each iteration, 0 = disable display refresh).
@@ -26,8 +26,8 @@ Disable reporting for each iteration.
 ``--ter-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``STD`` 
+   :Type: text
+   :Allowed values: ``STD``
    :Examples: ``--ter-type STD``
 
 Type of the terminal to use to display results.

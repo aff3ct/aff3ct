@@ -8,7 +8,7 @@ Decoder parameters
 ``--dec-sub-cw-size, -N`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-sub-cw-size 1``
 
 The codeword size.
@@ -18,7 +18,7 @@ The codeword size.
 ``--dec-sub-info-bits, -K`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-sub-info-bits 1``
 
 Useful number of bit transmitted (information bits).
@@ -28,7 +28,7 @@ Useful number of bit transmitted (information bits).
 ``--dec-alpha``
 """""""""""""""
 
-   :type: list of (real number):limited length [1;inf]
+   :Type: list of (real number):limited length [1;inf]
    :Examples: ``--dec-alpha TODO``
 
 Weighting factor, one by half iteration (so twice more than number of iterations). If not enough given values, then automatically extends the last to all iterations.
@@ -38,7 +38,7 @@ Weighting factor, one by half iteration (so twice more than number of iterations
 ``--dec-beta``
 """"""""""""""
 
-   :type: list of (real number:positive):limited length [1;inf]
+   :Type: list of (real number:positive):limited length [1;inf]
    :Examples: ``--dec-beta TODO``
 
 Reliability factor, one by half iteration (so twice more than number of iterations). If not enough given values, then automatically extends the last to all iterations. If not given, then computes beta dynamically from the least reliable position metrics.
@@ -48,7 +48,7 @@ Reliability factor, one by half iteration (so twice more than number of iteratio
 ``--dec-c``
 """""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-c 1``
 
 Number of competitors (0 means equal to number of test vectors, 1 means only the decided word).
@@ -58,7 +58,7 @@ Number of competitors (0 means equal to number of test vectors, 1 means only the
 ``--dec-cp-coef``
 """""""""""""""""
 
-   :type: list of (real number):limited length [5;5]
+   :Type: list of (real number):limited length [5;5]
    :Examples: ``--dec-cp-coef TODO``
 
 The 5 Chase Pyndiah constant coefficients "a,b,c,d,e".
@@ -68,7 +68,7 @@ The 5 Chase Pyndiah constant coefficients "a,b,c,d,e".
 ``--dec-flips``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -86,8 +86,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``NAIVE`` ``STD`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``NAIVE`` ``STD``
    :Examples: ``--dec-implem FAST``
 
 Select the implementation of the algorithm to decode.
@@ -114,7 +114,7 @@ Description of the allowed values:
 ``--dec-ite, -i``
 """""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-ite 1``
 
 Maximal number of iterations in the turbo.
@@ -124,7 +124,7 @@ Maximal number of iterations in the turbo.
 ``--dec-p``
 """""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-p 1``
 
 Number of least reliable positions.
@@ -134,7 +134,7 @@ Number of least reliable positions.
 ``--dec-sub-corr-pow, -T``
 """"""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-sub-corr-pow 1``
 
 Correction power of the BCH code.
@@ -144,7 +144,7 @@ Correction power of the BCH code.
 ``--dec-sub-flips``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-sub-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -162,8 +162,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-sub-implem``
 """"""""""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``GENIUS`` ``NAIVE`` ``STD`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``GENIUS`` ``NAIVE`` ``STD``
    :Examples: ``--dec-sub-implem FAST``
 
 Select the implementation of the algorithm to decode.
@@ -193,8 +193,8 @@ Description of the allowed values:
 ``--dec-sub-type, -D``
 """"""""""""""""""""""
 
-   :type: text
-   :Allowed values: ``ALGEBRAIC`` ``CHASE`` ``ML`` 
+   :Type: text
+   :Allowed values: ``ALGEBRAIC`` ``CHASE`` ``ML``
    :Examples: ``--dec-sub-type ALGEBRAIC``
 
 Select the algorithm you want to decode the codeword.
@@ -221,7 +221,7 @@ Description of the allowed values:
 ``--dec-t``
 """""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-t 1``
 
 Number of test vectors (0 means equal to 2^p).
@@ -231,8 +231,8 @@ Number of test vectors (0 means equal to 2^p).
 ``--dec-type, -D``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``CHASE`` ``CP`` ``ML`` 
+   :Type: text
+   :Allowed values: ``CHASE`` ``CP`` ``ML``
    :Examples: ``--dec-type CHASE``
 
 Select the algorithm you want to decode the codeword.

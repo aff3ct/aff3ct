@@ -8,7 +8,7 @@ Monitor parameters
 ``--mnt-err-hist``
 """"""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--mnt-err-hist 1``
 
 Activate the histogram of the number of errors per frame. Set the max number of bit error per frame included in the histogram (0 is no limit).
@@ -18,7 +18,7 @@ Activate the histogram of the number of errors per frame. Set the max number of 
 ``--mnt-err-hist-path``
 """""""""""""""""""""""
 
-   :type: file
+   :Type: file
    :Rights: write only
    :Examples: ``--mnt-err-hist-path example/path/to/the/right/file``
 
@@ -29,7 +29,7 @@ Path to the output histogram (default is './hist', add automatically the current
 ``--mnt-max-fe, -e``
 """"""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--mnt-max-fe 1``
 
 Max number of frame errors for each noise point simulation.

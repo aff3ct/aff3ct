@@ -8,7 +8,7 @@ Source parameters
 ``--src-fra, -F``
 """""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--src-fra 1``
 
 Set the number of inter frame level to process.
@@ -18,8 +18,8 @@ Set the number of inter frame level to process.
 ``--src-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``STD`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``STD``
    :Examples: ``--src-implem FAST``
 
 Select the implementation of the algorithm to generate the information bits.
@@ -43,7 +43,7 @@ Description of the allowed values:
 ``--src-path``
 """"""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--src-path example/path/to/the/right/file``
 
@@ -54,7 +54,7 @@ Path to a file containing one or a set of pre-computed source bits, to use with 
 ``--src-start-idx``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--src-start-idx 1``
 
 Start idx to use in the USER type source.
@@ -64,8 +64,8 @@ Start idx to use in the USER type source.
 ``--src-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``AZCW`` ``RAND`` ``USER`` 
+   :Type: text
+   :Allowed values: ``AZCW`` ``RAND`` ``USER``
    :Examples: ``--src-type AZCW``
 
 Method used to generate the codewords.

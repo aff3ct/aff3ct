@@ -8,7 +8,7 @@ Encoder parameters
 ``--enc-start-idx``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-start-idx 1``
 
 Start idx to use in the USER type encoder.

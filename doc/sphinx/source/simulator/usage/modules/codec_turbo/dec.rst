@@ -8,7 +8,7 @@ Decoder parameters
 ``--dec-flips``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -26,7 +26,7 @@ Enables the flip and check decoder (requires "\\-\\-crc-type").
 ``--dec-fnc-crc-ite``
 """""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-fnc-crc-ite 1``
 
 Set the iteration to start the CRC checking.
@@ -36,7 +36,7 @@ Set the iteration to start the CRC checking.
 ``--dec-fnc-ite-M``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-fnc-ite-M 1``
 
 Set last iteration at which the fnc is used.
@@ -46,7 +46,7 @@ Set last iteration at which the fnc is used.
 ``--dec-fnc-ite-m``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-fnc-ite-m 1``
 
 Set first iteration at which the fnc is used.
@@ -56,7 +56,7 @@ Set first iteration at which the fnc is used.
 ``--dec-fnc-ite-s``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-fnc-ite-s 1``
 
 Set iteration step for the fnc algorithm.
@@ -66,7 +66,7 @@ Set iteration step for the fnc algorithm.
 ``--dec-fnc-q``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-fnc-q 1``
 
 Set the search's space for the fnc algorithm.
@@ -84,8 +84,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``NAIVE`` ``STD`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``NAIVE`` ``STD``
    :Examples: ``--dec-implem FAST``
 
 Select the implementation of the algorithm to decode.
@@ -112,7 +112,7 @@ Description of the allowed values:
 ``--dec-ite, -i``
 """""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-ite 1``
 
 Maximal number of iterations in the turbo.
@@ -130,8 +130,8 @@ Enables the self corrected decoder (requires "\\-\\-crc-type").
 ``--dec-sf-type``
 """""""""""""""""
 
-   :type: text
-   :Allowed values: ``ADAPTIVE`` ``ARRAY`` ``CST`` ``LTE`` ``LTE_VEC`` 
+   :Type: text
+   :Allowed values: ``ADAPTIVE`` ``ARRAY`` ``CST`` ``LTE`` ``LTE_VEC``
    :Examples: ``--dec-sf-type ADAPTIVE``
 
 Scaling factor type.
@@ -164,7 +164,7 @@ Description of the allowed values:
 ``--dec-sub-flips``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-sub-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -182,8 +182,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-sub-implem``
 """"""""""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``GENERIC`` ``NAIVE`` ``STD`` ``VERY_FAST`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``GENERIC`` ``NAIVE`` ``STD`` ``VERY_FAST``
    :Examples: ``--dec-sub-implem FAST``
 
 Select the implementation of the algorithm to decode.
@@ -216,8 +216,8 @@ Description of the allowed values:
 ``--dec-sub-max``
 """""""""""""""""
 
-   :type: text
-   :Allowed values: ``MAX`` ``MAXL`` ``MAXS`` 
+   :Type: text
+   :Allowed values: ``MAX`` ``MAXL`` ``MAXS``
    :Examples: ``--dec-sub-max MAX``
 
 The MAX implementation for the nodes.
@@ -244,8 +244,8 @@ Description of the allowed values:
 ``--dec-sub-simd``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``INTER`` ``INTRA`` 
+   :Type: text
+   :Allowed values: ``INTER`` ``INTRA``
    :Examples: ``--dec-sub-simd INTER``
 
 The SIMD strategy you want to use.
@@ -269,8 +269,8 @@ Description of the allowed values:
 ``--dec-sub-type, -D``
 """"""""""""""""""""""
 
-   :type: text
-   :Allowed values: ``BCJR`` ``CHASE`` ``ML`` 
+   :Type: text
+   :Allowed values: ``BCJR`` ``CHASE`` ``ML``
    :Examples: ``--dec-sub-type BCJR``
 
 Select the algorithm you want to decode the codeword.
@@ -297,8 +297,8 @@ Description of the allowed values:
 ``--dec-type, -D``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``CHASE`` ``ML`` ``TURBO`` 
+   :Type: text
+   :Allowed values: ``CHASE`` ``ML`` ``TURBO``
    :Examples: ``--dec-type CHASE``
 
 Select the algorithm you want to decode the codeword.

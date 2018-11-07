@@ -8,7 +8,7 @@ Puncturer parameters
 ``--pct-fra-size, -N`` |image_required_argument|
 """"""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--pct-fra-size 1``
 
 Useful number of bit transmitted (information bits).
@@ -18,7 +18,7 @@ Useful number of bit transmitted (information bits).
 ``--pct-pattern``
 """""""""""""""""
 
-   :type: text
+   :Type: text
    :Examples: ``--pct-pattern "TODO CHECK VALUE"``
 
 Puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: "1,1,1,0").
@@ -28,8 +28,8 @@ Puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: "1,1,1,0"
 ``--pct-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``LDPC`` ``NO`` 
+   :Type: text
+   :Allowed values: ``LDPC`` ``NO``
    :Examples: ``--pct-type LDPC``
 
 Code puncturer type.

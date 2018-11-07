@@ -8,7 +8,7 @@ Encoder parameters
 ``--enc-fb-awgn-path``
 """"""""""""""""""""""
 
-   :type: path
+   :Type: path
    :Rights: read only
    :Examples: ``--enc-fb-awgn-path example/path/to/the/right/place/``
 
@@ -19,8 +19,8 @@ Path to a file or a directory containing the best channels to use for informatio
 ``--enc-fb-gen-method``
 """""""""""""""""""""""
 
-   :type: text
-   :Allowed values: ``FILE`` ``GA`` ``TV`` 
+   :Type: text
+   :Allowed values: ``FILE`` ``GA`` ``TV``
    :Examples: ``--enc-fb-gen-method FILE``
 
 Select the frozen bits generation method.
@@ -47,7 +47,7 @@ Description of the allowed values:
 ``--enc-fb-sigma``
 """"""""""""""""""
 
-   :type: real number
+   :Type: real number
    :Examples: ``--enc-fb-sigma 1.0``
 
 Sigma value for the polar codes generation (adaptive frozen bits if sigma is not set).
@@ -65,7 +65,7 @@ Disable the systematic encoding.
 ``--enc-path``
 """"""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--enc-path example/path/to/the/right/file``
 
@@ -76,7 +76,7 @@ Path to a file containing one or a set of pre-computed codewords, to use with "\
 ``--enc-start-idx``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-start-idx 1``
 
 Start idx to use in the USER type encoder.
@@ -86,8 +86,8 @@ Start idx to use in the USER type encoder.
 ``--enc-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``POLAR`` ``USER`` 
+   :Type: text
+   :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``POLAR`` ``USER``
    :Examples: ``--enc-type AZCW``
 
 Type of the encoder to use in the simulation.

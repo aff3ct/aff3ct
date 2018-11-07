@@ -8,7 +8,7 @@ Decoder parameters
 ``--dec-flips``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -26,8 +26,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``HARD_DECISION`` ``NAIVE`` ``STD`` 
+   :Type: text
+   :Allowed values: ``HARD_DECISION`` ``NAIVE`` ``STD``
    :Examples: ``--dec-implem HARD_DECISION``
 
 Select the implementation of the algorithm to decode.
@@ -54,8 +54,8 @@ Description of the allowed values:
 ``--dec-type, -D``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``CHASE`` ``ML`` ``NONE`` 
+   :Type: text
+   :Allowed values: ``CHASE`` ``ML`` ``NONE``
    :Examples: ``--dec-type CHASE``
 
 Select the algorithm you want to decode the codeword.

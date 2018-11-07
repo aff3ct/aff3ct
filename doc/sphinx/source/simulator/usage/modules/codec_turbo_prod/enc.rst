@@ -8,7 +8,7 @@ Encoder parameters
 ``--enc-sub-cw-size, -N`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-sub-cw-size 1``
 
 The codeword size.
@@ -18,7 +18,7 @@ The codeword size.
 ``--enc-sub-info-bits, -K`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-sub-info-bits 1``
 
 Useful number of bit transmitted (information bits).
@@ -36,7 +36,7 @@ Extends code with a parity bits.
 ``--enc-path``
 """"""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--enc-path example/path/to/the/right/file``
 
@@ -47,7 +47,7 @@ Path to a file containing one or a set of pre-computed codewords, to use with "\
 ``--enc-start-idx``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-start-idx 1``
 
 Start idx to use in the USER type encoder.
@@ -57,7 +57,7 @@ Start idx to use in the USER type encoder.
 ``--enc-sub-path``
 """"""""""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--enc-sub-path example/path/to/the/right/file``
 
@@ -68,7 +68,7 @@ Path to a file containing one or a set of pre-computed codewords, to use with "\
 ``--enc-sub-seed, -S``
 """"""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-sub-seed 1``
 
 Seed used to initialize the pseudo random generators.
@@ -78,7 +78,7 @@ Seed used to initialize the pseudo random generators.
 ``--enc-sub-start-idx``
 """""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-sub-start-idx 1``
 
 Start idx to use in the USER type encoder.
@@ -88,8 +88,8 @@ Start idx to use in the USER type encoder.
 ``--enc-sub-type``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``AZCW`` ``BCH`` ``COSET`` ``NO`` ``USER`` 
+   :Type: text
+   :Allowed values: ``AZCW`` ``BCH`` ``COSET`` ``NO`` ``USER``
    :Examples: ``--enc-sub-type AZCW``
 
 Type of the encoder to use in the simulation.
@@ -122,8 +122,8 @@ Description of the allowed values:
 ``--enc-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``TURBO_PROD`` ``USER`` 
+   :Type: text
+   :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``TURBO_PROD`` ``USER``
    :Examples: ``--enc-type AZCW``
 
 Type of the encoder to use in the simulation.

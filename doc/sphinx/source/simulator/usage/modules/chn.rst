@@ -8,8 +8,8 @@ Channel parameters
 ``--chn-blk-fad``
 """""""""""""""""
 
-   :type: text
-   :Allowed values: ``FRAME`` ``NO`` ``ONETAP`` 
+   :Type: text
+   :Allowed values: ``FRAME`` ``NO`` ``ONETAP``
    :Examples: ``--chn-blk-fad FRAME``
 
 Block fading policy for the RAYLEIGH channel.
@@ -36,7 +36,7 @@ Description of the allowed values:
 ``--chn-gain-occur``
 """"""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--chn-gain-occur 1``
 
 The number of times a gain is used on consecutive symbols (used with "\\-\\-chn-type RAYLEIGH_USER").
@@ -46,8 +46,8 @@ The number of times a gain is used on consecutive symbols (used with "\\-\\-chn-
 ``--chn-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``STD`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``STD``
    :Examples: ``--chn-implem FAST``
 
 Select the implementation of the algorithm to generate noise.
@@ -71,7 +71,7 @@ Description of the allowed values:
 ``--chn-path``
 """"""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read/write
    :Examples: ``--chn-path example/path/to/the/right/file``
 
@@ -82,8 +82,8 @@ Path to a noisy file, to use with "\\-\\-chn-type USER,OPTICAL" or to a gain fil
 ``--chn-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``AWGN`` ``BEC`` ``BSC`` ``NO`` ``OPTICAL`` ``RAYLEIGH`` ``RAYLEIGH_USER`` ``USER`` ``USER_ADD`` 
+   :Type: text
+   :Allowed values: ``AWGN`` ``BEC`` ``BSC`` ``NO`` ``OPTICAL`` ``RAYLEIGH`` ``RAYLEIGH_USER`` ``USER`` ``USER_ADD``
    :Examples: ``--chn-type AWGN``
 
 Type of the channel to use in the simulation ('USER' has an output got from a file when 'USER_ADD' has an additive noise got from a file).

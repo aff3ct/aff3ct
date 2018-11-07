@@ -8,7 +8,7 @@ Puncturer parameters
 ``--pct-fra-size, -N``
 """"""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--pct-fra-size 1``
 
 Useful number of bit transmitted (information bits).
@@ -18,8 +18,8 @@ Useful number of bit transmitted (information bits).
 ``--pct-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``NO`` ``TURBO_DB`` 
+   :Type: text
+   :Allowed values: ``NO`` ``TURBO_DB``
    :Examples: ``--pct-type NO``
 
 Code puncturer type.

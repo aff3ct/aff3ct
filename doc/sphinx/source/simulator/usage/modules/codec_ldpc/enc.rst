@@ -8,7 +8,7 @@ Encoder parameters
 ``--enc-cw-size, -N`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-cw-size 1``
 
 The codeword size.
@@ -18,7 +18,7 @@ The codeword size.
 ``--enc-info-bits, -K`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-info-bits 1``
 
 Useful number of bit transmitted (information bits).
@@ -28,8 +28,8 @@ Useful number of bit transmitted (information bits).
 ``--enc-g-method``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``IDENTITY`` ``LU_DEC`` 
+   :Type: text
+   :Allowed values: ``IDENTITY`` ``LU_DEC``
    :Examples: ``--enc-g-method IDENTITY``
 
 The method used to generate G from H when using 'LDPC_H' encoder type. 'LU_DEC' method generates a hollow G thanks to the LU decomposition with a guarantee to have the systematic identity (do not work with irregular matrices) when the 'IDENTITY' method generate an identity on H to get the parity part.
@@ -53,7 +53,7 @@ Description of the allowed values:
 ``--enc-g-path``
 """"""""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--enc-g-path example/path/to/the/right/file``
 
@@ -64,7 +64,7 @@ Path to the G matrix (AList formated file, required by the "LDPC" encoder).
 ``--enc-path``
 """"""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--enc-path example/path/to/the/right/file``
 
@@ -75,7 +75,7 @@ Path to a file containing one or a set of pre-computed codewords, to use with "\
 ``--enc-save-g``
 """"""""""""""""
 
-   :type: file
+   :Type: file
    :Rights: write only
    :Examples: ``--enc-save-g example/path/to/the/right/file``
 
@@ -86,7 +86,7 @@ Path where the generated G matrix with the 'LDPC_H' encoder type will be saved.
 ``--enc-start-idx``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-start-idx 1``
 
 Start idx to use in the USER type encoder.
@@ -96,8 +96,8 @@ Start idx to use in the USER type encoder.
 ``--enc-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``AZCW`` ``COSET`` ``LDPC`` ``LDPC_DVBS2`` ``LDPC_H`` ``LDPC_IRA`` ``LDPC_QC`` ``NO`` ``USER`` 
+   :Type: text
+   :Allowed values: ``AZCW`` ``COSET`` ``LDPC`` ``LDPC_DVBS2`` ``LDPC_H`` ``LDPC_IRA`` ``LDPC_QC`` ``NO`` ``USER``
    :Examples: ``--enc-type AZCW``
 
 Type of the encoder to use in the simulation.

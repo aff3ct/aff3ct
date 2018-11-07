@@ -8,7 +8,7 @@ Encoder parameters
 ``--enc-info-bits, -K`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-info-bits 1``
 
 Useful number of bit transmitted (information bits).
@@ -26,7 +26,7 @@ Disable the buffered encoding.
 ``--enc-path``
 """"""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--enc-path example/path/to/the/right/file``
 
@@ -37,7 +37,7 @@ Path to a file containing one or a set of pre-computed codewords, to use with "\
 ``--enc-start-idx``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-start-idx 1``
 
 Start idx to use in the USER type encoder.
@@ -47,8 +47,8 @@ Start idx to use in the USER type encoder.
 ``--enc-std``
 """""""""""""
 
-   :type: text
-   :Allowed values: ``DVB-RCS1`` ``DVB-RCS2`` 
+   :Type: text
+   :Allowed values: ``DVB-RCS1`` ``DVB-RCS2``
    :Examples: ``--enc-std DVB-RCS1``
 
 Select a standard and set automatically some parameters (overwritten with user given arguments).
@@ -72,8 +72,8 @@ Description of the allowed values:
 ``--enc-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``RSC_DB`` ``USER`` 
+   :Type: text
+   :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``RSC_DB`` ``USER``
    :Examples: ``--enc-type AZCW``
 
 Type of the encoder to use in the simulation.

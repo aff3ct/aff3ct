@@ -8,7 +8,7 @@ Puncturer parameters
 ``--pct-pattern``
 """""""""""""""""
 
-   :type: list of (list of (boolean:including set={0|1}):limited length [1;inf]):limited length [3;3], elements of same length
+   :Type: list of (list of (boolean:including set={0|1}):limited length [1;inf]):limited length [3;3], elements of same length
    :Examples: ``--pct-pattern TODO``
 
 Puncturing pattern for the turbo encoder (ex: "11,10,01").
@@ -18,8 +18,8 @@ Puncturing pattern for the turbo encoder (ex: "11,10,01").
 ``--pct-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``NO`` ``TURBO`` 
+   :Type: text
+   :Allowed values: ``NO`` ``TURBO``
    :Examples: ``--pct-type NO``
 
 Code puncturer type.

@@ -8,7 +8,7 @@ Quantizer parameters
 ``--qnt-bits``
 """"""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--qnt-bits 1``
 
 The number of bits used for the quantizer.
@@ -18,7 +18,7 @@ The number of bits used for the quantizer.
 ``--qnt-dec``
 """""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--qnt-dec 1``
 
 The position of the fixed point in the quantified representation.
@@ -28,8 +28,8 @@ The position of the fixed point in the quantified representation.
 ``--qnt-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``STD`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``STD``
    :Examples: ``--qnt-implem FAST``
 
 Select the implementation of quantizer.
@@ -53,7 +53,7 @@ Description of the allowed values:
 ``--qnt-range``
 """""""""""""""
 
-   :type: real number
+   :Type: real number
    :Examples: ``--qnt-range 1.0``
 
 The min/max bound for the tricky quantizer.
@@ -63,8 +63,8 @@ The min/max bound for the tricky quantizer.
 ``--qnt-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``CUSTOM`` ``POW2`` 
+   :Type: text
+   :Allowed values: ``CUSTOM`` ``POW2``
    :Examples: ``--qnt-type CUSTOM``
 
 Type of the quantizer to use in the simulation.

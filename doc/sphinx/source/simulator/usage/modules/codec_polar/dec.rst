@@ -8,7 +8,7 @@ Decoder parameters
 ``--dec-flips``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -26,8 +26,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``NAIVE`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``NAIVE``
    :Examples: ``--dec-implem FAST``
 
 Select the implementation of the algorithm to decode.
@@ -51,7 +51,7 @@ Description of the allowed values:
 ``--dec-ite, -i``
 """""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-ite 1``
 
 Maximal number of iterations in the SCAN decoder.
@@ -61,7 +61,7 @@ Maximal number of iterations in the SCAN decoder.
 ``--dec-lists, -L``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-lists 1``
 
 Maximal number of paths in the SCL decoder.
@@ -79,7 +79,7 @@ Enable the partial adaptive mode for the ASCL decoder (by default full adaptive 
 ``--dec-polar-nodes``
 """""""""""""""""""""
 
-   :type: text
+   :Type: text
    :Examples: ``--dec-polar-nodes "TODO CHECK VALUE"``
 
 The type of nodes you want to detect in the Polar tree (ex: "{R0,R1,R0L,REP_2-8,REPL,SPC_4+}").
@@ -89,8 +89,8 @@ The type of nodes you want to detect in the Polar tree (ex: "{R0,R1,R0L,REP_2-8,
 ``--dec-simd``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``INTER`` ``INTRA`` 
+   :Type: text
+   :Allowed values: ``INTER`` ``INTRA``
    :Examples: ``--dec-simd INTER``
 
 The SIMD strategy you want to use.
@@ -114,8 +114,8 @@ Description of the allowed values:
 ``--dec-type, -D``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``ASCL`` ``ASCL_MEM`` ``CHASE`` ``ML`` ``SC`` ``SCAN`` ``SCL`` ``SCL_MEM`` 
+   :Type: text
+   :Allowed values: ``ASCL`` ``ASCL_MEM`` ``CHASE`` ``ML`` ``SC`` ``SCAN`` ``SCL`` ``SCL_MEM``
    :Examples: ``--dec-type ASCL``
 
 Select the algorithm you want to decode the codeword.

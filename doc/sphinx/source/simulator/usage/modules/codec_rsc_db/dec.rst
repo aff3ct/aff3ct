@@ -8,7 +8,7 @@ Decoder parameters
 ``--dec-flips``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -26,8 +26,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``DVB-RCS1`` ``DVB-RCS2`` ``GENERIC`` ``NAIVE`` ``STD`` 
+   :Type: text
+   :Allowed values: ``DVB-RCS1`` ``DVB-RCS2`` ``GENERIC`` ``NAIVE`` ``STD``
    :Examples: ``--dec-implem DVB-RCS1``
 
 Select the implementation of the algorithm to decode.
@@ -60,8 +60,8 @@ Description of the allowed values:
 ``--dec-max``
 """""""""""""
 
-   :type: text
-   :Allowed values: ``MAX`` ``MAXL`` ``MAXS`` 
+   :Type: text
+   :Allowed values: ``MAX`` ``MAXL`` ``MAXS``
    :Examples: ``--dec-max MAX``
 
 The MAX implementation for the nodes.
@@ -88,8 +88,8 @@ Description of the allowed values:
 ``--dec-type, -D``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``BCJR`` ``CHASE`` ``ML`` 
+   :Type: text
+   :Allowed values: ``BCJR`` ``CHASE`` ``ML``
    :Examples: ``--dec-type BCJR``
 
 Select the algorithm you want to decode the codeword.

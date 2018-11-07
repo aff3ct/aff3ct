@@ -8,7 +8,7 @@ Decoder parameters
 ``--dec-h-path`` |image_required_argument|
 """"""""""""""""""""""""""""""""""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--dec-h-path example/path/to/the/right/file``
 
@@ -19,7 +19,7 @@ Path to the H matrix (AList or QC formated file).
 ``--dec-flips``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-flips 1``
 
 Set the maximum number of flips in the CHASE decoder.
@@ -29,8 +29,8 @@ Set the maximum number of flips in the CHASE decoder.
 ``--dec-h-reorder``
 """""""""""""""""""
 
-   :type: text
-   :Allowed values: ``ASC`` ``DSC`` ``NONE`` 
+   :Type: text
+   :Allowed values: ``ASC`` ``DSC`` ``NONE``
    :Examples: ``--dec-h-reorder ASC``
 
 Specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.
@@ -65,8 +65,8 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 ``--dec-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``AMS`` ``GALA`` ``LSPA`` ``MS`` ``NAIVE`` ``NMS`` ``OMS`` ``SPA`` ``STD`` ``WBF`` 
+   :Type: text
+   :Allowed values: ``AMS`` ``GALA`` ``LSPA`` ``MS`` ``NAIVE`` ``NMS`` ``OMS`` ``SPA`` ``STD`` ``WBF``
    :Examples: ``--dec-implem AMS``
 
 Select the implementation of the algorithm to decode.
@@ -114,7 +114,7 @@ Description of the allowed values:
 ``--dec-ite, -i``
 """""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-ite 1``
 
 Maximal number of iterations in the LDPC decoder.
@@ -124,8 +124,8 @@ Maximal number of iterations in the LDPC decoder.
 ``--dec-min``
 """""""""""""
 
-   :type: text
-   :Allowed values: ``MIN`` ``MINL`` ``MINS`` 
+   :Type: text
+   :Allowed values: ``MIN`` ``MINL`` ``MINS``
    :Examples: ``--dec-min MIN``
 
 The MIN implementation for the nodes (AMS decoder).
@@ -152,7 +152,7 @@ Description of the allowed values:
 ``--dec-mwbf``
 """"""""""""""
 
-   :type: real number
+   :Type: real number
    :Examples: ``--dec-mwbf 1.0``
 
 Factor used in the modified WBF algorithm (works only with "\\-\\-dec-implem WBF"). Set 0 for basic WBF.
@@ -170,7 +170,7 @@ Disable the syndrome detection (disable the stop criterion in the LDPC decoders)
 ``--dec-norm``
 """"""""""""""
 
-   :type: real number
+   :Type: real number
    :Examples: ``--dec-norm 1.0``
 
 Normalization factor used in the normalized min-sum BP algorithm (works only with "\\-\\-dec-implem NMS").
@@ -180,7 +180,7 @@ Normalization factor used in the normalized min-sum BP algorithm (works only wit
 ``--dec-off``
 """""""""""""
 
-   :type: real number
+   :Type: real number
    :Examples: ``--dec-off 1.0``
 
 Offset used in the offset min-sum BP algorithm (works only with "\\-\\-dec-implem NMS").
@@ -190,8 +190,8 @@ Offset used in the offset min-sum BP algorithm (works only with "\\-\\-dec-imple
 ``--dec-simd``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``INTER`` 
+   :Type: text
+   :Allowed values: ``INTER``
    :Examples: ``--dec-simd INTER``
 
 The SIMD strategy you want to use.
@@ -212,7 +212,7 @@ Description of the allowed values:
 ``--dec-synd-depth``
 """"""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--dec-synd-depth 1``
 
 Successive number of iterations to validate the syndrome detection.
@@ -222,8 +222,8 @@ Successive number of iterations to validate the syndrome detection.
 ``--dec-type, -D``
 """"""""""""""""""
 
-   :type: text
-   :Allowed values: ``BIT_FLIPPING`` ``BP_FLOODING`` ``BP_HORIZONTAL_LAYERED`` ``BP_PEELING`` ``BP_VERTICAL_LAYERED`` ``CHASE`` ``ML`` 
+   :Type: text
+   :Allowed values: ``BIT_FLIPPING`` ``BP_FLOODING`` ``BP_HORIZONTAL_LAYERED`` ``BP_PEELING`` ``BP_VERTICAL_LAYERED`` ``CHASE`` ``ML``
    :Examples: ``--dec-type BIT_FLIPPING``
 
 Select the algorithm you want to decode the codeword.

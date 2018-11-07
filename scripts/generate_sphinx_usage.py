@@ -157,7 +157,7 @@ def write_module(moduleMap, path, reftag):
 		if argtype != "FLAG":
 			value = argtype
 
-			text += indent + ":type: " + argtype + "\n"
+			text += indent + ":Type: " + argtype + "\n"
 
 
 		allowed_values_table = []

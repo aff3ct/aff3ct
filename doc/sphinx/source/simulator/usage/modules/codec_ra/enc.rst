@@ -8,7 +8,7 @@ Encoder parameters
 ``--enc-cw-size, -N`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-cw-size 1``
 
 The codeword size.
@@ -18,7 +18,7 @@ The codeword size.
 ``--enc-info-bits, -K`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-info-bits 1``
 
 Useful number of bit transmitted (information bits).
@@ -28,7 +28,7 @@ Useful number of bit transmitted (information bits).
 ``--enc-path``
 """"""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read only
    :Examples: ``--enc-path example/path/to/the/right/file``
 
@@ -39,7 +39,7 @@ Path to a file containing one or a set of pre-computed codewords, to use with "\
 ``--enc-start-idx``
 """""""""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--enc-start-idx 1``
 
 Start idx to use in the USER type encoder.
@@ -49,8 +49,8 @@ Start idx to use in the USER type encoder.
 ``--enc-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``RA`` ``USER`` 
+   :Type: text
+   :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``RA`` ``USER``
    :Examples: ``--enc-type AZCW``
 
 Type of the encoder to use in the simulation.

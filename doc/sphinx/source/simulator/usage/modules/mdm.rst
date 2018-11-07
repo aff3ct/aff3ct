@@ -8,7 +8,7 @@ Modem parameters
 ``--mdm-bps``
 """""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--mdm-bps 1``
 
 Select the number of bits per symbol (default is 1).
@@ -18,7 +18,7 @@ Select the number of bits per symbol (default is 1).
 ``--mdm-const-path``
 """"""""""""""""""""
 
-   :type: file
+   :Type: file
    :Rights: read/write
    :Examples: ``--mdm-const-path example/path/to/the/right/file``
 
@@ -29,7 +29,7 @@ Path to the ordered modulation symbols (constellation), to use with "\\-\\-mod-t
 ``--mdm-cpm-k``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--mdm-cpm-k 1``
 
 Modulation index numerator (default is 1).
@@ -39,7 +39,7 @@ Modulation index numerator (default is 1).
 ``--mdm-cpm-L``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--mdm-cpm-L 1``
 
 CPM pulse width or CPM memory (default is 2).
@@ -49,8 +49,8 @@ CPM pulse width or CPM memory (default is 2).
 ``--mdm-cpm-map``
 """""""""""""""""
 
-   :type: text
-   :Allowed values: ``GRAY`` ``NATURAL`` 
+   :Type: text
+   :Allowed values: ``GRAY`` ``NATURAL``
    :Examples: ``--mdm-cpm-map GRAY``
 
 Symbols mapping layout (default is NATURAL).
@@ -74,7 +74,7 @@ Description of the allowed values:
 ``--mdm-cpm-p``
 """""""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--mdm-cpm-p 1``
 
 Modulation index denominator (default is 2).
@@ -84,8 +84,8 @@ Modulation index denominator (default is 2).
 ``--mdm-cpm-std``
 """""""""""""""""
 
-   :type: text
-   :Allowed values: ``GSM`` 
+   :Type: text
+   :Allowed values: ``GSM``
    :Examples: ``--mdm-cpm-std GSM``
 
 The selection of a default CPM standard hardly implemented (any of those parameters is overwritten if the argument is given by the user).
@@ -106,8 +106,8 @@ Description of the allowed values:
 ``--mdm-cpm-ws``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``GMSK`` ``RCOS`` ``REC`` 
+   :Type: text
+   :Allowed values: ``GMSK`` ``RCOS`` ``REC``
    :Examples: ``--mdm-cpm-ws GMSK``
 
 Wave shape (default is GMSK).
@@ -134,8 +134,8 @@ Description of the allowed values:
 ``--mdm-implem``
 """"""""""""""""
 
-   :type: text
-   :Allowed values: ``FAST`` ``STD`` 
+   :Type: text
+   :Allowed values: ``FAST`` ``STD``
    :Examples: ``--mdm-implem FAST``
 
 Select the implementation of the modem.
@@ -159,7 +159,7 @@ Description of the allowed values:
 ``--mdm-ite``
 """""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--mdm-ite 1``
 
 Number of iteration in the demodulator.
@@ -169,8 +169,8 @@ Number of iteration in the demodulator.
 ``--mdm-max``
 """""""""""""
 
-   :type: text
-   :Allowed values: ``MAX`` ``MAXL`` ``MAXS`` ``MAXSS`` 
+   :Type: text
+   :Allowed values: ``MAX`` ``MAXL`` ``MAXS`` ``MAXSS``
    :Examples: ``--mdm-max MAX``
 
 Select the type of the max operation to use in the demodulator.
@@ -208,8 +208,8 @@ Turn off the division by sigma square in the demodulator.
 ``--mdm-psi``
 """""""""""""
 
-   :type: text
-   :Allowed values: ``PSI0`` ``PSI1`` ``PSI2`` ``PSI3`` 
+   :Type: text
+   :Allowed values: ``PSI0`` ``PSI1`` ``PSI2`` ``PSI3``
    :Examples: ``--mdm-psi PSI0``
 
 Select the type of the psi function to use in the SCMA demodulator.
@@ -239,8 +239,8 @@ Description of the allowed values:
 ``--mdm-type``
 """"""""""""""
 
-   :type: text
-   :Allowed values: ``BPSK`` ``CPM`` ``OOK`` ``PAM`` ``PSK`` ``QAM`` ``SCMA`` ``USER`` 
+   :Type: text
+   :Allowed values: ``BPSK`` ``CPM`` ``OOK`` ``PAM`` ``PSK`` ``QAM`` ``SCMA`` ``USER``
    :Examples: ``--mdm-type BPSK``
 
 Type of the modulation to use in the simulation.
@@ -282,7 +282,7 @@ Description of the allowed values:
 ``--mdm-ups``
 """""""""""""
 
-   :type: integer
+   :Type: integer
    :Examples: ``--mdm-ups 1``
 
 Select the symbol sampling factor (default is 1).
