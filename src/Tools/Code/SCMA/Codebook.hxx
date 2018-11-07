@@ -46,6 +46,13 @@ void Codebook<R>
 {
 	std::ifstream file(codebook_path);
 
+	if (file.bad())
+	{
+		std::stringstream message;
+		message << "Can't open '" + codebook_path + "' codebook file.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	file >> number_of_users >> number_of_orthogonal_resources >> codebook_size;
 
 	data.resize(number_of_users);
@@ -74,7 +81,7 @@ void Codebook<R>
 	}
 
 	// Factor graph calculation TODO:  Now constants and fixed size (-> dynamic allocation later)
-	int F[4][6] = {};
+	int F[number_of_orthogonal_resources][number_of_users];
 
     for (int u = 0; u < number_of_users; ++u)
 	{
@@ -82,7 +89,7 @@ void Codebook<R>
 		{
 			for (int c = 0; c < codebook_size; ++c)
 			{
-				if ((data[u][r][c].real() != 0.0) || (data[u][r][c].imag() != 0.0))
+				if ((data[u][r][c].real() != (R)0.0) || (data[u][r][c].imag() != (R)0.0))
                 {
 					F[r][u] = 1;
 					break;
@@ -91,8 +98,10 @@ void Codebook<R>
 		}
 	}
 
+	resource_to_user.resize(4);
 	for (int r = 0; r < number_of_orthogonal_resources; ++r)
 	{
+		resource_to_user[r].resize(3);
 		int idx = 0;
 		for (int u = 0; u < number_of_users; ++u)
 		{
@@ -104,8 +113,10 @@ void Codebook<R>
 		}
 	}
 
+	user_to_resource.resize(6);
 	for (int u = 0; u < number_of_users; ++u)
 	{
+		user_to_resource[u].resize(2);
 		int idx = 0;
 		for (int r = 0; r < number_of_orthogonal_resources; ++r)
 		{

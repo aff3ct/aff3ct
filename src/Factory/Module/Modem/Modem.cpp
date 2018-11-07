@@ -257,7 +257,8 @@ void Modem::parameters
 	if (this->type == "SCMA")
 	{
 		headers[p].push_back(std::make_pair("Number of iterations", demod_ite));
-		headers[p].push_back(std::make_pair("Psi function", demod_psi));
+		headers[p].push_back(std::make_pair("Psi function",         demod_psi));
+		headers[p].push_back(std::make_pair("codebook",             codebook ));
 	}
 }
 
