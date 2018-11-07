@@ -21,7 +21,7 @@ fi
 
 # Create the sonar config file on the fly
 GIT_VERSION=$(echo $GIT_TAG | cut -d $'v' -f2-)
-echo "sonar.projectKey=storm:aff3ct:gitlab:$GIT_BRANCH"                   >  sonar-project.properties
+echo "sonar.projectKey=storm:aff3ct:gitlab:$GIT_BRANCH"                  >  sonar-project.properties
 #echo "sonar.projectName=AFF3CT"                                          >> sonar-project.properties
 echo "sonar.projectVersion=$GIT_VERSION"                                 >> sonar-project.properties
 echo "sonar.login=$SONARQUBE_TOKEN"                                      >> sonar-project.properties

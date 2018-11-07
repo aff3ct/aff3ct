@@ -24,528 +24,528 @@ analysis-cppcheck:
   script:
     - ./ci/analysis-cppcheck.sh
 
-# build-linux-gcc-nointr:
-#   stage: build
-#   tags:
-#     - linux
-#     - gcc
-#     - cmake
-#     - gsl
-#     - x86
-#   artifacts:
-#     name: build-linux-gcc-nointr
-#     paths:
-#       - build_linux_gcc_nointr
-#   script:
-#     - export CC="gcc"
-#     - export CXX="g++"
-#     - export CFLAGS="-DMIPP_NO_INTRINSICS"
-#     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
-#     - export NAME="build_linux_gcc_nointr"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-linux-gcc-nointr:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+  artifacts:
+    name: build-linux-gcc-nointr
+    paths:
+      - build_linux_gcc_nointr
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-Wall -funroll-loops -DMIPP_NO_INTRINSICS"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
+    - export NAME="build_linux_gcc_nointr"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# build-linux-gcc-x64-sse4.2:
-#   stage: build
-#   tags:
-#     - linux
-#     - gcc
-#     - cmake
-#     - gsl
-#     - x86
-#     - 64-bit
-#   artifacts:
-#     name: build-linux-gcc-x64-sse4.2
-#     paths:
-#       - build_linux_gcc_x64_sse4.2
-#   script:
-#     - export CC="gcc"
-#     - export CXX="g++"
-#     - export CFLAGS="-m64 -msse4.2"
-#     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
-#     - export NAME="build_linux_gcc_x64_sse4.2"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-linux-gcc-x64-sse4.2:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+    - 64-bit
+  artifacts:
+    name: build-linux-gcc-x64-sse4.2
+    paths:
+      - build_linux_gcc_x64_sse4.2
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
+    - export NAME="build_linux_gcc_x64_sse4.2"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# build-linux-gcc-x64-avx2:
-#   stage: build
-#   tags:
-#     - linux
-#     - gcc
-#     - cmake
-#     - gsl
-#     - x86
-#     - 64-bit
-#   artifacts:
-#     name: build-linux-gcc-x64-avx2
-#     paths:
-#       - build_linux_gcc_x64_avx2
-#   script:
-#     - export CC="gcc"
-#     - export CXX="g++"
-#     - export CFLAGS="-m64 -mavx2 -mfma"
-#     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
-#     - export NAME="build_linux_gcc_x64_avx2"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-linux-gcc-x64-avx2:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - gsl
+    - x86
+    - 64-bit
+  artifacts:
+    name: build-linux-gcc-x64-avx2
+    paths:
+      - build_linux_gcc_x64_avx2
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-Wall -funroll-loops -m64 -mavx2 -mfma"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
+    - export NAME="build_linux_gcc_x64_avx2"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# build-linux-gcc-8-bit:
-#   stage: build
-#   tags:
-#     - linux
-#     - gcc
-#     - arm
-#     - cmake
-#     - gsl
-#   artifacts:
-#     name: build-linux-gcc-8-bit
-#     paths:
-#       - build_linux_gcc_8_bit
-#   script:
-#     - export CC="gcc"
-#     - export CXX="g++"
-#     - export CFLAGS="-march=native"
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=8 -DAFF3CT_LINK_GSL=ON"
-#     - export NAME="build_linux_gcc_8_bit"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-linux-gcc-8-bit:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - arm
+    - cmake
+    - gsl
+  artifacts:
+    name: build-linux-gcc-8-bit
+    paths:
+      - build_linux_gcc_8_bit
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-Wall -funroll-loops -march=native"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=8 -DAFF3CT_LINK_GSL=ON"
+    - export NAME="build_linux_gcc_8_bit"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# build-linux-gcc-mpi:
-#   stage: build
-#   tags:
-#     - linux
-#     - gcc
-#     - mpi
-#     - cmake
-#     - gsl
-#   artifacts:
-#     name: build-linux-gcc-mpi
-#     paths:
-#       - build_linux_gcc_mpi
-#   script:
-#     - export CC="gcc"
-#     - export CXX="g++"
-#     - export CFLAGS="-march=native"
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON -DAFF3CT_MPI=ON"
-#     - export NAME="build_linux_gcc_mpi"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-linux-gcc-mpi:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - mpi
+    - cmake
+    - gsl
+  artifacts:
+    name: build-linux-gcc-mpi
+    paths:
+      - build_linux_gcc_mpi
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-Wall -funroll-loops -march=native"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON -DAFF3CT_MPI=ON"
+    - export NAME="build_linux_gcc_mpi"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# build-linux-gcc-systemc:
-#   stage: build
-#   tags:
-#     - linux
-#     - gcc
-#     - systemc
-#     - cmake
-#   artifacts:
-#     name: build-linux-gcc-systemc
-#     paths:
-#       - build_linux_gcc_systemc
-#   script:
-#     - cp $SYSTEMC_HOME/FindSystemC.cmake cmake/Modules/
-#     - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
-#     - export CC="gcc"
-#     - export CXX="g++"
-#     - export CFLAGS="-march=native -Wno-deprecated-declarations"
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_PREC=MULTI -DAFF3CT_SYSTEMC_SIMU=ON"
-#     - export NAME="build_linux_gcc_systemc"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-linux-gcc-systemc:
+  stage: build
+  tags:
+    - linux
+    - gcc
+    - systemc
+    - cmake
+  artifacts:
+    name: build-linux-gcc-systemc
+    paths:
+      - build_linux_gcc_systemc
+  script:
+    - cp $SYSTEMC_HOME/FindSystemC.cmake cmake/Modules/
+    - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-Wall -funroll-loops -march=native -Wno-deprecated-declarations"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_PREC=MULTI -DAFF3CT_SYSTEMC_SIMU=ON"
+    - export NAME="build_linux_gcc_systemc"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# build-linux-clang:
-#   stage: build
-#   tags:
-#     - linux
-#     - clang
-#     - cmake
-#     - gsl
-#   artifacts:
-#     name: build-linux-clang
-#     paths:
-#       - build_linux_clang
-#   script:
-#     - export CC="clang"
-#     - export CXX="clang++"
-#     - export CFLAGS=""
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
-#     - export NAME="build_linux_clang"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-linux-clang:
+  stage: build
+  tags:
+    - linux
+    - clang
+    - cmake
+    - gsl
+  artifacts:
+    name: build-linux-clang
+    paths:
+      - build_linux_clang
+  script:
+    - export CC="clang"
+    - export CXX="clang++"
+    - export CFLAGS="-Wall -funroll-loops"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
+    - export NAME="build_linux_clang"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# build-linux-gcc-4.8:
-#   stage: build
-#   tags:
-#     - linux
-#     - gcc-4.8
-#     - cmake
-#     - gsl
-#   artifacts:
-#     name: build-linux-gcc-4.8
-#     paths:
-#       - build_linux_gcc-4.8
-#   script:
-#     - export CC="gcc-4.8"
-#     - export CXX="g++-4.8"
-#     - export CFLAGS="-march=native"
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
-#     - export NAME="build_linux_gcc-4.8"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-linux-gcc-4.8:
+  stage: build
+  tags:
+    - linux
+    - gcc-4.8
+    - cmake
+    - gsl
+  artifacts:
+    name: build-linux-gcc-4.8
+    paths:
+      - build_linux_gcc-4.8
+  script:
+    - export CC="gcc-4.8"
+    - export CXX="g++-4.8"
+    - export CFLAGS="-Wall -funroll-loops -march=native"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
+    - export NAME="build_linux_gcc-4.8"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# build-linux-icpc:
-#   stage: build
-#   tags:
-#     - linux
-#     - icpc
-#     - cmake
-#     - mkl
-#     - gsl
-#     - x86
-#   artifacts:
-#     name: build-linux-icpc
-#     paths:
-#       - build_linux_icpc
-#   script:
-#     - source /opt/intel/vars-intel.sh
-#     - export CC="icc"
-#     - export CXX="icpc"
-#     - export CFLAGS="-march=native -std=c++11"
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON -DAFF3CT_LINK_MKL=ON"
-#     - export NAME="build_linux_icpc"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-linux-icpc:
+  stage: build
+  tags:
+    - linux
+    - icpc
+    - cmake
+    - mkl
+    - gsl
+    - x86
+  artifacts:
+    name: build-linux-icpc
+    paths:
+      - build_linux_icpc
+  script:
+    - source /opt/intel/vars-intel.sh
+    - export CC="icc"
+    - export CXX="icpc"
+    - export CFLAGS="-Wall -funroll-loops -march=native -std=c++11"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON -DAFF3CT_LINK_MKL=ON"
+    - export NAME="build_linux_icpc"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# build-windows-gcc-x86-sse4.2:
-#   stage: build
-#   tags:
-#     - windows
-#     - gcc
-#     - cmake
-#     - x86
-#     - 32-bit
-#   artifacts:
-#     name: build-windows-gcc-x86-sse4.2
-#     paths:
-#       - build_windows_gcc_x86_sse4.2
-#   script:
-#     - set "CFLAGS=-m32 -msse4.2"
-#     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-#     - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
-#     - set "NAME=build_windows_gcc_x86_sse4.2"
-#     - call ./ci/tools/threads.bat
-#     - ./ci/build-windows-gcc.bat
+build-windows-gcc-x86-sse4.2:
+  stage: build
+  tags:
+    - windows
+    - gcc
+    - cmake
+    - x86
+    - 32-bit
+  artifacts:
+    name: build-windows-gcc-x86-sse4.2
+    paths:
+      - build_windows_gcc_x86_sse4.2
+  script:
+    - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m32 -msse4.2"
+    - set "LFLAGS=-static -static-libgcc -static-libstdc++"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
+    - set "NAME=build_windows_gcc_x86_sse4.2"
+    - call ./ci/tools/threads.bat
+    - ./ci/build-windows-gcc.bat
 
-# build-windows-gcc-x64-avx2:
-#   stage: build
-#   tags:
-#     - windows
-#     - 64-bit
-#     - gcc
-#     - cmake
-#     - x86
-#   artifacts:
-#     name: build-windows-gcc-x64-avx2
-#     paths:
-#       - build_windows_gcc_x64_avx2
-#   script:
-#     - set "CFLAGS=-m64 -mavx2"
-#     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-#     - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
-#     - set "NAME=build_windows_gcc_x64_avx2"
-#     - call ./ci/tools/threads.bat
-#     - ./ci/build-windows-gcc.bat
+build-windows-gcc-x64-avx2:
+  stage: build
+  tags:
+    - windows
+    - 64-bit
+    - gcc
+    - cmake
+    - x86
+  artifacts:
+    name: build-windows-gcc-x64-avx2
+    paths:
+      - build_windows_gcc_x64_avx2
+  script:
+    - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m64 -mavx2"
+    - set "LFLAGS=-static -static-libgcc -static-libstdc++"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
+    - set "NAME=build_windows_gcc_x64_avx2"
+    - call ./ci/tools/threads.bat
+    - ./ci/build-windows-gcc.bat
 
-# build-windows-msvc-avx:
-#   stage: build
-#   tags:
-#     - windows
-#     - msvc
-#     - cmake
-#     - x86
-#   artifacts:
-#     name: build-windows-msvc-avx
-#     paths:
-#       - build_windows_msvc_avx
-#   script:
-#     - set "CFLAGS=/arch:AVX"
-#     - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
-#     - set "NAME=build_windows_msvc_avx"
-#     - call ./ci/tools/threads.bat
-#     - ./ci/build-windows-msvc.bat
+build-windows-msvc-avx:
+  stage: build
+  tags:
+    - windows
+    - msvc
+    - cmake
+    - x86
+  artifacts:
+    name: build-windows-msvc-avx
+    paths:
+      - build_windows_msvc_avx
+  script:
+    - set "CFLAGS=-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc /arch:AVX"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
+    - set "NAME=build_windows_msvc_avx"
+    - call ./ci/tools/threads.bat
+    - ./ci/build-windows-msvc.bat
 
-# build-macos-clang-x64-sse4.2:
-#   stage: build
-#   tags:
-#     - macos
-#     - apple-clang
-#     - cmake
-#     - x86
-#   artifacts:
-#     name: build-macos-clang-x64-sse4.2
-#     paths:
-#       - build_macos_clang_x64_sse4.2
-#   script:
-#     - export CC="clang"
-#     - export CXX="clang++"
-#     - export CFLAGS="-m64 -msse4.2"
-#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI"
-#     - export NAME="build_macos_clang_x64_sse4.2"
-#     - source ./ci/tools/threads.sh
-#     - ./ci/build-linux-macos.sh
+build-macos-clang-x64-sse4.2:
+  stage: build
+  tags:
+    - macos
+    - apple-clang
+    - cmake
+    - x86
+  artifacts:
+    name: build-macos-clang-x64-sse4.2
+    paths:
+      - build_macos_clang_x64_sse4.2
+  script:
+    - export CC="clang"
+    - export CXX="clang++"
+    - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI"
+    - export NAME="build_macos_clang_x64_sse4.2"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
 
-# test-regression-bch:
-#   stage: test
-#   retry: 1
-#   dependencies:
-#     - build-linux-gcc-x64-sse4.2
-#   tags:
-#     - linux
-#     - x86
-#     - 64-bit
-#     - sse4.2
-#     - python
-#   artifacts:
-#      name: test-regression-results-bch
-#      when: always
-#      paths:
-#       - test-regression-results-bch/
-#   script:
-#     - source ./ci/tools/threads.sh
-#     - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+test-regression-bch:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - python
+  artifacts:
+     name: test-regression-results-bch
+     when: always
+     paths:
+      - test-regression-results-bch/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-# test-regression-ldpc:
-#   stage: test
-#   retry: 1
-#   dependencies:
-#     - build-linux-gcc-x64-sse4.2
-#   tags:
-#     - linux
-#     - x86
-#     - 64-bit
-#     - sse4.2
-#     - powerful
-#     - python
-#   artifacts:
-#      name: test-regression-results-ldpc
-#      when: always
-#      paths:
-#       - test-regression-results-ldpc/
-#   script:
-#     - source ./ci/tools/threads.sh
-#     - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+test-regression-ldpc:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - powerful
+    - python
+  artifacts:
+     name: test-regression-results-ldpc
+     when: always
+     paths:
+      - test-regression-results-ldpc/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-# test-regression-polar:
-#   stage: test
-#   retry: 1
-#   dependencies:
-#     - build-linux-gcc-x64-sse4.2
-#   tags:
-#     - linux
-#     - x86
-#     - 64-bit
-#     - sse4.2
-#     - powerful
-#     - python
-#   artifacts:
-#      name: test-regression-results-polar
-#      when: always
-#      paths:
-#       - test-regression-results-polar/
-#   script:
-#     - source ./ci/tools/threads.sh
-#     - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+test-regression-polar:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - powerful
+    - python
+  artifacts:
+     name: test-regression-results-polar
+     when: always
+     paths:
+      - test-regression-results-polar/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-# test-regression-rs:
-#   stage: test
-#   retry: 1
-#   dependencies:
-#     - build-linux-gcc-x64-sse4.2
-#   tags:
-#     - linux
-#     - x86
-#     - 64-bit
-#     - sse4.2
-#     - python
-#   artifacts:
-#      name: test-regression-results-rs
-#      when: always
-#      paths:
-#       - test-regression-results-rs/
-#   script:
-#     - source ./ci/tools/threads.sh
-#     - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+test-regression-rs:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - python
+  artifacts:
+     name: test-regression-results-rs
+     when: always
+     paths:
+      - test-regression-results-rs/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-# test-regression-turbo:
-#   stage: test
-#   retry: 1
-#   dependencies:
-#     - build-linux-gcc-x64-sse4.2
-#   tags:
-#     - linux
-#     - x86
-#     - 64-bit
-#     - sse4.2
-#     - powerful
-#     - python
-#   artifacts:
-#      name: test-regression-results-turbo
-#      when: always
-#      paths:
-#       - test-regression-results-turbo/
-#   script:
-#     - source ./ci/tools/threads.sh
-#     - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+test-regression-turbo:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - powerful
+    - python
+  artifacts:
+     name: test-regression-results-turbo
+     when: always
+     paths:
+      - test-regression-results-turbo/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-# test-regression-turbo-db:
-#   stage: test
-#   retry: 1
-#   dependencies:
-#     - build-linux-gcc-x64-sse4.2
-#   tags:
-#     - linux
-#     - x86
-#     - 64-bit
-#     - sse4.2
-#     - powerful
-#     - python
-#   artifacts:
-#      name: test-regression-results-turbo-db
-#      when: always
-#      paths:
-#       - test-regression-results-turbo-db/
-#   script:
-#     - source ./ci/tools/threads.sh
-#     - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+test-regression-turbo-db:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - powerful
+    - python
+  artifacts:
+     name: test-regression-results-turbo-db
+     when: always
+     paths:
+      - test-regression-results-turbo-db/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-# test-regression-turbo-prod:
-#   stage: test
-#   retry: 1
-#   dependencies:
-#     - build-linux-gcc-x64-sse4.2
-#   tags:
-#     - linux
-#     - x86
-#     - 64-bit
-#     - sse4.2
-#     - powerful
-#     - python
-#   artifacts:
-#      name: test-regression-results-turbo-prod
-#      when: always
-#      paths:
-#       - test-regression-results-turbo-prod/
-#   script:
-#     - source ./ci/tools/threads.sh
-#     - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 30 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+test-regression-turbo-prod:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - powerful
+    - python
+  artifacts:
+     name: test-regression-results-turbo-prod
+     when: always
+     paths:
+      - test-regression-results-turbo-prod/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 30 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-# test-regression-uncoded:
-#   stage: test
-#   retry: 1
-#   dependencies:
-#     - build-linux-gcc-x64-sse4.2
-#   tags:
-#     - linux
-#     - x86
-#     - 64-bit
-#     - sse4.2
-#     - python
-#   artifacts:
-#      name: test-regression-results-uncoded
-#      when: always
-#      paths:
-#       - test-regression-results-uncoded/
-#   script:
-#     - source ./ci/tools/threads.sh
-#     - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+test-regression-uncoded:
+  stage: test
+  retry: 1
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - python
+  artifacts:
+     name: test-regression-results-uncoded
+     when: always
+     paths:
+      - test-regression-results-uncoded/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-# test-build-coverage-regression:
-#   stage: test
-#   tags:
-#     - linux
-#     - gcc
-#     - lcov
-#     - sse4.2
-#     - powerful
-#   artifacts:
-#      name: code-coverage-files
-#      when: always
-#      paths:
-#       - code_coverage_files/
-#   script:
-#     - source ./ci/tools/threads.sh
-#     - ./ci/test-build-coverage-regression.sh
+test-build-coverage-regression:
+  stage: test
+  tags:
+    - linux
+    - gcc
+    - lcov
+    - sse4.2
+    - powerful
+  artifacts:
+     name: code-coverage-files
+     when: always
+     paths:
+      - code_coverage_files/
+  script:
+    - source ./ci/tools/threads.sh
+    - ./ci/test-build-coverage-regression.sh
 
-# coverage-linux:
-#   stage: coverage
-#   dependencies:
-#     - test-build-coverage-regression
-#   tags:
-#     - linux
-#     - lcov
-#     - lcov_cobertura
-#   coverage: '/.*lines\.*: (\d+.\d+\%)/'
-#   artifacts:
-#      name: code-coverage-report
-#      when: always
-#      paths:
-#        - code_coverage_report/
-#   script:
-#     - ./ci/coverage-linux.sh
+coverage-linux:
+  stage: coverage
+  dependencies:
+    - test-build-coverage-regression
+  tags:
+    - linux
+    - lcov
+    - lcov_cobertura
+  coverage: '/.*lines\.*: (\d+.\d+\%)/'
+  artifacts:
+     name: code-coverage-report
+     when: always
+     paths:
+       - code_coverage_report/
+  script:
+    - ./ci/coverage-linux.sh
 
-# deploy-sonarqube-linux:
-#   stage: deploy
-#   dependencies:
-#     - analysis-cppcheck
-#     - coverage-linux
-#   tags:
-#     - sonarqube
-#   only:
-#     - master
-#     - development
-#   script:
-#     - source ./ci/tools/git-tag.sh
-#     - source ./ci/tools/git-branch.sh
-#     - ./ci/deploy-sonarqube-linux.sh
+deploy-sonarqube-linux:
+  stage: deploy
+  dependencies:
+    - analysis-cppcheck
+    - coverage-linux
+  tags:
+    - sonarqube
+  only:
+    - master
+    - development
+  script:
+    - source ./ci/tools/git-tag.sh
+    - source ./ci/tools/git-branch.sh
+    - ./ci/deploy-sonarqube-linux.sh
 
-# deploy-builds-linux:
-#   stage: deploy
-#   dependencies:
-#     - build-linux-gcc-x64-sse4.2
-#     - build-linux-gcc-x64-avx2
-#     - build-windows-gcc-x86-sse4.2
-#     - build-windows-gcc-x64-avx2
-#     - build-macos-clang-x64-sse4.2
-#   tags:
-#     - linux
-#     - github
-#     - git-lfs
-#   only:
-#     - master
-#     - development
-#   script:
-#     - source ./ci/tools/git-branch.sh
-#     - source ./ci/tools/git-tag.sh
-#     - source ./ci/tools/git-hash.sh
-#     - source ./ci/tools/git-date.sh
-#     - source ./ci/tools/git-message.sh
-#     - source ./ci/tools/git-author.sh
-#     - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
+deploy-builds-linux:
+  stage: deploy
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
+    - build-windows-gcc-x86-sse4.2
+    - build-windows-gcc-x64-avx2
+    - build-macos-clang-x64-sse4.2
+  tags:
+    - linux
+    - github
+    - git-lfs
+  only:
+    - master
+    - development
+  script:
+    - source ./ci/tools/git-branch.sh
+    - source ./ci/tools/git-tag.sh
+    - source ./ci/tools/git-hash.sh
+    - source ./ci/tools/git-date.sh
+    - source ./ci/tools/git-message.sh
+    - source ./ci/tools/git-author.sh
+    - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
 
-# pages:
-#   stage: deploy
-#   tags:
-#     - linux
-#   dependencies:
-#     - coverage-linux
-#   script:
-#     - mv code_coverage_report/ public/
-#   artifacts:
-#     paths:
-#       - public
-#     expire_in: 30 days
-#   only:
-#     - development
+pages:
+  stage: deploy
+  tags:
+    - linux
+  dependencies:
+    - coverage-linux
+  script:
+    - mv code_coverage_report/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - development

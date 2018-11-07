@@ -2,7 +2,7 @@
 
 mkdir build
 cd build
-cmake .. -G"MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_BUILD_TYPE=Release %CMAKE_OPT% -DCMAKE_CXX_FLAGS="-Wall -Wno-misleading-indentation -funroll-loops %CFLAGS%" -DCMAKE_EXE_LINKER_FLAGS="%LFLAGS%"
+cmake .. -G"MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_BUILD_TYPE=Release %CMAKE_OPT% -DCMAKE_CXX_FLAGS="%CFLAGS%" -DCMAKE_EXE_LINKER_FLAGS="%LFLAGS%"
 if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 mingw32-make -j %THREADS%
 if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
