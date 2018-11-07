@@ -3,9 +3,9 @@
 Codec RA
 ********
 
-.. toctree:: 
+.. toctree::
    :maxdepth: 2
-   :caption: Codec RA contents
+   :caption: Codec RA Contents
 
    enc.rst
    dec.rst

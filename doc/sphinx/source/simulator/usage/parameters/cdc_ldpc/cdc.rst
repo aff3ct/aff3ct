@@ -3,9 +3,9 @@
 Codec LDPC
 **********
 
-.. toctree:: 
+.. toctree::
    :maxdepth: 2
-   :caption: Codec LDPC contents
+   :caption: Codec LDPC Contents
 
    enc.rst
    dec.rst

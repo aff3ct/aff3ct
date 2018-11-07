@@ -3,9 +3,9 @@
 Codec RSC
 *********
 
-.. toctree:: 
+.. toctree::
    :maxdepth: 2
-   :caption: Codec RSC contents
+   :caption: Codec RSC Contents
 
    enc.rst
    dec.rst

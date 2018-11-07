@@ -11,6 +11,7 @@ Welcome to AFF3CT's documentation!
    overview/overview
    simulator/simulator
    library/library
+   license/license
 
 
 Indices and tables

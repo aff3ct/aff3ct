@@ -3,9 +3,9 @@
 Codec POLAR
 ***********
 
-.. toctree:: 
+.. toctree::
    :maxdepth: 2
-   :caption: Codec POLAR contents
+   :caption: Codec POLAR Contents
 
    enc.rst
    dec.rst

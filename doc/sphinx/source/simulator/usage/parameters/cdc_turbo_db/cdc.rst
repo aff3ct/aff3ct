@@ -3,9 +3,9 @@
 Codec TURBO_DB
 **************
 
-.. toctree:: 
+.. toctree::
    :maxdepth: 2
-   :caption: Codec TURBO_DB contents
+   :caption: Codec TURBO_DB Contents
 
    enc.rst
    dec.rst

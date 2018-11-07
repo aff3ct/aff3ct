@@ -3,9 +3,9 @@
 Codec TURBO
 ***********
 
-.. toctree:: 
+.. toctree::
    :maxdepth: 2
-   :caption: Codec TURBO contents
+   :caption: Codec TURBO Contents
 
    enc.rst
    dec.rst

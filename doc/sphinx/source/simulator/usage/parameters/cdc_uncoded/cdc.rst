@@ -3,9 +3,9 @@
 Codec UNCODED
 *************
 
-.. toctree:: 
+.. toctree::
    :maxdepth: 2
-   :caption: Codec UNCODED contents
+   :caption: Codec UNCODED Contents
 
    enc.rst
    dec.rst

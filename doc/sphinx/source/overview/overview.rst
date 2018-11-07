@@ -22,9 +22,3 @@ ways, as:
    * a dedicated **toolbox** or **library** for your projects, many modules
      (like codecs, modems, channels, ...) are available and easy to use (see
      the :ref:`library` section).
-
-.. toctree::
-   :maxdepth: 3
-   :caption: Contents
-
-   license

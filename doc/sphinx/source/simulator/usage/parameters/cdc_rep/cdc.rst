@@ -3,9 +3,9 @@
 Codec REP
 *********
 
-.. toctree:: 
+.. toctree::
    :maxdepth: 2
-   :caption: Codec REP contents
+   :caption: Codec REP Contents
 
    enc.rst
    dec.rst

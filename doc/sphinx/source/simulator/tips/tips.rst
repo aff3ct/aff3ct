@@ -1,11 +1,8 @@
 Tips
 ====
 
-Known issues
-------------
-
 Eclipse IDE
-^^^^^^^^^^^
+-----------
 
 You may encounter an issue with Eclipse IDE, which doesn't handle C++11 as a
 default behavior. To solve it you have to add the followings.

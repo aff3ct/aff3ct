@@ -1,5 +1,5 @@
-Displaying results with PyBER
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PyBER
+^^^^^
 
 ``PyBER`` is our python GUI to display an AFF3CT results library.
 
