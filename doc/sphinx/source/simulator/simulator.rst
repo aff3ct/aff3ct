@@ -1,3 +1,5 @@
+.. _simulator:
+
 *********
 Simulator
 *********
@@ -6,6 +8,8 @@ Simulator
    :maxdepth: 2
    :caption: Contents
 
-   install/install
+   source_code/source_code
+   compilation/compilation
+   installation/installation
    usage/usage
-   help/help
+   tips/tips

@@ -4,14 +4,16 @@ CRC parameters
 --------------
 
 The following parameters concern the Cyclic Redundancy Check (CRC) module.
-CRC bits can be concatenated to the information bits in order to help the decoding process to know if the
-decoded codeword is valid or not.
+CRC bits can be concatenated to the information bits in order to help the
+decoding process to know if the decoded codeword is valid or not.
 
-.. note:: The CRC is only available for some specific decoders that have been designed to take advantage of the CRC like
-          in :cite:`Li2012,Tonnellier2016b`.
+.. note:: The CRC is only available for some specific decoders that have been
+          designed to take advantage of the CRC like in
+          :cite:`Li2012,Tonnellier2016b`.
 
-.. warning:: Using a CRC does not guarantee to know if the decoded codeword is the good one, it can be a
-             *false positive*. It is important to adapt the size of the CRC with the frame size and the targeted FER.
+.. warning:: Using a CRC does not guarantee to know if the decoded codeword is
+             the good one, it can be a *false positive*. It is important to
+             adapt the size of the CRC with the frame size and the targeted FER.
 
 .. _crc- --crc-poly:
 
@@ -22,9 +24,11 @@ decoded codeword is valid or not.
    :Examples: | ``--crc-type "32-GZIP"``
               | ``--crc-poly "0x04C11DB7" --crc-size 32``
 
-Select the CRC type you want to use among the predefined polynomials in the following table.
-If you want a specific polynomial that it is not available in the table you can directly put the polynomial in hexadecimal.
-In this case you have to specify explicitly the size of the polynomial with the :ref:`crc-crc-size` parameter.
+Select the CRC type you want to use among the predefined polynomials in the
+following table. If you want a specific polynomial that it is not available in
+the table you can directly put the polynomial in hexadecimal. In this case you
+have to specify explicitly the size of the polynomial with the
+:ref:`crc-crc-size` parameter.
 
 +-----------------+------------+------+
 | Type            | Polynomial | Size |
@@ -135,7 +139,8 @@ In this case you have to specify explicitly the size of the polynomial with the 
    :Range: :math:`]0 \to \infty[`
    :Examples: ``--crc-size 8``
 
-Size of the CRC (divisor size in bit -1), required if you selected an unknown CRC.
+Size of the CRC (divisor size in bit -1), required if you selected an unknown
+CRC.
 
 .. _crc-crc-implem:
 
@@ -160,13 +165,15 @@ Description of the allowed values:
 | ``INTER`` | |crc-implem_descr_inter| |
 +-----------+--------------------------+
 
-.. |crc-implem_descr_std| replace:: The standard implementation is generic and support any size of CRCs.
-                                    On the other hand the throughput is limited.
-.. |crc-implem_descr_fast| replace:: This implementation is much faster than the standard one. This speedup is
-                                     achieved thanks to the bit packing technique : up to 32 bits can be computed in
-                                     parallel. This implementation does not support polynomials higher than 32 bits.
-.. |crc-implem_descr_inter| replace:: The inter-frame implementation should not be used in general cases. It allow to
-                                      compute the CRC on many frames in parallel that have been reordered.
+.. |crc-implem_descr_std| replace:: The standard implementation is generic and
+   support any size of CRCs. On the other hand the throughput is limited.
+.. |crc-implem_descr_fast| replace:: This implementation is much faster than the
+   standard one. This speedup is achieved thanks to the bit packing technique:
+   up to 32 bits can be computed in parallel. This implementation does not
+   support polynomials higher than 32 bits.
+.. |crc-implem_descr_inter| replace:: The inter-frame implementation should not
+   be used in general cases. It allow to compute the CRC on many frames in
+   parallel that have been reordered.
 
 References
 """"""""""

@@ -1,12 +1,5 @@
-Help
+Tips
 ====
-
-Contact
--------
-
-You can contact us on github by opening an issue.
-
-
 
 Known issues
 ------------

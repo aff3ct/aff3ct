@@ -1,0 +1,340 @@
+Compilation
+===========
+
+.. _CMake: https://cmake.org/
+
+This project uses `CMake`_ in order to generate any type of projects (Makefile,
+Visual Studio, Eclipse, CLion, etc.).
+
+AFF3CT is portable and can be compiled on Linux, macOS and Windows. Of course
+it works on traditional x86 architectures like Intel and AMD CPUs but it also
+works on embedded architectures like ARM CPUs.
+
+CMake Installation
+------------------
+
+Windows/macOS
+^^^^^^^^^^^^^
+
+Download CMake from `the official web page <https://cmake.org/download/>`_
+and launch the executable file. Just press the `Next` button until the
+installation is over.
+
+.. note:: On Windows, if you plan to build AFF3CT from Visual Studio IDE you can
+          skip the CMake installation. You can directly go to the
+          :ref:`Compilation with Visual Studio <compilation-visual_studio_project>`
+          section.
+
+.. note:: On Windows, we recommend to download a version of CMake with an
+          installer.
+
+.. warning:: We recommend to add CMake in your system PATH during the
+             installation.
+
+Linux
+^^^^^
+
+Install Make and CMake from your package manager:
+
+.. code-block:: bash
+
+   sudo apt install make cmake
+
+.. note:: On CentOS-like systems you have to replace ``apt`` by ``yum``.
+
+
+C++ GNU Compiler Installation
+-----------------------------
+
+Windows
+^^^^^^^
+
+Download the latest MinGW build from `the official web page <https://sourceforge.net/projects/mingw-w64/>`_
+(tested with `MinGW x86_64-6.2.0 <https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/6.2.0/threads-posix/seh/x86_64-6.2.0-release-posix-seh-rt_v5-rev1.7z>`_).
+Unzip the archive. Copy the extracted ``mingw64`` folder in the
+``C:\Programs\Git\`` folder (erase all the duplicated files).
+
+.. note:: We suppose that you have installed Git for Windows has explained in the
+          :ref:`Git Installation on Windows <source_code-git_installation-windows>`
+          section and consequently you have Git Bash installed.
+
+macOS
+^^^^^
+
+We do not give the instructions to install the C++ GNU compiler because we will
+use the macOS native Clang compiler in the next steps, you can directly go to
+the :ref:`Compilation with a Makefile project on macOS <compilation-makefile_project>`
+section.
+
+Linux
+^^^^^
+
+Install the C++ GNU compiler from your package manager:
+
+.. code-block:: bash
+
+   sudo apt install g++
+
+.. note:: On CentOS-like systems you have to replace ``apt`` by ``yum``.
+
+.. warning:: The GNU compiler version has to be equal to or higher than 4.8 to
+             support the C++11 standard.
+
+
+Compilation with a Makefile Project
+-----------------------------------
+
+Go into the directory where you cloned AFF3CT, this directory will be refereed
+as ``$AFF3CT_ROOT``.
+
+Windows
+^^^^^^^
+
+Generate the Makefile from CMake:
+
+.. code-block:: bash
+
+   mkdir build
+   cd build
+   cmake .. -G"MinGW Makefiles"
+
+**This last command line should fail** but you can ignore it, continue with:
+
+.. code-block:: bash
+
+   cmake .. -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_CC_COMPILER=gcc.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+
+Build AFF3CT with the Makefile:
+
+.. code-block:: bash
+
+   mingw32-make -j4
+
+Once finished, the AFF3CT binary should be located in the
+``$AFF3CT_ROOT/build/bin`` folder.
+
+.. warning:: We encourage you to run the previous commands on **Git Bash**
+             instead of in the **Windows Console**.
+
+.. _compilation-makefile_project:
+
+macOS
+^^^^^
+
+Generate the Makefile from CMake:
+
+.. code-block:: bash
+
+   mkdir build
+   cd build
+   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CC_COMPILER=clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+
+Build AFF3CT with the Makefile:
+
+.. code-block:: bash
+
+   make -j4
+
+Once finished, the AFF3CT binary should be located in the
+``$AFF3CT_ROOT/build/bin`` folder.
+
+Linux
+^^^^^
+
+Generate the Makefile from CMake:
+
+.. code-block:: bash
+
+   mkdir build
+   cd build
+   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CC_COMPILER=gcc -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+
+Build AFF3CT with the Makefile:
+
+.. code-block:: bash
+
+   make -j4
+
+Once finished, the AFF3CT binary should be located in the
+``$AFF3CT_ROOT/build/bin`` folder.
+
+.. _compilation-visual_studio_project:
+
+Compilation with a Visual Studio 2017 Solution
+----------------------------------------------
+
+Since Microsoft Visual Studio 2017, Visual natively supports CMake.
+To generate the AFF3CT solution you simply need to open the
+``$AFF3CT_ROOT/CMakeList.txt`` file from the IDE. At this point you can select
+the `Release` target instead of the `Debug` target and press the `green play`
+button to start the compilation.
+
+.. note:: **Visual Studio** should not be confounded with
+          **Visual Studio Code**.
+          **Visual Studio** is the Windows native IDE and **Visual Studio Code**
+          a portable code editor.
+
+.. note:: `Visual Studio 2017 Community <https://visualstudio.microsoft.com/downloads/>`_
+          is free for Open-source contributors, students and freelance
+          developers.
+
+.. warning:: The Visual Studio default compiler (MSVC) is known to generate
+             slower AFF3CT executable than with the GNU compiler. **If you
+             target an high speed executable we recommend you to compile with
+             the GNU compiler.**
+
+The compilation can also be started from the command line after calling the
+``%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat`` batch script (where ``%VS_PATH%``
+is the location of Visual Studio on your system):
+
+.. code-block:: bash
+
+   devenv /build Release aff3ct.sln
+
+CMake Options
+-------------
+
+CMake allows to define project specific options. AFF3CT takes advantage of this
+feature and provides the following options:
+
++-------------------------------+---------+---------+---------------------------------+
+| Option                        | Type    | Default | Description                     |
++===============================+=========+=========+=================================+
+| ``AFF3CT_COMPILE_EXE``        | BOOLEAN | ON      | |cmake-opt-compile_exe|         |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_COMPILE_STATIC_LIB`` | BOOLEAN | OFF     | |cmake-opt-compile_static_lib|  |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_COMPILE_SHARED_LIB`` | BOOLEAN | OFF     | |cmake-opt-compile_shared_lib|  |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_LINK_GSL``           | BOOLEAN | OFF     | |cmake-opt-link_gsl|            |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_LINK_MKL``           | BOOLEAN | OFF     | |cmake-opt-link_mkl|            |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_SYSTEMC_SIMU``       | BOOLEAN | OFF     | |cmake-opt-systemc_simu|        |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_SYSTEMC_MODULE``     | BOOLEAN | OFF     | |cmake-opt-systemc_module|      |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_MPI``                | BOOLEAN | OFF     | |cmake-opt-mpi|                 |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_POLAR_BIT_PACKING``  | BOOLEAN | ON      | |cmake-opt-polar_bit_packing|   |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_COLORS``             | BOOLEAN | ON      | |cmake-opt-colors|              |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_BACKTRACE``          | BOOLEAN | ON      | |cmake-opt-backtrace|           |
++-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_PREC``               | STRING  | MULTI   | |cmake-opt-prec|                |
++-------------------------------+---------+---------+---------------------------------+
+
+.. |cmake-opt-compile_exe| replace:: Compile the executable.
+.. |cmake-opt-compile_static_lib| replace:: Compile the static library.
+.. |cmake-opt-compile_shared_lib| replace:: Compile the shared library.
+.. |cmake-opt-link_gsl| replace:: Link with the GSL library (used in the
+   channels).
+.. |cmake-opt-link_mkl| replace:: Link with the MKL library (used in the
+   channels).
+.. |cmake-opt-systemc_simu| replace:: Enable the SystemC simulation
+   (incompatible with the library compilation).
+.. |cmake-opt-systemc_module| replace:: Enable the SystemC support (only for the
+   modules).
+.. |cmake-opt-mpi| replace:: Enable the MPI support.
+.. |cmake-opt-polar_bit_packing| replace:: Enable the bit packing technique for
+   Polar code SC decoding.
+.. |cmake-opt-colors| replace:: Enable the colors in the terminal.
+.. |cmake-opt-backtrace| replace:: Enable the backtrace display when and
+   exception is raised. On Windows and macOS this option is not available and
+   automatically set to ``OFF``.
+.. |cmake-opt-prec| replace:: Select the precision in bits (can be '8', '16',
+   '32', '64' or 'MULTI').
+
+Lets consider an option named ``AFF3CT_OPTION`` that you want to set to ``ON``:
+when calling the CMake command, you need to prefix the option by ``-D`` and to
+specify its value preceded by ``=``:
+
+.. code-block:: bash
+
+   cmake .. -DAFF3CT_OPTION=ON
+
+It can be done even if CMake has be called before and as many time as wanted, it
+will affect the project generation. For instance, if CMake is configured to
+generate a Makefile and a option changed, the Makefile will be regenerated by
+CMake and AFF3CT will have to be rebuilt.
+
+Compiler Options
+----------------
+
+Build Type
+^^^^^^^^^^
+
+CMake allows build type selection among several predefined ones through the
+``CMAKE_BUILD_TYPE`` built-in variable. ``Release`` and ``Debug`` are the most
+famous values that the variable can get. For instance, to compile in release
+mode:
+
+.. code-block:: bash
+
+   cmake .. -DCMAKE_BUILD_TYPE=Release
+
+In CMake it is recommended to not explicitly set the compiler optimization level
+flags (``-O0``, ``-O1``, ``-O2``, ``-O3``, etc.). Those compiler options will
+be set automatically by the ``CMAKE_BUILD_TYPE`` built-in variable.
+For instance, with the GNU compiler, if ``CMAKE_BUILD_TYPE`` is set to
+``Release``, the code will be compiled with the ``-O3`` flag.
+
+.. note:: In Visual Studio solutions, the ``CMAKE_BUILD_TYPE`` built-in
+          variable has no effect and the build type is directly managed by
+          Visual.
+
+Specific Options
+^^^^^^^^^^^^^^^^
+
+CMake has a built-in variable you can set to specify the compiler options:
+``CMAKE_CXX_FLAGS``. For instance, it can be used like this:
+
+.. code-block:: bash
+
+   cmake .. -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+
+Many parts of the AFF3CT code use the **SIMD** (Single Instruction Multiple
+Data) parallelism and this type of instructions often requires additional
+compiler options to be enabled:
+
++-------------------+-------------------+
+| Option            | Description       |
++===================+===================+
+| ``-msse2``        | |comp-opt-sse2|   |
++-------------------+-------------------+
+| ``-mssse3``       | |comp-opt-ssse3|  |
++-------------------+-------------------+
+| ``-msse4.1``      | |comp-opt-sse41|  |
++-------------------+-------------------+
+| ``-mavx``         | |comp-opt-avx|    |
++-------------------+-------------------+
+| ``-mavx2``        | |comp-opt-avx2|   |
++-------------------+-------------------+
+| ``-mfpu=neon``    | |comp-opt-neon|   |
++-------------------+-------------------+
+| ``-march=native`` | |comp-opt-native| |
++-------------------+-------------------+
+
+.. |comp-opt-sse2| replace:: Enable the SSE2 set of instructions on x86 CPUs
+   (128-bit vector size, required for 32-bit and 64-bit data).
+.. |comp-opt-ssse3| replace:: Enable the SSSE3 set of instructions on x86 CPUs
+   (128-bit vector size, specifically required for 32-bit data and the SC_FAST
+   decoder).
+.. |comp-opt-sse41| replace:: Enable the SSE4.1 set of instructions on x86 CPUs
+   (128-bit vector size, required for 8-bit and 16-bit data).
+.. |comp-opt-avx| replace:: Enable the AVX set of instructions on x86 CPUs
+   (256-bit vector size, required for 32-bit and 64-bit data).
+.. |comp-opt-avx2| replace:: Enable the AVX2 set of instructions on x86 CPUs
+   (256-bit vector size, required for 8-bit and 16-bit data).
+.. |comp-opt-neon| replace:: Enable the NEON set of instructions on ARMv7 and
+   ARMv8 CPUs (128-bit vector size, required for 8-bit, 16-bit data and 32-bit
+   data).
+.. |comp-opt-native| replace:: Let the compiler choose the best set of
+   instructions available on the current architecture (it does not work for
+   ARMv7 architectures since the NEON instruction set is not IEEE 754
+   compatible).
+
+.. warning:: Previous options are only valid for the GNU and the Clang compilers
+             but it exists equivalent options for the other compilers like
+             the Microsoft compiler (MSVC) or the Intel compiler (icpc).
