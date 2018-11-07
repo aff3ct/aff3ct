@@ -22,17 +22,24 @@ Download Git from `the official web page <https://git-scm.com/downloads>`_
 and launch the executable file. Just press the `Next` button until the
 installation is over.
 
-
-.. note:: On Windows, during the installation you may want to check the **Linux
-          symbolic links** support.
-
-.. warning:: It is recommended to add Git to your system PATH during the
-             installation.
-
 .. warning:: On Windows, Git comes with the **Git Bash** terminal which is,
              to our mind, better suitable that the traditional **Windows
              Console**. We encourage you to use **Git Bash** instead of the
              **Windows Console** for the following steps.
+
+.. image:: images/git_bash.png
+   :align: center
+
+.. warning:: It is recommended to add Git to your system PATH during the
+             installation.
+
+.. image:: images/git_path.png
+   :align: center
+
+.. note:: On Windows, during the installation you may want to check the **Linux
+          symbolic links** support.
+.. image:: images/git_symlink.png
+   :align: center
 
 Linux
 ^^^^^

@@ -30,6 +30,8 @@ installation is over.
 
 .. warning:: It is recommended to add CMake to your system PATH during the
              installation.
+.. image:: images/cmake_path.png
+   :align: center
 
 Linux
 ^^^^^
@@ -161,9 +163,22 @@ Compilation with a Visual Studio 2017 Solution
 ----------------------------------------------
 
 Since Microsoft Visual Studio 2017, Visual natively supports CMake.
-To generate the AFF3CT solution, open the ``$AFF3CT_ROOT/CMakeList.txt`` file
-from the IDE. Select the `Release` target instead of the `Debug` target and
-press the `green play` button to start the compilation.
+To generate the AFF3CT solution, open the ``$AFF3CT_ROOT`` folder from the IDE.
+
+.. image:: images/vs17_cmake.png
+   :align: center
+
+Select the `Release` target and press the green play button ``aff3ct.exe`` to
+start the compilation.
+
+.. image:: images/vs17_compile.png
+   :align: center
+
+Once AFF3CT is compiled you can browse the build by right clicking on
+``CMakeList.txt`` > ``Cache`` > ``Open Cache Foler``.
+
+.. image:: images/vs17_cache_folder.png
+   :align: center
 
 .. note:: **Visual Studio** should not be confounded with
           **Visual Studio Code**.
