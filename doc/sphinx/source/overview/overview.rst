@@ -18,7 +18,7 @@ ways, as:
    :columns: 1
 
    * a **standalone application** for `Monte Carlo`_ `BFER`_ and `EXIT chart`_
-     simulations (see the :ref:`simulator` section),
+     simulations (see the :ref:`simulation` section),
    * a dedicated **toolbox** or **library** for your projects, many modules
      (like codecs, modems, channels, ...) are available and easy to use (see
      the :ref:`library` section).
