@@ -9,7 +9,10 @@ Welcome to AFF3CT's documentation!
    :numbered:
 
    overview/overview
-   simulator/simulator
+   source_code/source_code
+   compilation/compilation
+   installation/installation
+   simulation/simulation
    library/library
    license/license
 
