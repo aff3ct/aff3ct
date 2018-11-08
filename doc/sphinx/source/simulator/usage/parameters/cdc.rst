@@ -4,7 +4,7 @@ Codec parameters
 ++++++++++++++++
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Codec Contents
 
    cdc_bch/cdc
