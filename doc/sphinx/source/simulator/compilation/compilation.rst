@@ -1,12 +1,18 @@
 Compilation
 ===========
 
+.. note:: If you do not plan to modify the AFF3CT source code and you want
+          to use the simulator as is, you can **download one of the lastest
+          AFF3CT build** from the
+          `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_
+          and directly go to the :ref:`usage` section.
+
 .. _CMake: https://cmake.org/
 
 This project uses `CMake`_ in order to generate any type of projects (Makefile,
 Visual Studio, Eclipse, CLion, XCode, etc.).
 
-AFF3CT is portable and can be compiled on Linux, macOS and Windows. Of course
+AFF3CT is portable and can be compiled on Windows, macOS and Linux. Of course
 it works on traditional x86 architectures like Intel and AMD CPUs but it also
 works on embedded architectures like ARM CPUs.
 
