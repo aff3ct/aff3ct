@@ -21,7 +21,7 @@ Modem_SCMA<B,R,Q,PSI>
                noise,
                n_frames),
   CB                   (codebook_path),
-  arr_phi              (CB.get_codebook_size(),       CB.get_codebook_size(),       CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
+  arr_phi              (CB.get_number_of_resources(), CB.get_codebook_size(),       CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
   msg_user_to_resources(CB.get_number_of_users(),     CB.get_number_of_resources(), CB.get_codebook_size(),                         (Q)0),
   msg_res_user         (CB.get_number_of_resources(), CB.get_number_of_users(),     CB.get_codebook_size(),                         (Q)0),
   guess                (CB.get_number_of_users(),     CB.get_codebook_size(),                                                       (Q)0),
@@ -211,7 +211,7 @@ void Modem_SCMA<B,R,Q,PSI>
 					msg_res_user(r,CB.get_resource_to_user(r,u),i) = (Q)0;
 
 
-		for (auto i = 0; i < CB.get_codebook_size(); i++)  // codeword index
+		for (auto i = 0; i < CB.get_codebook_size(); i++)
 			for (auto j = 0; j < CB.get_codebook_size(); j++)
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
 					for (auto re = 0; re < CB.get_number_of_resources(); re++)
@@ -229,6 +229,23 @@ void Modem_SCMA<B,R,Q,PSI>
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re,0),re,j)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re,1),re,k);
 					}
+
+		/// I tried to convert this last quadruple loops into this:
+		// for (auto i = 0; i < CB.get_codebook_size(); i++)
+		// 	for (auto j = 0; j < CB.get_codebook_size(); j++)
+		// 		for (auto k = 0; k < CB.get_codebook_size(); k++)
+		// 			for (auto re = 0; re < CB.get_number_of_resources(); re++)
+		// 				for (auto u = 0; u < CB.get_number_of_users_per_resource(); u++)
+		// 				{
+		// 					auto proba = arr_phi(re,i,j,k);
+
+		// 					for (auto u2 = 0; u2 < CB.get_number_of_users_per_resource(); u2++)
+		// 						if (u2 != u)
+		// 							proba *= msg_user_to_resources(CB.get_resource_to_user(re,u2),re,j); ///// <------- but I'm having issue with this j that shall be k once on two.
+
+		// 					msg_res_user(re,CB.get_resource_to_user(re,u),i) += proba;
+		// 				}
+
 
 		// user to resource messaging
 		for (auto i = 0; i < CB.get_number_of_resources(); i++)
