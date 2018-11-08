@@ -114,6 +114,10 @@ Enable the coset approach.
 
 Iteration number to start the CRC checking in the turbo demodulation process.
 
+.. note::
+
+   Available only for BFERI simulations
+
 .. _sim-sim-debug:
 
 ``--sim-debug``
@@ -159,6 +163,10 @@ Set the precision of real elements when displayed in debug mode.
    :Examples: ``--sim-ite 1``
 
 Number of global iterations between the demodulator and the decoder.
+
+.. note::
+
+   Available only for BFERI simulations
 
 .. _sim-sim-meta:
 
