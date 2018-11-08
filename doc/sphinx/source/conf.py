@@ -26,7 +26,7 @@ author = 'AFF3CT\'s team'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '2.0.0'
+release = '2.1.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -99,6 +99,10 @@ html_static_path = ['_static']
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
+
+
+html_favicon = None
+html_logo    = None
 
 
 # -- Options for HTMLHelp output ---------------------------------------------
