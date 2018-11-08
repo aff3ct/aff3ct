@@ -25,7 +25,7 @@ author = 'AFF3CT\'s team'
 
 # get the AFF3CT version from Git
 import subprocess
-label = subprocess.check_output(["git", "describe"]).strip()
+label = subprocess.check_output(["git", "describe"]).strip().decode(encoding='UTF-8')
 split_label = label.split("-")
 
 # The short X.Y version
