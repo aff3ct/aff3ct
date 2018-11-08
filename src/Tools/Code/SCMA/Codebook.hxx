@@ -25,10 +25,10 @@ Codebook<R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (number_of_orthogonal_resources <= 0)
+	if (number_of_resources <= 0)
 	{
 		std::stringstream message;
-		message << "'number_of_orthogonal_resources' has to be strictly positive ('number_of_orthogonal_resources' = " << number_of_orthogonal_resources << ").";
+		message << "'number_of_resources' has to be strictly positive ('number_of_resources' = " << number_of_resources << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -53,14 +53,14 @@ void Codebook<R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	file >> number_of_users >> number_of_orthogonal_resources >> codebook_size;
+	file >> number_of_users >> number_of_resources >> codebook_size;
 
 	data.resize(number_of_users);
 
 	for (int u = 0; u < number_of_users; ++u)
 	{
-		data[u].resize(number_of_orthogonal_resources);
-		for (int r = 0; r < number_of_orthogonal_resources; ++r)
+		data[u].resize(number_of_resources);
+		for (int r = 0; r < number_of_resources; ++r)
 		{
 			data[u][r].resize(codebook_size);
 			for (int c = 0; c < codebook_size; ++c)
@@ -81,9 +81,9 @@ void Codebook<R>
 	}
 
 	// Factor graph calculation
-	std::vector<std::vector<bool>> F(number_of_orthogonal_resources, std::vector<bool>(number_of_users, false));
+	std::vector<std::vector<bool>> F(number_of_resources);
 
-	for (int r = 0; r < number_of_orthogonal_resources; ++r)
+	for (int r = 0; r < number_of_resources; ++r)
 	{
 		F[r].resize(number_of_users, false);
 		for (int u = 0; u < number_of_users; ++u)
@@ -99,11 +99,7 @@ void Codebook<R>
 		}
 	}
 
-
-	int number_of_resources_per_user = 0; // number of resources per user
-	int number_of_users_per_resource = 0; // number of users per resource
-
-	for (int r = 0; r < number_of_orthogonal_resources; ++r)
+	for (int r = 0; r < number_of_resources; ++r)
 	{
 		int n = 0; // number of users on this resource
 		for (int u = 0; u < number_of_users; ++u)
@@ -124,7 +120,7 @@ void Codebook<R>
 	for (int u = 0; u < number_of_users; ++u)
 	{
 		int n = 0; // number of resources used by this user
-		for (int r = 0; r < number_of_orthogonal_resources; ++r)
+		for (int r = 0; r < number_of_resources; ++r)
 			if (F[r][u])
 				n++;
 
@@ -140,8 +136,8 @@ void Codebook<R>
 	}
 
 
-	resource_to_user.resize(number_of_orthogonal_resources);
-	for (int r = 0; r < number_of_orthogonal_resources; ++r)
+	resource_to_user.resize(number_of_resources);
+	for (int r = 0; r < number_of_resources; ++r)
 	{
 		resource_to_user[r].resize(number_of_users_per_resource);
 		int idx = 0;
@@ -160,7 +156,7 @@ void Codebook<R>
 	{
 		user_to_resource[u].resize(number_of_resources_per_user);
 		int idx = 0;
-		for (int r = 0; r < number_of_orthogonal_resources; ++r)
+		for (int r = 0; r < number_of_resources; ++r)
 		{
 			if (F[r][u])
 			{
@@ -170,8 +166,6 @@ void Codebook<R>
 		}
 	}
 }
-
-
 
 template <typename R>
 inline const std::complex<R>& Codebook<R>
@@ -202,9 +196,9 @@ inline int Codebook<R>
 
 template <typename R>
 inline int Codebook<R>
-::get_number_of_orthogonal_resources() const
+::get_number_of_resources() const
 {
-	return number_of_orthogonal_resources;
+	return number_of_resources;
 }
 
 template <typename R>

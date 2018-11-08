@@ -7,6 +7,8 @@
 
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 #include "Tools/Code/SCMA/Codebook.hpp"
+#include "Tools/Algo/Multidimensional_vector/Vector_2D.hpp"
+#include "Tools/Algo/Multidimensional_vector/Vector_3D.hpp"
 #include "Tools/Algo/Multidimensional_vector/Vector_4D.hpp"
 
 #include "../Modem.hpp"
@@ -22,6 +24,9 @@ class Modem_SCMA : public Modem<B,R,Q>
 private:
 	const tools::Codebook<R> CB;
 	tools::Vector_4D<Q>      arr_phi;
+	tools::Vector_3D<Q>      msg_user_to_resources;
+	tools::Vector_3D<Q>      msg_res_user;
+	tools::Vector_2D<Q>      guess;
 	const bool               disable_sig2;
 	      R                  n0; // 1 / n0 = 179.856115108
 	const int                n_ite;

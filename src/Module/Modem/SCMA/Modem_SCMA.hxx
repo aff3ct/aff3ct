@@ -11,47 +11,6 @@ namespace aff3ct
 {
 namespace module
 {
-// template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-// const std::complex<float> Modem_SCMA<B,R,Q,PSI>::CB[6][4][4] =
-// {
-// 	{ // codebook1 (code layer 1)
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ { -0.1815f, -0.1318f }, { -0.6351f, -0.4615f }, {  0.6351f,  0.4615f }, {  0.1815f,  0.1318f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } }
-// 	},
-// 	{ // codebook2 (code layer 2)
-// 		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ { -0.1815f, -0.1318f }, { -0.6351f, -0.4615f }, {  0.6351f,  0.4615f }, {  0.1815f,  0.1318f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
-// 	},
-// 	{ // codebook3 (code layer 3)
-// 		{ { -0.6351f,  0.4615f }, {  0.1815f, -0.1318f }, { -0.1815f,  0.1318f }, {  0.6351f, -0.4615f } },
-// 		{ {  0.1392f, -0.1759f }, {  0.4873f, -0.6156f }, { -0.4873f,  0.6156f }, { -0.1392f,  0.1759f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
-// 	},
-// 	{ // codebook4 (code layer 4)
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } },
-// 		{ { -0.0055f, -0.2242f }, { -0.0193f, -0.7848f }, {  0.0193f,  0.7848f }, {  0.0055f,  0.2242f } }
-// 	},
-// 	{ // codebook5 (code layer 5)
-// 		{ { -0.0055f, -0.2242f }, { -0.0193f, -0.7848f }, {  0.0193f,  0.7848f }, {  0.0055f,  0.2242f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ { -0.6351f,  0.4615f }, {  0.1815f, -0.1318f }, { -0.1815f,  0.1318f }, {  0.6351f, -0.4615f } }
-// 	},
-// 	{ // codebook6 (code layer 6)
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ {  0.7851f,  0.0000f }, { -0.2243f,  0.0000f }, {  0.2243f,  0.0000f }, { -0.7851f,  0.0000f } },
-// 		{ {  0.1392f, -0.1759f }, {  0.4873f, -0.6156f }, { -0.4873f,  0.6156f }, { -0.1392f,  0.1759f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
-// 	},
-// };
-
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
 ::Modem_SCMA(const int N, const std::string& codebook_path, const tools::Noise<R>& noise, const int bps,
@@ -61,11 +20,14 @@ Modem_SCMA<B,R,Q,PSI>
                Modem_SCMA<B,R,Q,PSI>::size_fil(N, bps),
                noise,
                n_frames),
-  CB          (codebook_path),
-  arr_phi     (CB.get_codebook_size(), CB.get_codebook_size(), CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
-  disable_sig2(disable_sig2 ),
-  n_ite       (n_ite        ),
-  bps         (bps          )
+  CB                   (codebook_path),
+  arr_phi              (CB.get_codebook_size(),       CB.get_codebook_size(),       CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
+  msg_user_to_resources(CB.get_number_of_users(),     CB.get_number_of_resources(), CB.get_codebook_size(),                         (Q)0),
+  msg_res_user         (CB.get_number_of_resources(), CB.get_number_of_users(),     CB.get_codebook_size(),                         (Q)0),
+  guess                (CB.get_number_of_users(),     CB.get_codebook_size(),                                                       (Q)0),
+  disable_sig2         (disable_sig2 ),
+  n_ite                (n_ite        ),
+  bps                  (bps          )
 {
 	const std::string name = "Modem_SCMA";
 	this->set_name(name);
@@ -129,7 +91,7 @@ void Modem_SCMA<B,R,Q,PSI>
 			for (unsigned i = 0 ; i < 2 ; i++) // TODO:  With what should "2" be replaced ?
 				idx += (1 << i) * (unsigned)X_N1[f * this->N + 2 * j + i];
 
-			for (auto i = 0 ; i < CB.get_number_of_orthogonal_resources() ; i++)
+			for (auto i = 0 ; i < CB.get_number_of_resources() ; i++)
 			{
 				X_N2[f * N_mod + 8 * j + 2 * i   ] = CB(f, i, idx).real();
 				X_N2[f * N_mod + 8 * j + 2 * i +1] = CB(f, i, idx).imag();
@@ -143,7 +105,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		{
 			unsigned idx = (unsigned)X_N1[f * this->N + this->N - 1];
 
-			for (auto i = 0 ; i < CB.get_number_of_orthogonal_resources() ; i++)
+			for (auto i = 0 ; i < CB.get_number_of_resources() ; i++)
 			{
 				X_N2[f * N_mod + 8 * (this->N / 2) + 2 * i   ] = CB(f, i, idx).real(); // TODO:  With what should "8" be replaced ?
 				X_N2[f * N_mod + 8 * (this->N / 2) + 2 * i +1] = CB(f, i, idx).imag(); // TODO:  With what should "2" be replaced ?
@@ -178,7 +140,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		for (auto i = 0; i < CB.get_codebook_size(); i++)
 			for (auto j = 0; j < CB.get_codebook_size(); j++)
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
-					for (auto re = 0; re < CB.get_number_of_orthogonal_resources(); re++)
+					for (auto re = 0; re < CB.get_number_of_resources(); re++)
 						arr_phi(re,i,j,k) = phi(Y_N1, i, j, k, re, batch, H_N);
 
 		demodulate_batch(Y_N1,Y_N2,batch);
@@ -211,7 +173,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		for (auto i = 0; i < CB.get_codebook_size(); i++)
 			for (auto j = 0; j < CB.get_codebook_size(); j++)
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
-					for (auto re = 0; re < CB.get_number_of_orthogonal_resources(); re++)
+					for (auto re = 0; re < CB.get_number_of_resources(); re++)
 						arr_phi(re,i,j,k) = phi(Y_N1, i, j, k, re, batch);
 
 		demodulate_batch(Y_N1,Y_N2,batch);
@@ -231,131 +193,106 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!this->n->is_set())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
 
-	// declarations
-	Q msg_user_to_resources[6][4][4] = {};
-	Q msg_res_user[4][6][4] = {};
-	Q guess[6][4] = {};
-
 	// initial probability of each codeword/user
-	for (auto i = 0; i < CB.get_codebook_size(); i++)
-	{
-		msg_user_to_resources[0][CB.get_user_to_resource(0,0)][i] = (Q)0.25;
-		msg_user_to_resources[0][CB.get_user_to_resource(0,1)][i] = (Q)0.25;
-		msg_user_to_resources[1][CB.get_user_to_resource(1,0)][i] = (Q)0.25;
-		msg_user_to_resources[1][CB.get_user_to_resource(1,1)][i] = (Q)0.25;
-		msg_user_to_resources[2][CB.get_user_to_resource(2,0)][i] = (Q)0.25;
-		msg_user_to_resources[2][CB.get_user_to_resource(2,1)][i] = (Q)0.25;
-		msg_user_to_resources[3][CB.get_user_to_resource(3,0)][i] = (Q)0.25;
-		msg_user_to_resources[3][CB.get_user_to_resource(3,1)][i] = (Q)0.25;
-		msg_user_to_resources[4][CB.get_user_to_resource(4,0)][i] = (Q)0.25;
-		msg_user_to_resources[4][CB.get_user_to_resource(4,1)][i] = (Q)0.25;
-		msg_user_to_resources[5][CB.get_user_to_resource(5,0)][i] = (Q)0.25;
-		msg_user_to_resources[5][CB.get_user_to_resource(5,1)][i] = (Q)0.25;
-	}
+	auto init_proba = (Q)1. / (Q)CB.get_codebook_size();
+	for (auto u = 0; u < CB.get_number_of_users(); ++u)
+		for (auto r = 0; r < CB.get_number_of_resources_per_user(); ++r)
+			for (auto i = 0; i < CB.get_codebook_size(); i++)
+				msg_user_to_resources(u,CB.get_user_to_resource(u,r),i) = init_proba;
 
 	// starting iteration
 	for (auto itrr = 0; itrr < n_ite; itrr++)
 	{
 		// resource to user messaging
 		// initialization
-		for (auto i = 0; i < CB.get_number_of_orthogonal_resources(); i++)
-		{
-			msg_res_user[0][CB.get_resource_to_user(0,0)][i] = (Q)0;
-			msg_res_user[0][CB.get_resource_to_user(0,1)][i] = (Q)0;
-			msg_res_user[0][CB.get_resource_to_user(0,2)][i] = (Q)0;
-			msg_res_user[1][CB.get_resource_to_user(1,0)][i] = (Q)0;
-			msg_res_user[1][CB.get_resource_to_user(1,1)][i] = (Q)0;
-			msg_res_user[1][CB.get_resource_to_user(1,2)][i] = (Q)0;
-			msg_res_user[2][CB.get_resource_to_user(2,0)][i] = (Q)0;
-			msg_res_user[2][CB.get_resource_to_user(2,1)][i] = (Q)0;
-			msg_res_user[2][CB.get_resource_to_user(2,2)][i] = (Q)0;
-			msg_res_user[3][CB.get_resource_to_user(3,0)][i] = (Q)0;
-			msg_res_user[3][CB.get_resource_to_user(3,1)][i] = (Q)0;
-			msg_res_user[3][CB.get_resource_to_user(3,2)][i] = (Q)0;
-		}
+		for (auto r = 0; r < CB.get_number_of_resources(); ++r)
+			for (auto u = 0; u < CB.get_number_of_users_per_resource(); ++u)
+				for (auto i = 0; i < CB.get_codebook_size(); i++)
+					msg_res_user(r,CB.get_resource_to_user(r,u),i) = (Q)0;
+
 
 		for (auto i = 0; i < CB.get_codebook_size(); i++)  // codeword index
 			for (auto j = 0; j < CB.get_codebook_size(); j++)
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
-					for(auto re = 0; re < CB.get_number_of_orthogonal_resources(); re++)
+					for (auto re = 0; re < CB.get_number_of_resources(); re++)
 					{
-						msg_res_user[re][CB.get_resource_to_user(re,0)][i] = msg_res_user[re][CB.get_resource_to_user(re,0)][i]
+						msg_res_user(re,CB.get_resource_to_user(re,0),i) = msg_res_user(re,CB.get_resource_to_user(re,0),i)
 						                                            + arr_phi(re,i,j,k)
-						                                            * msg_user_to_resources[CB.get_resource_to_user(re,1)][re][j]
-						                                            * msg_user_to_resources[CB.get_resource_to_user(re,2)][re][k];
-						msg_res_user[re][CB.get_resource_to_user(re,1)][i] = msg_res_user[re][CB.get_resource_to_user(re,1)][i]
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re,1),re,j)
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re,2),re,k);
+						msg_res_user(re,CB.get_resource_to_user(re,1),i) = msg_res_user(re,CB.get_resource_to_user(re,1),i)
 						                                            + arr_phi(re,j,i,k)
-						                                            * msg_user_to_resources[CB.get_resource_to_user(re,0)][re][j]
-						                                            * msg_user_to_resources[CB.get_resource_to_user(re,2)][re][k];
-						msg_res_user[re][CB.get_resource_to_user(re,2)][i] = msg_res_user[re][CB.get_resource_to_user(re,2)][i]
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re,0),re,j)
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re,2),re,k);
+						msg_res_user(re,CB.get_resource_to_user(re,2),i) = msg_res_user(re,CB.get_resource_to_user(re,2),i)
 						                                            + arr_phi(re,j,k,i)
-						                                            * msg_user_to_resources[CB.get_resource_to_user(re,0)][re][j]
-						                                            * msg_user_to_resources[CB.get_resource_to_user(re,1)][re][k];
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re,0),re,j)
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re,1),re,k);
 					}
 
 		// user to resource messaging
-		for (auto i = 0; i < CB.get_number_of_orthogonal_resources(); i++)
+		for (auto i = 0; i < CB.get_number_of_resources(); i++)
 		{
-			msg_user_to_resources[0][CB.get_user_to_resource(0,0)][i] = msg_res_user[CB.get_user_to_resource(0,1)][0][i] /
-													 (msg_res_user[CB.get_user_to_resource(0,1)][0][0] +
-													  msg_res_user[CB.get_user_to_resource(0,1)][0][1] +
-			                                          msg_res_user[CB.get_user_to_resource(0,1)][0][2] +
-													  msg_res_user[CB.get_user_to_resource(0,1)][0][3]);
-			msg_user_to_resources[0][CB.get_user_to_resource(0,1)][i] = msg_res_user[CB.get_user_to_resource(0,0)][0][i] /
-													 (msg_res_user[CB.get_user_to_resource(0,0)][0][0] +
-													  msg_res_user[CB.get_user_to_resource(0,0)][0][1] +
-													  msg_res_user[CB.get_user_to_resource(0,0)][0][2] +
-													  msg_res_user[CB.get_user_to_resource(0,0)][0][3]);
-			msg_user_to_resources[1][CB.get_user_to_resource(1,0)][i] = msg_res_user[CB.get_user_to_resource(1,1)][1][i] /
-													 (msg_res_user[CB.get_user_to_resource(1,1)][1][0] +
-													  msg_res_user[CB.get_user_to_resource(1,1)][1][1] +
-													  msg_res_user[CB.get_user_to_resource(1,1)][1][2] +
-													  msg_res_user[CB.get_user_to_resource(1,1)][1][3]);
-			msg_user_to_resources[1][CB.get_user_to_resource(1,1)][i] = msg_res_user[CB.get_user_to_resource(1,0)][1][i] /
-													 (msg_res_user[CB.get_user_to_resource(1,0)][1][0] +
-													  msg_res_user[CB.get_user_to_resource(1,0)][1][1] +
-													  msg_res_user[CB.get_user_to_resource(1,0)][1][2] +
-													  msg_res_user[CB.get_user_to_resource(1,0)][1][3]);
-			msg_user_to_resources[2][CB.get_user_to_resource(2,0)][i] = msg_res_user[CB.get_user_to_resource(2,1)][2][i] /
-													 (msg_res_user[CB.get_user_to_resource(2,1)][2][0] +
-													  msg_res_user[CB.get_user_to_resource(2,1)][2][1] +
-													  msg_res_user[CB.get_user_to_resource(2,1)][2][2] +
-													  msg_res_user[CB.get_user_to_resource(2,1)][2][3]);
-			msg_user_to_resources[2][CB.get_user_to_resource(2,1)][i] = msg_res_user[CB.get_user_to_resource(2,0)][2][i] /
-													 (msg_res_user[CB.get_user_to_resource(2,0)][2][0] +
-													  msg_res_user[CB.get_user_to_resource(2,0)][2][1] +
-													  msg_res_user[CB.get_user_to_resource(2,0)][2][2] +
-													  msg_res_user[CB.get_user_to_resource(2,0)][2][3]);
-			msg_user_to_resources[3][CB.get_user_to_resource(3,0)][i] = msg_res_user[CB.get_user_to_resource(3,1)][3][i] /
-													 (msg_res_user[CB.get_user_to_resource(3,1)][3][0] +
-													  msg_res_user[CB.get_user_to_resource(3,1)][3][1] +
-													  msg_res_user[CB.get_user_to_resource(3,1)][3][2] +
-													  msg_res_user[CB.get_user_to_resource(3,1)][3][3]);
-			msg_user_to_resources[3][CB.get_user_to_resource(3,1)][i] = msg_res_user[CB.get_user_to_resource(3,0)][3][i] /
-													 (msg_res_user[CB.get_user_to_resource(3,0)][3][0] +
-													  msg_res_user[CB.get_user_to_resource(3,0)][3][1] +
-													  msg_res_user[CB.get_user_to_resource(3,0)][3][2] +
-													  msg_res_user[CB.get_user_to_resource(3,0)][3][3]);
-			msg_user_to_resources[4][CB.get_user_to_resource(4,0)][i] = msg_res_user[CB.get_user_to_resource(4,1)][4][i] /
-													 (msg_res_user[CB.get_user_to_resource(4,1)][4][0] +
-													  msg_res_user[CB.get_user_to_resource(4,1)][4][1] +
-													  msg_res_user[CB.get_user_to_resource(4,1)][4][2] +
-													  msg_res_user[CB.get_user_to_resource(4,1)][4][3]);
-			msg_user_to_resources[4][CB.get_user_to_resource(4,1)][i] = msg_res_user[CB.get_user_to_resource(4,0)][4][i] /
-													 (msg_res_user[CB.get_user_to_resource(4,0)][4][0] +
-													  msg_res_user[CB.get_user_to_resource(4,0)][4][1] +
-													  msg_res_user[CB.get_user_to_resource(4,0)][4][2] +
-													  msg_res_user[CB.get_user_to_resource(4,0)][4][3]);
-			msg_user_to_resources[5][CB.get_user_to_resource(5,0)][i] = msg_res_user[CB.get_user_to_resource(5,1)][5][i] /
-													 (msg_res_user[CB.get_user_to_resource(5,1)][5][0] +
-													  msg_res_user[CB.get_user_to_resource(5,1)][5][1] +
-													  msg_res_user[CB.get_user_to_resource(5,1)][5][2] +
-													  msg_res_user[CB.get_user_to_resource(5,1)][5][3]);
-			msg_user_to_resources[5][CB.get_user_to_resource(5,1)][i] = msg_res_user[CB.get_user_to_resource(5,0)][5][i] /
-													 (msg_res_user[CB.get_user_to_resource(5,0)][5][0] +
-													  msg_res_user[CB.get_user_to_resource(5,0)][5][1] +
-													  msg_res_user[CB.get_user_to_resource(5,0)][5][2] +
-													  msg_res_user[CB.get_user_to_resource(5,0)][5][3]);
+			msg_user_to_resources(0,CB.get_user_to_resource(0,0),i) = msg_res_user(CB.get_user_to_resource(0,1),0,i) /
+													 (msg_res_user(CB.get_user_to_resource(0,1),0,0) +
+													  msg_res_user(CB.get_user_to_resource(0,1),0,1) +
+			                                          msg_res_user(CB.get_user_to_resource(0,1),0,2) +
+													  msg_res_user(CB.get_user_to_resource(0,1),0,3));
+			msg_user_to_resources(0,CB.get_user_to_resource(0,1),i) = msg_res_user(CB.get_user_to_resource(0,0),0,i) /
+													 (msg_res_user(CB.get_user_to_resource(0,0),0,0) +
+													  msg_res_user(CB.get_user_to_resource(0,0),0,1) +
+													  msg_res_user(CB.get_user_to_resource(0,0),0,2) +
+													  msg_res_user(CB.get_user_to_resource(0,0),0,3));
+			msg_user_to_resources(1,CB.get_user_to_resource(1,0),i) = msg_res_user(CB.get_user_to_resource(1,1),1,i) /
+													 (msg_res_user(CB.get_user_to_resource(1,1),1,0) +
+													  msg_res_user(CB.get_user_to_resource(1,1),1,1) +
+													  msg_res_user(CB.get_user_to_resource(1,1),1,2) +
+													  msg_res_user(CB.get_user_to_resource(1,1),1,3));
+			msg_user_to_resources(1,CB.get_user_to_resource(1,1),i) = msg_res_user(CB.get_user_to_resource(1,0),1,i) /
+													 (msg_res_user(CB.get_user_to_resource(1,0),1,0) +
+													  msg_res_user(CB.get_user_to_resource(1,0),1,1) +
+													  msg_res_user(CB.get_user_to_resource(1,0),1,2) +
+													  msg_res_user(CB.get_user_to_resource(1,0),1,3));
+			msg_user_to_resources(2,CB.get_user_to_resource(2,0),i) = msg_res_user(CB.get_user_to_resource(2,1),2,i) /
+													 (msg_res_user(CB.get_user_to_resource(2,1),2,0) +
+													  msg_res_user(CB.get_user_to_resource(2,1),2,1) +
+													  msg_res_user(CB.get_user_to_resource(2,1),2,2) +
+													  msg_res_user(CB.get_user_to_resource(2,1),2,3));
+			msg_user_to_resources(2,CB.get_user_to_resource(2,1),i) = msg_res_user(CB.get_user_to_resource(2,0),2,i) /
+													 (msg_res_user(CB.get_user_to_resource(2,0),2,0) +
+													  msg_res_user(CB.get_user_to_resource(2,0),2,1) +
+													  msg_res_user(CB.get_user_to_resource(2,0),2,2) +
+													  msg_res_user(CB.get_user_to_resource(2,0),2,3));
+			msg_user_to_resources(3,CB.get_user_to_resource(3,0),i) = msg_res_user(CB.get_user_to_resource(3,1),3,i) /
+													 (msg_res_user(CB.get_user_to_resource(3,1),3,0) +
+													  msg_res_user(CB.get_user_to_resource(3,1),3,1) +
+													  msg_res_user(CB.get_user_to_resource(3,1),3,2) +
+													  msg_res_user(CB.get_user_to_resource(3,1),3,3));
+			msg_user_to_resources(3,CB.get_user_to_resource(3,1),i) = msg_res_user(CB.get_user_to_resource(3,0),3,i) /
+													 (msg_res_user(CB.get_user_to_resource(3,0),3,0) +
+													  msg_res_user(CB.get_user_to_resource(3,0),3,1) +
+													  msg_res_user(CB.get_user_to_resource(3,0),3,2) +
+													  msg_res_user(CB.get_user_to_resource(3,0),3,3));
+			msg_user_to_resources(4,CB.get_user_to_resource(4,0),i) = msg_res_user(CB.get_user_to_resource(4,1),4,i) /
+													 (msg_res_user(CB.get_user_to_resource(4,1),4,0) +
+													  msg_res_user(CB.get_user_to_resource(4,1),4,1) +
+													  msg_res_user(CB.get_user_to_resource(4,1),4,2) +
+													  msg_res_user(CB.get_user_to_resource(4,1),4,3));
+			msg_user_to_resources(4,CB.get_user_to_resource(4,1),i) = msg_res_user(CB.get_user_to_resource(4,0),4,i) /
+													 (msg_res_user(CB.get_user_to_resource(4,0),4,0) +
+													  msg_res_user(CB.get_user_to_resource(4,0),4,1) +
+													  msg_res_user(CB.get_user_to_resource(4,0),4,2) +
+													  msg_res_user(CB.get_user_to_resource(4,0),4,3));
+			msg_user_to_resources(5,CB.get_user_to_resource(5,0),i) = msg_res_user(CB.get_user_to_resource(5,1),5,i) /
+													 (msg_res_user(CB.get_user_to_resource(5,1),5,0) +
+													  msg_res_user(CB.get_user_to_resource(5,1),5,1) +
+													  msg_res_user(CB.get_user_to_resource(5,1),5,2) +
+													  msg_res_user(CB.get_user_to_resource(5,1),5,3));
+			msg_user_to_resources(5,CB.get_user_to_resource(5,1),i) = msg_res_user(CB.get_user_to_resource(5,0),5,i) /
+													 (msg_res_user(CB.get_user_to_resource(5,0),5,0) +
+													  msg_res_user(CB.get_user_to_resource(5,0),5,1) +
+													  msg_res_user(CB.get_user_to_resource(5,0),5,2) +
+													  msg_res_user(CB.get_user_to_resource(5,0),5,3));
 		}
 	}
 	// end of iterations
@@ -363,30 +300,30 @@ void Modem_SCMA<B,R,Q,PSI>
 	// guess at each user
 	for (auto i = 0; i < CB.get_codebook_size(); i++) //codeword index
 	{
-		guess[0][i] = msg_res_user[CB.get_user_to_resource(0,0)][0][i] * msg_res_user[CB.get_user_to_resource(0,1)][0][i];
-		guess[1][i] = msg_res_user[CB.get_user_to_resource(1,0)][1][i] * msg_res_user[CB.get_user_to_resource(1,1)][1][i];
-		guess[2][i] = msg_res_user[CB.get_user_to_resource(2,0)][2][i] * msg_res_user[CB.get_user_to_resource(2,1)][2][i];
-		guess[3][i] = msg_res_user[CB.get_user_to_resource(3,0)][3][i] * msg_res_user[CB.get_user_to_resource(3,1)][3][i];
-		guess[4][i] = msg_res_user[CB.get_user_to_resource(4,0)][4][i] * msg_res_user[CB.get_user_to_resource(4,1)][4][i];
-		guess[5][i] = msg_res_user[CB.get_user_to_resource(5,0)][5][i] * msg_res_user[CB.get_user_to_resource(5,1)][5][i];
+		guess(0,i) = msg_res_user(CB.get_user_to_resource(0,0),0,i) * msg_res_user(CB.get_user_to_resource(0,1),0,i);
+		guess(1,i) = msg_res_user(CB.get_user_to_resource(1,0),1,i) * msg_res_user(CB.get_user_to_resource(1,1),1,i);
+		guess(2,i) = msg_res_user(CB.get_user_to_resource(2,0),2,i) * msg_res_user(CB.get_user_to_resource(2,1),2,i);
+		guess(3,i) = msg_res_user(CB.get_user_to_resource(3,0),3,i) * msg_res_user(CB.get_user_to_resource(3,1),3,i);
+		guess(4,i) = msg_res_user(CB.get_user_to_resource(4,0),4,i) * msg_res_user(CB.get_user_to_resource(4,1),4,i);
+		guess(5,i) = msg_res_user(CB.get_user_to_resource(5,0),5,i) * msg_res_user(CB.get_user_to_resource(5,1),5,i);
 	}
 
 	// LLRs computation
-	Y_N2[0 * this->N + batch *2 +0] = (Q)(std::log(guess[0][0] + guess[0][2]) - std::log(guess[0][1] + guess[0][3]));
-	Y_N2[1 * this->N + batch *2 +0] = (Q)(std::log(guess[1][0] + guess[1][2]) - std::log(guess[1][1] + guess[1][3]));
-	Y_N2[2 * this->N + batch *2 +0] = (Q)(std::log(guess[2][0] + guess[2][2]) - std::log(guess[2][1] + guess[2][3]));
-	Y_N2[3 * this->N + batch *2 +0] = (Q)(std::log(guess[3][0] + guess[3][2]) - std::log(guess[3][1] + guess[3][3]));
-	Y_N2[4 * this->N + batch *2 +0] = (Q)(std::log(guess[4][0] + guess[4][2]) - std::log(guess[4][1] + guess[4][3]));
-	Y_N2[5 * this->N + batch *2 +0] = (Q)(std::log(guess[5][0] + guess[5][2]) - std::log(guess[5][1] + guess[5][3]));
+	Y_N2[0 * this->N + batch *2 +0] = (Q)(std::log(guess(0,0) + guess(0,2)) - std::log(guess(0,1) + guess(0,3)));
+	Y_N2[1 * this->N + batch *2 +0] = (Q)(std::log(guess(1,0) + guess(1,2)) - std::log(guess(1,1) + guess(1,3)));
+	Y_N2[2 * this->N + batch *2 +0] = (Q)(std::log(guess(2,0) + guess(2,2)) - std::log(guess(2,1) + guess(2,3)));
+	Y_N2[3 * this->N + batch *2 +0] = (Q)(std::log(guess(3,0) + guess(3,2)) - std::log(guess(3,1) + guess(3,3)));
+	Y_N2[4 * this->N + batch *2 +0] = (Q)(std::log(guess(4,0) + guess(4,2)) - std::log(guess(4,1) + guess(4,3)));
+	Y_N2[5 * this->N + batch *2 +0] = (Q)(std::log(guess(5,0) + guess(5,2)) - std::log(guess(5,1) + guess(5,3)));
 
 	if((this->N % 2) != 1 || batch != ((this->N /2 +1) -1))
 	{
-		Y_N2[0 * this->N + batch *2 +1] = (Q)(std::log(guess[0][0] + guess[0][1]) - std::log(guess[0][2] + guess[0][3]));
-		Y_N2[1 * this->N + batch *2 +1] = (Q)(std::log(guess[1][0] + guess[1][1]) - std::log(guess[1][2] + guess[1][3]));
-		Y_N2[2 * this->N + batch *2 +1] = (Q)(std::log(guess[2][0] + guess[2][1]) - std::log(guess[2][2] + guess[2][3]));
-		Y_N2[3 * this->N + batch *2 +1] = (Q)(std::log(guess[3][0] + guess[3][1]) - std::log(guess[3][2] + guess[3][3]));
-		Y_N2[4 * this->N + batch *2 +1] = (Q)(std::log(guess[4][0] + guess[4][1]) - std::log(guess[4][2] + guess[4][3]));
-		Y_N2[5 * this->N + batch *2 +1] = (Q)(std::log(guess[5][0] + guess[5][1]) - std::log(guess[5][2] + guess[5][3]));
+		Y_N2[0 * this->N + batch *2 +1] = (Q)(std::log(guess(0,0) + guess(0,1)) - std::log(guess(0,2) + guess(0,3)));
+		Y_N2[1 * this->N + batch *2 +1] = (Q)(std::log(guess(1,0) + guess(1,1)) - std::log(guess(1,2) + guess(1,3)));
+		Y_N2[2 * this->N + batch *2 +1] = (Q)(std::log(guess(2,0) + guess(2,1)) - std::log(guess(2,2) + guess(2,3)));
+		Y_N2[3 * this->N + batch *2 +1] = (Q)(std::log(guess(3,0) + guess(3,1)) - std::log(guess(3,2) + guess(3,3)));
+		Y_N2[4 * this->N + batch *2 +1] = (Q)(std::log(guess(4,0) + guess(4,1)) - std::log(guess(4,2) + guess(4,3)));
+		Y_N2[5 * this->N + batch *2 +1] = (Q)(std::log(guess(5,0) + guess(5,1)) - std::log(guess(5,2) + guess(5,3)));
 	}
 }
 
