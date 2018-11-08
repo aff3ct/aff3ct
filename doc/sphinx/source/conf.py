@@ -23,11 +23,15 @@ project = 'AFF3CT'
 copyright = '2018, AFF3CT\'s team'
 author = 'AFF3CT\'s team'
 
-# The short X.Y version
-version = ''
-# The full version, including alpha/beta/rc tags
-release = '2.0.0'
+# get the AFF3CT version from Git
+import subprocess
+label = subprocess.check_output(["git", "describe"]).strip()
+split_label = label.split("-")
 
+# The short X.Y version
+version = split_label[0]
+# The full version, including alpha/beta/rc tags
+release = label
 
 # -- General configuration ---------------------------------------------------
 
@@ -176,6 +180,10 @@ epub_title = project
 epub_exclude_files = ['search.html']
 
 rst_epilog = """
+
+.. |version| replace:: """ + version + """
+
+.. |release| replace:: """ + release + """
 
 .. |logo_ims| image:: https://www.ims-bordeaux.fr/images/logoimsjoom.png
     :alt: logo-ims-bordeaux
