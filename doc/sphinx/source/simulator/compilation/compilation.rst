@@ -4,11 +4,20 @@ Compilation
 .. _CMake: https://cmake.org/
 
 This project uses `CMake`_ in order to generate any type of projects (Makefile,
-Visual Studio, Eclipse, CLion, etc.).
+Visual Studio, Eclipse, CLion, XCode, etc.).
 
 AFF3CT is portable and can be compiled on Linux, macOS and Windows. Of course
 it works on traditional x86 architectures like Intel and AMD CPUs but it also
 works on embedded architectures like ARM CPUs.
+
+AFF3CT supports many C++11 compliant compilers, until now the following
+compilers have been tested: GNU (``g++``), Clang (``clang++``), Intel (``icpc``)
+and Microsoft (``MSVC``). In this section, a focus is given to compile AFF3CT
+with:
+
+   #. the GNU compiler on Windows and Linux (Makefile project),
+   #. the Microsoft compiler on Windows (Visual Studio 2017 solution),
+   #. the Clang compiler on macOS (Makefile project).
 
 CMake Installation
 ------------------
@@ -16,8 +25,8 @@ CMake Installation
 Windows/macOS
 ^^^^^^^^^^^^^
 
-Download CMake from `the official web page <https://cmake.org/download/>`_
-and launch the executable file. Just press the `Next` button until the
+`Download CMake from the official web page <https://cmake.org/download/>`_
+and launch the installer. Just press the `Next` button until the
 installation is over.
 
 .. note:: On Windows, if you plan to build AFF3CT from the Visual Studio IDE you
@@ -26,7 +35,7 @@ installation is over.
           section.
 
 .. note:: On Windows, it is recommended to download a version of CMake with an
-          installer.
+          installer: it looks like ``cmake-x.x.x-win64-x64.msi``.
 
 .. warning:: It is recommended to add CMake to your system PATH during the
              installation.
@@ -51,7 +60,7 @@ C++ GNU Compiler Installation
 Windows
 ^^^^^^^
 
-Download the latest MinGW build from `the official web page <https://sourceforge.net/projects/mingw-w64/>`_
+`Download the latest MinGW build from the official web page <https://sourceforge.net/projects/mingw-w64/>`_
 (tested with `MinGW x86_64-6.2.0 <https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/6.2.0/threads-posix/seh/x86_64-6.2.0-release-posix-seh-rt_v5-rev1.7z>`_).
 Unzip the archive. Copy the extracted ``mingw64`` folder in the
 ``C:\Programs\Git\`` folder (erase all the duplicated files).
@@ -112,8 +121,12 @@ Build AFF3CT with the Makefile:
 Once finished, the AFF3CT executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
 
-.. warning:: We encourage you to run the previous commands on **Git Bash**
-             instead of in the **Windows Console**.
+.. danger:: Run the previous commands on **Git Bash** (Start Menu > Git >
+            Git Bash) and not on the **Windows Command Prompt**.
+            If you try to run the previous commands on the **Windows Command
+            Prompt**, CMake will not find the GNU compiler (``g++.exe`` and
+            ``gcc.exe`` commands) because it has not been added to the system
+            PATH, same for the ``mingw32-make`` command.
 
 .. _compilation-makefile_project:
 
@@ -190,9 +203,9 @@ Once AFF3CT is compiled you can browse the build by right clicking on
           developers.
 
 .. warning:: The Visual Studio default compiler (MSVC) is known to generate
-             slower AFF3CT executable than with the GNU compiler. **If you
-             target an high speed executable it is recommended to use the GNU
-             compiler.**
+             significantly slower AFF3CT executable than the GNU compiler. **If
+             you target an high speed executable it is recommended to use the
+             GNU compiler.**
 
 The compilation can also be started from the command line after calling the
 ``%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat`` batch script (where ``%VS_PATH%``

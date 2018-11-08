@@ -18,14 +18,14 @@ Git Installation
 Windows/macOS
 ^^^^^^^^^^^^^
 
-Download Git from `the official web page <https://git-scm.com/downloads>`_
-and launch the executable file. Just press the `Next` button until the
+`Download Git from the official web page <https://git-scm.com/downloads>`_
+and launch the install. Just press the `Next` button until the
 installation is over.
 
 .. warning:: On Windows, Git comes with the **Git Bash** terminal which is,
              to our mind, better suitable that the traditional **Windows
              Console**. We encourage you to use **Git Bash** instead of the
-             **Windows Console** for the following steps.
+             **Windows Command Prompt** for the following steps.
 
 .. image:: images/git_bash.png
    :align: center
