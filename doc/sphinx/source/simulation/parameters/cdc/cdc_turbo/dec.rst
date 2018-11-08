@@ -31,7 +31,7 @@ Enables the flip and check decoder (requires "\\-\\-crc-type").
 
 Set the iteration to start the CRC checking.
 
-.. _dec-turbo-dec-fnc-ite-M:
+.. _dec-turbo-dec-fnc-ite-max:
 
 ``--dec-fnc-ite-M``
 """""""""""""""""""
@@ -41,7 +41,7 @@ Set the iteration to start the CRC checking.
 
 Set last iteration at which the fnc is used.
 
-.. _dec-turbo-dec-fnc-ite-m:
+.. _dec-turbo-dec-fnc-ite-min:
 
 ``--dec-fnc-ite-m``
 """""""""""""""""""

@@ -11,7 +11,7 @@ Other parameters
 
 Print this help.
 
-.. _global-Help:
+.. _global-advanced-help:
 
 ``--Help, -H``
 """"""""""""""
