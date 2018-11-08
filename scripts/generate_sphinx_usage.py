@@ -8,7 +8,7 @@ import aff3ct_help_reader as ahr
 
 parser = argparse.ArgumentParser(prog='aff3ct-command-conversion', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--build', action='store', dest='buildPath', type=str, default="build/", help='Build path to aff3ct.')
-parser.add_argument('--dest', action='store', dest='destPath', default="doc/sphinx/source/simulator/usage/parameters", type=str, help='Destination path.')
+parser.add_argument('--dest', action='store', dest='destPath', default="doc/sphinx/source/simulation/parameters", type=str, help='Destination path.')
 
 args = parser.parse_args()
 
@@ -290,7 +290,7 @@ def write_codec_file(codecPath, codeName, hasPct):
 
 	text += ".. toctree::\n"
 	text += indent + ":maxdepth: 2\n"
-	text += indent + ":caption: Codec " + codeName + " Contents\n\n"
+	text += indent + ":caption: Contents\n\n"
 	text += indent + "enc.rst\n"
 	text += indent + "dec.rst\n"
 
@@ -317,16 +317,16 @@ if __name__ == "__main__":
 		os.makedirs(destPath)
 
 
-	write_module(helpMap["Other"      ], destPath + "global.rst", "global");
-	write_module(helpMap["Simulation" ], destPath + "sim.rst"   , "sim");
-	write_module(helpMap["Source"     ], destPath + "src.rst"   , "src");
-	write_module(helpMap["CRC"        ], destPath + "crc.rst"   , "crc");
-	write_module(helpMap["Modem"      ], destPath + "mdm.rst"   , "mdm");
-	write_module(helpMap["Channel"    ], destPath + "chn.rst"   , "chn");
-	write_module(helpMap["Monitor"    ], destPath + "mnt.rst"   , "mnt");
-	write_module(helpMap["Terminal"   ], destPath + "ter.rst"   , "ter");
-	write_module(helpMap["Interleaver"], destPath + "itl.rst"   , "itl");
-	write_module(helpMap["Quantizer"  ], destPath + "qnt.rst"   , "qnt");
+	write_module(helpMap["Other"      ], destPath + "global/global.rst", "global");
+	write_module(helpMap["Simulation" ], destPath + "sim/sim.rst"      , "sim");
+	write_module(helpMap["Source"     ], destPath + "src/src.rst"      , "src");
+	write_module(helpMap["CRC"        ], destPath + "crc/crc.rst"      , "crc");
+	write_module(helpMap["Modem"      ], destPath + "mdm/mdm.rst"      , "mdm");
+	write_module(helpMap["Channel"    ], destPath + "chn/chn.rst"      , "chn");
+	write_module(helpMap["Monitor"    ], destPath + "mnt/mnt.rst"      , "mnt");
+	write_module(helpMap["Terminal"   ], destPath + "ter/ter.rst"      , "ter");
+	write_module(helpMap["Interleaver"], destPath + "itl/itl.rst"      , "itl");
+	write_module(helpMap["Quantizer"  ], destPath + "qnt/qnt.rst"      , "qnt");
 
 	codesList = ["BCH", "LDPC", "POLAR", "RA", "REP", "RS", "RSC", "RSC_DB", "TURBO", "TURBO_DB", "TURBO_PROD", "UNCODED"]
 
@@ -335,7 +335,7 @@ if __name__ == "__main__":
 		helpMap = ahr.help_to_map(stdOutput)
 
 
-		codecPath = destPath + "cdc_" + c.lower() + "/"
+		codecPath = destPath + "cdc/cdc_" + c.lower() + "/"
 
 		if not os.path.exists(codecPath):
 			os.makedirs(codecPath)
