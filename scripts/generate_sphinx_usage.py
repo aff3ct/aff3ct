@@ -8,7 +8,7 @@ import aff3ct_help_reader as ahr
 
 parser = argparse.ArgumentParser(prog='aff3ct-command-conversion', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--build', action='store', dest='buildPath', type=str, default="build/", help='Build path to aff3ct.')
-parser.add_argument('--dest', action='store', dest='destPath', default="doc/sphinx/source/simulator/usage/modules", type=str, help='Destination path.')
+parser.add_argument('--dest', action='store', dest='destPath', default="doc/sphinx/source/simulator/usage/parameters", type=str, help='Destination path.')
 
 args = parser.parse_args()
 
@@ -167,13 +167,13 @@ def write_module(moduleMap, path, reftag):
 			__limits = ""
 			pos = limits.find("{");
 			if pos != -1:
-				__limits  = ":Allowed values: ";
+				__limits  = ":Allowed values:";
 				allowed_values_table = limits[pos+1:-1].split('|')
 				for i in range(len(allowed_values_table)):
 					allowed_values_table[i] = allowed_values_table[i].strip()
 
 				for t in allowed_values_table:
-					__limits += "``" + t + "`` "
+					__limits += " ``" + t + "``"
 
 			elif argtype == "folder" or argtype == "path" or argtype == "file":
 				__limits = ":Rights: " + limits[1:-1]
@@ -288,9 +288,9 @@ def write_codec_file(codecPath, codeName, hasPct):
 
 	text += "\n\n"
 
-	text += ".. toctree:: \n"
+	text += ".. toctree::\n"
 	text += indent + ":maxdepth: 2\n"
-	text += indent + ":caption: Codec " + codeName + " contents\n\n"
+	text += indent + ":caption: Codec " + codeName + " Contents\n\n"
 	text += indent + "enc.rst\n"
 	text += indent + "dec.rst\n"
 
@@ -335,7 +335,7 @@ if __name__ == "__main__":
 		helpMap = ahr.help_to_map(stdOutput)
 
 
-		codecPath = destPath + "codec_" + c.lower() + "/"
+		codecPath = destPath + "cdc_" + c.lower() + "/"
 
 		if not os.path.exists(codecPath):
 			os.makedirs(codecPath)

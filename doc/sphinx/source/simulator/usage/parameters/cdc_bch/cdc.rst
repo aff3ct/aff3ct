@@ -5,7 +5,7 @@ Codec BCH
 
 .. toctree::
    :maxdepth: 2
-   :caption: Codec BCH contents
+   :caption: Codec BCH Contents
 
    enc.rst
    dec.rst
