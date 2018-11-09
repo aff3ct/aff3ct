@@ -1,11 +1,11 @@
 Compilation
 ===========
 
-.. note:: If you do not plan to modify the AFF3CT source code and you want
-          to use the simulator as is, you can **download one of the lastest
-          AFF3CT builds** from the
-          `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_
-          and skip this section.
+.. important:: If you do not plan to modify the AFF3CT source code and you want
+               to use the simulator as is, you can **download one of the lastest
+               AFF3CT builds** from the
+               `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_
+               and skip this section.
 
 .. _CMake: https://cmake.org/
 
@@ -35,10 +35,10 @@ Windows/macOS
 and launch the installer. Just press the `Next` button until the
 installation is over.
 
-.. note:: On Windows, if you plan to build AFF3CT from the Visual Studio IDE you
-          can skip the CMake installation and directly go to the
-          :ref:`Compilation with Visual Studio <compilation-visual_studio_project>`
-          section.
+.. important:: On Windows, if you plan to build AFF3CT from the Visual Studio
+               IDE you can skip the CMake installation and directly go to the
+               :ref:`Compilation with Visual Studio <compilation-visual_studio_project>`
+               section.
 
 .. note:: On Windows, it is recommended to download a version of CMake with an
           installer: it looks like ``cmake-x.x.x-win64-x64.msi``.
@@ -201,7 +201,7 @@ Once AFF3CT is compiled you can browse the build by right clicking on
 
 .. note:: **Visual Studio** should not be mixed up with **Visual Studio Code**.
           **Visual Studio** is the Windows native IDE and **Visual Studio Code**
-          a portable code editor.
+          is a portable code editor.
 
 .. note:: `Visual Studio 2017 Community <https://visualstudio.microsoft.com/downloads/>`_
           is free for Open-source contributors, students and freelance

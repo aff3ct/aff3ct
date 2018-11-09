@@ -1,11 +1,11 @@
 Installation
 ============
 
-.. note:: If you do not plan to modify the AFF3CT source code and you want
-          to use the simulator as is, you can **download one of the lastest
-          AFF3CT builds** from the
-          `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_
-          and skip this section.
+.. important:: If you do not plan to modify the AFF3CT source code and you want
+               to use the simulator as is, you can **download one of the lastest
+               AFF3CT builds** from the
+               `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_
+               and skip this section.
 
 Once AFF3CT has been compiled, it is possible (not mandatory) to install it on
 your system. On Unix-like systems, traditionally, the fresh build is installed
