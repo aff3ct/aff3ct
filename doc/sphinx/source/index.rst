@@ -33,6 +33,7 @@ ways, as:
    installation/installation
    simulation/simulation
    library/library
+   developer/developer
    license/license
 
 .. Indices and tables

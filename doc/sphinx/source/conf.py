@@ -12,7 +12,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
+import subprocess
+import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
@@ -24,7 +25,6 @@ copyright = '2018, AFF3CT\'s team'
 author = 'AFF3CT\'s team'
 
 # get the AFF3CT version from Git
-import subprocess
 label = subprocess.check_output(["git", "describe"]).strip().decode(encoding='UTF-8')
 split_label = label.split("-")
 
@@ -46,6 +46,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinxcontrib.bibtex',
+    'breathe'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -75,6 +76,21 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
+# -- Configure Breathe (Developer doc for Doxygen XML files) -----------------
+
+return_code = subprocess.call('doxygen --version > /dev/null 2>&1', shell=True)
+if return_code:
+    print "Please check to have Doxygen installed on your system."
+    exit -1
+
+print "Generating Doxygen XML files"
+return_code = subprocess.call('cd ../../doxygen; doxygen config.txt > /dev/null 2>&1', shell=True)
+if return_code:
+    print "Something went wrong during the Doxygen execution."
+    exit -1
+
+breathe_projects = { "AFF3CT": "../../doxygen/xml/" }
+breathe_default_project = "AFF3CT"
 
 # -- Options for HTML output -------------------------------------------------
 
