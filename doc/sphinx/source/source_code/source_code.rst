@@ -61,27 +61,33 @@ Install Git from the package manager:
 Clone AFF3CT from GitHub
 ------------------------
 
-From your favorite terminal:
+Get the source code from GitHub:
 
 .. code-block:: bash
 
-   git clone https://github.com/aff3ct/aff3ct.git
+   git clone --recursive https://github.com/aff3ct/aff3ct.git
    cd aff3ct
 
 .. _Git submodule feature: https://git-scm.com/docs/git-submodule
 
 The AFF3CT repository contains some dependencies to other repositories.
 Technically those dependencies are managed by the `Git submodule feature`_.
-By default the submodules are not downloaded during the ``git clone`` process.
-Before doing anything else it is highly recommended to get those submodules with
-the following command:
-
-.. code-block:: bash
-
-   git submodule update --init --recursive
+By default the submodules are not downloaded during the ``git clone`` process
+this is why the ``--recursive`` option has been added.
 
 .. danger:: On the `AFF3CT repository`_ you may want to directly download
             the source code without making a ``git clone``. This will get you an
             archive without the AFF3CT dependencies and the build process will
             fail. **Do not directly download AFF3CT from GitHub and please make
             a clone!**
+
+If you want to manually get or update the AFF3CT submodules, you can use the
+following command:
+
+.. code-block:: bash
+
+   git submodule update --init --recursive
+
+.. warning:: When ``git pull`` is used to get the last commits from the
+             repository, the submodules are not automatically updated and it
+             is required to call the previous ``git submodule`` command.

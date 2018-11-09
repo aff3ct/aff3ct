@@ -199,8 +199,7 @@ Once AFF3CT is compiled you can browse the build by right clicking on
 .. image:: images/vs17_cache_folder.png
    :align: center
 
-.. note:: **Visual Studio** should not be confounded with
-          **Visual Studio Code**.
+.. note:: **Visual Studio** should not be mixed up with **Visual Studio Code**.
           **Visual Studio** is the Windows native IDE and **Visual Studio Code**
           a portable code editor.
 
@@ -303,6 +302,13 @@ variable can get. For instance, to compile in release mode:
           ``CMAKE_BUILD_TYPE`` built-in variable. For instance, with the GNU
           compiler, if ``CMAKE_BUILD_TYPE`` is set to ``Release``, the code will
           be compiled with the ``-O3`` flag.
+
+.. note:: If you need to develop in AFF3CT it is recommended to compile
+          in the ``Debug`` mode during the development process to add the debug
+          symbols in the binary files. It will certainly ease the debug process
+          but be careful, the execution speed will be seriously affected in this
+          mode, be sure to switch to the ``Release`` mode when the code is
+          stable.
 
 .. note:: In Visual Studio solutions, the ``CMAKE_BUILD_TYPE`` built-in
           variable has no effect and the build type is directly managed by
