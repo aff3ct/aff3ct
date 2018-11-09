@@ -76,18 +76,14 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
-# -- Configure Breathe (Developer doc for Doxygen XML files) -----------------
+# -- Configure Breathe (Developer doc from Doxygen XML files) ----------------
 
-return_code = subprocess.call('doxygen --version > /dev/null 2>&1', shell=True)
-if return_code:
-    print "Please check to have Doxygen installed on your system."
-    exit -1
-
-print "Generating Doxygen XML files"
-return_code = subprocess.call('cd ../../doxygen; doxygen config.txt > /dev/null 2>&1', shell=True)
-if return_code:
-    print "Something went wrong during the Doxygen execution."
-    exit -1
+# Are we on a Readthedocs server ?
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+# If we are on a Readthedocs server
+if read_the_docs_build:
+    # Generate the Doxygen XML files
+    subprocess.call('cd ../../doxygen; doxygen config.txt', shell=True)
 
 breathe_projects = { "AFF3CT": "../../doxygen/xml/" }
 breathe_default_project = "AFF3CT"

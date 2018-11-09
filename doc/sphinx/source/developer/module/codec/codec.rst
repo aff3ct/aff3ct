@@ -1,4 +1,4 @@
-.. _developer_module_channel:
+.. _developer_module_codec:
 
 *****
 Codec
