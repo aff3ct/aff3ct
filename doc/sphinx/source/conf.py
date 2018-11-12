@@ -98,8 +98,20 @@ html_theme = 'sphinx_rtd_theme'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#
-# html_theme_options = {}
+# see here for description : https://sphinx-rtd-theme.readthedocs.io/en/latest/configuring.html#html-theme-options
+# TODO : Why the compilation fails the first time ???? -> the second time is good.
+html_theme_options = {
+    'canonical_url': '', # to help search engines with duplicated versions of the doc -> TODO
+    'collapse_navigation': False,
+    'style_external_links': False, # Add an icon next to external links.
+    'display_version': True, # the version number shown at the top of the sidebar
+    # Toc options
+    'navigation_depth' : -1,
+    'collapse_navigation': True,
+    'sticky_navigation': True,
+    'includehidden': False,
+    'titles_only': False
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
