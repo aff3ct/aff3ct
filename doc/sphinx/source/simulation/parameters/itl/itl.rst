@@ -150,7 +150,7 @@ interleaver:
 
 .. figure:: images/schema_col_row_origin.png
    :align: center
-   :scale: 50
+   :scale: 60
 
 
 The following figure depicts the read order options on the ``ROW_COL``
@@ -158,7 +158,7 @@ interleaver:
 
 .. figure:: images/schema_col_row_origin.png
    :align: center
-   :scale: 50
+   :scale: 60
 
 
 .. _itl-itl-uni:
@@ -166,6 +166,6 @@ interleaver:
 ``--itl-uni``
 """""""""""""
 
-Enables the regeneration of the interleaver at *each new frame* else generate
-once the LUT and use the same all along the simulation.
+Enables the regeneration of the interleaver at *each new frame* else the LUT
+is generated only once and is used all along the simulation.
 
