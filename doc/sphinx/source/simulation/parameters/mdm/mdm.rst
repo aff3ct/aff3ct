@@ -3,236 +3,17 @@
 Modem parameters
 ----------------
 
-.. _mdm-mdm-bps:
-
-``--mdm-bps``
-"""""""""""""
-
-   :Type: integer
-   :Examples: ``--mdm-bps 1``
-
-Select the number of bits per symbol (default is 1).
-
-.. _mdm-mdm-const-path:
-
-``--mdm-const-path``
-""""""""""""""""""""
-
-   :Type: file
-   :Rights: read/write
-   :Examples: ``--mdm-const-path example/path/to/the/right/file``
-
-Path to the ordered modulation symbols (constellation), to use with "\\-\\-mod-type USER".
-
-.. _mdm-mdm-cpm-k:
-
-``--mdm-cpm-k``
-"""""""""""""""
-
-   :Type: integer
-   :Examples: ``--mdm-cpm-k 1``
-
-Modulation index numerator (default is 1).
-
-.. _mdm-mdm-cpm-L:
-
-``--mdm-cpm-L``
-"""""""""""""""
-
-   :Type: integer
-   :Examples: ``--mdm-cpm-L 1``
-
-CPM pulse width or CPM memory (default is 2).
-
-.. _mdm-mdm-cpm-map:
-
-``--mdm-cpm-map``
-"""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``GRAY`` ``NATURAL``
-   :Examples: ``--mdm-cpm-map GRAY``
-
-Symbols mapping layout (default is NATURAL).
-
-Description of the allowed values:
-
-+-------------+-----------------------------+
-| Value       | Description                 |
-+=============+=============================+
-| ``GRAY``    | |mdm-cpm-map_descr_gray|    |
-+-------------+-----------------------------+
-| ``NATURAL`` | |mdm-cpm-map_descr_natural| |
-+-------------+-----------------------------+
-
-.. |mdm-cpm-map_descr_gray| replace:: TODO VALUE GRAY
-.. |mdm-cpm-map_descr_natural| replace:: TODO VALUE NATURAL
-
-
-.. _mdm-mdm-cpm-p:
-
-``--mdm-cpm-p``
-"""""""""""""""
-
-   :Type: integer
-   :Examples: ``--mdm-cpm-p 1``
-
-Modulation index denominator (default is 2).
-
-.. _mdm-mdm-cpm-std:
-
-``--mdm-cpm-std``
-"""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``GSM``
-   :Examples: ``--mdm-cpm-std GSM``
-
-The selection of a default CPM standard hardly implemented (any of those parameters is overwritten if the argument is given by the user).
-
-Description of the allowed values:
-
-+---------+-------------------------+
-| Value   | Description             |
-+=========+=========================+
-| ``GSM`` | |mdm-cpm-std_descr_gsm| |
-+---------+-------------------------+
-
-.. |mdm-cpm-std_descr_gsm| replace:: TODO VALUE GSM
-
-
-.. _mdm-mdm-cpm-ws:
-
-``--mdm-cpm-ws``
-""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``GMSK`` ``RCOS`` ``REC``
-   :Examples: ``--mdm-cpm-ws GMSK``
-
-Wave shape (default is GMSK).
-
-Description of the allowed values:
-
-+----------+-------------------------+
-| Value    | Description             |
-+==========+=========================+
-| ``GMSK`` | |mdm-cpm-ws_descr_gmsk| |
-+----------+-------------------------+
-| ``RCOS`` | |mdm-cpm-ws_descr_rcos| |
-+----------+-------------------------+
-| ``REC``  | |mdm-cpm-ws_descr_rec|  |
-+----------+-------------------------+
-
-.. |mdm-cpm-ws_descr_gmsk| replace:: TODO VALUE GMSK
-.. |mdm-cpm-ws_descr_rcos| replace:: TODO VALUE RCOS
-.. |mdm-cpm-ws_descr_rec| replace:: TODO VALUE REC
-
-
-.. _mdm-mdm-implem:
-
-``--mdm-implem``
-""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``FAST`` ``STD``
-   :Examples: ``--mdm-implem FAST``
-
-Select the implementation of the modem.
-
-Description of the allowed values:
-
-+----------+-------------------------+
-| Value    | Description             |
-+==========+=========================+
-| ``FAST`` | |mdm-implem_descr_fast| |
-+----------+-------------------------+
-| ``STD``  | |mdm-implem_descr_std|  |
-+----------+-------------------------+
-
-.. |mdm-implem_descr_fast| replace:: TODO VALUE FAST
-.. |mdm-implem_descr_std| replace:: TODO VALUE STD
-
-
-.. _mdm-mdm-ite:
-
-``--mdm-ite``
-"""""""""""""
-
-   :Type: integer
-   :Examples: ``--mdm-ite 1``
-
-Number of iteration in the demodulator.
-
-.. _mdm-mdm-max:
-
-``--mdm-max``
-"""""""""""""
-
-   :Type: text
-   :Allowed values: ``MAX`` ``MAXL`` ``MAXS`` ``MAXSS``
-   :Examples: ``--mdm-max MAX``
-
-Select the type of the max operation to use in the demodulator.
-
-Description of the allowed values:
-
-+-----------+-----------------------+
-| Value     | Description           |
-+===========+=======================+
-| ``MAX``   | |mdm-max_descr_max|   |
-+-----------+-----------------------+
-| ``MAXL``  | |mdm-max_descr_maxl|  |
-+-----------+-----------------------+
-| ``MAXS``  | |mdm-max_descr_maxs|  |
-+-----------+-----------------------+
-| ``MAXSS`` | |mdm-max_descr_maxss| |
-+-----------+-----------------------+
-
-.. |mdm-max_descr_max| replace:: TODO VALUE MAX
-.. |mdm-max_descr_maxl| replace:: TODO VALUE MAXL
-.. |mdm-max_descr_maxs| replace:: TODO VALUE MAXS
-.. |mdm-max_descr_maxss| replace:: TODO VALUE MAXSS
-
-
-.. _mdm-mdm-no-sig2:
-
-``--mdm-no-sig2``
-"""""""""""""""""
-
-
-Turn off the division by sigma square in the demodulator.
-
-.. _mdm-mdm-psi:
-
-``--mdm-psi``
-"""""""""""""
-
-   :Type: text
-   :Allowed values: ``PSI0`` ``PSI1`` ``PSI2`` ``PSI3``
-   :Examples: ``--mdm-psi PSI0``
-
-Select the type of the psi function to use in the SCMA demodulator.
-
-Description of the allowed values:
-
-+----------+----------------------+
-| Value    | Description          |
-+==========+======================+
-| ``PSI0`` | |mdm-psi_descr_psi0| |
-+----------+----------------------+
-| ``PSI1`` | |mdm-psi_descr_psi1| |
-+----------+----------------------+
-| ``PSI2`` | |mdm-psi_descr_psi2| |
-+----------+----------------------+
-| ``PSI3`` | |mdm-psi_descr_psi3| |
-+----------+----------------------+
-
-.. |mdm-psi_descr_psi0| replace:: TODO VALUE PSI0
-.. |mdm-psi_descr_psi1| replace:: TODO VALUE PSI1
-.. |mdm-psi_descr_psi2| replace:: TODO VALUE PSI2
-.. |mdm-psi_descr_psi3| replace:: TODO VALUE PSI3
-
+The Modem is a module with three parts in one:
+   * the **modulation** maps the input binary frame into symbols to send through the
+     channel
+   * the **filtering** gives event probabilities to the received waveforms
+   * the **demodulation** unmaps symbols and computes for every bit a Log-Likelihood
+     Ratio (LLR)
+
+.. note:: The filtering step is used only by the ``CPM`` Modem.
+
+.. note:: A negative LLR represents a bit at 1, and therefore when positive a
+          bit at 0.
 
 .. _mdm-mdm-type:
 
@@ -240,8 +21,10 @@ Description of the allowed values:
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``BPSK`` ``CPM`` ``OOK`` ``PAM`` ``PSK`` ``QAM`` ``SCMA`` ``USER``
-   :Examples: ``--mdm-type BPSK``
+   :Allowed values: ``BPSK`` ``CPM`` ``OOK`` ``PAM`` ``PSK`` ``QAM`` ``SCMA``
+                    ``USER``
+   :Default: ``BPSK``
+   :Examples: ``--mdm-type SCMA``
 
 Type of the modulation to use in the simulation.
 
@@ -267,15 +50,41 @@ Description of the allowed values:
 | ``USER`` | |mdm-type_descr_user| |
 +----------+-----------------------+
 
-.. |mdm-type_descr_bpsk| replace:: TODO VALUE BPSK
-.. |mdm-type_descr_cpm| replace:: TODO VALUE CPM
-.. |mdm-type_descr_ook| replace:: TODO VALUE OOK
-.. |mdm-type_descr_pam| replace:: TODO VALUE PAM
-.. |mdm-type_descr_psk| replace:: TODO VALUE PSK
-.. |mdm-type_descr_qam| replace:: TODO VALUE QAM
-.. |mdm-type_descr_scma| replace:: TODO VALUE SCMA
-.. |mdm-type_descr_user| replace:: TODO VALUE USER
+.. |mdm-type_descr_bpsk| replace:: The simple 2-PSK
+.. |mdm-type_descr_cpm|  replace:: The Continuous Phase Modulation
+.. |mdm-type_descr_ook|  replace:: The On-Off Keying
+.. |mdm-type_descr_pam|  replace:: The Pulse-Amplitude Modulation
+.. |mdm-type_descr_psk|  replace:: The Phase-Shift Keying
+.. |mdm-type_descr_qam|  replace:: The Quadrature-Amplitude Modulation
+.. |mdm-type_descr_scma| replace:: The SubCarrier Multiple Access
+.. |mdm-type_descr_user| replace:: A user defined constellation given through
+   :ref:`mdm-mdm-const-path`
 
+
+.. _mdm-mdm-bps:
+
+``--mdm-bps``
+"""""""""""""
+
+   :Type: integer
+   :Default: 1
+   :Examples: ``--mdm-bps 1``
+
+Selects the number of bits per symbol, ie. the number of bits used to generate a
+symbol. You can't change this value for ``BPSK`` and ``OOK`` types as it is
+forced to 1. Likewise, it is forced to 3 with ``SCMA``.
+
+.. _mdm-mdm-const-path:
+
+``--mdm-const-path``
+""""""""""""""""""""
+
+   :Type: file
+   :Rights: read/write
+   :Examples: ``--mdm-const-path ../conf/mod/16QAM_ANTI_GRAY.mod``
+
+Path to the ordered modulation symbols (constellation), to use with ``USER``
+type modulation".
 
 .. _mdm-mdm-ups:
 
@@ -283,7 +92,245 @@ Description of the allowed values:
 """""""""""""
 
    :Type: integer
+   :Default: 1
    :Examples: ``--mdm-ups 1``
 
-Select the symbol sampling factor (default is 1).
+Selects the symbol sampling factor.
 
+.. _mdm-mdm-implem:
+
+``--mdm-implem``
+""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``FAST`` ``STD``
+   :Examples: ``--mdm-implem FAST``
+
+Select the implementation of the modem.
+
+Description of the allowed values:
+
++----------+-------------------------+
+| Value    | Description             |
++==========+=========================+
+| ``STD``  | |mdm-implem_descr_std|  |
++----------+-------------------------+
+| ``FAST`` | |mdm-implem_descr_fast| |
++----------+-------------------------+
+
+.. |mdm-implem_descr_std| replace:: A standard implementation working for any
+   modem type.
+.. |mdm-implem_descr_fast| replace:: A much faster method using SIMD but *only
+   for* ``BPSK`` *type*.
+
+.. _mdm-mdm-max:
+
+``--mdm-max``
+"""""""""""""
+
+   :Type: text
+   :Allowed values: ``MAX`` ``MAXL`` ``MAXS`` ``MAXSS``
+   :Examples: ``--mdm-max MAX``
+
+Selects the mathematical form of the maximum operation applied in the ``PAM``'s,
+``QAM``'s, ``PSK``'s, ``USER``'s and ``CPM``'s  demodulator.
+
+Description of the allowed values:
+
++-----------+-----------------------+
+| Value     | Description           |
++===========+=======================+
+| ``MAX``   | |mdm-max_descr_max|   |
++-----------+-----------------------+
+| ``MAXL``  | |mdm-max_descr_maxl|  |
++-----------+-----------------------+
+| ``MAXS``  | |mdm-max_descr_maxs|  |
++-----------+-----------------------+
+| ``MAXSS`` | |mdm-max_descr_maxss| |
++-----------+-----------------------+
+
+.. |mdm-max_descr_max|   replace:: Standard MAX: :math:`\max(a,b)`
+.. |mdm-max_descr_maxl|  replace:: Linear MAX: :math:`\max(a,b) +
+   \max(0, 0.301 - (0.5 |a - b|))`
+.. |mdm-max_descr_maxs|  replace:: Star MAX: :math:`\max(a,b) +
+   \log(1 + \exp(-|a - b|))`
+.. |mdm-max_descr_maxss| replace:: Safe Star MAX: :math:`\max(a,b) + d` with
+   :math:`d = \begin{cases}
+   0                         & \quad \text{if } d >= 37\\
+   \exp(-|a - b|)            & \quad \text{if } 9 <= d < 37 \\
+   \log(1 + \exp(-|a - b|))  & \quad \text{else}
+   \end{cases}`
+
+.. _mdm-mdm-no-sig2:
+
+``--mdm-no-sig2``
+"""""""""""""""""
+
+
+Turn off the division by sigma square in the demodulator. Sigma is the Gaussian
+noise variance.
+
+.. _mdm-mdm-cpm-k:
+
+``--mdm-cpm-k``
+"""""""""""""""
+
+   :Type: integer
+   :Default: 1
+   :Examples: ``--mdm-cpm-k 1``
+
+Sets the ``CPM``'s modulation index numerator.
+
+.. _mdm-mdm-cpm-p:
+
+``--mdm-cpm-p``
+"""""""""""""""
+
+   :Type: integer
+   :Default: 2
+   :Examples: ``--mdm-cpm-p 1``
+
+Sets the ``CPM``'s modulation index denominator.
+
+.. _mdm-mdm-cpm-L:
+
+``--mdm-cpm-L``
+"""""""""""""""
+
+   :Type: integer
+   :Default: 2
+   :Examples: ``--mdm-cpm-L 1``
+
+Sets the ``CPM``'s *pulse width* (also called *memory depth*).
+
+.. _mdm-mdm-cpm-map:
+
+``--mdm-cpm-map``
+"""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``GRAY`` ``NATURAL``
+   :Default: ``NATURAL``
+   :Examples: ``--mdm-cpm-map GRAY``
+
+Selects the ``CPM``'s symbols mapping layout.
+
+Description of the allowed values:
+
++-------------+-----------------------------+
+| Value       | Description                 |
++=============+=============================+
+| ``GRAY``    | |mdm-cpm-map_descr_gray|    |
++-------------+-----------------------------+
+| ``NATURAL`` | |mdm-cpm-map_descr_natural| |
++-------------+-----------------------------+
+
+.. |mdm-cpm-map_descr_gray|    replace:: Gray code that switches only one bit at
+   a time from a symbol to the following.
+.. |mdm-cpm-map_descr_natural| replace:: The natural binary code incrementing
+   the value from a symbol to the next one.
+
+
+.. _mdm-mdm-cpm-ws:
+
+``--mdm-cpm-ws``
+""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``GMSK`` ``RCOS`` ``REC``
+   :Default: ``GMSK``
+   :Examples: ``--mdm-cpm-ws GMSK``
+
+Selects the ``CPM``'s wave shape.
+
+Description of the allowed values:
+
++----------+-------------------------+
+| Value    | Description             |
++==========+=========================+
+| ``GMSK`` | |mdm-cpm-ws_descr_gmsk| |
++----------+-------------------------+
+| ``RCOS`` | |mdm-cpm-ws_descr_rcos| |
++----------+-------------------------+
+| ``REC``  | |mdm-cpm-ws_descr_rec|  |
++----------+-------------------------+
+
+.. |mdm-cpm-ws_descr_gmsk| replace:: Gaussian Minimum Shift Keying
+.. |mdm-cpm-ws_descr_rcos| replace:: Raised COSinus
+.. |mdm-cpm-ws_descr_rec|  replace:: RECtangular
+
+
+.. _mdm-mdm-cpm-std:
+
+``--mdm-cpm-std``
+"""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``GSM``
+   :Examples: ``--mdm-cpm-std GSM``
+
+The selection of a default ``CPM`` standard implemented in hard in the code (any
+of these parameters can be overwritten by the other given arguments).
+
+Description of the allowed values:
+
++---------+------------------------------------+
+| Value   | Description                        |
++=========+====================================+
+| ``GSM`` | | Modulation index numerator = 1   |
+|         | | Modulation index denominator = 2 |
+|         | | Memory depth = 3                 |
+|         | | Bit per symbol = 1               |
+|         | | Sampling factor = 5              |
+|         | | Mapping layout = ``NATURAL``     |
+|         | | Wave shape = ``GMSK``            |
++---------+------------------------------------+
+
+.. _mdm-mdm-ite:
+
+``--mdm-ite``
+"""""""""""""
+
+   :Type: integer
+   :Default: 1
+   :Examples: ``--mdm-ite 5``
+
+Sets the number of iteration in the ``SCMA``'s demodulator.
+
+.. _mdm-mdm-psi:
+
+``--mdm-psi``
+"""""""""""""
+
+   :Type: text
+   :Allowed values: ``PSI0`` ``PSI1`` ``PSI2`` ``PSI3``
+   :Examples: ``--mdm-psi PSI0``
+
+Selects the type of the psi function to use in the ``SCMA``'s demodulator.
+
+Description of the allowed values:
+
++----------+----------------------+
+| Value    | Description          |
++==========+======================+
+| ``PSI0`` | |mdm-psi_descr_psi0| |
++----------+----------------------+
+| ``PSI1`` | |mdm-psi_descr_psi1| |
++----------+----------------------+
+| ``PSI2`` | |mdm-psi_descr_psi2| |
++----------+----------------------+
+| ``PSI3`` | |mdm-psi_descr_psi3| |
++----------+----------------------+
+
+.. |mdm-psi_descr_psi0| replace:: :math:`\exp\left(-\frac{|d|}{n0}\right)`
+.. |mdm-psi_descr_psi1| replace:: :math:`\frac{1}{|d| + n0}`
+.. |mdm-psi_descr_psi2| replace:: :math:`\frac{1}{8. |d|^2 + n0}`
+.. |mdm-psi_descr_psi3| replace:: :math:`\frac{1}{4. |d|^2 + n0}`
+
+Where |n0_equation|
+
+.. |n0_equation| replace:: :math:`n0 =
+  \begin{cases}
+  1       & \quad \text{if sig2 disabled}\\
+  4 \sigma^2  & \quad \text{else}
+  \end{cases}`
