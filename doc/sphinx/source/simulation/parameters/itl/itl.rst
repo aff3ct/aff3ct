@@ -49,17 +49,17 @@ Description of the allowed values:
 | ``USER``     | |itl-type_descr_user|     |
 +--------------+---------------------------+
 
-.. |itl-type_descr_ccsds|    replace:: Select the interleaver defined for the CCSDS standard.
-.. |itl-type_descr_col_row|  replace:: Fill the interleaver by column and read it by row.
-.. |itl-type_descr_dvb-rcs1| replace:: Select the interleaver defined for the DVB-RCS1 standard.
-.. |itl-type_descr_dvb-rcs2| replace:: Select the interleaver defined for the DVB-RCS2 standard.
+.. |itl-type_descr_ccsds|    replace:: Selects the interleaver defined for the CCSDS standard.
+.. |itl-type_descr_col_row|  replace:: Fills the interleaver by column and read it by row.
+.. |itl-type_descr_dvb-rcs1| replace:: Selects the interleaver defined for the DVB-RCS1 standard.
+.. |itl-type_descr_dvb-rcs2| replace:: Selects the interleaver defined for the DVB-RCS2 standard.
 .. |itl-type_descr_golden|   replace:: TODO VALUE GOLDEN
-.. |itl-type_descr_lte|      replace:: Select the interleaver defined for the LTE standard.
-.. |itl-type_descr_no|       replace:: Deactivate the interleaving process: the output is the input.
-.. |itl-type_descr_random|   replace:: Generate a completely random LUT.
-.. |itl-type_descr_rand_col| replace:: Randomly interleave the frame by independent columns.
-.. |itl-type_descr_row_col|  replace:: Fill the interleaver by row and read it by column.
-.. |itl-type_descr_user|     replace:: Use the user's LUT given in the file.
+.. |itl-type_descr_lte|      replace:: Selects the interleaver defined for the LTE standard.
+.. |itl-type_descr_no|       replace:: Deactivates the interleaving process: the output is the input.
+.. |itl-type_descr_random|   replace:: Generates a completely random LUT.
+.. |itl-type_descr_rand_col| replace:: Randomly interleaves the frame by independent columns.
+.. |itl-type_descr_row_col|  replace:: Fills the interleaver by row and read it by column.
+.. |itl-type_descr_user|     replace:: Uses the user's LUT given in the file.
 
 The following figures depict the behavior of the different interleaver types:
 
@@ -78,7 +78,7 @@ The following figures depict the behavior of the different interleaver types:
    :Default: 4
    :Examples: ``--itl-cols 1``
 
-Specify the number of columns used for the ``RAND_COL``, ``ROW_COL`` or ``COL_ROW`` interleavers.
+Specifies the number of columns used for the ``RAND_COL``, ``ROW_COL`` or ``COL_ROW`` interleavers.
 
 .. _itl-itl-path:
 
@@ -89,7 +89,7 @@ Specify the number of columns used for the ``RAND_COL``, ``ROW_COL`` or ``COL_RO
    :Rights: read only
    :Examples: ``--itl-path ../conf/itl/GSM-LDPC_4224.itl``
 
-Specify the path to the interleaver file (to use with ``USER`` interleaver).
+Specifies the path to the interleaver file (to use with ``USER`` interleaver).
 
 .. _itl-itl-read-order:
 
@@ -100,7 +100,7 @@ Specify the path to the interleaver file (to use with ``USER`` interleaver).
    :Allowed values: ``BOTTOM_LEFT`` ``BOTTOM_RIGHT`` ``TOP_LEFT`` ``TOP_RIGHT``
    :Examples: ``--itl-read-order BOTTOM_LEFT``
 
-Read order of the ``COL_ROW`` and ``ROW_COL`` interleavers.
+The read order of the ``COL_ROW`` and ``ROW_COL`` interleavers.
 The read starts from the given corner of the array to the diagonally opposite one.
 The read is made row by row for the ``COL_ROW`` interleaver and column by column
 for the ``ROW_COL`` one.
@@ -146,6 +146,6 @@ The following figure depicts the read order options on the ``ROW_COL`` interleav
 ``--itl-uni``
 """""""""""""
 
-Enable the regeneration of the interleaver at *each new frame* else generate once
+Enables the regeneration of the interleaver at *each new frame* else generate once
 the LUT and use the same all along the simulation.
 
