@@ -54,7 +54,7 @@ Description of the allowed values:
 
 .. |itl-type_descr_ccsds|    replace:: Selects the interleaver defined for the
    CCSDS standard.
-.. |itl-type_descr_col_row|  replace:: Fills the interleaver by column and read
+.. |itl-type_descr_col_row|  replace:: Fills the interleaver by column and reads
    it by row.
 .. |itl-type_descr_dvb-rcs1| replace:: Selects the interleaver defined for the
    DVB-RCS1 standard.
@@ -72,7 +72,9 @@ Description of the allowed values:
    by column.
 .. |itl-type_descr_user|     replace:: Uses the user's LUT given in the file.
 
-The following figures depict the behavior of the different interleaver types:
+
+
+The following figures depict the behavior of the interleaver basic types:
 
 .. figure:: images/schema_itl_types.png
    :align: center
