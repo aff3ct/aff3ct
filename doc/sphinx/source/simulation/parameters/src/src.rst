@@ -3,61 +3,19 @@
 Source parameters
 -----------------
 
-.. _src-src-fra:
+The source is the module at the beginning of the simulation chain as it
+generates the frames that go through all the other modules.
+It is at this step that you can set the number of frames that are simulated
+jointly : this is called the *inter frame level*.
 
-``--src-fra, -F``
-"""""""""""""""""
+.. note::
 
-   :Type: integer
-   :Examples: ``--src-fra 1``
+   The inter frame level can be used in a multi user modulation (SCMA), or
+   an inter frame SIMD optimization, for examples. It can also help to
+   accelerate the simulation (for short frames) by letting each module working
+   on more data at the same time instead of switching of module and memory zone
+   more often.
 
-Set the number of inter frame level to process.
-
-.. _src-src-implem:
-
-``--src-implem``
-""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``FAST`` ``STD``
-   :Examples: ``--src-implem FAST``
-
-Select the implementation of the algorithm to generate the information bits.
-
-Description of the allowed values:
-
-+----------+-------------------------+
-| Value    | Description             |
-+==========+=========================+
-| ``FAST`` | |src-implem_descr_fast| |
-+----------+-------------------------+
-| ``STD``  | |src-implem_descr_std|  |
-+----------+-------------------------+
-
-.. |src-implem_descr_fast| replace:: TODO VALUE FAST
-.. |src-implem_descr_std| replace:: TODO VALUE STD
-
-
-.. _src-src-path:
-
-``--src-path``
-""""""""""""""
-
-   :Type: file
-   :Rights: read only
-   :Examples: ``--src-path example/path/to/the/right/file``
-
-Path to a file containing one or a set of pre-computed source bits, to use with "\\-\\-src-type USER".
-
-.. _src-src-start-idx:
-
-``--src-start-idx``
-"""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--src-start-idx 1``
-
-Start idx to use in the USER type source.
 
 .. _src-src-type:
 
@@ -66,9 +24,11 @@ Start idx to use in the USER type source.
 
    :Type: text
    :Allowed values: ``AZCW`` ``RAND`` ``USER``
+   :Default: ``RAND``
    :Examples: ``--src-type AZCW``
 
-Method used to generate the codewords.
+Method used to generate the words.
+``AZCW`` means *All Zero Code Word*.
 
 Description of the allowed values:
 
@@ -82,8 +42,71 @@ Description of the allowed values:
 | ``USER`` | |src-type_descr_user| |
 +----------+-----------------------+
 
-.. |src-type_descr_azcw| replace:: TODO VALUE AZCW
-.. |src-type_descr_rand| replace:: TODO VALUE RAND
-.. |src-type_descr_user| replace:: TODO VALUE USER
+.. |src-type_descr_azcw| replace:: Generates only frames with all bits at 0.
+.. |src-type_descr_rand| replace:: Randomly generates frames with an uniform
+   distribution.
+.. |src-type_descr_user| replace:: Reads in loop the frames from a given file through
+   :ref:`src-src-path`.
+
+.. _src-src-fra:
+
+``--src-fra, -F``
+"""""""""""""""""
+
+   :Type: integer
+   :Default: 1
+   :Examples: ``--src-fra 8``
+
+Sets the number of inter frame level to process.
+
+.. _src-src-implem:
+
+``--src-implem``
+""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``FAST`` ``STD``
+   :Default: ``STD``
+   :Examples: ``--src-implem FAST``
+
+Select the implementation of the algorithm to generate the information bits.
+
+Description of the allowed values:
+
++----------+-------------------------+
+| Value    | Description             |
++==========+=========================+
+| ``STD``  | |src-implem_descr_std|  |
++----------+-------------------------+
+| ``FAST`` | |src-implem_descr_fast| |
++----------+-------------------------+
+
+.. |src-implem_descr_std|  replace:: A standard implementation working for any
+   source type.
+.. |src-implem_descr_fast| replace:: A much faster method using SIMD but *only
+   for* ``RAND`` *type*.
 
 
+.. _src-src-path:
+
+``--src-path``
+""""""""""""""
+
+   :Type: file
+   :Rights: read only
+   :Examples: ``--src-path ../conf/src/GSM-LDPC_2112.src``
+
+Path to a file containing one or a set of pre-computed source bits, to use
+with a ``USER`` source type.
+
+.. _src-src-start-idx:
+
+``--src-start-idx``
+"""""""""""""""""""
+
+   :Type: integer
+   :Default: 0
+   :Examples: ``--src-start-idx 42``
+
+The start index to use in the ``USER`` type source. It is the index of the first
+frame to read from the given file.
