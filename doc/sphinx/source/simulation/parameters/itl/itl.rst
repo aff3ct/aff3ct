@@ -3,57 +3,11 @@
 Interleaver parameters
 ----------------------
 
-.. _itl-itl-cols:
+The interleaving process starts by the generation of the Look up Table (LUT).
+This one describes for each bit of the output frame the position of the origin of this bit inside the input frame.
+Thus, the interleaver simply fills the output from the input according to this LUT.
 
-``--itl-cols``
-""""""""""""""
-
-   :Type: integer
-   :Examples: ``--itl-cols 1``
-
-Specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver.
-
-.. _itl-itl-path:
-
-``--itl-path``
-""""""""""""""
-
-   :Type: file
-   :Rights: read only
-   :Examples: ``--itl-path example/path/to/the/right/file``
-
-Specify the path to the interleaver file (to use with "\\-\\-itl-type USER").
-
-.. _itl-itl-read-order:
-
-``--itl-read-order``
-""""""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``BOTTOM_LEFT`` ``BOTTOM_RIGHT`` ``TOP_LEFT`` ``TOP_RIGHT``
-   :Examples: ``--itl-read-order BOTTOM_LEFT``
-
-Read order of the COL_ROW and ROW_COL interleavers.
-
-Description of the allowed values:
-
-+------------------+-------------------------------------+
-| Value            | Description                         |
-+==================+=====================================+
-| ``BOTTOM_LEFT``  | |itl-read-order_descr_bottom_left|  |
-+------------------+-------------------------------------+
-| ``BOTTOM_RIGHT`` | |itl-read-order_descr_bottom_right| |
-+------------------+-------------------------------------+
-| ``TOP_LEFT``     | |itl-read-order_descr_top_left|     |
-+------------------+-------------------------------------+
-| ``TOP_RIGHT``    | |itl-read-order_descr_top_right|    |
-+------------------+-------------------------------------+
-
-.. |itl-read-order_descr_bottom_left| replace:: TODO VALUE BOTTOM_LEFT
-.. |itl-read-order_descr_bottom_right| replace:: TODO VALUE BOTTOM_RIGHT
-.. |itl-read-order_descr_top_left| replace:: TODO VALUE TOP_LEFT
-.. |itl-read-order_descr_top_right| replace:: TODO VALUE TOP_RIGHT
-
+The deinterleaving process reverses the LUT to find back the natural order of the frame.
 
 .. _itl-itl-type:
 
@@ -62,7 +16,8 @@ Description of the allowed values:
 
    :Type: text
    :Allowed values: ``CCSDS`` ``COL_ROW`` ``DVB-RCS1`` ``DVB-RCS2`` ``GOLDEN`` ``LTE`` ``NO`` ``RANDOM`` ``RAND_COL`` ``ROW_COL`` ``USER``
-   :Examples: ``--itl-type CCSDS``
+   :Default: ``RANDOM``
+   :Examples: ``--itl-type RANDOM``
 
 Type of the interleaver to use in the simulation.
 
@@ -94,17 +49,96 @@ Description of the allowed values:
 | ``USER``     | |itl-type_descr_user|     |
 +--------------+---------------------------+
 
-.. |itl-type_descr_ccsds| replace:: TODO VALUE CCSDS
-.. |itl-type_descr_col_row| replace:: TODO VALUE COL_ROW
-.. |itl-type_descr_dvb-rcs1| replace:: TODO VALUE DVB-RCS1
-.. |itl-type_descr_dvb-rcs2| replace:: TODO VALUE DVB-RCS2
-.. |itl-type_descr_golden| replace:: TODO VALUE GOLDEN
-.. |itl-type_descr_lte| replace:: TODO VALUE LTE
-.. |itl-type_descr_no| replace:: TODO VALUE NO
-.. |itl-type_descr_random| replace:: TODO VALUE RANDOM
-.. |itl-type_descr_rand_col| replace:: TODO VALUE RAND_COL
-.. |itl-type_descr_row_col| replace:: TODO VALUE ROW_COL
-.. |itl-type_descr_user| replace:: TODO VALUE USER
+.. |itl-type_descr_ccsds|    replace:: Select the interleaver defined for the CCSDS standard.
+.. |itl-type_descr_col_row|  replace:: Fill the interleaver by column and read it by row.
+.. |itl-type_descr_dvb-rcs1| replace:: Select the interleaver defined for the DVB-RCS1 standard.
+.. |itl-type_descr_dvb-rcs2| replace:: Select the interleaver defined for the DVB-RCS2 standard.
+.. |itl-type_descr_golden|   replace:: TODO VALUE GOLDEN
+.. |itl-type_descr_lte|      replace:: Select the interleaver defined for the LTE standard.
+.. |itl-type_descr_no|       replace:: Deactivate the interleaving process: the output is the input.
+.. |itl-type_descr_random|   replace:: Generate a completely random LUT.
+.. |itl-type_descr_rand_col| replace:: Randomly interleave the frame by independent columns.
+.. |itl-type_descr_row_col|  replace:: Fill the interleaver by row and read it by column.
+.. |itl-type_descr_user|     replace:: Use the user's LUT given in the file.
+
+The following figures depict the behavior of the different interleaver types:
+
+.. figure:: images/schema_itl_types.png
+   :align: center
+
+.. seealso:: The :ref:`itl-itl-read-order` argument allows more options for the ``COL_ROW`` and ``ROW_COL`` interleavers.
+
+
+.. _itl-itl-cols:
+
+``--itl-cols``
+""""""""""""""
+
+   :Type: integer
+   :Default: 4
+   :Examples: ``--itl-cols 1``
+
+Specify the number of columns used for the ``RAND_COL``, ``ROW_COL`` or ``COL_ROW`` interleavers.
+
+.. _itl-itl-path:
+
+``--itl-path``
+""""""""""""""
+
+   :Type: file
+   :Rights: read only
+   :Examples: ``--itl-path ../conf/itl/GSM-LDPC_4224.itl``
+
+Specify the path to the interleaver file (to use with ``USER`` interleaver).
+
+.. _itl-itl-read-order:
+
+``--itl-read-order``
+""""""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``BOTTOM_LEFT`` ``BOTTOM_RIGHT`` ``TOP_LEFT`` ``TOP_RIGHT``
+   :Examples: ``--itl-read-order BOTTOM_LEFT``
+
+Read order of the ``COL_ROW`` and ``ROW_COL`` interleavers.
+The read starts from the given corner of the array to the diagonally opposite one.
+The read is made row by row for the ``COL_ROW`` interleaver and column by column
+for the ``ROW_COL`` one.
+
+
+
+Description of the allowed values (see also the figures just bellow):
+
++------------------+-------------------------------------+
+| Value            | Description                         |
++==================+=====================================+
+| ``TOP_LEFT``     | |itl-read-order_descr_top_left|     |
++------------------+-------------------------------------+
+| ``TOP_RIGHT``    | |itl-read-order_descr_top_right|    |
++------------------+-------------------------------------+
+| ``BOTTOM_LEFT``  | |itl-read-order_descr_bottom_left|  |
++------------------+-------------------------------------+
+| ``BOTTOM_RIGHT`` | |itl-read-order_descr_bottom_right| |
++------------------+-------------------------------------+
+
+.. |itl-read-order_descr_top_left| replace:: Read is down from the top left corner to the bottom right corner
+.. |itl-read-order_descr_top_right| replace:: Read is down from the top right corner to the bottom left corner
+.. |itl-read-order_descr_bottom_left| replace:: Read is down from the bottom left corner to the top right corner
+.. |itl-read-order_descr_bottom_right| replace:: Read is down from the bottom right corner to the top left corner
+
+
+The following figure depicts the read order options on the ``COL_ROW`` interleaver:
+
+.. figure:: images/schema_col_row_origin.png
+   :align: center
+   :scale: 50
+
+
+The following figure depicts the read order options on the ``ROW_COL`` interleaver:
+
+.. figure:: images/schema_col_row_origin.png
+   :align: center
+   :scale: 50
 
 
 .. _itl-itl-uni:
@@ -112,6 +146,6 @@ Description of the allowed values:
 ``--itl-uni``
 """""""""""""
 
-
-Enable the regeneration of the interleaver at each new frame.
+Enable the regeneration of the interleaver at *each new frame* else generate once
+the LUT and use the same all along the simulation.
 
