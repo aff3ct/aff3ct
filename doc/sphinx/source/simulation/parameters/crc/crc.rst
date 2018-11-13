@@ -15,20 +15,23 @@ decoding process to know if the decoded codeword is valid or not.
              the good one, it can be a *false positive*. It is important to
              adapt the size of the CRC with the frame size and the targeted FER.
 
-.. _crc- --crc-poly:
+.. _crc-crc-poly:
 
 ``--crc-type, --crc-poly``
 """"""""""""""""""""""""""
 
    :Type: text
+   :Default: ``NO``
    :Examples: | ``--crc-type "32-GZIP"``
               | ``--crc-poly "0x04C11DB7" --crc-size 32``
 
-Select the CRC type you want to use among the predefined polynomials in the
+Selects the CRC type you want to use among the predefined polynomials in the
 following table. If you want a specific polynomial that it is not available in
 the table you can directly put the polynomial in hexadecimal. In this case you
 have to specify explicitly the size of the polynomial with the
 :ref:`crc-crc-size` parameter.
+
+The type ``NO`` deactivates the CRC.
 
 +-----------------+------------+------+
 | Type            | Polynomial | Size |
@@ -139,8 +142,8 @@ have to specify explicitly the size of the polynomial with the
    :Range: :math:`]0 \to \infty[`
    :Examples: ``--crc-size 8``
 
-Size of the CRC (divisor size in bit -1), required if you selected an unknown
-CRC.
+Size of the CRC (divisor size in bits minus one), required if you selected an
+unknown CRC.
 
 .. _crc-crc-implem:
 
@@ -149,9 +152,10 @@ CRC.
 
    :Type: text
    :Allowed values: ``STD`` ``FAST`` ``INTER``
+   :Default: ``FAST``
    :Examples: ``--crc-implem FAST``
 
-Select the CRC implementation you want to use.
+Selects the CRC implementation you want to use.
 
 Description of the allowed values:
 
