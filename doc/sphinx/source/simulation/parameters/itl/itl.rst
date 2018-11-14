@@ -74,10 +74,14 @@ Description of the allowed values:
 
 
 
-The following figures depict the behavior of the interleaver basic types:
+The following figures :numref:`itl_figures_types` depict the behavior of the interleaver basic types:
+
+.. _itl_figures_types:
 
 .. figure:: images/schema_itl_types.png
    :align: center
+
+   Interleaver basic types
 
 .. seealso:: The :ref:`itl-itl-read-order` argument allows more options for the
    ``COL_ROW`` and ``ROW_COL`` interleavers.
