@@ -131,7 +131,7 @@ Description of the allowed values:
 
 .. |mdm-implem_descr_std| replace:: A standard implementation working for any
    modem type.
-.. |mdm-implem_descr_fast| replace:: A much faster method using SIMD but *only
+.. |mdm-implem_descr_fast| replace:: A much faster method using |SIMD| but *only
    for* ``BPSK`` *type*.
 
 .. _mdm-mdm-max:

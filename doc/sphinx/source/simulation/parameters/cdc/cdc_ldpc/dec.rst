@@ -194,7 +194,7 @@ Offset used in the offset min-sum BP algorithm (works only with "\\-\\-dec-imple
    :Allowed values: ``INTER``
    :Examples: ``--dec-simd INTER``
 
-The SIMD strategy you want to use.
+The |SIMD| strategy you want to use.
 
 Description of the allowed values:
 

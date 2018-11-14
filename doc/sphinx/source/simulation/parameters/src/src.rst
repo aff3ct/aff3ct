@@ -11,7 +11,7 @@ jointly : this is called the *inter frame level*.
 .. note::
 
    The inter frame level can be used in a multi user modulation (SCMA), or
-   an inter frame SIMD optimization, for examples. It can also help to
+   an inter frame |SIMD| optimization, for examples. It can also help to
    accelerate the simulation (for short frames) by letting each module working
    on more data at the same time instead of switching of module and memory zone
    more often.
@@ -83,7 +83,7 @@ Description of the allowed values:
 
 .. |src-implem_descr_std|  replace:: A standard implementation working for any
    source type.
-.. |src-implem_descr_fast| replace:: A much faster method using SIMD but *only
+.. |src-implem_descr_fast| replace:: A much faster method using |SIMD| but *only
    for* ``RAND`` *type*.
 
 

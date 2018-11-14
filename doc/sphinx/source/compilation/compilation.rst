@@ -332,7 +332,7 @@ CMake has a built-in variable you can set to specify the compiler options:
 
    cmake .. -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
-Many parts of the AFF3CT code use the :abbr:`SIMD (Single Instruction Multiple
+Many parts of the AFF3CT code use the |SIMD|
 Data)` parallelism and this type of instructions often requires additional
 compiler options to be enabled:
 

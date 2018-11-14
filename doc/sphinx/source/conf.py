@@ -234,6 +234,8 @@ rst_epilog = """
                              :height: 25px
 
 
+.. |SIMD| replace:: :abbr:`SIMD (Single Instruction Multiple Data)`
+
 """
 
 # -- Extension configuration -------------------------------------------------
