@@ -2,7 +2,7 @@ Compilation
 ===========
 
 .. important:: If you do not plan to modify the AFF3CT source code and you want
-               to use the simulator as is, you can **download one of the lastest
+               to use the simulator as is, you can **download one of the latest
                AFF3CT builds** from the
                `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_
                and skip this section.
@@ -41,10 +41,13 @@ installation is over.
                section.
 
 .. note:: On Windows, it is recommended to download a version of CMake with an
-          installer: it looks like ``cmake-x.x.x-win64-x64.msi``.
+          installer: it looks like :program:`cmake-x.x.x-win64-x64.msi`.
 
-.. warning:: It is recommended to add CMake to your system PATH during the
+.. warning:: It is recommended to add CMake to your system *PATH* during the
              installation.
+
+.. danger:: AFF3CT needs at least the version **3.0.2**.
+
 .. image:: images/cmake_path.png
    :align: center
 
@@ -66,10 +69,10 @@ C++ GNU Compiler Installation
 Windows
 ^^^^^^^
 
-`Download the latest MinGW build from the official web page <https://sourceforge.net/projects/mingw-w64/>`_
-(tested with `MinGW x86_64-6.2.0 <https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/6.2.0/threads-posix/seh/x86_64-6.2.0-release-posix-seh-rt_v5-rev1.7z>`_).
-Unzip the archive. Copy the extracted ``mingw64`` folder in the
-``C:\Programs\Git\`` folder (erase all the duplicated files).
+Download the latest MinGW build from the `official web page <https://sourceforge.net/projects/mingw-w64/>`_
+(tested with :download:`MinGW x86_64-6.2.0 <https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/6.2.0/threads-posix/seh/x86_64-6.2.0-release-posix-seh-rt_v5-rev1.7z>`).
+Unzip the archive. Copy the extracted :file:`mingw64` folder in the
+:file:`C:\\Programs\\Git\\` folder (overwrite all the duplicated files).
 
 .. note:: We suppose that you have installed Git for Windows has explained in the
           :ref:`Git Installation on Windows <source_code-git_installation-windows>`
@@ -194,7 +197,7 @@ start the compilation.
    :align: center
 
 Once AFF3CT is compiled you can browse the build by right clicking on
-``CMakeList.txt`` > ``Cache`` > ``Open Cache Foler``.
+``CMakeList.txt`` > ``Cache`` > ``Open Cache Folder``.
 
 .. image:: images/vs17_cache_folder.png
    :align: center
@@ -303,12 +306,17 @@ variable can get. For instance, to compile in release mode:
           compiler, if ``CMAKE_BUILD_TYPE`` is set to ``Release``, the code will
           be compiled with the ``-O3`` flag.
 
+.. important:: We have noticed numerical stability issues when compiling with
+          ``-Ofast`` flag. So the ``-O3`` flag is recommend to compile with the
+          best optimizations.
+
+
 .. note:: If you need to develop in AFF3CT it is recommended to compile
-          in the ``Debug`` mode during the development process to add the debug
-          symbols in the binary files. It will certainly ease the debug process
-          but be careful, the execution speed will be seriously affected in this
-          mode, be sure to switch to the ``Release`` mode when the code is
-          stable.
+          in the ``Debug`` mode (or eventually ``RelWithDebInfo`` mode) during
+          the development process to add the debug symbols in the binary files.
+          It will certainly ease the debug process but be careful, the execution
+          speed will be seriously affected in this mode, be sure to switch to
+          the ``Release`` mode when the code is stable.
 
 .. note:: In Visual Studio solutions, the ``CMAKE_BUILD_TYPE`` built-in
           variable has no effect and the build type is directly managed by
@@ -324,8 +332,8 @@ CMake has a built-in variable you can set to specify the compiler options:
 
    cmake .. -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
-Many parts of the AFF3CT code use the **SIMD** (Single Instruction Multiple
-Data) parallelism and this type of instructions often requires additional
+Many parts of the AFF3CT code use the :abbr:`SIMD (Single Instruction Multiple
+Data)` parallelism and this type of instructions often requires additional
 compiler options to be enabled:
 
 +-------------------+-------------------+
