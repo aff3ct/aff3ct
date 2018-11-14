@@ -70,18 +70,20 @@ Description of the allowed values:
    independent columns.
 .. |itl-type_descr_row_col|  replace:: Fills the interleaver by row and read it
    by column.
-.. |itl-type_descr_user|     replace:: Uses the user's LUT given in the file.
+.. |itl-type_descr_user|     replace:: Uses the user's LUT given in the file
+   through :ref:`itl-itl-path`.
 
 
 
-The following figures :numref:`itl_figures_types` depict the behavior of the interleaver basic types:
+The figure :numref:`itl_figures_types` depicts the behavior of the interleaver
+basic types.
 
 .. _itl_figures_types:
 
 .. figure:: images/schema_itl_types.png
    :align: center
 
-   Interleaver basic types
+   Interleaver basic types.
 
 .. seealso:: The :ref:`itl-itl-read-order` argument allows more options for the
    ``COL_ROW`` and ``ROW_COL`` interleavers.
@@ -149,20 +151,28 @@ Description of the allowed values (see also the figures just bellow):
    right corner to the top left corner
 
 
-The following figure depicts the read order options on the ``COL_ROW``
-interleaver:
+The figure :numref:`itl_figures_order_col_row` depicts the read order options on
+the ``COL_ROW`` interleaver.
+
+.. _itl_figures_order_col_row:
 
 .. figure:: images/schema_col_row_origin.png
    :align: center
    :scale: 60
 
+   Interleaver read order for ``COL_ROW`` type.
 
-The following figure depicts the read order options on the ``ROW_COL``
-interleaver:
+
+The figure :numref:`itl_figures_order_row_col` depicts the read order options on
+the ``ROW_COL`` interleaver.
+
+.. _itl_figures_order_row_col:
 
 .. figure:: images/schema_col_row_origin.png
    :align: center
    :scale: 60
+
+   Interleaver read order for ``COL_ROW`` type.
 
 
 .. _itl-itl-uni:

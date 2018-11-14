@@ -73,6 +73,9 @@ language = None
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+# Figures, tables and code-blocks are automatically numbered if they have a caption
+numfig = True
+
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
