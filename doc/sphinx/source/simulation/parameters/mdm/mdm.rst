@@ -4,16 +4,19 @@ Modem parameters
 ----------------
 
 The Modem is a module with three parts in one:
-   * the **modulation** maps the input binary frame into symbols to send through the
-     channel
+   * the **modulation** maps the input binary frame into symbols to send the
+     data through the channel
    * the **filtering** gives event probabilities to the received waveforms
-   * the **demodulation** unmaps symbols and computes for every bit a Log-Likelihood
-     Ratio (LLR)
+   * the **demodulation** unmaps symbols or waveforms and computes for every bit
+     a :abbr:`LLR (Log-Likelihood Ratio)`
 
-.. note:: The filtering step is used only by the ``CPM`` Modem.
+.. note:: The filtering step is used only by the ``CPM`` Modem as it is the only
+          AFF3CT's modulation using waveforms.
 
 .. note:: A negative LLR represents a bit at 1, and therefore when positive a
-          bit at 0.
+          bit at 0. It is a more convenient choice as the hard decision matches
+          directly with the sign bit.
+
 
 .. _mdm-mdm-type:
 
@@ -50,15 +53,23 @@ Description of the allowed values:
 | ``USER`` | |mdm-type_descr_user| |
 +----------+-----------------------+
 
-.. |mdm-type_descr_bpsk| replace:: The simple 2-PSK
-.. |mdm-type_descr_cpm|  replace:: The Continuous Phase Modulation
-.. |mdm-type_descr_ook|  replace:: The On-Off Keying
-.. |mdm-type_descr_pam|  replace:: The Pulse-Amplitude Modulation
-.. |mdm-type_descr_psk|  replace:: The Phase-Shift Keying
-.. |mdm-type_descr_qam|  replace:: The Quadrature-Amplitude Modulation
-.. |mdm-type_descr_scma| replace:: The SubCarrier Multiple Access
-.. |mdm-type_descr_user| replace:: A user defined constellation given through
-   :ref:`mdm-mdm-const-path`
+.. _Continuous Phase Modulation: https://en.wikipedia.org/wiki/Continuous_phase_modulation
+.. _On-Off Keying: https://en.wikipedia.org/wiki/On-off_keying
+.. _Pulse-Amplitude Modulation: https://en.wikipedia.org/wiki/Pulse-Amplitude_Modulation
+.. _Phase-Shift Keying: https://en.wikipedia.org/wiki/Phase-shift_keying
+.. _Quadrature-Amplitude Modulation: https://en.wikipedia.org/wiki/Quadrature_amplitude_modulation
+.. _SubCarrier Multiple Access: https://en.wikipedia.org/wiki/Subcarrier_multiplexing
+
+.. |mdm-type_descr_bpsk| replace:: The simple 2-PSK that has an optimized
+   implementation
+.. |mdm-type_descr_cpm|  replace:: The `Continuous Phase Modulation`_
+.. |mdm-type_descr_ook|  replace:: The `On-Off Keying`_
+.. |mdm-type_descr_pam|  replace:: The `Pulse-Amplitude Modulation`_
+.. |mdm-type_descr_psk|  replace:: The `Phase-Shift Keying`_
+.. |mdm-type_descr_qam|  replace:: The `Quadrature-Amplitude Modulation`_
+.. |mdm-type_descr_scma| replace:: The `SubCarrier Multiple Access`_
+.. |mdm-type_descr_user| replace:: A user defined constellation given in a file
+   through :ref:`mdm-mdm-const-path`
 
 
 .. _mdm-mdm-bps:
@@ -255,7 +266,9 @@ Description of the allowed values:
 | ``REC``  | |mdm-cpm-ws_descr_rec|  |
 +----------+-------------------------+
 
-.. |mdm-cpm-ws_descr_gmsk| replace:: Gaussian Minimum Shift Keying
+.. _Gaussian Minimum Shift Keying: https://en.wikipedia.org/wiki/Minimum-shift_keying#Gaussian_minimum-shift_keying
+
+.. |mdm-cpm-ws_descr_gmsk| replace:: `Gaussian Minimum Shift Keying`_
 .. |mdm-cpm-ws_descr_rcos| replace:: Raised COSinus
 .. |mdm-cpm-ws_descr_rec|  replace:: RECtangular
 
