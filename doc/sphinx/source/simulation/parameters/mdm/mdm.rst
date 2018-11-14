@@ -72,6 +72,9 @@ Description of the allowed values:
    through :ref:`mdm-mdm-const-path`
 
 
+.. TODO: describe completely the implemented models, such as the constellation
+  mapping (ex: PSK has always GRAY mapping) or what is done if sig2 is disabled.
+
 .. _mdm-mdm-bps:
 
 ``--mdm-bps``
