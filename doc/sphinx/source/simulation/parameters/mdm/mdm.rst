@@ -74,6 +74,7 @@ Description of the allowed values:
 
 .. TODO: describe completely the implemented models, such as the constellation
   mapping (ex: PSK has always GRAY mapping) or what is done if sig2 is disabled.
+  Describe the different demodulator of OOK when AWGN, optical, BSC, BEC
 
 .. _mdm-mdm-bps:
 

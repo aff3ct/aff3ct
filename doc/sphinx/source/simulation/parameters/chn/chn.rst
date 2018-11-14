@@ -3,79 +3,11 @@
 Channel parameters
 ------------------
 
-.. _chn-chn-blk-fad:
+The channel is the representation of the physical space in which data are
+transmitted. This operation corrupts the information, hence the origin of the
+error-correcting codes.
 
-``--chn-blk-fad``
-"""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``FRAME`` ``NO`` ``ONETAP``
-   :Examples: ``--chn-blk-fad FRAME``
-
-Block fading policy for the RAYLEIGH channel.
-
-Description of the allowed values:
-
-+------------+----------------------------+
-| Value      | Description                |
-+============+============================+
-| ``FRAME``  | |chn-blk-fad_descr_frame|  |
-+------------+----------------------------+
-| ``NO``     | |chn-blk-fad_descr_no|     |
-+------------+----------------------------+
-| ``ONETAP`` | |chn-blk-fad_descr_onetap| |
-+------------+----------------------------+
-
-.. |chn-blk-fad_descr_frame| replace:: TODO VALUE FRAME
-.. |chn-blk-fad_descr_no| replace:: TODO VALUE NO
-.. |chn-blk-fad_descr_onetap| replace:: TODO VALUE ONETAP
-
-
-.. _chn-chn-gain-occur:
-
-``--chn-gain-occur``
-""""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--chn-gain-occur 1``
-
-The number of times a gain is used on consecutive symbols (used with "\\-\\-chn-type RAYLEIGH_USER").
-
-.. _chn-chn-implem:
-
-``--chn-implem``
-""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``FAST`` ``STD``
-   :Examples: ``--chn-implem FAST``
-
-Select the implementation of the algorithm to generate noise.
-
-Description of the allowed values:
-
-+----------+-------------------------+
-| Value    | Description             |
-+==========+=========================+
-| ``FAST`` | |chn-implem_descr_fast| |
-+----------+-------------------------+
-| ``STD``  | |chn-implem_descr_std|  |
-+----------+-------------------------+
-
-.. |chn-implem_descr_fast| replace:: TODO VALUE FAST
-.. |chn-implem_descr_std| replace:: TODO VALUE STD
-
-
-.. _chn-chn-path:
-
-``--chn-path``
-""""""""""""""
-
-   :Type: file
-   :Rights: read/write
-   :Examples: ``--chn-path example/path/to/the/right/file``
-
-Path to a noisy file, to use with "\\-\\-chn-type USER,OPTICAL" or to a gain file (used with "\\-\\-chn-type RAYLEIGH_USER").
+.. TODO : Add_user on all channels ? For complex numbers, real / imag part independent ?
 
 .. _chn-chn-type:
 
@@ -83,7 +15,9 @@ Path to a noisy file, to use with "\\-\\-chn-type USER,OPTICAL" or to a gain fil
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``AWGN`` ``BEC`` ``BSC`` ``NO`` ``OPTICAL`` ``RAYLEIGH`` ``RAYLEIGH_USER`` ``USER`` ``USER_ADD``
+   :Allowed values: ``AWGN`` ``BEC`` ``BSC`` ``NO`` ``OPTICAL`` ``RAYLEIGH``
+                    ``RAYLEIGH_USER`` ``USER`` ``USER_ADD``
+   :Default: ``AWGN``
    :Examples: ``--chn-type AWGN``
 
 Type of the channel to use in the simulation ('USER' has an output got from a file when 'USER_ADD' has an additive noise got from a file).
@@ -112,14 +46,164 @@ Description of the allowed values:
 | ``USER_ADD``      | |chn-type_descr_user_add|      |
 +-------------------+--------------------------------+
 
-.. |chn-type_descr_awgn| replace:: TODO VALUE AWGN
-.. |chn-type_descr_bec| replace:: TODO VALUE BEC
-.. |chn-type_descr_bsc| replace:: TODO VALUE BSC
-.. |chn-type_descr_no| replace:: TODO VALUE NO
-.. |chn-type_descr_optical| replace:: TODO VALUE OPTICAL
-.. |chn-type_descr_rayleigh| replace:: TODO VALUE RAYLEIGH
-.. |chn-type_descr_rayleigh_user| replace:: TODO VALUE RAYLEIGH_USER
-.. |chn-type_descr_user| replace:: TODO VALUE USER
-.. |chn-type_descr_user_add| replace:: TODO VALUE USER_ADD
+.. _Additive White Gaussian Noise: https://en.wikipedia.org/wiki/Additive_white_Gaussian_noise
+.. _Binary Erasure Channel: https://en.wikipedia.org/wiki/Binary_erasure_channel
+.. _Binary Symmetric Channel: https://en.wikipedia.org/wiki/Binary_symmetric_channel
+.. _Rayleigh Fading: https://en.wikipedia.org/wiki/Rayleigh_fading
 
 
+.. |chn-type_descr_awgn|          replace:: The `Additive White Gaussian Noise`_
+   channel: :math:`Y = X + N_G \text{ with } N_G \sim \mathcal{N}(0,\sigma)`
+
+.. |chn-type_descr_bec|           replace:: The `Binary Erasure Channel`_
+   :math:`Y_i = \begin{cases}
+   erased & \quad \text{with a probability of } p_e \\
+   X_i    & \quad \text{else}
+   \end{cases}`
+
+.. |chn-type_descr_bsc|           replace:: The `Binary Symmetric Channel`_
+   :math:`Y_i = \begin{cases}
+   !X_i & \quad \text{with a probability of } p_e \\
+   X_i    & \quad \text{else}
+   \end{cases}`
+
+.. |chn-type_descr_no|            replace:: The perfect channel: :math:`Y = X`
+
+.. |chn-type_descr_optical|       replace:: The optical channel: :math:`Y_i =
+   \begin{cases}
+   CDF_0(x) & \quad \text{ when } X_i = 0 \\
+   CDF_1(x) & \quad \text{ when } X_i = 1
+   \end{cases} \text{ with } x \sim \mathcal{U}(0,1)`
+
+.. |chn-type_descr_rayleigh|      replace:: The `Rayleigh Fading`_ channel with
+   an AWGN gain: :math:`Y = X.H_G + N_G \text{ with }
+   N_G \sim \mathcal{N}(0,\sigma) \text{ and }
+   H_G \sim \mathcal{N}(0,\frac{1}{\sqrt(2)})`
+
+.. |chn-type_descr_rayleigh_user| replace:: The Rayleigh Fading channel with
+   the gain given in a file: :math:`Y = X.H + N_G
+   \text{ with } N_G \sim \mathcal{N}(0,\sigma) \text{ and }
+   H \text{ given by the user}`
+
+.. |chn-type_descr_user|          replace:: A channel with a user defined
+   **output** given in a file: :math:`Y = Z
+   \text{ with } Z \text{ given by the user}`
+
+.. |chn-type_descr_user_add|      replace:: A channel with a user defined
+   **additive noise** given in a file: :math:`Y = X +
+   Z \text{ with } Z \text{ given by the user}`
+
+
+.. note:: The ``AWGN``, ``NO`` and ``RAYLEIGH`` channels handle
+   complex modulations.
+
+.. note:: The ``BEC``, ``BSC`` and ``OPTICAL`` channels work only with ``OOK``
+   modulation.
+
+.. note:: The :abbr:`CDF (Cumulative Distribution Function)` for the ``OPTICAL``
+   channel is given with the :ref:`sim-sim-pdf-path` argument. This file
+   describes the :abbr:`PDF (Probability Density Function)` of the
+   :abbr:`ROP (Received Optical Power)` at different value for a bit transmitted
+   at 0 and another for a bit transmitted at 1. So this file contains twice as
+   many PDF as ROP to test.
+
+
+.. _chn-chn-implem:
+
+``--chn-implem``
+""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``FAST`` ``STD`` ``GSL`` ``MKL``
+   :Default: ``STD``
+   :Examples: ``--chn-implem FAST``
+
+Selects the implementation of the algorithm to generate the noise.
+
+Description of the allowed values:
+
++----------+-------------------------+
+| Value    | Description             |
++==========+=========================+
+| ``STD``  | |chn-implem_descr_std|  |
++----------+-------------------------+
+| ``FAST`` | |chn-implem_descr_fast| |
++----------+-------------------------+
+| ``GSL``  | |chn-implem_descr_gsl|  |
++----------+-------------------------+
+| ``MKL``  | |chn-implem_descr_mkl|  |
++----------+-------------------------+
+
+.. _GNU Scientific Library: https://www.gnu.org/software/gsl/
+.. _Intel Math Kernel Library: https://software.intel.com/en-us/mkl
+
+.. |chn-implem_descr_std|  replace:: A standard implementation.
+
+.. |chn-implem_descr_fast| replace:: A much faster method using |SIMD|.
+
+.. |chn-implem_descr_gsl|  replace:: A method using the
+   `GNU Scientific Library`_
+
+.. |chn-implem_descr_mkl|  replace:: A method using the
+   `Intel Math Kernel Library`_
+
+.. attention:: All channels work with any implementation. However, to activate
+   the ``GSL`` or the ``MKL`` implementation you need to
+   compile with the good options (see :ref:`compilation_cmake_options`).
+
+.. TODO : add a comparative table of the implems
+
+
+.. _chn-chn-gain-occur:
+
+``--chn-gain-occur``
+""""""""""""""""""""
+
+   :Type: integer
+   :Default: 1
+   :Examples: ``--chn-gain-occur 10``
+
+The number of times a gain is used on consecutive symbols. It is used in the
+``RAYLEIGH_USER`` channel while applying gains read from the given file.
+
+.. _chn-chn-path:
+
+``--chn-path``
+""""""""""""""
+
+   :Type: file
+   :Rights: read
+   :Examples: ``--chn-path example/path/to/the/right/file``
+
+For ``USER`` type, the file must contain noisy output values.
+For ``USER_ADD`` type, the file must contain noise values to add to input.
+For ``RAYLEIGH_USER`` type, the file must contain gain values.
+See :ref:`chn-chn-type` for more details.
+
+.. TODO Block fading is unused !!!
+   .. _chn-chn-blk-fad:
+
+   ``--chn-blk-fad``
+   """""""""""""""""
+
+      :Type: text
+      :Allowed values: ``FRAME`` ``NO`` ``ONETAP``
+      :Examples: ``--chn-blk-fad FRAME``
+
+   Block fading policy for the RAYLEIGH channel.
+
+   Description of the allowed values:
+
+   +------------+----------------------------+
+   | Value      | Description                |
+   +============+============================+
+   | ``FRAME``  | |chn-blk-fad_descr_frame|  |
+   +------------+----------------------------+
+   | ``NO``     | |chn-blk-fad_descr_no|     |
+   +------------+----------------------------+
+   | ``ONETAP`` | |chn-blk-fad_descr_onetap| |
+   +------------+----------------------------+
+
+   .. |chn-blk-fad_descr_frame| replace:: TODO VALUE FRAME
+   .. |chn-blk-fad_descr_no| replace:: TODO VALUE NO
+   .. |chn-blk-fad_descr_onetap| replace:: TODO VALUE ONETAP

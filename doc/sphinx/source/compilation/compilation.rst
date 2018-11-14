@@ -223,6 +223,8 @@ is the location of Visual Studio on your system):
 
    devenv /build Release aff3ct.sln
 
+.. _compilation_cmake_options:
+
 CMake Options
 -------------
 
