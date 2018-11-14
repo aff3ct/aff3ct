@@ -92,7 +92,7 @@ Description of the allowed values:
    :Allowed values: ``INTER`` ``INTRA``
    :Examples: ``--dec-simd INTER``
 
-The SIMD strategy you want to use.
+The |SIMD| strategy you want to use.
 
 Description of the allowed values:
 

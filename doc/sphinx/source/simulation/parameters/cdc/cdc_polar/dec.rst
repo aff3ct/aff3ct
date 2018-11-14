@@ -93,7 +93,7 @@ The type of nodes you want to detect in the Polar tree (ex: "{R0,R1,R0L,REP_2-8,
    :Allowed values: ``INTER`` ``INTRA``
    :Examples: ``--dec-simd INTER``
 
-The SIMD strategy you want to use.
+The |SIMD| strategy you want to use.
 
 Description of the allowed values:
 
