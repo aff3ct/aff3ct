@@ -45,6 +45,10 @@ Description of the allowed values:
 +-------------------+--------------------------------+
 | ``USER_ADD``      | |chn-type_descr_user_add|      |
 +-------------------+--------------------------------+
+| ``USER_BEC``      | |chn-type_descr_user_bec|      |
++-------------------+--------------------------------+
+| ``USER_BSC``      | |chn-type_descr_user_bsc|      |
++-------------------+--------------------------------+
 
 .. _Additive White Gaussian Noise: https://en.wikipedia.org/wiki/Additive_white_Gaussian_noise
 .. _Binary Erasure Channel: https://en.wikipedia.org/wiki/Binary_erasure_channel
@@ -53,45 +57,70 @@ Description of the allowed values:
 
 
 .. |chn-type_descr_awgn|          replace:: The `Additive White Gaussian Noise`_
-   channel: :math:`Y = X + N_G \text{ with } N_G \sim \mathcal{N}(0,\sigma)`
+   channel: :math:`Y = X + Z \text{ with } Z \sim \mathcal{N}(0,\sigma)`
 
 .. |chn-type_descr_bec|           replace:: The `Binary Erasure Channel`_
    :math:`Y_i = \begin{cases}
-   erased & \quad \text{with a probability of } p_e \\
+   erased & \quad \text{if } e = 1 \\
    X_i    & \quad \text{else}
-   \end{cases}`
+   \end{cases} \text{with } P(e = 1) = p_e`
 
 .. |chn-type_descr_bsc|           replace:: The `Binary Symmetric Channel`_
    :math:`Y_i = \begin{cases}
-   !X_i & \quad \text{with a probability of } p_e \\
+   !X_i & \quad \text{if } e = 1 \\
    X_i    & \quad \text{else}
-   \end{cases}`
+   \end{cases} \text{with } P(e = 1) = p_e`
 
-.. |chn-type_descr_no|            replace:: The perfect channel: :math:`Y = X`
+.. |chn-type_descr_no|            replace:: The **perfect** channel:
+   :math:`Y = X`
 
-.. |chn-type_descr_optical|       replace:: The optical channel: :math:`Y_i =
-   \begin{cases}
+.. |chn-type_descr_optical|       replace:: The **optical** channel:
+   :math:`Y_i = \begin{cases}
    CDF_0(x) & \quad \text{ when } X_i = 0 \\
    CDF_1(x) & \quad \text{ when } X_i = 1
    \end{cases} \text{ with } x \sim \mathcal{U}(0,1)`
+   and the CDFs given by user.
 
 .. |chn-type_descr_rayleigh|      replace:: The `Rayleigh Fading`_ channel with
-   an AWGN gain: :math:`Y = X.H_G + N_G \text{ with }
-   N_G \sim \mathcal{N}(0,\sigma) \text{ and }
-   H_G \sim \mathcal{N}(0,\frac{1}{\sqrt(2)})`
+   an AWGN gain: :math:`Y = X.H + Z \text{ with }
+   Z \sim \mathcal{N}(0,\sigma) \text{ and }
+   H \sim \mathcal{N}(0,\frac{1}{\sqrt 2})`
 
-.. |chn-type_descr_rayleigh_user| replace:: The Rayleigh Fading channel with
-   the gain given in a file: :math:`Y = X.H + N_G
-   \text{ with } N_G \sim \mathcal{N}(0,\sigma) \text{ and }
+.. |chn-type_descr_rayleigh_user| replace:: The `Rayleigh Fading`_ channel with
+   the gain given in a file: :math:`Y = X.H + Z
+   \text{ with } Z \sim \mathcal{N}(0,\sigma) \text{ and }
    H \text{ given by the user}`
 
-.. |chn-type_descr_user|          replace:: A channel with a user defined
-   **output** given in a file: :math:`Y = Z
-   \text{ with } Z \text{ given by the user}`
+.. |chn-type_descr_user|          replace:: A **user defined output** channel
+   from a file: :math:`Y = Z \text{ with } Z \text{ given by user}`
 
-.. |chn-type_descr_user_add|      replace:: A channel with a user defined
-   **additive noise** given in a file: :math:`Y = X +
+.. |chn-type_descr_user_add|      replace:: An **additive** channel with a user
+   defined noise given in a file: :math:`Y = X +
    Z \text{ with } Z \text{ given by the user}`
+
+.. |chn-type_descr_user_bec|      replace:: The `Binary Erasure Channel`_ with a
+   user defined event draw given in a file:
+   :math:`Y_i = \begin{cases}
+   erased & \quad \text{if } e = 1 \\
+   X_i    & \quad \text{else}
+   \end{cases} \text{ with } e \text{ given by the user}`
+
+.. |chn-type_descr_user_bsc|      replace:: The `Binary Symmetric Channel`_ with
+   a user defined event draw given in a file:
+   :math:`Y_i = \begin{cases}
+   !X_i & \quad \text{if } e = 1 \\
+   X_i    & \quad \text{else}
+   \end{cases} \text{ with } e \text{ given by the user}`
+
+Where :math:`\sigma, p_e` are the simulated noise points and are given by the
+user through the :ref:`sim-sim-noise-range` argument.
+
+The :abbr:`CDF (Cumulative Distribution Function)` for the ``OPTICAL``
+channel is given with the :ref:`sim-sim-pdf-path` argument. This file
+describes the :abbr:`PDF (Probability Density Function)` of the
+:abbr:`ROP (Received Optical Power)` at different value for a bit transmitted
+at 0 and another for a bit transmitted at 1. So this file contains twice as
+many PDF as ROP to test.
 
 
 .. note:: The ``AWGN``, ``NO`` and ``RAYLEIGH`` channels handle
@@ -99,13 +128,6 @@ Description of the allowed values:
 
 .. note:: The ``BEC``, ``BSC`` and ``OPTICAL`` channels work only with ``OOK``
    modulation.
-
-.. note:: The :abbr:`CDF (Cumulative Distribution Function)` for the ``OPTICAL``
-   channel is given with the :ref:`sim-sim-pdf-path` argument. This file
-   describes the :abbr:`PDF (Probability Density Function)` of the
-   :abbr:`ROP (Received Optical Power)` at different value for a bit transmitted
-   at 0 and another for a bit transmitted at 1. So this file contains twice as
-   many PDF as ROP to test.
 
 
 .. _chn-chn-implem:
@@ -137,12 +159,13 @@ Description of the allowed values:
 .. _GNU Scientific Library: https://www.gnu.org/software/gsl/
 .. _Intel Math Kernel Library: https://software.intel.com/en-us/mkl
 
-.. |chn-implem_descr_std|  replace:: A standard implementation.
+.. |chn-implem_descr_std|  replace:: A standard implementation using the C++
+   standard objects and algorithms.
 
 .. |chn-implem_descr_fast| replace:: A much faster method using |SIMD|.
 
 .. |chn-implem_descr_gsl|  replace:: A method using the
-   `GNU Scientific Library`_ that is not necessary really fast.
+   `GNU Scientific Library`_.
 
 .. |chn-implem_descr_mkl|  replace:: A method using the
    `Intel Math Kernel Library`_ optimized on Intel processors.
@@ -152,8 +175,8 @@ Description of the allowed values:
    compile with the good options (see :ref:`compilation_cmake_options`).
 
 
-Numbers on :numref:`table_implem_awgn`, :numref:`table_implem_bec` and
-:numref:`table_implem_optical` show the throughput of the channels on
+Numbers on :numref:`comp_implem_awgn`, :numref:`comp_implem_bec` and
+:numref:`comp_implem_optical` show the throughput of the channels on
 the different implementations in function of the frame size. The conditions of
 the experiment were an ``UNCODED`` simulation on 8 threads during 10 seconds per
 measurement on an *Intel(R) Xeon(R) CPU E3-1270 v5 @ 3.60GHz*.
@@ -162,26 +185,46 @@ the :ref:`sim-sim-stats` option flag. Numbers on those tables were read on the
 *Average* column of the *add_noise* task of the *Channel* module.
 
 
-.. _table_implem_awgn:
+.. _comp_implem_awgn:
 
 .. csv-table:: Comparison of the throughput in :math:`[Mb/s]` of the methods
    for the ``AWGN`` channel in function of the frame size.
    :delim: ;
    :file: implem_comparison_AWGN.csv
 
-.. _table_implem_bec:
+The :numref:`comp_implem_awgn` shows that the standard normal distribution
+generator with a Mersenne Twister 19937 is quite fast next to a Box-Muller
+algorithm from the GSL. However, the ``FAST`` Box-Muller method implementation
+with also a Mersenne Twister is much faster than the ``MKL``'s Box-Muller on
+short frames but the last takes some distance on longer ones.
+
+
+.. _comp_implem_bec:
 
 .. csv-table:: Comparison of the throughput in :math:`[Mb/s]` of the methods
    for the ``BEC` and ``BSC`` channel in function of the frame size.
    :delim: ;
    :file: implem_comparison_BEC.csv
 
-.. _table_implem_optical:
+You can see on :numref:`comp_implem_bec` that the ``MKL``'s Bernoulli solution
+is up to four times faster than the ``FAST`` implementation using a
+Mersenne Twister. The ``GSL``'s Bernoulli implementation is here
+twice faster than a ``STD``'s Bernoulli algorithm solution associated with a
+Mersenne Twister.
+
+
+.. _comp_implem_optical:
 
 .. csv-table:: Comparison of the throughput in :math:`[Mb/s]` of the methods
    for the ``OPTICAL`` channel in function of the frame size.
    :delim: ;
    :file: implem_comparison_OPTICAL.csv
+
+You can see on :numref:`comp_implem_optical` that although using same
+implementation as for the ``BEC`` to generate an uniform draw, the
+throughputs are identical for all. This is due to an unoptimized interpolation
+function using standard algorithm applied on each symbol to compute the output
+according to the given CDFs.
 
 .. _chn-chn-gain-occur:
 
