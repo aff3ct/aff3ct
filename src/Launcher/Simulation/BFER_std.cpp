@@ -155,6 +155,7 @@ void BFER_std<B,R,Q>
 	if (params.err_track_revert)
 	{
 		params.src->type = "USER";
+		params.src->implem = "STD";
 		params.src->path = params.err_track_path + std::string("_$noise.src");
 
 		params.cdc->enc->type = "USER";
@@ -170,6 +171,7 @@ void BFER_std<B,R,Q>
 			params.chn->type = "USER_ADD";
 		else if (params.chn->type == "USER" || params.chn->type == "BEC" || params.chn->type == "OPTICAL")
 			params.chn->type = "USER";
+		params.chn->implem = "STD";
 		// else params.chn->type == "NO" stays as it is
 		params.chn->path = params.err_track_path + std::string("_$snr.chn");
 	}
