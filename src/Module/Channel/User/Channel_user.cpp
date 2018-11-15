@@ -19,7 +19,7 @@ Channel_user<R>
 	if (filename.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 
-	Channel<R>::read_noise_file(filename, this->N, this->noise_buff);
+	read_noise_file(filename, this->N, this->noise_buff);
 }
 
 template <typename R>
