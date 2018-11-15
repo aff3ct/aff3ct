@@ -129,7 +129,7 @@ R aff3ct::tools::ebn0_to_esn0(const R ebn0, const R bit_rate, const int bps)
 template <typename R>
 std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& range_description, const R default_step)
 {
-	const R float_precision = 1e5;
+	const R float_precision = 1e7;
 
 	std::vector<int> range;
 
