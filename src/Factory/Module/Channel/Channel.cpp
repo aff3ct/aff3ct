@@ -2,6 +2,9 @@
 
 #include "Module/Channel/NO/Channel_NO.hpp"
 #include "Module/Channel/User/Channel_user.hpp"
+#include "Module/Channel/User/Channel_user_add.hpp"
+#include "Module/Channel/User/Channel_user_be.hpp"
+#include "Module/Channel/User/Channel_user_bs.hpp"
 #include "Module/Channel/AWGN/Channel_AWGN_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
@@ -64,10 +67,10 @@ void Channel::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("NO", "USER", "USER_ADD", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "BSC",
-		                                 "OPTICAL")),
+		tools::Text(tools::Including_set("NO", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "BSC", "OPTICAL", "USER",
+		                                 "USER_ADD", "USER_BEC", "USER_BSC")),
 		"type of the channel to use in the simulation ('USER' has an output got from a file when 'USER_ADD' has an"
-		" additive noise got from a file).");
+		" additive noise got from a file, 'USER_BEC' and 'USER_BSC' have their event draws from the file).");
 
 	args.add(
 		{p+"-implem"},
@@ -243,9 +246,11 @@ module::Channel<R>* Channel::parameters
 		return build_event<R>();
 	} catch (tools::cannot_allocate&) {}
 
-	if (type == "USER"    ) return new module::Channel_user<R>(N, path, add_users, false, n_frames);
-	if (type == "USER_ADD") return new module::Channel_user<R>(N, path, add_users,  true, n_frames);
-	if (type == "NO"      ) return new module::Channel_NO  <R>(N,       add_users,        n_frames);
+	if (type == "USER"    ) return new module::Channel_user    <R>(N, path, add_users, n_frames);
+	if (type == "USER_ADD") return new module::Channel_user_add<R>(N, path, add_users, n_frames);
+	if (type == "USER_BEC") return new module::Channel_user_be <R>(N, path,            n_frames);
+	if (type == "USER_BSC") return new module::Channel_user_bs <R>(N, path,            n_frames);
+	if (type == "NO"      ) return new module::Channel_NO      <R>(N,       add_users, n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

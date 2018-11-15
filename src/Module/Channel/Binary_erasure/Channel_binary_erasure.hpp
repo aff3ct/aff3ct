@@ -9,7 +9,7 @@
 #include "Tools/types.h"
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 
-#include "../Channel.hpp"
+#include "../User/Channel_user_be.hpp"
 
 namespace aff3ct
 {
@@ -22,7 +22,6 @@ protected:
 	std::unique_ptr<tools::Event_generator<R>> event_generator;
 
 	using E = typename tools::matching_types<R>::B;
-	std::vector<E> event_draw;
 
 public:
 	Channel_binary_erasure(const int N, std::unique_ptr<tools::Event_generator<R>>&& event_generator,

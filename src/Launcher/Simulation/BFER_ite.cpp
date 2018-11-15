@@ -164,8 +164,20 @@ void BFER_ite<B,R,Q>
 			params.itl->core->path = params.err_track_path + std::string("_$noise.itl");
 		}
 
-		params.chn->type = "USER";
-		params.chn->implem = "STD";
+		if (params.chn->type == "AWGN")
+			params.chn->type = "USER_ADD";
+
+		else if (params.chn->type == "BEC" || params.chn->type == "BSC")
+			params.chn->type = "USER_" + params.chn->type;
+
+		else if (params.chn->type.find("USER") == 0 || params.chn->type == "NO")
+		{} // if a "USER" type or "NO" type then stays as it is
+		else
+			std::clog << rang::tag::warning << "Channel '" << params.chn->type << " is not handled by the error"
+			          << " tracker tool.";
+
+		// TODO : need to manage "RAYLEIGH", "RAYLEIGH_USER" and "OPTICAL"
+
 		params.chn->path = params.err_track_path + std::string("_$noise.chn");
 	}
 
