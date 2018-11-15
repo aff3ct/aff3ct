@@ -142,17 +142,46 @@ Description of the allowed values:
 .. |chn-implem_descr_fast| replace:: A much faster method using |SIMD|.
 
 .. |chn-implem_descr_gsl|  replace:: A method using the
-   `GNU Scientific Library`_
+   `GNU Scientific Library`_ that is not necessary really fast.
 
 .. |chn-implem_descr_mkl|  replace:: A method using the
-   `Intel Math Kernel Library`_
+   `Intel Math Kernel Library`_ optimized on Intel processors.
 
 .. attention:: All channels work with any implementation. However, to activate
    the ``GSL`` or the ``MKL`` implementation you need to
    compile with the good options (see :ref:`compilation_cmake_options`).
 
-.. TODO : add a comparative table of the implems
 
+Numbers on :numref:`table_implem_awgn`, :numref:`table_implem_bec` and
+:numref:`table_implem_optical` show the throughput of the channels on
+the different implementations in function of the frame size. The conditions of
+the experiment were an ``UNCODED`` simulation on 8 threads during 10 seconds per
+measurement on an *Intel(R) Xeon(R) CPU E3-1270 v5 @ 3.60GHz*.
+To measure throughput AFF3CT uses an internal tool that can be activated with
+the :ref:`sim-sim-stats` option flag. Numbers on those tables were read on the
+*Average* column of the *add_noise* task of the *Channel* module.
+
+
+.. _table_implem_awgn:
+
+.. csv-table:: Comparison of the throughput in :math:`[Mb/s]` of the methods
+   for the ``AWGN`` channel in function of the frame size.
+   :delim: ;
+   :file: implem_comparison_AWGN.csv
+
+.. _table_implem_bec:
+
+.. csv-table:: Comparison of the throughput in :math:`[Mb/s]` of the methods
+   for the ``BEC` and ``BSC`` channel in function of the frame size.
+   :delim: ;
+   :file: implem_comparison_BEC.csv
+
+.. _table_implem_optical:
+
+.. csv-table:: Comparison of the throughput in :math:`[Mb/s]` of the methods
+   for the ``OPTICAL`` channel in function of the frame size.
+   :delim: ;
+   :file: implem_comparison_OPTICAL.csv
 
 .. _chn-chn-gain-occur:
 
