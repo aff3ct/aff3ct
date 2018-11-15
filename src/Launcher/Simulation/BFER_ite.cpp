@@ -122,6 +122,8 @@ void BFER_ite<B,R,Q>
 
 	params.chn->store(this->arg_vals);
 
+	params.mdm->channel_type = params.chn->type;
+
 	params.qnt->size = params.mdm->N_fil;
 
 	if (std::is_integral<Q>())

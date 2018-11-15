@@ -113,6 +113,8 @@ void BFER_std<B,R,Q>
 
 	params.chn->store(this->arg_vals);
 
+	params.mdm->channel_type = params.chn->type;
+
 	auto psim = params.get_prefix();
 	if (!this->arg_vals.exist({psim+"-noise-type", "E"}))
 	{
