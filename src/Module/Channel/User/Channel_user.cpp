@@ -1,5 +1,5 @@
-#include <fstream>
 #include <sstream>
+#include <fstream>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -10,9 +10,8 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_user<R>
-::Channel_user(const int N, const std::string &filename, const bool add_users, const bool additive_noise,
-               const int n_frames)
-: Channel<R>(N, n_frames), add_users(add_users), additive_noise(additive_noise), noise_buff(), noise_counter(0)
+::Channel_user(const int N, const std::string &filename, const bool add_users, const int n_frames)
+: Channel<R>(N, n_frames), add_users(add_users), noise_counter(0)
 {
 	const std::string name = "Channel_user";
 	this->set_name(name);
@@ -20,18 +19,72 @@ Channel_user<R>
 	if (filename.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 
+	read_noise_file(filename, this->N, this->noise_buff);
+}
+
+template <typename R>
+void Channel_user<R>
+::add_noise(const R *X_N, R *Y_N, const int frame_id)
+{
+	if (this->add_users && this->n_frames > 1)
+	{
+		if (frame_id != -1)
+		{
+			std::stringstream message;
+			message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->set_noise(0);
+
+		std::copy(this->noise.data(), this->noise.data() + this->N, Y_N);
+	}
+	else
+	{
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start + 1;
+
+		for (auto f = f_start; f < f_stop; f++)
+		{
+			this->set_noise(f);
+
+			std::copy(this->noise.data() +  f      * this->N,
+			          this->noise.data() + (f + 1) * this->N,
+			          Y_N + f * this->N);
+		}
+	}
+}
+
+template <typename R>
+void Channel_user<R>
+::set_noise(const int frame_id)
+{
+	std::copy(this->noise_buff[this->noise_counter].begin(),
+	          this->noise_buff[this->noise_counter].end(),
+	          this->noise.data() + frame_id * this->N);
+
+	this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
+}
+
+
+
+template<typename R>
+void Channel_user<R>::
+read_noise_file(const std::string &filename, const int N, std::vector<std::vector<R>>& noise_buffer)
+{
 	try
 	{
-		open_as_text(filename);
+		Channel_user<R>::read_as_text(filename, N, noise_buffer);
 	}
 	catch(const tools::runtime_error&)
 	{
-		open_as_binary(filename);
+		Channel_user<R>::read_as_binary(filename, N, noise_buffer);
 	}
 }
 
 template<typename R>
-void Channel_user<R>::open_as_text(const std::string &filename)
+void Channel_user<R>::
+read_as_text(const std::string &filename, const int N, std::vector<std::vector<R>>& noise_buffer)
 {
 	std::ifstream file(filename.c_str());
 
@@ -51,11 +104,11 @@ void Channel_user<R>::open_as_text(const std::string &filename)
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (fra_size == this->N)
+		if (fra_size == N)
 		{
-			this->noise_buff.resize(n_fra);
+			noise_buffer.resize(n_fra);
 			for (unsigned i = 0; i < (unsigned)n_fra; i++)
-				this->noise_buff[i].resize(fra_size);
+				noise_buffer[i].resize(fra_size);
 
 			for (unsigned i = 0; i < n_fra; i++)
 				for (auto j = 0; j < fra_size; j++)
@@ -69,7 +122,7 @@ void Channel_user<R>::open_as_text(const std::string &filename)
 
 					R value;
 					file >> value;
-					this->noise_buff[i][j] = value;
+					noise_buffer[i][j] = value;
 				}
 		}
 		else
@@ -77,7 +130,7 @@ void Channel_user<R>::open_as_text(const std::string &filename)
 			file.close();
 
 			std::stringstream message;
-			message << "The frame size is wrong (read: " << fra_size << ", expected: " << this->N << ").";
+			message << "The frame size is wrong (read: " << fra_size << ", expected: " << N << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
@@ -88,7 +141,7 @@ void Channel_user<R>::open_as_text(const std::string &filename)
 }
 
 template<typename R>
-void Channel_user<R>::open_as_binary(const std::string &filename)
+void Channel_user<R>::read_as_binary(const std::string &filename, const int N, std::vector<std::vector<R>>& noise_buffer)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary);
 
@@ -115,16 +168,16 @@ void Channel_user<R>::open_as_binary(const std::string &filename)
 
 		const unsigned sizeof_float = (unsigned)length / (n_fra * fra_size);
 
-		if (fra_size == this->N)
+		if (fra_size == N)
 		{
-			this->noise_buff.resize(n_fra);
+			noise_buffer.resize(n_fra);
 			for (unsigned i = 0; i < (unsigned)n_fra; i++)
-				this->noise_buff[i].resize(fra_size);
+				noise_buffer[i].resize(fra_size);
 
 			if (sizeof_float == sizeof(R))
 			{
 				for (unsigned i = 0; i < n_fra; i++)
-					file.read(reinterpret_cast<char*>(&this->noise_buff[i][0]), fra_size * sizeof(R));
+					file.read(reinterpret_cast<char*>(&noise_buffer[i][0]), fra_size * sizeof(R));
 			}
 			else
 			{
@@ -135,7 +188,7 @@ void Channel_user<R>::open_as_binary(const std::string &filename)
 					{
 						file.read(reinterpret_cast<char*>(tmp.data()), fra_size * sizeof(double));
 						for (auto j = 0; j < fra_size; j++)
-							this->noise_buff[i][j] = (R)tmp[j];
+							noise_buffer[i][j] = (R)tmp[j];
 					}
 				}
 				else if (sizeof_float == sizeof(float))
@@ -145,7 +198,7 @@ void Channel_user<R>::open_as_binary(const std::string &filename)
 					{
 						file.read(reinterpret_cast<char*>(tmp.data()), fra_size * sizeof(float));
 						for (auto j = 0; j < fra_size; j++)
-							this->noise_buff[i][j] = (R)tmp[j];
+							noise_buffer[i][j] = (R)tmp[j];
 					}
 				}
 				else
@@ -163,7 +216,7 @@ void Channel_user<R>::open_as_binary(const std::string &filename)
 			file.close();
 
 			std::stringstream message;
-			message << "The frame size is wrong (read: " << fra_size << ", expected: " << this->N << ").";
+			message << "The frame size is wrong (read: " << fra_size << ", expected: " << N << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -175,95 +228,6 @@ void Channel_user<R>::open_as_binary(const std::string &filename)
 	}
 }
 
-template <typename R>
-void Channel_user<R>
-::add_noise(const R *X_N, R *Y_N, const int frame_id)
-{
-	if (additive_noise)
-	{
-		if (add_users && this->n_frames > 1)
-		{
-			if (frame_id != -1)
-			{
-				std::stringstream message;
-				message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-				throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-			}
-
-			std::fill(Y_N, Y_N + this->N, (R) 0);
-			for (auto f = 0; f < this->n_frames; f++)
-				for (auto i = 0; i < this->N; i++)
-					Y_N[i] += X_N[f * this->N + i];
-
-			std::copy(this->noise_buff[this->noise_counter].begin(),
-			          this->noise_buff[this->noise_counter].end(),
-			          this->noise.data());
-
-			this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
-
-			for (auto i = 0; i < this->N; i++)
-				Y_N[i] += this->noise[i];
-		}
-		else
-		{
-			const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-			const auto f_stop = (frame_id < 0) ? this->n_frames : f_start + 1;
-
-			for (auto f = f_start; f < f_stop; f++)
-			{
-				std::copy(this->noise_buff[this->noise_counter].begin(),
-				          this->noise_buff[this->noise_counter].end(),
-				          this->noise.data() + f * this->N);
-
-				for (auto i = 0; i < this->N; i++)
-					Y_N[f * this->N + i] = X_N[f * this->N + i] + this->noise[f * this->N + i];
-
-				this->noise_counter = (this->noise_counter + 1) % (int) this->noise_buff.size();
-			}
-		}
-	}
-	else
-	{
-		if (add_users && this->n_frames > 1)
-		{
-			if (frame_id != -1)
-			{
-				std::stringstream message;
-				message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-				throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-			}
-
-			std::copy(this->noise_buff[this->noise_counter].begin(),
-			          this->noise_buff[this->noise_counter].end(),
-			          this->noise.data());
-
-			std::copy(this->noise_buff[this->noise_counter].begin(),
-			          this->noise_buff[this->noise_counter].end(),
-			          Y_N);
-
-			this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
-
-		}
-		else
-		{
-			const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-			const auto f_stop = (frame_id < 0) ? this->n_frames : f_start + 1;
-
-			for (auto f = f_start; f < f_stop; f++)
-			{
-				std::copy(this->noise_buff[this->noise_counter].begin(),
-				          this->noise_buff[this->noise_counter].end(),
-				          this->noise.data() + f * this->N);
-
-				std::copy(this->noise_buff[this->noise_counter].begin(),
-				          this->noise_buff[this->noise_counter].end(),
-				          Y_N + f * this->N);
-
-				this->noise_counter = (this->noise_counter + 1) % (int) this->noise_buff.size();
-			}
-		}
-	}
-}
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

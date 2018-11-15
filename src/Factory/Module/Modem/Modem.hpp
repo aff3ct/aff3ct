@@ -34,6 +34,7 @@ struct Modem : public Factory
 		bool        complex    = true;      // true if the modulated signal is complex
 		int         bps        = 1;         // bits per symbol
 		int         upf        = 1;         // samples per symbol
+
 		// -------- CPM parameters
 		std::string cpm_std    = "";        // the selection of a default cpm standard hardly implemented (GSM)
 		std::string mapping    = "NATURAL"; // symbol mapping layout (natural, gray)
@@ -53,6 +54,7 @@ struct Modem : public Factory
 
 		// ------- common parameters
 		int         n_frames   = 1;
+		std::string channel_type = "AWGN"; // the channel type used to build correct OOK modulation
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Modem_prefix);
@@ -66,10 +68,9 @@ struct Modem : public Factory
 
 		// builder
 		template <typename B = int, typename R = float, typename Q = R>
-		module::Modem<B,R,Q>* build(const std::string& chn_type = "AWGN") const;
+		module::Modem<B,R,Q>* build() const;
 		template <typename B = int, typename R = float, typename Q = R>
-		module::Modem<B,R,Q>* build(const tools::Distributions<R>& dist,
-		                            const std::string& chn_type = "AWGN") const;
+		module::Modem<B,R,Q>* build(const tools::Distributions<R>& dist) const;
 
 	private:
 		template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX>
@@ -81,11 +82,10 @@ struct Modem : public Factory
 
 
 	template <typename B = int, typename R = float, typename Q = R>
-	static module::Modem<B,R,Q>* build(const parameters &params, const std::string& chn_type = "AWGN");
+	static module::Modem<B,R,Q>* build(const parameters &params);
 
 	template <typename B = int, typename R = float, typename Q = R>
-	static module::Modem<B,R,Q>* build(const parameters &params, const tools::Distributions<R>& dist,
-	                                   const std::string& chn_type = "AWGN");
+	static module::Modem<B,R,Q>* build(const parameters &params, const tools::Distributions<R>& dist);
 
 	static bool is_complex_mod(const std::string &type, const int bps = 1);
 	static bool is_complex_fil(const std::string &type, const int bps = 1);

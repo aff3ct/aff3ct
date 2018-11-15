@@ -45,21 +45,28 @@ template <>
 void Event_generator_fast<R_32,B_32>
 ::generate(B_32 *draw, const unsigned length, const R_32 event_probability)
 {
-	const mipp::Reg<R_32> r_ep   = event_probability;
-	const mipp::Reg<B_32> r_one  = (B_32)true;
-	const mipp::Reg<B_32> r_zero = (B_32)false;
-
-	const unsigned vec_loop_size = (length / mipp::N<R_32>()) * mipp::N<R_32>();
-
-	for (unsigned i = 0; i < vec_loop_size; i += mipp::N<R_32>())
+	if (event_probability == (R_32)0.)
 	{
-		const auto r_draw  = mt19937_simd.randf_cc();
-		const auto r_out   = mipp::blend(r_one, r_zero, r_draw <= r_ep);
-		r_out.store(draw + i);
+		std::fill(draw, draw + length, (B_32)false);
 	}
+	else
+	{
+		const mipp::Reg<R_32> r_ep   = event_probability;
+		const mipp::Reg<B_32> r_one  = (B_32)true;
+		const mipp::Reg<B_32> r_zero = (B_32)false;
 
-	for (auto i = vec_loop_size; i < length; i++)
-		draw[i] = mt19937.randf_cc() <= event_probability;
+		const unsigned vec_loop_size = (length / mipp::N<R_32>()) * mipp::N<R_32>();
+
+		for (unsigned i = 0; i < vec_loop_size; i += mipp::N<R_32>())
+		{
+			const auto r_draw  = mt19937_simd.randf_cc();
+			const auto r_out   = mipp::blend(r_one, r_zero, r_draw <= r_ep);
+			r_out.store(draw + i);
+		}
+
+		for (auto i = vec_loop_size; i < length; i++)
+			draw[i] = mt19937.randf_cc() <= event_probability;
+	}
 }
 
 }
@@ -73,27 +80,34 @@ template <>
 void Event_generator_fast<R_64,B_64>
 ::generate(B_64 *draw, const unsigned length, const R_64 event_probability)
 {
-	const mipp::Reg<R_64> r_ep   = event_probability;
-	const mipp::Reg<B_64> r_one  = (B_64)true;
-	const mipp::Reg<B_64> r_zero = (B_64)false;
-
-	const unsigned vec_loop_size = (length / (2*mipp::N<R_64>())) * (2*mipp::N<R_64>());
-
-	for (unsigned i = 0; i < vec_loop_size; i += 2*mipp::N<R_64>())
+	if (event_probability == (R_64)0.)
 	{
-		const auto r_draw  = mt19937_simd.randf_cc(); // on simple floats
-
-		const auto draw_low  = mipp::cvt<float,R_64>(r_draw.low ());
-		const auto draw_high = mipp::cvt<float,R_64>(r_draw.high());
-
-		const auto r_out_low  = mipp::blend(r_one, r_zero, draw_low  <= r_ep);
-		const auto r_out_high = mipp::blend(r_one, r_zero, draw_high <= r_ep);
-		r_out_low .store(draw + i);
-		r_out_high.store(draw + i + mipp::N<R_64>());
+		std::fill(draw, draw + length, (B_64)false);
 	}
+	else
+	{
+		const mipp::Reg<R_64> r_ep   = event_probability;
+		const mipp::Reg<B_64> r_one  = (B_64)true;
+		const mipp::Reg<B_64> r_zero = (B_64)false;
 
-	for (auto i = vec_loop_size; i < length; i++)
-		draw[i] = (R_64)mt19937.randf_cc() <= event_probability;
+		const unsigned vec_loop_size = (length / (2*mipp::N<R_64>())) * (2*mipp::N<R_64>());
+
+		for (unsigned i = 0; i < vec_loop_size; i += 2*mipp::N<R_64>())
+		{
+			const auto r_draw  = mt19937_simd.randf_cc(); // on simple floats
+
+			const auto draw_low  = mipp::cvt<float,R_64>(r_draw.low ());
+			const auto draw_high = mipp::cvt<float,R_64>(r_draw.high());
+
+			const auto r_out_low  = mipp::blend(r_one, r_zero, draw_low  <= r_ep);
+			const auto r_out_high = mipp::blend(r_one, r_zero, draw_high <= r_ep);
+			r_out_low .store(draw + i);
+			r_out_high.store(draw + i + mipp::N<R_64>());
+		}
+
+		for (auto i = vec_loop_size; i < length; i++)
+			draw[i] = (R_64)mt19937.randf_cc() <= event_probability;
+	}
 }
 
 }
