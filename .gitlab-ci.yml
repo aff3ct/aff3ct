@@ -39,7 +39,7 @@ build-linux-gcc-nointr:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMIPP_NO_INTRINSICS"
+    - export CFLAGS="-Wall -funroll-loops -DMIPP_NO_INTRINSICS"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_nointr"
@@ -62,7 +62,7 @@ build-linux-gcc-x64-sse4.2:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-m64 -msse4.2"
+    - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_x64_sse4.2"
@@ -85,7 +85,7 @@ build-linux-gcc-x64-avx2:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-m64 -mavx2 -mfma"
+    - export CFLAGS="-Wall -funroll-loops -m64 -mavx2 -mfma"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_x64_avx2"
@@ -107,7 +107,7 @@ build-linux-gcc-8-bit:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-march=native"
+    - export CFLAGS="-Wall -funroll-loops -march=native"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=8 -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_8_bit"
     - source ./ci/tools/threads.sh
@@ -128,7 +128,7 @@ build-linux-gcc-mpi:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-march=native"
+    - export CFLAGS="-Wall -funroll-loops -march=native"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON -DAFF3CT_MPI=ON"
     - export NAME="build_linux_gcc_mpi"
     - source ./ci/tools/threads.sh
@@ -150,7 +150,7 @@ build-linux-gcc-systemc:
     - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-march=native -Wno-deprecated-declarations"
+    - export CFLAGS="-Wall -funroll-loops -march=native -Wno-deprecated-declarations"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_PREC=MULTI -DAFF3CT_SYSTEMC_SIMU=ON"
     - export NAME="build_linux_gcc_systemc"
     - source ./ci/tools/threads.sh
@@ -170,7 +170,7 @@ build-linux-clang:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS=""
+    - export CFLAGS="-Wall -funroll-loops"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_clang"
     - source ./ci/tools/threads.sh
@@ -190,7 +190,7 @@ build-linux-gcc-4.8:
   script:
     - export CC="gcc-4.8"
     - export CXX="g++-4.8"
-    - export CFLAGS="-march=native"
+    - export CFLAGS="-Wall -funroll-loops -march=native"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc-4.8"
     - source ./ci/tools/threads.sh
@@ -213,7 +213,7 @@ build-linux-icpc:
     - source /opt/intel/vars-intel.sh
     - export CC="icc"
     - export CXX="icpc"
-    - export CFLAGS="-march=native -std=c++11"
+    - export CFLAGS="-Wall -funroll-loops -march=native -std=c++11"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_LINK_GSL=ON -DAFF3CT_LINK_MKL=ON"
     - export NAME="build_linux_icpc"
     - source ./ci/tools/threads.sh
@@ -232,7 +232,7 @@ build-windows-gcc-x86-sse4.2:
     paths:
       - build_windows_gcc_x86_sse4.2
   script:
-    - set "CFLAGS=-m32 -msse4.2"
+    - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m32 -msse4.2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
     - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
     - set "NAME=build_windows_gcc_x86_sse4.2"
@@ -252,7 +252,7 @@ build-windows-gcc-x64-avx2:
     paths:
       - build_windows_gcc_x64_avx2
   script:
-    - set "CFLAGS=-m64 -mavx2"
+    - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m64 -mavx2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
     - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
     - set "NAME=build_windows_gcc_x64_avx2"
@@ -271,7 +271,7 @@ build-windows-msvc-avx:
     paths:
       - build_windows_msvc_avx
   script:
-    - set "CFLAGS=/arch:AVX"
+    - set "CFLAGS=-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc /arch:AVX"
     - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
     - set "NAME=build_windows_msvc_avx"
     - call ./ci/tools/threads.bat
@@ -291,7 +291,7 @@ build-macos-clang-x64-sse4.2:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-m64 -msse4.2"
+    - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI"
     - export NAME="build_macos_clang_x64_sse4.2"
     - source ./ci/tools/threads.sh
