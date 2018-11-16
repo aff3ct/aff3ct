@@ -216,16 +216,13 @@ void Modem_SCMA<B,R,Q,PSI>
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
 					for (auto re = 0; re < CB.get_number_of_resources(); re++)
 					{
-						msg_res_user(re,CB.get_resource_to_user(re,0),i) = msg_res_user(re,CB.get_resource_to_user(re,0),i)
-						                                            + arr_phi(re,i,j,k)
+						msg_res_user(re,CB.get_resource_to_user(re,0),i) += arr_phi(re,i,j,k)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re,1),re,j)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re,2),re,k);
-						msg_res_user(re,CB.get_resource_to_user(re,1),i) = msg_res_user(re,CB.get_resource_to_user(re,1),i)
-						                                            + arr_phi(re,j,i,k)
+						msg_res_user(re,CB.get_resource_to_user(re,1),i) += arr_phi(re,j,i,k)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re,0),re,j)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re,2),re,k);
-						msg_res_user(re,CB.get_resource_to_user(re,2),i) = msg_res_user(re,CB.get_resource_to_user(re,2),i)
-						                                            + arr_phi(re,j,k,i)
+						msg_res_user(re,CB.get_resource_to_user(re,2),i) += arr_phi(re,j,k,i)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re,0),re,j)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re,1),re,k);
 					}
