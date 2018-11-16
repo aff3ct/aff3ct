@@ -1,4 +1,4 @@
-.. _parameters:
+.. _simulation_parameters:
 
 Parameters
 ^^^^^^^^^^
@@ -10,11 +10,11 @@ Parameters
    sim/sim
    src/src
    crc/crc
-   mdm/mdm
    cdc/cdc
+   itl/itl
+   mdm/mdm
    chn/chn
+   qnt/qnt
    mnt/mnt
    ter/ter
-   itl/itl
-   qnt/qnt
    global/global
