@@ -27,6 +27,9 @@ from the monitor in real time.
 Sets the display frequency (refresh time) in *[ms]*, for each iteration.
 Setting 0 disables the refresh to dump only the final result.
 
+When MPI is enabled, this value is by default set to the same value than
+the :ref:`sim-sim-mpi-comm` argument.
+
 .. _ter-ter-no:
 
 ``--ter-no``
@@ -55,6 +58,6 @@ Description of the allowed values:
 +---------+----------------------+
 
 .. |ter-type_descr_std| replace:: This is the standard format readable by
-   :ref:`pyber`
+   :ref:`pyber_overview`
 
 

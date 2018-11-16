@@ -1,3 +1,5 @@
+.. _pyber_overview:
+
 PyBER
 ^^^^^
 

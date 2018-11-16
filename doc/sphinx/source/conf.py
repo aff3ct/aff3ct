@@ -235,6 +235,9 @@ rst_epilog = """
 
 .. |SIMD| replace:: :abbr:`SIMD (Single Instruction Multiple Data)`
 
+.. |BFER| replace:: :abbr:`BFER (Bit and Frame Error Rate)`
+.. |SNR| replace:: :abbr:`SNR (Signal Noise Ratio)`
+
 """
 
 # -- Extension configuration -------------------------------------------------
