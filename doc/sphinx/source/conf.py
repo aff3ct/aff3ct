@@ -105,7 +105,6 @@ html_theme = 'sphinx_rtd_theme'
 # TODO : Why the compilation fails the first time ???? -> the second time is good.
 html_theme_options = {
     'canonical_url': '', # to help search engines with duplicated versions of the doc -> TODO
-    'collapse_navigation': False,
     'style_external_links': False, # Add an icon next to external links.
     'display_version': True, # the version number shown at the top of the sidebar
     # Toc options
