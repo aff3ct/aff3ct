@@ -30,7 +30,7 @@ void Gaussian_noise_generator_GSL<R>
 ::generate(R *noise, const unsigned length, const R sigma, const R mu)
 {
 	for (unsigned i = 0; i < length; i++)
-		noise[i] = (R)gsl_ran_gaussian(rng.get(), sigma) + mu;
+		noise[i] = (R)gsl_ran_gaussian_ziggurat(rng.get(), sigma) + mu;
 }
 
 // ==================================================================================== explicit template instantiation
