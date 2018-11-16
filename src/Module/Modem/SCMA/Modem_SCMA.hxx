@@ -198,7 +198,7 @@ void Modem_SCMA<B,R,Q,PSI>
 	for (auto u = 0; u < CB.get_number_of_users(); ++u)
 		for (auto r = 0; r < CB.get_number_of_resources_per_user(); ++r)
 			for (auto i = 0; i < CB.get_codebook_size(); i++)
-				msg_user_to_resources(u,CB.get_user_to_resource(u,r),i) = init_proba;
+				msg_user_to_resources(u, CB.get_user_to_resource(u, r), i) = init_proba;
 
 	// starting iteration
 	for (auto itrr = 0; itrr < n_ite; itrr++)
@@ -208,7 +208,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		for (auto r = 0; r < CB.get_number_of_resources(); ++r)
 			for (auto u = 0; u < CB.get_number_of_users_per_resource(); ++u)
 				for (auto i = 0; i < CB.get_codebook_size(); i++)
-					msg_res_user(r,CB.get_resource_to_user(r,u),i) = (Q)0;
+					msg_res_user(r, CB.get_resource_to_user(r, u), i) = (Q)0;
 
 
 		for (auto i = 0; i < CB.get_codebook_size(); i++)
@@ -216,15 +216,15 @@ void Modem_SCMA<B,R,Q,PSI>
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
 					for (auto re = 0; re < CB.get_number_of_resources(); re++)
 					{
-						msg_res_user(re,CB.get_resource_to_user(re,0),i) += arr_phi(re,i,j,k)
-						                                            * msg_user_to_resources(CB.get_resource_to_user(re,1),re,j)
-						                                            * msg_user_to_resources(CB.get_resource_to_user(re,2),re,k);
-						msg_res_user(re,CB.get_resource_to_user(re,1),i) += arr_phi(re,j,i,k)
-						                                            * msg_user_to_resources(CB.get_resource_to_user(re,0),re,j)
-						                                            * msg_user_to_resources(CB.get_resource_to_user(re,2),re,k);
-						msg_res_user(re,CB.get_resource_to_user(re,2),i) += arr_phi(re,j,k,i)
-						                                            * msg_user_to_resources(CB.get_resource_to_user(re,0),re,j)
-						                                            * msg_user_to_resources(CB.get_resource_to_user(re,1),re,k);
+						msg_res_user(re, CB.get_resource_to_user(re, 0), i) += arr_phi(re, i, j, k)
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 1), re, j)
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 2), re, k);
+						msg_res_user(re, CB.get_resource_to_user(re, 1), i) += arr_phi(re, j, i, k)
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 0), re, j)
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 2), re, k);
+						msg_res_user(re, CB.get_resource_to_user(re, 2), i) += arr_phi(re, j, k, i)
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 0), re, j)
+						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 1), re, k);
 					}
 
 		/// I tried to convert this last quadruple loops into this:
@@ -249,8 +249,8 @@ void Modem_SCMA<B,R,Q,PSI>
 		{
 			for (auto j = 0; j < CB.get_number_of_users(); j++) //user index
 			{
-				msg_user_to_resources(j,CB.get_user_to_resource(j,0),i) = normalize_prob(j,1,i);
-				msg_user_to_resources(j,CB.get_user_to_resource(j,1),i) = normalize_prob(j,0,i);
+				msg_user_to_resources(j, CB.get_user_to_resource(j, 0), i) = normalize_prob(j, 1, i);
+				msg_user_to_resources(j, CB.get_user_to_resource(j, 1), i) = normalize_prob(j, 0, i);
 			}
 		}
 	}
@@ -261,21 +261,21 @@ void Modem_SCMA<B,R,Q,PSI>
 	{
 		for (auto j = 0; j < CB.get_number_of_users(); j++) //user index
 		{
-			guess(j,i) = msg_res_user(CB.get_user_to_resource(j,0),j,i) * msg_res_user(CB.get_user_to_resource(j,1),j,i);
+			guess(j, i) = msg_res_user(CB.get_user_to_resource(j, 0), j, i) * msg_res_user(CB.get_user_to_resource(j, 1), j, i);
 		}
 	}
 
 	// LLRs computation
 	for (auto i = 0; i < CB.get_number_of_users(); i++) //user index
 	{
-		Y_N2[i * this->N + batch *2 +0] = (Q)(std::log(guess(i,0) + guess(i,2)) - std::log(guess(i,1) + guess(i,3)));
+		Y_N2[i * this->N + batch * 2 +0] = (Q)(std::log(guess(i, 0) + guess(i, 2)) - std::log(guess(i, 1) + guess(i, 3)));
 	}
 
 	if((this->N % 2) != 1 || batch != ((this->N /2 +1) -1))
 	{
 		for (auto i = 0; i < CB.get_number_of_users(); i++) //user index
 		{
-			Y_N2[i * this->N + batch *2 +1] = (Q)(std::log(guess(i,0) + guess(i,1)) - std::log(guess(i,2) + guess(i,3)));
+			Y_N2[i * this->N + batch * 2 +1] = (Q)(std::log(guess(i, 0) + guess(i, 1)) - std::log(guess(i, 2) + guess(i, 3)));
 		}
 	}
 }
@@ -289,9 +289,9 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 	auto Y_N = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
 
-	const auto CB0 = std::complex<Q>((Q)CB(CB.get_resource_to_user(re,0), re, i).real(), (Q)CB(CB.get_resource_to_user(re,0), re, i).imag());
-	const auto CB1 = std::complex<Q>((Q)CB(CB.get_resource_to_user(re,1), re, j).real(), (Q)CB(CB.get_resource_to_user(re,1), re, j).imag());
-	const auto CB2 = std::complex<Q>((Q)CB(CB.get_resource_to_user(re,2), re, k).real(), (Q)CB(CB.get_resource_to_user(re,2), re, k).imag());
+	const auto CB0 = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 0), re, i).real(), (Q)CB(CB.get_resource_to_user(re, 0), re, i).imag());
+	const auto CB1 = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 1), re, j).real(), (Q)CB(CB.get_resource_to_user(re, 1), re, j).imag());
+	const auto CB2 = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 2), re, k).real(), (Q)CB(CB.get_resource_to_user(re, 2), re, k).imag());
 
 	tmp = Y_N - (CB0 + CB1 + CB2);
 
@@ -309,10 +309,10 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 	for(auto i = 0; i < CB.get_codebook_size(); i++) //codeword index
 	{
-		sum += msg_res_user(CB.get_user_to_resource(user,resource_ind),user,i);
+		sum += msg_res_user(CB.get_user_to_resource(user, resource_ind), user, i);
 	}
 
-	norm_prob = msg_res_user(CB.get_user_to_resource(user,resource_ind),user,resouce)/sum;
+	norm_prob = msg_res_user(CB.get_user_to_resource(user, resource_ind), user, resouce)/sum;
 
 	return norm_prob;
 }
@@ -327,16 +327,16 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 	const auto Y_N  = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
 
-	const auto H_N0 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re,0) * Nmod + 8 * batch + 2 * re   ],
-	                                  (Q)H_N[CB.get_resource_to_user(re,0) * Nmod + 8 * batch + 2 * re +1]);
-	const auto H_N1 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re,1) * Nmod + 8 * batch + 2 * re   ],
-	                                  (Q)H_N[CB.get_resource_to_user(re,1) * Nmod + 8 * batch + 2 * re +1]);
-	const auto H_N2 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re,2) * Nmod + 8 * batch + 2 * re   ],
-	                                  (Q)H_N[CB.get_resource_to_user(re,2) * Nmod + 8 * batch + 2 * re +1]);
+	const auto H_N0 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 0) * Nmod + 8 * batch + 2 * re   ],
+	                                  (Q)H_N[CB.get_resource_to_user(re, 0) * Nmod + 8 * batch + 2 * re +1]);
+	const auto H_N1 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 1) * Nmod + 8 * batch + 2 * re   ],
+	                                  (Q)H_N[CB.get_resource_to_user(re, 1) * Nmod + 8 * batch + 2 * re +1]);
+	const auto H_N2 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 2) * Nmod + 8 * batch + 2 * re   ],
+	                                  (Q)H_N[CB.get_resource_to_user(re, 2) * Nmod + 8 * batch + 2 * re +1]);
 
-	const auto CB0  = std::complex<Q>((Q)CB(CB.get_resource_to_user(re,0), re, i).real(), (Q)CB(CB.get_resource_to_user(re,0), re, i).imag());
-	const auto CB1  = std::complex<Q>((Q)CB(CB.get_resource_to_user(re,1), re, j).real(), (Q)CB(CB.get_resource_to_user(re,1), re, j).imag());
-	const auto CB2  = std::complex<Q>((Q)CB(CB.get_resource_to_user(re,2), re, k).real(), (Q)CB(CB.get_resource_to_user(re,2), re, k).imag());
+	const auto CB0  = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 0), re, i).real(), (Q)CB(CB.get_resource_to_user(re, 0), re, i).imag());
+	const auto CB1  = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 1), re, j).real(), (Q)CB(CB.get_resource_to_user(re, 1), re, j).imag());
+	const auto CB2  = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 2), re, k).real(), (Q)CB(CB.get_resource_to_user(re, 2), re, k).imag());
 
 	tmp = Y_N - (H_N0 * CB0 + H_N1 * CB1 + H_N2 * CB2);
 
