@@ -314,30 +314,24 @@ void Modem_SCMA<B,R,Q,PSI>
 	// guess at each user
 	for (auto i = 0; i < CB.get_codebook_size(); i++) //codeword index
 	{
-		guess(0,i) = msg_res_user(CB.get_user_to_resource(0,0),0,i) * msg_res_user(CB.get_user_to_resource(0,1),0,i);
-		guess(1,i) = msg_res_user(CB.get_user_to_resource(1,0),1,i) * msg_res_user(CB.get_user_to_resource(1,1),1,i);
-		guess(2,i) = msg_res_user(CB.get_user_to_resource(2,0),2,i) * msg_res_user(CB.get_user_to_resource(2,1),2,i);
-		guess(3,i) = msg_res_user(CB.get_user_to_resource(3,0),3,i) * msg_res_user(CB.get_user_to_resource(3,1),3,i);
-		guess(4,i) = msg_res_user(CB.get_user_to_resource(4,0),4,i) * msg_res_user(CB.get_user_to_resource(4,1),4,i);
-		guess(5,i) = msg_res_user(CB.get_user_to_resource(5,0),5,i) * msg_res_user(CB.get_user_to_resource(5,1),5,i);
+		for (auto j = 0; j < CB.get_number_of_users(); j++) //user index
+		{
+			guess(j,i) = msg_res_user(CB.get_user_to_resource(j,0),j,i) * msg_res_user(CB.get_user_to_resource(j,1),j,i);
+		}
 	}
 
 	// LLRs computation
-	Y_N2[0 * this->N + batch *2 +0] = (Q)(std::log(guess(0,0) + guess(0,2)) - std::log(guess(0,1) + guess(0,3)));
-	Y_N2[1 * this->N + batch *2 +0] = (Q)(std::log(guess(1,0) + guess(1,2)) - std::log(guess(1,1) + guess(1,3)));
-	Y_N2[2 * this->N + batch *2 +0] = (Q)(std::log(guess(2,0) + guess(2,2)) - std::log(guess(2,1) + guess(2,3)));
-	Y_N2[3 * this->N + batch *2 +0] = (Q)(std::log(guess(3,0) + guess(3,2)) - std::log(guess(3,1) + guess(3,3)));
-	Y_N2[4 * this->N + batch *2 +0] = (Q)(std::log(guess(4,0) + guess(4,2)) - std::log(guess(4,1) + guess(4,3)));
-	Y_N2[5 * this->N + batch *2 +0] = (Q)(std::log(guess(5,0) + guess(5,2)) - std::log(guess(5,1) + guess(5,3)));
+	for (auto i = 0; i < CB.get_number_of_users(); i++) //user index
+	{
+		Y_N2[i * this->N + batch *2 +0] = (Q)(std::log(guess(i,0) + guess(i,2)) - std::log(guess(i,1) + guess(i,3)));
+	}
 
 	if((this->N % 2) != 1 || batch != ((this->N /2 +1) -1))
 	{
-		Y_N2[0 * this->N + batch *2 +1] = (Q)(std::log(guess(0,0) + guess(0,1)) - std::log(guess(0,2) + guess(0,3)));
-		Y_N2[1 * this->N + batch *2 +1] = (Q)(std::log(guess(1,0) + guess(1,1)) - std::log(guess(1,2) + guess(1,3)));
-		Y_N2[2 * this->N + batch *2 +1] = (Q)(std::log(guess(2,0) + guess(2,1)) - std::log(guess(2,2) + guess(2,3)));
-		Y_N2[3 * this->N + batch *2 +1] = (Q)(std::log(guess(3,0) + guess(3,1)) - std::log(guess(3,2) + guess(3,3)));
-		Y_N2[4 * this->N + batch *2 +1] = (Q)(std::log(guess(4,0) + guess(4,1)) - std::log(guess(4,2) + guess(4,3)));
-		Y_N2[5 * this->N + batch *2 +1] = (Q)(std::log(guess(5,0) + guess(5,1)) - std::log(guess(5,2) + guess(5,3)));
+		for (auto i = 0; i < CB.get_number_of_users(); i++) //user index
+		{
+			Y_N2[i * this->N + batch *2 +1] = (Q)(std::log(guess(i,0) + guess(i,1)) - std::log(guess(i,2) + guess(i,3)));
+		}
 	}
 }
 
