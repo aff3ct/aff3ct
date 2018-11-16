@@ -247,66 +247,11 @@ void Modem_SCMA<B,R,Q,PSI>
 		// user to resource messaging
 		for (auto i = 0; i < CB.get_number_of_resources(); i++)
 		{
-			msg_user_to_resources(0,CB.get_user_to_resource(0,0),i) = msg_res_user(CB.get_user_to_resource(0,1),0,i) /
-													 (msg_res_user(CB.get_user_to_resource(0,1),0,0) +
-													  msg_res_user(CB.get_user_to_resource(0,1),0,1) +
-			                                          msg_res_user(CB.get_user_to_resource(0,1),0,2) +
-													  msg_res_user(CB.get_user_to_resource(0,1),0,3));
-			msg_user_to_resources(0,CB.get_user_to_resource(0,1),i) = msg_res_user(CB.get_user_to_resource(0,0),0,i) /
-													 (msg_res_user(CB.get_user_to_resource(0,0),0,0) +
-													  msg_res_user(CB.get_user_to_resource(0,0),0,1) +
-													  msg_res_user(CB.get_user_to_resource(0,0),0,2) +
-													  msg_res_user(CB.get_user_to_resource(0,0),0,3));
-			msg_user_to_resources(1,CB.get_user_to_resource(1,0),i) = msg_res_user(CB.get_user_to_resource(1,1),1,i) /
-													 (msg_res_user(CB.get_user_to_resource(1,1),1,0) +
-													  msg_res_user(CB.get_user_to_resource(1,1),1,1) +
-													  msg_res_user(CB.get_user_to_resource(1,1),1,2) +
-													  msg_res_user(CB.get_user_to_resource(1,1),1,3));
-			msg_user_to_resources(1,CB.get_user_to_resource(1,1),i) = msg_res_user(CB.get_user_to_resource(1,0),1,i) /
-													 (msg_res_user(CB.get_user_to_resource(1,0),1,0) +
-													  msg_res_user(CB.get_user_to_resource(1,0),1,1) +
-													  msg_res_user(CB.get_user_to_resource(1,0),1,2) +
-													  msg_res_user(CB.get_user_to_resource(1,0),1,3));
-			msg_user_to_resources(2,CB.get_user_to_resource(2,0),i) = msg_res_user(CB.get_user_to_resource(2,1),2,i) /
-													 (msg_res_user(CB.get_user_to_resource(2,1),2,0) +
-													  msg_res_user(CB.get_user_to_resource(2,1),2,1) +
-													  msg_res_user(CB.get_user_to_resource(2,1),2,2) +
-													  msg_res_user(CB.get_user_to_resource(2,1),2,3));
-			msg_user_to_resources(2,CB.get_user_to_resource(2,1),i) = msg_res_user(CB.get_user_to_resource(2,0),2,i) /
-													 (msg_res_user(CB.get_user_to_resource(2,0),2,0) +
-													  msg_res_user(CB.get_user_to_resource(2,0),2,1) +
-													  msg_res_user(CB.get_user_to_resource(2,0),2,2) +
-													  msg_res_user(CB.get_user_to_resource(2,0),2,3));
-			msg_user_to_resources(3,CB.get_user_to_resource(3,0),i) = msg_res_user(CB.get_user_to_resource(3,1),3,i) /
-													 (msg_res_user(CB.get_user_to_resource(3,1),3,0) +
-													  msg_res_user(CB.get_user_to_resource(3,1),3,1) +
-													  msg_res_user(CB.get_user_to_resource(3,1),3,2) +
-													  msg_res_user(CB.get_user_to_resource(3,1),3,3));
-			msg_user_to_resources(3,CB.get_user_to_resource(3,1),i) = msg_res_user(CB.get_user_to_resource(3,0),3,i) /
-													 (msg_res_user(CB.get_user_to_resource(3,0),3,0) +
-													  msg_res_user(CB.get_user_to_resource(3,0),3,1) +
-													  msg_res_user(CB.get_user_to_resource(3,0),3,2) +
-													  msg_res_user(CB.get_user_to_resource(3,0),3,3));
-			msg_user_to_resources(4,CB.get_user_to_resource(4,0),i) = msg_res_user(CB.get_user_to_resource(4,1),4,i) /
-													 (msg_res_user(CB.get_user_to_resource(4,1),4,0) +
-													  msg_res_user(CB.get_user_to_resource(4,1),4,1) +
-													  msg_res_user(CB.get_user_to_resource(4,1),4,2) +
-													  msg_res_user(CB.get_user_to_resource(4,1),4,3));
-			msg_user_to_resources(4,CB.get_user_to_resource(4,1),i) = msg_res_user(CB.get_user_to_resource(4,0),4,i) /
-													 (msg_res_user(CB.get_user_to_resource(4,0),4,0) +
-													  msg_res_user(CB.get_user_to_resource(4,0),4,1) +
-													  msg_res_user(CB.get_user_to_resource(4,0),4,2) +
-													  msg_res_user(CB.get_user_to_resource(4,0),4,3));
-			msg_user_to_resources(5,CB.get_user_to_resource(5,0),i) = msg_res_user(CB.get_user_to_resource(5,1),5,i) /
-													 (msg_res_user(CB.get_user_to_resource(5,1),5,0) +
-													  msg_res_user(CB.get_user_to_resource(5,1),5,1) +
-													  msg_res_user(CB.get_user_to_resource(5,1),5,2) +
-													  msg_res_user(CB.get_user_to_resource(5,1),5,3));
-			msg_user_to_resources(5,CB.get_user_to_resource(5,1),i) = msg_res_user(CB.get_user_to_resource(5,0),5,i) /
-													 (msg_res_user(CB.get_user_to_resource(5,0),5,0) +
-													  msg_res_user(CB.get_user_to_resource(5,0),5,1) +
-													  msg_res_user(CB.get_user_to_resource(5,0),5,2) +
-													  msg_res_user(CB.get_user_to_resource(5,0),5,3));
+			for (auto j = 0; j < CB.get_number_of_users(); j++) //user index
+			{
+				msg_user_to_resources(j,CB.get_user_to_resource(j,0),i) = normalize_prob(j,1,i);
+				msg_user_to_resources(j,CB.get_user_to_resource(j,1),i) = normalize_prob(j,0,i);
+			}
 		}
 	}
 	// end of iterations
@@ -353,6 +298,23 @@ Q Modem_SCMA<B,R,Q,PSI>
 	phi = PSI(tmp, (Q)n0);
 
 	return phi;
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+Q Modem_SCMA<B,R,Q,PSI>
+::normalize_prob(int user, int resource_ind, int resouce)
+{
+	Q sum = 0;
+	Q norm_prob = 0;
+
+	for(auto i = 0; i < CB.get_codebook_size(); i++) //codeword index
+	{
+		sum += msg_res_user(CB.get_user_to_resource(user,resource_ind),user,i);
+	}
+
+	norm_prob = msg_res_user(CB.get_user_to_resource(user,resource_ind),user,resouce)/sum;
+
+	return norm_prob;
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>

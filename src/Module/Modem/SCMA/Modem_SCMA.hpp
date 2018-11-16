@@ -68,6 +68,7 @@ private:
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch);
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch, const R* H_N);
 	void demodulate_batch(const Q* Y_N1, Q* Y_N2, int batch);
+	Q normalize_prob(int user, int resource_ind, int resouce);
 };
 }
 }
