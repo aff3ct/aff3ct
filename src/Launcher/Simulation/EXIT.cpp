@@ -93,6 +93,8 @@ void EXIT<B,R>
 
 	params.chn->store(this->arg_vals);
 
+	params.mdm->channel_type = params.chn->type;
+
 	params.mnt->size = K;
 
 	params.mnt->store(this->arg_vals);

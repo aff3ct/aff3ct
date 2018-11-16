@@ -20,8 +20,7 @@ class Channel_binary_symmetric : public Channel<R>
 protected:
 	std::unique_ptr<tools::Event_generator<R>> event_generator;
 
-	using E = typename tools::matching_types<R>::B;
-	std::vector<E> event_draw;
+	using E = typename tools::matching_types<R>::B; //Event type
 
 public:
 	Channel_binary_symmetric(const int N, std::unique_ptr<tools::Event_generator<R>>&& event_generator,

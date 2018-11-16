@@ -23,7 +23,12 @@ void Modem_OOK_BSC<B,R,Q>
 {
 	Modem_OOK<B,R,Q>::set_noise(noise);
 
-	this->log_pe_1_pe = (Q)log(this->n->get_noise() / (1 - this->n->get_noise())); // trow if noise is not set
+	auto proba = this->n->get_noise(); // trow if noise is not set
+
+	if (proba == (R)0.)
+		proba = (R)1e-10;
+
+	this->log_pe_1_pe = (Q)log(proba / (1 - proba));
 }
 
 template <typename B, typename R, typename Q>

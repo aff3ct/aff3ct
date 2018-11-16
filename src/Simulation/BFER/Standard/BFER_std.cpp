@@ -171,10 +171,10 @@ std::unique_ptr<module::Modem<B,R,R>> BFER_std<B,R,Q>
 {
 	if (this->distributions != nullptr)
 		return std::unique_ptr<module::Modem<B,R,R>>(
-			params_BFER_std.mdm->template build<B,R,R>(*this->distributions, this->params_BFER_std.chn->type));
+			params_BFER_std.mdm->template build<B,R,R>(*this->distributions));
 	else
 		return std::unique_ptr<module::Modem<B,R,R>>(
-			params_BFER_std.mdm->template build<B,R,R>(this->params_BFER_std.chn->type));
+			params_BFER_std.mdm->template build<B,R,R>());
 }
 
 template <typename B, typename R, typename Q>
