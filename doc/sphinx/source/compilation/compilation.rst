@@ -287,6 +287,8 @@ syntax to follow:
 
    cmake .. -DAFF3CT_OPTION=ON
 
+.. _compilation_compiler_options:
+
 Compiler Options
 ----------------
 

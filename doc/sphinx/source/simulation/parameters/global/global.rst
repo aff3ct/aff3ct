@@ -3,43 +3,48 @@
 Other parameters
 ----------------
 
+Those arguments are not associated to any module.
+
+
 .. _global-help:
 
 ``--help, -h``
 """"""""""""""
 
-
-Print this help.
+Prints the help with all the *required* and *optional* arguments.
+The last change in function of the selected simulation type and code.
 
 .. _global-advanced-help:
 
 ``--Help, -H``
 """"""""""""""
 
-
-Print this help with the advanced arguments.
+Prints the help with in more the advanced arguments.
 
 .. _global-version:
 
 ``--version, -v``
 """""""""""""""""
 
-
-Print informations about the version of the code.
+Prints informations about the version of the source code and
+compilation options.
 
 .. _global-except-a2l:
 
 ``--except-a2l`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""
 
+Enhances the backtrace when displaying exception.
+This change the program addresses into filenames and lines.
+It may take some seconds to do this work.
 
-Enhance the backtrace when displaying exception by changing program addresses into file names and lines (may take some seconds).
+.. note:: This option works only on Unix based OS and if AFF3CT has been
+   :ref:`compiled <compilation_compiler_options>` with debug symbols
+   (``-g`` compile flag) and **without** ``NDEBUG`` macro (``-DNDEBUG`` flag).
 
 .. _global-except-no-bt:
 
 ``--except-no-bt`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""""
 
-
-Do not print the backtrace when displaying exception.
-
+Disables the print of backtrace when displaying exception.
