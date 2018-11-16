@@ -3,14 +3,20 @@
 Simulation parameters
 ---------------------
 
+The simulation parameters allow the selection of the code to simulate on a
+selected chain, as well as the noise range to run.
+They give also access to powerful tools to debug the simulated modules.
+
+
 .. _sim-sim-cde-type:
 
 ``--sim-cde-type, -C`` |image_required_argument|
 """"""""""""""""""""""""""""""""""""""""""""""""
 
    :Type: text
-   :Allowed values: ``BCH`` ``LDPC`` ``POLAR`` ``RA`` ``REP`` ``RS`` ``RSC`` ``RSC_DB`` ``TURBO`` ``TURBO_DB`` ``TURBO_PROD`` ``UNCODED``
-   :Examples: ``--sim-cde-type BCH``
+   :Allowed values: ``BCH`` ``LDPC`` ``POLAR`` ``RA`` ``REP`` ``RS`` ``RSC``
+                    ``RSC_DB`` ``TURBO`` ``TURBO_DB`` ``TURBO_PROD`` ``UNCODED``
+   :Examples: ``-C BCH``
 
 Select the code type you want to use.
 
@@ -44,18 +50,87 @@ Description of the allowed values:
 | ``UNCODED``    | |sim-cde-type_descr_uncoded|    |
 +----------------+---------------------------------+
 
-.. |sim-cde-type_descr_bch| replace:: TODO VALUE BCH
-.. |sim-cde-type_descr_ldpc| replace:: TODO VALUE LDPC
-.. |sim-cde-type_descr_polar| replace:: TODO VALUE POLAR
-.. |sim-cde-type_descr_ra| replace:: TODO VALUE RA
-.. |sim-cde-type_descr_rep| replace:: TODO VALUE REP
-.. |sim-cde-type_descr_rs| replace:: TODO VALUE RS
-.. |sim-cde-type_descr_rsc| replace:: TODO VALUE RSC
-.. |sim-cde-type_descr_rsc_db| replace:: TODO VALUE RSC_DB
-.. |sim-cde-type_descr_turbo| replace:: TODO VALUE TURBO
-.. |sim-cde-type_descr_turbo_db| replace:: TODO VALUE TURBO_DB
-.. |sim-cde-type_descr_turbo_prod| replace:: TODO VALUE TURBO_PROD
-.. |sim-cde-type_descr_uncoded| replace:: TODO VALUE UNCODED
+.. _Bose–Chaudhuri–Hocquenghem: https://en.wikipedia.org/wiki/BCH_code
+.. _Low-density parity-check: https://en.wikipedia.org/wiki/Low-density_parity-check_code
+.. _Polar: https://en.wikipedia.org/wiki/Polar_code_(coding_theory)
+.. _Repeat accumulate: https://en.wikipedia.org/wiki/Repeat-accumulate_code
+.. _Repetition: https://en.wikipedia.org/wiki/Repetition_code
+.. _Reed–Solomon: https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction
+.. _Recursive Systematic Convolutional: https://en.wikipedia.org/wiki/Convolutional_code
+.. _Turbo: https://en.wikipedia.org/wiki/Turbo_code
+.. _Turbo Product: http://www.ieee802.org/16/tutorial/80216t-00_01.pdf
+
+.. |sim-cde-type_descr_bch|        replace:: The `Bose–Chaudhuri–Hocquenghem`_ code
+.. |sim-cde-type_descr_ldpc|       replace:: The `Low-density parity-check`_ codes
+.. |sim-cde-type_descr_polar|      replace:: The `Polar`_ code
+.. |sim-cde-type_descr_ra|         replace:: The `Repeat accumulate`_ code
+.. |sim-cde-type_descr_rep|        replace:: The `Repetition`_ code
+.. |sim-cde-type_descr_rs|         replace:: The `Reed–Solomon`_ code
+.. |sim-cde-type_descr_rsc|        replace:: The `Recursive Systematic Convolutional`_ code
+.. |sim-cde-type_descr_rsc_db|     replace:: The `Recursive Systematic Convolutional`_ code with Double Binary symbols
+.. |sim-cde-type_descr_turbo|      replace:: The `Turbo`_ codes
+.. |sim-cde-type_descr_turbo_db|   replace:: The `Turbo`_ codes Double Binary symbols
+.. |sim-cde-type_descr_turbo_prod| replace:: The `Turbo Product`_ code
+.. |sim-cde-type_descr_uncoded|    replace:: An uncoded simulation
+
+.. note:: Only ``POLAR``, ``RSC``, ``RSC_DB``, ``LDPC`` and ``UNCODED`` codes
+   are available in ``BFERI`` simulation type.
+
+
+.. _sim-sim-noise-type:
+
+``--sim-noise-type, -E``
+""""""""""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``EBN0`` ``ESN0`` ``EP`` ``ROP``
+   :Default: ``EBN0``
+   :Examples: ``--sim-noise-type EBN0``
+
+Selects the type of **noise** used to simulate.
+
+Description of the allowed values:
+
++----------+-----------------------------+
+| Value    | Description                 |
++==========+=============================+
+| ``EBN0`` | |sim-noise-type_descr_ebn0| |
++----------+-----------------------------+
+| ``ESN0`` | |sim-noise-type_descr_esn0| |
++----------+-----------------------------+
+| ``EP``   | |sim-noise-type_descr_ep|   |
++----------+-----------------------------+
+| ``ROP``  | |sim-noise-type_descr_rop|  |
++----------+-----------------------------+
+
+.. |sim-noise-type_descr_ebn0| replace:: Signal Noise Ratio per **information bit**
+.. |sim-noise-type_descr_esn0| replace:: Signal Noise Ratio per **transmitted symbol**
+.. |sim-noise-type_descr_ep|   replace:: Event Probability
+.. |sim-noise-type_descr_rop|  replace:: Received Optical Power
+
+.. note:: ``ESN0`` is automatically calculated from ``EBN0`` and vice-versa.
+
+.. note:: When selecting ``EP`` the simulator runs in reverse order, ie. from
+   the greatest probability to the smallest one.
+
+.. hint:: When selecting a ``BEC`` or ``BSC`` channel the ``EP`` noise type is
+   automatically set except if you give another one. This is the same for the
+   ``OPTICAL`` channel with the ``ROP`` noise type.
+   The channel type is set with the :ref:`chn-chn-type` argument.
+
+.. _sim-sim-noise-min:
+
+``--sim-noise-min, -m`` |image_required_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: real number
+   :Examples: ``--sim-noise-min 0.0``
+
+Gives the minimal noise energy point to simulate.
+
+.. attention:: This argument is another way to set the noise. It is ignored or
+   not required if :ref:`sim-sim-noise-range` is given, so you may find other
+   piece of information in its description.
 
 
 .. _sim-sim-noise-max:
@@ -64,35 +139,54 @@ Description of the allowed values:
 """""""""""""""""""""""""""""""""""""""""""""""""
 
    :Type: real number
-   :Examples: ``--sim-noise-max 1.0``
+   :Examples: ``--sim-noise-max 5.0``
 
-Maximal noise energy to simulate.
+Gives the maximal noise energy to simulate.
 
-.. _sim-sim-noise-min:
+.. attention:: This argument is another way to set the noise. It is ignored or
+   not required if :ref:`sim-sim-noise-range` is given, so you may find other
+   piece of information in its description.
 
-``--sim-noise-min, -m`` |image_required_argument|
-"""""""""""""""""""""""""""""""""""""""""""""""""
+.. _sim-sim-noise-step:
+
+``--sim-noise-step, -s``
+""""""""""""""""""""""""
 
    :Type: real number
-   :Examples: ``--sim-noise-min 1.0``
+   :Default:  0.1
+   :Examples: ``--sim-noise-step 1.0``
 
-Minimal noise energy to simulate.
+Gives the noise energy step between each simulation iteration.
+
+.. attention:: This argument is another way to set the noise. It is ignored or
+   not required if :ref:`sim-sim-noise-range` is given, so you may find other
+   piece of information in its description.
 
 .. _sim-sim-noise-range:
 
 ``--sim-noise-range, -R`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""""
 
-   :Type: list of (list of (real number):limited length [1;3]):limited length [1;inf]
-   :Examples: ``--sim-noise-range TODO``
+   :Type: Matlab style vector
+   :Default:  step of 0.1
+   :Examples: ``--sim-noise-range "0.5:1,1:0.05:1.2,1.21"``
 
-Noise energy range to run (Matlab style: "0.5:2.5,2.55,2.6:0.05:3" with a default step of 0.1).
+Set the noise energy range to run in a Matlab style vector.
+The given example will run the following noise points::
+
+   0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.05, 1.1, 1.15, 1.2, 1.21
+
+.. attention:: The numerical limit for a noise point is a maximum of about
+   :math:`\pm 214` with a precision :math:`10^{-7}`.
+
+.. note:: If given, :ref:`sim-sim-noise-min`, :ref:`sim-sim-noise-max`, and
+   :ref:`sim-sim-noise-step` are ignored. But it is not required anymore if
+   :ref:`sim-sim-noise-min` and :ref:`sim-sim-noise-max` are set.
 
 .. _sim-sim-coded:
 
 ``--sim-coded``
 """""""""""""""
-
 
 Enable the coded monitoring (extends the monitored bits to the entire codeword).
 
@@ -100,7 +194,6 @@ Enable the coded monitoring (extends the monitored bits to the entire codeword).
 
 ``--sim-coset, -c``
 """""""""""""""""""
-
 
 Enable the coset approach.
 
@@ -123,14 +216,12 @@ Iteration number to start the CRC checking in the turbo demodulation process.
 ``--sim-debug``
 """""""""""""""
 
-
 Enable debug mode: print array values after each step.
 
 .. _sim-sim-debug-hex:
 
 ``--sim-debug-hex``
 """""""""""""""""""
-
 
 Debug mode prints values in the hexadecimal format.
 
@@ -185,46 +276,6 @@ Print the output with metadata, takes the simulation title.
 
 
 Disable the colors in the shell.
-
-.. _sim-sim-noise-step:
-
-``--sim-noise-step, -s``
-""""""""""""""""""""""""
-
-   :Type: real number
-   :Examples: ``--sim-noise-step 1.0``
-
-Noise energy step between each simulation iteration.
-
-.. _sim-sim-noise-type:
-
-``--sim-noise-type, -E``
-""""""""""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``EBN0`` ``EP`` ``ESN0`` ``ROP``
-   :Examples: ``--sim-noise-type EBN0``
-
-Select the type of NOISE: SNR per Symbol / SNR per information Bit / Received Optical Power / Erasure Probability.
-
-Description of the allowed values:
-
-+----------+-----------------------------+
-| Value    | Description                 |
-+==========+=============================+
-| ``EBN0`` | |sim-noise-type_descr_ebn0| |
-+----------+-----------------------------+
-| ``EP``   | |sim-noise-type_descr_ep|   |
-+----------+-----------------------------+
-| ``ESN0`` | |sim-noise-type_descr_esn0| |
-+----------+-----------------------------+
-| ``ROP``  | |sim-noise-type_descr_rop|  |
-+----------+-----------------------------+
-
-.. |sim-noise-type_descr_ebn0| replace:: TODO VALUE EBN0
-.. |sim-noise-type_descr_ep| replace:: TODO VALUE EP
-.. |sim-noise-type_descr_esn0| replace:: TODO VALUE ESN0
-.. |sim-noise-type_descr_rop| replace:: TODO VALUE ROP
 
 
 .. _sim-sim-pdf-path:
