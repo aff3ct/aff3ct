@@ -165,9 +165,9 @@ Description of the allowed values:
 .. |chn-implem_descr_fast| replace:: A much faster method using |SIMD|.
 
 .. |chn-implem_descr_gsl|  replace:: A method using the
-   `GNU Scientific Library`_.
+   `GNU Scientific Library`_ but not parallelized.
 
-.. |chn-implem_descr_mkl|  replace:: A method using the
+.. |chn-implem_descr_mkl|  replace:: A parallelized method using the
    `Intel Math Kernel Library`_ optimized on Intel processors.
 
 .. attention:: All channels work with any implementation. However, to activate
@@ -193,7 +193,7 @@ the :ref:`sim-sim-stats` option flag. Numbers on those tables were read on the
    :file: implem_comparison_AWGN.csv
 
 The :numref:`comp_implem_awgn` shows that the standard normal distribution
-generator with a Mersenne Twister 19937 is quite fast next to a Box-Muller
+generator with a Mersenne Twister 19937 is quite fast next to a Ziggurat
 algorithm from the GSL. However, the ``FAST`` Box-Muller method implementation
 with also a Mersenne Twister is much faster than the ``MKL``'s Box-Muller on
 short frames but the last takes some distance on longer ones.
