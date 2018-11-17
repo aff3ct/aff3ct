@@ -249,8 +249,8 @@ void Modem_SCMA<B,R,Q,PSI>
 		{
 			for (auto j = 0; j < CB.get_number_of_users(); j++) //user index
 			{
-				msg_user_to_resources(j, CB.get_user_to_resource(j, 0), i) = normalize_prob(j, 1, i);
-				msg_user_to_resources(j, CB.get_user_to_resource(j, 1), i) = normalize_prob(j, 0, i);
+				msg_user_to_resources(j, CB.get_user_to_resource(j, 0), i) = normalize_prob_msg_res_user(j, 1, i);
+				msg_user_to_resources(j, CB.get_user_to_resource(j, 1), i) = normalize_prob_msg_res_user(j, 0, i);
 			}
 		}
 	}
@@ -302,7 +302,7 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Q Modem_SCMA<B,R,Q,PSI>
-::normalize_prob(int user, int resource_ind, int resouce)
+::normalize_prob_msg_res_user(int user, int resource_ind, int resouce)
 {
 	Q sum = 0;
 	Q norm_prob = 0;
