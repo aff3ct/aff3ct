@@ -1,29 +1,30 @@
 Installation
 ============
 
-.. important:: If you do not plan to modify the AFF3CT source code and you want
-               to use the simulator as is, you can **download one of the lastest
-               AFF3CT builds** from the
+.. important:: If you do not plan to modify the |AFF3CT| source code and you
+               want to use the simulator/library as is, you can **download one
+               of the latest builds** from the
                `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_
                and skip this section.
 
-Once AFF3CT has been compiled, it is possible (not mandatory) to install it on
+Once |AFF3CT| has been compiled, it is possible (not mandatory) to install it on
 your system. On Unix-like systems, traditionally, the fresh build is installed
-in the ``/usr/local`` directory. This location can be changed by setting the
-``CMAKE_INSTALL_PREFIX`` built-in variable with an other path. For instance, to
-install AFF3CT in the current build:
+in the ``/usr/local`` directory (this is the CMake default installation path).
+This location can be changed by setting the ``CMAKE_INSTALL_PREFIX`` built-in
+variable with an other path. For instance, to install |AFF3CT| in the current
+build:
 
 .. code-block:: bash
 
    cmake .. -DCMAKE_INSTALL_PREFIX="install"
 
-This command do not install AFF3CT. It only prepares the project to be installed
-in the selected location.
+This command do not install |AFF3CT|. It only prepares the project to be
+installed in the selected location.
 
 Makefile Project
 ----------------
 
-To install AFF3CT, call the `install` target on the current Makefile:
+To install |AFF3CT|, call the `install` target on the current Makefile:
 
 .. code-block:: bash
 
@@ -53,25 +54,25 @@ The installed package is organized as follow:
 
 * ``bin/``
 
-  - ``aff3ct-M.m.p/`` contains the AFF3CT executable binary.
+  - ``aff3ct-M.m.p/`` contains the |AFF3CT| executable binary.
 
 * ``include/``
 
-  - ``aff3ct-M.m.p/`` contains all the includes required by AFF3CT.
+  - ``aff3ct-M.m.p/`` contains all the includes required by |AFF3CT|.
 
 * ``lib/``
 
-  - ``aff3ct-M.m.p/`` contains the AFF3CT library.
+  - ``aff3ct-M.m.p/`` contains the |AFF3CT| library.
   - ``cmake/``
 
-     * ``aff3ct-M.m.p/`` contains the CMake configuration files required to link with AFF3CT.
+     * ``aff3ct-M.m.p/`` contains the CMake configuration files required to link with |AFF3CT|.
 
 * ``share/``
 
   - ``aff3ct-M.m.p``
 
-     * ``conf/`` contains some input files to configure the AFF3CT simulator.
-     * ``refs/`` many results from AFF3CT simulations.
+     * ``conf/`` contains some input files to configure the |AFF3CT| simulator.
+     * ``refs/`` many results from |AFF3CT| simulations.
 
 ``M`` stands for the major number of the version, ``m`` the minor number and
 ``p`` the id of the last patch.

@@ -38,7 +38,7 @@ Enhances the backtrace when displaying exception.
 This change the program addresses into filenames and lines.
 It may take some seconds to do this work.
 
-.. note:: This option works only on Unix based OS and if AFF3CT has been
+.. note:: This option works only on Unix based OS and if |AFF3CT| has been
    :ref:`compiled <compilation_compiler_options>` with debug symbols
    (``-g`` compile flag) and **without** ``NDEBUG`` macro (``-DNDEBUG`` flag).
 

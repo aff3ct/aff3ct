@@ -11,7 +11,7 @@ The Modem is a module with three parts in one:
      a :abbr:`LLR (Log-Likelihood Ratio)`
 
 .. note:: The filtering step is used only by the ``CPM`` Modem as it is the only
-          AFF3CT's modulation using waveforms.
+          |AFF3CT|'s modulation using waveforms.
 
 .. note:: A negative LLR represents a bit at 1, and therefore when positive a
           bit at 0. It is a more convenient choice as the hard decision matches

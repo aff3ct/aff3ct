@@ -1,9 +1,9 @@
 Compilation
 ===========
 
-.. important:: If you do not plan to modify the AFF3CT source code and you want
-               to use the simulator as is, you can **download one of the latest
-               AFF3CT builds** from the
+.. important:: If you do not plan to modify the |AFF3CT| source code and you
+               want to use the simulator/library as is, you can **download one
+               of the latest builds** from the
                `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_
                and skip this section.
 
@@ -12,13 +12,13 @@ Compilation
 This project uses `CMake`_ in order to generate any type of projects (Makefile,
 Visual Studio, Eclipse, CLion, XCode, etc.).
 
-AFF3CT is portable and can be compiled on Windows, macOS and Linux. Of course
+|AFF3CT| is portable and can be compiled on Windows, macOS and Linux. Of course
 it works on traditional x86 architectures like Intel and AMD CPUs but it also
 works on embedded architectures like ARM CPUs.
 
-AFF3CT supports many C++11 compliant compilers, until now the following
+|AFF3CT| supports many C++11 compliant compilers, until now the following
 compilers have been tested: GNU (``g++``), Clang (``clang++``), Intel (``icpc``)
-and Microsoft (``MSVC``). In this section, a focus is given to compile AFF3CT
+and Microsoft (``MSVC``). In this section, a focus is given to compile |AFF3CT|
 with:
 
    #. the GNU compiler on Windows and Linux (Makefile project),
@@ -35,7 +35,7 @@ Windows/macOS
 and launch the installer. Just press the `Next` button until the
 installation is over.
 
-.. important:: On Windows, if you plan to build AFF3CT from the Visual Studio
+.. important:: On Windows, if you plan to build |AFF3CT| from the Visual Studio
                IDE you can skip the CMake installation and directly go to the
                :ref:`Compilation with Visual Studio <compilation-visual_studio_project>`
                section.
@@ -46,7 +46,7 @@ installation is over.
 .. warning:: It is recommended to add CMake to your system *PATH* during the
              installation.
 
-.. danger:: AFF3CT needs at least the version **3.0.2**.
+.. danger:: The CMake minimal version requirement is **3.0.2**.
 
 .. image:: images/cmake_path.png
    :align: center
@@ -101,7 +101,7 @@ Install the C++ GNU compiler from the package manager:
 Compilation with a Makefile Project
 -----------------------------------
 
-Go into the directory where you cloned AFF3CT, this directory will be refereed
+Go into the directory where you cloned |AFF3CT|, this directory will be refereed
 as ``$AFF3CT_ROOT``.
 
 Windows
@@ -121,13 +121,13 @@ Generate the Makefile from CMake:
 
    cmake .. -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_CC_COMPILER=gcc.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
-Build AFF3CT with the Makefile:
+Build |AFF3CT| with the Makefile:
 
 .. code-block:: bash
 
    mingw32-make -j4
 
-Once finished, the AFF3CT executable should be located in the
+Once finished, the |AFF3CT| executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
 
 .. danger:: Run the previous commands on **Git Bash** (Start Menu > Git >
@@ -150,13 +150,13 @@ Generate the Makefile from CMake:
    cd build
    cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CC_COMPILER=clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
-Build AFF3CT with the Makefile:
+Build |AFF3CT| with the Makefile:
 
 .. code-block:: bash
 
    make -j4
 
-Once finished, the AFF3CT executable should be located in the
+Once finished, the |AFF3CT| executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
 
 Linux
@@ -170,13 +170,13 @@ Generate the Makefile from CMake:
    cd build
    cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CC_COMPILER=gcc -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
-Build AFF3CT with the Makefile:
+Build |AFF3CT| with the Makefile:
 
 .. code-block:: bash
 
    make -j4
 
-Once finished, the AFF3CT executable should be located in the
+Once finished, the |AFF3CT| executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
 
 .. _compilation-visual_studio_project:
@@ -184,8 +184,8 @@ Once finished, the AFF3CT executable should be located in the
 Compilation with a Visual Studio 2017 Solution
 ----------------------------------------------
 
-Since Microsoft Visual Studio 2017, Visual natively supports CMake.
-To generate the AFF3CT solution, open the ``$AFF3CT_ROOT`` folder from the IDE.
+Since Microsoft Visual Studio 2017, Visual natively supports CMake. To generate
+the |AFF3CT| solution, open the ``$AFF3CT_ROOT`` folder from the IDE.
 
 .. image:: images/vs17_cmake.png
    :align: center
@@ -196,7 +196,7 @@ start the compilation.
 .. image:: images/vs17_compile.png
    :align: center
 
-Once AFF3CT is compiled you can browse the build by right clicking on
+Once |AFF3CT| is compiled you can browse the build by right clicking on
 ``CMakeList.txt`` > ``Cache`` > ``Open Cache Folder``.
 
 .. image:: images/vs17_cache_folder.png
@@ -211,9 +211,9 @@ Once AFF3CT is compiled you can browse the build by right clicking on
           developers.
 
 .. warning:: The Visual Studio default compiler (MSVC) is known to generate
-             significantly slower AFF3CT executable than the GNU compiler. **If
-             you target an high speed executable it is recommended to use the
-             GNU compiler.**
+             significantly slower |AFF3CT| executable than the GNU compiler.
+             **If you target an high speed executable it is recommended to use
+             the GNU compiler.**
 
 The compilation can also be started from the command line after calling the
 ``%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat`` batch script (where ``%VS_PATH%``
@@ -228,8 +228,8 @@ is the location of Visual Studio on your system):
 CMake Options
 -------------
 
-CMake allows to define project specific options. AFF3CT takes advantage of this
-feature and provides the following options:
+CMake allows to define project specific options. |AFF3CT| takes advantage of
+this feature and provides the following options:
 
 +-------------------------------+---------+---------+---------------------------------+
 | Option                        | Type    | Default | Description                     |
@@ -310,12 +310,7 @@ variable can get. For instance, to compile in release mode:
           compiler, if ``CMAKE_BUILD_TYPE`` is set to ``Release``, the code will
           be compiled with the ``-O3`` flag.
 
-.. important:: We have noticed numerical stability issues when compiling with
-          ``-Ofast`` flag. So the ``-O3`` flag is recommend to compile with the
-          best optimizations.
-
-
-.. note:: If you need to develop in AFF3CT it is recommended to compile
+.. note:: If you need to develop in |AFF3CT| it is recommended to compile
           in the ``Debug`` mode (or eventually ``RelWithDebInfo`` mode) during
           the development process to add the debug symbols in the binary files.
           It will certainly ease the debug process but be careful, the execution
@@ -336,7 +331,7 @@ CMake has a built-in variable you can set to specify the compiler options:
 
    cmake .. -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
-Many parts of the AFF3CT code use the |SIMD| parallelism and this type of
+Many parts of the |AFF3CT| code use the |SIMD| parallelism and this type of
 instructions often requires additional compiler options to be enabled:
 
 +-------------------+-------------------+
@@ -374,8 +369,15 @@ instructions often requires additional compiler options to be enabled:
 .. |comp-opt-native| replace:: Let the compiler choose the best set of
    instructions available on the current architecture (it does not work for
    ARMv7 architectures since the NEON instruction set is not IEEE 754
-   compatible).
+   compliant).
 
 .. warning:: Previous options are only valid for the GNU and the Clang compilers
              but it exists similar options for the other compilers like
              the Microsoft compiler (MSVC) or the Intel compiler (icpc).
+
+.. danger:: Some |AFF3CT| routines require the floating-point operations to be
+            IEEE-compliant: numerical instabilities has been reported when
+            compiling with the ``--ffast-math`` flag. Be aware that the
+            ``-Ofast`` option is the combination of ``-O3`` and
+            ``--ffast-math``. **We recommend to avoid the** ``--ffast-math``
+            **option unless you know what you are doing.**

@@ -234,9 +234,9 @@ rst_epilog = """
 
 
 .. |SIMD| replace:: :abbr:`SIMD (Single Instruction Multiple Data)`
-
 .. |BFER| replace:: :abbr:`BFER (Bit and Frame Error Rate)`
 .. |SNR| replace:: :abbr:`SNR (Signal Noise Ratio)`
+.. |AFF3CT| replace:: :abbr:`AFF3CT (A Fast Forward Error Correction Toolbox!)`
 
 """
 
