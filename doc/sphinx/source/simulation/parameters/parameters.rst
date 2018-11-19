@@ -3,7 +3,7 @@
 Parameters
 ^^^^^^^^^^
 
-AFF3CT contains many arguments classified in three categories:
+|AFF3CT| contains many arguments classified in three categories:
 
 :Required: identified by the |image_required_argument| image, they are
    needed to launch a simulation.

@@ -8,9 +8,9 @@ from the monitor in real time.
 
 .. hint:: The intermediate results are dumped on the **error output** of the
    program when the final display is made on the **standard output**.
-   So when launching AFF3CT you can redirect the last one to a file to save
+   So when launching |AFF3CT| you can redirect the last one to a file to save
    results and still seeing the intermediate reports on your terminal.
-   See :ref:`simulation_overview` for more details about how to launch AFF3CT.
+   See :ref:`simulation_overview` for more details about how to launch |AFF3CT|.
 
 .. note:: Intermediate results of a same noise point are always displayed on the
    same line. They finish with a carrier return **\\r** character.

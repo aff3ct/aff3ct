@@ -20,7 +20,8 @@ error-correcting codes.
    :Default: ``AWGN``
    :Examples: ``--chn-type AWGN``
 
-Type of the channel to use in the simulation ('USER' has an output got from a file when 'USER_ADD' has an additive noise got from a file).
+Type of the channel to use in the simulation ('USER' has an output got from a
+file when 'USER_ADD' has an additive noise got from a file).
 
 Description of the allowed values:
 
@@ -180,7 +181,7 @@ Numbers on :numref:`comp_implem_awgn`, :numref:`comp_implem_bec` and
 the different implementations in function of the frame size. The conditions of
 the experiment were an ``UNCODED`` simulation on 8 threads during 10 seconds per
 measurement on an *Intel(R) Xeon(R) CPU E3-1270 v5 @ 3.60GHz*.
-To measure throughput AFF3CT uses an internal tool that can be activated with
+To measure throughput |AFF3CT| uses an internal tool that can be activated with
 the :ref:`sim-sim-stats` option flag. Numbers on those tables were read on the
 *Average* column of the *add_noise* task of the *Channel* module.
 

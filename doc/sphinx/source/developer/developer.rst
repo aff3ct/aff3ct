@@ -4,8 +4,8 @@
 Developer
 *********
 
-This section details the source code and has been automatically generated from
-Doxygen.
+This section details the |AFF3CT| source code and it is currently under
+construction.
 
 .. toctree::
    :caption: Contents

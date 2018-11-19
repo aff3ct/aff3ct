@@ -373,7 +373,7 @@ decimal part) of real elements.
 
 Disables the colors in the shell.
 
-.. note:: AFF3CT uses the `rang <https://github.com/agauniyal/rang>`_ library
+.. note:: |AFF3CT| uses the `rang <https://github.com/agauniyal/rang>`_ library
    that is portable on every OS as it only depends on C++ standard library.
    Furthermore, rang doesn't interfere when redirecting cout/cerr/clog to
    somewhere else and leaves the decision to the library user.
