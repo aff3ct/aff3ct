@@ -32,21 +32,23 @@ Description of the allowed values:
 | ``EXIT``  | |sim-type_descr_exit|  |
 +-----------+------------------------+
 
-.. |sim-type_descr_bfer|  replace:: The standard |BFER| chain (:numref:`image_bfer`)
-.. |sim-type_descr_bferi| replace:: The iterative |BFER| chain (:numref:`image_bferi`)
+.. |sim-type_descr_bfer|  replace:: The standard |BFER| chain (:numref:`fig_bfer`)
+.. |sim-type_descr_bferi| replace:: The iterative |BFER| chain (:numref:`fig_bferi`)
 .. |sim-type_descr_exit|  replace:: The EXIT simulation chain
 
-.. _image_bfer:
+.. _fig_bfer:
 
 .. figure:: images/bfer.png
-   :align: left
+   :figwidth: 90 %
+   :align: center
 
    The standard |BFER| chain.
 
-.. _image_bferi:
+.. _fig_bferi:
 
 .. figure:: images/bferi.png
-   :align: left
+   :figwidth: 90 %
+   :align: center
 
    The iterative |BFER| chain.
 

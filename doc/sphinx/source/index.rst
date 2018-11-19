@@ -7,7 +7,7 @@ AFF3CT Documentation
 .. _BFER: https://en.wikipedia.org/wiki/Bit_error_rate
 .. _EXIT chart: https://en.wikipedia.org/wiki/EXIT_chart
 
-|AFF3CT| (A Fast Forward Error Correction Toolbox!) is a library dedicated
+|AFF3CT| (A Fast Forward Error Correction Toolbox!) is a toolbox dedicated
 to the `Forward Error Correction`_ (FEC or channel coding). It is written in
 **C++11** and it supports a large range of codes: from the well-spread
 **Turbo codes** to the new **Polar codes** including the

@@ -213,10 +213,6 @@ epub_exclude_files = ['search.html']
 
 rst_epilog = """
 
-.. |version| replace:: """ + version + """
-
-.. |release| replace:: """ + release + """
-
 .. |logo_ims| image:: https://www.ims-bordeaux.fr/images/logoimsjoom.png
     :alt: logo-ims-bordeaux
     :width: 60px
@@ -233,10 +229,16 @@ rst_epilog = """
                              :height: 25px
 
 
-.. |SIMD| replace:: :abbr:`SIMD (Single Instruction Multiple Data)`
-.. |BFER| replace:: :abbr:`BFER (Bit and Frame Error Rate)`
-.. |SNR| replace:: :abbr:`SNR (Signal Noise Ratio)`
-.. |AFF3CT| replace:: :abbr:`AFF3CT (A Fast Forward Error Correction Toolbox!)`
+.. |version| replace:: """ + version + """
+.. |release| replace:: """ + release + """
+.. |SIMD|    replace:: :abbr:`SIMD (Single Instruction Multiple Data)`
+.. |BER|     replace:: :abbr:`BER (Bit Error Rate)`
+.. |FER|     replace:: :abbr:`FER (Frame Error Rate)`
+.. |BFER|    replace:: :abbr:`BER/FER (Bit and Frame Error Rate)`
+.. |SNR|     replace:: :abbr:`SNR (Signal Noise Ratio)`
+.. |AFF3CT|  replace:: :abbr:`AFF3CT (A Fast Forward Error Correction Toolbox!)`
+.. |PyBER|   replace:: PyBER
+.. |GUI|     replace:: :abbr:`GUI (Graphical User Interface)`
 
 """
 
