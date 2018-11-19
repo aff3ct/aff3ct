@@ -112,12 +112,15 @@ Description of the allowed values:
 .. |sim-cde-type_descr_rsc|        replace:: The `Recursive Systematic Convolutional`_ code
 .. |sim-cde-type_descr_rsc_db|     replace:: The `Recursive Systematic Convolutional`_ code with Double Binary symbols
 .. |sim-cde-type_descr_turbo|      replace:: The `Turbo`_ codes
-.. |sim-cde-type_descr_turbo_db|   replace:: The `Turbo`_ codes Double Binary symbols
+.. |sim-cde-type_descr_turbo_db|   replace:: The `Turbo`_ codes with Double Binary symbols
 .. |sim-cde-type_descr_turbo_prod| replace:: The `Turbo Product`_ code
 .. |sim-cde-type_descr_uncoded|    replace:: An uncoded simulation
 
 .. note:: Only ``POLAR``, ``RSC``, ``RSC_DB``, ``LDPC`` and ``UNCODED`` codes
    are available in ``BFERI`` simulation type.
+
+.. note:: Only ``POLAR`` and ``RSC`` codes are available in ``EXIT``
+   simulation type.
 
 
 .. _sim-sim-prec:
@@ -130,7 +133,10 @@ Description of the allowed values:
    :Allowed values: ``8`` ``16`` ``32`` ``64``
    :Examples: ``--sim-prec 8``
 
-Sets the simulation precision in bits.
+Sets the simulation precision in bits. The ``8`` and ``16`` precision activate
+the :ref:`Quantizer <qnt-quantizer-parameters>` module in the chains for fixed
+point decoding.
+
 
 Description of the allowed values:
 
@@ -151,9 +157,6 @@ Description of the allowed values:
 .. |sim-prec_descr_32| replace:: Precision on *32* bits
 .. |sim-prec_descr_64| replace:: Precision on *64* bits
 
-The ``8`` and ``16`` precision activate the
-:ref:`Quantizer <qnt-quantizer-parameters>` module in the chains for fixed
-point decoding.
 
 .. note:: The ``EXIT`` simulation chain is not available with fixed point
    precision.
@@ -169,6 +172,23 @@ point decoding.
    :Examples: ``-E EBN0``
 
 Selects the type of **noise** used to simulate.
+
+``ESN0`` is automatically calculated from ``EBN0`` and vice-versa with
+the following equation:
+
+.. centered::
+   :math:`\frac{E_S}{N_0} = \frac{E_B}{N_0} + 10.\log(R.bps)`
+
+where :math:`R` is the bit rate and :math:`bps` the number of bits per symbol.
+
+Actually, with those noise types, only the noise variance :math:`\sigma` is
+given to the different modules, including the channel:
+
+.. centered::
+   :math:`\sigma = \sqrt{\frac{ups}{2 \times 10^{\frac{E_S}{N_0} / 10}}}`
+
+where :math:`ups` is the up-sampling factor.
+
 
 Description of the allowed values:
 
@@ -189,10 +209,8 @@ Description of the allowed values:
 .. |sim-noise-type_descr_ep|   replace:: Event Probability
 .. |sim-noise-type_descr_rop|  replace:: Received Optical Power
 
-.. note:: ``ESN0`` is automatically calculated from ``EBN0`` and vice-versa.
-
 .. note:: When selecting ``EP`` the simulator runs in reverse order, ie. from
-   the greatest probability to the smallest one.
+   the greatest event probability to the smallest one.
 
 .. hint:: When selecting a ``BEC`` or ``BSC`` channel the ``EP`` noise type is
    automatically set except if you give another one. This is the same for the
@@ -209,9 +227,9 @@ Description of the allowed values:
 
 Gives the minimal noise energy point to simulate.
 
-.. attention:: This argument is another way to set the noise. It is ignored or
-   not required if :ref:`sim-sim-noise-range` is given, so you may find other
-   piece of information in its description.
+.. attention:: This argument is another way to set the noise range to simulate.
+   It is ignored or not required if the argument :ref:`sim-sim-noise-range` is given,
+   so you may find other piece of information in its description.
 
 
 .. _sim-sim-noise-max:
@@ -224,9 +242,9 @@ Gives the minimal noise energy point to simulate.
 
 Gives the maximal noise energy to simulate.
 
-.. attention:: This argument is another way to set the noise. It is ignored or
-   not required if :ref:`sim-sim-noise-range` is given, so you may find other
-   piece of information in its description.
+.. attention:: This argument is another way to set the noise range to simulate.
+   It is ignored or not required if the argument :ref:`sim-sim-noise-range` is given,
+   so you may find other piece of information in its description.
 
 .. _sim-sim-noise-step:
 
@@ -239,9 +257,9 @@ Gives the maximal noise energy to simulate.
 
 Gives the noise energy step between each simulation iteration.
 
-.. attention:: This argument is another way to set the noise. It is ignored or
-   not required if :ref:`sim-sim-noise-range` is given, so you may find other
-   piece of information in its description.
+.. attention:: This argument is another way to set the noise range to simulate.
+   It is ignored or not required if the argument :ref:`sim-sim-noise-range` is given,
+   so you may find other piece of information in its description.
 
 .. _sim-sim-noise-range:
 
@@ -253,12 +271,12 @@ Gives the noise energy step between each simulation iteration.
    :Examples: ``-R "0.5:1,1:0.05:1.2,1.21"``
 
 Set the noise energy range to run in a Matlab style vector.
-The given example will run the following noise points::
+The above example will run the following noise points::
 
    0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.05, 1.1, 1.15, 1.2, 1.21
 
-.. attention:: The numerical limit for a noise point is a maximum of about
-   :math:`\pm 214` with a precision :math:`10^{-7}`.
+.. attention:: The numerical range for a noise point is
+   :math:`\left[-214.748; 213.952 \right]` with a precision of :math:`10^{-7}`.
 
 .. note:: If given, :ref:`sim-sim-noise-min`, :ref:`sim-sim-noise-max`, and
    :ref:`sim-sim-noise-step` are ignored. But it is not required anymore if
@@ -292,7 +310,7 @@ by :ref:`sim-sim-noise-min` and :ref:`sim-sim-noise-max` with a minimum step of
 
 Prints the output with meta-data readable by :ref:`pyber_overview`.
 The given text is considered as the simulation title.
-Automatically printed meta-data are the *command* and the *title*.
+The just run *command* and the *title* meta-data are automatically printed.
 
 .. _sim-sim-coded:
 
@@ -394,8 +412,13 @@ random generators of all modules.
 .. note:: When using **MPI**, each node has its own seed generated from this
    initial value to guarantee the generation of different values between the
    different computers.
-
 .. TODO : add link to MPI use
+
+.. note:: |AFF3CT| uses pseudo-random generators in order to be able to replay
+   the same results from a run to another. It is helpful to debug source code.
+   However, when simulating in multi-thread, computer load is not controllable
+   and so results may differ as threads do not necessary run at the same speed.
+
 
 .. _sim-sim-stats:
 
@@ -516,7 +539,7 @@ Automatically replays the saved frames while running with :ref:`sim-sim-err-trk`
 
 Base path for the files where the bad frames will be stored or read.
 To this base path is added the noise point value and the matching module
-extension. With the above example, you may get files like that:
+extension. With the above example, you may get files such as:
 
    * :file:`errors/err_0.64.src`
    * :file:`errors/err_0.64.enc`
@@ -525,8 +548,9 @@ extension. With the above example, you may get files like that:
 .. note:: For |SNR| noise type, the value used to define the filename is the
    noise variance.
 
-.. attention:: Intermediate folders are not automatically created but only the
-   files. So be careful to create them before running long simulations!
+.. danger:: Intermediate folders are not automatically created but only the
+   files. You won't get any warning message, so be careful to create them before
+   running long simulations!
 
 .. _sim-sim-err-trk-thold:
 
@@ -551,8 +575,8 @@ Strictly no legend will be displayed when launching the simulation.
 
    Use this option when you want to complete an already existing
    simulation result file with new noise points. Pay attention to use ``>>``
-   to redirect the standard output instead of ``>`` to add results at the end of
-   the file and to not overwrite it.
+   instead of ``>`` to redirect the standard output in order to add results at
+   the end of the file and not overwriting it.
 
 .. _sim-sim-mpi-comm:
 
@@ -565,8 +589,10 @@ Strictly no legend will be displayed when launching the simulation.
 
 Sets the ``MPI`` communication frequency between the nodes in *[ms]*.
 This corresponds to the frequency with which nodes will gather their results.
-This operation may take a little time so a a too fast frequency may be
+This operation takes some computation resources so a too fast frequency may be
 sub-productive.
 
 .. note:: Available only when compiling with the MPI support
    :ref:`compilation_cmake_options`.
+
+.. TODO : add link to MPI use
