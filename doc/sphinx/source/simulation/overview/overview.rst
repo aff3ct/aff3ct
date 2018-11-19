@@ -43,7 +43,7 @@ illustrates those parameters in a simplified communication chain.
    :figwidth: 70 %
    :align: center
 
-   |SNR|-related parameters in the communication chain.
+   Code-related parameters in the communication chain.
 
 The simulator computes the |BER| and the |FER| for a |SNR| range (by default the
 |SNR| is :math:`E_b/N_0` in dB). ``-m`` is the first |SNR| value to simulate
@@ -58,7 +58,7 @@ between each |SNR| (c.f. section :ref:`sim-sim-noise-step`). The
    :figwidth: 60 %
    :align: center
 
-   Noise-related parameters in the communication chain.
+   |SNR|-related parameters in the communication chain.
 
 Surviving the Help
 """"""""""""""""""
