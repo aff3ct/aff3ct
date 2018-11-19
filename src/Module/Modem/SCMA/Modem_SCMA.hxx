@@ -350,7 +350,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	std::copy(Y_N1, Y_N1 + this->N_fil + this->n_frames, Y_N2);
+	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
 }
 }
 }
