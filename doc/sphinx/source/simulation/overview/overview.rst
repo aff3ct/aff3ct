@@ -4,38 +4,38 @@
 Overview
 --------
 
-.. * describe the BER/FER simulator chains, and EXIT chart (add figures)
-.. * detail the command line arguments philosophy:
-
-..    - give a simple example and explain the main arguments (-C -N -K -m -M)
-..    - explain the sub-arguments
-..    - explain the redundant arguments (--type --implem --help --Help)
-
-.. * tell that it is possible to use an `ini` file
-
 The |AFF3CT| toolbox comes with a simulator dedicated to the **communication
 chains**. The simulator focuses on **the channel coding level**. It can be used
 to reproduce/validate **state-of-the-art BER/FER performances** as well as an
 **exploration tool to bench various configurations**.
+
+.. _Monte Carlo method: https://en.wikipedia.org/wiki/Monte_Carlo_method
+
+The |AFF3CT| simulator is based on a `Monte Carlo method`_: the transmitter
+emits frames that are **randomly noised by the channel** and then the receiver
+try to decode the noised frames. The transmitter continue to emit frames until
+a fixed number of frame errors in achieved (typically 100 frame errors).
+A frame error occurs when the original frame from the transmitter differs from
+the the receiver decoded frame. As a consequence, when the |SNR| decreases,
+the number of frames to simulate increases as well as the simulation time.
 
 Basic Arguments
 """""""""""""""
 
 The |AFF3CT| simulator is a **command line program** which can take many
 different arguments. The command line interface make possible to write scripts
-that run a battery of simulations for instance.
-
-Here is a minimalist command line using |AFF3CT|:
+that run a battery of simulations for instance. Here is a minimalist command
+line using |AFF3CT|:
 
 .. code-block:: bash
 
    aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0
 
 ``-C`` is a required parameter that defines the type of channel code that will
-be used in the communication chain (see the :ref:`sim-sim-cde-type` section for
-more information). ``-K`` is the number of information bits and ``-N`` is the
-frame size (bits transmitted over the channel). The :numref:`fig_sim_code`
-illustrates those parameters in a simplified communication chain.
+be used in the communication chain (see the :ref:`sim-sim-cde-type` section).
+``-K`` is the number of information bits and ``-N`` is the frame size (bits
+transmitted over the channel). The :numref:`fig_sim_code` illustrates those
+parameters in a simplified communication chain.
 
 .. _fig_sim_code:
 
@@ -60,44 +60,58 @@ between each |SNR| (c.f. section :ref:`sim-sim-noise-step`). The
 
    |SNR|-related parameters in the communication chain.
 
-Surviving the Help
-""""""""""""""""""
+Output
+""""""
 
-|AFF3CT| proposes a very complete help option with the ``-h`` flag:
-
-.. code-block:: bash
-
-   aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0 -h
-
-.. _fig_arg_simulation:
-
-.. figure:: images/arg_simulation.png
-   :align: center
-
-   Simulation parameters.
-
-.. _fig_arg_encoder:
-
-.. figure:: images/arg_encoder.png
-   :align: center
-
-   Encoder parameters.
-
-:numref:`fig_arg_simulation` and :numref:`fig_arg_encoder` present samples of
-the help output. The ``{R}`` tag denotes required argument for a given code and
-simulation. Using the uppercase (``-H``) argument, advanced arguments are shown,
-denoted with a ``{A}`` tag (c.f. :numref:`fig_arg_advanced`):
+The output of the command
+(``aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0``) will look like:
 
 .. code-block:: bash
 
-   aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0 -H
+	# ----------------------------------------------------
+	# ---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----
+	# ----------------------------------------------------
+	# Parameters :
+	# [...]
+	#
+	# The simulation is running...
+	# ---------------------||------------------------------------------------------||---------------------
+	#  Signal Noise Ratio  ||   Bit Error Rate (BER) and Frame Error Rate (FER)    ||  Global throughput
+	#         (SNR)        ||                                                      ||  and elapsed time
+	# ---------------------||------------------------------------------------------||---------------------
+	# ----------|----------||----------|----------|----------|----------|----------||----------|----------
+	#     Es/N0 |    Eb/N0 ||      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT
+	#      (dB) |     (dB) ||          |          |          |          |          ||   (Mb/s) | (hhmmss)
+	# ----------|----------||----------|----------|----------|----------|----------||----------|----------
+	       0.25 |     1.00 ||      104 |    16425 |      104 | 9.17e-02 | 1.00e+00 ||    4.995 | 00h00'00
+	       1.25 |     2.00 ||      104 |    12285 |      104 | 6.86e-02 | 1.00e+00 ||   13.678 | 00h00'00
+	       2.25 |     3.00 ||      147 |     5600 |      102 | 2.21e-02 | 6.94e-01 ||   14.301 | 00h00'00
+	       3.25 |     4.00 ||     5055 |     2769 |      100 | 3.18e-04 | 1.98e-02 ||   30.382 | 00h00'00
+	# End of the simulation.
 
-.. _fig_arg_advanced:
+All the line beginning by the ``#`` character are intended present the
+simulation but there are not computational results. On the top, there is the
+list of the simulation parameters (above the ``# Parameters :`` line). After
+that, the simulation results are shown, each line corresponds to the decoding
+performance considering a given |SNR|. Each line is composed by the following
+columns:
 
-.. figure:: images/arg_advanced.png
-   :align: center
+* ``Es/N0``: the |SNR| expressed as :math:`E_s/N_0` in dB (c.f. the :ref:`sim-sim-noise-type` section),
+* ``Eb/N0``: the |SNR| expressed as :math:`E_b/N_0` in dB (c.f. the :ref:`sim-sim-noise-type` section),
+* ``FRA``: the number of simulated frames,
+* ``BE``: the number of bit errors,
+* ``FE``: the number of frame errors (see the :ref:`mnt-mnt-max-fe` section if you want to modify it),
+* ``BER``: the bit error rate (:math:`BER = \frac{BE}{FRA \times K}`),
+* ``FER``: the frame error rate (:math:`FER = \frac{FE}{FRA}`),
+* ``SIM_THR``: the simulation throughput (:math:`SIM_{THR} = \frac{K \times FRA}{T}` where :math:`T` is the simulation time),
+* ``ET/RT``: during the computation of the point, this column displays an estimation of the remaining time (``RT``), once the computations are done this is the total elapsed time (``ET``).
 
-   Advanced simulation parameter.
+.. note:: You may notice slightly different values in |BER| and |FER| columns if
+          you run the command line on your computer. This is because the
+          simulation is **multi-threaded by default**: the order of threads
+          execution is **not predictable**. If you want to have reproducible
+          results you can launch |AFF3CT| in **mono-threaded mode** (see the
+          :ref:`sim-sim-threads` section).
 
 Philosophy
 """"""""""
@@ -117,7 +131,7 @@ runtime.
    :figwidth: 90 %
    :align: center
 
-   Modules and tasks of the communication chain.
+   Modules and tasks of in the simulation.
 
 
 Each module or task has its own set of arguments. Still, some of the
