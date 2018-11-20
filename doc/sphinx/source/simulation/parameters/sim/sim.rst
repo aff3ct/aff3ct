@@ -3,9 +3,10 @@
 Simulation parameters
 ---------------------
 
-The simulation parameters allow the selection of the code to simulate on a
-selected chain, as well as the noise range to run.
-They give also access to powerful tools to debug the simulated modules.
+The simulation parameters allow to customize the communication chain from an
+high level point of view. Various communication chain skeletons are available
+and can be selected as well as the channel code family to simulate, it is also
+possible to enable debug and benchmarking tools.
 
 .. _sim-sim-type:
 
@@ -17,8 +18,7 @@ They give also access to powerful tools to debug the simulated modules.
    :Default: ``BFER``
    :Examples: ``--sim-type BFERI``
 
-Selects the type of simulation to launch. This will personalize the available
-arguments in function of the chosen chain.
+Selects the type of simulation (or communication chain skeleton).
 
 Description of the allowed values:
 
@@ -32,9 +32,9 @@ Description of the allowed values:
 | ``EXIT``  | |sim-type_descr_exit|  |
 +-----------+------------------------+
 
-.. |sim-type_descr_bfer|  replace:: The standard |BFER| chain (:numref:`fig_bfer`)
-.. |sim-type_descr_bferi| replace:: The iterative |BFER| chain (:numref:`fig_bferi`)
-.. |sim-type_descr_exit|  replace:: The EXIT simulation chain
+.. |sim-type_descr_bfer|  replace:: The standard |BFER| chain (:numref:`fig_bfer`).
+.. |sim-type_descr_bferi| replace:: The iterative |BFER| chain (:numref:`fig_bferi`).
+.. |sim-type_descr_exit|  replace:: The EXIT chart simulation chain (not documented at this time).
 
 .. _fig_bfer:
 
@@ -62,8 +62,7 @@ Description of the allowed values:
                     ``RSC_DB`` ``TURBO`` ``TURBO_DB`` ``TURBO_PROD`` ``UNCODED``
    :Examples: ``-C BCH``
 
-Select the code type you want to use. This will personalize the available
-arguments in function of the chosen code.
+Select the code type you want to simulate.
 
 Description of the allowed values:
 
@@ -105,25 +104,21 @@ Description of the allowed values:
 .. _Turbo: https://en.wikipedia.org/wiki/Turbo_code
 .. _Turbo Product: http://www.ieee802.org/16/tutorial/80216t-00_01.pdf
 
-.. |sim-cde-type_descr_bch|        replace:: The `Bose–Chaudhuri–Hocquenghem`_ code
-.. |sim-cde-type_descr_ldpc|       replace:: The `Low-density parity-check`_ codes
-.. |sim-cde-type_descr_polar|      replace:: The `Polar`_ code
-.. |sim-cde-type_descr_ra|         replace:: The `Repeat accumulate`_ code
-.. |sim-cde-type_descr_rep|        replace:: The `Repetition`_ code
-.. |sim-cde-type_descr_rs|         replace:: The `Reed–Solomon`_ code
-.. |sim-cde-type_descr_rsc|        replace:: The `Recursive Systematic Convolutional`_ code
-.. |sim-cde-type_descr_rsc_db|     replace:: The `Recursive Systematic Convolutional`_ code with Double Binary symbols
-.. |sim-cde-type_descr_turbo|      replace:: The `Turbo`_ codes
-.. |sim-cde-type_descr_turbo_db|   replace:: The `Turbo`_ codes with Double Binary symbols
-.. |sim-cde-type_descr_turbo_prod| replace:: The `Turbo Product`_ code
-.. |sim-cde-type_descr_uncoded|    replace:: An uncoded simulation
+.. |sim-cde-type_descr_bch|        replace:: The `Bose–Chaudhuri–Hocquenghem`_ code.
+.. |sim-cde-type_descr_ldpc|       replace:: The `Low-density parity-check`_ codes.
+.. |sim-cde-type_descr_polar|      replace:: The `Polar`_ code.
+.. |sim-cde-type_descr_ra|         replace:: The `Repeat accumulate`_ code.
+.. |sim-cde-type_descr_rep|        replace:: The `Repetition`_ code.
+.. |sim-cde-type_descr_rs|         replace:: The `Reed–Solomon`_ code.
+.. |sim-cde-type_descr_rsc|        replace:: The `Recursive Systematic Convolutional`_ code.
+.. |sim-cde-type_descr_rsc_db|     replace:: The `Recursive Systematic Convolutional`_ code with Double Binary symbols.
+.. |sim-cde-type_descr_turbo|      replace:: The `Turbo`_ codes.
+.. |sim-cde-type_descr_turbo_db|   replace:: The `Turbo`_ codes with Double Binary symbols.
+.. |sim-cde-type_descr_turbo_prod| replace:: The `Turbo Product`_ code.
+.. |sim-cde-type_descr_uncoded|    replace:: An uncoded simulation.
 
 .. note:: Only ``POLAR``, ``RSC``, ``RSC_DB``, ``LDPC`` and ``UNCODED`` codes
    are available in ``BFERI`` simulation type.
-
-.. note:: Only ``POLAR`` and ``RSC`` codes are available in ``EXIT``
-   simulation type.
-
 
 .. _sim-sim-prec:
 
@@ -135,10 +130,10 @@ Description of the allowed values:
    :Allowed values: ``8`` ``16`` ``32`` ``64``
    :Examples: ``--sim-prec 8``
 
-Sets the simulation precision in bits. The ``8`` and ``16`` precision activate
-the :ref:`Quantizer <qnt-quantizer-parameters>` module in the chains for fixed
-point decoding.
-
+Specify the representation of the real numbers. 64-bit and 32-bit precisions
+imply a floating-point representation of the real numbers. 16-bit and 8-bit
+imply a fixed-point representation of the real numbers (see the
+:ref:`qnt-quantizer-parameters` to configure the quantization).
 
 Description of the allowed values:
 
@@ -154,10 +149,10 @@ Description of the allowed values:
 | ``64`` | |sim-prec_descr_64| |
 +--------+---------------------+
 
-.. |sim-prec_descr_8|  replace:: Precision on *8* bits
-.. |sim-prec_descr_16| replace:: Precision on *16* bits
-.. |sim-prec_descr_32| replace:: Precision on *32* bits
-.. |sim-prec_descr_64| replace:: Precision on *64* bits
+.. |sim-prec_descr_8|  replace:: 8-bit precision.
+.. |sim-prec_descr_16| replace:: 16-bit precision.
+.. |sim-prec_descr_32| replace:: 32-bit precision.
+.. |sim-prec_descr_64| replace:: 64-bit precision.
 
 
 .. note:: The ``EXIT`` simulation chain is not available with fixed point
