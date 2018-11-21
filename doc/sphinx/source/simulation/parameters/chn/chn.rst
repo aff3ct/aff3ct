@@ -20,8 +20,8 @@ error-correcting codes.
    :Default: ``AWGN``
    :Examples: ``--chn-type AWGN``
 
-Type of the channel to use in the simulation ('USER' has an output got from a
-file when 'USER_ADD' has an additive noise got from a file).
+Set the type of the channel to use in the simulation ('USER' has an output got
+from a file when 'USER_ADD' has an additive noise got from a file).
 
 Description of the allowed values:
 
@@ -58,71 +58,80 @@ Description of the allowed values:
 
 
 .. |chn-type_descr_awgn|          replace:: The `Additive White Gaussian Noise`_
-   channel: :math:`Y = X + Z \text{ with } Z \sim \mathcal{N}(0,\sigma)`
+   channel: :math:`Y = X + Z \text{ with } Z \sim \mathcal{N}(0,\sigma^2)`.
 
 .. |chn-type_descr_bec|           replace:: The `Binary Erasure Channel`_
    :math:`Y_i = \begin{cases}
    erased & \quad \text{if } e = 1 \\
    X_i    & \quad \text{else}
-   \end{cases} \text{with } P(e = 1) = p_e`
+   \end{cases} \text{with } P(e = 1) = p_e \text{ and } P(e = 0) = 1 - p_e`.
 
 .. |chn-type_descr_bsc|           replace:: The `Binary Symmetric Channel`_
    :math:`Y_i = \begin{cases}
    !X_i & \quad \text{if } e = 1 \\
    X_i    & \quad \text{else}
-   \end{cases} \text{with } P(e = 1) = p_e`
+   \end{cases} \text{with } P(e = 1) = p_e \text{ and } P(e = 0) = 1 - p_e`.
 
 .. |chn-type_descr_no|            replace:: The **perfect** channel:
-   :math:`Y = X`
+   :math:`Y = X`.
 
 .. |chn-type_descr_optical|       replace:: The **optical** channel:
    :math:`Y_i = \begin{cases}
    CDF_0(x) & \quad \text{ when } X_i = 0 \\
    CDF_1(x) & \quad \text{ when } X_i = 1
    \end{cases} \text{ with } x \sim \mathcal{U}(0,1)`
-   and the CDFs given by user.
+   and the :math:`CDF_0` and :math:`CDF_1` are given by the user and selected
+   in function of the current :math:`ROP`.
 
 .. |chn-type_descr_rayleigh|      replace:: The `Rayleigh Fading`_ channel with
    an AWGN gain: :math:`Y = X.H + Z \text{ with }
    Z \sim \mathcal{N}(0,\sigma) \text{ and }
-   H \sim \mathcal{N}(0,\frac{1}{\sqrt 2})`
+   H \sim \mathcal{N}(0,\frac{1}{\sqrt 2})`.
 
 .. |chn-type_descr_rayleigh_user| replace:: The `Rayleigh Fading`_ channel with
    the gain given in a file: :math:`Y = X.H + Z
    \text{ with } Z \sim \mathcal{N}(0,\sigma) \text{ and }
-   H \text{ given by the user}`
+   H \text{ given by the user}`.
 
 .. |chn-type_descr_user|          replace:: A **user defined output** channel
-   from a file: :math:`Y = Z \text{ with } Z \text{ given by user}`
+   from a file: :math:`Y = Z \text{ with } Z \text{ given by user}`.
 
 .. |chn-type_descr_user_add|      replace:: An **additive** channel with a user
    defined noise given in a file: :math:`Y = X +
-   Z \text{ with } Z \text{ given by the user}`
+   Z \text{ with } Z \text{ given by the user}`.
 
 .. |chn-type_descr_user_bec|      replace:: The `Binary Erasure Channel`_ with a
    user defined event draw given in a file:
    :math:`Y_i = \begin{cases}
    erased & \quad \text{if } e = 1 \\
    X_i    & \quad \text{else}
-   \end{cases} \text{ with } e \text{ given by the user}`
+   \end{cases} \text{ with } e \text{ given by the user}`.
 
 .. |chn-type_descr_user_bsc|      replace:: The `Binary Symmetric Channel`_ with
    a user defined event draw given in a file:
    :math:`Y_i = \begin{cases}
    !X_i & \quad \text{if } e = 1 \\
    X_i    & \quad \text{else}
-   \end{cases} \text{ with } e \text{ given by the user}`
+   \end{cases} \text{ with } e \text{ given by the user}`.
 
-Where :math:`\sigma, p_e` are the simulated noise points and are given by the
-user through the :ref:`sim-sim-noise-range` argument.
+Where:
+   * :math:`\sigma` is the *Gaussian noise variance*, :math:`p_e` is the
+     *event probability* and :math:`ROP` is the *Received optical power* of the
+     simulated noise points.
+     They are given by the user through the :ref:`sim-sim-noise-range` argument.
+   * :math:`X` is the original modulated signal and :math:`Y` the noisy output.
+   * :math:`\mathcal{N}(\mu,\sigma^2)` is the
+     `Gaussian distribution <https://en.wikipedia.org/wiki/Normal_distribution>`_
+   * :math:`\mathcal{U}(a,b)` is the
+     `Uniform distribution <https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)>`_
 
-The :abbr:`CDF (Cumulative Distribution Function)` for the ``OPTICAL``
-channel is given with the :ref:`sim-sim-pdf-path` argument. This file
-describes the :abbr:`PDF (Probability Density Function)` of the
-:abbr:`ROP (Received Optical Power)` at different value for a bit transmitted
-at 0 and another for a bit transmitted at 1. So this file contains twice as
-many PDF as ROP to test.
 
+
+The :abbr:`CDF (Cumulative Distribution Function)` are computed for the
+``OPTICAL`` channel from the given :abbr:`PDF (Probability Density Function)`
+with the :ref:`sim-sim-pdf-path` argument. This file describes the latter for the
+different :abbr:`ROP (Received Optical Power)`. There must be a PDF for a bit
+transmitted at 0 and another for a bit transmitted at 1.
 
 .. note:: The ``AWGN``, ``NO`` and ``RAYLEIGH`` channels handle
    complex modulations.
@@ -141,7 +150,7 @@ many PDF as ROP to test.
    :Default: ``STD``
    :Examples: ``--chn-implem FAST``
 
-Selects the implementation of the algorithm to generate the noise.
+Select the implementation of the algorithm to generate the noise.
 
 Description of the allowed values:
 
@@ -163,15 +172,15 @@ Description of the allowed values:
 .. |chn-implem_descr_std|  replace:: A standard implementation using the C++
    standard objects and algorithms.
 
-.. |chn-implem_descr_fast| replace:: A much faster method using |SIMD|.
+.. |chn-implem_descr_fast| replace:: A much faster optimized method.
 
 .. |chn-implem_descr_gsl|  replace:: A method using the
-   `GNU Scientific Library`_ but not parallelized.
+   `GNU Scientific Library`_.
 
-.. |chn-implem_descr_mkl|  replace:: A parallelized method using the
+.. |chn-implem_descr_mkl|  replace:: A method using the
    `Intel Math Kernel Library`_ optimized on Intel processors.
 
-.. attention:: All channels work with any implementation. However, to activate
+.. attention:: All channels work with any implementation. However, to enable
    the ``GSL`` or the ``MKL`` implementation you need to
    compile with the good options (see :ref:`compilation_cmake_options`).
 
@@ -236,7 +245,7 @@ according to the given CDFs.
    :Default: 1
    :Examples: ``--chn-gain-occur 10``
 
-The number of times a gain is used on consecutive symbols. It is used in the
+Give the number of times a gain is used on consecutive symbols. It is used in the
 ``RAYLEIGH_USER`` channel while applying gains read from the given file.
 
 .. _chn-chn-path:
@@ -248,6 +257,7 @@ The number of times a gain is used on consecutive symbols. It is used in the
    :Rights: read
    :Examples: ``--chn-path example/path/to/the/right/file``
 
+Give the path to a file differently in function of the channel type.
 For ``USER`` type, the file must contain noisy output values.
 For ``USER_ADD`` type, the file must contain noise values to add to input.
 For ``RAYLEIGH_USER`` type, the file must contain gain values.
