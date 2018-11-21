@@ -191,7 +191,7 @@ static inline void display_data(const T *data,
 		if (max_frame < n_fra)
 		{
 			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << "f" << std::setw(n_digits)
-			           << max_frame + 1 << "->" << "f" << n_fra << ":" << rang::style::reset << "(...)\n";
+			           << max_frame + 1 << "->" << "f" << n_fra << ":" << rang::style::reset << "(...)";
 		}
 	}
 
