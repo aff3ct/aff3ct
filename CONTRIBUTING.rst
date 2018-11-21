@@ -50,7 +50,7 @@ apply some coding conventions:
    * we ALWAYS put spaces after list items and method parameters (``[1, 2, 3]``,
      not ``[1,2,3]``), around operators (``x += 1``, not ``x+=1``), and around
      hash arrows,
-   * we use the `_snake case`_ (``my_variable``, not ``myVariable``), classes
+   * we use the `snake case`_ (``my_variable``, not ``myVariable``), classes
      start with an upper case (`My_class`, not `my_class`) and
      variables/methods/functions start with a lower case,
    * the number of characters is limited to 120 per line of code.
