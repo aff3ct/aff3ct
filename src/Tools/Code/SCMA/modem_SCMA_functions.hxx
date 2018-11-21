@@ -1,3 +1,6 @@
+#ifndef MODEM_SCMA_FUNCTIONS_HXX_
+#define MODEM_SCMA_FUNCTIONS_HXX_
+
 #include <cmath>
 
 #include "modem_SCMA_functions.hpp"
@@ -31,3 +34,5 @@ inline R psi_3(const std::complex<R>& d, const R& n0)
 }
 }
 }
+
+#endif // MODEM_SCMA_FUNCTIONS_HXX_

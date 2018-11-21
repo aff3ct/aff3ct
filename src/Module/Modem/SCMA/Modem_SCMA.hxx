@@ -1,3 +1,6 @@
+#ifndef MODEM_SCMA_HXX_
+#define MODEM_SCMA_HXX_
+
 #include <cassert>
 #include <iomanip>
 #include <type_traits>
@@ -355,3 +358,5 @@ void Modem_SCMA<B,R,Q,PSI>
 }
 }
 }
+
+#endif // MODEM_SCMA_HXX_
