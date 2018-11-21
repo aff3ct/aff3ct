@@ -28,10 +28,7 @@ frames. The position of the fixed point is settable by the user.
    :Default: ``POW2``
    :Examples: ``--qnt-type CUSTOM``
 
-Type of the quantizer to use in the simulation.
-
-
-
+Give the type of the quantizer to use in the simulation.
 
 Description of the allowed values:
 
@@ -83,7 +80,7 @@ The min/max bound for the tricky quantizer.
    :Default: 8 else see :numref:`bits_default_table`
    :Examples: ``--qnt-bits 1``
 
-Sets the number of bits used for the quantizer.
+Set the number of bits used for the quantizer.
 
 
 .. _bits_default_table:
@@ -107,7 +104,7 @@ Sets the number of bits used for the quantizer.
    :Default: 3 else see :numref:`dec_default_table`
    :Examples: ``--qnt-dec 1``
 
-Sets the position of the fixed point in the quantified representation.
+Set the position of the fixed point in the quantified representation.
 
 .. _dec_default_table:
 
@@ -135,7 +132,7 @@ Sets the position of the fixed point in the quantified representation.
    :Default: ``STD``
    :Examples: ``--qnt-implem FAST``
 
-Selects the implementation of the quantizer.
+Select the implementation of the quantizer.
 
 Description of the allowed values:
 

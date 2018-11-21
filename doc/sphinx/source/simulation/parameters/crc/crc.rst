@@ -25,7 +25,7 @@ decoding process to know if the decoded codeword is valid or not.
    :Examples: | ``--crc-type "32-GZIP"``
               | ``--crc-poly "0x04C11DB7" --crc-size 32``
 
-Selects the CRC type you want to use among the predefined polynomials in the
+Select the CRC type you want to use among the predefined polynomials in the
 following table. If you want a specific polynomial that it is not available in
 the table you can directly put the polynomial in hexadecimal. In this case you
 have to specify explicitly the size of the polynomial with the
@@ -142,7 +142,7 @@ The type ``NO`` deactivates the CRC.
    :Range: :math:`]0 \to \infty[`
    :Examples: ``--crc-size 8``
 
-Size of the CRC (divisor size in bits minus one), required if you selected an
+Size the CRC (divisor size in bits minus one), required if you selected an
 unknown CRC.
 
 .. _crc-crc-implem:
@@ -155,7 +155,7 @@ unknown CRC.
    :Default: ``FAST``
    :Examples: ``--crc-implem FAST``
 
-Selects the CRC implementation you want to use.
+Select the CRC implementation you want to use.
 
 Description of the allowed values:
 

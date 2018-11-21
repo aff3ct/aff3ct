@@ -11,22 +11,22 @@ Those arguments are not associated to any module.
 ``--help, -h``
 """"""""""""""
 
-Prints the help with all the *required* and *optional* arguments.
-The last change in function of the selected simulation type and code.
+Print the help with all the *required* and *optional* arguments.
+The latter change in function of the selected simulation type and code.
 
 .. _global-advanced-help:
 
 ``--Help, -H``
 """"""""""""""
 
-Prints the help with in more the advanced arguments.
+Print the help with in more the advanced arguments.
 
 .. _global-version:
 
 ``--version, -v``
 """""""""""""""""
 
-Prints informations about the version of the source code and
+Print informations about the version of the source code and
 compilation options.
 
 .. _global-except-a2l:
@@ -34,7 +34,7 @@ compilation options.
 ``--except-a2l`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""
 
-Enhances the backtrace when displaying exception.
+Enhance the backtrace when displaying exception.
 This change the program addresses into filenames and lines.
 It may take some seconds to do this work.
 
@@ -47,4 +47,4 @@ It may take some seconds to do this work.
 ``--except-no-bt`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""""
 
-Disables the print of backtrace when displaying exception.
+Disable the print of backtrace when displaying exception.

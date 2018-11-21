@@ -4,18 +4,19 @@ Modem parameters
 ----------------
 
 The Modem is a module with three parts in one:
-   * the **modulation** maps the input binary frame into symbols to send the
+   * the **modulation** matches the input binary frame into symbols to send the
      data through the channel
    * the **filtering** gives event probabilities to the received waveforms
-   * the **demodulation** unmaps symbols or waveforms and computes for every bit
-     a :abbr:`LLR (Log-Likelihood Ratio)`
+   * the **demodulation** matches symbols or waveforms to bits and computes for
+     each a :abbr:`LLR (Log-Likelihood Ratio)`
 
 .. note:: The filtering step is used only by the ``CPM`` Modem as it is the only
           |AFF3CT|'s modulation using waveforms.
 
-.. note:: A negative LLR represents a bit at 1, and therefore when positive a
-          bit at 0. It is a more convenient choice as the hard decision matches
-          directly with the sign bit.
+..
+   .. note:: A negative LLR represents a bit at 1, and therefore when positive a
+             bit at 0. It is a more convenient choice as the hard decision matches
+             directly with the sign bit.
 
 
 .. _mdm-mdm-type:
@@ -85,7 +86,7 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--mdm-bps 1``
 
-Selects the number of bits per symbol, ie. the number of bits used to generate a
+Set the number of bits used to generate a
 symbol. You can't change this value for ``BPSK`` and ``OOK`` types as it is
 forced to 1. Likewise, it is forced to 3 with ``SCMA``.
 
@@ -100,8 +101,8 @@ forced to 1. Likewise, it is forced to 3 with ``SCMA``.
    :Rights: read/write
    :Examples: ``--mdm-const-path ../conf/mod/16QAM_ANTI_GRAY.mod``
 
-Path to the ordered modulation symbols (constellation), to use with ``USER``
-type modulation".
+Give the path to the ordered modulation symbols (constellation), to use with
+``USER`` type modulation".
 
 .. _mdm-mdm-ups:
 
@@ -112,7 +113,7 @@ type modulation".
    :Default: 1
    :Examples: ``--mdm-ups 1``
 
-Selects the symbol sampling factor.
+Select the symbol sampling factor.
 
 .. _mdm-mdm-implem:
 
@@ -135,9 +136,9 @@ Description of the allowed values:
 | ``FAST`` | |mdm-implem_descr_fast| |
 +----------+-------------------------+
 
-.. |mdm-implem_descr_std| replace:: A standard implementation working for any
+.. |mdm-implem_descr_std|  replace:: A standard implementation working for any
    modem type.
-.. |mdm-implem_descr_fast| replace:: A much faster method using |SIMD| but *only
+.. |mdm-implem_descr_fast| replace:: A much faster method but *only
    for* ``BPSK`` *type*.
 
 .. _mdm-mdm-max:
@@ -149,7 +150,7 @@ Description of the allowed values:
    :Allowed values: ``MAX`` ``MAXL`` ``MAXS`` ``MAXSS``
    :Examples: ``--mdm-max MAX``
 
-Selects the mathematical form of the maximum operation applied in the ``PAM``'s,
+Select the mathematical form of the maximum operation applied in the ``PAM``'s,
 ``QAM``'s, ``PSK``'s, ``USER``'s and ``CPM``'s  demodulator.
 
 Description of the allowed values:
@@ -183,7 +184,6 @@ Description of the allowed values:
 ``--mdm-no-sig2``
 """""""""""""""""
 
-
 Turn off the division by sigma square in the demodulator. Sigma is the Gaussian
 noise variance.
 
@@ -196,7 +196,7 @@ noise variance.
    :Default: 1
    :Examples: ``--mdm-cpm-k 1``
 
-Sets the ``CPM``'s modulation index numerator.
+Set the ``CPM``'s *modulation index numerator*.
 
 .. _mdm-mdm-cpm-p:
 
@@ -207,7 +207,7 @@ Sets the ``CPM``'s modulation index numerator.
    :Default: 2
    :Examples: ``--mdm-cpm-p 1``
 
-Sets the ``CPM``'s modulation index denominator.
+Set the ``CPM``'s *modulation index denominator*.
 
 .. _mdm-mdm-cpm-L:
 
@@ -218,7 +218,7 @@ Sets the ``CPM``'s modulation index denominator.
    :Default: 2
    :Examples: ``--mdm-cpm-L 1``
 
-Sets the ``CPM``'s *pulse width* (also called *memory depth*).
+Set the ``CPM``'s *pulse width* (also called *memory depth*).
 
 .. _mdm-mdm-cpm-map:
 
@@ -230,7 +230,7 @@ Sets the ``CPM``'s *pulse width* (also called *memory depth*).
    :Default: ``NATURAL``
    :Examples: ``--mdm-cpm-map GRAY``
 
-Selects the ``CPM``'s symbols mapping layout.
+Select the ``CPM``'s *symbols mapping layout*.
 
 Description of the allowed values:
 
@@ -242,7 +242,7 @@ Description of the allowed values:
 | ``NATURAL`` | |mdm-cpm-map_descr_natural| |
 +-------------+-----------------------------+
 
-.. |mdm-cpm-map_descr_gray|    replace:: Gray code that switches only one bit at
+.. |mdm-cpm-map_descr_gray|    replace:: Gray code switching only one bit at
    a time from a symbol to the following.
 .. |mdm-cpm-map_descr_natural| replace:: The natural binary code incrementing
    the value from a symbol to the next one.
@@ -258,7 +258,7 @@ Description of the allowed values:
    :Default: ``GMSK``
    :Examples: ``--mdm-cpm-ws GMSK``
 
-Selects the ``CPM``'s wave shape.
+Select the ``CPM``'s wave shape.
 
 Description of the allowed values:
 
@@ -314,7 +314,7 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--mdm-ite 5``
 
-Sets the number of iteration in the ``SCMA``'s demodulator.
+Set the number of iteration in the ``SCMA``'s demodulator.
 
 .. _mdm-mdm-psi:
 
@@ -325,7 +325,7 @@ Sets the number of iteration in the ``SCMA``'s demodulator.
    :Allowed values: ``PSI0`` ``PSI1`` ``PSI2`` ``PSI3``
    :Examples: ``--mdm-psi PSI0``
 
-Selects the type of the psi function to use in the ``SCMA``'s demodulator.
+Select the type of the psi function to use in the ``SCMA``'s demodulator.
 
 Description of the allowed values:
 

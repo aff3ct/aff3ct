@@ -36,7 +36,7 @@ Below, a list of the features that motivated the creation of the simulator:
    #. **prototype hardware implementation** (fixed-point receivers, hardware in
       the loop tools),
    #. **reuse tried and tested modules** and add yours,
-   #. **alternative to MATLAB and Simulink**, if you seek to reduce simulations
+   #. **alternative to |MATLAB| and Simulink**, if you seek to reduce simulations
       time.
 
 .. #. track erroneous frames at low error rate level

@@ -24,7 +24,7 @@ from the monitor in real time.
    :Default: 500
    :Examples: ``--ter-freq 1``
 
-Sets the display frequency (refresh time) in *[ms]*, for each iteration.
+Set the display frequency (refresh time) in *[ms]*, for each iteration.
 Setting 0 disables the refresh to dump only the final result.
 
 When MPI is enabled, this value is by default set to the same value than
@@ -35,7 +35,7 @@ the :ref:`sim-sim-mpi-comm` argument.
 ``--ter-no``
 """"""""""""
 
-Disables completely the terminal report.
+Disable completely the terminal report.
 
 .. _ter-ter-type:
 
@@ -47,7 +47,7 @@ Disables completely the terminal report.
    :Default: ``STD``
    :Examples: ``--ter-type STD``
 
-Type of the terminal to use to format the displayed results.
+Select the type of the terminal to use to format the displayed results.
 
 Description of the allowed values:
 

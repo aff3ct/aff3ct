@@ -57,7 +57,7 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--src-fra 8``
 
-Sets the number of inter frame level to process.
+Set the number of inter frame level to process.
 
 .. _src-src-implem:
 
@@ -96,8 +96,8 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--src-path ../conf/src/GSM-LDPC_2112.src``
 
-Path to a file containing one or a set of pre-computed source bits, to use
-with a ``USER`` source type.
+Set the path to a file containing one or a set of pre-computed source bits, to
+use with a ``USER`` source type.
 
 .. _src-src-start-idx:
 
@@ -108,5 +108,5 @@ with a ``USER`` source type.
    :Default: 0
    :Examples: ``--src-start-idx 42``
 
-The start index to use in the ``USER`` type source. It is the index of the first
-frame to read from the given file.
+Give the start index to use in the ``USER`` type source. It is the index of the
+first frame to read from the given file.

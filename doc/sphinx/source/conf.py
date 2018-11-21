@@ -238,6 +238,7 @@ rst_epilog = """
 .. |SNR|     replace:: :abbr:`SNR (Signal Noise Ratio)`
 .. |AFF3CT|  replace:: :abbr:`AFF3CT (A Fast Forward Error Correction Toolbox!)`
 .. |PyBER|   replace:: PyBER
+.. |MATLAB|  replace:: MATLAB
 .. |GUI|     replace:: :abbr:`GUI (Graphical User Interface)`
 .. |API|     replace:: :abbr:`API (Application Programming Interface)`
 .. |SDR|     replace:: :abbr:`SDR (Software-Defined Radio)`

@@ -16,7 +16,8 @@ error-correcting codes.
 
    :Type: text
    :Allowed values: ``AWGN`` ``BEC`` ``BSC`` ``NO`` ``OPTICAL`` ``RAYLEIGH``
-                    ``RAYLEIGH_USER`` ``USER`` ``USER_ADD``
+                    ``RAYLEIGH_USER`` ``USER`` ``USER_ADD``  ``USER_BEC``
+                    ``USER_BSC``
    :Default: ``AWGN``
    :Examples: ``--chn-type AWGN``
 

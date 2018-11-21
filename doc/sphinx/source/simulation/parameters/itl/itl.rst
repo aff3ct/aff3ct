@@ -52,25 +52,25 @@ Description of the allowed values:
 | ``USER``     | |itl-type_descr_user|     |
 +--------------+---------------------------+
 
-.. |itl-type_descr_ccsds|    replace:: Selects the interleaver defined for the
+.. |itl-type_descr_ccsds|    replace:: Select the interleaver defined for the
    CCSDS standard.
-.. |itl-type_descr_col_row|  replace:: Fills the interleaver by column and reads
+.. |itl-type_descr_col_row|  replace:: Fill the interleaver by column and reads
    it by row.
-.. |itl-type_descr_dvb-rcs1| replace:: Selects the interleaver defined for the
+.. |itl-type_descr_dvb-rcs1| replace:: Select the interleaver defined for the
    DVB-RCS1 standard.
-.. |itl-type_descr_dvb-rcs2| replace:: Selects the interleaver defined for the
+.. |itl-type_descr_dvb-rcs2| replace:: Select the interleaver defined for the
    DVB-RCS2 standard.
 .. |itl-type_descr_golden|   replace:: TODO VALUE GOLDEN
-.. |itl-type_descr_lte|      replace:: Selects the interleaver defined for the
+.. |itl-type_descr_lte|      replace:: Select the interleaver defined for the
    LTE standard.
-.. |itl-type_descr_no|       replace:: Deactivates the interleaving process: the
+.. |itl-type_descr_no|       replace:: Deactivate the interleaving process: the
    output is the input.
-.. |itl-type_descr_random|   replace:: Generates a completely random LUT.
-.. |itl-type_descr_rand_col| replace:: Randomly interleaves the frame by
+.. |itl-type_descr_random|   replace:: Generate a completely random LUT.
+.. |itl-type_descr_rand_col| replace:: Randomly interleave the frame by
    independent columns.
-.. |itl-type_descr_row_col|  replace:: Fills the interleaver by row and read it
+.. |itl-type_descr_row_col|  replace:: Fill the interleaver by row and read it
    by column.
-.. |itl-type_descr_user|     replace:: Uses the user's LUT given in the file
+.. |itl-type_descr_user|     replace:: Use the user's LUT given in the file
    through :ref:`itl-itl-path`.
 
 
@@ -98,7 +98,7 @@ basic types.
    :Default: 4
    :Examples: ``--itl-cols 1``
 
-Specifies the number of columns used for the ``RAND_COL``, ``ROW_COL`` or
+Specify the number of columns used for the ``RAND_COL``, ``ROW_COL`` or
 ``COL_ROW`` interleavers.
 
 .. _itl-itl-path:
@@ -110,7 +110,7 @@ Specifies the number of columns used for the ``RAND_COL``, ``ROW_COL`` or
    :Rights: read only
    :Examples: ``--itl-path ../conf/itl/GSM-LDPC_4224.itl``
 
-Specifies the path to the interleaver file (to use with ``USER`` interleaver).
+Give the path to the interleaver's LUT file (to use with ``USER`` interleaver).
 
 .. _itl-itl-read-order:
 
@@ -121,7 +121,7 @@ Specifies the path to the interleaver file (to use with ``USER`` interleaver).
    :Allowed values: ``BOTTOM_LEFT`` ``BOTTOM_RIGHT`` ``TOP_LEFT`` ``TOP_RIGHT``
    :Examples: ``--itl-read-order BOTTOM_LEFT``
 
-The read order of the ``COL_ROW`` and ``ROW_COL`` interleavers.
+Change the read order of the ``COL_ROW`` and ``ROW_COL`` interleavers.
 The read starts from the given corner of the array to the diagonally opposite
 one. The read is made row by row for the ``COL_ROW`` interleaver and column by
 column for the ``ROW_COL`` one.
@@ -141,11 +141,11 @@ Description of the allowed values (see also the figures just bellow):
 | ``BOTTOM_RIGHT`` | |itl-read-order_descr_bottom_right| |
 +------------------+-------------------------------------+
 
-.. |itl-read-order_descr_top_left| replace:: Read is down from the top left
+.. |itl-read-order_descr_top_left|     replace:: Read is down from the top left
    corner to the bottom right corner
-.. |itl-read-order_descr_top_right| replace:: Read is down from the top right
+.. |itl-read-order_descr_top_right|    replace:: Read is down from the top right
    corner to the bottom left corner
-.. |itl-read-order_descr_bottom_left| replace:: Read is down from the bottom
+.. |itl-read-order_descr_bottom_left|  replace:: Read is down from the bottom
    left corner to the top right corner
 .. |itl-read-order_descr_bottom_right| replace:: Read is down from the bottom
    right corner to the top left corner
@@ -180,6 +180,6 @@ the ``ROW_COL`` interleaver.
 ``--itl-uni``
 """""""""""""
 
-Enables the regeneration of the interleaver at *each new frame* else the LUT
-is generated only once and is used all along the simulation.
+Enable the regeneration of the interleaver at *each new frame* else the LUT
+is generated only once and is used throughout the simulation.
 

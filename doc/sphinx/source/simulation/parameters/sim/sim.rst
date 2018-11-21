@@ -18,7 +18,7 @@ possible to enable debug and benchmarking tools.
    :Default: ``BFER``
    :Examples: ``--sim-type BFERI``
 
-Selects the type of simulation (or communication chain skeleton).
+Select the type of simulation (or communication chain skeleton).
 
 Description of the allowed values:
 
@@ -168,7 +168,7 @@ Description of the allowed values:
    :Default: ``EBN0``
    :Examples: ``-E EBN0``
 
-Selects the type of **noise** used to simulate.
+Select the type of **noise** used to simulate.
 
 ``ESN0`` is automatically calculated from ``EBN0`` and vice-versa with
 the following equation:
@@ -222,7 +222,7 @@ Description of the allowed values:
    :Type: real number
    :Examples: ``-m 0.0``
 
-Gives the minimal noise energy point to simulate.
+Give the minimal noise energy point to simulate.
 
 .. attention:: This argument is another way to set the noise range to simulate.
    It is ignored or not required if the argument :ref:`sim-sim-noise-range` is given,
@@ -237,7 +237,7 @@ Gives the minimal noise energy point to simulate.
    :Type: real number
    :Examples: ``-M 5.0``
 
-Gives the maximal noise energy to simulate.
+Give the maximal noise energy to simulate.
 
 .. attention:: This argument is another way to set the noise range to simulate.
    It is ignored or not required if the argument :ref:`sim-sim-noise-range` is given,
@@ -252,7 +252,7 @@ Gives the maximal noise energy to simulate.
    :Default:  0.1
    :Examples: ``-s 1.0``
 
-Gives the noise energy step between each simulation iteration.
+Give the noise energy step between each simulation iteration.
 
 .. attention:: This argument is another way to set the noise range to simulate.
    It is ignored or not required if the argument :ref:`sim-sim-noise-range` is given,
@@ -263,11 +263,11 @@ Gives the noise energy step between each simulation iteration.
 ``--sim-noise-range, -R`` |image_required_argument|
 """""""""""""""""""""""""""""""""""""""""""""""""""
 
-   :Type: Matlab style vector
+   :Type: |MATLAB| style vector
    :Default:  step of 0.1
    :Examples: ``-R "0.5:1,1:0.05:1.2,1.21"``
 
-Set the noise energy range to run in a Matlab style vector.
+Set the noise energy range to run in a |MATLAB| style vector.
 The above example will run the following noise points::
 
    0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.05, 1.1, 1.15, 1.2, 1.21
@@ -288,7 +288,7 @@ The above example will run the following noise points::
    :Rights: read only
    :Examples: ``--sim-pdf-path example/path/to/the/right/file``
 
-Gives a file that contains PDF for different SNR.
+Give a file that contains PDF for different SNR.
 To use with the ``OPTICAL`` :ref:`channel type <chn-chn-type>`.
 
 It sets the noise range from the given ones in the file.
@@ -305,7 +305,7 @@ by :ref:`sim-sim-noise-min` and :ref:`sim-sim-noise-max` with a minimum step of
    :Type: text
    :Examples: ``--sim-meta "TODO CHECK VALUE"``
 
-Prints the output with meta-data readable by :ref:`pyber_overview`.
+Print the output with meta-data readable by :ref:`pyber_overview`.
 The given text is considered as the simulation title.
 The just run *command* and the *title* meta-data are automatically printed.
 
@@ -314,7 +314,7 @@ The just run *command* and the *title* meta-data are automatically printed.
 ``--sim-coded``
 """""""""""""""
 
-Enables the coded monitoring. This means that the monitoring is done on the
+Enable the coded monitoring. This means that the monitoring is done on the
 entire codeword instead of only the information bits. This gives theoretically
 an equal or worse |BFER| result.
 
@@ -323,7 +323,7 @@ an equal or worse |BFER| result.
 ``--sim-coset, -c``
 """""""""""""""""""
 
-Enables the COSET approach. This methods flips the value of the input and of the
+Enable the COSET approach. This methods flips the value of the input and of the
 output of the decoder in function of the original codeword bits. The flipped
 values are the matching bit at 1 in the codeword. Then the decoder works like on
 an all zero codeword. This is useful when developing a decoder without
@@ -338,7 +338,7 @@ vice-versa.
 ``--sim-debug``
 """""""""""""""
 
-Activates the debug mode. This prints the frame values after each module
+Enable the debug mode. This prints the frame values after each module
 step.
 
 .. note:: Debug mode runs the simulation on one thread only. Then you may need
@@ -355,7 +355,7 @@ step.
 ``--sim-debug-hex``
 """""""""""""""""""
 
-Activates the debug mode and prints values in the hexadecimal format.
+Enable the debug mode and prints values in the hexadecimal format.
 
 .. _sim-sim-debug-limit:
 
@@ -366,7 +366,7 @@ Activates the debug mode and prints values in the hexadecimal format.
    :Default: 0
    :Examples: ``--sim-debug-limit 1``
 
-Activates the debug mode and sets the max number of elements to display per
+Enable the debug mode and sets the max number of elements to display per
 frame. A number of elements at 0 means there is no dump limit.
 
 .. _sim-sim-debug-prec:
@@ -378,7 +378,7 @@ frame. A number of elements at 0 means there is no dump limit.
    :Default: 2
    :Examples: ``--sim-debug-prec 1``
 
-Activates the debug mode and sets the decimal precision (number of digits for
+Enable the debug mode and sets the decimal precision (number of digits for
 decimal part) of real elements.
 
 .. _sim-sim-no-colors:
@@ -386,7 +386,7 @@ decimal part) of real elements.
 ``--sim-no-colors``
 """""""""""""""""""
 
-Disables the colors in the shell.
+Disable the colors in the shell.
 
 .. note:: |AFF3CT| uses the `rang <https://github.com/agauniyal/rang>`_ library
    that is portable on every OS as it only depends on C++ standard library.
@@ -402,7 +402,7 @@ Disables the colors in the shell.
    :Default: 0
    :Examples: ``--sim-seed 42``
 
-Sets the seed used in the simulation to initialize the general pseudo random
+Set the seed used in the simulation to initialize the general pseudo random
 generators. This last generator is used to generate the seeds of the different
 random generators of all modules.
 
@@ -422,7 +422,7 @@ random generators of all modules.
 ``--sim-stats``
 """""""""""""""
 
-Displays the statistics module by module noise point after noise point.
+Display the statistics module by module noise point after noise point.
 Statistics show the time used by each module in the simulation, the
 throughput and latency (min, max and average) by task.
 
@@ -435,7 +435,7 @@ throughput and latency (min, max and average) by task.
    :Default: 0
    :Examples: ``--sim-threads 1``
 
-Specifies the number of threads used by the simulation.
+Specify the number of threads used by the simulation.
 A 0 value means the maximum number of thread supported by the processor, ie.
 the number of core (physical + virtual).
 
@@ -451,7 +451,7 @@ the number of core (physical + virtual).
    :Default: 2
    :Examples: ``--sim-crc-start 1``
 
-Sets the number of simulation iteration needed before starting the CRC checking
+Set the number of simulation iteration needed before starting the CRC checking
 in the turbo demodulation process.
 
 .. note:: Available only for BFERI simulations.
@@ -465,7 +465,7 @@ in the turbo demodulation process.
    :Default: 15
    :Examples: ``--sim-ite 10``
 
-Sets the number of global iterations between the demodulator and the decoder.
+Set the number of global iterations between the demodulator and the decoder.
 
 .. note:: Available only for BFERI simulations.
 
@@ -478,9 +478,9 @@ Sets the number of global iterations between the demodulator and the decoder.
    :Default: 0
    :Examples: ``--sim-max-frame 1``
 
-Maximum number of frames to play after what the current simulated noise point
-is stopped. A 0 value means no limit. The simulation is also stopped except
-if the :ref:`sim-sim-crit-nostop` option is used.
+Set the maximum number of frames to play after what the current simulated noise
+point is stopped. A 0 value means no limit. The simulation is also stopped
+except if the :ref:`sim-sim-crit-nostop` option is used.
 
 .. _sim-sim-stop-time:
 
@@ -491,8 +491,8 @@ if the :ref:`sim-sim-crit-nostop` option is used.
    :Default: 0
    :Examples: ``--sim-stop-time 1``
 
-Time in *[sec]* after what the current simulated noise point is stopped.
-A 0 value means no limit. The simulation is also stopped except
+Give the time in *[sec]* after what the current simulated noise point is
+stopped. A 0 value means no limit. The simulation is also stopped except
 if the :ref:`sim-sim-crit-nostop` option is used.
 
 .. _sim-sim-crit-nostop:
@@ -500,15 +500,16 @@ if the :ref:`sim-sim-crit-nostop` option is used.
 ``--sim-crit-nostop`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
-The stop criteria arguments:ref:`sim-sim-max-frame` and :ref:`sim-sim-stop-time`
-stop only the currently simulated noise point but not the simulation.
+Set the stop criteria arguments:ref:`sim-sim-max-frame` and
+:ref:`sim-sim-stop-time` stop only the currently simulated noise point but not
+the simulation.
 
 .. _sim-sim-err-trk:
 
 ``--sim-err-trk`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""
 
-Tracks the bad frames. When a wrong frame is detected, the source frame,
+Track the bad frames. When a wrong frame is detected, the source frame,
 the encoded frame and the noise applied by the channel are dumped in
 their respective file. Then use the :ref:`sim-sim-err-trk-rev` argument
 to run only these bad frames.
@@ -518,7 +519,7 @@ to run only these bad frames.
 ``--sim-err-trk-rev`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Automatically replays the saved frames while running with :ref:`sim-sim-err-trk`.
+Automatically replay the saved frames while running with :ref:`sim-sim-err-trk`.
 
 .. tip:: To play back the bad frames, just add **-rev** to the
    :ref:`sim-sim-err-trk` argument and change nothing else to your command line
@@ -534,7 +535,7 @@ Automatically replays the saved frames while running with :ref:`sim-sim-err-trk`
    :Default: :file:`error_tracker`
    :Examples: ``--sim-err-trk-path errors/err``
 
-Base path for the files where the bad frames will be stored or read.
+Set the base path for the files where the bad frames will be stored or read.
 To this base path is added the noise point value and the matching module
 extension. With the above example, you may get files such as:
 
@@ -558,7 +559,7 @@ extension. With the above example, you may get files such as:
    :Default: 0
    :Examples: ``--sim-err-trk-thold 1``
 
-Gives the threshold value of bit error count per frame that the error tracker
+Give the threshold value of bit error count per frame that the error tracker
 has to dump.
 
 .. _sim-sim-no-legend:
@@ -566,10 +567,9 @@ has to dump.
 ``--sim-no-legend`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""
 
-Strictly no legend will be displayed when launching the simulation.
+Display strictly no legend when launching the simulation.
 
 .. tip::
-
    Use this option when you want to complete an already existing
    simulation result file with new noise points. Pay attention to use ``>>``
    instead of ``>`` to redirect the standard output in order to add results at
@@ -584,7 +584,7 @@ Strictly no legend will be displayed when launching the simulation.
    :Default: 1000
    :Examples: ``--sim-mpi-comm 1``
 
-Sets the ``MPI`` communication frequency between the nodes in *[ms]*.
+Set the ``MPI`` communication frequency between the nodes in *[ms]*.
 This corresponds to the frequency with which nodes will gather their results.
 This operation takes some computation resources so a too fast frequency may be
 sub-productive.

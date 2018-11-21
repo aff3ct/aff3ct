@@ -20,7 +20,7 @@ number of errors per frame for each noise point can be dumped, too.
    :Default: 100
    :Examples: ``--mnt-max-fe 25``
 
-Sets the maximum number of frame errors simulated for each noise point.
+Set the maximum number of frame errors simulated for each noise point.
 
 .. _mnt-mnt-err-hist:
 
@@ -30,7 +30,7 @@ Sets the maximum number of frame errors simulated for each noise point.
    :Type: integer
    :Examples: ``--mnt-err-hist 1``
 
-Activates the histogram of the number of errors per frame. Sets also the maximum
+Activate the histogram of the number of errors per frame. Sets also the maximum
 number of bit error per frame included in the histogram (0 is no limit).
 
 .. _mnt-mnt-err-hist-path:
@@ -60,6 +60,6 @@ histogram with a simple command:
 ``--mnt-mutinfo``
 """""""""""""""""
 
-Activates the computation of the mutual information.
+Activate the computation of the mutual information.
 
 .. note:: Available only on ``BFER`` simulation types (:ref:`sim-sim-type`).
