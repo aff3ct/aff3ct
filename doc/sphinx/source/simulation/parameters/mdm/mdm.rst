@@ -66,7 +66,7 @@ Description of the allowed values:
 .. |mdm-type_descr_ook|  replace:: The `On-Off Keying`_
 .. |mdm-type_descr_pam|  replace:: The `Pulse-Amplitude Modulation`_
 .. |mdm-type_descr_psk|  replace:: The `Phase-Shift Keying`_
-.. |mdm-type_descr_qam|  replace:: The `Quadrature-Amplitude Modulation`_
+.. |mdm-type_descr_qam|  replace:: The Rectangular `Quadrature-Amplitude Modulation`_
 .. |mdm-type_descr_scma| replace:: The `SubCarrier Multiple Access`_
 .. |mdm-type_descr_user| replace:: A user defined constellation given in a file
    through :ref:`mdm-mdm-const-path`
@@ -88,6 +88,8 @@ Description of the allowed values:
 Selects the number of bits per symbol, ie. the number of bits used to generate a
 symbol. You can't change this value for ``BPSK`` and ``OOK`` types as it is
 forced to 1. Likewise, it is forced to 3 with ``SCMA``.
+
+.. note:: For ``QAM`` type, only even values of bits per symbol are supported.
 
 .. _mdm-mdm-const-path:
 
