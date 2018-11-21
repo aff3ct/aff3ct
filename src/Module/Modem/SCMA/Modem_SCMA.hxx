@@ -261,6 +261,7 @@ void Modem_SCMA<B,R,Q,PSI>
 	{
 		for (auto j = 0; j < CB.get_number_of_users(); j++) //user index
 		{
+			// TODO : need certainly a third loop here for the different resources of a the user 'j'
 			guess(j, i) = msg_res_user(CB.get_user_to_resource(j, 0), j, i) * msg_res_user(CB.get_user_to_resource(j, 1), j, i);
 		}
 	}
@@ -284,36 +285,30 @@ template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Q Modem_SCMA<B,R,Q,PSI>
 ::phi(const Q* Y_N1, int i, int j, int k, int re, int batch)
 {
-	Q phi;
-	std::complex<Q> tmp;
-
 	auto Y_N = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
 
-	const auto CB0 = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 0), re, i).real(), (Q)CB(CB.get_resource_to_user(re, 0), re, i).imag());
-	const auto CB1 = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 1), re, j).real(), (Q)CB(CB.get_resource_to_user(re, 1), re, j).imag());
-	const auto CB2 = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 2), re, k).real(), (Q)CB(CB.get_resource_to_user(re, 2), re, k).imag());
+	const auto CB0 = std::complex<Q>(CB(CB.get_resource_to_user(re, 0), re, i)); // convert from R to Q
+	const auto CB1 = std::complex<Q>(CB(CB.get_resource_to_user(re, 1), re, j));
+	const auto CB2 = std::complex<Q>(CB(CB.get_resource_to_user(re, 2), re, k));
 
-	tmp = Y_N - (CB0 + CB1 + CB2);
-
-	phi = PSI(tmp, (Q)n0);
+	auto tmp = Y_N - (CB0 + CB1 + CB2);
+	auto phi = PSI(tmp, (Q)n0);
 
 	return phi;
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Q Modem_SCMA<B,R,Q,PSI>
-::normalize_prob_msg_res_user(int user, int resource_ind, int resouce)
+::normalize_prob_msg_res_user(int user, int resource_ind, int resource)
 {
 	Q sum = 0;
-	Q norm_prob = 0;
 
 	for(auto i = 0; i < CB.get_codebook_size(); i++) //codeword index
 	{
 		sum += msg_res_user(CB.get_user_to_resource(user, resource_ind), user, i);
 	}
 
-	norm_prob = msg_res_user(CB.get_user_to_resource(user, resource_ind), user, resouce)/sum;
-
+	auto norm_prob = msg_res_user(CB.get_user_to_resource(user, resource_ind), user, resource) / sum;
 	return norm_prob;
 }
 
@@ -334,9 +329,9 @@ Q Modem_SCMA<B,R,Q,PSI>
 	const auto H_N2 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 2) * Nmod + 8 * batch + 2 * re   ],
 	                                  (Q)H_N[CB.get_resource_to_user(re, 2) * Nmod + 8 * batch + 2 * re +1]);
 
-	const auto CB0  = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 0), re, i).real(), (Q)CB(CB.get_resource_to_user(re, 0), re, i).imag());
-	const auto CB1  = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 1), re, j).real(), (Q)CB(CB.get_resource_to_user(re, 1), re, j).imag());
-	const auto CB2  = std::complex<Q>((Q)CB(CB.get_resource_to_user(re, 2), re, k).real(), (Q)CB(CB.get_resource_to_user(re, 2), re, k).imag());
+	const auto CB0  = std::complex<Q>(CB(CB.get_resource_to_user(re, 0), re, i));
+	const auto CB1  = std::complex<Q>(CB(CB.get_resource_to_user(re, 1), re, j));
+	const auto CB2  = std::complex<Q>(CB(CB.get_resource_to_user(re, 2), re, k));
 
 	tmp = Y_N - (H_N0 * CB0 + H_N1 * CB1 + H_N2 * CB2);
 
@@ -356,7 +351,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	std::copy(Y_N1, Y_N1 + this->N_fil + this->n_frames, Y_N2);
+	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
 }
 }
 }
