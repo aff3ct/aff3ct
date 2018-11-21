@@ -31,11 +31,13 @@ the most important ones are:
 techniques like |SIMD|, multi-threading and multi-nodes programming models.
 Below, a list of the features that motivated the creation of the simulator:
 
-#. **reproduce state-of-the-art decoding performances**,
-#. **explore various channel code configurations**, find new trade-offs,
-#. **prototype hardware implementation** (fixed-point ready receivers, hardware in the loop tools),
-#. **reuse tried and tested modules** and add your own,
-#. **alternative to MATLAB and Simulink**, if you seek to reduce simulations time.
+   #. **reproduce state-of-the-art decoding performances**,
+   #. **explore various channel code configurations**, find new trade-offs,
+   #. **prototype hardware implementation** (fixed-point receivers, hardware in
+      the loop tools),
+   #. **reuse tried and tested modules** and add yours,
+   #. **alternative to MATLAB and Simulink**, if you seek to reduce simulations
+      time.
 
 .. #. track erroneous frames at low error rate level
 
@@ -43,9 +45,10 @@ Below, a list of the features that motivated the creation of the simulator:
 reuse sub-parts of the code intensified: **the library was born**. Below is a
 list of possible applications for the library:
 
-#. **build custom communication chains** that are not possible with the simulator,
-#. **facilitate hardware prototyping**,
-#. enable various modules to be used in |SDR| contexts.
+   #. **build custom communication chains** that are not possible with the
+      simulator,
+   #. **facilitate hardware prototyping**,
+   #. enable various modules to be used in |SDR| contexts.
 
 The documentation is organized in five main sections:
 
