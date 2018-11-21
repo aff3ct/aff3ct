@@ -69,8 +69,8 @@ AFF3CT by running:
    cmake .. -DCMAKE_BUILD_TYPE=Release
    make -j4
 
-Constribute
------------
+Contribute
+----------
 
 - Source Code: https://github.com/aff3ct/aff3ct
 - Contributing guidelines: https://github.com/aff3ct/aff3ct/blob/master/CONTRIBUTING.md
