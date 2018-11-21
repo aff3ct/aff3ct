@@ -1,83 +1,94 @@
-# AFF3CT Short Presentation
+AFF3CT: A Fast Forward Error Correction Toolbox!
+================================================
 
-**AFF3CT** (A Fast Forward Error Correction Toolbox!) is a library dedicated to the [Forward Error Correction](https://en.wikipedia.org/wiki/Forward_error_correction) (FEC or channel coding).
-It is written in **C++11** and it supports a large range of codes: from the well-spread **Turbo codes** to the very new **Polar codes** including the **Low-Density Parity-Check (LDPC) codes**.
-AFF3CT can be used in two different ways, as:
-- a dedicated **toolbox** or **library** for your projects, many modules (like codecs, modems, channels, ...) are available and easy to use,
-- a **standalone application** for [Monte Carlo](https://en.wikipedia.org/wiki/Monte_Carlo_method) [BER/FER](https://en.wikipedia.org/wiki/Bit_error_rate) and [EXIT chart](https://en.wikipedia.org/wiki/EXIT_chart) simulations.
+**AFF3CT** is a simulator dedicated to the Forward Error Correction (FEC or
+**channel coding**). It is written in **C++** and it supports a large range of
+codes: from the well-spread **Turbo codes** to the very new **Polar codes**
+including the **Low-Density Parity-Check (LDPC) codes**. **AFF3CT** is a command
+line program and it simulates communication chains based on a Monte Carlo
+method.
 
-The following section focuses on the compilation and the execution of the AFF3CT standalone application.
+It is very easy to use, for instance, to estimate the BER/FER decoding
+performances of the (2048,1723) Polar code from 1.0 to 4.0 dB:
 
-# How to Compile and Run the Code
+.. code-block:: bash
 
-This project use `cmake` in order to generate any type of projects (Makefile, Visual Studio, Eclipse, CLion, etc.).
+   aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0
 
-## Get the Git Submodules
+And the output will be:
 
-AFF3CT depends on some other Git repositories (or submodules). It is highly recommended to get those submodules before trying to do anything else. Here is the command to get all the required submodules:
+.. code-block:: bash
 
-    $ git submodule update --init --recursive
+   # ----------------------------------------------------
+   # ---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----
+   # ----------------------------------------------------
+   # Parameters :
+   # [...]
+   #
+   # The simulation is running...
+   # ---------------------||------------------------------------------------------||---------------------
+   #  Signal Noise Ratio  ||   Bit Error Rate (BER) and Frame Error Rate (FER)    ||  Global throughput
+   #         (SNR)        ||                                                      ||  and elapsed time
+   # ---------------------||------------------------------------------------------||---------------------
+   # ----------|----------||----------|----------|----------|----------|----------||----------|----------
+   #     Es/N0 |    Eb/N0 ||      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT
+   #      (dB) |     (dB) ||          |          |          |          |          ||   (Mb/s) | (hhmmss)
+   # ----------|----------||----------|----------|----------|----------|----------||----------|----------
+          0.25 |     1.00 ||      104 |    16425 |      104 | 9.17e-02 | 1.00e+00 ||    4.995 | 00h00'00
+          1.25 |     2.00 ||      104 |    12285 |      104 | 6.86e-02 | 1.00e+00 ||   13.678 | 00h00'00
+          2.25 |     3.00 ||      147 |     5600 |      102 | 2.21e-02 | 6.94e-01 ||   14.301 | 00h00'00
+          3.25 |     4.00 ||     5055 |     2769 |      100 | 3.18e-04 | 1.98e-02 ||   30.382 | 00h00'00
+   # End of the simulation.
 
-## Example of a Makefile Project Generation (with the C++ GNU Compiler)
+Features
+--------
 
-Open a terminal and type (from the `AFF3CT` root folder):
+**The simulator targets high speed simulations** and extensively uses parallel
+techniques like SIMD, multi-threading and multi-nodes programming models.
+Below, a list of the features that motivated the creation of the simulator:
 
-    $ mkdir build
-    $ cd build
-    $ cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   #. **reproduce state-of-the-art decoding performances**,
+   #. **explore various channel code configurations**, find new trade-offs,
+   #. **prototype hardware implementation** (fixed-point receivers, hardware in
+      the loop tools),
+   #. **reuse tried and tested modules** and add yours,
+   #. **alternative to MATLAB and Simulink**, if you seek to reduce simulations
+      time.
 
-## Compile the Code with the Makefile
+Installation
+------------
 
-    $ make -j4
+First make sure to have installed a C++11 compiler, CMake and Git. Then install
+AFF3CT by running:
 
-This command will use the generated Makefile.
+.. code-block:: bash
 
-## Run the Code
-Here is an example of run. You can skip the computations of the current SNR point with the `ctrl+c` combination on the keyboard.
-If you use `ctrl+c` twice in a small time-step (500ms), the program will stop.
+   git clone --recursive https://github.com/aff3ct/aff3ct.git
+   mkdir aff3ct/build
+   cd aff3ct/build
+   cmake .. -DCMAKE_BUILD_TYPE=Release
+   make -j4
 
-### Decoding of the Polar Codes with the Successive Cancellation List Decoder (SCL)
+Constribute
+-----------
 
-Open a terminal and type (from the `$ROOT_AFF3CT/build/` folder):
+- Source Code: https://github.com/aff3ct/aff3ct
+- Contributing guidelines: https://github.com/aff3ct/aff3ct/blob/master/CONTRIBUTING.md
 
-    $ ./bin/aff3ct -C POLAR -m 1 -M 4 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL
+Support
+-------
 
-Expected output:
+If you are having issues, please let us know.
+We have an issue tracker at: https://github.com/aff3ct/aff3ct/issues
 
-    # ----------------------------------------------------
-    # ---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----
-    # ----------------------------------------------------
-    # Parameters :
-    # [...]
-    #
-    # The simulation is running...
-    # ----------------------------------------------------------------------||---------------------
-    #       Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput
-    #                    on the Signal Noise Ratio (SNR)                    ||  and elapsed time
-    # ----------------------------------------------------------------------||---------------------
-    # -------|-------|----------|----------|----------|----------|----------||----------|----------
-    #  Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||  SIM_THR |    ET/RT
-    #   (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss)
-    # -------|-------|----------|----------|----------|----------|----------||----------|----------
-        0.25 |  1.00 |      103 |    15522 |      103 | 8.75e-02 | 1.00e+00 ||     2.37 | 00h00'00
-        0.50 |  1.25 |      103 |    14705 |      103 | 8.29e-02 | 1.00e+00 ||     5.04 | 00h00'00
-        0.75 |  1.50 |      103 |    13801 |      103 | 7.78e-02 | 1.00e+00 ||     5.26 | 00h00'00
-        1.00 |  1.75 |      103 |    12988 |      103 | 7.32e-02 | 1.00e+00 ||     5.22 | 00h00'00
-        1.25 |  2.00 |      103 |    12072 |      103 | 6.80e-02 | 1.00e+00 ||     5.20 | 00h00'00
-        1.50 |  2.25 |      103 |    10801 |      103 | 6.09e-02 | 1.00e+00 ||     5.12 | 00h00'00
-        1.75 |  2.50 |      106 |     8266 |      103 | 4.53e-02 | 9.72e-01 ||     5.23 | 00h00'00
-        2.00 |  2.75 |      138 |     6789 |      102 | 2.86e-02 | 7.39e-01 ||     6.09 | 00h00'00
-        2.25 |  3.00 |      182 |     4777 |      103 | 1.52e-02 | 5.66e-01 ||     7.12 | 00h00'00
-        2.50 |  3.25 |      497 |     3751 |      102 | 4.38e-03 | 2.05e-01 ||    11.76 | 00h00'00
-        2.75 |  3.50 |     2445 |     2723 |      100 | 6.46e-04 | 4.09e-02 ||    19.59 | 00h00'00
-        3.00 |  3.75 |    18817 |     2552 |      100 | 7.87e-05 | 5.31e-03 ||    26.25 | 00h00'01
-        3.25 |  4.00 |   174249 |     1910 |      100 | 6.36e-06 | 5.74e-04 ||    28.97 | 00h00'10
-    # End of the simulation.
+License
+-------
 
-# More
+The project is licensed under the MIT license.
 
-A list of the AFF3CT related web pages:
-- [Official wiki](https://github.com/aff3ct/aff3ct/wiki)
-- [Official website](https://aff3ct.github.io/)
-- [Scientific publications](https://aff3ct.github.io/publications.html)
-- [Contributing guidelines](https://github.com/aff3ct/aff3ct/blob/master/CONTRIBUTING.md)
+External Links
+--------------
+
+- Official website: https://aff3ct.github.io
+- Documentation: https://aff3ct.readthedocs.io
+
