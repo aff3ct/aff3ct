@@ -43,11 +43,10 @@ Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (bps != 3) // TODO: With what should "3" be replaced ? -> have added "bps" attribute to the class, maybe you'll
-	              //       need to use it in the code to have it generic
+	if (fabs(bps - CB.get_system_bps()) > std::numeric_limits<double>::epsilon())
 	{
 		std::stringstream message;
-		message << "'bps' has to be equal to 3 ('bps' = " << bps << ").";
+		message << "'bps' has to be equal to " << CB.get_system_bps() << " ('bps' = " << bps << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
