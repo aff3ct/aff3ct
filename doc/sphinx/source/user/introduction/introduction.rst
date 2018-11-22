@@ -38,8 +38,7 @@ Below, a list of the features that motivated the creation of the simulator:
    #. **prototype hardware implementation** (fixed-point receivers, hardware in
       the loop tools),
    #. **reuse tried and tested modules** and add yours,
-   #. **alternative to MATLAB and Simulink**, if you seek to reduce simulations
-      time.
+   #. **alternative to MATLAB**, if you seek to reduce simulations time.
 
 |AFF3CT| was first intended to be a simulator but as it developed, the need to
 reuse sub-parts of the code intensified: **the library was born**. Below is a
