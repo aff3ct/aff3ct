@@ -143,7 +143,7 @@ void Modem_SCMA<B,R,Q,PSI>
 			for (auto j = 0; j < CB.get_codebook_size(); j++)
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
 					for (auto re = 0; re < CB.get_number_of_resources(); re++)
-						arr_phi(re,i,j,k) = phi(Y_N1, i, j, k, re, batch, H_N);
+						arr_phi(re, i, j, k) = phi(Y_N1, i, j, k, re, batch, H_N);
 
 		demodulate_batch(Y_N2, batch);
 	}
@@ -176,7 +176,7 @@ void Modem_SCMA<B,R,Q,PSI>
 			for (auto j = 0; j < CB.get_codebook_size(); j++)
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
 					for (auto re = 0; re < CB.get_number_of_resources(); re++)
-						arr_phi(re,i,j,k) = phi(Y_N1, i, j, k, re, batch);
+						arr_phi(re, i, j, k) = phi(Y_N1, i, j, k, re, batch);
 
 		demodulate_batch(Y_N2, batch);
 	}
@@ -288,7 +288,7 @@ Q Modem_SCMA<B,R,Q,PSI>
 ::phi(const Q* Y_N1, int i, int j, int k, int re, int batch)
 {
 	auto Y_N = std::complex<Q>(Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re],
-                               Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re +1]);
+                               Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re + 1]);
 
 	const auto CB0 = std::complex<Q>(CB(CB.get_resource_to_user(re, 0), re, i)); // convert from R to Q
 	const auto CB1 = std::complex<Q>(CB(CB.get_resource_to_user(re, 1), re, j));
