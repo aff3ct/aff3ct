@@ -46,7 +46,7 @@ void Monitor_BFER::parameters
 		"max number of frame errors for each noise point simulation.");
 
 	args.add(
-		{p+"-max-frame", "n"},
+		{p+"-max-fra", "n"},
 		tools::Integer(tools::Positive()),
 		"maximum number of frames for each noise point simulation.",
 		tools::arg_rank::ADV);
@@ -74,7 +74,7 @@ void Monitor_BFER::parameters
 	if(vals.exist({p+"-max-fe",    "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe",    "e"});
 	if(vals.exist({p+"-err-hist"      })) this->err_hist       = vals.to_int({p+"-err-hist"      });
 	if(vals.exist({p+"-err-hist-path" })) this->err_hist_path  = vals.at    ({p+"-err-hist-path" });
-	if(vals.exist({p+"-max-frame", "n"})) this->max_frame      = vals.to_int({p+"-max-frame", "n"});
+	if(vals.exist({p+"-max-fra",   "n"})) this->max_frame      = vals.to_int({p+"-max-fra",   "n"});
 }
 
 void Monitor_BFER::parameters
