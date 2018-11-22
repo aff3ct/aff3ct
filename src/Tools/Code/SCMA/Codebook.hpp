@@ -24,6 +24,7 @@ public:
 	int get_number_of_resources         () const;
 	int get_number_of_resources_per_user() const;
 	int get_number_of_users_per_resource() const;
+	int get_number_of_real_symbols      () const;
 	double get_system_bps               () const;
 
 	int get_resource_to_user(int r, int idx) const;
@@ -35,6 +36,7 @@ private:
 	int number_of_resources_per_user = 0;
 	int number_of_users_per_resource = 0;
 	int codebook_size                = 0;
+	int number_of_real_symbols       = 0;
 	double system_bps                = 0; // overall system spectral eff., may be float (e.g., 3 bps per user, 6 users, 4 resources -> 4.5)
 
 	std::vector<std::vector<std::vector<std::complex<R>>>> data;

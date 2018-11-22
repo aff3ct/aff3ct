@@ -224,6 +224,13 @@ inline int Codebook<R>
 }
 
 template <typename R>
+inline int Codebook<R>
+::get_number_of_real_symbols() const
+{
+	return 2 * number_of_resources;
+}
+
+template <typename R>
 inline double Codebook<R>
 ::get_system_bps() const
 {
