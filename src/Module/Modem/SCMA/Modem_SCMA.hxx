@@ -1,3 +1,6 @@
+#ifndef MODEM_SCMA_HXX_
+#define MODEM_SCMA_HXX_
+
 #include <cassert>
 #include <iomanip>
 #include <type_traits>
@@ -143,7 +146,7 @@ void Modem_SCMA<B,R,Q,PSI>
 					for (auto re = 0; re < CB.get_number_of_resources(); re++)
 						arr_phi(re,i,j,k) = phi(Y_N1, i, j, k, re, batch, H_N);
 
-		demodulate_batch(Y_N1,Y_N2,batch);
+		demodulate_batch(Y_N2, batch);
 	}
 }
 
@@ -176,13 +179,13 @@ void Modem_SCMA<B,R,Q,PSI>
 					for (auto re = 0; re < CB.get_number_of_resources(); re++)
 						arr_phi(re,i,j,k) = phi(Y_N1, i, j, k, re, batch);
 
-		demodulate_batch(Y_N1,Y_N2,batch);
+		demodulate_batch(Y_N2, batch);
 	}
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::demodulate_batch(const Q* Y_N1, Q* Y_N2, int batch)
+::demodulate_batch(Q* Y_N2, int batch)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -355,3 +358,5 @@ void Modem_SCMA<B,R,Q,PSI>
 }
 }
 }
+
+#endif // MODEM_SCMA_HXX_
