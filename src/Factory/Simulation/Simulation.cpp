@@ -46,44 +46,44 @@ void Simulation::parameters
 	args.add(
 		{p+"-stop-time"},
 		tools::Integer(tools::Positive()),
-		"time in sec after what the current simulatated noise stops (0 is infinite).",
+		"time in sec after what the current simulated noise stops (0 is infinite).",
 		tools::arg_rank::ADV);
 
 	args.add(
-		{p+"-max-frame", "n"},
+		{p+"-max-fra", "n"},
 		tools::Integer(tools::Positive()),
-		"maximum number of frames to play after what the current simulatated noise stops (0 is infinite).",
+		"maximum number of frames to play after what the current simulated noise stops (0 is infinite).",
 		tools::arg_rank::ADV);
 
 	args.add(
 		{p+"-crit-nostop"},
 		tools::None(),
-		"The stop criteria arguments -stop-time or -max-frame kill the current simulatated noise point"
+		"The stop criteria arguments -stop-time or -max-fra kill the current simulated noise point"
 		" but not the simulation.",
 		tools::arg_rank::ADV);
 
 	args.add(
-		{p+"-debug"},
+		{p+"-dbg"},
 		tools::None(),
 		"enable debug mode: print array values after each step.");
 
 	args.add(
-		{p+"-debug-hex"},
+		{p+"-dbg-hex"},
 		tools::None(),
 		"debug mode prints values in the hexadecimal format.");
 
 	args.add(
-		{p+"-debug-prec"},
+		{p+"-dbg-prec"},
 		tools::Integer(tools::Positive()),
 		"set the precision of real elements when displayed in debug mode.");
 
 	args.add(
-		{p+"-debug-limit", "d"},
+		{p+"-dbg-limit", "d"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the max number of elements to display in the debug mode.");
 
 	args.add(
-		{p+"-debug-frame"},
+		{p+"-dbg-fra"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"set the max number of frames to display in the debug mode.");
 
@@ -121,32 +121,32 @@ void Simulation::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-meta"            })) this->meta        =         vals.at    ({p+"-meta"          });
-	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int({p+"-stop-time"     }));
-	if(vals.exist({p+"-max-frame",   "n"})) this->max_frame   =         vals.to_int({p+"-max-frame", "n"});
-	if(vals.exist({p+"-seed",        "S"})) this->global_seed =         vals.to_int({p+"-seed",      "S"});
-	if(vals.exist({p+"-stats"           })) this->statistics  = true;
-	if(vals.exist({p+"-debug"           })) this->debug       = true;
-	if(vals.exist({p+"-crit-nostop"     })) this->crit_nostop = true;
-	if(vals.exist({p+"-debug-limit", "d"}))
+	if(vals.exist({p+"-meta"          })) this->meta        =         vals.at    ({p+"-meta"        });
+	if(vals.exist({p+"-stop-time"     })) this->stop_time   = seconds(vals.to_int({p+"-stop-time"   }));
+	if(vals.exist({p+"-max-fra",   "n"})) this->max_frame   =         vals.to_int({p+"-max-fra", "n"});
+	if(vals.exist({p+"-seed",      "S"})) this->global_seed =         vals.to_int({p+"-seed",    "S"});
+	if(vals.exist({p+"-stats"         })) this->statistics  = true;
+	if(vals.exist({p+"-dbg"           })) this->debug       = true;
+	if(vals.exist({p+"-crit-nostop"   })) this->crit_nostop = true;
+	if(vals.exist({p+"-dbg-limit", "d"}))
 	{
 		this->debug = true;
-		this->debug_limit = vals.to_int({p+"-debug-limit", "d"});
+		this->debug_limit = vals.to_int({p+"-dbg-limit", "d"});
 	}
-	if(vals.exist({p+"-debug-hex"}))
+	if(vals.exist({p+"-dbg-hex"}))
 	{
 		this->debug = true;
 		this->debug_hex = true;
 	}
-	if(vals.exist({p+"-debug-prec"}))
+	if(vals.exist({p+"-dbg-prec"}))
 	{
 		this->debug = true;
-		this->debug_precision = vals.to_int({p+"-debug-prec"});
+		this->debug_precision = vals.to_int({p+"-dbg-prec"});
 	}
-	if(vals.exist({p+"-debug-frame"}))
+	if(vals.exist({p+"-dbg-fra"}))
 	{
 		this->debug = true;
-		this->debug_frame_max = vals.to_int({p+"-debug-frame"});
+		this->debug_frame_max = vals.to_int({p+"-dbg-fra"});
 	}
 
 	if(vals.exist({p+"-threads", "t"}) && vals.to_int({p+"-threads", "t"}) > 0)
