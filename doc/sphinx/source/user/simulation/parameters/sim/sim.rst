@@ -355,7 +355,7 @@ step.
 ``--sim-debug-hex``
 """""""""""""""""""
 
-Enable the debug mode and prints values in the hexadecimal format.
+Enable the debug mode and *print values in the hexadecimal format*.
 
 .. _sim-sim-debug-limit:
 
@@ -366,8 +366,20 @@ Enable the debug mode and prints values in the hexadecimal format.
    :Default: 0
    :Examples: ``--sim-debug-limit 1``
 
-Enable the debug mode and sets the max number of elements to display per
+Enable the debug mode and set *the max number of elements* to display per
 frame. A number of elements at 0 means there is no dump limit.
+
+.. _sim-sim-debug-frame:
+
+``--sim-debug-frame``
+"""""""""""""""""""""
+
+   :Type: integer
+   :Default: 0
+   :Examples: ``--sim-debug-frame 10``
+
+Enable the debug mode and set *the max number of frames* to display per module.
+A number of elements at 0 means there is no dump limit.
 
 .. _sim-sim-debug-prec:
 
@@ -378,7 +390,7 @@ frame. A number of elements at 0 means there is no dump limit.
    :Default: 2
    :Examples: ``--sim-debug-prec 1``
 
-Enable the debug mode and sets the decimal precision (number of digits for
+Enable the debug mode and set *the decimal precision* (number of digits for
 decimal part) of real elements.
 
 .. _sim-sim-no-colors:
