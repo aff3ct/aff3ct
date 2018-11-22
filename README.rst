@@ -11,13 +11,13 @@ method.
 It is very easy to use, for instance, to estimate the BER/FER decoding
 performances of the (2048,1723) Polar code from 1.0 to 4.0 dB:
 
-.. code-block:: bash
+.. code-block:: console
 
    aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0
 
 And the output will be:
 
-.. code-block:: bash
+.. code-block:: console
 
    # ----------------------------------------------------
    # ---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----
@@ -61,7 +61,7 @@ Installation
 First make sure to have installed a C++11 compiler, CMake and Git. Then install
 AFF3CT by running:
 
-.. code-block:: bash
+.. code-block:: console
 
    git clone --recursive https://github.com/aff3ct/aff3ct.git
    mkdir aff3ct/build
