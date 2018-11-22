@@ -27,8 +27,8 @@ for small changes, but bigger changes should look like this:
    >
    > A paragraph describing what changed and its impact."
 
-Testing
--------
+Regression Testing
+------------------
 
 .. _an automated regression test script: https://github.com/aff3ct/aff3ct/blob/master/ci/test-regression.py
 .. _dedicated repository: https://github.com/aff3ct/error_rate_references
