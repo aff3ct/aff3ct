@@ -46,6 +46,7 @@ struct Simulation : Launcher
 		int                       global_seed     = 0;
 		int                       debug_limit     = 0;
 		int                       debug_precision = 2;
+		int                       debug_frame_max = 0;
 
 
 		// ---------------------------------------------------------------------------------------------------- METHODS

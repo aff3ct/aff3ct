@@ -42,6 +42,8 @@ void Simulation
 							t->set_debug_limit((uint32_t)params.debug_limit);
 						if (params.debug_precision)
 							t->set_debug_precision((uint8_t)params.debug_precision);
+						if (params.debug_frame_max)
+							t->set_debug_frame_max((uint32_t)params.debug_frame_max);
 					}
 
 					if (!t->is_stats() && !t->is_debug())

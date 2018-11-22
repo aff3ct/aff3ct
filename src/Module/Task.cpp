@@ -23,6 +23,7 @@ Task::Task(const Module &module, const std::string &name, const bool autoalloc, 
   debug_hex(false),
   debug_limit(-1),
   debug_precision(2),
+  debug_frame_max(-1),
   codelet([]() -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
@@ -106,6 +107,11 @@ void Task::set_debug_precision(const uint8_t prec)
 	this->debug_precision = prec;
 }
 
+void Task::set_debug_frame_max(const uint32_t limit)
+{
+	this->debug_frame_max = limit;
+}
+
 // trick to compile on the GNU compiler version 4 (where 'std::hexfloat' is unavailable)
 #if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
 namespace std {
@@ -118,9 +124,22 @@ Hexfloat hexfloat;
 std::ostream& operator<<(std::ostream &os, const std::Hexfloat &obj) { obj.message(os); return os; }
 #endif
 
+uint32_t n_digits_dec(uint32_t v)
+{
+	uint32_t count = 0;
+	while (v)
+	{
+		count++;
+		v /= 10;
+	}
+
+	return count;
+}
+
+
 template <typename T>
 static inline void display_data(const T *data,
-                                const size_t fra_size, const size_t n_fra, const size_t limit,
+                                const size_t fra_size, const size_t n_fra, const size_t limit, const size_t max_frame,
                                 const uint8_t p, const uint8_t n_spaces, const bool hex)
 {
 	constexpr bool is_float_type = std::is_same<float, T>::value || std::is_same<double, T>::value;
@@ -134,34 +153,45 @@ static inline void display_data(const T *data,
 	else
 		std::cout << std::fixed << std::setprecision(p) << std::dec;
 
-	if (n_fra == 1)
+	if (n_fra == 1 && max_frame != 0)
 	{
-		for (auto i = 0; i < (int)limit; i++)
+		for (size_t i = 0; i < limit; i++)
 		{
 			if (hex)
-				std::cout << (!is_float_type ? "0x" : "") << +data[i] << (i < (int)limit -1 ? ", " : "");
+				std::cout << (!is_float_type ? "0x" : "") << +data[i] << (i < limit -1 ? ", " : "");
 			else
-				std::cout << std::setw(p +3) << +data[i] << (i < (int)limit -1 ? ", " : "");
+				std::cout << std::setw(p +3) << +data[i] << (i < limit -1 ? ", " : "");
 		}
 		std::cout << (limit < fra_size ? ", ..." : "");
 	}
 	else
 	{
-		std::string spaces = "#"; for (auto s = 0; s < (int)n_spaces -1; s++) spaces += " ";
-		for (auto f = 0; f < (int)n_fra; f++)
+		std::string spaces = "#";
+		for (uint8_t s = 0; s < n_spaces -1; s++)
+			spaces += " ";
+
+		const auto n_digits = n_digits_dec(max_frame);
+
+		for (size_t f = 0; f < max_frame; f++)
 		{
-			std::string fra_id = "f" + std::to_string(f+1) + ":";
-			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << fra_id
-			          << rang::style::reset << "(";
-			for (auto i = 0; i < (int)limit; i++)
+			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << "f" << std::setw(n_digits)
+			          << f+1 << rang::style::reset << "(";
+
+			for (size_t i = 0; i < limit; i++)
 			{
 				if (hex)
 					std::cout << (!is_float_type ? "0x" : "") << +data[f * fra_size +i]
-					          << (i < (int)limit -1 ? ", " : "");
+					          << (i < limit -1 ? ", " : "");
 				else
-					std::cout << std::setw(p +3) << +data[f * fra_size +i] << (i < (int)limit -1 ? ", " : "");
+					std::cout << std::setw(p +3) << +data[f * fra_size +i] << (i < limit -1 ? ", " : "");
 			}
-			std::cout << (limit < fra_size ? ", ..." : "") << ")" << (f < (int)n_fra -1 ? ", \n" : "");
+			std::cout << (limit < fra_size ? ", ..." : "") << ")" << (f < n_fra -1 ? ", \n" : "");
+		}
+
+		if (max_frame < n_fra)
+		{
+			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << "f" << std::setw(n_digits)
+			           << max_frame + 1 << "->" << "f" << n_fra << ":" << rang::style::reset << "(...)";
 		}
 	}
 
@@ -213,16 +243,17 @@ int Task::exec()
 
 					auto n_elmts = s->get_databytes() / (size_t)s->get_datatype_size();
 					auto fra_size = n_elmts / n_fra;
-					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+					auto limit     = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+					auto max_frame = debug_frame_max != -1 ? std::min(n_fra, (size_t)debug_frame_max) : n_fra;
 					auto p = debug_precision;
 					auto h = debug_hex;
 					std::cout << "# {IN}  " << s->get_name() << spaces << " = [";
-					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
 					std::cout << "]" << std::endl;
 				}
 			}
@@ -264,15 +295,16 @@ int Task::exec()
 					auto n_elmts = s->get_databytes() / (size_t)s->get_datatype_size();
 					auto fra_size = n_elmts / n_fra;
 					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+					auto max_frame = debug_frame_max != -1 ? std::min(n_fra, (size_t)debug_frame_max) : n_fra;
 					auto p = debug_precision;
 					auto h = debug_hex;
 					std::cout << "# {OUT} " << s->get_name() << spaces << " = [";
-					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
 					std::cout << "]" << std::endl;
 				}
 			}

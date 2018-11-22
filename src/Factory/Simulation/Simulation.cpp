@@ -83,6 +83,11 @@ void Simulation::parameters
 		"set the max number of elements to display in the debug mode.");
 
 	args.add(
+		{p+"-debug-frame"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the max number of frames to display in the debug mode.");
+
+	args.add(
 		{p+"-stats"},
 		tools::None(),
 		"display statistics module by module.");
@@ -137,6 +142,11 @@ void Simulation::parameters
 	{
 		this->debug = true;
 		this->debug_precision = vals.to_int({p+"-debug-prec"});
+	}
+	if(vals.exist({p+"-debug-frame"}))
+	{
+		this->debug = true;
+		this->debug_frame_max = vals.to_int({p+"-debug-frame"});
 	}
 
 	if(vals.exist({p+"-threads", "t"}) && vals.to_int({p+"-threads", "t"}) > 0)
