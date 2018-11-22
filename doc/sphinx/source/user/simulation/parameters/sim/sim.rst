@@ -66,56 +66,47 @@ Select the code type you want to simulate.
 
 Description of the allowed values:
 
-+----------------+---------------------------------+
-| Value          | Description                     |
-+================+=================================+
-| ``BCH``        | |sim-cde-type_descr_bch|        |
-+----------------+---------------------------------+
-| ``LDPC``       | |sim-cde-type_descr_ldpc|       |
-+----------------+---------------------------------+
-| ``POLAR``      | |sim-cde-type_descr_polar|      |
-+----------------+---------------------------------+
-| ``RA``         | |sim-cde-type_descr_ra|         |
-+----------------+---------------------------------+
-| ``REP``        | |sim-cde-type_descr_rep|        |
-+----------------+---------------------------------+
-| ``RS``         | |sim-cde-type_descr_rs|         |
-+----------------+---------------------------------+
-| ``RSC``        | |sim-cde-type_descr_rsc|        |
-+----------------+---------------------------------+
-| ``RSC_DB``     | |sim-cde-type_descr_rsc_db|     |
-+----------------+---------------------------------+
-| ``TURBO``      | |sim-cde-type_descr_turbo|      |
-+----------------+---------------------------------+
-| ``TURBO_DB``   | |sim-cde-type_descr_turbo_db|   |
-+----------------+---------------------------------+
-| ``TURBO_PROD`` | |sim-cde-type_descr_turbo_prod| |
-+----------------+---------------------------------+
-| ``UNCODED``    | |sim-cde-type_descr_uncoded|    |
-+----------------+---------------------------------+
-
 .. _Bose–Chaudhuri–Hocquenghem: https://en.wikipedia.org/wiki/BCH_code
-.. _Low-density parity-check: https://en.wikipedia.org/wiki/Low-density_parity-check_code
+.. _Low-Density Parity-Check: https://en.wikipedia.org/wiki/Low-density_parity-check_code
 .. _Polar: https://en.wikipedia.org/wiki/Polar_code_(coding_theory)
-.. _Repeat accumulate: https://en.wikipedia.org/wiki/Repeat-accumulate_code
+.. _Repeat Accumulate: https://en.wikipedia.org/wiki/Repeat-accumulate_code
 .. _Repetition: https://en.wikipedia.org/wiki/Repetition_code
-.. _Reed–Solomon: https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction
+.. _Reed-Solomon: https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction
 .. _Recursive Systematic Convolutional: https://en.wikipedia.org/wiki/Convolutional_code
 .. _Turbo: https://en.wikipedia.org/wiki/Turbo_code
 .. _Turbo Product: http://www.ieee802.org/16/tutorial/80216t-00_01.pdf
 
-.. |sim-cde-type_descr_bch|        replace:: The `Bose–Chaudhuri–Hocquenghem`_ code.
-.. |sim-cde-type_descr_ldpc|       replace:: The `Low-density parity-check`_ codes.
-.. |sim-cde-type_descr_polar|      replace:: The `Polar`_ code.
-.. |sim-cde-type_descr_ra|         replace:: The `Repeat accumulate`_ code.
-.. |sim-cde-type_descr_rep|        replace:: The `Repetition`_ code.
-.. |sim-cde-type_descr_rs|         replace:: The `Reed–Solomon`_ code.
-.. |sim-cde-type_descr_rsc|        replace:: The `Recursive Systematic Convolutional`_ code.
-.. |sim-cde-type_descr_rsc_db|     replace:: The `Recursive Systematic Convolutional`_ code with Double Binary symbols.
-.. |sim-cde-type_descr_turbo|      replace:: The `Turbo`_ codes.
-.. |sim-cde-type_descr_turbo_db|   replace:: The `Turbo`_ codes with Double Binary symbols.
-.. |sim-cde-type_descr_turbo_prod| replace:: The `Turbo Product`_ code.
-.. |sim-cde-type_descr_uncoded|    replace:: An uncoded simulation.
++----------------+-------------------------------------------------------------+
+| Value          | Description                                                 |
++================+=============================================================+
+| ``BCH``        | The `Bose–Chaudhuri–Hocquenghem`_ codes :cite:`Bose1960`.   |
++----------------+-------------------------------------------------------------+
+| ``LDPC``       | The `Low-Density Parity-Check`_ codes                       |
+|                | :cite:`Gallager1963,MacKay1995`.                            |
++----------------+-------------------------------------------------------------+
+| ``POLAR``      | The `Polar`_ codes :cite:`Arikan2009`.                      |
++----------------+-------------------------------------------------------------+
+| ``RA``         | The `Repeat Accumulate`_ codes :cite:`Divsalar1998`.        |
++----------------+-------------------------------------------------------------+
+| ``REP``        | The `Repetition`_ codes :cite:`Ryan2009`.                   |
++----------------+-------------------------------------------------------------+
+| ``RS``         | The `Reed-Solomon`_ codes :cite:`Reed1960`.                 |
++----------------+-------------------------------------------------------------+
+| ``RSC``        | The `Recursive Systematic Convolutional`_ codes             |
+|                | :cite:`Ryan2009`.                                           |
++----------------+-------------------------------------------------------------+
+| ``RSC_DB``     | The `Recursive Systematic Convolutional`_ codes with double |
+|                | binary symbols :cite:`Ryan2009`.                            |
++----------------+-------------------------------------------------------------+
+| ``TURBO``      | The `Turbo`_ codes :cite:`Berrou1993`.                      |
++----------------+-------------------------------------------------------------+
+| ``TURBO_DB``   | The `Turbo`_ codes with double binary symbols               |
+|                | :cite:`Berrou1993`.                                         |
++----------------+-------------------------------------------------------------+
+| ``TURBO_PROD`` | The `Turbo Product`_ codes :cite:`Ryan2009`.                |
++----------------+-------------------------------------------------------------+
+| ``UNCODED``    | An uncoded simulation.                                      |
++----------------+-------------------------------------------------------------+
 
 .. note:: Only ``POLAR``, ``RSC``, ``RSC_DB``, ``LDPC`` and ``UNCODED`` codes
    are available in ``BFERI`` simulation type.
@@ -130,10 +121,10 @@ Description of the allowed values:
    :Allowed values: ``8`` ``16`` ``32`` ``64``
    :Examples: ``--sim-prec 8``
 
-Specify the representation of the real numbers. 64-bit and 32-bit precisions
-imply a floating-point representation of the real numbers. 16-bit and 8-bit
-imply a fixed-point representation of the real numbers (see the
-:ref:`qnt-quantizer-parameters` to configure the quantization).
+Specify the representation of the real numbers in the receiver part of the
+chain. 64-bit and 32-bit precisions imply a floating-point representation of the
+real numbers. 16-bit and 8-bit imply a fixed-point representation of the real
+numbers (see the :ref:`qnt-quantizer-parameters` to configure the quantization).
 
 Description of the allowed values:
 
@@ -154,10 +145,6 @@ Description of the allowed values:
 .. |sim-prec_descr_32| replace:: 32-bit precision.
 .. |sim-prec_descr_64| replace:: 64-bit precision.
 
-
-.. note:: The ``EXIT`` simulation chain is not available with fixed point
-   precision.
-
 .. _sim-sim-noise-type:
 
 ``--sim-noise-type, -E``
@@ -169,23 +156,6 @@ Description of the allowed values:
    :Examples: ``-E EBN0``
 
 Select the type of **noise** used to simulate.
-
-``ESN0`` is automatically calculated from ``EBN0`` and vice-versa with
-the following equation:
-
-.. centered::
-   :math:`\frac{E_S}{N_0} = \frac{E_B}{N_0} + 10.\log(R.bps)`
-
-where :math:`R` is the bit rate and :math:`bps` the number of bits per symbol.
-
-Actually, with those noise types, only the noise variance :math:`\sigma` is
-given to the different modules, including the channel:
-
-.. centered::
-   :math:`\sigma = \sqrt{\frac{ups}{2 \times 10^{\frac{E_S}{N_0} / 10}}}`
-
-where :math:`ups` is the up-sampling factor.
-
 
 Description of the allowed values:
 
@@ -206,6 +176,14 @@ Description of the allowed values:
 .. |sim-noise-type_descr_ep|   replace:: Event Probability
 .. |sim-noise-type_descr_rop|  replace:: Received Optical Power
 
+``ESN0`` is automatically calculated from ``EBN0`` and vice-versa with
+the following equation:
+
+.. centered::
+   :math:`\frac{E_S}{N_0} = \frac{E_B}{N_0} + 10.\log(R.bps),`
+
+where :math:`R` is the bit rate and :math:`bps` the number of bits per symbol.
+
 .. note:: When selecting ``EP`` the simulator runs in reverse order, ie. from
    the greatest event probability to the smallest one.
 
@@ -222,11 +200,11 @@ Description of the allowed values:
    :Type: real number
    :Examples: ``-m 0.0``
 
-Give the minimal noise energy point to simulate.
+Give the minimal noise energy value to simulate.
 
 .. attention:: This argument is another way to set the noise range to simulate.
-   It is ignored or not required if the argument :ref:`sim-sim-noise-range` is given,
-   so you may find other piece of information in its description.
+   It is ignored or not required if the :ref:`sim-sim-noise-range` argument is
+   given, so you may find other piece of information in its description.
 
 
 .. _sim-sim-noise-max:
@@ -237,11 +215,11 @@ Give the minimal noise energy point to simulate.
    :Type: real number
    :Examples: ``-M 5.0``
 
-Give the maximal noise energy to simulate.
+Give the maximal noise energy value to simulate.
 
 .. attention:: This argument is another way to set the noise range to simulate.
-   It is ignored or not required if the argument :ref:`sim-sim-noise-range` is given,
-   so you may find other piece of information in its description.
+   It is ignored or not required if the :ref:`sim-sim-noise-range` argument is
+   given, so you may find other piece of information in its description.
 
 .. _sim-sim-noise-step:
 
@@ -255,8 +233,8 @@ Give the maximal noise energy to simulate.
 Give the noise energy step between each simulation iteration.
 
 .. attention:: This argument is another way to set the noise range to simulate.
-   It is ignored or not required if the argument :ref:`sim-sim-noise-range` is given,
-   so you may find other piece of information in its description.
+   It is ignored or not required if the :ref:`sim-sim-noise-range` argument is
+   given, so you may find other piece of information in its description.
 
 .. _sim-sim-noise-range:
 
@@ -275,9 +253,9 @@ The above example will run the following noise points::
 .. attention:: The numerical range for a noise point is
    :math:`\left[-214.748; 213.952 \right]` with a precision of :math:`10^{-7}`.
 
-.. note:: If given, :ref:`sim-sim-noise-min`, :ref:`sim-sim-noise-max`, and
-   :ref:`sim-sim-noise-step` are ignored. But it is not required anymore if
-   :ref:`sim-sim-noise-min` and :ref:`sim-sim-noise-max` are set.
+.. note:: If given, the :ref:`sim-sim-noise-min`, :ref:`sim-sim-noise-max`, and
+   :ref:`sim-sim-noise-step` parameters are ignored. But it is not required
+   anymore if :ref:`sim-sim-noise-min` and :ref:`sim-sim-noise-max` are set.
 
 .. _sim-sim-pdf-path:
 
@@ -288,14 +266,11 @@ The above example will run the following noise points::
    :Rights: read only
    :Examples: ``--sim-pdf-path example/path/to/the/right/file``
 
-Give a file that contains PDF for different SNR.
-To use with the ``OPTICAL`` :ref:`channel type <chn-chn-type>`.
-
-It sets the noise range from the given ones in the file.
-However, it is overwritten by :ref:`sim-sim-noise-range` or limited
+Give a file that contains |PDF| for different |ROP|. To use with the ``OPTICAL``
+:ref:`channel type <chn-chn-type>`. It sets the noise range from the given ones
+in the file. However, it is overwritten by :ref:`sim-sim-noise-range` or limited
 by :ref:`sim-sim-noise-min` and :ref:`sim-sim-noise-max` with a minimum step of
 :ref:`sim-sim-noise-step` between two values.
-
 
 .. _sim-sim-meta:
 
@@ -303,20 +278,31 @@ by :ref:`sim-sim-noise-min` and :ref:`sim-sim-noise-max` with a minimum step of
 """"""""""""""
 
    :Type: text
-   :Examples: ``--sim-meta "TODO CHECK VALUE"``
+   :Examples: ``--sim-meta "TITLE"``
 
-Print the output with meta-data readable by :ref:`user_pyber_overview`.
-The given text is considered as the simulation title.
-The just run *command* and the *title* meta-data are automatically printed.
+.. _INI: https://en.wikipedia.org/wiki/INI_file
+
+Add meta-data at the beginning of the |AFF3CT| standard output (`INI`_ format is
+used). The value of the parameter will be affected to the *title* meta-data and
+the *command line* will be added.
+
+.. note:: :ref:`PyBER <user_pyber_overview>`, our |GUI| tool, can take advantage
+   of those meta-data to enhance the display of the simulations.
 
 .. _sim-sim-coded:
 
 ``--sim-coded``
 """""""""""""""
 
-Enable the coded monitoring. This means that the monitoring is done on the
-entire codeword instead of only the information bits. This gives theoretically
-an equal or worse |BFER| result.
+Enable the coded monitoring. By default, in the simulation, the information bits
+are extracted from the decoded codewords and then they are compared to the
+initially generated information bits. When this parameter is enabled, the
+decoded codewords are directly compared with the initially encoded codewords.
+
+.. note:: This parameter can have a negative impact on the |BER| performance.
+
+.. note:: In some rare cases, to enable this parameter can reduce the simulation
+  time.
 
 .. _sim-sim-coset:
 
@@ -593,3 +579,8 @@ sub-productive.
    :ref:`compilation_cmake_options`.
 
 .. TODO : add link to MPI use
+
+References
+""""""""""
+
+.. bibliography:: references.bib

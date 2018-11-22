@@ -182,5 +182,5 @@ Description of the allowed values:
 References
 """"""""""
 
-.. bibliography:: ../../../../references.bib
+.. bibliography:: references.bib
 
