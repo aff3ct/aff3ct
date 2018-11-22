@@ -319,10 +319,10 @@ vice-versa.
 .. TODO : add a link to the COSET encoder.
 
 
-.. _sim-sim-debug:
+.. _sim-sim-dbg:
 
-``--sim-debug``
-"""""""""""""""
+``--sim-dbg``
+"""""""""""""
 
 Enable the debug mode. This prints the frame values after each module
 step.
@@ -331,40 +331,52 @@ step.
    to remove the :ref:`sim-sim-threads` from your command line if you use it.
 
 .. hint:: To keep a readable debug log, use :ref:`mnt-mnt-max-fe` or
-   :ref:`sim-sim-max-frame` to stop your
+   :ref:`sim-sim-max-fra` to stop your
    simulation after that a given amount of frames have been played. You may also
-   think about using :ref:`sim-sim-debug-limit` when playing with too long
+   think about using :ref:`sim-sim-dbg-limit` when playing with too long
    frames (more than 32 bits in function of your screen size).
 
-.. _sim-sim-debug-hex:
+.. _sim-sim-dbg-hex:
 
-``--sim-debug-hex``
-"""""""""""""""""""
+``--sim-dbg-hex``
+"""""""""""""""""
 
-Enable the debug mode and prints values in the hexadecimal format.
+Enable the debug mode and *print values in the hexadecimal format*.
 
-.. _sim-sim-debug-limit:
+.. _sim-sim-dbg-limit:
 
-``--sim-debug-limit, -d``
-"""""""""""""""""""""""""
+``--sim-dbg-limit, -d``
+"""""""""""""""""""""""
 
    :Type: integer
    :Default: 0
-   :Examples: ``--sim-debug-limit 1``
+   :Examples: ``--sim-dbg-limit 1``
 
-Enable the debug mode and sets the max number of elements to display per
+Enable the debug mode and set *the max number of elements* to display per
 frame. A number of elements at 0 means there is no dump limit.
 
-.. _sim-sim-debug-prec:
+.. _sim-sim-dbg-fra:
 
-``--sim-debug-prec``
-""""""""""""""""""""
+``--sim-dbg-fra``
+"""""""""""""""""
+
+   :Type: integer
+   :Default: 0
+   :Examples: ``--sim-dbg-fra 10``
+
+Enable the debug mode and set *the max number of frames* to display per module.
+A number of elements at 0 means there is no dump limit.
+
+.. _sim-sim-dbg-prec:
+
+``--sim-dbg-prec``
+"""""""""""""""""
 
    :Type: integer
    :Default: 2
-   :Examples: ``--sim-debug-prec 1``
+   :Examples: ``--sim-dbg-prec 1``
 
-Enable the debug mode and sets the decimal precision (number of digits for
+Enable the debug mode and set *the decimal precision* (number of digits for
 decimal part) of real elements.
 
 .. _sim-sim-no-colors:
@@ -455,14 +467,14 @@ Set the number of global iterations between the demodulator and the decoder.
 
 .. note:: Available only for BFERI simulations.
 
-.. _sim-sim-max-frame:
+.. _sim-sim-max-fra:
 
-``--sim-max-frame, -n`` |image_advanced_argument|
-"""""""""""""""""""""""""""""""""""""""""""""""""
+``--sim-max-fra, -n`` |image_advanced_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""
 
    :Type: integer
    :Default: 0
-   :Examples: ``--sim-max-frame 1``
+   :Examples: ``--sim-max-fra 1``
 
 Set the maximum number of frames to play after what the current simulated noise
 point is stopped. A 0 value means no limit. The simulation is also stopped
@@ -486,7 +498,7 @@ if the :ref:`sim-sim-crit-nostop` option is used.
 ``--sim-crit-nostop`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Set the stop criteria arguments:ref:`sim-sim-max-frame` and
+Set the stop criteria arguments:ref:`sim-sim-max-fra` and
 :ref:`sim-sim-stop-time` stop only the currently simulated noise point but not
 the simulation.
 
@@ -509,7 +521,7 @@ Automatically replay the saved frames while running with :ref:`sim-sim-err-trk`.
 
 .. tip:: To play back the bad frames, just add **-rev** to the
    :ref:`sim-sim-err-trk` argument and change nothing else to your command line
-   except the debug mode arguments (:ref:`sim-sim-debug`).
+   except the debug mode arguments (:ref:`sim-sim-dbg`).
 
 .. _sim-sim-err-trk-path:
 
