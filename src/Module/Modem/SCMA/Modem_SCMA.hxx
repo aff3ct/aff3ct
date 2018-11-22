@@ -82,7 +82,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	const auto N_mod = 8 * ((this->N + 1) / 2); // TODO:  With what should "8" be replaced ?
+	const auto N_mod = CB.get_number_of_real_symbols() * ((this->N + 1) / 2);
 
 	for (auto f = 0 ; f < this->n_frames ; f++)
 	{
@@ -95,8 +95,8 @@ void Modem_SCMA<B,R,Q,PSI>
 
 			for (auto i = 0 ; i < CB.get_number_of_resources() ; i++)
 			{
-				X_N2[f * N_mod + 8 * j + 2 * i   ] = CB(f, i, idx).real();
-				X_N2[f * N_mod + 8 * j + 2 * i +1] = CB(f, i, idx).imag();
+				X_N2[f * N_mod + CB.get_number_of_real_symbols() * j + 2 * i   ] = CB(f, i, idx).real();
+				X_N2[f * N_mod + CB.get_number_of_real_symbols() * j + 2 * i +1] = CB(f, i, idx).imag();
 			}
 		}
 	}
@@ -109,8 +109,8 @@ void Modem_SCMA<B,R,Q,PSI>
 
 			for (auto i = 0 ; i < CB.get_number_of_resources() ; i++)
 			{
-				X_N2[f * N_mod + 8 * (this->N / 2) + 2 * i   ] = CB(f, i, idx).real(); // TODO:  With what should "8" be replaced ?
-				X_N2[f * N_mod + 8 * (this->N / 2) + 2 * i +1] = CB(f, i, idx).imag(); // TODO:  With what should "2" be replaced ?
+				X_N2[f * N_mod + CB.get_number_of_real_symbols() * (this->N / 2) + 2 * i   ] = CB(f, i, idx).real();
+				X_N2[f * N_mod + CB.get_number_of_real_symbols() * (this->N / 2) + 2 * i +1] = CB(f, i, idx).imag();
 			}
 		}
 	}
@@ -287,7 +287,8 @@ template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Q Modem_SCMA<B,R,Q,PSI>
 ::phi(const Q* Y_N1, int i, int j, int k, int re, int batch)
 {
-	auto Y_N = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
+	auto Y_N = std::complex<Q>(Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re],
+                               Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re +1]);
 
 	const auto CB0 = std::complex<Q>(CB(CB.get_resource_to_user(re, 0), re, i)); // convert from R to Q
 	const auto CB1 = std::complex<Q>(CB(CB.get_resource_to_user(re, 1), re, j));
@@ -322,14 +323,21 @@ Q Modem_SCMA<B,R,Q,PSI>
 	std::complex<Q> tmp;
 	const auto Nmod = size_mod(this->N, 3);
 
-	const auto Y_N  = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
+	const auto Y_N  = std::complex<Q>(Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re],
+                                      Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re +1]);
 
-	const auto H_N0 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 0) * Nmod + 8 * batch + 2 * re   ],
-	                                  (Q)H_N[CB.get_resource_to_user(re, 0) * Nmod + 8 * batch + 2 * re +1]);
-	const auto H_N1 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 1) * Nmod + 8 * batch + 2 * re   ],
-	                                  (Q)H_N[CB.get_resource_to_user(re, 1) * Nmod + 8 * batch + 2 * re +1]);
-	const auto H_N2 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 2) * Nmod + 8 * batch + 2 * re   ],
-	                                  (Q)H_N[CB.get_resource_to_user(re, 2) * Nmod + 8 * batch + 2 * re +1]);
+	const auto H_N0 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 0) * Nmod
+                                           + CB.get_number_of_real_symbols() * batch + 2 * re   ],
+	                                  (Q)H_N[CB.get_resource_to_user(re, 0) * Nmod
+                                           + CB.get_number_of_real_symbols() * batch + 2 * re +1]);
+	const auto H_N1 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 1) * Nmod
+                                           + CB.get_number_of_real_symbols() * batch + 2 * re   ],
+	                                  (Q)H_N[CB.get_resource_to_user(re, 1) * Nmod
+                                           + CB.get_number_of_real_symbols() * batch + 2 * re +1]);
+	const auto H_N2 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 2) * Nmod
+                                           + CB.get_number_of_real_symbols() * batch + 2 * re   ],
+	                                  (Q)H_N[CB.get_resource_to_user(re, 2) * Nmod
+                                           + CB.get_number_of_real_symbols() * batch + 2 * re +1]);
 
 	const auto CB0  = std::complex<Q>(CB(CB.get_resource_to_user(re, 0), re, i));
 	const auto CB1  = std::complex<Q>(CB(CB.get_resource_to_user(re, 1), re, j));
