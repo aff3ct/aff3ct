@@ -96,7 +96,7 @@ void Modem_SCMA<B,R,Q,PSI>
 			for (auto i = 0 ; i < CB.get_number_of_resources() ; i++)
 			{
 				X_N2[f * N_mod + CB.get_number_of_real_symbols() * j + 2 * i   ] = CB(f, i, idx).real();
-				X_N2[f * N_mod + CB.get_number_of_real_symbols() * j + 2 * i +1] = CB(f, i, idx).imag();
+				X_N2[f * N_mod + CB.get_number_of_real_symbols() * j + 2 * i + 1] = CB(f, i, idx).imag();
 			}
 		}
 	}
@@ -110,7 +110,7 @@ void Modem_SCMA<B,R,Q,PSI>
 			for (auto i = 0 ; i < CB.get_number_of_resources() ; i++)
 			{
 				X_N2[f * N_mod + CB.get_number_of_real_symbols() * (this->N / 2) + 2 * i   ] = CB(f, i, idx).real();
-				X_N2[f * N_mod + CB.get_number_of_real_symbols() * (this->N / 2) + 2 * i +1] = CB(f, i, idx).imag();
+				X_N2[f * N_mod + CB.get_number_of_real_symbols() * (this->N / 2) + 2 * i + 1] = CB(f, i, idx).imag();
 			}
 		}
 	}
@@ -324,20 +324,20 @@ Q Modem_SCMA<B,R,Q,PSI>
 	const auto Nmod = size_mod(this->N, 3);
 
 	const auto Y_N  = std::complex<Q>(Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re],
-                                      Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re +1]);
+                                      Y_N1[batch * CB.get_number_of_real_symbols() + 2 * re + 1]);
 
 	const auto H_N0 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 0) * Nmod
                                            + CB.get_number_of_real_symbols() * batch + 2 * re   ],
 	                                  (Q)H_N[CB.get_resource_to_user(re, 0) * Nmod
-                                           + CB.get_number_of_real_symbols() * batch + 2 * re +1]);
+                                           + CB.get_number_of_real_symbols() * batch + 2 * re + 1]);
 	const auto H_N1 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 1) * Nmod
                                            + CB.get_number_of_real_symbols() * batch + 2 * re   ],
 	                                  (Q)H_N[CB.get_resource_to_user(re, 1) * Nmod
-                                           + CB.get_number_of_real_symbols() * batch + 2 * re +1]);
+                                           + CB.get_number_of_real_symbols() * batch + 2 * re + 1]);
 	const auto H_N2 = std::complex<Q>((Q)H_N[CB.get_resource_to_user(re, 2) * Nmod
                                            + CB.get_number_of_real_symbols() * batch + 2 * re   ],
 	                                  (Q)H_N[CB.get_resource_to_user(re, 2) * Nmod
-                                           + CB.get_number_of_real_symbols() * batch + 2 * re +1]);
+                                           + CB.get_number_of_real_symbols() * batch + 2 * re + 1]);
 
 	const auto CB0  = std::complex<Q>(CB(CB.get_resource_to_user(re, 0), re, i));
 	const auto CB1  = std::complex<Q>(CB(CB.get_resource_to_user(re, 1), re, j));
