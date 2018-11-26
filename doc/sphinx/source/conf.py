@@ -237,6 +237,7 @@ rst_epilog = """
 .. |FER|      replace:: :abbr:`FER     (Frame Error Rate)`
 .. |BFER|     replace:: :abbr:`BER/FER (Bit and Frame Error Rate)`
 .. |SNR|      replace:: :abbr:`SNR     (Signal Noise Ratio)`
+.. |SNRs|     replace:: :abbr:`SNRs    (Signal Noise Ratios)`
 .. |AFF3CT|   replace:: :abbr:`AFF3CT  (A Fast Forward Error Correction Toolbox!)`
 .. |GUI|      replace:: :abbr:`GUI     (Graphical User Interface)`
 .. |API|      replace:: :abbr:`API     (Application Programming Interface)`
@@ -244,7 +245,8 @@ rst_epilog = """
 .. |PDF|      replace:: :abbr:`PDF     (Probability Density Function)`
 .. |ROP|      replace:: :abbr:`ROP     (Received Optical Power)`
 .. |EP|       replace:: :abbr:`EP      (Event Probability)`
-.. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Words)`
+.. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Word)`
+.. |AZCWs|    replace:: :abbr:`AZCWs    (All Zero Code Words)`
 .. |AWGN|     replace:: :abbr:`AWGN    (Additive White Gaussian Noise)`
 .. |BEC|      replace:: :abbr:`BEC     (Binary Erasure Channel)`
 .. |BSC|      replace:: :abbr:`BSC     (Binary Symmetric Channel)`
@@ -282,9 +284,15 @@ rst_epilog = """
 .. |DVB-RCS2| replace:: :abbr:`DVB-RCS2(Digital Video Broadcasting - Return Channel via Satellite 2)`
 .. |LDPC|     replace:: :abbr:`LDPC    (Low-Density Parity-Check)`
 .. |BCH|      replace:: :abbr:`BCH     (Bose, Ray-Chaudhuri and Hocquenghem)`
-.. |RS|       replace:: :abbr:`RS      (Reed-Solomon code)`
+.. |RS|       replace:: :abbr:`RS      (Reed-Solomon)`
 .. |RSC|      replace:: :abbr:`RSC     (Recursive Systematic Convolutional)`
 .. |RA|       replace:: :abbr:`RA      (Repeat and Accumulate)`
+.. |LLR|      replace:: :abbr:`LLR     (Log Likelihood Ratio)`
+.. |LLRs|     replace:: :abbr:`LLRs    (Log Likelihood Ratios)`
+.. |PRNG|     replace:: :abbr:`PRNG    (Pseudo Random Number Generator)`
+.. |PRNGs|    replace:: :abbr:`PRNGs   (Pseudo Random Number Generators)`
+.. |CRC|      replace:: :abbr:`CRC     (Cyclic Redundancy Check)`
+.. |MPI|      replace:: :abbr:`MPI     (Message Passing Interface)`
 
 """
 

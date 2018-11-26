@@ -267,7 +267,7 @@ The above example will run the following noise points::
    :Examples: ``--sim-pdf-path example/path/to/the/right/file``
 
 Give a file that contains |PDF| for different |ROP|. To use with the ``OPTICAL``
-:ref:`channel type <chn-chn-type>`. It sets the noise range from the given ones
+:ref:`channel <chn-chn-type>`. It sets the noise range from the given ones
 in the file. However, it is overwritten by :ref:`sim-sim-noise-range` or limited
 by :ref:`sim-sim-noise-min` and :ref:`sim-sim-noise-max` with a minimum step of
 :ref:`sim-sim-noise-step` between two values.
@@ -287,7 +287,7 @@ used). The value of the parameter will be affected to the *title* meta-data and
 the *command line* will be added.
 
 .. note:: :ref:`PyBER <user_pyber_overview>`, our |GUI| tool, can take advantage
-   of those meta-data to enhance the display of the simulations.
+   of those meta-data to enhance the display of the simulated curves.
 
 .. _sim-sim-coded:
 
@@ -309,12 +309,20 @@ decoded codewords are directly compared with the initially encoded codewords.
 ``--sim-coset, -c``
 """""""""""""""""""
 
-Enable the COSET approach. This methods flips the value of the input and of the
-output of the decoder in function of the original codeword bits. The flipped
-values are the matching bit at 1 in the codeword. Then the decoder works like on
-an all zero codeword. This is useful when developing a decoder without
-associated encoder. This activates automatically the ``COSET`` encoder and
-vice-versa.
+Enable the *coset* approach.
+The *coset* approach is a "trick" to simulate |BFER| performance **without an
+encoder**. It is based on the |AZCW| technique (see the :ref:`src-src-type`
+parameter). In the specific case of modulation with memory effect, |AZCWs| can
+lead to erroneous |BFER| performance. The *coset* approach solves this problem
+by randomly generating N bits, those bits represent a frame but there are
+**certainly not** a codeword. Then, those random bits (or symbols) can be
+modulated avoiding |AZCW| unexpected effects. On the receiver side, the idea is
+to force the decoder to work on an |AZCW| (because the N received |LLRs| are not
+a valid codeword). Before the decoding process, knowing the initial bits
+sequence, when a bit is 1 then the corresponding input |LLR| is replaced by its
+opposite. This way, the decoder "believe" it is decoding an |AZCW| which is a
+valid codeword. After the decoding process, knowing the initial bits sequence,
+when a bit is 1, then the corresponding output bit is flipped.
 
 .. TODO : add a link to the COSET encoder.
 
@@ -324,24 +332,81 @@ vice-versa.
 ``--sim-dbg``
 """""""""""""
 
-Enable the debug mode. This prints the frame values after each module
-step.
+Enable the debug mode. This print the input and the output frames after each
+task execution:
 
-.. note:: Debug mode runs the simulation on one thread only. Then you may need
-   to remove the :ref:`sim-sim-threads` from your command line if you use it.
+.. code-block:: console
 
-.. hint:: To keep a readable debug log, use :ref:`mnt-mnt-max-fe` or
-   :ref:`sim-sim-max-fra` to stop your
-   simulation after that a given amount of frames have been played. You may also
-   think about using :ref:`sim-sim-dbg-limit` when playing with too long
-   frames (more than 32 bits in function of your screen size).
+   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg
+   # [...]
+   # Source_random::generate(int32 U_K[4])
+   # {OUT} U_K = [    1,     1,     0,     1]
+   # Returned status: 0
+   #
+   # Encoder_repetition_sys::encode(const int32 U_K[4], int32 X_N[8])
+   # {IN}  U_K = [    1,     1,     0,     1]
+   # {OUT} X_N = [    1,     1,     0,     1,     1,     1,     0,     1]
+   # Returned status: 0
+   #
+   # Modem_BPSK::modulate(const int32 X_N1[8], float32 X_N2[8])
+   # {IN}  X_N1 = [    1,     1,     0,     1,     1,     1,     0,     1]
+   # {OUT} X_N2 = [-1.00, -1.00,  1.00, -1.00, -1.00, -1.00,  1.00, -1.00]
+   # Returned status: 0
+   #
+   # Channel_AWGN_LLR::add_noise(const float32 X_N[8], float32 Y_N[8])
+   # {IN}  X_N = [-1.00, -1.00,  1.00, -1.00, -1.00, -1.00,  1.00, -1.00]
+   # {OUT} Y_N = [-0.29, -0.24,  1.55, -0.58, -0.33, -0.51,  0.80, -2.88]
+   # Returned status: 0
+   #
+   # Modem_BPSK::demodulate(const float32 Y_N1[8], float32 Y_N2[8])
+   # {IN}  Y_N1 = [-0.29, -0.24,  1.55, -0.58, -0.33, -0.51,  0.80, -2.88]
+   # {OUT} Y_N2 = [-0.73, -0.61,  3.91, -1.45, -0.84, -1.28,  2.01, -7.26]
+   # Returned status: 0
+   #
+   # Decoder_repetition_std::decode_siho(const float32 Y_N[8], int32 V_K[4])
+   # {IN}  Y_N = [-0.73, -0.61,  3.91, -1.45, -0.84, -1.28,  2.01, -7.26]
+   # {OUT} V_K = [    1,     1,     0,     1]
+   # Returned status: 0
+   #
+   # Monitor_BFER::check_errors(const int32 U[4], const int32 V[4])
+   # {IN}  U = [    1,     1,     0,     1]
+   # {IN}  V = [    1,     1,     0,     1]
+   # Returned status: 0
+   # [...]
+
+.. note:: By default, the debug mode runs the simulation on one thread.
+   It is strongly advise to remove the :ref:`sim-sim-threads` parameter from
+   your command line if you use it.
+
+.. hint:: To limit the size of the debug trace, use the :ref:`mnt-mnt-max-fe` or
+   :ref:`sim-sim-max-fra` parameters to reduce the number of simulated frames.
+   You may also think about using :ref:`sim-sim-dbg-limit` when the frame size
+   is too long to be display on a screen line.
 
 .. _sim-sim-dbg-hex:
 
 ``--sim-dbg-hex``
 """""""""""""""""
 
-Enable the debug mode and *print values in the hexadecimal format*.
+Enable the debug mode and **print values in the hexadecimal format**.
+This mode is useful for having a fully accurate representation of floating
+numbers:
+
+.. code-block:: console
+
+   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg-hex
+   # [...]
+   # Modem_BPSK::modulate(const int32 X_N1[8], float32 X_N2[8])
+   # {IN}  X_N1 = [0x1, 0x1, 0x0, 0x1, 0x1, 0x1, 0x0, 0x1]
+   # {OUT} X_N2 = [-0x1p+0, -0x1p+0, 0x1p+0, -0x1p+0, -0x1p+0, -0x1p+0, 0x1p+0, -0x1p+0]
+   # Returned status: 0
+   #
+   # Channel_AWGN_LLR::add_noise(const float32 X_N[8], float32 Y_N[8])
+   # {IN}  X_N = [-0x1p+0, -0x1p+0, 0x1p+0, -0x1p+0, -0x1p+0, -0x1p+0, 0x1p+0, -0x1p+0]
+   # {OUT} Y_N = [-0x1.28be1cp-2, -0x1.ec1ec8p-3, 0x1.8d242cp+0, -0x1.268a8p-1, -0x1.54c3ccp-2, -0x1.04df9ap-1, 0x1.9905f8p-1, -0x1.71132cp+1]
+   # Returned status: 0
+   # [...]
+
 
 .. _sim-sim-dbg-limit:
 
@@ -352,8 +417,23 @@ Enable the debug mode and *print values in the hexadecimal format*.
    :Default: 0
    :Examples: ``--sim-dbg-limit 1``
 
-Enable the debug mode and set *the max number of elements* to display per
-frame. A number of elements at 0 means there is no dump limit.
+Enable the debug mode and **set the max number of elements** to display per
+frame. 0 value means there is no dump limit.
+
+.. code-block:: console
+
+   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg-limit 3
+   # [...]
+   # Modem_BPSK::modulate(const int32 X_N1[8], float32 X_N2[8])
+   # {IN}  X_N1 = [    1,     1,     0, ...]
+   # {OUT} X_N2 = [-1.00, -1.00,  1.00, ...]
+   # Returned status: 0
+   #
+   # Channel_AWGN_LLR::add_noise(const float32 X_N[8], float32 Y_N[8])
+   # {IN}  X_N = [-1.00, -1.00,  1.00, ...]
+   # {OUT} Y_N = [-0.29, -0.24,  1.55, ...]
+   # Returned status: 0
+   # [...]
 
 .. _sim-sim-dbg-fra:
 
@@ -364,20 +444,69 @@ frame. A number of elements at 0 means there is no dump limit.
    :Default: 0
    :Examples: ``--sim-dbg-fra 10``
 
-Enable the debug mode and set *the max number of frames* to display per module.
-A number of elements at 0 means there is no dump limit.
+Enable the debug mode and **set the max number of frames** to display. 0 value
+means there is no frame limit. By default, a task works on one frame at a time.
+This behavior can be overridden with the :ref:`src-src-fra` parameter and a task
+can be executed on many frames. In that case, you may want to reduce the number
+of displayed frames on screen:
+
+.. code-block:: console
+
+   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 -F 8 --sim-dbg-fra 4
+   # [...]
+   # Modem_BPSK::modulate(const int32 X_N1[8x8], float32 X_N2[8x8])
+   # {IN}  X_N1 = [f1(    1,     1,     0,     1,     1,     1,     0,     1),
+   #               f2(    0,     1,     1,     0,     0,     1,     1,     0),
+   #               f3(    1,     0,     1,     1,     1,     0,     1,     1),
+   #               f4(    1,     0,     0,     0,     1,     0,     0,     0),
+   #               f5->f8:(...)]
+   # {OUT} X_N2 = [f1(-1.00, -1.00,  1.00, -1.00, -1.00, -1.00,  1.00, -1.00),
+   #               f2( 1.00, -1.00, -1.00,  1.00,  1.00, -1.00, -1.00,  1.00),
+   #               f3(-1.00,  1.00, -1.00, -1.00, -1.00,  1.00, -1.00, -1.00),
+   #               f4(-1.00,  1.00,  1.00,  1.00, -1.00,  1.00,  1.00,  1.00),
+   #               f5->f8:(...)]
+   # Returned status: 0
+   #
+   # Channel_AWGN_LLR::add_noise(const float32 X_N[8x8], float32 Y_N[8x8])
+   # {IN}  X_N = [f1(-1.00, -1.00,  1.00, -1.00, -1.00, -1.00,  1.00, -1.00),
+   #              f2( 1.00, -1.00, -1.00,  1.00,  1.00, -1.00, -1.00,  1.00),
+   #              f3(-1.00,  1.00, -1.00, -1.00, -1.00,  1.00, -1.00, -1.00),
+   #              f4(-1.00,  1.00,  1.00,  1.00, -1.00,  1.00,  1.00,  1.00),
+   #              f5->f8:(...)]
+   # {OUT} Y_N = [f1(-0.29, -0.24,  1.55, -0.58, -0.33, -0.51,  0.80, -2.88),
+   #              f2( 0.15, -0.71, -1.85,  1.69, -0.02, -0.50,  0.07,  0.79),
+   #              f3(-1.03,  1.39, -1.03, -2.03, -0.67,  0.91, -0.45, -0.88),
+   #              f4(-0.37, -1.07,  1.49,  0.94, -0.21,  1.35,  1.06,  0.97),
+   #              f5->f8:(...)]
+   # Returned status: 0
+   # [...]
 
 .. _sim-sim-dbg-prec:
 
 ``--sim-dbg-prec``
-"""""""""""""""""
+""""""""""""""""""
 
    :Type: integer
    :Default: 2
    :Examples: ``--sim-dbg-prec 1``
 
-Enable the debug mode and set *the decimal precision* (number of digits for
-decimal part) of real elements.
+Enable the debug mode and **set the decimal precision** (number of digits for
+the decimal part) of the floating-point elements:
+
+.. code-block:: console
+
+   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg-prec 4
+   # [...]
+   # Modem_BPSK::modulate(const int32 X_N1[8], float32 X_N2[8])
+   # {IN}  X_N1 = [      0,       0,       1,       1,       0,       0,       1,       1]
+   # {OUT} X_N2 = [ 1.0000,  1.0000, -1.0000, -1.0000,  1.0000,  1.0000, -1.0000, -1.0000]
+   # Returned status: 0
+   #
+   # Channel_AWGN_LLR::add_noise(const float32 X_N[8], float32 Y_N[8])
+   # {IN}  X_N = [ 1.0000,  1.0000, -1.0000, -1.0000,  1.0000,  1.0000, -1.0000, -1.0000]
+   # {OUT} Y_N = [ 1.4260,  0.4301, -1.5119,  0.1559,  0.0784,  1.6980, -1.6501, -0.0769]
+   # Returned status: 0
+   # [...]
 
 .. _sim-sim-no-colors:
 
@@ -385,11 +514,6 @@ decimal part) of real elements.
 """""""""""""""""""
 
 Disable the colors in the shell.
-
-.. note:: |AFF3CT| uses the `rang <https://github.com/agauniyal/rang>`_ library
-   that is portable on every OS as it only depends on C++ standard library.
-   Furthermore, rang doesn't interfere when redirecting cout/cerr/clog to
-   somewhere else and leaves the decision to the library user.
 
 .. _sim-sim-seed:
 
@@ -400,19 +524,13 @@ Disable the colors in the shell.
    :Default: 0
    :Examples: ``--sim-seed 42``
 
-Set the seed used in the simulation to initialize the general pseudo random
-generators. This last generator is used to generate the seeds of the different
-random generators of all modules.
+Set the |PRNG| seed used in the Monte Carlo simulation.
 
-.. note:: When using **MPI**, each node has its own seed generated from this
-   initial value to guarantee the generation of different values between the
-   different computers.
-.. TODO : add link to MPI use
-
-.. note:: |AFF3CT| uses pseudo-random generators in order to be able to replay
-   the same results from a run to another. It is helpful to debug source code.
-   However, when simulating in multi-thread, computer load is not controllable
-   and so results may differ as threads do not necessary run at the same speed.
+.. note:: |AFF3CT| uses |PRNG| to simulate the random. As a consequence the
+   simulator behavior is reproducible from a run to another. It can be helpful
+   to debug source code. However, when simulating in multi-threaded mode, the
+   threads running order is not deterministic and so results will most likely be
+   different from one execution to another.
 
 
 .. _sim-sim-stats:
@@ -420,9 +538,74 @@ random generators of all modules.
 ``--sim-stats``
 """""""""""""""
 
-Display the statistics module by module noise point after noise point.
-Statistics show the time used by each module in the simulation, the
-throughput and latency (min, max and average) by task.
+Display statistics for each task. Those statistics are shown after each
+simulated |SNR| point:
+
+.. code-block:: console
+
+   $ aff3ct -C POLAR -K 1723 -N 2048 -m 4.2 -M 4.2 -t 1 --sim-stats
+   # [...]
+   # -------------------------------------------||------------------------------||--------------------------------||--------------------------------
+   #        Statistics for the given task       ||       Basic statistics       ||       Measured throughput      ||        Measured latency
+   #     ('*' = any, '-' = same as previous)    ||          on the task         ||   considering the last socket  ||   considering the last socket
+   # -------------------------------------------||------------------------------||--------------------------------||--------------------------------
+   # -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------
+   #       MODULE |              TASK |   TIMER ||    CALLS |     TIME |   PERC ||  AVERAGE |  MINIMUM |  MAXIMUM ||  AVERAGE |  MINIMUM |  MAXIMUM
+   #              |                   |         ||          |      (s) |    (%) ||   (Mb/s) |   (Mb/s) |   (Mb/s) ||     (us) |     (us) |     (us)
+   # -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------
+   #      Channel |         add_noise |       * ||    14909 |     0.72 |  37.59 ||    42.17 |    20.75 |    45.52 ||    48.56 |    44.99 |    98.69
+   #       Source |          generate |       * ||    14909 |     0.60 |  31.13 ||    42.84 |     8.72 |    44.34 ||    40.22 |    38.86 |   197.63
+   #      Encoder |            encode |       * ||    14909 |     0.37 |  19.06 ||    83.17 |    16.00 |    86.10 ||    24.62 |    23.79 |   127.97
+   #      Decoder |       decode_siho |       * ||    14909 |     0.22 |  11.32 ||   117.80 |    36.67 |   126.75 ||    14.63 |    13.59 |    46.99
+   #      Monitor |      check_errors |       * ||    14909 |     0.01 |   0.42 ||  3186.81 |   120.63 |  3697.42 ||     0.54 |     0.47 |    14.28
+   #        Modem |        demodulate |       * ||    14909 |     0.00 |   0.25 ||  6350.57 |   160.24 |  7876.92 ||     0.32 |     0.26 |    12.78
+   #        Modem |          modulate |       * ||    14909 |     0.00 |   0.23 ||  6962.61 |   184.84 |  8291.50 ||     0.29 |     0.25 |    11.08
+   # -------------|-------------------|---------||----------|----------|--------||----------|----------|----------||----------|----------|----------
+   #        TOTAL |                 * |       * ||    14909 |     1.93 | 100.00 ||    13.34 |     3.38 |    14.10 ||   129.19 |   122.21 |   509.42
+   # [...]
+
+Each line corresponds to a task. The tasks are sorted by execution time in the
+simulation (descending order).
+The first column group **identifies the task**:
+
+   * ``MODULE``: the module type,
+   * ``TASK``: the task name,
+   * ``TIMER``: the name of the current task timer (it is possible to put timers
+     inside a task to measure sub-parts of this task), ``*`` indicates that the
+     whole task execution time is considered.
+
+The second column group gives **basic statistics**:
+
+   * ``CALLS``: the number of times this task has been executed,
+   * ``TIME``: the cumulative time of all the task executions,
+   * ``PERC``: the percentage of time taken by the task in the simulation.
+
+The third column group shows **the average, the minimum and the maximum
+throughputs**. Those throughputs are calculated considering the size of the
+output frames. If the task does not have outputs (c.f the *check_errors* routine
+from the monitor) then the number of input bits is used instead. For instance,
+the *encode* task takes :math:`K` input bits and produces :math:`N` output bits,
+so :math:`N` bits will be considered in the throughput computations.
+
+The last column group shows **the average, the minimum and the maximum
+latencies**.
+
+The ``TOTAL`` line corresponds to the full communication chain. For the
+throughput computations, the last socket of the last task determines the number
+of considered bits. In a standard |BFER| simulation the last task is the
+*check_errors* routine from the monitor and consequently the number of
+information bits (:math:`K`) is considered. However, if the :ref:`sim-sim-coded`
+parameter is enabled, it becomes the codeword size (:math:`N`).
+
+.. note:: Enabling the statistics can increase the simulation time due the
+   measures overhead. This is especially true when short frames are simulated.
+
+.. warning:: In multi-threaded mode the reported time is the cumulative time of
+   all the threads. This time is bigger than the real simulation time because it
+   does not consider that many tasks have been executed in parallel.
+
+.. warning:: The task throughputs will not increase with the number of threads:
+   the statistics consider the performance on one thread.
 
 .. _sim-sim-threads:
 
@@ -433,12 +616,16 @@ throughput and latency (min, max and average) by task.
    :Default: 0
    :Examples: ``--sim-threads 1``
 
-Specify the number of threads used by the simulation.
-A 0 value means the maximum number of thread supported by the processor, ie.
-the number of core (physical + virtual).
+Specify the number of threads used in the simulation.
+The 0 default value will automatically set the number of threads to the hardware
+number of threads available on the machine.
 
-..note:: The simulation throughput is linear with the number of physical cores
-   used, but the contribution of the virtual cores is more limited.
+.. note:: **Monte Carlo methods are known to be embarrassingly parallel**, which
+   is why, in most cases, the simulation throughput will increase linearly with
+   the number of threads (unless this number exceeds the number of cores
+   available). However, in some cases, especially for large frames, when the
+   number of threads is high, the memory footprint can exceeds the size of the
+   CPU caches and it becomes less interesting to use a large number of threads.
 
 .. _sim-sim-crc-start:
 
@@ -449,10 +636,12 @@ the number of core (physical + virtual).
    :Default: 2
    :Examples: ``--sim-crc-start 1``
 
-Set the number of simulation iteration needed before starting the CRC checking
-in the turbo demodulation process.
+Set the number of simulation iterations to proceed before starting the |CRC|
+checking in the turbo demodulation process. It reduces the number of false
+positive |CRC| detections.
 
-.. note:: Available only for BFERI simulations.
+.. note:: Available only for ``BFERI`` simulation type (c.f. the
+   :ref:`sim-sim-type` parameter).
 
 .. _sim-sim-ite:
 
@@ -465,7 +654,8 @@ in the turbo demodulation process.
 
 Set the number of global iterations between the demodulator and the decoder.
 
-.. note:: Available only for BFERI simulations.
+.. note:: Available only for ``BFERI`` simulation type (c.f. the
+   :ref:`sim-sim-type` parameter).
 
 .. _sim-sim-max-fra:
 
@@ -476,9 +666,14 @@ Set the number of global iterations between the demodulator and the decoder.
    :Default: 0
    :Examples: ``--sim-max-fra 1``
 
-Set the maximum number of frames to play after what the current simulated noise
-point is stopped. A 0 value means no limit. The simulation is also stopped
-except if the :ref:`sim-sim-crit-nostop` option is used.
+Set the maximum number of frames to simulate per noise point. When a noise point
+reaches the maximum frame limit, the simulation is stopped. 0 value means no
+limit.
+
+.. note:: The default behavior is to stop the simulator when the limit is
+   reached but it is possible to override it with the :ref:`sim-sim-crit-nostop`
+   parameter. In this case, the remaining noise points will also be simulated
+   and the limit will be applied for each of them.
 
 .. _sim-sim-stop-time:
 
@@ -489,39 +684,56 @@ except if the :ref:`sim-sim-crit-nostop` option is used.
    :Default: 0
    :Examples: ``--sim-stop-time 1``
 
-Give the time in *[sec]* after what the current simulated noise point is
-stopped. A 0 value means no limit. The simulation is also stopped except
-if the :ref:`sim-sim-crit-nostop` option is used.
+Set the maximum time (in seconds) to simulate per noise point. When a noise
+point reaches the maximum time limit, the simulation is stopped. 0 value means
+no limit.
+
+.. note:: The default behavior is to stop the simulator when the limit is
+   reached but it is possible to override it with the :ref:`sim-sim-crit-nostop`
+   parameter. In this case, the remaining noise points will also be simulated
+   and the limit will be applied for each of them.
 
 .. _sim-sim-crit-nostop:
 
 ``--sim-crit-nostop`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Set the stop criteria arguments:ref:`sim-sim-max-fra` and
-:ref:`sim-sim-stop-time` stop only the currently simulated noise point but not
-the simulation.
+Stop only the current noise point instead of the whole simulation.
+To combine with the :ref:`sim-sim-max-fra` and/or the :ref:`sim-sim-stop-time`
+parameters.
 
 .. _sim-sim-err-trk:
 
 ``--sim-err-trk`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""
 
-Track the bad frames. When a wrong frame is detected, the source frame,
-the encoded frame and the noise applied by the channel are dumped in
-their respective file. Then use the :ref:`sim-sim-err-trk-rev` argument
-to run only these bad frames.
+Track the erroneous frames. When an error is found, the information bits from
+the source, the codeword from the encoder and the applied noise from the channel
+are dumped in several files.
+
+.. tip:: When working on the design of a new decoder or when improving an
+   existing one, it can be very interesting to have a database of erroneous
+   frames to work on (especially if those errors occur at low |BFER| when the
+   simulation time is important). This way it is possible to focus only on
+   those erroneous frames and quickly see if the decoder improvements have an
+   impact on them. It is also interesting to be able to easily extract the
+   erroneous frames from the simulator to characterize the type of errors and
+   better understand why the decoder fails.
+
+.. note:: See the :ref:`sim-sim-err-trk-rev` argument to replay the erroneous
+   dumped frames.
 
 .. _sim-sim-err-trk-rev:
 
 ``--sim-err-trk-rev`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Automatically replay the saved frames while running with :ref:`sim-sim-err-trk`.
+Replay dumped frames. By default this option reverts the :ref:`sim-sim-err-trk`
+parameter by replaying the erroneous frames that have been dumped.
 
-.. tip:: To play back the bad frames, just add **-rev** to the
-   :ref:`sim-sim-err-trk` argument and change nothing else to your command line
-   except the debug mode arguments (:ref:`sim-sim-dbg`).
+
+.. tip:: To play back the erroneous frames, just add ``-rev`` to the
+   :ref:`sim-sim-err-trk` argument and change nothing else to your command line.
 
 .. _sim-sim-err-trk-path:
 
@@ -533,20 +745,20 @@ Automatically replay the saved frames while running with :ref:`sim-sim-err-trk`.
    :Default: :file:`error_tracker`
    :Examples: ``--sim-err-trk-path errors/err``
 
-Set the base path for the files where the bad frames will be stored or read.
-To this base path is added the noise point value and the matching module
-extension. With the above example, you may get files such as:
+Specify the base path for the previous :ref:`sim-sim-err-trk` and
+:ref:`sim-sim-err-trk-rev` parameters. For the above example, the dumped or read
+files will be:
 
    * :file:`errors/err_0.64.src`
    * :file:`errors/err_0.64.enc`
    * :file:`errors/err_0.64.chn`
 
 .. note:: For |SNR| noise type, the value used to define the filename is the
-   noise variance.
+   noise variance :math:`\sigma`.
 
-.. danger:: Intermediate folders are not automatically created but only the
-   files. You won't get any warning message, so be careful to create them before
-   running long simulations!
+.. danger:: Be careful, if you give a wrong path you will not have a warning
+   message at the beginning of the simulation. It can be frustrating when
+   running a very long simulation...
 
 .. _sim-sim-err-trk-thold:
 
@@ -557,18 +769,18 @@ extension. With the above example, you may get files such as:
    :Default: 0
    :Examples: ``--sim-err-trk-thold 1``
 
-Give the threshold value of bit error count per frame that the error tracker
-has to dump.
+Specify a threshold value in number of erroneous bits before which a frame is
+dumped.
 
 .. _sim-sim-no-legend:
 
 ``--sim-no-legend`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""
 
-Display strictly no legend when launching the simulation.
+Disable the legend display (remove all the lines beginning by the ``#``
+character).
 
-.. tip::
-   Use this option when you want to complete an already existing
+.. tip:: Use this option when you want to complete an already existing
    simulation result file with new noise points. Pay attention to use ``>>``
    instead of ``>`` to redirect the standard output in order to add results at
    the end of the file and not overwriting it.
@@ -582,15 +794,13 @@ Display strictly no legend when launching the simulation.
    :Default: 1000
    :Examples: ``--sim-mpi-comm 1``
 
-Set the ``MPI`` communication frequency between the nodes in *[ms]*.
-This corresponds to the frequency with which nodes will gather their results.
-This operation takes some computation resources so a too fast frequency may be
-sub-productive.
+Set the time interval (in milliseconds) between the |MPI| communications.
+Increase this interval will reduce the |MPI| communication overhead.
 
-.. note:: Available only when compiling with the MPI support
+.. note:: Available only when compiling with the |MPI| support
    :ref:`compilation_cmake_options`.
 
-.. TODO : add link to MPI use
+.. TODO: add link to MPI use
 
 References
 """"""""""
