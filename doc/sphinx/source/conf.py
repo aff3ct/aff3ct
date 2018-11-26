@@ -292,7 +292,10 @@ rst_epilog = """
 .. |PRNG|     replace:: :abbr:`PRNG    (Pseudo Random Number Generator)`
 .. |PRNGs|    replace:: :abbr:`PRNGs   (Pseudo Random Number Generators)`
 .. |CRC|      replace:: :abbr:`CRC     (Cyclic Redundancy Check)`
+.. |CRCs|     replace:: :abbr:`CRCs    (Cyclic Redundancy Checks)`
 .. |MPI|      replace:: :abbr:`MPI     (Message Passing Interface)`
+.. |IFL|      replace:: :abbr:`IFL     (Inter Frame Level)`
+.. |ASCII|    replace:: :abbr:`ASCII   (American Standard Code for Information Interchange)`
 
 """
 
