@@ -135,7 +135,6 @@ void Codebook<R>
 		}
 	}
 
-
 	resource_to_user.resize(number_of_resources);
 	for (int r = 0; r < number_of_resources; ++r)
 	{
@@ -165,6 +164,8 @@ void Codebook<R>
 			}
 		}
 	}
+
+	system_bps = log2((float)codebook_size) * (float)number_of_users / (float)number_of_resources;
 }
 
 template <typename R>
@@ -220,6 +221,20 @@ inline int Codebook<R>
 ::get_user_to_resource(int u, int r) const
 {
 	return user_to_resource[u][r];
+}
+
+template <typename R>
+inline int Codebook<R>
+::get_number_of_real_symbols() const
+{
+	return (2 * number_of_resources);
+}
+
+template <typename R>
+inline float Codebook<R>
+::get_system_bps() const
+{
+	return system_bps;
 }
 
 }
