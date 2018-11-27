@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20181109164706" modified="D:20181114104141"/>
+<info created="D:20181109164706" modified="D:20181127105737"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -522,7 +522,7 @@ h
 160 768 l
 h
 </path>
-<text matrix="1 0 0 1 240 -24" transformations="translations" pos="96 816" stroke="black" type="label" width="167.807" height="6.918" depth="0" halign="center" valign="baseline">Interleaver ROW\_COL - TOP\_RIGHT</text>
+<text matrix="1 0 0 1 240 -24" transformations="translations" pos="96 816" stroke="black" type="label" width="58.727" height="6.808" depth="0" halign="center" valign="baseline">TOP\_RIGHT</text>
 <path matrix="1 0 0 1 192 0" stroke="black">
 128 768 m
 128 608 l
@@ -622,7 +622,7 @@ h
 160 768 l
 h
 </path>
-<text matrix="1 0 0 1 16 -24" transformations="translations" pos="96 816" stroke="black" type="label" width="161.096" height="6.918" depth="0" halign="center" valign="baseline">Interleaver ROW\_COL - TOP\_LEFT</text>
+<text matrix="1 0 0 1 16 -24" transformations="translations" pos="96 816" stroke="black" type="label" width="52.016" height="6.808" depth="0" halign="center" valign="baseline">TOP\_LEFT</text>
 <path matrix="1 0 0 1 -32 0" stroke="black">
 128 768 m
 128 608 l
@@ -822,7 +822,7 @@ h
 160 768 l
 h
 </path>
-<text matrix="1 0 0 1 16 -248" transformations="translations" pos="96 816" stroke="black" type="label" width="185.449" height="6.918" depth="0" halign="center" valign="baseline">Interleaver ROW\_COL - BOTTOM\_LEFT</text>
+<text matrix="1 0 0 1 16 -248" transformations="translations" pos="96 816" stroke="black" type="label" width="76.369" height="6.808" depth="0" halign="center" valign="baseline">BOTTOM\_LEFT</text>
 <path matrix="1 0 0 1 -32 -224" stroke="black">
 128 768 m
 128 608 l
@@ -915,7 +915,7 @@ h
 72 408 l
 72 400 l
 </path>
-<text matrix="1 0 0 1 240 -248" transformations="translations" pos="96 816" stroke="black" type="label" width="192.16" height="6.918" depth="0" halign="center" valign="baseline">Interleaver ROW\_COL - BOTTOM\_RIGHT</text>
+<text matrix="1 0 0 1 240 -248" transformations="translations" pos="96 816" stroke="black" type="label" width="83.08" height="6.808" depth="0" halign="center" valign="baseline">BOTTOM\_RIGHT</text>
 <path stroke="csn_p1_blue1">
 80 536 m
 88 536 l

@@ -246,7 +246,7 @@ rst_epilog = """
 .. |ROP|      replace:: :abbr:`ROP     (Received Optical Power)`
 .. |EP|       replace:: :abbr:`EP      (Event Probability)`
 .. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Word)`
-.. |AZCWs|    replace:: :abbr:`AZCWs    (All Zero Code Words)`
+.. |AZCWs|    replace:: :abbr:`AZCWs   (All Zero Code Words)`
 .. |AWGN|     replace:: :abbr:`AWGN    (Additive White Gaussian Noise)`
 .. |BEC|      replace:: :abbr:`BEC     (Binary Erasure Channel)`
 .. |BSC|      replace:: :abbr:`BSC     (Binary Symmetric Channel)`
@@ -296,6 +296,9 @@ rst_epilog = """
 .. |MPI|      replace:: :abbr:`MPI     (Message Passing Interface)`
 .. |IFL|      replace:: :abbr:`IFL     (Inter Frame Level)`
 .. |ASCII|    replace:: :abbr:`ASCII   (American Standard Code for Information Interchange)`
+.. |LUT|      replace:: :abbr:`LUT     (Look Up Table)`
+.. |LUTs|     replace:: :abbr:`LUTs    (Look Up Tables)`
+.. |MT 19937| replace:: :abbr:`MT 19937(Mersenne Twister 19937)`
 
 """
 

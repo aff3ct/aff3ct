@@ -25,7 +25,7 @@ Description of the allowed values:
 +==========+===================================================================+
 | ``AZCW`` | Set all the information bits to 0.                                |
 +----------+-------------------------------------------------------------------+
-| ``RAND`` | Generate randomly the information bits based on the MT 19937      |
+| ``RAND`` | Generate randomly the information bits based on the |MT 19937|    |
 |          | |PRNG| :cite:`Matsumoto1998`.                                     |
 +----------+-------------------------------------------------------------------+
 | ``USER`` | Read the information bits from a given file, the path can be set  |
@@ -89,7 +89,7 @@ automatically affect the |IFL| level in all the other simulation modules (c.f.
 
    3-way inter frame level in the communication chain.
 
-The |IFL| also allows multi-user configurations to be simulated (see the
+The |IFL| also allows multi-user configurations to be simulated (see
 :numref:`fig_src_fra_multi_user`). This configurations is used when using |SCMA|
 modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
 
