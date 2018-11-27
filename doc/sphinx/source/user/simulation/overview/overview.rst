@@ -113,6 +113,8 @@ columns:
           results you can launch |AFF3CT| in **mono-threaded mode** (see the
           :ref:`sim-sim-threads` section).
 
+.. _user_simulation_overview_philosophy:
+
 Philosophy
 """"""""""
 

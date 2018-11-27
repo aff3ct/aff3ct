@@ -299,6 +299,11 @@ rst_epilog = """
 .. |LUT|      replace:: :abbr:`LUT     (Look Up Table)`
 .. |LUTs|     replace:: :abbr:`LUTs    (Look Up Tables)`
 .. |MT 19937| replace:: :abbr:`MT 19937(Mersenne Twister 19937)`
+.. |modem|    replace:: :abbr:`modem   (modulator/demodulator)`
+.. |modems|   replace:: :abbr:`modems  (modulators/demodulators)`
+.. |codec|    replace:: :abbr:`codec   (coder/decoder)`
+.. |codecs|   replace:: :abbr:`codecs  (coders/decodes)`
+.. |BPS|      replace:: :abbr:`BPS     (Bit Per Symbol)`
 
 """
 
