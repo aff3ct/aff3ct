@@ -228,63 +228,64 @@ rst_epilog = """
                              :width:  80px
                              :height: 25px
 
-.. |version|  replace:: """ + version + """
-.. |release|  replace:: """ + release + """
-.. |PyBER|    replace:: PyBER
-.. |MATLAB|   replace:: MATLAB
-.. |SIMD|     replace:: :abbr:`SIMD    (Single Instruction Multiple Data)`
-.. |BER|      replace:: :abbr:`BER     (Bit Error Rate)`
-.. |FER|      replace:: :abbr:`FER     (Frame Error Rate)`
-.. |BFER|     replace:: :abbr:`BER/FER (Bit and Frame Error Rate)`
-.. |SNR|      replace:: :abbr:`SNR     (Signal Noise Ratio)`
 .. |AFF3CT|   replace:: :abbr:`AFF3CT  (A Fast Forward Error Correction Toolbox!)`
-.. |GUI|      replace:: :abbr:`GUI     (Graphical User Interface)`
+.. |AMS|      replace:: :abbr:`AMS     (Approximate Min-Star)`
 .. |API|      replace:: :abbr:`API     (Application Programming Interface)`
-.. |SDR|      replace:: :abbr:`SDR     (Software-Defined Radio)`
-.. |PDF|      replace:: :abbr:`PDF     (Probability Density Function)`
-.. |ROP|      replace:: :abbr:`ROP     (Received Optical Power)`
-.. |EP|       replace:: :abbr:`EP      (Event Probability)`
-.. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Words)`
+.. |ARP|      replace:: :abbr:`ARP     (Almost Regular Permutation)`
+.. |ASCL|     replace:: :abbr:`ASCL    (Adaptive Successive Cancellation List)`
 .. |AWGN|     replace:: :abbr:`AWGN    (Additive White Gaussian Noise)`
+.. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Words)`
+.. |BCH|      replace:: :abbr:`BCH     (Bose, Ray-Chaudhuri and Hocquenghem)`
+.. |BCJR|     replace:: :abbr:`BCJR    (Bahl, Cocke, Jelinek and Raviv algorithm or Maximum A Posteriori (MAP))`
 .. |BEC|      replace:: :abbr:`BEC     (Binary Erasure Channel)`
-.. |BSC|      replace:: :abbr:`BSC     (Binary Symmetric Channel)`
-.. |PSK|      replace:: :abbr:`PSK     (Phase-Shift Keying)`
-.. |QAM|      replace:: :abbr:`QAM     (Quadrature Amplitude Modulation)`
-.. |PAM|      replace:: :abbr:`PAM     (Pulse-Amplitude Modulation)`
-.. |OOK|      replace:: :abbr:`OOK     (On-Off Keying)`
-.. |CPM|      replace:: :abbr:`CPM     (Continuous Phase Modulation)`
-.. |SCMA|     replace:: :abbr:`SCMA    (Sparse Code Multiple Access)`
+.. |BER|      replace:: :abbr:`BER     (Bit Error Rate)`
+.. |BFER|     replace:: :abbr:`BER/FER (Bit and Frame Error Rate)`
 .. |BPSK|     replace:: :abbr:`BPSK    (Bit Phase-Shift Keying)`
-.. |ML|       replace:: :abbr:`ML      (Maximum Likelihood)`
 .. |BP|       replace:: :abbr:`BP      (Belief Propagation)`
-.. |SPA|      replace:: :abbr:`SPA     (Sum-Product Algorithm)`
+.. |BSC|      replace:: :abbr:`BSC     (Binary Symmetric Channel)`
+.. |CCSDS|    replace:: :abbr:`CCSDS   (Consultative Committee for Space Data Systems)`
+.. |CPM|      replace:: :abbr:`CPM     (Continuous Phase Modulation)`
+.. |CP|       replace:: :abbr:`CP      (Chase-Pyndiah)`
+.. |DVB-RCS1| replace:: :abbr:`DVB-RCS1(Digital Video Broadcasting - Return Channel via Satellite 1)`
+.. |DVB-RCS2| replace:: :abbr:`DVB-RCS2(Digital Video Broadcasting - Return Channel via Satellite 2)`
+.. |DVB-S1|   replace:: :abbr:`DVB-S1  (Digital Video Broadcasting - Satellite 1)`
+.. |DVB-S2|   replace:: :abbr:`DVB-S2  (Digital Video Broadcasting - Satellite 2)`
+.. |EP|       replace:: :abbr:`EP      (Event Probability)`
+.. |EXIT|     replace:: :abbr:`EXIT    (EXtrinsic Information Transfer chart)`
+.. |FER|      replace:: :abbr:`FER     (Frame Error Rate)`
+.. |GALA|     replace:: :abbr:`GALA    (Gallager A)`
+.. |GSM|      replace:: :abbr:`GSM     (Global System for Mobile Communications)`
+.. |GUI|      replace:: :abbr:`GUI     (Graphical User Interface)`
+.. |LDPC|     replace:: :abbr:`LDPC    (Low-Density Parity-Check)`
 .. |LSPA|     replace:: :abbr:`LSPA    (Logarithm Sum-Product Algorithm)`
+.. |LTE|      replace:: :abbr:`LTE     (Long Term Evolution)`
+.. |MATLAB|   replace:: MATLAB
+.. |ML|       replace:: :abbr:`ML      (Maximum Likelihood)`
 .. |MS|       replace:: :abbr:`MS      (Min-Sum)`
 .. |NMS|      replace:: :abbr:`NMS     (Normalized Min-Sum)`
 .. |OMS|      replace:: :abbr:`OMS     (Offset Min-Sum)`
 .. |ONMS|     replace:: :abbr:`ONMS    (Offset Normalized Min-Sum)`
-.. |AMS|      replace:: :abbr:`AMS     (Approximate Min-Star)`
-.. |GALA|     replace:: :abbr:`GALA    (Gallager A)`
-.. |ASCL|     replace:: :abbr:`ASCL    (Adaptive Successive Cancellation List)`
-.. |SC|       replace:: :abbr:`SC      (Successive Cancellation)`
-.. |SCL|      replace:: :abbr:`SCL     (Successive Cancellation List)`
-.. |SCAN|     replace:: :abbr:`SCAN    (Soft CANcellation)`
-.. |CP|       replace:: :abbr:`CP      (Chase-Pyndiah)`
-.. |BCJR|     replace:: :abbr:`BCJR    (Bahl, Cocke, Jelinek and Raviv algorithm or Maximum A Posteriori (MAP))`
-.. |EXIT|     replace:: :abbr:`EXIT    (EXtrinsic Information Transfer chart)`
-.. |ARP|      replace:: :abbr:`ARP     (Almost Regular Permutation)`
-.. |CCSDS|    replace:: :abbr:`CCSDS   (Consultative Committee for Space Data Systems)`
-.. |LTE|      replace:: :abbr:`LTE     (Long Term Evolution)`
-.. |GSM|      replace:: :abbr:`GSM     (Global System for Mobile Communications)`
-.. |DVB-S1|   replace:: :abbr:`DVB-S1  (Digital Video Broadcasting - Satellite 1)`
-.. |DVB-S2|   replace:: :abbr:`DVB-S2  (Digital Video Broadcasting - Satellite 2)`
-.. |DVB-RCS1| replace:: :abbr:`DVB-RCS1(Digital Video Broadcasting - Return Channel via Satellite 1)`
-.. |DVB-RCS2| replace:: :abbr:`DVB-RCS2(Digital Video Broadcasting - Return Channel via Satellite 2)`
-.. |LDPC|     replace:: :abbr:`LDPC    (Low-Density Parity-Check)`
-.. |BCH|      replace:: :abbr:`BCH     (Bose, Ray-Chaudhuri and Hocquenghem)`
-.. |RS|       replace:: :abbr:`RS      (Reed-Solomon code)`
-.. |RSC|      replace:: :abbr:`RSC     (Recursive Systematic Convolutional)`
+.. |OOK|      replace:: :abbr:`OOK     (On-Off Keying)`
+.. |PAM|      replace:: :abbr:`PAM     (Pulse-Amplitude Modulation)`
+.. |PDF|      replace:: :abbr:`PDF     (Probability Density Function)`
+.. |PSK|      replace:: :abbr:`PSK     (Phase-Shift Keying)`
+.. |PyBER|    replace:: PyBER
+.. |QAM|      replace:: :abbr:`QAM     (Quadrature Amplitude Modulation)`
 .. |RA|       replace:: :abbr:`RA      (Repeat and Accumulate)`
+.. |release|  replace:: """ + release + """
+.. |ROP|      replace:: :abbr:`ROP     (Received Optical Power)`
+.. |RSC|      replace:: :abbr:`RSC     (Recursive Systematic Convolutional)`
+.. |RS|       replace:: :abbr:`RS      (Reed-Solomon code)`
+.. |SCAN|     replace:: :abbr:`SCAN    (Soft CANcellation)`
+.. |SCL|      replace:: :abbr:`SCL     (Successive Cancellation List)`
+.. |SCMA|     replace:: :abbr:`SCMA    (Sparse Code Multiple Access)`
+.. |SC|       replace:: :abbr:`SC      (Successive Cancellation)`
+.. |SDR|      replace:: :abbr:`SDR     (Software-Defined Radio)`
+.. |SIMD|     replace:: :abbr:`SIMD    (Single Instruction Multiple Data)`
+.. |SNR|      replace:: :abbr:`SNR     (Signal Noise Ratio)`
+.. |SPA|      replace:: :abbr:`SPA     (Sum-Product Algorithm)`
+.. |TPC|      replace:: :abbr:`TPC     (Turbo Product Code)`
+.. |version|  replace:: """ + version + """
 
 """
 
