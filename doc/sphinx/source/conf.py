@@ -232,8 +232,11 @@ rst_epilog = """
 .. |AMS|      replace:: :abbr:`AMS     (Approximate Min-Star)`
 .. |API|      replace:: :abbr:`API     (Application Programming Interface)`
 .. |ARP|      replace:: :abbr:`ARP     (Almost Regular Permutation)`
+.. |ASCII|    replace:: :abbr:`ASCII   (American Standard Code for Information Interchange)`
 .. |ASCL|     replace:: :abbr:`ASCL    (Adaptive Successive Cancellation List)`
 .. |AWGN|     replace:: :abbr:`AWGN    (Additive White Gaussian Noise)`
+.. |AZCWs|    replace:: :abbr:`AZCWs   (All Zero Code Words)`
+.. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Word)`
 .. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Words)`
 .. |BCH|      replace:: :abbr:`BCH     (Bose, Ray-Chaudhuri and Hocquenghem)`
 .. |BCJR|     replace:: :abbr:`BCJR    (Bahl, Cocke, Jelinek and Raviv algorithm or Maximum A Posteriori (MAP))`
@@ -246,6 +249,8 @@ rst_epilog = """
 .. |CCSDS|    replace:: :abbr:`CCSDS   (Consultative Committee for Space Data Systems)`
 .. |CPM|      replace:: :abbr:`CPM     (Continuous Phase Modulation)`
 .. |CP|       replace:: :abbr:`CP      (Chase-Pyndiah)`
+.. |CRCs|     replace:: :abbr:`CRCs    (Cyclic Redundancy Checks)`
+.. |CRC|      replace:: :abbr:`CRC     (Cyclic Redundancy Check)`
 .. |DVB-RCS1| replace:: :abbr:`DVB-RCS1(Digital Video Broadcasting - Return Channel via Satellite 1)`
 .. |DVB-RCS2| replace:: :abbr:`DVB-RCS2(Digital Video Broadcasting - Return Channel via Satellite 2)`
 .. |DVB-S1|   replace:: :abbr:`DVB-S1  (Digital Video Broadcasting - Satellite 1)`
@@ -256,18 +261,27 @@ rst_epilog = """
 .. |GALA|     replace:: :abbr:`GALA    (Gallager A)`
 .. |GSM|      replace:: :abbr:`GSM     (Global System for Mobile Communications)`
 .. |GUI|      replace:: :abbr:`GUI     (Graphical User Interface)`
+.. |IFL|      replace:: :abbr:`IFL     (Inter Frame Level)`
 .. |LDPC|     replace:: :abbr:`LDPC    (Low-Density Parity-Check)`
+.. |LLRs|     replace:: :abbr:`LLRs    (Log Likelihood Ratios)`
+.. |LLR|      replace:: :abbr:`LLR     (Log Likelihood Ratio)`
 .. |LSPA|     replace:: :abbr:`LSPA    (Logarithm Sum-Product Algorithm)`
 .. |LTE|      replace:: :abbr:`LTE     (Long Term Evolution)`
+.. |LUTs|     replace:: :abbr:`LUTs    (Look Up Tables)`
+.. |LUT|      replace:: :abbr:`LUT     (Look Up Table)`
 .. |MATLAB|   replace:: MATLAB
 .. |ML|       replace:: :abbr:`ML      (Maximum Likelihood)`
+.. |MPI|      replace:: :abbr:`MPI     (Message Passing Interface)`
 .. |MS|       replace:: :abbr:`MS      (Min-Sum)`
+.. |MT 19937| replace:: :abbr:`MT 19937(Mersenne Twister 19937)`
 .. |NMS|      replace:: :abbr:`NMS     (Normalized Min-Sum)`
 .. |OMS|      replace:: :abbr:`OMS     (Offset Min-Sum)`
 .. |ONMS|     replace:: :abbr:`ONMS    (Offset Normalized Min-Sum)`
 .. |OOK|      replace:: :abbr:`OOK     (On-Off Keying)`
 .. |PAM|      replace:: :abbr:`PAM     (Pulse-Amplitude Modulation)`
 .. |PDF|      replace:: :abbr:`PDF     (Probability Density Function)`
+.. |PRNGs|    replace:: :abbr:`PRNGs   (Pseudo Random Number Generators)`
+.. |PRNG|     replace:: :abbr:`PRNG    (Pseudo Random Number Generator)`
 .. |PSK|      replace:: :abbr:`PSK     (Phase-Shift Keying)`
 .. |PyBER|    replace:: PyBER
 .. |QAM|      replace:: :abbr:`QAM     (Quadrature Amplitude Modulation)`
@@ -276,12 +290,14 @@ rst_epilog = """
 .. |ROP|      replace:: :abbr:`ROP     (Received Optical Power)`
 .. |RSC|      replace:: :abbr:`RSC     (Recursive Systematic Convolutional)`
 .. |RS|       replace:: :abbr:`RS      (Reed-Solomon code)`
+.. |RS|       replace:: :abbr:`RS      (Reed-Solomon)`
 .. |SCAN|     replace:: :abbr:`SCAN    (Soft CANcellation)`
 .. |SCL|      replace:: :abbr:`SCL     (Successive Cancellation List)`
 .. |SCMA|     replace:: :abbr:`SCMA    (Sparse Code Multiple Access)`
 .. |SC|       replace:: :abbr:`SC      (Successive Cancellation)`
 .. |SDR|      replace:: :abbr:`SDR     (Software-Defined Radio)`
 .. |SIMD|     replace:: :abbr:`SIMD    (Single Instruction Multiple Data)`
+.. |SNRs|     replace:: :abbr:`SNRs    (Signal Noise Ratios)`
 .. |SNR|      replace:: :abbr:`SNR     (Signal Noise Ratio)`
 .. |SPA|      replace:: :abbr:`SPA     (Sum-Product Algorithm)`
 .. |TPC|      replace:: :abbr:`TPC     (Turbo Product Code)`
