@@ -66,7 +66,9 @@ Description of the allowed values:
 .. |dec-type_descr_ml|    replace:: Decode with the |ML| algorithm
 
 
-.. rubric:: The ``CP`` algorithm:
+.. rubric:: The ``CP`` algorithm is the implementation of
+   :cite:`Pyndiah1998` but in a more generic way in order to let the user
+   chose its configuration:
 
 * Chase step: find the more reliable codeword :math:`D`:
    * Take hard decision :math:`H` on input :math:`R`.
@@ -84,8 +86,8 @@ Description of the allowed values:
    * Select the competitors with the smallest metric
      to get the decided word :math:`D` with a
      metric :math:`D_m` and where :math:`D_j = \begin{cases}
-     +1 & \text{when H_j = 0} \\
-     -1 & \text{when H_j = 1}
+     +1 & \text{when } H_j = 0 \\
+     -1 & \text{when } H_j = 1
      \end{cases}`
 
 * Pyndiah step: compute reliabilities of each bit of :math:`D`
@@ -338,3 +340,9 @@ Description of the allowed values:
       :Examples: ``--dec-sub-info-bits 1``
 
    Useful number of bit transmitted (information bits).
+
+References
+""""""""""
+
+.. bibliography:: references.bib
+
