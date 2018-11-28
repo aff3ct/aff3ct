@@ -3,20 +3,13 @@
 Quantizer parameters
 --------------------
 
-The Quantizer module is activated only when running quantified decoders, ie.
-when the simulation precision is set to ``8`` or ``16``
-(cf. :ref:`sim-sim-prec`).
+The quantizer is a module that ensures the real numbers transformation from a
+floating-point representation to a fixed-point representation. This module is
+enabled only if the receiver part of the communication chain works on a
+fixed-point representation (cf. the :ref:`sim-sim-prec` parameter).
 
-It converts input floating points frames into output quantified fixed point
-frames. The position of the fixed point is settable by the user.
-
-.. Danger:: The total number of bits used for the quantification does not fix
-   a saturation for the decoder itself that uses the whole available bits given
-   by the simulation precision.
-
-.. Warning:: All codes do not work with a quantification process.
-
-.. TODO: list those codes that do not work with fixed point.
+.. warning:: Some decoders are not *fixed-point ready*, please refer to the
+   decoders documentation for more details.
 
 .. _qnt-qnt-type:
 
@@ -28,9 +21,11 @@ frames. The position of the fixed point is settable by the user.
    :Default: ``POW2``
    :Examples: ``--qnt-type CUSTOM``
 
-Give the type of the quantizer to use in the simulation.
+Select the quantizer type.
 
-Description of the allowed values:
+Description of the allowed values (:math:`Y_i` stands for a floating-point
+representation and :math:`Q_i` for the fixed-point representation of a real
+number):
 
 +------------+-------------------------+
 | Value      | Description             |
@@ -44,7 +39,7 @@ Description of the allowed values:
    +v_{sat} & \text{when } v_i > +v_{sat} \\
    -v_{sat} & \text{when } v_i < -v_{sat} \\
    v_i      & \text{else}
-   \end{cases}` with :math:`v_i = \lfloor \frac{Y_i}{\Delta} \rceil
+   \end{cases}`, with :math:`v_i = \lfloor \frac{Y_i}{\Delta} \rceil
    \text{ and } v_{sat} = 2^{p_b - 1} - 1
    \text{ and } \Delta = \frac{|p_r|}{v_{sat}}`
 
@@ -52,75 +47,12 @@ Description of the allowed values:
    +v_{sat} & \text{when } v_i > +v_{sat} \\
    -v_{sat} & \text{when } v_i < -v_{sat} \\
    v_i      & \text{else}
-   \end{cases}` with :math:`v_i = \lfloor Y_i * F \rceil
+   \end{cases}`, with :math:`v_i = \lfloor Y_i * F \rceil
    \text{ and } v_{sat} = 2^{p_b - 1} - 1
    \text{ and } F = 2^{p_d}`
 
 Where :math:`p_r`, :math:`p_b` and :math:`p_d` are respectively given through
-:ref:`qnt-qnt-range`, :ref:`qnt-qnt-bits` and :ref:`qnt-qnt-dec`.
-
-
-.. _qnt-qnt-range:
-
-``--qnt-range``
-"""""""""""""""
-
-   :Type: real number
-   :Examples: ``--qnt-range 1.0``
-
-The min/max bound for the tricky quantizer.
-
-
-.. _qnt-qnt-bits:
-
-``--qnt-bits``
-""""""""""""""
-
-   :Type: integer
-   :Default: 8 else see :numref:`bits_default_table`
-   :Examples: ``--qnt-bits 1``
-
-Set the number of bits used for the quantizer.
-
-
-.. _bits_default_table:
-
-.. table:: Default values for the total number of bits for the different codes.
-
-   +----------+----------+-----------+---------+---------+------------+-----------+--------------+---------------+
-   | Code     | ``LDPC`` | ``POLAR`` | ``REP`` | ``RSC`` | ``RSC_DB`` | ``TURBO`` | ``TURBO_DB`` | ``TURBO_PROD``|
-   +==========+==========+===========+=========+=========+============+===========+==============+===============+
-   | Value    |   6      |   6       |   6     |   6     |   6        |   6       |   6          ||bit_turboprod||
-   +----------+----------+-----------+---------+---------+------------+-----------+--------------+---------------+
-
-.. |bit_turboprod| replace:: 6 on 8 bits and 8 on 16 bits
-
-.. _qnt-qnt-dec:
-
-``--qnt-dec``
-"""""""""""""
-
-   :Type: integer
-   :Default: 3 else see :numref:`dec_default_table`
-   :Examples: ``--qnt-dec 1``
-
-Set the position of the fixed point in the quantified representation.
-
-.. _dec_default_table:
-
-.. table:: Default values for the fixed point position for the different codes.
-
-   +----------+----------+-----------+---------+-----------+------------+-----------+--------------+---------------+
-   | Code     | ``LDPC`` | ``POLAR`` | ``REP`` | ``RSC``   | ``RSC_DB`` | ``TURBO`` | ``TURBO_DB`` | ``TURBO_PROD``|
-   +==========+==========+===========+=========+===========+============+===========+==============+===============+
-   | Value    |   2      |   1       |   2     | |dec_RSC| | |dec_RSCDB|||dec_turbo|| |dec_turbodb|||dec_turboprod||
-   +----------+----------+-----------+---------+-----------+------------+-----------+--------------+---------------+
-
-.. |dec_RSC|       replace:: 1 on 8 bits and 3 on 16 bits
-.. |dec_RSCDB|     replace:: 1 on 8 bits and 3 on 16 bits
-.. |dec_turbo|     replace:: 2 on 8 bits and 3 on 16 bits
-.. |dec_turbodb|   replace:: 2 on 8 bits and 3 on 16 bits
-.. |dec_turboprod| replace:: 2 on 8 bits and 3 on 16 bits
+the :ref:`qnt-qnt-range`, :ref:`qnt-qnt-bits` and :ref:`qnt-qnt-dec` parameters.
 
 .. _qnt-qnt-implem:
 
@@ -128,7 +60,7 @@ Set the position of the fixed point in the quantified representation.
 """"""""""""""""
 
    :Type: text
-   :Allowed values: ``FAST`` ``STD``
+   :Allowed values: ``STD`` ``FAST``
    :Default: ``STD``
    :Examples: ``--qnt-implem FAST``
 
@@ -139,11 +71,105 @@ Description of the allowed values:
 +----------+-------------------------+
 | Value    | Description             |
 +==========+=========================+
-| ``FAST`` | |qnt-implem_descr_fast| |
-+----------+-------------------------+
 | ``STD``  | |qnt-implem_descr_std|  |
 +----------+-------------------------+
+| ``FAST`` | |qnt-implem_descr_fast| |
++----------+-------------------------+
 
-.. |qnt-implem_descr_fast| replace:: A standard implementation
-.. |qnt-implem_descr_std|  replace:: A much faster method using |SIMD| but *only
-   for* ``POW2`` *type*.
+.. |qnt-implem_descr_std|  replace:: Select a standard implementation.
+.. |qnt-implem_descr_fast| replace:: Select a fast implementation, only
+   available for the ``POW2`` quantizer.
+
+.. _qnt-qnt-range:
+
+``--qnt-range``
+"""""""""""""""
+
+   :Type: real number
+   :Examples: ``--qnt-range 1.0``
+
+The min/max bounds for the ``CUSTOM`` quantizer.
+
+.. _qnt-qnt-bits:
+
+``--qnt-bits``
+""""""""""""""
+
+   :Type: integer
+   :Default: 8 else see :numref:`bits_default_table`
+   :Examples: ``--qnt-bits 1``
+
+Set the number of bits used in the fixed-point representation.
+
+.. note:: If the amplitude of the current number exceeds the maximum amplitude
+   that can be represented with the current quantization, then a saturation is
+   applied (c.f. the :ref:`qnt-qnt-type` parameter).
+
+.. _bits_default_table:
+
+.. table:: Default values of the total number of bits for the different codes.
+   :align: center
+
+   +----------------+-----------------+
+   | Code           | Value           |
+   +================+=================+
+   | ``LDPC``       | 6               |
+   +----------------+-----------------+
+   | ``POLAR``      | 6               |
+   +----------------+-----------------+
+   | ``REP``        | 6               |
+   +----------------+-----------------+
+   | ``RSC``        | 6               |
+   +----------------+-----------------+
+   | ``RSC_DB``     | 6               |
+   +----------------+-----------------+
+   | ``TURBO``      | 6               |
+   +----------------+-----------------+
+   | ``TURBO_DB``   | 6               |
+   +----------------+-----------------+
+   | ``TURBO_PROD`` | |bit_turboprod| |
+   +----------------+-----------------+
+
+.. |bit_turboprod| replace:: 6 on 8-bit and 8 on 16-bit
+
+.. _qnt-qnt-dec:
+
+``--qnt-dec``
+"""""""""""""
+
+   :Type: integer
+   :Default: 3 else see :numref:`dec_default_table`
+   :Examples: ``--qnt-dec 1``
+
+Set the position of the decimal point in the quantified representation.
+
+.. _dec_default_table:
+
+.. table:: Default values of the decimal point position for the different codes.
+   :align: center
+
+   +----------------+-----------------+
+   | Code           | Value           |
+   +================+=================+
+   | ``LDPC``       | 2               |
+   +----------------+-----------------+
+   | ``POLAR``      | 1               |
+   +----------------+-----------------+
+   | ``REP``        | 2               |
+   +----------------+-----------------+
+   | ``RSC``        | |dec_RSC|       |
+   +----------------+-----------------+
+   | ``RSC_DB``     | |dec_RSCDB|     |
+   +----------------+-----------------+
+   | ``TURBO``      | |dec_turbo|     |
+   +----------------+-----------------+
+   | ``TURBO_DB``   | |dec_turbodb|   |
+   +----------------+-----------------+
+   | ``TURBO_PROD`` | |dec_turboprod| |
+   +----------------+-----------------+
+
+.. |dec_RSC|       replace:: 1 on 8-bit and 3 on 16-bit
+.. |dec_RSCDB|     replace:: 1 on 8-bit and 3 on 16-bit
+.. |dec_turbo|     replace:: 2 on 8-bit and 3 on 16-bit
+.. |dec_turbodb|   replace:: 2 on 8-bit and 3 on 16-bit
+.. |dec_turboprod| replace:: 2 on 8-bit and 3 on 16-bit
