@@ -96,16 +96,16 @@ Description of the allowed values:
    * Compute the reliability :math:`F` of :math:`D` for each bit
      :math:`D_j` of the word:
 
-      * Find :math:`C^s` the competitor with the smallest metric :math:`C_m`
-        that have :math:`C_j^s \neq D_j`.
-      * when :math:`C^s` exists:
+     * Find :math:`C^s` the competitor with the smallest metric :math:`C_m`
+       that have :math:`C_j^s \neq D_j`.
+     * when :math:`C^s` exists:
 
         :math:`F_j = b . D_j . [C_m - D_m]`
-      * when :math:`C^s` does not exist and if
-        :ref:`dec-turbo_prod-dec-beta` is given:
+     * when :math:`C^s` does not exist and if
+       :ref:`dec-turbo_prod-dec-beta` is given:
 
         :math:`F_j = D_j . beta`
-      * else:
+     * else:
 
         :math:`F_j = D_j . \left[ \displaystyle\sum_{i=0}^{e}
         P_i - c . D_m + d . |R_j| \right]`
@@ -151,29 +151,48 @@ Description of the allowed values:
 """""""""""""""""
 
    :Type: integer
-   :Examples: ``--dec-ite 1``
+   :Default: 4
+   :Examples: ``--dec-ite 5``
 
-Maximal number of iterations in the turbo.
+Set the number of iterations in the turbo.
 
 .. _dec-turbo_prod-dec-alpha:
 
 ``--dec-alpha``
 """""""""""""""
 
-   :Type: list of (real number):limited length [1;inf]
-   :Examples: ``--dec-alpha TODO``
+   :Type: list of real numbers
+   :Default: all at 0.5
+   :Examples: ``--dec-alpha "0.1,0.1,0.2,0.25,0.3,0.35,.5,.5,1.2"``
 
-Weighting factor, one by half iteration (so twice more than number of iterations). If not enough given values, then automatically extends the last to all iterations.
+Give the *weighting factor* alpha, one by half iteration
+(so twice more than the number of iterations). The first one is for the first
+columns process, the second for the first rows process, the third for the second
+columns process, the fourth for the second rows process, and so on.
+
+If there are not enough values, then the last one given is automatically
+extended to the rest of the half-iterations.
+Conversely, if there are too many, the surplus is truncated.
 
 .. _dec-turbo_prod-dec-beta:
 
 ``--dec-beta``
 """"""""""""""
 
-   :Type: list of (real number:positive):limited length [1;inf]
-   :Examples: ``--dec-beta TODO``
+   :Type: list of real numbers
+   :Examples: ``--dec-beta "0.1,0.1,0.2,0.25,0.3,0.35,.5,.5,1.2"``
 
-Reliability factor, one by half iteration (so twice more than number of iterations). If not enough given values, then automatically extends the last to all iterations. If not given, then computes beta dynamically from the least reliable position metrics.
+Give the *reliability factor* beta, one by half iteration
+(so twice more than the number of iterations). The first one is for the first
+columns process, the second for the first rows process, the third for the second
+columns process, the fourth for the second rows process, and so on.
+
+If there are not enough values, then the last one given is automatically
+extended to the rest of the half-iterations.
+Conversely, if there are too many, the surplus is truncated.
+
+If not given, then beta is dynamically computed as described in
+:ref:`dec-turbo_prod-dec-type`.
 
 .. _dec-turbo_prod-dec-c:
 
@@ -181,9 +200,11 @@ Reliability factor, one by half iteration (so twice more than number of iteratio
 """""""""""
 
    :Type: integer
-   :Examples: ``--dec-c 1``
+   :Default: 0
+   :Examples: ``--dec-c 3``
 
-Number of competitors (0 means equal to number of test vectors, 1 means only the decided word).
+Set the *number of competitors*. A value of 0 means that the latter is set
+to the number of test vectors, 1 means only the decided word.
 
 .. _dec-turbo_prod-dec-p:
 
@@ -191,9 +212,10 @@ Number of competitors (0 means equal to number of test vectors, 1 means only the
 """""""""""
 
    :Type: integer
+   :Default: 2
    :Examples: ``--dec-p 1``
 
-Number of least reliable positions.
+Set the number of *least reliable positions*.
 
 .. _dec-turbo_prod-dec-t:
 
@@ -201,19 +223,23 @@ Number of least reliable positions.
 """""""""""
 
    :Type: integer
+   :Default: 0
    :Examples: ``--dec-t 1``
 
-Number of test vectors (0 means equal to 2^p).
+Set the *number of test vectors*. A value of 0 means equal to :math:`2^p` where
+:math:`p` is the number of least reliable positions.
 
 .. _dec-turbo_prod-dec-cp-coef:
 
 ``--dec-cp-coef``
 """""""""""""""""
 
-   :Type: list of (real number):limited length [5;5]
-   :Examples: ``--dec-cp-coef TODO``
+   :Type: list of real numbers
+   :Default: ``"1,1,1,1,0"``
+   :Examples: ``--dec-cp-coef "0,0.25,0,0,3"``
 
-The 5 Chase Pyndiah constant coefficients "a,b,c,d,e".
+Give the 5 ``CP`` constant coefficients :math:`a, b, c, d, e` as described in
+:ref:`dec-turbo_prod-dec-type`.
 
 .. _dec-turbo_prod-dec-flips:
 
@@ -230,7 +256,6 @@ Set the maximum number of flips in the CHASE decoder.
 ``--dec-hamming``
 """""""""""""""""
 
-
 Enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.
 
 .. _dec-turbo_prod-dec-sub-corr-pow:
@@ -239,9 +264,10 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 """"""""""""""""""""""""""
 
    :Type: integer
-   :Examples: ``--dec-sub-corr-pow 1``
+   :Default: 1
+   :Examples: ``-T 1``
 
-Correction power of the BCH code.
+Give the correction power of the BCH sub-decoder.
 
 .. _dec-turbo_prod-dec-sub-flips:
 
@@ -259,7 +285,8 @@ Set the maximum number of flips in the CHASE decoder.
 """""""""""""""""""""
 
 
-Enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.
+Enable the computation of the Hamming distance instead of the Euclidean distance
+in the ML/CHASE decoders.
 
 .. _dec-turbo_prod-dec-sub-implem:
 
