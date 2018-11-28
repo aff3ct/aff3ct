@@ -93,21 +93,22 @@ Description of the allowed values:
      the user with :ref:`dec-turbo_prod-dec-cp-coef`
    * Compute the reliability :math:`F` of :math:`D` for each bit
      :math:`D_j` of the word:
-        * Find :math:`C^s` the competitor with the smallest metric :math:`C_m`
-          that have :math:`C_j^s \neq D_j`.
-        * when :math:`C^s` exists:
 
-           :math:`F_j = b . D_j . [C_m - D_m]`
-        * when :math:`C^s` does not exist and if
-          :ref:`dec-turbo_prod-dec-beta` is given:
+      * Find :math:`C^s` the competitor with the smallest metric :math:`C_m`
+        that have :math:`C_j^s \neq D_j`.
+      * when :math:`C^s` exists:
 
-           :math:`F_j = D_j . beta`
-        * else:
+        :math:`F_j = b . D_j . [C_m - D_m]`
+      * when :math:`C^s` does not exist and if
+        :ref:`dec-turbo_prod-dec-beta` is given:
 
-           :math:`F_j = D_j . \left[ \displaystyle\sum_{i=0}^{e}
-           P_i - c . D_m + d . |R_j| \right]`
-           where :math:`P` is considered sorted, :math:`0 < e < p`,
-           and when :math:`e == 0 \implies e = p - 1`.
+        :math:`F_j = D_j . beta`
+      * else:
+
+        :math:`F_j = D_j . \left[ \displaystyle\sum_{i=0}^{e}
+        P_i - c . D_m + d . |R_j| \right]`
+        where :math:`P` is considered sorted, :math:`0 < e < p`,
+        and when :math:`e == 0 \implies e = p - 1`.
 
    * Compute extrinsic :math:`W = F - a . R`
 

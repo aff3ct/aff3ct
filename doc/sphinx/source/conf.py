@@ -234,6 +234,7 @@ rst_epilog = """
 .. |ARP|      replace:: :abbr:`ARP     (Almost Regular Permutation)`
 .. |ASCII|    replace:: :abbr:`ASCII   (American Standard Code for Information Interchange)`
 .. |ASCL|     replace:: :abbr:`ASCL    (Adaptive Successive Cancellation List)`
+.. |AVX|      replace:: :abbr:`AVX     (Advanced Vector Extensions)`
 .. |AWGN|     replace:: :abbr:`AWGN    (Additive White Gaussian Noise)`
 .. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Word)`
 .. |AZCWs|    replace:: :abbr:`AZCWs   (All Zero Code Words)`
@@ -247,10 +248,13 @@ rst_epilog = """
 .. |BPS|      replace:: :abbr:`BPS     (Bit Per Symbol)`
 .. |BSC|      replace:: :abbr:`BSC     (Binary Symmetric Channel)`
 .. |CCSDS|    replace:: :abbr:`CCSDS   (Consultative Committee for Space Data Systems)`
+.. |CDF|      replace:: :abbr:`CDF     (Cumulative Distribution Function)`
 .. |codec|    replace:: :abbr:`codec   (coder/decoder)`
 .. |codecs|   replace:: :abbr:`codecs  (coders/decodes)`
-.. |CPM|      replace:: :abbr:`CPM     (Continuous Phase Modulation)`
 .. |CP|       replace:: :abbr:`CP      (Chase-Pyndiah)`
+.. |CPM|      replace:: :abbr:`CPM     (Continuous Phase Modulation)`
+.. |CPU|      replace:: :abbr:`CPU     (Central Process Unit)`
+.. |CPUs|     replace:: :abbr:`CPUs    (Central Process Units)`
 .. |CRC|      replace:: :abbr:`CRC     (Cyclic Redundancy Check)`
 .. |CRCs|     replace:: :abbr:`CRCs    (Cyclic Redundancy Checks)`
 .. |DVB-RCS1| replace:: :abbr:`DVB-RCS1(Digital Video Broadcasting - Return Channel via Satellite 1)`
@@ -261,9 +265,16 @@ rst_epilog = """
 .. |EXIT|     replace:: :abbr:`EXIT    (EXtrinsic Information Transfer chart)`
 .. |FER|      replace:: :abbr:`FER     (Frame Error Rate)`
 .. |GALA|     replace:: :abbr:`GALA    (Gallager A)`
+.. |GPP|      replace:: :abbr:`GPP     (General Purpose Processor)`
+.. |GPPs|     replace:: :abbr:`GPPs    (General Purpose Processors)`
+.. |GPU|      replace:: :abbr:`GPU     (Graphics Processing Unit)`
+.. |GPUs|     replace:: :abbr:`GPUs    (Graphics Processing Units)`
+.. |GSL|      replace:: :abbr:`GSL     (GNU Scientific Library)`
 .. |GSM|      replace:: :abbr:`GSM     (Global System for Mobile Communications)`
 .. |GUI|      replace:: :abbr:`GUI     (Graphical User Interface)`
 .. |IFL|      replace:: :abbr:`IFL     (Inter Frame Level)`
+.. |ISA|      replace:: :abbr:`ISA     (Instruction Set Architecture)`
+.. |ISAs|     replace:: :abbr:`ISAs    (Instruction Set Architectures)`
 .. |LDPC|     replace:: :abbr:`LDPC    (Low-Density Parity-Check)`
 .. |LLRs|     replace:: :abbr:`LLRs    (Log Likelihood Ratios)`
 .. |LLR|      replace:: :abbr:`LLR     (Log Likelihood Ratio)`
@@ -272,12 +283,14 @@ rst_epilog = """
 .. |LUT|      replace:: :abbr:`LUT     (Look Up Table)`
 .. |LUTs|     replace:: :abbr:`LUTs    (Look Up Tables)`
 .. |MATLAB|   replace:: MATLAB
+.. |MKL|      replace:: :abbr:`MKL     (Intel Math Kernel Library)`
 .. |ML|       replace:: :abbr:`ML      (Maximum Likelihood)`
 .. |modem|    replace:: :abbr:`modem   (modulator/demodulator)`
 .. |modems|   replace:: :abbr:`modems  (modulators/demodulators)`
 .. |MPI|      replace:: :abbr:`MPI     (Message Passing Interface)`
 .. |MS|       replace:: :abbr:`MS      (Min-Sum)`
 .. |MT 19937| replace:: :abbr:`MT 19937(Mersenne Twister 19937)`
+.. |NEON|     replace:: :abbr:`NEON    (ARM SIMD instructions)`
 .. |NMS|      replace:: :abbr:`NMS     (Normalized Min-Sum)`
 .. |OMS|      replace:: :abbr:`OMS     (Offset Min-Sum)`
 .. |ONMS|     replace:: :abbr:`ONMS    (Offset Normalized Min-Sum)`
@@ -303,6 +316,7 @@ rst_epilog = """
 .. |SNRs|     replace:: :abbr:`SNRs    (Signal Noise Ratios)`
 .. |SNR|      replace:: :abbr:`SNR     (Signal Noise Ratio)`
 .. |SPA|      replace:: :abbr:`SPA     (Sum-Product Algorithm)`
+.. |SSE|      replace:: :abbr:`SSE     (Streaming SIMD Extensions)`
 .. |TPC|      replace:: :abbr:`TPC     (Turbo Product Code)`
 .. |version|  replace:: """ + version + """
 

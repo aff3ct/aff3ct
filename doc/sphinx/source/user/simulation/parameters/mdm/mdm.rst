@@ -195,9 +195,9 @@ Description of the allowed values:
    \log(1 + \exp(-|a - b|))`.
 .. |mdm-max_descr_maxss| replace:: :math:`\max^*(a,b) \approx \max(a,b) + d`
    with :math:`d = \begin{cases}
-   0                         & \quad \text{if } d >= 37\\
-   \exp(-|a - b|)            & \quad \text{if } 9 <= d < 37 \\
-   \log(1 + \exp(-|a - b|))  & \quad \text{else}
+   0                         & \text{if } d >= 37\\
+   \exp(-|a - b|)            & \text{if } 9 <= d < 37 \\
+   \log(1 + \exp(-|a - b|))  & \text{else}
    \end{cases}`.
 .. |mdm-max_descr_maxl|  replace:: :math:`\max^*(a,b) \approx \max(a,b) +
    \max(0, 0.301 - (0.5 |a - b|))`.
@@ -381,8 +381,8 @@ Where |n0_equation|
 
 .. |n0_equation| replace:: :math:`n_0 =
   \begin{cases}
-  1           & \quad \text{if } \sigma^2 \text{ is disabled}\\
-  4 \sigma^2  & \quad \text{else}
+  1           & \text{if } \sigma^2 \text{ is disabled}\\
+  4 \sigma^2  & \text{else}
   \end{cases}`.
 
 See the :ref:`mdm-mdm-no-sig2` parameter to disable the division by
