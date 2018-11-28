@@ -3,28 +3,27 @@
 PyBER
 ^^^^^
 
-``PyBER`` is our python GUI to display an |AFF3CT| results library.
+|PyBER| is our Python |GUI| to display the |AFF3CT| outputs.
 
-You can download it here: `PyBER <https://github.com/aff3ct/PyBER>`_
+It can be downloaded here: https://github.com/aff3ct/PyBER.
 
 .. image:: images/pyber_plot.png
+   :align: center
 
+Install Python3
+"""""""""""""""
 
-Install Python 3
-""""""""""""""""
-
-| Download and install `Anaconda3 <https://www.anaconda.com/download/>`_
-| Tested with: `Anaconda3 x86_64 4.2.0  <https://repo.continuum.io/archive/Anaconda3-4.2.0-Windows-x86_64.exe>`_
+Download and install Anaconda3: https://www.anaconda.com/download/ (tested on
+`Anaconda3-4.2.0-Windows-x86_64 <https://repo.continuum.io/archive/Anaconda3-4.2.0-Windows-x86_64.exe>`_).
 
 Next next next... Install!
-Pay attention to add ``Python`` to the ``PATH`` when installing it.
+Pay attention to add Python to the ``PATH`` when installing it.
 
 Run PyBER
 """""""""
 
-Launch or re-launch (it is important to re-launch) ``Git Bash`` and type:
+From your terminal, go to the folder where |PyBER| is located an run it:
 
 .. code-block:: console
 
-   cd ~/aff3ct/plotter/PyBER/
-   python pyBER.py &
+   $ python pyBER.py &

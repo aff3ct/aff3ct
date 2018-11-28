@@ -60,7 +60,7 @@ Install Make and CMake from the package manager:
 
 .. code-block:: console
 
-   sudo apt install make cmake
+   $ sudo apt install make cmake
 
 .. note:: On CentOS-like systems you have to replace ``apt`` by ``yum``.
 
@@ -96,7 +96,7 @@ Install the C++ GNU compiler from the package manager:
 
 .. code-block:: console
 
-   sudo apt install g++
+   $  sudo apt install g++
 
 .. note:: On CentOS-like systems you have to replace ``apt`` by ``yum``.
 
@@ -113,21 +113,21 @@ Generate the Makefile from CMake:
 
 .. code-block:: console
 
-   mkdir build
-   cd build
-   cmake .. -G"MinGW Makefiles"
+   $ mkdir build
+   $ cd build
+   $ cmake .. -G"MinGW Makefiles"
 
 **This last command line should fail** but you can ignore it, continue with:
 
 .. code-block:: console
 
-   cmake .. -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_CC_COMPILER=gcc.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   $ cmake .. -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_CC_COMPILER=gcc.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Build |AFF3CT| with the Makefile:
 
 .. code-block:: console
 
-   mingw32-make -j4
+   $ mingw32-make -j4
 
 Once finished, the |AFF3CT| executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
@@ -148,15 +148,15 @@ Generate the Makefile from CMake:
 
 .. code-block:: console
 
-   mkdir build
-   cd build
-   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CC_COMPILER=clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   $ mkdir build
+   $ cd build
+   $ cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CC_COMPILER=clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Build |AFF3CT| with the Makefile:
 
 .. code-block:: console
 
-   make -j4
+   $ make -j4
 
 Once finished, the |AFF3CT| executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
@@ -168,15 +168,15 @@ Generate the Makefile from CMake:
 
 .. code-block:: console
 
-   mkdir build
-   cd build
-   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CC_COMPILER=gcc -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   $ mkdir build
+   $ cd build
+   $ cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CC_COMPILER=gcc -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Build |AFF3CT| with the Makefile:
 
 .. code-block:: console
 
-   make -j4
+   $ make -j4
 
 Once finished, the |AFF3CT| executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
@@ -223,7 +223,7 @@ is the location of Visual Studio on your system):
 
 .. code-block:: console
 
-   devenv /build Release aff3ct.sln
+   $ devenv /build Release aff3ct.sln
 
 .. _compilation_cmake_options:
 
@@ -287,7 +287,7 @@ syntax to follow:
 
 .. code-block:: console
 
-   cmake .. -DAFF3CT_OPTION=ON
+   $ cmake .. -DAFF3CT_OPTION=ON
 
 .. _compilation_compiler_options:
 
@@ -303,7 +303,7 @@ variable can get. For instance, to compile in release mode:
 
 .. code-block:: console
 
-   cmake .. -DCMAKE_BUILD_TYPE=Release
+   $ cmake .. -DCMAKE_BUILD_TYPE=Release
 
 .. note:: In CMake it is recommended to not explicitly set the compiler
           optimization level flags (``-O0``, ``-O1``, ``-O2``, ``-O3``, etc.).
@@ -331,7 +331,7 @@ CMake has a built-in variable you can set to specify the compiler options:
 
 .. code-block:: console
 
-   cmake .. -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   $ cmake .. -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Many parts of the |AFF3CT| code use the |SIMD| parallelism and this type of
 instructions often requires additional compiler options to be enabled:

@@ -13,7 +13,7 @@ performances of the (2048,1723) Polar code from 1.0 to 4.0 dB:
 
 .. code-block:: console
 
-   aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0
+   $ aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0
 
 And the output will be:
 
@@ -63,11 +63,11 @@ AFF3CT by running:
 
 .. code-block:: console
 
-   git clone --recursive https://github.com/aff3ct/aff3ct.git
-   mkdir aff3ct/build
-   cd aff3ct/build
-   cmake .. -DCMAKE_BUILD_TYPE=Release
-   make -j4
+   $ git clone --recursive https://github.com/aff3ct/aff3ct.git
+   $ mkdir aff3ct/build
+   $ cd aff3ct/build
+   $ cmake .. -DCMAKE_BUILD_TYPE=Release
+   $ make -j4
 
 Contribute
 ----------

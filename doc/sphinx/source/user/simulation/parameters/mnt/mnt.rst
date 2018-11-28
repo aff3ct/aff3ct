@@ -3,13 +3,10 @@
 Monitor parameters
 ------------------
 
-The Monitor is the last module in the chain as it compares the decoded frame
-with the initially generated one in the Source module. Furthermore, it can
-also compute the mutual information at the output of the demodulator.
-It has also the power to limit the currently running simulated noise point as it
-can stop it when a given amount of frame errors is reached. An histogram of the
-number of errors per frame for each noise point can be dumped, too.
-
+The monitor is the last module in the chain: **it compares the decoded
+information bits with the initially generated ones from the source**.
+Furthermore, it can also compute **the mutual information** (|MI|) from the
+demodulator output.
 
 .. _mnt-mnt-max-fe:
 
@@ -20,7 +17,7 @@ number of errors per frame for each noise point can be dumped, too.
    :Default: 100
    :Examples: ``--mnt-max-fe 25``
 
-Set the maximum number of frame errors simulated for each noise point.
+Set the maximum number of frame errors to simulated for each noise point.
 
 .. _mnt-mnt-err-hist:
 
@@ -30,8 +27,20 @@ Set the maximum number of frame errors simulated for each noise point.
    :Type: integer
    :Examples: ``--mnt-err-hist 1``
 
-Activate the histogram of the number of errors per frame. Sets also the maximum
-number of bit error per frame included in the histogram (0 is no limit).
+Enable the construction of the errors per frame histogram. Set also the maximum
+number of bit errors per frame included in the histogram (0 means no limit).
+The histogram is saved in |CSV| format:
+
+.. code-block:: console
+
+   "Number of error bits per wrong frame"; "Histogram (noise: 5.000000dB, on 10004 frames)"
+   0; 0
+   1; 7255
+   2; 2199
+   3; 454
+   4; 84
+   5; 11
+   6; 12
 
 .. _mnt-mnt-err-hist-path:
 
@@ -43,13 +52,12 @@ number of bit error per frame included in the histogram (0 is no limit).
    :Default: :file:`./hist`
    :Examples: ``--mnt-err-hist-path my/histogram/root/path/name``
 
-Path to the output histogram. When files are dumped, the current noise value
-is added to this name with the *.txt* extension.
+Path to the output histogram. When the files are dumped, the current noise value
+is added to this name with the ``.txt`` extension.
 
 An output filename example is :file:`hist_2.000000.txt` for a noise value of
-:math:`2\ dB`.
-For `Gnuplot <http://www.gnuplot.info/>`_ users you can then simply display the
-histogram with a simple command:
+2 dB. For `Gnuplot <http://www.gnuplot.info/>`_ users you can then simply
+display the histogram with the following command:
 
 .. code-block:: console
 
@@ -60,6 +68,7 @@ histogram with a simple command:
 ``--mnt-mutinfo``
 """""""""""""""""
 
-Activate the computation of the mutual information.
+Enable the computation of the |MI|.
 
-.. note:: Available only on ``BFER`` simulation types (:ref:`sim-sim-type`).
+.. note:: Only available on ``BFER`` simulation types (see the
+   :ref:`sim-sim-type` parameter for more details).

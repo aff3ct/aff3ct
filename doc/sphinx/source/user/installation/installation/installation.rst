@@ -18,7 +18,7 @@ build:
 
 .. code-block:: console
 
-   cmake .. -DCMAKE_INSTALL_PREFIX="install"
+   $ cmake .. -DCMAKE_INSTALL_PREFIX="install"
 
 This command do not install |AFF3CT|. It only prepares the project to be
 installed in the selected location.
@@ -30,7 +30,7 @@ To install |AFF3CT|, call the `install` target on the current Makefile:
 
 .. code-block:: console
 
-   make install
+   $ make install
 
 .. note:: Depending on the chosen ``CMAKE_INSTALL_PREFIX`` location, the
           administrator privileges (**sudo**) can be required.
@@ -47,7 +47,7 @@ is the location of Visual Studio on your system):
 
 .. code-block:: console
 
-   devenv /build Release aff3ct.sln /project INSTALL
+   $ devenv /build Release aff3ct.sln /project INSTALL
 
 Details
 -------

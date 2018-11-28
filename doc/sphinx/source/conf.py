@@ -257,6 +257,7 @@ rst_epilog = """
 .. |CPUs|     replace:: :abbr:`CPUs    (Central Process Units)`
 .. |CRC|      replace:: :abbr:`CRC     (Cyclic Redundancy Check)`
 .. |CRCs|     replace:: :abbr:`CRCs    (Cyclic Redundancy Checks)`
+.. |CSV|      replace:: :abbr:`CSV     (Comma-Separated Values)`
 .. |DVB-RCS1| replace:: :abbr:`DVB-RCS1(Digital Video Broadcasting - Return Channel via Satellite 1)`
 .. |DVB-RCS2| replace:: :abbr:`DVB-RCS2(Digital Video Broadcasting - Return Channel via Satellite 2)`
 .. |DVB-S1|   replace:: :abbr:`DVB-S1  (Digital Video Broadcasting - Satellite 1)`
@@ -283,6 +284,7 @@ rst_epilog = """
 .. |LUT|      replace:: :abbr:`LUT     (Look Up Table)`
 .. |LUTs|     replace:: :abbr:`LUTs    (Look Up Tables)`
 .. |MATLAB|   replace:: MATLAB
+.. |MI|       replace:: :abbr:`MI      (Mutual Information)`
 .. |MKL|      replace:: :abbr:`MKL     (Intel Math Kernel Library)`
 .. |ML|       replace:: :abbr:`ML      (Maximum Likelihood)`
 .. |modem|    replace:: :abbr:`modem   (modulator/demodulator)`
@@ -295,6 +297,8 @@ rst_epilog = """
 .. |OMS|      replace:: :abbr:`OMS     (Offset Min-Sum)`
 .. |ONMS|     replace:: :abbr:`ONMS    (Offset Normalized Min-Sum)`
 .. |OOK|      replace:: :abbr:`OOK     (On-Off Keying)`
+.. |OS|       replace:: :abbr:`OS      (Operating System)`
+.. |OSs|      replace:: :abbr:`OSs     (Operating Systems)`
 .. |PAM|      replace:: :abbr:`PAM     (Pulse-Amplitude Modulation)`
 .. |PDF|      replace:: :abbr:`PDF     (Probability Density Function)`
 .. |PRNG|     replace:: :abbr:`PRNG    (Pseudo Random Number Generator)`

@@ -1,6 +1,5 @@
 .. _user_simulation_overview:
 
-
 Overview
 --------
 
@@ -29,7 +28,7 @@ line using |AFF3CT|:
 
 .. code-block:: console
 
-   aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0
+   $ aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0
 
 ``-C`` is a required parameter that defines the type of channel code that will
 be used in the communication chain (see the :ref:`sim-sim-cde-type` section).
@@ -60,14 +59,16 @@ between each |SNR| (c.f. section :ref:`sim-sim-noise-step`). The
 
    |SNR|-related parameters in the communication chain.
 
+.. _user_simulation_overview_output:
+
 Output
 """"""
 
-The output of the command
-(``aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0``) will look like:
+The output of following command will look like:
 
 .. code-block:: console
 
+	$ aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0
 	# ----------------------------------------------------
 	# ---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----
 	# ----------------------------------------------------
