@@ -75,6 +75,10 @@ Set the maximum number of bit flips in the Chase decoder.
 Compute the `Hamming distance`_ instead of the `Euclidean distance`_ in the |ML|
 and Chase decoders.
 
+.. note:: Using the `Hamming distance`_ will heavily degrade the |BFER|
+   performances. The |BFER| performances will be the same as an hard input
+   decoder.
+
 References
 """"""""""
 
