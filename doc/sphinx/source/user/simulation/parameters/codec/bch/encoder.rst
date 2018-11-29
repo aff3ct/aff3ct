@@ -39,40 +39,19 @@ Description of the allowed values:
 +-----------+------------------------+
 | Value     | Description            |
 +===========+========================+
-| ``AZCW``  | |enc-type_descr_azcw|  |
-+-----------+------------------------+
 | ``BCH``   | |enc-type_descr_bch|   |
 +-----------+------------------------+
-| ``COSET`` | |enc-type_descr_coset| |
+| ``AZCW``  | |enc-type_descr_azcw|  |
 +-----------+------------------------+
-| ``NO``    | |enc-type_descr_no|    |
+| ``COSET`` | |enc-type_descr_coset| |
 +-----------+------------------------+
 | ``USER``  | |enc-type_descr_user|  |
 +-----------+------------------------+
 
-.. |enc-type_descr_azcw| replace:: TODO VALUE AZCW
-.. |enc-type_descr_bch| replace:: TODO VALUE BCH
-.. |enc-type_descr_coset| replace:: TODO VALUE COSET
-.. |enc-type_descr_no| replace:: TODO VALUE NO
-.. |enc-type_descr_user| replace:: TODO VALUE USER
-
-.. _enc-bch-enc-path:
-
-``--enc-path``
-""""""""""""""
-
-   :Type: file
-   :Rights: read only
-   :Examples: ``--enc-path example/path/to/the/right/file``
-
-Path to a file containing one or a set of pre-computed codewords, to use with "\\-\\-enc-type USER".
-
-.. _enc-bch-enc-start-idx:
-
-``--enc-start-idx``
-"""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--enc-start-idx 1``
-
-Start idx to use in the USER type encoder.
+.. |enc-type_descr_bch| replace:: Select the standard BCH encoder.
+.. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+.. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+.. |enc-type_descr_user| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
