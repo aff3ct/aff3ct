@@ -17,14 +17,14 @@ classified in three categories:
    :maxdepth: 1
    :caption: Contents
 
-   sim/sim
-   src/src
+   simulation/simulation
+   source/source
    crc/crc
-   cdc/cdc
-   itl/itl
-   mdm/mdm
-   chn/chn
-   qnt/qnt
-   mnt/mnt
-   ter/ter
-   global/global
+   codec/codec
+   interleaver/interleaver
+   modem/modem
+   channel/channel
+   quantizer/quantizer
+   monitor/monitor
+   terminal/terminal
+   other/other
