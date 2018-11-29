@@ -9,9 +9,11 @@ Encoder parameters
 """""""""""""""""""""""""""""""""""""""""""""""
 
    :Type: integer
-   :Examples: ``--enc-cw-size 1``
+   :Examples: ``--enc-cw-size 127``
 
-The codeword size.
+Set the symbols codeword size as an integer of the form :math:`N = 2^m – 1`,
+where :math:`m` is an integer from 3 that represents also the number of bits per
+symbol. Thus, the binary codeword size is :math:`N \times m`.
 
 .. _enc-rs-enc-info-bits:
 
@@ -21,28 +23,11 @@ The codeword size.
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-Useful number of bit transmitted (information bits).
+Give the useful number of symbols transmitted.
 
-.. _enc-rs-enc-path:
-
-``--enc-path``
-""""""""""""""
-
-   :Type: file
-   :Rights: read only
-   :Examples: ``--enc-path example/path/to/the/right/file``
-
-Path to a file containing one or a set of pre-computed codewords, to use with "\\-\\-enc-type USER".
-
-.. _enc-rs-enc-start-idx:
-
-``--enc-start-idx``
-"""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--enc-start-idx 1``
-
-Start idx to use in the USER type encoder.
+This argument is not required if the correction power :math:`T` is given with
+:ref:`dec-rs-dec-corr-pow`, as it
+is calculated automatically with the formula :math:`K = N - 2.T`.
 
 .. _enc-rs-enc-type:
 
@@ -51,6 +36,7 @@ Start idx to use in the USER type encoder.
 
    :Type: text
    :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``RS`` ``USER``
+   :Default: ``RS``
    :Examples: ``--enc-type AZCW``
 
 Type of the encoder to use in the simulation.
@@ -64,17 +50,17 @@ Description of the allowed values:
 +-----------+------------------------+
 | ``COSET`` | |enc-type_descr_coset| |
 +-----------+------------------------+
-| ``NO``    | |enc-type_descr_no|    |
-+-----------+------------------------+
 | ``RS``    | |enc-type_descr_rs|    |
 +-----------+------------------------+
 | ``USER``  | |enc-type_descr_user|  |
 +-----------+------------------------+
 
-.. |enc-type_descr_azcw| replace:: TODO VALUE AZCW
-.. |enc-type_descr_coset| replace:: TODO VALUE COSET
-.. |enc-type_descr_no| replace:: TODO VALUE NO
-.. |enc-type_descr_rs| replace:: TODO VALUE RS
-.. |enc-type_descr_user| replace:: TODO VALUE USER
+.. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+.. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+.. |enc-type_descr_user| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+.. |enc-type_descr_rs| replace:: Select the standard |RS| encoder.
 
 
