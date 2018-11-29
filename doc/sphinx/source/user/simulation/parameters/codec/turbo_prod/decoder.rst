@@ -122,6 +122,7 @@ Description of the allowed values:
 
    :Type: text
    :Allowed values: ``FAST`` ``NAIVE`` ``STD``
+   :Default: ``STD``
    :Examples: ``--dec-implem STD``
 
 Select the implementation of the algorithm to decode.
@@ -269,25 +270,6 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 
 Give the correction power of the BCH sub-decoder.
 
-.. _dec-turbo_prod-dec-sub-flips:
-
-``--dec-sub-flips``
-"""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--dec-sub-flips 1``
-
-Set the maximum number of flips in the CHASE decoder.
-
-.. _dec-turbo_prod-dec-sub-hamming:
-
-``--dec-sub-hamming``
-"""""""""""""""""""""
-
-
-Enable the computation of the Hamming distance instead of the Euclidean distance
-in the ML/CHASE decoders.
-
 .. _dec-turbo_prod-dec-sub-implem:
 
 ``--dec-sub-implem``
@@ -348,6 +330,25 @@ Description of the allowed values:
 
 
 .. TODO : remove those arguments in the code
+
+   .. _dec-turbo_prod-dec-sub-flips:
+
+   ``--dec-sub-flips``
+   """""""""""""""""""
+
+      :Type: integer
+      :Examples: ``--dec-sub-flips 1``
+
+   Set the maximum number of flips in the ``CHASE`` sub-decoder.
+
+   .. _dec-turbo_prod-dec-sub-hamming:
+
+   ``--dec-sub-hamming``
+   """""""""""""""""""""
+
+
+   Enable the computation of the Hamming distance instead of the Euclidean distance
+   in the ``ML``/``CHASE`` sub-decoders.
 
    .. _dec-turbo_prod-dec-sub-cw-size:
 

@@ -1,7 +1,7 @@
 .. _codec-bch:
 
-Codec BCH
-*********
+Codec |BCH|
+***********
 
 .. toctree::
    :maxdepth: 2
