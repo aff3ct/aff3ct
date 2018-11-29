@@ -16,9 +16,9 @@ This location can be changed by setting the ``CMAKE_INSTALL_PREFIX`` built-in
 variable with an other path. For instance, to install |AFF3CT| in the current
 build:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ cmake .. -DCMAKE_INSTALL_PREFIX="install"
+   cmake .. -DCMAKE_INSTALL_PREFIX="install"
 
 This command do not install |AFF3CT|. It only prepares the project to be
 installed in the selected location.
@@ -28,9 +28,9 @@ Makefile Project
 
 To install |AFF3CT|, call the `install` target on the current Makefile:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ make install
+   make install
 
 .. note:: Depending on the chosen ``CMAKE_INSTALL_PREFIX`` location, the
           administrator privileges (**sudo**) can be required.
@@ -45,9 +45,9 @@ or from the command line after calling the
 ``%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat`` batch script (where ``%VS_PATH%``
 is the location of Visual Studio on your system):
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ devenv /build Release aff3ct.sln /project INSTALL
+   devenv /build Release aff3ct.sln /project INSTALL
 
 Details
 -------

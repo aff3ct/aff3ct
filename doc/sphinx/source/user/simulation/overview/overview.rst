@@ -26,9 +26,9 @@ different arguments. The command line interface make possible to write scripts
 that run a battery of simulations for instance. Here is a minimalist command
 line using |AFF3CT|:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0
+   aff3ct -C "POLAR" -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0
 
 ``-C`` is a required parameter that defines the type of channel code that will
 be used in the communication chain (see the :ref:`sim-sim-cde-type` section).
@@ -66,9 +66,9 @@ Output
 
 The output of following command will look like:
 
-.. code-block:: console
+.. code-block:: bash
 
-	$ aff3ct -C POLAR -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0
+	aff3ct -C "POLAR" -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0
 	# ----------------------------------------------------
 	# ---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----
 	# ----------------------------------------------------

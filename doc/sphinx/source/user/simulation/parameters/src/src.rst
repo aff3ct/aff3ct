@@ -121,7 +121,7 @@ use with the ``USER`` source type.
 
 An |ASCII| file is expected:
 
-.. code-block:: console
+.. code-block:: bash
 
    F
 

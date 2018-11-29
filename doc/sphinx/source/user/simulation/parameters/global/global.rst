@@ -11,9 +11,12 @@ Other parameters
 Print the help with all the required ``{R}`` and optional arguments.
 The latter change in function of the selected simulation type and code.
 
+.. code-block:: bash
+
+   aff3ct -h
+
 .. code-block:: console
 
-   $ aff3ct -h
    Usage: ./bin/aff3ct -C <text> [optional args...]
 
    Simulation parameter(s):
@@ -41,9 +44,12 @@ The latter change in function of the selected simulation type and code.
 
 Print the help with in more the advanced ``{A}`` arguments.
 
+.. code-block:: bash
+
+   aff3ct -H
+
 .. code-block:: console
 
-   $ aff3ct -H
    Usage: ./bin/aff3ct -C <text> [optional args...]
 
    Simulation parameter(s):
@@ -75,9 +81,12 @@ Print the help with in more the advanced ``{A}`` arguments.
 
 Print informations about the version of the source code and compilation options.
 
+.. code-block:: bash
+
+   aff3ct -v
+
 .. code-block:: console
 
-   $ aff3ct -v
    aff3ct (Linux 64-bit, g++ 8.1, AVX2) v2.0.0-112-gc74ce62
    Copyright (c) 2016-2018 - MIT license.
    This is free software; see the source for copying conditions.  There is NO

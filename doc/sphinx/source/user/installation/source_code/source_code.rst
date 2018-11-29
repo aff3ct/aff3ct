@@ -54,9 +54,9 @@ Linux
 
 Install Git from the package manager:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ sudo apt install git
+   sudo apt install git
 
 .. note:: On CentOS-like systems you have to replace ``apt`` by ``yum``.
 
@@ -65,10 +65,10 @@ Clone |AFF3CT| from GitHub
 
 Get the source code from GitHub:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ git clone --recursive https://github.com/aff3ct/aff3ct.git
-   $ cd aff3ct
+   git clone --recursive https://github.com/aff3ct/aff3ct.git
+   cd aff3ct
 
 .. _Git submodule feature: https://git-scm.com/docs/git-submodule
 
@@ -86,9 +86,9 @@ this is why the ``--recursive`` option has been added.
 If you want to manually get or update the |AFF3CT| submodules, you can use the
 following command:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ git submodule update --init --recursive
+   git submodule update --init --recursive
 
 .. warning:: When ``git pull`` is used to get the last commits from the
              repository, the submodules are not automatically updated and it

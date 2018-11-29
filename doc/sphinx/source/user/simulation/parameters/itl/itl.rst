@@ -144,7 +144,7 @@ interleaver).
 
 An |ASCII| file is expected:
 
-.. code-block:: console
+.. code-block:: bash
 
    1
 
@@ -163,7 +163,7 @@ If there is more than one interleaved sequence then for each new frame a new
 |LUT| is used in the natural order given by the file. Here is an example with
 two |LUTs|:
 
-.. code-block:: console
+.. code-block:: bash
 
    2
 

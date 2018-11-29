@@ -21,9 +21,9 @@ done (read more about `pull requests`_).
 Always write a clear log message for your commits. One-line messages are fine
 for small changes, but bigger changes should look like this:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ git commit -m "A brief summary of the commit
+   git commit -m "A brief summary of the commit
    >
    > A paragraph describing what changed and its impact."
 

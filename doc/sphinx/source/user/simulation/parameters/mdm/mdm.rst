@@ -115,7 +115,7 @@ Give the path to the ordered modulation symbols (constellation), to use with
 An |ASCII| file is expected, for instance here is the definition of a 16-|QAM|
 with an anti-Gray mapping (the lines starting with a ``#`` are ignored):
 
-.. code-block:: console
+.. code-block:: bash
 
    # 0000
     3  3

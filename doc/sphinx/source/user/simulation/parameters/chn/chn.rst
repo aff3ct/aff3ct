@@ -273,7 +273,7 @@ details):
 The expected file format is either |ASCII| or binary (the format is
 automatically detected). Here is the file structure expected in |ASCII|:
 
-.. code-block:: console
+.. code-block:: bash
 
    F
 

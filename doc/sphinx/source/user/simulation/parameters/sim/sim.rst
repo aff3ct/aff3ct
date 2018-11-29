@@ -335,9 +335,9 @@ when a bit is 1, then the corresponding output bit is flipped.
 Enable the debug mode. This print the input and the output frames after each
 task execution:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg
+   aff3ct -C "REP" -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg
    # [...]
    # Source_random::generate(int32 U_K[4])
    # {OUT} U_K = [    1,     1,     0,     1]
@@ -392,9 +392,9 @@ Enable the debug mode and **print values in the hexadecimal format**.
 This mode is useful for having a fully accurate representation of floating
 numbers:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg-hex
+   aff3ct -C "REP" -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg-hex
    # [...]
    # Modem_BPSK::modulate(const int32 X_N1[8], float32 X_N2[8])
    # {IN}  X_N1 = [0x1, 0x1, 0x0, 0x1, 0x1, 0x1, 0x0, 0x1]
@@ -420,9 +420,9 @@ numbers:
 Enable the debug mode and **set the max number of elements** to display per
 frame. 0 value means there is no dump limit.
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg-limit 3
+   aff3ct -C "REP" -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg-limit 3
    # [...]
    # Modem_BPSK::modulate(const int32 X_N1[8], float32 X_N2[8])
    # {IN}  X_N1 = [    1,     1,     0, ...]
@@ -450,9 +450,9 @@ This behavior can be overridden with the :ref:`src-src-fra` parameter and a task
 can be executed on many frames. In that case, you may want to reduce the number
 of displayed frames on screen:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 -F 8 --sim-dbg-fra 4
+   aff3ct -C "REP" -K 4 -N 8 -m 1.0 -M 1.0 -F 8 --sim-dbg-fra 4
    # [...]
    # Modem_BPSK::modulate(const int32 X_N1[8x8], float32 X_N2[8x8])
    # {IN}  X_N1 = [f1(    1,     1,     0,     1,     1,     1,     0,     1),
@@ -493,9 +493,9 @@ of displayed frames on screen:
 Enable the debug mode and **set the decimal precision** (number of digits for
 the decimal part) of the floating-point elements:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ aff3ct -C REP -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg-prec 4
+   aff3ct -C "REP" -K 4 -N 8 -m 1.0 -M 1.0 --sim-dbg-prec 4
    # [...]
    # Modem_BPSK::modulate(const int32 X_N1[8], float32 X_N2[8])
    # {IN}  X_N1 = [      0,       0,       1,       1,       0,       0,       1,       1]
@@ -541,9 +541,9 @@ Set the |PRNG| seed used in the Monte Carlo simulation.
 Display statistics for each task. Those statistics are shown after each
 simulated |SNR| point:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ aff3ct -C POLAR -K 1723 -N 2048 -m 4.2 -M 4.2 -t 1 --sim-stats
+   aff3ct -C "POLAR" -K 1723 -N 2048 -m 4.2 -M 4.2 -t 1 --sim-stats
    # [...]
    # -------------------------------------------||------------------------------||--------------------------------||--------------------------------
    #        Statistics for the given task       ||       Basic statistics       ||       Measured throughput      ||        Measured latency

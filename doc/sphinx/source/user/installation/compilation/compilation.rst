@@ -58,9 +58,9 @@ Linux
 
 Install Make and CMake from the package manager:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ sudo apt install make cmake
+   sudo apt install make cmake
 
 .. note:: On CentOS-like systems you have to replace ``apt`` by ``yum``.
 
@@ -94,9 +94,9 @@ Linux
 
 Install the C++ GNU compiler from the package manager:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $  sudo apt install g++
+   sudo apt install g++
 
 .. note:: On CentOS-like systems you have to replace ``apt`` by ``yum``.
 
@@ -111,23 +111,23 @@ Windows
 
 Generate the Makefile from CMake:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ mkdir build
-   $ cd build
-   $ cmake .. -G"MinGW Makefiles"
+   mkdir build
+   cd build
+   cmake .. -G"MinGW Makefiles"
 
 **This last command line should fail** but you can ignore it, continue with:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ cmake .. -DCMAKE_CXX_COMPILER=g++.exe -DCMAKE_CC_COMPILER=gcc.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   cmake .. -DCMAKE_CXX_COMPILER="g++.exe" -DCMAKE_CC_COMPILER="gcc.exe" -DCMAKE_BUILD_TYPE="Release" -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Build |AFF3CT| with the Makefile:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ mingw32-make -j4
+   mingw32-make -j4
 
 Once finished, the |AFF3CT| executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
@@ -146,17 +146,17 @@ macOS
 
 Generate the Makefile from CMake:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ mkdir build
-   $ cd build
-   $ cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CC_COMPILER=clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   mkdir build
+   cd build
+   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_CC_COMPILER="clang" -DCMAKE_BUILD_TYPE="Release" -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Build |AFF3CT| with the Makefile:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ make -j4
+   make -j4
 
 Once finished, the |AFF3CT| executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
@@ -166,17 +166,17 @@ Linux
 
 Generate the Makefile from CMake:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ mkdir build
-   $ cd build
-   $ cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CC_COMPILER=gcc -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   mkdir build
+   cd build
+   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER="g++" -DCMAKE_CC_COMPILER="gcc" -DCMAKE_BUILD_TYPE="Release" -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Build |AFF3CT| with the Makefile:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ make -j4
+   make -j4
 
 Once finished, the |AFF3CT| executable should be located in the
 ``$AFF3CT_ROOT/build/bin`` folder.
@@ -221,9 +221,9 @@ The compilation can also be started from the command line after calling the
 ``%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat`` batch script (where ``%VS_PATH%``
 is the location of Visual Studio on your system):
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ devenv /build Release aff3ct.sln
+   devenv /build Release aff3ct.sln
 
 .. _compilation_cmake_options:
 
@@ -285,9 +285,9 @@ this feature and provides the following options:
 Considering an option ``AFF3CT_OPTION`` we want to set to ``ON``, here is the
 syntax to follow:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ cmake .. -DAFF3CT_OPTION=ON
+   cmake .. -DAFF3CT_OPTION="ON"
 
 .. _compilation_compiler_options:
 
@@ -301,9 +301,9 @@ CMake allows to select the type of build through the ``CMAKE_BUILD_TYPE``
 built-in variable. ``Release`` and ``Debug`` are the common values that the
 variable can get. For instance, to compile in release mode:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ cmake .. -DCMAKE_BUILD_TYPE=Release
+   cmake .. -DCMAKE_BUILD_TYPE="Release"
 
 .. note:: In CMake it is recommended to not explicitly set the compiler
           optimization level flags (``-O0``, ``-O1``, ``-O2``, ``-O3``, etc.).
@@ -329,9 +329,9 @@ Specific Options
 CMake has a built-in variable you can set to specify the compiler options:
 ``CMAKE_CXX_FLAGS``. For instance, it can be used like this:
 
-.. code-block:: console
+.. code-block:: bash
 
-   $ cmake .. -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   cmake .. -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Many parts of the |AFF3CT| code use the |SIMD| parallelism and this type of
 instructions often requires additional compiler options to be enabled:

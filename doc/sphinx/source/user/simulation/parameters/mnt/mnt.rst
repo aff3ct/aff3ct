@@ -31,7 +31,7 @@ Enable the construction of the errors per frame histogram. Set also the maximum
 number of bit errors per frame included in the histogram (0 means no limit).
 The histogram is saved in |CSV| format:
 
-.. code-block:: console
+.. code-block:: bash
 
    "Number of error bits per wrong frame"; "Histogram (noise: 5.000000dB, on 10004 frames)"
    0; 0
@@ -59,7 +59,7 @@ An output filename example is :file:`hist_2.000000.txt` for a noise value of
 2 dB. For `Gnuplot <http://www.gnuplot.info/>`_ users you can then simply
 display the histogram with the following command:
 
-.. code-block:: console
+.. code-block:: bash
 
    gnuplot -e "set key autotitle columnhead; plot 'hist_2.000000.txt' with lines; pause -1"
 
