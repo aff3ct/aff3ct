@@ -37,6 +37,8 @@ Description of the allowed values:
 .. |dec-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
    parameter.
 
+The Berlekamp–Massey : :cite:`Berlekamp1968,Massey1969`
+
 .. _dec-rs-dec-implem:
 
 ``--dec-implem``
@@ -54,8 +56,6 @@ Description of the allowed values:
 | Value      | Description               |
 +============+===========================+
 | ``GENIUS`` | |dec-implem_descr_genius| |
-+------------+---------------------------+
-| ``NAIVE``  | |dec-implem_descr_naive|  |
 +------------+---------------------------+
 | ``STD``    | |dec-implem_descr_std|    |
 +------------+---------------------------+
@@ -87,3 +87,8 @@ Description of the allowed values:
 
 Set the correction power of the |RS| decoder. This value corresponds to the
 number of symbols errors that the decoder is able to correct.
+
+References
+""""""""""
+
+.. bibliography:: references.bib
