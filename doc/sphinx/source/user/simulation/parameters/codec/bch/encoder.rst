@@ -23,27 +23,6 @@ The codeword size.
 
 Useful number of bit transmitted (information bits).
 
-.. _enc-bch-enc-path:
-
-``--enc-path``
-""""""""""""""
-
-   :Type: file
-   :Rights: read only
-   :Examples: ``--enc-path example/path/to/the/right/file``
-
-Path to a file containing one or a set of pre-computed codewords, to use with "\\-\\-enc-type USER".
-
-.. _enc-bch-enc-start-idx:
-
-``--enc-start-idx``
-"""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--enc-start-idx 1``
-
-Start idx to use in the USER type encoder.
-
 .. _enc-bch-enc-type:
 
 ``--enc-type``
@@ -77,4 +56,23 @@ Description of the allowed values:
 .. |enc-type_descr_no| replace:: TODO VALUE NO
 .. |enc-type_descr_user| replace:: TODO VALUE USER
 
+.. _enc-bch-enc-path:
 
+``--enc-path``
+""""""""""""""
+
+   :Type: file
+   :Rights: read only
+   :Examples: ``--enc-path example/path/to/the/right/file``
+
+Path to a file containing one or a set of pre-computed codewords, to use with "\\-\\-enc-type USER".
+
+.. _enc-bch-enc-start-idx:
+
+``--enc-start-idx``
+"""""""""""""""""""
+
+   :Type: integer
+   :Examples: ``--enc-start-idx 1``
+
+Start idx to use in the USER type encoder.

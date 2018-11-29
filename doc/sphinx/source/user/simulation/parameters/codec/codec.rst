@@ -7,6 +7,7 @@ Codec parameters
    :maxdepth: 2
    :caption: Contents
 
+   common/codec
    bch/codec
    ldpc/codec
    polar/codec
