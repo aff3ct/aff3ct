@@ -62,9 +62,10 @@ Description of the allowed values:
 
 .. |dec-type_descr_cp|    replace:: Decode with the Chase-Pyndiah algorithm of
    the |TPC|
-.. |dec-type_descr_chase| replace:: Decode with the Chase algorithm
-.. |dec-type_descr_ml|    replace:: Decode with the |ML| algorithm
-
+.. |dec-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
+   parameter.
+.. |dec-type_descr_ml|    replace:: See the common :ref:`dec-common-dec-type`
+   parameter.
 
 .. rubric:: The ``CP`` algorithm is the implementation of
    :cite:`Pyndiah1998` but in a more generic way in order to let the user
@@ -121,7 +122,7 @@ Description of the allowed values:
 """"""""""""""""
 
    :Type: text
-   :Allowed values: ``FAST`` ``NAIVE`` ``STD``
+   :Allowed values: ``STD``
    :Default: ``STD``
    :Examples: ``--dec-implem STD``
 
@@ -134,17 +135,8 @@ Description of the allowed values:
 +===========+==========================+
 | ``STD``   | |dec-implem_descr_std|   |
 +-----------+--------------------------+
-| ``NAIVE`` | |dec-implem_descr_naive| |
-+-----------+--------------------------+
-
-.. | ``FAST``  | |dec-implem_descr_fast|  |
-.. +-----------+--------------------------+
 
 .. |dec-implem_descr_std|   replace:: A standard implementation
-.. |dec-implem_descr_naive| replace:: A naive implementation only for the ``ML``
-..
-   .. |dec-implem_descr_fast|  replace:: TODO VALUE FAST
-
 
 .. _dec-turbo_prod-dec-ite:
 
@@ -153,7 +145,7 @@ Description of the allowed values:
 
    :Type: integer
    :Default: 4
-   :Examples: ``--dec-ite 5``
+   :Examples: ``--dec-ite 8``
 
 Set the number of iterations in the turbo.
 
@@ -242,64 +234,6 @@ Set the *number of test vectors*. A value of 0 means equal to :math:`2^p` where
 Give the 5 ``CP`` constant coefficients :math:`a, b, c, d, e` as described in
 :ref:`dec-turbo_prod-dec-type`.
 
-.. _dec-turbo_prod-dec-flips:
-
-``--dec-flips``
-"""""""""""""""
-
-   :Type: integer
-   :Examples: ``--dec-flips 1``
-
-Set the maximum number of flips in the CHASE decoder.
-
-.. _dec-turbo_prod-dec-hamming:
-
-``--dec-hamming``
-"""""""""""""""""
-
-Enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.
-
-.. _dec-turbo_prod-dec-sub-corr-pow:
-
-``--dec-sub-corr-pow, -T``
-""""""""""""""""""""""""""
-
-   :Type: integer
-   :Default: 1
-   :Examples: ``-T 1``
-
-Give the correction power of the BCH sub-decoder.
-
-.. _dec-turbo_prod-dec-sub-implem:
-
-``--dec-sub-implem``
-""""""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``FAST`` ``GENIUS`` ``NAIVE`` ``STD``
-   :Examples: ``--dec-sub-implem FAST``
-
-Select the implementation of the algorithm to decode.
-
-Description of the allowed values:
-
-+------------+-------------------------------+
-| Value      | Description                   |
-+============+===============================+
-| ``FAST``   | |dec-sub-implem_descr_fast|   |
-+------------+-------------------------------+
-| ``GENIUS`` | |dec-sub-implem_descr_genius| |
-+------------+-------------------------------+
-| ``NAIVE``  | |dec-sub-implem_descr_naive|  |
-+------------+-------------------------------+
-| ``STD``    | |dec-sub-implem_descr_std|    |
-+------------+-------------------------------+
-
-.. |dec-sub-implem_descr_fast| replace:: TODO VALUE FAST
-.. |dec-sub-implem_descr_genius| replace:: TODO VALUE GENIUS
-.. |dec-sub-implem_descr_naive| replace:: TODO VALUE NAIVE
-.. |dec-sub-implem_descr_std| replace:: TODO VALUE STD
-
 
 .. _dec-turbo_prod-dec-sub-type:
 
@@ -310,7 +244,7 @@ Description of the allowed values:
    :Allowed values: ``ALGEBRAIC`` ``CHASE`` ``ML``
    :Examples: ``--dec-sub-type ALGEBRAIC``
 
-Select the algorithm you want to decode the codeword.
+Select the algorithm of the sub-decoder to decode each row and column.
 
 Description of the allowed values:
 
@@ -324,51 +258,100 @@ Description of the allowed values:
 | ``ML``        | |dec-sub-type_descr_ml|        |
 +---------------+--------------------------------+
 
-.. |dec-sub-type_descr_algebraic| replace:: TODO VALUE ALGEBRAIC
-.. |dec-sub-type_descr_chase| replace:: TODO VALUE CHASE
-.. |dec-sub-type_descr_ml| replace:: TODO VALUE ML
+.. |dec-sub-type_descr_algebraic| replace:: See the |BCH| code
+   :ref:`dec-bch-dec-type`.
+.. |dec-sub-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
+   parameter.
+.. |dec-sub-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
+   parameter.
 
 
-.. TODO : remove those arguments in the code
+.. _dec-turbo_prod-dec-sub-corr-pow:
 
-   .. _dec-turbo_prod-dec-sub-flips:
+``--dec-sub-corr-pow, -T``
+""""""""""""""""""""""""""
 
-   ``--dec-sub-flips``
-   """""""""""""""""""
+   :Type: integer
+   :Default: 1
+   :Examples: ``-T 2``
 
-      :Type: integer
-      :Examples: ``--dec-sub-flips 1``
+Give the correction power of the |BCH| ``ALGEBRAIC`` sub-decoder.
 
-   Set the maximum number of flips in the ``CHASE`` sub-decoder.
+.. _dec-turbo_prod-dec-sub-implem:
 
-   .. _dec-turbo_prod-dec-sub-hamming:
+``--dec-sub-implem``
+""""""""""""""""""""
 
-   ``--dec-sub-hamming``
-   """""""""""""""""""""
+   :Type: text
+   :Allowed values: ``FAST`` ``GENIUS`` ``NAIVE`` ``STD``
+   :Examples: ``--dec-sub-implem FAST``
+
+Select the implementation of the algorithm of the sub-decoder.
+
+Description of the allowed values:
+
++------------+-------------------------------+
+| Value      | Description                   |
++============+===============================+
+| ``NAIVE``  | |dec-sub-implem_descr_naive|  |
++------------+-------------------------------+
+| ``STD``    | |dec-sub-implem_descr_std|    |
++------------+-------------------------------+
+| ``FAST``   | |dec-sub-implem_descr_fast|   |
++------------+-------------------------------+
+| ``GENIUS`` | |dec-sub-implem_descr_genius| |
++------------+-------------------------------+
+
+.. |dec-sub-implem_descr_naive| replace:: See the common
+   :ref:`dec-common-dec-implem` parameter.
+.. |dec-sub-implem_descr_std| replace:: See the common
+   :ref:`dec-common-dec-implem` parameter, and the |BCH| code
+   :ref:`dec-bch-dec-implem` parameter.
+.. |dec-sub-implem_descr_fast| replace:: See the |BCH| code
+   :ref:`dec-bch-dec-implem` parameter.
+.. |dec-sub-implem_descr_genius| replace:: See the |BCH| code
+   :ref:`dec-bch-dec-implem` parameter.
+
+.. TODO : remove those following arguments from the code
+
+.. _dec-turbo_prod-dec-sub-flips:
+
+``--dec-sub-flips``
+"""""""""""""""""""
+
+   :Type: integer
+   :Examples: ``--dec-sub-flips 1``
+
+Set the maximum number of flips in the ``CHASE`` sub-decoder.
+
+.. _dec-turbo_prod-dec-sub-hamming:
+
+``--dec-sub-hamming``
+"""""""""""""""""""""
 
 
-   Enable the computation of the Hamming distance instead of the Euclidean distance
-   in the ``ML``/``CHASE`` sub-decoders.
+Enable the computation of the Hamming distance instead of the Euclidean distance
+in the ``ML``/``CHASE`` sub-decoders.
 
-   .. _dec-turbo_prod-dec-sub-cw-size:
+.. _dec-turbo_prod-dec-sub-cw-size:
 
-   ``--dec-sub-cw-size, -N`` |image_required_argument|
-   """""""""""""""""""""""""""""""""""""""""""""""""""
+``--dec-sub-cw-size, -N`` |image_required_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""""""
 
-      :Type: integer
-      :Examples: ``--dec-sub-cw-size 1``
+   :Type: integer
+   :Examples: ``--dec-sub-cw-size 1``
 
-   The codeword size.
+The codeword size.
 
-   .. _dec-turbo_prod-dec-sub-info-bits:
+.. _dec-turbo_prod-dec-sub-info-bits:
 
-   ``--dec-sub-info-bits, -K`` |image_required_argument|
-   """""""""""""""""""""""""""""""""""""""""""""""""""""
+``--dec-sub-info-bits, -K`` |image_required_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-      :Type: integer
-      :Examples: ``--dec-sub-info-bits 1``
+   :Type: integer
+   :Examples: ``--dec-sub-info-bits 1``
 
-   Useful number of bit transmitted (information bits).
+Useful number of bit transmitted (information bits).
 
 References
 """"""""""
