@@ -281,6 +281,7 @@ rst_epilog = """
 .. |GSM|      replace:: :abbr:`GSM     (Global System for Mobile Communications)`
 .. |GUI|      replace:: :abbr:`GUI     (Graphical User Interface)`
 .. |IFL|      replace:: :abbr:`IFL     (Inter Frame Level)`
+.. |IRA|      replace:: :abbr:`IRA     (Irregular Repeat Accumulate)`
 .. |ISA|      replace:: :abbr:`ISA     (Instruction Set Architecture)`
 .. |ISAs|     replace:: :abbr:`ISAs    (Instruction Set Architectures)`
 .. |LDPC|     replace:: :abbr:`LDPC    (Low-Density Parity-Check)`
@@ -313,6 +314,7 @@ rst_epilog = """
 .. |PSK|      replace:: :abbr:`PSK     (Phase-Shift Keying)`
 .. |PyBER|    replace:: PyBER
 .. |QAM|      replace:: :abbr:`QAM     (Quadrature Amplitude Modulation)`
+.. |QC|       replace:: :abbr:`QC      (Quasi-Cyclic)`
 .. |RA|       replace:: :abbr:`RA      (Repeat and Accumulate)`
 .. |release|  replace:: """ + release + """
 .. |ROP|      replace:: :abbr:`ROP     (Received Optical Power)`
@@ -332,6 +334,7 @@ rst_epilog = """
 .. |TPC|      replace:: :abbr:`TPC     (Turbo Product Code)`
 .. |TV|       replace:: :abbr:`TV      (Tal & Vardy)`
 .. |version|  replace:: """ + version + """
+.. |WBF|      replace:: :abbr:`WBF     (Weighted Bit Flipping)`
 
 """
 

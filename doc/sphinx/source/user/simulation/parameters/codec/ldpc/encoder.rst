@@ -11,9 +11,10 @@
    :Type: integer
    :Examples: ``--enc-cw-size 1024``
 
-Set the codeword size. This argument is not required as the size is known
-through the parity matrix given with :ref:`dec-ldpc-dec-h-path` or the
-generator matrix given with :ref:`enc-ldpc-enc-g-path`.
+Set the codeword size :math:`N`. This argument is not required as the size is
+known through the parity matrix given with the :ref:`dec-ldpc-dec-h-path`
+parameter or through the generator matrix given with the
+:ref:`enc-ldpc-enc-g-path` parameter.
 
 .. _enc-ldpc-enc-info-bits:
 
@@ -23,13 +24,12 @@ generator matrix given with :ref:`enc-ldpc-enc-g-path`.
    :Type: integer
    :Examples: ``--enc-info-bits 512``
 
-Give the useful number of information bits. This argument is not required as the
-size is known through the generator matrix when given with
-:ref:`enc-ldpc-enc-g-path`. If not it is calculated from
-the parity matrix given with :ref:`dec-ldpc-dec-h-path`,
-as :math:`K = N - M` where :math:`N` and :math:`M`
-are the parity matrix dimensions, considering then a regular matrix. For
-*non-regular matrices*, :math:`K` has to be given.
+Set the number of information bits :math:`K`. This argument is not required as
+the size is known through the generator matrix when given with the
+:ref:`enc-ldpc-enc-g-path` parameter. If not it is calculated from the parity
+matrix given with the :ref:`dec-ldpc-dec-h-path` parameter, as :math:`K = N - M`
+where :math:`N` and :math:`M` are the parity matrix dimensions, considering then
+a regular matrix. For *non-regular matrices*, :math:`K` has to be given.
 
 .. _enc-ldpc-enc-type:
 
@@ -66,30 +66,34 @@ Description of the allowed values:
 | ``USER``       | |enc-type_descr_user|       |
 +----------------+-----------------------------+
 
-.. |enc-type_descr_ldpc|       replace:: Encode from a given generator matrix.
-.. |enc-type_descr_ldpc_h|     replace:: Build the generator matrix from the
-   given parity matrix and then encode with the ``LDPC`` method.
-.. |enc-type_descr_ldpc_dvbs2| replace:: Optimized encoding from the chosen
-   |DVB-S2| matrix. It is selected from its given dimensions.
-.. |enc-type_descr_ldpc_ira|   replace:: Optimized encoding from a given
-   **IRA** parity matrix.
-.. |enc-type_descr_ldpc_qc|    replace:: Optimized encoding from a given
-   **QC** parity matrix.
-.. |enc-type_descr_azcw|       replace:: See the common
-   :ref:`enc-common-enc-type` parameter.
-.. |enc-type_descr_coset|      replace:: See the common
-   :ref:`enc-common-enc-type` parameter.
-.. |enc-type_descr_user|       replace:: See the common
-   :ref:`enc-common-enc-type` parameter.
-
+.. |enc-type_descr_ldpc| replace:: Select the generic encoder that encode
+   from a given :math:`G` generator matrix (to use with the
+   :ref:`enc-ldpc-enc-g-path` parameter).
+.. |enc-type_descr_ldpc_h| replace:: Build the  :math:`G` generator matrix from
+   the given :math:`H` parity matrix and then encode with the ``LDPC`` method
+   (to use with the :ref:`dec-ldpc-dec-h-path` parameter).
+.. |enc-type_descr_ldpc_dvbs2| replace:: Select the optimized encoding process
+   for the |DVB-S2| :math:`H` matrices (to use with the
+   :ref:`enc-ldpc-enc-cw-size` and :ref:`enc-ldpc-enc-info-bits` parameters).
+.. |enc-type_descr_ldpc_ira| replace:: Select the optimized encoding process for
+   the |IRA| :math:`H` parity matrices (to use with the
+   :ref:`dec-ldpc-dec-h-path` parameter).
+.. |enc-type_descr_ldpc_qc| replace:: Select the optimized encoding process for
+   the |QC| :math:`H` parity matrices (to use with the
+   :ref:`dec-ldpc-dec-h-path` parameter).
+.. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+.. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+.. |enc-type_descr_user| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
 
 .. note:: The ``LDPC_DVBS2`` encoder type allow the simulation of the
    |DVB-S2| standard but without the |BCH| code. All matrices described by
-   `the standard (Tables 5a/5b page 22/23) <https://www.etsi.org/deliver/etsi_en/302300_302399/30230701/01.04.01_60/en_30230701v010401p.pdf>`_
+   `the standard (Tables 5a/5b page 22-23) <https://www.etsi.org/deliver/etsi_en/302300_302399/30230701/01.04.01_60/en_30230701v010401p.pdf>`_
    are available. You just need to give to the arguments
-   :ref:`enc-ldpc-enc-info-bits` and
-   :ref:`enc-ldpc-enc-cw-size` the real :math:`K` and :math:`N` |LDPC|
-   dimensions, respectively.
+   :ref:`enc-ldpc-enc-info-bits` and :ref:`enc-ldpc-enc-cw-size` the real
+   :math:`K` and :math:`N` |LDPC| dimensions, respectively.
 
 .. _enc-ldpc-enc-g-path:
 
@@ -100,7 +104,8 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--enc-g-path example/path/to/the/G_matrix.alist``
 
-Give the path to the generator matrix in a AList or Qc formated file.
+Give the path to the :math:`G` generator matrix in a AList or |QC| formated
+file.
 
 .. _enc-ldpc-enc-g-method:
 
@@ -112,8 +117,8 @@ Give the path to the generator matrix in a AList or Qc formated file.
    :Default: ``IDENTITY``
    :Examples: ``--enc-g-method IDENTITY``
 
-Specify the method used to build the generator matrix from the parity matrix
-when using the ``LDPC_H`` encoder type.
+Specify the method used to build the :math:`G` generator matrix from the
+:math:`H` parity matrix when using the ``LDPC_H`` encoder.
 
 Description of the allowed values:
 
@@ -144,8 +149,8 @@ Description of the allowed values:
    :Rights: write only
    :Examples: ``--enc-save-g example/path/to/the/generated/G_matrix.alist``
 
-Give the filename where the built generator matrix with the ``LDPC_H`` encoder
-is saved in an AList format.
+Set the path where the :math:`G` generator matrix will be saved (AList
+file format). To use with the ``LDPC_H`` encoder.
 
 .. hint:: It is useful to not have to generate again and again this matrix
    simulation after simulation. Use this option the first time but pay attention
