@@ -233,7 +233,9 @@ rst_epilog = """
 .. |API|      replace:: :abbr:`API     (Application Programming Interface)`
 .. |ARP|      replace:: :abbr:`ARP     (Almost Regular Permutation)`
 .. |ASCII|    replace:: :abbr:`ASCII   (American Standard Code for Information Interchange)`
-.. |ASCL|     replace:: :abbr:`ASCL    (Adaptive Successive Cancellation List)`
+.. |A-SCL|    replace:: :abbr:`A-SCL   (Adaptive Successive Cancellation List)`
+.. |FA-SCL|   replace:: :abbr:`FA-SCL  (Fully Adaptive Successive Cancellation List)`
+.. |PA-SCL|   replace:: :abbr:`PA-SCL  (Partially Adaptive Successive Cancellation List)`
 .. |AVX|      replace:: :abbr:`AVX     (Advanced Vector Extensions)`
 .. |AWGN|     replace:: :abbr:`AWGN    (Additive White Gaussian Noise)`
 .. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Word)`
@@ -248,6 +250,7 @@ rst_epilog = """
 .. |BP|       replace:: :abbr:`BP      (Belief Propagation)`
 .. |BPS|      replace:: :abbr:`BPS     (Bit Per Symbol)`
 .. |BSC|      replace:: :abbr:`BSC     (Binary Symmetric Channel)`
+.. |CA|       replace:: :abbr:`CA      (CRC Aided)`
 .. |CCSDS|    replace:: :abbr:`CCSDS   (Consultative Committee for Space Data Systems)`
 .. |CDF|      replace:: :abbr:`CDF     (Cumulative Distribution Function)`
 .. |codec|    replace:: :abbr:`codec   (coder/decoder)`
@@ -259,6 +262,8 @@ rst_epilog = """
 .. |CRC|      replace:: :abbr:`CRC     (Cyclic Redundancy Check)`
 .. |CRCs|     replace:: :abbr:`CRCs    (Cyclic Redundancy Checks)`
 .. |CSV|      replace:: :abbr:`CSV     (Comma-Separated Values)`
+.. |DB|       replace:: :abbr:`DB      (Double Binary)`
+.. |DE|       replace:: :abbr:`DE      (Density Evolution)`
 .. |DVB-RCS1| replace:: :abbr:`DVB-RCS1(Digital Video Broadcasting - Return Channel via Satellite 1)`
 .. |DVB-RCS2| replace:: :abbr:`DVB-RCS2(Digital Video Broadcasting - Return Channel via Satellite 2)`
 .. |DVB-S1|   replace:: :abbr:`DVB-S1  (Digital Video Broadcasting - Satellite 1)`
@@ -266,6 +271,7 @@ rst_epilog = """
 .. |EP|       replace:: :abbr:`EP      (Event Probability)`
 .. |EXIT|     replace:: :abbr:`EXIT    (EXtrinsic Information Transfer chart)`
 .. |FER|      replace:: :abbr:`FER     (Frame Error Rate)`
+.. |GA|       replace:: :abbr:`GA      (Gaussian Approximation)`
 .. |GALA|     replace:: :abbr:`GALA    (Gallager A)`
 .. |GPP|      replace:: :abbr:`GPP     (General Purpose Processor)`
 .. |GPPs|     replace:: :abbr:`GPPs    (General Purpose Processors)`
@@ -320,9 +326,11 @@ rst_epilog = """
 .. |SIMD|     replace:: :abbr:`SIMD    (Single Instruction Multiple Data)`
 .. |SNRs|     replace:: :abbr:`SNRs    (Signal Noise Ratios)`
 .. |SNR|      replace:: :abbr:`SNR     (Signal Noise Ratio)`
+.. |SPC|      replace:: :abbr:`SPC     (Single Parity Check)`
 .. |SPA|      replace:: :abbr:`SPA     (Sum-Product Algorithm)`
 .. |SSE|      replace:: :abbr:`SSE     (Streaming SIMD Extensions)`
 .. |TPC|      replace:: :abbr:`TPC     (Turbo Product Code)`
+.. |TV|       replace:: :abbr:`TV      (Tal & Vardy)`
 .. |version|  replace:: """ + version + """
 
 """

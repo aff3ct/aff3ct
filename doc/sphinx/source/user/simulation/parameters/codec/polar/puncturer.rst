@@ -11,7 +11,8 @@ Polar Puncturer parameters
    :Type: integer
    :Examples: ``--pct-fra-size 1``
 
-Useful number of bit transmitted (information bits).
+Set the frame size :math:`N`. This is not necessarily the codeword size if a
+puncturer is used.
 
 .. _pct-polar-pct-info-bits:
 
@@ -21,7 +22,7 @@ Useful number of bit transmitted (information bits).
    :Type: integer
    :Examples: ``--pct-info-bits 1``
 
-Useful number of bit transmitted (information bits).
+Set the number of information bits :math:`K`.
 
 .. _pct-polar-pct-type:
 
@@ -32,17 +33,20 @@ Useful number of bit transmitted (information bits).
    :Allowed values: ``NO`` ``SHORTLAST``
    :Examples: ``--pct-type NO``
 
-Code puncturer type.
+Select the puncturer type.
 
 Description of the allowed values:
 
-+---------------+----------------------------+
-| Value         | Description                |
-+===============+============================+
-| ``NO``        | |pct-type_descr_no|        |
-+---------------+----------------------------+
-| ``SHORTLAST`` | |pct-type_descr_shortlast| |
-+---------------+----------------------------+
++---------------+--------------------------------------------------------------+
+| Value         | Description                                                  |
++===============+==============================================================+
+| ``NO``        | Disable the puncturer.                                       |
++---------------+--------------------------------------------------------------+
+| ``SHORTLAST`` | Select the short last puncturing strategy from               |
+|               | :cite:`Niu2013,Wang2014,Miloslavskaya2015`.                  |
++---------------+--------------------------------------------------------------+
 
-.. |pct-type_descr_no| replace:: TODO VALUE NO
-.. |pct-type_descr_shortlast| replace:: TODO VALUE SHORTLAST
+References
+""""""""""
+
+.. bibliography:: references_pct.bib
