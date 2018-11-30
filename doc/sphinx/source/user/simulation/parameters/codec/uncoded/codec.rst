@@ -1,6 +1,6 @@
 .. _codec-uncoded:
 
-Codec UNCODED
+Codec Uncoded
 *************
 
 .. toctree::

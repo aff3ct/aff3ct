@@ -1,7 +1,7 @@
 .. _dec-turbo_prod-decoder-parameters:
 
-Decoder parameters
-------------------
+|TPC| Decoder parameters
+------------------------
 
 The |TPC| decoder first decodes columns once with the Chase-Pyndiah algorithm,
 then rows, and columns again then rows again and so on.
@@ -33,8 +33,6 @@ with :math:`W_i^r` the extrinsic from the Chase-Pyndiah decoder
 computed on :math:`R_{i}^r`.
 
 Parameter :math:`alpha` is set with the argument :ref:`dec-turbo_prod-dec-alpha`.
-
-
 
 .. _dec-turbo_prod-dec-type:
 

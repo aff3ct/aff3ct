@@ -1,6 +1,6 @@
 .. _codec-polar:
 
-Codec POLAR
+Codec Polar
 ***********
 
 .. toctree::

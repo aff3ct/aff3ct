@@ -1,7 +1,7 @@
 .. _codec-rep:
 
-Codec REP
-*********
+Codec Repetition
+****************
 
 .. toctree::
    :maxdepth: 2

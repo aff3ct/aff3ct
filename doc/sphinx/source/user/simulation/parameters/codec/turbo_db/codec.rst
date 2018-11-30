@@ -1,7 +1,7 @@
 .. _codec-turbo_db:
 
-Codec TURBO_DB
-**************
+Codec Turbo |DB|
+****************
 
 .. toctree::
    :maxdepth: 2

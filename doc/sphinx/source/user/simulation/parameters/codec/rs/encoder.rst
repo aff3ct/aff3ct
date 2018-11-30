@@ -1,7 +1,7 @@
 .. _enc-rs-encoder-parameters:
 
-Encoder parameters
-------------------
+|RS| Encoder parameters
+-----------------------
 
 .. _enc-rs-enc-cw-size:
 
@@ -35,7 +35,7 @@ is calculated automatically with the formula :math:`K = N - 2.T`.
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``AZCW`` ``COSET`` ``NO`` ``RS`` ``USER``
+   :Allowed values: ``RS`` ``AZCW`` ``COSET`` ``USER``
    :Default: ``RS``
    :Examples: ``--enc-type AZCW``
 
@@ -46,21 +46,21 @@ Description of the allowed values:
 +-----------+------------------------+
 | Value     | Description            |
 +===========+========================+
+| ``RS``    | |enc-type_descr_rs|    |
++-----------+------------------------+
 | ``AZCW``  | |enc-type_descr_azcw|  |
 +-----------+------------------------+
 | ``COSET`` | |enc-type_descr_coset| |
 +-----------+------------------------+
-| ``RS``    | |enc-type_descr_rs|    |
-+-----------+------------------------+
 | ``USER``  | |enc-type_descr_user|  |
 +-----------+------------------------+
 
+.. |enc-type_descr_rs| replace:: Select the standard |RS| encoder.
 .. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
    parameter.
 .. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`
    parameter.
 .. |enc-type_descr_user| replace:: See the common :ref:`enc-common-enc-type`
    parameter.
-.. |enc-type_descr_rs| replace:: Select the standard |RS| encoder.
 
 

@@ -1,25 +1,37 @@
 .. _dec-rsc-decoder-parameters:
 
-Decoder parameters
-------------------
+|RSC| Decoder parameters
+------------------------
 
-.. _dec-rsc-dec-flips:
+.. _dec-rsc-dec-type:
 
-``--dec-flips``
-"""""""""""""""
+``--dec-type, -D``
+""""""""""""""""""
 
-   :Type: integer
-   :Examples: ``--dec-flips 1``
+   :Type: text
+   :Allowed values: ``BCJR`` ``CHASE`` ``ML``
+   :Examples: ``--dec-type BCJR``
 
-Set the maximum number of flips in the CHASE decoder.
+Select the algorithm you want to decode the codeword.
 
-.. _dec-rsc-dec-hamming:
+Description of the allowed values:
 
-``--dec-hamming``
-"""""""""""""""""
++-----------+------------------------+
+| Value     | Description            |
++===========+========================+
+| ``BCJR``  | |dec-type_descr_bcjr|  |
++-----------+------------------------+
+| ``CHASE`` | |dec-type_descr_chase| |
++-----------+------------------------+
+| ``ML``    | |dec-type_descr_ml|    |
++-----------+------------------------+
 
+.. |dec-type_descr_bcjr| replace:: TODO VALUE BCJR
+.. |dec-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
+   parameter.
+.. |dec-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
+   parameter.
 
-Enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.
 
 .. _dec-rsc-dec-implem:
 
@@ -27,7 +39,7 @@ Enable the computation of the Hamming distance instead of the Euclidean distance
 """"""""""""""""
 
    :Type: text
-   :Allowed values: ``FAST`` ``GENERIC`` ``NAIVE`` ``STD`` ``VERY_FAST``
+   :Allowed values: ``GENERIC`` ``STD`` ``FAST`` ``VERY_FAST``
    :Examples: ``--dec-implem FAST``
 
 Select the implementation of the algorithm to decode.
@@ -37,23 +49,43 @@ Description of the allowed values:
 +---------------+------------------------------+
 | Value         | Description                  |
 +===============+==============================+
-| ``FAST``      | |dec-implem_descr_fast|      |
-+---------------+------------------------------+
 | ``GENERIC``   | |dec-implem_descr_generic|   |
 +---------------+------------------------------+
-| ``NAIVE``     | |dec-implem_descr_naive|     |
-+---------------+------------------------------+
 | ``STD``       | |dec-implem_descr_std|       |
++---------------+------------------------------+
+| ``FAST``      | |dec-implem_descr_fast|      |
 +---------------+------------------------------+
 | ``VERY_FAST`` | |dec-implem_descr_very_fast| |
 +---------------+------------------------------+
 
-.. |dec-implem_descr_fast| replace:: TODO VALUE FAST
 .. |dec-implem_descr_generic| replace:: TODO VALUE GENERIC
-.. |dec-implem_descr_naive| replace:: TODO VALUE NAIVE
 .. |dec-implem_descr_std| replace:: TODO VALUE STD
+.. |dec-implem_descr_fast| replace:: TODO VALUE FAST
 .. |dec-implem_descr_very_fast| replace:: TODO VALUE VERY_FAST
 
+.. _dec-rsc-dec-simd:
+
+``--dec-simd``
+""""""""""""""
+
+   :Type: text
+   :Allowed values: ``INTER`` ``INTRA``
+   :Examples: ``--dec-simd INTER``
+
+The |SIMD| strategy you want to use.
+
+Description of the allowed values:
+
++-----------+------------------------+
+| Value     | Description            |
++===========+========================+
+| ``INTER`` | |dec-simd_descr_inter| |
++-----------+------------------------+
+| ``INTRA`` | |dec-simd_descr_intra| |
++-----------+------------------------+
+
+.. |dec-simd_descr_inter| replace:: TODO VALUE INTER
+.. |dec-simd_descr_intra| replace:: TODO VALUE INTRA
 
 .. _dec-rsc-dec-max:
 
@@ -81,58 +113,3 @@ Description of the allowed values:
 .. |dec-max_descr_max| replace:: TODO VALUE MAX
 .. |dec-max_descr_maxl| replace:: TODO VALUE MAXL
 .. |dec-max_descr_maxs| replace:: TODO VALUE MAXS
-
-
-.. _dec-rsc-dec-simd:
-
-``--dec-simd``
-""""""""""""""
-
-   :Type: text
-   :Allowed values: ``INTER`` ``INTRA``
-   :Examples: ``--dec-simd INTER``
-
-The |SIMD| strategy you want to use.
-
-Description of the allowed values:
-
-+-----------+------------------------+
-| Value     | Description            |
-+===========+========================+
-| ``INTER`` | |dec-simd_descr_inter| |
-+-----------+------------------------+
-| ``INTRA`` | |dec-simd_descr_intra| |
-+-----------+------------------------+
-
-.. |dec-simd_descr_inter| replace:: TODO VALUE INTER
-.. |dec-simd_descr_intra| replace:: TODO VALUE INTRA
-
-
-.. _dec-rsc-dec-type:
-
-``--dec-type, -D``
-""""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``BCJR`` ``CHASE`` ``ML``
-   :Examples: ``--dec-type BCJR``
-
-Select the algorithm you want to decode the codeword.
-
-Description of the allowed values:
-
-+-----------+------------------------+
-| Value     | Description            |
-+===========+========================+
-| ``BCJR``  | |dec-type_descr_bcjr|  |
-+-----------+------------------------+
-| ``CHASE`` | |dec-type_descr_chase| |
-+-----------+------------------------+
-| ``ML``    | |dec-type_descr_ml|    |
-+-----------+------------------------+
-
-.. |dec-type_descr_bcjr| replace:: TODO VALUE BCJR
-.. |dec-type_descr_chase| replace:: TODO VALUE CHASE
-.. |dec-type_descr_ml| replace:: TODO VALUE ML
-
-

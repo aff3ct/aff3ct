@@ -1,7 +1,7 @@
 .. _dec-bch-decoder-parameters:
 
-Decoder parameters
-------------------
+|BCH| Decoder parameters
+------------------------
 
 .. _dec-bch-dec-type:
 

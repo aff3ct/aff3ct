@@ -1,7 +1,7 @@
 .. _codec-ldpc:
 
-Codec LDPC
-**********
+Codec |LDPC|
+************
 
 .. toctree::
    :maxdepth: 2

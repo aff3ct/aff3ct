@@ -1,7 +1,7 @@
 .. _codec-ra:
 
-Codec RA
-********
+Codec |RA|
+**********
 
 .. toctree::
    :maxdepth: 2

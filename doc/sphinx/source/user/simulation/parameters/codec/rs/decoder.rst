@@ -1,7 +1,7 @@
 .. _dec-rs-decoder-parameters:
 
-Decoder parameters
-------------------
+|RS| Decoder parameters
+-----------------------
 
 .. _dec-rs-dec-type:
 
