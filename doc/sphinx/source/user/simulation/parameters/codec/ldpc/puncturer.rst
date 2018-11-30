@@ -9,9 +9,11 @@
 """"""""""""""""""""""""""""""""""""""""""""""""
 
    :Type: integer
-   :Examples: ``--pct-fra-size 1``
+   :Examples: ``--pct-fra-size 912``
 
-Useful number of bit transmitted (information bits).
+Set the number of bit transmitted after the puncture process.
+If the given size matches with the codeword size, then the puncturer is
+deactivated.
 
 .. _pct-ldpc-pct-type:
 
@@ -20,9 +22,10 @@ Useful number of bit transmitted (information bits).
 
    :Type: text
    :Allowed values: ``LDPC`` ``NO``
+   :Default: ``LDPC``
    :Examples: ``--pct-type LDPC``
 
-Code puncturer type.
+Select the puncturer type.
 
 Description of the allowed values:
 
@@ -34,16 +37,21 @@ Description of the allowed values:
 | ``NO``   | |pct-type_descr_no|   |
 +----------+-----------------------+
 
-.. |pct-type_descr_ldpc| replace:: TODO VALUE LDPC
-.. |pct-type_descr_no| replace:: TODO VALUE NO
-
+.. |pct-type_descr_ldpc| replace:: Puncture the |LDPC| codeword.
+.. |pct-type_descr_no|   replace:: Deactivate the puncturer.
 
 .. _pct-ldpc-pct-pattern:
 
 ``--pct-pattern``
 """""""""""""""""
 
-   :Type: text
-   :Examples: ``--pct-pattern "TODO CHECK VALUE"``
+   :Type: binary vector
+   :Examples: ``--pct-pattern "1,1,1,0"``
 
-Puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: "1,1,1,0").
+Give the puncturing pattern following the |LDPC| code.
+The number :math:`P` of values given in this pattern must be as
+:math:`N_{cw} = P \times Z` where :math:`Z` is the number of bits represented
+by a single value in the pattern.
+
+This |LDPC| puncturer behavior is such as, for the above example, the first
+three quarter bits are kept and the last quarter is removed from the frame.
