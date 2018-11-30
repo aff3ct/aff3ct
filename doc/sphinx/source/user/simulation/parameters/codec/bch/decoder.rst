@@ -17,25 +17,20 @@ Select the algorithm you want to decode the codeword.
 
 Description of the allowed values:
 
-+---------------+----------------------------+
-| Value         | Description                |
-+===============+============================+
-| ``ALGEBRAIC`` | |dec-type_descr_algebraic| |
-+---------------+----------------------------+
-| ``CHASE``     | |dec-type_descr_chase|     |
-+---------------+----------------------------+
-| ``ML``        | |dec-type_descr_ml|        |
-+---------------+----------------------------+
-
-.. _Berlekamp–Massey: https://en.wikipedia.org/wiki/Berlekamp%E2%80%93Massey_algorithm
+.. _Berlekamp-Massey algorithm: https://en.wikipedia.org/wiki/Berlekamp%E2%80%93Massey_algorithm
 .. _Chien search: https://en.wikipedia.org/wiki/Chien_search
 
-.. |dec-type_descr_algebraic| replace:: Decoding with the `Berlekamp–Massey`_
-   algorithm followed by a `Chien search`_.
-.. |dec-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
-   parameter.
-.. |dec-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
-   parameter.
++---------------+--------------------------------------------------------------+
+| Value         | Description                                                  |
++===============+==============================================================+
+| ``ALGEBRAIC`` | Select the `Berlekamp-Massey algorithm`_                     |
+|               | :cite:`Berlekamp1968,Massey1969` followed by a               |
+|               | `Chien search`_.                                             |
++---------------+--------------------------------------------------------------+
+| ``CHASE``     | See the common :ref:`dec-common-dec-type` parameter.         |
++---------------+--------------------------------------------------------------+
+| ``ML``        | See the common :ref:`dec-common-dec-type` parameter.         |
++---------------+--------------------------------------------------------------+
 
 .. _dec-bch-dec-implem:
 
@@ -67,22 +62,21 @@ Description of the allowed values:
 .. |dec-implem_descr_genius| replace:: A really fast implementation that compare
    the input to the original codeword and correct it only when the number of
    errors is less or equal to the |BCH| correction power.
-.. |dec-implem_descr_naive|  replace:: TODO VALUE NAIVE
 
 .. note::
    In the ``STD`` implementation, the Chien search finds roots of the
    error location polynomial. If the number of found roots does not match the
-   number of found errors by the Berlekamp–Massey algorithm, then the frame is
-   not modified.
+   number of found errors by the |BM| algorithm, then the frame is not modified.
 
    However, in the ``FAST`` implementation the correction of the bits
    is done at the same time as the execution of the Chien search. Then when the
    latter fails, the frame can be modified.
 
-   When a frame is very corrupted and when the two algorithms above can be
-   wrong in the correction by converging to another codeword, the ``GENIUS``
-   implementation cannot fail. Results may then differ from a real word
-   implementation.
+.. note::
+   When a frame is very corrupted and when the above ``STD`` and ``FAST``
+   implementations can be wrong in the correction by converging to another
+   codeword, the ``GENIUS`` implementation cannot fail. Results may then differ
+   from a real word implementation.
 
 
 .. _dec-bch-dec-corr-pow:
@@ -96,3 +90,8 @@ Description of the allowed values:
 
 Set the correction power of the |BCH| decoder. This value corresponds to the
 number of errors that the decoder is able to correct.
+
+References
+""""""""""
+
+.. bibliography:: references.bib

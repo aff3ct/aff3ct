@@ -244,6 +244,7 @@ rst_epilog = """
 .. |BER|      replace:: :abbr:`BER     (Bit Error Rate)`
 .. |BFER|     replace:: :abbr:`BER/FER (Bit and Frame Error Rate)`
 .. |BPSK|     replace:: :abbr:`BPSK    (Bit Phase-Shift Keying)`
+.. |BM|       replace:: :abbr:`BM      (Berlekamp-Massey)`
 .. |BP|       replace:: :abbr:`BP      (Belief Propagation)`
 .. |BPS|      replace:: :abbr:`BPS     (Bit Per Symbol)`
 .. |BSC|      replace:: :abbr:`BSC     (Binary Symmetric Channel)`
