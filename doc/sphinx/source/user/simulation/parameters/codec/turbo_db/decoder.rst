@@ -1,23 +1,118 @@
 .. _dec-turbo_db-decoder-parameters:
 
-Decoder parameters
-------------------
+Turbo |DB| Decoder parameters
+-----------------------------
 
-.. _dec-turbo_db-dec-flips:
+.. _dec-turbo_db-dec-type:
 
-``--dec-flips``
-"""""""""""""""
+``--dec-type, -D``
+""""""""""""""""""
 
-   :Type: integer
-   :Examples: ``--dec-flips 1``
+   :Type: text
+   :Allowed values: ``TURBO_DB`` ``CHASE`` ``ML``
+   :Examples: ``--dec-type CHASE``
 
-Set the maximum number of flips in the CHASE decoder.
+Select the algorithm you want to decode the codeword.
+
+Description of the allowed values:
+
++--------------+---------------------------+
+| Value        | Description               |
++==============+===========================+
+| ``TURBO_DB`` | |dec-type_descr_turbo_db| |
++--------------+---------------------------+
+| ``CHASE``    | |dec-type_descr_chase|    |
++--------------+---------------------------+
+| ``ML``       | |dec-type_descr_ml|       |
++--------------+---------------------------+
+
+.. |dec-type_descr_turbo_db| replace:: TODO VALUE TURBO_DB
+.. |dec-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
+   parameter.
+.. |dec-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
+   parameter.
+
+.. _dec-turbo_db-dec-implem:
+
+``--dec-implem``
+""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``NAIVE`` ``STD``
+   :Examples: ``--dec-implem NAIVE``
+
+Select the implementation of the algorithm to decode.
+
+Description of the allowed values:
+
++-----------+--------------------------+
+| Value     | Description              |
++===========+==========================+
+| ``STD``   | |dec-implem_descr_std|   |
++-----------+--------------------------+
+
+.. |dec-implem_descr_std| replace:: TODO VALUE STD
+
+.. _dec-turbo_db-dec-sub-type:
+
+``--dec-sub-type, -D``
+""""""""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``BCJR`` ``CHASE`` ``ML``
+   :Examples: ``--dec-sub-type BCJR``
+
+Select the algorithm you want to decode the codeword.
+
+Description of the allowed values:
+
++-----------+----------------------------+
+| Value     | Description                |
++===========+============================+
+| ``BCJR``  | |dec-sub-type_descr_bcjr|  |
++-----------+----------------------------+
+| ``CHASE`` | |dec-sub-type_descr_chase| |
++-----------+----------------------------+
+| ``ML``    | |dec-sub-type_descr_ml|    |
++-----------+----------------------------+
+
+.. |dec-sub-type_descr_bcjr| replace:: TODO VALUE BCJR
+.. |dec-sub-type_descr_chase| replace:: See the common
+   :ref:`dec-common-dec-type` parameter.
+.. |dec-sub-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
+   parameter.
+
+.. _dec-turbo_db-dec-sub-implem:
+
+``--dec-sub-implem``
+""""""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``GENERIC`` ``DVB-RCS1`` ``DVB-RCS2``
+   :Examples: ``--dec-sub-implem DVB-RCS1``
+
+Select the implementation of the algorithm to decode.
+
+Description of the allowed values:
+
++--------------+---------------------------------+
+| Value        | Description                     |
++==============+=================================+
+| ``GENERIC``  | |dec-sub-implem_descr_generic|  |
++--------------+---------------------------------+
+| ``DVB-RCS1`` | |dec-sub-implem_descr_dvb-rcs1| |
++--------------+---------------------------------+
+| ``DVB-RCS2`` | |dec-sub-implem_descr_dvb-rcs2| |
++--------------+---------------------------------+
+
+.. |dec-sub-implem_descr_generic| replace:: TODO VALUE GENERIC
+.. |dec-sub-implem_descr_dvb-rcs1| replace:: TODO VALUE DVB-RCS1
+.. |dec-sub-implem_descr_dvb-rcs2| replace:: TODO VALUE DVB-RCS2
 
 .. _dec-turbo_db-dec-fnc:
 
 ``--dec-fnc``
 """""""""""""
-
 
 Enables the flip and check decoder (requires "\\-\\-crc-type").
 
@@ -71,39 +166,6 @@ Set iteration step for the fnc algorithm.
 
 Set the search's space for the fnc algorithm.
 
-.. _dec-turbo_db-dec-hamming:
-
-``--dec-hamming``
-"""""""""""""""""
-
-
-Enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.
-
-.. _dec-turbo_db-dec-implem:
-
-``--dec-implem``
-""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``NAIVE`` ``STD``
-   :Examples: ``--dec-implem NAIVE``
-
-Select the implementation of the algorithm to decode.
-
-Description of the allowed values:
-
-+-----------+--------------------------+
-| Value     | Description              |
-+===========+==========================+
-| ``NAIVE`` | |dec-implem_descr_naive| |
-+-----------+--------------------------+
-| ``STD``   | |dec-implem_descr_std|   |
-+-----------+--------------------------+
-
-.. |dec-implem_descr_naive| replace:: TODO VALUE NAIVE
-.. |dec-implem_descr_std| replace:: TODO VALUE STD
-
-
 .. _dec-turbo_db-dec-ite:
 
 ``--dec-ite, -i``
@@ -147,59 +209,6 @@ Description of the allowed values:
 .. |dec-sf-type_descr_lte| replace:: TODO VALUE LTE
 .. |dec-sf-type_descr_lte_vec| replace:: TODO VALUE LTE_VEC
 
-
-.. _dec-turbo_db-dec-sub-flips:
-
-``--dec-sub-flips``
-"""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--dec-sub-flips 1``
-
-Set the maximum number of flips in the CHASE decoder.
-
-.. _dec-turbo_db-dec-sub-hamming:
-
-``--dec-sub-hamming``
-"""""""""""""""""""""
-
-
-Enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.
-
-.. _dec-turbo_db-dec-sub-implem:
-
-``--dec-sub-implem``
-""""""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``DVB-RCS1`` ``DVB-RCS2`` ``GENERIC`` ``NAIVE`` ``STD``
-   :Examples: ``--dec-sub-implem DVB-RCS1``
-
-Select the implementation of the algorithm to decode.
-
-Description of the allowed values:
-
-+--------------+---------------------------------+
-| Value        | Description                     |
-+==============+=================================+
-| ``DVB-RCS1`` | |dec-sub-implem_descr_dvb-rcs1| |
-+--------------+---------------------------------+
-| ``DVB-RCS2`` | |dec-sub-implem_descr_dvb-rcs2| |
-+--------------+---------------------------------+
-| ``GENERIC``  | |dec-sub-implem_descr_generic|  |
-+--------------+---------------------------------+
-| ``NAIVE``    | |dec-sub-implem_descr_naive|    |
-+--------------+---------------------------------+
-| ``STD``      | |dec-sub-implem_descr_std|      |
-+--------------+---------------------------------+
-
-.. |dec-sub-implem_descr_dvb-rcs1| replace:: TODO VALUE DVB-RCS1
-.. |dec-sub-implem_descr_dvb-rcs2| replace:: TODO VALUE DVB-RCS2
-.. |dec-sub-implem_descr_generic| replace:: TODO VALUE GENERIC
-.. |dec-sub-implem_descr_naive| replace:: TODO VALUE NAIVE
-.. |dec-sub-implem_descr_std| replace:: TODO VALUE STD
-
-
 .. _dec-turbo_db-dec-sub-max:
 
 ``--dec-sub-max``
@@ -226,61 +235,3 @@ Description of the allowed values:
 .. |dec-sub-max_descr_max| replace:: TODO VALUE MAX
 .. |dec-sub-max_descr_maxl| replace:: TODO VALUE MAXL
 .. |dec-sub-max_descr_maxs| replace:: TODO VALUE MAXS
-
-
-.. _dec-turbo_db-dec-sub-type:
-
-``--dec-sub-type, -D``
-""""""""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``BCJR`` ``CHASE`` ``ML``
-   :Examples: ``--dec-sub-type BCJR``
-
-Select the algorithm you want to decode the codeword.
-
-Description of the allowed values:
-
-+-----------+----------------------------+
-| Value     | Description                |
-+===========+============================+
-| ``BCJR``  | |dec-sub-type_descr_bcjr|  |
-+-----------+----------------------------+
-| ``CHASE`` | |dec-sub-type_descr_chase| |
-+-----------+----------------------------+
-| ``ML``    | |dec-sub-type_descr_ml|    |
-+-----------+----------------------------+
-
-.. |dec-sub-type_descr_bcjr| replace:: TODO VALUE BCJR
-.. |dec-sub-type_descr_chase| replace:: TODO VALUE CHASE
-.. |dec-sub-type_descr_ml| replace:: TODO VALUE ML
-
-
-.. _dec-turbo_db-dec-type:
-
-``--dec-type, -D``
-""""""""""""""""""
-
-   :Type: text
-   :Allowed values: ``CHASE`` ``ML`` ``TURBO_DB``
-   :Examples: ``--dec-type CHASE``
-
-Select the algorithm you want to decode the codeword.
-
-Description of the allowed values:
-
-+--------------+---------------------------+
-| Value        | Description               |
-+==============+===========================+
-| ``CHASE``    | |dec-type_descr_chase|    |
-+--------------+---------------------------+
-| ``ML``       | |dec-type_descr_ml|       |
-+--------------+---------------------------+
-| ``TURBO_DB`` | |dec-type_descr_turbo_db| |
-+--------------+---------------------------+
-
-.. |dec-type_descr_chase| replace:: TODO VALUE CHASE
-.. |dec-type_descr_ml| replace:: TODO VALUE ML
-.. |dec-type_descr_turbo_db| replace:: TODO VALUE TURBO_DB
-
-

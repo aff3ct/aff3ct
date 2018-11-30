@@ -1,7 +1,7 @@
 .. _codec-rs:
 
-Codec RS
-********
+Codec |RS|
+**********
 
 .. toctree::
    :maxdepth: 2

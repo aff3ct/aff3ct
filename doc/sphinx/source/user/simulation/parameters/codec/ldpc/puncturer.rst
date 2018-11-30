@@ -1,7 +1,19 @@
 .. _pct-ldpc-puncturer-parameters:
 
-Puncturer parameters
---------------------
+|LDPC| Puncturer parameters
+---------------------------
+
+.. _pct-ldpc-pct-fra-size:
+
+``--pct-fra-size, -N`` |image_required_argument|
+""""""""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: integer
+   :Examples: ``--pct-fra-size 912``
+
+Set the number of bit transmitted after the puncture process.
+If the given size matches with the codeword size, then the puncturer is
+deactivated.
 
 .. _pct-ldpc-pct-type:
 
@@ -27,18 +39,6 @@ Description of the allowed values:
 
 .. |pct-type_descr_ldpc| replace:: Puncture the |LDPC| codeword.
 .. |pct-type_descr_no|   replace:: Deactivate the puncturer.
-
-.. _pct-ldpc-pct-fra-size:
-
-``--pct-fra-size, -N`` |image_required_argument|
-""""""""""""""""""""""""""""""""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--pct-fra-size 912``
-
-Set the number of bit transmitted after the puncture process.
-If the given size matches with the codeword size, then the puncturer is
-deactivated.
 
 .. _pct-ldpc-pct-pattern:
 

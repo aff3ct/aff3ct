@@ -1,7 +1,7 @@
 .. _enc-bch-encoder-parameters:
 
-Encoder parameters
-------------------
+|BCH| Encoder parameters
+------------------------
 
 .. _enc-bch-enc-cw-size:
 
@@ -33,7 +33,7 @@ is calculated automatically.
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``AZCW`` ``BCH`` ``COSET`` ``NO`` ``USER``
+   :Allowed values: ``BCH`` ``AZCW`` ``COSET`` ``USER``
    :Default: ``BCH``
    :Examples: ``--enc-type AZCW``
 

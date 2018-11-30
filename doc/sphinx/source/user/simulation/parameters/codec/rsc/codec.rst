@@ -1,7 +1,7 @@
 .. _codec-rsc:
 
-Codec RSC
-*********
+Codec |RSC|
+***********
 
 .. toctree::
    :maxdepth: 2

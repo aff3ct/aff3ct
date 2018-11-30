@@ -1,7 +1,35 @@
 .. _enc-ldpc-encoder-parameters:
 
-Encoder parameters
-------------------
+|LDPC| Encoder parameters
+-------------------------
+
+.. _enc-ldpc-enc-cw-size:
+
+``--enc-cw-size, -N`` |image_required_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: integer
+   :Examples: ``--enc-cw-size 1024``
+
+Set the codeword size. This argument is not required as the size is known
+through the parity matrix given with :ref:`dec-ldpc-dec-h-path` or the
+generator matrix given with :ref:`enc-ldpc-enc-g-path`.
+
+.. _enc-ldpc-enc-info-bits:
+
+``--enc-info-bits, -K`` |image_required_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: integer
+   :Examples: ``--enc-info-bits 512``
+
+Give the useful number of information bits. This argument is not required as the
+size is known through the generator matrix when given with
+:ref:`enc-ldpc-enc-g-path`. If not it is calculated from
+the parity matrix given with :ref:`dec-ldpc-dec-h-path`,
+as :math:`K = N - M` where :math:`N` and :math:`M`
+are the parity matrix dimensions, considering then a regular matrix. For
+*non-regular matrices*, :math:`K` has to be given.
 
 .. _enc-ldpc-enc-type:
 
@@ -62,34 +90,6 @@ Description of the allowed values:
    :ref:`enc-ldpc-enc-info-bits` and
    :ref:`enc-ldpc-enc-cw-size` the real :math:`K` and :math:`N` |LDPC|
    dimensions, respectively.
-
-.. _enc-ldpc-enc-cw-size:
-
-``--enc-cw-size, -N`` |image_required_argument|
-"""""""""""""""""""""""""""""""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--enc-cw-size 1024``
-
-Set the codeword size. This argument is not required as the size is known
-through the parity matrix given with :ref:`dec-ldpc-dec-h-path` or the
-generator matrix given with :ref:`enc-ldpc-enc-g-path`.
-
-.. _enc-ldpc-enc-info-bits:
-
-``--enc-info-bits, -K`` |image_required_argument|
-"""""""""""""""""""""""""""""""""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--enc-info-bits 512``
-
-Give the useful number of information bits. This argument is not required as the
-size is known through the generator matrix when given with
-:ref:`enc-ldpc-enc-g-path`. If not it is calculated from
-the parity matrix given with :ref:`dec-ldpc-dec-h-path`,
-as :math:`K = N - M` where :math:`N` and :math:`M`
-are the parity matrix dimensions, considering then a regular matrix. For
-*non-regular matrices*, :math:`K` has to be given.
 
 .. _enc-ldpc-enc-g-path:
 

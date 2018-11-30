@@ -1,6 +1,6 @@
 .. _codec-turbo:
 
-Codec TURBO
+Codec Turbo
 ***********
 
 .. toctree::

@@ -1,17 +1,7 @@
 .. _pct-turbo_db-puncturer-parameters:
 
-Puncturer parameters
---------------------
-
-.. _pct-turbo_db-pct-fra-size:
-
-``--pct-fra-size, -N``
-""""""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--pct-fra-size 1``
-
-Useful number of bit transmitted (information bits).
+Turbo |DB| Puncturer parameters
+-------------------------------
 
 .. _pct-turbo_db-pct-type:
 
@@ -37,4 +27,12 @@ Description of the allowed values:
 .. |pct-type_descr_no| replace:: TODO VALUE NO
 .. |pct-type_descr_turbo_db| replace:: TODO VALUE TURBO_DB
 
+.. _pct-turbo_db-pct-fra-size:
 
+``--pct-fra-size, -N``
+""""""""""""""""""""""
+
+   :Type: integer
+   :Examples: ``--pct-fra-size 1``
+
+Useful number of bit transmitted (information bits).

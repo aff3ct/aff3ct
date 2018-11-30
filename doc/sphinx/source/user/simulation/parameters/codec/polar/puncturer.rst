@@ -1,7 +1,7 @@
 .. _pct-polar-puncturer-parameters:
 
-Puncturer parameters
---------------------
+Polar Puncturer parameters
+--------------------------
 
 .. _pct-polar-pct-fra-size:
 
@@ -46,5 +46,3 @@ Description of the allowed values:
 
 .. |pct-type_descr_no| replace:: TODO VALUE NO
 .. |pct-type_descr_shortlast| replace:: TODO VALUE SHORTLAST
-
-

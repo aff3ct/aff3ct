@@ -1,7 +1,26 @@
 .. _dec-ldpc-decoder-parameters:
 
-Decoder parameters
-------------------
+|LDPC| Decoder parameters
+-------------------------
+
+.. _dec-ldpc-dec-h-path:
+
+``--dec-h-path`` |image_required_argument|
+""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: file
+   :Rights: read only
+   :Examples: ``--dec-h-path conf/dec/LDPC/AR4JA_4096_8192.qc``
+              ``--dec-h-path conf/dec/LDPC/MACKAY_504_1008.alist``
+
+Give the path to the H matrix. Supported format are AList and QC files.
+
+This argument is not needed if the encoder type :ref:`enc-ldpc-enc-type`
+is ``LDPC_DVBS2``.
+
+.. TODO: info bits pos at the end of .alist file
+         puncturer pattern at the end of QC file
+
 
 .. _dec-ldpc-dec-type:
 
@@ -153,25 +172,6 @@ Description of the allowed values:
 
 .. |dec-simd_descr_inter| replace:: The decoder processes several frames at the
    same time.
-
-
-.. _dec-ldpc-dec-h-path:
-
-``--dec-h-path`` |image_required_argument|
-""""""""""""""""""""""""""""""""""""""""""
-
-   :Type: file
-   :Rights: read only
-   :Examples: ``--dec-h-path conf/dec/LDPC/AR4JA_4096_8192.qc``
-              ``--dec-h-path conf/dec/LDPC/MACKAY_504_1008.alist``
-
-Give the path to the H matrix. Supported format are AList and QC files.
-
-This argument is not needed if the encoder type :ref:`enc-ldpc-enc-type`
-is ``LDPC_DVBS2``.
-
-.. TODO: info bits pos at the end of .alist file
-         puncturer pattern at the end of QC file
 
 
 .. _dec-ldpc-dec-h-reorder:

@@ -1,7 +1,7 @@
 .. _codec-turbo_prod:
 
-Codec TURBO_PROD
-****************
+Codec |TPC|
+***********
 
 The |TPC| is an alliance of two crossed BCH codes.
 The same BCH code is used for columns and rows.

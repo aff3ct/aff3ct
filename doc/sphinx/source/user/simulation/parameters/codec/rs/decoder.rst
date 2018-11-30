@@ -1,7 +1,7 @@
 .. _dec-rs-decoder-parameters:
 
-Decoder parameters
-------------------
+|RS| Decoder parameters
+-----------------------
 
 The RS decoder was described by Reed and Solomon in 1960 :cite:`ReedSolomon1960`.
 
