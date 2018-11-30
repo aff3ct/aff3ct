@@ -3,6 +3,8 @@
 Decoder parameters
 ------------------
 
+The RS decoder was described by Reed and Solomon in 1960 :cite:`ReedSolomon1960`.
+
 .. _dec-rs-dec-type:
 
 ``--dec-type, -D``
@@ -17,27 +19,20 @@ Select the algorithm you want to decode the codeword.
 
 Description of the allowed values:
 
-+---------------+----------------------------+
-| Value         | Description                |
-+===============+============================+
-| ``ALGEBRAIC`` | |dec-type_descr_algebraic| |
-+---------------+----------------------------+
-| ``CHASE``     | |dec-type_descr_chase|     |
-+---------------+----------------------------+
-| ``ML``        | |dec-type_descr_ml|        |
-+---------------+----------------------------+
-
-.. _Berlekamp–Massey: https://en.wikipedia.org/wiki/Berlekamp%E2%80%93Massey_algorithm
+.. _Berlekamp-Massey algorithm: https://en.wikipedia.org/wiki/Berlekamp%E2%80%93Massey_algorithm
 .. _Chien search: https://en.wikipedia.org/wiki/Chien_search
 
-.. |dec-type_descr_algebraic| replace:: Decoding with the `Berlekamp–Massey`_
-   algorithm followed by a `Chien search`_.
-.. |dec-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
-   parameter.
-.. |dec-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
-   parameter.
-
-The Berlekamp–Massey : :cite:`Berlekamp1968,Massey1969`
++---------------+--------------------------------------------------------------+
+| Value         | Description                                                  |
++===============+==============================================================+
+| ``ALGEBRAIC`` | Select the `Berlekamp-Massey algorithm`_                     |
+|               | :cite:`Berlekamp1968,Massey1969` followed by a               |
+|               | `Chien search`_ :cite:`Chien1964`.                           |
++---------------+--------------------------------------------------------------+
+| ``CHASE``     | See the common :ref:`dec-common-dec-type` parameter.         |
++---------------+--------------------------------------------------------------+
+| ``ML``        | See the common :ref:`dec-common-dec-type` parameter.         |
++---------------+--------------------------------------------------------------+
 
 .. _dec-rs-dec-implem:
 
@@ -87,6 +82,10 @@ Description of the allowed values:
 
 Set the correction power of the |RS| decoder. This value corresponds to the
 number of symbols errors that the decoder is able to correct.
+
+It is automatically calculated from the input and codeword sizes. See also
+the argument :ref:`enc-rs-enc-info-bits`.
+
 
 References
 """"""""""

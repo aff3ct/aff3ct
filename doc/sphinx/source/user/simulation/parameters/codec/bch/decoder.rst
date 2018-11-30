@@ -25,7 +25,7 @@ Description of the allowed values:
 +===============+==============================================================+
 | ``ALGEBRAIC`` | Select the `Berlekamp-Massey algorithm`_                     |
 |               | :cite:`Berlekamp1968,Massey1969` followed by a               |
-|               | `Chien search`_.                                             |
+|               | `Chien search`_ :cite:`Chien1964`.                           |
 +---------------+--------------------------------------------------------------+
 | ``CHASE``     | See the common :ref:`dec-common-dec-type` parameter.         |
 +---------------+--------------------------------------------------------------+
