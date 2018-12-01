@@ -244,15 +244,22 @@ rst_epilog = """
 .. |BCJR|     replace:: :abbr:`BCJR    (Bahl, Cocke, Jelinek and Raviv algorithm or Maximum A Posteriori (MAP))`
 .. |BEC|      replace:: :abbr:`BEC     (Binary Erasure Channel)`
 .. |BER|      replace:: :abbr:`BER     (Bit Error Rate)`
+.. |BF|       replace:: :abbr:`BF      (Bit Flipping)`
 .. |BFER|     replace:: :abbr:`BER/FER (Bit and Frame Error Rate)`
 .. |BPSK|     replace:: :abbr:`BPSK    (Bit Phase-Shift Keying)`
 .. |BM|       replace:: :abbr:`BM      (Berlekamp-Massey)`
 .. |BP|       replace:: :abbr:`BP      (Belief Propagation)`
+.. |BP-F|     replace:: :abbr:`BP-F    (Belief Propagation with Flooding scheduling)`
+.. |BP-HL|    replace:: :abbr:`BP-HL   (Belief Propagation with Horizontal Layered scheduling)`
+.. |BP-P|     replace:: :abbr:`BP-P    (Belief Propagation Peeling)`
+.. |BP-VL|    replace:: :abbr:`BP-VL   (Belief Propagation with Vertical Layered scheduling)`
 .. |BPS|      replace:: :abbr:`BPS     (Bit Per Symbol)`
 .. |BSC|      replace:: :abbr:`BSC     (Binary Symmetric Channel)`
 .. |CA|       replace:: :abbr:`CA      (CRC Aided)`
 .. |CCSDS|    replace:: :abbr:`CCSDS   (Consultative Committee for Space Data Systems)`
 .. |CDF|      replace:: :abbr:`CDF     (Cumulative Distribution Function)`
+.. |CN|       replace:: :abbr:`CN      (Check Node)`
+.. |CNs|      replace:: :abbr:`CNs     (Check Nodes)`
 .. |codec|    replace:: :abbr:`codec   (coder/decoder)`
 .. |codecs|   replace:: :abbr:`codecs  (coders/decodes)`
 .. |CP|       replace:: :abbr:`CP      (Chase-Pyndiah)`
@@ -287,7 +294,7 @@ rst_epilog = """
 .. |LDPC|     replace:: :abbr:`LDPC    (Low-Density Parity-Check)`
 .. |LLRs|     replace:: :abbr:`LLRs    (Log Likelihood Ratios)`
 .. |LLR|      replace:: :abbr:`LLR     (Log Likelihood Ratio)`
-.. |LSPA|     replace:: :abbr:`LSPA    (Logarithm Sum-Product Algorithm)`
+.. |LSPA|     replace:: :abbr:`LSPA    (Logarithmic Sum-Product Algorithm)`
 .. |LTE|      replace:: :abbr:`LTE     (Long Term Evolution)`
 .. |LUT|      replace:: :abbr:`LUT     (Look Up Table)`
 .. |LUTs|     replace:: :abbr:`LUTs    (Look Up Tables)`
@@ -331,9 +338,12 @@ rst_epilog = """
 .. |SPC|      replace:: :abbr:`SPC     (Single Parity Check)`
 .. |SPA|      replace:: :abbr:`SPA     (Sum-Product Algorithm)`
 .. |SSE|      replace:: :abbr:`SSE     (Streaming SIMD Extensions)`
+.. |STD|      replace:: :abbr:`STD     (Standard)`
 .. |TPC|      replace:: :abbr:`TPC     (Turbo Product Code)`
 .. |TV|       replace:: :abbr:`TV      (Tal & Vardy)`
 .. |version|  replace:: """ + version + """
+.. |VN|       replace:: :abbr:`VN      (Variable Node)`
+.. |VNs|      replace:: :abbr:`VNs     (Variable Nodes)`
 .. |WBF|      replace:: :abbr:`WBF     (Weighted Bit Flipping)`
 
 """

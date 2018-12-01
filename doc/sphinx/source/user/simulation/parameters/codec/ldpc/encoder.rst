@@ -11,10 +11,12 @@
    :Type: integer
    :Examples: ``--enc-cw-size 1024``
 
-Set the codeword size :math:`N`. This argument is not required as the size is
-known through the parity matrix given with the :ref:`dec-ldpc-dec-h-path`
-parameter or through the generator matrix given with the
-:ref:`enc-ldpc-enc-g-path` parameter.
+Set the codeword size :math:`N`.
+
+.. note:: This parameter value is automatically deduced if the :math:`H` parity
+   matrix is given with the :ref:`dec-ldpc-dec-h-path` parameter or if the
+   :math:`G` generator matrix is given with the :ref:`enc-ldpc-enc-g-path`
+   parameter.
 
 .. _enc-ldpc-enc-info-bits:
 
@@ -24,12 +26,16 @@ parameter or through the generator matrix given with the
    :Type: integer
    :Examples: ``--enc-info-bits 512``
 
-Set the number of information bits :math:`K`. This argument is not required as
-the size is known through the generator matrix when given with the
-:ref:`enc-ldpc-enc-g-path` parameter. If not it is calculated from the parity
-matrix given with the :ref:`dec-ldpc-dec-h-path` parameter, as :math:`K = N - M`
-where :math:`N` and :math:`M` are the parity matrix dimensions, considering then
-a regular matrix. For *non-regular matrices*, :math:`K` has to be given.
+Set the number of information bits :math:`K`.
+
+.. note:: This parameter value is automatically deduced if the :math:`G`
+   generator matrix is given with the :ref:`enc-ldpc-enc-g-path` parameter.
+
+.. note:: In some cases, this parameter value can be automatically deduced if
+   the :math:`H` parity matrix is given with the :ref:`dec-ldpc-dec-h-path`
+   parameter. For regular matrices, :math:`K = N - M` where :math:`N` and
+   :math:`M` are the :math:`H` parity matrix dimensions. For *non-regular
+   matrices*, :math:`K` has to be given.
 
 .. _enc-ldpc-enc-type:
 
@@ -104,7 +110,7 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--enc-g-path example/path/to/the/G_matrix.alist``
 
-Give the path to the :math:`G` generator matrix in a AList or |QC| formated
+Give the path to the :math:`G` generator matrix in an AList or |QC| formated
 file.
 
 .. _enc-ldpc-enc-g-method:
@@ -132,10 +138,10 @@ Description of the allowed values:
 
 .. _LU decomposition: https://en.wikipedia.org/wiki/LU_decomposition
 
-.. |enc-g-method_descr_identity| replace:: Generate an identity on H to get the
-   parity part
-.. |enc-g-method_descr_lu_dec|   replace:: Generate a hollow G thanks to the
-   `LU decomposition`_ with a guarantee to have the systematic identity.
+.. |enc-g-method_descr_identity| replace:: Generate an identity on :math:`H` to
+   get the parity part.
+.. |enc-g-method_descr_lu_dec|   replace:: Generate a hollow :math:`G` thanks to
+   the `LU decomposition`_ with a guarantee to have the systematic identity.
    Do not work with irregular matrices.
 
 ``LU_DEC`` method is faster than ``IDENTITY``.
@@ -149,10 +155,13 @@ Description of the allowed values:
    :Rights: write only
    :Examples: ``--enc-save-g example/path/to/the/generated/G_matrix.alist``
 
-Set the path where the :math:`G` generator matrix will be saved (AList
+Set the file path where the :math:`G` generator matrix will be saved (AList
 file format). To use with the ``LDPC_H`` encoder.
 
-.. hint:: It is useful to not have to generate again and again this matrix
-   simulation after simulation. Use this option the first time but pay attention
-   to generate it only on a single thread with :ref:`sim-sim-threads`
-   to not write the file several times.
+.. hint:: When running the ``LDPC_H`` encoder, the generation of the :math:`G`
+   matrix can take a non-negligible part of the simulation time. With this
+   option the :math:`G` matrix can be saved once for all and used in the
+   standard ``LDPC`` decoder after.
+
+.. warning:: This option is not thread-safe, please run it on a single thread
+   with the :ref:`sim-sim-threads` parameter.
