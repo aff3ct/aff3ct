@@ -12,7 +12,7 @@ Polar Puncturer parameters
    :Examples: ``--pct-fra-size 1``
 
 Set the frame size :math:`N`. This is not necessarily the codeword size if a
-puncturer is used.
+puncturing pattern is used.
 
 .. _pct-polar-pct-info-bits:
 

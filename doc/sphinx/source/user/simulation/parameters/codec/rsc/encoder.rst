@@ -11,7 +11,9 @@
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-Useful number of bit transmitted (information bits).
+Set the number of information bits :math:`K`.
+The codeword size :math:`N` is automatically deduced:
+:math:`N = 2 \times (K + \log_2(ts))` where :math:`ts` is the trellis size.
 
 .. _enc-rsc-enc-type:
 
@@ -22,7 +24,7 @@ Useful number of bit transmitted (information bits).
    :Allowed values: ``RSC`` ``AZCW`` ``COSET`` ``USER``
    :Examples: ``--enc-type AZCW``
 
-Type of the encoder to use in the simulation.
+Select the encoder type.
 
 Description of the allowed values:
 
@@ -38,7 +40,7 @@ Description of the allowed values:
 | ``USER``  | |enc-type_descr_user|  |
 +-----------+------------------------+
 
-.. |enc-type_descr_rsc| replace:: TODO VALUE RSC
+.. |enc-type_descr_rsc| replace:: Select the standard |RSC| encoder.
 .. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
    parameter.
 .. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`
@@ -53,15 +55,32 @@ Description of the allowed values:
 
 Disable the buffered encoding.
 
+**Without the buffered encoding**, considering the following sequence of
+:math:`K` information bits: :math:`U_0, U_1, [...], U_{K-1}`, the encoded bits
+will be organized as follow:
+:math:`X_0^s, X_0^p, X_1^s, X_1^p, [...], X_{K-1}^s, X_{K-1}^p, X_{0}^{s^t}, X_{0}^{p^t}, X_{1}^{s^t}, X_{1}^{p^t}, [...], X_{\log_2(ts)-1}^{s^t}, X_{\log_2(ts)-1}^{p^t}`,
+where :math:`s` and :math:`p` are respectively *systematic* and *parity* bits,
+:math:`t` the *tail bits* and :math:`ts` the *trellis size*.
+
+**With the buffered encoding**, considering the following sequence of :math:`K`
+information bits: :math:`U_0, U_1, [...], U_{K-1}`, the encoded bits will be
+organized as follow:
+:math:`X_0^s, X_1^s, [...], X_{K-1}^s, X_{0}^{s^t}, X_{1}^{s^t}, [...], X_{\log_2(ts)-1}^{s^t}, X_0^p, X_1^p, [...], X_{K-1}^p, X_{0}^{p^t}, X_{1}^{p^t}, [...], X_{\log_2(ts)-1}^{p^t}`.
+where :math:`s` and :math:`p` are respectively *systematic* and *parity* bits,
+:math:`t` the *tail bits* and :math:`ts` the *trellis size*.
+
 .. _enc-rsc-enc-poly:
 
 ``--enc-poly``
 """"""""""""""
 
    :Type: text
-   :Examples: ``--enc-poly "TODO CHECK VALUE"``
+   :Default: ``"{013,015}"``
+   :Examples: ``--enc-poly "{023, 033}"``
 
-The polynomials describing RSC code, should be of the form "{A,B}".
+Set the polynomials that define the |RSC| code (or the trellis structure).
+The expected form is :math:`\{A,B\}` where :math:`A` and :math:`B` are given in
+octal.
 
 .. _enc-rsc-enc-std:
 
@@ -72,7 +91,7 @@ The polynomials describing RSC code, should be of the form "{A,B}".
    :Allowed values: ``CCSDS`` ``LTE``
    :Examples: ``--enc-std CCSDS``
 
-Select a standard and set automatically some parameters (overwritten with user
+Select a standard: set automatically some parameters (can be overwritten by user
 given arguments).
 
 Description of the allowed values:
@@ -85,5 +104,7 @@ Description of the allowed values:
 | ``LTE``   | |enc-std_descr_lte|   |
 +-----------+-----------------------+
 
-.. |enc-std_descr_ccsds| replace:: TODO VALUE CCSDS
-.. |enc-std_descr_lte| replace:: TODO VALUE LTE
+.. |enc-std_descr_ccsds| replace:: Set the :ref:`enc-rsc-enc-poly` parameter to
+   ``{023, 033}`` according to the |CCSDS| standard (16-stage trellis).
+.. |enc-std_descr_lte| replace:: Set the :ref:`enc-rsc-enc-poly` parameter to
+   ``{013,015}`` according to the |LTE| standard (8-stage trellis).

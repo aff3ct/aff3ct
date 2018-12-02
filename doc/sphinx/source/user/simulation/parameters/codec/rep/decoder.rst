@@ -12,7 +12,7 @@ Repetition Decoder parameters
    :Allowed values: ``REPETITION`` ``CHASE`` ``ML``
    :Examples: ``--dec-type CHASE``
 
-Select the algorithm you want to decode the codeword.
+Select the algorithm type.
 
 Description of the allowed values:
 
@@ -26,7 +26,7 @@ Description of the allowed values:
 | ``ML``         | |dec-type_descr_ml|         |
 +----------------+-----------------------------+
 
-.. |dec-type_descr_repetition| replace:: TODO VALUE REPETITION
+.. |dec-type_descr_repetition| replace:: Select the repetition decoder.
 .. |dec-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
    parameter.
 .. |dec-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
@@ -38,10 +38,10 @@ Description of the allowed values:
 """"""""""""""""
 
    :Type: text
-   :Allowed values: ``NAIVE`` ``STD`` ``FAST``
+   :Allowed values: ``STD`` ``FAST``
    :Examples: ``--dec-implem FAST``
 
-Select the implementation of the algorithm to decode.
+Select the algorithm implementation.
 
 Description of the allowed values:
 
@@ -53,5 +53,6 @@ Description of the allowed values:
 | ``FAST``  | |dec-implem_descr_fast|  |
 +-----------+--------------------------+
 
-.. |dec-implem_descr_std| replace:: TODO VALUE STD
-.. |dec-implem_descr_fast| replace:: TODO VALUE FAST
+.. |dec-implem_descr_std| replace:: Select the |STD| implementation.
+.. |dec-implem_descr_fast| replace:: Select the fast implementation, much more
+   faster without the :ref:`enc-rep-enc-no-buff` parameter.

@@ -11,7 +11,7 @@
    :Type: integer
    :Examples: ``--enc-cw-size 1``
 
-The codeword size.
+Set the codeword size :math:`N`.
 
 .. _enc-ra-enc-info-bits:
 
@@ -21,7 +21,7 @@ The codeword size.
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-Useful number of bit transmitted (information bits).
+Set the nulber of information bits :math:`K`.
 
 .. _enc-ra-enc-type:
 
@@ -32,7 +32,7 @@ Useful number of bit transmitted (information bits).
    :Allowed values: ``RA`` ``AZCW`` ``COSET`` ``USER``
    :Examples: ``--enc-type AZCW``
 
-Type of the encoder to use in the simulation.
+Select the encoder type.
 
 Description of the allowed values:
 
@@ -48,7 +48,7 @@ Description of the allowed values:
 | ``USER``  | |enc-type_descr_user|  |
 +-----------+------------------------+
 
-.. |enc-type_descr_ra| replace:: TODO VALUE RA
+.. |enc-type_descr_ra| replace:: Select the standard |RA| encoder.
 .. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
    parameter.
 .. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`

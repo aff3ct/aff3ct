@@ -23,58 +23,42 @@ Select the interleaver type.
 
 Description of the allowed values:
 
-+--------------+---------------------------+
-| Value        | Description               |
-+==============+===========================+
-| ``NO``       | |itl-type_descr_no|       |
-+--------------+---------------------------+
-| ``COL_ROW``  | |itl-type_descr_col_row|  |
-+--------------+---------------------------+
-| ``ROW_COL``  | |itl-type_descr_row_col|  |
-+--------------+---------------------------+
-| ``RANDOM``   | |itl-type_descr_random|   |
-+--------------+---------------------------+
-| ``RAND_COL`` | |itl-type_descr_rand_col| |
-+--------------+---------------------------+
-| ``GOLDEN``   | Select the interleaver    |
-|              | described in              |
-|              | :cite:`Crozier1999`.      |
-+--------------+---------------------------+
-| ``CCSDS``    | |itl-type_descr_ccsds|    |
-+--------------+---------------------------+
-| ``LTE``      | |itl-type_descr_lte|      |
-+--------------+---------------------------+
-| ``DVB-RCS1`` | |itl-type_descr_dvb-rcs1| |
-+--------------+---------------------------+
-| ``DVB-RCS2`` | |itl-type_descr_dvb-rcs2| |
-+--------------+---------------------------+
-| ``USER``     | |itl-type_descr_user|     |
-+--------------+---------------------------+
-
-.. |itl-type_descr_no|       replace:: Disable the interleaving process: the
-   output is the input (:numref:`fig_itl_no`).
-.. |itl-type_descr_col_row|  replace:: Fill the interleaver by column, read it
-   by row (can be customized with the :ref:`itl-itl-read-order` parameter)
-   (:numref:`fig_itl_col_row`).
-.. |itl-type_descr_row_col|  replace:: Fill the interleaver by row, read it by
-   column (can be customized with the :ref:`itl-itl-read-order` parameter)
-   (:numref:`fig_itl_row_col`)
-.. |itl-type_descr_random|   replace:: Generate a random sequence for the entire
-   frame (based on the |MT 19937| |PRNG|) (:numref:`fig_itl_random`).
-.. |itl-type_descr_rand_col| replace:: Generate multiple random sequences
-   decomposed in independent columns (based on the |MT 19937| |PRNG|)
-   (:numref:`fig_itl_rand_col`).
-.. |itl-type_descr_ccsds|    replace:: Select the interleaver defined in the
-   |CCSDS| standard.
-.. |itl-type_descr_lte|      replace:: Select the interleaver defined in the
-   |LTE| standard.
-.. |itl-type_descr_dvb-rcs1| replace:: Select the interleaver defined in the
-   |DVB-RCS1| standard.
-.. |itl-type_descr_dvb-rcs2| replace:: Select the interleaver defined in the
-   |DVB-RCS2| standard.
-.. |itl-type_descr_user|     replace:: Select the interleaver sequence (|LUT|)
-   from an external file (to use with the :ref:`itl-itl-path` parameter)
-   (:numref:`fig_itl_user`).
++--------------+---------------------------------------------------------------+
+| Value        | Description                                                   |
++==============+===============================================================+
+| ``NO``       | Disable the interleaving process: the output is the input     |
+|              | (:numref:`fig_itl_no`).                                       |
++--------------+---------------------------------------------------------------+
+| ``COL_ROW``  | Fill the interleaver by column, read it by row (can be        |
+|              | customized with the :ref:`itl-itl-read-order` parameter)      |
+|              | (:numref:`fig_itl_col_row`).                                  |
++--------------+---------------------------------------------------------------+
+| ``ROW_COL``  | Fill the interleaver by row, read it by column (can be        |
+|              | customized with the :ref:`itl-itl-read-order` parameter)      |
+|              | (:numref:`fig_itl_row_col`).                                  |
++--------------+---------------------------------------------------------------+
+| ``RANDOM``   | Generate a random sequence for the entire frame (based on the |
+|              | |MT 19937| |PRNG| :cite:`Matsumoto1998`)                      |
+|              | (:numref:`fig_itl_random`).                                   |
++--------------+---------------------------------------------------------------+
+| ``RAND_COL`` | Generate multiple random sequences decomposed in independent  |
+|              | columns (based on the |MT 19937| |PRNG| :cite:`Matsumoto1998`)|
+|              | (:numref:`fig_itl_rand_col`).                                 |
++--------------+---------------------------------------------------------------+
+| ``GOLDEN``   | Select the interleaver described in :cite:`Crozier1999`.      |
++--------------+---------------------------------------------------------------+
+| ``CCSDS``    | Select the interleaver defined in the |CCSDS| standard.       |
++--------------+---------------------------------------------------------------+
+| ``LTE``      | Select the interleaver defined in the |LTE| standard.         |
++--------------+---------------------------------------------------------------+
+| ``DVB-RCS1`` | Select the interleaver defined in the |DVB-RCS1| standard.    |
++--------------+---------------------------------------------------------------+
+| ``DVB-RCS2`` | Select the interleaver defined in the |DVB-RCS2| standard.    |
++--------------+---------------------------------------------------------------+
+| ``USER``     | Select the interleaver sequence (|LUT|) from an external file |
+|              | (to use with the :ref:`itl-itl-path` parameter)               |
+|              | (:numref:`fig_itl_user`).                                     |
++--------------+---------------------------------------------------------------+
 
 .. _fig_itl_no:
 

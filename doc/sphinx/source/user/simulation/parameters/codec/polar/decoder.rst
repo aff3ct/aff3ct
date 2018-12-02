@@ -88,7 +88,7 @@ Description of the allowed values:
    :Allowed values: ``INTER`` ``INTRA``
    :Examples: ``--dec-simd INTER``
 
-The |SIMD| strategy you want to use.
+Select the |SIMD| strategy you want to use.
 
 Description of the allowed values:
 
@@ -96,16 +96,13 @@ Description of the allowed values:
 | Value     | Description                                                      |
 +===========+==================================================================+
 | ``INTER`` | Select the inter-frame strategy, only available for the |SC|     |
-|           | `FAST` decoder (see                                              |
+|           | ``FAST`` decoder (see                                            |
 |           | :cite:`LeGal2015a,Cassagne2015c,Cassagne2016b`).                 |
 +-----------+------------------------------------------------------------------+
 | ``INTRA`` | Select the intra-frame strategy, only available for the |SC|     |
 |           | (see :cite:`Cassagne2015c,Cassagne2016b`),                       |
 |           | |SCL| and |A-SCL| decoders (see in :cite:`Leonardon2017`).       |
 +-----------+------------------------------------------------------------------+
-
-.. |dec-simd_descr_inter| replace:: TODO VALUE INTER
-.. |dec-simd_descr_intra| replace:: TODO VALUE INTRA
 
 .. note:: In **the intra-frame strategy**, |SIMD| units process several LLRs in
    parallel within a single frame decoding. This approach is efficient in the

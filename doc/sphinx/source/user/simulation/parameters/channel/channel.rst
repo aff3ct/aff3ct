@@ -184,9 +184,12 @@ Description of the allowed values:
    (only available for x86 architectures).
 
 .. note:: All the proposed implementations are based on the |MT 19937| |PRNG|
-   algorithm.
+   algorithm :cite:`Matsumoto1998`. The Gaussian distribution
+   :math:`\mathcal{N}(\mu,\sigma^2)` is implemented with the Box-Muller method
+   :cite:`Box1958` except when using the |GSL| where the Ziggurat method
+   :cite:`Marsaglia2000` is used instead.
 
-.. attention:: To enable the |GSL| or the |MKL| implementations you need to
+.. attention:: To enable the |GSL| or the |MKL| implementations, you need to
    have those libraries installed on your system and to turn on specific
    :ref:`compilation_cmake_options`.
 
@@ -315,3 +318,8 @@ The next :math:`F \times N` floating-point values can be either in 32-bit or in
    .. |chn-blk-fad_descr_frame| replace:: TODO VALUE FRAME
    .. |chn-blk-fad_descr_no| replace:: TODO VALUE NO
    .. |chn-blk-fad_descr_onetap| replace:: TODO VALUE ONETAP
+
+References
+""""""""""
+
+.. bibliography:: references.bib

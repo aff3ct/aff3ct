@@ -13,7 +13,7 @@
    :Examples: ``--dec-h-path conf/dec/LDPC/AR4JA_4096_8192.qc``
               ``--dec-h-path conf/dec/LDPC/MACKAY_504_1008.alist``
 
-Give the path to the :math:`H` parity matrix. Support the AList and |QC|
+Give the path to the :math:`H` parity matrix. Support the AList and the |QC|
 formats.
 
 This argument is not required if the encoder type :ref:`enc-ldpc-enc-type`
@@ -92,13 +92,13 @@ Description of the allowed values:
 +-----------+------------------------------------------------------------------+
 | ``LSPA``  | Select the |LSPA| update rules :cite:`MacKay1995`.               |
 +-----------+------------------------------------------------------------------+
-| ``AMS``   | Select the |AMS| update rules.                                   |
+| ``AMS``   | Select the |AMS| update rule.                                    |
 +-----------+------------------------------------------------------------------+
-| ``MS``    | Select the |MS| update rules :cite:`Fossorier1999`.              |
+| ``MS``    | Select the |MS| update rule :cite:`Fossorier1999`.               |
 +-----------+------------------------------------------------------------------+
-| ``NMS``   | Select the |NMS| update rules :cite:`Chen2002`.                  |
+| ``NMS``   | Select the |NMS| update rule :cite:`Chen2002`.                   |
 +-----------+------------------------------------------------------------------+
-| ``OMS``   | Select the |OMS| update rules :cite:`Chen2002`.                  |
+| ``OMS``   | Select the |OMS| update rule :cite:`Chen2002`.                   |
 +-----------+------------------------------------------------------------------+
 
 :numref:`tab_ldpc_dec_implem` shows the different decoder types and their
@@ -145,8 +145,8 @@ version 8.1.0).
    :Allowed values: ``INTER``
    :Examples: ``--dec-simd INTER``
 
-Select the |SIMD| strategy you want to use to accelerate significantly
-the simulation.
+Select the |SIMD| strategy you want to use. :numref:`tab_ldpc_dec_implem`
+shows the decoders and implementations that support |SIMD|.
 
 Description of the allowed values:
 
@@ -156,8 +156,21 @@ Description of the allowed values:
 | ``INTER`` | |dec-simd_descr_inter| |
 +-----------+------------------------+
 
-.. |dec-simd_descr_inter| replace:: The decoder processes several frames at the
-   same time.
+.. |dec-simd_descr_inter| replace:: Select the inter-frame strategy.
+
+.. note:: In **the intra-frame strategy**, |SIMD| units process several LLRs in
+   parallel within a single frame decoding. In **the inter-frame strategy**,
+   SIMD units decodes several independent frames in parallel in order to
+   saturate the |SIMD| unit. This approach improves the throughput of the
+   decoder but requires to load several frames before starting to decode,
+   increasing both the decoding latency and the decoder memory footprint.
+
+.. note:: When the inter-frame |SIMD| strategy is set, the simulator will run
+   with the right number of frames depending on the |SIMD| length. This number
+   of frames can be manually set with the :ref:`src-src-fra` parameter. Be aware
+   that running the simulator with the :ref:`src-src-fra` parameter set to 1 and
+   the :ref:`dec-polar-dec-simd` parameter set to ``INTER`` will completely be
+   counterproductive and will lead to no throughput improvements.
 
 .. _dec-ldpc-dec-h-reorder:
 
@@ -169,7 +182,9 @@ Description of the allowed values:
    :Default: ``NONE``
    :Examples: ``--dec-h-reorder ASC``
 
-Specify if the check nodes (CNs) from H have to be reordered.
+Specify the order of execution of the |CNs| in the decoding process depending on
+their degree. The degree of a |CN| is the number of |VNs| that are connected to
+it.
 
 Description of the allowed values:
 
@@ -183,10 +198,10 @@ Description of the allowed values:
 | ``NONE`` | |dec-h-reorder_descr_none| |
 +----------+----------------------------+
 
-.. |dec-h-reorder_descr_asc|  replace:: Reorder from the smallest to the biggest
-   CNs.
-.. |dec-h-reorder_descr_dsc|  replace:: Reorder from the biggest to the smallest
-   CNs.
+.. |dec-h-reorder_descr_asc|  replace:: Reorder from the smallest |CNs| degree
+   to the biggest |CNs| degree.
+.. |dec-h-reorder_descr_dsc|  replace:: Reorder from the biggest |CNs| degree to
+   the smallest |CNs| degree.
 .. |dec-h-reorder_descr_none| replace:: Do not change the order.
 
 .. _dec-ldpc-dec-ite:
@@ -198,12 +213,13 @@ Description of the allowed values:
    :Default: 10
    :Examples: ``--dec-ite 30``
 
-Set the maximal number of iterations in the LDPC decoder.
+Set the maximal number of iterations in the |LDPC| decoder.
 
-.. note:: The syndrome is used in order to accelerate the simulation
-   by stopping the decoder process before the end of all its iterations.
-   The decoder may then often not realize all the planned iterations.
-   Use :ref:`dec-ldpc-dec-no-synd` to deactivate this behavior.
+.. note:: By default, in order to speedup the decoding time, the decoder can
+   stop the decoding process if all the parity check equations are verified
+   (also called **the syndrome detection**). In that case the decoder can
+   perform less decoding iterations than the given number. To force the decoder
+   to make all the iterations, use the :ref:`dec-ldpc-dec-no-synd` parameter.
 
 .. _dec-ldpc-dec-min:
 
@@ -215,7 +231,7 @@ Set the maximal number of iterations in the LDPC decoder.
    :Default: ``MINL``
    :Examples: ``--dec-min MIN``
 
-Give the *MIN* implementation for the ``AMS`` decoder nodes.
+Define the :math:`\min^*` operator approximation used in the |AMS| update rule.
 
 Description of the allowed values:
 
@@ -253,7 +269,7 @@ only a :math:`\min` function.
    :Default: 1.0
    :Examples: ``--dec-norm 0.75``
 
-Set the normalization factor used in the ``NMS`` algorithm.
+Set the normalization factor used in the |NMS| update rule.
 
 .. _dec-ldpc-dec-off:
 
@@ -264,7 +280,7 @@ Set the normalization factor used in the ``NMS`` algorithm.
    :Default: 0.0
    :Examples: ``--dec-off 0.25``
 
-Set the offset used in the ``OMS`` algorithm.
+Set the offset used in the |OMS| update rule.
 
 .. _dec-ldpc-dec-mwbf:
 
@@ -275,7 +291,8 @@ Set the offset used in the ``OMS`` algorithm.
    :Default: 0.0
    :Examples: ``--dec-mwbf 1.0``
 
-Give the factor used in the modified ``WBF`` algorithm. Set 0 for basic WBF.
+Give the factor used in the modified |WBF| algorithm. Set to 0 for basic |WBF|
+algorithm.
 
 .. _dec-ldpc-dec-synd-depth:
 
@@ -286,16 +303,16 @@ Give the factor used in the modified ``WBF`` algorithm. Set 0 for basic WBF.
    :Default: 1
    :Examples: ``--dec-synd-depth 2``
 
-It helps to avoid the detection of false positive syndrome by ensuring that it
-is valid for several consecutive iterations.
+Set the number of iterations to process before enabling the syndrome detection.
+In some cases, it can help to avoid false positive detections.
 
 .. _dec-ldpc-dec-no-synd:
 
 ``--dec-no-synd``
 """""""""""""""""
 
-Disable the syndrome detection and so the stop criterion iteration after
-iteration.
+Disable the syndrome detection, all the |LDPC| decoding iterations will be
+performed.
 
 References
 """"""""""
