@@ -84,7 +84,7 @@ Description of the allowed values:
 +===========+==================================================================+
 | ``STD``   | Select the |STD| implementation.                                 |
 +-----------+------------------------------------------------------------------+
-| ``GALA``  | Select the |GALA| algorithm :cite:`BazziRichardsonUrbanke2004`.  |
+| ``GALA``  | Select the |GALA| algorithm :cite:`Ryan2009`.                    |
 +-----------+------------------------------------------------------------------+
 | ``WBF``   | Select the |WBF| algorithm :cite:`Wadayama2010`.                 |
 +-----------+------------------------------------------------------------------+
