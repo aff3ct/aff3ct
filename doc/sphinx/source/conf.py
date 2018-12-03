@@ -291,6 +291,7 @@ rst_epilog = """
 .. |IRA|      replace:: :abbr:`IRA     (Irregular Repeat Accumulate)`
 .. |ISA|      replace:: :abbr:`ISA     (Instruction Set Architecture)`
 .. |ISAs|     replace:: :abbr:`ISAs    (Instruction Set Architectures)`
+.. |JSON|     replace:: :abbr:`JSON    (JavaScript Object Notation)`
 .. |LDPC|     replace:: :abbr:`LDPC    (Low-Density Parity-Check)`
 .. |LLRs|     replace:: :abbr:`LLRs    (Log Likelihood Ratios)`
 .. |LLR|      replace:: :abbr:`LLR     (Log Likelihood Ratio)`

@@ -105,6 +105,6 @@ Description of the allowed values:
 +-----------+-----------------------+
 
 .. |enc-std_descr_ccsds| replace:: Set the :ref:`enc-rsc-enc-poly` parameter to
-   ``{023, 033}`` according to the |CCSDS| standard (16-stage trellis).
+   ``{023,033}`` according to the |CCSDS| standard (16-stage trellis).
 .. |enc-std_descr_lte| replace:: Set the :ref:`enc-rsc-enc-poly` parameter to
    ``{013,015}`` according to the |LTE| standard (8-stage trellis).
