@@ -12,25 +12,19 @@
    :Allowed values: ``BCJR`` ``CHASE`` ``ML``
    :Examples: ``--dec-type BCJR``
 
-Select the algorithm you want to decode the codeword.
+Select the decoder type.
 
 Description of the allowed values:
 
-+-----------+------------------------+
-| Value     | Description            |
-+===========+========================+
-| ``BCJR``  | |dec-type_descr_bcjr|  |
-+-----------+------------------------+
-| ``CHASE`` | |dec-type_descr_chase| |
-+-----------+------------------------+
-| ``ML``    | |dec-type_descr_ml|    |
-+-----------+------------------------+
-
-.. |dec-type_descr_bcjr| replace:: TODO VALUE BCJR
-.. |dec-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
-   parameter.
-.. |dec-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
-   parameter.
++-----------+------------------------------------------------------------------+
+| Value     | Description                                                      |
++===========+==================================================================+
+| ``BCJR``  | Select the |BCJR| |DB| decoder :cite:`Bahl1974`.                 |
++-----------+------------------------------------------------------------------+
+| ``CHASE`` | See the common :ref:`dec-common-dec-type` parameter.             |
++-----------+------------------------------------------------------------------+
+| ``ML``    | See the common :ref:`dec-common-dec-type` parameter.             |
++-----------+------------------------------------------------------------------+
 
 .. _dec-rsc_db-dec-implem:
 
@@ -45,19 +39,17 @@ Select the implementation of the algorithm to decode.
 
 Description of the allowed values:
 
-+--------------+-----------------------------+
-| Value        | Description                 |
-+==============+=============================+
-| ``GENERIC``  | |dec-implem_descr_generic|  |
-+--------------+-----------------------------+
-| ``DVB-RCS1`` | |dec-implem_descr_dvb-rcs1| |
-+--------------+-----------------------------+
-| ``DVB-RCS2`` | |dec-implem_descr_dvb-rcs2| |
-+--------------+-----------------------------+
-
-.. |dec-implem_descr_generic| replace:: TODO VALUE GENERIC
-.. |dec-implem_descr_dvb-rcs1| replace:: TODO VALUE DVB-RCS1
-.. |dec-implem_descr_dvb-rcs2| replace:: TODO VALUE DVB-RCS2
++--------------+---------------------------------------------------------------+
+| Value        | Description                                                   |
++==============+===============================================================+
+| ``GENERIC``  | Select a generic implementation that works on any trellis.    |
++--------------+---------------------------------------------------------------+
+| ``DVB-RCS1`` | Select an implementation dedicated to the |DVB-RCS1| trellis  |
+|              | (faster than the ``GENERIC`` implementation).                 |
++--------------+---------------------------------------------------------------+
+| ``DVB-RCS2`` | Select an implementation dedicated to the |DVB-RCS2| trellis  |
+|              | (faster than the ``GENERIC`` implementation).                 |
++--------------+---------------------------------------------------------------+
 
 .. _dec-rsc_db-dec-max:
 
@@ -65,23 +57,39 @@ Description of the allowed values:
 """""""""""""
 
    :Type: text
-   :Allowed values: ``MAX`` ``MAXL`` ``MAXS``
+   :Allowed values: ``MAXS`` ``MAXL`` ``MAX``
    :Examples: ``--dec-max MAX``
 
-The MAX implementation for the nodes.
+Select the approximation of the :math:`\max^∗` operator used in the trellis
+decoding.
 
 Description of the allowed values:
 
 +----------+----------------------+
 | Value    | Description          |
 +==========+======================+
-| ``MAX``  | |dec-max_descr_max|  |
+| ``MAXS`` | |dec-max_descr_maxs| |
 +----------+----------------------+
 | ``MAXL`` | |dec-max_descr_maxl| |
 +----------+----------------------+
-| ``MAXS`` | |dec-max_descr_maxs| |
+| ``MAX``  | |dec-max_descr_max|  |
 +----------+----------------------+
 
-.. |dec-max_descr_max| replace:: TODO VALUE MAX
-.. |dec-max_descr_maxl| replace:: TODO VALUE MAXL
-.. |dec-max_descr_maxs| replace:: TODO VALUE MAXS
+.. |dec-max_descr_maxs|  replace:: :math:`\max^*(a,b) = \max(a,b) +
+   \log(1 + \exp(-|a - b|))`.
+.. |dec-max_descr_maxl|  replace:: :math:`\max^*(a,b) \approx \max(a,b) +
+   \max(0, 0.301 - (0.5 |a - b|))`.
+.. |dec-max_descr_max|   replace:: :math:`\max^*(a,b) \approx \max(a,b)`.
+
+``MAXS`` for *Max Star* is the exact :math:`\max^*` operator. ``MAXL`` for
+*Max Linear* is a linear approximation of the :math:`\max^*` function. ``MAX``
+for *Max* is the simplest :math:`\max^*` approximation with only a
+:math:`\max` function.
+
+.. note:: The |BCJR| with the :math:`\max` approximation is also called the
+   max-log-|MAP| algorithm.
+
+References
+""""""""""
+
+.. bibliography:: references.bib

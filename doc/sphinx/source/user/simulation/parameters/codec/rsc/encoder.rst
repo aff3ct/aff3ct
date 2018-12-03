@@ -65,7 +65,7 @@ where :math:`s` and :math:`p` are respectively *systematic* and *parity* bits,
 **With the buffered encoding**, considering the following sequence of :math:`K`
 information bits: :math:`U_0, U_1, [...], U_{K-1}`, the encoded bits will be
 organized as follow:
-:math:`X_0^s, X_1^s, [...], X_{K-1}^s, X_{0}^{s^t}, X_{1}^{s^t}, [...], X_{\log_2(ts)-1}^{s^t}, X_0^p, X_1^p, [...], X_{K-1}^p, X_{0}^{p^t}, X_{1}^{p^t}, [...], X_{\log_2(ts)-1}^{p^t}`.
+:math:`X_0^s, X_1^s, [...], X_{K-1}^s, X_{0}^{s^t}, X_{1}^{s^t}, [...], X_{\log_2(ts)-1}^{s^t}, X_0^p, X_1^p, [...], X_{K-1}^p, X_{0}^{p^t}, X_{1}^{p^t}, [...], X_{\log_2(ts)-1}^{p^t}`,
 where :math:`s` and :math:`p` are respectively *systematic* and *parity* bits,
 :math:`t` the *tail bits* and :math:`ts` the *trellis size*.
 

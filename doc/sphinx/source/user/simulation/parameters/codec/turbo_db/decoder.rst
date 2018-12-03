@@ -12,7 +12,7 @@ Turbo |DB| Decoder parameters
    :Allowed values: ``TURBO_DB`` ``CHASE`` ``ML``
    :Examples: ``--dec-type CHASE``
 
-Select the algorithm you want to decode the codeword.
+Select the decoder algorithm.
 
 Description of the allowed values:
 
@@ -26,7 +26,7 @@ Description of the allowed values:
 | ``ML``       | |dec-type_descr_ml|       |
 +--------------+---------------------------+
 
-.. |dec-type_descr_turbo_db| replace:: TODO VALUE TURBO_DB
+.. |dec-type_descr_turbo_db| replace:: Select the standard Turbo decoder.
 .. |dec-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
    parameter.
 .. |dec-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
@@ -41,7 +41,7 @@ Description of the allowed values:
    :Allowed values: ``NAIVE`` ``STD``
    :Examples: ``--dec-implem NAIVE``
 
-Select the implementation of the algorithm to decode.
+Select the decoder implementation.
 
 Description of the allowed values:
 
@@ -51,70 +51,31 @@ Description of the allowed values:
 | ``STD``   | |dec-implem_descr_std|   |
 +-----------+--------------------------+
 
-.. |dec-implem_descr_std| replace:: TODO VALUE STD
+.. |dec-implem_descr_std| replace:: Select the |STD| implementation.
 
 .. _dec-turbo_db-dec-sub-type:
 
 ``--dec-sub-type, -D``
 """"""""""""""""""""""
 
-   :Type: text
-   :Allowed values: ``BCJR`` ``CHASE`` ``ML``
-   :Examples: ``--dec-sub-type BCJR``
-
-Select the algorithm you want to decode the codeword.
-
-Description of the allowed values:
-
-+-----------+----------------------------+
-| Value     | Description                |
-+===========+============================+
-| ``BCJR``  | |dec-sub-type_descr_bcjr|  |
-+-----------+----------------------------+
-| ``CHASE`` | |dec-sub-type_descr_chase| |
-+-----------+----------------------------+
-| ``ML``    | |dec-sub-type_descr_ml|    |
-+-----------+----------------------------+
-
-.. |dec-sub-type_descr_bcjr| replace:: TODO VALUE BCJR
-.. |dec-sub-type_descr_chase| replace:: See the common
-   :ref:`dec-common-dec-type` parameter.
-.. |dec-sub-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
-   parameter.
+Please refer to the |RSC| |DB| :ref:`dec-rsc_db-dec-type` parameter.
 
 .. _dec-turbo_db-dec-sub-implem:
 
 ``--dec-sub-implem``
 """"""""""""""""""""
 
-   :Type: text
-   :Allowed values: ``GENERIC`` ``DVB-RCS1`` ``DVB-RCS2``
-   :Examples: ``--dec-sub-implem DVB-RCS1``
-
-Select the implementation of the algorithm to decode.
-
-Description of the allowed values:
-
-+--------------+---------------------------------+
-| Value        | Description                     |
-+==============+=================================+
-| ``GENERIC``  | |dec-sub-implem_descr_generic|  |
-+--------------+---------------------------------+
-| ``DVB-RCS1`` | |dec-sub-implem_descr_dvb-rcs1| |
-+--------------+---------------------------------+
-| ``DVB-RCS2`` | |dec-sub-implem_descr_dvb-rcs2| |
-+--------------+---------------------------------+
-
-.. |dec-sub-implem_descr_generic| replace:: TODO VALUE GENERIC
-.. |dec-sub-implem_descr_dvb-rcs1| replace:: TODO VALUE DVB-RCS1
-.. |dec-sub-implem_descr_dvb-rcs2| replace:: TODO VALUE DVB-RCS2
+Please refer to the |RSC| |DB| :ref:`dec-rsc_db-dec-implem` parameter.
 
 .. _dec-turbo_db-dec-fnc:
 
 ``--dec-fnc``
 """""""""""""
 
-Enables the flip and check decoder (requires "\\-\\-crc-type").
+Enable the |FNC| post processing technique from :cite:`Tonnellier2016a`.
+
+.. note:: This parameter requires the Turbo code to be concatenated with a |CRC|
+   to work, see the :ref:`crc-crc-parameters`.
 
 .. _dec-turbo_db-dec-fnc-crc-ite:
 
@@ -124,7 +85,7 @@ Enables the flip and check decoder (requires "\\-\\-crc-type").
    :Type: integer
    :Examples: ``--dec-fnc-crc-ite 1``
 
-Set the iteration to start the CRC checking.
+Set the first iteration to start the |CRC| checking.
 
 .. _dec-turbo_db-dec-fnc-ite-max:
 
@@ -134,7 +95,8 @@ Set the iteration to start the CRC checking.
    :Type: integer
    :Examples: ``--dec-fnc-ite-M 1``
 
-Set last iteration at which the fnc is used.
+Set the last iteration at which the |FNC| is used (c.f the
+:ref:`dec-turbo_db-dec-fnc` parameter).
 
 .. _dec-turbo_db-dec-fnc-ite-min:
 
@@ -144,7 +106,8 @@ Set last iteration at which the fnc is used.
    :Type: integer
    :Examples: ``--dec-fnc-ite-m 1``
 
-Set first iteration at which the fnc is used.
+Set the first iteration at which the |FNC| is used (c.f the
+:ref:`dec-turbo_db-dec-fnc` parameter).
 
 .. _dec-turbo_db-dec-fnc-ite-s:
 
@@ -154,7 +117,8 @@ Set first iteration at which the fnc is used.
    :Type: integer
    :Examples: ``--dec-fnc-ite-s 1``
 
-Set iteration step for the fnc algorithm.
+Set the iteration step for the |FNC| technique (c.f the
+:ref:`dec-turbo_db-dec-fnc` parameter).
 
 .. _dec-turbo_db-dec-fnc-q:
 
@@ -164,7 +128,8 @@ Set iteration step for the fnc algorithm.
    :Type: integer
    :Examples: ``--dec-fnc-q 1``
 
-Set the search's space for the fnc algorithm.
+Set the search space for the |FNC| technique (c.f the
+:ref:`dec-turbo_db-dec-fnc` parameter).
 
 .. _dec-turbo_db-dec-ite:
 
@@ -174,7 +139,9 @@ Set the search's space for the fnc algorithm.
    :Type: integer
    :Examples: ``--dec-ite 1``
 
-Maximal number of iterations in the turbo.
+Set the maximal number of iterations in the Turbo decoder. If the Turbo code
+is concatenated with a |CRC| and if the |CRC| is checked, the decoder can stop
+before making all the iterations.
 
 .. _dec-turbo_db-dec-sf-type:
 
@@ -183,55 +150,67 @@ Maximal number of iterations in the turbo.
 
    :Type: text
    :Allowed values: ``ADAPTIVE`` ``ARRAY`` ``CST`` ``LTE`` ``LTE_VEC``
-   :Examples: ``--dec-sf-type ADAPTIVE``
+   :Examples: | ``--dec-sf-type ADAPTIVE``
+              | ``--dec-sf-type CST 0.5``
 
-Scaling factor type.
+Select a |SF| to be applied to the extrinsic values after each half iteration
+:cite:`Vogt2000`. This is especially useful with the max-log-|MAP| sub-decoders
+(|BCJR| with the :math:`\max` approximation): the |SF| helps to recover a part
+of the decoding performance loss compare to the |MAP| algorithm (|BCJR| with the
+:math:`\max^*` operator).
 
 Description of the allowed values:
 
-+--------------+------------------------------+
-| Value        | Description                  |
-+==============+==============================+
-| ``ADAPTIVE`` | |dec-sf-type_descr_adaptive| |
-+--------------+------------------------------+
-| ``ARRAY``    | |dec-sf-type_descr_array|    |
-+--------------+------------------------------+
-| ``CST``      | |dec-sf-type_descr_cst|      |
-+--------------+------------------------------+
-| ``LTE``      | |dec-sf-type_descr_lte|      |
-+--------------+------------------------------+
-| ``LTE_VEC``  | |dec-sf-type_descr_lte_vec|  |
-+--------------+------------------------------+
++--------------+---------------------------------------------------------------+
+| Value        | Description                                                   |
++==============+===============================================================+
+| ``ADAPTIVE`` | Select the adaptive |SF|, for the first and second iterations |
+|              | a |SF| of 0.5 is applied, for the other iterations the |SF|   |
+|              | is 0.85.                                                      |
++--------------+---------------------------------------------------------------+
+| ``ARRAY``    | Select an hard-coded array of |SFs| (c.f.                     |
+|              | :numref:`tab_turbo_dec_sf_array`).                            |
++--------------+---------------------------------------------------------------+
+| ``CST``      | Set the same |SF| to be applied for each iterations.          |
++--------------+---------------------------------------------------------------+
+| ``LTE``      | Select a 0.75 |SF|.                                           |
++--------------+---------------------------------------------------------------+
+| ``LTE_VEC``  | Select a 0.75 vectorized |SF| (faster than ``LTE``).          |
++--------------+---------------------------------------------------------------+
 
-.. |dec-sf-type_descr_adaptive| replace:: TODO VALUE ADAPTIVE
-.. |dec-sf-type_descr_array| replace:: TODO VALUE ARRAY
-.. |dec-sf-type_descr_cst| replace:: TODO VALUE CST
-.. |dec-sf-type_descr_lte| replace:: TODO VALUE LTE
-.. |dec-sf-type_descr_lte_vec| replace:: TODO VALUE LTE_VEC
+.. _tab_turbo_db_dec_sf_array:
+
+.. table:: Hard-coded array of |SFs|.
+   :align: center
+
+   +-----------+--------+
+   | Iteration | Value  |
+   +===========+========+
+   | 1         | 0.15   |
+   +-----------+--------+
+   | 2         | 0.25   |
+   +-----------+--------+
+   | 3         | 0.30   |
+   +-----------+--------+
+   | 4         | 0.40   |
+   +-----------+--------+
+   | 5         | 0.70   |
+   +-----------+--------+
+   | 6         | 0.80   |
+   +-----------+--------+
+   | 7         | 0.90   |
+   +-----------+--------+
+   | 8         | 0.95   |
+   +-----------+--------+
 
 .. _dec-turbo_db-dec-sub-max:
 
 ``--dec-sub-max``
 """""""""""""""""
 
-   :Type: text
-   :Allowed values: ``MAX`` ``MAXL`` ``MAXS``
-   :Examples: ``--dec-sub-max MAX``
+Please refer to the |RSC| :ref:`dec-rsc_db-dec-max` parameter.
 
-The MAX implementation for the nodes.
+References
+""""""""""
 
-Description of the allowed values:
-
-+----------+--------------------------+
-| Value    | Description              |
-+==========+==========================+
-| ``MAX``  | |dec-sub-max_descr_max|  |
-+----------+--------------------------+
-| ``MAXL`` | |dec-sub-max_descr_maxl| |
-+----------+--------------------------+
-| ``MAXS`` | |dec-sub-max_descr_maxs| |
-+----------+--------------------------+
-
-.. |dec-sub-max_descr_max| replace:: TODO VALUE MAX
-.. |dec-sub-max_descr_maxl| replace:: TODO VALUE MAXL
-.. |dec-sub-max_descr_maxs| replace:: TODO VALUE MAXS
+.. bibliography:: references.bib

@@ -11,7 +11,8 @@
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-Useful number of bit transmitted (information bits).
+Set the number of information bits :math:`K`.
+The codeword size :math:`N` is automatically deduced: :math:`N = 2 \times K`.
 
 .. _enc-rsc_db-enc-type:
 
@@ -22,7 +23,7 @@ Useful number of bit transmitted (information bits).
    :Allowed values: ``RSC_DB`` ``AZCW`` ``COSET`` ``USER``
    :Examples: ``--enc-type AZCW``
 
-Type of the encoder to use in the simulation.
+Select the encoder type.
 
 Description of the allowed values:
 
@@ -38,7 +39,7 @@ Description of the allowed values:
 | ``USER``   | |enc-type_descr_user|   |
 +------------+-------------------------+
 
-.. |enc-type_descr_rsc_db| replace:: TODO VALUE RSC_DB
+.. |enc-type_descr_rsc_db| replace:: Select the standard |RSC| |DB| encoder.
 .. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
    parameter.
 .. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`
@@ -62,8 +63,7 @@ Disable the buffered encoding.
    :Allowed values: ``DVB-RCS1`` ``DVB-RCS2``
    :Examples: ``--enc-std DVB-RCS1``
 
-Select a standard and set automatically some parameters (overwritten with user
-given arguments).
+Select a standard.
 
 Description of the allowed values:
 
@@ -75,5 +75,7 @@ Description of the allowed values:
 | ``DVB-RCS2`` | |enc-std_descr_dvb-rcs2| |
 +--------------+--------------------------+
 
-.. |enc-std_descr_dvb-rcs1| replace:: TODO VALUE DVB-RCS1
-.. |enc-std_descr_dvb-rcs2| replace:: TODO VALUE DVB-RCS2
+.. |enc-std_descr_dvb-rcs1| replace:: Select the configuration of the |DVB-RCS1|
+   standard.
+.. |enc-std_descr_dvb-rcs2| replace:: Select the configuration of the |DVB-RCS2|
+   standard.

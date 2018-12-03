@@ -91,7 +91,7 @@ in the *natural domain*,  :math:`si` and :math:`pi` are respectively
 **With the buffered encoding**, considering the following sequence of :math:`K`
 information bits: :math:`U_0, U_1, [...], U_{K-1}`, the encoded bits will be
 organized as follow:
-:math:`X_0^{sn}, [...], X_{K-1}^{sn}, X_{0}^{sn^t}, [...], X_{\log_2(ts)-1}^{sn^t}, X_0^{pn}, [...], X_{K-1}^{pn}, X_{0}^{pn^t}, [...], X_{\log_2(ts)-1}^{pn^t}, X_{0}^{si^t}, [...], X_{\log_2(ts)-1}^{si^t}, X_0^{pi}, [...], X_{K-1}^pi, X_{0}^{pi^t}, [...], X_{\log_2(ts)-1}^{pi^t}`.
+:math:`X_0^{sn}, [...], X_{K-1}^{sn}, X_{0}^{sn^t}, [...], X_{\log_2(ts)-1}^{sn^t}, X_0^{pn}, [...], X_{K-1}^{pn}, X_{0}^{pn^t}, [...], X_{\log_2(ts)-1}^{pn^t}, X_{0}^{si^t}, [...], X_{\log_2(ts)-1}^{si^t}, X_0^{pi}, [...], X_{K-1}^pi, X_{0}^{pi^t}, [...], X_{\log_2(ts)-1}^{pi^t}`,
 where :math:`sn` and :math:`pn` are respectively *systematic* and *parity* bits
 in the *natural domain*,  :math:`si` and :math:`pi` are respectively
 *systematic* and *parity* bits in the *interleaved domain*, :math:`t` the

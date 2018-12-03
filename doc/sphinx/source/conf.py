@@ -21,8 +21,8 @@ import os
 # -- Project information -----------------------------------------------------
 
 project = 'AFF3CT'
-copyright = '2018, AFF3CT\'s team'
-author = 'AFF3CT\'s team'
+copyright = '2018, AFF3CT team'
+author = 'AFF3CT team'
 
 # get the AFF3CT version from Git
 label = subprocess.check_output(["git", "describe"]).strip().decode(encoding='UTF-8')
@@ -278,6 +278,7 @@ rst_epilog = """
 .. |EP|       replace:: :abbr:`EP      (Event Probability)`
 .. |EXIT|     replace:: :abbr:`EXIT    (EXtrinsic Information Transfer chart)`
 .. |FER|      replace:: :abbr:`FER     (Frame Error Rate)`
+.. |FNC|      replace:: :abbr:`FNC     (Flip aNd Check)`
 .. |GA|       replace:: :abbr:`GA      (Gaussian Approximation)`
 .. |GALA|     replace:: :abbr:`GALA    (Gallager A)`
 .. |GPP|      replace:: :abbr:`GPP     (General Purpose Processor)`
@@ -299,6 +300,7 @@ rst_epilog = """
 .. |LTE|      replace:: :abbr:`LTE     (Long Term Evolution)`
 .. |LUT|      replace:: :abbr:`LUT     (Look Up Table)`
 .. |LUTs|     replace:: :abbr:`LUTs    (Look Up Tables)`
+.. |MAP|      replace:: :abbr:`MAP     (Maximum A Posteriori)`
 .. |MATLAB|   replace:: MATLAB
 .. |MI|       replace:: :abbr:`MI      (Mutual Information)`
 .. |MKL|      replace:: :abbr:`MKL     (Intel Math Kernel Library)`
@@ -332,7 +334,10 @@ rst_epilog = """
 .. |SCL|      replace:: :abbr:`SCL     (Successive Cancellation List)`
 .. |SCMA|     replace:: :abbr:`SCMA    (Sparse Code Multiple Access)`
 .. |SC|       replace:: :abbr:`SC      (Successive Cancellation)`
+.. |SCo|      replace:: :abbr:`SC      (Self-Corrected)`
 .. |SDR|      replace:: :abbr:`SDR     (Software-Defined Radio)`
+.. |SF|       replace:: :abbr:`SF      (Scaling Factor)`
+.. |SFs|      replace:: :abbr:`SFs     (Scaling Factors)`
 .. |SIMD|     replace:: :abbr:`SIMD    (Single Instruction Multiple Data)`
 .. |SNRs|     replace:: :abbr:`SNRs    (Signal Noise Ratios)`
 .. |SNR|      replace:: :abbr:`SNR     (Signal Noise Ratio)`

@@ -12,7 +12,7 @@ Uncoded Decoder parameters
    :Allowed values: ``NONE`` ``CHASE`` ``ML``
    :Examples: ``--dec-type CHASE``
 
-Select the algorithm you want to decode the codeword.
+Select the decoder algorithm.
 
 Description of the allowed values:
 
@@ -26,7 +26,7 @@ Description of the allowed values:
 | ``ML``    | |dec-type_descr_ml|    |
 +-----------+------------------------+
 
-.. |dec-type_descr_none| replace:: TODO VALUE NONE
+.. |dec-type_descr_none| replace:: Select the ``NONE`` decoder.
 .. |dec-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
    parameter.
 .. |dec-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
@@ -41,7 +41,7 @@ Description of the allowed values:
    :Allowed values: ``HARD_DECISION``
    :Examples: ``--dec-implem HARD_DECISION``
 
-Select the implementation of the algorithm to decode.
+Select the decoder implementation.
 
 Description of the allowed values:
 
@@ -51,4 +51,5 @@ Description of the allowed values:
 | ``HARD_DECISION`` | |dec-implem_descr_hard_decision| |
 +-------------------+----------------------------------+
 
-.. |dec-implem_descr_hard_decision| replace:: TODO VALUE HARD_DECISION
+.. |dec-implem_descr_hard_decision| replace:: Take the hard decision on the
+   input |LLRs|.

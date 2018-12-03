@@ -12,7 +12,7 @@ Turbo |DB| Puncturer parameters
    :Allowed values: ``NO`` ``TURBO_DB``
    :Examples: ``--pct-type NO``
 
-Code puncturer type.
+Select the puncturer type.
 
 Description of the allowed values:
 
@@ -24,8 +24,8 @@ Description of the allowed values:
 | ``TURBO_DB`` | |pct-type_descr_turbo_db| |
 +--------------+---------------------------+
 
-.. |pct-type_descr_no| replace:: TODO VALUE NO
-.. |pct-type_descr_turbo_db| replace:: TODO VALUE TURBO_DB
+.. |pct-type_descr_no| replace:: Disable the puncturer.
+.. |pct-type_descr_turbo_db| replace:: Enable the puncturer.
 
 .. _pct-turbo_db-pct-fra-size:
 
@@ -35,4 +35,6 @@ Description of the allowed values:
    :Type: integer
    :Examples: ``--pct-fra-size 1``
 
-Useful number of bit transmitted (information bits).
+Set the frame size :math:`N`.
+The puncturer supports :math:`R = 2/5`, :math:`R = 1/2`, :math:`R = 2/3` and
+:math:`R = 4/5` with :math:`R = K/N`.

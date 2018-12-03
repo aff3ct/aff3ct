@@ -131,6 +131,9 @@ Description of the allowed values:
 for *Max* is the simplest :math:`\max^*` approximation with only a
 :math:`\max` function.
 
+.. note:: The |BCJR| with the :math:`\max` approximation is also called the
+   max-log-|MAP| algorithm.
+
 References
 """"""""""
 
