@@ -4,15 +4,17 @@
 Classes
 *******
 
-This section details the |AFF3CT| source code classes and it is currently under
-construction.
+Work in progress...
 
-.. toctree::
-   :caption: Contents
-   :maxdepth: 2
+.. This section details the |AFF3CT| source code classes and it is currently under
+.. construction.
 
-   factory/factory
-   launcher/launcher
-   module/module
-   simulation/simulation
-   tools/tools
+.. .. toctree::
+..    :caption: Contents
+..    :maxdepth: 2
+
+..    factory/factory
+..    launcher/launcher
+..    module/module
+..    simulation/simulation
+..    tools/tools
