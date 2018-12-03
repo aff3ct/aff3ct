@@ -10,6 +10,7 @@ Turbo Decoder parameters
 
    :Type: text
    :Allowed values: ``TURBO`` ``CHASE`` ``ML``
+   :Default: ``TURBO``
    :Examples: ``--dec-type CHASE``
 
 Select the algorithm you want to decode the codeword.
@@ -40,6 +41,7 @@ Description of the allowed values:
 
    :Type: text
    :Allowed values: ``STD`` ``FAST``
+   :Default: ``FAST``
    :Examples: ``--dec-implem FAST``
 
 Select the decoder implementation.

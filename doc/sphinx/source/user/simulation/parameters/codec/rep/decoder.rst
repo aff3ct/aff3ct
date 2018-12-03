@@ -10,6 +10,7 @@ Repetition Decoder parameters
 
    :Type: text
    :Allowed values: ``REPETITION`` ``CHASE`` ``ML``
+   :Default: ``REPETITION``
    :Examples: ``--dec-type CHASE``
 
 Select the algorithm type.
@@ -39,6 +40,7 @@ Description of the allowed values:
 
    :Type: text
    :Allowed values: ``STD`` ``FAST``
+   :Default: ``STD``
    :Examples: ``--dec-implem FAST``
 
 Select the algorithm implementation.

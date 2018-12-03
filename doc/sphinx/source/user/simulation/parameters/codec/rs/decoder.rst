@@ -40,7 +40,8 @@ Description of the allowed values:
 """"""""""""""""
 
    :Type: text
-   :Allowed values: ``GENIUS`` ``STD``
+   :Allowed values: ``STD`` ``GENIUS``
+   :Default: ``STD``
    :Examples: ``--dec-implem GENIUS``
 
 Select the implementation of the algorithm to decode.
@@ -50,9 +51,9 @@ Description of the allowed values:
 +------------+---------------------------+
 | Value      | Description               |
 +============+===========================+
-| ``GENIUS`` | |dec-implem_descr_genius| |
-+------------+---------------------------+
 | ``STD``    | |dec-implem_descr_std|    |
++------------+---------------------------+
+| ``GENIUS`` | |dec-implem_descr_genius| |
 +------------+---------------------------+
 
 .. |dec-implem_descr_std|    replace:: A standard implementation of the |RS|.

@@ -10,6 +10,7 @@ Turbo |DB| Decoder parameters
 
    :Type: text
    :Allowed values: ``TURBO_DB`` ``CHASE`` ``ML``
+   :Default: ``TURBO_DB``
    :Examples: ``--dec-type CHASE``
 
 Select the decoder algorithm.
@@ -38,8 +39,9 @@ Description of the allowed values:
 """"""""""""""""
 
    :Type: text
-   :Allowed values: ``NAIVE`` ``STD``
-   :Examples: ``--dec-implem NAIVE``
+   :Allowed values: ``STD``
+   :Default: ``STD``
+   :Examples: ``--dec-implem STD``
 
 Select the decoder implementation.
 

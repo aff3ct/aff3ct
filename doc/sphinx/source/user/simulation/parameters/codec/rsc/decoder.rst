@@ -33,6 +33,7 @@ Description of the allowed values:
 
    :Type: text
    :Allowed values: ``GENERIC`` ``STD`` ``FAST`` ``VERY_FAST``
+   :Default: ``STD``
    :Examples: ``--dec-implem FAST``
 
 Select the implementation of the algorithm to decode.

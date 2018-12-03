@@ -23,6 +23,7 @@ size.
 
    :Type: text
    :Allowed values: ``TURBO`` ``AZCW`` ``COSET`` ``USER``
+   :Default: ``TURBO``
    :Examples: ``--enc-type AZCW``
 
 Select the encoder type.

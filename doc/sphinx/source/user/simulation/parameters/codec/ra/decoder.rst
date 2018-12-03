@@ -10,6 +10,7 @@
 
    :Type: text
    :Allowed values: ``RA`` ``CHASE`` ``ML``
+   :Default: ``RA``
    :Examples: ``--dec-type CHASE``
 
 Select the decoder algorithm.
@@ -39,8 +40,9 @@ Description of the allowed values:
 """"""""""""""""
 
    :Type: text
-   :Allowed values: ``NAIVE`` ``STD``
-   :Examples: ``--dec-implem NAIVE``
+   :Allowed values: ``STD``
+   :Default: ``STD``
+   :Examples: ``--dec-implem STD``
 
 Select the algorithm implementation.
 

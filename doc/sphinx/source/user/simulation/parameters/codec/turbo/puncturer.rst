@@ -10,6 +10,7 @@ Turbo Puncturer parameters
 
    :Type: text
    :Allowed values: ``NO`` ``TURBO``
+   :Default: ``NO``
    :Examples: ``--pct-type NO``
 
 Select the puncturer type.

@@ -21,6 +21,7 @@ The codeword size :math:`N` is automatically deduced: :math:`N = 2 \times K`.
 
    :Type: text
    :Allowed values: ``RSC_DB`` ``AZCW`` ``COSET`` ``USER``
+   :Default: ``RSC_DB``
    :Examples: ``--enc-type AZCW``
 
 Select the encoder type.
@@ -61,7 +62,8 @@ Disable the buffered encoding.
 
    :Type: text
    :Allowed values: ``DVB-RCS1`` ``DVB-RCS2``
-   :Examples: ``--enc-std DVB-RCS1``
+   :Default: ``DVB-RCS1``
+   :Examples: ``--enc-std DVB-RCS2``
 
 Select a standard.
 

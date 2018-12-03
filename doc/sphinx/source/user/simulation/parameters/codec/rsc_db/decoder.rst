@@ -10,6 +10,7 @@
 
    :Type: text
    :Allowed values: ``BCJR`` ``CHASE`` ``ML``
+   :Default: ``BCJR``
    :Examples: ``--dec-type BCJR``
 
 Select the decoder type.
@@ -33,6 +34,7 @@ Description of the allowed values:
 
    :Type: text
    :Allowed values: ``GENERIC`` ``DVB-RCS1`` ``DVB-RCS2``
+   :Default: ``DVB-RCS1``
    :Examples: ``--dec-implem DVB-RCS1``
 
 Select the implementation of the algorithm to decode.

@@ -10,6 +10,7 @@ Uncoded Decoder parameters
 
    :Type: text
    :Allowed values: ``NONE`` ``CHASE`` ``ML``
+   :Default: ``NONE``
    :Examples: ``--dec-type CHASE``
 
 Select the decoder algorithm.
@@ -39,6 +40,7 @@ Description of the allowed values:
 
    :Type: text
    :Allowed values: ``HARD_DECISION``
+   :default: ``HARD_DECISION``
    :Examples: ``--dec-implem HARD_DECISION``
 
 Select the decoder implementation.

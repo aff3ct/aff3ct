@@ -31,6 +31,7 @@ Set the number of information bits :math:`K`.
 
    :Type: text
    :Allowed values: ``NO`` ``SHORTLAST``
+   :Default: ``NO``
    :Examples: ``--pct-type NO``
 
 Select the puncturer type.

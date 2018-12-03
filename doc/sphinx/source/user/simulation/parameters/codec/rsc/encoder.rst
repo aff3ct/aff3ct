@@ -22,6 +22,7 @@ The codeword size :math:`N` is automatically deduced:
 
    :Type: text
    :Allowed values: ``RSC`` ``AZCW`` ``COSET`` ``USER``
+   :Default: ``RSC``
    :Examples: ``--enc-type AZCW``
 
 Select the encoder type.

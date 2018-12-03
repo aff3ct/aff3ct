@@ -11,6 +11,7 @@ Polar Decoder parameters
    :Type: text
    :Allowed values: ``SC`` ``SCAN`` ``SCL`` ``SCL_MEM`` ``ASCL`` ``ASCL_MEM``
                     ``CHASE`` ``ML``
+   :Default: ``SC``
    :Examples: ``--dec-type ASCL``
 
 Select the algorithm you want to decode the codeword.
@@ -51,6 +52,7 @@ Description of the allowed values:
 
    :Type: text
    :Allowed values: ``NAIVE`` ``FAST``
+   :Default: ``FAST``
    :Examples: ``--dec-implem FAST``
 
 Select the implementation of the algorithm to decode.

@@ -10,6 +10,7 @@ Turbo |DB| Puncturer parameters
 
    :Type: text
    :Allowed values: ``NO`` ``TURBO_DB``
+   :Default: ``NO``
    :Examples: ``--pct-type NO``
 
 Select the puncturer type.

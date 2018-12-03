@@ -10,6 +10,7 @@ Polar Encoder parameters
 
    :Type: text
    :Allowed values: ``POLAR`` ``AZCW`` ``COSET`` ``USER``
+   :Default: ``POLAR``
    :Examples: ``--enc-type AZCW``
 
 Type of the encoder to use in the simulation.

@@ -30,6 +30,7 @@ Set the nulber of information bits :math:`K`.
 
    :Type: text
    :Allowed values: ``RA`` ``AZCW`` ``COSET`` ``USER``
+   :Default: ``RA``
    :Examples: ``--enc-type AZCW``
 
 Select the encoder type.
