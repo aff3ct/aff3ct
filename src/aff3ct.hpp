@@ -742,8 +742,17 @@
 #ifndef CHANNEL_AWGN_LLR_HPP_
 #include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
 #endif
-#ifndef CHANNELS_USER_HPP_
+#ifndef CHANNEL_USER_ADD_HPP_
+#include <Module/Channel/User/Channel_user_add.hpp>
+#endif
+#ifndef CHANNEL_USER_HPP_
 #include <Module/Channel/User/Channel_user.hpp>
+#endif
+#ifndef CHANNEL_USER_BE_HPP_
+#include <Module/Channel/User/Channel_user_be.hpp>
+#endif
+#ifndef CHANNEL_USER_BS_HPP_
+#include <Module/Channel/User/Channel_user_bs.hpp>
 #endif
 #ifndef CHANNEL_OPTICAL_HPP_
 #include <Module/Channel/Optical/Channel_optical.hpp>
@@ -924,6 +933,9 @@
 #endif
 #ifndef DECODER_LDPC_BP_FLOODING_INTER_HPP_
 #include <Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_inter.hpp>
+#endif
+#ifndef DECODER_LDPC_BP_FLOODING_SPA_HPP_
+#include <Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_SPA.hpp>
 #endif
 #ifndef DECODER_LDPC_BP_FLOODING_HPP_
 #include <Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp>
@@ -1254,6 +1266,9 @@
 #endif
 #ifndef FACTORY_ENCODER_HPP
 #include <Factory/Module/Encoder/Encoder.hpp>
+#endif
+#ifndef FACTORY_ENCODER_NO_HPP
+#include <Factory/Module/Encoder/NO/Encoder_NO.hpp>
 #endif
 #ifndef FACTORY_ENCODER_RA_HPP
 #include <Factory/Module/Encoder/RA/Encoder_RA.hpp>
