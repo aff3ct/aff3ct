@@ -29,7 +29,7 @@ Set the number of infomation bits :math:`K`.
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``REPETITION`` ``AZCW`` ``COSET`` ``USER``
+   :Allowed values: ``REP`` ``AZCW`` ``COSET`` ``USER``
    :Examples: ``--enc-type AZCW``
 
 Type of the encoder to use in the simulation.
@@ -39,7 +39,7 @@ Description of the allowed values:
 +----------------+-----------------------------+
 | Value          | Description                 |
 +================+=============================+
-| ``REPETITION`` | |enc-type_descr_repetition| |
+| ``REP``        | |enc-type_descr_repetition| |
 +----------------+-----------------------------+
 | ``AZCW``       | |enc-type_descr_azcw|       |
 +----------------+-----------------------------+
