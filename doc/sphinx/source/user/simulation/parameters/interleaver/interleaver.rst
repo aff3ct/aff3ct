@@ -216,7 +216,7 @@ Description of the allowed values (see also the figures just bellow):
    :align: center
    :scale: 65
 
-   Interleaver ``COL_ROW`` read orders.
+   Interleaver ``ROW_COL`` read orders.
 
 
 .. _itl-itl-uni:
