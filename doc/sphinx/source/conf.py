@@ -81,15 +81,16 @@ pygments_style = None
 
 # -- Configure Breathe (Developer doc from Doxygen XML files) ----------------
 
-# Are we on a Readthedocs server ?
-read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-# If we are on a Readthedocs server
-if read_the_docs_build:
-    # Generate the Doxygen XML files
-    subprocess.call('cd ../../doxygen; doxygen config.txt', shell=True)
-
-breathe_projects = { "AFF3CT": "../../doxygen/xml/" }
-breathe_default_project = "AFF3CT"
+# # Uncomment the following lines to enable the Doxygen compilation
+# # Are we on a Readthedocs server ?
+# read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+# # If we are on a Readthedocs server
+# if read_the_docs_build:
+#     # Generate the Doxygen XML files
+#     subprocess.call('cd ../../doxygen; doxygen config.txt', shell=True)
+#
+# breathe_projects = { "AFF3CT": "../../doxygen/xml/" }
+# breathe_default_project = "AFF3CT"
 
 # -- Options for HTML output -------------------------------------------------
 
