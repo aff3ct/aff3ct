@@ -25,7 +25,7 @@ Set the maximum number of frame errors to simulated for each noise point.
 """"""""""""""""""
 
    :Type: integer
-   :Examples: ``--mnt-err-hist 1``
+   :Examples: ``--mnt-err-hist 0``
 
 Enable the construction of the errors per frame histogram. Set also the maximum
 number of bit errors per frame included in the histogram (0 means no limit).
