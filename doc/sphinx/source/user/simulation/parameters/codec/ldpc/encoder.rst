@@ -146,14 +146,14 @@ Description of the allowed values:
 
 ``LU_DEC`` method is faster than ``IDENTITY``.
 
-.. _enc-ldpc-enc-save-g:
+.. _enc-ldpc-enc-g-save-path:
 
-``--enc-save-g``
-""""""""""""""""
+``--enc-g-save-path``
+"""""""""""""""""""""
 
    :Type: file
    :Rights: write only
-   :Examples: ``--enc-save-g example/path/to/the/generated/G_matrix.alist``
+   :Examples: ``--enc-g-save-path example/path/to/the/generated/G_matrix.alist``
 
 Set the file path where the :math:`G` generator matrix will be saved (AList
 file format). To use with the ``LDPC_H`` encoder.
