@@ -107,6 +107,10 @@ void Decoder_turbo::parameters<D1,D2>
 		tools::None(),
 		"enable the json output trace.");
 
+	args.add(
+		{p+"-crc-start"},
+		tools::Integer(tools::Positive(), tools::Non_zero()),
+		"set the iteration to start the CRC checking.");
 
 	sf->get_description(args);
 
@@ -121,6 +125,7 @@ void Decoder_turbo::parameters<D1,D2>
 	args.erase({pfnc+"-size"     });
 	args.erase({pfnc+"-fra",  "F"});
 	args.erase({pfnc+"-ite",  "i"});
+	args.erase({pfnc+"-crc-ite"  });
 
 	sub1->get_description(args);
 
@@ -148,9 +153,10 @@ void Decoder_turbo::parameters<D1,D2>
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-ite", "i"})) this->n_ite          = vals.to_int({p+"-ite", "i"});
-	if(vals.exist({p+"-sc"      })) this->self_corrected = true;
-	if(vals.exist({p+"-json"    })) this->enable_json    = true;
+	if(vals.exist({p+"-ite", "i" })) this->n_ite          = vals.to_int({p+"-ite", "i"});
+	if(vals.exist({p+"-sc"       })) this->self_corrected = true;
+	if(vals.exist({p+"-json"     })) this->enable_json    = true;
+	if(vals.exist({p+"-crc-start"})) this->crc_start_ite  = vals.to_int({p+"-crc-start"});
 
 	this->sub1->K        = this->K;
 	this->sub2->K        = this->K;
@@ -190,9 +196,10 @@ void Decoder_turbo::parameters<D1,D2>
 
 	sf->store(vals);
 
-	this->fnc->size     = this->K;
-	this->fnc->n_frames = this->n_frames;
-	this->fnc->n_ite    = this->n_ite;
+	this->fnc->size          = this->K;
+	this->fnc->n_frames      = this->n_frames;
+	this->fnc->n_ite         = this->n_ite;
+	this->fnc->crc_start_ite = this->crc_start_ite;
 
 	fnc->store(vals);
 }
@@ -211,6 +218,7 @@ void Decoder_turbo::parameters<D1,D2>
 		auto p = this->get_prefix();
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+		headers[p].push_back(std::make_pair("CRC start iteration", std::to_string(this->crc_start_ite)));
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 		headers[p].push_back(std::make_pair("Enable json", ((this->enable_json) ? "on" : "off")));

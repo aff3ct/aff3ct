@@ -69,6 +69,20 @@ Please refer to the |RSC| |DB| :ref:`dec-rsc_db-dec-type` parameter.
 
 Please refer to the |RSC| |DB| :ref:`dec-rsc_db-dec-implem` parameter.
 
+.. _dec-turbo_db-dec-crc-start:
+
+``--dec-crc-start``
+"""""""""""""""""""
+
+   :Type: integer
+   :Default: ``2``
+   :Examples: ``--dec-fnc-crc-ite 1``
+
+Set the first iteration to start the |CRC| checking.
+
+.. note:: This parameter requires the Turbo code to be concatenated with a |CRC|
+   to work, see the :ref:`crc-crc-parameters`.
+
 .. _dec-turbo_db-dec-fnc:
 
 ``--dec-fnc``
@@ -79,15 +93,17 @@ Enable the |FNC| post processing technique from :cite:`Tonnellier2016a`.
 .. note:: This parameter requires the Turbo code to be concatenated with a |CRC|
    to work, see the :ref:`crc-crc-parameters`.
 
-.. _dec-turbo_db-dec-fnc-crc-ite:
+.. _dec-turbo_db-dec-fnc-ite-min:
 
-``--dec-fnc-crc-ite``
-"""""""""""""""""""""
+``--dec-fnc-ite-m``
+"""""""""""""""""""
 
    :Type: integer
-   :Examples: ``--dec-fnc-crc-ite 1``
+   :Default: ``3``
+   :Examples: ``--dec-fnc-ite-m 2``
 
-Set the first iteration to start the |CRC| checking.
+Set the first iteration at which the |FNC| is used (c.f the
+:ref:`dec-turbo_db-dec-fnc` parameter).
 
 .. _dec-turbo_db-dec-fnc-ite-max:
 
@@ -95,20 +111,10 @@ Set the first iteration to start the |CRC| checking.
 """""""""""""""""""
 
    :Type: integer
-   :Examples: ``--dec-fnc-ite-M 1``
+   :Default: ``10``
+   :Examples: ``--dec-fnc-ite-M 6``
 
 Set the last iteration at which the |FNC| is used (c.f the
-:ref:`dec-turbo_db-dec-fnc` parameter).
-
-.. _dec-turbo_db-dec-fnc-ite-min:
-
-``--dec-fnc-ite-m``
-"""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--dec-fnc-ite-m 1``
-
-Set the first iteration at which the |FNC| is used (c.f the
 :ref:`dec-turbo_db-dec-fnc` parameter).
 
 .. _dec-turbo_db-dec-fnc-ite-s:
@@ -117,7 +123,8 @@ Set the first iteration at which the |FNC| is used (c.f the
 """""""""""""""""""
 
    :Type: integer
-   :Examples: ``--dec-fnc-ite-s 1``
+   :Default: ``1``
+   :Examples: ``--dec-fnc-ite-s 2``
 
 Set the iteration step for the |FNC| technique (c.f the
 :ref:`dec-turbo_db-dec-fnc` parameter).
@@ -128,7 +135,8 @@ Set the iteration step for the |FNC| technique (c.f the
 """""""""""""""
 
    :Type: integer
-   :Examples: ``--dec-fnc-q 1``
+   :Default: ``10``
+   :Examples: ``--dec-fnc-q 6``
 
 Set the search space for the |FNC| technique (c.f the
 :ref:`dec-turbo_db-dec-fnc` parameter).
@@ -139,7 +147,8 @@ Set the search space for the |FNC| technique (c.f the
 """""""""""""""""
 
    :Type: integer
-   :Examples: ``--dec-ite 1``
+   :Default: ``6``
+   :Examples: ``--dec-ite 8``
 
 Set the maximal number of iterations in the Turbo decoder. If the Turbo code
 is concatenated with a |CRC| and if the |CRC| is checked, the decoder can stop

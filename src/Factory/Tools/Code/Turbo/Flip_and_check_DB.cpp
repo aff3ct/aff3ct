@@ -45,7 +45,7 @@ tools::Flip_and_check_DB<B,Q>* Flip_and_check_DB::parameters
 	if (!this->enable)
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	return new tools::Flip_and_check_DB<B,Q>(this->size, this->n_ite, crc, this->start_crc_check_ite, this->q, this->ite_min, this->ite_max, this->ite_step, this->n_frames);
+	return new tools::Flip_and_check_DB<B,Q>(this->size, this->n_ite, crc, this->crc_start_ite, this->q, this->ite_min, this->ite_max, this->ite_step, this->n_frames);
 }
 
 template<typename B, typename Q>

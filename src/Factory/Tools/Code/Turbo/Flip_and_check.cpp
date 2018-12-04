@@ -73,7 +73,7 @@ void Flip_and_check::parameters
 		"maximal number of iterations in the turbo.");
 
 	args.add(
-		{p+"-crc-ite"},
+		{p+"-crc-start"},
 		tools::Integer(tools::Positive()),
 		"set the iteration to start the CRC checking.");
 }
@@ -83,16 +83,16 @@ void Flip_and_check::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p             })) this->enable              = true;
-	if(vals.exist({p+"-size"     })) this->size                = vals.to_int({p+"-size"     });
-	if(vals.exist({p+"-q"        })) this->q                   = vals.to_int({p+"-q"        });
-	if(vals.exist({p+"-crc-ite"  })) this->start_crc_check_ite = vals.to_int({p+"-crc-ite"  });
-	if(vals.exist({p+"-fra",  "F"})) this->n_frames            = vals.to_int({p+"-fra", "F" });
-	if(vals.exist({p+"-ite-s"    })) this->ite_step            = vals.to_int({p+"-ite-s"    });
-	if(vals.exist({p+"-ite",  "i"})) this->n_ite               = vals.to_int({p+"-ite",  "i"});
-	if(vals.exist({p+"-ite-m"    })) this->ite_min             = vals.to_int({p+"-ite-m"    });
-	if(vals.exist({p+"-ite-M"    })) this->ite_max             = vals.to_int({p+"-ite-M"    });
-	else                              this->ite_max             = this->n_ite;
+	if(vals.exist({p             })) this->enable        = true;
+	if(vals.exist({p+"-size"     })) this->size          = vals.to_int({p+"-size"     });
+	if(vals.exist({p+"-q"        })) this->q             = vals.to_int({p+"-q"        });
+	if(vals.exist({p+"-crc-start"})) this->crc_start_ite = vals.to_int({p+"-crc-ite"  });
+	if(vals.exist({p+"-fra",  "F"})) this->n_frames      = vals.to_int({p+"-fra", "F" });
+	if(vals.exist({p+"-ite-s"    })) this->ite_step      = vals.to_int({p+"-ite-s"    });
+	if(vals.exist({p+"-ite",  "i"})) this->n_ite         = vals.to_int({p+"-ite",  "i"});
+	if(vals.exist({p+"-ite-m"    })) this->ite_min       = vals.to_int({p+"-ite-m"    });
+	if(vals.exist({p+"-ite-M"    })) this->ite_max       = vals.to_int({p+"-ite-M"    });
+	else                             this->ite_max       = this->n_ite;
 }
 
 void Flip_and_check::parameters
@@ -117,7 +117,7 @@ tools::Flip_and_check<B,Q>* Flip_and_check::parameters
 	if (!this->enable)
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	return new tools::Flip_and_check<B,Q>(this->size, this->n_ite, crc, this->start_crc_check_ite, this->q, this->ite_min, this->ite_max, this->ite_step, this->n_frames);
+	return new tools::Flip_and_check<B,Q>(this->size, this->n_ite, crc, this->crc_start_ite, this->q, this->ite_min, this->ite_max, this->ite_step, this->n_frames);
 }
 
 template<typename B, typename Q>
