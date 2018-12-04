@@ -116,7 +116,7 @@ corresponding available implementations.
    +---------+-----+------+-----+-----+------+-----+----+-----+-----+
    | |BP-P|  ||K|  |      |     |     |      |     |    |     |     |
    +---------+-----+------+-----+-----+------+-----+----+-----+-----+
-   | |BP-F|  |     ||K|   |     ||K2| ||K2|  ||K2| ||K2|||K2| ||K2| |
+   | |BP-F|  |     ||K|   |     ||K3| ||K2|  ||K2| ||K2|||K2| ||K2| |
    +---------+-----+------+-----+-----+------+-----+----+-----+-----+
    | |BP-HL| |     |      |     ||K2| ||K2|  ||K2| ||K1|||K1| ||K1| |
    +---------+-----+------+-----+-----+------+-----+----+-----+-----+
@@ -126,8 +126,9 @@ corresponding available implementations.
 .. |K| replace:: :math:`\checkmark`
 .. |K1| replace:: :math:`\checkmark^{*}`
 .. |K2| replace:: :math:`\checkmark^{**}`
+.. |K3| replace:: :math:`\checkmark^{**+}`
 
-:math:`^{*}/^{**}`: compatible with the :ref:`dec-ldpc-dec-simd`
+:math:`^{*}/^{**}/^{***}`: compatible with the :ref:`dec-ldpc-dec-simd`
 ``INTER`` parameter.
 
 :math:`^{**}`: require the C++ compiler to support the **dynamic memory
@@ -135,6 +136,8 @@ allocation for over-aligned data**, see the
 `P0035R4 paper <http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0035r4.html>`_.
 This feature is a part of the C++17 standard (working on the C++ GNU compiler
 version 8.1.0).
+
+:math:`^{+}`: compatible with the :ref:`dec-ldpc-dec-simd` ``INTRA`` parameter.
 
 .. _dec-ldpc-dec-simd:
 
@@ -153,9 +156,12 @@ Description of the allowed values:
 +-----------+------------------------+
 | Value     | Description            |
 +===========+========================+
+| ``INTRA`` | |dec-simd_descr_intra| |
++-----------+------------------------+
 | ``INTER`` | |dec-simd_descr_inter| |
 +-----------+------------------------+
 
+.. |dec-simd_descr_intra| replace:: Select the intra-frame strategy.
 .. |dec-simd_descr_inter| replace:: Select the inter-frame strategy.
 
 .. note:: In **the intra-frame strategy**, |SIMD| units process several LLRs in
