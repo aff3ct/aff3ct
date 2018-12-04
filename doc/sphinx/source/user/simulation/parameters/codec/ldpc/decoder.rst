@@ -135,7 +135,8 @@ corresponding available implementations.
 allocation for over-aligned data**, see the
 `P0035R4 paper <http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0035r4.html>`_.
 This feature is a part of the C++17 standard (working on the C++ GNU compiler
-version 8.1.0).
+version 8.1.0). When compiling with the GNU compiler in C++11 mode, the
+``-faligned-new`` option enables specifically the required feature.
 
 :math:`^{+}`: compatible with the :ref:`dec-ldpc-dec-simd` ``INTRA`` parameter.
 
