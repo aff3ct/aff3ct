@@ -64,7 +64,7 @@ void EXIT<B,R>
 	const auto K_mod = factory::Modem::get_buffer_size_after_modulation(params_EXIT.mdm->type,
 	                                                                    params_EXIT.cdc->K,
 	                                                                    params_EXIT.mdm->bps,
-	                                                                    params_EXIT.mdm->upf,
+	                                                                    params_EXIT.mdm->cpm_upf,
 	                                                                    params_EXIT.mdm->cpm_L);
 
 	// build the objects
@@ -110,7 +110,7 @@ void EXIT<B,R>
 		// For EXIT simulation, NOISE is considered as Es/N0
 		const R bit_rate = 1.;
 		R esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params_EXIT.mdm->bps);
-		R sigma = tools::esn0_to_sigma(esn0, params_EXIT.mdm->upf);
+		R sigma = tools::esn0_to_sigma(esn0, params_EXIT.mdm->cpm_upf);
 
 		this->noise.set_noise(sigma, ebn0, esn0);
 
@@ -145,7 +145,7 @@ void EXIT<B,R>
 			{
 				const R bit_rate = 1.;
 				auto sig_a_2 = (R)2. / sig_a;
-				R sig_a_esn0 = tools::sigma_to_esn0(sig_a_2, params_EXIT.mdm->upf);
+				R sig_a_esn0 = tools::sigma_to_esn0(sig_a_2, params_EXIT.mdm->cpm_upf);
 				R sig_a_ebn0 = tools::esn0_to_ebn0 (sig_a_esn0, bit_rate, params_EXIT.mdm->bps);
 
 				this->noise_a.set_noise(sig_a_2, sig_a_ebn0, sig_a_esn0);
@@ -380,7 +380,7 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 	chn_params->N   = factory::Modem::get_buffer_size_after_modulation(params_EXIT.mdm->type,
 	                                                                   params_EXIT.cdc->K,
 	                                                                   params_EXIT.mdm->bps,
-	                                                                   params_EXIT.mdm->upf,
+	                                                                   params_EXIT.mdm->cpm_upf,
 	                                                                   params_EXIT.mdm->cpm_L);
 
 	return std::unique_ptr<module::Channel<R>>(chn_params->template build<R>());

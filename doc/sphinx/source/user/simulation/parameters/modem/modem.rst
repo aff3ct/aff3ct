@@ -154,17 +154,6 @@ with an anti-Gray mapping (the lines starting with a ``#`` are ignored):
    given constellation. In the previous example, ``--mdm-bps 4`` has be added
    to the command line.
 
-.. _mdm-mdm-ups:
-
-``--mdm-ups``
-"""""""""""""
-
-   :Type: integer
-   :Default: 1
-   :Examples: ``--mdm-ups 1``
-
-Select the symbol upsampling factor (only relevant for the |CPM| |modem|).
-
 .. _mdm-mdm-max:
 
 ``--mdm-max``
@@ -251,6 +240,17 @@ Set the |CPM| *index denominator*.
 
 Set the |CPM| *pulse width* (also called *memory depth*).
 
+.. _mdm-mdm-cpm-upf:
+
+``--mdm-cpm-upf``
+"""""""""""""""""
+
+   :Type: integer
+   :Default: 1
+   :Examples: ``--mdm-cpm-upf 1``
+
+Select the symbol upsampling factor in the |CPM|.
+
 .. _mdm-mdm-cpm-map:
 
 ``--mdm-cpm-map``
@@ -325,7 +325,7 @@ Description of the allowed values:
 | Value   | Parameter                | Value         | Description                     |
 +=========+==========================+===============+=================================+
 | ``GSM`` | | :ref:`mdm-mdm-bps`     | | 1           | | Bit per symbol.               |
-|         | | :ref:`mdm-mdm-ups`     | | 5           | | Upsampling factor.            |
+|         | | :ref:`mdm-mdm-cpm-upf` | | 5           | | Upsampling factor.            |
 |         | | :ref:`mdm-mdm-cpm-k`   | | 1           | | Modulation index numerator.   |
 |         | | :ref:`mdm-mdm-cpm-p`   | | 2           | | Modulation index denominator. |
 |         | | :ref:`mdm-mdm-cpm-L`   | | 3           | | Memory depth.                 |

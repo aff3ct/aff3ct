@@ -99,7 +99,7 @@ void BFER<B,R,Q>
 	for (auto noise_idx = noise_begin; noise_idx != noise_end; noise_idx += noise_step)
 	{
 		this->noise.reset(params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
-		                                                       params_BFER.mdm->bps, params_BFER.mdm->upf));
+		                                                       params_BFER.mdm->bps, params_BFER.mdm->cpm_upf));
 
 		// manage noise distributions to be sure it exists
 		if (this->distributions != nullptr)
