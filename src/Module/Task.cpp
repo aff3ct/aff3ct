@@ -124,19 +124,6 @@ Hexfloat hexfloat;
 std::ostream& operator<<(std::ostream &os, const std::Hexfloat &obj) { obj.message(os); return os; }
 #endif
 
-uint32_t n_digits_dec(uint32_t v)
-{
-	uint32_t count = 0;
-	while (v)
-	{
-		count++;
-		v /= 10;
-	}
-
-	return count;
-}
-
-
 template <typename T>
 static inline void display_data(const T *data,
                                 const size_t fra_size, const size_t n_fra, const size_t limit, const size_t max_frame,
@@ -170,12 +157,29 @@ static inline void display_data(const T *data,
 		for (uint8_t s = 0; s < n_spaces -1; s++)
 			spaces += " ";
 
+		auto n_digits_dec = [](size_t f) -> size_t
+		{
+			size_t count = 0;
+			while (f && ++count)
+				f /= 10;
+			return count;
+		};
+
 		const auto n_digits = n_digits_dec(max_frame);
+		auto ftos = [&n_digits_dec,&n_digits](size_t f) -> std::string
+		{
+			auto n_zero = n_digits - n_digits_dec(f);
+			std::string f_str = "";
+			for (size_t z = 0; z < n_zero; z++)
+				f_str += "0";
+			f_str += std::to_string(f);
+			return f_str;
+		};
 
 		for (size_t f = 0; f < max_frame; f++)
 		{
-			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << "f" << std::setw(n_digits)
-			          << f+1 << rang::style::reset << "(";
+			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << "f" << ftos(f+1)
+			          << rang::style::reset << "(";
 
 			for (size_t i = 0; i < limit; i++)
 			{
@@ -189,10 +193,9 @@ static inline void display_data(const T *data,
 		}
 
 		if (max_frame < n_fra)
-		{
-			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << "f" << std::setw(n_digits)
-			           << max_frame + 1 << "->" << "f" << n_fra << ":" << rang::style::reset << "(...)";
-		}
+			std::cout << (max_frame >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << "f"
+			          << std::setw(n_digits) << max_frame + 1 << "->" << "f" << n_fra << ":"
+			          << rang::style::reset << "(...)";
 	}
 
 	std::cout.flags(f);
