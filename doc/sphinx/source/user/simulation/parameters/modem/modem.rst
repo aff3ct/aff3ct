@@ -388,6 +388,21 @@ Where |n0_equation|
 See the :ref:`mdm-mdm-no-sig2` parameter to disable the division by
 :math:`\sigma^2`.
 
+.. _mdm-mdm-rop-est:
+
+``--mdm-rop-est``
+"""""""""""""""""
+
+   :Type: integer
+   :Default: 0
+   :Examples: ``--mdm-rop-est 256``
+
+Set the number of known bits for the |ROP| estimation in the |OOK| demodulator
+on an optical channel. The estimation is done from a known set of bits
+that is the output of the modulation.
+
+If left to 0, the demodulation is done with the exact applied |ROP| in the
+channel.
 
 References
 """"""""""
