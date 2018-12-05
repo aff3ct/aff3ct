@@ -75,7 +75,7 @@ do
 	mkdir $BUILD/share/aff3ct/doc
 	cp -r doc/sphinx/build/html $BUILD/share/aff3ct/doc/
 	mkdir $BUILD/share/aff3ct/doc/pdf
-	cp doc/sphinx/build/latexpdf/AFF3CT.pdf $BUILD/share/aff3ct/doc/pdf
+	cp doc/sphinx/build/latex/AFF3CT.pdf $BUILD/share/aff3ct/doc/pdf
 
 	zip -r $ZIP_NAME $BUILD
 
