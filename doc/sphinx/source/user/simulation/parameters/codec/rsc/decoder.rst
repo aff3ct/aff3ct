@@ -106,7 +106,7 @@ Description of the allowed values:
    :Allowed values: ``MAXS`` ``MAXL`` ``MAX``
    :Examples: ``--dec-max MAX``
 
-Select the approximation of the :math:`\max^∗` operator used in the trellis
+Select the approximation of the :math:`\max^*` operator used in the trellis
 decoding.
 
 Description of the allowed values:
