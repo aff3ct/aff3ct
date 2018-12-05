@@ -47,7 +47,8 @@ documentation-sphinx:
       - doc/sphinx/build/html
       - doc/sphinx/build/latex
   tags:
-    - sphinx latex
+    - sphinx
+    - latex
   script:
     - cd doc/sphinx
     - make html
