@@ -52,14 +52,30 @@ do
 	ZIP_NAME=$(echo "${BUILD/build/$PREFIX}")
 	ZIP_NAME=$(echo "${ZIP_NAME/\./\_}_$GIT_HASH.zip")
 
+	# prepare headers
 	find $BUILD/include/aff3ct/ -type f -follow -print | grep "[.]cpp$"    | xargs rm -f
 	find $BUILD/include/aff3ct/ -type f -follow -print | grep "[.]cpp.in$" | xargs rm -f
+	cp -r lib/date/include/date $BUILD/include/
+	mkdir $BUILD/include/MIPP
+	cp -r lib/MIPP/src/* $BUILD/include/MIPP/
+	mkdir $BUILD/include/dirent
+	cp lib/MSVC/include/dirent.h $BUILD/include/dirent/
+	mkdir $BUILD/include/rang
+	cp lib/rang/include/rang.hpp $BUILD/include/rang/
+
+	# prepare conf and refs files
 	mkdir $BUILD/share
 	mkdir $BUILD/share/aff3ct
 	cp -r conf $BUILD/share/aff3ct/
 	cp -r refs $BUILD/share/aff3ct/
 	rm -rf $BUILD/share/aff3ct/conf/.git
 	rm -rf $BUILD/share/aff3ct/refs/.git
+
+	# prepare doc
+	mkdir $BUILD/share/aff3ct/doc
+	cp -r doc/sphinx/build/html $BUILD/share/aff3ct/doc/
+	mkdir $BUILD/share/aff3ct/doc/pdf
+	cp doc/sphinx/build/latexpdf/AFF3CT.pdf $BUILD/share/aff3ct/doc/pdf
 
 	zip -r $ZIP_NAME $BUILD
 
