@@ -1,7 +1,11 @@
 #!/bin/bash
 
 SRC_DIR=".\/src"
-AFF3CT_HEADER=.\/src\/aff3ct.hpp
+if [ -z "$1" ]; then
+  AFF3CT_HEADER=.\/src\/aff3ct.hpp
+else
+  AFF3CT_HEADER="$1"
+fi
 
 echo -e "#ifndef AFF3CT_HPP\n#define AFF3CT_HPP\n" > $AFF3CT_HEADER # create the aff3ct header file with the c++ header
 

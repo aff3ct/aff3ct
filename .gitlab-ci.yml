@@ -24,6 +24,19 @@ analysis-cppcheck:
   script:
     - ./ci/analysis-cppcheck.sh
 
+analysis-headers:
+  stage: analysis
+  artifacts:
+    name: analysis-headers
+    when: always
+    paths:
+      - aff3ct.hpp
+  tags:
+    - linux
+  script:
+    - ./scripts/generate_aff3ct_header.sh aff3ct.hpp
+    - diff aff3ct.hpp src/aff3ct.hpp
+
 build-linux-gcc-nointr:
   stage: build
   tags:
