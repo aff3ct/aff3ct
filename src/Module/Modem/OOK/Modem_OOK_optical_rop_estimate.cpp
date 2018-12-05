@@ -47,6 +47,14 @@ template <typename B, typename R, typename Q>
 void Modem_OOK_optical_rop_estimate<B,R,Q>
 ::init()
 {
+	if (ROP_known_bits.size() > this->N)
+	{
+		std::stringstream message;
+		message << "'ROP_known_bits.size()' has to be smaller than 'N' ('ROP_known_bits.size()' = "
+		        << ROP_known_bits.size() << ", 'N' = " << this->N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	dist_ROP_range = dist.get_noise_range();
 	dist_meanvoltage_p0.resize(dist_ROP_range.size(), 0);
 	dist_meanvoltage_p1.resize(dist_ROP_range.size(), 0);
