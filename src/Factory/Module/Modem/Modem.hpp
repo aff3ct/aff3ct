@@ -51,6 +51,8 @@ struct Modem : public Factory
 		int         n_ite      = 1;         // number of demodulations/decoding sessions to perform in the BFERI simulations
 		int         N_fil      = 0;         // frame size at the output of the filter
 		float       noise      = -1.f;      // noise value
+		int         rop_est_bits = 0;       // The number of bits known by the Modem_OOK_optical_rop_estimate demodulator
+		                                    // to estimate the ROP
 
 		// ------- common parameters
 		int         n_frames   = 1;

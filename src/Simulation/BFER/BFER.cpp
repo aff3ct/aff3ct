@@ -49,7 +49,9 @@ BFER<B,R,Q>
 	}
 
 	if (!params_BFER.noise->pdf_path.empty())
-		distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path));
+		distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path,
+		                                                tools::Distribution_mode::SUMMATION,
+		                                                params_BFER.mdm->rop_est_bits > 0));
 
 	this->build_monitors ();
 	this->build_reporters();

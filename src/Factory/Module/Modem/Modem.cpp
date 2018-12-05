@@ -5,6 +5,7 @@
 #include "Module/Modem/OOK/Modem_OOK_BEC.hpp"
 #include "Module/Modem/OOK/Modem_OOK_AWGN.hpp"
 #include "Module/Modem/OOK/Modem_OOK_optical.hpp"
+#include "Module/Modem/OOK/Modem_OOK_optical_rop_estimate.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK_fast.hpp"
 #include "Module/Modem/PAM/Modem_PAM.hpp"
@@ -133,6 +134,11 @@ void Modem::parameters
 		{p+"-ite"},
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		"number of iteration in the demodulator.");
+
+	args.add(
+		{p+"-rop-est"},
+		tools::Integer(tools::Positive()),
+		"set the number of known bits for the ROP estimation in the OOK demodulator on an optical channel (when 0, the ROP is known).");
 }
 
 void Modem::parameters
@@ -178,6 +184,7 @@ void Modem::parameters
 	if(vals.exist({p+"-cpm-upf"      })) this->cpm_upf        = vals.to_int({p+"-cpm-upf"      });
 	if(vals.exist({p+"-cpm-map"      })) this->cpm_mapping    = vals.at    ({p+"-cpm-map"      });
 	if(vals.exist({p+"-cpm-ws"       })) this->cpm_wave_shape = vals.at    ({p+"-cpm-ws"       });
+	if(vals.exist({p+"-rop-est"      })) this->rop_est_bits   = vals.to_int({p+"-rop-est"      });
 
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (this->type == "BPSK" || this->type == "OOK")
@@ -255,6 +262,14 @@ void Modem::parameters
 	}
 
 	if (full) headers[p].push_back(std::make_pair("Channel type", channel_type));
+
+	if (this->type == "OOK")
+	{
+		std::string str_est = "known";
+		if (this->rop_est_bits >= 0)
+			str_est = "on " + std::to_string(this->rop_est_bits) + " bits";
+		headers[p].push_back(std::make_pair("ROP estimation", str_est));
+	}
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -314,8 +329,12 @@ module::Modem<B,R,Q>* Modem::parameters
 ::build(const tools::Distributions<R>& dist) const
 {
 	if (this->type == "OOK" && this->implem == "STD" && channel_type == "OPTICAL")
-		return new module::Modem_OOK_optical<B,R,Q>(this->N, dist, tools::ROP<R>((R)this->noise), this->n_frames);
-
+	{
+		if (this->rop_est_bits == 0)
+			return new module::Modem_OOK_optical<B,R,Q>(this->N, dist, tools::ROP<R>((R)this->noise), this->n_frames);
+		else
+			return new module::Modem_OOK_optical_rop_estimate<B,R,Q>(this->N, rop_est_bits, dist, this->n_frames);
+	}
 	return build<B,R,Q>();
 }
 
