@@ -2,6 +2,7 @@
 #include <sstream>
 #include <cmath>
 #include <algorithm>
+#include <numeric>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
@@ -47,7 +48,7 @@ template <typename B, typename R, typename Q>
 void Modem_OOK_optical_rop_estimate<B,R,Q>
 ::init()
 {
-	if (ROP_known_bits.size() > this->N)
+	if (ROP_known_bits.size() > (size_t)this->N)
 	{
 		std::stringstream message;
 		message << "'ROP_known_bits.size()' has to be smaller than 'N' ('ROP_known_bits.size()' = "
