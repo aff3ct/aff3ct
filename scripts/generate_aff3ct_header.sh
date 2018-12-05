@@ -20,7 +20,7 @@ headershpp=$(find .\/src\/ -type f -follow -print | # find all source files
 
 headers="$headersh $headershpp"
 # sort the header by alphabetical order
-headers=$(echo $headers | tr " " "\n" | sort -f | tr "\n" " " ; echo)
+headers=$(echo $headers | tr " " "\n" | sort -f -d | tr "\n" " " ; echo)
 
 for f in $headers; do
     grep -m1 "#ifndef" < $f >> $AFF3CT_HEADER # add a guard to the header file to accelerate compilation
