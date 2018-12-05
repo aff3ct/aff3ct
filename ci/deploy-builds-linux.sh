@@ -70,6 +70,7 @@ do
 	cp -r refs $BUILD/share/aff3ct/
 	rm -rf $BUILD/share/aff3ct/conf/.git
 	rm -rf $BUILD/share/aff3ct/refs/.git
+	rm -rf $BUILD/share/aff3ct/refs/readers
 
 	# prepare doc
 	mkdir $BUILD/share/aff3ct/doc
