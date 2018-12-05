@@ -1,6 +1,7 @@
 stages:
   - analysis
   - build
+  - documentation
   - test
   - coverage
   - deploy
@@ -36,6 +37,21 @@ analysis-headers:
   script:
     - ./scripts/generate_aff3ct_header.sh aff3ct.hpp
     - diff aff3ct.hpp src/aff3ct.hpp
+
+documentation-sphinx:
+  stage: documentation
+  artifacts:
+    name: documentation-sphinx
+    when: always
+    paths:
+      - doc/sphinx/build/html
+      - doc/sphinx/build/latex
+  tags:
+    - sphinx latex
+  script:
+    - cd doc/sphinx
+    - make html
+    - make latexpdf
 
 build-linux-gcc-nointr:
   stage: build
