@@ -548,6 +548,7 @@ deploy-builds-linux:
     - build-windows-gcc-x86-sse4.2
     - build-windows-gcc-x64-avx2
     - build-macos-clang-x64-sse4.2
+    - documentation-sphinx
   tags:
     - linux
     - github
