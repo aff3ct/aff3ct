@@ -88,9 +88,9 @@ pygments_style = None
 # if read_the_docs_build:
 #     # Generate the Doxygen XML files
 #     subprocess.call('cd ../../doxygen; doxygen config.txt', shell=True)
-#
-# breathe_projects = { "AFF3CT": "../../doxygen/xml/" }
-# breathe_default_project = "AFF3CT"
+
+breathe_projects = { "AFF3CT": "../../doxygen/xml/" }
+breathe_default_project = "AFF3CT"
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -229,129 +229,147 @@ rst_epilog = """
                              :width:  80px
                              :height: 25px
 
-.. |AFF3CT|   replace:: :abbr:`AFF3CT  (A Fast Forward Error Correction Toolbox!)`
-.. |AMS|      replace:: :abbr:`AMS     (Approximate Min-Star)`
-.. |API|      replace:: :abbr:`API     (Application Programming Interface)`
-.. |ARP|      replace:: :abbr:`ARP     (Almost Regular Permutation)`
-.. |ASCII|    replace:: :abbr:`ASCII   (American Standard Code for Information Interchange)`
-.. |A-SCL|    replace:: :abbr:`A-SCL   (Adaptive Successive Cancellation List)`
-.. |FA-SCL|   replace:: :abbr:`FA-SCL  (Fully Adaptive Successive Cancellation List)`
-.. |PA-SCL|   replace:: :abbr:`PA-SCL  (Partially Adaptive Successive Cancellation List)`
-.. |AVX|      replace:: :abbr:`AVX     (Advanced Vector Extensions)`
-.. |AWGN|     replace:: :abbr:`AWGN    (Additive White Gaussian Noise)`
-.. |AZCW|     replace:: :abbr:`AZCW    (All Zero Code Word)`
-.. |AZCWs|    replace:: :abbr:`AZCWs   (All Zero Code Words)`
-.. |BCH|      replace:: :abbr:`BCH     (Bose, Ray-Chaudhuri and Hocquenghem)`
-.. |BCJR|     replace:: :abbr:`BCJR    (Bahl, Cocke, Jelinek and Raviv algorithm or Maximum A Posteriori (MAP))`
-.. |BEC|      replace:: :abbr:`BEC     (Binary Erasure Channel)`
-.. |BER|      replace:: :abbr:`BER     (Bit Error Rate)`
-.. |BF|       replace:: :abbr:`BF      (Bit Flipping)`
-.. |BFER|     replace:: :abbr:`BER/FER (Bit and Frame Error Rate)`
-.. |BPSK|     replace:: :abbr:`BPSK    (Bit Phase-Shift Keying)`
-.. |BM|       replace:: :abbr:`BM      (Berlekamp-Massey)`
-.. |BP|       replace:: :abbr:`BP      (Belief Propagation)`
-.. |BP-F|     replace:: :abbr:`BP-F    (Belief Propagation with Flooding scheduling)`
-.. |BP-HL|    replace:: :abbr:`BP-HL   (Belief Propagation with Horizontal Layered scheduling)`
-.. |BP-P|     replace:: :abbr:`BP-P    (Belief Propagation Peeling)`
-.. |BP-VL|    replace:: :abbr:`BP-VL   (Belief Propagation with Vertical Layered scheduling)`
-.. |BPS|      replace:: :abbr:`BPS     (Bit Per Symbol)`
-.. |BSC|      replace:: :abbr:`BSC     (Binary Symmetric Channel)`
-.. |CA|       replace:: :abbr:`CA      (CRC Aided)`
-.. |CCSDS|    replace:: :abbr:`CCSDS   (Consultative Committee for Space Data Systems)`
-.. |CDF|      replace:: :abbr:`CDF     (Cumulative Distribution Function)`
-.. |CN|       replace:: :abbr:`CN      (Check Node)`
-.. |CNs|      replace:: :abbr:`CNs     (Check Nodes)`
-.. |codec|    replace:: :abbr:`codec   (coder/decoder)`
-.. |codecs|   replace:: :abbr:`codecs  (coders/decodes)`
-.. |CP|       replace:: :abbr:`CP      (Chase-Pyndiah)`
-.. |CPM|      replace:: :abbr:`CPM     (Continuous Phase Modulation)`
-.. |CPU|      replace:: :abbr:`CPU     (Central Process Unit)`
-.. |CPUs|     replace:: :abbr:`CPUs    (Central Process Units)`
-.. |CRC|      replace:: :abbr:`CRC     (Cyclic Redundancy Check)`
-.. |CRCs|     replace:: :abbr:`CRCs    (Cyclic Redundancy Checks)`
-.. |CSV|      replace:: :abbr:`CSV     (Comma-Separated Values)`
-.. |DB|       replace:: :abbr:`DB      (Double Binary)`
-.. |DE|       replace:: :abbr:`DE      (Density Evolution)`
-.. |DVB-RCS1| replace:: :abbr:`DVB-RCS1(Digital Video Broadcasting - Return Channel via Satellite 1)`
-.. |DVB-RCS2| replace:: :abbr:`DVB-RCS2(Digital Video Broadcasting - Return Channel via Satellite 2)`
-.. |DVB-S1|   replace:: :abbr:`DVB-S1  (Digital Video Broadcasting - Satellite 1)`
-.. |DVB-S2|   replace:: :abbr:`DVB-S2  (Digital Video Broadcasting - Satellite 2)`
-.. |EP|       replace:: :abbr:`EP      (Event Probability)`
-.. |EXIT|     replace:: :abbr:`EXIT    (EXtrinsic Information Transfer chart)`
-.. |FER|      replace:: :abbr:`FER     (Frame Error Rate)`
-.. |FNC|      replace:: :abbr:`FNC     (Flip aNd Check)`
-.. |GA|       replace:: :abbr:`GA      (Gaussian Approximation)`
-.. |GALA|     replace:: :abbr:`GALA    (Gallager A)`
-.. |GPP|      replace:: :abbr:`GPP     (General Purpose Processor)`
-.. |GPPs|     replace:: :abbr:`GPPs    (General Purpose Processors)`
-.. |GPU|      replace:: :abbr:`GPU     (Graphics Processing Unit)`
-.. |GPUs|     replace:: :abbr:`GPUs    (Graphics Processing Units)`
-.. |GSL|      replace:: :abbr:`GSL     (GNU Scientific Library)`
-.. |GSM|      replace:: :abbr:`GSM     (Global System for Mobile Communications)`
-.. |GUI|      replace:: :abbr:`GUI     (Graphical User Interface)`
-.. |IFL|      replace:: :abbr:`IFL     (Inter Frame Level)`
-.. |IRA|      replace:: :abbr:`IRA     (Irregular Repeat Accumulate)`
-.. |ISA|      replace:: :abbr:`ISA     (Instruction Set Architecture)`
-.. |ISAs|     replace:: :abbr:`ISAs    (Instruction Set Architectures)`
-.. |JSON|     replace:: :abbr:`JSON    (JavaScript Object Notation)`
-.. |LDPC|     replace:: :abbr:`LDPC    (Low-Density Parity-Check)`
-.. |LLRs|     replace:: :abbr:`LLRs    (Log Likelihood Ratios)`
-.. |LLR|      replace:: :abbr:`LLR     (Log Likelihood Ratio)`
-.. |LSPA|     replace:: :abbr:`LSPA    (Logarithmic Sum-Product Algorithm)`
-.. |LTE|      replace:: :abbr:`LTE     (Long Term Evolution)`
-.. |LUT|      replace:: :abbr:`LUT     (Look Up Table)`
-.. |LUTs|     replace:: :abbr:`LUTs    (Look Up Tables)`
-.. |MAP|      replace:: :abbr:`MAP     (Maximum A Posteriori)`
-.. |MATLAB|   replace:: MATLAB
-.. |MI|       replace:: :abbr:`MI      (Mutual Information)`
-.. |MKL|      replace:: :abbr:`MKL     (Intel Math Kernel Library)`
-.. |ML|       replace:: :abbr:`ML      (Maximum Likelihood)`
-.. |modem|    replace:: :abbr:`modem   (modulator/demodulator)`
-.. |modems|   replace:: :abbr:`modems  (modulators/demodulators)`
-.. |MPI|      replace:: :abbr:`MPI     (Message Passing Interface)`
-.. |MS|       replace:: :abbr:`MS      (Min-Sum)`
-.. |MT 19937| replace:: :abbr:`MT 19937(Mersenne Twister 19937)`
-.. |NEON|     replace:: :abbr:`NEON    (ARM SIMD instructions)`
-.. |NMS|      replace:: :abbr:`NMS     (Normalized Min-Sum)`
-.. |OMS|      replace:: :abbr:`OMS     (Offset Min-Sum)`
-.. |ONMS|     replace:: :abbr:`ONMS    (Offset Normalized Min-Sum)`
-.. |OOK|      replace:: :abbr:`OOK     (On-Off Keying)`
-.. |OS|       replace:: :abbr:`OS      (Operating System)`
-.. |OSs|      replace:: :abbr:`OSs     (Operating Systems)`
-.. |PAM|      replace:: :abbr:`PAM     (Pulse-Amplitude Modulation)`
-.. |PDF|      replace:: :abbr:`PDF     (Probability Density Function)`
-.. |PRNG|     replace:: :abbr:`PRNG    (Pseudo Random Number Generator)`
-.. |PRNGs|    replace:: :abbr:`PRNGs   (Pseudo Random Number Generators)`
-.. |PSK|      replace:: :abbr:`PSK     (Phase-Shift Keying)`
-.. |PyBER|    replace:: PyBER
-.. |QAM|      replace:: :abbr:`QAM     (Quadrature Amplitude Modulation)`
-.. |QC|       replace:: :abbr:`QC      (Quasi-Cyclic)`
-.. |RA|       replace:: :abbr:`RA      (Repeat and Accumulate)`
-.. |release|  replace:: """ + release + """
-.. |ROP|      replace:: :abbr:`ROP     (Received Optical Power)`
-.. |RSC|      replace:: :abbr:`RSC     (Recursive Systematic Convolutional)`
-.. |RS|       replace:: :abbr:`RS      (Reed-Solomon)`
-.. |SCAN|     replace:: :abbr:`SCAN    (Soft CANcellation)`
-.. |SCL|      replace:: :abbr:`SCL     (Successive Cancellation List)`
-.. |SCMA|     replace:: :abbr:`SCMA    (Sparse Code Multiple Access)`
-.. |SC|       replace:: :abbr:`SC      (Successive Cancellation)`
-.. |SCo|      replace:: :abbr:`SC      (Self-Corrected)`
-.. |SDR|      replace:: :abbr:`SDR     (Software-Defined Radio)`
-.. |SF|       replace:: :abbr:`SF      (Scaling Factor)`
-.. |SFs|      replace:: :abbr:`SFs     (Scaling Factors)`
-.. |SIMD|     replace:: :abbr:`SIMD    (Single Instruction Multiple Data)`
-.. |SNRs|     replace:: :abbr:`SNRs    (Signal Noise Ratios)`
-.. |SNR|      replace:: :abbr:`SNR     (Signal Noise Ratio)`
-.. |SPC|      replace:: :abbr:`SPC     (Single Parity Check)`
-.. |SPA|      replace:: :abbr:`SPA     (Sum-Product Algorithm)`
-.. |SSE|      replace:: :abbr:`SSE     (Streaming SIMD Extensions)`
-.. |STD|      replace:: :abbr:`STD     (Standard)`
-.. |TPC|      replace:: :abbr:`TPC     (Turbo Product Code)`
-.. |TV|       replace:: :abbr:`TV      (Tal & Vardy)`
-.. |version|  replace:: """ + version + """
-.. |VN|       replace:: :abbr:`VN      (Variable Node)`
-.. |VNs|      replace:: :abbr:`VNs     (Variable Nodes)`
-.. |WBF|      replace:: :abbr:`WBF     (Weighted Bit Flipping)`
+.. |AFF3CT|    replace:: :abbr:`AFF3CT   (A Fast Forward Error Correction Toolbox!)`
+.. |AMS|       replace:: :abbr:`AMS      (Approximate Min-Star)`
+.. |API|       replace:: :abbr:`API      (Application Programming Interface)`
+.. |ARM|       replace:: :abbr:`ARM      (Advanced RISC (Reduced Instruction Set Computer) Machine)`
+.. |ARMv7|     replace:: :abbr:`ARMv7    (Advanced RISC (Reduced Instruction Set Computer) Machine Vesion 7)`
+.. |ARMv8|     replace:: :abbr:`ARMv8    (Advanced RISC (Reduced Instruction Set Computer) Machine Vesion 8)`
+.. |ARP|       replace:: :abbr:`ARP      (Almost Regular Permutation)`
+.. |ASCII|     replace:: :abbr:`ASCII    (American Standard Code for Information Interchange)`
+.. |A-SCL|     replace:: :abbr:`A-SCL    (Adaptive Successive Cancellation List)`
+.. |FA-SCL|    replace:: :abbr:`FA-SCL   (Fully Adaptive Successive Cancellation List)`
+.. |PA-SCL|    replace:: :abbr:`PA-SCL   (Partially Adaptive Successive Cancellation List)`
+.. |AVX|       replace:: :abbr:`AVX      (Advanced Vector Extensions)`
+.. |AVX2|      replace:: :abbr:`AVX2     (Advanced Vector Extensions 2)`
+.. |AVX-512|   replace:: :abbr:`AVX-512  (Advanced Vector Extensions 512-bit)`
+.. |AVX-512F|  replace:: :abbr:`AVX-512F (Advanced Vector Extensions 512-bit Foundation)`
+.. |AVX-512BW| replace:: :abbr:`AVX-512BW(Advanced Vector Extensions 512-bit Bytes-Words)`
+.. |AWGN|      replace:: :abbr:`AWGN     (Additive White Gaussian Noise)`
+.. |AZCW|      replace:: :abbr:`AZCW     (All Zero Code Word)`
+.. |AZCWs|     replace:: :abbr:`AZCWs    (All Zero Code Words)`
+.. |BCH|       replace:: :abbr:`BCH      (Bose, Ray-Chaudhuri and Hocquenghem)`
+.. |BCJR|      replace:: :abbr:`BCJR     (Bahl, Cocke, Jelinek and Raviv algorithm or Maximum A Posteriori (MAP))`
+.. |BEC|       replace:: :abbr:`BEC      (Binary Erasure Channel)`
+.. |BER|       replace:: :abbr:`BER      (Bit Error Rate)`
+.. |BF|        replace:: :abbr:`BF       (Bit Flipping)`
+.. |BFER|      replace:: :abbr:`BER/FER  (Bit and Frame Error Rate)`
+.. |BPSK|      replace:: :abbr:`BPSK     (Bit Phase-Shift Keying)`
+.. |BM|        replace:: :abbr:`BM       (Berlekamp-Massey)`
+.. |BP|        replace:: :abbr:`BP       (Belief Propagation)`
+.. |BP-F|      replace:: :abbr:`BP-F     (Belief Propagation with Flooding scheduling)`
+.. |BP-HL|     replace:: :abbr:`BP-HL    (Belief Propagation with Horizontal Layered scheduling)`
+.. |BP-P|      replace:: :abbr:`BP-P     (Belief Propagation Peeling)`
+.. |BP-VL|     replace:: :abbr:`BP-VL    (Belief Propagation with Vertical Layered scheduling)`
+.. |BPS|       replace:: :abbr:`BPS      (Bit Per Symbol)`
+.. |BSC|       replace:: :abbr:`BSC      (Binary Symmetric Channel)`
+.. |CA|        replace:: :abbr:`CA       (CRC Aided)`
+.. |CCSDS|     replace:: :abbr:`CCSDS    (Consultative Committee for Space Data Systems)`
+.. |CDF|       replace:: :abbr:`CDF      (Cumulative Distribution Function)`
+.. |CISC|      replace:: :abbr:`CISC     (Complex Instruction Set Computer)`
+.. |CN|        replace:: :abbr:`CN       (Check Node)`
+.. |CNs|       replace:: :abbr:`CNs      (Check Nodes)`
+.. |codec|     replace:: :abbr:`codec    (coder/decoder)`
+.. |codecs|    replace:: :abbr:`codecs   (coders/decodes)`
+.. |CP|        replace:: :abbr:`CP       (Chase-Pyndiah)`
+.. |CPM|       replace:: :abbr:`CPM      (Continuous Phase Modulation)`
+.. |CPU|       replace:: :abbr:`CPU      (Central Process Unit)`
+.. |CPUs|      replace:: :abbr:`CPUs     (Central Process Units)`
+.. |CRC|       replace:: :abbr:`CRC      (Cyclic Redundancy Check)`
+.. |CRCs|      replace:: :abbr:`CRCs     (Cyclic Redundancy Checks)`
+.. |CSV|       replace:: :abbr:`CSV      (Comma-Separated Values)`
+.. |DB|        replace:: :abbr:`DB       (Double Binary)`
+.. |DE|        replace:: :abbr:`DE       (Density Evolution)`
+.. |DVB-RCS1|  replace:: :abbr:`DVB-RCS1 (Digital Video Broadcasting - Return Channel via Satellite 1)`
+.. |DVB-RCS2|  replace:: :abbr:`DVB-RCS2 (Digital Video Broadcasting - Return Channel via Satellite 2)`
+.. |DVB-S1|    replace:: :abbr:`DVB-S1   (Digital Video Broadcasting - Satellite 1)`
+.. |DVB-S2|    replace:: :abbr:`DVB-S2   (Digital Video Broadcasting - Satellite 2)`
+.. |EP|        replace:: :abbr:`EP       (Event Probability)`
+.. |EXIT|      replace:: :abbr:`EXIT     (EXtrinsic Information Transfer chart)`
+.. |FER|       replace:: :abbr:`FER      (Frame Error Rate)`
+.. |FNC|       replace:: :abbr:`FNC      (Flip aNd Check)`
+.. |GA|        replace:: :abbr:`GA       (Gaussian Approximation)`
+.. |GALA|      replace:: :abbr:`GALA     (Gallager A)`
+.. |GNU|       replace:: :abbr:`GNU      (GNU's Not Unix!)`
+.. |GPP|       replace:: :abbr:`GPP      (General Purpose Processor)`
+.. |GPPs|      replace:: :abbr:`GPPs     (General Purpose Processors)`
+.. |GPU|       replace:: :abbr:`GPU      (Graphics Processing Unit)`
+.. |GPUs|      replace:: :abbr:`GPUs     (Graphics Processing Units)`
+.. |GSL|       replace:: :abbr:`GSL      (GNU Scientific Library)`
+.. |GSM|       replace:: :abbr:`GSM      (Global System for Mobile Communications)`
+.. |GUI|       replace:: :abbr:`GUI      (Graphical User Interface)`
+.. |icpc|      replace:: :abbr:`icpc     (Intel C++ Compiler)`
+.. |IEEE|      replace:: :abbr:`IEEE     (Institute of Electrical and Electronics Engineers)`
+.. |IFL|       replace:: :abbr:`IFL      (Inter Frame Level)`
+.. |IRA|       replace:: :abbr:`IRA      (Irregular Repeat Accumulate)`
+.. |ISA|       replace:: :abbr:`ISA      (Instruction Set Architecture)`
+.. |ISAs|      replace:: :abbr:`ISAs     (Instruction Set Architectures)`
+.. |JSON|      replace:: :abbr:`JSON     (JavaScript Object Notation)`
+.. |LDPC|      replace:: :abbr:`LDPC     (Low-Density Parity-Check)`
+.. |LLRs|      replace:: :abbr:`LLRs     (Log Likelihood Ratios)`
+.. |LLR|       replace:: :abbr:`LLR      (Log Likelihood Ratio)`
+.. |LSPA|      replace:: :abbr:`LSPA     (Logarithmic Sum-Product Algorithm)`
+.. |LTE|       replace:: :abbr:`LTE      (Long Term Evolution)`
+.. |LUT|       replace:: :abbr:`LUT      (Look Up Table)`
+.. |LUTs|      replace:: :abbr:`LUTs     (Look Up Tables)`
+.. |MAP|       replace:: :abbr:`MAP      (Maximum A Posteriori)`
+.. |MATLAB|    replace:: MATLAB
+.. |MI|        replace:: :abbr:`MI       (Mutual Information)`
+.. |MKL|       replace:: :abbr:`MKL      (Intel Math Kernel Library)`
+.. |ML|        replace:: :abbr:`ML       (Maximum Likelihood)`
+.. |modem|     replace:: :abbr:`modem    (modulator/demodulator)`
+.. |modems|    replace:: :abbr:`modems   (modulators/demodulators)`
+.. |MPI|       replace:: :abbr:`MPI      (Message Passing Interface)`
+.. |MS|        replace:: :abbr:`MS       (Min-Sum)`
+.. |MSVC|      replace:: :abbr:`MSVC     (Microsoft Visual C++)`
+.. |MT 19937|  replace:: :abbr:`MT 19937 (Mersenne Twister 19937)`
+.. |NEON|      replace:: :abbr:`NEON     (ARM SIMD instructions)`
+.. |NMS|       replace:: :abbr:`NMS      (Normalized Min-Sum)`
+.. |OMS|       replace:: :abbr:`OMS      (Offset Min-Sum)`
+.. |ONMS|      replace:: :abbr:`ONMS     (Offset Normalized Min-Sum)`
+.. |OOK|       replace:: :abbr:`OOK      (On-Off Keying)`
+.. |OS|        replace:: :abbr:`OS       (Operating System)`
+.. |OSs|       replace:: :abbr:`OSs      (Operating Systems)`
+.. |PAM|       replace:: :abbr:`PAM      (Pulse-Amplitude Modulation)`
+.. |PDF|       replace:: :abbr:`PDF      (Probability Density Function)`
+.. |PRNG|      replace:: :abbr:`PRNG     (Pseudo Random Number Generator)`
+.. |PRNGs|     replace:: :abbr:`PRNGs    (Pseudo Random Number Generators)`
+.. |PSK|       replace:: :abbr:`PSK      (Phase-Shift Keying)`
+.. |PyBER|     replace:: PyBER
+.. |QAM|       replace:: :abbr:`QAM      (Quadrature Amplitude Modulation)`
+.. |QC|        replace:: :abbr:`QC       (Quasi-Cyclic)`
+.. |RA|        replace:: :abbr:`RA       (Repeat and Accumulate)`
+.. |release|   replace:: """ + release + """
+.. |RISC|      replace:: :abbr:`RISC     (Reduced Instruction Set Computer)`
+.. |ROP|       replace:: :abbr:`ROP      (Received Optical Power)`
+.. |RSC|       replace:: :abbr:`RSC      (Recursive Systematic Convolutional)`
+.. |RS|        replace:: :abbr:`RS       (Reed-Solomon)`
+.. |SCAN|      replace:: :abbr:`SCAN     (Soft CANcellation)`
+.. |SCL|       replace:: :abbr:`SCL      (Successive Cancellation List)`
+.. |SCMA|      replace:: :abbr:`SCMA     (Sparse Code Multiple Access)`
+.. |SC|        replace:: :abbr:`SC       (Successive Cancellation)`
+.. |SCo|       replace:: :abbr:`SC       (Self-Corrected)`
+.. |SDR|       replace:: :abbr:`SDR      (Software-Defined Radio)`
+.. |SF|        replace:: :abbr:`SF       (Scaling Factor)`
+.. |SFs|       replace:: :abbr:`SFs      (Scaling Factors)`
+.. |SIMD|      replace:: :abbr:`SIMD     (Single Instruction Multiple Data)`
+.. |SNRs|      replace:: :abbr:`SNRs     (Signal Noise Ratios)`
+.. |SNR|       replace:: :abbr:`SNR      (Signal Noise Ratio)`
+.. |SPC|       replace:: :abbr:`SPC      (Single Parity Check)`
+.. |SPA|       replace:: :abbr:`SPA      (Sum-Product Algorithm)`
+.. |SSE|       replace:: :abbr:`SSE      (Streaming SIMD Extensions)`
+.. |SSE2|      replace:: :abbr:`SSE2     (Streaming SIMD Extensions 2)`
+.. |SSE3|      replace:: :abbr:`SSE3     (Streaming SIMD Extensions 3)`
+.. |SSSE3|     replace:: :abbr:`SSSE3    (Supplemental Streaming SIMD Extensions 3)`
+.. |SSE4.1|    replace:: :abbr:`SSE4.1   (Streaming SIMD Extensions 4.1)`
+.. |SSE4.2|    replace:: :abbr:`SSE4.2   (Streaming SIMD Extensions 4.2)`
+.. |STD|       replace:: :abbr:`STD      (Standard)`
+.. |TPC|       replace:: :abbr:`TPC      (Turbo Product Code)`
+.. |TV|        replace:: :abbr:`TV       (Tal & Vardy)`
+.. |version|   replace:: """ + version + """
+.. |VN|        replace:: :abbr:`VN       (Variable Node)`
+.. |VNs|       replace:: :abbr:`VNs      (Variable Nodes)`
+.. |WBF|       replace:: :abbr:`WBF      (Weighted Bit Flipping)`
 
 """
 
