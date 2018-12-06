@@ -748,6 +748,9 @@
 #ifndef MODEM_OOK_OPTICAL_HPP_
 #include <Module/Modem/OOK/Modem_OOK_optical.hpp>
 #endif
+#ifndef MODEM_OOK_OPTICAL_ROP_ESTIMATE_HPP_
+#include <Module/Modem/OOK/Modem_OOK_optical_rop_estimate.hpp>
+#endif
 #ifndef MODEM_PAM_HPP_
 #include <Module/Modem/PAM/Modem_PAM.hpp>
 #endif
