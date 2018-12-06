@@ -266,7 +266,7 @@ void Modem::parameters
 	if (this->type == "OOK")
 	{
 		std::string str_est = "known";
-		if (this->rop_est_bits >= 0)
+		if (this->rop_est_bits > 0)
 			str_est = "on " + std::to_string(this->rop_est_bits) + " bits";
 		headers[p].push_back(std::make_pair("ROP estimation", str_est));
 	}
