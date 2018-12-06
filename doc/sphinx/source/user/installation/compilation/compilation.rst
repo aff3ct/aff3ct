@@ -336,49 +336,58 @@ CMake has a built-in variable you can set to specify the compiler options:
 Many parts of the |AFF3CT| code use the |SIMD| parallelism and this type of
 instructions often requires additional compiler options to be enabled:
 
-+-------------------+-------------------+
-| Option            | Description       |
-+===================+===================+
-| ``-msse2``        | |comp-opt-sse2|   |
-+-------------------+-------------------+
-| ``-mssse3``       | |comp-opt-ssse3|  |
-+-------------------+-------------------+
-| ``-msse4.1``      | |comp-opt-sse41|  |
-+-------------------+-------------------+
-| ``-mavx``         | |comp-opt-avx|    |
-+-------------------+-------------------+
-| ``-mavx2``        | |comp-opt-avx2|   |
-+-------------------+-------------------+
-| ``-mfpu=neon``    | |comp-opt-neon|   |
-+-------------------+-------------------+
-| ``-march=native`` | |comp-opt-native| |
-+-------------------+-------------------+
++-------------------+---------------------+
+| Option            | Description         |
++===================+=====================+
+| ``-msse2``        | |comp-opt-sse2|     |
++-------------------+---------------------+
+| ``-mssse3``       | |comp-opt-ssse3|    |
++-------------------+---------------------+
+| ``-msse4.1``      | |comp-opt-sse41|    |
++-------------------+---------------------+
+| ``-mavx``         | |comp-opt-avx|      |
++-------------------+---------------------+
+| ``-mavx2``        | |comp-opt-avx2|     |
++-------------------+---------------------+
+| ``-mavx512f``     | |comp-opt-avx512f|  |
++-------------------+---------------------+
+| ``-mavx512bw``    | |comp-opt-avx512bw| |
++-------------------+---------------------+
+| ``-mfpu=neon``    | |comp-opt-neon|     |
++-------------------+---------------------+
+| ``-march=native`` | |comp-opt-native|   |
++-------------------+---------------------+
 
-.. |comp-opt-sse2| replace:: Enable the SSE2 set of instructions on x86 CPUs
+.. |comp-opt-sse2| replace:: Enable the |SSE2| set of instructions on x86 |CPUs|
    (128-bit vector size, required for 32-bit and 64-bit data).
-.. |comp-opt-ssse3| replace:: Enable the SSSE3 set of instructions on x86 CPUs
-   (128-bit vector size, specifically required for 32-bit data and the SC_FAST
-   decoder).
-.. |comp-opt-sse41| replace:: Enable the SSE4.1 set of instructions on x86 CPUs
-   (128-bit vector size, required for 8-bit and 16-bit data).
-.. |comp-opt-avx| replace:: Enable the AVX set of instructions on x86 CPUs
+.. |comp-opt-ssse3| replace:: Enable the |SSSE3| set of instructions on x86
+   |CPUs| (128-bit vector size, specifically required for 32-bit data and the
+   |SC| ``FAST`` decoder, see the :ref:`dec-polar-dec-type` and
+   :ref:`dec-polar-dec-implem` parameters).
+.. |comp-opt-sse41| replace:: Enable the |SSE4.1| set of instructions on x86
+   |CPUs| (128-bit vector size, required for 8-bit and 16-bit data).
+.. |comp-opt-avx| replace:: Enable the |AVX| set of instructions on x86 |CPUs|
    (256-bit vector size, required for 32-bit and 64-bit data).
-.. |comp-opt-avx2| replace:: Enable the AVX2 set of instructions on x86 CPUs
+.. |comp-opt-avx2| replace:: Enable the |AVX2| set of instructions on x86 |CPUs|
    (256-bit vector size, required for 8-bit and 16-bit data).
-.. |comp-opt-neon| replace:: Enable the NEON set of instructions on ARMv7 and
-   ARMv8 CPUs (128-bit vector size, required for 8-bit, 16-bit data and 32-bit
-   data).
+.. |comp-opt-avx512f| replace:: Enable the |AVX-512F| set of instructions on x86
+   |CPUs| (512-bit vector size, required for 32-bit and 64-bit data).
+.. |comp-opt-avx512bw| replace:: Enable the |AVX-512BW| set of instructions on
+   x86 |CPUs| (512-bit vector size, required for 8-bit and 16-bit data).
+.. |comp-opt-neon| replace:: Enable the |NEON| set of instructions on |ARMv7|
+   and |ARMv8| |CPUs| (128-bit vector size, required for 8-bit, 16-bit data and
+   32-bit data).
 .. |comp-opt-native| replace:: Let the compiler choose the best set of
    instructions available on the current architecture (it does not work for
-   ARMv7 architectures since the NEON instruction set is not IEEE 754
+   |ARMv7| architectures since the |NEON| instruction set is not |IEEE| 754
    compliant).
 
-.. warning:: Previous options are only valid for the GNU and the Clang compilers
-             but it exists similar options for the other compilers like
-             the Microsoft compiler (MSVC) or the Intel compiler (icpc).
+.. warning:: Previous options are only valid for the |GNU| and the Clang
+             compilers but it exists similar options for the other compilers
+             like the Microsoft compiler (|MSVC|) or the Intel compiler (icpc).
 
 .. danger:: Some |AFF3CT| routines require the floating-point operations to be
-            IEEE-compliant: numerical instabilities has been reported when
+            |IEEE|-compliant: numerical instabilities has been reported when
             compiling with the ``--ffast-math`` flag. Be aware that the
             ``-Ofast`` option is the combination of ``-O3`` and
             ``--ffast-math``. **We recommend to avoid the** ``--ffast-math``
