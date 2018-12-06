@@ -447,5 +447,7 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/conf/cde/")
 endif()
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/refs/BCH/")
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/refs/" DESTINATION share/aff3ct-${GIT_VERSION_RMV}/refs
-            FILES_MATCHING PATTERN "*.txt")
+            FILES_MATCHING PATTERN "*.txt"
+            PATTERN "readers"   EXCLUDE
+            PATTERN "untracked" EXCLUDE)
 endif()
