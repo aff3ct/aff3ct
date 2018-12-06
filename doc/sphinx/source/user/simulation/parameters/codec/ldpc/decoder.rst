@@ -128,7 +128,7 @@ corresponding available implementations.
 .. |K2| replace:: :math:`\checkmark^{**}`
 .. |K3| replace:: :math:`\checkmark^{**+}`
 
-:math:`^{*}/^{**}/^{***}`: compatible with the :ref:`dec-ldpc-dec-simd`
+:math:`^{*}/^{**}`: compatible with the :ref:`dec-ldpc-dec-simd`
 ``INTER`` parameter.
 
 :math:`^{**}`: require the C++ compiler to support the **dynamic memory
