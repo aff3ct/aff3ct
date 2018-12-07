@@ -127,7 +127,7 @@ void print_version()
 	std::string systemc = "off";
 #endif
 
-	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", "
+	std::cout << "aff3ct (" << os << prec << ", " << compiler << "-" << compiler_version << ", "
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
 	std::cout << "Compilation options:"                                                        << std::endl;
 	std::cout << "  * Precision: "         << precision                                        << std::endl;

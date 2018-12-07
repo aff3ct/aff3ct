@@ -33,27 +33,27 @@ square of this value.
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``TURBO_PROD`` ``AZCW`` ``COSET`` ``USER``
-   :Default: ``TURBO_PROD``
-   :Examples: ``--enc-type TURBO_PROD``
+   :Allowed values: ``TPC`` ``AZCW`` ``COSET`` ``USER``
+   :Default: ``TPC``
+   :Examples: ``--enc-type AZCW``
 
 Set the type of the encoder to use in the simulation.
 
 Description of the allowed values:
 
-+----------------+-----------------------------+
-| Value          | Description                 |
-+================+=============================+
-| ``TURBO_PROD`` | |enc-type_descr_turbo_prod| |
-+----------------+-----------------------------+
-| ``AZCW``       | |enc-type_descr_azcw|       |
-+----------------+-----------------------------+
-| ``COSET``      | |enc-type_descr_coset|      |
-+----------------+-----------------------------+
-| ``USER``       | |enc-type_descr_user|       |
-+----------------+-----------------------------+
++-----------+------------------------+
+| Value     | Description            |
++===========+========================+
+| ``TPC``   | |enc-type_descr_tpc|   |
++-----------+------------------------+
+| ``AZCW``  | |enc-type_descr_azcw|  |
++-----------+------------------------+
+| ``COSET`` | |enc-type_descr_coset| |
++-----------+------------------------+
+| ``USER``  | |enc-type_descr_user|  |
++-----------+------------------------+
 
-.. |enc-type_descr_turbo_prod| replace:: The |TPC| encoder.
+.. |enc-type_descr_tpc| replace:: The |TPC| encoder.
 .. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
    parameter.
 .. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`

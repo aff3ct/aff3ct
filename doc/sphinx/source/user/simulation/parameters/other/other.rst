@@ -20,7 +20,7 @@ The latter change in function of the selected simulation type and code.
    Usage: ./bin/aff3ct -C <text> [optional args...]
 
    Simulation parameter(s):
-   {R} --sim-cde-type, -C <text:including set={BCH|LDPC|POLAR|RA|REP|RS|RSC|RSC_DB|TURBO|TURBO_DB|TURBO_PROD|UNCODED}>
+   {R} --sim-cde-type, -C <text:including set={BCH|LDPC|POLAR|RA|REP|RS|RSC|RSC_DB|TPC|TURBO|TURBO_DB|UNCODED}>
          select the code type you want to use.
        --sim-no-colors
          disable the colors in the shell.
@@ -53,7 +53,7 @@ Print the help with in more the advanced ``{A}`` arguments.
    Usage: ./bin/aff3ct -C <text> [optional args...]
 
    Simulation parameter(s):
-   {R} --sim-cde-type, -C <text:including set={BCH|LDPC|POLAR|RA|REP|RS|RSC|RSC_DB|TURBO|TURBO_DB|TURBO_PROD|UNCODED}>
+   {R} --sim-cde-type, -C <text:including set={BCH|LDPC|POLAR|RA|REP|RS|RSC|RSC_DB|TPC|TURBO|TURBO_DB|UNCODED}>
          select the code type you want to use.
        --sim-no-colors
          disable the colors in the shell.

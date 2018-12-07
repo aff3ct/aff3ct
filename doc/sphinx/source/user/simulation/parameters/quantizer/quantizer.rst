@@ -110,27 +110,27 @@ Set the number of bits used in the fixed-point representation.
 .. table:: Default values of the total number of bits for the different codes.
    :align: center
 
-   +----------------+-----------------+
-   | Code           | Value           |
-   +================+=================+
-   | ``LDPC``       | 6               |
-   +----------------+-----------------+
-   | ``POLAR``      | 6               |
-   +----------------+-----------------+
-   | ``REP``        | 6               |
-   +----------------+-----------------+
-   | ``RSC``        | 6               |
-   +----------------+-----------------+
-   | ``RSC_DB``     | 6               |
-   +----------------+-----------------+
-   | ``TURBO``      | 6               |
-   +----------------+-----------------+
-   | ``TURBO_DB``   | 6               |
-   +----------------+-----------------+
-   | ``TURBO_PROD`` | |bit_turboprod| |
-   +----------------+-----------------+
+   +--------------+-----------+
+   | Code         | Value     |
+   +==============+===========+
+   | ``LDPC``     | 6         |
+   +--------------+-----------+
+   | ``POLAR``    | 6         |
+   +--------------+-----------+
+   | ``REP``      | 6         |
+   +--------------+-----------+
+   | ``RSC``      | 6         |
+   +--------------+-----------+
+   | ``RSC_DB``   | 6         |
+   +--------------+-----------+
+   | ``TPC``      | |bit_tpc| |
+   +--------------+-----------+
+   | ``TURBO``    | 6         |
+   +--------------+-----------+
+   | ``TURBO_DB`` | 6         |
+   +--------------+-----------+
 
-.. |bit_turboprod| replace:: 6 on 8-bit and 8 on 16-bit
+.. |bit_tpc| replace:: 6 on 8-bit and 8 on 16-bit
 
 .. _qnt-qnt-dec:
 
@@ -148,28 +148,28 @@ Set the position of the decimal point in the quantified representation.
 .. table:: Default values of the decimal point position for the different codes.
    :align: center
 
-   +----------------+-----------------+
-   | Code           | Value           |
-   +================+=================+
-   | ``LDPC``       | 2               |
-   +----------------+-----------------+
-   | ``POLAR``      | 1               |
-   +----------------+-----------------+
-   | ``REP``        | 2               |
-   +----------------+-----------------+
-   | ``RSC``        | |dec_RSC|       |
-   +----------------+-----------------+
-   | ``RSC_DB``     | |dec_RSCDB|     |
-   +----------------+-----------------+
-   | ``TURBO``      | |dec_turbo|     |
-   +----------------+-----------------+
-   | ``TURBO_DB``   | |dec_turbodb|   |
-   +----------------+-----------------+
-   | ``TURBO_PROD`` | |dec_turboprod| |
-   +----------------+-----------------+
+   +--------------+---------------+
+   | Code         | Value         |
+   +==============+===============+
+   | ``LDPC``     | 2             |
+   +--------------+---------------+
+   | ``POLAR``    | 1             |
+   +--------------+---------------+
+   | ``REP``      | 2             |
+   +--------------+---------------+
+   | ``RSC``      | |dec_rsc|     |
+   +--------------+---------------+
+   | ``RSC_DB``   | |dec_rscdb|   |
+   +--------------+---------------+
+   | ``TPC``      | |dec_tpc|     |
+   +--------------+---------------+
+   | ``TURBO``    | |dec_turbo|   |
+   +--------------+---------------+
+   | ``TURBO_DB`` | |dec_turbodb| |
+   +--------------+---------------+
 
-.. |dec_RSC|       replace:: 1 on 8-bit and 3 on 16-bit
-.. |dec_RSCDB|     replace:: 1 on 8-bit and 3 on 16-bit
-.. |dec_turbo|     replace:: 2 on 8-bit and 3 on 16-bit
-.. |dec_turbodb|   replace:: 2 on 8-bit and 3 on 16-bit
-.. |dec_turboprod| replace:: 2 on 8-bit and 3 on 16-bit
+.. |dec_rsc|     replace:: 1 on 8-bit and 3 on 16-bit
+.. |dec_rscdb|   replace:: 1 on 8-bit and 3 on 16-bit
+.. |dec_tpc|     replace:: 2 on 8-bit and 3 on 16-bit
+.. |dec_turbo|   replace:: 2 on 8-bit and 3 on 16-bit
+.. |dec_turbodb| replace:: 2 on 8-bit and 3 on 16-bit

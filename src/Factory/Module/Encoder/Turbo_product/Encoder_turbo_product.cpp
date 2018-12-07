@@ -16,7 +16,7 @@ Encoder_turbo_product::parameters
   sub(new Encoder_BCH::parameters(prefix+"-sub")),
   itl(new Interleaver::parameters("itl"))
 {
-	this->type = "TURBO_PROD";
+	this->type = "TPC";
 }
 
 Encoder_turbo_product::parameters* Encoder_turbo_product::parameters
@@ -72,7 +72,7 @@ void Encoder_turbo_product::parameters
 		args.erase({pi+"-fra", "F"});
 	}
 
-	tools::add_options(args.at({p+"-type"}), 0, "TURBO_PROD");
+	tools::add_options(args.at({p+"-type"}), 0, "TPC");
 
 	args.add(
 		{p+"-ext"},
@@ -143,7 +143,7 @@ module::Encoder_turbo_product<B>* Encoder_turbo_product::parameters
               module::Encoder_BCH<B> &enc_r,
               module::Encoder_BCH<B> &enc_c) const
 {
-	if (this->type == "TURBO_PROD") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c, n_frames);
+	if (this->type == "TPC") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c, n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
