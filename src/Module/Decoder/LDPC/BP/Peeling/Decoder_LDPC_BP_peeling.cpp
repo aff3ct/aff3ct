@@ -29,6 +29,7 @@ template <typename B, typename R>
 bool Decoder_LDPC_BP_peeling<B,R>
 ::_decode(const int frame_id)
 {
+	this->cur_syndrome_depth = 0;
 	auto links = this->H;
 
 	auto& CN = this->check_nodes;
@@ -92,7 +93,7 @@ bool Decoder_LDPC_BP_peeling<B,R>
 		if (this->enable_syndrome && (all_check_nodes_done || no_modification))
 		{
 			this->cur_syndrome_depth++;
-			if (this->cur_syndrome_depth == this->syndrome_depth)
+			if (this->cur_syndrome_depth >= this->syndrome_depth)
 				break;
 		}
 		else
