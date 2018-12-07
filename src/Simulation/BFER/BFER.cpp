@@ -245,7 +245,7 @@ void BFER<B,R,Q>
 					max = err_hist.get_hist_max();
 				else
 					max = params_BFER.mnt_er->err_hist;
-				err_hist.dump(file_err_hist, 0, max, 0, false, false, false, "; ");
+				err_hist.dump(file_err_hist, 0, max);
 			}
 		}
 
