@@ -11,6 +11,8 @@
    :Type: integer
    :Examples: ``--enc-cw-size 1024``
 
+**STRING**: |factory::Encoder::parameters::p+cw-size,N|
+
 Set the codeword size :math:`N`.
 
 .. note:: This parameter value is automatically deduced if the :math:`H` parity
@@ -25,6 +27,8 @@ Set the codeword size :math:`N`.
 
    :Type: integer
    :Examples: ``--enc-info-bits 512``
+
+**STRING**: |factory::Encoder::parameters::p+info-bits,K|
 
 Set the number of information bits :math:`K`.
 
@@ -47,6 +51,8 @@ Set the number of information bits :math:`K`.
                     ``LDPC_QC`` ``AZCW`` ``COSET`` ``USER``
    :Default: ``AZCW``
    :Examples: ``--enc-type AZCW``
+
+**STRING**: |factory::Encoder::parameters::p+type|
 
 Type of the encoder to use in the simulation.
 
@@ -110,6 +116,8 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--enc-g-path example/path/to/the/G_matrix.alist``
 
+**STRING**: |factory::Encoder_LDPC::parameters::p+g-path|
+
 Give the path to the :math:`G` generator matrix in an AList or |QC| formated
 file.
 
@@ -122,6 +130,8 @@ file.
    :Allowed values: ``IDENTITY`` ``LU_DEC``
    :Default: ``IDENTITY``
    :Examples: ``--enc-g-method IDENTITY``
+
+**STRING**: |factory::Encoder_LDPC::parameters::p+g-method|
 
 Specify the method used to build the :math:`G` generator matrix from the
 :math:`H` parity matrix when using the ``LDPC_H`` encoder.
@@ -154,6 +164,8 @@ Description of the allowed values:
    :Type: file
    :Rights: write only
    :Examples: ``--enc-g-save-path example/path/to/the/generated/G_matrix.alist``
+
+**STRING**: |factory::Encoder_LDPC::parameters::p+g-save-path|
 
 Set the file path where the :math:`G` generator matrix will be saved (AList
 file format). To use with the ``LDPC_H`` encoder.

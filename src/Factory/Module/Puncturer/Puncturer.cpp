@@ -30,28 +30,39 @@ void Puncturer::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Puncturer::parameters::";
 
-	args.add(
-		{p+"-info-bits", "K"},
+	// args.add(
+	// 	{p+"-info-bits", "K"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"useful number of bit transmitted (information bits).",
+	// 	tools::arg_rank::REQ);
+	add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra-size", "N"},
+	// args.add(
+	// 	{p+"-fra-size", "N"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"useful number of bit transmitted (information bits).",
+	// 	tools::arg_rank::REQ);
+	add_arg(args, p, class_name+"p+fra-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("NO")),
-		"code puncturer type.");
+	// args.add(
+	// 	{p+"-type"},
+	// 	tools::Text(tools::Including_set("NO")),
+	// 	"code puncturer type.");
+	add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("NO")));
 }
 
 void Puncturer::parameters

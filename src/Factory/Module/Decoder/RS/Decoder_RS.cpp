@@ -33,11 +33,14 @@ void Decoder_RS::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_RS::parameters::";
 
-	args.add(
-		{p+"-corr-pow", "T"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"correction power of the RS code.");
+	// args.add(
+	// 	{p+"-corr-pow", "T"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"correction power of the RS code.");
+	add_arg(args, p, class_name+"p+corr-pow",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});
 

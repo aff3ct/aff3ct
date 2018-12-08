@@ -373,4 +373,9 @@ rst_epilog = """
 
 """
 
+# parse the strings.rst file and add its contents to the 'rst_epilog' variable
+with open("../strings.rst", "r") as ins:
+    for line in ins:
+        rst_epilog = rst_epilog + line;
+
 # -- Extension configuration -------------------------------------------------

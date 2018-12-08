@@ -13,6 +13,8 @@ Turbo Puncturer parameters
    :Default: ``NO``
    :Examples: ``--pct-type NO``
 
+**STRING**: |factory::Puncturer::parameters::p+type|
+
 Select the puncturer type.
 
 Description of the allowed values:
@@ -38,6 +40,8 @@ Description of the allowed values:
 
    :Type: list of (list of (boolean:including set={0|1}):limited length [1;inf]):limited length [3;3], elements of same length
    :Examples: ``--pct-pattern "11,10,01"``
+
+**STRING**: |factory::Puncturer_turbo::parameters::p+pattern|
 
 Define the puncturing pattern. Considering the ``"11,10,01"`` puncturing
 pattern, the first sub-pattern ``11`` defines the emitted systematic bits,

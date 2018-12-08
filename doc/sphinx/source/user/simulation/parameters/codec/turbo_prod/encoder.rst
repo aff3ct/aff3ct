@@ -37,6 +37,8 @@ square of this value.
    :Default: ``TPC``
    :Examples: ``--enc-type AZCW``
 
+**STRING**: |factory::Encoder::parameters::p+type|
+
 Set the type of the encoder to use in the simulation.
 
 Description of the allowed values:
@@ -100,6 +102,8 @@ Description of the allowed values:
 
 ``--enc-ext``
 """""""""""""
+
+**STRING**: |factory::Encoder_turbo_product::parameters::p+ext|
 
 Extend the *sub-encoder* codeword with a parity bit in order to increase the
 distance of the code.

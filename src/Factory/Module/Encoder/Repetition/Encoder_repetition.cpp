@@ -29,13 +29,16 @@ void Encoder_repetition::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_repetition::parameters::";
 
 	tools::add_options(args.at({p+"-type"}), 0, "REP");
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"disable the buffered encoding.");
+	// args.add(
+	// 	{p+"-no-buff"},
+	// 	tools::None(),
+	// 	"disable the buffered encoding.");
+	add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 }
 
 void Encoder_repetition::parameters

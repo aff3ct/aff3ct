@@ -21,6 +21,8 @@ simulation of the noise point is over.
    :Default: ``STD``
    :Examples: ``--ter-type STD``
 
+**STRING**: |factory::Terminal::parameters::p+type|
+
 Select the terminal type (the format to display the results).
 
 Description of the allowed values:
@@ -45,6 +47,8 @@ Description of the allowed values:
    :Default: 500
    :Examples: ``--ter-freq 1``
 
+**STRING**: |factory::Terminal::parameters::p+freq|
+
 Set the display frequency (refresh time) of the intermediate results in
 milliseconds. Setting 0 disables the display of the intermediate results.
 
@@ -55,5 +59,7 @@ milliseconds. Setting 0 disables the display of the intermediate results.
 
 ``--ter-no``
 """"""""""""
+
+**STRING**: |factory::Terminal::parameters::p+no|
 
 Disable completely the terminal report.

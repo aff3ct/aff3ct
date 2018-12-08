@@ -2,6 +2,7 @@
 #include <iostream>
 #include <utility>
 #include <sstream>
+#include <fstream>
 #include <vector>
 #include <map>
 
@@ -17,6 +18,111 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Factory_name       = "Factory";
 const std::string aff3ct::factory::Factory_short_name = "Factory";
 const std::string aff3ct::factory::Factory_prefix     = "fac";
+
+std::string Filename = "../doc/sphinx/strings.rst";
+bool Found_file = false;
+std::map<std::string,std::string> Documentation;
+
+tools::Argument_tag extract_tags(const std::string &key, const std::string &prefix)
+{
+	auto key_cpy = key;
+	const std::string pcode = "p+";
+
+	while (key_cpy.find(pcode) != std::string::npos)
+		key_cpy.replace(key_cpy.find(pcode), pcode.length(), prefix + "-");
+	auto split_key = tools::split(key_cpy, ':');
+
+	if (split_key.size() == 0)
+	{
+		std::stringstream message;
+		message << "'split_key.size()' has to be higher than 0.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto tags = tools::split(split_key[split_key.size()-1], ',');
+
+	if (tags.size() == 0)
+	{
+		std::stringstream message;
+		message << "'tags.size()' has to be higher than 0.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	for (auto t = 0; t < tags.size(); t++)
+		if (tags[t].size() != 0 && tags[t][tags[t].size()-1] == '-')
+			tags[t].pop_back();
+
+	return tags;
+}
+
+void read_external_doc(const std::string filename)
+{
+	std::ifstream rst_file(filename);
+
+	if (rst_file.is_open())
+	{
+		Found_file = true;
+		std::string line, key, value;
+		while (std::getline(rst_file, line) && !rst_file.eof() && !rst_file.fail() && !rst_file.bad())
+		{
+			if (line.find(".. |") == 0)
+			{
+				if (key.length() && value.length())
+					Documentation[key] = value;
+
+				value.clear();
+
+				auto split_line = tools::split(line, '|');
+
+				if (split_line.size() < 2)
+				{
+					std::stringstream message;
+					message << "'split_line.size()' has to be equal or higher than 2 ('split_line.size()' = "
+					        << split_line.size() << ").";
+					throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+				}
+
+				key = split_line[1];
+			}
+			else if (line.find("..") != 0 && !std::all_of(line.begin(),line.end(),isspace))
+			{
+				if (line.find("   ") == 0) line.replace(0, 3, "");
+				if (value.length()) value += " ";
+				value += line;
+			}
+		}
+
+		if (key.length() && value.length())
+			Documentation[key] = value;
+	}
+}
+
+std::string get_external_doc(const std::string &key)
+{
+	if (Documentation.empty()) // then read the documentation...
+		read_external_doc(Filename);
+
+	if (Documentation.find(key) == Documentation.end())
+	{
+		if (!Found_file)
+			return  "Can't read the '" + Filename + "' file.";
+		else
+			return "This parameter is not documented";
+	}
+	else
+		return Documentation[key];
+}
+
+void aff3ct::factory::add_arg(      tools::Argument_map_info &args,
+	                          const std::string              &prefix,
+	                          const std::string              &key,
+	                                tools::Argument_type     *arg_t,
+	                          const tools::arg_rank           rank)
+{
+	const tools::Argument_tag tags = extract_tags(key, prefix);
+	const std::string doc = get_external_doc(key);
+	args.add(tags, arg_t, doc, rank);
+}
 
 Factory::parameters
 ::parameters(const std::string &name, const std::string &short_name, const std::string &prefix)

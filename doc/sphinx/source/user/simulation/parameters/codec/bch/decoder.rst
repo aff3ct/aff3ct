@@ -13,6 +13,8 @@
    :Default: ``ALGEBRAIC``
    :Examples: ``--dec-type ALGEBRAIC``
 
+**STRING**: |factory::Decoder::parameters::p+type,D|
+
 Select the algorithm you want to decode the codeword.
 
 Description of the allowed values:
@@ -41,6 +43,8 @@ Description of the allowed values:
    :Allowed values: ``FAST`` ``GENIUS`` ``STD``
    :Default: ``STD``
    :Examples: ``--dec-implem FAST``
+
+**STRING**: |factory::Decoder::parameters::p+implem|
 
 Select the implementation of the algorithm to decode.
 
@@ -87,6 +91,8 @@ Description of the allowed values:
    :Type: integer
    :Default: 5
    :Examples: ``--dec-corr-pow 18``
+
+**STRING**: |factory::Decoder_BCH::parameters::p+corr-pow,T|
 
 Set the correction power of the |BCH| decoder. This value corresponds to the
 number of errors that the decoder is able to correct.

@@ -14,6 +14,8 @@ This section describes the parameters common to all decoders.
    :Allowed values: ``CHASE`` ``ML``
    :Examples: ``--dec-type ML``
 
+**STRING**: |factory::Decoder::parameters::p+type,D|
+
 Select the decoder algorithm.
 
 Description of the allowed values:
@@ -37,6 +39,8 @@ Description of the allowed values:
    :Type: text
    :Allowed values: ``NAIVE`` ``STD``
    :Examples: ``--dec-implem STD``
+
+**STRING**: |factory::Decoder::parameters::p+implem|
 
 Select the implementation of the algorithm to decode.
 
@@ -62,12 +66,16 @@ Description of the allowed values:
    :Type: integer
    :Examples: ``--dec-flips 1``
 
+**STRING**: |factory::Decoder::parameters::p+flips|
+
 Set the maximum number of bit flips in the Chase decoder.
 
 .. _dec-common-dec-hamming:
 
 ``--dec-hamming``
 """""""""""""""""
+
+**STRING**: |factory::Decoder::parameters::p+hamming|
 
 .. _Hamming distance: https://en.wikipedia.org/wiki/Hamming_distance
 .. _Euclidean distance: https://en.wikipedia.org/wiki/Euclidean_distance

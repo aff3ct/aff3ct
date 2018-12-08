@@ -18,6 +18,8 @@ possible to enable debug and benchmarking tools.
    :Default: ``BFER``
    :Examples: ``--sim-type BFERI``
 
+**STRING**: |factory::Launcher::parameters::p+type|
+
 Select the type of simulation (or communication chain skeleton).
 
 Description of the allowed values:
@@ -61,6 +63,8 @@ Description of the allowed values:
    :Allowed values: ``BCH`` ``LDPC`` ``POLAR`` ``RA`` ``REP`` ``RS`` ``RSC``
                     ``RSC_DB`` ``TURBO`` ``TURBO_DB`` ``TURBO_PROD`` ``UNCODED``
    :Examples: ``-C BCH``
+
+**STRING**: |factory::Launcher::parameters::p+cde-type,C|
 
 Select the code type you want to simulate.
 
@@ -121,6 +125,8 @@ Description of the allowed values:
    :Allowed values: ``8`` ``16`` ``32`` ``64``
    :Examples: ``--sim-prec 8``
 
+**STRING**: |factory::Launcher::parameters::p+prec,p|
+
 Specify the representation of the real numbers in the receiver part of the
 chain. 64-bit and 32-bit precisions imply a floating-point representation of the
 real numbers. 16-bit and 8-bit imply a fixed-point representation of the real
@@ -154,6 +160,8 @@ Description of the allowed values:
    :Allowed values: ``EBN0`` ``ESN0`` ``EP`` ``ROP``
    :Default: ``EBN0``
    :Examples: ``-E EBN0``
+
+**STRING**: |factory::Noise::parameters::p+noise-type,E|
 
 Select the type of **noise** used to simulate.
 
@@ -200,6 +208,8 @@ where :math:`R` is the bit rate and :math:`bps` the number of bits per symbol.
    :Type: real number
    :Examples: ``-m 0.0``
 
+**STRING**: |factory::Noise::parameters::p+noise-min,m|
+
 Give the minimal noise energy value to simulate.
 
 .. attention:: This argument is another way to set the noise range to simulate.
@@ -214,6 +224,8 @@ Give the minimal noise energy value to simulate.
 
    :Type: real number
    :Examples: ``-M 5.0``
+
+**STRING**: |factory::Noise::parameters::p+noise-max,M|
 
 Give the maximal noise energy value to simulate.
 
@@ -230,6 +242,8 @@ Give the maximal noise energy value to simulate.
    :Default:  0.1
    :Examples: ``-s 1.0``
 
+**STRING**: |factory::Noise::parameters::p+noise-step,s|
+
 Give the noise energy step between each simulation iteration.
 
 .. attention:: This argument is another way to set the noise range to simulate.
@@ -244,6 +258,8 @@ Give the noise energy step between each simulation iteration.
    :Type: |MATLAB| style vector
    :Default:  step of 0.1
    :Examples: ``-R "0.5:1,1:0.05:1.2,1.21"``
+
+**STRING**: |factory::Noise::parameters::p+noise-range,R|
 
 Set the noise energy range to run in a |MATLAB| style vector.
 The above example will run the following noise points::
@@ -266,6 +282,8 @@ The above example will run the following noise points::
    :Rights: read only
    :Examples: ``--sim-pdf-path example/path/to/the/right/file``
 
+**STRING**: |factory::Noise::parameters::p+pdf-path|
+
 Give a file that contains |PDF| for different |ROP|. To use with the ``OPTICAL``
 :ref:`channel <chn-chn-type>`. It sets the noise range from the given ones
 in the file. However, it is overwritten by :ref:`sim-sim-noise-range` or limited
@@ -279,6 +297,8 @@ by :ref:`sim-sim-noise-min` and :ref:`sim-sim-noise-max` with a minimum step of
 
    :Type: text
    :Examples: ``--sim-meta "TITLE"``
+
+**STRING**: |factory::Simulation::parameters::p+meta|
 
 .. _INI: https://en.wikipedia.org/wiki/INI_file
 
@@ -294,6 +314,8 @@ the *command line* will be added.
 ``--sim-coded``
 """""""""""""""
 
+**STRING**: |factory::BFER::parameters::p+coded|
+
 Enable the coded monitoring. By default, in the simulation, the information bits
 are extracted from the decoded codewords and then they are compared to the
 initially generated information bits. When this parameter is enabled, the
@@ -308,6 +330,8 @@ decoded codewords are directly compared with the initially encoded codewords.
 
 ``--sim-coset, -c``
 """""""""""""""""""
+
+**STRING**: |factory::BFER::parameters::p+coset,c|
 
 Enable the *coset* approach.
 The *coset* approach is a "trick" to simulate |BFER| performance **without an
@@ -331,6 +355,8 @@ when a bit is 1, then the corresponding output bit is flipped.
 
 ``--sim-dbg``
 """""""""""""
+
+**STRING**: |factory::Simulation::parameters::p+dbg|
 
 Enable the debug mode. This print the input and the output frames after each
 task execution:
@@ -388,6 +414,8 @@ task execution:
 ``--sim-dbg-hex``
 """""""""""""""""
 
+**STRING**: |factory::Simulation::parameters::p+dbg-hex|
+
 Enable the debug mode and **print values in the hexadecimal format**.
 This mode is useful for having a fully accurate representation of floating
 numbers:
@@ -417,6 +445,8 @@ numbers:
    :Default: 0
    :Examples: ``--sim-dbg-limit 1``
 
+**STRING**: |factory::Simulation::parameters::p+dbg-limit,d|
+
 Enable the debug mode and **set the max number of elements** to display per
 frame. 0 value means there is no dump limit.
 
@@ -443,6 +473,8 @@ frame. 0 value means there is no dump limit.
    :Type: integer
    :Default: 0
    :Examples: ``--sim-dbg-fra 10``
+
+**STRING**: |factory::Simulation::parameters::p+dbg-fra|
 
 Enable the debug mode and **set the max number of frames** to display. 0 value
 means there is no frame limit. By default, a task works on one frame at a time.
@@ -490,6 +522,8 @@ of displayed frames on screen:
    :Default: 2
    :Examples: ``--sim-dbg-prec 1``
 
+**STRING**: |factory::Simulation::parameters::p+dbg-prec|
+
 Enable the debug mode and **set the decimal precision** (number of digits for
 the decimal part) of the floating-point elements:
 
@@ -513,6 +547,8 @@ the decimal part) of the floating-point elements:
 ``--sim-no-colors``
 """""""""""""""""""
 
+**STRING**: |factory::Launcher::parameters::p+no-colors|
+
 Disable the colors in the shell.
 
 .. _sim-sim-seed:
@@ -523,6 +559,8 @@ Disable the colors in the shell.
    :Type: integer
    :Default: 0
    :Examples: ``--sim-seed 42``
+
+**STRING**: |factory::Simulation::parameters::p+seed,S|
 
 Set the |PRNG| seed used in the Monte Carlo simulation.
 
@@ -537,6 +575,8 @@ Set the |PRNG| seed used in the Monte Carlo simulation.
 
 ``--sim-stats``
 """""""""""""""
+
+**STRING**: |factory::Simulation::parameters::p+stats|
 
 Display statistics for each task. Those statistics are shown after each
 simulated |SNR| point:
@@ -616,6 +656,8 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
    :Default: 0
    :Examples: ``--sim-threads 1``
 
+**STRING**: |factory::Simulation::parameters::p+threads,t|
+
 Specify the number of threads used in the simulation.
 The 0 default value will automatically set the number of threads to the hardware
 number of threads available on the machine.
@@ -636,6 +678,8 @@ number of threads available on the machine.
    :Default: 2
    :Examples: ``--sim-crc-start 1``
 
+**STRING**: |factory::BFER_ite::parameters::p+crc-start|
+
 Set the number of simulation iterations to proceed before starting the |CRC|
 checking in the turbo demodulation process. It reduces the number of false
 positive |CRC| detections.
@@ -652,6 +696,8 @@ positive |CRC| detections.
    :Default: 15
    :Examples: ``--sim-ite 10``
 
+**STRING**: |factory::BFER_ite::parameters::p+ite,I|
+
 Set the number of global iterations between the demodulator and the decoder.
 
 .. note:: Available only for ``BFERI`` simulation type (c.f. the
@@ -665,6 +711,8 @@ Set the number of global iterations between the demodulator and the decoder.
    :Type: integer
    :Default: 0
    :Examples: ``--sim-max-fra 1``
+
+**STRING**: |factory::Simulation::parameters::p+max-fra,n|
 
 Set the maximum number of frames to simulate per noise point. When a noise point
 reaches the maximum frame limit, the simulation is stopped. 0 value means no
@@ -684,6 +732,8 @@ limit.
    :Default: 0
    :Examples: ``--sim-stop-time 1``
 
+**STRING**: |factory::Simulation::parameters::p+stop-time|
+
 Set the maximum time (in seconds) to simulate per noise point. When a noise
 point reaches the maximum time limit, the simulation is stopped. 0 value means
 no limit.
@@ -698,6 +748,8 @@ no limit.
 ``--sim-crit-nostop`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
+**STRING**: |factory::Simulation::parameters::p+crit-nostop|
+
 Stop only the current noise point instead of the whole simulation.
 To combine with the :ref:`sim-sim-max-fra` and/or the :ref:`sim-sim-stop-time`
 parameters.
@@ -706,6 +758,8 @@ parameters.
 
 ``--sim-err-trk`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""
+
+**STRING**: |factory::BFER::parameters::p+err-trk|
 
 Track the erroneous frames. When an error is found, the information bits from
 the source, the codeword from the encoder and the applied noise from the channel
@@ -728,6 +782,8 @@ are dumped in several files.
 ``--sim-err-trk-rev`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
+**STRING**: |factory::BFER::parameters::p+err-trk-rev|
+
 Replay dumped frames. By default this option reverts the :ref:`sim-sim-err-trk`
 parameter by replaying the erroneous frames that have been dumped.
 
@@ -744,6 +800,8 @@ parameter by replaying the erroneous frames that have been dumped.
    :Rights: read/write
    :Default: :file:`error_tracker`
    :Examples: ``--sim-err-trk-path errors/err``
+
+**STRING**: |factory::BFER::parameters::p+err-trk-path|
 
 Specify the base path for the previous :ref:`sim-sim-err-trk` and
 :ref:`sim-sim-err-trk-rev` parameters. For the above example, the dumped or read
@@ -769,6 +827,8 @@ files will be:
    :Default: 0
    :Examples: ``--sim-err-trk-thold 1``
 
+**STRING**: |factory::BFER::parameters::p+err-trk-thold|
+
 Specify a threshold value in number of erroneous bits before which a frame is
 dumped.
 
@@ -776,6 +836,8 @@ dumped.
 
 ``--sim-no-legend`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""
+
+**STRING**: |factory::Launcher::parameters::p+no-legend|
 
 Disable the legend display (remove all the lines beginning by the ``#``
 character).
@@ -793,6 +855,8 @@ character).
    :Type: integer
    :Default: 1000
    :Examples: ``--sim-mpi-comm 1``
+
+**STRING**: |factory::Simulation::parameters::p+mpi-comm|
 
 Set the time interval (in milliseconds) between the |MPI| communications.
 Increase this interval will reduce the |MPI| communication overhead.

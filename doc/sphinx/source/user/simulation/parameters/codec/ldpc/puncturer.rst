@@ -11,6 +11,8 @@
    :Type: integer
    :Examples: ``--pct-fra-size 912``
 
+**STRING**: |factory::Puncturer::parameters::p+fra-size,N|
+
 Set the frame size :math:`N`. This is not necessarily the codeword size if a
 puncturing pattern is used.
 
@@ -23,6 +25,8 @@ puncturing pattern is used.
    :Allowed values: ``LDPC`` ``NO``
    :Default: ``LDPC``
    :Examples: ``--pct-type LDPC``
+
+**STRING**: |factory::Puncturer::parameters::p+type|
 
 Select the puncturer type.
 
@@ -46,6 +50,8 @@ Description of the allowed values:
 
    :Type: binary vector
    :Examples: ``--pct-pattern "1,1,1,0"``
+
+**STRING**: |factory::Puncturer_LDPC::parameters::p+pattern|
 
 Give the puncturing pattern following the |LDPC| code. The number :math:`P` of
 values given in this pattern must be as :math:`N_{cw} = P \times Z` where

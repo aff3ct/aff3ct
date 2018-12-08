@@ -13,6 +13,8 @@ Polar Encoder parameters
    :Default: ``POLAR``
    :Examples: ``--enc-type AZCW``
 
+**STRING**: |factory::Encoder::parameters::p+type|
+
 Type of the encoder to use in the simulation.
 
 Description of the allowed values:
@@ -42,6 +44,8 @@ Description of the allowed values:
 ``--enc-no-sys``
 """"""""""""""""
 
+**STRING**: |factory::Encoder_polar::parameters::p+no-sys|
+
 Enable non-systematic encoding. By default the encoding process is systematic.
 
 .. _enc-polar-enc-fb-gen-method:
@@ -52,6 +56,8 @@ Enable non-systematic encoding. By default the encoding process is systematic.
    :Type: text
    :Allowed values: ``FILE`` ``GA`` ``TV``
    :Examples: ``--enc-fb-gen-method FILE``
+
+**STRING**: |factory::Frozenbits_generator::parameters::p+gen-method|
 
 Select the frozen bits generation method.
 
@@ -86,6 +92,8 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--enc-fb-awgn-path example/path/to/the/right/place/``
 
+**STRING**: |factory::Frozenbits_generator::parameters::p+awgn-path|
+
 Set the path to a file or a directory containing the best channels to select
 the frozen bits.
 
@@ -119,6 +127,8 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
 
    :Type: real number
    :Examples: ``--enc-fb-sigma 1.0``
+
+**STRING**: |factory::Frozenbits_generator::parameters::p+sigma|
 
 Selects the noise variance :math:`\sigma` for which the frozen bits will be
 optimized. All the noise points in the simulation will use the same frozen bits

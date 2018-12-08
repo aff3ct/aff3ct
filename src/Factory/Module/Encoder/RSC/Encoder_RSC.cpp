@@ -33,25 +33,32 @@ void Encoder_RSC::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_RSC::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
 	tools::add_options(args.at({p+"-type"}), 0, "RSC");
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"disable the buffered encoding.");
+	// args.add(
+	// 	{p+"-no-buff"},
+	// 	tools::None(),
+	// 	"disable the buffered encoding.");
+	add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 
-	args.add(
-		{p+"-poly"},
-		tools::Text(),
-		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
+	// args.add(
+	// 	{p+"-poly"},
+	// 	tools::Text(),
+	// 	"the polynomials describing RSC code, should be of the form \"{A,B}\".");
+	add_arg(args, p, class_name+"p+poly",
+		tools::Text());
 
-	args.add(
-		{p+"-std"},
-		tools::Text(tools::Including_set("LTE", "CCSDS")),
-		"select a standard and set automatically some parameters (overwritten with user given arguments)");
+	// args.add(
+	// 	{p+"-std"},
+	// 	tools::Text(tools::Including_set("LTE", "CCSDS")),
+	// 	"select a standard and set automatically some parameters (overwritten with user given arguments)");
+	add_arg(args, p, class_name+"p+std",
+		tools::Text(tools::Including_set("LTE", "CCSDS")));
 }
 
 void Encoder_RSC::parameters

@@ -13,6 +13,8 @@
    :Default: ``BCJR``
    :Examples: ``--dec-type BCJR``
 
+**STRING**: |factory::Decoder::parameters::p+type,D|
+
 Select the decoder type.
 
 Description of the allowed values:
@@ -36,6 +38,8 @@ Description of the allowed values:
    :Allowed values: ``GENERIC`` ``DVB-RCS1`` ``DVB-RCS2``
    :Default: ``DVB-RCS1``
    :Examples: ``--dec-implem DVB-RCS1``
+
+**STRING**: |factory::Decoder::parameters::p+implem|
 
 Select the implementation of the algorithm to decode.
 
@@ -61,6 +65,8 @@ Description of the allowed values:
    :Type: text
    :Allowed values: ``MAXS`` ``MAXL`` ``MAX``
    :Examples: ``--dec-max MAX``
+
+**STRING**: |factory::Decoder_RSC_DB::parameters::p+max|
 
 Select the approximation of the :math:`\max^*` operator used in the trellis
 decoding.

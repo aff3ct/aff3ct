@@ -29,42 +29,58 @@ void Source::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Source::parameters::";
 
-	args.add(
-		{p+"-info-bits", "K"},
+	// args.add(
+	// 	{p+"-info-bits", "K"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"number of generated bits (information bits).",
+	// 	tools::arg_rank::REQ);
+	add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of generated bits (information bits).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("RAND", "AZCW", "USER")),
-		"method used to generate the codewords.");
+	// args.add(
+	// 	{p+"-type"},
+	// 	tools::Text(tools::Including_set("RAND", "AZCW", "USER")),
+	// 	"method used to generate the codewords.");
+	add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("RAND", "AZCW", "USER")));
 
-	args.add(
-		{p+"-implem"},
-		tools::Text(tools::Including_set("STD", "FAST")),
-		"select the implementation of the algorithm to generate the information bits.");
+	// args.add(
+	// 	{p+"-implem"},
+	// 	tools::Text(tools::Including_set("STD", "FAST")),
+	// 	"select the implementation of the algorithm to generate the information bits.");
+	add_arg(args, p, class_name+"p+implem",
+		tools::Text(tools::Including_set("STD", "FAST")));
 
-	args.add(
-		{p+"-path"},
-		tools::File(tools::openmode::read),
-		"path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\".");
+	// args.add(
+	// 	{p+"-path"},
+	// 	tools::File(tools::openmode::read),
+	// 	"path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\".");
+	add_arg(args, p, class_name+"p+path",
+		tools::File(tools::openmode::read));
 
-	args.add(
-		{p+"-start-idx"},
-		tools::Integer(tools::Positive()),
-		"Start idx to use in the USER type source.");
+	// args.add(
+	// 	{p+"-start-idx"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"Start idx to use in the USER type source.");
+	add_arg(args, p, class_name+"p+start-idx",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-seed", "S"},
-		tools::Integer(tools::Positive()),
-		"seed used to initialize the pseudo random generators.");
+	// args.add(
+	// 	{p+"-seed", "S"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"seed used to initialize the pseudo random generators.");
+	add_arg(args, p, class_name+"p+seed,S",
+		tools::Integer(tools::Positive()));
 }
 
 void Source::parameters

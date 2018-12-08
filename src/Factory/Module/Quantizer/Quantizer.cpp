@@ -31,42 +31,58 @@ void Quantizer::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Quantizer::parameters::";
 
-	args.add(
-		{p+"-size", "N"},
+	// args.add(
+	// 	{p+"-size", "N"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"number of real to quantize.",
+	// 	tools::arg_rank::REQ);
+	add_arg(args, p, class_name+"p+size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of real to quantize.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("POW2", "CUSTOM")),
-		"type of the quantizer to use in the simulation.");
+	// args.add(
+	// 	{p+"-type"},
+	// 	tools::Text(tools::Including_set("POW2", "CUSTOM")),
+	// 	"type of the quantizer to use in the simulation.");
+	add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("POW2", "CUSTOM")));
 
-	args.add(
-		{p+"-implem"},
-		tools::Text(tools::Including_set("STD", "FAST")),
-		"select the implementation of quantizer.");
+	// args.add(
+	// 	{p+"-implem"},
+	// 	tools::Text(tools::Including_set("STD", "FAST")),
+	// 	"select the implementation of quantizer.");
+	add_arg(args, p, class_name+"p+implem",
+		tools::Text(tools::Including_set("STD", "FAST")));
 
-	args.add(
-		{p+"-dec"},
-		tools::Integer(tools::Positive()),
-		"the position of the fixed point in the quantified representation.");
+	// args.add(
+	// 	{p+"-dec"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"the position of the fixed point in the quantified representation.");
+	add_arg(args, p, class_name+"p+dec",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-bits"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the number of bits used for the quantizer.");
+	// args.add(
+	// 	{p+"-bits"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"the number of bits used for the quantizer.");
+	add_arg(args, p, class_name+"p+bits",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-range"},
-		tools::Real(tools::Positive(), tools::Non_zero()),
-		"the min/max bound for the tricky quantizer.");
+	// args.add(
+	// 	{p+"-range"},
+	// 	tools::Real(tools::Positive(), tools::Non_zero()),
+	// 	"the min/max bound for the tricky quantizer.");
+	add_arg(args, p, class_name+"p+range",
+		tools::Real(tools::Positive(), tools::Non_zero()));
 }
 
 void Quantizer::parameters

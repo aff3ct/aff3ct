@@ -32,21 +32,26 @@ void Decoder_RSC_DB::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_RSC_DB::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
 	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
 
-	args.add(
-		{p+"-max"},
-		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
-		"the MAX implementation for the nodes.");
+	// args.add(
+	// 	{p+"-max"},
+	// 	tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
+	// 	"the MAX implementation for the nodes.");
+	add_arg(args, p, class_name+"p+max",
+		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")));
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"does not suppose a buffered encoding.");
+	// args.add(
+	// 	{p+"-no-buff"},
+	// 	tools::None(),
+	// 	"does not suppose a buffered encoding.");
+	add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 }
 
 void Decoder_RSC_DB::parameters

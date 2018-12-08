@@ -34,43 +34,60 @@ void Encoder::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder::parameters::";
 
-	args.add(
-		{p+"-info-bits", "K"},
+	// args.add(
+	// 	{p+"-info-bits", "K"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"useful number of bit transmitted (information bits).",
+	// 	tools::arg_rank::REQ);
+	add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-cw-size", "N"},
+	// args.add(
+	// 	{p+"-cw-size", "N"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"the codeword size.",
+	// 	tools::arg_rank::REQ);
+	add_arg(args, p, class_name+"p+cw-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("AZCW", "COSET", "USER")),
-		"type of the encoder to use in the simulation.");
+	// args.add(
+	// 	{p+"-type"},
+	// 	tools::Text(tools::Including_set("AZCW", "COSET", "USER")),
+	// 	"type of the encoder to use in the simulation.");
+	add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("AZCW", "COSET", "USER")));
 
-	args.add(
-		{p+"-path"},
-		tools::File(tools::openmode::read),
-		"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
+	// args.add(
+	// 	{p+"-path"},
+	// 	tools::File(tools::openmode::read),
+	// 	"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
+	add_arg(args, p, class_name+"p+path",
+		tools::File(tools::openmode::read));
 
-	args.add(
-		{p+"-start-idx"},
-		tools::Integer(tools::Positive()),
-		"Start idx to use in the USER type encoder.");
+	// args.add(
+	// 	{p+"-start-idx"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"Start idx to use in the USER type encoder.");
+	add_arg(args, p, class_name+"p+start-idx",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-seed", "S"},
-		tools::Integer(tools::Positive()),
-		"seed used to initialize the pseudo random generators.");
+	// args.add(
+	// 	{p+"-seed", "S"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"seed used to initialize the pseudo random generators.");
+	add_arg(args, p, class_name+"p+seed,S",
+		tools::Integer(tools::Positive()));
 }
 
 void Encoder::parameters

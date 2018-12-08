@@ -11,6 +11,8 @@
    :Type: integer
    :Examples: ``--enc-cw-size 127``
 
+**STRING**: |factory::Encoder::parameters::p+cw-size,N|
+
 Set the codeword size as an integer of the form :math:`N = 2^m – 1`, where
 :math:`m` is an integer from 3.
 
@@ -21,6 +23,8 @@ Set the codeword size as an integer of the form :math:`N = 2^m – 1`, where
 
    :Type: integer
    :Examples: ``--enc-info-bits 92``
+
+**STRING**: |factory::Encoder::parameters::p+info-bits,K|
 
 Give the useful number of bit transmitted (information bits).
 
@@ -36,6 +40,8 @@ is calculated automatically.
    :Allowed values: ``BCH`` ``AZCW`` ``COSET`` ``USER``
    :Default: ``BCH``
    :Examples: ``--enc-type AZCW``
+
+**STRING**: |factory::Encoder::parameters::p+type|
 
 Select the type of the encoder to use in the simulation.
 

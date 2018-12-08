@@ -87,48 +87,68 @@ void BFER::parameters
 	Simulation::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::BFER::parameters::";
 
-	args.add(
-		{p+"-coset", "c"},
-		tools::None(),
-		"enable the coset approach.");
+	// args.add(
+	// 	{p+"-coset", "c"},
+	// 	tools::None(),
+	// 	"enable the coset approach.");
+	add_arg(args, p, class_name+"p+coset,c",
+		tools::None());
 
-	args.add(
-		{p+"-err-trk"},
+	// args.add(
+	// 	{p+"-err-trk"},
+	// 	tools::None(),
+	// 	"enable the tracking of the bad frames (by default the frames are stored in "
+	//  "the current folder).",
+	// 	tools::arg_rank::ADV);
+	add_arg(args, p, class_name+"p+err-trk",
 		tools::None(),
-		"enable the tracking of the bad frames (by default the frames are stored in the current folder).",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-err-trk-rev"},
+	// args.add(
+	// 	{p+"-err-trk-rev"},
+	// 	tools::None(),
+	// 	"automatically replay the saved frames.",
+	// 	tools::arg_rank::ADV);
+	add_arg(args, p, class_name+"p+err-trk-rev",
 		tools::None(),
-		"automatically replay the saved frames.",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-err-trk-path"},
+	// args.add(
+	// 	{p+"-err-trk-path"},
+	// 	tools::File(tools::openmode::read_write),
+	// 	"base path for the files where the bad frames will be stored or read.",
+	// 	tools::arg_rank::ADV);
+	add_arg(args, p, class_name+"p+err-trk-path",
 		tools::File(tools::openmode::read_write),
-		"base path for the files where the bad frames will be stored or read.",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-err-trk-thold"},
+	// args.add(
+	// 	{p+"-err-trk-thold"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"dump only frames with a bit error count above or equal to this threshold.",
+	// 	tools::arg_rank::ADV);
+	add_arg(args, p, class_name+"p+err-trk-thold",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"dump only frames with a bit error count above or equal to this threshold.",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-coded"},
-		tools::None(),
-		"enable the coded monitoring (extends the monitored bits to the entire codeword).");
-
+	// args.add(
+	// 	{p+"-coded"},
+	// 	tools::None(),
+	// 	"enable the coded monitoring (extends the monitored bits to the entire ""
+	//  "codeword).");
+	add_arg(args, p, class_name+"p+coded",
+		tools::None());
 
 	auto pmon = mnt_er->get_prefix();
 
-	args.add(
-		{pmon+"-mutinfo"},
-		tools::None(),
-		"allow the computation of the mutual information.");
+	// args.add(
+	// 	{pmon+"-mutinfo"},
+	// 	tools::None(),
+	// 	"allow the computation of the mutual information.");
+	add_arg(args, pmon, class_name+"p+mutinfo",
+		tools::None());
 }
 
 void BFER::parameters

@@ -44,6 +44,8 @@ Parameter :math:`alpha` is set with the argument :ref:`dec-turbo_prod-dec-alpha`
    :Default: ``CP``
    :Examples: ``--dec-type CP``
 
+**STRING**: |factory::Decoder::parameters::p+type,D|
+
 Select the algorithm to decode each column and row of the |TPC|.
 
 Description of the allowed values:
@@ -124,6 +126,8 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem STD``
 
+**STRING**: |factory::Decoder::parameters::p+implem|
+
 Select the implementation of the algorithm to decode.
 
 Description of the allowed values:
@@ -145,6 +149,8 @@ Description of the allowed values:
    :Default: 4
    :Examples: ``--dec-ite 8``
 
+**STRING**: |factory::Decoder_turbo_product::parameters::p+ite,i|
+
 Set the number of iterations in the turbo.
 
 .. _dec-turbo_prod-dec-alpha:
@@ -155,6 +161,8 @@ Set the number of iterations in the turbo.
    :Type: list of real numbers
    :Default: all at 0.5
    :Examples: ``--dec-alpha "0.1,0.1,0.2,0.25,0.3,0.35,.5,.5,1.2"``
+
+**STRING**: |factory::Decoder_turbo_product::parameters::p+alpha|
 
 Give the *weighting factor* alpha, one by half iteration
 (so twice more than the number of iterations). The first one is for the first
@@ -172,6 +180,8 @@ Conversely, if there are too many, the surplus is truncated.
 
    :Type: list of real numbers
    :Examples: ``--dec-beta "0.1,0.1,0.2,0.25,0.3,0.35,.5,.5,1.2"``
+
+**STRING**: |factory::Decoder_turbo_product::parameters::p+beta|
 
 Give the *reliability factor* beta, one by half iteration
 (so twice more than the number of iterations). The first one is for the first
@@ -194,6 +204,8 @@ If not given, then beta is dynamically computed as described in
    :Default: 0
    :Examples: ``--dec-c 3``
 
+**STRING**: |factory::Decoder_turbo_product::parameters::p+c|
+
 Set the *number of competitors*. A value of 0 means that the latter is set
 to the number of test vectors, 1 means only the decided word.
 
@@ -206,6 +218,8 @@ to the number of test vectors, 1 means only the decided word.
    :Default: 2
    :Examples: ``--dec-p 1``
 
+**STRING**: |factory::Decoder_turbo_product::parameters::p+p|
+
 Set the number of *least reliable positions*.
 
 .. _dec-turbo_prod-dec-t:
@@ -216,6 +230,8 @@ Set the number of *least reliable positions*.
    :Type: integer
    :Default: 0
    :Examples: ``--dec-t 1``
+
+**STRING**: |factory::Decoder_turbo_product::parameters::p+t|
 
 Set the *number of test vectors*. A value of 0 means equal to :math:`2^p` where
 :math:`p` is the number of least reliable positions.
@@ -228,6 +244,8 @@ Set the *number of test vectors*. A value of 0 means equal to :math:`2^p` where
    :Type: list of real numbers
    :Default: ``"1,1,1,1,0"``
    :Examples: ``--dec-cp-coef "0,0.25,0,0,3"``
+
+**STRING**: |factory::Decoder_turbo_product::parameters::p+cp-coef|
 
 Give the 5 ``CP`` constant coefficients :math:`a, b, c, d, e` as described in
 :ref:`dec-turbo_prod-dec-type`.
@@ -262,7 +280,6 @@ Description of the allowed values:
    parameter.
 .. |dec-sub-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
    parameter.
-
 
 .. _dec-turbo_prod-dec-sub-corr-pow:
 

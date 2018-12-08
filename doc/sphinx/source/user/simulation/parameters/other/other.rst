@@ -8,6 +8,8 @@ Other parameters
 ``--help, -h``
 """"""""""""""
 
+**STRING**: |factory::Launcher::parameters::help,h|
+
 Print the help with all the required ``{R}`` and optional arguments.
 The latter change in function of the selected simulation type and code.
 
@@ -41,6 +43,8 @@ The latter change in function of the selected simulation type and code.
 
 ``--Help, -H``
 """"""""""""""
+
+**STRING**: |factory::Launcher::parameters::Help,H|
 
 Print the help with in more the advanced ``{A}`` arguments.
 
@@ -79,6 +83,8 @@ Print the help with in more the advanced ``{A}`` arguments.
 ``--version, -v``
 """""""""""""""""
 
+**STRING**: |factory::Launcher::parameters::version,v|
+
 Print informations about the version of the source code and compilation options.
 
 .. code-block:: bash
@@ -97,6 +103,8 @@ Print informations about the version of the source code and compilation options.
 ``--except-a2l`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""
 
+**STRING**: |factory::Launcher::parameters::except-a2l|
+
 Enhance the backtrace when displaying exception. This change the program
 addresses into filenames and lines. It may take some seconds to do this work.
 
@@ -108,5 +116,7 @@ addresses into filenames and lines. It may take some seconds to do this work.
 
 ``--except-no-bt`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""""
+
+**STRING**: |factory::Launcher::parameters::except-no-bt|
 
 Disable the print of backtrace when displaying exception.

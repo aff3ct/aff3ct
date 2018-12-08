@@ -30,13 +30,16 @@ void Encoder_polar::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_polar::parameters::";
 
 	tools::add_options(args.at({p+"-type"}), 0, "POLAR");
 
-	args.add(
-		{p+"-no-sys"},
-		tools::None(),
-		"disable the systematic encoding.");
+	// args.add(
+	// 	{p+"-no-sys"},
+	// 	tools::None(),
+	// 	"disable the systematic encoding.");
+	add_arg(args, p, class_name+"p+no-sys",
+		tools::None());
 }
 
 void Encoder_polar::parameters

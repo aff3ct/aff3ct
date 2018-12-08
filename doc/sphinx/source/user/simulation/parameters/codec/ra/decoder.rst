@@ -13,6 +13,8 @@
    :Default: ``RA``
    :Examples: ``--dec-type CHASE``
 
+**STRING**: |factory::Decoder::parameters::p+type,D|
+
 Select the decoder algorithm.
 
 Description of the allowed values:
@@ -44,6 +46,8 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem STD``
 
+**STRING**: |factory::Decoder::parameters::p+implem|
+
 Select the algorithm implementation.
 
 Description of the allowed values:
@@ -63,5 +67,7 @@ Description of the allowed values:
 
    :Type: integer
    :Examples: ``--dec-ite 1``
+
+**STRING**: |factory::Decoder_RA::parameters::p+ite,i|
 
 Set the number of iterations to perform in the decoder.

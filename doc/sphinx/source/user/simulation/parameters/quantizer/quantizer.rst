@@ -21,6 +21,8 @@ fixed-point representation (cf. the :ref:`sim-sim-prec` parameter).
    :Default: ``POW2``
    :Examples: ``--qnt-type CUSTOM``
 
+**STRING**: |factory::Quantizer::parameters::p+type|
+
 Select the quantizer type.
 
 Description of the allowed values (:math:`Y_i` stands for a floating-point
@@ -64,6 +66,8 @@ the :ref:`qnt-qnt-range`, :ref:`qnt-qnt-bits` and :ref:`qnt-qnt-dec` parameters.
    :Default: ``STD``
    :Examples: ``--qnt-implem FAST``
 
+**STRING**: |factory::Quantizer::parameters::p+implem|
+
 Select the implementation of the quantizer.
 
 Description of the allowed values:
@@ -88,6 +92,8 @@ Description of the allowed values:
    :Type: real number
    :Examples: ``--qnt-range 1.0``
 
+**STRING**: |factory::Quantizer::parameters::p+range|
+
 The min/max bounds for the ``CUSTOM`` quantizer.
 
 .. _qnt-qnt-bits:
@@ -98,6 +104,8 @@ The min/max bounds for the ``CUSTOM`` quantizer.
    :Type: integer
    :Default: 8 else see :numref:`bits_default_table`
    :Examples: ``--qnt-bits 1``
+
+**STRING**: |factory::Quantizer::parameters::p+bits|
 
 Set the number of bits used in the fixed-point representation.
 
@@ -140,6 +148,8 @@ Set the number of bits used in the fixed-point representation.
    :Type: integer
    :Default: 3 else see :numref:`dec_default_table`
    :Examples: ``--qnt-dec 1``
+
+**STRING**: |factory::Quantizer::parameters::p+dec|
 
 Set the position of the decimal point in the quantified representation.
 

@@ -23,6 +23,8 @@ errors to an acceptable rate).
    :Default: ``AWGN``
    :Examples: ``--chn-type AWGN``
 
+**STRING**: |factory::Channel::parameters::p+type|
+
 Select the channel type.
 
 Description of the allowed values:
@@ -153,6 +155,8 @@ for a bit transmitted at 1.
    :Default: ``STD``
    :Examples: ``--chn-implem FAST``
 
+**STRING**: |factory::Channel::parameters::p+implem|
+
 Select the implementation of the algorithm to generate the noise.
 
 Description of the allowed values:
@@ -253,6 +257,8 @@ experiments is an *Intel(R) Xeon(R) CPU E3-1270 v5 @ 3.60GHz* 8 threads |CPU|.
    :Default: 1
    :Examples: ``--chn-gain-occur 10``
 
+**STRING**: |factory::Channel::parameters::p+gain-occur|
+
 Give the number of times a gain is used on consecutive symbols. It is used in
 the ``RAYLEIGH_USER`` channel while applying gains read from the given file.
 
@@ -264,6 +270,8 @@ the ``RAYLEIGH_USER`` channel while applying gains read from the given file.
    :Type: file
    :Rights: read
    :Examples: ``--chn-path example/path/to/the/right/file``
+
+**STRING**: |factory::Channel::parameters::p+path|
 
 Give the path to a file containing the noise. The expected type of noise vary
 depending of the channel type (see the :ref:`chn-chn-type` parameter for more

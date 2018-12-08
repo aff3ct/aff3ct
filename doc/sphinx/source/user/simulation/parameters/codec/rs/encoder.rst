@@ -11,6 +11,8 @@
    :Type: integer
    :Examples: ``--enc-cw-size 127``
 
+**STRING**: |factory::Encoder::parameters::p+cw-size,N|
+
 Set the symbols codeword size as an integer of the form :math:`N = 2^m – 1`,
 where :math:`m` is an integer from 3 that represents also the number of bits per
 symbol. Thus, the binary codeword size is :math:`N \times m`.
@@ -22,6 +24,8 @@ symbol. Thus, the binary codeword size is :math:`N \times m`.
 
    :Type: integer
    :Examples: ``--enc-info-bits 1``
+
+**STRING**: |factory::Encoder::parameters::p+info-bits,K|
 
 Give the useful number of symbols transmitted.
 
@@ -38,6 +42,8 @@ is calculated automatically with the formula :math:`K = N - 2.T`.
    :Allowed values: ``RS`` ``AZCW`` ``COSET`` ``USER``
    :Default: ``RS``
    :Examples: ``--enc-type AZCW``
+
+**STRING**: |factory::Encoder::parameters::p+type|
 
 Type of the encoder to use in the simulation.
 

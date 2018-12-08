@@ -36,47 +36,66 @@ void Interleaver_core::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Interleaver_core::parameters::";
 
-	args.add(
-		{p+"-size"},
+	// args.add(
+	// 	{p+"-size"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"number of symbols to interleave.",
+	// 	tools::arg_rank::REQ);
+	add_arg(args, p, class_name+"p+size",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of symbols to interleave.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL", "ROW_COL", "COL_ROW", "NO")),
-		"type of the interleaver to use in the simulation.");
+	// args.add(
+	// 	{p+"-type"},
+	// 	tools::Text(tools::Including_set("LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL", "ROW_COL", "COL_ROW", "NO")),
+	// 	"type of the interleaver to use in the simulation.");
+	add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL",
+		                                 "ROW_COL", "COL_ROW", "NO")));
 
-	args.add(
-		{p+"-path"},
-		tools::File(tools::openmode::read),
-		"specify the path to the interleaver file (to use with \"--itl-type USER\").");
+	// args.add(
+	// 	{p+"-path"},
+	// 	tools::File(tools::openmode::read),
+	// 	"specify the path to the interleaver file (to use with \"--itl-type USER\").");
+	add_arg(args, p, class_name+"p+path",
+		tools::File(tools::openmode::read));
 
-	args.add(
-		{p+"-cols"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver.");
+	// args.add(
+	// 	{p+"-cols"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver.");
+	add_arg(args, p, class_name+"p+cols",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-uni"},
-		tools::None(),
-		"enable the regeneration of the interleaver at each new frame.");
+	// args.add(
+	// 	{p+"-uni"},
+	// 	tools::None(),
+	// 	"enable the regeneration of the interleaver at each new frame.");
+	add_arg(args, p, class_name+"p+uni",
+		tools::None());
 
-	args.add(
-		{p+"-seed", "S"},
-		tools::Integer(tools::Positive()),
-		"seed used to initialize the pseudo random generators.");
+	// args.add(
+	// 	{p+"-seed", "S"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"seed used to initialize the pseudo random generators.");
+	add_arg(args, p, class_name+"p+seed,S",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-read-order"},
-		tools::Text(tools::Including_set("TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT")),
-		"Read order of the COL_ROW and ROW_COL interleavers.");
+	// args.add(
+	// 	{p+"-read-order"},
+	// 	tools::Text(tools::Including_set("TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT")),
+	// 	"Read order of the COL_ROW and ROW_COL interleavers.");
+	add_arg(args, p, class_name+"p+read-order",
+		tools::Text(tools::Including_set("TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT")));
 
 }
 

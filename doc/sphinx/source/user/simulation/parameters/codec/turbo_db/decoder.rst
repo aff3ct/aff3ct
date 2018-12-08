@@ -13,6 +13,8 @@ Turbo |DB| Decoder parameters
    :Default: ``TURBO_DB``
    :Examples: ``--dec-type CHASE``
 
+**STRING**: |factory::Decoder::parameters::p+type,D|
+
 Select the decoder algorithm.
 
 Description of the allowed values:
@@ -42,6 +44,8 @@ Description of the allowed values:
    :Allowed values: ``STD``
    :Default: ``STD``
    :Examples: ``--dec-implem STD``
+
+**STRING**: |factory::Decoder::parameters::p+implem|
 
 Select the decoder implementation.
 
@@ -78,6 +82,8 @@ Please refer to the |RSC| |DB| :ref:`dec-rsc_db-dec-implem` parameter.
    :Default: ``2``
    :Examples: ``--dec-fnc-crc-ite 1``
 
+**STRING**: |factory::Decoder_turbo_DB::parameters::p+crc-start|
+
 Set the first iteration to start the |CRC| checking.
 
 .. note:: This parameter requires the Turbo code to be concatenated with a |CRC|
@@ -87,6 +93,8 @@ Set the first iteration to start the |CRC| checking.
 
 ``--dec-fnc``
 """""""""""""
+
+**STRING**: |factory::Flip_and_check::parameters::p+|
 
 Enable the |FNC| post processing technique from :cite:`Tonnellier2016a`.
 
@@ -102,6 +110,8 @@ Enable the |FNC| post processing technique from :cite:`Tonnellier2016a`.
    :Default: ``3``
    :Examples: ``--dec-fnc-ite-m 2``
 
+**STRING**: |factory::Flip_and_check::parameters::p+ite-m|
+
 Set the first iteration at which the |FNC| is used (c.f the
 :ref:`dec-turbo_db-dec-fnc` parameter).
 
@@ -113,6 +123,8 @@ Set the first iteration at which the |FNC| is used (c.f the
    :Type: integer
    :Default: ``10``
    :Examples: ``--dec-fnc-ite-M 6``
+
+**STRING**: |factory::Flip_and_check::parameters::p+ite-M|
 
 Set the last iteration at which the |FNC| is used (c.f the
 :ref:`dec-turbo_db-dec-fnc` parameter).
@@ -126,6 +138,8 @@ Set the last iteration at which the |FNC| is used (c.f the
    :Default: ``1``
    :Examples: ``--dec-fnc-ite-s 2``
 
+**STRING**: |factory::Flip_and_check::parameters::p+ite-s|
+
 Set the iteration step for the |FNC| technique (c.f the
 :ref:`dec-turbo_db-dec-fnc` parameter).
 
@@ -138,6 +152,8 @@ Set the iteration step for the |FNC| technique (c.f the
    :Default: ``10``
    :Examples: ``--dec-fnc-q 6``
 
+**STRING**: |factory::Flip_and_check::parameters::p+q|
+
 Set the search space for the |FNC| technique (c.f the
 :ref:`dec-turbo_db-dec-fnc` parameter).
 
@@ -149,6 +165,8 @@ Set the search space for the |FNC| technique (c.f the
    :Type: integer
    :Default: ``6``
    :Examples: ``--dec-ite 8``
+
+**STRING**: |factory::Decoder_turbo_DB::parameters::p+ite,i|
 
 Set the maximal number of iterations in the Turbo decoder. If the Turbo code
 is concatenated with a |CRC| and if the |CRC| is checked, the decoder can stop
@@ -163,6 +181,8 @@ before making all the iterations.
    :Allowed values: ``ADAPTIVE`` ``ARRAY`` ``CST`` ``LTE`` ``LTE_VEC``
    :Examples: | ``--dec-sf-type ADAPTIVE``
               | ``--dec-sf-type CST 0.5``
+
+**STRING**: |factory::Scaling_factor::parameters::p+type|
 
 Select a |SF| to be applied to the extrinsic values after each half iteration
 :cite:`Vogt2000`. This is especially useful with the max-log-|MAP| sub-decoders

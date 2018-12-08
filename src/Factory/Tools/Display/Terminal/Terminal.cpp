@@ -33,21 +33,28 @@ void Terminal::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Terminal::parameters::";
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("STD")),
-		"type of the terminal to use to display results.");
+	// args.add(
+	// 	{p+"-type"},
+	// 	tools::Text(tools::Including_set("STD")),
+	// 	"type of the terminal to use to display results.");
+	add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("STD")));
 
-	args.add(
-		{p+"-no"},
-		tools::None(),
-		"disable reporting for each iteration.");
+	// args.add(
+	// 	{p+"-no"},
+	// 	tools::None(),
+	// 	"disable reporting for each iteration.");
+	add_arg(args, p, class_name+"p+no",
+		tools::None());
 
-	args.add(
-		{p+"-freq"},
-		tools::Integer(tools::Positive()),
-		"display frequency in ms (refresh time step for each iteration, 0 = disable display refresh).");
+	// args.add(
+	// 	{p+"-freq"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"display frequency in ms (refresh time step for each iteration, 0 = disable display refresh).");
+	add_arg(args, p, class_name+"p+freq",
+		tools::Integer(tools::Positive()));
 }
 
 void Terminal::parameters

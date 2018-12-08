@@ -76,16 +76,16 @@ std::vector<std::string> BFER_ite::parameters
 ::get_prefixes() const
 {
 	auto p = Factory::parameters::get_prefixes();
-	if (this->src != nullptr) { auto nn = this->src->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->crc != nullptr) { auto nn = this->crc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->cdc != nullptr) { auto nn = this->cdc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->itl != nullptr) { auto nn = this->itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->mdm != nullptr) { auto nn = this->mdm->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->chn != nullptr) { auto nn = this->chn->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->qnt != nullptr) { auto nn = this->qnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->src    != nullptr) { auto nn = this->src   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->crc    != nullptr) { auto nn = this->crc   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->cdc    != nullptr) { auto nn = this->cdc   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->itl    != nullptr) { auto nn = this->itl   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->mdm    != nullptr) { auto nn = this->mdm   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->chn    != nullptr) { auto nn = this->chn   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->qnt    != nullptr) { auto nn = this->qnt   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (this->mnt_er != nullptr) { auto nn = this->mnt_er->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (this->mnt_mi != nullptr) { auto nn = this->mnt_mi->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->ter != nullptr) { auto nn = this->ter->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->ter    != nullptr) { auto nn = this->ter   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
 }
 
@@ -95,16 +95,21 @@ void BFER_ite::parameters
 	BFER::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::BFER_ite::parameters::";
 
-	args.add(
-		{p+"-ite", "I"},
-		tools::Integer(tools::Positive()),
-		"number of global iterations between the demodulator and the decoder.");
+	// args.add(
+	// 	{p+"-ite", "I"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"number of global iterations between the demodulator and the decoder.");
+	add_arg(args, p, class_name+"p+ite,I",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-crc-start"},
-		tools::Integer(tools::Positive()),
-		"iteration number to start the CRC checking in the turbo demodulation process.");
+	// args.add(
+	// 	{p+"-crc-start"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"iteration number to start the CRC checking in the turbo demodulation process.");
+	add_arg(args, p, class_name+"p+crc-start",
+		tools::Integer(tools::Positive()));
 }
 
 void BFER_ite::parameters

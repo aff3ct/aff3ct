@@ -11,6 +11,8 @@
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
+**STRING**: |factory::Encoder::parameters::p+info-bits,K|
+
 Set the number of information bits :math:`K`.
 The codeword size :math:`N` is automatically deduced:
 :math:`N = 2 \times (K + \log_2(ts))` where :math:`ts` is the trellis size.
@@ -24,6 +26,8 @@ The codeword size :math:`N` is automatically deduced:
    :Allowed values: ``RSC`` ``AZCW`` ``COSET`` ``USER``
    :Default: ``RSC``
    :Examples: ``--enc-type AZCW``
+
+**STRING**: |factory::Encoder::parameters::p+type|
 
 Select the encoder type.
 
@@ -54,6 +58,8 @@ Description of the allowed values:
 ``--enc-no-buff``
 """""""""""""""""
 
+**STRING**: |factory::Encoder_RSC::parameters::p+no-buff|
+
 Disable the buffered encoding.
 
 **Without the buffered encoding**, considering the following sequence of
@@ -79,6 +85,8 @@ where :math:`s` and :math:`p` are respectively *systematic* and *parity* bits,
    :Default: ``"{013,015}"``
    :Examples: ``--enc-poly "{023, 033}"``
 
+**STRING**: |factory::Encoder_RSC::parameters::p+poly|
+
 Set the polynomials that define the |RSC| code (or the trellis structure).
 The expected form is :math:`\{A,B\}` where :math:`A` and :math:`B` are given in
 octal.
@@ -91,6 +99,8 @@ octal.
    :Type: text
    :Allowed values: ``CCSDS`` ``LTE``
    :Examples: ``--enc-std CCSDS``
+
+**STRING**: |factory::Encoder_RSC::parameters::p+std|
 
 Select a standard: set automatically some parameters (can be overwritten by user
 given arguments).

@@ -17,6 +17,8 @@ demodulator output.
    :Default: 100
    :Examples: ``--mnt-max-fe 25``
 
+**STRING**: |factory::Monitor_BFER::parameters::p+max-fe,e|
+
 Set the maximum number of frame errors to simulated for each noise point.
 
 .. _mnt-mnt-err-hist:
@@ -26,6 +28,8 @@ Set the maximum number of frame errors to simulated for each noise point.
 
    :Type: integer
    :Examples: ``--mnt-err-hist 0``
+
+**STRING**: |factory::Monitor_BFER::parameters::p+err-hist|
 
 Enable the construction of the errors per frame histogram. Set also the maximum
 number of bit errors per frame included in the histogram (0 means no limit).
@@ -51,6 +55,8 @@ The histogram is saved in |CSV| format:
    :Rights: write only
    :Default: :file:`./hist`
    :Examples: ``--mnt-err-hist-path my/histogram/root/path/name``
+
+**STRING**: |factory::Monitor_BFER::parameters::p+err-hist-path|
 
 Path to the output histogram. When the files are dumped, the current noise value
 is added to this name with the ``.txt`` extension.

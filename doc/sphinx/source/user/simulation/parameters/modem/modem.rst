@@ -21,6 +21,8 @@ modules and tasks).
    :Default: ``BPSK``
    :Examples: ``--mdm-type SCMA``
 
+**STRING**: |factory::Modem::parameters::p+type|
+
 Select the modulation type.
 
 Description of the allowed values:
@@ -68,6 +70,8 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--mdm-implem FAST``
 
+**STRING**: |factory::Modem::parameters::p+implem|
+
 Select the implementation of the |modem|.
 
 Description of the allowed values:
@@ -94,6 +98,8 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--mdm-bps 1``
 
+**STRING**: |factory::Modem::parameters::p+bps|
+
 Set the number of bits used to generate a symbol (|BPS|). This parameter has no
 effect on the |BPSK| and |OOK| |modems| where the |BPS| is forced to 1. This is
 the same for the |SCMA| |modem| where the |BPS| is forced to 3.
@@ -108,6 +114,8 @@ the same for the |SCMA| |modem| where the |BPS| is forced to 3.
    :Type: file
    :Rights: read/write
    :Examples: ``--mdm-const-path ../conf/mod/16QAM_ANTI_GRAY.mod``
+
+**STRING**: |factory::Modem::parameters::p+const-path|
 
 Give the path to the ordered modulation symbols (constellation), to use with
 ``USER`` |modem|.
@@ -163,6 +171,8 @@ with an anti-Gray mapping (the lines starting with a ``#`` are ignored):
    :Allowed values: ``MAXS`` ``MAXSS`` ``MAXL`` ``MAX``
    :Examples: ``--mdm-max MAX``
 
+**STRING**: |factory::Modem::parameters::p+max|
+
 Select the approximation of the :math:`\max^*` operator used in the |PAM|,
 |QAM|, |PSK|, |CPM| and user demodulators.
 
@@ -204,6 +214,8 @@ only a :math:`\max` function.
 ``--mdm-no-sig2``
 """""""""""""""""
 
+**STRING**: |factory::Modem::parameters::p+no-sig2|
+
 Turn off the division by :math:`\sigma^2` in the demodulator where
 :math:`\sigma` is the Gaussian noise variance.
 
@@ -216,6 +228,8 @@ Turn off the division by :math:`\sigma^2` in the demodulator where
    :Default: 1
    :Examples: ``--mdm-cpm-k 1``
 
+**STRING**: |factory::Modem::parameters::p+cpm-k|
+
 Set the |CPM| *index numerator*.
 
 .. _mdm-mdm-cpm-p:
@@ -226,6 +240,8 @@ Set the |CPM| *index numerator*.
    :Type: integer
    :Default: 2
    :Examples: ``--mdm-cpm-p 1``
+
+**STRING**: |factory::Modem::parameters::p+cpm-p|
 
 Set the |CPM| *index denominator*.
 
@@ -238,6 +254,8 @@ Set the |CPM| *index denominator*.
    :Default: 2
    :Examples: ``--mdm-cpm-L 1``
 
+**STRING**: |factory::Modem::parameters::p+cpm-L|
+
 Set the |CPM| *pulse width* (also called *memory depth*).
 
 .. _mdm-mdm-cpm-upf:
@@ -248,6 +266,8 @@ Set the |CPM| *pulse width* (also called *memory depth*).
    :Type: integer
    :Default: 1
    :Examples: ``--mdm-cpm-upf 1``
+
+**STRING**: |factory::Modem::parameters::p+cpm-upf|
 
 Select the symbol upsampling factor in the |CPM|.
 
@@ -260,6 +280,8 @@ Select the symbol upsampling factor in the |CPM|.
    :Allowed values: ``GRAY`` ``NATURAL``
    :Default: ``NATURAL``
    :Examples: ``--mdm-cpm-map GRAY``
+
+**STRING**: |factory::Modem::parameters::p+cpm-map|
 
 Select the |CPM| *symbols mapping layout*.
 
@@ -287,6 +309,8 @@ Description of the allowed values:
    :Allowed values: ``GMSK`` ``RCOS`` ``REC``
    :Default: ``GMSK``
    :Examples: ``--mdm-cpm-ws GMSK``
+
+**STRING**: |factory::Modem::parameters::p+cpm-ws|
 
 Select the |CPM| *wave shape*.
 
@@ -317,6 +341,8 @@ Description of the allowed values:
    :Allowed values: ``GSM``
    :Examples: ``--mdm-cpm-std GSM``
 
+**STRING**: |factory::Modem::parameters::p+cpm-std|
+
 Set the |CPM| parameters according to a standard.
 
 Description of the allowed values:
@@ -345,6 +371,8 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--mdm-ite 5``
 
+**STRING**: |factory::Modem::parameters::p+ite|
+
 Set the number of iterations in the |SCMA| demodulator.
 
 .. _mdm-mdm-psi:
@@ -355,6 +383,8 @@ Set the number of iterations in the |SCMA| demodulator.
    :Type: text
    :Allowed values: ``PSI0`` ``PSI1`` ``PSI2`` ``PSI3``
    :Examples: ``--mdm-psi PSI0``
+
+**STRING**: |factory::Modem::parameters::p+psi|
 
 Select the :math:`\psi` function used in the |SCMA| demodulator.
 
@@ -396,6 +426,8 @@ See the :ref:`mdm-mdm-no-sig2` parameter to disable the division by
    :Type: integer
    :Default: 0
    :Examples: ``--mdm-rop-est 256``
+
+**STRING**: |factory::Modem::parameters::p+rop-est|
 
 Set the number of known bits for the |ROP| estimation in the |OOK| demodulator
 on an optical channel. The estimation is done from a known set of bits

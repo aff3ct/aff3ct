@@ -37,76 +37,109 @@ void Simulation::parameters
 	noise->get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Simulation::parameters::";
 
-	args.add(
-		{p+"-meta"},
-		tools::Text(),
-		"print the output with metadata, takes the simulation title.");
+	// args.add(
+	// 	{p+"-meta"},
+	// 	tools::Text(),
+	// 	"print the output with metadata, takes the simulation title.");
+	add_arg(args, p, class_name+"p+meta",
+		tools::Text());
 
-	args.add(
-		{p+"-stop-time"},
+	// args.add(
+	// 	{p+"-stop-time"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"time in sec after what the current simulated noise stops (0 is infinite).",
+	// 	tools::arg_rank::ADV);
+	add_arg(args, p, class_name+"p+stop-time",
 		tools::Integer(tools::Positive()),
-		"time in sec after what the current simulated noise stops (0 is infinite).",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-max-fra", "n"},
+	// args.add(
+	// 	{p+"-max-fra", "n"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"maximum number of frames to play after what the current simulated noise "
+	//  "stops (0 is infinite).",
+	// 	tools::arg_rank::ADV);
+	add_arg(args, p, class_name+"p+max-fra,n",
 		tools::Integer(tools::Positive()),
-		"maximum number of frames to play after what the current simulated noise stops (0 is infinite).",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-crit-nostop"},
+	// args.add(
+	// 	{p+"-crit-nostop"},
+	// 	tools::None(),
+	// 	"The stop criteria arguments -stop-time or -max-fra kill the current "
+	//  "simulated noise point but not the simulation.",
+	// 	tools::arg_rank::ADV);
+	add_arg(args, p, class_name+"p+crit-nostop",
 		tools::None(),
-		"The stop criteria arguments -stop-time or -max-fra kill the current simulated noise point"
-		" but not the simulation.",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-dbg"},
-		tools::None(),
-		"enable debug mode: print array values after each step.");
+	// args.add(
+	// 	{p+"-dbg"},
+	// 	tools::None(),
+	// 	"enable debug mode: print array values after each step.");
+	add_arg(args, p, class_name+"p+dbg",
+		tools::None());
 
-	args.add(
-		{p+"-dbg-hex"},
-		tools::None(),
-		"debug mode prints values in the hexadecimal format.");
+	// args.add(
+	// 	{p+"-dbg-hex"},
+	// 	tools::None(),
+	// 	"debug mode prints values in the hexadecimal format.");
+	add_arg(args, p, class_name+"p+dbg-hex",
+		tools::None());
 
-	args.add(
-		{p+"-dbg-prec"},
-		tools::Integer(tools::Positive()),
-		"set the precision of real elements when displayed in debug mode.");
+	// args.add(
+	// 	{p+"-dbg-prec"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"set the precision of real elements when displayed in debug mode.");
+	add_arg(args, p, class_name+"p+dbg-prec",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-dbg-limit", "d"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the max number of elements to display in the debug mode.");
+	// args.add(
+	// 	{p+"-dbg-limit", "d"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the max number of elements to display in the debug mode.");
+	add_arg(args, p, class_name+"p+dbg-limit,d",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-dbg-fra"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the max number of frames to display in the debug mode.");
+	// args.add(
+	// 	{p+"-dbg-fra"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the max number of frames to display in the debug mode.");
+	add_arg(args, p, class_name+"p+dbg-fra",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-stats"},
-		tools::None(),
-		"display statistics module by module.");
+	// args.add(
+	// 	{p+"-stats"},
+	// 	tools::None(),
+	// 	"display statistics module by module.");
+	add_arg(args, p, class_name+"p+stats",
+		tools::None());
 
-	args.add(
-		{p+"-threads", "t"},
-		tools::Integer(tools::Positive()),
-		"enable multi-threaded mode and specify the number of threads (0 means the maximum supported by the core.");
+	// args.add(
+	// 	{p+"-threads", "t"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"enable multi-threaded mode and specify the number of threads (0 means "
+	//  "the maximum supported by the core.");
+	add_arg(args, p, class_name+"p+threads,t",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-seed", "S"},
-		tools::Integer(tools::Positive()),
-		"seed used in the simulation to initialize the pseudo random generators in general.");
+	// args.add(
+	// 	{p+"-seed", "S"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"seed used in the simulation to initialize the pseudo random generators "
+	//  "in general.");
+	add_arg(args, p, class_name+"p+seed,S",
+		tools::Integer(tools::Positive()));
 
 #ifdef AFF3CT_MPI
-	args.add(
-		{p+"-mpi-comm"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"MPI communication frequency between the nodes (in millisec).");
+	// args.add(
+	// 	{p+"-mpi-comm"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"MPI communication frequency between the nodes (in millisec).");
+	add_arg(args, p, class_name+"p+mpi-comm",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 #endif
 }
 

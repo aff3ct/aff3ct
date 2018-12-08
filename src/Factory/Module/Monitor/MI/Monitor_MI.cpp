@@ -28,22 +28,30 @@ void Monitor_MI::parameters
 	Monitor::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Monitor_MI::parameters::";
 
-	args.add(
-		{p+"-fra-size", "N"},
+	// args.add(
+	// 	{p+"-fra-size", "N"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"the frame size for the mutual information computation.",
+	// 	tools::arg_rank::REQ);
+	add_arg(args, p, class_name+"p+fra-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the frame size for the mutual information computation.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-trials", "n"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of frames to simulate.");
+	// args.add(
+	// 	{p+"-trials", "n"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"number of frames to simulate.");
+	add_arg(args, p, class_name+"p+trials,n",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Monitor_MI::parameters
