@@ -59,11 +59,8 @@ std::string sanitize(const std::string &value)
 {
 	std::string new_value = value;
 
-// trick to compile on the GNU compiler version 4 (where 'std::regex' is unavailable)
-#if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
-	return new_value;
-#endif
-
+	// trick to compile on the GNU compiler version 4 (where 'std::regex' is unavailable)
+#if !(!defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5)
 	std::regex e_pipe("\\|([^ ]*)\\|");
 	new_value = std::regex_replace (new_value,e_pipe,"$1");
 
@@ -75,6 +72,7 @@ std::string sanitize(const std::string &value)
 
 	std::regex e_start1("\\*([^ ]*)\\*");
 	new_value = std::regex_replace (new_value,e_start1,"$1");
+#endif
 
 	return new_value;
 }
