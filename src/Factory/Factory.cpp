@@ -4,6 +4,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <regex>
 #include <map>
 
 #include "Tools/Display/rang_format/rang_format.h"
@@ -47,11 +48,30 @@ tools::Argument_tag extract_tags(const std::string &key, const std::string &pref
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	for (auto t = 0; t < tags.size(); t++)
+	for (size_t t = 0; t < tags.size(); t++)
 		if (tags[t].size() != 0 && tags[t][tags[t].size()-1] == '-')
 			tags[t].pop_back();
 
 	return tags;
+}
+
+std::string sanitize(const std::string &value)
+{
+	std::string new_value = value;
+
+	std::regex e_pipe("\\|([^ ]*)\\|");
+	new_value = std::regex_replace (new_value,e_pipe,"$1");
+
+	std::regex e_quote("`([^ ]*)`");
+	new_value = std::regex_replace (new_value,e_quote,"$1");
+
+	std::regex e_start2("\\*\\*([^ ]*)\\*\\*");
+	new_value = std::regex_replace (new_value,e_start2,"$1");
+
+	std::regex e_start1("\\*([^ ]*)\\*");
+	new_value = std::regex_replace (new_value,e_start1,"$1");
+
+	return new_value;
 }
 
 void parse_documentation()
@@ -64,7 +84,7 @@ void parse_documentation()
 		if (line.find(".. |") == 0)
 		{
 			if (key.length() && value.length())
-				Documentation[key] = value;
+				Documentation[key] = sanitize(value);
 
 			value.clear();
 
@@ -89,7 +109,7 @@ void parse_documentation()
 	}
 
 	if (key.length() && value.length())
-		Documentation[key] = value;
+		Documentation[key] = sanitize(value);
 }
 
 std::string extract_doc(const std::string &key)
