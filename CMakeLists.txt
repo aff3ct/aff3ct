@@ -8,7 +8,7 @@ project (aff3ct)
 
 if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
     message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
-                        "from a Git repository. Please do not download ZIP from GitHub and make a Git "
+                        "from a Git repository. Please do not download archives from GitHub and make a Git "
                         "clone instead (git clone https://github.com/aff3ct/MIPP.git).")
 endif()
 
@@ -114,6 +114,21 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp" @ONLY)
 
 list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp")
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- GENERATE STRINGS FILE
+# ---------------------------------------------------------------------------------------------------------------------
+
+file(READ doc/sphinx/strings.rst AFF3CT_STRINGS)
+
+string(REPLACE "\"" "\\\"" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
+string(REPLACE "\n" "\\n"  AFF3CT_STRINGS "${AFF3CT_STRINGS}")
+
+# Auto generate a file containing the doc strings
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp.in"
+               "${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp" @ONLY)
+
+list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------ CREATE FILTERS

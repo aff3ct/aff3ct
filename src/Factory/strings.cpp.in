@@ -1,0 +1,3 @@
+#include <string>
+
+const std::string Strings = "@AFF3CT_STRINGS@";

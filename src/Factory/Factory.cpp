@@ -11,6 +11,7 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Factory.hpp"
+#include "strings.cpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -19,8 +20,6 @@ const std::string aff3ct::factory::Factory_name       = "Factory";
 const std::string aff3ct::factory::Factory_short_name = "Factory";
 const std::string aff3ct::factory::Factory_prefix     = "fac";
 
-std::string Filename = "../doc/sphinx/strings.rst";
-bool Found_file = false;
 std::map<std::string,std::string> Documentation;
 
 tools::Argument_tag extract_tags(const std::string &key, const std::string &prefix)
@@ -55,60 +54,50 @@ tools::Argument_tag extract_tags(const std::string &key, const std::string &pref
 	return tags;
 }
 
-void read_external_doc(const std::string filename)
+void parse_documentation()
 {
-	std::ifstream rst_file(filename);
+	const auto lines = tools::split(Strings, '\n');
 
-	if (rst_file.is_open())
+	std::string line, key, value;
+	for (auto line : lines)
 	{
-		Found_file = true;
-		std::string line, key, value;
-		while (std::getline(rst_file, line) && !rst_file.eof() && !rst_file.fail() && !rst_file.bad())
+		if (line.find(".. |") == 0)
 		{
-			if (line.find(".. |") == 0)
+			if (key.length() && value.length())
+				Documentation[key] = value;
+
+			value.clear();
+
+			auto split_line = tools::split(line, '|');
+
+			if (split_line.size() < 2)
 			{
-				if (key.length() && value.length())
-					Documentation[key] = value;
-
-				value.clear();
-
-				auto split_line = tools::split(line, '|');
-
-				if (split_line.size() < 2)
-				{
-					std::stringstream message;
-					message << "'split_line.size()' has to be equal or higher than 2 ('split_line.size()' = "
-					        << split_line.size() << ").";
-					throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-				}
-
-				key = split_line[1];
+				std::stringstream message;
+				message << "'split_line.size()' has to be equal or higher than 2 ('split_line.size()' = "
+				        << split_line.size() << ").";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
-			else if (line.find("..") != 0 && !std::all_of(line.begin(),line.end(),isspace))
-			{
-				if (line.find("   ") == 0) line.replace(0, 3, "");
-				if (value.length()) value += " ";
-				value += line;
-			}
+
+			key = split_line[1];
 		}
-
-		if (key.length() && value.length())
-			Documentation[key] = value;
+		else if (line.find("..") != 0 && !std::all_of(line.begin(),line.end(),isspace))
+		{
+			if (line.find("   ") == 0) line.replace(0, 3, "");
+			if (value.length()) value += " ";
+			value += line;
+		}
 	}
+
+	if (key.length() && value.length())
+		Documentation[key] = value;
 }
 
-std::string get_external_doc(const std::string &key)
+std::string extract_doc(const std::string &key)
 {
-	if (Documentation.empty()) // then read the documentation...
-		read_external_doc(Filename);
+	if (Documentation.empty()) parse_documentation();
 
 	if (Documentation.find(key) == Documentation.end())
-	{
-		if (!Found_file)
-			return  "Can't read the '" + Filename + "' file.";
-		else
-			return "This parameter is not documented";
-	}
+		return "This parameter is not documented";
 	else
 		return Documentation[key];
 }
@@ -120,7 +109,7 @@ void aff3ct::factory::add_arg(      tools::Argument_map_info &args,
                               const tools::arg_rank           rank)
 {
 	const tools::Argument_tag tags = extract_tags(key, prefix);
-	const std::string doc = get_external_doc(key);
+	const std::string doc = extract_doc(key);
 	args.add(tags, arg_t, doc, rank);
 }
 
