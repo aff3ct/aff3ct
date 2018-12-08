@@ -59,6 +59,11 @@ std::string sanitize(const std::string &value)
 {
 	std::string new_value = value;
 
+// trick to compile on the GNU compiler version 4 (where 'std::regex' is unavailable)
+#if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
+	return new_value;
+#endif
+
 	std::regex e_pipe("\\|([^ ]*)\\|");
 	new_value = std::regex_replace (new_value,e_pipe,"$1");
 
