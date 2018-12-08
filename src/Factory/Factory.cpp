@@ -114,10 +114,10 @@ std::string get_external_doc(const std::string &key)
 }
 
 void aff3ct::factory::add_arg(      tools::Argument_map_info &args,
-	                          const std::string              &prefix,
-	                          const std::string              &key,
-	                                tools::Argument_type     *arg_t,
-	                          const tools::arg_rank           rank)
+                              const std::string              &prefix,
+                              const std::string              &key,
+                                    tools::Argument_type     *arg_t,
+                              const tools::arg_rank           rank)
 {
 	const tools::Argument_tag tags = extract_tags(key, prefix);
 	const std::string doc = get_external_doc(key);

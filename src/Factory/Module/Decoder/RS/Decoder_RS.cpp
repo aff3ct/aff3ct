@@ -39,7 +39,7 @@ void Decoder_RS::parameters
 	// 	{p+"-corr-pow", "T"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"correction power of the RS code.");
-	add_arg(args, p, class_name+"p+corr-pow",
+	add_arg(args, p, class_name+"p+corr-pow,T",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});
