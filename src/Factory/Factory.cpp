@@ -12,7 +12,7 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Factory.hpp"
-#ifdef AFF3CT_EXT_STRINGS
+#ifndef AFF3CT_EXT_STRINGS
 #include "strings.cpp"
 #endif
 

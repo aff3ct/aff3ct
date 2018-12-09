@@ -1,4 +1,4 @@
-#ifdef AFF3CT_EXT_STRINGS
+#ifndef AFF3CT_EXT_STRINGS
 
 #include <string>
 
