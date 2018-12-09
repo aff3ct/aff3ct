@@ -33,6 +33,12 @@ else()
     set (AFF3CT_BACKTRACE OFF)
 endif()
 
+if (NOT (WIN32 OR APPLE))
+    option (AFF3CT_EXT_STRINGS "Enable external strings for the help documentation" ON)
+else()
+    set (AFF3CT_EXT_STRINGS ON)
+endif()
+
 set(AFF3CT_PREC "MULTI" CACHE STRING "Select the precision in bits (can be '8', '16', '32', '64' or 'MULTI')")
 
 if (AFF3CT_SYSTEMC_SIMU AND (AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB))
@@ -119,16 +125,18 @@ list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp")
 # ----------------------------------------------------------------------------------------------- GENERATE STRINGS FILE
 # ---------------------------------------------------------------------------------------------------------------------
 
-file(READ doc/sphinx/strings.rst AFF3CT_STRINGS)
+if (AFF3CT_EXT_STRINGS)
+    file(READ doc/sphinx/strings.rst AFF3CT_STRINGS)
 
-string(REPLACE "\"" "\\\"" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
-string(REPLACE "\n" "\\n"  AFF3CT_STRINGS "${AFF3CT_STRINGS}")
+    string(REPLACE "\"" "\\\"" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
+    string(REPLACE "\n" "\\n"  AFF3CT_STRINGS "${AFF3CT_STRINGS}")
 
-# Auto generate a file containing the doc strings
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp.in"
-               "${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp" @ONLY)
+    # Auto generate a file containing the doc strings
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp.in"
+                   "${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp" @ONLY)
 
-list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp")
+    list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp")
+endif(AFF3CT_EXT_STRINGS)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------ CREATE FILTERS
@@ -205,6 +213,13 @@ if (AFF3CT_BACKTRACE)
 else()
     message(STATUS "AFF3CT - Backtrace: off")
 endif()
+if (AFF3CT_EXT_STRINGS)
+    aff3ct_add_definitions (-DAFF3CT_EXT_STRINGS)
+    message(STATUS "AFF3CT - External strings: on")
+else()
+    message(STATUS "AFF3CT - External strings: off")
+endif()
+
 if (AFF3CT_PREC STREQUAL "8")
     aff3ct_add_definitions (-DAFF3CT_8BIT_PREC)
     message(STATUS "AFF3CT - Precision: 8-bit")

@@ -1,3 +1,7 @@
+#ifdef AFF3CT_EXT_STRINGS
+
 #include <string>
 
 const std::string Strings = "@AFF3CT_STRINGS@";
+
+#endif

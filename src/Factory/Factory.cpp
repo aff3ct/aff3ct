@@ -12,7 +12,9 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Factory.hpp"
+#ifdef AFF3CT_EXT_STRINGS
 #include "strings.cpp"
+#endif
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -77,10 +79,8 @@ std::string sanitize(const std::string &value)
 	return new_value;
 }
 
-void parse_documentation()
+void parse_documentation(const std::vector<std::string> &lines)
 {
-	const auto lines = tools::split(Strings, '\n');
-
 	std::string line, key, value;
 	for (auto line : lines)
 	{
@@ -117,7 +117,22 @@ void parse_documentation()
 
 std::string extract_doc(const std::string &key)
 {
-	if (Documentation.empty()) parse_documentation();
+	if (Documentation.empty())
+	{
+		std::vector<std::string> lines;
+
+#ifdef AFF3CT_EXT_STRINGS
+		std::ifstream rst_file("../doc/sphinx/strings.rst");
+		std::string line;
+		if (rst_file.is_open())
+			while (std::getline(rst_file, line) && !rst_file.eof() && !rst_file.fail() && !rst_file.bad())
+				lines.push_back(line);
+#else
+		lines = tools::split(Strings, '\n');
+#endif
+
+		parse_documentation(lines);
+	}
 
 	if (Documentation.find(key) == Documentation.end())
 		return "This parameter is not documented";
