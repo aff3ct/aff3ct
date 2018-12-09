@@ -33,10 +33,10 @@ else()
     set (AFF3CT_BACKTRACE OFF)
 endif()
 
-if (NOT (WIN32 OR APPLE))
-    option (AFF3CT_EXT_STRINGS "Enable external strings for the help documentation" ON)
-else()
+if (MSVC)
     set (AFF3CT_EXT_STRINGS ON)
+else()
+    option (AFF3CT_EXT_STRINGS "Enable external strings for the help documentation" ON)
 endif()
 
 set(AFF3CT_PREC "MULTI" CACHE STRING "Select the precision in bits (can be '8', '16', '32', '64' or 'MULTI')")
