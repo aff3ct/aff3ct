@@ -125,7 +125,7 @@ list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp")
 # ----------------------------------------------------------------------------------------------- GENERATE STRINGS FILE
 # ---------------------------------------------------------------------------------------------------------------------
 
-if (AFF3CT_EXT_STRINGS)
+if (NOT AFF3CT_EXT_STRINGS)
     file(READ doc/sphinx/strings.rst AFF3CT_STRINGS)
 
     string(REPLACE "\"" "\\\"" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
