@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Factory/Module/Encoder/Encoder.hpp"
+#include "Factory/Module/Encoder/NO/Encoder_NO.hpp"
 #include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
@@ -13,7 +13,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_uncoded<B,Q>
-::Codec_uncoded(const factory::Encoder   ::parameters &enc_params,
+::Codec_uncoded(const factory::Encoder_NO::parameters &enc_params,
                 const factory::Decoder_NO::parameters &dec_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
@@ -62,8 +62,8 @@ Codec_uncoded<B,Q>
 	pct_params.N_cw     = enc_params.N_cw;
 	pct_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer(factory::Puncturer ::build<B,Q>(pct_params));
-	this->set_encoder  (factory::Encoder::build<B>(enc_params));
+	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
+	this->set_encoder  (factory::Encoder_NO::build<B>(enc_params));
 
 	try
 	{

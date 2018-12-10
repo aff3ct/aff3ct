@@ -67,7 +67,7 @@ void Encoder_LDPC::parameters
 		"matrices) when the 'IDENTITY' method generate an identity on H to get the parity part.");
 
 	args.add(
-		{p+"-save-g"},
+		{p+"-g-save-path"},
 		tools::File(tools::openmode::write),
 		"path where the generated G matrix with the 'LDPC_H' encoder type will be saved.");
 }
@@ -77,11 +77,11 @@ void Encoder_LDPC::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-h-path"   })) this->H_path    = vals.at({p+"-h-path"   });
-	if(vals.exist({p+"-g-path"   })) this->G_path    = vals.at({p+"-g-path"   });
-	if(vals.exist({p+"-h-reorder"})) this->H_reorder = vals.at({p+"-h-reorder"});
-	if(vals.exist({p+"-g-method" })) this->G_method  = vals.at({p+"-g-method" });
-	if(vals.exist({p+"-save-g"   })) this->G_save    = vals.at({p+"-save-g"   });
+	if(vals.exist({p+"-h-path"     })) this->H_path      = vals.at({p+"-h-path"     });
+	if(vals.exist({p+"-g-path"     })) this->G_path      = vals.at({p+"-g-path"     });
+	if(vals.exist({p+"-h-reorder"  })) this->H_reorder   = vals.at({p+"-h-reorder"  });
+	if(vals.exist({p+"-g-method"   })) this->G_method    = vals.at({p+"-g-method"   });
+	if(vals.exist({p+"-g-save-path"})) this->G_save_path = vals.at({p+"-g-save-path"});
 
 	if (!this->G_path.empty())
 	{
@@ -123,8 +123,8 @@ void Encoder_LDPC::parameters
 	if (this->type == "LDPC_H")
 	{
 		headers[p].push_back(std::make_pair("G build method", this->G_method));
-		if (this->G_save != "")
-		headers[p].push_back(std::make_pair("G save path", this->G_save));
+		if (this->G_save_path != "")
+		headers[p].push_back(std::make_pair("G save path", this->G_save_path));
 	}
 }
 
@@ -133,7 +133,7 @@ module::Encoder_LDPC<B>* Encoder_LDPC::parameters
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const
 {
 	if (this->type == "LDPC"    ) return new module::Encoder_LDPC         <B>(this->K, this->N_cw, G, this->n_frames);
-	if (this->type == "LDPC_H"  ) return new module::Encoder_LDPC_from_H  <B>(this->K, this->N_cw, H, this->G_method, this->G_save, this->n_frames);
+	if (this->type == "LDPC_H"  ) return new module::Encoder_LDPC_from_H  <B>(this->K, this->N_cw, H, this->G_method, this->G_save_path, this->n_frames);
 	if (this->type == "LDPC_QC" ) return new module::Encoder_LDPC_from_QC <B>(this->K, this->N_cw, H, this->n_frames);
 	if (this->type == "LDPC_IRA") return new module::Encoder_LDPC_from_IRA<B>(this->K, this->N_cw, H, this->n_frames);
 

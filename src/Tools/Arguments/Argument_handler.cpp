@@ -385,11 +385,10 @@ void Argument_handler
 		if (it_arg->second->rank != arg_rank::REQ)
 			continue;
 
-		bool found = false;
-
 		if (args_print_pos[std::distance(args.begin(), it_arg)])
 			continue; // already displayed
 
+		// bool found = false;
 		// auto& tag = it_arg->first.front();
 		// for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
 		// {
@@ -403,8 +402,8 @@ void Argument_handler
 		// 	}
 		// }
 
-		if (!found)
-		{
+		// if (!found)
+		// {
 			if (!title_displayed)
 			{
 				print_help_title("Other parameter(s)");
@@ -412,7 +411,7 @@ void Argument_handler
 			}
 
 			this->print_help(it_arg->first, *it_arg->second, longest_tag);
-		}
+		// }
 	}
 
 	// display the other OPTIONAL and ADVANCED parameters
@@ -422,11 +421,10 @@ void Argument_handler
 		 || (!print_advanced_args && it_arg->second->rank == arg_rank::ADV))
 			continue;
 
-		bool found = false;
-
 		if (args_print_pos[std::distance(args.begin(), it_arg)])
 			continue; // already displayed
 
+		// bool found = false;
 		// auto& tag = it_arg->first.front();
 		// for (auto it_grp = arg_groups.begin(); it_grp != arg_groups.end(); it_grp++)
 		// {
@@ -439,8 +437,8 @@ void Argument_handler
 		// 	}
 		// }
 
-		if (!found)
-		{
+		// if (!found)
+		// {
 			if (!title_displayed)
 			{
 				print_help_title("Other parameter(s)");
@@ -448,7 +446,7 @@ void Argument_handler
 			}
 
 			this->print_help(it_arg->first, *it_arg->second, longest_tag);
-		}
+		// }
 	}
 }
 

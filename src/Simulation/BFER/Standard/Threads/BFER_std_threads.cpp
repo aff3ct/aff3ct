@@ -154,6 +154,16 @@ void BFER_std_threads<B,R,Q>
 		mdm[mdm::sck::demodulate_wg::Y_N1](mdm[mdm::sck::filter       ::Y_N2]);
 		qnt[qnt::sck::process      ::Y_N1](mdm[mdm::sck::demodulate_wg::Y_N2]);
 	}
+	else if (this->params_BFER_std.chn->type == "OPTICAL" && this->params_BFER_std.mdm->rop_est_bits > 0)
+	{
+		chn[chn::sck::add_noise    ::X_N ](mdm[mdm::sck::modulate     ::X_N2]);
+		mdm[mdm::sck::demodulate_wg::H_N ](mdm[mdm::sck::modulate     ::X_N2]);
+		mdm[mdm::sck::demodulate_wg::Y_N1](chn[chn::sck::add_noise    ::Y_N ]);
+		qnt[qnt::sck::process      ::Y_N1](mdm[mdm::sck::demodulate_wg::Y_N2]);
+
+		if (this->params_BFER_std.qnt->type == "NO")
+			qnt[qnt::sck::process::Y_N2](qnt[qnt::sck::process::Y_N1]);
+	}
 	else
 	{
 		if (this->params_BFER_std.chn->type == "NO")
@@ -299,6 +309,13 @@ void BFER_std_threads<B,R,Q>
 				modem[mdm::tsk::filter].exec();
 			if (modem.is_demodulator())
 				modem[mdm::tsk::demodulate_wg].exec();
+			if (this->params_BFER_std.qnt->type != "NO")
+				quantizer[qnt::tsk::process].exec();
+		}
+		else if (this->params_BFER_std.chn->type == "OPTICAL" && this->params_BFER_std.mdm->rop_est_bits > 0)
+		{
+			channel[chn::tsk::add_noise].exec();
+			modem[mdm::tsk::demodulate_wg].exec();
 			if (this->params_BFER_std.qnt->type != "NO")
 				quantizer[qnt::tsk::process].exec();
 		}

@@ -86,8 +86,9 @@ void Channel::parameters
 
 	args.add(
 		{p+"-path"},
-		tools::File(tools::openmode::read_write),
-		"path to a noisy file, to use with \"--chn-type USER,OPTICAL\" or to a gain file (used with \"--chn-type RAYLEIGH_USER\").");
+		tools::File(tools::openmode::read),
+		"path to a noisy file, to use with \"--chn-type USER or USER_ADD\" or to a gain file"
+		" (used with \"--chn-type RAYLEIGH_USER\").");
 
 	args.add(
 		{p+"-blk-fad"},

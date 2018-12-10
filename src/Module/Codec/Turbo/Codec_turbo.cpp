@@ -131,7 +131,9 @@ Codec_turbo<B,Q>
 			add_post_pro(factory::Flip_and_check::build<B,Q>(*dec_params.fnc, *crc));
 		}
 		else if (crc != nullptr && crc->get_size() > 0)
-			add_post_pro(new tools::CRC_checker<B,Q>(*crc, 2, decoder_turbo->get_simd_inter_frame_level()));
+			add_post_pro(new tools::CRC_checker<B,Q>(*crc,
+			                                         dec_params.crc_start_ite,
+			                                         decoder_turbo->get_simd_inter_frame_level()));
 
 		if (dec_params.self_corrected)
 			add_post_pro(new tools::Self_corrected<B,Q>(dec_params.K,

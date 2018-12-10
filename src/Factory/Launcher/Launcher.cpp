@@ -73,7 +73,7 @@ void factory::Launcher::parameters
 
 	args.add(
 		{p+"-cde-type", "C"},
-		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TURBO_PROD", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED", "RS")),
+		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TPC", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED", "RS")),
 		"select the code type you want to use.",
 		tools::arg_rank::REQ);
 
@@ -326,7 +326,7 @@ launcher::Launcher* factory::Launcher::parameters
 		if (this->sim_type == "BFER") return new launcher::Turbo_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
-	if (this->cde_type == "TURBO_PROD")
+	if (this->cde_type == "TPC")
 	{
 		if (this->sim_type == "BFER") return new launcher::Turbo_product<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}

@@ -25,9 +25,6 @@ struct Encoder_turbo_DB : public Encoder
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional
-		std::string json_path = "";
-
 		// depending parameters
 		tools::auto_cloned_unique_ptr<Interleaver   ::parameters> itl;
 		tools::auto_cloned_unique_ptr<Encoder_RSC_DB::parameters> sub;

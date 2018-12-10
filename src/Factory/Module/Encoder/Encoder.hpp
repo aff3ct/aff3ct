@@ -24,7 +24,7 @@ struct Encoder : public Factory
 		int         N_cw        = 0;
 
 		// optional parameters
-		std::string type        = "NO";
+		std::string type        = "AZCW";
 		std::string path        = "";
 		bool        systematic  = true;
 		int         n_frames    = 1;

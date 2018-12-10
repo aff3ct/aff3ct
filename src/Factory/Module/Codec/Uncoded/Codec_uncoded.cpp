@@ -1,5 +1,6 @@
 #include "Codec_uncoded.hpp"
 
+#include "Factory/Module/Encoder/NO/Encoder_NO.hpp"
 #include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
 
 using namespace aff3ct;
@@ -13,7 +14,7 @@ Codec_uncoded::parameters
 : Codec          ::parameters(Codec_uncoded_name, prefix),
   Codec_SISO_SIHO::parameters(Codec_uncoded_name, prefix)
 {
-	Codec::parameters::set_enc(new Encoder   ::parameters("enc"));
+	Codec::parameters::set_enc(new Encoder_NO::parameters("enc"));
 	Codec::parameters::set_dec(new Decoder_NO::parameters("dec"));
 }
 
@@ -35,9 +36,6 @@ void Codec_uncoded::parameters
 	auto pdec = dec->get_prefix();
 
 	args.erase({penc+"-type"          });
-	args.erase({penc+"-cw-size",   "N"});
-	args.erase({penc+"-path"          });
-	args.erase({penc+"-seed",      "S"});
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
 	args.erase({pdec+"-fra",       "F"});
@@ -80,7 +78,8 @@ template <typename B, typename Q>
 module::Codec_uncoded<B,Q>* Codec_uncoded::parameters
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_uncoded<B,Q>(*enc, dynamic_cast<const Decoder_NO::parameters&>(*dec));
+	return new module::Codec_uncoded<B,Q>(dynamic_cast<const Encoder_NO::parameters&>(*enc),
+	                                      dynamic_cast<const Decoder_NO::parameters&>(*dec));
 }
 
 template <typename B, typename Q>

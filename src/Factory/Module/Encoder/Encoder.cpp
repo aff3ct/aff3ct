@@ -1,6 +1,5 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Encoder/AZCW/Encoder_AZCW.hpp"
 #include "Module/Encoder/Coset/Encoder_coset.hpp"
 #include "Module/Encoder/User/Encoder_user.hpp"
@@ -55,7 +54,7 @@ void Encoder::parameters
 
 	args.add(
 		{p+"-type"},
-		tools::Text(tools::Including_set("NO", "USER", "AZCW", "COSET")),
+		tools::Text(tools::Including_set("AZCW", "COSET", "USER")),
 		"type of the encoder to use in the simulation.");
 
 	args.add(
@@ -112,7 +111,6 @@ template <typename B>
 module::Encoder<B>* Encoder::parameters
 ::build() const
 {
-	if (this->type == "NO"   ) return new module::Encoder_NO   <B>(this->K,                         this->n_frames);
 	if (this->type == "AZCW" ) return new module::Encoder_AZCW <B>(this->K, this->N_cw,             this->n_frames);
 	if (this->type == "COSET") return new module::Encoder_coset<B>(this->K, this->N_cw, this->seed, this->n_frames);
 	if (this->type == "USER" ) return new module::Encoder_user <B>(this->K, this->N_cw, this->path, this->n_frames, this->start_idx);

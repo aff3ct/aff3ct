@@ -6,6 +6,12 @@ cmake_minimum_required (VERSION 3.0.2)
 cmake_policy(SET CMP0054 NEW)
 project (aff3ct)
 
+if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+    message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
+                        "from a Git repository. Please do not download ZIP from GitHub and make a Git "
+                        "clone instead (git clone https://github.com/aff3ct/MIPP.git).")
+endif()
+
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------- CMAKE OPTIONS
 # ---------------------------------------------------------------------------------------------------------------------
@@ -441,5 +447,7 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/conf/cde/")
 endif()
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/refs/BCH/")
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/refs/" DESTINATION share/aff3ct-${GIT_VERSION_RMV}/refs
-            FILES_MATCHING PATTERN "*.txt")
+            FILES_MATCHING PATTERN "*.txt"
+            PATTERN "readers"   EXCLUDE
+            PATTERN "untracked" EXCLUDE)
 endif()

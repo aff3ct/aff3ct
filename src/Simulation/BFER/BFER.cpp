@@ -49,7 +49,9 @@ BFER<B,R,Q>
 	}
 
 	if (!params_BFER.noise->pdf_path.empty())
-		distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path));
+		distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path,
+		                                                tools::Distribution_mode::SUMMATION,
+		                                                params_BFER.mdm->rop_est_bits > 0));
 
 	this->build_monitors ();
 	this->build_reporters();
@@ -99,7 +101,7 @@ void BFER<B,R,Q>
 	for (auto noise_idx = noise_begin; noise_idx != noise_end; noise_idx += noise_step)
 	{
 		this->noise.reset(params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
-		                                                       params_BFER.mdm->bps, params_BFER.mdm->upf));
+		                                                       params_BFER.mdm->bps, params_BFER.mdm->cpm_upf));
 
 		// manage noise distributions to be sure it exists
 		if (this->distributions != nullptr)
@@ -243,7 +245,7 @@ void BFER<B,R,Q>
 					max = err_hist.get_hist_max();
 				else
 					max = params_BFER.mnt_er->err_hist;
-				err_hist.dump(file_err_hist, 0, max, 0, false, false, false, "; ");
+				err_hist.dump(file_err_hist, 0, max);
 			}
 		}
 

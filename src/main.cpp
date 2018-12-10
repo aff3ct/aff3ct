@@ -71,8 +71,73 @@ void print_version()
 #endif
 	std::string affect_version = version() == "GIT-NOTFOUND" ? "" : version();
 
-	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", "
+#if defined(AFF3CT_MULTI_PREC)
+	std::string precision = "8/16/32/64-bit";
+#elif defined(AFF3CT_8BIT_PREC)
+	std::string precision = "8-bit";
+#elif defined(AFF3CT_16BIT_PREC)
+	std::string precision = "16-bit";
+#elif defined(AFF3CT_32BIT_PREC)
+	std::string precision = "32-bit";
+#elif defined(AFF3CT_64BIT_PREC)
+	std::string precision = "64-bit";
+#else
+	std::string precision = "Unknown";
+#endif
+
+#if defined(AFF3CT_POLAR_BIT_PACKING)
+	std::string bit_packing = "on";
+#else
+	std::string bit_packing = "off";
+#endif
+
+#if defined(AFF3CT_COLORS)
+	std::string terminal_colors = "on";
+#else
+	std::string terminal_colors = "off";
+#endif
+
+#if defined(AFF3CT_BACKTRACE)
+	std::string backtrace = "on";
+#else
+	std::string backtrace = "off";
+#endif
+
+#if defined(AFF3CT_ENABLE_MPI)
+	std::string mpi = "on";
+#else
+	std::string mpi = "off";
+#endif
+
+#if defined(AFF3CT_CHANNEL_GSL)
+	std::string gsl = "on";
+#else
+	std::string gsl = "off";
+#endif
+
+#if defined(AFF3CT_CHANNEL_MKL)
+	std::string mkl = "on";
+#else
+	std::string mkl = "off";
+#endif
+
+#if defined(AFF3CT_SYSTEMC_SIMU)
+	std::string systemc = "on";
+#else
+	std::string systemc = "off";
+#endif
+
+	std::cout << "aff3ct (" << os << prec << ", " << compiler << "-" << compiler_version << ", "
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
+	std::cout << "Compilation options:"                                                        << std::endl;
+	std::cout << "  * Precision: "         << precision                                        << std::endl;
+	std::cout << "  * Polar bit packing: " << bit_packing                                      << std::endl;
+	std::cout << "  * Terminal colors: "   << terminal_colors                                  << std::endl;
+	std::cout << "  * Backtrace: "         << backtrace                                        << std::endl;
+	std::cout << "  * MPI: "               << mpi                                              << std::endl;
+	std::cout << "  * GSL: "               << gsl                                              << std::endl;
+	std::cout << "  * MKL: "               << mkl                                              << std::endl;
+	std::cout << "  * SystemC: "           << systemc                                          << std::endl;
 	std::cout << "Copyright (c) 2016-2018 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;

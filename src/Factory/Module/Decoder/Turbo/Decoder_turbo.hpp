@@ -35,6 +35,7 @@ struct Decoder_turbo : public Decoder
 		bool self_corrected = false;
 		bool enable_json    = false;
 		int  n_ite          = 6;
+		int  crc_start_ite  = 2;
 
 		// depending parameters
 		tools::auto_cloned_unique_ptr<typename D1   ::parameters> sub1;

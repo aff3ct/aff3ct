@@ -33,16 +33,16 @@ struct Modem : public Factory
 		std::string const_path = "";        // PATH to constellation file (CSV file)
 		bool        complex    = true;      // true if the modulated signal is complex
 		int         bps        = 1;         // bits per symbol
-		int         upf        = 1;         // samples per symbol
 
 		// -------- CPM parameters
-		std::string cpm_std    = "";        // the selection of a default cpm standard hardly implemented (GSM)
-		std::string mapping    = "NATURAL"; // symbol mapping layout (natural, gray)
-		std::string wave_shape = "GMSK";    // wave shape (gmsk, rcos, rec)
-		int         cpm_L      = 2;         // cpm pulse width or cpm memory
-		int         cpm_k      = 1;         // modulation index numerator
-		int         cpm_p      = 2;         // modulation index denumerator
-		int         N_mod      = 0;         // frame size at the output of the modulator
+		std::string cpm_std        = "";        // the selection of a default cpm standard hardly implemented (GSM)
+		std::string cpm_mapping    = "NATURAL"; // symbol mapping layout (natural, gray)
+		std::string cpm_wave_shape = "GMSK";    // wave shape (gmsk, rcos, rec)
+		int         cpm_L          = 2;         // cpm pulse width or cpm memory
+		int         cpm_k          = 1;         // modulation index numerator
+		int         cpm_p          = 2;         // modulation index denumerator
+		int         cpm_upf        = 1;         // samples per symbol
+		int         N_mod          = 0;         // frame size at the output of the modulator
 
 		// ------- demodulator parameters
 		std::string max        = "MAX";     // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
@@ -51,6 +51,8 @@ struct Modem : public Factory
 		int         n_ite      = 1;         // number of demodulations/decoding sessions to perform in the BFERI simulations
 		int         N_fil      = 0;         // frame size at the output of the filter
 		float       noise      = -1.f;      // noise value
+		int         rop_est_bits = 0;       // The number of bits known by the Modem_OOK_optical_rop_estimate demodulator
+		                                    // to estimate the ROP
 
 		// ------- common parameters
 		int         n_frames   = 1;
@@ -92,10 +94,10 @@ struct Modem : public Factory
 
 	static int get_buffer_size_after_modulation(const std::string &type,
 	                                            const int         N,
-	                                            const int         bps   = 1,
-	                                            const int         upf   = 5,
-	                                            const int         cpm_L = 3,
-		                                        const int         cpm_p = 2);
+	                                            const int         bps     = 1,
+	                                            const int         cpm_upf = 5,
+	                                            const int         cpm_L   = 3,
+	                                            const int         cpm_p   = 2);
 
 	static int get_buffer_size_after_filtering(const std::string &type,
 	                                           const int         N,

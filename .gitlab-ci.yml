@@ -1,6 +1,7 @@
 stages:
   - analysis
   - build
+  - documentation
   - test
   - coverage
   - deploy
@@ -23,6 +24,35 @@ analysis-cppcheck:
     - cppcheck
   script:
     - ./ci/analysis-cppcheck.sh
+
+analysis-headers:
+  stage: analysis
+  artifacts:
+    name: analysis-headers
+    when: always
+    paths:
+      - aff3ct.hpp
+  tags:
+    - linux
+  script:
+    - ./scripts/generate_aff3ct_header.sh aff3ct.hpp
+    - diff aff3ct.hpp src/aff3ct.hpp
+
+documentation-sphinx:
+  stage: documentation
+  artifacts:
+    name: documentation-sphinx
+    when: always
+    paths:
+      - doc/sphinx/build/html
+      - doc/sphinx/build/latex
+  tags:
+    - sphinx
+    - latex
+  script:
+    - cd doc/sphinx
+    - make html
+    - make latexpdf
 
 build-linux-gcc-nointr:
   stage: build
@@ -519,6 +549,7 @@ deploy-builds-linux:
     - build-windows-gcc-x86-sse4.2
     - build-windows-gcc-x64-avx2
     - build-macos-clang-x64-sse4.2
+    - documentation-sphinx
   tags:
     - linux
     - github

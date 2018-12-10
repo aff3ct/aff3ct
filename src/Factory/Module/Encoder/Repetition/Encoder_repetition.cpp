@@ -14,7 +14,7 @@ Encoder_repetition::parameters
 ::parameters(const std::string &prefix)
 : Encoder::parameters(Encoder_repetition_name, prefix)
 {
-	this->type = "REPETITION";
+	this->type = "REP";
 }
 
 Encoder_repetition::parameters* Encoder_repetition::parameters
@@ -30,7 +30,7 @@ void Encoder_repetition::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options(args.at({p+"-type"}), 0, "REPETITION");
+	tools::add_options(args.at({p+"-type"}), 0, "REP");
 
 	args.add(
 		{p+"-no-buff"},
@@ -62,7 +62,7 @@ template <typename B>
 module::Encoder_repetition_sys<B>* Encoder_repetition::parameters
 ::build() const
 {
-	if (this->type == "REPETITION") return new module::Encoder_repetition_sys<B>(this->K, this->N_cw, this->buffered, this->n_frames);
+	if (this->type == "REP") return new module::Encoder_repetition_sys<B>(this->K, this->N_cw, this->buffered, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

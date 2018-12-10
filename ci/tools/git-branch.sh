@@ -17,4 +17,10 @@
 # 	export GIT_BRANCH
 # fi
 
-export GIT_BRANCH=development
+if [ -z "$CI_COMMIT_REF_NAME" ]
+then
+	echo "Git branch can't be found, exit."
+	exit 1;
+fi
+
+export GIT_BRANCH=$CI_COMMIT_REF_NAME
