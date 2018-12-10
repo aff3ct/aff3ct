@@ -181,10 +181,10 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 			{
 				auto count = 0;
 				for (auto cc = 0; cc < var_degree; cc++)
-					if (cc != c && chk_to_var_ptr[cc] != cur_state)
-						count++;
+					if (cc != c)
+						count += chk_to_var_ptr[cc] ? 1 : -1;
 
-				cur_state = count == (var_degree -1) ? !cur_state : cur_state;
+				cur_state = count > 0 ? 1 : (count < 0 ? 0 : cur_state);
 			}
 
 			var_to_chk_ptr[c] = (int8_t)cur_state;
