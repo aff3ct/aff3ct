@@ -35,6 +35,7 @@ struct Launcher : public Factory
 		bool        display_adv_help = false;
 		bool        display_version  = false;
 		bool        display_legend   = true;
+		bool        display_keys     = false;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Launcher_prefix);

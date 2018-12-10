@@ -242,5 +242,5 @@ void aff3ct::tools::add_arg(Argument_map_info &args, const std::string &prefix, 
 {
 	const Argument_tag tags = extract_tags(key, prefix);
 	const std::string doc = extract_documentation(key);
-	args.add(tags, arg_t, doc, rank);
+	args.add(tags, arg_t, doc, rank, key);
 }

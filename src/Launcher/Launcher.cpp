@@ -70,6 +70,7 @@ int Launcher::read_arguments()
 	try
 	{
 		this->store_args();
+		ah.set_help_display_keys(params_common.display_keys);
 	}
 	catch(const std::exception& e)
 	{

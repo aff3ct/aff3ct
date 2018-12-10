@@ -168,6 +168,10 @@ void factory::Launcher::parameters
 	tools::add_arg(args, p, class_name+"p+no-colors",
 		tools::None());
 #endif
+
+	tools::add_arg(args, p, class_name+"keys,k",
+		tools::None(),
+		tools::arg_rank::ADV);
 }
 
 void factory::Launcher::parameters
@@ -178,6 +182,7 @@ void factory::Launcher::parameters
 	if(vals.exist({p+"-cde-type", "C"})) this->cde_type        = vals.at({p+"-cde-type", "C"}); // required
 	if(vals.exist({p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
 	if(vals.exist({"version",     "v"})) this->display_version = true;
+	if(vals.exist({"keys",        "k"})) this->display_keys    = true;
 	if(vals.exist({p+"-no-legend"    })) this->display_legend  = false;
 
 	if(vals.exist({"help", "h"}))

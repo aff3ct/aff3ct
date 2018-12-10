@@ -31,6 +31,9 @@
 .. |factory::Launcher::parameters::p+no-colors| replace::
    disable the colors in the shell.
 
+.. |factory::Launcher::parameters::keys,k| replace::
+   display the parameter keys in the help.
+
 .. ---------------------------------------------- factory Simulation parameters
 
 .. |factory::Simulation::parameters::p+meta| replace::

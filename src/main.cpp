@@ -168,6 +168,7 @@ int read_arguments(const int argc, const char** argv, factory::Launcher::paramet
 	try
 	{
 		params.store(arg_vals);
+		ah.set_help_display_keys(params.display_keys);
 	}
 	catch(std::exception&)
 	{
