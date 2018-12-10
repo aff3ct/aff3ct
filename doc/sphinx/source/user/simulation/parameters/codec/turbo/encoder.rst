@@ -11,9 +11,8 @@ Turbo Encoder parameters
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-**STRING**: |factory::Encoder::parameters::p+info-bits,K|
+|factory::Encoder::parameters::p+info-bits,K|
 
-Set the number of information bits :math:`K`.
 The codeword size :math:`N` is automatically deduced:
 :math:`N = 3 \times K + 4 \times \log_2(ts)` where :math:`ts` is the trellis
 size.
@@ -28,9 +27,7 @@ size.
    :Default: ``TURBO``
    :Examples: ``--enc-type AZCW``
 
-**STRING**: |factory::Encoder::parameters::p+type|
-
-Select the encoder type.
+|factory::Encoder::parameters::p+type|
 
 Description of the allowed values:
 
@@ -70,11 +67,10 @@ Please refer to the |RSC| :ref:`enc-rsc-enc-type` parameter.
    :Rights: write only
    :Examples: ``--enc-json-path example/path/to/the/right/file``
 
-**STRING**: |factory::Encoder_turbo::parameters::p+json-path|
+|factory::Encoder_turbo::parameters::p+json-path|
 
-Select the file path to dump the encoder and decoder internal values (in |JSON|
-format). Those values can be observed with the dedicated `Turbo Code Reader`
-available on the |AFF3CT| website: http://aff3ct.github.io/turbo_reader.html.
+Those values can be observed with the dedicated `Turbo Code Reader` available on
+the |AFF3CT| website: http://aff3ct.github.io/turbo_reader.html.
 
 .. note:: Using this parameter will **slowdown considerably the encoder and
    decoder throughputs**.
@@ -84,9 +80,7 @@ available on the |AFF3CT| website: http://aff3ct.github.io/turbo_reader.html.
 ``--enc-sub-no-buff``
 """""""""""""""""""""
 
-**STRING**: |factory::Encoder_RSC::parameters::p+no-buff|
-
-Disable the buffered encoding.
+|factory::Encoder_RSC::parameters::p+no-buff|
 
 **Without the buffered encoding**, considering the following sequence of
 :math:`K` information bits: :math:`U_0, U_1, [...], U_{K-1}`, the encoded bits
@@ -122,10 +116,7 @@ Please refer to the |RSC| :ref:`enc-rsc-enc-poly` parameter.
    :Allowed values: ``CCSDS`` ``LTE``
    :Examples: ``--enc-sub-std CCSDS``
 
-**STRING**: |factory::Encoder_RSC::parameters::p+std|
-
-Select a standard: set automatically some parameters (can be overwritten by user
-given arguments).
+|factory::Encoder_RSC::parameters::p+std|
 
 Description of the allowed values:
 

@@ -19,9 +19,7 @@ iterative |BFER| chain in :numref:`fig_bferi`).
    :Default: ``RANDOM``
    :Examples: ``--itl-type RANDOM``
 
-**STRING**: |factory::Interleaver_core::parameters::p+type|
-
-Select the interleaver type.
+|factory::Interleaver_core::parameters::p+type|
 
 Description of the allowed values:
 
@@ -113,10 +111,7 @@ Description of the allowed values:
    :Default: 4
    :Examples: ``--itl-cols 1``
 
-**STRING**: |factory::Interleaver_core::parameters::p+cols|
-
-Specify the number of columns used for the ``RAND_COL``, ``ROW_COL`` or
-``COL_ROW`` interleavers.
+|factory::Interleaver_core::parameters::p+cols|
 
 .. _itl-itl-path:
 
@@ -127,10 +122,7 @@ Specify the number of columns used for the ``RAND_COL``, ``ROW_COL`` or
    :Rights: read only
    :Examples: ``--itl-path ../conf/itl/GSM-LDPC_4224.itl``
 
-**STRING**: |factory::Interleaver_core::parameters::p+path|
-
-Set the file path to the interleaver |LUT| (to use with the ``USER``
-interleaver).
+|factory::Interleaver_core::parameters::p+path|
 
 An |ASCII| file is expected:
 
@@ -174,9 +166,8 @@ two |LUTs|:
    :Allowed values: ``BOTTOM_LEFT`` ``BOTTOM_RIGHT`` ``TOP_LEFT`` ``TOP_RIGHT``
    :Examples: ``--itl-read-order BOTTOM_LEFT``
 
-**STRING**: |factory::Interleaver_core::parameters::p+read-order|
+|factory::Interleaver_core::parameters::p+read-order|
 
-Change the read order of the ``COL_ROW`` and ``ROW_COL`` interleavers.
 The read starts from the given corner of the array to the diagonally opposite
 one. The read is made row by row for the ``COL_ROW`` interleaver and column by
 column for the ``ROW_COL`` one.
@@ -226,15 +217,13 @@ Description of the allowed values (see also the figures just bellow):
 
    Interleaver ``ROW_COL`` read orders.
 
-
 .. _itl-itl-uni:
 
 ``--itl-uni``
 """""""""""""
 
-**STRING**: |factory::Interleaver_core::parameters::p+uni|
+|factory::Interleaver_core::parameters::p+uni|
 
-Enable to generate a new |LUT| *for each new frame* (i.e. uniform interleaver).
 By default, if this parameter is not used, the random interleavers generate the
 |LUT| only once for the whole simulation.
 

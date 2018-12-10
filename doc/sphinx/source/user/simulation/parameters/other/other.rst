@@ -8,10 +8,7 @@ Other parameters
 ``--help, -h``
 """"""""""""""
 
-**STRING**: |factory::Launcher::parameters::help,h|
-
-Print the help with all the required ``{R}`` and optional arguments.
-The latter change in function of the selected simulation type and code.
+|factory::Launcher::parameters::help,h|
 
 .. code-block:: bash
 
@@ -44,9 +41,7 @@ The latter change in function of the selected simulation type and code.
 ``--Help, -H``
 """"""""""""""
 
-**STRING**: |factory::Launcher::parameters::Help,H|
-
-Print the help with in more the advanced ``{A}`` arguments.
+|factory::Launcher::parameters::Help,H|
 
 .. code-block:: bash
 
@@ -83,10 +78,10 @@ Print the help with in more the advanced ``{A}`` arguments.
 
 .. _other-keys:
 
-``--keys, -k``
-"""""""""""""""""
+``--keys, -k`` |image_advanced_argument|
+""""""""""""""""""""""""""""""""""""""""
 
-**STRING**: |factory::Launcher::parameters::keys,k|
+|factory::Launcher::parameters::keys,k|
 
 .. code-block:: bash
 
@@ -136,9 +131,7 @@ Print the help with in more the advanced ``{A}`` arguments.
 ``--version, -v``
 """""""""""""""""
 
-**STRING**: |factory::Launcher::parameters::version,v|
-
-Print informations about the version of the source code and compilation options.
+|factory::Launcher::parameters::version,v|
 
 .. code-block:: bash
 
@@ -156,10 +149,7 @@ Print informations about the version of the source code and compilation options.
 ``--except-a2l`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""
 
-**STRING**: |factory::Launcher::parameters::except-a2l|
-
-Enhance the backtrace when displaying exception. This change the program
-addresses into filenames and lines. It may take some seconds to do this work.
+|factory::Launcher::parameters::except-a2l|
 
 .. note:: This option works only on Unix based |OS| and if |AFF3CT| has been
    :ref:`compiled <compilation_compiler_options>` with debug symbols
@@ -170,6 +160,4 @@ addresses into filenames and lines. It may take some seconds to do this work.
 ``--except-no-bt`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""""
 
-**STRING**: |factory::Launcher::parameters::except-no-bt|
-
-Disable the print of backtrace when displaying exception.
+|factory::Launcher::parameters::except-no-bt|

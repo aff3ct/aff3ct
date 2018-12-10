@@ -13,9 +13,7 @@ Uncoded Decoder parameters
    :Default: ``NONE``
    :Examples: ``--dec-type CHASE``
 
-**STRING**: |factory::Decoder::parameters::p+type,D|
-
-Select the decoder algorithm.
+|factory::Decoder::parameters::p+type,D|
 
 Description of the allowed values:
 
@@ -45,9 +43,7 @@ Description of the allowed values:
    :default: ``HARD_DECISION``
    :Examples: ``--dec-implem HARD_DECISION``
 
-**STRING**: |factory::Decoder::parameters::p+implem|
-
-Select the decoder implementation.
+|factory::Decoder::parameters::p+implem|
 
 Description of the allowed values:
 

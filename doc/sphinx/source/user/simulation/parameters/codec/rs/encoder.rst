@@ -11,11 +11,11 @@
    :Type: integer
    :Examples: ``--enc-cw-size 127``
 
-**STRING**: |factory::Encoder::parameters::p+cw-size,N|
+|factory::Encoder::parameters::p+cw-size,N|
 
-Set the symbols codeword size as an integer of the form :math:`N = 2^m – 1`,
-where :math:`m` is an integer from 3 that represents also the number of bits per
-symbol. Thus, the binary codeword size is :math:`N \times m`.
+:math:`N = 2^m – 1`, where :math:`m` is an integer from 3 that represents also
+the number of bits per symbol. Thus, the binary codeword size is
+:math:`N \times m`.
 
 .. _enc-rs-enc-info-bits:
 
@@ -25,9 +25,7 @@ symbol. Thus, the binary codeword size is :math:`N \times m`.
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-**STRING**: |factory::Encoder::parameters::p+info-bits,K|
-
-Give the useful number of symbols transmitted.
+|factory::Encoder::parameters::p+info-bits,K|
 
 This argument is not required if the correction power :math:`T` is given with
 :ref:`dec-rs-dec-corr-pow`, as it
@@ -43,9 +41,7 @@ is calculated automatically with the formula :math:`K = N - 2.T`.
    :Default: ``RS``
    :Examples: ``--enc-type AZCW``
 
-**STRING**: |factory::Encoder::parameters::p+type|
-
-Type of the encoder to use in the simulation.
+|factory::Encoder::parameters::p+type|
 
 Description of the allowed values:
 

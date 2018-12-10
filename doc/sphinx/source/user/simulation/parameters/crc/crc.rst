@@ -26,13 +26,13 @@ decoding process to know if the decoded bit sequence is valid or not.
    :Examples: | ``--crc-type "32-GZIP"``
               | ``--crc-poly "0x04C11DB7" --crc-size 32``
 
-**STRING**: |factory::CRC::parameters::p+type,p+poly|
+|factory::CRC::parameters::p+type,p+poly|
 
-Select the |CRC| type you want to use among the predefined polynomials in the
-:numref:`tab_crc_polynomials`. If you want a specific polynomial that it is not
-available in the table you can directly put the polynomial in hexadecimal. In
-this case you have to specify explicitly the size of the polynomial with the
-:ref:`crc-crc-size` parameter. The type ``NO`` deactivates the |CRC|.
+:numref:`tab_crc_polynomials` shows a list of the predefined polynomials. If
+you want a specific polynomial that it is not available in the table you can
+directly put the polynomial in hexadecimal. In this case you have to specify
+explicitly the size of the polynomial with the :ref:`crc-crc-size` parameter.
+The type ``NO`` deactivates the |CRC|.
 
 .. _tab_crc_polynomials:
 
@@ -50,10 +50,7 @@ this case you have to specify explicitly the size of the polynomial with the
    :Range: :math:`]0 \to \infty[`
    :Examples: ``--crc-size 8``
 
-**STRING**: |factory::CRC::parameters::p+size|
-
-Size the |CRC| (divisor size in bits minus one), required if you selected an
-unknown |CRC|.
+|factory::CRC::parameters::p+size|
 
 .. _crc-crc-implem:
 
@@ -65,9 +62,7 @@ unknown |CRC|.
    :Default: ``FAST``
    :Examples: ``--crc-implem FAST``
 
-**STRING**: |factory::CRC::parameters::p+implem|
-
-Select the |CRC| implementation you want to use.
+|factory::CRC::parameters::p+implem|
 
 Description of the allowed values:
 

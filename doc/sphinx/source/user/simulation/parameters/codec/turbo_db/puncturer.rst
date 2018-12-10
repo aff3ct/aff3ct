@@ -13,9 +13,7 @@ Turbo |DB| Puncturer parameters
    :Default: ``NO``
    :Examples: ``--pct-type NO``
 
-**STRING**: |factory::Puncturer::parameters::p+type|
-
-Select the puncturer type.
+|factory::Puncturer::parameters::p+type|
 
 Description of the allowed values:
 
@@ -38,8 +36,7 @@ Description of the allowed values:
    :Type: integer
    :Examples: ``--pct-fra-size 1``
 
-**STRING**: |factory::Puncturer::parameters::p+fra-size,N|
+|factory::Puncturer::parameters::p+fra-size,N|
 
-Set the frame size :math:`N`.
 The puncturer supports :math:`R = 2/5`, :math:`R = 1/2`, :math:`R = 2/3` and
 :math:`R = 4/5` with :math:`R = K/N`.

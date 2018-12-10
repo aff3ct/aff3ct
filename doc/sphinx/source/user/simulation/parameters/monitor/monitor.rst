@@ -17,9 +17,7 @@ demodulator output.
    :Default: 100
    :Examples: ``--mnt-max-fe 25``
 
-**STRING**: |factory::Monitor_BFER::parameters::p+max-fe,e|
-
-Set the maximum number of frame errors to simulated for each noise point.
+|factory::Monitor_BFER::parameters::p+max-fe,e|
 
 .. _mnt-mnt-err-hist:
 
@@ -29,10 +27,8 @@ Set the maximum number of frame errors to simulated for each noise point.
    :Type: integer
    :Examples: ``--mnt-err-hist 0``
 
-**STRING**: |factory::Monitor_BFER::parameters::p+err-hist|
+|factory::Monitor_BFER::parameters::p+err-hist|
 
-Enable the construction of the errors per frame histogram. Set also the maximum
-number of bit errors per frame included in the histogram (0 means no limit).
 The histogram is saved in |CSV| format:
 
 .. code-block:: bash
@@ -56,10 +52,7 @@ The histogram is saved in |CSV| format:
    :Default: :file:`./hist`
    :Examples: ``--mnt-err-hist-path my/histogram/root/path/name``
 
-**STRING**: |factory::Monitor_BFER::parameters::p+err-hist-path|
-
-Path to the output histogram. When the files are dumped, the current noise value
-is added to this name with the ``.txt`` extension.
+|factory::Monitor_BFER::parameters::p+err-hist-path|
 
 An output filename example is :file:`hist_2.000000.txt` for a noise value of
 2 dB. For `Gnuplot <http://www.gnuplot.info/>`_ users you can then simply
@@ -74,7 +67,7 @@ display the histogram with the following command:
 ``--mnt-mutinfo``
 """""""""""""""""
 
-Enable the computation of the |MI|.
+|factory::BFER::parameters::p+mutinfo|
 
 .. note:: Only available on ``BFER`` simulation types (see the
    :ref:`sim-sim-type` parameter for more details).

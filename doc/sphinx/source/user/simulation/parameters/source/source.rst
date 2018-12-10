@@ -16,9 +16,7 @@ point.
    :Default: ``RAND``
    :Examples: ``--src-type AZCW``
 
-**STRING**: |factory::Source::parameters::p+type|
-
-Method used to generate the :math:`K` information bits.
+|factory::Source::parameters::p+type|
 
 Description of the allowed values:
 
@@ -48,9 +46,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--src-implem FAST``
 
-**STRING**: |factory::Source::parameters::p+implem|
-
-Select the implementation of the algorithm to generate the information bits.
+|factory::Source::parameters::p+implem|
 
 Description of the allowed values:
 
@@ -76,11 +72,11 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--src-fra 8``
 
-**STRING**: |factory::Source::parameters::p+fra,F|
+|factory::Source::parameters::p+fra,F|
 
-Set the number of frames to process for each task execution. The default
-behavior is to generate one frame at a time. This parameter enables to process
-more than one frame when the *generate* task (from the source module) is called.
+The default behavior is to generate one frame at a time. This parameter enables
+to process more than one frame when the *generate* task (from the source module)
+is called.
 
 The number of frames consumed and produced when a task is executed is called the
 **inter frame level** or |IFL|. Setting the |IFL| in the source module will
@@ -122,10 +118,7 @@ modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
    :Rights: read only
    :Examples: ``--src-path ../conf/src/GSM-LDPC_2112.src``
 
-**STRING**: |factory::Source::parameters::p+path|
-
-Set the path to a file containing one or more frames (informations bits), to
-use with the ``USER`` source type.
+|factory::Source::parameters::p+path|
 
 An |ASCII| file is expected:
 
@@ -149,10 +142,7 @@ An |ASCII| file is expected:
    :Default: 0
    :Examples: ``--src-start-idx 42``
 
-**STRING**: |factory::Source::parameters::p+start-idx|
-
-Give the start index to use in the ``USER`` source type. It is the index of the
-first frame to read from the given file.
+|factory::Source::parameters::p+start-idx|
 
 References
 """"""""""

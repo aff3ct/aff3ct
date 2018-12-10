@@ -11,9 +11,7 @@
    :Type: integer
    :Examples: ``--enc-cw-size 1024``
 
-**STRING**: |factory::Encoder::parameters::p+cw-size,N|
-
-Set the codeword size :math:`N`.
+|factory::Encoder::parameters::p+cw-size,N|
 
 .. note:: This parameter value is automatically deduced if the :math:`H` parity
    matrix is given with the :ref:`dec-ldpc-dec-h-path` parameter or if the
@@ -28,9 +26,7 @@ Set the codeword size :math:`N`.
    :Type: integer
    :Examples: ``--enc-info-bits 512``
 
-**STRING**: |factory::Encoder::parameters::p+info-bits,K|
-
-Set the number of information bits :math:`K`.
+|factory::Encoder::parameters::p+info-bits,K|
 
 .. note:: This parameter value is automatically deduced if the :math:`G`
    generator matrix is given with the :ref:`enc-ldpc-enc-g-path` parameter.
@@ -52,9 +48,7 @@ Set the number of information bits :math:`K`.
    :Default: ``AZCW``
    :Examples: ``--enc-type AZCW``
 
-**STRING**: |factory::Encoder::parameters::p+type|
-
-Type of the encoder to use in the simulation.
+|factory::Encoder::parameters::p+type|
 
 Description of the allowed values:
 
@@ -116,10 +110,7 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--enc-g-path example/path/to/the/G_matrix.alist``
 
-**STRING**: |factory::Encoder_LDPC::parameters::p+g-path|
-
-Give the path to the :math:`G` generator matrix in an AList or |QC| formated
-file.
+|factory::Encoder_LDPC::parameters::p+g-path|
 
 .. _enc-ldpc-enc-g-method:
 
@@ -131,10 +122,7 @@ file.
    :Default: ``IDENTITY``
    :Examples: ``--enc-g-method IDENTITY``
 
-**STRING**: |factory::Encoder_LDPC::parameters::p+g-method|
-
-Specify the method used to build the :math:`G` generator matrix from the
-:math:`H` parity matrix when using the ``LDPC_H`` encoder.
+|factory::Encoder_LDPC::parameters::p+g-method|
 
 Description of the allowed values:
 
@@ -165,10 +153,7 @@ Description of the allowed values:
    :Rights: write only
    :Examples: ``--enc-g-save-path example/path/to/the/generated/G_matrix.alist``
 
-**STRING**: |factory::Encoder_LDPC::parameters::p+g-save-path|
-
-Set the file path where the :math:`G` generator matrix will be saved (AList
-file format). To use with the ``LDPC_H`` encoder.
+|factory::Encoder_LDPC::parameters::p+g-save-path|
 
 .. hint:: When running the ``LDPC_H`` encoder, the generation of the :math:`G`
    matrix can take a non-negligible part of the simulation time. With this

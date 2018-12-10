@@ -11,9 +11,7 @@
    :Type: integer
    :Examples: ``--enc-cw-size 1``
 
-**STRING**: |factory::Encoder::parameters::p+cw-size,N|
-
-Set the codeword size :math:`N`.
+|factory::Encoder::parameters::p+cw-size,N|
 
 .. _enc-ra-enc-info-bits:
 
@@ -23,9 +21,7 @@ Set the codeword size :math:`N`.
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-**STRING**: |factory::Encoder::parameters::p+info-bits,K|
-
-Set the nulber of information bits :math:`K`.
+|factory::Encoder::parameters::p+info-bits,K|
 
 .. _enc-ra-enc-type:
 
@@ -37,9 +33,7 @@ Set the nulber of information bits :math:`K`.
    :Default: ``RA``
    :Examples: ``--enc-type AZCW``
 
-**STRING**: |factory::Encoder::parameters::p+type|
-
-Select the encoder type.
+|factory::Encoder::parameters::p+type|
 
 Description of the allowed values:
 
