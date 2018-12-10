@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
@@ -88,7 +89,7 @@ void Encoder_turbo::parameters<E1,E2>
 	// 	{p+"-json-path"},
 	// 	tools::File(tools::openmode::write),
 	// 	"path to store the encoder and decoder traces formated in JSON.");
-	add_arg(args, p, class_name+"p+json-path",
+	tools::add_arg(args, p, class_name+"p+json-path",
 		tools::File(tools::openmode::write));
 
 	sub1->get_description(args);

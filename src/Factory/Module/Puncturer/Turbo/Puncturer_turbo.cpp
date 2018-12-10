@@ -1,5 +1,6 @@
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Turbo/Puncturer_turbo.hpp"
@@ -63,7 +64,7 @@ void Puncturer_turbo::parameters
 	// 	                    std::make_tuple(tools::Length(3, 3), tools::Function<sub_same_length>("elements of same length")),
 	// 	                    std::make_tuple(tools::Length(1))),
 	// 	"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
-	add_arg(args, p, class_name+"p+pattern",
+	tools::add_arg(args, p, class_name+"p+pattern",
 		tools::List2D<bool>(tools::Boolean(),
 	 	                    std::make_tuple(tools::Length(3, 3), tools::Function<sub_same_length>("elements of same length")),
 	 	                    std::make_tuple(tools::Length(1))));
@@ -72,14 +73,14 @@ void Puncturer_turbo::parameters
 	// 	{p+"-tail-length"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"total number of tail bits at the end of the frame.");
-	add_arg(args, p, class_name+"p+tail-length",
+	tools::add_arg(args, p, class_name+"p+tail-length",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-no-buff"},
 	// 	tools::None(),
 	// 	"does not suppose a buffered encoding.");
-	add_arg(args, p, class_name+"p+no-buff",
+	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }
 

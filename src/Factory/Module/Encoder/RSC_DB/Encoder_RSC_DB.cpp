@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Encoder_RSC_DB.hpp"
 
@@ -39,14 +40,14 @@ void Encoder_RSC_DB::parameters
 	// 	{p+"-std"},
 	// 	tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")),
 	// 	"select a standard and set automatically some parameters (overwritten with user given arguments).");
-	add_arg(args, p, class_name+"p+std",
+	tools::add_arg(args, p, class_name+"p+std",
 		tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")));
 
 	// args.add(
 	// 	{p+"-no-buff"},
 	// 	tools::None(),
 	// 	"disable the buffered encoding.");
-	add_arg(args, p, class_name+"p+no-buff",
+	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }
 

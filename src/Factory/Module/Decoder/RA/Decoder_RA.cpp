@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/RA/Decoder_RA.hpp"
 
@@ -73,7 +74,7 @@ void Decoder_RA::parameters
 	// 	{p+"-ite", "i"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"maximal number of iterations in the decoder.");
-	add_arg(args, p, class_name+"p+ite,i",
+	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 

@@ -2,19 +2,13 @@
 #include <iostream>
 #include <utility>
 #include <sstream>
-#include <fstream>
 #include <vector>
-#include <regex>
-#include <map>
 
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Factory.hpp"
-#ifndef AFF3CT_EXT_STRINGS
-#include "strings.cpp"
-#endif
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -22,134 +16,6 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Factory_name       = "Factory";
 const std::string aff3ct::factory::Factory_short_name = "Factory";
 const std::string aff3ct::factory::Factory_prefix     = "fac";
-
-std::map<std::string,std::string> Documentation;
-
-tools::Argument_tag extract_tags(const std::string &key, const std::string &prefix)
-{
-	auto key_cpy = key;
-	const std::string pcode = "p+";
-
-	while (key_cpy.find(pcode) != std::string::npos)
-		key_cpy.replace(key_cpy.find(pcode), pcode.length(), prefix + "-");
-	auto split_key = tools::split(key_cpy, ':');
-
-	if (split_key.size() == 0)
-	{
-		std::stringstream message;
-		message << "'split_key.size()' has to be higher than 0.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	auto tags = tools::split(split_key[split_key.size()-1], ',');
-
-	if (tags.size() == 0)
-	{
-		std::stringstream message;
-		message << "'tags.size()' has to be higher than 0.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	for (size_t t = 0; t < tags.size(); t++)
-		if (tags[t].size() != 0 && tags[t][tags[t].size()-1] == '-')
-			tags[t].pop_back();
-
-	return tags;
-}
-
-std::string sanitize(const std::string &value)
-{
-	std::string new_value = value;
-
-	// trick to compile on the GNU compiler version 4 (where 'std::regex' is unavailable)
-#if !(!defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5)
-	std::regex e_pipe("\\|([^ ]*)\\|");
-	new_value = std::regex_replace (new_value,e_pipe,"$1");
-
-	std::regex e_quote("`([^ ]*)`");
-	new_value = std::regex_replace (new_value,e_quote,"$1");
-
-	std::regex e_start2("\\*\\*([^ ]*)\\*\\*");
-	new_value = std::regex_replace (new_value,e_start2,"$1");
-
-	std::regex e_start1("\\*([^ ]*)\\*");
-	new_value = std::regex_replace (new_value,e_start1,"$1");
-#endif
-
-	return new_value;
-}
-
-void parse_documentation(const std::vector<std::string> &lines)
-{
-	std::string line, key, value;
-	for (auto line : lines)
-	{
-		if (line.find(".. |") == 0)
-		{
-			if (key.length() && value.length())
-				Documentation[key] = sanitize(value);
-
-			value.clear();
-
-			auto split_line = tools::split(line, '|');
-
-			if (split_line.size() < 2)
-			{
-				std::stringstream message;
-				message << "'split_line.size()' has to be equal or higher than 2 ('split_line.size()' = "
-				        << split_line.size() << ").";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-
-			key = split_line[1];
-		}
-		else if (line.find("..") != 0 && !std::all_of(line.begin(),line.end(),isspace))
-		{
-			if (line.find("   ") == 0) line.replace(0, 3, "");
-			if (value.length()) value += " ";
-			value += line;
-		}
-	}
-
-	if (key.length() && value.length())
-		Documentation[key] = sanitize(value);
-}
-
-std::string extract_doc(const std::string &key)
-{
-	if (Documentation.empty())
-	{
-		std::vector<std::string> lines;
-
-#ifdef AFF3CT_EXT_STRINGS
-		std::ifstream rst_file("../doc/sphinx/strings.rst");
-		std::string line;
-		if (rst_file.is_open())
-			while (std::getline(rst_file, line) && !rst_file.eof() && !rst_file.fail() && !rst_file.bad())
-				lines.push_back(line);
-#else
-		lines = tools::split(Strings, '\n');
-#endif
-
-		parse_documentation(lines);
-	}
-
-	if (Documentation.find(key) == Documentation.end())
-		return "This parameter is not documented";
-	else
-		return Documentation[key];
-}
-
-void aff3ct::factory::add_arg(      tools::Argument_map_info &args,
-                              const std::string              &prefix,
-                              const std::string              &key,
-                                    tools::Argument_type     *arg_t,
-                              const tools::arg_rank           rank)
-{
-	const tools::Argument_tag tags = extract_tags(key, prefix);
-	const std::string doc = extract_doc(key);
-	args.add(tags, arg_t, doc, rank);
-}
 
 Factory::parameters
 ::parameters(const std::string &name, const std::string &short_name, const std::string &prefix)
@@ -208,8 +74,7 @@ tools::Argument_map_info Factory
 }
 
 void Factory
-::get_description(const std::vector<Factory::parameters*> &params,
-                     tools::Argument_map_info &args)
+::get_description(const std::vector<Factory::parameters*> &params, tools::Argument_map_info &args)
 {
 	for (auto *p : params)
 		p->get_description(args);

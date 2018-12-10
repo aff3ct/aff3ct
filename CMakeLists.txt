@@ -132,11 +132,11 @@ if (NOT AFF3CT_EXT_STRINGS)
     string(REPLACE "\n" "\\n"  AFF3CT_STRINGS "${AFF3CT_STRINGS}")
 
     # Auto generate a file containing the doc strings
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp.in"
-                   "${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp" @ONLY)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/Documentation/strings.cpp.in"
+                   "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/Documentation/strings.cpp" @ONLY)
 
-    list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Factory/strings.cpp")
-endif(AFF3CT_EXT_STRINGS)
+    list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/Documentation/strings.cpp")
+endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------ CREATE FILTERS
@@ -451,6 +451,11 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
     install(FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-config.cmake"
                   "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-config-version.cmake"
             DESTINATION lib/cmake/aff3ct-${GIT_VERSION_RMV})
+endif()
+
+if (AFF3CT_EXT_STRINGS)
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/strings.rst"
+            DESTINATION share/aff3ct-${GIT_VERSION_RMV}/doc/strings)
 endif()
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/aff3ct

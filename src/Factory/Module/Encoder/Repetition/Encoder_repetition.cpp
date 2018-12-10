@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
@@ -37,7 +38,7 @@ void Encoder_repetition::parameters
 	// 	{p+"-no-buff"},
 	// 	tools::None(),
 	// 	"disable the buffered encoding.");
-	add_arg(args, p, class_name+"p+no-buff",
+	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }
 

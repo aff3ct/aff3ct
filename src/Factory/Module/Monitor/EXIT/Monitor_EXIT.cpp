@@ -1,6 +1,7 @@
 #include "Monitor_EXIT.hpp"
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
@@ -36,7 +37,7 @@ void Monitor_EXIT::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"number of bits to check.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+size,K",
+	tools::add_arg(args, p, class_name+"p+size,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -44,14 +45,14 @@ void Monitor_EXIT::parameters
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-trials", "n"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"number of frames to simulate per sigma A value.");
-	add_arg(args, p, class_name+"p+trials,n",
+	tools::add_arg(args, p, class_name+"p+trials,n",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 

@@ -1,7 +1,9 @@
 #include <thread>
 
-#include "BFER.hpp"
+#include "Tools/Documentation/documentation.h"
 #include "Tools/Math/utils.h"
+
+#include "BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -93,7 +95,7 @@ void BFER::parameters
 	// 	{p+"-coset", "c"},
 	// 	tools::None(),
 	// 	"enable the coset approach.");
-	add_arg(args, p, class_name+"p+coset,c",
+	tools::add_arg(args, p, class_name+"p+coset,c",
 		tools::None());
 
 	// args.add(
@@ -102,7 +104,7 @@ void BFER::parameters
 	// 	"enable the tracking of the bad frames (by default the frames are stored in "
 	//  "the current folder).",
 	// 	tools::arg_rank::ADV);
-	add_arg(args, p, class_name+"p+err-trk",
+	tools::add_arg(args, p, class_name+"p+err-trk",
 		tools::None(),
 		tools::arg_rank::ADV);
 
@@ -111,7 +113,7 @@ void BFER::parameters
 	// 	tools::None(),
 	// 	"automatically replay the saved frames.",
 	// 	tools::arg_rank::ADV);
-	add_arg(args, p, class_name+"p+err-trk-rev",
+	tools::add_arg(args, p, class_name+"p+err-trk-rev",
 		tools::None(),
 		tools::arg_rank::ADV);
 
@@ -120,7 +122,7 @@ void BFER::parameters
 	// 	tools::File(tools::openmode::read_write),
 	// 	"base path for the files where the bad frames will be stored or read.",
 	// 	tools::arg_rank::ADV);
-	add_arg(args, p, class_name+"p+err-trk-path",
+	tools::add_arg(args, p, class_name+"p+err-trk-path",
 		tools::File(tools::openmode::read_write),
 		tools::arg_rank::ADV);
 
@@ -129,7 +131,7 @@ void BFER::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"dump only frames with a bit error count above or equal to this threshold.",
 	// 	tools::arg_rank::ADV);
-	add_arg(args, p, class_name+"p+err-trk-thold",
+	tools::add_arg(args, p, class_name+"p+err-trk-thold",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::ADV);
 
@@ -138,7 +140,7 @@ void BFER::parameters
 	// 	tools::None(),
 	// 	"enable the coded monitoring (extends the monitored bits to the entire ""
 	//  "codeword).");
-	add_arg(args, p, class_name+"p+coded",
+	tools::add_arg(args, p, class_name+"p+coded",
 		tools::None());
 
 	auto pmon = mnt_er->get_prefix();
@@ -147,7 +149,7 @@ void BFER::parameters
 	// 	{pmon+"-mutinfo"},
 	// 	tools::None(),
 	// 	"allow the computation of the mutual information.");
-	add_arg(args, pmon, class_name+"p+mutinfo",
+	tools::add_arg(args, pmon, class_name+"p+mutinfo",
 		tools::None());
 }
 

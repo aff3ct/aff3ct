@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Polar/Encoder_polar.hpp"
 #include "Module/Encoder/Polar/Encoder_polar_sys.hpp"
@@ -38,7 +39,7 @@ void Encoder_polar::parameters
 	// 	{p+"-no-sys"},
 	// 	tools::None(),
 	// 	"disable the systematic encoding.");
-	add_arg(args, p, class_name+"p+no-sys",
+	tools::add_arg(args, p, class_name+"p+no-sys",
 		tools::None());
 }
 

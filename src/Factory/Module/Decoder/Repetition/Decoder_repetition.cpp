@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
@@ -40,7 +41,7 @@ void Decoder_repetition::parameters
 	// 	{p+"-no-buff"},
 	// 	tools::None(),
 	// 	"does not suppose a buffered encoding.");
-	add_arg(args, p, class_name+"p+no-buff",
+	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }
 

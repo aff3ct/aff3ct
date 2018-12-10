@@ -1,6 +1,7 @@
 #include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Quantizer/Pow2/Quantizer_pow2.hpp"
 #include "Module/Quantizer/Pow2/Quantizer_pow2_fast.hpp"
@@ -38,7 +39,7 @@ void Quantizer::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"number of real to quantize.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+size,N",
+	tools::add_arg(args, p, class_name+"p+size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -46,42 +47,42 @@ void Quantizer::parameters
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-type"},
 	// 	tools::Text(tools::Including_set("POW2", "CUSTOM")),
 	// 	"type of the quantizer to use in the simulation.");
-	add_arg(args, p, class_name+"p+type",
+	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("POW2", "CUSTOM")));
 
 	// args.add(
 	// 	{p+"-implem"},
 	// 	tools::Text(tools::Including_set("STD", "FAST")),
 	// 	"select the implementation of quantizer.");
-	add_arg(args, p, class_name+"p+implem",
+	tools::add_arg(args, p, class_name+"p+implem",
 		tools::Text(tools::Including_set("STD", "FAST")));
 
 	// args.add(
 	// 	{p+"-dec"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"the position of the fixed point in the quantified representation.");
-	add_arg(args, p, class_name+"p+dec",
+	tools::add_arg(args, p, class_name+"p+dec",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-bits"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"the number of bits used for the quantizer.");
-	add_arg(args, p, class_name+"p+bits",
+	tools::add_arg(args, p, class_name+"p+bits",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-range"},
 	// 	tools::Real(tools::Positive(), tools::Non_zero()),
 	// 	"the min/max bound for the tricky quantizer.");
-	add_arg(args, p, class_name+"p+range",
+	tools::add_arg(args, p, class_name+"p+range",
 		tools::Real(tools::Positive(), tools::Non_zero()));
 }
 

@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
 
@@ -88,14 +89,14 @@ void Decoder_turbo_DB::parameters
 	// 	{p+"-ite", "i"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"maximal number of iterations in the turbo.");
-	add_arg(args, p, class_name+"p+ite,i",
+	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-crc-start"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the iteration to start the CRC checking.");
-	add_arg(args, p, class_name+"p+crc-start",
+	tools::add_arg(args, p, class_name+"p+crc-start",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	sf->get_description(args);

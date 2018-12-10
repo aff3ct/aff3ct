@@ -4,6 +4,7 @@
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/general_utils.h"
 #include "Tools/Noise/noise_utils.h"
+#include "Tools/Documentation/documentation.h"
 
 #include "Noise.hpp"
 
@@ -36,7 +37,7 @@ void Noise::parameters
 	// 		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
 	// 		"noise energy range to run (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
 	// 		tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+noise-range,R",
+	tools::add_arg(args, p, class_name+"p+noise-range,R",
 		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
 		tools::arg_rank::REQ);
 
@@ -45,7 +46,7 @@ void Noise::parameters
 	// 		tools::Real(),
 	// 		"minimal noise energy to simulate.",
 	// 		tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+noise-min,m",
+	tools::add_arg(args, p, class_name+"p+noise-min,m",
 		tools::Real(),
 		tools::arg_rank::REQ);
 
@@ -54,7 +55,7 @@ void Noise::parameters
 	// 		tools::Real(),
 	// 		"maximal noise energy to simulate.",
 	// 		tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+noise-max,M",
+	tools::add_arg(args, p, class_name+"p+noise-max,M",
 		tools::Real(),
 		tools::arg_rank::REQ);
 
@@ -62,7 +63,7 @@ void Noise::parameters
 	// 		{p+"-noise-step", "s"},
 	// 		tools::Real(tools::Positive(), tools::Non_zero()),
 	// 		"noise energy step between each simulation iteration.");
-	add_arg(args, p, class_name+"p+noise-step,s",
+	tools::add_arg(args, p, class_name+"p+noise-step,s",
 		tools::Real(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
@@ -70,7 +71,7 @@ void Noise::parameters
 	// 		tools::File(tools::openmode::read),
 	// 		"A file that contains PDF for different SNR. Set the SNR range from the given ones. "
 	// 		"Overwritten by -R or limited by -m and -M with a minimum step of -s");
-	add_arg(args, p, class_name+"p+pdf-path",
+	tools::add_arg(args, p, class_name+"p+pdf-path",
 		tools::File(tools::openmode::read));
 
 
@@ -86,7 +87,7 @@ void Noise::parameters
 	// 		tools::Text(tools::Including_set("ESN0", "EBN0", "ROP", "EP")),
 	// 		"select the type of NOISE: SNR per Symbol / SNR per information Bit"
 	// 		" / Received Optical Power / Erasure Probability.");
-	add_arg(args, p, class_name+"p+noise-type,E",
+	tools::add_arg(args, p, class_name+"p+noise-type,E",
 		tools::Text(tools::Including_set("ESN0", "EBN0", "ROP", "EP")));
 
 }

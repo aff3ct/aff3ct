@@ -2,6 +2,7 @@
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_std.hpp"
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_scan.hpp"
@@ -60,35 +61,35 @@ void Decoder_RSC::parameters
 	// 	{p+"-simd"},
 	// 	tools::Text(tools::Including_set("INTRA", "INTER")),
 	// 	"the SIMD strategy you want to use.");
-	add_arg(args, p, class_name+"p+simd",
+	tools::add_arg(args, p, class_name+"p+simd",
 		tools::Text(tools::Including_set("INTRA", "INTER")));
 
 	// args.add(
 	// 	{p+"-max"},
 	// 	tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
 	// 	"the MAX implementation for the nodes.");
-	add_arg(args, p, class_name+"p+max",
+	tools::add_arg(args, p, class_name+"p+max",
 		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")));
 
 	// args.add(
 	// 	{p+"-no-buff"},
 	// 	tools::None(),
 	// 	"does not suppose a buffered encoding.");
-	add_arg(args, p, class_name+"p+no-buff",
+	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 
 	// args.add(
 	// 	{p+"-poly"},
 	// 	tools::Text(),
 	// 	"the polynomials describing RSC code, should be of the form \"{A,B}\".");
-	add_arg(args, p, class_name+"p+poly",
+	tools::add_arg(args, p, class_name+"p+poly",
 		tools::Text());
 
 	// args.add(
 	// 	{p+"-std"},
 	// 	tools::Text(tools::Including_set("LTE", "CCSDS")),
 	// 	"select a standard and set automatically some parameters (overwritten with user given arguments).");
-	add_arg(args, p, class_name+"p+std",
+	tools::add_arg(args, p, class_name+"p+std",
 		tools::Text(tools::Including_set("LTE", "CCSDS")));
 }
 

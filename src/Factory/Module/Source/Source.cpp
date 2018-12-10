@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Source/AZCW/Source_AZCW.hpp"
 #include "Module/Source/Random/Source_random.hpp"
@@ -36,7 +37,7 @@ void Source::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"number of generated bits (information bits).",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+info-bits,K",
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -44,42 +45,42 @@ void Source::parameters
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-type"},
 	// 	tools::Text(tools::Including_set("RAND", "AZCW", "USER")),
 	// 	"method used to generate the codewords.");
-	add_arg(args, p, class_name+"p+type",
+	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("RAND", "AZCW", "USER")));
 
 	// args.add(
 	// 	{p+"-implem"},
 	// 	tools::Text(tools::Including_set("STD", "FAST")),
 	// 	"select the implementation of the algorithm to generate the information bits.");
-	add_arg(args, p, class_name+"p+implem",
+	tools::add_arg(args, p, class_name+"p+implem",
 		tools::Text(tools::Including_set("STD", "FAST")));
 
 	// args.add(
 	// 	{p+"-path"},
 	// 	tools::File(tools::openmode::read),
 	// 	"path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\".");
-	add_arg(args, p, class_name+"p+path",
+	tools::add_arg(args, p, class_name+"p+path",
 		tools::File(tools::openmode::read));
 
 	// args.add(
 	// 	{p+"-start-idx"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"Start idx to use in the USER type source.");
-	add_arg(args, p, class_name+"p+start-idx",
+	tools::add_arg(args, p, class_name+"p+start-idx",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-seed", "S"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"seed used to initialize the pseudo random generators.");
-	add_arg(args, p, class_name+"p+seed,S",
+	tools::add_arg(args, p, class_name+"p+seed,S",
 		tools::Integer(tools::Positive()));
 }
 

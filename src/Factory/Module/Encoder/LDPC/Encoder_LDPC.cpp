@@ -1,4 +1,6 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
+
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
@@ -42,7 +44,7 @@ void Encoder_LDPC::parameters
 	// 	{p+"-h-path"},
 	// 	tools::File(tools::openmode::read),
 	// 	"path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder).");
-	add_arg(args, p, class_name+"p+h-path",
+	tools::add_arg(args, p, class_name+"p+h-path",
 		tools::File(tools::openmode::read));
 
 	args.add_link({p+"-h-path"}, {p+"-cw-size",   "N"}); // N_cw is H width
@@ -52,7 +54,7 @@ void Encoder_LDPC::parameters
 	// 	{p+"-g-path"},
 	// 	tools::File(tools::openmode::read),
 	// 	"path to the G matrix (AList formated file, required by the \"LDPC\" encoder).");
-	add_arg(args, p, class_name+"p+g-path",
+	tools::add_arg(args, p, class_name+"p+g-path",
 		tools::File(tools::openmode::read));
 
 	args.add_link({p+"-g-path"}, {p+"-info-bits", "K"});
@@ -63,7 +65,7 @@ void Encoder_LDPC::parameters
 	// 	tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
 	// 	"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
 	// 	"smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.");
-	add_arg(args, p, class_name+"p+h-reorder",
+	tools::add_arg(args, p, class_name+"p+h-reorder",
 		tools::Text(tools::Including_set("NONE", "ASC", "DSC")));
 
 	// args.add(
@@ -72,14 +74,14 @@ void Encoder_LDPC::parameters
 	// 	"The method used to generate G from H when using 'LDPC_H' encoder type. 'LU_DEC' method generates a hollow G "
 	// 	"thanks to the LU decomposition with a guarantee to have the systematic identity (do not work with irregular "
 	// 	"matrices) when the 'IDENTITY' method generate an identity on H to get the parity part.");
-	add_arg(args, p, class_name+"p+g-method",
+	tools::add_arg(args, p, class_name+"p+g-method",
 		tools::Text(tools::Including_set("IDENTITY", "LU_DEC")));
 
 	// args.add(
 	// 	{p+"-g-save-path"},
 	// 	tools::File(tools::openmode::write),
 	// 	"path where the generated G matrix with the 'LDPC_H' encoder type will be saved.");
-	add_arg(args, p, class_name+"p+g-save-path",
+	tools::add_arg(args, p, class_name+"p+g-save-path",
 		tools::File(tools::openmode::write));
 }
 

@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/Turbo/Decoder_turbo_std.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
@@ -97,28 +98,28 @@ void Decoder_turbo::parameters<D1,D2>
 	// 	{p+"-ite", "i"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"maximal number of iterations in the turbo.");
-	add_arg(args, p, class_name+"p+ite,i",
+	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-sc"},
 	// 	tools::None(),
 	// 	"enables the self corrected decoder (requires \"--crc-type\").");
-	add_arg(args, p, class_name+"p+sc",
+	tools::add_arg(args, p, class_name+"p+sc",
 		tools::None());
 
 	// args.add(
 	// 	{p+"-json"},
 	// 	tools::None(),
 	// 	"enable the json output trace.");
-	add_arg(args, p, class_name+"p+json",
+	tools::add_arg(args, p, class_name+"p+json",
 		tools::None());
 
 	// args.add(
 	// 	{p+"-crc-start"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the iteration to start the CRC checking.");
-	add_arg(args, p, class_name+"p+crc-start",
+	tools::add_arg(args, p, class_name+"p+crc-start",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	sf->get_description(args);

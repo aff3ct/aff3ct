@@ -1,5 +1,7 @@
 #if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
+#include "Tools/Documentation/documentation.h"
+
 #include "Simulation/EXIT/EXIT.hpp"
 #include "Tools/general_utils.h"
 
@@ -89,7 +91,7 @@ void EXIT::parameters
 	// 	"sigma range used in EXIT charts (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" "
 	//  "with a default step of 0.1).",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+siga-range",
+	tools::add_arg(args, p, class_name+"p+siga-range",
 		tools::Matlab_vector<float>(tools::Real(tools::Positive()), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
 		tools::arg_rank::REQ);
 
@@ -98,7 +100,7 @@ void EXIT::parameters
 	// 	tools::Real(tools::Positive()),
 	// 	"sigma min value used in EXIT charts.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+siga-min,a",
+	tools::add_arg(args, p, class_name+"p+siga-min,a",
 		tools::Real(tools::Positive()),
 		tools::arg_rank::REQ);
 
@@ -107,7 +109,7 @@ void EXIT::parameters
 	// 	tools::Real(tools::Positive()),
 	// 	"sigma max value used in EXIT charts.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+siga-max,A",
+	tools::add_arg(args, p, class_name+"p+siga-max,A",
 		tools::Real(tools::Positive()),
 		tools::arg_rank::REQ);
 
@@ -115,7 +117,7 @@ void EXIT::parameters
 	// 	{p+"-siga-step"},
 	// 	tools::Real(tools::Positive(), tools::Non_zero()),
 	// 	"sigma step value used in EXIT charts.");
-	add_arg(args, p, class_name+"p+siga-step",
+	tools::add_arg(args, p, class_name+"p+siga-step",
 		tools::Real(tools::Positive(), tools::Non_zero()));
 
 	args.add_link({p+"-siga-range"}, {p+"-siga-min", "a"});

@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Channel/NO/Channel_NO.hpp"
 #include "Module/Channel/User/Channel_user.hpp"
@@ -60,7 +61,7 @@ void Channel::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"number of symbols by frame.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+fra-size,N",
+	tools::add_arg(args, p, class_name+"p+fra-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -68,7 +69,7 @@ void Channel::parameters
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
@@ -77,7 +78,7 @@ void Channel::parameters
 	// 	                                 "USER_ADD", "USER_BEC", "USER_BSC")),
 	// 	"type of the channel to use in the simulation ('USER' has an output got from a file when 'USER_ADD' has an"
 	// 	" additive noise got from a file, 'USER_BEC' and 'USER_BSC' have their event draws from the file).");
-	add_arg(args, p, class_name+"p+type",
+	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("NO", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "BSC", "OPTICAL", "USER",
 		                                 "USER_ADD", "USER_BEC", "USER_BSC")));
 
@@ -85,7 +86,7 @@ void Channel::parameters
 	// 	{p+"-implem"},
 	// 	tools::Text(tools::Including_set("STD", "FAST")),
 	// 	"select the implementation of the algorithm to generate noise.");
-	add_arg(args, p, class_name+"p+implem",
+	tools::add_arg(args, p, class_name+"p+implem",
 		tools::Text(tools::Including_set("STD", "FAST")));
 
 #ifdef AFF3CT_CHANNEL_GSL
@@ -100,49 +101,49 @@ void Channel::parameters
 	// 	tools::File(tools::openmode::read),
 	// 	"path to a noisy file, to use with \"--chn-type USER or USER_ADD\" or to a gain file"
 	// 	" (used with \"--chn-type RAYLEIGH_USER\").");
-	add_arg(args, p, class_name+"p+path",
+	tools::add_arg(args, p, class_name+"p+path",
 		tools::File(tools::openmode::read));
 
 	// args.add(
 	// 	{p+"-blk-fad"},
 	// 	tools::Text(tools::Including_set("NO", "FRAME", "ONETAP")),
 	// 	"block fading policy for the RAYLEIGH channel.");
-	add_arg(args, p, class_name+"p+blk-fad",
+	tools::add_arg(args, p, class_name+"p+blk-fad",
 		tools::Text(tools::Including_set("NO", "FRAME", "ONETAP")));
 
 	// args.add(
 	// 	{p+"-noise"},
 	// 	tools::Real(tools::Positive(), tools::Non_zero()),
 	// 	"noise value (for SIGMA, ROP or EP noise type).");
-	add_arg(args, p, class_name+"p+noise",
+	tools::add_arg(args, p, class_name+"p+noise",
 		tools::Real(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-seed", "S"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"seed used to initialize the pseudo random generators.");
-	add_arg(args, p, class_name+"p+seed,S",
+	tools::add_arg(args, p, class_name+"p+seed,S",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-add-users"},
 	// 	tools::None(),
 	// 	"add all the users (= frames) before generating the noise.");
-	add_arg(args, p, class_name+"p+add-users",
+	tools::add_arg(args, p, class_name+"p+add-users",
 		tools::None());
 
 	// args.add(
 	// 	{p+"-complex"},
 	// 	tools::None(),
 	// 	"enable complex noise generation.");
-	add_arg(args, p, class_name+"p+complex",
+	tools::add_arg(args, p, class_name+"p+complex",
 		tools::None());
 
 	// args.add(
 	// 	{p+"-gain-occur"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"the number of times a gain is used on consecutive symbols (used with \"--chn-type RAYLEIGH_USER\").");
-	add_arg(args, p, class_name+"p+gain-occur",
+	tools::add_arg(args, p, class_name+"p+gain-occur",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 

@@ -1,9 +1,10 @@
 #include <sstream>
 
+#include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
+
 #include "Module/Decoder/RS/Standard/Decoder_RS_std.hpp"
 #include "Module/Decoder/RS/Genius/Decoder_RS_genius.hpp"
-
-#include "Tools/Exception/exception.hpp"
 
 #include "Decoder_RS.hpp"
 
@@ -39,7 +40,7 @@ void Decoder_RS::parameters
 	// 	{p+"-corr-pow", "T"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"correction power of the RS code.");
-	add_arg(args, p, class_name+"p+corr-pow,T",
+	tools::add_arg(args, p, class_name+"p+corr-pow,T",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});

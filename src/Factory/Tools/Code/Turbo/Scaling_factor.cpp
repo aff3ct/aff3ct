@@ -1,6 +1,7 @@
 #include <cctype>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_seq.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_vec.hpp"
@@ -38,14 +39,14 @@ void Scaling_factor::parameters
 	// 	{p+"-type"},
 	// 	tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")),
 	// 	"scaling factor type.");
-	add_arg(args, p, class_name+"p+type",
+	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")));
 
 	// args.add(
 	// 	{p+"-ite"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"number of iterations.");
-	add_arg(args, p, class_name+"p+ite",
+	tools::add_arg(args, p, class_name+"p+ite",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 

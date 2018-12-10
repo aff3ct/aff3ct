@@ -1,4 +1,6 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
+
 #include "Tools/general_utils.h"
 #include "Tools/Arguments/Splitter/Splitter.hpp"
 
@@ -97,7 +99,7 @@ void Decoder_turbo_product::parameters
 	// 	{p+"-ite", "i"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"maximal number of iterations in the turbo.");
-	add_arg(args, p, class_name+"p+ite,i",
+	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
@@ -105,7 +107,7 @@ void Decoder_turbo_product::parameters
 	// 	tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)),
 	// 	"weighting factor, one by half iteration (so twice more than number of iterations)."
 	// 	" If not enough given values, then automatically extends the last to all iterations.");
-	add_arg(args, p, class_name+"p+alpha",
+	tools::add_arg(args, p, class_name+"p+alpha",
 		tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)));
 
 	// args.add(
@@ -114,42 +116,42 @@ void Decoder_turbo_product::parameters
 	// 	"reliability factor, one by half iteration (so twice more than number of iterations)."
 	// 	" If not enough given values, then automatically extends the last to all iterations."
 	// 	" If not given, then computes beta dynamically from the least reliable position metrics.");
-	add_arg(args, p, class_name+"p+beta",
+	tools::add_arg(args, p, class_name+"p+beta",
 		tools::List<float,Real_splitter>(tools::Real(tools::Positive()), tools::Length(1)));
 
 	// args.add(
 	// 	{p+"-p"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"number of least reliable positions.");
-	add_arg(args, p, class_name+"p+p",
+	tools::add_arg(args, p, class_name+"p+p",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-t"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"number of test vectors (0 means equal to 2^p).");
-	add_arg(args, p, class_name+"p+t",
+	tools::add_arg(args, p, class_name+"p+t",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-c"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"number of competitors (0 means equal to number of test vectors, 1 means only the decided word).");
-	add_arg(args, p, class_name+"p+c",
+	tools::add_arg(args, p, class_name+"p+c",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-ext"},
 	// 	tools::None(),
 	// 	"extends code with a parity bits.");
-	add_arg(args, p, class_name+"p+ext",
+	tools::add_arg(args, p, class_name+"p+ext",
 		tools::None());
 
 	// args.add(
 	// 	{p+"-cp-coef"},
 	// 	tools::List<float,Real_splitter>(tools::Real(), tools::Length(5,5)),
 	// 	"the 5 Chase Pyndiah constant coefficients \"a,b,c,d,e\".");
-	add_arg(args, p, class_name+"p+cp-coef",
+	tools::add_arg(args, p, class_name+"p+cp-coef",
 		tools::List<float,Real_splitter>(tools::Real(), tools::Length(5,5)));
 
 	sub->get_description(args);

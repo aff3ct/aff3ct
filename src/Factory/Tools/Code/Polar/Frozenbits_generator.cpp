@@ -1,4 +1,6 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
+
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
@@ -34,7 +36,7 @@ void Frozenbits_generator::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"useful number of bit transmitted (information bits).",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+info-bits,K",
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -43,7 +45,7 @@ void Frozenbits_generator::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"the codeword size.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+cw-size,N",
+	tools::add_arg(args, p, class_name+"p+cw-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -52,14 +54,14 @@ void Frozenbits_generator::parameters
 	// 	tools::Real(tools::Positive(), tools::Non_zero()),
 	// 	"sigma value for the polar codes generation (adaptive frozen bits if "
 	//  "sigma is not set).");
-	add_arg(args, p, class_name+"p+sigma",
+	tools::add_arg(args, p, class_name+"p+sigma",
 		tools::Real(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-gen-method"},
 	// 	tools::Text(tools::Including_set("GA", "FILE", "TV")),
 	// 	"select the frozen bits generation method.");
-	add_arg(args, p, class_name+"p+gen-method",
+	tools::add_arg(args, p, class_name+"p+gen-method",
 		tools::Text(tools::Including_set("GA", "FILE", "TV")));
 
 	// args.add(
@@ -67,7 +69,7 @@ void Frozenbits_generator::parameters
 	// 	tools::Path(tools::openmode::read),
 	// 	"path to a file or a directory containing the best channels to use for
 	//  "information bits.");
-	add_arg(args, p, class_name+"p+awgn-path",
+	tools::add_arg(args, p, class_name+"p+awgn-path",
 		tools::Path(tools::openmode::read));
 
 #ifdef ENABLE_POLAR_BOUNDS
@@ -75,7 +77,7 @@ void Frozenbits_generator::parameters
 	// 	{p+"-pb-path"},
 	// 	tools::File(tools::openmode::read),
 	// 	"path of the polar bounds code generator (generates best channels to use");
-	add_arg(args, p, class_name+"p+pb-path",
+	tools::add_arg(args, p, class_name+"p+pb-path",
 		tools::Path(tools::openmode::read));
 #endif
 }

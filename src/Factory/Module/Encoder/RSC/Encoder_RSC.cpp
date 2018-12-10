@@ -2,6 +2,7 @@
 #include <cmath>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"
@@ -43,21 +44,21 @@ void Encoder_RSC::parameters
 	// 	{p+"-no-buff"},
 	// 	tools::None(),
 	// 	"disable the buffered encoding.");
-	add_arg(args, p, class_name+"p+no-buff",
+	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 
 	// args.add(
 	// 	{p+"-poly"},
 	// 	tools::Text(),
 	// 	"the polynomials describing RSC code, should be of the form \"{A,B}\".");
-	add_arg(args, p, class_name+"p+poly",
+	tools::add_arg(args, p, class_name+"p+poly",
 		tools::Text());
 
 	// args.add(
 	// 	{p+"-std"},
 	// 	tools::Text(tools::Including_set("LTE", "CCSDS")),
 	// 	"select a standard and set automatically some parameters (overwritten with user given arguments)");
-	add_arg(args, p, class_name+"p+std",
+	tools::add_arg(args, p, class_name+"p+std",
 		tools::Text(tools::Including_set("LTE", "CCSDS")));
 }
 

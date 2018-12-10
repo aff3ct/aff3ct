@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/AZCW/Encoder_AZCW.hpp"
 #include "Module/Encoder/Coset/Encoder_coset.hpp"
@@ -41,7 +42,7 @@ void Encoder::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"useful number of bit transmitted (information bits).",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+info-bits,K",
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -50,7 +51,7 @@ void Encoder::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"the codeword size.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+cw-size,N",
+	tools::add_arg(args, p, class_name+"p+cw-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -58,35 +59,35 @@ void Encoder::parameters
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-type"},
 	// 	tools::Text(tools::Including_set("AZCW", "COSET", "USER")),
 	// 	"type of the encoder to use in the simulation.");
-	add_arg(args, p, class_name+"p+type",
+	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("AZCW", "COSET", "USER")));
 
 	// args.add(
 	// 	{p+"-path"},
 	// 	tools::File(tools::openmode::read),
 	// 	"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
-	add_arg(args, p, class_name+"p+path",
+	tools::add_arg(args, p, class_name+"p+path",
 		tools::File(tools::openmode::read));
 
 	// args.add(
 	// 	{p+"-start-idx"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"Start idx to use in the USER type encoder.");
-	add_arg(args, p, class_name+"p+start-idx",
+	tools::add_arg(args, p, class_name+"p+start-idx",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-seed", "S"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"seed used to initialize the pseudo random generators.");
-	add_arg(args, p, class_name+"p+seed,S",
+	tools::add_arg(args, p, class_name+"p+seed,S",
 		tools::Integer(tools::Positive()));
 }
 

@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_generic.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS1.hpp"
@@ -43,14 +44,14 @@ void Decoder_RSC_DB::parameters
 	// 	{p+"-max"},
 	// 	tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
 	// 	"the MAX implementation for the nodes.");
-	add_arg(args, p, class_name+"p+max",
+	tools::add_arg(args, p, class_name+"p+max",
 		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")));
 
 	// args.add(
 	// 	{p+"-no-buff"},
 	// 	tools::None(),
 	// 	"does not suppose a buffered encoding.");
-	add_arg(args, p, class_name+"p+no-buff",
+	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }
 

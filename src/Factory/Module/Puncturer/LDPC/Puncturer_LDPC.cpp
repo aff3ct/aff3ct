@@ -2,6 +2,7 @@
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
@@ -40,7 +41,7 @@ void Puncturer_LDPC::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"the codeword size.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+cw-size,N_cw",
+	tools::add_arg(args, p, class_name+"p+cw-size,N_cw",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -50,7 +51,7 @@ void Puncturer_LDPC::parameters
 	// 	{p+"-pattern"},
 	// 	tools::Text(),
 	// 	"puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: \"1,1,1,0\").");
-	add_arg(args, p, class_name+"p+pattern",
+	tools::add_arg(args, p, class_name+"p+pattern",
 		tools::Text());
 }
 

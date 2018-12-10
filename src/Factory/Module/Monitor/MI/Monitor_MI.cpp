@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 
@@ -35,7 +36,7 @@ void Monitor_MI::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"the frame size for the mutual information computation.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+fra-size,N",
+	tools::add_arg(args, p, class_name+"p+fra-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -43,14 +44,14 @@ void Monitor_MI::parameters
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-trials", "n"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"number of frames to simulate.");
-	add_arg(args, p, class_name+"p+trials,n",
+	tools::add_arg(args, p, class_name+"p+trials,n",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 

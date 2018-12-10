@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 
@@ -34,21 +35,21 @@ void Encoder_NO::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"useful number of bit transmitted (information bits).",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+info-bits,K",
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-type"},
 	// 	tools::Text(tools::Including_set("NO")),
 	// 	"type of the encoder to use in the simulation.");
-	add_arg(args, p, class_name+"p+type",
+	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("NO")));
 }
 

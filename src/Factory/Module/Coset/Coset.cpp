@@ -1,3 +1,5 @@
+#include "Tools/Documentation/documentation.h"
+
 #include "Module/Coset/Bit/Coset_bit.hpp"
 #include "Module/Coset/Real/Coset_real.hpp"
 
@@ -32,7 +34,7 @@ void Coset::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"coset size.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+size",
+	tools::add_arg(args, p, class_name+"p+size",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -40,14 +42,14 @@ void Coset::parameters
 	// 	{p+"-type"},
 	// 	tools::Text(tools::Including_set("STD")),
 	// 	"coset type.");
-	add_arg(args, p, class_name+"p+type",
+	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("STD")));
 
 	// args.add(
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 

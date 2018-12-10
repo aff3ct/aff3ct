@@ -1,3 +1,5 @@
+#include "Tools/Documentation/documentation.h"
+
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 
 #include "Puncturer.hpp"
@@ -37,7 +39,7 @@ void Puncturer::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"useful number of bit transmitted (information bits).",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+info-bits,K",
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -46,7 +48,7 @@ void Puncturer::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"useful number of bit transmitted (information bits).",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+fra-size,N",
+	tools::add_arg(args, p, class_name+"p+fra-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -54,14 +56,14 @@ void Puncturer::parameters
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-type"},
 	// 	tools::Text(tools::Including_set("NO")),
 	// 	"code puncturer type.");
-	add_arg(args, p, class_name+"p+type",
+	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("NO")));
 }
 

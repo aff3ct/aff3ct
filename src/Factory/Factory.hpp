@@ -24,12 +24,6 @@ extern const std::string Factory_name;
 extern const std::string Factory_short_name;
 extern const std::string Factory_prefix;
 
-void add_arg(      tools::Argument_map_info &args,
-             const std::string              &prefix,
-             const std::string              &key,
-                   tools::Argument_type     *arg_t,
-             const tools::arg_rank           rank = tools::arg_rank::OPT);
-
 /*!
  * \class Factory
  *

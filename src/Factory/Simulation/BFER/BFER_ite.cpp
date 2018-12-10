@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
 #include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
@@ -101,14 +102,14 @@ void BFER_ite::parameters
 	// 	{p+"-ite", "I"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"number of global iterations between the demodulator and the decoder.");
-	add_arg(args, p, class_name+"p+ite,I",
+	tools::add_arg(args, p, class_name+"p+ite,I",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-crc-start"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"iteration number to start the CRC checking in the turbo demodulation process.");
-	add_arg(args, p, class_name+"p+crc-start",
+	tools::add_arg(args, p, class_name+"p+crc-start",
 		tools::Integer(tools::Positive()));
 }
 

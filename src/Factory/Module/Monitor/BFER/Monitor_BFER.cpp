@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 
@@ -35,7 +36,7 @@ void Monitor_BFER::parameters
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"number of bits to check.",
 	// 	tools::arg_rank::REQ);
-	add_arg(args, p, class_name+"p+info-bits,K",
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
@@ -43,14 +44,14 @@ void Monitor_BFER::parameters
 	// 	{p+"-fra", "F"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the number of inter frame level to process.");
-	add_arg(args, p, class_name+"p+fra,F",
+	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-max-fe", "e"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"max number of frame errors for each noise point simulation.");
-	add_arg(args, p, class_name+"p+max-fe,e",
+	tools::add_arg(args, p, class_name+"p+max-fe,e",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
@@ -58,7 +59,7 @@ void Monitor_BFER::parameters
 	// 	tools::Integer(tools::Positive()),
 	// 	"maximum number of frames for each noise point simulation.",
 	// 	tools::arg_rank::ADV);
-	add_arg(args, p, class_name+"p+max-fra,n",
+	tools::add_arg(args, p, class_name+"p+max-fra,n",
 		tools::Integer(tools::Positive()),
 		tools::arg_rank::ADV);
 
@@ -66,14 +67,14 @@ void Monitor_BFER::parameters
 	// 	{p+"-err-hist"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"activate the histogram of the number of errors per frame. Set the max number of bit error per frame included in the histogram (0 is no limit).");
-	add_arg(args, p, class_name+"p+err-hist",
+	tools::add_arg(args, p, class_name+"p+err-hist",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-err-hist-path"},
 	// 	tools::File(tools::openmode::write),
 	// 	"path to the output histogram (default is './hist', add automatically the current noise value and the extension '.txt')");
-	add_arg(args, p, class_name+"p+err-hist-path",
+	tools::add_arg(args, p, class_name+"p+err-hist-path",
 		tools::File(tools::openmode::write));
 }
 

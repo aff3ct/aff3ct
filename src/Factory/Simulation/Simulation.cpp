@@ -3,6 +3,7 @@
 #include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Simulation.hpp"
 
@@ -43,7 +44,7 @@ void Simulation::parameters
 	// 	{p+"-meta"},
 	// 	tools::Text(),
 	// 	"print the output with metadata, takes the simulation title.");
-	add_arg(args, p, class_name+"p+meta",
+	tools::add_arg(args, p, class_name+"p+meta",
 		tools::Text());
 
 	// args.add(
@@ -51,7 +52,7 @@ void Simulation::parameters
 	// 	tools::Integer(tools::Positive()),
 	// 	"time in sec after what the current simulated noise stops (0 is infinite).",
 	// 	tools::arg_rank::ADV);
-	add_arg(args, p, class_name+"p+stop-time",
+	tools::add_arg(args, p, class_name+"p+stop-time",
 		tools::Integer(tools::Positive()),
 		tools::arg_rank::ADV);
 
@@ -61,7 +62,7 @@ void Simulation::parameters
 	// 	"maximum number of frames to play after what the current simulated noise "
 	//  "stops (0 is infinite).",
 	// 	tools::arg_rank::ADV);
-	add_arg(args, p, class_name+"p+max-fra,n",
+	tools::add_arg(args, p, class_name+"p+max-fra,n",
 		tools::Integer(tools::Positive()),
 		tools::arg_rank::ADV);
 
@@ -71,7 +72,7 @@ void Simulation::parameters
 	// 	"The stop criteria arguments -stop-time or -max-fra kill the current "
 	//  "simulated noise point but not the simulation.",
 	// 	tools::arg_rank::ADV);
-	add_arg(args, p, class_name+"p+crit-nostop",
+	tools::add_arg(args, p, class_name+"p+crit-nostop",
 		tools::None(),
 		tools::arg_rank::ADV);
 
@@ -79,42 +80,42 @@ void Simulation::parameters
 	// 	{p+"-dbg"},
 	// 	tools::None(),
 	// 	"enable debug mode: print array values after each step.");
-	add_arg(args, p, class_name+"p+dbg",
+	tools::add_arg(args, p, class_name+"p+dbg",
 		tools::None());
 
 	// args.add(
 	// 	{p+"-dbg-hex"},
 	// 	tools::None(),
 	// 	"debug mode prints values in the hexadecimal format.");
-	add_arg(args, p, class_name+"p+dbg-hex",
+	tools::add_arg(args, p, class_name+"p+dbg-hex",
 		tools::None());
 
 	// args.add(
 	// 	{p+"-dbg-prec"},
 	// 	tools::Integer(tools::Positive()),
 	// 	"set the precision of real elements when displayed in debug mode.");
-	add_arg(args, p, class_name+"p+dbg-prec",
+	tools::add_arg(args, p, class_name+"p+dbg-prec",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
 	// 	{p+"-dbg-limit", "d"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the max number of elements to display in the debug mode.");
-	add_arg(args, p, class_name+"p+dbg-limit,d",
+	tools::add_arg(args, p, class_name+"p+dbg-limit,d",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-dbg-fra"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"set the max number of frames to display in the debug mode.");
-	add_arg(args, p, class_name+"p+dbg-fra",
+	tools::add_arg(args, p, class_name+"p+dbg-fra",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	// args.add(
 	// 	{p+"-stats"},
 	// 	tools::None(),
 	// 	"display statistics module by module.");
-	add_arg(args, p, class_name+"p+stats",
+	tools::add_arg(args, p, class_name+"p+stats",
 		tools::None());
 
 	// args.add(
@@ -122,7 +123,7 @@ void Simulation::parameters
 	// 	tools::Integer(tools::Positive()),
 	// 	"enable multi-threaded mode and specify the number of threads (0 means "
 	//  "the maximum supported by the core.");
-	add_arg(args, p, class_name+"p+threads,t",
+	tools::add_arg(args, p, class_name+"p+threads,t",
 		tools::Integer(tools::Positive()));
 
 	// args.add(
@@ -130,7 +131,7 @@ void Simulation::parameters
 	// 	tools::Integer(tools::Positive()),
 	// 	"seed used in the simulation to initialize the pseudo random generators "
 	//  "in general.");
-	add_arg(args, p, class_name+"p+seed,S",
+	tools::add_arg(args, p, class_name+"p+seed,S",
 		tools::Integer(tools::Positive()));
 
 #ifdef AFF3CT_MPI
@@ -138,7 +139,7 @@ void Simulation::parameters
 	// 	{p+"-mpi-comm"},
 	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
 	// 	"MPI communication frequency between the nodes (in millisec).");
-	add_arg(args, p, class_name+"p+mpi-comm",
+	tools::add_arg(args, p, class_name+"p+mpi-comm",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 #endif
 }
