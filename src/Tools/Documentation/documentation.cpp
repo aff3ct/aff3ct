@@ -4,6 +4,7 @@
 
 #if defined(__linux__) || defined(linux) || defined(__linux) || defined(__FreeBSD__)
 #include <unistd.h>
+#include <string.h>
 #include <errno.h>
 #elif defined(__APPLE__) || defined(__MACH__)
 #include <mach-o/dyld.h>
@@ -231,7 +232,7 @@ std::string extract_documentation(const std::string &key)
 	}
 
 	if (Documentation.find(key) == Documentation.end())
-		return "This parameter is not documented";
+		return "This parameter is not documented.";
 	else
 		return Documentation[key];
 }
