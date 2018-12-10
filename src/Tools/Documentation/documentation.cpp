@@ -65,17 +65,20 @@ std::string sanitize(const std::string &value)
 
 	// trick to compile on the GNU compiler version 4 (where 'std::regex' is unavailable)
 #if !(!defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5)
-	std::regex e_pipe("\\|([^ ]*)\\|");
-	new_value = std::regex_replace (new_value,e_pipe,"$1");
+	std::vector<std::regex> regexes;
 
-	std::regex e_quote("`([^ ]*)`");
-	new_value = std::regex_replace (new_value,e_quote,"$1");
+	new_value = std::regex_replace(new_value, std::regex("``([^``]*)``"), "'$1'");
+	new_value = std::regex_replace(new_value, std::regex("`([^`]*)`_"), "$1");
+	new_value = std::regex_replace(new_value, std::regex(":math:`([^ ]*)`"), ";;$1;;");
 
-	std::regex e_start2("\\*\\*([^ ]*)\\*\\*");
-	new_value = std::regex_replace (new_value,e_start2,"$1");
+	regexes.push_back(std::regex("\\|([^ ]*)\\|"));
+	regexes.push_back(std::regex("`([^`]*)`"));
+	regexes.push_back(std::regex("\\*\\*([^\\*\\*]*)\\*\\*"));
+	regexes.push_back(std::regex("\\*([^\\*]*)\\*"));
+	for (auto &re : regexes)
+		new_value = std::regex_replace(new_value, re, "$1");
 
-	std::regex e_start1("\\*([^ ]*)\\*");
-	new_value = std::regex_replace (new_value,e_start1,"$1");
+	new_value = std::regex_replace(new_value, std::regex(";;([^;;]*);;"),"`$1`");
 #endif
 
 	return new_value;
