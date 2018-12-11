@@ -56,7 +56,7 @@ The installed package is organized as follow:
 
 * ``bin/``
 
-  - ``aff3ct-M.m.p/`` contains the |AFF3CT| executable binary.
+  - ``aff3ct-M.m.p`` the |AFF3CT| executable binary.
 
 * ``include/``
 
@@ -64,7 +64,8 @@ The installed package is organized as follow:
 
 * ``lib/``
 
-  - ``aff3ct-M.m.p/`` contains the |AFF3CT| library.
+  - ``libaff3ct-M.m.p.a`` the |AFF3CT| static library.
+  - ``libaff3ct-M.m.p.so`` the |AFF3CT| shared library.
   - ``cmake/``
 
      * ``aff3ct-M.m.p/`` contains the CMake configuration files required to link with |AFF3CT|.
@@ -75,6 +76,7 @@ The installed package is organized as follow:
 
      * ``conf/`` contains some input files to configure the |AFF3CT| simulator.
      * ``refs/`` many results from |AFF3CT| simulations.
+     * ``doc/`` contains the |AFF3CT| documentation.
 
 ``M`` stands for the major number of the version, ``m`` the minor number and
 ``p`` the id of the last patch.
