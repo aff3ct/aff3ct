@@ -128,6 +128,7 @@ list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp")
 if (NOT AFF3CT_EXT_STRINGS)
     file(READ doc/sphinx/strings.rst AFF3CT_STRINGS)
 
+    string(REPLACE "\\" "\\\\" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
     string(REPLACE "\"" "\\\"" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
     string(REPLACE "\n" "\\n"  AFF3CT_STRINGS "${AFF3CT_STRINGS}")
 
