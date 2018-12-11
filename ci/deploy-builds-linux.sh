@@ -73,7 +73,7 @@ do
 	rm -rf $BUILD/share/aff3ct/refs/readers
 	mkdir $BUILD/share/aff3ct/doc
 	mkdir $BUILD/share/aff3ct/doc/strings
-	cp doc/sphinx/strings.rst $BUILD/share/aff3ct/doc/
+	cp doc/sphinx/strings.rst $BUILD/share/aff3ct/doc/strings
 
 	# prepare doc
 	mkdir $BUILD/share/aff3ct/doc
