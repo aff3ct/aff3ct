@@ -289,19 +289,19 @@ add_library (aff3ct-obj OBJECT ${source_files})
 # Binary
 if (AFF3CT_COMPILE_EXE)
     add_executable        (aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj>)
-    set_target_properties (aff3ct-bin PROPERTIES OUTPUT_NAME aff3ct)
+    set_target_properties (aff3ct-bin PROPERTIES OUTPUT_NAME aff3ct-${GIT_VERSION_RMV})
     message(STATUS "AFF3CT - Compile: executable")
 endif (AFF3CT_COMPILE_EXE)
 
 # Library
 if (AFF3CT_COMPILE_SHARED_LIB)
     add_library           (aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj>)
-    set_target_properties (aff3ct-shared-lib PROPERTIES OUTPUT_NAME aff3ct)
+    set_target_properties (aff3ct-shared-lib PROPERTIES OUTPUT_NAME aff3ct-${GIT_VERSION_RMV})
     message(STATUS "AFF3CT - Compile: shared library")
 endif (AFF3CT_COMPILE_SHARED_LIB)
 if (AFF3CT_COMPILE_STATIC_LIB)
     add_library           (aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj>)
-    set_target_properties (aff3ct-static-lib PROPERTIES OUTPUT_NAME aff3ct)
+    set_target_properties (aff3ct-static-lib PROPERTIES OUTPUT_NAME aff3ct-${GIT_VERSION_RMV})
     message(STATUS "AFF3CT - Compile: static library")
 endif (AFF3CT_COMPILE_STATIC_LIB)
 
@@ -427,9 +427,9 @@ endif()
 # Auto generate cmake config files to link with AFF3CT library (only if an AFF3CT library has been compiled)
 if (AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/aff3ct-config.cmake.in"
-                   "lib/cmake/aff3ct-config.cmake" @ONLY)
+                   "lib/cmake/aff3ct-${GIT_VERSION_RMV}/aff3ct-config.cmake" @ONLY)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/aff3ct-config-version.cmake.in"
-                   "lib/cmake/aff3ct-config-version.cmake" @ONLY)
+                   "lib/cmake/aff3ct-${GIT_VERSION_RMV}/aff3ct-config-version.cmake" @ONLY)
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -437,20 +437,19 @@ endif()
 # ---------------------------------------------------------------------------------------------------------------------
 
 if (AFF3CT_COMPILE_EXE)
-    install(TARGETS aff3ct-bin RUNTIME DESTINATION bin/aff3ct-${GIT_VERSION_RMV})
+    install(TARGETS aff3ct-bin RUNTIME DESTINATION bin/)
 endif()
 if (AFF3CT_COMPILE_SHARED_LIB)
-    install(TARGETS aff3ct-shared-lib LIBRARY DESTINATION lib/aff3ct-${GIT_VERSION_RMV})
+    install(TARGETS aff3ct-shared-lib LIBRARY DESTINATION lib/)
 endif()
 if (AFF3CT_COMPILE_STATIC_LIB)
-    install(TARGETS aff3ct-static-lib ARCHIVE DESTINATION lib/aff3ct-${GIT_VERSION_RMV})
+    install(TARGETS aff3ct-static-lib ARCHIVE DESTINATION lib/)
 endif()
 
 if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-    install(FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-config.cmake"
-                  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-config-version.cmake"
-            DESTINATION lib/cmake/aff3ct-${GIT_VERSION_RMV})
+    install(DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-${GIT_VERSION_RMV}"
+            DESTINATION lib/cmake/)
 endif()
 
 if (AFF3CT_EXT_STRINGS)
