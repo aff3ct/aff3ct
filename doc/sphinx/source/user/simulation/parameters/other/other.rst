@@ -76,6 +76,34 @@ Other parameters
        --version, -v
          print informations about the version of the code.
 
+.. _other-version:
+
+``--version, -v``
+"""""""""""""""""
+
+|factory::Launcher::parameters::version,v|
+
+.. code-block:: bash
+
+   aff3ct -v
+
+.. code-block:: console
+
+   aff3ct (Linux 64-bit, g++-8.1, AVX2) v2.1.1
+   Compilation options:
+     * Precision: 8/16/32/64-bit
+     * Polar bit packing: on
+     * Terminal colors: on
+     * Backtrace: on
+     * External strings: on
+     * MPI: off
+     * GSL: off
+     * MKL: off
+     * SystemC: off
+   Copyright (c) 2016-2018 - MIT license.
+   This is free software; see the source for copying conditions.  There is NO
+   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
 .. _other-keys:
 
 ``--keys, -k`` |image_advanced_argument|
@@ -125,24 +153,6 @@ Other parameters
        --version, -v
          [factory::Launcher::parameters::version,v]
          print informations about the version of the code.
-
-.. _other-version:
-
-``--version, -v``
-"""""""""""""""""
-
-|factory::Launcher::parameters::version,v|
-
-.. code-block:: bash
-
-   aff3ct -v
-
-.. code-block:: console
-
-   aff3ct (Linux 64-bit, g++ 8.1, AVX2) v2.0.0-112-gc74ce62
-   Copyright (c) 2016-2018 - MIT license.
-   This is free software; see the source for copying conditions.  There is NO
-   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 .. _other-except-a2l:
 
