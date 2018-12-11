@@ -345,7 +345,8 @@ test-regression-bch:
       - test-regression-results-bch/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-ldpc:
   stage: test
@@ -366,7 +367,8 @@ test-regression-ldpc:
       - test-regression-results-ldpc/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-polar:
   stage: test
@@ -387,7 +389,8 @@ test-regression-polar:
       - test-regression-results-polar/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-rs:
   stage: test
@@ -407,7 +410,8 @@ test-regression-rs:
       - test-regression-results-rs/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo:
   stage: test
@@ -428,7 +432,8 @@ test-regression-turbo:
       - test-regression-results-turbo/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-db:
   stage: test
@@ -449,7 +454,8 @@ test-regression-turbo-db:
       - test-regression-results-turbo-db/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-prod:
   stage: test
@@ -470,7 +476,8 @@ test-regression-turbo-prod:
       - test-regression-results-turbo-prod/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 30 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 30 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-uncoded:
   stage: test
@@ -490,7 +497,8 @@ test-regression-uncoded:
       - test-regression-results-uncoded/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-build-coverage-regression:
   stage: test
@@ -507,6 +515,7 @@ test-build-coverage-regression:
       - code_coverage_files/
   script:
     - source ./ci/tools/threads.sh
+    - source ./ci/tools/git-version.sh
     - ./ci/test-build-coverage-regression.sh
 
 coverage-linux:
