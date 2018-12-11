@@ -730,6 +730,9 @@
 #ifndef MODEM_CPM_HPP_
 #include <Module/Modem/CPM/Modem_CPM.hpp>
 #endif
+#ifndef MODEM_GENERIC_HPP_
+#include <Module/Modem/Generic/Modem_generic.hpp>
+#endif
 #ifndef MODEM_HPP_
 #include <Module/Modem/Modem.hpp>
 #endif
@@ -1278,6 +1281,30 @@
 #endif
 #ifndef SELF_CORRECTED_HPP
 #include <Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp>
+#endif
+#ifndef CONSTELLATION_COMPLEX_HPP__
+#include <Tools/Constellation/Complex/Constellation_complex.hpp>
+#endif
+#ifndef CONSTELLATION_PSK_HPP__
+#include <Tools/Constellation/Complex/PSK/Constellation_PSK.hpp>
+#endif
+#ifndef CONSTELLATION_QAM_HPP__
+#include <Tools/Constellation/Complex/QAM/Constellation_QAM.hpp>
+#endif
+#ifndef CONSTELLATION_COMPLEX_USER_HPP__
+#include <Tools/Constellation/Complex/User/Constellation_complex_user.hpp>
+#endif
+#ifndef CONSTELLATION_HPP__
+#include <Tools/Constellation/Constellation.hpp>
+#endif
+#ifndef CONSTELLATION_REAL_HPP__
+#include <Tools/Constellation/Real/Constellation_real.hpp>
+#endif
+#ifndef CONSTELLATION_PAM_HPP__
+#include <Tools/Constellation/Real/PAM/Constellation_PAM.hpp>
+#endif
+#ifndef CONSTELLATION_REAL_USER_HPP__
+#include <Tools/Constellation/Real/User/Constellation_real_user.hpp>
 #endif
 #ifndef DUMPER_HPP_
 #include <Tools/Display/Dumper/Dumper.hpp>
