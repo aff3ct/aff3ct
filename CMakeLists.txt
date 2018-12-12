@@ -144,8 +144,8 @@ endif()
 # --------------------------------------------------------------------------------------- GENERATE AFF3CT SHORTCUT FILE
 # ---------------------------------------------------------------------------------------------------------------------
 
-if (UNIX)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/aff3ct.in" "scripts/aff3ct" @ONLY)
+if (AFF3CT_COMPILE_EXE AND UNIX)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/scripts/aff3ct" "bin/aff3ct" @ONLY)
 endif ()
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -389,8 +389,6 @@ if (AFF3CT_LINK_MKL)
         aff3ct_include_directories (${MKL_INCLUDE_DIRS})
         aff3ct_link_libraries ("${MKL_MINIMAL_LIBRARIES}")
     endif (MKL_FOUND)
-else (AFF3CT_LINK_MKL)
-    set(INTEL_ROOT "/opt/intel")
 endif (AFF3CT_LINK_MKL)
 
 # MPI
@@ -458,7 +456,7 @@ endif()
 if (AFF3CT_COMPILE_EXE)
     install(TARGETS aff3ct-bin RUNTIME DESTINATION bin/)
     if (UNIX)
-        install(FILES "${CMAKE_BINARY_DIR}/scripts/aff3ct" DESTINATION bin/
+        install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/scripts/aff3ct" DESTINATION bin/
                 PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
     endif ()
 endif()
