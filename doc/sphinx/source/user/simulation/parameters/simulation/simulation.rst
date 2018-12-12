@@ -504,13 +504,6 @@ of displayed frames on screen:
    # Returned status: 0
    # [...]
 
-.. _sim-sim-no-colors:
-
-``--sim-no-colors``
-"""""""""""""""""""
-
-|factory::Launcher::parameters::p+no-colors|
-
 .. _sim-sim-seed:
 
 ``--sim-seed, -S``
@@ -754,28 +747,6 @@ For the above example, the dumped or read files will be:
    :Examples: ``--sim-err-trk-thold 1``
 
 |factory::BFER::parameters::p+err-trk-thold|
-
-.. _sim-sim-no-legend:
-
-``--sim-no-legend`` |image_advanced_argument|
-"""""""""""""""""""""""""""""""""""""""""""""
-
-|factory::Launcher::parameters::p+no-legend|
-
-.. tip:: Use this option when you want to complete an already existing
-   simulation result file with new noise points. Pay attention to use ``>>``
-   instead of ``>`` to redirect the standard output in order to add results at
-   the end of the file and not overwriting it.
-
-.. _sim-sim-full-legend:
-
-``--sim-full-legend`` |image_advanced_argument|
-"""""""""""""""""""""""""""""""""""""""""""""""
-
-|factory::Launcher::parameters::p+full-legend|
-
-This additional information can help to understand a problem in the simulation.
-Data can of course be redundant from one module to another.
 
 .. _sim-sim-mpi-comm:
 
