@@ -425,7 +425,6 @@ bool Modem
 	return type == "PAM" || type == "QAM" || type == "PSK" || type == "USER";
 }
 
-template <typename R>
 int Modem
 ::get_buffer_size_after_modulation(const std::string &type,
                                    const int         N,
@@ -433,7 +432,7 @@ int Modem
                                    const int         cpm_upf,
                                    const int         cpm_L,
                                    const int         cpm_p,
-                                   const tools::Constellation<R>* c)
+                                   const tools::Constellation<float>* c)
 {
 	if (c != nullptr && has_constellation(type))
 		return module::Modem_generic<>::size_mod(N, *c);
@@ -446,14 +445,13 @@ int Modem
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename R>
 int Modem
 ::get_buffer_size_after_filtering(const std::string &type,
                                   const int         N,
                                   const int         bps,
                                   const int         cpm_L,
                                   const int         cpm_p,
-                                  const tools::Constellation<R>* c)
+                                  const tools::Constellation<float>* c)
 {
 	if (c != nullptr && has_constellation(type))
 		return module::Modem_generic<>::size_fil(N, *c);
@@ -466,9 +464,8 @@ int Modem
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename R>
 bool Modem
-::is_complex_mod(const std::string &type, const int bps, const tools::Constellation<R>* c)
+::is_complex_mod(const std::string &type, const int bps, const tools::Constellation<float>* c)
 {
 	if (c != nullptr && has_constellation(type))
 		return module::Modem_generic<>::is_complex_mod(*c);
@@ -481,9 +478,8 @@ bool Modem
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename R>
 bool Modem
-::is_complex_fil(const std::string &type, const int bps, const tools::Constellation<R>* c)
+::is_complex_fil(const std::string &type, const int bps, const tools::Constellation<float>* c)
 {
 	if (c != nullptr && has_constellation(type))
 		return module::Modem_generic<>::is_complex_fil(*c);
@@ -538,4 +534,5 @@ template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::parameters::build
 template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>&);
 #endif
 #endif
+
 // ==================================================================================== explicit template instantiation
