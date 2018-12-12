@@ -141,6 +141,14 @@ if (NOT AFF3CT_EXT_STRINGS)
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------- GENERATE AFF3CT SHORTCUT FILE
+# ---------------------------------------------------------------------------------------------------------------------
+
+if (UNIX)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/aff3ct.in" "scripts/aff3ct" @ONLY)
+endif ()
+
+# ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------ CREATE FILTERS
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -374,12 +382,15 @@ endif (AFF3CT_LINK_GSL)
 if (AFF3CT_LINK_MKL)
     aff3ct_add_definitions("-DAFF3CT_CHANNEL_MKL")
 
+    # set (MKL_STATIC ON)
     find_package (MKL REQUIRED)
     if (MKL_FOUND)
         message(STATUS "AFF3CT - Library found: MKL")
         aff3ct_include_directories (${MKL_INCLUDE_DIRS})
         aff3ct_link_libraries ("${MKL_MINIMAL_LIBRARIES}")
     endif (MKL_FOUND)
+else (AFF3CT_LINK_MKL)
+    set(INTEL_ROOT "/opt/intel")
 endif (AFF3CT_LINK_MKL)
 
 # MPI
@@ -446,6 +457,10 @@ endif()
 
 if (AFF3CT_COMPILE_EXE)
     install(TARGETS aff3ct-bin RUNTIME DESTINATION bin/)
+    if (UNIX)
+        install(FILES "${CMAKE_BINARY_DIR}/scripts/aff3ct" DESTINATION bin/
+                PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    endif ()
 endif()
 if (AFF3CT_COMPILE_SHARED_LIB)
     install(TARGETS aff3ct-shared-lib LIBRARY DESTINATION lib/)
