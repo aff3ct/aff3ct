@@ -453,6 +453,14 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             DESTINATION lib/cmake/)
 endif()
 
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf")
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf"
+            DESTINATION share/aff3ct-${GIT_VERSION_RMV}/doc/pdf)
+endif()
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/html/")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/html/"
+            DESTINATION share/aff3ct-${GIT_VERSION_RMV}/doc/html)
+endif()
 if (AFF3CT_EXT_STRINGS)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/strings.rst"
             DESTINATION share/aff3ct-${GIT_VERSION_RMV}/doc/strings)
