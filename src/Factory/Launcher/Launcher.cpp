@@ -156,16 +156,22 @@ void factory::Launcher::parameters
 	// 	tools::None(),
 	// 	"do not display any legend when launching the simulation.",
 	// 	tools::arg_rank::ADV);
-	tools::add_arg(args, p, class_name+"p+no-legend",
+	tools::add_arg(args, p, class_name+"no-legend",
 		tools::None(),
 		tools::arg_rank::ADV);
 
+	tools::add_arg(args, p, class_name+"full-legend",
+		tools::None(),
+		tools::arg_rank::ADV);
+
+	args.add_link({"no-legend"}, {"full-legend"});
+
 #ifdef AFF3CT_COLORS
 	// args.add(
-	// 	{p+"-no-colors"},
+	// 	{"-no-colors"},
 	// 	tools::None(),
 	// 	"disable the colors in the shell.");
-	tools::add_arg(args, p, class_name+"p+no-colors",
+	tools::add_arg(args, p, class_name+"no-colors",
 		tools::None());
 #endif
 
@@ -183,7 +189,8 @@ void factory::Launcher::parameters
 	if(vals.exist({p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
 	if(vals.exist({"version",     "v"})) this->display_version = true;
 	if(vals.exist({"keys",        "k"})) this->display_keys    = true;
-	if(vals.exist({p+"-no-legend"    })) this->display_legend  = false;
+	if(vals.exist({"no-legend"       })) this->display_legend  = false;
+	if(vals.exist({"full-legend"     })) this->full_legend     = true;
 
 	if(vals.exist({"help", "h"}))
 	{
@@ -205,7 +212,7 @@ void factory::Launcher::parameters
 	tools::exception::no_addr_to_line = !vals.exist({"except-a2l"  });
 
 #ifdef AFF3CT_COLORS
-	if (vals.exist({p+"-no-colors"})) rang::setControlMode(rang::control::Off);
+	if (vals.exist({"no-colors"})) rang::setControlMode(rang::control::Off);
 #else
 	rang::setControlMode(rang::control::Off);
 #endif

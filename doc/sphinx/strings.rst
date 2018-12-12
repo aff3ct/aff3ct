@@ -30,11 +30,14 @@
    Enhance the backtrace when displaying exception. This change the program
    addresses into filenames and lines. It may take some seconds to do this work.
 
-.. |factory::Launcher::parameters::p+no-legend| replace::
+.. |factory::Launcher::parameters::no-legend| replace::
    Disable the legend display (remove all the lines beginning by the ``#``
    character).
 
-.. |factory::Launcher::parameters::p+no-colors| replace::
+.. |factory::Launcher::parameters::full-legend| replace::
+   Display the legend with all modules details when launching the simulation.
+
+.. |factory::Launcher::parameters::no-colors| replace::
    Disable the colors in the shell.
 
 .. |factory::Launcher::parameters::keys,k| replace::
