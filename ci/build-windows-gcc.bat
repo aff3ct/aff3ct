@@ -7,6 +7,7 @@ if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 mingw32-make -j %THREADS%
 if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 
+rd /s /q %NAME%
 mkdir %NAME%
 mkdir %NAME%\bin\
 mkdir %NAME%\lib\

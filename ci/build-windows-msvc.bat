@@ -11,6 +11,7 @@ devenv /build Release aff3ct.sln
 rem msbuild aff3ct.sln /t:Build /p:Configuration=Release
 if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 
+rd /s /q %NAME%
 mkdir %NAME%
 mkdir %NAME%\bin\
 mkdir %NAME%\lib\

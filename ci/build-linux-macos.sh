@@ -45,6 +45,7 @@ fi
 make -j $THREADS -k
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
+rm -rf $NAME
 mkdir $NAME $NAME/bin $NAME/lib $NAME/include $NAME/include/aff3ct
 cp bin/aff3ct* $NAME/bin/
 cp lib/libaff3ct*.a $NAME/lib/
