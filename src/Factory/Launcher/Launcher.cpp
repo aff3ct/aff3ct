@@ -160,6 +160,12 @@ void factory::Launcher::parameters
 		tools::None(),
 		tools::arg_rank::ADV);
 
+	tools::add_arg(args, p, class_name+"p+full-legend",
+		tools::None(),
+		tools::arg_rank::ADV);
+
+	args.add_link({p+"no-legend"}, {p+"full-legend"});
+
 #ifdef AFF3CT_COLORS
 	// args.add(
 	// 	{p+"-no-colors"},
@@ -184,6 +190,7 @@ void factory::Launcher::parameters
 	if(vals.exist({"version",     "v"})) this->display_version = true;
 	if(vals.exist({"keys",        "k"})) this->display_keys    = true;
 	if(vals.exist({p+"-no-legend"    })) this->display_legend  = false;
+	if(vals.exist({p+"-full-legend"  })) this->full_legend     = true;
 
 	if(vals.exist({"help", "h"}))
 	{

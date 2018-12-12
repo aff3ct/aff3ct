@@ -34,6 +34,9 @@
    Disable the legend display (remove all the lines beginning by the ``#``
    character).
 
+.. |factory::Launcher::parameters::p+full-legend| replace::
+   Display the legend with all modules details when launching the simulation.
+
 .. |factory::Launcher::parameters::p+no-colors| replace::
    Disable the colors in the shell.
 

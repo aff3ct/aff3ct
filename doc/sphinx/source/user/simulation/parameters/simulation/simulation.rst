@@ -767,6 +767,16 @@ For the above example, the dumped or read files will be:
    instead of ``>`` to redirect the standard output in order to add results at
    the end of the file and not overwriting it.
 
+.. _sim-sim-full-legend:
+
+``--sim-full-legend`` |image_advanced_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+|factory::Launcher::parameters::p+full-legend|
+
+This additional information can help to understand a problem in the simulation.
+Data can of course be redundant from one module to another.
+
 .. _sim-sim-mpi-comm:
 
 ``--sim-mpi-comm``
