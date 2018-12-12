@@ -46,7 +46,7 @@ void Reorderer<T>
 					const auto jump = k * l_size * 2;
 					for (auto l = 0; l < l_size; l++)
 					{
-						const auto interx2 = mipp::interleave<T>(regs_inter[jump         +l], 
+						const auto interx2 = mipp::interleave<T>(regs_inter[jump         +l],
 						                                         regs_inter[jump +l_size +l]);
 						regs_inter[jump         +l] = interx2.val[0];
 						regs_inter[jump +l_size +l] = interx2.val[1];
@@ -196,6 +196,10 @@ void Reorderer_static<T,N_FRAMES>
 			out_data[i*N_FRAMES +f] = in_data[f][i];
 }
 
+#if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
 template <typename T>
 void Reorderer<T>
 ::apply_rev(const T* in_data, std::vector<T*> &out_data, const int data_length)
@@ -239,7 +243,7 @@ void Reorderer<T>
 					const auto jump = k * l_size * 2;
 					for (auto l = 0; l < l_size; l++)
 					{
-						const auto interx2 = mipp::interleave<T>(regs_inter[jump         +l], 
+						const auto interx2 = mipp::interleave<T>(regs_inter[jump         +l],
 						                                         regs_inter[jump +l_size +l]);
 						regs_inter[jump         +l] = interx2.val[0];
 						regs_inter[jump +l_size +l] = interx2.val[1];
@@ -268,6 +272,9 @@ void Reorderer<T>
 		for (auto f = 0; f < n_fra; f++)
 			out_data[f][i] = in_data[i*n_fra +f];
 }
+#if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus)
+#pragma GCC diagnostic pop
+#endif
 
 template <typename T, int N_FRAMES, int J, int K, int L>
 struct Reorderer_static_core_rev
