@@ -72,7 +72,7 @@ void Frozenbits_generator::parameters
 	tools::add_arg(args, p, class_name+"p+awgn-path",
 		tools::Path(tools::openmode::read));
 
-#ifdef ENABLE_POLAR_BOUNDS
+#ifdef AFF3CT_POLAR_BOUNDS
 	// args.add(
 	// 	{p+"-pb-path"},
 	// 	tools::File(tools::openmode::read),
@@ -93,7 +93,7 @@ void Frozenbits_generator::parameters
 	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.at      ({p+"-awgn-path"     });
 	if(vals.exist({p+"-gen-method"    })) this->type    = vals.at      ({p+"-gen-method"    });
 
-#ifdef ENABLE_POLAR_BOUNDS
+#ifdef AFF3CT_POLAR_BOUNDS
 	if(vals.exist({p+"-pb-path"})) this->path_pb = vals.at({p+"-pb-path"});
 #endif
 }
@@ -107,7 +107,7 @@ void Frozenbits_generator::parameters
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Codeword size (N)", std::to_string(this->N_cw)));
 	headers[p].push_back(std::make_pair("Sigma", this->sigma == -1.0f ? "adaptive" : std::to_string(this->sigma)));
-#ifdef ENABLE_POLAR_BOUNDS
+#ifdef AFF3CT_POLAR_BOUNDS
 	if (this->type == "TV")
 		headers[p].push_back(std::make_pair("PB path", this->path_pb));
 #endif
