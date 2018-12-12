@@ -15,23 +15,22 @@ namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_generic<B,R,Q,MAX>
-::Modem_generic(const int N, std::shared_ptr<const tools::Constellation> cstl, const tools::Noise<R>& noise,
+::Modem_generic(const int N, std::unique_ptr<const tools::Constellation<R>>&& _cstl, const tools::Noise<R>& noise,
                 const bool disable_sig2, const int n_frames)
 : Modem<B,R,Q>(N,
-              (int)(std::ceil((float)N / (float)cstl->get_n_bits_per_symbol()) * (is_complex_mod(*cstl) ? 2 : 1)), // N_mod
+              (int)(std::ceil((float)N / (float)_cstl->get_n_bits_per_symbol()) * (is_complex_mod(*_cstl) ? 2 : 1)), // N_mod
               noise,
               n_frames),
+  cstl           (std::move(_cstl)),
   bits_per_symbol(cstl->get_n_bits_per_symbol()),
   nbr_symbols    (cstl->get_n_symbols()),
-  disable_sig2(disable_sig2   ),
-  cstl_real   (tools::is_constellation_real   <R>(*cstl.get()) ? std::dynamic_pointer_cast<const tools::Constellation_real   <R>>(cstl) : nullptr),
-  cstl_complex(tools::is_constellation_complex<R>(*cstl.get()) ? std::dynamic_pointer_cast<const tools::Constellation_complex<R>>(cstl) : nullptr)
+  disable_sig2   (disable_sig2)
 {
 	const std::string name = "Modem_generic<" + cstl->get_name() + ">";
 	this->set_name(name);
 
-	if (cstl_complex == nullptr && cstl_real == nullptr)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'cstl' is neither complex nor real).");
+	if (cstl == nullptr)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "No constellation given ('cstl' = nullptr).");
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -51,7 +50,7 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
-	if (this->cstl_complex != nullptr)
+	if (this->cstl->is_complex())
 		_modulate_complex(X_N1, X_N2, frame_id);
 	else
 		_modulate_real(X_N1, X_N2, frame_id);
@@ -61,7 +60,7 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
 ::_tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
 {
-	if (this->cstl_complex != nullptr)
+	if (this->cstl->is_complex())
 		_tmodulate_complex(X_N1, X_N2, frame_id);
 	else
 		_tmodulate_real(X_N1, X_N2, frame_id);
@@ -78,7 +77,7 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (this->cstl_complex != nullptr)
+	if (this->cstl->is_complex())
 		_demodulate_complex(Y_N1, Y_N2, frame_id);
 	else
 		_demodulate_real(Y_N1, Y_N2, frame_id);
@@ -88,7 +87,7 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
 ::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (this->cstl_complex != nullptr)
+	if (this->cstl->is_complex())
 		_demodulate_wg_complex(H_N, Y_N1, Y_N2, frame_id);
 	else
 		_demodulate_wg_real(H_N, Y_N1, Y_N2, frame_id);
@@ -98,7 +97,7 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
 ::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	if (this->cstl_complex != nullptr)
+	if (this->cstl->is_complex())
 		_tdemodulate_complex(Y_N1, Y_N2, Y_N3, frame_id);
 	else
 		_tdemodulate_real(Y_N1, Y_N2, Y_N3, frame_id);
@@ -108,7 +107,7 @@ template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
 ::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
-	if (this->cstl_complex != nullptr)
+	if (this->cstl->is_complex())
 		_tdemodulate_wg_complex(H_N, Y_N1, Y_N2, Y_N3, frame_id);
 	else
 		_tdemodulate_wg_real(H_N, Y_N1, Y_N2, Y_N3, frame_id);
@@ -129,7 +128,7 @@ void Modem_generic<B,R,Q,MAX>
 		unsigned idx = 0;
 		for (auto j = 0; j < this->bits_per_symbol; j++)
 			idx += unsigned(unsigned(1 << j) * X_N1[i * this->bits_per_symbol +j]);
-		auto symbol = (*cstl_complex)[idx];
+		auto symbol = (*cstl)[idx];
 
 		X_N2[2*i   ] = symbol.real();
 		X_N2[2*i +1] = symbol.imag();
@@ -141,7 +140,7 @@ void Modem_generic<B,R,Q,MAX>
 		unsigned idx = 0;
 		for (auto j = 0; j < size_in - (loop_size * this->bits_per_symbol); j++)
 			idx += unsigned(unsigned(1 << j) * X_N1[loop_size * this->bits_per_symbol +j]);
-		auto symbol = (*cstl_complex)[idx];
+		auto symbol = (*cstl)[idx];
 
 		X_N2[size_out -2] = symbol.real();
 		X_N2[size_out -1] = symbol.imag();
@@ -174,11 +173,11 @@ void Modem_generic<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if (((j>>b) & 1) == 0)
-				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)(*cstl_complex)[j].real(),
-				                                                     (Q)(*cstl_complex)[j].imag())) * (Q)inv_sigma2);
+				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)(*cstl)[j].real(),
+				                                                     (Q)(*cstl)[j].imag())) * (Q)inv_sigma2);
 			else
-				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)(*cstl_complex)[j].real(),
-				                                                     (Q)(*cstl_complex)[j].imag())) * (Q)inv_sigma2);
+				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)(*cstl)[j].real(),
+				                                                     (Q)(*cstl)[j].imag())) * (Q)inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
@@ -212,12 +211,12 @@ void Modem_generic<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if (((j>>b) & 1) == 0)
 				L0 = MAX(L0, -std::norm(complex_Yk -
-				                        complex_Hk * std::complex<Q>((Q)(*cstl_complex)[j].real(),
-				                                                     (Q)(*cstl_complex)[j].imag())) * (Q)inv_sigma2);
+				                        complex_Hk * std::complex<Q>((Q)(*cstl)[j].real(),
+				                                                     (Q)(*cstl)[j].imag())) * (Q)inv_sigma2);
 			else
 				L1 = MAX(L1, -std::norm(complex_Yk -
-				                        complex_Hk * std::complex<Q>((Q)(*cstl_complex)[j].real(),
-				                                                     (Q)(*cstl_complex)[j].imag())) * (Q)inv_sigma2);
+				                        complex_Hk * std::complex<Q>((Q)(*cstl)[j].real(),
+				                                                     (Q)(*cstl)[j].imag())) * (Q)inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
@@ -249,8 +248,8 @@ void Modem_generic<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto tempL = (Q)(std::norm(complex_Yk - std::complex<Q>((Q)(*cstl_complex)[j].real(),
-			                                                        (Q)(*cstl_complex)[j].imag())) * (Q)inv_sigma2);
+			auto tempL = (Q)(std::norm(complex_Yk - std::complex<Q>((Q)(*cstl)[j].real(),
+			                                                        (Q)(*cstl)[j].imag())) * (Q)inv_sigma2);
 
 			for (auto l = 0; l < this->bits_per_symbol; l++)
 			{
@@ -306,8 +305,8 @@ void Modem_generic<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
 			auto tempL = (Q)(std::norm(complex_Yk -
-			                           complex_Hk * std::complex<Q>((Q)(*cstl_complex)[j].real(),
-			                                                        (Q)(*cstl_complex)[j].imag())) * (Q)inv_sigma2);
+			                           complex_Hk * std::complex<Q>((Q)(*cstl)[j].real(),
+			                                                        (Q)(*cstl)[j].imag())) * (Q)inv_sigma2);
 
 			for (auto l = 0; l < this->bits_per_symbol; l++)
 			{
@@ -350,7 +349,7 @@ void Modem_generic<B, R, Q, MAX>
 
 		for (auto m = 0; m < this->nbr_symbols; m++)
 		{
-			std::complex<R> soft_symbol = (*cstl_complex)[m];
+			const auto& soft_symbol = (*cstl)[m];
 			auto p = (R)1.0;
 			for (auto j = 0; j < this->bits_per_symbol; j++)
 			{
@@ -371,7 +370,7 @@ void Modem_generic<B, R, Q, MAX>
 
 		for (auto m = 0; m < (1<<r); m++)
 		{
-			std::complex<R> soft_symbol = (*cstl_complex)[m];
+			const auto& soft_symbol = (*cstl)[m];
 			auto p = (R)1.0;
 			for (auto j = 0; j < r; j++)
 			{
@@ -399,7 +398,7 @@ void Modem_generic<B,R,Q,MAX>
 		unsigned idx = 0;
 		for (auto j = 0; j < bps; j++)
 			idx += unsigned(unsigned(1 << j) * X_N1[i * bps +j]);
-		auto symbol = (*cstl_real)[idx];
+		auto symbol = cstl->get_real(idx);
 
 		X_N2[i] = symbol;
 	}
@@ -410,7 +409,7 @@ void Modem_generic<B,R,Q,MAX>
 		unsigned idx = 0;
 		for (auto j = 0; j < size_in - (main_loop_size * bps); j++)
 			idx += unsigned(unsigned(1 << j) * X_N1[main_loop_size * bps +j]);
-		auto symbol = (*cstl_real)[idx];
+		auto symbol = cstl->get_real(idx);
 
 		X_N2[size_out -1] = symbol;
 	}
@@ -440,11 +439,11 @@ void Modem_generic<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if (((j>>b) & 1) == 0)
-				L0 = MAX(L0, -(Y_N1[k] - (Q)(*cstl_real)[j]) *
-				              (Y_N1[k] - (Q)(*cstl_real)[j]) * (Q)inv_sigma2);
+				L0 = MAX(L0, -(Y_N1[k] - (Q)cstl->get_real(j)) *
+				              (Y_N1[k] - (Q)cstl->get_real(j)) * (Q)inv_sigma2);
 			else
-				L1 = MAX(L1, -(Y_N1[k] - (Q)(*cstl_real)[j]) *
-				              (Y_N1[k] - (Q)(*cstl_real)[j]) * (Q)inv_sigma2);
+				L1 = MAX(L1, -(Y_N1[k] - (Q)cstl->get_real(j)) *
+				              (Y_N1[k] - (Q)cstl->get_real(j)) * (Q)inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
@@ -474,11 +473,11 @@ void Modem_generic<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if (((j>>b) & 1) == 0)
-				L0 = MAX(L0, -(Y_N1[k] - (Q)H_N[k] * (Q)(*cstl_real)[j]) *
-				              (Y_N1[k] - (Q)H_N[k] * (Q)(*cstl_real)[j]) * (Q)inv_sigma2);
+				L0 = MAX(L0, -(Y_N1[k] - (Q)H_N[k] * (Q)cstl->get_real(j)) *
+				              (Y_N1[k] - (Q)H_N[k] * (Q)cstl->get_real(j)) * (Q)inv_sigma2);
 			else
-				L1 = MAX(L1, -(Y_N1[k] - (Q)H_N[k] * (Q)(*cstl_real)[j]) *
-				              (Y_N1[k] - (Q)H_N[k] * (Q)(*cstl_real)[j]) * (Q)inv_sigma2);
+				L1 = MAX(L1, -(Y_N1[k] - (Q)H_N[k] * (Q)cstl->get_real(j)) *
+				              (Y_N1[k] - (Q)H_N[k] * (Q)cstl->get_real(j)) * (Q)inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
@@ -508,8 +507,8 @@ void Modem_generic<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto tempL  = (Q)((Y_N1[k] - (*cstl_real)[j]) *
-			                  (Y_N1[k] - (*cstl_real)[j]) * (Q)inv_sigma2);
+			auto tempL  = (Q)((Y_N1[k] - cstl->get_real(j)) *
+			                  (Y_N1[k] - cstl->get_real(j)) * (Q)inv_sigma2);
 
 			for (auto l = 0; l < this->bits_per_symbol; l++)
 			{
@@ -561,8 +560,8 @@ void Modem_generic<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto tempL = (Q)((Y_N1[k] - (Q)H_N[k] * (*cstl_real)[j]) *
-			                 (Y_N1[k] - (Q)H_N[k] * (*cstl_real)[j]) * (Q)inv_sigma2);
+			auto tempL = (Q)((Y_N1[k] - (Q)H_N[k] * cstl->get_real(j)) *
+			                 (Y_N1[k] - (Q)H_N[k] * cstl->get_real(j)) * (Q)inv_sigma2);
 
 			for (auto l = 0; l < this->bits_per_symbol; l++)
 			{
@@ -604,7 +603,7 @@ void Modem_generic<B, R, Q, MAX>
 
 		for (auto m = 0; m < this->nbr_symbols; m++)
 		{
-			R soft_symbol = (*cstl_real)[m];
+			R soft_symbol = (*cstl).get_real(m);
 			R p = 1.0;
 			for (auto j = 0; j < this->bits_per_symbol; j++)
 			{
@@ -623,7 +622,7 @@ void Modem_generic<B, R, Q, MAX>
 
 		for (auto m = 0; m < (1<<r); m++)
 		{
-			R soft_symbol = (*cstl_real)[m];
+			R soft_symbol =(*cstl).get_real(m);
 			auto p = (R)1.0;
 			for (auto j = 0; j < r; j++)
 			{

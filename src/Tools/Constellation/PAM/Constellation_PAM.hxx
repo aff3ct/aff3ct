@@ -15,7 +15,7 @@ namespace tools
 template <typename R>
 Constellation_PAM<R>::
 Constellation_PAM(const unsigned n_bps)
-: Constellation_real<R>(n_bps, "PAM"),
+: Constellation<R>(n_bps, "PAM"),
   sqrt_es((R)std::sqrt(((R)(this->get_n_symbols() * this->get_n_symbols()) - 1.0) / 3.0))
 {
 	this->build();

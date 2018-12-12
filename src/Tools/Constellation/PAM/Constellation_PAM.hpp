@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "../Constellation_real.hpp"
+#include "../Constellation.hpp"
 
 
 namespace aff3ct
@@ -11,10 +11,10 @@ namespace aff3ct
 namespace tools
 {
 template <typename R>
-class Constellation_PAM : public Constellation_real<R>
+class Constellation_PAM : public Constellation<R>
 {
 public:
-	using typename Constellation_real<R>::S;
+	using typename Constellation<R>::S;
 
 	/*
 	 * \param n_bps is the number of bits per symbol

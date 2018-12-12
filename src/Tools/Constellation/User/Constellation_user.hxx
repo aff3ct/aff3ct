@@ -1,5 +1,5 @@
-#ifndef CONSTELLATION_COMPLEX_USER_HXX__
-#define CONSTELLATION_COMPLEX_USER_HXX__
+#ifndef CONSTELLATION_USER_HXX__
+#define CONSTELLATION_USER_HXX__
 
 #include <fstream>
 #include <cmath>
@@ -7,7 +7,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Constellation_complex_user.hpp"
+#include "Constellation_user.hpp"
 
 
 namespace aff3ct
@@ -15,14 +15,14 @@ namespace aff3ct
 namespace tools
 {
 template <typename R>
-Constellation_complex_user<R>::
-Constellation_complex_user(const std::string& const_path)
-: Constellation_complex<R>(read_constellation(const_path), "User<C>")
+Constellation_user<R>::
+Constellation_user(const std::string& const_path)
+: Constellation<R>(read_constellation(const_path), "User<C>")
 {
 }
 
 template <typename R>
-std::vector<typename Constellation_complex_user<R>::S> Constellation_complex_user<R>::
+std::vector<typename Constellation_user<R>::S> Constellation_user<R>::
 read_constellation(const std::string& const_path)
 {
 	if (const_path.empty())
@@ -71,4 +71,4 @@ read_constellation(const std::string& const_path)
 
 }
 }
-#endif // CONSTELLATION_COMPLEX_USER_HXX__
+#endif // CONSTELLATION_USER_HXX__

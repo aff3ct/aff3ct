@@ -5,8 +5,6 @@
 
 #include "Tools/Math/max.h"
 #include "Tools/Constellation/Constellation.hpp"
-#include "Tools/Constellation/Real/Constellation_real.hpp"
-#include "Tools/Constellation/Complex/Constellation_complex.hpp"
 
 #include "../Modem.hpp"
 
@@ -18,38 +16,37 @@ template <typename B = int, typename R = float, typename Q = R, tools::proto_max
 class Modem_generic : public Modem<B,R,Q>
 {
 private:
+	std::unique_ptr<const tools::Constellation<R>> cstl;
+
 	const int bits_per_symbol;
 	const int nbr_symbols;
 	const bool disable_sig2;
 	R inv_sigma2;
 
-	std::shared_ptr<const tools::Constellation_real   <R>> cstl_real;
-	std::shared_ptr<const tools::Constellation_complex<R>> cstl_complex;
-
 public:
-	Modem_generic(const int N, std::shared_ptr<const tools::Constellation> cstl, const tools::Noise<R>& noise = tools::Sigma<R>(),
+	Modem_generic(const int N, std::unique_ptr<const tools::Constellation<R>>&& cstl, const tools::Noise<R>& noise = tools::Sigma<R>(),
 	              const bool disable_sig2 = false, const int n_frames = 1);
 
 	virtual ~Modem_generic() = default;
 
 	virtual void set_noise(const tools::Noise<R>& noise);
 
-	static bool is_complex_mod(const tools::Constellation& c)
+	static bool is_complex_mod(const tools::Constellation<R>& c)
 	{
-		return tools::is_constellation_complex<R>(c);
+		return c.is_complex();
 	}
 
-	static bool is_complex_fil(const tools::Constellation& c)
+	static bool is_complex_fil(const tools::Constellation<R>& c)
 	{
-		return tools::is_constellation_complex<R>(c);
+		return c.is_complex();
 	}
 
-	static int size_mod(const int N, const tools::Constellation& c)
+	static int size_mod(const int N, const tools::Constellation<R>& c)
 	{
 		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, c.get_n_bits_per_symbol(), 0, 1, is_complex_mod(c));
 	}
 
-	static int size_fil(const int N, const tools::Constellation& c)
+	static int size_fil(const int N, const tools::Constellation<R>& c)
 	{
 		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, c.get_n_bits_per_symbol(), 0, 1, is_complex_fil(c));
 	}

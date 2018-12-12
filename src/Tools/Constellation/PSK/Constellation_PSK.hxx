@@ -14,7 +14,7 @@ namespace tools
 template <typename R>
 Constellation_PSK<R>::
 Constellation_PSK(const unsigned n_bps)
-: Constellation_complex<R>(n_bps, "PSK")
+: Constellation<R>(n_bps, "PSK")
 {
 	this->build();
 }

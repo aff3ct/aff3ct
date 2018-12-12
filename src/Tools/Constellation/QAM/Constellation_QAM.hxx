@@ -13,7 +13,7 @@ namespace tools
 template <typename R>
 Constellation_QAM<R>::
 Constellation_QAM(const unsigned n_bps)
-: Constellation_complex<R>(n_bps, "QAM"),
+: Constellation<R>(n_bps, "QAM"),
   sqrt_es((R)std::sqrt((R)2.0 * (R)(this->get_n_symbols() - 1) / 3.0))
 {
 	this->build();

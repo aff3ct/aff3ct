@@ -83,7 +83,7 @@ struct Modem : public Factory
 		inline module::Modem<B,R,Q>* _build_scma() const;
 
 		template <typename R = float>
-		std::shared_ptr<tools::Constellation> build_constellation() const;
+		tools::Constellation<R>* build_constellation() const;
 	};
 
 
@@ -95,23 +95,28 @@ struct Modem : public Factory
 
 
 	static bool has_constellation(const std::string &type);
-	static bool is_complex_mod(const std::string &type, const int bps = 1, const tools::Constellation* c = nullptr);
-	static bool is_complex_fil(const std::string &type, const int bps = 1, const tools::Constellation* c = nullptr);
 
+	template <typename R = float>
+	static bool is_complex_mod(const std::string &type, const int bps = 1, const tools::Constellation<R>* c = nullptr);
+	template <typename R = float>
+	static bool is_complex_fil(const std::string &type, const int bps = 1, const tools::Constellation<R>* c = nullptr);
+
+	template <typename R = float>
 	static int get_buffer_size_after_modulation(const std::string &type,
 	                                            const int         N,
 	                                            const int         bps     = 1,
 	                                            const int         cpm_upf = 5,
 	                                            const int         cpm_L   = 3,
 	                                            const int         cpm_p   = 2,
-	                                            const tools::Constellation* c = nullptr);
+	                                            const tools::Constellation<R>* c = nullptr);
 
+	template <typename R = float>
 	static int get_buffer_size_after_filtering(const std::string &type,
 	                                           const int         N,
 	                                           const int         bps   = 1,
 	                                           const int         cpm_L = 3,
 	                                           const int         cpm_p = 2,
-	                                           const tools::Constellation* c = nullptr);
+	                                           const tools::Constellation<R>* c = nullptr);
 };
 }
 }
