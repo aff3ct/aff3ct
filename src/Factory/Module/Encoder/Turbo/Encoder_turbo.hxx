@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
@@ -68,6 +69,7 @@ void Encoder_turbo::parameters<E1,E2>
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_turbo::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
@@ -79,15 +81,16 @@ void Encoder_turbo::parameters<E1,E2>
 
 		args.erase({pi+"-size"    });
 		args.erase({pi+"-fra", "F"});
-
 	}
 
 	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
 
-	args.add(
-		{p+"-json-path"},
-		tools::File(tools::openmode::write),
-		"path to store the encoder and decoder traces formated in JSON.");
+	// args.add(
+	// 	{p+"-json-path"},
+	// 	tools::File(tools::openmode::write),
+	// 	"path to store the encoder and decoder traces formated in JSON.");
+	tools::add_arg(args, p, class_name+"p+json-path",
+		tools::File(tools::openmode::write));
 
 	sub1->get_description(args);
 

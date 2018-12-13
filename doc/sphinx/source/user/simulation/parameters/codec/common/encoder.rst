@@ -14,7 +14,7 @@ This section describes the parameters common to all encoders.
    :Allowed values: ``NO`` ``AZCW`` ``COSET`` ``USER``
    :Examples: ``--enc-type AZCW``
 
-Select the encoder type.
+|factory::Encoder::parameters::p+type|
 
 Description of the allowed values:
 
@@ -61,8 +61,7 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--enc-path example/path/to/the/right/file``
 
-Set the path to a file containing one or more codewords, to use with the
-``USER`` encoder.
+|factory::Encoder::parameters::p+path|
 
 An |ASCII| file is expected:
 
@@ -85,5 +84,4 @@ An |ASCII| file is expected:
    :Type: integer
    :Examples: ``--enc-start-idx 1``
 
-Give the start index to use in the ``USER`` encoder. It is the index of the
-first codeword to read from the given file.
+|factory::Encoder::parameters::p+start-idx|

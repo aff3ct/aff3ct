@@ -11,8 +11,7 @@
    :Type: integer
    :Examples: ``--pct-fra-size 912``
 
-Set the frame size :math:`N`. This is not necessarily the codeword size if a
-puncturing pattern is used.
+|factory::Puncturer::parameters::p+fra-size,N|
 
 .. _pct-ldpc-pct-type:
 
@@ -24,7 +23,7 @@ puncturing pattern is used.
    :Default: ``LDPC``
    :Examples: ``--pct-type LDPC``
 
-Select the puncturer type.
+|factory::Puncturer::parameters::p+type|
 
 Description of the allowed values:
 
@@ -47,9 +46,11 @@ Description of the allowed values:
    :Type: binary vector
    :Examples: ``--pct-pattern "1,1,1,0"``
 
-Give the puncturing pattern following the |LDPC| code. The number :math:`P` of
-values given in this pattern must be as :math:`N_{cw} = P \times Z` where
-:math:`Z` is the number of bits represented by a single value in the pattern.
+|factory::Puncturer_LDPC::parameters::p+pattern|
+
+The number :math:`P` of values given in this pattern must be as
+:math:`N_{cw} = P \times Z` where :math:`Z` is the number of bits represented by
+a single value in the pattern.
 
 This |LDPC| puncturer behavior is such as, for the above example, the first
 three quarter bits are kept and the last quarter is removed from the frame.

@@ -13,7 +13,7 @@ Repetition Decoder parameters
    :Default: ``REPETITION``
    :Examples: ``--dec-type CHASE``
 
-Select the algorithm type.
+|factory::Decoder::parameters::p+type,D|
 
 Description of the allowed values:
 
@@ -43,7 +43,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem FAST``
 
-Select the algorithm implementation.
+|factory::Decoder::parameters::p+implem|
 
 Description of the allowed values:
 

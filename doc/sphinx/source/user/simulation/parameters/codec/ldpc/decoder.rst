@@ -13,8 +13,7 @@
    :Examples: ``--dec-h-path conf/dec/LDPC/AR4JA_4096_8192.qc``
               ``--dec-h-path conf/dec/LDPC/MACKAY_504_1008.alist``
 
-Give the path to the :math:`H` parity matrix. Support the AList and the |QC|
-formats.
+|factory::Decoder_LDPC::parameters::p+h-path|
 
 This argument is not required if the encoder type :ref:`enc-ldpc-enc-type`
 is ``LDPC_DVBS2``.
@@ -34,7 +33,7 @@ is ``LDPC_DVBS2``.
    :Default: ``BP_FLOODING``
    :Examples: ``--dec-type BP_HORIZONTAL_LAYERED``
 
-Select the algorithm you want to decode the codeword.
+|factory::Decoder::parameters::p+type,D|
 
 Description of the allowed values:
 
@@ -75,7 +74,7 @@ Description of the allowed values:
    :Default: ``SPA``
    :Examples: ``--dec-implem AMS``
 
-Select the implementation of the algorithm to decode.
+|factory::Decoder::parameters::p+implem|
 
 Description of the allowed values:
 
@@ -149,8 +148,10 @@ version 8.1.0). When compiling with the GNU compiler in C++11 mode, the
    :Allowed values: ``INTER``
    :Examples: ``--dec-simd INTER``
 
-Select the |SIMD| strategy you want to use. :numref:`tab_ldpc_dec_implem`
-shows the decoders and implementations that support |SIMD|.
+|factory::Decoder_LDPC::parameters::p+simd|
+
+:numref:`tab_ldpc_dec_implem` shows the decoders and implementations that
+support |SIMD|.
 
 Description of the allowed values:
 
@@ -189,9 +190,9 @@ Description of the allowed values:
    :Default: ``NONE``
    :Examples: ``--dec-h-reorder ASC``
 
-Specify the order of execution of the |CNs| in the decoding process depending on
-their degree. The degree of a |CN| is the number of |VNs| that are connected to
-it.
+|factory::Decoder_LDPC::parameters::p+h-reorder|
+
+The degree of a |CN| is the number of |VNs| that are connected to it.
 
 Description of the allowed values:
 
@@ -220,7 +221,7 @@ Description of the allowed values:
    :Default: 10
    :Examples: ``--dec-ite 30``
 
-Set the maximal number of iterations in the |LDPC| decoder.
+|factory::Decoder_LDPC::parameters::p+ite,i|
 
 .. note:: By default, in order to speedup the decoding time, the decoder can
    stop the decoding process if all the parity check equations are verified
@@ -238,7 +239,7 @@ Set the maximal number of iterations in the |LDPC| decoder.
    :Default: ``MINL``
    :Examples: ``--dec-min MIN``
 
-Define the :math:`\min^*` operator approximation used in the |AMS| update rule.
+|factory::Decoder_LDPC::parameters::p+min|
 
 Description of the allowed values:
 
@@ -276,7 +277,7 @@ only a :math:`\min` function.
    :Default: 1.0
    :Examples: ``--dec-norm 0.75``
 
-Set the normalization factor used in the |NMS| update rule.
+|factory::Decoder_LDPC::parameters::p+norm|
 
 .. _dec-ldpc-dec-off:
 
@@ -287,7 +288,7 @@ Set the normalization factor used in the |NMS| update rule.
    :Default: 0.0
    :Examples: ``--dec-off 0.25``
 
-Set the offset used in the |OMS| update rule.
+|factory::Decoder_LDPC::parameters::p+off|
 
 .. _dec-ldpc-dec-mwbf:
 
@@ -298,8 +299,7 @@ Set the offset used in the |OMS| update rule.
    :Default: 0.0
    :Examples: ``--dec-mwbf 1.0``
 
-Give the factor used in the modified |WBF| algorithm. Set to 0 for basic |WBF|
-algorithm.
+|factory::Decoder_LDPC::parameters::p+mwbf|
 
 .. _dec-ldpc-dec-synd-depth:
 
@@ -310,16 +310,14 @@ algorithm.
    :Default: 1
    :Examples: ``--dec-synd-depth 2``
 
-Set the number of iterations to process before enabling the syndrome detection.
-In some cases, it can help to avoid false positive detections.
+|factory::Decoder_LDPC::parameters::p+synd-depth|
 
 .. _dec-ldpc-dec-no-synd:
 
 ``--dec-no-synd``
 """""""""""""""""
 
-Disable the syndrome detection, all the |LDPC| decoding iterations will be
-performed.
+|factory::Decoder_LDPC::parameters::p+no-synd|
 
 References
 """"""""""

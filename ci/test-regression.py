@@ -26,6 +26,7 @@ parser = argparse.ArgumentParser(prog='aff3ct-test-regression', formatter_class=
 parser.add_argument('--refs-path',      action='store', dest='refsPath',      type=str,   default="refs",                    help='Path to the references to re-simulate.')
 parser.add_argument('--results-path',   action='store', dest='resultsPath',   type=str,   default="test-regression-results", help='Path to the simulated results.')
 parser.add_argument('--build-path',     action='store', dest='buildPath',     type=str,   default="build",                   help='Path to the AFF3CT build.')
+parser.add_argument('--binary-path',    action='store', dest='binaryPath',    type=str,   default="bin/aff3ct",              help='Path to the AFF3CT binary.')
 parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                       # choices=xrange(1,   +inf)
 parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility on the difference between new vs ref to verify a noise point.')               # choices=xrange(1.0, +inf)
 parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                         # choices=xrange(0,   +ing)
@@ -293,6 +294,7 @@ print('# Parameters:')
 print('# refs path      =', args.refsPath     )
 print('# results path   =', args.resultsPath  )
 print('# build path     =', args.buildPath    )
+print('# binary path    =', args.binaryPath   )
 print('# start id       =', args.startId      )
 print('# sensibility    =', args.sensibility  )
 print('# n threads      =', args.nThreads     )
@@ -363,11 +365,10 @@ for fn in fileNames:
 		nIgnored += 1
 		continue
 
-
-
 	# get the command line to run
 	argsAFFECT = argsAFFECTcommand[:] # hard copy
 	argsAFFECT += simuRef.getSplitCommand()
+	argsAFFECT[len(argsAFFECTcommand)] = args.binaryPath;
 	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.getMetadata("title")]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]

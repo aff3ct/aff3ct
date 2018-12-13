@@ -1,3 +1,5 @@
+#include "Tools/Documentation/documentation.h"
+
 #include "Module/Coset/Bit/Coset_bit.hpp"
 #include "Module/Coset/Real/Coset_real.hpp"
 
@@ -25,22 +27,30 @@ void Coset::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Coset::parameters::";
 
-	args.add(
-		{p+"-size", "N"},
+	// args.add(
+	// 	{p+"-size", "N"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"coset size.",
+	// 	tools::arg_rank::REQ);
+	tools::add_arg(args, p, class_name+"p+size",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"coset size.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("STD")),
-		"coset type.");
+	// args.add(
+	// 	{p+"-type"},
+	// 	tools::Text(tools::Including_set("STD")),
+	// 	"coset type.");
+	tools::add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("STD")));
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Coset::parameters

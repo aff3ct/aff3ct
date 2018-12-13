@@ -8,7 +8,7 @@ project (aff3ct)
 
 if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
     message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
-                        "from a Git repository. Please do not download ZIP from GitHub and make a Git "
+                        "from a Git repository. Please do not download archives from GitHub and make a Git "
                         "clone instead (git clone https://github.com/aff3ct/MIPP.git).")
 endif()
 
@@ -25,12 +25,19 @@ option (AFF3CT_SYSTEMC_SIMU       "Enable the SystemC simulation (incompatible w
 option (AFF3CT_SYSTEMC_MODULE     "Enable the SystemC support (only for the modules)"                         OFF)
 option (AFF3CT_MPI                "Enable the MPI support"                                                    OFF)
 option (AFF3CT_POLAR_BIT_PACKING  "Enable the bit packing technique for Polar code SC decoding"               ON )
+option (AFF3CT_POLAR_BOUNDS       "Enable the use of the external Tal & Vardy Polar best channels generator"  OFF)
 option (AFF3CT_COLORS             "Enable the colors in the terminal"                                         ON )
 
 if (NOT (WIN32 OR APPLE))
     option (AFF3CT_BACKTRACE "Enable the backtrace display when and exception is raised" ON)
 else()
     set (AFF3CT_BACKTRACE OFF)
+endif()
+
+if (MSVC)
+    set (AFF3CT_EXT_STRINGS ON)
+else()
+    option (AFF3CT_EXT_STRINGS "Enable external strings for the help documentation" ON)
 endif()
 
 set(AFF3CT_PREC "MULTI" CACHE STRING "Select the precision in bits (can be '8', '16', '32', '64' or 'MULTI')")
@@ -116,6 +123,32 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp.in"
 list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp")
 
 # ---------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- GENERATE STRINGS FILE
+# ---------------------------------------------------------------------------------------------------------------------
+
+if (NOT AFF3CT_EXT_STRINGS)
+    file(READ doc/sphinx/strings.rst AFF3CT_STRINGS)
+
+    string(REPLACE "\\" "\\\\" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
+    string(REPLACE "\"" "\\\"" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
+    string(REPLACE "\n" "\\n"  AFF3CT_STRINGS "${AFF3CT_STRINGS}")
+
+    # Auto generate a file containing the doc strings
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/Documentation/strings.cpp.in"
+                   "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/Documentation/strings.cpp" @ONLY)
+
+    list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/Documentation/strings.cpp")
+endif()
+
+# ---------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------- GENERATE AFF3CT SHORTCUT FILE
+# ---------------------------------------------------------------------------------------------------------------------
+
+if (AFF3CT_COMPILE_EXE AND UNIX)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/scripts/aff3ct" "bin/aff3ct" @ONLY)
+endif ()
+
+# ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------ CREATE FILTERS
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -178,6 +211,12 @@ if (AFF3CT_POLAR_BIT_PACKING)
 else()
     message(STATUS "AFF3CT - Polar bit packing: off")
 endif()
+if (AFF3CT_POLAR_BOUNDS)
+    aff3ct_add_definitions (-DAFF3CT_POLAR_BOUNDS)
+    message(STATUS "AFF3CT - Polar bounds: on")
+else()
+    message(STATUS "AFF3CT - Polar bounds: off")
+endif()
 if (AFF3CT_COLORS)
     aff3ct_add_definitions (-DAFF3CT_COLORS)
     message(STATUS "AFF3CT - Terminal colors: on")
@@ -190,6 +229,13 @@ if (AFF3CT_BACKTRACE)
 else()
     message(STATUS "AFF3CT - Backtrace: off")
 endif()
+if (AFF3CT_EXT_STRINGS)
+    aff3ct_add_definitions (-DAFF3CT_EXT_STRINGS)
+    message(STATUS "AFF3CT - External strings: on")
+else()
+    message(STATUS "AFF3CT - External strings: off")
+endif()
+
 if (AFF3CT_PREC STREQUAL "8")
     aff3ct_add_definitions (-DAFF3CT_8BIT_PREC)
     message(STATUS "AFF3CT - Precision: 8-bit")
@@ -259,19 +305,19 @@ add_library (aff3ct-obj OBJECT ${source_files})
 # Binary
 if (AFF3CT_COMPILE_EXE)
     add_executable        (aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj>)
-    set_target_properties (aff3ct-bin PROPERTIES OUTPUT_NAME aff3ct)
+    set_target_properties (aff3ct-bin PROPERTIES OUTPUT_NAME aff3ct-${GIT_VERSION_RMV})
     message(STATUS "AFF3CT - Compile: executable")
 endif (AFF3CT_COMPILE_EXE)
 
 # Library
 if (AFF3CT_COMPILE_SHARED_LIB)
     add_library           (aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj>)
-    set_target_properties (aff3ct-shared-lib PROPERTIES OUTPUT_NAME aff3ct)
+    set_target_properties (aff3ct-shared-lib PROPERTIES OUTPUT_NAME aff3ct-${GIT_VERSION_RMV})
     message(STATUS "AFF3CT - Compile: shared library")
 endif (AFF3CT_COMPILE_SHARED_LIB)
 if (AFF3CT_COMPILE_STATIC_LIB)
     add_library           (aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj>)
-    set_target_properties (aff3ct-static-lib PROPERTIES OUTPUT_NAME aff3ct)
+    set_target_properties (aff3ct-static-lib PROPERTIES OUTPUT_NAME aff3ct-${GIT_VERSION_RMV})
     message(STATUS "AFF3CT - Compile: static library")
 endif (AFF3CT_COMPILE_STATIC_LIB)
 
@@ -336,6 +382,7 @@ endif (AFF3CT_LINK_GSL)
 if (AFF3CT_LINK_MKL)
     aff3ct_add_definitions("-DAFF3CT_CHANNEL_MKL")
 
+    # set (MKL_STATIC ON)
     find_package (MKL REQUIRED)
     if (MKL_FOUND)
         message(STATUS "AFF3CT - Library found: MKL")
@@ -397,9 +444,9 @@ endif()
 # Auto generate cmake config files to link with AFF3CT library (only if an AFF3CT library has been compiled)
 if (AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/aff3ct-config.cmake.in"
-                   "lib/cmake/aff3ct-config.cmake" @ONLY)
+                   "lib/cmake/aff3ct-${GIT_VERSION_RMV}/aff3ct-config.cmake" @ONLY)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/aff3ct-config-version.cmake.in"
-                   "lib/cmake/aff3ct-config-version.cmake" @ONLY)
+                   "lib/cmake/aff3ct-${GIT_VERSION_RMV}/aff3ct-config-version.cmake" @ONLY)
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -407,20 +454,36 @@ endif()
 # ---------------------------------------------------------------------------------------------------------------------
 
 if (AFF3CT_COMPILE_EXE)
-    install(TARGETS aff3ct-bin RUNTIME DESTINATION bin/aff3ct-${GIT_VERSION_RMV})
+    install(TARGETS aff3ct-bin RUNTIME DESTINATION bin/)
+    if (UNIX)
+        install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/scripts/aff3ct" DESTINATION bin/
+                PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    endif ()
 endif()
 if (AFF3CT_COMPILE_SHARED_LIB)
-    install(TARGETS aff3ct-shared-lib LIBRARY DESTINATION lib/aff3ct-${GIT_VERSION_RMV})
+    install(TARGETS aff3ct-shared-lib LIBRARY DESTINATION lib/)
 endif()
 if (AFF3CT_COMPILE_STATIC_LIB)
-    install(TARGETS aff3ct-static-lib ARCHIVE DESTINATION lib/aff3ct-${GIT_VERSION_RMV})
+    install(TARGETS aff3ct-static-lib ARCHIVE DESTINATION lib/)
 endif()
 
 if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-    install(FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-config.cmake"
-                  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-config-version.cmake"
-            DESTINATION lib/cmake/aff3ct-${GIT_VERSION_RMV})
+    install(DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/aff3ct-${GIT_VERSION_RMV}"
+            DESTINATION lib/cmake/)
+endif()
+
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf")
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf"
+            DESTINATION share/aff3ct-${GIT_VERSION_RMV}/doc/pdf)
+endif()
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/html/")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/html/"
+            DESTINATION share/aff3ct-${GIT_VERSION_RMV}/doc/html)
+endif()
+if (AFF3CT_EXT_STRINGS)
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/strings.rst"
+            DESTINATION share/aff3ct-${GIT_VERSION_RMV}/doc/strings)
 endif()
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/" DESTINATION include/aff3ct-${GIT_VERSION_RMV}/aff3ct

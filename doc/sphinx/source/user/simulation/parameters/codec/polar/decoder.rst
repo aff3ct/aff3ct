@@ -14,7 +14,7 @@ Polar Decoder parameters
    :Default: ``SC``
    :Examples: ``--dec-type ASCL``
 
-Select the algorithm you want to decode the codeword.
+|factory::Decoder::parameters::p+type,D|
 
 Description of the allowed values:
 
@@ -33,7 +33,7 @@ Description of the allowed values:
 +--------------+---------------------------------------------------------------+
 | ``ASCL``     | Select the |A-SCL| algorithm from :cite:`Li2012`, |PA-SCL|    |
 |              | and |FA-SCL| variants from :cite:`Leonardon2017` are          |
-|              | available (see the :ref:`dec-polar-dec-partial-adaptiv`       |
+|              | available (see the :ref:`dec-polar-dec-partial-adaptive`      |
 |              | parameter).                                                   |
 +--------------+---------------------------------------------------------------+
 | ``ASCL_MEM`` | Select the |A-SCL| algorithm, same as the previous one but    |
@@ -55,7 +55,7 @@ Description of the allowed values:
    :Default: ``FAST``
    :Examples: ``--dec-implem FAST``
 
-Select the implementation of the algorithm to decode.
+|factory::Decoder::parameters::p+implem|
 
 Description of the allowed values:
 
@@ -90,7 +90,7 @@ Description of the allowed values:
    :Allowed values: ``INTER`` ``INTRA``
    :Examples: ``--dec-simd INTER``
 
-Select the |SIMD| strategy you want to use.
+|factory::Decoder_polar::parameters::p+simd|
 
 Description of the allowed values:
 
@@ -131,7 +131,7 @@ Description of the allowed values:
    :Type: integer
    :Examples: ``--dec-ite 1``
 
-Set the number of decoding iterations in the |SCAN| decoder.
+|factory::Decoder_polar::parameters::p+ite,i|
 
 .. _dec-polar-dec-lists:
 
@@ -141,15 +141,14 @@ Set the number of decoding iterations in the |SCAN| decoder.
    :Type: integer
    :Examples: ``--dec-lists 1``
 
-Set the number of lists to maintain in the |SCL| and |A-SCL| decoders.
+|factory::Decoder_polar::parameters::p+lists,L|
 
-.. _dec-polar-dec-partial-adaptiv:
+.. _dec-polar-dec-partial-adaptive:
 
-``--dec-partial-adaptiv``
-"""""""""""""""""""""""""
+``--dec-partial-adaptive``
+""""""""""""""""""""""""""
 
-Select the partial adaptive (|PA-SCL|) variant of the |A-SCL| decoder (by
-default the |FA-SCL| is selected).
+|factory::Decoder_polar::parameters::p+partial-adaptive|
 
 .. _dec-polar-dec-polar-nodes:
 
@@ -160,9 +159,7 @@ default the |FA-SCL| is selected).
    :Default: ``"{R0,R1,R0L,REP,REPL,SPC}"``
    :Examples: ``--dec-polar-nodes "{R0,R1}"``
 
-Set the rules to enable in the tree simplifications process. This parameter is
-compatible with the |SC| ``FAST``, the |SCL| ``FAST``, |SCL|-MEM ``FAST``, the
-|A-SCL| ``FAST`` and the the |A-SCL|-MEM ``FAST`` decoders.
+|factory::Decoder_polar::parameters::p+polar-nodes|
 
 Here are the available node types (or rules):
 

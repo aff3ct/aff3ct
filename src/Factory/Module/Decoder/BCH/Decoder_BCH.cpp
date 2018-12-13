@@ -1,10 +1,11 @@
 #include <sstream>
 
+#include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
+
 #include "Module/Decoder/BCH/Standard/Decoder_BCH_std.hpp"
 #include "Module/Decoder/BCH/Genius/Decoder_BCH_genius.hpp"
 #include "Module/Decoder/BCH/Fast/Decoder_BCH_fast.hpp"
-
-#include "Tools/Exception/exception.hpp"
 
 #include "Decoder_BCH.hpp"
 
@@ -34,11 +35,14 @@ void Decoder_BCH::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_BCH::parameters::";
 
-	args.add(
-		{p+"-corr-pow", "T"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"correction power of the BCH code.");
+	// args.add(
+	// 	{p+"-corr-pow", "T"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"correction power of the BCH code.");
+	tools::add_arg(args, p, class_name+"p+corr-pow,T",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});
 

@@ -1324,6 +1324,9 @@
 #ifndef TERMINAL_HPP_
 #include <Tools/Display/Terminal/Terminal.hpp>
 #endif
+#ifndef DOCUMENTATION_H_
+#include <Tools/Documentation/documentation.h>
+#endif
 #ifndef CANNOT_ALLOCATE_HPP_
 #include <Tools/Exception/cannot_allocate/cannot_allocate.hpp>
 #endif

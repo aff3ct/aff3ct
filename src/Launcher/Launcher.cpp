@@ -70,6 +70,7 @@ int Launcher::read_arguments()
 	try
 	{
 		this->store_args();
+		ah.set_help_display_keys(params_common.display_keys);
 	}
 	catch(const std::exception& e)
 	{
@@ -122,7 +123,7 @@ void Launcher::print_header()
 	stream << rang::tag::comment << rang::style::bold << "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
 	stream << rang::tag::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
 	stream << rang::tag::comment << rang::style::bold << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
-	factory::Header::print_parameters({&params_common}, false, this->stream);
+	factory::Header::print_parameters({&params_common}, this->params_common.full_legend, this->stream);
 	this->stream << rang::tag::comment << std::endl;
 }
 

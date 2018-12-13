@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 
@@ -28,38 +29,53 @@ void Monitor_BFER::parameters
 	Monitor::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Monitor_BFER::parameters::";
 
-	args.add(
-		{p+"-info-bits", "K"},
+	// args.add(
+	// 	{p+"-info-bits", "K"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"number of bits to check.",
+	// 	tools::arg_rank::REQ);
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of bits to check.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-max-fe", "e"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"max number of frame errors for each noise point simulation.");
+	// args.add(
+	// 	{p+"-max-fe", "e"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"max number of frame errors for each noise point simulation.");
+	tools::add_arg(args, p, class_name+"p+max-fe,e",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-max-fra", "n"},
+	// args.add(
+	// 	{p+"-max-fra", "n"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"maximum number of frames for each noise point simulation.",
+	// 	tools::arg_rank::ADV);
+	tools::add_arg(args, p, class_name+"p+max-fra,n",
 		tools::Integer(tools::Positive()),
-		"maximum number of frames for each noise point simulation.",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-err-hist"},
-		tools::Integer(tools::Positive()),
-		"activate the histogram of the number of errors per frame. Set the max number of bit error per frame included in the histogram (0 is no limit).");
+	// args.add(
+	// 	{p+"-err-hist"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"activate the histogram of the number of errors per frame. Set the max number of bit error per frame included in the histogram (0 is no limit).");
+	tools::add_arg(args, p, class_name+"p+err-hist",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-err-hist-path"},
-		tools::File(tools::openmode::write),
-		"path to the output histogram (default is './hist', add automatically the current noise value and the extension '.txt')");
+	// args.add(
+	// 	{p+"-err-hist-path"},
+	// 	tools::File(tools::openmode::write),
+	// 	"path to the output histogram (default is './hist', add automatically the current noise value and the extension '.txt')");
+	tools::add_arg(args, p, class_name+"p+err-hist-path",
+		tools::File(tools::openmode::write));
 }
 
 void Monitor_BFER::parameters

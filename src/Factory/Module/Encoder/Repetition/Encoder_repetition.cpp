@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
@@ -29,13 +30,16 @@ void Encoder_repetition::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_repetition::parameters::";
 
 	tools::add_options(args.at({p+"-type"}), 0, "REP");
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"disable the buffered encoding.");
+	// args.add(
+	// 	{p+"-no-buff"},
+	// 	tools::None(),
+	// 	"disable the buffered encoding.");
+	tools::add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 }
 
 void Encoder_repetition::parameters

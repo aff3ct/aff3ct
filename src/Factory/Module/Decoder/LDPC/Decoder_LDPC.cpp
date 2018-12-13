@@ -1,5 +1,7 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 #include "Tools/Math/max.h"
+
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp"
@@ -62,11 +64,15 @@ void Decoder_LDPC::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_LDPC::parameters::";
 
-	args.add(
-		{p+"-h-path"},
+	// args.add(
+	// 	{p+"-h-path"},
+	// 	tools::File(tools::openmode::read),
+	// 	"path to the H matrix (AList or QC formated file).",
+	// 	tools::arg_rank::REQ);
+	tools::add_arg(args, p, class_name+"p+h-path",
 		tools::File(tools::openmode::read),
-		"path to the H matrix (AList or QC formated file).",
 		tools::arg_rank::REQ);
 
 	args.add_link({p+"-h-path"}, {p+"-cw-size",   "N"}); // N_cw is H width
@@ -79,51 +85,69 @@ void Decoder_LDPC::parameters
 #endif
 	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA", "GALB", "WBF");
 
-	args.add(
-		{p+"-ite", "i"},
-		tools::Integer(tools::Positive()),
-		"maximal number of iterations in the LDPC decoder.");
+	// args.add(
+	// 	{p+"-ite", "i"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"maximal number of iterations in the LDPC decoder.");
+	tools::add_arg(args, p, class_name+"p+ite,i",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-off"},
-		tools::Real(),
-		"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem NMS\").");
+	// args.add(
+	// 	{p+"-off"},
+	// 	tools::Real(),
+	// 	"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem NMS\").");
+	tools::add_arg(args, p, class_name+"p+off",
+		tools::Real());
 
-	args.add(
-		{p+"-mwbf"},
-		tools::Real(),
-		"factor used in the modified WBF algorithm (works only with \"--dec-implem WBF\"). Set 0 for basic WBF");
+	// args.add(
+	// 	{p+"-mwbf"},
+	// 	tools::Real(),
+	// 	"factor used in the modified WBF algorithm (works only with \"--dec-implem WBF\"). Set 0 for basic WBF");
+	tools::add_arg(args, p, class_name+"p+mwbf",
+		tools::Real());
 
-	args.add(
-		{p+"-norm"},
-		tools::Real(tools::Positive()),
-		"normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem NMS\").");
+	// args.add(
+	// 	{p+"-norm"},
+	// 	tools::Real(tools::Positive()),
+	// 	"normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem NMS\").");
+	tools::add_arg(args, p, class_name+"p+norm",
+		tools::Real(tools::Positive()));
 
-	args.add(
-		{p+"-no-synd"},
-		tools::None(),
-		"disable the syndrome detection (disable the stop criterion in the LDPC decoders).");
+	// args.add(
+	// 	{p+"-no-synd"},
+	// 	tools::None(),
+	// 	"disable the syndrome detection (disable the stop criterion in the LDPC decoders).");
+	tools::add_arg(args, p, class_name+"p+no-synd",
+		tools::None());
 
-	args.add(
-		{p+"-synd-depth"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"successive number of iterations to validate the syndrome detection.");
+	// args.add(
+	// 	{p+"-synd-depth"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"successive number of iterations to validate the syndrome detection.");
+	tools::add_arg(args, p, class_name+"p+synd-depth",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-simd"},
-		tools::Text(tools::Including_set("INTER", "INTRA")),
-		"the SIMD strategy you want to use.");
+	// args.add(
+	// 	{p+"-simd"},
+	// 	tools::Text(tools::Including_set("INTER", "INTRA")),
+	// 	"the SIMD strategy you want to use.");
+	tools::add_arg(args, p, class_name+"p+simd",
+		tools::Text(tools::Including_set("INTER", "INTRA")));
 
-	args.add(
-		{p+"-min"},
-		tools::Text(tools::Including_set("MIN", "MINL", "MINS")),
-		"the MIN implementation for the nodes (AMS decoder).");
+	// args.add(
+	// 	{p+"-min"},
+	// 	tools::Text(tools::Including_set("MIN", "MINL", "MINS")),
+	// 	"the MIN implementation for the nodes (AMS decoder).");
+	tools::add_arg(args, p, class_name+"p+min",
+		tools::Text(tools::Including_set("MIN", "MINL", "MINS")));
 
-	args.add(
-		{p+"-h-reorder"},
-		tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
-		"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
-		"smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.");
+	// args.add(
+	// 	{p+"-h-reorder"},
+	// 	tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
+	// 	"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
+	// 	"smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.");
+	tools::add_arg(args, p, class_name+"p+h-reorder",
+		tools::Text(tools::Including_set("NONE", "ASC", "DSC")));
 }
 
 void Decoder_LDPC::parameters

@@ -4,12 +4,6 @@ set -x
 mkdir build
 cd build
 
-if [ -z "$CC" ]
-then
-	echo "Please define the 'CC' environment variable."
-	exit 1
-fi
-
 if [ -z "$CXX" ]
 then
 	echo "Please define the 'CXX' environment variable."
@@ -30,12 +24,12 @@ fi
 
 if [ -z "$LFLAGS" ]
 then
-	cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX \
+	cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=$CXX \
 	         -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="$CFLAGS" \
 	         $CMAKE_OPT
 	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 else
-	cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX \
+	cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=$CXX \
 	         -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="$CFLAGS" \
 	         -DCMAKE_EXE_LINKER_FLAGS="$LFLAGS" \
 	         $CMAKE_OPT
@@ -45,9 +39,10 @@ fi
 make -j $THREADS -k
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
+rm -rf $NAME
 mkdir $NAME $NAME/bin $NAME/lib $NAME/include $NAME/include/aff3ct
-cp bin/aff3ct $NAME/bin/aff3ct
-cp lib/libaff3ct.a $NAME/lib/libaff3ct.a
+cp bin/aff3ct* $NAME/bin/
+cp lib/libaff3ct*.a $NAME/lib/
 cp -r ../src/* $NAME/include/aff3ct/
 find $NAME/include/aff3ct/ -type f -follow -print | grep "[.]cpp$"    | xargs rm -f
 find $NAME/include/aff3ct/ -type f -follow -print | grep "[.]cpp.in$" | xargs rm -f

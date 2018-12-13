@@ -15,7 +15,7 @@ The RS decoder was described by Reed and Solomon in 1960 :cite:`ReedSolomon1960`
    :Default: ``ALGEBRAIC``
    :Examples: ``--dec-type ALGEBRAIC``
 
-Select the algorithm you want to decode the codeword.
+|factory::Decoder::parameters::p+type,D|
 
 Description of the allowed values:
 
@@ -44,7 +44,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem GENIUS``
 
-Select the implementation of the algorithm to decode.
+|factory::Decoder::parameters::p+implem|
 
 Description of the allowed values:
 
@@ -81,12 +81,10 @@ Description of the allowed values:
    :Default: 5
    :Examples: ``-T 18``
 
-Set the correction power of the |RS| decoder. This value corresponds to the
-number of symbols errors that the decoder is able to correct.
+|factory::Decoder_RS::parameters::p+corr-pow,T|
 
 It is automatically calculated from the input and codeword sizes. See also
 the argument :ref:`enc-rs-enc-info-bits`.
-
 
 References
 """"""""""

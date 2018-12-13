@@ -9,6 +9,7 @@
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 #include "Tools/types.h"
 #include "Tools/version.h"
 
@@ -70,74 +71,113 @@ void factory::Launcher::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Launcher::parameters::";
 
-	args.add(
-		{p+"-cde-type", "C"},
-		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TPC", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED", "RS")),
-		"select the code type you want to use.",
+	// args.add(
+	// 	{p+"-cde-type", "C"},
+	// 	tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TPC", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED", "RS")),
+	// 	"select the code type you want to use."),
+	// 	tools::arg_rank::REQ);
+	tools::add_arg(args, p, class_name+"p+cde-type,C",
+		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TPC", "LDPC", "REP", "RA", "RSC", "RSC_DB",
+		                                 "BCH", "UNCODED", "RS")),
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-type"},
+// 	args.add(
+// 		{p+"-type"},
+// #if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
+// 		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")),
+// #else
+// 		tools::Text(tools::Including_set("BFER", "BFERI")),
+// #endif
+// 		"select the type of simulation to launch (default is BFER).");
+	tools::add_arg(args, p, class_name+"p+type",
 #if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
-		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")),
+		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")));
 #else
-		tools::Text(tools::Including_set("BFER", "BFERI")),
+		tools::Text(tools::Including_set("BFER", "BFERI")));
 #endif
-		"select the type of simulation to launch (default is BFER).");
 
 #ifdef AFF3CT_MULTI_PREC
-	args.add(
-		{p+"-prec", "p"},
-		tools::Integer(tools::Including_set(8, 16, 32, 64)),
-		"the simulation precision in bits.");
+	// args.add(
+	// 	{p+"-prec", "p"},
+	// 	tools::Integer(tools::Including_set(8, 16, 32, 64)),
+	// 	"the simulation precision in bits.");
+	tools::add_arg(args, p, class_name+"p+prec,p",
+		tools::Integer(tools::Including_set(8, 16, 32, 64)));
 #endif
 
-	args.add(
-		{"help", "h"},
-		tools::None(),
-		"print this help.");
+	// args.add(
+	// 	{"help", "h"},
+	// 	tools::None(),
+	// 	"print this help.");
+	tools::add_arg(args, p, class_name+"help,h",
+		tools::None());
 
-	args.add(
-		{"Help", "H"},
-		tools::None(),
-		"print this help with the advanced arguments.");
+	// args.add(
+	// 	{"Help", "H"},
+	// 	tools::None(),
+	// 	"print this help with the advanced arguments");
+	tools::add_arg(args, p, class_name+"Help,H",
+		tools::None());
 
-	args.add(
-		{"version", "v"},
-		tools::None(),
-		"print informations about the version of the code.");
+	// args.add(
+	// 	{"version", "v"},
+	// 	tools::None(),
+	// 	"print informations about the version of the code.");
+	tools::add_arg(args, p, class_name+"version,v",
+		tools::None());
 
 #ifdef AFF3CT_BACKTRACE
-	args.add(
-		{"except-no-bt"},
+	// args.add(
+	// 	{"except-no-bt"},
+	// 	tools::None(),
+	// 	"do not print the backtrace when displaying exception.",
+	// 	tools::arg_rank::ADV);
+	tools::add_arg(args, p, class_name+"except-no-bt",
 		tools::None(),
-		"do not print the backtrace when displaying exception.",
 		tools::arg_rank::ADV);
 #endif
 
 #ifndef NDEBUG
-	args.add(
-		{"except-a2l"},
+	// args.add(
+	// 	{"except-a2l"},
+	// 	tools::None(),
+	// 	"enhance the backtrace when displaying exception by changing program"
+	//  "addresses into file names and lines (may take some seconds)",
+	// 	tools::arg_rank::ADV);
+	tools::add_arg(args, p, class_name+"except-a2l",
 		tools::None(),
-		"enhance the backtrace when displaying exception by changing program addresses into "
-		" file names and lines (may take some seconds).",
 		tools::arg_rank::ADV);
 #endif
 
-	args.add(
-		{p+"-no-legend"},
+	// args.add(
+	// 	{p+"-no-legend"},
+	// 	tools::None(),
+	// 	"do not display any legend when launching the simulation.",
+	// 	tools::arg_rank::ADV);
+	tools::add_arg(args, p, class_name+"no-legend",
 		tools::None(),
-		"Do not display any legend when launching the simulation.",
 		tools::arg_rank::ADV);
 
+	tools::add_arg(args, p, class_name+"full-legend",
+		tools::None(),
+		tools::arg_rank::ADV);
+
+	args.add_link({"no-legend"}, {"full-legend"});
 
 #ifdef AFF3CT_COLORS
-	args.add(
-		{p+"-no-colors"},
-		tools::None(),
-		"disable the colors in the shell.");
+	// args.add(
+	// 	{"-no-colors"},
+	// 	tools::None(),
+	// 	"disable the colors in the shell.");
+	tools::add_arg(args, p, class_name+"no-colors",
+		tools::None());
 #endif
+
+	tools::add_arg(args, p, class_name+"keys,k",
+		tools::None(),
+		tools::arg_rank::ADV);
 }
 
 void factory::Launcher::parameters
@@ -148,7 +188,9 @@ void factory::Launcher::parameters
 	if(vals.exist({p+"-cde-type", "C"})) this->cde_type        = vals.at({p+"-cde-type", "C"}); // required
 	if(vals.exist({p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
 	if(vals.exist({"version",     "v"})) this->display_version = true;
-	if(vals.exist({p+"-no-legend"    })) this->display_legend  = false;
+	if(vals.exist({"keys",        "k"})) this->display_keys    = true;
+	if(vals.exist({"no-legend"       })) this->display_legend  = false;
+	if(vals.exist({"full-legend"     })) this->full_legend     = true;
 
 	if(vals.exist({"help", "h"}))
 	{
@@ -170,7 +212,7 @@ void factory::Launcher::parameters
 	tools::exception::no_addr_to_line = !vals.exist({"except-a2l"  });
 
 #ifdef AFF3CT_COLORS
-	if (vals.exist({p+"-no-colors"})) rang::setControlMode(rang::control::Off);
+	if (vals.exist({"no-colors"})) rang::setControlMode(rang::control::Off);
 #else
 	rang::setControlMode(rang::control::Off);
 #endif

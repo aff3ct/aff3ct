@@ -13,7 +13,7 @@
    :Default: ``ALGEBRAIC``
    :Examples: ``--dec-type ALGEBRAIC``
 
-Select the algorithm you want to decode the codeword.
+|factory::Decoder::parameters::p+type,D|
 
 Description of the allowed values:
 
@@ -42,7 +42,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem FAST``
 
-Select the implementation of the algorithm to decode.
+|factory::Decoder::parameters::p+implem|
 
 Description of the allowed values:
 
@@ -88,8 +88,7 @@ Description of the allowed values:
    :Default: 5
    :Examples: ``--dec-corr-pow 18``
 
-Set the correction power of the |BCH| decoder. This value corresponds to the
-number of errors that the decoder is able to correct.
+|factory::Decoder_BCH::parameters::p+corr-pow,T|
 
 References
 """"""""""

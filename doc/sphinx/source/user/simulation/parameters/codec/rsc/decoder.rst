@@ -12,7 +12,7 @@
    :Allowed values: ``BCJR`` ``CHASE`` ``ML``
    :Examples: ``--dec-type BCJR``
 
-Select the algorithm you want to decode the codeword.
+|factory::Decoder::parameters::p+type,D|
 
 Description of the allowed values:
 
@@ -36,7 +36,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem FAST``
 
-Select the implementation of the algorithm to decode.
+|factory::Decoder::parameters::p+implem|
 
 Description of the allowed values:
 
@@ -68,7 +68,7 @@ Description of the allowed values:
    :Allowed values: ``INTER`` ``INTRA``
    :Examples: ``--dec-simd INTER``
 
-Select the |SIMD| strategy you want to use.
+|factory::Decoder_RSC::parameters::p+simd|
 
 Description of the allowed values:
 
@@ -106,8 +106,7 @@ Description of the allowed values:
    :Allowed values: ``MAXS`` ``MAXL`` ``MAX``
    :Examples: ``--dec-max MAX``
 
-Select the approximation of the :math:`\max^*` operator used in the trellis
-decoding.
+|factory::Decoder_RSC::parameters::p+max|
 
 Description of the allowed values:
 

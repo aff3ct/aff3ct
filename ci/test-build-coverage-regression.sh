@@ -28,6 +28,7 @@ function gen_coverage_info
 	for path in $folder/*
 	do [ -f $path ] && {
 		cmd=$(awk -F "=" '/command/ {print $2}' $path)
+		cmd=$(echo "${cmd/aff3ct/aff3ct-$GIT_VERSION}")
 		echo $cmd
 		ci=$(awk -F "=" '/ci/ {print $2}' $path)
 		if [ "$ci" != "off" ]; then

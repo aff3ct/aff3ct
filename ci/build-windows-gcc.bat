@@ -7,14 +7,15 @@ if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 mingw32-make -j %THREADS%
 if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 
+rd /s /q %NAME%
 mkdir %NAME%
 mkdir %NAME%\bin\
 mkdir %NAME%\lib\
 mkdir %NAME%\include\
 mkdir %NAME%\include\aff3ct\
 
- copy bin\aff3ct.exe  %NAME%\bin\aff3ct.exe
- copy lib\libaff3ct.a %NAME%\lib\aff3ct.lib
-xcopy ..\src\*        %NAME%\include\aff3ct\ /s /e
+ copy bin\aff3ct*.exe  %NAME%\bin\
+ copy lib\libaff3ct*.a %NAME%\lib\
+xcopy ..\src\*         %NAME%\include\aff3ct\ /s /e > nul
 
 move %NAME% ..\

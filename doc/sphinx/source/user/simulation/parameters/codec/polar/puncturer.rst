@@ -11,8 +11,7 @@ Polar Puncturer parameters
    :Type: integer
    :Examples: ``--pct-fra-size 1``
 
-Set the frame size :math:`N`. This is not necessarily the codeword size if a
-puncturing pattern is used.
+|factory::Puncturer::parameters::p+fra-size,N|
 
 .. _pct-polar-pct-info-bits:
 
@@ -22,7 +21,7 @@ puncturing pattern is used.
    :Type: integer
    :Examples: ``--pct-info-bits 1``
 
-Set the number of information bits :math:`K`.
+|factory::Puncturer::parameters::p+info-bits,K|
 
 .. _pct-polar-pct-type:
 
@@ -34,7 +33,7 @@ Set the number of information bits :math:`K`.
    :Default: ``NO``
    :Examples: ``--pct-type NO``
 
-Select the puncturer type.
+|factory::Puncturer::parameters::p+type|
 
 Description of the allowed values:
 

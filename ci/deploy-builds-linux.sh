@@ -37,6 +37,12 @@ then
 	exit 1
 fi
 
+if [ -z "$GIT_VERSION" ]
+then
+	echo "Please define the 'GIT_VERSION' environment variable."
+	exit 1
+fi
+
 REPO_WEB=aff3ct.github.io
 REPO_RESSOURCES=ressources
 git clone git@github.com:aff3ct/${REPO_WEB}.git
@@ -63,20 +69,27 @@ do
 	mkdir $BUILD/include/rang
 	cp lib/rang/include/rang.hpp $BUILD/include/rang/
 
+	mv $BUILD/include $BUILD/aff3ct-$GIT_VERSION
+	mkdir $BUILD/include
+	mv $BUILD/aff3ct-$GIT_VERSION $BUILD/include/
+
 	# prepare conf and refs files
 	mkdir $BUILD/share
-	mkdir $BUILD/share/aff3ct
-	cp -r conf $BUILD/share/aff3ct/
-	cp -r refs $BUILD/share/aff3ct/
-	rm -rf $BUILD/share/aff3ct/conf/.git
-	rm -rf $BUILD/share/aff3ct/refs/.git
-	rm -rf $BUILD/share/aff3ct/refs/readers
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION
+	cp -r conf $BUILD/share/aff3ct-$GIT_VERSION/
+	cp -r refs $BUILD/share/aff3ct-$GIT_VERSION/
+	rm -rf $BUILD/share/aff3ct-$GIT_VERSION/conf/.git
+	rm -rf $BUILD/share/aff3ct-$GIT_VERSION/refs/.git
+	rm -rf $BUILD/share/aff3ct-$GIT_VERSION/refs/readers
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc/strings
+	cp doc/sphinx/strings.rst $BUILD/share/aff3ct-$GIT_VERSION/doc/strings
 
 	# prepare doc
-	mkdir $BUILD/share/aff3ct/doc
-	cp -r doc/sphinx/build/html $BUILD/share/aff3ct/doc/
-	mkdir $BUILD/share/aff3ct/doc/pdf
-	cp doc/sphinx/build/latex/AFF3CT.pdf $BUILD/share/aff3ct/doc/pdf
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc
+	cp -r doc/sphinx/build/html $BUILD/share/aff3ct-$GIT_VERSION/doc/
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc/pdf
+	cp doc/sphinx/build/latex/AFF3CT.pdf $BUILD/share/aff3ct-$GIT_VERSION/doc/pdf
 
 	zip -r $ZIP_NAME $BUILD
 

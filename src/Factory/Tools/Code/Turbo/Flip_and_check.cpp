@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Flip_and_check.hpp"
 
@@ -30,52 +31,72 @@ void Flip_and_check::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Flip_and_check::parameters::";
 
-	args.add(
-		{p+"-size"},
+	// args.add(
+	// 	{p+"-size"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"size (in bit) of the extrinsic for the fnc processing.",
+	// 	tools::arg_rank::REQ);
+	tools::add_arg(args, p, class_name+"p+size",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"size (in bit) of the extrinsic for the fnc processing.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p},
-		tools::None(),
-		"enables the flip and check decoder (requires \"--crc-type\").");
+	// args.add(
+	// 	{p},
+	// 	tools::None(),
+	// 	"enables the flip and check decoder (requires \"--crc-type\").");
+	tools::add_arg(args, p, class_name+"p+",
+		tools::None());
 
-	args.add(
-		{p+"-q"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the search's space for the fnc algorithm.");
+	// args.add(
+	// 	{p+"-q"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the search's space for the fnc algorithm.");
+	tools::add_arg(args, p, class_name+"p+q",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-ite-m"},
-		tools::Integer(tools::Positive()),
-		"set first iteration at which the fnc is used.");
+	// args.add(
+	// 	{p+"-ite-m"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"set first iteration at which the fnc is used.");
+	tools::add_arg(args, p, class_name+"p+ite-m",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-ite-M"},
-		tools::Integer(tools::Positive()),
-		"set last iteration at which the fnc is used.");
+	// args.add(
+	// 	{p+"-ite-M"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"set last iteration at which the fnc is used.");
+	tools::add_arg(args, p, class_name+"p+ite-M",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-ite-s"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set iteration step for the fnc algorithm.");
+	// args.add(
+	// 	{p+"-ite-s"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set iteration step for the fnc algorithm.");
+	tools::add_arg(args, p, class_name+"p+ite-s",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-ite", "i"},
-		tools::Integer(tools::Positive()),
-		"maximal number of iterations in the turbo.");
+	// args.add(
+	// 	{p+"-ite", "i"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"maximal number of iterations in the turbo.");
+	tools::add_arg(args, p, class_name+"p+ite",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-crc-start"},
-		tools::Integer(tools::Positive()),
-		"set the iteration to start the CRC checking.");
+	// args.add(
+	// 	{p+"-crc-start"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"set the iteration to start the CRC checking.");
+	tools::add_arg(args, p, class_name+"p+crc-start",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Flip_and_check::parameters

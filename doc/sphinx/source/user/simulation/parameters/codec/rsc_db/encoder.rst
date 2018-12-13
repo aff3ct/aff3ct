@@ -11,7 +11,8 @@
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-Set the number of information bits :math:`K`.
+|factory::Encoder::parameters::p+info-bits,K|
+
 The codeword size :math:`N` is automatically deduced: :math:`N = 2 \times K`.
 
 .. _enc-rsc_db-enc-type:
@@ -24,7 +25,7 @@ The codeword size :math:`N` is automatically deduced: :math:`N = 2 \times K`.
    :Default: ``RSC_DB``
    :Examples: ``--enc-type AZCW``
 
-Select the encoder type.
+|factory::Encoder::parameters::p+type|
 
 Description of the allowed values:
 
@@ -53,7 +54,7 @@ Description of the allowed values:
 ``--enc-no-buff``
 """""""""""""""""
 
-Disable the buffered encoding.
+|factory::Encoder_RSC_DB::parameters::p+no-buff|
 
 .. _enc-rsc_db-enc-std:
 
@@ -65,7 +66,7 @@ Disable the buffered encoding.
    :Default: ``DVB-RCS1``
    :Examples: ``--enc-std DVB-RCS2``
 
-Select a standard.
+|factory::Encoder_RSC_DB::parameters::p+std|
 
 Description of the allowed values:
 

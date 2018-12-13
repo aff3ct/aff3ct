@@ -11,7 +11,9 @@ Repetition Encoder parameters
    :Type: integer
    :Examples: ``--enc-cw-size 1``
 
-Set the codeword size :math:`N`. :math:`N` as to be divisible by `K`.
+|factory::Encoder::parameters::p+cw-size,N|
+
+:math:`N` has to be divisible by `K`.
 
 .. _enc-rep-enc-info-bits:
 
@@ -21,7 +23,7 @@ Set the codeword size :math:`N`. :math:`N` as to be divisible by `K`.
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-Set the number of infomation bits :math:`K`.
+|factory::Encoder::parameters::p+info-bits,K|
 
 .. _enc-rep-enc-type:
 
@@ -32,7 +34,7 @@ Set the number of infomation bits :math:`K`.
    :Allowed values: ``REP`` ``AZCW`` ``COSET`` ``USER``
    :Examples: ``--enc-type AZCW``
 
-Type of the encoder to use in the simulation.
+|factory::Encoder::parameters::p+type|
 
 Description of the allowed values:
 
@@ -61,7 +63,7 @@ Description of the allowed values:
 ``--enc-no-buff``
 """""""""""""""""
 
-Disable the buffered encoding.
+|factory::Encoder_repetition::parameters::p+no-buff|
 
 **Without the buffered encoding**, considering :math:`K` information bits
 :math:`U_0, U_1, [...], U_{K-1}`, the corresponding sequence of bits in the

@@ -11,14 +11,15 @@ devenv /build Release aff3ct.sln
 rem msbuild aff3ct.sln /t:Build /p:Configuration=Release
 if %ERRORLEVEL% neq 0 exit /B %ERRORLEVEL%
 
+rd /s /q %NAME%
 mkdir %NAME%
 mkdir %NAME%\bin\
 mkdir %NAME%\lib\
 mkdir %NAME%\include\
 mkdir %NAME%\include\aff3ct\
 
- copy bin\Release\aff3ct.exe %NAME%\bin\
- copy lib\Release\aff3ct.lib %NAME%\lib\
-xcopy ..\src\*               %NAME%\include\aff3ct\ /s /e
+ copy bin\Release\aff3ct*.exe %NAME%\bin\
+ copy lib\Release\aff3ct*.lib %NAME%\lib\
+xcopy ..\src\*                %NAME%\include\aff3ct\ /s /e > nul
 
 move %NAME% ..\

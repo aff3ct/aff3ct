@@ -2,6 +2,7 @@
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
@@ -33,19 +34,25 @@ void Puncturer_LDPC::parameters
 	Puncturer::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Puncturer_LDPC::parameters::";
 
-	args.add(
-		{p+"-cw-size", "N_cw"},
+	// args.add(
+	// 	{p+"-cw-size", "N_cw"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"the codeword size.",
+	// 	tools::arg_rank::REQ);
+	tools::add_arg(args, p, class_name+"p+cw-size,N_cw",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size.",
 		tools::arg_rank::REQ);
 
 	tools::add_options(args.at({p+"-type"}), 0, "LDPC");
 
-	args.add(
-		{p+"-pattern"},
-		tools::Text(),
-		"puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: \"1,1,1,0\").");
+	// args.add(
+	// 	{p+"-pattern"},
+	// 	tools::Text(),
+	// 	"puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: \"1,1,1,0\").");
+	tools::add_arg(args, p, class_name+"p+pattern",
+		tools::Text());
 }
 
 std::vector<bool> generate_punct_vector(const std::string &pattern)

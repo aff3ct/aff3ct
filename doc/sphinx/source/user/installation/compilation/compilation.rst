@@ -258,6 +258,8 @@ this feature and provides the following options:
 +-------------------------------+---------+---------+---------------------------------+
 | ``AFF3CT_BACKTRACE``          | BOOLEAN | ON      | |cmake-opt-backtrace|           |
 +-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_EXT_STRINGS``        | BOOLEAN | ON      | |cmake-opt-ext_strings|         |
++-------------------------------+---------+---------+---------------------------------+
 | ``AFF3CT_PREC``               | STRING  | MULTI   | |cmake-opt-prec|                |
 +-------------------------------+---------+---------+---------------------------------+
 
@@ -279,6 +281,10 @@ this feature and provides the following options:
 .. |cmake-opt-backtrace| replace:: Enable the backtrace display when and
    exception is raised. On Windows and macOS this option is not available and
    automatically set to ``OFF``.
+.. |cmake-opt-ext_strings| replace:: Enable external strings for the help
+   documentation. If ``ON`` the help doc will be parsed from the ``strings.rst``
+   external file. If ``OFF`` the strings will be self-contained in the binary.
+   On |MSVC| this option is not available and automatically set to ``ON``.
 .. |cmake-opt-prec| replace:: Select the precision in bits (can be '8', '16',
    '32', '64' or 'MULTI').
 

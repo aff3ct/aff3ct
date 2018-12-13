@@ -34,6 +34,26 @@ computed on :math:`R_{i}^r`.
 
 Parameter :math:`alpha` is set with the argument :ref:`dec-turbo_prod-dec-alpha`.
 
+.. _dec-turbo_prod-dec-sub-cw-size:
+
+``--dec-sub-cw-size, -N`` |image_required_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: integer
+   :Examples: ``--dec-sub-cw-size 1``
+
+|factory::Decoder::parameters::p+cw-size,N|
+
+.. _dec-turbo_prod-dec-sub-info-bits:
+
+``--dec-sub-info-bits, -K`` |image_required_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: integer
+   :Examples: ``--dec-sub-info-bits 1``
+
+|factory::Decoder::parameters::p+info-bits,K|
+
 .. _dec-turbo_prod-dec-type:
 
 ``--dec-type, -D``
@@ -44,7 +64,9 @@ Parameter :math:`alpha` is set with the argument :ref:`dec-turbo_prod-dec-alpha`
    :Default: ``CP``
    :Examples: ``--dec-type CP``
 
-Select the algorithm to decode each column and row of the |TPC|.
+|factory::Decoder::parameters::p+type,D|
+
+This algorithm will decode each column and row of the |TPC|.
 
 Description of the allowed values:
 
@@ -124,7 +146,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem STD``
 
-Select the implementation of the algorithm to decode.
+|factory::Decoder::parameters::p+implem|
 
 Description of the allowed values:
 
@@ -145,7 +167,7 @@ Description of the allowed values:
    :Default: 4
    :Examples: ``--dec-ite 8``
 
-Set the number of iterations in the turbo.
+|factory::Decoder_turbo_product::parameters::p+ite,i|
 
 .. _dec-turbo_prod-dec-alpha:
 
@@ -156,10 +178,11 @@ Set the number of iterations in the turbo.
    :Default: all at 0.5
    :Examples: ``--dec-alpha "0.1,0.1,0.2,0.25,0.3,0.35,.5,.5,1.2"``
 
-Give the *weighting factor* alpha, one by half iteration
-(so twice more than the number of iterations). The first one is for the first
-columns process, the second for the first rows process, the third for the second
-columns process, the fourth for the second rows process, and so on.
+|factory::Decoder_turbo_product::parameters::p+alpha|
+
+The first one is for the first columns process, the second for the first rows
+process, the third for the second columns process, the fourth for the second
+rows process, and so on.
 
 If there are not enough values, then the last one given is automatically
 extended to the rest of the half-iterations.
@@ -173,10 +196,11 @@ Conversely, if there are too many, the surplus is truncated.
    :Type: list of real numbers
    :Examples: ``--dec-beta "0.1,0.1,0.2,0.25,0.3,0.35,.5,.5,1.2"``
 
-Give the *reliability factor* beta, one by half iteration
-(so twice more than the number of iterations). The first one is for the first
-columns process, the second for the first rows process, the third for the second
-columns process, the fourth for the second rows process, and so on.
+|factory::Decoder_turbo_product::parameters::p+beta|
+
+The first one is for the first columns process, the second for the first rows
+process, the third for the second columns process, the fourth for the second
+rows process, and so on.
 
 If there are not enough values, then the last one given is automatically
 extended to the rest of the half-iterations.
@@ -194,8 +218,7 @@ If not given, then beta is dynamically computed as described in
    :Default: 0
    :Examples: ``--dec-c 3``
 
-Set the *number of competitors*. A value of 0 means that the latter is set
-to the number of test vectors, 1 means only the decided word.
+|factory::Decoder_turbo_product::parameters::p+c|
 
 .. _dec-turbo_prod-dec-p:
 
@@ -206,7 +229,7 @@ to the number of test vectors, 1 means only the decided word.
    :Default: 2
    :Examples: ``--dec-p 1``
 
-Set the number of *least reliable positions*.
+|factory::Decoder_turbo_product::parameters::p+p|
 
 .. _dec-turbo_prod-dec-t:
 
@@ -217,8 +240,7 @@ Set the number of *least reliable positions*.
    :Default: 0
    :Examples: ``--dec-t 1``
 
-Set the *number of test vectors*. A value of 0 means equal to :math:`2^p` where
-:math:`p` is the number of least reliable positions.
+|factory::Decoder_turbo_product::parameters::p+t|
 
 .. _dec-turbo_prod-dec-cp-coef:
 
@@ -229,127 +251,30 @@ Set the *number of test vectors*. A value of 0 means equal to :math:`2^p` where
    :Default: ``"1,1,1,1,0"``
    :Examples: ``--dec-cp-coef "0,0.25,0,0,3"``
 
-Give the 5 ``CP`` constant coefficients :math:`a, b, c, d, e` as described in
-:ref:`dec-turbo_prod-dec-type`.
+|factory::Decoder_turbo_product::parameters::p+cp-coef|
 
+See the :ref:`dec-turbo_prod-dec-type` parameter.
 
 .. _dec-turbo_prod-dec-sub-type:
 
 ``--dec-sub-type, -D``
 """"""""""""""""""""""
 
-   :Type: text
-   :Allowed values: ``ALGEBRAIC`` ``CHASE`` ``ML``
-   :Examples: ``--dec-sub-type ALGEBRAIC``
-
-Select the algorithm of the sub-decoder to decode each row and column.
-
-Description of the allowed values:
-
-+---------------+--------------------------------+
-| Value         | Description                    |
-+===============+================================+
-| ``ALGEBRAIC`` | |dec-sub-type_descr_algebraic| |
-+---------------+--------------------------------+
-| ``CHASE``     | |dec-sub-type_descr_chase|     |
-+---------------+--------------------------------+
-| ``ML``        | |dec-sub-type_descr_ml|        |
-+---------------+--------------------------------+
-
-.. |dec-sub-type_descr_algebraic| replace:: See the |BCH| code
-   :ref:`dec-bch-dec-type`.
-.. |dec-sub-type_descr_chase| replace:: See the common :ref:`dec-common-dec-type`
-   parameter.
-.. |dec-sub-type_descr_ml| replace:: See the common :ref:`dec-common-dec-type`
-   parameter.
-
+Please refer to the |BCH| :ref:`dec-bch-dec-type` parameter.
 
 .. _dec-turbo_prod-dec-sub-corr-pow:
 
 ``--dec-sub-corr-pow, -T``
 """"""""""""""""""""""""""
 
-   :Type: integer
-   :Default: 1
-   :Examples: ``-T 2``
-
-Give the correction power of the |BCH| ``ALGEBRAIC`` sub-decoder.
+Please refer to the |BCH| :ref:`dec-bch-dec-corr-pow` parameter.
 
 .. _dec-turbo_prod-dec-sub-implem:
 
 ``--dec-sub-implem``
 """"""""""""""""""""
 
-   :Type: text
-   :Allowed values: ``FAST`` ``GENIUS`` ``NAIVE`` ``STD``
-   :Examples: ``--dec-sub-implem FAST``
-
-Select the implementation of the algorithm of the sub-decoder.
-
-Description of the allowed values:
-
-+------------+-------------------------------+
-| Value      | Description                   |
-+============+===============================+
-| ``NAIVE``  | |dec-sub-implem_descr_naive|  |
-+------------+-------------------------------+
-| ``STD``    | |dec-sub-implem_descr_std|    |
-+------------+-------------------------------+
-| ``FAST``   | |dec-sub-implem_descr_fast|   |
-+------------+-------------------------------+
-| ``GENIUS`` | |dec-sub-implem_descr_genius| |
-+------------+-------------------------------+
-
-.. |dec-sub-implem_descr_naive| replace:: See the common
-   :ref:`dec-common-dec-implem` parameter.
-.. |dec-sub-implem_descr_std| replace:: See the common
-   :ref:`dec-common-dec-implem` parameter, and the |BCH| code
-   :ref:`dec-bch-dec-implem` parameter.
-.. |dec-sub-implem_descr_fast| replace:: See the |BCH| code
-   :ref:`dec-bch-dec-implem` parameter.
-.. |dec-sub-implem_descr_genius| replace:: See the |BCH| code
-   :ref:`dec-bch-dec-implem` parameter.
-
-.. TODO : remove those following arguments from the code
-
-.. _dec-turbo_prod-dec-sub-flips:
-
-``--dec-sub-flips``
-"""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--dec-sub-flips 1``
-
-Set the maximum number of flips in the ``CHASE`` sub-decoder.
-
-.. _dec-turbo_prod-dec-sub-hamming:
-
-``--dec-sub-hamming``
-"""""""""""""""""""""
-
-
-Enable the computation of the Hamming distance instead of the Euclidean distance
-in the ``ML``/``CHASE`` sub-decoders.
-
-.. _dec-turbo_prod-dec-sub-cw-size:
-
-``--dec-sub-cw-size, -N`` |image_required_argument|
-"""""""""""""""""""""""""""""""""""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--dec-sub-cw-size 1``
-
-The codeword size.
-
-.. _dec-turbo_prod-dec-sub-info-bits:
-
-``--dec-sub-info-bits, -K`` |image_required_argument|
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-   :Type: integer
-   :Examples: ``--dec-sub-info-bits 1``
-
-Useful number of bit transmitted (information bits).
+Please refer to the |BCH| :ref:`dec-bch-dec-implem` parameter.
 
 References
 """"""""""

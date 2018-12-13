@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/RA/Decoder_RA.hpp"
 
@@ -54,6 +55,7 @@ void Decoder_RA::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_RA::parameters::";
 
 	if (itl != nullptr)
 	{
@@ -68,10 +70,12 @@ void Decoder_RA::parameters
 	tools::add_options(args.at({p+"-type", "D"}), 0, "RA");
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
 
-	args.add(
-		{p+"-ite", "i"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"maximal number of iterations in the decoder.");
+	// args.add(
+	// 	{p+"-ite", "i"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"maximal number of iterations in the decoder.");
+	tools::add_arg(args, p, class_name+"p+ite,i",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Decoder_RA::parameters

@@ -12,7 +12,7 @@ using namespace aff3ct::tools;
 
 Argument_handler
 ::Argument_handler(const int argc, const char** argv, std::ostream& help_os)
-: help_os(help_os)
+: help_os(help_os), help_display_keys(false)
 {
 	if (argc <= 0)
 	{
@@ -32,6 +32,12 @@ Argument_handler
 Argument_handler
 ::~Argument_handler()
 {
+}
+
+void Argument_handler
+::set_help_display_keys(const bool display)
+{
+	this->help_display_keys = display;
 }
 
 bool Argument_handler
@@ -289,8 +295,11 @@ void Argument_handler
 
 	if (info.type->get_title().size())
 		help_os << rang::fg::gray << " <" << info.type->get_title() << ">" << rang::style::reset;
-
 	help_os << std::endl;
+
+	if (this->help_display_keys)
+		help_os << rang::fg::gray << tab + "  " << "[" << info.key << "]" << rang::style::reset << std::endl;
+
 	auto splitted_doc = split_doc(info.doc, tab + "  ", 80);
 	help_os << splitted_doc << std::endl;
 }

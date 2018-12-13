@@ -29,7 +29,8 @@ Argument_map_info& Argument_map_info
 }
 
 void Argument_map_info
-::add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc, const arg_rank rank)
+::add(const Argument_tag& tags, Argument_type* arg_t, const std::string& doc, const arg_rank rank,
+	  const std::string key)
 {
 	if (tags.size() == 0)
 		throw std::invalid_argument("No tag has been given ('tag.size()' == 0).");
@@ -40,7 +41,7 @@ void Argument_map_info
 	if (exist(tags))
 		erase(tags);
 
-	(*this)[tags] = new Argument_info(arg_t, doc, rank);
+	(*this)[tags] = new Argument_info(arg_t, doc, rank, key);
 }
 
 void Argument_map_info

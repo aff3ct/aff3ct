@@ -11,7 +11,8 @@ Turbo |DB| Encoder parameters
    :Type: integer
    :Examples: ``--enc-info-bits 40``
 
-Set the number of information bits :math:`K`.
+|factory::Encoder::parameters::p+info-bits,K|
+
 The codeword size :math:`N` is automatically deduced: :math:`N = 3 \times K`.
 
 .. _enc-turbo_db-enc-type:
@@ -24,7 +25,7 @@ The codeword size :math:`N` is automatically deduced: :math:`N = 3 \times K`.
    :Default: ``TURBO_DB``
    :Examples: ``--enc-type AZCW``
 
-Select the encoder type.
+|factory::Encoder::parameters::p+type|
 
 Description of the allowed values:
 
@@ -65,8 +66,7 @@ Please refer to the |RSC| |DB| :ref:`enc-rsc_db-enc-type` parameter.
    :Default: ``DVB-RCS1``
    :Examples: ``--enc-sub-std DVB-RCS2``
 
-Select a standard: set automatically some parameters (can be overwritten by user
-given arguments).
+|factory::Encoder_RSC_DB::parameters::p+std|
 
 Description of the allowed values:
 

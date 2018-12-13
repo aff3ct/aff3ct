@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 
@@ -27,22 +28,29 @@ void Encoder_NO::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_NO::parameters::";
 
-	args.add(
-		{p+"-info-bits", "K"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).",
-		tools::arg_rank::REQ);
+	// args.add(
+	// 	{p+"-info-bits", "K"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"useful number of bit transmitted (information bits).",
+	// 	tools::arg_rank::REQ);
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("NO")),
-		"type of the encoder to use in the simulation.");
+	// args.add(
+	// 	{p+"-type"},
+	// 	tools::Text(tools::Including_set("NO")),
+	// 	"type of the encoder to use in the simulation.");
+	tools::add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("NO")));
 }
 
 void Encoder_NO::parameters

@@ -14,7 +14,7 @@ This section describes the parameters common to all decoders.
    :Allowed values: ``CHASE`` ``ML``
    :Examples: ``--dec-type ML``
 
-Select the decoder algorithm.
+|factory::Decoder::parameters::p+type,D|
 
 Description of the allowed values:
 
@@ -38,7 +38,7 @@ Description of the allowed values:
    :Allowed values: ``NAIVE`` ``STD``
    :Examples: ``--dec-implem STD``
 
-Select the implementation of the algorithm to decode.
+|factory::Decoder::parameters::p+implem|
 
 Description of the allowed values:
 
@@ -62,7 +62,7 @@ Description of the allowed values:
    :Type: integer
    :Examples: ``--dec-flips 1``
 
-Set the maximum number of bit flips in the Chase decoder.
+|factory::Decoder::parameters::p+flips|
 
 .. _dec-common-dec-hamming:
 
@@ -72,8 +72,7 @@ Set the maximum number of bit flips in the Chase decoder.
 .. _Hamming distance: https://en.wikipedia.org/wiki/Hamming_distance
 .. _Euclidean distance: https://en.wikipedia.org/wiki/Euclidean_distance
 
-Compute the `Hamming distance`_ instead of the `Euclidean distance`_ in the |ML|
-and Chase decoders.
+|factory::Decoder::parameters::p+hamming|
 
 .. note:: Using the `Hamming distance`_ will heavily degrade the |BFER|
    performances. The |BFER| performances will be the same as an hard input

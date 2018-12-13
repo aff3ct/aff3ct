@@ -11,6 +11,8 @@
    :Type: integer
    :Examples: ``--enc-sub-cw-size 127``
 
+|factory::Encoder::parameters::p+cw-size,N|
+
 Give the *sub-encoder code* codeword size. You can extend this codeword with a
 parity bit with the :ref:`enc-turbo_prod-enc-ext` option.
 Then the codeword size of the |TPC| is the square of this value.
@@ -22,6 +24,8 @@ Then the codeword size of the |TPC| is the square of this value.
 
    :Type: integer
    :Examples: ``--enc-sub-info-bits 120``
+
+|factory::Encoder::parameters::p+info-bits,K|
 
 Give the *sub-encoder code* input size (number of information bits).
 Then the number of information bits of the |TPC| is the
@@ -37,7 +41,7 @@ square of this value.
    :Default: ``TPC``
    :Examples: ``--enc-type AZCW``
 
-Set the type of the encoder to use in the simulation.
+|factory::Encoder::parameters::p+type|
 
 Description of the allowed values:
 
@@ -66,40 +70,11 @@ Description of the allowed values:
 ``--enc-sub-type``
 """"""""""""""""""
 
-   :Type: text
-   :Allowed values: ``BCH`` ``AZCW`` ``COSET`` ``USER``
-   :Default: ``BCH``
-   :Examples: ``--enc-sub-type BCH``
-
-Give the type of the sub-encoder to use to code each column and row.
-
-Description of the allowed values:
-
-+-----------+----------------------------+
-| Value     | Description                |
-+===========+============================+
-| ``BCH``   | |enc-sub-type_descr_bch|   |
-+-----------+----------------------------+
-| ``AZCW``  | |enc-sub-type_descr_azcw|  |
-+-----------+----------------------------+
-| ``COSET`` | |enc-sub-type_descr_coset| |
-+-----------+----------------------------+
-| ``USER``  | |enc-sub-type_descr_user|  |
-+-----------+----------------------------+
-
-.. |enc-sub-type_descr_bch| replace:: See the |BCH| code
-   :ref:`enc-bch-encoder-parameters` parameters.
-.. |enc-sub-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
-   parameter.
-.. |enc-sub-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`
-   parameter.
-.. |enc-sub-type_descr_user| replace:: See the common :ref:`enc-common-enc-type`
-   parameter.
+Please refer to the |BCH| :ref:`enc-bch-enc-type` parameter.
 
 .. _enc-turbo_prod-enc-ext:
 
 ``--enc-ext``
 """""""""""""
 
-Extend the *sub-encoder* codeword with a parity bit in order to increase the
-distance of the code.
+|factory::Encoder_turbo_product::parameters::p+ext|

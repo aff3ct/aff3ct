@@ -1,3 +1,5 @@
+#include "Tools/Documentation/documentation.h"
+
 #include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_std.hpp"
 #include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_naive.hpp"
 #include "Module/Decoder/Generic/Chase/Decoder_chase_std.hpp"
@@ -26,43 +28,60 @@ void Decoder::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder::parameters::";
 
-	args.add(
-		{p+"-cw-size", "N"},
+	// args.add(
+	// 	{p+"-cw-size", "N"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"the codeword size.",
+	// 	tools::arg_rank::REQ);
+	tools::add_arg(args, p, class_name+"p+cw-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-info-bits", "K"},
+	// args.add(
+	// 	{p+"-info-bits", "K"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"useful number of bit transmitted (information bits).",
+	// 	tools::arg_rank::REQ);
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	// args.add(
+	// 	{p+"-fra", "F"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type", "D"},
-		tools::Text(tools::Including_set("ML", "CHASE")),
-		"select the algorithm you want to decode the codeword.");
+	// args.add(
+	// 	{p+"-type", "D"},
+	// 	tools::Text(tools::Including_set("ML", "CHASE")),
+	// 	"select the algorithm you want to decode the codeword.");
+	tools::add_arg(args, p, class_name+"p+type,D",
+		tools::Text(tools::Including_set("ML", "CHASE")));
 
-	args.add(
-		{p+"-implem"},
-		tools::Text(tools::Including_set("STD", "NAIVE")),
-		"select the implementation of the algorithm to decode.");
+	// args.add(
+	// 	{p+"-implem"},
+	// 	tools::Text(tools::Including_set("STD", "NAIVE")),
+	// 	"select the implementation of the algorithm to decode.");
+	tools::add_arg(args, p, class_name+"p+implem",
+		tools::Text(tools::Including_set("STD", "NAIVE")));
 
-	args.add(
-		{p+"-hamming"},
-		tools::None(),
-		"enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.");
+	// args.add(
+	// 	{p+"-hamming"},
+	// 	tools::None(),
+	// 	"enable the computation of the Hamming distance instead of the Euclidean distance in the ML/CHASE decoders.");
+	tools::add_arg(args, p, class_name+"p+hamming",
+		tools::None());
 
-	args.add(
-		{p+"-flips"},
-		tools::Integer(tools::Positive()),
-		"set the maximum number of flips in the CHASE decoder.");
+	// args.add(
+	// 	{p+"-flips"},
+	// 	tools::Integer(tools::Positive()),
+	// 	"set the maximum number of flips in the CHASE decoder.");
+	tools::add_arg(args, p, class_name+"p+flips",
+		tools::Integer(tools::Positive()));
 }
 
 void Decoder::parameters

@@ -15,7 +15,8 @@ enum class arg_rank : uint8_t {OPT, REQ, ADV};
 struct Argument_info
 {
     Argument_info();
-    Argument_info(Argument_type* type, const std::string& doc, const arg_rank rank = arg_rank::OPT);
+    Argument_info(Argument_type* type, const std::string& doc, const arg_rank rank = arg_rank::OPT,
+                  const std::string key = "");
 
 	virtual ~Argument_info();
 
@@ -30,6 +31,7 @@ struct Argument_info
 	Argument_type* type = nullptr;
 	std::string    doc  = "";
 	arg_rank       rank = arg_rank::OPT;
+	std::string    key  = "";
 };
 
 }

@@ -1,9 +1,10 @@
 #include <sstream>
 
+#include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
+
 #include "Module/Decoder/RS/Standard/Decoder_RS_std.hpp"
 #include "Module/Decoder/RS/Genius/Decoder_RS_genius.hpp"
-
-#include "Tools/Exception/exception.hpp"
 
 #include "Decoder_RS.hpp"
 
@@ -33,11 +34,14 @@ void Decoder_RS::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_RS::parameters::";
 
-	args.add(
-		{p+"-corr-pow", "T"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"correction power of the RS code.");
+	// args.add(
+	// 	{p+"-corr-pow", "T"},
+	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
+	// 	"correction power of the RS code.");
+	tools::add_arg(args, p, class_name+"p+corr-pow,T",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});
 

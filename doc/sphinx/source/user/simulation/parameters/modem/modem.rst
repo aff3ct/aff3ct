@@ -21,7 +21,7 @@ modules and tasks).
    :Default: ``BPSK``
    :Examples: ``--mdm-type SCMA``
 
-Select the modulation type.
+|factory::Modem::parameters::p+type|
 
 Description of the allowed values:
 
@@ -68,7 +68,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--mdm-implem FAST``
 
-Select the implementation of the |modem|.
+|factory::Modem::parameters::p+implem|
 
 Description of the allowed values:
 
@@ -94,9 +94,11 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--mdm-bps 1``
 
-Set the number of bits used to generate a symbol (|BPS|). This parameter has no
-effect on the |BPSK| and |OOK| |modems| where the |BPS| is forced to 1. This is
-the same for the |SCMA| |modem| where the |BPS| is forced to 3.
+|factory::Modem::parameters::p+bps|
+
+This parameter has no effect on the |BPSK| and |OOK| |modems| where the |BPS| is
+forced to 1. This is the same for the |SCMA| |modem| where the |BPS| is forced
+to 3.
 
 .. note:: For the |QAM| |modem|, only even |BPS| values are supported.
 
@@ -109,8 +111,7 @@ the same for the |SCMA| |modem| where the |BPS| is forced to 3.
    :Rights: read/write
    :Examples: ``--mdm-const-path ../conf/mod/16QAM_ANTI_GRAY.mod``
 
-Give the path to the ordered modulation symbols (constellation), to use with
-``USER`` |modem|.
+|factory::Modem::parameters::p+const-path|
 
 An |ASCII| file is expected, for instance here is the definition of a 16-|QAM|
 with an anti-Gray mapping (the lines starting with a ``#`` are ignored):
@@ -163,8 +164,7 @@ with an anti-Gray mapping (the lines starting with a ``#`` are ignored):
    :Allowed values: ``MAXS`` ``MAXSS`` ``MAXL`` ``MAX``
    :Examples: ``--mdm-max MAX``
 
-Select the approximation of the :math:`\max^*` operator used in the |PAM|,
-|QAM|, |PSK|, |CPM| and user demodulators.
+|factory::Modem::parameters::p+max|
 
 Description of the allowed values:
 
@@ -204,8 +204,7 @@ only a :math:`\max` function.
 ``--mdm-no-sig2``
 """""""""""""""""
 
-Turn off the division by :math:`\sigma^2` in the demodulator where
-:math:`\sigma` is the Gaussian noise variance.
+|factory::Modem::parameters::p+no-sig2|
 
 .. _mdm-mdm-cpm-k:
 
@@ -216,7 +215,7 @@ Turn off the division by :math:`\sigma^2` in the demodulator where
    :Default: 1
    :Examples: ``--mdm-cpm-k 1``
 
-Set the |CPM| *index numerator*.
+|factory::Modem::parameters::p+cpm-k|
 
 .. _mdm-mdm-cpm-p:
 
@@ -227,7 +226,7 @@ Set the |CPM| *index numerator*.
    :Default: 2
    :Examples: ``--mdm-cpm-p 1``
 
-Set the |CPM| *index denominator*.
+|factory::Modem::parameters::p+cpm-p|
 
 .. _mdm-mdm-cpm-L:
 
@@ -238,7 +237,7 @@ Set the |CPM| *index denominator*.
    :Default: 2
    :Examples: ``--mdm-cpm-L 1``
 
-Set the |CPM| *pulse width* (also called *memory depth*).
+|factory::Modem::parameters::p+cpm-L|
 
 .. _mdm-mdm-cpm-upf:
 
@@ -249,7 +248,7 @@ Set the |CPM| *pulse width* (also called *memory depth*).
    :Default: 1
    :Examples: ``--mdm-cpm-upf 1``
 
-Select the symbol upsampling factor in the |CPM|.
+|factory::Modem::parameters::p+cpm-upf|
 
 .. _mdm-mdm-cpm-map:
 
@@ -261,7 +260,7 @@ Select the symbol upsampling factor in the |CPM|.
    :Default: ``NATURAL``
    :Examples: ``--mdm-cpm-map GRAY``
 
-Select the |CPM| *symbols mapping layout*.
+|factory::Modem::parameters::p+cpm-map|
 
 Description of the allowed values:
 
@@ -288,7 +287,7 @@ Description of the allowed values:
    :Default: ``GMSK``
    :Examples: ``--mdm-cpm-ws GMSK``
 
-Select the |CPM| *wave shape*.
+|factory::Modem::parameters::p+cpm-ws|
 
 Description of the allowed values:
 
@@ -317,7 +316,7 @@ Description of the allowed values:
    :Allowed values: ``GSM``
    :Examples: ``--mdm-cpm-std GSM``
 
-Set the |CPM| parameters according to a standard.
+|factory::Modem::parameters::p+cpm-std|
 
 Description of the allowed values:
 
@@ -345,7 +344,7 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--mdm-ite 5``
 
-Set the number of iterations in the |SCMA| demodulator.
+|factory::Modem::parameters::p+ite|
 
 .. _mdm-mdm-psi:
 
@@ -356,7 +355,7 @@ Set the number of iterations in the |SCMA| demodulator.
    :Allowed values: ``PSI0`` ``PSI1`` ``PSI2`` ``PSI3``
    :Examples: ``--mdm-psi PSI0``
 
-Select the :math:`\psi` function used in the |SCMA| demodulator.
+|factory::Modem::parameters::p+psi|
 
 Description of the allowed values:
 
@@ -397,12 +396,11 @@ See the :ref:`mdm-mdm-no-sig2` parameter to disable the division by
    :Default: 0
    :Examples: ``--mdm-rop-est 256``
 
-Set the number of known bits for the |ROP| estimation in the |OOK| demodulator
-on an optical channel. The estimation is done from a known set of bits
-that is the output of the modulation.
+|factory::Modem::parameters::p+rop-est|
 
-If left to 0, the demodulation is done with the exact applied |ROP| in the
-channel.
+The estimation is done from a known set of bits that is the output of the
+modulation. If left to 0, the demodulation is done with the exact applied |ROP|
+in the channel.
 
 References
 """"""""""

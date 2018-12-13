@@ -2,6 +2,7 @@
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_std.hpp"
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_scan.hpp"
@@ -49,36 +50,47 @@ void Decoder_RSC::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_RSC::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
 	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "FAST", "VERY_FAST");
 
-	args.add(
-		{p+"-simd"},
-		tools::Text(tools::Including_set("INTRA", "INTER")),
-		"the SIMD strategy you want to use.");
+	// args.add(
+	// 	{p+"-simd"},
+	// 	tools::Text(tools::Including_set("INTRA", "INTER")),
+	// 	"the SIMD strategy you want to use.");
+	tools::add_arg(args, p, class_name+"p+simd",
+		tools::Text(tools::Including_set("INTRA", "INTER")));
 
-	args.add(
-		{p+"-max"},
-		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
-		"the MAX implementation for the nodes.");
+	// args.add(
+	// 	{p+"-max"},
+	// 	tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
+	// 	"the MAX implementation for the nodes.");
+	tools::add_arg(args, p, class_name+"p+max",
+		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")));
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"does not suppose a buffered encoding.");
+	// args.add(
+	// 	{p+"-no-buff"},
+	// 	tools::None(),
+	// 	"does not suppose a buffered encoding.");
+	tools::add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 
-	args.add(
-		{p+"-poly"},
-		tools::Text(),
-		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
+	// args.add(
+	// 	{p+"-poly"},
+	// 	tools::Text(),
+	// 	"the polynomials describing RSC code, should be of the form \"{A,B}\".");
+	tools::add_arg(args, p, class_name+"p+poly",
+		tools::Text());
 
-	args.add(
-		{p+"-std"},
-		tools::Text(tools::Including_set("LTE", "CCSDS")),
-		"select a standard and set automatically some parameters (overwritten with user given arguments).");
+	// args.add(
+	// 	{p+"-std"},
+	// 	tools::Text(tools::Including_set("LTE", "CCSDS")),
+	// 	"select a standard and set automatically some parameters (overwritten with user given arguments).");
+	tools::add_arg(args, p, class_name+"p+std",
+		tools::Text(tools::Including_set("LTE", "CCSDS")));
 }
 
 void Decoder_RSC::parameters

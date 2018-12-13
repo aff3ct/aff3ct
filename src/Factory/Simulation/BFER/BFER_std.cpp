@@ -59,8 +59,6 @@ const Codec_SIHO::parameters* BFER_std::parameters
 	return dynamic_cast<Codec_SIHO::parameters*>(this->cdc.get());
 }
 
-
-
 template <typename B, typename R, typename Q>
 simulation::BFER_std<B,R,Q>* BFER_std::parameters
 ::build() const
