@@ -50,7 +50,7 @@ void Frozenbits_generator::parameters
 
 #ifdef AFF3CT_POLAR_BOUNDS
 	tools::add_arg(args, p, class_name+"p+pb-path",
-		tools::Path(tools::openmode::read));
+		tools::File(tools::openmode::read));
 #endif
 }
 
@@ -62,11 +62,11 @@ void Frozenbits_generator::parameters
 	if(vals.exist({p+"-info-bits", "K"})) this->K       = vals.to_int  ({p+"-info-bits", "K"});
 	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw    = vals.to_int  ({p+"-cw-size",   "N"});
 	if(vals.exist({p+"-sigma"         })) this->sigma   = vals.to_float({p+"-sigma"         });
-	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.at      ({p+"-awgn-path"     });
+	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.to_path ({p+"-awgn-path"     });
 	if(vals.exist({p+"-gen-method"    })) this->type    = vals.at      ({p+"-gen-method"    });
 
 #ifdef AFF3CT_POLAR_BOUNDS
-	if(vals.exist({p+"-pb-path"})) this->path_pb = vals.at({p+"-pb-path"});
+	if(vals.exist({p+"-pb-path"})) this->path_pb = vals.to_file({p+"-pb-path"});
 #endif
 }
 

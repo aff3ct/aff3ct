@@ -72,14 +72,14 @@ void Interleaver_core::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-size"     })) this->size     = vals.to_int({p+"-size"     });
-	if(vals.exist({p+"-fra",  "F"})) this->n_frames = vals.to_int({p+"-fra",  "F"});
-	if(vals.exist({p+"-type"     })) this->type     = vals.at    ({p+"-type"     });
-	if(vals.exist({p+"-path"     })) this->path     = vals.at    ({p+"-path"     });
-	if(vals.exist({p+"-cols"     })) this->n_cols   = vals.to_int({p+"-cols"     });
-	if(vals.exist({p+"-seed", "S"})) this->seed     = vals.to_int({p+"-seed", "S"});
-	if(vals.exist({p+"-uni"      })) this->uniform  = true;
-	if(vals.exist({p+"-read-order"})) this->read_order = vals.at({p+"-read-order"});
+	if(vals.exist({p+"-size"      })) this->size       = vals.to_int ({p+"-size"      });
+	if(vals.exist({p+"-fra",   "F"})) this->n_frames   = vals.to_int ({p+"-fra",   "F"});
+	if(vals.exist({p+"-type"      })) this->type       = vals.at     ({p+"-type"      });
+	if(vals.exist({p+"-path"      })) this->path       = vals.to_file({p+"-path"      });
+	if(vals.exist({p+"-cols"      })) this->n_cols     = vals.to_int ({p+"-cols"      });
+	if(vals.exist({p+"-seed",  "S"})) this->seed       = vals.to_int ({p+"-seed",  "S"});
+	if(vals.exist({p+"-uni"       })) this->uniform    = true;
+	if(vals.exist({p+"-read-order"})) this->read_order = vals.at     ({p+"-read-order"});
 }
 
 void Interleaver_core::parameters

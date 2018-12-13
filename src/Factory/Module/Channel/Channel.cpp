@@ -104,14 +104,14 @@ void Channel::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-fra-size", "N"})) this->N            = vals.to_int({p+"-fra-size", "N"});
-	if(vals.exist({p+"-fra",      "F"})) this->n_frames     = vals.to_int({p+"-fra",      "F"});
-	if(vals.exist({p+"-seed",     "S"})) this->seed         = vals.to_int({p+"-seed",     "S"});
-	if(vals.exist({p+"-gain-occur"   })) this->gain_occur   = vals.to_int({p+"-gain-occur"   });
-	if(vals.exist({p+"-type"         })) this->type         = vals.at    ({p+"-type"         });
-	if(vals.exist({p+"-implem"       })) this->implem       = vals.at    ({p+"-implem"       });
-	if(vals.exist({p+"-path"         })) this->path         = vals.at    ({p+"-path"         });
-	if(vals.exist({p+"-blk-fad"      })) this->block_fading = vals.at    ({p+"-blk-fad"      });
+	if(vals.exist({p+"-fra-size", "N"})) this->N            = vals.to_int ({p+"-fra-size", "N"});
+	if(vals.exist({p+"-fra",      "F"})) this->n_frames     = vals.to_int ({p+"-fra",      "F"});
+	if(vals.exist({p+"-seed",     "S"})) this->seed         = vals.to_int ({p+"-seed",     "S"});
+	if(vals.exist({p+"-gain-occur"   })) this->gain_occur   = vals.to_int ({p+"-gain-occur"   });
+	if(vals.exist({p+"-type"         })) this->type         = vals.at     ({p+"-type"         });
+	if(vals.exist({p+"-implem"       })) this->implem       = vals.at     ({p+"-implem"       });
+	if(vals.exist({p+"-path"         })) this->path         = vals.to_file({p+"-path"         });
+	if(vals.exist({p+"-blk-fad"      })) this->block_fading = vals.at     ({p+"-blk-fad"      });
 	if(vals.exist({p+"-add-users"    })) this->add_users    = true;
 	if(vals.exist({p+"-complex"      })) this->complex      = true;
 	if(vals.exist({p+"-noise"        })) this->noise        = vals.to_float({p+"-noise"      });

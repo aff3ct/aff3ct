@@ -60,13 +60,13 @@ void Source::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int({p+"-info-bits", "K"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int({p+"-fra",       "F"});
-	if(vals.exist({p+"-type"          })) this->type     = vals.at    ({p+"-type"          });
-	if(vals.exist({p+"-implem"        })) this->implem   = vals.at    ({p+"-implem"        });
-	if(vals.exist({p+"-path"          })) this->path     = vals.at    ({p+"-path"          });
-	if(vals.exist({p+"-seed",      "S"})) this->seed     = vals.to_int({p+"-seed",      "S"});
-	if(vals.exist({p+"-start-idx"     })) this->start_idx= vals.to_int({p+"-start-idx"     });
+	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int ({p+"-fra",       "F"});
+	if(vals.exist({p+"-type"          })) this->type     = vals.at     ({p+"-type"          });
+	if(vals.exist({p+"-implem"        })) this->implem   = vals.at     ({p+"-implem"        });
+	if(vals.exist({p+"-path"          })) this->path     = vals.to_file({p+"-path"          });
+	if(vals.exist({p+"-seed",      "S"})) this->seed     = vals.to_int ({p+"-seed",      "S"});
+	if(vals.exist({p+"-start-idx"     })) this->start_idx= vals.to_int ({p+"-start-idx"     });
 }
 
 void Source::parameters

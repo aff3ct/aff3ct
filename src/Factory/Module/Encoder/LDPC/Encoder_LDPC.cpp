@@ -68,11 +68,11 @@ void Encoder_LDPC::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-h-path"     })) this->H_path      = vals.at({p+"-h-path"     });
-	if(vals.exist({p+"-g-path"     })) this->G_path      = vals.at({p+"-g-path"     });
-	if(vals.exist({p+"-h-reorder"  })) this->H_reorder   = vals.at({p+"-h-reorder"  });
-	if(vals.exist({p+"-g-method"   })) this->G_method    = vals.at({p+"-g-method"   });
-	if(vals.exist({p+"-g-save-path"})) this->G_save_path = vals.at({p+"-g-save-path"});
+	if(vals.exist({p+"-h-path"     })) this->H_path      = vals.to_file({p+"-h-path"     });
+	if(vals.exist({p+"-g-path"     })) this->G_path      = vals.to_file({p+"-g-path"     });
+	if(vals.exist({p+"-h-reorder"  })) this->H_reorder   = vals.at     ({p+"-h-reorder"  });
+	if(vals.exist({p+"-g-method"   })) this->G_method    = vals.at     ({p+"-g-method"   });
+	if(vals.exist({p+"-g-save-path"})) this->G_save_path = vals.at     ({p+"-g-save-path"});
 
 	if (!this->G_path.empty())
 	{

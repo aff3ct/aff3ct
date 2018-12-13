@@ -2,7 +2,11 @@
 #define ARGUMENT_TYPE_FILE_SYSTEM_HPP_
 
 #include <string>
+#include <iostream>
 #include <stdexcept>
+
+#include "Tools/system_functions.h"
+#include "Tools/version.h"
 
 #include "../Argument_type_limited.hpp"
 
@@ -12,6 +16,51 @@ namespace tools
 {
 
 enum class openmode : uint8_t {read, write, read_write};
+
+template <typename Read_F>
+std::string modify_file_path(const std::string& val)
+{
+	std::string binary_path = get_binary_path();
+	if (!binary_path.empty())
+	{
+		std::string basedir, filename;
+		split_path(binary_path, basedir, filename);
+
+		std::string aff3ct_version = aff3ct::version();
+		if (!aff3ct_version.empty() && aff3ct_version[0] == 'v')
+			aff3ct_version.erase(0, 1); // rm the 'v'
+
+		std::vector<std::string> paths = {
+			"../../conf/",
+			"../../../conf/",
+			"../share/aff3ct-" + aff3ct_version + "/doc/conf/",
+			"../../share/aff3ct-" + aff3ct_version + "/doc/conf/",
+			"/usr/share/aff3ct-" + aff3ct_version + "/doc/conf/",
+			"/usr/share/aff3ct-" + aff3ct_version + "/doc/conf/",
+			"/usr/local/share/aff3ct-" + aff3ct_version + "/doc/conf/",
+			"../share/aff3ct/doc/conf/",
+			"../../share/aff3ct/doc/conf/",
+			"/usr/share/aff3ct/doc/conf/",
+			"/usr/local/share/aff3ct/doc/conf/",
+		};
+
+		bool found = false;
+		for (auto &path : paths)
+		{
+			std::string full_path = (path[0] != '/') ? basedir + "/" : "";
+			full_path += path + val;
+#if defined(_WIN32) || defined(_WIN64)
+			if (path[0] == '/')
+				continue;
+			std::replace(full_path.begin(), full_path.end(), '/', '\\');
+#endif
+			if (Read_F::check(full_path))
+				return full_path;
+		}
+	}
+
+	return "";
+}
 
 std::string openmode_to_string(const openmode& mode);
 
@@ -34,7 +83,6 @@ struct noCheck
 {
 	static bool check(const std::string&);
 };
-
 
 template <typename T = std::string, typename Read_F = noCheck, typename Write_F = noCheck, typename RW_F = noCheck, typename... Ranges>
 class File_system_type : public Argument_type_limited<T,Ranges...>
@@ -95,7 +143,8 @@ public:
 		{
 			case openmode::read :
 				if(!Read_F::check(str_val))
-					throw std::runtime_error("does not name an existing " + name);
+					if (modify_file_path<Read_F>(str_val).empty())
+						throw std::runtime_error("does not name an existing " + name);
 				break;
 
 			case openmode::write :

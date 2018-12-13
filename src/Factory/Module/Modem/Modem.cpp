@@ -138,17 +138,17 @@ void Modem::parameters
 		}
 	}
 
-	if(vals.exist({p+"-fra-size", "N"})) this->N              = vals.to_int({p+"-fra-size", "N"});
-	if(vals.exist({p+"-fra",      "F"})) this->n_frames       = vals.to_int({p+"-fra",      "F"});
-	if(vals.exist({p+"-bps"          })) this->bps            = vals.to_int({p+"-bps"          });
-	if(vals.exist({p+"-const-path"   })) this->const_path     = vals.at    ({p+"-const-path"   });
-	if(vals.exist({p+"-cpm-L"        })) this->cpm_L          = vals.to_int({p+"-cpm-L"        });
-	if(vals.exist({p+"-cpm-p"        })) this->cpm_p          = vals.to_int({p+"-cpm-p"        });
-	if(vals.exist({p+"-cpm-k"        })) this->cpm_k          = vals.to_int({p+"-cpm-k"        });
-	if(vals.exist({p+"-cpm-upf"      })) this->cpm_upf        = vals.to_int({p+"-cpm-upf"      });
-	if(vals.exist({p+"-cpm-map"      })) this->cpm_mapping    = vals.at    ({p+"-cpm-map"      });
-	if(vals.exist({p+"-cpm-ws"       })) this->cpm_wave_shape = vals.at    ({p+"-cpm-ws"       });
-	if(vals.exist({p+"-rop-est"      })) this->rop_est_bits   = vals.to_int({p+"-rop-est"      });
+	if(vals.exist({p+"-fra-size", "N"})) this->N              = vals.to_int ({p+"-fra-size", "N"});
+	if(vals.exist({p+"-fra",      "F"})) this->n_frames       = vals.to_int ({p+"-fra",      "F"});
+	if(vals.exist({p+"-bps"          })) this->bps            = vals.to_int ({p+"-bps"          });
+	if(vals.exist({p+"-const-path"   })) this->const_path     = vals.to_file({p+"-const-path"   });
+	if(vals.exist({p+"-cpm-L"        })) this->cpm_L          = vals.to_int ({p+"-cpm-L"        });
+	if(vals.exist({p+"-cpm-p"        })) this->cpm_p          = vals.to_int ({p+"-cpm-p"        });
+	if(vals.exist({p+"-cpm-k"        })) this->cpm_k          = vals.to_int ({p+"-cpm-k"        });
+	if(vals.exist({p+"-cpm-upf"      })) this->cpm_upf        = vals.to_int ({p+"-cpm-upf"      });
+	if(vals.exist({p+"-cpm-map"      })) this->cpm_mapping    = vals.at     ({p+"-cpm-map"      });
+	if(vals.exist({p+"-cpm-ws"       })) this->cpm_wave_shape = vals.at     ({p+"-cpm-ws"       });
+	if(vals.exist({p+"-rop-est"      })) this->rop_est_bits   = vals.to_int ({p+"-rop-est"      });
 
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (this->type == "BPSK" || this->type == "OOK")

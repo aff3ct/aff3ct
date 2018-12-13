@@ -68,7 +68,7 @@ void Noise::parameters
 
 	if (vals.exist({p+"-pdf-path"}))
 	{
-		this->pdf_path = vals.at({p+"-pdf-path"});
+		this->pdf_path = vals.to_file({p+"-pdf-path"});
 		this->range = tools::Distributions<>(this->pdf_path).get_noise_range();
 
 		if(vals.exist({p+"-noise-range", "R"}))

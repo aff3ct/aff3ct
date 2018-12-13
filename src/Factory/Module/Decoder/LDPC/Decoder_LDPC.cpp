@@ -110,7 +110,7 @@ void Decoder_LDPC::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-h-path"    })) this->H_path          = vals.at      ({p+"-h-path"    });
+	if(vals.exist({p+"-h-path"    })) this->H_path          = vals.to_file ({p+"-h-path"    });
 	if(vals.exist({p+"-h-reorder" })) this->H_reorder       = vals.at      ({p+"-h-reorder" });
 	if(vals.exist({p+"-simd"      })) this->simd_strategy   = vals.at      ({p+"-simd"      });
 	if(vals.exist({p+"-min"       })) this->min             = vals.at      ({p+"-min"       });
