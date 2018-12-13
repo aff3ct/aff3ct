@@ -58,28 +58,14 @@ void Puncturer_turbo::parameters
 
 	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
 
-	// args.add(
-	// 	{p+"-pattern"},
-	// 	tools::List2D<bool>(tools::Boolean(),
-	// 	                    std::make_tuple(tools::Length(3, 3), tools::Function<sub_same_length>("elements of same length")),
-	// 	                    std::make_tuple(tools::Length(1))),
-	// 	"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
 	tools::add_arg(args, p, class_name+"p+pattern",
 		tools::List2D<bool>(tools::Boolean(),
 	 	                    std::make_tuple(tools::Length(3, 3), tools::Function<sub_same_length>("elements of same length")),
 	 	                    std::make_tuple(tools::Length(1))));
 
-	// args.add(
-	// 	{p+"-tail-length"},
-	// 	tools::Integer(tools::Positive()),
-	// 	"total number of tail bits at the end of the frame.");
 	tools::add_arg(args, p, class_name+"p+tail-length",
 		tools::Integer(tools::Positive()));
 
-	// args.add(
-	// 	{p+"-no-buff"},
-	// 	tools::None(),
-	// 	"does not suppose a buffered encoding.");
 	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }

@@ -85,17 +85,9 @@ void Decoder_turbo_DB::parameters
 	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO_DB");
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
 
-	// args.add(
-	// 	{p+"-ite", "i"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"maximal number of iterations in the turbo.");
 	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-crc-start"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"set the iteration to start the CRC checking.");
 	tools::add_arg(args, p, class_name+"p+crc-start",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 

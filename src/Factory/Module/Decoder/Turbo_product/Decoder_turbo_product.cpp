@@ -94,63 +94,27 @@ void Decoder_turbo_product::parameters
 	tools::add_options(args.at({p+"-type", "D"}), 0, "CP");
 	tools::add_options(args.at({p+"-implem"   }), 0, "FAST");
 
-
-	// args.add(
-	// 	{p+"-ite", "i"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"maximal number of iterations in the turbo.");
 	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-alpha"},
-	// 	tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)),
-	// 	"weighting factor, one by half iteration (so twice more than number of iterations)."
-	// 	" If not enough given values, then automatically extends the last to all iterations.");
 	tools::add_arg(args, p, class_name+"p+alpha",
 		tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)));
 
-	// args.add(
-	// 	{p+"-beta"},
-	// 	tools::List<float,Real_splitter>(tools::Real(tools::Positive()), tools::Length(1)),
-	// 	"reliability factor, one by half iteration (so twice more than number of iterations)."
-	// 	" If not enough given values, then automatically extends the last to all iterations."
-	// 	" If not given, then computes beta dynamically from the least reliable position metrics.");
 	tools::add_arg(args, p, class_name+"p+beta",
 		tools::List<float,Real_splitter>(tools::Real(tools::Positive()), tools::Length(1)));
 
-	// args.add(
-	// 	{p+"-p"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"number of least reliable positions.");
 	tools::add_arg(args, p, class_name+"p+p",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-t"},
-	// 	tools::Integer(tools::Positive()),
-	// 	"number of test vectors (0 means equal to 2^p).");
 	tools::add_arg(args, p, class_name+"p+t",
 		tools::Integer(tools::Positive()));
 
-	// args.add(
-	// 	{p+"-c"},
-	// 	tools::Integer(tools::Positive()),
-	// 	"number of competitors (0 means equal to number of test vectors, 1 means only the decided word).");
 	tools::add_arg(args, p, class_name+"p+c",
 		tools::Integer(tools::Positive()));
 
-	// args.add(
-	// 	{p+"-ext"},
-	// 	tools::None(),
-	// 	"extends code with a parity bits.");
 	tools::add_arg(args, p, class_name+"p+ext",
 		tools::None());
 
-	// args.add(
-	// 	{p+"-cp-coef"},
-	// 	tools::List<float,Real_splitter>(tools::Real(), tools::Length(5,5)),
-	// 	"the 5 Chase Pyndiah constant coefficients \"a,b,c,d,e\".");
 	tools::add_arg(args, p, class_name+"p+cp-coef",
 		tools::List<float,Real_splitter>(tools::Real(), tools::Length(5,5)));
 

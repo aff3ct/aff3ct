@@ -33,40 +33,19 @@ void CRC::parameters
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::CRC::parameters::";
 
-	// args.add(
-	// 	{p+"-info-bits", "K"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"number of generated bits (information bits, the CRC is not included).",
-	// 	tools::arg_rank::REQ);
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
-	// args.add(
-	// 	{p+"-fra", "F"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"set the number of inter frame level to process.");
 	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-type", p+"-poly"},
-	// 	tools::Text(),
-	// 	"select the CRC type/polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7).");
 	tools::add_arg(args, p, class_name+"p+type,p+poly",
 		tools::Text());
 
-	// args.add(
-	// 	{p+"-implem"},
-	// 	tools::Text(tools::Including_set("STD", "FAST", "INTER")),
-	// 	"select the CRC implementation you want to use.");
 	tools::add_arg(args, p, class_name+"p+implem",
 		tools::Text(tools::Including_set("STD", "FAST", "INTER")));
 
-	// args.add(
-	// 	{p+"-size"},
-	// 	tools::Integer(tools::Positive()),
-	// 	"size of the CRC (divisor size in bit -1), required if you selected an unknown CRC.");
 	tools::add_arg(args, p, class_name+"p+size",
 		tools::Integer(tools::Positive()));
 }

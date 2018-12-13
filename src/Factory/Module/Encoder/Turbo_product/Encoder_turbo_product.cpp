@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 
@@ -58,6 +59,7 @@ void Encoder_turbo_product::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_turbo_product::parameters::";
 
 	args.erase({p+"-info-bits", "K"});
 	args.erase({p+"-cw-size",   "N"});
@@ -74,11 +76,8 @@ void Encoder_turbo_product::parameters
 
 	tools::add_options(args.at({p+"-type"}), 0, "TPC");
 
-	args.add(
-		{p+"-ext"},
-		tools::None(),
-		"extends code with a parity bits.");
-
+	tools::add_arg(args, p, class_name+"p+ext",
+		tools::None());
 
 	sub->get_description(args);
 

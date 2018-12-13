@@ -98,17 +98,9 @@ void BFER_ite::parameters
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::BFER_ite::parameters::";
 
-	// args.add(
-	// 	{p+"-ite", "I"},
-	// 	tools::Integer(tools::Positive()),
-	// 	"number of global iterations between the demodulator and the decoder.");
 	tools::add_arg(args, p, class_name+"p+ite,I",
 		tools::Integer(tools::Positive()));
 
-	// args.add(
-	// 	{p+"-crc-start"},
-	// 	tools::Integer(tools::Positive()),
-	// 	"iteration number to start the CRC checking in the turbo demodulation process.");
 	tools::add_arg(args, p, class_name+"p+crc-start",
 		tools::Integer(tools::Positive()));
 }

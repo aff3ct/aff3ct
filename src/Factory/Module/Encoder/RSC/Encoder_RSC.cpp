@@ -40,24 +40,12 @@ void Encoder_RSC::parameters
 
 	tools::add_options(args.at({p+"-type"}), 0, "RSC");
 
-	// args.add(
-	// 	{p+"-no-buff"},
-	// 	tools::None(),
-	// 	"disable the buffered encoding.");
 	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 
-	// args.add(
-	// 	{p+"-poly"},
-	// 	tools::Text(),
-	// 	"the polynomials describing RSC code, should be of the form \"{A,B}\".");
 	tools::add_arg(args, p, class_name+"p+poly",
 		tools::Text());
 
-	// args.add(
-	// 	{p+"-std"},
-	// 	tools::Text(tools::Including_set("LTE", "CCSDS")),
-	// 	"select a standard and set automatically some parameters (overwritten with user given arguments)");
 	tools::add_arg(args, p, class_name+"p+std",
 		tools::Text(tools::Including_set("LTE", "CCSDS")));
 }

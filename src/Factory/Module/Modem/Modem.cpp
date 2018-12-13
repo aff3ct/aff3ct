@@ -44,141 +44,63 @@ void Modem::parameters
 	const std::string class_name = "factory::Modem::parameters::";
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	// args.add(
-	// 	{p+"-fra-size", "N"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"number of symbols by frame.",
-	// 	tools::arg_rank::REQ);
 	tools::add_arg(args, p, class_name+"p+fra-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
-	// args.add(
-	// 	{p+"-fra", "F"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"set the number of inter frame level to process.");
 	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-type"},
-	// 	tools::Text(tools::Including_set("BPSK", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")),
-	// 	"type of the modulation to use in the simulation.");
 	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("BPSK", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")));
 
-	// args.add(
-	// 	{p+"-implem"},
-	// 	tools::Text(tools::Including_set("STD", "FAST")),
-	// 	"select the implementation of the modem.");
 	tools::add_arg(args, p, class_name+"p+implem",
 		tools::Text(tools::Including_set("STD", "FAST")));
 
-	// args.add(
-	// 	{p+"-bps"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"select the number of bits per symbol (default is 1).");
 	tools::add_arg(args, p, class_name+"p+bps",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-const-path"},
-	// 	tools::File(tools::openmode::read_write),
-	// 	"path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\".");
 	tools::add_arg(args, p, class_name+"p+const-path",
 		tools::File(tools::openmode::read_write));
 
-	// args.add(
-	// 	{p+"-cpm-std"},
-	// 	tools::Text(tools::Including_set("GSM")),
-	// 	"the selection of a default CPM standard hardly implemented (any of those parameters is "
-	// 	   "overwritten if the argument is given by the user)");
 	tools::add_arg(args, p, class_name+"p+cpm-std",
 		tools::Text(tools::Including_set("GSM")));
 
-	// args.add(
-	// 	{p+"-cpm-L"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"CPM pulse width or CPM memory (default is 2).");
 	tools::add_arg(args, p, class_name+"p+cpm-L",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-cpm-k"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"modulation index numerator (default is 1).");
 	tools::add_arg(args, p, class_name+"p+cpm-k",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-cpm-p"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"modulation index denominator (default is 2).");
 	tools::add_arg(args, p, class_name+"p+cpm-p",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-cpm-upf"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"select the symbol sampling factor (default is 1).");
 	tools::add_arg(args, p, class_name+"p+cpm-upf",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-cpm-map"},
-	// 	tools::Text(tools::Including_set("NATURAL", "GRAY")),
-	// 	"symbols mapping layout (default is NATURAL).");
 	tools::add_arg(args, p, class_name+"p+cpm-map",
 		tools::Text(tools::Including_set("NATURAL", "GRAY")));
 
-	// args.add(
-	// 	{p+"-cpm-ws"},
-	// 	tools::Text(tools::Including_set("GMSK", "REC", "RCOS")),
-	// 	"wave shape (default is GMSK).");
 	tools::add_arg(args, p, class_name+"p+cpm-ws",
 		tools::Text(tools::Including_set("GMSK", "REC", "RCOS")));
 
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	// args.add(
-	// 	{p+"-max"},
-	// 	tools::Text(tools::Including_set("MAX", "MAXL", "MAXS", "MAXSS")),
-	// 	"select the type of the max operation to use in the demodulator.");
 	tools::add_arg(args, p, class_name+"p+max",
 		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS", "MAXSS")));
 
-	// args.add(
-	// 	{p+"-noise"},
-	// 	tools::Real(tools::Positive(), tools::Non_zero()),
-	// 	"noise variance value for the demodulator.");
 	tools::add_arg(args, p, class_name+"p+noise",
 		tools::Real(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-no-sig2"},
-	// 	tools::None(),
-	// 	"turn off the division by sigma square in the demodulator.");
 	tools::add_arg(args, p, class_name+"p+no-sig2",
 		tools::None());
 
-	// args.add(
-	// 	{p+"-psi"},
-	// 	tools::Text(tools::Including_set("PSI0", "PSI1", "PSI2", "PSI3")),
-	// 	"select the type of the psi function to use in the SCMA demodulator.");
 	tools::add_arg(args, p, class_name+"p+psi",
 		tools::Text(tools::Including_set("PSI0", "PSI1", "PSI2", "PSI3")));
 
-	// args.add(
-	// 	{p+"-ite"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"number of iteration in the demodulator.");
 	tools::add_arg(args, p, class_name+"p+ite",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-rop-est"},
-	// 	tools::Integer(tools::Positive()),
-	// 	"set the number of known bits for the ROP estimation in the OOK demodulator on an optical channel (when 0, the ROP is known).");
 	tools::add_arg(args, p, class_name+"p+rop-est",
 		tools::Integer(tools::Positive()));
 }

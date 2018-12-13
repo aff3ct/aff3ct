@@ -35,10 +35,6 @@ void Encoder_polar::parameters
 
 	tools::add_options(args.at({p+"-type"}), 0, "POLAR");
 
-	// args.add(
-	// 	{p+"-no-sys"},
-	// 	tools::None(),
-	// 	"disable the systematic encoding.");
 	tools::add_arg(args, p, class_name+"p+no-sys",
 		tools::None());
 }
