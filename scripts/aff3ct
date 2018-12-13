@@ -17,7 +17,7 @@ if [ $? -gt 0 ]; then
 	exit 1
 fi
 
-BIN=$(ls -lrt bin/aff3ct-* | tail -n 1 | rev | cut -d" " -f1 | rev)
+BIN=$(ls -lrt $AFF3CT_PATH/aff3ct-* | tail -n 1 | rev | cut -d" " -f1 | rev)
 
 STR=$($BIN "$@" 2>&1)
 if [[ $STR == *"mkl_intel"*".so: cannot open shared object file"* ]]; then
