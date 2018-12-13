@@ -146,7 +146,7 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 	for (; ite < this->n_ite; ite++)
 	{
 		this->_initialize_var_to_chk(Y_N, chk_to_var, var_to_chk, ite == 0);
-		this->_decode_single_ite(this->var_to_chk, this->chk_to_var);
+		this->_decode_single_ite(var_to_chk, chk_to_var);
 
 		if (this->enable_syndrome && ite != this->n_ite -1)
 		{
@@ -173,21 +173,31 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
+		const auto cur_state = (B)1 - (Y_N[v] + Y_N[v]);
 
-		for (auto c = 0; c < var_degree; c++)
+		if (first_ite)
 		{
-			auto cur_state = Y_N[v];
-			if (!first_ite)
+			for (auto c = 0; c < var_degree; c++)
+				var_to_chk_ptr[c] = (int8_t)cur_state;
+		}
+		else
+		{
+			auto sum = cur_state;
+			for (auto c = 0; c < var_degree; c++)
+				sum += chk_to_var_ptr[c];
+
+			for (auto c = 0; c < var_degree; c++)
 			{
-				auto count = 0;
-				for (auto cc = 0; cc < var_degree; cc++)
-					if (cc != c)
-						count += chk_to_var_ptr[cc] ? 1 : -1;
+				auto message = sum;
+				message -= chk_to_var_ptr[c];
 
-				cur_state = count > 0 ? 1 : (count < 0 ? 0 : cur_state);
+				const auto sign = std::signbit(message) ? -1 : 1;
+
+				const auto t = (B)1; // threshold for a majority voting decoding
+				message = (sign * message) < t ? cur_state : sign;
+
+				var_to_chk_ptr[c] = (int8_t)message;
 			}
-
-			var_to_chk_ptr[c] = (int8_t)cur_state;
 		}
 
 		chk_to_var_ptr += var_degree;
@@ -207,12 +217,12 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 	{
 		const auto chk_degree = (int)this->H.get_col_to_rows()[c].size();
 
-		auto acc = 0;
+		auto acc = 1;
 		for (auto v = 0; v < chk_degree; v++)
-			acc ^= var_to_chk[transpose_ptr[v]];
+			acc *= var_to_chk[transpose_ptr[v]];
 
 		for (auto v = 0; v < chk_degree; v++)
-			chk_to_var[transpose_ptr[v]] = acc ^ var_to_chk[transpose_ptr[v]];
+			chk_to_var[transpose_ptr[v]] = acc * var_to_chk[transpose_ptr[v]];
 
 		transpose_ptr += chk_degree;
 	}
@@ -229,16 +239,14 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
-		auto count = 0;
+		const auto cur_state = (B)1 - (Y_N[v] + Y_N[v]);
 
+		auto count = cur_state;
 		for (auto c = 0; c < var_degree; c++)
-			count += chk_to_var_ptr[c] ? 1 : -1;
-
-		if (var_degree % 2 == 0)
-			count += Y_N[v] ? 1 : -1;
+			count += chk_to_var_ptr[c];
 
 		// take the hard decision
-		V_N[v] = count > 0 ? 1 : 0;
+		V_N[v] = count ? std::signbit(count) : Y_N[v];
 
 		chk_to_var_ptr += var_degree;
 	}
