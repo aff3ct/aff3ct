@@ -31,17 +31,17 @@ std::string modify_file_path(const std::string& val)
 			aff3ct_version.erase(0, 1); // rm the 'v'
 
 		std::vector<std::string> paths = {
-			"../../conf/",
-			"../../../conf/",
-			"../share/aff3ct-" + aff3ct_version + "/conf/",
-			"../../share/aff3ct-" + aff3ct_version + "/conf/",
-			"/usr/share/aff3ct-" + aff3ct_version + "/conf/",
-			"/usr/share/aff3ct-" + aff3ct_version + "/conf/",
-			"/usr/local/share/aff3ct-" + aff3ct_version + "/conf/",
-			"../share/aff3ct/conf/",
-			"../../share/aff3ct/conf/",
-			"/usr/share/aff3ct/conf/",
-			"/usr/local/share/aff3ct/conf/",
+			"../../",
+			"../../../",
+			"../share/aff3ct-" + aff3ct_version + "/",
+			"../../share/aff3ct-" + aff3ct_version + "/",
+			"/usr/share/aff3ct-" + aff3ct_version + "/",
+			"/usr/share/aff3ct-" + aff3ct_version + "/",
+			"/usr/local/share/aff3ct-" + aff3ct_version + "/",
+			"../share/aff3ct/",
+			"../../share/aff3ct/",
+			"/usr/share/aff3ct/",
+			"/usr/local/share/aff3ct/",
 		};
 
 		for (auto &path : paths)
