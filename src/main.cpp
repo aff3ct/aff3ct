@@ -91,6 +91,12 @@ void print_version()
 	std::string bit_packing = "off";
 #endif
 
+#if defined(AFF3CT_POLAR_BOUNDS)
+	std::string polar_bounds = "on";
+#else
+	std::string polar_bounds = "off";
+#endif
+
 #if defined(AFF3CT_COLORS)
 	std::string terminal_colors = "on";
 #else
@@ -138,6 +144,7 @@ void print_version()
 	std::cout << "Compilation options:"                                                        << std::endl;
 	std::cout << "  * Precision: "         << precision                                        << std::endl;
 	std::cout << "  * Polar bit packing: " << bit_packing                                      << std::endl;
+	std::cout << "  * Polar bounds: "      << polar_bounds                                     << std::endl;
 	std::cout << "  * Terminal colors: "   << terminal_colors                                  << std::endl;
 	std::cout << "  * Backtrace: "         << backtrace                                        << std::endl;
 	std::cout << "  * External strings: "  << ext_strings                                      << std::endl;
