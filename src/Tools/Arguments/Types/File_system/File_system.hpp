@@ -33,18 +33,17 @@ std::string modify_file_path(const std::string& val)
 		std::vector<std::string> paths = {
 			"../../conf/",
 			"../../../conf/",
-			"../share/aff3ct-" + aff3ct_version + "/doc/conf/",
-			"../../share/aff3ct-" + aff3ct_version + "/doc/conf/",
-			"/usr/share/aff3ct-" + aff3ct_version + "/doc/conf/",
-			"/usr/share/aff3ct-" + aff3ct_version + "/doc/conf/",
-			"/usr/local/share/aff3ct-" + aff3ct_version + "/doc/conf/",
-			"../share/aff3ct/doc/conf/",
-			"../../share/aff3ct/doc/conf/",
-			"/usr/share/aff3ct/doc/conf/",
-			"/usr/local/share/aff3ct/doc/conf/",
+			"../share/aff3ct-" + aff3ct_version + "/conf/",
+			"../../share/aff3ct-" + aff3ct_version + "/conf/",
+			"/usr/share/aff3ct-" + aff3ct_version + "/conf/",
+			"/usr/share/aff3ct-" + aff3ct_version + "/conf/",
+			"/usr/local/share/aff3ct-" + aff3ct_version + "/conf/",
+			"../share/aff3ct/conf/",
+			"../../share/aff3ct/conf/",
+			"/usr/share/aff3ct/conf/",
+			"/usr/local/share/aff3ct/conf/",
 		};
 
-		bool found = false;
 		for (auto &path : paths)
 		{
 			std::string full_path = (path[0] != '/') ? basedir + "/" : "";
