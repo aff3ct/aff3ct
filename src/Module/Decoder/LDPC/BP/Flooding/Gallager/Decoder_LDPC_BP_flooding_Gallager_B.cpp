@@ -1,4 +1,5 @@
 #include <chrono>
+#include <numeric>
 #include <limits>
 #include <sstream>
 
@@ -173,30 +174,24 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
-		const auto cur_state = (B)1 - (Y_N[v] + Y_N[v]);
+		const auto cur_state = (int8_t)Y_N[v];
 
 		if (first_ite)
 		{
-			for (auto c = 0; c < var_degree; c++)
-				var_to_chk_ptr[c] = (int8_t)cur_state;
+			std::fill(var_to_chk_ptr, var_to_chk_ptr + var_degree, cur_state);
 		}
 		else
 		{
-			auto sum = cur_state;
-			for (auto c = 0; c < var_degree; c++)
-				sum += chk_to_var_ptr[c];
+			const auto sum = std::accumulate(chk_to_var_ptr, chk_to_var_ptr + var_degree, (int)0);
+			const auto n_ones = sum + cur_state;
+			const auto n_zero = var_degree - sum;
+			const auto n_z_m_o = n_zero - n_ones;
 
+			// majority vote on each node
 			for (auto c = 0; c < var_degree; c++)
 			{
-				auto message = sum;
-				message -= chk_to_var_ptr[c];
-
-				const auto sign = std::signbit(message) ? -1 : 1;
-
-				const auto t = (B)1; // threshold for a majority voting decoding
-				message = (sign * message) < t ? cur_state : sign;
-
-				var_to_chk_ptr[c] = (int8_t)message;
+				const auto diff = n_z_m_o + chk_to_var_ptr[c];
+				var_to_chk_ptr[c] = diff == 0 ? cur_state : (int8_t)std::signbit(diff);
 			}
 		}
 
@@ -217,12 +212,12 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 	{
 		const auto chk_degree = (int)this->H.get_col_to_rows()[c].size();
 
-		auto acc = 1;
+		auto acc = 0;
 		for (auto v = 0; v < chk_degree; v++)
-			acc *= var_to_chk[transpose_ptr[v]];
+			acc ^= var_to_chk[transpose_ptr[v]];
 
 		for (auto v = 0; v < chk_degree; v++)
-			chk_to_var[transpose_ptr[v]] = acc * var_to_chk[transpose_ptr[v]];
+			chk_to_var[transpose_ptr[v]] = acc ^ var_to_chk[transpose_ptr[v]];
 
 		transpose_ptr += chk_degree;
 	}
@@ -239,14 +234,15 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
-		const auto cur_state = (B)1 - (Y_N[v] + Y_N[v]);
+		const auto cur_state = Y_N[v];
 
-		auto count = cur_state;
-		for (auto c = 0; c < var_degree; c++)
-			count += chk_to_var_ptr[c];
+		const auto sum = std::accumulate(chk_to_var_ptr, chk_to_var_ptr + var_degree, (int)0);
+		const auto n_ones = sum + cur_state;
+		const auto n_zero = var_degree - sum;
+		const auto n_z_m_o = n_zero - n_ones;
 
 		// take the hard decision
-		V_N[v] = count ? std::signbit(count) : Y_N[v];
+		V_N[v] = n_z_m_o == 0 ? cur_state : std::signbit(n_z_m_o);
 
 		chk_to_var_ptr += var_degree;
 	}
