@@ -19,7 +19,7 @@ fi
 
 BIN=$(ls -lrt $AFF3CT_PATH/aff3ct-* | tail -n 1 | rev | cut -d" " -f1 | rev)
 
-STR=$($BIN "$@" 2>&1)
+STR=$($BIN "$@" "-v" 2>&1)
 if [[ $STR == *"mkl_intel"*".so: cannot open shared object file"* ]]; then
 	source /opt/intel/vars-intel.sh
 fi
