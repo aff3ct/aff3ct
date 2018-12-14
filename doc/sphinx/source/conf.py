@@ -290,6 +290,7 @@ rst_epilog = """
 .. |FNC|       replace:: :abbr:`FNC      (Flip aNd Check)`
 .. |GA|        replace:: :abbr:`GA       (Gaussian Approximation)`
 .. |GALA|      replace:: :abbr:`GALA     (Gallager A)`
+.. |GALB|      replace:: :abbr:`GALB     (Gallager B)`
 .. |GNU|       replace:: :abbr:`GNU      (GNU's Not Unix!)`
 .. |GPP|       replace:: :abbr:`GPP      (General Purpose Processor)`
 .. |GPPs|      replace:: :abbr:`GPPs     (General Purpose Processors)`
