@@ -136,9 +136,9 @@ inline bool signbit(T arg)
 }
 
 #if defined(_WIN64) || defined(_WIN32)
-inline bool signbit (float       x) { return std::signbit(arg);}
-inline bool signbit (double      x) { return std::signbit(arg);}
-inline bool signbit (long double x) { return std::signbit(arg);}
+inline bool signbit (float       arg) { return std::signbit(arg);}
+inline bool signbit (double      arg) { return std::signbit(arg);}
+inline bool signbit (long double arg) { return std::signbit(arg);}
 #endif
 
 
