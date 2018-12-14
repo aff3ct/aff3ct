@@ -433,7 +433,7 @@ for fn in fileNames:
 		for i in range(len(stdOutput)):
 			fRes.write(stdOutput[i] + "\n")
 		for i in range(len(errAndWarnMessages)):
-			fRes.write(errAndWarnMessages[i] + "\n")
+			fRes.write(errAndWarnMessages[i])
 
 	elif simuCur.getNoiseType() != simuRef.getNoiseType():
 		nErrors += 1
@@ -444,7 +444,7 @@ for fn in fileNames:
 		for i in range(len(stdOutput)):
 			fRes.write(stdOutput[i] + "\n")
 		for i in range(len(errAndWarnMessages)):
-			fRes.write(errAndWarnMessages[i] + "\n")
+			fRes.write(errAndWarnMessages[i])
 
 	else:
 		# parse the results to validate (or not) the BER/FER/MI performance

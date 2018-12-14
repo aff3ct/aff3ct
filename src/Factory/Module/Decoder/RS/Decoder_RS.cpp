@@ -36,10 +36,6 @@ void Decoder_RS::parameters
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Decoder_RS::parameters::";
 
-	// args.add(
-	// 	{p+"-corr-pow", "T"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"correction power of the RS code.");
 	tools::add_arg(args, p, class_name+"p+corr-pow,T",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 

@@ -42,6 +42,33 @@ public:
 	float to_float(const Argument_tag &tags) const;
 
 	/*!
+	 * \brief Returns the file path (can be modified).
+	 *
+	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.
+	 *
+	 * \return the file path (can be modified).
+	 */
+	std::string to_file(const Argument_tag &tags) const;
+
+	/*!
+	 * \brief Returns the path (can be modified).
+	 *
+	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.
+	 *
+	 * \return the path (can be modified).
+	 */
+	std::string to_path(const Argument_tag &tags) const;
+
+	/*!
+	 * \brief Returns the folder path (can be modified).
+	 *
+	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.
+	 *
+	 * \return the folder path (can be modified).
+	 */
+	std::string to_folder(const Argument_tag &tags) const;
+
+	/*!
 	 * \brief Returns the list of values for an argument.
 	 *
 	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.

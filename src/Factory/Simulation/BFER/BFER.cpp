@@ -91,64 +91,30 @@ void BFER::parameters
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::BFER::parameters::";
 
-	// args.add(
-	// 	{p+"-coset", "c"},
-	// 	tools::None(),
-	// 	"enable the coset approach.");
 	tools::add_arg(args, p, class_name+"p+coset,c",
 		tools::None());
 
-	// args.add(
-	// 	{p+"-err-trk"},
-	// 	tools::None(),
-	// 	"enable the tracking of the bad frames (by default the frames are stored in "
-	//  "the current folder).",
-	// 	tools::arg_rank::ADV);
 	tools::add_arg(args, p, class_name+"p+err-trk",
 		tools::None(),
 		tools::arg_rank::ADV);
 
-	// args.add(
-	// 	{p+"-err-trk-rev"},
-	// 	tools::None(),
-	// 	"automatically replay the saved frames.",
-	// 	tools::arg_rank::ADV);
 	tools::add_arg(args, p, class_name+"p+err-trk-rev",
 		tools::None(),
 		tools::arg_rank::ADV);
 
-	// args.add(
-	// 	{p+"-err-trk-path"},
-	// 	tools::File(tools::openmode::read_write),
-	// 	"base path for the files where the bad frames will be stored or read.",
-	// 	tools::arg_rank::ADV);
 	tools::add_arg(args, p, class_name+"p+err-trk-path",
 		tools::File(tools::openmode::read_write),
 		tools::arg_rank::ADV);
 
-	// args.add(
-	// 	{p+"-err-trk-thold"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"dump only frames with a bit error count above or equal to this threshold.",
-	// 	tools::arg_rank::ADV);
 	tools::add_arg(args, p, class_name+"p+err-trk-thold",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::ADV);
 
-	// args.add(
-	// 	{p+"-coded"},
-	// 	tools::None(),
-	// 	"enable the coded monitoring (extends the monitored bits to the entire ""
-	//  "codeword).");
 	tools::add_arg(args, p, class_name+"p+coded",
 		tools::None());
 
 	auto pmon = mnt_er->get_prefix();
 
-	// args.add(
-	// 	{pmon+"-mutinfo"},
-	// 	tools::None(),
-	// 	"allow the computation of the mutual information.");
 	tools::add_arg(args, pmon, class_name+"p+mutinfo",
 		tools::None());
 }

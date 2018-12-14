@@ -23,7 +23,7 @@ struct Frozenbits_generator : public Factory
 
 		// optional parameters
 		std::string type    = "GA";
-		std::string path_fb = "../conf/cde/awgn_polar_codes/TV";
+		std::string path_fb = "conf/cde/awgn_polar_codes/TV";
 		std::string path_pb = "../lib/polar_bounds/bin/polar_bounds";
 		float       sigma   = -1.f;
 

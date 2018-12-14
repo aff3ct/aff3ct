@@ -1,3 +1,5 @@
+#include "Tools/Arguments/Types/File_system/File_system.hpp"
+
 #include "Argument_map_value.hpp"
 
 using namespace aff3ct;
@@ -32,5 +34,50 @@ float Argument_map_value
 	catch (std::exception&)
 	{
 		return 0.0f;
+	}
+}
+
+std::string Argument_map_value::
+to_file(const Argument_tag &tags) const
+{
+	if (isFile::check(this->at(tags)))
+		return this->at(tags);
+	else
+	{
+		auto new_str = modify_path<isFile>(this->at(tags));
+		if (new_str.empty())
+			return this->at(tags);
+		else
+			return new_str;
+	}
+}
+
+std::string Argument_map_value::
+to_folder(const Argument_tag &tags) const
+{
+	if (isFolder::check(this->at(tags)))
+		return this->at(tags);
+	else
+	{
+		auto new_str = modify_path<isFolder>(this->at(tags));
+		if (new_str.empty())
+			return this->at(tags);
+		else
+			return new_str;
+	}
+}
+
+std::string Argument_map_value::
+to_path(const Argument_tag &tags) const
+{
+	if (isPath::check(this->at(tags)))
+		return this->at(tags);
+	else
+	{
+		auto new_str = modify_path<isPath>(this->at(tags));
+		if (new_str.empty())
+			return this->at(tags);
+		else
+			return new_str;
 	}
 }

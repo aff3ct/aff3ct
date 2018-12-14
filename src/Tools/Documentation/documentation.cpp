@@ -2,16 +2,6 @@
 #include <regex>
 #include <map>
 
-#if defined(__linux__) || defined(linux) || defined(__linux) || defined(__FreeBSD__)
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-#elif defined(__APPLE__) || defined(__MACH__)
-#include <mach-o/dyld.h>
-#elif defined(_WIN32) || defined(_WIN64)
-#include <Windows.h>
-#endif
-
 #ifndef AFF3CT_EXT_STRINGS
 #include "strings.cpp"
 #endif
@@ -19,6 +9,7 @@
 #include "Tools/version.h"
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/system_functions.h"
 
 #include "documentation.h"
 
@@ -120,61 +111,6 @@ void parse_documentation(const std::vector<std::string> &lines)
 		Documentation[key] = sanitize(value);
 }
 
-std::string get_binary_path()
-{
-	std::string binary_path;
-
-#if defined(__linux__) || defined(linux) || defined(__linux) || defined(__FreeBSD__)
-	constexpr size_t path_size = 8192;
-	char path[path_size];
-#ifdef __FreeBSD__
-	if (readlink("/proc/curproc/file", path, path_size) == -1)
-#else
-	if (readlink("/proc/self/exe", path, path_size) == -1)
-#endif
-	{
-		std::stringstream message;
-		message << "'readlink' failed ('errno' = " << strerror(errno) << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-	binary_path = path;
-#elif defined(__APPLE__) || defined(__MACH__)
-	constexpr size_t path_size = 8192;
-	char path[path_size];
-	uint32_t size = sizeof(path);
-	if (_NSGetExecutablePath(path, &size) != 0)
-	{
-		std::stringstream message;
-		message << "'_NSGetExecutablePath' path buffer is too small; need 'size' = " << size << "('path_size' = "
-		        << path_size << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-	binary_path = path;
-#elif defined(_WIN32) || defined(_WIN64)
-	constexpr size_t path_size = 8192;
-	char path[path_size];
-	DWORD copied = 0;
-	copied = GetModuleFileName(NULL, path, path_size);
-	if (copied >= path_size)
-	{
-		std::stringstream message;
-		message << "'GetModuleFileName' path buffer is too small ('path_size' = " << path_size << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-	binary_path = path;
-#endif
-
-	return binary_path;
-}
-
-void split_path(const std::string& path, std::string &basedir, std::string &filename)
-{
-  size_t found;
-  found = path.find_last_of("/\\");
-  basedir = path.substr(0,found);
-  filename = path.substr(found+1);
-}
-
 std::string extract_documentation(const std::string &key)
 {
 	if (Documentation.empty())
@@ -194,7 +130,6 @@ std::string extract_documentation(const std::string &key)
 
 			std::vector<std::string> paths = {
 				"../../doc/sphinx/",
-				"../../../doc/sphinx/",
 				"../../../doc/sphinx/",
 				"../share/aff3ct-" + aff3ct_version + "/doc/strings/",
 				"../../share/aff3ct-" + aff3ct_version + "/doc/strings/",

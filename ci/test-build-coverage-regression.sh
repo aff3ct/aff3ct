@@ -28,12 +28,12 @@ function gen_coverage_info
 	for path in $folder/*
 	do [ -f $path ] && {
 		cmd=$(awk -F "=" '/command/ {print $2}' $path)
-		cmd=$(echo "${cmd/aff3ct/aff3ct-$GIT_VERSION}")
+		cmd=$(echo "${cmd/aff3ct/.\/bin\/aff3ct-$GIT_VERSION}")
 		echo $cmd
 		ci=$(awk -F "=" '/ci/ {print $2}' $path)
 		if [ "$ci" != "off" ]; then
 			cd $build
-			eval "${cmd} --sim-stop-time 1 -t 1"
+			eval "${cmd} --sim-threads 1 --sim-max-fra 1 --sim-crit-nostop --ter-freq 0"
 			rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 			cd ..
 		else

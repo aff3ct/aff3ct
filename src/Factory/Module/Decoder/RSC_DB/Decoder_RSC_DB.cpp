@@ -40,17 +40,9 @@ void Decoder_RSC_DB::parameters
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
 	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
 
-	// args.add(
-	// 	{p+"-max"},
-	// 	tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
-	// 	"the MAX implementation for the nodes.");
 	tools::add_arg(args, p, class_name+"p+max",
 		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")));
 
-	// args.add(
-	// 	{p+"-no-buff"},
-	// 	tools::None(),
-	// 	"does not suppose a buffered encoding.");
 	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }

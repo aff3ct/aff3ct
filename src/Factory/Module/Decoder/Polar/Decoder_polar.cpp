@@ -77,45 +77,21 @@ void Decoder_polar::parameters
 
 	args.at({p+"-implem"})->change_type(tools::Text(tools::Example_set("FAST", "NAIVE")));
 
-	// args.add(
-	// 	{p+"-ite", "i"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"maximal number of iterations in the SCAN decoder.");
 	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-lists", "L"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"maximal number of paths in the SCL decoder.");
 	tools::add_arg(args, p, class_name+"p+lists,L",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-simd"},
-	// 	tools::Text(tools::Including_set("INTRA", "INTER")),
-	// 	"the SIMD strategy you want to use.");
 	tools::add_arg(args, p, class_name+"p+simd",
 		tools::Text(tools::Including_set("INTRA", "INTER")));
 
-	// args.add(
-	// 	{p+"-polar-nodes"},
-	// 	tools::Text(),
-	// 	"the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\").");
 	tools::add_arg(args, p, class_name+"p+polar-nodes",
 		tools::Text());
 
-	// args.add(
-	// 	{p+"-partial-adaptive"},
-	// 	tools::None(),
-	// 	"enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected).");
 	tools::add_arg(args, p, class_name+"p+partial-adaptive",
 		tools::None());
 
-	// args.add(
-	// 	{p+"-no-sys"},
-	// 	tools::None(),
-	// 	"does not suppose a systematic encoding.");
 	tools::add_arg(args, p, class_name+"p+no-sys",
 		tools::None());
 }

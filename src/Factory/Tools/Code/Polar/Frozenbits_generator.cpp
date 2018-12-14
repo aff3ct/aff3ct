@@ -17,6 +17,12 @@ Frozenbits_generator::parameters
 ::parameters(const std::string &prefix)
 : Factory::parameters(Frozenbits_generator_name, Frozenbits_generator_name, prefix)
 {
+	if (!tools::isPath::check(this->path_fb))
+	{
+		auto new_path_fb = tools::modify_path<tools::isPath>(this->path_fb);
+		if (!new_path_fb.empty())
+			this->path_fb = new_path_fb;
+	}
 }
 
 Frozenbits_generator::parameters* Frozenbits_generator::parameters
@@ -31,54 +37,26 @@ void Frozenbits_generator::parameters
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Frozenbits_generator::parameters::";
 
-	// args.add(
-	// 	{p+"-info-bits", "K"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"useful number of bit transmitted (information bits).",
-	// 	tools::arg_rank::REQ);
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
-	// args.add(
-	// 	{p+"-cw-size", "N"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"the codeword size.",
-	// 	tools::arg_rank::REQ);
 	tools::add_arg(args, p, class_name+"p+cw-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
-	// args.add(
-	// 	{p+"-sigma"},
-	// 	tools::Real(tools::Positive(), tools::Non_zero()),
-	// 	"sigma value for the polar codes generation (adaptive frozen bits if "
-	//  "sigma is not set).");
 	tools::add_arg(args, p, class_name+"p+sigma",
 		tools::Real(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-gen-method"},
-	// 	tools::Text(tools::Including_set("GA", "FILE", "TV")),
-	// 	"select the frozen bits generation method.");
 	tools::add_arg(args, p, class_name+"p+gen-method",
 		tools::Text(tools::Including_set("GA", "FILE", "TV")));
 
-	// args.add(
-	// 	{p+"-awgn-path"},
-	// 	tools::Path(tools::openmode::read),
-	// 	"path to a file or a directory containing the best channels to use for
-	//  "information bits.");
 	tools::add_arg(args, p, class_name+"p+awgn-path",
 		tools::Path(tools::openmode::read));
 
 #ifdef AFF3CT_POLAR_BOUNDS
-	// args.add(
-	// 	{p+"-pb-path"},
-	// 	tools::File(tools::openmode::read),
-	// 	"path of the polar bounds code generator (generates best channels to use");
 	tools::add_arg(args, p, class_name+"p+pb-path",
-		tools::Path(tools::openmode::read));
+		tools::File(tools::openmode::read));
 #endif
 }
 
@@ -90,11 +68,11 @@ void Frozenbits_generator::parameters
 	if(vals.exist({p+"-info-bits", "K"})) this->K       = vals.to_int  ({p+"-info-bits", "K"});
 	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw    = vals.to_int  ({p+"-cw-size",   "N"});
 	if(vals.exist({p+"-sigma"         })) this->sigma   = vals.to_float({p+"-sigma"         });
-	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.at      ({p+"-awgn-path"     });
+	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.to_path ({p+"-awgn-path"     });
 	if(vals.exist({p+"-gen-method"    })) this->type    = vals.at      ({p+"-gen-method"    });
 
 #ifdef AFF3CT_POLAR_BOUNDS
-	if(vals.exist({p+"-pb-path"})) this->path_pb = vals.at({p+"-pb-path"});
+	if(vals.exist({p+"-pb-path"})) this->path_pb = vals.to_file({p+"-pb-path"});
 #endif
 }
 
