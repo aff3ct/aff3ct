@@ -17,8 +17,12 @@ Frozenbits_generator::parameters
 ::parameters(const std::string &prefix)
 : Factory::parameters(Frozenbits_generator_name, Frozenbits_generator_name, prefix)
 {
-	if (!tools::isFile::check(this->path_fb))
-		this->path_fb = tools::modify_file_path<tools::isFile>(this->path_fb);
+	if (!tools::isPath::check(this->path_fb))
+	{
+		auto new_path_fb = tools::modify_path<tools::isPath>(this->path_fb);
+		if (!new_path_fb.empty())
+			this->path_fb = new_path_fb;
+	}
 }
 
 Frozenbits_generator::parameters* Frozenbits_generator::parameters

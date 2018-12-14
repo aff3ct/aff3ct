@@ -43,7 +43,13 @@ to_file(const Argument_tag &tags) const
 	if (isFile::check(this->at(tags)))
 		return this->at(tags);
 	else
-		return modify_file_path<isFile>(this->at(tags));
+	{
+		auto new_str = modify_path<isFile>(this->at(tags));
+		if (new_str.empty())
+			return this->at(tags);
+		else
+			return new_str;
+	}
 }
 
 std::string Argument_map_value::
@@ -52,7 +58,13 @@ to_folder(const Argument_tag &tags) const
 	if (isFolder::check(this->at(tags)))
 		return this->at(tags);
 	else
-		return modify_file_path<isFolder>(this->at(tags));
+	{
+		auto new_str = modify_path<isFolder>(this->at(tags));
+		if (new_str.empty())
+			return this->at(tags);
+		else
+			return new_str;
+	}
 }
 
 std::string Argument_map_value::
@@ -61,5 +73,11 @@ to_path(const Argument_tag &tags) const
 	if (isPath::check(this->at(tags)))
 		return this->at(tags);
 	else
-		return modify_file_path<isPath>(this->at(tags));
+	{
+		auto new_str = modify_path<isPath>(this->at(tags));
+		if (new_str.empty())
+			return this->at(tags);
+		else
+			return new_str;
+	}
 }

@@ -18,7 +18,7 @@ namespace tools
 enum class openmode : uint8_t {read, write, read_write};
 
 template <typename Read_F>
-std::string modify_file_path(const std::string& val)
+std::string modify_path(const std::string& val)
 {
 	std::string binary_path = get_binary_path();
 	if (!binary_path.empty())
@@ -142,7 +142,7 @@ public:
 		{
 			case openmode::read :
 				if(!Read_F::check(str_val))
-					if (modify_file_path<Read_F>(str_val).empty())
+					if (modify_path<Read_F>(str_val).empty())
 						throw std::runtime_error("does not name an existing " + name);
 				break;
 
