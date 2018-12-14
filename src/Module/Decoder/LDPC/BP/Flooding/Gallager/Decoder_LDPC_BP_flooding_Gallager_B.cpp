@@ -192,7 +192,7 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 			for (auto c = 0; c < var_degree; c++)
 			{
 				const auto diff = n_z_m_o + chk_to_var_ptr[c];
-				var_to_chk_ptr[c] = diff == 0 ? cur_state : (int8_t)std::signbit(diff);
+				var_to_chk_ptr[c] = diff == 0 ? cur_state : (int8_t)tools::signbit(diff);
 			}
 		}
 
@@ -243,7 +243,7 @@ void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 		const auto n_z_m_o = n_zero - n_ones;
 
 		// take the hard decision
-		V_N[v] = n_z_m_o == 0 ? cur_state : std::signbit(n_z_m_o);
+		V_N[v] = n_z_m_o == 0 ? cur_state : tools::signbit(n_z_m_o);
 
 		chk_to_var_ptr += var_degree;
 	}
