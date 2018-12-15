@@ -28,12 +28,18 @@ std::string aff3ct::tools::openmode_to_string(const openmode& mode)
 bool aff3ct::tools::isFile::check(const std::string& filename)
 {
 	std::ifstream f(filename);
+
+	auto is_good = f.good();
+	std::cout << "# (DBG) filename = '" << filename << "', exist = " << is_good << std::endl;
+
 	return f.good();
 }
 
 bool aff3ct::tools::isFolder::check(const std::string& foldername)
 {
 	DIR *dp = opendir(foldername.c_str());
+
+	std::cout << "# (DBG) foldername = '" << foldername << "', exist = " << (dp != nullptr) << std::endl;
 
 	if (dp != nullptr)
 	{
