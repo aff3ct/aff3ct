@@ -63,27 +63,27 @@ std::string modify_path(const std::string& val)
 
 std::string openmode_to_string(const openmode& mode);
 
-struct isFile
+struct Is_file
 {
 	static bool check(const std::string& filename);
 };
 
-struct isFolder
+struct Is_folder
 {
 	static bool check(const std::string& foldername);
 };
 
-struct isPath
+struct Is_path
 {
 	static bool check(const std::string& path);
 };
 
-struct noCheck
+struct No_check
 {
 	static bool check(const std::string&);
 };
 
-template <typename T = std::string, typename Read_F = noCheck, typename Write_F = noCheck, typename RW_F = noCheck, typename... Ranges>
+template <typename T = std::string, typename Read_F = No_check, typename Write_F = No_check, typename RW_F = No_check, typename... Ranges>
 class File_system_type : public Argument_type_limited<T,Ranges...>
 {
 protected:

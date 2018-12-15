@@ -25,7 +25,7 @@ std::string aff3ct::tools::openmode_to_string(const openmode& mode)
 	return str;
 }
 
-bool aff3ct::tools::isFile::check(const std::string& filename)
+bool aff3ct::tools::Is_file::check(const std::string& filename)
 {
 	std::ifstream f(filename);
 
@@ -43,7 +43,7 @@ bool aff3ct::tools::isFile::check(const std::string& filename)
 	return f.good();
 }
 
-bool aff3ct::tools::isFolder::check(const std::string& foldername)
+bool aff3ct::tools::Is_folder::check(const std::string& foldername)
 {
 	DIR *dp = opendir(foldername.c_str());
 
@@ -58,12 +58,12 @@ bool aff3ct::tools::isFolder::check(const std::string& foldername)
 	return false;
 }
 
-bool aff3ct::tools::isPath::check(const std::string& path)
+bool aff3ct::tools::Is_path::check(const std::string& path)
 {
-	return isFile::check(path) || isFolder::check(path);
+	return Is_file::check(path) || Is_folder::check(path);
 }
 
-bool aff3ct::tools::noCheck::check(const std::string&)
+bool aff3ct::tools::No_check::check(const std::string&)
 {
 	return true;
 }

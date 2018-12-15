@@ -40,11 +40,11 @@ float Argument_map_value
 std::string Argument_map_value::
 to_file(const Argument_tag &tags) const
 {
-	if (isFile::check(this->at(tags)))
+	if (Is_file::check(this->at(tags)))
 		return this->at(tags);
 	else
 	{
-		auto new_str = modify_path<isFile>(this->at(tags));
+		auto new_str = modify_path<Is_file>(this->at(tags));
 		if (new_str.empty())
 			return this->at(tags);
 		else
@@ -55,11 +55,11 @@ to_file(const Argument_tag &tags) const
 std::string Argument_map_value::
 to_folder(const Argument_tag &tags) const
 {
-	if (isFolder::check(this->at(tags)))
+	if (Is_folder::check(this->at(tags)))
 		return this->at(tags);
 	else
 	{
-		auto new_str = modify_path<isFolder>(this->at(tags));
+		auto new_str = modify_path<Is_folder>(this->at(tags));
 		if (new_str.empty())
 			return this->at(tags);
 		else
@@ -70,11 +70,11 @@ to_folder(const Argument_tag &tags) const
 std::string Argument_map_value::
 to_path(const Argument_tag &tags) const
 {
-	if (isPath::check(this->at(tags)))
+	if (Is_path::check(this->at(tags)))
 		return this->at(tags);
 	else
 	{
-		auto new_str = modify_path<isPath>(this->at(tags));
+		auto new_str = modify_path<Is_path>(this->at(tags));
 		if (new_str.empty())
 			return this->at(tags);
 		else

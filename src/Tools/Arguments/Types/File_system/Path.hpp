@@ -9,10 +9,10 @@ namespace tools
 {
 
 template <typename T = std::string, typename... Ranges>
-class Path_type : public File_system_type<T, isPath, noCheck, noCheck, Ranges...>
+class Path_type : public File_system_type<T, Is_path, No_check, No_check, Ranges...>
 {
 public:
-	using parent_type = File_system_type<T, isPath, noCheck, noCheck, Ranges...>;
+	using parent_type = File_system_type<T, Is_path, No_check, No_check, Ranges...>;
 
 	template <typename r, typename... R>
 	explicit Path_type(const openmode& mode, const r* range, const R*... ranges)
