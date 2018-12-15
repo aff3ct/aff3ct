@@ -29,8 +29,16 @@ bool aff3ct::tools::isFile::check(const std::string& filename)
 {
 	std::ifstream f(filename);
 
-	auto is_good = f.good();
-	std::cout << "# (DBG) filename = '" << filename << "', exist = " << is_good << std::endl;
+	DIR *dp = opendir(filename.c_str());
+
+	std::cout << "# (DBG) filename = '" << filename << "', exist = " << (f.good() && !dp) << std::endl;
+
+	// if filename is a directory return false
+	if (dp != nullptr)
+	{
+		closedir(dp);
+		return false;
+	}
 
 	return f.good();
 }
