@@ -31,8 +31,6 @@ bool aff3ct::tools::Is_file::check(const std::string& filename)
 
 	DIR *dp = opendir(filename.c_str());
 
-	std::cout << "# (DBG) filename = '" << filename << "', exist = " << (f.good() && !dp) << std::endl;
-
 	// if filename is a directory return false
 	if (dp != nullptr)
 	{
@@ -46,8 +44,6 @@ bool aff3ct::tools::Is_file::check(const std::string& filename)
 bool aff3ct::tools::Is_folder::check(const std::string& foldername)
 {
 	DIR *dp = opendir(foldername.c_str());
-
-	std::cout << "# (DBG) foldername = '" << foldername << "', exist = " << (dp != nullptr) << std::endl;
 
 	if (dp != nullptr)
 	{

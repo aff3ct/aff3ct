@@ -200,15 +200,17 @@ std::string aff3ct::tools::get_binary_path()
 	constexpr size_t path_size = 8192;
 	char path[path_size];
 #ifdef __FreeBSD__
-	if (readlink("/proc/curproc/file", path, path_size) == -1)
+	auto len = readlink("/proc/curproc/file", path, path_size);
 #else
-	if (readlink("/proc/self/exe", path, path_size) == -1)
+	auto len = readlink("/proc/self/exe", path, path_size);
 #endif
+	if (len == -1)
 	{
 		std::stringstream message;
 		message << "'readlink' failed ('errno' = " << strerror(errno) << ").";
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+	path[len] = '\0';
 	binary_path = path;
 #elif defined(__APPLE__) || defined(__MACH__)
 	constexpr size_t path_size = 8192;
