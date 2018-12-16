@@ -1,7 +1,7 @@
 #!/bin/bash
 # set -x
 
-GIT_VERSION=$(git describe)
+GIT_VERSION=$(git describe --abbrev=7)
 
 if [ ! -z "$GIT_VERSION" ]
 then
