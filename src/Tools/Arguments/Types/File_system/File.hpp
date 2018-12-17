@@ -9,10 +9,10 @@ namespace tools
 {
 
 template <typename T = std::string, typename... Ranges>
-class File_type : public File_system_type<T, isFile, noCheck, noCheck, Ranges...>
+class File_type : public File_system_type<T, Is_file, No_check, No_check, Ranges...>
 {
 public:
-	using parent_type = File_system_type<T, isFile, noCheck, noCheck, Ranges...>;
+	using parent_type = File_system_type<T, Is_file, No_check, No_check, Ranges...>;
 
 	template <typename r, typename... R>
 	explicit File_type(const openmode& mode, const r* range, const R*... ranges)

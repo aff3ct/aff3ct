@@ -121,7 +121,7 @@ Generate the Makefile from CMake:
 
 .. code-block:: bash
 
-   cmake .. -DCMAKE_CXX_COMPILER="g++.exe" -DCMAKE_CC_COMPILER="gcc.exe" -DCMAKE_BUILD_TYPE="Release" -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   cmake .. -DCMAKE_CXX_COMPILER="g++.exe" -DCMAKE_BUILD_TYPE="Release" -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Build |AFF3CT| with the Makefile:
 
@@ -150,7 +150,7 @@ Generate the Makefile from CMake:
 
    mkdir build
    cd build
-   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_CC_COMPILER="clang" -DCMAKE_BUILD_TYPE="Release" -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_BUILD_TYPE="Release" -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Build |AFF3CT| with the Makefile:
 
@@ -170,7 +170,7 @@ Generate the Makefile from CMake:
 
    mkdir build
    cd build
-   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER="g++" -DCMAKE_CC_COMPILER="gcc" -DCMAKE_BUILD_TYPE="Release" -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
+   cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER="g++" -DCMAKE_BUILD_TYPE="Release" -DCMAKE_CXX_FLAGS="-funroll-loops -march=native"
 
 Build |AFF3CT| with the Makefile:
 

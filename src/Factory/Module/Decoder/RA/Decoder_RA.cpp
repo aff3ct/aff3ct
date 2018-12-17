@@ -70,10 +70,6 @@ void Decoder_RA::parameters
 	tools::add_options(args.at({p+"-type", "D"}), 0, "RA");
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
 
-	// args.add(
-	// 	{p+"-ite", "i"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"maximal number of iterations in the decoder.");
 	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 }

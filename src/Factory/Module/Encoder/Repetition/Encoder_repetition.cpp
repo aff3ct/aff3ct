@@ -34,10 +34,6 @@ void Encoder_repetition::parameters
 
 	tools::add_options(args.at({p+"-type"}), 0, "REP");
 
-	// args.add(
-	// 	{p+"-no-buff"},
-	// 	tools::None(),
-	// 	"disable the buffered encoding.");
 	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }

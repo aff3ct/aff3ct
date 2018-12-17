@@ -85,10 +85,6 @@ void Encoder_turbo::parameters<E1,E2>
 
 	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
 
-	// args.add(
-	// 	{p+"-json-path"},
-	// 	tools::File(tools::openmode::write),
-	// 	"path to store the encoder and decoder traces formated in JSON.");
 	tools::add_arg(args, p, class_name+"p+json-path",
 		tools::File(tools::openmode::write));
 

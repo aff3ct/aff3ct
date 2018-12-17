@@ -37,56 +37,26 @@ void Encoder::parameters
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Encoder::parameters::";
 
-	// args.add(
-	// 	{p+"-info-bits", "K"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"useful number of bit transmitted (information bits).",
-	// 	tools::arg_rank::REQ);
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
-	// args.add(
-	// 	{p+"-cw-size", "N"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"the codeword size.",
-	// 	tools::arg_rank::REQ);
 	tools::add_arg(args, p, class_name+"p+cw-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
-	// args.add(
-	// 	{p+"-fra", "F"},
-	// 	tools::Integer(tools::Positive(), tools::Non_zero()),
-	// 	"set the number of inter frame level to process.");
 	tools::add_arg(args, p, class_name+"p+fra,F",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	// args.add(
-	// 	{p+"-type"},
-	// 	tools::Text(tools::Including_set("AZCW", "COSET", "USER")),
-	// 	"type of the encoder to use in the simulation.");
 	tools::add_arg(args, p, class_name+"p+type",
 		tools::Text(tools::Including_set("AZCW", "COSET", "USER")));
 
-	// args.add(
-	// 	{p+"-path"},
-	// 	tools::File(tools::openmode::read),
-	// 	"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
 	tools::add_arg(args, p, class_name+"p+path",
 		tools::File(tools::openmode::read));
 
-	// args.add(
-	// 	{p+"-start-idx"},
-	// 	tools::Integer(tools::Positive()),
-	// 	"Start idx to use in the USER type encoder.");
 	tools::add_arg(args, p, class_name+"p+start-idx",
 		tools::Integer(tools::Positive()));
 
-	// args.add(
-	// 	{p+"-seed", "S"},
-	// 	tools::Integer(tools::Positive()),
-	// 	"seed used to initialize the pseudo random generators.");
 	tools::add_arg(args, p, class_name+"p+seed,S",
 		tools::Integer(tools::Positive()));
 }
@@ -96,14 +66,14 @@ void Encoder::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int({p+"-info-bits", "K"});
-	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int({p+"-cw-size",   "N"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int({p+"-fra",       "F"});
-	if(vals.exist({p+"-seed",      "S"})) this->seed       = vals.to_int({p+"-seed",      "S"});
-	if(vals.exist({p+"-type"          })) this->type       = vals.at    ({p+"-type"          });
-	if(vals.exist({p+"-path"          })) this->path       = vals.at    ({p+"-path"          });
+	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int ({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int ({p+"-fra",       "F"});
+	if(vals.exist({p+"-seed",      "S"})) this->seed       = vals.to_int ({p+"-seed",      "S"});
+	if(vals.exist({p+"-type"          })) this->type       = vals.at     ({p+"-type"          });
+	if(vals.exist({p+"-path"          })) this->path       = vals.to_file({p+"-path"          });
 	if(vals.exist({p+"-no-sys"        })) this->systematic = false;
-	if(vals.exist({p+"-start-idx"     })) this->start_idx  = vals.to_int({p+"-start-idx"     });
+	if(vals.exist({p+"-start-idx"     })) this->start_idx  = vals.to_int ({p+"-start-idx"     });
 
 	this->R = (float)this->K / (float)this->N_cw;
 }

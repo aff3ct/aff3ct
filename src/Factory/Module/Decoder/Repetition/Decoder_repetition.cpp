@@ -37,10 +37,6 @@ void Decoder_repetition::parameters
 	tools::add_options(args.at({p+"-type", "D"}), 0, "REPETITION" );
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
 
-	// args.add(
-	// 	{p+"-no-buff"},
-	// 	tools::None(),
-	// 	"does not suppose a buffered encoding.");
 	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }

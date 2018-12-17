@@ -36,17 +36,9 @@ void Encoder_RSC_DB::parameters
 
 	tools::add_options(args.at({p+"-type"}), 0, "RSC_DB");
 
-	// args.add(
-	// 	{p+"-std"},
-	// 	tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")),
-	// 	"select a standard and set automatically some parameters (overwritten with user given arguments).");
 	tools::add_arg(args, p, class_name+"p+std",
 		tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")));
 
-	// args.add(
-	// 	{p+"-no-buff"},
-	// 	tools::None(),
-	// 	"disable the buffered encoding.");
 	tools::add_arg(args, p, class_name+"p+no-buff",
 		tools::None());
 }
