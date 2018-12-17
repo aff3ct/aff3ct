@@ -291,6 +291,7 @@ rst_epilog = """
 .. |GA|        replace:: :abbr:`GA       (Gaussian Approximation)`
 .. |GALA|      replace:: :abbr:`GALA     (Gallager A)`
 .. |GALB|      replace:: :abbr:`GALB     (Gallager B)`
+.. |GALE|      replace:: :abbr:`GALE     (Gallager E)`
 .. |GNU|       replace:: :abbr:`GNU      (GNU's Not Unix!)`
 .. |GPP|       replace:: :abbr:`GPP      (General Purpose Processor)`
 .. |GPPs|      replace:: :abbr:`GPPs     (General Purpose Processors)`
