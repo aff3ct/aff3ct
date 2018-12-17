@@ -24,4 +24,5 @@ if [[ $STR == *"mkl_intel"*".so: cannot open shared object file"* ]]; then
 	source /opt/intel/vars-intel.sh
 fi
 
-eval $BIN "$@"
+#eval $BIN "$@"
+( $BIN "$@" )
