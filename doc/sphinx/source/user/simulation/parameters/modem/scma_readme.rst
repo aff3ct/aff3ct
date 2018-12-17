@@ -1,0 +1,1 @@
+../../../../../../../conf/mod/SCMA/README.rst
