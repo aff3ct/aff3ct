@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
@@ -14,7 +15,7 @@ Encoder_repetition::parameters
 ::parameters(const std::string &prefix)
 : Encoder::parameters(Encoder_repetition_name, prefix)
 {
-	this->type = "REPETITION";
+	this->type = "REP";
 }
 
 Encoder_repetition::parameters* Encoder_repetition::parameters
@@ -29,13 +30,12 @@ void Encoder_repetition::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_repetition::parameters::";
 
-	tools::add_options(args.at({p+"-type"}), 0, "REPETITION");
+	tools::add_options(args.at({p+"-type"}), 0, "REP");
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"disable the buffered encoding.");
+	tools::add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 }
 
 void Encoder_repetition::parameters
@@ -62,7 +62,7 @@ template <typename B>
 module::Encoder_repetition_sys<B>* Encoder_repetition::parameters
 ::build() const
 {
-	if (this->type == "REPETITION") return new module::Encoder_repetition_sys<B>(this->K, this->N_cw, this->buffered, this->n_frames);
+	if (this->type == "REP") return new module::Encoder_repetition_sys<B>(this->K, this->N_cw, this->buffered, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -76,7 +76,7 @@ module::Encoder_repetition_sys<B>* Encoder_repetition
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_repetition_sys<B_8 >* aff3ct::factory::Encoder_repetition::parameters::build<B_8 >() const;
 template aff3ct::module::Encoder_repetition_sys<B_16>* aff3ct::factory::Encoder_repetition::parameters::build<B_16>() const;
 template aff3ct::module::Encoder_repetition_sys<B_32>* aff3ct::factory::Encoder_repetition::parameters::build<B_32>() const;

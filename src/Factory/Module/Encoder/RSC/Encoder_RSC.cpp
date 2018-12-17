@@ -2,6 +2,7 @@
 #include <cmath>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"
@@ -33,25 +34,20 @@ void Encoder_RSC::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_RSC::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
 	tools::add_options(args.at({p+"-type"}), 0, "RSC");
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"disable the buffered encoding.");
+	tools::add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 
-	args.add(
-		{p+"-poly"},
-		tools::Text(),
-		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
+	tools::add_arg(args, p, class_name+"p+poly",
+		tools::Text());
 
-	args.add(
-		{p+"-std"},
-		tools::Text(tools::Including_set("LTE", "CCSDS")),
-		"select a standard and set automatically some parameters (overwritten with user given arguments)");
+	tools::add_arg(args, p, class_name+"p+std",
+		tools::Text(tools::Including_set("LTE", "CCSDS")));
 }
 
 void Encoder_RSC::parameters
@@ -132,7 +128,7 @@ module::Encoder_RSC_sys<B>* Encoder_RSC
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_RSC_sys<B_8 >* aff3ct::factory::Encoder_RSC::parameters::build<B_8 >(std::ostream&) const;
 template aff3ct::module::Encoder_RSC_sys<B_16>* aff3ct::factory::Encoder_RSC::parameters::build<B_16>(std::ostream&) const;
 template aff3ct::module::Encoder_RSC_sys<B_32>* aff3ct::factory::Encoder_RSC::parameters::build<B_32>(std::ostream&) const;

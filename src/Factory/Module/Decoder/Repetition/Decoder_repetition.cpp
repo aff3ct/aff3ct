@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
@@ -31,14 +32,13 @@ void Decoder_repetition::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_repetition::parameters::";
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "REPETITION" );
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"does not suppose a buffered encoding.");
+	tools::add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 }
 
 void Decoder_repetition::parameters
@@ -93,7 +93,7 @@ module::Decoder_SIHO<B,Q>* Decoder_repetition
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_repetition::parameters::build<B_8 ,Q_8 >(const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_repetition::parameters::build<B_16,Q_16>(const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_repetition::parameters::build<B_32,Q_32>(const std::unique_ptr<module::Encoder<B_32>>&) const;

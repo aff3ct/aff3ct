@@ -2,6 +2,7 @@
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_std.hpp"
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_scan.hpp"
@@ -49,36 +50,27 @@ void Decoder_RSC::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_RSC::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
 	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "FAST", "VERY_FAST");
 
-	args.add(
-		{p+"-simd"},
-		tools::Text(tools::Including_set("INTRA", "INTER")),
-		"the SIMD strategy you want to use.");
+	tools::add_arg(args, p, class_name+"p+simd",
+		tools::Text(tools::Including_set("INTRA", "INTER")));
 
-	args.add(
-		{p+"-max"},
-		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")),
-		"the MAX implementation for the nodes.");
+	tools::add_arg(args, p, class_name+"p+max",
+		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")));
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"does not suppose a buffered encoding.");
+	tools::add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 
-	args.add(
-		{p+"-poly"},
-		tools::Text(),
-		"the polynomials describing RSC code, should be of the form \"{A,B}\".");
+	tools::add_arg(args, p, class_name+"p+poly",
+		tools::Text());
 
-	args.add(
-		{p+"-std"},
-		tools::Text(tools::Including_set("LTE", "CCSDS")),
-		"select a standard and set automatically some parameters (overwritten with user given arguments).");
+	tools::add_arg(args, p, class_name+"p+std",
+		tools::Text(tools::Including_set("LTE", "CCSDS")));
 }
 
 void Decoder_RSC::parameters
@@ -287,7 +279,7 @@ module::Decoder_SIHO<B,Q>* Decoder_RSC
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::parameters::build_siso<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, std::ostream&, const int, const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::parameters::build_siso<B_16,Q_16>(const std::vector<std::vector<int>>&, std::ostream&, const int, const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::parameters::build_siso<B_32,Q_32>(const std::vector<std::vector<int>>&, std::ostream&, const int, const std::unique_ptr<module::Encoder<B_32>>&) const;
@@ -301,7 +293,7 @@ template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_RSC::p
 template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_RSC::build_siso<B,Q>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int, const std::unique_ptr<module::Encoder<B>>&);
 #endif
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::parameters::build<B_8 ,Q_8 >(const std::vector<std::vector<int>>&, std::ostream&, const int, const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::parameters::build<B_16,Q_16>(const std::vector<std::vector<int>>&, std::ostream&, const int, const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::parameters::build<B_32,Q_32>(const std::vector<std::vector<int>>&, std::ostream&, const int, const std::unique_ptr<module::Encoder<B_32>>&) const;

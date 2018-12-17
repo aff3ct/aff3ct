@@ -1,4 +1,4 @@
-#ifdef SYSTEMC
+#ifdef AFF3CT_SYSTEMC_SIMU
 
 #include "Factory/Module/Coset/Coset.hpp"
 
@@ -279,7 +279,7 @@ std::unique_ptr<module::Coset<B,Q>> SC_BFER_ite<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::SC_BFER_ite<B_8,R_8,Q_8>;
 template class aff3ct::simulation::SC_BFER_ite<B_16,R_16,Q_16>;
 template class aff3ct::simulation::SC_BFER_ite<B_32,R_32,Q_32>;

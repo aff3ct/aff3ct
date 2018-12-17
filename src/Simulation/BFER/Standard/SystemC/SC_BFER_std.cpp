@@ -1,4 +1,4 @@
-#ifdef SYSTEMC
+#ifdef AFF3CT_SYSTEMC_SIMU
 
 #include <iostream>
 
@@ -60,6 +60,11 @@ void SC_BFER_std<B,R,Q>
 	if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
 		this->channel[tid]->sc.create_module(+chn::tsk::add_noise_wg );
+		this->modem  [tid]->sc.create_module(+mdm::tsk::demodulate_wg);
+	}
+	else if (this->params_BFER_std.chn->type == "OPTICAL" && this->params_BFER_std.mdm->rop_est_bits > 0)
+	{
+		this->channel[tid]->sc.create_module(+chn::tsk::add_noise    );
 		this->modem  [tid]->sc.create_module(+mdm::tsk::demodulate_wg);
 	}
 	else
@@ -147,6 +152,11 @@ void SC_BFER_std<B,R,Q>
 			chn.sc[+chn::tsk::add_noise_wg ].s_out [+chn::sck::add_noise_wg ::Y_N ](mdm.sc[+mdm::tsk::filter       ].s_in[+mdm::sck::filter       ::Y_N1]);
 			mdm.sc[+mdm::tsk::filter       ].s_out [+mdm::sck::filter       ::Y_N2](mdm.sc[+mdm::tsk::demodulate_wg].s_in[+mdm::sck::demodulate_wg::Y_N1]);
 			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate_wg::Y_N2](qnt.sc[+qnt::tsk::process      ].s_in[+qnt::sck::process      ::Y_N1]);
+		} else if (this->params_BFER_std.chn->type == "OPTICAL" && this->params_BFER_std.mdm->rop_est_bits > 0){ // optical channel with ROP estimation
+			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](chn.sc[+chn::tsk::add_noise    ].s_out[+chn::sck::add_noise    ::X_N ]);
+			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](mdm.sc[+mdm::tsk::demodulate_wg].s_out[+mdm::sck::demodulate_wg::H_N ]);
+			chn.sc[+chn::tsk::add_noise    ].s_out [+chn::sck::add_noise    ::Y_N ](mdm.sc[+mdm::tsk::demodulate_wg].s_out[+mdm::sck::demodulate_wg::Y_N1]);
+			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate_wg::Y_N2](qnt.sc[+qnt::tsk::process      ].s_out[+qnt::sck::process      ::Y_N1]);
 		} else { // additive channel (AWGN, USER, NO)
 			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](chn.sc[+chn::tsk::add_noise    ].s_in[+chn::sck::add_noise    ::X_N ]);
 			chn.sc[+chn::tsk::add_noise    ].s_out [+chn::sck::add_noise    ::Y_N ](mdm.sc[+mdm::tsk::filter       ].s_in[+mdm::sck::filter       ::Y_N1]);
@@ -174,6 +184,11 @@ void SC_BFER_std<B,R,Q>
 			chn.sc[+chn::tsk::add_noise_wg ].s_out [+chn::sck::add_noise_wg ::Y_N ](mdm.sc[+mdm::tsk::filter       ].s_in[+mdm::sck::filter       ::Y_N1]);
 			mdm.sc[+mdm::tsk::filter       ].s_out [+mdm::sck::filter       ::Y_N2](mdm.sc[+mdm::tsk::demodulate_wg].s_in[+mdm::sck::demodulate_wg::Y_N1]);
 			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate_wg::Y_N2](qnt.sc[+qnt::tsk::process      ].s_in[+qnt::sck::process      ::Y_N1]);
+		} else if (this->params_BFER_std.chn->type == "OPTICAL" && this->params_BFER_std.mdm->rop_est_bits > 0){ // optical channel with ROP estimation
+			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](chn.sc[+chn::tsk::add_noise    ].s_out[+chn::sck::add_noise    ::X_N ]);
+			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](mdm.sc[+mdm::tsk::demodulate_wg].s_out[+mdm::sck::demodulate_wg::H_N ]);
+			chn.sc[+chn::tsk::add_noise    ].s_out [+chn::sck::add_noise    ::Y_N ](mdm.sc[+mdm::tsk::demodulate_wg].s_out[+mdm::sck::demodulate_wg::Y_N1]);
+			mdm.sc[+mdm::tsk::demodulate_wg].s_out [+mdm::sck::demodulate_wg::Y_N2](qnt.sc[+qnt::tsk::process      ].s_out[+qnt::sck::process      ::Y_N1]);
 		} else { // additive channel (AWGN, USER, NO)
 			mdm.sc[+mdm::tsk::modulate     ].s_out [+mdm::sck::modulate     ::X_N2](chn.sc[+chn::tsk::add_noise    ].s_in[+chn::sck::add_noise    ::X_N ]);
 			chn.sc[+chn::tsk::add_noise    ].s_out [+chn::sck::add_noise    ::Y_N ](mdm.sc[+mdm::tsk::filter       ].s_in[+mdm::sck::filter       ::Y_N1]);
@@ -189,7 +204,7 @@ void SC_BFER_std<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::SC_BFER_std<B_8,R_8,Q_8>;
 template class aff3ct::simulation::SC_BFER_std<B_16,R_16,Q_16>;
 template class aff3ct::simulation::SC_BFER_std<B_32,R_32,Q_32>;
@@ -199,4 +214,4 @@ template class aff3ct::simulation::SC_BFER_std<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
 
-#endif /* SYSTEMC*/
+#endif /* AFF3CT_SYSTEMC_SIMU */

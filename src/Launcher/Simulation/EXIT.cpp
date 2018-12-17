@@ -1,4 +1,4 @@
-#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
 #include "Simulation/EXIT/EXIT.hpp"
 
@@ -93,6 +93,8 @@ void EXIT<B,R>
 
 	params.chn->store(this->arg_vals);
 
+	params.mdm->channel_type = params.chn->type;
+
 	params.mnt->size = K;
 
 	params.mnt->store(this->arg_vals);
@@ -120,7 +122,7 @@ template <typename B, typename R>
 simulation::Simulation* EXIT<B,R>
 ::build_simu()
 {
-#if !defined(SYSTEMC)
+#if !defined(AFF3CT_SYSTEMC_SIMU)
 	return factory::EXIT::build<B,R>(params);
 #else
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC/TLM  simulation is not available.");
@@ -129,7 +131,7 @@ simulation::Simulation* EXIT<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::EXIT<B_32,R_32>;
 template class aff3ct::launcher::EXIT<B_64,R_64>;
 #else

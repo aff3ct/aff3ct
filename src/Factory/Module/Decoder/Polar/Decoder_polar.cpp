@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive_sys.hpp"
@@ -70,40 +71,29 @@ void Decoder_polar::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_polar::parameters::";
 
 	tools::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN");
 
 	args.at({p+"-implem"})->change_type(tools::Text(tools::Example_set("FAST", "NAIVE")));
 
-	args.add(
-		{p+"-ite", "i"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"maximal number of iterations in the SCAN decoder.");
+	tools::add_arg(args, p, class_name+"p+ite,i",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-lists", "L"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"maximal number of paths in the SCL decoder.");
+	tools::add_arg(args, p, class_name+"p+lists,L",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-simd"},
-		tools::Text(tools::Including_set("INTRA", "INTER")),
-		"the SIMD strategy you want to use.");
+	tools::add_arg(args, p, class_name+"p+simd",
+		tools::Text(tools::Including_set("INTRA", "INTER")));
 
-	args.add(
-		{p+"-polar-nodes"},
-		tools::Text(),
-		"the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\").");
+	tools::add_arg(args, p, class_name+"p+polar-nodes",
+		tools::Text());
 
-	args.add(
-		{p+"-partial-adaptive"},
-		tools::None(),
-		"enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected).");
+	tools::add_arg(args, p, class_name+"p+partial-adaptive",
+		tools::None());
 
-	args.add(
-		{p+"-no-sys"},
-		tools::None(),
-		"does not suppose a systematic encoding.");
+	tools::add_arg(args, p, class_name+"p+no-sys",
+		tools::None());
 }
 
 void Decoder_polar::parameters
@@ -281,7 +271,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 		{
 			if (typeid(B) == typeid(signed char))
 			{
-#ifdef ENABLE_BIT_PACKING
+#ifdef AFF3CT_POLAR_BIT_PACKING
 #ifdef API_POLAR_DYNAMIC
 				using API_polar = tools::API_polar_dynamic_inter_8bit_bitpacking<B,Q>;
 #else
@@ -368,7 +358,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::parameters::build_siso<B_8 ,Q_8 >(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::parameters::build_siso<B_16,Q_16>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::parameters::build_siso<B_32,Q_32>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_32>>&) const;
@@ -382,7 +372,7 @@ template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_polar:
 template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build_siso<B,Q>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, const std::unique_ptr<module::Encoder<B>>& );
 #endif
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::parameters::build<B_8 ,Q_8 >(const std::vector<bool>&, module::CRC<B_8 >*, const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::parameters::build<B_16,Q_16>(const std::vector<bool>&, module::CRC<B_16>*, const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::parameters::build<B_32,Q_32>(const std::vector<bool>&, module::CRC<B_32>*, const std::unique_ptr<module::Encoder<B_32>>&) const;

@@ -1,4 +1,4 @@
-#ifdef SYSTEMC_MODULE
+#ifdef AFF3CT_SYSTEMC_MODULE
 
 #ifndef SC_MODULE_HPP_
 #define SC_MODULE_HPP_

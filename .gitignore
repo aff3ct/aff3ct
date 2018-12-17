@@ -20,6 +20,12 @@ cppcheck/
 doc/html/
 doc/latex/
 src/Tools/version.cpp
+src/Tools/Documentation/strings.cpp
 test-regression-results/
 code_coverage_files/
 code_coverage_report/
+doc/doxygen/html/
+doc/doxygen/latex/
+doc/doxygen/xml/
+
+__pycache__/

@@ -1,0 +1,49 @@
+# - Config file for the AFF3CT package
+# It defines the following variables
+#  AFF3CT_INCLUDE_DIRS      - include directories for AFF3CT
+#  AFF3CT_LIBRARIES         - libraries to link against
+#  AFF3CT_DEFINITIONS       - the list of preprocessor definitions
+#  AFF3CT_COMPILE_OPTIONS   - the list of compile options
+#  AFF3CT_STATIC_LIB        - true if the library has been compiled statically (otherwise is shared lib)
+#  AFF3CT_LINK_GSL          - true if AFF3CT has been linked with the GSL
+#  AFF3CT_LINK_MKL          - true if AFF3CT has been linked with the MKL
+#  AFF3CT_SYSTEMC_MODULE    - true if AFF3CT has been linked with SystemC
+#  AFF3CT_POLAR_BIT_PACKING - true if AFF3CT bit packing for Polar SC decoder is enabled
+#  AFF3CT_COLORS            - true if AFF3CT has been compiled with the terminal colors
+#  AFF3CT_BACKTRACE         - true if AFF3CT has been compiled to print the backtrace when a exception is raised
+#  AFF3CT_PREC              - specify the precision in bits ('8', '16', '32', '64' or 'MULTI')
+
+set(AFF3CT_INCLUDE_DIRS       "@AFF3CT_INCLUDE_DIRS@")
+set(AFF3CT_LIBRARIES          "@AFF3CT_LIBRARIES@")
+set(AFF3CT_DEFINITIONS        "@AFF3CT_DEFINITIONS@")
+set(AFF3CT_COMPILE_OPTIONS    "@AFF3CT_COMPILE_OPTIONS@")
+set(AFF3CT_STATIC_LIB         @AFF3CT_COMPILE_STATIC_LIB@)
+set(AFF3CT_LINK_GSL           @AFF3CT_LINK_GSL@)
+set(AFF3CT_LINK_MKL           @AFF3CT_LINK_MKL@)
+set(AFF3CT_SYSTEMC_MODULE     @AFF3CT_SYSTEMC_MODULE@)
+set(AFF3CT_MPI                @AFF3CT_MPI@)
+set(AFF3CT_POLAR_BIT_PACKING  @AFF3CT_POLAR_BIT_PACKING@)
+set(AFF3CT_COLORS             @AFF3CT_COLORS@)
+set(AFF3CT_BACKTRACE          @AFF3CT_BACKTRACE@)
+set(AFF3CT_PREC               "@AFF3CT_PREC@")
+
+set(AFF3CT_INCLUDE_ROOT "@CMAKE_INSTALL_PREFIX@/include/aff3ct-@GIT_VERSION_MAJOR@.@GIT_VERSION_MINOR@.@GIT_VERSION_PATCH@@GIT_TAIL@")
+list(INSERT AFF3CT_INCLUDE_DIRS 0 "${AFF3CT_INCLUDE_ROOT}/aff3ct"
+                                  "${AFF3CT_INCLUDE_ROOT}/date"
+                                  "${AFF3CT_INCLUDE_ROOT}/MIPP"
+                                  "${AFF3CT_INCLUDE_ROOT}/rang")
+
+if (MSVC)
+    list(INSERT AFF3CT_INCLUDE_DIRS 0 "${AFF3CT_INCLUDE_ROOT}/dirent")
+endif()
+
+set(AFF3CT_LIBRARIES_ROOT "@CMAKE_INSTALL_PREFIX@/lib")
+find_library (AFF3CT_LIBRARY NAMES libaff3ct-@GIT_VERSION_MAJOR@.@GIT_VERSION_MINOR@.@GIT_VERSION_PATCH@@GIT_TAIL@.a
+                                   aff3ct-@GIT_VERSION_MAJOR@.@GIT_VERSION_MINOR@.@GIT_VERSION_PATCH@@GIT_TAIL@.lib
+                                   aff3ct-@GIT_VERSION_MAJOR@.@GIT_VERSION_MINOR@.@GIT_VERSION_PATCH@@GIT_TAIL@
+                             PATHS ${AFF3CT_LIBRARIES_ROOT})
+if (AFF3CT_SYSTEMC_MODULE) # need to link with SystemC first
+	list(INSERT AFF3CT_LIBRARIES 1 "${AFF3CT_LIBRARY}")
+else()
+	list(INSERT AFF3CT_LIBRARIES 0 "${AFF3CT_LIBRARY}")
+endif()

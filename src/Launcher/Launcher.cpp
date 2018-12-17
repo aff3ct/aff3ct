@@ -9,7 +9,7 @@
 
 #include "Tools/Display/Terminal/Terminal.hpp"
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
 
@@ -70,6 +70,7 @@ int Launcher::read_arguments()
 	try
 	{
 		this->store_args();
+		ah.set_help_display_keys(params_common.display_keys);
 	}
 	catch(const std::exception& e)
 	{
@@ -79,7 +80,7 @@ int Launcher::read_arguments()
 		tools::exception::no_backtrace = save;
 	}
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	if (this->params_common.mpi_rank == 0)
 	{
 #endif
@@ -108,7 +109,7 @@ int Launcher::read_arguments()
 
 			std::cerr << std::endl << rang::tag::info << message << std::endl;
 		}
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	}
 #endif
 
@@ -122,7 +123,7 @@ void Launcher::print_header()
 	stream << rang::tag::comment << rang::style::bold << "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
 	stream << rang::tag::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
 	stream << rang::tag::comment << rang::style::bold << rang::style::underline << "Parameters :"<< rang::style::reset << std::endl;
-	factory::Header::print_parameters({&params_common}, false, this->stream);
+	factory::Header::print_parameters({&params_common}, this->params_common.full_legend, this->stream);
 	this->stream << rang::tag::comment << std::endl;
 }
 
@@ -161,7 +162,7 @@ int Launcher::launch()
 	if (this->read_arguments() == EXIT_FAILURE)
 	{
 		// print the warnings
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (this->params_common.mpi_rank == 0)
 #endif
 			for (unsigned w = 0; w < this->cmd_warn.size(); w++)
@@ -170,7 +171,7 @@ int Launcher::launch()
 	}
 
 	// write the command and he curve name in the PyBER format
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	if (this->params_common.mpi_rank == 0)
 #endif
 	if (!this->params_common.meta.empty())
@@ -182,13 +183,13 @@ int Launcher::launch()
 	}
 
 	if (this->params_common.display_legend)
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (this->params_common.mpi_rank == 0)
 #endif
 			this->print_header();
 
 	// print the warnings
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	if (this->params_common.mpi_rank == 0)
 #endif
 		for (unsigned w = 0; w < this->cmd_warn.size(); w++)
@@ -208,7 +209,7 @@ int Launcher::launch()
 	{
 		// launch the simulation
 		if (this->params_common.display_legend)
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 			if (this->params_common.mpi_rank == 0)
 #endif
 				stream << rang::tag::comment << "The simulation is running..." << std::endl;
@@ -227,7 +228,7 @@ int Launcher::launch()
 	}
 
 	if (this->params_common.display_legend)
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (this->params_common.mpi_rank == 0)
 #endif
 			stream << rang::tag::comment << "End of the simulation." << std::endl;

@@ -29,7 +29,7 @@ bool Encoder_NO<B>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_NO<B_8>;
 template class aff3ct::module::Encoder_NO<B_16>;
 template class aff3ct::module::Encoder_NO<B_32>;

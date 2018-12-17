@@ -1,4 +1,4 @@
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 
 #ifndef MONITOR_REDUCTION_MPI_HXX_
 #define MONITOR_REDUCTION_MPI_HXX_
@@ -87,4 +87,4 @@ void Monitor_reduction_MPI<M>
 
 #endif // MONITOR_REDUCTION_MPI_HXX_
 
-#endif // ENABLE_MPI
+#endif // AFF3CT_MPI

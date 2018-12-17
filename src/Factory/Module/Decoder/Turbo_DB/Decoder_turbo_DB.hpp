@@ -31,7 +31,8 @@ struct Decoder_turbo_DB : public Decoder
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
-		int n_ite = 6;
+		int n_ite         = 6;
+		int crc_start_ite = 2;
 
 		// depending parameters
 		tools::auto_cloned_unique_ptr<Decoder_RSC_DB   ::parameters> sub;

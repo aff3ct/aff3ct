@@ -1,4 +1,6 @@
-#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
+
+#include "Tools/Documentation/documentation.h"
 
 #include "Simulation/EXIT/EXIT.hpp"
 #include "Tools/general_utils.h"
@@ -81,32 +83,25 @@ void EXIT::parameters
 	Simulation::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::EXIT::parameters::";
 
-	args.add(
-		{p+"-siga-range"},
+	tools::add_arg(args, p, class_name+"p+siga-range",
 		tools::Matlab_vector<float>(tools::Real(tools::Positive()), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
-		"sigma range used in EXIT charts (Matlab style: \"0.5:2.5,2.55,2.6:0.05:3\" with a default step of 0.1).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-siga-min", "a"},
+	tools::add_arg(args, p, class_name+"p+siga-min,a",
 		tools::Real(tools::Positive()),
-		"sigma min value used in EXIT charts.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-siga-max", "A"},
+	tools::add_arg(args, p, class_name+"p+siga-max,A",
 		tools::Real(tools::Positive()),
-		"sigma max value used in EXIT charts.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-siga-step"},
-		tools::Real(tools::Positive(), tools::Non_zero()),
-		"sigma step value used in EXIT charts.");
+	tools::add_arg(args, p, class_name+"p+siga-step",
+		tools::Real(tools::Positive(), tools::Non_zero()));
 
-	args.add_link({p+"-siga-range"}, {p+"-siga-min",  "a"});
-	args.add_link({p+"-siga-range"}, {p+"-siga-max",  "A"});
+	args.add_link({p+"-siga-range"}, {p+"-siga-min", "a"});
+	args.add_link({p+"-siga-range"}, {p+"-siga-max", "A"});
 }
 
 void EXIT::parameters
@@ -205,7 +200,7 @@ template <typename B, typename R>
 simulation::EXIT<B,R>* EXIT::parameters
 ::build() const
 {
-#if defined(SYSTEMC)
+#if defined(AFF3CT_SYSTEMC_SIMU)
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC/TLM  simulation is not available.");
 #else
 	return new simulation::EXIT<B,R>(*this);
@@ -225,7 +220,7 @@ simulation::EXIT<B,R>* EXIT
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::simulation::EXIT<B_32,R_32>* aff3ct::factory::EXIT::build<B_32,R_32>(const aff3ct::factory::EXIT::parameters&);
 template aff3ct::simulation::EXIT<B_64,R_64>* aff3ct::factory::EXIT::build<B_64,R_64>(const aff3ct::factory::EXIT::parameters&);
 #else

@@ -127,7 +127,9 @@ Codec_turbo_DB<B,Q>
 			add_post_pro(factory::Flip_and_check_DB::build<B,Q>(*dec_params.fnc, *crc));
 		}
 		else if (crc != nullptr && crc->get_size() > 0)
-			add_post_pro(new tools::CRC_checker_DB<B,Q>(*crc, 2, decoder_turbo->get_simd_inter_frame_level()));
+			add_post_pro(new tools::CRC_checker_DB<B,Q>(*crc,
+			                                            dec_params.crc_start_ite,
+			                                            decoder_turbo->get_simd_inter_frame_level()));
 
 		for (auto i = 0; i < (int)post_pros.size(); i++)
 		{
@@ -153,7 +155,7 @@ void Codec_turbo_DB<B,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Codec_turbo_DB<B_8,Q_8>;
 template class aff3ct::module::Codec_turbo_DB<B_16,Q_16>;
 template class aff3ct::module::Codec_turbo_DB<B_32,Q_32>;

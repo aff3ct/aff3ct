@@ -30,9 +30,10 @@ namespace tools
 class Argument_handler
 {
 private:
-	std::vector<std::string> command;         /*!< The argument list from the command line "char** argv". */
-	std::string              m_program_name;  /*!< Program binary name. */
-	std::ostream&            help_os;         /*!< The output stream on which will be displayed the help */
+	std::vector<std::string> command;            /*!< The argument list from the command line "char** argv". */
+	std::string              m_program_name;     /*!< Program binary name. */
+	std::ostream&            help_os;            /*!< The output stream on which will be displayed the help */
+	bool                     help_display_keys;  /*!< Display the argument keys in the help */
 
 public:
 	/*!
@@ -62,6 +63,8 @@ public:
 	 */
 	Argument_map_value parse_arguments(const Argument_map_info &args,
 	                                   std::vector<std::string> &warnings, std::vector<std::string> &errors);
+
+	void set_help_display_keys(const bool display);
 
 	/*!
 	 * \brief Checks if the values from the command line respect the criteria given by required_args and optional_args.

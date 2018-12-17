@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/RA/Decoder_RA.hpp"
 
@@ -54,6 +55,7 @@ void Decoder_RA::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_RA::parameters::";
 
 	if (itl != nullptr)
 	{
@@ -68,10 +70,8 @@ void Decoder_RA::parameters
 	tools::add_options(args.at({p+"-type", "D"}), 0, "RA");
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
 
-	args.add(
-		{p+"-ite", "i"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"maximal number of iterations in the decoder.");
+	tools::add_arg(args, p, class_name+"p+ite,i",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Decoder_RA::parameters
@@ -136,7 +136,7 @@ module::Decoder_SIHO<B,Q>* Decoder_RA
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RA::parameters::build<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RA::parameters::build<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RA::parameters::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, const std::unique_ptr<module::Encoder<B_32>>&) const;

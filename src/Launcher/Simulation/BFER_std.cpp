@@ -74,7 +74,7 @@ void BFER_std<B,R,Q>
 	this->args.erase({pmnt+"-info-bits", "K"});
 	this->args.erase({pmnt+"-fra-size",  "N"});
 	this->args.erase({pmnt+"-fra",       "F"});
-	this->args.erase({pmnt+"-max-frame", "n"});
+	this->args.erase({pmnt+"-max-fra",   "n"});
 	this->args.erase({pmnt+"-trials",    "n"});
 	this->args.erase({pter+"-info-bits", "K"});
 	this->args.erase({pter+"-cw-size",   "N"});
@@ -112,6 +112,8 @@ void BFER_std<B,R,Q>
 	params.chn->seed      = params.local_seed;
 
 	params.chn->store(this->arg_vals);
+
+	params.mdm->channel_type = params.chn->type;
 
 	auto psim = params.get_prefix();
 	if (!this->arg_vals.exist({psim+"-noise-type", "E"}))
@@ -153,6 +155,7 @@ void BFER_std<B,R,Q>
 	if (params.err_track_revert)
 	{
 		params.src->type = "USER";
+		params.src->implem = "STD";
 		params.src->path = params.err_track_path + std::string("_$noise.src");
 
 		params.cdc->enc->type = "USER";
@@ -164,11 +167,21 @@ void BFER_std<B,R,Q>
 			params.cdc->itl->core->path = params.err_track_path + std::string("_$noise.itl");
 		}
 
-		if (params.chn->type == "USER_ADD" || params.chn->type == "AWGN" || params.chn->type == "RAYLEIGH" || params.chn->type == "RAYLEIGH_USER")
+		if (params.chn->type == "AWGN")
 			params.chn->type = "USER_ADD";
-		else if (params.chn->type == "USER" || params.chn->type == "BEC" || params.chn->type == "OPTICAL")
-			params.chn->type = "USER";
-		// else params.chn->type == "NO" stays as it is
+
+		else if (params.chn->type == "BEC" || params.chn->type == "BSC")
+			params.chn->type = "USER_" + params.chn->type;
+
+		else if (params.chn->type.find("USER") == 0 || params.chn->type == "NO")
+		{} // if a "USER" type or "NO" type then stays as it is
+		else
+			std::clog << rang::tag::warning << "Channel '" << params.chn->type << " is not handled by the error"
+			          << " tracker tool.";
+
+		// TODO : need to manage "RAYLEIGH", "RAYLEIGH_USER" and "OPTICAL"
+
+		params.chn->implem = "STD";
 		params.chn->path = params.err_track_path + std::string("_$snr.chn");
 	}
 
@@ -188,7 +201,7 @@ void BFER_std<B,R,Q>
 	params.mnt_er->max_frame = params.max_frame;
 	params.mnt_mi->n_trials  = 0;
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	auto pter = params.ter->get_prefix();
 	if (!this->arg_vals.exist({pter+"-freq"}))
 		params.ter->frequency = params.mpi_comm_freq;
@@ -205,7 +218,7 @@ simulation::Simulation* BFER_std<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::BFER_std<B_8,R_8,Q_8>;
 template class aff3ct::launcher::BFER_std<B_16,R_16,Q_16>;
 template class aff3ct::launcher::BFER_std<B_32,R_32,Q_32>;

@@ -113,6 +113,7 @@ function(git_describe _var)
 	execute_process(COMMAND
 		"${GIT_EXECUTABLE}"
 		describe
+		--abbrev=7
 		${hash}
 		${ARGN}
 		WORKING_DIRECTORY

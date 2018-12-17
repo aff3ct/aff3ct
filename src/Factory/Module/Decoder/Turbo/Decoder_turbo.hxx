@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/Turbo/Decoder_turbo_std.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
@@ -76,6 +77,7 @@ void Decoder_turbo::parameters<D1,D2>
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_turbo::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
@@ -92,21 +94,17 @@ void Decoder_turbo::parameters<D1,D2>
 	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO"      );
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
 
-	args.add(
-		{p+"-ite", "i"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"maximal number of iterations in the turbo.");
+	tools::add_arg(args, p, class_name+"p+ite,i",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-sc"},
-		tools::None(),
-		"enables the self corrected decoder (requires \"--crc-type\").");
+	tools::add_arg(args, p, class_name+"p+sc",
+		tools::None());
 
-	args.add(
-		{p+"-json"},
-		tools::None(),
-		"enable the json output trace.");
+	tools::add_arg(args, p, class_name+"p+json",
+		tools::None());
 
+	tools::add_arg(args, p, class_name+"p+crc-start",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	sf->get_description(args);
 
@@ -121,6 +119,7 @@ void Decoder_turbo::parameters<D1,D2>
 	args.erase({pfnc+"-size"     });
 	args.erase({pfnc+"-fra",  "F"});
 	args.erase({pfnc+"-ite",  "i"});
+	args.erase({pfnc+"-crc-ite"  });
 
 	sub1->get_description(args);
 
@@ -148,9 +147,10 @@ void Decoder_turbo::parameters<D1,D2>
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-ite", "i"})) this->n_ite          = vals.to_int({p+"-ite", "i"});
-	if(vals.exist({p+"-sc"      })) this->self_corrected = true;
-	if(vals.exist({p+"-json"    })) this->enable_json    = true;
+	if(vals.exist({p+"-ite", "i" })) this->n_ite          = vals.to_int({p+"-ite", "i"});
+	if(vals.exist({p+"-sc"       })) this->self_corrected = true;
+	if(vals.exist({p+"-json"     })) this->enable_json    = true;
+	if(vals.exist({p+"-crc-start"})) this->crc_start_ite  = vals.to_int({p+"-crc-start"});
 
 	this->sub1->K        = this->K;
 	this->sub2->K        = this->K;
@@ -190,9 +190,10 @@ void Decoder_turbo::parameters<D1,D2>
 
 	sf->store(vals);
 
-	this->fnc->size     = this->K;
-	this->fnc->n_frames = this->n_frames;
-	this->fnc->n_ite    = this->n_ite;
+	this->fnc->size          = this->K;
+	this->fnc->n_frames      = this->n_frames;
+	this->fnc->n_ite         = this->n_ite;
+	this->fnc->crc_start_ite = this->crc_start_ite;
 
 	fnc->store(vals);
 }
@@ -211,6 +212,7 @@ void Decoder_turbo::parameters<D1,D2>
 		auto p = this->get_prefix();
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+		headers[p].push_back(std::make_pair("CRC start iteration", std::to_string(this->crc_start_ite)));
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 		headers[p].push_back(std::make_pair("Enable json", ((this->enable_json) ? "on" : "off")));

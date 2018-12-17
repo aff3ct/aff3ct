@@ -186,10 +186,10 @@ std::unique_ptr<module::Modem<B,R,Q>> BFER_ite<B,R,Q>
 {
 	if (this->distributions != nullptr)
 		return std::unique_ptr<module::Modem<B,R,Q>>(
-			params_BFER_ite.mdm->template build<B,R,Q>(*this->distributions, this->params_BFER_ite.chn->type));
+			params_BFER_ite.mdm->template build<B,R,Q>(*this->distributions));
 	else
 		return std::unique_ptr<module::Modem<B,R,Q>>(
-			params_BFER_ite.mdm->template build<B,R,Q>(this->params_BFER_ite.chn->type));
+			params_BFER_ite.mdm->template build<B,R,Q>());
 }
 
 template <typename B, typename R, typename Q>
@@ -236,7 +236,7 @@ std::unique_ptr<module::Coset<B,B>> BFER_ite<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::BFER_ite<B_8,R_8,Q_8>;
 template class aff3ct::simulation::BFER_ite<B_16,R_16,Q_16>;
 template class aff3ct::simulation::BFER_ite<B_32,R_32,Q_32>;

@@ -59,13 +59,11 @@ const Codec_SIHO::parameters* BFER_std::parameters
 	return dynamic_cast<Codec_SIHO::parameters*>(this->cdc.get());
 }
 
-
-
 template <typename B, typename R, typename Q>
 simulation::BFER_std<B,R,Q>* BFER_std::parameters
 ::build() const
 {
-#if defined(SYSTEMC)
+#if defined(AFF3CT_SYSTEMC_SIMU)
 	return new simulation::SC_BFER_std<B,R,Q>(*this);
 #else
 	return new simulation::BFER_std_threads<B,R,Q>(*this);
@@ -81,7 +79,7 @@ simulation::BFER_std<B,R,Q>* BFER_std
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::simulation::BFER_std<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_std::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::BFER_std::parameters&);
 template aff3ct::simulation::BFER_std<B_16,R_16,Q_16>* aff3ct::factory::BFER_std::build<B_16,R_16,Q_16>(const aff3ct::factory::BFER_std::parameters&);
 template aff3ct::simulation::BFER_std<B_32,R_32,Q_32>* aff3ct::factory::BFER_std::build<B_32,R_32,Q_32>(const aff3ct::factory::BFER_std::parameters&);

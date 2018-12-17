@@ -20,17 +20,17 @@ struct Flip_and_check : public Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		int  size                = -1;
+		int  size          = -1;
 
 		// optional parameters
-		bool enable              = false;
-		int  q                   = 10;
-		int  n_ite               = 6;
-		int  ite_min             = 3;
-		int  ite_max             = 10;
-		int  ite_step            = 1;
-		int  start_crc_check_ite = 2;
-		int  n_frames            = 1;
+		bool enable        = false;
+		int  q             = 10;
+		int  n_ite         = 6;
+		int  ite_min       = 3;
+		int  ite_max       = 10;
+		int  ite_step      = 1;
+		int  crc_start_ite = 2;
+		int  n_frames      = 1;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Flip_and_check_prefix);

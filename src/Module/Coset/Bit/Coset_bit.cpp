@@ -19,7 +19,7 @@ void Coset_bit<B,D>::_apply(const B *ref, const D *in, D *out, const int frame_i
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Coset_bit<B_8,  B_8 >;
 template class aff3ct::module::Coset_bit<B_16, B_16>;
 template class aff3ct::module::Coset_bit<B_32, B_32>;

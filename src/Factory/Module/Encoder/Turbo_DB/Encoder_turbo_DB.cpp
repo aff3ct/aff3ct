@@ -72,11 +72,6 @@ void Encoder_turbo_DB::parameters
 
 	tools::add_options(args.at({p+"-type"}), 0, "TURBO_DB");
 
-	args.add(
-		{p+"-json-path"},
-		tools::File(tools::openmode::write),
-		"path to store the encoder and decoder traces formated in JSON.");
-
 	sub->get_description(args);
 
 	auto ps = sub->get_prefix();
@@ -131,9 +126,6 @@ void Encoder_turbo_DB::parameters
 	if (this->tail_length)
 		headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
-	if (!this->json_path.empty())
-		headers[p].push_back(std::make_pair("Path to the JSON file", this->json_path));
-
 	sub->get_headers(headers, full);
 }
 
@@ -157,7 +149,7 @@ module::Encoder_turbo_DB<B>* Encoder_turbo_DB
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_turbo_DB<B_8 >* aff3ct::factory::Encoder_turbo_DB::parameters::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&, aff3ct::module::Encoder_RSC_DB<B_8 >&) const;
 template aff3ct::module::Encoder_turbo_DB<B_16>* aff3ct::factory::Encoder_turbo_DB::parameters::build<B_16>(const aff3ct::module::Interleaver<B_16>&, aff3ct::module::Encoder_RSC_DB<B_16>&) const;
 template aff3ct::module::Encoder_turbo_DB<B_32>* aff3ct::factory::Encoder_turbo_DB::parameters::build<B_32>(const aff3ct::module::Interleaver<B_32>&, aff3ct::module::Encoder_RSC_DB<B_32>&) const;

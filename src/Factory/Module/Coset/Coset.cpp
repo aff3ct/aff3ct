@@ -1,3 +1,5 @@
+#include "Tools/Documentation/documentation.h"
+
 #include "Module/Coset/Bit/Coset_bit.hpp"
 #include "Module/Coset/Real/Coset_real.hpp"
 
@@ -25,22 +27,17 @@ void Coset::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Coset::parameters::";
 
-	args.add(
-		{p+"-size", "N"},
+	tools::add_arg(args, p, class_name+"p+size",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"coset size.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("STD")),
-		"coset type.");
+	tools::add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("STD")));
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Coset::parameters
@@ -97,7 +94,7 @@ module::Coset<B,R>* Coset
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Coset<B_8 ,B_8 >* aff3ct::factory::Coset::parameters::build_bit<B_8 ,B_8 >() const;
 template aff3ct::module::Coset<B_16,B_16>* aff3ct::factory::Coset::parameters::build_bit<B_16,B_16>() const;
 template aff3ct::module::Coset<B_32,B_32>* aff3ct::factory::Coset::parameters::build_bit<B_32,B_32>() const;
@@ -111,7 +108,7 @@ template aff3ct::module::Coset<B,B>* aff3ct::factory::Coset::parameters::build_b
 template aff3ct::module::Coset<B,B>* aff3ct::factory::Coset::build_bit<B,B>(const aff3ct::factory::Coset::parameters&);
 #endif
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Coset<B_8 ,Q_8 >* aff3ct::factory::Coset::parameters::build_real<B_8 ,Q_8 >() const;
 template aff3ct::module::Coset<B_16,Q_16>* aff3ct::factory::Coset::parameters::build_real<B_16,Q_16>() const;
 template aff3ct::module::Coset<B_32,Q_32>* aff3ct::factory::Coset::parameters::build_real<B_32,Q_32>() const;

@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Encoder_RSC_DB.hpp"
 
@@ -29,20 +30,17 @@ void Encoder_RSC_DB::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_RSC_DB::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
 	tools::add_options(args.at({p+"-type"}), 0, "RSC_DB");
 
-	args.add(
-		{p+"-std"},
-		tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")),
-		"select a standard and set automatically some parameters (overwritten with user given arguments).");
+	tools::add_arg(args, p, class_name+"p+std",
+		tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")));
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"disable the buffered encoding.");
+	tools::add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 }
 
 void Encoder_RSC_DB::parameters
@@ -90,7 +88,7 @@ module::Encoder_RSC_DB<B>* Encoder_RSC_DB
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_RSC_DB<B_8 >* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_8 >() const;
 template aff3ct::module::Encoder_RSC_DB<B_16>* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_16>() const;
 template aff3ct::module::Encoder_RSC_DB<B_32>* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_32>() const;

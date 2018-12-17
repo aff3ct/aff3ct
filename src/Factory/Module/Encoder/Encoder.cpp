@@ -1,6 +1,6 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
-#include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Encoder/AZCW/Encoder_AZCW.hpp"
 #include "Module/Encoder/Coset/Encoder_coset.hpp"
 #include "Module/Encoder/User/Encoder_user.hpp"
@@ -35,43 +35,30 @@ void Encoder::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder::parameters::";
 
-	args.add(
-		{p+"-info-bits", "K"},
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-cw-size", "N"},
+	tools::add_arg(args, p, class_name+"p+cw-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("NO", "USER", "AZCW", "COSET")),
-		"type of the encoder to use in the simulation.");
+	tools::add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("AZCW", "COSET", "USER")));
 
-	args.add(
-		{p+"-path"},
-		tools::File(tools::openmode::read),
-		"path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\".");
+	tools::add_arg(args, p, class_name+"p+path",
+		tools::File(tools::openmode::read));
 
-	args.add(
-		{p+"-start-idx"},
-		tools::Integer(tools::Positive()),
-		"Start idx to use in the USER type encoder.");
+	tools::add_arg(args, p, class_name+"p+start-idx",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-seed", "S"},
-		tools::Integer(tools::Positive()),
-		"seed used to initialize the pseudo random generators.");
+	tools::add_arg(args, p, class_name+"p+seed,S",
+		tools::Integer(tools::Positive()));
 }
 
 void Encoder::parameters
@@ -79,14 +66,14 @@ void Encoder::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int({p+"-info-bits", "K"});
-	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int({p+"-cw-size",   "N"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int({p+"-fra",       "F"});
-	if(vals.exist({p+"-seed",      "S"})) this->seed       = vals.to_int({p+"-seed",      "S"});
-	if(vals.exist({p+"-type"          })) this->type       = vals.at    ({p+"-type"          });
-	if(vals.exist({p+"-path"          })) this->path       = vals.at    ({p+"-path"          });
+	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int ({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int ({p+"-fra",       "F"});
+	if(vals.exist({p+"-seed",      "S"})) this->seed       = vals.to_int ({p+"-seed",      "S"});
+	if(vals.exist({p+"-type"          })) this->type       = vals.at     ({p+"-type"          });
+	if(vals.exist({p+"-path"          })) this->path       = vals.to_file({p+"-path"          });
 	if(vals.exist({p+"-no-sys"        })) this->systematic = false;
-	if(vals.exist({p+"-start-idx"     })) this->start_idx  = vals.to_int({p+"-start-idx"     });
+	if(vals.exist({p+"-start-idx"     })) this->start_idx  = vals.to_int ({p+"-start-idx"     });
 
 	this->R = (float)this->K / (float)this->N_cw;
 }
@@ -112,7 +99,6 @@ template <typename B>
 module::Encoder<B>* Encoder::parameters
 ::build() const
 {
-	if (this->type == "NO"   ) return new module::Encoder_NO   <B>(this->K,                         this->n_frames);
 	if (this->type == "AZCW" ) return new module::Encoder_AZCW <B>(this->K, this->N_cw,             this->n_frames);
 	if (this->type == "COSET") return new module::Encoder_coset<B>(this->K, this->N_cw, this->seed, this->n_frames);
 	if (this->type == "USER" ) return new module::Encoder_user <B>(this->K, this->N_cw, this->path, this->n_frames, this->start_idx);
@@ -129,7 +115,7 @@ module::Encoder<B>* Encoder
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder::parameters::build<B_8 >() const;
 template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder::parameters::build<B_16>() const;
 template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder::parameters::build<B_32>() const;
