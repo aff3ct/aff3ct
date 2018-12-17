@@ -937,6 +937,15 @@
 #ifndef SPARSE_MATRIX_HPP_
 #include <Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp>
 #endif
+#ifndef VECTOR_2D_HPP_
+#include <Tools/Algo/Multidimensional_vector/Vector_2D.hpp>
+#endif
+#ifndef VECTOR_3D_HPP_
+#include <Tools/Algo/Multidimensional_vector/Vector_3D.hpp>
+#endif
+#ifndef VECTOR_4D_HPP_
+#include <Tools/Algo/Multidimensional_vector/Vector_4D.hpp>
+#endif
 #ifndef PREDICATE_HPP
 #include <Tools/Algo/Predicate.hpp>
 #endif
@@ -1239,6 +1248,9 @@
 #endif
 #ifndef RS_POLYNOMIAL_GENERATOR_HPP
 #include <Tools/Code/RS/RS_polynomial_generator.hpp>
+#endif
+#ifndef CODEBOOK_HPP_
+#include <Tools/Code/SCMA/Codebook.hpp>
 #endif
 #ifndef MODEM_SCMA_FUNCTIONS_HPP
 #include <Tools/Code/SCMA/modem_SCMA_functions.hpp>
