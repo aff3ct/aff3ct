@@ -158,8 +158,11 @@ void BFER_std<B,R,Q>
 		params.src->implem = "STD";
 		params.src->path = params.err_track_path + std::string("_$noise.src");
 
-		params.cdc->enc->type = "USER";
-		params.cdc->enc->path = params.err_track_path + std::string("_$noise.enc");
+		if (params.cdc->enc->type != "LDPC_DVBS2")
+		{
+			params.cdc->enc->type = "USER";
+			params.cdc->enc->path = params.err_track_path + std::string("_$noise.enc");
+		}
 
 		if (params.cdc->itl != nullptr && params.cdc->itl->core->uniform)
 		{

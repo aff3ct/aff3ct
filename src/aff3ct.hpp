@@ -448,6 +448,12 @@
 #ifndef DECODER_LDPC_BP_FLOODING_GALLAGER_A_HPP_
 #include <Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp>
 #endif
+#ifndef DECODER_LDPC_BP_FLOODING_GALLAGER_B_HPP_
+#include <Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_B.hpp>
+#endif
+#ifndef DECODER_LDPC_BP_FLOODING_GALLAGER_E_HPP_
+#include <Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_E.hpp>
+#endif
 #ifndef DECODER_LDPC_BP_FLOODING_SPA_HPP_
 #include <Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_SPA.hpp>
 #endif
