@@ -10,12 +10,8 @@
 #include "Module/Modem/OOK/Modem_OOK_optical_rop_estimate.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK_fast.hpp"
-#include "Module/Modem/PAM/Modem_PAM.hpp"
-#include "Module/Modem/QAM/Modem_QAM.hpp"
-#include "Module/Modem/PSK/Modem_PSK.hpp"
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 #include "Module/Modem/SCMA/Modem_SCMA.hpp"
-#include "Module/Modem/User/Modem_user.hpp"
 #include "Module/Modem/Generic/Modem_generic.hpp"
 
 #include "Tools/Constellation/PAM/Constellation_PAM.hpp"
