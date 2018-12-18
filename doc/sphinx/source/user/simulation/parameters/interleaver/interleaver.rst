@@ -120,7 +120,7 @@ Description of the allowed values:
 
    :Type: file
    :Rights: read only
-   :Examples: ``--itl-path ../conf/itl/GSM-LDPC_4224.itl``
+   :Examples: ``--itl-path conf/itl/GSM-LDPC_4224.itl``
 
 |factory::Interleaver_core::parameters::p+path|
 

@@ -109,7 +109,7 @@ to 3.
 
    :Type: file
    :Rights: read/write
-   :Examples: ``--mdm-const-path ../conf/mod/16QAM_ANTI_GRAY.mod``
+   :Examples: ``--mdm-const-path conf/mod/16QAM_ANTI_GRAY.mod``
 
 |factory::Modem::parameters::p+const-path|
 
@@ -393,9 +393,11 @@ See the :ref:`mdm-mdm-no-sig2` parameter to disable the division by
 
    :Type: file
    :Rights: read/write
-   :Examples: ``--mdm-codebook ../conf/mod/SCMA/CS1.cb``
+   :Examples: ``--mdm-codebook conf/mod/SCMA/CS1.cb``
 
 |factory::Modem::parameters::p+codebook|
+
+.. note:: Only 3 |BPS| codebook symbols are supported at this time.
 
 .. rubric:: Codebook format
 
@@ -417,7 +419,6 @@ The codebook file then looks as a table of :math:`V \times K` rows and
    Re(User V, Resource 1, Code 1)    Im(User V, Resource 1, Code 1)    ...    Re(User V, Resource 1, Code M)    Im(User V, Resource 1, Code M)
    ...                               ...                               ...    ...                               ...
    Re(User V, Resource K, Code 1)    Im(User V, Resource K, Code 1)    ...    Re(User V, Resource K, Code M)    Im(User V, Resource K, Code M)
-
 
 .. rubric:: Descriptions of the codebooks of the configuration files
 
@@ -447,6 +448,7 @@ The simulation results for **CS1**-**CS7** (|AWGN| and Rayleigh fading channels)
 can be found in :cite:`Klimentyev2017`.
 The simulation results for **CS8** can be found in :cite:`Klimentyev2016`
 (defined as **CS2** in the paper).
+
 
 
 .. _mdm-mdm-rop-est:

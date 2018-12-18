@@ -116,7 +116,7 @@ modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
 
    :Type: file
    :Rights: read only
-   :Examples: ``--src-path ../conf/src/GSM-LDPC_2112.src``
+   :Examples: ``--src-path conf/src/GSM-LDPC_2112.src``
 
 |factory::Source::parameters::p+path|
 
