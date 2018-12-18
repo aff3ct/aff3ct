@@ -1423,6 +1423,9 @@
 #ifndef INTERPOLATION_H_
 #include <Tools/Math/interpolation.h>
 #endif
+#ifndef MATH_CONSTANTS_H
+#include <Tools/Math/math_constants.h>
+#endif
 #ifndef MATRIX_H
 #include <Tools/Math/matrix.h>
 #endif
