@@ -151,9 +151,8 @@ with an anti-Gray mapping (the lines starting with a ``#`` are ignored):
    # 1111
    -3  3
 
-.. warning:: The :ref:`mdm-mdm-bps` parameter has to be set accordingly to the
-   given constellation. In the previous example, ``--mdm-bps 4`` has be added
-   to the command line.
+.. note:: The number of bits per symbol is automatically computed from the
+   number of given symbols. The latter has to be a power of 2.
 
 .. _mdm-mdm-max:
 

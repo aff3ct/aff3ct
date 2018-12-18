@@ -79,7 +79,7 @@ set(AFF3CT_COMPILE_OPTIONS "")
 
 include(GetGitRevisionDescription)
 get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-git_describe(GIT_VERSION "--tags")
+git_describe(GIT_VERSION "--tags" "--abbrev=7")
 
 string(REGEX REPLACE "^v"                    "" GIT_VERSION_RMV   ${GIT_VERSION})
 string(REGEX REPLACE "-.*"                   "" GIT_VERSION_MMP   ${GIT_VERSION_RMV})

@@ -16,6 +16,12 @@
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 #include "Module/Modem/SCMA/Modem_SCMA.hpp"
 #include "Module/Modem/User/Modem_user.hpp"
+#include "Module/Modem/Generic/Modem_generic.hpp"
+
+#include "Tools/Constellation/PAM/Constellation_PAM.hpp"
+#include "Tools/Constellation/PSK/Constellation_PSK.hpp"
+#include "Tools/Constellation/QAM/Constellation_QAM.hpp"
+#include "Tools/Constellation/User/Constellation_user.hpp"
 
 #include "Modem.hpp"
 
@@ -166,20 +172,27 @@ void Modem::parameters
 
 
 
-	this->complex = is_complex_mod(this->type, this->bps);
+	std::unique_ptr<tools::Constellation<float>> cstl(this->build_constellation<float>());
+
+	if (cstl != nullptr && this->type == "USER")
+		this->bps = cstl->get_n_bits_per_symbol();
+
+	this->complex = is_complex_mod(this->type, this->bps, cstl.get());
 
 	this->N_mod = get_buffer_size_after_modulation(this->type,
 	                                               this->N,
 	                                               this->bps,
 	                                               this->cpm_upf,
 	                                               this->cpm_L,
-	                                               this->cpm_p);
+	                                               this->cpm_p,
+	                                               cstl.get());
 
 	this->N_fil = get_buffer_size_after_filtering (this->type,
 	                                               this->N,
 	                                               this->bps,
 	                                               this->cpm_L,
-	                                               this->cpm_p);
+	                                               this->cpm_p,
+	                                               cstl.get());
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(vals.exist({p+"-no-sig2"})) this->no_sig2 = true;
@@ -246,17 +259,29 @@ void Modem::parameters
 	}
 }
 
+template <typename R>
+tools::Constellation<R>* Modem::parameters
+::build_constellation() const
+{
+	if (this->type == "PAM" ) return new tools::Constellation_PAM <R>(this->bps);
+	if (this->type == "QAM" ) return new tools::Constellation_QAM <R>(this->bps);
+	if (this->type == "PSK" ) return new tools::Constellation_PSK <R>(this->bps);
+	if (this->type == "USER") return new tools::Constellation_user<R>(this->const_path);
+
+	return nullptr;
+}
+
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build() const
 {
-	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                                           this->no_sig2, this->n_frames);
-	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                   tools::Sigma<R>((R)this->noise),                                                                                                           this->no_sig2, this->n_frames);
-	if (this->type == "PAM"  && this->implem == "STD" ) return new module::Modem_PAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                                this->no_sig2, this->n_frames);
-	if (this->type == "QAM"  && this->implem == "STD" ) return new module::Modem_QAM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                                this->no_sig2, this->n_frames);
-	if (this->type == "PSK"  && this->implem == "STD" ) return new module::Modem_PSK      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps,                                                                                                this->no_sig2, this->n_frames);
-	if (this->type == "USER" && this->implem == "STD" ) return new module::Modem_user     <B,R,Q,MAX>(this->N, this->const_path, tools::Sigma<R>((R)this->noise), this->bps,                                                                                                this->no_sig2, this->n_frames);
-	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N,                   tools::Sigma<R>((R)this->noise), this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
+	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N, tools::Sigma<R>((R)this->noise),                                                                                                           this->no_sig2, this->n_frames);
+	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N, tools::Sigma<R>((R)this->noise),                                                                                                           this->no_sig2, this->n_frames);
+	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
+
+
+	std::unique_ptr<tools::Constellation<R>> cstl(this->build_constellation<R>());
+	if (cstl != nullptr) return new module::Modem_generic<B,R,Q,MAX>(N, std::move(cstl), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -326,22 +351,28 @@ module::Modem<B,R,Q>* Modem
 	return params.template build<B,R,Q>(dist);
 }
 
+bool Modem
+::has_constellation(const std::string &type)
+{
+	return type == "PAM" || type == "QAM" || type == "PSK" || type == "USER";
+}
+
 int Modem
 ::get_buffer_size_after_modulation(const std::string &type,
                                    const int         N,
                                    const int         bps,
                                    const int         cpm_upf,
                                    const int         cpm_L,
-                                   const int         cpm_p)
+                                   const int         cpm_p,
+                                   const tools::Constellation<float>* c)
 {
-	if (type == "BPSK") return module::Modem_BPSK     <>::size_mod(N                            );
-	if (type == "OOK" ) return module::Modem_OOK      <>::size_mod(N                            );
-	if (type == "SCMA") return module::Modem_SCMA     <>::size_mod(N, bps                       );
-	if (type == "PAM" ) return module::Modem_PAM      <>::size_mod(N, bps                       );
-	if (type == "QAM" ) return module::Modem_QAM      <>::size_mod(N, bps                       );
-	if (type == "PSK" ) return module::Modem_PSK      <>::size_mod(N, bps                       );
-	if (type == "USER") return module::Modem_user     <>::size_mod(N, bps                       );
-	if (type == "CPM" ) return module::Modem_CPM      <>::size_mod(N, bps, cpm_L, cpm_p, cpm_upf);
+	if (c != nullptr && has_constellation(type))
+		return module::Modem_generic<>::size_mod(N, *c);
+
+	if (type == "BPSK") return module::Modem_BPSK<>::size_mod(N                            );
+	if (type == "OOK" ) return module::Modem_OOK <>::size_mod(N                            );
+	if (type == "SCMA") return module::Modem_SCMA<>::size_mod(N, bps                       );
+	if (type == "CPM" ) return module::Modem_CPM <>::size_mod(N, bps, cpm_L, cpm_p, cpm_upf);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -351,45 +382,43 @@ int Modem
                                   const int         N,
                                   const int         bps,
                                   const int         cpm_L,
-                                  const int         cpm_p)
+                                  const int         cpm_p,
+                                  const tools::Constellation<float>* c)
 {
+	if (c != nullptr && has_constellation(type))
+		return module::Modem_generic<>::size_fil(N, *c);
+
 	if (type == "BPSK") return module::Modem_BPSK<>::size_fil(N                   );
 	if (type == "OOK" ) return module::Modem_OOK <>::size_fil(N                   );
 	if (type == "SCMA") return module::Modem_SCMA<>::size_fil(N, bps              );
-	if (type == "PAM" ) return module::Modem_PAM <>::size_fil(N, bps              );
-	if (type == "QAM" ) return module::Modem_QAM <>::size_fil(N, bps              );
-	if (type == "PSK" ) return module::Modem_PSK <>::size_fil(N, bps              );
-	if (type == "USER") return module::Modem_user<>::size_fil(N, bps              );
 	if (type == "CPM" ) return module::Modem_CPM <>::size_fil(N, bps, cpm_L, cpm_p);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 bool Modem
-::is_complex_mod(const std::string &type, const int bps)
+::is_complex_mod(const std::string &type, const int bps, const tools::Constellation<float>* c)
 {
+	if (c != nullptr && has_constellation(type))
+		return module::Modem_generic<>::is_complex_mod(*c);
+
 	if (type == "BPSK") return module::Modem_BPSK<>::is_complex_mod();
 	if (type == "OOK" ) return module::Modem_OOK <>::is_complex_mod();
 	if (type == "SCMA") return module::Modem_SCMA<>::is_complex_mod();
-	if (type == "PAM" ) return module::Modem_PAM <>::is_complex_mod();
-	if (type == "QAM" ) return module::Modem_QAM <>::is_complex_mod();
-	if (type == "PSK" ) return module::Modem_PSK <>::is_complex_mod();
-	if (type == "USER") return module::Modem_user<>::is_complex_mod();
 	if (type == "CPM" ) return module::Modem_CPM <>::is_complex_mod();
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 bool Modem
-::is_complex_fil(const std::string &type, const int bps)
+::is_complex_fil(const std::string &type, const int bps, const tools::Constellation<float>* c)
 {
+	if (c != nullptr && has_constellation(type))
+		return module::Modem_generic<>::is_complex_fil(*c);
+
 	if (type == "BPSK") return module::Modem_BPSK<>::is_complex_fil();
 	if (type == "OOK" ) return module::Modem_OOK <>::is_complex_fil();
 	if (type == "SCMA") return module::Modem_SCMA<>::is_complex_fil();
-	if (type == "PAM" ) return module::Modem_PAM <>::is_complex_fil();
-	if (type == "QAM" ) return module::Modem_QAM <>::is_complex_fil();
-	if (type == "PSK" ) return module::Modem_PSK <>::is_complex_fil();
-	if (type == "USER") return module::Modem_user<>::is_complex_fil();
 	if (type == "CPM" ) return module::Modem_CPM <>::is_complex_fil();
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -437,4 +466,5 @@ template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::parameters::build
 template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const aff3ct::factory::Modem::parameters&, const tools::Distributions<R>&);
 #endif
 #endif
+
 // ==================================================================================== explicit template instantiation

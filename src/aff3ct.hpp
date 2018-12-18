@@ -448,6 +448,12 @@
 #ifndef DECODER_LDPC_BP_FLOODING_GALLAGER_A_HPP_
 #include <Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp>
 #endif
+#ifndef DECODER_LDPC_BP_FLOODING_GALLAGER_B_HPP_
+#include <Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_B.hpp>
+#endif
+#ifndef DECODER_LDPC_BP_FLOODING_GALLAGER_E_HPP_
+#include <Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_E.hpp>
+#endif
 #ifndef DECODER_LDPC_BP_FLOODING_SPA_HPP_
 #include <Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_SPA.hpp>
 #endif
@@ -729,6 +735,9 @@
 #endif
 #ifndef MODEM_CPM_HPP_
 #include <Module/Modem/CPM/Modem_CPM.hpp>
+#endif
+#ifndef MODEM_GENERIC_HPP_
+#include <Module/Modem/Generic/Modem_generic.hpp>
 #endif
 #ifndef MODEM_HPP_
 #include <Module/Modem/Modem.hpp>
@@ -1290,6 +1299,21 @@
 #endif
 #ifndef SELF_CORRECTED_HPP
 #include <Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp>
+#endif
+#ifndef CONSTELLATION_HPP__
+#include <Tools/Constellation/Constellation.hpp>
+#endif
+#ifndef CONSTELLATION_PAM_HPP__
+#include <Tools/Constellation/PAM/Constellation_PAM.hpp>
+#endif
+#ifndef CONSTELLATION_PSK_HPP__
+#include <Tools/Constellation/PSK/Constellation_PSK.hpp>
+#endif
+#ifndef CONSTELLATION_QAM_HPP__
+#include <Tools/Constellation/QAM/Constellation_QAM.hpp>
+#endif
+#ifndef CONSTELLATION_USER_HPP__
+#include <Tools/Constellation/User/Constellation_user.hpp>
 #endif
 #ifndef DUMPER_HPP_
 #include <Tools/Display/Dumper/Dumper.hpp>
