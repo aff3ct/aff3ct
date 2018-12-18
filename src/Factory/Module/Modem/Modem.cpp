@@ -150,8 +150,10 @@ void Modem::parameters
 
 	if (this->type == "SCMA")
 	{
-		this->bps = 3; // set by default the number of bits per symbol to 3 when SCMA mod
-		this->n_frames = tools::Codebook<float>(this->codebook).get_number_of_users();
+		tools::Codebook<float> cb(this->codebook);
+
+		this->bps      = cb.get_system_bps(); // codebook bps is float so here bps is stocked rounded
+		this->n_frames = cb.get_number_of_users();
 	}
 
 	if(vals.exist({p+"-fra-size", "N"})) this->N              = vals.to_int ({p+"-fra-size", "N"});
@@ -290,10 +292,11 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem::parameters
 ::_build_scma() const
 {
-	if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, this->codebook, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, this->codebook, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, this->codebook, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, this->codebook, tools::Sigma<R>((R)this->noise), this->bps, this->no_sig2, this->n_ite, this->n_frames);
+	std::unique_ptr<tools::Codebook<R>> CB(new tools::Codebook<R>(this->codebook));
+	if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, std::move(CB), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, std::move(CB), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, std::move(CB), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, std::move(CB), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_ite, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

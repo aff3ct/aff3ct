@@ -16,21 +16,21 @@ namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
-::Modem_SCMA(const int N, const std::string& codebook_path, const tools::Noise<R>& noise, const int bps,
+::Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& _CB, const tools::Noise<R>& noise,
              const bool disable_sig2, const int n_ite, const int n_frames)
 : Modem<B,R,Q>(N,
-               Modem_SCMA<B,R,Q,PSI>::size_mod(N, bps),
-               Modem_SCMA<B,R,Q,PSI>::size_fil(N, bps),
+               Modem_SCMA<B,R,Q,PSI>::size_mod(N, _CB->get_system_bps()),
+               Modem_SCMA<B,R,Q,PSI>::size_fil(N, _CB->get_system_bps()),
                noise,
                n_frames),
-  CB                   (codebook_path),
+  CB_ptr               (std::move(_CB)),
+  CB                   (*CB_ptr),
   arr_phi              (CB.get_number_of_resources(), CB.get_codebook_size(),       CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
   msg_user_to_resources(CB.get_number_of_users(),     CB.get_number_of_resources(), CB.get_codebook_size(),                         (Q)0),
   msg_res_user         (CB.get_number_of_resources(), CB.get_number_of_users(),     CB.get_codebook_size(),                         (Q)0),
   guess                (CB.get_number_of_users(),     CB.get_codebook_size(),                                                       (Q)0),
   disable_sig2         (disable_sig2 ),
-  n_ite                (n_ite        ),
-  bps                  (bps          )
+  n_ite                (n_ite        )
 {
 	const std::string name = "Modem_SCMA";
 	this->set_name(name);
@@ -40,13 +40,6 @@ Modem_SCMA<B,R,Q,PSI>
 		std::stringstream message;
 		message << "'n_frames' has to be equal to CB.get_number_of_users() ('n_frames' = " << n_frames
 		        << ", 'CB.get_number_of_users()' = " << CB.get_number_of_users() << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (fabs(bps - CB.get_system_bps()) > std::numeric_limits<double>::epsilon())
-	{
-		std::stringstream message;
-		message << "'bps' has to be equal to " << CB.get_system_bps() << " ('bps' = " << bps << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -95,7 +88,7 @@ void Modem_SCMA<B,R,Q,PSI>
 
 			for (auto i = 0 ; i < CB.get_number_of_resources() ; i++)
 			{
-				X_N2[f * N_mod + CB.get_number_of_real_symbols() * j + 2 * i   ] = CB(f, i, idx).real();
+				X_N2[f * N_mod + CB.get_number_of_real_symbols() * j + 2 * i    ] = CB(f, i, idx).real();
 				X_N2[f * N_mod + CB.get_number_of_real_symbols() * j + 2 * i + 1] = CB(f, i, idx).imag();
 			}
 		}
@@ -109,7 +102,7 @@ void Modem_SCMA<B,R,Q,PSI>
 
 			for (auto i = 0 ; i < CB.get_number_of_resources() ; i++)
 			{
-				X_N2[f * N_mod + CB.get_number_of_real_symbols() * (this->N / 2) + 2 * i   ] = CB(f, i, idx).real();
+				X_N2[f * N_mod + CB.get_number_of_real_symbols() * (this->N / 2) + 2 * i    ] = CB(f, i, idx).real();
 				X_N2[f * N_mod + CB.get_number_of_real_symbols() * (this->N / 2) + 2 * i + 1] = CB(f, i, idx).imag();
 			}
 		}

@@ -22,7 +22,9 @@ template <typename B = int, typename R = float, typename Q = R, tools::proto_psi
 class Modem_SCMA : public Modem<B,R,Q>
 {
 private:
-	const tools::Codebook<R> CB;
+	std::unique_ptr<const tools::Codebook<R>> CB_ptr;
+	const tools::Codebook<R>& CB;
+
 	tools::Vector_4D<Q>      arr_phi;
 	tools::Vector_3D<Q>      msg_user_to_resources;
 	tools::Vector_3D<Q>      msg_res_user;
@@ -30,11 +32,10 @@ private:
 	const bool               disable_sig2;
 	      R                  n0; // 1 / n0 = 179.856115108
 	const int                n_ite;
-	const int                bps;
 
 public:
-	Modem_SCMA(const int N, const std::string& codebook_path, const tools::Noise<R>& noise = tools::Sigma<R>(), const int bps = 3, const bool disable_sig2 = false,
-	           const int n_ite = 1, const int n_frames = 6);
+	Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& CB, const tools::Noise<R>& noise = tools::Sigma<R>(),
+	           const bool disable_sig2 = false, const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA() = default;
 
 	virtual void set_noise(const tools::Noise<R>& noise);
