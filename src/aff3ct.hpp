@@ -760,20 +760,8 @@
 #ifndef MODEM_OOK_OPTICAL_ROP_ESTIMATE_HPP_
 #include <Module/Modem/OOK/Modem_OOK_optical_rop_estimate.hpp>
 #endif
-#ifndef MODEM_PAM_HPP_
-#include <Module/Modem/PAM/Modem_PAM.hpp>
-#endif
-#ifndef MODEM_PSK_HPP_
-#include <Module/Modem/PSK/Modem_PSK.hpp>
-#endif
-#ifndef MODEM_QAM_HPP_
-#include <Module/Modem/QAM/Modem_QAM.hpp>
-#endif
 #ifndef MODEM_SCMA_HPP_
 #include <Module/Modem/SCMA/Modem_SCMA.hpp>
-#endif
-#ifndef MODEM_USER_HPP_
-#include <Module/Modem/User/Modem_user.hpp>
 #endif
 #ifndef MODULE_HPP_
 #include <Module/Module.hpp>
