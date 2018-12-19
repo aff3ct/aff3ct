@@ -138,9 +138,11 @@ std::unique_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 ::build_codec(const int tid)
 {
 	const auto seed_enc = rd_engine_seed[tid]();
+	const auto seed_dec = rd_engine_seed[tid]();
 
 	std::unique_ptr<factory::Codec::parameters> params_cdc(params_BFER_std.cdc->clone());
 	params_cdc->enc->seed = seed_enc;
+	params_cdc->dec->seed = seed_dec;
 
 	if (params_cdc->itl != nullptr)
 	{

@@ -52,6 +52,9 @@ void Decoder::parameters
 
 	tools::add_arg(args, p, class_name+"p+flips",
 		tools::Integer(tools::Positive()));
+
+	tools::add_arg(args, p, class_name+"p+seed",
+		tools::Integer(tools::Positive()));
 }
 
 void Decoder::parameters
@@ -63,6 +66,7 @@ void Decoder::parameters
 	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int({p+"-cw-size",   "N"});
 	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int({p+"-fra",       "F"});
 	if(vals.exist({p+"-flips"         })) this->flips      = vals.to_int({p+"-flips"         });
+	if(vals.exist({p+"-seed"          })) this->seed       = vals.to_int({p+"-seed"          });
 	if(vals.exist({p+"-type",      "D"})) this->type       = vals.at    ({p+"-type",      "D"});
 	if(vals.exist({p+"-implem"        })) this->implem     = vals.at    ({p+"-implem"        });
 	if(vals.exist({p+"-no-sys"        })) this->systematic = false;
@@ -87,6 +91,8 @@ void Decoder::parameters
 		headers[p].push_back(std::make_pair("Distance", this->hamming ? "Hamming" : "Euclidean"));
 	if(this->type == "CHASE")
 		headers[p].push_back(std::make_pair("Max flips", std::to_string(this->flips)));
+
+	if (full) headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
 }
 
 template <typename B, typename Q>

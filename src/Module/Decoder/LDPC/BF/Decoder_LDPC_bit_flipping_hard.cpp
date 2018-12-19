@@ -1,110 +1,66 @@
-#include "Decoder_LDPC_BP_peeling.hpp"
+#include <chrono>
+#include <numeric>
+#include <limits>
+#include <sstream>
 
 #include "Tools/Perf/common/hard_decide.h"
-#include "Tools/Noise/noise_utils.h"
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
+
+#include "Decoder_LDPC_bit_flipping_hard.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-template<typename B, typename R>
-Decoder_LDPC_BP_peeling<B,R>::Decoder_LDPC_BP_peeling(const int K, const int N, const int n_ite,
-                                                      const tools::Sparse_matrix &_H,
-                                                      const std::vector<unsigned> &info_bits_pos,
-                                                      const bool enable_syndrome, const int syndrome_depth,
-                                                      const int n_frames)
-: Decoder               (K, N, n_frames, 1),
-  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1),
-  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
+// constexpr int C_to_V_max = 15; // saturation value for the LLRs/extrinsics
 
-  info_bits_pos  (info_bits_pos       ),
-  var_nodes      (N                   ),
-  check_nodes    (this->H.get_n_cols())
+template <typename B, typename R>
+Decoder_LDPC_bit_flipping_hard<B,R>
+::Decoder_LDPC_bit_flipping_hard(const int &K, const int &N, const int& n_ite,
+                           const tools::Sparse_matrix &_H,
+                           const std::vector<unsigned> &info_bits_pos,
+                           const bool enable_syndrome,
+                           const int syndrome_depth,
+                           const int n_frames)
+: Decoder               (K, N, n_frames, 1   ),
+  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1   ),
+  n_ite                 (n_ite               ),
+  enable_syndrome       (enable_syndrome     ),
+  syndrome_depth        (syndrome_depth      ),
+  H                     (_H.turn(tools::Sparse_matrix::Way::VERTICAL)),
+  var_nodes             (N                   ),
+  check_nodes           (this->H.get_n_cols()),
+  YH_N                  (N                   ),
+  info_bits_pos         (info_bits_pos       )
 {
-	const std::string name = "Decoder_LDPC_BP_peeling";
+	const std::string name = "Decoder_LDPC_bit_flipping_hard";
 	this->set_name(name);
+
+	if (n_ite <= 0)
+	{
+		std::stringstream message;
+		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (syndrome_depth <= 0)
+	{
+		std::stringstream message;
+		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (N != (int)H.get_n_rows())
+	{
+		std::stringstream message;
+		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
+		        << H.get_n_rows() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R>
-bool Decoder_LDPC_BP_peeling<B,R>
-::_decode(const int frame_id)
-{
-	this->cur_syndrome_depth = 0;
-	auto links = this->H;
-
-	auto& CN = this->check_nodes;
-	auto& VN = this->var_nodes;
-
-	std::fill(CN.begin(), CN.end(), (B)0);
-
-	// first forward known values
-	for (unsigned i = 0; i < links.get_n_rows(); i++)
-	{
-		auto cur_state = VN[i];
-		if (!tools::is_unknown_symbol<B>(cur_state))
-		{
-			auto& cn_list = links.get_cols_from_row(i);
-			while (cn_list.size())
-			{
-				auto& cn_pos = cn_list.front();
-
-				CN[cn_pos] ^= cur_state;
-				links.rm_connection(i, cn_pos);
-			}
-		}
-	}
-
-	bool all_check_nodes_done = false;
-
-	for (auto ite = 0; ite < this->n_ite; ite++)
-	{
-		bool no_modification = true;
-		all_check_nodes_done = true;
-
-		// find degree-1 check nodes
-		for (unsigned i = 0; i < links.get_n_cols(); i++)
-		{
-			auto& vn_list = links.get_rows_from_col(i);
-			if (vn_list.size() == 1)
-			{
-				no_modification = false;
-
-				// then forward the belief
-				auto& vn_pos = vn_list.front();
-				auto cur_state = CN[i];
-				VN[vn_pos] = cur_state;
-				CN[     i] = 0;
-				links.rm_connection(vn_pos, i);
-
-				// and propagate it
-				auto& cn_list = links.get_cols_from_row(vn_pos);
-				while (cn_list.size())
-				{
-					auto& cn_pos = cn_list.front();
-
-					CN[cn_pos] ^= cur_state;
-					links.rm_connection(vn_pos, cn_pos);
-				}
-			}
-			else
-				all_check_nodes_done &= vn_list.size() == 0;
-		}
-
-		if (this->enable_syndrome && (all_check_nodes_done || no_modification))
-		{
-			this->cur_syndrome_depth++;
-			if (this->cur_syndrome_depth >= this->syndrome_depth)
-				break;
-		}
-		else
-			this->cur_syndrome_depth = 0;
-	}
-
-	return all_check_nodes_done;
-};
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_peeling<B,R>
+void Decoder_LDPC_bit_flipping_hard<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
@@ -112,7 +68,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(frame_id);
+	this->decode(Y_N, frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -124,7 +80,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_peeling<B,R>
+void Decoder_LDPC_bit_flipping_hard<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
@@ -132,7 +88,7 @@ void Decoder_LDPC_BP_peeling<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(frame_id);
+	this->decode(Y_N, frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -144,15 +100,16 @@ void Decoder_LDPC_BP_peeling<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_peeling<B,R>
+void Decoder_LDPC_bit_flipping_hard<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
-	tools::hard_decide_unk(Y_N, var_nodes.data(), this->N);
+	tools::hard_decide(Y_N, YH_N.data(), this->N);
+	std::copy(YH_N.begin(), YH_N.end(), var_nodes.begin());
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(frame_id);
+	this->decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -165,15 +122,16 @@ void Decoder_LDPC_BP_peeling<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_peeling<B,R>
+void Decoder_LDPC_bit_flipping_hard<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
-	tools::hard_decide_unk(Y_N, var_nodes.data(), this->N);
+	tools::hard_decide(Y_N, YH_N.data(), this->N);
+	std::copy(YH_N.begin(), YH_N.end(), var_nodes.begin());
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(frame_id);
+	this->decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -186,26 +144,69 @@ void Decoder_LDPC_BP_peeling<B,R>
 }
 
 template<typename B, typename R>
-void Decoder_LDPC_BP_peeling<B,R>::_store(B *V_K, const int frame_id)
+void Decoder_LDPC_bit_flipping_hard<B,R>::_store(B *V_K, const int frame_id)
 {
 	for (auto i = 0; i < this->K; i++)
 		V_K[i] = this->var_nodes[this->info_bits_pos[i]];
 }
 
 template<typename B, typename R>
-void Decoder_LDPC_BP_peeling<B,R>::_store_cw(B *V_N, const int frame_id)
+void Decoder_LDPC_bit_flipping_hard<B,R>::_store_cw(B *V_N, const int frame_id)
 {
 	std::copy(this->var_nodes.begin(), this->var_nodes.end(), V_N);
 }
 
+template <typename B, typename R>
+bool Decoder_LDPC_bit_flipping_hard<B,R>
+::decode(const B *Y_N, const int frame_id)
+{
+	this->cur_syndrome_depth = 0;
+	bool synd = false;
+
+	auto* CN = this->check_nodes.data();
+	auto* VN = this->var_nodes  .data();
+
+	for (auto ite = 0; ite < this->n_ite; ite++)
+	{
+		this->cn_process(VN, CN, frame_id);
+
+		if (this->enable_syndrome && (synd = check_syndrome()))
+		{
+			this->cur_syndrome_depth++;
+			if (this->cur_syndrome_depth >= this->syndrome_depth)
+				break;
+		}
+		else
+			this->cur_syndrome_depth = 0;
+
+		this->vn_process(Y_N, VN, CN, frame_id);
+	}
+
+	if (!this->enable_syndrome)
+		synd = check_syndrome();
+
+	return synd;
+}
+
+template <typename B, typename R>
+bool Decoder_LDPC_bit_flipping_hard<B,R>
+::check_syndrome() const
+{
+	auto res = std::accumulate(check_nodes.begin(), check_nodes.end(), (B)0,
+	                           [](const B a, B b){return a || b;});
+
+	return !res;
+}
+
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template class aff3ct::module::Decoder_LDPC_BP_peeling<B_8,Q_8>;
-template class aff3ct::module::Decoder_LDPC_BP_peeling<B_16,Q_16>;
-template class aff3ct::module::Decoder_LDPC_BP_peeling<B_32,Q_32>;
-template class aff3ct::module::Decoder_LDPC_BP_peeling<B_64,Q_64>;
+template class aff3ct::module::Decoder_LDPC_bit_flipping_hard<B_8,Q_8>;
+template class aff3ct::module::Decoder_LDPC_bit_flipping_hard<B_16,Q_16>;
+template class aff3ct::module::Decoder_LDPC_bit_flipping_hard<B_32,Q_32>;
+template class aff3ct::module::Decoder_LDPC_bit_flipping_hard<B_64,Q_64>;
 #else
-template class aff3ct::module::Decoder_LDPC_BP_peeling<B,Q>;
+template class aff3ct::module::Decoder_LDPC_bit_flipping_hard<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

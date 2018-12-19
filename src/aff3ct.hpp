@@ -430,11 +430,17 @@
 #ifndef DECODER_MAXIMUM_LIKELIHOOD_STD_HPP_
 #include <Module/Decoder/Generic/ML/Decoder_maximum_likelihood_std.hpp>
 #endif
+#ifndef DECODER_LDPC_BIT_FLIPPING_HARD_HPP_
+#include <Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping_hard.hpp>
+#endif
 #ifndef DECODER_LDPC_BIT_FLIPPING_HPP_
 #include <Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping.hpp>
 #endif
 #ifndef DECODER_LDPC_BIT_FLIPPING_OMWBF_HPP_
 #include <Module/Decoder/LDPC/BF/OMWBF/Decoder_LDPC_bit_flipping_OMWBF.hpp>
+#endif
+#ifndef DECODER_LDPC_PROBABILISTIC_PARALLEL_BIT_FLIPPING_HPP_
+#include <Module/Decoder/LDPC/BF/PPBF/Decoder_LDPC_probabilistic_parallel_bit_flipping.hpp>
 #endif
 #ifndef DECODER_LDPC_BP_HPP_
 #include <Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp>
