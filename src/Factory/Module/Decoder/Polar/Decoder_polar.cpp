@@ -33,7 +33,7 @@
 #include "Tools/Code/Polar/API/API_polar_static_intra_32bit.hpp"
 #endif
 
-#include "Tools/Code/Polar/nodes_parser.h"
+#include "Tools/Code/Polar/Nodes_parser.h"
 
 #include "Decoder_polar.hpp"
 
@@ -199,7 +199,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 			if (crc == nullptr || crc->get_size() == 0)
 			{
 				int idx_r0, idx_r1;
-				auto polar_patterns = tools::nodes_parser(this->polar_nodes, idx_r0, idx_r1);
+				auto polar_patterns = tools::Nodes_parser<>::parse_uptr(this->polar_nodes, idx_r0, idx_r1);
 				if (this->type == "SC"  ) return new module::Decoder_polar_SC_fast_sys<B, Q, API_polar>(this->K, this->N_cw, frozen_bits, std::move(polar_patterns), idx_r0, idx_r1, this->n_frames);
 			}
 		}
@@ -213,7 +213,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 ::_build_scl_fast(const std::vector<bool> &frozen_bits, module::CRC<B> *crc, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	int idx_r0, idx_r1;
-	auto polar_patterns = tools::nodes_parser(this->polar_nodes, idx_r0, idx_r1);
+	auto polar_patterns = tools::Nodes_parser<>::parse_uptr(this->polar_nodes, idx_r0, idx_r1);
 
 	if (this->implem == "FAST" && this->systematic)
 	{
