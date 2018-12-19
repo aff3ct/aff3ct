@@ -40,7 +40,7 @@ Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
 		std::stringstream message;
 		message << "'bernouilli_probas.size()' must be equal to the biggest variable node degree plus 2"
 		        << "('bernouilli_probas.size() = '" << bernouilli_probas.size() << ", 'variable node max degree' = "
-		        << this->H.get_cols_max_degree() << ").";
+		        << this->H.get_rows_max_degree() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
