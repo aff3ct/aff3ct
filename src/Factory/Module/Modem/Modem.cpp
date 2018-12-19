@@ -248,7 +248,7 @@ void Modem::parameters
 
 	if (full) headers[p].push_back(std::make_pair("Channel type", channel_type));
 
-	if (this->type == "OOK")
+	if (this->type == "OOK" && channel_type == "OPTICAL")
 	{
 		std::string str_est = "known";
 		if (this->rop_est_bits > 0)
