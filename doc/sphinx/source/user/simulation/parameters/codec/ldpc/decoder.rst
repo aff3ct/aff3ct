@@ -69,8 +69,8 @@ Description of the allowed values:
 """"""""""""""""
 
    :Type: text
-   :Allowed values: ``STD`` ``GALA`` ``GALB``  ``GALE`` ``WBF`` ``SPA`` ``LSPA``
-                    ``AMS`` ``MS`` ``NMS`` ``OMS``
+   :Allowed values: ``STD`` ``GALA`` ``GALB`` ``GALE`` ``WBF`` ``PPBF`` ``SPA``
+                    ``LSPA`` ``AMS`` ``MS`` ``NMS`` ``OMS``
    :Default: ``SPA``
    :Examples: ``--dec-implem AMS``
 
@@ -88,6 +88,8 @@ Description of the allowed values:
 | ``GALB``  | Select the |GALB| algorithm :cite:`Declerq2014` with majority vote.    |
 +-----------+------------------------------------------------------------------------+
 | ``GALE``  | Select the |GALE| algorithm :cite:`Declerq2014` with extended alphabet.|
++-----------+------------------------------------------------------------------------+
+| ``PPBF``  | Select the |PPBF| algorithm :cite:`LeGhaffari2019`.                    |
 +-----------+------------------------------------------------------------------------+
 | ``WBF``   | Select the |WBF| algorithm :cite:`Wadayama2010`.                       |
 +-----------+------------------------------------------------------------------------+
@@ -315,6 +317,20 @@ only a :math:`\min` function.
    :Examples: ``--dec-synd-depth 2``
 
 |factory::Decoder_LDPC::parameters::p+synd-depth|
+
+.. _dec-ldpc-dec-ppbf-proba:
+
+``--dec-ppbf-proba``
+""""""""""""""""""""
+
+   :Type: list of real numbers
+   :Examples: ``--dec-ppbf-proba "0,0.001,0.1,0.3,1,1,1"``
+
+|factory::Decoder_LDPC::parameters::p+ppbf-proba|
+
+Thus, with a parity matrix that has its largest variable node at 5, you must
+give 7 values. Each value corresponds to an energy level as described in
+:cite:`LeGhaffari2019`.
 
 .. _dec-ldpc-dec-no-synd:
 

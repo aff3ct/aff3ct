@@ -337,6 +337,7 @@ rst_epilog = """
 .. |PRNG|      replace:: :abbr:`PRNG     (Pseudo Random Number Generator)`
 .. |PRNGs|     replace:: :abbr:`PRNGs    (Pseudo Random Number Generators)`
 .. |PSK|       replace:: :abbr:`PSK      (Phase-Shift Keying)`
+.. |PPBF|      replace:: :abbr:`PPBF     (Probabilistic Parallel Bit-Flipping)`
 .. |PyBER|     replace:: PyBER
 .. |QAM|       replace:: :abbr:`QAM      (Quadrature Amplitude Modulation)`
 .. |QC|        replace:: :abbr:`QC       (Quasi-Cyclic)`
