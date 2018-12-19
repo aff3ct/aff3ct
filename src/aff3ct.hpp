@@ -1214,7 +1214,7 @@
 #include <Tools/Code/Polar/Frozenbits_notifier.hpp>
 #endif
 #ifndef NODES_PARSER_HPP
-#include <Tools/Code/Polar/nodes_parser.h>
+#include <Tools/Code/Polar/Nodes_parser.h>
 #endif
 #ifndef PATTERN_POLAR_PARSER_HPP
 #include <Tools/Code/Polar/Pattern_polar_parser.hpp>

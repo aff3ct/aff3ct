@@ -25,10 +25,25 @@ template <class R0   = Pattern_polar_r0,
           class REPL = Pattern_polar_rep_left,
           class SPC  = Pattern_polar_spc,
           class STD  = Pattern_polar_std>
-std::vector<std::unique_ptr<aff3ct::tools::Pattern_polar_i>> nodes_parser(const std::string &str_polar, int &idx_r0, int &idx_r1);
+struct Nodes_parser
+{
+private:
+	static void push_back_polar_pattern(std::vector<Pattern_polar_i*> *polar_patterns_ptr,
+	                                    std::vector<std::unique_ptr<Pattern_polar_i>> *polar_patterns_uptr,
+	                                    Pattern_polar_i* polar_pattern);
+
+	static void parse(const std::string &str_polar, int &idx_r0, int &idx_r1,
+	                        std::vector<Pattern_polar_i*> *polar_patterns_ptr,
+	                        std::vector<std::unique_ptr<Pattern_polar_i>> *polar_patterns_uptr);
+
+public:
+	static std::vector<std::unique_ptr<Pattern_polar_i>> parse_uptr(const std::string &str_polar, int &idx_r0, int &idx_r1);
+
+	static std::vector<Pattern_polar_i*> parse_ptr(const std::string &str_polar, int &idx_r0, int &idx_r1);
+};
 }
 }
 
-#include "nodes_parser.hxx"
+#include "Nodes_parser.hxx"
 
 #endif /* NODES_PARSER_HPP */
