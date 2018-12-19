@@ -368,7 +368,7 @@ test-regression-ldpc:
   script:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 10 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-polar:
   stage: test
