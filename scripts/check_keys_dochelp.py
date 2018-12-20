@@ -63,11 +63,18 @@ def aff3ct_helpmap_to_keys_list(help_map, aff3ct_keys): # fill aff3ct_keys from 
 
 
 def get_aff3ct_help_keys(aff3ct_path):
+
+	# get the available codes and simulation types
+	args_list = [aff3ct_path, "-h"]
+	std, err  = run_aff3ct(args_list)
+	helpMap = ahr.help_to_map(std)
+
+	codesList = helpMap["Simulation"]["--sim-cde-type, -C"]["limits"] [1:-1].split("|")
+	simList   = helpMap["Simulation"]["--sim-type"        ]["limits"] [1:-1].split("|")
+
+
+	# try to run all codes ans simu to get their helps
 	aff3ct_keys = []
-
-	codesList = ["BCH", "LDPC", "POLAR", "RA", "REP", "RS", "RSC", "RSC_DB", "TURBO", "TURBO_DB", "TPC", "UNCODED"]
-	simList = ["BFER", "BFERI", "EXIT"]
-
 	for c in codesList:
 		for s in simList:
 			args_list = [aff3ct_path, "-C", c, "-H", "-k", "--sim-type", s]
