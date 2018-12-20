@@ -1,4 +1,7 @@
-def __parse_argument(command, declaration, info):
+import argparse
+import sys
+
+def __parse_argument(command, declaration, key, info):
 	argStartSpace = "    "
 	len_argStartSpace = len(argStartSpace)
 
@@ -59,6 +62,7 @@ def __parse_argument(command, declaration, info):
 	# command[tags]["default" ] = default
 	# command[tags]["needs"   ] = needs
 	# command[tags]["excludes"] = excludes
+	command[tags]["key"     ] = key
 	command[tags]["info"    ] = info
 
 
@@ -66,8 +70,7 @@ def help_to_map(stdOutput):
 	helpMap = {}
 	i = 2 #first line is Usage and second is empty
 
-	infoStartSpace = "      "
-
+	space = "      "
 	parameter = ""
 	while i < len(stdOutput):
 		if len(stdOutput[i]) == 0 : # empty line
@@ -75,20 +78,29 @@ def help_to_map(stdOutput):
 
 		else:
 			parPos = stdOutput[i].find(" parameter(s):")
+
 			if parPos == -1: # then still in the same parameter type
 				# add the argument
-				argDecl = stdOutput[i  ]
-				argInfo = stdOutput[i+1][len(infoStartSpace):]
-				i += 2
+				argDecl = stdOutput[i]
+				i += 1
+				argKey = stdOutput[i][len(space):]
+				i += 1
+				if (argKey[0] == '['):
+					argKey = argKey[1:len(argKey)-2]
+					argInfo = stdOutput[i][len(space):]
+					i += 1
+				else:
+					argKey  = ""
+					argInfo = argKey
 
 				while i < len(stdOutput): # check if there is more doc on several lines
-					if stdOutput[i][:len(infoStartSpace)] == infoStartSpace :
-						argInfo += stdOutput[i][len(infoStartSpace):]
+					if stdOutput[i][:len(space)] == space :
+						argInfo += stdOutput[i][len(space):]
 						i += 1
 					else :
 						break
 
-				__parse_argument(helpMap[parameter], str(argDecl), str(argInfo))
+				__parse_argument(helpMap[parameter], str(argDecl), str(argKey), str(argInfo))
 			else:
 				parameter = stdOutput[i][:parPos]
 				helpMap[parameter] = {"name" : parameter + " parameters"}
@@ -98,3 +110,31 @@ def help_to_map(stdOutput):
 					raise
 
 	return helpMap
+
+
+def print_help_map(help_map):
+	for k in help_map:
+		print(k + ":")
+
+		for a in help_map[k]:
+
+			if type(help_map[k][a]) == 'dict':
+				print("\t" + a + ":")
+				for i in help_map[k][a]:
+					print("\t\t" + i + ":", help_map[k][a][i])
+			else:
+				print("\t" + a + ":", help_map[k][a])
+
+		print()
+
+
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser()
+	parser.add_argument('input', default=sys.stdin, type=argparse.FileType('r'), nargs='?')
+	args = parser.parse_args()
+
+	data = args.input.read()
+
+	helpMap = help_to_map(data.split('\n'))
+
+	print_help_map(helpMap)
