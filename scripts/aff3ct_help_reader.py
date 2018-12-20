@@ -86,12 +86,12 @@ def help_to_map(stdOutput):
 				argKey = stdOutput[i][len(space):]
 				i += 1
 				if (argKey[0] == '['):
-					argKey = argKey[1:len(argKey)-2]
+					argKey = argKey[1:len(argKey)-1]
 					argInfo = stdOutput[i][len(space):]
 					i += 1
 				else:
-					argKey  = ""
 					argInfo = argKey
+					argKey  = ""
 
 				while i < len(stdOutput): # check if there is more doc on several lines
 					if stdOutput[i][:len(space)] == space :
@@ -118,7 +118,7 @@ def print_help_map(help_map):
 
 		for a in help_map[k]:
 
-			if type(help_map[k][a]) == 'dict':
+			if type(help_map[k][a]) is dict:
 				print("\t" + a + ":")
 				for i in help_map[k][a]:
 					print("\t\t" + i + ":", help_map[k][a][i])
