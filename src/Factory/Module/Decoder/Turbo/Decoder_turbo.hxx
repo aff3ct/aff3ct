@@ -120,6 +120,7 @@ void Decoder_turbo::parameters<D1,D2>
 	args.erase({pfnc+"-fra",  "F"});
 	args.erase({pfnc+"-ite",  "i"});
 	args.erase({pfnc+"-crc-ite"  });
+	args.erase({pfnc+"-crc-start"});
 
 	sub1->get_description(args);
 

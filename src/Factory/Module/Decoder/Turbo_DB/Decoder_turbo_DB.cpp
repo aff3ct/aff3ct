@@ -105,6 +105,7 @@ void Decoder_turbo_DB::parameters
 	args.erase({pfnc+"-fra",  "F"});
 	args.erase({pfnc+"-ite",  "i"});
 	args.erase({pfnc+"-crc-ite"  });
+	args.erase({pfnc+"-crc-start"});
 
 	sub->get_description(args);
 

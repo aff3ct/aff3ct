@@ -244,6 +244,21 @@ experiments is an *Intel(R) Xeon(R) CPU E3-1270 v5 @ 3.60GHz* 8 threads |CPU|.
    simulator integrated statistics tool (see the :ref:`sim-sim-stats`
    parameter).
 
+.. _chn-chn-blk-fad:
+
+``--chn-blk-fad``
+"""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``NO`` ``FRAME`` ``ONETAP``
+   :Default: 1
+   :Examples: ``--chn-gain-occur 10``
+
+|factory::Channel::parameters::p+blk-fad|
+
+.. note:: At this time the ``FRAME`` and ``ONETAP`` block fading are not
+   implemented.
+
 .. _chn-chn-gain-occur:
 
 ``--chn-gain-occur``

@@ -3,6 +3,8 @@ import sys
 import re
 import subprocess
 import os
+import glob
+import copy
 
 import aff3ct_help_reader as ahr
 
@@ -72,12 +74,11 @@ def get_aff3ct_help_keys(aff3ct_path):
 	codesList = helpMap["Simulation"]["--sim-cde-type, -C"]["limits"] [1:-1].split("|")
 	simList   = helpMap["Simulation"]["--sim-type"        ]["limits"] [1:-1].split("|")
 
-
 	# try to run all codes ans simu to get their helps
 	aff3ct_keys = []
 	for c in codesList:
 		for s in simList:
-			args_list = [aff3ct_path, "-C", c, "-H", "-k", "--sim-type", s]
+			args_list = [aff3ct_path, "-C", c, "-H", "-k", "--sim-type", s, "-p", "8"]
 			std, err  = run_aff3ct(args_list)
 
 			helpMap = ahr.help_to_map(std)
@@ -87,13 +88,34 @@ def get_aff3ct_help_keys(aff3ct_path):
 	return aff3ct_keys
 
 
-def check_keys(keys_file, aff3ct_path):
+def get_doc_keys(doc_path):
+
+	doc_keys = []
+	for filename in glob.iglob(doc_path + '**/*.rst', recursive=True):
+		pattern = re.compile("\|(factory::[^ ]*)\|")
+		for i, line in enumerate(open(filename)):
+			for match in re.finditer(pattern, line):
+				doc_keys.append(match.group(1))
+
+	# remove duplicates
+	doc_keys = list(set(doc_keys))
+
+	return doc_keys
+
+
+def check_keys(keys_file, aff3ct_path, doc_path):
 
 	list_keys   = get_keys(keys_file)
 	aff3ct_keys = get_aff3ct_help_keys(aff3ct_path)
+	doc_keys    = get_doc_keys(doc_path)
+
+	list_keys.sort()
+	aff3ct_keys.sort()
+	doc_keys.sort()
+
+	aff3ct_keys_save = copy.deepcopy(aff3ct_keys)
 
 	not_in_aff3ct_keys = []
-
 	for k in list_keys:
 		try:
 			idx = aff3ct_keys.index(k)
@@ -101,18 +123,34 @@ def check_keys(keys_file, aff3ct_path):
 		except Exception as e:
 			not_in_aff3ct_keys.append(k)
 
-	print("keys left in aff3ct help:")
+	not_in_doc_keys = []
+	for k in aff3ct_keys_save:
+		try:
+			idx = doc_keys.index(k)
+			del doc_keys[idx]
+		except Exception as e:
+			not_in_doc_keys.append(k)
+
+	print("Keys only used in the AFF3CT help (undocumented keys):")
 	print(aff3ct_keys)
 	print()
-	print("keys not in aff3ct help:")
+	print("Keys not used in the AFF3CT help:")
 	print(not_in_aff3ct_keys)
+	print()
+
+	print("Keys used in the AFF3CT doc but not used in the AFF3CT help:")
+	print(doc_keys)
+	print()
+	print("Keys used in the AFF3CT help but not used in the AFF3CT doc:")
+	print(not_in_doc_keys)
 	print()
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--keys',   action='store', dest='keys_file',   type=str, default='doc/sphinx/strings.rst')
 	parser.add_argument('--aff3ct', action='store', dest='aff3ct_path', type=str, default='build/bin/aff3ct')
+	parser.add_argument('--doc',    action='store', dest='doc_path',    type=str, default='doc/sphinx/source/user/simulation/parameters/')
 
 	args = parser.parse_args()
 
-	check_keys(args.keys_file, args.aff3ct_path)
+	check_keys(args.keys_file, args.aff3ct_path, args.doc_path)

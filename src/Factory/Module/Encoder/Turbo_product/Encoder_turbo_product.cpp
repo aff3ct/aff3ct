@@ -83,7 +83,8 @@ void Encoder_turbo_product::parameters
 
 	auto ps = sub->get_prefix();
 
-	args.erase({ps+"-fra", "F"});
+	args.erase({ps+"-fra",  "F"});
+	args.erase({ps+"-seed", "S"});
 }
 
 void Encoder_turbo_product::parameters

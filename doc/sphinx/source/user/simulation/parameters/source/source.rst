@@ -6,6 +6,19 @@ Source parameters
 The source generates :math:`K` information bits: it is the simulation starting
 point.
 
+.. _src-src-info-bits:
+
+``--src-info-bits, -K`` |image_required_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: integer
+   :Examples: ``--src-info-bits 64`` ``-K 128``
+
+|factory::Source::parameters::p+info-bits,K|
+
+.. warning:: This argument is required only with the ``UNCODED`` simulation code
+   type (cf. the :ref:`sim-sim-cde-type` parameter).
+
 .. _src-src-type:
 
 ``--src-type``
