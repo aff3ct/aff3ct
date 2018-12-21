@@ -16,15 +16,15 @@ using namespace aff3ct::tools;
 template <typename R>
 struct Reporter_noise<R>::Noise_ptr
 {
-	explicit Noise_ptr(const Noise<R>* const* n) : noise(nullptr), noise_ptr(n), sh_ptr(nullptr) {}
-	explicit Noise_ptr(const Noise<R>*        n) : noise(n),  noise_ptr(&noise), sh_ptr(nullptr) {}
-	explicit Noise_ptr(const Noise<R>&        n) : noise(&n), noise_ptr(&noise), sh_ptr(nullptr) {}
+	explicit Noise_ptr(const Noise<R>* const* n) : noise(nullptr), noise_ptr(n), sh_ptr(nullptr), un_ptr(nullptr) {}
+	explicit Noise_ptr(const Noise<R>*        n) : noise(n),  noise_ptr(&noise), sh_ptr(nullptr), un_ptr(nullptr) {}
+	explicit Noise_ptr(const Noise<R>&        n) : noise(&n), noise_ptr(&noise), sh_ptr(nullptr), un_ptr(nullptr) {}
 
-	explicit Noise_ptr(const std::shared_ptr<Noise<R>>* noise) : noise(nullptr), noise_ptr(nullptr), sh_ptr( noise) {}
-	explicit Noise_ptr(const std::shared_ptr<Noise<R>>& noise) : noise(nullptr), noise_ptr(nullptr), sh_ptr(&noise) {}
+	explicit Noise_ptr(const std::shared_ptr<Noise<R>>* n) : noise(nullptr), noise_ptr(nullptr), sh_ptr( n), un_ptr(nullptr) {}
+	explicit Noise_ptr(const std::shared_ptr<Noise<R>>& n) : noise(nullptr), noise_ptr(nullptr), sh_ptr(&n), un_ptr(nullptr) {}
 
-	explicit Noise_ptr(const std::unique_ptr<Noise<R>>* noise) : noise(nullptr), noise_ptr(nullptr), un_ptr( noise) {}
-	explicit Noise_ptr(const std::unique_ptr<Noise<R>>& noise) : noise(nullptr), noise_ptr(nullptr), un_ptr(&noise) {}
+	explicit Noise_ptr(const std::unique_ptr<Noise<R>>* n) : noise(nullptr), noise_ptr(nullptr), sh_ptr(nullptr), un_ptr( n) {}
+	explicit Noise_ptr(const std::unique_ptr<Noise<R>>& n) : noise(nullptr), noise_ptr(nullptr), sh_ptr(nullptr), un_ptr(&n) {}
 
 	const Noise<R>* get_noise_ptr() const
 	{
@@ -157,7 +157,7 @@ Reporter::report_t Reporter_noise<R>
 	{
 		case Noise_type::SIGMA :
 		{
-			auto sig = dynamic_cast<const tools::Sigma<>*>(get_noise_ptr());
+			auto sig = dynamic_cast<const tools::Sigma<R>*>(get_noise_ptr());
 
 			stream << std::setprecision(2) << std::fixed << sig->get_esn0();
 			noise_report.push_back(stream.str());
