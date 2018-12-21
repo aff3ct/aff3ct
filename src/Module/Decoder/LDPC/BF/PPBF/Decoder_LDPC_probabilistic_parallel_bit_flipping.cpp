@@ -53,7 +53,7 @@ template <typename B, typename R>
 void Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
 ::cn_process(const B *VN, B *CN, const int frame_id)
 {
-	// for each check nodes&&&
+	// for each check nodes
 	const auto n_chk_nodes = (int)this->H.get_n_cols();
 	for (auto c = 0; c < n_chk_nodes; c++)
 	{

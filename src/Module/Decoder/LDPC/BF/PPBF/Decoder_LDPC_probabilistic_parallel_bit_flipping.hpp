@@ -13,10 +13,6 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_LDPC_probabilistic_parallel_bit_flipping : public Decoder_LDPC_bit_flipping_hard<B,R>
 {
-//private:
-//	const float normalize_factor;
-//	const R offset;
-
 public:
 	Decoder_LDPC_probabilistic_parallel_bit_flipping(const int &K, const int &N, const int& n_ite,
 	                                                 const tools::Sparse_matrix &H,

@@ -182,7 +182,7 @@ bool Decoder_LDPC_bit_flipping_hard<B,R>
 		this->vn_process(Y_N, VN, CN, frame_id);
 	}
 
-	if (!this->enable_syndrome)
+	if (!this->enable_syndrome || !synd)
 		synd = check_syndrome();
 
 	return synd;
