@@ -55,7 +55,7 @@ void Flip_and_check::parameters
 	tools::add_arg(args, p, class_name+"p+ite-s",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	tools::add_arg(args, p, class_name+"p+ite",
+	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+crc-start",
