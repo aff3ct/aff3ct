@@ -38,22 +38,6 @@ analysis-headers:
     - ./scripts/generate_aff3ct_header.sh aff3ct.hpp
     - diff aff3ct.hpp src/aff3ct.hpp
 
-documentation-sphinx:
-  stage: documentation
-  artifacts:
-    name: documentation-sphinx
-    when: always
-    paths:
-      - doc/sphinx/build/html
-      - doc/sphinx/build/latex
-  tags:
-    - sphinx
-    - latex
-  script:
-    - cd doc/sphinx
-    - make html
-    - make latexpdf
-
 build-linux-gcc-nointr:
   stage: build
   tags:
@@ -326,6 +310,35 @@ build-macos-clang-x64-sse4.2:
     - export NAME="build_macos_clang_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
+
+documentation-sphinx:
+  stage: documentation
+  artifacts:
+    name: documentation-sphinx
+    when: always
+    paths:
+      - doc/sphinx/build/html
+      - doc/sphinx/build/latex
+  tags:
+    - sphinx
+    - latex
+  script:
+    - cd doc/sphinx
+    - make html
+    - make latexpdf
+
+documentation-check:
+  stage: documentation
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - python
+  script:
+    - ./ci/documentation-check.py --aff3ct "build-linux-gcc-x64-sse4.2/bin/aff3ct"
 
 test-regression-bch:
   stage: test
