@@ -338,7 +338,7 @@ documentation-check:
     - sse4.2
     - python
   script:
-    - ./ci/documentation-check.py --aff3ct "build-linux-gcc-x64-sse4.2/bin/aff3ct"
+    - ./ci/documentation-check.py --aff3ct "build_linux_gcc_x64_sse4.2/bin/aff3ct"
 
 test-regression-bch:
   stage: test
