@@ -81,7 +81,7 @@ void Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
 		for (unsigned c = 0; c < var_degree; c++)
 			energy += CN[var_node[c]];
 
-		VN[v] ^= (*bernouilli_dist[energy])(this->rd_engine);
+		VN[v] ^= (B)(*bernouilli_dist[energy])(this->rd_engine);
 	}
 }
 
