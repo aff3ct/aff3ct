@@ -93,7 +93,8 @@ do
 
 	zip -r $ZIP_NAME $BUILD
 
-	cp $ZIP_NAME ${REPO_WEB}/${REPO_RESSOURCES}/aff3ct_builds/
+	mv $ZIP_NAME ${REPO_WEB}/${REPO_RESSOURCES}/aff3ct_builds/
+	rm -rf $BUILD
 
 	if [ -z "$BUILDS_LIST" ]
 	then
