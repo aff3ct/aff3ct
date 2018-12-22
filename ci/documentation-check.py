@@ -6,8 +6,7 @@ import os
 import glob
 import copy
 
-import aff3ct_help_reader as ahr
-
+import aff3ct_help_parser as ahp
 
 # read all the lines from the given file and set them in a list of string lines with striped \n \r
 def readFileInTable(filename):
@@ -47,9 +46,8 @@ def run_aff3ct(args_list):
 
 	return std, err
 
-
 def aff3ct_helpmap_to_keys_list(help_map, aff3ct_keys): # fill aff3ct_keys from help_map
-	# ahr.print_help_map(help_map)
+	# ahp.print_help_map(help_map)
 	for m in help_map: # module
 		for a in help_map[m]: # argument
 			if type(help_map[m][a]) is dict:
@@ -63,13 +61,12 @@ def aff3ct_helpmap_to_keys_list(help_map, aff3ct_keys): # fill aff3ct_keys from 
 					else:
 						pass
 
-
 def get_aff3ct_help_keys(aff3ct_path):
 
 	# get the available codes and simulation types
 	args_list = [aff3ct_path, "-h"]
 	std, err  = run_aff3ct(args_list)
-	helpMap = ahr.help_to_map(std)
+	helpMap = ahp.help_to_map(std)
 
 	codesList = helpMap["Simulation"]["--sim-cde-type, -C"]["limits"] [1:-1].split("|")
 	simList   = helpMap["Simulation"]["--sim-type"        ]["limits"] [1:-1].split("|")
@@ -81,12 +78,11 @@ def get_aff3ct_help_keys(aff3ct_path):
 			args_list = [aff3ct_path, "-C", c, "-H", "-k", "--sim-type", s, "-p", "8"]
 			std, err  = run_aff3ct(args_list)
 
-			helpMap = ahr.help_to_map(std)
+			helpMap = ahp.help_to_map(std)
 
 			aff3ct_helpmap_to_keys_list(helpMap, aff3ct_keys)
 
 	return aff3ct_keys
-
 
 def get_doc_keys(doc_path):
 
@@ -102,6 +98,13 @@ def get_doc_keys(doc_path):
 
 	return doc_keys
 
+def display_keys(keys):
+
+	for e in keys:
+		print ("  - [" + e + "]")
+
+	if len(keys) == 0:
+		print ("  The keys list is empty.")
 
 def check_keys(keys_file, aff3ct_path, doc_path):
 
@@ -131,19 +134,30 @@ def check_keys(keys_file, aff3ct_path, doc_path):
 		except Exception as e:
 			not_in_doc_keys.append(k)
 
-	print("Keys only used in the AFF3CT help (undocumented keys):")
-	print(aff3ct_keys)
-	print()
-	print("Keys not used in the AFF3CT help:")
-	print(not_in_aff3ct_keys)
-	print()
+	# manages special key exceptions
+	exceptions_not_in_doc_keys = ["factory::Frozenbits_generator::parameters::p+pb-path"]
+	exceptions_doc_keys = ["factory::Simulation::parameters::p+mpi-comm", "factory::Launcher::parameters::except-a2l"]
+	for e in exceptions_not_in_doc_keys:
+		if e in not_in_doc_keys: not_in_doc_keys.remove(e)
+	for e in exceptions_doc_keys:
+		if e in doc_keys: doc_keys.remove(e)
 
+	print("Keys used in the AFF3CT help but not defined in the strings database (undocumented keys):")
+	display_keys(aff3ct_keys)
+	print()
 	print("Keys used in the AFF3CT doc but not used in the AFF3CT help:")
-	print(doc_keys)
+	display_keys(doc_keys)
 	print()
 	print("Keys used in the AFF3CT help but not used in the AFF3CT doc:")
-	print(not_in_doc_keys)
+	display_keys(not_in_doc_keys)
 	print()
+	print("Keys defined in the strings database but not used in the AFF3CT help or in the AFF3CT doc:")
+	display_keys(not_in_aff3ct_keys)
+	print()
+
+	nDiff = len(aff3ct_keys) + len(doc_keys) + len(not_in_doc_keys)
+
+	return nDiff;
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
@@ -153,4 +167,6 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
 
-	check_keys(args.keys_file, args.aff3ct_path, args.doc_path)
+	nDiff = check_keys(args.keys_file, args.aff3ct_path, args.doc_path)
+
+	sys.exit(nDiff);

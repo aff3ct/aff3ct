@@ -15,7 +15,6 @@ def __parse_argument(command, declaration, key, info):
 		elif group.startswith("{A}"):
 			group = "advanced"
 
-
 	# parse the name
 	posspace = declaration.find(" ", len_argStartSpace)
 	posend   = posspace
@@ -45,14 +44,11 @@ def __parse_argument(command, declaration, key, info):
 			if pos != -1: # including set
 				limits = limits[pos:]
 
-
-
 		if argtype.startswith("file") or argtype.startswith("folder") or argtype.startswith("path"):
 			pos = argtype.find(" ")
 			if pos != -1:
 				limits  = argtype[pos+1:]
 				argtype = argtype[:pos]
-
 
 	command[tags] = {}
 
@@ -65,7 +61,6 @@ def __parse_argument(command, declaration, key, info):
 	command[tags]["key"     ] = key
 	command[tags]["info"    ] = info
 
-
 def help_to_map(stdOutput):
 	helpMap = {}
 	i = 2 #first line is Usage and second is empty
@@ -75,7 +70,6 @@ def help_to_map(stdOutput):
 	while i < len(stdOutput):
 		if len(stdOutput[i]) == 0 : # empty line
 			i += 1
-
 		else:
 			parPos = stdOutput[i].find(" parameter(s):")
 
@@ -111,7 +105,6 @@ def help_to_map(stdOutput):
 
 	return helpMap
 
-
 def print_help_map(help_map):
 	for k in help_map:
 		print(k + ":")
@@ -126,7 +119,6 @@ def print_help_map(help_map):
 				print("\t" + a + ":", help_map[k][a])
 
 		print()
-
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
