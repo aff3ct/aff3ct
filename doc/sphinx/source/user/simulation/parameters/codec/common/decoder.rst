@@ -78,6 +78,16 @@ Description of the allowed values:
    performances. The |BFER| performances will be the same as an hard input
    decoder.
 
+.. _dec-common-dec-seed:
+
+``--dec-seed``
+"""""""""""""""
+
+   :Type: integer
+   :Examples: ``--dec-seed 1``
+
+|factory::Decoder::parameters::p+seed|
+
 References
 """"""""""
 

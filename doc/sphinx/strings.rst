@@ -274,7 +274,7 @@
    Set the maximum number of bit flips in the Chase decoder.
 
 .. |factory::Decoder::parameters::p+seed| replace::
-   Specify the seed used to generate random numbers when needed.
+   Specify the decoder |PRNG| seed (if the decoder uses one).
 
 .. --------------------------------------------- factory Decoder_BCH parameters
 
@@ -321,7 +321,7 @@
    on their degree.
 
 .. |factory::Decoder_LDPC::parameters::p+ppbf-proba| replace::
-   Give the probabilities of the Bernouilli distribution of the PPBF.
+   Give the probabilities of the Bernouilli distribution of the |PPBF|.
    The number of given values must be equal to the biggest variable node degree
    plus two.
 
