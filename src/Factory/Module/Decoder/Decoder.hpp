@@ -33,6 +33,7 @@ struct Decoder : Factory
 		int         n_frames    = 1;
 		int         tail_length = 0;
 		int         flips       = 3;
+		int         seed        = 0;
 
 		// deduced parameters
 		float       R           = -1.f;

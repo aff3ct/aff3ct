@@ -273,6 +273,9 @@
 .. |factory::Decoder::parameters::p+flips| replace::
    Set the maximum number of bit flips in the Chase decoder.
 
+.. |factory::Decoder::parameters::p+seed| replace::
+   Specify the seed used to generate random numbers when needed.
+
 .. --------------------------------------------- factory Decoder_BCH parameters
 
 .. |factory::Decoder_BCH::parameters::p+corr-pow,T| replace::
@@ -316,6 +319,11 @@
 .. |factory::Decoder_LDPC::parameters::p+h-reorder| replace::
    Specify the order of execution of the |CNs| in the decoding process depending
    on their degree.
+
+.. |factory::Decoder_LDPC::parameters::p+ppbf-proba| replace::
+   Give the probabilities of the Bernouilli distribution of the PPBF.
+   The number of given values must be equal to the biggest variable node degree
+   plus two.
 
 .. ---------------------------------------------- factory Decoder_NO parameters
 

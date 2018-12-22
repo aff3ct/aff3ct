@@ -41,6 +41,7 @@ void LDPC<L,B,R,Q>
 
 	this->args.erase({penc+"-fra",  "F"});
 	this->args.erase({penc+"-seed", "S"});
+	this->args.erase({pdec+"-seed"     });
 
 	this->args.add_link({pdec+"-h-path"}, {penc+"-type"}, enc_dvb_no_h_matrix);
 

@@ -1,6 +1,7 @@
 #ifndef FACTORY_DECODER_LDPC_HPP
 #define FACTORY_DECODER_LDPC_HPP
 
+#include <vector>
 #include <string>
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
@@ -36,6 +37,8 @@ struct Decoder_LDPC : public Decoder
 		bool        enable_syndrome = true;
 		int         syndrome_depth  = 1;
 		int         n_ite           = 10;
+
+		std::vector<float> ppbf_proba;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_LDPC_prefix);
