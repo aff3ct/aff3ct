@@ -46,8 +46,10 @@ fi
 REPO_WEB=aff3ct.github.io
 REPO_RESSOURCES=ressources
 git clone git@github.com:aff3ct/${REPO_WEB}.git
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 cd ${REPO_WEB}
 git clone git@github.com:aff3ct/${REPO_RESSOURCES}.git
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 git submodule update --init --recursive
 mkdir ressources/aff3ct_builds
 cd ..
@@ -92,6 +94,7 @@ do
 	cp doc/sphinx/build/latex/AFF3CT.pdf $BUILD/share/aff3ct-$GIT_VERSION/doc/pdf
 
 	zip -r $ZIP_NAME $BUILD
+	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
 	mv $ZIP_NAME ${REPO_WEB}/${REPO_RESSOURCES}/aff3ct_builds/
 	rm -rf $BUILD
@@ -110,7 +113,7 @@ cd ${REPO_WEB}/${REPO_RESSOURCES}
 # git lfs install --local
 # git lfs track aff3ct_builds/*
 git add -f aff3ct_builds/*
-git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
+git commit -m "Automatic: add new AFF3CT builds ($GIT_BRANCH: $GIT_HASH)."
 
 #delete old builds
 BUILD_CSV=../download/download_${GIT_BRANCH}.csv
@@ -118,7 +121,7 @@ N_BUILDS_TO_KEEP=0
 if [ "${GIT_BRANCH}" == "master" ]; then
 	N_BUILDS_TO_KEEP=5
 else
-	N_BUILDS_TO_KEEP=10
+	N_BUILDS_TO_KEEP=5
 fi
 N_BUILDS=$(wc -l $BUILD_CSV | cut -d " " -f1)
 N_BUILDS=$(($N_BUILDS-1))
@@ -154,8 +157,10 @@ fi
 git gc --prune=now
 # git gc --aggressive --prune=now
 git push origin master --force
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
 cd ..
 git add -f download/download_${GIT_BRANCH}.csv
-git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
+git commit -m "Automatic: add new AFF3CT builds ($GIT_BRANCH: $GIT_HASH)."
 git push origin master
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
