@@ -13,7 +13,7 @@ performances of the (2048,1723) Polar code from 1.0 to 4.0 dB:
 
 .. code-block:: bash
 
-   aff3ct -C "POLAR" -K 1723 -N 2048 -m 1.0 -M 4.0
+   aff3ct -C "POLAR" -K 1723 -N 2048 -m 1.0 -M 4.0 -s 1.0
 
 And the output will be:
 
@@ -91,4 +91,3 @@ External Links
 
 - Official website: https://aff3ct.github.io
 - Documentation: https://aff3ct.readthedocs.io
-
