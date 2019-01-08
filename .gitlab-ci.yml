@@ -47,7 +47,7 @@ analysis-git-submodules:
     - development
   script:
     - source ./ci/tools/git-branch.sh
-    - ./ci/analysis-git-submodules.sh
+    - ./ci/analysis-git-submodule.sh
 
 build-linux-gcc-nointr:
   stage: build
