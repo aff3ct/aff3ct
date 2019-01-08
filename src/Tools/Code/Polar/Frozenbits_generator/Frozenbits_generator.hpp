@@ -28,7 +28,7 @@ class Frozenbits_generator
 protected:
 	const int K; /*!< Number of information bits in the frame. */
 	const int N; /*!< Codeword size (or frame size). */
-	tools::Noise<float>* n;   /*!< The current noise to apply to the input signal */
+	std::unique_ptr<tools::Noise<float>> n;
 
 	std::vector<uint32_t> best_channels; /*!< The best channels in a codeword sorted by descending order. */
 
@@ -64,10 +64,7 @@ public:
 	 */
 	void set_noise(const tools::Noise<float>& noise)
 	{
-		if (this->n != nullptr)
-			delete this->n;
-
-		this->n = tools::cast<float>(noise);
+		this->n.reset(tools::cast<float>(noise));
 	}
 
 	/*!
@@ -77,11 +74,7 @@ public:
 	 */
 	void set_noise(const tools::Noise<double>& noise)
 	{
-		if (this->n != nullptr)
-			delete this->n;
-
-		this->n = tools::cast<float>(noise);
-		this->check_noise();
+		this->n.reset(tools::cast<float>(noise));
 	}
 
 	/*!
