@@ -28,23 +28,10 @@ BFER<B,R,Q>
   barrier(params_BFER.n_threads),
 
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
-  noise(nullptr),
 
-  monitor_mi    (params_BFER.n_threads, nullptr),
-  monitor_mi_red(                       nullptr),
-  monitor_er    (params_BFER.n_threads, nullptr),
-  monitor_er_red(                       nullptr),
-
-  dumper    (params_BFER.n_threads, nullptr),
-  dumper_red(                       nullptr),
-
-  rep_er   (nullptr),
-  rep_mi   (nullptr),
-  rep_noise(nullptr),
-  rep_thr  (nullptr),
-  terminal (nullptr),
-
-  distributions(nullptr)
+  monitor_mi(params_BFER.n_threads),
+  monitor_er(params_BFER.n_threads),
+  dumper    (params_BFER.n_threads)
 {
 	if (params_BFER.n_threads < 1)
 	{
@@ -56,49 +43,20 @@ BFER<B,R,Q>
 	if (params_BFER.err_track_enable)
 	{
 		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-			dumper[tid] = new tools::Dumper();
+			dumper[tid].reset(new tools::Dumper());
 
-		std::vector<tools::Dumper*> dumpers;
-		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-			dumpers.push_back(dumper[tid]);
-
-		dumper_red = new tools::Dumper_reduction(dumpers);
+		dumper_red.reset(new tools::Dumper_reduction(dumper));
 	}
 
 	if (!params_BFER.noise->pdf_path.empty())
-		distributions = new tools::Distributions<R>(params_BFER.noise->pdf_path);
+		distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path,
+		                                                tools::Distribution_mode::SUMMATION,
+		                                                params_BFER.mdm->rop_est_bits > 0));
 
 	this->build_monitors ();
 	this->build_reporters();
 
 	this->terminal = this->build_terminal();
-}
-
-template <typename B, typename R, typename Q>
-BFER<B,R,Q>
-::~BFER()
-{
-	release_objects();
-
-	if (rep_noise != nullptr) { delete rep_noise; rep_noise = nullptr; }
-	if (rep_er    != nullptr) { delete rep_er;    rep_er    = nullptr; }
-	if (rep_mi    != nullptr) { delete rep_mi;    rep_mi    = nullptr; }
-	if (rep_thr   != nullptr) { delete rep_thr;   rep_thr   = nullptr; }
-
-	if (monitor_mi_red != nullptr) { delete monitor_mi_red; monitor_mi_red = nullptr; }
-	if (monitor_er_red != nullptr) { delete monitor_er_red; monitor_er_red = nullptr; }
-	if (dumper_red     != nullptr) { delete dumper_red;     dumper_red     = nullptr; }
-
-	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-	{
-		if (monitor_mi[tid] != nullptr) { delete monitor_mi[tid]; monitor_mi[tid] = nullptr; }
-		if (monitor_er[tid] != nullptr) { delete monitor_er[tid]; monitor_er[tid] = nullptr; }
-		if (dumper    [tid] != nullptr) { delete dumper    [tid]; dumper    [tid] = nullptr; }
-	}
-
-	if (terminal      != nullptr) { delete terminal;      terminal      = nullptr; }
-	if (distributions != nullptr) { delete distributions; distributions = nullptr; }
-	if (noise         != nullptr) { delete noise;         noise         = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -126,10 +84,7 @@ void BFER<B,R,Q>
 		this->build_communication_chain();
 
 		if (tools::Terminal::is_over())
-		{
-			this->release_objects();
 			return;
-		}
 	}
 
 	int noise_begin = 0;
@@ -145,10 +100,8 @@ void BFER<B,R,Q>
 	// for each NOISE to be simulated
 	for (auto noise_idx = noise_begin; noise_idx != noise_end; noise_idx += noise_step)
 	{
-		if (this->noise != nullptr) delete noise;
-
-		this->noise = params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
-		                                                   params_BFER.mdm->bps, params_BFER.mdm->upf);
+		this->noise.reset(params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
+		                                                       params_BFER.mdm->bps, params_BFER.mdm->cpm_upf));
 
 		// manage noise distributions to be sure it exists
 		if (this->distributions != nullptr)
@@ -156,7 +109,6 @@ void BFER<B,R,Q>
 
 		if (params_BFER.err_track_revert)
 		{
-			this->release_objects();
 			this->monitor_er_red->clear_callbacks();
 
 			if (this->monitor_mi_red != nullptr)
@@ -191,13 +143,10 @@ void BFER<B,R,Q>
 			this->build_communication_chain();
 
 			if (tools::Terminal::is_over())
-			{
-				this->release_objects();
 				return;
-			}
 		}
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
 #endif
 		if (params_BFER.display_legend)
@@ -205,7 +154,7 @@ void BFER<B,R,Q>
 				|| (params_BFER.statistics && !params_BFER.debug))
 				terminal->legend(std::cout);
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
 #endif
 		// start the terminal to display BER/FER results
@@ -221,24 +170,18 @@ void BFER<B,R,Q>
 		}
 		catch (std::exception const& e)
 		{
-			tools::Terminal::stop();
 			module::Monitor_reduction::is_done_all(true, true); // final reduction
 
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
 
 			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 			this->simu_error = true;
+
+			tools::Terminal::stop();
 		}
 
 
-		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
-		    !this->monitor_er_red->fe_limit_achieved() &&
-		    (this->monitor_er_red->frame_limit_achieved() || this->stop_time_reached()))
-			tools::Terminal::stop();
-
-
-
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
 #endif
 		if (!params_BFER.ter->disabled && terminal != nullptr && !this->simu_error)
@@ -254,9 +197,9 @@ void BFER<B,R,Q>
 				for (auto &vm : modules)
 				{
 					std::vector<const module::Module*> sub_mod_vec;
-					for (auto *m : vm.second)
+					for (auto& m : vm.second)
 						sub_mod_vec.push_back(m);
-					mod_vec.push_back(sub_mod_vec);
+					mod_vec.push_back(std::move(sub_mod_vec));
 				}
 
 				std::cout << "#" << std::endl;
@@ -264,6 +207,12 @@ void BFER<B,R,Q>
 				std::cout << "#" << std::endl;
 			}
 		}
+
+		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
+		    !this->monitor_er_red->fe_limit_achieved() &&
+		    (this->monitor_er_red->frame_limit_achieved() || this->stop_time_reached()))
+			tools::Terminal::stop();
+
 
 		if (params_BFER.mnt_er->err_hist != -1)
 		{
@@ -276,9 +225,9 @@ void BFER<B,R,Q>
 				{
 					case tools::Noise_type::SIGMA:
 						if (params_BFER.noise->type == "EBN0")
-							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise)->get_ebn0());
+							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise.get())->get_ebn0());
 						else //(params_BFER.noise_type == "ESN0")
-							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise)->get_esn0());
+							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise.get())->get_esn0());
 						break;
 					case tools::Noise_type::ROP:
 					case tools::Noise_type::EP:
@@ -296,7 +245,7 @@ void BFER<B,R,Q>
 					max = err_hist.get_hist_max();
 				else
 					max = params_BFER.mnt_er->err_hist;
-				err_hist.dump(file_err_hist, 0, max, 0, false, false, false, "; ");
+				err_hist.dump(file_err_hist, 0, max);
 			}
 		}
 
@@ -313,7 +262,7 @@ void BFER<B,R,Q>
 			break;
 
 		for (auto &m : modules)
-			for (auto mm : m.second)
+			for (auto& mm : m.second)
 				if (mm != nullptr)
 					for (auto &t : mm->tasks)
 						t->reset_stats();
@@ -321,59 +270,48 @@ void BFER<B,R,Q>
 		module::Monitor_reduction::reset_all();
 		tools::Terminal::reset();
 	}
-
-	this->release_objects();
 }
 
 template <typename B, typename R, typename Q>
-void BFER<B,R,Q>
-::release_objects()
-{
-}
-
-template <typename B, typename R, typename Q>
-module::Monitor_MI<B,R>* BFER<B,R,Q>
+std::unique_ptr<typename BFER<B,R,Q>::Monitor_MI_type> BFER<B,R,Q>
 ::build_monitor_mi(const int tid)
 {
-	return params_BFER.mnt_mi->build<B,R>();
+	return std::unique_ptr<typename BFER<B,R,Q>::Monitor_MI_type>(params_BFER.mnt_mi->build<B,R>());
 }
 
 template <typename B, typename R, typename Q>
-module::Monitor_BFER<B>* BFER<B,R,Q>
+std::unique_ptr<typename BFER<B,R,Q>::Monitor_BFER_type> BFER<B,R,Q>
 ::build_monitor_er(const int tid)
 {
 	bool count_unknown_values = params_BFER.noise->type == "EP";
 
-	return params_BFER.mnt_er->build<B>(count_unknown_values);
+	auto mnt = std::unique_ptr<typename BFER<B,R,Q>::Monitor_BFER_type>(params_BFER.mnt_er->build<B>(count_unknown_values));
+	mnt->activate_err_histogram(params_BFER.mnt_er->err_hist != -1);
+
+	return mnt;
 }
 
 template <typename B, typename R, typename Q>
-tools::Terminal* BFER<B,R,Q>
+std::unique_ptr<tools::Terminal> BFER<B,R,Q>
 ::build_terminal()
 {
-	return params_BFER.ter->build(this->reporters);
+	return std::unique_ptr<tools::Terminal>(params_BFER.ter->build(this->reporters));
 }
 
 template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
 ::build_reporters()
 {
-	this->noise = params_BFER.noise->template build<R>(0);
-
-	this->rep_noise = new tools::Reporter_noise<R>(&this->noise);
-	this->reporters.push_back(this->rep_noise);
+	this->noise.reset(params_BFER.noise->template build<R>(0));
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_noise<R>>(new tools::Reporter_noise<R>(this->noise)));
 
 	if (params_BFER.mutinfo)
 	{
-		this->rep_mi = new tools::Reporter_MI<B,R>(*this->monitor_mi_red);
-		this->reporters.push_back(this->rep_mi);
+		this->reporters.push_back(std::unique_ptr<tools::Reporter_MI<B,R>>(new tools::Reporter_MI<B,R>(*this->monitor_mi_red)));
 	}
 
-	this->rep_er = new tools::Reporter_BFER<B>(*this->monitor_er_red);
-	this->reporters.push_back(this->rep_er);
-
-	this->rep_thr = new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red);
-	this->reporters.push_back(this->rep_thr);
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_BFER<B>>(new tools::Reporter_BFER<B>(*this->monitor_er_red)));
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_throughput<uint64_t>>(new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red)));
 }
 
 template <typename B, typename R, typename Q>
@@ -381,32 +319,32 @@ void BFER<B,R,Q>
 ::build_monitors()
 {
 	// build a monitor to compute BER/FER on each thread
-	this->modules["monitor_er"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
+	this->add_module("monitor_er", params_BFER.n_threads);
 	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 	{
 		this->monitor_er[tid] = this->build_monitor_er(tid);
-		this->modules["monitor_er"][tid] = this->monitor_er[tid];
+		this->set_module("monitor_er", tid, this->monitor_er[tid]);
 	}
 
 	// build a monitor to reduce BER/FER from the other monitors
-	this->monitor_er_red = new Monitor_BFER_reduction_type(this->monitor_er);
+	this->monitor_er_red.reset(new Monitor_BFER_reduction_type(this->monitor_er));
 
 	if (params_BFER.mutinfo)
 	{
 		// build a monitor to compute MIon each thread
-		this->modules["monitor_mi"] = std::vector<module::Module*>(params_BFER.n_threads, nullptr);
+		this->add_module("monitor_mi", params_BFER.n_threads);
 		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 		{
 			this->monitor_mi[tid] = this->build_monitor_mi(tid);
-			this->modules["monitor_mi"][tid] = this->monitor_mi[tid];
+			this->set_module("monitor_mi", tid, this->monitor_mi[tid]);
 		}
 
 		// build a monitor to reduce M from the other monitors
-		this->monitor_mi_red = new Monitor_MI_reduction_type(this->monitor_mi);
+		this->monitor_mi_red.reset(new Monitor_MI_reduction_type(this->monitor_mi));
 	}
 
 	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
 #else
 	module::Monitor_reduction::set_reduce_frequency(std::chrono::milliseconds(0));
@@ -426,7 +364,7 @@ void BFER<B,R,Q>
 		simu->__build_communication_chain(tid);
 
 		if (simu->params_BFER.err_track_enable)
-			simu->monitor_er[tid]->add_handler_fe(std::bind(&tools::Dumper::add, simu->dumper[tid], std::placeholders::_1, std::placeholders::_2));
+			simu->monitor_er[tid]->add_handler_fe(std::bind(&tools::Dumper::add, simu->dumper[tid].get(), std::placeholders::_1, std::placeholders::_2));
 	}
 	catch (std::exception const& e)
 	{
@@ -471,7 +409,7 @@ bool BFER<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::BFER<B_8,R_8,Q_8>;
 template class aff3ct::simulation::BFER<B_16,R_16,Q_16>;
 template class aff3ct::simulation::BFER<B_32,R_32,Q_32>;

@@ -6,7 +6,6 @@
 #include <string>
 #include <cmath>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS.hpp"
 #include "Tools/Math/utils.h"
 

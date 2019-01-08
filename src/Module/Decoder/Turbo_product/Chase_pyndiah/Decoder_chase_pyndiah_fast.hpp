@@ -10,27 +10,6 @@ namespace aff3ct
 namespace module
 {
 
-/*
- * Chase :
- *   - take hard decision H on input R
- *   - create test vectors from test patterns after selecting the p least reliable positions -> give a p metric set Pm
- *   - hard decode with the HIHO decoder -> get the competitors C -> remove competitors that have not been corrected
- *   - compute the metrics Cm: euclidean distance of each competitor m compared to H
- *   - select the competitor with the smallest metric Dm -> get the decided word D
- *   - if SIHO, return D, if SISO, compute reliabilities of each bit of D -> Pyndiah
- * Pyndiah :
- *   - Compute extrinsic W as
- *          W = F - a * R
- *   - Compute the reliability F of D as, for each bit j of the word:
- *          Fj = Dj * [Cm - Dm] * b                   when Cj /= Dj in the competitor with the smallest metric Cm
- *             = Dj * [beta - c * Dm + d * |Rj|]   when there is no such competitor as described above
- *        with Dj =  1 when Hj = 0
- *                = -1 when Hj = 1
- *        with beta = sum from 0 to e of the Pm    where 0 <= e < p
-
- *   - a, b, c, d and e are simulation constants changeable by the user
- */
-
 template <typename B = int, typename R = float>
 class Decoder_chase_pyndiah_fast : public Decoder_chase_pyndiah<B,R>
 {
@@ -46,7 +25,7 @@ public:
 	                           const int n_competitors  = 0,
 	                           const std::vector<float>& cp_coef = {1,1,1,1,0}); // the a b c d and e coef
 
-	~Decoder_chase_pyndiah_fast() = default;
+	virtual ~Decoder_chase_pyndiah_fast() = default;
 
 protected:
 	virtual void compute_metrics    (const R* Y_N);

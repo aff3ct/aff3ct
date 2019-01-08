@@ -21,7 +21,7 @@ protected:
 public:
 	Codec_RS(const factory::Encoder_RS::parameters &enc_params,
 	         const factory::Decoder_RS::parameters &dec_params);
-	virtual ~Codec_RS();
+	virtual ~Codec_RS() = default;
 };
 }
 }

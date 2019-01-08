@@ -12,12 +12,6 @@ Encoder_AZCW<B>
 }
 
 template <typename B>
-Encoder_AZCW<B>
-::~Encoder_AZCW()
-{
-}
-
-template <typename B>
 void Encoder_AZCW<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
@@ -40,7 +34,7 @@ bool Encoder_AZCW<B>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_AZCW<B_8>;
 template class aff3ct::module::Encoder_AZCW<B_16>;
 template class aff3ct::module::Encoder_AZCW<B_32>;

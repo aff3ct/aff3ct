@@ -3,7 +3,6 @@
 #include <utility>
 #include <sstream>
 #include <vector>
-#include <map>
 
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/general_utils.h"
@@ -21,11 +20,6 @@ const std::string aff3ct::factory::Factory_prefix     = "fac";
 Factory::parameters
 ::parameters(const std::string &name, const std::string &short_name, const std::string &prefix)
 : name(name), short_name(short_name), prefix(prefix)
-{
-}
-
-Factory::parameters
-::~parameters()
 {
 }
 
@@ -80,8 +74,7 @@ tools::Argument_map_info Factory
 }
 
 void Factory
-::get_description(const std::vector<Factory::parameters*> &params,
-                     tools::Argument_map_info &args)
+::get_description(const std::vector<Factory::parameters*> &params, tools::Argument_map_info &args)
 {
 	for (auto *p : params)
 		p->get_description(args);

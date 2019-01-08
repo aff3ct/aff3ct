@@ -9,6 +9,7 @@
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 #include "Tools/types.h"
 #include "Tools/version.h"
 
@@ -60,11 +61,6 @@ factory::Launcher::parameters
 {
 }
 
-factory::Launcher::parameters
-::~parameters()
-{
-}
-
 factory::Launcher::parameters* factory::Launcher::parameters
 ::clone() const
 {
@@ -75,74 +71,64 @@ void factory::Launcher::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Launcher::parameters::";
 
-	args.add(
-		{p+"-cde-type", "C"},
-		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TURBO_PROD", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH", "UNCODED", "RS")),
-		"select the code type you want to use.",
+	tools::add_arg(args, p, class_name+"p+cde-type,C",
+		tools::Text(tools::Including_set("POLAR", "TURBO", "TURBO_DB", "TPC", "LDPC", "REP", "RA", "RSC", "RSC_DB",
+		                                 "BCH", "UNCODED", "RS")),
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-type"},
-#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
-		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")),
+	tools::add_arg(args, p, class_name+"p+type",
+#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
+		tools::Text(tools::Including_set("BFER", "BFERI", "EXIT")));
 #else
-		tools::Text(tools::Including_set("BFER", "BFERI")),
-#endif
-		"select the type of simulation to launch (default is BFER).");
-
-#ifdef MULTI_PREC
-	args.add(
-		{p+"-prec", "p"},
-		tools::Integer(tools::Including_set(8, 16, 32, 64)),
-		"the simulation precision in bits.");
+		tools::Text(tools::Including_set("BFER", "BFERI")));
 #endif
 
-	args.add(
-		{"help", "h"},
-		tools::None(),
-		"print this help.");
+#ifdef AFF3CT_MULTI_PREC
+	tools::add_arg(args, p, class_name+"p+prec,p",
+		tools::Integer(tools::Including_set(8, 16, 32, 64)));
+#endif
 
-	args.add(
-		{"Help", "H"},
-		tools::None(),
-		"print this help with the advanced arguments.");
+	tools::add_arg(args, p, class_name+"help,h",
+		tools::None());
 
-	args.add(
-		{"version", "v"},
-		tools::None(),
-		"print informations about the version of the code.");
+	tools::add_arg(args, p, class_name+"Help,H",
+		tools::None());
 
-#ifdef ENABLE_BACK_TRACE
-	args.add(
-		{"except-no-bt"},
+	tools::add_arg(args, p, class_name+"version,v",
+		tools::None());
+
+#ifdef AFF3CT_BACKTRACE
+	tools::add_arg(args, p, class_name+"except-no-bt",
 		tools::None(),
-		"do not print the backtrace when displaying exception.",
 		tools::arg_rank::ADV);
 #endif
 
 #ifndef NDEBUG
-	args.add(
-		{"except-a2l"},
+	tools::add_arg(args, p, class_name+"except-a2l",
 		tools::None(),
-		"enhance the backtrace when displaying exception by changing program addresses into "
-		" file names and lines (may take some seconds).",
 		tools::arg_rank::ADV);
 #endif
 
-	args.add(
-		{p+"-no-legend"},
+	tools::add_arg(args, p, class_name+"no-legend",
 		tools::None(),
-		"Do not display any legend when launching the simulation.",
 		tools::arg_rank::ADV);
 
-
-#ifdef ENABLE_COOL_BASH
-	args.add(
-		{p+"-no-colors"},
+	tools::add_arg(args, p, class_name+"full-legend",
 		tools::None(),
-		"disable the colors in the shell.");
+		tools::arg_rank::ADV);
+
+	args.add_link({"no-legend"}, {"full-legend"});
+
+#ifdef AFF3CT_COLORS
+	tools::add_arg(args, p, class_name+"no-colors",
+		tools::None());
 #endif
+
+	tools::add_arg(args, p, class_name+"keys,k",
+		tools::None(),
+		tools::arg_rank::ADV);
 }
 
 void factory::Launcher::parameters
@@ -153,7 +139,9 @@ void factory::Launcher::parameters
 	if(vals.exist({p+"-cde-type", "C"})) this->cde_type        = vals.at({p+"-cde-type", "C"}); // required
 	if(vals.exist({p+"-type"         })) this->sim_type        = vals.at({p+"-type"         });
 	if(vals.exist({"version",     "v"})) this->display_version = true;
-	if(vals.exist({p+"-no-legend"    })) this->display_legend  = false;
+	if(vals.exist({"keys",        "k"})) this->display_keys    = true;
+	if(vals.exist({"no-legend"       })) this->display_legend  = false;
+	if(vals.exist({"full-legend"     })) this->full_legend     = true;
 
 	if(vals.exist({"help", "h"}))
 	{
@@ -167,15 +155,15 @@ void factory::Launcher::parameters
 		this->display_adv_help = true;
 	}
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
 
 	tools::exception::no_backtrace    =  vals.exist({"except-no-bt"});
 	tools::exception::no_addr_to_line = !vals.exist({"except-a2l"  });
 
-#ifdef ENABLE_COOL_BASH
-	if (vals.exist({p+"-no-colors"})) rang::setControlMode(rang::control::Off);
+#ifdef AFF3CT_COLORS
+	if (vals.exist({"no-colors"})) rang::setControlMode(rang::control::Off);
 #else
 	rang::setControlMode(rang::control::Off);
 #endif
@@ -197,7 +185,7 @@ void factory::Launcher::parameters
 
 	params_headers[p].push_back(std::make_pair("Type", this->sim_type));
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 	std::type_index id_B = typeid(int32_t), id_R = typeid(float), id_Q = typeid(float);
 	switch (this->sim_prec)
 	{
@@ -263,7 +251,7 @@ namespace aff3ct
 {
 namespace factory
 {
-#if defined(MULTI_PREC) || defined(PREC_32_BIT)
+#if defined(AFF3CT_MULTI_PREC) || defined(AFF3CT_32BIT_PREC)
 template <>
 launcher::Launcher* Launcher::parameters
 ::build_exit<int32_t, float, float>(const int argc, const char **argv) const
@@ -280,7 +268,7 @@ launcher::Launcher* Launcher::parameters
 }
 #endif
 
-#if defined(MULTI_PREC) || defined(PREC_64_BIT)
+#if defined(AFF3CT_MULTI_PREC) || defined(AFF3CT_64BIT_PREC)
 template <>
 launcher::Launcher* Launcher::parameters
 ::build_exit<int64_t, double, double>(const int argc, const char **argv) const
@@ -305,84 +293,67 @@ launcher::Launcher* factory::Launcher::parameters
 {
 	if (this->cde_type == "POLAR")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Polar<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::Polar<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::Polar<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::Polar<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RSC")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::RSC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::RSC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::RSC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::RSC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RSC_DB")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::RSC_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::RSC_DB<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::RSC_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::RSC_DB<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "TURBO")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Turbo<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::Turbo<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "TURBO_DB")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Turbo_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::Turbo_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
-	if (this->cde_type == "TURBO_PROD")
+	if (this->cde_type == "TPC")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Turbo_product<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::Turbo_product<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "REP")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Repetition<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::Repetition<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "BCH")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::BCH<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::BCH<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RS")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::RS<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::RS<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "RA")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::RA<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER") return new launcher::RA<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "LDPC")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::LDPC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::LDPC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::LDPC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::LDPC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (this->cde_type == "UNCODED")
 	{
-		if (this->sim_type == "BFER")
-			return new launcher::Uncoded<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-		else if (this->sim_type == "BFERI")
-			return new launcher::Uncoded<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFER" ) return new launcher::Uncoded<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		if (this->sim_type == "BFERI") return new launcher::Uncoded<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	return build_exit<B,R,Q>(argc, argv);
@@ -397,7 +368,7 @@ launcher::Launcher* factory::Launcher
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_8 ,R_8 ,Q_8 >(const int, const char**) const;
 template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_16,R_16,Q_16>(const int, const char**) const;
 template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_32,R_32,Q_32>(const int, const char**) const;

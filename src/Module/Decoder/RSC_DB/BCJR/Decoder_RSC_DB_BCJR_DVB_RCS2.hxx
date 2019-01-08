@@ -23,19 +23,13 @@ Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
 {
 	const std::string name = "Decoder_RSC_DB_BCJR_DVB_RCS2";
 	this->set_name(name);
-	
+
 	if (this->n_states != 16)
 	{
 		std::stringstream message;
 		message << "'n_states' has to be equal to 16 ('n_states' = " << this->n_states << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R, tools::proto_max<R> MAX>
-Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
-::~Decoder_RSC_DB_BCJR_DVB_RCS2()
-{
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>

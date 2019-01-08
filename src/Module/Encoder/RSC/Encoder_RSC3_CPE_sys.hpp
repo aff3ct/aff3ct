@@ -12,7 +12,7 @@ class Encoder_RSC3_CPE_sys : public Encoder_RSC_sys<B>
 {
 public:
 	Encoder_RSC3_CPE_sys(const int& K, const int& N, const int& n_frames = 1, const bool buffered_encoding = true);
-	virtual ~Encoder_RSC3_CPE_sys() {}
+	virtual ~Encoder_RSC3_CPE_sys() = default;
 
 protected:
 	int inner_encode(const int bit_sys, int &state);

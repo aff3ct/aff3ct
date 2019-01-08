@@ -90,13 +90,19 @@ void Decoder_chase_pyndiah_fast<B,R>
 {
 	const auto & DW = this->competitors.front(); // the Decided Word
 
-	// compute beta, the sum of the least reliable position reliabilities in the decided word
-	R beta = 0;
-	int max_sum = this->cp_coef[4] ? std::min((int)this->cp_coef[4], this->n_least_reliable_positions) : this->n_least_reliable_positions;
-	for (int i = 0; i < max_sum; i++)
-		beta += this->least_reliable_pos[i].metric;
+	R beta_applied = this->beta;
 
-	beta -= this->cp_coef[2] * DW.metric;
+	if (!this->beta_is_set)
+	{
+		// compute beta, the sum of the least reliable position reliabilities in the decided word
+		beta_applied = 0;
+		int max_sum = this->cp_coef[4] ? std::min((int)this->cp_coef[4], this->n_least_reliable_positions) : this->n_least_reliable_positions;
+		for (int i = 0; i < max_sum; i++)
+			beta_applied += this->least_reliable_pos[i].metric;
+
+		beta_applied -= this->cp_coef[2] * DW.metric;
+	}
+
 
 	this->n_good_competitors = std::min(this->n_good_competitors, this->n_competitors); // if there is less than 'this->n_competitors' good this->competitors
 	                                                                  // then take only them for reliability calculation
@@ -108,29 +114,59 @@ void Decoder_chase_pyndiah_fast<B,R>
 
 	const auto N_loop_size = (this->N / mipp::nElReg<B>()) * mipp::nElReg<B>();
 	const mipp::Reg<R> r_zero = (R)0;
+	const mipp::Reg<R> r_beta = beta_applied;
 
-	for (auto i = 0; i < N_loop_size; i += mipp::nElReg<R>())
+
+	if (this->beta_is_set)
 	{
-		const mipp::Reg<B> r_DB = &this->test_vect[DW.pos + i];
-		const mipp::Reg<R> r_Y1 = &Y_N1[i];
-
-		mipp::Reg<R> r_reliability = mipp::abs(r_Y1) * this->cp_coef[3] + beta; // reliability when no competitor with different bit
-		r_reliability = mipp::blend(r_zero, r_reliability, r_reliability < (R)0);
-
-
-		for (B j = this->n_good_competitors -1; j > 0; j--) // j = 0  == DW
+		for (auto i = 0; i < N_loop_size; i += mipp::nElReg<R>())
 		{
-			const mipp::Reg<B> r_comp_bit = &this->test_vect[this->competitors[j].pos + i];
-			const mipp::Reg<R> r_comp_met = this->competitors[j].metric;
+			const mipp::Reg<B> r_DB = &this->test_vect[DW.pos + i];
+			const mipp::Reg<R> r_Y1 = &Y_N1[i];
 
-			r_reliability = mipp::blend(r_reliability, r_comp_met, r_comp_bit == r_DB);
+			mipp::Reg<R> r_reliability = r_beta;
+
+
+			for (B j = this->n_good_competitors -1; j > 0; j--) // j = 0  == DW
+			{
+				const mipp::Reg<B> r_comp_bit = &this->test_vect[this->competitors[j].pos + i];
+				const mipp::Reg<R> r_comp_met = this->competitors[j].metric;
+
+				r_reliability = mipp::blend(r_reliability, r_comp_met, r_comp_bit == r_DB);
+			}
+
+			r_reliability = mipp::neg(r_reliability, r_DB != (B)0);
+			r_reliability -= r_Y1 * this->cp_coef[0];
+
+			r_reliability.store(&Y_N2[i]);
 		}
-
-		r_reliability = mipp::neg(r_reliability, r_DB != (B)0);
-		r_reliability -= r_Y1 * this->cp_coef[0];
-
-		r_reliability.store(&Y_N2[i]);
 	}
+	else
+	{
+		for (auto i = 0; i < N_loop_size; i += mipp::nElReg<R>())
+		{
+			const mipp::Reg<B> r_DB = &this->test_vect[DW.pos + i];
+			const mipp::Reg<R> r_Y1 = &Y_N1[i];
+
+			mipp::Reg<R> r_reliability = mipp::abs(r_Y1) * this->cp_coef[3] + r_beta; // reliability when no competitor with different bit
+			r_reliability = mipp::blend(r_zero, r_reliability, r_reliability < (R)0);
+
+
+			for (B j = this->n_good_competitors -1; j > 0; j--) // j = 0  == DW
+			{
+				const mipp::Reg<B> r_comp_bit = &this->test_vect[this->competitors[j].pos + i];
+				const mipp::Reg<R> r_comp_met = this->competitors[j].metric;
+
+				r_reliability = mipp::blend(r_reliability, r_comp_met, r_comp_bit == r_DB);
+			}
+
+			r_reliability = mipp::neg(r_reliability, r_DB != (B)0);
+			r_reliability -= r_Y1 * this->cp_coef[0];
+
+			r_reliability.store(&Y_N2[i]);
+		}
+	}
+
 
 	for (int i = N_loop_size; i < this->N; i++)
 	{
@@ -147,9 +183,13 @@ void Decoder_chase_pyndiah_fast<B,R>
 		{
 			reliability = this->competitors[j].metric;
 		}
+		else if (this->beta_is_set)
+		{
+			reliability = this->beta;
+		}
 		else // same bits for each candidates
 		{
-			reliability = beta + this->cp_coef[3] * std::abs(Y_N1[i]);
+			reliability = beta_applied + this->cp_coef[3] * std::abs(Y_N1[i]);
 			if (reliability < 0)
 				reliability = 0;
 		}
@@ -163,7 +203,7 @@ void Decoder_chase_pyndiah_fast<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_chase_pyndiah_fast<B_8,Q_8>;
 template class aff3ct::module::Decoder_chase_pyndiah_fast<B_16,Q_16>;
 template class aff3ct::module::Decoder_chase_pyndiah_fast<B_32,Q_32>;

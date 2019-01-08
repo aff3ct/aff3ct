@@ -32,15 +32,6 @@ Distributions(const std::string& filename, Distribution_mode mode, bool read_all
 }
 
 template<typename R>
-Distributions<R>::
-~Distributions()
-{
-	for (auto& d : distributions)
-		if (d.second != nullptr)
-			delete d.second;
-}
-
-template<typename R>
 const std::vector<R>& Distributions<R>::
 get_noise_range() const
 {
@@ -110,7 +101,7 @@ read_noise_range()
 			if (f_distributions.eof())
 				break;
 
-			my_getline(f_distributions, line); 
+			my_getline(f_distributions, line);
 			if (line.empty())
 			{
 				i--;
@@ -146,7 +137,7 @@ get_distribution(R noise) const
 		message << "Undefined noise 'noise' in the distributions ('noise' = " << noise << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-	
+
 	if (it->second == nullptr)
 	{
 		std::stringstream message;
@@ -159,7 +150,7 @@ get_distribution(R noise) const
 
 template<typename R>
 void Distributions<R>::
-add_distribution(R noise, Distribution<R>* new_distribution)
+add_distribution(R noise, std::unique_ptr<Distribution<R>>&& new_distribution)
 {
 	if (new_distribution == nullptr)
 	{
@@ -177,7 +168,7 @@ add_distribution(R noise, Distribution<R>* new_distribution)
 	}
 	catch (const tools::invalid_argument&)
 	{
-		this->distributions[calibrated_noise(noise)] = new_distribution;
+		this->distributions[calibrated_noise(noise)] = std::move(new_distribution);
 	}
 }
 
@@ -303,12 +294,12 @@ read_distribution_from_file(unsigned index)
 	catch(...)
 	{
 		std::stringstream message;
-		message << "A value does not represent a float (ROP = " << ROP << ", ROP_R = " << ROP_R 
+		message << "A value does not represent a float (ROP = " << ROP << ", ROP_R = " << ROP_R
 		        << ", j = " << j << ", v_x[j] = " << v_x[j] << ", v_y0[j] = " << v_y0[j] << ", v_y1[j] = " << v_y1[j] << ")";
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	add_distribution(ROP_R, new Distribution<R>(std::move(v_x_R), std::move(v_y_R)));
+	add_distribution(ROP_R, std::unique_ptr<Distribution<R>>(new Distribution<R>(std::move(v_x_R), std::move(v_y_R))));
 }
 
 template<typename R>
@@ -320,7 +311,7 @@ calibrated_noise(R noise)
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::tools::Distributions<R_32>;
 template class aff3ct::tools::Distributions<R_64>;
 #else

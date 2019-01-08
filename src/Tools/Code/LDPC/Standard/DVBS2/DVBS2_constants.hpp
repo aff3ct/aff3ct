@@ -1,9 +1,14 @@
+/*
+ * Link to the DVBS2 standard: https://www.etsi.org/deliver/etsi_en/302300_302399/30230701/01.04.01_60/en_30230701v010401p.pdf
+ */
+
 #ifndef DVBS2_CONSTANTS_HPP_
 #define DVBS2_CONSTANTS_HPP_
 
 #include <vector>
+#include <memory>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct
 {
@@ -21,7 +26,7 @@ struct dvbs2_values
 	int N_LINES;
 };
 
-dvbs2_values* build_dvbs2(const int K, const int N);
+std::unique_ptr<dvbs2_values> build_dvbs2(const int K, const int N);
 
 tools::Sparse_matrix build_H(const dvbs2_values& dvbs2);
 

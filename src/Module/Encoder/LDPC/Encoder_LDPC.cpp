@@ -47,30 +47,16 @@ template <typename B>
 void Encoder_LDPC<B>
 ::check_G_dimensions()
 {
-	try
-	{
-		this->_check_G_dimensions();
-	}
-	catch(tools::invalid_argument&)
-	{
-		this->G.self_transpose();
-		this->_check_G_dimensions();
-	}
+	G.self_turn(tools::Sparse_matrix::Way::VERTICAL);
+	this->_check_G_dimensions();
 }
 
 template <typename B>
 void Encoder_LDPC<B>
 ::check_H_dimensions()
 {
-	try
-	{
-		this->_check_H_dimensions();
-	}
-	catch(tools::invalid_argument&)
-	{
-		this->H.self_transpose();
-		this->_check_H_dimensions();
-	}
+	H.self_turn(tools::Sparse_matrix::Way::VERTICAL);
+	this->_check_H_dimensions();
 }
 
 template <typename B>
@@ -122,20 +108,6 @@ void Encoder_LDPC<B>
 }
 
 template <typename B>
-const std::vector<uint32_t>& Encoder_LDPC<B>
-::get_info_bits_pos() const
-{
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
-}
-
-template <typename B>
-bool Encoder_LDPC<B>
-::is_sys() const
-{
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
-}
-
-template <typename B>
 bool Encoder_LDPC<B>
 ::is_codeword(const B *X_N)
 {
@@ -147,7 +119,7 @@ bool Encoder_LDPC<B>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_LDPC<B_8>;
 template class aff3ct::module::Encoder_LDPC<B_16>;
 template class aff3ct::module::Encoder_LDPC<B_32>;

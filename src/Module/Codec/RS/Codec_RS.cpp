@@ -56,35 +56,24 @@ Codec_RS<B,Q>
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
 
-	Encoder<B>* encoder;
 	try
 	{
-		encoder = factory::Encoder_RS::build<B>(enc_params, GF_poly);
+		this->set_encoder(factory::Encoder_RS::build<B>(enc_params, GF_poly));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		encoder = factory::Encoder::build<B>(enc_params);
+		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
 	if (dec_params.implem == "GENIUS")
-		encoder->set_memorizing(true);
+		this->get_encoder()->set_memorizing(true);
 
-	this->set_encoder(encoder);
-
-	auto decoder_hiho_siho = factory::Decoder_RS::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder());
-	this->set_decoder_siho(decoder_hiho_siho);
-	this->set_decoder_hiho(decoder_hiho_siho);
-}
-
-template <typename B, typename Q>
-Codec_RS<B,Q>
-::~Codec_RS()
-{
+	this->set_decoder_siho_hiho(factory::Decoder_RS::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder()));
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Codec_RS<B_8,Q_8>;
 template class aff3ct::module::Codec_RS<B_16,Q_16>;
 template class aff3ct::module::Codec_RS<B_32,Q_32>;

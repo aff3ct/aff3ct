@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "Module/Module.hpp"
 #include "Tools/Noise/Noise.hpp"
@@ -48,7 +49,7 @@ public:
 
 protected:
 	const int N;          // Size of one frame (= number of bits in one frame)
-	tools::Noise<R>* n;   // the current noise to apply to the input signal
+	std::unique_ptr<tools::Noise<R>> n;   // the current noise to apply to the input signal
 	std::vector<R> noise; // vector of the noise applied to the signal
 
 public:
@@ -72,7 +73,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Channel();
+	virtual ~Channel() = default;
 
 	int get_N() const;
 

@@ -14,7 +14,7 @@ class Encoder_CPE
 {
 public:
 	Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm);
-	virtual ~Encoder_CPE() {}
+	virtual ~Encoder_CPE() = default;
 
 	const int N; // number of symbol to send for one frame
 	const CPM_parameters<SIN,SOUT>& cpm;

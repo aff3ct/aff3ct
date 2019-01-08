@@ -99,12 +99,42 @@ public:
 	}
 
 	/*
+	 *	Add a value 'd' 'weight' times in the histogram
+	 */
+	inline void add_value(const R& d, size_t weight)
+	{
+		auto x = calibrate_val(d);
+
+		auto it = hist.find(x);
+		if (it == hist.end())
+			hist[x] = weight;
+		else
+			it->second += weight;
+
+		n_values += weight;
+	}
+
+
+	inline void norm_sum_to_1 (bool               val) { _norm_sum_to_1  = val;} // to normalize the values to a cumulative integration to 1.
+	inline void norm_minus_1  (bool               val) { _norm_minus_1   = val;} // only when norm_sum_to_1 == true, dump (1-x)
+	inline void cumul_vals    (bool               val) { _cumul_vals     = val;} // accumulate values rung after rung as for a CDF
+	inline void cumul_borders (bool               val) { _cumul_borders  = val;} // accumulate the values over the given range [hist_min, hist_max] on those border values
+	inline void n_rung        (unsigned           val) { _n_rung         = val;} // the number of values plotted on the abscissa in the asked range (if 0 then dump directly the values)
+	inline void data_separator(const std::string& val) { _data_separator = val;} // tag used to separate x from y when dumping them
+
+	inline bool               norm_sum_to_1 () const { return _norm_sum_to_1; }
+	inline bool               norm_minus_1  () const { return _norm_minus_1;  }
+	inline bool               cumul_vals    () const { return _cumul_vals;    }
+	inline bool               cumul_borders () const { return _cumul_borders; }
+	inline unsigned           n_rung        () const { return _n_rung;        }
+	inline const std::string& data_separator() const { return _data_separator;}
+
+	/*
 	 * call dump by setting the hist_min and hist_max values as, respectively, get_hist_min() and get_hist_max()
 	 */
-	int dump(std::ofstream& hist_file, unsigned n_rung = 0, bool norm_sum_to_1 = false, bool cumul_vals = false,
-	         bool cumul_borders = false, const std::string& data_separator = "; ") const
+	int dump(std::ofstream& hist_file) const
 	{
-		return dump(hist_file, get_hist_min(), get_hist_max(), n_rung, norm_sum_to_1, cumul_vals, cumul_borders, data_separator);
+		return dump(hist_file, get_hist_min(), get_hist_max());
 	}
 
 	/*
@@ -112,24 +142,22 @@ public:
 	 * @hist_min is the left border of the dump
 	 * @hist_max is the right border of the dump
 	 * @n_rung is the number of values plotted on the abscissa in the asked range (if 0 then dump directly the values)
-	 * @norm_sum_to_1 is to normalize the values to a cumulative integration to 1.
-+	 * @cumul_vals option accumulates values rung after rung as for a CDF
-	 * @cumul_borders is to accumulate the values over the given range [hist_min, hist_max] on those border values
-	 * @data_separator is the tag used to separate x from y when dumping them
 	 * @return 1 when there is an error in given limits
 	 */
-	int dump(std::ofstream& hist_file, R hist_min, R hist_max, unsigned n_rung = 0, bool norm_sum_to_1 = false,
-	         bool cumul_vals = false, bool cumul_borders = false, const std::string& data_separator = "; ") const
+	int dump(std::ofstream& hist_file, R hist_min, R hist_max) const
 	{
 		if (hist_min >= hist_max)
 			return 1;
 
-		if (n_rung == 0)
-			return dump_all_values(hist_file, hist_min, hist_max,         norm_sum_to_1, cumul_vals, cumul_borders, data_separator);
+		if (n_rung() == 0)
+			return dump_all_values(hist_file, hist_min, hist_max);
 		else
-			return dump_intervals (hist_file, hist_min, hist_max, n_rung, norm_sum_to_1, cumul_vals, cumul_borders, data_separator);
+			return dump_intervals (hist_file, hist_min, hist_max);
 	}
 
+	/*
+	 * Reset histogram values but not the options.
+	 */
 	inline void reset()
 	{
 		n_values = 0;
@@ -176,13 +204,12 @@ public:
 	}
 
 private:
-	int dump_all_values(std::ofstream& hist_file, R hist_min, R hist_max, bool norm_sum_to_1 = false,
-	                    bool cumul_vals = false, bool cumul_borders = false, const std::string& data_separator = "; ") const
+	int dump_all_values(std::ofstream& hist_file, R hist_min, R hist_max) const
 	{
 		R factor = 1;
-		if (norm_sum_to_1)
+		if (norm_sum_to_1())
 		{
-			factor = (R)1 /(R)n_values;
+			factor = (R)1 /(R)get_n_values();
 		}
 
 		size_t cumul = 0;
@@ -190,56 +217,69 @@ private:
 
 		auto cal_hist_min = calibrate_val(hist_min);
 		auto cal_hist_max = calibrate_val(hist_max);
+		R value;
 
 		for (auto it = hist.begin(); it != hist.end(); it++)
 		{
 			if ((it->first > cal_hist_min) && (cal_hist_max > it->first))
 			{
+				value = (R)cumul * factor;
+				if (norm_sum_to_1() && norm_minus_1())
+					value = (R)1 - value;
+
 				if (!dumped_hist_min)
 				{ // then end of the cumul border on the left
-					hist_file << hist_min << data_separator << std::scientific << (R)cumul * factor << std::endl;
+					hist_file << hist_min << data_separator() << std::scientific << value << std::endl;
 					dumped_hist_min = true;
 				}
 
-				if (cumul_vals)
+				if (cumul_vals())
 					cumul += it->second;
 				else
 					cumul = it->second;
 
-				hist_file << uncalibrate_val(it->first) << data_separator << std::scientific << (R)cumul * factor << std::endl;
+				value = (R)cumul * factor;
+				if (norm_sum_to_1() && norm_minus_1())
+					value = (R)1 - value;
+
+				hist_file << uncalibrate_val(it->first) << data_separator() << std::scientific << value << std::endl;
 			}
-			else if (cumul_borders || it->first == cal_hist_min || it->first == cal_hist_max)
+			else if (cumul_borders() || it->first == cal_hist_min || it->first == cal_hist_max)
 			{
 				cumul += it->second;
 			}
 		}
 
 		if (cumul != 0) // then end of the cumul border on the right
-			hist_file << hist_max << data_separator << std::scientific << (R)cumul * factor << std::endl;
+		{
+			value = (R)cumul * factor;
+			if (norm_sum_to_1() && norm_minus_1())
+				value = (R)1 - value;
+			hist_file << hist_max << data_separator() << std::scientific << value << std::endl;
+		}
 
 		return 0;
 	}
 
-	int dump_intervals(std::ofstream& hist_file, R hist_min, R hist_max, unsigned n_rung, bool norm_sum_to_1 = false,
-	                   bool cumul_vals = false, bool cumul_borders = false, const std::string& data_separator = "; ") const
+	int dump_intervals(std::ofstream& hist_file, R hist_min, R hist_max) const
 	{
 		R factor = 1;
-		if (norm_sum_to_1)
+		if (norm_sum_to_1())
 		{
-			factor = (R)1 /(R)n_values;
+			factor = (R)1 /(R)get_n_values();
 		}
 
-		R dump_step = (R)n_rung / (hist_max - hist_min);
-		std::vector<size_t> dump_hist(n_rung + 1, 0);
+		R dump_step = (R)n_rung() / (hist_max - hist_min);
+		std::vector<size_t> dump_hist(n_rung() + 1, 0);
 
 		for (auto it = hist.begin(); it != hist.end(); it++)
 		{
 			auto x = (int)round((uncalibrate_val(it->first) - hist_min) * dump_step);
-			if (x >= 0 && x <= (int)n_rung)
+			if (x >= 0 && x <= (int)n_rung())
 			{
 				dump_hist[x] += it->second;
 			}
-			else if (cumul_borders)
+			else if (cumul_borders())
 			{
 				if (x < 0)
 					dump_hist.front() += it->second;
@@ -251,18 +291,30 @@ private:
 		R _dump_step = (R)1/dump_step;
 		size_t cumul = 0;
 
-		for (unsigned i = 0; i <= n_rung; ++i)
+		for (unsigned i = 0; i <= n_rung(); ++i)
 		{
-			if (cumul_vals)
+			if (cumul_vals())
 				cumul += dump_hist[i];
 			else
 				cumul = dump_hist[i];
 
-			hist_file << ((R) i * _dump_step + hist_min) << data_separator << std::scientific
-			          << (R) cumul * factor << std::endl;
+			auto value = (R)cumul * factor;
+			if (norm_sum_to_1() && norm_minus_1())
+				value = (R)1 - value;
+
+			hist_file << ((R) i * _dump_step + hist_min) << data_separator() << std::scientific << value << std::endl;
 		}
 		return 0;
 	}
+
+private:
+	bool        _norm_sum_to_1  = false;
+	bool        _norm_minus_1   = false;
+	bool        _cumul_vals     = false;
+	bool        _cumul_borders  = false;
+	unsigned    _n_rung         = 0;
+	std::string _data_separator = "; ";
+
 };
 
 }

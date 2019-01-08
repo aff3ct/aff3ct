@@ -21,11 +21,7 @@ Encoder_RA::parameters
 Encoder_RA::parameters* Encoder_RA::parameters
 ::clone() const
 {
-	auto clone = new Encoder_RA::parameters(*this);
-
-	if (itl != nullptr) { clone->itl = itl->clone(); }
-
-	return clone;
+	return new Encoder_RA::parameters(*this);
 }
 
 std::vector<std::string> Encoder_RA::parameters
@@ -51,21 +47,20 @@ std::vector<std::string> Encoder_RA::parameters
 	return p;
 }
 
-Encoder_RA::parameters
-::~parameters()
-{
-	if (itl != nullptr) { delete itl; itl = nullptr; }
-}
-
 void Encoder_RA::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
-	this->itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	args.erase({"itl-size"    });
-	args.erase({"itl-fra", "F"});
+		auto pi = itl->get_prefix();
+
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
 	auto p = this->get_prefix();
 
@@ -77,10 +72,13 @@ void Encoder_RA::parameters
 {
 	Encoder::parameters::store(vals);
 
-	this->itl->core->size     = this->N_cw;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->N_cw;
+		this->itl->core->n_frames = this->n_frames;
 
-	this->itl->store(vals);
+		this->itl->store(vals);
+	}
 }
 
 void Encoder_RA::parameters
@@ -88,7 +86,8 @@ void Encoder_RA::parameters
 {
 	Encoder::parameters::get_headers(headers, full);
 
-	this->itl->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 }
 
 template <typename B>
@@ -109,7 +108,7 @@ module::Encoder_RA<B>* Encoder_RA
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_RA<B_8 >* aff3ct::factory::Encoder_RA::parameters::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&) const;
 template aff3ct::module::Encoder_RA<B_16>* aff3ct::factory::Encoder_RA::parameters::build<B_16>(const aff3ct::module::Interleaver<B_16>&) const;
 template aff3ct::module::Encoder_RA<B_32>* aff3ct::factory::Encoder_RA::parameters::build<B_32>(const aff3ct::module::Interleaver<B_32>&) const;

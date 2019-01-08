@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Tools/Interleaver/Random_column/Interleaver_core_random_column.hpp"
 #include "Tools/Interleaver/Row_column/Interleaver_core_row_column.hpp"
@@ -26,11 +27,6 @@ Interleaver_core::parameters
 {
 }
 
-Interleaver_core::parameters
-::~parameters()
-{
-}
-
 Interleaver_core::parameters* Interleaver_core::parameters
 ::clone() const
 {
@@ -41,42 +37,34 @@ void Interleaver_core::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Interleaver_core::parameters::";
 
-	args.add(
-		{p+"-size"},
+	tools::add_arg(args, p, class_name+"p+size",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of symbols to interleave.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL", "ROW_COL", "COL_ROW", "NO")),
-		"type of the interleaver to use in the simulation.");
+	tools::add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL",
+		                                 "ROW_COL", "COL_ROW", "NO")));
 
-	args.add(
-		{p+"-path"},
-		tools::File(tools::openmode::read),
-		"specify the path to the interleaver file (to use with \"--itl-type USER\").");
+	tools::add_arg(args, p, class_name+"p+path",
+		tools::File(tools::openmode::read));
 
-	args.add(
-		{p+"-cols"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"specify the number of columns used for the RAND_COL, ROW_COL or COL_ROW interleaver.");
+	tools::add_arg(args, p, class_name+"p+cols",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-uni"},
-		tools::None(),
-		"enable the regeneration of the interleaver at each new frame.");
+	tools::add_arg(args, p, class_name+"p+uni",
+		tools::None());
 
-	args.add(
-		{p+"-seed", "S"},
-		tools::Integer(tools::Positive()),
-		"seed used to initialize the pseudo random generators.");
+	tools::add_arg(args, p, class_name+"p+seed,S",
+		tools::Integer(tools::Positive()));
+
+	tools::add_arg(args, p, class_name+"p+read-order",
+		tools::Text(tools::Including_set("TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT")));
+
 }
 
 void Interleaver_core::parameters
@@ -84,13 +72,14 @@ void Interleaver_core::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-size"     })) this->size     = vals.to_int({p+"-size"     });
-	if(vals.exist({p+"-fra",  "F"})) this->n_frames = vals.to_int({p+"-fra",  "F"});
-	if(vals.exist({p+"-type"     })) this->type     = vals.at    ({p+"-type"     });
-	if(vals.exist({p+"-path"     })) this->path     = vals.at    ({p+"-path"     });
-	if(vals.exist({p+"-cols"     })) this->n_cols   = vals.to_int({p+"-cols"     });
-	if(vals.exist({p+"-seed", "S"})) this->seed     = vals.to_int({p+"-seed", "S"});
-	if(vals.exist({p+"-uni"      })) this->uniform  = true;
+	if(vals.exist({p+"-size"      })) this->size       = vals.to_int ({p+"-size"      });
+	if(vals.exist({p+"-fra",   "F"})) this->n_frames   = vals.to_int ({p+"-fra",   "F"});
+	if(vals.exist({p+"-type"      })) this->type       = vals.at     ({p+"-type"      });
+	if(vals.exist({p+"-path"      })) this->path       = vals.to_file({p+"-path"      });
+	if(vals.exist({p+"-cols"      })) this->n_cols     = vals.to_int ({p+"-cols"      });
+	if(vals.exist({p+"-seed",  "S"})) this->seed       = vals.to_int ({p+"-seed",  "S"});
+	if(vals.exist({p+"-uni"       })) this->uniform    = true;
+	if(vals.exist({p+"-read-order"})) this->read_order = vals.at     ({p+"-read-order"});
 }
 
 void Interleaver_core::parameters
@@ -116,17 +105,17 @@ template <typename T>
 tools::Interleaver_core<T>* Interleaver_core::parameters
 ::build() const
 {
-	     if (this->type == "LTE"     ) return new tools::Interleaver_core_LTE          <T>(this->size,                                          this->n_frames);
-	else if (this->type == "CCSDS"   ) return new tools::Interleaver_core_CCSDS        <T>(this->size,                                          this->n_frames);
-	else if (this->type == "DVB-RCS1") return new tools::Interleaver_core_ARP_DVB_RCS1 <T>(this->size,                                          this->n_frames);
-	else if (this->type == "DVB-RCS2") return new tools::Interleaver_core_ARP_DVB_RCS2 <T>(this->size,                                          this->n_frames);
-	else if (this->type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(this->size,               this->seed, this->uniform, this->n_frames);
-	else if (this->type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(this->size, this->n_cols, this->seed, this->uniform, this->n_frames);
-	else if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols,                            this->n_frames);
-	else if (this->type == "COL_ROW" ) return new tools::Interleaver_core_column_row   <T>(this->size, this->n_cols,                            this->n_frames);
-	else if (this->type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(this->size,               this->seed, this->uniform, this->n_frames);
-	else if (this->type == "USER"    ) return new tools::Interleaver_core_user         <T>(this->size, this->path,                              this->n_frames);
-	else if (this->type == "NO"      ) return new tools::Interleaver_core_NO           <T>(this->size,                                          this->n_frames);
+	if (this->type == "LTE"     ) return new tools::Interleaver_core_LTE          <T>(this->size,                                          this->n_frames);
+	if (this->type == "CCSDS"   ) return new tools::Interleaver_core_CCSDS        <T>(this->size,                                          this->n_frames);
+	if (this->type == "DVB-RCS1") return new tools::Interleaver_core_ARP_DVB_RCS1 <T>(this->size,                                          this->n_frames);
+	if (this->type == "DVB-RCS2") return new tools::Interleaver_core_ARP_DVB_RCS2 <T>(this->size,                                          this->n_frames);
+	if (this->type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(this->size,               this->seed, this->uniform, this->n_frames);
+	if (this->type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(this->size, this->n_cols, this->seed, this->uniform, this->n_frames);
+	if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols, this->read_order,          this->n_frames);
+	if (this->type == "COL_ROW" ) return new tools::Interleaver_core_column_row   <T>(this->size, this->n_cols, this->read_order,          this->n_frames);
+	if (this->type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(this->size,               this->seed, this->uniform, this->n_frames);
+	if (this->type == "USER"    ) return new tools::Interleaver_core_user         <T>(this->size, this->path,                              this->n_frames);
+	if (this->type == "NO"      ) return new tools::Interleaver_core_NO           <T>(this->size,                                          this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

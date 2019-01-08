@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "Channel_AWGN_LLR.hpp"
 
@@ -9,31 +10,25 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_AWGN_LLR<R>
-::Channel_AWGN_LLR(const int N, tools::Gaussian_gen<R> *noise_generator, const bool add_users,
+::Channel_AWGN_LLR(const int N, std::unique_ptr<tools::Gaussian_gen<R>>&& _ng, const bool add_users,
                    const tools::Sigma<R>& noise, const int n_frames)
 : Channel<R>(N, noise, n_frames),
   add_users(add_users),
-  noise_generator(noise_generator)
+  noise_generator(std::move(_ng))
 {
 	const std::string name = "Channel_AWGN_LLR";
 	this->set_name(name);
 
-	if (noise_generator == nullptr)
+	if (this->noise_generator == nullptr)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
 }
 
 template <typename R>
 Channel_AWGN_LLR<R>
 ::Channel_AWGN_LLR(const int N, const int seed, const bool add_users, const tools::Sigma<R>& noise, const int n_frames)
-: Channel_AWGN_LLR<R>(N, new tools::Gaussian_noise_generator_std<R>(seed), add_users, noise, n_frames)
+: Channel_AWGN_LLR<R>(N, std::unique_ptr<tools::Gaussian_noise_generator_std<R>>(new tools::Gaussian_noise_generator_std<R>(seed)),
+  add_users, noise, n_frames)
 {
-}
-
-template <typename R>
-Channel_AWGN_LLR<R>
-::~Channel_AWGN_LLR()
-{
-	delete noise_generator;
 }
 
 template <typename R>
@@ -86,7 +81,7 @@ void Channel_AWGN_LLR<R>::check_noise()
 }
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Channel_AWGN_LLR<R_32>;
 template class aff3ct::module::Channel_AWGN_LLR<R_64>;
 #else

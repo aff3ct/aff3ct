@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Polar/Encoder_polar.hpp"
 #include "Module/Encoder/Polar/Encoder_polar_sys.hpp"
@@ -18,11 +19,6 @@ Encoder_polar::parameters
 	this->type = "POLAR";
 }
 
-Encoder_polar::parameters
-::~parameters()
-{
-}
-
 Encoder_polar::parameters* Encoder_polar::parameters
 ::clone() const
 {
@@ -35,13 +31,12 @@ void Encoder_polar::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_polar::parameters::";
 
 	tools::add_options(args.at({p+"-type"}), 0, "POLAR");
 
-	args.add(
-		{p+"-no-sys"},
-		tools::None(),
-		"disable the systematic encoding.");
+	tools::add_arg(args, p, class_name+"p+no-sys",
+		tools::None());
 }
 
 void Encoder_polar::parameters
@@ -60,8 +55,8 @@ template <typename B>
 module::Encoder_polar<B>* Encoder_polar::parameters
 ::build(const std::vector<bool> &frozen_bits) const
 {
-	     if (this->type == "POLAR" && !this->systematic) return new module::Encoder_polar    <B>(this->K, this->N_cw, frozen_bits, this->n_frames);
-	else if (this->type == "POLAR" &&  this->systematic) return new module::Encoder_polar_sys<B>(this->K, this->N_cw, frozen_bits, this->n_frames);
+	if (this->type == "POLAR" && !this->systematic) return new module::Encoder_polar    <B>(this->K, this->N_cw, frozen_bits, this->n_frames);
+	if (this->type == "POLAR" &&  this->systematic) return new module::Encoder_polar_sys<B>(this->K, this->N_cw, frozen_bits, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -75,7 +70,7 @@ module::Encoder_polar<B>* Encoder_polar
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_polar<B_8 >* aff3ct::factory::Encoder_polar::parameters::build<B_8 >(const std::vector<bool>&) const;
 template aff3ct::module::Encoder_polar<B_16>* aff3ct::factory::Encoder_polar::parameters::build<B_16>(const std::vector<bool>&) const;
 template aff3ct::module::Encoder_polar<B_32>* aff3ct::factory::Encoder_polar::parameters::build<B_32>(const std::vector<bool>&) const;

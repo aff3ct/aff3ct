@@ -12,7 +12,7 @@ class Decoder_NO : public Decoder_SISO_SIHO<B,R>
 {
 public:
 	Decoder_NO(const int K, const int n_frames = 1);
-	virtual ~Decoder_NO();
+	virtual ~Decoder_NO() = default;
 
 protected:
 	void _decode_siso   (const R *sys, const R *par, R *ext, const int frame_id);

@@ -30,7 +30,7 @@ struct Puncturer : Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Puncturer_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Puncturer::parameters* clone() const;
 
 		// parameters construction

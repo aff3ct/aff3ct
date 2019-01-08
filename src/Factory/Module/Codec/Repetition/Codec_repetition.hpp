@@ -4,9 +4,6 @@
 #include <string>
 #include <cmath>
 
-#include "Factory/Module/Encoder/Repetition/Encoder_repetition.hpp"
-#include "Factory/Module/Decoder/Repetition/Decoder_repetition.hpp"
-
 #include "Module/Codec/Repetition/Codec_repetition.hpp"
 
 #include "../Codec_SIHO.hpp"
@@ -22,14 +19,8 @@ struct Codec_repetition : public Codec_SIHO
 	class parameters : public Codec_SIHO::parameters
 	{
 	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// depending parameters
-		Encoder_repetition::parameters *enc;
-		Decoder_repetition::parameters *dec;
-
-		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_repetition_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Codec_repetition::parameters* clone() const;
 
 		// parameters construction

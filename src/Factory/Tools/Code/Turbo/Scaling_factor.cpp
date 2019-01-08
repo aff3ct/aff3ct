@@ -1,6 +1,7 @@
 #include <cctype>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_seq.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_vec.hpp"
@@ -22,11 +23,6 @@ Scaling_factor::parameters
 {
 }
 
-Scaling_factor::parameters
-::~parameters()
-{
-}
-
 Scaling_factor::parameters* Scaling_factor::parameters
 ::clone() const
 {
@@ -37,16 +33,13 @@ void Scaling_factor::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Scaling_factor::parameters::";
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")),
-		"scaling factor type.");
+	tools::add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")));
 
-	args.add(
-		{p+"-ite"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of iterations.");
+	tools::add_arg(args, p, class_name+"p+ite",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Scaling_factor::parameters
@@ -92,11 +85,11 @@ template<typename B, typename Q>
 tools::Scaling_factor<B,Q>* Scaling_factor::parameters
 ::build() const
 {
-	     if (this->type == "CST"     ) return new tools::Scaling_factor_constant<B,Q>(this->n_ite, this->cst        );
-	else if (this->type == "LTE_VEC" ) return new tools::Scaling_factor_vec     <B,Q>(this->n_ite                   );
-	else if (this->type == "LTE"     ) return new tools::Scaling_factor_seq     <B,Q>(this->n_ite                   );
-	else if (this->type == "ARRAY"   ) return new tools::Scaling_factor_array   <B,Q>(this->n_ite, this->alpha_array);
-	else if (this->type == "ADAPTIVE") return new tools::Scaling_factor_adaptive<B,Q>(this->n_ite                   );
+	if (this->type == "CST"     ) return new tools::Scaling_factor_constant<B,Q>(this->n_ite, this->cst        );
+	if (this->type == "LTE_VEC" ) return new tools::Scaling_factor_vec     <B,Q>(this->n_ite                   );
+	if (this->type == "LTE"     ) return new tools::Scaling_factor_seq     <B,Q>(this->n_ite                   );
+	if (this->type == "ARRAY"   ) return new tools::Scaling_factor_array   <B,Q>(this->n_ite, this->alpha_array);
+	if (this->type == "ADAPTIVE") return new tools::Scaling_factor_adaptive<B,Q>(this->n_ite                   );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -110,7 +103,7 @@ tools::Scaling_factor<B,Q>* Scaling_factor
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::tools::Scaling_factor<B_8 ,Q_8 >* aff3ct::factory::Scaling_factor::parameters::build<B_8 ,Q_8 >() const;
 template aff3ct::tools::Scaling_factor<B_16,Q_16>* aff3ct::factory::Scaling_factor::parameters::build<B_16,Q_16>() const;
 template aff3ct::tools::Scaling_factor<B_32,Q_32>* aff3ct::factory::Scaling_factor::parameters::build<B_32,Q_32>() const;

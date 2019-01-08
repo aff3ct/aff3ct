@@ -50,12 +50,6 @@ Interleaver(const tools::Interleaver_core<T> &core)
 }
 
 template <typename D, typename T>
-Interleaver<D,T>::
-~Interleaver()
-{
-}
-
-template <typename D, typename T>
 const tools::Interleaver_core<T>& Interleaver<D,T>::
 get_core() const
 {

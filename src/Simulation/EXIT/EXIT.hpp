@@ -1,4 +1,4 @@
-#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
 #ifndef SIMULATION_EXIT_HPP_
 #define SIMULATION_EXIT_HPP_
@@ -40,26 +40,23 @@ protected:
 	R sig_a;
 
 	// communication chain
-	module::Source      <B  > *source;
-	module::Codec_SISO  <B,R> *codec;
-	module::Modem       <B,R> *modem;
-	module::Modem       <B,R> *modem_a;
-	module::Channel     <  R> *channel;
-	module::Channel     <  R> *channel_a;
-	module::Decoder_SISO<  R> *siso;
-	module::Monitor_EXIT<B,R> *monitor;
+	std::unique_ptr<module::Source      <B  >> source;
+	std::unique_ptr<module::Codec_SISO  <B,R>> codec;
+	std::unique_ptr<module::Modem       <B,R>> modem;
+	std::unique_ptr<module::Modem       <B,R>> modem_a;
+	std::unique_ptr<module::Channel     <  R>> channel;
+	std::unique_ptr<module::Channel     <  R>> channel_a;
+	std::unique_ptr<module::Decoder_SISO<  R>> siso;
+	std::unique_ptr<module::Monitor_EXIT<B,R>> monitor;
 
 	// terminal and reporters (for the output of the code)
-	tools::Reporter_EXIT <B,R>*           rep_exit;
-	tools::Reporter_noise<  R>*           rep_noise;
-	tools::Reporter_throughput<uint64_t>* rep_throughput;
-	std::vector<tools::Reporter*>         reporters;
-	tools::Terminal* terminal;
+	std::vector<std::unique_ptr<tools::Reporter>> reporters;
+	std::unique_ptr<tools::Terminal>              terminal;
 
 
 public:
 	explicit EXIT(const factory::EXIT::parameters &params_EXIT);
-	virtual ~EXIT();
+	virtual ~EXIT() = default;
 
 	void launch();
 
@@ -67,16 +64,15 @@ protected:
 	void _build_communication_chain();
 	void sockets_binding           ();
 	void simulation_loop           ();
-	void release_objects           ();
 
-	module::Source      <B  >* build_source   (              );
-	module::Codec_SISO  <B,R>* build_codec    (              );
-	module::Modem       <B,R>* build_modem    (              );
-	module::Modem       <B,R>* build_modem_a  (              );
-	module::Channel     <  R>* build_channel  (const int size);
-	module::Channel     <  R>* build_channel_a(const int size);
-	module::Monitor_EXIT<B,R>* build_monitor  (              );
-	tools::Terminal*           build_terminal (              );
+	std::unique_ptr<module::Source      <B  >> build_source   (              );
+	std::unique_ptr<module::Codec_SISO  <B,R>> build_codec    (              );
+	std::unique_ptr<module::Modem       <B,R>> build_modem    (              );
+	std::unique_ptr<module::Modem       <B,R>> build_modem_a  (              );
+	std::unique_ptr<module::Channel     <  R>> build_channel  (const int size);
+	std::unique_ptr<module::Channel     <  R>> build_channel_a(const int size);
+	std::unique_ptr<module::Monitor_EXIT<B,R>> build_monitor  (              );
+	std::unique_ptr<tools::Terminal          > build_terminal (              );
 };
 }
 }

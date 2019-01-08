@@ -60,12 +60,6 @@ Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
-::~Decoder_LDPC_BP_vertical_layered_inter()
-{
-}
-
-template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
 ::reset()
 {

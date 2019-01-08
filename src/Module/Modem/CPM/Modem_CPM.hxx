@@ -12,6 +12,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 #include "Tools/Math/numerical_integration.h"
+#include "Tools/Math/math_constants.h"
 #include "Modem_CPM.hpp"
 
 
@@ -91,12 +92,6 @@ Modem_CPM<B,R,Q,MAX>
 
 	if (no_sig2 || (this->n != nullptr && this->n->is_set()))
 		generate_projection();
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modem_CPM<B,R,Q,MAX>
-::~Modem_CPM()
-{
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -199,7 +194,7 @@ void Modem_CPM<B,R,Q,MAX>
 	for (auto wa = 0; wa < cpm.n_wa; wa++)
 	{
 		auto allowed_wa         = cpm.allowed_wave_forms[wa];
-		auto tilted_phase_part1 = (R)(2 * M_PI * cpm_h * (allowed_wa & p_mask));
+		auto tilted_phase_part1 = (R)(2 * (R)M_PI * cpm_h * (allowed_wa & p_mask));
 
 		std::vector<R> tilted_phase_part2(cpm.s_factor, (R)0);
 		std::vector<R> tilted_phase_part3(cpm.s_factor, (R)0);
@@ -225,10 +220,6 @@ void Modem_CPM<B,R,Q,MAX>
 		}
 	}
 }
-
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795
-#endif
 
 template <typename R>
 class GMSK

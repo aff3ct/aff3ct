@@ -22,7 +22,7 @@ protected:
 public:
 	Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator<B>& GF, const int n_frames = 1);
 
-	virtual ~Encoder_BCH();
+	virtual ~Encoder_BCH() = default;
 
 	bool is_codeword(const B *X_N);
 

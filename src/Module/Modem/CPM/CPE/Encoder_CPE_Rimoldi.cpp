@@ -243,7 +243,7 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_CPE_Rimoldi<B_8,  B_8 >;
 template class aff3ct::module::Encoder_CPE_Rimoldi<B_16, B_16>;
 template class aff3ct::module::Encoder_CPE_Rimoldi<B_32, B_32>;

@@ -32,7 +32,7 @@ struct Quantizer : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Quantizer_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Quantizer::parameters* clone() const;
 
 		// parameters construction

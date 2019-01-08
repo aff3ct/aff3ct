@@ -18,12 +18,8 @@ struct Monitor : public Factory
 	class parameters : public Factory::parameters
 	{
 	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
-
-		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Monitor_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Monitor::parameters* clone() const;
 
 		// parameters construction

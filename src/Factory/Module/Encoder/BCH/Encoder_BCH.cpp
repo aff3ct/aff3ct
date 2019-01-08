@@ -20,11 +20,6 @@ Encoder_BCH::parameters
 	this->type = "BCH";
 }
 
-Encoder_BCH::parameters
-::~parameters()
-{
-}
-
 Encoder_BCH::parameters* Encoder_BCH::parameters
 ::clone() const
 {
@@ -71,7 +66,7 @@ module::Encoder_BCH<B>* Encoder_BCH
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_BCH<B_8 >* aff3ct::factory::Encoder_BCH::parameters::build<B_8 >(const aff3ct::tools::BCH_polynomial_generator<B_8 >&) const;
 template aff3ct::module::Encoder_BCH<B_16>* aff3ct::factory::Encoder_BCH::parameters::build<B_16>(const aff3ct::tools::BCH_polynomial_generator<B_16>&) const;
 template aff3ct::module::Encoder_BCH<B_32>* aff3ct::factory::Encoder_BCH::parameters::build<B_32>(const aff3ct::tools::BCH_polynomial_generator<B_32>&) const;

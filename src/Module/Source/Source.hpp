@@ -60,7 +60,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Source();
+	virtual ~Source() = default;
 
 	virtual int get_K() const;
 

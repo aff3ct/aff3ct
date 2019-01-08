@@ -24,8 +24,3 @@ underflow_error
 : exception(filename, line_num, funcname, message.empty() ? default_message : message)
 {
 }
-
-underflow_error
-::~underflow_error() throw()
-{
-}

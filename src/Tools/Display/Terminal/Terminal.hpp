@@ -61,21 +61,21 @@ public:
 	 *
 	 * \param stream: the stream to print the legend.
 	 */
-	virtual void legend(std::ostream &stream) const = 0;
+	virtual void legend(std::ostream &stream = std::cout) const = 0;
 
 	/*!
 	 * \brief Temporary report.
 	 *
 	 * \param stream: the stream to print the report.
 	 */
-	void temp_report(std::ostream &stream);
+	void temp_report(std::ostream &stream = std::cout);
 
 	/*!
 	 * \brief Final report.
 	 *
 	 * \param stream: the stream to print the report.
 	 */
-	void final_report(std::ostream &stream);
+	void final_report(std::ostream &stream = std::cout);
 
 	void start_temp_report(const std::chrono::milliseconds freq = std::chrono::milliseconds(500));
 

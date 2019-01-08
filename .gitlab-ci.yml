@@ -1,6 +1,7 @@
 stages:
   - analysis
   - build
+  - documentation
   - test
   - coverage
   - deploy
@@ -24,6 +25,19 @@ analysis-cppcheck:
   script:
     - ./ci/analysis-cppcheck.sh
 
+analysis-headers:
+  stage: analysis
+  artifacts:
+    name: analysis-headers
+    when: always
+    paths:
+      - aff3ct.hpp
+  tags:
+    - linux
+  script:
+    - ./scripts/generate_aff3ct_header.sh aff3ct.hpp
+    - diff aff3ct.hpp src/aff3ct.hpp
+
 build-linux-gcc-nointr:
   stage: build
   tags:
@@ -39,9 +53,9 @@ build-linux-gcc-nointr:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -DMIPP_NO_INTRINSICS"
+    - export CFLAGS="-Wall -funroll-loops -DMIPP_NO_INTRINSICS"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_nointr"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -62,9 +76,9 @@ build-linux-gcc-x64-sse4.2:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -m64 -msse4.2"
+    - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -85,9 +99,9 @@ build-linux-gcc-x64-avx2:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -m64 -mavx2 -mfma"
+    - export CFLAGS="-Wall -funroll-loops -m64 -mavx2 -mfma"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_x64_avx2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -107,8 +121,8 @@ build-linux-gcc-8-bit:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DPREC_8_BIT -march=native"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CFLAGS="-Wall -funroll-loops -march=native"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=8 -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc_8_bit"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -128,8 +142,8 @@ build-linux-gcc-mpi:
   script:
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -march=native"
-    - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MPI=ON"
+    - export CFLAGS="-Wall -funroll-loops -march=native"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON -DAFF3CT_MPI=ON"
     - export NAME="build_linux_gcc_mpi"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -150,8 +164,8 @@ build-linux-gcc-systemc:
     - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
     - export CC="gcc"
     - export CXX="g++"
-    - export CFLAGS="-DMULTI_PREC -march=native -Wno-deprecated-declarations"
-    - export CMAKE_OPT="-DENABLE_SYSTEMC=ON"
+    - export CFLAGS="-Wall -funroll-loops -march=native -Wno-deprecated-declarations"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_SYSTEMC_SIMU=ON"
     - export NAME="build_linux_gcc_systemc"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -170,8 +184,8 @@ build-linux-clang:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-DMULTI_PREC"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CFLAGS="-Wall -funroll-loops"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_clang"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -190,8 +204,8 @@ build-linux-gcc-4.8:
   script:
     - export CC="gcc-4.8"
     - export CXX="g++-4.8"
-    - export CFLAGS="-DMULTI_PREC -march=native"
-    - export CMAKE_OPT="-DENABLE_GSL=ON"
+    - export CFLAGS="-Wall -funroll-loops -march=native"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_gcc-4.8"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -213,8 +227,8 @@ build-linux-icpc:
     - source /opt/intel/vars-intel.sh
     - export CC="icc"
     - export CXX="icpc"
-    - export CFLAGS="-DMULTI_PREC -march=native -std=c++11"
-    - export CMAKE_OPT="-DENABLE_GSL=ON -DENABLE_MKL=ON"
+    - export CFLAGS="-Wall -funroll-loops -march=native -std=c++11"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON -DAFF3CT_LINK_MKL=ON"
     - export NAME="build_linux_icpc"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -232,9 +246,9 @@ build-windows-gcc-x86-sse4.2:
     paths:
       - build_windows_gcc_x86_sse4.2
   script:
-    - set "CFLAGS=-DMULTI_PREC -m32 -msse4.2"
+    - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m32 -msse4.2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - set "NAME=build_windows_gcc_x86_sse4.2"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
@@ -252,9 +266,9 @@ build-windows-gcc-x64-avx2:
     paths:
       - build_windows_gcc_x64_avx2
   script:
-    - set "CFLAGS=-DMULTI_PREC -m64 -mavx2"
+    - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m64 -mavx2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - set "NAME=build_windows_gcc_x64_avx2"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
@@ -271,8 +285,8 @@ build-windows-msvc-avx:
     paths:
       - build_windows_msvc_avx
   script:
-    - set "CFLAGS=-DMULTI_PREC /arch:AVX"
-    - set "CMAKE_OPT=-DENABLE_EXEC=ON -DENABLE_STATIC_LIB=ON"
+    - set "CFLAGS=-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc /arch:AVX"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
     - set "NAME=build_windows_msvc_avx"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-msvc.bat
@@ -291,11 +305,40 @@ build-macos-clang-x64-sse4.2:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-DMULTI_PREC -m64 -msse4.2"
-    - export CMAKE_OPT=""
+    - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build_macos_clang_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
+
+documentation-sphinx:
+  stage: documentation
+  artifacts:
+    name: documentation-sphinx
+    when: always
+    paths:
+      - doc/sphinx/build/html
+      - doc/sphinx/build/latex
+  tags:
+    - sphinx
+    - latex
+  script:
+    - cd doc/sphinx
+    - make html
+    - make latexpdf
+
+documentation-check:
+  stage: documentation
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - python
+  script:
+    - ./ci/documentation-check.py --aff3ct "build_linux_gcc_x64_sse4.2/bin/aff3ct"
 
 test-regression-bch:
   stage: test
@@ -307,7 +350,6 @@ test-regression-bch:
     - x86
     - 64-bit
     - sse4.2
-    - powerful
     - python
   artifacts:
      name: test-regression-results-bch
@@ -316,7 +358,8 @@ test-regression-bch:
       - test-regression-results-bch/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-ldpc:
   stage: test
@@ -337,7 +380,8 @@ test-regression-ldpc:
       - test-regression-results-ldpc/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 10 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-polar:
   stage: test
@@ -358,7 +402,8 @@ test-regression-polar:
       - test-regression-results-polar/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-rs:
   stage: test
@@ -370,7 +415,6 @@ test-regression-rs:
     - x86
     - 64-bit
     - sse4.2
-    - powerful
     - python
   artifacts:
      name: test-regression-results-rs
@@ -379,7 +423,8 @@ test-regression-rs:
       - test-regression-results-rs/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo:
   stage: test
@@ -400,7 +445,8 @@ test-regression-turbo:
       - test-regression-results-turbo/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-db:
   stage: test
@@ -421,7 +467,8 @@ test-regression-turbo-db:
       - test-regression-results-turbo-db/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-prod:
   stage: test
@@ -442,7 +489,8 @@ test-regression-turbo-prod:
       - test-regression-results-turbo-prod/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 30 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 30 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-uncoded:
   stage: test
@@ -454,7 +502,6 @@ test-regression-uncoded:
     - x86
     - 64-bit
     - sse4.2
-    - powerful
     - python
   artifacts:
      name: test-regression-results-uncoded
@@ -463,7 +510,8 @@ test-regression-uncoded:
       - test-regression-results-uncoded/
   script:
     - source ./ci/tools/threads.sh
-    - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - source ./ci/tools/git-version.sh
+    - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time 5 --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-build-coverage-regression:
   stage: test
@@ -480,6 +528,7 @@ test-build-coverage-regression:
       - code_coverage_files/
   script:
     - source ./ci/tools/threads.sh
+    - source ./ci/tools/git-version.sh
     - ./ci/test-build-coverage-regression.sh
 
 coverage-linux:
@@ -522,6 +571,7 @@ deploy-builds-linux:
     - build-windows-gcc-x86-sse4.2
     - build-windows-gcc-x64-avx2
     - build-macos-clang-x64-sse4.2
+    - documentation-sphinx
   tags:
     - linux
     - github
@@ -536,6 +586,7 @@ deploy-builds-linux:
     - source ./ci/tools/git-date.sh
     - source ./ci/tools/git-message.sh
     - source ./ci/tools/git-author.sh
+    - source ./ci/tools/git-version.sh
     - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
 
 pages:

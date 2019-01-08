@@ -43,12 +43,6 @@ Decoder_maximum_likelihood<B,R>
 }
 
 template <typename B, typename R>
-Decoder_maximum_likelihood<B,R>
-::~Decoder_maximum_likelihood()
-{
-}
-
-template <typename B, typename R>
 float Decoder_maximum_likelihood<B,R>
 ::compute_euclidean_dist(const B *X_N, const R *Y_N) const
 {

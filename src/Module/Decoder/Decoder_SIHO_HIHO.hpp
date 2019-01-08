@@ -48,7 +48,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_SIHO_HIHO();
+	virtual ~Decoder_SIHO_HIHO() = default;
 };
 }
 }

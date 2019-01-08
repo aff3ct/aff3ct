@@ -1,6 +1,7 @@
 #include "Monitor_EXIT.hpp"
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
@@ -17,11 +18,6 @@ Monitor_EXIT::parameters
 {
 }
 
-Monitor_EXIT::parameters
-::~parameters()
-{
-}
-
 Monitor_EXIT::parameters* Monitor_EXIT::parameters
 ::clone() const
 {
@@ -34,22 +30,17 @@ void Monitor_EXIT::parameters
 	Monitor::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Monitor_EXIT::parameters::";
 
-	args.add(
-		{p+"-size", "K"},
+	tools::add_arg(args, p, class_name+"p+size,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of bits to check.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-trials", "n"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of frames to simulate per sigma A value.");
+	tools::add_arg(args, p, class_name+"p+trials,n",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Monitor_EXIT::parameters
@@ -94,7 +85,7 @@ module::Monitor_EXIT<B,R>* Monitor_EXIT
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Monitor_EXIT<B_32,R_32>* aff3ct::factory::Monitor_EXIT::parameters::build<B_32,R_32>() const;
 template aff3ct::module::Monitor_EXIT<B_64,R_64>* aff3ct::factory::Monitor_EXIT::parameters::build<B_64,R_64>() const;
 template aff3ct::module::Monitor_EXIT<B_32,R_32>* aff3ct::factory::Monitor_EXIT::build<B_32,R_32>(const aff3ct::factory::Monitor_EXIT::parameters&);

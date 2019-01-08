@@ -3,6 +3,7 @@
 
 #include <string>
 #include <chrono>
+#include <memory>
 
 #include "Tools/Noise/noise_utils.h"
 
@@ -20,27 +21,17 @@ public:
 	explicit Reporter_noise(const Noise<R>*        noise);
 	explicit Reporter_noise(const Noise<R>&        noise);
 
+	explicit Reporter_noise(const std::shared_ptr<Noise<R>>* noise);
+	explicit Reporter_noise(const std::shared_ptr<Noise<R>>& noise);
+	explicit Reporter_noise(const std::unique_ptr<Noise<R>>* noise);
+	explicit Reporter_noise(const std::unique_ptr<Noise<R>>& noise);
+
 	virtual ~Reporter_noise();
 
 	report_t report(bool final = false);
 
 private:
-	struct Noise_ptr
-	{
-		Noise_ptr(const Noise<R>* const* n) : noise(nullptr), noise_ptr(n) {}
-		Noise_ptr(const Noise<R>*        n) : noise(n),  noise_ptr(&noise) {}
-		Noise_ptr(const Noise<R>&        n) : noise(&n), noise_ptr(&noise) {}
-
-		const Noise<R>* get_noise_ptr() const
-		{
-			return *noise_ptr;
-		}
-
-	private:
-		const Noise<R>*        noise;
-		const Noise<R>* const* noise_ptr;
-
-	};
+	struct Noise_ptr;
 
 	explicit Reporter_noise(Noise_ptr* noise_ptr);
 	Noise_ptr* noise_ptr;
@@ -51,7 +42,6 @@ protected:
 
 protected:
 	const Noise<R>* get_noise_ptr() const;
-
 };
 }
 }

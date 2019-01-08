@@ -12,7 +12,7 @@ class BFER_std_threads : public BFER_std<B,R,Q>
 {
 public:
 	explicit BFER_std_threads(const factory::BFER_std::parameters &params_BFER_std);
-	virtual ~BFER_std_threads();
+	virtual ~BFER_std_threads() = default;
 
 protected:
 	virtual void _launch();

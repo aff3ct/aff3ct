@@ -164,12 +164,6 @@ Quantizer_custom<R,Q>
 	}
 }
 
-template <typename R, typename Q>
-Quantizer_custom<R,Q>
-::~Quantizer_custom()
-{
-}
-
 template<typename R, typename Q>
 void Quantizer_custom<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
@@ -197,7 +191,7 @@ void Quantizer_custom<R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Quantizer_custom<R_8,Q_8>;
 template class aff3ct::module::Quantizer_custom<R_16,Q_16>;
 template class aff3ct::module::Quantizer_custom<R_32,Q_32>;

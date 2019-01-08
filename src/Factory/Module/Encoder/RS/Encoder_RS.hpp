@@ -24,7 +24,7 @@ struct Encoder_RS : public Encoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_RS_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Encoder_RS::parameters* clone() const;
 
 		// parameters construction

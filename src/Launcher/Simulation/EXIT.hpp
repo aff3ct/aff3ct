@@ -1,4 +1,4 @@
-#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
 #ifndef LAUNCHER_EXIT_HPP_
 #define LAUNCHER_EXIT_HPP_
@@ -19,7 +19,7 @@ protected:
 
 public:
 	EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~EXIT();
+	virtual ~EXIT() = default;
 
 protected:
 	virtual void get_description_args();

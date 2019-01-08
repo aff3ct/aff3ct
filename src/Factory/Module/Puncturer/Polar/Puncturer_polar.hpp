@@ -23,7 +23,7 @@ struct Puncturer_polar : public Puncturer
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Puncturer_polar_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Puncturer_polar::parameters* clone() const;
 
 		// parameters construction

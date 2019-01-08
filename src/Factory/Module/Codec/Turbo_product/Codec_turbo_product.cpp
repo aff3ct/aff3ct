@@ -1,5 +1,8 @@
 #include "Codec_turbo_product.hpp"
 
+#include "Factory/Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
+#include "Factory/Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
+
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
@@ -9,45 +12,20 @@ const std::string aff3ct::factory::Codec_turbo_product_prefix = "cdc";
 Codec_turbo_product::parameters
 ::parameters(const std::string &prefix)
 : Codec          ::parameters(Codec_turbo_product_name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_turbo_product_name, prefix),
-  enc(new Encoder_turbo_product::parameters("enc")),
-  dec(new Decoder_turbo_product::parameters("dec"))
+  Codec_SISO_SIHO::parameters(Codec_turbo_product_name, prefix)
 {
-	Codec::parameters::enc = enc;
-	Codec::parameters::dec = dec;
-	Codec::parameters::itl = enc->itl;
-	delete dec->itl; dec->itl = enc->itl;
-}
-
-Codec_turbo_product::parameters
-::~parameters()
-{
-	if (enc != nullptr) { enc->itl = nullptr; delete enc; enc = nullptr; }
-	if (dec != nullptr) { dec->itl = nullptr; delete dec; dec = nullptr; }
-
-	Codec::parameters::enc = nullptr;
-	Codec::parameters::dec = nullptr;
-	if (Codec::parameters::itl != nullptr)
-	{
-		delete Codec::parameters::itl;
-		Codec::parameters::itl = nullptr;
-	}
+	auto enc_t = new Encoder_turbo_product::parameters("enc");
+	auto dec_t = new Decoder_turbo_product::parameters("dec");
+	Codec::parameters::set_enc(enc_t);
+	Codec::parameters::set_dec(dec_t);
+	Codec::parameters::set_itl(std::move(enc_t->itl));
+	dec_t->itl = nullptr;
 }
 
 Codec_turbo_product::parameters* Codec_turbo_product::parameters
 ::clone() const
 {
-	auto clone = new Codec_turbo_product::parameters(*this);
-
-	if (enc != nullptr) { clone->enc = enc->clone(); }
-	if (dec != nullptr) { clone->dec = dec->clone(); }
-
-	clone->set_enc(clone->enc);
-	clone->set_dec(clone->dec);
-	clone->set_itl(clone->enc->itl);
-	delete clone->dec->itl; clone->dec->itl = clone->enc->itl;
-
-	return clone;
+	return new Codec_turbo_product::parameters(*this);
 }
 
 void Codec_turbo_product::parameters
@@ -55,16 +33,29 @@ void Codec_turbo_product::parameters
 {
 	Codec_SIHO::parameters::get_description(args);
 
+	auto dec_tur = dynamic_cast<Decoder_turbo_product::parameters*>(dec.get());
+
 	enc->get_description(args);
 	dec->get_description(args);
 
 	auto pdec = dec->get_prefix();
-	auto pdes = dec->sub->get_prefix();
+	auto pdes = dec_tur->get_prefix();
 
 	args.erase({pdes+"-cw-size",   "N"});
 	args.erase({pdes+"-info-bits", "K"});
 	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-ext",          });
+
+
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
+
+		auto pi = itl->get_prefix();
+
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 }
 
 void Codec_turbo_product::parameters
@@ -72,18 +63,38 @@ void Codec_turbo_product::parameters
 {
 	Codec_SIHO::parameters::store(vals);
 
+	auto enc_tur = dynamic_cast<Encoder_turbo_product::parameters*>(enc.get());
+	auto dec_tur = dynamic_cast<Decoder_turbo_product::parameters*>(dec.get());
+
 	enc->store(vals);
 
-	this->dec->sub->K           = this->enc->sub->K;
-	this->dec->sub->N_cw        = this->enc->sub->N_cw;
-	this->dec->n_frames         = this->enc->n_frames;
-	this->dec->parity_extended  = this->enc->parity_extended;
+	dec_tur->sub->K           = enc_tur->sub->K;
+	dec_tur->sub->N_cw        = enc_tur->sub->N_cw;
+	dec_tur->n_frames         = enc_tur->n_frames;
+	dec_tur->parity_extended  = enc_tur->parity_extended;
 
 	dec->store(vals);
 
-	this->K    = this->enc->K;
-	this->N_cw = this->enc->N_cw;
-	this->N    = this->enc->N_cw;
+	if (itl != nullptr)
+	{
+		itl->core->n_frames = enc_tur->n_frames;
+		itl->core->type     = "ROW_COL";
+
+		if (enc_tur->parity_extended)
+			itl->core->n_cols = enc_tur->sub->N_cw +1;
+		else
+			itl->core->n_cols = enc_tur->sub->N_cw;
+
+		itl->core->size = itl->core->n_cols * itl->core->n_cols;
+		enc->N_cw = itl->core->size;
+		dec->N_cw = itl->core->size;
+
+		itl->store(vals);
+	}
+
+	K    = enc->K;
+	N_cw = enc->N_cw;
+	N    = enc->N_cw;
 }
 
 void Codec_turbo_product::parameters
@@ -92,15 +103,18 @@ void Codec_turbo_product::parameters
 	Codec_SIHO::parameters::get_headers(headers, full);
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
+
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 }
 
 template <typename B, typename Q>
 module::Codec_turbo_product<B,Q>* Codec_turbo_product::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_turbo_product<B,Q>(*enc, *dec);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+	return new module::Codec_turbo_product<B,Q>(dynamic_cast<const Encoder_turbo_product::parameters&>(*enc),
+	                                            dynamic_cast<const Decoder_turbo_product::parameters&>(*dec),
+	                                            *itl);
 }
 
 
@@ -113,7 +127,7 @@ module::Codec_turbo_product<B,Q>* Codec_turbo_product
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Codec_turbo_product<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo_product::parameters::build<B_8 ,Q_8 >(module::CRC<B_8 > *) const;
 template aff3ct::module::Codec_turbo_product<B_16,Q_16>* aff3ct::factory::Codec_turbo_product::parameters::build<B_16,Q_16>(module::CRC<B_16> *) const;
 template aff3ct::module::Codec_turbo_product<B_32,Q_32>* aff3ct::factory::Codec_turbo_product::parameters::build<B_32,Q_32>(module::CRC<B_32> *) const;

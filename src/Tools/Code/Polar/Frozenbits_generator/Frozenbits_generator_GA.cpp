@@ -18,15 +18,10 @@ Frozenbits_generator_GA
 {
 }
 
-Frozenbits_generator_GA
-::~Frozenbits_generator_GA()
-{
-}
-
 void Frozenbits_generator_GA
 ::evaluate()
 {
-	for (unsigned i = 0; i != this->best_channels.size(); i++) 
+	for (unsigned i = 0; i != this->best_channels.size(); i++)
 		this->best_channels[i] = i;
 
 	for (auto i = 0; i < std::exp2(m); i++)
@@ -40,7 +35,7 @@ void Frozenbits_generator_GA
 		for (auto t = 0; t < (int)std::exp2(l -1); t++)
 		{
 			double T = z[t * o1];
-			
+
 			z[t * o1] = phi_inv(1.0 - std::pow(1.0 - phi(T), 2.0));
 			if (z[t * o1] == HUGE_VAL)
 				z[t * o1] = T + M_LN2 / (alpha * gamma);
@@ -64,7 +59,7 @@ double Frozenbits_generator_GA
 double Frozenbits_generator_GA
 ::phi_inv(double t)
 {
-	if (t > phi_inv_pivot)	
+	if (t > phi_inv_pivot)
 		return 4.304964539 * (1 - sqrt(1 + 0.9567131408 * std::log(t)));
 	else
 		return std::pow(a * std::log(t) + b, c);

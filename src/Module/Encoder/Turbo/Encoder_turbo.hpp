@@ -25,7 +25,7 @@ protected:
 
 public:
 	Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &enco_n, Encoder<B> &enco_i);
-	virtual ~Encoder_turbo() {}
+	virtual ~Encoder_turbo() = default;
 
 	int tail_length() const;
 

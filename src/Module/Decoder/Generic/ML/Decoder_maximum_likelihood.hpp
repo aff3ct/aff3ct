@@ -21,7 +21,7 @@ protected:
 	std::vector<B> hard_Y_N;
 
 public:
-	virtual ~Decoder_maximum_likelihood();
+	virtual ~Decoder_maximum_likelihood() = default;
 
 protected:
 	Decoder_maximum_likelihood(const int K, const int N, Encoder<B> &encoder, const int n_frames = 1);

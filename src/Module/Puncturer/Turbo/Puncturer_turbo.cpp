@@ -40,12 +40,6 @@ Puncturer_turbo<B,Q>
 }
 
 template <typename B, typename Q>
-Puncturer_turbo<B,Q>
-::~Puncturer_turbo()
-{
-}
-
-template <typename B, typename Q>
 void Puncturer_turbo<B,Q>
 ::_puncture(const B *X_N1, B *X_N2, const int frame_id) const
 {
@@ -245,7 +239,7 @@ int Puncturer_turbo<B,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Puncturer_turbo<B_8,Q_8>;
 template class aff3ct::module::Puncturer_turbo<B_16,Q_16>;
 template class aff3ct::module::Puncturer_turbo<B_32,Q_32>;

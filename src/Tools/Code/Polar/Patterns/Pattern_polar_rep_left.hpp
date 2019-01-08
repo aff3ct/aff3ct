@@ -49,7 +49,7 @@ public:
 		return new Pattern_polar_rep_left(N, node, min_level, max_level);
 	}
 
-	virtual ~Pattern_polar_rep_left() {}
+	virtual ~Pattern_polar_rep_left() = default;
 
 	virtual polar_node_t type()       const { return polar_node_t::REP_LEFT; }
 	virtual std::string  name()       const { return "Rep left";             }

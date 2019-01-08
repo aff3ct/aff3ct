@@ -19,7 +19,7 @@ protected:
 
 private:
 	std::string message;   // the message only
-#ifdef ENABLE_BACK_TRACE
+#ifdef AFF3CT_BACKTRACE
 	std::string backtrace; // the message + the backtrace
 	std::string backtrace_a2l; // the message + the backtrace with addr_to_line conversion
 #endif
@@ -34,7 +34,7 @@ public:
 	          const std::string &funcname,
 	          const std::string &message) throw();
 
-	virtual ~exception() throw();
+	virtual ~exception() throw() = default;
 
 	virtual const char* what() const throw(); // return the message and the back trace if enabled
 };

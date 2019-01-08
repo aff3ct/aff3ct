@@ -55,20 +55,6 @@ void Encoder_LDPC_from_IRA<B>
 }
 
 template <typename B>
-const std::vector<uint32_t>& Encoder_LDPC_from_IRA<B>
-::get_info_bits_pos() const
-{
-	return Encoder<B>::get_info_bits_pos();
-}
-
-template <typename B>
-bool Encoder_LDPC_from_IRA<B>
-::is_sys() const
-{
-	return Encoder<B>::is_sys();
-}
-
-template <typename B>
 void Encoder_LDPC_from_IRA<B>
 ::_check_H_dimensions()
 {
@@ -85,7 +71,7 @@ void Encoder_LDPC_from_IRA<B>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_LDPC_from_IRA<B_8>;
 template class aff3ct::module::Encoder_LDPC_from_IRA<B_16>;
 template class aff3ct::module::Encoder_LDPC_from_IRA<B_32>;

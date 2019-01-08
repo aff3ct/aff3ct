@@ -43,7 +43,7 @@ Decoder_turbo<B,R>
 {
 	const std::string name = "Decoder_turbo";
 	this->set_name(name);
-	
+
 	if (siso_n.get_K() != K)
 	{
 		std::stringstream message;
@@ -100,12 +100,6 @@ Decoder_turbo<B,R>
 		        << ", 'siso_i.get_simd_inter_frame_level()' = " << siso_i.get_simd_inter_frame_level() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R>
-Decoder_turbo<B,R>
-::~Decoder_turbo()
-{
 }
 
 template <typename B, typename R>
@@ -271,7 +265,7 @@ void Decoder_turbo<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_turbo<B_8,Q_8>;
 template class aff3ct::module::Decoder_turbo<B_16,Q_16>;
 template class aff3ct::module::Decoder_turbo<B_32,Q_32>;

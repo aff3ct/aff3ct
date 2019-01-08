@@ -23,7 +23,8 @@ protected:
 	const int n_frames;
 	      bool uniform;
 	      bool initialized;
-	std::vector<T> pi;     /*!< Lookup table for the interleaving process */
+	std::vector<T> pi;     /*!< Lookup table for the interleaving process :
+	                            the interleaving output position i can be found in the source at the position 'pi[i]' */
 	std::vector<T> pi_inv; /*!< Lookup table for the deinterleaving process */
 
 public:
@@ -60,9 +61,7 @@ public:
 		}
 	}
 
-	virtual ~Interleaver_core()
-	{
-	}
+	virtual ~Interleaver_core() = default;
 
 	const std::vector<T>& get_lut() const
 	{

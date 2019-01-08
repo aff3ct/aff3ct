@@ -1,0 +1,69 @@
+@InProceedings{Cassagne2016a,
+  author    = {A. Cassagne and T. Tonnellier and C. Leroux and B. {Le Gal} and O. Aumage and D. Barthou},
+  title     = {Beyond {G}bps Turbo decoder on multi-core {CPUs}},
+  booktitle = {International Symposium on Turbo Codes and Iterative Information Processing (ISTC)},
+  year      = {2016},
+  pages     = {136--140},
+  month     = sep,
+  publisher = {IEEE},
+  abstract  = {This paper presents a high-throughput implementation of a portable software turbo decoder. The code is optimized for traditional multi-core CPUs (like x86) and it is based on the Enhanced max-log-MAP turbo decoding variant. The code follows the LTE-Advanced specification. The key of the high performance comes from an inter-frame SIMD strategy combined with a fixed-point representation. Our results show that proposed multi-core CPU implementation of turbo-decoders is a challenging alternative to GPU implementation in terms of throughput and energy efficiency. On a high-end processor, our software turbo-decoder exceeds 1 Gbps information throughput for all rate-1/3 LTE codes with K $<$; 4096.},
+  doi       = {10.1109/ISTC.2016.7593092},
+  file      = {:pdf/Cassagne2016a - Beyond Gbps Turbo Decoder on Multi-Core CPUs.pdf:PDF;:pdf/Cassagne2016a - Beyond Gbps Turbo Decoder on Multi-Core CPUs [poster].pdf:PDF},
+  groups    = {Turbo Codes, Software Decoders, HoF Turbo - MAP, AFF3CT},
+  keywords  = {codecs, maximum likelihood decoding, microprocessor chips, turbo codes, Gbps turbo decoder, energy efficiency, enhanced max-log-MAP turbo decoding variant, inter-frame SIMD strategy, multicore CPU, portable software turbo decoder, rate-l/3 LTE codes, Instruction sets, Measurement},
+}
+
+@Article{Tonnellier2016b,
+  author   = {T. Tonnellier and C. Leroux and B. {Le Gal} and B. Gadat and C. J\'ego and N. Van Wambeke},
+  title    = {Lowering the Error Floor of Turbo Codes With {CRC} Verification},
+  journal  = {IEEE Wireless Communications Letters (WCL)},
+  year     = {2016},
+  volume   = {5},
+  number   = {4},
+  pages    = {404--407},
+  month    = aug,
+  issn     = {2162-2337},
+  abstract = {Decoding performance of turbo codes can flatten at moderately high signal-to-noise ratio. This letter proposes a low complexity method for lowering this error floor. This method rests on the observation of the extrinsic information during the iterative decoding process. A set of q most unreliable bits are identified based on their associated extrinsic information. A total of 2\textsuperscript{q} test patterns are then built by inverting the most unreliable bits. The decoded codeword is identified thanks to a cyclic redundancy check detector. This method keeps the turbo coding scheme unchanged as long as an error detection code is serially concatenated with the turbo code. Simulations were performed on a rate-1/3 Long-Term Evolution turbo code and show an improvement of at least one decade in terms of frame error rate in the error floor region. This low complexity method paves the way for further improvements in lowering the error floor of turbo codes.},
+  doi      = {10.1109/LWC.2016.2571283},
+  file     = {:pdf/Tonnellier2016b - Lowering the Error Floor of Turbo Codes With CRC Verification.pdf:PDF},
+  groups   = {Turbo Codes, AFF3CT},
+  keywords = {concatenated codes, cyclic redundancy check codes, error detection codes, error statistics, iterative decoding, turbo codes, CRC verification, Long-Term Evolution turbo code, cyclic redundancy check detector, decoded codeword identificaion, error detection code, frame error rate, iterative decoding process, low complexity method, serially concatenated code, signal-to-noise ratio, turbo code error floor, Cyclic redundancy check codes, Decoding, Error analysis, Iterative decoding, Measurement, Standards, Turbo codes, CRC codes, Turbo codes, error floor region, extrinsic information, iterative decoding process},
+}
+
+@PhdThesis{Tonnellier2017,
+  author   = {T. Tonnellier},
+  title    = {Contribution to the Improvement of the Decoding Performance of Turbo Codes : Algorithms and Architecture},
+  school   = {Universit{\'e} de Bordeaux},
+  year     = {2017},
+  abstract = {Since their introduction in the 90’s, turbo codes are considered as one of the most powerful error-correcting code. Thanks to their excellent trade-off between computational complexity and decoding performance, they were chosen in many communication standards.
+
+One way to characterize error-correcting codes is the evolution of the bit error rate as a function of signal-to-noise ratio (SNR). The turbo code error rate performance is divided in two different regions : the waterfall region and the error floor region. In the waterfall region, a slight increase in SNR results in a significant drop in error rate. In the error floor region, the error rate performance is only slightly improved as the SNR grows. This error floor can prevent turbo codes from being used in applications with low error rates requirements. Therefore various constructions optimizations that lower the error floor of turbo codes has been proposed in recent years by scientific community. However, these approaches can not be considered for already standardized turbo codes.
+
+This thesis addresses the problem of lowering the error floor of turbo codes without allowing any modification of the digital communication chain at the transmitter side.
+For this purpose, the state-of-the-art post-processing decoding method for turbo codes is detailed. It appears that efficient solutions are expensive to implement due to the required multiplication of computational resources or can strongly impact the overall decoding latency.
+
+Firstly, two decoding algorithms based on the monitoring of decoder’s internal metrics are proposed. The waterfall region is enhanced by the first algorithm. However, the second one marginally lowers the error floor. Then, the study shows that in the error floor region, frames decoded by the turbo decoder are really close to the word originally transmitted. This is demonstrated by a proposition of an analytical prediction of the distribution of the number of bits in errors per erroneous frame. This prediction rests on the distance spectrum of turbo codes. Since the appearance of error floor region is due to only few bits in errors, an identification metric is proposed. This lead to the proposal of an algorithm that can correct residual errors. This algorithm, called Flip-and-Check, rests on the generation of candidate words, followed by verification according to an error-detecting code. Thanks to this decoding algorithm, the error floor of turbo codes encountered in different standards (LTE, CCSDS, DVB-RCS and DVB-RCS2) is lowered by one order of magnitude. This performance improvement is obtained without considering an important vcomputational complexity overhead.
+
+Finally, a hardware decoding architecture implementing the Flip-and-Check algorithm is presented. A preliminary study of the impact of the different parameters of this algorithm is carried out. It leads to the definition of optimal values for some of these parameters. Others has to be adapted according to the gains targeted in terms of decoding performance. The possible integration of this algorithm along with existing turbo decoders is demonstrated thanks to this hardware architecture. This therefore enables the lowering of the error floors of standardized turbo codes.},
+  file     = {:pdf/Tonnellier2017 - Contribution to the Improvement of the Decoding Performance of Turbo Codes \: Algorithms and Architecture.pdf:PDF},
+  groups   = {Turbo Codes, AFF3CT},
+  keywords = {Turbo codes, Residual Errors, Post-processing, Hardware architecture},
+  url      = {https://tel.archives-ouvertes.fr/tel-01580476},
+}
+
+@Article{Vogt2000,
+  author   = {J. Vogt and A. Finger},
+  title    = {Improving the max-log-{MAP} Turbo Decoder},
+  journal  = {IET Electronics Letters},
+  year     = {2000},
+  volume   = {36},
+  number   = {23},
+  pages    = {1937--1939},
+  month    = nov,
+  issn     = {0013-5194},
+  abstract = {Decoding turbo codes with the max-log-MAP algorithm is a good compromise between performance and complexity. The decoding quality of the max-log-MAP decoder is improved by using a scaling factor within the extrinsic calculation. Simulations using the 1MT-2000/3GPP parameters demonstrate that this method gives ~0.2 to 0.4 dB performance gain compared to the standard max-log-MAP algorithm},
+  doi      = {10.1049/el:20001357},
+  file     = {:pdf/Vogt2000 - Improving the max-log-MAP Turbo Decoder.pdf:PDF},
+  groups   = {Turbo Codes},
+  keywords = {decoding, turbo codes, 1MT-2000 parameters, 3GPP parameters, decoding quality improvement, max-log-MAP turbo decoder, scaling factor, turbo codes},
+}

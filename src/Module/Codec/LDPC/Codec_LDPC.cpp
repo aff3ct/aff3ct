@@ -24,8 +24,7 @@ Codec_LDPC<B,Q>
              const factory::Decoder_LDPC  ::parameters &dec_params,
                    factory::Puncturer_LDPC::parameters *pct_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  dvbs2(nullptr)
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
 {
 	const std::string name = "Codec_LDPC";
 	this->set_name(name);
@@ -63,8 +62,7 @@ Codec_LDPC<B,Q>
 	else if (enc_params.type == "LDPC_DVBS2")
 	{
 		dvbs2 = tools::build_dvbs2(this->K, this->N);
-
-		H = tools::build_H(*dvbs2);
+		H     = tools::build_H(*dvbs2);
 	}
 
 	if (H.get_n_connections() == 0)
@@ -83,7 +81,7 @@ Codec_LDPC<B,Q>
 
 	if (dec_params.H_reorder != "NONE")
 	{	// reorder the H matrix following the check node degrees
-		H.sort_cols_per_density(dec_params.H_reorder);
+		H.sort_cols_per_density(dec_params.H_reorder == "ASC" ? tools::Matrix::Sort::ASCENDING : tools::Matrix::Sort::DESCENDING);
 	}
 
 
@@ -131,7 +129,7 @@ Codec_LDPC<B,Q>
 	{ // encoder not set when building encoder LDPC_H
 		try
 		{
-			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, dvbs2));
+			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, *dvbs2));
 		}
 		catch(tools::cannot_allocate const&)
 		{
@@ -155,22 +153,12 @@ Codec_LDPC<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, this->get_encoder());
-		this->set_decoder_siso(decoder_siso_siho);
-		this->set_decoder_siho(decoder_siso_siho);
+		this->set_decoder_siso_siho(factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
 	}
 	catch (const std::exception&)
 	{
 		this->set_decoder_siho(factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
 	}
-}
-
-template <typename B, typename Q>
-Codec_LDPC<B,Q>
-::~Codec_LDPC()
-{
-	if (dvbs2 != nullptr)
-		delete dvbs2;
 }
 
 template <typename B, typename Q>
@@ -210,7 +198,7 @@ void Codec_LDPC<B,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Codec_LDPC<B_8,Q_8>;
 template class aff3ct::module::Codec_LDPC<B_16,Q_16>;
 template class aff3ct::module::Codec_LDPC<B_32,Q_32>;

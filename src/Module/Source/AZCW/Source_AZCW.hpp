@@ -17,7 +17,7 @@ class Source_AZCW : public Source<B>
 public:
 	Source_AZCW(const int K, const int n_frames = 1);
 
-	virtual ~Source_AZCW();
+	virtual ~Source_AZCW() = default;
 
 protected:
 	void _generate(B *U_K, const int frame_id);

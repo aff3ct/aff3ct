@@ -16,12 +16,6 @@ BCH<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-BCH<L,B,R,Q>
-::~BCH()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void BCH<L,B,R,Q>
 ::get_description_args()
 {
@@ -54,7 +48,7 @@ void BCH<L,B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #include "Launcher/Simulation/BFER_std.hpp"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::BCH<aff3ct::launcher::BFER_std<B_8 ,R_8 ,Q_8 >,B_8 ,R_8 ,Q_8 >;
 template class aff3ct::launcher::BCH<aff3ct::launcher::BFER_std<B_16,R_16,Q_16>,B_16,R_16,Q_16>;
 template class aff3ct::launcher::BCH<aff3ct::launcher::BFER_std<B_32,R_32,Q_32>,B_32,R_32,Q_32>;

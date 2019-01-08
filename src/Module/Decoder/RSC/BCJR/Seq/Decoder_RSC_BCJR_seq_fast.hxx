@@ -18,12 +18,6 @@ Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
-Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
-::~Decoder_RSC_BCJR_seq_fast()
-{
-}
-
-template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
 ::compute_gamma(const R *sys, const R *par)
 {

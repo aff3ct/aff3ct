@@ -125,7 +125,7 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_MEM_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                                 const std::vector<tools::Pattern_polar_i*>& polar_patterns,
+                                 std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
                                  const int idx_r0, const int idx_r1,
                                  const int n_frames)
 : Decoder          (K, N, n_frames, API_polar::get_n_frames()),
@@ -133,7 +133,7 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
   m                ((int)std::log2(N)),
   L                (L),
   frozen_bits      (frozen_bits),
-  polar_patterns   (N, frozen_bits, polar_patterns, idx_r0, idx_r1),
+  polar_patterns   (N, frozen_bits, std::move(polar_patterns), idx_r0, idx_r1),
   paths            (L),
   metrics          (L),
   l                (L, mipp::vector<R>(N + mipp::nElReg<R>())),
@@ -211,7 +211,6 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::~Decoder_polar_SCL_MEM_fast_sys()
 {
-	polar_patterns.release_patterns();
 }
 
 template <typename B, typename R, class API_polar>

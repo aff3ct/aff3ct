@@ -24,7 +24,7 @@ struct Encoder_repetition : public Encoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_repetition_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Encoder_repetition::parameters* clone() const;
 
 		// parameters construction

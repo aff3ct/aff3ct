@@ -15,7 +15,7 @@ protected:
 
 public:
 	BCH(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~BCH();
+	virtual ~BCH() = default;
 
 protected:
 	virtual void get_description_args();

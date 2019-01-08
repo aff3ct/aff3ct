@@ -8,9 +8,8 @@
 
 #include "Tools/types.h"
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
-#include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
 
-#include "../Channel.hpp"
+#include "../User/Channel_user_be.hpp"
 
 namespace aff3ct
 {
@@ -20,19 +19,18 @@ template <typename R = float>
 class Channel_binary_erasure : public Channel<R>
 {
 protected:
-	tools::Event_generator<R> *event_generator;
+	std::unique_ptr<tools::Event_generator<R>> event_generator;
 
 	using E = typename tools::matching_types<R>::B;
-	std::vector<E> event_draw;
 
 public:
-	Channel_binary_erasure(const int N, tools::Event_generator<R> *event_generator = new tools::Event_generator_std<R>(),
-	            const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
-	            const int n_frames = 1);
+	Channel_binary_erasure(const int N, std::unique_ptr<tools::Event_generator<R>>&& event_generator,
+	                       const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
+	                       const int n_frames = 1);
 
-	Channel_binary_erasure(const int N, const int seed,
-	            const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
-	            const int n_frames = 1);
+	explicit Channel_binary_erasure(const int N, const int seed = 0,
+	                                const tools::Event_probability<R>& noise = tools::Event_probability<R>(),
+	                                const int n_frames = 1);
 
 	virtual ~Channel_binary_erasure() = default;
 

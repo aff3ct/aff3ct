@@ -17,11 +17,6 @@ Puncturer_polar::parameters
 	this->type = "SHORTLAST";
 }
 
-Puncturer_polar::parameters
-::~parameters()
-{
-}
-
 Puncturer_polar::parameters* Puncturer_polar::parameters
 ::clone() const
 {
@@ -73,7 +68,7 @@ module::Puncturer_polar_shortlast<B,Q>* Puncturer_polar
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Puncturer_polar_shortlast<B_8 ,Q_8 >* aff3ct::factory::Puncturer_polar::parameters::build<B_8 ,Q_8 >(const aff3ct::tools::Frozenbits_generator&) const;
 template aff3ct::module::Puncturer_polar_shortlast<B_16,Q_16>* aff3ct::factory::Puncturer_polar::parameters::build<B_16,Q_16>(const aff3ct::tools::Frozenbits_generator&) const;
 template aff3ct::module::Puncturer_polar_shortlast<B_32,Q_32>* aff3ct::factory::Puncturer_polar::parameters::build<B_32,Q_32>(const aff3ct::tools::Frozenbits_generator&) const;

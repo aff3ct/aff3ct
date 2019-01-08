@@ -2,7 +2,8 @@
 #define FACTORY_ENCODER_LDPC_HPP
 
 #include <string>
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include <memory>
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
@@ -21,16 +22,20 @@ struct Encoder_LDPC : public Encoder
 	{
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional
+		// matrices
 		std::string H_path = "";
 		std::string G_path = "";
 
 		// optional parameters
 		std::string H_reorder = "NONE";
 
+		// G generator method
+		std::string G_method    = "IDENTITY";
+		std::string G_save_path = "";
+
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_LDPC_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Encoder_LDPC::parameters* clone() const;
 
 		// parameters construction
@@ -40,14 +45,19 @@ struct Encoder_LDPC : public Encoder
 
 		// builder
 		template <typename B = int>
+		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const;
+		template <typename B = int>
 		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H,
-		                               const tools::dvbs2_values* dvbs2 = nullptr) const;
+		                               const tools::dvbs2_values& dvbs2) const;
 	};
 
 	template <typename B = int>
 	static module::Encoder_LDPC<B>* build(const parameters &params, const tools::Sparse_matrix &G,
+	                                                                const tools::Sparse_matrix &H);
+	template <typename B = int>
+	static module::Encoder_LDPC<B>* build(const parameters &params, const tools::Sparse_matrix &G,
 	                                                                const tools::Sparse_matrix &H,
-	                                                                const tools::dvbs2_values* dvbs2 = nullptr);
+	                                                                const tools::dvbs2_values& dvbs2);
 };
 }
 }

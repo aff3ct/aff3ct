@@ -18,12 +18,6 @@ Turbo_product<L,B,R,Q>
 }
 
 template <class L, typename B, typename R, typename Q>
-Turbo_product<L,B,R,Q>
-::~Turbo_product()
-{
-}
-
-template <class L, typename B, typename R, typename Q>
 void Turbo_product<L,B,R,Q>
 ::get_description_args()
 {
@@ -47,6 +41,9 @@ template <class L, typename B, typename R, typename Q>
 void Turbo_product<L,B,R,Q>
 ::store_args()
 {
+	auto enc_tur = dynamic_cast<factory::Encoder_turbo_product::parameters*>(params_cdc->enc.get());
+	auto dec_tur = dynamic_cast<factory::Decoder_turbo_product::parameters*>(params_cdc->dec.get());
+
 	params_cdc->store(this->arg_vals);
 
 	// if (params_cdc->dec->sub->simd_strategy == "INTER")
@@ -70,8 +67,8 @@ void Turbo_product<L,B,R,Q>
 	params_cdc->enc      ->n_frames = this->params.src->n_frames;
 	params_cdc->dec      ->n_frames = this->params.src->n_frames;
 	params_cdc->itl->core->n_frames = this->params.src->n_frames;
-	params_cdc->enc->sub ->n_frames = this->params.src->n_frames;
-	params_cdc->dec->sub ->n_frames = this->params.src->n_frames;
+	enc_tur        ->sub ->n_frames = this->params.src->n_frames;
+	dec_tur        ->sub ->n_frames = this->params.src->n_frames;
 
 	params_cdc->itl->core->seed = this->params.global_seed;
 }
@@ -79,7 +76,7 @@ void Turbo_product<L,B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #include "Launcher/Simulation/BFER_std.hpp"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::Turbo_product<aff3ct::launcher::BFER_std<B_8 ,R_8 ,Q_8 >,B_8 ,R_8 ,Q_8 >;
 template class aff3ct::launcher::Turbo_product<aff3ct::launcher::BFER_std<B_16,R_16,Q_16>,B_16,R_16,Q_16>;
 template class aff3ct::launcher::Turbo_product<aff3ct::launcher::BFER_std<B_32,R_32,Q_32>,B_32,R_32,Q_32>;

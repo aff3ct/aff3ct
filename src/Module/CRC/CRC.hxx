@@ -65,13 +65,6 @@ CRC(const int K, const int size, const int n_frames)
 	});
 }
 
-
-template <typename B>
-CRC<B>::
-~CRC()
-{
-}
-
 template <typename B>
 int CRC<B>::
 get_K() const

@@ -19,7 +19,7 @@ Decoder_RSC_BCJR_intra_std<B,R,MAX>
 {
 	const std::string name = "Decoder_RSC_BCJR_intra_std";
 	this->set_name(name);
-	
+
 	if (mipp::nElReg<R>() != 8)
 	{
 		std::stringstream message;
@@ -33,12 +33,6 @@ Decoder_RSC_BCJR_intra_std<B,R,MAX>
 		message << "'K' has to be divisible by 8 ('K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename B, typename R, tools::proto_max_i<R> MAX>
-Decoder_RSC_BCJR_intra_std<B,R,MAX>
-::~Decoder_RSC_BCJR_intra_std()
-{
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
@@ -88,7 +82,7 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 	for (auto i = 1; i < this->K +3; i++)
 	{
 		// load 4 gamma0 and 4 gamma1
-		if ((i -1) % 4 == 0) 
+		if ((i -1) % 4 == 0)
 			r_g4.load(&this->gamma[(i -1)*2]);
 
 		// compute alpha[0..8] for section i

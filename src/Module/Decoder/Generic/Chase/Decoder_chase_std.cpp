@@ -45,12 +45,6 @@ Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
-Decoder_chase_std<B,R>
-::~Decoder_chase_std()
-{
-}
-
-template <typename B, typename R>
 void Decoder_chase_std<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
@@ -175,7 +169,7 @@ void Decoder_chase_std<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_chase_std<B_8,Q_8>;
 template class aff3ct::module::Decoder_chase_std<B_16,Q_16>;
 template class aff3ct::module::Decoder_chase_std<B_32,Q_32>;

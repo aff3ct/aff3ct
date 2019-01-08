@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 
 #include "../Encoder.hpp"
 
@@ -16,10 +16,12 @@ template <typename B = int>
 class Encoder_LDPC : public Encoder<B>
 {
 protected:
-	tools::Sparse_matrix G; // the generator matrix (automatically transposed if needed in constructor)
+	tools::Sparse_matrix G; // In vertical way
+	                        // the generator matrix (automatically transposed if needed in constructor)
 	                        // G cols are the K dimension
 	                        // G rows are the N dimension
-	tools::Sparse_matrix H; // the decodeur matrix (automatically transposed if needed in constructor)
+	tools::Sparse_matrix H; // In vertical way
+	                        // the decodeur matrix (automatically transposed if needed in constructor)
 	                        // H cols are the M dimension (often M = N - K)
 	                        // H rows are the N dimension
 
@@ -31,8 +33,6 @@ public:
 	Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const tools::Sparse_matrix &H, const int n_frames = 1);
 	virtual ~Encoder_LDPC() = default;
 
-	virtual const std::vector<uint32_t>& get_info_bits_pos() const;
-	virtual bool is_sys() const;
 	virtual bool is_codeword(const B *X_N);
 
 protected:

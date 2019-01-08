@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
 #include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
@@ -17,31 +18,25 @@ BFER_ite::parameters
 {
 }
 
-BFER_ite::parameters
-::~parameters()
-{
-	if (itl != nullptr) { delete itl; itl = nullptr; }
-}
-
 BFER_ite::parameters* BFER_ite::parameters
 ::clone() const
 {
-	auto clone = new BFER_ite::parameters(*this);
+	return new BFER_ite::parameters(*this);
 
-	if (src != nullptr) { clone->src = src->clone(); }
-	if (crc != nullptr) { clone->crc = crc->clone(); }
-	if (cdc != nullptr) { clone->cdc = cdc->clone(); }
-	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
-	if (chn != nullptr) { clone->chn = chn->clone(); }
-	if (qnt != nullptr) { clone->qnt = qnt->clone(); }
-	if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
-	if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
-	if (ter != nullptr) { clone->ter = ter->clone(); }
-	if (itl != nullptr) { clone->itl = itl->clone(); }
+	// if (src != nullptr) { clone->src = src->clone(); }
+	// if (crc != nullptr) { clone->crc = crc->clone(); }
+	// if (cdc != nullptr) { clone->cdc = cdc->clone(); }
+	// if (mdm != nullptr) { clone->mdm = mdm->clone(); }
+	// if (chn != nullptr) { clone->chn = chn->clone(); }
+	// if (qnt != nullptr) { clone->qnt = qnt->clone(); }
+	// if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
+	// if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
+	// if (ter != nullptr) { clone->ter = ter->clone(); }
+	// if (itl != nullptr) { clone->itl = itl->clone(); }
 
-	clone->set_cdc(clone->cdc);
+	// clone->set_cdc(clone->cdc);
 
-	return clone;
+	// return clone;
 }
 
 std::vector<std::string> BFER_ite::parameters
@@ -82,16 +77,16 @@ std::vector<std::string> BFER_ite::parameters
 ::get_prefixes() const
 {
 	auto p = Factory::parameters::get_prefixes();
-	if (this->src != nullptr) { auto nn = this->src->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->crc != nullptr) { auto nn = this->crc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->cdc != nullptr) { auto nn = this->cdc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->itl != nullptr) { auto nn = this->itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->mdm != nullptr) { auto nn = this->mdm->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->chn != nullptr) { auto nn = this->chn->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->qnt != nullptr) { auto nn = this->qnt->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->src    != nullptr) { auto nn = this->src   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->crc    != nullptr) { auto nn = this->crc   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->cdc    != nullptr) { auto nn = this->cdc   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->itl    != nullptr) { auto nn = this->itl   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->mdm    != nullptr) { auto nn = this->mdm   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->chn    != nullptr) { auto nn = this->chn   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->qnt    != nullptr) { auto nn = this->qnt   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (this->mnt_er != nullptr) { auto nn = this->mnt_er->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (this->mnt_mi != nullptr) { auto nn = this->mnt_mi->get_prefixes(); for (auto &x : nn) p.push_back(x); }
-	if (this->ter != nullptr) { auto nn = this->ter->get_prefixes(); for (auto &x : nn) p.push_back(x); }
+	if (this->ter    != nullptr) { auto nn = this->ter   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
 }
 
@@ -101,16 +96,13 @@ void BFER_ite::parameters
 	BFER::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::BFER_ite::parameters::";
 
-	args.add(
-		{p+"-ite", "I"},
-		tools::Integer(tools::Positive()),
-		"number of global iterations between the demodulator and the decoder.");
+	tools::add_arg(args, p, class_name+"p+ite,I",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-crc-start"},
-		tools::Integer(tools::Positive()),
-		"iteration number to start the CRC checking in the turbo demodulation process.");
+	tools::add_arg(args, p, class_name+"p+crc-start",
+		tools::Integer(tools::Positive()));
 }
 
 void BFER_ite::parameters
@@ -149,11 +141,19 @@ void BFER_ite::parameters
 	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }
 
+const Codec_SISO_SIHO::parameters* BFER_ite::parameters
+::get_cdc() const
+{
+	return dynamic_cast<Codec_SISO_SIHO::parameters*>(this->cdc.get());
+}
+
+
+
 template <typename B, typename R, typename Q>
 simulation::BFER_ite<B,R,Q>* BFER_ite::parameters
 ::build() const
 {
-#if defined(SYSTEMC)
+#if defined(AFF3CT_SYSTEMC_SIMU)
 	return new simulation::SC_BFER_ite<B,R,Q>(*this);
 #else
 	return new simulation::BFER_ite_threads<B,R,Q>(*this);
@@ -169,7 +169,7 @@ simulation::BFER_ite<B,R,Q>* BFER_ite
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::simulation::BFER_ite<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_ite::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::BFER_ite::parameters&);
 template aff3ct::simulation::BFER_ite<B_16,R_16,Q_16>* aff3ct::factory::BFER_ite::build<B_16,R_16,Q_16>(const aff3ct::factory::BFER_ite::parameters&);
 template aff3ct::simulation::BFER_ite<B_32,R_32,Q_32>* aff3ct::factory::BFER_ite::build<B_32,R_32,Q_32>(const aff3ct::factory::BFER_ite::parameters&);

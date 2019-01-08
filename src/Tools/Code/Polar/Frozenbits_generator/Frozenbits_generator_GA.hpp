@@ -32,7 +32,7 @@ private:
 public:
 	Frozenbits_generator_GA(const int K, const int N);
 
-	~Frozenbits_generator_GA();
+	virtual ~Frozenbits_generator_GA() = default;
 
 protected:
 	void   evaluate();

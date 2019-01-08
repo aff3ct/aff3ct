@@ -60,7 +60,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Coset();
+	virtual ~Coset() = default;
 
 	int get_size() const;
 

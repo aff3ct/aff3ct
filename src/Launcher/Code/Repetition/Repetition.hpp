@@ -15,7 +15,7 @@ protected:
 
 public:
 	Repetition(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Repetition();
+	virtual ~Repetition() = default;
 
 protected:
 	virtual void get_description_args();

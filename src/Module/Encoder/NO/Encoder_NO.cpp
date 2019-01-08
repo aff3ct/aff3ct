@@ -14,12 +14,6 @@ Encoder_NO<B>
 }
 
 template <typename B>
-Encoder_NO<B>
-::~Encoder_NO()
-{
-}
-
-template <typename B>
 void Encoder_NO<B>
 ::_encode(const B *U_K, B *X_K, const int frame_id)
 {
@@ -33,9 +27,9 @@ bool Encoder_NO<B>
 	return true;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_NO<B_8>;
 template class aff3ct::module::Encoder_NO<B_16>;
 template class aff3ct::module::Encoder_NO<B_32>;

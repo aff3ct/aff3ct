@@ -420,7 +420,7 @@ Monitor_EXIT<B,R>::Attributes
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Monitor_EXIT<B_32,R_32>;
 template class aff3ct::module::Monitor_EXIT<B_64,R_64>;
 #else

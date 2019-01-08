@@ -32,7 +32,7 @@ public:
 	                  const int             s                      =  1,
 	                  const int             simd_inter_frame_level =  1);
 
-	virtual ~Flip_and_check_DB();
+	virtual ~Flip_and_check_DB() = default;
 
 	bool siso_n(const int ite,
 	            const mipp::vector<R>& sys,

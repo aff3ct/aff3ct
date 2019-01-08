@@ -3,6 +3,7 @@
 #include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Simulation.hpp"
 
@@ -19,20 +20,14 @@ Simulation::parameters
 {
 }
 
-Simulation::parameters
-::~parameters()
-{
-	if (noise != nullptr) { delete noise; noise = nullptr; }
-}
-
 Simulation::parameters* Simulation::parameters
 ::clone() const
 {
-	auto clone = new Simulation::parameters(*this);
+	return new Simulation::parameters(*this);
 
-	if (noise != nullptr) {clone->noise = noise->clone(); }
+	// if (noise != nullptr) {clone->noise = noise->clone(); }
 
-	return clone;
+	// return clone;
 }
 
 void Simulation::parameters
@@ -43,71 +38,50 @@ void Simulation::parameters
 	noise->get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Simulation::parameters::";
 
-	args.add(
-		{p+"-meta"},
-		tools::Text(),
-		"print the output with metadata, takes the simulation title.");
+	tools::add_arg(args, p, class_name+"p+meta",
+		tools::Text());
 
-	args.add(
-		{p+"-stop-time"},
+	tools::add_arg(args, p, class_name+"p+stop-time",
 		tools::Integer(tools::Positive()),
-		"time in sec after what the current simulatated noise stops (0 is infinite).",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-max-frame", "n"},
+	tools::add_arg(args, p, class_name+"p+max-fra,n",
 		tools::Integer(tools::Positive()),
-		"maximum number of frames to play after what the current simulatated noise stops (0 is infinite).",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-crit-nostop"},
+	tools::add_arg(args, p, class_name+"p+crit-nostop",
 		tools::None(),
-		"The stop criteria arguments -stop-time or -max-frame kill the current simulatated noise point"
-		" but not the simulation.",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-debug"},
-		tools::None(),
-		"enable debug mode: print array values after each step.");
+	tools::add_arg(args, p, class_name+"p+dbg",
+		tools::None());
 
-	args.add(
-		{p+"-debug-hex"},
-		tools::None(),
-		"debug mode prints values in the hexadecimal format.");
+	tools::add_arg(args, p, class_name+"p+dbg-hex",
+		tools::None());
 
-	args.add(
-		{p+"-debug-prec"},
-		tools::Integer(tools::Positive()),
-		"set the precision of real elements when displayed in debug mode.");
+	tools::add_arg(args, p, class_name+"p+dbg-prec",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-debug-limit", "d"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the max number of elements to display in the debug mode.");
+	tools::add_arg(args, p, class_name+"p+dbg-limit,d",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-stats"},
-		tools::None(),
-		"display statistics module by module.");
+	tools::add_arg(args, p, class_name+"p+dbg-fra",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-threads", "t"},
-		tools::Integer(tools::Positive()),
-		"enable multi-threaded mode and specify the number of threads (0 means the maximum supported by the core.");
+	tools::add_arg(args, p, class_name+"p+stats",
+		tools::None());
 
-	args.add(
-		{p+"-seed", "S"},
-		tools::Integer(tools::Positive()),
-		"seed used in the simulation to initialize the pseudo random generators in general.");
+	tools::add_arg(args, p, class_name+"p+threads,t",
+		tools::Integer(tools::Positive()));
 
-#ifdef ENABLE_MPI
-	args.add(
-		{p+"-mpi-comm"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"MPI communication frequency between the nodes (in millisec).");
+	tools::add_arg(args, p, class_name+"p+seed,S",
+		tools::Integer(tools::Positive()));
+
+#ifdef AFF3CT_MPI
+	tools::add_arg(args, p, class_name+"p+mpi-comm",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 #endif
 }
 
@@ -122,33 +96,38 @@ void Simulation::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-meta"            })) this->meta        =         vals.at    ({p+"-meta"          });
-	if(vals.exist({p+"-stop-time"       })) this->stop_time   = seconds(vals.to_int({p+"-stop-time"     }));
-	if(vals.exist({p+"-max-frame",   "n"})) this->max_frame   =         vals.to_int({p+"-max-frame", "n"});
-	if(vals.exist({p+"-seed",        "S"})) this->global_seed =         vals.to_int({p+"-seed",      "S"});
-	if(vals.exist({p+"-stats"           })) this->statistics  = true;
-	if(vals.exist({p+"-debug"           })) this->debug       = true;
-	if(vals.exist({p+"-crit-nostop"     })) this->crit_nostop = true;
-	if(vals.exist({p+"-debug-limit", "d"}))
+	if(vals.exist({p+"-meta"          })) this->meta        =         vals.at    ({p+"-meta"        });
+	if(vals.exist({p+"-stop-time"     })) this->stop_time   = seconds(vals.to_int({p+"-stop-time"   }));
+	if(vals.exist({p+"-max-fra",   "n"})) this->max_frame   =         vals.to_int({p+"-max-fra", "n"});
+	if(vals.exist({p+"-seed",      "S"})) this->global_seed =         vals.to_int({p+"-seed",    "S"});
+	if(vals.exist({p+"-stats"         })) this->statistics  = true;
+	if(vals.exist({p+"-dbg"           })) this->debug       = true;
+	if(vals.exist({p+"-crit-nostop"   })) this->crit_nostop = true;
+	if(vals.exist({p+"-dbg-limit", "d"}))
 	{
 		this->debug = true;
-		this->debug_limit = vals.to_int({p+"-debug-limit", "d"});
+		this->debug_limit = vals.to_int({p+"-dbg-limit", "d"});
 	}
-	if(vals.exist({p+"-debug-hex"}))
+	if(vals.exist({p+"-dbg-hex"}))
 	{
 		this->debug = true;
 		this->debug_hex = true;
 	}
-	if(vals.exist({p+"-debug-prec"}))
+	if(vals.exist({p+"-dbg-prec"}))
 	{
 		this->debug = true;
-		this->debug_precision = vals.to_int({p+"-debug-prec"});
+		this->debug_precision = vals.to_int({p+"-dbg-prec"});
+	}
+	if(vals.exist({p+"-dbg-fra"}))
+	{
+		this->debug = true;
+		this->debug_frame_max = vals.to_int({p+"-dbg-fra"});
 	}
 
 	if(vals.exist({p+"-threads", "t"}) && vals.to_int({p+"-threads", "t"}) > 0)
 		if(vals.exist({p+"-threads", "t"})) this->n_threads = vals.to_int({p+"-threads", "t"});
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	MPI_Comm_size(MPI_COMM_WORLD, &this->mpi_size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &this->mpi_rank);
 
@@ -173,7 +152,7 @@ void Simulation::parameters
 	this->local_seed = this->global_seed;
 #endif
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 	if(vals.exist({p+"-prec", "p"})) this->sim_prec = vals.to_int({p+"-prec", "p"});
 #endif
 
@@ -201,7 +180,7 @@ void Simulation::parameters
 			headers[p].push_back(std::make_pair("Debug limit", std::to_string(this->debug_limit)));
 	}
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	headers[p].push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(this->mpi_comm_freq.count())));
 	headers[p].push_back(std::make_pair("MPI size",             std::to_string(this->mpi_size             )));
 #endif

@@ -15,10 +15,11 @@
 #include <unordered_map>
 #include <map>
 #include <functional>
+#include <memory>
 
 #include "Task.hpp"
 #include "Socket.hpp"
-#ifdef SYSTEMC_MODULE
+#ifdef AFF3CT_SYSTEMC_MODULE
 #include "SC_Module.hpp"
 #endif
 
@@ -43,11 +44,11 @@ protected:
 	int         n_frames;    /*!< Number of frames to process in this Module */
 	std::string name;        /*!< Name of the Module. */
 	std::string short_name;  /*!< Short name of the Module. */
-	std::vector<Task*> tasks_with_nullptr;
+	std::vector<std::shared_ptr<Task>> tasks_with_nullptr;
 
 public:
-	std::vector<Task*> tasks;
-#ifdef SYSTEMC_MODULE
+	std::vector<std::shared_ptr<Task>> tasks;
+#ifdef AFF3CT_SYSTEMC_MODULE
 	friend SC_Module_container;
 	SC_Module_container sc;
 #endif
@@ -63,7 +64,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Module();
+	virtual ~Module() = default;
 
 	/*!
 	 * \brief Get the number of frames.

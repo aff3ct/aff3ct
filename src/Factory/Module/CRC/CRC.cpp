@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 #include "Tools/types.h"
 
 #include "Module/CRC/NO/CRC_NO.hpp"
@@ -20,11 +21,6 @@ CRC::parameters
 {
 }
 
-CRC::parameters
-::~parameters()
-{
-}
-
 CRC::parameters* CRC::parameters
 ::clone() const
 {
@@ -35,32 +31,23 @@ void CRC::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::CRC::parameters::";
 
-	args.add(
-		{p+"-info-bits", "K"},
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of generated bits (information bits, the CRC is not included).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type", p+"-poly"},
-		tools::Text(),
-		"select the CRC type/polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7).");
+	tools::add_arg(args, p, class_name+"p+type,p+poly",
+		tools::Text());
 
-	args.add(
-		{p+"-implem"},
-		tools::Text(tools::Including_set("STD", "FAST", "INTER")),
-		"select the CRC implementation you want to use.");
+	tools::add_arg(args, p, class_name+"p+implem",
+		tools::Text(tools::Including_set("STD", "FAST", "INTER")));
 
-	args.add(
-		{p+"-size"},
-		tools::Integer(tools::Positive()),
-		"size of the CRC (divisor size in bit -1), required if you selected an unknown CRC.");
+	tools::add_arg(args, p, class_name+"p+size",
+		tools::Integer(tools::Positive()));
 }
 
 void CRC::parameters
@@ -118,11 +105,11 @@ module::CRC<B>* CRC::parameters
 	{
 		const auto poly = this->type;
 
-		     if (this->implem == "STD"  ) return new module::CRC_polynomial      <B>(K, poly, size, n_frames);
-		else if (this->implem == "FAST" ) return new module::CRC_polynomial_fast <B>(K, poly, size, n_frames);
-		else if (this->implem == "INTER") return new module::CRC_polynomial_inter<B>(K, poly, size, n_frames);
+		if (this->implem == "STD"  ) return new module::CRC_polynomial      <B>(K, poly, size, n_frames);
+		if (this->implem == "FAST" ) return new module::CRC_polynomial_fast <B>(K, poly, size, n_frames);
+		if (this->implem == "INTER") return new module::CRC_polynomial_inter<B>(K, poly, size, n_frames);
 	}
-	else                                  return new module::CRC_NO              <B>(K,             n_frames);
+	else                             return new module::CRC_NO              <B>(K,             n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -136,7 +123,7 @@ module::CRC<B>* CRC
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::CRC<B_8 >* aff3ct::factory::CRC::parameters::build<B_8 >() const;
 template aff3ct::module::CRC<B_16>* aff3ct::factory::CRC::parameters::build<B_16>() const;
 template aff3ct::module::CRC<B_32>* aff3ct::factory::CRC::parameters::build<B_32>() const;

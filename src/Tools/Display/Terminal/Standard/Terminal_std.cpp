@@ -24,13 +24,8 @@ const int aff3ct::tools::Terminal_std::column_width = 10;
 #endif
 
 Terminal_std
-::Terminal_std(std::vector<Reporter*>& reporters)
+::Terminal_std(const std::vector<std::unique_ptr<tools::Reporter>>& reporters)
 : Terminal(), reporters(reporters)
-{
-}
-
-Terminal_std
-::~Terminal_std()
 {
 }
 
@@ -218,7 +213,12 @@ void Terminal_std
 {
 	std::ios::fmtflags f(stream.flags());
 
+	// Ugly hack to manage correctly the interruption by the user and to remove the ^C from the screen
+	if (Terminal::is_interrupt())
+		std::clog << "\r";
+
 	stream << data_tag;
+
 
 	for (unsigned r = 0; r < this->reporters.size(); r++)
 		if (this->reporters[r] != nullptr)

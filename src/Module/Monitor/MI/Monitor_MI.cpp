@@ -16,7 +16,7 @@ template <typename B, typename R>
 Monitor_MI<B,R>
 ::Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames)
 : Monitor(n_frames), N(N), max_n_trials(max_n_trials),
-  mutinfo_hist(1)
+  mutinfo_hist(1), mutinfo_hist_activated(false)
 {
 	const std::string name = "Monitor_MI";
 	this->set_name(name);
@@ -118,7 +118,7 @@ namespace aff3ct
 {
 namespace module
 {
-#if defined(MULTI_PREC) | defined (PREC_32_BIT)
+#if defined(AFF3CT_MULTI_PREC) | defined (AFF3CT_32BIT_PREC)
 template <>
 R_32 Monitor_MI<B_32,R_32>
 ::_get_mutual_info(const B_32 *X, const R_32 *Y, const int frame_id)
@@ -129,7 +129,7 @@ R_32 Monitor_MI<B_32,R_32>
 }
 #endif
 
-#if defined(MULTI_PREC) | defined (PREC_64_BIT)
+#if defined(AFF3CT_MULTI_PREC) | defined (AFF3CT_64BIT_PREC)
 template <>
 R_64 Monitor_MI<B_64,R_64>
 ::_get_mutual_info(const B_64 *X, const R_64 *Y, const int frame_id)
@@ -152,7 +152,8 @@ void Monitor_MI<B,R>
 	vals.MI_max = std::max(vals.MI_max, mi);
 	vals.MI_min = std::min(vals.MI_min, mi);
 
-	this->mutinfo_hist.add_value(mi);
+	if (mutinfo_hist_activated)
+		this->mutinfo_hist.add_value(mi);
 }
 
 
@@ -223,13 +224,20 @@ R Monitor_MI<B,R>
 	return vals.MI_max;
 }
 
-
-
 template<typename B, typename R>
-tools::Histogram<R> Monitor_MI<B,R>::get_mutinfo_hist() const
+tools::Histogram<R> Monitor_MI<B,R>
+::get_mutinfo_hist() const
 {
 	return this->mutinfo_hist;
 }
+
+template<typename B, typename R>
+void  Monitor_MI<B,R>
+::activate_mutinfo_histogram(bool val)
+{
+	mutinfo_hist_activated = val;
+}
+
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
@@ -371,7 +379,7 @@ Monitor_MI<B,R>::Attributes
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Monitor_MI<B_8, R_8>;
 template class aff3ct::module::Monitor_MI<B_16,R_16>;
 template class aff3ct::module::Monitor_MI<B_32,R_32>;

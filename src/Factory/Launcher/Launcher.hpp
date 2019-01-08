@@ -35,10 +35,12 @@ struct Launcher : public Factory
 		bool        display_adv_help = false;
 		bool        display_version  = false;
 		bool        display_legend   = true;
+		bool        display_keys     = false;
+		bool        full_legend      = false;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Launcher_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Launcher::parameters* clone() const;
 
 		// parameters construction

@@ -18,12 +18,8 @@ struct Puncturer_turbo_DB : public Puncturer
 	class parameters : public Puncturer::parameters
 	{
 	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
-
-		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Puncturer_turbo_DB_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Puncturer_turbo_DB::parameters* clone() const;
 
 		// parameters construction

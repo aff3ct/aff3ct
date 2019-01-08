@@ -12,15 +12,15 @@ using namespace aff3ct::module;
 template <typename B, typename Q>
 Puncturer_polar_shortlast<B,Q>
 ::Puncturer_polar_shortlast(const int &K,
-                          const int &N,
-                          const tools::Frozenbits_generator &fb_generator,
-                          const int n_frames)
+                            const int &N,
+                            const tools::Frozenbits_generator &fb_generator,
+                            const int n_frames)
 : Puncturer<B,Q>(K, N, (int)std::exp2(std::ceil(std::log2(N))), n_frames),
   fb_generator(fb_generator)
 {
 	const std::string name = "Puncturer_polar_shortlast";
 	this->set_name(name);
-	
+
 	if (fb_generator.get_K() != K)
 	{
 		std::stringstream message;
@@ -39,12 +39,6 @@ Puncturer_polar_shortlast<B,Q>
 }
 
 template <typename B, typename Q>
-Puncturer_polar_shortlast<B,Q>
-::~Puncturer_polar_shortlast()
-{
-}
-
-template <typename B, typename Q>
 void Puncturer_polar_shortlast<B,Q>
 ::gen_frozen_bits(std::vector<bool> &frozen_bits)
 {
@@ -58,8 +52,8 @@ void Puncturer_polar_shortlast<B,Q>
 	auto i = 0;
 	while (info_bits_placed < this->K)
 	{
- 		if (best_channels[i] < (uint32_t)this->N) // choose best channels in interval [0 ; N]
-		{                               // interval [0 ; N] are frozen
+		if (best_channels[i] < (uint32_t)this->N) // choose best channels in interval [0 ; N]
+		{                                         // interval [0 ; N] are frozen
 			frozen_bits[best_channels[i]] = false;
 			info_bits_placed++;
 		}
@@ -84,9 +78,9 @@ void Puncturer_polar_shortlast<B,Q>
 	std::fill(Y_N2 + this->N, Y_N2 + this->N_cw, tools::sat_vals<Q>().second);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Puncturer_polar_shortlast<B_8,Q_8>;
 template class aff3ct::module::Puncturer_polar_shortlast<B_16,Q_16>;
 template class aff3ct::module::Puncturer_polar_shortlast<B_32,Q_32>;

@@ -14,17 +14,11 @@ Source_random_fast<B>
 {
 	const std::string name = "Source_random_fast";
 	this->set_name(name);
-	
+
 	mipp::vector<int> seeds(mipp::nElReg<int>());
 	for (auto i = 0; i < mipp::nElReg<int>(); i++)
 		seeds[i] = mt19937.rand();
 	mt19937_simd.seed(seeds.data());
-}
-
-template <typename B>
-Source_random_fast<B>
-::~Source_random_fast()
-{
 }
 
 template <typename B>
@@ -37,7 +31,7 @@ void Source_random_fast<B>
 	const auto size = (unsigned)(this->K);
 
 	// vectorized loop
-	const auto period = mipp::nElReg<B>() * sizeof(B) * 8; 
+	const auto period = mipp::nElReg<B>() * sizeof(B) * 8;
 	const auto vec_loop_size = (unsigned)((size / period) * period);
 	for (unsigned i = 0; i < vec_loop_size; i += period)
 	{
@@ -67,9 +61,9 @@ void Source_random_fast<B>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Source_random_fast<B_8>;
 template class aff3ct::module::Source_random_fast<B_16>;
 template class aff3ct::module::Source_random_fast<B_32>;

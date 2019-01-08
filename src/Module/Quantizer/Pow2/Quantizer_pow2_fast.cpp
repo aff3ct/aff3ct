@@ -150,12 +150,6 @@ Quantizer_pow2_fast<double, double>
 }
 }
 
-template <typename R, typename Q>
-Quantizer_pow2_fast<R,Q>
-::~Quantizer_pow2_fast()
-{
-}
-
 template<typename R, typename Q>
 void Quantizer_pow2_fast<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
@@ -249,7 +243,7 @@ void Quantizer_pow2_fast<float,signed char>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Quantizer_pow2_fast<R_8,Q_8>;
 template class aff3ct::module::Quantizer_pow2_fast<R_16,Q_16>;
 template class aff3ct::module::Quantizer_pow2_fast<R_32,Q_32>;

@@ -25,7 +25,7 @@ public:
 	                        const std::string &awgn_codes_dir,
 	                        const std::string &bin_pb_path);
 
-	virtual ~Frozenbits_generator_TV();
+	virtual ~Frozenbits_generator_TV() = default;
 
 protected:
 	void evaluate();

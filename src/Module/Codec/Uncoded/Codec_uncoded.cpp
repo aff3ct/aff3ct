@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Factory/Module/Encoder/Encoder.hpp"
+#include "Factory/Module/Encoder/NO/Encoder_NO.hpp"
 #include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
@@ -13,7 +13,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_uncoded<B,Q>
-::Codec_uncoded(const factory::Encoder   ::parameters &enc_params,
+::Codec_uncoded(const factory::Encoder_NO::parameters &enc_params,
                 const factory::Decoder_NO::parameters &dec_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
@@ -62,24 +62,17 @@ Codec_uncoded<B,Q>
 	pct_params.N_cw     = enc_params.N_cw;
 	pct_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer(factory::Puncturer ::build<B,Q>(pct_params));
-	this->set_encoder(factory::Encoder::build<B>(enc_params));
+	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
+	this->set_encoder  (factory::Encoder_NO::build<B>(enc_params));
+
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_NO::build_siso<B,Q>(dec_params, this->get_encoder());
-		this->set_decoder_siso(decoder_siso_siho);
-		this->set_decoder_siho(decoder_siso_siho);
+		this->set_decoder_siso_siho(factory::Decoder_NO::build_siso<B,Q>(dec_params, this->get_encoder()));
 	}
-	catch (tools::cannot_allocate const&)
+	catch (const std::exception&)
 	{
 		this->set_decoder_siho(factory::Decoder_NO::build<B,Q>(dec_params, this->get_encoder()));
 	}
-}
-
-template <typename B, typename Q>
-Codec_uncoded<B,Q>
-::~Codec_uncoded()
-{
 }
 
 template <typename B, typename Q>
@@ -90,9 +83,9 @@ void Codec_uncoded<B,Q>
 	std::copy(Y_N, Y_N + K, sys);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Codec_uncoded<B_8,Q_8>;
 template class aff3ct::module::Codec_uncoded<B_16,Q_16>;
 template class aff3ct::module::Codec_uncoded<B_32,Q_32>;

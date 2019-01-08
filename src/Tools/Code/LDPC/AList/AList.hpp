@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct
 {
@@ -13,7 +13,7 @@ struct AList
 {
 public:
 	static Sparse_matrix read (                             std::istream &stream);
-	static void          write(const Sparse_matrix &matrix, std::ostream &stream);
+	static void          write(const Sparse_matrix &matrix, std::ostream &stream, bool zero_padding = false);
 
 	/*
 	 * get the matrix dimensions H and N from the input stream

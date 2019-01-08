@@ -20,11 +20,13 @@ Decoder_turbo_product<B,R>
                         const Interleaver<R>& pi,
                         Decoder_chase_pyndiah<B,R> &cp_r,
                         Decoder_chase_pyndiah<B,R> &cp_c,
+                        const std::vector<float>& beta,
                         const int n_frames)
 : Decoder               (cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), n_frames, 1),
   Decoder_SISO_SIHO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), n_frames, 1),
   n_ite(n_ite),
   alpha(alpha),
+  beta (beta ),
   pi   (pi   ),
   cp_r (cp_r ),
   cp_c (cp_c ),
@@ -50,6 +52,13 @@ Decoder_turbo_product<B,R>
 	{
 		std::stringstream message;
 		message << "'alpha.size()' has to be twice 'n_ite' ('n_ite' = " << n_ite << " and 'alpha.size()' = " << alpha.size() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (n_ite*2 != (int)beta.size() && beta.size() != 0)
+	{
+		std::stringstream message;
+		message << "'beta.size()' has to be twice 'n_ite' or null ('n_ite' = " << n_ite << " and 'beta.size()' = " << alpha.size() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -97,12 +106,12 @@ Decoder_turbo_product<B,R>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-}
 
-template <typename B, typename R>
-Decoder_turbo_product<B,R>
-::~Decoder_turbo_product()
-{
+	if (beta.size())
+	{
+		cp_r.clear_beta();
+		cp_c.clear_beta();
+	}
 }
 
 template <typename B, typename R>
@@ -181,6 +190,12 @@ void Decoder_turbo_product<B,R>
 	{
 		pi.interleave(Y_N_i.data(), Y_N_pi.data(), 0, 1); // columns becomes rows
 
+		if (beta.size())
+		{
+			cp_c.set_beta((R)beta[2*i+0]);
+			cp_r.set_beta((R)beta[2*i+1]);
+		}
+
 		// decode each col
 		for (int j = 0; j < n_cols; j++)
 		{
@@ -200,7 +215,7 @@ void Decoder_turbo_product<B,R>
 		pi.deinterleave(Y_N_pi.data(), Y_N_i.data(), 0, 1); // rows go back as columns
 
 		// decode each row
-		if (i < (n_ite -1) || return_K_siso == 2)
+		if (i < (n_ite -1) || return_K_siso >= 2)
 		{
 			for (int j = 0; j < n_rows; j++)
 			{
@@ -236,7 +251,7 @@ void Decoder_turbo_product<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_turbo_product<B_8,Q_8>;
 template class aff3ct::module::Decoder_turbo_product<B_16,Q_16>;
 template class aff3ct::module::Decoder_turbo_product<B_32,Q_32>;

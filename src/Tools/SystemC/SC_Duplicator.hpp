@@ -1,4 +1,4 @@
-#if defined(SYSTEMC) || defined(SYSTEMC_MODULE)
+#if defined(AFF3CT_SYSTEMC_SIMU) || defined(AFF3CT_SYSTEMC_MODULE)
 
 #ifndef SC_DUPLICATOR_HPP_
 #define SC_DUPLICATOR_HPP_
@@ -19,11 +19,13 @@ class SC_Duplicator : sc_core::sc_module
 	SC_HAS_PROCESS(SC_Duplicator);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Duplicator> s_in;
-	tlm_utils::simple_initiator_socket<SC_Duplicator> s_out1;
-	tlm_utils::simple_initiator_socket<SC_Duplicator> s_out2;
+	using SI_t = tlm_utils::simple_target_socket   <SC_Duplicator>;
+	using SO_t = tlm_utils::simple_initiator_socket<SC_Duplicator>;
 
-public:
+	SI_t s_in;
+	SO_t s_out1;
+	SO_t s_out2;
+
 	explicit SC_Duplicator(sc_core::sc_module_name name = "SC_Duplicator")
 	: sc_module(name), s_in("s_in"), s_out1("s_out1"), s_out2("s_out2")
 	{
@@ -37,10 +39,12 @@ private:
 		s_out1->b_transport(trans, zero_time);
 		s_out2->b_transport(trans, zero_time);
 	}
+
 };
+
 }
 }
 
 #endif /* SC_DUPLICATOR_HPP_ */
 
-#endif /* SYSTEMC */
+#endif /* AFF3CT_SYSTEMC_SIMU */

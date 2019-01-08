@@ -25,7 +25,7 @@ struct Decoder_repetition : public Decoder
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_repetition_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Decoder_repetition::parameters* clone() const;
 
 		// parameters construction
@@ -35,11 +35,11 @@ struct Decoder_repetition : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, module::Encoder<B> *encoder = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };
 }
 }

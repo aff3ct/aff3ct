@@ -1,6 +1,7 @@
 #include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Quantizer/Pow2/Quantizer_pow2.hpp"
 #include "Module/Quantizer/Pow2/Quantizer_pow2_fast.hpp"
@@ -21,11 +22,6 @@ Quantizer::parameters
 {
 }
 
-Quantizer::parameters
-::~parameters()
-{
-}
-
 Quantizer::parameters* Quantizer::parameters
 ::clone() const
 {
@@ -36,42 +32,29 @@ void Quantizer::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Quantizer::parameters::";
 
-	args.add(
-		{p+"-size", "N"},
+	tools::add_arg(args, p, class_name+"p+size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of real to quantize.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("POW2", "CUSTOM")),
-		"type of the quantizer to use in the simulation.");
+	tools::add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("POW2", "CUSTOM")));
 
-	args.add(
-		{p+"-implem"},
-		tools::Text(tools::Including_set("STD", "FAST")),
-		"select the implementation of quantizer.");
+	tools::add_arg(args, p, class_name+"p+implem",
+		tools::Text(tools::Including_set("STD", "FAST")));
 
-	args.add(
-		{p+"-dec"},
-		tools::Integer(tools::Positive()),
-		"the position of the fixed point in the quantified representation.");
+	tools::add_arg(args, p, class_name+"p+dec",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-bits"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the number of bits used for the quantizer.");
+	tools::add_arg(args, p, class_name+"p+bits",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-range"},
-		tools::Real(tools::Positive(), tools::Non_zero()),
-		"the min/max bound for the tricky quantizer.");
+	tools::add_arg(args, p, class_name+"p+range",
+		tools::Real(tools::Positive(), tools::Non_zero()));
 }
 
 void Quantizer::parameters
@@ -110,10 +93,10 @@ template <typename R, typename Q>
 module::Quantizer<R,Q>* Quantizer::parameters
 ::build() const
 {
-	     if (this->type == "POW2"   && this->implem == "STD" ) return new module::Quantizer_pow2     <R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
-	else if (this->type == "POW2"   && this->implem == "FAST") return new module::Quantizer_pow2_fast<R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
-	else if (this->type == "CUSTOM" && this->implem == "STD" ) return new module::Quantizer_custom   <R,Q>(this->size, this->range,      this->n_bits, this->n_frames);
-	else if (this->type == "NO"                              ) return new module::Quantizer_NO       <R,Q>(this->size,                                 this->n_frames);
+	if (this->type == "POW2"   && this->implem == "STD" ) return new module::Quantizer_pow2     <R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
+	if (this->type == "POW2"   && this->implem == "FAST") return new module::Quantizer_pow2_fast<R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
+	if (this->type == "CUSTOM" && this->implem == "STD" ) return new module::Quantizer_custom   <R,Q>(this->size, this->range,      this->n_bits, this->n_frames);
+	if (this->type == "NO"                              ) return new module::Quantizer_NO       <R,Q>(this->size,                                 this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -127,7 +110,7 @@ module::Quantizer<R,Q>* Quantizer
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Quantizer<R_8 ,Q_8 >* aff3ct::factory::Quantizer::parameters::build<R_8 ,Q_8 >() const;
 template aff3ct::module::Quantizer<R_16,Q_16>* aff3ct::factory::Quantizer::parameters::build<R_16,Q_16>() const;
 template aff3ct::module::Quantizer<R_32,Q_32>* aff3ct::factory::Quantizer::parameters::build<R_32,Q_32>() const;

@@ -46,12 +46,6 @@ Source(const int K, const int n_frames)
 }
 
 template <typename B>
-Source<B>::
-~Source()
-{
-}
-
-template <typename B>
 int Source<B>::
 get_K() const
 {

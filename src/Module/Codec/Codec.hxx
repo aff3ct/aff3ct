@@ -16,11 +16,6 @@ template <typename B, typename Q>
 Codec<B,Q>::
 Codec(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
 : Module(n_frames),
-  interleaver_core(nullptr),
-  interleaver_bit (nullptr),
-  interleaver_llr (nullptr),
-  encoder         (nullptr),
-  puncturer       (nullptr),
   K(K), N_cw(N_cw), N(N), tail_length(tail_length),
   n(nullptr)
 {
@@ -112,19 +107,7 @@ Codec(const int K, const int N_cw, const int N, const int tail_length, const int
 }
 
 template <typename B, typename Q>
-Codec<B,Q>::
-~Codec()
-{
-	if (encoder          != nullptr) { delete encoder;          encoder          = nullptr; }
-	if (puncturer        != nullptr) { delete puncturer;        puncturer        = nullptr; }
-	if (interleaver_bit  != nullptr) { delete interleaver_bit;  interleaver_bit  = nullptr; }
-	if (interleaver_llr  != nullptr) { delete interleaver_llr;  interleaver_llr  = nullptr; }
-	if (interleaver_core != nullptr) { delete interleaver_core; interleaver_core = nullptr; }
-	if (n                != nullptr) { delete n;                n                = nullptr; }
-}
-
-template <typename B, typename Q>
-tools::Interleaver_core<>* Codec<B,Q>::
+std::unique_ptr<tools::Interleaver_core<>>& Codec<B,Q>::
 get_interleaver()
 {
 	if (this->interleaver_core == nullptr)
@@ -138,7 +121,7 @@ get_interleaver()
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec<B,Q>::
+std::unique_ptr<Encoder<B>>& Codec<B,Q>::
 get_encoder()
 {
 	if (this->encoder == nullptr)
@@ -152,7 +135,7 @@ get_encoder()
 }
 
 template <typename B, typename Q>
-Puncturer<B,Q>* Codec<B,Q>::
+std::unique_ptr<Puncturer<B,Q>>& Codec<B,Q>::
 get_puncturer()
 {
 	if (this->puncturer == nullptr)
@@ -166,30 +149,24 @@ get_puncturer()
 }
 
 template <typename B, typename Q>
-const tools::Noise<float>* Codec<B,Q>::
+const tools::Noise<float>& Codec<B,Q>::
 current_noise() const
 {
-	return this->n;
+	return *this->n;
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>
 ::set_noise(const tools::Noise<float>& noise)
 {
-	if (this->n != nullptr)
-		delete this->n;
-
-	this->n = tools::cast<float>(noise);
+	this->n.reset(tools::cast<float>(noise));
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>
 ::set_noise(const tools::Noise<double>& noise)
 {
-	if (this->n != nullptr)
-		delete this->n;
-
-	this->n = tools::cast<float>(noise);
+	this->n.reset(tools::cast<float>(noise));
 }
 
 template <typename B, typename Q>
@@ -422,23 +399,44 @@ template <typename B, typename Q>
 void Codec<B,Q>::
 set_interleaver(tools::Interleaver_core<>* itl)
 {
-	this->interleaver_core = itl;
-	this->interleaver_bit  = factory::Interleaver::build<B>(*itl);
-	this->interleaver_llr  = factory::Interleaver::build<Q>(*itl);
+	this->set_interleaver(std::unique_ptr<tools::Interleaver_core<>>(itl));
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>::
 set_encoder(Encoder<B>* enc)
 {
-	this->encoder = enc;
+	this->set_encoder(std::unique_ptr<Encoder<B>>(enc));
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>::
 set_puncturer(Puncturer<B,Q>* pct)
 {
-	this->puncturer = pct;
+	this->set_puncturer(std::unique_ptr<Puncturer<B,Q>>(pct));
+}
+
+template <typename B, typename Q>
+void Codec<B,Q>::
+set_interleaver(std::unique_ptr<tools::Interleaver_core<>>&& itl)
+{
+	this->interleaver_core = std::move(itl);
+	this->interleaver_bit.reset(factory::Interleaver::build<B>(*this->interleaver_core));
+	this->interleaver_llr.reset(factory::Interleaver::build<Q>(*this->interleaver_core));
+}
+
+template <typename B, typename Q>
+void Codec<B,Q>::
+set_encoder(std::unique_ptr<Encoder<B>>&& enc)
+{
+	this->encoder = std::move(enc);
+}
+
+template <typename B, typename Q>
+void Codec<B,Q>::
+set_puncturer(std::unique_ptr<Puncturer<B,Q>>&& pct)
+{
+	this->puncturer = std::move(pct);
 }
 
 template <typename B, typename Q>

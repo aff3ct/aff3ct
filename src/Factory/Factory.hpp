@@ -41,7 +41,7 @@ struct Factory
 		parameters(const std::string &name       = Factory_name,
 		           const std::string &short_name = Factory_short_name,
 		           const std::string &prefix     = Factory_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Factory::parameters* clone() const = 0;
 
 		        std::string              get_name       () const;

@@ -25,7 +25,7 @@ struct Codec_SISO_SIHO : Codec
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_SISO_SIHO_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Codec_SISO_SIHO::parameters* clone() const = 0;
 
 		// builder

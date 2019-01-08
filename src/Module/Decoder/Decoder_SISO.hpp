@@ -52,7 +52,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_SISO();
+	virtual ~Decoder_SISO() = default;
 
 	/*!
 	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be

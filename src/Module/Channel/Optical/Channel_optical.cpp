@@ -7,23 +7,16 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_optical<R>
-::Channel_optical(const int N, tools::User_pdf_noise_generator<R> *noise_generator,
+::Channel_optical(const int N, std::unique_ptr<tools::User_pdf_noise_generator<R>>&& _ng,
                   const tools::Noise<R>& noise, const int n_frames)
 : Channel<R>(N, noise, n_frames),
-  noise_generator(noise_generator)
+  noise_generator(std::move(_ng))
 {
 	const std::string name = "Channel_optical";
 	this->set_name(name);
 
 	if (noise_generator == nullptr)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
-}
-
-template <typename R>
-Channel_optical<R>
-::~Channel_optical()
-{
-	if (noise_generator != nullptr) delete noise_generator;
 }
 
 template <typename R>
@@ -44,7 +37,7 @@ void Channel_optical<R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Channel_optical<R_32>;
 template class aff3ct::module::Channel_optical<R_64>;
 #else

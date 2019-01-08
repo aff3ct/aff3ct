@@ -29,7 +29,7 @@ struct Monitor_MI : public Monitor
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Monitor_MI_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Monitor_MI::parameters* clone() const;
 
 		// parameters construction

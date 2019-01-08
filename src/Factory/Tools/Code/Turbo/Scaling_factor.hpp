@@ -35,7 +35,7 @@ struct Scaling_factor : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Scaling_factor_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Scaling_factor::parameters* clone() const;
 
 		// parameters construction

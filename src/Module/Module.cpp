@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 Module::
 Module(const int n_frames)
 : n_frames(n_frames), name("Module"), short_name("Module")
-#ifdef SYSTEMC_MODULE
+#ifdef AFF3CT_SYSTEMC_MODULE
 , sc(*this)
 #endif
 {
@@ -20,12 +20,6 @@ Module(const int n_frames)
 		message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-Module::
-~Module()
-{
-	for (auto t : tasks) delete t;
 }
 
 int Module::
@@ -68,32 +62,28 @@ Task& Module::
 create_task(const std::string &name, const int id)
 {
 	bool autoalloc = false, autoexec = false, stats = false, fast = false, debug = false;
-	auto t = new Task(*this, name, autoalloc, autoexec, stats, fast, debug);
+	auto t = std::make_shared<Task>(*this, name, autoalloc, autoexec, stats, fast, debug);
+
 	if (id < 0)
 	{
-		tasks.push_back(t);
 		tasks_with_nullptr.push_back(t);
+	}
+	else if (tasks_with_nullptr.size() > (size_t)id && tasks_with_nullptr[id] == nullptr)
+	{
+		tasks_with_nullptr[id] = t;
 	}
 	else
 	{
-		if (tasks_with_nullptr.size() > (size_t)id && tasks_with_nullptr[id] == nullptr)
-		{
-			tasks.push_back(t);
-			tasks_with_nullptr[id] = t;
-
-		}else
-		{
-			delete t;
-
-			std::stringstream message;
-			message << "Impossible to create the task ('task.name' = " << name
-			        << ", 'task.id' = " << id
-			        << ", 'tasks.size()' = " << tasks.size()
-			        << ", 'module.name' = " << this->get_name() << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
+		std::stringstream message;
+		message << "Impossible to create the task ('task.name' = " << name
+		        << ", 'task.id' = " << id
+		        << ", 'tasks.size()' = " << tasks.size()
+		        << ", 'module.name' = " << this->get_name() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
-	return *t;
+
+	tasks.push_back(std::move(t));
+	return *tasks.back();
 }
 
 void Module::

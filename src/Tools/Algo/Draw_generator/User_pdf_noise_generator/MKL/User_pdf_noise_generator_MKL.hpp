@@ -1,4 +1,4 @@
-#ifdef CHANNEL_MKL
+#ifdef AFF3CT_CHANNEL_MKL
 
 #ifndef User_pdf_noise_generator_MKL_HPP_
 #define User_pdf_noise_generator_MKL_HPP_

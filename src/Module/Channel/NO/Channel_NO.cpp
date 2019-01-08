@@ -12,12 +12,6 @@ Channel_NO<R>
 }
 
 template <typename R>
-Channel_NO<R>
-::~Channel_NO()
-{
-}
-
-template <typename R>
 void Channel_NO<R>
 ::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
@@ -48,7 +42,7 @@ void Channel_NO<R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Channel_NO<R_32>;
 template class aff3ct::module::Channel_NO<R_64>;
 #else

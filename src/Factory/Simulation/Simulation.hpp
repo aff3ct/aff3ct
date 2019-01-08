@@ -1,7 +1,7 @@
 #ifndef FACTORY_SIMULATION_HPP
 #define FACTORY_SIMULATION_HPP
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
 #include <chrono>
@@ -11,6 +11,7 @@
 
 #include "Factory/Launcher/Launcher.hpp"
 #include "Factory/Tools/Noise/Noise.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 
 namespace aff3ct
 {
@@ -25,10 +26,10 @@ struct Simulation : Launcher
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required arg
-		Noise::parameters *noise;
+		tools::auto_cloned_unique_ptr<Noise::parameters> noise;
 
 		// optional parameters
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		std::chrono::milliseconds mpi_comm_freq   = std::chrono::milliseconds(1000);
 		int                       mpi_rank        = 0;
 		int                       mpi_size        = 1;
@@ -45,10 +46,11 @@ struct Simulation : Launcher
 		int                       global_seed     = 0;
 		int                       debug_limit     = 0;
 		int                       debug_precision = 2;
+		int                       debug_frame_max = 0;
 
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Simulation::parameters* clone() const;
 
 		// parameters construction

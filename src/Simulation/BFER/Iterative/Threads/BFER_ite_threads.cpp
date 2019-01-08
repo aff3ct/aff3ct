@@ -27,12 +27,6 @@ BFER_ite_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-BFER_ite_threads<B,R,Q>
-::~BFER_ite_threads()
-{
-}
-
-template <typename B, typename R, typename Q>
 void BFER_ite_threads<B,R,Q>
 ::_launch()
 {
@@ -463,7 +457,7 @@ void BFER_ite_threads<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::BFER_ite_threads<B_8,R_8,Q_8>;
 template class aff3ct::simulation::BFER_ite_threads<B_16,R_16,Q_16>;
 template class aff3ct::simulation::BFER_ite_threads<B_32,R_32,Q_32>;

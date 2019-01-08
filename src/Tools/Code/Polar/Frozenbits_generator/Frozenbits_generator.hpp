@@ -45,7 +45,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Frozenbits_generator() {}
+	virtual ~Frozenbits_generator() = default;
 
 	int get_K() const
 	{

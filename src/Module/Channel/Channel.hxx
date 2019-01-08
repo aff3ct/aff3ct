@@ -69,14 +69,6 @@ Channel(const int N, const int n_frames)
 }
 
 template <typename R>
-Channel<R>::
-~Channel()
-{
-	if (this->n != nullptr)
-		delete this->n;
-}
-
-template <typename R>
 int Channel<R>::
 get_N() const
 {
@@ -94,10 +86,7 @@ template <typename R>
 void Channel<R>::
 set_noise(const tools::Noise<R>& _n)
 {
-	if (this->n != nullptr)
-		delete this->n;
-
-	this->n = _n.clone();
+	this->n.reset(_n.clone());
 	this->check_noise();
 }
 

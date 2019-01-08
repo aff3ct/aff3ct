@@ -3,8 +3,6 @@
 
 #include <cstdint>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
-
 #include "../../../../Decoder_SIHO_HIHO.hpp"
 #include "../../Decoder_LDPC_BP.hpp"
 
@@ -30,7 +28,7 @@ public:
 	                                    const bool enable_syndrome = true,
 	                                    const int syndrome_depth = 1,
 	                                    const int n_frames = 1);
-	virtual ~Decoder_LDPC_BP_flooding_Gallager_A();
+	virtual ~Decoder_LDPC_BP_flooding_Gallager_A() = default;
 
 protected:
 	void _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);

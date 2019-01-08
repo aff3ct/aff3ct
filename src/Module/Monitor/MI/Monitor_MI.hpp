@@ -35,6 +35,7 @@ private:
 
 	Attributes vals;
 	tools::Histogram<R> mutinfo_hist; // the MI histogram record
+	bool mutinfo_hist_activated;
 
 	std::vector<std::function<void(void)>> callbacks_check;
 	std::vector<std::function<void(void)>> callbacks_n_trials_limit_achieved;
@@ -99,8 +100,9 @@ public:
 	R                   get_MI          () const;
 	R                   get_MI_min      () const;
 	R                   get_MI_max      () const;
-	tools::Histogram<R> get_mutinfo_hist() const;
 
+	tools::Histogram<R> get_mutinfo_hist() const;
+	void activate_mutinfo_histogram(bool val);
 
 	virtual void add_handler_check                  (std::function<void(void)> callback);
 	virtual void add_handler_n_trials_limit_achieved(std::function<void(void)> callback);

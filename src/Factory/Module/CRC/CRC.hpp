@@ -31,7 +31,7 @@ struct CRC : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = CRC_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		CRC::parameters* clone() const;
 
 		// parameters construction

@@ -1,5 +1,6 @@
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Turbo/Puncturer_turbo.hpp"
@@ -7,7 +8,7 @@
 #include "Puncturer_turbo.hpp"
 
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 using PT = aff3ct::module::Puncturer_turbo<B_32,Q_32>;
 #else
 using PT = aff3ct::module::Puncturer_turbo<B,Q>;
@@ -26,11 +27,6 @@ Puncturer_turbo::parameters
 : Puncturer::parameters(Puncturer_turbo_name, prefix)
 {
 	this->type = "TURBO";
-}
-
-Puncturer_turbo::parameters
-::~parameters()
-{
 }
 
 Puncturer_turbo::parameters* Puncturer_turbo::parameters
@@ -56,27 +52,22 @@ void Puncturer_turbo::parameters
 	Puncturer::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Puncturer_turbo::parameters::";
 
 	args.erase({p+"-fra-size", "N"});
 
 	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
 
-	args.add(
-		{p+"-pattern"},
+	tools::add_arg(args, p, class_name+"p+pattern",
 		tools::List2D<bool>(tools::Boolean(),
-		                    std::make_tuple(tools::Length(3, 3), tools::Function<sub_same_length>("elements of same length")),
-		                    std::make_tuple(tools::Length(1))),
-		"puncturing pattern for the turbo encoder (ex: \"11,10,01\").");
+	 	                    std::make_tuple(tools::Length(3, 3), tools::Function<sub_same_length>("elements of same length")),
+	 	                    std::make_tuple(tools::Length(1))));
 
-	args.add(
-		{p+"-tail-length"},
-		tools::Integer(tools::Positive()),
-		"total number of tail bits at the end of the frame.");
+	tools::add_arg(args, p, class_name+"p+tail-length",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-no-buff"},
-		tools::None(),
-		"does not suppose a buffered encoding.");
+	tools::add_arg(args, p, class_name+"p+no-buff",
+		tools::None());
 }
 
 void Puncturer_turbo::parameters
@@ -130,7 +121,7 @@ module::Puncturer<B,Q>* Puncturer_turbo
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer_turbo::parameters::build<B_8 ,Q_8 >() const;
 template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer_turbo::parameters::build<B_16,Q_16>() const;
 template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer_turbo::parameters::build<B_32,Q_32>() const;

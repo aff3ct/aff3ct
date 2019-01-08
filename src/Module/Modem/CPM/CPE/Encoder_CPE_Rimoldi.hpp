@@ -17,7 +17,7 @@ protected:
 
 public:
 	Encoder_CPE_Rimoldi(const int N, const CPM_parameters<SIN,SOUT>& cpm);
-	virtual ~Encoder_CPE_Rimoldi() {}
+	virtual ~Encoder_CPE_Rimoldi() = default;
 
 	SOUT inner_encode(const SIN new_symbol, int &state);
 	SIN  tail_symb   (const int &state                );

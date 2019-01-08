@@ -12,6 +12,36 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
+
+template <typename R>
+struct Reporter_noise<R>::Noise_ptr
+{
+	explicit Noise_ptr(const Noise<R>* const* n) : noise(nullptr), noise_ptr(n), sh_ptr(nullptr), un_ptr(nullptr) {}
+	explicit Noise_ptr(const Noise<R>*        n) : noise(n),  noise_ptr(&noise), sh_ptr(nullptr), un_ptr(nullptr) {}
+	explicit Noise_ptr(const Noise<R>&        n) : noise(&n), noise_ptr(&noise), sh_ptr(nullptr), un_ptr(nullptr) {}
+
+	explicit Noise_ptr(const std::shared_ptr<Noise<R>>* n) : noise(nullptr), noise_ptr(nullptr), sh_ptr( n), un_ptr(nullptr) {}
+	explicit Noise_ptr(const std::shared_ptr<Noise<R>>& n) : noise(nullptr), noise_ptr(nullptr), sh_ptr(&n), un_ptr(nullptr) {}
+
+	explicit Noise_ptr(const std::unique_ptr<Noise<R>>* n) : noise(nullptr), noise_ptr(nullptr), sh_ptr(nullptr), un_ptr( n) {}
+	explicit Noise_ptr(const std::unique_ptr<Noise<R>>& n) : noise(nullptr), noise_ptr(nullptr), sh_ptr(nullptr), un_ptr(&n) {}
+
+	const Noise<R>* get_noise_ptr() const
+	{
+		return noise_ptr != nullptr ? *noise_ptr :
+		         (un_ptr != nullptr ? un_ptr->get() :
+		         (sh_ptr != nullptr ? sh_ptr->get() :
+		                              nullptr));
+	}
+
+private:
+	const Noise<R>*                  noise;
+	const Noise<R>* const*           noise_ptr;
+	const std::shared_ptr<Noise<R>>* sh_ptr;
+	const std::unique_ptr<Noise<R>>* un_ptr;
+};
+
+
 template <typename R>
 Reporter_noise<R>
 ::Reporter_noise(const Noise<R>* const* _noise)
@@ -32,6 +62,42 @@ Reporter_noise<R>
 : Reporter_noise(new Noise_ptr(_noise))
 {
 }
+
+template <typename R>
+Reporter_noise<R>
+::Reporter_noise(const std::shared_ptr<Noise<R>>* _noise)
+: Reporter_noise(new Noise_ptr(_noise))
+{
+}
+
+template <typename R>
+Reporter_noise<R>
+::Reporter_noise(const std::shared_ptr<Noise<R>>& _noise)
+: Reporter_noise(new Noise_ptr(_noise))
+{
+}
+
+template <typename R>
+Reporter_noise<R>
+::Reporter_noise(const std::unique_ptr<Noise<R>>* _noise)
+: Reporter_noise(new Noise_ptr(_noise))
+{
+}
+
+template <typename R>
+Reporter_noise<R>
+::Reporter_noise(const std::unique_ptr<Noise<R>>& _noise)
+: Reporter_noise(new Noise_ptr(_noise))
+{
+}
+
+template <typename R>
+Reporter_noise<R>
+::~Reporter_noise()
+{
+	if (noise_ptr != nullptr) delete noise_ptr;
+}
+
 
 template <typename R>
 Reporter_noise<R>
@@ -68,13 +134,6 @@ Reporter_noise<R>
 }
 
 template <typename R>
-Reporter_noise<R>
-::~Reporter_noise()
-{
-	if (noise_ptr != nullptr) delete noise_ptr;
-}
-
-template <typename R>
 Reporter::report_t Reporter_noise<R>
 ::report(bool final)
 {
@@ -98,7 +157,7 @@ Reporter::report_t Reporter_noise<R>
 	{
 		case Noise_type::SIGMA :
 		{
-			auto sig = dynamic_cast<const tools::Sigma<>*>(get_noise_ptr());
+			auto sig = dynamic_cast<const tools::Sigma<R>*>(get_noise_ptr());
 
 			stream << std::setprecision(2) << std::fixed << sig->get_esn0();
 			noise_report.push_back(stream.str());
@@ -109,7 +168,7 @@ Reporter::report_t Reporter_noise<R>
 		}
 		case Noise_type::ROP :
 		{
-			stream << std::setprecision(2) << std::fixed << get_noise_ptr()->get_noise();
+			stream << std::setprecision(4) << std::fixed << get_noise_ptr()->get_noise();
 			break;
 		}
 		case Noise_type::EP :
@@ -136,7 +195,7 @@ const Noise<R>* Reporter_noise<R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::tools::Reporter_noise<R_32>;
 template class aff3ct::tools::Reporter_noise<R_64>;
 #else

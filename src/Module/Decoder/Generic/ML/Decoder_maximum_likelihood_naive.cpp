@@ -38,12 +38,6 @@ Decoder_maximum_likelihood_naive<B,R>
 }
 
 template <typename B, typename R>
-Decoder_maximum_likelihood_naive<B,R>
-::~Decoder_maximum_likelihood_naive()
-{
-}
-
-template <typename B, typename R>
 void Decoder_maximum_likelihood_naive<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
@@ -156,7 +150,7 @@ void Decoder_maximum_likelihood_naive<B,R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_maximum_likelihood_naive<B_8,Q_8>;
 template class aff3ct::module::Decoder_maximum_likelihood_naive<B_16,Q_16>;
 template class aff3ct::module::Decoder_maximum_likelihood_naive<B_32,Q_32>;

@@ -15,29 +15,24 @@ BFER_std::parameters
 {
 }
 
-BFER_std::parameters
-::~parameters()
-{
-}
-
 BFER_std::parameters* BFER_std::parameters
 ::clone() const
 {
-	auto clone = new BFER_std::parameters(*this);
+	return new BFER_std::parameters(*this);
 
-	if (src != nullptr) { clone->src = src->clone(); }
-	if (crc != nullptr) { clone->crc = crc->clone(); }
-	if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SIHO::parameters*>(cdc->clone()); }
-	if (mdm != nullptr) { clone->mdm = mdm->clone(); }
-	if (chn != nullptr) { clone->chn = chn->clone(); }
-	if (qnt != nullptr) { clone->qnt = qnt->clone(); }
-	if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
-	if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
-	if (ter != nullptr) { clone->ter = ter->clone(); }
+	// if (src != nullptr) { clone->src = src->clone(); }
+	// if (crc != nullptr) { clone->crc = crc->clone(); }
+	// if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SIHO::parameters*>(cdc->clone()); }
+	// if (mdm != nullptr) { clone->mdm = mdm->clone(); }
+	// if (chn != nullptr) { clone->chn = chn->clone(); }
+	// if (qnt != nullptr) { clone->qnt = qnt->clone(); }
+	// if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
+	// if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
+	// if (ter != nullptr) { clone->ter = ter->clone(); }
 
-	clone->set_cdc(clone->cdc);
+	// clone->set_cdc(clone->cdc);
 
-	return clone;
+	// return clone;
 }
 
 void BFER_std::parameters
@@ -58,11 +53,17 @@ void BFER_std::parameters
 	BFER::parameters::get_headers(headers, full);
 }
 
+const Codec_SIHO::parameters* BFER_std::parameters
+::get_cdc() const
+{
+	return dynamic_cast<Codec_SIHO::parameters*>(this->cdc.get());
+}
+
 template <typename B, typename R, typename Q>
 simulation::BFER_std<B,R,Q>* BFER_std::parameters
 ::build() const
 {
-#if defined(SYSTEMC)
+#if defined(AFF3CT_SYSTEMC_SIMU)
 	return new simulation::SC_BFER_std<B,R,Q>(*this);
 #else
 	return new simulation::BFER_std_threads<B,R,Q>(*this);
@@ -78,7 +79,7 @@ simulation::BFER_std<B,R,Q>* BFER_std
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::simulation::BFER_std<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_std::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::BFER_std::parameters&);
 template aff3ct::simulation::BFER_std<B_16,R_16,Q_16>* aff3ct::factory::BFER_std::build<B_16,R_16,Q_16>(const aff3ct::factory::BFER_std::parameters&);
 template aff3ct::simulation::BFER_std<B_32,R_32,Q_32>* aff3ct::factory::BFER_std::build<B_32,R_32,Q_32>(const aff3ct::factory::BFER_std::parameters&);

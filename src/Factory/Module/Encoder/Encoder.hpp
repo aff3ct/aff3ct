@@ -24,7 +24,7 @@ struct Encoder : public Factory
 		int         N_cw        = 0;
 
 		// optional parameters
-		std::string type        = "NO";
+		std::string type        = "AZCW";
 		std::string path        = "";
 		bool        systematic  = true;
 		int         n_frames    = 1;
@@ -37,7 +37,7 @@ struct Encoder : public Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Encoder::parameters* clone() const;
 
 		// parameters construction

@@ -17,7 +17,7 @@ protected:
 
 public:
 	Puncturer_turbo_DB(const int &K, const int &N, const int n_frames = 1);
-	virtual ~Puncturer_turbo_DB();
+	virtual ~Puncturer_turbo_DB() = default;
 
 protected:
 	void   _puncture(const B *X_N1, B *X_N2, const int frame_id) const;

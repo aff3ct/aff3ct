@@ -16,7 +16,7 @@ template <typename B>
 Encoder_LDPC_from_QC<B>
 ::Encoder_LDPC_from_QC(const int K, const int N, const tools::Sparse_matrix &_H, const int n_frames)
 : Encoder_LDPC<B>(K, N, n_frames),
-  invH2(tools::LDPC_matrix_handler::invert_H2(_H))
+  invH2(tools::LDPC_matrix_handler::LU_decomposition(_H))
 {
 	const std::string name = "Encoder_LDPC_from_QC";
 	this->set_name(name);
@@ -53,20 +53,6 @@ void Encoder_LDPC_from_QC<B>
 }
 
 template <typename B>
-const std::vector<uint32_t>& Encoder_LDPC_from_QC<B>
-::get_info_bits_pos() const
-{
-	return Encoder<B>::get_info_bits_pos();
-}
-
-template <typename B>
-bool Encoder_LDPC_from_QC<B>
-::is_sys() const
-{
-	return Encoder<B>::is_sys();
-}
-
-template <typename B>
 void Encoder_LDPC_from_QC<B>
 ::_check_H_dimensions()
 {
@@ -83,7 +69,7 @@ void Encoder_LDPC_from_QC<B>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_LDPC_from_QC<B_8>;
 template class aff3ct::module::Encoder_LDPC_from_QC<B_16>;
 template class aff3ct::module::Encoder_LDPC_from_QC<B_32>;

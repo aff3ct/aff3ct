@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <memory>
 
 #include <map>
 #include <chrono>
@@ -42,6 +43,7 @@ protected:
 	bool debug_hex;
 	int32_t debug_limit;
 	uint8_t debug_precision;
+	int32_t debug_frame_max;
 	std::function<int(void)> codelet;
 	std::vector<mipp::vector<uint8_t>> out_buffers;
 
@@ -61,7 +63,7 @@ protected:
 	std::vector<socket_t> socket_type;
 
 public:
-	std::vector<Socket*> sockets;
+	std::vector<std::shared_ptr<Socket>> sockets;
 
 	Task(const Module &module,
 	     const std::string &name,
@@ -71,7 +73,7 @@ public:
 	     const bool fast      = false,
 	     const bool debug     = false);
 
-	virtual ~Task();
+	virtual ~Task() = default;
 
 	void reset_stats();
 
@@ -83,6 +85,7 @@ public:
 	void set_debug_hex      (const bool     debug_hex);
 	void set_debug_limit    (const uint32_t limit    );
 	void set_debug_precision(const uint8_t  prec     );
+	void set_debug_frame_max(const uint32_t limit    );
 
 	inline bool is_autoalloc        (                  ) const { return this->autoalloc;            }
 	inline bool is_autoexec         (                  ) const { return this->autoexec;             }

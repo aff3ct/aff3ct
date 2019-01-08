@@ -32,6 +32,22 @@ std::string run_system_command(std::string cmd);
  */
 std::string addr_to_line(const std::string& backtrace);
 
+
+/*!
+ * \brief return the full location/path of the binary
+ *
+ * \return the binary path if supported, empty string else
+ */
+std::string get_binary_path();
+
+/*!
+ * \brief split a path in basedir and filename
+ *
+ * \param path is the path (basedir/filename)
+ * \param basedir is the directory without the filename
+ * \param filename is the name of the file without the base directory
+ */
+void split_path(const std::string& path, std::string &basedir, std::string &filename);
 }
 }
 

@@ -9,6 +9,7 @@
 #define MODEM_HPP_
 
 #include <string>
+#include <memory>
 #include <vector>
 
 #include "Module/Module.hpp"
@@ -62,7 +63,7 @@ protected:
 	const int N;       /*!< Size of one frame (= number of bits in one frame) */
 	const int N_mod;   /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
 	const int N_fil;   /*!< Number of transmitted elements after the filtering process */
-	tools::Noise<R>* n; /*!< the current noise applied to the input signal */
+	std::unique_ptr<tools::Noise<R>> n; /*!< the current noise applied to the input signal */
 
 	bool enable_filter;
 	bool enable_demodulator;
@@ -103,7 +104,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Modem();
+	virtual ~Modem() = default;
 
 	int get_N() const;
 

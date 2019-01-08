@@ -59,12 +59,6 @@ Decoder_HIHO(const int K, const int N, const int n_frames, const int simd_inter_
 }
 
 template <typename B>
-Decoder_HIHO<B>::
-~Decoder_HIHO()
-{
-}
-
-template <typename B>
 template <class A>
 void Decoder_HIHO<B>::
 decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id)

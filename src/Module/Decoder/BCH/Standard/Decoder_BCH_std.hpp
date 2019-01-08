@@ -36,7 +36,7 @@ protected:
 
 public:
 	Decoder_BCH_std(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF, const int n_frames = 1);
-	virtual ~Decoder_BCH_std();
+	virtual ~Decoder_BCH_std() = default;
 
 protected:
 	virtual void _decode        (      B *Y_N,         const int frame_id);

@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Source/AZCW/Source_AZCW.hpp"
 #include "Module/Source/Random/Source_random.hpp"
@@ -19,11 +20,6 @@ Source::parameters
 {
 }
 
-Source::parameters
-::~parameters()
-{
-}
-
 Source::parameters* Source::parameters
 ::clone() const
 {
@@ -34,42 +30,29 @@ void Source::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Source::parameters::";
 
-	args.add(
-		{p+"-info-bits", "K"},
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of generated bits (information bits).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-fra", "F"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"set the number of inter frame level to process.");
+	tools::add_arg(args, p, class_name+"p+fra,F",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("RAND", "AZCW", "USER")),
-		"method used to generate the codewords.");
+	tools::add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("RAND", "AZCW", "USER")));
 
-	args.add(
-		{p+"-implem"},
-		tools::Text(tools::Including_set("STD", "FAST")),
-		"select the implementation of the algorithm to generate the information bits.");
+	tools::add_arg(args, p, class_name+"p+implem",
+		tools::Text(tools::Including_set("STD", "FAST")));
 
-	args.add(
-		{p+"-path"},
-		tools::File(tools::openmode::read),
-		"path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\".");
+	tools::add_arg(args, p, class_name+"p+path",
+		tools::File(tools::openmode::read));
 
-	args.add(
-		{p+"-start-idx"},
-		tools::Integer(tools::Positive()),
-		"Start idx to use in the USER type source.");
+	tools::add_arg(args, p, class_name+"p+start-idx",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-seed", "S"},
-		tools::Integer(tools::Positive()),
-		"seed used to initialize the pseudo random generators.");
+	tools::add_arg(args, p, class_name+"p+seed,S",
+		tools::Integer(tools::Positive()));
 }
 
 void Source::parameters
@@ -77,13 +60,13 @@ void Source::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int({p+"-info-bits", "K"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int({p+"-fra",       "F"});
-	if(vals.exist({p+"-type"          })) this->type     = vals.at    ({p+"-type"          });
-	if(vals.exist({p+"-implem"        })) this->implem   = vals.at    ({p+"-implem"        });
-	if(vals.exist({p+"-path"          })) this->path     = vals.at    ({p+"-path"          });
-	if(vals.exist({p+"-seed",      "S"})) this->seed     = vals.to_int({p+"-seed",      "S"});
-	if(vals.exist({p+"-start-idx"     })) this->start_idx= vals.to_int({p+"-start-idx"     });
+	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int ({p+"-fra",       "F"});
+	if(vals.exist({p+"-type"          })) this->type     = vals.at     ({p+"-type"          });
+	if(vals.exist({p+"-implem"        })) this->implem   = vals.at     ({p+"-implem"        });
+	if(vals.exist({p+"-path"          })) this->path     = vals.to_file({p+"-path"          });
+	if(vals.exist({p+"-seed",      "S"})) this->seed     = vals.to_int ({p+"-seed",      "S"});
+	if(vals.exist({p+"-start-idx"     })) this->start_idx= vals.to_int ({p+"-start-idx"     });
 }
 
 void Source::parameters
@@ -112,8 +95,9 @@ module::Source<B>* Source::parameters
 		else if (this->implem == "FAST")
 			return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
 	}
-	else if (this->type == "AZCW") return new module::Source_AZCW<B>(this->K,             this->n_frames);
-	else if (this->type == "USER") return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
+
+	if (this->type == "AZCW") return new module::Source_AZCW<B>(this->K,             this->n_frames);
+	if (this->type == "USER") return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -127,7 +111,7 @@ module::Source<B>* Source
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Source<B_8 >* aff3ct::factory::Source::parameters::build<B_8 >() const;
 template aff3ct::module::Source<B_16>* aff3ct::factory::Source::parameters::build<B_16>() const;
 template aff3ct::module::Source<B_32>* aff3ct::factory::Source::parameters::build<B_32>() const;

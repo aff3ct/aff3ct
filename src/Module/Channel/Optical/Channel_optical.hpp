@@ -19,13 +19,13 @@ template <typename R = float>
 class Channel_optical : public Channel<R>
 {
 protected:
-	tools::User_pdf_noise_generator<R> *noise_generator;
+	std::unique_ptr<tools::User_pdf_noise_generator<R>> noise_generator;
 
 public:
-	Channel_optical(const int N, tools::User_pdf_noise_generator<R> *noise_generator,
+	Channel_optical(const int N, std::unique_ptr<tools::User_pdf_noise_generator<R>>&& noise_generator,
 	                const tools::Noise<R>& noise = tools::ROP<R>(), const int n_frames = 1);
 
-	virtual ~Channel_optical();
+	virtual ~Channel_optical() = default;
 
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 

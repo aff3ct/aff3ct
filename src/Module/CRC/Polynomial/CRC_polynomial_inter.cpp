@@ -41,7 +41,7 @@ bool CRC_polynomial_inter<B>
 	}
 
 	this->_generate_INTER(V_K, this->buff_crc.data(),
-	                      0, 
+	                      0,
 	                      this->K * real_n_frames,
 	                      this->K * real_n_frames,
 	                      real_n_frames);
@@ -59,8 +59,8 @@ template <typename B>
 void CRC_polynomial_inter<B>
 ::_generate_INTER(const B *U_in,
                         B *U_out,
-                  const int off_in, 
-                  const int off_out, 
+                  const int off_in,
+                  const int off_out,
                   const int loop_size,
                   const int n_frames)
 {
@@ -88,9 +88,9 @@ void CRC_polynomial_inter<B>
 	std::copy(this->buff_crc.end() - n_frames * this->size, this->buff_crc.end(), U_out + off_out);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::CRC_polynomial_inter<B_8>;
 template class aff3ct::module::CRC_polynomial_inter<B_16>;
 template class aff3ct::module::CRC_polynomial_inter<B_32>;

@@ -12,7 +12,7 @@ class Encoder_NO : public Encoder<B>
 {
 public:
 	Encoder_NO(const int K, const int n_frames = 1);
-	virtual ~Encoder_NO();
+	virtual ~Encoder_NO() = default;
 
 	bool is_codeword(const B *X_K);
 

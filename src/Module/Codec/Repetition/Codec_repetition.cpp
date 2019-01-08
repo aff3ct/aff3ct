@@ -16,7 +16,7 @@ Codec_repetition<B,Q>
 {
 	const std::string name = "Codec_repetition";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -51,7 +51,7 @@ Codec_repetition<B,Q>
 	pct_params.n_frames = enc_params.n_frames;
 
 	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
-	
+
 	try
 	{
 		this->set_encoder(factory::Encoder_repetition::build<B>(enc_params));
@@ -64,15 +64,9 @@ Codec_repetition<B,Q>
 	this->set_decoder_siho(factory::Decoder_repetition::build<B,Q>(dec_params, this->get_encoder()));
 }
 
-template <typename B, typename Q>
-Codec_repetition<B,Q>
-::~Codec_repetition()
-{
-}
-
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Codec_repetition<B_8,Q_8>;
 template class aff3ct::module::Codec_repetition<B_16,Q_16>;
 template class aff3ct::module::Codec_repetition<B_32,Q_32>;

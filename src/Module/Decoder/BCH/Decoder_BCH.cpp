@@ -29,12 +29,6 @@ Decoder_BCH<B, R>
 }
 
 template <typename B, typename R>
-Decoder_BCH<B, R>
-::~Decoder_BCH()
-{
-}
-
-template <typename B, typename R>
 bool Decoder_BCH<B, R>
 ::get_last_is_codeword(const int frame_id) const
 {
@@ -42,7 +36,7 @@ bool Decoder_BCH<B, R>
 }
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_BCH<B_8,Q_8>;
 template class aff3ct::module::Decoder_BCH<B_16,Q_16>;
 template class aff3ct::module::Decoder_BCH<B_32,Q_32>;

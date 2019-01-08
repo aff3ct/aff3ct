@@ -32,7 +32,7 @@ struct Monitor_BFER : public Monitor
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Monitor_BFER_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Monitor_BFER::parameters* clone() const;
 
 		// parameters construction

@@ -3,7 +3,6 @@
 
 #include <mipp.h>
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
 
 #include "../../../Decoder_SISO_SIHO.hpp"
@@ -41,7 +40,7 @@ public:
 	                                         const bool enable_syndrome = true,
 	                                         const int syndrome_depth = 1,
 	                                         const int n_frames = 1);
-	virtual ~Decoder_LDPC_BP_horizontal_layered_inter();
+	virtual ~Decoder_LDPC_BP_horizontal_layered_inter() = default;
 	void reset();
 
 protected:

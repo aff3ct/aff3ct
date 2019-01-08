@@ -16,14 +16,8 @@ Turbo_DB<L,B,R,Q>
 {
 	this->params.set_cdc(params_cdc);
 
-	if (typeid(L) == typeid(BFER_std<B,R,Q>))
+	if (std::is_same<L, BFER_std<B,R,Q>>::value)
 		params_cdc->enable_puncturer();
-}
-
-template <class L, typename B, typename R, typename Q>
-Turbo_DB<L,B,R,Q>
-::~Turbo_DB()
-{
 }
 
 template <class L, typename B, typename R, typename Q>
@@ -46,6 +40,9 @@ template <class L, typename B, typename R, typename Q>
 void Turbo_DB<L,B,R,Q>
 ::store_args()
 {
+	auto enc_tur = dynamic_cast<factory::Encoder_turbo_DB::parameters*>(params_cdc->enc.get());
+	auto dec_tur = dynamic_cast<factory::Decoder_turbo_DB::parameters*>(params_cdc->dec.get());
+
 	params_cdc->store(this->arg_vals);
 
 	if (std::is_same<Q,int8_t>())
@@ -62,12 +59,12 @@ void Turbo_DB<L,B,R,Q>
 	L::store_args();
 
 	params_cdc->enc      ->n_frames = this->params.src->n_frames;
-	if (params_cdc->pct)
+	if (params_cdc->pct != nullptr)
 	params_cdc->pct      ->n_frames = this->params.src->n_frames;
 	params_cdc->dec      ->n_frames = this->params.src->n_frames;
 	params_cdc->itl->core->n_frames = this->params.src->n_frames;
-	params_cdc->enc->sub ->n_frames = this->params.src->n_frames;
-	params_cdc->dec->sub ->n_frames = this->params.src->n_frames;
+	enc_tur->sub         ->n_frames = this->params.src->n_frames;
+	dec_tur->sub         ->n_frames = this->params.src->n_frames;
 
 	params_cdc->itl->core->seed = this->params.global_seed;
 }
@@ -75,7 +72,7 @@ void Turbo_DB<L,B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #include "Launcher/Simulation/BFER_std.hpp"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::Turbo_DB<aff3ct::launcher::BFER_std<B_8 ,R_8 ,Q_8 >,B_8 ,R_8 ,Q_8 >;
 template class aff3ct::launcher::Turbo_DB<aff3ct::launcher::BFER_std<B_16,R_16,Q_16>,B_16,R_16,Q_16>;
 template class aff3ct::launcher::Turbo_DB<aff3ct::launcher::BFER_std<B_32,R_32,Q_32>,B_32,R_32,Q_32>;

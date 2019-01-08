@@ -21,11 +21,6 @@ RS_polynomial_generator
 	compute_polynomial();
 }
 
-RS_polynomial_generator
-::~RS_polynomial_generator()
-{
-}
-
 int RS_polynomial_generator
 ::get_d() const
 {

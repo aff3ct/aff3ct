@@ -62,12 +62,6 @@ Decoder_SIHO(const int K, const int N, const int n_frames, const int simd_inter_
 }
 
 template <typename B, typename R>
-Decoder_SIHO<B,R>::
-~Decoder_SIHO()
-{
-}
-
-template <typename B, typename R>
 template <class AR, class AB>
 void Decoder_SIHO<B,R>::
 decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int frame_id)

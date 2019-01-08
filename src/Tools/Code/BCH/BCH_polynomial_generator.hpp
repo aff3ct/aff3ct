@@ -20,7 +20,7 @@ protected:
 
 public:
 	BCH_polynomial_generator(const int& N, const int& t);
-	virtual ~BCH_polynomial_generator();
+	virtual ~BCH_polynomial_generator() = default;
 
 	int get_d      () const;
 	int get_t      () const; // get the correction power

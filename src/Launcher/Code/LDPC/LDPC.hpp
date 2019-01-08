@@ -15,7 +15,7 @@ protected:
 
 public:
 	LDPC(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~LDPC();
+	virtual ~LDPC() = default;
 
 protected:
 	virtual void get_description_args();

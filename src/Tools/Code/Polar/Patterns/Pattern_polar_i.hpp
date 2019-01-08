@@ -127,7 +127,7 @@ public:
 		}
 	}
 
-	virtual ~Pattern_polar_i() {}
+	virtual ~Pattern_polar_i() = default;
 
 	void        set_id   (const unsigned id     ) { this->id = id;    }
 	unsigned    get_id   (                      ) { return this->id;  }

@@ -64,7 +64,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~CRC();
+	virtual ~CRC() = default;
 
 	int get_K() const;
 

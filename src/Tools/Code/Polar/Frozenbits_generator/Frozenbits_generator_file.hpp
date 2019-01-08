@@ -21,7 +21,7 @@ protected:
 public:
 	Frozenbits_generator_file(const int K, const int N, const std::string& filename);
 
-	virtual ~Frozenbits_generator_file();
+	virtual ~Frozenbits_generator_file() = default;
 
 protected:
 	void evaluate();

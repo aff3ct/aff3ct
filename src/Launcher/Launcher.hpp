@@ -10,6 +10,7 @@
 
 #include <map>
 #include <string>
+#include <memory>
 
 #include "Tools/types.h"
 #include "Tools/Arguments/Argument_handler.hpp"
@@ -31,7 +32,7 @@ namespace launcher
 class Launcher
 {
 private:
-	simulation::Simulation          *simu;          /*!< A generic simulation pointer to allocate a specific simulation. */
+	std::unique_ptr<simulation::Simulation> simu; /*!< A generic simulation pointer to allocate a specific simulation. */
 	std::string                      cmd_line;
 	std::vector<std::string>         cmd_warn;
 
@@ -60,7 +61,7 @@ public:
 	 *
 	 * Deallocates the simulation.
 	 */
-	virtual ~Launcher();
+	virtual ~Launcher() = default;
 
 	/*!
 	 * \brief Launch the simulation.

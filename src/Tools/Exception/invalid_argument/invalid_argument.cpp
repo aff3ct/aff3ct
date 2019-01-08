@@ -24,8 +24,3 @@ invalid_argument
 : exception(filename, line_num, funcname, message.empty() ? default_message : message)
 {
 }
-
-invalid_argument
-::~invalid_argument() throw()
-{
-}

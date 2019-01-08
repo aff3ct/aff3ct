@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 #include "Channel_Rayleigh_LLR.hpp"
 
@@ -10,13 +11,13 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_Rayleigh_LLR<R>
-::Channel_Rayleigh_LLR(const int N, const bool complex, tools::Gaussian_gen<R> *noise_generator, const bool add_users,
+::Channel_Rayleigh_LLR(const int N, const bool complex, std::unique_ptr<tools::Gaussian_gen<R>>&& _ng, const bool add_users,
                        const tools::Noise<R>& noise, const int n_frames)
 : Channel<R>(N, noise, n_frames),
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
-  noise_generator(noise_generator)
+  noise_generator(std::move(_ng))
 {
 	const std::string name = "Channel_Rayleigh_LLR";
 	this->set_name(name);
@@ -51,13 +52,6 @@ Channel_Rayleigh_LLR<R>
 		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-}
-
-template <typename R>
-Channel_Rayleigh_LLR<R>
-::~Channel_Rayleigh_LLR()
-{
-	delete noise_generator;
 }
 
 template <typename R>
@@ -171,7 +165,7 @@ void Channel_Rayleigh_LLR<R>::check_noise()
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Channel_Rayleigh_LLR<R_32>;
 template class aff3ct::module::Channel_Rayleigh_LLR<R_64>;
 #else

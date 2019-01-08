@@ -29,8 +29,6 @@ protected:
 	std::vector<group_t> cols_groups;
 
 public:
-	Reporter() = default;
-
 	virtual ~Reporter() = default;
 
 	const std::vector<group_t>& get_groups() const;

@@ -2,6 +2,7 @@
 #define FACTORY_DECODER_HPP_
 
 #include <string>
+#include <memory>
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Encoder/Encoder.hpp"
@@ -32,12 +33,13 @@ struct Decoder : Factory
 		int         n_frames    = 1;
 		int         tail_length = 0;
 		int         flips       = 3;
+		int         seed        = 0;
 
 		// deduced parameters
 		float       R           = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Decoder::parameters* clone() const;
 
 		// parameters construction
@@ -49,7 +51,7 @@ struct Decoder : Factory
 		parameters(const std::string &n, const std::string &p);
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 	};
 };
 }

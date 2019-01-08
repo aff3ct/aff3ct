@@ -49,7 +49,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder();
+	virtual ~Decoder() = default;
 
 	int get_K() const;
 

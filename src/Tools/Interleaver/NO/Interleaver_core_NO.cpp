@@ -13,12 +13,6 @@ Interleaver_core_NO<T>
 }
 
 template <typename T>
-Interleaver_core_NO<T>
-::~Interleaver_core_NO()
-{
-}
-
-template <typename T>
 void Interleaver_core_NO<T>
 ::gen_lut(T *lut, const int frame_id)
 {

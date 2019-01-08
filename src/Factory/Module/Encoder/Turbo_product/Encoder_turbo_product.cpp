@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 
@@ -16,18 +17,13 @@ Encoder_turbo_product::parameters
   sub(new Encoder_BCH::parameters(prefix+"-sub")),
   itl(new Interleaver::parameters("itl"))
 {
-	this->type = "TURBO_PROD";
+	this->type = "TPC";
 }
 
 Encoder_turbo_product::parameters* Encoder_turbo_product::parameters
 ::clone() const
 {
-	auto clone = new Encoder_turbo_product::parameters(*this);
-
-	if (sub != nullptr) { clone->sub = sub->clone(); }
-	if (itl != nullptr) { clone->itl = itl->clone(); }
-
-	return clone;
+	return new Encoder_turbo_product::parameters(*this);
 }
 
 std::vector<std::string> Encoder_turbo_product::parameters
@@ -57,43 +53,38 @@ std::vector<std::string> Encoder_turbo_product::parameters
 	return p;
 }
 
-Encoder_turbo_product::parameters
-::~parameters()
-{
-	if (sub != nullptr) { delete sub; sub = nullptr; }
-	if (itl != nullptr) { delete itl; itl = nullptr; }
-}
-
 void Encoder_turbo_product::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_turbo_product::parameters::";
 
 	args.erase({p+"-info-bits", "K"});
 	args.erase({p+"-cw-size",   "N"});
 
-	itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = this->itl->get_prefix();
+		auto pi = this->itl->get_prefix();
 
-	args.erase({pi+"-size"    });
-	args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
-	tools::add_options(args.at({p+"-type"}), 0, "TURBO_PROD");
+	tools::add_options(args.at({p+"-type"}), 0, "TPC");
 
-	args.add(
-		{p+"-ext"},
-		tools::None(),
-		"extends code with a parity bits.");
-
+	tools::add_arg(args, p, class_name+"p+ext",
+		tools::None());
 
 	sub->get_description(args);
 
 	auto ps = sub->get_prefix();
 
-	args.erase({ps+"-fra", "F"});
+	args.erase({ps+"-fra",  "F"});
+	args.erase({ps+"-seed", "S"});
 }
 
 void Encoder_turbo_product::parameters
@@ -113,18 +104,22 @@ void Encoder_turbo_product::parameters
 
 	this->R = (float)this->K / (float)this->N_cw;
 
-	this->itl->core->n_frames = this->n_frames;
-	this->itl->core->type     = "ROW_COL";
 
-	if (parity_extended)
-		this->itl->core->n_cols = this->sub->N_cw +1;
-	else
-		this->itl->core->n_cols = this->sub->N_cw;
+	if (itl != nullptr)
+	{
+		this->itl->core->n_frames = this->n_frames;
+		this->itl->core->type     = "ROW_COL";
 
-	this->itl->core->size = this->itl->core->n_cols * this->itl->core->n_cols;
-	this->N_cw = this->itl->core->size;
+		if (parity_extended)
+			this->itl->core->n_cols = this->sub->N_cw +1;
+		else
+			this->itl->core->n_cols = this->sub->N_cw;
 
-	itl->store(vals);
+		this->itl->core->size = this->itl->core->n_cols * this->itl->core->n_cols;
+		this->N_cw = this->itl->core->size;
+
+		itl->store(vals);
+	}
 }
 
 void Encoder_turbo_product::parameters
@@ -132,7 +127,8 @@ void Encoder_turbo_product::parameters
 {
 	Encoder::parameters::get_headers(headers, full);
 
-	itl->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -147,7 +143,7 @@ module::Encoder_turbo_product<B>* Encoder_turbo_product::parameters
               module::Encoder_BCH<B> &enc_r,
               module::Encoder_BCH<B> &enc_c) const
 {
-	if (this->type == "TURBO_PROD") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c, n_frames);
+	if (this->type == "TPC") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c, n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -164,7 +160,7 @@ module::Encoder_turbo_product<B>* Encoder_turbo_product
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_turbo_product<B_8 >* aff3ct::factory::Encoder_turbo_product::parameters::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&, aff3ct::module::Encoder_BCH<B_8 >&, aff3ct::module::Encoder_BCH<B_8 >&) const;
 template aff3ct::module::Encoder_turbo_product<B_16>* aff3ct::factory::Encoder_turbo_product::parameters::build<B_16>(const aff3ct::module::Interleaver<B_16>&, aff3ct::module::Encoder_BCH<B_16>&, aff3ct::module::Encoder_BCH<B_16>&) const;
 template aff3ct::module::Encoder_turbo_product<B_32>* aff3ct::factory::Encoder_turbo_product::parameters::build<B_32>(const aff3ct::module::Interleaver<B_32>&, aff3ct::module::Encoder_BCH<B_32>&, aff3ct::module::Encoder_BCH<B_32>&) const;

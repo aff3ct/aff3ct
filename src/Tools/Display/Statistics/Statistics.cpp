@@ -8,16 +8,6 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-Statistics
-::Statistics()
-{
-}
-
-Statistics
-::~Statistics()
-{
-}
-
 void Statistics
 ::separation1(std::ostream &stream)
 {
@@ -189,11 +179,11 @@ void Statistics
 ::show(std::vector<const module::Module*> modules, const bool ordered, std::ostream &stream)
 {
 	std::vector<const module::Task*> tasks;
-	for (auto *m : modules)
+	for (auto& m : modules)
 		if (m != nullptr)
-			for (auto *t : m->tasks)
+			for (auto& t : m->tasks)
 				if (t->get_n_calls())
-					tasks.push_back(t);
+					tasks.push_back(t.get());
 
 	Statistics::show(tasks, ordered, stream);
 }
@@ -305,8 +295,8 @@ void Statistics
 			for (size_t t = 0; t < tasks0.size(); t++)
 			{
 				std::vector<const module::Task*> tsk;
-				for (auto *m : vm)
-					tsk.push_back(m->tasks[t]);
+				for (auto& m : vm)
+					tsk.push_back(m->tasks[t].get());
 				tasks.push_back(tsk);
 			}
 		}

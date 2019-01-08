@@ -60,7 +60,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Quantizer();
+	virtual ~Quantizer() = default;
 
 	int get_N() const;
 

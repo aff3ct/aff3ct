@@ -1,7 +1,6 @@
 #ifndef DECODER_LDPC_BP_VERTICAL_LAYERED_HPP_
 #define DECODER_LDPC_BP_VERTICAL_LAYERED_HPP_
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
 
 #include "../../../Decoder_SISO_SIHO.hpp"
@@ -35,7 +34,7 @@ public:
 	                                 const bool enable_syndrome = true,
 	                                 const int syndrome_depth = 1,
 	                                 const int n_frames = 1);
-	virtual ~Decoder_LDPC_BP_vertical_layered();
+	virtual ~Decoder_LDPC_BP_vertical_layered() = default;
 	void reset();
 
 protected:

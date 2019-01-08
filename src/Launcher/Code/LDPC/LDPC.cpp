@@ -18,14 +18,8 @@ LDPC<L,B,R,Q>
 {
 	this->params.set_cdc(params_cdc);
 
-	if (typeid(L) == typeid(BFER_std<B,R,Q>))
+	if (std::is_same<L, BFER_std<B,R,Q>>::value)
 		params_cdc->enable_puncturer();
-}
-
-template <class L, typename B, typename R, typename Q>
-LDPC<L,B,R,Q>
-::~LDPC()
-{
 }
 
 bool enc_dvb_no_h_matrix(const void*, const void* enc_type)
@@ -47,6 +41,7 @@ void LDPC<L,B,R,Q>
 
 	this->args.erase({penc+"-fra",  "F"});
 	this->args.erase({penc+"-seed", "S"});
+	this->args.erase({pdec+"-seed"     });
 
 	this->args.add_link({pdec+"-h-path"}, {penc+"-type"}, enc_dvb_no_h_matrix);
 
@@ -58,9 +53,11 @@ template <class L, typename B, typename R, typename Q>
 void LDPC<L,B,R,Q>
 ::store_args()
 {
+	auto dec_ldpc = dynamic_cast<factory::Decoder_LDPC::parameters*>(params_cdc->dec.get());
+
 	params_cdc->store(this->arg_vals);
 
-	if (params_cdc->dec->simd_strategy == "INTER")
+	if (dec_ldpc->simd_strategy == "INTER")
 		this->params.src->n_frames = mipp::N<Q>();
 
 	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
@@ -72,7 +69,7 @@ void LDPC<L,B,R,Q>
 	L::store_args();
 
 	params_cdc->enc->n_frames = this->params.src->n_frames;
-	if (params_cdc->pct)
+	if (params_cdc->pct != nullptr)
 	params_cdc->pct->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;
 }
@@ -82,7 +79,7 @@ void LDPC<L,B,R,Q>
 #include "Launcher/Simulation/EXIT.hpp"
 #include "Launcher/Simulation/BFER_std.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::LDPC<aff3ct::launcher::EXIT    <B_32,R_32     >,B_32,R_32     >;
 template class aff3ct::launcher::LDPC<aff3ct::launcher::EXIT    <B_64,R_64     >,B_64,R_64     >;
 template class aff3ct::launcher::LDPC<aff3ct::launcher::BFER_std<B_8, R_8, Q_8 >,B_8 ,R_8 ,Q_8 >;
@@ -94,7 +91,7 @@ template class aff3ct::launcher::LDPC<aff3ct::launcher::BFER_ite<B_16,R_16,Q_16>
 template class aff3ct::launcher::LDPC<aff3ct::launcher::BFER_ite<B_32,R_32,Q_32>,B_32,R_32,Q_32>;
 template class aff3ct::launcher::LDPC<aff3ct::launcher::BFER_ite<B_64,R_64,Q_64>,B_64,R_64,Q_64>;
 #else
-#if defined(PREC_32_BIT) || defined(PREC_64_BIT)
+#if defined(AFF3CT_32BIT_PREC) || defined(AFF3CT_64BIT_PREC)
 template class aff3ct::launcher::LDPC<aff3ct::launcher::EXIT    <B,R  >,B,R  >;
 #endif
 template class aff3ct::launcher::LDPC<aff3ct::launcher::BFER_std<B,R,Q>,B,R,Q>;

@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
@@ -25,13 +26,7 @@ template <class E1, class E2>
 Encoder_turbo::parameters<E1,E2>* Encoder_turbo::parameters<E1,E2>
 ::clone() const
 {
-	auto clone = new Encoder_turbo::parameters<E1,E2>(*this);
-
-	if (itl  != nullptr) { clone->itl  = itl ->clone(); }
-	if (sub1 != nullptr) { clone->sub1 = sub1->clone(); }
-	if (sub2 != nullptr) { clone->sub2 = sub2->clone(); }
-
-	return clone;
+	return new Encoder_turbo::parameters<E1,E2>(*this);
 }
 
 template <class E1, class E2>
@@ -68,37 +63,30 @@ std::vector<std::string> Encoder_turbo::parameters<E1,E2>
 }
 
 template <class E1, class E2>
-Encoder_turbo::parameters<E1,E2>
-::~parameters()
-{
-	if (itl  != nullptr) { delete itl;  itl  = nullptr; }
-	if (sub1 != nullptr) { delete sub1; sub1 = nullptr; }
-	if (sub2 != nullptr) { delete sub2; sub2 = nullptr; }
-}
-
-template <class E1, class E2>
 void Encoder_turbo::parameters<E1,E2>
 ::get_description(tools::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_turbo::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
-	itl->get_description(args);
+	if (itl != nullptr)
+	{
+		itl->get_description(args);
 
-	auto pi = itl->get_prefix();
+		auto pi = itl->get_prefix();
 
-	args.erase({pi+"-size"    });
-	args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"    });
+		args.erase({pi+"-fra", "F"});
+	}
 
 	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
 
-	args.add(
-		{p+"-json-path"},
-		tools::File(tools::openmode::write),
-		"path to store the encoder and decoder traces formated in JSON.");
+	tools::add_arg(args, p, class_name+"p+json-path",
+		tools::File(tools::openmode::write));
 
 	sub1->get_description(args);
 
@@ -154,16 +142,19 @@ void Encoder_turbo::parameters<E1,E2>
 	this->N_cw        = this->sub1->N_cw + this->sub2->N_cw - this->K;
 	this->R           = (float)this->K / (float)this->N_cw;
 
-	this->itl->core->size     = this->K;
-	this->itl->core->n_frames = this->n_frames;
+	if (itl != nullptr)
+	{
+		this->itl->core->size     = this->K;
+		this->itl->core->n_frames = this->n_frames;
 
-	itl->store(vals);
+		itl->store(vals);
 
-	if (this->sub1->standard == "LTE" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "LTE";
+		if (this->sub1->standard == "LTE" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "LTE";
 
-	if (this->sub1->standard == "CCSDS" && !vals.exist({"itl-type"}))
-		this->itl->core->type = "CCSDS";
+		if (this->sub1->standard == "CCSDS" && !vals.exist({"itl-type"}))
+			this->itl->core->type = "CCSDS";
+	}
 }
 
 template <class E1, class E2>
@@ -172,7 +163,8 @@ void Encoder_turbo::parameters<E1,E2>
 {
 	Encoder::parameters::get_headers(headers, full);
 
-	itl->get_headers(headers);
+	if (itl != nullptr)
+		itl->get_headers(headers);
 
 	auto p = this->get_prefix();
 
@@ -191,8 +183,8 @@ template <class E1, class E2>
 template <typename B>
 module::Encoder_turbo<B>* Encoder_turbo::parameters<E1,E2>
 ::build(const module::Interleaver<B> &itl,
-              module::Encoder    <B> *enc_n,
-              module::Encoder    <B> *enc_i) const
+              std::shared_ptr<module::Encoder<B>> enc_n,
+              std::shared_ptr<module::Encoder<B>> enc_i) const
 {
 	enc_i = (enc_i == nullptr) ? enc_n : enc_i;
 
@@ -212,8 +204,8 @@ template <typename B, class E1, class E2>
 module::Encoder_turbo<B>* Encoder_turbo
 ::build(const parameters<E1,E2>      &params,
         const module::Interleaver<B> &itl,
-              module::Encoder    <B> *enc_n,
-              module::Encoder    <B> *enc_i)
+              std::shared_ptr<module::Encoder<B>> enc_n,
+              std::shared_ptr<module::Encoder<B>> enc_i)
 {
 	return params.template build<B>(itl, enc_n, enc_i);
 }

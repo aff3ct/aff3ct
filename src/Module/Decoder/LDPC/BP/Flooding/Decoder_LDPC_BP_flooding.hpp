@@ -1,7 +1,6 @@
 #ifndef DECODER_LDPC_BP_FLOODING_HPP_
 #define DECODER_LDPC_BP_FLOODING_HPP_
 
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
 
 #include "../../../Decoder_SISO_SIHO.hpp"
@@ -34,7 +33,7 @@ public:
 	                         const bool enable_syndrome = true,
 	                         const int syndrome_depth = 1,
 	                         const int n_frames = 1);
-	virtual ~Decoder_LDPC_BP_flooding();
+	virtual ~Decoder_LDPC_BP_flooding() = default;
 	void reset();
 
 protected:
@@ -42,10 +41,10 @@ protected:
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
-	void _decode               (const R *Y_N, const int frame_id);
-	void _initialize_var_to_chk(const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &msg_var_to_chk);
-	void _decode_single_ite    (              const std::vector<R> &msg_var_to_chk, std::vector<R> &msg_chk_to_var);
-	void _compute_post         (const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &post);
+	        void _decode               (const R *Y_N, const int frame_id);
+	        void _initialize_var_to_chk(const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &msg_var_to_chk);
+	virtual void _decode_single_ite    (              const std::vector<R> &msg_var_to_chk, std::vector<R> &msg_chk_to_var);
+	        void _compute_post         (const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &post);
 };
 }
 }

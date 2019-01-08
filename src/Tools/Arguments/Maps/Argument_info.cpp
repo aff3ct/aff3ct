@@ -8,8 +8,8 @@ Argument_info
 { }
 
 Argument_info
-::Argument_info(Argument_type* type, const std::string& doc, const arg_rank rank)
-: type(type), doc(doc), rank(rank)
+::Argument_info(Argument_type* type, const std::string& doc, const arg_rank rank, const std::string key)
+: type(type), doc(doc), rank(rank), key(key)
 {}
 
 

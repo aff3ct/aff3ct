@@ -23,7 +23,7 @@ protected:
 
 public:
 	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc);
-	virtual ~Encoder_turbo_legacy() {}
+	virtual ~Encoder_turbo_legacy() = default;
 
 	bool is_codeword(const B *X_N);
 

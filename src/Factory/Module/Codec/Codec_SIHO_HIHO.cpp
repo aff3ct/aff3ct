@@ -22,16 +22,11 @@ Codec_SIHO_HIHO::parameters
 {
 }
 
-Codec_SIHO_HIHO::parameters
-::~parameters()
-{
-}
-
 template <typename B, typename Q>
 module::Codec_SIHO_HIHO<B,Q>* Codec_SIHO_HIHO::parameters
 ::build(module::CRC<B>* crc) const
 {
-	     if (get_name() == Codec_BCH_name) return dynamic_cast<const Codec_BCH    ::parameters&>(*this).template build<B,Q>(crc);
+	if (get_name() == Codec_BCH_name) return dynamic_cast<const Codec_BCH::parameters&>(*this).template build<B,Q>(crc);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -44,7 +39,7 @@ module::Codec_SIHO_HIHO<B,Q>* Codec_SIHO_HIHO
 }
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Codec_SIHO_HIHO<B_8 ,Q_8 >* aff3ct::factory::Codec_SIHO_HIHO::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
 template aff3ct::module::Codec_SIHO_HIHO<B_16,Q_16>* aff3ct::factory::Codec_SIHO_HIHO::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
 template aff3ct::module::Codec_SIHO_HIHO<B_32,Q_32>* aff3ct::factory::Codec_SIHO_HIHO::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;

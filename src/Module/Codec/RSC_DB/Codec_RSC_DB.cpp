@@ -19,7 +19,7 @@ Codec_RSC_DB<B,Q>
 {
 	const std::string name = "Codec_RSC_DB";
 	this->set_name(name);
-	
+
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
 	{
@@ -49,9 +49,8 @@ Codec_RSC_DB<B,Q>
 	auto enc_cpy = enc_params;
 	enc_cpy.type = "RSC_DB";
 
-	auto encoder_RSC = factory::Encoder_RSC_DB::build<B>(enc_cpy);
+	std::unique_ptr<Encoder_RSC_DB<B>> encoder_RSC(factory::Encoder_RSC_DB::build<B>(enc_cpy));
 	trellis = encoder_RSC->get_trellis();
-	delete encoder_RSC;
 
 	// ---------------------------------------------------------------------------------------------------- allocations
 	factory::Puncturer::parameters pct_params;
@@ -74,9 +73,7 @@ Codec_RSC_DB<B,Q>
 
 	try
 	{
-		auto decoder_siso_siho = factory::Decoder_RSC_DB::build_siso<B,Q>(dec_params, trellis, this->get_encoder());
-		this->set_decoder_siso(decoder_siso_siho);
-		this->set_decoder_siho(decoder_siso_siho);
+		this->set_decoder_siso_siho(factory::Decoder_RSC_DB::build_siso<B,Q>(dec_params, trellis, this->get_encoder()));
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -84,15 +81,9 @@ Codec_RSC_DB<B,Q>
 	}
 }
 
-template <typename B, typename Q>
-Codec_RSC_DB<B,Q>
-::~Codec_RSC_DB()
-{
-}
-
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Codec_RSC_DB<B_8,Q_8>;
 template class aff3ct::module::Codec_RSC_DB<B_16,Q_16>;
 template class aff3ct::module::Codec_RSC_DB<B_32,Q_32>;

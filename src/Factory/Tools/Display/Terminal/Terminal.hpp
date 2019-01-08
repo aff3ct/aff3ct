@@ -3,6 +3,7 @@
 
 #include <string>
 #include <chrono>
+#include <memory>
 
 #include "Tools/Display/Terminal/Terminal.hpp"
 
@@ -27,7 +28,7 @@ struct Terminal : Factory
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		parameters(const std::string &p = Terminal_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		virtual Terminal::parameters* clone() const;
 
 		// parameters construction
@@ -36,13 +37,13 @@ struct Terminal : Factory
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
-		tools::Terminal* build(std::vector<tools::Reporter*> &reporters) const;
+		tools::Terminal* build(const std::vector<std::unique_ptr<tools::Reporter>> &reporters) const;
 
 	protected:
 		parameters(const std::string &n, const std::string &p);
 	};
 
-	static tools::Terminal* build(const parameters &params, std::vector<tools::Reporter*> &reporters);
+	static tools::Terminal* build(const parameters &params, const std::vector<std::unique_ptr<tools::Reporter>> &reporters);
 };
 }
 }

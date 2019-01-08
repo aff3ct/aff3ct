@@ -37,7 +37,7 @@ protected:
 public:
 	explicit Interleaver(const tools::Interleaver_core<T> &core);
 
-	virtual ~Interleaver();
+	virtual ~Interleaver() = default;
 
 	const tools::Interleaver_core<T>& get_core() const;
 

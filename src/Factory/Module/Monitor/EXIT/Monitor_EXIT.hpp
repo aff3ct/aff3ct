@@ -29,7 +29,7 @@ struct Monitor_EXIT : public Monitor
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Monitor_EXIT_prefix);
-		virtual ~parameters();
+		virtual ~parameters() = default;
 		Monitor_EXIT::parameters* clone() const;
 
 		// parameters construction

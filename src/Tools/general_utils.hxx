@@ -36,18 +36,30 @@ std::size_t get_closest_index(BidirectionalIterator first, BidirectionalIterator
 template <typename Ta, typename To>
 void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate)
 {
+	mutual_sort(vec_abscissa, vec_ordinate, [](const Ta& a, const Ta& b){ return a < b; });
+}
+
+template <typename Ta, typename To>
+void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate)
+{
+	mutual_sort(vec_abscissa, vec_ordinate, [](const Ta& a, const Ta& b){ return a < b; });
+}
+
+template <typename Ta, typename To, class Compare>
+void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate, Compare comp)
+{
 	assert(vec_abscissa.size() == vec_ordinate.size());
 
 	for (unsigned i = 1; i < vec_abscissa.size(); i++)
-		for (unsigned j = i; j > 0 && vec_abscissa[j] < vec_abscissa[j-1]; j--)
+		for (unsigned j = i; j > 0 && comp(vec_abscissa[j], vec_abscissa[j-1]); j--)
 		{
 			std::swap(vec_abscissa[j], vec_abscissa[j-1]); // order the x position
 			std::swap(vec_ordinate[j], vec_ordinate[j-1]); // the y follow their x, moving the same way
 		}
 }
 
-template <typename Ta, typename To>
-void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate)
+template <typename Ta, typename To, class Compare>
+void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate, Compare comp)
 {
 #ifndef NDEBUG
 	bool good = true;
@@ -57,7 +69,7 @@ void mutual_sort(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& ve
 #endif
 
 	for (unsigned i = 1; i < vec_abscissa.size(); i++)
-		for (unsigned j = i; j > 0 && vec_abscissa[j] < vec_abscissa[j-1]; j--)
+		for (unsigned j = i; j > 0 && comp(vec_abscissa[j], vec_abscissa[j-1]); j--)
 		{
 			std::swap(vec_abscissa[j], vec_abscissa[j-1]); // order the x position
 
@@ -81,6 +93,9 @@ void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate)
 			vec_ordinate[r] = std::move(vec_ordinate[i]);
 		}
 	}
+
+	if (vec_abscissa.size() != 0 && r == 0)
+		r = 1;
 
 	vec_abscissa.resize(r);
 	vec_ordinate.resize(r);
@@ -107,6 +122,12 @@ void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& 
 				vec_ordinate[k][r] = std::move(vec_ordinate[k][i]);
 		}
 	}
+
+	if (vec_abscissa.size() != 0 && r == 0)
+		r = 1;
+
+	vec_abscissa.resize(r);
+	vec_ordinate.resize(r);
 }
 
 

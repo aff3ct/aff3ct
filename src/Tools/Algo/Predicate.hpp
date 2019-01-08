@@ -21,18 +21,9 @@ class Predicate
 {
 public:
 	/*!
-	 * \brief Constructor.
+	 * \brief virtual Destructor.
 	 */
-	Predicate()
-	{
-	}
-
-	/*!
-	 * \brief Destructor.
-	 */
-	virtual ~Predicate()
-	{
-	}
+	virtual ~Predicate() = default;
 
 	/*!
 	 * \brief Evaluates the predicate.

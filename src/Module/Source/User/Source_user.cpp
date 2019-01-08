@@ -69,12 +69,6 @@ Source_user<B>
 }
 
 template <typename B>
-Source_user<B>
-::~Source_user()
-{
-}
-
-template <typename B>
 void Source_user<B>
 ::_generate(B *U_K, const int frame_id)
 {
@@ -87,7 +81,7 @@ void Source_user<B>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Source_user<B_8>;
 template class aff3ct::module::Source_user<B_16>;
 template class aff3ct::module::Source_user<B_32>;

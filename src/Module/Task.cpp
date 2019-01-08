@@ -23,6 +23,7 @@ Task::Task(const Module &module, const std::string &name, const bool autoalloc, 
   debug_hex(false),
   debug_limit(-1),
   debug_precision(2),
+  debug_frame_max(-1),
   codelet([]() -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
@@ -30,16 +31,6 @@ Task::Task(const Module &module, const std::string &name, const bool autoalloc, 
   duration_max(std::chrono::nanoseconds(0)),
   last_input_socket(nullptr)
 {
-}
-
-Task::~Task()
-{
-	for (size_t i = 0; i < sockets.size(); i++)
-		if (sockets[i] != nullptr)
-		{
-			delete sockets[i];
-			sockets[i] = nullptr;
-		}
 }
 
 void Task::set_autoalloc(const bool autoalloc)
@@ -51,13 +42,13 @@ void Task::set_autoalloc(const bool autoalloc)
 		if (!autoalloc)
 		{
 			this->out_buffers.clear();
-			for (auto *s : sockets)
+			for (auto& s : sockets)
 				if (get_socket_type(*s) == socket_t::SOUT)
 					s->dataptr = nullptr;
 		}
 		else
 		{
-			for (auto *s : sockets)
+			for (auto& s : sockets)
 				if (get_socket_type(*s) == socket_t::SOUT)
 				{
 					out_buffers.push_back(mipp::vector<uint8_t>(s->databytes));
@@ -116,6 +107,11 @@ void Task::set_debug_precision(const uint8_t prec)
 	this->debug_precision = prec;
 }
 
+void Task::set_debug_frame_max(const uint32_t limit)
+{
+	this->debug_frame_max = limit;
+}
+
 // trick to compile on the GNU compiler version 4 (where 'std::hexfloat' is unavailable)
 #if !defined(__clang__) && !defined(__llvm__) && defined(__GNUC__) && defined(__cplusplus) && __GNUC__ < 5
 namespace std {
@@ -130,7 +126,7 @@ std::ostream& operator<<(std::ostream &os, const std::Hexfloat &obj) { obj.messa
 
 template <typename T>
 static inline void display_data(const T *data,
-                                const size_t fra_size, const size_t n_fra, const size_t limit,
+                                const size_t fra_size, const size_t n_fra, const size_t limit, const size_t max_frame,
                                 const uint8_t p, const uint8_t n_spaces, const bool hex)
 {
 	constexpr bool is_float_type = std::is_same<float, T>::value || std::is_same<double, T>::value;
@@ -144,35 +140,62 @@ static inline void display_data(const T *data,
 	else
 		std::cout << std::fixed << std::setprecision(p) << std::dec;
 
-	if (n_fra == 1)
+	if (n_fra == 1 && max_frame != 0)
 	{
-		for (auto i = 0; i < (int)limit; i++)
+		for (size_t i = 0; i < limit; i++)
 		{
 			if (hex)
-				std::cout << (!is_float_type ? "0x" : "") << +data[i] << (i < (int)limit -1 ? ", " : "");
+				std::cout << (!is_float_type ? "0x" : "") << +data[i] << (i < limit -1 ? ", " : "");
 			else
-				std::cout << std::setw(p +3) << +data[i] << (i < (int)limit -1 ? ", " : "");
+				std::cout << std::setw(p +3) << +data[i] << (i < limit -1 ? ", " : "");
 		}
 		std::cout << (limit < fra_size ? ", ..." : "");
 	}
 	else
 	{
-		std::string spaces = "#"; for (auto s = 0; s < (int)n_spaces -1; s++) spaces += " ";
-		for (auto f = 0; f < (int)n_fra; f++)
+		std::string spaces = "#";
+		for (uint8_t s = 0; s < n_spaces -1; s++)
+			spaces += " ";
+
+		auto n_digits_dec = [](size_t f) -> size_t
 		{
-			std::string fra_id = "f" + std::to_string(f+1) + ":";
-			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << fra_id
+			size_t count = 0;
+			while (f && ++count)
+				f /= 10;
+			return count;
+		};
+
+		const auto n_digits = n_digits_dec(max_frame);
+		auto ftos = [&n_digits_dec,&n_digits](size_t f) -> std::string
+		{
+			auto n_zero = n_digits - n_digits_dec(f);
+			std::string f_str = "";
+			for (size_t z = 0; z < n_zero; z++)
+				f_str += "0";
+			f_str += std::to_string(f);
+			return f_str;
+		};
+
+		for (size_t f = 0; f < max_frame; f++)
+		{
+			std::cout << (f >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << "f" << ftos(f+1)
 			          << rang::style::reset << "(";
-			for (auto i = 0; i < (int)limit; i++)
+
+			for (size_t i = 0; i < limit; i++)
 			{
 				if (hex)
 					std::cout << (!is_float_type ? "0x" : "") << +data[f * fra_size +i]
-					          << (i < (int)limit -1 ? ", " : "");
+					          << (i < limit -1 ? ", " : "");
 				else
-					std::cout << std::setw(p +3) << +data[f * fra_size +i] << (i < (int)limit -1 ? ", " : "");
+					std::cout << std::setw(p +3) << +data[f * fra_size +i] << (i < limit -1 ? ", " : "");
 			}
-			std::cout << (limit < fra_size ? ", ..." : "") << ")" << (f < (int)n_fra -1 ? ", \n" : "");
+			std::cout << (limit < fra_size ? ", ..." : "") << ")" << (f < n_fra -1 ? ", \n" : "");
 		}
+
+		if (max_frame < n_fra)
+			std::cout << (max_frame >= 1 ? spaces : "") << rang::style::bold << rang::fg::gray << "f"
+			          << std::setw(n_digits) << max_frame + 1 << "->" << "f" << n_fra << ":"
+			          << rang::style::reset << "(...)";
 	}
 
 	std::cout.flags(f);
@@ -214,7 +237,7 @@ int Task::exec()
 			}
 			std::cout << ")" << std::endl;
 
-			for (auto *s : sockets)
+			for (auto& s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
 				if (s_type == socket_t::SIN || s_type == socket_t::SIN_SOUT)
@@ -223,16 +246,17 @@ int Task::exec()
 
 					auto n_elmts = s->get_databytes() / (size_t)s->get_datatype_size();
 					auto fra_size = n_elmts / n_fra;
-					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+					auto limit     = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+					auto max_frame = debug_frame_max != -1 ? std::min(n_fra, (size_t)debug_frame_max) : n_fra;
 					auto p = debug_precision;
 					auto h = debug_hex;
 					std::cout << "# {IN}  " << s->get_name() << spaces << " = [";
-					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
 					std::cout << "]" << std::endl;
 				}
 			}
@@ -264,7 +288,7 @@ int Task::exec()
 		if (debug)
 		{
 			auto n_fra = (size_t)this->module.get_n_frames();
-			for (auto *s : sockets)
+			for (auto& s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
 				if (s_type == socket_t::SOUT || s_type == socket_t::SIN_SOUT)
@@ -274,15 +298,16 @@ int Task::exec()
 					auto n_elmts = s->get_databytes() / (size_t)s->get_datatype_size();
 					auto fra_size = n_elmts / n_fra;
 					auto limit = debug_limit != -1 ? std::min(fra_size, (size_t)debug_limit) : fra_size;
+					auto max_frame = debug_frame_max != -1 ? std::min(n_fra, (size_t)debug_frame_max) : n_fra;
 					auto p = debug_precision;
 					auto h = debug_hex;
 					std::cout << "# {OUT} " << s->get_name() << spaces << " = [";
-					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, p, (uint8_t)max_n_chars +12, h);
+					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
 					std::cout << "]" << std::endl;
 				}
 			}
@@ -322,11 +347,11 @@ Socket& Task::create_socket(const std::string &name, const size_t n_elmts)
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-	auto *s = new Socket(*this, name, typeid(T), n_elmts * sizeof(T), this->is_fast());
+	auto s = std::make_shared<Socket>(*this, name, typeid(T), n_elmts * sizeof(T), this->is_fast());
 
-	sockets.push_back(s);
+	sockets.push_back(std::move(s));
 
-	return *s;
+	return *sockets.back();
 }
 
 template <typename T>
@@ -361,7 +386,7 @@ Socket& Task::create_socket_out(const std::string &name, const size_t n_elmts)
 	// memory allocation
 	if (is_autoalloc())
 	{
-		out_buffers.push_back(mipp::vector<uint8_t>(s.databytes));
+		out_buffers.push_back(mipp::vector<uint8_t>(s.get_databytes()));
 		s.dataptr = out_buffers.back().data();
 	}
 
@@ -429,11 +454,11 @@ const std::vector<std::chrono::nanoseconds>& Task::get_timers_max() const
 socket_t Task::get_socket_type(const Socket &s) const
 {
 	for (size_t i = 0; i < sockets.size(); i++)
-		if (sockets[i] == &s)
+		if (sockets[i].get() == &s)
 			return socket_type[i];
 
 	std::stringstream message;
-	message << "The socket does not exist ('s.name' = " << s.name << ", 'task.name' = " << this->get_name()
+	message << "The socket does not exist ('s.name' = " << s.get_name() << ", 'task.name' = " << this->get_name()
 	        << ", 'module.name' = " << module.get_name() << ").";
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }

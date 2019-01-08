@@ -86,13 +86,6 @@ Puncturer(const int K, const int N, const int N_cw, const int n_frames)
 }
 
 template <typename B, typename Q>
-Puncturer<B,Q>::
-~Puncturer()
-{
-
-}
-
-template <typename B, typename Q>
 int Puncturer<B,Q>::
 get_K() const
 {

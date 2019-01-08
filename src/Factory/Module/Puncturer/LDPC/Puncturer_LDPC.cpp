@@ -2,6 +2,7 @@
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
@@ -21,11 +22,6 @@ Puncturer_LDPC::parameters
 	this->type = "LDPC";
 }
 
-Puncturer_LDPC::parameters
-::~parameters()
-{
-}
-
 Puncturer_LDPC::parameters* Puncturer_LDPC::parameters
 ::clone() const
 {
@@ -38,19 +34,16 @@ void Puncturer_LDPC::parameters
 	Puncturer::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Puncturer_LDPC::parameters::";
 
-	args.add(
-		{p+"-cw-size", "N_cw"},
+	tools::add_arg(args, p, class_name+"p+cw-size,N_cw",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size.",
 		tools::arg_rank::REQ);
 
 	tools::add_options(args.at({p+"-type"}), 0, "LDPC");
 
-	args.add(
-		{p+"-pattern"},
-		tools::Text(),
-		"puncturing pattern for the LDPC encoder/decoder (size = N_Code/Z) (ex: \"1,1,1,0\").");
+	tools::add_arg(args, p, class_name+"p+pattern",
+		tools::Text());
 }
 
 std::vector<bool> generate_punct_vector(const std::string &pattern)
@@ -134,7 +127,7 @@ module::Puncturer<B,Q>* Puncturer_LDPC
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer_LDPC::parameters::build<B_8 ,Q_8 >() const;
 template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer_LDPC::parameters::build<B_16,Q_16>() const;
 template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer_LDPC::parameters::build<B_32,Q_32>() const;

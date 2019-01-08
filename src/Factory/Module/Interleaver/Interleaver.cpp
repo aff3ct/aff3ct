@@ -15,20 +15,10 @@ Interleaver::parameters
 {
 }
 
-Interleaver::parameters
-::~parameters()
-{
-	if (core != nullptr) { delete core; core = nullptr; }
-}
-
 Interleaver::parameters* Interleaver::parameters
 ::clone() const
 {
-	auto clone = new Interleaver::parameters(*this);
-
-	if (core != nullptr) {clone->core = core->clone(); }
-
-	return clone;
+	return new Interleaver::parameters(*this);
 }
 
 void Interleaver::parameters
@@ -54,8 +44,6 @@ module::Interleaver<D>* Interleaver::parameters
 ::build(const tools::Interleaver_core<>& itl_core) const
 {
 	return new module::Interleaver<D>(itl_core);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename D>
@@ -63,8 +51,6 @@ module::Interleaver<D>* Interleaver
 ::build(const tools::Interleaver_core<>& itl_core)
 {
 	return new module::Interleaver<D>(itl_core);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation

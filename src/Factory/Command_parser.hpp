@@ -36,8 +36,6 @@ public:
 	               bool add_help_tag = false,
 	               std::ostream& err_stream = std::cerr);
 
-	~Command_parser();
-
 	void print_help    ();
 	void print_errors  ();
 	void print_warnings();
