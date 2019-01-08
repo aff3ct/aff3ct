@@ -16,19 +16,6 @@ private:
 	const int m;
 	std::vector<double> z;
 
-	const double alpha = -0.4527;
-	const double beta  =  0.0218;
-	const double gamma =  0.8600;
-
-	const double a =  1.0  / alpha;
-	const double b = -beta / alpha;
-	const double c =  1.0  / gamma;
-
-	const double phi_pivot     = 0.867861;
-	const double phi_inv_pivot = 0.6845772418;
-
-	const double bisection_max = std::numeric_limits<double>::max();
-
 public:
 	Frozenbits_generator_BEC(const int K, const int N);
 
