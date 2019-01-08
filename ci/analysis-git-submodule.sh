@@ -9,6 +9,8 @@ fi
 
 cd conf
 HASH_CONF=$(git rev-parse --short HEAD)
+git checkout ${GIT_BRANCH}
+git pull origin ${GIT_BRANCH}
 CONTAIN_COMMIT_CONF=$(git branch ${GIT_BRANCH} --contains ${HASH_CONF})
 if [ -z "$CONTAIN_COMMIT_CONF" ]
 then
@@ -19,6 +21,8 @@ cd ..
 
 cd refs
 HASH_REFS=$(git rev-parse --short HEAD)
+git checkout ${GIT_BRANCH}
+git pull origin ${GIT_BRANCH}
 CONTAIN_COMMIT_REFS=$(git branch ${GIT_BRANCH} --contains ${HASH_REFS})
 if [ -z "$CONTAIN_COMMIT_REFS" ]
 then
