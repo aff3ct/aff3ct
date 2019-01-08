@@ -38,6 +38,17 @@ analysis-headers:
     - ./scripts/generate_aff3ct_header.sh aff3ct.hpp
     - diff aff3ct.hpp src/aff3ct.hpp
 
+analysis-git-submodules:
+  stage: analysis
+  tags:
+    - linux
+  only:
+    - master
+    - development
+  script:
+    - source ./ci/tools/git-branch.sh
+    - ./ci/analysis-git-submodules.sh
+
 build-linux-gcc-nointr:
   stage: build
   tags:
