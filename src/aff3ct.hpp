@@ -40,6 +40,9 @@
 #ifndef FACTORY_CODEC_POLAR_HPP
 #include <Factory/Module/Codec/Polar/Codec_polar.hpp>
 #endif
+#ifndef FACTORY_CODEC_POLAR_MK_HPP
+#include <Factory/Module/Codec/Polar_MK/Codec_polar_MK.hpp>
+#endif
 #ifndef FACTORY_CODEC_RA_HPP
 #include <Factory/Module/Codec/RA/Codec_RA.hpp>
 #endif
@@ -88,6 +91,9 @@
 #ifndef FACTORY_DECODER_POLAR_HPP
 #include <Factory/Module/Decoder/Polar/Decoder_polar.hpp>
 #endif
+#ifndef FACTORY_DECODER_POLAR_MK_HPP
+#include <Factory/Module/Decoder/Polar_MK/Decoder_polar_MK.hpp>
+#endif
 #ifndef FACTORY_DECODER_RA_HPP
 #include <Factory/Module/Decoder/RA/Decoder_RA.hpp>
 #endif
@@ -126,6 +132,9 @@
 #endif
 #ifndef FACTORY_ENCODER_POLAR_HPP
 #include <Factory/Module/Encoder/Polar/Encoder_polar.hpp>
+#endif
+#ifndef FACTORY_ENCODER_POLAR_MK_HPP
+#include <Factory/Module/Encoder/Polar_MK/Encoder_polar_MK.hpp>
 #endif
 #ifndef FACTORY_ENCODER_RA_HPP
 #include <Factory/Module/Encoder/RA/Encoder_RA.hpp>
@@ -208,6 +217,9 @@
 #ifndef FACTORY_FROZENBITS_GENERATOR_HPP
 #include <Factory/Tools/Code/Polar/Frozenbits_generator.hpp>
 #endif
+#ifndef FACTORY_FROZENBITS_GENERATOR_MK_HPP
+#include <Factory/Tools/Code/Polar_MK/Frozenbits_generator_MK.hpp>
+#endif
 #ifndef FACTORY_FLIP_AND_CHECK_DB_HPP
 #include <Factory/Tools/Code/Turbo/Flip_and_check_DB.hpp>
 #endif
@@ -231,6 +243,9 @@
 #endif
 #ifndef LAUNCHER_LDPC_HPP_
 #include <Launcher/Code/LDPC/LDPC.hpp>
+#endif
+#ifndef LAUNCHER_POLAR_MK_HPP_
+#include <Launcher/Code/Polar_MK/Polar_MK.hpp>
 #endif
 #ifndef LAUNCHER_POLAR_HPP_
 #include <Launcher/Code/Polar/Polar.hpp>
@@ -336,6 +351,9 @@
 #endif
 #ifndef CODEC_POLAR_HPP_
 #include <Module/Codec/Polar/Codec_polar.hpp>
+#endif
+#ifndef CODEC_POLAR_MK_HPP_
+#include <Module/Codec/Polar_MK/Codec_polar_MK.hpp>
 #endif
 #ifndef CODEC_RA_HPP_
 #include <Module/Codec/RA/Codec_RA.hpp>
@@ -489,6 +507,9 @@
 #endif
 #ifndef DECODER_POLAR_ASCL_MEM_FAST_SYS_CA
 #include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SC_NAIVE_
+#include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp>
 #endif
 #ifndef DECODER_POLAR_SCAN_NAIVE_H_
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp>
@@ -678,6 +699,12 @@
 #endif
 #ifndef ENCODER_POLAR_SYS_HPP_
 #include <Module/Encoder/Polar/Encoder_polar_sys.hpp>
+#endif
+#ifndef ENCODER_POLAR_MK_HPP_
+#include <Module/Encoder/Polar_MK/Encoder_polar_MK.hpp>
+#endif
+#ifndef ENCODER_POLAR_MK_SYS_HPP_
+#include <Module/Encoder/Polar_MK/Encoder_polar_MK_sys.hpp>
 #endif
 #ifndef ENCODER_RA_HPP_
 #include <Module/Encoder/RA/Encoder_RA.hpp>
