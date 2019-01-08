@@ -457,7 +457,7 @@ test-regression-bch-long:
   script:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - export TIME_SEC="1800"
+    - export TIME_SEC=$CI_TIME_SEC_BCH
     - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-ldpc:
@@ -506,7 +506,7 @@ test-regression-ldpc-long:
   script:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - export TIME_SEC="1800"
+    - export TIME_SEC=$CI_TIME_SEC_LDPC
     - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 
@@ -556,7 +556,7 @@ test-regression-polar-long:
   script:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - export TIME_SEC="1800"
+    - export TIME_SEC=$CI_TIME_SEC_POLAR
     - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-rs:
@@ -603,7 +603,7 @@ test-regression-rs-long:
   script:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - export TIME_SEC="1800"
+    - export TIME_SEC=$CI_TIME_SEC_RS
     - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo:
@@ -652,7 +652,7 @@ test-regression-turbo-long:
   script:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - export TIME_SEC="1800"
+    - export TIME_SEC=$CI_TIME_SEC_TURBO
     - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-db:
@@ -701,7 +701,7 @@ test-regression-turbo-db-long:
   script:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - export TIME_SEC="1800"
+    - export TIME_SEC=$CI_TIME_SEC_TURBO_DB
     - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-prod:
@@ -750,7 +750,7 @@ test-regression-turbo-prod-long:
   script:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - export TIME_SEC="1800"
+    - export TIME_SEC=$CI_TIME_SEC_TURBO_PROD
     - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-uncoded:
@@ -797,7 +797,7 @@ test-regression-uncoded-long:
   script:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - export TIME_SEC="1800"
+    - export TIME_SEC=$CI_TIME_SEC_UNCODED
     - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-build-coverage-regression:
