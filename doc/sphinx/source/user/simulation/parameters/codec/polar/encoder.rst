@@ -50,7 +50,7 @@ Description of the allowed values:
 """""""""""""""""""""""
 
    :Type: text
-   :Allowed values: ``FILE`` ``GA`` ``TV``
+   :Allowed values: ``FILE`` ``GA`` ``TV`` ``BEC``
    :Examples: ``--enc-fb-gen-method FILE``
 
 |factory::Frozenbits_generator::parameters::p+gen-method|
@@ -69,6 +69,9 @@ Description of the allowed values:
 | ``FILE`` | Read the best channels from an external file, to use with the     |
 |          | :ref:`enc-polar-enc-fb-awgn-path` parameter.                      |
 +----------+-------------------------------------------------------------------+
+| ``BEC``  | Generate frozen bits for the |BEC| channel from                   |
+|          | :cite:`Arikan2009`.                                               |
++----------+-------------------------------------------------------------------+
 
 .. note:: By default, when using the |GA| or the |TV| method, the frozen bits
    are optimized for each |SNR| point. To override this behavior you can use
@@ -76,6 +79,10 @@ Description of the allowed values:
 
 .. note:: When using the ``FILE`` method, the frozen bits are always the same
    regardless of the |SNR| value.
+
+.. note:: When using the ``BEC`` method, the frozen bits are optimized for each
+   erasure probability.
+
 
 .. _enc-polar-enc-fb-awgn-path:
 
