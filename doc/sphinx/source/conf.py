@@ -317,6 +317,7 @@ rst_epilog = """
 .. |MAP|       replace:: :abbr:`MAP      (Maximum A Posteriori)`
 .. |MATLAB|    replace:: MATLAB
 .. |MI|        replace:: :abbr:`MI       (Mutual Information)`
+.. |MK|        replace:: :abbr:`MK       (Multi-Kernel)`
 .. |MKL|       replace:: :abbr:`MKL      (Intel Math Kernel Library)`
 .. |ML|        replace:: :abbr:`ML       (Maximum Likelihood)`
 .. |modem|     replace:: :abbr:`modem    (modulator/demodulator)`

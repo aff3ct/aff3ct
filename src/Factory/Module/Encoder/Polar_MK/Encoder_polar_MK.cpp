@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 #include "Module/Encoder/Polar_MK/Encoder_polar_MK_sys.hpp"
@@ -42,25 +43,20 @@ void Encoder_polar_MK::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_polar_MK::parameters::";
 
 	tools::add_options(args.at({p+"-type"}), 0, "POLAR_MK");
 
-	args.add(
-		{p+"-sys"},
-		tools::None(),
-		"enable the systematic encoding.");
+	tools::add_arg(args, p, class_name+"p+sys",
+		tools::None());
 
-	args.add(
-		{p+"-kernel"},
+	tools::add_arg(args, p, class_name+"p+kernel",
 		tools::List2D<bool>(tools::Boolean(),
 		                    std::make_tuple(tools::Length(1), tools::Function<sub_same_length>("elements of same length")),
-		                    std::make_tuple(tools::Length(1))),
-		"kernel of the polar code (squared matrix only) (ex: \"111,101,011\").");
+		                    std::make_tuple(tools::Length(1))));
 
-	args.add(
-		{p+"-code-path"},
-		tools::File(tools::openmode::read),
-		"path to a file containing the polar code description (kernels definition and stages).");
+	tools::add_arg(args, p, class_name+"p+code-path",
+		tools::File(tools::openmode::read));
 }
 
 void Encoder_polar_MK::parameters

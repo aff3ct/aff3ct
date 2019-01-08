@@ -1,0 +1,158 @@
+.. _enc-polar_mk-encoder-parameters:
+
+Polar |MK| Encoder parameters
+-----------------------------
+
+.. _enc-polar_mk-enc-type:
+
+``--enc-type``
+""""""""""""""
+
+   :Type: text
+   :Allowed values: ``POLAR_MK`` ``AZCW`` ``COSET`` ``USER``
+   :Default: ``POLAR_MK``
+   :Examples: ``--enc-type AZCW``
+
+|factory::Encoder::parameters::p+type|
+
+Description of the allowed values:
+
++--------------+------------------------+
+| Value        | Description            |
++==============+========================+
+| ``POLAR_MK`` | |enc-type_descr_polar| |
++--------------+------------------------+
+| ``AZCW``     | |enc-type_descr_azcw|  |
++--------------+------------------------+
+| ``COSET``    | |enc-type_descr_coset| |
++--------------+------------------------+
+| ``USER``     | |enc-type_descr_user|  |
++--------------+------------------------+
+
+.. |enc-type_descr_polar| replace:: Select the standard Polar |MK| encoder.
+.. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+.. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+.. |enc-type_descr_user| replace:: See the common :ref:`enc-common-enc-type`
+   parameter.
+
+.. _enc-polar_mk-enc-no-sys:
+
+``--enc-sys``
+"""""""""""""
+
+|factory::Encoder_polar_MK::parameters::p+sys|
+
+.. _enc-polar_mk-enc-kernel:
+
+``--enc-kernel``
+""""""""""""""""
+
+   :Type: list of (list of (boolean:including set={0|1}):limited length [1;inf]), elements of same length
+   :Default: ``"10,11"``
+   :Examples: ``--enc-kernel "111,101,011"``
+
+|factory::Encoder_polar_MK::parameters::p+kernel|
+
+.. _enc-polar_mk-enc-code-path:
+
+``--enc-code-path``
+"""""""""""""""""""
+
+   :Type: file
+   :Rights: read only
+   :Examples: ``--enc-code-path example/path/to/the/right/place/``
+
+|factory::Encoder_polar_MK::parameters::p+code-path|
+
+An |ASCII| file is expected:
+
+.. code-block:: bash
+
+   # number of different kernels
+   2
+
+   # dimension of kernel 0
+   2
+   # kernel 0
+   1 0
+   1 1
+
+   # dimension of kernel 1
+   3
+   # kernel 1
+   1 1 1
+   1 0 1
+   0 1 1
+
+   # number of stages
+   5
+   # type of kernel per stage
+   0 0 0 0 1
+
+The previous file describes a :math:`N = 48` Polar |MK| code with the following
+construction:
+:math:`G_{48} = T_2 \otimes T_2 \otimes T_2 \otimes T_2 \otimes T_3`.
+
+.. _enc-polar_mk-enc-fb-gen-method:
+
+``--enc-fb-gen-method``
+"""""""""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``FILE``
+   :Examples: ``--enc-fb-gen-method FILE``
+
+|factory::Frozenbits_generator_MK::parameters::p+gen-method|
+
+Description of the allowed values:
+
++----------+-------------------------------------------------------------------+
+| Value    | Description                                                       |
++==========+===================================================================+
+| ``FILE`` | Read the best channels from an external file, to use with the     |
+|          | :ref:`enc-polar_mk-enc-fb-awgn-path` parameter.                   |
++----------+-------------------------------------------------------------------+
+
+.. note:: When using the ``FILE`` method, the frozen bits are always the same
+   regardless of the |SNR| value.
+
+.. _enc-polar_mk-enc-fb-awgn-path:
+
+``--enc-fb-awgn-path``
+""""""""""""""""""""""
+
+   :Type: file
+   :Rights: read only
+   :Examples: ``--enc-fb-awgn-path example/path/to/the/right/place/``
+
+|factory::Frozenbits_generator_MK::parameters::p+awgn-path|
+
+An |ASCII| file is expected, for instance, the following file describes the
+most reliable channels optimized for a codeword of size :math:`N = 8` and for an
+|AWGN| channel where the noise variance is :math:`\sigma = 0.435999`:
+
+.. code-block:: bash
+
+   8
+   awgn
+   0.435999
+   7 6 5 3 4 2 1 0
+
+Given the previous file, if we suppose a Polar code of size :math:`N = 8` with
+:math:`K = 4` information bits, the frozen bits are at the ``0, 1, 2, 4``
+positions in the codeword. The strategy is to freeze the less reliable channels.
+
+.. warning:: The ``FILE`` frozen bits generator expects a file and not a
+   directory.
+
+.. _enc-polar_mk-enc-fb-sigma:
+
+``--enc-fb-sigma``
+""""""""""""""""""
+
+   :Type: real number
+   :Examples: ``--enc-fb-sigma 1.0``
+
+|factory::Frozenbits_generator_MK::parameters::p+sigma|

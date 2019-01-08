@@ -200,6 +200,8 @@
 
 .. --------------------------------------------- factory Codec_polar parameters
 
+.. ------------------------------------------ factory Codec_polar_MK parameters
+
 .. ------------------------------------------------ factory Codec_RA parameters
 
 .. ---------------------------------------- factory Codec_repetition parameters
@@ -349,6 +351,8 @@
 
 .. |factory::Decoder_polar::parameters::p+no-sys| replace::
    Enable non-systematic encoding.
+
+.. ---------------------------------------- factory Decoder_polar_MK parameters
 
 .. ---------------------------------------------- factory Decoder_RA parameters
 
@@ -511,6 +515,19 @@
 .. |factory::Encoder_polar::parameters::p+no-sys| replace::
    Enable non-systematic encoding. By default the encoding process is
    systematic.
+
+.. ---------------------------------------- factory Encoder_polar_MK parameters
+
+.. |factory::Encoder_polar_MK::parameters::p+sys| replace::
+   Enable systematic encoding. By default the encoding process is
+   non-systematic.
+
+.. |factory::Encoder_polar_MK::parameters::p+kernel| replace::
+   Set the polar code kernel (squared matrix only).
+
+.. |factory::Encoder_polar_MK::parameters::p+code-path| replace::
+   Set the path to a file containing the polar code description (kernels
+   definition and stages).
 
 .. ---------------------------------------------- factory Encoder_RA parameters
 
@@ -781,6 +798,26 @@
 .. |factory::Frozenbits_generator::parameters::p+pb-path| replace::
    Set the path of the polar bounds code generator (generates best channels to
    use).
+
+.. --------------------------------- factory Frozenbits_generator_MK parameters
+
+.. |factory::Frozenbits_generator_MK::parameters::p+info-bits,K| replace::
+   Select the number of information bits :math:`K`.
+
+.. |factory::Frozenbits_generator_MK::parameters::p+cw-size,N| replace::
+   Select the codeword size :math:`N`.
+
+.. |factory::Frozenbits_generator_MK::parameters::p+sigma| replace::
+   Selects the noise variance :math:`\sigma` for which the frozen bits will be
+   optimized. All the noise points in the simulation will use the same frozen
+   bits configuration.
+
+.. |factory::Frozenbits_generator_MK::parameters::p+gen-method| replace::
+   Select the frozen bits generation method.
+
+.. |factory::Frozenbits_generator_MK::parameters::p+awgn-path| replace::
+   Set the path to a file or a directory containing the best channels to select
+   the frozen bits.
 
 .. ------------------------------------------ factory Flip_and_check parameters
 

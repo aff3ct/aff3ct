@@ -1,4 +1,6 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
+
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
 
 #include "Frozenbits_generator_MK.hpp"
@@ -25,33 +27,24 @@ void Frozenbits_generator_MK::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Frozenbits_generator_MK::parameters::";
 
-	args.add(
-		{p+"-info-bits", "K"},
+	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"useful number of bit transmitted (information bits).",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-cw-size", "N"},
+	tools::add_arg(args, p, class_name+"p+cw-size,N",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"the codeword size.",
 		tools::arg_rank::REQ);
 
-	args.add(
-		{p+"-sigma"},
-		tools::Real(tools::Positive(), tools::Non_zero()),
-		"sigma value for the polar codes generation (adaptive frozen bits if sigma is not set).");
+	tools::add_arg(args, p, class_name+"p+sigma",
+		tools::Real(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-gen-method"},
-		tools::Text(tools::Including_set("FILE")),
-		"select the frozen bits generation method.");
+	tools::add_arg(args, p, class_name+"p+gen-method",
+		tools::Text(tools::Including_set("FILE")));
 
-	args.add(
-		{p+"-awgn-path"},
-		tools::Path(tools::openmode::read),
-		"path to a file or a directory containing the best channels to use for information bits.");
+	tools::add_arg(args, p, class_name+"p+awgn-path",
+		tools::Path(tools::openmode::read));
 }
 
 void Frozenbits_generator_MK::parameters
