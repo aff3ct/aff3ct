@@ -83,7 +83,7 @@ void Frozenbits_generator_TV
 
 		if (!this->load_channels_file(filename))
 		{
-#ifdef ENABLE_POLAR_BOUNDS
+#ifdef AFF3CT_POLAR_BOUNDS
 			static std::mutex mutex_write_file;
 			mutex_write_file.lock();
 			if (!this->load_channels_file(filename))
@@ -96,8 +96,8 @@ void Frozenbits_generator_TV
 				cmd      += " --log-length=" + str_m;                  // m
 				cmd      += " -f=" + filename;                         // filename
 
-				std::clog << rang::tag::info << "Generating best channels positions file (\"" << filename << "\")...\r";
-				fflush(stdout); fflush(stderr);
+				// std::clog << rang::tag::info << "Generating best channels positions file (\"" << filename << "\")...\r";
+				// fflush(stdout); fflush(stderr);
 
 				if (system(cmd.c_str()) == 0)
 				{

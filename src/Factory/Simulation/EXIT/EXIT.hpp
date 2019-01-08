@@ -1,4 +1,4 @@
-#if !defined(PREC_8_BIT) && !defined(PREC_16_BIT)
+#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
 #ifndef FACTORY_SIMULATION_EXIT_HPP_
 #define FACTORY_SIMULATION_EXIT_HPP_

@@ -45,7 +45,7 @@ tools::Flip_and_check_DB<B,Q>* Flip_and_check_DB::parameters
 	if (!this->enable)
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	return new tools::Flip_and_check_DB<B,Q>(this->size, this->n_ite, crc, this->start_crc_check_ite, this->q, this->ite_min, this->ite_max, this->ite_step, this->n_frames);
+	return new tools::Flip_and_check_DB<B,Q>(this->size, this->n_ite, crc, this->crc_start_ite, this->q, this->ite_min, this->ite_max, this->ite_step, this->n_frames);
 }
 
 template<typename B, typename Q>
@@ -57,7 +57,7 @@ tools::Flip_and_check_DB<B,Q>* Flip_and_check_DB
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::tools::Flip_and_check_DB<B_8 ,Q_8 >* aff3ct::factory::Flip_and_check_DB::parameters::build<B_8 ,Q_8 >(module::CRC<B_8 >&) const;
 template aff3ct::tools::Flip_and_check_DB<B_16,Q_16>* aff3ct::factory::Flip_and_check_DB::parameters::build<B_16,Q_16>(module::CRC<B_16>&) const;
 template aff3ct::tools::Flip_and_check_DB<B_32,Q_32>* aff3ct::factory::Flip_and_check_DB::parameters::build<B_32,Q_32>(module::CRC<B_32>&) const;

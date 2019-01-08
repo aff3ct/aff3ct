@@ -17,7 +17,7 @@ template<typename R>
 Channel_binary_symmetric<R>
 ::Channel_binary_symmetric(const int N, std::unique_ptr<tools::Event_generator<R>>&& event_generator,
               const tools::Event_probability<R> &noise, const int n_frames)
-: Channel<R>(N, noise, n_frames), event_generator(std::move(event_generator)), event_draw(this->N)
+: Channel<R>(N, noise, n_frames), event_generator(std::move(event_generator))
 {
 	const std::string name = "Channel_binary_symmetric";
 	this->set_name(name);
@@ -29,8 +29,10 @@ void Channel_binary_symmetric<R>
 {
 	this->check_noise();
 
+	auto event_draw = (E*)(this->noise.data() + this->N * frame_id);
+
 	const auto event_probability = this->n->get_noise();
-	event_generator->generate(this->event_draw.data(), (unsigned)this->N, event_probability);
+	event_generator->generate(event_draw, (unsigned)this->N, event_probability);
 
 	const mipp::Reg<E> r_false = (E)false;
 	const mipp::Reg<R> r_0     = (R)0.0;
@@ -41,7 +43,7 @@ void Channel_binary_symmetric<R>
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
 	{
 		const mipp::Reg<R> r_in    = X_N + i;
-		const mipp::Reg<E> r_event = &this->event_draw[i];
+		const mipp::Reg<E> r_event = event_draw + i;
 
 		const auto m_zero  = r_in == r_0;
 		const auto m_event = r_event != r_false;
@@ -51,7 +53,7 @@ void Channel_binary_symmetric<R>
 	}
 
 	for (auto i = vec_loop_size; i < this->N; i++)
-		Y_N[i] = this->event_draw[i] != (X_N[i] == (R)0.0) ? (R)0.0 : (R)1.0;
+		Y_N[i] = event_draw[i] != (X_N[i] == (R)0.0) ? (R)0.0 : (R)1.0;
 }
 
 template<typename R>
@@ -64,7 +66,7 @@ void Channel_binary_symmetric<R>::check_noise()
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Channel_binary_symmetric<R_32>;
 template class aff3ct::module::Channel_binary_symmetric<R_64>;
 #else

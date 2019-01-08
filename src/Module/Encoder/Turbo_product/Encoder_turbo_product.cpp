@@ -152,7 +152,7 @@ typename Encoder_turbo_product<B>::template rob<Tag, p>::filler Encoder_turbo_pr
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 /*template class Encoder_turbo_product<B_8 >::rob<Encoder_turbo_product<B_8 >::Enc_X_N_mem, &Encoder<B_8 >::X_N_mem>;
 template class Encoder_turbo_product<B_16>::rob<Encoder_turbo_product<B_16>::Enc_X_N_mem, &Encoder<B_16>::X_N_mem>;
 template class Encoder_turbo_product<B_32>::rob<Encoder_turbo_product<B_32>::Enc_X_N_mem, &Encoder<B_32>::X_N_mem>;

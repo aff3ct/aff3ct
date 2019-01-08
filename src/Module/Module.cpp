@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 Module::
 Module(const int n_frames)
 : n_frames(n_frames), name("Module"), short_name("Module")
-#ifdef SYSTEMC_MODULE
+#ifdef AFF3CT_SYSTEMC_MODULE
 , sc(*this)
 #endif
 {

@@ -24,7 +24,7 @@ Encoder_turbo<B>
 {
 	const std::string name = "Encoder_turbo";
 	this->set_name(name);
-	
+
 	if (N - (enco_n.tail_length() + enco_i.tail_length()) != 3 * K)
 	{
 		std::stringstream message;
@@ -89,7 +89,7 @@ bool Encoder_turbo<B>
 	pi.interleave(U_K_n, U_K_i.data());
 
 	std::copy(U_K_i  .begin(),
-	          U_K_i  .begin() + enco_i.get_K(), 
+	          U_K_i  .begin() + enco_i.get_K(),
 	          X_N_tmp.begin());
 	std::copy(X_N             + enco_n.get_N(),
 	          X_N             + this->N,
@@ -101,9 +101,9 @@ bool Encoder_turbo<B>
 	return true;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_turbo<B_8>;
 template class aff3ct::module::Encoder_turbo<B_16>;
 template class aff3ct::module::Encoder_turbo<B_32>;

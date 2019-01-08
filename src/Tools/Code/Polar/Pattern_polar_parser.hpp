@@ -82,7 +82,7 @@ public:
 	 */
 	Pattern_polar_parser(const int& N,
 	                     const std::vector<bool> &frozen_bits,
-	                     std::initializer_list<tools::Pattern_polar_i*> patterns,
+	                     const std::vector<tools::Pattern_polar_i*> patterns,
 	                     const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate0,
 	                     const std::unique_ptr<tools::Pattern_polar_i> &pattern_rate1);
 
@@ -97,7 +97,7 @@ public:
 	 */
 	Pattern_polar_parser(const int& N,
 	                     const std::vector<bool>& frozen_bits,
-	                     std::initializer_list<tools::Pattern_polar_i*> patterns,
+	                     const std::vector<tools::Pattern_polar_i*> patterns,
 	                     const int pattern_rate0_id,
 	                     const int pattern_rate1_id);
 

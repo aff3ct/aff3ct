@@ -3,7 +3,6 @@
 #include <utility>
 #include <sstream>
 #include <vector>
-#include <map>
 
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/general_utils.h"
@@ -75,8 +74,7 @@ tools::Argument_map_info Factory
 }
 
 void Factory
-::get_description(const std::vector<Factory::parameters*> &params,
-                     tools::Argument_map_info &args)
+::get_description(const std::vector<Factory::parameters*> &params, tools::Argument_map_info &args)
 {
 	for (auto *p : params)
 		p->get_description(args);

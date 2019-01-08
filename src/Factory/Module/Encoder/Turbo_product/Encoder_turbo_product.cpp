@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 
@@ -16,7 +17,7 @@ Encoder_turbo_product::parameters
   sub(new Encoder_BCH::parameters(prefix+"-sub")),
   itl(new Interleaver::parameters("itl"))
 {
-	this->type = "TURBO_PROD";
+	this->type = "TPC";
 }
 
 Encoder_turbo_product::parameters* Encoder_turbo_product::parameters
@@ -58,6 +59,7 @@ void Encoder_turbo_product::parameters
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_turbo_product::parameters::";
 
 	args.erase({p+"-info-bits", "K"});
 	args.erase({p+"-cw-size",   "N"});
@@ -72,19 +74,17 @@ void Encoder_turbo_product::parameters
 		args.erase({pi+"-fra", "F"});
 	}
 
-	tools::add_options(args.at({p+"-type"}), 0, "TURBO_PROD");
+	tools::add_options(args.at({p+"-type"}), 0, "TPC");
 
-	args.add(
-		{p+"-ext"},
-		tools::None(),
-		"extends code with a parity bits.");
-
+	tools::add_arg(args, p, class_name+"p+ext",
+		tools::None());
 
 	sub->get_description(args);
 
 	auto ps = sub->get_prefix();
 
-	args.erase({ps+"-fra", "F"});
+	args.erase({ps+"-fra",  "F"});
+	args.erase({ps+"-seed", "S"});
 }
 
 void Encoder_turbo_product::parameters
@@ -143,7 +143,7 @@ module::Encoder_turbo_product<B>* Encoder_turbo_product::parameters
               module::Encoder_BCH<B> &enc_r,
               module::Encoder_BCH<B> &enc_c) const
 {
-	if (this->type == "TURBO_PROD") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c, n_frames);
+	if (this->type == "TPC") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c, n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -160,7 +160,7 @@ module::Encoder_turbo_product<B>* Encoder_turbo_product
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Encoder_turbo_product<B_8 >* aff3ct::factory::Encoder_turbo_product::parameters::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&, aff3ct::module::Encoder_BCH<B_8 >&, aff3ct::module::Encoder_BCH<B_8 >&) const;
 template aff3ct::module::Encoder_turbo_product<B_16>* aff3ct::factory::Encoder_turbo_product::parameters::build<B_16>(const aff3ct::module::Interleaver<B_16>&, aff3ct::module::Encoder_BCH<B_16>&, aff3ct::module::Encoder_BCH<B_16>&) const;
 template aff3ct::module::Encoder_turbo_product<B_32>* aff3ct::factory::Encoder_turbo_product::parameters::build<B_32>(const aff3ct::module::Interleaver<B_32>&, aff3ct::module::Encoder_BCH<B_32>&, aff3ct::module::Encoder_BCH<B_32>&) const;

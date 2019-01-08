@@ -14,7 +14,7 @@ Decoder_LDPC_BP_peeling<B,R>::Decoder_LDPC_BP_peeling(const int K, const int N, 
                                                       const bool enable_syndrome, const int syndrome_depth,
                                                       const int n_frames)
 : Decoder               (K, N, n_frames, 1),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1),
+  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1),
   Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
 
   info_bits_pos  (info_bits_pos       ),
@@ -29,6 +29,7 @@ template <typename B, typename R>
 bool Decoder_LDPC_BP_peeling<B,R>
 ::_decode(const int frame_id)
 {
+	this->cur_syndrome_depth = 0;
 	auto links = this->H;
 
 	auto& CN = this->check_nodes;
@@ -92,7 +93,7 @@ bool Decoder_LDPC_BP_peeling<B,R>
 		if (this->enable_syndrome && (all_check_nodes_done || no_modification))
 		{
 			this->cur_syndrome_depth++;
-			if (this->cur_syndrome_depth == this->syndrome_depth)
+			if (this->cur_syndrome_depth >= this->syndrome_depth)
 				break;
 		}
 		else
@@ -199,7 +200,7 @@ void Decoder_LDPC_BP_peeling<B,R>::_store_cw(B *V_N, const int frame_id)
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Decoder_LDPC_BP_peeling<B_8,Q_8>;
 template class aff3ct::module::Decoder_LDPC_BP_peeling<B_16,Q_16>;
 template class aff3ct::module::Decoder_LDPC_BP_peeling<B_32,Q_32>;

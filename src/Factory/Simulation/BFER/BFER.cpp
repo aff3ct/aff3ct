@@ -1,7 +1,9 @@
 #include <thread>
 
-#include "BFER.hpp"
+#include "Tools/Documentation/documentation.h"
 #include "Tools/Math/utils.h"
+
+#include "BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -87,54 +89,40 @@ void BFER::parameters
 	Simulation::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::BFER::parameters::";
 
-	args.add(
-		{p+"-coset", "c"},
-		tools::None(),
-		"enable the coset approach.");
+	tools::add_arg(args, p, class_name+"p+coset,c",
+		tools::None());
 
-	args.add(
-		{p+"-err-trk"},
+	tools::add_arg(args, p, class_name+"p+err-trk",
 		tools::None(),
-		"enable the tracking of the bad frames (by default the frames are stored in the current folder).",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-err-trk-rev"},
+	tools::add_arg(args, p, class_name+"p+err-trk-rev",
 		tools::None(),
-		"automatically replay the saved frames.",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-err-trk-path"},
+	tools::add_arg(args, p, class_name+"p+err-trk-path",
 		tools::File(tools::openmode::read_write),
-		"base path for the files where the bad frames will be stored or read.",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-err-trk-thold"},
+	tools::add_arg(args, p, class_name+"p+err-trk-thold",
 		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"dump only frames with a bit error count above or equal to this threshold.",
 		tools::arg_rank::ADV);
 
-	args.add(
-		{p+"-coded"},
-		tools::None(),
-		"enable the coded monitoring (extends the monitored bits to the entire codeword).");
-
+	tools::add_arg(args, p, class_name+"p+coded",
+		tools::None());
 
 	auto pmon = mnt_er->get_prefix();
 
-	args.add(
-		{pmon+"-mutinfo"},
-		tools::None(),
-		"allow the computation of the mutual information.");
+	tools::add_arg(args, pmon, class_name+"p+mutinfo",
+		tools::None());
 }
 
 void BFER::parameters
 ::store(const tools::Argument_map_value &vals)
 {
-#if !defined(SYSTEMC)
+#if !defined(AFF3CT_SYSTEMC_SIMU)
 	this->n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
 

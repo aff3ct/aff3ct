@@ -23,7 +23,12 @@ void Modem_OOK_BSC<B,R,Q>
 {
 	Modem_OOK<B,R,Q>::set_noise(noise);
 
-	this->log_pe_1_pe = (Q)log(this->n->get_noise() / (1 - this->n->get_noise())); // trow if noise is not set
+	auto proba = this->n->get_noise(); // trow if noise is not set
+
+	if (proba == (R)0.)
+		proba = (R)1e-10;
+
+	this->log_pe_1_pe = (Q)log(proba / (1 - proba));
 }
 
 template <typename B, typename R, typename Q>
@@ -48,7 +53,7 @@ void Modem_OOK_BSC<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Modem_OOK_BSC<B_8,R_8,R_8>;
 template class aff3ct::module::Modem_OOK_BSC<B_8,R_8,Q_8>;
 template class aff3ct::module::Modem_OOK_BSC<B_16,R_16,R_16>;
@@ -57,7 +62,7 @@ template class aff3ct::module::Modem_OOK_BSC<B_32,R_32,R_32>;
 template class aff3ct::module::Modem_OOK_BSC<B_64,R_64,R_64>;
 #else
 template class aff3ct::module::Modem_OOK_BSC<B,R,Q>;
-#if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
+#if !defined(AFF3CT_32BIT_PREC) && !defined(AFF3CT_64BIT_PREC)
 template class aff3ct::module::Modem_OOK_BSC<B,R,R>;
 #endif
 #endif

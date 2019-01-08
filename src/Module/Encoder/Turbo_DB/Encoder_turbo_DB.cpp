@@ -24,7 +24,7 @@ Encoder_turbo_DB<B>
 {
 	const std::string name = "Encoder_turbo_DB";
 	this->set_name(name);
-	
+
 	if (K % 2)
 	{
 		std::stringstream message;
@@ -50,7 +50,7 @@ Encoder_turbo_DB<B>
 	if (!enco_n.is_buffered() || !enco_i.is_buffered())
 	{
 		std::stringstream message;
-		message << "Both 'enco_n.is_buffered()' and 'enco_i.is_buffered()' have to be true ('enco_n.is_buffered()' = " 
+		message << "Both 'enco_n.is_buffered()' and 'enco_i.is_buffered()' have to be true ('enco_n.is_buffered()' = "
 		        << enco_n.is_buffered() << ", 'enco_i.is_buffered()' = " << enco_i.is_buffered() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -83,13 +83,13 @@ void Encoder_turbo_DB<B>
 
 	enco_n.encode(U_K - frame_id * enco_n.get_K(), X_N_tmp.data(), frame_id);
 
-	std::copy(X_N_tmp.begin() + frame_id * enco_n.get_N() + enco_n.get_K(), 
+	std::copy(X_N_tmp.begin() + frame_id * enco_n.get_N() + enco_n.get_K(),
 	          X_N_tmp.begin() + frame_id * enco_n.get_N() + enco_n.get_N(),
 	          this->par_n.begin());
 
 	enco_i.encode(U_K_i.data(), X_N_tmp.data(), frame_id);
 
-	std::copy(X_N_tmp.begin() + frame_id * enco_i.get_N() + enco_i.get_K(), 
+	std::copy(X_N_tmp.begin() + frame_id * enco_i.get_N() + enco_i.get_K(),
 	          X_N_tmp.begin() + frame_id * enco_i.get_N() + enco_i.get_N(),
 	          this->par_i.begin());
 
@@ -150,9 +150,9 @@ bool Encoder_turbo_DB<B>
 	return true;
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_turbo_DB<B_8>;
 template class aff3ct::module::Encoder_turbo_DB<B_16>;
 template class aff3ct::module::Encoder_turbo_DB<B_32>;

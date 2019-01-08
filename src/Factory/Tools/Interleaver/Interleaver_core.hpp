@@ -20,15 +20,16 @@ struct Interleaver_core : public Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		int         size     = 0;
+		int         size       = 0;
 
 		// optional parameters
-		std::string type     = "RANDOM";
-		std::string path     = "";
-		int         n_cols   = 4; // number of columns of the columns interleaver
-		int         n_frames = 1;
-		int         seed     = 0;
-		bool        uniform  = false; // set at true to regenerate the interleaver at each new frame
+		std::string type       = "RANDOM";
+		std::string path       = "";
+		std::string read_order = "TOP_LEFT";
+		int         n_cols     = 4; // number of columns of the columns interleaver
+		int         n_frames   = 1;
+		int         seed       = 0;
+		bool        uniform    = false; // set at true to regenerate the interleaver at each new frame
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Interleaver_core_prefix);

@@ -1,4 +1,4 @@
-#if defined(SYSTEMC) || defined(SYSTEMC_MODULE)
+#if defined(AFF3CT_SYSTEMC_SIMU) || defined(AFF3CT_SYSTEMC_MODULE)
 
 #ifndef SC_DUMMY_HPP_
 #define SC_DUMMY_HPP_
@@ -35,4 +35,4 @@ private:
 
 #endif /* SC_DUMMY_HPP_ */
 
-#endif /* SYSTEMC */
+#endif /* AFF3CT_SYSTEMC_SIMU */

@@ -1,4 +1,4 @@
-#ifdef SYSTEMC_MODULE
+#ifdef AFF3CT_SYSTEMC_MODULE
 
 #include "Module.hpp"
 #include "SC_Module.hpp"

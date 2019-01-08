@@ -165,7 +165,7 @@ void Channel_Rayleigh_LLR<R>::check_noise()
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Channel_Rayleigh_LLR<R_32>;
 template class aff3ct::module::Channel_Rayleigh_LLR<R_64>;
 #else

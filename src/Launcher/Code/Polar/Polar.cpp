@@ -72,7 +72,7 @@ void Polar<L,B,R,Q>
 #include "Launcher/Simulation/EXIT.hpp"
 #include "Launcher/Simulation/BFER_std.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::launcher::Polar<aff3ct::launcher::EXIT    <B_32,R_32     >,B_32,R_32     >;
 template class aff3ct::launcher::Polar<aff3ct::launcher::EXIT    <B_64,R_64     >,B_64,R_64     >;
 template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_std<B_8, R_8, Q_8 >,B_8 ,R_8 ,Q_8 >;
@@ -84,7 +84,7 @@ template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_ite<B_16,R_16,Q_16
 template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_ite<B_32,R_32,Q_32>,B_32,R_32,Q_32>;
 template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_ite<B_64,R_64,Q_64>,B_64,R_64,Q_64>;
 #else
-#if defined(PREC_32_BIT) || defined(PREC_64_BIT)
+#if defined(AFF3CT_32BIT_PREC) || defined(AFF3CT_64BIT_PREC)
 template class aff3ct::launcher::Polar<aff3ct::launcher::EXIT    <B,R  >,B,R  >;
 #endif
 template class aff3ct::launcher::Polar<aff3ct::launcher::BFER_std<B,R,Q>,B,R,Q>;

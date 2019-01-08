@@ -18,7 +18,7 @@ Encoder_RSC_sys<B>
 {
 	const std::string name = "Encoder_RSC_sys";
 	this->set_name(name);
-	
+
 	if (n_ff <= 0)
 	{
 		std::stringstream message;
@@ -154,7 +154,7 @@ void Encoder_RSC_sys<B>
 
 template <typename B>
 bool Encoder_RSC_sys<B>
-::_is_codeword(const B* sys, const B* tail_sys, const B* par, const B* tail_par, 
+::_is_codeword(const B* sys, const B* tail_sys, const B* par, const B* tail_par,
                const int stride, const int stride_tail)
 {
 	auto state = 0; // initial (and final) state 0 0 0
@@ -209,9 +209,9 @@ bool Encoder_RSC_sys<B>
 		                    2);                    // stride tail bits
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Encoder_RSC_sys<B_8>;
 template class aff3ct::module::Encoder_RSC_sys<B_16>;
 template class aff3ct::module::Encoder_RSC_sys<B_32>;

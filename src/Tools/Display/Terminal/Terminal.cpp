@@ -1,5 +1,5 @@
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
 
@@ -114,7 +114,7 @@ bool Terminal
 bool Terminal
 ::is_over()
 {
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	char over_send = (char)Terminal::over, over_recv;
 
 	MPI_Allreduce(&over_send, &over_recv, 1, MPI_CHAR, MPI_LOR, MPI_COMM_WORLD);

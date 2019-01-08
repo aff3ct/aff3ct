@@ -1,6 +1,7 @@
 #include <cctype>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_seq.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_vec.hpp"
@@ -32,16 +33,13 @@ void Scaling_factor::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Scaling_factor::parameters::";
 
-	args.add(
-		{p+"-type"},
-		tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")),
-		"scaling factor type.");
+	tools::add_arg(args, p, class_name+"p+type",
+		tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")));
 
-	args.add(
-		{p+"-ite"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of iterations.");
+	tools::add_arg(args, p, class_name+"p+ite",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Scaling_factor::parameters
@@ -105,7 +103,7 @@ tools::Scaling_factor<B,Q>* Scaling_factor
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::tools::Scaling_factor<B_8 ,Q_8 >* aff3ct::factory::Scaling_factor::parameters::build<B_8 ,Q_8 >() const;
 template aff3ct::tools::Scaling_factor<B_16,Q_16>* aff3ct::factory::Scaling_factor::parameters::build<B_16,Q_16>() const;
 template aff3ct::tools::Scaling_factor<B_32,Q_32>* aff3ct::factory::Scaling_factor::parameters::build<B_32,Q_32>() const;

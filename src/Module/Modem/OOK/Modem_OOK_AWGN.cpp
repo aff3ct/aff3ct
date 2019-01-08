@@ -96,7 +96,7 @@ void Modem_OOK_AWGN<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Modem_OOK_AWGN<B_8,R_8,R_8>;
 template class aff3ct::module::Modem_OOK_AWGN<B_8,R_8,Q_8>;
 template class aff3ct::module::Modem_OOK_AWGN<B_16,R_16,R_16>;
@@ -105,7 +105,7 @@ template class aff3ct::module::Modem_OOK_AWGN<B_32,R_32,R_32>;
 template class aff3ct::module::Modem_OOK_AWGN<B_64,R_64,R_64>;
 #else
 template class aff3ct::module::Modem_OOK_AWGN<B,R,Q>;
-#if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
+#if !defined(AFF3CT_32BIT_PREC) && !defined(AFF3CT_64BIT_PREC)
 template class aff3ct::module::Modem_OOK_AWGN<B,R,R>;
 #endif
 #endif

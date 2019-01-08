@@ -49,7 +49,9 @@ BFER<B,R,Q>
 	}
 
 	if (!params_BFER.noise->pdf_path.empty())
-		distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path));
+		distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path,
+		                                                tools::Distribution_mode::SUMMATION,
+		                                                params_BFER.mdm->rop_est_bits > 0));
 
 	this->build_monitors ();
 	this->build_reporters();
@@ -99,7 +101,7 @@ void BFER<B,R,Q>
 	for (auto noise_idx = noise_begin; noise_idx != noise_end; noise_idx += noise_step)
 	{
 		this->noise.reset(params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
-		                                                       params_BFER.mdm->bps, params_BFER.mdm->upf));
+		                                                       params_BFER.mdm->bps, params_BFER.mdm->cpm_upf));
 
 		// manage noise distributions to be sure it exists
 		if (this->distributions != nullptr)
@@ -144,7 +146,7 @@ void BFER<B,R,Q>
 				return;
 		}
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
 #endif
 		if (params_BFER.display_legend)
@@ -152,7 +154,7 @@ void BFER<B,R,Q>
 				|| (params_BFER.statistics && !params_BFER.debug))
 				terminal->legend(std::cout);
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
 #endif
 		// start the terminal to display BER/FER results
@@ -179,7 +181,7 @@ void BFER<B,R,Q>
 		}
 
 
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
 #endif
 		if (!params_BFER.ter->disabled && terminal != nullptr && !this->simu_error)
@@ -243,7 +245,7 @@ void BFER<B,R,Q>
 					max = err_hist.get_hist_max();
 				else
 					max = params_BFER.mnt_er->err_hist;
-				err_hist.dump(file_err_hist, 0, max, 0, false, false, false, "; ");
+				err_hist.dump(file_err_hist, 0, max);
 			}
 		}
 
@@ -342,7 +344,7 @@ void BFER<B,R,Q>
 	}
 
 	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
-#ifdef ENABLE_MPI
+#ifdef AFF3CT_MPI
 	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
 #else
 	module::Monitor_reduction::set_reduce_frequency(std::chrono::milliseconds(0));
@@ -407,7 +409,7 @@ bool BFER<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::BFER<B_8,R_8,Q_8>;
 template class aff3ct::simulation::BFER<B_16,R_16,Q_16>;
 template class aff3ct::simulation::BFER<B_32,R_32,Q_32>;

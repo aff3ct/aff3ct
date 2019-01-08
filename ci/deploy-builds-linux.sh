@@ -37,11 +37,19 @@ then
 	exit 1
 fi
 
+if [ -z "$GIT_VERSION" ]
+then
+	echo "Please define the 'GIT_VERSION' environment variable."
+	exit 1
+fi
+
 REPO_WEB=aff3ct.github.io
 REPO_RESSOURCES=ressources
 git clone git@github.com:aff3ct/${REPO_WEB}.git
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 cd ${REPO_WEB}
 git clone git@github.com:aff3ct/${REPO_RESSOURCES}.git
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 git submodule update --init --recursive
 mkdir ressources/aff3ct_builds
 cd ..
@@ -52,14 +60,44 @@ do
 	ZIP_NAME=$(echo "${BUILD/build/$PREFIX}")
 	ZIP_NAME=$(echo "${ZIP_NAME/\./\_}_$GIT_HASH.zip")
 
-	find $BUILD/inc/ -type f -follow -print | grep "[.]cpp$"    | xargs rm -f
-	find $BUILD/inc/ -type f -follow -print | grep "[.]cpp.in$" | xargs rm -f
-	cp -r conf $BUILD/
-	rm -rf $BUILD/conf/.git
+	# prepare headers
+	find $BUILD/include/aff3ct/ -type f -follow -print | grep "[.]cpp$"    | xargs rm -f
+	find $BUILD/include/aff3ct/ -type f -follow -print | grep "[.]cpp.in$" | xargs rm -f
+	cp -r lib/date/include/date $BUILD/include/
+	mkdir $BUILD/include/MIPP
+	cp -r lib/MIPP/src/* $BUILD/include/MIPP/
+	mkdir $BUILD/include/dirent
+	cp lib/MSVC/include/dirent.h $BUILD/include/dirent/
+	mkdir $BUILD/include/rang
+	cp lib/rang/include/rang.hpp $BUILD/include/rang/
+
+	mv $BUILD/include $BUILD/aff3ct-$GIT_VERSION
+	mkdir $BUILD/include
+	mv $BUILD/aff3ct-$GIT_VERSION $BUILD/include/
+
+	# prepare conf and refs files
+	mkdir $BUILD/share
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION
+	cp -r conf $BUILD/share/aff3ct-$GIT_VERSION/
+	cp -r refs $BUILD/share/aff3ct-$GIT_VERSION/
+	rm -rf $BUILD/share/aff3ct-$GIT_VERSION/conf/.git
+	rm -rf $BUILD/share/aff3ct-$GIT_VERSION/refs/.git
+	rm -rf $BUILD/share/aff3ct-$GIT_VERSION/refs/readers
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc/strings
+	cp doc/sphinx/strings.rst $BUILD/share/aff3ct-$GIT_VERSION/doc/strings
+
+	# prepare doc
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc
+	cp -r doc/sphinx/build/html $BUILD/share/aff3ct-$GIT_VERSION/doc/
+	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc/pdf
+	cp doc/sphinx/build/latex/AFF3CT.pdf $BUILD/share/aff3ct-$GIT_VERSION/doc/pdf
 
 	zip -r $ZIP_NAME $BUILD
+	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
-	cp $ZIP_NAME ${REPO_WEB}/${REPO_RESSOURCES}/aff3ct_builds/
+	mv $ZIP_NAME ${REPO_WEB}/${REPO_RESSOURCES}/aff3ct_builds/
+	rm -rf $BUILD
 
 	if [ -z "$BUILDS_LIST" ]
 	then
@@ -75,7 +113,7 @@ cd ${REPO_WEB}/${REPO_RESSOURCES}
 # git lfs install --local
 # git lfs track aff3ct_builds/*
 git add -f aff3ct_builds/*
-git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
+git commit -m "Automatic: add new AFF3CT builds ($GIT_BRANCH: $GIT_HASH)."
 
 #delete old builds
 BUILD_CSV=../download/download_${GIT_BRANCH}.csv
@@ -83,7 +121,7 @@ N_BUILDS_TO_KEEP=0
 if [ "${GIT_BRANCH}" == "master" ]; then
 	N_BUILDS_TO_KEEP=5
 else
-	N_BUILDS_TO_KEEP=10
+	N_BUILDS_TO_KEEP=5
 fi
 N_BUILDS=$(wc -l $BUILD_CSV | cut -d " " -f1)
 N_BUILDS=$(($N_BUILDS-1))
@@ -119,8 +157,10 @@ fi
 git gc --prune=now
 # git gc --aggressive --prune=now
 git push origin master --force
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
 cd ..
 git add -f download/download_${GIT_BRANCH}.csv
-git commit -m "Automatic: add new AFF3CT builds ($GIT_HASH)."
+git commit -m "Automatic: add new AFF3CT builds ($GIT_BRANCH: $GIT_HASH)."
 git push origin master
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi

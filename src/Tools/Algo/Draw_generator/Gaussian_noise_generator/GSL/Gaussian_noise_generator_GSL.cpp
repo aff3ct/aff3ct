@@ -1,4 +1,4 @@
-#ifdef CHANNEL_GSL
+#ifdef AFF3CT_CHANNEL_GSL
 
 #include "Tools/Exception/exception.hpp"
 
@@ -30,12 +30,12 @@ void Gaussian_noise_generator_GSL<R>
 ::generate(R *noise, const unsigned length, const R sigma, const R mu)
 {
 	for (unsigned i = 0; i < length; i++)
-		noise[i] = (R)gsl_ran_gaussian(rng.get(), sigma) + mu;
+		noise[i] = (R)gsl_ran_gaussian_ziggurat(rng.get(), sigma) + mu;
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::tools::Gaussian_noise_generator_GSL<R_32>;
 template class aff3ct::tools::Gaussian_noise_generator_GSL<R_64>;
 #else

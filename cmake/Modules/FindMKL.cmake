@@ -3,7 +3,7 @@
 #
 # Options:
 #
-#   MKL_STATAIC       :   use static linking
+#   MKL_STATIC        :   use static linking
 #   MKL_MULTI_THREADED:   use multi-threading
 #   MKL_SDL           :   Single Dynamic Library interface
 #
@@ -38,20 +38,20 @@ endif()
 set(_MKL_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
 
 if(WIN32)
-    if(MKL_STATAIC)
+    if(MKL_STATIC)
         set(CMAKE_FIND_LIBRARY_SUFFIXES .lib)
     else()
         set(CMAKE_FIND_LIBRARY_SUFFIXES _dll.lib)
     endif()
 else()
     if(APPLE)
-        if(MKL_STATAIC)
+        if(MKL_STATIC)
             set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
         else()
             set(CMAKE_FIND_LIBRARY_SUFFIXES .dylib)
         endif()
     else()
-        if(MKL_STATAIC)
+        if(MKL_STATIC)
             set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
         else()
             set(CMAKE_FIND_LIBRARY_SUFFIXES .so)
@@ -61,16 +61,16 @@ endif()
 
 # MKL is composed by four layers: Interface, Threading, Computational and RTL
 if(APPLE)
-    set(MKL_LIBRARIES_PATH 
+    set(MKL_LIBRARIES_PATH
         # ${MKL_ROOT}/lib/ia32/
         ${MKL_ROOT}/lib/)
 else()
-    set(MKL_LIBRARIES_PATH 
+    set(MKL_LIBRARIES_PATH
         # ${MKL_ROOT}/lib/ia32/
         ${MKL_ROOT}/lib/intel64/)
 endif()
 
-set(INTEL_LIBRARIES_PATH 
+set(INTEL_LIBRARIES_PATH
     # ${INTEL_ROOT}/lib/ia32/
     ${INTEL_ROOT}/lib/intel64/)
 

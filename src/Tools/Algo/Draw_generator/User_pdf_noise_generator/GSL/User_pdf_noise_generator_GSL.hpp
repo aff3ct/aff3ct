@@ -1,4 +1,4 @@
-#ifdef CHANNEL_GSL
+#ifdef AFF3CT_CHANNEL_GSL
 
 #ifndef User_pdf_noise_generator_GSL_HPP_
 #define User_pdf_noise_generator_GSL_HPP_

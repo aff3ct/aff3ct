@@ -1,4 +1,4 @@
-#ifdef CHANNEL_MKL
+#ifdef AFF3CT_CHANNEL_MKL
 
 #include <sstream>
 
@@ -56,7 +56,7 @@ void User_pdf_noise_generator_MKL<R>
 	}
 }
 
-#if defined(MULTI_PREC) | defined(PREC_64_BIT)
+#if defined(AFF3CT_MULTI_PREC) | defined(AFF3CT_64BIT_PREC)
 
 namespace aff3ct
 {
@@ -93,7 +93,7 @@ void User_pdf_noise_generator_MKL<R>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::tools::User_pdf_noise_generator_MKL<R_32>;
 template class aff3ct::tools::User_pdf_noise_generator_MKL<R_64>;
 #else

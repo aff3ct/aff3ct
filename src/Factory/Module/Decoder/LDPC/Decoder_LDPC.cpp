@@ -1,5 +1,8 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
+#include "Tools/Arguments/Splitter/Splitter.hpp"
 #include "Tools/Math/max.h"
+
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp"
@@ -27,10 +30,12 @@
 
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/ONMS/Decoder_LDPC_BP_horizontal_layered_ONMS_inter.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_B.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_E.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_SPA.hpp"
 #include "Module/Decoder/LDPC/BP/Peeling/Decoder_LDPC_BP_peeling.hpp"
 #include "Module/Decoder/LDPC/BF/OMWBF/Decoder_LDPC_bit_flipping_OMWBF.hpp"
-
-
+#include "Module/Decoder/LDPC/BF/PPBF/Decoder_LDPC_probabilistic_parallel_bit_flipping.hpp"
 
 #include "Decoder_LDPC.hpp"
 
@@ -54,17 +59,28 @@ Decoder_LDPC::parameters* Decoder_LDPC::parameters
 	return new Decoder_LDPC::parameters(*this);
 }
 
+struct Real_splitter
+{
+	static std::vector<std::string> split(const std::string& val)
+	{
+		const std::string head      = "{([";
+		const std::string queue     = "})]";
+		const std::string separator = ",";
+
+		return tools::Splitter::split(val, head, queue, separator);
+	}
+};
+
 void Decoder_LDPC::parameters
 ::get_description(tools::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_LDPC::parameters::";
 
-	args.add(
-		{p+"-h-path"},
+	tools::add_arg(args, p, class_name+"p+h-path",
 		tools::File(tools::openmode::read),
-		"path to the H matrix (AList or QC formated file).",
 		tools::arg_rank::REQ);
 
 	args.add_link({p+"-h-path"}, {p+"-cw-size",   "N"}); // N_cw is H width
@@ -75,53 +91,37 @@ void Decoder_LDPC::parameters
 #ifdef __cpp_aligned_new
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_HORIZONTAL_LAYERED_LEGACY");
 #endif
-	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA", "WBF");
+	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA", "GALB", "GALE", "WBF", "PPBF");
 
-	args.add(
-		{p+"-ite", "i"},
-		tools::Integer(tools::Positive()),
-		"maximal number of iterations in the LDPC decoder.");
+	tools::add_arg(args, p, class_name+"p+ite,i",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-off"},
-		tools::Real(),
-		"offset used in the offset min-sum BP algorithm (works only with \"--dec-implem NMS\").");
+	tools::add_arg(args, p, class_name+"p+off",
+		tools::Real());
 
-	args.add(
-		{p+"-mwbf"},
-		tools::Real(),
-		"factor used in the modified WBF algorithm (works only with \"--dec-implem WBF\"). Set 0 for basic WBF");
+	tools::add_arg(args, p, class_name+"p+mwbf",
+		tools::Real());
 
-	args.add(
-		{p+"-norm"},
-		tools::Real(tools::Positive()),
-		"normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem NMS\").");
+	tools::add_arg(args, p, class_name+"p+norm",
+		tools::Real(tools::Positive()));
 
-	args.add(
-		{p+"-no-synd"},
-		tools::None(),
-		"disable the syndrome detection (disable the stop criterion in the LDPC decoders).");
+	tools::add_arg(args, p, class_name+"p+no-synd",
+		tools::None());
 
-	args.add(
-		{p+"-synd-depth"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"successive number of iterations to validate the syndrome detection.");
+	tools::add_arg(args, p, class_name+"p+synd-depth",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-simd"},
-		tools::Text(tools::Including_set("INTER")),
-		"the SIMD strategy you want to use.");
+	tools::add_arg(args, p, class_name+"p+simd",
+		tools::Text(tools::Including_set("INTER", "INTRA")));
 
-	args.add(
-		{p+"-min"},
-		tools::Text(tools::Including_set("MIN", "MINL", "MINS")),
-		"the MIN implementation for the nodes (AMS decoder).");
+	tools::add_arg(args, p, class_name+"p+min",
+		tools::Text(tools::Including_set("MIN", "MINL", "MINS")));
 
-	args.add(
-		{p+"-h-reorder"},
-		tools::Text(tools::Including_set("NONE", "ASC", "DSC")),
-		"specify if the check nodes (CNs) from H have to be reordered, 'NONE': do nothing (default), 'ASC': from the "
-		"smallest to the biggest CNs, 'DSC': from the biggest to the smallest CNs.");
+	tools::add_arg(args, p, class_name+"p+h-reorder",
+		tools::Text(tools::Including_set("NONE", "ASC", "DSC")));
+
+	tools::add_arg(args, p, class_name+"p+ppbf-proba",
+		tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)));
 }
 
 void Decoder_LDPC::parameters
@@ -129,15 +129,16 @@ void Decoder_LDPC::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-h-path"    })) this->H_path          = vals.at      ({p+"-h-path"    });
+	if(vals.exist({p+"-h-path"    })) this->H_path          = vals.to_file ({p+"-h-path"    });
 	if(vals.exist({p+"-h-reorder" })) this->H_reorder       = vals.at      ({p+"-h-reorder" });
 	if(vals.exist({p+"-simd"      })) this->simd_strategy   = vals.at      ({p+"-simd"      });
 	if(vals.exist({p+"-min"       })) this->min             = vals.at      ({p+"-min"       });
 	if(vals.exist({p+"-ite",   "i"})) this->n_ite           = vals.to_int  ({p+"-ite",   "i"});
 	if(vals.exist({p+"-synd-depth"})) this->syndrome_depth  = vals.to_int  ({p+"-synd-depth"});
 	if(vals.exist({p+"-off"       })) this->offset          = vals.to_float({p+"-off"       });
-	if(vals.exist({p+"-mwbf"      })) this->mwbf_factor     = vals.to_float({p+"-mwbf"       });
+	if(vals.exist({p+"-mwbf"      })) this->mwbf_factor     = vals.to_float({p+"-mwbf"      });
 	if(vals.exist({p+"-norm"      })) this->norm_factor     = vals.to_float({p+"-norm"      });
+	if(vals.exist({p+"-ppbf-proba"})) this->ppbf_proba      = vals.to_list<float>({p+"-ppbf-proba"});
 	if(vals.exist({p+"-no-synd"   })) this->enable_syndrome = false;
 
 	if (!this->H_path.empty())
@@ -188,6 +189,17 @@ void Decoder_LDPC::parameters
 
 		if (this->implem == "AMS")
 			headers[p].push_back(std::make_pair("Min type", this->min));
+
+		if (this->implem == "PPBF")
+		{
+			std::stringstream bern_str;
+			bern_str << "{";
+			for (unsigned i = 0; i < this->ppbf_proba.size(); i++)
+				bern_str << this->ppbf_proba[i] << (i == this->ppbf_proba.size()-1 ?"":", ");
+			bern_str << "}";
+
+			headers[p].push_back(std::make_pair("Bernouilli probas", bern_str.str()));
+		}
 	}
 }
 
@@ -246,7 +258,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 	}
 	else if (this->type == "BIT_FLIPPING")
 	{
-		     if (this->implem == "WBF")      return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(     this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		     if (this->implem == "WBF" ) return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 	}
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_HORIZONTAL_LAYERED" && this->simd_strategy == "INTER")
@@ -291,7 +303,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 	{
 		if (this->implem == "MS" ) return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)0           , this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		if (this->implem == "NMS") return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)0           , this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "OMS")	return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "OMS")return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 	}
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_FLOODING" && this->simd_strategy == "INTER")
@@ -362,8 +374,11 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 			if (this->min == "MINS") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
 	}
-
 #endif
+	else if (this->type == "BP_FLOODING" && this->simd_strategy == "INTRA")
+	{
+		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_SPA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -382,12 +397,17 @@ module::Decoder_SIHO<B,Q>* Decoder_LDPC::parameters
 		if ((this->type == "BP" || this->type == "BP_FLOODING") && this->simd_strategy.empty())
 		{
 			if (this->implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->implem == "GALB") return new module::Decoder_LDPC_BP_flooding_GALB<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->implem == "GALE") return new module::Decoder_LDPC_BP_flooding_GALE<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
 		else if (this->type == "BP_PEELING")
 		{
 			if (this->implem == "STD") return new module::Decoder_LDPC_BP_peeling<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		}
-
+		else if (this->type == "BIT_FLIPPING")
+		{
+		    if (this->implem == "PPBF") return new module::Decoder_LDPC_PPBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->ppbf_proba,  this->enable_syndrome, this->syndrome_depth, this->seed, this->n_frames);
+		}
 		return build_siso<B,Q>(H, info_bits_pos);
 	}
 }
@@ -410,7 +430,7 @@ module::Decoder_SIHO<B,Q>* Decoder_LDPC
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_LDPC::parameters::build_siso<B_8 ,Q_8 >(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_LDPC::parameters::build_siso<B_16,Q_16>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_LDPC::parameters::build_siso<B_32,Q_32>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, const std::unique_ptr<module::Encoder<B_32>>&) const;
@@ -425,7 +445,7 @@ template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_LDPC::
 #endif
 
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_LDPC::parameters::build<B_8 ,Q_8 >(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_LDPC::parameters::build<B_16,Q_16>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_LDPC::parameters::build<B_32,Q_32>(const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&, const std::unique_ptr<module::Encoder<B_32>>&) const;

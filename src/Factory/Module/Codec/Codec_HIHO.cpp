@@ -40,7 +40,7 @@ module::Codec_HIHO<B,Q>* Codec_HIHO
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Codec_HIHO<B_8 ,Q_8 >* aff3ct::factory::Codec_HIHO::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
 template aff3ct::module::Codec_HIHO<B_16,Q_16>* aff3ct::factory::Codec_HIHO::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
 template aff3ct::module::Codec_HIHO<B_32,Q_32>* aff3ct::factory::Codec_HIHO::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;

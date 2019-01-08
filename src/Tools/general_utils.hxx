@@ -94,6 +94,9 @@ void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_ordinate)
 		}
 	}
 
+	if (vec_abscissa.size() != 0 && r == 0)
+		r = 1;
+
 	vec_abscissa.resize(r);
 	vec_ordinate.resize(r);
 }
@@ -119,6 +122,12 @@ void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& 
 				vec_ordinate[k][r] = std::move(vec_ordinate[k][i]);
 		}
 	}
+
+	if (vec_abscissa.size() != 0 && r == 0)
+		r = 1;
+
+	vec_abscissa.resize(r);
+	vec_ordinate.resize(r);
 }
 
 

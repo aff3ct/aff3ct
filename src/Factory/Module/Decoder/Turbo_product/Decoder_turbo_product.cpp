@@ -1,4 +1,6 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
+
 #include "Tools/general_utils.h"
 #include "Tools/Arguments/Splitter/Splitter.hpp"
 
@@ -74,6 +76,7 @@ void Decoder_turbo_product::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_turbo_product::parameters::";
 
 	args.erase({p+"-info-bits", "K"});
 	args.erase({p+"-cw-size",   "N"});
@@ -91,49 +94,29 @@ void Decoder_turbo_product::parameters
 	tools::add_options(args.at({p+"-type", "D"}), 0, "CP");
 	tools::add_options(args.at({p+"-implem"   }), 0, "FAST");
 
+	tools::add_arg(args, p, class_name+"p+ite,i",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-ite", "i"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"maximal number of iterations in the turbo.");
+	tools::add_arg(args, p, class_name+"p+alpha",
+		tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)));
 
-	args.add(
-		{p+"-alpha"},
-		tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)),
-		"weighting factor, one by half iteration (so twice more than number of iterations)."
-		" If not enough given values, then automatically extends the last to all iterations.");
+	tools::add_arg(args, p, class_name+"p+beta",
+		tools::List<float,Real_splitter>(tools::Real(tools::Positive()), tools::Length(1)));
 
-	args.add(
-		{p+"-beta"},
-		tools::List<float,Real_splitter>(tools::Real(tools::Positive()), tools::Length(1)),
-		"reliability factor, one by half iteration (so twice more than number of iterations)."
-		" If not enough given values, then automatically extends the last to all iterations."
-		" If not given, then computes beta dynamically from the least reliable position metrics.");
+	tools::add_arg(args, p, class_name+"p+p",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
-	args.add(
-		{p+"-p"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"number of least reliable positions.");
+	tools::add_arg(args, p, class_name+"p+t",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-t"},
-		tools::Integer(tools::Positive()),
-		"number of test vectors (0 means equal to 2^p).");
+	tools::add_arg(args, p, class_name+"p+c",
+		tools::Integer(tools::Positive()));
 
-	args.add(
-		{p+"-c"},
-		tools::Integer(tools::Positive()),
-		"number of competitors (0 means equal to number of test vectors, 1 means only the decided word).");
+	tools::add_arg(args, p, class_name+"p+ext",
+		tools::None());
 
-	args.add(
-		{p+"-ext"},
-		tools::None(),
-		"extends code with a parity bits.");
-
-	args.add(
-		{p+"-cp-coef"},
-		tools::List<float,Real_splitter>(tools::Real(), tools::Length(5,5)),
-		"the 5 Chase Pyndiah constant coefficients \"a,b,c,d,e\".");
+	tools::add_arg(args, p, class_name+"p+cp-coef",
+		tools::List<float,Real_splitter>(tools::Real(), tools::Length(5,5)));
 
 	sub->get_description(args);
 
@@ -330,7 +313,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_turbo_product
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_product::parameters::build<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_product::parameters::build<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_product::parameters::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, const std::unique_ptr<module::Encoder<B_32>>&) const;
@@ -344,7 +327,7 @@ template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_produ
 template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::build<B,Q>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, const std::unique_ptr<module::Encoder<B>>& );
 #endif
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_product::parameters::build_siso<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &) const;
 template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_product::parameters::build_siso<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &) const;
 template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_product::parameters::build_siso<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &) const;

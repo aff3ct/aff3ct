@@ -133,6 +133,32 @@ T least_common_multiple(T a, T b)
 	return (a * b) / greatest_common_divisor(a, b);
 }
 
+
+#if defined(_WIN64) || defined(_WIN32)
+template <typename T>
+inline constexpr bool __signbit__(T x, std::false_type is_signed) { return false; }
+
+template <typename T>
+inline constexpr bool __signbit__(T x, std::true_type is_signed) { return x < T(0); }
+#endif
+
+template <typename T>
+inline bool signbit(T arg)
+{
+	#if defined(_WIN64) || defined(_WIN32)
+		return tools::__signbit__(arg, std::is_signed<T>());
+	#else
+		return std::signbit(arg);
+	#endif
+}
+
+#if defined(_WIN64) || defined(_WIN32)
+inline bool signbit (float       arg) { return std::signbit(arg);}
+inline bool signbit (double      arg) { return std::signbit(arg);}
+inline bool signbit (long double arg) { return std::signbit(arg);}
+#endif
+
+
 }
 }
 

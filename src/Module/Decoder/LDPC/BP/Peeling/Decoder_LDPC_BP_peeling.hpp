@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BP_PEELING_HPP
 #define DECODER_LDPC_BP_PEELING_HPP
 
-#include "../../../Decoder_SISO_SIHO.hpp"
+#include "../../../Decoder_SIHO_HIHO.hpp"
 #include "../Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
@@ -10,7 +10,7 @@ namespace module
 {
 
 template<typename B = int, typename R = float>
-class Decoder_LDPC_BP_peeling : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
+class Decoder_LDPC_BP_peeling : public Decoder_SIHO_HIHO<B,R>, public Decoder_LDPC_BP
 {
 protected:
 	const std::vector<unsigned> &info_bits_pos;
@@ -39,7 +39,6 @@ protected:
 
 	// return true if the syndrome is valid
 	virtual bool _decode(                      const int frame_id);
-
 };
 
 }

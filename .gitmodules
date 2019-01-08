@@ -7,9 +7,6 @@
 [submodule "refs"]
 	path = refs
 	url = ../error_rate_references
-[submodule "lib/CLI11"]
-	path = lib/CLI11
-	url = https://github.com/CLIUtils/CLI11.git
 [submodule "lib/rang"]
 	path = lib/rang
 	url = https://github.com/agauniyal/rang.git

@@ -118,7 +118,7 @@ namespace aff3ct
 {
 namespace module
 {
-#if defined(MULTI_PREC) | defined (PREC_32_BIT)
+#if defined(AFF3CT_MULTI_PREC) | defined (AFF3CT_32BIT_PREC)
 template <>
 R_32 Monitor_MI<B_32,R_32>
 ::_get_mutual_info(const B_32 *X, const R_32 *Y, const int frame_id)
@@ -129,7 +129,7 @@ R_32 Monitor_MI<B_32,R_32>
 }
 #endif
 
-#if defined(MULTI_PREC) | defined (PREC_64_BIT)
+#if defined(AFF3CT_MULTI_PREC) | defined (AFF3CT_64BIT_PREC)
 template <>
 R_64 Monitor_MI<B_64,R_64>
 ::_get_mutual_info(const B_64 *X, const R_64 *Y, const int frame_id)
@@ -379,7 +379,7 @@ Monitor_MI<B,R>::Attributes
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::module::Monitor_MI<B_8, R_8>;
 template class aff3ct::module::Monitor_MI<B_16,R_16>;
 template class aff3ct::module::Monitor_MI<B_32,R_32>;

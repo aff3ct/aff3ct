@@ -150,9 +150,11 @@ std::unique_ptr<module::Codec_SISO_SIHO<B,Q>> BFER_ite<B,R,Q>
 ::build_codec(const int tid)
 {
 	const auto seed_enc = rd_engine_seed[tid]();
+	const auto seed_dec = rd_engine_seed[tid]();
 
 	std::unique_ptr<factory::Codec::parameters> params_cdc(params_BFER_ite.cdc->clone());
 	params_cdc->enc->seed = seed_enc;
+	params_cdc->dec->seed = seed_dec;
 
 	auto crc = this->params_BFER_ite.crc->type == "NO" ? nullptr : this->crc[tid].get();
 
@@ -186,10 +188,10 @@ std::unique_ptr<module::Modem<B,R,Q>> BFER_ite<B,R,Q>
 {
 	if (this->distributions != nullptr)
 		return std::unique_ptr<module::Modem<B,R,Q>>(
-			params_BFER_ite.mdm->template build<B,R,Q>(*this->distributions, this->params_BFER_ite.chn->type));
+			params_BFER_ite.mdm->template build<B,R,Q>(*this->distributions));
 	else
 		return std::unique_ptr<module::Modem<B,R,Q>>(
-			params_BFER_ite.mdm->template build<B,R,Q>(this->params_BFER_ite.chn->type));
+			params_BFER_ite.mdm->template build<B,R,Q>());
 }
 
 template <typename B, typename R, typename Q>
@@ -236,7 +238,7 @@ std::unique_ptr<module::Coset<B,B>> BFER_ite<B,R,Q>
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template class aff3ct::simulation::BFER_ite<B_8,R_8,Q_8>;
 template class aff3ct::simulation::BFER_ite<B_16,R_16,Q_16>;
 template class aff3ct::simulation::BFER_ite<B_32,R_32,Q_32>;

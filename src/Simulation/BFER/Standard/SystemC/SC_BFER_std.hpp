@@ -1,4 +1,4 @@
-#ifdef SYSTEMC
+#ifdef AFF3CT_SYSTEMC_SIMU
 
 #ifndef SC_SIMULATION_BFER_STD_HPP_
 #define SC_SIMULATION_BFER_STD_HPP_
@@ -35,4 +35,4 @@ private:
 
 #endif /* SC_SIMULATION_BFER_STD_HPP_ */
 
-#endif /* SYSTEMC */
+#endif /* AFF3CT_SYSTEMC_SIMU */

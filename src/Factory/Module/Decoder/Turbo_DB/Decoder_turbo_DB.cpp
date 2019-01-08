@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
 
@@ -67,6 +68,7 @@ void Decoder_turbo_DB::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_turbo_DB::parameters::";
 
 	args.erase({p+"-cw-size", "N"});
 
@@ -83,10 +85,11 @@ void Decoder_turbo_DB::parameters
 	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO_DB");
 	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
 
-	args.add(
-		{p+"-ite", "i"},
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		"maximal number of iterations in the turbo.");
+	tools::add_arg(args, p, class_name+"p+ite,i",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
+
+	tools::add_arg(args, p, class_name+"p+crc-start",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 
 	sf->get_description(args);
 
@@ -101,6 +104,8 @@ void Decoder_turbo_DB::parameters
 	args.erase({pfnc+"-size"     });
 	args.erase({pfnc+"-fra",  "F"});
 	args.erase({pfnc+"-ite",  "i"});
+	args.erase({pfnc+"-crc-ite"  });
+	args.erase({pfnc+"-crc-start"});
 
 	sub->get_description(args);
 
@@ -118,7 +123,8 @@ void Decoder_turbo_DB::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-ite", "i"})) this->n_ite = vals.to_int({p+"-ite", "i"});
+	if(vals.exist({p+"-ite", "i"}))  this->n_ite         = vals.to_int({p+"-ite", "i"});
+	if(vals.exist({p+"-crc-start"})) this->crc_start_ite = vals.to_int({p+"-crc-start"});
 
 	this->sub->K        = this->K;
 	this->sub->n_frames = this->n_frames;
@@ -146,9 +152,10 @@ void Decoder_turbo_DB::parameters
 
 	sf->store(vals);
 
-	this->fnc->size     = this->K;
-	this->fnc->n_frames = this->n_frames;
-	this->fnc->n_ite    = this->n_ite;
+	this->fnc->size          = this->K;
+	this->fnc->n_frames      = this->n_frames;
+	this->fnc->n_ite         = this->n_ite;
+	this->fnc->crc_start_ite = this->crc_start_ite;
 
 	fnc->store(vals);
 }
@@ -166,6 +173,7 @@ void Decoder_turbo_DB::parameters
 			itl->get_headers(headers, full);
 
 		headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
+		headers[p].push_back(std::make_pair("CRC start iteration", std::to_string(this->crc_start_ite)));
 		if (this->tail_length && full)
 			headers[p].push_back(std::make_pair("Tail length", std::to_string(this->tail_length)));
 
@@ -217,7 +225,7 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_DB
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_turbo_DB<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >&, aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_turbo_DB<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>&, aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_turbo_DB<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>&, aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>&, const std::unique_ptr<module::Encoder<B_32>>&) const;
@@ -231,7 +239,7 @@ template aff3ct::module::Decoder_turbo_DB<B,Q>* aff3ct::factory::Decoder_turbo_D
 template aff3ct::module::Decoder_turbo_DB<B,Q>* aff3ct::factory::Decoder_turbo_DB::build<B,Q>(const aff3ct::factory::Decoder_turbo_DB::parameters&, const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&, aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&, const std::unique_ptr<module::Encoder<B>>& );
 #endif
 
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_8 ,Q_8 >(const std::unique_ptr<module::Encoder<B_8 >>&) const;
 template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_16,Q_16>(const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::parameters::build<B_32,Q_32>(const std::unique_ptr<module::Encoder<B_32>>&) const;

@@ -160,7 +160,7 @@ module::Codec_polar_MK<B,Q>* Codec_polar_MK
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
-#ifdef MULTI_PREC
+#ifdef AFF3CT_MULTI_PREC
 template aff3ct::module::Codec_polar_MK<B_8 ,Q_8 >* aff3ct::factory::Codec_polar_MK::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
 template aff3ct::module::Codec_polar_MK<B_16,Q_16>* aff3ct::factory::Codec_polar_MK::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
 template aff3ct::module::Codec_polar_MK<B_32,Q_32>* aff3ct::factory::Codec_polar_MK::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
