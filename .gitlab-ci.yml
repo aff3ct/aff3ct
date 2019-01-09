@@ -886,21 +886,21 @@ deploy-builds-linux:
     - source ./ci/tools/git-version.sh
     - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
 
-deploy-github-push:
-  stage: deploy
-  except:
-    - schedules
-  dependencies:
-    - analysis-git-submodules
-  tags:
-    - linux
-    - github
-  only:
-    - master
-    - development
-  script:
-    - source ./ci/tools/git-branch.sh
-    - ./ci/deploy-github-push.sh
+# deploy-github-push:
+#   stage: deploy
+#   except:
+#     - schedules
+#   dependencies:
+#     - analysis-git-submodules
+#   tags:
+#     - linux
+#     - github
+#   only:
+#     - master
+#     - development
+#   script:
+#     - source ./ci/tools/git-branch.sh
+#     - ./ci/deploy-github-push.sh
 
 pages:
   stage: deploy
