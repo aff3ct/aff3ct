@@ -1,3 +1,6 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: none
+
 stages:
   - analysis
   - build
@@ -10,8 +13,6 @@ before_script:
   - hostname
   - whoami
 # - pwd
-  - git submodule sync --recursive
-  - git submodule update --init --recursive
 
 analysis-cppcheck:
   stage: analysis
@@ -44,6 +45,8 @@ analysis-headers:
 
 analysis-git-submodules:
   stage: analysis
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   tags:
@@ -57,6 +60,8 @@ analysis-git-submodules:
 
 build-linux-gcc-nointr:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -83,6 +88,10 @@ build-linux-gcc-nointr:
 
 build-linux-gcc-x64-sse4.2:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  except:
+    - schedules
   dependencies:
     - analysis-headers
   tags:
@@ -108,8 +117,8 @@ build-linux-gcc-x64-sse4.2:
 
 build-linux-gcc-x64-avx2:
   stage: build
-  except:
-    - schedules
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   dependencies:
     - analysis-headers
   tags:
@@ -135,6 +144,8 @@ build-linux-gcc-x64-avx2:
 
 build-linux-gcc-8-bit:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -160,6 +171,8 @@ build-linux-gcc-8-bit:
 
 build-linux-gcc-mpi:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -185,6 +198,8 @@ build-linux-gcc-mpi:
 
 build-linux-gcc-systemc:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -211,6 +226,8 @@ build-linux-gcc-systemc:
 
 build-linux-clang:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -235,6 +252,8 @@ build-linux-clang:
 
 build-linux-gcc-4.8:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -259,6 +278,8 @@ build-linux-gcc-4.8:
 
 build-linux-icpc:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -286,6 +307,8 @@ build-linux-icpc:
 
 build-windows-gcc-x86-sse4.2:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -310,6 +333,8 @@ build-windows-gcc-x86-sse4.2:
 
 build-windows-gcc-x64-avx2:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -334,6 +359,8 @@ build-windows-gcc-x64-avx2:
 
 build-windows-msvc-avx:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -356,6 +383,8 @@ build-windows-msvc-avx:
 
 build-macos-clang-x64-sse4.2:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -409,12 +438,14 @@ documentation-check:
     - x86
     - 64-bit
     - sse4.2
-    - python
+    - python3.5
   script:
     - ./ci/documentation-check.py --aff3ct "build_linux_gcc_x64_sse4.2/bin/aff3ct"
 
 test-regression-bch:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -425,7 +456,7 @@ test-regression-bch:
     - x86
     - 64-bit
     - sse4.2
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-bch
      when: always
@@ -439,16 +470,20 @@ test-regression-bch:
 
 test-regression-bch-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
-    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
   tags:
     - linux
     - x86
     - 64-bit
-    - sse4.2
-    - python
+    - avx2
+    - powerful
+    - schedules
+    - python3.4
   artifacts:
      name: test-regression-results-bch
      when: always
@@ -458,10 +493,12 @@ test-regression-bch-long:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
     - export TIME_SEC=$CI_TIME_SEC_BCH
-    - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-ldpc:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -473,7 +510,7 @@ test-regression-ldpc:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-ldpc
      when: always
@@ -487,17 +524,20 @@ test-regression-ldpc:
 
 test-regression-ldpc-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
-    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
   tags:
     - linux
     - x86
     - 64-bit
-    - sse4.2
+    - avx2
     - powerful
-    - python
+    - schedules
+    - python3.4
   artifacts:
      name: test-regression-results-ldpc
      when: always
@@ -507,11 +547,13 @@ test-regression-ldpc-long:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
     - export TIME_SEC=$CI_TIME_SEC_LDPC
-    - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 
 test-regression-polar:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -523,7 +565,7 @@ test-regression-polar:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-polar
      when: always
@@ -537,17 +579,20 @@ test-regression-polar:
 
 test-regression-polar-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
-    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
   tags:
     - linux
     - x86
     - 64-bit
-    - sse4.2
+    - avx2
     - powerful
-    - python
+    - schedules
+    - python3.4
   artifacts:
      name: test-regression-results-polar
      when: always
@@ -557,10 +602,12 @@ test-regression-polar-long:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
     - export TIME_SEC=$CI_TIME_SEC_POLAR
-    - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-rs:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -571,7 +618,7 @@ test-regression-rs:
     - x86
     - 64-bit
     - sse4.2
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-rs
      when: always
@@ -585,16 +632,20 @@ test-regression-rs:
 
 test-regression-rs-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
-    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
   tags:
     - linux
     - x86
     - 64-bit
-    - sse4.2
-    - python
+    - avx2
+    - powerful
+    - schedules
+    - python3.4
   artifacts:
      name: test-regression-results-rs
      when: always
@@ -604,10 +655,12 @@ test-regression-rs-long:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
     - export TIME_SEC=$CI_TIME_SEC_RS
-    - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -619,7 +672,7 @@ test-regression-turbo:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-turbo
      when: always
@@ -633,17 +686,20 @@ test-regression-turbo:
 
 test-regression-turbo-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
-    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
   tags:
     - linux
     - x86
     - 64-bit
-    - sse4.2
+    - avx2
     - powerful
-    - python
+    - schedules
+    - python3.4
   artifacts:
      name: test-regression-results-turbo
      when: always
@@ -653,10 +709,12 @@ test-regression-turbo-long:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
     - export TIME_SEC=$CI_TIME_SEC_TURBO
-    - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-db:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -668,7 +726,7 @@ test-regression-turbo-db:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-turbo-db
      when: always
@@ -682,17 +740,20 @@ test-regression-turbo-db:
 
 test-regression-turbo-db-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
-    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
   tags:
     - linux
     - x86
     - 64-bit
-    - sse4.2
+    - avx2
     - powerful
-    - python
+    - schedules
+    - python3.4
   artifacts:
      name: test-regression-results-turbo-db
      when: always
@@ -702,10 +763,12 @@ test-regression-turbo-db-long:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
     - export TIME_SEC=$CI_TIME_SEC_TURBO_DB
-    - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-prod:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -717,7 +780,7 @@ test-regression-turbo-prod:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-turbo-prod
      when: always
@@ -731,17 +794,20 @@ test-regression-turbo-prod:
 
 test-regression-turbo-prod-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
-    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
   tags:
     - linux
     - x86
     - 64-bit
-    - sse4.2
+    - avx2
     - powerful
-    - python
+    - schedules
+    - python3.4
   artifacts:
      name: test-regression-results-turbo-prod
      when: always
@@ -751,10 +817,12 @@ test-regression-turbo-prod-long:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
     - export TIME_SEC=$CI_TIME_SEC_TURBO_PROD
-    - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-uncoded:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -765,7 +833,7 @@ test-regression-uncoded:
     - x86
     - 64-bit
     - sse4.2
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-uncoded
      when: always
@@ -779,16 +847,20 @@ test-regression-uncoded:
 
 test-regression-uncoded-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
-    - build-linux-gcc-x64-sse4.2
+    - build-linux-gcc-x64-avx2
   tags:
     - linux
     - x86
     - 64-bit
-    - sse4.2
-    - python
+    - avx2
+    - powerful
+    - schedules
+    - python3.4
   artifacts:
      name: test-regression-results-uncoded
      when: always
@@ -798,10 +870,12 @@ test-regression-uncoded-long:
     - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
     - export TIME_SEC=$CI_TIME_SEC_UNCODED
-    - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+    - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-build-coverage-regression:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -860,6 +934,8 @@ deploy-sonarqube-linux:
 
 deploy-builds-linux:
   stage: deploy
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -886,21 +962,21 @@ deploy-builds-linux:
     - source ./ci/tools/git-version.sh
     - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
 
-deploy-github-push:
-  stage: deploy
-  except:
-    - schedules
-  dependencies:
-    - analysis-git-submodules
-  tags:
-    - linux
-    - github
-  only:
-    - master
-    - development
-  script:
-    - source ./ci/tools/git-branch.sh
-    - ./ci/deploy-github-push.sh
+# deploy-github-push:
+#   stage: deploy
+#   except:
+#     - schedules
+#   dependencies:
+#     - analysis-git-submodules
+#   tags:
+#     - linux
+#     - github
+#   only:
+#     - master
+#     - development
+#   script:
+#     - source ./ci/tools/git-branch.sh
+#     - ./ci/deploy-github-push.sh
 
 pages:
   stage: deploy
