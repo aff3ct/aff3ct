@@ -1,24 +1,24 @@
 # Try to find gnu scientific library GSL
-# See 
-# http://www.gnu.org/software/gsl/  and 
+# See
+# http://www.gnu.org/software/gsl/  and
 # http://gnuwin32.sourceforge.net/packages/gsl.htm
 #
 # Based on a script of Felix Woelk and Jan Woetzel
 # (www.mip.informatik.uni-kiel.de)
-# 
+#
 # It defines the following variables:
 #  GSL_FOUND - system has GSL lib
-#  GSL_INCLUDE_DIRS - where to find headers 
+#  GSL_INCLUDE_DIRS - where to find headers
 #  GSL_LIBRARIES - full path to the libraries
 #  GSL_LIBRARY_DIRS, the directory where the PLplot library is found.
- 
+
 #  CMAKE_GSL_CXX_FLAGS  = Unix compiler flags for GSL, essentially "`gsl-config --cxxflags`"
 #  GSL_LINK_DIRECTORIES = link directories, useful for rpath on Unix
 #  GSL_EXE_LINKER_FLAGS = rpath on Unix
- 
+
 set( GSL_FOUND OFF )
 set( GSL_CBLAS_FOUND OFF )
- 
+
 # Windows, but not for Cygwin and MSys where gsl-config is available
 if( WIN32 AND NOT CYGWIN AND NOT MSYS )
   # look for headers
@@ -28,25 +28,25 @@ if( WIN32 AND NOT CYGWIN AND NOT MSYS )
   if( GSL_INCLUDE_DIR )
     # look for gsl library
     find_library( GSL_LIBRARY
-      NAMES gsl 
-    )  
+      NAMES gsl
+    )
     if( GSL_LIBRARY )
       set( GSL_INCLUDE_DIRS ${GSL_INCLUDE_DIR} )
       get_filename_component( GSL_LIBRARY_DIRS ${GSL_LIBRARY} PATH )
       set( GSL_FOUND ON )
     endif( GSL_LIBRARY )
- 
+
     # look for gsl cblas library
     find_library( GSL_CBLAS_LIBRARY
-        NAMES gslcblas 
+        NAMES gslcblas
       )
     if( GSL_CBLAS_LIBRARY )
       set( GSL_CBLAS_FOUND ON )
     endif( GSL_CBLAS_LIBRARY )
-       
+
     set( GSL_LIBRARIES ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} )
   endif( GSL_INCLUDE_DIR )
-   
+
   mark_as_advanced(
     GSL_INCLUDE_DIR
     GSL_LIBRARY
@@ -58,10 +58,10 @@ else( WIN32 AND NOT CYGWIN AND NOT MSYS )
       /usr/bin/
       /usr/local/bin
     )
-     
-    if( GSL_CONFIG_EXECUTABLE ) 
+
+    if( GSL_CONFIG_EXECUTABLE )
       set( GSL_FOUND ON )
-       
+
       # run the gsl-config program to get cxxflags
       execute_process(
         COMMAND sh "${GSL_CONFIG_EXECUTABLE}" --cflags
@@ -72,13 +72,13 @@ else( WIN32 AND NOT CYGWIN AND NOT MSYS )
       if( RET EQUAL 0 )
         string( STRIP "${GSL_CFLAGS}" GSL_CFLAGS )
         separate_arguments( GSL_CFLAGS )
- 
+
         # parse definitions from cflags; drop -D* from CFLAGS
         string( REGEX MATCHALL "-D[^;]+"
           GSL_DEFINITIONS  "${GSL_CFLAGS}" )
         string( REGEX REPLACE "-D[^;]+;" ""
           GSL_CFLAGS "${GSL_CFLAGS}" )
- 
+
         # parse include dirs from cflags; drop -I prefix
         string( REGEX MATCHALL "-I[^;]+"
           GSL_INCLUDE_DIRS "${GSL_CFLAGS}" )
@@ -89,7 +89,7 @@ else( WIN32 AND NOT CYGWIN AND NOT MSYS )
       else( RET EQUAL 0 )
         set( GSL_FOUND FALSE )
       endif( RET EQUAL 0 )
- 
+
       # run the gsl-config program to get the libs
       execute_process(
         COMMAND sh "${GSL_CONFIG_EXECUTABLE}" --libs
@@ -100,7 +100,7 @@ else( WIN32 AND NOT CYGWIN AND NOT MSYS )
       if( RET EQUAL 0 )
         string(STRIP "${GSL_LIBRARIES}" GSL_LIBRARIES )
         separate_arguments( GSL_LIBRARIES )
- 
+
         # extract linkdirs (-L) for rpath (i.e., LINK_DIRECTORIES)
         string( REGEX MATCHALL "-L[^;]+"
           GSL_LIBRARY_DIRS "${GSL_LIBRARIES}" )
@@ -109,17 +109,19 @@ else( WIN32 AND NOT CYGWIN AND NOT MSYS )
       else( RET EQUAL 0 )
         set( GSL_FOUND FALSE )
       endif( RET EQUAL 0 )
-       
+
       MARK_AS_ADVANCED(
         GSL_CFLAGS
       )
-      message( STATUS "Using GSL from ${GSL_PREFIX}" )
+      if( NOT GSL_FIND_QUIETLY )
+        message( STATUS "Using GSL from ${GSL_PREFIX}" )
+      endif()
     else( GSL_CONFIG_EXECUTABLE )
       message( STATUS "FindGSL: gsl-config not found.")
     endif( GSL_CONFIG_EXECUTABLE )
   endif( UNIX OR MSYS )
 endif( WIN32 AND NOT CYGWIN AND NOT MSYS )
- 
+
 if( GSL_FOUND )
   if( NOT GSL_FIND_QUIETLY )
     message( STATUS "FindGSL: Found both GSL headers and library" )
