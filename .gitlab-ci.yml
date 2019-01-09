@@ -1,3 +1,5 @@
+GIT_SUBMODULE_STRATEGY: recursive
+
 stages:
   - analysis
   - build
@@ -10,8 +12,6 @@ before_script:
   - hostname
   - whoami
 # - pwd
-  - git submodule sync --recursive
-  - git submodule update --init --recursive
 
 analysis-cppcheck:
   stage: analysis
