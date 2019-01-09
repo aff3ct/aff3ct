@@ -9,7 +9,7 @@ project (aff3ct)
 if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
     message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
                         "from a Git repository. Please do not download archives from GitHub and make a Git "
-                        "clone instead (git clone https://github.com/aff3ct/MIPP.git).")
+                        "clone instead (git clone https://github.com/aff3ct/aff3ct.git).")
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ option (AFF3CT_POLAR_BOUNDS       "Enable the use of the external Tal & Vardy Po
 option (AFF3CT_COLORS             "Enable the colors in the terminal"                                         ON )
 
 if (NOT (WIN32 OR APPLE))
-    option (AFF3CT_BACKTRACE "Enable the backtrace display when and exception is raised" ON)
+    option (AFF3CT_BACKTRACE "Enable the backtrace display when an exception is raised" ON)
 else()
     set (AFF3CT_BACKTRACE OFF)
 endif()
