@@ -438,7 +438,7 @@ documentation-check:
     - x86
     - 64-bit
     - sse4.2
-    - python
+    - python3.5
   script:
     - ./ci/documentation-check.py --aff3ct "build_linux_gcc_x64_sse4.2/bin/aff3ct"
 
@@ -456,7 +456,7 @@ test-regression-bch:
     - x86
     - 64-bit
     - sse4.2
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-bch
      when: always
@@ -483,7 +483,7 @@ test-regression-bch-long:
     - avx2
     - powerful
     - schedules
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-bch
      when: always
@@ -510,7 +510,7 @@ test-regression-ldpc:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-ldpc
      when: always
@@ -537,7 +537,7 @@ test-regression-ldpc-long:
     - avx2
     - powerful
     - schedules
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-ldpc
      when: always
@@ -565,7 +565,7 @@ test-regression-polar:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-polar
      when: always
@@ -592,7 +592,7 @@ test-regression-polar-long:
     - avx2
     - powerful
     - schedules
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-polar
      when: always
@@ -618,7 +618,7 @@ test-regression-rs:
     - x86
     - 64-bit
     - sse4.2
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-rs
      when: always
@@ -645,7 +645,7 @@ test-regression-rs-long:
     - avx2
     - powerful
     - schedules
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-rs
      when: always
@@ -672,7 +672,7 @@ test-regression-turbo:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-turbo
      when: always
@@ -699,7 +699,7 @@ test-regression-turbo-long:
     - avx2
     - powerful
     - schedules
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-turbo
      when: always
@@ -726,7 +726,7 @@ test-regression-turbo-db:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-turbo-db
      when: always
@@ -753,7 +753,7 @@ test-regression-turbo-db-long:
     - avx2
     - powerful
     - schedules
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-turbo-db
      when: always
@@ -780,7 +780,7 @@ test-regression-turbo-prod:
     - 64-bit
     - sse4.2
     - powerful
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-turbo-prod
      when: always
@@ -807,7 +807,7 @@ test-regression-turbo-prod-long:
     - avx2
     - powerful
     - schedules
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-turbo-prod
      when: always
@@ -833,7 +833,7 @@ test-regression-uncoded:
     - x86
     - 64-bit
     - sse4.2
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-uncoded
      when: always
@@ -860,7 +860,7 @@ test-regression-uncoded-long:
     - avx2
     - powerful
     - schedules
-    - python
+    - python3.4
   artifacts:
      name: test-regression-results-uncoded
      when: always
