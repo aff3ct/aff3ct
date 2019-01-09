@@ -1,5 +1,5 @@
 variables:
-  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_STRATEGY: none
 
 stages:
   - analysis
@@ -45,6 +45,8 @@ analysis-headers:
 
 analysis-git-submodules:
   stage: analysis
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   tags:
@@ -58,6 +60,8 @@ analysis-git-submodules:
 
 build-linux-gcc-nointr:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -84,6 +88,8 @@ build-linux-gcc-nointr:
 
 build-linux-gcc-x64-sse4.2:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -111,6 +117,8 @@ build-linux-gcc-x64-sse4.2:
 
 build-linux-gcc-x64-avx2:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   dependencies:
     - analysis-headers
   tags:
@@ -136,6 +144,8 @@ build-linux-gcc-x64-avx2:
 
 build-linux-gcc-8-bit:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -161,6 +171,8 @@ build-linux-gcc-8-bit:
 
 build-linux-gcc-mpi:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -186,6 +198,8 @@ build-linux-gcc-mpi:
 
 build-linux-gcc-systemc:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -212,6 +226,8 @@ build-linux-gcc-systemc:
 
 build-linux-clang:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -236,6 +252,8 @@ build-linux-clang:
 
 build-linux-gcc-4.8:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -260,6 +278,8 @@ build-linux-gcc-4.8:
 
 build-linux-icpc:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -287,6 +307,8 @@ build-linux-icpc:
 
 build-windows-gcc-x86-sse4.2:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -311,6 +333,8 @@ build-windows-gcc-x86-sse4.2:
 
 build-windows-gcc-x64-avx2:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -335,6 +359,8 @@ build-windows-gcc-x64-avx2:
 
 build-windows-msvc-avx:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -357,6 +383,8 @@ build-windows-msvc-avx:
 
 build-macos-clang-x64-sse4.2:
   stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -872,6 +900,8 @@ deploy-sonarqube-linux:
 
 deploy-builds-linux:
   stage: deploy
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
