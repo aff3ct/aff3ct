@@ -874,6 +874,8 @@ test-regression-uncoded-long:
 
 test-build-coverage-regression:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
