@@ -55,6 +55,10 @@ Description of the allowed values:
 
 |factory::Encoder_polar_MK::parameters::p+kernel|
 
+The Kronecker powers of the kernel matrix :math:`T_s` defines the :math:`G`
+generator matrix. The frame size :math:`N` can only be a power of the matrix
+size :math:`s`. For traditional Polar codes :math:`s = 2`.
+
 .. _enc-polar_mk-enc-code-path:
 
 ``--enc-code-path``
@@ -91,9 +95,13 @@ An |ASCII| file is expected:
    # type of kernel per stage
    0 0 0 0 1
 
-The previous file describes a :math:`N = 48` Polar |MK| code with the following
-construction:
-:math:`G_{48} = T_2 \otimes T_2 \otimes T_2 \otimes T_2 \otimes T_3`.
+The previous file describes a Polar |MK| code which is build from the following
+Kronecker product:
+:math:`G_{48} = T_2 \otimes T_2 \otimes T_2 \otimes T_2 \otimes T_3` with
+:math:`N = 2 \times 2 \times 2 \times 2 \times 3 = 48.`
+
+.. note:: When this parameter is used it overrides the
+   :ref:`enc-polar_mk-enc-kernel` parameter.
 
 .. _enc-polar_mk-enc-fb-gen-method:
 
