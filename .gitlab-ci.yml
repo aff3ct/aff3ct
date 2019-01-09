@@ -444,6 +444,8 @@ documentation-check:
 
 test-regression-bch:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -468,6 +470,8 @@ test-regression-bch:
 
 test-regression-bch-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
@@ -493,6 +497,8 @@ test-regression-bch-long:
 
 test-regression-ldpc:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -518,6 +524,8 @@ test-regression-ldpc:
 
 test-regression-ldpc-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
@@ -544,6 +552,8 @@ test-regression-ldpc-long:
 
 test-regression-polar:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -569,6 +579,8 @@ test-regression-polar:
 
 test-regression-polar-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
@@ -594,6 +606,8 @@ test-regression-polar-long:
 
 test-regression-rs:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -618,6 +632,8 @@ test-regression-rs:
 
 test-regression-rs-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
@@ -643,6 +659,8 @@ test-regression-rs-long:
 
 test-regression-turbo:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -668,6 +686,8 @@ test-regression-turbo:
 
 test-regression-turbo-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
@@ -693,6 +713,8 @@ test-regression-turbo-long:
 
 test-regression-turbo-db:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -718,6 +740,8 @@ test-regression-turbo-db:
 
 test-regression-turbo-db-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
@@ -743,6 +767,8 @@ test-regression-turbo-db-long:
 
 test-regression-turbo-prod:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -768,6 +794,8 @@ test-regression-turbo-prod:
 
 test-regression-turbo-prod-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
@@ -793,6 +821,8 @@ test-regression-turbo-prod-long:
 
 test-regression-uncoded:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   retry: 1
   except:
     - schedules
@@ -817,6 +847,8 @@ test-regression-uncoded:
 
 test-regression-uncoded-long:
   stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
   dependencies:
