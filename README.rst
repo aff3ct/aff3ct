@@ -1,6 +1,8 @@
 AFF3CT: A Fast Forward Error Correction Toolbox!
 ================================================
 
+|PipelineBadge|_ |CoverageBadge|_ |DocBadge|_ |ReleaseBadge|_ |LicenseBadge|_ |DOIBadge|_
+
 **AFF3CT** is a simulator dedicated to the Forward Error Correction (FEC or
 **channel coding**). It is written in **C++** and it supports a large range of
 codes: from the well-spread **Turbo codes** to the very new **Polar codes**
@@ -91,3 +93,23 @@ External Links
 
 - Official website: https://aff3ct.github.io
 - Documentation: https://aff3ct.readthedocs.io
+
+.. --------------------------------------------------------------------- badges
+
+.. |PipelineBadge| image:: https://img.shields.io/gitlab/pipeline/aff3ct/aff3ct.svg
+.. _PipelineBadge: https://gitlab.com/aff3ct/aff3ct/pipelines
+
+.. |CoverageBadge| image:: https://gitlab.com/aff3ct/aff3ct/badges/master/coverage.svg
+.. _CoverageBadge: https://gitlab.com/aff3ct/aff3ct/pipelines
+
+.. |DocBadge| image:: https://img.shields.io/readthedocs/aff3ct.svg
+.. _DocBadge: https://readthedocs.org/projects/aff3ct/
+
+.. |ReleaseBadge| image:: https://img.shields.io/github/release/aff3ct/aff3ct.svg
+.. _ReleaseBadge: https://github.com/aff3ct/aff3ct/releases
+
+.. |LicenseBadge| image:: https://img.shields.io/github/license/aff3ct/aff3ct.svg
+.. _LicenseBadge: ./LICENSE
+
+.. |DOIBadge| image:: https://zenodo.org/badge/60615913.svg
+.. _DOIBadge: https://zenodo.org/badge/latestdoi/60615913
