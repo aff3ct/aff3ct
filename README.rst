@@ -100,7 +100,7 @@ External Links
 .. _PipelineBadge: https://gitlab.com/aff3ct/aff3ct/pipelines
 
 .. |CoverageBadge| image:: https://gitlab.com/aff3ct/aff3ct/badges/master/coverage.svg
-.. _CoverageBadge: https://gitlab.com/aff3ct/aff3ct/pipelines
+.. _CoverageBadge: https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard?id=storm%3Aaff3ct%3Agitlab%3Amaster
 
 .. |DocBadge| image:: https://img.shields.io/readthedocs/aff3ct.svg
 .. _DocBadge: https://readthedocs.org/projects/aff3ct/
