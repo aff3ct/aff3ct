@@ -1,7 +1,7 @@
 AFF3CT: A Fast Forward Error Correction Toolbox!
 ================================================
 
-|PipelineBadge|_ |CoverageBadge|_ |DocBadge|_ |ReleaseBadge|_ |LicenseBadge|_ |DOIBadge|_
+|PipelineBadge|_ |DocBadge|_ |QualityGateBadge|_ |CoverageBadge|_ |CodeLinesBadge|_ |ReleaseBadge|_ |DOIBadge|_ |LicenseBadge|_
 
 **AFF3CT** is a simulator dedicated to the Forward Error Correction (FEC or
 **channel coding**). It is written in **C++** and it supports a large range of
@@ -99,17 +99,23 @@ External Links
 .. |PipelineBadge| image:: https://img.shields.io/gitlab/pipeline/aff3ct/aff3ct.svg
 .. _PipelineBadge: https://gitlab.com/aff3ct/aff3ct/pipelines
 
-.. |CoverageBadge| image:: https://gitlab.com/aff3ct/aff3ct/badges/master/coverage.svg
-.. _CoverageBadge: https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard?id=storm%3Aaff3ct%3Agitlab%3Amaster
-
 .. |DocBadge| image:: https://img.shields.io/readthedocs/aff3ct.svg
 .. _DocBadge: https://readthedocs.org/projects/aff3ct/
+
+.. |QualityGateBadge| image:: https://sonarqube.bordeaux.inria.fr/sonarqube/api/badges/gate?key=storm%3Aaff3ct%3Agitlab%3Amaster
+.. _QualityGateBadge: https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard?id=storm%3Aaff3ct%3Agitlab%3Amaster
+
+.. |CoverageBadge| image:: https://sonarqube.bordeaux.inria.fr/sonarqube/api/badges/measure?key=storm%3Aaff3ct%3Agitlab%3Amaster&metric=coverage
+.. _CoverageBadge: https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard?id=storm%3Aaff3ct%3Agitlab%3Amaster
+
+.. |CodeLinesBadge| image:: https://sonarqube.bordeaux.inria.fr/sonarqube/api/badges/measure?key=storm%3Aaff3ct%3Agitlab%3Amaster&metric=ncloc
+.. _CodeLinesBadge: https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard?id=storm%3Aaff3ct%3Agitlab%3Amaster
 
 .. |ReleaseBadge| image:: https://img.shields.io/github/release/aff3ct/aff3ct.svg
 .. _ReleaseBadge: https://github.com/aff3ct/aff3ct/releases
 
-.. |LicenseBadge| image:: https://img.shields.io/github/license/aff3ct/aff3ct.svg
-.. _LicenseBadge: ./LICENSE
-
 .. |DOIBadge| image:: https://zenodo.org/badge/60615913.svg
 .. _DOIBadge: https://zenodo.org/badge/latestdoi/60615913
+
+.. |LicenseBadge| image:: https://img.shields.io/github/license/aff3ct/aff3ct.svg
+.. _LicenseBadge: ./LICENSE
