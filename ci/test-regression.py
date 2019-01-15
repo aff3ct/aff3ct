@@ -166,16 +166,15 @@ class tableStats:
 
 		return float(self.valid) / float(self.nData)
 
+
 class compStats:
-	def __init__(self, dataCur, dataRef, sensibility, asked_n_fe):
+	def __init__(self, dataCur, dataRef, sensibility, minFE):
 		if not isinstance(dataCur, atr.aff3ctTraceReader) or not isinstance(dataRef, atr.aff3ctTraceReader) :
 			raise TypeError
 
-		self.nValidData = len(dataCur.getTrace("n_fe"))
-		for d in range(len(dataCur.getTrace("n_fe"))) :
-			if dataCur.getTrace("n_fe")[d] < asked_n_fe :
-				self.nValidData = d
-
+		self.nValidData = 0
+		while self.nValidData < len(dataCur.getTrace("n_fe")) and dataCur.getTrace("n_fe")[self.nValidData] > minFE:
+			self.nValidData += 1
 
 		self.dataCur  = dataCur
 		self.dataRef  = dataRef
