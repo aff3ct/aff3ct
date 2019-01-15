@@ -25,9 +25,9 @@ AFF3CT Documentation
    :maxdepth: 1
    :numbered:
 
-   others/readme/readme
    others/tips/tips
    others/license/license
+.. others/readme/readme
 
 .. Indices and tables
 .. ==================
