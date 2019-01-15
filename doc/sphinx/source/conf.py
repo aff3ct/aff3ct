@@ -21,7 +21,7 @@ import os
 # -- Project information -----------------------------------------------------
 
 project = 'AFF3CT'
-copyright = '2018, AFF3CT team'
+copyright = '2019, AFF3CT team'
 author = 'AFF3CT team'
 
 # get the AFF3CT version from Git

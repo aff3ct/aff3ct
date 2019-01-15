@@ -142,17 +142,17 @@ void print_version()
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << "-" << compiler_version << ", "
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
 	std::cout << "Compilation options:"                                                        << std::endl;
-	std::cout << "  * Precision: "         << precision                                        << std::endl;
-	std::cout << "  * Polar bit packing: " << bit_packing                                      << std::endl;
-	std::cout << "  * Polar bounds: "      << polar_bounds                                     << std::endl;
-	std::cout << "  * Terminal colors: "   << terminal_colors                                  << std::endl;
-	std::cout << "  * Backtrace: "         << backtrace                                        << std::endl;
-	std::cout << "  * External strings: "  << ext_strings                                      << std::endl;
-	std::cout << "  * MPI: "               << mpi                                              << std::endl;
-	std::cout << "  * GSL: "               << gsl                                              << std::endl;
-	std::cout << "  * MKL: "               << mkl                                              << std::endl;
-	std::cout << "  * SystemC: "           << systemc                                          << std::endl;
-	std::cout << "Copyright (c) 2016-2018 - MIT license."                                      << std::endl;
+	std::cout << "  - Precision:         " << precision                                        << std::endl;
+	std::cout << "  - Polar bit packing: " << bit_packing                                      << std::endl;
+	std::cout << "  - Polar bounds:      " << polar_bounds                                     << std::endl;
+	std::cout << "  - Terminal colors:   " << terminal_colors                                  << std::endl;
+	std::cout << "  - Backtrace:         " << backtrace                                        << std::endl;
+	std::cout << "  - External strings:  " << ext_strings                                      << std::endl;
+	std::cout << "  - MPI:               " << mpi                                              << std::endl;
+	std::cout << "  - GSL:               " << gsl                                              << std::endl;
+	std::cout << "  - MKL:               " << mkl                                              << std::endl;
+	std::cout << "  - SystemC:           " << systemc                                          << std::endl;
+	std::cout << "Copyright (c) 2016-2019 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
 	exit(EXIT_SUCCESS);
