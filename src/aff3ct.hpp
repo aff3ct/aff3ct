@@ -1,9 +1,6 @@
 #ifndef AFF3CT_HPP
 #define AFF3CT_HPP
 
-#ifndef COMMAND_PARSER_HPP
-#include <Factory/Command_parser.hpp>
-#endif
 #ifndef FACTORY_HPP
 #include <Factory/Factory.hpp>
 #endif
