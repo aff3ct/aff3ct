@@ -102,7 +102,7 @@ template<typename B, bool cus>
 B Boolean_diff<B,cus>
 ::apply(const B& in1, const B& in2)
 {
-	return (!in1 != !in2) ? (B)1 : (B)0;
+	return ((in1 != (B)0) ^ (in2 != (B)0)) ? (B)1 : (B)0;
 }
 
 template<typename B, bool cus>
@@ -121,9 +121,10 @@ struct Boolean_diff<B,true>
 	static inline mipp::Reg<B> apply(const mipp::Reg<B>& in1, const mipp::Reg<B>& in2)
 	{
 		const mipp::Reg<B> zeros  = (B)0, ones = (B)1;
-		auto m_in = in1 != in2;
-		m_in |= is_unknown_symbol<B>(in1) | is_unknown_symbol<B>(in2);
-		return mipp::blend(ones, zeros, m_in);
+		const auto m_in1 = in1 != zeros;
+		const auto m_in2 = in2 != zeros;
+		const auto m_unk = is_unknown_symbol<B>(in1) | is_unknown_symbol<B>(in2);
+		return mipp::blend(ones, zeros, m_in1 ^ m_in2 | m_unk);
 	}
 
 	static inline mipp::Reg<B> apply(const mipp::Reg<B>& in)
@@ -135,7 +136,7 @@ struct Boolean_diff<B,true>
 
 	static inline B apply(const B& in1, const B& in2)
 	{
-		return (!in1 != !in2) || is_unknown_symbol<B>(in1) || is_unknown_symbol<B>(in2) ? (B)1 : (B)0;
+		return ((in1 != (B)0) ^ (in2 != (B)0)) || is_unknown_symbol<B>(in1) || is_unknown_symbol<B>(in2) ? (B)1 : (B)0;
 	}
 
 	static inline B apply(const B& in)
