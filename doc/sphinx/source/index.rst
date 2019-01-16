@@ -20,14 +20,16 @@ AFF3CT Documentation
    developer/classes/classes
    developer/contributing/contributing
 
-.. toctree::
-   :caption: Others
-   :maxdepth: 1
-   :numbered:
+.. only:: html
 
-   others/readme/readme
-   others/tips/tips
-   others/license/license
+   .. toctree::
+      :caption: Others
+      :maxdepth: 1
+      :numbered:
+
+      others/readme/readme
+      others/tips/tips
+      others/license/license
 
 .. Indices and tables
 .. ==================
