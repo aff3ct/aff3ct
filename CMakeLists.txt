@@ -391,7 +391,7 @@ endif (AFF3CT_LINK_MKL)
 
 # MPI
 if (AFF3CT_MPI)
-    aff3ct_add_definitions ("-DAFF3CT_ENABLE_MPI")
+    aff3ct_add_definitions ("-DAFF3CT_MPI")
 
     find_package (MPI REQUIRED QUIET)
     if (MPI_CXX_FOUND)
