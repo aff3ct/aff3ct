@@ -118,6 +118,7 @@ class Monitor_reduction_M : public Monitor_reduction, public M
 
 private:
 	const std::vector<std::unique_ptr<M>>& monitors;
+	M collecter;
 
 public:
 	/*

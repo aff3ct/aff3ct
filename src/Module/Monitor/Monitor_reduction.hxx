@@ -19,7 +19,8 @@ Monitor_reduction_M<M>
   M((_monitors.size() && _monitors.front()) ? *_monitors.front() : M(),
 	std::accumulate(_monitors.begin(), _monitors.end(), 0,
                     [](int tot, const std::unique_ptr<M>& m) { return tot + m->get_n_frames(); })),
-  monitors(_monitors)
+  monitors(_monitors),
+  collecter(*this)
 {
 	if (this->monitors.size() == 0)
 	{
@@ -98,7 +99,16 @@ template <class M>
 void Monitor_reduction_M<M>
 ::_reduce(bool fully)
 {
-	M collecter(*this);
+	// Old slow way to collect data (with object allocation)
+	// M collecter(*this);
+
+	// for (auto& m : this->monitors)
+	// 	collecter.collect(*m, fully);
+
+	// M::copy(collecter, fully);
+
+	// New way to collect data (without object allocation)
+	collecter.reset();
 
 	for (auto& m : this->monitors)
 		collecter.collect(*m, fully);
