@@ -347,12 +347,14 @@ void BFER<B,R,Q>
 #ifdef AFF3CT_MPI
 	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
 #else
-	module::Monitor_reduction::set_reduce_frequency(std::chrono::milliseconds(0));
+	auto freq = std::chrono::milliseconds(1000);
+	if (params_BFER.ter.get() != nullptr && params_BFER.ter->frequency != std::chrono::milliseconds(0))
+		freq = params_BFER.ter.get()->frequency;
+	module::Monitor_reduction::set_reduce_frequency(freq);
 #endif
 
 	module::Monitor_reduction::reset_all();
 	module::Monitor_reduction::check_reducible();
-
 }
 
 template <typename B, typename R, typename Q>
