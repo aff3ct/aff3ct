@@ -15,6 +15,14 @@ namespace module
 
 class Monitor_reduction
 {
+private:
+	static bool                            stop_loop;
+	static std::vector<Monitor_reduction*> monitors;
+	static std::thread::id                 master_thread_id;
+	static std::chrono::nanoseconds        d_reduce_frequency;
+
+	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_reduction;
+
 public:
 	/*
 	 * \brief check if any recorded monitor reduction has done after having done a reduction
@@ -41,8 +49,8 @@ public:
 	static void reset_all();
 
 	static void set_master_thread_id(std::thread::id          t);
-	static void set_reduce_frequency(std::chrono::nanoseconds d);
 
+	static void set_reduce_frequency(std::chrono::nanoseconds d);
 
 	/*
 	 * \brief get if the current simulation loop must be stopped or not
@@ -60,9 +68,9 @@ public:
 	 */
 	static void check_reducible();
 
-
 protected:
 	Monitor_reduction();
+
 	virtual ~Monitor_reduction() = default;
 
 	/*
@@ -101,20 +109,13 @@ private:
 	 * \return the result of the 'reduce_stop_loop()' call after the reductions. If there were not, then return false.
 	 */
 	static bool __reduce__(bool fully, bool force);
-
-	static bool                            stop_loop;
-	static std::vector<Monitor_reduction*> monitors;
-	static std::thread::id                 master_thread_id;
-	static std::chrono::nanoseconds        d_reduce_frequency;
-
-	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_reduction;
 };
 
 
 template <class M> // M is the monitor on which must be applied the reduction
 class Monitor_reduction_M : public Monitor_reduction, public M
 {
-	static_assert(std::is_base_of<Monitor, M>::value, "M shall be based on a module::Monitor class.");
+	static_assert(std::is_base_of<Monitor, M>::value, "M have to be based on a module::Monitor class.");
 
 private:
 	const std::vector<std::unique_ptr<M>>& monitors;
@@ -143,7 +144,6 @@ protected:
 	 * \brief call is_done()
 	 */
 	virtual bool is_done_mr();
-
 };
 }
 }
