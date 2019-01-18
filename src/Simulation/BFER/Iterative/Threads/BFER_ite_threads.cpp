@@ -21,7 +21,7 @@ BFER_ite_threads<B,R,Q>
 	{
 		if (this->params_BFER_ite.n_threads != 1)
 			std::clog << rang::tag::warning << "Multi-threading detected with error tracking revert feature! "
-			                                      "Each thread will play the same frames. Please run with one thread."
+			                                   "Each thread will play the same frames. Please run with one thread."
 			          << std::endl;
 	}
 }
@@ -68,7 +68,8 @@ void BFER_ite_threads<B,R,Q>
 		std::string msg = e.what(); // get only the function signature
 		tools::exception::no_backtrace = save;
 
-		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) == simu->prev_err_messages.end())
+		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) ==
+		    simu->prev_err_messages.end())
 		{
 			simu->prev_err_messages.push_back(msg); // save only the function signature
 			simu->prev_err_messages_to_display.push_back(e.what()); // with backtrace if debug mode
@@ -331,10 +332,11 @@ void BFER_ite_threads<B,R,Q>
 			if (!monitor[mnt::tsk::check_errors].get_n_calls())
 				std::cout << "#" << std::endl;
 
-			std::cout << "# -------------------------------" << std::endl;
-			std::cout << "# New communication (n°" << monitor[mnt::tsk::check_errors].get_n_calls() << ")" << std::endl;
-			std::cout << "# -------------------------------" << std::endl;
-			std::cout << "#" << std::endl;
+			auto fid = monitor[mnt::tsk::check_errors].get_n_calls();
+			std::cout << "# -------------------------------"     << std::endl;
+			std::cout << "# New communication (n°" << fid << ")" << std::endl;
+			std::cout << "# -------------------------------"     << std::endl;
+			std::cout << "#"                                     << std::endl;
 		}
 
 		if (this->params_BFER_ite.src->type != "AZCW")

@@ -158,7 +158,8 @@ void BFER<B,R,Q>
 		if (params_BFER.mpi_rank == 0)
 #endif
 		// start the terminal to display BER/FER results
-		if (!params_BFER.ter->disabled && params_BFER.ter->frequency != std::chrono::nanoseconds(0) && !params_BFER.debug)
+		if (!params_BFER.ter->disabled && params_BFER.ter->frequency != std::chrono::nanoseconds(0) &&
+		    !params_BFER.debug)
 			terminal->start_temp_report(params_BFER.ter->frequency);
 
 		this->t_start_noise_point = std::chrono::steady_clock::now();
@@ -172,14 +173,13 @@ void BFER<B,R,Q>
 		{
 			module::Monitor_reduction::is_done_all(true, true); // final reduction
 
-			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error messages
-
+			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error
+			                                   // messages
 			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 			this->simu_error = true;
 
 			tools::Terminal::stop();
 		}
-
 
 #ifdef AFF3CT_MPI
 		if (params_BFER.mpi_rank == 0)
@@ -285,7 +285,8 @@ std::unique_ptr<typename BFER<B,R,Q>::Monitor_BFER_type> BFER<B,R,Q>
 {
 	bool count_unknown_values = params_BFER.noise->type == "EP";
 
-	auto mnt = std::unique_ptr<typename BFER<B,R,Q>::Monitor_BFER_type>(params_BFER.mnt_er->build<B>(count_unknown_values));
+	auto mnt_tmp = params_BFER.mnt_er->build<B>(count_unknown_values);
+	auto mnt = std::unique_ptr<typename BFER<B,R,Q>::Monitor_BFER_type>(mnt_tmp);
 	mnt->activate_err_histogram(params_BFER.mnt_er->err_hist != -1);
 
 	return mnt;
@@ -303,15 +304,20 @@ void BFER<B,R,Q>
 ::build_reporters()
 {
 	this->noise.reset(params_BFER.noise->template build<R>(0));
-	this->reporters.push_back(std::unique_ptr<tools::Reporter_noise<R>>(new tools::Reporter_noise<R>(this->noise)));
+
+	auto reporter_noise = new tools::Reporter_noise<R>(this->noise);
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_noise<R>>(reporter_noise));
 
 	if (params_BFER.mutinfo)
 	{
-		this->reporters.push_back(std::unique_ptr<tools::Reporter_MI<B,R>>(new tools::Reporter_MI<B,R>(*this->monitor_mi_red)));
+		auto reporter_MI = new tools::Reporter_MI<B,R>(*this->monitor_mi_red);
+		this->reporters.push_back(std::unique_ptr<tools::Reporter_MI<B,R>>(reporter_MI));
 	}
 
-	this->reporters.push_back(std::unique_ptr<tools::Reporter_BFER<B>>(new tools::Reporter_BFER<B>(*this->monitor_er_red)));
-	this->reporters.push_back(std::unique_ptr<tools::Reporter_throughput<uint64_t>>(new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red)));
+	auto reporter_BFER = new tools::Reporter_BFER<B>(*this->monitor_er_red);
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_BFER<B>>(reporter_BFER));
+	auto reporter_thr = new tools::Reporter_throughput<uint64_t>(*this->monitor_er_red);
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_throughput<uint64_t>>(reporter_thr));
 }
 
 template <typename B, typename R, typename Q>
@@ -366,7 +372,10 @@ void BFER<B,R,Q>
 		simu->__build_communication_chain(tid);
 
 		if (simu->params_BFER.err_track_enable)
-			simu->monitor_er[tid]->add_handler_fe(std::bind(&tools::Dumper::add, simu->dumper[tid].get(), std::placeholders::_1, std::placeholders::_2));
+			simu->monitor_er[tid]->add_handler_fe(std::bind(&tools::Dumper::add,
+			                                                simu->dumper[tid].get(),
+			                                                std::placeholders::_1,
+			                                                std::placeholders::_2));
 	}
 	catch (std::exception const& e)
 	{
@@ -380,12 +389,13 @@ void BFER<B,R,Q>
 		std::string msg = e.what(); // get only the function signature
 		tools::exception::no_backtrace = save;
 
-		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) == simu->prev_err_messages.end())
+		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) ==
+		                                               simu->prev_err_messages.end())
 		{
 			// with backtrace if debug mode
 			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
-
-			simu->prev_err_messages.push_back(msg); // save only the function signature
+			// save only the function signature
+			simu->prev_err_messages.push_back(msg);
 		}
 		simu->mutex_exception.unlock();
 	}
@@ -406,7 +416,8 @@ bool BFER<B,R,Q>
 ::stop_time_reached()
 {
 	using namespace std::chrono;
-	return params_BFER.stop_time != seconds(0) && (steady_clock::now() - this->t_start_noise_point) >= params_BFER.stop_time;
+	return params_BFER.stop_time != seconds(0) && (steady_clock::now() - this->t_start_noise_point) >=
+	                                                                     params_BFER.stop_time;
 }
 
 // ==================================================================================== explicit template instantiation

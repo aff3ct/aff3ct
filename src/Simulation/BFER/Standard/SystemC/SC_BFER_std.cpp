@@ -20,12 +20,12 @@ SC_BFER_std<B,R,Q>
 		                                                            "multi-threading.");
 
 	if (params_BFER_std.coded_monitoring)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the coded "
-		                                                            "monitoring.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the "
+		                                                            "coded monitoring.");
 
 	if (params_BFER_std.mutinfo)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the mututal"
-		                                                            "information computation.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the "
+		                                                            "mututal information computation.");
 }
 
 template <typename B, typename R, typename Q>

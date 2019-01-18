@@ -51,9 +51,12 @@ EXIT<B,R>
 
 	this->set_module("monitor", 0, this->monitor);
 
-	reporters.push_back(std::unique_ptr<tools::Reporter_noise< R>           >(new tools::Reporter_noise< R>           (this->noise                  )));
-	reporters.push_back(std::unique_ptr<tools::Reporter_EXIT<B,R>           >(new tools::Reporter_EXIT<B,R>           (*this->monitor, this->noise_a)));
-	reporters.push_back(std::unique_ptr<tools::Reporter_throughput<uint64_t>>(new tools::Reporter_throughput<uint64_t>(*this->monitor               )));
+	auto reporter_noise = new tools::Reporter_noise<R>(this->noise);
+	reporters.push_back(std::unique_ptr<tools::Reporter_noise<R>>(reporter_noise));
+	auto reporter_EXIT = new tools::Reporter_EXIT<B,R>(*this->monitor, this->noise_a);
+	reporters.push_back(std::unique_ptr<tools::Reporter_EXIT<B,R>>(reporter_EXIT));
+	auto reporter_thr = new tools::Reporter_throughput<uint64_t>(*this->monitor);
+	reporters.push_back(std::unique_ptr<tools::Reporter_throughput<uint64_t>>(reporter_thr));
 }
 
 template <typename B, typename R>
@@ -289,10 +292,11 @@ void EXIT<B,R>
 			if (!monitor[mnt::tsk::check_mutual_info].get_n_calls())
 				std::cout << "#" << std::endl;
 
-			std::cout << "# -------------------------------" << std::endl;
-			std::cout << "# New communication (n°" << monitor[mnt::tsk::check_mutual_info].get_n_calls() << ")" << std::endl;
-			std::cout << "# -------------------------------" << std::endl;
-			std::cout << "#" << std::endl;
+			auto fid = monitor[mnt::tsk::check_mutual_info].get_n_calls();
+			std::cout << "# -------------------------------"     << std::endl;
+			std::cout << "# New communication (n°" << fid << ")" << std::endl;
+			std::cout << "# -------------------------------"     << std::endl;
+			std::cout << "#"                                     << std::endl;
 		}
 
 		source [src::tsk::generate].exec();
