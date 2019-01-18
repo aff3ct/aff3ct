@@ -748,22 +748,6 @@ For the above example, the dumped or read files will be:
 
 |factory::BFER::parameters::p+err-trk-thold|
 
-.. _sim-sim-mpi-comm:
-
-``--sim-mpi-comm``
-""""""""""""""""""
-
-   :Type: integer
-   :Default: 1000
-   :Examples: ``--sim-mpi-comm 1``
-
-|factory::Simulation::parameters::p+mpi-comm|
-
-.. note:: Available only when compiling with the |MPI| support
-   :ref:`compilation_cmake_options`.
-
-.. TODO: add link to MPI use
-
 References
 """"""""""
 

@@ -97,10 +97,6 @@
 .. |factory::Simulation::parameters::p+seed,S| replace::
    Set the |PRNG| seed used in the Monte Carlo simulation.
 
-.. |factory::Simulation::parameters::p+mpi-comm| replace::
-   Set the time interval (in milliseconds) between the |MPI| communications.
-   Increase this interval will reduce the |MPI| communication overhead.
-
 .. ---------------------------------------------------- factory BFER parameters
 
 .. |factory::BFER::parameters::p+coset,c| replace::
@@ -128,6 +124,17 @@
 
 .. |factory::BFER::parameters::p+mutinfo| replace::
    Enable the computation of the mutual information (|MI|).
+
+.. |factory::BFER::parameters::p+red-lazy| replace::
+   Enable the lazy synchronization between the various monitor threads.
+
+.. |factory::BFER::parameters::p+red-lazy-freq| replace::
+   Set the time interval (in milliseconds) between the synchronizations of the
+   monitor threads.
+
+.. |factory::BFER::parameters::p+mpi-comm-freq| replace::
+   Set the time interval (in milliseconds) between the |MPI| communications.
+   Increase this interval will reduce the |MPI| communications overhead.
 
 .. ------------------------------------------------ factory BFER_ite parameters
 

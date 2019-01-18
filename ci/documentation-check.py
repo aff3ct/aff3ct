@@ -138,7 +138,7 @@ def check_keys(keys_file, aff3ct_path, doc_path):
 
 	# manages special key exceptions
 	exceptions_not_in_doc_keys = ["factory::Frozenbits_generator::parameters::p+pb-path"]
-	exceptions_doc_keys = ["factory::Simulation::parameters::p+mpi-comm", "factory::Launcher::parameters::except-a2l"]
+	exceptions_doc_keys = ["factory::BFER::parameters::p+mpi-comm-freq", "factory::Launcher::parameters::except-a2l"]
 	for e in exceptions_not_in_doc_keys:
 		if e in not_in_doc_keys: not_in_doc_keys.remove(e)
 	for e in exceptions_doc_keys:

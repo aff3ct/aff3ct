@@ -23,7 +23,7 @@ SC_BFER_std<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the "
 		                                                            "coded monitoring.");
 
-	if (params_BFER_std.mutinfo)
+	if (params_BFER_std.mnt_mutinfo)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "BFER SystemC simulation does not support the "
 		                                                            "mututal information computation.");
 }
@@ -75,7 +75,7 @@ void SC_BFER_std<B,R,Q>
 	this->quantizer [tid]                    ->sc.create_module(+qnt::tsk::process        );
 	this->codec     [tid]->get_decoder_siho()->sc.create_module(+dec::tsk::decode_siho    );
 	this->monitor_er[tid]                    ->sc.create_module(+mnt::tsk::check_errors   );
-	if (this->params_BFER_std.mutinfo) // this->monitor_mi[tid] != nullptr
+	if (this->params_BFER_std.mnt_mutinfo) // this->monitor_mi[tid] != nullptr
 	this->monitor_mi[tid]                    ->sc.create_module(+mnt::tsk::get_mutual_info);
 	if (this->params_BFER_std.coset)
 	{

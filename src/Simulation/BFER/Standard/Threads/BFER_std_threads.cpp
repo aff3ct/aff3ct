@@ -244,7 +244,7 @@ void BFER_std_threads<B,R,Q>
 		mnt[mnt::sck::check_errors::V](crc[crc::sck::extract ::V_K2]);
 	}
 
-	if (this->params_BFER_std.mutinfo) // this->monitor_mi[tid] != nullptr
+	if (this->params_BFER_std.mnt_mutinfo) // this->monitor_mi[tid] != nullptr
 	{
 		auto &mnt = *this->monitor_mi[tid];
 
@@ -369,7 +369,7 @@ void BFER_std_threads<B,R,Q>
 
 		monitor[mnt::tsk::check_errors].exec();
 
-		if (this->params_BFER_std.mutinfo)
+		if (this->params_BFER_std.mnt_mutinfo)
 		{
 			auto &monitor = *this->monitor_mi[tid];
 

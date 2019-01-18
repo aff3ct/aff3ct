@@ -308,7 +308,7 @@ void BFER<B,R,Q>
 	auto reporter_noise = new tools::Reporter_noise<R>(this->noise);
 	this->reporters.push_back(std::unique_ptr<tools::Reporter_noise<R>>(reporter_noise));
 
-	if (params_BFER.mutinfo)
+	if (params_BFER.mnt_mutinfo)
 	{
 		auto reporter_MI = new tools::Reporter_MI<B,R>(*this->monitor_mi_red);
 		this->reporters.push_back(std::unique_ptr<tools::Reporter_MI<B,R>>(reporter_MI));
@@ -335,7 +335,7 @@ void BFER<B,R,Q>
 	// build a monitor to reduce BER/FER from the other monitors
 	this->monitor_er_red.reset(new Monitor_BFER_reduction_type(this->monitor_er));
 
-	if (params_BFER.mutinfo)
+	if (params_BFER.mnt_mutinfo)
 	{
 		// build a monitor to compute MIon each thread
 		this->add_module("monitor_mi", params_BFER.n_threads);
@@ -351,11 +351,16 @@ void BFER<B,R,Q>
 
 	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
 #ifdef AFF3CT_MPI
-	module::Monitor_reduction::set_reduce_frequency(params_BFER.mpi_comm_freq);
+	module::Monitor_reduction::set_reduce_frequency(params_BFER.mnt_mpi_comm_freq);
 #else
-	auto freq = std::chrono::milliseconds(1000);
-	if (params_BFER.ter.get() != nullptr && params_BFER.ter->frequency != std::chrono::milliseconds(0))
-		freq = params_BFER.ter.get()->frequency;
+	auto freq = std::chrono::milliseconds(0);
+	if (params_BFER.mnt_red_lazy)
+	{
+		if (params_BFER.mnt_red_lazy_freq.count())
+			freq = params_BFER.mnt_red_lazy_freq;
+		else
+			freq = std::chrono::milliseconds(1000); // default value when lazy reduction and no terminal refresh
+	}
 	module::Monitor_reduction::set_reduce_frequency(freq);
 #endif
 
