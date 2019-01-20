@@ -61,10 +61,6 @@ mkdir ressources/aff3ct_builds
 cd ..
 
 CSV_ENTRY=$(cat ${REPO_WEB}/download/download_${GIT_BRANCH}.csv | grep "$GIT_TAG" | grep "$GIT_HASH" | grep "$GIT_DATE" | grep "$GIT_MESSAGE" | grep "$GIT_AUTHOR" | grep "$BUILDS_LIST")
-# if the entry does not exist, add the entry to the CSV file
-if [ -z "$CSV_ENTRY" ]; then
-	echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ${REPO_WEB}/download/download_${GIT_BRANCH}.csv
-fi
 
 # delete the build if it exists
 if [ -n "$CSV_ENTRY" ]; then
@@ -139,6 +135,11 @@ do
 		BUILDS_LIST=${BUILDS_LIST},${ZIP_NAME}
 	fi
 done
+
+# if the entry does not exist, add the entry to the CSV file
+if [ -z "$CSV_ENTRY" ]; then
+	echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ${REPO_WEB}/download/download_${GIT_BRANCH}.csv
+fi
 
 cd ${REPO_WEB}/${REPO_RESSOURCES}
 # git lfs install --local
