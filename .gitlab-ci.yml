@@ -953,8 +953,6 @@ deploy-sonarqube-linux:
   only:
     - master
     - development
-  environment:
-    name: production
   allow_failure: true
   script:
     - source ./ci/tools/git-tag.sh
@@ -981,8 +979,6 @@ deploy-builds-linux:
   only:
     - master
     - development
-  environment:
-    name: production
   allow_failure: true
   script:
     - source ./ci/tools/git-branch.sh
@@ -1002,8 +998,6 @@ pages:
     - linux
   dependencies:
     - coverage-linux
-  environment:
-    name: production
   allow_failure: true
   script:
     - mv code_coverage_report/ public/
