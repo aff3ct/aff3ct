@@ -60,6 +60,33 @@ git submodule update --init --recursive
 mkdir ressources/aff3ct_builds
 cd ..
 
+CSV_ENTRY=$(cat ${REPO_WEB}/download/download_${GIT_BRANCH}.csv | grep "$GIT_TAG" | grep "$GIT_HASH" | grep "$GIT_DATE" | grep "$GIT_MESSAGE" | grep "$GIT_AUTHOR" | grep "$BUILDS_LIST")
+# if the entry does not exist, add the entry to the CSV file
+if [ -z "$CSV_ENTRY" ]; then
+	echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ${REPO_WEB}/download/download_${GIT_BRANCH}.csv
+fi
+
+# delete the build if it exists
+if [ -n "$CSV_ENTRY" ]; then
+	cd ${REPO_WEB}/${REPO_RESSOURCES}
+	FILES=$(echo $CSV_ENTRY | cut -d ";" -f6)
+	s1="\""
+	s2=""
+	FILES=$(echo "${FILES//$s1/$s2}")
+	N_FILES=$(echo $FILES |  sed 's/,/\n/g' | wc -l)
+	for (( F=1; F<=N_FILES; F++ ))
+	do
+		FILE=$(echo $FILES | cut -d "," -f$F)
+		FILE_PATH=aff3ct_builds/$FILE;
+		if [ -f $FILE_PATH ]; then
+			git filter-branch --force --index-filter "git rm --cached --ignore-unmatch ${FILE_PATH}" --prune-empty --tag-name-filter cat -- --all
+			rm -rf .git/refs/original/
+			git reflog expire --expire=now --all
+		fi
+	done
+	cd ../../
+fi
+
 for BUILD in "$@"
 do
 	PREFIX=aff3ct_${GIT_BRANCH}
@@ -113,20 +140,13 @@ do
 	fi
 done
 
-cat ${REPO_WEB}/download/download_${GIT_BRANCH}.csv | grep "$GIT_TAG" | grep "$GIT_HASH" | grep "$GIT_DATE" | grep "$GIT_MESSAGE" | grep "$GIT_AUTHOR" | grep "$BUILDS_LIST" > /dev/null 2>&1
-rc=$?;
-# if the entry does not exist, add the entry to the CSV file
-if [[ $rc != 0 ]]; then
-	echo "\"$GIT_TAG\";\"$GIT_HASH\";\"$GIT_DATE\";\"$GIT_MESSAGE\";\"$GIT_AUTHOR\";\"$BUILDS_LIST\"" >> ${REPO_WEB}/download/download_${GIT_BRANCH}.csv
-fi
-
 cd ${REPO_WEB}/${REPO_RESSOURCES}
 # git lfs install --local
 # git lfs track aff3ct_builds/*
 git add -f aff3ct_builds/*
 git commit -m "Automatic: add new AFF3CT builds ($GIT_BRANCH: $GIT_HASH)."
 
-#delete old builds
+# delete old builds
 BUILD_CSV=../download/download_${GIT_BRANCH}.csv
 N_BUILDS_TO_KEEP=0
 if [ "${GIT_BRANCH}" == "master" ]; then
