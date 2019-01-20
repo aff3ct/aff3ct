@@ -1,9 +1,9 @@
 #!/bin/bash
 set -x
 
-if [ "$CI_PROJECT_URL" != "https://gitlab.com/aff3ct/aff3ct" ]
+if [[ ( -z "$CI_AFF3CT_DEPLOY" ) || ( "$CI_AFF3CT_DEPLOY" != "ON" ) ]]
 then
-	echo "This job can only be done from the public CI: https://gitlab.com/aff3ct/aff3ct/pipelines."
+	echo "This job is disabled, try to set the CI_AFF3CT_DEPLOY environment variable to 'ON' to enable it."
 	exit 1
 fi
 
