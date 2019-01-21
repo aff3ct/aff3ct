@@ -27,7 +27,7 @@ private:
 
 	tools::Vector_4D<Q>      arr_phi;
 	tools::Vector_3D<Q>      msg_user_to_resources;
-	tools::Vector_3D<Q>      msg_res_user;
+	tools::Vector_3D<Q>      msg_resource_to_users;
 	tools::Vector_2D<Q>      guess;
 	const bool               disable_sig2;
 	      R                  n0; // 1 / n0 = 179.856115108
@@ -69,7 +69,7 @@ private:
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch);
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch, const R* H_N);
 	void demodulate_batch(Q* Y_N2, int batch);
-	Q normalize_prob_msg_res_user(int user, int resource_ind, int codeword);
+	Q normalize_prob_msg_resource_to_users(int user, int resource_ind, int codeword);
 };
 }
 }
