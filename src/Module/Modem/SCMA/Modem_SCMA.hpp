@@ -69,7 +69,7 @@ private:
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch);
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch, const R* H_N);
 	void demodulate_batch(Q* Y_N2, int batch);
-	Q normalize_prob_msg_res_user(int user, int resource_ind, int resource);
+	Q normalize_prob_msg_res_user(int user, int resource_ind, int codeword);
 };
 }
 }
