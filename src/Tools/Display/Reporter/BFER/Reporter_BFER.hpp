@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
+template <typename B = int32_t>
 class Reporter_BFER : public Reporter_monitor<module::Monitor_BFER<B>>
 {
 public:
