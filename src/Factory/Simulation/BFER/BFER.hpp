@@ -34,6 +34,7 @@ struct BFER : Simulation
 		bool        err_track_enable    = false;
 		bool        coset               = false;
 		bool        coded_monitoring    = false;
+		bool        ter_sigma           = false;
 		bool        mnt_mutinfo         = false;
 
 #ifdef AFF3CT_MPI

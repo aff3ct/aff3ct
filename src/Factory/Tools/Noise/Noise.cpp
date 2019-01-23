@@ -58,7 +58,6 @@ void Noise::parameters
 
 	tools::add_arg(args, p, class_name+"p+noise-type,E",
 		tools::Text(tools::Including_set("ESN0", "EBN0", "ROP", "EP")));
-
 }
 
 void Noise::parameters

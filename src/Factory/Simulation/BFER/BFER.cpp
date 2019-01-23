@@ -113,6 +113,11 @@ void BFER::parameters
 	tools::add_arg(args, p, class_name+"p+coded",
 		tools::None());
 
+	auto pter = ter->get_prefix();
+
+	tools::add_arg(args, pter, class_name+"p+sigma",
+		tools::None());
+
 	auto pmnt = mnt_er->get_prefix();
 
 	tools::add_arg(args, pmnt, class_name+"p+mutinfo",
@@ -143,8 +148,8 @@ void BFER::parameters
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-err-trk-path" })) this->err_track_path      = vals.at    ({p+"-err-trk-path"   });
-	if(vals.exist({p+"-err-trk-thold"})) this->err_track_threshold = vals.to_int({p+"-err-trk-thold"  });
+	if(vals.exist({p+"-err-trk-path" })) this->err_track_path      = vals.at    ({p+"-err-trk-path" });
+	if(vals.exist({p+"-err-trk-thold"})) this->err_track_threshold = vals.to_int({p+"-err-trk-thold"});
 	if(vals.exist({p+"-err-trk-rev"  })) this->err_track_revert    = true;
 	if(vals.exist({p+"-err-trk"      })) this->err_track_enable    = true;
 	if(vals.exist({p+"-coset",    "c"})) this->coset               = true;
@@ -155,6 +160,10 @@ void BFER::parameters
 		this->err_track_enable = false;
 		this->n_threads = 1;
 	}
+
+	auto pter = ter->get_prefix();
+
+	if(vals.exist({pter+"-sigma"})) this->ter_sigma = true;
 
 	auto pmnt = mnt_er->get_prefix();
 
@@ -178,6 +187,12 @@ void BFER::parameters
 	Simulation::parameters::get_headers(headers, full);
 
 	auto p = this->get_prefix();
+
+	if (this->noise.get() != nullptr && (this->noise.get()->type == "EBN0" || this->noise.get()->type == "ESN0"))
+	{
+		std::string pter = ter->get_prefix();
+		headers[pter].push_back(std::make_pair("Show Sigma", this->ter_sigma ? "on" : "off"));
+	}
 
 	std::string pmnt = mnt_er->get_prefix();
 #ifdef AFF3CT_MPI

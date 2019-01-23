@@ -305,7 +305,7 @@ void BFER<B,R,Q>
 {
 	this->noise.reset(params_BFER.noise->template build<R>(0));
 
-	auto reporter_noise = new tools::Reporter_noise<R>(this->noise);
+	auto reporter_noise = new tools::Reporter_noise<R>(this->noise, this->params_BFER.ter_sigma);
 	this->reporters.push_back(std::unique_ptr<tools::Reporter_noise<R>>(reporter_noise));
 
 	if (params_BFER.mnt_mutinfo)
