@@ -122,6 +122,9 @@
 .. |factory::BFER::parameters::p+coded| replace::
    Enable the coded monitoring.
 
+.. |factory::BFER::parameters::p+sigma| replace::
+   Show the variance :math:`\sigma` of the Gaussian noise in the terminal.
+
 .. |factory::BFER::parameters::p+mutinfo| replace::
    Enable the computation of the mutual information (|MI|).
 

@@ -56,3 +56,13 @@ Description of the allowed values:
 """"""""""""
 
 |factory::Terminal::parameters::p+no|
+
+.. _ter-ter-sigma:
+
+``--ter-sigma``
+"""""""""""""""
+
+|factory::BFER::parameters::p+sigma|
+
+.. note:: Work only if the :ref:`sim-sim-noise-type` parameter is set to
+   ``EBN0`` or ``ESNO``.
