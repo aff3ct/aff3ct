@@ -123,7 +123,8 @@
    Enable the coded monitoring.
 
 .. |factory::BFER::parameters::p+sigma| replace::
-   Show the variance :math:`\sigma` of the Gaussian noise in the terminal.
+   Show the standard deviation (:math:`\sigma`) of the Gaussian/Normal
+   distribution in the terminal.
 
 .. |factory::BFER::parameters::p+mutinfo| replace::
    Enable the computation of the mutual information (|MI|).
