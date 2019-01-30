@@ -122,23 +122,21 @@ Codec_polar<B,Q>
 	{
 		if (!adaptive_fb)
 		{
-			tools::Noise<float> * noise;
 			if(fb_params.noise_type == "SIGMA")
 			{
 				auto sigma = tools::Sigma<float>(fb_params.noise);
-				noise = &sigma;
+				fb_generator->set_noise(sigma);
 			}
 			else if (fb_params.noise_type == "EP")
 			{
 				auto ep = tools::Event_probability<float>(fb_params.noise);
-				noise = &ep;
+				fb_generator->set_noise(ep);
 			}
 			else
 			{
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported noise type for fb generation.");
 			}
-
-			fb_generator->set_noise(*noise);
+			
 			fb_generator->generate(frozen_bits);
 			this->notify_frozenbits_update();
 		}
