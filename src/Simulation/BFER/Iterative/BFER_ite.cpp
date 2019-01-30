@@ -97,19 +97,42 @@ void BFER_ite<B,R,Q>
 
 		source[src::tsk::generate].set_autoalloc(true);
 		auto src_data = (B*)(source[src::sck::generate::U_K].get_dataptr());
-		auto src_size = (source[src::sck::generate::U_K].get_databytes() / sizeof(B)) / this->params_BFER_ite.src->n_frames;
-		this->dumper[tid]->register_data(src_data, (unsigned int)src_size, this->params_BFER_ite.err_track_threshold, "src", false, this->params_BFER_ite.src->n_frames, {});
+		auto src_bytes = source[src::sck::generate::U_K].get_databytes();
+		auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_ite.src->n_frames;
+		this->dumper[tid]->register_data(src_data,
+		                                 (unsigned int)src_size,
+		                                 this->params_BFER_ite.err_track_threshold,
+		                                 "src",
+		                                 false,
+		                                 this->params_BFER_ite.src->n_frames,
+		                                 {});
 
 		encoder[enc::tsk::encode].set_autoalloc(true);
 		auto enc_data = (B*)(encoder[enc::sck::encode::X_N].get_dataptr());
-		auto enc_size = (encoder[enc::sck::encode::X_N].get_databytes() / sizeof(B)) / this->params_BFER_ite.src->n_frames;
-		this->dumper[tid]->register_data(enc_data, (unsigned int)enc_size, this->params_BFER_ite.err_track_threshold, "enc", false, this->params_BFER_ite.src->n_frames,
+		auto enc_bytes = encoder[enc::sck::encode::X_N].get_databytes();
+		auto enc_size = (enc_bytes / sizeof(B)) / this->params_BFER_ite.src->n_frames;
+		this->dumper[tid]->register_data(enc_data,
+		                                 (unsigned int)enc_size,
+		                                 this->params_BFER_ite.err_track_threshold,
+		                                 "enc",
+		                                 false,
+		                                 this->params_BFER_ite.src->n_frames,
 		                                 {(unsigned)this->params_BFER_ite.cdc->enc->K});
 
-		this->dumper[tid]->register_data(channel.get_noise(), this->params_BFER_ite.err_track_threshold, "chn", true, this->params_BFER_ite.src->n_frames, {});
+		this->dumper[tid]->register_data(channel.get_noise(),
+		                                 this->params_BFER_ite.err_track_threshold,
+		                                 "chn",
+		                                 true,
+		                                 this->params_BFER_ite.src->n_frames,
+		                                 {});
 
 		if (interleaver_core[tid]->is_uniform())
-			this->dumper[tid]->register_data(interleaver.get_lut(), this->params_BFER_ite.err_track_threshold, "itl", false, this->params_BFER_ite.src->n_frames, {});
+			this->dumper[tid]->register_data(interleaver.get_lut(),
+			                                 this->params_BFER_ite.err_track_threshold,
+			                                 "itl",
+			                                 false,
+			                                 this->params_BFER_ite.src->n_frames,
+			                                 {});
 	}
 }
 

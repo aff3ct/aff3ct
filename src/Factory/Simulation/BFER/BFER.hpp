@@ -34,7 +34,15 @@ struct BFER : Simulation
 		bool        err_track_enable    = false;
 		bool        coset               = false;
 		bool        coded_monitoring    = false;
-		bool        mutinfo             = false;
+		bool        ter_sigma           = false;
+		bool        mnt_mutinfo         = false;
+
+#ifdef AFF3CT_MPI
+		std::chrono::milliseconds mnt_mpi_comm_freq = std::chrono::milliseconds(1000);
+#else
+		std::chrono::milliseconds mnt_red_lazy_freq = std::chrono::milliseconds(0);
+		bool                      mnt_red_lazy      = false;
+#endif
 
 		// module parameters
 		tools::auto_cloned_unique_ptr<Source       ::parameters> src;

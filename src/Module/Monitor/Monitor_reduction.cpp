@@ -95,7 +95,6 @@ void Monitor_reduction
 		        << ", and 'pow_np' = " << pow_np << ").";
 		throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
 	}
-
 #endif
 }
 
@@ -109,7 +108,6 @@ bool Monitor_reduction
 	if (n_stop_recv > 0)
 		Monitor_reduction::set_stop_loop();
 
-
 	int np;
 	MPI_Comm_size(MPI_COMM_WORLD, &np);
 
@@ -117,7 +115,6 @@ bool Monitor_reduction
 #else
 	return true;
 #endif
-
 }
 
 bool Monitor_reduction
@@ -126,12 +123,11 @@ bool Monitor_reduction
 	bool all_process_on_last = false;
 
 	// only the master thread can do this
-	if (force
-		|| (std::this_thread::get_id() == Monitor_reduction::master_thread_id
-	        && (std::chrono::steady_clock::now() - Monitor_reduction::t_last_reduction) >= Monitor_reduction::d_reduce_frequency)
-	   )
+	if (force || (std::this_thread::get_id() == Monitor_reduction::master_thread_id &&
+	              (std::chrono::steady_clock::now() - Monitor_reduction::t_last_reduction) >=
+	               Monitor_reduction::d_reduce_frequency))
 	{
-		for(auto& m : Monitor_reduction::monitors)
+		for (auto& m : Monitor_reduction::monitors)
 			m->_reduce(fully);
 
 		all_process_on_last = reduce_stop_loop();

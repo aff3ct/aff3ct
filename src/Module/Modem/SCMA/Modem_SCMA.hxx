@@ -27,7 +27,7 @@ Modem_SCMA<B,R,Q,PSI>
   CB                   (*CB_ptr),
   arr_phi              (CB.get_number_of_resources(), CB.get_codebook_size(),       CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
   msg_user_to_resources(CB.get_number_of_users(),     CB.get_number_of_resources(), CB.get_codebook_size(),                         (Q)0),
-  msg_res_user         (CB.get_number_of_resources(), CB.get_number_of_users(),     CB.get_codebook_size(),                         (Q)0),
+  msg_resource_to_users(CB.get_number_of_resources(), CB.get_number_of_users(),     CB.get_codebook_size(),                         (Q)0),
   guess                (CB.get_number_of_users(),     CB.get_codebook_size(),                                                       (Q)0),
   disable_sig2         (disable_sig2 ),
   n_ite                (n_ite        )
@@ -203,7 +203,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		for (auto r = 0; r < CB.get_number_of_resources(); ++r)
 			for (auto u = 0; u < CB.get_number_of_users_per_resource(); ++u)
 				for (auto i = 0; i < CB.get_codebook_size(); i++)
-					msg_res_user(r, CB.get_resource_to_user(r, u), i) = (Q)0;
+					msg_resource_to_users(r, CB.get_resource_to_user(r, u), i) = (Q)0;
 
 
 		for (auto i = 0; i < CB.get_codebook_size(); i++)
@@ -211,13 +211,13 @@ void Modem_SCMA<B,R,Q,PSI>
 				for (auto k = 0; k < CB.get_codebook_size(); k++)
 					for (auto re = 0; re < CB.get_number_of_resources(); re++)
 					{
-						msg_res_user(re, CB.get_resource_to_user(re, 0), i) += arr_phi(re, i, j, k)
+						msg_resource_to_users(re, CB.get_resource_to_user(re, 0), i) += arr_phi(re, i, j, k)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 1), re, j)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 2), re, k);
-						msg_res_user(re, CB.get_resource_to_user(re, 1), i) += arr_phi(re, j, i, k)
+						msg_resource_to_users(re, CB.get_resource_to_user(re, 1), i) += arr_phi(re, j, i, k)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 0), re, j)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 2), re, k);
-						msg_res_user(re, CB.get_resource_to_user(re, 2), i) += arr_phi(re, j, k, i)
+						msg_resource_to_users(re, CB.get_resource_to_user(re, 2), i) += arr_phi(re, j, k, i)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 0), re, j)
 						                                            * msg_user_to_resources(CB.get_resource_to_user(re, 1), re, k);
 					}
@@ -235,17 +235,17 @@ void Modem_SCMA<B,R,Q,PSI>
 		// 						if (u2 != u)
 		// 							proba *= msg_user_to_resources(CB.get_resource_to_user(re,u2),re,j); ///// <------- but I'm having issue with this j that shall be k once on two.
 
-		// 					msg_res_user(re,CB.get_resource_to_user(re,u),i) += proba;
+		// 					msg_resource_to_users(re,CB.get_resource_to_user(re,u),i) += proba;
 		// 				}
 
 
 		// user to resource messaging
-		for (auto i = 0; i < CB.get_number_of_resources(); i++)
+		for (auto i = 0; i < CB.get_codebook_size(); i++) //codeword index
 		{
 			for (auto j = 0; j < CB.get_number_of_users(); j++) //user index
 			{
-				msg_user_to_resources(j, CB.get_user_to_resource(j, 0), i) = normalize_prob_msg_res_user(j, 1, i);
-				msg_user_to_resources(j, CB.get_user_to_resource(j, 1), i) = normalize_prob_msg_res_user(j, 0, i);
+				msg_user_to_resources(j, CB.get_user_to_resource(j, 0), i) = normalize_prob_msg_resource_to_users(j, 1, i);
+				msg_user_to_resources(j, CB.get_user_to_resource(j, 1), i) = normalize_prob_msg_resource_to_users(j, 0, i);
 			}
 		}
 	}
@@ -257,7 +257,7 @@ void Modem_SCMA<B,R,Q,PSI>
 		for (auto j = 0; j < CB.get_number_of_users(); j++) //user index
 		{
 			// TODO : need certainly a third loop here for the different resources of a the user 'j'
-			guess(j, i) = msg_res_user(CB.get_user_to_resource(j, 0), j, i) * msg_res_user(CB.get_user_to_resource(j, 1), j, i);
+			guess(j, i) = msg_resource_to_users(CB.get_user_to_resource(j, 0), j, i) * msg_resource_to_users(CB.get_user_to_resource(j, 1), j, i);
 		}
 	}
 
@@ -295,16 +295,16 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Q Modem_SCMA<B,R,Q,PSI>
-::normalize_prob_msg_res_user(int user, int resource_ind, int resource)
+::normalize_prob_msg_resource_to_users(int user, int resource_ind, int codeword)
 {
 	Q sum = 0;
 
 	for(auto i = 0; i < CB.get_codebook_size(); i++) //codeword index
 	{
-		sum += msg_res_user(CB.get_user_to_resource(user, resource_ind), user, i);
+		sum += msg_resource_to_users(CB.get_user_to_resource(user, resource_ind), user, i);
 	}
 
-	auto norm_prob = msg_res_user(CB.get_user_to_resource(user, resource_ind), user, resource) / sum;
+	auto norm_prob = msg_resource_to_users(CB.get_user_to_resource(user, resource_ind), user, codeword) / sum;
 	return norm_prob;
 }
 

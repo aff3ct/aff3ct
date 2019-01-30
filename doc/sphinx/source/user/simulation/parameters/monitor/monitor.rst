@@ -71,3 +71,60 @@ display the histogram with the following command:
 
 .. note:: Only available on ``BFER`` simulation types (see the
    :ref:`sim-sim-type` parameter for more details).
+
+.. _mnt-mnt-red-lazy:
+
+``--mnt-red-lazy``
+"""""""""""""""""""""""
+
+|factory::BFER::parameters::p+red-lazy|
+
+Using this parameter can significantly reduce the simulation time, especially
+for short frame sizes when the monitor synchronizations happen very often.
+
+.. note:: This parameter is not available if the code has been compiled with
+   |MPI|.
+
+.. note:: By default, if the :ref:`mnt-mnt-red-lazy-freq` parameter is not
+   specified, the interval/frequency is set to the same value than the
+   :ref:`ter-ter-freq` parameter.
+
+.. warning:: Be careful, this parameter is known to alter the behavior of the
+   :ref:`sim-sim-max-fra` parameter.
+
+.. _mnt-mnt-red-lazy-freq:
+
+``--mnt-red-lazy-freq``
+"""""""""""""""""""""""""""
+
+   :Type: integer
+   :Default: 1000
+   :Examples: ``--mnt-red-lazy-freq 200``
+
+|factory::BFER::parameters::p+red-lazy-freq|
+
+.. note:: This parameter automatically enables the :ref:`mnt-mnt-red-lazy`
+   parameter.
+
+.. note:: This parameter is not available if the code has been compiled with
+   |MPI|.
+
+.. _mnt-mnt-mpi-comm-freq:
+
+``--mnt-mpi-comm-freq``
+"""""""""""""""""""""""
+
+   :Type: integer
+   :Default: 1000
+   :Examples: ``--mnt-mpi-comm-freq 1``
+
+|factory::BFER::parameters::p+mpi-comm-freq|
+
+.. note:: Available only when compiling with the |MPI| support
+   :ref:`compilation_cmake_options`.
+
+.. note:: When this parameter is specified, the :ref:`ter-ter-freq` parameter
+   is automatically set to the same value except if the :ref:`ter-ter-freq` is
+   explicitly defined.
+
+.. TODO: add link to MPI use

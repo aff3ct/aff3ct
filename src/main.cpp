@@ -115,7 +115,7 @@ void print_version()
 	std::string ext_strings = "off";
 #endif
 
-#if defined(AFF3CT_ENABLE_MPI)
+#if defined(AFF3CT_MPI)
 	std::string mpi = "on";
 #else
 	std::string mpi = "off";
