@@ -136,7 +136,7 @@ Codec_polar<B,Q>
 			{
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported noise type for fb generation.");
 			}
-			
+
 			fb_generator->generate(frozen_bits);
 			this->notify_frozenbits_update();
 		}
