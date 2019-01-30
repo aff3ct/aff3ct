@@ -5,18 +5,20 @@ AFF3CT_PATH=../../../build/bin/aff3ct
 
 $AFF3CT_PATH -p "8" --sim-type "BFER" -C "POLAR" -K "32" -N "64" -m "2.81"     \
 -M "2.81" -e "2" --enc-fb-gen-method "GA" --dec-type "SC"                      \
---src-type "RAND_FAST" --chn-type "AWGN" --chn-implem "FAST"                   \
---dec-implem "FAST" --dec-simd "INTRA" --sim-debug --sim-pyber "test dump"     \
+--src-type "RAND" --src-implem FAST --chn-type "AWGN" --chn-implem "FAST"                   \
+--dec-implem "FAST" --dec-simd "INTRA" --sim-dbg --sim-meta "test dump"     \
 > dump_debug_gold.txt
 
 $AFF3CT_PATH --sim-type "BFER" -p "8" --sim-cde-type "UNCODED" -K "12" -m "5"  \
 -M "5" -s "0.5" --chn-type "RAYLEIGH" -t "1" --mdm-type "SCMA" --mdm-ite "4"   \
---mnt-max-fe "100" -F "6" --sim-debug --sim-pyber "Dump Test"                  \
+--mnt-max-fe "100" -F "6" --sim-dbg --sim-meta "Dump Test"                  \
+--mdm-codebook "conf/mod/SCMA/CS1.cb" \
 > dump_debug_gold2.txt
 
 $AFF3CT_PATH --sim-type "BFER" -p "8" --sim-cde-type "UNCODED" -K "12" -m "5"  \
 -M "5" -s "0.5" --chn-type "RAYLEIGH" -t "1" --mdm-type "SCMA" --mdm-ite "4"   \
---mnt-max-fe "100" -F "6" --sim-debug-hex --sim-pyber "Dump Test"              \
+--mnt-max-fe "100" -F "6" --sim-dbg-hex --sim-meta "Dump Test"              \
+--mdm-codebook "conf/mod/SCMA/CS1.cb" \
 > dump_debug_gold4.txt
 
 
@@ -61,7 +63,7 @@ rm -f Y_N.mat X_N.mat H_N.mat
 # Test 3...
 rm -f Y_N1.txt Y_N2.txt Y_N1.bin Y_N2.bin Y_N1.h Y_N2.h
 python3 ../aff3ct_debug_parser.py ./dump_debug_gold.txt                        \
---mod Quantizer_standard --tsk process --src --txt --bin --mat
+--mod Quantizer_pow2 --tsk process --src --txt --bin --mat
 cmp Y_N1.txt refs/Y_N1_gold3.txt
 cmp Y_N2.txt refs/Y_N2_gold3.txt
 cmp Y_N1.bin refs/Y_N1_gold3.bin
@@ -77,7 +79,7 @@ rm -f Y_N1.mat Y_N2.mat
 # Test 4...
 rm -f Y_N1.txt Y_N2.txt Y_N1.bin Y_N2.bin Y_N1.h Y_N2.h
 python3 ../aff3ct_debug_parser.py ./dump_debug_gold4.txt                        \
---mod Quantizer_standard --tsk process --src --txt --bin --mat --fra 3
+--mod Quantizer_pow2 --tsk process --src --txt --bin --mat --fra 3
 cmp Y_N1.txt refs/Y_N1_gold4.txt
 cmp Y_N2.txt refs/Y_N2_gold4.txt
 cmp Y_N1.bin refs/Y_N1_gold4.bin
