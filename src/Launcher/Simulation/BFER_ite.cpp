@@ -198,7 +198,12 @@ void BFER_ite<B,R,Q>
 #ifdef AFF3CT_MPI
 	auto pter = params.ter->get_prefix();
 	if (!this->arg_vals.exist({pter+"-freq"}))
-		params.ter->frequency = params.mpi_comm_freq;
+		params.ter->frequency = params.mnt_mpi_comm_freq;
+#else
+	auto pter = params.ter->get_prefix();
+	auto pmnt = params.mnt_er->get_prefix();
+	if (!this->arg_vals.exist({pmnt+"-red-lazy-freq"}))
+		params.mnt_red_lazy_freq = params.ter->frequency;
 #endif
 }
 

@@ -43,16 +43,16 @@ std::vector<std::string> BFER_ite::parameters
 ::get_names() const
 {
 	auto n = Simulation::parameters::get_names();
-	if (this->src != nullptr) { auto nn = this->src->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (this->crc != nullptr) { auto nn = this->crc->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (this->cdc != nullptr) { auto nn = this->cdc->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (this->itl != nullptr) { auto nn = this->itl->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (this->mdm != nullptr) { auto nn = this->mdm->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (this->chn != nullptr) { auto nn = this->chn->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (this->qnt != nullptr) { auto nn = this->qnt->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->src    != nullptr) { auto nn = this->src   ->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->crc    != nullptr) { auto nn = this->crc   ->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->cdc    != nullptr) { auto nn = this->cdc   ->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->itl    != nullptr) { auto nn = this->itl   ->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->mdm    != nullptr) { auto nn = this->mdm   ->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->chn    != nullptr) { auto nn = this->chn   ->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->qnt    != nullptr) { auto nn = this->qnt   ->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (this->mnt_er != nullptr) { auto nn = this->mnt_er->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (this->mnt_mi != nullptr) { auto nn = this->mnt_mi->get_names(); for (auto &x : nn) n.push_back(x); }
-	if (this->ter != nullptr) { auto nn = this->ter->get_names(); for (auto &x : nn) n.push_back(x); }
+	if (this->ter    != nullptr) { auto nn = this->ter   ->get_names(); for (auto &x : nn) n.push_back(x); }
 	return n;
 }
 
@@ -60,16 +60,16 @@ std::vector<std::string> BFER_ite::parameters
 ::get_short_names() const
 {
 	auto sn = Factory::parameters::get_short_names();
-	if (this->src != nullptr) { auto nn = this->src->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (this->crc != nullptr) { auto nn = this->crc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (this->cdc != nullptr) { auto nn = this->cdc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (this->itl != nullptr) { auto nn = this->itl->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (this->mdm != nullptr) { auto nn = this->mdm->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (this->chn != nullptr) { auto nn = this->chn->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (this->qnt != nullptr) { auto nn = this->qnt->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->src    != nullptr) { auto nn = this->src   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->crc    != nullptr) { auto nn = this->crc   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->cdc    != nullptr) { auto nn = this->cdc   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->itl    != nullptr) { auto nn = this->itl   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->mdm    != nullptr) { auto nn = this->mdm   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->chn    != nullptr) { auto nn = this->chn   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->qnt    != nullptr) { auto nn = this->qnt   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (this->mnt_er != nullptr) { auto nn = this->mnt_er->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (this->mnt_mi != nullptr) { auto nn = this->mnt_mi->get_short_names(); for (auto &x : nn) sn.push_back(x); }
-	if (this->ter != nullptr) { auto nn = this->ter->get_short_names(); for (auto &x : nn) sn.push_back(x); }
+	if (this->ter    != nullptr) { auto nn = this->ter   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	return sn;
 }
 
@@ -115,7 +115,7 @@ void BFER_ite::parameters
 	if(vals.exist({p+"-ite",  "I"})) this->n_ite     = vals.to_int({p+"-ite",  "I"});
 	if(vals.exist({p+"-crc-start"})) this->crc_start = vals.to_int({p+"-crc-start"});
 
-	this->mutinfo = false;
+	this->mnt_mutinfo = false;
 }
 
 void BFER_ite::parameters
@@ -130,15 +130,15 @@ void BFER_ite::parameters
 	if (this->crc != nullptr && this->crc->type != "NO")
 		headers[p].push_back(std::make_pair("CRC start ite.", std::to_string(this->crc_start)));
 
-	if (this->src != nullptr) { this->src->get_headers(headers, full); }
-	if (this->crc != nullptr) { this->crc->get_headers(headers, full); }
-	if (this->cdc != nullptr) { this->cdc->get_headers(headers, full); }
-	if (this->itl != nullptr) { this->itl->get_headers(headers, full); }
-	if (this->mdm != nullptr) { this->mdm->get_headers(headers, full); }
-	if (this->chn != nullptr) { this->chn->get_headers(headers, full); }
-	if (this->qnt != nullptr) { this->qnt->get_headers(headers, full); }
+	if (this->src    != nullptr) { this->src   ->get_headers(headers, full); }
+	if (this->crc    != nullptr) { this->crc   ->get_headers(headers, full); }
+	if (this->cdc    != nullptr) { this->cdc   ->get_headers(headers, full); }
+	if (this->itl    != nullptr) { this->itl   ->get_headers(headers, full); }
+	if (this->mdm    != nullptr) { this->mdm   ->get_headers(headers, full); }
+	if (this->chn    != nullptr) { this->chn   ->get_headers(headers, full); }
+	if (this->qnt    != nullptr) { this->qnt   ->get_headers(headers, full); }
 	if (this->mnt_er != nullptr) { this->mnt_er->get_headers(headers, full); }
-	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
+	if (this->ter    != nullptr) { this->ter   ->get_headers(headers, full); }
 }
 
 const Codec_SISO_SIHO::parameters* BFER_ite::parameters

@@ -16,7 +16,7 @@ Codec_polar<B,Q>
               CRC<B>* crc)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  adaptive_fb(fb_params.sigma == -1.f),
+  adaptive_fb(fb_params.noise == -1.f),
   frozen_bits(fb_params.N_cw, true),
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
   puncturer_shortlast(nullptr),
@@ -122,6 +122,21 @@ Codec_polar<B,Q>
 	{
 		if (!adaptive_fb)
 		{
+			if(fb_params.noise_type == "SIGMA")
+			{
+				auto sigma = tools::Sigma<float>(fb_params.noise);
+				fb_generator->set_noise(sigma);
+			}
+			else if (fb_params.noise_type == "EP")
+			{
+				auto ep = tools::Event_probability<float>(fb_params.noise);
+				fb_generator->set_noise(ep);
+			}
+			else
+			{
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported noise type for fb generation.");
+			}
+
 			fb_generator->generate(frozen_bits);
 			this->notify_frozenbits_update();
 		}

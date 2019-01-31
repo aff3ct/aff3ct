@@ -75,7 +75,7 @@ Description of the allowed values:
 
 .. note:: By default, when using the |GA| or the |TV| method, the frozen bits
    are optimized for each |SNR| point. To override this behavior you can use
-   the :ref:`enc-polar-enc-fb-sigma` parameter.
+   the :ref:`enc-polar-enc-fb-noise` parameter.
 
 .. note:: When using the ``FILE`` method, the frozen bits are always the same
    regardless of the |SNR| value.
@@ -118,15 +118,25 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
    configuration files are a set of best channels pre-generated with the |TV|
    method (see ``conf/cde/awgn_polar_codes/TV/``).
 
-.. _enc-polar-enc-fb-sigma:
+.. _enc-polar-enc-fb-noise:
 
-``--enc-fb-sigma``
+``--enc-fb-noise``
 """"""""""""""""""
 
    :Type: real number
-   :Examples: ``--enc-fb-sigma 1.0``
+   :Examples: ``--enc-fb-noise 1.0``
 
-|factory::Frozenbits_generator::parameters::p+sigma|
+|factory::Frozenbits_generator::parameters::p+noise|
+
+.. _enc-polar-enc-fb-noise-type:
+
+``--enc-fb-noise-type``
+"""""""""""""""""""""""
+
+   :Type: text
+   :Examples: ``--enc-fb-noise SIGMA``
+
+|factory::Frozenbits_generator::parameters::p+noise-type|
 
 References
 """"""""""

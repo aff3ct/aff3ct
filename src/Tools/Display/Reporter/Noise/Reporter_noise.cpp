@@ -44,50 +44,50 @@ private:
 
 template <typename R>
 Reporter_noise<R>
-::Reporter_noise(const Noise<R>* const* _noise)
-: Reporter_noise(new Noise_ptr(_noise))
+::Reporter_noise(const Noise<R>* const* _noise, const bool show_sigma)
+: Reporter_noise(new Noise_ptr(_noise), show_sigma)
 {
 }
 
 template <typename R>
 Reporter_noise<R>
-::Reporter_noise(const Noise<R>* _noise)
-: Reporter_noise(new Noise_ptr(_noise))
+::Reporter_noise(const Noise<R>* _noise, const bool show_sigma)
+: Reporter_noise(new Noise_ptr(_noise), show_sigma)
 {
 }
 
 template <typename R>
 Reporter_noise<R>
-::Reporter_noise(const Noise<R>& _noise)
-: Reporter_noise(new Noise_ptr(_noise))
+::Reporter_noise(const Noise<R>& _noise, const bool show_sigma)
+: Reporter_noise(new Noise_ptr(_noise), show_sigma)
 {
 }
 
 template <typename R>
 Reporter_noise<R>
-::Reporter_noise(const std::shared_ptr<Noise<R>>* _noise)
-: Reporter_noise(new Noise_ptr(_noise))
+::Reporter_noise(const std::shared_ptr<Noise<R>>* _noise, const bool show_sigma)
+: Reporter_noise(new Noise_ptr(_noise), show_sigma)
 {
 }
 
 template <typename R>
 Reporter_noise<R>
-::Reporter_noise(const std::shared_ptr<Noise<R>>& _noise)
-: Reporter_noise(new Noise_ptr(_noise))
+::Reporter_noise(const std::shared_ptr<Noise<R>>& _noise, const bool show_sigma)
+: Reporter_noise(new Noise_ptr(_noise), show_sigma)
 {
 }
 
 template <typename R>
 Reporter_noise<R>
-::Reporter_noise(const std::unique_ptr<Noise<R>>* _noise)
-: Reporter_noise(new Noise_ptr(_noise))
+::Reporter_noise(const std::unique_ptr<Noise<R>>* _noise, const bool show_sigma)
+: Reporter_noise(new Noise_ptr(_noise), show_sigma)
 {
 }
 
 template <typename R>
 Reporter_noise<R>
-::Reporter_noise(const std::unique_ptr<Noise<R>>& _noise)
-: Reporter_noise(new Noise_ptr(_noise))
+::Reporter_noise(const std::unique_ptr<Noise<R>>& _noise, const bool show_sigma)
+: Reporter_noise(new Noise_ptr(_noise), show_sigma)
 {
 }
 
@@ -101,10 +101,11 @@ Reporter_noise<R>
 
 template <typename R>
 Reporter_noise<R>
-::Reporter_noise(Noise_ptr* noise_ptr)
+::Reporter_noise(Noise_ptr* noise_ptr, const bool show_sigma)
 : Reporter(),
   noise_ptr(noise_ptr),
-  saved_noise_type(get_noise_ptr() != nullptr ? get_noise_ptr()->get_type() : Noise_type::SIGMA)
+  saved_noise_type(get_noise_ptr() != nullptr ? get_noise_ptr()->get_type() : Noise_type::SIGMA),
+  show_sigma(show_sigma)
 {
 	if (get_noise_ptr() == nullptr)
 		throw invalid_argument(__FILE__, __LINE__, __func__, "'noise' is a null pointer.");
@@ -117,6 +118,8 @@ Reporter_noise<R>
 	{
 		case Noise_type::SIGMA :
 			Noise_title = {"Signal Noise Ratio", "(SNR)"};
+			if (show_sigma)
+				Noise_cols.push_back(std::make_pair("Sigma", ""));
 			Noise_cols.push_back(std::make_pair("Es/N0", "(dB)"));
 			Noise_cols.push_back(std::make_pair("Eb/N0", "(dB)"));
 		break;
@@ -155,9 +158,16 @@ Reporter::report_t Reporter_noise<R>
 	std::stringstream stream;
 	switch (get_noise_ptr()->get_type())
 	{
-		case Noise_type::SIGMA :
+		case Noise_type::SIGMA:
 		{
 			auto sig = dynamic_cast<const tools::Sigma<R>*>(get_noise_ptr());
+
+			if (show_sigma)
+			{
+				stream << std::setprecision(4) << std::fixed << sig->get_noise();
+				noise_report.push_back(stream.str());
+				stream.str("");
+			}
 
 			stream << std::setprecision(2) << std::fixed << sig->get_esn0();
 			noise_report.push_back(stream.str());
@@ -166,12 +176,12 @@ Reporter::report_t Reporter_noise<R>
 			stream << std::setprecision(2) << std::fixed << sig->get_ebn0();
 			break;
 		}
-		case Noise_type::ROP :
+		case Noise_type::ROP:
 		{
 			stream << std::setprecision(4) << std::fixed << get_noise_ptr()->get_noise();
 			break;
 		}
-		case Noise_type::EP :
+		case Noise_type::EP:
 		{
 			stream << std::setprecision(4) << std::fixed << get_noise_ptr()->get_noise();
 			break;

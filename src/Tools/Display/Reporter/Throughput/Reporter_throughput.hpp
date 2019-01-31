@@ -17,7 +17,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename T>
+template <typename T = uint64_t>
 class Reporter_throughput : public Reporter
 {
 	static_assert(std::is_convertible<T, double>::value, "T type must be convertible to a double.");

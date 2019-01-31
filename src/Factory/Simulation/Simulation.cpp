@@ -2,6 +2,10 @@
 #include <algorithm>
 #include <rang.hpp>
 
+#ifdef AFF3CT_MPI
+#include <mpi.h>
+#endif
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 
@@ -78,11 +82,6 @@ void Simulation::parameters
 
 	tools::add_arg(args, p, class_name+"p+seed,S",
 		tools::Integer(tools::Positive()));
-
-#ifdef AFF3CT_MPI
-	tools::add_arg(args, p, class_name+"p+mpi-comm",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
-#endif
 }
 
 void Simulation::parameters
@@ -131,8 +130,6 @@ void Simulation::parameters
 	MPI_Comm_size(MPI_COMM_WORLD, &this->mpi_size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &this->mpi_rank);
 
-	if(vals.exist({p+"-mpi-comm"})) this->mpi_comm_freq = milliseconds(vals.to_int({p+"-mpi-comm"}));
-
 	int max_n_threads_global;
 	int max_n_threads_local = this->n_threads;
 
@@ -180,14 +177,13 @@ void Simulation::parameters
 			headers[p].push_back(std::make_pair("Debug limit", std::to_string(this->debug_limit)));
 	}
 
-#ifdef AFF3CT_MPI
-	headers[p].push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(this->mpi_comm_freq.count())));
-	headers[p].push_back(std::make_pair("MPI size",             std::to_string(this->mpi_size             )));
-#endif
-
 	std::string threads = "unused";
 	if (this->n_threads)
 		threads = std::to_string(this->n_threads) + " thread(s)";
 
 	headers[p].push_back(std::make_pair("Multi-threading (t)", threads));
+
+#ifdef AFF3CT_MPI
+	headers[p].push_back(std::make_pair("MPI size", std::to_string(this->mpi_size)));
+#endif
 }
