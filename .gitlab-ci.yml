@@ -423,6 +423,10 @@ parser-check:
     - sse4.2
     - python3.5
     - mat4py
+  artifacts:
+    name: debug-parser-output
+    paths:
+      - scripts/debug_parser/test/data
   script:
     - source ./ci/tools/git-version.sh
     - cd ../scripts/debug_parser/
