@@ -15,7 +15,7 @@ fi
 
 $AFF3CT_PATH -p "8" --sim-type "BFER" -C "POLAR" -K "32" -N "64" -m "2.81"     \
 -M "2.81" -e "2" --enc-fb-gen-method "GA" --dec-type "SC"                      \
---src-type "RAND" --src-implem FAST --chn-type "AWGN" --chn-implem "FAST"      \
+--src-type "RAND"  --chn-type "AWGN"                                           \
 --dec-implem "FAST" --dec-simd "INTRA" --sim-dbg --sim-meta "test dump"        \
 > dump_debug_gold.txt
 
