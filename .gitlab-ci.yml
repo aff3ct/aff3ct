@@ -429,7 +429,7 @@ parser-check:
       - scripts/debug_parser/test/data
   script:
     - source ./ci/tools/git-version.sh
-    - cd ../scripts/debug_parser/
+    - cd ./scripts/debug_parser/
     - export AFF3CT_PATH="../../../build_linux_gcc_x64_sse4.2/bin/aff3ct-$GIT_VERSION"
     - ./test/test.sh 
 
