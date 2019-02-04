@@ -47,7 +47,7 @@ mv Y_N.txt V_K.txt Y_N.bin V_K.bin Y_N.h V_K.h      data/test1
 mv Y_N.mat V_K.mat                                  data/test1
 echo "Test 1 Done."
 
-echo "Test 2: inter frames, int & float values."
+echo "Test 2: inter frames, float values."
 ../aff3ct_debug_parser.py ./dump_debug_gold2.txt                               \
 --mod Channel_Rayleigh_LLR --tsk add_noise_wg --src --txt --bin --mat
 cmp Y_N.txt refs/Y_N_gold2.txt                     ;rc=$(($?+$rc))
@@ -81,7 +81,7 @@ mv Y_N1.txt Y_N2.txt Y_N1.bin Y_N2.bin              data/test3
 mv Y_N1.h Y_N2.h Y_N1.mat Y_N2.mat                  data/test3
 echo "Test 3 Done."
 
-echo "Test 4: extract one frame (0) from inter frame, float hex values."
+echo "Test 4: extract one frame (0), inter frame, float hex values."
 ../aff3ct_debug_parser.py ./dump_debug_gold4.txt                               \
 --mod Channel_user --tsk add_noise --src --txt --bin --mat --fra 0
 cmp X_N.txt refs/X_N_gold4.txt                   ;rc=$(($?+$rc))
@@ -96,7 +96,7 @@ mv X_N.txt Y_N.txt X_N.bin Y_N.bin              data/test4
 mv X_N.h Y_N.h X_N.mat Y_N.mat                  data/test4
 echo "Test 4 Done."
 
-# rm dump_debug_gold.txt dump_debug_gold2.txt dump_debug_gold4.txt
+mv dump_debug_gold.txt dump_debug_gold2.txt dump_debug_gold4.txt data
 
 cd .. > /dev/null
 
