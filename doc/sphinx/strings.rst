@@ -779,12 +779,9 @@
 
 .. |factory::Frozenbits_generator::parameters::p+noise| replace::
    Selects the noise for which the frozen bits will be optimized. Can be
-   a variance value :math:`\sigma` for AWGN channel, or an event probability
-   for BEC channels. All the noise points in the simulation will use the same frozen
-   bits configuration.
-
-.. |factory::Frozenbits_generator::parameters::p+noise-type| replace::
-   Selects the noise type for the frozen bits generator (SIGMA or EP)
+   a gaussian noise variance :math:`\sigma` for an |AWGN| channel, or an event
+   probability for a |BEC| channel. All the noise points in the simulation will
+   use the same frozen bits configuration.
 
 .. |factory::Frozenbits_generator::parameters::p+gen-method| replace::
    Select the frozen bits generation method.

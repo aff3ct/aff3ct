@@ -25,7 +25,6 @@ struct Frozenbits_generator : public Factory
 		std::string type       = "GA";
 		std::string path_fb    = "conf/cde/awgn_polar_codes/TV";
 		std::string path_pb    = "../lib/polar_bounds/bin/polar_bounds";
-		std::string noise_type = "SIGMA";
 		float       noise      = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS

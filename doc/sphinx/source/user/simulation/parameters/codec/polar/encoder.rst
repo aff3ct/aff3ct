@@ -128,16 +128,6 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
 
 |factory::Frozenbits_generator::parameters::p+noise|
 
-.. _enc-polar-enc-fb-noise-type:
-
-``--enc-fb-noise-type``
-"""""""""""""""""""""""
-
-   :Type: text
-   :Examples: ``--enc-fb-noise SIGMA``
-
-|factory::Frozenbits_generator::parameters::p+noise-type|
-
 References
 """"""""""
 
