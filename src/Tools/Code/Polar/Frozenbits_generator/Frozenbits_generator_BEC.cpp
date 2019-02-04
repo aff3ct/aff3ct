@@ -27,6 +27,8 @@ Frozenbits_generator_BEC
 void Frozenbits_generator_BEC
 ::evaluate()
 {
+	this->check_noise();
+
 	for (unsigned i = 0; i != this->best_channels.size(); i++) 
 		this->best_channels[i] = i;
 
@@ -49,9 +51,6 @@ void Frozenbits_generator_BEC
 	}
 
 	std::sort(this->best_channels.begin(), this->best_channels.end(), [this](int i1, int i2) { return z[i1] > z[i2]; });
-	// for (auto chan : this->best_channels)
-	// 	std::cout << chan << " ";
-	// std::cout << std::endl;
 }
 
 void Frozenbits_generator_BEC
