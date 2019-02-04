@@ -1204,6 +1204,9 @@
 #ifndef FB_EXTRACT_HPP
 #include <Tools/Code/Polar/fb_extract.h>
 #endif
+#ifndef FROZENBITS_GENERATOR_5G_HPP_
+#include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_5G.hpp>
+#endif
 #ifndef FROZENBITS_GENERATOR_BEC_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_BEC.hpp>
 #endif

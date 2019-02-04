@@ -82,12 +82,12 @@ void Frozenbits_generator_TV
 
 		auto filename = sub_folder + "/N" + str_N + "_awgn_s" + str_sigma + ".pc";
 
-		if (!this->load_channels_file(filename))
+		if (!this->load_channels_file(filename, this->best_channels))
 		{
 #ifdef AFF3CT_POLAR_BOUNDS
 			static std::mutex mutex_write_file;
 			mutex_write_file.lock();
-			if (!this->load_channels_file(filename))
+			if (!this->load_channels_file(filename, this->best_channels))
 			{
 				auto cmd  = bin_pb_path;
 				cmd      += " --no-print";                             // do not display anything
@@ -102,7 +102,7 @@ void Frozenbits_generator_TV
 
 				if (system(cmd.c_str()) == 0)
 				{
-					if (!this->load_channels_file(filename))
+					if (!this->load_channels_file(filename, this->best_channels))
 					{
 						mutex_write_file.unlock();
 						std::stringstream message;
