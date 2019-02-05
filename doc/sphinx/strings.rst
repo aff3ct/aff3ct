@@ -778,10 +778,7 @@
    Select the codeword size :math:`N`.
 
 .. |factory::Frozenbits_generator::parameters::p+noise| replace::
-   Selects the noise for which the frozen bits will be optimized. Can be
-   a gaussian noise variance :math:`\sigma` for an |AWGN| channel, or an event
-   probability for a |BEC| channel. All the noise points in the simulation will
-   use the same frozen bits configuration.
+   Select the noise for which the frozen bits will be optimized.
 
 .. |factory::Frozenbits_generator::parameters::p+gen-method| replace::
    Select the frozen bits generation method.

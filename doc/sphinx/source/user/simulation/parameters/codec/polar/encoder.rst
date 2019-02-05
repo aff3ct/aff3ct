@@ -128,6 +128,10 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
 
 |factory::Frozenbits_generator::parameters::p+noise|
 
+Can be a gaussian noise variance :math:`\sigma` for |GA| and |TV| generation 
+methods, or an event probability for the |BEC| generation method. All the noise
+points in the simulation will use the same frozen bits configuration.
+
 References
 """"""""""
 
