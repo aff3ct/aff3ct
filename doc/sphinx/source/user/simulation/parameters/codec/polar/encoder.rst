@@ -72,6 +72,9 @@ Description of the allowed values:
 | ``BEC``  | Generate frozen bits for the |BEC| channel from                   |
 |          | :cite:`Arikan2009`.                                               |
 +----------+-------------------------------------------------------------------+
+| ``5G``   | Generate the frozen bits as described in the 5G standard          |
+|          | :cite:`3GPP2017`.                                                 |
++----------+-------------------------------------------------------------------+
 
 .. note:: By default, when using the |GA| or the |TV| method, the frozen bits
    are optimized for each |SNR| point. To override this behavior you can use
@@ -83,6 +86,8 @@ Description of the allowed values:
 .. note:: When using the ``BEC`` method, the frozen bits are optimized for each
    erasure probability.
 
+.. note:: When using the ``5G`` method, the codeword size must be inferior
+   to 1024.
 
 .. _enc-polar-enc-fb-awgn-path:
 
