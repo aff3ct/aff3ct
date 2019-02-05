@@ -99,7 +99,3 @@ const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_
 }
 
 #endif /* CRC_POLYNOMIAL_HPP_ */
-
-
-
-
