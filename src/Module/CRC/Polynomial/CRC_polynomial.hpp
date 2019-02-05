@@ -50,6 +50,9 @@ const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_
    {"24-LTEA"        , std::make_tuple(0x864CFB  , 24)},
    {"24-RADIX-64"    , std::make_tuple(0x864CFB  , 24)},
    {"24-FLEXRAY"     , std::make_tuple(0x5D6DCB  , 24)},
+   {"24-5GA"         , std::make_tuple(0x864CFB  , 24)},
+   {"24-5GB"         , std::make_tuple(0x800063  , 24)},
+   {"24-5GC"         , std::make_tuple(0xB2B117  , 24)},
    {"21-CAN"         , std::make_tuple(0x102899  , 21)},
    {"17-CAN"         , std::make_tuple(0x1685B   , 17)},
    {"16-IBM"         , std::make_tuple(0x8005    , 16)},
@@ -62,6 +65,7 @@ const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_
    {"16-DECT"        , std::make_tuple(0x0589    , 16)},
    {"16-CDMA2000"    , std::make_tuple(0xC867    , 16)},
    {"16-ARINC"       , std::make_tuple(0xA02B    , 16)},
+   {"16-5G"          , std::make_tuple(0x1023    , 16)},
    {"16-CHAKRAVARTY" , std::make_tuple(0x2F15    , 16)},
    {"15-MPT1327"     , std::make_tuple(0x6815    , 15)},
    {"15-CAN"         , std::make_tuple(0x4599    , 15)},
@@ -70,6 +74,7 @@ const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_
    {"12-CDMA2000"    , std::make_tuple(0xF13     , 12)},
    {"12-TELECOM"     , std::make_tuple(0x80F     , 12)},
    {"11-FLEXRAY"     , std::make_tuple(0x385     , 11)},
+   {"11-5G"          , std::make_tuple(0x621     , 11)},
    {"10-CDMA2000"    , std::make_tuple(0x3D9     , 10)},
    {"10-ATM"         , std::make_tuple(0x233     , 10)},
    {"8-WCDMA"        , std::make_tuple(0x9B      ,  8)},
@@ -94,3 +99,7 @@ const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_
 }
 
 #endif /* CRC_POLYNOMIAL_HPP_ */
+
+
+
+
