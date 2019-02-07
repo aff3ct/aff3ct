@@ -1,4 +1,5 @@
 #ifndef UPDATE_RULE_OMS_SIMD_HPP
+#ifdef __cpp_aligned_new
 #define UPDATE_RULE_OMS_SIMD_HPP
 
 #include <cassert>
@@ -94,4 +95,5 @@ public:
 }
 }
 
+#endif
 #endif /* UPDATE_RULE_OMS_SIMD_HPP */
