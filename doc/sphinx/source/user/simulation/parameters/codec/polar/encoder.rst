@@ -50,7 +50,7 @@ Description of the allowed values:
 """""""""""""""""""""""
 
    :Type: text
-   :Allowed values: ``FILE`` ``GA`` ``TV`` ``BEC``
+   :Allowed values: ``FILE`` ``GA`` ``TV`` ``BEC`` ``5G``
    :Examples: ``--enc-fb-gen-method FILE``
 
 |factory::Frozenbits_generator::parameters::p+gen-method|
