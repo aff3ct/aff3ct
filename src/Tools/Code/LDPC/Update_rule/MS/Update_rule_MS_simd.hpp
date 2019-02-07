@@ -1,4 +1,5 @@
 #ifndef UPDATE_RULE_MS_SIMD_HPP
+#ifdef __cpp_aligned_new
 #define UPDATE_RULE_MS_SIMD_HPP
 
 #include <limits>
@@ -122,4 +123,5 @@ public:
 }
 }
 
+#endif
 #endif /* UPDATE_RULE_MS_SIMD_HPP */

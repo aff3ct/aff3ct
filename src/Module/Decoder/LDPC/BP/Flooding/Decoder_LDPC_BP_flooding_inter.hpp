@@ -1,4 +1,5 @@
 #ifndef DECODER_LDPC_BP_FLOODING_INTER_HPP_
+#ifdef __cpp_aligned_new
 #define DECODER_LDPC_BP_FLOODING_INTER_HPP_
 
 #include <mipp.h>
@@ -64,4 +65,5 @@ protected:
 
 #include "Decoder_LDPC_BP_flooding_inter.hxx"
 
+#endif
 #endif /* DECODER_LDPC_BP_FLOODING_INTER_HPP_ */

@@ -4,6 +4,7 @@ variables:
 stages:
   - analysis
   - build
+  - parser
   - documentation
   - test
   - coverage
@@ -406,6 +407,32 @@ build-macos-clang-x64-sse4.2:
     - export NAME="build_macos_clang_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
+
+parser-check:
+  stage: parser
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  except:
+    - schedules
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - python3.5
+    - mat4py
+  artifacts:
+    name: debug-parser-output
+    when: always
+    paths:
+      - scripts/debug_parser/test/data
+  script:
+    - source ./ci/tools/git-version.sh
+    - cd ./scripts/debug_parser/
+    - export AFF3CT_PATH="../../../build_linux_gcc_x64_sse4.2/bin/aff3ct-$GIT_VERSION"
+    - ./test/test.sh
 
 documentation-sphinx:
   stage: documentation
