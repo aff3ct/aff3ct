@@ -44,8 +44,8 @@ public:
 
 protected:
 	        void _load           (const R *Y_N                                         );
-	        void _decode_siho    (const R *Y_N, B *V_K, const int frame_id             );
-	        void _decode_siho_cw (const R *Y_N, B *V_N, const int frame_id             );
+	virtual void _decode_siho    (const R *Y_N, B *V_K, const int frame_id             );
+	virtual void _decode_siho_cw (const R *Y_N, B *V_N, const int frame_id             );
 	virtual void _store          (              B *V,   bool coded = false             ) const;
 	virtual void recursive_decode(const tools::Binary_node<Contents_SC<B,R>>* node_curr);
 

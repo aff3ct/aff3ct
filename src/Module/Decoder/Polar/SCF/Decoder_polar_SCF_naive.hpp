@@ -22,14 +22,19 @@ class Decoder_polar_SCF_naive : public Decoder_polar_SC_naive<B,R,F,G,H>
 protected:
 	CRC<B>& crc;
 
+	int param_t;
+	std::vector<int> index;
+	int current_flip_index;
+
 public:
 	Decoder_polar_SCF_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits,
 	                        CRC<B>& crc, const int n_frames = 1);
 	virtual ~Decoder_polar_SCF_naive() = default;
 
 protected:
+	void _decode_siho    (const R *Y_N, B *V_K, const int frame_id             );
+	void _decode_siho_cw (const R *Y_N, B *V_N, const int frame_id             );
     void recursive_decode(const tools::Binary_node<Contents_SC<B,R>>* node_curr);
-
 };
 }
 }
