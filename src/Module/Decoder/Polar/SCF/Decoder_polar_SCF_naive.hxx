@@ -10,9 +10,9 @@ Decoder_polar_SCF_naive<B,R,F,G,H>
                           CRC<B>& crc, const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_polar_SC_naive<B,R,F,G,H>(K, N, frozen_bits, n_frames),
+  crc(crc),
   param_t(8),
-  index(K),
-  crc(crc)
+  index(K)
 {
 	const std::string name = "Decoder_polar_SCF_naive";
 	this->set_name(name);
@@ -94,6 +94,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+
 	// initialize current_flip_index
 	current_flip_index = -1;
 
@@ -146,11 +147,26 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, to
 void Decoder_polar_SCF_naive<B,R,F,G,H>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
+	// initialization
+	bool decode_result = false;
+	int n_ite = 0;
+
+	// initialize indices with inf bits indices
+	// TODO: move to notify_frozen ?
+	auto j = 0;
+	for (auto i = 0; i < this->N; i++)
+		if (!this->frozen_bits[i])
+			index[j++] = i;
+
+	// get tree leaves
+	auto leaves = this->polar_tree.get_leaves();
+
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+
 	// initialize current_flip_index
 	current_flip_index = -1;
 
