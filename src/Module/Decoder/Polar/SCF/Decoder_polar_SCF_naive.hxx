@@ -24,6 +24,9 @@ Decoder_polar_SCF_naive<B,R,F,G,H>
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	// get tree leaves
+	leaves = this->polar_tree.get_leaves();
 }
 
 
@@ -95,40 +98,25 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 
-	// initialize current_flip_index
 	current_flip_index = -1;
 
-	// decode
 	this->recursive_decode(this->polar_tree.get_root());
 
 	// identify the n_flips weakest llrs 
 	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
-	                  [leaves](const int& a, const int& b) 
-	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
+	                  [this](const int& a, const int& b) 
+	                  {return std::abs(this->leaves[a]->get_c()->lambda[0]) < std::abs(this->leaves[b]->get_c()->lambda[0]);}
 	                 );
 
-	// test crc
-	std::vector<B> U_test;
-	U_test.clear();
-	for (auto leaf = 0 ; leaf < this->N ; leaf++)
-		if (!this->frozen_bits[leaf]) 
-			U_test.push_back(leaves[leaf]->get_c()->s[0]);
-	decode_result = this->crc.check(U_test, this->get_simd_inter_frame_level());
-	
+	decode_result = this->check_crc();
+
 	while ((n_ite < n_flips) && (!decode_result))
 	{
 		current_flip_index = index[n_ite];
 
-		// decode
 		this->recursive_decode(this->polar_tree.get_root());
 
-		// test crc
-		std::vector<B> U_test;
-		U_test.clear();
-		for (auto leaf = 0 ; leaf < this->N ; leaf++)
-			if (!this->frozen_bits[leaf]) 
-				U_test.push_back(leaves[leaf]->get_c()->s[0]);
-		decode_result = this->crc.check(U_test, this->get_simd_inter_frame_level());
+		decode_result = this->check_crc();
 		
 		n_ite ++;
 	}
@@ -158,49 +146,31 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 		if (!this->frozen_bits[i])
 			index[j++] = i;
 
-	// get tree leaves
-	auto leaves = this->polar_tree.get_leaves();
-
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 
-	// initialize current_flip_index
 	current_flip_index = -1;
 
-	// decode
 	this->recursive_decode(this->polar_tree.get_root());
 
 	// identify the n_flips weakest llrs 
 	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
-	                  [leaves](const int& a, const int& b) 
-	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
+	                  [this](const int& a, const int& b) 
+	                  {return std::abs(this->leaves[a]->get_c()->lambda[0]) < std::abs(this->leaves[b]->get_c()->lambda[0]);}
 	                 );
 
-	// test crc
-	std::vector<B> U_test;
-	U_test.clear();
-	for (auto leaf = 0 ; leaf < this->N ; leaf++)
-		if (!this->frozen_bits[leaf]) 
-			U_test.push_back(leaves[leaf]->get_c()->s[0]);
-	decode_result = this->crc.check(U_test, this->get_simd_inter_frame_level());
-	
+	decode_result = check_crc();
+
 	while ((n_ite < n_flips) && (!decode_result))
 	{
 		current_flip_index = index[n_ite];
 
-		// decode
 		this->recursive_decode(this->polar_tree.get_root());
 
-		// test crc
-		std::vector<B> U_test;
-		U_test.clear();
-		for (auto leaf = 0 ; leaf < this->N ; leaf++)
-			if (!this->frozen_bits[leaf]) 
-				U_test.push_back(leaves[leaf]->get_c()->s[0]);
-		decode_result = this->crc.check(U_test, this->get_simd_inter_frame_level());
+		decode_result = check_crc();
 		
 		n_ite ++;
 	}
@@ -215,7 +185,17 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 }
 
-
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
+bool Decoder_polar_SCF_naive<B,R,F,G,H>
+::check_crc()
+{
+	std::vector<B> U_test;
+	U_test.clear();
+	for (auto leaf = 0 ; leaf < this->N ; leaf++)
+		if (!this->frozen_bits[leaf]) 
+			U_test.push_back(leaves[leaf]->get_c()->s[0]);
+	return this->crc.check(U_test, this->get_simd_inter_frame_level());		
+}
 }
 }
 

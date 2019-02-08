@@ -7,6 +7,7 @@
 #include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp"
 #include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hpp"
 #include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive.hpp"
+#include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive_sys.hpp"
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp"
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hpp"
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_fast_sys.hpp"
@@ -199,7 +200,10 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 				if (this->type == "SCL" ) return new module::Decoder_polar_SCL_naive_sys   <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(this->K, this->N_cw, this->L,     frozen_bits,       this->n_frames);
 			}
 			else
+			{
+				if (this->type == "SCF" ) return new module::Decoder_polar_SCF_naive_sys   <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw, frozen_bits, *crc, this->flips, this->n_frames);
 				if (this->type == "SCL" ) return new module::Decoder_polar_SCL_naive_CA_sys<B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(this->K, this->N_cw, this->L,     frozen_bits, *crc, this->n_frames);
+			}
 		}
 		else if (this->implem == "FAST")
 		{

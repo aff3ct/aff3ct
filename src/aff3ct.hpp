@@ -508,6 +508,9 @@
 #ifndef DECODER_POLAR_SCF_NAIVE_
 #include <Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive.hpp>
 #endif
+#ifndef DECODER_POLAR_SCF_NAIVE_SYS_
+#include <Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive_sys.hpp>
+#endif
 #ifndef DECODER_POLAR_SCL_FAST_SYS_CA
 #include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hpp>
 #endif
