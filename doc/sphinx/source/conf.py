@@ -347,10 +347,11 @@ rst_epilog = """
 .. |ROP|       replace:: :abbr:`ROP      (Received Optical Power)`
 .. |RSC|       replace:: :abbr:`RSC      (Recursive Systematic Convolutional)`
 .. |RS|        replace:: :abbr:`RS       (Reed-Solomon)`
+.. |SC|        replace:: :abbr:`SC       (Successive Cancellation)`
 .. |SCAN|      replace:: :abbr:`SCAN     (Soft CANcellation)`
+.. |SCF|       replace:: :abbr:`SCF      (Successive Cancellation Flip)`
 .. |SCL|       replace:: :abbr:`SCL      (Successive Cancellation List)`
 .. |SCMA|      replace:: :abbr:`SCMA     (Sparse Code Multiple Access)`
-.. |SC|        replace:: :abbr:`SC       (Successive Cancellation)`
 .. |SCo|       replace:: :abbr:`SC       (Self-Corrected)`
 .. |SDR|       replace:: :abbr:`SDR      (Software-Defined Radio)`
 .. |SF|        replace:: :abbr:`SF       (Scaling Factor)`
