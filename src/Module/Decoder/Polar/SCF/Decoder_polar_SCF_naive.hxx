@@ -7,11 +7,11 @@ namespace module
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SCF_naive<B,R,F,G,H>
 ::Decoder_polar_SCF_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, 
-                          CRC<B>& crc, const int n_frames)
+                          CRC<B>& crc, const int n_flips, const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_polar_SC_naive<B,R,F,G,H>(K, N, frozen_bits, n_frames),
   crc(crc),
-  param_t(8),
+  n_flips(n_flips),
   index(K)
 {
 	const std::string name = "Decoder_polar_SCF_naive";
@@ -101,8 +101,8 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 	// decode
 	this->recursive_decode(this->polar_tree.get_root());
 
-	// identify the param_t weakest llrs 
-	std::partial_sort(index.begin(), index.begin() + param_t, index.end(),
+	// identify the n_flips weakest llrs 
+	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
 	                  [leaves](const int& a, const int& b) 
 	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
 	                 );
@@ -115,7 +115,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 			U_test.push_back(leaves[leaf]->get_c()->s[0]);
 	decode_result = this->crc.check(U_test, this->get_simd_inter_frame_level());
 	
-	while ((n_ite < param_t) && (!decode_result))
+	while ((n_ite < n_flips) && (!decode_result))
 	{
 		current_flip_index = index[n_ite];
 
@@ -173,8 +173,8 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 	// decode
 	this->recursive_decode(this->polar_tree.get_root());
 
-	// identify the param_t weakest llrs 
-	std::partial_sort(index.begin(), index.begin() + param_t, index.end(),
+	// identify the n_flips weakest llrs 
+	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
 	                  [leaves](const int& a, const int& b) 
 	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
 	                 );
@@ -187,7 +187,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 			U_test.push_back(leaves[leaf]->get_c()->s[0]);
 	decode_result = this->crc.check(U_test, this->get_simd_inter_frame_level());
 	
-	while ((n_ite < param_t) && (!decode_result))
+	while ((n_ite < n_flips) && (!decode_result))
 	{
 		current_flip_index = index[n_ite];
 

@@ -129,6 +129,9 @@ void Decoder_polar::parameters
 		if (this->type == "SCAN")
 			headers[p].push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->n_ite)));
 
+		if (this->type == "SCF")
+			headers[p].push_back(std::make_pair("Num. of flips", std::to_string(this->flips)));
+
 		if (this->type == "SCL" || this->type == "SCL_MEM")
 			headers[p].push_back(std::make_pair("Num. of lists (L)", std::to_string(this->L)));
 
@@ -180,7 +183,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 			}
 			else
 			{
-				if (this->type == "SCF" ) return new module::Decoder_polar_SCF_naive       <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw,              frozen_bits, *crc, this->n_frames);
+				if (this->type == "SCF" ) return new module::Decoder_polar_SCF_naive       <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw, frozen_bits, *crc, this->flips, this->n_frames);
 				if (this->type == "SCL" ) return new module::Decoder_polar_SCL_naive_CA    <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(this->K, this->N_cw, this->L,     frozen_bits, *crc, this->n_frames);
 			}
 		}

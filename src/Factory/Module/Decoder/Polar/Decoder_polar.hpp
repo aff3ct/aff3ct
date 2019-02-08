@@ -30,6 +30,7 @@ struct Decoder_polar : public Decoder
 		bool        full_adaptive = true;
 		int         n_ite         = 1;
 		int         L             = 8;
+		int         T             = 8;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_polar_prefix);

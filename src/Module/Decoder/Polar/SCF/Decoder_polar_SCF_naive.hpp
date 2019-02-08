@@ -22,13 +22,13 @@ class Decoder_polar_SCF_naive : public Decoder_polar_SC_naive<B,R,F,G,H>
 protected:
 	CRC<B>& crc;
 
-	int param_t;
+	const int n_flips;
 	std::vector<int> index;
 	int current_flip_index;
 
 public:
 	Decoder_polar_SCF_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-	                        CRC<B>& crc, const int n_frames = 1);
+	                        CRC<B>& crc, const int n_flips, const int n_frames = 1);
 	virtual ~Decoder_polar_SCF_naive() = default;
 
 protected:
