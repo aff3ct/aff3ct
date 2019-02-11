@@ -683,6 +683,112 @@ test-regression-rs:
 #     - export TIME_SEC=$CI_TIME_SEC_TEST_LONG_RS
 #     - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
+test-regression-rsc:
+  stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  retry: 1
+  except:
+    - schedules
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - python3.4
+  artifacts:
+     name: test-regression-results-rsc
+     when: always
+     paths:
+      - test-regression-results-rsc/
+  script:
+    - source ./ci/tools/threads.sh
+    - source ./ci/tools/git-version.sh
+    - export TIME_SEC="5"
+    - ./ci/test-regression.py --refs-path refs/RSC --results-path test-regression-results-rsc --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+
+# test-regression-rsc-long:
+#   stage: test
+#   variables:
+#     GIT_SUBMODULE_STRATEGY: recursive
+#   only:
+#     - schedules
+#   dependencies:
+#     - build-linux-gcc-x64-avx2
+#   tags:
+#     - linux
+#     - x86
+#     - 64-bit
+#     - avx2
+#     - powerful
+#     - schedules
+#     - python3.4
+#   artifacts:
+#      name: test-regression-results-rsc
+#      when: always
+#      paths:
+#       - test-regression-results-rsc/
+#   script:
+#     - source ./ci/tools/threads.sh
+#     - source ./ci/tools/git-version.sh
+#     - export TIME_SEC=$CI_TIME_SEC_TEST_LONG_RSC
+#     - ./ci/test-regression.py --refs-path refs/RSC --results-path test-regression-results-rsc --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+
+test-regression-rsc-db:
+  stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  retry: 1
+  except:
+    - schedules
+  dependencies:
+    - build-linux-gcc-x64-sse4.2
+  tags:
+    - linux
+    - x86
+    - 64-bit
+    - sse4.2
+    - python3.4
+  artifacts:
+     name: test-regression-results-rsc-db
+     when: always
+     paths:
+      - test-regression-results-rsc-db/
+  script:
+    - source ./ci/tools/threads.sh
+    - source ./ci/tools/git-version.sh
+    - export TIME_SEC="5"
+    - ./ci/test-regression.py --refs-path refs/RSC_DB --results-path test-regression-results-rsc-db --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+
+# test-regression-rsc-db-long:
+#   stage: test
+#   variables:
+#     GIT_SUBMODULE_STRATEGY: recursive
+#   only:
+#     - schedules
+#   dependencies:
+#     - build-linux-gcc-x64-avx2
+#   tags:
+#     - linux
+#     - x86
+#     - 64-bit
+#     - avx2
+#     - powerful
+#     - schedules
+#     - python3.4
+#   artifacts:
+#      name: test-regression-results-rsc-db
+#      when: always
+#      paths:
+#       - test-regression-results-rsc-db/
+#   script:
+#     - source ./ci/tools/threads.sh
+#     - source ./ci/tools/git-version.sh
+#     - export TIME_SEC=$CI_TIME_SEC_TEST_LONG_RSC_DB
+#     - ./ci/test-regression.py --refs-path refs/RSC_DB --results-path test-regression-results-rsc-db --build-path build_linux_gcc_x64_avx2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
+
 test-regression-turbo:
   stage: test
   variables:
