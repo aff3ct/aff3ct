@@ -866,7 +866,7 @@
    Enable to generate a new |LUT| *for each new frame* (i.e. uniform
    interleaver).
 
-.. |factory::Interleaver_core::parameters::p+seed,S| replace::
+.. |factory::Interleaver_core::parameters::p+seed| replace::
    Select the seed used to initialize the |PRNG|.
 
 .. |factory::Interleaver_core::parameters::p+read-order| replace::

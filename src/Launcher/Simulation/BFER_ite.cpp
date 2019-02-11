@@ -16,14 +16,14 @@ BFER_ite<B,R,Q>
 ::BFER_ite(const int argc, const char **argv, std::ostream &stream)
 : Launcher(argc, argv, params, stream)
 {
-	params.set_src(new factory::Source         ::parameters("src"));
-	params.set_crc(new factory::CRC            ::parameters("crc"));
-	params.set_itl(new factory::Interleaver    ::parameters("itl"));
-	params.set_mdm(new factory::Modem          ::parameters("mdm"));
-	params.set_chn(new factory::Channel        ::parameters("chn"));
-	params.set_qnt(new factory::Quantizer      ::parameters("qnt"));
+	params.set_src   (new factory::Source      ::parameters("src"));
+	params.set_crc   (new factory::CRC         ::parameters("crc"));
+	params.set_itl   (new factory::Interleaver ::parameters("itl"));
+	params.set_mdm   (new factory::Modem       ::parameters("mdm"));
+	params.set_chn   (new factory::Channel     ::parameters("chn"));
+	params.set_qnt   (new factory::Quantizer   ::parameters("qnt"));
 	params.set_mnt_er(new factory::Monitor_BFER::parameters("mnt"));
-	params.set_ter(new factory::Terminal       ::parameters("ter"));
+	params.set_ter   (new factory::Terminal    ::parameters("ter"));
 }
 
 template <typename B, typename R, typename Q>
@@ -63,7 +63,6 @@ void BFER_ite<B,R,Q>
 	this->args.erase({pcrc+"-fra",       "F"});
 	this->args.erase({pitl+"-size"          });
 	this->args.erase({pitl+"-fra",       "F"});
-	this->args.erase({pitl+"-seed",      "S"});
 	this->args.erase({pmdm+"-fra-size",  "N"});
 	this->args.erase({pmdm+"-fra",       "F"});
 	this->args.erase({pmdm+"-noise"         });
@@ -107,7 +106,6 @@ void BFER_ite<B,R,Q>
 	params.src->K = params.src->K == 0 ? params.crc->K : params.src->K;
 
 	params.itl->core->size = N;
-	params.itl->core->seed = params.local_seed;
 
 	params.itl->store(this->arg_vals);
 
