@@ -91,6 +91,8 @@ void Codec_RA::parameters
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
+	if (itl != nullptr)
+		itl->get_headers(headers, full);
 }
 
 template <typename B, typename Q>
