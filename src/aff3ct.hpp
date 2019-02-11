@@ -1534,9 +1534,6 @@
 #ifndef SYSTEM_FUNCTIONS_H_
 #include <Tools/system_functions.h>
 #endif
-#ifndef BARRIER_HPP
-#include <Tools/Threads/Barrier.hpp>
-#endif
 #ifndef TYPES_H_
 #include <Tools/types.h>
 #endif
