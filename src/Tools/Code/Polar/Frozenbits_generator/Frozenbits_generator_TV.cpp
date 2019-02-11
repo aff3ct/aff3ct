@@ -33,7 +33,7 @@ void Frozenbits_generator_TV
 ::evaluate()
 {
 	this-> check_noise();
-	
+
 	std::ostringstream s_stream;
 	s_stream << std::setiosflags(std::ios::fixed) << std::setprecision(3) << this->n->get_noise();
 	auto str_sigma = s_stream.str();
@@ -89,13 +89,13 @@ void Frozenbits_generator_TV
 			mutex_write_file.lock();
 			if (!this->load_channels_file(filename, this->best_channels))
 			{
-				auto cmd  = bin_pb_path;
-				cmd      += " --no-print";                             // do not display anything
-				cmd      += " -q " + std::to_string(Mu);               // quality
-				cmd      += " --awgn";                                 // type
-				cmd      += " --sigma=" + std::to_string(this->sigma); // sigma value
-				cmd      += " --log-length=" + str_m;                  // m
-				cmd      += " -f=" + filename;                         // filename
+				auto cmd = bin_pb_path;
+				cmd += " --no-print";                                      // do not display anything
+				cmd += " -q " + std::to_string(Mu);                        // quality
+				cmd += " --awgn";                                          // type
+				cmd += " --sigma=" + std::to_string(this->n->get_noise()); // sigma value
+				cmd += " --log-length=" + str_m;                           // m
+				cmd += " -f=" + filename;                                  // filename
 
 				// std::clog << rang::tag::info << "Generating best channels positions file (\"" << filename << "\")...\r";
 				// fflush(stdout); fflush(stderr);
