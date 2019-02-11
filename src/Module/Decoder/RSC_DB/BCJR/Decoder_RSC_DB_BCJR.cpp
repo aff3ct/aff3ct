@@ -75,8 +75,8 @@ void Decoder_RSC_DB_BCJR<B,R>
 			sys[4*i + 2] = -a + b;
 			sys[4*i + 3] = -a - b;
 
-			par[2*i  ] = Y_N[4*i + 2];
-			par[2*i+2] = Y_N[4*i + 3];
+			par[2*i  ] = tools::div2(Y_N[4*i + 2]);
+			par[2*i+1] = tools::div2(Y_N[4*i + 3]);
 		}
 	}
 }
