@@ -6,8 +6,6 @@
 #include <vector>
 #include <memory>
 
-#include "Tools/Threads/Barrier.hpp"
-
 #include "Tools/Display/Reporter/BFER/Reporter_BFER.hpp"
 #include "Tools/Display/Reporter/MI/Reporter_MI.hpp"
 #include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
@@ -47,9 +45,6 @@ protected:
 	std::mutex               mutex_exception;
 	std::vector<std::string> prev_err_messages;
 	std::vector<std::string> prev_err_messages_to_display;
-
-	// a barrier to synchronize the threads
-	tools::Barrier barrier;
 
 	// code specifications
 	const float bit_rate;
