@@ -124,7 +124,7 @@ struct Boolean_diff<B,true>
 		const auto m_in1 = in1 != zeros;
 		const auto m_in2 = in2 != zeros;
 		const auto m_unk = is_unknown_symbol<B>(in1) | is_unknown_symbol<B>(in2);
-		return mipp::blend(ones, zeros, m_in1 ^ m_in2 | m_unk);
+		return mipp::blend(ones, zeros, (m_in1 ^ m_in2) | m_unk);
 	}
 
 	static inline mipp::Reg<B> apply(const mipp::Reg<B>& in)

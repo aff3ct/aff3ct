@@ -42,7 +42,7 @@ bool Frozenbits_generator_file
 		std::string trash;
 		in_code >> trash; // N
 
-		if (std::stoi(trash) != best_channels.size())
+		if ((size_t)std::stoi(trash) != best_channels.size())
 		{
 			std::stringstream message;
 			message << "'trash' has to be equal to 'N' ('trash' = " << trash << ", 'N' = " << this->N << ").";
