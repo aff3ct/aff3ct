@@ -36,7 +36,7 @@ template <class L, typename B, typename R, typename Q>
 void Polar_MK<L,B,R,Q>
 ::store_args()
 {
-	auto dec_polar = dynamic_cast<factory::Decoder_polar_MK::parameters*>(params_cdc->dec.get());
+	// auto dec_polar = dynamic_cast<factory::Decoder_polar_MK::parameters*>(params_cdc->dec.get());
 
 	params_cdc->store(this->arg_vals);
 

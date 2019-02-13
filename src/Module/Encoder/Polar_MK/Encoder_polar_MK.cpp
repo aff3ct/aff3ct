@@ -83,7 +83,7 @@ void aff3ct::tools::read_polar_MK_code(const std::string                        
 								tools::getline(file, line);
 								auto values = tools::split(line);
 
-								if (values.size() == kernel_size)
+								if (values.size() == (size_t)kernel_size)
 								{
 									for (auto j = 0; j < kernel_size; j++)
 										kernel[i][j] = (bool)std::stoi(values[j]);
@@ -144,7 +144,7 @@ void aff3ct::tools::read_polar_MK_code(const std::string                        
 					tools::getline(file, line);
 					auto values = tools::split(line);
 
-					if (values.size() == n_stages)
+					if (values.size() == (size_t)n_stages)
 					{
 						for (auto s = 0; s < n_stages; s++)
 							stages[s] = (uint32_t)std::stoi(values[s]);

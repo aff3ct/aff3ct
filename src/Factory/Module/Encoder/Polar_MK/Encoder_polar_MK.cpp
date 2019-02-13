@@ -90,7 +90,7 @@ void Encoder_polar_MK::parameters
 		if (kernel_matrices.size() > 0)
 		{
 			std::string kernels_str = "{" + tools::display_kernel(kernel_matrices[0]);
-			for (auto k = 1; k < kernel_matrices.size(); k++)
+			for (size_t k = 1; k < kernel_matrices.size(); k++)
 				kernels_str += "," + tools::display_kernel(kernel_matrices[k]);
 			kernels_str += "}";
 			headers[p].push_back(std::make_pair(std::string("Kernels"), kernels_str));
@@ -98,7 +98,7 @@ void Encoder_polar_MK::parameters
 		if (stages.size() > 0)
 		{
 			std::string stages_str = "{" + std::to_string(stages[0]);
-			for (auto s = 1; s < stages.size(); s++)
+			for (size_t s = 1; s < stages.size(); s++)
 				stages_str += "," + std::to_string(stages[s]);
 			stages_str += "}";
 			headers[p].push_back(std::make_pair(std::string("Stages"), stages_str));

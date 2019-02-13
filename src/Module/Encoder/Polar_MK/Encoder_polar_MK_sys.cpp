@@ -14,6 +14,18 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename T = int32_t>
+inline T kronecker_product_mul(T a, T b)
+{
+	return a * b;
+}
+
+template <>
+inline bool kronecker_product_mul<bool>(bool a, bool b)
+{
+	return a && b;
+}
+
+template <typename T = int32_t>
 void kronecker_product(const std::vector<std::vector<T>>& A,
                        const std::vector<std::vector<T>>& B,
                              std::vector<std::vector<T>>& C)
@@ -22,7 +34,8 @@ void kronecker_product(const std::vector<std::vector<T>>& A,
 		for (auto col_A = 0; col_A < (int)A[0].size(); col_A++)
 			for (auto row_B = 0; row_B < (int)B.size(); row_B++)
 				for (auto col_B = 0; col_B < (int)B[0].size(); col_B++)
-					C[row_A * B.size() + row_B][col_A * B[0].size() + col_B] = A[row_A][col_A] * B[row_B][col_B];
+					C[row_A * B.size() + row_B][col_A * B[0].size() + col_B] = kronecker_product_mul(A[row_A][col_A],
+					                                                                                 B[row_B][col_B]);
 }
 
 template <typename T = int32_t>
