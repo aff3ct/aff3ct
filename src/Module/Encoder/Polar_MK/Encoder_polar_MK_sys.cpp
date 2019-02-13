@@ -14,13 +14,13 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename T = int32_t>
-inline T kronecker_product_mul(T a, T b)
+inline T kronecker_product_mul(const T a, const T b)
 {
 	return a * b;
 }
 
 template <>
-inline bool kronecker_product_mul<bool>(bool a, bool b)
+inline bool kronecker_product_mul<bool>(const bool a, const bool b)
 {
 	return a && b;
 }
