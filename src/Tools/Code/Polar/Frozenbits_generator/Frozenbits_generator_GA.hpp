@@ -30,7 +30,7 @@ private:
 	const double bisection_max = std::numeric_limits<double>::max();
 
 public:
-	Frozenbits_generator_GA(const int K, const int N, const float sigma = 0.f);
+	Frozenbits_generator_GA(const int K, const int N);
 
 	virtual ~Frozenbits_generator_GA() = default;
 
@@ -38,6 +38,7 @@ protected:
 	void   evaluate();
 	double phi    (double t);
 	double phi_inv(double t);
+	virtual void check_noise();
 };
 }
 }

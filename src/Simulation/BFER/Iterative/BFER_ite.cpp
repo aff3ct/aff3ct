@@ -192,7 +192,8 @@ std::unique_ptr<tools ::Interleaver_core<>> BFER_ite<B,R,Q>
 	const auto seed_itl = rd_engine_seed[tid]();
 
 	std::unique_ptr<factory::Interleaver::parameters> params_itl(params_BFER_ite.itl->clone());
-	params_itl->core->seed = params_BFER_ite.itl->core->uniform ? seed_itl : params_BFER_ite.itl->core->seed;
+	params_itl->core->seed = params_BFER_ite.itl->core->uniform ? params_BFER_ite.itl->core->seed + seed_itl :
+	                                                              params_BFER_ite.itl->core->seed;
 
 	if (params_BFER_ite.err_track_revert && params_BFER_ite.itl->core->uniform)
 	{

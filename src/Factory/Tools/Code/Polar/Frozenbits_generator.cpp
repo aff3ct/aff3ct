@@ -2,8 +2,10 @@
 #include "Tools/Documentation/documentation.h"
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_5G.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_BEC.hpp"
 
 #include "Frozenbits_generator.hpp"
 
@@ -45,11 +47,11 @@ void Frozenbits_generator::parameters
 		tools::Integer(tools::Positive(), tools::Non_zero()),
 		tools::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+sigma",
+	tools::add_arg(args, p, class_name+"p+noise",
 		tools::Real(tools::Positive(), tools::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+gen-method",
-		tools::Text(tools::Including_set("GA", "FILE", "TV")));
+		tools::Text(tools::Including_set("GA", "FILE", "5G", "TV", "BEC")));
 
 	tools::add_arg(args, p, class_name+"p+awgn-path",
 		tools::Path(tools::openmode::read));
@@ -65,11 +67,11 @@ void Frozenbits_generator::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K       = vals.to_int  ({p+"-info-bits", "K"});
-	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw    = vals.to_int  ({p+"-cw-size",   "N"});
-	if(vals.exist({p+"-sigma"         })) this->sigma   = vals.to_float({p+"-sigma"         });
-	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.to_path ({p+"-awgn-path"     });
-	if(vals.exist({p+"-gen-method"    })) this->type    = vals.at      ({p+"-gen-method"    });
+	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int  ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int  ({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-noise"         })) this->noise      = vals.to_float({p+"-noise"         });
+	if(vals.exist({p+"-awgn-path"     })) this->path_fb    = vals.to_path ({p+"-awgn-path"     });
+	if(vals.exist({p+"-gen-method"    })) this->type       = vals.at      ({p+"-gen-method"    });
 
 #ifdef AFF3CT_POLAR_BOUNDS
 	if(vals.exist({p+"-pb-path"})) this->path_pb = vals.to_file({p+"-pb-path"});
@@ -84,7 +86,7 @@ void Frozenbits_generator::parameters
 	headers[p].push_back(std::make_pair("Type", this->type));
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Codeword size (N)", std::to_string(this->N_cw)));
-	headers[p].push_back(std::make_pair("Sigma", this->sigma == -1.0f ? "adaptive" : std::to_string(this->sigma)));
+	headers[p].push_back(std::make_pair("Noise", this->noise == -1.0f ? "adaptive" : std::to_string(this->noise)));
 #ifdef AFF3CT_POLAR_BOUNDS
 	if (this->type == "TV")
 		headers[p].push_back(std::make_pair("PB path", this->path_pb));
@@ -96,9 +98,11 @@ void Frozenbits_generator::parameters
 tools::Frozenbits_generator* Frozenbits_generator::parameters
 ::build() const
 {
-	if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw,                               this->sigma);
-	if (this->type == "TV"  ) return new tools::Frozenbits_generator_TV  (this->K, this->N_cw, this->path_fb, this->path_pb, this->sigma);
-	if (this->type == "FILE") return new tools::Frozenbits_generator_file(this->K, this->N_cw, this->path_fb                            );
+	if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw                              );
+	if (this->type == "TV"  ) return new tools::Frozenbits_generator_TV  (this->K, this->N_cw, this->path_fb, this->path_pb);
+	if (this->type == "FILE") return new tools::Frozenbits_generator_file(this->K, this->N_cw, this->path_fb               );
+	if (this->type == "5G")   return new tools::Frozenbits_generator_5G  (this->K, this->N_cw                              );
+	if (this->type == "BEC")  return new tools::Frozenbits_generator_BEC (this->K, this->N_cw                              );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

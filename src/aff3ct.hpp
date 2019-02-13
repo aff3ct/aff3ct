@@ -1210,6 +1210,12 @@
 #ifndef FB_EXTRACT_HPP
 #include <Tools/Code/Polar/fb_extract.h>
 #endif
+#ifndef FROZENBITS_GENERATOR_5G_HPP_
+#include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_5G.hpp>
+#endif
+#ifndef FROZENBITS_GENERATOR_BEC_HPP_
+#include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_BEC.hpp>
+#endif
 #ifndef FROZENBITS_GENERATOR_FILE_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp>
 #endif
@@ -1533,9 +1539,6 @@
 #endif
 #ifndef SYSTEM_FUNCTIONS_H_
 #include <Tools/system_functions.h>
-#endif
-#ifndef BARRIER_HPP
-#include <Tools/Threads/Barrier.hpp>
 #endif
 #ifndef TYPES_H_
 #include <Tools/types.h>

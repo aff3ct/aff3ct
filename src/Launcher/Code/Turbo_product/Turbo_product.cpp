@@ -28,7 +28,6 @@ void Turbo_product<L,B,R,Q>
 
 	this->args.erase({penc+"-fra",  "F"});
 	this->args.erase({penc+"-seed", "S"});
-	this->args.erase({pitl+"-seed", "S"});
 
 	L::get_description_args();
 
@@ -69,8 +68,6 @@ void Turbo_product<L,B,R,Q>
 	params_cdc->itl->core->n_frames = this->params.src->n_frames;
 	enc_tur        ->sub ->n_frames = this->params.src->n_frames;
 	dec_tur        ->sub ->n_frames = this->params.src->n_frames;
-
-	params_cdc->itl->core->seed = this->params.global_seed;
 }
 
 // ==================================================================================== explicit template instantiation

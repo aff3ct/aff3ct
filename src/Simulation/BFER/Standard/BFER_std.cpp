@@ -179,7 +179,7 @@ std::unique_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 		}
 		else if (params_cdc->itl->core->uniform)
 		{
-			const auto seed_itl = rd_engine_seed[tid]();
+			const auto seed_itl = rd_engine_seed[tid]() + params_cdc->itl->core->seed;
 			params_cdc->itl->core->seed = seed_itl;
 		}
 	}

@@ -217,6 +217,23 @@ Description of the allowed values (see also the figures just bellow):
 
    Interleaver ``ROW_COL`` read orders.
 
+.. _itl-itl-seed:
+
+``--itl-seed``
+""""""""""""""
+
+   :Type: integer
+   :Default: 0
+   :Examples: ``--itl-seed 48``
+
+|factory::Interleaver_core::parameters::p+seed|
+
+All the threads/nodes have the same seed (except if a uniform interleaver is
+used, see the :ref:`itl-itl-uni` parameter).
+
+.. note:: This parameter has no effect if the selected interleaver is not
+   randomly generated.
+
 .. _itl-itl-uni:
 
 ``--itl-uni``

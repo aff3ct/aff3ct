@@ -7,6 +7,9 @@ Type            ; Polynomial ; Size
 24-LTEA         ; 0x864CFB   ; 24
 24-RADIX-64     ; 0x864CFB   ; 24
 24-FLEXRAY      ; 0x5D6DCB   ; 24
+24-5GA          ; 0x864CFB   ; 24
+24-5GB          ; 0x800063   ; 24
+24-5GC          ; 0xB2B117   ; 24
 21-CAN          ; 0x102899   ; 21
 17-CAN          ; 0x1685B    ; 17
 16-IBM          ; 0x8005     ; 16
@@ -20,6 +23,7 @@ Type            ; Polynomial ; Size
 16-CDMA2000     ; 0xC867     ; 16
 16-ARINC        ; 0xA02B     ; 16
 16-CHAKRAVARTY  ; 0x2F15     ; 16
+16-5G           ; 0x1023     ; 16
 15-MPT1327      ; 0x6815     ; 15
 15-CAN          ; 0x4599     ; 15
 14-DARC         ; 0x0805     ; 14
@@ -27,6 +31,7 @@ Type            ; Polynomial ; Size
 12-CDMA2000     ; 0xF13      ; 12
 12-TELECOM      ; 0x80F      ; 12
 11-FLEXRAY      ; 0x385      ; 11
+11-5G           ; 0x621      ; 11
 10-CDMA2000     ; 0x3D9      ; 10
 10-ATM          ; 0x233      ; 10
 8-WCDMA         ; 0x9B       ;  8

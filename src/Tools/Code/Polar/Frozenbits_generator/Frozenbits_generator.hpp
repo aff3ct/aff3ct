@@ -10,6 +10,9 @@
 
 #include <sstream>
 #include <vector>
+#include <memory>
+#include <Tools/Noise/Noise.hpp>
+#include <Tools/Noise/noise_utils.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -26,7 +29,7 @@ class Frozenbits_generator
 protected:
 	const int K; /*!< Number of information bits in the frame. */
 	const int N; /*!< Codeword size (or frame size). */
-	float sigma; /*!< The AWGN channel sigma value. */
+	std::unique_ptr<tools::Noise<float>> n;
 
 	std::vector<uint32_t> best_channels; /*!< The best channels in a codeword sorted by descending order. */
 
@@ -36,11 +39,10 @@ public:
 	 *
 	 * \param K:     number of information bits in the frame.
 	 * \param N:     codeword size (or frame size).
-	 * \param sigma: the AWGN channel sigma value.
 	 */
-	Frozenbits_generator(const int K, const int N, const float sigma = 0.f)
-	: K(K), N(N), sigma(sigma), best_channels(N) {}
-
+	Frozenbits_generator(const int K, const int N)
+	: K(K), N(N), best_channels(N) {}
+	
 	/*!
 	 * \brief Destructor.
 	 */
@@ -57,18 +59,23 @@ public:
 	}
 
 	/*!
-	 * \brief Sets the AWGN channel sigma value.
+	 * \brief Sets the current noise to apply to the input signal
 	 *
-	 * \param sigma: the AWGN channel sigma value.
+	 * \param sigma: the current noise to apply to the input signal
 	 */
-	void set_sigma(const float sigma)
+	void set_noise(const tools::Noise<float>& noise)
 	{
-		this->sigma = sigma;
+		this->n.reset(tools::cast<float>(noise));
 	}
 
-	float get_sigma() const
+	/*!
+	 * \brief Sets the current noise to apply to the input signal
+	 *
+	 * \param sigma: the current noise to apply to the input signal
+	 */
+	void set_noise(const tools::Noise<double>& noise)
 	{
-		return this->sigma;
+		this->n.reset(tools::cast<float>(noise));
 	}
 
 	/*!
@@ -105,6 +112,7 @@ public:
 	}
 
 protected:
+
 	/*!
 	 * \brief Evaluates the best channels.
 	 *
@@ -112,6 +120,19 @@ protected:
 	 * This method fills the internal Frozenbits_generator::best_channels attribute.
 	 */
 	virtual void evaluate() = 0;
+
+	/*!
+	 * \brief Check that the noise has the expected type
+	 */
+	virtual void check_noise()
+	{
+		if (this->n == nullptr)
+		{
+			std::stringstream message;
+			message << "No noise has been set.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
 };
 }
 }

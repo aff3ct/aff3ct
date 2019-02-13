@@ -25,8 +25,6 @@ BFER<B,R,Q>
 : Simulation(params_BFER),
   params_BFER(params_BFER),
 
-  barrier(params_BFER.n_threads),
-
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
 
   monitor_mi(params_BFER.n_threads),
