@@ -97,10 +97,6 @@
 .. |factory::Simulation::parameters::p+seed,S| replace::
    Set the |PRNG| seed used in the Monte Carlo simulation.
 
-.. |factory::Simulation::parameters::p+mpi-comm| replace::
-   Set the time interval (in milliseconds) between the |MPI| communications.
-   Increase this interval will reduce the |MPI| communication overhead.
-
 .. ---------------------------------------------------- factory BFER parameters
 
 .. |factory::BFER::parameters::p+coset,c| replace::
@@ -126,8 +122,23 @@
 .. |factory::BFER::parameters::p+coded| replace::
    Enable the coded monitoring.
 
+.. |factory::BFER::parameters::p+sigma| replace::
+   Show the standard deviation (:math:`\sigma`) of the Gaussian/Normal
+   distribution in the terminal.
+
 .. |factory::BFER::parameters::p+mutinfo| replace::
    Enable the computation of the mutual information (|MI|).
+
+.. |factory::BFER::parameters::p+red-lazy| replace::
+   Enable the lazy synchronization between the various monitor threads.
+
+.. |factory::BFER::parameters::p+red-lazy-freq| replace::
+   Set the time interval (in milliseconds) between the synchronizations of the
+   monitor threads.
+
+.. |factory::BFER::parameters::p+mpi-comm-freq| replace::
+   Set the time interval (in milliseconds) between the |MPI| communications.
+   Increase this interval will reduce the |MPI| communications overhead.
 
 .. ------------------------------------------------ factory BFER_ite parameters
 
@@ -783,10 +794,8 @@
 .. |factory::Frozenbits_generator::parameters::p+cw-size,N| replace::
    Select the codeword size :math:`N`.
 
-.. |factory::Frozenbits_generator::parameters::p+sigma| replace::
-   Selects the noise variance :math:`\sigma` for which the frozen bits will be
-   optimized. All the noise points in the simulation will use the same frozen
-   bits configuration.
+.. |factory::Frozenbits_generator::parameters::p+noise| replace::
+   Select the noise for which the frozen bits will be optimized.
 
 .. |factory::Frozenbits_generator::parameters::p+gen-method| replace::
    Select the frozen bits generation method.
@@ -894,7 +903,7 @@
    Enable to generate a new |LUT| *for each new frame* (i.e. uniform
    interleaver).
 
-.. |factory::Interleaver_core::parameters::p+seed,S| replace::
+.. |factory::Interleaver_core::parameters::p+seed| replace::
    Select the seed used to initialize the |PRNG|.
 
 .. |factory::Interleaver_core::parameters::p+read-order| replace::

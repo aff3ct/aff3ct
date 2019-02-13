@@ -59,7 +59,7 @@ void Interleaver_core::parameters
 	tools::add_arg(args, p, class_name+"p+uni",
 		tools::None());
 
-	tools::add_arg(args, p, class_name+"p+seed,S",
+	tools::add_arg(args, p, class_name+"p+seed",
 		tools::Integer(tools::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+read-order",
@@ -77,7 +77,7 @@ void Interleaver_core::parameters
 	if(vals.exist({p+"-type"      })) this->type       = vals.at     ({p+"-type"      });
 	if(vals.exist({p+"-path"      })) this->path       = vals.to_file({p+"-path"      });
 	if(vals.exist({p+"-cols"      })) this->n_cols     = vals.to_int ({p+"-cols"      });
-	if(vals.exist({p+"-seed",  "S"})) this->seed       = vals.to_int ({p+"-seed",  "S"});
+	if(vals.exist({p+"-seed"      })) this->seed       = vals.to_int ({p+"-seed"      });
 	if(vals.exist({p+"-uni"       })) this->uniform    = true;
 	if(vals.exist({p+"-read-order"})) this->read_order = vals.at     ({p+"-read-order"});
 }
@@ -96,7 +96,7 @@ void Interleaver_core::parameters
 		headers[p].push_back(std::make_pair("Number of columns", std::to_string(this->n_cols)));
 	if (this->type == "RANDOM" || this->type == "GOLDEN" || this->type == "RAND_COL")
 	{
-		if (full) headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
+		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
 		headers[p].push_back(std::make_pair("Uniform", (this->uniform ? "yes" : "no")));
 	}
 }

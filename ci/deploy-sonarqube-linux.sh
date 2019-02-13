@@ -1,6 +1,12 @@
 #!/bin/bash
 set -x
 
+if [[ ( -z "$CI_AFF3CT_DEPLOY" ) || ( "$CI_AFF3CT_DEPLOY" != "ON" ) ]]
+then
+	echo "This job is disabled, try to set the CI_AFF3CT_DEPLOY environment variable to 'ON' to enable it."
+	exit 1
+fi
+
 if [ -z "$SONARQUBE_TOKEN" ]
 then
 	echo "The SONARQUBE_TOKEN environment variable is not defined!"
@@ -29,7 +35,7 @@ echo "sonar.sources=./src/"                                              >> sona
 echo "sonar.exclusions=**/date.h, **/dirent.h"                           >> sonar-project.properties
 echo "sonar.links.homepage=https://aff3ct.github.io/"                    >> sonar-project.properties
 echo "sonar.links.scm=https://github.com/aff3ct/aff3ct/tree/$GIT_BRANCH" >> sonar-project.properties
-echo "sonar.links.ci=https://gitlab.inria.fr/fec/aff3ct/pipelines"       >> sonar-project.properties
+echo "sonar.links.ci=https://gitlab.com/aff3ct/aff3ct/pipelines"         >> sonar-project.properties
 echo "sonar.links.issue=https://github.com/aff3ct/aff3ct/issues"         >> sonar-project.properties
 echo "sonar.language=c++"                                                >> sonar-project.properties
 echo "sonar.cxx.cppcheck.reportPath=cppcheck/cppcheck.xml"               >> sonar-project.properties

@@ -12,11 +12,11 @@ namespace tools
 {
 class Frozenbits_generator_file : public Frozenbits_generator
 {
-private:
+protected:
 	const std::string filename;
 
 protected:
-	Frozenbits_generator_file(const int K, const int N, const float sigma = 0.f);
+	Frozenbits_generator_file(const int K, const int N);
 
 public:
 	Frozenbits_generator_file(const int K, const int N, const std::string& filename);
@@ -25,7 +25,8 @@ public:
 
 protected:
 	void evaluate();
-	bool load_channels_file(const std::string& filename);
+	bool load_channels_file(const std::string& filename, std::vector<uint32_t>& best_channels);
+	virtual void check_noise();
 };
 }
 }

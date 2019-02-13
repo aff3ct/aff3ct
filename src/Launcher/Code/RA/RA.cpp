@@ -27,7 +27,6 @@ void RA<L,B,R,Q>
 
 	this->args.erase({penc+"-fra",  "F"});
 	this->args.erase({penc+"-seed", "S"});
-	this->args.erase({pitl+"-seed", "S"});
 
 	L::get_description_args();
 }
@@ -40,10 +39,8 @@ void RA<L,B,R,Q>
 
 	L::store_args();
 
-	params_cdc->enc->n_frames = this->params.src->n_frames;
-	params_cdc->dec->n_frames = this->params.src->n_frames;
-
-	params_cdc->itl->core->seed     = this->params.global_seed;
+	params_cdc->enc      ->n_frames = this->params.src->n_frames;
+	params_cdc->dec      ->n_frames = this->params.src->n_frames;
 	params_cdc->itl->core->n_frames = this->params.src->n_frames;
 }
 

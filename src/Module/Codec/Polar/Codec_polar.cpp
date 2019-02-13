@@ -16,7 +16,7 @@ Codec_polar<B,Q>
               CRC<B>* crc)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  adaptive_fb(fb_params.sigma == -1.f),
+  adaptive_fb(fb_params.noise == -1.f),
   frozen_bits(fb_params.N_cw, true),
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
   puncturer_shortlast(nullptr),
@@ -122,6 +122,17 @@ Codec_polar<B,Q>
 	{
 		if (!adaptive_fb)
 		{
+			if(fb_params.type == "BEC")
+			{
+				auto ep = tools::Event_probability<float>(fb_params.noise);
+				fb_generator->set_noise(ep);
+			}
+			else /* type = GA, TV or FILE */
+			{
+				auto sigma = tools::Sigma<float>(fb_params.noise);
+				fb_generator->set_noise(sigma);
+			}
+
 			fb_generator->generate(frozen_bits);
 			this->notify_frozenbits_update();
 		}
@@ -162,9 +173,7 @@ void Codec_polar<B,Q>
 	// adaptive frozen bits generation
 	if (adaptive_fb && !generated_decoder)
 	{
-		this->n->is_of_type_throw(tools::Noise_type::SIGMA);
-
-		fb_generator->set_sigma(this->n->get_noise());
+		fb_generator->set_noise(noise);
 		fb_generator->generate(frozen_bits);
 
 		this->notify_frozenbits_update();

@@ -24,17 +24,18 @@ const int Frozenbits_generator_TV::Mu = 100;
 Frozenbits_generator_TV
 ::Frozenbits_generator_TV(const int K, const int N,
                           const std::string &awgn_codes_dir,
-                          const std::string &bin_pb_path,
-                          const float sigma)
-: Frozenbits_generator_file(K, N, sigma), m((int)std::log2(N)), awgn_codes_dir(awgn_codes_dir), bin_pb_path(bin_pb_path)
+                          const std::string &bin_pb_path)
+: Frozenbits_generator_file(K, N), m((int)std::log2(N)), awgn_codes_dir(awgn_codes_dir), bin_pb_path(bin_pb_path)
 {
 }
 
 void Frozenbits_generator_TV
 ::evaluate()
 {
+	this-> check_noise();
+
 	std::ostringstream s_stream;
-	s_stream << std::setiosflags(std::ios::fixed) << std::setprecision(3) << this->sigma;
+	s_stream << std::setiosflags(std::ios::fixed) << std::setprecision(3) << this->n->get_noise();
 	auto str_sigma = s_stream.str();
 	auto str_N = std::to_string(this->N);
 	auto str_m = std::to_string(m);
@@ -81,27 +82,27 @@ void Frozenbits_generator_TV
 
 		auto filename = sub_folder + "/N" + str_N + "_awgn_s" + str_sigma + ".pc";
 
-		if (!this->load_channels_file(filename))
+		if (!this->load_channels_file(filename, this->best_channels))
 		{
 #ifdef AFF3CT_POLAR_BOUNDS
 			static std::mutex mutex_write_file;
 			mutex_write_file.lock();
-			if (!this->load_channels_file(filename))
+			if (!this->load_channels_file(filename, this->best_channels))
 			{
-				auto cmd  = bin_pb_path;
-				cmd      += " --no-print";                             // do not display anything
-				cmd      += " -q " + std::to_string(Mu);               // quality
-				cmd      += " --awgn";                                 // type
-				cmd      += " --sigma=" + std::to_string(this->sigma); // sigma value
-				cmd      += " --log-length=" + str_m;                  // m
-				cmd      += " -f=" + filename;                         // filename
+				auto cmd = bin_pb_path;
+				cmd += " --no-print";                                      // do not display anything
+				cmd += " -q " + std::to_string(Mu);                        // quality
+				cmd += " --awgn";                                          // type
+				cmd += " --sigma=" + std::to_string(this->n->get_noise()); // sigma value
+				cmd += " --log-length=" + str_m;                           // m
+				cmd += " -f=" + filename;                                  // filename
 
 				// std::clog << rang::tag::info << "Generating best channels positions file (\"" << filename << "\")...\r";
 				// fflush(stdout); fflush(stderr);
 
 				if (system(cmd.c_str()) == 0)
 				{
-					if (!this->load_channels_file(filename))
+					if (!this->load_channels_file(filename, this->best_channels))
 					{
 						mutex_write_file.unlock();
 						std::stringstream message;
@@ -125,4 +126,12 @@ void Frozenbits_generator_TV
 #endif
 		}
 	}
+}
+
+void Frozenbits_generator_TV
+::check_noise()
+{
+	Frozenbits_generator::check_noise();
+
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
 }

@@ -1,4 +1,5 @@
 #ifndef DECODER_LDPC_BP_VERTICAL_LAYERED_INTER_HPP_
+#ifdef __cpp_aligned_new
 #define DECODER_LDPC_BP_VERTICAL_LAYERED_INTER_HPP_
 
 #include <mipp.h>
@@ -59,4 +60,5 @@ protected:
 
 #include "Decoder_LDPC_BP_vertical_layered_inter.hxx"
 
+#endif
 #endif /* DECODER_LDPC_BP_VERTICAL_LAYERED_INTER_HPP_ */

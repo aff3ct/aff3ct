@@ -50,7 +50,7 @@ Description of the allowed values:
 """""""""""""""""""""""
 
    :Type: text
-   :Allowed values: ``FILE`` ``GA`` ``TV``
+   :Allowed values: ``FILE`` ``GA`` ``TV`` ``BEC`` ``5G``
    :Examples: ``--enc-fb-gen-method FILE``
 
 |factory::Frozenbits_generator::parameters::p+gen-method|
@@ -69,13 +69,25 @@ Description of the allowed values:
 | ``FILE`` | Read the best channels from an external file, to use with the     |
 |          | :ref:`enc-polar-enc-fb-awgn-path` parameter.                      |
 +----------+-------------------------------------------------------------------+
+| ``BEC``  | Generate frozen bits for the |BEC| channel from                   |
+|          | :cite:`Arikan2009`.                                               |
++----------+-------------------------------------------------------------------+
+| ``5G``   | Generate the frozen bits as described in the 5G standard          |
+|          | :cite:`3GPP2017`.                                                 |
++----------+-------------------------------------------------------------------+
 
 .. note:: By default, when using the |GA| or the |TV| method, the frozen bits
    are optimized for each |SNR| point. To override this behavior you can use
-   the :ref:`enc-polar-enc-fb-sigma` parameter.
+   the :ref:`enc-polar-enc-fb-noise` parameter.
 
 .. note:: When using the ``FILE`` method, the frozen bits are always the same
    regardless of the |SNR| value.
+
+.. note:: When using the ``BEC`` method, the frozen bits are optimized for each
+   erasure probability.
+
+.. note:: When using the ``5G`` method, the codeword size must be inferior
+   to 1024.
 
 .. _enc-polar-enc-fb-awgn-path:
 
@@ -111,15 +123,19 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
    configuration files are a set of best channels pre-generated with the |TV|
    method (see ``conf/cde/awgn_polar_codes/TV/``).
 
-.. _enc-polar-enc-fb-sigma:
+.. _enc-polar-enc-fb-noise:
 
-``--enc-fb-sigma``
+``--enc-fb-noise``
 """"""""""""""""""
 
    :Type: real number
-   :Examples: ``--enc-fb-sigma 1.0``
+   :Examples: ``--enc-fb-noise 1.0``
 
-|factory::Frozenbits_generator::parameters::p+sigma|
+|factory::Frozenbits_generator::parameters::p+noise|
+
+Can be a gaussian noise variance :math:`\sigma` for |GA| and |TV| generation 
+methods, or an event probability for the |BEC| generation method. All the noise
+points in the simulation will use the same frozen bits configuration.
 
 References
 """"""""""

@@ -9,7 +9,7 @@ project (aff3ct)
 if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
     message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
                         "from a Git repository. Please do not download archives from GitHub and make a Git "
-                        "clone instead (git clone https://github.com/aff3ct/MIPP.git).")
+                        "clone instead (git clone https://github.com/aff3ct/aff3ct.git).")
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ option (AFF3CT_POLAR_BOUNDS       "Enable the use of the external Tal & Vardy Po
 option (AFF3CT_COLORS             "Enable the colors in the terminal"                                         ON )
 
 if (NOT (WIN32 OR APPLE))
-    option (AFF3CT_BACKTRACE "Enable the backtrace display when and exception is raised" ON)
+    option (AFF3CT_BACKTRACE "Enable the backtrace display when an exception is raised" ON)
 else()
     set (AFF3CT_BACKTRACE OFF)
 endif()
@@ -353,14 +353,14 @@ if (AFF3CT_SYSTEMC_SIMU OR AFF3CT_SYSTEMC_MODULE)
     find_package (SystemC REQUIRED QUIET)
     if (SystemC_FOUND)
         message(STATUS "AFF3CT - Library found: SystemC")
-        aff3ct_include_directories (${SystemC_INCLUDE_DIRS})
+        aff3ct_include_directories ("${SystemC_INCLUDE_DIRS}")
         aff3ct_link_libraries ("${SystemC_LIBRARIES}")
     endif (SystemC_FOUND)
 
     find_package (TLM REQUIRED QUIET)
     if (TLM_FOUND)
         message(STATUS "AFF3CT - Library found: TLM")
-        aff3ct_include_directories (${TLM_INCLUDE_DIRS})
+        aff3ct_include_directories ("${TLM_INCLUDE_DIRS}")
     endif (TLM_FOUND)
 endif ()
 
@@ -371,7 +371,7 @@ if (AFF3CT_LINK_GSL)
     find_package (GSL REQUIRED QUIET)
     if (GSL_FOUND)
         message(STATUS "AFF3CT - Library found: GSL")
-        aff3ct_include_directories (${GSL_INCLUDE_DIRS})
+        aff3ct_include_directories ("${GSL_INCLUDE_DIRS}")
         aff3ct_link_libraries ("${GSL_LIBRARIES}")
     endif (GSL_FOUND)
 endif (AFF3CT_LINK_GSL)
@@ -384,20 +384,20 @@ if (AFF3CT_LINK_MKL)
     find_package (MKL REQUIRED QUIET)
     if (MKL_FOUND)
         message(STATUS "AFF3CT - Library found: MKL")
-        aff3ct_include_directories (${MKL_INCLUDE_DIRS})
+        aff3ct_include_directories ("${MKL_INCLUDE_DIRS}")
         aff3ct_link_libraries ("${MKL_MINIMAL_LIBRARIES}")
     endif (MKL_FOUND)
 endif (AFF3CT_LINK_MKL)
 
 # MPI
 if (AFF3CT_MPI)
-    aff3ct_add_definitions ("-DAFF3CT_ENABLE_MPI")
+    aff3ct_add_definitions ("-DAFF3CT_MPI")
 
     find_package (MPI REQUIRED QUIET)
     if (MPI_CXX_FOUND)
 
         message(STATUS "AFF3CT - Library found: MPI")
-        aff3ct_include_directories (${MPI_CXX_INCLUDE_PATH})
+        aff3ct_include_directories ("${MPI_CXX_INCLUDE_PATH}")
         aff3ct_link_libraries ("${MPI_CXX_LIBRARIES}")
 
         if (MPI_CXX_COMPILE_FLAGS)

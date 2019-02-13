@@ -61,9 +61,15 @@ void Polar<L,B,R,Q>
 
 	L::store_args();
 
+	auto pfbg = this->params_cdc->fbg->get_prefix();
+
+	if (!this->arg_vals.exist({pfbg+"-gen-method"}))
+		if (this->params.chn->type == "BEC")
+			this->params_cdc->fbg->type = "BEC";
+
 	params_cdc->enc->n_frames = this->params.src->n_frames;
 	if (params_cdc->pct != nullptr)
-	params_cdc->pct->n_frames = this->params.src->n_frames;
+		params_cdc->pct->n_frames = this->params.src->n_frames;
 	params_cdc->dec->n_frames = this->params.src->n_frames;
 }
 

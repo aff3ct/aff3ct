@@ -54,9 +54,11 @@ def format_e(n):
 	a = '%.2e' % n
 	return a
 
+
 def splitFloat(n):
 	s = format_e(n).split('e')
 	return [float(s[0]), int(s[1])]
+
 
 def getFileNames(currentPath, fileNames):
 	if os.path.isdir(currentPath):
@@ -164,16 +166,15 @@ class tableStats:
 
 		return float(self.valid) / float(self.nData)
 
+
 class compStats:
-	def __init__(self, dataCur, dataRef, sensibility, asked_n_fe):
+	def __init__(self, dataCur, dataRef, sensibility, minFE):
 		if not isinstance(dataCur, atr.aff3ctTraceReader) or not isinstance(dataRef, atr.aff3ctTraceReader) :
 			raise TypeError
 
-		self.nValidData = len(dataCur.getTrace("n_fe"))
-		for d in range(len(dataCur.getTrace("n_fe"))) :
-			if dataCur.getTrace("n_fe")[d] < asked_n_fe :
-				self.nValidData = d
-
+		self.nValidData = 0
+		while self.nValidData < len(dataCur.getTrace("n_fe")) and dataCur.getTrace("n_fe")[self.nValidData] > minFE:
+			self.nValidData += 1
 
 		self.dataCur  = dataCur
 		self.dataRef  = dataRef
@@ -453,19 +454,26 @@ for fn in fileNames:
 		# print the parameters directly and add to the wrong data the ref values
 		idxNoise = 0
 		i = 0
-		while( i < len(stdOutput)):
-			l = stdOutput[i]
-			if l.startswith("#"):
-				if "# End of the simulation." not in l:
-					fRes.write(l + "\n")
+
+		while "[trace]" not in stdOutput[i]:
+			fRes.write(stdOutput[i] + "\n")
+			i += 1
+
+		fRes.write(stdOutput[i] + "\n")
+		i += 1
+
+		while i < len(stdOutput):
+			line = stdOutput[i]
+			if line.startswith("#"):
+				if "# End of the simulation." not in line:
+					fRes.write(line + "\n")
 
 			else:
 				em = comp.errorMessage(idxNoise)
-				fRes.write(l + em + "\n")
+				fRes.write(line + em + "\n")
 				idxNoise += 1
 
 			i += 1 # to next line
-
 
 		fRes.flush()
 

@@ -190,7 +190,6 @@ void BFER_std<B,R,Q>
 
 	params.cdc->enc->seed = params.local_seed;
 
-
 	if (!this->arg_vals.exist({psrc+"-fra", "F"}) && params.mdm->type == "SCMA")
 		params.src->n_frames = params.mdm->n_frames;
 
@@ -207,9 +206,13 @@ void BFER_std<B,R,Q>
 #ifdef AFF3CT_MPI
 	auto pter = params.ter->get_prefix();
 	if (!this->arg_vals.exist({pter+"-freq"}))
-		params.ter->frequency = params.mpi_comm_freq;
+		params.ter->frequency = params.mnt_mpi_comm_freq;
+#else
+	auto pter = params.ter->get_prefix();
+	auto pmnt = params.mnt_er->get_prefix();
+	if (!this->arg_vals.exist({pmnt+"-red-lazy-freq"}))
+		params.mnt_red_lazy_freq = params.ter->frequency;
 #endif
-
 }
 
 template <typename B, typename R, typename Q>

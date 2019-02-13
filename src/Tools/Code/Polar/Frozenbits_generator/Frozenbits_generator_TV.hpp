@@ -23,13 +23,13 @@ private:
 public:
 	Frozenbits_generator_TV(const int K, const int N,
 	                        const std::string &awgn_codes_dir,
-	                        const std::string &bin_pb_path,
-	                        float sigma = 0.f);
+	                        const std::string &bin_pb_path);
 
 	virtual ~Frozenbits_generator_TV() = default;
 
 protected:
 	void evaluate();
+	virtual void check_noise();
 };
 }
 }

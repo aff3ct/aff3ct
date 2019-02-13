@@ -13,19 +13,21 @@
 using namespace aff3ct::tools;
 
 Frozenbits_generator_GA
-::Frozenbits_generator_GA(const int K, const int N, const float sigma)
-: Frozenbits_generator(K, N, sigma), m((int)std::log2(N)), z((int)std::exp2(m), 0)
+::Frozenbits_generator_GA(const int K, const int N)
+: Frozenbits_generator(K, N), m((int)std::log2(N)), z((int)std::exp2(m), 0)
 {
 }
 
 void Frozenbits_generator_GA
 ::evaluate()
 {
+	this-> check_noise();
+	
 	for (unsigned i = 0; i != this->best_channels.size(); i++)
 		this->best_channels[i] = i;
 
 	for (auto i = 0; i < std::exp2(m); i++)
-		z[i] = 2.0 / std::pow((double)this->sigma, 2.0);
+		z[i] = 2.0 / std::pow((double)this->n->get_noise(), 2.0);
 
 	for (auto l = 1; l <= m; l++)
 	{
@@ -63,4 +65,12 @@ double Frozenbits_generator_GA
 		return 4.304964539 * (1 - sqrt(1 + 0.9567131408 * std::log(t)));
 	else
 		return std::pow(a * std::log(t) + b, c);
+}
+
+void Frozenbits_generator_GA
+::check_noise()
+{
+	Frozenbits_generator::check_noise();
+
+	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
 }
