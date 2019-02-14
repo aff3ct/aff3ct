@@ -4,3 +4,4 @@ sphinxcontrib-bibtex==0.4.0
 sphinxcontrib-websupport==1.1.0
 breathe==4.11.0
 m2r==0.2.1
+docutils==0.14
