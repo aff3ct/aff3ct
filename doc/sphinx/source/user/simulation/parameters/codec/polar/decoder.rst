@@ -9,8 +9,8 @@ Polar Decoder parameters
 """"""""""""""""""
 
    :Type: text
-   :Allowed values: ``SC`` ``SCAN`` ``SCL`` ``SCL_MEM`` ``ASCL`` ``ASCL_MEM``
-                    ``CHASE`` ``ML`` ``SCF``
+   :Allowed values: ``SC`` ``SCAN`` ``SCF`` ``SCL`` ``SCL_MEM`` ``ASCL``
+                    ``ASCL_MEM`` ``CHASE`` ``ML``
    :Default: ``SC``
    :Examples: ``--dec-type ASCL``
 
@@ -145,7 +145,8 @@ Description of the allowed values:
 
 |factory::Decoder::parameters::p+flips|
 
-Corresponds to the ``T`` parameter in :cite:`Afisiadis2014`.
+Corresponds to the ``T`` parameter of the |SCF| decoding alogorithm
+:cite:`Afisiadis2014`.
 
 .. _dec-polar-dec-lists:
 

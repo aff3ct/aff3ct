@@ -64,9 +64,7 @@ Description of the allowed values:
 
 |factory::Decoder::parameters::p+flips|
 
-.. note:: Used in the Chase decoding algorithm and in the |SCF| polar decoding
-   algorithm.
-
+.. note:: Used in the Chase decoding algorithm.
 
 .. _dec-common-dec-hamming:
 

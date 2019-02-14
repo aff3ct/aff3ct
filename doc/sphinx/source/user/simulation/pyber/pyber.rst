@@ -26,4 +26,4 @@ From your terminal, go to the folder where |PyBER| is located an run it:
 
 .. code-block:: bash
 
-   python pyBER.py &
+   python PyBER.py &
