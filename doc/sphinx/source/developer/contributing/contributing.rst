@@ -1,3 +1,3 @@
 .. _developer_contributing:
 
-.. include:: ../../../../../CONTRIBUTING.rst
+.. mdinclude:: ../../../../../CONTRIBUTING.md

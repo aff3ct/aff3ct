@@ -46,7 +46,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinxcontrib.bibtex',
-    'breathe'
+    'breathe',
+    'm2r'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
