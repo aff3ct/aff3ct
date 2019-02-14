@@ -284,7 +284,7 @@
    |ML| and Chase decoders.
 
 .. |factory::Decoder::parameters::p+flips| replace::
-   Set the maximum number of bit flips in the Chase decoder.
+   Set the maximum number of bit flips in the decoding algorithm.
 
 .. |factory::Decoder::parameters::p+seed| replace::
    Specify the decoder |PRNG| seed (if the decoder uses one).
