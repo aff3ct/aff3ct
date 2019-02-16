@@ -6,13 +6,14 @@ namespace module
 {
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SCF_naive<B,R,F,G,H>
-::Decoder_polar_SCF_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, 
+::Decoder_polar_SCF_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits,
                           CRC<B>& crc, const int n_flips, const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_polar_SC_naive<B,R,F,G,H>(K, N, frozen_bits, n_frames),
   crc(crc),
   n_flips(n_flips),
-  index(K)
+  index(K),
+  current_flip_index(-1)
 {
 	const std::string name = "Decoder_polar_SCF_naive";
 	this->set_name(name);
@@ -102,9 +103,9 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 
 	this->recursive_decode(this->polar_tree.get_root());
 
-	// identify the n_flips weakest llrs 
+	// identify the n_flips weakest llrs
 	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
-	                  [this](const int& a, const int& b) 
+	                  [this](const int& a, const int& b)
 	                  {return std::abs(this->leaves[a]->get_c()->lambda[0]) < std::abs(this->leaves[b]->get_c()->lambda[0]);}
 	                 );
 
@@ -117,7 +118,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 		this->recursive_decode(this->polar_tree.get_root());
 
 		decode_result = this->check_crc();
-		
+
 		n_ite ++;
 	}
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
@@ -156,9 +157,9 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 
 	this->recursive_decode(this->polar_tree.get_root());
 
-	// identify the n_flips weakest llrs 
+	// identify the n_flips weakest llrs
 	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
-	                  [this](const int& a, const int& b) 
+	                  [this](const int& a, const int& b)
 	                  {return std::abs(this->leaves[a]->get_c()->lambda[0]) < std::abs(this->leaves[b]->get_c()->lambda[0]);}
 	                 );
 
@@ -171,7 +172,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 		this->recursive_decode(this->polar_tree.get_root());
 
 		decode_result = check_crc();
-		
+
 		n_ite ++;
 	}
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
@@ -192,9 +193,9 @@ bool Decoder_polar_SCF_naive<B,R,F,G,H>
 	std::vector<B> U_test;
 	U_test.clear();
 	for (auto leaf = 0 ; leaf < this->N ; leaf++)
-		if (!this->frozen_bits[leaf]) 
+		if (!this->frozen_bits[leaf])
 			U_test.push_back(leaves[leaf]->get_c()->s[0]);
-	return this->crc.check(U_test, this->get_simd_inter_frame_level());		
+	return this->crc.check(U_test, this->get_simd_inter_frame_level());
 }
 }
 }
