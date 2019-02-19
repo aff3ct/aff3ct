@@ -2,7 +2,7 @@
 # ------------------------------------------------------------------------------------------------------- CMAKE PROJECT
 # ---------------------------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.0.2)
+cmake_minimum_required (VERSION 3.1)
 cmake_policy(SET CMP0054 NEW)
 project (aff3ct)
 
@@ -54,11 +54,8 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/M
 set (CMAKE_MACOSX_RPATH 1)
 
 # Enable C++11
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-    set (CMAKE_CXX_STANDARD 14)
-else ()
-    set (CMAKE_CXX_STANDARD 11)
-endif()
+set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Specify bin and lib paths
 set (EXECUTABLE_OUTPUT_PATH bin/)
@@ -180,6 +177,9 @@ macro (aff3ct_add_compile_options opt)
     list(APPEND AFF3CT_COMPILE_OPTIONS ${opt})
 endmacro()
 
+# set -fpic ON
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # by compiler
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
     aff3ct_add_compile_options(-Wno-overloaded-virtual)
@@ -198,7 +198,6 @@ if (WIN32) # for Windows operating system in general
 elseif (APPLE) # for macOS
     message(STATUS "AFF3CT - System: macOS")
 elseif (UNIX AND NOT APPLE) # for Linux, BSD, Solaris, Minix
-    aff3ct_add_compile_options(-fPIC)
     message(STATUS "AFF3CT - System: Unix/Linux")
 endif()
 
