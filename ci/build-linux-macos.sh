@@ -1,6 +1,7 @@
 #!/bin/bash
 set -x
 
+cmake --version
 mkdir build
 cd build
 
