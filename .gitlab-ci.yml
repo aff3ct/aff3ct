@@ -242,7 +242,7 @@ build-linux-clang:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-Wall -funroll-loops"
+    - export CFLAGS="-Wall -Wno-overloaded-virtual -funroll-loops"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_clang"
     - source ./ci/tools/threads.sh
