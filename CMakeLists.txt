@@ -462,6 +462,32 @@ find_package(Threads REQUIRED)
 aff3ct_target_link_libraries(Threads::Threads)
 
 # ---------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------- EXPORT
+# ---------------------------------------------------------------------------------------------------------------------
+
+if (AFF3CT_COMPILE_SHARED_LIB AND NOT AFF3CT_COMPILE_STATIC_LIB)
+    export(TARGETS
+           aff3ct-shared-lib
+           NAMESPACE aff3ct::
+           FILE "lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config.cmake")
+endif()
+
+if (AFF3CT_COMPILE_STATIC_LIB AND NOT AFF3CT_COMPILE_SHARED_LIB)
+    export(TARGETS
+           aff3ct-static-lib
+           NAMESPACE aff3ct::
+           FILE "lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config.cmake")
+endif()
+
+if(AFF3CT_COMPILE_SHARED_LIB AND AFF3CT_COMPILE_STATIC_LIB)
+    export(TARGETS
+           aff3ct-shared-lib
+           aff3ct-static-lib
+           NAMESPACE aff3ct::
+           FILE "lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config.cmake")
+endif()
+
+# ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------- INSTALL
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -480,32 +506,12 @@ if(AFF3CT_COMPILE_SHARED_LIB)
             EXPORT aff3ct-config
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/
             COMPONENT library)
-    if (NOT AFF3CT_COMPILE_STATIC_LIB)
-        export(TARGETS
-               aff3ct-shared-lib
-               NAMESPACE aff3ct::
-               FILE "lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config.cmake")
-    endif()
 endif()
 if(AFF3CT_COMPILE_STATIC_LIB)
     install(TARGETS aff3ct-static-lib
             EXPORT aff3ct-config
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/
             COMPONENT library)
-    if (NOT AFF3CT_COMPILE_SHARED_LIB)
-        export(TARGETS
-               aff3ct-static-lib
-               NAMESPACE aff3ct::
-               FILE "lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config.cmake")
-    endif()
-endif()
-
-if(AFF3CT_COMPILE_SHARED_LIB AND AFF3CT_COMPILE_STATIC_LIB)
-    export(TARGETS
-           aff3ct-shared-lib
-           aff3ct-static-lib
-           NAMESPACE aff3ct::
-           FILE "lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config.cmake")
 endif()
 
 if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
