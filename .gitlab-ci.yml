@@ -71,7 +71,6 @@ build-linux-gcc-nointr:
     - linux
     - gcc
     - cmake
-    - gsl
     - x86
   artifacts:
     name: build-linux-gcc-nointr
@@ -82,7 +81,7 @@ build-linux-gcc-nointr:
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -DMIPP_NO_INTRINSICS"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build_linux_gcc_nointr"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -99,7 +98,6 @@ build-linux-gcc-x64-sse4.2:
     - linux
     - gcc
     - cmake
-    - gsl
     - x86
     - 64-bit
   artifacts:
@@ -111,7 +109,7 @@ build-linux-gcc-x64-sse4.2:
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build_linux_gcc_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -126,7 +124,6 @@ build-linux-gcc-x64-avx2:
     - linux
     - gcc
     - cmake
-    - gsl
     - x86
     - 64-bit
   artifacts:
@@ -138,7 +135,7 @@ build-linux-gcc-x64-avx2:
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -m64 -mavx2 -mfma"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build_linux_gcc_x64_avx2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -192,7 +189,7 @@ build-linux-gcc-mpi:
     - export CC="gcc"
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -march=native"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON -DAFF3CT_MPI=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=OFF -DAFF3CT_COMPILE_SHARED_LIB=OFF -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON -DAFF3CT_MPI=ON"
     - export NAME="build_linux_gcc_mpi"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -402,7 +399,7 @@ build-macos-clang-x64-sse4.2:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
+    - export CFLAGS="-Wall -Wno-overloaded-virtual -funroll-loops -m64 -msse4.2"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build_macos_clang_x64_sse4.2"
     - source ./ci/tools/threads.sh
