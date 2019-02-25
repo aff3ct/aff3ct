@@ -108,9 +108,9 @@ if(NOT "${AFF3CT_HASH}" STREQUAL "")
 endif()
 
 if(("${AFF3CT_BUILD}" STREQUAL "") OR ("${AFF3CT_HASH}" STREQUAL ""))
-    set(AFF3CT_EXTRA "")
+    set(AFF3CT_VERSION_EXTRA "")
 else()
-    set(AFF3CT_EXTRA "-${AFF3CT_BUILD}-${AFF3CT_HASH}")
+    set(AFF3CT_VERSION_EXTRA "-${AFF3CT_BUILD}-${AFF3CT_HASH}")
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
