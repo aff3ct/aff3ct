@@ -91,7 +91,7 @@ void Decoder_LDPC::parameters
 #ifdef __cpp_aligned_new
 	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_HORIZONTAL_LAYERED_LEGACY");
 #endif
-	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA", "GALB", "GALE", "WBF", "PPBF");
+	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA", "GALB", "GALE", "WBF", "MWBF",  "PPBF");
 
 	tools::add_arg(args, p, class_name+"p+ite,i",
 		tools::Integer(tools::Positive()));
@@ -99,7 +99,7 @@ void Decoder_LDPC::parameters
 	tools::add_arg(args, p, class_name+"p+off",
 		tools::Real());
 
-	tools::add_arg(args, p, class_name+"p+mwbf",
+	tools::add_arg(args, p, class_name+"p+mwbf-factor",
 		tools::Real());
 
 	tools::add_arg(args, p, class_name+"p+norm",
@@ -129,17 +129,17 @@ void Decoder_LDPC::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-h-path"    })) this->H_path          = vals.to_file ({p+"-h-path"    });
-	if(vals.exist({p+"-h-reorder" })) this->H_reorder       = vals.at      ({p+"-h-reorder" });
-	if(vals.exist({p+"-simd"      })) this->simd_strategy   = vals.at      ({p+"-simd"      });
-	if(vals.exist({p+"-min"       })) this->min             = vals.at      ({p+"-min"       });
-	if(vals.exist({p+"-ite",   "i"})) this->n_ite           = vals.to_int  ({p+"-ite",   "i"});
-	if(vals.exist({p+"-synd-depth"})) this->syndrome_depth  = vals.to_int  ({p+"-synd-depth"});
-	if(vals.exist({p+"-off"       })) this->offset          = vals.to_float({p+"-off"       });
-	if(vals.exist({p+"-mwbf"      })) this->mwbf_factor     = vals.to_float({p+"-mwbf"      });
-	if(vals.exist({p+"-norm"      })) this->norm_factor     = vals.to_float({p+"-norm"      });
-	if(vals.exist({p+"-ppbf-proba"})) this->ppbf_proba      = vals.to_list<float>({p+"-ppbf-proba"});
-	if(vals.exist({p+"-no-synd"   })) this->enable_syndrome = false;
+	if(vals.exist({p+"-h-path"     })) this->H_path          = vals.to_file ({p+"-h-path"     });
+	if(vals.exist({p+"-h-reorder"  })) this->H_reorder       = vals.at      ({p+"-h-reorder"  });
+	if(vals.exist({p+"-simd"       })) this->simd_strategy   = vals.at      ({p+"-simd"       });
+	if(vals.exist({p+"-min"        })) this->min             = vals.at      ({p+"-min"        });
+	if(vals.exist({p+"-ite",    "i"})) this->n_ite           = vals.to_int  ({p+"-ite",    "i"});
+	if(vals.exist({p+"-synd-depth" })) this->syndrome_depth  = vals.to_int  ({p+"-synd-depth" });
+	if(vals.exist({p+"-off"        })) this->offset          = vals.to_float({p+"-off"        });
+	if(vals.exist({p+"-mwbf-factor"})) this->mwbf_factor     = vals.to_float({p+"-mwbf-factor"});
+	if(vals.exist({p+"-norm"       })) this->norm_factor     = vals.to_float({p+"-norm"       });
+	if(vals.exist({p+"-ppbf-proba" })) this->ppbf_proba      = vals.to_list<float>({p+"-ppbf-proba"});
+	if(vals.exist({p+"-no-synd"    })) this->enable_syndrome = false;
 
 	if (!this->H_path.empty())
 	{
@@ -200,6 +200,9 @@ void Decoder_LDPC::parameters
 
 			headers[p].push_back(std::make_pair("Bernouilli probas", bern_str.str()));
 		}
+
+		if (this->implem == "MWBF")
+			headers[p].push_back(std::make_pair("Weighting factor", std::to_string(this->mwbf_factor)));
 	}
 }
 
@@ -258,7 +261,8 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 	}
 	else if (this->type == "BIT_FLIPPING")
 	{
-		     if (this->implem == "WBF" ) return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		     if (this->implem == "WBF" ) return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 0.f              , this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		     if (this->implem == "MWBF") return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 	}
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_HORIZONTAL_LAYERED" && this->simd_strategy == "INTER")
