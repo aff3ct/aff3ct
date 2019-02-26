@@ -518,7 +518,8 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
     install(EXPORT
             aff3ct-config
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/aff3ct-${AFF3CT_VERSION_FULL}/"
-            NAMESPACE aff3ct::)
+            NAMESPACE aff3ct::
+            COMPONENT library)
 
     install(FILES "${CMAKE_BINARY_DIR}/lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config-version.cmake"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/aff3ct-${AFF3CT_VERSION_FULL}/"
@@ -578,7 +579,7 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/"
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/conf/cde/")
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/conf/"
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/aff3ct-${AFF3CT_VERSION_FULL}/conf
-            COMPONENT configuration_files
+            COMPONENT configuration
             FILES_MATCHING PATTERN "*"
             PATTERN ".git*" EXCLUDE)
 endif()
@@ -598,12 +599,45 @@ endif()
 
 # build a CPack driven installer package
 include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_NAME "AFF3CT")
+set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_PACKAGE_CONTACT "Inria/IMS Bordeaux")
+set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
+set(CPACK_PACKAGE_NAME "aff3ct")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction Toolbox!")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_PACKAGE_VERSION "${AFF3CT_VERSION}")
 set(CPACK_PACKAGE_VERSION_MAJOR "${AFF3CT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${AFF3CT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${AFF3CT_VERSION_PATCH}")
-set(CPACK_COMPONENTS_ALL simulator library headers documentation configuration_files references)
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "AFF3CT Component")
+set(CPACK_COMPONENTS_ALL simulator library headers documentation configuration references)
+
+set(CPACK_COMPONENT_SIMULATOR_DISPLAY_NAME "Simulator")
+set(CPACK_COMPONENT_LIBRARY_DISPLAY_NAME "Library")
+set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
+set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
+set(CPACK_COMPONENT_CONFIGURATION_DISPLAY_NAME "Configuration Files")
+set(CPACK_COMPONENT_REFERENCES_DISPLAY_NAME "BER/FER References")
+
+set(CPACK_COMPONENT_SIMULATOR_DESCRIPTION "The AFF3CT standalone simulator application.")
+set(CPACK_COMPONENT_LIBRARY_DESCRIPTION "The library containing all the AFF3CT toolbox features.")
+set(CPACK_COMPONENT_HEADERS_DESCRIPTION "The C++ header files to use with the AFF3CT library.")
+set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "The detailed documentation of the simulator and the library (html and PDF).")
+set(CPACK_COMPONENT_CONFIGURATION_DESCRIPTION "Input files that can be used to configure the simulator or some library blocks.")
+set(CPACK_COMPONENT_REFERENCES_DESCRIPTION "Many pre-simulated BER/FER reference curves.")
+
+set(CPACK_COMPONENT_HEADERS_DEPENDS library)
+set(CPACK_COMPONENT_SIMULATOR_DEPENDS configuration)
+
+set(CPACK_COMPONENT_SIMULATOR_GROUP "Runtime")
+set(CPACK_COMPONENT_CONFIGURATION_GROUP "Runtime")
+set(CPACK_COMPONENT_REFERENCES_GROUP "Runtime")
+set(CPACK_COMPONENT_LIBRARY_GROUP "Development")
+set(CPACK_COMPONENT_HEADERS_GROUP "Development")
+
+set(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION "The AFF3CT simulator and related components.")
+set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "All of the tools you need to develop with the AFF3CT toolbox.")
+
 include(CPack)
