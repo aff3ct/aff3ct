@@ -324,7 +324,7 @@ build-windows-gcc-x86-sse4.2:
   script:
     - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m32 -msse4.2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - set "NAME=build_windows_gcc_x86_sse4.2"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
@@ -350,7 +350,7 @@ build-windows-gcc-x64-avx2:
   script:
     - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m64 -mavx2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - set "NAME=build_windows_gcc_x64_avx2"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
@@ -374,7 +374,7 @@ build-windows-msvc-avx:
       - build_windows_msvc_avx
   script:
     - set "CFLAGS=-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc /arch:AVX"
-    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI"
     - set "NAME=build_windows_msvc_avx"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-msvc.bat
