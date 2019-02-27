@@ -524,6 +524,40 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
     install(FILES "${CMAKE_BINARY_DIR}/lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config-version.cmake"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/aff3ct-${AFF3CT_VERSION_FULL}/"
             COMPONENT library)
+
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.hpp")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.hxx")
+
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/date
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/MIPP
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/MIPP
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.hxx")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MSVC/include/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/dirent
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/rang
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.hpp")
 endif()
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf")
@@ -541,40 +575,6 @@ if(AFF3CT_EXT_STRINGS)
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/aff3ct-${AFF3CT_VERSION_FULL}/doc/strings
             COMPONENT documentation)
 endif()
-
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
-        COMPONENT headers
-        FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
-        COMPONENT headers
-        FILES_MATCHING PATTERN "*.hpp")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
-        COMPONENT headers
-        FILES_MATCHING PATTERN "*.hxx")
-
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/date
-        COMPONENT headers
-        FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/MIPP
-        COMPONENT headers
-        FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/MIPP
-        COMPONENT headers
-        FILES_MATCHING PATTERN "*.hxx")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MSVC/include/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/dirent
-        COMPONENT headers
-        FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/rang
-        COMPONENT headers
-        FILES_MATCHING PATTERN "*.hpp")
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/conf/cde/")
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/conf/"
@@ -599,21 +599,38 @@ endif()
 
 # build a CPack driven installer package
 include(InstallRequiredSystemLibraries)
+
+# general configuration and package description
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Adrien Cassagne <adrien.cassagne@inria.fr>")
+SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://aff3ct.github.io/")
+SET(CPACK_PACKAGE_VENDOR "Inria/IMS Bordeaux")
 set(CPACK_PACKAGE_CONTACT "Inria/IMS Bordeaux")
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
 set(CPACK_PACKAGE_NAME "aff3ct")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction Toolbox!")
+set(CPACK_PACKAGE_DESCRIPTION "AFF3CT - A Fast Forward Error Correction Toolbox!")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction Toolbox!
+                                       AFF3CT is an open source software dedicated to Forward Error Correction
+                                       (FEC or channel coding) simulations. It is written in C++ and it supports
+                                       a broad range of codes: from the well-spread turbo codes and Low-Density
+                                       Parity-Check (LDPC) codes to the more recent polar codes. A particular
+                                       emphasis is given to simulation throughput performance (multiple Mb/s on
+                                       modern CPUs). AFF3CT can also been used as a FEC library and all the blocks
+                                       can be reused separately in various contexts.")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_PACKAGE_VERSION "${AFF3CT_VERSION}")
 set(CPACK_PACKAGE_VERSION_MAJOR "${AFF3CT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${AFF3CT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${AFF3CT_VERSION_PATCH}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "AFF3CT Component")
+
+# set the component to be included in the package
 set(CPACK_COMPONENTS_ALL simulator library headers documentation configuration references)
 
+# rename the components to be displayed in the installer
 set(CPACK_COMPONENT_SIMULATOR_DISPLAY_NAME "Simulator")
 set(CPACK_COMPONENT_LIBRARY_DISPLAY_NAME "Library")
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
@@ -621,6 +638,7 @@ set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
 set(CPACK_COMPONENT_CONFIGURATION_DISPLAY_NAME "Configuration Files")
 set(CPACK_COMPONENT_REFERENCES_DISPLAY_NAME "BER/FER References")
 
+# add a description of the components
 set(CPACK_COMPONENT_SIMULATOR_DESCRIPTION "The AFF3CT standalone simulator application.")
 set(CPACK_COMPONENT_LIBRARY_DESCRIPTION "The library containing all the AFF3CT toolbox features.")
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION "The C++ header files to use with the AFF3CT library.")
@@ -628,15 +646,18 @@ set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "The detailed documentation of the
 set(CPACK_COMPONENT_CONFIGURATION_DESCRIPTION "Input files that can be used to configure the simulator or some library blocks.")
 set(CPACK_COMPONENT_REFERENCES_DESCRIPTION "Many pre-simulated BER/FER reference curves.")
 
+# add dependencies between the components
 set(CPACK_COMPONENT_HEADERS_DEPENDS library)
 set(CPACK_COMPONENT_SIMULATOR_DEPENDS configuration)
 
+# group the components
 set(CPACK_COMPONENT_SIMULATOR_GROUP "Runtime")
 set(CPACK_COMPONENT_CONFIGURATION_GROUP "Runtime")
 set(CPACK_COMPONENT_REFERENCES_GROUP "Runtime")
 set(CPACK_COMPONENT_LIBRARY_GROUP "Development")
 set(CPACK_COMPONENT_HEADERS_GROUP "Development")
 
+# add a description of the groups
 set(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION "The AFF3CT simulator and related components.")
 set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "All of the tools you need to develop with the AFF3CT toolbox.")
 
