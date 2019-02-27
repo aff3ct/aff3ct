@@ -506,6 +506,7 @@ if(AFF3CT_COMPILE_SHARED_LIB)
         install(TARGETS aff3ct-shared-lib
                 EXPORT aff3ct-config
                 RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/
                 COMPONENT library)
     else()
         install(TARGETS aff3ct-shared-lib
