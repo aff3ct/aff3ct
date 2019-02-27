@@ -502,10 +502,17 @@ if(AFF3CT_COMPILE_EXE)
     endif()
 endif()
 if(AFF3CT_COMPILE_SHARED_LIB)
-    install(TARGETS aff3ct-shared-lib
-            EXPORT aff3ct-config
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/
-            COMPONENT library)
+    if(WIN32)
+        install(TARGETS aff3ct-shared-lib
+                EXPORT aff3ct-config
+                RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/
+                COMPONENT library)
+    else()
+        install(TARGETS aff3ct-shared-lib
+                EXPORT aff3ct-config
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/
+                COMPONENT library)
+    endif()
 endif()
 if(AFF3CT_COMPILE_STATIC_LIB)
     install(TARGETS aff3ct-static-lib
