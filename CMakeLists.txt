@@ -212,24 +212,24 @@ endif(AFF3CT_COMPILE_STATIC_LIB)
 # ------------------------------------------------------------------------------------------------ COMPILER DEFINITIONS
 # ---------------------------------------------------------------------------------------------------------------------
 
-macro(aff3ct_target_compile_definitions def)
-    target_compile_definitions(aff3ct-obj PUBLIC $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
+macro(aff3ct_target_compile_definitions privacy def)
+    target_compile_definitions(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
     if(AFF3CT_COMPILE_EXE)
-        target_compile_definitions(aff3ct-bin PUBLIC $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
+        target_compile_definitions(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
     endif()
     if(AFF3CT_COMPILE_SHARED_LIB)
-        target_compile_definitions(aff3ct-shared-lib PUBLIC $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
+        target_compile_definitions(aff3ct-shared-lib ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
     endif()
     if(AFF3CT_COMPILE_STATIC_LIB)
-        target_compile_definitions(aff3ct-static-lib PUBLIC $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
+        target_compile_definitions(aff3ct-static-lib ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
     endif()
 endmacro()
 
 # by system
 if(WIN32) # for Windows operating system in general
     set(WINDOWS_VISTA 0x0600)
-    aff3ct_target_compile_definitions(_WIN32_WINNT=${WINDOWS_VISTA})
-    aff3ct_target_compile_definitions(NOMINMAX)
+    aff3ct_target_compile_definitions(PUBLIC _WIN32_WINNT=${WINDOWS_VISTA})
+    aff3ct_target_compile_definitions(PUBLIC NOMINMAX)
     message(STATUS "AFF3CT - System: Windows")
 elseif(APPLE) # for macOS
     message(STATUS "AFF3CT - System: macOS")
@@ -239,50 +239,50 @@ endif()
 
 # common
 if(AFF3CT_POLAR_BIT_PACKING)
-    aff3ct_target_compile_definitions(AFF3CT_POLAR_BIT_PACKING)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_POLAR_BIT_PACKING)
     message(STATUS "AFF3CT - Polar bit packing: on")
 else()
     message(STATUS "AFF3CT - Polar bit packing: off")
 endif()
 if(AFF3CT_POLAR_BOUNDS)
-    aff3ct_target_compile_definitions(AFF3CT_POLAR_BOUNDS)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_POLAR_BOUNDS)
     message(STATUS "AFF3CT - Polar bounds: on")
 else()
     message(STATUS "AFF3CT - Polar bounds: off")
 endif()
 if(AFF3CT_COLORS)
-    aff3ct_target_compile_definitions(AFF3CT_COLORS)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_COLORS)
     message(STATUS "AFF3CT - Terminal colors: on")
 else()
     message(STATUS "AFF3CT - Terminal colors: off")
 endif()
 if(AFF3CT_BACKTRACE)
-    aff3ct_target_compile_definitions(AFF3CT_BACKTRACE)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_BACKTRACE)
     message(STATUS "AFF3CT - Backtrace: on")
 else()
     message(STATUS "AFF3CT - Backtrace: off")
 endif()
 if(AFF3CT_EXT_STRINGS)
-    aff3ct_target_compile_definitions(AFF3CT_EXT_STRINGS)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_EXT_STRINGS)
     message(STATUS "AFF3CT - External strings: on")
 else()
     message(STATUS "AFF3CT - External strings: off")
 endif()
 
 if(AFF3CT_PREC STREQUAL "8")
-    aff3ct_target_compile_definitions(AFF3CT_8BIT_PREC)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_8BIT_PREC)
     message(STATUS "AFF3CT - Precision: 8-bit")
 elseif(AFF3CT_PREC STREQUAL "16")
-    aff3ct_target_compile_definitions(AFF3CT_16BIT_PREC)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_16BIT_PREC)
     message(STATUS "AFF3CT - Precision: 16-bit")
 elseif(AFF3CT_PREC STREQUAL "32")
-    aff3ct_target_compile_definitions(AFF3CT_32BIT_PREC)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_32BIT_PREC)
     message(STATUS "AFF3CT - Precision: 32-bit")
 elseif(AFF3CT_PREC STREQUAL "64")
-    aff3ct_target_compile_definitions(AFF3CT_64BIT_PREC)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_64BIT_PREC)
     message(STATUS "AFF3CT - Precision: 64-bit")
 elseif(AFF3CT_PREC STREQUAL "MULTI")
-    aff3ct_target_compile_definitions(AFF3CT_MULTI_PREC)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_MULTI_PREC)
     message(STATUS "AFF3CT - Precision: 8/16/32/64-bit")
 else()
     message(FATAL_ERROR "AFF3CT_PREC='${AFF3CT_PREC}' and should be '8', '16', '32', '64' or 'MULTI'.")
@@ -292,39 +292,39 @@ endif()
 # ----------------------------------------------------------------------------------------------- HEADER ONLY LIBRARIES
 # ---------------------------------------------------------------------------------------------------------------------
 
-macro(aff3ct_target_include_directories dir_build dir_install)
-    target_include_directories(aff3ct-obj PUBLIC
+macro(aff3ct_target_include_directories privacy dir_build dir_install)
+    target_include_directories(aff3ct-obj ${privacy}
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
                                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/${dir_install}>)
     if(AFF3CT_COMPILE_EXE)
-        target_include_directories(aff3ct-bin PUBLIC
+        target_include_directories(aff3ct-bin ${privacy}
                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
                                    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/${dir_install}>)
     endif()
     if(AFF3CT_COMPILE_SHARED_LIB)
-        target_include_directories(aff3ct-shared-lib PUBLIC
+        target_include_directories(aff3ct-shared-lib ${privacy}
                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
                                    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/${dir_install}>)
     endif()
     if(AFF3CT_COMPILE_STATIC_LIB)
-        target_include_directories(aff3ct-static-lib PUBLIC
+        target_include_directories(aff3ct-static-lib ${privacy}
                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
                                    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/${dir_install}>)
     endif()
 endmacro()
 
 # AFF3CT headers
-aff3ct_target_include_directories("src" "aff3ct")
+aff3ct_target_include_directories(PUBLIC "src" "aff3ct")
 
 # MSVC dirent.h
 if(MSVC)
-    aff3ct_target_include_directories("lib/MSVC/include" "dirent")
+    aff3ct_target_include_directories(PUBLIC "lib/MSVC/include" "dirent")
 endif()
 
 # MIPP
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/mipp.h")
-    aff3ct_target_compile_definitions(MIPP_ENABLE_BACKTRACE)
-    aff3ct_target_include_directories("lib/MIPP/src" "MIPP")
+    aff3ct_target_compile_definitions(PUBLIC MIPP_ENABLE_BACKTRACE)
+    aff3ct_target_include_directories(PUBLIC "lib/MIPP/src" "MIPP")
     message(STATUS "AFF3CT - Header found: MIPP")
 else()
     message(FATAL_ERROR "AFF3CT - MIPP can't be found, try to init the submodule with the following cmd:\n"
@@ -333,7 +333,7 @@ endif()
 
 # rang
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/rang.hpp")
-    aff3ct_target_include_directories("lib/rang/include" "rang")
+    aff3ct_target_include_directories(PUBLIC "lib/rang/include" "rang")
     message(STATUS "AFF3CT - Header found: rang")
 else()
     message(FATAL_ERROR "AFF3CT - rang can't be found, try to init the submodule with the following cmd:\n"
@@ -342,7 +342,7 @@ endif()
 
 # date
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/date.h")
-    aff3ct_target_include_directories("lib/date/include/date" "date")
+    aff3ct_target_include_directories(PUBLIC "lib/date/include/date" "date")
     message(STATUS "AFF3CT - Header found: date")
 else()
     message(FATAL_ERROR "AFF3CT - date can't be found, try to init the submodule with the following cmd:\n"
@@ -353,89 +353,89 @@ endif()
 # -------------------------------------------------------------------------------------------------- COMPILED LIBRARIES
 # ---------------------------------------------------------------------------------------------------------------------
 
-macro(aff3ct_target_link_libraries lib)
+macro(aff3ct_target_link_libraries privacy lib)
     if(AFF3CT_COMPILE_EXE)
-        target_link_libraries(aff3ct-bin PUBLIC ${lib})
+        target_link_libraries(aff3ct-bin ${privacy} ${lib})
     endif(AFF3CT_COMPILE_EXE)
     if(AFF3CT_COMPILE_SHARED_LIB)
-       target_link_libraries(aff3ct-shared-lib INTERFACE ${lib})
+       target_link_libraries(aff3ct-shared-lib ${privacy} ${lib})
     endif(AFF3CT_COMPILE_SHARED_LIB)
     if(AFF3CT_COMPILE_STATIC_LIB)
-        target_link_libraries(aff3ct-static-lib INTERFACE ${lib})
+        target_link_libraries(aff3ct-static-lib ${privacy} ${lib})
     endif(AFF3CT_COMPILE_STATIC_LIB)
 endmacro()
 
-macro(aff3ct_target_include_directories dir)
-    target_include_directories(aff3ct-obj PUBLIC $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+macro(aff3ct_target_include_directories privacy dir)
+    target_include_directories(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
     if(AFF3CT_COMPILE_EXE)
-        target_include_directories(aff3ct-bin PUBLIC $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+        target_include_directories(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
     endif()
     if(AFF3CT_COMPILE_SHARED_LIB)
-        target_include_directories(aff3ct-shared-lib PUBLIC $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+        target_include_directories(aff3ct-shared-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
     endif()
     if(AFF3CT_COMPILE_STATIC_LIB)
-        target_include_directories(aff3ct-static-lib PUBLIC $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+        target_include_directories(aff3ct-static-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
     endif()
 endmacro()
 
 # SystemC (it is very important to have SystemC linked before the other libraries !!!)
 if(AFF3CT_SYSTEMC_SIMU OR AFF3CT_SYSTEMC_MODULE)
     if(AFF3CT_SYSTEMC_SIMU)
-        aff3ct_target_compile_definitions("AFF3CT_SYSTEMC_SIMU")
-        aff3ct_target_compile_definitions("AFF3CT_SYSTEMC_MODULE")
+        aff3ct_target_compile_definitions(PUBLIC "AFF3CT_SYSTEMC_SIMU")
+        aff3ct_target_compile_definitions(PUBLIC "AFF3CT_SYSTEMC_MODULE")
     else()
-        aff3ct_target_compile_definitions("AFF3CT_SYSTEMC_MODULE")
+        aff3ct_target_compile_definitions(PUBLIC "AFF3CT_SYSTEMC_MODULE")
     endif()
 
     find_package(SystemC REQUIRED QUIET)
     if(SystemC_FOUND)
         message(STATUS "AFF3CT - Library found: SystemC")
-        aff3ct_target_include_directories("${SystemC_INCLUDE_DIRS}")
-        aff3ct_target_link_libraries("${SystemC_LIBRARIES}")
+        aff3ct_target_include_directories(PUBLIC "${SystemC_INCLUDE_DIRS}")
+        aff3ct_target_link_libraries(PUBLIC "${SystemC_LIBRARIES}")
     endif(SystemC_FOUND)
 
     find_package(TLM REQUIRED QUIET)
     if(TLM_FOUND)
         message(STATUS "AFF3CT - Library found: TLM")
-        aff3ct_target_include_directories("${TLM_INCLUDE_DIRS}")
+        aff3ct_target_include_directories(PUBLIC "${TLM_INCLUDE_DIRS}")
     endif(TLM_FOUND)
 endif()
 
 # GSL
 if(AFF3CT_LINK_GSL)
-    aff3ct_target_compile_definitions("AFF3CT_CHANNEL_GSL")
+    aff3ct_target_compile_definitions(PUBLIC "AFF3CT_CHANNEL_GSL")
 
     find_package(GSL REQUIRED QUIET)
     if(GSL_FOUND)
         message(STATUS "AFF3CT - Library found: GSL")
-        aff3ct_target_link_libraries(GSL::gsl)
+        aff3ct_target_link_libraries(PUBLIC GSL::gsl)
     endif(GSL_FOUND)
 endif(AFF3CT_LINK_GSL)
 
 # MKL
 if(AFF3CT_LINK_MKL)
-    aff3ct_target_compile_definitions("AFF3CT_CHANNEL_MKL")
+    aff3ct_target_compile_definitions(PUBLIC "AFF3CT_CHANNEL_MKL")
 
     # set (MKL_STATIC ON)
     find_package(MKL REQUIRED QUIET)
     if(MKL_FOUND)
         message(STATUS "AFF3CT - Library found: MKL")
-        aff3ct_target_include_directories("${MKL_INCLUDE_DIRS}")
-        aff3ct_target_link_libraries("${MKL_MINIMAL_LIBRARIES}")
+        aff3ct_target_include_directories(PUBLIC "${MKL_INCLUDE_DIRS}")
+        aff3ct_target_link_libraries(PUBLIC "${MKL_MINIMAL_LIBRARIES}")
     endif(MKL_FOUND)
 endif(AFF3CT_LINK_MKL)
 
 # MPI
 if(AFF3CT_MPI)
-    aff3ct_target_compile_definitions("AFF3CT_MPI")
+    aff3ct_target_compile_definitions(PUBLIC "AFF3CT_MPI")
 
     find_package(MPI REQUIRED QUIET)
     if(MPI_CXX_FOUND)
 
         message(STATUS "AFF3CT - Library found: MPI")
         if(${CMAKE_VERSION} VERSION_LESS "3.9.6")
-            aff3ct_target_include_directories("${MPI_CXX_INCLUDE_PATH}")
-            aff3ct_target_link_libraries("${MPI_CXX_LIBRARIES}")
+            aff3ct_target_include_directories(PUBLIC "${MPI_CXX_INCLUDE_PATH}")
+            aff3ct_target_link_libraries(PUBLIC "${MPI_CXX_LIBRARIES}")
 
             if(MPI_CXX_COMPILE_FLAGS)
                 if(AFF3CT_COMPILE_EXE)
@@ -449,7 +449,7 @@ if(AFF3CT_MPI)
                 endif()
             endif(MPI_CXX_LINK_FLAGS)
         else()
-            aff3ct_target_link_libraries(MPI::MPI_CXX)
+            aff3ct_target_link_libraries(PUBLIC MPI::MPI_CXX)
         endif()
 
     endif(MPI_CXX_FOUND)
@@ -459,7 +459,7 @@ endif(AFF3CT_MPI)
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-aff3ct_target_link_libraries(Threads::Threads)
+aff3ct_target_link_libraries(PUBLIC Threads::Threads)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------- EXPORT
