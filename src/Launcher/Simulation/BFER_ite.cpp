@@ -1,6 +1,5 @@
 #include "Simulation/BFER/Iterative/BFER_ite.hpp"
 
-#include <thread>
 #include <string>
 #include <iostream>
 

@@ -4,7 +4,6 @@
 #define FACTORY_SIMULATION_EXIT_HPP_
 
 #include <string>
-#include <thread>
 
 #include "Factory/Module/Source/Source.hpp"
 #include "Factory/Module/Modem/Modem.hpp"
