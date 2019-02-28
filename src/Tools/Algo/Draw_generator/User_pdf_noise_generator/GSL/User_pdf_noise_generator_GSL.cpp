@@ -1,6 +1,8 @@
 #ifdef AFF3CT_CHANNEL_GSL
 
 #include <sstream>
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 
 #include "Tools/Exception/exception.hpp"
 #include "User_pdf_noise_generator_GSL.hpp"
@@ -11,7 +13,7 @@ using namespace aff3ct::tools;
 template <typename R>
 User_pdf_noise_generator_GSL<R>
 ::User_pdf_noise_generator_GSL(const tools::Distributions<R>& dists, const int seed, Interpolation_type inter_type)
-: User_pdf_noise_generator<R>(dists), rng(gsl_rng_alloc(gsl_rng_mt19937), gsl_rng_free), interp_function(nullptr)
+: User_pdf_noise_generator<R>(dists), rng((void*)gsl_rng_alloc(gsl_rng_mt19937)), interp_function(nullptr)
 {
 	this->set_seed(seed);
 
@@ -28,10 +30,17 @@ User_pdf_noise_generator_GSL<R>
 }
 
 template <typename R>
+User_pdf_noise_generator_GSL<R>
+::~User_pdf_noise_generator_GSL()
+{
+	gsl_rng_free((gsl_rng*)rng);
+}
+
+template <typename R>
 void User_pdf_noise_generator_GSL<R>
 ::set_seed(const int seed)
 {
-	gsl_rng_set(rng.get(), seed);
+	gsl_rng_set((gsl_rng*)rng, seed);
 }
 
 template <typename R>
@@ -44,7 +53,7 @@ void User_pdf_noise_generator_GSL<R>
 	{
 		const auto& cdf_y = signal[i] ? dis.get_cdf_y()[1] : dis.get_cdf_y()[0];
 		const auto& cdf_x = signal[i] ? dis.get_cdf_x()[1] : dis.get_cdf_x()[0];
-		const auto uni_draw = gsl_ran_flat(rng.get(), (R)0, (R)1);
+		const auto uni_draw = gsl_ran_flat((gsl_rng*)rng, (R)0, (R)1);
 		draw[i] = interp_function(cdf_y.data(), cdf_x.data(), cdf_x.size(), uni_draw);
 	}
 }

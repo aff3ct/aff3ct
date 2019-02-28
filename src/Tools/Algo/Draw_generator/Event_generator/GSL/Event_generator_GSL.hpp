@@ -3,10 +3,6 @@
 #ifndef EVENT_GENERATOR_GSL_HPP
 #define EVENT_GENERATOR_GSL_HPP
 
-#include <gsl/gsl_randist.h>
-#include <gsl/gsl_rng.h>
-#include <memory>
-
 #include "../Event_generator.hpp"
 
 namespace aff3ct
@@ -18,12 +14,12 @@ template <typename R = float, typename E = typename tools::matching_types<R>::B>
 class Event_generator_GSL : public Event_generator<R,E>
 {
 private:
-	std::unique_ptr<gsl_rng,decltype(&gsl_rng_free)> rng;
+	void* rng; // gsl_rng* type
 
 public:
 	explicit Event_generator_GSL(const int seed = 0);
 
-	virtual ~Event_generator_GSL() = default;
+	virtual ~Event_generator_GSL();
 
 	virtual void set_seed(const int seed);
 

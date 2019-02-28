@@ -1,5 +1,7 @@
 #ifdef AFF3CT_CHANNEL_MKL
 
+#include <mkl_vsl.h>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Event_generator_MKL.hpp"
@@ -10,7 +12,7 @@ using namespace aff3ct::tools;
 template <typename R, typename E>
 Event_generator_MKL<R,E>
 ::Event_generator_MKL(const int seed)
-: Event_generator<R,E>(), stream_state(nullptr), is_stream_alloc(false)
+: Event_generator<R,E>(), stream_state((void*)new VSLStreamStatePtr), is_stream_alloc(false)
 {
 	this->set_seed(seed);
 }
@@ -20,17 +22,18 @@ Event_generator_MKL<R,E>
 ::~Event_generator_MKL()
 {
 	if (is_stream_alloc)
-		vslDeleteStream(&stream_state);
+		vslDeleteStream((VSLStreamStatePtr*)stream_state);
+	delete (VSLStreamStatePtr*)stream_state;
 }
 
 template <typename R, typename E>
 void Event_generator_MKL<R,E>
 ::set_seed(const int seed)
 {
-	if (is_stream_alloc) vslDeleteStream(&stream_state);
+	if (is_stream_alloc) vslDeleteStream((VSLStreamStatePtr*)stream_state);
 
-	//vslNewStream(&stream_state, VSL_BRNG_MT2203, seed);
-	vslNewStream(&stream_state, VSL_BRNG_SFMT19937, seed);
+	//vslNewStream((VSLStreamStatePtr*)stream_state, VSL_BRNG_MT2203, seed);
+	vslNewStream((VSLStreamStatePtr*)stream_state, VSL_BRNG_SFMT19937, seed);
 
 	is_stream_alloc = true;
 }
@@ -50,7 +53,7 @@ template <>
 void Event_generator_MKL<R_32,B_32>
 ::generate(B_32 *draw, const unsigned length, const R_32 event_probability)
 {
-	viRngBernoulli(VSL_RNG_METHOD_BERNOULLI_ICDF, stream_state, length, draw, event_probability);
+	viRngBernoulli(VSL_RNG_METHOD_BERNOULLI_ICDF, *(VSLStreamStatePtr*)stream_state, length, draw, event_probability);
 }
 
 template <>
@@ -58,7 +61,8 @@ void Event_generator_MKL<R_64,B_64>
 ::generate(B_64 *draw, const unsigned length, const R_64 event_probability)
 {
 	std::vector<int> draw_i(length);
-	viRngBernoulli(VSL_RNG_METHOD_BERNOULLI_ICDF, stream_state, length, draw_i.data(), event_probability);
+	viRngBernoulli(VSL_RNG_METHOD_BERNOULLI_ICDF, *(VSLStreamStatePtr*)stream_state, length, draw_i.data(),
+	               event_probability);
 
 	std::copy(draw_i.begin(), draw_i.end(), draw);
 }

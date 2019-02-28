@@ -3,21 +3,18 @@
 #ifndef EVENT_GENERATOR_MKL_HPP
 #define EVENT_GENERATOR_MKL_HPP
 
-#include <mkl_vsl.h>
-
 #include "../Event_generator.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
-
 template <typename R = float, typename E = typename tools::matching_types<R>::B>
 class Event_generator_MKL : public Event_generator<R,E>
 {
 private:
-	VSLStreamStatePtr stream_state;
-	bool              is_stream_alloc;
+	void* stream_state; // VSLStreamStatePtr* type
+	bool  is_stream_alloc;
 
 public:
 	explicit Event_generator_MKL(const int seed = 0);

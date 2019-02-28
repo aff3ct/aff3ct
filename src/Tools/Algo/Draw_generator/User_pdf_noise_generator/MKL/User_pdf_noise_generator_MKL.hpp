@@ -3,8 +3,6 @@
 #ifndef User_pdf_noise_generator_MKL_HPP_
 #define User_pdf_noise_generator_MKL_HPP_
 
-#include <mkl_vsl.h>
-
 #include "Tools/Math/interpolation.h"
 
 #include "../User_pdf_noise_generator.hpp"
@@ -18,14 +16,14 @@ template <typename R = float>
 class User_pdf_noise_generator_MKL : public User_pdf_noise_generator<R>
 {
 private:
-	VSLStreamStatePtr stream_state;
-	bool              is_stream_alloc;
+	void* stream_state;
+	bool  is_stream_alloc;
 
 	R (*interp_function)(const R*, const R*, const unsigned, const R);
 
 public:
 	explicit User_pdf_noise_generator_MKL(const tools::Distributions<R>& dists, const int seed = 0, Interpolation_type inter_type = Interpolation_type::NEAREST);
-	virtual ~User_pdf_noise_generator_MKL() = default;
+	virtual ~User_pdf_noise_generator_MKL();
 
 	virtual void set_seed(const int seed);
 

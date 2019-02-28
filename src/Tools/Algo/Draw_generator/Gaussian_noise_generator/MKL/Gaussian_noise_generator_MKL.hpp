@@ -3,8 +3,6 @@
 #ifndef GAUSSIAN_NOISE_GENERATOR_MKL_HPP_
 #define GAUSSIAN_NOISE_GENERATOR_MKL_HPP_
 
-#include <mkl_vsl.h>
-
 #include "../Gaussian_noise_generator.hpp"
 
 namespace aff3ct
@@ -15,8 +13,8 @@ template <typename R = float>
 class Gaussian_noise_generator_MKL : public Gaussian_noise_generator<R>
 {
 private:
-	VSLStreamStatePtr stream_state;
-	bool              is_stream_alloc;
+	void* stream_state; // VSLStreamStatePtr* type
+	bool  is_stream_alloc;
 
 public:
 	explicit Gaussian_noise_generator_MKL(const int seed = 0);
