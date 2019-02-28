@@ -608,11 +608,26 @@ endif()
 # build a CPack driven installer package
 include(InstallRequiredSystemLibraries)
 
+find_program(DPKG_CMD dpkg)
+if(NOT "${DPKG_CMD}" STREQUAL "DPKG_CMD-NOTFOUND")
+    execute_process(COMMAND "${DPKG_CMD}" --print-architecture
+                    OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(CPACK_PACKAGE_FILE_NAME "aff3ct-${AFF3CT_VERSION_FULL}-${CMAKE_SYSTEM_NAME}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+endif()
+
 # general configuration and package description
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Adrien Cassagne <adrien.cassagne@inria.fr>")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://aff3ct.github.io/")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libgcc1, libstdc++6")
+if (AFF3CT_LINK_GSL)
+    string(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS ", libgsl2")
+endif()
+if (AFF3CT_MPI)
+    string(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS ", libopenmpi1.10")
+endif()
 set(CPACK_PACKAGE_VENDOR "Inria/IMS Bordeaux")
 set(CPACK_PACKAGE_CONTACT "Inria/IMS Bordeaux")
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
@@ -620,13 +635,13 @@ set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
 set(CPACK_PACKAGE_NAME "aff3ct")
 set(CPACK_PACKAGE_DESCRIPTION "AFF3CT - A Fast Forward Error Correction Toolbox!")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction Toolbox!
-                                       AFF3CT is an open source software dedicated to Forward Error Correction
-                                       (FEC or channel coding) simulations. It is written in C++ and it supports
-                                       a broad range of codes: from the well-spread turbo codes and Low-Density
-                                       Parity-Check (LDPC) codes to the more recent polar codes. A particular
-                                       emphasis is given to simulation throughput performance (multiple Mb/s on
-                                       modern CPUs). AFF3CT can also been used as a FEC library and all the blocks
-                                       can be reused separately in various contexts.")
+    AFF3CT is an open source software dedicated to Forward Error Correction (FEC or
+    channel coding) simulations. It is written in C++ and it supports a broad range
+    of codes: from the well-spread turbo codes and Low-Density Parity-Check (LDPC)
+    codes to the more recent polar codes. A particular emphasis is given to
+    simulation throughput performance (multiple Mb/s on modern CPUs). AFF3CT can
+    also been used as a FEC library and all the blocks can be reused separately in
+    various contexts.")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_PACKAGE_VERSION "${AFF3CT_VERSION}")
