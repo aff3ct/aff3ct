@@ -198,7 +198,7 @@ file(WRITE ${debian_rules}
 	"\n\n%:\n"
 	"\tdh  $@ --buildsystem=cmake\n"
 	"\noverride_dh_auto_configure:\n"
-	"\tDESTDIR=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" dh_auto_configure -- -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DPACKAGE_TGZ=OFF"
+	"\tDESTDIR=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" dh_auto_configure -- -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DPACKAGE_TGZ=OFF -DAFF3CT_OVERRIDE_VERSION=${GIT_VERSION} -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS}'"
 	"\n\noverride_dh_auto_install:\n"
 	"\tdh_auto_install --destdir=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" --buildsystem=cmake"
 	"\n\noverride_dh_strip:\n"
@@ -339,7 +339,7 @@ message(STATUS "DEB_SOURCE_CHANGES is ${DEB_SOURCE_CHANGES}")
 #     else()
 #         add_custom_target(dput_${DISTRI} ALL
 #             COMMAND ${DPUT_EXECUTABLE} ${DPUT_HOST} ${DEB_SOURCE_CHANGES}
-#             DEPENDS debuild_${DISTRI}
+#             DEPENDS debuild_${DISTRI}, 
 #             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI}
 #         )
 #     endif()

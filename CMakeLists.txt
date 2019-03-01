@@ -11,11 +11,6 @@ endif()
 
 project(aff3ct)
 
-if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-    message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
-                        "from a Git repository. Please do not download archives from GitHub and make a Git "
-                        "clone instead (git clone https://github.com/aff3ct/aff3ct.git).")
-endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------- CMAKE OPTIONS
@@ -32,6 +27,13 @@ option(AFF3CT_MPI                "Enable the MPI support"                       
 option(AFF3CT_POLAR_BIT_PACKING  "Enable the bit packing technique for Polar code SC decoding"               ON )
 option(AFF3CT_POLAR_BOUNDS       "Enable the use of the external Tal & Vardy Polar best channels generator"  OFF)
 option(AFF3CT_COLORS             "Enable the colors in the terminal"                                         ON )
+option(AFF3CT_OVERRIDE_VERSION   "Compile without .git directory, provided a version and hash"               OFF)
+
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND NOT AFF3CT_OVERRIDE_VERSION)
+    message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
+                        "from a Git repository. Please do not download archives from GitHub and make a Git "
+                        "clone instead (git clone https://github.com/aff3ct/aff3ct.git).")
+endif()
 
 if(NOT (WIN32 OR APPLE))
     option(AFF3CT_BACKTRACE "Enable the backtrace display when an exception is raised" ON)
@@ -80,9 +82,15 @@ file(GLOB_RECURSE source_files ${CMAKE_CURRENT_SOURCE_DIR}/src/*)
 # ------------------------------------------------------------------------------------------------ GET VERSION FROM GIT
 # ---------------------------------------------------------------------------------------------------------------------
 
-include(GetGitRevisionDescription)
-get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-git_describe(GIT_VERSION "--tags" "--abbrev=7")
+if(NOT AFF3CT_OVERRIDE_VERSION)
+    include(GetGitRevisionDescription)
+    get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+    git_describe(GIT_VERSION "--tags" "--abbrev=7")
+else()
+    set(GIT_VERSION ${AFF3CT_OVERRIDE_VERSION})
+endif()
+
+
 
 string(REGEX REPLACE "^v"                ""    AFF3CT_VERSION_FULL  ${GIT_VERSION})
 string(REGEX REPLACE "-.*"               ""    AFF3CT_VERSION       ${AFF3CT_VERSION_FULL})
