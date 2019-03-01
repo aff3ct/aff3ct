@@ -49,6 +49,20 @@ then
 	exit 1
 fi
 
+if [ "${GIT_BRANCH}" == "master" ]; then
+	if [ -z "$CI_AFF3CT_DEPLOY_BUILDS_MASTER" ]
+	then
+		echo "Please define the 'CI_AFF3CT_DEPLOY_BUILDS_MASTER' environment variable."
+		exit 1
+	fi
+else
+	if [ -z "$CI_AFF3CT_DEPLOY_BUILDS_DEV" ]
+	then
+		echo "Please define the 'CI_AFF3CT_DEPLOY_BUILDS_DEV' environment variable."
+		exit 1
+	fi
+fi
+
 REPO_WEB=aff3ct.github.io
 REPO_RESSOURCES=ressources
 git clone git@github.com:aff3ct/${REPO_WEB}.git
@@ -56,7 +70,6 @@ rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 cd ${REPO_WEB}
 git clone git@github.com:aff3ct/${REPO_RESSOURCES}.git
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-git submodule update --init --recursive
 mkdir ressources/aff3ct_builds
 cd ..
 
@@ -124,9 +137,9 @@ git commit -m "Automatic: add new AFF3CT builds ($GIT_BRANCH: $GIT_HASH)."
 BUILD_CSV=../download/download_${GIT_BRANCH}.csv
 N_BUILDS_TO_KEEP=0
 if [ "${GIT_BRANCH}" == "master" ]; then
-	N_BUILDS_TO_KEEP=5
+	N_BUILDS_TO_KEEP=$CI_AFF3CT_DEPLOY_BUILDS_MASTER
 else
-	N_BUILDS_TO_KEEP=5
+	N_BUILDS_TO_KEEP=$CI_AFF3CT_DEPLOY_BUILDS_DEV
 fi
 N_BUILDS=$(wc -l $BUILD_CSV | cut -d " " -f1)
 N_BUILDS=$(($N_BUILDS-1))
