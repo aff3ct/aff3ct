@@ -69,12 +69,6 @@ do
 	ZIP_NAME=$(echo "${BUILD/build/$PREFIX}")
 	ZIP_NAME=$(echo "${ZIP_NAME/\./\_}_$GIT_HASH.zip")
 
-	# add the documentation
-	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc
-	cp -r doc/sphinx/build/html $BUILD/share/aff3ct-$GIT_VERSION/doc/
-	mkdir $BUILD/share/aff3ct-$GIT_VERSION/doc/pdf
-	cp doc/sphinx/build/latex/AFF3CT.pdf $BUILD/share/aff3ct-$GIT_VERSION/doc/pdf
-
 	zip -r $ZIP_NAME $BUILD > /dev/null
 	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
