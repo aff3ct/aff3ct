@@ -1213,6 +1213,11 @@ deploy-builds-linux:
   only:
     - master
     - development
+  artifacts:
+     name: builds
+     when: always
+     paths:
+      - builds/
   allow_failure: true
   script:
     - source ./ci/tools/git-branch.sh
