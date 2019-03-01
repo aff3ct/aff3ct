@@ -611,13 +611,17 @@ include(InstallRequiredSystemLibraries)
 # general configuration and package description
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Adrien Cassagne <adrien.cassagne@inria.fr>")
+#set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Adrien Cassagne <adrien.cassagne@inria.fr>")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Mathieu Léonardon <mathieu.leonardon@gmail.com>")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://aff3ct.github.io/")
+set(CPACK_DEBIAN_PACKAGE_VERSION "${AFF3CT_VERSION}")
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "any")
 set(CPACK_PACKAGE_VENDOR "Inria/IMS Bordeaux")
 set(CPACK_PACKAGE_CONTACT "Inria/IMS Bordeaux")
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
 set(CPACK_PACKAGE_NAME "aff3ct")
+set(CPACK_SOURCE_PACKAGE_NAME "aff3ct")
 set(CPACK_PACKAGE_DESCRIPTION "AFF3CT - A Fast Forward Error Correction Toolbox!")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction Toolbox!
                                        AFF3CT is an open source software dedicated to Forward Error Correction
@@ -629,6 +633,8 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction 
                                        can be reused separately in various contexts.")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_PACKAGE_FILE_NAME "aff3ct_${AFF3CT_VERSION}.orig")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "aff3ct_${AFF3CT_VERSION}.orig")
 set(CPACK_PACKAGE_VERSION "${AFF3CT_VERSION}")
 set(CPACK_PACKAGE_VERSION_MAJOR "${AFF3CT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${AFF3CT_VERSION_MINOR}")
@@ -669,4 +675,12 @@ set(CPACK_COMPONENT_HEADERS_GROUP "Development")
 set(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION "The AFF3CT simulator and related components.")
 set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "All of the tools you need to develop with the AFF3CT toolbox.")
 
+# ignored files
+set(CPACK_IGNORE_FILES "/\\\\.git/;/\\\\.git.*;/build/;/\\\\.idea")
+set(CPACK_SOURCE_IGNORE_FILES "${CPACK_IGNORE_FILES}")
+set(CPACK_INSTALLED_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR};/")
+
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+
+include(UploadPPA)
 include(CPack)
