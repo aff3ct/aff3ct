@@ -615,7 +615,7 @@ set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Mathieu Léonardon <mathieu.leonardon@gmail.com>")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://aff3ct.github.io/")
 set(CPACK_DEBIAN_PACKAGE_VERSION "${AFF3CT_VERSION}")
-set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "any")
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 set(CPACK_PACKAGE_VENDOR "Inria/IMS Bordeaux")
 set(CPACK_PACKAGE_CONTACT "Inria/IMS Bordeaux")
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
@@ -676,7 +676,7 @@ set(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION "The AFF3CT simulator and related 
 set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "All of the tools you need to develop with the AFF3CT toolbox.")
 
 # ignored files
-set(CPACK_IGNORE_FILES "/\\\\.git/;/\\\\.git.*;/build/;/\\\\.idea")
+set(CPACK_IGNORE_FILES "/build/;/\\\\.idea")
 set(CPACK_SOURCE_IGNORE_FILES "${CPACK_IGNORE_FILES}")
 set(CPACK_INSTALLED_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR};/")
 
