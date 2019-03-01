@@ -89,7 +89,7 @@ rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
 cd ${REPO_WEB}
 
-ARTIFACTS_PATH=${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/file/${BUILDS_DIR}/
+ARTIFACTS_PATH=${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/${BUILDS_DIR}/
 CSV_ENTRY=$(cat download/download_${GIT_BRANCH}.csv | grep "$GIT_TAG" | grep "$GIT_HASH" | grep "$GIT_DATE" | grep "$GIT_MESSAGE" | grep "$GIT_AUTHOR" | grep "$ARTIFACTS_PATH" | grep "$BUILDS_LIST")
 
 # if the entry does not exist, add the entry to the CSV file
