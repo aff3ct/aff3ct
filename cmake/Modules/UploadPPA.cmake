@@ -62,22 +62,20 @@ if(NOT DEBUILD_EXECUTABLE OR NOT DPUT_EXECUTABLE)
 endif(NOT DEBUILD_EXECUTABLE OR NOT DPUT_EXECUTABLE)
 
 
-if(NOT PROJECT_PPA_DISTRIB_TARGET)
+if(NOT AFF3CT_PPA_DISTRIB)
 execute_process(
     COMMAND lsb_release -cs
     OUTPUT_VARIABLE DISTRI
     OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(PROJECT_PPA_DISTRIB_TARGET ${DISTRI})
-    message(STATUS "PROJECT_PPA_DISTRIB_TARGET NOT provided, so using system settings : ${DISTRI}")
+    set(AFF3CT_PPA_DISTRIB ${DISTRI})
+    message(STATUS "AFF3CT - PPA distrib found: ${DISTRI}")
 endif()
 
-foreach(DISTRI ${PROJECT_PPA_DISTRIB_TARGET})
-message(STATUS "Building for ${DISTRI}")
+foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
 
 # Strip "-dirty" flag from package version.
 # It can be added by, e.g., git describe but it causes trouble with debuild etc.
 string(REPLACE "-dirty" "" CPACK_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION})
-message(STATUS "version: ${CPACK_PACKAGE_VERSION}")
 
 # DEBIAN/control
 # debian policy enforce lower case for package name
@@ -112,7 +110,7 @@ endif()
 
 if(PPA_DEBIAN_VERSION)
   set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}-${PPA_DEBIAN_VERSION}~${DISTRI}1")
-elseif(NOT PPA_DEBIAN_VERSION AND NOT PROJECT_PPA_DISTRIB_TARGET)
+elseif(NOT PPA_DEBIAN_VERSION AND NOT AFF3CT_PPA_DISTRIB)
   message(WARNING "Variable PPA_DEBIAN_VERSION not set! Building 'native' package!")
   set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}")
 else()
@@ -229,7 +227,7 @@ if(CHANGELOG_MESSAGE)
 else()
 	set(output_changelog_msg "* Package created with CMake")
 endif(CHANGELOG_MESSAGE)
-message(STATUS "Changelog message : \"${output_changelog_msg}\"")
+
 if(EXISTS ${CPACK_DEBIAN_RESOURCE_FILE_CHANGELOG})
   configure_file(${CPACK_DEBIAN_RESOURCE_FILE_CHANGELOG} ${debian_changelog} COPYONLY)
 
@@ -285,21 +283,17 @@ set(package_file_name "${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}")
 
 set(orig_file "${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${package_file_name}.orig.tar.gz")
 
-message(STATUS "orig_file is ${orig_file}")
-
-
 add_custom_command(OUTPUT ${orig_file}
-  COMMAND cpack -G TGZ --config ${CMAKE_BINARY_DIR}/CPackConfig.cmake
+  COMMAND cpack -G TGZ --config ${CMAKE_BINARY_DIR}/CPackSourceConfig.cmake
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI}
   )
 
-message(STATUS "DEBIAN_SOURCE_DIR is ${DEBIAN_SOURCE_DIR}")
 
 add_custom_command(OUTPUT ${DEBIAN_SOURCE_DIR}/CMakeLists.txt
-	COMMAND tar zxf ${orig_file}
-	WORKING_DIRECTORY ${DEBIAN_SOURCE_DIR}
-	DEPENDS ${orig_file}
-	)
+  COMMAND tar zxf ${orig_file}
+  WORKING_DIRECTORY ${DEBIAN_SOURCE_DIR}
+  DEPENDS ${orig_file}
+  )
 
 ##############################################################################
 # debuild -S
@@ -307,22 +301,31 @@ set(DEB_SOURCE_CHANGES
   ${CPACK_DEBIAN_PACKAGE_NAME}_${DEBIAN_PACKAGE_VERSION}_source.changes
   )
 
-message(STATUS "DEB_SOURCE_CHANGES is ${DEB_SOURCE_CHANGES}")
+add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEB_SOURCE_CHANGES}
+  COMMAND ${DEBUILD_EXECUTABLE} --no-tgz-check -S
+  WORKING_DIRECTORY ${DEBIAN_SOURCE_DIR}
+  )
 
-# add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEB_SOURCE_CHANGES}
-#   COMMAND ${DEBUILD_EXECUTABLE} --no-tgz-check -S
-#   WORKING_DIRECTORY ${DEBIAN_SOURCE_DIR}
-#   )
-# add_custom_target(debuild_${DISTRI} ALL
-# 				DEPENDS ${DEBIAN_SOURCE_DIR}/CMakeLists.txt
-# 						${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEB_SOURCE_CHANGES}
-# 		)
+add_custom_target(debuild_${DISTRI} ALL
+				DEPENDS ${DEBIAN_SOURCE_DIR}/CMakeLists.txt
+        aff3ct-bin
+				${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEB_SOURCE_CHANGES}
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI}
+		)
 # ##############################################################################
 # # dput ppa:your-lp-id/ppa <source.changes>
 
-# set(UPLOAD_PPA "ppa:mathieu-leonardon/aff3ct")
+set(UPLOAD_PPA "ppa:mathieu-leonardon/aff3ct")
 
-# message(STATUS "Upload PPA is ${UPLOAD_PPA}")
+add_custom_target(dput_${DISTRI} ALL
+        COMMAND ${DPUT_EXECUTABLE} ${DPUT_HOST} ${DEB_SOURCE_CHANGES}
+        DEPENDS  debuild_${DISTRI}
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI}
+    )
+endforeach(DISTRI)
+
+
+
 # if(UPLOAD_PPA)
 #     if (EXISTS ${DPUT_CONFIG_IN})
 #         set(DPUT_DIST ${DISTRI})
@@ -333,15 +336,14 @@ message(STATUS "DEB_SOURCE_CHANGES is ${DEB_SOURCE_CHANGES}")
 #         )
 #         add_custom_target(dput_${DISTRI} ALL
 #             COMMAND ${DPUT_EXECUTABLE} -c ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/dput.cf ${DPUT_HOST} ${DEB_SOURCE_CHANGES}
-#             DEPENDS debuild_${DISTRI}
+#             DEPENDS debuild_${DISTRI}, aff3ct-bin
 #             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI}
 #         )
 #     else()
-#         add_custom_target(dput_${DISTRI} ALL
-#             COMMAND ${DPUT_EXECUTABLE} ${DPUT_HOST} ${DEB_SOURCE_CHANGES}
-#             DEPENDS debuild_${DISTRI}, 
-#             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI}
-#         )
+        # add_custom_target(dput_${DISTRI} ALL
+        #     COMMAND ${DPUT_EXECUTABLE} ${DPUT_HOST} ${DEB_SOURCE_CHANGES}
+        #     DEPENDS debuild_${DISTRI}, aff3ct-bin
+        #     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI}
+        # )
 #     endif()
 # endif()
-endforeach(DISTRI)

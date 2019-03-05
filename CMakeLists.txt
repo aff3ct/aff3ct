@@ -690,5 +690,8 @@ set(CPACK_INSTALLED_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR};/")
 
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
 
-include(UploadPPA)
+if (AFF3CT_UPLOAD_PPA)
+    include(UploadPPA)
+endif()
+
 include(CPack)
