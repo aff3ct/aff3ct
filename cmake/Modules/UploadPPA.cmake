@@ -315,7 +315,7 @@ add_custom_target(debuild_${DISTRI} ALL
 # ##############################################################################
 # # dput ppa:your-lp-id/ppa <source.changes>
 
-set(UPLOAD_PPA "ppa:mathieu-leonardon/aff3ct")
+set(DPUT_HOST "ppa:mathieu-leonardon/aff3ct")
 
 add_custom_target(dput_${DISTRI} ALL
         COMMAND ${DPUT_EXECUTABLE} ${DPUT_HOST} ${DEB_SOURCE_CHANGES}
