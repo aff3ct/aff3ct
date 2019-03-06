@@ -196,7 +196,9 @@ file(WRITE ${debian_rules}
 	"\n\n%:\n"
 	"\tdh  $@ --buildsystem=cmake\n"
 	"\noverride_dh_auto_configure:\n"
-	"\tDESTDIR=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" dh_auto_configure -- -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DPACKAGE_TGZ=OFF -DAFF3CT_OVERRIDE_VERSION=${GIT_VERSION} -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS}'"
+	"\tDESTDIR=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" dh_auto_configure"
+  " -- -DCMAKE_BUILD_TYPE=Release -DAFF3CT_COMPILE_SHARED_LIB=ON -DPACKAGE_TGZ=OFF "
+  "-DAFF3CT_OVERRIDE_VERSION=${GIT_VERSION} -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS}'"
 	"\n\noverride_dh_auto_install:\n"
 	"\tdh_auto_install --destdir=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" --buildsystem=cmake"
 	"\n\noverride_dh_strip:\n"
@@ -316,7 +318,7 @@ add_custom_target(debuild_${DISTRI} ALL
 # ##############################################################################
 # # dput ppa:your-lp-id/ppa <source.changes>
 
-set(DPUT_HOST "ppa:mathieu-leonardon/aff3ct")
+set(DPUT_HOST "ppa:aff3ct/aff3ct")
 
 add_custom_target(dput_${DISTRI} ALL
         COMMAND ${DPUT_EXECUTABLE} ${DPUT_HOST} ${DEB_SOURCE_CHANGES}
