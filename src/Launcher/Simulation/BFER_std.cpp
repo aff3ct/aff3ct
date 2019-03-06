@@ -1,6 +1,5 @@
 #include "Simulation/BFER/Standard/BFER_std.hpp"
 
-#include <thread>
 #include <string>
 #include <iostream>
 

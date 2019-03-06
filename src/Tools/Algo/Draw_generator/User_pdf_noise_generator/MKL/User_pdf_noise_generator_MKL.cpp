@@ -1,5 +1,6 @@
 #ifdef AFF3CT_CHANNEL_MKL
 
+#include <mkl_vsl.h>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -11,7 +12,10 @@ using namespace aff3ct::tools;
 template <typename R>
 User_pdf_noise_generator_MKL<R>
 ::User_pdf_noise_generator_MKL(const tools::Distributions<R>& dists, const int seed, Interpolation_type inter_type)
-: User_pdf_noise_generator<R>(dists), stream_state(nullptr), is_stream_alloc(false), interp_function(nullptr)
+: User_pdf_noise_generator<R>(dists),
+  stream_state((void*)new VSLStreamStatePtr),
+  is_stream_alloc(false),
+  interp_function(nullptr)
 {
 	this->set_seed(seed);
 
@@ -28,13 +32,22 @@ User_pdf_noise_generator_MKL<R>
 }
 
 template <typename R>
+User_pdf_noise_generator_MKL<R>
+::~User_pdf_noise_generator_MKL()
+{
+	if (is_stream_alloc)
+		vslDeleteStream((VSLStreamStatePtr*)stream_state);
+	delete (VSLStreamStatePtr*)stream_state;
+}
+
+template <typename R>
 void User_pdf_noise_generator_MKL<R>
 ::set_seed(const int seed)
 {
-	if (is_stream_alloc) vslDeleteStream(&stream_state);
+	if (is_stream_alloc) vslDeleteStream((VSLStreamStatePtr*)stream_state);
 
-	//vslNewStream(&stream_state, VSL_BRNG_MT2203, seed);
-	vslNewStream(&stream_state, VSL_BRNG_SFMT19937, seed);
+	//vslNewStream((VSLStreamStatePtr*)stream_state, VSL_BRNG_MT2203, seed);
+	vslNewStream((VSLStreamStatePtr*)stream_state, VSL_BRNG_SFMT19937, seed);
 
 	is_stream_alloc = true;
 }
@@ -45,7 +58,7 @@ void User_pdf_noise_generator_MKL<R>
 {
 	auto dis = this->distributions.get_distribution(noise_power);
 
-	vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream_state, length, draw, (R)0, (R)1);
+	vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, *(VSLStreamStatePtr*)stream_state, length, draw, (R)0, (R)1);
 
 
 	for (unsigned i = 0; i < length; i++)
@@ -69,7 +82,7 @@ void User_pdf_noise_generator_MKL<double>
 {
 	auto dis = this->distributions.get_distribution(noise_power);
 
-	vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream_state, length, draw, (double)0, (double)1);
+	vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, *(VSLStreamStatePtr*)stream_state, length, draw, (double)0, (double)1);
 
 
 	for (unsigned i = 0; i < length; i++)
