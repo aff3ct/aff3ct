@@ -1,58 +1,3 @@
-## -*- mode:cmake; coding:utf-8; -*-
-# Copyright (c) 2010 Daniel Pfeifer <daniel@pfeifer-mail.de>
-# Changes Copyright (c) 2011 2012 Rüdiger Sonderfeld <ruediger@c-plusplus.de>
-#
-# UploadPPA.cmake is free software. It comes without any warranty,
-# to the extent permitted by applicable law. You can redistribute it
-# and/or modify it under the terms of the Do What The Fuck You Want
-# To Public License, Version 2, as published by Sam Hocevar. See
-# http://sam.zoy.org/wtfpl/COPYING for more details.
-#
-##
-# Documentation
-#
-# This CMake module uploads a project to a PPA.  It creates all the files
-# necessary (similar to CPack) and uses debuild(1) and dput(1) to create the
-# package and upload it to a PPA.  A PPA is a Personal Package Archive and can
-# be used by Debian/Ubuntu or other apt/deb based distributions to install and
-# update packages from a remote repository.
-# Canonicals Launchpad (http://launchpad.net) is usually used to host PPAs.
-# See https://help.launchpad.net/Packaging/PPA for further information
-# about PPAs.
-#
-# UploadPPA.cmake uses similar settings to CPack and the CPack DEB Generator.
-# Additionally the following variables are used
-#
-# CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS to specify build dependencies
-# (cmake is added as default)
-# CPACK_DEBIAN_RESOURCE_FILE_CHANGELOG should point to a file containing the
-# changelog in debian format.  If not set it checks whether a file
-# debian/changelog exists in the source directory or creates a simply changelog
-# file.
-# CPACK_DEBIAN_UPDATE_CHANGELOG if set to True then UploadPPA.cmake adds a new
-# entry to the changelog with the current version number and distribution name
-# (lsb_release -c is used).  This can be useful because debuild uses the latest
-# version number from the changelog and the version number set in
-# CPACK_PACKAGE_VERSION.  If they mismatch the creation of the package fails.
-#
-## A.Hoarau : CHANGELOG_MESSAGE can be used to pass a custom changelog message
-# Check packages
-#
-# ./configure -DENABLE_PPA=On
-# make dput
-# cd build/Debian/${DISTRI}
-# dpkg-source -x vobsub2srt_1.0pre4-ppa1.dsc
-# cd vobsub2srt-1.0pre4/
-# debuild -i -us -uc -sa -b
-#
-# Check the lintian warnings!
-#
-##
-# TODO
-# I plan to add support for git dch (from git-buildpackage) to auto generate
-# the changelog.
-##
-
 find_program(DEBUILD_EXECUTABLE debuild)
 find_program(DPUT_EXECUTABLE dput)
 
@@ -61,64 +6,19 @@ if(NOT DEBUILD_EXECUTABLE OR NOT DPUT_EXECUTABLE)
   return()
 endif(NOT DEBUILD_EXECUTABLE OR NOT DPUT_EXECUTABLE)
 
-
 if(NOT AFF3CT_PPA_DISTRIB)
 execute_process(
     COMMAND lsb_release -cs
     OUTPUT_VARIABLE DISTRI
     OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(AFF3CT_PPA_DISTRIB ${DISTRI})
-    message(STATUS "AFF3CT - PPA distrib found: ${DISTRI}")
 endif()
 
 foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
 
-# Strip "-dirty" flag from package version.
-# It can be added by, e.g., git describe but it causes trouble with debuild etc.
-string(REPLACE "-dirty" "" CPACK_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION})
-
-# DEBIAN/control
-# debian policy enforce lower case for package name
-# Package: (mandatory)
-IF(NOT CPACK_DEBIAN_PACKAGE_NAME)
-  STRING(TOLOWER "${CPACK_PACKAGE_NAME}" CPACK_DEBIAN_PACKAGE_NAME)
-ENDIF(NOT CPACK_DEBIAN_PACKAGE_NAME)
-
-# Section: (recommended)
-IF(NOT CPACK_DEBIAN_PACKAGE_SECTION)
-  SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
-ENDIF(NOT CPACK_DEBIAN_PACKAGE_SECTION)
-
-# Priority: (recommended)
-IF(NOT CPACK_DEBIAN_PACKAGE_PRIORITY)
-  SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-ENDIF(NOT CPACK_DEBIAN_PACKAGE_PRIORITY)
-
-if(NOT CPACK_DEBIAN_PACKAGE_MAINTAINER)
-  set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${CPACK_PACKAGE_CONTACT})
-endif()
-
-if(NOT CPACK_PACKAGE_DESCRIPTION AND EXISTS ${CPACK_PACKAGE_DESCRIPTION_FILE})
-  file(STRINGS ${CPACK_PACKAGE_DESCRIPTION_FILE} DESC_LINES)
-  foreach(LINE ${DESC_LINES})
-    set(deb_long_description "${deb_long_description} ${LINE}\n")
-  endforeach(LINE ${DESC_LINES})
-else()
-  # add space before each line
-  string(REPLACE "\n" "\n " deb_long_description " ${CPACK_PACKAGE_DESCRIPTION}")
-endif()
-
-if(PPA_DEBIAN_VERSION)
-  set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}-${PPA_DEBIAN_VERSION}~${DISTRI}1")
-elseif(NOT PPA_DEBIAN_VERSION AND NOT AFF3CT_PPA_DISTRIB)
-  message(WARNING "Variable PPA_DEBIAN_VERSION not set! Building 'native' package!")
-  set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}")
-else()
-  set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}~${DISTRI}1")
-endif()
-
-# message(STATUS "Debian version: ${DEBIAN_PACKAGE_VERSION}")
-
+set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}~${DISTRI}1")
 set(DEBIAN_SOURCE_DIR ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${CPACK_DEBIAN_PACKAGE_NAME}_${DEBIAN_PACKAGE_VERSION})
 
 # ##############################################################################

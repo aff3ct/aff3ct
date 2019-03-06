@@ -216,6 +216,11 @@ if(AFF3CT_COMPILE_STATIC_LIB)
     message(STATUS "AFF3CT - Compile: static library")
 endif(AFF3CT_COMPILE_STATIC_LIB)
 
+# PPA uploading
+if (AFF3CT_UPLOAD_PPA)
+    message(STATUS "AFF3CT - PPA uploading: on")
+endif()
+
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------ COMPILER DEFINITIONS
 # ---------------------------------------------------------------------------------------------------------------------
@@ -627,7 +632,6 @@ else()
 endif()
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "aff3ct-${AFF3CT_VERSION_FULL}")
 
-message("CPACK_DEBIAN_PACKAGE_ARCHITECTURE: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
 # general configuration and package description
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
