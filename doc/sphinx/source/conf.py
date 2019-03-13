@@ -327,6 +327,7 @@ rst_epilog = """
 .. |MS|        replace:: :abbr:`MS       (Min-Sum)`
 .. |MSVC|      replace:: :abbr:`MSVC     (Microsoft Visual C++)`
 .. |MT 19937|  replace:: :abbr:`MT 19937 (Mersenne Twister 19937)`
+.. |MWBF|      replace:: :abbr:`MWBF     (Modified Weighted Bit Flipping)`
 .. |NEON|      replace:: :abbr:`NEON     (ARM SIMD instructions)`
 .. |NMS|       replace:: :abbr:`NMS      (Normalized Min-Sum)`
 .. |OMS|       replace:: :abbr:`OMS      (Offset Min-Sum)`

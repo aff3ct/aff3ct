@@ -4,8 +4,7 @@ variables:
 stages:
   - analysis
   - build
-  - parser
-  - documentation
+  - check
   - test
   - coverage
   - deploy
@@ -59,6 +58,24 @@ analysis-git-submodules:
     - source ./ci/tools/git-branch.sh
     - ./ci/analysis-git-submodule.sh
 
+documentation-sphinx:
+  stage: analysis
+  except:
+    - schedules
+  artifacts:
+    name: documentation-sphinx
+    when: always
+    paths:
+      - doc/sphinx/build/html
+      - doc/sphinx/build/latex
+  tags:
+    - sphinx
+    - latex
+  script:
+    - cd doc/sphinx
+    - make html
+    - make latexpdf
+
 build-linux-gcc-nointr:
   stage: build
   variables:
@@ -66,12 +83,11 @@ build-linux-gcc-nointr:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - linux
     - gcc
     - cmake
-    - gsl
     - x86
   artifacts:
     name: build-linux-gcc-nointr
@@ -82,7 +98,7 @@ build-linux-gcc-nointr:
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -DMIPP_NO_INTRINSICS"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build_linux_gcc_nointr"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -94,12 +110,11 @@ build-linux-gcc-x64-sse4.2:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - linux
     - gcc
     - cmake
-    - gsl
     - x86
     - 64-bit
   artifacts:
@@ -111,7 +126,7 @@ build-linux-gcc-x64-sse4.2:
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build_linux_gcc_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -121,12 +136,11 @@ build-linux-gcc-x64-avx2:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - linux
     - gcc
     - cmake
-    - gsl
     - x86
     - 64-bit
   artifacts:
@@ -138,7 +152,7 @@ build-linux-gcc-x64-avx2:
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -m64 -mavx2 -mfma"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build_linux_gcc_x64_avx2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -150,7 +164,7 @@ build-linux-gcc-8-bit:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - linux
     - gcc
@@ -177,7 +191,7 @@ build-linux-gcc-mpi:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - linux
     - gcc
@@ -192,7 +206,7 @@ build-linux-gcc-mpi:
     - export CC="gcc"
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -march=native"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON -DAFF3CT_MPI=ON"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=OFF -DAFF3CT_COMPILE_SHARED_LIB=OFF -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON -DAFF3CT_MPI=ON"
     - export NAME="build_linux_gcc_mpi"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
@@ -204,7 +218,7 @@ build-linux-gcc-systemc:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - linux
     - gcc
@@ -232,7 +246,7 @@ build-linux-clang:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - linux
     - clang
@@ -245,7 +259,7 @@ build-linux-clang:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-Wall -funroll-loops"
+    - export CFLAGS="-Wall -Wno-overloaded-virtual -funroll-loops"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_clang"
     - source ./ci/tools/threads.sh
@@ -258,7 +272,7 @@ build-linux-gcc-4.8:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - linux
     - gcc-4.8
@@ -284,7 +298,7 @@ build-linux-icpc:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - linux
     - icpc
@@ -313,7 +327,7 @@ build-windows-gcc-x86-sse4.2:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - windows
     - gcc
@@ -327,7 +341,7 @@ build-windows-gcc-x86-sse4.2:
   script:
     - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m32 -msse4.2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - set "NAME=build_windows_gcc_x86_sse4.2"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
@@ -339,7 +353,7 @@ build-windows-gcc-x64-avx2:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - windows
     - 64-bit
@@ -353,7 +367,7 @@ build-windows-gcc-x64-avx2:
   script:
     - set "CFLAGS=-Wall -funroll-loops -Wno-misleading-indentation -m64 -mavx2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
-    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - set "NAME=build_windows_gcc_x64_avx2"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
@@ -365,7 +379,7 @@ build-windows-msvc-avx:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - windows
     - msvc
@@ -377,7 +391,7 @@ build-windows-msvc-avx:
       - build_windows_msvc_avx
   script:
     - set "CFLAGS=-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc /arch:AVX"
-    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_PREC=MULTI"
+    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI"
     - set "NAME=build_windows_msvc_avx"
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-msvc.bat
@@ -389,7 +403,7 @@ build-macos-clang-x64-sse4.2:
   except:
     - schedules
   dependencies:
-    - analysis-headers
+    - documentation-sphinx
   tags:
     - macos
     - apple-clang
@@ -402,14 +416,14 @@ build-macos-clang-x64-sse4.2:
   script:
     - export CC="clang"
     - export CXX="clang++"
-    - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
+    - export CFLAGS="-Wall -Wno-overloaded-virtual -funroll-loops -m64 -msse4.2"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build_macos_clang_x64_sse4.2"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
-parser-check:
-  stage: parser
+check-debug-parser:
+  stage: check
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
@@ -434,28 +448,8 @@ parser-check:
     - export AFF3CT_PATH="../../../build_linux_gcc_x64_sse4.2/bin/aff3ct-$GIT_VERSION"
     - ./test/test.sh
 
-documentation-sphinx:
-  stage: documentation
-  except:
-    - schedules
-  dependencies:
-    - analysis-headers
-  artifacts:
-    name: documentation-sphinx
-    when: always
-    paths:
-      - doc/sphinx/build/html
-      - doc/sphinx/build/latex
-  tags:
-    - sphinx
-    - latex
-  script:
-    - cd doc/sphinx
-    - make html
-    - make latexpdf
-
-documentation-check:
-  stage: documentation
+check-documentation:
+  stage: check
   except:
     - schedules
   dependencies:
@@ -467,7 +461,7 @@ documentation-check:
     - sse4.2
     - python3.5
   script:
-    - ./ci/documentation-check.py --aff3ct "build_linux_gcc_x64_sse4.2/bin/aff3ct"
+    - ./ci/check-documentation.py --aff3ct "build_linux_gcc_x64_sse4.2/bin/aff3ct"
 
 test-regression-bch:
   stage: test
@@ -1200,8 +1194,6 @@ deploy-sonarqube-linux:
 
 deploy-builds-linux:
   stage: deploy
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
@@ -1210,14 +1202,17 @@ deploy-builds-linux:
     - build-windows-gcc-x86-sse4.2
     - build-windows-gcc-x64-avx2
     - build-macos-clang-x64-sse4.2
-    - documentation-sphinx
   tags:
     - linux
     - github
-#   - git-lfs
   only:
     - master
     - development
+  artifacts:
+     name: builds
+     when: always
+     paths:
+      - builds/
   allow_failure: true
   script:
     - source ./ci/tools/git-branch.sh

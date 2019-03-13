@@ -1,5 +1,7 @@
 #ifdef AFF3CT_CHANNEL_MKL
 
+#include <mkl_vsl.h>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Gaussian_noise_generator_MKL.hpp"
@@ -9,7 +11,7 @@ using namespace aff3ct::tools;
 template <typename R>
 Gaussian_noise_generator_MKL<R>
 ::Gaussian_noise_generator_MKL(const int seed)
-: Gaussian_noise_generator<R>(), stream_state(nullptr), is_stream_alloc(false)
+: Gaussian_noise_generator<R>(), stream_state((void*)new VSLStreamStatePtr), is_stream_alloc(false)
 {
 	this->set_seed(seed);
 }
@@ -19,17 +21,18 @@ Gaussian_noise_generator_MKL<R>
 ::~Gaussian_noise_generator_MKL()
 {
 	if (is_stream_alloc)
-		vslDeleteStream(&stream_state);
+		vslDeleteStream((VSLStreamStatePtr*)stream_state);
+	delete (VSLStreamStatePtr*)stream_state;
 }
 
 template <typename R>
 void Gaussian_noise_generator_MKL<R>
 ::set_seed(const int seed)
 {
-	if (is_stream_alloc) vslDeleteStream(&stream_state);
+	if (is_stream_alloc) vslDeleteStream((VSLStreamStatePtr*)stream_state);
 
-	//vslNewStream(&stream_state, VSL_BRNG_MT2203, seed);
-	vslNewStream(&stream_state, VSL_BRNG_SFMT19937, seed);
+	//vslNewStream((VSLStreamStatePtr*)stream_state, VSL_BRNG_MT2203, seed);
+	vslNewStream((VSLStreamStatePtr*)stream_state, VSL_BRNG_SFMT19937, seed);
 
 	is_stream_alloc = true;
 }
@@ -50,14 +53,14 @@ void Gaussian_noise_generator_MKL<float>
 ::generate(float *noise, const unsigned length, const float sigma, const float mu)
 {
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
-	              stream_state,
+	              *(VSLStreamStatePtr*)stream_state,
 	              length,
 	              noise,
 	              mu,
 	              sigma);
 	/*
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
-	              stream_state,
+	              *(VSLStreamStatePtr*)stream_state,
 	              length,
 	              noise,
 	              mu,
@@ -76,14 +79,14 @@ void Gaussian_noise_generator_MKL<double>
 ::generate(double *noise, const unsigned length, const double sigma, const double mu)
 {
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
-	              stream_state,
+	              *(VSLStreamStatePtr*)stream_state,
 	              length,
 	              noise,
 	              mu,
 	              sigma);
 	/*
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
-	              stream_state,
+	              *(VSLStreamStatePtr*)stream_state,
 	              length,
 	              noise,
 	              mu,

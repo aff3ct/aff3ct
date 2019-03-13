@@ -307,9 +307,8 @@
 .. |factory::Decoder_LDPC::parameters::p+off| replace::
    Set the offset used in the |OMS| update rule.
 
-.. |factory::Decoder_LDPC::parameters::p+mwbf| replace::
-   Give the factor used in the modified |WBF| algorithm. Set to 0 for basic
-   |WBF| algorithm.
+.. |factory::Decoder_LDPC::parameters::p+mwbf-factor| replace::
+   Give the weighting factor used in the |MWBF| algorithm.
 
 .. |factory::Decoder_LDPC::parameters::p+norm| replace::
    Set the normalization factor used in the |NMS| update rule.
