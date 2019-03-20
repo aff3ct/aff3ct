@@ -124,7 +124,7 @@ module::Encoder_LDPC<B>* Encoder_LDPC::parameters
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const
 {
 	if (this->type == "LDPC"    ) return new module::Encoder_LDPC         <B>(this->K, this->N_cw, G, this->n_frames);
-	if (this->type == "LDPC_H"  ) return new module::Encoder_LDPC_from_H  <B>(this->K, this->N_cw, H, this->G_method, this->G_save_path, this->n_frames);
+	if (this->type == "LDPC_H"  ) return new module::Encoder_LDPC_from_H  <B>(this->K, this->N_cw, H, this->G_method, this->G_save_path, true, this->n_frames);
 	if (this->type == "LDPC_QC" ) return new module::Encoder_LDPC_from_QC <B>(this->K, this->N_cw, H, this->n_frames);
 	if (this->type == "LDPC_IRA") return new module::Encoder_LDPC_from_IRA<B>(this->K, this->N_cw, H, this->n_frames);
 
