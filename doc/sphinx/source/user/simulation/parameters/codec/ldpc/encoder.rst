@@ -159,6 +159,3 @@ Description of the allowed values:
    matrix can take a non-negligible part of the simulation time. With this
    option the :math:`G` matrix can be saved once for all and used in the
    standard ``LDPC`` decoder after.
-
-.. warning:: This option is not thread-safe, please run it on a single thread
-   with the :ref:`sim-sim-threads` parameter.
