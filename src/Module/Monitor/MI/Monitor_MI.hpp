@@ -58,19 +58,19 @@ public:
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
 	R get_mutual_info(const std::vector<B,AB>& X, const std::vector<R,AR>& Y, const int frame_id = -1)
 	{
-		if ((int)X.K() != this->K * this->n_frames)
+		if ((int)X.size() != this->N * this->n_frames)
 		{
 			std::stringstream message;
-			message << "'X.K()' has to be equal to 'K' * 'n_frames' ('X.K()' = " << X.K()
-			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
+			message << "'X.size()' has to be equal to 'N' * 'n_frames' ('X.size()' = " << X.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if ((int)Y.K() != this->K * this->n_frames)
+		if ((int)Y.size() != this->N * this->n_frames)
 		{
 			std::stringstream message;
-			message << "'Y.K()' has to be equal to 'K' * 'n_frames' ('Y.K()' = " << Y.K()
-			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
+			message << "'Y.size()' has to be equal to 'N' * 'n_frames' ('Y.size()' = " << Y.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -82,7 +82,7 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		return this->check_errors(X.data(), Y.data(), frame_id);
+		return this->get_mutual_info(X.data(), Y.data(), frame_id);
 	}
 
 	virtual R get_mutual_info(const B *X, const R *Y, const int frame_id = -1);

@@ -14,9 +14,12 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B>
+std::thread::id aff3ct::module::Encoder_LDPC_from_H<B>::master_thread_id = std::this_thread::get_id();
+
+template <typename B>
 Encoder_LDPC_from_H<B>
 ::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &_H, const std::string& G_method,
-                      const std::string& G_save_path, const int n_frames)
+                      const std::string& G_save_path, const bool G_save_path_single_thread, const int n_frames)
 : Encoder_LDPC<B>(K, N, n_frames)
 {
 	const std::string name = "Encoder_LDPC_from_H";
@@ -37,16 +40,19 @@ Encoder_LDPC_from_H<B>
 
 	if (G_save_path != "")
 	{
-		std::ofstream file(G_save_path);
-		if (!file.is_open())
+		if (!G_save_path_single_thread || this->master_thread_id == std::this_thread::get_id())
 		{
-			std::stringstream message;
-			message << "'G_save_path' could not be opened ('G_save_path' = \"" << G_save_path << "\").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+			std::ofstream file(G_save_path);
+			if (!file.is_open())
+			{
+				std::stringstream message;
+				message << "'G_save_path' could not be opened ('G_save_path' = \"" << G_save_path << "\").";
+				throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+			}
 
-		tools::AList::write(this->G, file);
-		tools::AList::write_info_bits_pos(this->info_bits_pos, file);
+			tools::AList::write(this->G, file);
+			tools::AList::write_info_bits_pos(this->info_bits_pos, file);
+		}
 	}
 
 	this->check_G_dimensions();
