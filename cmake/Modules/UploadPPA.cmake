@@ -18,14 +18,13 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
     set(CPACK_DEBIAN_PACKAGE_NAME ${CPACK_PACKAGE_NAME})
     set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-    set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}~${DISTRI}1")
-    set(DEBIAN_SOURCE_DIR ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${CPACK_DEBIAN_PACKAGE_NAME}_${DEBIAN_PACKAGE_VERSION})
+    set(DEBIAN_SOURCE_DIR ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_DEBIAN_PACKAGE_VERSION})
     set(DEBIAN_CONTROL ${DEBIAN_SOURCE_DIR}/debian/control)
     set(DEBIAN_COPYRIGHT ${DEBIAN_SOURCE_DIR}/debian/copyright)
     set(DEBIAN_RULES ${DEBIAN_SOURCE_DIR}/debian/rules)
     set(DEBIAN_CHANGELOG ${DEBIAN_SOURCE_DIR}/debian/changelog)
-    set(DEBIAN_SOURCE_CHANGES ${CPACK_DEBIAN_PACKAGE_NAME}_${DEBIAN_PACKAGE_VERSION}_source.changes)
-    set(PACKAGE_FILE_NAME "${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}")
+    set(DEBIAN_SOURCE_CHANGES ${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_DEBIAN_PACKAGE_VERSION}_source.changes)
+    set(PACKAGE_FILE_NAME "${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_DEBIAN_PACKAGE_VERSION}")
     set(ORIG_FILE "${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${PACKAGE_FILE_NAME}.orig.tar.gz")
     set(DPUT_HOST "ppa:aff3ct/aff3ct")
     if(CHANGELOG_MESSAGE) # TODO get it from git
@@ -58,24 +57,6 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "Depends: ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
          "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
          "${DEBIAN_LONG_DESCRIPTION}\n")
-
-    foreach(COMPONENT ${CPACK_COMPONENTS_ALL})
-        string(TOUPPER ${COMPONENT} UPPER_COMPONENT)
-        set(DEPENDS "${CPACK_DEBIAN_PACKAGE_NAME}")
-        foreach(DEP ${CPACK_COMPONENT_${UPPER_COMPONENT}_DEPENDS})
-            set(DEPENDS "${DEPENDS}, ${CPACK_DEBIAN_PACKAGE_NAME}-${DEP}")
-        endforeach(DEP ${CPACK_COMPONENT_${UPPER_COMPONENT}_DEPENDS})
-        set(DEPENDS "${DEPENDS}, \${misc:Depends}")
-        file(APPEND ${DEBIAN_CONTROL} "\n"
-             "Package: ${CPACK_DEBIAN_PACKAGE_NAME}-${COMPONENT}\n"
-             "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
-             "Depends: ${DEPENDS}\n"
-             "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}"
-             ": ${CPACK_COMPONENT_${UPPER_COMPONENT}_DISPLAY_NAME}\n"
-             "${DEBIAN_LONG_DESCRIPTION}"
-             "\n .\n"
-             " ${CPACK_COMPONENT_${UPPER_COMPONENT}_DESCRIPTION}\n")
-    endforeach(COMPONENT ${CPACK_COMPONENTS_ALL})
 
     ##############################################################################
     # debian/copyright
@@ -117,7 +98,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
                             OUTPUT_VARIABLE DATE_TIME
                             OUTPUT_STRIP_TRAILING_WHITESPACE)
             file(WRITE ${DEBIAN_CHANGELOG}
-                 "${CPACK_DEBIAN_PACKAGE_NAME} (${DEBIAN_PACKAGE_VERSION}) ${DISTRI}; urgency=low\n\n"
+                 "${CPACK_DEBIAN_PACKAGE_NAME} (${CPACK_DEBIAN_PACKAGE_VERSION}) ${DISTRI}; urgency=low\n\n"
                  "  ${output_changelog_msg}\n\n"
                  " -- ${CPACK_DEBIAN_PACKAGE_MAINTAINER}  ${DATE_TIME}\n\n")
             file(APPEND ${DEBIAN_CHANGELOG} ${DEBIAN_CHANGELOG_content})
@@ -128,7 +109,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
                       OUTPUT_VARIABLE DATE_TIME
                       OUTPUT_STRIP_TRAILING_WHITESPACE)
       file(WRITE ${DEBIAN_CHANGELOG}
-           "${CPACK_DEBIAN_PACKAGE_NAME} (${DEBIAN_PACKAGE_VERSION}) ${DISTRI}; urgency=low\n\n"
+           "${CPACK_DEBIAN_PACKAGE_NAME} (${CPACK_DEBIAN_PACKAGE_VERSION}) ${DISTRI}; urgency=low\n\n"
            "  ${output_changelog_msg}\n\n"
            " -- ${CPACK_DEBIAN_PACKAGE_MAINTAINER}  ${DATE_TIME}\n")
     endif()
