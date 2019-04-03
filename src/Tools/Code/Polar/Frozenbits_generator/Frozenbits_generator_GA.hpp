@@ -13,6 +13,7 @@ namespace tools
 class Frozenbits_generator_GA : public Frozenbits_generator
 {
 private:
+	const int base;
 	const int m;
 	std::vector<double> z;
 
@@ -30,7 +31,7 @@ private:
 	const double bisection_max = std::numeric_limits<double>::max();
 
 public:
-	Frozenbits_generator_GA(const int K, const int N);
+	Frozenbits_generator_GA(const int K, const int N, const int base = 2);
 
 	virtual ~Frozenbits_generator_GA() = default;
 

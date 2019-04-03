@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "Factory/Tools/Code/Polar_MK/Frozenbits_generator_MK.hpp"
+#include "Factory/Tools/Code/Polar_MK/Polar_code.hpp"
 
 #include "Module/CRC/CRC.hpp"
 #include "Module/Codec/Polar_MK/Codec_polar_MK.hpp"
@@ -24,6 +25,7 @@ struct Codec_polar_MK : public Codec_SIHO
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// depending parameters
+		tools::auto_cloned_unique_ptr<Polar_code             ::parameters> pc;
 		tools::auto_cloned_unique_ptr<Frozenbits_generator_MK::parameters> fbg;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS

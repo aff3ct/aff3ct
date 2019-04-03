@@ -2,6 +2,7 @@
 #define FACTORY_FROZENBITS_GENERATOR_MK_HPP
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "Tools/Code/Polar/Polar_code.hpp"
 
 #include "../../../Factory.hpp"
 
@@ -24,7 +25,7 @@ struct Frozenbits_generator_MK : public Factory
 		// optional parameters
 		std::string type    = "FILE";
 		std::string path_fb = "../conf/cde/awgn_polar_codes/TV";
-		float       sigma   = -1.f;
+		float       noise   = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Frozenbits_generator_MK_prefix);
@@ -37,10 +38,10 @@ struct Frozenbits_generator_MK : public Factory
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder
-		tools::Frozenbits_generator* build() const;
+		tools::Frozenbits_generator* build(const tools::Polar_code &pc) const;
 	};
 
-	static tools::Frozenbits_generator* build(const parameters &params);
+	static tools::Frozenbits_generator* build(const parameters &params, const tools::Polar_code &pc);
 };
 }
 }

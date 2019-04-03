@@ -8,7 +8,7 @@
 #ifndef BINARY_TREE_METRIC_HPP_
 #define BINARY_TREE_METRIC_HPP_
 
-#include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree.hpp"
 
 namespace aff3ct
 {

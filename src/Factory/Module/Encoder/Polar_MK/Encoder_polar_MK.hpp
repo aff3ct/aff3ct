@@ -6,6 +6,8 @@
 
 #include "Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 
+#include "Tools/Code/Polar/Polar_code.hpp"
+
 #include "../Encoder.hpp"
 
 namespace aff3ct
@@ -21,8 +23,6 @@ struct Encoder_polar_MK : public Encoder
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional
-		std::vector<std::vector<bool>> kernel_matrix = {{1,0},{1,1}};
-		std::string                    code_path;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Encoder_polar_MK_prefix);
@@ -36,11 +36,14 @@ struct Encoder_polar_MK : public Encoder
 
 		// builder
 		template <typename B = int>
-		module::Encoder_polar_MK<B>* build(const std::vector<bool> &frozen_bits) const;
+		module::Encoder_polar_MK<B>* build(const tools::Polar_code &code,
+		                                   const std::vector<bool> &frozen_bits) const;
 	};
 
 	template <typename B = int>
-	static module::Encoder_polar_MK<B>* build(const parameters &params, const std::vector<bool> &frozen_bits);
+	static module::Encoder_polar_MK<B>* build(const parameters &params,
+	                                          const tools::Polar_code &code,
+	                                          const std::vector<bool> &frozen_bits);
 };
 }
 }

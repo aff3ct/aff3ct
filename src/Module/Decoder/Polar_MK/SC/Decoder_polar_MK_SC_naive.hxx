@@ -13,13 +13,24 @@ namespace module
 {
 template <typename B, typename R>
 Decoder_polar_MK_SC_naive<B,R>
-::Decoder_polar_MK_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames)
+::Decoder_polar_MK_SC_naive(const int& K,
+                            const int& N,
+                            const std::vector<bool>& frozen_bits,
+                            const int base,
+                            const int n_frames)
 : Decoder          (K, N, n_frames, 1),
   Decoder_SIHO<B,R>(K, N, n_frames, 1),
-  m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
+  base(base), m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1, 2)
 {
 	const std::string name = "Decoder_polar_MK_SC_naive";
 	this->set_name(name);
+
+	if (base < 2)
+	{
+		std::stringstream message;
+		message << "'base' has to be bigger or equal to 2 ('base' = " << this->base << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (!tools::is_power_of_2(this->N))
 	{
@@ -133,28 +144,25 @@ void Decoder_polar_MK_SC_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
-::recursive_allocate_nodes_contents(tools::Binary_node<Contents_MK_SC<B,R>>* node_curr, const int vector_size)
+::recursive_allocate_nodes_contents(tools::Generic_node<Contents_MK_SC<B,R>>* node_curr, const int vector_size)
 {
-	if (node_curr != nullptr)
-	{
-		node_curr->set_contents(new Contents_MK_SC<B,R>(vector_size));
+	node_curr->set_contents(new Contents_MK_SC<B,R>(vector_size));
 
-		this->recursive_allocate_nodes_contents(node_curr->get_left() , vector_size / 2);
-		this->recursive_allocate_nodes_contents(node_curr->get_right(), vector_size / 2);
-	}
+	for (auto c : node_curr->get_children())
+		this->recursive_allocate_nodes_contents(c, vector_size / 2);
 }
 
 template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
-::recursive_initialize_frozen_bits(const tools::Binary_node<Contents_MK_SC<B,R>>* node_curr,
+::recursive_initialize_frozen_bits(const tools::Generic_node<Contents_MK_SC<B,R>>* node_curr,
                                    const std::vector<bool>& frozen_bits)
 {
 	auto *contents = node_curr->get_contents();
 
 	if (!node_curr->is_leaf()) // stop condition
 	{
-		this->recursive_initialize_frozen_bits(node_curr->get_left(),  frozen_bits); // recursive call
-		this->recursive_initialize_frozen_bits(node_curr->get_right(), frozen_bits); // recursive call
+		for (auto c : node_curr->get_children())
+			this->recursive_initialize_frozen_bits(c, frozen_bits); // recursive call
 	}
 	else
 		contents->is_frozen_bit = frozen_bits[node_curr->get_lane_id()];
@@ -180,15 +188,15 @@ B H(const R& lambda_a)
 
 template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
-::recursive_decode(const tools::Binary_node<Contents_MK_SC<B,R>>* node_curr)
+::recursive_decode(const tools::Generic_node<Contents_MK_SC<B,R>>* node_curr)
 {
 	if (!node_curr->is_leaf()) // stop condition
 	{
 		const auto size = (int)node_curr->get_c()->lambda.size();
 		const auto size_2 = size / 2;
 
-		const auto *node_left  = node_curr->get_left(); // get left node
-		const auto *node_right = node_curr->get_right(); // get right node
+		const auto *node_left  = node_curr->get_children()[0]; // get left node
+		const auto *node_right = node_curr->get_children()[1]; // get right node
 
 		for (auto i = 0; i < size_2; i++)
 			node_left->get_c()->lambda[i] = F<R>(node_curr->get_c()->lambda[        i],  // apply f()
@@ -218,15 +226,13 @@ void Decoder_polar_MK_SC_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
-::recursive_store(const tools::Binary_node<Contents_MK_SC<B,R>>* node_curr, B *V_K, int &k) const
+::recursive_store(const tools::Generic_node<Contents_MK_SC<B,R>>* node_curr, B *V_K, int &k) const
 {
 	auto *contents = node_curr->get_contents();
 
 	if (!node_curr->is_leaf()) // stop condition
-	{
-		this->recursive_store(node_curr->get_left(),  V_K, k); // recursive call
-		this->recursive_store(node_curr->get_right(), V_K, k); // recursive call
-	}
+		for (auto c : node_curr->get_children())
+			this->recursive_store(c, V_K, k); // recursive call
 	else
 		if (!frozen_bits[node_curr->get_lane_id()])
 			V_K[k++] = contents->s[0];
@@ -234,12 +240,12 @@ void Decoder_polar_MK_SC_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
-::recursive_deallocate_nodes_contents(tools::Binary_node<Contents_MK_SC<B,R>>* node_curr)
+::recursive_deallocate_nodes_contents(tools::Generic_node<Contents_MK_SC<B,R>>* node_curr)
 {
 	if (node_curr != nullptr)
 	{
-		this->recursive_deallocate_nodes_contents(node_curr->get_left()); // recursive call
-		this->recursive_deallocate_nodes_contents(node_curr->get_right()); // recursive call
+		for (auto c : node_curr->get_children())
+			this->recursive_deallocate_nodes_contents(c); // recursive call
 
 		auto *contents = node_curr->get_contents();
 		delete contents;

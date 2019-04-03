@@ -44,31 +44,31 @@ Description of the allowed values:
 
 |factory::Encoder_polar_MK::parameters::p+sys|
 
-.. _enc-polar_mk-enc-kernel:
+.. _enc-polar_mk-enc-pc-kernel:
 
-``--enc-kernel``
-""""""""""""""""
+``--enc-pc-kernel``
+"""""""""""""""""""
 
    :Type: list of (list of (boolean:including set={0|1}):limited length [1;inf]), elements of same length
    :Default: ``"10,11"``
    :Examples: ``--enc-kernel "111,101,011"``
 
-|factory::Encoder_polar_MK::parameters::p+kernel|
+|factory::Polar_code::parameters::p+kernel|
 
 The Kronecker powers of the kernel matrix :math:`T_s` defines the :math:`G`
 generator matrix. The frame size :math:`N` can only be a power of the matrix
 size :math:`s`. For traditional Polar codes :math:`s = 2`.
 
-.. _enc-polar_mk-enc-code-path:
+.. _enc-polar_mk-enc-pc-path:
 
-``--enc-code-path``
-"""""""""""""""""""
+``--enc-pc-path``
+"""""""""""""""""
 
    :Type: file
    :Rights: read only
    :Examples: ``--enc-code-path example/path/to/the/right/place/``
 
-|factory::Encoder_polar_MK::parameters::p+code-path|
+|factory::Polar_code::parameters::p+path|
 
 An |ASCII| file is expected:
 
@@ -101,7 +101,7 @@ Kronecker product:
 :math:`N = 2 \times 2 \times 2 \times 2 \times 3 = 48.`
 
 .. note:: When this parameter is used it overrides the
-   :ref:`enc-polar_mk-enc-kernel` parameter.
+   :ref:`enc-polar_mk-enc-pc-kernel` parameter.
 
 .. _enc-polar_mk-enc-fb-gen-method:
 
@@ -109,7 +109,7 @@ Kronecker product:
 """""""""""""""""""""""
 
    :Type: text
-   :Allowed values: ``FILE``
+   :Allowed values: ``FILE`` ``GA``
    :Examples: ``--enc-fb-gen-method FILE``
 
 |factory::Frozenbits_generator_MK::parameters::p+gen-method|
@@ -122,9 +122,15 @@ Description of the allowed values:
 | ``FILE`` | Read the best channels from an external file, to use with the     |
 |          | :ref:`enc-polar_mk-enc-fb-awgn-path` parameter.                   |
 +----------+-------------------------------------------------------------------+
+| ``GA``   | Select the |GA| method from :cite:`Trifonov2012`.                 |
++----------+-------------------------------------------------------------------+
 
 .. note:: When using the ``FILE`` method, the frozen bits are always the same
    regardless of the |SNR| value.
+
+.. note:: At this time, the multi-kernel mode is not supported when using the
+   ``GA`` method, should be used with the :ref:`enc-polar_mk-enc-pc-kernel`
+   parameter.
 
 .. _enc-polar_mk-enc-fb-awgn-path:
 
@@ -155,12 +161,17 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
 .. warning:: The ``FILE`` frozen bits generator expects a file and not a
    directory.
 
-.. _enc-polar_mk-enc-fb-sigma:
+.. _enc-polar_mk-enc-fb-noise:
 
-``--enc-fb-sigma``
+``--enc-fb-noise``
 """"""""""""""""""
 
    :Type: real number
-   :Examples: ``--enc-fb-sigma 1.0``
+   :Examples: ``--enc-fb-noise 1.0``
 
-|factory::Frozenbits_generator_MK::parameters::p+sigma|
+|factory::Frozenbits_generator_MK::parameters::p+noise|
+
+References
+""""""""""
+
+.. bibliography:: references_enc.bib

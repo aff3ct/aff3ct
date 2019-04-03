@@ -17,7 +17,8 @@ Codec_polar_MK::parameters
 	Codec::parameters::set_enc(new Encoder_polar_MK::parameters("enc"));
 	Codec::parameters::set_dec(new Decoder_polar_MK::parameters("dec"));
 
-  	fbg = new Frozenbits_generator_MK::parameters(enc->get_prefix()+"-fb");
+	pc  = new Polar_code::parameters(enc->get_prefix()+"-pc");
+	fbg = new Frozenbits_generator_MK::parameters(enc->get_prefix()+"-fb");
 }
 
 Codec_polar_MK::parameters* Codec_polar_MK::parameters
@@ -35,9 +36,13 @@ std::vector<std::string> Codec_polar_MK::parameters
 	for (size_t i = 0; i < n.size(); i++)
 	{
 		n2.push_back(n[i]);
-		if (enc != nullptr && n[i] == enc->get_name() && fbg != nullptr)
+		if (enc != nullptr && n[i] == enc->get_name() && pc != nullptr && fbg != nullptr)
 		{
-			auto nn = fbg->get_names();
+			auto nn = pc->get_names();
+			for (auto &x : nn)
+				n2.push_back(x);
+
+			nn = fbg->get_names();
 			for (auto &x : nn)
 				n2.push_back(x);
 		}
@@ -56,9 +61,13 @@ std::vector<std::string> Codec_polar_MK::parameters
 	for (size_t i = 0; i < sn.size(); i++)
 	{
 		sn2.push_back(sn[i]);
-		if (enc != nullptr && sn[i] == enc->get_short_name() && fbg != nullptr)
+		if (enc != nullptr && sn[i] == enc->get_short_name() && pc != nullptr && fbg != nullptr)
 		{
-			auto nn = fbg->get_short_names();
+			auto nn = pc->get_short_names();
+			for (auto &x : nn)
+				sn2.push_back(x);
+
+			nn = fbg->get_short_names();
 			for (auto &x : nn)
 				sn2.push_back(x);
 		}
@@ -77,9 +86,13 @@ std::vector<std::string> Codec_polar_MK::parameters
 	for (size_t i = 0; i < p.size(); i++)
 	{
 		p2.push_back(p[i]);
-		if (enc != nullptr && p[i] == enc->get_prefix() && fbg != nullptr)
+		if (enc != nullptr && p[i] == enc->get_prefix() && pc != nullptr && fbg != nullptr)
 		{
-			auto nn = fbg->get_prefixes();
+			auto nn = pc->get_prefixes();
+			for (auto &x : nn)
+				p2.push_back(x);
+
+			nn = fbg->get_prefixes();
 			for (auto &x : nn)
 				p2.push_back(x);
 		}
@@ -95,9 +108,11 @@ void Codec_polar_MK::parameters
 	Codec_SIHO::parameters::get_description(args);
 
 	enc->get_description(args);
+	pc ->get_description(args);
 	fbg->get_description(args);
 	dec->get_description(args);
 
+	auto ppc  = pc->get_prefix();
 	auto pdec = dec->get_prefix();
 	auto pfbg = fbg->get_prefix();
 
@@ -105,6 +120,7 @@ void Codec_polar_MK::parameters
 	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-no-sys"        });
 	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({ppc +"-cw-size",   "N"});
 	args.erase({pfbg+"-cw-size",   "N"});
 	args.erase({pfbg+"-info-bits", "K"});
 }
@@ -116,9 +132,14 @@ void Codec_polar_MK::parameters
 
 	enc->store(vals);
 
-	fbg->K    = dec->K        = enc->K;
-	fbg->N_cw = dec->N_cw     = enc->N_cw;
-	            dec->n_frames = enc->n_frames;
+	           fbg->K    = dec->K        = enc->K;
+	pc->N_cw = fbg->N_cw = dec->N_cw     = enc->N_cw;
+	                       dec->n_frames = enc->n_frames;
+
+	pc->store(vals);
+
+	// if (enc->code_path.empty())
+	// 	fbg->base = enc->kernel_matrix.size();
 
 	fbg->store(vals);
 
@@ -137,6 +158,7 @@ void Codec_polar_MK::parameters
 	Codec_SIHO::parameters::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
+	pc ->get_headers(headers, full);
 	fbg->get_headers(headers, full);
 	dec->get_headers(headers, full);
 }
@@ -145,7 +167,7 @@ template <typename B, typename Q>
 module::Codec_polar_MK<B,Q>* Codec_polar_MK::parameters
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_polar_MK<B,Q>(*fbg,
+	return new module::Codec_polar_MK<B,Q>(*pc, *fbg,
 	                                       dynamic_cast<const Encoder_polar_MK::parameters&>(*enc),
 	                                       dynamic_cast<const Decoder_polar_MK::parameters&>(*dec),
 	                                       crc);

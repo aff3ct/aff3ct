@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Algo/Tree/Generic/Generic_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
@@ -29,13 +29,18 @@ template <typename B = int, typename R = float>
 class Decoder_polar_MK_SC_naive : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
 {
 protected:
+	const int base;
 	const int m; // graph depth
 
 	const std::vector<bool> &frozen_bits;
-	tools::Binary_tree<Contents_MK_SC<B,R>> polar_tree;
+	tools::Generic_tree<Contents_MK_SC<B,R>> polar_tree;
 
 public:
-	Decoder_polar_MK_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames = 1);
+	Decoder_polar_MK_SC_naive(const int&               K,
+	                          const int&               N,
+	                          const std::vector<bool>& frozen_bits,
+	                          const int                base,
+	                          const int                n_frames = 1);
 	virtual ~Decoder_polar_MK_SC_naive();
 
 	virtual void notify_frozenbits_update();
@@ -47,11 +52,11 @@ protected:
 	virtual void _store         (              B *V,   bool coded = false) const;
 
 private:
-	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_MK_SC<B,R>>* node_curr, const int vector_size               );
-	void recursive_initialize_frozen_bits   (const tools::Binary_node<Contents_MK_SC<B,R>>* node_curr, const std::vector<bool> &frozen_bits);
-	void recursive_decode                   (const tools::Binary_node<Contents_MK_SC<B,R>>* node_curr                                      );
-	void recursive_store                    (const tools::Binary_node<Contents_MK_SC<B,R>>* node_curr, B *V_K, int &k                      ) const;
-	void recursive_deallocate_nodes_contents(      tools::Binary_node<Contents_MK_SC<B,R>>* node_curr                                      );
+	void recursive_allocate_nodes_contents  (      tools::Generic_node<Contents_MK_SC<B,R>>* node_curr, const int vector_size               );
+	void recursive_initialize_frozen_bits   (const tools::Generic_node<Contents_MK_SC<B,R>>* node_curr, const std::vector<bool> &frozen_bits);
+	void recursive_decode                   (const tools::Generic_node<Contents_MK_SC<B,R>>* node_curr                                      );
+	void recursive_store                    (const tools::Generic_node<Contents_MK_SC<B,R>>* node_curr, B *V_K, int &k                      ) const;
+	void recursive_deallocate_nodes_contents(      tools::Generic_node<Contents_MK_SC<B,R>>* node_curr                                      );
 };
 }
 }

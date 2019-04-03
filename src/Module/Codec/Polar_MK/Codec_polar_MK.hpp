@@ -3,10 +3,12 @@
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
+#include "Tools/Code/Polar/Polar_code.hpp"
 
 #include "Factory/Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 #include "Factory/Module/Decoder/Polar_MK/Decoder_polar_MK.hpp"
 #include "Factory/Tools/Code/Polar_MK/Frozenbits_generator_MK.hpp"
+#include "Factory/Tools/Code/Polar_MK/Polar_code.hpp"
 
 #include "../Codec_SIHO.hpp"
 
@@ -21,13 +23,15 @@ protected:
 	const bool adaptive_fb;
 	std::vector<bool> frozen_bits; // known bits (alias frozen bits) are set to true
 
+	std::unique_ptr<tools::Polar_code>           code;
 	std::unique_ptr<tools::Frozenbits_generator> fb_generator;
 
 	tools::Frozenbits_notifier* fb_decoder;
 	tools::Frozenbits_notifier* fb_encoder;
 
 public:
-	Codec_polar_MK(const factory::Frozenbits_generator_MK::parameters &fb_par,
+	Codec_polar_MK(const factory::Polar_code             ::parameters &pc_par,
+	               const factory::Frozenbits_generator_MK::parameters &fb_par,
 	               const factory::Encoder_polar_MK       ::parameters &enc_par,
 	               const factory::Decoder_polar_MK       ::parameters &dec_par,
 	               CRC<B>* crc = nullptr);

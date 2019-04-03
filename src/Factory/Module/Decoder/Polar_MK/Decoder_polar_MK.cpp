@@ -73,7 +73,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK::parameters
 			{
 				if (crc == nullptr || crc->get_size() == 0)
 				{
-					if (this->type == "SC") return new module::Decoder_polar_MK_SC_naive<B,Q>(this->K, this->N_cw, frozen_bits, this->n_frames);
+					if (this->type == "SC") return new module::Decoder_polar_MK_SC_naive<B,Q>(this->K, this->N_cw, frozen_bits, 2, this->n_frames);
 				}
 			}
 		}

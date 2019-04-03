@@ -98,7 +98,7 @@ void Frozenbits_generator::parameters
 tools::Frozenbits_generator* Frozenbits_generator::parameters
 ::build() const
 {
-	if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw                              );
+	if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw, 2                           );
 	if (this->type == "TV"  ) return new tools::Frozenbits_generator_TV  (this->K, this->N_cw, this->path_fb, this->path_pb);
 	if (this->type == "FILE") return new tools::Frozenbits_generator_file(this->K, this->N_cw, this->path_fb               );
 	if (this->type == "5G")   return new tools::Frozenbits_generator_5G  (this->K, this->N_cw                              );

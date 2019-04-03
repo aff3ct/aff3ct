@@ -87,52 +87,18 @@ std::vector<std::vector<T>> kronecker_product(const std::vector<std::vector<T>>&
 
 template <typename B>
 Encoder_polar_MK_sys<B>
-::Encoder_polar_MK_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-                       const std::vector<std::vector<bool>>& kernel_matrix, const int n_frames)
-: Encoder_polar_MK<B>(K, N, frozen_bits, kernel_matrix, n_frames)
-{
-	const std::string name = "Encoder_polar_MK_sys";
-	this->set_name(name);
-	this->set_sys(true);
-
-	this->init();
-}
-
-template <typename B>
-Encoder_polar_MK_sys<B>
-::Encoder_polar_MK_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-                       const std::vector<std::vector<std::vector<bool>>>& kernel_matrices,
-                       const std::vector<uint32_t> &stages, const int n_frames)
-: Encoder_polar_MK<B>(K, N, frozen_bits, kernel_matrices, stages, n_frames)
-{
-	const std::string name = "Encoder_polar_MK_sys";
-	this->set_name(name);
-	this->set_sys(true);
-
-	this->init();
-}
-
-template <typename B>
-Encoder_polar_MK_sys<B>
-::Encoder_polar_MK_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const std::string &code_path,
+::Encoder_polar_MK_sys(const int& K, const int& N, const tools::Polar_code& code, const std::vector<bool>& frozen_bits,
                        const int n_frames)
-: Encoder_polar_MK<B>(K, N, frozen_bits, code_path, n_frames)
+: Encoder_polar_MK<B>(K, N, code, frozen_bits, n_frames)
 {
 	const std::string name = "Encoder_polar_MK_sys";
 	this->set_name(name);
 	this->set_sys(true);
 
-	this->init();
-}
-
-template <typename B>
-void Encoder_polar_MK_sys<B>
-::init()
-{
 	// generate the "G" matrix from the "kernel_matrices"
-	auto G = this->kernel_matrices[this->stages[0]];
-	for (auto s = 1; s < (int)this->stages.size(); s++)
-		G = kronecker_product<bool>(G, this->kernel_matrices[this->stages[s]]);
+	auto G = this->code.get_kernel_matrices()[this->code.get_stages()[0]];
+	for (auto s = 1; s < (int)this->code.get_stages().size(); s++)
+		G = kronecker_product<bool>(G, this->code.get_kernel_matrices()[this->code.get_stages()[s]]);
 
 	// compute the "G x G" product
 	auto G_x_G = G;

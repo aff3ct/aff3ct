@@ -4,37 +4,45 @@
 
 #include <cmath>
 #include <limits>
+#include <numeric>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Frozenbits_generator_GA.hpp"
 
 using namespace aff3ct::tools;
 
 Frozenbits_generator_GA
-::Frozenbits_generator_GA(const int K, const int N)
-: Frozenbits_generator(K, N), m((int)std::log2(N)), z((int)std::exp2(m), 0)
+::Frozenbits_generator_GA(const int K, const int N, const int base)
+: Frozenbits_generator(K, N), base(base), m((int)(std::log(N) / std::log(base))), z((int)std::pow(base, m), 0)
 {
+	if (base < 2)
+	{
+		std::stringstream message;
+		message << "'base' has to be bigger or equal to 2 ('base' = " << this->base << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 void Frozenbits_generator_GA
 ::evaluate()
 {
 	this-> check_noise();
-	
-	for (unsigned i = 0; i != this->best_channels.size(); i++)
-		this->best_channels[i] = i;
 
-	for (auto i = 0; i < std::exp2(m); i++)
+	std::iota(this->best_channels.begin(), this->best_channels.end(), 0);
+
+	for (auto i = 0; i < std::pow(this->base, m); i++)
 		z[i] = 2.0 / std::pow((double)this->n->get_noise(), 2.0);
 
 	for (auto l = 1; l <= m; l++)
 	{
-		auto o1 = (int)std::exp2(m - l +1);
-		auto o2 = (int)std::exp2(m - l   );
+		auto o1 = (int)std::pow(this->base, m - l +1);
+		auto o2 = (int)std::pow(this->base, m - l   );
 
-		for (auto t = 0; t < (int)std::exp2(l -1); t++)
+		for (auto t = 0; t < (int)std::pow(this->base, l -1); t++)
 		{
 			double T = z[t * o1];
 

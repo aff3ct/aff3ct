@@ -11,13 +11,14 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_polar_MK<B,Q>
-::Codec_polar_MK(const factory::Frozenbits_generator_MK::parameters &fb_params,
+::Codec_polar_MK(const factory::Polar_code             ::parameters &pc_params,
+                 const factory::Frozenbits_generator_MK::parameters &fb_params,
                  const factory::Encoder_polar_MK       ::parameters &enc_params,
                  const factory::Decoder_polar_MK       ::parameters &dec_params,
                  CRC<B>* crc)
 : Codec     <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  adaptive_fb(fb_params.sigma == -1.f),
+  adaptive_fb(fb_params.noise == -1.f),
   frozen_bits(fb_params.N_cw, true),
   fb_decoder(nullptr),
   fb_encoder(nullptr)
@@ -51,8 +52,11 @@ Codec_polar_MK<B,Q>
 	}
 
 	// ---------------------------------------------------------------------------------------------------------- tools
+	// build the polar code
+	code.reset(factory::Polar_code::build(pc_params));
+
 	// build the frozen bits generator
-	fb_generator.reset(factory::Frozenbits_generator_MK::build(fb_params));
+	fb_generator.reset(factory::Frozenbits_generator_MK::build(fb_params, *code.get()));
 
 	// ---------------------------------------------------------------------------------------------------- allocations
 	factory::Puncturer::parameters pct_params;
@@ -68,7 +72,7 @@ Codec_polar_MK<B,Q>
 
 	try
 	{
-		this->set_encoder(factory::Encoder_polar_MK::build<B>(enc_params, frozen_bits));
+		this->set_encoder(factory::Encoder_polar_MK::build<B>(enc_params, *code.get(), frozen_bits));
 		fb_encoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_encoder().get());
 	}
 	catch (tools::cannot_allocate const&)
@@ -104,8 +108,6 @@ void Codec_polar_MK<B,Q>
 	// adaptive frozen bits generation
 	if (adaptive_fb)
 	{
-		this->n->is_of_type_throw(tools::Noise_type::SIGMA);
-
 		fb_generator->set_noise(noise);
 		fb_generator->generate(frozen_bits);
 

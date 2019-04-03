@@ -5,20 +5,9 @@
 #include <string>
 
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
-#include "Tools/Algo/Matrix/Full_matrix/Full_matrix.hpp"
+#include "Tools/Code/Polar/Polar_code.hpp"
 
 #include "../Encoder.hpp"
-
-namespace aff3ct
-{
-namespace tools
-{
-std::string display_kernel(const std::vector<std::vector<bool>>& pattern_bits);
-void read_polar_MK_code(const std::string                                 &code_path,
-                              std::vector<std::vector<std::vector<bool>>> &kernel_matrices,
-                              std::vector<uint32_t>                       &stages);
-}
-}
 
 namespace aff3ct
 {
@@ -28,29 +17,17 @@ template <typename B = int>
 class Encoder_polar_MK : public Encoder<B>, public tools::Frozenbits_notifier
 {
 protected:
-	const std::vector<bool>&                          frozen_bits; // true means frozen, false means set to 0/1
-	const std::vector<std::vector<std::vector<bool>>> kernel_matrices;
-	const std::vector<uint32_t>                       stages;
-//	      std::vector<B>                              X_N_tmp;
-	      std::vector<std::vector<B>>                 Ke;
-	      std::vector<uint32_t>                       idx;
-	      std::vector<B>                              u;
+	const tools::Polar_code           code;
+	const std::vector<bool>&          frozen_bits;
+	      std::vector<std::vector<B>> Ke;
+	      std::vector<uint32_t>       idx;
+	      std::vector<B>              u;
 
 public:
-	Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-	                 const std::vector<std::vector<bool>>& kernel_matrix = {{1,0},{1,1}}, const int n_frames = 1);
-
-	Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-	                 const std::vector<std::vector<std::vector<bool>>>& kernel_matrices,
-	                 const std::vector<uint32_t> &stages, const int n_frames = 1);
-
-	Encoder_polar_MK(const int& K, const int& N, const std::vector<bool>& frozen_bits, const std::string &code_path,
+	Encoder_polar_MK(const int& K, const int& N, const tools::Polar_code& code, const std::vector<bool>& frozen_bits,
 	                 const int n_frames = 1);
 
 	virtual ~Encoder_polar_MK() = default;
-
-	void init_MK();
-	void init();
 
 	// bool is_codeword(const B *X_N);
 
