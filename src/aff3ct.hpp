@@ -220,6 +220,9 @@
 #ifndef FACTORY_FROZENBITS_GENERATOR_MK_HPP
 #include <Factory/Tools/Code/Polar_MK/Frozenbits_generator_MK.hpp>
 #endif
+#ifndef FACTORY_POLAR_CODE_HPP
+#include <Factory/Tools/Code/Polar_MK/Polar_code.hpp>
+#endif
 #ifndef FACTORY_FLIP_AND_CHECK_DB_HPP
 #include <Factory/Tools/Code/Turbo/Flip_and_check_DB.hpp>
 #endif
@@ -1001,13 +1004,19 @@
 #include <Tools/Algo/Sort/LC_sorter_simd.hpp>
 #endif
 #ifndef BINARY_NODE_HPP_
-#include <Tools/Algo/Tree/Binary_node.hpp>
+#include <Tools/Algo/Tree/Binary/Binary_node.hpp>
 #endif
 #ifndef BINARY_TREE_HPP_
-#include <Tools/Algo/Tree/Binary_tree.hpp>
+#include <Tools/Algo/Tree/Binary/Binary_tree.hpp>
 #endif
 #ifndef BINARY_TREE_METRIC_HPP_
-#include <Tools/Algo/Tree/Binary_tree_metric.hpp>
+#include <Tools/Algo/Tree/Binary/Binary_tree_metric.hpp>
+#endif
+#ifndef GENERIC_NODE_HPP_
+#include <Tools/Algo/Tree/Generic/Generic_node.hpp>
+#endif
+#ifndef GENERIC_TREE_HPP_
+#include <Tools/Algo/Tree/Generic/Generic_tree.hpp>
 #endif
 #ifndef ARGUMENT_HANDLER_HPP_
 #include <Tools/Arguments/Argument_handler.hpp>
@@ -1287,6 +1296,9 @@
 #endif
 #ifndef PATTERN_POLAR_STANDARD_HPP_
 #include <Tools/Code/Polar/Patterns/Pattern_polar_std.hpp>
+#endif
+#ifndef POLAR_CODE_HPP_
+#include <Tools/Code/Polar/Polar_code.hpp>
 #endif
 #ifndef RS_POLYNOMIAL_GENERATOR_HPP
 #include <Tools/Code/RS/RS_polynomial_generator.hpp>
