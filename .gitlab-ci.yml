@@ -1230,8 +1230,6 @@ deploy-upload-ppa:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
   tags:
     - linux
     - gcc
@@ -1240,9 +1238,9 @@ deploy-upload-ppa:
     - 64-bit
     - ppa
   artifacts:
-    name: build-linux-gcc-x64-sse4.2
+    name: build
     paths:
-      - build_linux_gcc_x64_sse4.2
+      - build
   script:
     - export CC="gcc"
     - export CXX="g++"

@@ -5,6 +5,8 @@ cmake --version
 mkdir build
 cd build
 
+export GPG_TTY=$(tty)
+
 if [ -z "$CXX" ]
 then
 	echo "Please define the 'CXX' environment variable."
