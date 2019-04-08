@@ -9,6 +9,8 @@
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Encoder/Encoder.hpp"
 
+#include "Tools/Code/Polar/Polar_code.hpp"
+
 #include "../Decoder.hpp"
 
 namespace aff3ct
@@ -37,7 +39,8 @@ struct Decoder_polar_MK : public Decoder
 
 		// builder
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc = nullptr,
+		module::Decoder_SIHO<B,Q>* build(const tools::Polar_code &code, const std::vector<bool> &frozen_bits,
+		                                 module::CRC<B> *crc = nullptr,
 		                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 	protected:
@@ -45,7 +48,9 @@ struct Decoder_polar_MK : public Decoder
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters& params, const std::vector<bool> &frozen_bits,
+	static module::Decoder_SIHO<B,Q>* build(const parameters& params,
+	                                        const tools::Polar_code &code,
+	                                        const std::vector<bool> &frozen_bits,
 	                                        module::CRC<B> *crc = nullptr,
 	                                        const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };

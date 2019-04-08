@@ -406,3 +406,13 @@ const std::vector<uint32_t>& Polar_code
 {
 	return this->stages;
 }
+
+size_t Polar_code
+::get_biggest_kernel_size() const
+{
+	size_t biggest_kernel_size = 0;
+	for (auto ke = 0; ke < (int)this->get_kernel_matrices().size(); ke++)
+		biggest_kernel_size = std::max(biggest_kernel_size, this->get_kernel_matrices()[ke].size());
+
+	return biggest_kernel_size;
+}

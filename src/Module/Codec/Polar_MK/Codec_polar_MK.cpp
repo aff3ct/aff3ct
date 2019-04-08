@@ -80,7 +80,8 @@ Codec_polar_MK<B,Q>
 		this->set_encoder(factory::Encoder::build<B>(enc_params));
 	}
 
-	this->set_decoder_siho(factory::Decoder_polar_MK::build<B,Q>(dec_params, frozen_bits, crc, this->get_encoder()));
+	this->set_decoder_siho(factory::Decoder_polar_MK::build<B,Q>(dec_params, *code.get(), frozen_bits, crc,
+	                                                             this->get_encoder()));
 	this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho().get());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen

@@ -34,6 +34,8 @@ public:
 	const std::vector<std::vector<std::vector<bool>>>& get_kernel_matrices() const;
 	const std::vector<uint32_t>& get_stages() const;
 
+	size_t get_biggest_kernel_size() const;
+
 private:
 	void verif_MK();
 	void verif();

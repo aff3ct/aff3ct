@@ -6,6 +6,7 @@
 #include "Tools/Algo/Tree/Generic/Generic_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
+#include "Tools/Code/Polar/Polar_code.hpp"
 
 #include "../../Decoder_SIHO.hpp"
 
@@ -17,11 +18,12 @@ template <typename B = int, typename R = float>
 class Contents_MK_SC
 {
 public:
-	std::vector<R> lambda;
+	std::vector<R> l;
 	std::vector<B> s;
 	bool           is_frozen_bit;
+	int            stage;
 
-	explicit Contents_MK_SC(int size) : lambda(size), s(size), is_frozen_bit(false) {}
+	explicit Contents_MK_SC(int size, int stage = -1) : l(size), s(size), is_frozen_bit(false), stage(stage) {}
 	virtual ~Contents_MK_SC() {}
 };
 
@@ -29,17 +31,22 @@ template <typename B = int, typename R = float>
 class Decoder_polar_MK_SC_naive : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
 {
 protected:
-	const int base;
-	const int m; // graph depth
-
+	const tools::Polar_code &code;
 	const std::vector<bool> &frozen_bits;
 	tools::Generic_tree<Contents_MK_SC<B,R>> polar_tree;
+	std::vector<std::vector<B>> Ke;
+	std::vector<uint32_t> idx;
+	std::vector<B> u;
+
+	std::vector<R> LLRs;
+	std::vector<B> bits;
+	std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>> lambdas;
 
 public:
 	Decoder_polar_MK_SC_naive(const int&               K,
 	                          const int&               N,
+	                          const tools::Polar_code& code,
 	                          const std::vector<bool>& frozen_bits,
-	                          const int                base,
 	                          const int                n_frames = 1);
 	virtual ~Decoder_polar_MK_SC_naive();
 
@@ -60,7 +67,5 @@ private:
 };
 }
 }
-
-#include "Decoder_polar_MK_SC_naive.hxx"
 
 #endif /* DECODER_POLAR_MK_SC_NAIVE_ */

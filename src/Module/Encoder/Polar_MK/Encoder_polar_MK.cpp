@@ -18,22 +18,15 @@ Encoder_polar_MK<B>
   code(code),
   frozen_bits(frozen_bits),
   Ke(code.get_kernel_matrices().size()),
-  idx(),
-  u()
+  idx(code.get_biggest_kernel_size()),
+  u(code.get_biggest_kernel_size())
 {
 	const std::string name = "Encoder_polar_MK";
 	this->set_name(name);
 	this->set_sys(false);
 
-	size_t biggest_kernel_size = 0;
 	for (auto ke = 0; ke < (int)this->code.get_kernel_matrices().size(); ke++)
-	{
 		Ke[ke].resize(this->code.get_kernel_matrices()[ke].size() * this->code.get_kernel_matrices()[ke].size());
-		biggest_kernel_size = std::max(biggest_kernel_size, this->code.get_kernel_matrices()[ke].size());
-	}
-
-	idx.resize(biggest_kernel_size);
-	u.resize(biggest_kernel_size);
 
 	if (this->N != (int)this->frozen_bits.size())
 	{
@@ -74,22 +67,21 @@ void Encoder_polar_MK<B>
 }
 
 template <typename B>
-void polar_kernel(const B *u, const uint32_t *idx, const B *Ke, B *x, const int size)
-{
-	for (auto i = 0; i < size; i++)
-	{
-		const auto stride = i * size;
-		auto sum = 0;
-		for (auto j = 0; j < size; j++)
-			sum += u[j] & Ke[stride +j];
-		x[idx[i]] = sum & (B)1;
-	}
-}
-
-template <typename B>
 void Encoder_polar_MK<B>
 ::light_encode(B *X_N)
 {
+	auto apply_polar_kernel = [](const B *u, const uint32_t *idx, const B *Ke, B *x, const int size)
+	{
+		for (auto i = 0; i < size; i++)
+		{
+			const auto stride = i * size;
+			auto sum = 0;
+			for (auto j = 0; j < size; j++)
+				sum += u[j] & Ke[stride +j];
+			x[idx[i]] = sum & (B)1;
+		}
+	};
+
 	auto n_kernels = (int)1;
 	for (auto s = 0; s < (int)this->code.get_stages().size(); s++)
 	{
@@ -106,7 +98,11 @@ void Encoder_polar_MK<B>
 					this->u[i] = X_N[this->idx[i]];
 				}
 
-				polar_kernel(this->u.data(), this->idx.data(), this->Ke[code.get_stages()[s]].data(), X_N, kernel_size);
+				apply_polar_kernel(this->u.data(),
+				                   this->idx.data(),
+				                   this->Ke[code.get_stages()[s]].data(),
+				                   X_N,
+				                   kernel_size);
 			}
 		}
 
