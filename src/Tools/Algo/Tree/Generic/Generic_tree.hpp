@@ -65,6 +65,8 @@ public:
 	 */
 	std::vector<Generic_node<T>*> get_leaves() const;
 
+	int get_depth() const;
+
 private:
 	void create_nodes        (Generic_node<T>* cur_node, int cur_depth, std::vector<int>& lanes, const std::vector<uint32_t> &sequence);
 	void delete_nodes        (Generic_node<T>* cur_node                                                                               );

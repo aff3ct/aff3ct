@@ -110,8 +110,16 @@ void Generic_tree<T>
 
 template<typename T>
 std::vector<Generic_node<T>*> Generic_tree<T>
-::get_leaves() const{
+::get_leaves() const
+{
 	return this->leaves;
+}
+
+template<typename T>
+int Generic_tree<T>
+::get_depth() const
+{
+	return this->depth;
 }
 }
 }

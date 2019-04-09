@@ -21,9 +21,8 @@ public:
 	std::vector<R> l;
 	std::vector<B> s;
 	bool           is_frozen_bit;
-	int            stage;
 
-	explicit Contents_MK_SC(int size, int stage = -1) : l(size), s(size), is_frozen_bit(false), stage(stage) {}
+	explicit Contents_MK_SC(int size) : l(size), s(size), is_frozen_bit(false) {}
 	virtual ~Contents_MK_SC() {}
 };
 

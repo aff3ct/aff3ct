@@ -289,14 +289,15 @@ template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
 ::recursive_allocate_nodes_contents(tools::Generic_node<Contents_MK_SC<B,R>>* node_curr, const int vector_size)
 {
-	const int stage = node_curr->is_root() ? this->code.get_stages().size() -1 :
-	                                         node_curr->get_father()->get_c()->stage -1;
+	node_curr->set_contents(new Contents_MK_SC<B,R>(vector_size));
 
-	node_curr->set_contents(new Contents_MK_SC<B,R>(vector_size, stage));
-
-	const auto new_vector_size = vector_size / this->code.get_kernel_matrices()[code.get_stages()[stage]].size();
-	for (auto c : node_curr->get_children())
-		this->recursive_allocate_nodes_contents(c, new_vector_size);
+	if (!node_curr->is_leaf())
+	{
+		const auto stage = polar_tree.get_depth() - node_curr->get_depth() -2;
+		const auto new_vector_size = vector_size / this->code.get_kernel_matrices()[code.get_stages()[stage]].size();
+		for (auto c : node_curr->get_children())
+			this->recursive_allocate_nodes_contents(c, new_vector_size);
+	}
 }
 
 template <typename B, typename R>
@@ -304,15 +305,13 @@ void Decoder_polar_MK_SC_naive<B,R>
 ::recursive_initialize_frozen_bits(const tools::Generic_node<Contents_MK_SC<B,R>>* node_curr,
                                    const std::vector<bool>& frozen_bits)
 {
-	auto *contents = node_curr->get_contents();
-
 	if (!node_curr->is_leaf()) // stop condition
 	{
 		for (auto c : node_curr->get_children())
 			this->recursive_initialize_frozen_bits(c, frozen_bits); // recursive call
 	}
 	else
-		contents->is_frozen_bit = frozen_bits[node_curr->get_lane_id()];
+		node_curr->get_contents()->is_frozen_bit = frozen_bits[node_curr->get_lane_id()];
 }
 
 template <typename B, typename R>
@@ -321,7 +320,7 @@ void Decoder_polar_MK_SC_naive<B,R>
 {
 	if (!node_curr->is_leaf()) // stop condition
 	{
-		const auto stage = node_curr->get_c()->stage;
+		const auto stage = polar_tree.get_depth() - node_curr->get_depth() -2;
 		const auto kern_size = (int)node_curr->get_children().size();
 		const auto size = (int)node_curr->get_c()->l.size();
 		const auto n_kernels = size / kern_size;
