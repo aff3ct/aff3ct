@@ -113,7 +113,7 @@ Decoder_polar_MK_SC_naive<B,R>
 		{
 			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]);
+				auto sign = std::signbit((float)LLRs[0]) ^ std::signbit((float)LLRs[1]);
 				auto abs0 = (R)std::abs(LLRs[0]);
 				auto abs1 = (R)std::abs(LLRs[1]);
 				auto min = std::min(abs0, abs1);
@@ -132,7 +132,7 @@ Decoder_polar_MK_SC_naive<B,R>
 		{
 			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
+				auto sign = std::signbit((float)LLRs[0]) ^ std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[2]);
 				auto abs0 = (R)std::abs(LLRs[0]);
 				auto abs1 = (R)std::abs(LLRs[1]);
 				auto abs2 = (R)std::abs(LLRs[2]);
@@ -143,7 +143,7 @@ Decoder_polar_MK_SC_naive<B,R>
 
 			lambdas[l][1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				auto sign = std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
+				auto sign = std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[2]);
 				auto abs1 = (R)std::abs(LLRs[1]);
 				auto abs2 = (R)std::abs(LLRs[2]);
 				auto min = std::min(abs1, abs2);
@@ -165,7 +165,7 @@ Decoder_polar_MK_SC_naive<B,R>
 		{
 			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
+				auto sign = std::signbit((float)LLRs[0]) ^ std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[2]);
 				auto abs0 = (R)std::abs(LLRs[0]);
 				auto abs1 = (R)std::abs(LLRs[1]);
 				auto abs2 = (R)std::abs(LLRs[2]);
@@ -178,7 +178,7 @@ Decoder_polar_MK_SC_naive<B,R>
 			{
 				auto hl0 = (bits[0] == 0) ? LLRs[0] : -LLRs[0];
 
-				auto sign = std::signbit(hl0) ^ std::signbit(LLRs[2]);
+				auto sign = std::signbit((float)hl0) ^ std::signbit((float)LLRs[2]);
 				auto abs0 = (R)std::abs(hl0);
 				auto abs2 = (R)std::abs(LLRs[2]);
 				auto min = std::min(abs0, abs2);
