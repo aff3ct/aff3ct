@@ -40,7 +40,7 @@ protected:
 
 	std::vector<R> LLRs;
 	std::vector<B> bits;
-	std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>> lambdas;
+	std::vector<std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>> lambdas;
 
 public:
 	Decoder_polar_MK_SC_naive(const int&               K,

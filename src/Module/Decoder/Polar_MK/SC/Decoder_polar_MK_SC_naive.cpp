@@ -11,6 +11,15 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
+std::vector<uint32_t> gen_sequence(const tools::Polar_code& code)
+{
+	std::vector<uint32_t> sequence(code.get_stages().size());
+	for (size_t s  = 0; s < code.get_stages().size(); s++)
+		sequence[s] = code.get_kernel_matrices()[code.get_stages()[(sequence.size()-1)-s]].size();
+
+	return sequence;
+}
+
 template <typename B, typename R>
 Decoder_polar_MK_SC_naive<B,R>
 ::Decoder_polar_MK_SC_naive(const int& K,
@@ -22,23 +31,16 @@ Decoder_polar_MK_SC_naive<B,R>
   Decoder_SIHO<B,R>(K, N, n_frames, 1),
   code(code),
   frozen_bits(frozen_bits),
-  polar_tree(code.get_stages().size() +1, code.get_kernel_matrices()[0].size()),
+  polar_tree(gen_sequence(code)),
   Ke(code.get_kernel_matrices().size()),
   idx(code.get_biggest_kernel_size()),
   u(code.get_biggest_kernel_size()),
-  LLRs(code.get_kernel_matrices()[0].size()),
-  bits(code.get_kernel_matrices()[0].size() -1),
-  lambdas(code.get_kernel_matrices()[0].size())
+  LLRs(code.get_biggest_kernel_size()),
+  bits(code.get_biggest_kernel_size() -1),
+  lambdas(code.get_kernel_matrices().size())
 {
 	const std::string name = "Decoder_polar_MK_SC_naive";
 	this->set_name(name);
-
-	if (!code.is_mono_kernel())
-	{
-		std::stringstream message;
-		message << "'code.is_mono_kernel()' has to be true.";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 
 	const auto base = code.get_kernel_matrices()[0].size();
 	if (base < 2)
@@ -85,7 +87,8 @@ Decoder_polar_MK_SC_naive<B,R>
 				this->Ke[ke][i * kernel_size +j] = (B)this->code.get_kernel_matrices()[ke][j][i];
 	}
 
-	auto same_polar_kernel = [](const std::vector<std::vector<bool>>& a, const std::vector<std::vector<bool>>& b) {
+	auto same_polar_kernel = [](const std::vector<std::vector<bool>>& a, const std::vector<std::vector<bool>>& b)
+	{
 		if (a.size() != b.size())
 			return false;
 
@@ -101,94 +104,107 @@ Decoder_polar_MK_SC_naive<B,R>
 		return true;
 	};
 
-	if (same_polar_kernel(code.get_kernel_matrices()[0], {{1,0},{1,1}})) // Arikan kernel
+	for (size_t l = 0; l < lambdas.size(); l++)
 	{
-		lambdas[0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		lambdas[l].resize(code.get_kernel_matrices()[l].size());
+
+		if (same_polar_kernel(code.get_kernel_matrices()[l], {{1,0},{1,1}})) // Arikan kernel
 		{
-			// return tools::f_LLR<R>(LLRs[0], LLRs[1]);
-			auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]);
-			auto abs0 = std::abs(LLRs[0]);
-			auto abs1 = std::abs(LLRs[1]);
-			auto min = std::min(abs0, abs1);
+			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			{
+				// std::cout << "k2 l0" << std::endl;
+				// return tools::f_LLR<R>(LLRs[0], LLRs[1]);
+				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]);
+				auto abs0 = std::abs(LLRs[0]);
+				auto abs1 = std::abs(LLRs[1]);
+				auto min = std::min(abs0, abs1);
 
-			return sign ? -min : min;
-		};
+				return sign ? -min : min;
+			};
 
-		lambdas[1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			lambdas[l][1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			{
+				// std::cout << "k2 l1" << std::endl;
+				// return tools::g_LLR<B,R>(LLRs[0], LLRs[1], bits[0]);
+				return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + LLRs[1];
+			};
+		}
+		else if (same_polar_kernel(code.get_kernel_matrices()[l], {{1,1,1},{1,0,1},{0,1,1}}))
 		{
-			// return tools::g_LLR<B,R>(LLRs[0], LLRs[1], bits[0]);
-			return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + LLRs[1];
-		};
-	}
-	else if (same_polar_kernel(code.get_kernel_matrices()[0], {{1,1,1},{1,0,1},{0,1,1}}))
-	{
-		lambdas[0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			{
+				// std::cout << "k3 l0" << std::endl;
+				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
+				auto abs0 = std::abs(LLRs[0]);
+				auto abs1 = std::abs(LLRs[1]);
+				auto abs2 = std::abs(LLRs[2]);
+				auto min = std::min(std::min(abs0, abs1), abs2);
+
+				return sign ? -min : min;
+			};
+
+			lambdas[l][1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			{
+				// std::cout << "k3 l1" << std::endl;
+				auto sign = std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
+				auto abs1 = std::abs(LLRs[1]);
+				auto abs2 = std::abs(LLRs[2]);
+				auto min = std::min(abs1, abs2);
+
+				auto l1_l2 = sign ? -min : min;
+
+				return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + l1_l2;
+			};
+
+			lambdas[l][2] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			{
+				// std::cout << "k3 l2" << std::endl;
+				return (( bits[0]            == 0) ? LLRs[1] : -LLRs[1]) +
+				       (((bits[0] ^ bits[1]) == 0) ? LLRs[2] : -LLRs[2]);
+			};
+		}
+		else if (same_polar_kernel(code.get_kernel_matrices()[l], {{1,0,0},{1,1,0},{1,0,1}}))
 		{
-			auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
-			auto abs0 = std::abs(LLRs[0]);
-			auto abs1 = std::abs(LLRs[1]);
-			auto abs2 = std::abs(LLRs[2]);
-			auto min = std::min(std::min(abs0, abs1), abs2);
+			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			{
+				// std::cout << "k3 l0" << std::endl;
+				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
+				auto abs0 = std::abs(LLRs[0]);
+				auto abs1 = std::abs(LLRs[1]);
+				auto abs2 = std::abs(LLRs[2]);
+				auto min = std::min(std::min(abs0, abs1), abs2);
 
-			return sign ? -min : min;
-		};
+				return sign ? -min : min;
+			};
 
-		lambdas[1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			lambdas[l][1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			{
+				// std::cout << "k3 l1" << std::endl;
+				auto hl0 = ((bits[0] == 0) ? LLRs[0] : -LLRs[0]);
+
+				auto sign = std::signbit(hl0) ^ std::signbit(LLRs[2]);
+				auto abs0 = std::abs(hl0);
+				auto abs2 = std::abs(LLRs[2]);
+				auto min = std::min(abs0, abs2);
+				auto hl0_l2 = sign ? -min : min;
+
+				return hl0_l2 + LLRs[1];
+			};
+
+			lambdas[l][2] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+			{
+				// std::cout << "k3 l2" << std::endl;
+				auto hl0 = (((bits[0] ^ bits[1]) == 0) ? LLRs[0] : -LLRs[0]);
+
+				return hl0 + LLRs[2];
+			};
+		}
+		else
 		{
-			auto sign = std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
-			auto abs1 = std::abs(LLRs[1]);
-			auto abs2 = std::abs(LLRs[2]);
-			auto min = std::min(abs1, abs2);
-
-			auto l1_l2 = sign ? -min : min;
-
-			return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + l1_l2;
-		};
-
-		lambdas[2] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
-		{
-			return (( bits[0]            == 0) ? LLRs[1] : -LLRs[1]) +
-			       (((bits[0] ^ bits[1]) == 0) ? LLRs[2] : -LLRs[2]);
-		};
-	}
-	else if (same_polar_kernel(code.get_kernel_matrices()[0], {{1,0,0},{1,1,0},{1,0,1}}))
-	{
-		lambdas[0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
-		{
-			auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
-			auto abs0 = std::abs(LLRs[0]);
-			auto abs1 = std::abs(LLRs[1]);
-			auto abs2 = std::abs(LLRs[2]);
-			auto min = std::min(std::min(abs0, abs1), abs2);
-
-			return sign ? -min : min;
-		};
-
-		lambdas[1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
-		{
-			auto hl0 = ((bits[0] == 0) ? LLRs[0] : -LLRs[0]);
-
-			auto sign = std::signbit(hl0) ^ std::signbit(LLRs[2]);
-			auto abs0 = std::abs(hl0);
-			auto abs2 = std::abs(LLRs[2]);
-			auto min = std::min(abs0, abs2);
-			auto hl0_l2 = sign ? -min : min;
-
-			return hl0_l2 + LLRs[1];
-		};
-
-		lambdas[2] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
-		{
-			auto hl0 = (((bits[0] ^ bits[1]) == 0) ? LLRs[0] : -LLRs[0]);
-
-			return hl0 + LLRs[2];
-		};
-	}
-	else
-	{
-		std::stringstream message;
-		message << "Unsupported polar kernel.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			std::stringstream message;
+			message << "Unsupported polar kernel.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 }
 
@@ -282,8 +298,9 @@ void Decoder_polar_MK_SC_naive<B,R>
 
 	node_curr->set_contents(new Contents_MK_SC<B,R>(vector_size, stage));
 
+	const auto new_vector_size = vector_size / this->code.get_kernel_matrices()[code.get_stages()[stage]].size();
 	for (auto c : node_curr->get_children())
-		this->recursive_allocate_nodes_contents(c, vector_size / this->code.get_kernel_matrices()[0].size());
+		this->recursive_allocate_nodes_contents(c, new_vector_size);
 }
 
 template <typename B, typename R>
@@ -308,20 +325,21 @@ void Decoder_polar_MK_SC_naive<B,R>
 {
 	if (!node_curr->is_leaf()) // stop condition
 	{
+		const auto stage = node_curr->get_c()->stage;
 		const auto kern_size = (int)node_curr->get_children().size();
 		const auto size = (int)node_curr->get_c()->l.size();
-		const auto sub_part = size / kern_size;
+		const auto nelmts = size / kern_size;
 
 		for (auto child = 0; child < kern_size; child++)
 		{
 			const auto *node_child = node_curr->get_children()[child];
 
-			for (auto i = 0; i < sub_part; i++)
+			for (auto e = 0; e < nelmts; e++)
 			{
-				for (auto l = 0; l < kern_size; l++) LLRs[l] = node_curr->get_c()->l[l * sub_part +i];
-				for (auto c = 0; c < child;     c++) bits[c] = node_curr->get_children()[c]->get_c()->s[i];
+				for (auto l = 0; l < kern_size; l++) LLRs[l] = node_curr->get_c()->l[l * nelmts +e];
+				for (auto c = 0; c < child;     c++) bits[c] = node_curr->get_children()[c]->get_c()->s[e];
 
-				node_child->get_c()->l[i] = lambdas[child](LLRs, bits);
+				node_child->get_c()->l[e] = lambdas[this->code.get_stages()[stage]][child](LLRs, bits);
 			}
 
 			this->recursive_decode(node_child); // recursive call
@@ -340,19 +358,18 @@ void Decoder_polar_MK_SC_naive<B,R>
 		};
 
 		// re-encode the bits (partial sums) (generalized to all kernels)
-		const auto s = node_curr->get_c()->stage;
 		const auto n_kernels = (int)node_curr->get_c()->s.size() / kern_size;
 		for (auto k = 0; k < n_kernels; k++)
 		{
 			for (auto i = 0; i < kern_size; i++)
 			{
 				this->idx[i] = (uint32_t)(n_kernels * i +k);
-				this->u[i] = node_curr->get_children()[(this->idx[i]/sub_part)]->get_c()->s[this->idx[i]%sub_part];
+				this->u[i] = node_curr->get_children()[(this->idx[i]/nelmts)]->get_c()->s[this->idx[i]%nelmts];
 			}
 
 			encode_polar_kernel(this->u.data(),
 			                    this->idx.data(),
-			                    this->Ke[code.get_stages()[s]].data(),
+			                    this->Ke[code.get_stages()[stage]].data(),
 			                    node_curr->get_c()->s.data(),
 			                    kern_size);
 		}
