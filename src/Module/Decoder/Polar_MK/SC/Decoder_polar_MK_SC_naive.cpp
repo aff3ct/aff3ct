@@ -112,8 +112,6 @@ Decoder_polar_MK_SC_naive<B,R>
 		{
 			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				// std::cout << "k2 l0" << std::endl;
-				// return tools::f_LLR<R>(LLRs[0], LLRs[1]);
 				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]);
 				auto abs0 = std::abs(LLRs[0]);
 				auto abs1 = std::abs(LLRs[1]);
@@ -124,8 +122,6 @@ Decoder_polar_MK_SC_naive<B,R>
 
 			lambdas[l][1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				// std::cout << "k2 l1" << std::endl;
-				// return tools::g_LLR<B,R>(LLRs[0], LLRs[1], bits[0]);
 				return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + LLRs[1];
 			};
 		}
@@ -133,7 +129,6 @@ Decoder_polar_MK_SC_naive<B,R>
 		{
 			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				// std::cout << "k3 l0" << std::endl;
 				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
 				auto abs0 = std::abs(LLRs[0]);
 				auto abs1 = std::abs(LLRs[1]);
@@ -145,7 +140,6 @@ Decoder_polar_MK_SC_naive<B,R>
 
 			lambdas[l][1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				// std::cout << "k3 l1" << std::endl;
 				auto sign = std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
 				auto abs1 = std::abs(LLRs[1]);
 				auto abs2 = std::abs(LLRs[2]);
@@ -158,7 +152,6 @@ Decoder_polar_MK_SC_naive<B,R>
 
 			lambdas[l][2] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				// std::cout << "k3 l2" << std::endl;
 				return (( bits[0]            == 0) ? LLRs[1] : -LLRs[1]) +
 				       (((bits[0] ^ bits[1]) == 0) ? LLRs[2] : -LLRs[2]);
 			};
@@ -167,7 +160,6 @@ Decoder_polar_MK_SC_naive<B,R>
 		{
 			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				// std::cout << "k3 l0" << std::endl;
 				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
 				auto abs0 = std::abs(LLRs[0]);
 				auto abs1 = std::abs(LLRs[1]);
@@ -179,8 +171,7 @@ Decoder_polar_MK_SC_naive<B,R>
 
 			lambdas[l][1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				// std::cout << "k3 l1" << std::endl;
-				auto hl0 = ((bits[0] == 0) ? LLRs[0] : -LLRs[0]);
+				auto hl0 = (bits[0] == 0) ? LLRs[0] : -LLRs[0];
 
 				auto sign = std::signbit(hl0) ^ std::signbit(LLRs[2]);
 				auto abs0 = std::abs(hl0);
@@ -193,8 +184,7 @@ Decoder_polar_MK_SC_naive<B,R>
 
 			lambdas[l][2] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
-				// std::cout << "k3 l2" << std::endl;
-				auto hl0 = (((bits[0] ^ bits[1]) == 0) ? LLRs[0] : -LLRs[0]);
+				auto hl0 = ((bits[0] ^ bits[1]) == 0) ? LLRs[0] : -LLRs[0];
 
 				return hl0 + LLRs[2];
 			};
@@ -294,7 +284,8 @@ template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
 ::recursive_allocate_nodes_contents(tools::Generic_node<Contents_MK_SC<B,R>>* node_curr, const int vector_size)
 {
-	const int stage = node_curr->is_root() ? this->code.get_stages().size()-1 : node_curr->get_father()->get_c()->stage -1;
+	const int stage = node_curr->is_root() ? this->code.get_stages().size() -1 :
+	                                         node_curr->get_father()->get_c()->stage -1;
 
 	node_curr->set_contents(new Contents_MK_SC<B,R>(vector_size, stage));
 
@@ -328,18 +319,17 @@ void Decoder_polar_MK_SC_naive<B,R>
 		const auto stage = node_curr->get_c()->stage;
 		const auto kern_size = (int)node_curr->get_children().size();
 		const auto size = (int)node_curr->get_c()->l.size();
-		const auto nelmts = size / kern_size;
+		const auto n_kernels = size / kern_size;
 
 		for (auto child = 0; child < kern_size; child++)
 		{
 			const auto *node_child = node_curr->get_children()[child];
-
-			for (auto e = 0; e < nelmts; e++)
+			for (auto k = 0; k < n_kernels; k++)
 			{
-				for (auto l = 0; l < kern_size; l++) LLRs[l] = node_curr->get_c()->l[l * nelmts +e];
-				for (auto c = 0; c < child;     c++) bits[c] = node_curr->get_children()[c]->get_c()->s[e];
+				for (auto l = 0; l < kern_size; l++) LLRs[l] = node_curr->get_c()->l[l * n_kernels +k];
+				for (auto c = 0; c < child;     c++) bits[c] = node_curr->get_children()[c]->get_c()->s[k];
 
-				node_child->get_c()->l[e] = lambdas[this->code.get_stages()[stage]][child](LLRs, bits);
+				node_child->get_c()->l[k] = lambdas[this->code.get_stages()[stage]][child](LLRs, bits);
 			}
 
 			this->recursive_decode(node_child); // recursive call
@@ -358,13 +348,12 @@ void Decoder_polar_MK_SC_naive<B,R>
 		};
 
 		// re-encode the bits (partial sums) (generalized to all kernels)
-		const auto n_kernels = (int)node_curr->get_c()->s.size() / kern_size;
 		for (auto k = 0; k < n_kernels; k++)
 		{
 			for (auto i = 0; i < kern_size; i++)
 			{
 				this->idx[i] = (uint32_t)(n_kernels * i +k);
-				this->u[i] = node_curr->get_children()[(this->idx[i]/nelmts)]->get_c()->s[this->idx[i]%nelmts];
+				this->u[i] = node_curr->get_children()[(this->idx[i]/n_kernels)]->get_c()->s[this->idx[i]%n_kernels];
 			}
 
 			encode_polar_kernel(this->u.data(),
