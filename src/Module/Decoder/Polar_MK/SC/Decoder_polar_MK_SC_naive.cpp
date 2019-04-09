@@ -108,13 +108,14 @@ Decoder_polar_MK_SC_naive<B,R>
 	{
 		lambdas[l].resize(code.get_kernel_matrices()[l].size());
 
-		if (same_polar_kernel(code.get_kernel_matrices()[l], {{1,0},{1,1}})) // Arikan kernel
+		if (same_polar_kernel(code.get_kernel_matrices()[l], {{1,0},{1,1}})) // Arikan kernel                       1 0
+		                                                                     //                                     1 1
 		{
 			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
 				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]);
-				auto abs0 = std::abs(LLRs[0]);
-				auto abs1 = std::abs(LLRs[1]);
+				auto abs0 = (R)std::abs(LLRs[0]);
+				auto abs1 = (R)std::abs(LLRs[1]);
 				auto min = std::min(abs0, abs1);
 
 				return sign ? -min : min;
@@ -125,14 +126,16 @@ Decoder_polar_MK_SC_naive<B,R>
 				return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + LLRs[1];
 			};
 		}
-		else if (same_polar_kernel(code.get_kernel_matrices()[l], {{1,1,1},{1,0,1},{0,1,1}}))
+		else if (same_polar_kernel(code.get_kernel_matrices()[l], {{1,1,1},{1,0,1},{0,1,1}})) //                  1 1 1
+		                                                                                      //                  1 0 1
+		                                                                                      //                  0 1 1
 		{
 			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
 				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
-				auto abs0 = std::abs(LLRs[0]);
-				auto abs1 = std::abs(LLRs[1]);
-				auto abs2 = std::abs(LLRs[2]);
+				auto abs0 = (R)std::abs(LLRs[0]);
+				auto abs1 = (R)std::abs(LLRs[1]);
+				auto abs2 = (R)std::abs(LLRs[2]);
 				auto min = std::min(std::min(abs0, abs1), abs2);
 
 				return sign ? -min : min;
@@ -141,8 +144,8 @@ Decoder_polar_MK_SC_naive<B,R>
 			lambdas[l][1] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
 				auto sign = std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
-				auto abs1 = std::abs(LLRs[1]);
-				auto abs2 = std::abs(LLRs[2]);
+				auto abs1 = (R)std::abs(LLRs[1]);
+				auto abs2 = (R)std::abs(LLRs[2]);
 				auto min = std::min(abs1, abs2);
 
 				auto l1_l2 = sign ? -min : min;
@@ -156,14 +159,16 @@ Decoder_polar_MK_SC_naive<B,R>
 				       (((bits[0] ^ bits[1]) == 0) ? LLRs[2] : -LLRs[2]);
 			};
 		}
-		else if (same_polar_kernel(code.get_kernel_matrices()[l], {{1,0,0},{1,1,0},{1,0,1}}))
+		else if (same_polar_kernel(code.get_kernel_matrices()[l], {{1,0,0},{1,1,0},{1,0,1}})) //                  1 0 0
+		                                                                                      //                  1 1 0
+		                                                                                      //                  1 0 1
 		{
 			lambdas[l][0] = [](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
 			{
 				auto sign = std::signbit(LLRs[0]) ^ std::signbit(LLRs[1]) ^ std::signbit(LLRs[2]);
-				auto abs0 = std::abs(LLRs[0]);
-				auto abs1 = std::abs(LLRs[1]);
-				auto abs2 = std::abs(LLRs[2]);
+				auto abs0 = (R)std::abs(LLRs[0]);
+				auto abs1 = (R)std::abs(LLRs[1]);
+				auto abs2 = (R)std::abs(LLRs[2]);
 				auto min = std::min(std::min(abs0, abs1), abs2);
 
 				return sign ? -min : min;
@@ -174,8 +179,8 @@ Decoder_polar_MK_SC_naive<B,R>
 				auto hl0 = (bits[0] == 0) ? LLRs[0] : -LLRs[0];
 
 				auto sign = std::signbit(hl0) ^ std::signbit(LLRs[2]);
-				auto abs0 = std::abs(hl0);
-				auto abs2 = std::abs(LLRs[2]);
+				auto abs0 = (R)std::abs(hl0);
+				auto abs2 = (R)std::abs(LLRs[2]);
 				auto min = std::min(abs0, abs2);
 				auto hl0_l2 = sign ? -min : min;
 
