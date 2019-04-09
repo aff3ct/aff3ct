@@ -9,6 +9,7 @@
 #define GENERIC_NODE_HPP_
 
 #include <vector>
+#include <cstddef>
 
 namespace aff3ct
 {
