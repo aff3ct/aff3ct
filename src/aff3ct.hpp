@@ -514,6 +514,9 @@
 #ifndef DECODER_POLAR_MK_SC_NAIVE_
 #include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp>
 #endif
+#ifndef DECODER_POLAR_MK_SC_NAIVE_SYS_
+#include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp>
+#endif
 #ifndef DECODER_POLAR_SCAN_NAIVE_H_
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp>
 #endif
