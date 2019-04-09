@@ -1,6 +1,7 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp"
+#include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp"
 
 #include "Decoder_polar_MK.hpp"
 
@@ -74,6 +75,16 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK::parameters
 				if (crc == nullptr || crc->get_size() == 0)
 				{
 					if (this->type == "SC") return new module::Decoder_polar_MK_SC_naive<B,Q>(this->K, this->N_cw, code, frozen_bits, this->n_frames);
+				}
+			}
+		}
+		else // systematic encoding
+		{
+			if (this->implem == "NAIVE")
+			{
+				if (crc == nullptr || crc->get_size() == 0)
+				{
+					if (this->type == "SC") return new module::Decoder_polar_MK_SC_naive_sys<B,Q>(this->K, this->N_cw, code, frozen_bits, this->n_frames);
 				}
 			}
 		}
