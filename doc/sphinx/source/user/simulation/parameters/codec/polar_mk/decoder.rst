@@ -9,9 +9,9 @@ Polar |MK| Decoder parameters
 """"""""""""""""""
 
    :Type: text
-   :Allowed values: ``SC`` ``CHASE`` ``ML``
+   :Allowed values: ``SC`` ``SCL`` ``CHASE`` ``ML``
    :Default: ``SC``
-   :Examples: ``--dec-type ML``
+   :Examples: ``--dec-type SCL``
 
 |factory::Decoder::parameters::p+type,D|
 
@@ -22,7 +22,8 @@ Description of the allowed values:
 +==============+===============================================================+
 | ``SC``       | Select the original |SC| algorithm from :cite:`Arikan2009`.   |
 +--------------+---------------------------------------------------------------+
-| ``SCL``      | Select the |SCL| algorithm from :cite:`Tal2011`.              |
+| ``SCL``      | Select the |SCL| algorithm from :cite:`Tal2011`, also support |
+|              | the improved |CA|-|SCL| algorithm.                            |
 +--------------+---------------------------------------------------------------+
 | ``CHASE``    | See the common :ref:`dec-common-dec-type` parameter.          |
 +--------------+---------------------------------------------------------------+

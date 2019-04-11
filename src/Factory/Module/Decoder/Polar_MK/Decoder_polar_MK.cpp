@@ -5,6 +5,8 @@
 #include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp"
 #include "Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive.hpp"
 #include "Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive_sys.hpp"
+#include "Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA.hpp"
+#include "Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA_sys.hpp"
 
 #include "Decoder_polar_MK.hpp"
 
@@ -93,6 +95,10 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK::parameters
 					if (this->type == "SC" ) return new module::Decoder_polar_MK_SC_naive <B,Q>(this->K, this->N_cw,          code, frozen_bits, this->n_frames);
 					if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, this->n_frames);
 				}
+				else
+				{
+					if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive_CA<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, *crc, this->n_frames);
+				}
 			}
 		}
 		else // systematic encoding
@@ -103,6 +109,10 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK::parameters
 				{
 					if (this->type == "SC" ) return new module::Decoder_polar_MK_SC_naive_sys <B,Q>(this->K, this->N_cw,          code, frozen_bits, this->n_frames);
 					if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive_sys<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, this->n_frames);
+				}
+				else
+				{
+					if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive_CA_sys<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, *crc, this->n_frames);
 				}
 			}
 		}

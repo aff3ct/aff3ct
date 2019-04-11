@@ -517,6 +517,12 @@
 #ifndef DECODER_POLAR_MK_SC_NAIVE_SYS_
 #include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp>
 #endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE_CA_
+#include <Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE_CA_SYS_
+#include <Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA_sys.hpp>
+#endif
 #ifndef DECODER_POLAR_MK_SCL_NAIVE
 #include <Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive.hpp>
 #endif
