@@ -6,11 +6,17 @@ if(NOT DEBUILD_EXECUTABLE OR NOT DPUT_EXECUTABLE)
   return()
 endif(NOT DEBUILD_EXECUTABLE OR NOT DPUT_EXECUTABLE)
 
+
+execute_process(COMMAND git tag -n20 --points-at v${AFF3CT_VERSION}
+                OUTPUT_VARIABLE CHANGELOG
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+set(CHANGELOG_MESSAGE ${CHANGELOG})
+
 if(NOT AFF3CT_PPA_DISTRIB)
 execute_process(COMMAND lsb_release -cs
                 OUTPUT_VARIABLE DISTRI
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
-                set(AFF3CT_PPA_DISTRIB ${DISTRI})
+set(AFF3CT_PPA_DISTRIB ${DISTRI})
 endif()
 
 foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
@@ -22,7 +28,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
     set(DEBIAN_COPYRIGHT ${DEBIAN_SOURCE_DIR}/debian/copyright)
     set(DEBIAN_RULES ${DEBIAN_SOURCE_DIR}/debian/rules)
     set(DEBIAN_CHANGELOG ${DEBIAN_SOURCE_DIR}/debian/changelog)
-    set(DEBIAN_SOURCE_CHANGES ${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_DEBIAN_PACKAGE_VERSION}_source.changes)
+    set(DEBIAN_SOURCE_CHANGES ${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_DEBIAN_PACKAGE_VERSION}-${DISTRI}_source.changes)
     set(ORIG_FILE "${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEBIAN_PACKAGE_FILE_NAME}.tar.gz")
     set(DPUT_HOST "ppa:aff3ct/aff3ct")
     if(CHANGELOG_MESSAGE) # TODO get it from git
@@ -96,7 +102,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
                             OUTPUT_VARIABLE DATE_TIME
                             OUTPUT_STRIP_TRAILING_WHITESPACE)
             file(WRITE ${DEBIAN_CHANGELOG}
-                 "${CPACK_DEBIAN_PACKAGE_NAME} (${AFF3CT_VERSION_FULL} ${DISTRI}; urgency=low\n\n"
+                 "${CPACK_DEBIAN_PACKAGE_NAME} (${AFF3CT_VERSION_FULL}-${DISTRI} ${DISTRI}; urgency=low\n\n"
                  "  ${output_changelog_msg}\n\n"
                  " -- ${CPACK_DEBIAN_PACKAGE_MAINTAINER}  ${DATE_TIME}\n\n")
             file(APPEND ${DEBIAN_CHANGELOG} ${DEBIAN_CHANGELOG_content})
@@ -107,7 +113,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
                       OUTPUT_VARIABLE DATE_TIME
                       OUTPUT_STRIP_TRAILING_WHITESPACE)
       file(WRITE ${DEBIAN_CHANGELOG}
-           "${CPACK_DEBIAN_PACKAGE_NAME} (${AFF3CT_VERSION_FULL}) ${DISTRI}; urgency=low\n\n"
+           "${CPACK_DEBIAN_PACKAGE_NAME} (${AFF3CT_VERSION_FULL}-${DISTRI}) ${DISTRI}; urgency=low\n\n"
            "  ${output_changelog_msg}\n\n"
            " -- ${CPACK_DEBIAN_PACKAGE_MAINTAINER}  ${DATE_TIME}\n")
     endif()
@@ -144,4 +150,6 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
                       COMMAND ${DPUT_EXECUTABLE} ${DPUT_HOST} ${DEBIAN_SOURCE_CHANGES}
                       DEPENDS  debuild_${DISTRI}
                       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI})
+
+
 endforeach(DISTRI)
