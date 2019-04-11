@@ -29,6 +29,10 @@ option(AFF3CT_POLAR_BOUNDS       "Enable the use of the external Tal & Vardy Pol
 option(AFF3CT_COLORS             "Enable the colors in the terminal"                                         ON )
 option(AFF3CT_OVERRIDE_VERSION   "Compile without .git directory, provided a version and hash"               OFF)
 
+if (AFF3CT_COMPILE_EXE OR AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
+    set(AFF3CT_COMPILE_OBJ)
+endif()
+
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND NOT AFF3CT_OVERRIDE_VERSION)
     message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
                         "from a Git repository. Please do not download archives from GitHub and make a Git "
@@ -188,9 +192,11 @@ if(${CMAKE_VERSION} VERSION_EQUAL "3.14" OR ${CMAKE_VERSION} VERSION_GREATER "3.
 endif()
 
 # Object
-add_library(aff3ct-obj OBJECT ${source_files})
-set_target_properties(aff3ct-obj PROPERTIES
-                                 POSITION_INDEPENDENT_CODE ON) # set -fpic
+if(AFF3CT_COMPILE_OBJ)
+    add_library(aff3ct-obj OBJECT ${source_files})
+    set_target_properties(aff3ct-obj PROPERTIES
+                                     POSITION_INDEPENDENT_CODE ON) # set -fpic
+endif()
 
 # Binary
 if(AFF3CT_COMPILE_EXE)
@@ -227,7 +233,9 @@ endif()
 # ---------------------------------------------------------------------------------------------------------------------
 
 macro(aff3ct_target_compile_definitions privacy def)
-    target_compile_definitions(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
+    if(AFF3CT_COMPILE_OBJ)
+        target_compile_definitions(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
+    endif()
     if(AFF3CT_COMPILE_EXE)
         target_compile_definitions(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
     endif()
@@ -307,9 +315,11 @@ endif()
 # ---------------------------------------------------------------------------------------------------------------------
 
 macro(aff3ct_target_include_directories privacy dir_build dir_install)
-    target_include_directories(aff3ct-obj ${privacy}
-                               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
-                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/${dir_install}>)
+    if(AFF3CT_COMPILE_OBJ)
+        target_include_directories(aff3ct-obj ${privacy}
+                                   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
+                                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/${dir_install}>)
+    endif()
     if(AFF3CT_COMPILE_EXE)
         target_include_directories(aff3ct-bin ${privacy}
                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
@@ -380,7 +390,9 @@ macro(aff3ct_target_link_libraries privacy lib)
 endmacro()
 
 macro(aff3ct_target_include_directories privacy dir)
-    target_include_directories(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    if(AFF3CT_COMPILE_OBJ)
+        target_include_directories(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
     if(AFF3CT_COMPILE_EXE)
         target_include_directories(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
     endif()

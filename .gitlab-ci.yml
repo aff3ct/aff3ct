@@ -1252,7 +1252,7 @@ deploy-upload-ppa:
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=OFF -DAFF3CT_COMPILE_STATIC_LIB=OFF -DAFF3CT_COMPILE_SHARED_LIB=OFF -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build"
     - source ./ci/tools/threads.sh
     - ./ci/deploy-upload-ppa.sh

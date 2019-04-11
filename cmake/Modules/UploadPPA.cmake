@@ -139,8 +139,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
                        WORKING_DIRECTORY ${DEBIAN_SOURCE_DIR})
 
     add_custom_target(debuild_${DISTRI} ALL
-                      DEPENDS ${DEBIAN_SOURCE_DIR}/CMakeLists.txt aff3ct-bin
-                              ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEBIAN_SOURCE_CHANGES}
+                      DEPENDS ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEBIAN_SOURCE_CHANGES}
                       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI})
 
     # ##############################################################################
