@@ -30,7 +30,9 @@ option(AFF3CT_COLORS             "Enable the colors in the terminal"            
 option(AFF3CT_OVERRIDE_VERSION   "Compile without .git directory, provided a version and hash"               OFF)
 
 if (AFF3CT_COMPILE_EXE OR AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
-    set(AFF3CT_COMPILE_OBJ)
+    set(AFF3CT_COMPILE_OBJ ON)
+else()
+    set(AFF3CT_COMPILE_OBJ OFF)
 endif()
 
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND NOT AFF3CT_OVERRIDE_VERSION)
