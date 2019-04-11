@@ -5,7 +5,12 @@ cmake --version
 mkdir build
 cd build
 
-export GPG_TTY=$(tty)
+if [ -z "DISTRIBS" ]
+then
+	echo "Please define the 'DISTRIBS' environment variable."
+	exit 1
+fi
+
 
 if [ -z "$CXX" ]
 then
@@ -30,20 +35,18 @@ then
 	cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=$CXX \
 	         -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="$CFLAGS" \
 	         $CMAKE_OPT -DCMAKE_INSTALL_PREFIX="$NAME" \
-	         -DAFF3CT_UPLOAD_PPA="ON"
+	         -DAFF3CT_UPLOAD_PPA="ON" \
+	         -DAFF3CT_PPA_DISTRIB="$DISTRIBS"
 	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 else
 	cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=$CXX \
 	         -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="$CFLAGS" \
 	         -DCMAKE_EXE_LINKER_FLAGS="$LFLAGS" \
 	         $CMAKE_OPT -DCMAKE_INSTALL_PREFIX="$NAME" \
-	         -DAFF3CT_UPLOAD_PPA="ON"
+	         -DAFF3CT_UPLOAD_PPA="ON"\
+	         -DAFF3CT_PPA_DISTRIB="$DISTRIBS"
 	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 fi
 
 make -j $THREADS -k
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-rm -rf $NAME
-make install > /dev/null
-rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-mv $NAME ../
