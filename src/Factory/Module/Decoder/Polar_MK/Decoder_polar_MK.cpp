@@ -1,7 +1,9 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Documentation/documentation.h"
 
 #include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp"
 #include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp"
+#include "Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive.hpp"
 
 #include "Decoder_polar_MK.hpp"
 
@@ -39,22 +41,35 @@ void Decoder_polar_MK::parameters
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Decoder_polar_MK::parameters::";
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "SC");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL");
 
 	args.at({p+"-implem"})->change_type(tools::Text(tools::Example_set("NAIVE")));
+
+	tools::add_arg(args, p, class_name+"p+lists,L",
+		tools::Integer(tools::Positive(), tools::Non_zero()));
 }
 
 void Decoder_polar_MK::parameters
 ::store(const tools::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(vals.exist({p+"-lists", "L"})) this->L = vals.to_int({p+"-lists", "L"});
 }
 
 void Decoder_polar_MK::parameters
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	Decoder::parameters::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	if (this->type == "SCL" || this->type == "SCL_MEM")
+		headers[p].push_back(std::make_pair("Num. of lists (L)", std::to_string(this->L)));
 }
 
 template <typename B, typename Q>
@@ -74,7 +89,8 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK::parameters
 			{
 				if (crc == nullptr || crc->get_size() == 0)
 				{
-					if (this->type == "SC") return new module::Decoder_polar_MK_SC_naive<B,Q>(this->K, this->N_cw, code, frozen_bits, this->n_frames);
+					if (this->type == "SC")  return new module::Decoder_polar_MK_SC_naive <B,Q>(this->K, this->N_cw,          code, frozen_bits, this->n_frames);
+					if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, this->n_frames);
 				}
 			}
 		}

@@ -517,6 +517,9 @@
 #ifndef DECODER_POLAR_MK_SC_NAIVE_SYS_
 #include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp>
 #endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE
+#include <Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive.hpp>
+#endif
 #ifndef DECODER_POLAR_SCAN_NAIVE_H_
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp>
 #endif
@@ -1020,6 +1023,9 @@
 #endif
 #ifndef GENERIC_TREE_HPP_
 #include <Tools/Algo/Tree/Generic/Generic_tree.hpp>
+#endif
+#ifndef GENERIC_TREE_METRIC_HPP_
+#include <Tools/Algo/Tree/Generic/Generic_tree_metric.hpp>
 #endif
 #ifndef ARGUMENT_HANDLER_HPP_
 #include <Tools/Arguments/Argument_handler.hpp>

@@ -70,22 +70,6 @@ template <typename B>
 void Encoder_polar_MK<B>
 ::light_encode(B *X_N)
 {
-	// std::cout << "frozen: [";
-	// for (auto e = 0; e < this->N; e++)
-	// {
-	// 	if (e > 0) std::cout << ",";
-	// 	std::cout << frozen_bits[e];
-	// }
-	// std::cout << "]" << std::endl;
-
-	// std::cout << "X_N: [";
-	// for (auto e = 0; e < this->N; e++)
-	// {
-	// 	if (e > 0) std::cout << ",";
-	// 	std::cout << X_N[e];
-	// }
-	// std::cout << "]" << std::endl;
-
 	auto apply_polar_kernel = [](const B *u, const uint32_t *idx, const B *Ke, B *x, const int size)
 	{
 		for (auto i = 0; i < size; i++)
@@ -120,15 +104,6 @@ void Encoder_polar_MK<B>
 				                   X_N,
 				                   kernel_size);
 			}
-
-			// std::cout << "stage " << s << " - block " << b << ": [";
-			// for (auto e = 0; e < n_kernels * kernel_size; e++)
-			// {
-			// 	if (e > 0)
-			// 		std::cout << ",";
-			// 	std::cout << X_N[b * n_kernels * kernel_size + e];
-			// }
-			// std::cout << "]" << std::endl;
 		}
 
 		n_kernels *= kernel_size;

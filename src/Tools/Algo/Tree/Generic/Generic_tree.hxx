@@ -79,7 +79,8 @@ void Generic_tree<T>
 			                                 std::vector<Generic_node<T>*>(),
 			                                 nullptr,
 			                                 cur_depth,
-			                                 lanes[cur_depth]++);
+			                                 lanes[cur_depth]++,
+			                                 c);
 			cur_node->children.push_back(child);
 			this->create_nodes(child, cur_depth +1, lanes, sequence);
 		}

@@ -364,6 +364,9 @@
 
 .. ---------------------------------------- factory Decoder_polar_MK parameters
 
+.. |factory::Decoder_polar_MK::parameters::p+lists,L| replace::
+   Set the number of lists to maintain in the |SCL| decoder.
+
 .. ---------------------------------------------- factory Decoder_RA parameters
 
 .. |factory::Decoder_RA::parameters::p+ite,i| replace::

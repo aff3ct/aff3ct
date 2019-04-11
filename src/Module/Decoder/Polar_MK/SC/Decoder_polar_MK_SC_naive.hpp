@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "Tools/Algo/Tree/Generic/Generic_tree.hpp"
-#include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
 

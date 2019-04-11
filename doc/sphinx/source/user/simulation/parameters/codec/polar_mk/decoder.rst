@@ -22,6 +22,8 @@ Description of the allowed values:
 +==============+===============================================================+
 | ``SC``       | Select the original |SC| algorithm from :cite:`Arikan2009`.   |
 +--------------+---------------------------------------------------------------+
+| ``SCL``      | Select the |SCL| algorithm from :cite:`Tal2011`.              |
++--------------+---------------------------------------------------------------+
 | ``CHASE``    | See the common :ref:`dec-common-dec-type` parameter.          |
 +--------------+---------------------------------------------------------------+
 | ``ML``       | See the common :ref:`dec-common-dec-type` parameter.          |
@@ -49,6 +51,17 @@ Description of the allowed values:
 
 .. |dec-implem_descr_naive| replace:: Select the naive implementation which is
    typically slow.
+
+.. _dec-polar_mk-dec-lists:
+
+``--dec-lists, -L``
+"""""""""""""""""""
+
+   :Type: integer
+   :Default: ``8``
+   :Examples: ``--dec-lists 1``
+
+|factory::Decoder_polar_MK::parameters::p+lists,L|
 
 References
 """"""""""

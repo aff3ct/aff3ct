@@ -10,8 +10,9 @@ Generic_node<T>
                std::vector<Generic_node<T>*> children,
                T* content,
                int depth,
-               int lane_id)
-: father(father), children(children), contents(content), depth(depth), lane_id(lane_id)
+               int lane_id,
+               int child_id)
+: father(father), children(children), contents(content), depth(depth), lane_id(lane_id), child_id(child_id)
 {
 }
 
@@ -99,6 +100,13 @@ int Generic_node<T>
 }
 
 template <typename T>
+int Generic_node<T>
+::get_child_id() const
+{
+	return this->child_id;
+}
+
+template <typename T>
 bool Generic_node<T>
 ::cut_child(const size_t pos)
 {
@@ -106,6 +114,10 @@ bool Generic_node<T>
 	{
 		delete this->children[pos];
 		this->children.erase(this->children.begin() + pos);
+
+		for (auto c = 0; c < this->children.size(); c++)
+			this->children[c].child_id = c;
+
 		return true;
 	}
 	else

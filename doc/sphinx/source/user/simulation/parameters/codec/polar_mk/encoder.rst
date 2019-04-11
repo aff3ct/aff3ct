@@ -51,7 +51,7 @@ Description of the allowed values:
 
    :Type: list of (list of (boolean:including set={0|1}):limited length [1;inf]), elements of same length
    :Default: ``"10,11"``
-   :Examples: ``--enc-kernel "111,101,011"``
+   :Examples: ``--enc-pc-kernel "111,101,011"``
 
 |factory::Polar_code::parameters::p+kernel|
 
@@ -66,7 +66,7 @@ size :math:`s`. For traditional Polar codes :math:`s = 2`.
 
    :Type: file
    :Rights: read only
-   :Examples: ``--enc-code-path example/path/to/the/right/place/``
+   :Examples: ``--enc-pc-path example/path/to/the/right/place/``
 
 |factory::Polar_code::parameters::p+path|
 

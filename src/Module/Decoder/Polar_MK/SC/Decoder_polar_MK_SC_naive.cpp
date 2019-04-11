@@ -3,6 +3,7 @@
 #include <sstream>
 #include <algorithm>
 
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
@@ -41,14 +42,6 @@ Decoder_polar_MK_SC_naive<B,R>
 {
 	const std::string name = "Decoder_polar_MK_SC_naive";
 	this->set_name(name);
-
-	const auto base = code.get_kernel_matrices()[0].size();
-	if (base < 2)
-	{
-		std::stringstream message;
-		message << "'base' has to be bigger or equal to 2 ('base' = " << base << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 
 	if (this->N != code.get_codeword_size())
 	{
@@ -378,29 +371,23 @@ template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
 ::recursive_store(const tools::Generic_node<Contents_MK_SC<B,R>>* node_curr, B *V_K, int &k) const
 {
-	auto *contents = node_curr->get_contents();
-
 	if (!node_curr->is_leaf()) // stop condition
 		for (auto c : node_curr->get_children())
 			this->recursive_store(c, V_K, k); // recursive call
 	else
 		if (!frozen_bits[node_curr->get_lane_id()])
-			V_K[k++] = contents->s[0];
+			V_K[k++] = node_curr->get_contents()->s[0];
 }
 
 template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
 ::recursive_deallocate_nodes_contents(tools::Generic_node<Contents_MK_SC<B,R>>* node_curr)
 {
-	if (node_curr != nullptr)
-	{
-		for (auto c : node_curr->get_children())
-			this->recursive_deallocate_nodes_contents(c); // recursive call
+	for (auto c : node_curr->get_children())
+		this->recursive_deallocate_nodes_contents(c); // recursive call
 
-		auto *contents = node_curr->get_contents();
-		delete contents;
-		node_curr->set_contents(nullptr);
-	}
+	delete node_curr->get_contents();
+	node_curr->set_contents(nullptr);
 }
 
 // ==================================================================================== explicit template instantiation

@@ -41,6 +41,8 @@ private:
 	const int depth;   /*!< Depth   of this node (vertical   indexing). */
 	const int lane_id; /*!< Lane id of this node (horizontal indexing). */
 
+	int child_id;
+
 public:
 	/*!
 	 * \brief Constructor.
@@ -56,7 +58,8 @@ public:
 	             std::vector<Generic_node<T>*> children,
 	             T* contents,
 	             int depth,
-	             int lane_id);
+	             int lane_id,
+	             int child_id = -1);
 
 	/*!
 	 * \brief Destructor.
@@ -137,6 +140,8 @@ public:
 	 * \return Returns the lane id of this node (horizontal indexing).
 	 */
 	inline int get_lane_id() const;
+
+	inline int get_child_id() const;
 
 	inline bool cut_child(const size_t pos);
 
