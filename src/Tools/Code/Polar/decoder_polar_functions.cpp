@@ -20,7 +20,12 @@ aff3ct::tools::Polar_lambdas<B,R>::functions = {
 
 			return sign ? -min : min;
 		},
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1) -> R
+#else
 		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
 		{
 			return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + LLRs[1];
 		}
@@ -31,7 +36,13 @@ aff3ct::tools::Polar_lambdas<B,R>::functions = {
 	 {1,0,1},
 	 {0,1,1}},
 	{
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1,
+		                                                           int b = 1) -> R
+#else
 		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
 		{
 			auto sign = std::signbit((float)LLRs[0]) ^ std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[2]);
 			auto abs0 = (R)std::abs(LLRs[0]);
@@ -41,18 +52,29 @@ aff3ct::tools::Polar_lambdas<B,R>::functions = {
 
 			return sign ? -min : min;
 		},
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1, int b = 1, int c = 1) -> R
+#else
 		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
 		{
 			auto sign = std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[2]);
 			auto abs1 = (R)std::abs(LLRs[1]);
 			auto abs2 = (R)std::abs(LLRs[2]);
 			auto min = std::min(abs1, abs2);
 
-			auto l1_l2 = sign ? -min : min;
+			auto l1_x_l2 = sign ? -min : min;
 
-			return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + l1_l2;
+			return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + l1_x_l2;
 		},
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1, int b = 1, int c = 1,
+		                                                           int d = 1) -> R
+#else
 		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
 		{
 			return (( bits[0]            == 0) ? LLRs[1] : -LLRs[1]) +
 			       (((bits[0] ^ bits[1]) == 0) ? LLRs[2] : -LLRs[2]);
@@ -64,7 +86,13 @@ aff3ct::tools::Polar_lambdas<B,R>::functions = {
 	 {1,1,0},
 	 {1,0,1}},
 	{
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1, int b = 1, int c = 1,
+		                                                           int d = 1, int e = 1) -> R
+#else
 		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
 		{
 			auto sign = std::signbit((float)LLRs[0]) ^ std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[2]);
 			auto abs0 = (R)std::abs(LLRs[0]);
@@ -74,7 +102,13 @@ aff3ct::tools::Polar_lambdas<B,R>::functions = {
 
 			return sign ? -min : min;
 		},
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1, int b = 1, int c = 1,
+		                                                           int d = 1, int e = 1, int f = 1) -> R
+#else
 		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
 		{
 			auto hl0 = (bits[0] == 0) ? LLRs[0] : -LLRs[0];
 
@@ -82,15 +116,115 @@ aff3ct::tools::Polar_lambdas<B,R>::functions = {
 			auto abs0 = (R)std::abs(hl0);
 			auto abs2 = (R)std::abs(LLRs[2]);
 			auto min = std::min(abs0, abs2);
-			auto hl0_l2 = sign ? -min : min;
+			auto hl0_x_l2 = sign ? -min : min;
 
-			return hl0_l2 + LLRs[1];
+			return hl0_x_l2 + LLRs[1];
 		},
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1, int b = 1, int c = 1,
+		                                                           int d = 1, int e = 1, int f = 1,
+		                                                           int g = 1) -> R
+#else
 		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
 		{
 			auto hl0 = ((bits[0] ^ bits[1]) == 0) ? LLRs[0] : -LLRs[0];
 
 			return hl0 + LLRs[2];
+		}
+	}
+},
+{
+	{{1,0,0,0},
+	 {1,1,0,0},
+	 {1,0,1,0},
+	 {1,1,1,1}},
+	{
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1, int b = 1, int c = 1,
+		                                                           int d = 1, int e = 1, int f = 1,
+		                                                           int g = 1, int h = 1) -> R
+#else
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
+		{
+			auto sign = std::signbit((float)LLRs[0]) ^
+			            std::signbit((float)LLRs[1]) ^
+			            std::signbit((float)LLRs[2]) ^
+			            std::signbit((float)LLRs[3]);
+			auto abs0 = (R)std::abs(LLRs[0]);
+			auto abs1 = (R)std::abs(LLRs[1]);
+			auto abs2 = (R)std::abs(LLRs[2]);
+			auto abs3 = (R)std::abs(LLRs[3]);
+			auto min = std::min(std::min(std::min(abs0, abs1), abs2), abs3);
+
+			return sign ? -min : min;
+		},
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1, int b = 1, int c = 1,
+		                                                           int d = 1, int e = 1, int f = 1,
+		                                                           int g = 1, int h = 1, int i = 1) -> R
+#else
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
+		{
+			auto hl0 = (bits[0] == 0) ? LLRs[0] : -LLRs[0];
+
+			auto sign = std::signbit((float)hl0) ^ std::signbit((float)LLRs[2]);
+			auto abs0 = (R)std::abs(hl0);
+			auto abs2 = (R)std::abs(LLRs[2]);
+			auto min = std::min(abs0, abs2);
+			auto hl0_x_l2 = sign ? -min : min;
+
+			sign = std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[3]);
+			auto abs1 = (R)std::abs(LLRs[1]);
+			auto abs3 = (R)std::abs(LLRs[3]);
+			min = std::min(abs1, abs3);
+			auto l1_x_l3 = sign ? -min : min;
+
+			return hl0_x_l2 + l1_x_l3;
+		},
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1, int b = 1, int c = 1,
+		                                                           int d = 1, int e = 1, int f = 1,
+		                                                           int g = 1, int h = 1, int i = 1,
+		                                                           int j = 1) -> R
+#else
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
+		{
+			auto hl0 = ((bits[0] ^ bits[1]) == 0) ? LLRs[0] : -LLRs[0];
+			auto hl1 = ((          bits[1]) == 0) ? LLRs[1] : -LLRs[1];
+
+			auto hl0_p_l2 = hl0 + LLRs[2];
+			auto hl1_p_l3 = hl1 + LLRs[3];
+
+			auto sign = std::signbit((float)hl0_p_l2) ^ std::signbit((float)hl1_p_l3);
+			auto abs02 = (R)std::abs(hl0_p_l2);
+			auto abs13 = (R)std::abs(hl1_p_l3);
+			auto min = std::min(abs02, abs13);
+
+			return sign ? -min : min;
+		},
+#if defined(__clang__) || defined(__llvm__)
+		// fix clang <= 3.9 bug: "definition with same mangled name as another definition"
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits, int a = 1, int b = 1, int c = 1,
+		                                                           int d = 1, int e = 1, int f = 1,
+		                                                           int g = 1, int h = 1, int i = 1,
+		                                                           int j = 1, int k = 1) -> R
+#else
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+#endif
+		{
+			auto hl0 = ((bits[0] ^ bits[1] ^ bits[2]) == 0) ? LLRs[0] : -LLRs[0];
+			auto hl1 = ((          bits[1]          ) == 0) ? LLRs[1] : -LLRs[1];
+			auto hl2 = ((                    bits[2]) == 0) ? LLRs[2] : -LLRs[2];
+
+			return hl0 + hl1 + hl2 + LLRs[3];
 		}
 	}
 }};
