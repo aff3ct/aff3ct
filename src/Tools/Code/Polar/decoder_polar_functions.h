@@ -4,6 +4,7 @@
 #include <limits>
 #include <utility> // pair
 #include <mipp.h>
+#include <functional>
 
 #include "Tools/Math/utils.h"
 
@@ -120,6 +121,14 @@ template <typename B, typename R>
 __forceinline R phi(const R& mu, const R& lambda, const B& u);
 
 __forceinline int compute_depth(int index, int tree_depth);
+
+template <typename B, typename R>
+struct Polar_lambdas
+{
+	static std::map<std::vector<std::vector<bool>>,
+	                std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>> functions;
+};
+
 }
 }
 
