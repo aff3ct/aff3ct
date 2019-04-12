@@ -25,9 +25,14 @@ public:
 	virtual ~Contents_MK_SC() {}
 };
 
+template <typename B, typename R>
+class Decoder_polar_MK_ASCL_naive_CA;
+
 template <typename B = int, typename R = float>
 class Decoder_polar_MK_SC_naive : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
 {
+	friend Decoder_polar_MK_ASCL_naive_CA<B,R>;
+
 protected:
 	const tools::Polar_code &code;
 	const std::vector<bool> &frozen_bits;

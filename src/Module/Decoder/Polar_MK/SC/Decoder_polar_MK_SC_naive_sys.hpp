@@ -9,9 +9,15 @@ namespace aff3ct
 {
 namespace module
 {
+
+template <typename B, typename R>
+class Decoder_polar_MK_ASCL_naive_CA_sys;
+
 template <typename B = int, typename R = float>
 class Decoder_polar_MK_SC_naive_sys : public Decoder_polar_MK_SC_naive<B,R>
 {
+	friend Decoder_polar_MK_ASCL_naive_CA_sys<B,R>;
+
 public:
 	Decoder_polar_MK_SC_naive_sys(const int&               K,
 	                              const int&               N,

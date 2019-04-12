@@ -95,43 +95,47 @@ Encoder_polar_MK_sys<B>
 	this->set_name(name);
 	this->set_sys(true);
 
-	// generate the "G" matrix from the "kernel_matrices"
-	auto G = this->code.get_kernel_matrices()[this->code.get_stages()[0]];
-	for (auto s = 1; s < (int)this->code.get_stages().size(); s++)
-		G = kronecker_product<bool>(G, this->code.get_kernel_matrices()[this->code.get_stages()[s]]);
+	////////////////////////////////////////////////////////////////////////////
+	// /!\ The following lines are commented because they take too many time! //
+	////////////////////////////////////////////////////////////////////////////
 
-	// compute the "G x G" product
-	auto G_x_G = G;
-	for (auto i = 0; i < (int)G.size(); i++)
-		for (auto j = 0; j < (int)G.size(); j++)
-		{
-			uint32_t sum_r = 0;
-			for (auto k = 0; k < (int)G.size(); k++)
-				sum_r += (uint32_t)(G[i][k] & G[k][j]);
-			G_x_G[i][j] = (bool)(sum_r & (B)1);
-		}
+	// // generate the "G" matrix from the "kernel_matrices"
+	// auto G = this->code.get_kernel_matrices()[this->code.get_stages()[0]];
+	// for (auto s = 1; s < (int)this->code.get_stages().size(); s++)
+	// 	G = kronecker_product<bool>(G, this->code.get_kernel_matrices()[this->code.get_stages()[s]]);
 
-	// check if "G x G" is the identity matrix
-	for (auto i = 0; i < (int)G_x_G.size(); i++)
-		for (auto j = 0; j < (int)G_x_G.size(); j++)
-			if (i == j && G_x_G[i][j] != true)
-			{
-				std::stringstream message;
-				message << "'G_x_G' has to be the identity matrix ("
-				        << "'i' = " << i << ", "
-				        << "'j' = " << j << ", "
-				        << "'G_x_G[i][j]' = " << G_x_G[i][j] << ").";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-			else if (i != j && G_x_G[i][j] != false)
-			{
-				std::stringstream message;
-				message << "'G_x_G' has to be the identity matrix ("
-				        << "'i' = " << i << ", "
-				        << "'j' = " << j << ", "
-				        << "'G_x_G[i][j]' = " << G_x_G[i][j] << ").";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
+	// // compute the "G x G" product
+	// auto G_x_G = G;
+	// for (auto i = 0; i < (int)G.size(); i++)
+	// 	for (auto j = 0; j < (int)G.size(); j++)
+	// 	{
+	// 		uint32_t sum_r = 0;
+	// 		for (auto k = 0; k < (int)G.size(); k++)
+	// 			sum_r += (uint32_t)(G[i][k] & G[k][j]);
+	// 		G_x_G[i][j] = (bool)(sum_r & (B)1);
+	// 	}
+
+	// // check if "G x G" is the identity matrix
+	// for (auto i = 0; i < (int)G_x_G.size(); i++)
+	// 	for (auto j = 0; j < (int)G_x_G.size(); j++)
+	// 		if (i == j && G_x_G[i][j] != true)
+	// 		{
+	// 			std::stringstream message;
+	// 			message << "'G_x_G' has to be the identity matrix ("
+	// 			        << "'i' = " << i << ", "
+	// 			        << "'j' = " << j << ", "
+	// 			        << "'G_x_G[i][j]' = " << G_x_G[i][j] << ").";
+	// 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	// 		}
+	// 		else if (i != j && G_x_G[i][j] != false)
+	// 		{
+	// 			std::stringstream message;
+	// 			message << "'G_x_G' has to be the identity matrix ("
+	// 			        << "'i' = " << i << ", "
+	// 			        << "'j' = " << j << ", "
+	// 			        << "'G_x_G[i][j]' = " << G_x_G[i][j] << ").";
+	// 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	// 		}
 }
 
 template <typename B>

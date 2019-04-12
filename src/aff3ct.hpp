@@ -511,6 +511,12 @@
 #ifndef DECODER_POLAR_ASCL_MEM_FAST_SYS_CA
 #include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp>
 #endif
+#ifndef DECODER_POLAR_MK_ASCL_NAIVE_CA
+#include <Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_ASCL_NAIVE_CA_SYS
+#include <Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA_sys.hpp>
+#endif
 #ifndef DECODER_POLAR_MK_SC_NAIVE_
 #include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp>
 #endif

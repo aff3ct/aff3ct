@@ -7,6 +7,8 @@
 #include "Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive_sys.hpp"
 #include "Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA.hpp"
 #include "Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA_sys.hpp"
+#include "Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA.hpp"
+#include "Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA_sys.hpp"
 
 #include "Decoder_polar_MK.hpp"
 
@@ -46,7 +48,7 @@ void Decoder_polar_MK::parameters
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Decoder_polar_MK::parameters::";
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL");
+	tools::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL", "ASCL");
 
 	args.at({p+"-implem"})->change_type(tools::Text(tools::Example_set("NAIVE")));
 
@@ -97,7 +99,8 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK::parameters
 				}
 				else
 				{
-					if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive_CA<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, *crc, this->n_frames);
+					if (this->type == "SCL" ) return new module::Decoder_polar_MK_SCL_naive_CA <B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, *crc, this->n_frames);
+					if (this->type == "ASCL") return new module::Decoder_polar_MK_ASCL_naive_CA<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, *crc, this->n_frames);
 				}
 			}
 		}
@@ -112,7 +115,8 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK::parameters
 				}
 				else
 				{
-					if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive_CA_sys<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, *crc, this->n_frames);
+					if (this->type == "SCL" ) return new module::Decoder_polar_MK_SCL_naive_CA_sys <B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, *crc, this->n_frames);
+					if (this->type == "ASCL") return new module::Decoder_polar_MK_ASCL_naive_CA_sys<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, *crc, this->n_frames);
 				}
 			}
 		}
