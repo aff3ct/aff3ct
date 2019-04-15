@@ -8,12 +8,30 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 std::map<std::vector<std::vector<bool>>,
          std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>>
-aff3ct::tools::Polar_lambdas<B,R>::functions = {};
+aff3ct::tools::Polar_lambdas<B,R>::functions = {
+{
+	{{1}},
+	{
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			return LLRs[0];
+		}
+	}
+}};
 #else
 template <typename B, typename R>
 std::map<std::vector<std::vector<bool>>,
          std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>>
 aff3ct::tools::Polar_lambdas<B,R>::functions = {
+{
+	{{1}},
+	{
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			return LLRs[0];
+		}
+	}
+},
 {
 	{{1,0},
 	 {1,1}},
