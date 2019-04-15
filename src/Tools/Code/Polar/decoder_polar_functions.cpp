@@ -1,24 +1,10 @@
+#if !defined(__clang__) && !defined(__llvm__)
+
 #include "decoder_polar_functions.h"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-#if defined(__clang__) || defined(__llvm__)
-// hotfix clang bug: "definition with same mangled name as another definition"
-template <typename B, typename R>
-std::map<std::vector<std::vector<bool>>,
-         std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>>
-aff3ct::tools::Polar_lambdas<B,R>::functions = {
-{
-	{{1}},
-	{
-		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
-		{
-			return LLRs[0];
-		}
-	}
-}};
-#else
 template <typename B, typename R>
 std::map<std::vector<std::vector<bool>>,
          std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>>
@@ -182,7 +168,6 @@ aff3ct::tools::Polar_lambdas<B,R>::functions = {
 		}
 	}
 }};
-#endif
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
@@ -195,3 +180,5 @@ template struct aff3ct::tools::Polar_lambdas<B_64,Q_64>;
 template struct aff3ct::tools::Polar_lambdas<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
+
+#endif

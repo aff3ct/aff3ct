@@ -97,6 +97,7 @@ Decoder_polar_MK_SCL_naive<B,R>
 				this->Ke[ke][i * kernel_size +j] = (B)this->code.get_kernel_matrices()[ke][j][i];
 	}
 
+#if !defined(__clang__) && !defined(__llvm__)
 	for (size_t l = 0; l < lambdas.size(); l++)
 	{
 		if (tools::Polar_lambdas<B,R>::functions.find(code.get_kernel_matrices()[l]) ==
@@ -104,6 +105,11 @@ Decoder_polar_MK_SCL_naive<B,R>
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported polar kernel.");
 		lambdas[l] = tools::Polar_lambdas<B,R>::functions[code.get_kernel_matrices()[l]];
 	}
+#else
+	std::stringstream message;
+	message << "This decoder is not supported by Clang at this time.";
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+#endif
 }
 
 template <typename B, typename R>

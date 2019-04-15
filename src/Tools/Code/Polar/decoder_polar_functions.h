@@ -122,13 +122,14 @@ __forceinline R phi(const R& mu, const R& lambda, const B& u);
 
 __forceinline int compute_depth(int index, int tree_depth);
 
+#if !defined(__clang__) && !defined(__llvm__)
 template <typename B, typename R>
 struct Polar_lambdas
 {
 	static std::map<std::vector<std::vector<bool>>,
 	                std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>> functions;
 };
-
+#endif
 }
 }
 
