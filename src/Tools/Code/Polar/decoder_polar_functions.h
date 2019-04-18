@@ -7,6 +7,7 @@
 #include <functional>
 
 #include "Tools/Math/utils.h"
+#include "Tools/Code/Polar/Polar_code.hpp"
 
 #ifndef _MSC_VER
 #ifndef __forceinline
@@ -128,6 +129,33 @@ struct Polar_lambdas
 	static std::map<std::vector<std::vector<bool>>,
 	                std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>> functions;
 };
+
+template <typename R>
+using proto_xor = R (*)(const R& lambda_a, const R& lambda_b);
+
+template <typename R>
+using proto_plus = R (*)(const R& lambda_a, const R& lambda_b);
+
+
+template <typename R>
+__forceinline R square_plus(const R& lambda_a, const R& lambda_b);
+
+template <typename R>
+__forceinline R plus(const R& lambda_a, const R& lambda_b);
+
+
+template <typename B, typename R, proto_xor <R> X = square_plus,
+                                  proto_plus<R> P = plus>
+struct Polar_lambdas_bis
+{
+private:
+	static R h(const R &L, const std::vector<B> &u, const std::vector<bool> &m);
+
+public:
+	static std::map<std::vector<std::vector<bool>>,
+	                std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>> functions;
+};
+
 }
 }
 

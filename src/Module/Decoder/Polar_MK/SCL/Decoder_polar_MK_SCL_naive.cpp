@@ -99,10 +99,10 @@ Decoder_polar_MK_SCL_naive<B,R>
 
 	for (size_t l = 0; l < lambdas.size(); l++)
 	{
-		if (tools::Polar_lambdas<B,R>::functions.find(code.get_kernel_matrices()[l]) ==
-		    tools::Polar_lambdas<B,R>::functions.end())
+		if (tools::Polar_lambdas_bis<B,R>::functions.find(code.get_kernel_matrices()[l]) ==
+		    tools::Polar_lambdas_bis<B,R>::functions.end())
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported polar kernel.");
-		lambdas[l] = tools::Polar_lambdas<B,R>::functions[code.get_kernel_matrices()[l]];
+		lambdas[l] = tools::Polar_lambdas_bis<B,R>::functions[code.get_kernel_matrices()[l]];
 	}
 }
 

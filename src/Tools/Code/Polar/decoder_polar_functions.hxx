@@ -467,5 +467,152 @@ Polar_lambdas<B,R>::functions = {
 	}
 }};
 
+template <typename R>
+R square_plus(const R& ll, const R& lr)
+{
+	auto sign = std::signbit((float)ll) ^ std::signbit((float)lr);
+	auto absl = (R)std::abs(ll);
+	auto absr = (R)std::abs(lr);
+	auto min = std::min(absl, absr);
+
+	return sign ? -min : min;
+}
+
+template <typename R>
+R plus(const R& ll, const R& lr)
+{
+	return ll + lr;
+}
+
+template <typename B, typename R, proto_xor<R> X, proto_plus<R> P>
+R Polar_lambdas_bis<B,R,X,P>
+::h(const R &L, const std::vector<B> &u, const std::vector<bool> &m)
+{
+	bool switch_sign = false;
+	for (size_t i = 0; i < m.size(); i++)
+		switch_sign ^= m[i] & u[i];
+
+	return switch_sign ? -L : L;
+}
+
+template <typename B, typename R, proto_xor<R> X, proto_plus<R> P>
+std::map<std::vector<std::vector<bool>>,
+         std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>>
+Polar_lambdas_bis<B,R,X,P>::functions = {
+{
+	{{1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return L[0];
+		}
+	}
+},
+{
+	{{1,0},
+	 {1,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(L[0], L[1]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(h(L[0],u,{1}), L[1]);
+		}
+	}
+},
+{
+	{{1,1,1},
+	 {1,0,1},
+	 {0,1,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(L[0], L[1]), L[2]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(h(L[0],u,{1}), X(L[1], L[2]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(h(L[1],u,{1,0}), h(L[2],u,{1,1}));
+		}
+	}
+},
+{
+	{{1,0,0},
+	 {1,1,0},
+	 {1,0,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(L[0], L[1]), L[2]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(X(h(L[0],u,{1}), L[2]), L[1]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(h(L[0],u,{1,1}), L[2]);
+		}
+	}
+},
+{
+	{{1,0,0,0},
+	 {1,1,0,0},
+	 {1,0,1,0},
+	 {1,1,1,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(X(L[0], L[1]), L[2]), L[3]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(X(h(L[0],u,{1}), L[2]), X(L[1], L[2]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(P(h(L[0],u,{1,1}), L[2]), P(h(L[1],u,{0,1}), L[3]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(P(P(h(L[0],u,{1,1,1}), h(L[1],u,{0,1,0})), h(L[2],u,{0,0,1})), L[3]);
+		}
+	}
+},
+{
+	{{1,0,0,0,0},
+	 {1,1,0,0,0},
+	 {1,0,1,0,0},
+	 {1,0,0,1,0},
+	 {1,1,1,0,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(X(X(L[0], L[1]), L[2]), L[3]), L[4]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(X(X(h(L[0],u,{1}), L[2]), L[3]), X(L[1], L[4]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(P(h(L[1],u,{0,1}), L[4]), P(L[2], X(h(L[0],u,{1,1}), L[3])));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(L[3], (X(h(L[0],u,{1,1,1}), P(P(h(L[1],u,{0,1,0}), h(L[2],u,{0,0,1})), L[3]))));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return P(P(P(h(L[0],u,{1,1,1,1}), h(L[1],u,{0,1,0,0})), h(L[2],u,{0,0,1,0})), L[4]);
+		}
+	}
+}};
+
 }
 }
