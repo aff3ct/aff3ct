@@ -3,6 +3,7 @@
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA_Arikan.hpp"
 
 #include "Frozenbits_generator_MK.hpp"
 
@@ -42,7 +43,7 @@ void Frozenbits_generator_MK::parameters
 		tools::Real(tools::Positive(), tools::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+gen-method",
-		tools::Text(tools::Including_set("FILE", "GA")));
+		tools::Text(tools::Including_set("FILE", "GA", "GAA")));
 
 	tools::add_arg(args, p, class_name+"p+awgn-path",
 		tools::Path(tools::openmode::read));
@@ -76,8 +77,9 @@ void Frozenbits_generator_MK::parameters
 tools::Frozenbits_generator* Frozenbits_generator_MK::parameters
 ::build(const tools::Polar_code &pc) const
 {
-	if (this->type == "GA" && pc.is_mono_kernel()) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw, pc.get_kernel_matrices()[0].size());
-	if (this->type == "FILE"                     ) return new tools::Frozenbits_generator_file(this->K, this->N_cw, this->path_fb);
+	if (this->type == "GAA" && pc.is_mono_kernel() == 2) return new tools::Frozenbits_generator_GA_Arikan(this->K, this->N_cw               );
+	if (this->type == "GA"                             ) return new tools::Frozenbits_generator_GA       (this->K, this->N_cw, pc           );
+	if (this->type == "FILE"                           ) return new tools::Frozenbits_generator_file     (this->K, this->N_cw, this->path_fb);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

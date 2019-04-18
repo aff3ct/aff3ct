@@ -11,6 +11,10 @@
 
 namespace aff3ct
 {
+namespace tools
+{
+class Frozenbits_generator_GA;
+}
 namespace module
 {
 template <typename B = int, typename R = float>
@@ -32,6 +36,7 @@ template <typename B = int, typename R = float>
 class Decoder_polar_MK_SC_naive : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
 {
 	friend Decoder_polar_MK_ASCL_naive_CA<B,R>;
+	friend tools::Frozenbits_generator_GA;
 
 protected:
 	const tools::Polar_code &code;

@@ -4,6 +4,10 @@
 #include <limits>
 #include <vector>
 
+#include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp"
+
+#include "Tools/Code/Polar/Polar_code.hpp"
+
 #include "Frozenbits_generator.hpp"
 
 namespace aff3ct
@@ -13,33 +17,41 @@ namespace tools
 class Frozenbits_generator_GA : public Frozenbits_generator
 {
 private:
-	const int base;
-	const int m;
+	const Polar_code& code;
 	std::vector<double> z;
 
-	const double alpha = -0.4527;
-	const double beta  =  0.0218;
-	const double gamma =  0.8600;
+	static constexpr double alpha = -0.4527;
+	static constexpr double beta  =  0.0218;
+	static constexpr double gamma =  0.8600;
 
-	const double a =  1.0  / alpha;
-	const double b = -beta / alpha;
-	const double c =  1.0  / gamma;
+	static constexpr double a =  1.0  / alpha;
+	static constexpr double b = -beta / alpha;
+	static constexpr double c =  1.0  / gamma;
 
-	const double phi_pivot     = 0.867861;
-	const double phi_inv_pivot = 0.6845772418;
+	static constexpr double phi_pivot     = 0.867861;
+	static constexpr double phi_inv_pivot = 0.6845772418;
 
-	const double bisection_max = std::numeric_limits<double>::max();
+	static constexpr double bisection_max = std::numeric_limits<double>::max();
+
+	std::vector<bool> fake_frozen_bits;
+	module::Decoder_polar_MK_SC_naive<int64_t, double> decoder_sc;
 
 public:
-	Frozenbits_generator_GA(const int K, const int N, const int base = 2);
+	Frozenbits_generator_GA(const int K, const int N, const Polar_code& code);
 
 	virtual ~Frozenbits_generator_GA() = default;
 
 protected:
-	void   evaluate();
-	double phi    (double t);
-	double phi_inv(double t);
+	void evaluate();
+	static double phi    (double t);
+	static double phi_inv(double t);
 	virtual void check_noise();
+
+	void recursive_override_frozen_bits(const Generic_node<module::Contents_MK_SC<int64_t, double>>* node_curr);
+	void recursive_store_DE(const Generic_node<module::Contents_MK_SC<int64_t, double>>* node_curr, double *z) const;
+
+	static double square_plus_DE(const double& ll, const double& lr);
+	static double plus_DE       (const double& ll, const double& lr);
 };
 }
 }

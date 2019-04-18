@@ -29,7 +29,7 @@ public:
 
 	virtual ~Polar_code() = default;
 
-	bool is_mono_kernel() const;
+	size_t is_mono_kernel() const;
 	int get_codeword_size() const;
 	const std::vector<std::vector<std::vector<bool>>>& get_kernel_matrices() const;
 	const std::vector<uint32_t>& get_stages() const;

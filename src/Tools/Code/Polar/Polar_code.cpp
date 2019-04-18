@@ -383,10 +383,14 @@ void Polar_code
 	}
 }
 
-bool Polar_code
+size_t Polar_code
 ::is_mono_kernel() const
 {
-	return true;
+	auto type = stages[0];
+	for (size_t s = 1; s < stages.size(); s++)
+		if (stages[s] != type)
+			return 0;
+	return this->get_kernel_matrices()[0].size();
 }
 
 int Polar_code

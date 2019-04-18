@@ -292,5 +292,8 @@ template class aff3ct::module::Decoder_polar_MK_SC_naive<B_32,Q_32>;
 template class aff3ct::module::Decoder_polar_MK_SC_naive<B_64,Q_64>;
 #else
 template class aff3ct::module::Decoder_polar_MK_SC_naive<B,Q>;
+#if !defined(AFF3CT_64BIT_PREC)
+template class aff3ct::module::Decoder_polar_MK_SC_naive<B_64,Q_64>;
+#endif
 #endif
 // ==================================================================================== explicit template instantiation

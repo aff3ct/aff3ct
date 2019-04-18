@@ -23,7 +23,7 @@ struct Frozenbits_generator_MK : public Factory
 		int         N_cw    = -1;
 
 		// optional parameters
-		std::string type    = "FILE";
+		std::string type    = "GA";
 		std::string path_fb = "../conf/cde/awgn_polar_codes/TV";
 		float       noise   = -1.f;
 

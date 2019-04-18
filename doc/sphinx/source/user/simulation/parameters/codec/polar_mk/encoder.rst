@@ -109,7 +109,8 @@ Kronecker product:
 """""""""""""""""""""""
 
    :Type: text
-   :Allowed values: ``FILE`` ``GA``
+   :Default: ``GA``
+   :Allowed values: ``GA`` ``GAA`` ``FILE``
    :Examples: ``--enc-fb-gen-method FILE``
 
 |factory::Frozenbits_generator_MK::parameters::p+gen-method|
@@ -119,10 +120,13 @@ Description of the allowed values:
 +----------+-------------------------------------------------------------------+
 | Value    | Description                                                       |
 +==========+===================================================================+
+| ``GA``   | Select the |GA| method from :cite:`Trifonov2012`.                 |
++----------+-------------------------------------------------------------------+
+| ``GAA``  | Select the |GA| method from :cite:`Trifonov2012` (works only for  |
+|          | Arikan mono-kernel polar codes).                                  |
++----------+-------------------------------------------------------------------+
 | ``FILE`` | Read the best channels from an external file, to use with the     |
 |          | :ref:`enc-polar_mk-enc-fb-awgn-path` parameter.                   |
-+----------+-------------------------------------------------------------------+
-| ``GA``   | Select the |GA| method from :cite:`Trifonov2012`.                 |
 +----------+-------------------------------------------------------------------+
 
 .. note:: When using the ``FILE`` method, the frozen bits are always the same
