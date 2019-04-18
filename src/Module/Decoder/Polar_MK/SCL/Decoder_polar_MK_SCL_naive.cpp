@@ -407,8 +407,13 @@ void Decoder_polar_MK_SCL_naive<B,R>
                                 tools::Generic_node<Contents_MK_SCL<B,R>>* node_b,
                                 tools::Generic_node<Contents_MK_SCL<B,R>>* node_caller)
 {
-	if (!node_a->is_leaf() && node_a->get_children()[0] != node_caller)
-		node_b->get_children()[0]->get_c()->s = node_a->get_children()[0]->get_c()->s;
+	if (!node_a->is_leaf())
+		for (size_t c = 0; c < node_a->get_children().size()-1; c++)
+		{
+			auto child_a = node_a->get_children()[c];
+			if (child_a != node_caller)
+				node_b->get_children()[c]->get_c()->s = child_a->get_c()->s;
+		}
 
 	if (!node_a->is_root())
 		this->recursive_duplicate_tree_sums(node_a->get_father(), node_b->get_father(), node_a);
