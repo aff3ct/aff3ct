@@ -7,7 +7,6 @@
 #include <functional>
 
 #include "Tools/Math/utils.h"
-#include "Tools/Code/Polar/Polar_code.hpp"
 
 #ifndef _MSC_VER
 #ifndef __forceinline
@@ -131,18 +130,16 @@ struct Polar_lambdas
 };
 
 template <typename R>
-using proto_xor = R (*)(const R& lambda_a, const R& lambda_b);
+using proto_xor = R (*)(const R& ll, const R& lr);
 
 template <typename R>
-using proto_plus = R (*)(const R& lambda_a, const R& lambda_b);
-
-
-template <typename R>
-__forceinline R square_plus(const R& lambda_a, const R& lambda_b);
+using proto_plus = R (*)(const R& ll, const R& lr);
 
 template <typename R>
-__forceinline R plus(const R& lambda_a, const R& lambda_b);
+__forceinline R square_plus(const R& ll, const R& lr);
 
+template <typename R>
+__forceinline R plus(const R& ll, const R& lr);
 
 template <typename B, typename R, proto_xor <R> X = square_plus,
                                   proto_plus<R> P = plus>
