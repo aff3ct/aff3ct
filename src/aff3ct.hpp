@@ -1279,6 +1279,9 @@
 #ifndef FROZENBITS_GENERATOR_FILE_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp>
 #endif
+#ifndef FROZENBITS_GENERATOR_GA_ARIKAN_HPP_
+#include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA_Arikan.hpp>
+#endif
 #ifndef FROZENBITS_GENERATOR_GA_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp>
 #endif
