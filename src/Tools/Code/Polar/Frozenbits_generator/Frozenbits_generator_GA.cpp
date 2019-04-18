@@ -14,6 +14,7 @@
 
 #include "Frozenbits_generator_GA.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 std::vector<bool> init_fb(const int K, const int N)
