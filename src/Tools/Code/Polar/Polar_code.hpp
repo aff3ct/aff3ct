@@ -29,6 +29,7 @@ public:
 
 	virtual ~Polar_code() = default;
 
+	bool can_be_systematic() const;
 	size_t is_mono_kernel() const;
 	int get_codeword_size() const;
 	const std::vector<std::vector<std::vector<bool>>>& get_kernel_matrices() const;

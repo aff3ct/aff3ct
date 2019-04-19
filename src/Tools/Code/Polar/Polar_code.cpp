@@ -383,6 +383,65 @@ void Polar_code
 	}
 }
 
+bool Polar_code
+::can_be_systematic() const
+{
+	if (!this->is_mono_kernel())
+	{
+		const auto n_stages_2 = this->get_stages().size() / 2;
+		for (size_t sl = 0; sl < n_stages_2; sl++)
+			if (this->get_stages()[sl] != this->get_stages()[this->get_stages().size() -1 -sl])
+			{
+				// std::stringstream message;
+				// message << "The stages are not symetric.";
+				// throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+				return false;
+			}
+	}
+
+	for (auto &kernel : this->get_kernel_matrices())
+	{
+		// compute the "K x K" product
+		auto k_x_k = kernel;
+		for (auto i = 0; i < (int)kernel.size(); i++)
+			for (auto j = 0; j < (int)kernel.size(); j++)
+			{
+				uint32_t sum_r = 0;
+				for (auto k = 0; k < (int)kernel.size(); k++)
+					sum_r += (uint32_t)(kernel[i][k] & kernel[k][j]);
+				k_x_k[i][j] = (bool)(sum_r & (uint32_t)1);
+			}
+
+		// check if "kernel x kernel" is the identity matrix
+		for (auto i = 0; i < (int)k_x_k.size(); i++)
+			for (auto j = 0; j < (int)k_x_k.size(); j++)
+				if (i == j && k_x_k[i][j] != true)
+				{
+					// std::stringstream message;
+					// message << "'k_x_k' has to be the identity matrix ("
+					//         << "'i' = " << i << ", "
+					//         << "'j' = " << j << ", "
+					//         << "'k_x_k[i][j]' = " << k_x_k[i][j] << "), the '"
+					//         << tools::display_kernel(kernel) << "' kernel is incompatible.";
+					// throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+					return false;
+				}
+				else if (i != j && k_x_k[i][j] != false)
+				{
+					// std::stringstream message;
+					// message << "'k_x_k' has to be the identity matrix ("
+					//         << "'i' = " << i << ", "
+					//         << "'j' = " << j << ", "
+					//         << "'k_x_k[i][j]' = " << k_x_k[i][j] << "), the '"
+					//         << tools::display_kernel(kernel) << "' kernel is incompatible.";
+					// throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+					return false;
+				}
+	}
+
+	return true;
+}
+
 size_t Polar_code
 ::is_mono_kernel() const
 {
