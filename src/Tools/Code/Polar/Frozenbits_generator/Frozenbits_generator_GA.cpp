@@ -28,7 +28,6 @@ std::vector<bool> init_fb(const int K, const int N)
 Frozenbits_generator_GA
 ::Frozenbits_generator_GA(const int K, const int N, const Polar_code& code)
 : Frozenbits_generator(K, N),
-  code(code),
   z(code.get_codeword_size()),
   fake_frozen_bits(init_fb(K, code.get_codeword_size())),
   decoder_sc(K, code.get_codeword_size(), code, fake_frozen_bits)

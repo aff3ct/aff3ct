@@ -11,20 +11,6 @@
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-// // DEBUG
-// template <typename T = int32_t>
-// void display_matrix(const std::vector<std::vector<T>>& M)
-// {
-// 	for (auto row = 0; row < (int)M.size(); row++)
-// 	{
-// 		for (auto col = 0; col < (int)M[0].size(); col++)
-// 		{
-// 			std::cout << M[row][col] << "\t";
-// 		}
-// 		std::cout << std::endl;
-// 	}
-// }
-
 std::string aff3ct::tools::display_kernel(const std::vector<std::vector<bool>>& pattern_bits)
 {
 	std::string m = "{";
@@ -265,11 +251,6 @@ Polar_code
   kernel_matrices(),
   stages()
 {
-	// // dark cpp but I know what I'm doing... I suppose...
-	// auto kernel_matrices_bis = const_cast<std::vector<std::vector<std::vector<bool>>>*>(&this->kernel_matrices);
-	// auto stages_bis = const_cast<std::vector<uint32_t>*>(&this->stages);
-	// tools::read_polar_MK_code(code_path, *kernel_matrices_bis, *stages_bis);
-
 	tools::read_polar_MK_code(code_path, this->kernel_matrices, this->stages);
 
 	this->N = 1;
@@ -391,12 +372,7 @@ bool Polar_code
 		const auto n_stages_2 = this->get_stages().size() / 2;
 		for (size_t sl = 0; sl < n_stages_2; sl++)
 			if (this->get_stages()[sl] != this->get_stages()[this->get_stages().size() -1 -sl])
-			{
-				// std::stringstream message;
-				// message << "The stages are not symetric.";
-				// throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 				return false;
-			}
 	}
 
 	for (auto &kernel : this->get_kernel_matrices())
@@ -416,27 +392,9 @@ bool Polar_code
 		for (auto i = 0; i < (int)k_x_k.size(); i++)
 			for (auto j = 0; j < (int)k_x_k.size(); j++)
 				if (i == j && k_x_k[i][j] != true)
-				{
-					// std::stringstream message;
-					// message << "'k_x_k' has to be the identity matrix ("
-					//         << "'i' = " << i << ", "
-					//         << "'j' = " << j << ", "
-					//         << "'k_x_k[i][j]' = " << k_x_k[i][j] << "), the '"
-					//         << tools::display_kernel(kernel) << "' kernel is incompatible.";
-					// throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 					return false;
-				}
 				else if (i != j && k_x_k[i][j] != false)
-				{
-					// std::stringstream message;
-					// message << "'k_x_k' has to be the identity matrix ("
-					//         << "'i' = " << i << ", "
-					//         << "'j' = " << j << ", "
-					//         << "'k_x_k[i][j]' = " << k_x_k[i][j] << "), the '"
-					//         << tools::display_kernel(kernel) << "' kernel is incompatible.";
-					// throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 					return false;
-				}
 	}
 
 	return true;

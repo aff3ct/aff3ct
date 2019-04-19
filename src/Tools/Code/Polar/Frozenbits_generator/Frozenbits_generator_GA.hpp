@@ -17,7 +17,6 @@ namespace tools
 class Frozenbits_generator_GA : public Frozenbits_generator
 {
 private:
-	const Polar_code& code;
 	std::vector<double> z;
 
 	static constexpr double alpha = -0.4527;
