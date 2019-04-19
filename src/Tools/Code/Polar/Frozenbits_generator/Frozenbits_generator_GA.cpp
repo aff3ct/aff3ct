@@ -50,8 +50,7 @@ void Frozenbits_generator_GA
 {
 	this->check_noise();
 
-	for (auto i = 0; i < this->N; i++)
-		z[i] = 2.0 / std::pow((double)this->n->get_noise(), 2.0);
+	std::fill(z.begin(), z.end(), 2.0 / std::pow((double)this->n->get_noise(), 2.0));
 
 	this->decoder_sc._load(z.data());
 	this->decoder_sc.recursive_decode(this->decoder_sc.polar_tree.get_root());
