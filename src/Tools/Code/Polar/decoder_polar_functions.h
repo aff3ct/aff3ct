@@ -141,16 +141,14 @@ __forceinline R square_plus(const R& ll, const R& lr);
 template <typename R>
 __forceinline R plus(const R& ll, const R& lr);
 
-template <typename B, typename R, proto_xor <R> X = square_plus,
-                                  proto_plus<R> P = plus>
+template <typename B, typename R, proto_xor <R> X = square_plus<R>,
+                                  proto_plus<R> P = plus<R>>
 struct Polar_lambdas_bis
 {
-private:
-	static R h(const R &L, const std::vector<B> &u, const std::vector<bool> &m);
-
 public:
 	static std::map<std::vector<std::vector<bool>>,
 	                std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>> functions;
+	static R h(const R &L, const std::vector<B> &u, const std::vector<bool> &m);
 };
 
 }
