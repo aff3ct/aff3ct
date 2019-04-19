@@ -61,7 +61,7 @@ void Polar_code::parameters
 
 	if(vals.exist({p+"-cw-size", "N"})) this->N_cw          = vals.to_int                    ({p+"-cw-size", "N"});
 	if(vals.exist({p+"-kernel"      })) this->kernel_matrix = vals.to_list<std::vector<bool>>({p+"-kernel"      });
-	if(vals.exist({p+"-path"        })) this->code_path     = vals.at                        ({p+"-path"        });
+	if(vals.exist({p+"-path"        })) this->code_path     = vals.to_file                   ({p+"-path"        });
 }
 
 void Polar_code::parameters

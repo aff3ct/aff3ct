@@ -46,7 +46,7 @@ void Frozenbits_generator_MK::parameters
 		tools::Text(tools::Including_set("FILE", "GA", "GAA")));
 
 	tools::add_arg(args, p, class_name+"p+awgn-path",
-		tools::Path(tools::openmode::read));
+		tools::File(tools::openmode::read));
 }
 
 void Frozenbits_generator_MK::parameters
@@ -57,7 +57,7 @@ void Frozenbits_generator_MK::parameters
 	if(vals.exist({p+"-info-bits", "K"})) this->K       = vals.to_int  ({p+"-info-bits", "K"});
 	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw    = vals.to_int  ({p+"-cw-size",   "N"});
 	if(vals.exist({p+"-noise"         })) this->noise   = vals.to_float({p+"-noise"         });
-	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.at      ({p+"-awgn-path"     });
+	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.to_file ({p+"-awgn-path"     });
 	if(vals.exist({p+"-gen-method"    })) this->type    = vals.at      ({p+"-gen-method"    });
 }
 
