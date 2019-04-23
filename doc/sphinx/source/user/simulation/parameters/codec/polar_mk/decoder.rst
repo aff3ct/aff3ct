@@ -90,8 +90,8 @@ Description of the allowed values:
 +-----------+-----------------------+
 
 .. |dec-node-type_ms|  replace::
-  :math:`\DeclareMathOperator{\sign}{sign} L_a \boxplus L_b \simeq
-  \sign(L_a).\sign(L_b).\min(|L_a|,|L_b|)`.
+  :math:`L_a \boxplus L_b \simeq
+  \text{sign}(L_a).\text{sign}(L_b).\min(|L_a|,|L_b|)`.
 .. |dec-node-type_spa| replace::
    :math:`L_a \boxplus L_b =
    2\tanh^{-1}(\tanh(\frac{L_a}{2}).\tanh(\frac{L_b}{2}))`.
