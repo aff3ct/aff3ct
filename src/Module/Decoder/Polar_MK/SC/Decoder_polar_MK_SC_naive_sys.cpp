@@ -9,19 +9,33 @@ Decoder_polar_MK_SC_naive_sys<B,R>
                                 const int& N,
                                 const tools::Polar_code& code,
                                 const std::vector<bool>& frozen_bits,
+                                const std::vector<std::vector<std::function<R(const std::vector<R> &LLRs,
+                                                                              const std::vector<B> &bits)>>> &lambdas,
                                 const int n_frames)
 : Decoder                       (K, N, n_frames, 1),
-  Decoder_polar_MK_SC_naive<B,R>(K, N, code, frozen_bits, n_frames)
+  Decoder_polar_MK_SC_naive<B,R>(K, N, code, frozen_bits, lambdas, n_frames)
 {
-	const std::string name = "Decoder_polar_MK_SC_sys_naive";
-	this->set_name(name);
+    const std::string name = "Decoder_polar_MK_SC_sys_naive";
+    this->set_name(name);
 
-	if (!this->code.can_be_systematic())
-	{
-		std::stringstream message;
-		message << "This polar code does not support systematic encoding.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
+    if (!this->code.can_be_systematic())
+    {
+        std::stringstream message;
+        message << "This polar code does not support systematic encoding.";
+        throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+    }
+
+}
+
+template <typename B, typename R>
+Decoder_polar_MK_SC_naive_sys<B,R>
+::Decoder_polar_MK_SC_naive_sys(const int& K,
+                                const int& N,
+                                const tools::Polar_code& code,
+                                const std::vector<bool>& frozen_bits,
+                                const int n_frames)
+: Decoder_polar_MK_SC_naive_sys<B,R>(K, N, code, frozen_bits, {}, n_frames)
+{
 }
 
 template <typename B, typename R>

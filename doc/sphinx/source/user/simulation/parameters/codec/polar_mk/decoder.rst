@@ -67,6 +67,35 @@ Description of the allowed values:
 
 |factory::Decoder_polar_MK::parameters::p+lists,L|
 
+.. _dec-polar_mk-dec-node-type:
+
+``--dec-node-type``
+"""""""""""""""""""
+
+   :Type: text
+   :Allowed values: ``MS`` ``SPA``
+   :Default: ``MS``
+   :Examples: ``--dec-node-type SPA``
+
+|factory::Decoder_polar_MK::parameters::p+node-type|
+
+Description of the allowed values:
+
++-----------+-----------------------+
+| Value     | Description           |
++===========+=======================+
+| ``MS``    | |dec-node-type_ms|    |
++-----------+-----------------------+
+| ``SPA``   | |dec-node-type_spa|   |
++-----------+-----------------------+
+
+.. |dec-node-type_ms|  replace::
+  :math:`\DeclareMathOperator{\sign}{sign} L_a \boxplus L_b \simeq
+  \sign(L_a).\sign(L_b).\min(|L_a|,|L_b|)`.
+.. |dec-node-type_spa| replace::
+   :math:`L_a \boxplus L_b =
+   2\tanh^{-1}(\tanh(\frac{L_a}{2}).\tanh(\frac{L_b}{2}))`.
+
 References
 """"""""""
 

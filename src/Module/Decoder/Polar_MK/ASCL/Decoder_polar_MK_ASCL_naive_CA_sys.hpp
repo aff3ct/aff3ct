@@ -22,6 +22,16 @@ public:
 	                                   const int& L,
 	                                   const tools::Polar_code& code,
 	                                   const std::vector<bool>& frozen_bits,
+	                                   const std::vector<std::vector<std::function<R(const std::vector<R> &LLRs,
+	                                                                                 const std::vector<B> &bits)>>> &lambdas,
+	                                   CRC<B>& crc,
+	                                   const int n_frames = 1);
+
+	Decoder_polar_MK_ASCL_naive_CA_sys(const int& K,
+	                                   const int& N,
+	                                   const int& L,
+	                                   const tools::Polar_code& code,
+	                                   const std::vector<bool>& frozen_bits,
 	                                   CRC<B>& crc,
 	                                   const int n_frames = 1);
 

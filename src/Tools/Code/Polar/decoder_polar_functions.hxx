@@ -468,7 +468,23 @@ Polar_lambdas<B,R>::functions = {
 }};
 
 template <typename R>
-R square_plus(const R& ll, const R& lr)
+R square_plus_SPA(const R& ll, const R& lr)
+{
+	auto absl = (R)std::abs(ll);
+	auto absr = (R)std::abs(lr);
+
+	if(absl > (R)17. || absr > (R)17.)
+	{
+		auto sign = std::signbit((float)ll) ^ std::signbit((float)lr);
+		auto min = std::min(absl, absr);
+		return sign ? -min : min;
+	}
+	else
+		return (R)2. * std::atanh(std::tanh(ll * (R)0.5) * std::tanh(lr * (R)0.5));
+}
+
+template <typename R>
+R square_plus_MS(const R& ll, const R& lr)
 {
 	auto sign = std::signbit((float)ll) ^ std::signbit((float)lr);
 	auto absl = (R)std::abs(ll);

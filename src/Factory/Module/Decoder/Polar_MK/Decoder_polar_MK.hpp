@@ -26,7 +26,8 @@ struct Decoder_polar_MK : public Decoder
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
-		int L = 8;
+		int         L         = 8;
+		std::string node_type = "MS";
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Decoder_polar_MK_prefix);

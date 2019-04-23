@@ -13,9 +13,11 @@ Decoder_polar_MK_SCL_naive_CA<B,R>
                                 const int& L,
                                 const tools::Polar_code& code,
                                 const std::vector<bool>& frozen_bits,
+                                const std::vector<std::vector<std::function<R(const std::vector<R> &LLRs,
+                                                                              const std::vector<B> &bits)>>> &lambdas,
                                 CRC<B>& crc, const int n_frames)
-: Decoder                        (K, N,                       n_frames, 1),
-  Decoder_polar_MK_SCL_naive<B,R>(K, N, L, code, frozen_bits, n_frames   ),
+: Decoder                        (K, N,                                n_frames, 1),
+  Decoder_polar_MK_SCL_naive<B,R>(K, N, L, code, frozen_bits, lambdas, n_frames   ),
   crc(crc)
 {
 	const std::string name = "Decoder_polar_MK_SCL_naive_CA";
@@ -28,6 +30,18 @@ Decoder_polar_MK_SCL_naive_CA<B,R>
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+Decoder_polar_MK_SCL_naive_CA<B,R>
+::Decoder_polar_MK_SCL_naive_CA(const int& K,
+                                const int& N,
+                                const int& L,
+                                const tools::Polar_code& code,
+                                const std::vector<bool>& frozen_bits,
+                                CRC<B>& crc, const int n_frames)
+: Decoder_polar_MK_SCL_naive_CA<B,R>(K, N, L, code, frozen_bits, {}, crc, n_frames)
+{
 }
 
 template <typename B, typename R>
