@@ -70,7 +70,7 @@ public:
 	const tools::Noise<float>& current_noise() const;
 
 	virtual void set_noise(const tools::Noise<float>& noise);
-	void set_noise(const tools::Noise<double>& noise);
+	virtual void set_noise(const tools::Noise<double>& noise);
 
 	template <class A = std::allocator<Q>>
 	void extract_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id = -1);

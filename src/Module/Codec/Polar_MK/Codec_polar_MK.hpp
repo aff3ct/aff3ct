@@ -38,6 +38,7 @@ public:
 	virtual ~Codec_polar_MK() = default;
 
 	virtual void set_noise(const tools::Noise<float>& noise);
+	virtual void set_noise(const tools::Noise<double>& noise);
 
 	std::vector<bool>& get_frozen_bits();
 
