@@ -123,6 +123,19 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
    configuration files are a set of best channels pre-generated with the |TV|
    method (see ``conf/cde/awgn_polar_codes/TV/``).
 
+.. _enc-polar-enc-fb-dump-path:
+
+``--enc-fb-dump-path``
+""""""""""""""""""""""
+
+   :Type: folder
+   :Rights: write only
+   :Examples: ``--enc-fb-dump-path example/path/to/the/right/place/``
+
+|factory::Frozenbits_generator::parameters::p+dump-path|
+
+.. note:: Works only for the ``GA`` and ``BEC`` frozen bits generation methods.
+
 .. _enc-polar-enc-fb-noise:
 
 ``--enc-fb-noise``
@@ -133,7 +146,7 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
 
 |factory::Frozenbits_generator::parameters::p+noise|
 
-Can be a gaussian noise variance :math:`\sigma` for |GA| and |TV| generation 
+Can be a gaussian noise variance :math:`\sigma` for |GA| and |TV| generation
 methods, or an event probability for the |BEC| generation method. All the noise
 points in the simulation will use the same frozen bits configuration.
 

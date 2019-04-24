@@ -786,6 +786,9 @@
    Set the path to a file or a directory containing the best channels to select
    the frozen bits.
 
+.. |factory::Frozenbits_generator::parameters::p+dump-path| replace::
+   Set the path to store the best channels.
+
 .. |factory::Frozenbits_generator::parameters::p+pb-path| replace::
    Set the path of the polar bounds code generator (generates best channels to
    use).

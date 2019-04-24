@@ -30,7 +30,8 @@ private:
 	const double bisection_max = std::numeric_limits<double>::max();
 
 public:
-	Frozenbits_generator_GA(const int K, const int N);
+	Frozenbits_generator_GA(const int K, const int N, const std::string &dump_channels_path = "",
+	                                                  const bool dump_channels_single_thread = true);
 
 	virtual ~Frozenbits_generator_GA() = default;
 
