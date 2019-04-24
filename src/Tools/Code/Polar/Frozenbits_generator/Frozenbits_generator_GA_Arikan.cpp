@@ -16,8 +16,11 @@
 using namespace aff3ct::tools;
 
 Frozenbits_generator_GA_Arikan
-::Frozenbits_generator_GA_Arikan(const int K, const int N)
-: Frozenbits_generator(K, N), m((int)std::log2(N)), z((int)std::exp2(m), 0)
+::Frozenbits_generator_GA_Arikan(const int K, const int N, const std::string &dump_channels_path,
+                                                           const bool dump_channels_single_thread)
+: Frozenbits_generator(K, N, dump_channels_path, dump_channels_single_thread),
+  m((int)std::log2(N)),
+  z((int)std::exp2(m), 0)
 {
 }
 

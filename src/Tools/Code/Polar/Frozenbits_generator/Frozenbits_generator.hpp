@@ -8,13 +8,10 @@
 #ifndef FROZENBITS_GENERATOR_HPP_
 #define FROZENBITS_GENERATOR_HPP_
 
-#include <sstream>
+#include <thread>
 #include <vector>
 #include <memory>
 #include <Tools/Noise/Noise.hpp>
-#include <Tools/Noise/noise_utils.h>
-
-#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {
@@ -26,6 +23,11 @@ namespace tools
  */
 class Frozenbits_generator
 {
+private:
+	static std::thread::id master_thread_id;
+	const std::string dump_channels_path;
+	const bool dump_channels_single_thread;
+
 protected:
 	const int K; /*!< Number of information bits in the frame. */
 	const int N; /*!< Codeword size (or frame size). */
@@ -40,76 +42,47 @@ public:
 	 * \param K:     number of information bits in the frame.
 	 * \param N:     codeword size (or frame size).
 	 */
-	Frozenbits_generator(const int K, const int N)
-	: K(K), N(N), best_channels(N) {}
-	
+	Frozenbits_generator(const int K, const int N, const std::string &dump_channels_path = "",
+	                                               const bool dump_channels_single_thread = true);
+
 	/*!
 	 * \brief Destructor.
 	 */
 	virtual ~Frozenbits_generator() = default;
 
-	int get_K() const
-	{
-		return this->K;
-	}
+	int get_K() const;
 
-	int get_N() const
-	{
-		return this->N;
-	}
+	int get_N() const;
 
 	/*!
 	 * \brief Sets the current noise to apply to the input signal
 	 *
 	 * \param sigma: the current noise to apply to the input signal
 	 */
-	void set_noise(const tools::Noise<float>& noise)
-	{
-		this->n.reset(tools::cast<float>(noise));
-	}
+	void set_noise(const tools::Noise<float>& noise);
 
 	/*!
 	 * \brief Sets the current noise to apply to the input signal
 	 *
 	 * \param sigma: the current noise to apply to the input signal
 	 */
-	void set_noise(const tools::Noise<double>& noise)
-	{
-		this->n.reset(tools::cast<float>(noise));
-	}
+	void set_noise(const tools::Noise<double>& noise);
 
 	/*!
 	 * \brief Generates the frozen bits vector.
 	 *
 	 * \param frozen_bits: output vector of frozen bits.
 	 */
-	void generate(std::vector<bool> &frozen_bits)
-	{
-		if (frozen_bits.size() != (unsigned)N)
-		{
-			std::stringstream message;
-			message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
-			        << ", 'N' = " << N << ").";
-			throw length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		this->evaluate();
-
-		// init frozen_bits vector, true means frozen bits, false means information bits
-		std::fill(frozen_bits.begin(), frozen_bits.end(), true);
-		for (auto i = 0; i < K; i++)
-			frozen_bits[best_channels[i]] = false;
-	}
+	void generate(std::vector<bool> &frozen_bits);
 
 	/*!
 	 * \brief Gets the best channels (the most secured bits sorted by descending order).
 	 *
 	 * \return a vector of the best channels.
 	 */
-	const std::vector<uint32_t>& get_best_channels() const
-	{
-		return best_channels;
-	}
+	const std::vector<uint32_t>& get_best_channels() const;
+
+	void dump_best_channels(const std::string& dump_channels_full_path) const;
 
 protected:
 
@@ -124,15 +97,7 @@ protected:
 	/*!
 	 * \brief Check that the noise has the expected type
 	 */
-	virtual void check_noise()
-	{
-		if (this->n == nullptr)
-		{
-			std::stringstream message;
-			message << "No noise has been set.";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
+	virtual void check_noise();
 };
 }
 }
