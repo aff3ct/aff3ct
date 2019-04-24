@@ -87,6 +87,17 @@ Codec_polar_MK<B,Q>
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
 	if (!adaptive_fb)
 	{
+		if (fb_params.type == "BEC")
+		{
+			auto ep = tools::Event_probability<float>(fb_params.noise);
+			fb_generator->set_noise(ep);
+		}
+		else /* type = GA, TV or FILE */
+		{
+			auto sigma = tools::Sigma<float>(fb_params.noise);
+			fb_generator->set_noise(sigma);
+		}
+
 		fb_generator->generate(frozen_bits);
 		this->notify_frozenbits_update();
 	}
