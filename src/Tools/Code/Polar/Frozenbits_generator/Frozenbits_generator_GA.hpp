@@ -50,7 +50,6 @@ protected:
 	void recursive_store_DE(const Generic_node<module::Contents_MK_SC<int64_t, double>>* node_curr, double *z) const;
 
 	static double square_plus_DE(const double& ll, const double& lr);
-	static double plus_DE       (const double& ll, const double& lr);
 };
 }
 }

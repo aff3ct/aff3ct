@@ -40,7 +40,7 @@ Frozenbits_generator_GA
 		    Polar_lambdas_bis<int64_t,double>::functions.end())
 			throw runtime_error(__FILE__, __LINE__, __func__, "Unsupported polar kernel.");
 		decoder_sc.lambdas[l] =
-		    Polar_lambdas_bis<int64_t,double,square_plus_DE,plus_DE>::functions[code.get_kernel_matrices()[l]];
+		    Polar_lambdas_bis<int64_t,double,square_plus_DE>::functions[code.get_kernel_matrices()[l]];
 	}
 }
 
@@ -111,10 +111,4 @@ double Frozenbits_generator_GA
 	auto z = phi_inv(1.0 - ((1.0 - phi(zl)) * (1.0 - phi(zr))));
 	return (z == HUGE_VAL) ? zl + M_LN2 / (alpha * gamma) : z;
 	// return z;
-}
-
-double Frozenbits_generator_GA
-::plus_DE(const double& zl, const double& zr)
-{
-	return zl + zr;
 }
