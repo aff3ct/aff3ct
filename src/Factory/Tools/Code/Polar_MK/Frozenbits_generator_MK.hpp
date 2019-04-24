@@ -23,9 +23,10 @@ struct Frozenbits_generator_MK : public Factory
 		int         N_cw    = -1;
 
 		// optional parameters
-		std::string type    = "GA";
-		std::string path_fb = "../conf/cde/awgn_polar_codes/TV";
-		float       noise   = -1.f;
+		std::string type               = "GA";
+		std::string path_fb            = "../conf/cde/awgn_polar_codes/TV";
+		std::string dump_channels_path = "";
+		float       noise              = -1.f;
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Frozenbits_generator_MK_prefix);

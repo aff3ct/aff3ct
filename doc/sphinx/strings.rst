@@ -827,6 +827,9 @@
    Set the path to a file or a directory containing the best channels to select
    the frozen bits.
 
+.. |factory::Frozenbits_generator_MK::parameters::p+dump-path| replace::
+   Set the path to store the best channels.
+
 .. ---------------------------------------------- factory Polar_code parameters
 
 .. |factory::Polar_code::parameters::p+kernel| replace::

@@ -165,6 +165,19 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
 .. warning:: The ``FILE`` frozen bits generator expects a file and not a
    directory.
 
+.. _enc-polar_mk-enc-fb-dump-path:
+
+``--enc-fb-dump-path``
+""""""""""""""""""""""
+
+   :Type: folder
+   :Rights: write only
+   :Examples: ``--enc-fb-dump-path example/path/to/the/right/place/``
+
+|factory::Frozenbits_generator_MK::parameters::p+dump-path|
+
+.. note:: Works only for the ``GA`` and ``GAA`` frozen bits generation methods.
+
 .. _enc-polar_mk-enc-fb-noise:
 
 ``--enc-fb-noise``

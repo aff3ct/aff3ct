@@ -26,8 +26,9 @@ std::vector<bool> init_fb(const int K, const int N)
 }
 
 Frozenbits_generator_GA
-::Frozenbits_generator_GA(const int K, const int N, const Polar_code& code)
-: Frozenbits_generator(K, N),
+::Frozenbits_generator_GA(const int K, const int N, const Polar_code& code, const std::string &dump_channels_path,
+                          const bool dump_channels_single_thread)
+: Frozenbits_generator(K, N, dump_channels_path, dump_channels_single_thread),
   z(code.get_codeword_size()),
   fake_frozen_bits(init_fb(K, code.get_codeword_size())),
   decoder_sc(K, code.get_codeword_size(), code, fake_frozen_bits)

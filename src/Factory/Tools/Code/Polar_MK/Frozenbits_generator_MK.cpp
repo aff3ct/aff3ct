@@ -47,6 +47,9 @@ void Frozenbits_generator_MK::parameters
 
 	tools::add_arg(args, p, class_name+"p+awgn-path",
 		tools::File(tools::openmode::read));
+
+	tools::add_arg(args, p, class_name+"p+dump-path",
+		tools::Folder(tools::openmode::write));
 }
 
 void Frozenbits_generator_MK::parameters
@@ -54,11 +57,12 @@ void Frozenbits_generator_MK::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K       = vals.to_int  ({p+"-info-bits", "K"});
-	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw    = vals.to_int  ({p+"-cw-size",   "N"});
-	if(vals.exist({p+"-noise"         })) this->noise   = vals.to_float({p+"-noise"         });
-	if(vals.exist({p+"-awgn-path"     })) this->path_fb = vals.to_file ({p+"-awgn-path"     });
-	if(vals.exist({p+"-gen-method"    })) this->type    = vals.at      ({p+"-gen-method"    });
+	if(vals.exist({p+"-info-bits", "K"})) this->K                  = vals.to_int   ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw               = vals.to_int   ({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-noise"         })) this->noise              = vals.to_float ({p+"-noise"         });
+	if(vals.exist({p+"-awgn-path"     })) this->path_fb            = vals.to_file  ({p+"-awgn-path"     });
+	if(vals.exist({p+"-gen-method"    })) this->type               = vals.at       ({p+"-gen-method"    });
+	if(vals.exist({p+"-dump-path"     })) this->dump_channels_path = vals.to_folder({p+"-dump-path"     });
 }
 
 void Frozenbits_generator_MK::parameters
@@ -72,14 +76,16 @@ void Frozenbits_generator_MK::parameters
 	headers[p].push_back(std::make_pair("Noise", this->noise == -1.0f ? "adaptive" : std::to_string(this->noise)));
 	if (this->type == "FILE")
 		headers[p].push_back(std::make_pair("Path", this->path_fb));
+	if (!this->dump_channels_path.empty() && (this->type == "GA" || this->type == "GAA" || this->type == "BEC"))
+		headers[p].push_back(std::make_pair("Dump channels path", this->dump_channels_path));
 }
 
 tools::Frozenbits_generator* Frozenbits_generator_MK::parameters
 ::build(const tools::Polar_code &pc) const
 {
-	if (this->type == "GAA" && pc.is_mono_kernel() == 2) return new tools::Frozenbits_generator_GA_Arikan(this->K, this->N_cw               );
-	if (this->type == "GA"                             ) return new tools::Frozenbits_generator_GA       (this->K, this->N_cw, pc           );
-	if (this->type == "FILE"                           ) return new tools::Frozenbits_generator_file     (this->K, this->N_cw, this->path_fb);
+	if (this->type == "GAA" && pc.is_mono_kernel() == 2) return new tools::Frozenbits_generator_GA_Arikan(this->K, this->N_cw,     this->dump_channels_path);
+	if (this->type == "GA"                             ) return new tools::Frozenbits_generator_GA       (this->K, this->N_cw, pc, this->dump_channels_path);
+	if (this->type == "FILE"                           ) return new tools::Frozenbits_generator_file     (this->K, this->N_cw,     this->path_fb           );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

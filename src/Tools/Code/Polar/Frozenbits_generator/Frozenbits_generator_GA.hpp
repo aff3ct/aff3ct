@@ -36,7 +36,8 @@ private:
 	module::Decoder_polar_MK_SC_naive<int64_t, double> decoder_sc;
 
 public:
-	Frozenbits_generator_GA(const int K, const int N, const Polar_code& code);
+	Frozenbits_generator_GA(const int K, const int N, const Polar_code& code,
+	                        const std::string &dump_channels_path = "", const bool dump_channels_single_thread = true);
 
 	virtual ~Frozenbits_generator_GA() = default;
 
