@@ -621,7 +621,7 @@ Polar_lambdas_bis<B,R,X,P>::functions = {
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(L[3], (X(h(L[0],u,{1,1,1}), P(P(h(L[1],u,{0,1,0}), h(L[2],u,{0,0,1})), L[3]))));
+			return P(L[3], (X(h(L[0],u,{1,1,1}), P(P(h(L[1],u,{0,1,0}), h(L[2],u,{0,0,1})), L[4]))));
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
