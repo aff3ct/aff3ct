@@ -37,11 +37,11 @@ Frozenbits_generator_GA
 
 	for (size_t l = 0; l < decoder_sc.lambdas.size(); l++)
 	{
-		if (Polar_lambdas_bis<int64_t,double>::functions.find(code.get_kernel_matrices()[l]) ==
-		    Polar_lambdas_bis<int64_t,double>::functions.end())
+		if (Polar_lambdas<int64_t,double>::functions.find(code.get_kernel_matrices()[l]) ==
+		    Polar_lambdas<int64_t,double>::functions.end())
 			throw runtime_error(__FILE__, __LINE__, __func__, "Unsupported polar kernel.");
 		decoder_sc.lambdas[l] =
-		    Polar_lambdas_bis<int64_t,double,square_plus_DE>::functions[code.get_kernel_matrices()[l]];
+		    Polar_lambdas<int64_t,double,square_plus_DE>::functions[code.get_kernel_matrices()[l]];
 	}
 }
 

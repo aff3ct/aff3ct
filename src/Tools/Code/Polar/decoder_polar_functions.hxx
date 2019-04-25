@@ -306,7 +306,7 @@ inline int compute_depth(int index, int tree_depth)
 template <typename B, typename R>
 std::map<std::vector<std::vector<bool>>,
          std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>>
-Polar_lambdas<B,R>::functions = {
+Polar_lambdas_legacy<B,R>::functions = {
 {
 	{{1}},
 	{
@@ -501,7 +501,7 @@ R plus(const R& ll, const R& lr)
 }
 
 template <typename B, typename R, proto_xor<R> X, proto_plus<R> P>
-R Polar_lambdas_bis<B,R,X,P>
+R Polar_lambdas<B,R,X,P>
 ::h(const R &L, const std::vector<B> &u, const std::vector<bool> &m)
 {
 	bool switch_sign = false;
@@ -514,7 +514,7 @@ R Polar_lambdas_bis<B,R,X,P>
 template <typename B, typename R, proto_xor<R> X, proto_plus<R> P>
 std::map<std::vector<std::vector<bool>>,
          std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>>
-Polar_lambdas_bis<B,R,X,P>::functions = {
+Polar_lambdas<B,R,X,P>::functions = {
 {
 	{{1}},
 	{

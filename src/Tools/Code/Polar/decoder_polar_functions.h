@@ -123,7 +123,7 @@ __forceinline R phi(const R& mu, const R& lambda, const B& u);
 __forceinline int compute_depth(int index, int tree_depth);
 
 template <typename B, typename R>
-struct Polar_lambdas
+struct Polar_lambdas_legacy
 {
 	static std::map<std::vector<std::vector<bool>>,
 	                std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>> functions;
@@ -146,7 +146,7 @@ __forceinline R plus(const R& ll, const R& lr);
 
 template <typename B, typename R, proto_xor <R> X = square_plus_MS<R>,
                                   proto_plus<R> P = plus<R>>
-struct Polar_lambdas_bis
+struct Polar_lambdas
 {
 public:
 	static std::map<std::vector<std::vector<bool>>,

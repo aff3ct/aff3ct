@@ -99,14 +99,14 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK::parameters
 
 		for (size_t l = 0; l < lambdas.size(); l++)
 		{
-			if (tools::Polar_lambdas_bis<B,Q>::functions.find(code.get_kernel_matrices()[l]) ==
-			    tools::Polar_lambdas_bis<B,Q>::functions.end())
+			if (tools::Polar_lambdas<B,Q>::functions.find(code.get_kernel_matrices()[l]) ==
+			    tools::Polar_lambdas<B,Q>::functions.end())
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported polar kernel.");
 
 			if (this->node_type == "MS")
-				lambdas[l] = tools::Polar_lambdas_bis<B,Q,tools::square_plus_MS<Q>>::functions[code.get_kernel_matrices()[l]];
+				lambdas[l] = tools::Polar_lambdas<B,Q,tools::square_plus_MS<Q>>::functions[code.get_kernel_matrices()[l]];
 			else if (this->node_type == "SPA")
-				lambdas[l] = tools::Polar_lambdas_bis<B,Q,tools::square_plus_SPA<Q>>::functions[code.get_kernel_matrices()[l]];
+				lambdas[l] = tools::Polar_lambdas<B,Q,tools::square_plus_SPA<Q>>::functions[code.get_kernel_matrices()[l]];
 		}
 
 		if (!this->systematic) // non-systematic encoding
