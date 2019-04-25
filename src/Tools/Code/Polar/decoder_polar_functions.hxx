@@ -534,7 +534,9 @@ Polar_lambdas_bis<B,R,X,P>::functions = {
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(h(L[0],u,{1}), L[1]);
+			auto hL0 = h(L[0], u, {1});
+
+			return P(hL0, L[1]);
 		}
 	}
 },
@@ -549,11 +551,16 @@ Polar_lambdas_bis<B,R,X,P>::functions = {
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(h(L[0],u,{1}), X(L[1], L[2]));
+			auto hL0 = h(L[0], u, {1});
+
+			return P(hL0, X(L[1], L[2]));
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(h(L[1],u,{1,0}), h(L[2],u,{1,1}));
+			auto hL1 = h(L[1], u, {1,0});
+			auto hL2 = h(L[2], u, {1,1});
+
+			return P(hL1, hL2);
 		}
 	}
 },
@@ -568,11 +575,15 @@ Polar_lambdas_bis<B,R,X,P>::functions = {
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(X(h(L[0],u,{1}), L[2]), L[1]);
+			auto hL0 = h(L[0], u, {1});
+
+			return P(X(hL0, L[2]), L[1]);
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(h(L[0],u,{1,1}), L[2]);
+			auto hL0 = h(L[0], u, {1,1});
+
+			return P(hL0, L[2]);
 		}
 	}
 },
@@ -588,15 +599,24 @@ Polar_lambdas_bis<B,R,X,P>::functions = {
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(X(h(L[0],u,{1}), L[2]), X(L[1], L[3]));
+			auto hL0 = h(L[0], u, {1});
+
+			return P(X(hL0, L[2]), X(L[1], L[3]));
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return X(P(h(L[0],u,{1,1}), L[2]), P(h(L[1],u,{0,1}), L[3]));
+			auto hL0 = h(L[0], u, {1,1});
+			auto hL1 = h(L[1], u, {0,1});
+
+			return X(P(hL0, L[2]), P(hL1, L[3]));
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(P(P(h(L[0],u,{1,1,1}), h(L[1],u,{0,1,0})), h(L[2],u,{0,0,1})), L[3]);
+			auto hL0 = h(L[0], u, {1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0});
+			auto hL2 = h(L[2], u, {0,0,1});
+
+			return P(P(P(hL0, hL1), hL2), L[3]);
 		}
 	}
 },
@@ -613,19 +633,85 @@ Polar_lambdas_bis<B,R,X,P>::functions = {
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(X(X(h(L[0],u,{1}), L[2]), L[3]), X(L[1], L[4]));
+			auto hL0 = h(L[0], u, {1});
+
+			return P(X(X(hL0, L[2]), L[3]), X(L[1], L[4]));
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return X(P(h(L[1],u,{0,1}), L[4]), P(L[2], X(h(L[0],u,{1,1}), L[3])));
+			auto hL0 = h(L[0], u, {1,1});
+			auto hL1 = h(L[1], u, {0,1});
+
+			return X(P(hL1, L[4]), P(L[2], X(hL0, L[3])));
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(L[3], (X(h(L[0],u,{1,1,1}), P(P(h(L[1],u,{0,1,0}), h(L[2],u,{0,0,1})), L[4]))));
+			auto hL0 = h(L[0], u, {1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0});
+			auto hL2 = h(L[2], u, {0,0,1});
+
+			return P(L[3], (X(hL0, P(P(hL1, hL2), L[4]))));
 		},
 		[](const std::vector<R> &L, const std::vector<B> &u) -> R
 		{
-			return P(P(P(h(L[0],u,{1,1,1,1}), h(L[1],u,{0,1,0,0})), h(L[2],u,{0,0,1,0})), L[4]);
+			auto hL0 = h(L[0], u, {1,1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0,0});
+			auto hL2 = h(L[2], u, {0,0,1,0});
+
+			return P(P(P(hL0, hL1), hL2), L[4]);
+		}
+	}
+},
+{
+	{{1,0,0,0,0,0},
+	 {1,1,0,0,0,0},
+	 {1,0,1,0,0,0},
+	 {1,0,0,1,0,0},
+	 {1,1,1,0,1,0},
+	 {1,1,0,1,0,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(X(X(X(L[0], L[1]), L[2]), L[3]), L[4]), L[5]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1});
+
+			return P(X(X(hL0, L[2]), L[3]), X(X(L[1], L[4]), L[5]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1});
+			auto hL1 = h(L[1], u, {0,1});
+
+			return X(P(L[2], X(hL0, L[3])), P(L[4], X(hL1, L[5])));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0});
+			auto hL2 = h(L[2], u, {0,0,1});
+
+			// need LSE :-(
+			return P(X(hL0, P(hL1, X(L[5], P(hL2, L[4])))), X(L[3], P(X(hL1, L[4]), L[5])));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0,0});
+			auto hL2 = h(L[2], u, {0,0,1,0});
+			auto hL3 = h(L[3], u, {0,0,0,1});
+
+			return P(P(X(P(hL3, L[5]), P(hL0, hL1)), hL2), L[4]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1,1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0,0,1});
+			auto hL3 = h(L[3], u, {0,0,0,1,0});
+
+			return P(P(P(hL0, hL1), hL3), L[5]);
 		}
 	}
 }};
