@@ -115,6 +115,22 @@ module::Decoder_SIHO<B,Q>* Decoder::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B, typename Q>
+module::Decoder_SIHO_HIHO<B,Q>* Decoder::parameters
+::build_hiho(const std::unique_ptr<module::Encoder<B>>& encoder) const
+{
+	if (encoder)
+	{
+		if (this->type == "ML")
+		{
+			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
+			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
+		}
+	}
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
@@ -122,7 +138,12 @@ template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::para
 template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder::parameters::build<B_16,Q_16>(const std::unique_ptr<module::Encoder<B_16>>&) const;
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder::parameters::build<B_32,Q_32>(const std::unique_ptr<module::Encoder<B_32>>&) const;
 template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder::parameters::build<B_64,Q_64>(const std::unique_ptr<module::Encoder<B_64>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::parameters::build_hiho<B_8 ,Q_8 >(const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_16,Q_16>* aff3ct::factory::Decoder::parameters::build_hiho<B_16,Q_16>(const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_32,Q_32>* aff3ct::factory::Decoder::parameters::build_hiho<B_32,Q_32>(const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_64,Q_64>* aff3ct::factory::Decoder::parameters::build_hiho<B_64,Q_64>(const std::unique_ptr<module::Encoder<B_64>>&) const;
 #else
 template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder::parameters::build<B,Q>(const std::unique_ptr<module::Encoder<B>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B,Q>* aff3ct::factory::Decoder::parameters::build_hiho<B,Q>(const std::unique_ptr<module::Encoder<B>>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

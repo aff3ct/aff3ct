@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-#include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 #include "Module/Encoder/Encoder.hpp"
 
 #include "../../Factory.hpp"
@@ -52,6 +52,9 @@ struct Decoder : Factory
 
 		template <typename B = int, typename Q = float>
 		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
+
+		template <typename B = int, typename Q = float>
+		module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 	};
 };
 }
