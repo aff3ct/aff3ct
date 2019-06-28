@@ -1,7 +1,7 @@
 # AFF3CT: A Fast Forward Error Correction Toolbox!
 
 [![GitLab Pipeline Status](https://img.shields.io/gitlab/pipeline/aff3ct/aff3ct.svg)](https://gitlab.com/aff3ct/aff3ct/pipelines)
-[![SonarQube Code Coverage](https://gitlab.com/aff3ct/aff3ct/badges/master/coverage.svg)](https://sonarqube.inria.fr/sonarqube/dashboard?id=storm%3Aaff3ct%3Agitlab%3Amaster)
+[![SonarQube Code Coverage](https://gitlab.com/aff3ct/aff3ct/badges/master/coverage.svg)](https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard?id=storm%3Aaff3ct%3Agitlab%3Amaster)
 [![Documentation Build Status](https://img.shields.io/readthedocs/aff3ct.svg)](https://readthedocs.org/projects/aff3ct/)
 [![Latest Release](https://img.shields.io/github/release/aff3ct/aff3ct.svg)](https://github.com/aff3ct/aff3ct/releases)
 [![DOI](https://zenodo.org/badge/60615913.svg)](https://zenodo.org/badge/latestdoi/60615913)
@@ -13,6 +13,8 @@ codes: from the well-spread **Turbo codes** to the very new **Polar codes**
 including the **Low-Density Parity-Check (LDPC) codes**. **AFF3CT** is a command
 line program and it simulates communication chains based on a Monte Carlo
 method.
+
+![Communication Chain](https://aff3ct.github.io/images/chain.svg)
 
 It is very easy to use, for instance, to estimate the BER/FER decoding
 performances of the (2048,1723) Polar code from 1.0 to 4.0 dB:
@@ -58,6 +60,8 @@ Below, a list of the features that motivated the creation of the simulator:
    the loop tools),
 4. **reuse tried and tested modules** and add yours,
 5. **alternative to MATLAB**, if you seek to reduce simulations time.
+
+![BER/FER Performances](https://aff3ct.github.io/images/bfer/bfer_polar_turbo_ldpc_bch_rs.svg)
 
 ## Installation
 
