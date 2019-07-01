@@ -113,17 +113,23 @@ template <typename B, typename Q>
 module::Decoder_SIHO_HIHO<B,Q>* Decoder_BCH::parameters
 ::build_hiho(const tools::BCH_polynomial_generator<B> &GF, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
-	if (this->type == "ALGEBRAIC")
+	try
 	{
-		if (this->implem == "STD" ) return new module::Decoder_BCH_std <B,Q>(this->K, this->N_cw, GF, this->n_frames);
-		if (this->implem == "FAST") return new module::Decoder_BCH_fast<B,Q>(this->K, this->N_cw, GF, this->n_frames);
-
-		if (encoder)
+		return Decoder::parameters::build_hiho<B,Q>(encoder);
+	}
+	catch (tools::cannot_allocate const&)
+	{
+		if (this->type == "ALGEBRAIC")
 		{
-			if (this->implem == "GENIUS") return new module::Decoder_BCH_genius<B,Q>(this->K, this->N_cw, this->t, *encoder, this->n_frames);
+			if (this->implem == "STD" ) return new module::Decoder_BCH_std <B,Q>(this->K, this->N_cw, GF, this->n_frames);
+			if (this->implem == "FAST") return new module::Decoder_BCH_fast<B,Q>(this->K, this->N_cw, GF, this->n_frames);
+
+			if (encoder)
+			{
+				if (this->implem == "GENIUS") return new module::Decoder_BCH_genius<B,Q>(this->K, this->N_cw, this->t, *encoder, this->n_frames);
+			}
 		}
 	}
-
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

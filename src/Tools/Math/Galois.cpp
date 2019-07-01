@@ -11,7 +11,7 @@ using namespace aff3ct::tools;
 
 template <typename I>
 Galois<I>
-::Galois(const int& N)
+::Galois(const int& N, const std::vector<I> p)
  : N(N), m((int)std::ceil(std::log2(N))), alpha_to(N +1), index_of(N +1), p(m +1, 0)
 {
 	if (N <= 0)
@@ -49,7 +49,18 @@ Galois<I>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	select_polynomial();
+	if (!p.empty() && (p.size() != static_cast<size_t>(m +1)))
+	{
+		std::stringstream message;
+		message << "The order of the Galois primitive polynomial (p) must be m + 1 (= " << m +1 << ") .";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());	
+	}
+
+	if (p.empty())
+		select_polynomial();
+	else
+		this->p = p;
+
 	generate_gf();
 }
 

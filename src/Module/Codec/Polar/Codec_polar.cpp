@@ -181,6 +181,22 @@ void Codec_polar<B,Q>
 }
 
 template <typename B, typename Q>
+void Codec_polar<B,Q>
+::set_noise(const tools::Noise<double>& noise)
+{
+	Codec_SISO_SIHO<B,Q>::set_noise(noise);
+
+	// adaptive frozen bits generation
+	if (adaptive_fb && !generated_decoder)
+	{
+		fb_generator->set_noise(noise);
+		fb_generator->generate(frozen_bits);
+
+		this->notify_frozenbits_update();
+	}
+}
+
+template <typename B, typename Q>
 std::vector<bool>& Codec_polar<B,Q>
 ::get_frozen_bits()
 {

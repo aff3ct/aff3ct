@@ -177,8 +177,13 @@ void Decoder_BCH_std<B, R>
 				if (!q)
 				{ /* store root and error
 				   * location number indices */
-					loc[count] = this->N_p2_1 - i;
-					count++;
+					if(static_cast<size_t>(count) >= loc.size())
+					{
+						std::stringstream message;
+						message << "The polynomial seems not to be primitive.";
+						throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+					}
+					loc[count++] = this->N_p2_1 - i;
 				}
 			}
 

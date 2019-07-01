@@ -17,7 +17,8 @@ private:
 	std::vector<double> z;
 
 public:
-	Frozenbits_generator_BEC(const int K, const int N);
+	Frozenbits_generator_BEC(const int K, const int N, const std::string &dump_channels_path = "",
+	                                                   const bool dump_channels_single_thread = true);
 
 	~Frozenbits_generator_BEC();
 

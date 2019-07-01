@@ -8,8 +8,8 @@ using namespace aff3ct::tools;
 
 template <typename I>
 BCH_polynomial_generator<I>
-::BCH_polynomial_generator(const int& N, const int& t)
- : Galois<I>(N), t(t), d(2 * t + 1)
+::BCH_polynomial_generator(const int& N, const int& t, const std::vector<I> p)
+ : Galois<I>(N, p), t(t), d(2 * t + 1)
 {
 	if (t < 1)
 	{

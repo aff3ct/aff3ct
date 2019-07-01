@@ -56,6 +56,9 @@ void Frozenbits_generator::parameters
 	tools::add_arg(args, p, class_name+"p+awgn-path",
 		tools::Path(tools::openmode::read));
 
+	tools::add_arg(args, p, class_name+"p+dump-path",
+		tools::Folder(tools::openmode::write));
+
 #ifdef AFF3CT_POLAR_BOUNDS
 	tools::add_arg(args, p, class_name+"p+pb-path",
 		tools::File(tools::openmode::read));
@@ -67,11 +70,12 @@ void Frozenbits_generator::parameters
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int  ({p+"-info-bits", "K"});
-	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int  ({p+"-cw-size",   "N"});
-	if(vals.exist({p+"-noise"         })) this->noise      = vals.to_float({p+"-noise"         });
-	if(vals.exist({p+"-awgn-path"     })) this->path_fb    = vals.to_path ({p+"-awgn-path"     });
-	if(vals.exist({p+"-gen-method"    })) this->type       = vals.at      ({p+"-gen-method"    });
+	if(vals.exist({p+"-info-bits", "K"})) this->K                  = vals.to_int   ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw               = vals.to_int   ({p+"-cw-size",   "N"});
+	if(vals.exist({p+"-noise"         })) this->noise              = vals.to_float ({p+"-noise"         });
+	if(vals.exist({p+"-awgn-path"     })) this->path_fb            = vals.to_path  ({p+"-awgn-path"     });
+	if(vals.exist({p+"-gen-method"    })) this->type               = vals.at       ({p+"-gen-method"    });
+	if(vals.exist({p+"-dump-path"     })) this->dump_channels_path = vals.to_folder({p+"-dump-path"     });
 
 #ifdef AFF3CT_POLAR_BOUNDS
 	if(vals.exist({p+"-pb-path"})) this->path_pb = vals.to_file({p+"-pb-path"});
@@ -93,16 +97,18 @@ void Frozenbits_generator::parameters
 #endif
 	if (this->type == "TV" || this->type == "FILE")
 		headers[p].push_back(std::make_pair("Path", this->path_fb));
+	if (!this->dump_channels_path.empty() && (this->type == "GA" || this->type == "BEC"))
+		headers[p].push_back(std::make_pair("Dump channels path", this->dump_channels_path));
 }
 
 tools::Frozenbits_generator* Frozenbits_generator::parameters
 ::build() const
 {
-	if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw                              );
+	if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw, this->dump_channels_path    );
 	if (this->type == "TV"  ) return new tools::Frozenbits_generator_TV  (this->K, this->N_cw, this->path_fb, this->path_pb);
 	if (this->type == "FILE") return new tools::Frozenbits_generator_file(this->K, this->N_cw, this->path_fb               );
 	if (this->type == "5G")   return new tools::Frozenbits_generator_5G  (this->K, this->N_cw                              );
-	if (this->type == "BEC")  return new tools::Frozenbits_generator_BEC (this->K, this->N_cw                              );
+	if (this->type == "BEC")  return new tools::Frozenbits_generator_BEC (this->K, this->N_cw, this->dump_channels_path    );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
