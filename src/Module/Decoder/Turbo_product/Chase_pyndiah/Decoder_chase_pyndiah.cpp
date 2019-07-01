@@ -392,7 +392,7 @@ void Decoder_chase_pyndiah<B,R>
 		for (int i = 0; i < max_sum; i++)
 			beta_applied += least_reliable_pos[i].metric;
 
-		beta_applied -= cp_coef[2] * DW.metric;
+		beta_applied -= (R)cp_coef[2] * DW.metric;
 	}
 
 
@@ -404,7 +404,7 @@ void Decoder_chase_pyndiah<B,R>
 	                                                                  // then take only them for reliability calculation
 
 	for (int j = 1; j < n_good_competitors; j++)
-		competitors[j].metric = (competitors[j].metric - DW.metric) * cp_coef[1];
+		competitors[j].metric = (competitors[j].metric - DW.metric) * (R)cp_coef[1];
 
 
 	for (int i = 0; i < this->N; i++)
@@ -428,7 +428,7 @@ void Decoder_chase_pyndiah<B,R>
 		}
 		else // same bits for each candidates
 		{
-			reliability = beta_applied + cp_coef[3] * std::abs(Y_N1[i]);
+			reliability = beta_applied + (R)cp_coef[3] * std::abs(Y_N1[i]);
 			if (reliability < 0)
 				reliability = 0;
 		}
@@ -440,7 +440,7 @@ void Decoder_chase_pyndiah<B,R>
 		std::cerr << "Rel:  i = " << i << ", Y_N1 = " << Y_N1[i] << ", competitors[" << j << "].metric = " << competitors[j].metric;
 #endif
 
-		Y_N2[i] = reliability - cp_coef[0] * Y_N1[i];
+		Y_N2[i] = reliability - (R)cp_coef[0] * Y_N1[i];
 
 #ifndef NDEBUG_TPC
 		std::cerr  << ", reliability = " << reliability << ", Y_N2 = " << Y_N2[i] << std::endl;

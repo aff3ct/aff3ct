@@ -244,7 +244,7 @@ void Decoder_LDPC_bit_flipping<B,R>
  	for (auto i = 0; i < this->n_V_nodes; i++)
 	{
 		// filling the output
-		this->Lp_N[i] = (decis[i] == 0)?1:-1;
+		this->Lp_N[i] = (decis[i] == 0)?(R)1:(R)-1;
 	}
 
 }

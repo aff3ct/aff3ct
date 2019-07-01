@@ -148,7 +148,7 @@ void Modem::parameters
 	{
 		tools::Codebook<float> cb(this->codebook);
 
-		this->bps      = cb.get_system_bps(); // codebook bps is float so here bps is stocked rounded
+		this->bps      = (int)cb.get_system_bps(); // codebook bps is float so here bps is stocked rounded
 		this->n_frames = cb.get_number_of_users();
 	}
 

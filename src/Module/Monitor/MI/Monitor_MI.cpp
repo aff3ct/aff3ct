@@ -33,8 +33,8 @@ Monitor_MI<B,R>
 	auto &ps_Y = this->template create_socket_in<R>(p, "Y", get_N() * get_n_frames());
 	this->create_codelet(p, [this, &ps_X, &ps_Y]() -> int
 	{
-		return this->get_mutual_info(static_cast<B*>(ps_X.get_dataptr()),
-		                             static_cast<R*>(ps_Y.get_dataptr()));
+		return (int)this->get_mutual_info(static_cast<B*>(ps_X.get_dataptr()),
+		                                  static_cast<R*>(ps_Y.get_dataptr()));
 	});
 
 	reset();

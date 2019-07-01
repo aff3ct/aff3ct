@@ -253,7 +253,7 @@ LDPC_matrix_handler::LDPC_matrix LU_decomp(const LDPC_matrix_handler::LDPC_matri
 					auto rLgn3       = rLgn2 ^ rLgn;
 					rLgn3.store(&Hinv[r2][i * mipp::nElReg<V>()]);
 				}
-				for (unsigned i = loop_size1 * mipp::nElReg<V>(); i < 2 * M; i++)
+				for (size_t i = loop_size1 * (size_t)mipp::nElReg<V>(); i < 2 * M; i++)
 					Hinv[r2][i] = Hinv[r2][i] ^ Hinv[r][i];
 			}
 		}
