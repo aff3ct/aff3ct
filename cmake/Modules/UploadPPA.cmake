@@ -60,7 +60,22 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
          "Depends: ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
          "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
+         "${DEBIAN_LONG_DESCRIPTION}\n"
+         "\n"
+         "Package: ${CPACK_DEBIAN_PACKAGE_NAME}-dev\n"
+         "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
+         "Depends: ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
+         "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
          "${DEBIAN_LONG_DESCRIPTION}\n")
+
+    file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}.install"
+         "usr/bin/*\n"
+         "usr/share/*/conf/*\n"
+         "usr/share/*/refs/*\n")
+
+    file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-dev.install"
+         "usr/lib/*\n"
+         "usr/include/*\n")
 
     ##############################################################################
     # debian/copyright
