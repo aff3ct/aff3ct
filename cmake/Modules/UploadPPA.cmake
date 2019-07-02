@@ -70,12 +70,12 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}.install"
          "usr/bin/*\n"
-         "usr/share/*/conf/*\n"
-         "usr/share/*/refs/*\n")
+         "usr/share/aff3ct-${AFF3CT_VERSION_FULL}/conf/*\n"
+         "usr/share/aff3ct-${AFF3CT_VERSION_FULL}/refs/*\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-dev.install"
-         "usr/lib/*\n"
-         "usr/include/*\n")
+         "usr/lib/x86_64-linux-gnu/*\n"
+         "usr/include/aff3ct-${AFF3CT_VERSION_FULL}/*\n")
 
     ##############################################################################
     # debian/copyright
@@ -89,11 +89,11 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "\n\n%:\n"
          "\tdh  $@ --buildsystem=cmake\n"
          "\noverride_dh_auto_configure:\n"
-         "\tDESTDIR=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" dh_auto_configure"
+         "\tDESTDIR=\"$(CURDIR)\" dh_auto_configure"
          " -- -DCMAKE_BUILD_TYPE=Release -DAFF3CT_COMPILE_SHARED_LIB=ON -DPACKAGE_TGZ=OFF "
          "-DAFF3CT_OVERRIDE_VERSION=${GIT_VERSION} -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS}'"
          "\n\noverride_dh_auto_install:\n"
-         "\tdh_auto_install --destdir=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" --buildsystem=cmake"
+         "\tdh_auto_install --destdir=\"$(CURDIR)\" --buildsystem=cmake"
          "\n\noverride_dh_strip:\n")
 
     execute_process(COMMAND chmod +x ${DEBIAN_RULES})
