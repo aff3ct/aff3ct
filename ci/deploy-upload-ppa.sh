@@ -48,5 +48,11 @@ else
 	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 fi
 
+
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+
+
+
 make -j $THREADS -k
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+

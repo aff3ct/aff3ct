@@ -66,6 +66,12 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
          "Depends: ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
          "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
+         "${DEBIAN_LONG_DESCRIPTION}\n"
+         "\n"
+         "Package: ${CPACK_DEBIAN_PACKAGE_NAME}-doc\n"
+         "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
+         "Depends: ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
+         "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
          "${DEBIAN_LONG_DESCRIPTION}\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}.install"
@@ -76,6 +82,9 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-dev.install"
          "usr/lib/x86_64-linux-gnu/*\n"
          "usr/include/aff3ct-${AFF3CT_VERSION_FULL}/*\n")
+
+    file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-doc.install"
+         "documentation-sphinx/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc\n")
 
     ##############################################################################
     # debian/copyright

@@ -1230,7 +1230,8 @@ deploy-upload-ppa:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  dependencies: 
+    - documentation-sphinx
   tags:
     - linux
     - gcc
