@@ -3,6 +3,7 @@ set -x
 
 cmake --version
 mkdir build
+mv documentation-sphinx build
 cd build
 
 if [ -z "DISTRIBS" ]
@@ -48,11 +49,5 @@ else
 	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 fi
 
-
-rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-
-
-
 make -j $THREADS -k
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-
