@@ -84,7 +84,8 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "usr/include/aff3ct-${AFF3CT_VERSION_FULL}/*\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-doc.install"
-         "doc/sphinx/built/html/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/html\n")
+         "doc/sphinx/built/html/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/html\n"
+         "doc/sphinx/built/latex/AFF3CT.pdf usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/pdf/\n")
 
     ##############################################################################
     # debian/copyright
@@ -99,7 +100,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "\tdh  $@ --buildsystem=cmake\n"
          "\noverride_dh_auto_configure:\n"
          "\tDESTDIR=\"$(CURDIR)\" dh_auto_configure"
-         " -- -DCMAKE_BUILD_TYPE=Release -DAFF3CT_COMPILE_SHARED_LIB=ON -DPACKAGE_TGZ=OFF "
+         " -- -DCMAKE_BUILD_TYPE=Release -DAFF3CT_COMPILE_SHARED_LIB=ON "
          "-DAFF3CT_OVERRIDE_VERSION=${GIT_VERSION} -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS}'"
          "\n\noverride_dh_auto_install:\n"
          "\tdh_auto_install --destdir=\"$(CURDIR)\" --buildsystem=cmake"
