@@ -84,7 +84,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "usr/include/aff3ct-${AFF3CT_VERSION_FULL}/*\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-doc.install"
-         "documentation-sphinx/doc/sphinx/build/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc\n")
+         "doc/sphinx/built/html/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/html\n")
 
     ##############################################################################
     # debian/copyright

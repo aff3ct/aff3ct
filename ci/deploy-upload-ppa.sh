@@ -3,7 +3,7 @@ set -x
 
 cmake --version
 mkdir build
-mv documentation-sphinx build
+mv doc/sphinx/build doc/sphinx/built
 cd build
 
 if [ -z "DISTRIBS" ]
