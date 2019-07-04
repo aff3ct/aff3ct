@@ -52,7 +52,7 @@ Full_matrix<T> bgemm(const Full_matrix<T>& A, const Full_matrix<T>& B)
 	auto M = B.get_n_rows();
 	auto N = B.get_n_cols();
 
-	Full_matrix<T> C(L, N);
+	Full_matrix<T> C((unsigned)L, (unsigned)N);
 
 	for (size_t l = 0; l < L; l++)
 		for (size_t n = 0; n < N; n++)
@@ -88,7 +88,7 @@ Full_matrix<T> bgemmt(const Full_matrix<T>& A, const Full_matrix<T>& tB)
 	auto N = tB.get_n_rows();
 	auto M = tB.get_n_cols();
 
-	Full_matrix<T> C(L, N);
+	Full_matrix<T> C((unsigned)L, (unsigned)N);
 
 	const auto M_loop_size = (M / (size_t)mipp::nElReg<T>()) * (size_t)mipp::nElReg<T>();
 

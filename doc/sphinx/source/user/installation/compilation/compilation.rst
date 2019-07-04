@@ -215,7 +215,12 @@ Once |AFF3CT| is compiled you can browse the build by right clicking on
 .. warning:: The Visual Studio default compiler (MSVC) is known to generate
              significantly slower |AFF3CT| executable than the GNU compiler.
              **If you target an high speed executable it is recommended to use
-             the GNU compiler.**
+             the GNU or Clang compilers.**
+
+.. danger:: When compiling AFF3CT in debug mode, the
+            ``src\Factory\Module\Decoder\Polar\Decoder_polar.cpp`` file
+            generates the following error: ``fatal error C1128``.
+            To fix this, you need to compile with the ``/bigobj`` parameter.
 
 The compilation can also be started from the command line after calling the
 ``%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat`` batch script (where ``%VS_PATH%``
@@ -224,6 +229,16 @@ is the location of Visual Studio on your system):
 .. code-block:: bash
 
    devenv /build Release aff3ct.sln
+
+.. _compilation-visual_studio_2019_project:
+
+Compilation with a Visual Studio 2019 Solution
+----------------------------------------------
+
+The compilation process on Visual Studio 2019 is almost the same than on Visual
+Studio 2017. Note that many improvements have been made on the |MSVC| compiler
+on Visual Studio 2019 and now the produced binaries are competitive with other
+standard compilers like GNU and Clang.
 
 .. _compilation_cmake_options:
 

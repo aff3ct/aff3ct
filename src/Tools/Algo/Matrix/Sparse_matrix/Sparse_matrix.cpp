@@ -38,8 +38,8 @@ void Sparse_matrix
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->row_to_cols[row_index].push_back(col_index);
-	this->col_to_rows[col_index].push_back(row_index);
+	this->row_to_cols[row_index].push_back((uint32_t)col_index);
+	this->col_to_rows[col_index].push_back((uint32_t)row_index);
 
 	this->rows_max_degree = std::max(get_rows_max_degree(), row_to_cols[row_index].size());
 	this->cols_max_degree = std::max(get_cols_max_degree(), col_to_rows[col_index].size());
@@ -157,8 +157,8 @@ Sparse_matrix Sparse_matrix
 					const auto row_index = col_to_rows[c][r];
 					if (row_index < n_rows)
 					{
-						resized.row_to_cols[row_index].push_back(col_index);
-						resized.col_to_rows[col_index].push_back(row_index);
+						resized.row_to_cols[row_index].push_back((uint32_t)col_index);
+						resized.col_to_rows[col_index].push_back((uint32_t)row_index);
 					}
 				}
 		}
@@ -172,8 +172,8 @@ Sparse_matrix Sparse_matrix
 					const auto row_index = col_to_rows[c][r];
 					if (row_index < n_rows)
 					{
-						resized.row_to_cols[row_index].push_back(col_index);
-						resized.col_to_rows[col_index].push_back(row_index);
+						resized.row_to_cols[row_index].push_back((uint32_t)col_index);
+						resized.col_to_rows[col_index].push_back((uint32_t)row_index);
 					}
 				}
 		}
@@ -187,8 +187,8 @@ Sparse_matrix Sparse_matrix
 					const auto row_index = diff_n_rows + (int)col_to_rows[c][r];
 					if (row_index >= 0)
 					{
-						resized.row_to_cols[row_index].push_back(col_index);
-						resized.col_to_rows[col_index].push_back(row_index);
+						resized.row_to_cols[row_index].push_back((uint32_t)col_index);
+						resized.col_to_rows[col_index].push_back((uint32_t)row_index);
 					}
 				}
 		}
@@ -202,8 +202,8 @@ Sparse_matrix Sparse_matrix
 					const auto row_index = diff_n_rows + (int)col_to_rows[c][r];
 					if (row_index >= 0)
 					{
-						resized.row_to_cols[row_index].push_back(col_index);
-						resized.col_to_rows[col_index].push_back(row_index);
+						resized.row_to_cols[row_index].push_back((uint32_t)col_index);
+						resized.col_to_rows[col_index].push_back((uint32_t)row_index);
 					}
 				}
 		}
@@ -262,7 +262,7 @@ void Sparse_matrix
 		r.clear();
 	for (size_t i = 0; i < this->col_to_rows.size(); i++)
 		for (size_t j = 0; j < this->col_to_rows[i].size(); j++)
-			this->row_to_cols[this->col_to_rows[i][j]].push_back(i);
+			this->row_to_cols[this->col_to_rows[i][j]].push_back((uint32_t)i);
 }
 
 void Sparse_matrix

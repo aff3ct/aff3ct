@@ -33,7 +33,7 @@ inline bool has_complex_symbols(const Constellation<R>& cstl)
 template <typename R>
 Constellation<R>::
 Constellation(std::vector<S>&& symbols, const std::string& name)
-: n_bps(std::log2(symbols.size())),
+: n_bps((unsigned int)std::log2(symbols.size())),
   n_symbs(1 << n_bps),
   name(std::to_string(n_symbs) + name),
   constellation(std::move(symbols)),
@@ -51,9 +51,8 @@ Constellation(std::vector<S>&& symbols, const std::string& name)
 template <typename R>
 Constellation<R>::
 Constellation(const unsigned n_bps, const std::string& name)
-: Constellation(std::move(std::vector<S>(1 << n_bps)), name)
+: Constellation(std::move(std::vector<S>((size_t)((int64_t)1 << n_bps))), name)
 {
-
 }
 
 template <typename R>

@@ -23,7 +23,7 @@ Decoder_LDPC_BP_flooding_SPA<B,R>
                                const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_LDPC_BP_flooding<B,R,tools::Update_rule_SPA<R>>(K, N, n_ite, _H, info_bits_pos,
-                                                          tools::Update_rule_SPA<R>(_H.get_cols_max_degree()),
+                                                          tools::Update_rule_SPA<R>((unsigned int)_H.get_cols_max_degree()),
                                                           enable_syndrome, syndrome_depth, n_frames),
   values(_H.get_cols_max_degree())
 {
@@ -85,7 +85,7 @@ void Decoder_LDPC_BP_flooding_SPA<B,R>
 	}
 	// tail loop to compute the remaining elements
 	for (auto b = vec_loop_size; b < n_branches; b++)
-		msg_chk_to_var[b] = (R)2.0 * std::atanh(msg_chk_to_var[b]);
+		msg_chk_to_var[b] = (R)2.0 * (R)std::atanh(msg_chk_to_var[b]);
 }
 }
 }
