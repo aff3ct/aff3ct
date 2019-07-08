@@ -11,7 +11,6 @@ if(NOT AFF3CT_DPUT_HOST)
   return()
 endif(NOT AFF3CT_DPUT_HOST)
 
-
 execute_process(COMMAND git tag -n20 --points-at v${AFF3CT_VERSION}
                 OUTPUT_VARIABLE CHANGELOG
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -23,8 +22,6 @@ execute_process(COMMAND lsb_release -cs
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
 set(AFF3CT_PPA_DISTRIB ${DISTRI})
 endif()
-
-
 
 foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
     string(REPLACE "\n" "\n " DEBIAN_LONG_DESCRIPTION " ${CPACK_PACKAGE_DESCRIPTION}")
@@ -177,7 +174,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
     # dput ppa:your-lp-id/ppa <source.changes>
     # TODO : Add possibility to use .dc file
     add_custom_target(dput_${DISTRI} ALL
-                      COMMAND ${DPUT_EXECUTABLE} ${DPUT_HOST} ${DEBIAN_SOURCE_CHANGES}
+                      COMMAND ${DPUT_EXECUTABLE} ${AFF3CT_DPUT_HOST} ${DEBIAN_SOURCE_CHANGES}
                       DEPENDS  debuild_${DISTRI}
                       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Debian/${DISTRI})
 

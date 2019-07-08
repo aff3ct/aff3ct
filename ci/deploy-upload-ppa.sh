@@ -37,13 +37,13 @@ then
 	NAME="build_deploy_upload_ppa"
 fi
 
-if [ "$GIT_BRANCH" = "development"]
+if [ "$GIT_BRANCH" = "development" ]
 then
 	DPUT_HOST="ppa:aff3ct/aff3ct-dev"
-elif [ "$GIT_BRANCH" = "master"]
+elif [ "$GIT_BRANCH" = "master" ]
 then
 	DPUT_HOST="ppa:aff3ct/aff3ct-stable"
-elif [ "$GIT_BRANCH" = "ppa_upload"]
+elif [ "$GIT_BRANCH" = "ppa_upload" ]
 then
 	DPUT_HOST="ppa:aff3ct/aff3ct"
 else
