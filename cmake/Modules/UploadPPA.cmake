@@ -6,6 +6,11 @@ if(NOT DEBUILD_EXECUTABLE OR NOT DPUT_EXECUTABLE)
   return()
 endif(NOT DEBUILD_EXECUTABLE OR NOT DPUT_EXECUTABLE)
 
+if(NOT AFF3CT_DPUT_HOST)
+  message(WARNING "AFF3CT_DPUT_HOST varibale note set. Please give the ppa host name.")
+  return()
+endif(NOT AFF3CT_DPUT_HOST)
+
 
 execute_process(COMMAND git tag -n20 --points-at v${AFF3CT_VERSION}
                 OUTPUT_VARIABLE CHANGELOG
@@ -19,6 +24,8 @@ execute_process(COMMAND lsb_release -cs
 set(AFF3CT_PPA_DISTRIB ${DISTRI})
 endif()
 
+
+
 foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
     string(REPLACE "\n" "\n " DEBIAN_LONG_DESCRIPTION " ${CPACK_PACKAGE_DESCRIPTION}")
     set(DEBIAN_PACKAGE_FILE_NAME "aff3ct-${AFF3CT_VERSION_FULL}-${DISTRI}.orig")
@@ -30,8 +37,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
     set(DEBIAN_CHANGELOG ${DEBIAN_SOURCE_DIR}/debian/changelog)
     set(DEBIAN_SOURCE_CHANGES ${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_DEBIAN_PACKAGE_VERSION}-${DISTRI}_source.changes)
     set(ORIG_FILE "${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEBIAN_PACKAGE_FILE_NAME}.tar.gz")
-    set(DPUT_HOST "ppa:aff3ct/aff3ct")
-    if(CHANGELOG_MESSAGE) # TODO get it from git
+    if(CHANGELOG_MESSAGE)
         set(output_changelog_msg ${CHANGELOG_MESSAGE})
     else()
         set(output_changelog_msg "* Package created with CMake")

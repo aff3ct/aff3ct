@@ -1239,6 +1239,10 @@ deploy-upload-ppa:
     - x86
     - 64-bit
     - ppa
+  only:
+    - master
+    - development
+    - ppa_upload
   artifacts:
     name: ppa_files
     when: always
@@ -1248,6 +1252,8 @@ deploy-upload-ppa:
       - build/Debian/xenial/*.dsc
       - build/Debian/xenial/*.build
   script:
+    - source ./ci/tools/git-branch.sh
+    - source ./ci/tools/threads.sh
     - export DISTRIBS="xenial;bionic"
     - export CC="gcc"
     - export CXX="g++"
@@ -1255,7 +1261,6 @@ deploy-upload-ppa:
     - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=OFF -DAFF3CT_COMPILE_STATIC_LIB=OFF -DAFF3CT_COMPILE_SHARED_LIB=OFF -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - export NAME="build"
-    - source ./ci/tools/threads.sh
     - ./ci/deploy-upload-ppa.sh
 
 pages:
