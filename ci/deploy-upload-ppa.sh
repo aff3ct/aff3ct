@@ -1,6 +1,12 @@
 #!/bin/bash
 set -x
 
+if [[ ( -z "$CI_AFF3CT_DEPLOY" ) || ( "$CI_AFF3CT_DEPLOY" != "ON" ) ]]
+then
+	echo "This job is disabled, try to set the CI_AFF3CT_DEPLOY environment variable to 'ON' to enable it."
+	exit 1
+fi
+
 cmake --version
 mkdir build
 mv doc/sphinx/build doc/sphinx/built

@@ -1232,6 +1232,7 @@ deploy-upload-ppa:
     - schedules
   dependencies: 
     - documentation-sphinx
+  allow_failure: true
   tags:
     - linux
     - gcc
