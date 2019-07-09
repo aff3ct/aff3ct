@@ -650,7 +650,6 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME "aff3ct-${AFF3CT_VERSION_FULL}")
 # general configuration and package description
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
-#set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Adrien Cassagne <adrien.cassagne@inria.fr>")
 set(CPACK_DEBIAN_PACKAGE_NAME "aff3ct")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Mathieu Léonardon <mathieu.leonardon@gmail.com>")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://aff3ct.github.io/")
