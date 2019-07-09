@@ -59,14 +59,14 @@ If you do not plan to modify the |AFF3CT| source code and you
 want to use the simulator/library as is, you can **download one
 of the latest builds** from the
 `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_.
-
+Precompiled binaries are available for the most common operating systems : Windows, macOS and Linux.
 
 On Debian / Ubuntu
 """"""""""""""""""
 Each new version of |AFF3CT| is deployed on ppa repository for aptitude package manager.
 Two different repositories are available.
-The first one, ``stable``, holds each new version of the ``master`` branch.
-The second one, ``dev``, holds each new version of the ``development`` branch.
+The first one, ``stable``, holds versions that are released after a lot of testing to ensure performance and stability.
+The second one, ``dev``, holds the latest development versions of aff3ct.
 
 Select the channel to use:
 
