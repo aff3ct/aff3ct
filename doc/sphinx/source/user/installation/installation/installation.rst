@@ -4,8 +4,8 @@ Installation
 ============
 
 In order to be installed on a system, AFF3CT can either be compiled locally
- and installed (see `From Source`_), or remotely precompiled versions 
- can be downloaded and installed (see `Precompiled Versions`_.)
+and installed (see `From Source`_), or remotely precompiled versions 
+can be downloaded and installed (see `Precompiled Versions`_.)
 
 From Source
 -----------
@@ -58,23 +58,40 @@ From |AFF3CT| website
 If you do not plan to modify the |AFF3CT| source code and you
 want to use the simulator/library as is, you can **download one
 of the latest builds** from the
-`download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_
-and skip this section.
+`download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_.
 
 
 On Debian / Ubuntu
 """"""""""""""""""
-Each new version of |AFF3CT| is deployed on a ppa.
-It can be installed on Debian / Ubuntu systems with the following commands:
+Each new version of |AFF3CT| is deployed on ppa repository for aptitude package manager.
+Two different repositories are available.
+The first one, ``stable``, holds each new version of the ``master`` branch.
+The second one, ``dev``, holds each new version of the ``development`` branch.
+
+Select the channel to use:
+
+*Stable*
 
 .. code-block:: bash
 
-   sudo add-apt-repository ppa:aff3ct/aff3ct
-   sudo apt-get update
-   sudo apt-get install aff3ct     # contains ``bin/``, ``conf/`` and ``refs/`` folders
-   sudo apt-get install aff3ct-dev # contains ``include/`` and ``lib/`` folders
-   sudo apt-get install aff3ct-doc # contains ``doc/``
+   sudo add-apt-repository ppa:aff3ct-stable/aff3ct
 
+*Dev*
+
+.. code-block:: bash
+
+   sudo add-apt-repository ppa:aff3ct-dev/aff3ct
+
+*Update package list and install:*
+
+.. code-block:: bash
+
+   sudo apt-get update
+   sudo apt-get install aff3ct aff3ct-dev aff3ct-doc 
+
+The package ``aff3ct`` contains the ``bin/``, ``conf/`` and ``refs/`` folders.
+The package ``aff3ct-dev`` contains the ``include/`` and ``lib/`` folders.
+The package ``aff3ct-doc`` contains the ``doc/`` folder.
 
 Contents
 -------
