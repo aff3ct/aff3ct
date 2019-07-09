@@ -1247,7 +1247,6 @@ deploy-upload-ppa:
     name: ppa_files
     when: always
     paths:
-      - build/Debian/xenial/*.gz
       - build/Debian/xenial/*.xz
       - build/Debian/xenial/*.dsc
       - build/Debian/xenial/*.build
