@@ -103,7 +103,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "\tdh  $@ --buildsystem=cmake\n"
          "\noverride_dh_auto_configure:\n"
          "\tDESTDIR=\"$(CURDIR)\" dh_auto_configure"
-         " -- -DCMAKE_BUILD_TYPE=Release -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_EXT_STRINGS=OFF"
+         " -- -DCMAKE_BUILD_TYPE=Release -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_EXT_STRINGS=OFF "
          "-DAFF3CT_OVERRIDE_VERSION=${GIT_VERSION} -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS}'"
          "\n\noverride_dh_auto_install:\n"
          "\tdh_auto_install --destdir=\"$(CURDIR)\" --buildsystem=cmake"
