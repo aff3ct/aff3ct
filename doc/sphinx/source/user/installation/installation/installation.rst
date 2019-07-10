@@ -63,10 +63,10 @@ Precompiled binaries are available for the most common operating systems : Windo
 
 On Debian / Ubuntu
 """"""""""""""""""
-Each new version of |AFF3CT| is deployed on ppa repository for aptitude package manager.
+Each new version of |AFF3CT| is deployed on |PPA| repositories for the aptitude package manager.
 Two different repositories are available.
 The first one, ``stable``, holds versions that are released after a lot of testing to ensure performance and stability.
-The second one, ``dev``, holds the latest development versions of aff3ct.
+The second one, ``dev``, holds the latest development versions of |AFF3CT|.
 
 Select the channel to use:
 
@@ -74,13 +74,13 @@ Select the channel to use:
 
 .. code-block:: bash
 
-   sudo add-apt-repository ppa:aff3ct-stable/aff3ct
+   sudo add-apt-repository ppa:aff3ct/aff3ct-stable
 
 *Dev*
 
 .. code-block:: bash
 
-   sudo add-apt-repository ppa:aff3ct-dev/aff3ct
+   sudo add-apt-repository ppa:aff3ct/aff3ct-dev
 
 *Update package list and install:*
 
