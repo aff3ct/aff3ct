@@ -38,7 +38,7 @@ parameters in a simplified communication chain.
 
 .. _fig_sim_code:
 
-.. figure:: images/sim_code.png
+.. figure:: images/sim_code.svg
    :figwidth: 70 %
    :align: center
 
@@ -53,7 +53,7 @@ between each |SNR| (c.f. section :ref:`sim-sim-noise-step`). The
 
 .. _fig_sim_snr:
 
-.. figure:: images/sim_snr.png
+.. figure:: images/sim_snr.svg
    :figwidth: 60 %
    :align: center
 
@@ -130,7 +130,7 @@ runtime.
 
 .. _fig_sim_module_task:
 
-.. figure:: images/sim_module_task.png
+.. figure:: images/sim_module_task.svg
    :figwidth: 90 %
    :align: center
 

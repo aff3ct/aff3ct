@@ -2,6 +2,7 @@ Sphinx==1.8.1
 sphinx-rtd-theme==0.4.2
 sphinxcontrib-bibtex==0.4.0
 sphinxcontrib-websupport==1.1.0
+sphinxcontrib-svg2pdfconverter==0.1.0
 breathe==4.11.0
 m2r==0.2.1
 docutils==0.14

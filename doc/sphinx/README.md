@@ -5,7 +5,7 @@
 Install Sphinx using Python and pip:
 
 ```bash
-sudo apt install python3 python3-pip
+sudo apt install python3 python3-pip librsvg2-2
 sudo pip3 install -r requirements.txt
 ```
 

@@ -23,7 +23,7 @@ the most important ones are:
 
 .. _fig_comm_chain:
 
-.. figure:: images/comm_chain.png
+.. figure:: images/comm_chain.svg
    :figwidth: 80 %
    :align: center
 

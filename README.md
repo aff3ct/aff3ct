@@ -7,7 +7,7 @@
 [![DOI](https://zenodo.org/badge/60615913.svg)](https://zenodo.org/badge/latestdoi/60615913)
 [![License: MIT](https://img.shields.io/github/license/aff3ct/aff3ct.svg)](./LICENSE)
 
-**AFF3CT** is a simulator and a library dedicated to the Forward Error
+**AFF3CT** is **a simulator** and **a library** dedicated to the Forward Error
 Correction (FEC or **channel coding**). It is written in **C++** and it supports
 a large range of codes: from the well-spread **Turbo codes** to the new
 **Polar codes** including the **Low-Density Parity-Check (LDPC) codes**.
