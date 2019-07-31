@@ -25,10 +25,10 @@ calculated from 0.0 dB to 10.0 dB with a 1.0 dB step.
 Bootstrap
 =========
 
-The bootstrap example is the easiest way to start using the |AFF3CT| library. It is based on
-``C++`` classes and methods that operate on buffers.
-Keep in mind that this is the simplest way to use |AFF3CT|, but not the
-most powerful way. More advanced features such as benchmarking, debugging, command line
+The bootstrap example is the easiest way to start using the |AFF3CT| library. It
+is based on ``C++`` classes and methods that operate on buffers. Keep in mind
+that this is the simplest way to use |AFF3CT|, but not the most powerful way.
+More advanced features such as benchmarking, debugging, command line
 interfacing, and more are illustrated in the :ref:`user_library_tasks` and
 :ref:`user_library_factory` examples.
 
@@ -40,7 +40,8 @@ interfacing, and more are illustrated in the :ref:`user_library_tasks` and
    Simulated communication chain: classes and methods.
 
 :numref:`fig_simple_chain_code` illustrates the source code: green boxes
-correspond to classes, blue boxes correspond to methods, and arrows represent buffers.
+correspond to classes, blue boxes correspond to methods, and arrows represent
+buffers.
 
 .. code-block:: cpp
 	:caption: Bootstrap: main function
@@ -108,15 +109,16 @@ the modules, ``m`` contains the modules of the communication chain and ``u`` is
 a set of convenient helper objects.
 
 Line ``15`` loops over the desired |SNRs| range. Lines ``31-40``, the ``while``
-loop iterates until 100 frame errors have been detected by the monitor. The |AFF3CT|
-communication chain methods are called inside this loop. Each |AFF3CT| method
-works on input(s) and/or output(s) buffer(s) that have been declared at line ``8``.
-Those buffers can be ``std::vector``, or pointers to user-allocated memory areas. The sizes and the types of
-those buffers have to be set in accordance with the corresponding sizes and types of the |AFF3CT|
-modules declared at line ``7``. If there is a size and/or type mismatch,
-the |AFF3CT| library throws an exception. The |AFF3CT| modules are classes
-that uses the C++ meta-programming technique (e.g. ``C++ templates``). By default
-those templates are instantiated to ``int32_t`` or ``float``.
+loop iterates until 100 frame errors have been detected by the monitor. The
+|AFF3CT| communication chain methods are called inside this loop. Each |AFF3CT|
+method works on input(s) and/or output(s) buffer(s) that have been declared at
+line ``8``. Those buffers can be ``std::vector``, or pointers to user-allocated
+memory areas. The sizes and the types of those buffers have to be set in
+accordance with the corresponding sizes and types of the |AFF3CT| modules
+declared at line ``7``. If there is a size and/or type mismatch, the |AFF3CT|
+library throws an exception. The |AFF3CT| modules are classes that uses the C++
+meta-programming technique (e.g. ``C++ templates``). By default those templates
+are instantiated to ``int32_t`` or ``float``.
 
 .. code-block:: cpp
 	:caption: Bootstrap: parameters
@@ -140,8 +142,8 @@ those templates are instantiated to ``int32_t`` or ``float``.
 		p.R = (float)p.K / (float)p.N;
 	}
 
-:numref:`lst_bootstrap_params` describes the ``params1`` simulation
-structure and the ``init_params1`` function used at line ``6`` in
+:numref:`lst_bootstrap_params` describes the ``params1`` simulation structure
+and the ``init_params1`` function used at line ``6`` in
 :numref:`lst_bootstrap_main`.
 
 .. code-block:: cpp
@@ -169,13 +171,13 @@ structure and the ``init_params1`` function used at line ``6`` in
 		m.monitor = std::unique_ptr<module::Monitor_BFER          <>>(new module::Monitor_BFER          <>(p.K, p.fe  ));
 	};
 
-:numref:`lst_bootstrap_main` describes the ``modules1`` structure
-and the ``init_modules1`` function used at line ``7`` in
-:numref:`lst_bootstrap_main`. The ``init_modules1`` function allocates the
-modules of the communication chain. Those modules are allocated on the heap and
-managed by smart pointers (``std::unique_ptr``). Note that the ``init_modules1``
-function takes a ``params1`` structure from :numref:`lst_bootstrap_params` in
-parameter. These parameters are used to build the modules.
+:numref:`lst_bootstrap_main` describes the ``modules1`` structure and the
+``init_modules1`` function used at line ``7`` in :numref:`lst_bootstrap_main`.
+The ``init_modules1`` function allocates the modules of the communication chain.
+Those modules are allocated on the heap and managed by smart pointers
+(``std::unique_ptr``). Note that the ``init_modules1`` function takes a
+``params1`` structure from :numref:`lst_bootstrap_params` in parameter. These
+parameters are used to build the modules.
 
 .. code-block:: cpp
 	:caption: Bootstrap: buffers
@@ -202,13 +204,13 @@ parameter. These parameters are used to build the modules.
 		b.dec_bits      = std::vector<int  >(p.K);
 	}
 
-:numref:`lst_bootstrap_buffers` describes the ``buffers1`` structure
-and the ``init_buffers1`` function used at line ``8`` in
-:numref:`lst_bootstrap_main`. The ``init_buffers1`` function allocates the
-buffers of the communication chain. Here, we chose to allocate buffers as
-instances of the ``std::vector`` C++ standard class. As for the modules in
-:numref:`lst_bootstrap_modules`, the size of the buffers is obtained from the
-``params1`` input structure (cf. :numref:`lst_bootstrap_params`).
+:numref:`lst_bootstrap_buffers` describes the ``buffers1`` structure and the
+``init_buffers1`` function used at line ``8`` in :numref:`lst_bootstrap_main`.
+The ``init_buffers1`` function allocates the buffers of the communication chain.
+Here, we chose to allocate buffers as instances of the ``std::vector`` C++
+standard class. As for the modules in :numref:`lst_bootstrap_modules`, the size
+of the buffers is obtained from the ``params1`` input structure (cf.
+:numref:`lst_bootstrap_params`).
 
 .. code-block:: cpp
 	:caption: Bootstrap: utils
@@ -237,12 +239,12 @@ instances of the ``std::vector`` C++ standard class. As for the modules in
 	}
 
 :numref:`lst_bootstrap_utils` describes the ``utils1`` structure and the
-``init_utils1`` function used at line ``9`` in :numref:`lst_bootstrap_main`.
-The ``init_utils1`` function allocates 1) the ``noise`` object that contains the
-type of noise we want to simulate (e.g. `sigma`), 2) a ``terminal`` object that takes care of printing
-the |BFER| to the console. Three reporters are
-created, one for to print |SNR|, another one to print |BFER|, and the last
-one to report the simulation throughput in the ``terminal``.
+``init_utils1`` function used at line ``9`` in :numref:`lst_bootstrap_main`. The
+``init_utils1`` function allocates 1) the ``noise`` object that contains the
+type of noise we want to simulate (e.g. `sigma`), 2) a ``terminal`` object that
+takes care of printing the |BFER| to the console. Three reporters are created,
+one to print |SNR|, another one to print |BFER|, and the last one to report the
+simulation throughput in the ``terminal``.
 
 If you run the `bootstrap` example, the expected output is shown in
 :numref:`lst_bootstrap_output`.
@@ -280,12 +282,12 @@ Tasks
 =====
 
 Some of the |AFF3CT| classes inherit from the ``Module`` abstract class.
-Generally speaking, any class defining methods for a communication
-chain is a ``Module``. Inside a module class, there can be many public methods; however,
-only some of them are directly used in the communication chain. A method
-usable in a chain is named a ``Task``. A ``Task`` is characterized by its
-behavior and its data: the input and output data are declared via a collection
-of ``Socket`` objects.
+Generally speaking, any class defining methods for a communication chain is a
+``Module``. Inside a module class, there can be many public methods; however,
+only some of them are directly used in the communication chain. A method usable
+in a chain is named a ``Task``. A ``Task`` is characterized by its behavior and
+its data: the input and output data are declared via a collection of ``Socket``
+objects.
 
 .. code-block:: cpp
 	:linenos:
@@ -358,21 +360,22 @@ of ``Socket`` objects.
 		return 0;
 	}
 
-:numref:`lst_tasks_main` shows how the ``Module``, ``Task`` and
-``Socket`` objects work together. Line ``7``, ``modules2`` differs slightly from the
-previous ``modules1`` structure, and it is also the same for the ``init_modules2``
-function. :numref:`lst_tasks_modules` details the changes.
+:numref:`lst_tasks_main` shows how the ``Module``, ``Task`` and ``Socket``
+objects work together. Line ``7``, ``modules2`` differs slightly from the
+previous ``modules1`` structure, and it is also the same for the
+``init_modules2`` function. :numref:`lst_tasks_modules` details the changes.
 
-Thanks to the use of ``Task`` and ``Socket`` objects, it is now possible to
-skip the buffer allocation part (see line ``8``), which is handled transparently by these objects.
-For that, the connections between the sockets of successive tasks in
-the chain have to be established explicitly: this is the binding process shown at lines ``14-22``,
-using the ``bind`` method. In return, to execute the tasks (lines ``43-49``), you now only
-need to call the ``exec`` method, without any parameters.
+Thanks to the use of ``Task`` and ``Socket`` objects, it is now possible to skip
+the buffer allocation part (see line ``8``), which is handled transparently by
+these objects. For that, the connections between the sockets of successive tasks
+in the chain have to be established explicitly: this is the binding process
+shown at lines ``14-22``, using the ``bind`` method. In return, to execute the
+tasks (lines ``43-49``), you now only need to call the ``exec`` method, without
+any parameters.
 
-Using the ``bind`` and ``exec`` methods bring new useful features
-for debugging and benchmarking. In :numref:`lst_tasks_main`, some statistics
-about tasks are collected and reported at lines ``60-61`` (see :ref:`sim-sim-stats` section
+Using the ``bind`` and ``exec`` methods bring new useful features for debugging
+and benchmarking. In :numref:`lst_tasks_main`, some statistics about tasks are
+collected and reported at lines ``60-61`` (see :ref:`sim-sim-stats` section
 for more informations about the statistics output).
 
 .. code-block:: cpp
@@ -411,8 +414,9 @@ The beginning of the ``init_modules2`` function (:numref:`lst_tasks_modules`) is
 the same as the ``init_module1`` function (:numref:`lst_bootstrap_modules`). At
 lines ``10-24``, each ``Module`` is parsed to get its tasks, each ``Task`` is
 configured to automatically allocate its outputs ``Socket`` memory (line ``15``)
-and collect statistics on the ``Task`` execution (line ``19``). It is also possible
-to print debug information by toggling boolean to ``true`` at line ``17``.
+and collect statistics on the ``Task`` execution (line ``19``). It is also
+possible to print debug information by toggling boolean to ``true`` at line
+``17``.
 
 .. note:: The full source code is available here:
   https://github.com/aff3ct/my_project_with_aff3ct/blob/master/examples/tasks/src/main.cpp.
@@ -422,7 +426,7 @@ to print debug information by toggling boolean to ``true`` at line ``17``.
 SystemC/TLM
 ===========
 
-Alternatively, the AFF3CT modules support SystemC/TLM interfaces, 
+Alternatively, the AFF3CT modules support SystemC/TLM interfaces,
 :numref:`lst_systemc_main` highlights the modifications in the ``main`` function
 to use standard TLM interfaces.
 
@@ -522,9 +526,8 @@ Factory
 
 In the previous :ref:`user_library_bootstrap`, :ref:`user_library_tasks` and
 :ref:`user_library_systemc` examples, the AFF3CT ``Module`` classes were built
-statically in the source code. In the ``Factory`` example, ``factory``
-classes are used instead, to build modules dynamically from command line
-arguments.
+statically in the source code. In the ``Factory`` example, ``factory`` classes
+are used instead, to build modules dynamically from command line arguments.
 
 .. code-block:: cpp
 	:caption: Factory: main function
@@ -548,8 +551,8 @@ arguments.
 		return 0;
 	}
 
-The ``main`` function in :numref:`lst_factory_main` is almost unchanged from
-the ``main`` function in :numref:`lst_tasks_main`.
+The ``main`` function in :numref:`lst_factory_main` is almost unchanged from the
+``main`` function in :numref:`lst_tasks_main`.
 
 .. code-block:: cpp
 	:caption: Factory: parameters
@@ -603,18 +606,18 @@ the ``main`` function in :numref:`lst_tasks_main`.
 	}
 
 The ``params3`` structure from :numref:`lst_factory_params` contains some
-pointers to factory objects (lines ``8-13``). |SNR| parameters
-remain static is this examples.
+pointers to factory objects (lines ``8-13``). |SNR| parameters remain static is
+this examples.
 
 The ``init_params3`` function takes two new input arguments from the command
 line: ``argc`` and ``argv``. The function first allocates the factories (lines
-``18-23``) and then those factories are supplied with parameters from the command line
-(line ``29``) thanks to the ``Command_parser`` class. Lines ``38-41``, the parameters
-from the factories are printed to the terminal.
+``18-23``) and then those factories are supplied with parameters from the
+command line (line ``29``) thanks to the ``factory::Command_parser`` class.
+Lines ``38-41``, the parameters from the factories are printed to the terminal.
 
 Note that in this example a repetition code is used, however it is very easy to
-select another code type, for instance by replacing ``repetition`` line ``9`` and line ``19`` by
-``polar`` to work with polar code.
+select another code type, for instance by replacing ``repetition`` line ``9``
+and line ``19`` by ``polar`` to work with polar code.
 
 .. code-block:: cpp
 	:caption: Factory: modules
@@ -660,8 +663,8 @@ select another code type, for instance by replacing ``repetition`` line ``9`` an
 			}
 	}
 
-In :numref:`lst_factory_modules` the ``modules3`` structure changes a little
-bit because a ``Codec`` class is used to aggregate the ``Encoder`` and the
+In :numref:`lst_factory_modules` the ``modules3`` structure changes a little bit
+because a ``Codec`` class is used to aggregate the ``Encoder`` and the
 ``Decoder`` together. In the ``init_modules3`` the factories allocated in
 :numref:`lst_factory_params` are used to build the modules (lines ``14-18``).
 
@@ -689,6 +692,29 @@ In the :numref:`lst_factory_utils`, the ``init_utils3`` changes a little bit
 from the ``init_utils1`` function (:numref:`lst_bootstrap_utils`) because at
 line ``12`` a factory is used to build the ``terminal``.
 
+To execute the binary it is now required to specify the number of information
+bits `K` and the frame size `N` as shown in
+:numref:`lst_factory_binary_execute`.
+
+.. code-block:: bash
+	:caption: Factory: execute the binary
+	:name: lst_factory_binary_execute
+
+	$ ./bin/my_project -K 32 -N 128
+
+Be aware that many other parameters can be set from the command line. The
+parameters list can be seen using ``-h`` as shown in
+:numref:`lst_factory_binary_help`.
+
+.. code-block:: bash
+	:caption: Factory: execute the binary
+	:name: lst_factory_binary_help
+
+	$ ./bin/my_project -h
+
+Those parameters are documented in the :ref:`user_simulation_parameters`
+section.
+
 .. note:: The full source code is available here:
   https://github.com/aff3ct/my_project_with_aff3ct/blob/master/examples/factory/src/main.cpp.
 
@@ -700,10 +726,10 @@ OpenMP
 .. _OpenMP: https://www.openmp.org/
 
 In the previous examples the code is mono-threaded. To take advantage of the
-today multi-core |CPUs| some modifications have to be made. This example
-starts from the previous :ref:`user_library_factory` example and
-adapts it to work on multi-threaded architectures using `pragma` directives of the well-known `OpenMP`
-language.
+today multi-core |CPUs| some modifications have to be made. This example starts
+from the previous :ref:`user_library_factory` example and adapts it to work on
+multi-threaded architectures using `pragma` directives of the well-known
+`OpenMP`_ language.
 
 .. code-block:: cpp
 	:caption: OpenMP: main function
@@ -800,8 +826,8 @@ language.
 		return 0;
 	}
 
-:numref:`lst_openmp_main` depicts how to use `OpenMP` pragmas to
-parallelize the whole communication chain. As a remainder:
+:numref:`lst_openmp_main` depicts how to use `OpenMP`_ pragmas to parallelize
+the whole communication chain. As a remainder:
 
 - ``#pragma omp parallel``: all the code after in the braces is executed by all
   the threads,
@@ -880,22 +906,22 @@ each threads gets its own local ``m``.
 		u.modules[tid] = modules_list;
 	}
 
-In :numref:`lst_openmp_modules_utils`, there is a change in the
-``modules4`` structure compared to the ``modules3`` structure
-(:numref:`lst_factory_modules`): at line ``7`` the ``monitor`` is not
-allocated in this structure anymore, thus a standard pointer is used instead of a smart
-pointer. The monitor is now allocated in the ``utils4`` structure at line ``17``,
-because all the monitors from all the threads have to be passed to build a
-common aggregated monitor for all of them: the ``monitor_red`` at line ``18``.
-``monitor_red`` is able to perform the reduction of all the per-thread ``monitors``.
-In the example, the ``monitor_red`` is the only member from ``u`` called
-by all the threads, to check whether the simulation has to continue or not (see line
-``54`` in the ``main`` function, :numref:`lst_openmp_main`).
+In :numref:`lst_openmp_modules_utils`, there is a change in the ``modules4``
+structure compared to the ``modules3`` structure
+(:numref:`lst_factory_modules`): at line ``7`` the ``monitor`` is not allocated
+in this structure anymore, thus a standard pointer is used instead of a smart
+pointer. The monitor is now allocated in the ``utils4`` structure at line
+``17``, because all the monitors from all the threads have to be passed to build
+a common aggregated monitor for all of them: the ``monitor_red`` at line ``18``.
+``monitor_red`` is able to perform the reduction of all the per-thread
+``monitors``. In the example, the ``monitor_red`` is the only member from ``u``
+called by all the threads, to check whether the simulation has to continue or
+not (see line ``54`` in the ``main`` function, :numref:`lst_openmp_main`).
 
 In the ``init_modules_and_utils4`` function, lines ``25-30``, a different seed
-is assigned to the modules using a |PRNG|. It is important to give adistinct
-seed to each thread. If the seed is the same for all threads, they
-all simulate the same frame contents and apply the same noise over it.
+is assigned to the modules using a |PRNG|. It is important to give a distinct
+seed to each thread. If the seed is the same for all threads, they all simulate
+the same frame contents and apply the same noise over it.
 
 Lines ``36-37``, the ``monitors`` are allocated in ``u`` and the resulting
 pointer is assigned to ``m``. At line ``57`` a list of the modules is stored in
@@ -937,7 +963,9 @@ previously in the ``init_modules_and_utils4`` function
 
 Lines ``17-20``, the ``u.modules`` list is reordered in the ``u.modules_stats``
 to be used for the statistics of the tasks in the ``main`` function
-(:numref:`lst_openmp_main` line ``84``).
+(:numref:`lst_openmp_main` line ``84``). In the ``u.modules`` list the first
+dimension is the number of threads and the second is the different modules while
+in ``u.modules_stats`` the two dimension are switched.
 
 .. note:: The full source code is available here:
   https://github.com/aff3ct/my_project_with_aff3ct/blob/master/examples/openmp/src/main.cpp.
