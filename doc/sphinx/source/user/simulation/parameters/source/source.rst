@@ -98,7 +98,7 @@ automatically affect the |IFL| level in all the other simulation modules (c.f.
 
 .. _fig_src_fra_inter:
 
-.. figure:: images/src_fra_inter.png
+.. figure:: images/src_fra_inter.svg
    :figwidth: 70 %
    :align: center
 
@@ -110,7 +110,7 @@ modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
 
 .. _fig_src_fra_multi_user:
 
-.. figure:: images/src_fra_multi_user.png
+.. figure:: images/src_fra_multi_user.svg
    :figwidth: 70 %
    :align: center
 

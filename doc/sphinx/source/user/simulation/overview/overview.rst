@@ -134,7 +134,7 @@ runtime.
    :figwidth: 90 %
    :align: center
 
-   Modules and tasks of in the simulation.
+   Modules and tasks in the simulation.
 
 
 Each module or task has its own set of arguments. Still, some of the

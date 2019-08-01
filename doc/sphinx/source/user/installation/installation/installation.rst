@@ -4,7 +4,7 @@ Installation
 ============
 
 In order to be installed on a system, AFF3CT can either be compiled locally
-and installed (see `From Source`_), or remotely precompiled versions 
+and installed (see `From Source`_), or remotely precompiled versions
 can be downloaded and installed (see `Precompiled Versions`_.)
 
 From Source
@@ -59,42 +59,40 @@ If you do not plan to modify the |AFF3CT| source code and you
 want to use the simulator/library as is, you can **download one
 of the latest builds** from the
 `download page of the AFF3CT website <http://aff3ct.github.io/download.html>`_.
-Precompiled binaries are available for the most common operating systems : Windows, macOS and Linux.
+Precompiled binaries are available for the most common operating systems :
+Windows, macOS and Linux.
 
 On Debian / Ubuntu
 """"""""""""""""""
-Each new version of |AFF3CT| is deployed on |PPA| repositories for the aptitude package manager.
-Two different repositories are available.
-The first one, ``stable``, holds versions that are released after a lot of testing to ensure performance and stability.
-The second one, ``dev``, holds the latest development versions of |AFF3CT|.
+Each new version of |AFF3CT| is deployed on |PPA| repositories for the aptitude
+package manager. Two different repositories are available. The first one,
+``stable``, holds versions that are released after a lot of testing to ensure
+performance and stability. The second one, ``dev``, holds the latest development
+versions of |AFF3CT|.
 
-Select the channel to use:
-
-*Stable*
+Select the channel to use (``stable`` **or** ``dev``, **not both!**):
 
 .. code-block:: bash
 
+   # stable
    sudo add-apt-repository ppa:aff3ct/aff3ct-stable
 
-*Dev*
-
-.. code-block:: bash
-
+   # dev
    sudo add-apt-repository ppa:aff3ct/aff3ct-dev
 
-*Update package list and install:*
+Update package list and install:
 
 .. code-block:: bash
 
    sudo apt-get update
-   sudo apt-get install aff3ct aff3ct-dev aff3ct-doc 
+   sudo apt-get install aff3ct aff3ct-dev aff3ct-doc
 
 The package ``aff3ct`` contains the ``bin/``, ``conf/`` and ``refs/`` folders.
 The package ``aff3ct-dev`` contains the ``include/`` and ``lib/`` folders.
 The package ``aff3ct-doc`` contains the ``doc/`` folder.
 
 Contents
--------
+--------
 
 The installed package is organized as follow:
 

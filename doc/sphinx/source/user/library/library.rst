@@ -41,7 +41,9 @@ interfacing, and more are illustrated in the :ref:`user_library_tasks` and
 
 :numref:`fig_simple_chain_code` illustrates the source code: green boxes
 correspond to classes, blue boxes correspond to methods, and arrows represent
-buffers.
+buffers. Some of the |AFF3CT| classes inherit from the ``Module`` abstract
+class. Generally speaking, any class defining methods for a communication chain
+is a module (green boxes in :numref:`fig_simple_chain_code`).
 
 .. code-block:: cpp
 	:caption: Bootstrap: main function
@@ -116,7 +118,7 @@ line ``8``. Those buffers can be ``std::vector``, or pointers to user-allocated
 memory areas. The sizes and the types of those buffers have to be set in
 accordance with the corresponding sizes and types of the |AFF3CT| modules
 declared at line ``7``. If there is a size and/or type mismatch, the |AFF3CT|
-library throws an exception. The |AFF3CT| modules are classes that uses the C++
+library throws an exception. The |AFF3CT| modules are classes that use the C++
 meta-programming technique (e.g. ``C++ templates``). By default those templates
 are instantiated to ``int32_t`` or ``float``.
 
@@ -243,7 +245,7 @@ of the buffers is obtained from the ``params1`` input structure (cf.
 ``init_utils1`` function allocates 1) the ``noise`` object that contains the
 type of noise we want to simulate (e.g. `sigma`), 2) a ``terminal`` object that
 takes care of printing the |BFER| to the console. Three reporters are created,
-one to print |SNR|, another one to print |BFER|, and the last one to report the
+one to print |SNR|, second one to print |BFER|, and the last one to report the
 simulation throughput in the ``terminal``.
 
 If you run the `bootstrap` example, the expected output is shown in
@@ -281,9 +283,7 @@ If you run the `bootstrap` example, the expected output is shown in
 Tasks
 =====
 
-Some of the |AFF3CT| classes inherit from the ``Module`` abstract class.
-Generally speaking, any class defining methods for a communication chain is a
-``Module``. Inside a module class, there can be many public methods; however,
+Inside a ``Module`` class, there can be many public methods; however,
 only some of them are directly used in the communication chain. A method usable
 in a chain is named a ``Task``. A ``Task`` is characterized by its behavior and
 its data: the input and output data are declared via a collection of ``Socket``
@@ -370,7 +370,7 @@ the buffer allocation part (see line ``8``), which is handled transparently by
 these objects. For that, the connections between the sockets of successive tasks
 in the chain have to be established explicitly: this is the binding process
 shown at lines ``14-22``, using the ``bind`` method. In return, to execute the
-tasks (lines ``43-49``), you now only need to call the ``exec`` method, without
+tasks (lines ``43-49``), we now only need to call the ``exec`` method, without
 any parameters.
 
 Using the ``bind`` and ``exec`` methods bring new useful features for debugging
@@ -964,8 +964,8 @@ previously in the ``init_modules_and_utils4`` function
 Lines ``17-20``, the ``u.modules`` list is reordered in the ``u.modules_stats``
 to be used for the statistics of the tasks in the ``main`` function
 (:numref:`lst_openmp_main` line ``84``). In the ``u.modules`` list the first
-dimension is the number of threads and the second is the different modules while
-in ``u.modules_stats`` the two dimension are switched.
+dimension is the number of threads and the second is the number of different
+modules while in ``u.modules_stats`` the two dimension are switched.
 
 .. note:: The full source code is available here:
   https://github.com/aff3ct/my_project_with_aff3ct/blob/master/examples/openmp/src/main.cpp.

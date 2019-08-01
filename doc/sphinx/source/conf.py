@@ -213,12 +213,12 @@ rst_epilog = """
     :width: 60px
     :height: 30px
 
-.. |image_required_argument| image:: /user/simulation/parameters/images/required.png
+.. |image_required_argument| image:: /user/simulation/parameters/images/required.svg
                              :alt:  Required
                              :width:  80px
                              :height: 25px
 
-.. |image_advanced_argument| image:: /user/simulation/parameters/images/advanced.png
+.. |image_advanced_argument| image:: /user/simulation/parameters/images/advanced.svg
                              :alt:  Advanced
                              :width:  80px
                              :height: 25px
