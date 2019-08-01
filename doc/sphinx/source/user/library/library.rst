@@ -249,7 +249,7 @@ simulation throughput in the ``terminal``.
 If you run the `bootstrap` example, the expected output is shown in
 :numref:`lst_bootstrap_output`.
 
-.. code-block:: bash
+.. code-block:: text
 	:caption: Bootstrap: output
 	:name: lst_bootstrap_output
 
@@ -700,7 +700,7 @@ bits `K` and the frame size `N` as shown in
 	:caption: Factory: execute the binary
 	:name: lst_factory_binary_execute
 
-	$ ./bin/my_project -K 32 -N 128
+	./bin/my_project -K 32 -N 128
 
 Be aware that many other parameters can be set from the command line. The
 parameters list can be seen using ``-h`` as shown in
@@ -710,7 +710,7 @@ parameters list can be seen using ``-h`` as shown in
 	:caption: Factory: execute the binary
 	:name: lst_factory_binary_help
 
-	$ ./bin/my_project -h
+	./bin/my_project -h
 
 Those parameters are documented in the :ref:`user_simulation_parameters`
 section.
