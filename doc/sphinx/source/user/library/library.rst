@@ -361,9 +361,9 @@ objects.
 	}
 
 :numref:`lst_tasks_main` shows how the ``Module``, ``Task`` and ``Socket``
-objects work together. Line ``7``, ``modules2`` differs slightly from the
-previous ``modules1`` structure, and it is also the same for the
-``init_modules2`` function. :numref:`lst_tasks_modules` details the changes.
+objects work together. Line ``7``, ``init_modules2`` differs slightly from the
+previous ``init_modules1`` function, :numref:`lst_tasks_modules` details the
+changes.
 
 Thanks to the use of ``Task`` and ``Socket`` objects, it is now possible to skip
 the buffer allocation part (see line ``8``), which is handled transparently by
@@ -375,7 +375,7 @@ any parameters.
 
 Using the ``bind`` and ``exec`` methods bring new useful features for debugging
 and benchmarking. In :numref:`lst_tasks_main`, some statistics about tasks are
-collected and reported at lines ``60-61`` (see :ref:`sim-sim-stats` section
+collected and reported at lines ``60-61`` (see the :ref:`sim-sim-stats` section
 for more informations about the statistics output).
 
 .. code-block:: cpp
@@ -526,7 +526,7 @@ Factory
 
 In the previous :ref:`user_library_bootstrap`, :ref:`user_library_tasks` and
 :ref:`user_library_systemc` examples, the AFF3CT ``Module`` classes were built
-statically in the source code. In the ``Factory`` example, ``factory`` classes
+statically in the source code. In the *Factory* example, ``factory`` classes
 are used instead, to build modules dynamically from command line arguments.
 
 .. code-block:: cpp
