@@ -1,6 +1,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Arguments/Splitter/Splitter.hpp"
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Math/max.h"
 
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
@@ -147,7 +148,12 @@ void Decoder_LDPC::parameters
 		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, M, this->N_cw);
 
 		if (M > this->N_cw)
+		{
 			std::swap(M, this->N_cw);
+			std::clog << rang::tag::warning << "Be careful, 'M' (the number of check nodes) and 'N' (the number of "
+			                                   "variable nodes) have been switched, the format of the input 'H' parity "
+			                                   "matrix could be wrong!" << std::endl;
+		}
 
 		this->K = this->N_cw - M; // considered as regular so M = N - K
 	}
