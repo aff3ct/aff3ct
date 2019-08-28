@@ -82,8 +82,7 @@ build-linux-gcc-nointr:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -109,8 +108,7 @@ build-linux-gcc-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -135,8 +133,7 @@ build-linux-gcc-x64-avx2:
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -163,8 +160,7 @@ build-linux-gcc-8-bit:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -190,8 +186,7 @@ build-linux-gcc-mpi:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -217,8 +212,7 @@ build-linux-gcc-systemc:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -245,8 +239,7 @@ build-linux-clang:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - clang
@@ -271,8 +264,7 @@ build-linux-gcc-4.8:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc-4.8
@@ -297,8 +289,7 @@ build-linux-icpc:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - icpc
@@ -326,8 +317,7 @@ build-windows-gcc-x86-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - windows
     - gcc
@@ -352,8 +342,7 @@ build-windows-gcc-x64-avx2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - windows
     - 64-bit
@@ -378,8 +367,7 @@ build-windows-msvc-avx:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - windows
     - msvc
@@ -402,8 +390,7 @@ build-macos-clang-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - macos
     - apple-clang
@@ -1137,8 +1124,7 @@ test-build-coverage-regression:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - analysis-headers
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -1230,7 +1216,7 @@ deploy-upload-ppa:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: 
+  dependencies:
     - documentation-sphinx
   allow_failure: true
   tags:
