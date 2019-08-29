@@ -1,6 +1,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Arguments/Splitter/Splitter.hpp"
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Math/max.h"
 
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
@@ -145,10 +146,6 @@ void Decoder_LDPC::parameters
 	{
 		int M;
 		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, M, this->N_cw);
-
-		if (M > this->N_cw)
-			std::swap(M, this->N_cw);
-
 		this->K = this->N_cw - M; // considered as regular so M = N - K
 	}
 
@@ -213,7 +210,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 {
 	if (this->type == "BP_FLOODING" && this->simd_strategy.empty())
 	{
-		const auto max_CN_degree = H.get_cols_max_degree();
+		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
 		if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
@@ -229,7 +226,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 	}
 	else if (this->type == "BP_HORIZONTAL_LAYERED" && this->simd_strategy.empty())
 	{
-		const auto max_CN_degree = H.get_cols_max_degree();
+		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
 		if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
@@ -245,7 +242,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 	}
 	else if (this->type == "BP_VERTICAL_LAYERED" && this->simd_strategy.empty())
 	{
-		const auto max_CN_degree = H.get_cols_max_degree();
+		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
 		if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
@@ -261,13 +258,13 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 	}
 	else if (this->type == "BIT_FLIPPING")
 	{
-		     if (this->implem == "WBF" ) return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 0.f              , this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		     if (this->implem == "MWBF") return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		     if (this->implem == "WBF" ) return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)0.               , this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		     if (this->implem == "MWBF") return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 	}
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_HORIZONTAL_LAYERED" && this->simd_strategy == "INTER")
 	{
-		const auto max_CN_degree = H.get_cols_max_degree();
+		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
 		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_SPA_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA_simd <Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_LSPA_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA_simd<Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
@@ -312,7 +309,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_FLOODING" && this->simd_strategy == "INTER")
 	{
-		const auto max_CN_degree = H.get_cols_max_degree();
+		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
 		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_SPA_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA_simd <Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_LSPA_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA_simd<Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
@@ -347,7 +344,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC::parameters
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_VERTICAL_LAYERED" && this->simd_strategy == "INTER")
 	{
-		const auto max_CN_degree = H.get_cols_max_degree();
+		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
 		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_SPA_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA_simd <Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
 		if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_LSPA_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA_simd<Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);

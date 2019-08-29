@@ -17,7 +17,6 @@ import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-
 # -- Project information -----------------------------------------------------
 
 project = 'AFF3CT'
@@ -46,6 +45,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinxcontrib.bibtex',
+    'sphinxcontrib.rsvgconverter',
     'breathe',
     'm2r'
 ]
@@ -131,17 +131,13 @@ html_static_path = ['_static']
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
-
-
 html_favicon = None
 html_logo    = None
-
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'AFF3CTdoc'
-
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -173,7 +169,6 @@ latex_documents = [
      'AFF3CT team', 'manual'),
 ]
 
-
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -182,7 +177,6 @@ man_pages = [
     (master_doc, 'aff3ct', 'AFF3CT Documentation',
      [author], 1)
 ]
-
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -194,7 +188,6 @@ texinfo_documents = [
      author, 'AFF3CT', 'One line description of project.',
      'Miscellaneous'),
 ]
-
 
 # -- Options for Epub output -------------------------------------------------
 
@@ -220,12 +213,12 @@ rst_epilog = """
     :width: 60px
     :height: 30px
 
-.. |image_required_argument| image:: /user/simulation/parameters/images/required.png
+.. |image_required_argument| image:: /user/simulation/parameters/images/required.svg
                              :alt:  Required
                              :width:  80px
                              :height: 25px
 
-.. |image_advanced_argument| image:: /user/simulation/parameters/images/advanced.png
+.. |image_advanced_argument| image:: /user/simulation/parameters/images/advanced.svg
                              :alt:  Advanced
                              :width:  80px
                              :height: 25px
@@ -340,6 +333,7 @@ rst_epilog = """
 .. |PRNG|      replace:: :abbr:`PRNG     (Pseudo Random Number Generator)`
 .. |PRNGs|     replace:: :abbr:`PRNGs    (Pseudo Random Number Generators)`
 .. |PSK|       replace:: :abbr:`PSK      (Phase-Shift Keying)`
+.. |PPA|       replace:: :abbr:`PPA      (Personal Package Archive)`
 .. |PPBF|      replace:: :abbr:`PPBF     (Probabilistic Parallel Bit-Flipping)`
 .. |PyBER|     replace:: PyBER
 .. |QAM|       replace:: :abbr:`QAM      (Quadrature Amplitude Modulation)`

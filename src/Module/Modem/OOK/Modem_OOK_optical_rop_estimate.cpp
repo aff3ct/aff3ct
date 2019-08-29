@@ -138,7 +138,7 @@ void Modem_OOK_optical_rop_estimate<B,R,Q>
 		auto prob_0 = pdf_y0[x_pos] == (Q)0 ? min_value : pdf_y0[x_pos];
 		auto prob_1 = pdf_y1[x_pos] == (Q)0 ? min_value : pdf_y1[x_pos];
 
-		Y_N2[i] = std::log(prob_0/prob_1);
+		Y_N2[i] = (Q)std::log(prob_0/prob_1);
 	}
 }
 

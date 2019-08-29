@@ -46,7 +46,7 @@ void Decoder_BCH_std<B, R>
 		if (s[i] != 0)
 			syn_error = 1; /* set error flag if non-zero syndrome */
 		/* convert syndrome from polynomial form to index form  */
-		s[i] = index_of[s[i]];
+		s[i] = (int)index_of[s[i]];
 	}
 
 	this->last_is_codeword[frame_id] = !syn_error;
@@ -89,7 +89,7 @@ void Decoder_BCH_std<B, R>
 				for (i = 0; i <= l[u]; i++)
 				{
 					elp[u + 1][i] = elp[u][i];
-					elp[u][i] = index_of[elp[u][i]];
+					elp[u][i] = (int)index_of[elp[u][i]];
 				}
 			}
 			else
@@ -126,11 +126,11 @@ void Decoder_BCH_std<B, R>
 				for (i = 0; i <= l[q]; i++)
 					if (elp[q][i] != -1)
 						elp[u + 1][i + u - q] =
-							alpha_to[(discrepancy[u] + this->N_p2_1 - discrepancy[q] + elp[q][i]) % this->N_p2_1];
+							(int)alpha_to[(discrepancy[u] + this->N_p2_1 - discrepancy[q] + elp[q][i]) % this->N_p2_1];
 				for (i = 0; i <= l[u]; i++)
 				{
 					elp[u + 1][i] ^= elp[u][i];
-					elp[u][i] = index_of[elp[u][i]];
+					elp[u][i] = (int)index_of[elp[u][i]];
 				}
 			}
 			u_lu[u + 1] = u - l[u + 1];
@@ -140,7 +140,7 @@ void Decoder_BCH_std<B, R>
 			{
 				/* no discrepancy computed on last iteration */
 				if (s[u + 1] != -1)
-					discrepancy[u + 1] = alpha_to[s[u + 1]];
+					discrepancy[u + 1] = (int)alpha_to[s[u + 1]];
 				else
 					discrepancy[u + 1] = 0;
 
@@ -148,7 +148,7 @@ void Decoder_BCH_std<B, R>
 					if ((s[u + 1 - i] != -1) && (elp[u + 1][i] != 0))
 						discrepancy[u + 1] ^= alpha_to[(s[u + 1 - i] + index_of[elp[u + 1][i]]) % this->N_p2_1];
 				/* put d[u+1] into index form */
-				discrepancy[u + 1] = index_of[discrepancy[u + 1]];
+				discrepancy[u + 1] = (int)index_of[discrepancy[u + 1]];
 			}
 		}
 		while ((u < t2) && (l[u + 1] <= this->t));
@@ -158,7 +158,7 @@ void Decoder_BCH_std<B, R>
 		{/* Can correct errors */
 			/* put elp into index form */
 			for (i = 0; i <= l[u]; i++)
-				elp[u][i] = index_of[elp[u][i]];
+				elp[u][i] = (int)index_of[elp[u][i]];
 
 			/* Chien search: find roots of the error location polynomial */
 			for (i = 1; i <= l[u]; i++)
@@ -177,8 +177,13 @@ void Decoder_BCH_std<B, R>
 				if (!q)
 				{ /* store root and error
 				   * location number indices */
-					loc[count] = this->N_p2_1 - i;
-					count++;
+					if(static_cast<size_t>(count) >= loc.size())
+					{
+						std::stringstream message;
+						message << "The polynomial seems not to be primitive.";
+						throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+					}
+					loc[count++] = this->N_p2_1 - i;
 				}
 			}
 

@@ -24,7 +24,7 @@ struct Codec_SIHO : Codec
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Codec_SIHO_prefix);
-		virtual ~parameters() = default;
+		virtual ~parameters() {}
 		// The following line is commented to prevent Visual C++ to incorrectly report ambiguity when covariance is
 		// used with virtual inheritance.
 		// See more about this MSVC bug:

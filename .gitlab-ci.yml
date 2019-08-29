@@ -82,8 +82,7 @@ build-linux-gcc-nointr:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -109,8 +108,7 @@ build-linux-gcc-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -135,8 +133,7 @@ build-linux-gcc-x64-avx2:
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -163,8 +160,7 @@ build-linux-gcc-8-bit:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -190,8 +186,7 @@ build-linux-gcc-mpi:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -217,8 +212,7 @@ build-linux-gcc-systemc:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -245,8 +239,7 @@ build-linux-clang:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - clang
@@ -271,8 +264,7 @@ build-linux-gcc-4.8:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - gcc-4.8
@@ -297,8 +289,7 @@ build-linux-icpc:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - linux
     - icpc
@@ -326,8 +317,7 @@ build-windows-gcc-x86-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - windows
     - gcc
@@ -352,8 +342,7 @@ build-windows-gcc-x64-avx2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - windows
     - 64-bit
@@ -378,8 +367,7 @@ build-windows-msvc-avx:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - windows
     - msvc
@@ -402,8 +390,7 @@ build-macos-clang-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - documentation-sphinx
+  dependencies: []
   tags:
     - macos
     - apple-clang
@@ -1191,8 +1178,7 @@ test-build-coverage-regression:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - analysis-headers
+  dependencies: []
   tags:
     - linux
     - gcc
@@ -1277,6 +1263,45 @@ deploy-builds-linux:
     - source ./ci/tools/git-author.sh
     - source ./ci/tools/git-version.sh
     - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
+
+deploy-upload-ppa:
+  stage: deploy
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  except:
+    - schedules
+  dependencies:
+    - documentation-sphinx
+  allow_failure: true
+  tags:
+    - linux
+    - gcc
+    - cmake
+    - x86
+    - 64-bit
+    - ppa
+  only:
+    - master
+    - development
+    - ppa_upload
+  artifacts:
+    name: ppa_files
+    when: always
+    paths:
+      - build/Debian/xenial/*.xz
+      - build/Debian/xenial/*.dsc
+      - build/Debian/xenial/*.build
+  script:
+    - source ./ci/tools/git-branch.sh
+    - source ./ci/tools/threads.sh
+    - export DISTRIBS="xenial;bionic"
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
+    - export LFLAGS="-static -static-libgcc -static-libstdc++ -Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=OFF -DAFF3CT_COMPILE_STATIC_LIB=OFF -DAFF3CT_COMPILE_SHARED_LIB=OFF -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+    - export NAME="build"
+    - ./ci/deploy-upload-ppa.sh
 
 pages:
   stage: deploy

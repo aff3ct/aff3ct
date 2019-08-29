@@ -312,7 +312,7 @@ template <typename T>
 Full_matrix<T> Full_matrix<T>
 ::identity(const size_t n_rows, const size_t n_cols)
 {
-	Full_matrix<T> mat(n_rows, n_cols);
+	Full_matrix<T> mat((unsigned)n_rows, (unsigned)n_cols);
 	auto shortest_side = std::min(n_rows, n_cols);
 
 	for (size_t i = 0; i < shortest_side; i++)
@@ -325,7 +325,7 @@ template <typename T>
 Full_matrix<T> Full_matrix<T>
 ::zero(const size_t n_rows, const size_t n_cols)
 {
-	return Full_matrix<T>(n_rows, n_cols);
+	return Full_matrix<T>((unsigned)n_rows, (unsigned)n_cols);
 }
 
 template <typename T>

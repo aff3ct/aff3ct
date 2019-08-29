@@ -62,42 +62,42 @@ Description of the allowed values:
 
 .. _fig_itl_no:
 
-.. figure:: images/itl_no.png
+.. figure:: images/itl_no.svg
    :align: center
 
    Interleaver ``NO``.
 
 .. _fig_itl_col_row:
 
-.. figure:: images/itl_col_row.png
+.. figure:: images/itl_col_row.svg
    :align: center
 
    Interleaver ``COL_ROW``.
 
 .. _fig_itl_row_col:
 
-.. figure:: images/itl_row_col.png
+.. figure:: images/itl_row_col.svg
    :align: center
 
    Interleaver ``ROW_COL``.
 
 .. _fig_itl_random:
 
-.. figure:: images/itl_random.png
+.. figure:: images/itl_random.svg
    :align: center
 
    Interleaver ``RANDOM``.
 
 .. _fig_itl_rand_col:
 
-.. figure:: images/itl_rand_col.png
+.. figure:: images/itl_rand_col.svg
    :align: center
 
    Interleaver ``RAND_COL``.
 
 .. _fig_itl_user:
 
-.. figure:: images/itl_user.png
+.. figure:: images/itl_user.svg
    :align: center
 
    Interleaver ``USER``.
@@ -200,7 +200,7 @@ Description of the allowed values (see also the figures just bellow):
 
 .. _fig_itl_col_row_order:
 
-.. figure:: images/itl_col_row_order.png
+.. figure:: images/itl_col_row_order.svg
    :align: center
    :scale: 50
 
@@ -211,7 +211,7 @@ Description of the allowed values (see also the figures just bellow):
 
 .. _fig_itl_row_col_order:
 
-.. figure:: images/itl_row_col_order.png
+.. figure:: images/itl_row_col_order.svg
    :align: center
    :scale: 65
 

@@ -100,7 +100,7 @@ void Decoder_chase_pyndiah_fast<B,R>
 		for (int i = 0; i < max_sum; i++)
 			beta_applied += this->least_reliable_pos[i].metric;
 
-		beta_applied -= this->cp_coef[2] * DW.metric;
+		beta_applied -= (R)this->cp_coef[2] * DW.metric;
 	}
 
 
@@ -108,7 +108,7 @@ void Decoder_chase_pyndiah_fast<B,R>
 	                                                                  // then take only them for reliability calculation
 
 	for (int j = 1; j < this->n_good_competitors; j++)
-		this->competitors[j].metric = (this->competitors[j].metric - DW.metric) * this->cp_coef[1];
+		this->competitors[j].metric = (this->competitors[j].metric - DW.metric) * (R)this->cp_coef[1];
 
 
 
@@ -136,7 +136,7 @@ void Decoder_chase_pyndiah_fast<B,R>
 			}
 
 			r_reliability = mipp::neg(r_reliability, r_DB != (B)0);
-			r_reliability -= r_Y1 * this->cp_coef[0];
+			r_reliability -= r_Y1 * (R)this->cp_coef[0];
 
 			r_reliability.store(&Y_N2[i]);
 		}
@@ -148,7 +148,7 @@ void Decoder_chase_pyndiah_fast<B,R>
 			const mipp::Reg<B> r_DB = &this->test_vect[DW.pos + i];
 			const mipp::Reg<R> r_Y1 = &Y_N1[i];
 
-			mipp::Reg<R> r_reliability = mipp::abs(r_Y1) * this->cp_coef[3] + r_beta; // reliability when no competitor with different bit
+			mipp::Reg<R> r_reliability = mipp::abs(r_Y1) * (R)this->cp_coef[3] + r_beta; // reliability when no competitor with different bit
 			r_reliability = mipp::blend(r_zero, r_reliability, r_reliability < (R)0);
 
 
@@ -161,7 +161,7 @@ void Decoder_chase_pyndiah_fast<B,R>
 			}
 
 			r_reliability = mipp::neg(r_reliability, r_DB != (B)0);
-			r_reliability -= r_Y1 * this->cp_coef[0];
+			r_reliability -= r_Y1 * (R)this->cp_coef[0];
 
 			r_reliability.store(&Y_N2[i]);
 		}
@@ -189,7 +189,7 @@ void Decoder_chase_pyndiah_fast<B,R>
 		}
 		else // same bits for each candidates
 		{
-			reliability = beta_applied + this->cp_coef[3] * std::abs(Y_N1[i]);
+			reliability = beta_applied + (R)this->cp_coef[3] * std::abs(Y_N1[i]);
 			if (reliability < 0)
 				reliability = 0;
 		}
@@ -197,7 +197,7 @@ void Decoder_chase_pyndiah_fast<B,R>
 		if (DB) // if DB is a 1
 			reliability = -reliability; // set as negative
 
-		Y_N2[i] = reliability - this->cp_coef[0] * Y_N1[i];
+		Y_N2[i] = reliability - (R)this->cp_coef[0] * Y_N1[i];
 	}
 }
 

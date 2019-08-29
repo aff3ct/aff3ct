@@ -1,5 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
+#include "Tools/Display/rang_format/rang_format.h"
 
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
@@ -77,18 +78,11 @@ void Encoder_LDPC::parameters
 	if (!this->G_path.empty())
 	{
 		tools::LDPC_matrix_handler::read_matrix_size(this->G_path, this->K, this->N_cw);
-
-		if (this->K > this->N_cw)
-			std::swap(this->K, this->N_cw);
 	}
 	else if (!this->H_path.empty())
 	{
 		int M;
 		tools::LDPC_matrix_handler::read_matrix_size(this->H_path, M, this->N_cw);
-
-		if (M > this->N_cw)
-			std::swap(M, this->N_cw);
-
 		this->K = this->N_cw - M; // considered as regular so M = N - K
 	}
 

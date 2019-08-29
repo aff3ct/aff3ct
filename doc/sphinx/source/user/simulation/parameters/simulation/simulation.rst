@@ -38,7 +38,7 @@ Description of the allowed values:
 
 .. _fig_bfer:
 
-.. figure:: images/bfer.png
+.. figure:: images/bfer.svg
    :figwidth: 90 %
    :align: center
 
@@ -46,7 +46,7 @@ Description of the allowed values:
 
 .. _fig_bferi:
 
-.. figure:: images/bferi.png
+.. figure:: images/bferi.svg
    :figwidth: 90 %
    :align: center
 

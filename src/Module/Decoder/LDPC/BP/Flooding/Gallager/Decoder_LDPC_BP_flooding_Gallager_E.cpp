@@ -265,10 +265,10 @@ void Decoder_LDPC_BP_flooding_Gallager_E<B,R>
 		const auto cur_state = Y_N[v];
 
 		auto sum = std::accumulate(chk_to_var_ptr, chk_to_var_ptr + var_degree, (int)0);
-		sum += cur_state;
+		sum += (int)cur_state;
 
 		// take the hard decision
-		V_N[v] = tools::div2(B(1) -(sum == 0 ? cur_state : signum(sum)));
+		V_N[v] = (int8_t)tools::div2(B(1) -(sum == 0 ? cur_state : signum(sum)));
 
 		chk_to_var_ptr += var_degree;
 	}

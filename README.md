@@ -1,18 +1,20 @@
 # AFF3CT: A Fast Forward Error Correction Toolbox!
 
 [![GitLab Pipeline Status](https://img.shields.io/gitlab/pipeline/aff3ct/aff3ct.svg)](https://gitlab.com/aff3ct/aff3ct/pipelines)
-[![SonarQube Code Coverage](https://gitlab.com/aff3ct/aff3ct/badges/master/coverage.svg)](https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard?id=storm%3Aaff3ct%3Agitlab%3Amaster)
+[![SonarQube Code Coverage](https://gitlab.com/aff3ct/aff3ct/badges/master/coverage.svg)](https://sonarqube.inria.fr/sonarqube/dashboard?id=storm%3Aaff3ct%3Agitlab%3Amaster)
 [![Documentation Build Status](https://img.shields.io/readthedocs/aff3ct.svg)](https://readthedocs.org/projects/aff3ct/)
 [![Latest Release](https://img.shields.io/github/release/aff3ct/aff3ct.svg)](https://github.com/aff3ct/aff3ct/releases)
 [![DOI](https://zenodo.org/badge/60615913.svg)](https://zenodo.org/badge/latestdoi/60615913)
 [![License: MIT](https://img.shields.io/github/license/aff3ct/aff3ct.svg)](./LICENSE)
 
-**AFF3CT** is a simulator dedicated to the Forward Error Correction (FEC or
-**channel coding**). It is written in **C++** and it supports a large range of
-codes: from the well-spread **Turbo codes** to the very new **Polar codes**
-including the **Low-Density Parity-Check (LDPC) codes**. **AFF3CT** is a command
-line program and it simulates communication chains based on a Monte Carlo
-method.
+**AFF3CT** is **a simulator** and **a library** dedicated to the Forward Error
+Correction (FEC or **channel coding**). It is written in **C++** and it supports
+a large range of codes: from the well-spread **Turbo codes** to the new
+**Polar codes** including the **Low-Density Parity-Check (LDPC) codes**.
+**AFF3CT** can be used as a command line program and it simulates communication
+chains based on a Monte Carlo method.
+
+![Communication Chain](https://aff3ct.github.io/images/chain.svg)
 
 It is very easy to use, for instance, to estimate the BER/FER decoding
 performances of the (2048,1723) Polar code from 1.0 to 4.0 dB:
@@ -59,10 +61,24 @@ Below, a list of the features that motivated the creation of the simulator:
 4. **reuse tried and tested modules** and add yours,
 5. **alternative to MATLAB**, if you seek to reduce simulations time.
 
+![BER/FER Performances](https://aff3ct.github.io/images/bfer/bfer_polar_turbo_ldpc_bch_rs.svg)
+
+**AFF3CT** was first intended to be a simulator but as it developed, the need to
+reuse sub-parts of the code intensified: the library was born. Below is a list
+of possible applications for the library:
+
+1. **build custom communication chains** that are not possible with the
+   simulator,
+2. **facilitate hardware prototyping**,
+3. enable various modules to be used in SDR contexts.
+
+If you seek for using **AFF3CT** as a library, please refer to the
+[dedicated documentation page](https://aff3ct.readthedocs.io/en/latest/user/library/library.html).
+
 ## Installation
 
-First make sure to have installed a C++11 compiler, CMake and Git. Then install
-AFF3CT by running:
+First make sure to have installed a `C++11 compiler`, `CMake` and `Git`. Then
+install **AFF3CT** by running:
 
 ```bash
 git clone --recursive https://github.com/aff3ct/aff3ct.git

@@ -14,7 +14,7 @@
    viewBox="0 0 65.436813 16.607813"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="advanced.svg">
   <defs
      id="defs2">
@@ -42,9 +42,9 @@
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1869"
-     inkscape:window-height="1025"
-     inkscape:window-x="51"
+     inkscape:window-width="1920"
+     inkscape:window-height="1023"
+     inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
      fit-margin-top="0"
@@ -68,17 +68,42 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-42.105646,-86.207144)">
-    <text
-       xml:space="preserve"
+    <g
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:AnjaliOldLipi;-inkscape-font-specification:AnjaliOldLipi;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="45.546127"
-       y="98.184517"
-       id="text3715"><tspan
-         sodipodi:role="line"
-         id="tspan3713"
-         x="45.546127"
-         y="98.184517"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.25;font-family:LKLUG;-inkscape-font-specification:LKLUG;letter-spacing:0px;fill:#1793d6;fill-opacity:1;stroke-width:0.26458332">ADVANCED</tspan></text>
+       id="text3715">
+      <path
+         d="m 49.163477,91.497587 -1.415934,3.839559 2.837036,0 -1.421102,-3.839559 z m -0.589111,-1.028361 1.18339,0 2.940389,7.715291 -1.085205,0 -0.702799,-1.979207 -3.477824,0 -0.702799,1.979207 -1.100708,0 2.945556,-7.715291 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.25;font-family:LKLUG;-inkscape-font-specification:LKLUG;letter-spacing:0px;fill:#1793d6;fill-opacity:1;stroke-width:0.26458332"
+         id="path3366" />
+      <path
+         d="m 54.863388,91.327055 0,5.999633 1.260905,0 q 1.596801,0 2.335774,-0.72347 0.744141,-0.72347 0.744141,-2.284098 0,-1.550293 -0.744141,-2.268595 -0.738973,-0.72347 -2.335774,-0.72347 l -1.260905,0 z m -1.043864,-0.857829 2.144572,0 q 2.242757,0 3.291788,0.935343 1.049032,0.930176 1.049032,2.914551 0,1.99471 -1.054199,2.930054 -1.0542,0.935343 -3.286621,0.935343 l -2.144572,0 0,-7.715291 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.25;font-family:LKLUG;-inkscape-font-specification:LKLUG;letter-spacing:0px;fill:#1793d6;fill-opacity:1;stroke-width:0.26458332"
+         id="path3368" />
+      <path
+         d="m 63.767237,98.184517 -2.945556,-7.715291 1.090372,0 2.444296,6.495727 2.449462,-6.495727 1.085205,0 -2.940388,7.715291 -1.183391,0 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.25;font-family:LKLUG;-inkscape-font-specification:LKLUG;letter-spacing:0px;fill:#1793d6;fill-opacity:1;stroke-width:0.26458332"
+         id="path3370" />
+      <path
+         d="m 70.908919,91.497587 -1.415934,3.839559 2.837036,0 -1.421102,-3.839559 z m -0.589111,-1.028361 1.18339,0 2.940389,7.715291 -1.085205,0 -0.7028,-1.979207 -3.477824,0 -0.702799,1.979207 -1.100708,0 2.945557,-7.715291 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.25;font-family:LKLUG;-inkscape-font-specification:LKLUG;letter-spacing:0px;fill:#1793d6;fill-opacity:1;stroke-width:0.26458332"
+         id="path3372" />
+      <path
+         d="m 75.564966,90.469226 1.405599,0 3.42098,6.454386 0,-6.454386 1.012858,0 0,7.715291 -1.405599,0 -3.42098,-6.454386 0,6.454386 -1.012858,0 0,-7.715291 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.25;font-family:LKLUG;-inkscape-font-specification:LKLUG;letter-spacing:0px;fill:#1793d6;fill-opacity:1;stroke-width:0.26458332"
+         id="path3374" />
+      <path
+         d="m 89.259221,91.063505 0,1.100708 q -0.527099,-0.490926 -1.126546,-0.733806 -0.594279,-0.242879 -1.266073,-0.242879 -1.322916,0 -2.025716,0.81132 -0.702799,0.806152 -0.702799,2.335775 0,1.524455 0.702799,2.335774 0.7028,0.806153 2.025716,0.806153 0.671794,0 1.266073,-0.242879 0.599447,-0.24288 1.126546,-0.733806 l 0,1.090373 q -0.54777,0.37207 -1.16272,0.558105 -0.609781,0.186036 -1.29191,0.186036 -1.751831,0 -2.759522,-1.069703 -1.00769,-1.074869 -1.00769,-2.930053 0,-1.860352 1.00769,-2.930054 1.007691,-1.07487 2.759522,-1.07487 0.692464,0 1.302246,0.186036 0.614949,0.180867 1.152384,0.54777 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.25;font-family:LKLUG;-inkscape-font-specification:LKLUG;letter-spacing:0px;fill:#1793d6;fill-opacity:1;stroke-width:0.26458332"
+         id="path3376" />
+      <path
+         d="m 90.881859,90.469226 4.878255,0 0,0.878499 -3.834391,0 0,2.284098 3.674194,0 0,0.8785 -3.674194,0 0,2.795695 3.927408,0 0,0.878499 -4.971272,0 0,-7.715291 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.25;font-family:LKLUG;-inkscape-font-specification:LKLUG;letter-spacing:0px;fill:#1793d6;fill-opacity:1;stroke-width:0.26458332"
+         id="path3378" />
+      <path
+         d="m 98.622988,91.327055 0,5.999633 1.260905,0 q 1.596797,0 2.335777,-0.72347 0.74414,-0.72347 0.74414,-2.284098 0,-1.550293 -0.74414,-2.268595 -0.73898,-0.72347 -2.335777,-0.72347 l -1.260905,0 z m -1.043864,-0.857829 2.144572,0 q 2.242754,0 3.291784,0.935343 1.04904,0.930176 1.04904,2.914551 0,1.99471 -1.0542,2.930054 -1.0542,0.935343 -3.286624,0.935343 l -2.144572,0 0,-7.715291 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.25;font-family:LKLUG;-inkscape-font-specification:LKLUG;letter-spacing:0px;fill:#1793d6;fill-opacity:1;stroke-width:0.26458332"
+         id="path3380" />
+    </g>
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke:#1793d6;stroke-width:1.75957072;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
        id="rect3723"

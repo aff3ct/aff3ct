@@ -11,11 +11,6 @@ endif()
 
 project(aff3ct)
 
-if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-    message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
-                        "from a Git repository. Please do not download archives from GitHub and make a Git "
-                        "clone instead (git clone https://github.com/aff3ct/aff3ct.git).")
-endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------- CMAKE OPTIONS
@@ -32,6 +27,19 @@ option(AFF3CT_MPI                "Enable the MPI support"                       
 option(AFF3CT_POLAR_BIT_PACKING  "Enable the bit packing technique for Polar code SC decoding"               ON )
 option(AFF3CT_POLAR_BOUNDS       "Enable the use of the external Tal & Vardy Polar best channels generator"  OFF)
 option(AFF3CT_COLORS             "Enable the colors in the terminal"                                         ON )
+option(AFF3CT_OVERRIDE_VERSION   "Compile without .git directory, provided a version and hash"               OFF)
+
+if (AFF3CT_COMPILE_EXE OR AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
+    set(AFF3CT_COMPILE_OBJ ON)
+else()
+    set(AFF3CT_COMPILE_OBJ OFF)
+endif()
+
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND NOT AFF3CT_OVERRIDE_VERSION)
+    message(FATAL_ERROR "The '.git' folder can't be found, AFF3CT can't be compiled if it is not cloned "
+                        "from a Git repository. Please do not download archives from GitHub and make a Git "
+                        "clone instead (git clone https://github.com/aff3ct/aff3ct.git).")
+endif()
 
 if(NOT (WIN32 OR APPLE))
     option(AFF3CT_BACKTRACE "Enable the backtrace display when an exception is raised" ON)
@@ -80,9 +88,15 @@ file(GLOB_RECURSE source_files ${CMAKE_CURRENT_SOURCE_DIR}/src/*)
 # ------------------------------------------------------------------------------------------------ GET VERSION FROM GIT
 # ---------------------------------------------------------------------------------------------------------------------
 
-include(GetGitRevisionDescription)
-get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-git_describe(GIT_VERSION "--tags" "--abbrev=7")
+if(NOT AFF3CT_OVERRIDE_VERSION)
+    include(GetGitRevisionDescription)
+    get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+    git_describe(GIT_VERSION "--tags" "--abbrev=7")
+else()
+    set(GIT_VERSION ${AFF3CT_OVERRIDE_VERSION})
+endif()
+
+
 
 string(REGEX REPLACE "^v"                ""    AFF3CT_VERSION_FULL  ${GIT_VERSION})
 string(REGEX REPLACE "-.*"               ""    AFF3CT_VERSION       ${AFF3CT_VERSION_FULL})
@@ -92,6 +106,7 @@ string(      REPLACE "${AFF3CT_VERSION}" ""    AFF3CT_BUILD         ${AFF3CT_BUI
 string(REGEX REPLACE "(.*)\\..*\\..*"    "\\1" AFF3CT_VERSION_MAJOR ${AFF3CT_VERSION})
 string(REGEX REPLACE ".*\\.(.*)\\..*"    "\\1" AFF3CT_VERSION_MINOR ${AFF3CT_VERSION})
 string(REGEX REPLACE ".*\\..*\\.(.*)"    "\\1" AFF3CT_VERSION_PATCH ${AFF3CT_VERSION})
+
 
 if(NOT "${AFF3CT_BUILD}" STREQUAL "")
     string(REPLACE "${AFF3CT_HASH}" "" AFF3CT_BUILD ${AFF3CT_BUILD})
@@ -179,9 +194,11 @@ if(${CMAKE_VERSION} VERSION_EQUAL "3.14" OR ${CMAKE_VERSION} VERSION_GREATER "3.
 endif()
 
 # Object
-add_library(aff3ct-obj OBJECT ${source_files})
-set_target_properties(aff3ct-obj PROPERTIES
-                                 POSITION_INDEPENDENT_CODE ON) # set -fpic
+if(AFF3CT_COMPILE_OBJ)
+    add_library(aff3ct-obj OBJECT ${source_files})
+    set_target_properties(aff3ct-obj PROPERTIES
+                                     POSITION_INDEPENDENT_CODE ON) # set -fpic
+endif()
 
 # Binary
 if(AFF3CT_COMPILE_EXE)
@@ -208,12 +225,19 @@ if(AFF3CT_COMPILE_STATIC_LIB)
     message(STATUS "AFF3CT - Compile: static library")
 endif(AFF3CT_COMPILE_STATIC_LIB)
 
+# PPA uploading
+if (AFF3CT_UPLOAD_PPA)
+    message(STATUS "AFF3CT - PPA uploading: on")
+endif()
+
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------ COMPILER DEFINITIONS
 # ---------------------------------------------------------------------------------------------------------------------
 
 macro(aff3ct_target_compile_definitions privacy def)
-    target_compile_definitions(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
+    if(AFF3CT_COMPILE_OBJ)
+        target_compile_definitions(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
+    endif()
     if(AFF3CT_COMPILE_EXE)
         target_compile_definitions(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${def}> $<INSTALL_INTERFACE:${def}>)
     endif()
@@ -293,9 +317,11 @@ endif()
 # ---------------------------------------------------------------------------------------------------------------------
 
 macro(aff3ct_target_include_directories privacy dir_build dir_install)
-    target_include_directories(aff3ct-obj ${privacy}
-                               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
-                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/${dir_install}>)
+    if(AFF3CT_COMPILE_OBJ)
+        target_include_directories(aff3ct-obj ${privacy}
+                                   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
+                                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/${dir_install}>)
+    endif()
     if(AFF3CT_COMPILE_EXE)
         target_include_directories(aff3ct-bin ${privacy}
                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${dir_build}/>
@@ -366,7 +392,9 @@ macro(aff3ct_target_link_libraries privacy lib)
 endmacro()
 
 macro(aff3ct_target_include_directories privacy dir)
-    target_include_directories(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    if(AFF3CT_COMPILE_OBJ)
+        target_include_directories(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
     if(AFF3CT_COMPILE_EXE)
         target_include_directories(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
     endif()
@@ -622,9 +650,13 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME "aff3ct-${AFF3CT_VERSION_FULL}")
 # general configuration and package description
 set(CPACK_RPM_COMPONENT_INSTALL ON)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Adrien Cassagne <adrien.cassagne@inria.fr>")
+set(CPACK_DEBIAN_PACKAGE_NAME "aff3ct")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Mathieu Léonardon <mathieu.leonardon@gmail.com>")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://aff3ct.github.io/")
+set(CPACK_DEBIAN_PACKAGE_VERSION "${AFF3CT_VERSION_FULL}")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libgcc1, libstdc++6")
+set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 if (AFF3CT_LINK_GSL)
     string(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS ", libgsl2")
 endif()
@@ -636,6 +668,7 @@ set(CPACK_PACKAGE_CONTACT "Inria/IMS Bordeaux")
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
 set(CPACK_PACKAGE_NAME "aff3ct")
+set(CPACK_SOURCE_PACKAGE_NAME "aff3ct")
 set(CPACK_PACKAGE_DESCRIPTION "AFF3CT - A Fast Forward Error Correction Toolbox!")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction Toolbox!
     AFF3CT is an open source software dedicated to Forward Error Correction (FEC or
@@ -647,6 +680,7 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction 
     various contexts.")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "aff3ct_${AFF3CT_VERSION_FULL}.orig")
 set(CPACK_PACKAGE_VERSION "${AFF3CT_VERSION}")
 set(CPACK_PACKAGE_VERSION_MAJOR "${AFF3CT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${AFF3CT_VERSION_MINOR}")
@@ -686,5 +720,16 @@ set(CPACK_COMPONENT_HEADERS_GROUP "Development")
 # add a description of the groups
 set(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION "The AFF3CT simulator and related components.")
 set(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "All of the tools you need to develop with the AFF3CT toolbox.")
+
+# ignored files
+set(CPACK_IGNORE_FILES "/build/;/\\\\.idea")
+set(CPACK_SOURCE_IGNORE_FILES "${CPACK_IGNORE_FILES}")
+set(CPACK_INSTALLED_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR};/")
+
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+
+if (AFF3CT_UPLOAD_PPA)
+    include(UploadPPA)
+endif()
 
 include(CPack)
