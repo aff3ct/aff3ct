@@ -629,7 +629,8 @@ def process_ast(ast_filename):
                         method_suffix = m.group(2)
                     else:
                         # special case for '= default' (no trailing ';' in Clang AST print)
-                        m = re.match(r'(.*\))[^)]*( = default)$', line)
+                        line_tmp = re.sub(r' throw\(\)', '', line)
+                        m = re.match(r'(.*\))[^)]*( = default)$', line_tmp)
                         if m is not None:
                             method = m.group(1)
                             method_suffix = m.group(2)
