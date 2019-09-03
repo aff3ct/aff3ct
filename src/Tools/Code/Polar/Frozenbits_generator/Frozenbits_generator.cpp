@@ -124,6 +124,13 @@ void Frozenbits_generator
 
 	std::ofstream file(dump_channels_full_path);
 
+	if (!file.is_open())
+	{
+		std::stringstream message;
+		message << "Impossible to open the '" << dump_channels_full_path << "' file to dump the Polar best channels.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	file << this->N << std::endl;
 	file << noise_type << std::endl;
 	file << std::fixed << std::setprecision(3) << this->n->get_noise() << std::endl;
