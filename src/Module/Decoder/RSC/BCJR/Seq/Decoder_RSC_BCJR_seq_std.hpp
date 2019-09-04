@@ -16,7 +16,6 @@ template <typename B = int, typename R = float, typename RD = float,
           tools::proto_max<R> MAX1 = tools::max, tools::proto_max<RD> MAX2 = tools::max>
 class Decoder_RSC_BCJR_seq_std : public Decoder_RSC_BCJR_seq<B,R>
 {
-
 public:
 	Decoder_RSC_BCJR_seq_std(const int &K,
 	                         const std::vector<std::vector<int>> &trellis,

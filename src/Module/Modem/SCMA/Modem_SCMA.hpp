@@ -45,25 +45,10 @@ public:
 	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::demodulate_wg;
 	virtual void filter       (              const R *Y_N1, R *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::filter;
 
-	static bool is_complex_mod()
-	{
-		return true;
-	}
-
-	static bool is_complex_fil()
-	{
-		return true;
-	}
-
-	static int size_mod(const int N, const int bps)
-	{
-		return ((int)std::pow(2, bps) * ((N + 1) / 2));
-	}
-
-	static int size_fil(const int N, const int bps)
-	{
-		return size_mod(N, bps);
-	}
+	static bool is_complex_mod();
+	static bool is_complex_fil();
+	static int size_mod(const int N, const int bps);
+	static int size_fil(const int N, const int bps);
 
 private:
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch);

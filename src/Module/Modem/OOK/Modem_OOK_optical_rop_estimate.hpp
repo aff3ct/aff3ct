@@ -19,7 +19,6 @@ protected:
 	const tools::Distributions<R>& dist;
 
 	std::vector<R> dist_ROP_range;
-
 	std::vector<R> dist_meanvoltage_p0;
 	std::vector<R> dist_meanvoltage_p1;
 

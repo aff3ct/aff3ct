@@ -14,25 +14,10 @@ public:
 	Modem_OOK(const int N, const tools::Noise<R>& noise, const int n_frames = 1);
 	virtual ~Modem_OOK() = default;
 
-	static bool is_complex_mod()
-	{
-		return false;
-	}
-
-	static bool is_complex_fil()
-	{
-		return false;
-	}
-
-	static int size_mod(const int N)
-	{
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, 1, 0, 1, is_complex_mod());
-	}
-
-	static int size_fil(const int N)
-	{
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, 1, 0, 1, is_complex_fil());
-	}
+	static bool is_complex_mod();
+	static bool is_complex_fil();
+	static int size_mod(const int N);
+	static int size_fil(const int N);
 
 protected:
 	void _modulate(const B *X_N1, R *X_N2, const int frame_id);
@@ -40,5 +25,7 @@ protected:
 };
 }
 }
+
+#include "Modem_OOK.hxx"
 
 #endif /* MODEM_OOK_HPP_ */

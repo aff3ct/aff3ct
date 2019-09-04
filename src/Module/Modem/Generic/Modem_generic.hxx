@@ -46,6 +46,34 @@ void Modem_generic<B,R,Q,MAX>
 	                    (R)((R)1.0 / (2 * this->n->get_noise() * this->n->get_noise()));
 }
 
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+bool Modem_generic<B,R,Q,MAX>
+::is_complex_mod(const tools::Constellation<R>& c)
+{
+	return c.is_complex();
+}
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+bool Modem_generic<B,R,Q,MAX>
+::is_complex_fil(const tools::Constellation<R>& c)
+{
+	return c.is_complex();
+}
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+int Modem_generic<B,R,Q,MAX>
+::size_mod(const int N, const tools::Constellation<R>& c)
+{
+	return Modem<B,R,Q>::get_buffer_size_after_modulation(N, c.get_n_bits_per_symbol(), 0, 1, is_complex_mod(c));
+}
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+int Modem_generic<B,R,Q,MAX>
+::size_fil(const int N, const tools::Constellation<R>& c)
+{
+	return Modem<B,R,Q>::get_buffer_size_after_filtering(N, c.get_n_bits_per_symbol(), 0, 1, is_complex_fil(c));
+}
+
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)

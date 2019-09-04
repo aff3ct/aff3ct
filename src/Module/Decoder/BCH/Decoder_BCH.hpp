@@ -15,8 +15,8 @@ template <typename B = int, typename R = float>
 class Decoder_BCH : public Decoder_SIHO_HIHO<B,R>
 {
 protected:
-	const int t;         // correction power
-	const int N_p2_1;      // the next power 2 of N minus 1
+	const int t; // correction power
+	const int N_p2_1; // the next power 2 of N minus 1
 	std::vector<B> last_is_codeword; // a value per frame
 
 public:

@@ -32,7 +32,7 @@ protected:
 	virtual ~Decoder_RSC_BCJR() = default;
 
 public:
-	virtual int tail_length() const { return 2 * n_ff; }
+	virtual int tail_length() const;
 
 protected:
 	virtual void _load       (const R *Y_N                            );

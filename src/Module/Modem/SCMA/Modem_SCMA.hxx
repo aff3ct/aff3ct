@@ -356,6 +356,35 @@ void Modem_SCMA<B,R,Q,PSI>
 
 	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
 }
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+bool Modem_SCMA<B,R,Q,PSI>
+::is_complex_mod()
+{
+	return true;
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+bool Modem_SCMA<B,R,Q,PSI>
+::is_complex_fil()
+{
+	return true;
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+int Modem_SCMA<B,R,Q,PSI>
+::size_mod(const int N, const int bps)
+{
+	return ((int)std::pow(2, bps) * ((N + 1) / 2));
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+int Modem_SCMA<B,R,Q,PSI>
+::size_fil(const int N, const int bps)
+{
+	return size_mod(N, bps);
+}
+
 }
 }
 

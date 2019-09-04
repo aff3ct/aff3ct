@@ -23,8 +23,8 @@ public:
 	                 const int n_frames = 1);
 
 	explicit Channel_AWGN_LLR(const int N, const int seed = 0, const bool add_users = false,
-	                 const tools::Sigma<R>& noise = tools::Sigma<R>(),
-	                 const int n_frames = 1);
+	                          const tools::Sigma<R>& noise = tools::Sigma<R>(),
+	                          const int n_frames = 1);
 
 	virtual ~Channel_AWGN_LLR() = default;
 

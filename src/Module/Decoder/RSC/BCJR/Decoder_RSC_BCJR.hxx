@@ -42,6 +42,13 @@ Decoder_RSC_BCJR<B,R>
 }
 
 template <typename B, typename R>
+int Decoder_RSC_BCJR<B,R>
+::tail_length() const
+{
+	return 2 * n_ff;
+}
+
+template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
 ::_load(const R *Y_N)
 {

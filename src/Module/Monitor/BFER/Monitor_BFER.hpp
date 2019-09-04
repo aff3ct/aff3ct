@@ -50,10 +50,8 @@ public:
 
 	virtual ~Monitor_BFER() = default;
 
-
 	bool equivalent(const Monitor_BFER<B>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                        // and then can be merged by "collect" or "copy" methods
-
 	/*!
 	 * \brief Compares two messages and counts the number of frame errors and bit errors.
 	 *
@@ -63,34 +61,7 @@ public:
 	 * \param Y: the decoded message (from the Decoder).
 	 */
 	template <class A = std::allocator<B>>
-	int check_errors(const std::vector<B,A>& U, const std::vector<B,A>& Y, const int frame_id = -1)
-	{
-		if ((int)U.size() != this->K * this->n_frames)
-		{
-			std::stringstream message;
-			message << "'U.size()' has to be equal to 'K' * 'n_frames' ('U.size()' = " << U.size()
-			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if ((int)Y.size() != this->K * this->n_frames)
-		{
-			std::stringstream message;
-			message << "'Y.size()' has to be equal to 'K' * 'n_frames' ('Y.size()' = " << Y.size()
-			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (frame_id != -1 && frame_id >= this->n_frames)
-		{
-			std::stringstream message;
-			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
-			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		return this->check_errors(U.data(), Y.data(), frame_id);
-	}
+	int check_errors(const std::vector<B,A>& U, const std::vector<B,A>& Y, const int frame_id = -1);
 
 	virtual int check_errors(const B *U, const B *Y, const int frame_id = -1);
 
@@ -125,14 +96,11 @@ public:
 
 	Monitor_BFER<B>& operator+=(const Monitor_BFER<B>& m); // not full "collect" call
 
-
 	virtual void copy(const Monitor& m,         bool fully = false);
 	virtual void copy(const Monitor_BFER<B>& m, bool fully = false);
 	virtual void copy(const Attributes& v);
 
 	Monitor_BFER<B>& operator=(const Monitor_BFER<B>& m); // not full "copy" call
-
-
 
 protected:
 	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
@@ -140,5 +108,7 @@ protected:
 };
 }
 }
+
+#include "Monitor_BFER.hxx"
 
 #endif /* MONITOR_BFER_HPP_ */

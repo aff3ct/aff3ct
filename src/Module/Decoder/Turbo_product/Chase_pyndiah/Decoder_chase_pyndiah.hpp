@@ -7,13 +7,10 @@
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Module/Encoder/Encoder.hpp"
 
-
-
 namespace aff3ct
 {
 namespace module
 {
-
 /*
  * Chase :
  *   - take hard decision H on input R
@@ -36,7 +33,6 @@ namespace module
  *        with Dj =  1 when Hj = 0
  *                = -1 when Hj = 1
  */
-
 template <typename B = int, typename R = float>
 class Decoder_chase_pyndiah : public Decoder_SISO_SIHO<B,R>
 {

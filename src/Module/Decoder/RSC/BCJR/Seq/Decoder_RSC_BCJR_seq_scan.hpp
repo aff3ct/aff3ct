@@ -15,7 +15,6 @@ namespace module
 template <typename B = int, typename R = float, typename RD = float>
 class Decoder_RSC_BCJR_seq_scan : public Decoder_RSC_BCJR_seq<B,R>
 {
-
 public:
 	Decoder_RSC_BCJR_seq_scan(const int &K,
 	                          const std::vector<std::vector<int>> &trellis,
