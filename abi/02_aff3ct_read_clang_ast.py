@@ -168,10 +168,117 @@ def split_args(arg_str):
 
     return args
 
+# process one template arg, mainly to extract its default value if it has one
+def process_template_arg(template_arg_signature, template_arg_rank):
+    m = re.match(r'([^=]+)(?:=(.+))?', template_arg_signature)
+    if m is None:
+        sys.stderr.write('parse error: template arg name extraction failed')
+        sys.exit(1)
+    template_arg_name = m.group(1).strip()
+    if m.group(2) is not None:
+        template_arg_default = m.group(2).strip()
+    else:
+        template_arg_default = ''
+
+    template_arg_entry = dict()
+    template_arg_entry['template_arg_signature'] = template_arg_signature
+    template_arg_entry['template_arg_name'] = template_arg_name
+    template_arg_entry['template_arg_default'] = template_arg_default
+    return template_arg_entry
+
+# process a method template declaration
+def process_template(template_signature, template_rank):
+    template_entry = dict()
+    template_entry['template_signature'] = template_signature
+    template_entry['template_args'] = []
+    template_args_str = re.sub(r'template *<(.*)>', r'\1', template_signature)
+    template_args = split_args(template_args_str)
+
+    template_arg_i = 0
+    for template_arg in template_args:
+        template_arg_entry = process_template_arg(template_arg, template_arg_i)
+        template_arg_i = template_arg_i+1
+        template_entry['template_args'].append(template_arg_entry)
+    template_entry['template_nb_args'] = template_arg_i
+
+    return template_entry
+
+# process method templates declarations
+def add_templates(method_entry, templates):
+    template_i = 0
+    for template in templates:
+        template_entry = process_template(template, template_i)
+        template_i = template_i+1
+        method_entry['method_templates'].append(template_entry)
+    method_entry['method_nb_templates'] = template_i
+
+# split the template declaration part of a method declaration
+def split_templates(method_str):
+    templates = []
+    if not method_str.startswith('template'):
+        return (method_str, templates)
+    angle_brackets = 0
+    square_brackets = 0
+    curly_brackets = 0
+    parenthesis = 0
+    n = len(method_str)
+    start_i = 0
+    i = len('template')
+    while i < n:
+        c = method_str[i]
+        if c == ' ':
+            pass # nothing
+
+        elif c == r'[':
+            square_brackets = square_brackets+1
+        elif c == r']':
+            square_brackets = square_brackets-1
+
+        elif c == r'<':
+            angle_brackets = angle_brackets+1
+        elif c == r'>':
+            angle_brackets = angle_brackets-1
+
+        elif c == r'{':
+            curly_brackets = curly_brackets+1
+        elif c == r'}':
+            curly_brackets = curly_brackets-1
+
+        elif c == r'(':
+            parenthesis = parenthesis+1
+        elif c == r')':
+            parenthesis = parenthesis-1
+
+        elif method_str[i:].startswith('template'):
+            if angle_brackets == 0 and square_brackets == 0 and curly_brackets == 0 and parenthesis == 0:
+                if i <= start_i or i == n-1:
+                    sys.stderr.write('parse error: template list\n')
+                    sys.exit(1)
+                # found template prefix with no pending open bracket, extract the corresponding chunk
+                template = method_str[start_i:i].strip()
+                templates.append(template)
+
+                start_i = i
+                i = i+len('template')
+        else:
+            if angle_brackets == 0 and square_brackets == 0 and curly_brackets == 0 and parenthesis == 0:
+                if i <= start_i or i == n-1:
+                    sys.stderr.write('parse error: template list\n')
+                    sys.exit(1)
+                # found something that is not a template, stop here
+                template = method_str[start_i:i].strip()
+                templates.append(template)
+                break
+
+        i = i+1
+
+    return (method_str[i:].strip(), templates)
+
+
 # detect a class method and record corresponding entry
 # - method_is_inline indicate whether the method is defined in the class (True) or just declared (False)
 # - method_suffix store trailing method declaration items (such as "= 0" for pure virtual methods)
-def add_method(class_entry, method, method_is_inline, method_suffix):
+def add_method(class_entry, method, method_is_inline, method_suffix, method_templates):
     method_entry = dict()
     class_short_name = class_entry['class_short_name']
     method_is_virtual = False
@@ -284,6 +391,10 @@ def add_method(class_entry, method, method_is_inline, method_suffix):
     method_entry['method_arguments'] = []
     args = split_args(method_args)
     add_args(method_entry, args)
+
+    # process method templates
+    method_entry['method_templates'] = []
+    add_templates(method_entry, method_templates)
 
     # process output
     if method_kind in [ 'static', 'method' ]:
@@ -522,6 +633,7 @@ def process_ast(ast_filename):
                         scopes.append((scope, scope_entry, block_nest_level))
                         prev_scope_entry = scope_entry
                         method = m.group(1)
+                        (method, method_templates) = split_templates(method)
                         if ' : ' in method:
                             # remove any member initializer in constructor
                             method = re.sub(' : .*$', '', method)
@@ -532,7 +644,7 @@ def process_ast(ast_filename):
                         if not filter_out:
                             # only record public class members
                             if previous_scope == 'class' and class_access == 'public':
-                                method_entry = add_method(class_entry, method, True, '')
+                                method_entry = add_method(class_entry, method, True, '', method_templates)
                                 if method_entry is not None:
                                     method_unique_name = method_entry['method_unique_name']
                                     method_unique_short_name = method_entry['method_unique_short_name']
@@ -622,21 +734,22 @@ def process_ast(ast_filename):
                 if scope == 'class' and class_access == 'public':
                     method = None
 
+                    (method_line_perhaps, method_templates) = split_templates(line.strip())
                     # heuristic to match a method declaration
-                    m = re.match(r'(.*\))([^)]*);', line)
+                    m = re.match(r'(.*\))([^)]*);', method_line_perhaps)
                     if m is not None:
                         method = m.group(1)
                         method_suffix = m.group(2)
                     else:
                         # special case for '= default' (no trailing ';' in Clang AST print)
-                        line_tmp = re.sub(r' throw\(\)', '', line)
-                        m = re.match(r'(.*\))[^)]*( = default)$', line_tmp)
+                        method_line_perhaps = re.sub(r' throw\(\)', '', method_line_perhaps)
+                        m = re.match(r'(.*\))[^)]*( = default)$', method_line_perhaps)
                         if m is not None:
                             method = m.group(1)
                             method_suffix = m.group(2)
                     if method is not None:
                         # some method found, add it to db
-                        method_entry = add_method(class_entry, method, False, method_suffix)
+                        method_entry = add_method(class_entry, method, False, method_suffix, method_templates)
                         if method_entry is not None:
                             method_unique_name = method_entry['method_unique_name']
                             method_unique_short_name = method_entry['method_unique_short_name']
