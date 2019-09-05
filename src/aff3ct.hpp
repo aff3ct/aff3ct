@@ -733,18 +733,6 @@
 #ifndef MODEM_BPSK_HPP_
 #include <Module/Modem/BPSK/Modem_BPSK.hpp>
 #endif
-#ifndef CPM_BCJR_HPP_
-#include <Module/Modem/CPM/BCJR/CPM_BCJR.hpp>
-#endif
-#ifndef ENCODER_CPE_HPP_
-#include <Module/Modem/CPM/CPE/Encoder_CPE.hpp>
-#endif
-#ifndef ENCODER_CPE_RIMOLDI_HPP_
-#include <Module/Modem/CPM/CPE/Encoder_CPE_Rimoldi.hpp>
-#endif
-#ifndef CPM_PARAMETERS_HPP_
-#include <Module/Modem/CPM/CPM_parameters.hpp>
-#endif
 #ifndef MODEM_CPM_HPP_
 #include <Module/Modem/CPM/Modem_CPM.hpp>
 #endif
@@ -1089,6 +1077,18 @@
 #endif
 #ifndef BCH_POLYNOMIAL_GENERATOR_HPP
 #include <Tools/Code/BCH/BCH_polynomial_generator.hpp>
+#endif
+#ifndef CPM_BCJR_HPP_
+#include <Tools/Code/CPM/BCJR/CPM_BCJR.hpp>
+#endif
+#ifndef ENCODER_CPE_HPP_
+#include <Tools/Code/CPM/CPE/Encoder_CPE.hpp>
+#endif
+#ifndef ENCODER_CPE_RIMOLDI_HPP_
+#include <Tools/Code/CPM/CPE/Encoder_CPE_Rimoldi.hpp>
+#endif
+#ifndef CPM_PARAMETERS_HPP_
+#include <Tools/Code/CPM/CPM_parameters.hpp>
 #endif
 #ifndef ALIST_HPP_
 #include <Tools/Code/LDPC/AList/AList.hpp>
