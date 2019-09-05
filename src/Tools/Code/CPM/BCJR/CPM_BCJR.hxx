@@ -11,7 +11,7 @@
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 template<typename Q>
 inline Q negative_inf(){return std::numeric_limits<Q>::lowest(); }
@@ -19,7 +19,7 @@ inline Q negative_inf(){return std::numeric_limits<Q>::lowest(); }
 template<typename Q>
 inline Q positive_inf(){return std::numeric_limits<Q>::max(); }
 
-template <typename Q, tools::proto_max<Q> MAX>
+template <typename Q, proto_max<Q> MAX>
 inline void BCJR_normalize(Q *metrics, const int &n_states)
 {
 	// normalization
@@ -31,7 +31,7 @@ inline void BCJR_normalize(Q *metrics, const int &n_states)
 		metrics[j] -= norm_val;
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 CPM_BCJR<SIN,SOUT,Q,MAX>
 ::CPM_BCJR(const CPM_parameters<SIN,SOUT>& _cpm, const int _n_symbols)
 : cpm              (_cpm                                   ),
@@ -49,7 +49,7 @@ CPM_BCJR<SIN,SOUT,Q,MAX>
 {
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const std::vector<Q> &Lch_N, std::vector<Q> &Le_N)
 {
@@ -58,7 +58,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		std::stringstream message;
 		message << "'Lch_N.size()' has to be equal to 'chn_size' ('Lch_N.size()' = " << Lch_N.size()
 		        << ", 'chn_size' = " << chn_size << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (Le_N.size() != ext_size)
@@ -66,13 +66,13 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		std::stringstream message;
 		message << "'Le_N.size()' has to be equal to 'ext_size' ('Le_N.size()' = " << Le_N.size()
 		        << ", 'ext_size' = " << ext_size << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	this->decode(Lch_N.data(), Le_N.data());
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const Q *Lch_N, Q *Le_N)
 {
@@ -84,7 +84,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	compute_ext             (Le_N );
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const std::vector<Q> &Lch_N, const std::vector<Q> &Ldec_N, std::vector<Q> &Le_N)
 {
@@ -93,7 +93,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		std::stringstream message;
 		message << "'Lch_N.size()' has to be equal to 'chn_size' ('Lch_N.size()' = " << Lch_N.size()
 		        << ", 'chn_size' = " << chn_size << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (Ldec_N.size() != dec_size)
@@ -101,7 +101,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		std::stringstream message;
 		message << "'Ldec_N.size()' has to be equal to 'dec_size' ('Ldec_N.size()' = " << Ldec_N.size()
 		        << ", 'dec_size' = " << dec_size << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (Le_N.size() != ext_size)
@@ -109,13 +109,13 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		std::stringstream message;
 		message << "'Le_N.size()' has to be equal to 'ext_size' ('Le_N.size()' = " << Le_N.size()
 		        << ", 'ext_size' = " << ext_size << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	this->decode(Lch_N.data(), Ldec_N.data(), Le_N.data());
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const Q *Lch_N, const Q *Ldec_N, Q *Le_N)
 {
@@ -126,7 +126,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	compute_ext             (Ldec_N, Le_N);
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::LLR_to_logsymb_proba(const Q *Ldec_N)
 {
@@ -144,7 +144,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 			}
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_alpha_beta_gamma(const Q *Lch_N)
 {
@@ -190,7 +190,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	}
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::symboles_probas()
 {
@@ -206,7 +206,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 				        gamma   [(i * cpm.max_st_id + cpm.allowed_states[st]) * cpm.m_order + tr]);
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::bits_probas()
 {
@@ -226,7 +226,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	}
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(Q *Le_N)
 {
@@ -236,7 +236,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		Le_N[i] = proba_msg_bits[i*2] - proba_msg_bits[i*2 +1];
 }
 
-template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(const Q *Ldec_N, Q *Le_N)
 {
