@@ -2,7 +2,7 @@
 
 #include "Factory/Module/Codec/Repetition/Codec_repetition.hpp"
 
-#include "Repetition.hpp"
+#include "Launcher/Code/Repetition/Repetition.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

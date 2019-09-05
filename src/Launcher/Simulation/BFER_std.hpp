@@ -3,7 +3,7 @@
 
 #include "Factory/Simulation/BFER/BFER_std.hpp"
 
-#include "../Launcher.hpp"
+#include "Launcher/Launcher.hpp"
 
 namespace aff3ct
 {

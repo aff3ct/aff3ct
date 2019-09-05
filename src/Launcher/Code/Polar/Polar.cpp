@@ -6,7 +6,7 @@
 
 #include "Factory/Module/Codec/Polar/Codec_polar.hpp"
 
-#include "Polar.hpp"
+#include "Launcher/Code/Polar/Polar.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

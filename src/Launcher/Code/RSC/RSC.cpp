@@ -5,7 +5,7 @@
 
 #include "Factory/Module/Codec/RSC/Codec_RSC.hpp"
 
-#include "RSC.hpp"
+#include "Launcher/Code/RSC/RSC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

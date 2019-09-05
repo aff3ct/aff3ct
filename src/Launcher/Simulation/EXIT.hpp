@@ -5,7 +5,7 @@
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
-#include "../Launcher.hpp"
+#include "Launcher/Launcher.hpp"
 
 namespace aff3ct
 {
