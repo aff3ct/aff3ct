@@ -35,4 +35,6 @@ protected:
 }
 }
 
+#include "Modem_BPSK_fast.hxx"
+
 #endif /* MODEM_BPSK_FAST_HPP_ */
