@@ -9,7 +9,7 @@
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_constant.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_adaptive.hpp"
 
-#include "Scaling_factor.hpp"
+#include "Factory/Tools/Code/Turbo/Scaling_factor.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

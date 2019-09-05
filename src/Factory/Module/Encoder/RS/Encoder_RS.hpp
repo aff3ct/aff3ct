@@ -6,7 +6,7 @@
 #include "Module/Encoder/RS/Encoder_RS.hpp"
 #include "Tools/Code/RS/RS_polynomial_generator.hpp"
 
-#include "../Encoder.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

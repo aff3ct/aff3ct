@@ -1,6 +1,6 @@
 #include "BCH/Codec_BCH.hpp"
 
-#include "Codec_SIHO_HIHO.hpp"
+#include "Factory/Module/Codec/Codec_SIHO_HIHO.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

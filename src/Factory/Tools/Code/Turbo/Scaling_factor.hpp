@@ -5,7 +5,7 @@
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp"
 
-#include "../../../Factory.hpp"
+#include "Factory/Factory.hpp"
 
 namespace aff3ct
 {

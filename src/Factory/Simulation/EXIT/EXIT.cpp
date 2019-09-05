@@ -5,7 +5,7 @@
 #include "Simulation/EXIT/EXIT.hpp"
 #include "Tools/general_utils.h"
 
-#include "EXIT.hpp"
+#include "Factory/Simulation/EXIT/EXIT.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

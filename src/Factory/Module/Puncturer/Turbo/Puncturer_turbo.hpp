@@ -6,7 +6,7 @@
 
 #include "Module/Puncturer/Puncturer.hpp"
 
-#include "../Puncturer.hpp"
+#include "Factory/Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct
 {

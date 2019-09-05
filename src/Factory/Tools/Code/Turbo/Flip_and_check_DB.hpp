@@ -5,7 +5,7 @@
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check_DB.hpp"
 
-#include "Flip_and_check.hpp"
+#include "Factory/Tools/Code/Turbo/Flip_and_check.hpp"
 
 namespace aff3ct
 {

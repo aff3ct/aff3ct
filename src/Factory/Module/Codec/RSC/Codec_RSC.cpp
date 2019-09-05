@@ -1,7 +1,7 @@
-#include "Codec_RSC.hpp"
-
 #include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
 #include "Factory/Module/Decoder/RSC/Decoder_RSC.hpp"
+
+#include "Factory/Module/Codec/RSC/Codec_RSC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

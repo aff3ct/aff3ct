@@ -9,7 +9,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 
-#include "Simulation.hpp"
+#include "Factory/Simulation/Simulation.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

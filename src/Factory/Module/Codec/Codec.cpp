@@ -3,7 +3,7 @@
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 
-#include "Codec.hpp"
+#include "Factory/Module/Codec/Codec.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

@@ -30,7 +30,7 @@
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/GSL/User_pdf_noise_generator_GSL.hpp"
 #endif
 
-#include "Channel.hpp"
+#include "Factory/Module/Channel/Channel.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

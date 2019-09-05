@@ -11,7 +11,7 @@
 #include "Uncoded/Codec_uncoded.hpp"
 #include "Turbo_product/Codec_turbo_product.hpp"
 
-#include "Codec_SIHO.hpp"
+#include "Factory/Module/Codec/Codec_SIHO.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

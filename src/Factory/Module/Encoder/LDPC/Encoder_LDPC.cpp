@@ -10,7 +10,7 @@
 #include "Module/Encoder/LDPC/From_IRA/Encoder_LDPC_from_IRA.hpp"
 #include "Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp"
 
-#include "Encoder_LDPC.hpp"
+#include "Factory/Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

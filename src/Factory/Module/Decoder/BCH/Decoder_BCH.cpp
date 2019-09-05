@@ -7,7 +7,7 @@
 #include "Module/Decoder/BCH/Genius/Decoder_BCH_genius.hpp"
 #include "Module/Decoder/BCH/Fast/Decoder_BCH_fast.hpp"
 
-#include "Decoder_BCH.hpp"
+#include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

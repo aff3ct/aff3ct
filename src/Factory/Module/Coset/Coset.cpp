@@ -3,7 +3,7 @@
 #include "Module/Coset/Bit/Coset_bit.hpp"
 #include "Module/Coset/Real/Coset_real.hpp"
 
-#include "Coset.hpp"
+#include "Factory/Module/Coset/Coset.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

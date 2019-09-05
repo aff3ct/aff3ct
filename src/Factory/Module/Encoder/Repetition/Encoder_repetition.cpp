@@ -3,7 +3,7 @@
 
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
-#include "Encoder_repetition.hpp"
+#include "Factory/Module/Encoder/Repetition/Encoder_repetition.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

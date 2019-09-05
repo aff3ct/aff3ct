@@ -5,7 +5,7 @@
 #include "Module/Encoder/Coset/Encoder_coset.hpp"
 #include "Module/Encoder/User/Encoder_user.hpp"
 
-#include "Encoder.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

@@ -3,7 +3,7 @@
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 
-#include "Monitor_MI.hpp"
+#include "Factory/Module/Monitor/MI/Monitor_MI.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

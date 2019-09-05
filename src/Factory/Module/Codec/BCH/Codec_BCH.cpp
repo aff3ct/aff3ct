@@ -1,7 +1,7 @@
-#include "Codec_BCH.hpp"
-
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
+
+#include "Factory/Module/Codec/BCH/Codec_BCH.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

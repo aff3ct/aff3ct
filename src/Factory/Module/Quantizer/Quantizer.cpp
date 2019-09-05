@@ -8,7 +8,7 @@
 #include "Module/Quantizer/Custom/Quantizer_custom.hpp"
 #include "Module/Quantizer/NO/Quantizer_NO.hpp"
 
-#include "Quantizer.hpp"
+#include "Factory/Module/Quantizer/Quantizer.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

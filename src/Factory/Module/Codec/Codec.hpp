@@ -9,7 +9,7 @@
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Tools/auto_cloned_unique_ptr.hpp"
 
-#include "../../Factory.hpp"
+#include "Factory/Factory.hpp"
 
 namespace aff3ct
 {

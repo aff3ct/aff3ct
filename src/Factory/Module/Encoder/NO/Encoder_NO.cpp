@@ -3,7 +3,7 @@
 
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 
-#include "Encoder_NO.hpp"
+#include "Factory/Module/Encoder/NO/Encoder_NO.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

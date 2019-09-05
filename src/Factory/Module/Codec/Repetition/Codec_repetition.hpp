@@ -6,7 +6,7 @@
 
 #include "Module/Codec/Repetition/Codec_repetition.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "Factory/Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {

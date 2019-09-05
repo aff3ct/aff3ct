@@ -5,7 +5,7 @@
 
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 
-#include "../Monitor.hpp"
+#include "Factory/Module/Monitor/Monitor.hpp"
 
 namespace aff3ct
 {

@@ -3,7 +3,7 @@
 
 #include "Module/Decoder/RA/Decoder_RA.hpp"
 
-#include "Decoder_RA.hpp"
+#include "Factory/Module/Decoder/RA/Decoder_RA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

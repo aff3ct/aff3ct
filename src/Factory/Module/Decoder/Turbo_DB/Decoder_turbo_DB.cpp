@@ -3,7 +3,7 @@
 
 #include "Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
 
-#include "Decoder_turbo_DB.hpp"
+#include "Factory/Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
 
 const std::string aff3ct::factory::Decoder_turbo_DB_name   = "Decoder Turbo DB";
 const std::string aff3ct::factory::Decoder_turbo_DB_prefix = "dec";

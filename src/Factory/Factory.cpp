@@ -8,7 +8,7 @@
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 
-#include "Factory.hpp"
+#include "Factory/Factory.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

@@ -6,7 +6,7 @@
 
 #include "Module/Encoder/Polar/Encoder_polar.hpp"
 
-#include "../Encoder.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

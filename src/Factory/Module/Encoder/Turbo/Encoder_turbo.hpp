@@ -12,7 +12,7 @@
 
 #include "Tools/auto_cloned_unique_ptr.hpp"
 
-#include "../Encoder.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

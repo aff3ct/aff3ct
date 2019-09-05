@@ -5,11 +5,11 @@
 #include <vector>
 #include <string>
 
-#include "Factory/Factory.hpp"
 #include "Tools/Arguments/Argument_handler.hpp"
-
 #include "Tools/system_functions.h"
 #include "Tools/Exception/exception.hpp"
+
+#include "Factory/Factory.hpp"
 
 namespace aff3ct
 {

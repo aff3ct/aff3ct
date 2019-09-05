@@ -6,7 +6,7 @@
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
 
-#include "../Encoder.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

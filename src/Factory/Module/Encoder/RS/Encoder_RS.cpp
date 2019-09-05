@@ -5,7 +5,7 @@
 
 #include "Module/Encoder/RS/Encoder_RS.hpp"
 
-#include "Encoder_RS.hpp"
+#include "Factory/Module/Encoder/RS/Encoder_RS.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
