@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Interleaver_core_CCSDS.hpp"
+#include "Tools/Interleaver/CCSDS/Interleaver_core_CCSDS.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

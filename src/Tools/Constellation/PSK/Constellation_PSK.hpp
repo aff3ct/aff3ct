@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "../Constellation.hpp"
+#include "Tools/Constellation/Constellation.hpp"
 
 
 namespace aff3ct
@@ -27,6 +27,6 @@ protected:
 }
 }
 
-#include "Constellation_PSK.hxx"
+#include "Tools/Constellation/PSK/Constellation_PSK.hxx"
 
 #endif // CONSTELLATION_PSK_HPP__

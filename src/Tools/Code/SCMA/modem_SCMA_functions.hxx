@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "modem_SCMA_functions.hpp"
+#include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 
 namespace aff3ct
 {

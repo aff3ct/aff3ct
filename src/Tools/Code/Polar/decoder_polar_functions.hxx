@@ -6,7 +6,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "decoder_polar_functions.h"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 namespace aff3ct
 {
@@ -38,7 +38,7 @@ inline R f_LLR(const R& lambda_a, const R& lambda_b)
 
 template <typename R>
 inline R f_LLR_tanh(const R& lambda_a, const R& lambda_b)
-{	
+{
 	auto sign_lambda_a_b = sgn<int,R>(lambda_a * lambda_b);
 	auto abs_lambda_a = (lambda_a >= 0) ? lambda_a : -lambda_a;
 	auto abs_lambda_b = (lambda_b >= 0) ? lambda_b : -lambda_b;
@@ -277,7 +277,7 @@ template <>
 inline int8_t phi(const int8_t& mu, const int8_t& lambda, const int8_t& u)
 {
 	int8_t new_mu;
-	
+
 	if (u == 0 && lambda < 0)
 		new_mu = mu - lambda;
 	else if (u != 0 && lambda > 0)

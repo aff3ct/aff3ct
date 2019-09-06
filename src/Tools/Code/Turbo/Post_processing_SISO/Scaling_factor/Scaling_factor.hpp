@@ -8,7 +8,7 @@
 #ifndef SCALING_FACTOR_HPP
 #define SCALING_FACTOR_HPP
 
-#include "../Post_processing_SISO.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 
 namespace aff3ct
 {

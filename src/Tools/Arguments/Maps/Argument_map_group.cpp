@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "Argument_map_group.hpp"
+#include "Tools/Arguments/Maps/Argument_map_group.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

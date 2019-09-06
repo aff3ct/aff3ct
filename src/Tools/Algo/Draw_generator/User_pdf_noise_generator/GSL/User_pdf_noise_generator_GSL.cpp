@@ -5,7 +5,7 @@
 #include <gsl/gsl_randist.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "User_pdf_noise_generator_GSL.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/GSL/User_pdf_noise_generator_GSL.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

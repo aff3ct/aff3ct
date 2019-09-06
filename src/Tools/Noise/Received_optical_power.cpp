@@ -1,7 +1,8 @@
 #include <sstream>
+
 #include "Tools/Exception/exception.hpp"
 
-#include "Received_optical_power.hpp"
+#include "Tools/Noise/Received_optical_power.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

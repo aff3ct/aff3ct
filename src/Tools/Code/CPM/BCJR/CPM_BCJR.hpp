@@ -5,7 +5,7 @@
 
 #include "Tools/Math/max.h"
 
-#include "../CPM_parameters.hpp"
+#include "Tools/Code/CPM/CPM_parameters.hpp"
 
 namespace aff3ct
 {
@@ -51,6 +51,6 @@ private:
 }
 }
 
-#include "CPM_BCJR.hxx"
+#include "Tools/Code/CPM/BCJR/CPM_BCJR.hxx"
 
 #endif /* CPM_BCJR_HPP_ */

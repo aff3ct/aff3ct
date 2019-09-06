@@ -6,11 +6,11 @@
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "functions_polar_inter_intra.h"
-#include "functions_polar_intra_32bit.h"
-#include "functions_polar_seq.h"
+#include "Tools/Code/Polar/API/functions_polar_inter_intra.h"
+#include "Tools/Code/Polar/API/functions_polar_intra_32bit.h"
+#include "Tools/Code/Polar/API/functions_polar_seq.h"
 
-#include "API_polar.hpp"
+#include "Tools/Code/Polar/API/API_polar.hpp"
 
 namespace aff3ct
 {
@@ -38,7 +38,7 @@ public:
 	}
 
 	// -------------------------------------------------------------------------------------------------------------- f
-	
+
 	template <int N_ELMTS = 0>
 	static void f(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
 	{

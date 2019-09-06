@@ -7,7 +7,7 @@
 #include "Tools/general_utils.h"
 #include "Tools/Display/rang_format/rang_format.h"
 
-#include "AList.hpp"
+#include "Tools/Code/LDPC/AList/AList.hpp"
 
 using namespace aff3ct::tools;
 

@@ -7,7 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "CPM_BCJR.hpp"
+#include "Tools/Code/CPM/BCJR/CPM_BCJR.hpp"
 
 namespace aff3ct
 {

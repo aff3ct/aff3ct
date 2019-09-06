@@ -1,7 +1,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "User_pdf_noise_generator_fast.hpp"
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Fast/User_pdf_noise_generator_fast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

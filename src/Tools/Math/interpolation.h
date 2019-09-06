@@ -74,6 +74,6 @@ void nearest_interpolation(const std::vector<T>& x_data, const std::vector<T>& y
 }
 }
 
-#include "interpolation.hxx"
+#include "Tools/Math/interpolation.hxx"
 
 #endif // INTERPOLATION_H_

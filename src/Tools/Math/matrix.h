@@ -96,6 +96,6 @@ __forceinline void complex_transpose(const int M, const int N,
 }
 }
 
-#include "matrix.hxx"
+#include "Tools/Math/matrix.hxx"
 
 #endif /* MATRIX_H */

@@ -4,9 +4,9 @@
 #include <sstream>
 #include <mipp.h>
 
-#include "matrix_utils.h"
-
 #include "Tools/Exception/exception.hpp"
+
+#include "Tools/Algo/Matrix/matrix_utils.h"
 
 namespace aff3ct
 {

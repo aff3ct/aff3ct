@@ -1,7 +1,7 @@
 #ifndef SIGMA_HPP_
 #define SIGMA_HPP_
 
-#include "Noise.hpp"
+#include "Tools/Noise/Noise.hpp"
 
 namespace aff3ct
 {

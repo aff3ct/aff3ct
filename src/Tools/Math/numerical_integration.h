@@ -149,6 +149,6 @@ inline R simps_integral_seq(Function f, const R min, const R max, const int numb
 }
 }
 
-#include "numerical_integration.hxx"
+#include "Tools/Math/numerical_integration.hxx"
 
 #endif // NUMERICAL_INTEGRATION_H_

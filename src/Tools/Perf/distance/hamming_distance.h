@@ -76,6 +76,6 @@ inline size_t hamming_distance_unk(const B *in, const unsigned size);
 }
 }
 
-#include "hamming_distance.hxx"
+#include "Tools/Perf/distance/hamming_distance.hxx"
 
 #endif /* HAMMING_DISTANCE_H_ */

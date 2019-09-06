@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder_CPE.hpp"
+#include "Tools/Code/CPM/CPE/Encoder_CPE.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

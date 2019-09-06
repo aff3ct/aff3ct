@@ -3,7 +3,7 @@
 
 #include "Tools/Display/rang_format/rang_format.h"
 
-#include "Statistics.hpp"
+#include "Tools/Display/Statistics/Statistics.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

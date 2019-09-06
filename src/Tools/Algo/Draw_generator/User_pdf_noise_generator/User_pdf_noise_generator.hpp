@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 
-#include "../Draw_generator.hpp"
+#include "Tools/Algo/Draw_generator/Draw_generator.hpp"
 
 namespace aff3ct
 {

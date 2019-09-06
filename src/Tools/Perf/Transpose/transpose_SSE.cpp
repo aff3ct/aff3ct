@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "transpose_SSE.h"
+#include "Tools/Perf/Transpose/transpose_SSE.h"
 
 using namespace aff3ct::tools;
 

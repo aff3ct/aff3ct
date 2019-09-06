@@ -1,8 +1,8 @@
 #ifndef MATRIX_UTILS_H__
 #define MATRIX_UTILS_H__
 
-#include "Sparse_matrix/Sparse_matrix.hpp"
-#include "Full_matrix/Full_matrix.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Full_matrix/Full_matrix.hpp"
 
 namespace aff3ct
 {
@@ -69,6 +69,6 @@ bool all_zeros(const Sparse_matrix& );
 }
 }
 
-#include "matrix_utils.hxx"
+#include "Tools/Algo/Matrix/matrix_utils.hxx"
 
 #endif // MATRIX_UTILS_H__

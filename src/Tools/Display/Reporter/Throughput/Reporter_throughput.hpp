@@ -11,7 +11,7 @@
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
-#include "../Reporter.hpp"
+#include "Tools/Display/Reporter/Reporter.hpp"
 
 namespace aff3ct
 {
@@ -55,6 +55,6 @@ public:
 }
 }
 
-#include "Reporter_throughput.hxx"
+#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hxx"
 
 #endif /* REPORTER_THROUGHPUT_HPP_ */

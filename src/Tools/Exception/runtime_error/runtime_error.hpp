@@ -1,7 +1,7 @@
 #ifndef RUNTIME_ERROR_HPP_
 #define RUNTIME_ERROR_HPP_
 
-#include "../exception.hpp"
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {

@@ -4,7 +4,7 @@
 #include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
 #include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
 
-#include "../Event_generator.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 
 namespace aff3ct
 {

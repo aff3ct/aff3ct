@@ -1,9 +1,9 @@
 #include <sstream>
-  #include <iostream>
-
-#include "RS_polynomial_generator.hpp"
+#include <iostream>
 
 #include "Tools/Exception/exception.hpp"
+
+#include "Tools/Code/RS/RS_polynomial_generator.hpp"
 
 using namespace aff3ct::tools;
 

@@ -5,17 +5,15 @@
 #include <cmath>
 #include <iostream>
 
-#include "Constellation.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
+#include "Tools/Constellation/Constellation.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
-
-
 template <typename R>
 inline bool has_complex_symbols(const Constellation<R>& cstl)
 {
@@ -27,8 +25,6 @@ inline bool has_complex_symbols(const Constellation<R>& cstl)
 
 	return false;
 }
-
-
 
 template <typename R>
 Constellation<R>::
@@ -89,8 +85,6 @@ is_complex() const
 {
 	return is_cplx;
 }
-
-
 
 template <typename R>
 inline const typename Constellation<R>::S& Constellation<R>::

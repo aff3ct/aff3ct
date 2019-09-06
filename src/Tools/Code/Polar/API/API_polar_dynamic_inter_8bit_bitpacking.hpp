@@ -7,11 +7,11 @@
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "functions_polar_inter_intra.h"
-#include "functions_polar_inter.h"
-#include "functions_polar_inter_8bit_bitpacking.h"
+#include "Tools/Code/Polar/API/functions_polar_inter_intra.h"
+#include "Tools/Code/Polar/API/functions_polar_inter.h"
+#include "Tools/Code/Polar/API/functions_polar_inter_8bit_bitpacking.h"
 
-#include "API_polar.hpp"
+#include "Tools/Code/Polar/API/API_polar.hpp"
 
 namespace aff3ct
 {
@@ -37,7 +37,7 @@ public:
 	{
 		return mipp::isAligned(ptr);
 	}
-	
+
 	// -------------------------------------------------------------------------------------------------------------- f
 
 	template <int N_ELMTS = 0>
@@ -272,7 +272,7 @@ public:
 		const B *__restrict s_b = s.data() + os(off_s_b);
 		      B *__restrict s_c = s.data() + os(off_s_c);
 
-		const int init_shift = ishift(off_s_c);		      
+		const int init_shift = ishift(off_s_c);
 
 		if      (n_elmts >= 8) xo0_inter_8bit_bitpacking<B   >::apply(s_b, s_c, init_shift, n_elmts);
 		else if (n_elmts == 4) xo0_inter_8bit_bitpacking<B, 4>::apply(s_b, s_c, init_shift, n_elmts);

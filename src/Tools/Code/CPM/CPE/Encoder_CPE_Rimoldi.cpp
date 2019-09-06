@@ -5,7 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder_CPE_Rimoldi.hpp"
+#include "Tools/Code/CPM/CPE/Encoder_CPE_Rimoldi.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

@@ -3,7 +3,7 @@
 
 #include <random>
 
-#include "../Interleaver_core.hpp"
+#include "Tools/Interleaver/Interleaver_core.hpp"
 
 namespace aff3ct
 {

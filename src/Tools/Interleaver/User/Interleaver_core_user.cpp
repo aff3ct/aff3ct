@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Interleaver_core_user.hpp"
+#include "Tools/Interleaver/User/Interleaver_core_user.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

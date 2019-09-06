@@ -9,7 +9,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Frozenbits_generator_file.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
 
 using namespace aff3ct::tools;
 

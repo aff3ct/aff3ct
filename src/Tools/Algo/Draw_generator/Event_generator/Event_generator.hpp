@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Tools/types.h"
-#include "../Draw_generator.hpp"
+#include "Tools/Algo/Draw_generator/Draw_generator.hpp"
 
 namespace aff3ct
 {

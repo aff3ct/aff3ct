@@ -10,7 +10,7 @@
 #include "Tools/Math/interpolation.h"
 #include "Tools/general_utils.h"
 
-#include "Distribution.hpp"
+#include "Tools/Math/Distribution/Distribution.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

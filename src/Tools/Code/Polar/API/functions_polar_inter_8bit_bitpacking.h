@@ -10,7 +10,7 @@
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "functions_polar_inter.h"
+#include "Tools/Code/Polar/API/functions_polar_inter.h"
 
 namespace aff3ct
 {
@@ -44,7 +44,7 @@ struct g_inter_8bit_bitpacking
 				const auto r_u_unpacked = mipp::andb<B>(mipp::lshift<B>(r_u_packed, (sizeof(B) * 8 -1) - j), r_mask);
 				const auto r_lambda_c   = GI(r_lambda_a, r_lambda_b, r_u_unpacked                                  );
 
-				mipp::store<R>(l_c + i + j * mipp::nElmtsPerRegister<R>(), 
+				mipp::store<R>(l_c + i + j * mipp::nElmtsPerRegister<R>(),
 				               API_polar_inter_intra_saturate<R>::perform(r_lambda_c, r_sat));
 			}
 		}
@@ -75,7 +75,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 0>
 				const auto r_u_unpacked = mipp::andb<B>(mipp::lshift<B>(r_u_packed, (sizeof(B) * 8 -1) - j), r_mask);
 				const auto r_lambda_c   = GI(r_lambda_a, r_lambda_b, r_u_unpacked                                  );
 
-				mipp::store<R>(l_c + i + j * mipp::nElmtsPerRegister<R>(), 
+				mipp::store<R>(l_c + i + j * mipp::nElmtsPerRegister<R>(),
 				               API_polar_inter_intra_saturate<R>::perform(r_lambda_c, r_sat));
 			}
 		}
@@ -101,7 +101,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 4>
 			const auto r_u_unpacked = mipp::andb<B>(mipp::lshift<B>(r_u_packed, shift--), r_mask);
 			const auto r_lambda_c   = GI(r_lambda_a, r_lambda_b, r_u_unpacked);
 
-			mipp::store<R>(l_c + i * mipp::nElmtsPerRegister<R>(), 
+			mipp::store<R>(l_c + i * mipp::nElmtsPerRegister<R>(),
 			               API_polar_inter_intra_saturate<R>::perform(r_lambda_c, r_sat));
 		}
 	}
@@ -126,7 +126,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 2>
 			const auto r_u_unpacked = mipp::andb<B>(mipp::lshift<B>(r_u_packed, shift--), r_mask);
 			const auto r_lambda_c   = GI(r_lambda_a, r_lambda_b, r_u_unpacked);
 
-			mipp::store<R>(l_c + i * mipp::nElmtsPerRegister<R>(), 
+			mipp::store<R>(l_c + i * mipp::nElmtsPerRegister<R>(),
 			               API_polar_inter_intra_saturate<R>::perform(r_lambda_c, r_sat));
 		}
 	}
@@ -146,7 +146,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 1>
 		const auto r_lambda_c0   = GI(r_lambda_a0, r_lambda_b0, r_u_unpacked0);
 
 		const auto r_sat = API_polar_inter_intra_saturate<R>::init();
-		mipp::store<R>(l_c + 0 * mipp::nElmtsPerRegister<R>(), 
+		mipp::store<R>(l_c + 0 * mipp::nElmtsPerRegister<R>(),
 		               API_polar_inter_intra_saturate<R>::perform(r_lambda_c0, r_sat));
 	}
 };

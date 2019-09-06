@@ -7,8 +7,9 @@
 #include <string>
 #include <cmath>
 
-#include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS_simd.hpp"
 #include "Tools/Math/utils.h"
+
+#include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS_simd.hpp"
 
 namespace aff3ct
 {

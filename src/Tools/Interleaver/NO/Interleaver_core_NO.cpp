@@ -1,6 +1,6 @@
 #include <numeric>
 
-#include "Interleaver_core_NO.hpp"
+#include "Tools/Interleaver/NO/Interleaver_core_NO.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

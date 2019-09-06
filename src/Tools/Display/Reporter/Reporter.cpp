@@ -1,7 +1,7 @@
 #include <cassert>
 #include <ios>
 
-#include "Reporter.hpp"
+#include "Tools/Display/Reporter/Reporter.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

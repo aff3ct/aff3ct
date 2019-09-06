@@ -13,7 +13,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Predicate.hpp"
+#include "Tools/Algo/Predicate.hpp"
 
 namespace aff3ct
 {

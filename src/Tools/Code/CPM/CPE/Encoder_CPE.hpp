@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "../CPM_parameters.hpp"
+#include "Tools/Code/CPM/CPM_parameters.hpp"
 
 namespace aff3ct
 {

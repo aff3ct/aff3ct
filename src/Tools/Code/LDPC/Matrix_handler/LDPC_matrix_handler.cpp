@@ -9,7 +9,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "LDPC_matrix_handler.hpp"
+#include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 using namespace aff3ct::tools;
 

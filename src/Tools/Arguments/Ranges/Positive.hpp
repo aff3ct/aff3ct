@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Min.hpp"
+#include "Tools/Arguments/Ranges/Min.hpp"
 
 namespace aff3ct
 {

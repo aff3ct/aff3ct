@@ -1,7 +1,7 @@
 #ifndef SCALING_FACTOR_ADAPTIVE_HPP
 #define SCALING_FACTOR_ADAPTIVE_HPP
 
-#include "Scaling_factor.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp"
 
 namespace aff3ct
 {

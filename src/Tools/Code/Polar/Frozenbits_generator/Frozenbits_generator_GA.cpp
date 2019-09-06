@@ -8,7 +8,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Frozenbits_generator_GA.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
 
 using namespace aff3ct::tools;
 

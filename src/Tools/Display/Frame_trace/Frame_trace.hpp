@@ -126,6 +126,6 @@ private:
 }
 }
 
-#include "Frame_trace.hxx"
+#include "Tools/Display/Frame_trace/Frame_trace.hxx"
 
 #endif /* FRAME_TRACE_HPP */

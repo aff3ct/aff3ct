@@ -5,9 +5,9 @@
 #include <assert.h>
 #include <mipp.h>
 
-#include "interpolation.h"
 #include "Tools/Math/utils.h"
 #include "Tools/general_utils.h"
+#include "Tools/Math/interpolation.h"
 
 namespace aff3ct
 {
