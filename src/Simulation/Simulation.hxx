@@ -2,7 +2,8 @@
 #define SIMULATION_HXX_
 
 #include <type_traits>
-#include "Simulation.hpp"
+
+#include "Simulation/Simulation.hpp"
 
 namespace aff3ct
 {

@@ -22,7 +22,7 @@
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
-#include "../Simulation.hpp"
+#include "Simulation/Simulation.hpp"
 
 namespace aff3ct
 {
