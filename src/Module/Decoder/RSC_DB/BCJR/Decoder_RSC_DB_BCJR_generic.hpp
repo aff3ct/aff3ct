@@ -29,6 +29,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_DB_BCJR_generic.hxx"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_generic.hxx"
 
 #endif /* DECODER_RSC_DB_BCJR_GENERIC_HPP_ */

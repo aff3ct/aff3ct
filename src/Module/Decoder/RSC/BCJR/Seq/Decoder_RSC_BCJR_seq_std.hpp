@@ -35,6 +35,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR_seq_std.hxx"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_std.hxx"
 
 #endif /* DECODER_RSC_BCJR_STD_SEQ_HPP_ */

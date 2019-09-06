@@ -32,6 +32,6 @@ protected:
 }
 }
 
-#include "Decoder_maximum_likelihood.hxx"
+#include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood.hxx"
 
 #endif /* DECODER_MAXIMUM_LIKELIHOO_HPP_ */

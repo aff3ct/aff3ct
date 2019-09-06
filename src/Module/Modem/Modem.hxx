@@ -14,7 +14,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Modem.hpp"
+#include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
 {

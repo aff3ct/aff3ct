@@ -56,6 +56,6 @@ private:
 }
 }
 
-#include "Decoder_polar_SCAN_naive.hxx"
+#include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hxx"
 
 #endif	/* DECODER_POLAR_SCAN_NAIVE_H_ */

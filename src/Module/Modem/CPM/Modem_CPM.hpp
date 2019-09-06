@@ -79,6 +79,6 @@ private:
 }
 }
 
-#include "Modem_CPM.hxx"
+#include "Module/Modem/CPM/Modem_CPM.hxx"
 
 #endif /* MODEM_CPM_HPP_ */

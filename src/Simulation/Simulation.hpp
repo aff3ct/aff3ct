@@ -71,6 +71,6 @@ protected:
 }
 }
 
-#include "Simulation.hxx"
+#include "Simulation/Simulation.hxx"
 
 #endif /* SIMULATION_HPP_ */

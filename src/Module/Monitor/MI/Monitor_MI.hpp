@@ -101,6 +101,6 @@ protected:
 }
 }
 
-#include "Monitor_MI.hxx"
+#include "Module/Monitor/MI/Monitor_MI.hxx"
 
 #endif /* MONITOR_MI_HPP_ */

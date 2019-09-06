@@ -30,6 +30,6 @@ protected:
 };
 }
 }
-#include "Codec_SIHO.hxx"
+#include "Module/Codec/Codec_SIHO.hxx"
 
 #endif /* CODEC_SIHO_HPP_ */

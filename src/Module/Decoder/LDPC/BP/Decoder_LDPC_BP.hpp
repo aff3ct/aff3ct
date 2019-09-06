@@ -38,6 +38,6 @@ public:
 }
 }
 
-#include "Decoder_LDPC_BP.hxx"
+#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hxx"
 
 #endif /* DECODER_LDPC_BP_HPP_ */

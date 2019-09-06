@@ -33,6 +33,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR_inter_fast.hxx"
+#include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hxx"
 
 #endif /* DECODER_RSC_BCJR_INTER_FAST_HPP_ */

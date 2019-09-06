@@ -148,6 +148,6 @@ protected:
 }
 }
 
-#include "Monitor_reduction.hxx"
+#include "Module/Monitor/Monitor_reduction.hxx"
 
 #endif /* MONITOR_REDUCTION_HPP_ */

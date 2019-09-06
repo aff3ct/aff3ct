@@ -27,6 +27,6 @@ protected:
 };
 }
 }
-#include "Decoder_RSC_DB_BCJR_DVB_RCS2.hxx"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS2.hxx"
 
 #endif /* DECODER_RSC_DB_BCJR_DVB_RCS2_HPP_ */

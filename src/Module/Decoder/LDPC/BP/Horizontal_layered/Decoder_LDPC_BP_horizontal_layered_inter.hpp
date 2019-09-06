@@ -57,7 +57,7 @@ protected:
 }
 }
 
-#include "Decoder_LDPC_BP_horizontal_layered_inter.hxx"
+#include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered_inter.hxx"
 
 #endif
 #endif /* DECODER_LDPC_BP_HORIZONTAL_LAYERED_INTER_HPP_ */

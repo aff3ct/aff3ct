@@ -80,6 +80,6 @@ protected:
 };
 }
 }
-#include "Decoder_HIHO.hxx"
+#include "Module/Decoder/Decoder_HIHO.hxx"
 
 #endif /* DECODER_HIHO_HPP_ */

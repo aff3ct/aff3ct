@@ -93,6 +93,6 @@ protected:
 };
 }
 }
-#include "Decoder_SISO.hxx"
+#include "Module/Decoder/Decoder_SISO.hxx"
 
 #endif /* DECODER_SISO_HPP_ */

@@ -51,6 +51,6 @@ public:
 };
 }
 }
-#include "Decoder_SISO_SIHO.hxx"
+#include "Module/Decoder/Decoder_SISO_SIHO.hxx"
 
 #endif /* DECODER_SISO_SIHO_HPP_ */

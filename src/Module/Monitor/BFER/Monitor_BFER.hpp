@@ -110,6 +110,6 @@ protected:
 }
 }
 
-#include "Monitor_BFER.hxx"
+#include "Module/Monitor/BFER/Monitor_BFER.hxx"
 
 #endif /* MONITOR_BFER_HPP_ */

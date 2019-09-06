@@ -33,6 +33,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR_intra.hxx"
+#include "Module/Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra.hxx"
 
 #endif /* DECODER_RSC_BCJR_INTRA_HPP_ */

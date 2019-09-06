@@ -66,6 +66,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_SC_fast_sys.hxx"
+#include "Module/Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hxx"
 
 #endif /* DECODER_POLAR_SC_FAST_SYS_ */

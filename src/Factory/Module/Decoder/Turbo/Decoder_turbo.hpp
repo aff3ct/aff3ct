@@ -82,6 +82,6 @@ struct Decoder_turbo : public Decoder
 }
 }
 
-#include "Decoder_turbo.hxx"
+#include "Factory/Module/Decoder/Turbo/Decoder_turbo.hxx"
 
 #endif /* FACTORY_DECODER_TURBO_HPP */

@@ -82,6 +82,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_SCL_naive.hxx"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hxx"
 
 #endif /* DECODER_POLAR_SCL_NAIVE_ */

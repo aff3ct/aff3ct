@@ -30,6 +30,6 @@ protected:
 }
 }
 
-#include "Decoder_LDPC_BP_flooding_SPA.hxx"
+#include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_SPA.hxx"
 
 #endif /* DECODER_LDPC_BP_FLOODING_SPA_HPP_ */

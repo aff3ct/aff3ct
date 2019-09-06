@@ -52,6 +52,6 @@ public:
 };
 }
 }
-#include "Decoder_SIHO_HIHO.hxx"
+#include "Module/Decoder/Decoder_SIHO_HIHO.hxx"
 
 #endif /* DECODER_SIHO_HIHO_HPP_ */

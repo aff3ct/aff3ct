@@ -115,6 +115,6 @@ protected:
 }
 }
 
-#include "Codec.hxx"
+#include "Module/Codec/Codec.hxx"
 
 #endif /* CODEC_HPP_ */

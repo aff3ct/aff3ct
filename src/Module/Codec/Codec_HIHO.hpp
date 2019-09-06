@@ -31,6 +31,6 @@ protected:
 }
 }
 
-#include "Codec_HIHO.hxx"
+#include "Module/Codec/Codec_HIHO.hxx"
 
 #endif /* CODEC_HIHO_HPP_ */

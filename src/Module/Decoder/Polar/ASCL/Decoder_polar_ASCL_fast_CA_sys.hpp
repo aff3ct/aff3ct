@@ -47,6 +47,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_ASCL_fast_CA_sys.hxx"
+#include "Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_fast_CA_sys.hxx"
 
 #endif /* DECODER_POLAR_ASCL_FAST_SYS_CA_CA */

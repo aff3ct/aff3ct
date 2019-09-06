@@ -101,6 +101,6 @@ protected:
 };
 }
 }
-#include "Module.hxx"
+#include "Module/Module.hxx"
 
 #endif /* MODULE_HPP_ */

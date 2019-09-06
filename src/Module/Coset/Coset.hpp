@@ -84,6 +84,6 @@ protected:
 };
 }
 }
-#include "Coset.hxx"
+#include "Module/Coset/Coset.hxx"
 
 #endif /* COSET_HPP_ */

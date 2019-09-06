@@ -41,6 +41,6 @@ protected:
 }
 }
 
-#include "CRC_polynomial.hxx"
+#include "Module/CRC/Polynomial/CRC_polynomial.hxx"
 
 #endif /* CRC_POLYNOMIAL_HPP_ */

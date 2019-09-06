@@ -108,6 +108,6 @@ private:
 }
 }
 
-#include "Decoder_polar_SCL_MEM_fast_sys.hxx"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_MEM_fast_sys.hxx"
 
 #endif /* DECODER_POLAR_SCL_MEM_FAST_SYS_ */

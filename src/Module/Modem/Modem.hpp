@@ -266,6 +266,6 @@ protected:
 };
 }
 }
-#include "Modem.hxx"
+#include "Module/Modem/Modem.hxx"
 
 #endif /* MODEM_HPP_ */

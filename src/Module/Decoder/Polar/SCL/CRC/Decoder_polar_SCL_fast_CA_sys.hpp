@@ -46,6 +46,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_SCL_fast_CA_sys.hxx"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hxx"
 
 #endif /* DECODER_POLAR_SCL_FAST_SYS_CA_CA */

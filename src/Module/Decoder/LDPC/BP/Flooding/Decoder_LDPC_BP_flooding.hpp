@@ -49,6 +49,6 @@ protected:
 }
 }
 
-#include "Decoder_LDPC_BP_flooding.hxx"
+#include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hxx"
 
 #endif /* DECODER_LDPC_BP_FLOODING_HPP_ */

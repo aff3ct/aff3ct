@@ -30,6 +30,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR_intra_fast.hxx"
+#include "Module/Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_fast.hxx"
 
 #endif /* DECODER_RSC_BCJR_INTRA_FAST_HPP_ */

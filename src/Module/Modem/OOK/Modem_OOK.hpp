@@ -26,6 +26,6 @@ protected:
 }
 }
 
-#include "Modem_OOK.hxx"
+#include "Module/Modem/OOK/Modem_OOK.hxx"
 
 #endif /* MODEM_OOK_HPP_ */

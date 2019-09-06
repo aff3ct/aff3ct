@@ -33,6 +33,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR_seq_very_fast.hxx"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_very_fast.hxx"
 
 #endif /* DECODER_RSC_BCJR_SEQ_VERY_FAST_HPP_ */

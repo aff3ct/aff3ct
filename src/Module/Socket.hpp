@@ -66,6 +66,6 @@ public:
 }
 }
 
-#include "Socket.hxx"
+#include "Module/Socket.hxx"
 
 #endif /* SOCKET_HPP_ */

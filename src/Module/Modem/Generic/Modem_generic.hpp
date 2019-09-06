@@ -62,6 +62,6 @@ protected:
 }
 }
 
-#include "Modem_generic.hxx"
+#include "Module/Modem/Generic/Modem_generic.hxx"
 
 #endif // MODEM_GENERIC_HPP_

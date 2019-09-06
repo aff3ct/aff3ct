@@ -42,6 +42,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR.hxx"
+#include "Module/Decoder/RSC/BCJR/Decoder_RSC_BCJR.hxx"
 
 #endif /* DECODER_RSC_BCJR_HPP_ */

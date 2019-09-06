@@ -59,6 +59,6 @@ private:
 }
 }
 
-#include "Modem_SCMA.hxx"
+#include "Module/Modem/SCMA/Modem_SCMA.hxx"
 
 #endif /* MODEM_SCMA_HPP_ */

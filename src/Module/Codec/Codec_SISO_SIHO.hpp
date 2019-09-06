@@ -25,6 +25,6 @@ public:
 };
 }
 }
-#include "Codec_SISO_SIHO.hxx"
+#include "Module/Codec/Codec_SISO_SIHO.hxx"
 
 #endif /* CODEC_SISO_SIHO_HPP_ */

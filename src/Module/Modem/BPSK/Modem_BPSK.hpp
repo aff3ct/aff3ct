@@ -36,6 +36,6 @@ protected:
 }
 }
 
-#include "Modem_BPSK.hxx"
+#include "Module/Modem/BPSK/Modem_BPSK.hxx"
 
 #endif /* MODEM_BPSK_HPP_ */

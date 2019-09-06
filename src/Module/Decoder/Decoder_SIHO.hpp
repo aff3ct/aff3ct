@@ -81,6 +81,6 @@ protected:
 };
 }
 }
-#include "Decoder_SIHO.hxx"
+#include "Module/Decoder/Decoder_SIHO.hxx"
 
 #endif /* DECODER_SIHO_HPP_ */

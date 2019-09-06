@@ -29,6 +29,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_SCF_naive_sys.hxx"
+#include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive_sys.hxx"
 
 #endif /* DECODER_POLAR_SCF_NAIVE_SYS_ */
