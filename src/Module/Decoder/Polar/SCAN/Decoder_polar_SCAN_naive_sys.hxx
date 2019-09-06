@@ -1,4 +1,4 @@
-#include "Decoder_polar_SCAN_naive_sys.hpp"
+#include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hpp"
 
 namespace aff3ct
 {

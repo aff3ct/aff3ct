@@ -5,7 +5,7 @@
 
 #include <mpi.h>
 
-#include "Monitor_reduction.hpp"
+#include "Module/Monitor/Monitor_reduction.hpp"
 
 namespace aff3ct
 {

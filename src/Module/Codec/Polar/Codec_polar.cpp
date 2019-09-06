@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Codec_polar.hpp"
+#include "Module/Codec/Polar/Codec_polar.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

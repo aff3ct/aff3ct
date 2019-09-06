@@ -7,7 +7,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Modem_generic.hpp"
+#include "Module/Modem/Generic/Modem_generic.hpp"
 
 namespace aff3ct
 {

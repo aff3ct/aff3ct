@@ -3,7 +3,7 @@
 
 #include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
 
-#include "../Decoder_LDPC_BP_flooding.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp"
 
 namespace aff3ct
 {

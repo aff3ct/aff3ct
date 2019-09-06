@@ -6,7 +6,7 @@
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_RSC_DB_BCJR_DVB_RCS1.hpp"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS1.hpp"
 
 using namespace aff3ct::tools;
 

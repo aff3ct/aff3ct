@@ -7,7 +7,7 @@
 
 #include "Tools/Math/max.h"
 
-#include "Decoder_RSC_BCJR_seq_generic_std.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp"
 
 namespace aff3ct
 {

@@ -7,7 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_polar_SCAN_naive.hpp"
+#include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp"
 
 namespace aff3ct
 {
@@ -33,7 +33,7 @@ Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 {
 	const std::string name = "Decoder_polar_SCAN_naive";
 	this->set_name(name);
-	
+
 	if (!tools::is_power_of_2(this->N))
 	{
 		std::stringstream message;
@@ -95,12 +95,12 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 		else
 			feedback_graph[0][i] = I();
 
-	// init the rest of the feedback graph 
+	// init the rest of the feedback graph
 	for (auto t = 1; t < layers_count; t++)
 		for (auto i = 0; i < this->N; i++)
 			feedback_graph[t][i] = I();
-	
-	// init the softGraph 
+
+	// init the softGraph
 	// (except for the layer "layers_count -1" because it will made by the "load" routine from the LLRs)
 	for (auto t = 0; t < layers_count -1; t++)
 		for (auto i = 0; i < this->N; i++)
@@ -282,10 +282,10 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 			auto g_down_ix = j;
 
 			if ((i & (1 << l)) == 0) // function F
-				soft_graph[l][j] = F(soft_graph[l + 1][  f_up_ix], 
+				soft_graph[l][j] = F(soft_graph[l + 1][  f_up_ix],
 				                     V(soft_graph[l + 1][f_down_ix], feedback_graph[l][f_down_ix]));
 			else // function G
-				soft_graph[l][j] = V(soft_graph[l + 1][g_down_ix], 
+				soft_graph[l][j] = V(soft_graph[l + 1][g_down_ix],
 				                     F(feedback_graph[l][  g_up_ix], soft_graph[l + 1][  g_up_ix]));
 		}
 	}

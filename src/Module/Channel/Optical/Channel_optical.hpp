@@ -3,7 +3,7 @@
 
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"
 
-#include "../Channel.hpp"
+#include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
 {

@@ -1,5 +1,5 @@
-#include "Decoder_RSC_BCJR_seq_fast.hpp"
-#include "Decoder_RSC_BCJR_seq_scan.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_fast.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_scan.hpp"
 
 #define WINDOW 32
 #define BLOCK  32

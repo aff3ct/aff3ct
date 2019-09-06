@@ -6,7 +6,7 @@
 
 #include "Tools/Math/max.h"
 
-#include "Decoder_RSC_BCJR_inter.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter.hpp"
 
 namespace aff3ct
 {

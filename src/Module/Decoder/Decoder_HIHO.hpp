@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include "Decoder.hpp"
+#include "Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
 {

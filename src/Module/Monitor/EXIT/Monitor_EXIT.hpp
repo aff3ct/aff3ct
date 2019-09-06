@@ -5,7 +5,7 @@
 #include <vector>
 #include <functional>
 
-#include "../Monitor.hpp"
+#include "Module/Monitor/Monitor.hpp"
 
 namespace aff3ct
 {

@@ -4,7 +4,7 @@
 #include <vector>
 #include <mipp.h>
 
-#include "../Channel.hpp"
+#include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
 {

@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/common/hard_decide.h"
 
-#include "Codec.hpp"
+#include "Module/Codec/Codec.hpp"
 
 namespace aff3ct
 {

@@ -1,4 +1,4 @@
-#include "CRC_NO.hpp"
+#include "Module/CRC/NO/CRC_NO.hpp"
 
 using namespace aff3ct::module;
 

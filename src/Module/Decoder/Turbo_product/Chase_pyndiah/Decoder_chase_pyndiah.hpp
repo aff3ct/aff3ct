@@ -3,9 +3,10 @@
 
 #include <vector>
 
-#include "../../Decoder_SISO_SIHO.hpp"
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Module/Encoder/Encoder.hpp"
+
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
 {

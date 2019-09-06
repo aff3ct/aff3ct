@@ -17,10 +17,10 @@
 #include <functional>
 #include <memory>
 
-#include "Task.hpp"
-#include "Socket.hpp"
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #ifdef AFF3CT_SYSTEMC_MODULE
-#include "SC_Module.hpp"
+#include "Module/SC_Module.hpp"
 #endif
 
 // convert strongly typed enum to integer

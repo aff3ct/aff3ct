@@ -8,7 +8,7 @@
 
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 
-#include "../Channel.hpp"
+#include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
 {

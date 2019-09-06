@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_BCH.hpp"
+#include "Module/Decoder/BCH/Decoder_BCH.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

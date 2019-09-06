@@ -13,7 +13,7 @@
 #include "Factory/Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 #include "Factory/Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
 
-#include "../Codec_SISO_SIHO.hpp"
+#include "Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct
 {

@@ -3,7 +3,7 @@
 
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
 
-#include "../Channel.hpp"
+#include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
 {

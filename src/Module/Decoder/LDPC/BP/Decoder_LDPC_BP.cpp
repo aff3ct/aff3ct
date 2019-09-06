@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Decoder_LDPC_BP.hpp"
+#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

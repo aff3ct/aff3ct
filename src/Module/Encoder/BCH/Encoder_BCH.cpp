@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "Encoder_BCH.hpp"
+#include "Module/Encoder/BCH/Encoder_BCH.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

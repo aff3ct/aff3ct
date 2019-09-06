@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Quantizer_NO.hpp"
+#include "Module/Quantizer/NO/Quantizer_NO.hpp"
 
 using namespace aff3ct::module;
 

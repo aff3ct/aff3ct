@@ -13,7 +13,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Decoder_SISO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {

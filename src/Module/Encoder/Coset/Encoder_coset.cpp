@@ -1,4 +1,4 @@
-#include "Encoder_coset.hpp"
+#include "Module/Encoder/Coset/Encoder_coset.hpp"
 
 using namespace aff3ct::module;
 

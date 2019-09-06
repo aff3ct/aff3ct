@@ -14,7 +14,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_polar_SC_naive.hpp"
+#include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
 
 namespace aff3ct
 {
@@ -20,7 +20,7 @@ Decoder_polar_SC_naive<B,R,F,G,H>
 {
 	const std::string name = "Decoder_polar_SC_naive";
 	this->set_name(name);
-	
+
 	if (!tools::is_power_of_2(this->N))
 	{
 		std::stringstream message;

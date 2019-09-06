@@ -6,7 +6,7 @@
 #include "Tools/Math/max.h"
 #include "Tools/Constellation/Constellation.hpp"
 
-#include "../Modem.hpp"
+#include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
 {

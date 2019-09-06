@@ -4,9 +4,9 @@
 #include <vector>
 #include <mipp.h>
 
-#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq.hpp"
-
 #include "Tools/Math/max.h"
+
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq.hpp"
 
 namespace aff3ct
 {

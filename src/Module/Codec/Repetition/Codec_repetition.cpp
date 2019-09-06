@@ -2,7 +2,7 @@
 
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
-#include "Codec_repetition.hpp"
+#include "Module/Codec/Repetition/Codec_repetition.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

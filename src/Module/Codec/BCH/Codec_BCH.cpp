@@ -5,7 +5,7 @@
 
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
-#include "Codec_BCH.hpp"
+#include "Module/Codec/BCH/Codec_BCH.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

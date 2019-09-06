@@ -5,7 +5,7 @@
 #include <vector>
 #include <mipp.h>
 
-#include "../Source.hpp"
+#include "Module/Source/Source.hpp"
 
 namespace aff3ct
 {

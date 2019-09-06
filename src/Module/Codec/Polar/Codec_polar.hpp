@@ -11,7 +11,7 @@
 #include "Factory/Module/Puncturer/Polar/Puncturer_polar.hpp"
 #include "Factory/Tools/Code/Polar/Frozenbits_generator.hpp"
 
-#include "../Codec_SISO_SIHO.hpp"
+#include "Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct
 {

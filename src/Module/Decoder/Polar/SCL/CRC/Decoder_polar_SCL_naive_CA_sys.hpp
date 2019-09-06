@@ -3,7 +3,7 @@
 
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "Decoder_polar_SCL_naive_CA.hpp"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp"
 
 namespace aff3ct
 {

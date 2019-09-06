@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include "Decoder_repetition_std.hpp"
+#include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

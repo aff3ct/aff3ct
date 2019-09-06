@@ -3,7 +3,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/Polar/fb_extract.h"
 
-#include "Decoder_polar_SCL_MEM_fast_CA_sys.hpp"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_MEM_fast_CA_sys.hpp"
 
 namespace aff3ct
 {

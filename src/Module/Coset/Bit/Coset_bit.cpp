@@ -1,4 +1,4 @@
-#include "Coset_bit.hpp"
+#include "Module/Coset/Bit/Coset_bit.hpp"
 
 using namespace aff3ct::module;
 

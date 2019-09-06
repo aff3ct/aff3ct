@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Modem_OOK.hpp"
+#include "Module/Modem/OOK/Modem_OOK.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

@@ -3,7 +3,7 @@
 
 #include "Module/Encoder/Encoder.hpp"
 
-#include "../../Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 
 namespace aff3ct
 {

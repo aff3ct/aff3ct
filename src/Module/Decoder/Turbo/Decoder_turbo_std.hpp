@@ -1,7 +1,7 @@
 #ifndef DECODER_TURBO_NAIVE_HPP
 #define DECODER_TURBO_NAIVE_HPP
 
-#include "Decoder_turbo.hpp"
+#include "Module/Decoder/Turbo/Decoder_turbo.hpp"
 
 namespace aff3ct
 {

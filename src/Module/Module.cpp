@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Module.hpp"
+#include "Module/Module.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

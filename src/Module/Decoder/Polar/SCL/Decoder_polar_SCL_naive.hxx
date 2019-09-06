@@ -10,7 +10,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_polar_SCL_naive.hpp"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp"
 
 namespace aff3ct
 {
@@ -29,7 +29,7 @@ Decoder_polar_SCL_naive<B,R,F,G>
 {
 	const std::string name = "Decoder_polar_SCL_naive";
 	this->set_name(name);
-	
+
 	if (!tools::is_power_of_2(this->N))
 	{
 		std::stringstream message;
@@ -379,7 +379,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::select_best_path() 
+::select_best_path()
 {
 	int best_path = 0;
 	if (active_paths.size() >= 1)

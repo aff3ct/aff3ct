@@ -6,7 +6,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 
-#include "Encoder_LDPC.hpp"
+#include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

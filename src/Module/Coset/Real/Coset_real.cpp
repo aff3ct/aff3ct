@@ -1,4 +1,4 @@
-#include "Coset_real.hpp"
+#include "Module/Coset/Real/Coset_real.hpp"
 
 using namespace aff3ct::module;
 

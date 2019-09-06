@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Socket.hpp"
+#include "Module/Socket.hpp"
 
 namespace aff3ct
 {

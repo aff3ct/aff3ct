@@ -1,7 +1,7 @@
 #ifndef PUNCTURER_NO_HPP_
 #define PUNCTURER_NO_HPP_
 
-#include "../Puncturer.hpp"
+#include "Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct
 {

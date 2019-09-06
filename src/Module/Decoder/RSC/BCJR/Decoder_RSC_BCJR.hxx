@@ -6,7 +6,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
-#include "Decoder_RSC_BCJR.hpp"
+#include "Module/Decoder/RSC/BCJR/Decoder_RSC_BCJR.hpp"
 
 namespace aff3ct
 {

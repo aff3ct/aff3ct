@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/common/hard_decide.h"
 
-#include "Decoder_chase_std.hpp"
+#include "Module/Decoder/Generic/Chase/Decoder_chase_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

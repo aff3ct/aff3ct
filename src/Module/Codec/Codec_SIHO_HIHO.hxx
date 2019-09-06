@@ -1,7 +1,7 @@
 #ifndef CODEC_SIHO_HIHO_HXX_
 #define CODEC_SIHO_HIHO_HXX_
 
-#include "Codec_SIHO_HIHO.hpp"
+#include "Module/Codec/Codec_SIHO_HIHO.hpp"
 
 namespace aff3ct
 {

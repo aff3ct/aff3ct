@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Decoder_RSC_BCJR_inter_intra_fast_x4_AVX.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x4_AVX.hpp"
 
 namespace aff3ct
 {

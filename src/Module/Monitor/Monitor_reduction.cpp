@@ -7,7 +7,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Monitor_reduction.hpp"
+#include "Module/Monitor/Monitor_reduction.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

@@ -11,7 +11,7 @@
 #include "Tools/Code/CPM/CPE/Encoder_CPE_Rimoldi.hpp"
 #include "Tools/Code/CPM/BCJR/CPM_BCJR.hpp"
 
-#include "../Modem.hpp"
+#include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
 {

@@ -3,8 +3,8 @@
 
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
-#include "Codec_SISO.hpp"
-#include "Codec_SIHO.hpp"
+#include "Module/Codec/Codec_SISO.hpp"
+#include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {

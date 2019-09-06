@@ -1,4 +1,4 @@
-#include "CRC_polynomial.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 
 namespace aff3ct
 {

@@ -12,7 +12,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Quantizer.hpp"
+#include "Module/Quantizer/Quantizer.hpp"
 
 namespace aff3ct
 {

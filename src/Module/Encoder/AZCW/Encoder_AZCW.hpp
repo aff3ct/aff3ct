@@ -3,7 +3,7 @@
 
 #include <random>
 
-#include "../Encoder.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

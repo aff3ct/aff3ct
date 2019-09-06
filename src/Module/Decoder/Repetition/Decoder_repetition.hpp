@@ -4,7 +4,7 @@
 #include <vector>
 #include <mipp.h>
 
-#include "../Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
 {

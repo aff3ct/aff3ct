@@ -4,7 +4,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_RSC_BCJR_seq.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq.hpp"
 
 namespace aff3ct
 {

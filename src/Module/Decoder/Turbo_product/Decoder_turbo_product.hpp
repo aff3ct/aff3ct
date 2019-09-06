@@ -2,12 +2,10 @@
 #define DECODER_TURBO_PRODUCT_HPP_
 
 #include "Module/Interleaver/Interleaver.hpp"
-
-#include "../Decoder_SISO_SIHO.hpp"
-#include "../Decoder_HIHO.hpp"
-#include "../../Encoder/Encoder.hpp"
-
-#include "Chase_pyndiah/Decoder_chase_pyndiah.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_HIHO.hpp"
+#include "Module/Encoder/Encoder.hpp"
+#include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 
 namespace aff3ct
 {

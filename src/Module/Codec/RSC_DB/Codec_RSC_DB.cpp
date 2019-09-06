@@ -4,7 +4,7 @@
 
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
-#include "Codec_RSC_DB.hpp"
+#include "Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

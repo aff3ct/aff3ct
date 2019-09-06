@@ -8,7 +8,7 @@
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
-#include "../../Decoder_SIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -64,7 +64,7 @@ private:
 	                                         tools::Binary_node<Contents_SCL<B,R>>* node_b,
 	                                         tools::Binary_node<Contents_SCL<B,R>>* node_caller        );
 
-	void duplicate_path(int path, int leaf_index, 
+	void duplicate_path(int path, int leaf_index,
 	                    std::vector<std::vector<tools::Binary_node<Contents_SCL<B,R>>*>> leaves_array);
 
 protected:

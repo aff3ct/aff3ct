@@ -1,7 +1,7 @@
 #ifndef CODEC_SISO_HXX_
 #define CODEC_SISO_HXX_
 
-#include "Codec_SISO.hpp"
+#include "Module/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
 {

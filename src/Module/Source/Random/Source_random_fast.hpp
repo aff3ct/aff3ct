@@ -4,7 +4,7 @@
 #include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
 #include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
 
-#include "../Source.hpp"
+#include "Module/Source/Source.hpp"
 
 namespace aff3ct
 {

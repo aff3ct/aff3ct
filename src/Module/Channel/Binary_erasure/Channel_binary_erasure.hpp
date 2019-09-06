@@ -9,7 +9,7 @@
 #include "Tools/types.h"
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 
-#include "../User/Channel_user_be.hpp"
+#include "Module/Channel/User/Channel_user_be.hpp"
 
 namespace aff3ct
 {

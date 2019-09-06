@@ -1,6 +1,6 @@
 #include <mipp.h>
 
-#include "Decoder_RSC_BCJR_inter_fast.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hpp"
 
 namespace aff3ct
 {

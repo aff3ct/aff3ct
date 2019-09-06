@@ -11,7 +11,7 @@
 #include "Tools/Algo/Multidimensional_vector/Vector_3D.hpp"
 #include "Tools/Algo/Multidimensional_vector/Vector_4D.hpp"
 
-#include "../Modem.hpp"
+#include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
 {

@@ -12,7 +12,7 @@
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Puncturer/Puncturer.hpp"
 
-#include "../Module.hpp"
+#include "Module/Module.hpp"
 
 namespace aff3ct
 {

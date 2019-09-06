@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder_LDPC_DVBS2.hpp"
+#include "Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

@@ -8,7 +8,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
-#include "Decoder_LDPC_BP_horizontal_layered_inter.hpp"
+#include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered_inter.hpp"
 
 namespace aff3ct
 {

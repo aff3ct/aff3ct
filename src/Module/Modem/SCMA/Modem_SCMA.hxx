@@ -8,7 +8,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Modem_SCMA.hpp"
+#include "Module/Modem/SCMA/Modem_SCMA.hpp"
 
 namespace aff3ct
 {

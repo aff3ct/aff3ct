@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include "../CRC.hpp"
+#include "Module/CRC/CRC.hpp"
 
 namespace aff3ct
 {

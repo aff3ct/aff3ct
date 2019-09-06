@@ -1,4 +1,4 @@
-#include "Modem_BPSK_fast.hpp"
+#include "Module/Modem/BPSK/Modem_BPSK_fast.hpp"
 
 namespace aff3ct
 {

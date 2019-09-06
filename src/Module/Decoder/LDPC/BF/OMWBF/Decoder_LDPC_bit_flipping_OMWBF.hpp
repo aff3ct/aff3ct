@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BIT_FLIPPING_OMWBF_HPP_
 #define DECODER_LDPC_BIT_FLIPPING_OMWBF_HPP_
 
-#include "../Decoder_LDPC_bit_flipping.hpp"
+#include "Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping.hpp"
 
 namespace aff3ct
 {

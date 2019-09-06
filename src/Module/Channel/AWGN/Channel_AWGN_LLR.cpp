@@ -3,7 +3,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
-#include "Channel_AWGN_LLR.hpp"
+#include "Module/Channel/AWGN/Channel_AWGN_LLR.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

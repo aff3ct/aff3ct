@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "../Decoder_SIHO.hpp"
-#include "../../Interleaver/Interleaver.hpp"
+#include "Module/Interleaver/Interleaver.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {

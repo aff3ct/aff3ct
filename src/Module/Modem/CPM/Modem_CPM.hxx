@@ -13,8 +13,8 @@
 #include "Tools/Math/matrix.h"
 #include "Tools/Math/numerical_integration.h"
 #include "Tools/Math/math_constants.h"
-#include "Modem_CPM.hpp"
 
+#include "Module/Modem/CPM/Modem_CPM.hpp"
 
 namespace aff3ct
 {

@@ -6,7 +6,7 @@
 #include "Tools/Math/utils.h"
 #include "Tools/Algo/Bit_packer.hpp"
 
-#include "Decoder_RS.hpp"
+#include "Module/Decoder/RS/Decoder_RS.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

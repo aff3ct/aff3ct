@@ -3,7 +3,7 @@
 
 #include "Module/Decoder/Decoder_HIHO.hpp"
 
-#include "Codec.hpp"
+#include "Module/Codec/Codec.hpp"
 
 namespace aff3ct
 {

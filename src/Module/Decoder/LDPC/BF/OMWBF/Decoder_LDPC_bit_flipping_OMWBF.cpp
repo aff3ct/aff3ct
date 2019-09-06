@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_LDPC_bit_flipping_OMWBF.hpp"
+#include "Module/Decoder/LDPC/BF/OMWBF/Decoder_LDPC_bit_flipping_OMWBF.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

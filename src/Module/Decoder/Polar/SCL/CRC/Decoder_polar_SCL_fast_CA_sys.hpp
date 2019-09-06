@@ -5,7 +5,7 @@
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Module/CRC/CRC.hpp"
 
-#include "../Decoder_polar_SCL_fast_sys.hpp"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_fast_sys.hpp"
 
 namespace aff3ct
 {

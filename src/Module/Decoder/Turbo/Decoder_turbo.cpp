@@ -8,7 +8,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
-#include "Decoder_turbo.hpp"
+#include "Module/Decoder/Turbo/Decoder_turbo.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
