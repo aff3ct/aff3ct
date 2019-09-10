@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <numeric>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Monitor/Monitor_reduction.hpp"

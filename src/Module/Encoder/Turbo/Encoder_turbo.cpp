@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder_turbo.hpp"
+#include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

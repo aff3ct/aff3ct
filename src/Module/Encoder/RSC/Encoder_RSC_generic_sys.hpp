@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Encoder_RSC_sys.hpp"
+#include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
 
 namespace aff3ct
 {

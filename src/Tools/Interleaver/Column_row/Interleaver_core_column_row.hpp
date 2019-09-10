@@ -2,6 +2,7 @@
 #define INTERLEAVER_CORE_COLUMN_ROW_HPP
 
 #include <string>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Tools/Interleaver/Interleaver_core.hpp"

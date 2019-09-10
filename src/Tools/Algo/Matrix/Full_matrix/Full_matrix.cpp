@@ -6,7 +6,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
-#include "Full_matrix.hpp"
+#include "Tools/Algo/Matrix/Full_matrix/Full_matrix.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

@@ -1,7 +1,7 @@
 #include <vector>
 #include <cmath>
 
-#include "Encoder_RSC3_CPE_sys.hpp"
+#include "Module/Encoder/RSC/Encoder_RSC3_CPE_sys.hpp"
 
 using namespace aff3ct::module;
 

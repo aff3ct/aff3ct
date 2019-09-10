@@ -7,7 +7,6 @@
 
 #include "Tools/Constellation/PSK/Constellation_PSK.hpp"
 
-
 namespace aff3ct
 {
 namespace tools

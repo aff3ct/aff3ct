@@ -5,7 +5,6 @@
 
 #include "Tools/Constellation/Constellation.hpp"
 
-
 namespace aff3ct
 {
 namespace tools

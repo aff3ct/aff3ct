@@ -5,7 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

@@ -1,7 +1,8 @@
 #include <climits>
 
-#include "Encoder_RS.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
+
+#include "Module/Encoder/RS/Encoder_RS.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

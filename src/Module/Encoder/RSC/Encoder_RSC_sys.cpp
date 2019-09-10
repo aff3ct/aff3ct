@@ -5,7 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder_RSC_sys.hpp"
+#include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

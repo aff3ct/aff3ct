@@ -3,7 +3,6 @@
 
 #include <random>
 #include <vector>
-#include <mipp.h>
 
 #include "Module/Source/Source.hpp"
 

@@ -4,7 +4,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
-#include "Encoder_user.hpp"
+#include "Module/Encoder/User/Encoder_user.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

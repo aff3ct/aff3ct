@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder_repetition_sys.hpp"
+#include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
