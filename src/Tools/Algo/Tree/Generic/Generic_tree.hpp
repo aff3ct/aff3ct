@@ -11,7 +11,7 @@
 #include <vector>
 #include <cstdint>
 
-#include "Generic_node.hpp"
+#include "Tools/Algo/Tree/Generic/Generic_node.hpp"
 
 namespace aff3ct
 {
@@ -75,6 +75,6 @@ private:
 }
 }
 
-#include "Generic_tree.hxx"
+#include "Tools/Algo/Tree/Generic/Generic_tree.hxx"
 
 #endif /* GENERIC_TREE_HPP_ */

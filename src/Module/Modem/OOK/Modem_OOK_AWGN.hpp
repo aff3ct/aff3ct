@@ -1,7 +1,7 @@
 #ifndef MODEM_OOK_AWGN_HPP_
 #define MODEM_OOK_AWGN_HPP_
 
-#include "Modem_OOK.hpp"
+#include "Module/Modem/OOK/Modem_OOK.hpp"
 
 namespace aff3ct
 {
@@ -15,7 +15,10 @@ protected:
 	R sigma_factor;
 
 public:
-	Modem_OOK_AWGN(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const bool disable_sig2 = false, const int n_frames = 1);
+	Modem_OOK_AWGN(const int N,
+	               const tools::Noise<R>& noise = tools::Sigma<R>(),
+	               const bool disable_sig2 = false,
+	               const int n_frames = 1);
 	virtual ~Modem_OOK_AWGN() = default;
 
 	virtual void set_noise(const tools::Noise<R>& noise);

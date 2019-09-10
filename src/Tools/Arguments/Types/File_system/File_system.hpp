@@ -8,7 +8,7 @@
 #include "Tools/system_functions.h"
 #include "Tools/version.h"
 
-#include "../Argument_type_limited.hpp"
+#include "Tools/Arguments/Types/Argument_type_limited.hpp"
 
 namespace aff3ct
 {

@@ -2,7 +2,7 @@
 #include <numeric>
 #include <cmath>
 
-#include "Interleaver_core_golden.hpp"
+#include "Tools/Interleaver/Golden/Interleaver_core_golden.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

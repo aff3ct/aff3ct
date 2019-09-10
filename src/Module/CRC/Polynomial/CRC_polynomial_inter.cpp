@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "CRC_polynomial_inter.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial_inter.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

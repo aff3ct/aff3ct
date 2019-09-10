@@ -3,7 +3,7 @@
 
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 
-#include "Monitor_BFER.hpp"
+#include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

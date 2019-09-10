@@ -5,13 +5,13 @@
 
 #include "Tools/Math/max.h"
 
-#include "../CPM_parameters.hpp"
+#include "Tools/Code/CPM/CPM_parameters.hpp"
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
-template <typename SIN = int, typename SOUT = int, typename Q = float, tools::proto_max<Q> MAX = tools::max_star>
+template <typename SIN = int, typename SOUT = int, typename Q = float, proto_max<Q> MAX = max_star>
 class CPM_BCJR
 {
 protected:
@@ -51,6 +51,6 @@ private:
 }
 }
 
-#include "CPM_BCJR.hxx"
+#include "Tools/Code/CPM/BCJR/CPM_BCJR.hxx"
 
 #endif /* CPM_BCJR_HPP_ */

@@ -7,7 +7,7 @@
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "functions_polar_inter_intra.h"
+#include "Tools/Code/Polar/API/functions_polar_inter_intra.h"
 
 namespace aff3ct
 {

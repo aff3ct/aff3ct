@@ -6,7 +6,7 @@
 #include "Tools/Math/utils.h"
 #include "Tools/Exception/exception.hpp"
 
-#include "general_utils.h"
+#include "Tools/general_utils.h"
 
 std::vector<std::string> aff3ct::tools::split(const std::string &s, char delim)
 {

@@ -1,11 +1,11 @@
-#include "Simulation/BFER/Iterative/BFER_ite.hpp"
-
 #include <string>
 #include <iostream>
 
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 
-#include "BFER_ite.hpp"
+#include "Simulation/BFER/Iterative/BFER_ite.hpp"
+
+#include "Launcher/Simulation/BFER_ite.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

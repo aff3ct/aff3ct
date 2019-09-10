@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "max.h"
+#include "Tools/Math/max.h"
 
 namespace aff3ct
 {

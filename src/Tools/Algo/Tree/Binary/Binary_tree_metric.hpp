@@ -63,7 +63,7 @@ public:
 }
 }
 
-#include "Binary_tree_metric.hxx"
+#include "Tools/Algo/Tree/Binary/Binary_tree_metric.hxx"
 
 #endif /* BINARY_TREE_METRIC_HPP_ */
 

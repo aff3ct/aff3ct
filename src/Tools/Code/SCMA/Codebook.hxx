@@ -6,7 +6,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Codebook.hpp"
+#include "Tools/Code/SCMA/Codebook.hpp"
 
 namespace aff3ct
 {

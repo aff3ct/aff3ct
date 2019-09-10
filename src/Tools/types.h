@@ -2,6 +2,7 @@
 #define TYPES_H_
 
 #include <cstdint>
+#include <cstddef>
 
 // type for the bits
 //using B_8  = signed char;

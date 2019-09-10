@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Channel_user_add.hpp"
+#include "Module/Channel/User/Channel_user_add.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

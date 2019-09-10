@@ -7,7 +7,7 @@
 #include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"
 
-#include "Encoder_RSC.hpp"
+#include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

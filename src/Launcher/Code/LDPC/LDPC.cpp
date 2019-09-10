@@ -6,7 +6,7 @@
 
 #include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
 
-#include "LDPC.hpp"
+#include "Launcher/Code/LDPC/LDPC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

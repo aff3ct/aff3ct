@@ -6,7 +6,7 @@
 
 #include "Tools/Math/max.h"
 
-#include "Decoder_RSC_BCJR_intra.hpp"
+#include "Module/Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra.hpp"
 
 namespace aff3ct
 {
@@ -30,6 +30,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR_intra_std.hxx"
+#include "Module/Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_std.hxx"
 
 #endif /* DECODER_RSC_BCJR_INTRA_STD_HPP_ */

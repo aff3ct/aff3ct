@@ -4,7 +4,7 @@
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Module/CRC/CRC.hpp"
 
-#include "../Decoder_polar_SCL_naive.hpp"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp"
 
 namespace aff3ct
 {
@@ -28,6 +28,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_SCL_naive_CA.hxx"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hxx"
 
 #endif /* DECODER_POLAR_SCL_NAIVE_CA_ */

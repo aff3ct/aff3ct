@@ -3,7 +3,7 @@
 
 #include "Tools/Code/Polar/Polar_code.hpp"
 
-#include "../../../Factory.hpp"
+#include "Factory/Factory.hpp"
 
 namespace aff3ct
 {

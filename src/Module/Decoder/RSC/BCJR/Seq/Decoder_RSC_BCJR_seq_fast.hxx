@@ -1,4 +1,4 @@
-#include "Decoder_RSC_BCJR_seq_fast.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_fast.hpp"
 
 namespace aff3ct
 {

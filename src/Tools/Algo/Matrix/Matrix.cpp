@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Matrix.hpp"
+#include "Tools/Algo/Matrix/Matrix.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

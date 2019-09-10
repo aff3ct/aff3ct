@@ -9,7 +9,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_LDPC_BP_flooding_Gallager_E.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_E.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

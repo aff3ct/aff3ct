@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/compute_parity.h"
 
-#include "Encoder_turbo_product.hpp"
+#include "Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

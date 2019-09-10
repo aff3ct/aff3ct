@@ -4,7 +4,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_RSC_BCJR_inter_intra.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra.hpp"
 
 namespace aff3ct
 {

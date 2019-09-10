@@ -14,7 +14,7 @@
 #include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
-#include "BFER.hpp"
+#include "Simulation/BFER/BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;

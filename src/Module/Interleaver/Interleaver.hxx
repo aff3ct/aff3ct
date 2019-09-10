@@ -7,7 +7,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Interleaver.hpp"
+#include "Module/Interleaver/Interleaver.hpp"
 
 namespace aff3ct
 {

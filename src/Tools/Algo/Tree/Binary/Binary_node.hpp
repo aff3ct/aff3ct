@@ -167,6 +167,6 @@ public:
 }
 }
 
-#include "Binary_node.hxx"
+#include "Tools/Algo/Tree/Binary/Binary_node.hxx"
 
 #endif /* BINARY_NODE_HPP_ */

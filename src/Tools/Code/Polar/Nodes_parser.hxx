@@ -7,7 +7,7 @@
 
 #include "Tools/general_utils.h"
 
-#include "Nodes_parser.h"
+#include "Tools/Code/Polar/Nodes_parser.h"
 
 namespace aff3ct
 {

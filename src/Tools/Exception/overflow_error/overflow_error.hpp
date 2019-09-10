@@ -1,7 +1,7 @@
 #ifndef OVERFLOW_ERROR_HPP_
 #define OVERFLOW_ERROR_HPP_
 
-#include "../exception.hpp"
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {

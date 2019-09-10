@@ -7,7 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_polar_MK_SC_naive.hpp"
+#include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

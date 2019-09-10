@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Generic_tree.hpp"
+#include "Tools/Algo/Tree/Generic/Generic_tree.hpp"
 
 namespace aff3ct
 {

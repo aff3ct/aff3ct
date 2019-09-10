@@ -150,6 +150,6 @@ public:
 }
 }
 
-#include "Generic_node.hxx"
+#include "Tools/Algo/Tree/Generic/Generic_node.hxx"
 
 #endif /* GENERIC_NODE_HPP_ */

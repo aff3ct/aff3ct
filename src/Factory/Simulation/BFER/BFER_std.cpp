@@ -1,7 +1,7 @@
 #include "Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp"
 #include "Simulation/BFER/Standard/Threads/BFER_std_threads.hpp"
 
-#include "BFER_std.hpp"
+#include "Factory/Simulation/BFER/BFER_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

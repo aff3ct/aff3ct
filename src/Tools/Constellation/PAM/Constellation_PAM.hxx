@@ -4,8 +4,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "Constellation_PAM.hpp"
-
+#include "Tools/Constellation/PAM/Constellation_PAM.hpp"
 
 namespace aff3ct
 {

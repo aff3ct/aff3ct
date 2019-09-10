@@ -1,7 +1,7 @@
 #ifndef DECODER_TURBO_FAST_SYS_
 #define DECODER_TURBO_FAST_SYS_
 
-#include "Decoder_turbo.hpp"
+#include "Module/Decoder/Turbo/Decoder_turbo.hpp"
 
 namespace aff3ct
 {

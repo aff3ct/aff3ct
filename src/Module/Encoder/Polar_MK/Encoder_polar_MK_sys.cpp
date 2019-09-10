@@ -8,7 +8,7 @@
 #include "Tools/Math/utils.h"
 #include "Tools/general_utils.h"
 
-#include "Encoder_polar_MK_sys.hpp"
+#include "Module/Encoder/Polar_MK/Encoder_polar_MK_sys.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

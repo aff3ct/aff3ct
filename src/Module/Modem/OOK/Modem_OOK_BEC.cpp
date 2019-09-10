@@ -3,7 +3,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Modem_OOK_BEC.hpp"
+#include "Module/Modem/OOK/Modem_OOK_BEC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

@@ -7,7 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
 
-#include "Decoder_RS_genius.hpp"
+#include "Module/Decoder/RS/Genius/Decoder_RS_genius.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

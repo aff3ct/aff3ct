@@ -8,7 +8,7 @@
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
 
-#include "../../Decoder_SIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {

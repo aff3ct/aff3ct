@@ -4,8 +4,9 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Decoder_turbo_DB.hpp"
 #include "Tools/Math/utils.h"
+
+#include "Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

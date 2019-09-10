@@ -9,7 +9,7 @@
 
 #include "Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
 
-#include "../Codec_SISO_SIHO.hpp"
+#include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct
 {

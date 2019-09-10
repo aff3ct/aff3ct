@@ -7,12 +7,11 @@
 #include <vector>
 
 #include "Tools/Math/max.h"
+#include "Tools/Code/CPM/CPM_parameters.hpp"
+#include "Tools/Code/CPM/CPE/Encoder_CPE_Rimoldi.hpp"
+#include "Tools/Code/CPM/BCJR/CPM_BCJR.hpp"
 
-#include "../Modem.hpp"
-
-#include "CPM_parameters.hpp"
-#include "CPE/Encoder_CPE_Rimoldi.hpp"
-#include "BCJR/CPM_BCJR.hpp"
+#include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
 {
@@ -31,19 +30,19 @@ private:
 
 protected:
 	// inputs:
-	const bool                    no_sig2;    // no computation of sigma^2
+	const bool                           no_sig2;    // no computation of sigma^2
 
 	// modulation data:
-	CPM_parameters<SIN,SOUT>      cpm;        // all CPM parameters
-	R                             cpm_h;      // modulation index = k/p
-	R                             T_samp;     // sample duration  = 1/s_factor
-	std::vector<R>                baseband;   // translation of base band vectors
-	std::vector<R>                projection; // translation of filtering generator family
-	const int                     n_sy;       // number of symbols for one frame after encoding without tail symbols
-	const int                     n_sy_tl;    // number of symbols to send for one frame after encoding with tail symbols
-	Encoder_CPE_Rimoldi<SIN,SOUT> cpe;        // the continuous phase encoder
+	tools::CPM_parameters<SIN,SOUT>      cpm;        // all CPM parameters
+	R                                    cpm_h;      // modulation index = k/p
+	R                                    T_samp;     // sample duration  = 1/s_factor
+	std::vector<R>                       baseband;   // translation of base band vectors
+	std::vector<R>                       projection; // translation of filtering generator family
+	const int                            n_sy;       // number of symbols for one frame after encoding without tail symbols
+	const int                            n_sy_tl;    // number of symbols to send for one frame after encoding with tail symbols
+	tools::Encoder_CPE_Rimoldi<SIN,SOUT> cpe;        // the continuous phase encoder
 
-	CPM_BCJR<SIN,SOUT,Q,MAX>      bcjr;       // demodulator
+	tools::CPM_BCJR<SIN,SOUT,Q,MAX>      bcjr;       // demodulator
 
 public:
 	Modem_CPM(const int  N,
@@ -61,34 +60,10 @@ public:
 
 	virtual void set_noise(const tools::Noise<R>& noise);
 
-	static bool is_complex_mod()
-	{
-		return true;
-	}
-
-	static bool is_complex_fil()
-	{
-		return false;
-	}
-
-	static int size_mod(const int N, const int bps, const int L, const int p, const int ups)
-	{
-		int m_order = (int)1 << bps;
-		int n_tl	= (int)(std::ceil((float)(p - 1) / (float)(m_order - 1))) + L - 1;
-
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, n_tl, ups, is_complex_mod());
-	}
-
-	static int size_fil(const int N, const int bps, const int L, const int p)
-	{
-		int m_order   = (int)1 << bps;
-		int n_tl	  = (int)(std::ceil((float)(p - 1) / (float)(m_order - 1))) + L - 1;
-		int n_wa      = (int)(p * std::pow(m_order, L));
-		int n_bits_wa = (int)std::ceil(std::log2(n_wa));
-		int max_wa_id = (int)(1 << n_bits_wa);
-
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, n_tl, max_wa_id, is_complex_fil());
-	}
+	static bool is_complex_mod();
+	static bool is_complex_fil();
+	static int size_mod(const int N, const int bps, const int L, const int p, const int ups);
+	static int size_fil(const int N, const int bps, const int L, const int p);
 
 protected:
 	void   _modulate (const B *X_N1,                R *X_N2, const int frame_id);
@@ -104,6 +79,6 @@ private:
 }
 }
 
-#include "Modem_CPM.hxx"
+#include "Module/Modem/CPM/Modem_CPM.hxx"
 
 #endif /* MODEM_CPM_HPP_ */

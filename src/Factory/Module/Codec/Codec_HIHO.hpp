@@ -6,7 +6,7 @@
 #include "Module/Codec/Codec_HIHO.hpp"
 #include "Module/CRC/CRC.hpp"
 
-#include "Codec.hpp"
+#include "Factory/Module/Codec/Codec.hpp"
 
 namespace aff3ct
 {

@@ -5,9 +5,9 @@
 #include <vector>
 #include <map>
 
-#include "Argument_info.hpp"
-#include "Argument_tag.hpp"
-#include "Argument_links.hpp"
+#include "Tools/Arguments/Maps/Argument_info.hpp"
+#include "Tools/Arguments/Maps/Argument_tag.hpp"
+#include "Tools/Arguments/Maps/Argument_links.hpp"
 
 namespace aff3ct
 {

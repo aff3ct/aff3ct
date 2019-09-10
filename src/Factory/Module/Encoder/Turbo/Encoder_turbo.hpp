@@ -12,7 +12,7 @@
 
 #include "Tools/auto_cloned_unique_ptr.hpp"
 
-#include "../Encoder.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {
@@ -65,6 +65,6 @@ struct Encoder_turbo : public Encoder
 }
 }
 
-#include "Encoder_turbo.hxx"
+#include "Factory/Module/Encoder/Turbo/Encoder_turbo.hxx"
 
 #endif /* FACTORY_ENCODER_TURBO_HPP */

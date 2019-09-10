@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "Decoder_polar_SCL_naive_sys.hpp"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hpp"
 
 namespace aff3ct
 {

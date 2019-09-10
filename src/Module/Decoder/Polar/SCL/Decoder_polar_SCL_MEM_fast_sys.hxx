@@ -22,8 +22,8 @@
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/fb_extract.h"
 
-#include "Decoder_polar_SCL_fast_sys.hpp"
-#include "Decoder_polar_SCL_MEM_fast_sys.hpp"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_fast_sys.hpp"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_MEM_fast_sys.hpp"
 
 namespace aff3ct
 {

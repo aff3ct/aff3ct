@@ -4,7 +4,7 @@
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
 
-#include "Encoder_turbo.hpp"
+#include "Factory/Module/Encoder/Turbo/Encoder_turbo.hpp"
 
 namespace aff3ct
 {

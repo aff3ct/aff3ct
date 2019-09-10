@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 
-#include "Encoder_RSC_generic_sys.hpp"
+#include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
 
 namespace aff3ct
 {

@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Encoder_polar_MK.hpp"
+#include "Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

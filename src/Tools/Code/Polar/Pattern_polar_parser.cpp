@@ -2,7 +2,7 @@
 #include <cmath>
 #include <algorithm>
 
-#include "Pattern_polar_parser.hpp"
+#include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

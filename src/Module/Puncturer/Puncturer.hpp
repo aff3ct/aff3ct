@@ -103,6 +103,7 @@ protected:
 };
 }
 }
-#include "Puncturer.hxx"
+
+#include "Module/Puncturer/Puncturer.hxx"
 
 #endif /* PUNCTURER_HPP_ */

@@ -1,7 +1,8 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Decoder_polar_MK_SCL_naive_CA.hpp"
+
+#include "Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

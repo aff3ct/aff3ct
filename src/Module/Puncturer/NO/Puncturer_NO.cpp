@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "Puncturer_NO.hpp"
+#include "Module/Puncturer/NO/Puncturer_NO.hpp"
 
 using namespace aff3ct::module;
 

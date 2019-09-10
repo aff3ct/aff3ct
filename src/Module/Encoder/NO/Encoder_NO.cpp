@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "Encoder_NO.hpp"
+#include "Module/Encoder/NO/Encoder_NO.hpp"
 
 using namespace aff3ct::module;
 

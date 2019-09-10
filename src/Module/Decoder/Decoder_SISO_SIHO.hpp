@@ -8,8 +8,8 @@
 #ifndef DECODER_SISO_SIHO_HPP_
 #define DECODER_SISO_SIHO_HPP_
 
-#include "Decoder_SIHO.hpp"
-#include "Decoder_SISO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {
@@ -51,6 +51,6 @@ public:
 };
 }
 }
-#include "Decoder_SISO_SIHO.hxx"
+#include "Module/Decoder/Decoder_SISO_SIHO.hxx"
 
 #endif /* DECODER_SISO_SIHO_HPP_ */

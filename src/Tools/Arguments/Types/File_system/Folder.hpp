@@ -1,7 +1,7 @@
 #ifndef ARGUMENT_TYPE_FOLDER_HPP_
 #define ARGUMENT_TYPE_FOLDER_HPP_
 
-#include "File_system.hpp"
+#include "Tools/Arguments/Types/File_system/File_system.hpp"
 
 namespace aff3ct
 {

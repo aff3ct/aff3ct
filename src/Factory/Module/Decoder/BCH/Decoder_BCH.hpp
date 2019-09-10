@@ -9,7 +9,7 @@
 #include "Module/Encoder/Encoder.hpp"
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
 
-#include "../Decoder.hpp"
+#include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
 {

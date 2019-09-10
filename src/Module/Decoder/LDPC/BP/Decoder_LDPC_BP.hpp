@@ -30,32 +30,14 @@ public:
 	virtual ~Decoder_LDPC_BP() = default;
 
 	template <typename R>
-	inline bool check_syndrome_soft(const R* Y_N)
-	{
-		if (this->enable_syndrome)
-		{
-			const auto syndrome = tools::LDPC_syndrome::check_soft(Y_N, this->H);
-			this->cur_syndrome_depth = syndrome ? (this->cur_syndrome_depth +1) % this->syndrome_depth : 0;
-			return syndrome && (this->cur_syndrome_depth == 0);
-		}
-		else
-			return false;
-	}
+	inline bool check_syndrome_soft(const R* Y_N);
 
 	template <typename B>
-	inline bool check_syndrome_hard(const B* V_N)
-	{
-		if (this->enable_syndrome)
-		{
-			const auto syndrome = tools::LDPC_syndrome::check_hard(V_N, this->H);
-			this->cur_syndrome_depth = syndrome ? (this->cur_syndrome_depth +1) % this->syndrome_depth : 0;
-			return syndrome && (this->cur_syndrome_depth == 0);
-		}
-		else
-			return false;
-	}
+	inline bool check_syndrome_hard(const B* V_N);
 };
 }
 }
+
+#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hxx"
 
 #endif /* DECODER_LDPC_BP_HPP_ */

@@ -1,7 +1,7 @@
 #ifndef ENCODER_POLAR_MK_SYS_HPP_
 #define ENCODER_POLAR_MK_SYS_HPP_
 
-#include "Encoder_polar_MK.hpp"
+#include "Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 
 namespace aff3ct
 {

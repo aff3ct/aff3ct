@@ -7,7 +7,7 @@
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 
-#include "Puncturer_LDPC.hpp"
+#include "Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

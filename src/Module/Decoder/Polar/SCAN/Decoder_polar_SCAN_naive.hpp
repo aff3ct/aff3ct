@@ -7,7 +7,7 @@
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
-#include "../../Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -56,6 +56,6 @@ private:
 }
 }
 
-#include "Decoder_polar_SCAN_naive.hxx"
+#include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hxx"
 
 #endif	/* DECODER_POLAR_SCAN_NAIVE_H_ */

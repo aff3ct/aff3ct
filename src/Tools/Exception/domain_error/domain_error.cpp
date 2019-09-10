@@ -1,4 +1,4 @@
-#include "domain_error.hpp"
+#include "Tools/Exception/domain_error/domain_error.hpp"
 
 using namespace aff3ct::tools;
 

@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Channel_user_bs.hpp"
+#include "Module/Channel/User/Channel_user_bs.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

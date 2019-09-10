@@ -1,7 +1,7 @@
 #ifndef DECODER_POLAR_MK_SCL_NAIVE_CA_SYS_
 #define DECODER_POLAR_MK_SCL_NAIVE_CA_SYS_
 
-#include "Decoder_polar_MK_SCL_naive_CA.hpp"
+#include "Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA.hpp"
 
 namespace aff3ct
 {

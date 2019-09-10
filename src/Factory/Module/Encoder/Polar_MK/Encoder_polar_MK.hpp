@@ -8,7 +8,7 @@
 
 #include "Tools/Code/Polar/Polar_code.hpp"
 
-#include "../Encoder.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

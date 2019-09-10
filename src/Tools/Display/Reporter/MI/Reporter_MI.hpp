@@ -5,7 +5,7 @@
 #include <chrono>
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
-#include "../Reporter_monitor.hpp"
+#include "Tools/Display/Reporter/Reporter_monitor.hpp"
 
 namespace aff3ct
 {

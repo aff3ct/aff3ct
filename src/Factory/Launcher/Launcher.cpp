@@ -42,7 +42,7 @@
 #include "Factory/Module/Codec/Turbo_DB/Codec_turbo_DB.hpp"
 #include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
 
-#include "Launcher.hpp"
+#include "Factory/Launcher/Launcher.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

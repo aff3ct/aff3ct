@@ -6,7 +6,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
-#include "Polar_code.hpp"
+#include "Tools/Code/Polar/Polar_code.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

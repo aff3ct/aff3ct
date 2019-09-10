@@ -2,7 +2,7 @@
 
 #include "Tools/Perf/common/hard_decide.h"
 
-#include "Decoder_NO.hpp"
+#include "Module/Decoder/NO/Decoder_NO.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

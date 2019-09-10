@@ -11,7 +11,7 @@
 #include "Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA.hpp"
 #include "Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA_sys.hpp"
 
-#include "Decoder_polar_MK.hpp"
+#include "Factory/Module/Decoder/Polar_MK/Decoder_polar_MK.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

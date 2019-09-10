@@ -1,6 +1,6 @@
 #include "Tools/Display/rang_format/rang_format.h"
 
-#include "Command_parser.hpp"
+#include "Factory/Command_parser.hpp"
 
 using namespace aff3ct;
 using namespace factory;

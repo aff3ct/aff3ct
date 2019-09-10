@@ -7,7 +7,7 @@
 #include <string>
 #include <typeinfo>
 
-#include "Pattern_polar_i.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
 namespace aff3ct
 {

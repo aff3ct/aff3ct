@@ -7,7 +7,7 @@
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_LDPC_BP_flooding_SPA.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_SPA.hpp"
 
 namespace aff3ct
 {

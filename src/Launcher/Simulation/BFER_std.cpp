@@ -1,5 +1,3 @@
-#include "Simulation/BFER/Standard/BFER_std.hpp"
-
 #include <string>
 #include <iostream>
 
@@ -7,7 +5,9 @@
 #include "Factory/Module/Monitor/MI/Monitor_MI.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
-#include "BFER_std.hpp"
+#include "Simulation/BFER/Standard/BFER_std.hpp"
+
+#include "Launcher/Simulation/BFER_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

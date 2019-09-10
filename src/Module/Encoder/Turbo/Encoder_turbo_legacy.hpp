@@ -6,7 +6,7 @@
 
 #include "Module/Interleaver/Interleaver.hpp"
 
-#include "Encoder_turbo.hpp"
+#include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 
 namespace aff3ct
 {

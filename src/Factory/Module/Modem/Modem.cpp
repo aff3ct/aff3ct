@@ -19,7 +19,7 @@
 #include "Tools/Constellation/QAM/Constellation_QAM.hpp"
 #include "Tools/Constellation/User/Constellation_user.hpp"
 
-#include "Modem.hpp"
+#include "Factory/Module/Modem/Modem.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

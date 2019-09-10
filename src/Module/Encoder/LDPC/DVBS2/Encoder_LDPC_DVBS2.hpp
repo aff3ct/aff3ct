@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#include "../Encoder_LDPC.hpp"
-
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
+
+#include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 namespace aff3ct
 {

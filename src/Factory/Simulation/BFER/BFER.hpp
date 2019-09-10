@@ -13,7 +13,7 @@
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
-#include "../Simulation.hpp"
+#include "Factory/Simulation/Simulation.hpp"
 
 namespace aff3ct
 {

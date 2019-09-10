@@ -1,7 +1,7 @@
 #ifndef ARGUMENT_FUNCTION_RANGE_HPP_
 #define ARGUMENT_FUNCTION_RANGE_HPP_
 
-#include "Argument_range.hpp"
+#include "Tools/Arguments/Ranges/Argument_range.hpp"
 
 namespace aff3ct
 {

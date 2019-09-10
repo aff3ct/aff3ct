@@ -11,7 +11,7 @@
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
-#include "../Codec_SISO_SIHO.hpp"
+#include "Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct
 {

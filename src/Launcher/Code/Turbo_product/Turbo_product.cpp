@@ -4,7 +4,7 @@
 
 #include "Launcher/Simulation/BFER_std.hpp"
 
-#include "Turbo_product.hpp"
+#include "Launcher/Code/Turbo_product/Turbo_product.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

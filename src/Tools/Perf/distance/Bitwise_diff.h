@@ -31,6 +31,6 @@ struct Bitwise_diff
 }
 }
 
-#include "Bitwise_diff.hxx"
+#include "Tools/Perf/distance/Bitwise_diff.hxx"
 
 #endif

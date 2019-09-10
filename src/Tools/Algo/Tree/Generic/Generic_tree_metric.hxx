@@ -1,4 +1,4 @@
-#include "Generic_tree_metric.hpp"
+#include "Tools/Algo/Tree/Generic/Generic_tree_metric.hpp"
 
 namespace aff3ct
 {

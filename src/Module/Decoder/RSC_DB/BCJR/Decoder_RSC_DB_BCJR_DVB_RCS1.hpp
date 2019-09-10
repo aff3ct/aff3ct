@@ -5,7 +5,7 @@
 
 #include "Tools/Math/max.h"
 
-#include "Decoder_RSC_DB_BCJR.hpp"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
 
 namespace aff3ct
 {
@@ -27,6 +27,6 @@ protected:
 };
 }
 }
-#include "Decoder_RSC_DB_BCJR_DVB_RCS1.hxx"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS1.hxx"
 
 #endif /* DECODER_RSC_DB_BCJR_DVB_RCS1_HPP_ */

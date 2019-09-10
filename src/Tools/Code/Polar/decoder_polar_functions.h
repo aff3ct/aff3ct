@@ -157,6 +157,6 @@ public:
 }
 }
 
-#include "decoder_polar_functions.hxx"
+#include "Tools/Code/Polar/decoder_polar_functions.hxx"
 
 #endif /* DECODER_POLAR_FUNCTIONS_H */

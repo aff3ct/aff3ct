@@ -1,7 +1,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 
-#include "Flip_and_check.hpp"
+#include "Factory/Tools/Code/Turbo/Flip_and_check.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

@@ -11,7 +11,7 @@
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
 #include "Module/Encoder/Encoder.hpp"
 
-#include "../Decoder.hpp"
+#include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
 {

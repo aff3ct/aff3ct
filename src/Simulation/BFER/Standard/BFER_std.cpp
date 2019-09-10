@@ -2,7 +2,7 @@
 
 #include "Factory/Module/Coset/Coset.hpp"
 
-#include "BFER_std.hpp"
+#include "Simulation/BFER/Standard/BFER_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;

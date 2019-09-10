@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Binary_tree.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree.hpp"
 
 namespace aff3ct
 {

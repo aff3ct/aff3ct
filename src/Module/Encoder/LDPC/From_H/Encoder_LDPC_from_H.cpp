@@ -8,7 +8,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/LDPC/AList/AList.hpp"
 
-#include "Encoder_LDPC_from_H.hpp"
+#include "Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

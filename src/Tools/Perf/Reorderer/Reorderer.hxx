@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Reorderer.hpp"
+#include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4717 )

@@ -5,7 +5,7 @@
 #include "Tools/Noise/noise_utils.h"
 #include "Tools/Exception/exception.hpp"
 
-#include "Frozenbits_generator.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

@@ -9,6 +9,7 @@
 #define SIMULATION_HPP_
 
 #include <memory>
+
 #include "Module/Module.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Factory/Simulation/Simulation.hpp"
@@ -70,6 +71,6 @@ protected:
 }
 }
 
-#include "Simulation.hxx"
+#include "Simulation/Simulation.hxx"
 
 #endif /* SIMULATION_HPP_ */

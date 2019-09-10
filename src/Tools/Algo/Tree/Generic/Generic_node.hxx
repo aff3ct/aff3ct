@@ -1,4 +1,4 @@
-#include "Generic_node.hpp"
+#include "Tools/Algo/Tree/Generic/Generic_node.hpp"
 
 namespace aff3ct
 {

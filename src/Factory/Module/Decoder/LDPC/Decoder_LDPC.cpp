@@ -38,7 +38,7 @@
 #include "Module/Decoder/LDPC/BF/OMWBF/Decoder_LDPC_bit_flipping_OMWBF.hpp"
 #include "Module/Decoder/LDPC/BF/PPBF/Decoder_LDPC_probabilistic_parallel_bit_flipping.hpp"
 
-#include "Decoder_LDPC.hpp"
+#include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

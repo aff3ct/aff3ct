@@ -48,6 +48,6 @@ template <typename R> __forceinline mipp::Reg<R> min_star_i        (const mipp::
 }
 }
 
-#include "max.hxx"
+#include "Tools/Math/max.hxx"
 
 #endif /* MAX_H */

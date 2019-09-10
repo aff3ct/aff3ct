@@ -1,7 +1,7 @@
-#include "Codec_RA.hpp"
-
 #include "Factory/Module/Encoder/RA/Encoder_RA.hpp"
 #include "Factory/Module/Decoder/RA/Decoder_RA.hpp"
+
+#include "Factory/Module/Codec/RA/Codec_RA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

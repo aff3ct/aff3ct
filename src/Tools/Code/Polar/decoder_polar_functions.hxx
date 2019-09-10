@@ -6,7 +6,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "decoder_polar_functions.h"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 namespace aff3ct
 {

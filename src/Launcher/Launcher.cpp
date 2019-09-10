@@ -30,7 +30,7 @@
 #include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
-#include "Launcher.hpp"
+#include "Launcher/Launcher.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

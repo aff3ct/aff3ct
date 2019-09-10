@@ -5,7 +5,7 @@
 
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
 
-#include "Encoder_BCH.hpp"
+#include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

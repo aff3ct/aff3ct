@@ -13,7 +13,7 @@
 #include "Factory/Tools/Code/Turbo/Scaling_factor.hpp"
 #include "Factory/Tools/Code/Turbo/Flip_and_check.hpp"
 
-#include "Codec_turbo.hpp"
+#include "Module/Codec/Turbo/Codec_turbo.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

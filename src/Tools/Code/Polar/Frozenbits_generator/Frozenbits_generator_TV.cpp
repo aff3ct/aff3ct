@@ -15,7 +15,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 
-#include "Frozenbits_generator_TV.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp"
 
 using namespace aff3ct::tools;
 

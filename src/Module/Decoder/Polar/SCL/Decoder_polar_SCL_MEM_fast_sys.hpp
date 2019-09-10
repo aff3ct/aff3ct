@@ -11,7 +11,7 @@
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 
-#include "../../Decoder_SIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -108,6 +108,6 @@ private:
 }
 }
 
-#include "Decoder_polar_SCL_MEM_fast_sys.hxx"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_MEM_fast_sys.hxx"
 
 #endif /* DECODER_POLAR_SCL_MEM_FAST_SYS_ */

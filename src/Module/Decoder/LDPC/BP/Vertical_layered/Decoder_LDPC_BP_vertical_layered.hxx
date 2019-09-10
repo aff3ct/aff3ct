@@ -6,7 +6,7 @@
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_LDPC_BP_vertical_layered.hpp"
+#include "Module/Decoder/LDPC/BP/Vertical_layered/Decoder_LDPC_BP_vertical_layered.hpp"
 
 namespace aff3ct
 {

@@ -4,9 +4,9 @@
 #include <vector>
 #include <mipp.h>
 
-#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq.hpp"
-
 #include "Tools/Math/max.h"
+
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq.hpp"
 
 namespace aff3ct
 {
@@ -15,7 +15,6 @@ namespace module
 template <typename B = int, typename R = float, typename RD = float>
 class Decoder_RSC_BCJR_seq_scan : public Decoder_RSC_BCJR_seq<B,R>
 {
-
 public:
 	Decoder_RSC_BCJR_seq_scan(const int &K,
 	                          const std::vector<std::vector<int>> &trellis,
@@ -34,6 +33,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR_seq_scan.hxx"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_scan.hxx"
 
 #endif /* DECODER_RSC_BCJR_SEQ_SCAN_HPP_ */

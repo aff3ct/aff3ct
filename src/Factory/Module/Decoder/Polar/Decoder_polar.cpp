@@ -37,7 +37,7 @@
 
 #include "Tools/Code/Polar/Nodes_parser.h"
 
-#include "Decoder_polar.hpp"
+#include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

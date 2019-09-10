@@ -3,7 +3,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "Monitor_EXIT.hpp"
+#include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
 using namespace aff3ct::module;
 

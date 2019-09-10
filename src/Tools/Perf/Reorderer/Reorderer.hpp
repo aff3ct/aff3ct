@@ -81,6 +81,6 @@ public:
 }
 }
 
-#include "Reorderer.hxx"
+#include "Tools/Perf/Reorderer/Reorderer.hxx"
 
 #endif /* REORDERER_HPP_ */

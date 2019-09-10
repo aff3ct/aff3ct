@@ -9,9 +9,10 @@
 #define PUNCTURER_HXX_
 
 #include <sstream>
+
 #include "Tools/Exception/exception.hpp"
 
-#include "Puncturer.hpp"
+#include "Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct
 {

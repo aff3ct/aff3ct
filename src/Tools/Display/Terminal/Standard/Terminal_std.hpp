@@ -16,9 +16,9 @@
 #include <string>
 #include <memory>
 
-#include "../Terminal.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Display/Reporter/Reporter.hpp"
+#include "Tools/Display/Terminal/Terminal.hpp"
 
 namespace aff3ct
 {

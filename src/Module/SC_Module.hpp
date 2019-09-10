@@ -12,7 +12,7 @@
 #include <tlm_utils/simple_initiator_socket.h>
 #include <type_traits>
 
-#include "Task.hpp"
+#include "Module/Task.hpp"
 
 namespace aff3ct
 {

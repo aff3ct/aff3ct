@@ -65,7 +65,7 @@ public:
 }
 }
 
-#include "Generic_tree_metric.hxx"
+#include "Tools/Algo/Tree/Generic/Generic_tree_metric.hxx"
 
 #endif /* GENERIC_TREE_METRIC_HPP_ */
 

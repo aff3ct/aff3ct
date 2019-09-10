@@ -4,10 +4,10 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "transpose_AVX.h"
+#include "Tools/Perf/Transpose/transpose_AVX.h"
 
-inline void _MM_TRANSPOSE8_PS(__m256 &row0, __m256 &row1, __m256 &row2, __m256 &row3, __m256 &row4, __m256 &row5, 
-                              __m256 &row6, __m256 &row7) 
+inline void _MM_TRANSPOSE8_PS(__m256 &row0, __m256 &row1, __m256 &row2, __m256 &row3, __m256 &row4, __m256 &row5,
+                              __m256 &row6, __m256 &row7)
 {
 	__m256 __t0, __t1, __t2, __t3, __t4, __t5, __t6, __t7;
 	__m256 __tt0, __tt1, __tt2, __tt3, __tt4, __tt5, __tt6, __tt7;

@@ -11,7 +11,8 @@
 #include <thread>
 #include <vector>
 #include <memory>
-#include <Tools/Noise/Noise.hpp>
+
+#include "Tools/Noise/Noise.hpp"
 
 namespace aff3ct
 {

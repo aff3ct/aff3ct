@@ -23,7 +23,7 @@
  */
 #include <stdio.h>
 
-#include "PRNG_MT19937.hpp"
+#include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
 
 using namespace aff3ct::tools;
 
@@ -118,7 +118,7 @@ void PRNG_MT19937::generate_numbers()
 	uint32_t y, i = 0;
 
 	// i = [0 ... 225]
-	while (i < (DIFF -1)) 
+	while (i < (DIFF -1))
 	{
 		/*
 	 	 * We're doing 226 = 113*2, an even number of steps, so we can
@@ -132,7 +132,7 @@ void PRNG_MT19937::generate_numbers()
 	UNROLL((i+PERIOD) % SIZE);
 
 	// i = [227 ... 622]
-	while (i < (SIZE-1)) 
+	while (i < (SIZE-1))
 	{
 		/*
 		 * 623-227 = 396 = 2*2*3*3*11, so we can unroll this loop in any number
@@ -184,7 +184,7 @@ int PRNG_MT19937::rand()
 	 * but rand() must return a number from 0 ... RAND_MAX.
 	 *
 	 * We'll just assume that rand() only uses 31 bits worth of
-	 * data, and that we're on a two's complement system.  
+	 * data, and that we're on a two's complement system.
 	 *
 	 * So, to output an integer compatible with rand(), we have
 	 * two options: Either mask off the highest (32nd) bit, or

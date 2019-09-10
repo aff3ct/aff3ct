@@ -8,7 +8,7 @@
 #ifndef DECODER_SISO_SIHO_HXX_
 #define DECODER_SISO_SIHO_HXX_
 
-#include "Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
 {

@@ -10,7 +10,7 @@
 #include "Module/CRC/CRC.hpp"
 #include "Module/Codec/Polar_MK/Codec_polar_MK.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "Factory/Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {

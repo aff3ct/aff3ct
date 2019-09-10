@@ -132,6 +132,6 @@ protected:
 }
 }
 
-#include "CRC.hxx"
+#include "Module/CRC/CRC.hxx"
 
 #endif

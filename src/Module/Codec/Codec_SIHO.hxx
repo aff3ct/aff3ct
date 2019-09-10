@@ -3,7 +3,7 @@
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
-#include "Codec_SIHO.hpp"
+#include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {

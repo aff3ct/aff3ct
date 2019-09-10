@@ -1,4 +1,4 @@
-#include "Binary_tree_metric.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree_metric.hpp"
 
 namespace aff3ct
 {

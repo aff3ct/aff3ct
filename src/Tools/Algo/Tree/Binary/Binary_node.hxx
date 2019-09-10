@@ -1,4 +1,4 @@
-#include "Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
 
 namespace aff3ct
 {

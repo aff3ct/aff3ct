@@ -1,6 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Monitor.hpp"
+#include "Module/Monitor/Monitor.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

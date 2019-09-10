@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Module/Encoder/Encoder.hpp"
-#include "../Decoder_RS.hpp"
+#include "Module/Decoder/RS/Decoder_RS.hpp"
 
 namespace aff3ct
 {

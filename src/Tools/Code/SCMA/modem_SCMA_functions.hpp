@@ -34,6 +34,6 @@ __forceinline R psi_3(const std::complex<R>& d, const R& n0);
 }
 }
 
-#include "modem_SCMA_functions.hxx"
+#include "Tools/Code/SCMA/modem_SCMA_functions.hxx"
 
 #endif /* MODEM_SCMA_FUNCTIONS_HPP */

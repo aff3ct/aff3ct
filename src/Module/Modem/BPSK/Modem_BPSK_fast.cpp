@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Modem_BPSK_fast.hpp"
+#include "Module/Modem/BPSK/Modem_BPSK_fast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

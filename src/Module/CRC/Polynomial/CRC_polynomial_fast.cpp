@@ -3,7 +3,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
 
-#include "CRC_polynomial_fast.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial_fast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "SC_BFER_std.hpp"
+#include "Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;

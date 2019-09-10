@@ -11,7 +11,7 @@
 
 #include "Tools/Code/Polar/Polar_code.hpp"
 
-#include "../Decoder.hpp"
+#include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
 {

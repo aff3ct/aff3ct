@@ -1,7 +1,7 @@
-#include "Codec_polar_MK.hpp"
-
 #include "Factory/Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 #include "Factory/Module/Decoder/Polar_MK/Decoder_polar_MK.hpp"
+
+#include "Factory/Module/Codec/Polar_MK/Codec_polar_MK.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

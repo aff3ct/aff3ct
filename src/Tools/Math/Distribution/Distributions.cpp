@@ -5,7 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Arguments/Splitter/Splitter.hpp"
-#include "Distributions.hpp"
+#include "Tools/Math/Distribution/Distributions.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

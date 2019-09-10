@@ -1,12 +1,12 @@
 #ifndef STATISTICS_HPP_
 #define STATISTICS_HPP_
 
-#include "Module/Module.hpp"
-#include "Module/Task.hpp"
-
 #include <vector>
 #include <iostream>
 #include <memory>
+
+#include "Module/Module.hpp"
+#include "Module/Task.hpp"
 
 namespace aff3ct
 {

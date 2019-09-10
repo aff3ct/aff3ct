@@ -4,7 +4,7 @@
 #include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
 #include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
 
-#include "BFER_ite.hpp"
+#include "Factory/Simulation/BFER/BFER_ite.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

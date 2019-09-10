@@ -6,7 +6,7 @@
 
 #include "Module/Codec/Uncoded/Codec_uncoded.hpp"
 
-#include "../Codec_SISO_SIHO.hpp"
+#include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct
 {

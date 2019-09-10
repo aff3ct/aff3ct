@@ -4,7 +4,7 @@
 #include <vector>
 #include <assert.h>
 
-#include "mutual_info.h"
+#include "Tools/Perf/common/mutual_info.h"
 
 #ifndef M_LN2
 #define M_LN2 std::log(2)

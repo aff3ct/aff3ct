@@ -11,7 +11,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Frozenbits_generator_GA_Arikan.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA_Arikan.hpp"
 
 using namespace aff3ct::tools;
 

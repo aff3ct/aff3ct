@@ -10,7 +10,7 @@
 #include "Factory/Tools/Code/Polar_MK/Frozenbits_generator_MK.hpp"
 #include "Factory/Tools/Code/Polar_MK/Polar_code.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {

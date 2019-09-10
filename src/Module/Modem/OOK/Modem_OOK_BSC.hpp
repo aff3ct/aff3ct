@@ -1,7 +1,7 @@
 #ifndef MODEM_OOK_BSC_HPP_
 #define MODEM_OOK_BSC_HPP_
 
-#include "Modem_OOK.hpp"
+#include "Module/Modem/OOK/Modem_OOK.hpp"
 
 namespace aff3ct
 {

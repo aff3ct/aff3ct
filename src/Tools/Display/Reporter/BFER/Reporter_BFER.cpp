@@ -7,7 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Noise/noise_utils.h"
 
-#include "Reporter_BFER.hpp"
+#include "Tools/Display/Reporter/BFER/Reporter_BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

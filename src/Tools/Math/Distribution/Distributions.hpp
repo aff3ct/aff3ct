@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-#include "Distribution.hpp"
+#include "Tools/Math/Distribution/Distribution.hpp"
 
 namespace aff3ct
 {

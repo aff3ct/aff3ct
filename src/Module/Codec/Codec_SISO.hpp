@@ -3,7 +3,7 @@
 
 #include "Module/Decoder/Decoder_SISO.hpp"
 
-#include "Codec.hpp"
+#include "Module/Codec/Codec.hpp"
 
 namespace aff3ct
 {
@@ -30,6 +30,6 @@ protected:
 };
 }
 }
-#include "Codec_SISO.hxx"
+#include "Module/Codec/Codec_SISO.hxx"
 
 #endif /* CODEC_SISO_HPP_ */

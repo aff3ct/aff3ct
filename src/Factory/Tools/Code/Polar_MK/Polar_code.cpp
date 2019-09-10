@@ -4,7 +4,7 @@
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
 
-#include "Polar_code.hpp"
+#include "Factory/Tools/Code/Polar_MK/Polar_code.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

@@ -3,8 +3,7 @@
 
 #include <vector>
 
-#include "../Constellation.hpp"
-
+#include "Tools/Constellation/Constellation.hpp"
 
 namespace aff3ct
 {
@@ -28,6 +27,6 @@ private:
 }
 }
 
-#include "Constellation_user.hxx"
+#include "Tools/Constellation/User/Constellation_user.hxx"
 
 #endif // CONSTELLATION_USER_HPP__

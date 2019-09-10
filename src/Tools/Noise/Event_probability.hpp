@@ -1,7 +1,7 @@
 #ifndef ERASED_PROBABILITY_HPP_
 #define ERASED_PROBABILITY_HPP_
 
-#include "Noise.hpp"
+#include "Tools/Noise/Noise.hpp"
 
 namespace aff3ct
 {

@@ -4,7 +4,7 @@
 
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
-#include "Codec_polar_MK.hpp"
+#include "Module/Codec/Polar_MK/Codec_polar_MK.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

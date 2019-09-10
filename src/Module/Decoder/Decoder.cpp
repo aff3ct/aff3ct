@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Decoder.hpp"
+#include "Module/Decoder/Decoder.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

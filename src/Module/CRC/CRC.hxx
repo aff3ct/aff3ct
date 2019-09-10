@@ -12,7 +12,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "CRC.hpp"
+#include "Module/CRC/CRC.hpp"
 
 namespace aff3ct
 {

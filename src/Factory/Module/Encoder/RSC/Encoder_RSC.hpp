@@ -5,7 +5,7 @@
 
 #include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
 
-#include "../Encoder.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

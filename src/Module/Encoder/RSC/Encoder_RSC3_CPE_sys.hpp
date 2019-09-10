@@ -1,7 +1,7 @@
 #ifndef ENCODER_RSC3_CPE_SYS_HPP_
 #define ENCODER_RSC3_CPE_SYS_HPP_
 
-#include "Encoder_RSC_sys.hpp"
+#include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
 
 namespace aff3ct
 {

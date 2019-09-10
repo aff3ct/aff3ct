@@ -6,7 +6,7 @@
 #include "Module/Decoder/RS/Standard/Decoder_RS_std.hpp"
 #include "Module/Decoder/RS/Genius/Decoder_RS_genius.hpp"
 
-#include "Decoder_RS.hpp"
+#include "Factory/Module/Decoder/RS/Decoder_RS.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

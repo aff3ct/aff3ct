@@ -4,7 +4,7 @@
 #include "Factory/Module/Encoder/RA/Encoder_RA.hpp"
 #include "Factory/Module/Decoder/RA/Decoder_RA.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {

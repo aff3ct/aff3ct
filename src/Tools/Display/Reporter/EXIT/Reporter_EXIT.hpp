@@ -7,7 +7,7 @@
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 #include "Tools/Noise/Noise.hpp"
 
-#include "../Reporter_monitor.hpp"
+#include "Tools/Display/Reporter/Reporter_monitor.hpp"
 
 namespace aff3ct
 {

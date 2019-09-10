@@ -4,7 +4,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/common/hard_decide.h"
 
-#include "Decoder_maximum_likelihood.hpp"
+#include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood.hpp"
 
 namespace aff3ct
 {

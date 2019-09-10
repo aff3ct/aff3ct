@@ -1,9 +1,9 @@
 #ifndef HAMMING_DISTANCE_HXX_
 #define HAMMING_DISTANCE_HXX_
 
-#include "hamming_distance.h"
-#include "distance.h"
-#include "Boolean_diff.h"
+#include "Tools/Perf/distance/hamming_distance.h"
+#include "Tools/Perf/distance/distance.h"
+#include "Tools/Perf/distance/Boolean_diff.h"
 
 namespace aff3ct
 {

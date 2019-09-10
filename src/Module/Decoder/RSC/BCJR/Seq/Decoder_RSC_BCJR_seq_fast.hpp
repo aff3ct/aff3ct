@@ -6,7 +6,7 @@
 
 #include "Tools/Math/max.h"
 
-#include "Decoder_RSC_BCJR_seq.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq.hpp"
 
 namespace aff3ct
 {
@@ -16,7 +16,6 @@ template <typename B = int, typename R = float, typename RD = float,
           tools::proto_max<R> MAX1 = tools::max, tools::proto_max<RD> MAX2 = tools::max>
 class Decoder_RSC_BCJR_seq_fast : public Decoder_RSC_BCJR_seq<B,R>
 {
-
 public:
 	Decoder_RSC_BCJR_seq_fast(const int &K,
 	                          const std::vector<std::vector<int>> &trellis,
@@ -35,6 +34,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR_seq_fast.hxx"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_fast.hxx"
 
 #endif /* DECODER_RSC_BCJR_SEQ_FAST_HPP_ */

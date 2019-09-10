@@ -1,7 +1,7 @@
 #ifndef CRC_NO_HPP_
 #define CRC_NO_HPP_
 
-#include "../CRC.hpp"
+#include "Module/CRC/CRC.hpp"
 
 namespace aff3ct
 {

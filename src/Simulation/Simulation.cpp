@@ -1,7 +1,8 @@
 #include <sstream>
+
 #include "Tools/Exception/exception.hpp"
 
-#include "Simulation.hpp"
+#include "Simulation/Simulation.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;

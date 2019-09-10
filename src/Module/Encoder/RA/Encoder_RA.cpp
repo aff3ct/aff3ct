@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder_RA.hpp"
+#include "Module/Encoder/RA/Encoder_RA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

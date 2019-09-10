@@ -15,7 +15,7 @@
 
 #include "Tools/auto_cloned_unique_ptr.hpp"
 
-#include "../Decoder.hpp"
+#include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
 {

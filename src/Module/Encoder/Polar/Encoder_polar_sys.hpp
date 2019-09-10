@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Encoder_polar.hpp"
+#include "Module/Encoder/Polar/Encoder_polar.hpp"
 
 namespace aff3ct
 {

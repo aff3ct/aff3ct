@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "../Puncturer.hpp"
+#include "Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct
 {

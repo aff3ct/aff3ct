@@ -11,7 +11,7 @@
 #include "Module/CRC/CRC.hpp"
 #include "Module/Codec/Turbo_DB/Codec_turbo_DB.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "Factory/Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {

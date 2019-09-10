@@ -1,8 +1,9 @@
 #ifndef MONITOR_MI_HPP_
 #define MONITOR_MI_HPP_
 
-#include "../Monitor.hpp"
 #include "Tools/Algo/Histogram.hpp"
+
+#include "Module/Monitor/Monitor.hpp"
 
 namespace aff3ct
 {
@@ -53,41 +54,10 @@ public:
 
 	bool equivalent(const Monitor_MI<B,R>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                        // and then can be merged by "collect" or "copy" methods
-
-
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
-	R get_mutual_info(const std::vector<B,AB>& X, const std::vector<R,AR>& Y, const int frame_id = -1)
-	{
-		if ((int)X.size() != this->N * this->n_frames)
-		{
-			std::stringstream message;
-			message << "'X.size()' has to be equal to 'N' * 'n_frames' ('X.size()' = " << X.size()
-			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if ((int)Y.size() != this->N * this->n_frames)
-		{
-			std::stringstream message;
-			message << "'Y.size()' has to be equal to 'N' * 'n_frames' ('Y.size()' = " << Y.size()
-			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (frame_id != -1 && frame_id >= this->n_frames)
-		{
-			std::stringstream message;
-			message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
-			        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
-			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		return this->get_mutual_info(X.data(), Y.data(), frame_id);
-	}
+	R get_mutual_info(const std::vector<B,AB>& X, const std::vector<R,AR>& Y, const int frame_id = -1);
 
 	virtual R get_mutual_info(const B *X, const R *Y, const int frame_id = -1);
-
-
 
 	bool n_trials_limit_achieved() const;
 	virtual bool is_done() const;
@@ -123,7 +93,6 @@ public:
 
 	Monitor_MI<B,R>& operator=(const Monitor_MI<B,R>& m); // "copy" call  with fully = false
 
-
 protected:
 	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);
 
@@ -131,5 +100,7 @@ protected:
 };
 }
 }
+
+#include "Module/Monitor/MI/Monitor_MI.hxx"
 
 #endif /* MONITOR_MI_HPP_ */

@@ -6,7 +6,7 @@
 
 #include "Tools/Noise/noise_utils.h"
 
-#include "Boolean_diff.h"
+#include "Tools/Perf/distance/Boolean_diff.h"
 
 //************************************************************************************** common functions for real types
 

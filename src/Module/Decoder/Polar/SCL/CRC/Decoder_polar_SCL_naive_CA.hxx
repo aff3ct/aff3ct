@@ -1,7 +1,8 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Decoder_polar_SCL_naive_CA.hpp"
+
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp"
 
 namespace aff3ct
 {
@@ -16,7 +17,7 @@ Decoder_polar_SCL_naive_CA<B,R,F,G>
 {
 	const std::string name = "Decoder_polar_SCL_naive_CA";
 	this->set_name(name);
-	
+
 	if (crc.get_size() > K)
 	{
 		std::stringstream message;
@@ -28,7 +29,7 @@ Decoder_polar_SCL_naive_CA<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive_CA<B,R,F,G>
-::select_best_path() 
+::select_best_path()
 {
 	std::vector<B> U_test;
 	std::set<int> active_paths_before_crc = this->active_paths;
@@ -37,7 +38,7 @@ void Decoder_polar_SCL_naive_CA<B,R,F,G>
 		U_test.clear();
 
 		for (auto leaf = 0 ; leaf < this->N ; leaf++)
-			if (!this->frozen_bits[leaf]) 
+			if (!this->frozen_bits[leaf])
 				U_test.push_back(this->leaves_array[path][leaf]->get_c()->s[0]);
 
 		bool decode_result = crc.check(U_test, this->get_simd_inter_frame_level());

@@ -4,7 +4,7 @@
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
-#include "Codec_turbo_product.hpp"
+#include "Module/Codec/Turbo_product/Codec_turbo_product.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

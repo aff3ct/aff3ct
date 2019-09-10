@@ -5,7 +5,7 @@
 
 #include <mpi.h>
 
-#include "Monitor_reduction.hpp"
+#include "Module/Monitor/Monitor_reduction.hpp"
 
 namespace aff3ct
 {
@@ -35,7 +35,7 @@ private:
 };
 }
 }
-#include "Monitor_reduction_MPI.hxx"
+#include "Module/Monitor/Monitor_reduction_MPI.hxx"
 
 #endif /* MONITOR_REDUCTION_MPI_HPP_ */
 

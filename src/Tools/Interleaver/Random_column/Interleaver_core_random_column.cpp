@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <sstream>
 
-#include "Interleaver_core_random_column.hpp"
+#include "Tools/Interleaver/Random_column/Interleaver_core_random_column.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

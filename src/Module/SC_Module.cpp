@@ -1,9 +1,9 @@
 #ifdef AFF3CT_SYSTEMC_MODULE
 
-#include "Module.hpp"
-#include "SC_Module.hpp"
-
 #include "Tools/general_utils.h"
+
+#include "Module/Module.hpp"
+#include "Module/SC_Module.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

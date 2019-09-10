@@ -5,7 +5,7 @@
 
 #include "Tools/Code/RS/RS_polynomial_generator.hpp"
 
-#include "../Decoder_RS.hpp"
+#include "Module/Decoder/RS/Decoder_RS.hpp"
 
 /* source : http://www.eccpage.com/  */
 

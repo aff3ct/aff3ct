@@ -1,7 +1,7 @@
 #ifndef ENCODER_REPETITION_SYS_HPP_
 #define ENCODER_REPETITION_SYS_HPP_
 
-#include "../Encoder.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

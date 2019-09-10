@@ -3,7 +3,7 @@
 
 #include "Module/CRC/CRC.hpp"
 
-#include "../Post_processing_SISO.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 
 namespace aff3ct
 {

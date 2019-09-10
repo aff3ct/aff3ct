@@ -5,7 +5,7 @@
 #include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Perf/common/hard_decide.h"
 
-#include "Decoder_maximum_likelihood_std.hpp"
+#include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

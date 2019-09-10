@@ -7,7 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
-#include "Modem_OOK_optical_rop_estimate.hpp"
+#include "Module/Modem/OOK/Modem_OOK_optical_rop_estimate.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

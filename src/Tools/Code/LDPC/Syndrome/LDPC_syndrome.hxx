@@ -1,4 +1,4 @@
-#include "LDPC_syndrome.hpp"
+#include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 
 namespace aff3ct
 {

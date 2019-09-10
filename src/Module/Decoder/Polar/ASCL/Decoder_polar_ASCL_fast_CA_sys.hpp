@@ -4,8 +4,8 @@
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "../SC/Decoder_polar_SC_fast_sys.hpp"
-#include "../SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hpp"
+#include "Module/Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hpp"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hpp"
 
 #include "Module/CRC/CRC.hpp"
 
@@ -47,6 +47,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_ASCL_fast_CA_sys.hxx"
+#include "Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_fast_CA_sys.hxx"
 
 #endif /* DECODER_POLAR_ASCL_FAST_SYS_CA_CA */

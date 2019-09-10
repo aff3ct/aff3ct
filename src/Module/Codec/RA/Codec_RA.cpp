@@ -3,7 +3,7 @@
 #include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
-#include "Codec_RA.hpp"
+#include "Module/Codec/RA/Codec_RA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

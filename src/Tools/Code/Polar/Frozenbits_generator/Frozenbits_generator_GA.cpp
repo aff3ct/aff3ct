@@ -12,7 +12,7 @@
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Exception/exception.hpp"
 
-#include "Frozenbits_generator_GA.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

@@ -1,8 +1,8 @@
 #ifndef DECODER_POLAR_MK_ASCL_NAIVE_CA
 #define DECODER_POLAR_MK_ASCL_NAIVE_CA
 
-#include "../SC/Decoder_polar_MK_SC_naive.hpp"
-#include "../SCL/CRC/Decoder_polar_MK_SCL_naive_CA.hpp"
+#include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp"
+#include "Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA.hpp"
 
 #include "Module/CRC/CRC.hpp"
 

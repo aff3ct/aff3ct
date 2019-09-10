@@ -4,7 +4,7 @@
 #include "Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 #include "Module/Encoder/Polar_MK/Encoder_polar_MK_sys.hpp"
 
-#include "Encoder_polar_MK.hpp"
+#include "Factory/Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

@@ -8,7 +8,7 @@
 
 #include "Tools/Math/utils.h"
 
-#include "LC_sorter.hpp"
+#include "Tools/Algo/Sort/LC_sorter.hpp"
 
 namespace aff3ct
 {

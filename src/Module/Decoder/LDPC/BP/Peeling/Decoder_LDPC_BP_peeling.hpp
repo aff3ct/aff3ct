@@ -1,8 +1,8 @@
 #ifndef DECODER_LDPC_BP_PEELING_HPP
 #define DECODER_LDPC_BP_PEELING_HPP
 
-#include "../../../Decoder_SIHO_HIHO.hpp"
-#include "../Decoder_LDPC_BP.hpp"
+#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
 {

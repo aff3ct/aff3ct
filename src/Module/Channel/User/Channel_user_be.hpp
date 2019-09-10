@@ -5,7 +5,7 @@
 
 #include "Tools/types.h"
 
-#include "Channel_user.hpp"
+#include "Module/Channel/User/Channel_user.hpp"
 
 namespace aff3ct
 {

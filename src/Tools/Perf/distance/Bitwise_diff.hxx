@@ -6,7 +6,7 @@
 
 #include "Tools/Noise/noise_utils.h"
 
-#include "Bitwise_diff.h"
+#include "Tools/Perf/distance/Bitwise_diff.h"
 
 
 namespace aff3ct

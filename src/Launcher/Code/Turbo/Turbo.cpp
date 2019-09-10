@@ -6,7 +6,7 @@
 
 #include "Factory/Module/Codec/Turbo/Codec_turbo.hpp"
 
-#include "Turbo.hpp"
+#include "Launcher/Code/Turbo/Turbo.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

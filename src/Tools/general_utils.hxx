@@ -5,7 +5,8 @@
 #include <cassert>
 #include <sstream>
 #include <iomanip>
-#include "general_utils.h"
+
+#include "Tools/general_utils.h"
 
 namespace aff3ct
 {

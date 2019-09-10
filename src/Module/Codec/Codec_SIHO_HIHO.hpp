@@ -3,8 +3,8 @@
 
 #include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 
-#include "Codec_HIHO.hpp"
-#include "Codec_SIHO.hpp"
+#include "Module/Codec/Codec_HIHO.hpp"
+#include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -26,6 +26,6 @@ public:
 }
 }
 
-#include "Codec_SIHO_HIHO.hxx"
+#include "Module/Codec/Codec_SIHO_HIHO.hxx"
 
 #endif /* CODEC_SIHO_HIHO_HPP_ */

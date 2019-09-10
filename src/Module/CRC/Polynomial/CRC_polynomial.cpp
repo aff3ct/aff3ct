@@ -5,7 +5,7 @@
 #include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 
-#include "CRC_polynomial.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

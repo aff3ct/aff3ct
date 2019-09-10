@@ -8,7 +8,7 @@
 #ifndef BINARY_TREE_HPP_
 #define BINARY_TREE_HPP_
 
-#include "Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
 
 namespace aff3ct
 {
@@ -68,6 +68,6 @@ private:
 }
 }
 
-#include "Binary_tree.hxx"
+#include "Tools/Algo/Tree/Binary/Binary_tree.hxx"
 
 #endif /* BINARY_TREE_HPP_ */
