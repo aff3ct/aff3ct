@@ -1,4 +1,4 @@
-#include "Decoder_polar_SCF_naive_sys.hpp"
+#include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive_sys.hpp"
 
 namespace aff3ct
 {
@@ -6,7 +6,7 @@ namespace module
 {
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SCF_naive_sys<B,R,F,G,H>
-::Decoder_polar_SCF_naive_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, 
+::Decoder_polar_SCF_naive_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
                               CRC<B>& crc, const int n_flips, const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_polar_SCF_naive<B,R,F,G,H>(K, N, frozen_bits, crc, n_flips, n_frames)
@@ -43,7 +43,7 @@ bool Decoder_polar_SCF_naive_sys<B,R,F,G,H>
 		if (!this->frozen_bits[i])
 			U_test.push_back(this->polar_tree.get_root()->get_c()->s[i]);
 
-	return this->crc.check(U_test, this->get_simd_inter_frame_level());		
+	return this->crc.check(U_test, this->get_simd_inter_frame_level());
 }
 }
 }

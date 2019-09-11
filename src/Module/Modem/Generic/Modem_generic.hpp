@@ -6,7 +6,7 @@
 #include "Tools/Math/max.h"
 #include "Tools/Constellation/Constellation.hpp"
 
-#include "../Modem.hpp"
+#include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
 {
@@ -31,25 +31,10 @@ public:
 
 	virtual void set_noise(const tools::Noise<R>& noise);
 
-	static bool is_complex_mod(const tools::Constellation<R>& c)
-	{
-		return c.is_complex();
-	}
-
-	static bool is_complex_fil(const tools::Constellation<R>& c)
-	{
-		return c.is_complex();
-	}
-
-	static int size_mod(const int N, const tools::Constellation<R>& c)
-	{
-		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, c.get_n_bits_per_symbol(), 0, 1, is_complex_mod(c));
-	}
-
-	static int size_fil(const int N, const tools::Constellation<R>& c)
-	{
-		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, c.get_n_bits_per_symbol(), 0, 1, is_complex_fil(c));
-	}
+	static bool is_complex_mod(const tools::Constellation<R>& c);
+	static bool is_complex_fil(const tools::Constellation<R>& c);
+	static int size_mod(const int N, const tools::Constellation<R>& c);
+	static int size_fil(const int N, const tools::Constellation<R>& c);
 
 protected:
 	void   _tmodulate   (              const Q *X_N1,                 R *X_N2, const int frame_id);
@@ -77,6 +62,6 @@ protected:
 }
 }
 
-#include "Modem_generic.hxx"
+#include "Module/Modem/Generic/Modem_generic.hxx"
 
 #endif // MODEM_GENERIC_HPP_

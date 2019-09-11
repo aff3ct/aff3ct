@@ -1,7 +1,7 @@
 #ifndef DECODER_MAXIMUM_LIKELIHOOD_NAIVE_HPP_
 #define DECODER_MAXIMUM_LIKELIHOOD_NAIVE_HPP_
 
-#include "Decoder_maximum_likelihood.hpp"
+#include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood.hpp"
 
 namespace aff3ct
 {

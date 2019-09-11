@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include "Decoder.hpp"
+#include "Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
 {
@@ -80,6 +80,6 @@ protected:
 };
 }
 }
-#include "Decoder_HIHO.hxx"
+#include "Module/Decoder/Decoder_HIHO.hxx"
 
 #endif /* DECODER_HIHO_HPP_ */

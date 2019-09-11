@@ -3,8 +3,8 @@
 
 #include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
 
-#include "../../../Decoder_SISO_SIHO.hpp"
-#include "../Decoder_LDPC_BP.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
 {
@@ -48,6 +48,6 @@ protected:
 }
 }
 
-#include "Decoder_LDPC_BP_horizontal_layered.hxx"
+#include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered.hxx"
 
 #endif /* DECODER_LDPC_BP_HORIZONTAL_LAYERED_HPP_ */

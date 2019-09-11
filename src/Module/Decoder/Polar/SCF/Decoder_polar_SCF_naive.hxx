@@ -1,4 +1,4 @@
-#include "Decoder_polar_SCF_naive.hpp"
+#include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive.hpp"
 
 namespace aff3ct
 {

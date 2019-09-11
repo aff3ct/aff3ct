@@ -1,4 +1,4 @@
-#include "Encoder_AZCW.hpp"
+#include "Module/Encoder/AZCW/Encoder_AZCW.hpp"
 
 using namespace aff3ct::module;
 

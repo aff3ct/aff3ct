@@ -3,7 +3,7 @@
 
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "Decoder_polar_SCL_naive_CA.hpp"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp"
 
 namespace aff3ct
 {
@@ -26,6 +26,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_SCL_naive_CA_sys.hxx"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA_sys.hxx"
 
 #endif /* DECODER_POLAR_SCL_NAIVE_CA_SYS_ */

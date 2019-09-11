@@ -1,6 +1,8 @@
 #include <type_traits>
-#include "Channel_binary_symmetric.hpp"
+
 #include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
+
+#include "Module/Channel/Binary_symmetric/Channel_binary_symmetric.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

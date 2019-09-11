@@ -5,7 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Galois.hpp"
+#include "Tools/Math/Galois.hpp"
 
 using namespace aff3ct::tools;
 
@@ -53,7 +53,7 @@ Galois<I>
 	{
 		std::stringstream message;
 		message << "The order of the Galois primitive polynomial (p) must be m + 1 (= " << m +1 << ") .";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());	
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (p.empty())

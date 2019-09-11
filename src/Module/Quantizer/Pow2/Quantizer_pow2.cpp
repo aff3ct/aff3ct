@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Quantizer_pow2.hpp"
+#include "Module/Quantizer/Pow2/Quantizer_pow2.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

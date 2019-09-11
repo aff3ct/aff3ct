@@ -118,6 +118,6 @@ protected:
 };
 }
 }
-#include "Encoder.hxx"
+#include "Module/Encoder/Encoder.hxx"
 
 #endif /* ENCODER_HPP_ */

@@ -7,7 +7,7 @@
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
-#include "Decoder_turbo_fast.hpp"
+#include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

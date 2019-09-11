@@ -7,7 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_LDPC_bit_flipping_hard.hpp"
+#include "Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping_hard.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

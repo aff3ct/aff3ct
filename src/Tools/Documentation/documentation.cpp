@@ -11,7 +11,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/system_functions.h"
 
-#include "documentation.h"
+#include "Tools/Documentation/documentation.h"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

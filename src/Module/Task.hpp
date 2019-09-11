@@ -114,29 +114,9 @@ public:
 
 	int exec();
 
-	inline Socket& operator[](const int id)
-	{
-		return *this->sockets[id];
-	}
+	inline Socket& operator[](const int id);
 
-	inline void update_timer(const int id, const std::chrono::nanoseconds &duration)
-	{
-		if (this->is_stats())
-		{
-			this->timers_n_calls[id]++;
-			this->timers_total[id] += duration;
-			if (this->n_calls)
-			{
-				this->timers_max[id] = std::max(this->timers_max[id], duration);
-				this->timers_min[id] = std::min(this->timers_min[id], duration);
-			}
-			else
-			{
-				this->timers_max[id] = duration;
-				this->timers_min[id] = duration;
-			}
-		}
-	}
+	inline void update_timer(const int id, const std::chrono::nanoseconds &duration);
 
 protected:
 	void register_timer(const std::string &key);
@@ -158,5 +138,7 @@ private:
 };
 }
 }
+
+#include "Module/Task.hxx"
 
 #endif /* TASK_HPP_ */

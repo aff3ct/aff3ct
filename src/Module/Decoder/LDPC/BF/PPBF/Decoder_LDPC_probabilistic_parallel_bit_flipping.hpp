@@ -4,7 +4,7 @@
 #include <random>
 #include <memory>
 
-#include "../Decoder_LDPC_bit_flipping_hard.hpp"
+#include "Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping_hard.hpp"
 
 namespace aff3ct
 {

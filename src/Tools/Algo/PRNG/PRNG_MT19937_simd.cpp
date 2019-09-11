@@ -1,6 +1,6 @@
 #include <limits>
 
-#include "PRNG_MT19937_simd.hpp"
+#include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
 
 using namespace aff3ct::tools;
 
@@ -105,7 +105,7 @@ void PRNG_MT19937_simd::generate_numbers()
 	uint32_t i = 0;
 
 	// i = [0 ... 225]
-	while (i < (DIFF -1)) 
+	while (i < (DIFF -1))
 	{
 		/*
 		 * We're doing 226 = 113*2, an even number of steps, so we can
@@ -119,7 +119,7 @@ void PRNG_MT19937_simd::generate_numbers()
 	UNROLL((i+PERIOD) % SIZE);
 
 	// i = [227 ... 622]
-	while (i < (SIZE-1)) 
+	while (i < (SIZE-1))
 	{
 		/*
 		 * 623-227 = 396 = 2*2*3*3*11, so we can unroll this loop in any number

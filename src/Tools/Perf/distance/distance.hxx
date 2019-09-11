@@ -5,7 +5,7 @@
 #include <cmath>
 #include <mipp.h>
 
-#include "distance.h"
+#include "Tools/Perf/distance/distance.h"
 
 namespace aff3ct
 {

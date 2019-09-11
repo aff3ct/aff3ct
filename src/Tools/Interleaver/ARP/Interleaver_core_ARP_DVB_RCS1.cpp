@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Interleaver_core_ARP_DVB_RCS1.hpp"
+#include "Tools/Interleaver/ARP/Interleaver_core_ARP_DVB_RCS1.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

@@ -1,4 +1,4 @@
-#include "Decoder_polar_SCL_naive_CA_sys.hpp"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA_sys.hpp"
 
 namespace aff3ct
 {
@@ -17,7 +17,7 @@ Decoder_polar_SCL_naive_CA_sys<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive_CA_sys<B,R,F,G>
-::select_best_path() 
+::select_best_path()
 {
 	std::vector<B> U_test;
 	std::set<int> active_paths_before_crc = this->active_paths;

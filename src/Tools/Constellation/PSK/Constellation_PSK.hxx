@@ -2,10 +2,10 @@
 #define CONSTELLATION_PSK_HXX__
 
 #include <cmath>
+
 #include "Tools/Math/math_constants.h"
 
-#include "Constellation_PSK.hpp"
-
+#include "Tools/Constellation/PSK/Constellation_PSK.hpp"
 
 namespace aff3ct
 {

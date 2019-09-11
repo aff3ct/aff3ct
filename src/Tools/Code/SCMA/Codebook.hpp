@@ -49,6 +49,6 @@ private:
 }
 }
 
-#include "Codebook.hxx"
+#include "Tools/Code/SCMA/Codebook.hxx"
 
 #endif // CODEBOOK_HPP_

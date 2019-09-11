@@ -5,7 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Event_generator_GSL.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/GSL/Event_generator_GSL.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

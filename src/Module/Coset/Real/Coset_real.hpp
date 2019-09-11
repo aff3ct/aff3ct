@@ -5,7 +5,7 @@
 #include <string>
 #include <mipp.h>
 
-#include "../Coset.hpp"
+#include "Module/Coset/Coset.hpp"
 
 namespace aff3ct
 {

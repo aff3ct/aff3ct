@@ -3,7 +3,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
-#include "Puncturer_LDPC.hpp"
+#include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

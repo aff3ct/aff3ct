@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Module/Encoder/Encoder.hpp"
-#include "../Decoder_BCH.hpp"
+#include "Module/Decoder/BCH/Decoder_BCH.hpp"
 
 namespace aff3ct
 {

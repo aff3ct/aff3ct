@@ -1,7 +1,8 @@
 #include <stdexcept>
 #include <utility>
 #include <algorithm>
-#include "Argument_links.hpp"
+
+#include "Tools/Arguments/Maps/Argument_links.hpp"
 
 using namespace aff3ct::tools;
 

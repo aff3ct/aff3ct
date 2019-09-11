@@ -5,7 +5,7 @@
 
 #include "Module/Source/Source.hpp"
 
-#include "../../Factory.hpp"
+#include "Factory/Factory.hpp"
 
 namespace aff3ct
 {

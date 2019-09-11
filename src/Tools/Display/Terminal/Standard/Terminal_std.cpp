@@ -3,7 +3,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 
-#include "Terminal_std.hpp"
+#include "Tools/Display/Terminal/Standard/Terminal_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

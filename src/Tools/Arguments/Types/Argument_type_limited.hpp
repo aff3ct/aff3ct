@@ -4,8 +4,8 @@
 #include <string>
 #include <stdexcept>
 
-#include "Argument_type.hpp"
-#include "../Ranges/Argument_range.hpp"
+#include "Tools/Arguments/Ranges/Argument_range.hpp"
+#include "Tools/Arguments/Types/Argument_type.hpp"
 
 namespace aff3ct
 {

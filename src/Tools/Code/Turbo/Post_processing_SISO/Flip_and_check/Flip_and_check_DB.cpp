@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Flip_and_check_DB.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

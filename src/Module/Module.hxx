@@ -5,7 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Module.hpp"
+#include "Module/Module.hpp"
 
 namespace aff3ct
 {

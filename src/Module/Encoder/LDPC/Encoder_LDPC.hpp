@@ -5,7 +5,7 @@
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 
-#include "../Encoder.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

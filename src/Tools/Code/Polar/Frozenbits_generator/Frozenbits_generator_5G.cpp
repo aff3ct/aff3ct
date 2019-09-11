@@ -8,8 +8,9 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Frozenbits_generator_5G.hpp"
-#include <Tools/Arguments/Types/File_system/File_system.hpp>
+#include "Tools/Arguments/Types/File_system/File_system.hpp"
+
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_5G.hpp"
 
 using namespace aff3ct::tools;
 
@@ -39,7 +40,7 @@ void Frozenbits_generator_5G
 
 	int j = 0;
 
-	for (unsigned i = 0; i != best_channels_mother.size(); i++) 
+	for (unsigned i = 0; i != best_channels_mother.size(); i++)
 		if(best_channels_mother[i] < (unsigned) this->N)
 			this->best_channels[j++] = best_channels_mother[i];
 

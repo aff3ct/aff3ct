@@ -3,7 +3,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 
-#include "Encoder_RSC_DB.hpp"
+#include "Factory/Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

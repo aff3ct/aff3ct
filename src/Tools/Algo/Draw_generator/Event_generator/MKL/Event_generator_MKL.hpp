@@ -3,7 +3,7 @@
 #ifndef EVENT_GENERATOR_MKL_HPP
 #define EVENT_GENERATOR_MKL_HPP
 
-#include "../Event_generator.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 
 namespace aff3ct
 {

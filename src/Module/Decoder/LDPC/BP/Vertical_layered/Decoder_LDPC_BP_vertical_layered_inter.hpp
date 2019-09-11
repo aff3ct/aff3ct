@@ -6,8 +6,8 @@
 
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
 
-#include "../../../Decoder_SISO_SIHO.hpp"
-#include "../Decoder_LDPC_BP.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
 {
@@ -58,7 +58,7 @@ protected:
 }
 }
 
-#include "Decoder_LDPC_BP_vertical_layered_inter.hxx"
+#include "Module/Decoder/LDPC/BP/Vertical_layered/Decoder_LDPC_BP_vertical_layered_inter.hxx"
 
 #endif
 #endif /* DECODER_LDPC_BP_VERTICAL_LAYERED_INTER_HPP_ */

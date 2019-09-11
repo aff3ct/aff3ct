@@ -4,7 +4,7 @@
 #include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
 
-#include "Decoder_repetition.hpp"
+#include "Factory/Module/Decoder/Repetition/Decoder_repetition.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

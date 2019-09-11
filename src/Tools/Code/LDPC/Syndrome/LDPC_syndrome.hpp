@@ -27,6 +27,6 @@ public:
 }
 }
 
-#include "LDPC_syndrome.hxx"
+#include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hxx"
 
 #endif /* LDPC_SYNDROME_HPP_ */

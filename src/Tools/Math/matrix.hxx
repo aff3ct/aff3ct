@@ -2,7 +2,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "matrix.h"
+#include "Tools/Math/matrix.h"
 
 namespace aff3ct
 {
@@ -59,7 +59,7 @@ inline void rgemm(const int M, const int N, const int K,
 }
 
 template <typename T, class AT>
-inline void cgemm(const int M, const int N, const int K, 
+inline void cgemm(const int M, const int N, const int K,
                   const std::vector<T,AT> &A,
                   const std::vector<T,AT> &tB,
                         std::vector<T,AT> &tC)
@@ -104,12 +104,12 @@ inline void cgemm(const int M, const int N, const int K,
 	      T* tC_real = tC;
 	      T* tC_imag = tC + ((M * N) >> 1);
 
-	for (auto i = 0; i < M; i++) 
+	for (auto i = 0; i < M; i++)
 	{
-		for (auto j = 0; j < N; j++) 
+		for (auto j = 0; j < N; j++)
 		{
 			T sum_r = 0, sum_i = 0;
-			for (auto k = 0; k < K; k++) 
+			for (auto k = 0; k < K; k++)
 			{
 				sum_r += A_real[i * K + k] * tB_real[j * K + k] - A_imag[i * K + k] * tB_imag[j * K + k];
 				sum_i += A_imag[i * K + k] * tB_real[j * K + k] + A_real[i * K + k] * tB_imag[j * K + k];
@@ -122,7 +122,7 @@ inline void cgemm(const int M, const int N, const int K,
 }
 
 template <typename T, class AT>
-inline void cgemm_r(const int M, const int N, const int K, 
+inline void cgemm_r(const int M, const int N, const int K,
                     const std::vector<T,AT> &A,
                     const std::vector<T,AT> &tB,
                           std::vector<T,AT> &tC)
@@ -166,12 +166,12 @@ inline void cgemm_r(const int M, const int N, const int K,
 	const T* tB_imag = tB + ((N * K) >> 1);
 	      T* tC_real = tC;
 
-	for (auto i = 0; i < M; i++) 
+	for (auto i = 0; i < M; i++)
 	{
-		for (auto j = 0; j < N; j++) 
+		for (auto j = 0; j < N; j++)
 		{
 			T sum_r = 0;
-			for (auto k = 0; k < K; k++) 
+			for (auto k = 0; k < K; k++)
 				sum_r += A_real[i * K + k] * tB_real[j * K + k] - A_imag[i * K + k] * tB_imag[j * K + k];
 
 			tC_real[j * M + i] = sum_r;

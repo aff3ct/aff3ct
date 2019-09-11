@@ -8,7 +8,7 @@
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 template <typename SIN = int, typename SOUT = int>
 class CPM_parameters

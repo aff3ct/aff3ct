@@ -7,7 +7,7 @@
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Exception/exception.hpp"
 
-#include "Decoder_BCH_fast.hpp"
+#include "Module/Decoder/BCH/Fast/Decoder_BCH_fast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

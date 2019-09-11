@@ -6,7 +6,7 @@
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
 
-#include "../Codec_SIHO_HIHO.hpp"
+#include "Module/Codec/Codec_SIHO_HIHO.hpp"
 
 namespace aff3ct
 {

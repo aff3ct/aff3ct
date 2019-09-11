@@ -2,7 +2,7 @@
 
 #include "Factory/Module/Codec/RS/Codec_RS.hpp"
 
-#include "RS.hpp"
+#include "Launcher/Code/RS/RS.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

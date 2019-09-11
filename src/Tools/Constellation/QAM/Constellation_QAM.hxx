@@ -3,8 +3,7 @@
 
 #include <cmath>
 
-#include "Constellation_QAM.hpp"
-
+#include "Tools/Constellation/QAM/Constellation_QAM.hpp"
 
 namespace aff3ct
 {

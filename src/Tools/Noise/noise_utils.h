@@ -2,11 +2,12 @@
 #define NOISE_UTILS_HPP__
 
 #include <mipp.h>
+
 #include "Tools/Math/utils.h"
 
-#include "Sigma.hpp"
-#include "Event_probability.hpp"
-#include "Received_optical_power.hpp"
+#include "Tools/Noise/Sigma.hpp"
+#include "Tools/Noise/Event_probability.hpp"
+#include "Tools/Noise/Received_optical_power.hpp"
 
 namespace aff3ct
 {

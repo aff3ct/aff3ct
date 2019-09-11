@@ -5,7 +5,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Dumper.hpp"
+#include "Tools/Display/Dumper/Dumper.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

@@ -5,7 +5,7 @@
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 
-#include "Decoder_repetition.hpp"
+#include "Module/Decoder/Repetition/Decoder_repetition.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

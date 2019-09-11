@@ -5,7 +5,7 @@
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS1.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS2.hpp"
 
-#include "Decoder_RSC_DB.hpp"
+#include "Factory/Module/Decoder/RSC_DB/Decoder_RSC_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

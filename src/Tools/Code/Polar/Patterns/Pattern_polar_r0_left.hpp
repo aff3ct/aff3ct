@@ -9,9 +9,8 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Pattern_polar_i.hpp"
-
-#include "Pattern_polar_r0.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
 
 namespace aff3ct
 {

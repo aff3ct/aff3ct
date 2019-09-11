@@ -5,15 +5,15 @@
 #include "Tools/Exception/exception.hpp"
 
 #ifdef __AVX2__
-#include "transpose_AVX.h"
+#include "Tools/Perf/Transpose/transpose_AVX.h"
 #elif defined(__SSE4_1__)
-#include "transpose_SSE.h"
+#include "Tools/Perf/Transpose/transpose_SSE.h"
 #endif
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
-#include "transpose_NEON.h"
+#include "Tools/Perf/Transpose/transpose_NEON.h"
 #endif
 
-#include "transpose_selector.h"
+#include "Tools/Perf/Transpose/transpose_selector.h"
 
 bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int n)
 {

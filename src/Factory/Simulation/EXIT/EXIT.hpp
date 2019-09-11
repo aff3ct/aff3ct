@@ -14,7 +14,7 @@
 #include "Factory/Module/Codec/Codec_SISO.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
-#include "../Simulation.hpp"
+#include "Factory/Simulation/Simulation.hpp"
 
 namespace aff3ct
 {

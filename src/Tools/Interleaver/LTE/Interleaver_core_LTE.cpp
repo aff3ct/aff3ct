@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Interleaver_core_LTE.hpp"
+#include "Tools/Interleaver/LTE/Interleaver_core_LTE.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

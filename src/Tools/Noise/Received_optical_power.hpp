@@ -1,7 +1,7 @@
 #ifndef RECEIVED_OPTICAL_POWER_HPP_
 #define RECEIVED_OPTICAL_POWER_HPP_
 
-#include "Noise.hpp"
+#include "Tools/Noise/Noise.hpp"
 
 namespace aff3ct
 {

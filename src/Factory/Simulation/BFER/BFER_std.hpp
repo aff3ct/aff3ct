@@ -5,7 +5,7 @@
 
 #include "Factory/Module/Codec/Codec_SIHO.hpp"
 
-#include "BFER.hpp"
+#include "Factory/Simulation/BFER/BFER.hpp"
 
 namespace aff3ct
 {

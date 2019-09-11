@@ -10,7 +10,7 @@
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Encoder/Encoder.hpp"
 
-#include "../Decoder.hpp"
+#include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
 {

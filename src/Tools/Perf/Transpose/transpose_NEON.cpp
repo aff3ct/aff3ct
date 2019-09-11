@@ -9,7 +9,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "transpose_NEON.h"
+#include "Tools/Perf/Transpose/transpose_NEON.h"
 
 #define DATA_TYPE  trans_TYPE
 

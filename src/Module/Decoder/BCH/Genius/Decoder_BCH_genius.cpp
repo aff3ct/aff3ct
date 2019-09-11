@@ -5,7 +5,7 @@
 #include "Tools/Perf/distance/hamming_distance.h"
 #include "Tools/Exception/exception.hpp"
 
-#include "Decoder_BCH_genius.hpp"
+#include "Module/Decoder/BCH/Genius/Decoder_BCH_genius.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

@@ -1,5 +1,4 @@
-
-#include "Event_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

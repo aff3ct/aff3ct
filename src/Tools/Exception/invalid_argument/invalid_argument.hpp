@@ -1,7 +1,7 @@
 #ifndef INVALID_ARGUMENT_HPP_
 #define INVALID_ARGUMENT_HPP_
 
-#include "../exception.hpp"
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {

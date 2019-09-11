@@ -79,6 +79,6 @@ protected:
 };
 }
 }
-#include "Source.hxx"
+#include "Module/Source/Source.hxx"
 
 #endif /* SOURCE_HPP_ */

@@ -7,7 +7,7 @@
 
 #include "Tools/Noise/noise_utils.h"
 
-#include "../Reporter.hpp"
+#include "Tools/Display/Reporter/Reporter.hpp"
 
 namespace aff3ct
 {

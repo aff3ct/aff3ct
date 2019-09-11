@@ -1,10 +1,9 @@
-#include "Monitor_EXIT.hpp"
-
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
+#include "Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

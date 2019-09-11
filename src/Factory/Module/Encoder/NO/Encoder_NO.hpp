@@ -5,7 +5,7 @@
 
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 
-#include "../Encoder.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

@@ -7,7 +7,7 @@
 
 #include "Tools/Math/max.h"
 
-#include "Decoder_RSC_BCJR_seq_generic_std.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp"
 
 namespace aff3ct
 {
@@ -38,6 +38,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR_seq_generic_std_json.hxx"
+#include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std_json.hxx"
 
 #endif /* DECODER_RSC_BCJR_STD_GENERIC_SEQ_JSON_HPP_ */

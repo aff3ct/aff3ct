@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
-#include "QC.hpp"
+#include "Tools/Code/LDPC/QC/QC.hpp"
 
 using namespace aff3ct::tools;
 

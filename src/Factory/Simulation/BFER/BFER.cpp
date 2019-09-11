@@ -3,7 +3,7 @@
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Math/utils.h"
 
-#include "BFER.hpp"
+#include "Factory/Simulation/BFER/BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

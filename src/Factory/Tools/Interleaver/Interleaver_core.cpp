@@ -13,7 +13,7 @@
 #include "Tools/Interleaver/Random/Interleaver_core_random.hpp"
 #include "Tools/Interleaver/User/Interleaver_core_user.hpp"
 
-#include "Interleaver_core.hpp"
+#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

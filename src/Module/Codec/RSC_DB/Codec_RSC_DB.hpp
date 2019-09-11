@@ -4,7 +4,7 @@
 #include "Factory/Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 #include "Factory/Module/Decoder/RSC_DB/Decoder_RSC_DB.hpp"
 
-#include "../Codec_SISO_SIHO.hpp"
+#include "Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct
 {

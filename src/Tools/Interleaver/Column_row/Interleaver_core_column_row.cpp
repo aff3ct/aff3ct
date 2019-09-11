@@ -1,10 +1,9 @@
-#include "Interleaver_core_column_row.hpp"
-
 #include <sstream>
 #include <iostream>
 
 #include "Tools/Exception/exception.hpp"
 
+#include "Tools/Interleaver/Column_row/Interleaver_core_column_row.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;

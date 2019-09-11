@@ -7,7 +7,7 @@
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "functions_polar_inter_intra.h"
+#include "Tools/Code/Polar/API/functions_polar_inter_intra.h"
 
 namespace aff3ct
 {
@@ -40,7 +40,7 @@ struct g_intra_unaligned
 	                  const int n_elmts = 0)
 	{
 		const auto r_sat = API_polar_inter_intra_saturate<R>::init();
-			
+
 		const auto r_lambda_a = mipp::loadu<R>(l_a);
 		const auto r_lambda_b = mipp::loadu<R>(l_b);
 		const auto r_u        = mipp::loadu<B>(s_a);

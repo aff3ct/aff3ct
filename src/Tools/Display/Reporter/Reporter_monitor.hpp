@@ -6,7 +6,7 @@
 
 #include "Module/Monitor/Monitor_reduction.hpp"
 
-#include "Reporter.hpp"
+#include "Tools/Display/Reporter/Reporter.hpp"
 
 namespace aff3ct
 {

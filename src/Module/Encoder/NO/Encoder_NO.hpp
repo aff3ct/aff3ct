@@ -1,7 +1,7 @@
 #ifndef ENCODER_NO_HPP_
 #define ENCODER_NO_HPP_
 
-#include "../Encoder.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

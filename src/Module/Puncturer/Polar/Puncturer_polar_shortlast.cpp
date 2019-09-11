@@ -4,7 +4,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Puncturer_polar_shortlast.hpp"
+#include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

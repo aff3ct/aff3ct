@@ -2,9 +2,10 @@
 #define INTERLEAVER_CORE_ROW_COLUMN_HPP
 
 #include <string>
+
 #include "Tools/Exception/exception.hpp"
 
-#include "../Interleaver_core.hpp"
+#include "Tools/Interleaver/Interleaver_core.hpp"
 
 /*
  * This interleaver is such as a table that is written row by row and read column by column

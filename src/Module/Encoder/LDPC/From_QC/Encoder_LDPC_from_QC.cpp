@@ -7,7 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 
-#include "Encoder_LDPC_from_QC.hpp"
+#include "Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

@@ -13,7 +13,7 @@
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 #include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 
-#include "Codec_LDPC.hpp"
+#include "Module/Codec/LDPC/Codec_LDPC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

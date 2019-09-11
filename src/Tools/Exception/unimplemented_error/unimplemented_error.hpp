@@ -1,7 +1,7 @@
 #ifndef UNIMPLEMENTED_ERROR_HPP_
 #define UNIMPLEMENTED_ERROR_HPP_
 
-#include "../exception.hpp"
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {

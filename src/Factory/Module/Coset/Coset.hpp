@@ -5,7 +5,7 @@
 
 #include "Module/Coset/Coset.hpp"
 
-#include "../../Factory.hpp"
+#include "Factory/Factory.hpp"
 
 namespace aff3ct
 {

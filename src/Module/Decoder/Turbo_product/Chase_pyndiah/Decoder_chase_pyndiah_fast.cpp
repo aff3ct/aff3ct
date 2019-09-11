@@ -3,16 +3,14 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Decoder_chase_pyndiah_fast.hpp"
-
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/compute_parity.h"
 
+#include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah_fast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
-
 
 template <typename B, typename R>
 Decoder_chase_pyndiah_fast<B,R>

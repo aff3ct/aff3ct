@@ -1,5 +1,5 @@
-#include "version.h"
-#include "general_utils.h"
+#include "Tools/version.h"
+#include "Tools/general_utils.h"
 
 #define GIT_SHA1    "@GIT_SHA1@"
 #define GIT_VERSION "@GIT_VERSION@"

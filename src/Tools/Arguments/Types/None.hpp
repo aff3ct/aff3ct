@@ -4,7 +4,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "Argument_type.hpp"
+#include "Tools/Arguments/Types/Argument_type.hpp"
 
 namespace aff3ct
 {

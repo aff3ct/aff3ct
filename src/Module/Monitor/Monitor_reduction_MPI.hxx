@@ -8,8 +8,8 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Monitor_reduction_MPI.hpp"
-#include "MI/Monitor_MI.hpp"
+#include "Module/Monitor/MI/Monitor_MI.hpp"
+#include "Module/Monitor/Monitor_reduction_MPI.hpp"
 
 namespace aff3ct
 {

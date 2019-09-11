@@ -2,7 +2,7 @@
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 
-#include "Puncturer.hpp"
+#include "Factory/Module/Puncturer/Puncturer.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

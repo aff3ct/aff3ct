@@ -3,9 +3,10 @@
 
 #include <sstream>
 #include <numeric>
+
 #include "Tools/Exception/exception.hpp"
 
-#include "Monitor_reduction.hpp"
+#include "Module/Monitor/Monitor_reduction.hpp"
 
 namespace aff3ct
 {

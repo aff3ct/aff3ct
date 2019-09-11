@@ -16,7 +16,7 @@
 
 #include "Tools/auto_cloned_unique_ptr.hpp"
 
-#include "../Decoder.hpp"
+#include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
 {
@@ -82,6 +82,6 @@ struct Decoder_turbo : public Decoder
 }
 }
 
-#include "Decoder_turbo.hxx"
+#include "Factory/Module/Decoder/Turbo/Decoder_turbo.hxx"
 
 #endif /* FACTORY_DECODER_TURBO_HPP */

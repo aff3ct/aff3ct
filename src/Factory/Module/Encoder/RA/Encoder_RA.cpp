@@ -2,7 +2,7 @@
 
 #include "Module/Encoder/RA/Encoder_RA.hpp"
 
-#include "Encoder_RA.hpp"
+#include "Factory/Module/Encoder/RA/Encoder_RA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

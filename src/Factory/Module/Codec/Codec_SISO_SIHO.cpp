@@ -4,7 +4,7 @@
 #include "RSC_DB/Codec_RSC_DB.hpp"
 #include "Uncoded/Codec_uncoded.hpp"
 
-#include "Codec_SISO_SIHO.hpp"
+#include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

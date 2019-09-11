@@ -1,6 +1,6 @@
 #include "Tools/Math/utils.h"
 
-#include "Scaling_factor_constant.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_constant.hpp"
 
 using namespace aff3ct::tools;
 

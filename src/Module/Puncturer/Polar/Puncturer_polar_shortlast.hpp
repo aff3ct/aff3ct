@@ -3,7 +3,7 @@
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
-#include "../Puncturer.hpp"
+#include "Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct
 {

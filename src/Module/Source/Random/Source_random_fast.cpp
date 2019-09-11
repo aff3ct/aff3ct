@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <mipp.h>
 
-#include "Source_random_fast.hpp"
+#include "Module/Source/Random/Source_random_fast.hpp"
 
 using namespace aff3ct::module;
 

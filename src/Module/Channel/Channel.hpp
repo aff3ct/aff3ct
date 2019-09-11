@@ -12,8 +12,9 @@
 #include <vector>
 #include <memory>
 
-#include "Module/Module.hpp"
 #include "Tools/Noise/Noise.hpp"
+
+#include "Module/Module.hpp"
 
 namespace aff3ct
 {
@@ -116,6 +117,6 @@ protected:
 }
 }
 
-#include "Channel.hxx"
+#include "Module/Channel/Channel.hxx"
 
 #endif /* CHANNEL_HPP_ */

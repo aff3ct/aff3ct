@@ -6,7 +6,7 @@
 #include "Module/Source/Random/Source_random_fast.hpp"
 #include "Module/Source/User/Source_user.hpp"
 
-#include "Source.hpp"
+#include "Factory/Module/Source/Source.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

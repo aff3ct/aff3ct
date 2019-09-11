@@ -2,7 +2,7 @@
 
 #include "Factory/Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
 
-#include "RSC_DB.hpp"
+#include "Launcher/Code/RSC_DB/RSC_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::launcher;

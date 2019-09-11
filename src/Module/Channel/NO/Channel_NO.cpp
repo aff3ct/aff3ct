@@ -1,4 +1,4 @@
-#include "Channel_NO.hpp"
+#include "Module/Channel/NO/Channel_NO.hpp"
 
 using namespace aff3ct::module;
 

@@ -3,8 +3,8 @@
 
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
-#include "Codec_SISO.hpp"
-#include "Codec_SIHO.hpp"
+#include "Module/Codec/Codec_SISO.hpp"
+#include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -22,11 +22,9 @@ public:
 
 	virtual void set_decoder_siso_siho(std::shared_ptr<Decoder_SISO_SIHO<B,Q>> dec);
 	virtual void set_decoder_siso_siho(Decoder_SISO_SIHO<B,Q>* dec);
-
-
 };
 }
 }
-#include "Codec_SISO_SIHO.hxx"
+#include "Module/Codec/Codec_SISO_SIHO.hxx"
 
 #endif /* CODEC_SISO_SIHO_HPP_ */

@@ -6,7 +6,7 @@
 #include "Tools/Noise/noise_utils.h"
 #include "Tools/Documentation/documentation.h"
 
-#include "Noise.hpp"
+#include "Factory/Tools/Noise/Noise.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

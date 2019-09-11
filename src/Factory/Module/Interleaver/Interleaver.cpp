@@ -1,6 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Interleaver.hpp"
+#include "Factory/Module/Interleaver/Interleaver.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

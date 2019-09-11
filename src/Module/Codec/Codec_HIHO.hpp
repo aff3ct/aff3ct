@@ -3,7 +3,7 @@
 
 #include "Module/Decoder/Decoder_HIHO.hpp"
 
-#include "Codec.hpp"
+#include "Module/Codec/Codec.hpp"
 
 namespace aff3ct
 {
@@ -31,6 +31,6 @@ protected:
 }
 }
 
-#include "Codec_HIHO.hxx"
+#include "Module/Codec/Codec_HIHO.hxx"
 
 #endif /* CODEC_HIHO_HPP_ */

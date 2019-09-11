@@ -5,7 +5,7 @@
 
 #include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 
-#include "../Puncturer.hpp"
+#include "Factory/Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct
 {

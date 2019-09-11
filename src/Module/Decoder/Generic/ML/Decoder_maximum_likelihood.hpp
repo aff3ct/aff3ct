@@ -3,7 +3,7 @@
 
 #include "Module/Encoder/Encoder.hpp"
 
-#include "../../Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 
 namespace aff3ct
 {
@@ -32,6 +32,6 @@ protected:
 }
 }
 
-#include "Decoder_maximum_likelihood.hxx"
+#include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood.hxx"
 
 #endif /* DECODER_MAXIMUM_LIKELIHOO_HPP_ */

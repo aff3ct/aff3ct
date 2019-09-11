@@ -4,7 +4,7 @@
 #include "Factory/Module/Encoder/Repetition/Encoder_repetition.hpp"
 #include "Factory/Module/Decoder/Repetition/Decoder_repetition.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {

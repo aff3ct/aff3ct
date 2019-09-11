@@ -32,6 +32,6 @@ struct Boolean_diff
 }
 }
 
-#include "Boolean_diff.hxx"
+#include "Tools/Perf/distance/Boolean_diff.hxx"
 
 #endif

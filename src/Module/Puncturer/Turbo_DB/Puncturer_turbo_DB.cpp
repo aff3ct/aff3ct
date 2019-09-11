@@ -3,7 +3,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
-#include "Puncturer_turbo_DB.hpp"
+#include "Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

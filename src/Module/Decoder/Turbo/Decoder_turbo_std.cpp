@@ -6,7 +6,7 @@
 
 #include "Tools/Perf/common/hard_decide.h"
 
-#include "Decoder_turbo_std.hpp"
+#include "Module/Decoder/Turbo/Decoder_turbo_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

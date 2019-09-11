@@ -3,11 +3,11 @@
 
 #include <vector>
 
-#include "Encoder_CPE.hpp"
+#include "Tools/Code/CPM/CPE/Encoder_CPE.hpp"
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 template <typename SIN = int, typename SOUT = int>
 class Encoder_CPE_Rimoldi : public Encoder_CPE<SIN, SOUT>

@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "Encoder_polar_sys.hpp"
+#include "Module/Encoder/Polar/Encoder_polar_sys.hpp"
 
 using namespace aff3ct::module;
 

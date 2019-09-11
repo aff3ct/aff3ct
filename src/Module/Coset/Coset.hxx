@@ -14,7 +14,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Coset.hpp"
+#include "Module/Coset/Coset.hpp"
 
 namespace aff3ct
 {

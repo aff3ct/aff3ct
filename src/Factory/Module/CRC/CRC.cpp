@@ -7,7 +7,7 @@
 #include "Module/CRC/Polynomial/CRC_polynomial_fast.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial_inter.hpp"
 
-#include "CRC.hpp"
+#include "Factory/Module/CRC/CRC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

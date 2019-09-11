@@ -110,6 +110,6 @@ bool has_complex_symbols(const Constellation<R>& cstl);
 }
 }
 
-#include "Constellation.hxx"
+#include "Tools/Constellation/Constellation.hxx"
 
 #endif // CONSTELLATION_HPP__

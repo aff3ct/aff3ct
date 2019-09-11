@@ -6,7 +6,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
-#include "Decoder_RSC_BCJR.hpp"
+#include "Module/Decoder/RSC/BCJR/Decoder_RSC_BCJR.hpp"
 
 namespace aff3ct
 {
@@ -39,6 +39,13 @@ Decoder_RSC_BCJR<B,R>
 		message << "'n_states' has to be a power of 2 ('n_states' = " << n_states << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+int Decoder_RSC_BCJR<B,R>
+::tail_length() const
+{
+	return 2 * n_ff;
 }
 
 template <typename B, typename R>

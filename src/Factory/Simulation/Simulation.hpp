@@ -6,9 +6,9 @@
 #include <sstream>
 #include <vector>
 
-#include "Factory/Launcher/Launcher.hpp"
 #include "Factory/Tools/Noise/Noise.hpp"
 #include "Tools/auto_cloned_unique_ptr.hpp"
+#include "Factory/Launcher/Launcher.hpp"
 
 namespace aff3ct
 {

@@ -4,7 +4,7 @@
 #include <vector>
 #include <mipp.h>
 
-#include "../../Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -32,7 +32,7 @@ protected:
 	virtual ~Decoder_RSC_BCJR() = default;
 
 public:
-	virtual int tail_length() const { return 2 * n_ff; }
+	virtual int tail_length() const;
 
 protected:
 	virtual void _load       (const R *Y_N                            );
@@ -42,6 +42,6 @@ protected:
 }
 }
 
-#include "Decoder_RSC_BCJR.hxx"
+#include "Module/Decoder/RSC/BCJR/Decoder_RSC_BCJR.hxx"
 
 #endif /* DECODER_RSC_BCJR_HPP_ */

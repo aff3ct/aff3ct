@@ -1,8 +1,8 @@
 #ifndef ENCODER_RA_HPP_
 #define ENCODER_RA_HPP_
 
-#include "../Encoder.hpp"
-#include "../../Interleaver/Interleaver.hpp"
+#include "Module/Interleaver/Interleaver.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

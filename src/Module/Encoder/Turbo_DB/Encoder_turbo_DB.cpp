@@ -3,7 +3,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder_turbo_DB.hpp"
+#include "Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

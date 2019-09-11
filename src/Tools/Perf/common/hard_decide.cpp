@@ -1,7 +1,8 @@
 #include <limits>
 
 #include "Tools/Noise/noise_utils.h"
-#include "hard_decide.h"
+
+#include "Tools/Perf/common/hard_decide.h"
 
 template <typename B, typename Q>
 void aff3ct::tools::hard_decide_seq(const Q *in, B *out, const unsigned size)

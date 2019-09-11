@@ -7,7 +7,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 
-#include "Encoder_LDPC_from_IRA.hpp"
+#include "Module/Encoder/LDPC/From_IRA/Encoder_LDPC_from_IRA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

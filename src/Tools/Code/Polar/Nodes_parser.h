@@ -44,6 +44,6 @@ public:
 }
 }
 
-#include "Nodes_parser.hxx"
+#include "Tools/Code/Polar/Nodes_parser.hxx"
 
 #endif /* NODES_PARSER_HPP */

@@ -14,7 +14,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Modem.hpp"
+#include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
 {
@@ -569,6 +569,7 @@ _tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
+
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>::
 _filter(const R *Y_N1, R *Y_N2, const int frame_id)

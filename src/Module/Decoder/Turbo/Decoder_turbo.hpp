@@ -7,8 +7,8 @@
 
 #include "Module/Interleaver/Interleaver.hpp"
 
-#include "../Decoder_SIHO.hpp"
-#include "../Decoder_SISO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {

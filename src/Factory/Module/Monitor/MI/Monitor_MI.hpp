@@ -5,7 +5,7 @@
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 
-#include "../Monitor.hpp"
+#include "Factory/Module/Monitor/Monitor.hpp"
 
 namespace aff3ct
 {

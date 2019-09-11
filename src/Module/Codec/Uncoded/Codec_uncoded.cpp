@@ -6,7 +6,7 @@
 #include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
-#include "Codec_uncoded.hpp"
+#include "Module/Codec/Uncoded/Codec_uncoded.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

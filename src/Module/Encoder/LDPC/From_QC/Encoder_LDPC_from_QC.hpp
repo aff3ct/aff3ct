@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#include "../Encoder_LDPC.hpp"
-
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
+
+#include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 namespace aff3ct
 {

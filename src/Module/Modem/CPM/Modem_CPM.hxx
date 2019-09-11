@@ -13,8 +13,8 @@
 #include "Tools/Math/matrix.h"
 #include "Tools/Math/numerical_integration.h"
 #include "Tools/Math/math_constants.h"
-#include "Modem_CPM.hpp"
 
+#include "Module/Modem/CPM/Modem_CPM.hpp"
 
 namespace aff3ct
 {
@@ -101,6 +101,43 @@ void Modem_CPM<B,R,Q,MAX>
 	Modem<B,R,Q>::set_noise(noise);
 
 	if (!no_sig2) this->generate_projection();
+}
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+bool Modem_CPM<B,R,Q,MAX>
+::is_complex_mod()
+{
+	return true;
+}
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+bool Modem_CPM<B,R,Q,MAX>
+:: is_complex_fil()
+{
+	return false;
+}
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+int Modem_CPM<B,R,Q,MAX>
+::size_mod(const int N, const int bps, const int L, const int p, const int ups)
+{
+	int m_order = (int)1 << bps;
+	int n_tl	= (int)(std::ceil((float)(p - 1) / (float)(m_order - 1))) + L - 1;
+
+	return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, n_tl, ups, is_complex_mod());
+}
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+int Modem_CPM<B,R,Q,MAX>
+::size_fil(const int N, const int bps, const int L, const int p)
+{
+	int m_order   = (int)1 << bps;
+	int n_tl	  = (int)(std::ceil((float)(p - 1) / (float)(m_order - 1))) + L - 1;
+	int n_wa      = (int)(p * std::pow(m_order, L));
+	int n_bits_wa = (int)std::ceil(std::log2(n_wa));
+	int max_wa_id = (int)(1 << n_bits_wa);
+
+	return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, n_tl, max_wa_id, is_complex_fil());
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>

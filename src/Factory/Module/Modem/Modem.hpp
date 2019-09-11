@@ -10,7 +10,7 @@
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Constellation/Constellation.hpp"
 
-#include "../../Factory.hpp"
+#include "Factory/Factory.hpp"
 
 namespace aff3ct
 {

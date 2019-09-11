@@ -6,7 +6,7 @@
 
 #include "Tools/Noise/Noise.hpp"
 
-#include "../../Factory.hpp"
+#include "Factory/Factory.hpp"
 
 namespace aff3ct
 {

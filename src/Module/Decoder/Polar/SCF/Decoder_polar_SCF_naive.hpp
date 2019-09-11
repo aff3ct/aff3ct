@@ -8,7 +8,7 @@
 #include "Module/CRC/CRC.hpp"
 
 
-#include "../SC/Decoder_polar_SC_naive.hpp"
+#include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
 
 namespace aff3ct
 {
@@ -40,6 +40,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_SCF_naive.hxx"
+#include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive.hxx"
 
 #endif /* DECODER_POLAR_SCF_NAIVE_ */

@@ -5,8 +5,8 @@
 #include <assert.h>
 #include <mipp.h>
 
-#include "utils.h"
-#include "numerical_integration.h"
+#include "Tools/Math/utils.h"
+#include "Tools/Math/numerical_integration.h"
 
 namespace aff3ct
 {

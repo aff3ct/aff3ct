@@ -22,7 +22,7 @@
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hpp"
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_very_fast.hpp"
 
-#include "Decoder_RSC.hpp"
+#include "Factory/Module/Decoder/RSC/Decoder_RSC.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

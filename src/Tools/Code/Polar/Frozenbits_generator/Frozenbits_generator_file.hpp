@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "Frozenbits_generator.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 namespace aff3ct
 {

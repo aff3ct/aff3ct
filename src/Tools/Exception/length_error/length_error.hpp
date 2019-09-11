@@ -1,7 +1,7 @@
 #ifndef LENGTH_ERROR_HPP_
 #define LENGTH_ERROR_HPP_
 
-#include "../exception.hpp"
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {

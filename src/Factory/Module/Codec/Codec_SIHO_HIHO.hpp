@@ -6,8 +6,8 @@
 #include "Module/Codec/Codec_SIHO_HIHO.hpp"
 #include "Module/CRC/CRC.hpp"
 
-#include "Codec_SIHO.hpp"
-#include "Codec_HIHO.hpp"
+#include "Factory/Module/Codec/Codec_SIHO.hpp"
+#include "Factory/Module/Codec/Codec_HIHO.hpp"
 
 namespace aff3ct
 {

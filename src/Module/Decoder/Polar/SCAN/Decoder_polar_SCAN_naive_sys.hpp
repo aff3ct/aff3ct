@@ -5,7 +5,7 @@
 
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "Decoder_polar_SCAN_naive.hpp"
+#include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp"
 
 namespace aff3ct
 {
@@ -31,6 +31,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_SCAN_naive_sys.hxx"
+#include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hxx"
 
 #endif /* DECODER_POLAR_SCAN_NAIVE_SYS_ */

@@ -1,4 +1,4 @@
-#include "logic_error.hpp"
+#include "Tools/Exception/logic_error/logic_error.hpp"
 
 using namespace aff3ct::tools;
 

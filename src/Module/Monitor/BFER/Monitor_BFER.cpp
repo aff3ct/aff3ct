@@ -2,11 +2,12 @@
 #include <vector>
 #include <stdexcept>
 
-#include "Monitor_BFER.hpp"
 #include "Tools/Perf/common/mutual_info.h"
 #include "Tools/Perf/distance/hamming_distance.h"
 #include "Tools/Math/utils.h"
 #include "Tools/general_utils.h"
+
+#include "Module/Monitor/BFER/Monitor_BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

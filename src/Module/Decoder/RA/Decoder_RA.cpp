@@ -6,7 +6,7 @@
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 
-#include "Decoder_RA.hpp"
+#include "Module/Decoder/RA/Decoder_RA.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

@@ -2,7 +2,7 @@
 
 #include "Module/Monitor/Monitor.hpp"
 
-#include "Monitor.hpp"
+#include "Factory/Module/Monitor/Monitor.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

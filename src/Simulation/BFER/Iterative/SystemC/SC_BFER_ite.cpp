@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Predicate_ite.hpp"
 
-#include "SC_BFER_ite.hpp"
+#include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;

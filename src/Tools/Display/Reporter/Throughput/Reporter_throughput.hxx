@@ -6,7 +6,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 
-#include "Reporter_throughput.hpp"
+#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 
 namespace aff3ct
 {

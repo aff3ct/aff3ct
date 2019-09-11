@@ -12,7 +12,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Source.hpp"
+#include "Module/Source/Source.hpp"
 
 namespace aff3ct
 {

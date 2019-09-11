@@ -66,6 +66,6 @@ private:
 };
 }
 }
-#include "Interleaver.hxx"
+#include "Module/Interleaver/Interleaver.hxx"
 
 #endif /* INTERLEAVER_HPP_ */

@@ -3,7 +3,7 @@
 
 #include "Module/CRC/CRC.hpp"
 
-#include "CRC_checker.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp"
 
 namespace aff3ct
 {

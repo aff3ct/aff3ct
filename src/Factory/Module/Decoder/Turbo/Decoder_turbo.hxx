@@ -4,7 +4,7 @@
 #include "Module/Decoder/Turbo/Decoder_turbo_std.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
 
-#include "Decoder_turbo.hpp"
+#include "Factory/Module/Decoder/Turbo/Decoder_turbo.hpp"
 
 namespace aff3ct
 {

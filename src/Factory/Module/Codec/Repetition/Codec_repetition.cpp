@@ -1,7 +1,7 @@
-#include "Codec_repetition.hpp"
-
 #include "Factory/Module/Encoder/Repetition/Encoder_repetition.hpp"
 #include "Factory/Module/Decoder/Repetition/Decoder_repetition.hpp"
+
+#include "Factory/Module/Codec/Repetition/Codec_repetition.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

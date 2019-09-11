@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_LDPC_probabilistic_parallel_bit_flipping.hpp"
+#include "Module/Decoder/LDPC/BF/PPBF/Decoder_LDPC_probabilistic_parallel_bit_flipping.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

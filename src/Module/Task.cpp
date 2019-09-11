@@ -4,9 +4,9 @@
 
 #include <rang.hpp>
 
-#include "Module.hpp"
-#include "Socket.hpp"
-#include "Task.hpp"
+#include "Module/Module.hpp"
+#include "Module/Socket.hpp"
+#include "Module/Task.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

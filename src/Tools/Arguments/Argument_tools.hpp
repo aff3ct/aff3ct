@@ -6,9 +6,9 @@
 #include <type_traits>
 #include <iostream>
 
-#include "Maps/Argument_map_info.hpp"
-#include "Maps/Argument_map_group.hpp"
-#include "Maps/Argument_map_value.hpp"
+#include "Tools/Arguments/Maps/Argument_map_info.hpp"
+#include "Tools/Arguments/Maps/Argument_map_group.hpp"
+#include "Tools/Arguments/Maps/Argument_map_value.hpp"
 
 namespace aff3ct
 {

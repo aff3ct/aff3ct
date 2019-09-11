@@ -28,7 +28,7 @@
 
 #include "Factory/Simulation/BFER/BFER.hpp"
 
-#include "../Simulation.hpp"
+#include "Simulation/Simulation.hpp"
 
 namespace aff3ct
 {

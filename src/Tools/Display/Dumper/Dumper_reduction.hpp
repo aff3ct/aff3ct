@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "Dumper.hpp"
+#include "Tools/Display/Dumper/Dumper.hpp"
 
 namespace aff3ct
 {

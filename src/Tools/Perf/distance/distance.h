@@ -41,6 +41,6 @@ inline size_t distance(const T *in, const unsigned size);
 }
 }
 
-#include "distance.hxx"
+#include "Tools/Perf/distance/distance.hxx"
 
 #endif

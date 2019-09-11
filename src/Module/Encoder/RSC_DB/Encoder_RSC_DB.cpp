@@ -1,6 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Encoder_RSC_DB.hpp"
+#include "Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

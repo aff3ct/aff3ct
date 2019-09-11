@@ -1,7 +1,7 @@
 #ifndef QUANTIZER_POW2_FAST_HPP_
 #define QUANTIZER_POW2_FAST_HPP_
 
-#include "../Quantizer.hpp"
+#include "Module/Quantizer/Quantizer.hpp"
 
 namespace aff3ct
 {

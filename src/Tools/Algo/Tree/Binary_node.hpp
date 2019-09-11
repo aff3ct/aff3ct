@@ -48,11 +48,11 @@ public:
 	 * \param depth:       the depth of this node (vertical indexing).
 	 * \param lane_id:     the lane id of this node (horizontal indexing).
 	 */
-	Binary_node(Binary_node<T>* father_node, 
-	            Binary_node<T>* left_node, 
-	            Binary_node<T>* right_node, 
+	Binary_node(Binary_node<T>* father_node,
+	            Binary_node<T>* left_node,
+	            Binary_node<T>* right_node,
 	            T* contents,
-	            int depth, 
+	            int depth,
 	            int lane_id);
 
 	/*!
@@ -167,6 +167,6 @@ public:
 }
 }
 
-#include "Binary_node.hxx"
+#include "Tools/Algo/Tree/Binary_node.hxx"
 
 #endif /* BINARY_NODE_HPP_ */

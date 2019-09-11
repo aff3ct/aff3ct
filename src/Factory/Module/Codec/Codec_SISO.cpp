@@ -5,7 +5,7 @@
 #include "Uncoded/Codec_uncoded.hpp"
 #include "Turbo_product/Codec_turbo_product.hpp"
 
-#include "Codec_SISO.hpp"
+#include "Factory/Module/Codec/Codec_SISO.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

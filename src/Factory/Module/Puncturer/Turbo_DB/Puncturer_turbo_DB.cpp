@@ -4,7 +4,7 @@
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp"
 
-#include "Puncturer_turbo_DB.hpp"
+#include "Factory/Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::factory;

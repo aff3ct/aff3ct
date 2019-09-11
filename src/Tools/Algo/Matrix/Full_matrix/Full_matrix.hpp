@@ -6,7 +6,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "../Matrix.hpp"
+#include "Tools/Algo/Matrix/Matrix.hpp"
 
 namespace aff3ct
 {

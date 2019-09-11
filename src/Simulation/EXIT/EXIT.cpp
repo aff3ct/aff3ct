@@ -9,7 +9,7 @@
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 
-#include "EXIT.hpp"
+#include "Simulation/EXIT/EXIT.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;

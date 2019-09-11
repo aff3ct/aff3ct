@@ -7,8 +7,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Constellation_user.hpp"
-
+#include "Tools/Constellation/User/Constellation_user.hpp"
 
 namespace aff3ct
 {

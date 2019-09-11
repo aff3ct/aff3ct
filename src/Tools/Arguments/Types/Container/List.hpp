@@ -7,9 +7,9 @@
 #include <type_traits>
 #include <tuple>
 
-#include "../Argument_type_limited.hpp"
-#include "../../utilities.hpp"
-#include "../../Splitter/Splitter.hpp"
+#include "Tools/Arguments/Types/Argument_type_limited.hpp"
+#include "Tools/Arguments/utilities.hpp"
+#include "Tools/Arguments/Splitter/Splitter.hpp"
 
 namespace aff3ct
 {

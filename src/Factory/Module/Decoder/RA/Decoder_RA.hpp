@@ -10,7 +10,7 @@
 
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 
-#include "../Decoder.hpp"
+#include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
 {

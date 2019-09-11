@@ -6,7 +6,7 @@
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "Decoder_polar_SCF_naive.hpp"
+#include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive.hpp"
 
 namespace aff3ct
 {
@@ -29,6 +29,6 @@ protected:
 }
 }
 
-#include "Decoder_polar_SCF_naive_sys.hxx"
+#include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive_sys.hxx"
 
 #endif /* DECODER_POLAR_SCF_NAIVE_SYS_ */

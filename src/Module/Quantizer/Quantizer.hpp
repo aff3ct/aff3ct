@@ -80,6 +80,6 @@ protected:
 };
 }
 }
-#include "Quantizer.hxx"
+#include "Module/Quantizer/Quantizer.hxx"
 
 #endif /* QUANTIZER_HPP_ */

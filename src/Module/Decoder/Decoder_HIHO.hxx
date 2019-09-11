@@ -12,7 +12,7 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Decoder_HIHO.hpp"
+#include "Module/Decoder/Decoder_HIHO.hpp"
 
 namespace aff3ct
 {

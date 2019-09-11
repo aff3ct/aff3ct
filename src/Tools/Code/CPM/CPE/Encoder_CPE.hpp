@@ -3,11 +3,11 @@
 
 #include <vector>
 
-#include "../CPM_parameters.hpp"
+#include "Tools/Code/CPM/CPM_parameters.hpp"
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 template <typename SIN = int, typename SOUT = int>
 class Encoder_CPE

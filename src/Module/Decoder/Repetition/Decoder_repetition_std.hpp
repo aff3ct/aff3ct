@@ -4,7 +4,7 @@
 #include <vector>
 #include <mipp.h>
 
-#include "Decoder_repetition.hpp"
+#include "Module/Decoder/Repetition/Decoder_repetition.hpp"
 
 namespace aff3ct
 {

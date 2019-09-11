@@ -7,7 +7,7 @@
 #include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 #include "Module/Encoder/Encoder.hpp"
 
-#include "../../Factory.hpp"
+#include "Factory/Factory.hpp"
 
 namespace aff3ct
 {

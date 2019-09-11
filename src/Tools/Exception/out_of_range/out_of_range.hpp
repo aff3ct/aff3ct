@@ -1,7 +1,7 @@
 #ifndef OUT_OF_RANGE_HPP_
 #define OUT_OF_RANGE_HPP_
 
-#include "../exception.hpp"
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {

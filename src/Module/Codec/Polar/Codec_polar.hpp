@@ -11,7 +11,7 @@
 #include "Factory/Module/Puncturer/Polar/Puncturer_polar.hpp"
 #include "Factory/Tools/Code/Polar/Frozenbits_generator.hpp"
 
-#include "../Codec_SISO_SIHO.hpp"
+#include "Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -25,11 +25,11 @@ protected:
 	std::vector<bool> frozen_bits; // known bits (alias frozen bits) are set to true
 	const bool generated_decoder;
 
-	std::unique_ptr<tools::Frozenbits_generator>    fb_generator;
+	std::unique_ptr<tools::Frozenbits_generator> fb_generator;
 
-	Puncturer_polar_shortlast<B,Q>*  puncturer_shortlast;
-	tools::Frozenbits_notifier*      fb_decoder;
-	tools::Frozenbits_notifier*      fb_encoder;
+	Puncturer_polar_shortlast<B,Q>* puncturer_shortlast;
+	tools::Frozenbits_notifier*     fb_decoder;
+	tools::Frozenbits_notifier*     fb_encoder;
 
 public:
 	Codec_polar(const factory::Frozenbits_generator::parameters &fb_par,

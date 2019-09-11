@@ -6,7 +6,7 @@
 #include <vector>
 #include <cassert>
 
-#include "Monitor.hpp"
+#include "Module/Monitor/Monitor.hpp"
 
 namespace aff3ct
 {
@@ -148,6 +148,6 @@ protected:
 }
 }
 
-#include "Monitor_reduction.hxx"
+#include "Module/Monitor/Monitor_reduction.hxx"
 
 #endif /* MONITOR_REDUCTION_HPP_ */

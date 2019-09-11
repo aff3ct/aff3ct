@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BIT_FLIPPING_OMWBF_HPP_
 #define DECODER_LDPC_BIT_FLIPPING_OMWBF_HPP_
 
-#include "../Decoder_LDPC_bit_flipping.hpp"
+#include "Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping.hpp"
 
 namespace aff3ct
 {
@@ -29,8 +29,7 @@ protected:
 	// BF functions for decoding
 	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V);
 
-
-	std::vector<B> synd  ;
+	std::vector<B> synd;
 	std::vector<R> energy;
 };
 }

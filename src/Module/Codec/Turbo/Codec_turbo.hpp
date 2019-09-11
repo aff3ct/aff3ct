@@ -14,7 +14,7 @@
 #include "Factory/Module/Decoder/Turbo/Decoder_turbo.hpp"
 #include "Factory/Module/Puncturer/Turbo/Puncturer_turbo.hpp"
 
-#include "../Codec_SIHO.hpp"
+#include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {

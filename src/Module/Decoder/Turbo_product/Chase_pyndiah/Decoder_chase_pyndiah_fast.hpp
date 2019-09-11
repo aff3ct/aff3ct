@@ -1,9 +1,7 @@
 #ifndef Decoder_chase_pyndiah_fast_HPP_
 #define	Decoder_chase_pyndiah_fast_HPP_
 
-
-#include "Decoder_chase_pyndiah.hpp"
-
+#include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 
 namespace aff3ct
 {
