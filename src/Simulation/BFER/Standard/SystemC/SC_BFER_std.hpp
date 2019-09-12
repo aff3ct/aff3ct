@@ -4,7 +4,7 @@
 #define SC_SIMULATION_BFER_STD_HPP_
 
 #include "Tools/SystemC/SC_Duplicator.hpp"
-
+#include "Factory/Simulation/BFER/BFER_std.hpp"
 #include "Simulation/BFER/Standard/BFER_std.hpp"
 
 namespace aff3ct

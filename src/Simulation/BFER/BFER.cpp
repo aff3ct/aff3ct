@@ -10,7 +10,10 @@
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/Exception/exception.hpp"
-
+#include "Tools/Display/Reporter/MI/Reporter_MI.hpp"
+#include "Tools/Display/Reporter/BFER/Reporter_BFER.hpp"
+#include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
+#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 #include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 

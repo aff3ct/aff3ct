@@ -1,6 +1,7 @@
 #ifndef SIMULATION_BFER_STD_THREADS_HPP_
 #define SIMULATION_BFER_STD_THREADS_HPP_
 
+#include "Factory/Simulation/BFER/BFER_std.hpp"
 #include "Simulation/BFER/Standard/BFER_std.hpp"
 
 namespace aff3ct

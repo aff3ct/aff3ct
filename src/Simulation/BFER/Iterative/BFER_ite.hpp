@@ -1,10 +1,11 @@
 #ifndef SIMULATION_BFER_ITE_HPP_
 #define SIMULATION_BFER_ITE_HPP_
 
-#include <chrono>
 #include <vector>
 #include <random>
+#include <memory>
 
+#include "Tools/Interleaver/Interleaver_core.hpp"
 #include "Module/Source/Source.hpp"
 #include "Module/CRC/CRC.hpp"
 #include "Module/Codec/Codec_SISO_SIHO.hpp"
@@ -13,11 +14,7 @@
 #include "Module/Quantizer/Quantizer.hpp"
 #include "Module/Coset/Coset.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
-
-#include "Tools/Interleaver/Interleaver_core.hpp"
-
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
-
 #include "Simulation/BFER/BFER.hpp"
 
 namespace aff3ct
