@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_LDPC_HPP_
 #define LAUNCHER_LDPC_HPP_
 
+#include <iostream>
+
 #include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
 
 namespace aff3ct

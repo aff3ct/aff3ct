@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_TURBO_HPP_
 #define LAUNCHER_TURBO_HPP_
 
+#include <iostream>
+
 #include "Factory/Module/Codec/Turbo/Codec_turbo.hpp"
 
 namespace aff3ct

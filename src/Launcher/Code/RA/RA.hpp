@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_RA_HPP_
 #define LAUNCHER_RA_HPP_
 
+#include <iostream>
+
 #include "Factory/Module/Codec/RA/Codec_RA.hpp"
 
 namespace aff3ct

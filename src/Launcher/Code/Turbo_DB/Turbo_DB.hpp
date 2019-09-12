@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_TURBO_DB_HPP_
 #define LAUNCHER_TURBO_DB_HPP_
 
+#include <iostream>
+
 #include "Factory/Module/Codec/Turbo_DB/Codec_turbo_DB.hpp"
 
 namespace aff3ct

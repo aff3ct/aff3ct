@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_BCH_HPP_
 #define LAUNCHER_BCH_HPP_
 
+#include <iostream>
+
 #include "Factory/Module/Codec/BCH/Codec_BCH.hpp"
 
 namespace aff3ct

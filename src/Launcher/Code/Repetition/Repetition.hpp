@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_REPETITION_HPP_
 #define LAUNCHER_REPETITION_HPP_
 
+#include <iostream>
+
 #include "Factory/Module/Codec/Repetition/Codec_repetition.hpp"
 
 namespace aff3ct

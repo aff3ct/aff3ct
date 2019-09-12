@@ -3,8 +3,10 @@
 #ifndef LAUNCHER_EXIT_HPP_
 #define LAUNCHER_EXIT_HPP_
 
-#include "Factory/Simulation/EXIT/EXIT.hpp"
+#include <iostream>
 
+#include "Factory/Simulation/EXIT/EXIT.hpp"
+#include "Simulation/Simulation.hpp"
 #include "Launcher/Launcher.hpp"
 
 namespace aff3ct
