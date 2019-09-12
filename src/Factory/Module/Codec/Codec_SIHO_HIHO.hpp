@@ -5,7 +5,6 @@
 
 #include "Module/Codec/Codec_SIHO_HIHO.hpp"
 #include "Module/CRC/CRC.hpp"
-
 #include "Factory/Module/Codec/Codec_SIHO.hpp"
 #include "Factory/Module/Codec/Codec_HIHO.hpp"
 

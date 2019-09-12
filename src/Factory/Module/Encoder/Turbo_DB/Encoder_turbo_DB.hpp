@@ -1,16 +1,17 @@
 #ifndef FACTORY_ENCODER_TURBO_DB_HPP
 #define FACTORY_ENCODER_TURBO_DB_HPP
 
+#include <vector>
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
+#include "Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 #include "Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp"
-
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
-
-#include "Tools/auto_cloned_unique_ptr.hpp"
-
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

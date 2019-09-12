@@ -1,16 +1,14 @@
 #ifndef FACTORY_INTERLEAVER_HPP
 #define FACTORY_INTERLEAVER_HPP
 
-#include <cstdint>
 #include <string>
+#include <map>
 
-#include "Tools/Interleaver/Interleaver_core.hpp"
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/auto_cloned_unique_ptr.hpp"
-
-#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
-
+#include "Tools/Interleaver/Interleaver_core.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
-
+#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

@@ -1,17 +1,16 @@
 #ifndef FACTORY_ENCODER_TURBO_HPP
 #define FACTORY_ENCODER_TURBO_HPP
 
+#include <vector>
 #include <string>
-#include <memory>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
-
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
-
-#include "Tools/auto_cloned_unique_ptr.hpp"
-
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
@@ -51,16 +50,16 @@ struct Encoder_turbo : public Encoder
 
 		// builder
 		template <typename B = int>
-		module::Encoder_turbo<B>* build(const module::Interleaver<B> &itl,
-		                                      std::shared_ptr<module::Encoder<B>> enc_n,
-		                                      std::shared_ptr<module::Encoder<B>> enc_i = nullptr) const;
+		module::Encoder_turbo<B>* build(const module::Interleaver<B>              &itl,
+		                                      std::shared_ptr<module::Encoder<B>>  enc_n,
+		                                      std::shared_ptr<module::Encoder<B>>  enc_i = nullptr) const;
 	};
 
 	template <typename B = int, class E1 = Encoder_RSC, class E2 = E1>
-	static module::Encoder_turbo<B>* build(const parameters<E1,E2>      &params,
-	                                       const module::Interleaver<B> &itl,
-	                                             std::shared_ptr<module::Encoder<B>> enc_n,
-	                                             std::shared_ptr<module::Encoder<B>> enc_i = nullptr);
+	static module::Encoder_turbo<B>* build(const parameters<E1,E2>                   &params,
+	                                       const module::Interleaver<B>              &itl,
+	                                             std::shared_ptr<module::Encoder<B>>  enc_n,
+	                                             std::shared_ptr<module::Encoder<B>>  enc_i = nullptr);
 };
 }
 }

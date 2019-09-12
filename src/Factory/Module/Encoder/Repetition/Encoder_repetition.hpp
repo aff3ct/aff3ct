@@ -2,9 +2,10 @@
 #define FACTORY_ENCODER_REPETITION_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
-
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

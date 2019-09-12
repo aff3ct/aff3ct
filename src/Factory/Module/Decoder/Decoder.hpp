@@ -3,10 +3,12 @@
 
 #include <string>
 #include <memory>
+#include <map>
 
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Encoder/Encoder.hpp"
-
+#include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -51,10 +53,10 @@ struct Decoder : Factory
 		parameters(const std::string &n, const std::string &p);
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
+		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
 
 		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
+		module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
 	};
 };
 }

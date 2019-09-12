@@ -2,9 +2,10 @@
 #define FACTORY_SIMULATION_BFER_STD_HPP_
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Factory/Module/Codec/Codec_SIHO.hpp"
-
 #include "Factory/Simulation/BFER/BFER.hpp"
 
 namespace aff3ct

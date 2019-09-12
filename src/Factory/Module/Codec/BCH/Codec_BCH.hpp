@@ -2,10 +2,11 @@
 #define FACTORY_CODEC_BCH_HPP
 
 #include <string>
-#include <cmath>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Module/CRC/CRC.hpp"
 #include "Module/Codec/BCH/Codec_BCH.hpp"
-
 #include "Factory/Module/Codec/Codec_SIHO_HIHO.hpp"
 
 namespace aff3ct

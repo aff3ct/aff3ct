@@ -2,10 +2,12 @@
 #define FACTORY_DECODER_REPETITION_HPP
 
 #include <string>
+#include <memory>
+#include <map>
 
-#include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Encoder/Encoder.hpp"
-
+#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct

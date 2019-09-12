@@ -3,13 +3,14 @@
 
 #include <vector>
 #include <string>
+#include <memory>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-
+#include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
-#include "Module/Encoder/Encoder.hpp"
-
 #include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct

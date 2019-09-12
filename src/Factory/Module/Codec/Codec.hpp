@@ -2,13 +2,14 @@
 #define FACTORY_CODEC_HPP_
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
 #include "Factory/Module/Decoder/Decoder.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
-#include "Tools/auto_cloned_unique_ptr.hpp"
-
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

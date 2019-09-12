@@ -2,10 +2,11 @@
 #define FACTORY_CODEC_TURBO_PRODUCT_HPP
 
 #include <string>
-#include <cmath>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Module/CRC/CRC.hpp"
 #include "Module/Codec/Turbo_product/Codec_turbo_product.hpp"
-
 #include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct

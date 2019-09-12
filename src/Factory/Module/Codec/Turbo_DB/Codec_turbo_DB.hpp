@@ -2,15 +2,14 @@
 #define FACTORY_CODEC_TURBO_DB_HPP
 
 #include <string>
-#include <cmath>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Module/CRC/CRC.hpp"
 #include "Factory/Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp"
 #include "Factory/Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
 #include "Factory/Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp"
-
-#include "Module/CRC/CRC.hpp"
 #include "Module/Codec/Turbo_DB/Codec_turbo_DB.hpp"
-
 #include "Factory/Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct

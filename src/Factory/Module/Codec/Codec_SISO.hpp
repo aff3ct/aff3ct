@@ -5,7 +5,6 @@
 
 #include "Module/Codec/Codec_SISO.hpp"
 #include "Module/CRC/CRC.hpp"
-
 #include "Factory/Module/Codec/Codec.hpp"
 
 namespace aff3ct

@@ -1,10 +1,12 @@
 #ifndef FACTORY_ENCODER_RSC_HPP
 #define FACTORY_ENCODER_RSC_HPP
 
+#include <vector>
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
-
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

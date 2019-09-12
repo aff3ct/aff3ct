@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include <map>
 
 #include "Tools/Arguments/Argument_tools.hpp"
@@ -42,11 +43,12 @@ struct Factory
 		           const std::string &short_name = Factory_short_name,
 		           const std::string &prefix     = Factory_prefix);
 		virtual ~parameters() = default;
-		virtual Factory::parameters* clone() const = 0;
 
-		        std::string              get_name       () const;
-		        std::string              get_short_name () const;
-		        std::string              get_prefix     () const;
+		virtual Factory::parameters*     clone          () const = 0;
+
+		                    std::string  get_name       () const;
+		                    std::string  get_short_name () const;
+		                    std::string  get_prefix     () const;
 
 		virtual std::vector<std::string> get_names      () const;
 		virtual std::vector<std::string> get_short_names() const;

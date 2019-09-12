@@ -1,12 +1,13 @@
 #ifndef FACTORY_TERMINAL_HPP_
 #define FACTORY_TERMINAL_HPP_
 
-#include <string>
 #include <chrono>
-#include <memory>
+#include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
-
+#include "Tools/Display/Reporter/Reporter.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -22,7 +23,7 @@ struct Terminal : Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// optional parameters
-		std::string               type = "STD";
+		std::string               type      = "STD";
 		std::chrono::milliseconds frequency = std::chrono::milliseconds(500);
 		bool                      disabled  = false;
 

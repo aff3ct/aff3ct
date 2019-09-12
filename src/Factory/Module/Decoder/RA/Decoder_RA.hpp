@@ -1,15 +1,16 @@
 #ifndef FACTORY_DECODER_RA_HPP
 #define FACTORY_DECODER_RA_HPP
 
+#include <vector>
 #include <string>
+#include <memory>
+#include <map>
 
-#include "Module/Decoder/Decoder_SIHO.hpp"
-#include "Module/Encoder/Encoder.hpp"
-
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/auto_cloned_unique_ptr.hpp"
-
+#include "Module/Encoder/Encoder.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
-
 #include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct

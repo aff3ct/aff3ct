@@ -1,8 +1,11 @@
 #ifndef FACTORY_FROZENBITS_GENERATOR_HPP
 #define FACTORY_FROZENBITS_GENERATOR_HPP
 
-#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -18,8 +21,8 @@ struct Frozenbits_generator : public Factory
 	public:
 		// ------------------------------------------------------------------------------------------------- PARAMETERS
 		// required parameters
-		int         K       = -1;
-		int         N_cw    = -1;
+		int         K                  = -1;
+		int         N_cw               = -1;
 
 		// optional parameters
 		std::string type               = "GA";

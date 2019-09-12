@@ -1,4 +1,5 @@
 #include "Tools/Display/rang_format/rang_format.h"
+#include "Tools/Exception/exception.hpp"
 
 #include "Factory/Command_parser.hpp"
 

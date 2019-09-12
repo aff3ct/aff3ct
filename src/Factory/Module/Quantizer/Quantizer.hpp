@@ -2,9 +2,10 @@
 #define FACTORY_QUANTIZER_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Quantizer/Quantizer.hpp"
-
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

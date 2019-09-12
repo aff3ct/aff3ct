@@ -2,10 +2,11 @@
 #define FACTORY_ENCODER_RS_HPP
 
 #include <string>
+#include <map>
 
-#include "Module/Encoder/RS/Encoder_RS.hpp"
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Code/RS/RS_polynomial_generator.hpp"
-
+#include "Module/Encoder/RS/Encoder_RS.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

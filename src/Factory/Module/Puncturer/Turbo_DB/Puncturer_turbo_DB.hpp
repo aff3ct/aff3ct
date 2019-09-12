@@ -2,9 +2,10 @@
 #define FACTORY_PUNCTURER_TURBO_DB_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Puncturer/Puncturer.hpp"
-
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct

@@ -2,9 +2,10 @@
 #define FACTORY_MONITOR_BFER_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
-
 #include "Factory/Module/Monitor/Monitor.hpp"
 
 namespace aff3ct

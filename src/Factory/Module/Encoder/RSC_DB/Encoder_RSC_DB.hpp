@@ -2,9 +2,10 @@
 #define FACTORY_ENCODER_RSC_DB_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
-
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
