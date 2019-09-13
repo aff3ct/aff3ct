@@ -186,7 +186,7 @@ def process_template_arg(template_arg_signature, template_arg_rank):
     template_arg_entry['template_arg_default'] = template_arg_default
     return template_arg_entry
 
-# process a method template declaration
+# process a template declaration
 def process_template(template_signature, template_rank):
     template_entry = dict()
     template_entry['template_signature'] = template_signature
@@ -204,7 +204,7 @@ def process_template(template_signature, template_rank):
     return template_entry
 
 # process method templates declarations
-def add_templates(method_entry, templates):
+def add_method_templates(method_entry, templates):
     template_i = 0
     for template in templates:
         template_entry = process_template(template, template_i)
@@ -212,20 +212,30 @@ def add_templates(method_entry, templates):
         method_entry['method_templates'].append(template_entry)
     method_entry['method_nb_templates'] = template_i
 
-# split the template declaration part of a method declaration
-def split_templates(method_str):
+# process class templates declarations
+def add_class_templates(class_entry, templates):
+    template_i = 0
+    for template in templates:
+        template_entry = process_template(template, template_i)
+        template_i = template_i+1
+        class_entry['class_templates'].append(template_entry)
+    class_entry['class_nb_templates'] = template_i
+
+# split the template part of a declaration
+def split_templates(declaration_str):
     templates = []
-    if not method_str.startswith('template'):
-        return (method_str, templates)
+    declaration_str = declaration_str.strip()
+    if not declaration_str.startswith('template'):
+        return (declaration_str, templates)
     angle_brackets = 0
     square_brackets = 0
     curly_brackets = 0
     parenthesis = 0
-    n = len(method_str)
+    n = len(declaration_str)
     start_i = 0
     i = len('template')
     while i < n:
-        c = method_str[i]
+        c = declaration_str[i]
         if c == ' ':
             pass # nothing
 
@@ -249,13 +259,13 @@ def split_templates(method_str):
         elif c == r')':
             parenthesis = parenthesis-1
 
-        elif method_str[i:].startswith('template'):
+        elif declaration_str[i:].startswith('template'):
             if angle_brackets == 0 and square_brackets == 0 and curly_brackets == 0 and parenthesis == 0:
                 if i <= start_i or i == n-1:
                     sys.stderr.write('parse error: template list\n')
                     sys.exit(1)
                 # found template prefix with no pending open bracket, extract the corresponding chunk
-                template = method_str[start_i:i].strip()
+                template = declaration_str[start_i:i].strip()
                 templates.append(template)
 
                 start_i = i
@@ -266,13 +276,13 @@ def split_templates(method_str):
                     sys.stderr.write('parse error: template list\n')
                     sys.exit(1)
                 # found something that is not a template, stop here
-                template = method_str[start_i:i].strip()
+                template = declaration_str[start_i:i].strip()
                 templates.append(template)
                 break
 
         i = i+1
 
-    return (method_str[i:].strip(), templates)
+    return (declaration_str[i:].strip(), templates)
 
 
 # detect a class method and record corresponding entry
@@ -394,7 +404,7 @@ def add_method(class_entry, method, method_is_inline, method_suffix, method_temp
 
     # process method templates
     method_entry['method_templates'] = []
-    add_templates(method_entry, method_templates)
+    add_method_templates(method_entry, method_templates)
 
     # process output
     if method_kind in [ 'static', 'method' ]:
@@ -429,7 +439,7 @@ def add_method(class_entry, method, method_is_inline, method_suffix, method_temp
 # add a new class to the db
 # - name_path_str is the full qualified name including namespace(s)
 # - class_inheritence is the right hand side of the class declaration, stating base class(es)
-def add_class(db, name_path_str, class_short_name, class_inheritence):
+def add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part):
     # initialize a class entry
     class_entry = dict()
     class_entry['class_name'] = name_path_str
@@ -446,6 +456,9 @@ def add_class(db, name_path_str, class_short_name, class_inheritence):
     class_entry['class_fixme_methods'] = dict()
     class_entry['class_is_abstract'] = False
     class_entry['class_is_module'] = False
+    class_entry['class_templates'] = []
+    (_,class_templates) = split_templates(class_template_part+' dummy')
+    add_class_templates(class_entry, class_templates)
     db[name_path_str] = class_entry
     return class_entry
 
@@ -600,7 +613,7 @@ def process_ast(ast_filename):
                             scopes.append((scope, scope_entry, block_nest_level))
 
                             # entering class
-                            template_part = m.group(1).strip()
+                            class_template_part = m.group(1).strip()
                             class_short_name = m.group(2)
                             class_inheritence = m.group(3)
                             class_access = default_class_access
@@ -610,7 +623,7 @@ def process_ast(ast_filename):
 
                             # if class not already known, add it to 'db'
                             if name_path_str not in db:
-                                add_class(db, name_path_str, class_short_name, class_inheritence)
+                                add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part)
 
                             class_entry = db[name_path_str]
                             scope = 'class'
@@ -620,9 +633,9 @@ def process_ast(ast_filename):
                             if not filter_out:
                                 if debug_mode:
                                     print('==> class_name:', class_name)
-                                if template_part != '':
+                                if class_template_part != '':
                                     if debug_mode:
-                                        print('=== template part:', template_part)
+                                        print('=== class template part:', class_template_part)
                             continue
 
                     # try to match a method definition (e.g. with associated block of code)
