@@ -3,6 +3,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <algorithm>
 
 #include "Tools/system_functions.h"
 #include "Tools/version.h"
