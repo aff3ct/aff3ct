@@ -1,8 +1,10 @@
 #ifndef CRC_CHECKER_DB_HPP
 #define CRC_CHECKER_DB_HPP
 
-#include "Module/CRC/CRC.hpp"
+#include <vector>
+#include <mipp.h>
 
+#include "Module/CRC/CRC.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp"
 
 namespace aff3ct

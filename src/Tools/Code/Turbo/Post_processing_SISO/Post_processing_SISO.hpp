@@ -16,23 +16,17 @@ public:
 	virtual bool siso_n(const int ite,
 	                    const mipp::vector<R>& sys,
 	                          mipp::vector<R>& ext,
-	                          mipp::vector<B>& s)
-	{
-		return false;
-	}
+	                          mipp::vector<B>& s);
 
 	virtual bool siso_i(const int ite,
 	                    const mipp::vector<R>& sys,
-	                          mipp::vector<R>& ext)
-	{
-		return false;
-	}
+	                          mipp::vector<R>& ext);
 
-	virtual void end(const int n_ite)
-	{
-	}
+	virtual void end(const int n_ite);
 };
 }
 }
+
+#include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hxx"
 
 #endif /* POST_PROCESSING_SISO_HPP */

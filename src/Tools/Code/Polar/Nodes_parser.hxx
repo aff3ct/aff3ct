@@ -1,12 +1,8 @@
-#include <string>
 #include <sstream>
-#include <vector>
 #include <cmath>
 
 #include "Tools/Display/rang_format/rang_format.h"
-
 #include "Tools/general_utils.h"
-
 #include "Tools/Code/Polar/Nodes_parser.h"
 
 namespace aff3ct

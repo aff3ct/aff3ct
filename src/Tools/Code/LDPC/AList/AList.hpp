@@ -2,6 +2,7 @@
 #define ALIST_HPP_
 
 #include <iostream>
+#include <vector>
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 

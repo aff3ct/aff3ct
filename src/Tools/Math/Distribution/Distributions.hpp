@@ -1,6 +1,7 @@
 #ifndef DISTRIBUTIONS_HPP
 #define DISTRIBUTIONS_HPP
 
+#include <ios>
 #include <fstream>
 #include <string>
 #include <map>

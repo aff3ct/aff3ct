@@ -1,4 +1,5 @@
 #include <limits>
+#include <mipp.h>
 
 #include "Tools/Noise/noise_utils.h"
 

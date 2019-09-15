@@ -1,11 +1,7 @@
-#ifndef MATRIX_UTILS_HXX__
-#define MATRIX_UTILS_HXX__
-
 #include <sstream>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Algo/Matrix/matrix_utils.h"
 
 namespace aff3ct
@@ -132,6 +128,3 @@ bool all_zeros(const Full_matrix<T>& M)
 
 }
 }
-
-
-#endif // MATRIX_UTILS_HXX__

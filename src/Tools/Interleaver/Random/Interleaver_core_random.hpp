@@ -1,6 +1,7 @@
 #ifndef INTERLEAVER_CORE_RANDOM_HPP
 #define INTERLEAVER_CORE_RANDOM_HPP
 
+#include <cstdint>
 #include <random>
 
 #include "Tools/Interleaver/Interleaver_core.hpp"

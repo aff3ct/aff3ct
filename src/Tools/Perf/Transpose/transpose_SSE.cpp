@@ -1,6 +1,8 @@
 #ifdef __SSE4_1__
 
 #include <sstream>
+#include <xmmintrin.h>
+#include <immintrin.h>
 
 #include "Tools/Exception/exception.hpp"
 

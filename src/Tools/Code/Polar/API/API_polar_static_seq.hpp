@@ -1,13 +1,11 @@
 #ifndef API_POLAR_STATIC_SEQ_HPP_
 #define API_POLAR_STATIC_SEQ_HPP_
 
-#include <algorithm>
+#include <memory>
+#include <vector>
 
-#include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-
 #include "Tools/Code/Polar/API/functions_polar_seq.h"
-
 #include "Tools/Code/Polar/API/API_polar.hpp"
 
 namespace aff3ct

@@ -2,7 +2,6 @@
 #ifdef __cpp_aligned_new
 #define UPDATE_RULE_MS_SIMD_HPP
 
-#include <limits>
 #include <string>
 #include <mipp.h>
 
@@ -42,86 +41,41 @@ protected:
 	int ite;
 
 public:
-	Update_rule_MS_simd()
-	: name("MS"), false_msk(false), zero((R)0), max(std::numeric_limits<R>::max()), sign(false), min1(max), min2(max),
-	  cst1(zero), cst2(zero), n_ite(0), ite(0)
-	{
-	}
+	Update_rule_MS_simd();
 
-	virtual ~Update_rule_MS_simd()
-	{
-	}
+	virtual ~Update_rule_MS_simd() = default;
 
-	std::string get_name() const
-	{
-		return this->name;
-	}
+	inline std::string get_name() const;
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
 
-	inline void begin_decoding(const int n_ite)
-	{
-		this->n_ite = n_ite;
-	}
+	inline void begin_decoding(const int n_ite);
 
-	inline void begin_ite(const int ite)
-	{
-		this->ite = ite;
-	}
+	inline void begin_ite(const int ite);
 
 	// incoming values from the variable nodes into the check nodes
-	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
-	{
-		this->sign = this->false_msk;
-		this->min1 = this->max;
-		this->min2 = this->max;
-	}
+	inline void begin_chk_node_in(const int chk_id, const int chk_degree);
 
-	inline void compute_chk_node_in(const int var_id, const mipp::Reg<R> var_val)
-	{
-		const auto var_abs  = mipp::abs(var_val);
-		const auto var_sign = mipp::sign(var_val);
+	inline void compute_chk_node_in(const int var_id, const mipp::Reg<R> var_val);
 
-		this->sign ^= var_sign;
-		this->min2  = mipp::min(this->min2, mipp::max(var_abs, this->min1));
-		this->min1  = mipp::min(this->min1,           var_abs             );
-	}
-
-	inline void end_chk_node_in()
-	{
-		this->cst1 = mipp::max(this->zero, this->min2);
-		this->cst2 = mipp::max(this->zero, this->min1);
-	}
+	inline void end_chk_node_in();
 
 	// outcomming values from the check nodes into the variable nodes
-	inline void begin_chk_node_out(const int chk_id, const int chk_degree)
-	{
-	}
+	inline void begin_chk_node_out(const int chk_id, const int chk_degree);
 
-	inline mipp::Reg<R> compute_chk_node_out(const int var_id, const mipp::Reg<R> var_val)
-	{
-		const auto var_abs = mipp::abs(var_val);
-		      auto res_abs = mipp::blend(this->cst1, this->cst2, var_abs == this->min1);
-		const auto res_sng = this->sign ^ mipp::sign(var_val);
+	inline mipp::Reg<R> compute_chk_node_out(const int var_id, const mipp::Reg<R> var_val);
 
-		return mipp::copysign(res_abs, res_sng);
-	}
+	inline void end_chk_node_out();
 
-	inline void end_chk_node_out()
-	{
-	}
+	inline void end_ite();
 
-	inline void end_ite()
-	{
-	}
-
-	inline void end_decoding()
-	{
-	}
+	inline void end_decoding();
 };
 }
 }
+
+#include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS_simd.hxx"
 
 #endif
 #endif /* UPDATE_RULE_MS_SIMD_HPP */

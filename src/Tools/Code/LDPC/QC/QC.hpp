@@ -1,10 +1,8 @@
 #ifndef QC_HPP_
 #define QC_HPP_
 
-#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 

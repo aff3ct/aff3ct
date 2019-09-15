@@ -26,11 +26,8 @@ protected:
 	      void*           dataptr;
 
 public:
-	Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
-	       const bool fast = false, void *dataptr = nullptr)
-	: task(task), name(name), datatype(datatype), databytes(databytes), fast(fast), dataptr(dataptr)
-	{
-	}
+	inline Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
+	              const bool fast = false, void *dataptr = nullptr);
 
 	inline std::string     get_name           () const;
 	inline std::type_index get_datatype       () const;

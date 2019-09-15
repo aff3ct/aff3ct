@@ -8,9 +8,11 @@
 #ifndef FROZENBITS_GENERATOR_HPP_
 #define FROZENBITS_GENERATOR_HPP_
 
+#include <cstdint>
 #include <thread>
 #include <vector>
 #include <memory>
+#include <string>
 
 #include "Tools/Noise/Noise.hpp"
 

@@ -1,11 +1,9 @@
-#include <iostream>
+#include <limits>
 #include <cmath>     // min(), fabs(), copysign()...
 #include <algorithm> // min()
-#include <chrono>
-#include <stdexcept>
 
+#include "Tools/Math/utils.h"
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
 namespace aff3ct

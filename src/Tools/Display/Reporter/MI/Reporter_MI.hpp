@@ -1,9 +1,6 @@
 #ifndef REPORTER_MI_HPP_
 #define REPORTER_MI_HPP_
 
-#include <string>
-#include <chrono>
-
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Tools/Display/Reporter/Reporter_monitor.hpp"
 

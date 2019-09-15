@@ -22,6 +22,13 @@ static std::unordered_map<std::type_index,uint8_t> type_to_size = {{typeid(int8_
                                                                    {typeid(float  ), 4},
                                                                    {typeid(double ), 8}};
 
+Socket
+::Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
+         const bool fast, void *dataptr)
+: task(task), name(name), datatype(datatype), databytes(databytes), fast(fast), dataptr(dataptr)
+{
+}
+
 std::string Socket
 ::get_name() const
 {

@@ -1,11 +1,7 @@
 #ifndef DECODER_POLAR_FUNCTIONS_H
 #define DECODER_POLAR_FUNCTIONS_H
 
-#include <limits>
-#include <utility> // pair
 #include <mipp.h>
-
-#include "Tools/Math/utils.h"
 
 #ifndef _MSC_VER
 #ifndef __forceinline

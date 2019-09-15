@@ -1,8 +1,7 @@
 #ifndef NUMERICAL_INTEGRATION_HXX_
 #define NUMERICAL_INTEGRATION_HXX_
 
-#include <sstream>
-#include <assert.h>
+#include <cassert>
 #include <mipp.h>
 
 #include "Tools/Math/utils.h"
@@ -18,7 +17,7 @@ namespace tools
 // =====================================================================================================================
 
 template <typename R>
-inline R trapz_integral(const R* y, const R step, int size)
+R trapz_integral(const R* y, const R step, int size)
 {
 	assert(y    != 0);
 	assert(step != 0);
@@ -47,7 +46,7 @@ inline R trapz_integral(const R* y, const R step, int size)
 }
 
 template <typename R>
-inline R rect_integral(const R* y, const R step, const int size)
+R rect_integral(const R* y, const R step, const int size)
 {
 	assert(y    != 0);
 	assert(step != 0);
@@ -78,7 +77,7 @@ inline R rect_integral(const R* y, const R step, const int size)
 // =====================================================================================================================
 
 template <typename R>
-inline R trapz_integral_seq(const R* y, const R step, int size)
+R trapz_integral_seq(const R* y, const R step, int size)
 {
 	assert(y    != 0);
 	assert(step != 0);
@@ -100,7 +99,7 @@ inline R trapz_integral_seq(const R* y, const R step, int size)
 }
 
 template <typename R>
-inline void cumtrapz_integral_seq(const R* y, const R step, R* cumul, int size)
+void cumtrapz_integral_seq(const R* y, const R step, R* cumul, int size)
 {
 	assert(y    != 0);
 	assert(cumul!= 0);
@@ -130,7 +129,7 @@ inline void cumtrapz_integral_seq(const R* y, const R step, R* cumul, int size)
 }
 
 template <typename R>
-inline R trapz_integral_seq(const R* x, const R* y, int size)
+R trapz_integral_seq(const R* x, const R* y, int size)
 {
 	assert(x    != 0);
 	assert(y    != 0);
@@ -150,7 +149,7 @@ inline R trapz_integral_seq(const R* x, const R* y, int size)
 }
 
 template <typename R>
-inline void cumtrapz_integral_seq(const R* x, const R* y, R* cumul, int size)
+void cumtrapz_integral_seq(const R* x, const R* y, R* cumul, int size)
 {
 	assert(x    != 0);
 	assert(y    != 0);
@@ -180,7 +179,7 @@ inline void cumtrapz_integral_seq(const R* x, const R* y, R* cumul, int size)
 }
 
 template <typename R, typename Function>
-inline R trapz_integral_seq(Function f, const R min, const R max, const int number_steps)
+R trapz_integral_seq(Function f, const R min, const R max, const int number_steps)
 {
 	assert(number_steps != 0);
 	assert(max >= min);
@@ -203,7 +202,7 @@ inline R trapz_integral_seq(Function f, const R min, const R max, const int numb
 // =====================================================================================================================
 
 template <typename R>
-inline R rect_integral_seq(const R* y, const R step, const int size)
+R rect_integral_seq(const R* y, const R step, const int size)
 {
 	assert(y    != 0);
 	assert(step != 0);
@@ -222,7 +221,7 @@ inline R rect_integral_seq(const R* y, const R step, const int size)
 
 // ===================================================================== Rectangular numerical integration with function
 template <typename R, typename Function>
-inline R mid_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
+R mid_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
 {
 	assert(number_steps != 0);
 	assert(max >= min);
@@ -237,7 +236,7 @@ inline R mid_rect_integral_seq(Function f, const R min, const R max, const int n
 }
 
 template <typename R, typename Function>
-inline R left_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
+R left_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
 {
 	assert(number_steps != 0);
 	assert(max >= min);
@@ -252,7 +251,7 @@ inline R left_rect_integral_seq(Function f, const R min, const R max, const int 
 }
 
 template <typename R, typename Function>
-inline R right_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
+R right_rect_integral_seq(Function f, const R min, const R max, const int number_steps)
 {
 	assert(number_steps != 0);
 	assert(max >= min);
@@ -268,7 +267,7 @@ inline R right_rect_integral_seq(Function f, const R min, const R max, const int
 
 // ======================================================================== Rectangular numerical integration with (x,y)
 template <typename R>
-inline R mid_rect_integral_seq(const R* x, const R* y, int size)
+R mid_rect_integral_seq(const R* x, const R* y, int size)
 {
 	assert(x    != 0);
 	assert(y    != 0);
@@ -288,7 +287,7 @@ inline R mid_rect_integral_seq(const R* x, const R* y, int size)
 }
 
 template <typename R>
-inline R left_rect_integral_seq(const R* x, const R* y, int size)
+R left_rect_integral_seq(const R* x, const R* y, int size)
 {
 	assert(x    != 0);
 	assert(y    != 0);
@@ -308,7 +307,7 @@ inline R left_rect_integral_seq(const R* x, const R* y, int size)
 }
 
 template <typename R>
-inline R right_rect_integral_seq(const R* x, const R* y, int size)
+R right_rect_integral_seq(const R* x, const R* y, int size)
 {
 	assert(x    != 0);
 	assert(y    != 0);
@@ -330,7 +329,7 @@ inline R right_rect_integral_seq(const R* x, const R* y, int size)
 // =====================================================================================================================
 
 template <typename R, typename Function>
-inline R simps_integral_seq(Function f, const R min, const R max, const int number_steps)
+R simps_integral_seq(Function f, const R min, const R max, const int number_steps)
 {
 	assert(number_steps != 0);
 	assert(max >= min);

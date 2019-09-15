@@ -1,10 +1,7 @@
 #ifndef UPDATE_RULE_MS_HPP
 #define UPDATE_RULE_MS_HPP
 
-#include <cassert>
-#include <limits>
 #include <string>
-#include <cmath>
 
 namespace aff3ct
 {
@@ -30,84 +27,40 @@ protected:
 	int ite;
 
 public:
-	Update_rule_MS()
-	: name("MS"), sign(0), min1(std::numeric_limits<R>::max()), min2(min1), cst1(0), cst2(0), n_ite(0), ite(0)
-	{
-	}
+	Update_rule_MS();
 
-	virtual ~Update_rule_MS()
-	{
-	}
+	virtual ~Update_rule_MS() = default;
 
-	std::string get_name() const
-	{
-		return this->name;
-	}
+	inline std::string get_name() const;
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
 
-	inline void begin_decoding(const int n_ite)
-	{
-		this->n_ite = n_ite;
-	}
+	inline void begin_decoding(const int n_ite);
 
-	inline void begin_ite(const int ite)
-	{
-		this->ite = ite;
-	}
+	inline void begin_ite(const int ite);
 
 	// incoming values from the variable nodes into the check nodes
-	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
-	{
-		this->sign = 0;
-		this->min1 = std::numeric_limits<R>::max();
-		this->min2 = std::numeric_limits<R>::max();
-	}
+	inline void begin_chk_node_in(const int chk_id, const int chk_degree);
 
-	inline void compute_chk_node_in(const int var_id, const R var_val)
-	{
-		const auto var_abs  = (R)std::abs(var_val);
-		const auto var_sign = std::signbit((float)var_val) ? -1 : 0;
+	inline void compute_chk_node_in(const int var_id, const R var_val);
 
-		this->sign ^= var_sign;
-		this->min2  = std::min(this->min2, std::max(var_abs, this->min1));
-		this->min1  = std::min(this->min1,          var_abs             );
-	}
-
-	inline void end_chk_node_in()
-	{
-		this->cst1 = std::max((R)0, this->min2);
-		this->cst2 = std::max((R)0, this->min1);
-	}
+	inline void end_chk_node_in();
 
 	// outcomming values from the check nodes into the variable nodes
-	inline void begin_chk_node_out(const int chk_id, const int chk_degree)
-	{
-	}
+	inline void begin_chk_node_out(const int chk_id, const int chk_degree);
 
-	inline R compute_chk_node_out(const int var_id, const R var_val)
-	{
-		const auto var_abs = (R)std::abs(var_val);
-		const auto res_abs = ((var_abs == this->min1) ? this->cst1 : this->cst2);
-		const auto res_sng = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);
+	inline R compute_chk_node_out(const int var_id, const R var_val);
 
-		return (R)std::copysign(res_abs, res_sng);
-	}
+	inline void end_chk_node_out();
 
-	inline void end_chk_node_out()
-	{
-	}
+	inline void end_ite();
 
-	inline void end_ite()
-	{
-	}
-
-	inline void end_decoding()
-	{
-	}
+	inline void end_decoding();
 };
 }
 }
+
+#include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS.hxx"
 
 #endif /* UPDATE_RULE_MS_HPP */

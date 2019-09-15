@@ -1,14 +1,12 @@
 #ifndef BITWISE_DIFF_H__
 #define BITWISE_DIFF_H__
 
-#include <cmath>
 #include <mipp.h>
 
 namespace aff3ct
 {
 namespace tools
 {
-
 /*
  * \brief compare as values of inputs, ie. compare if both are equals or not
  * when there is only one parameter the input is compared to zero
@@ -27,7 +25,6 @@ struct Bitwise_diff
 
 	static inline T apply(const T& in);
 };
-
 }
 }
 

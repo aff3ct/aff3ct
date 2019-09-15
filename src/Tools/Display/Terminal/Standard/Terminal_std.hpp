@@ -9,10 +9,7 @@
 #define TERMINAL_STD_HPP_
 
 #include <iostream>
-#include <sstream>
-#include <iomanip>
 #include <vector>
-#include <utility>
 #include <string>
 #include <memory>
 

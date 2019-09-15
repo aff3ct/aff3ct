@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <map>
 
 #include "Tools/Arguments/Maps/Argument_map_info.hpp"
 #include "Tools/Arguments/Maps/Argument_map_group.hpp"

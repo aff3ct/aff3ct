@@ -1,6 +1,8 @@
 #ifndef INTERLEAVER_CORE_CCSDS_HPP
 #define INTERLEAVER_CORE_CCSDS_HPP
 
+#include <cstdint>
+
 #include "Tools/Interleaver/Interleaver_core.hpp"
 
 namespace aff3ct

@@ -19,16 +19,10 @@ public:
 	tlm_utils::simple_target_socket<SC_Dummy> s_in;
 
 public:
-	explicit SC_Dummy(sc_core::sc_module_name name)
-	: sc_module(name), s_in("s_in")
-	{
-		s_in.register_b_transport(this, &SC_Dummy::b_transport);
-	}
+	explicit SC_Dummy(sc_core::sc_module_name name);
 
 private:
-	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
-	{
-	}
+	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t);
 };
 }
 }

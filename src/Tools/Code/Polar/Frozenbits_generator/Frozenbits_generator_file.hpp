@@ -1,6 +1,7 @@
 #ifndef FROZENBITS_GENERATOR_FILE_HPP_
 #define FROZENBITS_GENERATOR_FILE_HPP_
 
+#include <cstdint>
 #include <string>
 #include <vector>
 

@@ -1,8 +1,4 @@
-#ifndef CONSTELLATION_PAM_HXX__
-#define CONSTELLATION_PAM_HXX__
-
 #include <cmath>
-#include <iostream>
 
 #include "Tools/Constellation/PAM/Constellation_PAM.hpp"
 
@@ -21,7 +17,7 @@ Constellation_PAM(const unsigned n_bps)
 }
 
 template <typename R>
-inline typename Constellation_PAM<R>::S Constellation_PAM<R>::
+typename Constellation_PAM<R>::S Constellation_PAM<R>::
 bits_to_symbol(const uint8_t bits[]) const
 {
 	auto symbol = (R)1.0 - ((R)bits[0] + (R)bits[0]);
@@ -33,4 +29,3 @@ bits_to_symbol(const uint8_t bits[]) const
 
 }
 }
-#endif // CONSTELLATION_PAM_HXX__

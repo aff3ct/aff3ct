@@ -1,6 +1,7 @@
 #ifndef INTERLEAVER_CORE_ROW_COLUMN_HPP
 #define INTERLEAVER_CORE_ROW_COLUMN_HPP
 
+#include <cstdint>
 #include <string>
 
 #include "Tools/Exception/exception.hpp"

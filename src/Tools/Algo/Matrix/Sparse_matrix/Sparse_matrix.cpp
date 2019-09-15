@@ -2,6 +2,7 @@
 #include <sstream>
 #include <vector>
 #include <numeric>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 

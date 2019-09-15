@@ -2,10 +2,6 @@
 #define ARGUMENT_RANGE_HPP_
 
 #include <string>
-#include <sstream>
-#include <vector>
-#include <stdexcept>
-#include <algorithm>
 
 namespace aff3ct
 {

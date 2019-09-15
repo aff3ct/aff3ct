@@ -13,7 +13,7 @@ namespace tools
 {
 
 template <typename B, class Fdiffcnt>
-inline size_t distance_seq(const B *in1, const B *in2, const unsigned size)
+size_t distance_seq(const B *in1, const B *in2, const unsigned size)
 {
 	size_t dist = 0;
 
@@ -24,7 +24,7 @@ inline size_t distance_seq(const B *in1, const B *in2, const unsigned size)
 }
 
 template <typename B, class Fdiffcnt>
-inline size_t distance_seq(const B *in, const unsigned size)
+size_t distance_seq(const B *in, const unsigned size)
 {
 	size_t dist = 0;
 
@@ -56,7 +56,7 @@ size_t distance(const T *in, const unsigned size)
 template <typename T, class Fdiffcnt>
 struct Distance // for T on 32 or 64 bits
 {
-	static inline size_t apply(const T *in1, const T *in2, const unsigned size)
+	static size_t apply(const T *in1, const T *in2, const unsigned size)
 	{
 		mipp::Reg<T> counter = (T)0;
 
@@ -72,7 +72,7 @@ struct Distance // for T on 32 or 64 bits
 		return dist;
 	}
 
-	static inline size_t apply(const T *in, const unsigned size)
+	static size_t apply(const T *in, const unsigned size)
 	{
 		mipp::Reg<T> counter = (T)0;
 
@@ -93,7 +93,7 @@ struct Distance // for T on 32 or 64 bits
 template <class Fdiffcnt>
 struct Distance<int16_t, Fdiffcnt>
 {
-	static inline size_t apply(const int16_t *in1, const int16_t *in2, const unsigned size)
+	static size_t apply(const int16_t *in1, const int16_t *in2, const unsigned size)
 	{
 #ifdef MIPP_BW
 		mipp::Reg<int32_t> counter32 = (int32_t)0;
@@ -123,7 +123,7 @@ struct Distance<int16_t, Fdiffcnt>
 		return dist;
 	}
 
-	static inline size_t apply(const int16_t *in, const unsigned size)
+	static size_t apply(const int16_t *in, const unsigned size)
 	{
 #ifdef MIPP_BW
 		mipp::Reg<int32_t> counter32 = (int32_t)0;
@@ -158,7 +158,7 @@ struct Distance<int16_t, Fdiffcnt>
 template <class Fdiffcnt>
 struct Distance<int8_t, Fdiffcnt>
 {
-	static inline size_t apply(const int8_t *in1, const int8_t *in2, const unsigned size)
+	static size_t apply(const int8_t *in1, const int8_t *in2, const unsigned size)
 	{
 #ifdef MIPP_BW
 		const mipp::Reg<int8_t> zeros = (int8_t)0, ones = (int8_t)1;
@@ -194,7 +194,7 @@ struct Distance<int8_t, Fdiffcnt>
 		return dist;
 	}
 
-	static inline size_t apply(const int8_t *in, const unsigned size)
+	static size_t apply(const int8_t *in, const unsigned size)
 	{
 #ifdef MIPP_BW
 		const mipp::Reg<int8_t> zeros = (int8_t)0, ones = (int8_t)1;

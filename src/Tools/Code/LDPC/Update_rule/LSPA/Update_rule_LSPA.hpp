@@ -1,15 +1,8 @@
 #ifndef UPDATE_RULE_LSPA_HPP
 #define UPDATE_RULE_LSPA_HPP
 
-#include <sstream>
-#include <cassert>
 #include <vector>
-#include <limits>
 #include <string>
-#include <cmath>
-#include <type_traits>
-
-#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {
@@ -27,96 +20,37 @@ protected:
 	int ite;
 
 public:
-	explicit Update_rule_LSPA(const unsigned max_check_node_degree)
-	: name("LSPA"), values(max_check_node_degree), sign(0), sum(0), n_ite(0), ite(0)
-	{
-		if (max_check_node_degree == 0)
-		{
-			std::stringstream message;
-			message << "'max_check_node_degree' has to greater than 0.";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
+	explicit Update_rule_LSPA(const unsigned max_check_node_degree);
 
-		if (!std::is_same<R, double>::value && !std::is_same<R, float>::value)
-		{
-			std::stringstream message;
-			message << "The 'LSPA' update rule supports only 'float' or 'double' datatypes.";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
+	virtual ~Update_rule_LSPA() = default;
 
-	virtual ~Update_rule_LSPA()
-	{
-	}
+	inline std::string get_name() const;
 
-	std::string get_name() const
-	{
-		return this->name;
-	}
+	inline void begin_decoding(const int n_ite);
 
-	inline void begin_decoding(const int n_ite)
-	{
-		this->n_ite = n_ite;
-	}
-
-	inline void begin_ite(const int ite)
-	{
-		this->ite = ite;
-	}
+	inline void begin_ite(const int ite);
 
 	// incoming values from the variable nodes into the check nodes
-	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
-	{
-		assert(chk_degree <= (int)values.size());
+	inline void begin_chk_node_in(const int chk_id, const int chk_degree);
 
-		this->sign = 0;
-		this->sum  = 0;
-	}
+	inline void compute_chk_node_in(const int var_id, const R var_val);
 
-	inline void compute_chk_node_in(const int var_id, const R var_val)
-	{
-		const auto var_abs     = (R)std::abs(var_val);
-		const auto tan_var_abs = std::tanh(var_abs * (R)0.5);
-		const auto res         = (tan_var_abs != 0) ? (R)std::log(tan_var_abs) : std::numeric_limits<R>::min();
-		const auto var_sign    = std::signbit((float)var_val) ? -1 : 0;
-
-		this->sign          ^= var_sign;
-		this->sum           += res;
-		this->values[var_id] = res;
-	}
-
-	inline void end_chk_node_in()
-	{
-	}
+	inline void end_chk_node_in();
 
 	// outcomming values from the check nodes into the variable nodes
-	inline void begin_chk_node_out(const int chk_id, const int chk_degree)
-	{
-	}
+	inline void begin_chk_node_out(const int chk_id, const int chk_degree);
 
-	inline R compute_chk_node_out(const int var_id, const R var_val)
-	{
-		      auto res_tmp = this->sum - this->values[var_id];
-		           res_tmp = (res_tmp != (R)0) ? (R)std::exp(res_tmp) : (R)1.0 - std::numeric_limits<R>::epsilon();
-		const auto res_abs = (R)2.0 * std::atanh(res_tmp);
-		const auto res_sgn = this->sign ^ (std::signbit((float)var_val) ? -1 : 0);
+	inline R compute_chk_node_out(const int var_id, const R var_val);
 
-		return (R)std::copysign(res_abs, res_sgn);
-	}
+	inline void end_chk_node_out();
 
-	inline void end_chk_node_out()
-	{
-	}
+	inline void end_ite();
 
-	inline void end_ite()
-	{
-	}
-
-	inline void end_decoding()
-	{
-	}
+	inline void end_decoding();
 };
 }
 }
+
+#include "Tools/Code/LDPC/Update_rule/LSPA/Update_rule_LSPA.hxx"
 
 #endif /* UPDATE_RULE_LSPA_HPP */

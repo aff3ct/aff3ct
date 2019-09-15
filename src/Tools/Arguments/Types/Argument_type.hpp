@@ -2,7 +2,6 @@
 #define ARGUMENT_TYPE_HPP_
 
 #include <string>
-#include <stdexcept>
 
 namespace aff3ct
 {

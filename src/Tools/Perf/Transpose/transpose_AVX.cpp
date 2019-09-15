@@ -1,5 +1,7 @@
 #ifdef __AVX2__
 
+#include <xmmintrin.h>
+#include <smmintrin.h>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"

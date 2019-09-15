@@ -1,11 +1,9 @@
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 
-#include <math.h>
+#include <cmath>
 #include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <arm_neon.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include "Tools/Exception/exception.hpp"
 

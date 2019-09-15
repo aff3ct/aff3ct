@@ -11,6 +11,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include <mutex>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"

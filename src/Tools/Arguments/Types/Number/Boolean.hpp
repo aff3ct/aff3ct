@@ -3,7 +3,6 @@
 
 #include <string>
 #include <stdexcept>
-#include <sstream>
 
 #include "Tools/Arguments/Types/Argument_type_limited.hpp"
 

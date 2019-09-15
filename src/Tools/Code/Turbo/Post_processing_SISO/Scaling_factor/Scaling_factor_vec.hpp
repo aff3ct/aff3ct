@@ -1,6 +1,8 @@
 #ifndef SCALING_FACTOR_VEC_HPP
 #define SCALING_FACTOR_VEC_HPP
 
+#include <mipp.h>
+
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp"
 
 namespace aff3ct

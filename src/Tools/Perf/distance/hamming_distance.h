@@ -1,7 +1,8 @@
 #ifndef HAMMING_DISTANCE_H_
 #define HAMMING_DISTANCE_H_
 
-#include <mipp.h>
+#include <cstdint>
+#include <cstddef>
 
 namespace aff3ct
 {
@@ -36,9 +37,6 @@ inline size_t hamming_distance_seq(const B *in, const unsigned size);
  */
 template <typename B = int32_t>
 inline size_t hamming_distance(const B *in, const unsigned size);
-
-
-
 
 /*
  * compute the Hamming distance between the arrays 'in1' and 'in2' of length 'size'

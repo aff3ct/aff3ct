@@ -4,7 +4,6 @@
 #include <string>
 #include <sstream>
 #include <stdexcept>
-#include <type_traits>
 #include <tuple>
 
 #include "Tools/Arguments/Types/Argument_type_limited.hpp"

@@ -1,6 +1,10 @@
 #ifndef FLIP_AND_CHECK_DB_HPP
 #define FLIP_AND_CHECK_DB_HPP
 
+#include <vector>
+#include <mipp.h>
+
+#include "Module/CRC/CRC.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker_DB.hpp"
 
 namespace aff3ct

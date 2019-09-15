@@ -1,10 +1,8 @@
 #ifndef MATRIX_HPP_
 #define MATRIX_HPP_
 
-#include <vector>
 #include <string>
 #include <iostream>
-#include <algorithm>
 
 namespace aff3ct
 {
@@ -38,30 +36,15 @@ public:
 
 	virtual ~Matrix() = default;
 
-	inline size_t get_n_rows() const
-	{
-		return this->n_rows;
-	}
+	inline size_t get_n_rows() const;
 
-	inline size_t get_n_cols() const
-	{
-		return this->n_cols;
-	}
+	inline size_t get_n_cols() const;
 
-	inline size_t get_rows_max_degree() const
-	{
-		return this->rows_max_degree;
-	}
+	inline size_t get_rows_max_degree() const;
 
-	inline size_t get_cols_max_degree() const
-	{
-		return this->cols_max_degree;
-	}
+	inline size_t get_cols_max_degree() const;
 
-	inline size_t get_n_connections() const
-	{
-		return this->n_connections;
-	}
+	inline size_t get_n_connections() const;
 
 	/*
 	 * return true if there is a connection there
@@ -145,5 +128,7 @@ protected:
 }
 
 std::ostream& operator<<(std::ostream& os, const aff3ct::tools::Matrix& sm);
+
+#include "Tools/Algo/Matrix/Matrix.hxx"
 
 #endif /* MATRIX_HPP_ */

@@ -1,6 +1,8 @@
 #ifndef HAMMING_DISTANCE_HXX_
 #define HAMMING_DISTANCE_HXX_
 
+#include <mipp.h>
+
 #include "Tools/Perf/distance/hamming_distance.h"
 #include "Tools/Perf/distance/distance.h"
 #include "Tools/Perf/distance/Boolean_diff.h"
@@ -33,9 +35,6 @@ size_t hamming_distance(const B *in, const unsigned size)
 	return distance<B,Boolean_diff<B,false>>(in, size);
 }
 
-
-
-
 template <typename B>
 size_t hamming_distance_unk_seq(const B *in1, const B *in2, const unsigned size)
 {
@@ -59,7 +58,6 @@ size_t hamming_distance_unk(const B *in, const unsigned size)
 {
 	return distance<B,Boolean_diff<B,true>>(in, size);
 }
-
 }
 }
 

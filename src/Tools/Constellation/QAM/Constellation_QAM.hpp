@@ -1,8 +1,6 @@
 #ifndef CONSTELLATION_QAM_HPP__
 #define CONSTELLATION_QAM_HPP__
 
-#include <vector>
-
 #include "Tools/Constellation/Constellation.hpp"
 
 namespace aff3ct

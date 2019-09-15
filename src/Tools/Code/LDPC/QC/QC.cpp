@@ -1,5 +1,6 @@
 #include <string>
 #include <sstream>
+#include <mipp.h>
 
 #include "Tools/Code/LDPC/AList/AList.hpp"
 #include "Tools/Exception/exception.hpp"
@@ -7,6 +8,8 @@
 
 #include "Tools/Code/LDPC/QC/QC.hpp"
 
+
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 Sparse_matrix QC

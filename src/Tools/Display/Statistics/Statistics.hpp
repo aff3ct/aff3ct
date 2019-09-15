@@ -2,8 +2,9 @@
 #define STATISTICS_HPP_
 
 #include <vector>
+#include <chrono>
+#include <string>
 #include <iostream>
-#include <memory>
 
 #include "Module/Module.hpp"
 #include "Module/Task.hpp"

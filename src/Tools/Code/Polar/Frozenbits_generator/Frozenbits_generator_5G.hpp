@@ -1,9 +1,6 @@
 #ifndef FROZENBITS_GENERATOR_5G_HPP_
 #define FROZENBITS_GENERATOR_5G_HPP_
 
-#include <limits>
-#include <vector>
-
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
 
 namespace aff3ct

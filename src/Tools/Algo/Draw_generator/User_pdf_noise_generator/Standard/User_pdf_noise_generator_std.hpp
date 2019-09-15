@@ -4,7 +4,6 @@
 #include <random>
 
 #include "Tools/Math/interpolation.h"
-
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"
 
 namespace aff3ct

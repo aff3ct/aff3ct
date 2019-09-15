@@ -2,7 +2,6 @@
 #define ARGUMENT_TYPE_NONE_HPP_
 
 #include <string>
-#include <stdexcept>
 
 #include "Tools/Arguments/Types/Argument_type.hpp"
 

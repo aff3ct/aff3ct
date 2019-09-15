@@ -1,11 +1,8 @@
-#ifndef REPORTER_THROUGHPUT_HXX_
-#define REPORTER_THROUGHPUT_HXX_
-
 #include <ios>
+#include <iomanip>
+#include <utility>
 
-#include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
-
 #include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 
 namespace aff3ct
@@ -119,5 +116,3 @@ void Reporter_throughput<T>
 }
 }
 }
-
-#endif /* REPORTER_THROUGHPUT_HXX_ */

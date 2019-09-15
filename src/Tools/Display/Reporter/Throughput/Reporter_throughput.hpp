@@ -1,16 +1,13 @@
 #ifndef REPORTER_THROUGHPUT_HPP_
 #define REPORTER_THROUGHPUT_HPP_
 
-#include <string>
 #include <chrono>
 #include <functional>
-#include <cassert>
 #include <type_traits>
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
-
 #include "Tools/Display/Reporter/Reporter.hpp"
 
 namespace aff3ct

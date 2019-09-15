@@ -1,7 +1,7 @@
 #ifndef ARGUMENT_LINKS_HPP_
 #define ARGUMENT_LINKS_HPP_
 
-#include <string>
+#include <cstddef>
 #include <vector>
 
 #include "Tools/Arguments/Maps/Argument_tag.hpp"

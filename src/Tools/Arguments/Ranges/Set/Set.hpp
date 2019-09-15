@@ -1,6 +1,7 @@
 #ifndef ARGUMENT_SET_RANGE_HPP_
 #define ARGUMENT_SET_RANGE_HPP_
 
+#include <vector>
 #include <set>
 
 #include "Tools/Arguments/Ranges/Argument_range.hpp"

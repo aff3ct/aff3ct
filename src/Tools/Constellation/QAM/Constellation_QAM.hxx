@@ -1,6 +1,3 @@
-#ifndef CONSTELLATION_QAM_HXX__
-#define CONSTELLATION_QAM_HXX__
-
 #include <cmath>
 
 #include "Tools/Constellation/QAM/Constellation_QAM.hpp"
@@ -19,7 +16,7 @@ Constellation_QAM(const unsigned n_bps)
 }
 
 template <typename R>
-inline typename Constellation_QAM<R>::S Constellation_QAM<R>::
+typename Constellation_QAM<R>::S Constellation_QAM<R>::
 bits_to_symbol(const uint8_t bits[]) const
 {
 	auto bps = this->get_n_bits_per_symbol();
@@ -38,4 +35,3 @@ bits_to_symbol(const uint8_t bits[]) const
 
 }
 }
-#endif // CONSTELLATION_QAM_HXX__

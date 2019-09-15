@@ -1,8 +1,9 @@
 #include <cassert>
+#include <ios>
+#include <iomanip>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/rang_format/rang_format.h"
-
 #include "Tools/Display/Terminal/Standard/Terminal_std.hpp"
 
 using namespace aff3ct;

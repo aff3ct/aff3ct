@@ -2,7 +2,6 @@
 #define ARGUMENT_TYPE_FILE_SYSTEM_HPP_
 
 #include <string>
-#include <iostream>
 #include <stdexcept>
 
 #include "Tools/system_functions.h"

@@ -4,7 +4,6 @@
 #include <typeinfo>
 #include <stdexcept>
 #include <type_traits>
-#include <iostream>
 
 #include "Tools/Arguments/Maps/Argument_map_info.hpp"
 #include "Tools/Arguments/Maps/Argument_map_group.hpp"

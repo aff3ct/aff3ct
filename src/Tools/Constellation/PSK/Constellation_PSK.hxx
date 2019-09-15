@@ -1,10 +1,6 @@
-#ifndef CONSTELLATION_PSK_HXX__
-#define CONSTELLATION_PSK_HXX__
-
 #include <cmath>
 
 #include "Tools/Math/math_constants.h"
-
 #include "Tools/Constellation/PSK/Constellation_PSK.hpp"
 
 namespace aff3ct
@@ -21,7 +17,7 @@ Constellation_PSK(const unsigned n_bps)
 }
 
 template <typename R>
-inline typename Constellation_PSK<R>::S Constellation_PSK<R>::
+typename Constellation_PSK<R>::S Constellation_PSK<R>::
 bits_to_symbol(const uint8_t bits[]) const
 {
 	auto symbol = (R)1.0 - ((R)bits[0] + (R)bits[0]);
@@ -34,4 +30,3 @@ bits_to_symbol(const uint8_t bits[]) const
 
 }
 }
-#endif // CONSTELLATION_PSK_HXX__

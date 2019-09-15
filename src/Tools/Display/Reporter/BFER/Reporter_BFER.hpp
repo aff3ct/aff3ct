@@ -1,9 +1,6 @@
 #ifndef Reporter_BFER_HPP_
 #define Reporter_BFER_HPP_
 
-#include <string>
-#include <chrono>
-
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Tools/Display/Reporter/Reporter_monitor.hpp"
 

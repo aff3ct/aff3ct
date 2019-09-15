@@ -31,10 +31,7 @@ public:
 	 * \param K:     number of information bits in the frame.
 	 * \param n_ite: number of iterations in the turbo decoding process.
 	 */
-	explicit Scaling_factor(const int n_ite)
-	: n_ite(n_ite)
-	{
-	}
+	explicit Scaling_factor(const int n_ite);
 
 	/*!
 	 * \brief Destructor.
@@ -43,5 +40,7 @@ public:
 };
 }
 }
+
+#include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hxx"
 
 #endif /* SCALING_FACTOR_HPP */

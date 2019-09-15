@@ -2,8 +2,7 @@
 #define INTERPOLATION_HXX_
 
 #include <algorithm>
-#include <assert.h>
-#include <mipp.h>
+#include <cassert>
 
 #include "Tools/Math/utils.h"
 #include "Tools/general_utils.h"
@@ -55,9 +54,6 @@ void linear_interpolation(const std::vector<T>& x_data, const std::vector<T>& y_
 	for(unsigned j = 0; j < x_vals.size(); j++)
 		y_vals[j] = linear_interpolation(x_data.data(), y_data.data(), x_data.size(), x_vals[j]);
 }
-
-
-
 
 //************************************************************************************************ NEAREST INTERPOLATION
 template <typename T>

@@ -1,13 +1,9 @@
-#ifndef CONSTELLATION_HXX__
-#define CONSTELLATION_HXX__
-
 #include <utility>
+#include <sstream>
 #include <cmath>
-#include <iostream>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Tools/Constellation/Constellation.hpp"
 
 namespace aff3ct
@@ -15,7 +11,7 @@ namespace aff3ct
 namespace tools
 {
 template <typename R>
-inline bool has_complex_symbols(const Constellation<R>& cstl)
+bool has_complex_symbols(const Constellation<R>& cstl)
 {
 	for (unsigned i = 0; i < cstl.get_n_symbols(); i++)
 	{
@@ -59,56 +55,56 @@ Constellation(const std::vector<S>& symbols, const std::string& name)
 }
 
 template <typename R>
-inline const std::string& Constellation<R>::
+const std::string& Constellation<R>::
 get_name() const
 {
 	return name;
 }
 
 template <typename R>
-inline unsigned Constellation<R>::
+unsigned Constellation<R>::
 get_n_bits_per_symbol() const
 {
 	return n_bps;
 }
 
 template <typename R>
-inline unsigned Constellation<R>::
+unsigned Constellation<R>::
 get_n_symbols() const
 {
 	return n_symbs;
 }
 
 template <typename R>
-inline bool Constellation<R>::
+bool Constellation<R>::
 is_complex() const
 {
 	return is_cplx;
 }
 
 template <typename R>
-inline const typename Constellation<R>::S& Constellation<R>::
+const typename Constellation<R>::S& Constellation<R>::
 operator[](const size_t idx) const
 {
 	return constellation[idx];
 }
 
 template <typename R>
-inline const typename Constellation<R>::S& Constellation<R>::
+const typename Constellation<R>::S& Constellation<R>::
 get_symbol(const size_t idx) const
 {
 	return constellation[idx];
 }
 
 template <typename R>
-inline R Constellation<R>::
+R Constellation<R>::
 get_imag(const size_t idx) const
 {
 	return constellation[idx].imag();
 }
 
 template <typename R>
-inline R Constellation<R>::
+R Constellation<R>::
 get_real(const size_t idx) const
 {
 	return constellation[idx].real();
@@ -144,4 +140,3 @@ build()
 
 }
 }
-#endif // CONSTELLATION_HXX__

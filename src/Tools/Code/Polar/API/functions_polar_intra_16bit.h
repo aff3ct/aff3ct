@@ -1,11 +1,7 @@
 #ifndef FUNCTIONS_POLAR_INTRA_16BIT_H_
 #define FUNCTIONS_POLAR_INTRA_16BIT_H_
 
-#include <algorithm>
-
-#include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-
 #include "Tools/Code/Polar/API/functions_polar_intra.h"
 #include "Tools/Code/Polar/API/functions_polar_seq.h"
 

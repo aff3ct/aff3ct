@@ -1,6 +1,7 @@
 #ifndef FROZENBITS_GENERATOR_GA_HPP_
 #define FROZENBITS_GENERATOR_GA_HPP_
 
+#include <string>
 #include <limits>
 #include <vector>
 

@@ -1,6 +1,3 @@
-#ifndef CONSTELLATION_USER_HXX__
-#define CONSTELLATION_USER_HXX__
-
 #include <fstream>
 #include <cmath>
 #include <iterator>
@@ -70,4 +67,3 @@ read_constellation(const std::string& const_path)
 
 }
 }
-#endif // CONSTELLATION_USER_HXX__

@@ -13,8 +13,6 @@
 #include <thread>
 #include <condition_variable>
 #include <iostream>
-#include <sstream>
-#include <string>
 
 #include "Tools/Display/Reporter/Reporter.hpp"
 

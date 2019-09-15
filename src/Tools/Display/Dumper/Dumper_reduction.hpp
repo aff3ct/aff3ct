@@ -1,6 +1,8 @@
 #ifndef DUMPER_REDUCTION_HPP_
 #define DUMPER_REDUCTION_HPP_
 
+#include <string>
+#include <vector>
 #include <memory>
 
 #include "Tools/Display/Dumper/Dumper.hpp"

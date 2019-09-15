@@ -1,6 +1,9 @@
 #ifndef ARGUMENT_INCLUDING_SET_RANGE_HPP_
 #define ARGUMENT_INCLUDING_SET_RANGE_HPP_
 
+#include <stdexcept>
+#include <type_traits>
+
 #include "Tools/Arguments/Ranges/Set/Set.hpp"
 
 namespace aff3ct

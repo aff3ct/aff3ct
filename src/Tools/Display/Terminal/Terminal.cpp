@@ -1,10 +1,8 @@
 #ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
-
 #include <csignal>
 
-#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 
 bool aff3ct::tools::Terminal::interrupt       = false;

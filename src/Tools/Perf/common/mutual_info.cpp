@@ -3,6 +3,7 @@
 #include <limits>
 #include <vector>
 #include <assert.h>
+#include <mipp.h>
 
 #include "Tools/Perf/common/mutual_info.h"
 

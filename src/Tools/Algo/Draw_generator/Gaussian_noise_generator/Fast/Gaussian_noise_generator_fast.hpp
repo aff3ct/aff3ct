@@ -1,11 +1,8 @@
 #ifndef GAUSSIAN_NOISE_GENERATOR_FAST_HPP_
 #define GAUSSIAN_NOISE_GENERATOR_FAST_HPP_
 
-#include <random>
-
 #include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
 #include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
-
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
 
 namespace aff3ct

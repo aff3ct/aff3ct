@@ -1,6 +1,9 @@
 #ifndef SELF_CORRECTED_HPP
 #define SELF_CORRECTED_HPP
 
+#include <vector>
+#include <mipp.h>
+
 #include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 
 namespace aff3ct

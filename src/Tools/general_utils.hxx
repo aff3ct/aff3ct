@@ -148,6 +148,12 @@ std::string get_time_format(T secondes)
 	return time_format.str();
 }
 
+template<typename T, typename U>
+constexpr size_t offsetOf(U T::*member)
+{
+    return (char*)&((T*)nullptr->*member) - (char*)nullptr;
+}
+
 }
 }
 
