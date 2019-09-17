@@ -813,18 +813,25 @@ def find_task_method(class_entry, module_task_entry):
     # lookup all methods
     for method, method_entry in class_entry['class_all_methods_index'].items():
         # early filter out unlikely candidates
-        if ('method_output' not in method_entry or method_entry['method_output'] is None) and method_entry['method_short_name'] == module_task_name and method_entry['method_nb_arguments'] == module_task_nb_sockets:
-            method_args = method_entry['method_arguments']
-            method_is_task = True
-            # also check that the number of arguments and their type match the task sockets
-            for i in range(module_task_nb_sockets):
-                method_arg = method_args[i]
-                method_task_socket = module_task_sockets[i]
-                if method_task_socket['soc_type']+' []' != method_arg['arg_type']:
-                    method_is_task = False
-                    break
-            if method_is_task:
-                return method_entry
+        if 'method_output' in method_entry and method_entry['method_output'] is not None:
+            continue
+        if method_entry['method_short_name'] != module_task_name:
+            continue
+        method_args = method_entry['method_arguments']
+        method_is_task = True
+        # also check that the number of arguments and their type match the task sockets
+        j = 0
+        for i in range(method_entry['method_nb_arguments']):
+            method_arg = method_args[i]
+            if '=' in method_arg:
+                continue
+            method_task_socket = module_task_sockets[j]
+            if method_task_socket['soc_type']+' []' != method_arg['arg_type']:
+                method_is_task = False
+                break
+            j = j+1
+        if method_is_task:
+            return method_entry
     return None
 
 # change a class method into a module task
