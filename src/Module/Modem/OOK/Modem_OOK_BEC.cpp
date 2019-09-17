@@ -1,8 +1,9 @@
+#include <string>
 #include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/utils.h"
-
+#include "Tools/Noise/noise_utils.h"
+// #include "Tools/Math/utils.h"
 #include "Module/Modem/OOK/Modem_OOK_BEC.hpp"
 
 using namespace aff3ct;

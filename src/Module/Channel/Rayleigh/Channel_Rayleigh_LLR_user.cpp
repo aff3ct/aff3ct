@@ -1,9 +1,10 @@
-#include <cmath>
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
-
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR_user.hpp"
 
 using namespace aff3ct;
@@ -134,7 +135,8 @@ void Channel_Rayleigh_LLR_user<R>
 }
 
 template<typename R>
-void Channel_Rayleigh_LLR_user<R>::check_noise()
+void Channel_Rayleigh_LLR_user<R>
+::check_noise()
 {
 	Channel<R>::check_noise();
 

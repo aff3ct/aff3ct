@@ -1,6 +1,8 @@
 #ifndef ENCODER_RSC_SYS_HPP_
 #define ENCODER_RSC_SYS_HPP_
 
+#include <vector>
+
 #include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

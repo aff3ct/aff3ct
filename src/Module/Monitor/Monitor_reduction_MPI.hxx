@@ -3,12 +3,9 @@
 #ifndef MONITOR_REDUCTION_MPI_HXX_
 #define MONITOR_REDUCTION_MPI_HXX_
 
-#include <stddef.h>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
-#include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Module/Monitor/Monitor_reduction_MPI.hpp"
 
 namespace aff3ct

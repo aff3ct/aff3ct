@@ -1,12 +1,9 @@
+#include <cmath>
 #include <string>
-#include <vector>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/common/mutual_info.h"
-#include "Tools/Perf/distance/hamming_distance.h"
-#include "Tools/Math/utils.h"
-#include "Tools/general_utils.h"
-
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 
 using namespace aff3ct;

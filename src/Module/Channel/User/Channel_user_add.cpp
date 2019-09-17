@@ -1,7 +1,8 @@
+#include <algorithm>
 #include <sstream>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Channel/User/Channel_user_add.hpp"
 
 using namespace aff3ct;

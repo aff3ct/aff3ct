@@ -1,6 +1,9 @@
 #ifndef DECODER_LDPC_BIT_FLIPPING_OMWBF_HPP_
 #define DECODER_LDPC_BIT_FLIPPING_OMWBF_HPP_
 
+#include <vector>
+
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping.hpp"
 
 namespace aff3ct

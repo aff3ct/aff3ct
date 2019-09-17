@@ -1,12 +1,12 @@
-#ifndef MODEM_GENERIC_HXX_
-#define MODEM_GENERIC_HXX_
-
 #include <cmath>
+#include <algorithm>
 #include <limits>
+#include <string>
 #include <sstream>
+#include <type_traits>
+#include <complex>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Modem/Generic/Modem_generic.hpp"
 
 namespace aff3ct
@@ -663,5 +663,3 @@ void Modem_generic<B, R, Q, MAX>
 }
 }
 }
-
-#endif //MODEM_GENERIC_HXX_

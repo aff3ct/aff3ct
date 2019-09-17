@@ -1,3 +1,4 @@
+#include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct

@@ -1,10 +1,9 @@
-#include <chrono>
+#include <string>
 #include <sstream>
 #include <algorithm>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/Repetition/Decoder_repetition.hpp"
 
 using namespace aff3ct;

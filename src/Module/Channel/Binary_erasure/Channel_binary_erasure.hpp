@@ -1,14 +1,11 @@
 #ifndef CHANNEL_BEC_HPP_
 #define CHANNEL_BEC_HPP_
 
-#include <vector>
-#include <mipp.h>
-
-#include <random>
+#include <memory>
 
 #include "Tools/types.h"
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
-
+#include "Tools/Noise/Event_probability.hpp"
 #include "Module/Channel/User/Channel_user_be.hpp"
 
 namespace aff3ct

@@ -1,12 +1,11 @@
 #ifndef ENCODER_TURBO_DB_HPP_
 #define ENCODER_TURBO_DB_HPP_
 
-#include <string>
 #include <vector>
 
 #include "Module/Interleaver/Interleaver.hpp"
-
 #include "Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
+#include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
 {

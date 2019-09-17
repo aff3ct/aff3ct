@@ -2,10 +2,8 @@
 #define CODEC_BCH_HPP_
 
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
-
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
-
 #include "Module/Codec/Codec_SIHO_HIHO.hpp"
 
 namespace aff3ct

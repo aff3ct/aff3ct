@@ -1,7 +1,9 @@
 #ifdef AFF3CT_SYSTEMC_MODULE
 
-#include "Tools/general_utils.h"
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
+#include "Tools/general_utils.h"
 #include "Module/Module.hpp"
 #include "Module/SC_Module.hpp"
 

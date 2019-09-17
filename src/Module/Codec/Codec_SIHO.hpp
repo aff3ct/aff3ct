@@ -1,8 +1,9 @@
 #ifndef CODEC_SIHO_HPP_
 #define CODEC_SIHO_HPP_
 
-#include "Module/Decoder/Decoder_SIHO.hpp"
+#include <memory>
 
+#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Codec/Codec.hpp"
 
 namespace aff3ct

@@ -1,11 +1,8 @@
-#include <chrono>
-#include <limits>
+#include <string>
 #include <sstream>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/utils.h"
-
 #include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
 
 using namespace aff3ct;

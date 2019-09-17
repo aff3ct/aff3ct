@@ -1,19 +1,8 @@
-/*!
- * \file
- * \brief The Channel is the physical transmission medium.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef CHANNEL_HXX_
-#define CHANNEL_HXX_
-
 #include <sstream>
-#include <algorithm>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Noise/noise_utils.h"
-
+#include "Tools/Noise/Sigma.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
@@ -22,8 +11,8 @@ namespace module
 {
 
 template <typename R>
-Channel<R>::
-Channel(const int N, const tools::Noise<R>& _n, const int n_frames)
+Channel<R>
+::Channel(const int N, const tools::Noise<R>& _n, const int n_frames)
 : Module(n_frames), N(N), n(_n.clone()), noise(this->N * this->n_frames, 0)
 {
 	const std::string name = "Channel";
@@ -63,45 +52,45 @@ Channel(const int N, const tools::Noise<R>& _n, const int n_frames)
 }
 
 template <typename R>
-Channel<R>::
-Channel(const int N, const int n_frames)
+Channel<R>
+::Channel(const int N, const int n_frames)
 : Channel(N, tools::Sigma<R>(), n_frames)
 {
 }
 
 template <typename R>
-int Channel<R>::
-get_N() const
+int Channel<R>
+::get_N() const
 {
 	return this->N;
 }
 
 template <typename R>
-const std::vector<R>& Channel<R>::
-get_noise() const
+const std::vector<R>& Channel<R>
+::get_noise() const
 {
 	return noise;
 }
 
 template <typename R>
-void Channel<R>::
-set_noise(const tools::Noise<R>& _n)
+void Channel<R>
+::set_noise(const tools::Noise<R>& _n)
 {
 	this->n.reset(_n.clone());
 	this->check_noise();
 }
 
 template<typename R>
-const tools::Noise <R> *Channel<R>::
-current_noise() const
+const tools::Noise <R> *Channel<R>
+::current_noise() const
 {
 	return this->n;
 }
 
 template <typename R>
 template <class A>
-void Channel<R>::
-add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id)
+void Channel<R>
+::add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id)
 {
 	if (X_N.size() != Y_N.size())
 	{
@@ -139,8 +128,8 @@ add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id
 }
 
 template <typename R>
-void Channel<R>::
-add_noise(const R *X_N, R *Y_N, const int frame_id)
+void Channel<R>
+::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -153,8 +142,8 @@ add_noise(const R *X_N, R *Y_N, const int frame_id)
 
 template <typename R>
 template <class A>
-void Channel<R>::
-add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N, const int frame_id)
+void Channel<R>
+::add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N, const int frame_id)
 {
 	if (X_N.size() != Y_N.size() || Y_N.size() != H_N.size())
 	{
@@ -200,8 +189,8 @@ add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A
 }
 
 template <typename R>
-void Channel<R>::
-add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id)
+void Channel<R>
+::add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -214,21 +203,22 @@ add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id)
 }
 
 template <typename R>
-void Channel<R>::
-_add_noise(const R *X_N, R *Y_N, const int frame_id)
+void Channel<R>
+::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename R>
-void Channel<R>::
-_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
+void Channel<R>
+::_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template<typename R>
-void Channel<R>::check_noise()
+void Channel<R>
+::check_noise()
 {
 	if (this->n == nullptr)
 	{
@@ -240,5 +230,3 @@ void Channel<R>::check_noise()
 
 }
 }
-
-#endif

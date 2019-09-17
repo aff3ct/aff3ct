@@ -6,7 +6,6 @@
 #include <mipp.h>
 
 #include "Module/Interleaver/Interleaver.hpp"
-
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
 

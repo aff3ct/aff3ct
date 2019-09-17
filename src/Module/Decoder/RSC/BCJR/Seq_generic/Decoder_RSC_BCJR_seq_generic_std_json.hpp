@@ -6,7 +6,6 @@
 #include <mipp.h>
 
 #include "Tools/Math/max.h"
-
 #include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp"
 
 namespace aff3ct

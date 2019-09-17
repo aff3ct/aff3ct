@@ -1,19 +1,18 @@
 #ifndef CODEC_TURBO_HPP_
 #define CODEC_TURBO_HPP_
 
+#include <memory>
 #include <vector>
 #include <fstream>
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
-
 #include "Module/CRC/CRC.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
-
 #include "Factory/Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Factory/Module/Decoder/Turbo/Decoder_turbo.hpp"
+#include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Puncturer/Turbo/Puncturer_turbo.hpp"
-
 #include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct

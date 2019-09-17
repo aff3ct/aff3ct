@@ -1,13 +1,8 @@
 #include <string>
-#include <fstream>
-#include <iostream>
-#include <algorithm>
-#include <stdexcept>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/Reorderer/Reorderer.hpp"
-
 #include "Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
 
 using namespace aff3ct;
@@ -51,14 +46,16 @@ Decoder_turbo_product<B,R>
 	if (n_ite*2 != (int)alpha.size())
 	{
 		std::stringstream message;
-		message << "'alpha.size()' has to be twice 'n_ite' ('n_ite' = " << n_ite << " and 'alpha.size()' = " << alpha.size() << ").";
+		message << "'alpha.size()' has to be twice 'n_ite' ('n_ite' = " << n_ite << " and 'alpha.size()' = "
+		        << alpha.size() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (n_ite*2 != (int)beta.size() && beta.size() != 0)
 	{
 		std::stringstream message;
-		message << "'beta.size()' has to be twice 'n_ite' or null ('n_ite' = " << n_ite << " and 'beta.size()' = " << alpha.size() << ").";
+		message << "'beta.size()' has to be twice 'n_ite' or null ('n_ite' = " << n_ite << " and 'beta.size()' = "
+		        << alpha.size() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 

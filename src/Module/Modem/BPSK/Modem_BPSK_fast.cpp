@@ -1,3 +1,5 @@
+#include <string>
+#include <algorithm>
 #include <type_traits>
 #include <mipp.h>
 

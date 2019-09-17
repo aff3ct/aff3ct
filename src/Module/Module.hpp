@@ -8,14 +8,12 @@
 #ifndef MODULE_HPP_
 #define MODULE_HPP_
 
-#include <string>
-
-#include <typeinfo>
-#include <typeindex>
-#include <unordered_map>
-#include <map>
+#include <type_traits>
 #include <functional>
+#include <cstddef>
+#include <vector>
 #include <memory>
+#include <string>
 
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
@@ -101,6 +99,7 @@ protected:
 };
 }
 }
+
 #include "Module/Module.hxx"
 
 #endif /* MODULE_HPP_ */

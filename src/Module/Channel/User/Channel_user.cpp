@@ -1,8 +1,11 @@
+#include <algorithm>
 #include <sstream>
 #include <fstream>
+#include <string>
+#include <limits>
+#include <ios>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Channel/User/Channel_user.hpp"
 
 using namespace aff3ct;

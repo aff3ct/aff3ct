@@ -2,10 +2,8 @@
 #define DECODER_POLAR_SCL_NAIVE_SYS
 
 #include <vector>
-#include <set>
 
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp"
 
 namespace aff3ct

@@ -8,7 +8,8 @@
 #ifndef PUNCTURER_HPP_
 #define PUNCTURER_HPP_
 
-#include <string>
+#include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "Module/Module.hpp"

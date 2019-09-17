@@ -2,7 +2,6 @@
 #define PUNCTURER_POLAR_SHORTLAST_HPP_
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
-
 #include "Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct

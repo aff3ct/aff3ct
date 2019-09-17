@@ -2,10 +2,8 @@
 #define ENCODER_TURBO_LEGACY_HPP_
 
 #include <vector>
-#include <string>
 
 #include "Module/Interleaver/Interleaver.hpp"
-
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 
 namespace aff3ct

@@ -1,8 +1,11 @@
 #ifndef DECODER_LDPC_BP_HORIZONTAL_LAYERED_HPP_
 #define DECODER_LDPC_BP_HORIZONTAL_LAYERED_HPP_
 
-#include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
+#include <cstdint>
+#include <vector>
 
+#include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 

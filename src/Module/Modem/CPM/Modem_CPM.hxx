@@ -2,18 +2,14 @@
 #define _USE_MATH_DEFINES
 #endif
 
-#include <cstdlib>
-#include <cstdio>
+#include <string>
 #include <cmath>
-#include <ctgmath>
+#include <vector>
 #include <sstream>
-#include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 #include "Tools/Math/numerical_integration.h"
-#include "Tools/Math/math_constants.h"
-
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 
 namespace aff3ct

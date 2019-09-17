@@ -1,10 +1,9 @@
-#include <limits>
-#include <sstream>
 #include <typeinfo>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/utils.h"
-
 #include "Module/Decoder/LDPC/BF/OMWBF/Decoder_LDPC_bit_flipping_OMWBF.hpp"
 
 using namespace aff3ct;

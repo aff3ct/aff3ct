@@ -2,18 +2,16 @@
 #define CODEC_TURBO_DB_HPP_
 
 #include <vector>
-#include <fstream>
+#include <memory>
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
-
 #include "Module/CRC/CRC.hpp"
 #include "Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
-
+#include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp"
 #include "Factory/Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
 #include "Factory/Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp"
-
 #include "Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct

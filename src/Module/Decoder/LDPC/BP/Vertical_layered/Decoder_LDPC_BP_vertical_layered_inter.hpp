@@ -2,10 +2,12 @@
 #ifdef __cpp_aligned_new
 #define DECODER_LDPC_BP_VERTICAL_LAYERED_INTER_HPP_
 
+#include <cstdint>
+#include <vector>
 #include <mipp.h>
 
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
-
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 

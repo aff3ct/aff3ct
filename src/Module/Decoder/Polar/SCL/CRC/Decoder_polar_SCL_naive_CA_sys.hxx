@@ -1,3 +1,6 @@
+#include <string>
+#include <set>
+
 #include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA_sys.hpp"
 
 namespace aff3ct

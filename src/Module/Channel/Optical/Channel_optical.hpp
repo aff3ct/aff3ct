@@ -1,8 +1,11 @@
 #ifndef CHANNEL_OPTICAL_HPP_
 #define CHANNEL_OPTICAL_HPP_
 
-#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"
+#include <memory>
 
+#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"
+#include "Tools/Noise/Noise.hpp"
+#include "Tools/Noise/Received_optical_power.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct

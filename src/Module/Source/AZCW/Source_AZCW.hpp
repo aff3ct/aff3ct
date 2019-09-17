@@ -1,9 +1,6 @@
 #ifndef SOURCE_AZCW_HPP_
 #define SOURCE_AZCW_HPP_
 
-#include <random>
-#include <vector>
-
 #include "Module/Source/Source.hpp"
 
 namespace aff3ct

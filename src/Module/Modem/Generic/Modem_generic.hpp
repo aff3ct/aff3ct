@@ -5,7 +5,8 @@
 
 #include "Tools/Math/max.h"
 #include "Tools/Constellation/Constellation.hpp"
-
+#include "Tools/Noise/Noise.hpp"
+#include "Tools/Noise/Sigma.hpp"
 #include "Module/Modem/Modem.hpp"
 
 namespace aff3ct

@@ -8,12 +8,11 @@
 #ifndef CHANNEL_HPP_
 #define CHANNEL_HPP_
 
-#include <string>
+#include <cstdint>
 #include <vector>
 #include <memory>
 
 #include "Tools/Noise/Noise.hpp"
-
 #include "Module/Module.hpp"
 
 namespace aff3ct

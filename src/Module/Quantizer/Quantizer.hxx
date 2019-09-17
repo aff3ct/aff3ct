@@ -1,17 +1,7 @@
-/*!
- * \file
- * \brief Quantizes floating-point data to fixed-point representation.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef QUANTIZER_HXX_
-#define QUANTIZER_HXX_
-
+#include <string>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Quantizer/Quantizer.hpp"
 
 namespace aff3ct
@@ -109,5 +99,3 @@ _process(const R *Y_N1, Q *Y_N2, const int frame_id)
 
 }
 }
-
-#endif

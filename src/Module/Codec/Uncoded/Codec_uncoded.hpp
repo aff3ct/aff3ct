@@ -3,7 +3,6 @@
 
 #include "Factory/Module/Encoder/NO/Encoder_NO.hpp"
 #include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
-
 #include "Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct

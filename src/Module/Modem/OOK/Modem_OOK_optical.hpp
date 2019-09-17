@@ -1,8 +1,9 @@
 #ifndef MODEM_OOK_OPTICAL_HPP_
 #define MODEM_OOK_OPTICAL_HPP_
 
+#include "Tools/Noise/Noise.hpp"
+#include "Tools/Noise/Received_optical_power.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
-
 #include "Module/Modem/OOK/Modem_OOK.hpp"
 
 namespace aff3ct

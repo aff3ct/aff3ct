@@ -1,10 +1,13 @@
-#include "Tools/Exception/exception.hpp"
-#include "Factory/Module/Interleaver/Interleaver.hpp"
-#include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
-#include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
-#include "Factory/Module/Puncturer/Puncturer.hpp"
+#include <sstream>
+#include <string>
 
+#include "Tools/Exception/exception.hpp"
+#include "Factory/Module/Puncturer/Puncturer.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
+#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 #include "Module/Codec/Turbo_product/Codec_turbo_product.hpp"
+#include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
+#include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah_fast.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;

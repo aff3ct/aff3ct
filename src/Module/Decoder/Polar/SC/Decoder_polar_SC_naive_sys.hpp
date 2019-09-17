@@ -3,9 +3,7 @@
 
 #include <vector>
 
-#include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
 
 namespace aff3ct

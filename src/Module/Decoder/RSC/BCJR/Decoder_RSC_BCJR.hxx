@@ -1,11 +1,11 @@
-#include <chrono>
-#include <limits>
+#include <algorithm>
 #include <sstream>
+#include <string>
+#include <cmath>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
-
 #include "Module/Decoder/RSC/BCJR/Decoder_RSC_BCJR.hpp"
 
 namespace aff3ct

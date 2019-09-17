@@ -1,6 +1,9 @@
 #ifndef DECODER_LDPC_BP_PEELING_HPP
 #define DECODER_LDPC_BP_PEELING_HPP
 
+#include <vector>
+
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 

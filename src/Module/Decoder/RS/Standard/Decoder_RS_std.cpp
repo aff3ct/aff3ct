@@ -1,9 +1,7 @@
-#include <chrono>
-#include <sstream>
+#include <string>
+#include <algorithm>
 
-#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/RS/Standard/Decoder_RS_std.hpp"
 
 using namespace aff3ct;

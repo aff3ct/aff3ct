@@ -1,9 +1,10 @@
 #include <sstream>
+#include <memory>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Factory/Module/Puncturer/Puncturer.hpp"
-
+#include "Factory/Module/Encoder/Encoder.hpp"
 #include "Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
 
 using namespace aff3ct;

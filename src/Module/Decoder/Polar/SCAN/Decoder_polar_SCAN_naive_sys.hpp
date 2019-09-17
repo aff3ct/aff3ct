@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-
 #include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp"
 
 namespace aff3ct

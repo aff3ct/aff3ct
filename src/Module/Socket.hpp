@@ -2,10 +2,10 @@
 #define SOCKET_HPP_
 
 #include <string>
-#include <sstream>
+#include <memory>
+#include <vector>
+#include <cstddef>
 #include <typeindex>
-
-#include "Tools/Exception/exception.hpp"
 
 #include "Module/Task.hpp"
 

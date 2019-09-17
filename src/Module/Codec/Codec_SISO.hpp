@@ -1,8 +1,9 @@
 #ifndef CODEC_SISO_HPP_
 #define CODEC_SISO_HPP_
 
-#include "Module/Decoder/Decoder_SISO.hpp"
+#include <memory>
 
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Codec/Codec.hpp"
 
 namespace aff3ct

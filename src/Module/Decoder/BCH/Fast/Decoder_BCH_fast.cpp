@@ -1,12 +1,14 @@
-#include <chrono>
-#include <sstream>
-#include <numeric>
 #include <type_traits>
+#include <algorithm>
+#include <numeric>
+#include <sstream>
+#include <string>
+#include <limits>
+#include <memory>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/BCH/Fast/Decoder_BCH_fast.hpp"
 
 using namespace aff3ct;

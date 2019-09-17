@@ -1,12 +1,9 @@
-#include <chrono>
+#include <algorithm>
 #include <sstream>
-#include <iostream>
-#include <iomanip>
 #include <cmath>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp"
 
 namespace aff3ct

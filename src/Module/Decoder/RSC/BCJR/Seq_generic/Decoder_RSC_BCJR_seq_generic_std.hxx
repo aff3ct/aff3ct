@@ -1,7 +1,8 @@
-#include <sstream>
+#include <cmath>
+#include <string>
+#include <limits>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp"
 
 namespace aff3ct

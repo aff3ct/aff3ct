@@ -8,12 +8,10 @@
 #ifndef MODEM_HXX_
 #define MODEM_HXX_
 
-#include <stdexcept>
-#include <cmath>
+#include <string>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Modem/Modem.hpp"
 
 namespace aff3ct

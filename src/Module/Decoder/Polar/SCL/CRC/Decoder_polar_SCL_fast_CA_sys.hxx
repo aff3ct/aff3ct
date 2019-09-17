@@ -1,8 +1,9 @@
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/Polar/fb_extract.h"
-
 #include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hpp"
 
 namespace aff3ct

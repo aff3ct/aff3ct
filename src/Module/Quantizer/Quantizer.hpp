@@ -8,6 +8,8 @@
 #ifndef QUANTIZER_HPP_
 #define QUANTIZER_HPP_
 
+#include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "Module/Module.hpp"

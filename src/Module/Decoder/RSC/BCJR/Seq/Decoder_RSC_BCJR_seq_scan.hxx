@@ -1,3 +1,8 @@
+#include <cmath>
+#include <limits>
+#include <string>
+
+#include "Tools/Math/utils.h"
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_fast.hpp"
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_scan.hpp"
 

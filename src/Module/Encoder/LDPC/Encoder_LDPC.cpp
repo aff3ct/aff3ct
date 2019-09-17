@@ -1,11 +1,8 @@
-#include <numeric>
-#include <iostream>
+#include <string>
 #include <sstream>
 
 #include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/matrix.h"
-
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 using namespace aff3ct;

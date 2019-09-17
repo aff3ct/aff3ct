@@ -1,13 +1,10 @@
-#include <limits>
 #include <cmath>
+#include <string>
 #include <sstream>
-#include <iostream>
+#include <algorithm>
 
-#include "Tools/general_utils.h"
-#include "Tools/Math/utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
-
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered_inter.hpp"
 #include "Module/Decoder/LDPC/BP/Vertical_layered/Decoder_LDPC_BP_vertical_layered_inter.hpp"
 

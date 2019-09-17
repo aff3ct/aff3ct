@@ -1,6 +1,8 @@
 #ifndef ENCODER_COSET_HPP_
 #define ENCODER_COSET_HPP_
 
+#include <cstdint>
+#include <vector>
 #include <random>
 
 #include "Module/Encoder/Encoder.hpp"

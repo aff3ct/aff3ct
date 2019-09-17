@@ -1,6 +1,7 @@
-#ifndef CODEC_HIHO_HXX_
-#define CODEC_HIHO_HXX_
+#include <string>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Codec/Codec_HIHO.hpp"
 
 namespace aff3ct
@@ -8,8 +9,8 @@ namespace aff3ct
 namespace module
 {
 template <typename B, typename Q>
-Codec_HIHO<B,Q>::
-Codec_HIHO(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
+Codec_HIHO<B,Q>
+::Codec_HIHO(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
 : Codec<B,Q>(K, N_cw, N, tail_length, n_frames)
 {
 	const std::string name = "Codec_HIHO";
@@ -17,8 +18,8 @@ Codec_HIHO(const int K, const int N_cw, const int N, const int tail_length, cons
 }
 
 template <typename B, typename Q>
-const std::shared_ptr<Decoder_HIHO<B>>& Codec_HIHO<B,Q>::
-get_decoder_hiho()
+const std::shared_ptr<Decoder_HIHO<B>>& Codec_HIHO<B,Q>
+::get_decoder_hiho()
 {
 	if (this->decoder_hiho == nullptr)
 	{
@@ -31,8 +32,8 @@ get_decoder_hiho()
 }
 
 template <typename B, typename Q>
-void Codec_HIHO<B,Q>::
-reset()
+void Codec_HIHO<B,Q>
+::reset()
 {
 	if (this->decoder_hiho == nullptr)
 	{
@@ -45,20 +46,18 @@ reset()
 }
 
 template <typename B, typename Q>
-void Codec_HIHO<B,Q>::
-set_decoder_hiho(std::shared_ptr<Decoder_HIHO<B>> dec)
+void Codec_HIHO<B,Q>
+::set_decoder_hiho(std::shared_ptr<Decoder_HIHO<B>> dec)
 {
 	this->decoder_hiho = dec;
 }
 
 template <typename B, typename Q>
-void Codec_HIHO<B,Q>::
-set_decoder_hiho(Decoder_HIHO<B>* dec)
+void Codec_HIHO<B,Q>
+::set_decoder_hiho(Decoder_HIHO<B>* dec)
 {
 	this->set_decoder_hiho(std::shared_ptr<Decoder_HIHO<B>>(dec));
 }
 
 }
 }
-
-#endif

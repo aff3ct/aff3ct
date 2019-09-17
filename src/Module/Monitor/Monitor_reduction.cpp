@@ -1,12 +1,10 @@
 #include <cmath>
 #include <sstream>
-
 #ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Monitor/Monitor_reduction.hpp"
 
 using namespace aff3ct;

@@ -1,6 +1,7 @@
-#ifndef CODEC_SISO_HXX_
-#define CODEC_SISO_HXX_
+#include <sstream>
+#include <string>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
@@ -8,8 +9,8 @@ namespace aff3ct
 namespace module
 {
 template <typename B, typename Q>
-Codec_SISO<B,Q>::
-Codec_SISO(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
+Codec_SISO<B,Q>
+::Codec_SISO(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
 : Codec<B,Q>(K, N_cw, N, tail_length, n_frames), decoder_siso(nullptr)
 {
 	const std::string name = "Codec_SISO";
@@ -17,8 +18,8 @@ Codec_SISO(const int K, const int N_cw, const int N, const int tail_length, cons
 }
 
 template <typename B, typename Q>
-const std::shared_ptr<Decoder_SISO<Q>>& Codec_SISO<B,Q>::
-get_decoder_siso()
+const std::shared_ptr<Decoder_SISO<Q>>& Codec_SISO<B,Q>
+::get_decoder_siso()
 {
 	if (this->decoder_siso == nullptr)
 	{
@@ -31,8 +32,8 @@ get_decoder_siso()
 }
 
 template <typename B, typename Q>
-void Codec_SISO<B,Q>::
-reset()
+void Codec_SISO<B,Q>
+::reset()
 {
 	if (this->decoder_siso == nullptr)
 	{
@@ -45,20 +46,18 @@ reset()
 }
 
 template <typename B, typename Q>
-void Codec_SISO<B,Q>::
-set_decoder_siso(std::shared_ptr<Decoder_SISO<Q>> dec)
+void Codec_SISO<B,Q>
+::set_decoder_siso(std::shared_ptr<Decoder_SISO<Q>> dec)
 {
 	this->decoder_siso = dec;
 }
 
 template <typename B, typename Q>
-void Codec_SISO<B,Q>::
-set_decoder_siso(Decoder_SISO<Q>* dec)
+void Codec_SISO<B,Q>
+::set_decoder_siso(Decoder_SISO<Q>* dec)
 {
 	this->set_decoder_siso(std::shared_ptr<Decoder_SISO<Q>>(dec));
 }
 
 }
 }
-
-#endif /* CODEC_SISO_HXX_ */

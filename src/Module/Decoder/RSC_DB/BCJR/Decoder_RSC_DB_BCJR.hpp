@@ -2,7 +2,6 @@
 #define DECODER_RSC_DB_BCJR_HPP_
 
 #include <vector>
-#include <string>
 
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 

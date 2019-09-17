@@ -1,6 +1,11 @@
 #ifndef Decoder_chase_pyndiah_fast_HPP_
 #define	Decoder_chase_pyndiah_fast_HPP_
 
+#include <vector>
+#include <mipp.h>
+
+#include "Module/Encoder/Encoder.hpp"
+#include "Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 
 namespace aff3ct

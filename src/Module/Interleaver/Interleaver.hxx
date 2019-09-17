@@ -1,12 +1,8 @@
-#ifndef INTERLEAVER_HXX_
-#define INTERLEAVER_HXX_
-
-#include <cstdint>
+#include <string>
 #include <sstream>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Interleaver/Interleaver.hpp"
 
 namespace aff3ct
@@ -242,5 +238,3 @@ _interleave(const D *in_vec, D *out_vec,
 
 }
 }
-
-#endif

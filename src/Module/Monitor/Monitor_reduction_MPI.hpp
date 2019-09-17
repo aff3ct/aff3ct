@@ -3,6 +3,8 @@
 #ifndef MONITOR_REDUCTION_MPI_HPP_
 #define MONITOR_REDUCTION_MPI_HPP_
 
+#include <vector>
+#include <memory>
 #include <mpi.h>
 
 #include "Module/Monitor/Monitor_reduction.hpp"

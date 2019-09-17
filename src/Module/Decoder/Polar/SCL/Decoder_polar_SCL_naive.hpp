@@ -4,6 +4,7 @@
 #include <set>
 #include <vector>
 
+#include "Tools/Algo/Tree/Binary_node.hpp"
 #include "Tools/Algo/Tree/Binary_tree_metric.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"

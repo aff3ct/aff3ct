@@ -8,8 +8,7 @@
 #ifndef DECODER_SIHO_HPP_
 #define DECODER_SIHO_HPP_
 
-#include <chrono>
-#include <string>
+#include <memory>
 #include <vector>
 
 #include "Module/Decoder/Decoder.hpp"

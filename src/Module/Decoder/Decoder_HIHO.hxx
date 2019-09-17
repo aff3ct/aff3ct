@@ -1,17 +1,8 @@
-/*!
- * \file
- * \brief A Decoder is an algorithm dedicated to find the initial sequence of information bits (before the noise).
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef DECODER_HIHO_HXX_
-#define DECODER_HIHO_HXX_
-
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/Decoder_HIHO.hpp"
 
 namespace aff3ct
@@ -20,8 +11,8 @@ namespace module
 {
 
 template <typename B>
-Decoder_HIHO<B>::
-Decoder_HIHO(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
+Decoder_HIHO<B>
+::Decoder_HIHO(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
 : Decoder(K, N, n_frames, simd_inter_frame_level),
   Y_N    (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
   V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
@@ -60,8 +51,8 @@ Decoder_HIHO(const int K, const int N, const int n_frames, const int simd_inter_
 
 template <typename B>
 template <class A>
-void Decoder_HIHO<B>::
-decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id)
+void Decoder_HIHO<B>
+::decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)Y_N.size())
 	{
@@ -91,8 +82,8 @@ decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_
 }
 
 template <typename B>
-void Decoder_HIHO<B>::
-decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+void Decoder_HIHO<B>
+::decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	if (frame_id < 0 || this->simd_inter_frame_level == 1)
 	{
@@ -144,8 +135,8 @@ decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 
 template <typename B>
 template <class A>
-void Decoder_HIHO<B>::
-decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int frame_id)
+void Decoder_HIHO<B>
+::decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)Y_N.size())
 	{
@@ -175,8 +166,8 @@ decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int fra
 }
 
 template <typename B>
-void Decoder_HIHO<B>::
-decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+void Decoder_HIHO<B>
+::decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	if (frame_id < 0 || this->simd_inter_frame_level == 1)
 	{
@@ -227,20 +218,18 @@ decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 }
 
 template <typename B>
-void Decoder_HIHO<B>::
-_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+void Decoder_HIHO<B>
+::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
-void Decoder_HIHO<B>::
-_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+void Decoder_HIHO<B>
+::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 }
 }
-
-#endif

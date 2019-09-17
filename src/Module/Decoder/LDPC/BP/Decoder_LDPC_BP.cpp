@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 using namespace aff3ct;

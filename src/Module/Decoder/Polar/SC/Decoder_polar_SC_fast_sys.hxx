@@ -1,14 +1,13 @@
-#include <chrono>
-#include <algorithm>
-#include <iostream>
+#include <cmath>
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Math/utils.h"
 #include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Perf/Transpose/transpose_selector.h"
-
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0_left.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r1.hpp"
@@ -16,9 +15,7 @@
 #include "Tools/Code/Polar/Patterns/Pattern_polar_rep_left.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_spc.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
-
 #include "Tools/Code/Polar/fb_extract.h"
-
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hpp"
 
 namespace aff3ct

@@ -1,8 +1,9 @@
 #include <cmath>
+#include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
-
 #include "Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp"
 
 using namespace aff3ct;

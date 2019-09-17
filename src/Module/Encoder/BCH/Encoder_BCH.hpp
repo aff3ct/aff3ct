@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
-
 #include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

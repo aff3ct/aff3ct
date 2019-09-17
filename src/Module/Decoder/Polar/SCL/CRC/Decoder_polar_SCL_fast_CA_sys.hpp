@@ -1,10 +1,13 @@
 #ifndef DECODER_POLAR_SCL_FAST_SYS_CA
 #define DECODER_POLAR_SCL_FAST_SYS_CA
 
+#include <memory>
+#include <vector>
+#include <mipp.h>
+
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Module/CRC/CRC.hpp"
-
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_fast_sys.hpp"
 
 namespace aff3ct

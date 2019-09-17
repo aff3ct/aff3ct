@@ -1,18 +1,15 @@
 #include <functional>
-#include <cctype>
+#include <sstream>
+#include <string>
+#include <ios>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp"
-#include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp"
-
-#include "Factory/Module/Interleaver/Interleaver.hpp"
-#include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
-#include "Factory/Module/Decoder/RSC/Decoder_RSC.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
+#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 #include "Factory/Tools/Code/Turbo/Scaling_factor.hpp"
 #include "Factory/Tools/Code/Turbo/Flip_and_check.hpp"
-
 #include "Module/Codec/Turbo/Codec_turbo.hpp"
 
 using namespace aff3ct;

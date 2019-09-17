@@ -1,10 +1,9 @@
 #ifndef CHANNEL_USER_BS_HPP_
 #define CHANNEL_USER_BS_HPP_
 
-#include <vector>
+#include <string>
 
 #include "Tools/types.h"
-
 #include "Module/Channel/User/Channel_user.hpp"
 
 namespace aff3ct

@@ -1,7 +1,8 @@
 #ifndef ENCODER_AZCW_HPP_
 #define ENCODER_AZCW_HPP_
 
-#include <random>
+#include <cstdint>
+#include <vector>
 
 #include "Module/Encoder/Encoder.hpp"
 

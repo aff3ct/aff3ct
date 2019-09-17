@@ -2,7 +2,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Source/User/Source_user.hpp"
 
 using namespace aff3ct;

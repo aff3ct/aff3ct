@@ -1,22 +1,13 @@
 #ifndef TASK_HPP_
 #define TASK_HPP_
 
+#include <functional>
+#include <cstddef>
 #include <string>
-#include <sstream>
 #include <memory>
-
-#include <map>
 #include <chrono>
 #include <vector>
-#include <typeinfo>
-#include <algorithm>
-#include <typeindex>
-#include <functional>
-#include <unordered_map>
-
 #include <mipp.h>
-
-#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {
@@ -87,18 +78,18 @@ public:
 	void set_debug_precision(const uint8_t  prec     );
 	void set_debug_frame_max(const uint32_t limit    );
 
-	inline bool is_autoalloc        (                  ) const { return this->autoalloc;            }
-	inline bool is_autoexec         (                  ) const { return this->autoexec;             }
-	inline bool is_stats            (                  ) const { return this->stats;                }
-	inline bool is_fast             (                  ) const { return this->fast;                 }
-	inline bool is_debug            (                  ) const { return this->debug;                }
-	inline bool is_debug_hex        (                  ) const { return this->debug_hex;            }
-	inline bool is_last_input_socket(const Socket &s_in) const { return last_input_socket == &s_in; }
+	inline bool is_autoalloc        (                  ) const;
+	inline bool is_autoexec         (                  ) const;
+	inline bool is_stats            (                  ) const;
+	inline bool is_fast             (                  ) const;
+	inline bool is_debug            (                  ) const;
+	inline bool is_debug_hex        (                  ) const;
+	inline bool is_last_input_socket(const Socket &s_in) const;
 	inline bool can_exec            (                  ) const;
 
-	inline const Module& get_module     (               ) const { return this->module;  }
-	inline std::string   get_name       (               ) const { return this->name;    }
-	inline uint32_t      get_n_calls    (               ) const { return this->n_calls; }
+	inline const Module& get_module     (               ) const;
+	inline std::string   get_name       (               ) const;
+	inline uint32_t      get_n_calls    (               ) const;
 	       socket_t      get_socket_type(const Socket &s) const;
 
 	// get stats

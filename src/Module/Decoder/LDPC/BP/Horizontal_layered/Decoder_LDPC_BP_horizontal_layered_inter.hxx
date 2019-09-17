@@ -1,13 +1,10 @@
-#include <limits>
-#include <cmath>
+#include <algorithm>
 #include <sstream>
-#include <iostream>
+#include <string>
+#include <cmath>
 
-#include "Tools/general_utils.h"
-#include "Tools/Math/utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
-
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered_inter.hpp"
 
 namespace aff3ct

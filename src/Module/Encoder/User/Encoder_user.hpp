@@ -1,6 +1,7 @@
 #ifndef ENCODER_USER_HPP_
 #define ENCODER_USER_HPP_
 
+#include <vector>
 #include <string>
 
 #include "Module/Encoder/Encoder.hpp"

@@ -1,9 +1,11 @@
 #ifndef DECODER_CHASE_STD_HPP_
 #define DECODER_CHASE_STD_HPP_
 
-#include "Module/Encoder/Encoder.hpp"
+#include <cstdint>
+#include <vector>
 
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Module/Encoder/Encoder.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {

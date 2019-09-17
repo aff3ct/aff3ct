@@ -1,19 +1,7 @@
-/*!
- * \file
- * \brief Performs the coset approach (flips the bits or the signs depending on the initial codeword).
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef COSET_HXX_
-#define COSET_HXX_
-
-#include <vector>
 #include <string>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Coset/Coset.hpp"
 
 namespace aff3ct
@@ -22,8 +10,8 @@ namespace module
 {
 
 template <typename B, typename D>
-Coset<B,D>::
-Coset(const int size, const int n_frames)
+Coset<B,D>
+::Coset(const int size, const int n_frames)
 : Module(n_frames), size(size)
 {
 	const std::string name = "Coset";
@@ -52,16 +40,16 @@ Coset(const int size, const int n_frames)
 }
 
 template <typename B, typename D>
-int Coset<B,D>::
-get_size() const
+int Coset<B,D>
+::get_size() const
 {
 	return this->size;
 }
 
 template <typename B, typename D>
 template <class AB, class AD>
-void Coset<B,D>::
-apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in, std::vector<D,AD> &out,
+void Coset<B,D>
+::apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in, std::vector<D,AD> &out,
            const int frame_id)
 {
 	if (ref.size() != in.size() || in.size() != out.size())
@@ -109,8 +97,8 @@ apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in, std::vector<D,A
 }
 
 template <typename B, typename D>
-void Coset<B,D>::
-apply(const B *ref, const D *in, D *out, const int frame_id)
+void Coset<B,D>
+::apply(const B *ref, const D *in, D *out, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -123,13 +111,11 @@ apply(const B *ref, const D *in, D *out, const int frame_id)
 }
 
 template <typename B, typename D>
-void Coset<B,D>::
-_apply(const B *ref, const D *in, D *out, const int frame_id)
+void Coset<B,D>
+::_apply(const B *ref, const D *in, D *out, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 }
 }
-
-#endif

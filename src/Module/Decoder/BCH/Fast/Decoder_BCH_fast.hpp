@@ -5,7 +5,6 @@
 #include <mipp.h>
 
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
-
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 
 namespace aff3ct

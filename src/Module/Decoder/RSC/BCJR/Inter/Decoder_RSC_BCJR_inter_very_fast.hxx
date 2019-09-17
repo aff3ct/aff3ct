@@ -1,5 +1,8 @@
+#include <string>
+#include <cmath>
 #include <mipp.h>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hpp"
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_very_fast.hpp"
 

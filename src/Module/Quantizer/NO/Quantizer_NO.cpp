@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cmath>
 
 #include "Module/Quantizer/NO/Quantizer_NO.hpp"
 

@@ -1,6 +1,9 @@
 #ifndef CRC_POLYNOMIAL_HPP_
 #define CRC_POLYNOMIAL_HPP_
 
+#include <string>
+#include <vector>
+#include <tuple>
 #include <map>
 
 #include "Module/CRC/CRC.hpp"

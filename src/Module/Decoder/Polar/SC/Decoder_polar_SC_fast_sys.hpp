@@ -1,15 +1,15 @@
 #ifndef DECODER_POLAR_SC_FAST_SYS_
 #define DECODER_POLAR_SC_FAST_SYS_
 
-#include <map>
+#include <memory>
 #include <vector>
 #include <mipp.h>
 
+#include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
-
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct

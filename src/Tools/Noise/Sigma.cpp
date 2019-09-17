@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Noise/Sigma.hpp"
 
 using namespace aff3ct;

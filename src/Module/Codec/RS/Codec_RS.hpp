@@ -2,10 +2,8 @@
 #define CODEC_RS_HPP_
 
 #include "Tools/Code/RS/RS_polynomial_generator.hpp"
-
 #include "Factory/Module/Encoder/RS/Encoder_RS.hpp"
 #include "Factory/Module/Decoder/RS/Decoder_RS.hpp"
-
 #include "Module/Codec/Codec_SIHO_HIHO.hpp"
 
 namespace aff3ct

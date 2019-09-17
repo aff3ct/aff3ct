@@ -2,7 +2,9 @@
 #define DECODER_LDPC_BP_FLOODING_GALLAGER_E_HPP_
 
 #include <cstdint>
+#include <vector>
 
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 

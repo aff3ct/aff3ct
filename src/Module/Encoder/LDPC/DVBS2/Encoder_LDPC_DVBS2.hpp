@@ -1,10 +1,7 @@
 #ifndef ENCODER_LDPC_DVBS2_HPP_
 #define ENCODER_LDPC_DVBS2_HPP_
 
-#include <vector>
-
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
-
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 namespace aff3ct

@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include <algorithm>
 
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 

@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "Tools/Code/RS/RS_polynomial_generator.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/RS/Decoder_RS.hpp"
 

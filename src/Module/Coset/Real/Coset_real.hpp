@@ -1,10 +1,6 @@
 #ifndef COSET_REAL_HPP_
 #define COSET_REAL_HPP_
 
-#include <vector>
-#include <string>
-#include <mipp.h>
-
 #include "Module/Coset/Coset.hpp"
 
 namespace aff3ct

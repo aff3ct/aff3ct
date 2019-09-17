@@ -1,7 +1,7 @@
 #ifndef DECODER_POLAR_SCL_MEM_FAST_SYS
 #define DECODER_POLAR_SCL_MEM_FAST_SYS
 
-#include <set>
+#include <memory>
 #include <vector>
 #include <mipp.h>
 
@@ -10,6 +10,7 @@
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 

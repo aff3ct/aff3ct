@@ -1,7 +1,8 @@
+#include <algorithm>
+#include <string>
+
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Noise/noise_utils.h"
-#include "Tools/Math/utils.h"
-
 #include "Module/Decoder/LDPC/BP/Peeling/Decoder_LDPC_BP_peeling.hpp"
 
 using namespace aff3ct;

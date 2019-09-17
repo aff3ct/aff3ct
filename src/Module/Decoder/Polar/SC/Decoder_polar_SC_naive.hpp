@@ -3,10 +3,10 @@
 
 #include <vector>
 
+#include "Tools/Algo/Tree/Binary_node.hpp"
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
-
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct

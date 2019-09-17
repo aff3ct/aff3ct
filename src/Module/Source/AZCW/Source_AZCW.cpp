@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "Module/Source/AZCW/Source_AZCW.hpp"
 
 using namespace aff3ct::module;

@@ -1,7 +1,9 @@
 #include <type_traits>
+#include <algorithm>
+#include <string>
 
 #include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
-
+#include "Tools/Noise/noise_utils.h"
 #include "Module/Channel/Binary_erasure/Channel_binary_erasure.hpp"
 
 using namespace aff3ct;

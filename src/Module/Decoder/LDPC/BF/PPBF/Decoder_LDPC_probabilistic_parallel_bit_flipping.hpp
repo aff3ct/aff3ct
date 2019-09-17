@@ -1,9 +1,11 @@
 #ifndef DECODER_LDPC_PROBABILISTIC_PARALLEL_BIT_FLIPPING_HPP_
 #define DECODER_LDPC_PROBABILISTIC_PARALLEL_BIT_FLIPPING_HPP_
 
+#include <vector>
 #include <random>
 #include <memory>
 
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping_hard.hpp"
 
 namespace aff3ct

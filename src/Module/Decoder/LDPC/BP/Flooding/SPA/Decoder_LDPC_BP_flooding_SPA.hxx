@@ -1,12 +1,9 @@
-#include <chrono>
+#include <string>
 #include <limits>
-#include <sstream>
+#include <cmath>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/common/hard_decide.h"
-#include "Tools/Math/utils.h"
-
 #include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_SPA.hpp"
 
 namespace aff3ct

@@ -1,11 +1,8 @@
-#include <chrono>
-#include <limits>
+#include <algorithm>
+#include <string>
 #include <cmath>
-#include <stdexcept>
 
 #include "Tools/Perf/common/hard_decide.h"
-#include "Tools/Math/utils.h"
-
 #include "Module/Decoder/LDPC/BP/Vertical_layered/Decoder_LDPC_BP_vertical_layered.hpp"
 
 namespace aff3ct

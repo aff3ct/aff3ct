@@ -1,7 +1,7 @@
-#include <chrono>
+#include <algorithm>
+#include <string>
 
 #include "Tools/Perf/common/hard_decide.h"
-
 #include "Module/Decoder/NO/Decoder_NO.hpp"
 
 using namespace aff3ct;

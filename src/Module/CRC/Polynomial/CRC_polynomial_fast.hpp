@@ -1,7 +1,8 @@
 #ifndef CRC_POLYNOMIAL_FAST_HPP_
 #define CRC_POLYNOMIAL_FAST_HPP_
 
-#include <map>
+#include <vector>
+#include <string>
 
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 
