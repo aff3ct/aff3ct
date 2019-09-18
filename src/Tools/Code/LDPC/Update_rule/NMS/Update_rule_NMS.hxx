@@ -1,4 +1,4 @@
-#include <cmath>
+#include <algorithm>
 #include <sstream>
 
 #include "Tools/Math/utils.h"

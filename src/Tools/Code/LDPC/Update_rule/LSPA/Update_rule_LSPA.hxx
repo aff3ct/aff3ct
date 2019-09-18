@@ -1,3 +1,7 @@
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <type_traits>
 #include <sstream>
 #include <cassert>
 #include <limits>

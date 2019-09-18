@@ -1,6 +1,3 @@
-#ifndef GENERAL_UTILS_HXX
-#define GENERAL_UTILS_HXX
-
 #include <algorithm>
 #include <cassert>
 #include <sstream>
@@ -156,5 +153,3 @@ constexpr size_t offsetOf(U T::*member)
 
 }
 }
-
-#endif //GENERAL_UTILS_HXX

@@ -1,8 +1,9 @@
+#include <sstream>
+#include <utility>
 #include <thread>
 
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Math/utils.h"
-
 #include "Factory/Simulation/BFER/BFER.hpp"
 
 using namespace aff3ct;

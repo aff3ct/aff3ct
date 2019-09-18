@@ -1,6 +1,7 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Tools/Interleaver/Random_column/Interleaver_core_random_column.hpp"
 #include "Tools/Interleaver/Row_column/Interleaver_core_row_column.hpp"
 #include "Tools/Interleaver/Column_row/Interleaver_core_column_row.hpp"
@@ -12,7 +13,6 @@
 #include "Tools/Interleaver/Golden/Interleaver_core_golden.hpp"
 #include "Tools/Interleaver/Random/Interleaver_core_random.hpp"
 #include "Tools/Interleaver/User/Interleaver_core_user.hpp"
-
 #include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 
 using namespace aff3ct;

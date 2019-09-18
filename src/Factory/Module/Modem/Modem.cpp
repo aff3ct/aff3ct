@@ -1,8 +1,11 @@
+#include <algorithm>
+#include <utility>
+#include <memory>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
-
+#include "Tools/Noise/Sigma.hpp"
 #include "Module/Modem/OOK/Modem_OOK_BSC.hpp"
 #include "Module/Modem/OOK/Modem_OOK_BEC.hpp"
 #include "Module/Modem/OOK/Modem_OOK_AWGN.hpp"
@@ -13,12 +16,10 @@
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 #include "Module/Modem/SCMA/Modem_SCMA.hpp"
 #include "Module/Modem/Generic/Modem_generic.hpp"
-
 #include "Tools/Constellation/PAM/Constellation_PAM.hpp"
 #include "Tools/Constellation/PSK/Constellation_PSK.hpp"
 #include "Tools/Constellation/QAM/Constellation_QAM.hpp"
 #include "Tools/Constellation/User/Constellation_user.hpp"
-
 #include "Factory/Module/Modem/Modem.hpp"
 
 using namespace aff3ct;
@@ -276,7 +277,6 @@ module::Modem<B,R,Q>* Modem::parameters
 	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N, tools::Sigma<R>((R)this->noise),                                                                                                           this->no_sig2, this->n_frames);
 	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N, tools::Sigma<R>((R)this->noise),                                                                                                           this->no_sig2, this->n_frames);
 	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
-
 
 	std::unique_ptr<tools::Constellation<R>> cstl(this->build_constellation<R>());
 	if (cstl != nullptr) return new module::Modem_generic<B,R,Q,MAX>(N, std::move(cstl), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_frames);

@@ -5,9 +5,9 @@
 #include <immintrin.h>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Perf/Transpose/transpose_SSE.h"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 //

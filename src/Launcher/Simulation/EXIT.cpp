@@ -1,9 +1,5 @@
 #if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
-#include <thread>
-#include <string>
-#include <iostream>
-
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 

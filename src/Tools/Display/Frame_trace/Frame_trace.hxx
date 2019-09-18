@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iomanip>
+#include <ios>
 #include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"

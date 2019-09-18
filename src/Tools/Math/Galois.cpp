@@ -1,10 +1,7 @@
-#include <cmath>
-#include <iostream>
 #include <sstream>
 #include <cmath>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Math/Galois.hpp"
 
 using namespace aff3ct;

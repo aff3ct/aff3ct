@@ -1,10 +1,7 @@
-#include <vector>
-#include <cmath>
-#include <sstream>
 #include <algorithm>
+#include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Code/CPM/CPE/Encoder_CPE_Rimoldi.hpp"
 
 using namespace aff3ct;

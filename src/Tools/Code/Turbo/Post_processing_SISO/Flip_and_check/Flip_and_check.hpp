@@ -1,7 +1,6 @@
 #ifndef FLIP_AND_CHECK_HPP
 #define FLIP_AND_CHECK_HPP
 
-#include <vector>
 #include <mipp.h>
 
 #include "Module/CRC/CRC.hpp"

@@ -1,9 +1,7 @@
-#include <stdexcept>
-
 #include "Tools/Math/utils.h"
-
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_array.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename R>

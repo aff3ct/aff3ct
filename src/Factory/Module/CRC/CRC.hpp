@@ -2,7 +2,6 @@
 #define FACTORY_CRC_HPP
 
 #include <string>
-#include <string>
 #include <map>
 
 #include "Tools/Arguments/Argument_tools.hpp"

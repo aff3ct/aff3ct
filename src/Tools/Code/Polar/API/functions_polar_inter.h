@@ -1,6 +1,9 @@
 #ifndef FUNCTIONS_POLAR_INTER_H_
 #define FUNCTIONS_POLAR_INTER_H_
 
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <cmath>
 #include <limits>
 #include <mipp.h>

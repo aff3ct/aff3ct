@@ -1,6 +1,7 @@
 #ifndef API_POLAR_STATIC_SEQ_HPP_
 #define API_POLAR_STATIC_SEQ_HPP_
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 

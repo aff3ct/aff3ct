@@ -1,6 +1,5 @@
 #include "Factory/Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 #include "Factory/Module/Decoder/RSC_DB/Decoder_RSC_DB.hpp"
-
 #include "Factory/Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
 
 using namespace aff3ct;

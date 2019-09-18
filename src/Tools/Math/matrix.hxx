@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Math/matrix.h"
 
 namespace aff3ct

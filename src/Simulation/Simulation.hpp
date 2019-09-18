@@ -8,10 +8,11 @@
 #ifndef SIMULATION_HPP_
 #define SIMULATION_HPP_
 
-#include <map>
-#include <string>
-#include <memory>
 #include <type_traits>
+#include <vector>
+#include <memory>
+#include <string>
+#include <map>
 
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Factory/Simulation/Simulation.hpp"

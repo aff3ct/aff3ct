@@ -1,12 +1,8 @@
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 
-#include <cmath>
 #include <sstream>
-#include <cstdio>
-#include <cstdlib>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Perf/Transpose/transpose_NEON.h"
 
 #define DATA_TYPE  trans_TYPE

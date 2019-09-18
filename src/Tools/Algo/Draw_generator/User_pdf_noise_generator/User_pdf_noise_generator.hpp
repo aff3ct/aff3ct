@@ -2,6 +2,7 @@
 #define USER_PDF_NOISE_GENERATOR_HPP
 
 #include <memory>
+#include <vector>
 
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Algo/Draw_generator/Draw_generator.hpp"

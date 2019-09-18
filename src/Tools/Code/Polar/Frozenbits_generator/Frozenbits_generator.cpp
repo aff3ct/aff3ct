@@ -1,10 +1,12 @@
+#include <algorithm>
+#include <iomanip>
 #include <sstream>
 #include <fstream>
 #include <numeric>
+#include <ios>
 
 #include "Tools/Noise/noise_utils.h"
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 using namespace aff3ct;

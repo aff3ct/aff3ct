@@ -1,3 +1,6 @@
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <utility>
 #include <sstream>
 #include <cmath>
@@ -23,8 +26,8 @@ bool has_complex_symbols(const Constellation<R>& cstl)
 }
 
 template <typename R>
-Constellation<R>::
-Constellation(std::vector<S>&& symbols, const std::string& name)
+Constellation<R>
+::Constellation(std::vector<S>&& symbols, const std::string& name)
 : n_bps((unsigned int)std::log2(symbols.size())),
   n_symbs(1 << n_bps),
   name(std::to_string(n_symbs) + name),
@@ -41,85 +44,85 @@ Constellation(std::vector<S>&& symbols, const std::string& name)
 }
 
 template <typename R>
-Constellation<R>::
-Constellation(const unsigned n_bps, const std::string& name)
+Constellation<R>
+::Constellation(const unsigned n_bps, const std::string& name)
 : Constellation(std::move(std::vector<S>((size_t)((int64_t)1 << n_bps))), name)
 {
 }
 
 template <typename R>
-Constellation<R>::
-Constellation(const std::vector<S>& symbols, const std::string& name)
+Constellation<R>
+::Constellation(const std::vector<S>& symbols, const std::string& name)
 : Constellation(std::move(std::vector<S>(symbols)), name)
 {
 }
 
 template <typename R>
-const std::string& Constellation<R>::
-get_name() const
+const std::string& Constellation<R>
+::get_name() const
 {
 	return name;
 }
 
 template <typename R>
-unsigned Constellation<R>::
-get_n_bits_per_symbol() const
+unsigned Constellation<R>
+::get_n_bits_per_symbol() const
 {
 	return n_bps;
 }
 
 template <typename R>
-unsigned Constellation<R>::
-get_n_symbols() const
+unsigned Constellation<R>
+::get_n_symbols() const
 {
 	return n_symbs;
 }
 
 template <typename R>
-bool Constellation<R>::
-is_complex() const
+bool Constellation<R>
+::is_complex() const
 {
 	return is_cplx;
 }
 
 template <typename R>
-const typename Constellation<R>::S& Constellation<R>::
-operator[](const size_t idx) const
+const typename Constellation<R>::S& Constellation<R>
+::operator[](const size_t idx) const
 {
 	return constellation[idx];
 }
 
 template <typename R>
-const typename Constellation<R>::S& Constellation<R>::
-get_symbol(const size_t idx) const
+const typename Constellation<R>::S& Constellation<R>
+::get_symbol(const size_t idx) const
 {
 	return constellation[idx];
 }
 
 template <typename R>
-R Constellation<R>::
-get_imag(const size_t idx) const
+R Constellation<R>
+::get_imag(const size_t idx) const
 {
 	return constellation[idx].imag();
 }
 
 template <typename R>
-R Constellation<R>::
-get_real(const size_t idx) const
+R Constellation<R>
+::get_real(const size_t idx) const
 {
 	return constellation[idx].real();
 }
 
 template <typename R>
-typename Constellation<R>::S Constellation<R>::
-bits_to_symbol(const uint8_t bits[]) const
+typename Constellation<R>::S Constellation<R>
+::bits_to_symbol(const uint8_t bits[]) const
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename R>
-void Constellation<R>::
-build()
+void Constellation<R>
+::build()
 {
 	try
 	{

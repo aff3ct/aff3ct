@@ -1,8 +1,8 @@
 #ifndef MATRIX_HPP_
 #define MATRIX_HPP_
 
-#include <string>
 #include <iostream>
+#include <string>
 
 namespace aff3ct
 {

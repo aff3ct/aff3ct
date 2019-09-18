@@ -1,5 +1,5 @@
-#include <iostream>
-#include <typeinfo>
+#include <type_traits>
+#include <cmath>
 #include <mipp.h>
 
 #include "Launcher/Simulation/BFER_std.hpp"

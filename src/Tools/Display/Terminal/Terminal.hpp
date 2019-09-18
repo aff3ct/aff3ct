@@ -8,11 +8,11 @@
 #ifndef TERMINAL_HPP_
 #define TERMINAL_HPP_
 
+#include <condition_variable>
+#include <iostream>
 #include <chrono>
 #include <mutex>
 #include <thread>
-#include <condition_variable>
-#include <iostream>
 
 #include "Tools/Display/Reporter/Reporter.hpp"
 

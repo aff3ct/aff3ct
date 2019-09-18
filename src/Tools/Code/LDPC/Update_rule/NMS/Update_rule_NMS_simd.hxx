@@ -1,7 +1,5 @@
-#include <cmath>
 #include <sstream>
 
-#include "Tools/Math/utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
 

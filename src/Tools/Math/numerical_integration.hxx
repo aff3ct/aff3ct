@@ -1,7 +1,3 @@
-#ifndef NUMERICAL_INTEGRATION_HXX_
-#define NUMERICAL_INTEGRATION_HXX_
-
-#include <cassert>
 #include <mipp.h>
 
 #include "Tools/Math/utils.h"
@@ -345,5 +341,3 @@ R simps_integral_seq(Function f, const R min, const R max, const int number_step
 
 }
 }
-
-#endif

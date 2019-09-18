@@ -1,9 +1,7 @@
-#include <iostream>
-#include <typeinfo>
-#include <mipp.h>
+#include <type_traits>
+// #include <mipp.h>
 
 #include "Launcher/Simulation/BFER_std.hpp"
-
 #include "Launcher/Code/Turbo_product/Turbo_product.hpp"
 
 using namespace aff3ct;

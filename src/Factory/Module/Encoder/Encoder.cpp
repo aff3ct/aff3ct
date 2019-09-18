@@ -1,10 +1,10 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Encoder/AZCW/Encoder_AZCW.hpp"
 #include "Module/Encoder/Coset/Encoder_coset.hpp"
 #include "Module/Encoder/User/Encoder_user.hpp"
-
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 using namespace aff3ct;

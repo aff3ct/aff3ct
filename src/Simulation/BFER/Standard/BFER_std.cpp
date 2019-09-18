@@ -1,7 +1,9 @@
+#include <functional>
+#include <stdexcept>
+#include <iomanip>
+
 #include "Tools/Exception/exception.hpp"
-
 #include "Factory/Module/Coset/Coset.hpp"
-
 #include "Simulation/BFER/Standard/BFER_std.hpp"
 
 using namespace aff3ct;

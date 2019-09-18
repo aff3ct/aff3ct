@@ -1,9 +1,9 @@
 #include <mipp.h>
 
 #include "Tools/Math/utils.h"
-
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_vec.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename R>

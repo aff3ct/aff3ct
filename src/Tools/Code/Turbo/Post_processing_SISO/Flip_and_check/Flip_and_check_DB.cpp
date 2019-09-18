@@ -1,9 +1,7 @@
-#include <cmath>
-#include <sstream>
 #include <algorithm>
+#include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check_DB.hpp"
 
 using namespace aff3ct;

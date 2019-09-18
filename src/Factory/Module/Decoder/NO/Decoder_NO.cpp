@@ -1,9 +1,5 @@
-#include <sstream>
-
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/NO/Decoder_NO.hpp"
-
 #include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
 
 using namespace aff3ct;

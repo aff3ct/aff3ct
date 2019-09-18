@@ -1,9 +1,9 @@
 #ifndef ARGUMENT_TYPE_FILE_SYSTEM_HPP_
 #define ARGUMENT_TYPE_FILE_SYSTEM_HPP_
 
-#include <string>
 #include <stdexcept>
 #include <algorithm>
+#include <string>
 
 #include "Tools/system_functions.h"
 #include "Tools/version.h"

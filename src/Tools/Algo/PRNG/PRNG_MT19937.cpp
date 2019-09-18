@@ -21,8 +21,6 @@
  * \section LICENSE
  * This file is under BSD license.
  */
-#include <stdio.h>
-
 #include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
 
 using namespace aff3ct::tools;

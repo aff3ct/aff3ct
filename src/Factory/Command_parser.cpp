@@ -1,6 +1,7 @@
+#include <stdexcept>
+
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Exception/exception.hpp"
-
 #include "Factory/Command_parser.hpp"
 
 using namespace aff3ct;

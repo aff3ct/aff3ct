@@ -1,11 +1,8 @@
-#include <iostream>
-#include <typeinfo>
+#include <type_traits>
 #include <mipp.h>
 
 #include "Launcher/Simulation/BFER_std.hpp"
-
 #include "Factory/Module/Codec/Polar/Codec_polar.hpp"
-
 #include "Launcher/Code/Polar/Polar.hpp"
 
 using namespace aff3ct;

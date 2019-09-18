@@ -1,4 +1,3 @@
-#include <utility>
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"

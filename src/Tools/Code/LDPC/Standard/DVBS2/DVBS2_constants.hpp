@@ -1,7 +1,6 @@
 /*
  * Link to the DVBS2 standard: https://www.etsi.org/deliver/etsi_en/302300_302399/30230701/01.04.01_60/en_30230701v010401p.pdf
  */
-
 #ifndef DVBS2_CONSTANTS_HPP_
 #define DVBS2_CONSTANTS_HPP_
 

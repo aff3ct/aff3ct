@@ -3,8 +3,6 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
-#include "Tools/Exception/exception.hpp"
-
 #include "Tools/Algo/Draw_generator/Event_generator/GSL/Event_generator_GSL.hpp"
 
 using namespace aff3ct;

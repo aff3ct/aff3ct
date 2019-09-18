@@ -1,15 +1,14 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Display/rang_format/rang_format.h"
-
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
-
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 #include "Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp"
 #include "Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp"
 #include "Module/Encoder/LDPC/From_IRA/Encoder_LDPC_from_IRA.hpp"
 #include "Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp"
-
 #include "Factory/Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 using namespace aff3ct;

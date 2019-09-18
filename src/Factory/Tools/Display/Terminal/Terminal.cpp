@@ -1,8 +1,8 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Tools/Display/Terminal/Standard/Terminal_std.hpp"
-
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 
 using namespace aff3ct;

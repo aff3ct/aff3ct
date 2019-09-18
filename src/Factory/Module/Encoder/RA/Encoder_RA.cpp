@@ -1,7 +1,7 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Encoder/RA/Encoder_RA.hpp"
-
 #include "Factory/Module/Encoder/RA/Encoder_RA.hpp"
 
 using namespace aff3ct;

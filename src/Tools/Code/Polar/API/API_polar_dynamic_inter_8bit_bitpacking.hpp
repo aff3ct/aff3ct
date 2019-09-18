@@ -1,6 +1,7 @@
 #ifndef API_POLAR_DYNAMIC_INTER_8BIT_BITPACKING_HPP_
 #define API_POLAR_DYNAMIC_INTER_8BIT_BITPACKING_HPP_
 
+#include <cstdint>
 #include <vector>
 #include <memory>
 #include <mipp.h>

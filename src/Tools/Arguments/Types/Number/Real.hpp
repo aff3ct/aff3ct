@@ -1,8 +1,8 @@
 #ifndef ARGUMENT_TYPE_REAL_HPP_
 #define ARGUMENT_TYPE_REAL_HPP_
 
-#include <string>
 #include <stdexcept>
+#include <string>
 
 #include "Tools/Arguments/Types/Argument_type_limited.hpp"
 

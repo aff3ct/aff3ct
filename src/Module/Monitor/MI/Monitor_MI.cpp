@@ -1,6 +1,6 @@
-#include <cmath>
-#include <string>
+#include <algorithm>
 #include <sstream>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/common/mutual_info.h"

@@ -1,9 +1,12 @@
-#include <cmath>
+#include <functional>
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <iomanip>
 #include <thread>
 #include <string>
-#include <sstream>
-#include <algorithm>
-#include <functional>
+#include <ios>
 
 #include "Tools/general_utils.h"
 #include "Tools/system_functions.h"
@@ -16,7 +19,6 @@
 #include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 #include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
-
 #include "Simulation/BFER/BFER.hpp"
 
 using namespace aff3ct;

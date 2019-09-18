@@ -1,5 +1,4 @@
-#include "BCH/Codec_BCH.hpp"
-
+#include "Factory/Module/Codec/BCH/Codec_BCH.hpp"
 #include "Factory/Module/Codec/Codec_SIHO_HIHO.hpp"
 
 using namespace aff3ct;

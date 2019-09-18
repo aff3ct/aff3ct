@@ -1,3 +1,6 @@
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <cmath>
 
 #include "Tools/Constellation/QAM/Constellation_QAM.hpp"
@@ -7,8 +10,8 @@ namespace aff3ct
 namespace tools
 {
 template <typename R>
-Constellation_QAM<R>::
-Constellation_QAM(const unsigned n_bps)
+Constellation_QAM<R>
+::Constellation_QAM(const unsigned n_bps)
 : Constellation<R>(n_bps, "QAM"),
   sqrt_es((R)std::sqrt((R)2.0 * (R)(this->get_n_symbols() - 1) / 3.0))
 {
@@ -16,8 +19,8 @@ Constellation_QAM(const unsigned n_bps)
 }
 
 template <typename R>
-typename Constellation_QAM<R>::S Constellation_QAM<R>::
-bits_to_symbol(const uint8_t bits[]) const
+typename Constellation_QAM<R>::S Constellation_QAM<R>
+::bits_to_symbol(const uint8_t bits[]) const
 {
 	auto bps = this->get_n_bits_per_symbol();
 

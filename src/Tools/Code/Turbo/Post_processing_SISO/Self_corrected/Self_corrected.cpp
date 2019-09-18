@@ -2,6 +2,7 @@
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename R>

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <numeric>
+#include <vector>
 #include <cmath>
 
 #include "Tools/Interleaver/Golden/Interleaver_core_golden.hpp"

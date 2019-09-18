@@ -1,7 +1,10 @@
 #ifndef REPORTER_MONITOR_HPP_
 #define REPORTER_MONITOR_HPP_
 
-#include "Module/Monitor/Monitor_reduction.hpp"
+#include <vector>
+#include <utility>
+#include <string>
+
 #include "Tools/Display/Reporter/Reporter.hpp"
 
 namespace aff3ct

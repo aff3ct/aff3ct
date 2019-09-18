@@ -1,17 +1,14 @@
-#include <iostream>
+#include <utility>
 #include <iomanip>
 #include <sstream>
+#include <cassert>
 #include <ios>
 
-#include "Tools/Display/rang_format/rang_format.h"
-#include "Tools/Exception/exception.hpp"
-#include "Tools/Noise/noise_utils.h"
-
+#include "Tools/Noise/Sigma.hpp"
 #include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
-
 
 template <typename R>
 struct Reporter_noise<R>::Noise_ptr

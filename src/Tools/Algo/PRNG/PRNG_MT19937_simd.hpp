@@ -21,7 +21,6 @@
 #define PRNG_MT19937_SIMD_HPP
 
 #include <cstdint>
-#include <vector>
 #include <mipp.h>
 
 namespace aff3ct

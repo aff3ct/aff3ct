@@ -1,11 +1,9 @@
-#include <string>
-#include <sstream>
-#include <vector>
-#include <numeric>
 #include <algorithm>
+#include <numeric>
+#include <sstream>
+#include <ios>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 
 using namespace aff3ct;

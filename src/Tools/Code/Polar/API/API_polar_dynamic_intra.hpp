@@ -1,6 +1,7 @@
 #ifndef API_POLAR_DYNAMIC_INTRA_HPP_
 #define API_POLAR_DYNAMIC_INTRA_HPP_
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 #include <mipp.h>

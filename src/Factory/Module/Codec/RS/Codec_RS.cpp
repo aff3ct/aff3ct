@@ -1,6 +1,7 @@
+#include <utility>
+
 #include "Factory/Module/Encoder/RS/Encoder_RS.hpp"
 #include "Factory/Module/Decoder/RS/Decoder_RS.hpp"
-
 #include "Factory/Module/Codec/RS/Codec_RS.hpp"
 
 using namespace aff3ct;

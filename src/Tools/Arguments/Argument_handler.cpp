@@ -1,11 +1,10 @@
-#include <sstream>
 #include <algorithm>
-#include <type_traits>
-
+#include <sstream>
+#include <utility>
+#include <map>
 #include <rang.hpp>
 
 #include "Tools/general_utils.h"
-
 #include "Tools/Arguments/Argument_handler.hpp"
 
 using namespace aff3ct::tools;

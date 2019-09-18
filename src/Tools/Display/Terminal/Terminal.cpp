@@ -2,6 +2,7 @@
 #include <mpi.h>
 #endif
 #include <csignal>
+#include <cstdlib>
 
 #include "Tools/Display/Terminal/Terminal.hpp"
 

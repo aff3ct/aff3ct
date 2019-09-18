@@ -2,6 +2,7 @@
 #define FULL_MATRIX_HPP_
 
 #include <iostream>
+#include <cstddef>
 #include <vector>
 
 #include "Tools/Algo/Matrix/Matrix.hpp"

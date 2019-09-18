@@ -1,6 +1,8 @@
 #ifndef CONSTELLATION_PAM_HPP__
 #define CONSTELLATION_PAM_HPP__
 
+#include <cstdint>
+
 #include "Tools/Constellation/Constellation.hpp"
 
 namespace aff3ct

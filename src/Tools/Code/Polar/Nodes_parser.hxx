@@ -1,4 +1,8 @@
-#include <sstream>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <algorithm>
+#include <iostream>
 #include <cmath>
 
 #include "Tools/Display/rang_format/rang_format.h"

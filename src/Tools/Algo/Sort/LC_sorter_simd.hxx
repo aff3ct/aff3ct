@@ -1,5 +1,9 @@
-#include <cmath>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <numeric>
+#include <limits>
+#include <cmath>
 
 #include "Tools/Algo/Sort/LC_sorter.hpp"
 #include "Tools/Algo/Sort/LC_sorter_simd.hpp"

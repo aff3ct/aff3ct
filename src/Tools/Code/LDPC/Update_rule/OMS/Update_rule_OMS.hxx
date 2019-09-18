@@ -1,4 +1,4 @@
-#include <cmath>
+#include <algorithm>
 
 #include "Tools/Code/LDPC/Update_rule/OMS/Update_rule_OMS.hpp"
 

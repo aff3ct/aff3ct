@@ -1,10 +1,9 @@
-#include <string>
-#include <vector>
-#include <sstream>
+#include <algorithm>
 #include <iostream>
+#include <cstdint>
+#include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Display/Dumper/Dumper.hpp"
 
 using namespace aff3ct;

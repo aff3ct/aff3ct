@@ -1,11 +1,8 @@
-#include <string>
-#include <sstream>
-#include <vector>
 #include <algorithm>
+#include <sstream>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
-
 #include "Tools/Algo/Matrix/Full_matrix/Full_matrix.hpp"
 
 using namespace aff3ct;

@@ -1,6 +1,7 @@
+#include <algorithm>
+
 #include "Factory/Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 #include "Factory/Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
-
 #include "Factory/Module/Codec/Turbo_product/Codec_turbo_product.hpp"
 
 using namespace aff3ct;

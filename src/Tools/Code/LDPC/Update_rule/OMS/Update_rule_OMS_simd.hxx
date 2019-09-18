@@ -1,5 +1,3 @@
-#include <cmath>
-
 #include "Tools/Code/LDPC/Update_rule/OMS/Update_rule_OMS_simd.hpp"
 
 namespace aff3ct

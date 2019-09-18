@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Noise/Event_probability.hpp"
 
 using namespace aff3ct;

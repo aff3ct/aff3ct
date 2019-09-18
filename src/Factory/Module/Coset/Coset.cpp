@@ -1,8 +1,8 @@
-#include "Tools/Documentation/documentation.h"
+#include <utility>
 
+#include "Tools/Documentation/documentation.h"
 #include "Module/Coset/Bit/Coset_bit.hpp"
 #include "Module/Coset/Real/Coset_real.hpp"
-
 #include "Factory/Module/Coset/Coset.hpp"
 
 using namespace aff3ct;

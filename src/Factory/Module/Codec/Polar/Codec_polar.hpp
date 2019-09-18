@@ -1,6 +1,7 @@
 #ifndef FACTORY_CODEC_POLAR_HPP
 #define FACTORY_CODEC_POLAR_HPP
 
+#include <vector>
 #include <string>
 #include <map>
 

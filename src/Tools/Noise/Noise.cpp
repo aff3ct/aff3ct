@@ -1,3 +1,6 @@
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Noise/Noise.hpp"
 
 using namespace aff3ct;

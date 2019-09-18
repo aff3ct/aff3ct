@@ -1,8 +1,8 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
-
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 
 using namespace aff3ct;

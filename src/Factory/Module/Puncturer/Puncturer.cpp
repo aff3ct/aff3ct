@@ -1,7 +1,7 @@
+#include <utility>
+
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
-
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
 using namespace aff3ct;

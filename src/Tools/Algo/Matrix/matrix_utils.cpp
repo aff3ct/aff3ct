@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Algo/Matrix/matrix_utils.h"
 
 using namespace aff3ct::tools;

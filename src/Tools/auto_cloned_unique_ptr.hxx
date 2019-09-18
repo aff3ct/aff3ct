@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <utility>
 
 #include "Tools/auto_cloned_unique_ptr.hpp"

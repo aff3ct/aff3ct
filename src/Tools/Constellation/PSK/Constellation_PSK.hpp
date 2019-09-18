@@ -1,6 +1,8 @@
 #ifndef CONSTELLATION_PSK_HPP__
 #define CONSTELLATION_PSK_HPP__
 
+#include <cstdint>
+
 #include "Tools/Constellation/Constellation.hpp"
 
 namespace aff3ct

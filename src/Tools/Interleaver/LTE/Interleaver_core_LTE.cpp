@@ -2,7 +2,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Interleaver/LTE/Interleaver_core_LTE.hpp"
 
 using namespace aff3ct;

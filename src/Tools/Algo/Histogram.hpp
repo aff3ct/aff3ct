@@ -1,12 +1,12 @@
 #ifndef HISTOGRAM_HPP__
 #define HISTOGRAM_HPP__
 
-#include <string>
-#include <map>
-#include <cmath>
-#include <cstddef>
-#include <vector>
 #include <fstream>
+#include <cstddef>
+#include <string>
+#include <cmath>
+#include <vector>
+#include <map>
 
 namespace aff3ct
 {

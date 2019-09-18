@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Interleaver/Row_column/Interleaver_core_row_column.hpp"
 
 using namespace aff3ct;

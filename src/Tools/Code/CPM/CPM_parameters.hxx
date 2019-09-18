@@ -1,3 +1,6 @@
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <cmath>
 
 #include "Tools/Code/CPM/CPM_parameters.hpp"

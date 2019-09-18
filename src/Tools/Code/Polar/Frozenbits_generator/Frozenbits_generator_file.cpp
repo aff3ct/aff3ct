@@ -1,14 +1,7 @@
-#include <sys/stat.h>
-#include <dirent.h>
-#include <errno.h>
-
-#include <iostream>
 #include <fstream>
 #include <sstream>
-#include <iomanip>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
 
 using namespace aff3ct::tools;

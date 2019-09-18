@@ -1,8 +1,6 @@
 #include <sstream>
-#include <iostream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants_64800.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants_16200.hpp"

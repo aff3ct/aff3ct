@@ -1,6 +1,7 @@
 #ifndef API_POLAR_STATIC_INTRA_16BIT_HPP_
 #define API_POLAR_STATIC_INTRA_16BIT_HPP_
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 #include <mipp.h>

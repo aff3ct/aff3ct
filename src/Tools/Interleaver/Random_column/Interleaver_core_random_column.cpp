@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <sstream>
+#include <vector>
 
 #include "Tools/Interleaver/Random_column/Interleaver_core_random_column.hpp"
 

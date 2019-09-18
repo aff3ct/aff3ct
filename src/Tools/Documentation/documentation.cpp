@@ -1,16 +1,16 @@
+#include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <regex>
 #include <map>
 
 #ifndef AFF3CT_EXT_STRINGS
-#include "strings.cpp"
+#include "Tools/Documentation/strings.cpp"
 #endif
-
 #include "Tools/version.h"
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/system_functions.h"
-
 #include "Tools/Documentation/documentation.h"
 
 using namespace aff3ct;

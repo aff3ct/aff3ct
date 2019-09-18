@@ -1,9 +1,7 @@
-#include <string>
+#include <algorithm>
 #include <sstream>
-#include <vector>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Algo/Matrix/Matrix.hpp"
 
 using namespace aff3ct;
@@ -80,8 +78,6 @@ void Matrix
 	n_cols = _n_cols;
 }
 
-
-
 bool Matrix
 ::is_of_way(Way w) const noexcept
 {
@@ -99,8 +95,6 @@ void Matrix
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
-
-
 
 std::string Matrix
 ::way_to_str(Way w)
@@ -127,10 +121,6 @@ std::string Matrix
 
 	return str;
 }
-
-
-
-
 
 std::ostream& operator<<(std::ostream& os, const Matrix& sm)
 {

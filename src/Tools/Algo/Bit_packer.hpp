@@ -9,9 +9,9 @@
 #ifndef BIT_PACKER_HPP_
 #define BIT_PACKER_HPP_
 
+#include <climits>
 #include <vector>
 #include <memory>
-#include <climits>
 
 namespace aff3ct
 {

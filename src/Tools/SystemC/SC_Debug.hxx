@@ -1,6 +1,9 @@
 #if defined(AFF3CT_SYSTEMC_SIMU) || defined(AFF3CT_SYSTEMC_MODULE)
 
+#include <algorithm>
 #include <typeinfo>
+#include <iostream>
+#include <vector>
 
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/SystemC/SC_Debug.hpp"

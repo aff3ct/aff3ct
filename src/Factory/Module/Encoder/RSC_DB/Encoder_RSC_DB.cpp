@@ -1,8 +1,7 @@
-#include <algorithm>
+#include <utility>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Factory/Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 
 using namespace aff3ct;

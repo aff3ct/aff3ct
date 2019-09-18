@@ -1,8 +1,8 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
-
 #include "Factory/Module/Encoder/Repetition/Encoder_repetition.hpp"
 
 using namespace aff3ct;

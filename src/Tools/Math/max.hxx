@@ -1,8 +1,10 @@
-#include <cmath>     // min(), fabs(), copysign()...
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <cmath>     // fabs(), copysign()...
 #include <algorithm> // min()
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Math/max.h"
 
 namespace aff3ct

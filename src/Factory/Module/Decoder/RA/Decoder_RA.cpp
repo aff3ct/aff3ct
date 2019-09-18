@@ -1,8 +1,8 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Decoder/RA/Decoder_RA.hpp"
-
 #include "Factory/Module/Decoder/RA/Decoder_RA.hpp"
 
 using namespace aff3ct;

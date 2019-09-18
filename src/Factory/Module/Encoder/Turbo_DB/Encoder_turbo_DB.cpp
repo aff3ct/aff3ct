@@ -1,7 +1,7 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp"
-
 #include "Factory/Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp"
 
 const std::string aff3ct::factory::Encoder_turbo_DB_name   = "Encoder Turbo DB";

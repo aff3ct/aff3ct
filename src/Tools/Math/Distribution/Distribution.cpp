@@ -1,15 +1,11 @@
-#include <utility>
-#include <random>
-#include <sstream>
 #include <algorithm>
-#include <vector>
 #include <numeric>
+#include <sstream>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/numerical_integration.h"
 #include "Tools/Math/interpolation.h"
 #include "Tools/general_utils.h"
-
 #include "Tools/Math/Distribution/Distribution.hpp"
 
 using namespace aff3ct;

@@ -1,11 +1,11 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Source/AZCW/Source_AZCW.hpp"
 #include "Module/Source/Random/Source_random.hpp"
 #include "Module/Source/Random/Source_random_fast.hpp"
 #include "Module/Source/User/Source_user.hpp"
-
 #include "Factory/Module/Source/Source.hpp"
 
 using namespace aff3ct;

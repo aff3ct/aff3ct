@@ -1,9 +1,10 @@
 #ifndef ARGUMENT_TOOLS_HPP_
 #define ARGUMENT_TOOLS_HPP_
 
-#include <typeinfo>
-#include <stdexcept>
 #include <type_traits>
+#include <stdexcept>
+#include <typeinfo>
+#include <string>
 
 #include "Tools/Arguments/Maps/Argument_map_info.hpp"
 #include "Tools/Arguments/Maps/Argument_map_group.hpp"

@@ -1,6 +1,7 @@
 #ifndef FACTORY_CODEC_HPP_
 #define FACTORY_CODEC_HPP_
 
+#include <vector>
 #include <string>
 #include <map>
 

@@ -2,6 +2,7 @@
 #define REPORTER_THROUGHPUT_HPP_
 
 #include <chrono>
+#include <cstdint>
 #include <functional>
 #include <type_traits>
 

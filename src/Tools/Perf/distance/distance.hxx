@@ -1,8 +1,5 @@
-#ifndef DISTANCE_HXX__
-#define DISTANCE_HXX__
-
+#include <algorithm>
 #include <limits>
-#include <cmath>
 #include <mipp.h>
 
 #include "Tools/Perf/distance/distance.h"
@@ -248,5 +245,3 @@ size_t distance(const T *in, const unsigned size)
 
 }
 }
-
-#endif

@@ -1,7 +1,6 @@
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
-
 #include <string>
 #include <cmath>
 #include <vector>
@@ -11,6 +10,10 @@
 #include "Tools/Math/matrix.h"
 #include "Tools/Math/numerical_integration.h"
 #include "Module/Modem/CPM/Modem_CPM.hpp"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 namespace aff3ct
 {

@@ -1,9 +1,10 @@
 #ifndef ARGUMENT_TYPE_LIST_HPP_
 #define ARGUMENT_TYPE_LIST_HPP_
 
-#include <string>
-#include <sstream>
 #include <stdexcept>
+#include <sstream>
+#include <vector>
+#include <string>
 #include <tuple>
 
 #include "Tools/Arguments/Types/Argument_type_limited.hpp"

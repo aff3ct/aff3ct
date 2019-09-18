@@ -1,4 +1,5 @@
 #include <sstream>
+#include <vector>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"

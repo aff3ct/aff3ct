@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include <map>
 
 #include "Tools/Arguments/Argument_tools.hpp"

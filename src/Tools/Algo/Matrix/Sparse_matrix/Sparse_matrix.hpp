@@ -1,9 +1,10 @@
 #ifndef SPARSE_MATRIX_HPP_
 #define SPARSE_MATRIX_HPP_
 
+#include <iostream>
+#include <cstddef>
 #include <cstdint>
 #include <vector>
-#include <iostream>
 
 #include "Tools/Algo/Matrix/Matrix.hpp"
 

@@ -2,6 +2,9 @@
 #define ARGUMENT_EXAMPLE_SET_RANGE_HPP_
 
 #include <type_traits>
+#include <algorithm>
+#include <vector>
+#include <string>
 
 #include "Tools/Arguments/Ranges/Set/Set.hpp"
 

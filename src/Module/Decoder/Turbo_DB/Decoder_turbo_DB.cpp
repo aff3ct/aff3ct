@@ -1,7 +1,6 @@
-#include <cmath>
-#include <string>
-#include <sstream>
 #include <algorithm>
+#include <sstream>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"

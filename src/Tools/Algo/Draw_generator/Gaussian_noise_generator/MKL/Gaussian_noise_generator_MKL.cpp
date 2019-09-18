@@ -3,7 +3,6 @@
 #include <mkl_vsl.h>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
 
 using namespace aff3ct::tools;

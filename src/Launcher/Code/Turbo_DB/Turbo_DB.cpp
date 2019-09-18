@@ -1,9 +1,7 @@
-#include <iostream>
+#include <type_traits>
 
 #include "Launcher/Simulation/BFER_std.hpp"
-
 #include "Factory/Module/Codec/Turbo_DB/Codec_turbo_DB.hpp"
-
 #include "Launcher/Code/Turbo_DB/Turbo_DB.hpp"
 
 using namespace aff3ct;

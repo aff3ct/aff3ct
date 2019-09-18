@@ -1,4 +1,3 @@
-#include <utility>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"

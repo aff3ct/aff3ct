@@ -1,13 +1,5 @@
-#ifndef BITWISE_DIFF_HXX__
-#define BITWISE_DIFF_HXX__
-
-#include <limits>
-#include <cmath>
-
 #include "Tools/Noise/noise_utils.h"
-
 #include "Tools/Perf/distance/Bitwise_diff.h"
-
 
 namespace aff3ct
 {
@@ -77,5 +69,3 @@ struct Bitwise_diff<T,true>
 
 }
 }
-
-#endif

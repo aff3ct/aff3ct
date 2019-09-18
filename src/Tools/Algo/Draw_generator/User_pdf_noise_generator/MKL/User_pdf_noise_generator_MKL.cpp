@@ -1,7 +1,6 @@
 #ifdef AFF3CT_CHANNEL_MKL
 
 #include <mkl_vsl.h>
-#include <sstream>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/MKL/User_pdf_noise_generator_MKL.hpp"

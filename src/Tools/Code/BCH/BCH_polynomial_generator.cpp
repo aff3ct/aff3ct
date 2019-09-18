@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
 
 using namespace aff3ct::tools;

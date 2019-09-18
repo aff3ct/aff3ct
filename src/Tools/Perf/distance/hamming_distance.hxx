@@ -1,11 +1,6 @@
-#ifndef HAMMING_DISTANCE_HXX_
-#define HAMMING_DISTANCE_HXX_
-
-#include <mipp.h>
-
-#include "Tools/Perf/distance/hamming_distance.h"
 #include "Tools/Perf/distance/distance.h"
 #include "Tools/Perf/distance/Boolean_diff.h"
+#include "Tools/Perf/distance/hamming_distance.h"
 
 namespace aff3ct
 {
@@ -60,5 +55,3 @@ size_t hamming_distance_unk(const B *in, const unsigned size)
 }
 }
 }
-
-#endif

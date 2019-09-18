@@ -1,7 +1,7 @@
-#include <sstream>
 #include <algorithm>
-#include <vector>
 #include <iostream>
+#include <sstream>
+#include <ios>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Arguments/Splitter/Splitter.hpp"

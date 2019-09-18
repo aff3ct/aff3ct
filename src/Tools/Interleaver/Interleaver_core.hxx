@@ -1,5 +1,5 @@
-#include <sstream>
 #include <algorithm>
+#include <sstream>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Interleaver/Interleaver_core.hpp"

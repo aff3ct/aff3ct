@@ -1,14 +1,12 @@
-#include <iostream>
+#include <utility>
 #include <iomanip>
 #include <sstream>
 #include <ios>
 
-#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Reporter/MI/Reporter_MI.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
-
 
 template <typename B, typename R>
 Reporter_MI<B,R>

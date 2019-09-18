@@ -1,6 +1,7 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Factory/Tools/Code/Turbo/Flip_and_check.hpp"
 
 using namespace aff3ct;

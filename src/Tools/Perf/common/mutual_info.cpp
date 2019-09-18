@@ -1,15 +1,15 @@
-#include <cmath>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <type_traits>
 #include <algorithm>
+#include <cassert>
+#include <cmath>
 #include <limits>
 #include <vector>
-#include <assert.h>
 #include <mipp.h>
 
 #include "Tools/Perf/common/mutual_info.h"
-
-#ifndef M_LN2
-#define M_LN2 std::log(2)
-#endif
 
 #ifdef MIPP_AVX1
 

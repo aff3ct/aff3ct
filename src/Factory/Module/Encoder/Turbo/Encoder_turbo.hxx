@@ -1,9 +1,10 @@
+#include <type_traits>
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
-
 #include "Factory/Module/Encoder/Turbo/Encoder_turbo.hpp"
 
 namespace aff3ct
