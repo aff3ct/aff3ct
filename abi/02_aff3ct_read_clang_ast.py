@@ -10,6 +10,8 @@ import sys
 # enable additional output and dump internal_db
 debug_mode = False
 
+setting_keep_task_method = True
+
 # process one method argument
 def process_arg(arg_signature, arg_rank):
     arg_is_const = False
@@ -826,10 +828,16 @@ def find_task_method(class_entry, module_task_entry):
             if '=' in method_arg:
                 continue
             method_task_socket = module_task_sockets[j]
-            if method_task_socket['soc_type']+' []' != method_arg['arg_type']:
+            method_arg_type = method_arg['arg_type']
+            if method_arg_type.endswith(']') and method_task_socket['soc_type']+' []' != method_arg_type:
+                method_is_task = False
+                break
+            elif  method_arg_type.endswith(('*','&')) and method_task_socket['soc_type'] != method_arg_type:
                 method_is_task = False
                 break
             j = j+1
+            if j >= module_task_nb_sockets:
+                break
         if method_is_task:
             return method_entry
     return None
@@ -844,13 +852,21 @@ def make_task(class_entry, method_entry, module_task_entry):
 
     # change method kind into 'task'
     method_entry['method_kind'] = 'task'
+    socket_nb = 0
     for socket in method_entry['method_arguments']:
+        if '=' in socket['arg_signature']:
+            continue
         # copy() is mandatory here, as keys() aliases the dict keys list which will be modified
         old_keys = socket.copy().keys()
         for old_key in old_keys:
             new_key = 'soc'+old_key[3:]
-            socket[new_key] = socket.pop(old_key)
-        module_task_socket = module_task_entry['sockets'][socket['soc_rank']]
+            if setting_keep_task_method:
+                socket[new_key] = socket[old_key]
+            else:
+                socket[new_key] = socket.pop(old_key)
+        socket_rank = socket['soc_rank']
+        socket_nb = socket_nb+1
+        module_task_socket = module_task_entry['sockets'][socket_rank]
         if socket['soc_shape'] != '<fixme>':
             sys.stderr.write("invalid socket shape" + "\n")
             sys.exit(1)
@@ -870,11 +886,17 @@ def make_task(class_entry, method_entry, module_task_entry):
             sys.exit(1)
         socket['soc_dir'] = socket_dir
         socket['soc_fixme'] = False
-    method_entry['method_fixme'] = False
-    method_entry['method_nb_sockets'] = method_entry.pop('method_nb_arguments')
-    method_entry['method_sockets'] = method_entry.pop('method_arguments')
-    class_entry['class_tasks'][method] = class_entry['class_methods'].pop(method)
-    del class_entry['class_fixme_methods'][method]
+
+    method_entry['method_nb_sockets'] = socket_nb
+    if setting_keep_task_method:
+        method_entry['method_sockets'] = method_entry['method_arguments']
+        class_entry['class_tasks'][method] = method_entry
+    else:
+        method_entry['method_fixme'] = False
+        method_entry.pop('method_nb_arguments')
+        method_entry['method_sockets'] = method_entry.pop('method_arguments')
+        class_entry['class_tasks'][method] = class_entry['class_methods'].pop(method)
+        del class_entry['class_fixme_methods'][method]
 
 # process a modules description .json file
 def process_modules(json_modules_filename):
