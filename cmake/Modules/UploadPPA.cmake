@@ -59,15 +59,21 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "Standards-Version: 3.9.7\n"
          "Homepage: ${CPACK_DEBIAN_PACKAGE_HOMEPAGE}\n"
          "\n"
-         "Package: ${CPACK_DEBIAN_PACKAGE_NAME}\n"
+         "Package: ${CPACK_DEBIAN_PACKAGE_NAME}-bin\n"
          "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
          "Depends: ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
          "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
          "${DEBIAN_LONG_DESCRIPTION}\n"
          "\n"
-         "Package: ${CPACK_DEBIAN_PACKAGE_NAME}-dev\n"
+         "Package: lib${CPACK_DEBIAN_PACKAGE_NAME}\n"
          "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
          "Depends: ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
+         "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
+         "${DEBIAN_LONG_DESCRIPTION}\n"
+         "\n"
+         "Package: lib${CPACK_DEBIAN_PACKAGE_NAME}-dev\n"
+         "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
+         "Depends: lib${CPACK_DEBIAN_PACKAGE_NAME}, ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
          "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
          "${DEBIAN_LONG_DESCRIPTION}\n"
          "\n"
@@ -77,13 +83,15 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
          "${DEBIAN_LONG_DESCRIPTION}\n")
 
-    file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}.install"
+    file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-bin.install"
          "usr/bin/*\n"
          "usr/share/aff3ct-${AFF3CT_VERSION_FULL}/conf/*\n"
          "usr/share/aff3ct-${AFF3CT_VERSION_FULL}/refs/*\n")
 
-    file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-dev.install"
-         "usr/lib/x86_64-linux-gnu/*\n"
+    file(WRITE "${DEBIAN_SOURCE_DIR}/debian/lib${CPACK_DEBIAN_PACKAGE_NAME}.install"
+         "usr/lib/x86_64-linux-gnu/*\n")
+
+    file(WRITE "${DEBIAN_SOURCE_DIR}/debian/lib${CPACK_DEBIAN_PACKAGE_NAME}-dev.install"
          "usr/include/aff3ct-${AFF3CT_VERSION_FULL}/*\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-doc.install"

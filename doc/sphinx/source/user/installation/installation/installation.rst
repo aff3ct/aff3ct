@@ -85,11 +85,16 @@ Update package list and install:
 .. code-block:: bash
 
    sudo apt-get update
-   sudo apt-get install aff3ct aff3ct-dev aff3ct-doc
+   sudo apt-get install aff3ct-bin aff3ct-doc libaff3ct libaff3ct-dev
 
-The package ``aff3ct`` contains the ``bin/``, ``conf/`` and ``refs/`` folders.
-The package ``aff3ct-dev`` contains the ``include/`` and ``lib/`` folders.
-The package ``aff3ct-doc`` contains the ``doc/`` folder.
+* The package ``aff3ct-bin`` contains the ``bin/``, ``conf/`` and ``refs/`` folders.
+
+* The package ``aff3ct-doc`` contains the ``doc/`` folder.
+
+* The package ``libaff3ct`` contains the ``lib/`` folder.
+
+* The package ``libaff3ct-dev`` contains the ``include/`` folder and depends on the ``libaff3ct`` package.
+
 
 Contents
 --------
