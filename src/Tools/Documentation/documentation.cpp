@@ -124,7 +124,7 @@ std::string extract_documentation(const std::string &key)
 			std::string basedir, filename;
 			split_path(binary_path, basedir, filename);
 
-			std::string aff3ct_version = aff3ct::version();
+			std::string aff3ct_version = version();
 			if (!aff3ct_version.empty() && aff3ct_version[0] == 'v')
 				aff3ct_version.erase(0, 1); // rm the 'v'
 

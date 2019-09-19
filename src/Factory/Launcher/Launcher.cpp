@@ -230,8 +230,8 @@ void factory::Launcher::parameters
 	date << std::chrono::system_clock::now();
 	auto split_date = tools::split(date.str(), '.');
 	params_headers[p].push_back(std::make_pair("Date (UTC)", split_date[0]));
-	if (version() != "GIT-NOTFOUND")
-		params_headers[p].push_back(std::make_pair("Git version", version()));
+	if (tools::version() != "GIT-NOTFOUND")
+		params_headers[p].push_back(std::make_pair("Git version", tools::version()));
 
 	params_headers[p].push_back(std::make_pair("Code type (C)", this->cde_type));
 }
